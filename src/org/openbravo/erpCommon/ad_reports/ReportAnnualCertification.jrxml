@@ -241,98 +241,84 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{LOCODE}]]></textFieldExpression>
 				</textField>
-				<staticText>
-					<reportElement
-						x="182"
-						y="32"
-						width="38"
-						height="17"
-						key="staticText-1"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Courier New"/>
-					</textElement>
-				<text><![CDATA[Spett.]]></text>
-				</staticText>
-				<staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
-						y="68"
+						y="69"
 						width="535"
 						height="33"
-						key="staticText-2"/>
+						key="textField-6"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font fontName="Courier New" pdfFontName="Helvetica-Bold" isBold="true"/>
 					</textElement>
-				<text><![CDATA[Oggetto : certificazione dei compensi assoggettati a ritenuta d'acconto (art. DPR 29 Settembre 1973 n°
-600)]]></text>
-				</staticText>
-				<staticText>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Subject: Certification of compensation subject to withholding"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="1"
 						y="117"
 						width="75"
 						height="18"
-						key="staticText-3"/>
+						key="textField-7"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Courier New"/>
 					</textElement>
-				<text><![CDATA[Percipiente :]]></text>
-				</staticText>
-				<staticText>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Tax payer :"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="1"
 						y="135"
 						width="75"
 						height="18"
-						key="staticText-4"/>
+						key="textField-8"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Courier New"/>
 					</textElement>
-				<text><![CDATA[Nato :]]></text>
-				</staticText>
-				<staticText>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Date of birth :"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="1"
 						y="153"
 						width="75"
 						height="18"
-						key="staticText-5"/>
+						key="textField-9"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Courier New"/>
 					</textElement>
-				<text><![CDATA[Residente :]]></text>
-				</staticText>
-				<staticText>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Address :"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="1"
 						y="171"
 						width="75"
 						height="18"
-						key="staticText-6"/>
+						key="textField-10"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Courier New"/>
 					</textElement>
-				<text><![CDATA[Cod.Fiscale :]]></text>
-				</staticText>
-				<staticText>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Tax ID :"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
 						y="199"
 						width="75"
 						height="18"
-						key="staticText-7"/>
+						key="textField-11"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Courier New"/>
 					</textElement>
-				<text><![CDATA[Erogante :]]></text>
-				</staticText>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Employer :"]]></textFieldExpression>
+				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
@@ -344,35 +330,35 @@
 					<textElement>
 						<font fontName="Courier New"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["Attestiamo che nel periodo dal "+$P{DateFrom}.toString()+" al "+$P{DateTo}.toString()+" sono state corrisposte al percipiente somme per un importo complessivo pari a Euro "+$F{GRANDTOTALAMOUNT}.toString()+"\n"+
-"e l'importo della ritenuta d'acconto operata è di Euro "+$F{WITHHOLDINGAMOUNT}.toString()+"\n"]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["We certify thet the period from "+$P{DateFrom}.toString()+" to "+$P{DateTo}.toString()+" wages have been paid to the payer for a total amount of "+$F{GRANDTOTALAMOUNT}.toString()+"\n"+
+"and that the withholding amount is "+$F{WITHHOLDINGAMOUNT}.toString()+"\n"]]></textFieldExpression>
 				</textField>
-				<staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
 						y="527"
 						width="131"
 						height="18"
-						key="staticText-8"/>
+						key="textField-12"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font fontName="Courier New"/>
 					</textElement>
-				<text><![CDATA[Distinti saluti]]></text>
-				</staticText>
-				<staticText>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Best regards :"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="404"
 						y="557"
 						width="131"
 						height="18"
-						key="staticText-9"/>
+						key="textField-13"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right">
 						<font fontName="Courier New" pdfFontName="Helvetica" isBold="false"/>
 					</textElement>
-				<text><![CDATA[Firma]]></text>
-				</staticText>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Signature"]]></textFieldExpression>
+				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
@@ -425,7 +411,7 @@
 					<textElement>
 						<font fontName="Courier New"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["Versamento effettuato il "+ new SimpleDateFormat ("dd/mm/yyyy").format($F{DATEPLANNED}).toString()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["On : "+ new SimpleDateFormat ("dd/mm/yyyy").format($F{DATEPLANNED}).toString()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -438,7 +424,7 @@
 					<textElement>
 						<font fontName="Courier New"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["Le ritenute d'acconto sono state versate nei termini di legge, presso : "]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["The withhold amount has been deposited at: "]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
