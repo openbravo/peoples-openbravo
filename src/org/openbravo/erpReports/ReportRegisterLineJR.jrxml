@@ -125,7 +125,7 @@
 					<textElement verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["Periodo da :    " + $P{invoicedateDA}+"   a    "+$P{invoicedateA}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Date from :    " + $P{invoicedateDA}+"   to    "+$P{invoicedateA}]]></textFieldExpression>
 				</textField>
 			</band>
 		</title>

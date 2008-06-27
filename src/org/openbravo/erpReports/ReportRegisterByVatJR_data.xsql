@@ -38,8 +38,8 @@
  	coalesce(taxregline.totalamt,0) as Totale,
  	coalesce(taxreg.lastregaccumamt,0) as TotalePrecedente,
 	case 
- 	when taxregtyp.issotrx ='Y' then 'Vendita'
- 	else 'Acquisti'
+ 	when taxregtyp.issotrx ='Y' then 'Sales'
+ 	else 'Purchase'
  	end 
  	as IsSale
  from c_taxregister taxreg, 

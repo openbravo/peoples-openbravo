@@ -255,7 +255,7 @@ case
 					<textElement>
 						<font pdfFontName="Helvetica-Bold" isBold="true"/>
 					</textElement>
-				<text><![CDATA[Totali :]]></text>
+				<text><![CDATA[Total :]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -292,7 +292,7 @@ case
 					<textElement>
 						<font size="30"/>
 					</textElement>
-				<text><![CDATA[Liquidazione Iva]]></text>
+				<text><![CDATA[Tax payment]]></text>
 				</staticText>
 				<line direction="TopDown">
 					<reportElement
@@ -327,7 +327,7 @@ case
 					<textElement verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["Periodo da:   " +" "+ $P{invoicedateDA}+" "+"   a   "+" "+$P{invoicedateA}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Date from:   " +" "+ $P{invoicedateDA}+" "+"   to   "+" "+$P{invoicedateA}]]></textFieldExpression>
 				</textField>
 			</band>
 		</title>
@@ -384,7 +384,7 @@ case
 					<textElement>
 						<font size="12"/>
 					</textElement>
-				<text><![CDATA[Aliquota]]></text>
+				<text><![CDATA[Tax rate]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
@@ -395,10 +395,10 @@ case
 						forecolor="#000000"
 						key="staticText"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right">
+					<textElement textAlignment="Center">
 						<font size="12"/>
 					</textElement>
-				<text><![CDATA[Imponibile]]></text>
+				<text><![CDATA[Tax base amount]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
@@ -409,10 +409,10 @@ case
 						forecolor="#000000"
 						key="staticText"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right">
+					<textElement textAlignment="Center">
 						<font size="12"/>
 					</textElement>
-				<text><![CDATA[Non Imp.]]></text>
+				<text><![CDATA[Non taxable]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
@@ -423,10 +423,10 @@ case
 						forecolor="#000000"
 						key="staticText"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right">
+					<textElement textAlignment="Center">
 						<font size="12"/>
 					</textElement>
-				<text><![CDATA[Esente]]></text>
+				<text><![CDATA[Exempt]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
@@ -437,10 +437,10 @@ case
 						forecolor="#000000"
 						key="staticText"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right">
+					<textElement textAlignment="Center">
 						<font size="12"/>
 					</textElement>
-				<text><![CDATA[Iva Inded.]]></text>
+				<text><![CDATA[No deductable]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
@@ -454,7 +454,7 @@ case
 					<textElement textAlignment="Right">
 						<font size="12"/>
 					</textElement>
-				<text><![CDATA[Iva]]></text>
+				<text><![CDATA[VAT]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
@@ -468,7 +468,7 @@ case
 					<textElement textAlignment="Right">
 						<font size="12"/>
 					</textElement>
-				<text><![CDATA[Totale]]></text>
+				<text><![CDATA[Total]]></text>
 				</staticText>
 			</band>
 		</columnHeader>
@@ -691,7 +691,7 @@ case
 					<textElement>
 						<font/>
 					</textElement>
-				<text><![CDATA[Iva Inded.]]></text>
+				<text><![CDATA[Und. VAT]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
@@ -704,7 +704,7 @@ case
 					<textElement>
 						<font/>
 					</textElement>
-				<text><![CDATA[Iva]]></text>
+				<text><![CDATA[VAT]]></text>
 				</staticText>
 						</cellContents>
 						</crosstabRowHeader>
@@ -722,7 +722,7 @@ case
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["Totale Iva"]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Total VAT"]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -735,7 +735,7 @@ case
 					<textElement>
 						<font/>
 					</textElement>
-				<text><![CDATA[Iva]]></text>
+				<text><![CDATA[VAT]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
@@ -748,7 +748,7 @@ case
 					<textElement>
 						<font/>
 					</textElement>
-				<text><![CDATA[Iva Inded.]]></text>
+				<text><![CDATA[Und. VAT]]></text>
 				</staticText>
 						</cellContents>
 						</crosstabTotalRowHeader>
@@ -875,7 +875,7 @@ case
 					<textElement verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="12" isBold="true"/>
 					</textElement>
-				<text><![CDATA[Totale IVA da pagare]]></text>
+				<text><![CDATA[Total payment]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -901,7 +901,7 @@ case
 					<textElement verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="12" isBold="true"/>
 					</textElement>
-				<text><![CDATA[Totale credito prec.]]></text>
+				<text><![CDATA[Previous credit.]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
