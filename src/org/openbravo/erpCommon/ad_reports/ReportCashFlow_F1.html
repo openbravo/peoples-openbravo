@@ -92,7 +92,8 @@ function displayCombos(){
 function refreshAccounts() {
   var cmbAccountSchema = document.frmMain.inpcAcctSchemaId;  
   var cmbAccount = document.frmMain.inpAccountingReportId;  
-  cambiarListaCombo(cmbAccount, arrAccount, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);  
+  cambiarListaCombo(cmbAccount, arrAccount, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);
+  depurarCombo();  
   return true;
 }
 function depurar(command) {
