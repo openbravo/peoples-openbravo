@@ -612,14 +612,16 @@
     <Parameter name="IBudgetLineID"/>
   </SqlMethod>
 
-  <SqlMethod name="insertBudgetLineError" type="preparedStatement" connection="true" return="rowCount">
+  <SqlMethod name="insertBudgetLineError" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'Insert BudgetLine, '
+	    UPDATE I_BudgetLine
+        SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'') || 'Insert BudgetLine error: ' || ?
         WHERE I_BudgetLine_ID = TO_NUMBER(?)
       ]]>
     </Sql>
+	<Parameter name="error"/>
     <Parameter name="I_BudgetLine_id"/>
   </SqlMethod>
 
@@ -658,25 +660,29 @@
     <Parameter name="CBudgetLineID"/>
   </SqlMethod>
 
-  <SqlMethod name="updateBudgetLineError" type="preparedStatement" connection="true" return="rowCount">
+  <SqlMethod name="updateBudgetLineError" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'Update BudgetLine, '
+	    UPDATE I_BudgetLine
+        SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'') || 'Update BudgetLine error: ' || ?
         WHERE I_BudgetLine_ID = TO_NUMBER(?)
       ]]>
     </Sql>
+	<Parameter name="error"/>
     <Parameter name="I_BudgetLine_id"/>
   </SqlMethod>
 
-  <SqlMethod name="updateSetImportedError" type="preparedStatement" connection="true" return="rowCount">
+  <SqlMethod name="updateSetImportedError" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'Set Imported, '
+	    UPDATE I_BudgetLine
+        SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'') || 'Set imported error: ' || ?
         WHERE I_BudgetLine_ID = TO_NUMBER(?)
       ]]>
     </Sql>
+	<Parameter name="error"/>
     <Parameter name="I_BudgetLine_id"/>
   </SqlMethod>
 
@@ -700,10 +706,10 @@
         UPDATE I_BudgetLine
         SET I_IsImported='N', Updated=now()
         WHERE I_IsImported<>'Y'
-        AND I_BudgetLine_ID = TO_NUMBER(?)
+        AND AD_CLIENT_ID = TO_NUMBER(?)
       ]]>
     </Sql>
-    <Parameter name="IBudgetLineID"/>
+    <Parameter name="client"/>
   </SqlMethod>
 
 </SqlClass>

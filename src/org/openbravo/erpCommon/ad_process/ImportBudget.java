@@ -166,8 +166,8 @@ public class ImportBudget extends ImportProcess {
       return myError;
     }
 
-    // till here, the edition of the I_ImportBudget table
-    // now, the insertion from I_ImportBudget table in C_BPartner...
+    // till here, the edition of the I_BUDGETLINE table
+    // now, the insertion from I_BUDGETLINE table in C_BPartner...
 
     int noInsert = 0;
     int noUpdate = 0;
@@ -188,7 +188,7 @@ public class ImportBudget extends ImportProcess {
         con = conn.getTransactionConnection();
 
         //  create/update Budget
-        if (newBudgetLine) {  //  Insert new BPartner
+        if (newBudgetLine) {  //  Insert new BudgetLine
           C_BudgetLine_ID = SequenceIdData.getSequence(conn, "C_BudgetLine", vars.getClient());
           try {
             no = ImportBudgetData.insertBudgetLine(con, conn, C_BudgetLine_ID, Integer.toString(seqNo), I_BudgetLine_ID);
@@ -197,8 +197,8 @@ public class ImportBudget extends ImportProcess {
             seqNo = seqNo + 10;
           } catch (ServletException ex)  {
             if (log4j.isDebugEnabled()) log4j.debug("Insert BudgetLine - " + ex.toString());
-            no = ImportBudgetData.insertBudgetLineError(con, conn, I_BudgetLine_ID);
             conn.releaseRollbackConnection(con);
+            no = ImportBudgetData.insertBudgetLineError(conn, ex.toString(), I_BudgetLine_ID);            
             continue;
           }
         } else {      //  Update existing BudgetLine
@@ -208,8 +208,8 @@ public class ImportBudget extends ImportProcess {
             noUpdate++;
           }  catch (ServletException ex)  {
             if (log4j.isDebugEnabled()) log4j.debug("Update BudgetLine - " + ex.toString());
-            no = ImportBudgetData.updateBudgetLineError(con, conn, I_BudgetLine_ID);
             conn.releaseRollbackConnection(con);
+            no = ImportBudgetData.updateBudgetLineError(conn, ex.toString(), I_BudgetLine_ID);            
             continue;
           }
         }
@@ -221,8 +221,8 @@ public class ImportBudget extends ImportProcess {
         } catch (ServletException ex) {
           if (log4j.isDebugEnabled()) log4j.debug("Update Imported - " + ex.toString());
           noInsert--;
-          no = ImportBudgetData.updateSetImportedError(con, conn, I_BudgetLine_ID);
           conn.releaseRollbackConnection(con);
+          no = ImportBudgetData.updateSetImportedError(conn, ex.toString(), I_BudgetLine_ID);          
           continue;
         }
       }

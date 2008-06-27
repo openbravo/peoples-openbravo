@@ -28,7 +28,7 @@
     * Description:
     *    - create default Account records
     ************************************************************************/
-  v_Type NUMBER;
+  v_Type CHAR(1);
 BEGIN
   IF(INSERTING OR UPDATING) THEN
     SELECT BUDGET_TYPE
