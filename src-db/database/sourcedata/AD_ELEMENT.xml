@@ -45115,7 +45115,7 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800762 CREATEDBY-->
 <!--800762-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800762 UPDATED-->
-<!--800762-->              <UPDATED><![CDATA[2007-05-09 18:22:50.0]]></UPDATED>
+<!--800762-->              <UPDATED><![CDATA[2008-06-29 13:11:45.0]]></UPDATED>
 <!--800762 UPDATEDBY-->
 <!--800762-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800762 COLUMNNAME-->
@@ -45123,7 +45123,7 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800762 NAME-->
 <!--800762-->              <NAME><![CDATA[Manufacturing Plan]]></NAME>
 <!--800762 PRINTNAME-->
-<!--800762-->              <PRINTNAME><![CDATA[Manufacturing Planification]]></PRINTNAME>
+<!--800762-->              <PRINTNAME><![CDATA[Manufacturing Planning]]></PRINTNAME>
 <!--800762 HELP-->
 <!--800762-->              <HELP><![CDATA[Headers of the production planning processes.]]></HELP>
 <!--800762**************--></AD_ELEMENT>
@@ -45225,7 +45225,7 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800766 CREATEDBY-->
 <!--800766-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800766 UPDATED-->
-<!--800766-->              <UPDATED><![CDATA[2007-05-09 19:26:05.0]]></UPDATED>
+<!--800766-->              <UPDATED><![CDATA[2008-06-29 13:12:29.0]]></UPDATED>
 <!--800766 UPDATEDBY-->
 <!--800766-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800766 COLUMNNAME-->
@@ -45233,7 +45233,7 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800766 NAME-->
 <!--800766-->              <NAME><![CDATA[Purchase Plan Line]]></NAME>
 <!--800766 PRINTNAME-->
-<!--800766-->              <PRINTNAME><![CDATA[Purchase planification line]]></PRINTNAME>
+<!--800766-->              <PRINTNAME><![CDATA[Purchase planning line]]></PRINTNAME>
 <!--800766 HELP-->
 <!--800766-->              <HELP><![CDATA[Identifies a line of the purchase planning processes.]]></HELP>
 <!--800766**************--></AD_ELEMENT>
