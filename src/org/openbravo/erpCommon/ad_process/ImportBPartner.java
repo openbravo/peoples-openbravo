@@ -61,6 +61,11 @@ public class ImportBPartner extends ImportProcess {
 		try {
             conn = getConnection();
 			con = conn.getTransactionConnection();
+			// Delete imported 
+			if(m_deleteOldImported) {
+				no = ImportBPartnerData.deleteOld(con, conn, getAD_Client_ID());
+				if (log4j.isDebugEnabled()) log4j.debug("Delete Old Imported = " + no);
+			}
 			//  Set Client, Org, IaActive, Created/Updated, ProductType
 			no = ImportBPartnerData.updateRecords(con, conn, getAD_Client_ID());
 			if (log4j.isDebugEnabled()) log4j.debug("ImportBPartner Reset = " + no);
@@ -244,11 +249,6 @@ public class ImportBPartner extends ImportProcess {
 
 			//  Set Error to indicator to not imported
 			noBPartnerError = ImportBPartnerData.updateNotImported(conn, getAD_Client_ID());
-			// Delete imported 
-			if(m_deleteOldImported) {
-				no = ImportBPartnerData.deleteOld(conn, getAD_Client_ID());
-				if (log4j.isDebugEnabled()) log4j.debug("Delete Old Imported = " + no);
-			}
 		} catch (Exception se) {
 			se.printStackTrace();
 			addLog(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
