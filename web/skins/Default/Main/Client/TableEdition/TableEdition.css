@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2007 Openbravo SL 
+ * All portions are Copyright (C) 2007-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -174,7 +174,7 @@ td.DimensionUDArrows_ContentCell {
   border: 0px none;
   vertical-align: top;
   text-align: left;
-  padding-top:0px;
+  padding-top:1px;
   border-collapse: collapse;
   height: 25px;
 }

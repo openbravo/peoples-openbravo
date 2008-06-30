@@ -56,7 +56,7 @@ var isInputFile = false;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '5286';
+  var number = '5514';
   return number;
 }
 

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2007 Openbravo SL 
+ * All portions are Copyright (C) 2007-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,8 @@
   font-size: 8pt;
   background-color: #FFFFFF;
   padding-left: 4px;
+  padding-top: 1px;
+  height: 17px;
 }
 
 .dojoValidateValid {
@@ -33,6 +35,8 @@
   color: #303030;
   background-color: #FFFFFF;
   padding-left: 4px;
+  padding-top: 1px;
+  height: 17px;
 }
 
 .dojoValidateInvalid {
@@ -42,6 +46,8 @@
   background-color: #FFFFFF;
   color: Red;
   padding-left: 4px;
+  padding-top: 1px;
+  height: 17px;
 }
 
 .dojoValidateRange {
@@ -50,46 +56,52 @@
   font-size:8pt;
   background-color: #FFFFFF;
   padding-left: 4px;
+  padding-top: 1px;
+  height: 17px;
 }
 
 .dojoValidateEmpty_focus {
-  border: 1px solid #888888;
   font-family: tahoma, arial, helvetica, sans-serif;
   font-size: 8pt;
   color: #303030;
   background: url(textField.background.focused.png) repeat-x top !important;
   background-color: #D9F0FB !important;
-  padding-left: 4px;
+  padding-left: 3px;
+  padding-top: 0px;
+  height: 17px;
 }
 
 .dojoValidateValid_focus {
-  border: 1px solid #888888;
   font-family: tahoma, arial, helvetica, sans-serif;
   font-size: 8pt;
   color: #303030;
   background: url(textField.background.focused.png) repeat-x top !important;
   background-color: #D9F0FB !important;
-  padding-left: 4px;
+  padding-left: 3px;
+  padding-top: 0px;
+  height: 17px;
 }
 
 .dojoValidateInvalid_focus {
-  border: 1px solid #888888;
   font-family: tahoma, arial, helvetica, sans-serif;
   font-size: 8pt;
   color: #303030;
   background: url(textField.background.focused.png) repeat-x top !important;
   background-color: #D9F0FB !important;
-  padding-left: 4px;
+  padding-left: 3px;
+  padding-top: 0px;
+  height: 17px;
 }
 
 .dojoValidateRange_focus {
-  border: 1px solid #888888;
   font-family: tahoma, arial, helvetica, sans-serif;
   font-size: 8pt;
   color: #303030;
   background: url(textField.background.focused.png) repeat-x top !important;
   background-color: #D9F0FB !important;
-  padding-left: 4px;
+  padding-left: 3px;
+  padding-top: 0px;
+  height: 17px;
 }
 
 .TextBox_focus {
