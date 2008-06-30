@@ -71,6 +71,10 @@ public class ImportOrder extends ImportProcess {
       int no = 0;
       conn = getConnection();
       con = conn.getTransactionConnection();
+      if(m_deleteOldImported) {
+        no = ImportOrderData.deleteOld(con, conn, getAD_Client_ID());
+        if (log4j.isDebugEnabled()) log4j.debug("Delete Old Imported = " + no);
+      }
       // Set Client, Org, IsActive, Created/Updated
       no = ImportOrderData.updateRecords(con, conn, getAD_Client_ID());
       if (log4j.isDebugEnabled()) log4j.debug("ImportOrder updated = " + no);
@@ -532,11 +536,6 @@ public class ImportOrder extends ImportProcess {
       }
       con = conn.getTransactionConnection();
       noOrderError = ImportOrderData.updateNotImported(con, conn, getAD_Client_ID());
-      //Delete imported
-      if(m_deleteOldImported) {
-    	  no = ImportOrderData.deleteOld(con, conn, getAD_Client_ID());
-          if (log4j.isDebugEnabled()) log4j.debug("Delete Old Imported = " + no);
-        }
             
       addLog(Utility.messageBD(conn, "Orders not imported", vars.getLanguage()) + ": " + noOrderError + "; ");
       addLog("Orders inserted: " + noInsert + "; ");
