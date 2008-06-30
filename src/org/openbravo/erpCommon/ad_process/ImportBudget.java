@@ -66,6 +66,10 @@ public class ImportBudget extends ImportProcess {
     try {
       conn = getConnection();
       con = conn.getTransactionConnection();
+      if(m_deleteOldImported) {
+        no = ImportBudgetData.deleteOld(con, conn, getAD_Client_ID());
+        if (log4j.isDebugEnabled()) log4j.debug("Delete Old Imported = " + no);
+      }
       //  Set Client, Org, IaActive, Created/Updated, ProductType
       no = ImportBudgetData.updateRecords(con, conn, getAD_Client_ID(), m_Budget_ID);
       if (log4j.isDebugEnabled()) log4j.debug("ImportBudget Reset = " + no);
@@ -229,11 +233,6 @@ public class ImportBudget extends ImportProcess {
 
       //  Set Error to indicator to not imported
       noBudgetError = ImportBudgetData.updateNotImported(conn, getAD_Client_ID());
-      // Delete imported
-      if(m_deleteOldImported) {
-          no = ImportBudgetData.deleteOld(conn, getAD_Client_ID());
-          if (log4j.isDebugEnabled()) log4j.debug("Delete Old Imported = " + no);
-        }      
     } catch (Exception se) {
       se.printStackTrace();
       addLog(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
