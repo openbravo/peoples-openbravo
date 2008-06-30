@@ -775,7 +775,7 @@ function setMenuElementFocus(obj) {
     elementOffsetTop_top = getMenuElementOffsetTop(obj) - menuScrollTop;
   }
 
-  while(elementOffsetTop_bottom > menuHeight){
+  while(elementOffsetTop_bottom-1 > menuHeight){
     document.getElementById('Menu_Client').scrollTop += 1;
     menuScrollTop = document.getElementById('Menu_Client').scrollTop;
     menuHeight = document.getElementById("Menu_Client").clientHeight;
