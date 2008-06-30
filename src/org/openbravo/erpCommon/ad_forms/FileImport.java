@@ -122,7 +122,6 @@ public class FileImport extends HttpSecureAppServlet {
     try{
       con = getTransactionConnection();
       data = FileImportData.select(this, strAdImpformatId);
-      FileImportData.delete(con, this, vars.getClient());
       String strTable = FileImportData.table(this, strAdImpformatId);
       for (int i=0;i<data2.length;i++){
         String sequence = SequenceIdData.getSequence(this, FileImportData.table(this,strAdImpformatId), vars.getClient());

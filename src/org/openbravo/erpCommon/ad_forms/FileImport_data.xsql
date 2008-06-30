@@ -69,16 +69,6 @@
      <Parameter name="fields"  type="replace" optional="true" after=" SET " text="C_ORDER_ID = 3"/>
      <Parameter name="values" type="replace" optional="true" after="WHERE " text="C_ORDER_ID = 1"/>
    </SqlMethod>
-  <SqlMethod name="delete" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        DELETE FROM I_ELEMENTVALUE
-        where ad_client_ID = TO_NUMBER(?)
-     ]]>
-     </Sql>
-     <Parameter name="client"/>
-   </SqlMethod>
   <SqlMethod name="table" type="preparedStatement" return="String">
     <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
