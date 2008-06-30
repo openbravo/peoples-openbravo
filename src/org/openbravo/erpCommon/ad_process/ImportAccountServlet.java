@@ -44,10 +44,10 @@ public class ImportAccountServlet extends HttpSecureAppServlet {
     String process = ImportData.processId(this, "ImportAccount");
 		String strTabId = vars.getGlobalVariable("inpTabId", "ImportAccountServlet|tabId");
 		String strWindowId = vars.getGlobalVariable("inpwindowId", "ImportAccountServlet|windowId");
-		String strDeleteOld = vars.getStringParameter("inpDeleteOld", "Y");
+		String strDeleteOld = vars.getStringParameter("inpDeleteOld", "N");
 		String strCElementId = vars.getStringParameter("inpElementId", "");
-		String strUpdateDefault = vars.getStringParameter("inpUpdateDefault", "Y");
-		String strCreateNewCombination = vars.getStringParameter("inpCreateNewCombination", "Y");
+		String strUpdateDefault = vars.getStringParameter("inpUpdateDefault", "N");
+		String strCreateNewCombination = vars.getStringParameter("inpCreateNewCombination", "N");
     if (vars.commandIn("DEFAULT")) {
       printPage(response, vars, process, strWindowId, strTabId, strDeleteOld, strCElementId, strUpdateDefault, strCreateNewCombination);
     } else if (vars.commandIn("SAVE")) {
