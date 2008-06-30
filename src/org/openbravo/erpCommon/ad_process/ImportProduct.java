@@ -61,6 +61,10 @@ public class ImportProduct extends ImportProcess {
 		try {
 			conn = getConnection();
 			con = conn.getTransactionConnection();
+			if(m_deleteOldImported) {
+				no = ImportProductData.deleteOld(con, conn, getAD_Client_ID());
+				if (log4j.isDebugEnabled()) log4j.debug("Delete Old Imported = " + no);
+			}
 			//  Set Client, Org, IaActive, Created/Updated, ProductType
 			no = ImportProductData.updateRecords(con, conn, getAD_Client_ID());
 			if (log4j.isDebugEnabled()) log4j.debug("ImportProduct Reset = " + no);
@@ -275,11 +279,6 @@ public class ImportProduct extends ImportProcess {
 
       //  Set Error to indicator to not imported
       noProductError = ImportProductData.updateNotImported(conn, getAD_Client_ID());
-      // Delete imported 
-      if(m_deleteOldImported) {
-			no = ImportProductData.deleteOld(conn, getAD_Client_ID());
-			if (log4j.isDebugEnabled()) log4j.debug("Delete Old Imported = " + no);
-      }
       if (log4j.isDebugEnabled()) log4j.debug("Errors = " + noProductError);
 			addLog(Utility.messageBD(conn, "Products not imported", vars.getLanguage()) + ": " + noProductError + "; ");
 			addLog("Product inserted: " + noInsert + "; ");
