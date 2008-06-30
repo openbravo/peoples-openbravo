@@ -69,20 +69,27 @@ function getKeyField() {
       var strText = "";
       if (getReadyStateHandler(xmlreq,null,false)) {
         try {
-          if (xmlreq.responseText) strText = xmlreq.responseText;
+          if (xmlreq.responseXML) strText = xmlreq.responseXML;
         } catch (e) {
           initialize_MessageBox('messageBoxID');
           setValues_MessageBox('messageBoxID','ERROR','ERROR',e);
         }
         if (strText == "") {
           mensaje(22);
-        } else if (strText != "") {
+        }else if (strText != "") {
+          var node = strText.getElementsByTagName("xml-structure");
+          node = node[0].getElementsByTagName("status");
+          var type = node[0].getElementsByTagName("type");
+          var title = node[0].getElementsByTagName("title");
+          var description = node[0].getElementsByTagName("description");
           initialize_MessageBox('messageBoxID');
-          setValues_MessageBox('messageBoxID','ERROR','ERROR',strText);
+          setValues_MessageBox('messageBoxID',getChildText(type[0]),getChildText(title[0]),getChildText(description[0]));
+          if (getChildText(type[0]) == 'Success') document.frmMain.reset();
         }
       }
       return true;
-    }
+    }	
+	
      function showInfo() { 
        mensaje(21);
      }
