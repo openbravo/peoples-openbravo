@@ -94,12 +94,6 @@ build.war: build a war file in the lib directory.
       <fileset dir="${build.AD}"/>
       <fileset dir="${build.sqlc}"/>
     </delete>
-    <basename property="attach.path.filename" file="${attach.path}"/>
-    <condition property="attach.path.condition" value="**/${attach.path.filename}/**" else="">
-      <and>
-        <contains string="${attach.path}" substring="${jakarta.context}" casesensitive="false"/>
-      </and>
-    </condition>
   </target>
 
   <target name="copy.srcClient">
