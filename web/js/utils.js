@@ -576,7 +576,7 @@ function openPopUp(url, _name, height, width, top, left, checkChanges, target, d
   } else {
     var winPopUp = window.open((doSubmit?"":url), _name, adds);
   }
-
+  winPopUp.onunload = function(){putFocusOnMenu();}
   if (closeControl) window.onunload = function(){winPopUp.close();}
   if (doSubmit) {
     if (isPopup==true && hasLoading == true) synchronizedSubmitCommandForm(getArrayValue(parameters, "Command", "DEFAULT"), (getArrayValue(parameters, "debug", false)==true), null, url, _name, target, checkChanges);
