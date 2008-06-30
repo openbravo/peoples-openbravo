@@ -63,6 +63,10 @@ public class ImportTax extends ImportProcess {
 		try {
       conn = getConnection();
       con = conn.getTransactionConnection();
+			if(m_deleteOldImported) {
+				no = ImportTaxData.deleteOld(con, conn, getAD_Client_ID());
+				if (log4j.isDebugEnabled()) log4j.debug("Delete Old Imported = " + no);
+			}
       //  Set Client, Org, IaActive, Created/Updated
       no = ImportTaxData.updateRecords(con, conn, getAD_Client_ID());
       if (log4j.isDebugEnabled()) log4j.debug("Reset = " + no);
@@ -330,10 +334,6 @@ public class ImportTax extends ImportProcess {
 
 			//  Set Error to indicator to not imported
 			noTaxError = ImportTaxData.updateNotImported(conn, getAD_Client_ID());
-			if(m_deleteOldImported) {
-				no = ImportTaxData.deleteOld(conn, getAD_Client_ID());
-				if (log4j.isDebugEnabled()) log4j.debug("Delete Old Imported = " + no);
-			}
 		} catch (Exception se) {
 			se.printStackTrace();
 			addLog(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
