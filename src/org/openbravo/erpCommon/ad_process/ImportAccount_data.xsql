@@ -699,8 +699,10 @@
         UPDATE I_ElementValue
         SET I_IsImported='N', Updated=now()
         WHERE I_IsImported<>'Y'
+        and ad_client_id = to_number(?)
       ]]>
     </Sql>
+    <Parameter name="client"/>
   </SqlMethod>
 
   <SqlMethod name="setParent" type="preparedStatement" connection="true" return="rowCount">

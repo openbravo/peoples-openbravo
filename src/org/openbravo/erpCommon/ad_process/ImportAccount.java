@@ -75,7 +75,10 @@ public class ImportAccount extends ImportProcess {
     try {
       conn = getConnection();
       con = conn.getTransactionConnection();
-
+      if(m_deleteOldImported) {
+        no = ImportAccountData.deleteOld(con, conn, getAD_Client_ID());
+        if (log4j.isDebugEnabled()) log4j.debug("Delete Old Imported = " + no);
+      }
       //  Set Client, Org, IaActive, Created/Updated
       no = ImportAccountData.updateRecords(con, conn, getAD_Client_ID());
       if (log4j.isDebugEnabled()) log4j.debug("ImportAccount Reset = " + no);
@@ -303,12 +306,7 @@ public class ImportAccount extends ImportProcess {
         if(gLRecordNo.equals("0")) ImportAccountData.insertGLRecord(con, conn, acctSchemas[g].cAcctschemaId, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, vars.getUser(), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[2][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[4][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[6][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[7][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[67][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[8][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[9][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[0][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[10][1], vars.getUser()));
       }    
       //  Set Error to indicator to not imported
-      noAccountError = ImportAccountData.updateNotImported(con, conn);
-      //delete imported
-      if(m_deleteOldImported) {
-        no = ImportAccountData.deleteOld(con, conn, getAD_Client_ID());
-        if (log4j.isDebugEnabled()) log4j.debug("Delete Old Imported = " + no);
-      }
+      noAccountError = ImportAccountData.updateNotImported(con, conn, getAD_Client_ID());
       if (log4j.isDebugEnabled()) log4j.debug("Errors: " + noAccountError);
       if (log4j.isDebugEnabled()) log4j.debug("Inserts: " + noInsert);
       if (log4j.isDebugEnabled()) log4j.debug("Updates: " + noUpdate);
