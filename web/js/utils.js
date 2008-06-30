@@ -1198,7 +1198,7 @@ function keyControl(pushedKey) {
   } else {
     return false;
   }
-  if (isKeyboardLocked==false && thereIsShortcut==false && !isCtrlPressed && !isAltPressed && pushedKey.type=='keydown') {
+  if (isKeyboardLocked==false && thereIsShortcut==false && !isCtrlPressed && !isAltPressed && pushedKey.type=='keydown' && pressedKeyCode!='16' && pressedKeyCode!='17' && pressedKeyCode!='18') {
     if (focusedWindowElement.tagName == 'SELECT') {
       if (focusedWindowElement.getAttribute('onchange') && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) setTimeout("focusedWindowElement.onchange();",50);
     }
