@@ -18,18 +18,15 @@
 */
 package org.openbravo.erpCommon.ad_actionButton;
 
-import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.*;
 import org.openbravo.utils.FormatUtilities;
-import org.openbravo.utils.Replace;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
-import org.openbravo.exception.*;
 import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
-import java.sql.*;
+
 
 
 // imports for transactions
@@ -65,30 +62,19 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
         strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName + "_Relation.html";
       } else strWindowPath = strDefaultServlet;
 
-      try {
-        Connection conn = getTransactionConnection();
-        String strMessage = processButton(conn, vars, strKey, strInvoice, strWindow);
-        if (!strMessage.equals("") && !strTabName.equals("")) {
-          vars.setSessionValue(strWindow + "|" + strTabName + ".message", Replace.replace(strMessage, "'", "\\'"));
-        }
-      } catch (NoConnectionAvailableException ex) {
-        bdErrorConnection(response);
-        return;
-      } catch (SQLException ex2) {
-        OBError myError = Utility.translateError(this, vars, vars.getLanguage(), ex2.toString());
-        if (!myError.isConnectionAvailable()) {
-          bdErrorConnection(response);
-          return;
-        } else vars.setMessage(strTab, myError);
-      }
-      printPageClosePopUp(response, vars, strWindowPath);
+        OBError myError = processButton(vars, strKey, strInvoice, strWindow);
+        vars.setMessage(strTab, myError);        
+        printPageClosePopUp(response, vars, strWindowPath);
       //response.sendRedirect(strDireccion + strWindowPath);
     } else pageErrorPopUp(response);
   }
 
-  String processButton(Connection conn, VariablesSecureApp vars, String strKey, String strInvoice, String windowId) {
-    int i=0;
+  OBError processButton(VariablesSecureApp vars, String strKey, String strInvoice, String windowId) {
+    int i = 0;
+    OBError myError = null;
+    Connection conn = null;
     try {
+      conn = getTransactionConnection();    
       CopyFromInvoiceData[] data = CopyFromInvoiceData.select(conn, this, strInvoice, Utility.getContext(this, vars, "#User_Client", windowId), Utility.getContext(this, vars, "#User_Org", windowId));
       if (data!=null && data.length!=0) {
         for (i=0;i<data.length;i++) {
@@ -103,9 +89,16 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
       } catch (Exception ignored) {}
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
-      return Utility.messageBD(this, "ProcessRunError", vars.getLanguage());
+      myError.setType("Error");
+      myError.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+      myError.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
+      return myError;
     }
-    return (Utility.messageBD(this, "RecordsCopied", vars.getLanguage()) + i);
+    myError = new OBError();
+    myError.setType("Success");
+    myError.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
+    myError.setMessage(Utility.messageBD(this, "RecordsCopied", vars.getLanguage()) + " " + i);
+    return myError;
   }
 
 

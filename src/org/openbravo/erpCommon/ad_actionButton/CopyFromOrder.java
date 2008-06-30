@@ -18,7 +18,6 @@
 */
 package org.openbravo.erpCommon.ad_actionButton;
 
-import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.*;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.utils.Replace;
@@ -76,14 +75,15 @@ public class CopyFromOrder extends HttpSecureAppServlet {
       String strWindowId = vars.getStringParameter("inpWindowId");
       String strSOTrx = vars.getStringParameter("inpissotrx");
       String strTabId = vars.getStringParameter("inpTabId");
-      String strMessage = copyLines(vars, strRownum, strKey, strWindowId, strSOTrx);
+      OBError myError = copyLines(vars, strRownum, strKey, strWindowId, strSOTrx);
       ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTabId);
       String strWindowPath="", strTabName="";
       if (tab!=null && tab.length!=0) {
         strTabName = FormatUtilities.replace(tab[0].name);
         strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName + "_Relation.html";
       } else strWindowPath = strDefaultServlet;
-      if (!strMessage.equals("")) vars.setSessionValue(strWindowId + "|" + strTabName + ".message", strMessage);
+      
+      vars.setMessage(strTabId, myError);      
       printPageClosePopUp(response, vars, strWindowPath);
     } else pageErrorPopUp(response);
   }
@@ -109,11 +109,17 @@ public class CopyFromOrder extends HttpSecureAppServlet {
     out.close();
   }
 
-  String copyLines(VariablesSecureApp vars, String strRownum, String strKey, String strWindowId, String strSOTrx) 
+  OBError copyLines(VariablesSecureApp vars, String strRownum, String strKey, String strWindowId, String strSOTrx) 
       throws IOException, ServletException {
 
-    String strMessageResult = "";
-    if (strRownum.equals("")) return "";
+    OBError myError = null;
+    int count = 0;
+    
+    if (strRownum.equals("")){      
+      //return "";
+      myError = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+      return myError;
+    }
     Connection conn = null;
     try {
       conn = getTransactionConnection();
@@ -140,6 +146,7 @@ public class CopyFromOrder extends HttpSecureAppServlet {
           CopyFromOrderData.insertCOrderline(conn, this, strCOrderlineID, order[0].adClientId, order[0].adOrgId, vars.getUser(),
           strKey, order[0].cBpartnerId, order[0].cBpartnerLocationId, order[0].dateordered, order[0].dateordered, 
           strmProductId, order[0].mWarehouseId.equals("")?vars.getWarehouse():order[0].mWarehouseId, strcUOMId, strQty, order[0].cCurrencyId, orderlineprice[0].pricelist, strLastpriceso, orderlineprice[0].pricelimit, strcTaxId, strmAttributesetinstanceId);
+          count++;
         }
       }
       releaseCommitConnection(conn);
@@ -149,9 +156,16 @@ public class CopyFromOrder extends HttpSecureAppServlet {
       } catch (Exception ignored) {}
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
-      return Utility.messageBD(this, "ProcessRunError", vars.getLanguage());
+      myError = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+      return myError;      
     }
-    return strMessageResult.equals("")?Utility.messageBD(this, "Success", vars.getLanguage()):strMessageResult;
+    if (myError==null) {
+      myError = new OBError();
+      myError.setType("Success");
+      myError.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
+      myError.setMessage(Utility.messageBD(this, "RecordsCopied", vars.getLanguage()) + " " + count);
+    }
+    return myError;
   }
 
 
