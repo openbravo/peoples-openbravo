@@ -716,6 +716,7 @@ public class ToolBar {
       toolbar.append(transformElementsToString(buttons.get("LAST"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("LAST_RELATION"), lastType, false));
       if (isRelation) {
+        toolbar.append("<TD width=\"1\"><IMG src=\"").append(base_direction).append("/images/blank.gif\" style=\"width: 7px;\" border=\"0\">");
         toolbar.append("<TD width=\"1\"><IMG src=\"").append(base_direction).append("/images/blank.gif\" class=\"Main_ToolBar_textlabel_bg_left\" border=\"0\">");
         toolbar.append("</TD>\n");
         toolbar.append("<TD class=\"Main_ToolBar_textlabel_bg_body\">\n");
