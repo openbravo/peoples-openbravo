@@ -371,7 +371,7 @@ public class WindowTabs {
    * 
    * @return String with the HTML of the tabs.
    */
-  public String childTabs() {
+  public String childTabs(boolean readOnly) {
     StringBuffer text = new StringBuffer();
     if (this.tabs==null) return text.append("<td class=\"tabTabbarBackGround\"></td>").toString();
     String strShowAcct = "N";
@@ -398,13 +398,18 @@ public class WindowTabs {
       isFirst = false;
       text.append("<span class=\"dojoTab").append(((data.adTabId.equals(this.TabID) || data.isbreadcrumb.equals("Y"))?" current":"")).append("\">");
       text.append("<div><a class=\"dojoTabLink\" href=\"#\" onclick=\"");
-      text.append(getUrlCommand(data.adTabId, data.name, Integer.valueOf(data.tablevel).intValue()));
+      if(readOnly) text.append("return false;");
+      else text.append(getUrlCommand(data.adTabId, data.name, Integer.valueOf(data.tablevel).intValue()));
       text.append("\" onMouseOver=\"return true;\" onMouseOut=\"return true;\"  id=\""+data.tabnameid+"\">").append(data.tabname).append("</a></div></span>\n");
     }
     text.append("    </div></td><td valign=\"top\"><span class=\"tabRight\">&nbsp;</span></td>\n");
     text.append("  </tr></table>\n");
     text.append("</td>\n");
     return text.toString();
+  }
+  
+  public String childTabs() {
+    return childTabs(false);
   }
 
 /*  public String childTabs() {
