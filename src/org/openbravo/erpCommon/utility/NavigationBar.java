@@ -72,7 +72,7 @@ public class NavigationBar {
     toolbar.append(" alt=\"").append(auxText).append("\" title=\"").append(auxText).append("\"");
     toolbar.append("></a>\n");
     toolbar.append("  </TD>\n");
-    toolbar.append("  <TD class=\"Main_NavBar_separator_cell\"></TD>\n");
+    toolbar.append("  <TD class=\"Main_NavBar_separator_cell_small\"></TD>\n");
     toolbar.append("  <TD class=\"Main_NavBar_RightButton_cell\">\n");
     toolbar.append("    <a class=\"Main_NavBar_RightButton\" href=\"#\" onclick=\"openHelp(");
     if (window_type.equalsIgnoreCase("W")) toolbar.append("document.frmMain.inpwindowId.value");
