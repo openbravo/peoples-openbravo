@@ -1023,7 +1023,8 @@ public class Sqlc extends DefaultHandler {
             else if (fieldAdded.strValue.equals("void"))
               out2.append("        object" + sqlcName + "." + fieldAdded.strName + " = \"\";\n");
           }
-          out2.append("        object" + sqlcName + ".InitRecordNumber = Integer.toString(firstRegister);\n");
+          if(sql.sqlReturn.equalsIgnoreCase("MULTIPLE"))
+            out2.append("        object" + sqlcName + ".InitRecordNumber = Integer.toString(firstRegister);\n");
         }
       } catch(SQLException e){
         log4j.error("SQL Exception error:"+ e);
