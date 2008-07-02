@@ -49,7 +49,7 @@ public class WADList extends WADControl {
       text.append("  }");
       setValidation(replaceHTML(text.toString()));
     }
-    setOnLoad("if (inputValue(key)==\"0\") updateOnChange(frm.inp" + getData("ColumnNameInp") + ");");
+    setOnLoad("if (inputValue(key)==null || inputValue(key)==\"\") updateOnChange(frm.inp" + getData("ColumnNameInp") + ");");
     setCalloutJS();
   }
 
