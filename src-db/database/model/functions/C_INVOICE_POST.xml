@@ -1513,9 +1513,9 @@ cWithHoldId NUMBER;
                     v_IsSOTrx, NULL, NULL, '* ' || v_DocumentNo || ' * (' || v_BPartnerName ||( CASE WHEN v_POReference IS NULL THEN '' ELSE ' .Ref:'||TO_CHAR(v_POReference) END) || ' )',
                     v_Record_ID, v_BPartner_ID, v_Currency_ID, NULL,
                     v_bankAccount, v_cashBook, CUR_PAYMENTS.PaymentRule, 'N',
-                    (v_paymentamount *v_multiplierarc) -withholdamount *(v_paymentamount *v_multiplierarc / v_grandtotal), 0, v_plannedDate, 'N',
+                    C_Currency_Round((v_paymentamount *v_multiplierarc) -withholdamount *(v_paymentamount *v_multiplierarc / v_grandtotal), v_Currency_ID, NULL), 0, v_plannedDate, 'N',
                     'Y', NULL, 'N', 'N',
-                    'N', v_C_Project_Id, 'DE', 'DE',   withholdamount *(v_paymentamount *v_multiplierarc / v_grandtotal),cWithHoldId
+                    'N', v_C_Project_Id, 'DE', 'DE', C_Currency_Round(withholdamount *(v_paymentamount *v_multiplierarc / v_grandtotal), v_Currency_ID, NULL),cWithHoldId
                   )
                   ;
                 --AL
