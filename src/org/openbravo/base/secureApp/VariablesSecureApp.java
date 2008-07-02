@@ -79,26 +79,70 @@ public class VariablesSecureApp extends VariablesBase {
     this.accessLevel = getSessionValue("#CurrentAccessLevel");
   }
 
+  /**
+   * Returns the primary key (AD_USER_ID) of the authenticated user deriving from the
+   * AD_USER table.
+   * 
+   * @return AD_USER_ID primary key number formatted as string
+   * @see    database table AD_USER 
+   */
   public String getUser() {
     return user;
   }
 
+  /**
+   * Returns the primary key (AD_ROLE_ID) of the role of the authenticated user deriving 
+   * as entered in the AD_ROLE table.
+   * 
+   * @return AD_ROLE_ID primary key number formatted as string
+   * @see    database table AD_ROLE
+   */
   public String getRole() {
     return role;
   }
 
+  /**
+   * Returns the code of the language currently selected by the authenticated 
+   * user according to the RFC 4646 format LANG_REGION, e.g. es_ES for 
+   * Spanish language from Spain or en_GB for English language from Great 
+   * Britain.
+   * 
+   * @return  the language code formatted as a string according to RFC 4646
+   */
   public String getLanguage() {
     return language;
   }
 
+  /**
+   * Returns the unique name of the theme currently selected for the session. 
+   * This usually corresponds to the theme's folder name in the web/skins. 
+   * Default theme's value is 'Default'.
+   * 
+   * @return string with the unique name of the theme
+   */
   public String getTheme() {
     return theme;
   }
 
+  /**
+   * Returns the ID of the client (AD_CLIENT_ID) as defined by the 
+   * role of the user's current session.
+   *  
+   * @return string with the AD_CLIENT_ID primary key value
+   * @see    database table AD_CLIENT
+   */
   public String getClient() {
     return client;
   }
 
+  /**
+   * Returns the ID of the organization (AD_ORG_ID) selected by the 
+   * user among the ones available within the role of the 
+   * current session.
+   *  
+   * @return string with the AD_ORG_ID primary key value
+   * @see    AD_ORG database table
+   */
   public String getOrg() {
     return organization;
   }
@@ -112,22 +156,62 @@ public class VariablesSecureApp extends VariablesBase {
   }
   
 
+  /**
+   * Returns the ID of the current default warehouse that will be used with
+   * transactions that require a warehouse selected. This is selected using
+   * the Role change window and the user can only select warehouses he or she
+   * has access to.
+   *  
+   * @return string with the M_WAREHOUSE primary key value
+   * @see    database table M_WAREHOUSE
+   */
   public String getWarehouse() {
     return warehouse;
   }
 
+  /**
+   * Returns the ID of the session stored within the AD_SESSION database 
+   * table.
+   * 
+   * @return string with the AD_SESSION primary key value
+   * @see    database table AD_SESSION
+   */
   public String getDBSession() {
     return dbSessionID;
   }
 
+  /**
+   * Returns the command that was passed to the servlet through the Command 
+   * parameter of the HTTP POST/GET. Normally used by the java controllers
+   * so that one controller can support various actions/functions.
+   * 
+   * @return string containing the value of the Command parameter
+   */
   public String getCommand() {
     return command;
   }
+  
+  /**
+   * Checks if the parameter Command passed to the servlet equals to
+   * the parameter inKey1 passed to this method.
+   * 
+   * @return  the language code formatted as a string according to RFC 4646
+   * @see     also getCommand()
+   */
   
   public String getAccessLevel() {
     return accessLevel;
   }
 
+  /**
+   * Returns true if the Command parameter of the HTTP POST/GET request to the
+   * servlet equals either the value specified, false if not.
+   * 
+   * @param  inKey1 the string to compare Command parameter to 
+   * @return        boolean that indicates the equality of the Command and the
+   *                inKey1 parameter 
+   * @see           also getCommand()
+   */
   public boolean commandIn(String inKey1) {
     if (command.equals(inKey1))
       return true;
@@ -135,6 +219,16 @@ public class VariablesSecureApp extends VariablesBase {
       return false;
   }
 
+  /**
+   * Returns true if the Command parameter of the HTTP POST/GET request to the
+   * servlet equals either of the values specified, false if not.
+   * 
+   * @param  inKey1 the string to compare the Command parameter to 
+   * @param  inKey2 the second string to compare the Command parameter to 
+   * @return        boolean that indicates the equality of the Command and 
+   *                either of the inKeyX parameters 
+   * @see           also getCommand()
+   */
   public boolean commandIn(String inKey1, String inKey2) {
     if (command.equals(inKey1) || command.equals(inKey2))
       return true;
@@ -142,6 +236,17 @@ public class VariablesSecureApp extends VariablesBase {
       return false;
   }
 
+  /**
+   * Returns true if the Command parameter of the HTTP POST/GET request to the
+   * servlet equals either of the values specified, false if not.
+   * 
+   * @param  inKey1 the string to compare the Command parameter to 
+   * @param  inKey2 the second string to compare the Command parameter to 
+   * @param  inKey3 the third string to compare the Command parameter to 
+   * @return        boolean that indicates the equality of the Command and 
+   *                either of the inKeyX parameters 
+   * @see           also getCommand()
+   */
   public boolean commandIn(String inKey1, String inKey2, String inKey3) {
     if (command.equals(inKey1) || command.equals(inKey2) || command.equals(inKey3))
       return true;
@@ -149,6 +254,18 @@ public class VariablesSecureApp extends VariablesBase {
       return false;
   }
 
+  /**
+   * Returns true if the Command parameter of the HTTP POST/GET request to the
+   * servlet equals either of the values specified, false if not.
+   * 
+   * @param  inKey1 the string to compare the Command parameter to 
+   * @param  inKey2 the second string to compare the Command parameter to 
+   * @param  inKey3 the third string to compare the Command parameter to 
+   * @param  inKey4 the fourth string to compare the Command parameter to 
+   * @return        boolean that indicates the equality of the Command and 
+   *                either of the inKeyX parameters 
+   * @see           also getCommand()
+   */
   public boolean commandIn(String inKey1, String inKey2, String inKey3, String inKey4) {
     if (command.equals(inKey1) || command.equals(inKey2) || command.equals(inKey3) || command.equals(inKey4))
       return true;
@@ -156,6 +273,19 @@ public class VariablesSecureApp extends VariablesBase {
       return false;
   }
   
+  /**
+   * Returns true if the Command parameter of the HTTP POST/GET request to the
+   * servlet equals either of the values specified, false if not.
+   * 
+   * @param  inKey1 the string to compare the Command parameter to 
+   * @param  inKey2 the second string to compare the Command parameter to 
+   * @param  inKey3 the third string to compare the Command parameter to 
+   * @param  inKey4 the fourth string to compare the Command parameter to 
+   * @param  inKey5 the fifth string to compare the Command parameter to 
+   * @return        boolean that indicates the equality of the Command and 
+   *                either of the inKeyX parameters 
+   * @see           also getCommand()
+   */
   public boolean commandIn(String inKey1, String inKey2, String inKey3, String inKey4, String inKey5) {
     if (command.equals(inKey1) || command.equals(inKey2) || command.equals(inKey3) || command.equals(inKey4) || command.equals(inKey5))
       return true;
@@ -163,24 +293,82 @@ public class VariablesSecureApp extends VariablesBase {
       return false;
   }
 
+  /**
+   * Returns the date format used in Java formatting as defined by the 
+   * dateFormat.java variable within the config/Openbravo.properties
+   * configuration file.
+   * 
+   * @return formatting string, for example 'dd-MM-yyyy'
+   */
   public String getJavaDateFormat() {
     return javaDateFormat;
   }
+  
+  /**
+   * Returns the date format used in Javascript formatting as defined by the 
+   * dateFormat.java variable within the config/Openbravo.properties
+   * configuration file.
+   * 
+   * @return formatting string, for example '%d-%m-%Y'
+   */
   public String getJsDateFormat() {
     return jsDateFormat;
   }
+  
+  /**
+   * Returns the date format used in SQL formatting as defined by the 
+   * dateFormat.sql variable within the config/Openbravo.properties
+   * configuration file.
+   * 
+   * @return formatting string, for example 'DD-MM-YYYY'
+   */
   public String getSqlDateFormat() {
     return sqlDateFormat;
   }
 
+  /**
+   * Returns a deserialized OBError object retrieved from the session data that
+   * might contain the error information for the specified tab. This error 
+   * would normally be generated by the controller servlet of that tab.
+   * 
+   * @param  AD_Tab_ID string with the primary key (ID) of the tab as entered 
+   *                   within the AD_Tab database table
+   * @return           deserialized OBError object retrieved from the session. 
+   *                   Null if no error message exists for this tab.
+   * @see              database table AD_TAB
+   * @see              setMessage()
+   * @see              removeMessage()
+   */
   public OBError getMessage(String AD_Tab_ID) {
     return ((OBError)getSessionObject(AD_Tab_ID + "|message"));
   }
 
+  /**
+   * Serializes and saves the error object to a session variable, specific 
+   * to the tab which ID is being passed.
+   *  
+   * @param AD_Tab_ID string with the primary key (ID) of the tab as entered 
+   *                  within the AD_Tab database table
+   * @param error     the OBError object that needs to be set
+   * @see             database table AD_TAB
+   * @see             getMessage()
+   * @see             removeMessage()
+   */
   public void setMessage(String AD_Tab_ID, OBError error) {
     setSessionObject(AD_Tab_ID + "|message", error);
   }
 
+  /**
+   * Removes the error object for the specified tab from the session data.
+   * This needs to be done in order for the message not to appear every time
+   * the tab is reloaded.
+   * 
+   * @param  AD_Tab_ID string with the primary key (ID) of the tab as entered 
+   *                   within the AD_Tab database table
+   * @see              database table AD_TAB
+   * @see              setMessage()
+   * @see              getMessage()
+   */
   public void removeMessage(String AD_Tab_ID) {
     removeSessionValue(AD_Tab_ID + "|message");
   }
