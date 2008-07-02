@@ -165,8 +165,8 @@ function mouseDownLogic(evt, obj) {
   if(obj == null) {
     obj = (!document.all) ? evt.target : event.srcElement;
   }
-  isOnMouseDown = true
-
+  isOnMouseDown = true;
+  if (focusedWindowElement == null) focusedWindowElement = '';
   if(obj.tagName == 'SELECT' && isSelectedComboOpened == true && selectedCombo == obj) {
     selectedCombo = obj;
     isSelectedComboOpened = false;
@@ -823,8 +823,14 @@ function getCurrentWindowTableLastElement() {
 function getFirstWindowElement() {
   focusedWindowElement = document.getElementById(windowTables[0].tableId);
   focusedWindowTable = 0;
-  var obj = getNextWindowElement();
-  return obj;
+  try {
+    var obj = getNextWindowElement();
+    return obj;
+  }
+  catch (e) {
+    obj = null;
+    focusedWindowElement = document.getElementsByTagName('BODY')[0];
+  }
 }
 
 function getLastWindowElement() {
