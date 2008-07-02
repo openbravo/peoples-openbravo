@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2007 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -199,9 +199,12 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
     String strOutput = vars.commandIn("EDIT_HTML")?"html":"pdf";
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerJR.jrxml";
     
+    String strSubTitle = "";
+    strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " "+strdateFrom+" " + Utility.messageBD(this, "To", vars.getLanguage()) + " "+strdateTo;
+    
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("REPORT_TITLE", classInfo.name);
-    parameters.put("REPORT_SUBTITLE", "From " + strdateFrom + " to "+ strdateTo);
+    parameters.put("REPORT_SUBTITLE", strSubTitle);
     renderJR(vars, response, strReportName, strOutput, parameters, data, null );
   }
 }

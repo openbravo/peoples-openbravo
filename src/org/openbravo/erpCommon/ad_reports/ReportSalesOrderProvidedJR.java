@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -198,23 +198,23 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
   }
 
 
-//Aquí empieza el que llama al Jasper
-
-
-
+//Jasper calling starts here
 
   void printPageDataSheetJasper(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom, String strdateTo, String strcBpartnerId, String strmWarehouseId, String strcProjectId, String strmCategoryId, String strProjectkind, String strcRegionId, String strProjectpublic, String strProduct) throws IOException, ServletException {
 
 
     ReportSalesOrderProvidedData[] data = ReportSalesOrderProvidedData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderProvided"), Utility.getContext(this, vars, "#User_Org", "ReportSalesOrderProvided"), strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,"1"), strcBpartnerId, strmWarehouseId, strcProjectId, strmCategoryId, strProjectkind, strcRegionId, strProjectpublic, strProduct);
 
-   String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportSalesOrderProvidedJR.jrxml";
-   String strOutput = "html";
+    String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportSalesOrderProvidedJR.jrxml";
+    String strOutput = "html";
     if (strOutput.equals("pdf")) response.setHeader("Content-disposition", "inline; filename=ReportSalesOrderProvided.pdf");
 
-   HashMap<String, Object> parameters = new HashMap<String, Object>();
+    String strSubTitle = "";
+    strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " "+strdateFrom+" " + Utility.messageBD(this, "To", vars.getLanguage()) + " "+strdateTo;
+    
+    HashMap<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("REPORT_TITLE", classInfo.name);
-		parameters.put("REPORT_SUBTITLE", "From "+ strdateFrom +" to "+strdateTo);
+		parameters.put("REPORT_SUBTITLE", strSubTitle);
     renderJR(vars, response, strReportName, strOutput, parameters, data, null ); 
 
   }

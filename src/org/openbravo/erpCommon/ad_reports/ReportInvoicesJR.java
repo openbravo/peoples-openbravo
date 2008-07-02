@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -74,9 +74,12 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
 
     data = ReportInvoicesData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportInvoices"), Utility.getContext(this, vars, "#User_Org", "ReportInvoices"), strC_BpGroup_ID, strM_Product_Category_ID, strC_BPartner_ID, strM_Product_ID, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strDocumentNo, (strOrder.equals("PurchaseOrder"))?"":"sales", (strOrder.equals("PurchaseOrder"))?"purchase":"");
 
+    String strSubTitle = "";
+    strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " "+strDateFrom+" " + Utility.messageBD(this, "To", vars.getLanguage()) + " "+strDateTo;
+    
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("REPORT_TITLE", classInfo.name);
-    parameters.put("REPORT_SUBTITLE", "From "+strDateFrom+" to "+strDateTo);
+    parameters.put("REPORT_SUBTITLE", strSubTitle);
 
     renderJR(vars, response, strReportName, strOutput, parameters, data, null );
   }
