@@ -428,7 +428,7 @@ public VariablesBase(HttpServletRequest request) {
       FileItem item = iter.next();
       if (item.isFormField() && item.getFieldName().equals(parameter)) {
         try {
-          result.addElement(item.getString());
+          result.addElement(item.getString("UTF-8"));
         } catch (Exception ex) {}
       }
     }

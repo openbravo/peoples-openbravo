@@ -128,7 +128,7 @@ public class MultipartRequest implements FieldProvider {
             b[i] = bAux.byteValue();
           }
           vectorInt = new Vector<Byte>();
-          linea = new String(b);
+          linea = new String(b, "UTF-8");
           if (!isFirstRow || !firstRowHeads) {
             FieldProvider fieldProvider = setFieldProvider(linea);
             vector.addElement(fieldProvider);
