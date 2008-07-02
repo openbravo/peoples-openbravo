@@ -68,7 +68,7 @@ BEGIN
       v_auxDate:=v_auxDate - 1;
     END LOOP;
     v_invoiceToDate:=v_auxDate;
-    WHILE(TO_CHAR(v_invoiceToDate, 'D') <> v_invoiceCutOff)
+    WHILE(TO_NUMBER(TO_CHAR(v_invoiceToDate, 'D')) <> v_invoiceCutOff)
     LOOP
       v_invoiceToDate:=v_invoiceToDate - 1;
     END LOOP;
