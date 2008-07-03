@@ -145,6 +145,16 @@ END;
 ' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
+CREATE or REPLACE function update_dateFormat (format IN varchar) returns varchar as '
+DECLARE
+BEGIN
+  execute ''CREATE OR REPLACE FUNCTION dateFormat() RETURNS VARCHAR AS '''' DECLARE BEGIN  RETURN '''''''''' || format || ''''''''''; EXCEPTION WHEN OTHERS THEN RETURN NULL; END; '''' LANGUAGE ''''plpgsql'''' IMMUTABLE; '';
+  return '' dateFormat modified'';
+END;'
+language 'plpgsql' 
+/-- END
+
+
 CREATE OR REPLACE FUNCTION to_number
 (
 text
