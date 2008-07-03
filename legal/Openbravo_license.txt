@@ -185,7 +185,7 @@ NOTE: The text of this Exhibit A may differ slightly from the text of the notice
 
 Exhibit B - Openbravo Public License
 
-Additional Terms applicable to the OpenBravo Public License.
+Additional Terms applicable to the Openbravo Public License.
 
 I. Effect
 
@@ -195,4 +195,4 @@ II. Openbravo and logo
 
 This License does not grant any rights to use the trademarks "Openbravo" and the "Openbravo" logos even if such marks are included in the Original Code or Modifications.
 
-However, in addition to the other notice obligations, all copies of the Covered Code in Executable and Source Code form distributed must, as a form of attribution of the original author, include on each user interface screen and on program start-up or login screen the "Powered by OpenBravo" logo, visible to all users. The dimensions of the "Powered by Openbravo" logo must be at least 89x24 pixels. When users click on the "Powered by Openbravo " logo it must direct them to http://www.openbravo.com
+However, in addition to the other notice obligations, all copies of the Covered Code in Executable and Source Code form distributed must, as a form of attribution of the original author, include on each user interface screen and on program start-up or login screen the "Powered by Openbravo" logo, visible to all users. The dimensions of the "Powered by Openbravo" logo must be at least 89x24 pixels. When users click on the "Powered by Openbravo " logo it must direct them to http://www.openbravo.com
