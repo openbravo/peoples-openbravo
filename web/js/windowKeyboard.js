@@ -287,6 +287,10 @@ function setWindowElementFocus(obj, type) {
     }
   } else if (type == 'id') {
     obj = document.getElementById(obj);
+    if (!canHaveFocus(obj)) {
+      setFirstWindowElementFocus();
+      return false;
+    }
     removeWindowElementFocus(focusedWindowElement_tmp);
     focusedWindowElement = obj;
     focusedWindowElement_tmp = focusedWindowElement;
@@ -599,6 +603,13 @@ function getNextWindowElement() {
                       //Devolver primer elemento
                     //No
 
+  if (isReadOnlyWindow) {
+    try {
+      setTimeout("setSelectedArea('window'); swichSelectedArea();",50);
+      return true;
+    } catch(e) {}
+  }
+
   var success = null;
   var nextElementTmp = null;
   var nextElement = focusedWindowElement;
@@ -666,7 +677,7 @@ function getNextWindowElement() {
             if (nextElement==document.getElementById(windowTableParentElement) || nextElement==document.getElementsByTagName('BODY')[0]) {
               //alert('hemos llegado al padre!')
               goToNextWindowTable();
-              if (!isFirstTime && !isReadOnlyWindow) return getCurrentWindowTableFirstElement();
+              if (!isFirstTime) return getCurrentWindowTableFirstElement();
               else {
                 try {
                   isReadOnlyWindow = true;
