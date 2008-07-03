@@ -28,7 +28,7 @@
   <PARAMETER id="xx" name="maxlength" attribute="maxlength"/>
   <PARAMETER id="xx" name="columnNameInp" attribute="name" replace="xx"/>
   <PARAMETER id="xx" name="callout" attribute="onchange" replace="xx();"/>
-  <PARAMETER id="xx" name="disabled" boolean="disable=true" withId="paramChecked"/>
+  <PARAMETER id="xx" name="disabled" boolean="disabled=true" withId="paramChecked"/>
   <PARAMETER id="xx" name="required" attribute="required"/>
   <PARAMETER id="xx" name="requiredClass" attribute="class" replace="xx"/>
   <PARAMETER id="fieldButton" name="button"/>
