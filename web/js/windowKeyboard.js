@@ -41,6 +41,7 @@ var defaultActionElementArrayPosition = null;
 
 var isTabPressed = null;
 var isFirstTime = true;
+var isReadOnlyWindow =  false;
 
 var isGoingDown = null;
 var isGoingUp = null;
@@ -665,9 +666,10 @@ function getNextWindowElement() {
             if (nextElement==document.getElementById(windowTableParentElement) || nextElement==document.getElementsByTagName('BODY')[0]) {
               //alert('hemos llegado al padre!')
               goToNextWindowTable();
-              if (!isFirstTime) return getCurrentWindowTableFirstElement();
+              if (!isFirstTime && !isReadOnlyWindow) return getCurrentWindowTableFirstElement();
               else {
                 try {
+                  isReadOnlyWindow = true;
                   setTimeout("setSelectedArea('window'); swichSelectedArea();",50);
                 } catch(e) {}
               }
