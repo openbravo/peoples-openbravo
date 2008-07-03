@@ -10572,7 +10572,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--431 CREATEDBY-->
 <!--431-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--431 UPDATED-->
-<!--431-->              <UPDATED><![CDATA[2008-03-26 15:52:41.0]]></UPDATED>
+<!--431-->              <UPDATED><![CDATA[2008-07-03 17:31:44.0]]></UPDATED>
 <!--431 UPDATEDBY-->
 <!--431-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--431 NAME-->
@@ -10602,7 +10602,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--431 HASTREE-->
 <!--431-->              <HASTREE><![CDATA[N]]></HASTREE>
 <!--431 WHERECLAUSE-->
-<!--431-->              <WHERECLAUSE><![CDATA[C_BPartner.C_BPartner_ID IN (SELECT C_BPartner_ID  FROM S_TimeExpenseLine WHERE IsInvoiced='Y' AND C_OrderLine_ID IS NULL)]]></WHERECLAUSE>
+<!--431-->              <WHERECLAUSE><![CDATA[C_BPartner.C_BPartner_ID IN (SELECT DISTINCT SL.C_BPartner_ID FROM S_TimeExpenseLine SL, S_TimeExpense S WHERE SL.IsInvoiced='Y' AND SL.C_OrderLine_ID IS NULL AND S.Processed='Y' AND SL.S_TimeExpense_Id = S.S_TimeExpense_Id)]]></WHERECLAUSE>
 <!--431 PROCESSING-->
 <!--431-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--431 IMPORTFIELDS-->
