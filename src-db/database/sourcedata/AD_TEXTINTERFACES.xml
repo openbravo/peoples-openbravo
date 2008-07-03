@@ -21257,7 +21257,7 @@
 <!--807107 TEXT-->
 <!--807107-->              <TEXT><![CDATA[Delete imported]]></TEXT>
 <!--807107 ISUSED-->
-<!--807107-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--807107-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--807107**************--></AD_TEXTINTERFACES>
 
 <!--807108**************--><AD_TEXTINTERFACES>
@@ -21280,7 +21280,7 @@
 <!--807108 TEXT-->
 <!--807108-->              <TEXT><![CDATA[Delete imported:]]></TEXT>
 <!--807108 ISUSED-->
-<!--807108-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--807108-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--807108**************--></AD_TEXTINTERFACES>
 
 <!--807109**************--><AD_TEXTINTERFACES>
@@ -36795,6 +36795,156 @@
 <!--1000500021 ISUSED-->
 <!--1000500021-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--1000500021**************--></AD_TEXTINTERFACES>
+
+<!--1000500022**************--><AD_TEXTINTERFACES>
+<!--1000500022 AD_TEXTINTERFACES_ID-->
+<!--1000500022-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500022]]></AD_TEXTINTERFACES_ID>
+<!--1000500022 AD_CLIENT_ID-->
+<!--1000500022-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500022 AD_ORG_ID-->
+<!--1000500022-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500022 ISACTIVE-->
+<!--1000500022-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500022 CREATED-->
+<!--1000500022-->              <CREATED><![CDATA[2008-07-03 10:16:40.0]]></CREATED>
+<!--1000500022 CREATEDBY-->
+<!--1000500022-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500022 UPDATED-->
+<!--1000500022-->              <UPDATED><![CDATA[2008-07-03 10:16:40.0]]></UPDATED>
+<!--1000500022 UPDATEDBY-->
+<!--1000500022-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500022 TEXT-->
+<!--1000500022-->              <TEXT><![CDATA[Delete previous imports]]></TEXT>
+<!--1000500022 FILENAME-->
+<!--1000500022-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_process/ImportProductServlet.html]]></FILENAME>
+<!--1000500022 ISUSED-->
+<!--1000500022-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1000500022**************--></AD_TEXTINTERFACES>
+
+<!--1000500023**************--><AD_TEXTINTERFACES>
+<!--1000500023 AD_TEXTINTERFACES_ID-->
+<!--1000500023-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500023]]></AD_TEXTINTERFACES_ID>
+<!--1000500023 AD_CLIENT_ID-->
+<!--1000500023-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500023 AD_ORG_ID-->
+<!--1000500023-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500023 ISACTIVE-->
+<!--1000500023-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500023 CREATED-->
+<!--1000500023-->              <CREATED><![CDATA[2008-07-03 10:16:40.0]]></CREATED>
+<!--1000500023 CREATEDBY-->
+<!--1000500023-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500023 UPDATED-->
+<!--1000500023-->              <UPDATED><![CDATA[2008-07-03 10:16:40.0]]></UPDATED>
+<!--1000500023 UPDATEDBY-->
+<!--1000500023-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500023 TEXT-->
+<!--1000500023-->              <TEXT><![CDATA[Delete previous imports]]></TEXT>
+<!--1000500023 FILENAME-->
+<!--1000500023-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_process/ImportAccountServlet.html]]></FILENAME>
+<!--1000500023 ISUSED-->
+<!--1000500023-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1000500023**************--></AD_TEXTINTERFACES>
+
+<!--1000500024**************--><AD_TEXTINTERFACES>
+<!--1000500024 AD_TEXTINTERFACES_ID-->
+<!--1000500024-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500024]]></AD_TEXTINTERFACES_ID>
+<!--1000500024 AD_CLIENT_ID-->
+<!--1000500024-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500024 AD_ORG_ID-->
+<!--1000500024-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500024 ISACTIVE-->
+<!--1000500024-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500024 CREATED-->
+<!--1000500024-->              <CREATED><![CDATA[2008-07-03 10:16:41.0]]></CREATED>
+<!--1000500024 CREATEDBY-->
+<!--1000500024-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500024 UPDATED-->
+<!--1000500024-->              <UPDATED><![CDATA[2008-07-03 10:16:41.0]]></UPDATED>
+<!--1000500024 UPDATEDBY-->
+<!--1000500024-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500024 TEXT-->
+<!--1000500024-->              <TEXT><![CDATA[Delete previous imports]]></TEXT>
+<!--1000500024 FILENAME-->
+<!--1000500024-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_process/ImportBudgetServlet.html]]></FILENAME>
+<!--1000500024 ISUSED-->
+<!--1000500024-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1000500024**************--></AD_TEXTINTERFACES>
+
+<!--1000500025**************--><AD_TEXTINTERFACES>
+<!--1000500025 AD_TEXTINTERFACES_ID-->
+<!--1000500025-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500025]]></AD_TEXTINTERFACES_ID>
+<!--1000500025 AD_CLIENT_ID-->
+<!--1000500025-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500025 AD_ORG_ID-->
+<!--1000500025-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500025 ISACTIVE-->
+<!--1000500025-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500025 CREATED-->
+<!--1000500025-->              <CREATED><![CDATA[2008-07-03 10:16:42.0]]></CREATED>
+<!--1000500025 CREATEDBY-->
+<!--1000500025-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500025 UPDATED-->
+<!--1000500025-->              <UPDATED><![CDATA[2008-07-03 10:16:42.0]]></UPDATED>
+<!--1000500025 UPDATEDBY-->
+<!--1000500025-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500025 TEXT-->
+<!--1000500025-->              <TEXT><![CDATA[Delete previous imports]]></TEXT>
+<!--1000500025 FILENAME-->
+<!--1000500025-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_process/ImportOrderServlet.html]]></FILENAME>
+<!--1000500025 ISUSED-->
+<!--1000500025-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1000500025**************--></AD_TEXTINTERFACES>
+
+<!--1000500026**************--><AD_TEXTINTERFACES>
+<!--1000500026 AD_TEXTINTERFACES_ID-->
+<!--1000500026-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500026]]></AD_TEXTINTERFACES_ID>
+<!--1000500026 AD_CLIENT_ID-->
+<!--1000500026-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500026 AD_ORG_ID-->
+<!--1000500026-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500026 ISACTIVE-->
+<!--1000500026-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500026 CREATED-->
+<!--1000500026-->              <CREATED><![CDATA[2008-07-03 10:16:42.0]]></CREATED>
+<!--1000500026 CREATEDBY-->
+<!--1000500026-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500026 UPDATED-->
+<!--1000500026-->              <UPDATED><![CDATA[2008-07-03 10:16:42.0]]></UPDATED>
+<!--1000500026 UPDATEDBY-->
+<!--1000500026-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500026 TEXT-->
+<!--1000500026-->              <TEXT><![CDATA[Delete previous imports]]></TEXT>
+<!--1000500026 FILENAME-->
+<!--1000500026-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_process/ImportBPartnerServlet.html]]></FILENAME>
+<!--1000500026 ISUSED-->
+<!--1000500026-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1000500026**************--></AD_TEXTINTERFACES>
+
+<!--1000500027**************--><AD_TEXTINTERFACES>
+<!--1000500027 AD_TEXTINTERFACES_ID-->
+<!--1000500027-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500027]]></AD_TEXTINTERFACES_ID>
+<!--1000500027 AD_CLIENT_ID-->
+<!--1000500027-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500027 AD_ORG_ID-->
+<!--1000500027-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500027 ISACTIVE-->
+<!--1000500027-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500027 CREATED-->
+<!--1000500027-->              <CREATED><![CDATA[2008-07-03 10:16:43.0]]></CREATED>
+<!--1000500027 CREATEDBY-->
+<!--1000500027-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500027 UPDATED-->
+<!--1000500027-->              <UPDATED><![CDATA[2008-07-03 10:16:43.0]]></UPDATED>
+<!--1000500027 UPDATEDBY-->
+<!--1000500027-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500027 TEXT-->
+<!--1000500027-->              <TEXT><![CDATA[Delete previous imports]]></TEXT>
+<!--1000500027 FILENAME-->
+<!--1000500027-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_process/ImportTaxServlet.html]]></FILENAME>
+<!--1000500027 ISUSED-->
+<!--1000500027-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1000500027**************--></AD_TEXTINTERFACES>
 
 <!--1000600000**************--><AD_TEXTINTERFACES>
 <!--1000600000 AD_TEXTINTERFACES_ID-->
