@@ -31,45 +31,29 @@
 	href="../../../../../web/skins/Default/Main/Client/DataGrid/DataGrid.css"
 	id="paramCSS" />
 
-<script language="JavaScript" type="text/javascript" id="paramDirection">
+    <script language="JavaScript" type="text/javascript" id="paramDirection">
       var baseDirection = "../../../../../web/";
       </script>
-<script language="JavaScript" src="../../../../../web/js/messages.js"
-	type="text/javascript">
+      <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript">
       </script>
-<script language="JavaScript" src="../utility/MessagesJS.js"
-	type="text/javascript"></script>
-<script language="JavaScript" type="text/javascript" id="paramLanguage">
+      <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
+      <script language="JavaScript" type="text/javascript" id="paramLanguage">
         var LNG_POR_DEFECTO = "en_US";
       </script>
-<script language="JavaScript" src="../../../../../web/js/utils.js"
-	type="text/javascript"></script>
-<script language="JavaScript" src="../../../../../web/js/searchs.js"
-	type="text/javascript"></script>
-<script language="JavaScript" src="../../../../../web/js/ajax.js"
-	type="text/javascript"></script>
-<script language="JavaScript"
-	src="../../../../../web/js/default/MessageBox.js"
-	type="text/javascript"></script>
-<script language="JavaScript" src="../../../../../web/js/messages.js"
-	type="text/javascript"></script>
-<script language="JavaScript" src="../utility/MessagesJS.js"
-	type="text/javascript"></script>
-<script language="JavaScript"
-	src="../../../../../web/js/jscalendar/calendar.js"
-	type="text/javascript"></script>
-<script language="JavaScript"
-	src="../../../../../web/js/jscalendar/lang/calendar-es.js"
-	type="text/javascript" id="fieldCalendar"></script>
-<script language="JavaScript"
-	src="../../../../../web/js/default/DateTextBox.js"
-	type="text/javascript"></script>
-<script language="JavaScript" src="../../../../../web/js/dojoConfig.js"
-	type="text/javascript"></script>
-<script language="JavaScript" src="../../../../../web/js/dojo/dojo.js"
-	type="text/javascript"></script>
-<script language="JavaScript" type="text/javascript" id="keyMap"></script>
-<script type="text/javascript">
+      <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
+      <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
+      <script type="text/javascript">
         dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
       </script>
 <SCRIPT language="JavaScript" type="text/javascript">
@@ -95,10 +79,32 @@ function depurar(){
 	seleccionarListCompleto(frm.inpcBPartnerId_IN);
 	return true;
 }</SCRIPT>
+	<SCRIPT language="JavaScript" type="text/javascript">
+	function onLoadDo(){
+		this.windowTables = new Array(
+		  new windowTableId('client', 'buttonHTML')
+		);
+		setWindowTableParentElement();
+		this.tabsTables = new Array(
+		  new tabTableId('tdtopTabs')
+		);
+		setTabTableParentElement();
+		enableShortcuts('edition');
+		setBrowserAutoComplete(false);
+		
+		resizeArea();
+		updateMenuIcon('buttonMenu');
+
+		setWindowElementFocus('firstElement');
+	}
+
+	function onResizeDo(){
+		resizeArea();
+	}
+	</SCRIPT>
 </HEAD>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"
-	onload="resizeArea(); updateMenuIcon('buttonMenu'); focoPrimerControl(); onloadFunctions();"
-	onresize="resizeArea();">
+	onload="onLoadDo();" onresize="onResizeDo();">
 <FORM method="POST" action="ReportAnnualCertification" name="frmMain"
 	target="_self"><INPUT type="hidden" name="Command"></INPUT>
 <table height="100%" border="0" cellpadding="0" cellspacing="0"
@@ -459,7 +465,8 @@ function depurar(){
 					onblur="this.className='ButtonLink'; window.status=''; return true;"
 					onkeypress="this.className='ButtonLink_active'; return true;"
 					onkeyup="this.className='ButtonLink_hover'; return true;"
-					onclick="submitCommandForm('FIND', true, frmMain, 'ReportAnnualCertification.html', '_self');return false;">
+					onclick="submitCommandForm('FIND', true, frmMain, 'ReportAnnualCertification.html', '_self');return false;"
+					id="buttonHTML">
 				<table class="Button"
 					onmouseout="this.className='Button';window.status='';return true;"
 					onmouseover="this.className='Button_hover';window.status='HTML_Report';return true;"

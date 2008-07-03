@@ -21,7 +21,6 @@
 	<template file="ReportAnnualCertification.html" />
 	<!-- PARAMETRI PER LO SKIN (CSS) E IL KEY MAPPINGS ( KEY SHORTCUT) -->
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default" />
-	<PARAMETER id="keyMap" name="keyMap" default="" />
 	<!-- PARAMETRI PER LA TOOL BAR E LA NAVIGAZIONE e la LEFT BAR-->
 	<PARAMETER id="paramToolBar" name="toolbar" default="" />
 	<PARAMETER id="tdtopButtons" name="navigationBar" default="" />
@@ -31,6 +30,7 @@
   	<PARAMETER id="paramMainTabContainer" name="mainTabContainer" default=" "/>
   	<PARAMETER id="paramChildTabContainer" name="childTabContainer" default=" "/>
 	<!-- PARAMETRI PER I MESSAGGI-->
+	<PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
 	<PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN" />
 	<PARAMETER id="messageBoxIDTitle" name="messageTitle" default="" />
 	<PARAMETER id="messageBoxIDMessage" name="messageMessage" default="" />

@@ -131,12 +131,7 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportAnnualCertification", discard).createXmlDocument();
     //Setting Key Mappings ( key shortcut)
     xmlDocument.setParameter("theme", vars.getTheme());
-    try {
-    KeyMap key = new KeyMap(this, vars, "ReportAnnualCertification.html");
-    xmlDocument.setParameter("keyMap", key.getReportKeyMaps());
-    } catch (Exception ex) {
-        throw new ServletException(ex);
-      }
+
     //Toolbar
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportAnnualCertification", false, "", "", "imprimir();return false;",false, "ad_reports",  strReplaceWith, false,  true);
     toolbar.prepareSimpleToolBarTemplate();
@@ -170,6 +165,7 @@ public class ReportAnnualCertification extends HttpSecureAppServlet {
         }
       }
     // PARAMETRI UTENTE
+    xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
     xmlDocument.setParameter("dateFrom", strDateFrom);
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));

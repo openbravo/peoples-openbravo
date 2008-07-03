@@ -76,7 +76,8 @@ var arrWarehouse=null;
     <SCRIPT language="JavaScript" type="text/javascript">
     function onLoadDo(){
         this.windowTables = new Array(
-          new windowTableId('client')
+          new windowTableId('client', 'buttonSearch'),
+		  new windowTableId('tdbottomButtons', 'buttonUpdateABC')
         );
         setWindowTableParentElement();
         this.tabsTables = new Array(
@@ -273,7 +274,7 @@ var arrWarehouse=null;
               <TD class="TitleCell"></TD>
               <TD class="Button_CenterAlign_ContentCell">
                 <div>
-                  <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='View Results'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;"onclick="submitCommandForm('FIND', false, null, 'ReportParetoProduct.html', '_self', null, false);return false;" >
+                  <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='View Results'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;"onclick="submitCommandForm('FIND', false, null, 'ReportParetoProduct.html', '_self', null, false);return false;" id="buttonSearch">
                   <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Search';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                     <tr>
                       <td class="Button_left"><img class="Button_Icon Button_Icon_search" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border=0/></td>
@@ -353,7 +354,7 @@ var arrWarehouse=null;
                   <TD></TD>
                   <TD class="Button_LeftAlign_ContentCell">
                     <div>
-                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Updates ABC Org specific property'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('GENERATE', true, null, null, null, true, true);return false;">
+                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Updates ABC Org specific property'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('GENERATE', true, null, null, null, true, true);return false;" id="buttonUpdateABC">
                         <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Updates ABC Org specific property';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                         <tr>
                           <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="Update ABC" title="Update ABC" src="../../../../../web/images/blank.gif" border=0/></td>
