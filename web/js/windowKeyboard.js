@@ -140,7 +140,7 @@ function swichSelectedArea() {
     selectedArea = 'tabs';
     removeWindowElementFocus(focusedWindowElement);
     setActiveTab();
-  } else if (selectedArea=='tabs') {
+  } else if (selectedArea=='tabs' && !isReadOnlyWindow) {
     selectedArea = 'window';
     removeTabFocus(focusedTab);
     currentWindowElementType=previousWindowElementType;
