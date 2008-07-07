@@ -98,7 +98,7 @@ function defaultActionLogic(obj) {
   disableDefaultAction();
   defaultActionElement = document.getElementById(windowTables[focusedWindowTable].defaultActionButtonId);
   try {
-    if (obj.tagName == 'INPUT' || obj.tagName == 'SELECT') {
+    if ((obj.tagName == 'INPUT' && obj.getAttribute('type') != 'file') || obj.tagName == 'SELECT') {
       activateDefaultAction();
       for (var i = 0; i < keyArray.length; i++) {
         if (keyArray[i] != null && keyArray[i]) {
