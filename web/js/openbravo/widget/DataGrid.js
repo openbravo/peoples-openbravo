@@ -2502,7 +2502,9 @@ dojo.declare("openbravo.widget.DataGrid.Column", null,
 {
 	DEFAULT_WIDTH: '100px',
 	DEFAULT_CLASS: 'DataGrid_Body_Cell',
+	DEFAULT_CLASS_INVERSE: 'DataGrid_Body_Cell DataGrid_Body_Cell_Inverse',
 	DEFAULT_HEADER_CLASS: 'DataGrid_Header_Cell',
+	DEFAULT_HEADER_CLASS_INVERSE: 'DataGrid_Header_Cell DataGrid_Header_Cell_Inverse',
 	
 	initializer: function(name, type, params) {
 		this.index = -1;
@@ -2515,8 +2517,13 @@ dojo.declare("openbravo.widget.DataGrid.Column", null,
 		this.sync = params.sync == "true";
 		this.visible = params.visible != "false";
       	this.sortable = params.sortable != "false";
-		this.className = params.className ? params.className : this.DEFAULT_CLASS;
-		this.headerClassName = params.headerClassName ? params.headerClassName : this.DEFAULT_HEADER_CLASS;
+    if (this.type.name == 'integer' || this.type.name == 'float') {
+  		this.className = params.className ? params.className : this.DEFAULT_CLASS_INVERSE;
+  		this.headerClassName = params.headerClassName ? params.headerClassName : this.DEFAULT_HEADER_CLASS_INVERSE;
+    } else {
+  		this.className = params.className ? params.className : this.DEFAULT_CLASS;
+  		this.headerClassName = params.headerClassName ? params.headerClassName : this.DEFAULT_HEADER_CLASS;
+    }
 		this.identifier = params.identifier == "true";
 		this.invalidates = params.invalidates ? params.invalidates : [];
 		this.subordinated = [];

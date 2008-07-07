@@ -181,6 +181,11 @@ th.DataGrid_Header_Cell {
   font-weight: bold;
 }
 
+th.DataGrid_Header_Cell_Inverse {
+  text-align: right !important;
+  padding: 1px 4px 1px 0px !important;
+}
+
 th.DataGrid_Header_Cell_hover {
   background: none;
   background: url(backgroundHeader.rollover.png) repeat-x;
@@ -227,6 +232,11 @@ td.DataGrid_Body_Cell {
   white-space: nowrap !important;
   vertical-align: middle !important;
   cursor: default;
+}
+
+td.DataGrid_Body_Cell_Inverse {
+  text-align: right !important;
+  padding: 1px 3px 1px 1px !important;
 }
 
 td.DataGrid_Body_Cell span {
