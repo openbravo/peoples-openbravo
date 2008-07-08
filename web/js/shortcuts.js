@@ -112,7 +112,7 @@ function getShortcuts(type) {
         new keyArrayItem("TAB", "windowShiftTabKey(false);", null, "shiftKey", false, 'onkeyup'),
         new keyArrayItem("G", "executeWindowButton('buttonEdition');", null, "ctrlKey", false, 'onkeydown'),
         new keyArrayItem("DELETE", "executeWindowButton('linkButtonDelete');", null, null, false, 'onkeydown'),
-        new keyArrayItem("ENTER", "windowEnterKey();", null, null, false, 'onkeydown')
+        new keyArrayItem("ENTER", "windowEnterKey();", null, null, true, 'onkeydown')
       );
   } else if (type=='gridKeys') {
       this.keyArray.splice(keyArray.length-1, 0,
