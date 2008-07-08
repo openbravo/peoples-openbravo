@@ -26,6 +26,10 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
+import org.openbravo.erpCommon.reference.ListData;
+import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.erpCommon.utility.ComboTableData;
 
 public class SL_Order_DocType extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -119,6 +123,34 @@ public class SL_Order_DocType extends HttpSecureAppServlet {
           DeliveryRule= dataBP[0].deliveryrule;
           if (!dataBP[0].deliveryviarule.equals("")) resultado.append(", new Array(\"inpdeliveryviarule\", \"" + dataBP[0].deliveryviarule + "\")\n");
         }
+      //Added by gorkaion remove when feature request 4350 is done
+        FieldProvider [] l = null;
+        try {
+          ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "", "C_Order InvoiceRule", "", Utility.getContext(this, vars, "#User_Org", "SLOrderDocType"), Utility.getContext(this, vars, "#User_Client", "SLOrderDocType"), 0);
+          Utility.fillSQLParameters(this, vars, null, comboTableData, "SLOrderDocType", "");
+          l = comboTableData.select(false);
+          comboTableData = null;
+        } catch (Exception ex) {
+          throw new ServletException(ex);
+        }
+        resultado.append(", new Array(\"inpinvoicerule\", ");
+        if (l!=null && l.length>0) {
+          resultado.append("new Array(");
+          for (int i=0;i<l.length;i++) {
+            resultado.append("new Array(\"" + l[i].getField("id") + "\", \"" + FormatUtilities.replaceJS(l[i].getField("name")) + "\", \"" + (l[i].getField("id").equalsIgnoreCase(InvoiceRule)?"true":"false") + "\")");
+            if (i<l.length-1) resultado.append(",\n");
+          }
+          resultado.append(")");
+        } else resultado.append("null");
+        resultado.append(")");
+        InvoiceRule = "";
+      } else {
+        resultado.append(", new Array(\"inpinvoicerule\", new Array(");
+        resultado.append("new Array(\"D\", \"").append(FormatUtilities.replaceJS(ListData.selectName(this, "150", "D"))).append("\", ").append(InvoiceRule.equals("D")?"true":"false").append("),"); 
+        resultado.append("new Array(\"I\", \"").append(FormatUtilities.replaceJS(ListData.selectName(this, "150", "I"))).append("\", ").append(InvoiceRule.equals("I")?"true":"false").append("),"); 
+        resultado.append("new Array(\"O\", \"").append(FormatUtilities.replaceJS(ListData.selectName(this, "150", "O"))).append("\", ").append(InvoiceRule.equals("O")?"true":"false").append(")))\n"); 
+        InvoiceRule = "";
+      //End of add
       }
       if (!PaymentRule.equals("")) resultado.append(", new Array(\"inppaymentrule\", \"" + PaymentRule + "\")\n");
       if (!InvoiceRule.equals("")) resultado.append(", new Array(\"inpinvoicerule\", \"" + InvoiceRule + "\")\n");
@@ -126,7 +158,6 @@ public class SL_Order_DocType extends HttpSecureAppServlet {
       resultado.append(", new Array(\"EXECUTE\", \"displayLogic();\")\n");
       resultado.append(");\n");
     }
-
     xmlDocument.setParameter("array", resultado.toString());
     xmlDocument.setParameter("frameName", "frameAplicacion");
     response.setContentType("text/html; charset=UTF-8");
