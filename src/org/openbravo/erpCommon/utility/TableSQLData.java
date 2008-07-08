@@ -1704,6 +1704,10 @@ public class TableSQLData {
           type="url";
         } else if (prop.getProperty("AD_Reference_ID").equals("32")) {
           type="img";
+        } else if (prop.getProperty("AD_Reference_ID").equals("11")) { 
+          type="integer";
+        } else if (prop.getProperty("AD_Reference_ID").equals("12") || prop.getProperty("AD_Reference_ID").equals("22")) {   
+          type="float";
         }
         dataAux.setData("type", type);
         String strWidth = prop.getProperty("DisplayLength");
