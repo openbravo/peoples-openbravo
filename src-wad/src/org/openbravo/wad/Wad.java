@@ -1500,7 +1500,8 @@ public class Wad extends DefaultHandler {
     if (strWindow.equals("110")) discard[27]="sectionOrganizationCheck";
     discard[28]="sameParent";
     if (!(parentsFieldsData==null || parentsFieldsData.length == 0)&&(keyColumnName.equals(parentsFieldsData[0].name))) discard[28]="";
-    if (isSecondaryKey && (!EditionFieldsData.isOrgKey(pool, strTab).equals("0"))) discard[29] = "";
+    if (isSecondaryKey && !EditionFieldsData.isOrgKey(pool, strTab).equals("0") && !strTab.equals("170")) discard[29] = "";
+    
     if (strWindow.equals("250")) discard[30]="refreshTabParentSession"; //TODO: This fixes [1879633] and shoudn't be necessary in r2.5x because of new PKs
     
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/javasource", discard).createXmlDocument();
@@ -2115,10 +2116,13 @@ public class Wad extends DefaultHandler {
     }
     if (!(windowType.equalsIgnoreCase("T") && tablevel.equals("0"))) discard[4] = "sectionTransactional";
     if (strFilter.trim().equals("")) discard[5] = "sectionFilter";
-    if (!(isSecondaryKey && !EditionFieldsData.isOrgKey(pool, strTab).equals("0"))) discard[7] = "hasOrgKey";
-    else discard[7] = "hasNoOrgKey";
+    if ((!(isSecondaryKey && !EditionFieldsData.isOrgKey(pool, strTab).equals("0"))) || strTab.equals("170")) discard[7] = "hasOrgKey";
+    else {
+      discard[7] = "hasNoOrgKey";
+    }
     
     xmlDocumentXsql = xmlEngine.readXmlTemplate("org/openbravo/wad/datasource", discard).createXmlDocument();
+    for (int i=0; i<discard.length; i++) {System.out.println("discard["+i+"]: "+discard[i]); }//alo
     
     xmlDocumentXsql.setParameter("class", tabName + "Data");
     xmlDocumentXsql.setParameter("package", "org.openbravo.erpWindows." + windowName);
@@ -2128,10 +2132,13 @@ public class Wad extends DefaultHandler {
       xmlDocumentXsql.setParameter("keyParent", tableName + "." + parentsFieldsData[0].name);
     }
     xmlDocumentXsql.setParameter("paramKey", Sqlc.TransformaNombreColumna(keyColumnName));
+    System.out.println("paramKey:"+ Sqlc.TransformaNombreColumna(keyColumnName)); //ALO
     if (parentsFieldsData.length > 0) {
       xmlDocumentXsql.setParameter("paramKeyParent", Sqlc.TransformaNombreColumna(parentsFieldsData[0].name));
+      System.out.println("paramKeyParent:"+ Sqlc.TransformaNombreColumna(parentsFieldsData[0].name)); //ALO
       if (isSecondaryKey && (!EditionFieldsData.isOrgKey(pool, strTab).equals("0"))) {
         xmlDocumentXsql.setParameter("paramKeyParentOrg", "currentAdOrgId");
+        System.out.println("paramKeyParentOrg: currentAdOrgId"); //ALO
       }
     }
 
@@ -2815,7 +2822,7 @@ public class Wad extends DefaultHandler {
   private void processTabXmlEdition(File fileDir, String strTab, String tabName, String windowId, boolean isreadonly, FieldProvider[] efd, FieldProvider[] efdauxiliar, boolean isSecondaryKey) throws ServletException, IOException {
     if (log4j.isDebugEnabled()) log4j.debug("Processing edition xml: " + strTab + ", " + tabName);
     String[] discard = {"hasOrgKey"};
-    if (isSecondaryKey && !EditionFieldsData.isOrgKey(pool, strTab).equals("0")) discard[0] = "";
+    if (isSecondaryKey && !EditionFieldsData.isOrgKey(pool, strTab).equals("0") && !strTab.equals("170")) discard[0] = "";
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/Configuration_Edition").createXmlDocument();
 
     StringBuffer htmlHidden = new StringBuffer();
