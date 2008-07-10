@@ -2122,7 +2122,6 @@ public class Wad extends DefaultHandler {
     }
     
     xmlDocumentXsql = xmlEngine.readXmlTemplate("org/openbravo/wad/datasource", discard).createXmlDocument();
-    for (int i=0; i<discard.length; i++) {System.out.println("discard["+i+"]: "+discard[i]); }//alo
     
     xmlDocumentXsql.setParameter("class", tabName + "Data");
     xmlDocumentXsql.setParameter("package", "org.openbravo.erpWindows." + windowName);
@@ -2132,13 +2131,10 @@ public class Wad extends DefaultHandler {
       xmlDocumentXsql.setParameter("keyParent", tableName + "." + parentsFieldsData[0].name);
     }
     xmlDocumentXsql.setParameter("paramKey", Sqlc.TransformaNombreColumna(keyColumnName));
-    System.out.println("paramKey:"+ Sqlc.TransformaNombreColumna(keyColumnName)); //ALO
     if (parentsFieldsData.length > 0) {
       xmlDocumentXsql.setParameter("paramKeyParent", Sqlc.TransformaNombreColumna(parentsFieldsData[0].name));
-      System.out.println("paramKeyParent:"+ Sqlc.TransformaNombreColumna(parentsFieldsData[0].name)); //ALO
       if (isSecondaryKey && (!EditionFieldsData.isOrgKey(pool, strTab).equals("0"))) {
         xmlDocumentXsql.setParameter("paramKeyParentOrg", "currentAdOrgId");
-        System.out.println("paramKeyParentOrg: currentAdOrgId"); //ALO
       }
     }
 
