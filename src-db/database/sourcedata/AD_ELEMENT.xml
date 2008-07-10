@@ -11434,19 +11434,19 @@ Usually, company's internal identifiers for various records (products, customers
 <!--916 CREATEDBY-->
 <!--916-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--916 UPDATED-->
-<!--916-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--916-->              <UPDATED><![CDATA[2008-07-03 07:01:41.0]]></UPDATED>
 <!--916 UPDATEDBY-->
-<!--916-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--916-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--916 COLUMNNAME-->
 <!--916-->              <COLUMNNAME><![CDATA[IsBillTo]]></COLUMNNAME>
 <!--916 NAME-->
-<!--916-->              <NAME><![CDATA[Bill to Address]]></NAME>
+<!--916-->              <NAME><![CDATA[Invoice to Address]]></NAME>
 <!--916 PRINTNAME-->
-<!--916-->              <PRINTNAME><![CDATA[Bill-To Address]]></PRINTNAME>
+<!--916-->              <PRINTNAME><![CDATA[Invoice-To Address]]></PRINTNAME>
 <!--916 DESCRIPTION-->
-<!--916-->              <DESCRIPTION><![CDATA[Indicates that this address is the Bill to Address]]></DESCRIPTION>
+<!--916-->              <DESCRIPTION><![CDATA[Indicates that this address is the Invoice to Address]]></DESCRIPTION>
 <!--916 HELP-->
-<!--916-->              <HELP><![CDATA[The Bill to Address checkbox indicates if this location is the Bill to Address for this Business Partner]]></HELP>
+<!--916-->              <HELP><![CDATA[The Invoice to Address checkbox indicates if this location is the Invoice to Address for this Business Partner]]></HELP>
 <!--916**************--></AD_ELEMENT>
 
 <!--918**************--><AD_ELEMENT>
