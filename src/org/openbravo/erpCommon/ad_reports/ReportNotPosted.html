@@ -51,22 +51,21 @@
         dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
       </script>
 <SCRIPT language="JavaScript" type="text/javascript">
-function depurar(action, Formulario, valor) {
-  var frm=document.frmMain;
-if (frm.inpDateFrom.value==null || frm.inpDateFrom.value=="") {
-      setWindowElementFocus(frm.inpDateFrom);
-      frm.inpDateFrom.select();
-      return false;
-    }
-	 if (frm.inpDateTo.value==null || frm.inpDateTo.value=="") {
-      setWindowElementFocus(frm.inpDateTo);
-      frm.inpDateTo.select();
-      return false;
-    }
-  return true;
-}
-
-</SCRIPT>	<SCRIPT language="JavaScript" type="text/javascript">
+	function depurar() {
+		var frm=document.frmMain;
+		if (inputValue(frm.inpDateFrom)==null || inputValue(frm.inpDateFrom)=="") {
+			setWindowElementFocus(frm.inpDateFrom);
+			mensaje(7);
+			return false;
+		}  else if (inputValue(frm.inpDateTo)==null || inputValue(frm.inpDateTo)=="") {
+			setWindowElementFocus(frm.inpDateTo);
+			mensaje(7);
+			return false;
+		}
+		return true;
+	}
+</SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
 		  new windowTableId('client', 'buttonHTML')

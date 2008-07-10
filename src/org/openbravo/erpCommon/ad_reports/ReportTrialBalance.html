@@ -94,6 +94,10 @@ function depurar() {
       setWindowElementFocus(frm.inpDateFrom);
       mensaje(7);
       return false;
+    }  else if (inputValue(frm.inpDateTo)==null || inputValue(frm.inpDateTo)=="") {
+      setWindowElementFocus(frm.inpDateTo);
+      mensaje(7);
+      return false;
     }  else if (inputValue(frm.inpOrg)==null || inputValue(frm.inpOrg)=="") {
       setWindowElementFocus(frm.inpOrg);
       mensaje(7);
