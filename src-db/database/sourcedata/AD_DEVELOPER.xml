@@ -2522,6 +2522,93 @@
 <!--10087-->              <SVNUSER><![CDATA[eduardoargal]]></SVNUSER>
 <!--10087**************--></AD_DEVELOPER>
 
+<!--10088**************--><AD_DEVELOPER>
+<!--10088 AD_DEVELOPER_ID-->
+<!--10088-->              <AD_DEVELOPER_ID><![CDATA[10088]]></AD_DEVELOPER_ID>
+<!--10088 AD_CLIENT_ID-->
+<!--10088-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--10088 AD_ORG_ID-->
+<!--10088-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--10088 ISACTIVE-->
+<!--10088-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--10088 CREATED-->
+<!--10088-->              <CREATED><![CDATA[2008-07-11 11:35:00.0]]></CREATED>
+<!--10088 CREATEDBY-->
+<!--10088-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--10088 UPDATED-->
+<!--10088-->              <UPDATED><![CDATA[2008-07-11 11:35:00.0]]></UPDATED>
+<!--10088 UPDATEDBY-->
+<!--10088-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--10088 NAME-->
+<!--10088-->              <NAME><![CDATA[Amaya Vicente]]></NAME>
+<!--10088 NICKNAME-->
+<!--10088-->              <NICKNAME><![CDATA[amayavicente]]></NICKNAME>
+<!--10088 EMAIL-->
+<!--10088-->              <EMAIL><![CDATA[avi at openbravo dot com]]></EMAIL>
+<!--10088 COMPANY-->
+<!--10088-->              <COMPANY><![CDATA[Openbravo]]></COMPANY>
+<!--10088 SVNUSER-->
+<!--10088-->              <SVNUSER><![CDATA[amayavicente]]></SVNUSER>
+<!--10088**************--></AD_DEVELOPER>
+
+<!--10089**************--><AD_DEVELOPER>
+<!--10089 AD_DEVELOPER_ID-->
+<!--10089-->              <AD_DEVELOPER_ID><![CDATA[10089]]></AD_DEVELOPER_ID>
+<!--10089 AD_CLIENT_ID-->
+<!--10089-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--10089 AD_ORG_ID-->
+<!--10089-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--10089 ISACTIVE-->
+<!--10089-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--10089 CREATED-->
+<!--10089-->              <CREATED><![CDATA[2008-07-11 11:35:00.0]]></CREATED>
+<!--10089 CREATEDBY-->
+<!--10089-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--10089 UPDATED-->
+<!--10089-->              <UPDATED><![CDATA[2008-07-11 11:35:00.0]]></UPDATED>
+<!--10089 UPDATEDBY-->
+<!--10089-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--10089 NAME-->
+<!--10089-->              <NAME><![CDATA[Pascal Magnin]]></NAME>
+<!--10089 NICKNAME-->
+<!--10089-->              <NICKNAME><![CDATA[pmagnin]]></NICKNAME>
+<!--10089 EMAIL-->
+<!--10089-->              <EMAIL><![CDATA[pma at openbravo dot com]]></EMAIL>
+<!--10089 COMPANY-->
+<!--10089-->              <COMPANY><![CDATA[Openbravo]]></COMPANY>
+<!--10089 SVNUSER-->
+<!--10089-->              <SVNUSER><![CDATA[pmagnin]]></SVNUSER>
+<!--10089**************--></AD_DEVELOPER>
+
+<!--10090**************--><AD_DEVELOPER>
+<!--10090 AD_DEVELOPER_ID-->
+<!--10090-->              <AD_DEVELOPER_ID><![CDATA[10090]]></AD_DEVELOPER_ID>
+<!--10090 AD_CLIENT_ID-->
+<!--10090-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--10090 AD_ORG_ID-->
+<!--10090-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--10090 ISACTIVE-->
+<!--10090-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--10090 CREATED-->
+<!--10090-->              <CREATED><![CDATA[2008-07-11 11:35:00.0]]></CREATED>
+<!--10090 CREATEDBY-->
+<!--10090-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--10090 UPDATED-->
+<!--10090-->              <UPDATED><![CDATA[2008-07-11 11:35:00.0]]></UPDATED>
+<!--10090 UPDATEDBY-->
+<!--10090-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--10090 NAME-->
+<!--10090-->              <NAME><![CDATA[Josep Tarbal]]></NAME>
+<!--10090 NICKNAME-->
+<!--10090-->              <NICKNAME><![CDATA[jtarbal]]></NICKNAME>
+<!--10090 EMAIL-->
+<!--10090-->              <EMAIL><![CDATA[jta at openbravo dot com]]></EMAIL>
+<!--10090 COMPANY-->
+<!--10090-->              <COMPANY><![CDATA[Openbravo]]></COMPANY>
+<!--10090 SVNUSER-->
+<!--10090-->              <SVNUSER><![CDATA[jtarbal]]></SVNUSER>
+<!--10090**************--></AD_DEVELOPER>
+
 <!--
 ************************
 0. End of Core Range.
