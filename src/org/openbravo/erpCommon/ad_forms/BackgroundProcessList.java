@@ -26,6 +26,10 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
 
@@ -106,6 +110,9 @@ public class BackgroundProcessList extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
     }
+    
+    data = removePeriodicHeartbeat(data); // Remove PeriodicHeartbeat
+    
 
     xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
@@ -125,6 +132,29 @@ public class BackgroundProcessList extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
+  }
+  
+
+  /**
+   * Removes PeriodicHeartbeat from the list of Background Processes.
+   * 
+   * Issue 0004325 - PeriodicHeartbeat can not be disabled through BackgroundProcess window
+   * so it needs to be removed. 
+   * 
+   * @param original
+   * @return
+   */
+  private BackgroundProcessListData[] removePeriodicHeartbeat(BackgroundProcessListData[] original) {
+    List<BackgroundProcessListData> list = new ArrayList<BackgroundProcessListData>();
+    if (original!=null && original.length>0) {
+      for (BackgroundProcessListData bpld : original) {
+        if (bpld.getField("description") != null && 
+            !bpld.getField("description").equals("PeriodicHeartbeat")) {
+          list.add(bpld);
+        }
+      }
+    }
+    return list.toArray(new BackgroundProcessListData[list.size()]);
   }
 
   public String getServletInfo() {
