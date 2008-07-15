@@ -16,6 +16,13 @@ import javax.servlet.http.*;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.data.FieldProvider;
 
+/**
+ * This class is used to provide the coder with friendly methods to retrieve
+ * certain environment, session and servlet call variables. 
+ * 
+ * @author Openbravo
+ *
+ */
 public class VariablesSecureApp extends VariablesBase {
   private String user;
   private String role;
@@ -33,6 +40,16 @@ public class VariablesSecureApp extends VariablesBase {
   private String sqlDateFormat;
   private String accessLevel;
 
+  /**
+   * Constructor used to make an empty/manual instance of this class.
+   *  
+   * @param strUser         ID of the user as specified by the AD_USER_ID 
+   *                        column within the AD_USER database table.
+   * @param strClient       ID of the client as specified by the AD_CLIENT_ID
+   *                        column within the AD_CLIENT database table.
+   * @param strOrganization ID of the organization as specified by the 
+   *                        AD_ORG_ID column within the AD_ORG database table.
+   */
   public VariablesSecureApp(String strUser, String strClient, String strOrganization) {
     this.user = strUser;
     this.role = "";
@@ -51,16 +68,33 @@ public class VariablesSecureApp extends VariablesBase {
     this.accessLevel = "";
   }
 
+  /**
+   * Constructor that parses the session variables to initialize the class' 
+   * internal variables.
+   * 
+   * @param request HttpServletRequest object originating from the user request.
+   */
   public VariablesSecureApp(HttpServletRequest request) {
     super(request);
     setValues();
   }
   
+  /**
+   * Constructor that parses the session variables to initialize the class' 
+   * internal variables for multipart requests.
+   * 
+   * @param request HttpServletRequest object originating from the user request.
+   */
   public VariablesSecureApp(HttpServletRequest request, boolean f) {
     super(request,f);
     setValues(); 
   }
   
+  /**
+   * Internal method used to parse the session variables and store them into
+   * private variables of this class. These variables can them be retrieved 
+   * through various get methods (e.g. getUser(), getRole(), etc.).
+   */
   private void setValues(){
     this.user = getSessionValue("#AD_User_ID");
     this.role = getSessionValue("#AD_Role_ID");
@@ -84,7 +118,6 @@ public class VariablesSecureApp extends VariablesBase {
    * AD_USER table.
    * 
    * @return AD_USER_ID primary key number formatted as string
-   * @see    database table AD_USER 
    */
   public String getUser() {
     return user;
@@ -95,7 +128,6 @@ public class VariablesSecureApp extends VariablesBase {
    * as entered in the AD_ROLE table.
    * 
    * @return AD_ROLE_ID primary key number formatted as string
-   * @see    database table AD_ROLE
    */
   public String getRole() {
     return role;
@@ -107,7 +139,7 @@ public class VariablesSecureApp extends VariablesBase {
    * Spanish language from Spain or en_GB for English language from Great 
    * Britain.
    * 
-   * @return  the language code formatted as a string according to RFC 4646
+   * @return The language code formatted as a string according to RFC 4646.
    */
   public String getLanguage() {
     return language;
@@ -118,7 +150,7 @@ public class VariablesSecureApp extends VariablesBase {
    * This usually corresponds to the theme's folder name in the web/skins. 
    * Default theme's value is 'Default'.
    * 
-   * @return string with the unique name of the theme
+   * @return String with the unique name of the theme.
    */
   public String getTheme() {
     return theme;
@@ -128,8 +160,7 @@ public class VariablesSecureApp extends VariablesBase {
    * Returns the ID of the client (AD_CLIENT_ID) as defined by the 
    * role of the user's current session.
    *  
-   * @return string with the AD_CLIENT_ID primary key value
-   * @see    database table AD_CLIENT
+   * @return String with the AD_CLIENT_ID primary key value.
    */
   public String getClient() {
     return client;
@@ -140,8 +171,7 @@ public class VariablesSecureApp extends VariablesBase {
    * user among the ones available within the role of the 
    * current session.
    *  
-   * @return string with the AD_ORG_ID primary key value
-   * @see    AD_ORG database table
+   * @return String with the AD_ORG_ID primary key value.
    */
   public String getOrg() {
     return organization;
@@ -162,8 +192,7 @@ public class VariablesSecureApp extends VariablesBase {
    * the Role change window and the user can only select warehouses he or she
    * has access to.
    *  
-   * @return string with the M_WAREHOUSE primary key value
-   * @see    database table M_WAREHOUSE
+   * @return String with the M_WAREHOUSE primary key value.
    */
   public String getWarehouse() {
     return warehouse;
@@ -173,8 +202,7 @@ public class VariablesSecureApp extends VariablesBase {
    * Returns the ID of the session stored within the AD_SESSION database 
    * table.
    * 
-   * @return string with the AD_SESSION primary key value
-   * @see    database table AD_SESSION
+   * @return String with the AD_SESSION primary key value.
    */
   public String getDBSession() {
     return dbSessionID;
@@ -185,19 +213,11 @@ public class VariablesSecureApp extends VariablesBase {
    * parameter of the HTTP POST/GET. Normally used by the java controllers
    * so that one controller can support various actions/functions.
    * 
-   * @return string containing the value of the Command parameter
+   * @return String containing the value of the Command parameter.
    */
   public String getCommand() {
     return command;
   }
-  
-  /**
-   * Checks if the parameter Command passed to the servlet equals to
-   * the parameter inKey1 passed to this method.
-   * 
-   * @return  the language code formatted as a string according to RFC 4646
-   * @see     also getCommand()
-   */
   
   public String getAccessLevel() {
     return accessLevel;
@@ -205,12 +225,12 @@ public class VariablesSecureApp extends VariablesBase {
 
   /**
    * Returns true if the Command parameter of the HTTP POST/GET request to the
-   * servlet equals either the value specified, false if not.
+   * servlet equals the value specified, false if not.
    * 
-   * @param  inKey1 the string to compare Command parameter to 
-   * @return        boolean that indicates the equality of the Command and the
-   *                inKey1 parameter 
-   * @see           also getCommand()
+   * @param  inKey1 The string to compare Command parameter to. 
+   * @return        Boolean indicating the equality of the Command and the
+   *                inKey1 parameter. 
+   * @see           getCommand
    */
   public boolean commandIn(String inKey1) {
     if (command.equals(inKey1))
@@ -223,11 +243,11 @@ public class VariablesSecureApp extends VariablesBase {
    * Returns true if the Command parameter of the HTTP POST/GET request to the
    * servlet equals either of the values specified, false if not.
    * 
-   * @param  inKey1 the string to compare the Command parameter to 
-   * @param  inKey2 the second string to compare the Command parameter to 
-   * @return        boolean that indicates the equality of the Command and 
-   *                either of the inKeyX parameters 
-   * @see           also getCommand()
+   * @param  inKey1 The string to compare the Command parameter to. 
+   * @param  inKey2 The second string to compare the Command parameter to. 
+   * @return        Boolean indicating the equality of the Command and 
+   *                either of the inKeyX parameters. 
+   * @see           getCommand
    */
   public boolean commandIn(String inKey1, String inKey2) {
     if (command.equals(inKey1) || command.equals(inKey2))
@@ -240,12 +260,12 @@ public class VariablesSecureApp extends VariablesBase {
    * Returns true if the Command parameter of the HTTP POST/GET request to the
    * servlet equals either of the values specified, false if not.
    * 
-   * @param  inKey1 the string to compare the Command parameter to 
-   * @param  inKey2 the second string to compare the Command parameter to 
-   * @param  inKey3 the third string to compare the Command parameter to 
-   * @return        boolean that indicates the equality of the Command and 
-   *                either of the inKeyX parameters 
-   * @see           also getCommand()
+   * @param  inKey1 The string to compare the Command parameter to. 
+   * @param  inKey2 The second string to compare the Command parameter to. 
+   * @param  inKey3 The third string to compare the Command parameter to .
+   * @return        Boolean indicating the equality of the Command and 
+   *                either of the inKeyX parameters.
+   * @see           getCommand
    */
   public boolean commandIn(String inKey1, String inKey2, String inKey3) {
     if (command.equals(inKey1) || command.equals(inKey2) || command.equals(inKey3))
@@ -258,13 +278,13 @@ public class VariablesSecureApp extends VariablesBase {
    * Returns true if the Command parameter of the HTTP POST/GET request to the
    * servlet equals either of the values specified, false if not.
    * 
-   * @param  inKey1 the string to compare the Command parameter to 
-   * @param  inKey2 the second string to compare the Command parameter to 
-   * @param  inKey3 the third string to compare the Command parameter to 
-   * @param  inKey4 the fourth string to compare the Command parameter to 
-   * @return        boolean that indicates the equality of the Command and 
-   *                either of the inKeyX parameters 
-   * @see           also getCommand()
+   * @param  inKey1 The string to compare the Command parameter to. 
+   * @param  inKey2 The second string to compare the Command parameter to. 
+   * @param  inKey3 The third string to compare the Command parameter to.
+   * @param  inKey4 The fourth string to compare the Command parameter to.
+   * @return        Boolean indicating the equality of the Command and 
+   *                either of the inKeyX parameters. 
+   * @see           getCommand
    */
   public boolean commandIn(String inKey1, String inKey2, String inKey3, String inKey4) {
     if (command.equals(inKey1) || command.equals(inKey2) || command.equals(inKey3) || command.equals(inKey4))
@@ -277,14 +297,14 @@ public class VariablesSecureApp extends VariablesBase {
    * Returns true if the Command parameter of the HTTP POST/GET request to the
    * servlet equals either of the values specified, false if not.
    * 
-   * @param  inKey1 the string to compare the Command parameter to 
-   * @param  inKey2 the second string to compare the Command parameter to 
-   * @param  inKey3 the third string to compare the Command parameter to 
-   * @param  inKey4 the fourth string to compare the Command parameter to 
-   * @param  inKey5 the fifth string to compare the Command parameter to 
-   * @return        boolean that indicates the equality of the Command and 
-   *                either of the inKeyX parameters 
-   * @see           also getCommand()
+   * @param  inKey1 The string to compare the Command parameter to.
+   * @param  inKey2 The second string to compare the Command parameter to.
+   * @param  inKey3 The third string to compare the Command parameter to.
+   * @param  inKey4 The fourth string to compare the Command parameter to. 
+   * @param  inKey5 The fifth string to compare the Command parameter to. 
+   * @return        Boolean indicating the equality of the Command and 
+   *                either of the inKeyX parameters. 
+   * @see           getCommand
    */
   public boolean commandIn(String inKey1, String inKey2, String inKey3, String inKey4, String inKey5) {
     if (command.equals(inKey1) || command.equals(inKey2) || command.equals(inKey3) || command.equals(inKey4) || command.equals(inKey5))
@@ -298,7 +318,7 @@ public class VariablesSecureApp extends VariablesBase {
    * dateFormat.java variable within the config/Openbravo.properties
    * configuration file.
    * 
-   * @return formatting string, for example 'dd-MM-yyyy'
+   * @return Formatting string, for example 'dd-MM-yyyy'.
    */
   public String getJavaDateFormat() {
     return javaDateFormat;
@@ -309,7 +329,7 @@ public class VariablesSecureApp extends VariablesBase {
    * dateFormat.java variable within the config/Openbravo.properties
    * configuration file.
    * 
-   * @return formatting string, for example '%d-%m-%Y'
+   * @return Formatting string, for example '%d-%m-%Y'.
    */
   public String getJsDateFormat() {
     return jsDateFormat;
@@ -320,7 +340,7 @@ public class VariablesSecureApp extends VariablesBase {
    * dateFormat.sql variable within the config/Openbravo.properties
    * configuration file.
    * 
-   * @return formatting string, for example 'DD-MM-YYYY'
+   * @return Formatting string, for example 'DD-MM-YYYY'.
    */
   public String getSqlDateFormat() {
     return sqlDateFormat;
@@ -331,13 +351,12 @@ public class VariablesSecureApp extends VariablesBase {
    * might contain the error information for the specified tab. This error 
    * would normally be generated by the controller servlet of that tab.
    * 
-   * @param  AD_Tab_ID string with the primary key (ID) of the tab as entered 
-   *                   within the AD_Tab database table
-   * @return           deserialized OBError object retrieved from the session. 
+   * @param  AD_Tab_ID String with the primary key (ID) of the tab as entered 
+   *                   within the AD_TAB database table.
+   * @return           Deserialized OBError object retrieved from the session. 
    *                   Null if no error message exists for this tab.
-   * @see              database table AD_TAB
-   * @see              setMessage()
-   * @see              removeMessage()
+   * @see              setMessage
+   * @see              removeMessage
    */
   public OBError getMessage(String AD_Tab_ID) {
     return ((OBError)getSessionObject(AD_Tab_ID + "|message"));
@@ -347,12 +366,11 @@ public class VariablesSecureApp extends VariablesBase {
    * Serializes and saves the error object to a session variable, specific 
    * to the tab which ID is being passed.
    *  
-   * @param AD_Tab_ID string with the primary key (ID) of the tab as entered 
-   *                  within the AD_Tab database table
-   * @param error     the OBError object that needs to be set
-   * @see             database table AD_TAB
-   * @see             getMessage()
-   * @see             removeMessage()
+   * @param AD_Tab_ID String with the primary key (ID) of the tab as entered 
+   *                  within the AD_TAB database table.
+   * @param error     The OBError object that needs to be set.
+   * @see             getMessage
+   * @see             removeMessage
    */
   public void setMessage(String AD_Tab_ID, OBError error) {
     setSessionObject(AD_Tab_ID + "|message", error);
@@ -363,11 +381,10 @@ public class VariablesSecureApp extends VariablesBase {
    * This needs to be done in order for the message not to appear every time
    * the tab is reloaded.
    * 
-   * @param  AD_Tab_ID string with the primary key (ID) of the tab as entered 
-   *                   within the AD_Tab database table
-   * @see              database table AD_TAB
-   * @see              setMessage()
-   * @see              getMessage()
+   * @param AD_Tab_ID String with the primary key (ID) of the tab as entered 
+   *                  within the AD_TAB database table.
+   * @see             setMessage
+   * @see             getMessage
    */
   public void removeMessage(String AD_Tab_ID) {
     removeSessionValue(AD_Tab_ID + "|message");
