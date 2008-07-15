@@ -295,7 +295,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
    * Closes the preparedStatement and releases the connection on top of which this 
    * statement was prepared.
    * 
-   * @param  PreparedStatement object containing prepared statement to release.
+   * @param preparedStatement Object containing prepared statement to release.
    * @throws SQLException
    */
   public void releasePreparedStatement(PreparedStatement preparedStatement) throws SQLException {
