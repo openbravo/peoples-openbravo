@@ -92,13 +92,15 @@ public class WADImage extends WADControl {
   
   public String toJava() {
     StringBuffer text = new StringBuffer();
-    text.append("String strCurrentImageURL = (dataField==null?data[0].getField(\"");
-    text.append(getData("ColumnNameInp")).append("\"):dataField.getField(\"");
-    text.append(getData("ColumnNameInp")).append("\"));\n");
-    text.append("if (strCurrentImageURL==null || strCurrentImageURL.equals(\"\")){\n");
-    text.append("  xmlDocument.setParameter(\"").append(getData("ColumnName")).append("Class\", \"Image_NotAvailable_medium\");\n");
-    text.append("  if (dataField==null) data[0].adImageIdr=\"blank.gif\";\n");
-    text.append("}\n");
+    if (getData("IsDisplayed").equals("Y")) {
+      text.append("String strCurrentImageURL = (dataField==null?data[0].getField(\"");
+      text.append(getData("ColumnNameInp")).append("\"):dataField.getField(\"");
+      text.append(getData("ColumnNameInp")).append("\"));\n");
+      text.append("if (strCurrentImageURL==null || strCurrentImageURL.equals(\"\")){\n");
+      text.append("  xmlDocument.setParameter(\"").append(getData("ColumnName")).append("Class\", \"Image_NotAvailable_medium\");\n");
+      text.append("  if (dataField==null) data[0].adImageIdr=\"blank.gif\";\n");
+      text.append("}\n");
+    }
     return text.toString();		
   }
 }
