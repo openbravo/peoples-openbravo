@@ -239,7 +239,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
       OBError roleError = new OBError();
       roleError.setTitle("Invalid " + d.getDefaultField());
       roleError.setType("Error");
-      roleError.setMessage("No valid " + d.getDefaultField() + " identified. Please contact your system administrator for acccess.");
+      roleError.setMessage("No valid " + d.getDefaultField() + " identified. Please contact your system administrator for access.");
       invalidLogin(request, response, roleError);
       
       return;
