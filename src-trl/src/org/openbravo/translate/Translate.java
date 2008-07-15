@@ -140,18 +140,18 @@ public class Translate extends DefaultHandler implements LexicalHandler {
 
     File path = new File(dirIni, relativePath);
     if (!path.exists()) {
-      System.out.println("Can´t find directory: " + dirIni);
+      log4j.error("Can´t find directory: " + dirIni);      
       translate.destroy();
       return;
     }
     File fileFin = new File(dirFin);
     if (!fileFin.exists()) {
-      System.out.println("Can´t find directory: " + dirFin);
+      log4j.error("Can´t find directory: " + dirFin);
       translate.destroy();
       return;
     }
     listDir(path, boolFilter, dirFilter, fileFin, relativePath);
-    System.out.println("Translated files for " + fileTermination + ": " + count);
+    log4j.info("Translated files for " + fileTermination + ": " + count);
     translate.destroy();
   }
 

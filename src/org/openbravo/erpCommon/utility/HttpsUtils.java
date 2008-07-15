@@ -378,37 +378,5 @@ public class HttpsUtils {
       return false;
     }
     return true;
-  }
-  
-//  public class InternetConnector extends Thread {
-//    public void run() {
-//      try {
-//        InetAddress address = InetAddress.getByName("web.mit.edu");
-//        System.out.println("Name: " + address.getHostName());
-//        System.out.println("Addr: " + address.getHostAddress());
-//        System.out.println("Reach: " + address.isReachable(3000));
-//      }
-//      catch (UnknownHostException e) {
-//        System.err.println("Unable to lookup web.mit.edu");
-//      }
-//      catch (IOException e) {
-//        System.err.println("Unable to reach web.mit.edu");
-//      }
-//    }
-//  }
-//  
-//  public class Timer extends Thread {
-//    
-//    public void run() {
-//      try {
-//        for (int i = 0; i < 5; i++) {
-//          System.out.println("Timer " + new Date());
-//          sleep(1000);
-//        }
-//        
-//      } catch (InterruptedException e) {}
-//      System.out.println("Times up " + new Date());
-//    }
-//  }
-  
+  }  
 }

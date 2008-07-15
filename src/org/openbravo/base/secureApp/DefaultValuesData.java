@@ -19,12 +19,14 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.exception.*;
 import org.openbravo.data.UtilSql;
+import org.apache.log4j.Logger ;
 
 /**Clase SqlStandardData
  */
 public class DefaultValuesData implements FieldProvider {
   public String columnname;
-
+  static Logger log4j = Logger.getLogger(DefaultValuesData.class);
+  
   public String getField(String fieldName) {
     if (fieldName.equalsIgnoreCase("columnname"))
       return columnname;
@@ -57,16 +59,16 @@ public class DefaultValuesData implements FieldProvider {
       }
       result.close();
     } catch(SQLException e){
-      System.out.println("SQL error in query: " + strSql + "Exception:"+ e);
+      log4j.error("SQL error in query: " + strSql + "Exception:"+ e);
       throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
     } catch(NoConnectionAvailableException ec){
-      System.out.println("Connection error in query: " + strSql + "Exception:"+ ec);
+      log4j.error("Connection error in query: " + strSql + "Exception:"+ ec);
       throw new ServletException("@CODE=NoConnectionAvailable");
     } catch(PoolNotFoundException ep){
-      System.out.println("Pool error in query: " + strSql + "Exception:"+ ep);
+      log4j.error("Pool error in query: " + strSql + "Exception:"+ ep);
       throw new ServletException("@CODE=NoConnectionAvailable");
     } catch(Exception ex){
-      System.out.println("Exception in query: " + strSql + "Exception:"+ ex);
+      log4j.error("Exception in query: " + strSql + "Exception:"+ ex);
       throw new ServletException("@CODE=@" + ex.getMessage());
     } finally {
       try {
