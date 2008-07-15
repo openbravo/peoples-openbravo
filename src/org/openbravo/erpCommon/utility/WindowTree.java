@@ -54,21 +54,7 @@ public class WindowTree extends HttpSecureAppServlet {
         WindowTreeData[] data = WindowTreeData.selectTreeID(this, Utility.getContext(this, vars, "#User_Client", ""), TreeType);
         if (data!=null && data.length>0) strTreeID = data[0].id;
       }
-      WindowTreeData[] data = WindowTreeData.selectTabName(this, strTabId);
-      String windowName = FormatUtilities.replace(data[0].description);
-      String tabName = FormatUtilities.replace(data[0].name);
-      String strHref = windowName + "/" + tabName + "_Relation.html?Command=" + vars.getCommand();
-      {
-        WindowTreeData[] parents = WindowTreeData.selectParents(this, strTabId);
-        if (parents!=null && parents.length>0) {
-          for (int i=0;i<parents.length;i++) {
-            String strField = "inp" + Sqlc.TransformaNombreColumna(parents[i].name);
-            String strData = vars.getGlobalVariable(strField, parents[i].nodeId + "|" + parents[i].name);
-            strHref += "&" + strField + "=" + strData;
-          }
-        }
-      }
-      if (strTreeID.equals("")) advisePopUp(response, "Error", Utility.messageBD(this, "AccessTableNoView", vars.getLanguage()));//response.sendRedirect(strDireccion + "/" + strHref);
+      if (strTreeID.equals("")) advisePopUp(response, "Error", Utility.messageBD(this, "AccessTableNoView", vars.getLanguage()));
       else printPageDataSheet(response, vars, strTabId);
     } else if (vars.commandIn("ASSIGN")) {
       String strTabId = vars.getRequiredStringParameter("inpTabId");
