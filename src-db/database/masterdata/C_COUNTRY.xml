@@ -103,13 +103,13 @@
 <!--102 CREATEDBY-->
 <!--102-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--102 UPDATED-->
-<!--102-->              <UPDATED><![CDATA[2003-08-06 20:46:32.0]]></UPDATED>
+<!--102-->              <UPDATED><![CDATA[2008-07-15 16:56:17.0]]></UPDATED>
 <!--102 UPDATEDBY-->
-<!--102-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--102-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--102 NAME-->
 <!--102-->              <NAME><![CDATA[France]]></NAME>
 <!--102 DESCRIPTION-->
-<!--102-->              <DESCRIPTION><![CDATA[Francia]]></DESCRIPTION>
+<!--102-->              <DESCRIPTION><![CDATA[France]]></DESCRIPTION>
 <!--102 COUNTRYCODE-->
 <!--102-->              <COUNTRYCODE><![CDATA[FR]]></COUNTRYCODE>
 <!--102 HASREGION-->
@@ -185,13 +185,13 @@
 <!--105 CREATEDBY-->
 <!--105-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--105 UPDATED-->
-<!--105-->              <UPDATED><![CDATA[2002-12-10 10:23:49.0]]></UPDATED>
+<!--105-->              <UPDATED><![CDATA[2008-07-15 16:56:48.0]]></UPDATED>
 <!--105 UPDATEDBY-->
-<!--105-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--105-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--105 NAME-->
 <!--105-->              <NAME><![CDATA[Holland]]></NAME>
 <!--105 DESCRIPTION-->
-<!--105-->              <DESCRIPTION><![CDATA[Holanda]]></DESCRIPTION>
+<!--105-->              <DESCRIPTION><![CDATA[Holland]]></DESCRIPTION>
 <!--105 COUNTRYCODE-->
 <!--105-->              <COUNTRYCODE><![CDATA[NL]]></COUNTRYCODE>
 <!--105 HASREGION-->
@@ -228,13 +228,13 @@
 <!--106 CREATEDBY-->
 <!--106-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--106 UPDATED-->
-<!--106-->              <UPDATED><![CDATA[2008-05-15 17:03:27.0]]></UPDATED>
+<!--106-->              <UPDATED><![CDATA[2008-07-15 16:52:26.0]]></UPDATED>
 <!--106 UPDATEDBY-->
 <!--106-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--106 NAME-->
 <!--106-->              <NAME><![CDATA[Spain]]></NAME>
 <!--106 DESCRIPTION-->
-<!--106-->              <DESCRIPTION><![CDATA[España]]></DESCRIPTION>
+<!--106-->              <DESCRIPTION><![CDATA[Spain]]></DESCRIPTION>
 <!--106 COUNTRYCODE-->
 <!--106-->              <COUNTRYCODE><![CDATA[ES]]></COUNTRYCODE>
 <!--106 HASREGION-->
@@ -273,11 +273,13 @@
 <!--107 CREATEDBY-->
 <!--107-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--107 UPDATED-->
-<!--107-->              <UPDATED><![CDATA[2003-08-06 20:41:04.0]]></UPDATED>
+<!--107-->              <UPDATED><![CDATA[2008-07-15 17:06:06.0]]></UPDATED>
 <!--107 UPDATEDBY-->
-<!--107-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--107-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--107 NAME-->
 <!--107-->              <NAME><![CDATA[Switzerland]]></NAME>
+<!--107 DESCRIPTION-->
+<!--107-->              <DESCRIPTION><![CDATA[Switzerland]]></DESCRIPTION>
 <!--107 COUNTRYCODE-->
 <!--107-->              <COUNTRYCODE><![CDATA[CH]]></COUNTRYCODE>
 <!--107 HASREGION-->
@@ -353,11 +355,13 @@
 <!--109 CREATEDBY-->
 <!--109-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--109 UPDATED-->
-<!--109-->              <UPDATED><![CDATA[2003-01-08 13:06:10.0]]></UPDATED>
+<!--109-->              <UPDATED><![CDATA[2008-07-15 16:55:14.0]]></UPDATED>
 <!--109 UPDATEDBY-->
-<!--109-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--109-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--109 NAME-->
 <!--109-->              <NAME><![CDATA[Canada]]></NAME>
+<!--109 DESCRIPTION-->
+<!--109-->              <DESCRIPTION><![CDATA[Canada]]></DESCRIPTION>
 <!--109 COUNTRYCODE-->
 <!--109-->              <COUNTRYCODE><![CDATA[CA]]></COUNTRYCODE>
 <!--109 HASREGION-->
@@ -1904,13 +1908,13 @@
 <!--155 CREATEDBY-->
 <!--155-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--155 UPDATED-->
-<!--155-->              <UPDATED><![CDATA[2003-03-09 00:00:00.0]]></UPDATED>
+<!--155-->              <UPDATED><![CDATA[2008-07-15 16:51:36.0]]></UPDATED>
 <!--155 UPDATEDBY-->
-<!--155-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--155-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--155 NAME-->
-<!--155-->              <NAME><![CDATA[Cocos (keeling) Islands]]></NAME>
+<!--155-->              <NAME><![CDATA[Cocos (Keeling) Islands]]></NAME>
 <!--155 DESCRIPTION-->
-<!--155-->              <DESCRIPTION><![CDATA[Cocos (keeling) Islands]]></DESCRIPTION>
+<!--155-->              <DESCRIPTION><![CDATA[Cocos (Keeling) Islands]]></DESCRIPTION>
 <!--155 COUNTRYCODE-->
 <!--155-->              <COUNTRYCODE><![CDATA[CC]]></COUNTRYCODE>
 <!--155 HASREGION-->
@@ -2153,13 +2157,13 @@
 <!--162 CREATEDBY-->
 <!--162-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--162 UPDATED-->
-<!--162-->              <UPDATED><![CDATA[2003-03-09 00:00:00.0]]></UPDATED>
+<!--162-->              <UPDATED><![CDATA[2008-07-15 16:51:54.0]]></UPDATED>
 <!--162 UPDATEDBY-->
-<!--162-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--162-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--162 NAME-->
-<!--162-->              <NAME><![CDATA[Cote D'ivoire]]></NAME>
+<!--162-->              <NAME><![CDATA[Cote D'Ivoire]]></NAME>
 <!--162 DESCRIPTION-->
-<!--162-->              <DESCRIPTION><![CDATA[Cote D'ivoire]]></DESCRIPTION>
+<!--162-->              <DESCRIPTION><![CDATA[Cote D'Ivoire]]></DESCRIPTION>
 <!--162 COUNTRYCODE-->
 <!--162-->              <COUNTRYCODE><![CDATA[CI]]></COUNTRYCODE>
 <!--162 HASREGION-->
@@ -2755,13 +2759,13 @@
 <!--178 CREATEDBY-->
 <!--178-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--178 UPDATED-->
-<!--178-->              <UPDATED><![CDATA[2003-03-09 00:00:00.0]]></UPDATED>
+<!--178-->              <UPDATED><![CDATA[2008-07-15 16:52:46.0]]></UPDATED>
 <!--178 UPDATEDBY-->
-<!--178-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--178-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--178 NAME-->
-<!--178-->              <NAME><![CDATA[Falkland Islands (malvinas)]]></NAME>
+<!--178-->              <NAME><![CDATA[Falkland Islands (Malvinas)]]></NAME>
 <!--178 DESCRIPTION-->
-<!--178-->              <DESCRIPTION><![CDATA[Falkland Islands (malvinas)]]></DESCRIPTION>
+<!--178-->              <DESCRIPTION><![CDATA[Falkland Islands (Malvinas)]]></DESCRIPTION>
 <!--178 COUNTRYCODE-->
 <!--178-->              <COUNTRYCODE><![CDATA[FK]]></COUNTRYCODE>
 <!--178 HASREGION-->
@@ -3448,13 +3452,13 @@
 <!--199 CREATEDBY-->
 <!--199-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--199 UPDATED-->
-<!--199-->              <UPDATED><![CDATA[2003-03-09 00:00:00.0]]></UPDATED>
+<!--199-->              <UPDATED><![CDATA[2008-07-15 16:53:42.0]]></UPDATED>
 <!--199 UPDATEDBY-->
-<!--199-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--199-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--199 NAME-->
-<!--199-->              <NAME><![CDATA[Guinea-bissau]]></NAME>
+<!--199-->              <NAME><![CDATA[Guinea-Bissau]]></NAME>
 <!--199 DESCRIPTION-->
-<!--199-->              <DESCRIPTION><![CDATA[Guinea-bissau]]></DESCRIPTION>
+<!--199-->              <DESCRIPTION><![CDATA[Guinea-Bissau]]></DESCRIPTION>
 <!--199 COUNTRYCODE-->
 <!--199-->              <COUNTRYCODE><![CDATA[GW]]></COUNTRYCODE>
 <!--199 HASREGION-->
@@ -3586,13 +3590,13 @@
 <!--203 CREATEDBY-->
 <!--203-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--203 UPDATED-->
-<!--203-->              <UPDATED><![CDATA[2003-03-09 00:00:00.0]]></UPDATED>
+<!--203-->              <UPDATED><![CDATA[2008-07-15 16:57:16.0]]></UPDATED>
 <!--203 UPDATEDBY-->
-<!--203-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--203-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--203 NAME-->
-<!--203-->              <NAME><![CDATA[Holy See (vatican City State)]]></NAME>
+<!--203-->              <NAME><![CDATA[Holy See (Vatican City State)]]></NAME>
 <!--203 DESCRIPTION-->
-<!--203-->              <DESCRIPTION><![CDATA[Holy See (vatican City State)]]></DESCRIPTION>
+<!--203-->              <DESCRIPTION><![CDATA[Holy See (Vatican City State)]]></DESCRIPTION>
 <!--203 COUNTRYCODE-->
 <!--203-->              <COUNTRYCODE><![CDATA[VA]]></COUNTRYCODE>
 <!--203 HASREGION-->
@@ -7778,13 +7782,13 @@
 <!--320 CREATEDBY-->
 <!--320-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--320 UPDATED-->
-<!--320-->              <UPDATED><![CDATA[2003-03-09 00:00:00.0]]></UPDATED>
+<!--320-->              <UPDATED><![CDATA[2008-07-15 17:06:44.0]]></UPDATED>
 <!--320 UPDATEDBY-->
-<!--320-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--320-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--320 NAME-->
-<!--320-->              <NAME><![CDATA[Timor-leste]]></NAME>
+<!--320-->              <NAME><![CDATA[Timor-Leste]]></NAME>
 <!--320 DESCRIPTION-->
-<!--320-->              <DESCRIPTION><![CDATA[Timor-leste]]></DESCRIPTION>
+<!--320-->              <DESCRIPTION><![CDATA[Timor-Leste]]></DESCRIPTION>
 <!--320 COUNTRYCODE-->
 <!--320-->              <COUNTRYCODE><![CDATA[TL]]></COUNTRYCODE>
 <!--320 HASREGION-->
@@ -8543,13 +8547,13 @@
 <!--342 CREATEDBY-->
 <!--342-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--342 UPDATED-->
-<!--342-->              <UPDATED><![CDATA[2003-03-09 00:00:00.0]]></UPDATED>
+<!--342-->              <UPDATED><![CDATA[2008-07-15 17:07:21.0]]></UPDATED>
 <!--342 UPDATEDBY-->
-<!--342-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--342-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--342 NAME-->
-<!--342-->              <NAME><![CDATA[Virgin Islands U.s.]]></NAME>
+<!--342-->              <NAME><![CDATA[Virgin Islands U.S.]]></NAME>
 <!--342 DESCRIPTION-->
-<!--342-->              <DESCRIPTION><![CDATA[Virgin Islands U.s.]]></DESCRIPTION>
+<!--342-->              <DESCRIPTION><![CDATA[Virgin Islands U.S.]]></DESCRIPTION>
 <!--342 COUNTRYCODE-->
 <!--342-->              <COUNTRYCODE><![CDATA[VI]]></COUNTRYCODE>
 <!--342 HASREGION-->
@@ -8753,13 +8757,13 @@
 <!--349 CREATEDBY-->
 <!--349-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--349 UPDATED-->
-<!--349-->              <UPDATED><![CDATA[2007-12-21 15:27:01.0]]></UPDATED>
+<!--349-->              <UPDATED><![CDATA[2008-07-15 17:03:01.0]]></UPDATED>
 <!--349 UPDATEDBY-->
 <!--349-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--349 NAME-->
 <!--349-->              <NAME><![CDATA[Republic of Serbia]]></NAME>
 <!--349 DESCRIPTION-->
-<!--349-->              <DESCRIPTION><![CDATA[Republika Srbija]]></DESCRIPTION>
+<!--349-->              <DESCRIPTION><![CDATA[Republic of Serbia]]></DESCRIPTION>
 <!--349 COUNTRYCODE-->
 <!--349-->              <COUNTRYCODE><![CDATA[RS]]></COUNTRYCODE>
 <!--349 HASREGION-->
@@ -8796,11 +8800,13 @@
 <!--350 CREATEDBY-->
 <!--350-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--350 UPDATED-->
-<!--350-->              <UPDATED><![CDATA[2008-01-11 10:26:15.0]]></UPDATED>
+<!--350-->              <UPDATED><![CDATA[2008-07-15 16:58:31.0]]></UPDATED>
 <!--350 UPDATEDBY-->
 <!--350-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--350 NAME-->
 <!--350-->              <NAME><![CDATA[Montenegro]]></NAME>
+<!--350 DESCRIPTION-->
+<!--350-->              <DESCRIPTION><![CDATA[Montenegro]]></DESCRIPTION>
 <!--350 COUNTRYCODE-->
 <!--350-->              <COUNTRYCODE><![CDATA[ME]]></COUNTRYCODE>
 <!--350 HASREGION-->
