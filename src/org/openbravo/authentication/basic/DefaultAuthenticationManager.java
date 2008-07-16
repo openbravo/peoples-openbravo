@@ -105,7 +105,8 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
     if (request.getSession().getAttribute("#Authenticated_user") != "" || request.getSession().getAttribute("#Authenticated_user") != null) {
       request.getSession(true).removeAttribute("#Authenticated_user");
     }
-    response.sendRedirect(HttpBaseUtils.getLocalAddress(request));
+    if(!response.isCommitted())
+      response.sendRedirect(HttpBaseUtils.getLocalAddress(request));
   }
 
 }
