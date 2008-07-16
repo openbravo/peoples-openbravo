@@ -52,6 +52,7 @@ public class PeriodicHeartbeat implements BackgroundProcess {
   public static final String HOST = "butler.openbravo.com";
   public static final int PORT = 443;
   public static final String PATH = "/heartbeat-server/heartbeat";
+  public static final String CERT_ALIAS = "openbravo-butler";
   
   public void processPL(PeriodicBackground periodicBG, boolean directProcess) throws Exception {
     
@@ -262,7 +263,7 @@ public class PeriodicHeartbeat implements BackgroundProcess {
       log4j.error(e.getMessage(), e);
     }
     log4j.info("Heartbeat sending: '" + queryStr + "'");
-    return HttpsUtils.sendSecure(url, queryStr, "changeit"); 
+    return HttpsUtils.sendSecure(url, queryStr, CERT_ALIAS, "changeit"); 
   }
   
   public void logSystemInfo(ConnectionProvider conn, Properties systemInfo) throws ServletException {
@@ -297,17 +298,25 @@ public class PeriodicHeartbeat implements BackgroundProcess {
    * @return
    */
   public List<Alert> parseUpdates(String response) {
-    log4j.info("Generating update alerts from heartbeat response...");
+    log4j.info("Generating update alerts from heartbeat response: " + response);
     if (response == null)
       return null;
     String[] updates = response.split("::");
     List<Alert> alerts = new ArrayList<Alert>();
+    Pattern pattern = Pattern.compile("\\[recordId=\\d+\\]");
     for (String update : updates) {
-      Alert alert = new Alert(1005400000);
-      alert.setDescription(update);
+      String recordId = null;
+      String description = update;
+      Matcher matcher = pattern.matcher(update);
+      if (matcher.find()) {
+        String s = matcher.group();
+        recordId = s.substring(s.indexOf('=') + 1, s.indexOf(']'));
+        description = update.substring(update.indexOf(']') + 1);
+      }
+      Alert alert = new Alert(1005400000, recordId); 
+      alert.setDescription(description);
       alerts.add(alert);
     }
-    
     return alerts;
   }
  

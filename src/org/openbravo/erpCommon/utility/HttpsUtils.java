@@ -30,7 +30,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,20 +40,15 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
-import java.net.SocketException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.security.GeneralSecurityException;
-import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -114,7 +108,7 @@ public class HttpsUtils {
     return ks;
   }
   
-  static void installCert(URL url, String passphrase) throws GeneralSecurityException {
+  static void installCert(URL url, String alias, String passphrase) throws GeneralSecurityException {
     
     KeyStore ks = null;
     SSLContext context = null;
@@ -163,8 +157,6 @@ public class HttpsUtils {
       }
     }
     
-    String alias = null;
-    
     X509Certificate[] chain = tm.chain;
     if (chain == null) {
       throw new GeneralSecurityException("No certificates found at " + url.toString());
@@ -175,7 +167,6 @@ public class HttpsUtils {
       String subjectDNName = cert.getSubjectDN().getName();
       if (subjectDNName.contains("Openbravo Heartbeat")) {
         log4j.info("Found certificate matching \'Openbravo Heartbeat\'");
-        alias = host + "-" + (i + 1);
         OutputStream out = null;
         try {
           ks.setCertificateEntry(alias, cert);
@@ -263,15 +254,18 @@ public class HttpsUtils {
     return result;
   }
   
-  public static String sendSecure(URL url, String data, String passphrase) 
-      throws GeneralSecurityException, IOException {    
+  public static String sendSecure(URL url, String data, String alias, String passphrase) throws GeneralSecurityException, IOException {
     KeyStore ks = null;
     HttpsURLConnection conn = null;
     
     try {
       ks = loadKeyStore(passphrase);
-    } catch (KeyStoreException e) { // Certificate not installed yet. Install and try again.
-      installCert(url, passphrase);
+    } catch (KeyStoreException e) { // Problem loading keystore
+      log4j.error(e.getMessage(), e);
+    }
+    // check if the Certificate for alias is installed. If not, install it.
+    if (ks != null && !ks.containsAlias(alias)) {
+      installCert(url, alias, passphrase);
       ks = loadKeyStore(passphrase);
     }
     // Now try and establish the secure connection
@@ -378,5 +372,6 @@ public class HttpsUtils {
       return false;
     }
     return true;
-  }  
+  }
+  
 }

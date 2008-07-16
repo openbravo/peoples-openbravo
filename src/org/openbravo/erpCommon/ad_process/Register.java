@@ -35,7 +35,6 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.ad_background.PeriodicHeartbeat;
-import org.openbravo.erpCommon.ad_forms.Registration;
 import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -134,7 +133,7 @@ public class Register extends HttpSecureAppServlet {
       e.printStackTrace(); // Won't happen.
     }
     log4j.info(("Sending registration info: '" + encodedQueryStr + "'"));
-    return HttpsUtils.sendSecure(url, encodedQueryStr, "changeit");
+    return HttpsUtils.sendSecure(url, encodedQueryStr, PeriodicHeartbeat.CERT_ALIAS, "changeit");
   }
   
   private String createQueryString(RegisterData data) {  
