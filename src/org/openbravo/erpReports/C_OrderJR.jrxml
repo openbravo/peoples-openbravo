@@ -167,7 +167,7 @@
 		<group  name="C_ORDER_ID" isStartNewPage="true" isResetPageNumber="true" >
 			<groupExpression><![CDATA[$F{C_ORDER_ID}]]></groupExpression>
 			<groupHeader>
-			<band height="209"  isSplitAllowed="true" >
+			<band height="220"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="341"
@@ -320,7 +320,7 @@
 						x="1"
 						y="196"
 						width="150"
-						height="12"
+						height="20"
 						key="textField-8"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
@@ -356,7 +356,7 @@
 						x="390"
 						y="196"
 						width="80"
-						height="12"
+						height="20"
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right">
