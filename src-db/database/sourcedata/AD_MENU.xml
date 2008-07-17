@@ -3210,17 +3210,17 @@
 <!--238 AD_ORG_ID-->
 <!--238-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--238 ISACTIVE-->
-<!--238-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--238-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--238 CREATED-->
 <!--238-->              <CREATED><![CDATA[2000-05-22 21:37:39.0]]></CREATED>
 <!--238 CREATEDBY-->
 <!--238-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--238 UPDATED-->
-<!--238-->              <UPDATED><![CDATA[2001-01-11 20:21:44.0]]></UPDATED>
+<!--238-->              <UPDATED><![CDATA[2008-07-16 10:17:10.0]]></UPDATED>
 <!--238 NAME-->
 <!--238-->              <NAME><![CDATA[Mail Template]]></NAME>
 <!--238 UPDATEDBY-->
-<!--238-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--238-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--238 DESCRIPTION-->
 <!--238-->              <DESCRIPTION><![CDATA[Maintain Mail Template]]></DESCRIPTION>
 <!--238 ISSUMMARY-->

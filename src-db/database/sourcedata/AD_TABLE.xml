@@ -8182,9 +8182,9 @@ Run Synchronize Terminology to update menu translation. You need only to transla
 <!--416 CREATEDBY-->
 <!--416-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--416 UPDATED-->
-<!--416-->              <UPDATED><![CDATA[2001-01-11 18:05:16.0]]></UPDATED>
+<!--416-->              <UPDATED><![CDATA[2008-07-15 20:26:47.0]]></UPDATED>
 <!--416 UPDATEDBY-->
-<!--416-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--416-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--416 NAME-->
 <!--416-->              <NAME><![CDATA[R_MailText]]></NAME>
 <!--416 DESCRIPTION-->
@@ -8212,7 +8212,7 @@ Run Synchronize Terminology to update menu translation. You need only to transla
 <!--416 SQL_RECORD_IDENTIFIER-->
 <!--416-->              <SQL_RECORD_IDENTIFIER><![CDATA[SELECT TO_CHAR(COALESCE(TO_CHAR(T.Name),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, R_MailText T WHERE R_MailText_ID=:c_ID]]></SQL_RECORD_IDENTIFIER>
 <!--416 DEVELOPMENTSTATUS-->
-<!--416-->              <DEVELOPMENTSTATUS><![CDATA[NI]]></DEVELOPMENTSTATUS>
+<!--416-->              <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--416**************--></AD_TABLE>
 
 <!--417**************--><AD_TABLE>

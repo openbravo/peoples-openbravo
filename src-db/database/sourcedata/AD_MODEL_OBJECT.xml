@@ -12660,15 +12660,15 @@
 <!--803404 AD_ORG_ID-->
 <!--803404-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--803404 ISACTIVE-->
-<!--803404-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--803404-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--803404 CREATED-->
 <!--803404-->              <CREATED><![CDATA[2007-07-25 18:28:56.0]]></CREATED>
 <!--803404 CREATEDBY-->
 <!--803404-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--803404 UPDATED-->
-<!--803404-->              <UPDATED><![CDATA[2007-07-25 18:28:56.0]]></UPDATED>
+<!--803404-->              <UPDATED><![CDATA[2008-07-15 20:28:45.0]]></UPDATED>
 <!--803404 UPDATEDBY-->
-<!--803404-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--803404-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--803404 ACTION-->
 <!--803404-->              <ACTION><![CDATA[W]]></ACTION>
 <!--803404 AD_TAB_ID-->
@@ -12687,15 +12687,15 @@
 <!--803405 AD_ORG_ID-->
 <!--803405-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--803405 ISACTIVE-->
-<!--803405-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--803405-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--803405 CREATED-->
 <!--803405-->              <CREATED><![CDATA[2007-07-25 18:28:56.0]]></CREATED>
 <!--803405 CREATEDBY-->
 <!--803405-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--803405 UPDATED-->
-<!--803405-->              <UPDATED><![CDATA[2007-07-25 18:28:56.0]]></UPDATED>
+<!--803405-->              <UPDATED><![CDATA[2008-07-15 20:28:45.0]]></UPDATED>
 <!--803405 UPDATEDBY-->
-<!--803405-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--803405-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--803405 ACTION-->
 <!--803405-->              <ACTION><![CDATA[W]]></ACTION>
 <!--803405 AD_TAB_ID-->
