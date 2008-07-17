@@ -39,6 +39,9 @@ public class DocLine_Material extends DocLine {
         /** Locator         */
         public String         m_M_Locator_ID = "";
         public String         m_M_LocatorTo_ID = "";
+        public String         m_M_Warehouse_ID = "";
+        /** Production         */
+        public String         m_Productiontype = "";
 
         /**
          *  Set Trasaction Quantity and Storage Qty
