@@ -20,7 +20,6 @@
 package org.openbravo.erpCommon.ad_background;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
@@ -31,7 +30,6 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,6 +39,7 @@ import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Alert;
 import org.openbravo.erpCommon.utility.HttpsUtils;
+import org.openbravo.erpCommon.utility.SystemInfo;
 
 public class PeriodicHeartbeat implements BackgroundProcess {
   
@@ -57,7 +56,7 @@ public class PeriodicHeartbeat implements BackgroundProcess {
   public void processPL(PeriodicBackground periodicBG, boolean directProcess) throws Exception {
     
     try {
-      String isheartbeatactive = PeriodicHeartbeatData.selectIsheartbeatactive(periodicBG.conn);
+      String isheartbeatactive = SystemInfo.get(SystemInfo.Item.ISHEARTBEATACTIVE);
       if (isheartbeatactive != null && isheartbeatactive.equals("Y") &&
           isInternetAvailable(periodicBG.conn)) {
         periodicBG.addLog("Starting Heartbeat Background Process...");
@@ -99,10 +98,15 @@ public class PeriodicHeartbeat implements BackgroundProcess {
     saveUpdateAlerts(conn, updates);
   }
   
+  /**
+   * @param conn
+   * @return
+   * @throws ServletException
+   */
   public static boolean isInternetAvailable(ConnectionProvider conn) 
       throws ServletException {
     log4j.info("Checking for internet connection...");
-    String isproxyrequired = PeriodicHeartbeatData.selectIsproxyrequired(conn);
+    String isproxyrequired = SystemInfo.get(SystemInfo.Item.ISPROXYREQUIRED);
     if (isproxyrequired != null && isproxyrequired.equals("Y")) {
       String proxyServer = PeriodicHeartbeatData.selectProxyServer(conn);
       String proxyPort = PeriodicHeartbeatData.selectProxyPort(conn);
@@ -117,112 +121,13 @@ public class PeriodicHeartbeat implements BackgroundProcess {
   }
   
   /**
-   * Collects system information from the database and system properties
-   * and returns the key value pairs in a Properties object.
    * @param conn
    * @return
    * @throws ServletException
    */
-  public Properties getSystemInfo(ConnectionProvider conn) 
-      throws ServletException {
-    log4j.info("Gathering system information...");
-    Properties systemInfo = new Properties();
-    
-    // Get required data from AD_SYSTEM_INFO
-    PeriodicHeartbeatData[] data = PeriodicHeartbeatData.selectSystemProperties(conn);
-    if (data.length > 0) {
-      
-      // Check to see if system has a system identifier. If not, set one.
-      String systemIdentifier = data[0].systemIdentifier;
-      if (systemIdentifier == null || systemIdentifier.equals("")) {
-        systemIdentifier = UUID.randomUUID().toString();
-        PeriodicHeartbeatData.updateSystemIdentifier(conn, systemIdentifier);
-      }
-      systemInfo.put("systemIdentifier", systemIdentifier);
-      
-      String db = conn.getRDBMS();
-      if (db != null && db.equals("ORACLE")) {
-        String dbVersion = PeriodicHeartbeatData.selectOracleVersion(conn);
-        systemInfo.put("dbVersion", getVersion(dbVersion));
-      } else if (db != null && db.equals("POSTGRE")) {
-        systemInfo.put("dbVersion", PeriodicHeartbeatData.selectPostregresVersion(conn));
-      }
-      systemInfo.put("db", db);
-      
-      String webserver = data[0].webserver;
-      if (webserver == null || webserver.equals("")) {
-        try {
-          URL url = new URL("http://openbravo.com");
-          HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
-          httpConn.connect();
-          if (httpConn.getResponseCode() == 200) {
-            String server = httpConn.getHeaderField("Server");
-            
-            webserver = server.split("/")[0];
-            String webserverVersion = server.split("/")[1];
-            data[0].webserver = webserver;
-            data[0].webserverVersion = webserverVersion;
-            PeriodicHeartbeatData.updateWebserver(conn, webserver, webserverVersion);
-          } else {
-            throw new Exception();
-          }
-        } catch (Exception e) {
-          log4j.error("Unable to get Web Server and version");
-        }
-        
-      }
-      
-      systemInfo.put("servletContainer", data[0].servletContainer);
-      systemInfo.put("servletContainerVersion", data[0].servletContainerVersion);
-      systemInfo.put("antVersion", getVersion(data[0].antVersion));
-      systemInfo.put("obVersion", data[0].obVersion);
-      systemInfo.put("obInstallMode", data[0].obInstallmode);
-      systemInfo.put("codeRevision", data[0].codeRevision);
-      systemInfo.put("webserver", data[0].webserver);
-      systemInfo.put("webserverVersion", data[0].webserverVersion);
-      systemInfo.put("numRegisteredUsers", PeriodicHeartbeatData.selectNumRegisteredUsers(conn));
-      
-      
-      systemInfo.put("isheartbeatactive", data[0].isheartbeatactive);
-      systemInfo.put("isproxyrequired", data[0].isproxyrequired);
-      systemInfo.put("proxyServer", data[0].proxyServer);
-      systemInfo.put("proxyPort", data[0].proxyPort);
-      
-      /* activityRate mapping
-       * Range:  0..............1.- Inactive
-         1-100..........2.- Low
-         101-500........3.- Medium
-         500-1000.......4.- High
-         1001 or more...5.- Very High
-      */
-      int activityRate = Integer.valueOf(PeriodicHeartbeatData.selectActivityRate(conn));
-      if (activityRate == 0) { systemInfo.put("activityRate", "1"); }
-      else if (activityRate > 0 && activityRate < 101) { systemInfo.put("activityRate", "2"); }
-      else if (activityRate > 100 && activityRate < 501) { systemInfo.put("activityRate", "3"); }
-      else if (activityRate > 500 && activityRate < 1001) { systemInfo.put("activityRate", "4"); }
-      else if (activityRate > 1001) { systemInfo.put("activityRate", "5"); }
-      
-      /* complexityRate mapping
-       * Range:
-         0-2 ............1.- Low
-         3-6.............2.- Medium
-         7 or more.......3.- High
-       */
-      int complexityRate = Integer.valueOf(PeriodicHeartbeatData.selectComplexityRate(conn));
-      if (complexityRate > 0 && complexityRate < 3) { systemInfo.put("complexityRate", "1"); }
-      else if (complexityRate > 2 && complexityRate < 7) { systemInfo.put("complexityRate", "2"); }
-      else if (complexityRate > 7) { systemInfo.put("complexityRate", "3"); }
-    }
-    
-    // Get required data from System properties
-    Properties props = System.getProperties();
-    if     (props != null) {
-      systemInfo.put("os", props.getProperty("os.name"));
-      systemInfo.put("osVersion", props.getProperty("os.version"));
-      systemInfo.put("javaVersion", props.getProperty("java.version"));
-    }
-    
-    return systemInfo;
+  public Properties getSystemInfo(ConnectionProvider conn) throws ServletException {
+    SystemInfo.load(conn);
+    return SystemInfo.getSystemInfo();
   }
   
   /**
@@ -333,23 +238,4 @@ public class PeriodicHeartbeat implements BackgroundProcess {
     }
   }
   
-  /**
-   * Returns the string representation of a numerical version from a
-   * longer string. For example, given the string:
-   * 'Apache Ant version 1.7.0 compiled on August 29 2007' getVersion() will
-   * return '1.7.0'
-   * @param str
-   * @return
-   */
-  public String getVersion(String str) {
-    String version = "";
-    if (str == null)
-      return "";
-    Pattern pattern = Pattern.compile("((\\d+\\.)+)\\d+");
-    Matcher matcher = pattern.matcher(str);
-    if (matcher.find()) {
-      version = matcher.group();
-    }
-    return version;
-  }
 }
