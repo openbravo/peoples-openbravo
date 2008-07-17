@@ -1866,7 +1866,15 @@ public class TableSQLData {
    * @return String with the sql.
    */
   public String getSQL() {
-    return getSQL(null, null, null, null, null, null, 0, 0);
+    return getSQL(null, null, null, null, null, null, 0, 0, false);
+  }
+  
+  /**
+   * Get the sql generated with order clause by default
+   * @return String with the sql
+   */  
+  public String getSQL(Vector<String> _FilterFields, Vector<String> _FilterParams, Vector<String> _OrderFields, Vector<String> _OrderParams, String selectFields, Vector<String>_OrderSimple, int startPosition, int rangeLength) {
+    return getSQL(_FilterFields, _FilterParams, _OrderFields, _OrderParams, selectFields, _OrderSimple, startPosition, rangeLength, true);
   }
 
   /**
@@ -1882,7 +1890,7 @@ public class TableSQLData {
    * @param rangeLength: int with the number of rows to be shown
    * @return String with the generated sql.
    */
-  public String getSQL(Vector<String> _FilterFields, Vector<String> _FilterParams, Vector<String> _OrderFields, Vector<String> _OrderParams, String selectFields, Vector<String>_OrderSimple, int startPosition, int rangeLength) {
+  public String getSQL(Vector<String> _FilterFields, Vector<String> _FilterParams, Vector<String> _OrderFields, Vector<String> _OrderParams, String selectFields, Vector<String>_OrderSimple, int startPosition, int rangeLength, boolean sorted) {
     StringBuffer text = new StringBuffer();
     boolean hasWhere = false;
     Vector<QueryFieldStructure> aux = null;
@@ -1992,24 +2000,26 @@ public class TableSQLData {
     
     
     //Order by
+    
     setOrderBy(_OrderFields, _OrderParams);
     aux = getOrderByFields();
     boolean hasOrder = false;
     StringBuffer txtAuxOrderBy = new StringBuffer();
-    if (aux!=null) {
-      for (int i=0;i<aux.size();i++) {
-        QueryFieldStructure auxStructure = aux.elementAt(i);
+    if(sorted) {
+      if (aux!=null) {
+        for (int i=0;i<aux.size();i++) {
+          QueryFieldStructure auxStructure = aux.elementAt(i);
+          if (!hasOrder) txtAuxOrderBy.append("ORDER BY ");
+          else txtAuxOrderBy.append(", ");
+          hasOrder=true;
+          txtAuxOrderBy.append(auxStructure.toString());
+        }
         if (!hasOrder) txtAuxOrderBy.append("ORDER BY ");
         else txtAuxOrderBy.append(", ");
         hasOrder=true;
-        txtAuxOrderBy.append(auxStructure.toString());
+        txtAuxOrderBy.append(getTableName()).append(".").append(getKeyColumn());
       }
-      if (!hasOrder) txtAuxOrderBy.append("ORDER BY ");
-      else txtAuxOrderBy.append(", ");
-      hasOrder=true;
-      txtAuxOrderBy.append(getTableName()).append(".").append(getKeyColumn());
     }
-
     if (hasWhere) {
       if (hasRange) txtAuxWhere.append(txtAuxOrderBy.toString()); //Internal order by only for ranges
       if ((!hasRange)||(getPool().getRDBMS().equalsIgnoreCase("ORACLE"))) txtAuxWhere.append(")\n");

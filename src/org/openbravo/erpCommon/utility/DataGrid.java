@@ -325,7 +325,7 @@ public class DataGrid extends HttpSecureAppServlet {
       try{
         Vector<String> filter = new Vector<String>();
         filter.addElement(tableSQL.getTableName() + "." + tableSQL.getKeyColumn() + " IN " + rows);
-        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, "SUM(" + columnname + ") AS TOTAL", filter, new Vector<String>(), 0,0);
+        String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, "SUM(" + columnname + ") AS TOTAL", filter, new Vector<String>(), 0,0, false);
         ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValues());
         data = execquery.select();
       } catch (Exception e) { 
