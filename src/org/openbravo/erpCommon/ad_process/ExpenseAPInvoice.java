@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.ad_process;
 
 import org.openbravo.erpCommon.utility.*;
+import org.openbravo.erpCommon.ad_actionButton.ActionButtonDefaultData;
 import org.openbravo.erpCommon.businessUtility.*;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -236,8 +237,15 @@ String strProductRMailTextID = "";
   void printPage(HttpServletResponse response, VariablesSecureApp vars, String strcBpartnerId, String strDatereportFrom, String strDatereportTo, String strDateInvoiced) throws IOException, ServletException {
       if (log4j.isDebugEnabled()) log4j.debug("Output: process ExpenseAPInvoice");
       
+      ActionButtonDefaultData[] data = null;      
+      String strHelp="", strDescription="", strProcessId="187";
       String[] discard = {""};
-      String strHelp = ExpenseAPInvoiceData.help(this, "S_ExpenseAPInvoice");
+      if (vars.getLanguage().equals("en_US")) data = ActionButtonDefaultData.select(this, strProcessId);
+      else data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
+      if (data!=null && data.length!=0) {
+        strDescription = data[0].description;
+        strHelp = data[0].help;
+      }
       if (strHelp.equals("")) discard[0] = new String("helpDiscard");
       
       XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_process/ExpenseAPInvoice").createXmlDocument();
@@ -249,11 +257,11 @@ String strProductRMailTextID = "";
       xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
       xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
       xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("description", strDescription);
       xmlDocument.setParameter("help", strHelp);
       xmlDocument.setParameter("dateFrom", strDatereportFrom);
       xmlDocument.setParameter("dateTo", strDatereportTo);
       xmlDocument.setParameter("dateInvoiced", strDateInvoiced);
-      xmlDocument.setParameter("description", ExpenseAPInvoiceData.description(this, "S_ExpenseAPInvoice"));
 
       try {
     	  ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "C_BPartner_ID", "C_BPartner Employee w Address", "", Utility.getContext(this, vars, "#User_Client",""), Utility.getContext(this, vars, "#AD_Client_ID", "ExpenseAPInvoice"), 0);

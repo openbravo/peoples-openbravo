@@ -298,9 +298,16 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
   void printPage(HttpServletResponse response, VariablesSecureApp vars, String strDatefrom,String strDateto,String strDateOrdered,String strBPartner, String strOrganization, String strCompleteAuto) throws IOException, ServletException {
 	  if (log4j.isDebugEnabled()) log4j.debug("Output: process ExpenseSOrder");
       
+  	  ActionButtonDefaultData[] data = null;      
+      String strHelp="", strDescription="", strProcessId="186";
       String[] discard = {""};
-      String strHelp = ExpenseSOrderData.help(this, "S_ExpenseSOrder");
-      if (strHelp.equals("")) discard[0] = new String("helpDiscard");
+      if (vars.getLanguage().equals("en_US")) data = ActionButtonDefaultData.select(this, strProcessId);
+      else data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
+      if (data!=null && data.length!=0) {
+        strDescription = data[0].description;
+        strHelp = data[0].help;
+      }
+      if (strHelp.equals("")) discard[0] = new String("helpDiscard");  
 
       XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/ExpenseSOrder").createXmlDocument();
       
@@ -311,21 +318,21 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
       xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
       xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
       xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("description", strDescription);
       xmlDocument.setParameter("help", strHelp);
       xmlDocument.setParameter("Bpartnerdescription", ExpenseSOrderData.selectBpartner(this, strBPartner));
       xmlDocument.setParameter("BpartnerId", strBPartner);
       xmlDocument.setParameter("adOrgId", strOrganization);
-	  xmlDocument.setParameter("dateFrom", strDatefrom);
+	    xmlDocument.setParameter("dateFrom", strDatefrom);
       xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
       xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-	  xmlDocument.setParameter("dateTo", strDateto);
+	    xmlDocument.setParameter("dateTo", strDateto);
       xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
       xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
       xmlDocument.setParameter("dateOrdered", strDateOrdered);
       xmlDocument.setParameter("dateOrddisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
       xmlDocument.setParameter("dateOrdsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
       xmlDocument.setParameter("paramShowNullComplete", strCompleteAuto);
-      xmlDocument.setParameter("description", ExpenseSOrderData.description(this, "S_ExpenseSOrder"));
       xmlDocument.setData("structureOrganizacion", OrganizationComboData.select(this, vars.getRole()));
       
       //New interface parameters

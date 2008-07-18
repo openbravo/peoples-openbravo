@@ -141,30 +141,6 @@
     <Parameter name="adOrgId"/>
   </SqlMethod>
   
-   <SqlMethod name="help" type="preparedStatement" return="string" default="">
-     <SqlMethodComment></SqlMethodComment>
-     <Sql>
-       <![CDATA[
-       SELECT HELP
-       FROM AD_PROCESS
-       WHERE VALUE = TO_CHAR(?)
-      ]]>
-    </Sql>
-    <Parameter name="process"/>
-  </SqlMethod>
-  
-  <SqlMethod name="description" type="preparedStatement" return="string" default="">
-     <SqlMethodComment></SqlMethodComment>
-     <Sql>
-       <![CDATA[
-       SELECT DESCRIPTION
-       FROM AD_PROCESS
-       WHERE VALUE = TO_CHAR(?)
-      ]]>
-    </Sql>
-    <Parameter name="process"/>
-  </SqlMethod>
-  
   <SqlMethod name="cDoctypeId" type="preparedStatement" return="string" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
