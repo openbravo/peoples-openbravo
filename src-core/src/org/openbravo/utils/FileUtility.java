@@ -48,7 +48,7 @@ public class FileUtility {
 
     if (newFile) {
       File file = new File(path, name);
-      if (file.canRead()) throw new IllegalArgumentException("file: " + path + "\\" + name + " allready exists");
+      if (file.canRead()) throw new IllegalArgumentException("file: " + path + "\\" + name + " already exists");
     }
 
     dir = path;

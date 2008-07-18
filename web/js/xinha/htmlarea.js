@@ -585,7 +585,7 @@ HTMLArea.Config.prototype.hideSomeButtons = function(remove) {
 };
 
 /** Helper Function: add buttons/drop-downs boxes with title or separator to the toolbar
- * if the buttons/drop-downs boxes doesn't allready exists.
+ * if the buttons/drop-downs boxes do not already exist.
  * id: button or selectbox (as array with separator or title)
  * where: button or selectbox (as array if the first is not found take the second and so on)
  * position:
