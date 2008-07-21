@@ -20,6 +20,7 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import java.io.IOException;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,6 +32,11 @@ import org.openbravo.utils.FormatUtilities;
 
 public abstract class CalloutHelper extends HttpSecureAppServlet {
 
+  public void init (ServletConfig config) {
+    super.init(config);
+    boolHist = false;
+  }
+	
   abstract void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTabId, String windowId) throws IOException, ServletException;
   
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
