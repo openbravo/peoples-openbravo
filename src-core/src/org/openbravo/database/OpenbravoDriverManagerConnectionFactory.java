@@ -15,14 +15,14 @@ import java.sql.*;
 import java.util.Properties;
 import org.apache.commons.dbcp.*;
 
-public class OpenBravoDriverManagerConnectionFactory implements ConnectionFactory {
+public class OpenbravoDriverManagerConnectionFactory implements ConnectionFactory {
   protected String _connectUri;
   protected String _uname;
   protected String _passwd;
   protected Properties _props;
   protected String _dbSessionConfig;
 
-  public OpenBravoDriverManagerConnectionFactory(String connectUri, Properties props) {
+  public OpenbravoDriverManagerConnectionFactory(String connectUri, Properties props) {
     _connectUri = null;
     _uname = null;
     _passwd = null;
@@ -31,7 +31,7 @@ public class OpenBravoDriverManagerConnectionFactory implements ConnectionFactor
     _props = props;
   }
 
-  public OpenBravoDriverManagerConnectionFactory(String connectUri, String uname, String passwd, String dbSessionConfig) {
+  public OpenbravoDriverManagerConnectionFactory(String connectUri, String uname, String passwd, String dbSessionConfig) {
     _connectUri = null;
     _uname = null;
     _passwd = null;

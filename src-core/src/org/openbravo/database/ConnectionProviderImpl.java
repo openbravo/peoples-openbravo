@@ -133,7 +133,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     connectionPool.setTestWhileIdle(false);
 
     KeyedObjectPoolFactory keyedObject = new StackKeyedObjectPoolFactory();
-    ConnectionFactory connectionFactory = new OpenBravoDriverManagerConnectionFactory(dbServer, dbLogin, dbPassword, dbSessionConfig);
+    ConnectionFactory connectionFactory = new OpenbravoDriverManagerConnectionFactory(dbServer, dbLogin, dbPassword, dbSessionConfig);
     @SuppressWarnings("unused") //required by dbcp
 	PoolableConnectionFactory poolableConnectionFactory = new PoolableConnectionFactory(connectionFactory,connectionPool,keyedObject,null,false,true);
 

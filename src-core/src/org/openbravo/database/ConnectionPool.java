@@ -24,7 +24,7 @@ import org.apache.commons.dbcp.PoolableConnectionFactory;
 import org.apache.commons.pool.KeyedObjectPoolFactory;
 import org.apache.commons.pool.impl.StackKeyedObjectPoolFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
-import org.openbravo.database.OpenBravoDriverManagerConnectionFactory;
+import org.openbravo.database.OpenbravoDriverManagerConnectionFactory;
 
 /**
  * ConnectionPool
@@ -69,7 +69,7 @@ public class ConnectionPool {
     connectionPool.setTestWhileIdle(false);
 
     KeyedObjectPoolFactory keyedObject = new StackKeyedObjectPoolFactory();
-    ConnectionFactory connectionFactory = new OpenBravoDriverManagerConnectionFactory(_server, _login, _password, _dbSessionConfig);
+    ConnectionFactory connectionFactory = new OpenbravoDriverManagerConnectionFactory(_server, _login, _password, _dbSessionConfig);
     @SuppressWarnings("unused") //required by dbcp
 	PoolableConnectionFactory poolableConnectionFactory = new PoolableConnectionFactory(connectionFactory,connectionPool,keyedObject, null,false,true);
 
