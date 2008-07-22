@@ -57,7 +57,7 @@
         <Parameter name="adUserClient" type="replace" optional="true" after="bp.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="bp.AD_Org_ID IN (" text="'1'"/>
         <Parameter name="key" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(bp.Value) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="name" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(bp.Name) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="name" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND C_IGNORE_ACCENT(bp.Name) LIKE C_IGNORE_ACCENT(?) ]]></Parameter>
         <Parameter name="contact" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(COALESCE(c.name,u.name)) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="codigoPostal" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(l.Postal) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="provincia" optional="true" after="AND bp.IsActive='Y'"><![CDATA[AND UPPER(r.NAME) LIKE UPPER(?)]]></Parameter>
