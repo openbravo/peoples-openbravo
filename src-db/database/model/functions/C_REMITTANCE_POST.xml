@@ -78,6 +78,7 @@
     v_vDPManagementID NUMBER;
     v_BankAccountID NUMBER;
     v_line NUMBER;
+    v_remittanceLineCount NUMBER;
     FINISH_PROCESS BOOLEAN:=FALSE;
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
@@ -126,6 +127,17 @@
       C_BANKACCOUNT a
     WHERE c_Remittance_ID=v_Record_Id
       AND r.C_BANKACCOUNT_ID=a.c_bankAccount_ID;
+
+    -- check if there are any active remittance lines at all
+    SELECT COUNT(*)
+    INTO v_remittanceLineCount
+    FROM C_REMITTANCELINE rl
+    WHERE rl.c_remittance_id=v_Record_Id
+      AND rl.isactive='Y';
+    
+    IF(v_remittanceLineCount = 0) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@C_REMITTANCE_POST_NO_LINES@');
+    END IF;
 
     IF(v_Processing='Y') THEN
       RAISE_APPLICATION_ERROR(-20000, '@OtherProcessActive@') ;
