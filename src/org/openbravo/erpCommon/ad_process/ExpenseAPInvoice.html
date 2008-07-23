@@ -113,10 +113,11 @@ function depurar() {
 	}
 
 	function onResizeDo(){
+		resizeArea();
 	}
 	</SCRIPT>
 </HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();"id="body" onresize="resizeArea();">
+<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();" id="body">
 <FORM id="form" method="POST" action="ExpenseAPInvoice.html" name="frmMain">
   <INPUT type="hidden" name="Command">
 <INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>
