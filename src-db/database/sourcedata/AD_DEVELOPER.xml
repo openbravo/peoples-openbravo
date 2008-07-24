@@ -2696,6 +2696,35 @@
 <!--10093-->              <SVNUSER><![CDATA[jalegria]]></SVNUSER>
 <!--10093**************--></AD_DEVELOPER>
 
+<!--10094**************--><AD_DEVELOPER>
+<!--10094 AD_DEVELOPER_ID-->
+<!--10094-->              <AD_DEVELOPER_ID><![CDATA[10094]]></AD_DEVELOPER_ID>
+<!--10094 AD_CLIENT_ID-->
+<!--10094-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--10094 AD_ORG_ID-->
+<!--10094-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--10094 ISACTIVE-->
+<!--10094-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--10094 CREATED-->
+<!--10094-->              <CREATED><![CDATA[2008-07-24 11:35:00.0]]></CREATED>
+<!--10094 CREATEDBY-->
+<!--10094-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--10094 UPDATED-->
+<!--10094-->              <UPDATED><![CDATA[2008-07-24 11:35:00.0]]></UPDATED>
+<!--10094 UPDATEDBY-->
+<!--10094-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--10094 NAME-->
+<!--10094-->              <NAME><![CDATA[Mohammad Jaffar Fahmi]]></NAME>
+<!--10094 NICKNAME-->
+<!--10094-->              <NICKNAME><![CDATA[mjfahmi]]></NICKNAME>
+<!--10094 EMAIL-->
+<!--10094-->              <EMAIL><![CDATA[mjfahmi at yahoo dot com]]></EMAIL>
+<!--10094 COMPANY-->
+<!--10094-->              <COMPANY><![CDATA[Soul-it]]></COMPANY>
+<!--10094 SVNUSER-->
+<!--10094-->              <SVNUSER><![CDATA[mjfahmi]]></SVNUSER>
+<!--10094**************--></AD_DEVELOPER>
+
 <!--
 ************************
 0. End of Core Range.
