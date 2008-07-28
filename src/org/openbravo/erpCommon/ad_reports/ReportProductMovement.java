@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -87,7 +87,7 @@ public class ReportProductMovement extends HttpSecureAppServlet {
     }
     if (vars.commandIn("FIND", "DIRECT")){
       if (strInout.equals("-1")){
-        data = ReportProductMovementData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"), Utility.getContext(this, vars, "#User_Org", "ReportProductMovement"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strcBpartnerId, strmProductId);
+        data = ReportProductMovementData.select(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"), Utility.getContext(this, vars, "#User_Org", "ReportProductMovement"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strcBpartnerId, strmProductId);
         if (data == null || data.length == 0){
           discard[0] = "selEliminar1";
           data = ReportProductMovementData.set();
