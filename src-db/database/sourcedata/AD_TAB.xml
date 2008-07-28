@@ -14613,7 +14613,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800002 CREATEDBY-->
 <!--800002-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800002 UPDATED-->
-<!--800002-->              <UPDATED><![CDATA[2008-03-23 21:17:32.0]]></UPDATED>
+<!--800002-->              <UPDATED><![CDATA[2008-07-28 16:09:35.0]]></UPDATED>
 <!--800002 UPDATEDBY-->
 <!--800002-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800002 NAME-->
@@ -14640,14 +14640,14 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800002-->              <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--800002 HASTREE-->
 <!--800002-->              <HASTREE><![CDATA[N]]></HASTREE>
+<!--800002 WHERECLAUSE-->
+<!--800002-->              <WHERECLAUSE><![CDATA[(C_Project.ProjectCategory<>'S' OR C_Project.ProjectCategory IS NULL)]]></WHERECLAUSE>
 <!--800002 PROCESSING-->
 <!--800002-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800002 IMPORTFIELDS-->
 <!--800002-->              <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
 <!--800002 ISSORTTAB-->
 <!--800002-->              <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--800002 FILTERCLAUSE-->
-<!--800002-->              <FILTERCLAUSE><![CDATA[C_Project.ProjectCategory NOT IN ('S') OR C_Project.ProjectCategory IS NULL]]></FILTERCLAUSE>
 <!--800002**************--></AD_TAB>
 
 <!--800003**************--><AD_TAB>
