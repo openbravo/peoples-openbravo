@@ -6343,7 +6343,7 @@
 <!--1005400002 CREATEDBY-->
 <!--1005400002-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1005400002 UPDATED-->
-<!--1005400002-->              <UPDATED><![CDATA[2008-06-20 09:59:34.0]]></UPDATED>
+<!--1005400002-->              <UPDATED><![CDATA[2008-07-28 15:44:50.0]]></UPDATED>
 <!--1005400002 UPDATEDBY-->
 <!--1005400002-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005400002 NAME-->
@@ -6370,11 +6370,11 @@ The heartbeat data is stored in a file controlled by Openbravo S.L. It is collec
 
 For further information, please consult http://wiki.openbravo.com/wiki/User_Manual_2.40/HeartBeat 
 
-Openbravo implements security measures in accordance with applicable legislation to maintain the confidentiality of this data. This data is not used for commercial purposes other than as set out above. It is not communicated or transferred to any third party
+Openbravo stores this information on servers in the USA and implements security measures in accordance with applicable legislation to maintain the confidentiality of this data. This data is not used for commercial purposes other than as set out above. It is not communicated or transferred to any third party
 
 You may deactivate this feature by disabling the “enable heartbeat” box. In addition, you may exercise your right to access, rectify, oppose and cancel the data by writing to Openbravo, S.L. PO Box 5117, 31010 Pamplona, Navarra, Spain, or by email to privacy@openbravo.com. 
 
-By enabling the heartbeat, you consent to the processing of this data as set out above.  
+By enabling the heartbeat, you consent to the processing of this data and storing of the same in the USA as set out above.  
 ]]></HELP>
 <!--1005400002 WINDOWTYPE-->
 <!--1005400002-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
@@ -6400,7 +6400,7 @@ By enabling the heartbeat, you consent to the processing of this data as set out
 <!--1005400003 CREATEDBY-->
 <!--1005400003-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1005400003 UPDATED-->
-<!--1005400003-->              <UPDATED><![CDATA[2008-06-20 10:00:41.0]]></UPDATED>
+<!--1005400003-->              <UPDATED><![CDATA[2008-07-28 15:46:53.0]]></UPDATED>
 <!--1005400003 UPDATEDBY-->
 <!--1005400003-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005400003 NAME-->
@@ -6410,11 +6410,11 @@ By enabling the heartbeat, you consent to the processing of this data as set out
 <!--1005400003 HELP-->
 <!--1005400003-->              <HELP><![CDATA[On registration, we only collect the data set out in the form. The fields with yellow background are obligatory. This registration data is stored in a file controlled by Openbravo S.L. It is collected and processed to assist managing your Openbravo product installation and use, communicating with you and managing the relationship between you and Openbravo S.L. Openbravo may send you certain technical information (including updates and upgrades), commercial offers and other relevant information. This data will also be used on an aggregated and anonymous basis to generate reports identifying where and how the Openbravo product is being utilised. 
 
-Openbravo implements security measures in accordance with applicable legislation to maintain the confidentiality of this data. This data is not used for purposes other than as set out above. It is not communicated or transferred in an identifiable form to any third party. 
+Openbravo stores this information on servers in the USA and implements security measures in accordance with applicable legislation to maintain the confidentiality of this data. This data is not used for purposes other than as set out above. It is not communicated or transferred in an identifiable form to any third party. 
 
 You may deactivate this feature by disabling the “activate registration” box and clicking on “update registration”. In addition, you may exercise your right to access, rectify, oppose and cancel the data by writing to Openbravo, S.L. PO Box 5117, 31010 Pamplona, Navarra, Spain, or by email to privacy@openbravo.com. 
 
-By activating the registration, you consent to the processing of this data as set out above.
+By activating the registration, you consent to the processing of this data and storing of the same in the USA as set out above.
 
 For further information, please consult http://wiki.openbravo.com/wiki/User_Manual_2.40/Registration]]></HELP>
 <!--1005400003 WINDOWTYPE-->
