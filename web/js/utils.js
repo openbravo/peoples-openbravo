@@ -2580,7 +2580,23 @@ function formElementEvent(Formulario, ElementName, calloutName) {
           bolReadOnly=true;
           obj.readOnly = false;
         }
-        obj.onchange();
+
+      if (obj.className.indexOf("Combo")!=-1) {
+        var onchange_text = obj.getAttribute("onChange");
+        if (onchange_text.indexOf("selectCombo")!=-1) {
+          onchange_text = onchange_text.substring(0,onchange_text.indexOf("selectCombo"))+onchange_text.substring(onchange_text.indexOf(";",onchange_text.indexOf("selectCombo"))+1, onchange_text.length);
+          var onchange_text2 = onchange_text;
+          onchange_text = onchange_text.substring(0,onchange_text.indexOf("return"))+onchange_text.substring(onchange_text.indexOf(";",onchange_text.indexOf("return"))+1, onchange_text.length);
+          onchange_text = onchange_text.replace("(this)","(obj)");
+          onchange_text = onchange_text.replace("(this,","(obj,");
+          onchange_text = onchange_text.replace("(this ","(obj ");
+          onchange_text = onchange_text.replace(",this)",",obj)");
+          onchange_text = onchange_text.replace(" this)"," obj)");
+          eval(onchange_text);
+          obj.setAttribute("onChange", "selectCombo(this, '"+obj.value+"');"+onchange_text2);
+        } else obj.onchange();
+      } else obj.onchange();
+
         if (bolReadOnly) obj.readOnly = true;
       }
     }
