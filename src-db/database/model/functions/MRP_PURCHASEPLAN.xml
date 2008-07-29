@@ -106,8 +106,8 @@ BEGIN
       FOR Cur_Lines IN (
         SELECT pl.*,
           (CASE WHEN pl.INOUTTRXTYPE = 'ST' THEN 0
-                WHEN pl.INOUTTRXTYPE = 'MS' THEN 1
-                WHEN pl.QTY >= 0 THEN 2
+                WHEN pl.INOUTTRXTYPE = 'MS' THEN 2
+                WHEN pl.QTY >= 0 THEN 1
                 ELSE 3 END) AS PRIORITY
         FROM MRP_RUN_PURCHASELINE pl,
           M_PRODUCT

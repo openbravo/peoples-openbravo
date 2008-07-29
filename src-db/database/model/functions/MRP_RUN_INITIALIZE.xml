@@ -173,15 +173,15 @@ BEGIN
           FOR Cur_OrderLine IN (SELECT Mrp_Check_Planningmethod(Cur_Product.MRP_PlanningMethod_ID,
                                                                 (CASE o.IsSOTrx WHEN 'Y' THEN 'SO' ELSE 'PO' END),
                                                                 TO_NUMBER(ol.DatePromised - p_PlanningDate), p_TimeHorizon) AS WEIGHTING,
-                                      (ol.QTYORDERED - COALESCE(ol.QTYDELIVERED, 0)) AS qty,
+                                      (ol.QTYORDERED - COALESCE(ol.QTYDELIVERED, 0) - COALESCE(matchpo.qty,0)) AS qty,
                                       ol.C_OrderLine_ID, GREATEST(COALESCE(ol.DatePromised, ol.DateOrdered, o.DateOrdered), p_PlanningDate) AS planningDate,
                                       COALESCE(ol.DateOrdered, o.Dateordered) AS dateordered,
                                       o.IsSOTrx
-                                 FROM C_ORDER o, C_ORDERLINE ol
+                                 FROM C_ORDER o, C_ORDERLINE ol LEFT JOIN (SELECT C_ORDERLINE_ID, SUM(QTY) as qty FROM m_matchpo group by c_orderline_id) matchpo on ol.c_orderline_id = matchpo.c_orderline_id
                                  WHERE o.C_ORDER_ID = ol.C_ORDER_ID
                                    --AND C_Order_Status(o.C_ORDER_ID) IN (1, 2, 3)
                                    AND o.PROCESSED = 'Y'
-                                   AND ol.QTYORDERED <> ol.QTYDELIVERED
+                                   AND ol.QTYORDERED <> (COALESCE(ol.QTYDELIVERED,0) + COALESCE(matchpo.qty,0))
                                    AND ol.M_Product_ID = Cur_Product.M_Product_ID
                                    AND Mrp_Check_Planningmethod(Cur_Product.MRP_PlanningMethod_ID,
                                                                (CASE o.IsSOTrx WHEN 'Y' THEN 'SO' ELSE 'PO' END),
