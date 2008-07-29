@@ -2725,6 +2725,93 @@
 <!--10094-->              <SVNUSER><![CDATA[mjfahmi]]></SVNUSER>
 <!--10094**************--></AD_DEVELOPER>
 
+<!--10095**************--><AD_DEVELOPER>
+<!--10095 AD_DEVELOPER_ID-->
+<!--10095-->              <AD_DEVELOPER_ID><![CDATA[10095]]></AD_DEVELOPER_ID>
+<!--10095 AD_CLIENT_ID-->
+<!--10095-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--10095 AD_ORG_ID-->
+<!--10095-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--10095 ISACTIVE-->
+<!--10095-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--10095 CREATED-->
+<!--10095-->              <CREATED><![CDATA[2008-07-29 09:19:00.0]]></CREATED>
+<!--10095 CREATEDBY-->
+<!--10095-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--10095 UPDATED-->
+<!--10095-->              <UPDATED><![CDATA[2008-07-29 09:19:00.0]]></UPDATED>
+<!--10095 UPDATEDBY-->
+<!--10095-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--10095 NAME-->
+<!--10095-->              <NAME><![CDATA[Armo Huttunen]]></NAME>
+<!--10095 NICKNAME-->
+<!--10095-->              <NICKNAME><![CDATA[armo.huttunen]]></NICKNAME>
+<!--10095 EMAIL-->
+<!--10095-->              <EMAIL><![CDATA[-]]></EMAIL>
+<!--10095 COMPANY-->
+<!--10095-->              <COMPANY><![CDATA[-]]></COMPANY>
+<!--10095 SVNUSER-->
+<!--10095-->              <SVNUSER><![CDATA[armo.huttunen]]></SVNUSER>
+<!--10095**************--></AD_DEVELOPER>
+
+<!--10096**************--><AD_DEVELOPER>
+<!--10096 AD_DEVELOPER_ID-->
+<!--10096-->              <AD_DEVELOPER_ID><![CDATA[10096]]></AD_DEVELOPER_ID>
+<!--10096 AD_CLIENT_ID-->
+<!--10096-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--10096 AD_ORG_ID-->
+<!--10096-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--10096 ISACTIVE-->
+<!--10096-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--10096 CREATED-->
+<!--10096-->              <CREATED><![CDATA[2008-07-29 09:19:00.0]]></CREATED>
+<!--10096 CREATEDBY-->
+<!--10096-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--10096 UPDATED-->
+<!--10096-->              <UPDATED><![CDATA[2008-07-29 09:19:00.0]]></UPDATED>
+<!--10096 UPDATEDBY-->
+<!--10096-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--10096 NAME-->
+<!--10096-->              <NAME><![CDATA[Mauri Meronen]]></NAME>
+<!--10096 NICKNAME-->
+<!--10096-->              <NICKNAME><![CDATA[mauri.meronen]]></NICKNAME>
+<!--10096 EMAIL-->
+<!--10096-->              <EMAIL><![CDATA[-]]></EMAIL>
+<!--10096 COMPANY-->
+<!--10096-->              <COMPANY><![CDATA[-]]></COMPANY>
+<!--10096 SVNUSER-->
+<!--10096-->              <SVNUSER><![CDATA[mauri.meronen]]></SVNUSER>
+<!--10096**************--></AD_DEVELOPER>
+
+<!--10097**************--><AD_DEVELOPER>
+<!--10097 AD_DEVELOPER_ID-->
+<!--10097-->              <AD_DEVELOPER_ID><![CDATA[10097]]></AD_DEVELOPER_ID>
+<!--10097 AD_CLIENT_ID-->
+<!--10097-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--10097 AD_ORG_ID-->
+<!--10097-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--10097 ISACTIVE-->
+<!--10097-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--10097 CREATED-->
+<!--10097-->              <CREATED><![CDATA[2008-07-29 09:19:00.0]]></CREATED>
+<!--10097 CREATEDBY-->
+<!--10097-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--10097 UPDATED-->
+<!--10097-->              <UPDATED><![CDATA[2008-07-29 09:19:00.0]]></UPDATED>
+<!--10097 UPDATEDBY-->
+<!--10097-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--10097 NAME-->
+<!--10097-->              <NAME><![CDATA[Olli Vihervuori]]></NAME>
+<!--10097 NICKNAME-->
+<!--10097-->              <NICKNAME><![CDATA[olli.vihervuori]]></NICKNAME>
+<!--10097 EMAIL-->
+<!--10097-->              <EMAIL><![CDATA[-]]></EMAIL>
+<!--10097 COMPANY-->
+<!--10097-->              <COMPANY><![CDATA[-]]></COMPANY>
+<!--10097 SVNUSER-->
+<!--10097-->              <SVNUSER><![CDATA[olli.vihervuori]]></SVNUSER>
+<!--10097**************--></AD_DEVELOPER>
+
 <!--
 ************************
 0. End of Core Range.
