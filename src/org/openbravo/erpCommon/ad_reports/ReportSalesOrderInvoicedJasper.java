@@ -164,8 +164,12 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
       SubCategoryProductData[] dataSub = SubCategoryProductData.select(this, Utility.getContext(this, vars, "#User_Org", "ReportSalesOrderInvoicedJasper"), Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderInvoicedJasper"));
       xmlDocument.setParameter("product", arrayDobleEntrada("array", SubCategoryProductData.selectProduct(this, Utility.getContext(this, vars, "#User_Org", "ReportSalesOrderInvoicedJasper"), Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderInvoicedJasper"))));
       
-      xmlDocument.setData("structureCategory", dataSub);
-      xmlDocument.setData("structureProduct", SubCategoryProductData.selectCategoryProduct(this, dataSub[0].id));
+      if  (dataSub != null && dataSub.length != 0){      
+        xmlDocument.setData("structureCategory", dataSub);
+        xmlDocument.setData("structureProduct", SubCategoryProductData.selectCategoryProduct(this, dataSub[0].id));        
+      }
+      
+      
     }
     else {
       ReportSalesOrderInvoicedData[] data = ReportSalesOrderInvoicedData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderInvoiced"), Utility.getContext(this, vars, "#User_Org", "ReportSalesOrderInvoiced"), strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,"1"), strcBpartnerId, strmWarehouseId, strcProjectId, strmCategoryId, strProjectkind, strcRegionId, strProjectpublic, strProduct);

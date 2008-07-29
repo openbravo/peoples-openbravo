@@ -165,8 +165,10 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
       SubCategoryProductData[] dataSub = SubCategoryProductData.select(this,Utility.getContext(this, vars, "#User_Org", "ReportSalesOrderProvidedJR"), Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderProvidedJR"));
       xmlDocument.setParameter("product", arrayDobleEntrada("array", SubCategoryProductData.selectProduct(this,Utility.getContext(this, vars, "#User_Org", "ReportSalesOrderProvidedJR"), Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderProvidedJR"))));
       
-      xmlDocument.setData("structureCategory", dataSub);
-      xmlDocument.setData("structureProduct", SubCategoryProductData.selectCategoryProduct(this, dataSub[0].id));
+      if  (dataSub != null && dataSub.length != 0){
+        xmlDocument.setData("structureCategory", dataSub);
+        xmlDocument.setData("structureProduct", SubCategoryProductData.selectCategoryProduct(this, dataSub[0].id));
+      }
     }
     else {
       ReportSalesOrderProvidedData[] data = ReportSalesOrderProvidedData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderProvided"), Utility.getContext(this, vars, "#User_Org", "ReportSalesOrderProvided"), strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,"1"), strcBpartnerId, strmWarehouseId, strcProjectId, strmCategoryId, strProjectkind, strcRegionId, strProjectpublic, strProduct);
