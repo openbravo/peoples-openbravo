@@ -1797,15 +1797,15 @@
 <!--152 CREATEDBY-->
 <!--152-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--152 UPDATED-->
-<!--152-->              <UPDATED><![CDATA[2003-02-22 02:19:53.0]]></UPDATED>
+<!--152-->              <UPDATED><![CDATA[2008-07-21 04:07:30.0]]></UPDATED>
 <!--152 UPDATEDBY-->
-<!--152-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--152-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--152 VALUE-->
 <!--152-->              <VALUE><![CDATA[RV_C_InvoiceLine]]></VALUE>
 <!--152 NAME-->
-<!--152-->              <NAME><![CDATA[Invoice Detail]]></NAME>
+<!--152-->              <NAME><![CDATA[Invoice Detail - old]]></NAME>
 <!--152 DESCRIPTION-->
-<!--152-->              <DESCRIPTION><![CDATA[Invoice Detail]]></DESCRIPTION>
+<!--152-->              <DESCRIPTION><![CDATA[Invoice Detail - old]]></DESCRIPTION>
 <!--152 HELP-->
 <!--152-->              <HELP><![CDATA[Invoice Detail]]></HELP>
 <!--152 ACCESSLEVEL-->
@@ -1820,6 +1820,8 @@
 <!--152-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--152 ISJASPER-->
 <!--152-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--152 ISEXTERNALSERVICE-->
+<!--152-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--152**************--></AD_PROCESS>
 
 <!--153**************--><AD_PROCESS>
@@ -10987,13 +10989,13 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800201 CREATEDBY-->
 <!--800201-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800201 UPDATED-->
-<!--800201-->              <UPDATED><![CDATA[2008-06-20 13:07:36.0]]></UPDATED>
+<!--800201-->              <UPDATED><![CDATA[2008-07-21 04:08:22.0]]></UPDATED>
 <!--800201 UPDATEDBY-->
 <!--800201-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800201 VALUE-->
 <!--800201-->              <VALUE><![CDATA[ReportInvoiceDetailJasper]]></VALUE>
 <!--800201 NAME-->
-<!--800201-->              <NAME><![CDATA[Invoice Detail - Jasper]]></NAME>
+<!--800201-->              <NAME><![CDATA[Invoice Detail]]></NAME>
 <!--800201 DESCRIPTION-->
 <!--800201-->              <DESCRIPTION><![CDATA[Invoice Detail]]></DESCRIPTION>
 <!--800201 HELP-->

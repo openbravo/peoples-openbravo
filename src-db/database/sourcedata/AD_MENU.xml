@@ -3361,13 +3361,13 @@
 <!--253 CREATEDBY-->
 <!--253-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--253 UPDATED-->
-<!--253-->              <UPDATED><![CDATA[2001-01-27 20:13:56.0]]></UPDATED>
+<!--253-->              <UPDATED><![CDATA[2008-07-21 04:08:49.0]]></UPDATED>
 <!--253 NAME-->
-<!--253-->              <NAME><![CDATA[Invoice Detail]]></NAME>
+<!--253-->              <NAME><![CDATA[Invoice Detail - old]]></NAME>
 <!--253 UPDATEDBY-->
-<!--253-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--253-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--253 DESCRIPTION-->
-<!--253-->              <DESCRIPTION><![CDATA[Invoice Detail]]></DESCRIPTION>
+<!--253-->              <DESCRIPTION><![CDATA[Invoice Detail - old]]></DESCRIPTION>
 <!--253 ISSUMMARY-->
 <!--253-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--253 ACTION-->
@@ -11606,9 +11606,9 @@
 <!--800285 CREATEDBY-->
 <!--800285-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800285 UPDATED-->
-<!--800285-->              <UPDATED><![CDATA[2007-07-11 13:09:26.0]]></UPDATED>
+<!--800285-->              <UPDATED><![CDATA[2008-07-21 04:08:09.0]]></UPDATED>
 <!--800285 NAME-->
-<!--800285-->              <NAME><![CDATA[Invoice Detail - Jasper]]></NAME>
+<!--800285-->              <NAME><![CDATA[Invoice Detail]]></NAME>
 <!--800285 UPDATEDBY-->
 <!--800285-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800285 DESCRIPTION-->
