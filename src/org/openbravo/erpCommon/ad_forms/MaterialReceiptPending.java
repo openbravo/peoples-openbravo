@@ -70,10 +70,9 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
       printPageDataSheet(response, vars, strC_BPartner_ID, strAD_Org_ID, strDateFrom, strDateTo, strDocumentNo);
     } else if (vars.commandIn("GENERATE")) {
       String strcOrderLineId = vars.getRequiredInStringParameter("inpOrder");
-      //New message system
+
       OBError myMessage = processPurchaseOrder(vars, strcOrderLineId);
       vars.setMessage("MaterialReceiptPending", myMessage);
-      //vars.setSessionValue("MaterialReceiptPending|message", strMessage);
       
       response.sendRedirect(strDireccion + request.getServletPath());
   } else pageError(response);
@@ -206,9 +205,9 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
 
             if (strDateReceipt.equals("")){
               myMessage.setType("Error");
+              myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
               myMessage.setMessage(Utility.messageBD(this, "DateReceipt", vars.getLanguage()) + " " + MaterialReceiptPendingData.bPartnerDescription(this, data[0].cBpartnerId));
               return myMessage;
-              //return(Utility.messageBD(this, "DateReceipt", vars.getLanguage()) + " " + MaterialReceiptPendingData.bPartnerDescription(this, data[0].cBpartnerId));
             }
             MaterialReceiptPendingData.insert(conn, this, strmInoutId, vars.getClient(), data[0].adOrgId, "Y", vars.getUser(), vars.getUser(), "N", strDocumentno, "CO", "DR", "N", "N", "N", docTargetType, data[0].description, data[0].cOrderId, data[0].dateordered, "N", "V+", strDateReceipt, strDateReceipt, data[0].cBpartnerId, data[0].cBpartnerLocationId, data[0].mWarehouseId, data[0].poreference, data[0].deliveryrule, data[0].freightcostrule, data[0].freightamt, data[0].deliveryviarule, data[0].mShipperId, data[0].cChargeId, data[0].chargeamt, data[0].priorityrule, "N", "N", data[0].adUserId, data[0].salesrepId, data[0].adOrgtrxId, data[0].cProjectId, data[0].cCampaignId, data[0].cActivityId, data[0].user1Id, data[0].user2Id, "N", "N", "N");
           }
@@ -236,12 +235,13 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
       myMessage.setType("Error");
+      myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
       myMessage.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
       return myMessage;
-      //return Utility.messageBD(this, "ProcessRunError", vars.getLanguage());
     }
     myMessage.setType(strMessageType);
-    myMessage.setMessage(strMessageResult.equals("")?Utility.messageBD(this, "Success", vars.getLanguage()):strMessageResult);
+    myMessage.setTitle(myMessageAux.getTitle());
+    myMessage.setMessage(strMessageResult);
     return myMessage;
     //return strMessageResult.equals("")?Utility.messageBD(this, "Success", vars.getLanguage()):strMessageResult;
   }
