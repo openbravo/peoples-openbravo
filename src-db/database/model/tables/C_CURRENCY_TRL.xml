@@ -58,7 +58,7 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_CCURRENCYTRL">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_CCURRENCYTRL">
+      <foreign-key foreignTable="C_CURRENCY" name="CCURRENCY_CCURRENCYTRL" onDelete="cascade">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
       <check name="C_CURRENCY_TRL_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

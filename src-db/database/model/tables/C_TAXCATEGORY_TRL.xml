@@ -58,7 +58,7 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_CTAXCATEGORYTRL">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_TAXCATEGORY" name="CTAXCATEGORY_TRL">
+      <foreign-key foreignTable="C_TAXCATEGORY" name="CTAXCATEGORY_TRL" onDelete="cascade">
         <reference local="C_TAXCATEGORY_ID" foreign="C_TAXCATEGORY_ID"/>
       </foreign-key>
       <check name="CTAXCATEG_ISTRANSLATED_CHECK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>

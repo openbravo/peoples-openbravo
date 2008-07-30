@@ -48,7 +48,7 @@
       <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_TEXTINTERFACESTRL">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_TEXTINTERFACES" name="AD_TEXTINTERFACESTRL">
+      <foreign-key foreignTable="AD_TEXTINTERFACES" name="AD_TEXTINTERFACESTRL" onDelete="cascade">
         <reference local="AD_TEXTINTERFACES_ID" foreign="AD_TEXTINTERFACES_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADTEXTINTERFACESTRL">

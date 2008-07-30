@@ -48,7 +48,7 @@
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADFIELDGROUPTRL">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_FIELDGROUP" name="ADFIELDGROUP_TRL">
+      <foreign-key foreignTable="AD_FIELDGROUP" name="ADFIELDGROUP_TRL" onDelete="cascade">
         <reference local="AD_FIELDGROUP_ID" foreign="AD_FIELDGROUP_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_LANGUAGE" name="ADLANGUAGE_ADFIELDGROUPTRL">

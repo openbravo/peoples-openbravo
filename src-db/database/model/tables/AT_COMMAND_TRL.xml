@@ -70,7 +70,7 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_ATCOMMANDTRL">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AT_COMMAND" name="AT_COMMANDTRL">
+      <foreign-key foreignTable="AT_COMMAND" name="AT_COMMANDTRL" onDelete="cascade">
         <reference local="AT_COMMAND_ID" foreign="AT_COMMAND_ID"/>
       </foreign-key>
       <check name="ATCOMMANDTRL_IS_ANSLATED_CHECK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>

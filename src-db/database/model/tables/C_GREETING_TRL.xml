@@ -58,7 +58,7 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_CGREETINGTRL">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_GREETING" name="CGREETING_CGREETINGTRL">
+      <foreign-key foreignTable="C_GREETING" name="CGREETING_CGREETINGTRL" onDelete="cascade">
         <reference local="C_GREETING_ID" foreign="C_GREETING_ID"/>
       </foreign-key>
       <index name="C_GREETING_TRL_UN_KEY" unique="true">

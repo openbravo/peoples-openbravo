@@ -45,7 +45,7 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_ALERTRULE" name="ADALERTRULE_ADALERTRULETRL">
+      <foreign-key foreignTable="AD_ALERTRULE" name="ADALERTRULE_ADALERTRULETRL" onDelete="cascade">
         <reference local="AD_ALERTRULE_ID" foreign="AD_ALERTRULE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADALERRTRULETRL">
