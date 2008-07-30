@@ -2812,6 +2812,35 @@
 <!--10097-->              <SVNUSER><![CDATA[olli.vihervuori]]></SVNUSER>
 <!--10097**************--></AD_DEVELOPER>
 
+<!--10098**************--><AD_DEVELOPER>
+<!--10098 AD_DEVELOPER_ID-->
+<!--10098-->              <AD_DEVELOPER_ID><![CDATA[10098]]></AD_DEVELOPER_ID>
+<!--10098 AD_CLIENT_ID-->
+<!--10098-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--10098 AD_ORG_ID-->
+<!--10098-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--10098 ISACTIVE-->
+<!--10098-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--10098 CREATED-->
+<!--10098-->              <CREATED><![CDATA[2008-07-30 19:12:00.0]]></CREATED>
+<!--10098 CREATEDBY-->
+<!--10098-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--10098 UPDATED-->
+<!--10098-->              <UPDATED><![CDATA[2008-07-30 19:12:00.0]]></UPDATED>
+<!--10098 UPDATEDBY-->
+<!--10098-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--10098 NAME-->
+<!--10098-->              <NAME><![CDATA[Jon Alegría]]></NAME>
+<!--10098 NICKNAME-->
+<!--10098-->              <NICKNAME><![CDATA[skotos]]></NICKNAME>
+<!--10098 EMAIL-->
+<!--10098-->              <EMAIL><![CDATA[jal at openbravo dot com]]></EMAIL>
+<!--10098 COMPANY-->
+<!--10098-->              <COMPANY><![CDATA[Openbravo]]></COMPANY>
+<!--10098 SVNUSER-->
+<!--10098-->              <SVNUSER><![CDATA[jalegria]]></SVNUSER>
+<!--10098**************--></AD_DEVELOPER>
+
 <!--
 ************************
 0. End of Core Range.
