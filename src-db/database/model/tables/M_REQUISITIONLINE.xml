@@ -97,6 +97,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="DATEPLANNED" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <column name="NEEDBYDATE" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
         <default/>
         <onCreateDefault><![CDATA[SELECT DATEPLANNED FROM M_REQUISITIONLINE_ WHERE M_REQUISITIONLINE_.M_REQUISITIONLINE_ID = M_REQUISITIONLINE.M_REQUISITIONLINE_ID]]></onCreateDefault>
