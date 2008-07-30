@@ -15238,7 +15238,7 @@
 <!--805945 UPDATEDBY-->
 <!--805945-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--805945 TEXT-->
-<!--805945-->              <TEXT><![CDATA[Actual password]]></TEXT>
+<!--805945-->              <TEXT><![CDATA[Current password]]></TEXT>
 <!--805945 FILENAME-->
 <!--805945-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_forms/Role.html]]></FILENAME>
 <!--805945 ISUSED-->
