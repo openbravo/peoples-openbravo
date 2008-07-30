@@ -20,6 +20,7 @@
 package org.openbravo.erpCommon.ad_forms;
 import org.openbravo.data.Sqlc;
 
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 
@@ -51,26 +52,41 @@ public class AlertManagement extends HttpSecureAppServlet {
       String strFixedFilter=vars.getRequestGlobalVariable("inpFixedFilter", "FixedFilter|AlertRule").equals("")?"N":"Y";
       printPageDataSheet(response, vars, strAlertRuleId, strActiveFilter, strFixedFilter);
     } else if (vars.commandIn("SAVE_EDIT_EDIT")) {
-      updateValues(request, vars);
+      OBError myMessage = updateValues(request, vars);
       String strAlertRuleId=vars.getRequestGlobalVariable("inpAlertRule", "AlertManagement|AlertRule");
       String strActiveFilter=vars.getStringParameter("inpActiveFilter").equals("")?"N":"Y";
-      String strFixedFilter=vars.getRequestGlobalVariable("inpFixedFilter", "FixedFilter|AlertRule").equals("")?"N":"Y";
+      String strFixedFilter=vars.getRequestGlobalVariable("inpFixedFilter", "FixedFilter|AlertRule").equals("")?"N":"Y";      
+      vars.setMessage("AlertManagement", myMessage);
       printPageDataSheet(response, vars, strAlertRuleId, strActiveFilter, strFixedFilter);
     } else pageError(response);
   }
 
-  void updateValues(HttpServletRequest request, VariablesSecureApp vars) throws IOException, ServletException {
-    String[] strAlertId = request.getParameterValues("strAlertID");
-    if (log4j.isDebugEnabled()) log4j.debug("update: alerts"+strAlertId.length);
-    for (int i=0; i<strAlertId.length; i++) {
+  OBError updateValues(HttpServletRequest request, VariablesSecureApp vars) throws IOException, ServletException {
+    
+    OBError myMessage = new OBError();
+    
+    try{
+      String[] strAlertId = request.getParameterValues("strAlertID");
+      if (log4j.isDebugEnabled()) log4j.debug("update: alerts"+strAlertId.length);      
+        for (int i=0; i<strAlertId.length; i++) {      
+          String note = vars.getStringParameter("strNotes"+strAlertId[i]);
+          String fixed = vars.getStringParameter("strFixed"+strAlertId[i]).equals("on")?"Y":"N";
+          String active = vars.getStringParameter("strActive"+strAlertId[i]).equals("on")?"Y":"N";
+          
+          if (log4j.isDebugEnabled()) log4j.debug("updating:"+strAlertId[i]+" - fixed:"+fixed+" - active:"+active);
+          AlertManagementData.update(this, note, fixed, active, strAlertId[i]);
+        }   
+    }       
+    catch(Exception ex){
+      myMessage.setType("Error");
+      myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+      myMessage.setMessage(ex.toString());
+      return myMessage;
       
-      String note = vars.getStringParameter("strNotes"+strAlertId[i]);
-      String fixed = vars.getStringParameter("strFixed"+strAlertId[i]).equals("on")?"Y":"N";
-      String active = vars.getStringParameter("strActive"+strAlertId[i]).equals("on")?"Y":"N";
-      
-      if (log4j.isDebugEnabled()) log4j.debug("updating:"+strAlertId[i]+" - fixed:"+fixed+" - active:"+active);
-      AlertManagementData.update(this, note, fixed, active, strAlertId[i]);
     }
+    myMessage.setType("Success");
+    myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
+    return myMessage;
   }
                     
   void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strAlertRuleId, String strActiveFilter, String strFixedFilter) throws IOException, ServletException {
