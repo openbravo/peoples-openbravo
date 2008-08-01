@@ -95,6 +95,38 @@
      <Parameter name="C_BPARTNER_ID"/>
      <Parameter name="C_ACCTSCHEMA_ID"/>     
    </SqlMethod>
+  <SqlMethod name="selectBankStatementLineAcct" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+		SELECT B_INTRANSIT_ACCT  AS ACCOUNT_ID
+		FROM C_BANKSTATEMENTLINE, C_BANKSTATEMENT, C_BANKACCOUNT, C_BANKACCOUNT_ACCT
+		WHERE C_BANKSTATEMENTLINE.C_BANKSTATEMENT_ID = C_BANKSTATEMENT.C_BANKSTATEMENT_ID
+		AND C_BANKSTATEMENT.C_BANKACCOUNT_ID = C_BANKACCOUNT.C_BANKACCOUNT_ID
+		AND C_BANKACCOUNT.C_BANKACCOUNT_ID = C_BANKACCOUNT_ACCT.C_BANKACCOUNT_ID
+		AND C_BANKSTATEMENTLINE_ID = ?
+		AND C_BANKACCOUNT_ACCT.C_ACCTSCHEMA_ID = ?
+     ]]>
+     </Sql>
+     <Parameter name="C_BANKSTATEMENTLINE_ID"/>
+     <Parameter name="C_ACCTSCHEMA_ID"/>     
+   </SqlMethod>
+  <SqlMethod name="selectCashLineAcct" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+		SELECT CB_RECEIPT_ACCT  AS ACCOUNT_ID
+		FROM C_CASHLINE, C_CASH, C_CASHBOOK, C_CASHBOOK_ACCT
+		WHERE C_CASHLINE.C_CASH_ID = C_CASH.C_CASH_ID
+		AND C_CASH.C_CASHBOOK_ID = C_CASHBOOK.C_CASHBOOK_ID
+		AND C_CASHBOOK.C_CASHBOOK_ID = C_CASHBOOK_ACCT.C_CASHBOOK_ID
+		AND C_CASHLINE_ID = ?
+		AND C_CASHBOOK_ACCT.C_ACCTSCHEMA_ID = ?
+     ]]>
+     </Sql>
+     <Parameter name="C_CASHLINE_ID"/>
+     <Parameter name="C_ACCTSCHEMA_ID"/>     
+   </SqlMethod>
   <SqlMethod name="selectCancelManual" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
