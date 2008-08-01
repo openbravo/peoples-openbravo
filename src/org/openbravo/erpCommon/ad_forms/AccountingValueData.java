@@ -36,7 +36,6 @@ import java.io.*;
     public String defaultAccount="";
     public String accountParent="";
     public String elementLevel="";
-    public String operands="";
     public String balanceSheet="";
     public String balanceSheetName="";
     public String uS1120BalanceSheet="";
@@ -77,8 +76,6 @@ import java.io.*;
         return accountParent;
       else if (fieldName.equalsIgnoreCase("ELEMENT_LEVEL") || fieldName.equals("elementLevel"))
         return elementLevel;
-      else if (fieldName.equalsIgnoreCase("OPERANDS") || fieldName.equals("operands"))
-        return operands;
       else if (fieldName.equalsIgnoreCase("BALANCE_SHEET") || fieldName.equals("balanceSheet"))
         return balanceSheet;
       else if (fieldName.equalsIgnoreCase("BALANCE_SHEET_NAME") || fieldName.equals("balanceSheetName"))
@@ -117,7 +114,7 @@ import java.io.*;
       int siguiente=0;
       int anterior=0;
       String texto="";
-      for (int i=0;i<21;i++) {
+      for (int i=0;i<20;i++) {
         if (siguiente>=linea.length()) break;
         if ((anterior+1)<linea.length() && linea.substring(anterior, anterior+1).equals("\"")) {
           int aux = linea.indexOf("\"", anterior + 1);
@@ -154,27 +151,25 @@ import java.io.*;
                         break;
           case 9: AccountingValueData.elementLevel = texto;
                         break;
-          case 10: AccountingValueData.operands = texto;
+          case 10: AccountingValueData.balanceSheet = texto;
                         break;
-          case 11: AccountingValueData.balanceSheet = texto;
+          case 11: AccountingValueData.balanceSheetName = texto;
                         break;
-          case 12: AccountingValueData.balanceSheetName = texto;
+          case 12: AccountingValueData.uS1120BalanceSheet = texto;
                         break;
-          case 13: AccountingValueData.uS1120BalanceSheet = texto;
+          case 13: AccountingValueData.uS1120BalanceSheetName = texto;
                         break;
-          case 14: AccountingValueData.uS1120BalanceSheetName = texto;
+          case 14: AccountingValueData.profitAndLoss = texto;
                         break;
-          case 15: AccountingValueData.profitAndLoss = texto;
+          case 15: AccountingValueData.profitAndLossName = texto;
                         break;
-          case 16: AccountingValueData.profitAndLossName = texto;
+          case 16: AccountingValueData.uS1120IncomeStatement = texto;
                         break;
-          case 17: AccountingValueData.uS1120IncomeStatement = texto;
+          case 17: AccountingValueData.uS1120IncomeStatementName = texto;
                         break;
-          case 18: AccountingValueData.uS1120IncomeStatementName = texto;
+          case 18: AccountingValueData.cashFlow = texto;
                         break;
-          case 19: AccountingValueData.cashFlow = texto;
-                        break;
-          case 20: AccountingValueData.cashFlowName = texto;
+          case 19: AccountingValueData.cashFlowName = texto;
                         break;
         }
         anterior=siguiente+1;
