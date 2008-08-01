@@ -27,12 +27,12 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT E.AD_CLIENT_ID, E.AD_ORG_ID,EL.C_BPARTNER_ID, BP.NAME AS BPNAME, E.M_WAREHOUSE_ID,
-        EL.C_PROJECT_ID, EL.C_ACTIVITY_ID, EL.C_CAMPAIGN_ID,
+        SELECT E.AD_CLIENT_ID, E.AD_ORG_ID,EL.C_BPARTNER_ID, BP.NAME AS BPNAME, E.M_WAREHOUSE_ID, TO_CHAR(E.DATEREPORT) AS DATEREPORT,
+        TO_CHAR(EL.DATEEXPENSE) AS DATEEXPENSE, EL.C_PROJECT_ID, EL.C_ACTIVITY_ID, EL.C_CAMPAIGN_ID,
         EL.M_PRODUCT_ID, EL.S_RESOURCEASSIGNMENT_ID, EL.C_UOM_ID,EL.QTY, EL.DESCRIPTION, EL.NOTE, EL.INVOICEPRICE,
         COALESCE(BP.M_PRICELIST_ID, E.M_PRICELIST_ID) AS M_PRICELIST_ID, E.DOCUMENTNO, EL.S_TIMEEXPENSELINE_ID, EL.C_CURRENCY_ID,
         '' AS DATEORDERED, '' AS DATEPROMISED, '' AS C_BPARTNER_LOCATION_ID, '' AS PROCESSING,
-        '' AS STDPRECISION, '' AS PRICEPRECISION 
+        '' AS STDPRECISION, '' AS PRICEPRECISION, '' AS VALIDFROM, '' AS PRICESTD, '' AS PRICELIST, '' AS PRICELIMIT 
         FROM S_TIMEEXPENSELINE EL left join  S_RESOURCEASSIGNMENT RA on EL.S_RESOURCEASSIGNMENT_ID=RA.S_RESOURCEASSIGNMENT_ID,
         S_TIMEEXPENSE E,  C_BPARTNER BP
         WHERE E.S_TIMEEXPENSE_ID=EL.S_TIMEEXPENSE_ID
@@ -46,10 +46,33 @@
       ]]>
     </Sql>
     <Parameter name="bpartner" optional="true" after="WHERE "><![CDATA[ el.C_BPartner_ID = TO_NUMBER(?) AND ]]></Parameter>
-    <Parameter name="dateFrom" optional="true" after="WHERE "><![CDATA[ e.DateReport >= TO_DATE(?) AND ]]></Parameter>
-    <Parameter name="dateTo" optional="true" after="WHERE "><![CDATA[ e.DateReport  < TO_DATE(?) AND ]]></Parameter>
+    <Parameter name="dateFrom" optional="true" after="WHERE "><![CDATA[ COALESCE(el.DateExpense, e.DateReport) >= TO_DATE(?) AND ]]></Parameter>
+    <Parameter name="dateTo" optional="true" after="WHERE "><![CDATA[ COALESCE(el.DateExpense, e.DateReport)  < TO_DATE(?) AND ]]></Parameter>
     <Parameter name="adUserClient" type="replace" optional="true" after="E.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="E.AD_ORG_ID IN (" text="'1'"/>
+  </SqlMethod>
+  <SqlMethod name="selectPrice" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT BOM_PriceStd(p.M_Product_ID,pv.M_PriceList_Version_ID) AS PriceStd,
+        BOM_PriceList(p.M_Product_ID,pv.M_PriceList_Version_ID) AS PriceList,
+        BOM_PriceLimit(p.M_Product_ID,pv.M_PriceList_Version_ID) AS PriceLimit,
+        p.C_UOM_ID,pv.ValidFrom 
+        FROM M_Product p, M_ProductPrice pp, M_Pricelist pl, M_PriceList_Version pv 
+        WHERE p.M_Product_ID=pp.M_Product_ID
+        AND pp.M_PriceList_Version_ID=pv.M_PriceList_Version_ID
+        AND pv.M_PriceList_ID=pl.M_PriceList_ID
+        AND pv.IsActive='Y'
+        AND p.M_Product_ID = TO_NUMBER(?)
+        AND pl.M_PriceList_ID = TO_NUMBER(?)
+        AND pl.C_Currency_ID = TO_NUMBER(?)
+        ORDER BY pv.ValidFrom DESC
+      ]]>
+    </Sql>
+    <Parameter name="MProductID"/>
+    <Parameter name="MPriceListID"/>
+    <Parameter name="CCurrencyID"/>
   </SqlMethod>
   <SqlMethod name="updateTimeExpenseLine" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
@@ -217,8 +240,7 @@
         CALL C_Order_Post(TO_NUMBER(?))
       ]]></Sql>
       <Parameter name="adPinstanceId"/>
-   </SqlMethod>
-   
+   </SqlMethod>   
   <SqlMethod name="selectPrecisions" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
@@ -229,5 +251,28 @@
         ]]>
       </Sql>
       <Parameter name="cCurrencyId"/>
+   </SqlMethod>
+   <SqlMethod name="selectCurrency" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+      SELECT C_Currency_ID
+      FROM M_PriceList 
+      WHERE M_PriceList_ID = TO_NUMBER(?) 
+    ]]></Sql>
+    <Parameter name="mPricelistId"/>
+   </SqlMethod>
+   <SqlMethod name="selectConvertedAmt" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select c_currency_convert(TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_DATE(?),null, TO_NUMBER(?),TO_NUMBER(?)) from dual
+      ]]>
+    </Sql>
+    <Parameter name="expenseAmount"/>
+    <Parameter name="currencyFrom"/>
+    <Parameter name="currencyTo"/>
+    <Parameter name="dateExpense"/>
+    <Parameter name="client"/>
+    <Parameter name="org"/>
    </SqlMethod>
 </SqlClass>

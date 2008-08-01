@@ -23,15 +23,15 @@
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment>Select for relation</SqlMethodComment>
     <Sql><![CDATA[
-       SELECT  st.AD_Client_ID, st.AD_Org_ID, st.C_BPartner_ID, bp.name as bpname, stl.C_Project_ID, stl.C_Activity_ID, stl.C_Campaign_ID, stl.M_Product_ID, p.name as prodname, stl.S_ResourceAssignment_ID, stl.C_UOM_ID, stl.Qty, stl.Description, stl.Note, stl.ExpenseAmt, stl.C_Currency_ID, stl.ConvertedAmt, st.DocumentNo, stl.S_TimeExpenseLine_ID, stl.invoiceprice, '' AS Pricestd, '' AS Pricelimit, '' AS Pricelist, '' AS C_INVOICELINE_ID, '' AS QTYINVOICED, '' AS C_INVOICELINE_ACCTDIMENSION_ID, '' AS AMT
+       SELECT  st.AD_Client_ID, st.AD_Org_ID, st.C_BPartner_ID, to_char(st.DateReport) as datereport, bp.name as bpname, stl.C_Project_ID, stl.C_Activity_ID, stl.C_Campaign_ID, stl.M_Product_ID, p.name as prodname, stl.S_ResourceAssignment_ID, stl.C_UOM_ID, stl.Qty, stl.Description, stl.Note, stl.ExpenseAmt, stl.C_Currency_ID, stl.ConvertedAmt, st.DocumentNo, stl.S_TimeExpenseLine_ID, stl.invoiceprice, to_char(stl.DateExpense) as dateexpense, '' AS Pricestd, '' AS Pricelimit, '' AS Pricelist, '' AS C_INVOICELINE_ID, '' AS QTYINVOICED, '' AS C_INVOICELINE_ACCTDIMENSION_ID, '' AS AMT, '' AS STDPRECISION, '' AS PRICEPRECISION
         FROM S_TimeExpense st, S_TimeExpenseLine stl, C_BPartner bp, M_Product p
         WHERE st.S_TimeExpense_Id = stl.S_TimeExpense_Id
         AND st.C_BPartner_ID = bp.C_BPartner_ID
         AND stl.M_Product_ID = p.M_Product_ID
         AND st.AD_Client_ID IN ('1')
         AND st.AD_Org_ID IN ('1')
-        AND st.DateReport >= TO_DATE(?)
-        AND st.DateReport < TO_DATE(?)
+        AND COALESCE(stl.DateExpense, st.DateReport) >= TO_DATE(?)
+        AND COALESCE(stl.DateExpense, st.DateReport) < TO_DATE(?)
         AND stl.ISTIMEREPORT <> 'Y'
         AND st.PROCESSED = 'Y'
         AND stl.C_InvoiceLine_ID IS NULL
@@ -582,5 +582,39 @@ TO_NUMBER(?)
     ]]></Sql>
   <Parameter name="qtyinvoiced"/>
   <Parameter name="cInvoicelineId"/>
+</SqlMethod>
+<SqlMethod name="selectCurrency" type="preparedStatement" return="String" default="">
+<SqlMethodComment></SqlMethodComment>
+	<Sql><![CDATA[
+		SELECT C_Currency_ID
+		FROM M_PriceList 
+		WHERE M_PriceList_ID = TO_NUMBER(?) 
+	]]></Sql>
+ 	<Parameter name="mPricelistId"/>
+</SqlMethod>
+<SqlMethod name="selectPrecisions" type="preparedStatement" return="multiple">
+   <SqlMethodComment></SqlMethodComment>
+   <Sql>
+     <![CDATA[
+       SELECT STDPRECISION, PRICEPRECISION 
+       FROM C_CURRENCY 
+       WHERE C_CURRENCY_ID = to_number(?)
+     ]]>
+   </Sql>
+   <Parameter name="cCurrencyId"/>
+</SqlMethod>
+<SqlMethod name="selectConvertedAmt" type="preparedStatement" return="String" default="">
+	<SqlMethodComment></SqlMethodComment>
+	<Sql>
+	  <![CDATA[
+	    select c_currency_convert(TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_DATE(?),null, TO_NUMBER(?),TO_NUMBER(?)) from dual
+	  ]]>
+	 </Sql>
+	 <Parameter name="expenseAmount"/>
+	 <Parameter name="currencyFrom"/>
+	 <Parameter name="currencyTo"/>
+	 <Parameter name="dateExpense"/>
+	 <Parameter name="client"/>
+	 <Parameter name="org"/>
 </SqlMethod>
 </SqlClass>

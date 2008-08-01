@@ -56,4 +56,15 @@
     </Sql>
     <Parameter name="cCurrencyId"/>
   </SqlMethod>
+  <SqlMethod name="selectReportDate" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT TO_CHAR(S.DATEREPORT) 
+		FROM S_TIMEEXPENSE S
+		WHERE S.S_TIMEEXPENSE_ID = TO_NUMBER(?)
+      ]]>
+    </Sql>
+    <Parameter name="sTimeExpenseId"/>
+  </SqlMethod>
 </SqlClass>

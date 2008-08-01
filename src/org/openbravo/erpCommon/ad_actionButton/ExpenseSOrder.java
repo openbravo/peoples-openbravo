@@ -95,6 +95,8 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
       String strProcessing = "N";
       String strCOrderId = "";
       String strCCurrencyId = "";
+      String strBPCCurrencyId = "";
+      String strDateexpense = "";
       String priceactual = "";
       String pricelist = "";
       String pricelimit = "";
@@ -105,6 +107,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
       //ArrayList order = new ArrayList();
       for (int i=0;data!=null && i<data.length;i++) {
             docTargetType = ExpenseSOrderData.cDoctypeTarget(conn, this, data[i].adClientId, data[i].adOrgId);
+            
             if ((!data[i].cBpartnerId.equals(strOldBPartner) || !data[i].cProjectId.equals(strOldProject)|| !data[i].adOrgId.equals(strOldOrganization)) && !strCOrderId.equals("")) {
               releaseCommitConnection(conn);
               // Automatically processes Sales Order
@@ -114,101 +117,135 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
               }
               conn = getTransactionConnection();
             }
+            //Creates a new sales order header, if required
             if (!data[i].cBpartnerId.equals(strOldBPartner) || !data[i].cProjectId.equals(strOldProject) || !data[i].adOrgId.equals(strOldOrganization)) {
+              
               line = 0;
               if (total != 0) textoMensaje.append("<br>");
-              total++;
+              total++;    
+
+              strOldBPartner = data[i].cBpartnerId;
+              strOldProject = data[i].cProjectId;
+              strOldOrganization = data[i].adOrgId;              
+              strCust = data[i].bpname;
+              
+              if (data[i].mPricelistId.equals("")){
+                throw new Exception ("PricelistNotdefined");
+              } else {
+                //Selects the currency of the business partner price list, that can be different from the currency of the expense
+                strBPCCurrencyId = ExpenseSOrderData.selectCurrency(this, data[i].mPricelistId);
+              }
+
+              SEOrderBPartnerData[] data1 = SEOrderBPartnerData.select(this, data[i].cBpartnerId);         
+              
+              if (data1[0].paymentrule.equals("")){
+             	 throw new Exception ("FormofPaymentNotdefined");
+              }    
+              
               strCOrderId = SequenceIdData.getSequence(this, "C_Order", vars.getClient());
               //order.add(strCOrderId);
               String strDocumentNo = Utility.getDocumentNo(this, vars, "", "C_Order", Utility.getContext(this, vars, "C_DocTypeTarget_ID", docTargetType), Utility.getContext(this, vars, "C_DocType_ID", docTargetType), false, true);
 
-              strOldBPartner = data[i].cBpartnerId;
-              strOldProject = data[i].cProjectId;
-              strOldOrganization = data[i].adOrgId;
-              strCCurrencyId = data[i].cCurrencyId.equals("")?Utility.getContext(this, vars, "$C_Currency_ID", "ExpenseSOrder"):data[i].cCurrencyId;
-
-              SEOrderBPartnerData[] data1 = SEOrderBPartnerData.select(this, data[i].cBpartnerId);
-              
-              strCust = data[i].bpname;
-              if (data[i].mPricelistId.equals("")){
-            	  throw new Exception ("PricelistNotdefined");
-              }
-              if (data1[0].paymentrule.equals("")){
-             	 throw new Exception ("FormofPaymentNotdefined");
-              }
-
-              ExpenseSOrderData.insertCOrder(conn, this, strCOrderId, data[i].adClientId, data[i].adOrgId, vars.getUser(), strDocumentNo, strDocStatus, strDocAction, strProcessing, docType, docTargetType, strDateOrdered, strDateOrdered, strDateOrdered, data[i].cBpartnerId, ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), ExpenseSOrderData.billto(this, data[i].cBpartnerId).equals("")?ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId):ExpenseSOrderData.billto(this, data[i].cBpartnerId), strCCurrencyId, data1[0].paymentrule, data1[0].cPaymenttermId.equals("")?SEOrderBPartnerData.selectPaymentTerm(this, data[i].adClientId):data1[0].cPaymenttermId, data1[0].invoicerule.equals("")?"I":data1[0].invoicerule, data1[0].deliveryrule.equals("")?"A":data1[0].deliveryrule, "I", data1[0].deliveryviarule.equals("")?"D":data1[0].deliveryviarule, data[i].mWarehouseId.equals("")?vars.getWarehouse():data[i].mWarehouseId, data[i].mPricelistId, data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId);
+              ExpenseSOrderData.insertCOrder(conn, this, strCOrderId, data[i].adClientId, data[i].adOrgId, vars.getUser(), strDocumentNo, strDocStatus, strDocAction, strProcessing, docType, docTargetType, strDateOrdered, strDateOrdered, strDateOrdered, data[i].cBpartnerId, ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), ExpenseSOrderData.billto(this, data[i].cBpartnerId).equals("")?ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId):ExpenseSOrderData.billto(this, data[i].cBpartnerId), strBPCCurrencyId, data1[0].paymentrule, data1[0].cPaymenttermId.equals("")?SEOrderBPartnerData.selectPaymentTerm(this, data[i].adClientId):data1[0].cPaymenttermId, data1[0].invoicerule.equals("")?"I":data1[0].invoicerule, data1[0].deliveryrule.equals("")?"A":data1[0].deliveryrule, "I", data1[0].deliveryviarule.equals("")?"D":data1[0].deliveryviarule, data[i].mWarehouseId.equals("")?vars.getWarehouse():data[i].mWarehouseId, data[i].mPricelistId, data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId);
               
               textoMensaje.append(Utility.messageBD(this, "SalesOrderDocumentno", vars.getLanguage())).append(" ").append(strDocumentNo).append(" ").append(Utility.messageBD(this, "beenCreated", vars.getLanguage()));
-            }
-
-            String strCOrderlineID = SequenceIdData.getSequence(this, "C_OrderLine", vars.getClient());
-
+            }                               
+            
+            //Gets the tax for the expense line
+            String strCTaxID = Tax.get(this, data[i].mProductId, DateTimeData.today(this), data[i].adOrgId, data[i].mWarehouseId.equals("")?vars.getWarehouse():data[i].mWarehouseId, ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), data[i].cProjectId, true);
+            if (strCTaxID.equals(""))
+              throw new Exception ("TaxNotFound");              
+            
+            //Currency of the expense line
+            strCCurrencyId = data[i].cCurrencyId;
+            
             String strPrecision = "0";
             String strPricePrecision="0";
             String strDiscount = "";
+            
+            BigDecimal priceActual, priceList, priceLimit, discount;
+            
+            //If there is no invoice price, looks for the prices in the pricelist of the business partner
+            if (data[i].invoiceprice == null || data[i].invoiceprice.equals("")) {
+              ExpenseSOrderData[] data3 = ExpenseSOrderData.selectPrice(this, data[i].mProductId, data[i].mPricelistId, strBPCCurrencyId);
+              for (int j=0;data3!=null && j<data3.length;j++) {
+                if (data3[j].validfrom == null  || data3[j].validfrom.equals("") || !DateTimeData.compare(this, DateTimeData.today(this), data3[j].validfrom).equals("-1")){
+                  priceactual = data3[j].pricestd;
+                  pricelist = data3[j].pricelist;
+                  pricelimit = data3[j].pricelimit;
+                }
+              }              
+            } else { 
+              //If there is an invoice price, it takes it and makes currency conversions, if necessary
+	            priceactual = data[i].invoiceprice;
+	            pricelist = "0";
+	            pricelimit = "0";
+	            
+	            // If the currency of the expense line is not the same as the currency of the business partner pricelist, make the corresponding conversions
+	            if (!strCCurrencyId.equals(strBPCCurrencyId)){              
+	              //Determines the date (strDateExpense) used for the currency conversions
+	              strDateexpense = data[i].dateexpense.equals("")?data[i].datereport:data[i].dateexpense;
+	              strDateexpense = strDateexpense.equals("")?DateTimeData.today(this):strDateexpense;
+	              
+	              //Converts priceactual, pricelist and pricelimit to the currency of the business partner pricelist
+	              priceactual = ExpenseSOrderData.selectConvertedAmt(this, priceactual, strCCurrencyId, strBPCCurrencyId, strDateexpense, vars.getClient(), vars.getOrg());      
+	              pricelist = ExpenseSOrderData.selectConvertedAmt(this, pricelist, strCCurrencyId, strBPCCurrencyId, strDateexpense, vars.getClient(), vars.getOrg());      
+	              pricelimit = ExpenseSOrderData.selectConvertedAmt(this, pricelimit, strCCurrencyId, strBPCCurrencyId, strDateexpense, vars.getClient(), vars.getOrg());
+	            }
+            }            
+              
+            //Recalculates precisions for the business partner pricelist currency
+            ExpenseSOrderData[] data4 = ExpenseSOrderData.selectPrecisions(this, strBPCCurrencyId);
+            if (data4!=null && data4.length>0) {
+              strPrecision = data4[0].stdprecision.equals("")?"0":data4[0].stdprecision;
+              strPricePrecision = data4[0].priceprecision.equals("")?"0":data4[0].priceprecision;
+            }
+            int StdPrecision = Integer.valueOf(strPrecision).intValue();
+            int PricePrecision = Integer.valueOf(strPricePrecision).intValue();
+            priceActual = (priceactual.equals("")?ZERO:(new BigDecimal(priceactual)));
+            priceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+            priceList = (pricelist.equals("")?ZERO:(new BigDecimal(pricelist)));
+            priceList.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+            priceLimit = (pricelimit.equals("")?ZERO:(new BigDecimal(pricelimit)));
+            priceLimit.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP); 
+            
+            //Calculating discount
+            if (priceList.doubleValue() == 0.0) discount = ZERO;
+            else {
+              if (log4j.isDebugEnabled()) log4j.debug("pricelist:" + Double.toString(priceList.doubleValue()));
+              if (log4j.isDebugEnabled()) log4j.debug("priceActual:" + Double.toString(priceActual.doubleValue()));
+              discount = new BigDecimal ((priceList.doubleValue()-priceActual.doubleValue()) / priceList.doubleValue() * 100.0);
+            }
+            if (log4j.isDebugEnabled()) log4j.debug("Discount: " + discount.toString());
+            if (discount.scale() > StdPrecision){
+              discount = discount.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
+            }
+            if (log4j.isDebugEnabled()) log4j.debug("Discount rounded: " + discount.toString());            
+            
+            priceactual = priceActual.toString();
+            pricelist = priceList.toString();
+            pricelimit = priceLimit.toString();
+            strDiscount = discount.toString();
+
+            if (priceactual.equals("")) priceactual="0";
+            if (pricelist.equals("")) pricelist="0";
+            if (pricelimit.equals("")) pricelimit="0";
+            if (strDiscount.equals("")) strDiscount="0";   
+            
+            String strCOrderlineID = SequenceIdData.getSequence(this, "C_OrderLine", vars.getClient());                       
+            
             if (line==0) {
               line = 10;
             } else {
               line = line + 10;
             }
-            if (data[i].invoiceprice == null || data[i].invoiceprice.equals("")) {
-              SEExpenseProductData[] data3 = SEExpenseProductData.select(this, data[i].mProductId, data[i].mPricelistId);
-              for (int j=0;data3!=null && j<data3.length;j++) {
-                if (data3[j].validfrom == null  || data3[j].validfrom.equals("") || !DateTimeData.compare(this, DateTimeData.today(this), data3[j].validfrom).equals("-1")){
-                priceactual = data3[j].pricestd;
-                pricelist = data3[j].pricelist;
-                pricelimit = data3[j].pricelimit;
-                ExpenseSOrderData[] data4 = ExpenseSOrderData.selectPrecisions(this, strCCurrencyId);
-                  if (data4!=null && data4.length>0) {
-                  strPrecision = data4[0].stdprecision.equals("")?"0":data4[0].stdprecision;
-                  strPricePrecision = data4[0].priceprecision.equals("")?"0":data4[0].priceprecision;
-                  }
-                int StdPrecision = Integer.valueOf(strPrecision).intValue();
-                int PricePrecision = Integer.valueOf(strPricePrecision).intValue();
-
-                BigDecimal priceActual, priceList, discount;
-
-                priceActual = (priceactual.equals("")?ZERO:(new BigDecimal(priceactual)));
-                priceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
-                priceList = (pricelist.equals("")?ZERO:new BigDecimal(pricelist));
-                
-                //Calculating discount
-                if (priceList.doubleValue() == 0.0) discount = ZERO;
-                else {
-                  if (log4j.isDebugEnabled()) log4j.debug("pricelist:" + Double.toString(priceList.doubleValue()));
-                  if (log4j.isDebugEnabled()) log4j.debug("priceActual:" + Double.toString(priceActual.doubleValue()));
-                  discount = new BigDecimal ((priceList.doubleValue()-priceActual.doubleValue()) / priceList.doubleValue() * 100.0);
-                }
-                if (log4j.isDebugEnabled()) log4j.debug("Discount: " + discount.toString());
-                if (discount.scale() > StdPrecision){
-                	discount = discount.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
-                }
-                if (log4j.isDebugEnabled()) log4j.debug("Discount rounded: " + discount.toString());
-                
-                strDiscount = discount.toString();
-                priceactual = priceActual.toString();
-                pricelist = priceList.toString();
-                }
-              }
-              if (priceactual.equals("")) priceactual="0";
-              if (pricelist.equals("")) pricelist="0";
-              if (pricelimit.equals("")) pricelimit="0";
-            } else {
-	            priceactual = data[i].invoiceprice;
-	            pricelist = "0";
-	            pricelimit = "0";
-            }
             
-            String strCTaxID = Tax.get(this, data[i].mProductId, DateTimeData.today(this), data[i].adOrgId, data[i].mWarehouseId.equals("")?vars.getWarehouse():data[i].mWarehouseId, ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), data[i].cProjectId, true);
-            if (strCTaxID.equals("")){
-              throw new Exception ("TaxNotFound");              
-            }            
+            ExpenseSOrderData.insertCOrderline(conn, this, strCOrderlineID, data[i].adClientId, strOrganization.equals("")?data[i].adOrgId:strOrganization, vars.getUser(), strCOrderId, Integer.toString(line), data[i].cBpartnerId, ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), DateTimeData.today(this), DateTimeData.today(this), data[i].description, data[i].mProductId, data[i].mWarehouseId.equals("")?vars.getWarehouse():data[i].mWarehouseId, data[i].cUomId.equals("")?Utility.getContext(this, vars, "#C_UOM_ID", "ExpenseSOrder"):data[i].cUomId, data[i].qty, strBPCCurrencyId, pricelist, priceactual, pricelimit, strCTaxID, data[i].sResourceassignmentId, strDiscount);
             
-            ExpenseSOrderData.insertCOrderline(conn, this, strCOrderlineID, data[i].adClientId, strOrganization.equals("")?data[i].adOrgId:strOrganization, vars.getUser(), strCOrderId, Integer.toString(line), data[i].cBpartnerId, ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), DateTimeData.today(this), DateTimeData.today(this), data[i].description, data[i].mProductId, data[i].mWarehouseId.equals("")?vars.getWarehouse():data[i].mWarehouseId, data[i].cUomId.equals("")?Utility.getContext(this, vars, "#C_UOM_ID", "ExpenseSOrder"):data[i].cUomId, data[i].qty, strCCurrencyId, pricelist, priceactual, pricelimit, strCTaxID, data[i].sResourceassignmentId, strDiscount);
-
+            //Updates expense line with the sales order line ID
             ExpenseSOrderData.updateTimeExpenseLine(conn, this, strCOrderlineID, data[i].sTimeexpenselineId);
       }
+      
       releaseCommitConnection(conn);
       if (!strCOrderId.equals("")) {
         // Automatically processes Sales Order
@@ -235,13 +272,13 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
   	  myMessage.setType("Error");
   	  myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));  	  
   	  if (e.getMessage().equals("PricelistNotdefined")){
-   	 	 myMessage.setMessage(Utility.messageBD(this, "TheCustomer", vars.getLanguage()) + ' ' + strCust + ' ' + Utility.messageBD(this, "PricelistNotdefined", vars.getLanguage()));
+   	 	   myMessage.setMessage(Utility.messageBD(this, "TheCustomer", vars.getLanguage()) + ' ' + strCust + ' ' + Utility.messageBD(this, "PricelistNotdefined", vars.getLanguage()));
       } else if (e.getMessage().equals("FormofPaymentNotdefined")){
       	 myMessage.setMessage(Utility.messageBD(this, "TheCustomer", vars.getLanguage()) + ' ' + strCust + ' ' + Utility.messageBD(this, "FormofPaymentNotdefined", vars.getLanguage()));
       } else if (e.getMessage().equals("TaxNotFound")){
          myMessage.setMessage(Utility.messageBD(this, "TaxNotFound", vars.getLanguage()));
       } else {
-    	  myMessage.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
+    	   myMessage.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
       }
       return myMessage;
     }

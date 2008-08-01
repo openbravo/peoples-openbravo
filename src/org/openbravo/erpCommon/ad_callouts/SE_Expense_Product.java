@@ -30,7 +30,6 @@ import org.openbravo.erpCommon.utility.Utility;
 
 import java.math.BigDecimal;
 
-
 public class SE_Expense_Product extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   
@@ -43,7 +42,7 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     if (vars.commandIn("DEFAULT")) {
-      String strDateexpense = vars.getStringParameter("inpdateexpense", DateTimeData.today(this));
+      String strDateexpense = vars.getStringParameter("inpdateexpense");
       String strmProductId = vars.getStringParameter("inpmProductId");
       String strsTimeexpenseId = vars.getStringParameter("inpsTimeexpenseId");
       String strcCurrencyId = vars.getStringParameter("inpcCurrencyId");
@@ -74,6 +73,11 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
     String CCurrencyID = "";
     BigDecimal Qty = new BigDecimal(strqty);
     BigDecimal Amount = null;
+    
+    if (strDateexpense.equals("")){
+      strDateexpense = SEExpenseProductData.selectReportDate(this, strsTimeexpenseId).equals("")?DateTimeData.today(this):SEExpenseProductData.selectReportDate(this, strsTimeexpenseId);
+    }
+    
     if (strInvPrice.equals("")) {
       for (int i=0;data!=null && i<data.length && noPrice;i++){
         if (data[i].validfrom == null  || data[i].validfrom.equals("") || !DateTimeData.compare(this, strDateexpense, data[i].validfrom).equals("-1")){
@@ -135,8 +139,8 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
     String C_Currency_To_ID = Utility.getContext(this, vars, "$C_Currency_ID", "");
     if (!CCurrencyID.equals("")) {
       String convertedAmount = Amount.toString();
-      if (!CCurrencyID.equals(C_Currency_To_ID)){
-         convertedAmount = SEExpenseAmountData.selectConvertedAmt(this, Amount.toString(), CCurrencyID, C_Currency_To_ID, strDateexpense, vars.getClient(), vars.getOrg());
+      if (!CCurrencyID.equals(C_Currency_To_ID)){        
+        convertedAmount = SEExpenseProductData.selectConvertedAmt(this, Amount.toString(), CCurrencyID, C_Currency_To_ID, strDateexpense, vars.getClient(), vars.getOrg());
       }
       String strPrecisionConv = "0";    
       if (!C_Currency_To_ID.equals("")){

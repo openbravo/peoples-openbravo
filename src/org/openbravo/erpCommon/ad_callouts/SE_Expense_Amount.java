@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_callouts;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
+import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.Utility;
 import java.io.*;
 import java.math.BigDecimal;
@@ -44,21 +45,26 @@ public class SE_Expense_Amount extends HttpSecureAppServlet {
       String strExpenseAmt = vars.getStringParameter("inpexpenseamt");
       String strDateexpense = vars.getStringParameter("inpdateexpense");
       String strcCurrencyId = vars.getStringParameter("inpcCurrencyId");
+      String strTimeExpenseId = vars.getStringParameter("inpsTimeexpenseId");
       String strTabId = vars.getStringParameter("inpTabId");
       
       try {
-        printPage(response, vars, strExpenseAmt, strDateexpense, strcCurrencyId, strTabId);
+        printPage(response, vars, strExpenseAmt, strDateexpense, strcCurrencyId, strTimeExpenseId, strTabId);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
     } else pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strExpenseAmt, String strDateexpense, String strcCurrencyId, String strTabId) throws IOException, ServletException {
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strExpenseAmt, String strDateexpense, String strcCurrencyId, String strTimeExpenseId, String strTabId) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
     
     String C_Currency_To_ID = Utility.getContext(this, vars, "$C_Currency_ID", "");
+    
+    if (strDateexpense.equals("")){
+      strDateexpense = SEExpenseAmountData.selectReportDate(this, strTimeExpenseId).equals("")?DateTimeData.today(this):SEExpenseAmountData.selectReportDate(this, strTimeExpenseId);
+    }
     
     BigDecimal Amount = null;
     if (!strExpenseAmt.equals("")) {
@@ -82,7 +88,7 @@ public class SE_Expense_Amount extends HttpSecureAppServlet {
       String strPrecisionConv = "0";    
       if (!C_Currency_To_ID.equals("")){
         strPrecisionConv = SEExpenseAmountData.selectPrecision(this, C_Currency_To_ID);
-      }
+      }      
       int StdPrecisionConv = Integer.valueOf(strPrecisionConv).intValue();
       convertedAmount = SEExpenseAmountData.selectConvertedAmt(this, strExpenseAmt, strcCurrencyId, C_Currency_To_ID, strDateexpense, vars.getClient(), vars.getOrg());      
       if (!convertedAmount.equals("")) {
