@@ -150,7 +150,11 @@ String strProductRMailTextID = "";
          
          textoMensaje.append(Utility.messageBD(this, "PurchaseInvoiceDocumentno", vars.getLanguage())).append(" ").append(strDocumentno).append(" ").append(Utility.messageBD(this, "beenCreated", vars.getLanguage())).append("<br>");
          total++;        
-       } else strcInvoiceId = strcInvoiceIdOld; 
+       } else strcInvoiceId = strcInvoiceIdOld;        
+       
+       //Determines the date of the expense (strDateExpense)
+       strDateexpense = data[i].dateexpense.equals("")?data[i].datereport:data[i].dateexpense;
+       strDateexpense = strDateexpense.equals("")?DateTimeData.today(this):strDateexpense;
        
        String bpartnerLocationShip = ExpenseAPInvoiceData.shipto(this, data[i].cBpartnerId);
        if (bpartnerLocationShip.equals(""))
@@ -158,6 +162,7 @@ String strProductRMailTextID = "";
 
        String strmProductUomId = ExpenseAPInvoiceData.mProductUomId(this, data[i].mProductId);
        
+       //Gets the tax for the purchase invoice line
        strcTaxID = Tax.get(this, data[i].mProductId, strDateInvoiced, data[i].adOrgId, vars.getWarehouse(), strcBpartnerLocationId, bpartnerLocationShip, data[i].cProjectId, false);
        if (strcTaxID.equals(""))
          throw new Exception ("TaxNotFound");  
@@ -179,11 +184,6 @@ String strProductRMailTextID = "";
        if (data[i].invoiceprice != null && !data[i].invoiceprice.equals("")) {
          // If the currency of the expense line is not the same as the currency of the employee pricelist, make the corresponding conversions and set the correct precisions
          if (!strCCurrencyId.equals(strBPCCurrencyId)){      
-           
-           //Determines the date (strDateExpense) used for the currency conversions
-           strDateexpense = data[i].dateexpense.equals("")?data[i].datereport:data[i].dateexpense;
-           strDateexpense = strDateexpense.equals("")?DateTimeData.today(this):strDateexpense;
-           
            //Converts priceactual, pricelist and pricelimit to the currency of the employee pricelist
            strPricestd = ExpenseAPInvoiceData.selectConvertedAmt(this, strPricestd, strCCurrencyId, strBPCCurrencyId, strDateexpense, vars.getClient(), vars.getOrg());      
            strPricelist = ExpenseAPInvoiceData.selectConvertedAmt(this, strPricelist, strCCurrencyId, strBPCCurrencyId, strDateexpense, vars.getClient(), vars.getOrg());      

@@ -149,10 +149,14 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
               ExpenseSOrderData.insertCOrder(conn, this, strCOrderId, data[i].adClientId, data[i].adOrgId, vars.getUser(), strDocumentNo, strDocStatus, strDocAction, strProcessing, docType, docTargetType, strDateOrdered, strDateOrdered, strDateOrdered, data[i].cBpartnerId, ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), ExpenseSOrderData.billto(this, data[i].cBpartnerId).equals("")?ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId):ExpenseSOrderData.billto(this, data[i].cBpartnerId), strBPCCurrencyId, data1[0].paymentrule, data1[0].cPaymenttermId.equals("")?SEOrderBPartnerData.selectPaymentTerm(this, data[i].adClientId):data1[0].cPaymenttermId, data1[0].invoicerule.equals("")?"I":data1[0].invoicerule, data1[0].deliveryrule.equals("")?"A":data1[0].deliveryrule, "I", data1[0].deliveryviarule.equals("")?"D":data1[0].deliveryviarule, data[i].mWarehouseId.equals("")?vars.getWarehouse():data[i].mWarehouseId, data[i].mPricelistId, data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId);
               
               textoMensaje.append(Utility.messageBD(this, "SalesOrderDocumentno", vars.getLanguage())).append(" ").append(strDocumentNo).append(" ").append(Utility.messageBD(this, "beenCreated", vars.getLanguage()));
-            }                               
+            }     
             
-            //Gets the tax for the expense line
-            String strCTaxID = Tax.get(this, data[i].mProductId, DateTimeData.today(this), data[i].adOrgId, data[i].mWarehouseId.equals("")?vars.getWarehouse():data[i].mWarehouseId, ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), data[i].cProjectId, true);
+            //Determines the date of the expense (strDateExpense)
+            strDateexpense = data[i].dateexpense.equals("")?data[i].datereport:data[i].dateexpense;
+            strDateexpense = strDateexpense.equals("")?DateTimeData.today(this):strDateexpense;
+            
+            //Gets the tax for the sales order line
+            String strCTaxID = Tax.get(this, data[i].mProductId, strDateOrdered, data[i].adOrgId, data[i].mWarehouseId.equals("")?vars.getWarehouse():data[i].mWarehouseId, ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), data[i].cProjectId, true);
             if (strCTaxID.equals(""))
               throw new Exception ("TaxNotFound");              
             
@@ -169,7 +173,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
             if (data[i].invoiceprice == null || data[i].invoiceprice.equals("")) {
               ExpenseSOrderData[] data3 = ExpenseSOrderData.selectPrice(this, data[i].mProductId, data[i].mPricelistId, strBPCCurrencyId);
               for (int j=0;data3!=null && j<data3.length;j++) {
-                if (data3[j].validfrom == null  || data3[j].validfrom.equals("") || !DateTimeData.compare(this, DateTimeData.today(this), data3[j].validfrom).equals("-1")){
+                if (data3[j].validfrom == null  || data3[j].validfrom.equals("") || !DateTimeData.compare(this, strDateexpense, data3[j].validfrom).equals("-1")){
                   priceactual = data3[j].pricestd;
                   pricelist = data3[j].pricelist;
                   pricelimit = data3[j].pricelimit;
@@ -183,10 +187,6 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
 	            
 	            // If the currency of the expense line is not the same as the currency of the business partner pricelist, make the corresponding conversions
 	            if (!strCCurrencyId.equals(strBPCCurrencyId)){              
-	              //Determines the date (strDateExpense) used for the currency conversions
-	              strDateexpense = data[i].dateexpense.equals("")?data[i].datereport:data[i].dateexpense;
-	              strDateexpense = strDateexpense.equals("")?DateTimeData.today(this):strDateexpense;
-	              
 	              //Converts priceactual, pricelist and pricelimit to the currency of the business partner pricelist
 	              priceactual = ExpenseSOrderData.selectConvertedAmt(this, priceactual, strCCurrencyId, strBPCCurrencyId, strDateexpense, vars.getClient(), vars.getOrg());      
 	              pricelist = ExpenseSOrderData.selectConvertedAmt(this, pricelist, strCCurrencyId, strBPCCurrencyId, strDateexpense, vars.getClient(), vars.getOrg());      
@@ -240,7 +240,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
               line = line + 10;
             }
             
-            ExpenseSOrderData.insertCOrderline(conn, this, strCOrderlineID, data[i].adClientId, strOrganization.equals("")?data[i].adOrgId:strOrganization, vars.getUser(), strCOrderId, Integer.toString(line), data[i].cBpartnerId, ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), DateTimeData.today(this), DateTimeData.today(this), data[i].description, data[i].mProductId, data[i].mWarehouseId.equals("")?vars.getWarehouse():data[i].mWarehouseId, data[i].cUomId.equals("")?Utility.getContext(this, vars, "#C_UOM_ID", "ExpenseSOrder"):data[i].cUomId, data[i].qty, strBPCCurrencyId, pricelist, priceactual, pricelimit, strCTaxID, data[i].sResourceassignmentId, strDiscount);
+            ExpenseSOrderData.insertCOrderline(conn, this, strCOrderlineID, data[i].adClientId, strOrganization.equals("")?data[i].adOrgId:strOrganization, vars.getUser(), strCOrderId, Integer.toString(line), data[i].cBpartnerId, ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), strDateOrdered, strDateOrdered, data[i].description, data[i].mProductId, data[i].mWarehouseId.equals("")?vars.getWarehouse():data[i].mWarehouseId, data[i].cUomId.equals("")?Utility.getContext(this, vars, "#C_UOM_ID", "ExpenseSOrder"):data[i].cUomId, data[i].qty, strBPCCurrencyId, pricelist, priceactual, pricelimit, strCTaxID, data[i].sResourceassignmentId, strDiscount);
             
             //Updates expense line with the sales order line ID
             ExpenseSOrderData.updateTimeExpenseLine(conn, this, strCOrderlineID, data[i].sTimeexpenselineId);
