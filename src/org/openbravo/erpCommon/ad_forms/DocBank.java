@@ -204,7 +204,7 @@ public Fact createFact (AcctSchema as,ConnectionProvider conn,Connection con,Var
         //  BankInTransit   DR      CR              (Payment)
         /*if (!line.m_C_Payment_ID.equals("") && !line.isManual.equals("Y"))fact.createLine(line,getAccountBPartner(line.m_C_BPartner_ID, as,conn, (TrxAmt.negate().compareTo(new BigDecimal("0"))>0?false:true)),line.m_C_Currency_ID, TrxAmt.negate().toString(), conn);
         else*/ 
-        fact.createLine(line ,getAccountBankInTransit(line.m_TrxLine_ID, as, conn),line.m_C_Currency_ID, TrxAmt.negate().toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        fact.createLine(line ,getAccount(AcctServer.ACCTTYPE_BankInTransitDefault, as, conn),line.m_C_Currency_ID, TrxAmt.negate().toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         //  Charge          DR          (Charge)
         fact.createLine(new DocLine_Bank (DocumentType, Record_ID, line.m_TrxLine_ID) ,new Account(conn,DocLineBankData.selectChargeAccount(conn, C_BankAccount_ID,as.m_C_AcctSchema_ID)),line.m_C_Currency_ID, ChargeAmt.toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         //  Interest        DR      CR  (Interest)
@@ -224,39 +224,41 @@ public Fact createFact (AcctSchema as,ConnectionProvider conn,Connection con,Var
     return fact;
 }   //  createFact
 
-/**
- *  Get the account for Accounting Schema
- *  @param BankStatementline_Id
- *  @param as accounting schema
- *  @return Account
- */
-public final Account getAccountBankInTransit(String strcBankstatementlineId, AcctSchema as, ConnectionProvider conn){
-  DocBankData [] data=null;
-    try{
-        data = DocBankData.selectBankInTransitAcct(conn, strcBankstatementlineId, as.getC_AcctSchema_ID());
-    }catch(ServletException e){
-        log4j.warn(e);
-    }
-    //  Get Acct
-    String Account_ID = "";
-    if (data != null && data.length!=0){
-        Account_ID = data[0].accountId;
-    }else   return null;
-    //  No account
-    if (Account_ID.equals("")){
-        log4j.warn("DocBank - getAccountBankStatementLine - NO account BankStatementLine="
-            + strcBankstatementlineId + ", Record=" + Record_ID);
-        return null;
-    }
-    //  Return Account
-    Account acct = null;
-    try{
-        acct = Account.getAccount(conn, Account_ID);
-    }catch(ServletException e){
-        log4j.warn(e);
-    }
-    return acct;
-}   //  getAccount
+    /**
+     *  Get the account for Accounting Schema
+     *  @param AcctType see ACCTTYPE_*
+     *  @param as accounting schema
+     *  @return Account
+     */
+ /*   public final Account getAccountBPartner (String cBPartnerId, AcctSchema as,ConnectionProvider conn, boolean receipt){
+        DocPaymentData [] data=null;
+        try{
+            if (receipt){
+                data = DocPaymentData.selectBPartnerCustomerAcct(conn, as.getC_AcctSchema_ID(), cBPartnerId);
+            }else data = DocPaymentData.selectBPartnerVendorAcct(conn, as.getC_AcctSchema_ID(), cBPartnerId);
+        }catch(ServletException e){
+            log4jDocBank.warn(e);
+        }
+        //  Get Acct
+        String Account_ID = "";
+        if (data != null && data.length!=0){
+            Account_ID = data[0].accountId;
+        }else   return null;
+        //  No account
+        if (Account_ID.equals("")){
+            log4jDocBank.warn("getAccountBPartner - NO account BPartner="
+                + cBPartnerId + ", Record=" + Record_ID);
+            return null;
+        }
+        //  Return Account
+        Account acct = null;
+        try{
+            acct = Account.getAccount(conn, Account_ID);
+        }catch(ServletException e){
+            log4jDocBank.warn(e);
+        }
+        return acct;
+    } */  //  getAccount
 
     public String nextSeqNo(String oldSeqNo){
       log4jDocBank.debug("DocBank - oldSeqNo = " + oldSeqNo);

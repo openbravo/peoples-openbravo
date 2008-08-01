@@ -42,11 +42,6 @@ public class DocLine_Payment extends DocLine {
     String C_BPARTNER_ID="";
     String C_WITHHOLDING_ID="";
     String WithHoldAmt="";
-    String C_BANKACCOUNT_ID="";
-    String C_BANKSTATEMENTLINE_ID="";
-    String C_CASHBOOK_ID="";
-    String C_CASHLINE_ID="";
-
     public DocLine_Payment (String DocumentType, String TrxHeader_ID, String TrxLine_ID){
         super(DocumentType, TrxHeader_ID, TrxLine_ID);
         Line_ID = TrxLine_ID;
