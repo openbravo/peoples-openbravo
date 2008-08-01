@@ -50,6 +50,7 @@
   v_EndDate DATE;
   v_Date DATE;
   v_DateInt DATE;
+  v_Int NUMBER;
   --  Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -254,7 +255,7 @@
         v_ResultStr:='Monthly Periodicity';
         v_Date:=TO_DATE(Cur_Periodicity.Monthday || '/' || TO_CHAR(v_InitDate, 'mm/yyyy'), 'dd/mm/yyyy') ;
         IF(v_date<v_InitDate) THEN
-          v_Date:=ADD_MONTHS(v_Date, 1) ;
+          v_Date:=ADD_MONTHS(v_Date, to_number(1)) ;
         END IF;
         WHILE(v_Date<v_EndDate)
         LOOP
@@ -318,14 +319,15 @@
               v_InsertCount:=v_InsertCount + 1;
             END IF;
           END IF;
-          v_Date:=ADD_MONTHS(v_Date, 1) ;
+          v_Date:=ADD_MONTHS(v_Date, to_number(1)) ;
         END LOOP;
       ELSIF(Cur_Periodicity.Periodicity_Type='M2') THEN
         v_ResultStr:='Bi-Monthly Periodicity';
-        v_Date:=ADD_MONTHS(Cur_Periodicity.initdate, 2*(TRUNC(MONTHS_BETWEEN(v_InitDate, Cur_Periodicity.initdate) /2))) ;
+        v_Int := 2*(TRUNC(MONTHS_BETWEEN(v_InitDate, Cur_Periodicity.initdate) /2));
+        v_Date:=ADD_MONTHS(Cur_Periodicity.initdate, v_Int) ;
         --v_Date := TRUNC(Cur_Periodicity.lastdatecalc, 'mm/yyyy')+Cur_Periodicity.Monthday;
         IF(v_date<v_InitDate) THEN
-          v_Date:=ADD_MONTHS(v_Date, 2) ;
+          v_Date:=ADD_MONTHS(v_Date, to_number(2)) ;
         END IF;
         WHILE(v_Date<v_EndDate)
         LOOP
@@ -389,13 +391,14 @@
               v_InsertCount:=v_InsertCount + 1;
             END IF;
           END IF;
-          v_Date:=ADD_MONTHS(v_Date, 2) ;
+          v_Date:=ADD_MONTHS(v_Date, to_number(2)) ;
         END LOOP;
       ELSIF(Cur_Periodicity.Periodicity_Type='M3') THEN
         v_ResultStr:='Quarterly Periodicity';
-        v_Date:=ADD_MONTHS(Cur_Periodicity.initdate, 3*(TRUNC(MONTHS_BETWEEN(v_InitDate, Cur_Periodicity.initdate) /3))) ;
+        v_Int := 3*(TRUNC(MONTHS_BETWEEN(v_InitDate, Cur_Periodicity.initdate) /3));
+        v_Date:=ADD_MONTHS(Cur_Periodicity.initdate, v_Int) ;
         IF(v_date<v_InitDate) THEN
-          v_Date:=ADD_MONTHS(v_Date, 3) ;
+          v_Date:=ADD_MONTHS(v_Date, to_number(3)) ;
         END IF;
         WHILE(v_Date<v_EndDate)
         LOOP
@@ -459,13 +462,14 @@
               v_InsertCount:=v_InsertCount + 1;
             END IF;
           END IF;
-          v_Date:=ADD_MONTHS(v_Date, 3) ;
+          v_Date:=ADD_MONTHS(v_Date, to_number(3)) ;
         END LOOP;
       ELSIF(Cur_Periodicity.Periodicity_Type='M6') THEN
         v_ResultStr:='Half-yearly Periodicity';
-        v_Date:=ADD_MONTHS(Cur_Periodicity.initdate, 6*(TRUNC(MONTHS_BETWEEN(v_InitDate, Cur_Periodicity.initdate) /6))) ;
+        v_Int := 3*(TRUNC(MONTHS_BETWEEN(v_InitDate, Cur_Periodicity.initdate) /3));
+        v_Date:=ADD_MONTHS(Cur_Periodicity.initdate, v_Int) ;
         IF(v_date<v_InitDate) THEN
-          v_Date:=ADD_MONTHS(v_Date, 6) ;
+          v_Date:=ADD_MONTHS(v_Date, to_number(6)) ;
         END IF;
         WHILE(v_Date<v_EndDate)
         LOOP
@@ -529,7 +533,7 @@
               v_InsertCount:=v_InsertCount + 1;
             END IF;
           END IF;
-          v_Date:=ADD_MONTHS(v_Date, 6) ;
+          v_Date:=ADD_MONTHS(v_Date, to_number(6)) ;
         END LOOP;
       END IF;
     END LOOP;
