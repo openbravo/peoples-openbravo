@@ -22,16 +22,12 @@ import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.base.secureApp.*;
 import org.openbravo.xmlEngine.XmlDocument;
 import java.io.*;
-import java.math.BigDecimal;
-
 import javax.servlet.*;
 
-import java.util.StringTokenizer;
 import java.util.Vector;
 import javax.servlet.http.*;
 
 import org.openbravo.erpCommon.ad_combos.*;
-import org.openbravo.erpCommon.ad_process.ImportAccountData;
 import org.openbravo.exception.*;
 
 import org.openbravo.data.*;
@@ -643,56 +639,8 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     }
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - save - NATURAL ACCOUNT ADDED");
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - save - m_info last: " + m_info.toString());
-    return updateOperands(conn, vars, AD_Client_ID, data);
-  }//  save
-
-  public boolean updateOperands (Connection conn, VariablesSecureApp vars, String AD_Client_ID, AccountingValueData[] data) throws ServletException {
-    boolean OK = true;
-    for (int i=0;i<data.length;i++) {
-      String [][] strOperand = operandProcess(data[i].operands);
-      String strSeqNo = "10";
-      for(int j=0;strOperand!=null && j<strOperand.length;j++){
-          String C_ElementValue_Operand_ID = SequenceIdData.getSequence(this, "C_ElementValue_Operand", AD_Client_ID);
-          String strAccount = InitialClientSetupData.selectAccount(conn, this, strOperand[j][0], AD_Client_ID);
-          String strElementValue = InitialClientSetupData.selectAccount(conn, this, data[i].accountValue, AD_Client_ID);
-          if(strAccount!=null && !strAccount.equals("")){
-            InitialClientSetupData.insertOperands(conn, this, C_ElementValue_Operand_ID, (strOperand[j][1].equals("+")?"1":"-1"), strElementValue, strAccount, strSeqNo, AD_Client_ID, vars.getUser());
-            strSeqNo = nextSeqNo(strSeqNo);
-          } else {
-              if (log4j.isDebugEnabled()) log4j.error("Operand not inserted - Value = " + strOperand[j][0]);
-              OK = false;
-          }
-      }
-    } 
     return OK;
-  }
-  
-  private String [][] operandProcess (String strOperand) {
-     if(strOperand==null || strOperand.equals("")) return null;
-     StringTokenizer st = new StringTokenizer(strOperand,"+-",true);
-     StringTokenizer stNo = new StringTokenizer(strOperand,"+-",false);
-     int no=stNo.countTokens();
-     String [][] strResult = new String [no][2];
-     no=0; //Token No
-     int i=0; // Array position
-     strResult[0][1] = "+";
-     while (st.hasMoreTokens()) {
-         if(i%2!=1){
-             strResult[no][0] = st.nextToken();
-             no++;
-         }
-         else strResult[no][1] = st.nextToken();
-         i++;
-     }
-//     strResult = filterArray(strResult);
-     return strResult;
-  }  //  operandProcess
-
-  public String nextSeqNo(String oldSeqNo){
-    BigDecimal seqNo = new BigDecimal(oldSeqNo);
-    String SeqNo = (seqNo.add(new BigDecimal("10"))).toString();
-    return SeqNo;
-  }
+  }//  save
 
   public AccountingValueData[] parseData (FieldProvider[] data) throws ServletException {
     AccountingValueData[] result = null;
@@ -719,9 +667,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - dataAux.accountParent: " + dataAux.accountParent);
       dataAux.elementLevel = data[i].getField("elementLevel");
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - dataAux.elementLevel: " + dataAux.elementLevel);
-    dataAux.balanceSheet = data[i].getField("balanceSheet");
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - dataAux.operands: " + dataAux.operands);
-    dataAux.operands = data[i].getField("operands");
+      dataAux.balanceSheet = data[i].getField("balanceSheet");
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - dataAux.balanceSheet: " + dataAux.balanceSheet);
       dataAux.balanceSheetName = data[i].getField("balanceSheetName");
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - dataAux.balanceSheetName: " + dataAux.balanceSheetName);
