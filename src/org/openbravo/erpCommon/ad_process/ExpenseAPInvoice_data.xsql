@@ -73,6 +73,31 @@
     <Parameter name="cActivityId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_ACTIVITY_ID = TO_NUMBER(?)]]></Parameter>
     <Parameter name="cCampaignId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_CAMPAIGN_ID = TO_NUMBER(?)]]></Parameter>
   </SqlMethod>
+  
+  <SqlMethod name="selectInvoiceHeaderNoProject" type="preparedStatement" connection="true" return="String" default="">
+    <SqlMethodComment>Select for relation (when project is null)</SqlMethodComment>
+    <Sql><![CDATA[
+      SELECT MAX(C_INVOICE.C_INVOICE_ID) AS C_INVOICE_ID
+      FROM C_INVOICE, C_INVOICELINE
+      WHERE C_INVOICE.AD_CLIENT_ID = TO_NUMBER(?)
+      AND C_INVOICE.AD_ORG_ID = TO_NUMBER(?)
+      AND C_INVOICE.DATEINVOICED = TO_DATE(?)
+      AND C_INVOICE.C_BPARTNER_ID = TO_NUMBER(?)
+      AND C_INVOICE.C_CURRENCY_ID = TO_NUMBER(?)
+      AND C_INVOICE.DOCSTATUS = 'DR'
+      AND C_INVOICE.PROCESSED <> 'Y'
+      AND C_INVOICE.ISACTIVE = 'Y'
+      AND C_INVOICE.ISSOTRX = 'N'
+      AND C_INVOICE.C_PROJECT_ID IS NULL
+      ]]></Sql>
+    <Parameter name="adClientId"/>
+    <Parameter name="adOrgId"/>
+    <Parameter name="dateinvoiced"/>
+    <Parameter name="cBpartnerId"/>
+    <Parameter name="cCurrencyId"/>
+    <Parameter name="cActivityId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_ACTIVITY_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="cCampaignId" optional="true" after="AND C_INVOICE.ISSOTRX = 'N'"><![CDATA[ AND C_INVOICE.C_CAMPAIGN_ID = TO_NUMBER(?)]]></Parameter>
+  </SqlMethod>
 
   <SqlMethod name="selectInvoiceLine" type="preparedStatement" connection="true" return="multiple">
     <SqlMethodComment>Select for relation</SqlMethodComment>
@@ -567,7 +592,7 @@ TO_NUMBER(?)
 
  <SqlMethod name="updateInvoiceline" type="preparedStatement" connection="true" return="rowCount">
    <Sql><![CDATA[
-        UPDATE C_INVOICELINE SET QTYINVOICED = ?, LINENETAMT = ?
+        UPDATE C_INVOICELINE SET QTYINVOICED = TO_NUMBER(?), LINENETAMT = TO_NUMBER(?)
         WHERE C_INVOICELINE_ID = TO_NUMBER(?)
     ]]></Sql>
   <Parameter name="qtyinvoiced"/>
@@ -577,7 +602,7 @@ TO_NUMBER(?)
 
 <SqlMethod name="updateAcctdimension" type="preparedStatement" connection="true" return="rowCount">
   <Sql><![CDATA[
-      UPDATE C_INVOICELINE_ACCTDIMENSION SET AMT = ?
+      UPDATE C_INVOICELINE_ACCTDIMENSION SET AMT = TO_NUMBER(?)
       WHERE C_INVOICELINE_ACCTDIMENSION_ID = TO_NUMBER(?)
     ]]></Sql>
   <Parameter name="qtyinvoiced"/>

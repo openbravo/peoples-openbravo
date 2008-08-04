@@ -115,7 +115,13 @@ String strProductRMailTextID = "";
        String docTargetType = ExpenseAPInvoiceData.cDoctypeTarget(this, data[i].adClientId, data[i].adOrgId);
               
        // Checks if there are invoices not processed that full filled the requirements
-       String strcInvoiceIdOld = ExpenseAPInvoiceData.selectInvoiceHeader(conn, this, data[i].adClientId, data[i].adOrgId, strDateInvoiced, data[i].cBpartnerId, strBPCCurrencyId, data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId);
+       String strcInvoiceIdOld = "";
+       //In order to make different purchase invoices for expense lines assigned to different projects
+       if (data[i].cProjectId.equals("")){
+         strcInvoiceIdOld = ExpenseAPInvoiceData.selectInvoiceHeaderNoProject(conn, this, data[i].adClientId, data[i].adOrgId, strDateInvoiced, data[i].cBpartnerId, strBPCCurrencyId, data[i].cActivityId, data[i].cCampaignId);
+       } else {
+         strcInvoiceIdOld = ExpenseAPInvoiceData.selectInvoiceHeader(conn, this, data[i].adClientId, data[i].adOrgId, strDateInvoiced, data[i].cBpartnerId, strBPCCurrencyId, data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId);
+       }
          
        if (strcInvoiceIdOld.equals("")) {
          //Checks some employee data
@@ -226,13 +232,11 @@ String strProductRMailTextID = "";
 	 
          if (log4j.isDebugEnabled()) log4j.debug("*****************+client: "+ (data[i].invoiceprice.equals("")?dataPrice[0].pricestd:data[i].invoiceprice));
          ExpenseAPInvoiceData.insertLine(conn, this, data[i].adClientId, data[i].adOrgId, strcInvoiceId, "", String.valueOf(line), "", data[i].mProductId, "", data[i].description, "", strmProductUomId, String.valueOf(qty), data[i].cUomId, strPricestd, strPricelist, strcTaxID, String.valueOf(Float.valueOf(strPricestd)*qty), "", strPricestd, strPricelimit, "", "", "", "Y", "0", "", "", strcInvoiceLineId, "N", vars.getUser(), vars.getUser());
-
        } else {
          //If there are more lines that full filled the requirements, adds the new amount to the old
          strcInvoiceLineId = dataInvoiceline[0].cInvoicelineId;
          qty = Float.valueOf(dataInvoiceline[0].qtyinvoiced)+Float.valueOf(data[i].qty);
          ExpenseAPInvoiceData.updateInvoiceline(conn, this, String.valueOf(qty), String.valueOf(Float.valueOf(strPricestd)*qty), strcInvoiceLineId);
-
        }
 
        if (!data[i].cProjectId.equals("")){
@@ -242,6 +246,7 @@ String strProductRMailTextID = "";
           String strcInvoicelineAcctdimension = SequenceIdData.getSequence(this, "C_InvoiceLine_AcctDimension", data[i].adClientId);
           ExpenseAPInvoiceData.insertInvoicelineAcctdimension(conn, this, strcInvoicelineAcctdimension, data[i].adClientId, data[i].adOrgId, "Y", vars.getUser(), vars.getUser(), strcInvoiceLineId, String.valueOf(qty*Float.valueOf(strPricestd)), data[i].cProjectId, data[i].cCampaignId, "", "");
          } else {
+          //If there are more lines that full filled the requirements, adds the new amount to the old
           amount = Float.valueOf(dataAcctdimension[0].amt)+(Float.valueOf(data[i].qty)*Float.valueOf(strPricestd));
           ExpenseAPInvoiceData.updateAcctdimension(conn, this, String.valueOf(amount), dataAcctdimension[0].cInvoicelineAcctdimensionId);
          }
