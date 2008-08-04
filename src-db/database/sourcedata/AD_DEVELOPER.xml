@@ -2841,6 +2841,35 @@
 <!--10098-->              <SVNUSER><![CDATA[jalegria]]></SVNUSER>
 <!--10098**************--></AD_DEVELOPER>
 
+<!--10099**************--><AD_DEVELOPER>
+<!--10099 AD_DEVELOPER_ID-->
+<!--10099-->              <AD_DEVELOPER_ID><![CDATA[10099]]></AD_DEVELOPER_ID>
+<!--10099 AD_CLIENT_ID-->
+<!--10099-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--10099 AD_ORG_ID-->
+<!--10099-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--10099 ISACTIVE-->
+<!--10099-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--10099 CREATED-->
+<!--10099-->              <CREATED><![CDATA[2008-08-04 19:12:00.0]]></CREATED>
+<!--10099 CREATEDBY-->
+<!--10099-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--10099 UPDATED-->
+<!--10099-->              <UPDATED><![CDATA[2008-08-04 19:12:00.0]]></UPDATED>
+<!--10099 UPDATEDBY-->
+<!--10099-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--10099 NAME-->
+<!--10099-->              <NAME><![CDATA[Luis Garcia Benito]]></NAME>
+<!--10099 NICKNAME-->
+<!--10099-->              <NICKNAME><![CDATA[luis.garcia]]></NICKNAME>
+<!--10099 EMAIL-->
+<!--10099-->              <EMAIL><![CDATA[luis.garcia at gepelia dot com]]></EMAIL>
+<!--10099 COMPANY-->
+<!--10099-->              <COMPANY><![CDATA[Gepelia]]></COMPANY>
+<!--10099 SVNUSER-->
+<!--10099-->              <SVNUSER><![CDATA[luis.garcia]]></SVNUSER>
+<!--10099**************--></AD_DEVELOPER>
+
 <!--
 ************************
 0. End of Core Range.
