@@ -93,6 +93,7 @@
           V.M_PRICELIST_ID,
           P.C_CAMPAIGN_ID,
           PL.C_CURRENCY_ID,
+	  	  P.C_CURRENCY_ID AS PROJCURRENCY,
           BP.PAYMENTRULEPO AS PAYMENTRULE,
           BP.PO_PAYMENTTERM_ID AS C_PAYMENTTERM_ID,
           P.M_WAREHOUSE_ID,
@@ -257,7 +258,16 @@
               v_PriceLimit :=  v_PriceActual ;
             END IF;
 
-            IF (v_PriceList = 0) THEN
+	        -- Make currency conversion if project header's currency (hence, project lines currency) is different from supplier's price list currency
+            IF (Cur_SO.C_CURRENCY_ID != Cur_SO.PROJCURRENCY) THEN
+              v_PriceActual := COALESCE(C_Currency_Convert(v_PriceActual, Cur_SO.PROJCURRENCY, Cur_SO.C_CURRENCY_ID, now(), NULL, Cur_SO.AD_CLIENT_ID, Cur_SO.AD_ORG_ID),0);
+	          v_PriceStd := COALESCE(C_Currency_Convert(v_PriceStd, Cur_SO.PROJCURRENCY, Cur_SO.C_CURRENCY_ID, now(), NULL, Cur_SO.AD_CLIENT_ID, Cur_SO.AD_ORG_ID),0);
+              v_PriceList := COALESCE(C_Currency_Convert(v_PriceList, Cur_SO.PROJCURRENCY, Cur_SO.C_CURRENCY_ID, now(), NULL, Cur_SO.AD_CLIENT_ID, Cur_SO.AD_ORG_ID),0);
+              v_PriceLimit := COALESCE(C_Currency_Convert(v_PriceLimit, Cur_SO.PROJCURRENCY, Cur_SO.C_CURRENCY_ID, now(), NULL, Cur_SO.AD_CLIENT_ID, Cur_SO.AD_ORG_ID),0);
+	        END IF;
+
+	        -- Calculating the discount
+	        IF (v_PriceList = 0) THEN
                v_Discount := 0 ;
             ELSE
               -- Calculate rounded discount
