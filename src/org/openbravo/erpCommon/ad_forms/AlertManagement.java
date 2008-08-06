@@ -68,6 +68,7 @@ public class AlertManagement extends HttpSecureAppServlet {
     try{
       String[] strAlertId = request.getParameterValues("strAlertID");
       if (log4j.isDebugEnabled()) log4j.debug("update: alerts"+strAlertId.length);      
+      if (strAlertId!=null && strAlertId.length!=0) {
         for (int i=0; i<strAlertId.length; i++) {      
           String note = vars.getStringParameter("strNotes"+strAlertId[i]);
           String fixed = vars.getStringParameter("strFixed"+strAlertId[i]).equals("on")?"Y":"N";
@@ -75,7 +76,14 @@ public class AlertManagement extends HttpSecureAppServlet {
           
           if (log4j.isDebugEnabled()) log4j.debug("updating:"+strAlertId[i]+" - fixed:"+fixed+" - active:"+active);
           AlertManagementData.update(this, note, fixed, active, strAlertId[i]);
-        }   
+        }        
+      }else{
+        myMessage.setType("Error");
+        myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+        myMessage.setMessage(Utility.messageBD(this, "There are no displayed alerts", vars.getLanguage()));
+        return myMessage;
+      }
+      
     }       
     catch(Exception ex){
       myMessage.setType("Error");
