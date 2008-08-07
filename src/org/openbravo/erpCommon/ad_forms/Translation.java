@@ -228,7 +228,7 @@ public class Translation extends HttpSecureAppServlet
 
   private String exportTrl(String directory, int AD_Client_ID, String AD_Language, String Trl_Table)
 	{
-		String fileName = directory + File.separator + Trl_Table + "_" + AD_Language + ".xml";
+		String fileName = directory + Trl_Table + "_" + AD_Language + ".xml";
 		log4j.info("exportTrl - " + fileName);
 		File out = new File(fileName);
     Statement st = null;
