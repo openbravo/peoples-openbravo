@@ -12,7 +12,7 @@
     * under the License. 
     * The Original Code is Openbravo ERP. 
     * The Initial Developer of the Original Code is Openbravo SL 
-    * All portions are Copyright (C) 2001-2006 Openbravo SL 
+    * All portions are Copyright (C) 2001-2008 Openbravo SL 
     * All Rights Reserved. 
     * Contributor(s):  ______________________________________.
     ************************************************************************
@@ -46,35 +46,46 @@
                       LEFT JOIN (SELECT c_Project, sum(amount) as amount
            FROM (
            SELECT CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN i.c_project_id ELSE ila.c_project_id END AS C_Project,
-                  CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN il.linenetamt ELSE ila.amt END AS amount
-           FROM C_Invoice i, C_InvoiceLine il LEFT JOIN C_InvoiceLine_AcctDimension ila on il.C_InvoiceLine_ID = ila.C_InvoiceLine_ID,
-             M_Product p
+                  CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN COALESCE(il.linenetamt,0) * (1 + (CASE WHEN i.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(ABS(i.totallines) + ABS(disc.dis_amt))) END)) ELSE COALESCE(ila.amt,0) * (1 + (CASE WHEN i.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(ABS(i.totallines) + ABS(disc.dis_amt))) END)) END AS amount
+           FROM M_Product p, C_InvoiceLine il LEFT JOIN C_InvoiceLine_AcctDimension ila on il.C_InvoiceLine_ID = ila.C_InvoiceLine_ID,
+             C_Invoice i left join (SELECT c_invoice_id, sum(linenetamt) as dis_amt
+                                         FROM c_invoiceline
+                                        WHERE c_invoice_discount_id IS NOT NULL
+                                        GROUP BY c_invoice_id) disc ON i.C_Invoice_ID = disc.C_Invoice_ID
            WHERE i.C_Invoice_ID = il.C_Invoice_ID
              AND il.M_Product_ID = p.M_Product_ID
              AND i.issotrx = 'Y'
              AND i.docStatus IN ('CO', 'CL')
 	         AND 2=2
+	         AND il.c_invoice_discount_id IS NULL
              AND p.producttype = 'S') AAA
            GROUP BY c_Project) serrev ON p.C_Project_ID = serrev.C_Project
                       LEFT JOIN (SELECT c_Project, sum(amount) as amount
            FROM (
            SELECT CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN i.c_project_id ELSE ila.c_project_id END AS C_Project,
-                  CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN il.linenetamt ELSE ila.amt END AS amount
-           FROM C_Invoice i, C_InvoiceLine il LEFT JOIN C_InvoiceLine_AcctDimension ila on il.C_InvoiceLine_ID = ila.C_InvoiceLine_ID,
-             M_Product p
+                  CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN COALESCE(il.linenetamt,0) * (1 + (CASE WHEN i.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(ABS(i.totallines) + ABS(disc.dis_amt))) END)) ELSE COALESCE(ila.amt,0) * (1 + (CASE WHEN i.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(ABS(i.totallines) + ABS(disc.dis_amt))) END)) END AS amount
+           FROM M_Product p, C_InvoiceLine il LEFT JOIN C_InvoiceLine_AcctDimension ila on il.C_InvoiceLine_ID = ila.C_InvoiceLine_ID,
+             C_Invoice i left join (SELECT c_invoice_id, sum(linenetamt) as dis_amt
+                                         FROM c_invoiceline
+                                        WHERE c_invoice_discount_id IS NOT NULL
+                                        GROUP BY c_invoice_id) disc ON i.C_Invoice_ID = disc.C_Invoice_ID
            WHERE i.C_Invoice_ID = il.C_Invoice_ID
              AND il.M_Product_ID = p.M_Product_ID
              AND i.issotrx = 'Y'
              AND i.docStatus IN ('CO', 'CL')
 	         AND 3=3
+	         AND il.c_invoice_discount_id IS NULL
              AND p.producttype <> 'S') BBB
            GROUP BY c_Project) exprei ON p.C_Project_ID = exprei.C_Project
                       LEFT JOIN (SELECT c_Project, sum(amount) as amount
            FROM (
            SELECT CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN i.c_project_id ELSE ila.c_project_id END AS C_Project,
-                  CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN il.linenetamt ELSE ila.amt END AS amount
-           FROM C_Invoice i, C_InvoiceLine il LEFT JOIN C_InvoiceLine_AcctDimension ila on il.C_InvoiceLine_ID = ila.C_InvoiceLine_ID,
-             M_Product p
+                  CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN COALESCE(il.linenetamt,0) * (1 + (CASE WHEN i.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(ABS(i.totallines) + ABS(disc.dis_amt))) END)) ELSE COALESCE(ila.amt,0) * (1 + (CASE WHEN i.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(ABS(i.totallines) + ABS(disc.dis_amt))) END)) END AS amount
+           FROM M_Product p, C_InvoiceLine il LEFT JOIN C_InvoiceLine_AcctDimension ila on il.C_InvoiceLine_ID = ila.C_InvoiceLine_ID,
+             C_Invoice i left join (SELECT c_invoice_id, sum(linenetamt) as dis_amt
+                                         FROM c_invoiceline
+                                        WHERE c_invoice_discount_id IS NOT NULL
+                                        GROUP BY c_invoice_id) disc ON i.C_Invoice_ID = disc.C_Invoice_ID
            WHERE i.C_Invoice_ID = il.C_Invoice_ID
            AND il.M_Product_ID = p.M_Product_ID
            AND i.docStatus IN ('CO', 'CL')
