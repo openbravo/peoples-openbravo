@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -169,6 +169,8 @@ compare.database.structure: refer to compare.database.structure target of databa
     <ant dir="${base.src.trl}" target="build.jar" inheritAll="true" inheritRefs="true"/>
     <ant dir="${base.src.wad}" target="build.jar" inheritAll="true" inheritRefs="true"/>
     <ant dir="${base.src}" target="eclipse.compile" inheritAll="true" inheritRefs="true"/>
+  	<eclipse.refreshLocal resource="openbravo" depth="infinite"/>
+  	<eclipse.incrementalBuild project="openbravo" kind="incremental"/>
   </target>
 
   <target name="eclipse.compile.complete" depends="init">
@@ -176,6 +178,8 @@ compare.database.structure: refer to compare.database.structure target of databa
     <ant dir="${base.src.trl}" target="build.jar" inheritAll="true" inheritRefs="true"/>
     <ant dir="${base.src.wad}" target="build.jar" inheritAll="true" inheritRefs="true"/>
     <ant dir="${base.src}" target="eclipse.compile.complete" inheritAll="true" inheritRefs="true"/>
+  	<eclipse.refreshLocal resource="openbravo" depth="infinite"/>
+  	<eclipse.incrementalBuild project="openbravo" kind="full"/>
   </target>
 
   <target name="compile.src" depends="init">
@@ -197,6 +201,8 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <target name="eclipse.wad.lib" depends="init">
     <ant dir="${base.src.wad}" target="sqlc" inheritAll="true" inheritRefs="true"/>
+  	<eclipse.refreshLocal resource="OpenbravoWAD" depth="infinite"/>
+  	<eclipse.incrementalBuild project="OpenbravoWAD" kind="full"/>
   </target>
 
   <target name="wad.docs" depends="init">
@@ -209,6 +215,8 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <target name="eclipse.trl.lib" depends="init">
     <ant dir="${base.src.trl}" target="sqlc" inheritAll="true" inheritRefs="true"/>
+  	<eclipse.refreshLocal resource="OpenbravoTrl" depth="infinite"/>
+  	<eclipse.incrementalBuild project="OpenbravoTrl" kind="full"/>
   </target>
 
   <target name="trl.docs" depends="init">
@@ -263,10 +271,10 @@ compare.database.structure: refer to compare.database.structure target of databa
   <target name="eclipse.install.source" depends="init,code.rev">
     <antcall target="database.lib"/>
     <ant dir="${base.db}" target="create.database" inheritAll="true" inheritRefs="true"/>
-    <antcall target="core.lib"/>
-    <antcall target="wad.lib"/>
-    <antcall target="trl.lib"/>
-    <antcall target="compile.complete"/>
+  	<eclipse.incrementalBuild project="OpenbravoCore" kind="full"/>
+    <antcall target="eclipse.wad.lib"/>
+    <antcall target="eclipse.trl.lib"/>
+    <antcall target="eclipse.compile.complete"/>
   </target>
 
   <target name="create.database" depends="init,code.rev">
