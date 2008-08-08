@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
- *************************************************************************
- * The contents of this file are subject to the Openbravo  Public  License
- * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
- * Version 1.1  with a permitted attribution clause; you may not  use this
- * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
- * Software distributed under the License  is  distributed  on  an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
- * All Rights Reserved. 
- * Contributor(s):  ______________________________________.
- ************************************************************************
+*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2001-2008 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************
 -->
 <!--
 List of targets:
@@ -122,31 +122,29 @@ compare.database.structure: refer to compare.database.structure target of databa
       <include name="openbravo-wad.jar"/>
     </fileset>
   </path>
-  
+
   <target name="init">
     <fail if="no.java.home" message="The environment variable JAVA_HOME is not set."/>
   </target>
 
- 
- <target name="code.rev">
-  <loadfile property="svn.entries" srcFile=".svn/entries" failonerror="false">
-    <filterchain>
-      <filterreader classname="org.apache.tools.ant.filters.HeadFilter">
-        <param name="skip" value="3"/>
-        <param name="lines" value="1"/>
-      </filterreader>
-    </filterchain>
-  	<filterchain>
-      <filterreader classname="org.apache.tools.ant.filters.StripLineBreaks" />
-    </filterchain>
-  </loadfile>
-  <condition property="code.revision" value="${svn.entries}" else ="0">
-  	<and>
-      <isset property="svn.entries" />
-  	</and>
-  </condition>    
- </target>
-
+  <target name="code.rev">
+    <loadfile property="svn.entries" srcFile=".svn/entries" failonerror="false">
+      <filterchain>
+        <filterreader classname="org.apache.tools.ant.filters.HeadFilter">
+          <param name="skip" value="3"/>
+          <param name="lines" value="1"/>
+        </filterreader>
+      </filterchain>
+      <filterchain>
+        <filterreader classname="org.apache.tools.ant.filters.StripLineBreaks" />
+      </filterchain>
+    </loadfile>
+    <condition property="code.revision" value="${svn.entries}" else ="0">
+      <and>
+        <isset property="svn.entries" />
+      </and>
+    </condition>
+  </target>
 
   <target name="compile.complete" depends="init">
     <ant dir="${base.src}" target="compile.complete" inheritAll="true" inheritRefs="true"/>
@@ -169,8 +167,8 @@ compare.database.structure: refer to compare.database.structure target of databa
     <ant dir="${base.src.trl}" target="build.jar" inheritAll="true" inheritRefs="true"/>
     <ant dir="${base.src.wad}" target="build.jar" inheritAll="true" inheritRefs="true"/>
     <ant dir="${base.src}" target="eclipse.compile" inheritAll="true" inheritRefs="true"/>
-  	<eclipse.refreshLocal resource="openbravo" depth="infinite"/>
-  	<eclipse.incrementalBuild project="openbravo" kind="incremental"/>
+    <eclipse.refreshLocal resource="openbravo" depth="infinite"/>
+    <eclipse.incrementalBuild project="openbravo" kind="incremental"/>
   </target>
 
   <target name="eclipse.compile.complete" depends="init">
@@ -178,8 +176,8 @@ compare.database.structure: refer to compare.database.structure target of databa
     <ant dir="${base.src.trl}" target="build.jar" inheritAll="true" inheritRefs="true"/>
     <ant dir="${base.src.wad}" target="build.jar" inheritAll="true" inheritRefs="true"/>
     <ant dir="${base.src}" target="eclipse.compile.complete" inheritAll="true" inheritRefs="true"/>
-  	<eclipse.refreshLocal resource="openbravo" depth="infinite"/>
-  	<eclipse.incrementalBuild project="openbravo" kind="full"/>
+    <eclipse.refreshLocal resource="openbravo" depth="infinite"/>
+    <eclipse.incrementalBuild project="openbravo" kind="full"/>
   </target>
 
   <target name="compile.src" depends="init">
@@ -201,8 +199,8 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <target name="eclipse.wad.lib" depends="init">
     <ant dir="${base.src.wad}" target="sqlc" inheritAll="true" inheritRefs="true"/>
-  	<eclipse.refreshLocal resource="OpenbravoWAD" depth="infinite"/>
-  	<eclipse.incrementalBuild project="OpenbravoWAD" kind="full"/>
+    <eclipse.refreshLocal resource="OpenbravoWAD" depth="infinite"/>
+    <eclipse.incrementalBuild project="OpenbravoWAD" kind="full"/>
   </target>
 
   <target name="wad.docs" depends="init">
@@ -215,8 +213,8 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <target name="eclipse.trl.lib" depends="init">
     <ant dir="${base.src.trl}" target="sqlc" inheritAll="true" inheritRefs="true"/>
-  	<eclipse.refreshLocal resource="OpenbravoTrl" depth="infinite"/>
-  	<eclipse.incrementalBuild project="OpenbravoTrl" kind="full"/>
+    <eclipse.refreshLocal resource="OpenbravoTrl" depth="infinite"/>
+    <eclipse.incrementalBuild project="OpenbravoTrl" kind="full"/>
   </target>
 
   <target name="trl.docs" depends="init">
@@ -271,7 +269,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   <target name="eclipse.install.source" depends="init,code.rev">
     <antcall target="database.lib"/>
     <ant dir="${base.db}" target="create.database" inheritAll="true" inheritRefs="true"/>
-  	<eclipse.incrementalBuild project="OpenbravoCore" kind="full"/>
+    <eclipse.incrementalBuild project="OpenbravoCore" kind="full"/>
     <antcall target="eclipse.wad.lib"/>
     <antcall target="eclipse.trl.lib"/>
     <antcall target="eclipse.compile.complete"/>
@@ -358,5 +356,4 @@ compare.database.structure: refer to compare.database.structure target of databa
   <target name="compare.database.data" depends="init">
     <ant dir="${base.db}" target="compare.database.data" inheritAll="true" inheritRefs="true"/>
   </target>
-
 </project>
