@@ -193,9 +193,7 @@ build.war: build a war file in the lib directory.
     <copy todir="${base.context}/WEB-INF"  encoding="UTF-8">
       <fileset file="${build.sqlc}/src/web.xml"/>
        <fileset dir="${base.config}">
-        <exclude name="*.bin"/>
-        <exclude name="*.exe"/>
-        <exclude name="*.tar.gz"/>
+        <exclude name="**/setup-tool/**"/>
         <exclude name="*.template"/>
       </fileset>
     </copy>
