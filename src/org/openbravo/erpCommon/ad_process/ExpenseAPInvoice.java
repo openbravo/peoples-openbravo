@@ -125,6 +125,7 @@ String strProductRMailTextID = "";
          
        if (strcInvoiceIdOld.equals("")) {
          //Checks some employee data
+         strEmpl = data[i].bpname;
          
          strPricelistId = ExpenseAPInvoiceData.pricelistId(this, data[i].cBpartnerId);      
          if (strPricelistId.equals("")){
@@ -146,7 +147,6 @@ String strProductRMailTextID = "";
          if (strPaymentterm.equals(""))
            throw new Exception ("PaymenttermNotdefined");
          
-         strEmpl = data[i].bpname;
          //Creates a new purchase invoice header       
          strcInvoiceId = SequenceIdData.getSequence(this, "C_Invoice", data[i].adClientId);
          String strDocumentno = Utility.getDocumentNo(this, vars, "", "C_Invoice", Utility.getContext(this, vars, "C_DocTypeTarget_ID", docTargetType), Utility.getContext(this, vars, "C_DocType_ID", docTargetType), false, true);
