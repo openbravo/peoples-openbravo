@@ -100,8 +100,8 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
   String processButton(Connection conn, VariablesSecureApp vars, String strKey, String strPediodId, String windowId, String strClose) throws ServletException{
     String strRegId = SequenceIdData.getSequence(this, "Fact_Acct_Group", vars.getClient());
     String strCloseId = strClose.equals("Y")?SequenceIdData.getSequence(this, "Fact_Acct_Group", vars.getClient()):"";
-    String strDivideUpId = strClose.equals("Y")?SequenceIdData.getSequence(this, "Fact_Acct_Group", vars.getClient()):"";
     String strOpenId = strClose.equals("Y")?SequenceIdData.getSequence(this, "Fact_Acct_Group", vars.getClient()):"";
+    String strDivideUpId = strClose.equals("Y")?SequenceIdData.getSequence(this, "Fact_Acct_Group", vars.getClient()):"";
     CreateRegFactAcctData [] data = CreateRegFactAcctData.treeOrg(this, vars.getClient(), "0");
     CreateRegFactAcctData [] acctSchema = CreateRegFactAcctData.treeAcctSchema(this, vars.getClient());
     for (int j=0;j<acctSchema.length;j++){
