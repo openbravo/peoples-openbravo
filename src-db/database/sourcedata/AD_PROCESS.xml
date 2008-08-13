@@ -3777,9 +3777,9 @@
 <!--209 NAME-->
 <!--209-->              <NAME><![CDATA[Send Mail Text]]></NAME>
 <!--209 DESCRIPTION-->
-<!--209-->              <DESCRIPTION><![CDATA[Send EMails to active subscribers of an Interest Area or Business Partner Group]]></DESCRIPTION>
+<!--209-->              <DESCRIPTION><![CDATA[Send EMails to active subscribers of the Areas of Interest or Business Partner Group]]></DESCRIPTION>
 <!--209 HELP-->
-<!--209-->              <HELP><![CDATA[Select the Interest Area to which subscribers you send the Mail Text from the User selected. Alternatively, you can send mails to the Contacts of a Business Partner Group. ||The User to send emails from needs to have valid EMail information.]]></HELP>
+<!--209-->              <HELP><![CDATA[Select the Areas of Interest to which subscribers you send the Mail Text from the User selected. Alternatively, you can send mails to the Contacts of a Business Partner Group. ||The User to send emails from needs to have valid EMail information.]]></HELP>
 <!--209 ACCESSLEVEL-->
 <!--209-->              <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
 <!--209 ISUSERSTARTABLE-->

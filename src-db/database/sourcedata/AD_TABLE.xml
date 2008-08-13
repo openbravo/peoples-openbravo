@@ -10074,17 +10074,16 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--528 CREATEDBY-->
 <!--528-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--528 UPDATED-->
-<!--528-->              <UPDATED><![CDATA[2007-05-11 10:01:14.0]]></UPDATED>
+<!--528-->              <UPDATED><![CDATA[2008-08-08 01:03:19.0]]></UPDATED>
 <!--528 UPDATEDBY-->
 <!--528-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--528 NAME-->
 <!--528-->              <NAME><![CDATA[R_ContactInterest]]></NAME>
 <!--528 DESCRIPTION-->
-<!--528-->              <DESCRIPTION><![CDATA[Business Partner Contact Interest Area
-Interest Area suscription]]></DESCRIPTION>
+<!--528-->              <DESCRIPTION><![CDATA[Business Partner Contact Areas of Interest<BR>Areas of Interest suscription]]></DESCRIPTION>
 <!--528 HELP-->
-<!--528-->              <HELP><![CDATA[Interest Area can be used for Marketing Campaigns
-The subscription is used to follow up the contacts which are subscribed to an specific area of interest and also add new subscribers.]]></HELP>
+<!--528-->              <HELP><![CDATA[Areas of Interest can be used for Marketing Campaigns
+The subscription is used to follow up the contacts which are subscribed to an specific areas of interest and also add new subscribers.]]></HELP>
 <!--528 TABLENAME-->
 <!--528-->              <TABLENAME><![CDATA[R_ContactInterest]]></TABLENAME>
 <!--528 ISVIEW-->
@@ -10170,15 +10169,15 @@ The subscription is used to follow up the contacts which are subscribed to an sp
 <!--530 CREATEDBY-->
 <!--530-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--530 UPDATED-->
-<!--530-->              <UPDATED><![CDATA[2007-05-11 10:00:23.0]]></UPDATED>
+<!--530-->              <UPDATED><![CDATA[2008-08-08 01:04:01.0]]></UPDATED>
 <!--530 UPDATEDBY-->
 <!--530-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--530 NAME-->
 <!--530-->              <NAME><![CDATA[R_InterestArea]]></NAME>
 <!--530 DESCRIPTION-->
-<!--530-->              <DESCRIPTION><![CDATA[Interest Area or Topic]]></DESCRIPTION>
+<!--530-->              <DESCRIPTION><![CDATA[Areas of Interest or Topic]]></DESCRIPTION>
 <!--530 HELP-->
-<!--530-->              <HELP><![CDATA[Interest Areas reflect interest in a topic by a contact. Interest areas can be used for marketing campaigns.]]></HELP>
+<!--530-->              <HELP><![CDATA[Areas of Interest reflect interest in a topic by a contact. Areas of Interest can be used for marketing campaigns.]]></HELP>
 <!--530 TABLENAME-->
 <!--530-->              <TABLENAME><![CDATA[R_InterestArea]]></TABLENAME>
 <!--530 ISVIEW-->

@@ -6484,11 +6484,11 @@ You find the current status in the Document Status field. The options are listed
 <!--313 UPDATEDBY-->
 <!--313-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--313 NAME-->
-<!--313-->              <NAME><![CDATA[Interest Area]]></NAME>
+<!--313-->              <NAME><![CDATA[Areas of Interest]]></NAME>
 <!--313 DESCRIPTION-->
-<!--313-->              <DESCRIPTION><![CDATA[Interest Area or Topic]]></DESCRIPTION>
+<!--313-->              <DESCRIPTION><![CDATA[Areas of Interest or Topic]]></DESCRIPTION>
 <!--313 HELP-->
-<!--313-->              <HELP><![CDATA[Interest Areas reflect interest in a topic by a contact. Interest areas can be used for marketing campaigns.]]></HELP>
+<!--313-->              <HELP><![CDATA[Areas of Interest reflect interest in a topic by a contact. Areas of Interest can be used for marketing campaigns.]]></HELP>
 <!--313 AD_PROCESS_ID-->
 <!--313-->              <AD_PROCESS_ID><![CDATA[209]]></AD_PROCESS_ID>
 <!--313 SEQNO-->

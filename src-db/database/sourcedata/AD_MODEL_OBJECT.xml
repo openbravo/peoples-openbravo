@@ -17256,15 +17256,15 @@
 <!--803632 CREATEDBY-->
 <!--803632-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--803632 UPDATED-->
-<!--803632-->              <UPDATED><![CDATA[2007-07-25 18:28:57.0]]></UPDATED>
+<!--803632-->              <UPDATED><![CDATA[2008-08-08 00:58:18.0]]></UPDATED>
 <!--803632 UPDATEDBY-->
-<!--803632-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--803632-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--803632 ACTION-->
 <!--803632-->              <ACTION><![CDATA[W]]></ACTION>
 <!--803632 AD_TAB_ID-->
 <!--803632-->              <AD_TAB_ID><![CDATA[438]]></AD_TAB_ID>
 <!--803632 CLASSNAME-->
-<!--803632-->              <CLASSNAME><![CDATA[org.openbravo.erpWindows.InterestArea.InterestArea]]></CLASSNAME>
+<!--803632-->              <CLASSNAME><![CDATA[org.openbravo.erpWindows.AreasofInterest.AreasofInterest]]></CLASSNAME>
 <!--803632 ISDEFAULT-->
 <!--803632-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--803632**************--></AD_MODEL_OBJECT>
@@ -17283,9 +17283,9 @@
 <!--803633 CREATEDBY-->
 <!--803633-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--803633 UPDATED-->
-<!--803633-->              <UPDATED><![CDATA[2007-07-25 18:28:57.0]]></UPDATED>
+<!--803633-->              <UPDATED><![CDATA[2008-08-08 00:58:18.0]]></UPDATED>
 <!--803633 UPDATEDBY-->
-<!--803633-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--803633-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--803633 ACTION-->
 <!--803633-->              <ACTION><![CDATA[W]]></ACTION>
 <!--803633 AD_TAB_ID-->
@@ -17310,7 +17310,7 @@
 <!--803634 CREATEDBY-->
 <!--803634-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--803634 UPDATED-->
-<!--803634-->              <UPDATED><![CDATA[2007-07-25 18:28:57.0]]></UPDATED>
+<!--803634-->              <UPDATED><![CDATA[2008-08-08 00:56:02.0]]></UPDATED>
 <!--803634 UPDATEDBY-->
 <!--803634-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--803634 ACTION-->
@@ -17318,7 +17318,7 @@
 <!--803634 AD_TAB_ID-->
 <!--803634-->              <AD_TAB_ID><![CDATA[439]]></AD_TAB_ID>
 <!--803634 CLASSNAME-->
-<!--803634-->              <CLASSNAME><![CDATA[org.openbravo.erpWindows.BusinessPartner.InterestArea]]></CLASSNAME>
+<!--803634-->              <CLASSNAME><![CDATA[org.openbravo.erpWindows.BusinessPartner.AreasofInterest]]></CLASSNAME>
 <!--803634 ISDEFAULT-->
 <!--803634-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--803634**************--></AD_MODEL_OBJECT>
@@ -17337,7 +17337,7 @@
 <!--803635 CREATEDBY-->
 <!--803635-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--803635 UPDATED-->
-<!--803635-->              <UPDATED><![CDATA[2007-07-25 18:28:57.0]]></UPDATED>
+<!--803635-->              <UPDATED><![CDATA[2008-08-08 00:56:02.0]]></UPDATED>
 <!--803635 UPDATEDBY-->
 <!--803635-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--803635 ACTION-->
@@ -28920,15 +28920,15 @@
 <!--804164 CREATEDBY-->
 <!--804164-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--804164 UPDATED-->
-<!--804164-->              <UPDATED><![CDATA[2007-07-25 18:29:01.0]]></UPDATED>
+<!--804164-->              <UPDATED><![CDATA[2008-08-08 00:59:38.0]]></UPDATED>
 <!--804164 UPDATEDBY-->
-<!--804164-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--804164-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--804164 ACTION-->
 <!--804164-->              <ACTION><![CDATA[W]]></ACTION>
 <!--804164 AD_TAB_ID-->
 <!--804164-->              <AD_TAB_ID><![CDATA[536]]></AD_TAB_ID>
 <!--804164 CLASSNAME-->
-<!--804164-->              <CLASSNAME><![CDATA[org.openbravo.erpWindows.InterestArea.InterestAreaSubscription]]></CLASSNAME>
+<!--804164-->              <CLASSNAME><![CDATA[org.openbravo.erpWindows.AreasofInterest.AreasofInterestSubscription]]></CLASSNAME>
 <!--804164 ISDEFAULT-->
 <!--804164-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--804164**************--></AD_MODEL_OBJECT>
@@ -28947,9 +28947,9 @@
 <!--804165 CREATEDBY-->
 <!--804165-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--804165 UPDATED-->
-<!--804165-->              <UPDATED><![CDATA[2007-07-25 18:29:01.0]]></UPDATED>
+<!--804165-->              <UPDATED><![CDATA[2008-08-08 00:59:38.0]]></UPDATED>
 <!--804165 UPDATEDBY-->
-<!--804165-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--804165-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--804165 ACTION-->
 <!--804165-->              <ACTION><![CDATA[W]]></ACTION>
 <!--804165 AD_TAB_ID-->
