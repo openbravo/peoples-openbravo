@@ -365,7 +365,7 @@ function onloadFunctions() {
 					      <TABLE style="border:0px;border-collapse:collapse;">
 					        <TR>
 					          <TD style="padding-top: 0px;">
-                        		  <INPUT displayFormat="DD-MM-YYYY" saveFormat="DD-MM-YYYY"  class="dojoValidateValid TextBox_btn_OneCell_width" type="text" name="inpDateReceiptxx" id="paramDateReceiptxx" onchange="validateDateTextBox(this.id);logChanges(this);return true;" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this);"></INPUT>
+                        		  <INPUT displayFormat="DD-MM-YYYY" saveFormat="DD-MM-YYYY"  class="dojoValidateValid TextBox_btn_OneCell_width required" required="true" type="text" name="inpDateReceiptxx" id="paramDateReceiptxx" onchange="validateDateTextBox(this.id);logChanges(this);return true;" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this);"></INPUT>
                               </TD>			
 							</TR>
 					      </TABLE>
@@ -441,14 +441,14 @@ function onloadFunctions() {
                   <TD width="409" class="DataGrid_Body_Cell" id="fieldProductName">xx</TD>
                   <TD width="198" class="DataGrid_Body_Cell" id="fieldDescription">xx</TD>
                   <TD width="146" class="DataGrid_Body_Cell" id="fieldTotalQty">xx</TD>
-                  <TD width="131" class="DataGrid_Body_Cell"> <INPUT name="inpQtyorderedxx" type="text" id="fieldQtyordered" size="5" style="width:80px" value="0" onkeyup="auto_complete_number(this, true, true);return true;" class="dojoValidateValid readonly" disabled></INPUT>
+                  <TD width="131" class="DataGrid_Body_Cell"> <INPUT name="inpQtyorderedxx" type="text" id="fieldQtyordered" size="5" style="width:80px" value="0" onkeyup="auto_complete_number(this, true, true);return true;" class="dojoValidateValid readonly required" required="true" disabled></INPUT>
                   </TD>
                   <TD class="DataGrid_Body_Cell">
                     <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <TR>
                         <TD class="TextBox_ContentCell">
                           <INPUT type="hidden" name="inpmLocatorIdss"  id="M_Locator_ID" value=""></INPUT> 
-                          <INPUT class="dojoValidateValid TextBox_btn_TwoCells_width readonly" type="text"  name="inpmLocatorId_Dxx" maxlength="20" value="" id="M_Locator_ID_D"></INPUT>
+                          <INPUT class="dojoValidateValid TextBox_btn_TwoCells_width readonly required" required="true" type="text"  name="inpmLocatorId_Dxx" maxlength="20" value="" id="M_Locator_ID_D"></INPUT>
                         </TD>
                         <TD class="FieldButton_ContentCell">
                           <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Locator'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="openSearch(null, null, '../info/Locator.html', null, false, 'frmMain', 'inpmLocatorIdss', 'inpmLocatorId_Dyy', document.frmMain.inpmLocatorId_Dzz.value, 'WindowID', '168');return false;" id="fieldLocatorId">
