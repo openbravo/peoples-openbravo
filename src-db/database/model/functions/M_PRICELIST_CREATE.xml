@@ -84,7 +84,7 @@
       WHERE p.M_PriceList_ID=v.M_PriceList_ID
         AND p.C_Currency_ID=c.C_Currency_ID
         AND v.M_PriceList_Version_ID=v_PriceList_Version_ID;
-      IF (v_PriceList_Version_Base_ID IS NULL OR v_PriceList_Version_Base_ID='') THEN
+      IF (v_PriceList_Version_Base_ID IS NULL) THEN
 	    RAISE_APPLICATION_ERROR(-20102, 'Base Pricelist Version required to complete Create PriceList process.');
       END IF;
 	
