@@ -83,7 +83,8 @@ public class OpenbravoExcludeFilter extends ExcludeFilter {
             "LOWEREQUALTIMESTAMP",
             "DBA_RECOMPILE",
             "DBA_AFTERIMPORT",
-            "NOW"
+            "NOW",
+            "UPDATE_DATEFORMAT"
             };
     }
 
