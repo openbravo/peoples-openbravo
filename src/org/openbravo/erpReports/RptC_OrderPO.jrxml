@@ -254,14 +254,14 @@ AND C_ORDER.C_ORDER_ID IN $P!{ORDER_ID}]]></queryString>
 						x="15"
 						y="88"
 						width="181"
-						height="50"
+						height="16"
 						key="textField-11"
 						stretchType="RelativeToBandHeight"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ENTITY}+"\n"+$F{LOCATION}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ENTITY}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -402,6 +402,21 @@ AND C_ORDER.C_ORDER_ID IN $P!{ORDER_ID}]]></queryString>
 						<font/>
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[$F{DATEORDERED}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="15"
+						y="105"
+						width="181"
+						height="36"
+						key="textField-14"
+						stretchType="RelativeToBandHeight"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{LOCATION}]]></textFieldExpression>
 				</textField>
 			</band>
 			</groupHeader>

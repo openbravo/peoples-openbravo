@@ -149,7 +149,7 @@
 					<textElement>
 						<font fontName="Courier New" size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{AddressOrganization}+"\nIl "+ new SimpleDateFormat ("dd/mm/yyyy").format(new Date()).toString()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{AddressOrganization} + new SimpleDateFormat ("dd/mm/yyyy").format(new Date()).toString()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -330,8 +330,8 @@
 					<textElement>
 						<font fontName="Courier New"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["We certify thet the period from "+$P{DateFrom}.toString()+" to "+$P{DateTo}.toString()+" wages have been paid to the payer for a total amount of "+$F{GRANDTOTALAMOUNT}.toString()+"\n"+
-"and that the withholding amount is "+$F{WITHHOLDINGAMOUNT}.toString()+"\n"]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["We certify thet the period from "+$P{DateFrom}.toString()+" to "+$P{DateTo}.toString()+" wages have been paid to the payer for a total amount of "+$F{GRANDTOTALAMOUNT}.toString()+
+" and that the withholding amount is "+$F{WITHHOLDINGAMOUNT}.toString()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
