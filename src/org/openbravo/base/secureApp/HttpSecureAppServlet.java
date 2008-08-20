@@ -11,7 +11,6 @@
 */
 package org.openbravo.base.secureApp;
 
-import org.apache.log4j.Logger;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.erpCommon.utility.*;
@@ -86,8 +85,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
   public boolean boolHist = true;
   String myTheme = "";
   public ClassInfoData classInfo;
-  protected AuthenticationManager m_AuthManager = null;
-  public Logger log4j = Logger.getLogger(HttpSecureAppServlet.class);
+  protected AuthenticationManager m_AuthManager = null;  
 
   String servletClass = this.getClass().getName();
 
