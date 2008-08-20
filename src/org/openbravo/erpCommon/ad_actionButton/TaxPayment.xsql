@@ -94,10 +94,10 @@
   <![CDATA[
      select count(*) from c_taxpayment where processed='Y' 
      and 
-     ((DateFrom <= to_date(?,'dd/mm/yyyy') and DateTo >=to_date(?,'dd/mm/yyyy')
-     or DateFrom <= to_date(?,'dd/mm/yyyy') and DateTo >=to_date(?,'dd/mm/yyyy'))
+     ((DateFrom <= to_date(?) and DateTo >=to_date(?)
+     or DateFrom <= to_date(?) and DateTo >=to_date(?))
      or 
-     (DateFrom >= to_date(?,'dd/mm/yyyy') and DateTo <=to_date(?,'dd/mm/yyyy')
+     (DateFrom >= to_date(?) and DateTo <=to_date(?)
      ))
       ]]>
   </Sql>
