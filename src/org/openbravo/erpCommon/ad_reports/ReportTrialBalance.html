@@ -62,14 +62,6 @@ function imprimir()
 <SCRIPT language="JavaScript" type="text/javascript">
 function displayLogic() {
   //alert("inpLvl"+inputValue(document.frmMain.inpLevel)+" - inpOnly:"+inputValue(document.frmMain.inpOnly));
-  if (inputValue(document.frmMain.inpLevel) == 'S') {
-    displayLogicElement('paramOnly',true);
-    displayLogicElement('txtOnly',true);    
-  }else {
-    displayLogicElement('paramOnly',false);
-    displayLogicElement('txtOnly',false);
-  }
-  
   if (inputValue(document.frmMain.inpLevel) == 'S' && inputValue(document.frmMain.inpOnly) == '-1') {
     displayLogicElement('AcctFromTo', true);
     displayLogicElement('BP', true);
@@ -360,7 +352,7 @@ var arrAccountTo=null;
                 </SELECT></TD>
               <TD class="TitleCell" id="txtOnly"> <SPAN class="LabelText">Show selected level only</SPAN></TD>
               <TD class="Radio_Check_ContentCell">
-                <SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpOnly" onchange="displayLogic(); return true;" id="paramOnly" value="-1" checked></INPUT></SPAN>
+                <SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpOnly" id="paramOnly" value="-1" checked></INPUT></SPAN>
               </TD>
               <TD class="ContentCell"></TD>
             </TR>
