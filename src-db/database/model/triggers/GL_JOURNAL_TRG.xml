@@ -27,20 +27,24 @@
     */
     BEGIN
     -- Subtract Old Amount
-    IF(UPDATING
-    OR DELETING)
-    THEN  IF(:old.TotalDr <> :NEW.TotalDr
-    OR :OLD.TotalCr <> :NEW.TotalCr)
-    THEN  IF(:old.GL_JournalBatch_ID IS NOT NULL
-    AND :old.IsActive='Y')
-    THEN
-  UPDATE GL_JournalBatch
-    SET TotalDr=TotalDr - :old.TotalDr,
-    TotalCr=TotalCr - :old.TotalCr
-  WHERE GL_JournalBatch_ID=:old.GL_JournalBatch_ID;
+    IF(UPDATING) THEN
+      IF(:old.TotalDr <> :NEW.TotalDr OR :OLD.TotalCr <> :NEW.TotalCr) THEN  
+      IF(:old.GL_JournalBatch_ID IS NOT NULL AND :old.IsActive='Y') THEN
+	  UPDATE GL_JournalBatch
+	    SET TotalDr=TotalDr - :old.TotalDr,
+	    TotalCr=TotalCr - :old.TotalCr
+	  WHERE GL_JournalBatch_ID=:old.GL_JournalBatch_ID;
+       END IF;
+     END IF;
    END IF;
-  END IF;
- END IF;
+   IF(DELETING) THEN      
+      IF(:old.GL_JournalBatch_ID IS NOT NULL AND :old.IsActive='Y') THEN
+	  UPDATE GL_JournalBatch
+	    SET TotalDr=TotalDr - :old.TotalDr,
+	    TotalCr=TotalCr - :old.TotalCr
+	  WHERE GL_JournalBatch_ID=:old.GL_JournalBatch_ID;
+       END IF;     
+   END IF;
  -- Add new Amount
  IF(INSERTING OR UPDATING) THEN
   IF(COALESCE(:old.TotalDr, 0) <> COALESCE(:NEW.TotalDr, 0)
