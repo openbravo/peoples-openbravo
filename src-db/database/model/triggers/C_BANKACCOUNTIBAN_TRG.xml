@@ -44,10 +44,10 @@ BEGIN
       END IF;
     END IF;
     IF (:NEW.IBAN IS NOT NULL) THEN
-        SELECT MOD(SUBSTR(:NEW.IBAN, 5, LENGTH(:NEW.IBAN)-4)||
-           ASCII(SUBSTR(UPPER(:NEW.IBAN),1,1))-55
-           ||ASCII(SUBSTR(UPPER(:NEW.IBAN),2,1))-55||
-           SUBSTR(:NEW.IBAN,3,2),97) AS DC
+        SELECT MOD(TO_NUMBER(SUBSTR(NEW.IBAN, 5, LENGTH(NEW.IBAN)-4)||
+           ASCII(SUBSTR(UPPER(NEW.IBAN),1,1))-55
+           ||ASCII(SUBSTR(UPPER(NEW.IBAN),2,1))-55||
+           SUBSTR(NEW.IBAN,3,2)),97) AS DC
            INTO v_IBAN_check
         FROM DUAL;        
          IF (v_IBAN_check <> 1) THEN
