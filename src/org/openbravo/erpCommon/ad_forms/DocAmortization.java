@@ -79,7 +79,11 @@ private DocLine[] loadLines(ConnectionProvider conn){
     }catch(ServletException e){
         log4jDocAmortization.warn(e);
     }
-    log4jDocAmortization.debug("Record_ID = " + Record_ID + " - Lines=" + p_lines.length);
+    if (p_lines != null) {
+      log4jDocAmortization.debug("Record_ID = " + Record_ID + " - Lines=" + p_lines.length);
+    } else {
+      log4jDocAmortization.debug("Record_ID = " + Record_ID + " - Lines= **p_lines is null**");
+    }
         //
     for (int i=0;data!=null && i<data.length;i++){
         String Line_ID = data[i].getField("A_AMORTIZATIONLINE_ID");
