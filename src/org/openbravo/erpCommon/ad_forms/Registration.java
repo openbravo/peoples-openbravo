@@ -49,7 +49,7 @@ public class Registration extends HttpSecureAppServlet {
     } else if (vars.commandIn("POSTPONE")) {
       Calendar cal = Calendar.getInstance();
       cal.add(Calendar.DATE, 3);
-      String date = new SimpleDateFormat("dd/MM/yyyy").format(cal.getTime());
+      String date = new SimpleDateFormat(vars.getJavaDateFormat()).format(cal.getTime());
       RegisterData.postpone(myPool, date);
     } else pageError(response);
   }

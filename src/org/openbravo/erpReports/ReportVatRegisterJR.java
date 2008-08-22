@@ -126,11 +126,11 @@ public class ReportVatRegisterJR extends HttpSecureAppServlet {
 
 
 		xmlDocument.setParameter("dateFrom", strDateFrom);
-		xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-		xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+		xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_JavaDateTimeFormat"));
+		xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_JavaDateTimeFormat"));
 		xmlDocument.setParameter("dateTo", strDateTo);
-		xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-		xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+		xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_JavaDateTimeFormat"));
+		xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_JavaDateTimeFormat"));
 
 		TypeReportRegister[] aTypeVatReport = TypeReportRegister.set();
 		xmlDocument.setData("reportTypeVatReport", "liststructure",	aTypeVatReport);

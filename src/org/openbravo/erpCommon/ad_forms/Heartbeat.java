@@ -64,7 +64,7 @@ public class Heartbeat extends HttpSecureAppServlet {
     } else if (vars.commandIn("POSTPONE")) {
       Calendar cal = Calendar.getInstance();
       cal.add(Calendar.DATE, 2);
-      String date = new SimpleDateFormat("dd/MM/yyyy").format(cal.getTime());
+      String date = new SimpleDateFormat(vars.getJavaDateFormat()).format(cal.getTime());
       PeriodicHeartbeatData.postpone(myPool, date);
     } else pageError(response);
   }

@@ -30,7 +30,7 @@
 
 <SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></SCRIPT>
-<SCRIPT language="JavaScript" src="../web/js/default/DateTextBox.js" type="text/javascript"></SCRIPT>
+<script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
 
 <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
@@ -272,7 +272,7 @@
 					
 					        <TR>
 					          <TD style="padding-top: 0px;">
-					            <INPUT type="text" id="paramDateFrom" class="dojoValidateValid TextBox_btn_OneCell_width" required="false" value="" maxlength="10" name="inpDateFrom" onkeyup="auto_complete_date(this);" onchange="validateDateTextBox(this.id);logChanges(this);return true;" displayformat="DD-MM-YYYY" saveformat="DD-MM-YYYY"></INPUT>
+					            <INPUT type="text" id="paramDateFrom" class="dojoValidateValid TextBox_btn_OneCell_width" required="false" value="" maxlength="10" name="inpDateFrom" onkeyup="auto_complete_date(this);" onchange="validateDateTextBox(this.id);logChanges(this);return true;" displayformat="xx" saveformat="yy"></INPUT>
 					          </TD>
 					        </TR>
 					      </TABLE>
@@ -311,7 +311,7 @@
 					    </TABLE>
 					  </SPAN>
 					      </TD>
-					      <TD class="FieldButton_ContentCell"><A class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Date of First Sale'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmShipment.inpDateFrom', document.frmShipment.inpDateFrom.value, false);return false;">
+					      <TD class="FieldButton_ContentCell"><A class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Date of First Sale'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmSelector.inpDateFrom', document.frmSelector.inpDateFrom.value, false);return false;">
 					  <TABLE class="FieldButton" onmousedown="this.className='FieldButton_active'; return true;" onmouseup="this.className='FieldButton'; return true;" onmouseover="this.className='FieldButton_hover'; window.status='Date of First Sale'; return true;" onmouseout="this.className='FieldButton'; window.status=''; return true;" id="paramDateFromlinkCalendar">
 					    <TR>
 					      <TD class="FieldButton_bg">
@@ -338,7 +338,7 @@
 					
 					        <TR>
 					          <TD style="padding-top: 0px;">
-					            <INPUT type="text" id="paramDateTo" class="dojoValidateValid TextBox_btn_OneCell_width" required="false" value="" maxlength="10" name="inpDateTo" onkeyup="auto_complete_date(this);" onchange="validateDateTextBox(this.id);logChanges(this);return true;" displayformat="DD-MM-YYYY" saveformat="DD-MM-YYYY"></INPUT>
+					            <INPUT type="text" id="paramDateTo" class="dojoValidateValid TextBox_btn_OneCell_width" required="false" value="" maxlength="10" name="inpDateTo" onkeyup="auto_complete_date(this);" onchange="validateDateTextBox(this.id);logChanges(this);return true;" displayformat="xx" saveformat="yy"></INPUT>
 					          </TD>
 					        </TR>
 					      </TABLE>
@@ -377,7 +377,7 @@
 					    </TABLE>
 					  </SPAN>
 					      </TD>
-					      <TD class="FieldButton_ContentCell"><A class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Date of First Sale'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmShipment.inpDateTo', document.frmShipment.inpDateTo.value, false);return false;">
+					      <TD class="FieldButton_ContentCell"><A class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Date of First Sale'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmSelector.inpDateTo', document.frmSelector.inpDateTo.value, false);return false;">
 					  <TABLE class="FieldButton" onmousedown="this.className='FieldButton_active'; return true;" onmouseup="this.className='FieldButton'; return true;" onmouseover="this.className='FieldButton_hover'; window.status='Date of First Sale'; return true;" onmouseout="this.className='FieldButton'; window.status=''; return true;" id="paramDateTolinkCalendar">
 					    <TR>
 					      <TD class="FieldButton_bg">

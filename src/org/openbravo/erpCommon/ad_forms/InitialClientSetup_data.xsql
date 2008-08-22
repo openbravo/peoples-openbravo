@@ -821,10 +821,11 @@
     <Sql>
       INSERT INTO M_PriceList_Version (M_PriceList_Version_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,
       UpdatedBy,Name,ValidFrom,M_PriceList_ID,M_DiscountSchema_ID) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,TO_CHAR(now(),'YYYY-MM-DD'),TO_DATE(now()),TO_NUMBER(?),TO_NUMBER(?))
+      VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,?,TO_DATE(now()),TO_NUMBER(?),TO_NUMBER(?))
     </Sql>
     <Parameter name="M_PriceList_Version_ID"/>
     <Parameter name="AD_Client_ID"/>
+    <Parameter name="StringDate"/>
     <Parameter name="M_PriceList_ID"/>
     <Parameter name="M_DiscountSchema_ID"/>
   </SqlMethod>

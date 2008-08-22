@@ -377,7 +377,7 @@ void decidePopups(XmlDocument xmlDocument, VariablesSecureApp vars) throws Servl
 	        } else {
 	          Date date = null;
 	          try {
-	            date = new SimpleDateFormat("dd-MM-yyyy").parse(postponeDate);
+	            date = new SimpleDateFormat(vars.getJavaDateFormat()).parse(postponeDate);
 	            if (date.before(new Date())) {
 	              xmlDocument.setParameter("popup", "openHeartbeat();");
 	              return;
@@ -401,7 +401,7 @@ void decidePopups(XmlDocument xmlDocument, VariablesSecureApp vars) throws Servl
 	        } else {
 	          Date date = null;
 	          try {
-	            date = new SimpleDateFormat("dd-MM-yyyy").parse(rPostponeDate);
+	            date = new SimpleDateFormat(vars.getJavaDateFormat()).parse(rPostponeDate);
 	            if (date.before(new Date())) {
 	              xmlDocument.setParameter("popup", "openRegistration();");
 	              return;

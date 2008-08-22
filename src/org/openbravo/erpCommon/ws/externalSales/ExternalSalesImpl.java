@@ -230,9 +230,9 @@ public class ExternalSalesImpl implements ExternalSales{
           if (newOrders[i].getOrderId() != null)
           {
             data[0].orderReferenceno = newOrders[i].getOrderId().getDocumentNo();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat dateFormat = new SimpleDateFormat(javaDateFormat);
             data[0].dateordered = ""+dateFormat.format(newOrders[i].getOrderId().getDateNew());
-            data[0].dateTimeFormat = "YYYY-MM-DD HH24:MI:SS";
+            data[0].dateTimeFormat = javaDateFormat;
           }
           if (newOrders[i].getBusinessPartner() != null)
           {

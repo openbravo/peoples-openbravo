@@ -24,6 +24,8 @@ import org.openbravo.xmlEngine.XmlDocument;
 import java.io.*;
 import javax.servlet.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Vector;
 import javax.servlet.http.*;
 
@@ -1322,7 +1324,10 @@ public boolean createEntities (VariablesSecureApp vars,String C_Country_ID, Stri
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -M_PriceList_Version: ");
     String M_PriceList_Version_ID = SequenceIdData.getSequence(this, "M_PriceList_Version", client);
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -M_PriceList_Version_ID: " + M_PriceList_Version_ID);
-    if (InitialClientSetupData.insertPriceListVersion(conn ,this,M_PriceList_Version_ID, AD_Client_ID,M_PriceList_ID, M_DiscountSchema_ID) != 1)
+    String strDateFormat = vars.getJavaDateFormat();
+    SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
+    Date today = new Date();
+    if (InitialClientSetupData.insertPriceListVersion(conn ,this,M_PriceList_Version_ID, AD_Client_ID, dateFormat.format(today), M_PriceList_ID, M_DiscountSchema_ID) != 1)
       log4j.warn("InitialClientSetup - createEntities - PriceList_Version NOT inserted");
     //  ProductPrice
     if (InitialClientSetupData.insertProductPrice(conn ,this,M_PriceList_Version_ID, AD_Client_ID,M_Product_ID) != 1)

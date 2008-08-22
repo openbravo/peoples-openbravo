@@ -32,6 +32,8 @@
   <PARAMETER id="paramDateTo" name="dateTo" attribute="value" default=""/>  
   <PARAMETER id="paramDateTo" name="dateTodisplayFormat" attribute="displayformat" replace="xx"/>
   <PARAMETER id="paramDateTo" name="dateTosaveFormat" attribute="saveformat" replace="yy"/>
+  <PARAMETER id="paramfieldDate" name="dateTodisplayFormat" attribute="displayformat" replace="xx"/>
+  <PARAMETER id="paramfieldDate" name="dateTosaveFormat" attribute="saveformat" replace="yy"/>
   <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
