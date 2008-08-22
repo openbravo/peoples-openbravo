@@ -93,7 +93,7 @@ BEGIN
     END LOOP; -- Get Parameter
 
     v_ResultStr := 'Checking vendor';
-    IF (p_Vendor_ID IS NULL OR p_Vendor_ID = '') THEN
+    IF (p_Vendor_ID IS NULL) THEN
       FOR Cur_Product IN (
           SELECT M_PRODUCT.NAME, M_REQUISITIONLINE.LINE
           FROM M_REQUISITION, M_REQUISITIONLINE, M_PRODUCT
@@ -243,7 +243,7 @@ BEGIN
           M_WAREHOUSE_ID, C_UOM_ID, QTYORDERED, C_CURRENCY_ID,
           PRICELIST, PRICEACTUAL, PRICELIMIT,
           PRICESTD, LINENETAMT, DISCOUNT,
-          C_TAX_ID
+          C_TAX_ID, M_PRODUCT_UOM_ID, QUANTITYORDER
       ) VALUES (
           v_COrderLine_ID,v_Client_ID, p_Org_ID,'Y',
           now(), v_User_ID, now(), v_User_ID,
@@ -253,7 +253,7 @@ BEGIN
           p_Warehouse_ID, Cur_Lines.C_UOM_ID, Cur_Lines.QTY - Cur_Lines.ORDEREDQTY, v_Currency_ID,
           v_PriceList, v_PriceActual, v_PriceLimit,
           v_PriceStd, v_PriceActual*(Cur_Lines.QTY - Cur_Lines.ORDEREDQTY),v_Discount,
-          v_Tax_ID
+          v_Tax_ID, Cur_Lines.M_Product_UOM_ID, Cur_Lines.QuantityOrder
       );
 
       Ad_Sequence_Next('M_RequisitionOrder', v_User_ID, v_RequisitionOrder_ID);
