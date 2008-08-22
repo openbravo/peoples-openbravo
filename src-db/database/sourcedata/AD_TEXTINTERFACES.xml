@@ -35293,7 +35293,7 @@
 <!--1000100011 FILENAME-->
 <!--1000100011-->              <FILENAME><![CDATA[/org/openbravo/erpReports/C_OrderJR.jrxml]]></FILENAME>
 <!--1000100011 ISUSED-->
-<!--1000100011-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1000100011-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--1000100011**************--></AD_TEXTINTERFACES>
 
 <!--1000100012**************--><AD_TEXTINTERFACES>
@@ -35568,7 +35568,7 @@
 <!--1000200003 FILENAME-->
 <!--1000200003-->              <FILENAME><![CDATA[/org/openbravo/erpReports/RptC_Invoice.jrxml]]></FILENAME>
 <!--1000200003 ISUSED-->
-<!--1000200003-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1000200003-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--1000200003**************--></AD_TEXTINTERFACES>
 
 <!--1000200004**************--><AD_TEXTINTERFACES>
@@ -42441,7 +42441,7 @@
 <!--1002100149 FILENAME-->
 <!--1002100149-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportAnnualCertification.jrxml]]></FILENAME>
 <!--1002100149 ISUSED-->
-<!--1002100149-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1002100149-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--1002100149**************--></AD_TEXTINTERFACES>
 
 <!--1002100150**************--><AD_TEXTINTERFACES>
@@ -42716,7 +42716,7 @@
 <!--1002100161 FILENAME-->
 <!--1002100161-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ReportAnnualCertification.jrxml]]></FILENAME>
 <!--1002100161 ISUSED-->
-<!--1002100161-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1002100161-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--1002100161**************--></AD_TEXTINTERFACES>
 
 <!--1002100162**************--><AD_TEXTINTERFACES>
@@ -43066,7 +43066,7 @@
 <!--1002700004 FILENAME-->
 <!--1002700004-->              <FILENAME><![CDATA[/org/openbravo/erpReports/RptC_OrderPO.jrxml]]></FILENAME>
 <!--1002700004 ISUSED-->
-<!--1002700004-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1002700004-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--1002700004**************--></AD_TEXTINTERFACES>
 
 <!--1002700005**************--><AD_TEXTINTERFACES>
