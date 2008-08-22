@@ -103,9 +103,6 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADPROCESS">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <unique name="ADPROCESS_UN_NAME">
-        <unique-column name="NAME"/>
-      </unique>
       <check name="ADPROC_EXTERNALSERVICE_CHECK"><![CDATA[ISEXTERNALSERVICE IN ('Y', 'N')]]></check>
       <check name="ADPROCESS_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="ADPROCESS_ISBACKGROUND_CHECK"><![CDATA[ISBACKGROUND IN ('Y', 'N')]]></check>
