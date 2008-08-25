@@ -175,9 +175,7 @@
 
 	<parameter name="ATTACH" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="BASE_WEB" isForPrompting="false" class="java.lang.String"/>
-	<parameter name="BASE_DESIGN" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA["/home/david/workspace/trunk/openbravo/src"]]></defaultValueExpression>
-	</parameter>
+	<parameter name="BASE_DESIGN" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="LANGUAGE" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["en_US"]]></defaultValueExpression>
 	</parameter>
