@@ -119,11 +119,11 @@
       </column>
       <column name="SHOWACCOUNTNO" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default/>
-        <onCreateDefault><![CDATA[SELECT 'Y' FROM DUAL]]></onCreateDefault>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
       </column>
       <column name="SHOWIBAN" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default/>
-        <onCreateDefault><![CDATA[SELECT 'N' FROM DUAL]]></onCreateDefault>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
       <column name="DISPLAYEDACCOUNT" primaryKey="false" required="false" type="NVARCHAR" size="34" autoIncrement="false">
         <default/>
