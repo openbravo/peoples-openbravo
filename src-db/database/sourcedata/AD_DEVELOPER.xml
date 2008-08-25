@@ -2899,6 +2899,35 @@
 <!--10100-->              <SVNUSER><![CDATA[salvador.zapata]]></SVNUSER>
 <!--10100**************--></AD_DEVELOPER>
 
+<!--10101**************--><AD_DEVELOPER>
+<!--10101 AD_DEVELOPER_ID-->
+<!--10101-->              <AD_DEVELOPER_ID><![CDATA[10101]]></AD_DEVELOPER_ID>
+<!--10101 AD_CLIENT_ID-->
+<!--10101-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--10101 AD_ORG_ID-->
+<!--10101-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--10101 ISACTIVE-->
+<!--10101-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--10101 CREATED-->
+<!--10101-->              <CREATED><![CDATA[2008-08-25 11:45:00.0]]></CREATED>
+<!--10101 CREATEDBY-->
+<!--10101-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--10101 UPDATED-->
+<!--10101-->              <UPDATED><![CDATA[2008-08-25 11:45:00.0]]></UPDATED>
+<!--10101 UPDATEDBY-->
+<!--10101-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--10101 NAME-->
+<!--10101-->              <NAME><![CDATA[Kalyan Chukkapalli]]></NAME>
+<!--10101 NICKNAME-->
+<!--10101-->              <NICKNAME><![CDATA[kalyan.chukkapalli]]></NICKNAME>
+<!--10101 EMAIL-->
+<!--10101-->              <EMAIL><![CDATA[kch at openbravo dot com]]></EMAIL>
+<!--10101 COMPANY-->
+<!--10101-->              <COMPANY><![CDATA[Openbravo]]></COMPANY>
+<!--10101 SVNUSER-->
+<!--10101-->              <SVNUSER><![CDATA[kalyan.chukkapalli]]></SVNUSER>
+<!--10101**************--></AD_DEVELOPER>
+
 <!--
 ************************
 0. End of Core Range.
