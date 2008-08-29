@@ -125,20 +125,41 @@
 	<parameter name="REPORT_SUBTITLE" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
 	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
-	<queryString><![CDATA[SELECT C_CASHBOOK.C_CASHBOOK_ID, C_CASHBOOK.NAME AS NAMECASHBOOK, C_CASH.STATEMENTDATE, C_CASH.C_CASH_ID, C_CASH.NAME AS NAMECASH, 
-             C_CASH.BEGINNINGBALANCE, C_CASH.ENDINGBALANCE,  C_CURRENCY.ISO_CODE AS CURRENCY,
-             C_CASHLINE.LINE, COALESCE(AD_REF_LIST_TRL.NAME,AD_REF_LIST.NAME) AS NAME, C_CASHLINE.AMOUNT, C_CASHLINE.DESCRIPTION
-      FROM C_CASHBOOK, C_CASH, C_CASHLINE, C_CURRENCY, AD_REF_LIST 
-			     LEFT JOIN AD_REF_LIST_TRL ON AD_REF_LIST.AD_REF_LIST_ID=AD_REF_LIST_TRL.AD_REF_LIST_ID
-      		 					 								 AND AD_REF_LIST_TRL.AD_LANGUAGE = 'es_ES'
-      WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
-      AND C_CASH.C_CASH_ID=C_CASHLINE.C_CASH_ID
-      AND C_CASHBOOK.C_CURRENCY_ID=C_CURRENCY.C_CURRENCY_ID
-      AND C_CASHLINE.CASHTYPE=AD_REF_LIST.VALUE
-      AND AD_REFERENCE_ID=217
-      AND 1=1
-      AND C_CASH.PROCESSED='Y'
-      ORDER BY NAMECASHBOOK, STATEMENTDATE, C_CASH_ID]]></queryString>
+	<queryString><![CDATA[SELECT C_CASHBOOK.C_CASHBOOK_ID, C_CASHBOOK.NAME AS NAMECASHBOOK, C_CASH.STATEMENTDATE, C_CASH.C_CASH_ID, C_CASH.NAME AS NAMECASH,
+  C_CASH.BEGINNINGBALANCE, C_CASH.ENDINGBALANCE,  C_CURRENCY.ISO_CODE AS CURRENCY,
+  C_CASHLINE.LINE, COALESCE(AD_REF_LIST_TRL.NAME,AD_REF_LIST.NAME) AS NAME, C_CASHLINE.AMOUNT, C_CASHLINE.DESCRIPTION,
+  COALESCE (INITIALBALANCE.TOTAL_AMT,0) AS INITIALBALANCE
+FROM C_CASHBOOK
+  LEFT JOIN
+    (
+   SELECT SUM(CL.AMOUNT) AS TOTAL_AMT, C.C_CASHBOOK_ID
+   FROM C_CASHBOOK C, C_CASH CH, C_CASHLINE CL, C_CURRENCY CUR, AD_REF_LIST LIST
+     LEFT JOIN AD_REF_LIST_TRL LIST_T ON LIST.AD_REF_LIST_ID=LIST_T.AD_REF_LIST_ID
+       AND LIST_T.AD_LANGUAGE = 'en_US'
+   WHERE C.C_CASHBOOK_ID = CH.C_CASHBOOK_ID
+     AND CH.C_CASH_ID=CL.C_CASH_ID
+     AND C.C_CURRENCY_ID=CUR.C_CURRENCY_ID
+     AND CL.CASHTYPE=LIST.VALUE
+     AND AD_REFERENCE_ID=217
+     AND CH.AD_Client_ID IN (0,1000000)
+     AND CH.AD_ORG_ID IN (0,1000000,1000002,1000003,1000004,1000005,1000006,1000007,1000008,1000009)
+     AND 1=1 AND CH.STATEMENTDATE < TO_DATE('18-10-2006')
+     AND CH.PROCESSED='Y'
+   GROUP BY C.C_CASHBOOK_ID, CL.AMOUNT
+     ) INITIALBALANCE ON INITIALBALANCE.C_CASHBOOK_ID = C_CASHBOOK.C_CASHBOOK_ID
+  , C_CASH, C_CASHLINE, C_CURRENCY, AD_REF_LIST
+  LEFT JOIN AD_REF_LIST_TRL ON AD_REF_LIST.AD_REF_LIST_ID=AD_REF_LIST_TRL.AD_REF_LIST_ID
+  AND AD_REF_LIST_TRL.AD_LANGUAGE = 'en_US'
+WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
+  AND C_CASH.C_CASH_ID=C_CASHLINE.C_CASH_ID
+  AND C_CASHBOOK.C_CURRENCY_ID=C_CURRENCY.C_CURRENCY_ID
+  AND C_CASHLINE.CASHTYPE=AD_REF_LIST.VALUE
+  AND AD_REFERENCE_ID=217
+  AND C_CASH.AD_Client_ID IN (0,1000000)
+  AND C_CASH.AD_ORG_ID IN (0,1000000,1000002,1000003,1000004,1000005,1000006,1000007,1000008,1000009)
+  AND 2=2 AND C_CASH.STATEMENTDATE >= TO_DATE('18-10-2006')
+  AND C_CASH.PROCESSED='Y'
+  ORDER BY NAMECASHBOOK, STATEMENTDATE, C_CASH_ID, C_CASHLINE.LINE]]></queryString>
 
 	<field name="C_CASHBOOK_ID" class="java.math.BigDecimal"/>
 	<field name="NAMECASHBOOK" class="java.lang.String"/>
@@ -152,6 +173,7 @@
 	<field name="NAME" class="java.lang.String"/>
 	<field name="AMOUNT" class="java.math.BigDecimal"/>
 	<field name="DESCRIPTION" class="java.lang.String"/>
+	<field name="INITIALBALANCE" class="java.math.BigDecimal"/>
 
 	<variable name="totalCash" class="java.math.BigDecimal" resetType="Group" resetGroup="C_CASH_ID" calculation="Sum">
 		<variableExpression><![CDATA[$F{AMOUNT}]]></variableExpression>
@@ -453,7 +475,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="11"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($V{totalAmount}!=null)?$P{NUMBERFORMAT}.format($V{totalAmount}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{totalAmount}!=null)?$P{NUMBERFORMAT}.format($V{totalAmount}.add($F{INITIALBALANCE})):new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -467,7 +489,7 @@
 					<textElement verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="11"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($V{totalAmount}!=null)?$P{NUMBERFORMAT}.format($V{totalAmount}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{totalAmount}!=null)?$P{NUMBERFORMAT}.format($V{totalAmount}.add($F{INITIALBALANCE})):$P{NUMBERFORMAT}.format($F{INITIALBALANCE})]]></textFieldExpression>
 				</textField>
 			</band>
 			</groupHeader>
@@ -676,7 +698,7 @@
 					<textElement>
 						<font fontName="Bitstream Vera Sans"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($V{totalAmount}!=null)?$P{NUMBERFORMAT}.format($V{totalAmount}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{totalAmount}!=null)?$P{NUMBERFORMAT}.format($V{totalAmount}.add($F{INITIALBALANCE})):new String(" ")]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>

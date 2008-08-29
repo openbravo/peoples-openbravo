@@ -58,12 +58,14 @@ public class ReportCashJR extends HttpSecureAppServlet {
     if (strDateFrom.equals("") && strDateTo.equals("")) {
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strCashbook);
     } else {
-      data = ReportCashJRData.select(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "ReportCashJR"), Utility.getContext(this, vars, "#User_Org", "ReportCashJR"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strCashbook);
-      
+      data = ReportCashJRData.select(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "ReportCashJR"), Utility.getContext(this, vars, "#User_Org", "ReportCashJR"), strDateFrom, strCashbook, strDateTo);
    
       String strReportPath = "@basedesign@" + "/org/openbravo/erpCommon/ad_reports/ReportCashJR.jrxml";
       HashMap<String, Object> parameters = new HashMap<String, Object>();
       parameters.put("REPORT_TITLE", classInfo.name);
+      parameters.put("DATE_FROM", strDateFrom);
+      parameters.put("USER_ORG", Utility.getContext(this, vars, "#User_Org", "ReportBankJR"));
+      parameters.put("USER_CLIENT", Utility.getContext(this, vars, "#User_Client", "ReportBankJR"));
       renderJR(vars, response, strReportPath, "html", parameters, data, null);
     }
       
