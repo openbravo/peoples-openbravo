@@ -60,24 +60,24 @@ public class SL_BankDebt_Amount extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
     String Amount = null;
-    String strDescription = null;
+    //String strDescription = null;
     String ConvChargeAmt="0";
     String conv = null;
 
     if (!strDebtPayment.equals("")) {
       Amount = SLCashJournalAmountsData.amountDebtPaymentBank(this, strBankStatement, strDebtPayment);
-      strDescription = SLCashJournalAmountsData.debtPaymentDescription(this, strDebtPayment);
+      //strDescription = SLCashJournalAmountsData.debtPaymentDescription(this, strDebtPayment);
       conv = SLBankStmtAmountData.isConversion(this,strCurrency, strDebtPayment);
     } else {
       Amount="0";
-      strDescription="";
+      //strDescription="";
       conv="N";
     }
     
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_BankDebt_Amount';\n\n");
     resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpdescription\", \"" + FormatUtilities.replaceJS(strDescription) + "\"),");
+    //resultado.append("new Array(\"inpdescription\", \"" + FormatUtilities.replaceJS(strDescription) + "\"),");
     resultado.append("new Array(\"inptrxamt\", \"" + Amount + "\"),");
     resultado.append("new Array(\"inpcurrconv\", \"" + conv + "\"),");
     resultado.append("new Array(\"inpconvertchargeamt\", \"" + ConvChargeAmt + "\"),");
