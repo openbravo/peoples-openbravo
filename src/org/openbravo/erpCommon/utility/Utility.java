@@ -30,6 +30,7 @@ import java.util.StringTokenizer;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.sql.Connection;
 import javax.servlet.ServletException;
 import java.io.*;
 import org.apache.log4j.Logger ;
@@ -526,6 +527,27 @@ public class Utility {
     else return cs.razon;
   }
 
+  /**
+   * Gets the document number from database.
+   * 
+   * @param conn: Handler for the database connection.
+   * @param AD_Client_ID: String with the client id.
+   * @param TableName: Table name.
+   * @param updateNext: Save the new sequence in database.
+   * @return String with the new document number.
+   */
+  public static String getDocumentNoConnection (Connection conn, ConnectionProvider con, String AD_Client_ID, String TableName, boolean updateNext) {
+    if (TableName == null || TableName.length() == 0) throw new IllegalArgumentException("Utility.getDocumentNo - required parameter missing");
+
+    CSResponse cs=null;
+    try {
+      cs = DocumentNoData.nextDocConnection(conn, con, "DocumentNo_" + TableName, AD_Client_ID, (updateNext?"Y":"N"));
+    } catch (ServletException e) {}
+
+
+    if (cs==null || cs.razon==null) return "";
+    else return cs.razon;
+  }
   /**
    * Adds the system element to the given list.
    * 

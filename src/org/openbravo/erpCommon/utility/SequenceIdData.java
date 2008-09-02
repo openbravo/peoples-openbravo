@@ -181,4 +181,37 @@ public class SequenceIdData implements FieldProvider {
       }*/
     return(object);
   }
+  
+  /**Get the sequence for the specified table 
+   */
+   public static String getSequenceConnection(Connection conn, ConnectionProvider con, String table, String client)
+     throws ServletException {
+     /*String strSql = "";
+       strSql = strSql + "";
+       strSql = strSql + "        CALL AD_Sequence_Next(?,?,?)";
+       strSql = strSql + "      ";
+
+       CallableStatement st = conn.getCallableStatement(strSql);
+       String object;
+
+       int iParameter = 0;*/
+     String object;
+     CSResponse response = SequenceData.getSequenceConnection(conn, con, table, client);
+     object = response.razon;
+     /*try {
+       iParameter++; UtilSql.setValue(st, iParameter, 12, "Test", table);
+       iParameter++; UtilSql.setValue(st, iParameter, 12, "Test", client);
+       int iParametersequence = iParameter + 1;
+       iParameter++; st.registerOutParameter(iParameter, 12);
+
+       st.execute();
+       object = UtilSql.getStringCallableStatement(st, iParametersequence);
+       } catch(SQLException e){
+       System.out.println("Error of SQL in query: getSequence Exception:"+ e);
+       throw new ServletException(Integer.toString(e.getErrorCode()));
+       } finally {
+       conn.releasePreparedStatement(st);
+       }*/
+     return(object);
+   }
 }

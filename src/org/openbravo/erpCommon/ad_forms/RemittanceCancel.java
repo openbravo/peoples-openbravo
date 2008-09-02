@@ -118,13 +118,13 @@ public class RemittanceCancel extends HttpSecureAppServlet {
           String strRLId = st.nextToken().trim();
           RemittanceCancelData.setReturned(conn, this, strRLId);
           if (strDPMID.equals("")) {
-            strDPMID = SequenceIdData.getSequence(this, "C_DP_Management", vars.getClient());
-            line = new Integer(RemittanceCancelData.getLineDPM(this, strDPMID));
-            String strDocumentNo = Utility.getDocumentNo(this, vars.getClient(), "C_DP_Management", true);
+            strDPMID = SequenceIdData.getSequenceConnection(conn, this, "C_DP_Management", vars.getClient());
+            line = new Integer(RemittanceCancelData.getLineDPMConnection(conn, this, strDPMID));
+            String strDocumentNo = Utility.getDocumentNoConnection(conn, this, vars.getClient(), "C_DP_Management", true);
             RemittanceCancelData.insertDPManagement(conn, this, strDPMID, vars.getClient(), vars.getOrg(), vars.getUser(), strDocumentNo, strDateAcct, strRLId);
           }
           line += 10;
-          String strLID = SequenceIdData.getSequence(this, "C_DP_ManagementLine", vars.getClient());
+          String strLID = SequenceIdData.getSequenceConnection(conn, this, "C_DP_ManagementLine", vars.getClient());
           RemittanceCancelData.returnDPOriginal(conn, this, strLID, vars.getClient(), vars.getOrg(), vars.getUser(), strDPMID,strRLId, line.toString());
 
           /*line += 10;
@@ -134,12 +134,12 @@ public class RemittanceCancel extends HttpSecureAppServlet {
         if (log4j.isDebugEnabled()) log4j.debug("*********************dpmid: "+strDPMID);
         //Call c_dp_management_post
         if (!strDPMID.equals("")){
-          String pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
-          PInstanceProcessData.insertPInstance(this, pinstance, "800140", strDPMID, "N", vars.getUser(), vars.getClient(), vars.getOrg());
+          String pinstance = SequenceIdData.getSequenceConnection(conn, this, "AD_PInstance", vars.getClient());
+          PInstanceProcessData.insertPInstance(conn, this, pinstance, "800140", strDPMID, "N", vars.getUser(), vars.getClient(), vars.getOrg());
           RemittanceCancelData.process800140(conn, this, pinstance);
          
 
-          PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);
+          PInstanceProcessData[] pinstanceData = PInstanceProcessData.selectConnection(conn, this, pinstance);
           myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
         }
       

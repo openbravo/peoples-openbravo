@@ -68,8 +68,8 @@
            DOCUMENTNO, DATETRX, DATEACCT, SETTLEMENTTYPE, C_DOCTYPE_ID, C_Currency_ID,
            description,IsGenerated)
            values
-           (?, ?, ?, 'Y', now(), ?, now(), ?, 
-           '*RT*'||?,?, ?,'C', Ad_Get_DocType(?, ?, 'STT'),  (select c_currency_id
+           (TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', now(), TO_NUMBER(?), now(), TO_NUMBER(?), 
+           '*RT*'||?,TO_DATE(?), TO_DATE(?),'C', Ad_Get_DocType(TO_NUMBER(?), TO_NUMBER(?), 'STT'),  (select c_currency_id
                                        from  c_remittanceLine rl,
                                              c_debt_payment   dp
                                       where c_RemittanceLine_ID = TO_NUMBER(?)
@@ -98,8 +98,8 @@
        (C_DP_MANAGEMENT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, 
        DOCUMENTNO, DATETRX, C_DOCTYPE_ID,  DATEACCT,C_Currency_ID)
      values
-       (?, ?, ?, 'Y', now(), ?, now(), ?, 
-        ?, ?, Ad_Get_DocType(?, ?, 'DPM'), ?, (select c_currency_id
+       (TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', now(), TO_NUMBER(?), now(), TO_NUMBER(?), 
+        ?, TO_DATE(?), Ad_Get_DocType(TO_NUMBER(?), TO_NUMBER(?), 'DPM'), TO_DATE(?), (select c_currency_id
                                  from  c_remittanceLine rl,
                                        c_debt_payment   dp
                                 where c_RemittanceLine_ID = TO_NUMBER(?)
@@ -155,8 +155,8 @@
            (C_DP_MANAGEMENTLINE_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, 
             C_DP_MANAGEMENT_ID, STATUS_FROM, STATUS_TO, C_DEBT_PAYMENT_ID, LINE)
          values
-           (?,?, ?, 'Y', now(), ?, now(), ?, 
-            ?, (select dp.status
+           (TO_NUMBER(?),TO_NUMBER(?), TO_NUMBER(?), 'Y', now(), TO_NUMBER(?), now(), TO_NUMBER(?), 
+            TO_NUMBER(?), (select dp.status
                         from c_debt_payment dp,
                              c_remittanceLine rl
                        where c_RemittanceLine_ID = TO_NUMBER(?)
@@ -170,7 +170,7 @@
                          and rl.c_RemittanceLine_ID = TO_NUMBER(?)),
                      (select c_debt_payment_id
                         from c_remittanceLine rl
-                       where c_RemittanceLine_ID = TO_NUMBER(?)), ?)
+                       where c_RemittanceLine_ID = TO_NUMBER(?)), TO_NUMBER(?))
       ]]></Sql>
     <Parameter name="LID"/>
     <Parameter name="client"/>
@@ -192,8 +192,8 @@
            (C_DP_MANAGEMENTLINE_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, 
             C_DP_MANAGEMENT_ID, STATUS_FROM, STATUS_TO, C_DEBT_PAYMENT_ID, LINE)
          values
-           (?,?, ?, 'Y', now(), ?, now(), ?, 
-            ?, (select dp.status
+           (TO_NUMBER(?),TO_NUMBER(?), TO_NUMBER(?), 'Y', now(), TO_NUMBER(?), now(), TO_NUMBER(?), 
+            TO_NUMBER(?), (select dp.status
                         from c_debt_payment dp,
                              c_remittanceLine rl
                        where c_RemittanceLine_ID = TO_NUMBER(?)
@@ -207,7 +207,7 @@
                          and rl.c_RemittanceLine_ID = TO_NUMBER(?)),
                      (select C_DEBT_PAYMENT_CANCELLED
                         from c_remittanceLine rl
-                       where c_RemittanceLine_ID = TO_NUMBER(?)), ?)
+                       where c_RemittanceLine_ID = TO_NUMBER(?)), TO_NUMBER(?))
       ]]></Sql>
     <Parameter name="LID"/>
     <Parameter name="client"/>
@@ -261,7 +261,7 @@
       <Parameter name="cSettlementId"></Parameter>
    </SqlMethod>
 
-    <SqlMethod name="getLineDPM" type="preparedStatement" return="String">
+    <SqlMethod name="getLineDPMConnection" connection="true" type="preparedStatement" return="String">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[

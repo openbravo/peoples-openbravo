@@ -37,4 +37,13 @@
       <Parameter name="adClientId"/>
       <Parameter name="razon" type="out"/>
    </SqlMethod>
+   <SqlMethod name="getSequenceConnection" connection="true"  type="callableStatement" return="object" object="CSResponse">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        CALL AD_Sequence_Next(?,to_number(?),?)
+      ]]></Sql>
+      <Parameter name="table"/>
+      <Parameter name="adClientId"/>
+      <Parameter name="razon" type="out"/>
+   </SqlMethod>   
 </SqlClass>
