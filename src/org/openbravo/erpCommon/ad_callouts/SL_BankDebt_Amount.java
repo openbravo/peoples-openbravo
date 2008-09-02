@@ -47,26 +47,29 @@ public class SL_BankDebt_Amount extends HttpSecureAppServlet {
       String strBankStatement = vars.getStringParameter("inpcBankstatementId");
       String strTabId = vars.getStringParameter("inpTabId");
       String strCurrency = vars.getStringParameter("inpcCurrencyId");
+      String strDescription = vars.getStringParameter("inpdescription");
       
       try {
-        printPage(response, vars, strChanged, strDebtPayment, strTabId, strBankStatement, strCurrency);
+        printPage(response, vars, strChanged, strDebtPayment, strTabId, strBankStatement, strCurrency, strDescription);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
     } else pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged, String strDebtPayment, String strTabId, String strBankStatement, String strCurrency) throws IOException, ServletException {
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged, String strDebtPayment, String strTabId, String strBankStatement, String strCurrency, String strDescription) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
     String Amount = null;
-    //String strDescription = null;
     String ConvChargeAmt="0";
     String conv = null;
-
+       
     if (!strDebtPayment.equals("")) {
       Amount = SLCashJournalAmountsData.amountDebtPaymentBank(this, strBankStatement, strDebtPayment);
-      //strDescription = SLCashJournalAmountsData.debtPaymentDescription(this, strDebtPayment);
+      if (!strDescription.equals("")) {
+        strDescription = strDescription + " - ";
+      }
+      strDescription = strDescription + SLCashJournalAmountsData.debtPaymentDescription(this, strDebtPayment);
       conv = SLBankStmtAmountData.isConversion(this,strCurrency, strDebtPayment);
     } else {
       Amount="0";
@@ -77,7 +80,7 @@ public class SL_BankDebt_Amount extends HttpSecureAppServlet {
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_BankDebt_Amount';\n\n");
     resultado.append("var respuesta = new Array(");
-    //resultado.append("new Array(\"inpdescription\", \"" + FormatUtilities.replaceJS(strDescription) + "\"),");
+    resultado.append("new Array(\"inpdescription\", \"" + FormatUtilities.replaceJS(strDescription) + "\"),");
     resultado.append("new Array(\"inptrxamt\", \"" + Amount + "\"),");
     resultado.append("new Array(\"inpcurrconv\", \"" + conv + "\"),");
     resultado.append("new Array(\"inpconvertchargeamt\", \"" + ConvChargeAmt + "\"),");
