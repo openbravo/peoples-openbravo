@@ -812,7 +812,7 @@ cWithHoldId NUMBER;
             DBMS_OUTPUT.PUT_LINE('  BOMs to resolve=' || CountNo) ;
             -- Get Price List Version
             FOR CUR_PriceList_Version IN
-              (SELECT COALESCE(SUM(v.M_PriceList_Version_ID), 0) AS PriceList_Version_ID, o.M_PriceList_ID AS M_PriceLIst_ID
+              (SELECT COALESCE(v.M_PriceList_Version_ID, 0) AS PriceList_Version_ID, o.M_PriceList_ID AS M_PriceLIst_ID
               FROM M_PRICELIST_VERSION v,
                 C_INVOICE o
               WHERE v.M_PriceList_ID=o.M_PriceList_ID
