@@ -97,8 +97,8 @@
 		    COALESCE(B.C_BP_GROUP_ID,1)         = CASE WHEN B.C_BP_GROUP_ID         IS NULL THEN 1 ELSE (SELECT MAX(C_BP_GROUP_ID) 
 		                                                                                                            FROM C_BPARTNER 
 		                                                                                                            WHERE C_BPARTNER_ID=F.C_BPARTNER_ID
-		                                                                                                            AND C_BPARTNER_ID IS NOT NULL)          END AND          
-		    COALESCE(B.AD_ORG_ID,1)             = CASE WHEN B.AD_ORG_ID             IS NULL THEN 1 ELSE F.AD_ORG_ID             END          
+		                                                                                                            AND C_BPARTNER_ID IS NOT NULL)          END AND 
+		    AD_ISORGINCLUDED(CASE WHEN B.AD_ORG_ID             IS NULL THEN 1 ELSE F.AD_ORG_ID             END,COALESCE(B.AD_ORG_ID,1), B.AD_CLIENT_ID) <> -1
 		    GROUP BY E.ACCOUNTSIGN        )        ELSE -1 END AS ACTUAL,         
 		  AD_COLUMN_IDENTIFIER('C_ELEMENTVALUE', TO_CHAR(B.C_ELEMENTVALUE_ID), TO_CHAR(?)) AS VALIDCOMBINATION,        
 		  AD_COLUMN_IDENTIFIER('C_ACCTSCHEMA', TO_CHAR(B.C_ACCTSCHEMA_ID), TO_CHAR(?)) AS ACCOUNTSCHEMA      
