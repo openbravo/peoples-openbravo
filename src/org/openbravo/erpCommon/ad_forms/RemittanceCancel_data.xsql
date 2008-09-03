@@ -34,12 +34,15 @@
                r.duedate, '' as line
           from c_debt_payment    dp,
                c_remittanceLine  rl,
-               c_Remittance			 r
+               c_Remittance		 r,
+               c_remittance_type rt
          where rl.c_debt_payment_id = dp.c_debt_payment_id
            and coalesce(rl.returned,'N') = 'N'
            and dp.C_SETTLEMENT_CANCEL_ID is null
            and r.processed = 'Y'
            and r.C_Remittance_ID    = rl.C_Remittance_ID
+           and r.c_remittance_type_id = rt.c_remittance_type_id
+           and rt.consolidate = 'Y'
            AND r.AD_CLIENT_ID IN ('1') 
            AND r.AD_ORG_ID IN ('1') 
            AND 1=1 
