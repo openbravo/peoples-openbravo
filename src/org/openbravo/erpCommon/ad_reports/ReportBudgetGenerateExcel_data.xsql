@@ -90,16 +90,16 @@
 		    COALESCE(B.C_CAMPAIGN_ID,'1')         = CASE WHEN B.C_CAMPAIGN_ID         IS NULL THEN '1' ELSE F.C_CAMPAIGN_ID         END AND          
 		    COALESCE(B.C_ACTIVITY_ID,'1')         = CASE WHEN B.C_ACTIVITY_ID         IS NULL THEN '1' ELSE F.C_ACTIVITY_ID         END AND          
 		    COALESCE(B.C_PROJECT_ID,'1')          = CASE WHEN B.C_PROJECT_ID          IS NULL THEN '1' ELSE F.C_PROJECT_ID          END AND          
-		    COALESCE(B.M_PRODUCT_CATEGORY_ID,'1') = CASE WHEN B.M_PRODUCT_CATEGORY_ID IS NULL THEN '1' ELSE (SELECT MAX(M_PRODUCT_CATEGORY_ID) 
+		    COALESCE(B.M_PRODUCT_CATEGORY_ID,'1') = CASE WHEN B.M_PRODUCT_CATEGORY_ID IS NULL THEN '1' ELSE (SELECT TO_CHAR(MAX(M_PRODUCT_CATEGORY_ID)) 
 		                                                                                                            FROM M_PRODUCT 
 		                                                                                                            WHERE M_PRODUCT_ID=F.M_PRODUCT_ID
 		                                                                                                            AND M_PRODUCT_ID IS NOT NULL)          END AND          
-		    COALESCE(B.C_BP_GROUP_ID,'1')         = CASE WHEN B.C_BP_GROUP_ID         IS NULL THEN '1' ELSE (SELECT MAX(C_BP_GROUP_ID) 
+		    COALESCE(B.C_BP_GROUP_ID,'1')         = CASE WHEN B.C_BP_GROUP_ID         IS NULL THEN '1' ELSE (SELECT TO_CHAR(MAX(C_BP_GROUP_ID)) 
 		                                                                                                            FROM C_BPARTNER 
 		                                                                                                            WHERE C_BPARTNER_ID=F.C_BPARTNER_ID
 		                                                                                                            AND C_BPARTNER_ID IS NOT NULL)          END AND 
-		    AD_ISORGINCLUDED(CASE WHEN B.AD_ORG_ID             IS NULL THEN 1 ELSE F.AD_ORG_ID             END,COALESCE(B.AD_ORG_ID,1), B.AD_CLIENT_ID) <> -1
-		    GROUP BY E.ACCOUNTSIGN        )        ELSE -1 END AS ACTUAL,         
+		    AD_ISORGINCLUDED(CASE WHEN B.AD_ORG_ID             IS NULL THEN '1' ELSE F.AD_ORG_ID             END,COALESCE(B.AD_ORG_ID,'1'), B.AD_CLIENT_ID) <> -1
+		    GROUP BY E.ACCOUNTSIGN        )        ELSE '-1' END AS ACTUAL,         
 		  AD_COLUMN_IDENTIFIER('C_ELEMENTVALUE', TO_CHAR(B.C_ELEMENTVALUE_ID), TO_CHAR(?)) AS VALIDCOMBINATION,        
 		  AD_COLUMN_IDENTIFIER('C_ACCTSCHEMA', TO_CHAR(B.C_ACCTSCHEMA_ID), TO_CHAR(?)) AS ACCOUNTSCHEMA      
 		FROM    C_BUDGETLINE B, C_BUDGET      
