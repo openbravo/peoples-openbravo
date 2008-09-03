@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_ACCTSCHEMA_DEFAULT_COPY">
     <function name="C_ACCTSCHEMA_DEFAULT_COPY" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_client_id" type="NUMERIC" mode="in">
+      <parameter name="p_client_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -36,12 +36,12 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     --
-    v_AD_Client_ID NUMBER;
+    v_AD_Client_ID VARCHAR2(32);
     --
     Cur_Acct RECORD;
     --
@@ -73,7 +73,7 @@
     LOOP
       v_Record_ID:=Cur_Parameter.Record_ID;
       IF(Cur_Parameter.ParameterName='AD_Client_ID') THEN
-        v_AD_Client_ID:=Cur_Parameter.P_Number;
+        v_AD_Client_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  AD_Client_ID=' || v_AD_Client_ID) ;
       ELSE
         DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
@@ -102,7 +102,7 @@
         P_TradeDiscountRec_Acct=Cur_Acct.P_TradeDiscountRec_Acct,
         P_TradeDiscountGrant_Acct=Cur_Acct.P_TradeDiscountGrant_Acct,
         Updated=now(),
-        UpdatedBy=0
+        UpdatedBy='0'
       WHERE M_Product_Category_Acct.C_AcctSchema_ID=Cur_Acct.C_AcctSchema_ID
         AND EXISTS
         (SELECT *
@@ -123,8 +123,8 @@
           P_TradeDiscountRec_Acct, P_TradeDiscountGrant_Acct
         )
       SELECT p.M_Product_Category_ID, Cur_Acct.C_AcctSchema_ID, p.AD_Client_ID, p.AD_Org_ID,
-        'Y', now(), 0, now(),
-        0, Cur_Acct.P_Revenue_Acct, Cur_Acct.P_Expense_Acct,
+        'Y', now(), '0', now(),
+        '0', Cur_Acct.P_Revenue_Acct, Cur_Acct.P_Expense_Acct,
         Cur_Acct.P_Asset_Acct, Cur_Acct.P_CoGs_Acct, Cur_Acct.P_PurchasePriceVariance_Acct,
         Cur_Acct.P_InvoicePriceVariance_Acct, Cur_Acct.P_TradeDiscountRec_Acct, Cur_Acct.P_TradeDiscountGrant_Acct
       FROM M_Product_Category p
@@ -160,7 +160,7 @@
         NotInvoicedRevenue_Acct=Cur_Acct.NotInvoicedRevenue_Acct,
         NotInvoicedReceivables_Acct=Cur_Acct.NotInvoicedReceivables_Acct,
         Updated=now(),
-        UpdatedBy=0,
+        UpdatedBy='0',
         Status=Cur_Acct.Status
       WHERE C_BP_Group_Acct.C_AcctSchema_ID=Cur_Acct.C_AcctSchema_ID
         AND EXISTS
@@ -185,7 +185,7 @@
         )
       SELECT AD_SEQUENCE_NEXTNO('C_BP_Group_Acct'), x.C_BP_Group_ID,
         Cur_Acct.C_AcctSchema_ID, x.AD_Client_ID, x.AD_Org_ID, 'Y',
-        now(), 0, now(), 0,
+        now(), '0', now(), '0',
         Cur_Acct.C_Receivable_Acct, Cur_Acct.C_PrePayment_Acct, Cur_Acct.V_Liability_Acct, Cur_Acct.V_Liability_Services_Acct,
         Cur_Acct.V_PrePayment_Acct, Cur_Acct.PayDiscount_Exp_Acct, Cur_Acct.PayDiscount_Rev_Acct, Cur_Acct.WriteOff_Acct,
         Cur_Acct.UnRealizedGain_Acct, Cur_Acct.UnRealizedLoss_Acct, Cur_Acct.RealizedGain_Acct, Cur_Acct.RealizedLoss_Acct,
@@ -210,7 +210,7 @@
         SET E_Expense_Acct=Cur_Acct.E_Expense_Acct,
         E_PrePayment_Acct=Cur_Acct.E_PrePayment_Acct,
         Updated=now(),
-        UpdatedBy=0
+        UpdatedBy='0'
       WHERE C_BP_Employee_Acct.C_AcctSchema_ID=Cur_Acct.C_AcctSchema_ID
         AND EXISTS
         (SELECT *
@@ -230,7 +230,7 @@
         )
       SELECT x.C_BPartner_ID,
         Cur_Acct.C_AcctSchema_ID, x.AD_Client_ID, x.AD_Org_ID, 'Y',
-        now(), 0, now(), 0,
+        now(), '0', now(), '0',
         Cur_Acct.E_Expense_Acct, Cur_Acct.E_PrePayment_Acct
       FROM C_BPartner x
       WHERE AD_Client_ID=Cur_Acct.AD_Client_ID
@@ -253,7 +253,7 @@
         W_Revaluation_Acct=Cur_Acct.W_Revaluation_Acct,
         W_InvActualAdjust_Acct=Cur_Acct.W_InvActualAdjust_Acct,
         Updated=now(),
-        UpdatedBy=0
+        UpdatedBy='0'
       WHERE M_Warehouse_Acct.C_AcctSchema_ID=Cur_Acct.C_AcctSchema_ID
         AND EXISTS
         (SELECT *
@@ -274,7 +274,7 @@
         )
       SELECT x.M_Warehouse_ID,
         Cur_Acct.C_AcctSchema_ID, x.AD_Client_ID, x.AD_Org_ID, 'Y',
-        now(), 0, now(), 0,
+        now(), '0', now(), '0',
         Cur_Acct.W_Inventory_Acct, Cur_Acct.W_Differences_Acct, Cur_Acct.W_Revaluation_Acct, Cur_Acct.W_InvActualAdjust_Acct
       FROM M_Warehouse x
       WHERE AD_Client_ID=Cur_Acct.AD_Client_ID
@@ -295,7 +295,7 @@
         SET PJ_Asset_Acct=Cur_Acct.PJ_Asset_Acct,
         PJ_WIP_Acct=Cur_Acct.PJ_Asset_Acct,
         Updated=now(),
-        UpdatedBy=0
+        UpdatedBy='0'
       WHERE C_Project_Acct.C_AcctSchema_ID=Cur_Acct.C_AcctSchema_ID
         AND EXISTS
         (SELECT *
@@ -315,7 +315,7 @@
         )
       SELECT x.C_Project_ID,
         Cur_Acct.C_AcctSchema_ID, x.AD_Client_ID, x.AD_Org_ID, 'Y',
-        now(), 0, now(), 0,
+        now(), '0', now(), '0',
         Cur_Acct.PJ_Asset_Acct, Cur_Acct.PJ_WIP_Acct
       FROM C_Project x
       WHERE AD_Client_ID=Cur_Acct.AD_Client_ID
@@ -339,7 +339,7 @@
         T_Receivables_Acct=Cur_Acct.T_Receivables_Acct,
         T_Expense_Acct=Cur_Acct.T_Expense_Acct,
         Updated=now(),
-        UpdatedBy=0
+        UpdatedBy='0'
       WHERE C_Tax_Acct.C_AcctSchema_ID=Cur_Acct.C_AcctSchema_ID
         AND EXISTS
         (SELECT * FROM C_Tax_Acct x WHERE x.C_Tax_ID=C_Tax_Acct.C_Tax_ID)
@@ -356,7 +356,7 @@
           T_Receivables_Acct, T_Expense_Acct
         )
       SELECT x.C_Tax_ID, Cur_Acct.C_AcctSchema_ID, x.AD_Client_ID, x.AD_Org_ID,
-        'Y', now(), 0, now(), 0,
+        'Y', now(), '0', now(), '0',
         Cur_Acct.T_Due_Acct, Cur_Acct.T_Liability_Acct, Cur_Acct.T_Credit_Acct, Cur_Acct.T_Receivables_Acct,
         Cur_Acct.T_Expense_Acct
       FROM C_Tax x
@@ -388,7 +388,7 @@
         B_RevaluationGain_Acct=Cur_Acct.B_RevaluationGain_Acct,
         B_RevaluationLoss_Acct=Cur_Acct.B_RevaluationLoss_Acct,
         Updated=now(),
-        UpdatedBy=0
+        UpdatedBy='0'
       WHERE C_BankAccount_Acct.C_AcctSchema_ID=Cur_Acct.C_AcctSchema_ID
         AND EXISTS
         (SELECT *
@@ -409,8 +409,8 @@
           B_SettlementGain_Acct, B_SettlementLoss_Acct, B_RevaluationGain_Acct, B_RevaluationLoss_Acct
         )
       SELECT x.C_BankAccount_ID, Cur_Acct.C_AcctSchema_ID, x.AD_Client_ID, x.AD_Org_ID,
-        'Y', now(), 0, now(),
-        0, Cur_Acct.B_InTransit_Acct, Cur_Acct.B_Asset_Acct, Cur_Acct.B_Expense_Acct,
+        'Y', now(), '0', now(),
+        '0', Cur_Acct.B_InTransit_Acct, Cur_Acct.B_Asset_Acct, Cur_Acct.B_Expense_Acct,
         Cur_Acct.B_InterestRev_Acct, Cur_Acct.B_InterestExp_Acct, Cur_Acct.B_UnIdentified_Acct, Cur_Acct.B_UnAllocatedCash_Acct,
         Cur_Acct.B_PaymentSelect_Acct, Cur_Acct.B_SettlementGain_Acct, Cur_Acct.B_SettlementLoss_Acct, Cur_Acct.B_RevaluationGain_Acct,
         Cur_Acct.B_RevaluationLoss_Acct
@@ -432,7 +432,7 @@
       UPDATE C_Withholding_Acct
         SET Withholding_Acct=Cur_Acct.Withholding_Acct,
         Updated=now(),
-        UpdatedBy=0
+        UpdatedBy='0'
       WHERE C_Withholding_Acct.C_AcctSchema_ID=Cur_Acct.C_AcctSchema_ID
         AND EXISTS
         (SELECT *
@@ -451,8 +451,8 @@
           UpdatedBy, Withholding_Acct
         )
       SELECT x.C_Withholding_ID, Cur_Acct.C_AcctSchema_ID, x.AD_Client_ID, x.AD_Org_ID,
-        'Y', now(), 0, now(),
-        0, Cur_Acct.Withholding_Acct
+        'Y', now(), '0', now(),
+        '0', Cur_Acct.Withholding_Acct
       FROM C_Withholding x
       WHERE AD_Client_ID=Cur_Acct.AD_Client_ID
         AND NOT EXISTS
@@ -472,7 +472,7 @@
         SET Ch_Expense_Acct=Cur_Acct.Ch_Expense_Acct,
         Ch_Revenue_Acct=Cur_Acct.Ch_Revenue_Acct,
         Updated=now(),
-        UpdatedBy=0
+        UpdatedBy='0'
       WHERE C_Charge_Acct.C_AcctSchema_ID=Cur_Acct.C_AcctSchema_ID
         AND EXISTS
         (SELECT * FROM C_Charge_Acct x WHERE x.C_Charge_ID=C_Charge_Acct.C_Charge_ID)
@@ -489,7 +489,7 @@
         )
       SELECT x.C_Charge_ID,
         Cur_Acct.C_AcctSchema_ID, x.AD_Client_ID, x.AD_Org_ID, 'Y',
-        now(), 0, now(), 0,
+        now(), '0', now(), '0',
         Cur_Acct.Ch_Expense_Acct, Cur_Acct.Ch_Revenue_Acct
       FROM C_Charge x
       WHERE AD_Client_ID=Cur_Acct.AD_Client_ID
@@ -513,7 +513,7 @@
         CB_Expense_Acct=Cur_Acct.CB_Expense_Acct,
         CB_Receipt_Acct=Cur_Acct.CB_Receipt_Acct,
         Updated=now(),
-        UpdatedBy=0
+        UpdatedBy='0'
       WHERE C_Cashbook_Acct.C_AcctSchema_ID=Cur_Acct.C_AcctSchema_ID
         AND EXISTS
         (SELECT *
@@ -534,7 +534,7 @@
         )
       SELECT x.C_Cashbook_ID,
         Cur_Acct.C_AcctSchema_ID, x.AD_Client_ID, x.AD_Org_ID, 'Y',
-        now(), 0, now(), 0,
+        now(), '0', now(), '0',
         Cur_Acct.CB_Asset_Acct, Cur_Acct.CB_Differences_Acct, Cur_Acct.CB_CashTransfer_Acct, Cur_Acct.CB_Expense_Acct,
         Cur_Acct.CB_Receipt_Acct
       FROM C_Cashbook x

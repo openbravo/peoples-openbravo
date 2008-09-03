@@ -31,7 +31,7 @@
 				ol.DateOrdered, ol.M_Warehouse_ID, ol.C_Currency_ID, ol.Description, ol.C_BPartner_ID, ol.C_BPartner_Location_ID
 			  FROM C_OrderLine ol, C_Order o
 				WHERE ol.C_Order_ID = o.C_Order_ID
-			  AND ol.AD_Client_ID = TO_NUMBER(?)
+			  AND ol.AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -41,10 +41,16 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-              INSERT INTO C_OrderLine (C_OrderLine_ID, AD_Client_ID, AD_Org_ID, isActive, Created, CreatedBy, Updated, UpdatedBy,
-                Line, M_Product_ID, QtyOrdered, PriceActual, C_Tax_ID, FreightAmt, C_Order_ID, PriceList, PriceStd, PriceLimit,
+              INSERT INTO C_OrderLine 
+                (C_OrderLine_ID, AD_Client_ID, AD_Org_ID, isActive, Created, CreatedBy, Updated, UpdatedBy,
+                Line, M_Product_ID, QtyOrdered, PriceActual, C_Tax_ID, 
+                FreightAmt, C_Order_ID, PriceList, PriceStd, PriceLimit,
                 Discount, C_UOM_ID, DateOrdered, M_Warehouse_ID, C_Currency_ID, Description, C_BPartner_ID, C_BPartner_Location_ID)
-                VALUES (TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', now(), TO_NUMBER(?), now(), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), COALESCE(TO_NUMBER(?), 0), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), COALESCE(TO_DATE(?), now()), TO_NUMBER(?), TO_NUMBER(?), ?, TO_NUMBER(?), TO_NUMBER(?))
+                VALUES 
+                (?, ?, ?, 'Y', now(), ?, now(), ?, 
+                 TO_NUMBER(?), ?, TO_NUMBER(?), TO_NUMBER(?), ?, 
+                 COALESCE(TO_NUMBER(?), 0), ?, TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 
+                 ?, ?, COALESCE(TO_DATE(?), now()), ?, ?, ?, ?, ?)
       ]]>
     </Sql>
     <Parameter name="cOrderlineId"/>

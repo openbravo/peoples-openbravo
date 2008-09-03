@@ -235,11 +235,11 @@ ORDER BY STATEMENTDATE, NAME2]]></queryString>
 
 	<field name="NAME" class="java.lang.String"/>
 	<field name="NAME2" class="java.lang.String"/>
-	<field name="C_BANKACCOUNT_ID" class="java.math.BigDecimal"/>
+	<field name="C_BANKACCOUNT_ID" class="java.lang.String"/>
 	<field name="BANKACCOUNT" class="java.lang.String"/>
 	<field name="TRXAMT" class="java.math.BigDecimal"/>
 	<field name="PAYAMT" class="java.math.BigDecimal"/>
-	<field name="BANKSTATEMENT_ID" class="java.math.BigDecimal"/>
+	<field name="BANKSTATEMENT_ID" class="java.lang.String"/>
 	<field name="STATEMENTDATE" class="java.util.Date"/>
 	<field name="BEGINING" class="java.math.BigDecimal"/>
 	<field name="ENDING" class="java.math.BigDecimal"/>

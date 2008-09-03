@@ -78,12 +78,12 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     }
 
     xmlDocument.setParameter("calendar", vars.getLanguage());
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("mProduct", strmProductIdGlobal);
     xmlDocument.setParameter("parameterM_ATTRIBUTESETINSTANCE_ID", strmAttributesetinstanceIdGlobal);
     xmlDocument.setData("reportM_ATTRIBUTESETINSTANCE_ID","liststructure",AttributeSetInstanceComboData.select(this, vars.getLanguage(), strmProductIdGlobal, Utility.getContext(this, vars, "#User_Client", "MInOutTraceReports"), Utility.getContext(this, vars, "#User_Org", "MInOutTraceReports")));
     xmlDocument.setParameter("productDescription", MInOutTraceReportsData.selectMproduct(this, strmProductIdGlobal));
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("in", strIn);
     xmlDocument.setParameter("out", strIn);
     

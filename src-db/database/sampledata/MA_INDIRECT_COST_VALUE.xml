@@ -1,20 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--
-************************
-0. Core Range.
-************************
--->
-<!--
-************************
-0. End of Core Range.
-************************
--->
-<!--
-************************
-1. Custom Range.
-************************
--->
 <!--1000002**************--><MA_INDIRECT_COST_VALUE>
 <!--1000002 MA_INDIRECT_COST_VALUE_ID-->
 <!--1000002-->              <MA_INDIRECT_COST_VALUE_ID><![CDATA[1000002]]></MA_INDIRECT_COST_VALUE_ID>
@@ -81,9 +66,4 @@
 <!--1000003-->              <CALCULATED><![CDATA[N]]></CALCULATED>
 <!--1000003**************--></MA_INDIRECT_COST_VALUE>
 
-<!--
-************************
-1. End of Custom Range.
-************************
--->
 </data>

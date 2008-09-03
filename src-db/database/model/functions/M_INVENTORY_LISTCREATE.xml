@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_INVENTORY_LISTCREATE">
     <function name="M_INVENTORY_LISTCREATE" type="NULL">
-      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -43,19 +43,19 @@
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     --    Parameter Variables
-    v_Record_ID NUMBER;
+    v_Record_ID VARCHAR2(32);
     v_ProductValue VARCHAR2(40) ;
-    v_Locator_ID NUMBER;
-    v_Product_Category_ID NUMBER;
+    v_Locator_ID VARCHAR2(32);
+    v_Product_Category_ID VARCHAR2(32);
     v_QtyRange CHAR(1) ;
     v_Regularization CHAR(1) ;
     v_ABC CHAR(1);
     --
-    v_Warehouse_ID NUMBER;
-    v_Client_ID NUMBER;
-    v_Org_ID NUMBER;
+    v_Warehouse_ID VARCHAR2(32);
+    v_Client_ID VARCHAR2(32);
+    v_Org_ID VARCHAR2(32);
     --
-    v_NextNo NUMBER;
+    v_NextNo VARCHAR2(32);
     v_NextLine NUMBER;
     --    Selection
     Cur_Storage RECORD;
@@ -92,10 +92,10 @@
         v_Regularization:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  Regularization=' || v_Regularization) ;
       ELSIF(Cur_Parameter.ParameterName='M_Locator_ID') THEN
-        v_Locator_ID:=Cur_Parameter.P_Number;
+        v_Locator_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  M_Locator_ID=' || v_Locator_ID) ;
       ELSIF(Cur_Parameter.ParameterName='M_Product_Category_ID') THEN
-        v_Product_Category_ID:=Cur_Parameter.P_Number;
+        v_Product_Category_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  M_Product_Category_ID=' || v_Product_Category_ID) ;
       ELSIF(Cur_Parameter.ParameterName='ABC') THEN
         v_ABC:=Cur_Parameter.P_String;
@@ -149,12 +149,12 @@
       v_ProductValue:=UPPER(v_ProductValue) ;
     END IF;
     --  Create 0 Storage Records
-    IF(v_QtyRange='=' AND v_Locator_ID>0) THEN
+    IF(v_QtyRange='=' AND v_Locator_ID!='0') THEN
       v_ResultStr:='Creating 0 values';
       DECLARE
         Cur_Products RECORD;
         storagesCount NUMBER:=0;
-        p_Storage_ID NUMBER;
+        p_Storage_ID VARCHAR2(32);
       BEGIN
         FOR Cur_Products IN
           (SELECT M_Product_ID,
@@ -182,10 +182,10 @@
             )
             VALUES
             (
-              p_Storage_ID, Cur_Products.M_Product_ID, v_Locator_ID, 0,
+              p_Storage_ID, Cur_Products.M_Product_ID, v_Locator_ID, '0',
               Cur_Products.C_UOM_ID, NULL, v_Client_ID, v_Org_ID,
-               'Y', now(), 0, now(),
-              0, 0, NULL, 0,
+               'Y', now(), '0', now(),
+              '0', 0, NULL, 0,
               NULL, NULL
             )
             ;
@@ -270,8 +270,8 @@
             VALUES
             (
               v_NextNo, v_NextLine, v_Client_ID, v_Org_ID,
-               'Y', now(), 0, now(),
-              0, v_Record_ID, Cur_Storage.M_Locator_ID, Cur_Storage.M_ATTRIBUTESETINSTANCE_ID,
+               'Y', now(), '0', now(),
+              '0', v_Record_ID, Cur_Storage.M_Locator_ID, Cur_Storage.M_ATTRIBUTESETINSTANCE_ID,
               Cur_Storage.M_Product_ID, Cur_Storage.QtyOnHand,( CASE v_Regularization WHEN 'Y' THEN 0 ELSE Cur_Storage.QtyOnHand END), Cur_Storage.C_UOM_ID,(CASE WHEN Cur_Storage.QtyOnHandOrder IS NULL THEN NULL ELSE(CASE v_Regularization WHEN 'Y' THEN 0 ELSE Cur_Storage.QtyOnHandOrder END) END), Cur_Storage.QtyOnHandOrder, Cur_Storage.M_Product_UOM_ID
             )
             ;
@@ -288,7 +288,7 @@
             QUANTITYORDERBOOK=Cur_Storage.QtyOnHandOrder,
             M_Product_UOM_ID=Cur_Storage.M_Product_UOM_ID,
             Updated=now(),
-            UpdatedBy=0
+            UpdatedBy='0'
           WHERE M_Inventory_ID=v_Record_ID
             AND M_Product_ID=Cur_Storage.M_Product_ID
             AND C_UOM_ID=Cur_Storage.C_UOM_ID

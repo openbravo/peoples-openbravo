@@ -133,6 +133,7 @@
 	</parameter>
 	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
 	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
+	<parameter name="SR_LINES" isForPrompting="false" class="net.sf.jasperreports.engine.JasperReport"/>
 	<queryString><![CDATA[SELECT C_ORDER.C_ORDER_ID, C_BPARTNER.NAME, L.ADDRESS1 || 
         (CASE WHEN (L.POSTAL||L.CITY||R.NAME) IS NOT NULL THEN (CHR(10)||L.POSTAL || (CASE WHEN L.POSTAL IS NOT NULL THEN (' - '||TO_CHAR(L.CITY)) END) || 
         (CASE WHEN R.NAME IS NOT NULL THEN (' ('||TO_CHAR(R.NAME)|| ')') END)) END) AS ADDRESS1,
@@ -150,7 +151,7 @@
         AND C_ORDER.AD_CLIENT_ID = AD_CLIENT.AD_CLIENT_ID
         AND C_ORDER.C_ORDER_ID IN (1000069, 1000222, 1000209)]]></queryString>
 
-	<field name="C_ORDER_ID" class="java.math.BigDecimal"/>
+	<field name="C_ORDER_ID" class="java.lang.String"/>
 	<field name="NAME" class="java.lang.String"/>
 	<field name="ADDRESS1" class="java.lang.String"/>
 	<field name="PHONE" class="java.lang.String"/>
@@ -419,7 +420,7 @@
 						<subreportParameterExpression><![CDATA[$P{LOCALE}]]></subreportParameterExpression>
 					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/C_OrderLinesJR.jasper"]]></subreportExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SR_LINES}]]></subreportExpression>
 				</subreport>
 			</band>
 		</detail>

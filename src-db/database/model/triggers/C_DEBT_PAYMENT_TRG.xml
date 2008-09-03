@@ -27,12 +27,12 @@
  v_Canceled NUMBER:=0;
  v_Generated NUMBER:=0;
  v_Applied NUMBER:=0;
- v_Settlement_ID NUMBER(10);
- v_Currency_ID NUMBER(10);
- v_S_Currency_ID NUMBER(10);
+ v_Settlement_ID VARCHAR2(32);
+ v_Currency_ID VARCHAR2(32);
+ v_S_Currency_ID VARCHAR2(32);
  v_S_Date  DATE;
- v_Client_ID NUMBER(10);
- v_Org_ID NUMBER(10);
+ v_Client_ID VARCHAR2(32);
+ v_Org_ID VARCHAR2(32);
  v_multiplier NUMBER:=1;
  v_Oldmultiplier NUMBER:=1;
  v_Processed CHAR(1);
@@ -104,9 +104,9 @@ BEGIN
   ELSIF (UPDATING) THEN
     IF (:old.IsValid = 'Y' AND ((:old.IsActive <> :new.IsActive)
                    OR (:old.IsReceipt<>:new.IsReceipt)
-               OR (COALESCE(:old.C_Settlement_Generate_ID,0)<>COALESCE(:new.C_Settlement_Generate_ID,0))
-               -- OR (COALESCE(:old.C_Invoice_ID,0)<>COALESCE(:new.C_Invoice_ID,0))
-                OR (COALESCE(:old.C_BPartner_ID,0)<>COALESCE(:new.C_BPartner_ID,0))
+               OR (COALESCE(:old.C_Settlement_Generate_ID,'0')<>COALESCE(:new.C_Settlement_Generate_ID,'0'))
+               -- OR (COALESCE(:old.C_Invoice_ID,'0')<>COALESCE(:new.C_Invoice_ID,'0'))
+                OR (COALESCE(:old.C_BPartner_ID,'0')<>COALESCE(:new.C_BPartner_ID,'0'))
                OR (:old.C_Currency_ID<>:new.C_Currency_ID)
                OR (:old.Amount<>:new.Amount)
                OR (:old.IsManual<>:new.IsManual))) THEN
@@ -114,8 +114,8 @@ BEGIN
     END IF;
     IF (C_DEBT_PAYMENT_STATUS(:old.C_Settlement_Cancel_ID,:old.Cancel_Processed,:old.Generate_Processed,
         :old.IsPaid,:old.IsValid,:old.C_CashLine_ID,:old.C_BankStatementLine_ID) NOT IN ('P','I')
-     AND ((COALESCE(:old.C_BankAccount_ID,0)<>COALESCE(:new.C_BankAccount_ID,0)) OR
-       (COALESCE(:old.C_CashBook_ID,0)<>COALESCE(:new.C_CashBook_ID,0)) OR
+     AND ((COALESCE(:old.C_BankAccount_ID,'0')<>COALESCE(:new.C_BankAccount_ID,'0')) OR
+       (COALESCE(:old.C_CashBook_ID,'0')<>COALESCE(:new.C_CashBook_ID,'0')) OR
         (:old.PaymentRule<>:new.PaymentRule) OR (:old.DatePlanned<>:new.DatePlanned))) THEN
       RAISE_APPLICATION_ERROR(-20511, 'This Debt/Payment can not be modified');
     END IF;
@@ -123,7 +123,7 @@ BEGIN
      IF (:old.C_Settlement_Cancel_ID<>:new.C_Settlement_Cancel_ID) THEN
         RAISE_APPLICATION_ERROR(-20512, 'The Debt/Payment is already in a Settlement Cancel');
      END IF;
-     IF ((COALESCE(:old.C_Settlement_Cancel_ID,0)<>COALESCE(:new.C_Settlement_Cancel_ID,0))
+     IF ((COALESCE(:old.C_Settlement_Cancel_ID,'0')<>COALESCE(:new.C_Settlement_Cancel_ID,'0'))
       OR (:old.IsPaid<>:new.IsPaid)
       OR (:old.WriteOffAmt<>:new.WriteOffAmt)) THEN
           SELECT processed INTO v_IsProcessed FROM C_Settlement

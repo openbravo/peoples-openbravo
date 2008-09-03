@@ -19,5 +19,5 @@
 -->
 <REPORT>
 	<template file="Login_Welcome.html"/>
-	<PARAMETER id="paramDirection" name="direction" default=""/>
+	<PARAMETER id="paramDirectory" name="directory" default=""/>
 </REPORT>

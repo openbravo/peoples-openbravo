@@ -39,7 +39,7 @@
         AND pl.M_Product_ID = p.M_Product_ID
         AND wp.MA_Sequence_ID = sp.MA_Sequence_ID
         AND sp.M_Product_ID = wpp.M_Product_ID
-        AND pp.M_ProductionPlan_ID = TO_NUMBER(?)
+        AND pp.M_ProductionPlan_ID = ?
         AND pl.Productiontype = '-'
     ]]></Sql>
     <Parameter name="productionplan"/>

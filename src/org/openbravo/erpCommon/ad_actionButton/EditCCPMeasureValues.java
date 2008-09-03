@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -44,27 +44,13 @@ public class EditCCPMeasureValues extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     if (vars.commandIn("DEFAULT")) {
-      vars.getRequestGlobalVariable("inpmaMeasureShiftId", "EditCCPMeasureValues|inpmaMeasureShiftId");
-      vars.getGlobalVariable("inpwindowId", "EditCCPMeasureValues|windowId", "");
-      vars.getGlobalVariable("inpTabId", "EditCCPMeasureValues|adTabId", "");
-      vars.getRequestGlobalVariable("inpmeasuredate", "EditCCPMeasureValues|inpmeasuredate");
-      vars.getRequestGlobalVariable("inpshift", "EditCCPMeasureValues|inpshift");
 
-      vars.setSessionValue("EditCCPMeasureValues|adProcessId", "800062");
-
-      printPage_FS(response, vars);
-    } else if (vars.commandIn("FRAME2")) {
-      printPage_F2(response, vars);
-    } else if (vars.commandIn("FRAME1")) {
-      String strWindowId = vars.getGlobalVariable("inpWindowId", "EditCCPMeasureValues|windowId");
-      String strKey = vars.getGlobalVariable("inpmaMeasureShiftId", "EditCCPMeasureValues|inpmaMeasureShiftId");
-      String strTabId = vars.getGlobalVariable("inpTabId", "EditCCPMeasureValues|adTabId");
-      String strProcessId = vars.getGlobalVariable("inpadProcessId", "EditCCPMeasureValues|adProcessId");
-      String strMeasureDate = vars.getGlobalVariable("inpmeasuredate", "EditCCPMeasureValues|inpmeasuredate", "");
-      String strShift = vars.getGlobalVariable("inpshift", "EditCCPMeasureValues|inpshift", "");
-      vars.removeSessionValue("EditCCPMeasureValues|windowId");
-      vars.removeSessionValue("EditCCPMeasureValues|adTabId");
-      vars.removeSessionValue("EditCCPMeasureValues|adProcessId");
+      String strWindowId = vars.getStringParameter("inpwindowId");
+      String strKey = vars.getRequiredStringParameter("inpmaMeasureShiftId");
+      String strTabId = vars.getStringParameter("inpTabId");
+      String strProcessId = "800062";
+      String strMeasureDate = vars.getStringParameter("inpmeasuredate");
+      String strShift = vars.getStringParameter("inpshift");
 
       printPageDataSheet(response, vars, strKey, strWindowId, strTabId, strProcessId, strMeasureDate, strShift);
     } else if (vars.commandIn("SAVE")) {
@@ -73,30 +59,6 @@ public class EditCCPMeasureValues extends HttpSecureAppServlet {
       String strTabId = vars.getStringParameter("inpTabId");
       updateValues(response, request, vars, strKey, strWindowId, strTabId);
     } else pageErrorPopUp(response);
-  }
-
-
-  void printPage_FS(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: FrameSet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/EditCCPMeasureValues_FS").createXmlDocument();
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-    if (log4j.isDebugEnabled()) log4j.debug("Output: FrameSet - out");
-  }
-
-  void printPage_F2(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Frame2");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/EditCCPMeasureValues_F2").createXmlDocument();
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Frame2 - Out");
   }
 
   void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strKey, String strWindowId, String strTabId, String strProcessId, String strMeasureDate, String strShift) throws IOException, ServletException {
@@ -109,10 +71,10 @@ public class EditCCPMeasureValues extends HttpSecureAppServlet {
 
     if (vars.getLanguage().equals("en_US")) shift = EditCCPMeasureValuesData.selectShift(this, strShift);
     else shift = EditCCPMeasureValuesData.selectShiftTrl(this, strShift, vars.getLanguage());
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/EditCCPMeasureValues_F1", discard).createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/EditCCPMeasureValues", discard).createXmlDocument();
     
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("key", strKey);
     xmlDocument.setParameter("windowId", strWindowId);

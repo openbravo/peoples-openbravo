@@ -30,7 +30,7 @@
     <PARAMETER id="paramTaxpaymentID" name="TaxpaymentID" default="" attribute="value"/>
 	<PARAMETER id="paramMessage" name="message" default="" attribute="onload" replace="xx();"/>
 	<PARAMETER id="question" name="question" default=""/>
-	<PARAMETER id="paramDirection" name="direction" default=""/>
+	<PARAMETER id="paramDirectory" name="directory" default=""/>
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
 	<PARAMETER id="processHelp" name="help" replaceCharacters="htmlHelp" default=""/>
 	<DISCARD id="discard"/>

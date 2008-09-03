@@ -42,7 +42,7 @@
         AND ad_column.ad_table_id = ad_table.ad_table_id 
         AND ad_column.isActive = 'Y' 
         AND upper(ad_column.columnname) <> 'BINARYDATA' 
-        AND ad_tab_id = to_number(?)
+        AND ad_tab_id = ?
       ORDER BY ad_field.SEQNO
       ]]>
     </Sql>
@@ -60,7 +60,7 @@
       FROM ad_field f, ad_column c 
       WHERE f.ad_column_id = c.ad_column_id 
       AND f.showInRelation = 'Y' 
-      AND f.ad_tab_id = to_number(?) 
+      AND f.ad_tab_id = ? 
       ORDER BY f.SEQNO
     </Sql>
     <Parameter name="tab"/>
@@ -76,7 +76,7 @@
            ad_column c 
       WHERE f.ad_column_id = c.ad_column_id 
       AND f.showInRelation = 'Y' 
-      AND f.ad_tab_id = to_number(?)    
+      AND f.ad_tab_id = ?    
       ORDER BY f.SEQNO
     </Sql>
     <Parameter name="adLanguage"/>
@@ -88,7 +88,7 @@
       SELECT AD_AUXILIARINPUT_ID as reference, name as realname, name as columnname, name as name, 
       code as defaultValue, 'x' as xmltext, '' as WHERECLAUSE
       FROM ad_auxiliarinput 
-      WHERE ad_tab_id = to_number(?)
+      WHERE ad_tab_id = ?
     </Sql>
     <Parameter name="sql" optional="true" after="WHERE " text="code LIKE ? || '%' AND "/>
     <Parameter name="tab"/>
@@ -97,7 +97,7 @@
     <SqlMethodComment>Name of the tab</SqlMethodComment>
     <Sql>
         SELECT Name FROM ad_tab
-        WHERE ad_tab_id = to_number(?)
+        WHERE ad_tab_id = ?
     </Sql>
     <Parameter name="tab"/>
   </SqlMethod>
@@ -105,7 +105,7 @@
       <SqlMethodComment>Name of the window</SqlMethodComment>
       <Sql>
         SELECT ad_window.Name FROM ad_tab, ad_window
-        WHERE ad_window.ad_window_id = ad_tab.ad_window_id and ad_tab_id = to_number(?)
+        WHERE ad_window.ad_window_id = ad_tab.ad_window_id and ad_tab_id = ?
       </Sql>
       <Parameter name="tab"/>
   </SqlMethod>
@@ -135,7 +135,7 @@
         SELECT ColumnName As Name, issecondarykey FROM ad_table, ad_column, ad_tab 
         WHERE ad_table.ad_table_id = ad_column.ad_table_id
           AND ad_tab.ad_table_id = ad_table.ad_table_id
-          AND ad_tab_id = to_number(?) 
+          AND ad_tab_id = ? 
           and (iskey='Y' OR isSecondaryKey='Y')
           AND ad_column.ColumnName <> ? 
           ORDER BY (CASE iskey WHEN 'Y' THEN 1 ELSE 2 END)
@@ -148,9 +148,9 @@
       <Sql><![CDATA[
         SELECT ColumnName AS NAME, AD_REFERENCE_id AS reference, ad_reference_value_id AS referencevalue,
         (SELECT tableNAME FROM AD_TABLE, AD_TAB WHERE AD_TABLE.ad_table_id = AD_TAB.ad_table_id
-        AND AD_TAB.ad_tab_id=to_number(?)) AS tablename 
+        AND AD_TAB.ad_tab_id=?) AS tablename 
         FROM AD_FIELD, AD_COLUMN 
-        WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id AND ad_table_id = to_number(?) AND isParent='Y' 
+        WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id AND ad_table_id = ? AND isParent='Y' 
       ]]></Sql>
       <Parameter name="parentTab"/>
       <Parameter name="adTableId"/>
@@ -160,11 +160,11 @@
       <Sql><![CDATA[
         SELECT ColumnName AS NAME, AD_REFERENCE_id AS reference, ad_reference_value_id AS referencevalue,
         (SELECT tableNAME FROM AD_TABLE, AD_TAB WHERE AD_TABLE.ad_table_id = AD_TAB.ad_table_id
-        AND AD_TAB.ad_tab_id=to_number(?)) AS tablename, to_number(?) as AD_Tab_ID, (select name from ad_tab where ad_tab_id = to_NUMBER(?)) as parent_tab_name
+        AND AD_TAB.ad_tab_id=?) AS tablename, ? as AD_Tab_ID, (select name from ad_tab where ad_tab_id = ?) as parent_tab_name
         FROM AD_FIELD, AD_COLUMN 
-        WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id AND ad_tab_id = to_number(?) AND isParent='Y' 
+        WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id AND ad_tab_id = ? AND isParent='Y' 
         AND EXISTS(SELECT 1 FROM AD_COLUMN c, AD_FIELD f WHERE c.ad_column_id = f.ad_column_id AND (c.iskey='Y' OR c.issecondarykey='Y')
-        AND ad_tab_id=to_number(?) AND UPPER(c.columnname) = UPPER(AD_COLUMN.columnname))
+        AND ad_tab_id=? AND UPPER(c.columnname) = UPPER(AD_COLUMN.columnname))
       ]]></Sql>
       <Parameter name="parentTab"/>
       <Parameter name="parentTab"/>
@@ -177,13 +177,13 @@
       <Sql>
         SELECT ColumnName AS NAME, AD_REFERENCE_id AS reference, ad_reference_value_id AS referencevalue,
         (SELECT tableNAME FROM AD_TABLE, AD_TAB WHERE AD_TABLE.ad_table_id = AD_TAB.ad_table_id
-        AND AD_TAB.ad_tab_id=to_number(?)) AS tablename 
+        AND AD_TAB.ad_tab_id=?) AS tablename
         FROM AD_FIELD, AD_COLUMN 
-        WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id AND ad_tab_id = to_number(?)
+        WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id AND ad_tab_id = ?
         AND UPPER(columnname) IN (SELECT UPPER(columnname) FROM AD_FIELD, AD_COLUMN 
         WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id 
         AND AD_COLUMN.iskey='Y' 
-        AND AD_FIELD.ad_tab_id=to_number(?))
+        AND AD_FIELD.ad_tab_id=?)
       </Sql>
       <Parameter name="parentTab"/>
       <Parameter name="tab"/>
@@ -194,10 +194,10 @@
       <Sql>
         SELECT ColumnName AS NAME, AD_REFERENCE_id AS reference, ad_reference_value_id AS referencevalue,
         (SELECT tableNAME FROM AD_TABLE, AD_TAB WHERE AD_TABLE.ad_table_id = AD_TAB.ad_table_id
-        AND AD_TAB.ad_tab_id=to_number(?)) AS tablename 
+        AND AD_TAB.ad_tab_id=?) AS tablename 
         FROM AD_FIELD, AD_COLUMN 
         WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id 
-        AND ad_tab_id = to_number(?) 
+        AND ad_tab_id = ? 
         AND isparent='Y'
         order by ad_column.seqno
       </Sql>
@@ -212,7 +212,7 @@
                                               and ad_field_trl.ad_language = ?, 
                ad_column 
         WHERE ad_field.ad_column_id = ad_column.ad_column_id 
-        and ad_table_id = to_number(?) and isParent='Y' 
+        and ad_table_id = ? and isParent='Y' 
       ]]></Sql>
       <Parameter name="adLanguage"/>
       <Parameter name="table"/>
@@ -225,9 +225,9 @@
                                               and ad_field_trl.ad_language = ?, 
                ad_column 
         WHERE ad_field.ad_column_id = ad_column.ad_column_id 
-        and ad_tab_id = to_number(?) and isParent='Y' 
+        and ad_tab_id = ? and isParent='Y' 
         and exists(select 1 from ad_column c, ad_field f where c.ad_column_id = f.ad_column_id and c.iskey='Y'
-        and ad_tab_id=to_number(?) and UPPER(c.columnname) = UPPER(ad_column.columnname))
+        and ad_tab_id=? and UPPER(c.columnname) = UPPER(ad_column.columnname))
       ]]></Sql>
       <Parameter name="adLanguage"/>
       <Parameter name="tab"/>
@@ -241,11 +241,11 @@
                                             AND AD_FIELD_TRL.AD_LANGUAGE = ? , 
              AD_COLUMN 
         WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id 
-        AND ad_tab_id = to_number(?)
+        AND ad_tab_id = ?
         AND UPPER(columnname) IN (SELECT UPPER(columnname) FROM AD_FIELD, AD_COLUMN 
         WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id 
         AND AD_COLUMN.iskey='Y' 
-        AND AD_FIELD.ad_tab_id=to_number(?))
+        AND AD_FIELD.ad_tab_id=?)
       </Sql>
       <Parameter name="adLanguage"/>
       <Parameter name="tab"/>
@@ -259,7 +259,7 @@
                                             AND AD_FIELD_TRL.AD_LANGUAGE = ? ,
              AD_COLUMN 
         WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id 
-        AND ad_tab_id = to_number(?)
+        AND ad_tab_id = ?
         AND isparent='Y'
         ORDER BY AD_Column.SEQNO
       </Sql>
@@ -270,7 +270,7 @@
       <SqlMethodComment>Name of the table of the tab</SqlMethodComment>
       <Sql>
         SELECT ad_table.TABLEName FROM ad_tab, ad_table
-        WHERE ad_table.ad_table_id = ad_tab.ad_table_id and ad_tab_id = to_number(?)
+        WHERE ad_table.ad_table_id = ad_tab.ad_table_id and ad_tab_id = ?
       </Sql>
       <Parameter name="tab"/>
   </SqlMethod>
@@ -281,7 +281,7 @@
           FROM ad_tab left join ad_tab_trl on  ad_tab.ad_tab_id = ad_tab_trl.ad_tab_id
                                           and ad_tab_trl.isactive = 'Y'
                                           and ad_tab_trl.ad_language = ?
-        WHERE ad_tab.ad_tab_id = to_number(?)        
+        WHERE ad_tab.ad_tab_id = ?        
       </Sql>
       <Parameter name="adLanguage"/>
       <Parameter name="tab"/>      
@@ -294,7 +294,7 @@
                                                         and ad_window_trl.isactive = 'Y'
                                                         and ad_window_trl.ad_language = ?
         WHERE ad_tab.ad_window_id = ad_window.ad_window_id 
-        and ad_tab.ad_tab_id = to_number(?)
+        and ad_tab.ad_tab_id = ?
         
       </Sql>
       <Parameter name="adLanguage"/>
@@ -307,7 +307,7 @@
       ad_column.ad_reference_value_id as referencevalue FROM ad_field, ad_column 
       WHERE ad_field.ad_column_id = ad_column.ad_column_id 
       and UPPER(ad_column.columnname) not in ('CREATED', 'UPDATED', 'CREATEDBY', 'UPDATEDBY') 
-      and ad_tab_id = to_number(?) 
+      and ad_tab_id = ? 
       AND upper(ad_column.columnname) <> 'BINARYDATA' 
       AND ad_column.isEncrypted <> 'Y'
       AND ad_column.isactive = 'Y'
@@ -323,8 +323,8 @@
       WHERE ad_field.ad_column_id = ad_column.ad_column_id 
         and ad_column.ad_table_id = ad_table.ad_table_id 
         and ad_field.ISDISPLAYED = 'Y'
-        AND ad_tab_id = to_number(?)
-        AND ad_reference_id = 17
+        AND ad_tab_id = ?
+        AND ad_reference_id = '17'
     </Sql>
     <Parameter name="tab"/>
   </SqlMethod>
@@ -341,8 +341,8 @@
       AND ad_ref_table.ad_table_id = ad_table.ad_table_id 
       AND ad_column.AD_REFERENCE_VALUE_ID = ad_ref_table.AD_REFERENCE_ID  
       and ad_field.ISDISPLAYED = 'Y'
-      AND ad_tab_id = to_number(?) 
-      AND ad_column.ad_reference_id = 18
+      AND ad_tab_id = ? 
+      AND ad_column.ad_reference_id = '18'
     </Sql>
     <Parameter name="tab"/>
   </SqlMethod>
@@ -356,8 +356,8 @@
       WHERE ad_field.ad_column_id = ad_column.ad_column_id 
       and ad_column.ad_table_id = ad_table.ad_table_id 
       and ad_field.ISDISPLAYED = 'Y'
-      AND ad_tab_id = to_number(?) 
-      AND ad_reference_id = 19
+      AND ad_tab_id = ? 
+      AND ad_reference_id = '19'
     </Sql>
     <Parameter name="tab"/>
   </SqlMethod>
@@ -400,7 +400,7 @@
       SELECT ColumnName As Name
       FROM ad_field, ad_column
       WHERE ad_field.ad_column_id = ad_column.ad_column_id 
-        AND ad_tab_id = to_number(?)
+        AND ad_tab_id = ?
         AND ad_field.SORTNO is not null
       ORDER BY ad_field.SORTNO, ad_field.SEQNO
       ]]>
@@ -413,7 +413,7 @@
       <![CDATA[
       SELECT isSOTrx FROM AD_WINDOW, AD_TAB 
       WHERE AD_TAB.AD_WINDOW_ID = AD_WINDOW.AD_WINDOW_ID 
-      AND AD_TAB.AD_TAB_ID = to_number(?)
+      AND AD_TAB.AD_TAB_ID = ?
       ]]>
     </Sql>
     <Parameter name="tab"/>
@@ -431,7 +431,7 @@
       FROM ad_field, ad_column, ad_table
       WHERE ad_field.ad_column_id = ad_column.ad_column_id
 	  	AND ad_column.AD_TABLE_ID = ad_table.AD_TABLE_ID 
-        AND ad_tab_id = to_number(?) 
+        AND ad_tab_id = ? 
         AND upper(ad_column.columnname) <> 'BINARYDATA' 
       ORDER BY ad_field.SEQNO
       ]]>
@@ -450,7 +450,7 @@
         ad_field.displaylength, REPLACE(replace(REPLACE(REPLACE(AD_ELEMENT.columnname, 'Substitute_ID', 'M_Product_ID'), 'C_Settlement_Cancel_ID', 'C_Settlement_ID'), 'BOM_ID', '_ID'), 'M_LocatorTo_ID', 'M_Locator_ID') as columnname
       FROM ad_field, ad_column left join ad_element on ad_column.ad_element_id = ad_element.ad_element_id
       WHERE ad_field.ad_column_id = ad_column.ad_column_id 
-        AND ad_tab_id = to_number(?)
+        AND ad_tab_id = ?
         AND (ad_column.ISSESSIONATTR = 'Y' 
         OR ad_column.iskey = 'Y') 
         AND upper(ad_column.columnname) <> 'BINARYDATA' 
@@ -471,7 +471,7 @@
       FROM ad_field, ad_column, ad_table
       WHERE ad_field.ad_column_id = ad_column.ad_column_id
 	  	AND ad_column.AD_TABLE_ID = ad_table.AD_TABLE_ID 
-        AND ad_tab_id = to_number(?) 
+        AND ad_tab_id = ? 
         and isParent='N'
         and ad_column.columnname = 'DocumentNo'
         and ad_column.defaultvalue is null
@@ -584,7 +584,7 @@
       <![CDATA[
       SELECT ishighvolume FROM AD_TAB, AD_TABLE 
       WHERE AD_TAB.ad_table_id = AD_TABLE.ad_table_id
-      AND AD_TAB.ad_tab_id=to_number(?)
+      AND AD_TAB.ad_tab_id=?
       ]]>
     </Sql>
     <Parameter name="tab"/>
@@ -594,7 +594,7 @@
     <Sql>
       <![CDATA[
       SELECT issinglerow FROM AD_TAB 
-      WHERE ad_tab_id=to_number(?)
+      WHERE ad_tab_id=?
       ]]>
     </Sql>
     <Parameter name="tab"/>
@@ -603,12 +603,12 @@
     <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT coalesce(ad_column.ad_process_id, -1) AS total 
+        SELECT coalesce(ad_column.ad_process_id, '-1') AS total 
         FROM AD_FIELD, AD_COLUMN, AD_TABLE
         WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id
         AND AD_COLUMN.AD_TABLE_ID = AD_TABLE.AD_TABLE_ID 
-        AND ad_tab_id = to_number(?) 
-        AND AD_COLUMN.ad_reference_id = 28
+        AND ad_tab_id = ? 
+        AND AD_COLUMN.ad_reference_id = '28'
         AND AD_COLUMN.COLUMNNAME = 'CreateFrom'
         AND AD_COLUMN.AD_PROCESS_ID IS NULL
         AND AD_FIELD.ISDISPLAYED = 'Y'
@@ -620,12 +620,12 @@
     <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT coalesce(ad_column.ad_process_id, -1) AS total 
+        SELECT coalesce(ad_column.ad_process_id, '-1') AS total 
         FROM AD_FIELD, AD_COLUMN, AD_TABLE
         WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id
         AND AD_COLUMN.AD_TABLE_ID = AD_TABLE.AD_TABLE_ID 
-        AND ad_tab_id = to_number(?) 
-        AND AD_COLUMN.ad_reference_id = 28
+        AND ad_tab_id = ? 
+        AND AD_COLUMN.ad_reference_id = '28'
         AND AD_COLUMN.COLUMNNAME = 'Posted'
         AND AD_COLUMN.AD_PROCESS_ID IS NULL
         AND AD_FIELD.ISDISPLAYED = 'Y'
@@ -642,12 +642,12 @@
         (case when t.whereclause is not null or v.code is not null then 'C' else 'R' end) as type /*Combo reaload or Reference*/ 
         FROM AD_FIELD f, 
              AD_COLUMN c left join  AD_VAL_RULE v on c.AD_VAL_RULE_ID = v.AD_VAL_RULE_ID
-                         left join AD_REF_TABLE t on (CASE c.ad_reference_id WHEN 18 THEN c.AD_REFERENCE_VALUE_ID ELSE 0 END) = t.AD_REFERENCE_ID     
+                         left join AD_REF_TABLE t on (CASE c.ad_reference_id WHEN '18' THEN c.AD_REFERENCE_VALUE_ID ELSE '0' END) = t.AD_REFERENCE_ID     
         WHERE f.AD_COLUMN_ID = c.ad_column_id
-        AND f.ad_tab_id = to_number(?) 
+        AND f.ad_tab_id = ? 
         AND (t.whereclause IS NOT NULL
             OR v.code IS NOT NULL
-            OR c.ad_reference_id in (19,18,17))
+            OR c.ad_reference_id in ('19','18','17'))
       ]]>
     </Sql>
     <Parameter name="tab"/>
@@ -664,9 +664,9 @@
       AND ad_ref_table.ad_table_id = ad_table.ad_table_id 
       AND ad_column.AD_REFERENCE_VALUE_ID = ad_ref_table.AD_REFERENCE_ID  
       and ad_field.ISDISPLAYED = 'Y'
-      AND ad_field.ad_tab_id = to_number(?)
-      AND ad_column.ad_column_id = to_number(?) 
-      AND ad_column.ad_reference_id = 18
+      AND ad_field.ad_tab_id = ?
+      AND ad_column.ad_column_id = ? 
+      AND ad_column.ad_reference_id = '18'
     </Sql>
     <Parameter name="adTabId"/>
     <Parameter name="adColumnId"/>
@@ -681,9 +681,9 @@
       WHERE ad_field.ad_column_id = ad_column.ad_column_id 
       and ad_column.ad_table_id = ad_table.ad_table_id 
       and ad_field.ISDISPLAYED = 'Y'
-      AND ad_field.ad_tab_id = to_number(?)
-      AND ad_column.ad_column_id = to_number(?) 
-      AND ad_reference_id = 19
+      AND ad_field.ad_tab_id = ?
+      AND ad_column.ad_column_id = ? 
+      AND ad_reference_id = '19'
     </Sql>
     <Parameter name="adTabId"/>
     <Parameter name="adColumnId"/>
@@ -693,7 +693,7 @@
     <Sql>
       <![CDATA[
       SELECT columnname FROM AD_column 
-      WHERE ad_column_id= to_number(?)
+      WHERE ad_column_id=?
       ]]>
     </Sql>
     <Parameter name="adColumnId"/>
@@ -709,7 +709,7 @@
       FROM ad_field, ad_column, ad_table
       WHERE ad_field.ad_column_id = ad_column.ad_column_id
 	  	AND ad_column.AD_TABLE_ID = ad_table.AD_TABLE_ID 
-        AND ad_tab_id = to_number(?) 
+        AND ad_tab_id = ? 
         and ismandatory='Y' 
         AND upper(ad_column.columnname) = 'VALUE'
       ORDER BY ad_field.SEQNO
@@ -723,7 +723,7 @@
       <![CDATA[
       SELECT whereclause
       FROM ad_tab
-      WHERE ad_tab_id = to_number(?) 
+      WHERE ad_tab_id = ? 
       ]]>
     </Sql>
     <Parameter name="tab"/>
@@ -734,7 +734,7 @@
       <![CDATA[
         SELECT count(*) AS total 
         FROM AD_FIELD, AD_COLUMN
-        WHERE AD_FIELD.ad_tab_id = to_number(?) 
+        WHERE AD_FIELD.ad_tab_id = ? 
         AND ad_field.ad_column_id = ad_column.ad_column_id 
         AND ad_column.isEncrypted = 'Y' 
         AND ad_field.ISDISPLAYED = 'Y'
@@ -751,7 +751,7 @@
       WHERE ad_field.ad_column_id = ad_column.ad_column_id 
         AND ad_column.isEncrypted = 'Y' 
         AND ad_field.ISDISPLAYED = 'Y'
-        AND ad_tab_id = to_number(?)
+        AND ad_tab_id = ?
       ORDER BY ad_field.SEQNO
       ]]>
     </Sql>
@@ -764,12 +764,12 @@
       select ad_reference_value_id as id, columnname, columnname || '_BTN' as realName 
       from ad_field f, ad_column c
       where f.ad_column_id = c.ad_column_id 
-      and f.ad_tab_id = to_number(?)
+      and f.ad_tab_id = ?
       and f.isactive = 'Y'
       and f.isdisplayed = 'Y'
       and c.isactive = 'Y'
       and ad_reference_value_id is not null
-      and c.ad_reference_id = 28 
+      and c.ad_reference_id = '28' 
       and c.columnname <> 'ChangeProjectStatus'
       ]]>
     </Sql>
@@ -782,12 +782,12 @@
       select count(*) as actionButtons
       from ad_field f, ad_column c
       where f.ad_column_id = c.ad_column_id 
-      and f.ad_tab_id = to_number(?)
+      and f.ad_tab_id = ?
       and f.isactive = 'Y'
       and f.isdisplayed = 'Y'
       and c.isactive = 'Y'
       and ad_reference_value_id is not null
-      and c.ad_reference_id = 28 
+      and c.ad_reference_id = '28' 
       ]]>
     </Sql>
     <Parameter name="tab"/>
@@ -799,9 +799,9 @@
           select count(*) as total
         from ad_field f,
              ad_column c
-       where f.ad_tab_id = to_number(?)
+       where f.ad_tab_id = ?
          and f.ad_column_id = c.ad_column_id
-         and ad_reference_id = 28
+         and ad_reference_id = '28'
          and ad_reference_value_id is not null
          and f.isdisplayed = 'Y'
          and f.isactive='Y'
@@ -816,9 +816,9 @@
           select count(*) as total
         from ad_field f,
              ad_column c
-       where f.ad_tab_id = to_number(?)
+       where f.ad_tab_id = ?
          and f.ad_column_id = c.ad_column_id
-         and ad_reference_id = 28
+         and ad_reference_id = '28'
          and f.isdisplayed = 'Y'
          and f.isactive='Y'
       ]]>

@@ -37,7 +37,7 @@
 	<PARAMETER id="paramLanguage" name="language" default=""/>
 	<PARAMETER id="question" name="question" default=""/>
 	<PARAMETER id="body" name="body" attribute="onload" replace="xx" default=""/>
-	<PARAMETER id="paramDirection" name="direction" default=""/>
+	<PARAMETER id="paramDirectory" name="directory" default=""/>
 	<PARAMETER id="processDescription" name="description" replaceCharacters="htmlHelp" default=""/>
 	<PARAMETER id="processHelp" name="help" replaceCharacters="htmlHelp" default=""/>
 	<SUBREPORT id="reportC_BankAccountFrom_ID" name="reportC_BankAccountFrom_ID" report="org/openbravo/erpCommon/reference/List">

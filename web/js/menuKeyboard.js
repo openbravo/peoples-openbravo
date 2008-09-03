@@ -44,9 +44,9 @@ function getReference(id) {
   else return null;
 }
 
-function getStyle(id, esId) {
+function getStyle(id, isId) {
   var ref;
-  if (esId==null || esId) ref = getReference(id);
+  if (isId==null || isId) ref = getReference(id);
   else ref = id;
   try {
     return ((document.layers) ? ref : ref.style);
@@ -73,9 +73,9 @@ function changeState(evt, element) {
     //focusedMenuElement = element.parentNode;
     setMenuElementFocus(element.parentNode);
   }  
-  var indice = null;
-  if (document.all) indice = element.sourceIndex;
-  var hijo=null;
+  var index = null;
+  if (document.all) index = element.sourceIndex;
+  var child=null;
   var total = "";
   try {
     if (element.id.indexOf("folder")==-1 && element.id.indexOf("folderCell")==-1 && element.id.indexOf("folderImg")==-1) {
@@ -87,12 +87,12 @@ function changeState(evt, element) {
     else if (element.id.indexOf("folderImg")==0) total = element.id.replace("folderImg", "");
     else total = element.id.replace("folder","");
   } catch (e) {}
-  hijo = getReference("parent" + total);
+  child = getReference("parent" + total);
   var actualclass = getObjectClass("folderImg" + total);
   var selectedClass = getObjectClass("child" + total);
   if (selectedClass==null) selectedClass = "";
   selectedClass = selectedClass.replace(" Opened", " NOT_Opened");
-  var obj = getStyle(hijo, false);
+  var obj = getStyle(child, false);
   if (!obj) return;
   try {
     if (obj.display=="none") {
@@ -126,9 +126,9 @@ if (document.layers) {
 function onFocusMenu() {
   isMenuFocused = true;
   try {
-    top.frameAplicacion.disableDefaultAction();
-    top.frameAplicacion.removeWindowElementFocus(top.frameAplicacion.focusedWindowElement);
-    top.frameAplicacion.removeTabFocus(top.frameAplicacion.focusedTab);
+    top.appFrame.disableDefaultAction();
+    top.appFrame.removeWindowElementFocus(top.appFrame.focusedWindowElement);
+    top.appFrame.removeTabFocus(top.appFrame.focusedTab);
   } catch(e) {}
   putMenuElementFocus(focusedMenuElement);
 }

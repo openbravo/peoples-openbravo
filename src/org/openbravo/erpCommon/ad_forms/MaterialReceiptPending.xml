@@ -21,7 +21,7 @@
   <template file="MaterialReceiptPending.html"/>
   <PARAMETER id="paramToolBar" name="toolbar" default=""/>
   <PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
-  <PARAMETER id="paramDirection" name="direction" default=""/>
+  <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="paramBPartnerId" name="paramBPartnerId" attribute="value"/>
   <PARAMETER id="ParamAD_Org_ID" name="paramAdOrgId"/>
   <PARAMETER id="paramBPartnerDescription" name="paramBPartnerDescription" attribute="value"/>

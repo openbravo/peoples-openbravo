@@ -20,7 +20,8 @@
 <REPORT>
 	<template file="Heartbeat.html"/>
 	<PARAMETER id="paramWelcome" name="welcome" replaceCharacters="htmlHelp" />
-	<PARAMETER id="paramDirection" name="direction" default=""/>
+	<PARAMETER id="paramDirectory" name="directory" default=""/>
 	<PARAMETER id="paramLanguage" name="language" default=""/>
-	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/> 
+	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
+ 	<PARAMETER id="openRegistration" name="registration" />
 </REPORT>

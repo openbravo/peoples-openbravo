@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MA_STANDARD_COST">
     <function name="MA_STANDARD_COST" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -24,17 +24,17 @@
   v_Message               VARCHAR2(2000) := '';
   v_Result NUMBER:= 1;
 
-  p_User                  NUMBER;
+  p_User VARCHAR2(32);
   p_CalcDate              DATE;
-  p_Budget_ID             NUMBER;
-  p_ProcessPlan           NUMBER;
+  p_Budget_ID             varchar2(32);
+  p_ProcessPlan           VARCHAR2(32);
   v_Calculated            CHAR(1);
 
   TYPE RECORD IS REF CURSOR;
   Cur_Parameter RECORD;
   Cur_Sequences RECORD;
 
-  v_Client_ID             NUMBER;
+  v_Client_ID             varchar2(32);
 
 
 BEGIN
@@ -47,9 +47,9 @@ BEGIN --BODY
     p_CalcDate := now();
     v_Client_ID:=Cur_Parameter.AD_Client_ID;
     IF (Cur_Parameter.ParameterName = 'C_Budget_ID') THEN
-      p_Budget_ID := Cur_Parameter.P_Number;
+      p_Budget_ID := Cur_Parameter.P_String;
     ELSIF (Cur_Parameter.ParameterName = 'MA_ProcessPlan_ID') THEN
-      p_ProcessPlan := Cur_Parameter.P_Number;
+      p_ProcessPlan := Cur_Parameter.P_String;
     ELSIF (Cur_Parameter.ParameterName = 'CalcDate') THEN
       p_CalcDate := COALESCE(Cur_Parameter.P_Date, TRUNC(now()));
     END IF;

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MA_WORKEFFORT_VALIDATE">
     <function name="MA_WORKEFFORT_VALIDATE" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -28,28 +28,28 @@
     Cur_Parameter RECORD;
     Cur_Toolset RECORD;
     --
-    v_Record_ID NUMBER:=NULL;
-    v_User_ID NUMBER;
-    v_Org_ID NUMBER;
-    v_Client_ID NUMBER;
+    v_Record_ID VARCHAR2(32):=NULL;
+    v_User_ID VARCHAR2(32);
+    v_Org_ID VARCHAR2(32);
+    v_Client_ID VARCHAR2(32);
     v_count NUMBER;
 --    v_count2 NUMBER;
---    v_Production_ID NUMBER;
+--    v_Production_ID VARCHAR2(32);
     v_ProductionDate DATE;
 --    v_Name NVARCHAR2(60) ;
     -- p_ppline            NUMBER;
     -- p_plline          NUMBER;
---    v_ProductionPlan_ID NUMBER;
---    v_ProductionLine_ID NUMBER;
+--    v_ProductionPlan_ID VARCHAR2(32);
+--    v_ProductionLine_ID VARCHAR2(32);
 --    v_Quantity NUMBER;
---    v_UOM_ID NUMBER;
+--    v_UOM_ID VARCHAR2(32);
 --    v_PInstance NUMBER;
 --    v_doneQty NUMBER;
 --    v_needQty NUMBER;
     v_QtyOnHand NUMBER;
     p_Processed CHAR;
     v_ProductQty NUMBER;
-    v_NextNo NUMBER;
+    v_NextNo VARCHAR2(32);
     Quantity NUMBER:=99999; -- unlimited
     v_Result NUMBER:=1;
 
@@ -179,7 +179,7 @@
       FROM M_PRODUCTIONPLAN PP, M_PRODUCTIONLINE PL, M_PRODUCT P
       WHERE PL.M_PRODUCT_ID=P.M_PRODUCT_ID
         AND P.M_ATTRIBUTESET_ID IS NOT NULL
-        AND COALESCE(PL.M_ATTRIBUTESETINSTANCE_ID, 0) = 0
+        AND COALESCE(PL.M_ATTRIBUTESETINSTANCE_ID, '0') = '0'
         AND PL.M_ProductionPlan_ID=pp.M_ProductionPlan_ID
         AND pp.M_Production_ID=v_Record_ID;
       IF v_Count<>0 THEN
@@ -248,7 +248,7 @@
             v_NextNo, CUR_PL_Post.M_ProductionLine_ID, CUR_PL_Post.AD_Client_ID, CUR_PL_Post.AD_Org_ID,
              'Y', now(), v_User_ID, now(),
             v_User_ID, 'P+', CUR_PL_Post.M_Locator_ID, CUR_PL_Post.M_Product_ID,
-            COALESCE(CUR_PL_Post.M_AttributeSetInstance_ID, 0), -- not distinguishing between assemby/disassembly
+            COALESCE(CUR_PL_Post.M_AttributeSetInstance_ID, '0'), -- not distinguishing between assemby/disassembly
             CUR_PL_Post.MovementDate,(CASE CUR_PL_Post.PRODUCTIONTYPE WHEN '+' THEN CUR_PL_Post.MovementQty ELSE -CUR_PL_Post.MOVEMENTQTY END), CUR_PL_Post.M_Product_UOM_ID,(CASE CUR_PL_Post.PRODUCTIONTYPE WHEN '+' THEN CUR_PL_Post.QUANTITYORDER ELSE -CUR_PL_Post.QuantityOrder END), CUR_PL_Post.C_UOM_ID
           )
           ;

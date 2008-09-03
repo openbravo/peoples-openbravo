@@ -28,7 +28,7 @@
       <![CDATA[
 	  SELECT IL.AD_ORG_ID, IL.M_PRODUCT_ID, IL.LINE, IL.DESCRIPTION,
 	  IL.C_UOM_ID, IL.M_INVENTORYLINE_ID, IL.QTYBOOK, IL.QTYCOUNT,
-	  IL.M_LOCATOR_ID FROM M_InventoryLine IL WHERE M_Inventory_ID = TO_NUMBER(?) ORDER BY Line
+	  IL.M_LOCATOR_ID FROM M_InventoryLine IL WHERE M_Inventory_ID=? ORDER BY Line
      ]]>
      </Sql>
      <Parameter name="M_Inventory_ID"/>

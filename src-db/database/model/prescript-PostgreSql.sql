@@ -414,6 +414,78 @@ END;
 ' language 'plpgsql' IMMUTABLE
 /-- END
 
+CREATE OR REPLACE FUNCTION hex_to_int("varchar")
+  RETURNS "numeric" AS
+$BODY$
+DECLARE
+h alias for $1;
+exec varchar;
+curs refcursor;
+res numeric;
+res1 numeric;
+res2 numeric;
+res3 numeric;
+res4 numeric;
+hi varchar;
+h1 varchar;
+h2 varchar;
+h3 varchar;
+h4 varchar;
+exp1 numeric(50);
+exp2 numeric(50);
+exp3 numeric(50);
+BEGIN
+if length(h) < 32 then
+	hi:=repeat('0',32-length(h)) || h;
+else
+	hi:=h;
+end if;
+h1:=substr(hi,25,8);
+h2:=substr(hi,17,8);
+h3:=substr(hi,9,8);
+h4:=substr(hi,1,8);
+exec := 'SELECT x''' || h1 || '''::bigint';
+OPEN curs FOR EXECUTE exec;
+FETCH curs INTO res1;
+CLOSE curs;
+exec := 'SELECT x''' || h2 || '''::bigint';
+OPEN curs FOR EXECUTE exec;
+FETCH curs INTO res2;
+CLOSE curs;
+exec := 'SELECT x''' || h3 || '''::bigint';
+OPEN curs FOR EXECUTE exec;
+FETCH curs INTO res3;
+CLOSE curs;
+exec := 'SELECT x''' || h4 || '''::bigint';
+OPEN curs FOR EXECUTE exec;
+FETCH curs INTO res4;
+CLOSE curs;
+exp1=pow(16::numeric,8::numeric);
+exp2=pow(16::numeric,16::numeric);
+exp3=pow(16::numeric,24::numeric);
+res:=res1;
+res:=res+res2*exp1;
+res:=res+res3*exp2;
+res:=res+res4*exp3;
+return to_number(res);
+END;$BODY$
+  LANGUAGE 'plpgsql' IMMUTABLE STRICT;
+/-- END
+
+CREATE OR REPLACE FUNCTION hex_to_int(numeric) RETURNS numeric AS '
+DECLARE
+h alias for $1;
+exec varchar;
+curs refcursor;
+res int;
+BEGIN
+return h;
+END;'
+LANGUAGE 'plpgsql'
+IMMUTABLE
+STRICT;
+/-- END
+
 
 CREATE OR REPLACE FUNCTION add_months
 (
@@ -1177,4 +1249,34 @@ DROP FUNCTION drop_operator (varchar,varchar,varchar)
 DROP FUNCTION drop_view (varchar)
 /-- END
 
+
+CREATE OR REPLACE FUNCTION uuid_generate_v1()
+RETURNS uuid
+AS '$libdir/uuid-ossp', 'uuid_generate_v1'
+VOLATILE STRICT LANGUAGE C;
+
+CREATE OR REPLACE FUNCTION get_uuid()
+  RETURNS varchar AS
+$BODY$ DECLARE
+/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2008 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+BEGIN
+  return replace(upper(uuid_generate_v1()::varchar),'-','');
+END;   $BODY$
+  LANGUAGE 'plpgsql' VOLATILE
+/-- END
 

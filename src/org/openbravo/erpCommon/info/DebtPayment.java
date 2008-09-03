@@ -93,8 +93,8 @@ public class DebtPayment extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 1 of the DebtPayments seeker");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/DebtPayment").createXmlDocument();
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "", "All_Payment Rule", "", Utility.getContext(this, vars, "#User_Org", "DebtPayment"), Utility.getContext(this, vars, "#User_Client", "DebtPayment"), 0);

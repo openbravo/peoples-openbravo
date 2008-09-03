@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_PROJECT_WON">
     <function name="C_PROJECT_WON" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -23,20 +23,20 @@
   --  Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
   --  Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     Cur_ProjectProposalLine RECORD;
     --  Parameter Variables
-    v_NextNo NUMBER;
-    v_cProjectId NUMBER;
-    v_cBPartnerId NUMBER;
-    v_cBPartnerLocationId NUMBER;
-    v_adUserId NUMBER;
-    v_billToId NUMBER;
+    v_NextNo VARCHAR2(32);
+    v_cProjectId varchar2(32);
+    v_cBPartnerId varchar2(32);
+    v_cBPartnerLocationId varchar2(32);
+    v_adUserId varchar2(32);
+    v_billToId varchar2(32);
     v_paymentRule CHAR(1) ;
-    v_cPaymenttermId NUMBER;
+    v_cPaymenttermId varchar2(32);
     v_projectStatus CHAR(2) ;
     v_value NVARCHAR2(40) ;
     v_Accountno NVARCHAR2(20) ;
@@ -119,7 +119,7 @@
         END;
         UPDATE C_PROJECT
           SET Updated=now(),
-          UpdatedBy=0,
+          UpdatedBy='0',
           C_BPartner_ID=v_cBPartnerId,
           C_BPartner_Location_ID=v_cBPartnerLocationId, --Salesrep_ID = v_adUserId,
           BillTo_ID=v_billToId,
@@ -163,7 +163,7 @@
             VALUES
             (
               v_NextNo, Cur_ProjectProposalLine.AD_Client_ID, Cur_ProjectProposalLine.AD_Org_ID, 'Y',
-              now(), 0, now(), 0,
+              now(), '0', now(), '0',
               v_cProjectId, Cur_ProjectProposalLine.LineNo, '', Cur_ProjectProposalLine.Qty,
               Cur_ProjectProposalLine.Price, Cur_ProjectProposalLine.Qty*Cur_ProjectProposalLine.Price, 0, 0,
               Cur_ProjectProposalLine.M_Product_ID, Cur_ProjectProposalLine.M_Product_Category_ID, 0, 0,

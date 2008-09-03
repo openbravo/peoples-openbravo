@@ -48,8 +48,8 @@
         I.C_CAMPAIGN_ID, I.C_ACTIVITY_ID, I.USER1_ID, I.USER2_ID, I.DOCUMENTNO, I.DATEACCT,
         I.C_DOCTYPE_ID, I.C_CHARGE_ID, I.CHARGEAMT, I.POSTED, I.MOVEMENTDATE, I.C_BPARTNER_LOCATION_ID
         FROM M_INOUT I
-        WHERE AD_Client_ID = TO_NUMBER(?) 
-        AND M_INOUT_ID = TO_NUMBER(?)
+        WHERE AD_Client_ID=? 
+        AND M_INOUT_ID=?
      ]]>
      </Sql>
      <Parameter name="client"/>

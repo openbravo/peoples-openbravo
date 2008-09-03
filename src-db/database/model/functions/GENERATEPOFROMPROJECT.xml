@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION GENERATEPOFROMPROJECT">
     <function name="GENERATEPOFROMPROJECT" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -23,13 +23,13 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1; -- 0=failure
-  v_Record_ID NUMBER;
-  v_AD_User_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
+  v_AD_User_ID VARCHAR2(32);
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
-    v_C_Order_ID NUMBER;
-    v_C_OrderLine_ID NUMBER;
-    v_C_DOCTYPE_ID NUMBER;
+    v_C_Order_ID VARCHAR2(32);
+    v_C_OrderLine_ID VARCHAR2(32);
+    v_C_DOCTYPE_ID VARCHAR2(32);
     v_DocumentNo NVARCHAR2(30) ;
   BEGIN
     --  Update AD_PInstance
@@ -61,19 +61,19 @@
     END LOOP; -- Get Parameter
     DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
     DECLARE
-      v_BPartner_Location_ID NUMBER;
-      v_BillTo_ID NUMBER;
+      v_BPartner_Location_ID VARCHAR2(32);
+      v_BillTo_ID VARCHAR2(32);
       v_Size NUMBER;
       v_UOM NUMBER;
       v_PriceStd NUMBER;
       v_PriceList NUMBER;
       v_PriceLimit NUMBER;
-      v_C_UOM_ID NUMBER;
-      v_C_Currency_ID NUMBER;
+      v_C_UOM_ID VARCHAR2(32);
+      v_C_Currency_ID VARCHAR2(32);
       v_PriceActual NUMBER;
       v_Discount NUMBER;
-      v_Tax_ID NUMBER;
-      v_M_PriceList_Version_ID NUMBER;
+      v_Tax_ID VARCHAR2(32);
+      v_M_PriceList_Version_ID VARCHAR2(32);
 
     TYPE RECORD IS REF CURSOR;
       Cur_SO RECORD;
@@ -171,7 +171,7 @@
           (
             v_C_Order_ID, Cur_SO.AD_CLIENT_ID, Cur_SO.AD_ORG_ID, v_AD_User_ID,
             v_AD_User_ID, 'N', v_DocumentNo, 'DR',
-             'CO', 0, v_C_DOCTYPE_ID, TRUNC(now(), 'DD'),
+             'CO', '0', v_C_DOCTYPE_ID, TRUNC(now(), 'DD'),
             TRUNC(now(), 'DD'), Cur_SO.C_BPARTNER_ID, v_BPartner_Location_ID, 'N',
             Cur_SO.C_CURRENCY_ID, COALESCE(Cur_SO.PAYMENTRULE, 'P'), Cur_SO.C_PAYMENTTERM_ID, 'D',
              'A', 'I', 'D', '5',

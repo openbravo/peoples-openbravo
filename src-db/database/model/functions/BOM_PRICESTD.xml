@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
   <database name="FUNCTION BOM_PRICESTD">
     <function name="BOM_PRICESTD" type="NUMERIC">
-      <parameter name="product_id" type="NUMERIC" mode="in">
+      <parameter name="product_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="pricelist_version_id" type="NUMERIC" mode="in">
+      <parameter name="pricelist_version_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/******************************************************************************

@@ -20,7 +20,7 @@
 <REPORT>
 	<template file="DebtPaymentUnapply.html"/>
 	<PARAMETER id="paramToolBar" name="toolbar" default=""/>
-	<PARAMETER id="paramDirection" name="direction" default=""/>
+	<PARAMETER id="paramDirectory" name="directory" default=""/>
 	<PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
 <!--PARAMETER id="paramMessage" name="paramMessage" attribute="onload" replace="xx();"/-->
 <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>

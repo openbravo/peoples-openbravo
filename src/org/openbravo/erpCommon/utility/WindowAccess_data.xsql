@@ -154,8 +154,8 @@
 		<Sql>
 			select Count(*) AS TOTAL
 			FROM AD_Task_Access
-			WHERE AD_Role_ID = to_number(?)
-			AND AD_Task_ID = to_number(?)
+			WHERE AD_Role_ID = ?
+			AND AD_Task_ID = ?
 			AND IsActive = to_char('Y')
 		</Sql>
 		<Parameter name="adRoleId"/>
@@ -181,8 +181,8 @@
 	   <Sql>
 	     select Count(*) AS TOTAL 
 	     FROM AD_Window_Access 
-	     WHERE AD_Window_ID = TO_NUMBER(?)
-	     AND AD_Role_ID = TO_NUMBER(?) 
+	     WHERE AD_Window_ID = ?
+	     AND AD_Role_ID = ? 
 	     AND IsActive = 'Y' 
 	   </Sql>
 	   <Parameter name="adWindowId"/>

@@ -149,8 +149,8 @@ public class AlertManagement extends HttpSecureAppServlet {
     xmlDocument.setDataArray("reportAlertManagement","structure2", alerts);
     xmlDocument.setParameter("active",strActiveFilter);
     xmlDocument.setParameter("fixed",strFixedFilter);
-	xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+	xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "AlertManagement", false, "", "", "",false, "ad_forms",  strReplaceWith, false,  true);
     toolbar.prepareSimpleSaveToolBarTemplate();

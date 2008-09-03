@@ -25,14 +25,14 @@
     <link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Main_Manual.css" id="paramCSS" />
      
-    <script language="JavaScript" type="text/javascript" id="paramDirection">
-      var baseDirection = "../../../../../web/";
+    <script language="JavaScript" type="text/javascript" id="paramDirectory">
+      var baseDirectory = "../../../../../web/";
       </script>
       <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript">
       </script>
       <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
       <script language="JavaScript" type="text/javascript" id="paramLanguage">
-        var LNG_POR_DEFECTO = "en_US";
+        var defaultLang = "en_US";
       </script>
       <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
@@ -54,38 +54,38 @@
 
 function imprimir()
 {
-	if (depurar()){
-		abrirPDFFiltered("ReportRefund.pdf","PDF");
+	if (validate()){
+		openPDFFiltered("ReportRefund.pdf","PDF");
 	}
 	return true;
 }
 
-function depurar(action)
+function validate(action)
 {
 	var frm = document.frmMain;
 	if (frm.inpDateFrom.value == null || frm.inpDateFrom.value == "") {
 		setWindowElementFocus(frm.inpDateFrom);
-		mensaje(7);
+		showJSMessage(7);
 		return false;
 	} else if (frm.inpDateTo.value == null || frm.inpDateTo.value == ""){
 		setWindowElementFocus(frm.inpDateTo);
-		mensaje(7);
+		showJSMessage(7);
 		return false;
 	}
 	if (action == "EDIT_HTML_COMPARATIVE" || action == "EDIT_PDF_COMPARATIVE") {
 		if (frm.inpDateFromRef.value == null || frm.inpDateFromRef.value == "") {
 			setWindowElementFocus(frm.inpDateFromRef);
-			mensaje(7);
+			showJSMessage(7);
 			return false;
 		} else if (frm.inpDateToRef.value == null || frm.inpDateToRef.value == ""){
 			setWindowElementFocus(frm.inpDateToRef);
-			mensaje(7);
+			showJSMessage(7);
 			return false;
 		}
 	}
-	seleccionarListCompleto(frm.inpmProductId_IN);
-	seleccionarListCompleto(frm.inpcBPartnerId_IN);
-	seleccionarListCompleto(frm.inpShown);
+	markCheckedAllElements(frm.inpmProductId_IN);
+	markCheckedAllElements(frm.inpcBPartnerId_IN);
+	markCheckedAllElements(frm.inpShown);
 	return true;
 }
 
@@ -122,7 +122,7 @@ function onloadFunctions() {
           <TD width="2%"> <A href="#" onclick="menuShowHide();return false;" onmouseover="window.status='Menu';return true;" onmouseout="window.status='';return true;" class="TBButton"> 
             <img src="../../../../../web/images/Menu.jpg"  alt="Menu" title="Menu" border="0" id="buttonMenu"></IMG></A></TD>
           <TD width="1%">&nbsp;</TD>
-          <TD width="2%"> <A href="#" onclick="submitCommandForm('DEFAULT',false,null,null,'frameAplicacion');return false;" onmouseover="window.status='Update';return true;" onmouseout="window.status='';return true;" class="TBButton"> 
+          <TD width="2%"> <A href="#" onclick="submitCommandForm('DEFAULT',false,null,null,'appFrame');return false;" onmouseover="window.status='Update';return true;" onmouseout="window.status='';return true;" class="TBButton"> 
             <img src="../../../../../web/images/Refresh.jpg"  alt="Update" title="Update" border="0" id="buttonRefresh"></IMG></A></TD>
           <TD >&nbsp;</TD>
           <TD > <A href="../secureApp/GoBack.html" onmouseover="window.status='Back';return true;" onmouseout="window.status='';return true;" class="TBButton"> 
@@ -384,11 +384,11 @@ function onloadFunctions() {
               <img src="../../../../../web/images/SelInsertar.jpg" border="0"  alt="Add" title="Add" id="buttonSelInsertar"></IMG></A></TD>
           </TR>
           <TR> 
-            <TD width="18%"> <A href="#" onclick="eliminarElementosList(document.frmMain.inpmProductId_IN);return false;" onmouseover="window.status='Delete selected elements';return true;" onmouseout="window.status='';return true;" > 
+            <TD width="18%"> <A href="#" onclick="clearSelectedElements(document.frmMain.inpmProductId_IN);return false;" onmouseover="window.status='Delete selected elements';return true;" onmouseout="window.status='';return true;" > 
               <img src="../../../../../web/images/Retirar.jpg"  alt="Delete selected elements" title="Delete selected elements" border="0" id="buttonRetirar"></IMG></A></TD>
           </TR>
           <TR> 
-            <TD width="18%"> <A href="#" onclick="limpiarLista(document.frmMain.inpmProductId_IN);return false;" onmouseover="window.status='Delete all elements';return true;" onmouseout="window.status='';return true;" > 
+            <TD width="18%"> <A href="#" onclick="clearList(document.frmMain.inpmProductId_IN);return false;" onmouseover="window.status='Delete all elements';return true;" onmouseout="window.status='';return true;" > 
               <img src="../../../../../web/images/Vaciar.jpg"  alt="Delete all elements" title="Delete all elements" border="0" id="buttonVaciar"></IMG></A></TD>
           </TR>
         </TABLE></TD>
@@ -431,11 +431,11 @@ function onloadFunctions() {
               <img src="../../../../../web/images/SelInsertar.jpg" border="0"  alt="Insert" title="Insert" id="buttonSelInsertar"></IMG></A></TD>
           </TR>
           <TR> 
-            <TD width="18%"> <A href="#" onclick="eliminarElementosList(document.frmMain.inpcBPartnerId_IN);return false;" onmouseover="window.status='Delete selected elements';return true;" onmouseout="window.status='';return true;" > 
+            <TD width="18%"> <A href="#" onclick="clearSelectedElements(document.frmMain.inpcBPartnerId_IN);return false;" onmouseover="window.status='Delete selected elements';return true;" onmouseout="window.status='';return true;" > 
               <img src="../../../../../web/images/Retirar.jpg"  alt="Delete selected elements" title="Delete selected elements" border="0" id="buttonRetirar"></IMG></A></TD>
           </TR>
           <TR> 
-            <TD width="18%"> <A href="#" onclick="limpiarLista(document.frmMain.inpcBPartnerId_IN);return false;" onmouseover="window.status='Delete all elements';return true;" onmouseout="window.status='';return true;" > 
+            <TD width="18%"> <A href="#" onclick="clearList(document.frmMain.inpcBPartnerId_IN);return false;" onmouseover="window.status='Delete all elements';return true;" onmouseout="window.status='';return true;" > 
               <img src="../../../../../web/images/Vaciar.jpg"  alt="Delete all elements" title="Delete all elements" border="0" id="buttonVaciar"></IMG></A></TD>
           </TR>
         </TABLE></TD>

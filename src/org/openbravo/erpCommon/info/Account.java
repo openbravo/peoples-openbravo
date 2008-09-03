@@ -135,10 +135,10 @@ public class Account extends HttpSecureAppServlet {
   String generateResult(AccountData[] data) throws IOException, ServletException {
     StringBuffer html = new StringBuffer();
 
-    html.append("\nfunction depurarSelector() {\n");
-    html.append("var clave = \"" + data[0].cValidcombinationId + "\";\n");
-    html.append("var texto = \"" + Replace.replace(data[0].combination, "\"", "\\\"") + "\";\n");
-    html.append("parent.opener.closeSearch(\"SAVE\", clave, texto, null);\n");
+    html.append("\nfunction validateSelector() {\n");
+    html.append("var key = \"" + data[0].cValidcombinationId + "\";\n");
+    html.append("var text = \"" + Replace.replace(data[0].combination, "\"", "\\\"") + "\";\n");
+    html.append("parent.opener.closeSearch(\"SAVE\", key, text, null);\n");
     html.append("}\n");
     return html.toString();
   }
@@ -153,8 +153,8 @@ public class Account extends HttpSecureAppServlet {
     } else {
       data = AccountData.select(this, "1", "", "", "", "", "", "", "", "", "", strValidCombination, Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this, vars, "#User_Org", "Account"), "1 ASC", "", "");
     }
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setData("structure1", data);
     try {

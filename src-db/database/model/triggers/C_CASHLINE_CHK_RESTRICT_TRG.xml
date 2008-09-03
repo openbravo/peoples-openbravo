@@ -24,7 +24,7 @@
     * Contributor(s):  ______________________________________.
     ************************************************************************/
   v_Processed CHAR(1) ;
-  v_C_CASH_ID NUMBER(10) ;
+  v_C_CASH_ID VARCHAR2(32) ;
 BEGIN
   IF INSERTING THEN
     v_C_CASH_ID:=:NEW.C_CASH_ID;
@@ -36,16 +36,16 @@ BEGIN
     IF(v_Processed='Y'
       AND (
         (COALESCE(:OLD.LINE, 0) <> COALESCE(:NEW.LINE, 0))
-        OR(COALESCE(:OLD.C_CHARGE_ID, 0) <> COALESCE(:NEW.C_CHARGE_ID, 0))
+        OR(COALESCE(:OLD.C_CHARGE_ID, '0') <> COALESCE(:NEW.C_CHARGE_ID, '0'))
         OR(COALESCE(:OLD.CASHTYPE, '.') <> COALESCE(:NEW.CASHTYPE, '.'))
         OR(COALESCE(:OLD.AMOUNT, 0) <> COALESCE(:NEW.AMOUNT, 0))
         OR(COALESCE(:OLD.DISCOUNTAMT, 0) <> COALESCE(:NEW.DISCOUNTAMT, 0))
         OR(COALESCE(:OLD.WRITEOFFAMT, 0) <> COALESCE(:NEW.WRITEOFFAMT, 0))
         OR(
-          COALESCE(:OLD.C_DEBT_PAYMENT_ID, 0) <> COALESCE(:NEW.C_DEBT_PAYMENT_ID, 0)
+          COALESCE(:OLD.C_DEBT_PAYMENT_ID, '0') <> COALESCE(:NEW.C_DEBT_PAYMENT_ID, '0')
           AND(:OLD.C_ORDER_ID IS NULL))
-        OR(COALESCE(:OLD.C_ORDER_ID, 0) <> COALESCE(:NEW.C_ORDER_ID, 0))
-        OR(COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0)))) THEN
+        OR(COALESCE(:OLD.C_ORDER_ID, '0') <> COALESCE(:NEW.C_ORDER_ID, '0'))
+        OR(COALESCE(:old.AD_CLIENT_ID, '0') <> COALESCE(:new.AD_CLIENT_ID, '0')))) THEN
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
   END IF;

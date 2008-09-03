@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_INVOICE_CANCEL">
     <function name="C_INVOICE_CANCEL" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_order_id" type="NUMERIC" mode="in">
+      <parameter name="p_order_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -32,8 +32,8 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
-  v_AD_Client_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
+  v_AD_Client_ID VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;

@@ -74,8 +74,8 @@ public class Rpt_Etiquetas extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/Rpt_Etiquetas_Config").createXmlDocument();
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("product", strmProductId);
     xmlDocument.setParameter("productName", RptEtiquetasData.selectProduct(this, strmProductId));
     xmlDocument.setParameter("bpartner", strcBpartnerId);

@@ -26,17 +26,17 @@
    TYPE RECORD IS REF CURSOR;
    Cur_Offer RECORD;
 
-  v_InvoiceLine_Offer_Id NUMBER;
+  v_InvoiceLine_Offer_ID VARCHAR2(32);
   v_lineno NUMBER:=0;
   v_Price NUMBER;
   v_PriceNew NUMBER;
   v_Amt NUMBER;
-  v_BPartner_ID NUMBER;
-  v_Order_ID NUMBER;
+  v_BPartner_ID VARCHAR2(32);
+  v_Order_ID VARCHAR2(32);
   v_Insert BOOLEAN :=FALSE;
   v_DateInvoiced DATE;
   v_Precision NUMBER;
-  v_PriceList_ID NUMBER;
+  v_PriceList_ID VARCHAR2(32);
 BEGIN
 -- This trigger is used for calculate the applied offers f0r the invoice
 
@@ -48,7 +48,7 @@ BEGIN
  END IF;
 
  IF UPDATING THEN
-  IF (    (COALESCE(:NEW.M_Product_ID,0) != COALESCE(:OLD.M_Product_ID,0))
+  IF (    (COALESCE(:NEW.M_Product_ID,'0') != COALESCE(:OLD.M_Product_ID,'0'))
     OR (COALESCE(:NEW.PriceActual,0) != COALESCE(:OLD.PriceActual,0))
     OR (COALESCE(:NEW.QtyInvoiced,0) != COALESCE(:OLD.QtyInvoiced,0))) THEN
   DELETE FROM C_INVOICELINE_OFFER

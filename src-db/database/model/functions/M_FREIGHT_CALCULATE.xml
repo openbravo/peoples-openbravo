@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_FREIGHT_CALCULATE">
     <function name="M_FREIGHT_CALCULATE" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -23,7 +23,7 @@
   --  Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
   v_Result NUMBER:=1; --  Success
   v_Cheaper CHAR(1) ;
   v_Calc_Qty CHAR(1) ;
@@ -31,13 +31,13 @@
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     --  Record Info
-    v_Client_ID NUMBER;
-    v_Org_ID NUMBER;
-    v_User_ID NUMBER;
-    v_Shipper_ID NUMBER;
-    v_FreightCategory_ID NUMBER;
-    v_From_ID NUMBER;
-    v_To_ID NUMBER;
+    v_Client_ID VARCHAR2(32);
+    v_Org_ID VARCHAR2(32);
+    v_User_ID VARCHAR2(32);
+    v_Shipper_ID VARCHAR2(32);
+    v_FreightCategory_ID VARCHAR2(32);
+    v_From_ID VARCHAR2(32);
+    v_To_ID VARCHAR2(32);
     v_Date DATE;
     v_Qty NUMBER;
     v_IsSOTrx CHAR(1) ;

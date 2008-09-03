@@ -21,7 +21,7 @@
   <template file="ReportInventoryEdit.html"/>
   
   <PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
-  <PARAMETER id="paramDirection" name="direction"/>
+  <PARAMETER id="paramDirectory" name="directory"/>
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
 
   <structure name="structure1">

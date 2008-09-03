@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MA_WORKREQUIREMENT_PROCESS">
     <function name="MA_WORKREQUIREMENT_PROCESS" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -27,16 +27,16 @@
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     --
-    v_Record_ID NUMBER:=NULL;
-    v_User_ID NUMBER;
-    v_Org_ID NUMBER;
-    v_Client_ID NUMBER;
-    v_WrPhase_ID NUMBER;
-    v_WrPhaseProd_ID NUMBER;
+    v_Record_ID VARCHAR2(32):=NULL;
+    v_User_ID VARCHAR2(32);
+    v_Org_ID VARCHAR2(32);
+    v_Client_ID VARCHAR2(32);
+    v_WrPhase_ID VARCHAR2(32);
+    v_WrPhaseProd_ID VARCHAR2(32);
     --  Sequences to process
     Cur_Sequence RECORD;
     --
-    v_ProcessPlan_ID NUMBER;
+    v_ProcessPlan_ID VARCHAR2(32);
     v_ExplodePhases CHAR;
     v_Quantity NUMBER;
     v_Multiplier NUMBER;

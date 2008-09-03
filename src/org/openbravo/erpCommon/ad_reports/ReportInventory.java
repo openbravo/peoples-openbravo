@@ -102,8 +102,8 @@ public class ReportInventory extends HttpSecureAppServlet {
     }
     
     
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
 
     out.println(xmlDocument.print());
@@ -148,8 +148,8 @@ public class ReportInventory extends HttpSecureAppServlet {
   //  xmlDocument.setData("structure", WarehouseComboData.selectFilter(this, Utility.getContext(this, vars, "#User_Client", "ReportInventory")));
 
     xmlDocument.setParameter("mWarehouseId", strmWarehouseId);
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("Detalle", strDetalle);
    try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportInventory"), Utility.getContext(this, vars, "#User_Client", "ReportInventory"), 0);
@@ -246,8 +246,8 @@ public class ReportInventory extends HttpSecureAppServlet {
     xmlDocument.setData("structure", WarehouseComboData.selectFilter(this, Utility.getContext(this, vars, "#User_Client", "ReportInventory")));
 
     xmlDocument.setParameter("warehouse", strmWarehouseId);
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("Detalle", strDetalle);
     out.println(xmlDocument.print());
     out.close();

@@ -60,8 +60,9 @@
     <Parameter name="adOrgClient" type="replace" optional="true" after="AND M_TRANSACTION.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[ AND M_TRANSACTION.MOVEMENTDATE >= to_date(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[ AND M_TRANSACTION.MOVEMENTDATE < to_date(?)]]></Parameter>
-    <Parameter name="cBpartner" optional="true" after="AND 1=1"><![CDATA[ AND C_BPARTNER.C_BPARTNER_ID = TO_NUMBER(?)]]></Parameter>
-    <Parameter name="mProductId" optional="true" after="AND 1=1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="cBpartner" optional="true" after="AND 1=1"><![CDATA[ AND C_BPARTNER.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="mProductId" optional="true" after="AND 1=1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_ID = ?]]></Parameter>
+    <Parameter name="parmAttributeSetInstanceId" optional="true" after="AND 1=1"><![CDATA[AND M_TRANSACTION.M_ATTRIBUTESETINSTANCE_ID = ?]]></Parameter>
   </SqlMethod>
 
   <SqlMethod name="selectInventory" type="preparedStatement" return="multiple">
@@ -92,8 +93,8 @@
     <Parameter name="adOrgClient" type="replace" optional="true" after="AND M_TRANSACTION.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[ AND M_TRANSACTION.MOVEMENTDATE >= to_date(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[ AND M_TRANSACTION.MOVEMENTDATE < to_date(?)]]></Parameter>
-    <Parameter name="cBpartner" optional="true" after="AND 1=1"><![CDATA[ AND C_BPARTNER.C_BPARTNER_ID = TO_NUMBER(?)]]></Parameter>
-    <Parameter name="mProductId" optional="true" after="AND 1=1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="cBpartner" optional="true" after="AND 1=1"><![CDATA[ AND C_BPARTNER.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="mProductId" optional="true" after="AND 1=1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_ID = ?]]></Parameter>
   </SqlMethod>
 
   <SqlMethod name="selectMovement" type="preparedStatement" return="multiple">
@@ -125,8 +126,8 @@
     <Parameter name="adOrgClient" type="replace" optional="true" after="AND M_TRANSACTION.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[ AND M_TRANSACTION.MOVEMENTDATE >= to_date(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[ AND M_TRANSACTION.MOVEMENTDATE < to_date(?)]]></Parameter>
-    <Parameter name="cBpartner" optional="true" after="AND 1=1"><![CDATA[ AND C_BPARTNER.C_BPARTNER_ID = TO_NUMBER(?)]]></Parameter>
-    <Parameter name="mProductId" optional="true" after="AND 1=1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="cBpartner" optional="true" after="AND 1=1"><![CDATA[ AND C_BPARTNER.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="mProductId" optional="true" after="AND 1=1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_ID = ?]]></Parameter>
   </SqlMethod>
 
   <SqlMethod name="selectProduction" type="preparedStatement" return="multiple">
@@ -159,8 +160,8 @@
     <Parameter name="adOrgClient" type="replace" optional="true" after="AND M_TRANSACTION.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[ AND M_TRANSACTION.MOVEMENTDATE >= to_date(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[ AND M_TRANSACTION.MOVEMENTDATE < to_date(?)]]></Parameter>
-    <Parameter name="cBpartner" optional="true" after="AND 1=1"><![CDATA[ AND C_BPARTNER.C_BPARTNER_ID = TO_NUMBER(?)]]></Parameter>
-    <Parameter name="mProductId" optional="true" after="AND 1=1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="cBpartner" optional="true" after="AND 1=1"><![CDATA[ AND C_BPARTNER.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="mProductId" optional="true" after="AND 1=1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_ID = ?]]></Parameter>
   </SqlMethod>
 
   <SqlMethod name="selectBpartner" type="preparedStatement" return="String" default="">
@@ -169,7 +170,7 @@
     <![CDATA[
       SELECT C_BPARTNER.NAME
       FROM C_BPARTNER
-      WHERE C_BPARTNER.C_BPARTNER_ID = TO_NUMBER(?)
+      WHERE C_BPARTNER.C_BPARTNER_ID = ?
      ]]></Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
@@ -180,7 +181,7 @@
     <![CDATA[
       SELECT M_PRODUCT.NAME
       FROM M_PRODUCT
-      WHERE M_PRODUCT.M_PRODUCT_ID = TO_NUMBER(?)
+      WHERE M_PRODUCT.M_PRODUCT_ID = ?
      ]]></Sql>
     <Parameter name="mProductId"/>
   </SqlMethod>

@@ -30,9 +30,9 @@
 	'' AS CREATED, '' AS CREATEDBY, '' AS UPDATED, '' AS UPDATEDBY, '' AS NAME, '' AS DESCRIPTION, '' AS STATEMENTDATE,
 	'' AS DATEACCT,'' AS STATEMENTDIFFERENCE,
 	'' AS POSTED, '' AS AD_ORGTRX_ID, '' AS C_PROJECT_ID, '' AS C_CAMPAIGN_ID, '' AS C_ACTIVITY_ID, '' AS USER1_ID, '' AS USER2_ID,
-	'' as ISSOTRX, '' AS C_BPARTNER_ID, '' AS ISRECEIPT
+	'' as ISSOTRX, '' AS C_BPARTNER_ID, '' AS ISRECEIPT, '' AS ACCOUNT_ID
 	FROM C_Cash c, C_CashBook cb 
-	WHERE c.C_CashBook_ID=cb.C_CashBook_ID AND c.C_Cash_ID = TO_NUMBER(?)
+	WHERE c.C_CashBook_ID=cb.C_CashBook_ID AND c.C_Cash_ID=?
      ]]>
      </Sql>
      <Parameter name="cash"/>
@@ -44,7 +44,7 @@
 	SELECT O.C_BPARTNER_ID as C_BPARTNER_ID, o.ISSOTRX AS ISSOTRX 
 	FROM C_CASHLINE C, C_ORDER O
 	WHERE C.C_ORDER_ID = O.C_ORDER_ID
-	AND C.C_CASHLINE_ID = TO_NUMBER(?)
+	AND C.C_CASHLINE_ID = ?
      ]]>
      </Sql>
      <Parameter name="cashLine"/>
@@ -57,11 +57,40 @@
         C.C_ACTIVITY_ID, C.USER1_ID, C.USER2_ID, C.NAME, C.DATEACCT, C.POSTED, C.STATEMENTDATE,
         C.STATEMENTDIFFERENCE
         FROM C_CASH C
-        WHERE AD_CLIENT_ID = TO_NUMBER(?) 
-        AND C_CASH_ID = TO_NUMBER(?)
+        WHERE AD_CLIENT_ID=? 
+        AND C_CASH_ID=?
      ]]>
      </Sql>
      <Parameter name="client"/>
      <Parameter name="id"/>
+   </SqlMethod>
+  <!--SqlMethod name="selectCashLineAcct" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+		SELECT CB_INTRANSIT_ACCT  AS ACCOUNT_ID
+		FROM C_CASHLINE, C_CASH, C_CASHBOOK, C_CASHBOOK_ACCT
+		WHERE C_CASHLINE.C_CASH_ID = C_CASH.C_CASH_ID
+		AND C_CASH.C_CASHBOOK_ID = C_CASHBOOK.C_CASHBOOK_ID
+		AND C_CASHBOOK.C_CASHBOOK_ID = C_CASHBOOK_ACCT.C_CASHBOOK_ID
+		AND C_CASHLINE_ID = ?
+		AND C_CASHBOOK_ACCT.C_ACCTSCHEMA_ID = ?
+     ]]>
+     </Sql>
+     <Parameter name="C_CASHLINE_ID"/>
+     <Parameter name="C_ACCTSCHEMA_ID"/>     
+   </SqlMethod-->
+  <SqlMethod name="selectBankInTransitAcct" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+		SELECT B_INTRANSIT_ACCT  AS ACCOUNT_ID
+		FROM C_BANKACCOUNT_ACCT
+		WHERE C_BANKACCOUNT_ID = ?
+		AND C_BANKACCOUNT_ACCT.C_ACCTSCHEMA_ID = ?
+     ]]>
+     </Sql>
+     <Parameter name="C_BANKACCOUNT_ID"/>
+     <Parameter name="C_ACCTSCHEMA_ID"/>     
    </SqlMethod>
    </SqlClass>

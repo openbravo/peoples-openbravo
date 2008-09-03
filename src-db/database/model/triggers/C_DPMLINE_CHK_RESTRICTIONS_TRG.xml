@@ -24,7 +24,7 @@
     * Contributor(s):  ______________________________________.
     ************************************************************************/
   v_Processed CHAR(1) ;
-  v_C_dp_ID NUMBER(10) ;
+  v_C_dp_ID VARCHAR2(32) ;
 BEGIN
   IF INSERTING THEN
     v_C_DP_ID:=:NEW.C_DP_MANAGEMENT_ID;
@@ -38,11 +38,11 @@ BEGIN
   IF UPDATING THEN
     IF(v_Processed='Y'
       AND ((COALESCE(:OLD.LINE, 0) <> COALESCE(:NEW.LINE, 0))
-      OR(COALESCE(:OLD.C_DEBT_PAYMENT_ID, 0) <> COALESCE(:NEW.C_DEBT_PAYMENT_ID, 0))
+      OR(COALESCE(:OLD.C_DEBT_PAYMENT_ID, '0') <> COALESCE(:NEW.C_DEBT_PAYMENT_ID, '0'))
       OR(COALESCE(:OLD.STATUS_FROM, 0) <> COALESCE(:NEW.STATUS_FROM, 0))
       OR(COALESCE(:OLD.STATUS_TO, 0) <> COALESCE(:NEW.STATUS_TO, 0))
-      OR(COALESCE(:old.AD_ORG_ID, 0) <> COALESCE(:new.AD_ORG_ID, 0))
-      OR(COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0)))) THEN
+      OR(COALESCE(:old.AD_ORG_ID, '0') <> COALESCE(:new.AD_ORG_ID, '0'))
+      OR(COALESCE(:old.AD_CLIENT_ID, '0') <> COALESCE(:new.AD_CLIENT_ID, '0')))) THEN
         RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
   END IF;

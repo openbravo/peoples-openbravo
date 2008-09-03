@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_ISMEMBERINCLUDED">
     <function name="AD_ISMEMBERINCLUDED" type="NUMERIC">
-      <parameter name="p_nodeid" type="NUMERIC" mode="in">
+      <parameter name="p_nodeid" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_parentid" type="NUMERIC" mode="in">
+      <parameter name="p_parentid" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_treeid" type="NUMERIC" mode="in">
+      <parameter name="p_treeid" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -31,8 +31,8 @@
 *    where parentID is the root. Else return -1
 ************************************************************************/
   v_Level NUMBER:=0;
-  v_Parent NUMBER(10) ;
-  v_Node   NUMBER(10) ;
+  v_Parent VARCHAR2(32) ;
+  v_Node   VARCHAR2(32) ;
 BEGIN
   v_Parent:=p_nodeID;
   WHILE v_Parent IS NOT NULL

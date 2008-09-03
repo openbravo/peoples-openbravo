@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_TAB_IMPORT">
     <function name="AD_TAB_IMPORT" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_ad_tab_id" type="NUMERIC" mode="in">
+      <parameter name="p_ad_tab_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -37,8 +37,8 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1; -- 0=failure
-  v_Record_ID NUMBER;
-  v_AD_User_ID NUMBER:=0;
+  v_Record_ID VARCHAR2(32);
+  v_AD_User_ID VARCHAR2(32):='0';
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -46,8 +46,8 @@
     -- Variables
     Cur_Column RECORD;
     --
-    v_NextNo NUMBER(10) ;
-    v_AD_Table_ID NUMBER(10) ;
+    v_NextNo VARCHAR2(32) ;
+    v_AD_Table_ID VARCHAR2(32) ;
     v_count NUMBER(10):=0;
     -- added by Pablo Sarobe
     v_isDisplayed CHAR(1):='Y';
@@ -59,8 +59,8 @@
     v_columnName VARCHAR2(40) ;
     v_LastColumnName VARCHAR2(40) ;
     v_DisplayLength NUMBER(10) ;
-    v_PInstance_Log_ID NUMBER;
-    v_Client_ID NUMBER;
+    v_PInstance_Log_ID VARCHAR2(32);
+    v_Client_ID VARCHAR2(32);
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -90,7 +90,7 @@
     SELECT AD_Table_ID
     INTO v_AD_Table_ID
     FROM AD_Tab
-    WHERE AD_Tab_ID=v_Record_ID  AND AD_Table_ID!=291; -- C_BPartner (multiple tabs)
+    WHERE AD_Tab_ID=v_Record_ID  AND AD_Table_ID!='291'; -- C_BPartner (multiple tabs)
     FOR Cur_Column IN(-- added by Pablo Sarobe
     SELECT c.Columnname, c.Name, c.Description, c.AD_Column_ID, c.FieldLength, t.tablename
     FROM AD_Column c, AD_Table t
@@ -147,8 +147,8 @@
           isdisplayed, isreadonly, sortno, issameline, showinrelation
         )
         VALUES
-        (v_NextNo, 0, 0, 'Y',
-        now(), 0, now(), 0,
+        (v_NextNo, '0', '0', 'Y',
+        now(), '0', now(), '0',
         Cur_Column.Name, Cur_Column.Description, v_SeqNo, v_Record_ID,
         Cur_Column.AD_Column_ID, v_DisplayLength, 'Y', 
         v_isDisplayed, v_isReadOnly, v_sortNo, v_sameLine, v_showInRelation) ;
@@ -181,7 +181,7 @@ WHEN OTHERS THEN
   END IF;
 
   SELECT AD_TABLE_ID INTO v_AD_TABLE_ID FROM AD_Tab WHERE AD_Tab_ID=v_Record_ID;
-  IF (v_AD_Table_ID=291) THEN
+  IF (v_AD_Table_ID='291') THEN
     RAISE_APPLICATION_ERROR(-20507, v_ResultStr) ;
   END IF;
 --  RETURN;

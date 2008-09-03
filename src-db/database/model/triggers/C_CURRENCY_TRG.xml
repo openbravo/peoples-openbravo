@@ -25,12 +25,12 @@
   INSERT
   INTO C_CURRENCY_Trl
     (
-      C_CURRENCY_ID, AD_Language, AD_Client_ID,
+      C_CURRENCY_Trl_ID, C_CURRENCY_ID, AD_Language, AD_Client_ID,
       AD_Org_ID, IsActive, Created,
       CreatedBy, Updated, UpdatedBy,
       IsTranslated, CurSymbol, Description
     )
-  SELECT :new.C_CURRENCY_ID,
+  SELECT get_uuid(), :new.C_CURRENCY_ID,
     AD_Language, :new.AD_Client_ID, :new.AD_Org_ID,
     :new.IsActive, :new.Created, :new.CreatedBy,
     :new.Updated, :new.UpdatedBy,

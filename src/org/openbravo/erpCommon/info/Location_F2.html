@@ -21,20 +21,20 @@
 <title></title>
 <link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico"></link> 
 <LINK rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Popup/Popup.css" id="paramCSS"></LINK>
-<script language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</script>
-<script language="JavaScript" type="text/javascript" id="paramLanguage">var LNG_POR_DEFECTO = "en_US";</script>
+<script language="JavaScript" type="text/javascript" id="paramDirectory">var baseDirectory = "../../../../../web/";</script>
+<script language="JavaScript" type="text/javascript" id="paramLanguage">var defaultLang = "en_US";</script>
 <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
 <script language="JavaScript" type="text/javascript" id="paramArray">
 var regions = null;
 </script>
 <script language="JavaScript" type="text/javascript">
-function cargar()
+function load()
 {
-  if (parent.superior && parent.superior.cargarCombo!=null)
-    parent.superior.cargarCombo(regions);
+  if (parent.superior && parent.superior.loadCombo!=null)
+    parent.superior.loadCombo(regions);
 }
 </script>
 </head>
-<body bgcolor="#FFFFFF" onload="cargar();">
+<body bgcolor="#FFFFFF" onload="load();">
 </body>
 </html>

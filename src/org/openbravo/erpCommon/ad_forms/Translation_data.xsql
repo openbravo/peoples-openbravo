@@ -75,7 +75,7 @@
                 AD_Column c
           where c.AD_Table_ID=t.AD_Table_ID 
             and upper(t.TableName)=?
-            and c.AD_Reference_ID in (10,14)
+            and c.AD_Reference_ID in ('10','14')
           order by IsMandatory desc, ColumnName
       </Sql>
       <Parameter name="tableName"/>

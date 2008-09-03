@@ -205,6 +205,9 @@
 	</parameter>
 	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
 	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
+	<parameter name="SR_LINES" isForPrompting="false" class="net.sf.jasperreports.engine.JasperReport"/>
+	<parameter name="Subtitle" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="Final" isForPrompting="false" class="java.lang.String"/>
 	<queryString><![CDATA[select * from (
       SELECT VALUE, PARTNER, dateacct, NAME, 
       (CASE WHEN ABS(SUM(AMTACCTDR))>ABS(SUM(AMTACCTCR)) THEN SUM(AMTACCTDR)-SUM(AMTACCTCR) END) AS AMTACCTDR,
@@ -230,12 +233,12 @@
 	<field name="AMTACCTDR" class="java.math.BigDecimal"/>
 	<field name="AMTACCTCR" class="java.math.BigDecimal"/>
 	<field name="TOTAL" class="java.math.BigDecimal"/>
-	<field name="FACT_ACCT_GROUP_ID" class="java.math.BigDecimal"/>
-	<field name="ID" class="java.math.BigDecimal"/>
+	<field name="FACT_ACCT_GROUP_ID" class="java.lang.String"/>
+	<field name="ID" class="java.lang.String"/>
 	<field name="SALDO" class="java.math.BigDecimal"/>
-	<field name="FACT_ACCT_ID" class="java.math.BigDecimal"/>
+	<field name="FACT_ACCT_ID" class="java.lang.String"/>
 	<field name="DESCRIPTION" class="java.lang.String"/>
-	<field name="C_BPARTNER_ID" class="java.math.BigDecimal"/>
+	<field name="C_BPARTNER_ID" class="java.lang.String"/>
 
 	<variable name="DetailFieldTotal" class="java.lang.String" resetType="Report" calculation="Nothing">
 	</variable>
@@ -248,8 +251,8 @@
 	<variable name="totalTotal" class="java.math.BigDecimal" resetType="Group" resetGroup="AccountGroup" calculation="Sum">
 		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
 	</variable>
-	<variable name="auxPartnerGroup" class="java.math.BigDecimal" resetType="None" calculation="Nothing">
-		<variableExpression><![CDATA[$P{ShowPartner}.booleanValue()?$F{C_BPARTNER_ID}:new BigDecimal(-1)]]></variableExpression>
+	<variable name="auxPartnerGroup" class="java.lang.String" resetType="None" calculation="Nothing">
+		<variableExpression><![CDATA[$P{ShowPartner}.booleanValue()?$F{C_BPARTNER_ID}:"-1"]]></variableExpression>
 	</variable>
 
 		<group  name="PartnerGroup" >
@@ -521,7 +524,7 @@
 						<subreportParameterExpression><![CDATA[$F{ID}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter  name="Title">
-						<subreportParameterExpression><![CDATA[new String("Previous")]]></subreportParameterExpression>
+						<subreportParameterExpression><![CDATA[$P{Subtitle}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter  name="Date">
 						<subreportParameterExpression><![CDATA[$F{DATEACCT}]]></subreportParameterExpression>
@@ -539,7 +542,7 @@
 						<subreportParameterExpression><![CDATA[$P{LOCALE}]]></subreportParameterExpression>
 					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "ReportGeneralLedger_Previous.jasper"]]></subreportExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SR_LINES}]]></subreportExpression>
 				</subreport>
 				<line direction="TopDown">
 					<reportElement
@@ -684,7 +687,7 @@
 						<subreportParameterExpression><![CDATA[$F{ID}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter  name="Title">
-						<subreportParameterExpression><![CDATA[new String("Final")]]></subreportParameterExpression>
+						<subreportParameterExpression><![CDATA[$P{Final}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter  name="Date">
 						<subreportParameterExpression><![CDATA[$P{DateTo}]]></subreportParameterExpression>
@@ -702,7 +705,7 @@
 						<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
 					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "ReportGeneralLedger_Previous.jasper"]]></subreportExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SR_LINES}]]></subreportExpression>
 				</subreport>
 				<line direction="TopDown">
 					<reportElement

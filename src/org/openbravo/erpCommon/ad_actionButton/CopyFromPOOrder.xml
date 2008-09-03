@@ -27,7 +27,7 @@
 <PARAMETER id="window" name="window" default="" attribute="value"/>
 <PARAMETER id="tab" name="tab" default="" attribute="value"/>
 <PARAMETER id="question" name="question" default=""/>
-<PARAMETER id="paramDirection" name="direction" default=""/>
+<PARAMETER id="paramDirectory" name="directory" default=""/>
 <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
 <PARAMETER id="processDescription" name="description" default=""/>
 <PARAMETER id="processHelp" name="help" default=""/>

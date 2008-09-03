@@ -28,8 +28,8 @@
             FROM M_LOCATOR L, M_WAREHOUSE W
 			WHERE W.M_WAREHOUSE_ID = L.M_WAREHOUSE_ID
             AND L.IsActive='Y' 
-            AND W.M_WAREHOUSE_ID = TO_NUMBER(?) 
-            AND L.AD_Client_ID = TO_NUMBER(?) 
+            AND W.M_WAREHOUSE_ID = ? 
+            AND L.AD_Client_ID = ? 
             ORDER BY NAME
             
           ]]></Sql>

@@ -29,14 +29,14 @@
       SELECT p.M_WH_PERIOD_ID AS ID, p.STARTDATE, p.ENDDATE, 
              '' as name, '' as AD_ORG_ID
       FROM M_WH_PERIOD p 
-      WHERE p.M_WH_SCHEDULE_ID = TO_NUMBER(?) 
+      WHERE p.M_WH_SCHEDULE_ID = ? 
       AND p.STARTDATE >= TO_DATE(?)
       AND p.ENDDATE <= TO_DATE(?)
       AND NOT EXISTS (SELECT 1 
                        FROM M_WH_PERIOD_INVOICED i 
 								      WHERE i.M_WH_PERIOD_ID = p.M_WH_PERIOD_ID 
-								      AND i.C_BPARTNER_ID = TO_NUMBER(?)
-								      AND i.AD_ORG_ID = TO_NUMBER(?) )
+								      AND i.C_BPARTNER_ID = ?
+								      AND i.AD_ORG_ID = ? )
 			ORDER BY p.STARTDATE
     ]]></Sql>
     <Parameter name="mWhScheduleId"/>
@@ -53,7 +53,7 @@
       WHERE M_WH_Period.AD_Org_ID IN('1') 
       AND M_WH_Period.AD_Client_ID IN('1') 
       AND M_WH_Period.isActive = 'Y' 
-      AND M_WH_Schedule_ID = TO_NUMBER(?)
+      AND M_WH_Schedule_ID = ?
       ORDER BY M_WH_Period.StartDate
     ]]></Sql>
     <Parameter name="adOrgClient" type="replace" optional="true" after="M_WH_Period.AD_Org_ID IN(" text="'1'"/>
@@ -74,7 +74,7 @@
     <Sql><![CDATA[
       SELECT STARTDATE
       FROM M_WH_PERIOD 
-      WHERE M_WH_PERIOD_ID = TO_NUMBER(?) 
+      WHERE M_WH_PERIOD_ID = ? 
     ]]></Sql>
     <Parameter name="mWhPeriodId"/>
   </SqlMethod>
@@ -83,7 +83,7 @@
     <Sql><![CDATA[
       SELECT ENDDATE
       FROM M_WH_PERIOD 
-      WHERE M_WH_PERIOD_ID = TO_NUMBER(?) 
+      WHERE M_WH_PERIOD_ID = ? 
     ]]></Sql>
     <Parameter name="mWhPeriodId"/>
   </SqlMethod>
@@ -92,7 +92,7 @@
     <Sql><![CDATA[
       SELECT C_Currency_ID
       FROM M_PriceList 
-      WHERE M_PriceList_ID = TO_NUMBER(?) 
+      WHERE M_PriceList_ID = ? 
     ]]></Sql>
     <Parameter name="mPricelistId"/>
   </SqlMethod>
@@ -101,7 +101,7 @@
     <Sql><![CDATA[
       SELECT M_PriceList_ID
       FROM C_Bpartner 
-      WHERE C_Bpartner_ID = TO_NUMBER(?) 
+      WHERE C_Bpartner_ID = ? 
     ]]></Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
@@ -110,7 +110,7 @@
     <Sql><![CDATA[
       SELECT C_UOM_ID
       FROM M_PRODUCT 
-      WHERE M_Product_ID = TO_NUMBER(?) 
+      WHERE M_Product_ID = ? 
     ]]></Sql>
     <Parameter name="mProductId"/>
   </SqlMethod>
@@ -119,7 +119,7 @@
     <Sql><![CDATA[
       SELECT Name
       FROM C_BPartner 
-      WHERE C_BPartner_ID = TO_NUMBER(?) 
+      WHERE C_BPartner_ID = ? 
     ]]></Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
@@ -128,7 +128,7 @@
     <Sql><![CDATA[
       SELECT dateordered
       FROM C_ORDER
-      WHERE C_ORDER_ID = TO_NUMBER(?) 
+      WHERE C_ORDER_ID = ? 
     ]]></Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
@@ -137,7 +137,7 @@
     <Sql><![CDATA[
       SELECT C_Project_ID
       FROM C_ORDER
-      WHERE C_ORDER_ID = TO_NUMBER(?) 
+      WHERE C_ORDER_ID = ? 
     ]]></Sql>
     <Parameter name="cOrderId"/>
   </SqlMethod>
@@ -148,7 +148,7 @@
       SELECT IO.M_INOUT_ID
       FROM M_INOUT IO, M_INOUTLINE IOL
       WHERE IO.M_INOUT_ID = IOL.M_INOUT_ID
-      AND IO.C_BPARTNER_ID = TO_NUMBER(?)
+      AND IO.C_BPARTNER_ID = ?
       AND IO.AD_ORG_ID IN ('1')
       AND IO.AD_CLIENT_ID IN ('1') 
       AND IO.ISLOGISTIC  = 'Y'
@@ -169,8 +169,8 @@
     <Sql><![CDATA[
       INSERT INTO M_WH_PERIOD_INVOICED (M_WH_PERIOD_INVOICED_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, 
       UPDATED, UPDATEDBY, M_WH_PERIOD_ID, C_BPARTNER_ID, C_ORDER_ID) 
-      VALUES (TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', now(), TO_NUMBER(?), 
-      now(), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?))
+      VALUES (?, ?, ?, 'Y', now(), ?, 
+      now(), ?, ?, ?, ?)
     ]]></Sql>
     <Parameter name="mWhPeriodInvoicedId"/>
     <Parameter name="adClientId"/>
@@ -185,7 +185,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       INSERT INTO AD_PINSTANCE (AD_PINSTANCE_ID, AD_PROCESS_ID, RECORD_ID, ISPROCESSING, CREATED, AD_USER_ID, UPDATED, AD_CLIENT_ID, AD_ORG_ID, CREATEDBY, UPDATEDBY)
-      VALUES(TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),?,now(),TO_NUMBER(?),now(), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?))
+      VALUES(?,?,?,?,now(),?,now(), ?, ?, ?, ?)
     </Sql>
     <Parameter name="adPinstanceId"/>
     <Parameter name="adProcessId"/>
@@ -200,7 +200,7 @@
   <SqlMethod name="process104" type="callableStatement" return="object" connection="true" object="InvoicingScheduleData">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        CALL C_Order_Post(TO_NUMBER(?))
+        CALL C_Order_Post(?)
       ]]></Sql>
       <Parameter name="adPinstanceId"></Parameter>
    </SqlMethod>

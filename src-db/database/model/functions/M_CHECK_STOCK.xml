@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_CHECK_STOCK">
     <function name="M_CHECK_STOCK" type="NULL">
-      <parameter name="p_m_product_id" type="NUMERIC" mode="in">
+      <parameter name="p_m_product_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_ad_client_id" type="NUMERIC" mode="in">
+      <parameter name="p_ad_client_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_ad_org_id" type="NUMERIC" mode="in">
+      <parameter name="p_ad_org_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_result" type="NUMERIC" mode="out">
@@ -36,7 +36,7 @@
   v_ExistsNegativeStock NUMBER;
   v_Stock CHAR:='N';
   v_Name VARCHAR2(60) ;
-  v_AD_Client_ID NUMBER;
+  v_AD_Client_ID VARCHAR2(32);
 BEGIN
   v_ResultStr:='Checking stock';
   p_Result:=1;

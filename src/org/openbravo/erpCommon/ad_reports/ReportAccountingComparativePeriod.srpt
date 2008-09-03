@@ -29,7 +29,7 @@
 				<tr>
 					<td width="xx%" id="fieldComparativePeriodWidthMargin"></td>
 					<td width="yy%" id="fieldComparativePeriodWidthText" class="TextoGris2Bg"><div style="display: table-cell; display: -moz-inline-box;">
-						<a href="#" onclick="actualizarDatos('OPEN', 'xx', 'yy', 'zz', 'ww', 'mm', 'pp', 'aa');return false;" onMouseOver="window.status='Open';return true;" onMouseOut="window.status='';return true;" id="fieldComparativePeriodParentLevel">
+						<a href="#" onclick="updateData('OPEN', 'xx', 'yy', 'zz', 'ww', 'mm', 'pp', 'aa');return false;" onMouseOver="window.status='Open';return true;" onMouseOut="window.status='';return true;" id="fieldComparativePeriodParentLevel">
               <span id="buttonTreexj" ></span>
               <span id="fieldComparativePeriodNivel"></span>
             </a>

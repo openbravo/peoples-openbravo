@@ -34,7 +34,7 @@
   <SqlMethod name="processRequest" type="callableStatement" return="object" object="RequestReOpenData">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        CALL R_Request_Reopen(TO_NUMBER(?))
+        CALL R_Request_Reopen(?)
       ]]></Sql>
       <Parameter name="adPinstanceId"/>
    </SqlMethod>

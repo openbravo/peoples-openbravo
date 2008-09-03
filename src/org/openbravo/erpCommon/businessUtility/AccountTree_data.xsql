@@ -31,8 +31,8 @@
         WHERE tn.IsActive='Y' 
         AND m.isActive='Y' 
         AND tn.Node_ID = m.C_ElementValue_ID 
-        AND tn.AD_Tree_ID = TO_NUMBER(?) 
-        ORDER BY COALESCE(tn.Parent_ID, -1), tn.SeqNo
+        AND tn.AD_Tree_ID = ? 
+        ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo
       ]]></Sql>
         <Parameter name="conCodigo"/>
         <Parameter name="adTreeId"/>
@@ -50,8 +50,8 @@
         WHERE tn.IsActive='Y' 
         AND m.isActive='Y' 
         AND tn.Node_ID = m.C_ElementValue_ID 
-        AND tn.AD_Tree_ID = TO_NUMBER(?) 
-        ORDER BY COALESCE(tn.Parent_ID, -1), tn.SeqNo 
+        AND tn.AD_Tree_ID = ? 
+        ORDER BY COALESCE(tn.Parent_ID, '-1'), tn.SeqNo 
       ]]></Sql>
         <Parameter name="conCodigo"/>
         <Parameter name="adLanguage"/>
@@ -98,14 +98,14 @@
         <Parameter name="adUserClient" type="replace" optional="true" after="m.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="dateFrom" optional="true" after="AND 1=1 "><![CDATA[ AND f.DATEACCT >= to_date(?)]]></Parameter>
         <Parameter name="dateTo" optional="true" after="AND 1=1 "><![CDATA[ AND f.DATEACCT < to_date(?)]]></Parameter>
-        <Parameter name="acctschema" optional="true" after="AND 1=1 "><![CDATA[ AND f.C_ACCTSCHEMA_ID = to_number(?)]]></Parameter>
+        <Parameter name="acctschema" optional="true" after="AND 1=1 "><![CDATA[ AND f.C_ACCTSCHEMA_ID = ?]]></Parameter>
         <Parameter name="org" optional="true" type="replace" after="AND 0=0 AND f.AD_ORG_ID IN (" text="'1'"/>
         <Parameter name="agno"/>
         <Parameter name="adOrgClient" type="replace" optional="true" after="m.AD_Org_ID IN(" text="'2'"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="m.AD_Client_ID IN(" text="'2'"/>
         <Parameter name="dateFromRef" optional="true" after="AND 2=2 "><![CDATA[ AND f.DATEACCT >= to_date(?)]]></Parameter>
         <Parameter name="dateToRef" optional="true" after="AND 2=2 "><![CDATA[ AND f.DATEACCT < to_date(?)]]></Parameter>
-        <Parameter name="acctschema" optional="true" after="AND 2=2 "><![CDATA[ AND f.C_ACCTSCHEMA_ID = to_number(?)]]></Parameter>
+        <Parameter name="acctschema" optional="true" after="AND 2=2 "><![CDATA[ AND f.C_ACCTSCHEMA_ID = ?]]></Parameter>
         <Parameter name="org" optional="true" type="replace" after="AND 1=1 AND f.AD_ORG_ID IN (" text="'1'"/>
         <Parameter name="agnoRef"/>
   </SqlMethod>

@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_INVOICE_POST">
     <function name="C_INVOICE_POST" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_invoice_id" type="NUMERIC" mode="in">
+      <parameter name="p_invoice_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -41,38 +41,38 @@
   *
   ************************************************************************/
 withholdamount NUMBER(10,2);
-cWithHoldId NUMBER;
+cWithHoldId varchar2(32);
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
   v_Result NUMBER:=1; -- Success
   v_TOTAL NUMBER;
-  v_C_Settlement_Cancel_ID NUMBER;
+  v_C_Settlement_Cancel_ID VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
 
     Cur_line RECORD;
     -- Record Info
-    v_Client_ID NUMBER;
-    v_Org_ID NUMBER;
+    v_Client_ID VARCHAR2(32);
+    v_Org_ID VARCHAR2(32);
     v_UpdatedBy C_INVOICE.UpdatedBy%TYPE;
     v_Processing C_INVOICE.Processing%TYPE;
     v_Processed C_INVOICE.Processed%TYPE;
     v_DocAction C_INVOICE.DocAction%TYPE;
     v_DocStatus C_INVOICE.DocStatus%TYPE;
-    v_DoctypeReversed_ID NUMBER;
-    v_DocType_ID NUMBER;
-    v_DocTypeTarget_ID NUMBER;
+    v_DoctypeReversed_ID VARCHAR2(32);
+    v_DocType_ID VARCHAR2(32);
+    v_DocTypeTarget_ID VARCHAR2(32);
     v_PaymentRule C_INVOICE.PaymentRule%TYPE;
     v_PaymentTerm C_INVOICE.C_PaymentTerm_ID%TYPE;
-    v_Order_ID NUMBER;
+    v_Order_ID VARCHAR2(32);
     v_DateAcct DATE;
     v_DateInvoiced DATE;
     v_DocumentNo C_INVOICE.DocumentNo%TYPE;
-    v_BPartner_ID NUMBER;
-    v_BPartner_User_ID NUMBER;
+    v_BPartner_ID VARCHAR2(32);
+    v_BPartner_User_ID VARCHAR2(32);
     v_IsSOTrx C_INVOICE.IsSOTrx%TYPE;
     v_Posted C_INVOICE.Posted%TYPE;
   --Added by P.SAROBE
@@ -83,28 +83,28 @@ cWithHoldId NUMBER;
   v_dateBankstatement DATE;
   v_nameCash VARCHAR2 (60);
   v_dateCash DATE;
-  v_Bankstatementline_ID NUMBER;
-  v_Debtpayment_ID NUMBER;
-  v_CashLine_ID NUMBER;
+  v_Bankstatementline_ID VARCHAR2(32);
+  v_Debtpayment_ID VARCHAR2(32);
+  v_CashLine_ID VARCHAR2(32);
   v_ispaid CHAR(1);
-  v_Settlement_Cancel_ID NUMBER;
+  v_Settlement_Cancel_ID VARCHAR2(32);
   --Finish added by P.Sarobe
     --
     v_GrandTotal NUMBER:=0;
     v_TotalLines NUMBER:=0;
-    v_Currency_ID NUMBER;
+    v_Currency_ID VARCHAR2(32);
     v_Multiplier NUMBER:=1;
     --
-    v_RInvoice_ID NUMBER;
+    v_RInvoice_ID VARCHAR2(32);
     v_RDocumentNo C_INVOICE.DocumentNo%TYPE;
-    v_NextNo NUMBER;
+    v_NextNo VARCHAR2(32);
     v_count NUMBER;
-    v_AD_Org_ID NUMBER;
+    v_AD_Org_ID VARCHAR2(32);
     v_POReference NVARCHAR2(40) ;
     --
-    v_SettlementDocType_ID NUMBER(10) ;
+    v_SettlementDocType_ID VARCHAR2(32) ;
     v_SDocumentNo C_SETTLEMENT.DocumentNo%TYPE;
-    v_settlementID NUMBER(10):=NULL;
+    v_settlementID varchar2(32):=NULL;
     --
     v_FirstSales C_BPARTNER.FirstSale%TYPE;
     v_REInOutStatus M_INOUT.DocStatus%TYPE;
@@ -120,7 +120,7 @@ cWithHoldId NUMBER;
     v_Discount NUMBER;
     v_Line NUMBER;
     v_InvoiceDiscount NUMBER;
-    v_C_Project_Id NUMBER;
+    v_C_Project_ID VARCHAR2(32);
  v_acctAmount NUMBER;
  v_realAmount NUMBER;
  v_partialAmount NUMBER;
@@ -780,14 +780,14 @@ cWithHoldId NUMBER;
           CUR_BOM RECORD;
           --
           CountNo NUMBER;
-          v_PriceList_Version_ID NUMBER;
-          v_NextNo NUMBER;
+          v_PriceList_Version_ID VARCHAR2(32);
+          v_NextNo VARCHAR2(32);
           v_Line NUMBER;
           v_ChargeAmt NUMBER;
-          -- v_Offer_ID       NUMBER;
+          -- v_Offer_ID       varchar2(32);
           v_DateInvoiced DATE;
-          v_BPartner_ID NUMBER;
-          v_PriceList_ID NUMBER;
+          v_BPartner_ID VARCHAR2(32);
+          v_PriceList_ID VARCHAR2(32);
           --
           CUR_PriceList_Version RECORD;
         BEGIN
@@ -1032,7 +1032,7 @@ cWithHoldId NUMBER;
           v_LineNo NUMBER:=0;
           v_ActualBaseAmt NUMBER;
           v_FirstLine BOOLEAN;
-          v_C_InvoiceTax_ID NUMBER(10);
+          v_C_InvoiceTax_ID VARCHAR2(32);
         BEGIN
           v_ResultStr:='DeleteOldTaxes';
           DELETE FROM C_INVOICETAX
@@ -1195,8 +1195,8 @@ cWithHoldId NUMBER;
             -- Invoice-PO Match
             Cur_ILines_PO RECORD;
             v_Qty NUMBER;
-            v_MatchInv_ID NUMBER(10) ;
-            v_MatchPO_ID NUMBER(10) ;
+            v_MatchInv_ID VARCHAR2(32) ;
+            v_MatchPO_ID VARCHAR2(32) ;
           BEGIN
             v_ResultStr:='MatchInv-Receipt';
             FOR Cur_ILines_Receipt IN
@@ -1236,7 +1236,7 @@ cWithHoldId NUMBER;
                 VALUES
                 (
                   v_MatchInv_ID, Cur_ILines_Receipt.AD_Client_ID, Cur_ILines_Receipt.AD_Org_ID, 'Y',
-                  now(), 0, now(), 0,
+                  now(), '0', now(), '0',
                   Cur_ILines_Receipt.M_InOutLine_ID, Cur_ILines_Receipt.C_InvoiceLine_ID, Cur_ILines_Receipt.M_Product_ID, Cur_ILines_Receipt.DateAcct,
                   v_Qty, 'N', 'Y', 'N'
                 )
@@ -1283,7 +1283,7 @@ cWithHoldId NUMBER;
                 VALUES
                 (
                   v_MatchPO_ID, Cur_ILines_PO.AD_Client_ID, Cur_ILines_PO.AD_Org_ID, 'Y',
-                  now(), 0, now(), 0,
+                  now(), '0', now(), '0',
                   Cur_ILines_PO.C_OrderLine_ID, NULL, Cur_ILines_PO.C_InvoiceLine_ID, Cur_ILines_PO.M_Product_ID,
                   Cur_ILines_PO.DateAcct, v_Qty, 'N', 'Y',
                    'N'
@@ -1354,16 +1354,16 @@ cWithHoldId NUMBER;
         DECLARE
           v_totalCash NUMBER:=0;
           v_processed CHAR(1):='N';
-          v_debtPaymentID NUMBER(10) ;
+          v_debtPaymentID varchar2(32) ;
           v_amount NUMBER;
-          v_cashBook NUMBER(10) ;
-          v_bankAccount NUMBER(10) ;
-          v_cash NUMBER(10) ;
+          v_cashBook VARCHAR2(32) ;
+          v_bankAccount VARCHAR2(32) ;
+          v_cash VARCHAR2(32) ;
           v_IsoCode C_CURRENCY.ISO_CODE%TYPE;
-          v_CashLine NUMBER(10) ;
-          v_line NUMBER(10) ;
+          v_CashLine VARCHAR2(32) ;
+          v_line VARCHAR2(32) ;
           v_BPartnerName C_BPARTNER.NAME%TYPE;
-          v_GenDP_Org NUMBER(10);
+          v_GenDP_Org VARCHAR2(32);
         BEGIN
           v_ResultStr:='Generating C_Debt_Payment';
           UPDATE C_DEBT_PAYMENT
@@ -1403,9 +1403,9 @@ cWithHoldId NUMBER;
               v_plannedDate DATE;
               v_pendingAmount NUMBER;
               v_paymentAmount NUMBER;
-              v_GenDebt_PaymentID NUMBER;
-              v_SettlementDocTypeID NUMBER(10) ;
-              v_settlement_ID NUMBER(10) ;
+              v_GenDebt_PaymentID varchar2(32);
+              v_SettlementDocTypeID varchar2(32) ;
+              v_settlement_ID VARCHAR2(32) ;
        v_CB_Curr NUMBER;
               v_SDocument_No C_SETTLEMENT.DocumentNo%TYPE;
             BEGIN

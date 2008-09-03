@@ -32,13 +32,13 @@
   INSERT
   INTO C_PaymentTerm_Trl
     (
-      C_PaymentTerm_ID, AD_Language, AD_Client_ID,
+      C_PaymentTerm_Trl_ID, C_PaymentTerm_ID, AD_Language, AD_Client_ID,
       AD_Org_ID, IsActive, Created,
       CreatedBy, Updated, UpdatedBy,
       Name, Description, DocumentNote,
       IsTranslated
     )
-  SELECT :new.C_PaymentTerm_ID,
+  SELECT get_uuid(), :new.C_PaymentTerm_ID,
     AD_Language, :new.AD_Client_ID, :new.AD_Org_ID,
     :new.IsActive, :new.Created, :new.CreatedBy,
     :new.Updated, :new.UpdatedBy, :new.Name,

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_DEBT_PAYMENT_STATUS">
     <function name="C_DEBT_PAYMENT_STATUS" type="CHAR">
-      <parameter name="p_settlement_cancel_id" type="NUMERIC" mode="in">
+      <parameter name="p_settlement_cancel_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_cancel_processed" type="CHAR" mode="in">
@@ -16,10 +16,10 @@
       <parameter name="p_isvalid" type="CHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_c_cashline_id" type="NUMERIC" mode="in">
+      <parameter name="p_c_cashline_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_c_bankstatementline_id" type="NUMERIC" mode="in">
+      <parameter name="p_c_bankstatementline_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************

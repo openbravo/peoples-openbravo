@@ -30,7 +30,7 @@
    <SqlMethod name="adDeleteClient" type="callableStatement" return="object" object="RespuestaCS">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        CALL AD_Delete_Client(TO_NUMBER(?),null)
+        CALL AD_Delete_Client(?,null)
       ]]></Sql>
       <Parameter name="adPinstanceId"></Parameter>
    </SqlMethod>

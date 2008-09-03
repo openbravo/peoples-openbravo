@@ -1,10 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--
-************************
-0. Core Range.
-************************
--->
 <!--1522**************--><AD_MODEL_OBJECT_MAPPING>
 <!--1522 AD_MODEL_OBJECT_MAPPING_ID-->
 <!--1522-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[1522]]></AD_MODEL_OBJECT_MAPPING_ID>
@@ -1505,6 +1500,56 @@
 <!--1584-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--1584**************--></AD_MODEL_OBJECT_MAPPING>
 
+<!--100002**************--><AD_MODEL_OBJECT_MAPPING>
+<!--100002 AD_MODEL_OBJECT_MAPPING_ID-->
+<!--100002-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[100002]]></AD_MODEL_OBJECT_MAPPING_ID>
+<!--100002 AD_CLIENT_ID-->
+<!--100002-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--100002 AD_ORG_ID-->
+<!--100002-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--100002 ISACTIVE-->
+<!--100002-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--100002 CREATED-->
+<!--100002-->              <CREATED><![CDATA[2008-05-28 19:15:17.0]]></CREATED>
+<!--100002 CREATEDBY-->
+<!--100002-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--100002 UPDATED-->
+<!--100002-->              <UPDATED><![CDATA[2008-05-28 19:15:17.0]]></UPDATED>
+<!--100002 UPDATEDBY-->
+<!--100002-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--100002 AD_MODEL_OBJECT_ID-->
+<!--100002-->              <AD_MODEL_OBJECT_ID><![CDATA[800737]]></AD_MODEL_OBJECT_ID>
+<!--100002 MAPPINGNAME-->
+<!--100002-->              <MAPPINGNAME><![CDATA[/ad_actionButton/CreateFromMultiple_F1.html]]></MAPPINGNAME>
+<!--100002 ISDEFAULT-->
+<!--100002-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
+<!--100002**************--></AD_MODEL_OBJECT_MAPPING>
+
+<!--100003**************--><AD_MODEL_OBJECT_MAPPING>
+<!--100003 AD_MODEL_OBJECT_MAPPING_ID-->
+<!--100003-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[100003]]></AD_MODEL_OBJECT_MAPPING_ID>
+<!--100003 AD_CLIENT_ID-->
+<!--100003-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--100003 AD_ORG_ID-->
+<!--100003-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--100003 ISACTIVE-->
+<!--100003-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--100003 CREATED-->
+<!--100003-->              <CREATED><![CDATA[2008-05-28 19:15:24.0]]></CREATED>
+<!--100003 CREATEDBY-->
+<!--100003-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--100003 UPDATED-->
+<!--100003-->              <UPDATED><![CDATA[2008-05-28 19:15:31.0]]></UPDATED>
+<!--100003 UPDATEDBY-->
+<!--100003-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--100003 AD_MODEL_OBJECT_ID-->
+<!--100003-->              <AD_MODEL_OBJECT_ID><![CDATA[800737]]></AD_MODEL_OBJECT_ID>
+<!--100003 MAPPINGNAME-->
+<!--100003-->              <MAPPINGNAME><![CDATA[/ad_actionButton/CreateFromMultiple_F2.html]]></MAPPINGNAME>
+<!--100003 ISDEFAULT-->
+<!--100003-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
+<!--100003**************--></AD_MODEL_OBJECT_MAPPING>
+
 <!--800582**************--><AD_MODEL_OBJECT_MAPPING>
 <!--800582 AD_MODEL_OBJECT_MAPPING_ID-->
 <!--800582-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[800582]]></AD_MODEL_OBJECT_MAPPING_ID>
@@ -1629,31 +1674,6 @@
 <!--800588 ISDEFAULT-->
 <!--800588-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--800588**************--></AD_MODEL_OBJECT_MAPPING>
-
-<!--800589**************--><AD_MODEL_OBJECT_MAPPING>
-<!--800589 AD_MODEL_OBJECT_MAPPING_ID-->
-<!--800589-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[800589]]></AD_MODEL_OBJECT_MAPPING_ID>
-<!--800589 AD_CLIENT_ID-->
-<!--800589-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800589 AD_ORG_ID-->
-<!--800589-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800589 ISACTIVE-->
-<!--800589-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800589 CREATED-->
-<!--800589-->              <CREATED><![CDATA[2006-05-15 17:52:05.0]]></CREATED>
-<!--800589 CREATEDBY-->
-<!--800589-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--800589 UPDATED-->
-<!--800589-->              <UPDATED><![CDATA[2006-05-15 17:52:05.0]]></UPDATED>
-<!--800589 UPDATEDBY-->
-<!--800589-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--800589 AD_MODEL_OBJECT_ID-->
-<!--800589-->              <AD_MODEL_OBJECT_ID><![CDATA[800530]]></AD_MODEL_OBJECT_ID>
-<!--800589 MAPPINGNAME-->
-<!--800589-->              <MAPPINGNAME><![CDATA[/ad_forms/MatchingPO-Receipt-Invoice.html]]></MAPPINGNAME>
-<!--800589 ISDEFAULT-->
-<!--800589-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
-<!--800589**************--></AD_MODEL_OBJECT_MAPPING>
 
 <!--800591**************--><AD_MODEL_OBJECT_MAPPING>
 <!--800591 AD_MODEL_OBJECT_MAPPING_ID-->
@@ -2769,13 +2789,13 @@
 <!--800929 CREATEDBY-->
 <!--800929-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800929 UPDATED-->
-<!--800929-->              <UPDATED><![CDATA[2006-05-22 12:12:41.0]]></UPDATED>
+<!--800929-->              <UPDATED><![CDATA[2008-08-05 19:06:38.0]]></UPDATED>
 <!--800929 UPDATEDBY-->
 <!--800929-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800929 AD_MODEL_OBJECT_ID-->
 <!--800929-->              <AD_MODEL_OBJECT_ID><![CDATA[800723]]></AD_MODEL_OBJECT_ID>
 <!--800929 MAPPINGNAME-->
-<!--800929-->              <MAPPINGNAME><![CDATA[/ad_process/CopyFromGLJournal_FS.html]]></MAPPINGNAME>
+<!--800929-->              <MAPPINGNAME><![CDATA[/ad_process/CopyFromGLJournal.html]]></MAPPINGNAME>
 <!--800929 ISDEFAULT-->
 <!--800929-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--800929**************--></AD_MODEL_OBJECT_MAPPING>
@@ -2919,13 +2939,13 @@
 <!--800941 CREATEDBY-->
 <!--800941-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800941 UPDATED-->
-<!--800941-->              <UPDATED><![CDATA[2006-06-16 19:36:07.0]]></UPDATED>
+<!--800941-->              <UPDATED><![CDATA[2008-08-08 16:46:11.0]]></UPDATED>
 <!--800941 UPDATEDBY-->
 <!--800941-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800941 AD_MODEL_OBJECT_ID-->
 <!--800941-->              <AD_MODEL_OBJECT_ID><![CDATA[800735]]></AD_MODEL_OBJECT_ID>
 <!--800941 MAPPINGNAME-->
-<!--800941-->              <MAPPINGNAME><![CDATA[/ad_actionButton/CopyFromOrder_FS.html]]></MAPPINGNAME>
+<!--800941-->              <MAPPINGNAME><![CDATA[/ad_actionButton/CopyFromOrder.html]]></MAPPINGNAME>
 <!--800941 ISDEFAULT-->
 <!--800941-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--800941**************--></AD_MODEL_OBJECT_MAPPING>
@@ -3205,81 +3225,6 @@
 <!--800954-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--800954**************--></AD_MODEL_OBJECT_MAPPING>
 
-<!--801001**************--><AD_MODEL_OBJECT_MAPPING>
-<!--801001 AD_MODEL_OBJECT_MAPPING_ID-->
-<!--801001-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[801001]]></AD_MODEL_OBJECT_MAPPING_ID>
-<!--801001 AD_CLIENT_ID-->
-<!--801001-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--801001 AD_ORG_ID-->
-<!--801001-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--801001 ISACTIVE-->
-<!--801001-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--801001 CREATED-->
-<!--801001-->              <CREATED><![CDATA[2006-05-22 13:54:02.0]]></CREATED>
-<!--801001 CREATEDBY-->
-<!--801001-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--801001 UPDATED-->
-<!--801001-->              <UPDATED><![CDATA[2006-05-22 13:54:02.0]]></UPDATED>
-<!--801001 UPDATEDBY-->
-<!--801001-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--801001 AD_MODEL_OBJECT_ID-->
-<!--801001-->              <AD_MODEL_OBJECT_ID><![CDATA[800723]]></AD_MODEL_OBJECT_ID>
-<!--801001 MAPPINGNAME-->
-<!--801001-->              <MAPPINGNAME><![CDATA[/ad_process/CopyFromGLJournal_F1.html]]></MAPPINGNAME>
-<!--801001 ISDEFAULT-->
-<!--801001-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--801001**************--></AD_MODEL_OBJECT_MAPPING>
-
-<!--801002**************--><AD_MODEL_OBJECT_MAPPING>
-<!--801002 AD_MODEL_OBJECT_MAPPING_ID-->
-<!--801002-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[801002]]></AD_MODEL_OBJECT_MAPPING_ID>
-<!--801002 AD_CLIENT_ID-->
-<!--801002-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--801002 AD_ORG_ID-->
-<!--801002-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--801002 ISACTIVE-->
-<!--801002-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--801002 CREATED-->
-<!--801002-->              <CREATED><![CDATA[2006-05-22 13:54:06.0]]></CREATED>
-<!--801002 CREATEDBY-->
-<!--801002-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--801002 UPDATED-->
-<!--801002-->              <UPDATED><![CDATA[2006-05-22 13:54:06.0]]></UPDATED>
-<!--801002 UPDATEDBY-->
-<!--801002-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--801002 AD_MODEL_OBJECT_ID-->
-<!--801002-->              <AD_MODEL_OBJECT_ID><![CDATA[800723]]></AD_MODEL_OBJECT_ID>
-<!--801002 MAPPINGNAME-->
-<!--801002-->              <MAPPINGNAME><![CDATA[/ad_process/CopyFromGLJournal_F2.html]]></MAPPINGNAME>
-<!--801002 ISDEFAULT-->
-<!--801002-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--801002**************--></AD_MODEL_OBJECT_MAPPING>
-
-<!--801003**************--><AD_MODEL_OBJECT_MAPPING>
-<!--801003 AD_MODEL_OBJECT_MAPPING_ID-->
-<!--801003-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[801003]]></AD_MODEL_OBJECT_MAPPING_ID>
-<!--801003 AD_CLIENT_ID-->
-<!--801003-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--801003 AD_ORG_ID-->
-<!--801003-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--801003 ISACTIVE-->
-<!--801003-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--801003 CREATED-->
-<!--801003-->              <CREATED><![CDATA[2006-05-22 13:54:20.0]]></CREATED>
-<!--801003 CREATEDBY-->
-<!--801003-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--801003 UPDATED-->
-<!--801003-->              <UPDATED><![CDATA[2006-05-22 13:54:20.0]]></UPDATED>
-<!--801003 UPDATEDBY-->
-<!--801003-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--801003 AD_MODEL_OBJECT_ID-->
-<!--801003-->              <AD_MODEL_OBJECT_ID><![CDATA[800723]]></AD_MODEL_OBJECT_ID>
-<!--801003 MAPPINGNAME-->
-<!--801003-->              <MAPPINGNAME><![CDATA[/ad_process/CopyFromGLJournal_F3.html]]></MAPPINGNAME>
-<!--801003 ISDEFAULT-->
-<!--801003-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--801003**************--></AD_MODEL_OBJECT_MAPPING>
-
 <!--801020**************--><AD_MODEL_OBJECT_MAPPING>
 <!--801020 AD_MODEL_OBJECT_MAPPING_ID-->
 <!--801020-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[801020]]></AD_MODEL_OBJECT_MAPPING_ID>
@@ -3400,85 +3345,10 @@
 <!--801024 AD_MODEL_OBJECT_ID-->
 <!--801024-->              <AD_MODEL_OBJECT_ID><![CDATA[800780]]></AD_MODEL_OBJECT_ID>
 <!--801024 MAPPINGNAME-->
-<!--801024-->              <MAPPINGNAME><![CDATA[/info/ImageInfo_FS.html]]></MAPPINGNAME>
+<!--801024-->              <MAPPINGNAME><![CDATA[/info/ImageInfo.html]]></MAPPINGNAME>
 <!--801024 ISDEFAULT-->
 <!--801024-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--801024**************--></AD_MODEL_OBJECT_MAPPING>
-
-<!--801025**************--><AD_MODEL_OBJECT_MAPPING>
-<!--801025 AD_MODEL_OBJECT_MAPPING_ID-->
-<!--801025-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[801025]]></AD_MODEL_OBJECT_MAPPING_ID>
-<!--801025 AD_CLIENT_ID-->
-<!--801025-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--801025 AD_ORG_ID-->
-<!--801025-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--801025 ISACTIVE-->
-<!--801025-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--801025 CREATED-->
-<!--801025-->              <CREATED><![CDATA[2006-05-22 17:29:52.0]]></CREATED>
-<!--801025 CREATEDBY-->
-<!--801025-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--801025 UPDATED-->
-<!--801025-->              <UPDATED><![CDATA[2006-05-22 17:29:52.0]]></UPDATED>
-<!--801025 UPDATEDBY-->
-<!--801025-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--801025 AD_MODEL_OBJECT_ID-->
-<!--801025-->              <AD_MODEL_OBJECT_ID><![CDATA[800780]]></AD_MODEL_OBJECT_ID>
-<!--801025 MAPPINGNAME-->
-<!--801025-->              <MAPPINGNAME><![CDATA[/info/ImageInfo_F1.html]]></MAPPINGNAME>
-<!--801025 ISDEFAULT-->
-<!--801025-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--801025**************--></AD_MODEL_OBJECT_MAPPING>
-
-<!--801026**************--><AD_MODEL_OBJECT_MAPPING>
-<!--801026 AD_MODEL_OBJECT_MAPPING_ID-->
-<!--801026-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[801026]]></AD_MODEL_OBJECT_MAPPING_ID>
-<!--801026 AD_CLIENT_ID-->
-<!--801026-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--801026 AD_ORG_ID-->
-<!--801026-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--801026 ISACTIVE-->
-<!--801026-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--801026 CREATED-->
-<!--801026-->              <CREATED><![CDATA[2006-05-22 17:30:01.0]]></CREATED>
-<!--801026 CREATEDBY-->
-<!--801026-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--801026 UPDATED-->
-<!--801026-->              <UPDATED><![CDATA[2006-05-22 17:30:01.0]]></UPDATED>
-<!--801026 UPDATEDBY-->
-<!--801026-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--801026 AD_MODEL_OBJECT_ID-->
-<!--801026-->              <AD_MODEL_OBJECT_ID><![CDATA[800780]]></AD_MODEL_OBJECT_ID>
-<!--801026 MAPPINGNAME-->
-<!--801026-->              <MAPPINGNAME><![CDATA[/info/ImageInfo_F2.html]]></MAPPINGNAME>
-<!--801026 ISDEFAULT-->
-<!--801026-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--801026**************--></AD_MODEL_OBJECT_MAPPING>
-
-<!--801027**************--><AD_MODEL_OBJECT_MAPPING>
-<!--801027 AD_MODEL_OBJECT_MAPPING_ID-->
-<!--801027-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[801027]]></AD_MODEL_OBJECT_MAPPING_ID>
-<!--801027 AD_CLIENT_ID-->
-<!--801027-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--801027 AD_ORG_ID-->
-<!--801027-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--801027 ISACTIVE-->
-<!--801027-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--801027 CREATED-->
-<!--801027-->              <CREATED><![CDATA[2006-05-22 17:30:03.0]]></CREATED>
-<!--801027 CREATEDBY-->
-<!--801027-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--801027 UPDATED-->
-<!--801027-->              <UPDATED><![CDATA[2006-05-22 17:30:03.0]]></UPDATED>
-<!--801027 UPDATEDBY-->
-<!--801027-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--801027 AD_MODEL_OBJECT_ID-->
-<!--801027-->              <AD_MODEL_OBJECT_ID><![CDATA[800780]]></AD_MODEL_OBJECT_ID>
-<!--801027 MAPPINGNAME-->
-<!--801027-->              <MAPPINGNAME><![CDATA[/info/ImageInfo_F3.html]]></MAPPINGNAME>
-<!--801027 ISDEFAULT-->
-<!--801027-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--801027**************--></AD_MODEL_OBJECT_MAPPING>
 
 <!--801028**************--><AD_MODEL_OBJECT_MAPPING>
 <!--801028 AD_MODEL_OBJECT_MAPPING_ID-->
@@ -5519,66 +5389,16 @@
 <!--801262 CREATEDBY-->
 <!--801262-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--801262 UPDATED-->
-<!--801262-->              <UPDATED><![CDATA[2006-05-23 19:14:38.0]]></UPDATED>
+<!--801262-->              <UPDATED><![CDATA[2008-08-08 18:56:27.0]]></UPDATED>
 <!--801262 UPDATEDBY-->
 <!--801262-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--801262 AD_MODEL_OBJECT_ID-->
 <!--801262-->              <AD_MODEL_OBJECT_ID><![CDATA[800999]]></AD_MODEL_OBJECT_ID>
 <!--801262 MAPPINGNAME-->
-<!--801262-->              <MAPPINGNAME><![CDATA[/ad_actionButton/UpdateMaintenanceScheduled_FS.html]]></MAPPINGNAME>
+<!--801262-->              <MAPPINGNAME><![CDATA[/ad_actionButton/UpdateMaintenanceScheduled.html]]></MAPPINGNAME>
 <!--801262 ISDEFAULT-->
 <!--801262-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--801262**************--></AD_MODEL_OBJECT_MAPPING>
-
-<!--801271**************--><AD_MODEL_OBJECT_MAPPING>
-<!--801271 AD_MODEL_OBJECT_MAPPING_ID-->
-<!--801271-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[801271]]></AD_MODEL_OBJECT_MAPPING_ID>
-<!--801271 AD_CLIENT_ID-->
-<!--801271-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--801271 AD_ORG_ID-->
-<!--801271-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--801271 ISACTIVE-->
-<!--801271-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--801271 CREATED-->
-<!--801271-->              <CREATED><![CDATA[2006-05-23 13:54:04.0]]></CREATED>
-<!--801271 CREATEDBY-->
-<!--801271-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--801271 UPDATED-->
-<!--801271-->              <UPDATED><![CDATA[2006-05-23 19:14:42.0]]></UPDATED>
-<!--801271 UPDATEDBY-->
-<!--801271-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--801271 AD_MODEL_OBJECT_ID-->
-<!--801271-->              <AD_MODEL_OBJECT_ID><![CDATA[800999]]></AD_MODEL_OBJECT_ID>
-<!--801271 MAPPINGNAME-->
-<!--801271-->              <MAPPINGNAME><![CDATA[/ad_actionButton/UpdateMaintenanceScheduled_F1.html]]></MAPPINGNAME>
-<!--801271 ISDEFAULT-->
-<!--801271-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--801271**************--></AD_MODEL_OBJECT_MAPPING>
-
-<!--801272**************--><AD_MODEL_OBJECT_MAPPING>
-<!--801272 AD_MODEL_OBJECT_MAPPING_ID-->
-<!--801272-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[801272]]></AD_MODEL_OBJECT_MAPPING_ID>
-<!--801272 AD_CLIENT_ID-->
-<!--801272-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--801272 AD_ORG_ID-->
-<!--801272-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--801272 ISACTIVE-->
-<!--801272-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--801272 CREATED-->
-<!--801272-->              <CREATED><![CDATA[2006-05-23 13:54:13.0]]></CREATED>
-<!--801272 CREATEDBY-->
-<!--801272-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--801272 UPDATED-->
-<!--801272-->              <UPDATED><![CDATA[2006-05-23 19:15:15.0]]></UPDATED>
-<!--801272 UPDATEDBY-->
-<!--801272-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--801272 AD_MODEL_OBJECT_ID-->
-<!--801272-->              <AD_MODEL_OBJECT_ID><![CDATA[800999]]></AD_MODEL_OBJECT_ID>
-<!--801272 MAPPINGNAME-->
-<!--801272-->              <MAPPINGNAME><![CDATA[/ad_actionButton/UpdateMaintenanceScheduled_F2.html]]></MAPPINGNAME>
-<!--801272 ISDEFAULT-->
-<!--801272-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--801272**************--></AD_MODEL_OBJECT_MAPPING>
 
 <!--801280**************--><AD_MODEL_OBJECT_MAPPING>
 <!--801280 AD_MODEL_OBJECT_MAPPING_ID-->
@@ -5894,91 +5714,16 @@
 <!--801296 CREATEDBY-->
 <!--801296-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--801296 UPDATED-->
-<!--801296-->              <UPDATED><![CDATA[2006-05-25 18:56:56.0]]></UPDATED>
+<!--801296-->              <UPDATED><![CDATA[2008-08-12 19:44:53.0]]></UPDATED>
 <!--801296 UPDATEDBY-->
 <!--801296-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--801296 AD_MODEL_OBJECT_ID-->
 <!--801296-->              <AD_MODEL_OBJECT_ID><![CDATA[801011]]></AD_MODEL_OBJECT_ID>
 <!--801296 MAPPINGNAME-->
-<!--801296-->              <MAPPINGNAME><![CDATA[/ad_actionButton/EditCCPMeasureValues_FS.html]]></MAPPINGNAME>
+<!--801296-->              <MAPPINGNAME><![CDATA[/ad_actionButton/EditCCPMeasureValues.html]]></MAPPINGNAME>
 <!--801296 ISDEFAULT-->
 <!--801296-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--801296**************--></AD_MODEL_OBJECT_MAPPING>
-
-<!--801297**************--><AD_MODEL_OBJECT_MAPPING>
-<!--801297 AD_MODEL_OBJECT_MAPPING_ID-->
-<!--801297-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[801297]]></AD_MODEL_OBJECT_MAPPING_ID>
-<!--801297 AD_CLIENT_ID-->
-<!--801297-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--801297 AD_ORG_ID-->
-<!--801297-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--801297 ISACTIVE-->
-<!--801297-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--801297 CREATED-->
-<!--801297-->              <CREATED><![CDATA[2006-05-25 18:57:07.0]]></CREATED>
-<!--801297 CREATEDBY-->
-<!--801297-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--801297 UPDATED-->
-<!--801297-->              <UPDATED><![CDATA[2006-05-25 18:57:07.0]]></UPDATED>
-<!--801297 UPDATEDBY-->
-<!--801297-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--801297 AD_MODEL_OBJECT_ID-->
-<!--801297-->              <AD_MODEL_OBJECT_ID><![CDATA[801011]]></AD_MODEL_OBJECT_ID>
-<!--801297 MAPPINGNAME-->
-<!--801297-->              <MAPPINGNAME><![CDATA[/ad_actionButton/EditCCPMeasureValues_F0.html]]></MAPPINGNAME>
-<!--801297 ISDEFAULT-->
-<!--801297-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--801297**************--></AD_MODEL_OBJECT_MAPPING>
-
-<!--801298**************--><AD_MODEL_OBJECT_MAPPING>
-<!--801298 AD_MODEL_OBJECT_MAPPING_ID-->
-<!--801298-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[801298]]></AD_MODEL_OBJECT_MAPPING_ID>
-<!--801298 AD_CLIENT_ID-->
-<!--801298-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--801298 AD_ORG_ID-->
-<!--801298-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--801298 ISACTIVE-->
-<!--801298-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--801298 CREATED-->
-<!--801298-->              <CREATED><![CDATA[2006-05-25 18:57:14.0]]></CREATED>
-<!--801298 CREATEDBY-->
-<!--801298-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--801298 UPDATED-->
-<!--801298-->              <UPDATED><![CDATA[2006-05-25 18:57:14.0]]></UPDATED>
-<!--801298 UPDATEDBY-->
-<!--801298-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--801298 AD_MODEL_OBJECT_ID-->
-<!--801298-->              <AD_MODEL_OBJECT_ID><![CDATA[801011]]></AD_MODEL_OBJECT_ID>
-<!--801298 MAPPINGNAME-->
-<!--801298-->              <MAPPINGNAME><![CDATA[/ad_actionButton/EditCCPMeasureValues_F1.html]]></MAPPINGNAME>
-<!--801298 ISDEFAULT-->
-<!--801298-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--801298**************--></AD_MODEL_OBJECT_MAPPING>
-
-<!--801299**************--><AD_MODEL_OBJECT_MAPPING>
-<!--801299 AD_MODEL_OBJECT_MAPPING_ID-->
-<!--801299-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[801299]]></AD_MODEL_OBJECT_MAPPING_ID>
-<!--801299 AD_CLIENT_ID-->
-<!--801299-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--801299 AD_ORG_ID-->
-<!--801299-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--801299 ISACTIVE-->
-<!--801299-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--801299 CREATED-->
-<!--801299-->              <CREATED><![CDATA[2006-05-25 18:57:18.0]]></CREATED>
-<!--801299 CREATEDBY-->
-<!--801299-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--801299 UPDATED-->
-<!--801299-->              <UPDATED><![CDATA[2006-05-25 18:57:18.0]]></UPDATED>
-<!--801299 UPDATEDBY-->
-<!--801299-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--801299 AD_MODEL_OBJECT_ID-->
-<!--801299-->              <AD_MODEL_OBJECT_ID><![CDATA[801011]]></AD_MODEL_OBJECT_ID>
-<!--801299 MAPPINGNAME-->
-<!--801299-->              <MAPPINGNAME><![CDATA[/ad_actionButton/EditCCPMeasureValues_F2.html]]></MAPPINGNAME>
-<!--801299 ISDEFAULT-->
-<!--801299-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--801299**************--></AD_MODEL_OBJECT_MAPPING>
 
 <!--801300**************--><AD_MODEL_OBJECT_MAPPING>
 <!--801300 AD_MODEL_OBJECT_MAPPING_ID-->
@@ -7330,56 +7075,6 @@
 <!--801595-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--801595**************--></AD_MODEL_OBJECT_MAPPING>
 
-<!--801596**************--><AD_MODEL_OBJECT_MAPPING>
-<!--801596 AD_MODEL_OBJECT_MAPPING_ID-->
-<!--801596-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[801596]]></AD_MODEL_OBJECT_MAPPING_ID>
-<!--801596 AD_CLIENT_ID-->
-<!--801596-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--801596 AD_ORG_ID-->
-<!--801596-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--801596 ISACTIVE-->
-<!--801596-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--801596 CREATED-->
-<!--801596-->              <CREATED><![CDATA[2006-06-16 19:36:14.0]]></CREATED>
-<!--801596 CREATEDBY-->
-<!--801596-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--801596 UPDATED-->
-<!--801596-->              <UPDATED><![CDATA[2006-06-16 19:36:14.0]]></UPDATED>
-<!--801596 UPDATEDBY-->
-<!--801596-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--801596 AD_MODEL_OBJECT_ID-->
-<!--801596-->              <AD_MODEL_OBJECT_ID><![CDATA[800735]]></AD_MODEL_OBJECT_ID>
-<!--801596 MAPPINGNAME-->
-<!--801596-->              <MAPPINGNAME><![CDATA[/ad_actionButton/CopyFromOrder_F1.html]]></MAPPINGNAME>
-<!--801596 ISDEFAULT-->
-<!--801596-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--801596**************--></AD_MODEL_OBJECT_MAPPING>
-
-<!--801597**************--><AD_MODEL_OBJECT_MAPPING>
-<!--801597 AD_MODEL_OBJECT_MAPPING_ID-->
-<!--801597-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[801597]]></AD_MODEL_OBJECT_MAPPING_ID>
-<!--801597 AD_CLIENT_ID-->
-<!--801597-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--801597 AD_ORG_ID-->
-<!--801597-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--801597 ISACTIVE-->
-<!--801597-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--801597 CREATED-->
-<!--801597-->              <CREATED><![CDATA[2006-06-16 19:36:19.0]]></CREATED>
-<!--801597 CREATEDBY-->
-<!--801597-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--801597 UPDATED-->
-<!--801597-->              <UPDATED><![CDATA[2006-06-16 19:36:44.0]]></UPDATED>
-<!--801597 UPDATEDBY-->
-<!--801597-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--801597 AD_MODEL_OBJECT_ID-->
-<!--801597-->              <AD_MODEL_OBJECT_ID><![CDATA[800735]]></AD_MODEL_OBJECT_ID>
-<!--801597 MAPPINGNAME-->
-<!--801597-->              <MAPPINGNAME><![CDATA[/ad_actionButton/CopyFromOrder_F2.html]]></MAPPINGNAME>
-<!--801597 ISDEFAULT-->
-<!--801597-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--801597**************--></AD_MODEL_OBJECT_MAPPING>
-
 <!--801598**************--><AD_MODEL_OBJECT_MAPPING>
 <!--801598 AD_MODEL_OBJECT_MAPPING_ID-->
 <!--801598-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[801598]]></AD_MODEL_OBJECT_MAPPING_ID>
@@ -8054,131 +7749,6 @@
 <!--802099 ISDEFAULT-->
 <!--802099-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--802099**************--></AD_MODEL_OBJECT_MAPPING>
-
-<!--802112**************--><AD_MODEL_OBJECT_MAPPING>
-<!--802112 AD_MODEL_OBJECT_MAPPING_ID-->
-<!--802112-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[802112]]></AD_MODEL_OBJECT_MAPPING_ID>
-<!--802112 AD_CLIENT_ID-->
-<!--802112-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--802112 AD_ORG_ID-->
-<!--802112-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--802112 ISACTIVE-->
-<!--802112-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--802112 CREATED-->
-<!--802112-->              <CREATED><![CDATA[2007-03-23 18:18:01.0]]></CREATED>
-<!--802112 CREATEDBY-->
-<!--802112-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--802112 UPDATED-->
-<!--802112-->              <UPDATED><![CDATA[2007-03-23 18:18:01.0]]></UPDATED>
-<!--802112 UPDATEDBY-->
-<!--802112-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--802112 AD_MODEL_OBJECT_ID-->
-<!--802112-->              <AD_MODEL_OBJECT_ID><![CDATA[800530]]></AD_MODEL_OBJECT_ID>
-<!--802112 MAPPINGNAME-->
-<!--802112-->              <MAPPINGNAME><![CDATA[/ad_forms/MatchingPO-Receipt-Invoice_F1.html]]></MAPPINGNAME>
-<!--802112 ISDEFAULT-->
-<!--802112-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--802112**************--></AD_MODEL_OBJECT_MAPPING>
-
-<!--802113**************--><AD_MODEL_OBJECT_MAPPING>
-<!--802113 AD_MODEL_OBJECT_MAPPING_ID-->
-<!--802113-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[802113]]></AD_MODEL_OBJECT_MAPPING_ID>
-<!--802113 AD_CLIENT_ID-->
-<!--802113-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--802113 AD_ORG_ID-->
-<!--802113-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--802113 ISACTIVE-->
-<!--802113-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--802113 CREATED-->
-<!--802113-->              <CREATED><![CDATA[2007-03-23 18:18:08.0]]></CREATED>
-<!--802113 CREATEDBY-->
-<!--802113-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--802113 UPDATED-->
-<!--802113-->              <UPDATED><![CDATA[2007-03-23 18:18:08.0]]></UPDATED>
-<!--802113 UPDATEDBY-->
-<!--802113-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--802113 AD_MODEL_OBJECT_ID-->
-<!--802113-->              <AD_MODEL_OBJECT_ID><![CDATA[800530]]></AD_MODEL_OBJECT_ID>
-<!--802113 MAPPINGNAME-->
-<!--802113-->              <MAPPINGNAME><![CDATA[/ad_forms/MatchingPO-Receipt-Invoice_F2.html]]></MAPPINGNAME>
-<!--802113 ISDEFAULT-->
-<!--802113-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--802113**************--></AD_MODEL_OBJECT_MAPPING>
-
-<!--802114**************--><AD_MODEL_OBJECT_MAPPING>
-<!--802114 AD_MODEL_OBJECT_MAPPING_ID-->
-<!--802114-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[802114]]></AD_MODEL_OBJECT_MAPPING_ID>
-<!--802114 AD_CLIENT_ID-->
-<!--802114-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--802114 AD_ORG_ID-->
-<!--802114-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--802114 ISACTIVE-->
-<!--802114-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--802114 CREATED-->
-<!--802114-->              <CREATED><![CDATA[2007-03-23 18:18:13.0]]></CREATED>
-<!--802114 CREATEDBY-->
-<!--802114-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--802114 UPDATED-->
-<!--802114-->              <UPDATED><![CDATA[2007-03-23 18:18:13.0]]></UPDATED>
-<!--802114 UPDATEDBY-->
-<!--802114-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--802114 AD_MODEL_OBJECT_ID-->
-<!--802114-->              <AD_MODEL_OBJECT_ID><![CDATA[800530]]></AD_MODEL_OBJECT_ID>
-<!--802114 MAPPINGNAME-->
-<!--802114-->              <MAPPINGNAME><![CDATA[/ad_forms/MatchingPO-Receipt-Invoice_F3.html]]></MAPPINGNAME>
-<!--802114 ISDEFAULT-->
-<!--802114-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--802114**************--></AD_MODEL_OBJECT_MAPPING>
-
-<!--802115**************--><AD_MODEL_OBJECT_MAPPING>
-<!--802115 AD_MODEL_OBJECT_MAPPING_ID-->
-<!--802115-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[802115]]></AD_MODEL_OBJECT_MAPPING_ID>
-<!--802115 AD_CLIENT_ID-->
-<!--802115-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--802115 AD_ORG_ID-->
-<!--802115-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--802115 ISACTIVE-->
-<!--802115-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--802115 CREATED-->
-<!--802115-->              <CREATED><![CDATA[2007-03-23 18:18:20.0]]></CREATED>
-<!--802115 CREATEDBY-->
-<!--802115-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--802115 UPDATED-->
-<!--802115-->              <UPDATED><![CDATA[2007-03-23 18:18:20.0]]></UPDATED>
-<!--802115 UPDATEDBY-->
-<!--802115-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--802115 AD_MODEL_OBJECT_ID-->
-<!--802115-->              <AD_MODEL_OBJECT_ID><![CDATA[800530]]></AD_MODEL_OBJECT_ID>
-<!--802115 MAPPINGNAME-->
-<!--802115-->              <MAPPINGNAME><![CDATA[/ad_forms/MatchingPO-Receipt-Invoice_F4.html]]></MAPPINGNAME>
-<!--802115 ISDEFAULT-->
-<!--802115-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--802115**************--></AD_MODEL_OBJECT_MAPPING>
-
-<!--802116**************--><AD_MODEL_OBJECT_MAPPING>
-<!--802116 AD_MODEL_OBJECT_MAPPING_ID-->
-<!--802116-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[802116]]></AD_MODEL_OBJECT_MAPPING_ID>
-<!--802116 AD_CLIENT_ID-->
-<!--802116-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--802116 AD_ORG_ID-->
-<!--802116-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--802116 ISACTIVE-->
-<!--802116-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--802116 CREATED-->
-<!--802116-->              <CREATED><![CDATA[2007-03-23 18:18:38.0]]></CREATED>
-<!--802116 CREATEDBY-->
-<!--802116-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--802116 UPDATED-->
-<!--802116-->              <UPDATED><![CDATA[2007-03-23 18:18:38.0]]></UPDATED>
-<!--802116 UPDATEDBY-->
-<!--802116-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--802116 AD_MODEL_OBJECT_ID-->
-<!--802116-->              <AD_MODEL_OBJECT_ID><![CDATA[800530]]></AD_MODEL_OBJECT_ID>
-<!--802116 MAPPINGNAME-->
-<!--802116-->              <MAPPINGNAME><![CDATA[/ad_forms/MatchingPO-Receipt-Invoice_F5.html]]></MAPPINGNAME>
-<!--802116 ISDEFAULT-->
-<!--802116-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--802116**************--></AD_MODEL_OBJECT_MAPPING>
 
 <!--802141**************--><AD_MODEL_OBJECT_MAPPING>
 <!--802141 AD_MODEL_OBJECT_MAPPING_ID-->
@@ -63005,69 +62575,4 @@
 <!--1006400008-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--1006400008**************--></AD_MODEL_OBJECT_MAPPING>
 
-<!--
-************************
-0. End of Core Range.
-************************
--->
-<!--
-************************
-1. Custom Range.
-************************
--->
-<!--100002**************--><AD_MODEL_OBJECT_MAPPING>
-<!--100002 AD_MODEL_OBJECT_MAPPING_ID-->
-<!--100002-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[100002]]></AD_MODEL_OBJECT_MAPPING_ID>
-<!--100002 AD_CLIENT_ID-->
-<!--100002-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--100002 AD_ORG_ID-->
-<!--100002-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--100002 ISACTIVE-->
-<!--100002-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--100002 CREATED-->
-<!--100002-->              <CREATED><![CDATA[2008-05-28 19:15:17.0]]></CREATED>
-<!--100002 CREATEDBY-->
-<!--100002-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--100002 UPDATED-->
-<!--100002-->              <UPDATED><![CDATA[2008-05-28 19:15:17.0]]></UPDATED>
-<!--100002 UPDATEDBY-->
-<!--100002-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--100002 AD_MODEL_OBJECT_ID-->
-<!--100002-->              <AD_MODEL_OBJECT_ID><![CDATA[800737]]></AD_MODEL_OBJECT_ID>
-<!--100002 MAPPINGNAME-->
-<!--100002-->              <MAPPINGNAME><![CDATA[/ad_actionButton/CreateFromMultiple_F1.html]]></MAPPINGNAME>
-<!--100002 ISDEFAULT-->
-<!--100002-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--100002**************--></AD_MODEL_OBJECT_MAPPING>
-
-<!--100003**************--><AD_MODEL_OBJECT_MAPPING>
-<!--100003 AD_MODEL_OBJECT_MAPPING_ID-->
-<!--100003-->              <AD_MODEL_OBJECT_MAPPING_ID><![CDATA[100003]]></AD_MODEL_OBJECT_MAPPING_ID>
-<!--100003 AD_CLIENT_ID-->
-<!--100003-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--100003 AD_ORG_ID-->
-<!--100003-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--100003 ISACTIVE-->
-<!--100003-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--100003 CREATED-->
-<!--100003-->              <CREATED><![CDATA[2008-05-28 19:15:24.0]]></CREATED>
-<!--100003 CREATEDBY-->
-<!--100003-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--100003 UPDATED-->
-<!--100003-->              <UPDATED><![CDATA[2008-05-28 19:15:31.0]]></UPDATED>
-<!--100003 UPDATEDBY-->
-<!--100003-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--100003 AD_MODEL_OBJECT_ID-->
-<!--100003-->              <AD_MODEL_OBJECT_ID><![CDATA[800737]]></AD_MODEL_OBJECT_ID>
-<!--100003 MAPPINGNAME-->
-<!--100003-->              <MAPPINGNAME><![CDATA[/ad_actionButton/CreateFromMultiple_F2.html]]></MAPPINGNAME>
-<!--100003 ISDEFAULT-->
-<!--100003-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--100003**************--></AD_MODEL_OBJECT_MAPPING>
-
-<!--
-************************
-1. End of Custom Range.
-************************
--->
 </data>

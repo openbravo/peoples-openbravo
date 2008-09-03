@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_DELETE_CLIENT0">
     <function name="AD_DELETE_CLIENT0" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************

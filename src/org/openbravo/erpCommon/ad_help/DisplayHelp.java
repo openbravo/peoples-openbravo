@@ -242,8 +242,8 @@ public class DisplayHelp extends HttpSecureAppServlet {
 
     DisplayHelpData[] data = (vars.getLanguage().equals("en_US")?DisplayHelpData.select(this, strWindow):DisplayHelpData.selectTrl(this, strWindow, vars.getLanguage()));
     
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("windowId", strWindow);
     xmlDocument.setParameter("windowName", (vars.getLanguage().equals("en_US")?DisplayHelpData.windowName(this, strWindow):DisplayHelpData.windowNameTrl(this, strWindow, vars.getLanguage())));
@@ -299,8 +299,8 @@ public class DisplayHelp extends HttpSecureAppServlet {
       xmlDocument.setParameter("messageTitle", myMessage.getTitle());
       xmlDocument.setParameter("messageMessage", myMessage.getMessage());
     }
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("save", strTipo);
     xmlDocument.setData("structure1", data);
@@ -326,7 +326,7 @@ public class DisplayHelp extends HttpSecureAppServlet {
     }
     
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_help/DisplayHelp_Edit_F2", discard).createXmlDocument();
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("message", message.toString());
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -349,8 +349,8 @@ public class DisplayHelp extends HttpSecureAppServlet {
     data = (vars.getLanguage().equals("en_US")?DisplayHelpEditData.selectField(this, strClave):DisplayHelpEditData.selectFieldTrl(this, vars.getLanguage(), strClave));
     strTipo="Field";
     String strEdit="Element";
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("field", strClave);
     xmlDocument.setParameter("save", strTipo);
@@ -378,7 +378,7 @@ public class DisplayHelp extends HttpSecureAppServlet {
     }
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_help/DisplayHelp_Edit_Field_F2", discard).createXmlDocument();
     if (log4j.isDebugEnabled()) log4j.debug("WE REDRAW THE FIELD OF THE FUNCTION");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("message", message.toString());
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -401,8 +401,8 @@ public class DisplayHelp extends HttpSecureAppServlet {
     data = (vars.getLanguage().equals("en_US")?DisplayHelpEditData.selectElement(this, strClave):DisplayHelpEditData.selectElementTrl(this, vars.getLanguage(), strClave));
     strTipo="Element";
     String strEdit="Field";
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("save", strTipo);
     xmlDocument.setParameter("field", strClave);
@@ -430,7 +430,7 @@ public class DisplayHelp extends HttpSecureAppServlet {
       discard[0] = "discardClose";
     }
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_help/DisplayHelp_Edit_Element_F2", discard).createXmlDocument();
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("message", message.toString());
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();

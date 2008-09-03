@@ -30,9 +30,9 @@
     <![CDATA[
 				select B.NAME AS BANK,b.codebank, b.codebranch, b.DIGITCONTROL as digitcontrol1, ba.DIGITCONTROL as digitcontrol2, 
       ba.CODEACCOUNT, 
-			LPAD(B.CODEBANK,4,TO_CHAR('0'))||LPAD(B.CODEBRANCH,4,TO_CHAR('0'))||B.DIGITCONTROL||ba.DIGITCONTROL||LPAD(ba.CODEACCOUNT,10,TO_CHAR('0')) AS N_CUENTA,
-      lpad(rpad(c.NAME,40,' '),46,TO_CHAR(' ')) AS ENTIDAD, rpad(c.NAME,40,' ') AS ENTIDAD19, oi.TAXID AS NIF, TO_CHAR(r.Duedate  ,'DD')||TO_CHAR(r.Duedate,'MM')||TO_CHAR(r.Duedate,'YY')AS DATEPLANNED, TO_CHAR(now(), 'DD')||TO_CHAR(now(), 'MM')||TO_CHAR(now(), 'YY') AS HOY, 
-			LPAD(RPAD(LPAD(B.CODEBANK,4,TO_CHAR('0'))||LPAD(B.CODEBRANCH,4,TO_CHAR('0')),74,' '),94,TO_CHAR(' ')) AS ENTOFI, LPAD(B.INE_NUMBER,61,TO_CHAR(' ')) AS INE, 
+			LPAD(B.CODEBANK,4,'0')||LPAD(B.CODEBRANCH,4,'0')||B.DIGITCONTROL||ba.DIGITCONTROL||LPAD(ba.CODEACCOUNT,10,'0') AS N_CUENTA,
+      lpad(rpad(c.NAME,40,' '),46,' ') AS ENTIDAD, rpad(c.NAME,40,' ') AS ENTIDAD19, oi.TAXID AS NIF, TO_CHAR(r.Duedate  ,'DD')||TO_CHAR(r.Duedate,'MM')||TO_CHAR(r.Duedate,'YY')AS DATEPLANNED, TO_CHAR(now(), 'DD')||TO_CHAR(now(), 'MM')||TO_CHAR(now(), 'YY') AS HOY, 
+			LPAD(RPAD(LPAD(B.CODEBANK,4,'0')||LPAD(B.CODEBRANCH,4,'0'),74,' '),94,' ') AS ENTOFI, LPAD(B.INE_NUMBER,61,' ') AS INE, 
 			'' AS TERCERO,
       '' AS FECHA_FACTURA, '' AS FECHA_VENCIMIENTO, '' AS PAYAMT, '' AS CREDITCARDNUMBER, '' AS N_FACTURA, '' AS N_FACTURA19, '' AS CIUDAD, '' AS DIRECCION,
       '' AS CONCEPTO, '' AS PLAZA, '' AS LOCALIDAD, '' AS POSTAL, '' AS CODIGO_PROVINCIA, '' AS LINEAS, '' AS ORDENANTES, '' AS HUECO, '' AS CONTENT
@@ -44,7 +44,7 @@
 		 	 and   r.AD_ORG_ID = oi.ad_org_id
 			 and r.C_BANKACCOUNT_ID = ba.c_bankAccount_id
 			 and b.c_bank_id = ba.c_bank_Id
-       and r.C_Remittance_ID = TO_NUMBER(?)
+       and r.C_Remittance_ID = ?
     ]]>
     </Sql>
     <Parameter name="cRemittanceId"/>
@@ -54,9 +54,9 @@
     <Sql>
     <![CDATA[
       SELECT RPAD(COALESCE(BP.NAME2,BP.NAME),40,' ') AS TERCERO,RPAD(TO_CHAR(COALESCE(C_INVOICE.DATEINVOICED,DP.DATEPLANNED), 'DDMMYY'),14) AS FECHA_FACTURA, 
-      TO_CHAR(TO_CHAR(DP.DATEPLANNED, 'DDMMYY')) AS FECHA_VENCIMIENTO,LPAD(TO_CHAR(ROUND(DP.AMOUNT*100,0)),10,TO_CHAR('0')) AS PAYAMT, 
+      TO_CHAR(TO_CHAR(DP.DATEPLANNED, 'DDMMYY')) AS FECHA_VENCIMIENTO,LPAD(TO_CHAR(ROUND(DP.AMOUNT*100,0)),10,'0') AS PAYAMT, 
       (SELECT MAX(BP_A.ACCOUNTNO) FROM C_BP_BANKACCOUNT BP_A WHERE BP.C_BPARTNER_ID = BP_A.C_BPARTNER_ID AND BP_A.ISACTIVE='Y')  AS CREDITCARDNUMBER,
-      LPAD(TO_CHAR(BP.VALUE),12,TO_CHAR('0')) AS N_FACTURA, RPAD(LPAD(TO_CHAR(BP.VALUE),8,TO_CHAR('0')),12,' ') AS N_FACTURA19,L.CITY AS CIUDAD, RPAD(L.ADDRESS1,40,' ') AS DIRECCION, 
+      LPAD(BP.VALUE,12,'0') AS N_FACTURA, RPAD(LPAD(BP.VALUE,8,'0'),12,' ') AS N_FACTURA19,L.CITY AS CIUDAD, RPAD(L.ADDRESS1,40,' ') AS DIRECCION, 
       TO_CHAR(now(),'DD')||TO_CHAR(now(),'MM')||TO_CHAR(now(),'YY') AS HOY, RPAD(COALESCE(TO_CHAR(DP.DESCRIPTION),' '),40,' ') AS CONCEPTO,
       RPAD(L.CITY,35,' ') AS PLAZA, RPAD(L.CITY,38,' ') AS LOCALIDAD, L.POSTAL AS POSTAL, SUBSTR(L.POSTAL,0,2) AS CODIGO_PROVINCIA, BP.TAXID AS NIF
       FROM c_remittanceline S, C_BPARTNER_LOCATION BP_L,
@@ -66,7 +66,7 @@
       AND DP.C_BPARTNER_ID = BP.C_BPARTNER_ID
       AND BP_L.C_BPARTNER_LOCATION_ID = C_GETBPLOCATIONID(BP.C_BPARTNER_ID, 'B')
       AND BP_L.C_LOCATION_ID = L.C_LOCATION_ID
-      and s.C_Remittance_ID = TO_NUMBER(?)
+      and s.C_Remittance_ID = ?
     ]]>
     </Sql>
     <Parameter name="cRemittanceId"/>
@@ -75,12 +75,12 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT RPAD(LPAD(TO_CHAR(ROUND(sum(DP.AMOUNT)*100,0)),10,TO_CHAR('0')),16,TO_CHAR(' ')) AS PAYAMT, 
-      LPAD(TO_CHAR(COUNT(*)),10,TO_CHAR('0')) AS N_FACTURA 
+      SELECT RPAD(LPAD(TO_CHAR(ROUND(sum(DP.AMOUNT)*100,0)),10,'0'),16,' ') AS PAYAMT, 
+      LPAD(TO_CHAR(COUNT(*)),10,'0') AS N_FACTURA 
       FROM C_DEBT_PAYMENT DP,
 			     c_remittanceLine rl
 		 where dp.c_debt_payment_id = rl.c_debt_payment_id
-       and rl.C_Remittance_ID = TO_NUMBER(?)
+       and rl.C_Remittance_ID = ?
     ]]>
     </Sql>
     <Parameter name="cRemittanceId"/>
@@ -89,7 +89,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-    SELECT RPAD(LPAD(TO_CHAR(?),10,TO_CHAR('0')),48,' ') AS LINEAS, LPAD(RPAD(LPAD(TO_CHAR(1),4,TO_CHAR('0')),20,' '),72,TO_CHAR(' ')) AS ORDENANTES, LPAD(' ',72,TO_CHAR(' ')) AS HUECO FROM DUAL
+    SELECT RPAD(LPAD(?,10,'0'),48,' ') AS LINEAS, LPAD(RPAD(LPAD('1',4,'0'),20,' '),72,' ') AS ORDENANTES, LPAD(' ',72,' ') AS HUECO FROM DUAL
     ]]>
     </Sql>
     <Parameter name="nLineas"/>
@@ -104,7 +104,7 @@
              c_Remittance_Parameter rp
 			 where r.C_Remittance_Type_id = rt.C_Remittance_Type_id
 			   and rp.C_Remittance_Type_Id =  rt.C_Remittance_Type_id
-				 and r.C_Remittance_ID = TO_NUMBER(?)
+				 and r.C_Remittance_id = ?
 				 and upper(rp.name)=upper(to_char(?))
     ]]>
     </Sql>
@@ -121,7 +121,7 @@
     WHERE rl.c_debt_payment_id = dp.c_debt_payment_id
     AND DP.ISPAID = 'N' 
     AND DP.C_BPARTNER_ID = NULL
-		and rl.c_remittance_ID = TO_NUMBER(?)
+		and rl.c_remittance_id = ?
     ]]>
     </Sql>
     <Parameter name="cRemittanceId"/>
@@ -132,7 +132,7 @@
     <![CDATA[
     	SELECT COUNT(*) 
 		  FROM c_remittanceLine rl 
-    WHERE rl.c_remittance_ID = TO_NUMBER(?)
+    WHERE rl.c_remittance_id = ?
     ]]>
     </Sql>
     <Parameter name="cRemittanceId"/>
@@ -144,7 +144,7 @@
     	select count(*)
 		  from c_remittance
 		where processed='Y'
-		 and c_remittance_ID = TO_NUMBER(?)
+		 and c_remittance_id = ?
     ]]>
     </Sql>
     <Parameter name="cRemittanceId"/>
@@ -159,7 +159,7 @@
     WHERE DP.C_DEBT_PAYMENT_ID = rl.C_DEBT_PAYMENT_id
     AND DP.ISPAID = 'N'
     AND DP.C_BPARTNER_ID IS NOT NULL
-		and rl.c_remittance_ID = TO_NUMBER(?)
+		and rl.c_remittance_id = ?
     ]]>
     </Sql>
     <Parameter name="cRemittanceId"/>

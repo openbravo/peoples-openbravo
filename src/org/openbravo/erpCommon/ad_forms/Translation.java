@@ -287,7 +287,7 @@ public class Translation extends HttpSecureAppServlet
 				haveWhere = true;
 			}
 			if (AD_Client_ID >= 0)
-				sql.append(haveWhere ? " AND " : " WHERE ").append("o.AD_Client_ID=").append(AD_Client_ID);
+				sql.append(haveWhere ? " AND " : " WHERE ").append("o.AD_Client_ID='").append(AD_Client_ID).append("'");
 			sql.append(" ORDER BY t.").append(keyColumn);
 			//
 
@@ -303,7 +303,7 @@ public class Translation extends HttpSecureAppServlet
 			while (rs.next())
 			{
 				Element row = document.createElement (XML_ROW_TAG);
-				row.setAttribute(XML_ROW_ATTRIBUTE_ID, String.valueOf(rs.getInt(2)));	//	KeyColumn
+				row.setAttribute(XML_ROW_ATTRIBUTE_ID, String.valueOf(rs.getString(2)));	//	KeyColumn
 				row.setAttribute(XML_ROW_ATTRIBUTE_TRANSLATED, rs.getString(1));		//	IsTranslated
 				for (int i = 0; i < trlColumns.length; i++)
 				{
@@ -475,8 +475,8 @@ private  TranslationData[] getTrlColumns (String Base_Table)
     //xmlDocument.setParameter("mensaje", strMessage.equals("")?"":"alert('"+strMessage+"');");
     //}
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("paramSelLanguage", vars.getSessionValue("translation.lang"));
     xmlDocument.setParameter("paramSystem", vars.getSessionValue("translation.client"));
     xmlDocument.setData("structure1", LanguageComboData.select(this));

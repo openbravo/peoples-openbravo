@@ -88,8 +88,8 @@
           M_REQUISITIONLINE.ORDEREDQTY AS MATCHEDQTY, M_REQUISITIONLINE.PRICELIST,
           COALESCE(LOCKQTY, QTY-ORDEREDQTY) AS LOCKQTY,
           COALESCE(LOCKPRICE, PRICEACTUAL) AS LOCKPRICE,
-          COALESCE(M_REQUISITIONLINE.C_BPARTNER_ID, M_REQUISITION.C_BPARTNER_ID, to_number(-1)) AS VENDOR_ID,
-          COALESCE(M_REQUISITIONLINE.M_PRICELIST_ID, M_REQUISITION.M_PRICELIST_ID, to_number(-1)) AS M_PRICELIST_ID,
+          COALESCE(M_REQUISITIONLINE.C_BPARTNER_ID, M_REQUISITION.C_BPARTNER_ID, '-1') AS VENDOR_ID,
+          COALESCE(M_REQUISITIONLINE.M_PRICELIST_ID, M_REQUISITION.M_PRICELIST_ID, '-1') AS M_PRICELIST_ID,
           AD_COLUMN_IDENTIFIER(to_char('C_BPartner'), to_char(COALESCE(M_REQUISITIONLINE.C_BPARTNER_ID, M_REQUISITION.C_BPARTNER_ID)), ?) AS VENDOR,
           AD_COLUMN_IDENTIFIER(to_char('M_Product'), to_char(M_REQUISITIONLINE.M_PRODUCT_ID), ?) AS PRODUCT,
           AD_COLUMN_IDENTIFIER(to_char('M_AttributeSetInstance'), to_char(M_REQUISITIONLINE.M_ATTRIBUTESETINSTANCE_ID), ?) AS ATTRIBUTE,
@@ -100,7 +100,7 @@
           AND M_REQUISITIONLINE.ISACTIVE = 'Y'
           AND M_REQUISITION.DOCSTATUS = 'CO'
           AND M_REQUISITIONLINE.REQSTATUS = 'O'
-          AND M_REQUISITIONLINE.LOCKEDBY = to_number(?)
+          AND M_REQUISITIONLINE.LOCKEDBY = ?
           AND M_REQUISITIONLINE.LOCKDATE >= (now()-3)
           AND M_REQUISITION.AD_CLIENT_ID IN ('1')
           AND M_REQUISITIONLINE.AD_ORG_ID IN ('1')
@@ -124,18 +124,18 @@
           COALESCE(M_PRODUCTPRICE.PRICELIST, M_REQUISITIONLINE.PRICELIST, LOCKPRICE) AS PRICELIST,
           COALESCE(M_PRODUCTPRICE.PRICELIMIT, LOCKPRICE) AS PRICELIMIT,
           COALESCE(M_PRODUCTPRICE.PRICESTD, LOCKPRICE) AS PRICESTD,
-          ROUND(COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD),(SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = to_number(?))) AS PRICEACTUAL,
+          ROUND(COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD),(SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?)) AS PRICEACTUAL,
           ROUND((COALESCE(M_PRODUCTPRICE.PRICELIST, M_REQUISITIONLINE.PRICELIST, LOCKPRICE) - COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD))/
                    COALESCE(M_PRODUCTPRICE.PRICELIST, M_REQUISITIONLINE.PRICELIST, LOCKPRICE)*100,
                 (SELECT STDPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?)) AS DISCOUNT,
-          C_GetTax(M_REQUISITIONLINE.M_PRODUCT_ID, to_date(?), to_number(?), to_number(?), to_number(?), to_number(?), null, 'N') AS TAX,
+          C_GetTax(M_REQUISITIONLINE.M_PRODUCT_ID, to_date(?), ?, ?, ?, ?, null, 'N') AS TAX,
           CASE WHEN LOCKQTY < (M_REQUISITIONLINE.QTY - M_REQUISITIONLINE.ORDEREDQTY) THEN 'N' ELSE 'Y' END AS TO_CLOSE
         FROM M_REQUISITIONLINE LEFT JOIN M_PRODUCTPRICE
                                          ON M_REQUISITIONLINE.M_PRODUCT_ID = M_PRODUCTPRICE.M_PRODUCT_ID
-                                            AND M_PRODUCTPRICE.M_PRICELIST_VERSION_ID = to_number(?)
+                                            AND M_PRODUCTPRICE.M_PRICELIST_VERSION_ID = ?
         WHERE 1=1
         ORDER BY M_REQUISITIONLINE.M_PRODUCT_ID, M_ATTRIBUTESETINSTANCE_ID, SUPPLIERNOTES, 
-                 ROUND(COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD),(SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = to_number(?)))
+                 ROUND(COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD),(SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?))
         ]]></Sql>
     <Field name="rownum" value="count"/>
     <Parameter name="currency"/>
@@ -209,7 +209,7 @@
       <![CDATA[
         SELECT AD_ORG.AD_ORG_ID AS PADRE, M_WAREHOUSE.M_WAREHOUSE_ID AS ID, M_WAREHOUSE.NAME AS NAME
         FROM M_WAREHOUSE, AD_ORG
-        WHERE AD_ISORGINCLUDED(AD_ORG.AD_ORG_ID, M_WAREHOUSE.AD_ORG_ID, to_number(?)) <> -1
+        WHERE AD_ISORGINCLUDED(AD_ORG.AD_ORG_ID, M_WAREHOUSE.AD_ORG_ID, ?) <> -1
           AND AD_ORG.AD_ORG_ID IN ('1')
           AND M_WAREHOUSE.AD_CLIENT_ID IN ('1')
         ORDER BY PADRE, NAME
@@ -225,7 +225,7 @@
       SELECT p.InvoiceRule, p.DeliveryRule, DeliveryViaRule,
         p.PaymentRulePO, p.PO_PaymentTerm_ID
       FROM C_BPartner p
-      WHERE p.C_BPartner_ID = TO_NUMBER(?)
+      WHERE p.C_BPartner_ID = ?
       ]]>
     </Sql>
     <Parameter name="cBpartnerId"/>
@@ -254,7 +254,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT GET_PRICELIST_VERSION(to_number(?), to_date(?)) AS PRICELISTID
+        SELECT GET_PRICELIST_VERSION(?, to_date(?)) AS PRICELISTID
         FROM DUAL
         ]]></Sql>
     <Parameter name="pricelist"/>
@@ -265,7 +265,7 @@
     <Sql>
       <![CDATA[
         SELECT AD_TREE_ORG_ID FROM AD_CLIENTINFO
-        WHERE AD_CLIENT_ID = TO_NUMBER(?)
+        WHERE AD_CLIENT_ID = ?
         ]]></Sql>
     <Parameter name="client"/>
   </SqlMethod>
@@ -273,7 +273,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT AD_GET_DOCTYPE(TO_NUMBER(?), TO_NUMBER(?), 'POO', null) FROM DUAL
+        SELECT AD_GET_DOCTYPE(?, ?, 'POO', null) FROM DUAL
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
@@ -284,7 +284,7 @@
     <Sql>
       <![CDATA[
         SELECT MAX(C_BPARTNER_LOCATION_ID) FROM C_BPARTNER_LOCATION
-        WHERE C_BPARTNER_ID = TO_NUMBER(?)
+        WHERE C_BPARTNER_ID = ?
         AND C_BPartner_Location.IsActive='Y'
       ]]>
     </Sql>
@@ -297,7 +297,7 @@
         SELECT MAX(C_BPARTNER_LOCATION_ID) FROM C_BPARTNER_LOCATION
         WHERE  C_BPartner_Location.IsBillTo='Y'
         AND C_BPartner_Location.IsActive='Y'
-        AND C_BPARTNER_ID = TO_NUMBER(?)
+        AND C_BPARTNER_ID = ?
       ]]>
     </Sql>
     <Parameter name="cBpartnerId"/>
@@ -346,7 +346,7 @@
     <Sql>
       <![CDATA[
         UPDATE M_REQUISITIONLINE
-        SET LOCKEDBY = to_number(?),
+        SET LOCKEDBY = ?,
             LOCKDATE = now(),
             LOCKQTY = null,
             LOCKPRICE = null,
@@ -364,7 +364,7 @@
         UPDATE M_REQUISITIONLINE
         SET LOCKQTY = to_number(?),
             LOCKPRICE = to_number(?)
-        WHERE M_REQUISITIONLINE_ID = to_number(?)
+        WHERE M_REQUISITIONLINE_ID = ?
       ]]>
     </Sql>
     <Parameter name="lockQty"/>
@@ -381,7 +381,7 @@
         PAYMENTRULE, C_PAYMENTTERM_ID, INVOICERULE, DELIVERYRULE, FREIGHTCOSTRULE, 
         DELIVERYVIARULE, M_WAREHOUSE_ID, M_PRICELIST_ID, 
         C_PROJECT_ID, C_ACTIVITY_ID, C_CAMPAIGN_ID, PRIORITYRULE, ISSOTRX)
-        VALUES (TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),now(),TO_NUMBER(?),now(),TO_NUMBER(?),?,?,?,TO_NUMBER(?),TO_NUMBER(?),TO_DATE(?),TO_DATE(?),TO_DATE(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),?,TO_NUMBER(?),?,?,?,?,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),'5', 'N')
+        VALUES (?,?,?,now(),?,now(),?,?,?,?,?,?,TO_DATE(?),TO_DATE(?),TO_DATE(?),?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'5', 'N')
       ]]>
     </Sql>
     <Parameter name="cOrderId"/>
@@ -425,13 +425,13 @@
         PRICEACTUAL, 
         PRICELIMIT, C_TAX_ID, S_RESOURCEASSIGNMENT_ID, DISCOUNT, 
         PRICESTD) 
-        VALUES (TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),now(),TO_NUMBER(?),now(),TO_NUMBER(?),
-        TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_DATE(?),TO_DATE(?),
-        ?,TO_NUMBER(?),TO_NUMBER(?),
-        TO_NUMBER(?), TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),
+        VALUES (?,?,?,now(),?,now(),?,
+        ?,TO_NUMBER(?),?,?,TO_DATE(?),TO_DATE(?),
+        ?,?,?,
+        ?, ?,?,?,
         TO_NUMBER(?), 
-        M_GET_OFFERS_PRICE(to_date(now()), TO_NUMBER(?), TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?)),
-        TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?),TO_NUMBER(?), 
+        M_GET_OFFERS_PRICE(to_date(now()), ?, ?,?,?,?),
+        TO_NUMBER(?), ?, ?,TO_NUMBER(?), 
         TO_NUMBER(?))
       ]]>
     </Sql>
@@ -471,8 +471,8 @@
       <![CDATA[
         INSERT INTO M_REQUISITIONORDER (M_REQUISITIONORDER_ID, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ISACTIVE,
         M_REQUISITIONLINE_ID, C_ORDERLINE_ID, QTY)
-        VALUES (TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),now(),TO_NUMBER(?),now(),TO_NUMBER(?),'Y',
-        TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?))
+        VALUES (?,?,?,now(),?,now(),?,'Y',
+        ?,?,TO_NUMBER(?))
       ]]>
     </Sql>
     <Parameter name="mRequisitionOrderId"/>
@@ -487,14 +487,14 @@
   <SqlMethod name="cOrderPost0" connection="true" type="callableStatement" return="object" object="RequisitionToOrderData">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        CALL C_Order_Post(TO_NUMBER(?))
+        CALL C_Order_Post(?)
       ]]></Sql>
       <Parameter name="adPinstanceId"></Parameter>
    </SqlMethod>
   <SqlMethod name="requisitionStatus" connection="true" type="callableStatement" return="object" object="RequisitionToOrderData">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        CALL M_RequisitionLine_Status(null, TO_NUMBER(?), TO_NUMBER(?))
+        CALL M_RequisitionLine_Status(null, TO_NUMBER(?), ?)
       ]]></Sql>
       <Parameter name="requisitionLineId"></Parameter>
       <Parameter name="userId"></Parameter>

@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,8 +30,8 @@
         SELECT DP.C_DEBT_PAYMENT_ID, L.NAME AS PAYMENTRULE, B.NAME AS BPARTNER, 
         Ad_Column_Identifier(to_char('C_Invoice'), to_char(i.C_Invoice_ID), to_char(?)) AS INVOICE, DP.DATEPLANNED, 
         DP.AMOUNT, C.ISO_CODE, DP.WRITEOFFAMT AS WRITEOFFAMT, DP.ISPAID, O.Name as Org, 
-        (CASE ? WHEN 'Y' THEN DP.C_DEBT_PAYMENT_ID ELSE -1 END) AS MARCAR_ID, 
-        (CASE ? WHEN 'Y' THEN -1 ELSE DP.C_DEBT_PAYMENT_ID END) AS DISABLE_INPUTS 
+        (CASE ? WHEN 'Y' THEN DP.C_DEBT_PAYMENT_ID ELSE '-1' END) AS MARCAR_ID, 
+        (CASE ? WHEN 'Y' THEN '-1' ELSE DP.C_DEBT_PAYMENT_ID END) AS DISABLE_INPUTS 
         FROM C_DEBT_PAYMENT DP left join AD_REF_LIST_V L on DP.PAYMENTRULE = L.VALUE
                                                         and L.AD_REFERENCE_ID = '195'
                                                         and L.AD_LANGUAGE = ?
@@ -58,7 +58,7 @@
     <Parameter name="userClient" optional="true" type="replace" after="AND DP.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="userOrg" optional="true" type="replace" after="AND DP.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="language"/>
-    <Parameter name="cBPartnerId" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID " text=" AND DP.C_BPARTNER_ID = TO_NUMBER(?) "/>
+    <Parameter name="cBPartnerId" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID " text=" AND DP.C_BPARTNER_ID = ? "/>
     <Parameter name="paymentrule" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID " text=" AND DP.PAYMENTRULE = ? "/>
     <Parameter name="planneddateFrom" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID "><![CDATA[ AND DP.DATEPLANNED >= TO_DATE(?) ]]></Parameter>
     <Parameter name="planneddateTo" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID "><![CDATA[ AND DP.DATEPLANNED <= TO_DATE(?) ]]></Parameter>
@@ -66,12 +66,12 @@
     <Parameter name="amountFrom" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID "><![CDATA[ AND DP.AMOUNT >= ? ]]></Parameter>
     <Parameter name="amountTo" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID "><![CDATA[ AND DP.AMOUNT <= ? ]]></Parameter>
     <Parameter name="amount" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID "><![CDATA[ AND ABS(DP.AMOUNT) < ? ]]></Parameter>
-    <Parameter name="adOrgId" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID " text=" AND DP.AD_Org_ID = TO_NUMBER(?) "/>
+    <Parameter name="adOrgId" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID " text=" AND DP.AD_Org_ID = ? "/>
   </SqlMethod>
   <SqlMethod name="bpartner" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT NAME FROM C_BPARTNER WHERE C_BPARTNER_ID = TO_NUMBER(?)
+      SELECT NAME FROM C_BPARTNER WHERE C_BPARTNER_ID=?
     </Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
@@ -80,7 +80,7 @@
     <Sql><![CDATA[
       SELECT COUNT(*) AS TOTAL
       FROM C_DEBT_PAYMENT DP 
-      WHERE DP.C_DEBT_PAYMENT_ID = TO_NUMBER(?) 
+      WHERE DP.C_DEBT_PAYMENT_ID = ? 
       AND C_DEBT_PAYMENT_STATUS(DP.C_Settlement_Cancel_ID, DP.Cancel_Processed, DP.Generate_Processed, 
       DP.IsPaid, DP.IsValid, DP.C_CashLine_ID, DP.C_BankStatementLine_ID)='P' 
       AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE DP.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID) 
@@ -92,8 +92,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE C_DEBT_PAYMENT SET UPDATED=now(), UPDATEDBY=TO_NUMBER(?), C_SETTLEMENT_CANCEL_ID=TO_NUMBER(?), WRITEOFFAMT=TO_NUMBER(?), ISPAID=? 
-        WHERE C_DEBT_PAYMENT_ID = TO_NUMBER(?)
+        UPDATE C_DEBT_PAYMENT SET UPDATED=now(), UPDATEDBY = ?, C_SETTLEMENT_CANCEL_id = ?, WRITEOFFAMT=TO_NUMBER(?), ISPAID=? 
+        WHERE C_DEBT_PAYMENT_ID = ?
       ]]>
     </Sql>
     <Parameter name="adUserId"/>

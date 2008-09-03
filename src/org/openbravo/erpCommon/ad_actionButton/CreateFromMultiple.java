@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -59,8 +59,6 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
       vars.setSessionValue("CreateFromMultiple|adProcessId", "800062");
 
       printPage_FS(response, vars);
-    } else if (vars.commandIn("FRAME2")) {
-      printPage_F2(response, vars);
     } else if (vars.commandIn("FRAME1")) {
       String strWindowId = vars.getGlobalVariable("inpWindowId", "CreateFromMultiple|windowId");
       String strSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
@@ -112,18 +110,6 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPage_F2(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Frame2");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_F2").createXmlDocument();
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-
   void callPrintPage(HttpServletResponse response, VariablesSecureApp vars, String strKey, String strWindowId, String strSOTrx, String strTabId, String strProcessId, String strBpartner, String strmWarehouseId) throws IOException, ServletException {
     if (strSOTrx.equals("Y")) { //Shipment
       printPageShipment(response, vars, strKey, strWindowId, strTabId, strSOTrx, strProcessId, strBpartner, strmWarehouseId);
@@ -146,8 +132,8 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
     if (strHelp.equals("")) discard[0] = new String("helpDiscard");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Receipt", discard).createXmlDocument();
     
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("help", strHelp);
     xmlDocument.setParameter("description", strDescription);
     xmlDocument.setParameter("key", strKey);
@@ -215,8 +201,8 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
     }
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Shipment", discard).createXmlDocument();
     
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("key", strKey);
     xmlDocument.setParameter("windowId", strWindowId);
     xmlDocument.setParameter("tabId", strTabId);

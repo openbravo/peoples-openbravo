@@ -124,8 +124,8 @@ public class GenerateHelp extends HttpSecureAppServlet {
       toolbar.prepareSimpleToolBarTemplate();
       xmlDocument.setParameter("toolbar", toolbar.toString());
       
-      xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-      xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars.getLanguage()));
       xmlDocument.setParameter("description", strDescription);
       xmlDocument.setParameter("help", strHelp);

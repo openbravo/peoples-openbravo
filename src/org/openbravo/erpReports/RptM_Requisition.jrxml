@@ -193,7 +193,7 @@
 FROM M_REQUISITION
 WHERE M_REQUISITION.M_REQUISITION_ID IN $P!{REQUISITION_ID}]]></queryString>
 
-	<field name="M_REQUISITION_ID" class="java.math.BigDecimal"/>
+	<field name="M_REQUISITION_ID" class="java.lang.String"/>
 	<field name="DOCUMENTNO" class="java.lang.String"/>
 	<field name="REQUESTER" class="java.lang.String"/>
 	<field name="DESCRIPTION" class="java.lang.String"/>

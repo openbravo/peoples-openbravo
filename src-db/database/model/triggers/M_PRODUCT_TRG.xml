@@ -26,9 +26,9 @@
    TYPE RECORD IS REF CURSOR;
    Cur_Defaults RECORD;
 
-    v_xTree_ID    NUMBER;
-    v_xParent_ID  NUMBER;
-    v_NextNo      NUMBER;
+    v_xTree_ID    varchar2(32);
+    v_xParent_ID  varchar2(32);
+    v_NextNo      VARCHAR2(32);
     v_ControlNo NUMBER;
 
 BEGIN
@@ -66,13 +66,13 @@ BEGIN
         WHERE  d.M_Product_Category_ID=:new.M_Product_Category_ID) LOOP
          --  Account
          INSERT INTO M_Product_Acct
-             (M_Product_ID, C_AcctSchema_ID,
+             (M_Product_Acct_ID, M_Product_ID, C_AcctSchema_ID,
              AD_Client_ID, AD_Org_ID, IsActive, Created, CreatedBy, Updated, UpdatedBy,
              P_Revenue_Acct, P_Expense_Acct, P_Asset_Acct, P_COGS_Acct,
     P_PurchasePriceVariance_Acct, P_InvoicePriceVariance_Acct,
     P_TradeDiscountRec_Acct, P_TradeDiscountGrant_Acct)
          VALUES
-             (:new.M_Product_ID, Cur_Defaults.C_AcctSchema_ID,
+             (get_uuid(), :new.M_Product_ID, Cur_Defaults.C_AcctSchema_ID,
              :new.AD_Client_ID, :new.AD_ORG_ID, 'Y', now(), :new.CreatedBy, now(), :new.UpdatedBy,
              Cur_Defaults.P_Revenue_Acct, Cur_Defaults.P_Expense_Acct, Cur_Defaults.P_Asset_Acct, Cur_Defaults.P_COGS_Acct,
     Cur_Defaults.P_PurchasePriceVariance_Acct, Cur_Defaults.P_InvoicePriceVariance_Acct,
@@ -83,10 +83,10 @@ BEGIN
 
      --  Create Translation Row
      INSERT INTO M_Product_Trl
-         (M_Product_ID, AD_Language, AD_Client_ID, AD_Org_ID,
+         (M_Product_Trl_ID, M_Product_ID, AD_Language, AD_Client_ID, AD_Org_ID,
          IsActive, Created, CreatedBy, Updated, UpdatedBy,
          Name, DocumentNote, IsTranslated)
-     SELECT :new.M_Product_ID, AD_Language, :new.AD_Client_ID, :new.AD_Org_ID,
+     SELECT get_uuid(), :new.M_Product_ID, AD_Language, :new.AD_Client_ID, :new.AD_Org_ID,
          :new.IsActive, :new.Created, :new.CreatedBy, :new.Updated, :new.UpdatedBy,
          :new.Name, :new.DocumentNote, 'N'
      FROM    AD_Language
@@ -107,12 +107,12 @@ BEGIN
 
      --  Insert into TreeNode
      INSERT INTO AD_TreeNodePR
-         (AD_Client_ID, AD_Org_ID,
+         (AD_TreeNodePR_ID, AD_Client_ID, AD_Org_ID,
          IsActive, Created, CreatedBy, Updated, UpdatedBy,
          AD_Tree_ID, Node_ID,
          Parent_ID, SeqNo)
      VALUES
-         (:new.AD_Client_ID, :new.AD_Org_ID,
+         (get_uuid(), :new.AD_Client_ID, :new.AD_Org_ID,
          :new.IsActive, :new.Created, :new.CreatedBy, :new.Updated, :new.UpdatedBy,
          v_xTree_ID, :new.M_Product_ID,
          v_xParent_ID, (CASE :new.IsSummary WHEN 'Y' THEN 100 ELSE 999 END));     -- Summary Nodes first

@@ -199,7 +199,7 @@ ORDER BY DATEACCT, IDENTIFIER]]></queryString>
 	<field name="VALUE" class="java.lang.String"/>
 	<field name="NAME" class="java.lang.String"/>
 	<field name="ID" class="java.math.BigDecimal"/>
-	<field name="AD_TABLE_ID" class="java.math.BigDecimal"/>
+	<field name="AD_TABLE_ID" class="java.lang.String"/>
 	<field name="DOCBASETYPE" class="java.lang.String"/>
 	<field name="TOTAL" class="java.lang.String"/>
 	<field name="DESCRIPTION" class="java.lang.String"/>

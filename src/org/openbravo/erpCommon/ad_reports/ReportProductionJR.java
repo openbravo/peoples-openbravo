@@ -18,6 +18,12 @@
  */
 package org.openbravo.erpCommon.ad_reports;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+
 import org.openbravo.erpCommon.utility.*;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -86,8 +92,8 @@ public class ReportProductionJR extends HttpSecureAppServlet {
     } 
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("dateFrom", strDateFrom);
     xmlDocument.setParameter("dateTo", strDateTo);
     xmlDocument.setParameter("rawMaterial", strRawMaterial);
@@ -108,7 +114,7 @@ public class ReportProductionJR extends HttpSecureAppServlet {
     response.setHeader("Content-disposition", "inline; filename=ProductionReportJR.pdf");
 
     String strTitle = "Production Report";
-	String strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " "+strDateFrom+" " + Utility.messageBD(this, "To", vars.getLanguage()) + " "+strDateTo;
+    String strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " "+strDateFrom+" " + Utility.messageBD(this, "To", vars.getLanguage()) + " "+strDateTo;
 
    // String strSubTitle = (!strDateFrom.equals("")?"From "+strDateFrom:"")  + (!strDateTo.equals("")?" to "+strDateTo:"");
     
@@ -126,6 +132,20 @@ public class ReportProductionJR extends HttpSecureAppServlet {
     
     if (log4j.isDebugEnabled()) log4j.debug("inpDateFrom:"+vars.getRequestGlobalVariable("inpDateFrom", "ReportProductionJR|DateFrom"));
     if (log4j.isDebugEnabled()) log4j.debug("inpDateTo:"+vars.getRequestGlobalVariable("inpDateTo", "ReportProductionJR|DateFrom"));
+    
+   
+    String strLanguage = vars.getLanguage();
+    String strBaseDesign = getBaseDesignPath(strLanguage);
+    
+    JasperReport jasperReportLines;
+    try {
+      JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign + "/org/openbravo/erpCommon/ad_reports/productionSubReport.jrxml");
+      jasperReportLines = JasperCompileManager.compileReport(jasperDesignLines);
+    } catch (JRException e) {
+      e.printStackTrace();
+      throw new ServletException(e.getMessage());
+    }
+    parameters.put("SR_LINES", jasperReportLines);
     
     parameters.put("REPORT_TITLE", strTitle);
     parameters.put("REPORT_SUBTITLE", strSubTitle);

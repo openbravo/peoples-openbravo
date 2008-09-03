@@ -53,7 +53,7 @@
       <Parameter name="level"/>
     <Parameter name="dateFrom"/>
     <Parameter name="dateTo"/>
-    <Parameter name="mProductId" optional="true" after="1=1"> AND pl.M_PRODUCT_ID = TO_NUMBER(?)</Parameter>
+    <Parameter name="mProductId" optional="true" after="1=1"> AND pl.M_PRODUCT_ID = ?</Parameter>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
@@ -85,7 +85,7 @@
               AND p.Processed = 'Y'
               AND p.MovementDate >= TO_DATE(?)
               AND p.MovementDate < TO_DATE(?)
-              AND pl.M_Product_ID = TO_NUMBER(?)
+              AND pl.M_Product_ID = ?
               GROUP BY pp.M_ProductionPlan_ID, wrp.MA_Sequence_ID
               HAVING SUM(pl.MovementQty) <> 0) rpp 
            LEFT OUTER JOIN
@@ -102,7 +102,7 @@
         WHERE auxSeq.M_Product_ID = M_Product.M_Product_ID
         GROUP BY auxSeq.M_Product_ID, M_Product.Name, M_Product.MA_ProcessPlan_ID) pr, AD_Ref_List
         WHERE pr.levelid = AD_Ref_List.value
-        AND Ad_Ref_List.AD_Reference_ID = 800097
+        AND Ad_Ref_List.AD_Reference_ID = '800097'
         ]]></Sql>
       <Parameter name="id"/>
       <Parameter name="level"/>
@@ -137,7 +137,7 @@
               AND p.Processed = 'Y'
               AND p.MovementDate >= TO_DATE(?)
               AND p.MovementDate < TO_DATE(?)
-              AND pl.M_Product_ID = TO_NUMBER(?)
+              AND pl.M_Product_ID = ?
               GROUP BY pp.M_ProductionPlan_ID, wrp.MA_Sequence_ID
               HAVING SUM(pl.MovementQty) <> 0) rpp 
            LEFT OUTER JOIN
@@ -151,7 +151,7 @@
         WHERE auxSeq.MA_Machine_ID = MA_Machine.MA_Machine_ID
         GROUP BY auxSeq.MA_Machine_ID, MA_Machine.name) pr, AD_Ref_List
         WHERE pr.levelid = AD_Ref_List.value
-        AND AD_Ref_List.AD_Reference_ID = 800097
+        AND AD_Ref_List.AD_Reference_ID = '800097'
         ]]></Sql>
      <Parameter name="level"/>
      <Parameter name="level"/>
@@ -185,7 +185,7 @@
               AND p.Processed = 'Y'
               AND p.MovementDate >= TO_DATE(?)
               AND p.MovementDate < TO_DATE(?)
-              AND pl.M_Product_ID = TO_NUMBER(?)
+              AND pl.M_Product_ID = ?
               GROUP BY pp.M_ProductionPlan_ID, wrp.MA_Sequence_ID
               HAVING SUM(pl.MovementQty) <> 0) rpp 
            LEFT OUTER JOIN
@@ -199,7 +199,7 @@
         WHERE auxSeq.MA_Indirect_Cost_ID = MA_Indirect_Cost.MA_Indirect_Cost_ID
         GROUP BY auxSeq.MA_Indirect_Cost_ID, MA_Indirect_Cost.name) pr, AD_Ref_List
         WHERE pr.levelid = AD_Ref_List.value
-        AND AD_Ref_List.AD_Reference_ID = 800097
+        AND AD_Ref_List.AD_Reference_ID = '800097'
         ]]></Sql>
      <Parameter name="level"/>
      <Parameter name="level"/>
@@ -233,7 +233,7 @@
               AND p.Processed = 'Y'
               AND p.MovementDate >= TO_DATE(?)
               AND p.MovementDate < TO_DATE(?)
-              AND pl.M_Product_ID = TO_NUMBER(?)
+              AND pl.M_Product_ID = ?
               GROUP BY pp.M_ProductionPlan_ID, wrp.MA_Sequence_ID
               HAVING SUM(pl.MovementQty) <> 0) rpp 
            LEFT OUTER JOIN
@@ -247,7 +247,7 @@
         WHERE auxSeq.C_Salary_Category_ID = C_Salary_Category.C_Salary_Category_ID
         GROUP BY auxSeq.C_Salary_Category_ID, C_Salary_Category.name) pr, AD_Ref_List
         WHERE pr.levelid =AD_Ref_List.value
-        AND AD_Ref_List.AD_Reference_ID = 800097
+        AND AD_Ref_List.AD_Reference_ID = '800097'
         ]]></Sql>
      <Parameter name="level"/>
      <Parameter name="level"/>
@@ -281,7 +281,7 @@
               AND p.Processed = 'Y'
               AND p.MovementDate >= TO_DATE(?)
               AND p.MovementDate < TO_DATE(?)
-              AND pl.M_Product_ID = TO_NUMBER(?)
+              AND pl.M_Product_ID = ?
               GROUP BY pp.M_ProductionPlan_ID, wrp.MA_Sequence_ID, pp.MA_CostCenter_Version_ID, pp.CalcCost
               HAVING SUM(pl.MovementQty) <> 0) rpp 
            GROUP BY rpp.MA_CostCenter_Version_ID, rpp.ComponentCost, rpp.MA_Sequence_ID
@@ -292,7 +292,7 @@
           AND MA_CostCenter_Version.MA_CostCenter_ID = MA_CostCenter.MA_CostCenter_ID
         GROUP BY auxSeq.MA_CostCenter_Version_ID, MA_CostCenter.name) pr, AD_Ref_List
         WHERE pr.levelid =AD_Ref_List.value
-        AND AD_Ref_List.AD_Reference_ID = 800097
+        AND AD_Ref_List.AD_Reference_ID = '800097'
         ]]></Sql>
      <Parameter name="level"/>
      <Parameter name="level"/>
@@ -305,7 +305,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     SELECT max(NAME) as name FROM C_BPARTNER 
-    WHERE C_BPARTNER_ID = TO_NUMBER(?)
+    WHERE C_BPARTNER_ID = ?
     </Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
@@ -313,7 +313,7 @@
   <SqlMethod name="mProductDescription" type="preparedStatement" return="String" default="">
      <SqlMethodComment></SqlMethodComment>
      <Sql>
-     SELECT MAX(NAME) AS NAME FROM M_PRODUCT WHERE M_PRODUCT_ID = TO_NUMBER(?)
+     SELECT MAX(NAME) AS NAME FROM M_PRODUCT WHERE M_PRODUCT_ID = ?
      </Sql>
      <Parameter name="cBpartnerId"/>
    </SqlMethod>

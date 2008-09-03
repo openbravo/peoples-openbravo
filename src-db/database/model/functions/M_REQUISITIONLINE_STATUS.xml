@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_REQUISITIONLINE_STATUS">
     <function name="M_REQUISITIONLINE_STATUS" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_requisitionline_id" type="NUMERIC" mode="in">
+      <parameter name="p_requisitionline_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_user_id" type="NUMERIC" mode="in">
+      <parameter name="p_user_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -30,8 +30,8 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1; -- 0=failure
-  v_Record_ID NUMBER;
-  v_User_ID NUMBER:=0;
+  v_Record_ID VARCHAR2(32);
+  v_User_ID VARCHAR2(32):='0';
 
   --  Parameter
   TYPE RECORD IS REF CURSOR;

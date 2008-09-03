@@ -35,7 +35,7 @@
         '' as DeliveryViaRule,
         '' as PaymentRulePO, '' as PO_PaymentTerm_ID
         FROM C_DocType d left join AD_Sequence s on d.DocNoSequence_ID=s.AD_Sequence_ID
-        WHERE C_DocType_ID = TO_NUMBER(?) 
+        WHERE C_DocType_ID = ? 
       ]]>
     </Sql>
     <Parameter name="cDoctypeId"/>
@@ -49,7 +49,7 @@
         DeliveryViaRule,
         PaymentRulePO,PO_PaymentTerm_ID
         FROM C_BPartner
-        WHERE C_BPartner_ID = TO_NUMBER(?)
+        WHERE C_BPartner_ID=?
       ]]>
     </Sql>
     <Parameter name="cBpartnerId"/>
@@ -59,7 +59,7 @@
     <Sql>
       <![CDATA[
       SELECT DOCSUBTYPESO FROM C_DOCTYPE
-      WHERE C_DOCTYPE_ID IN (SELECT C_DOCTYPETARGET_ID FROM C_ORDER WHERE C_ORDER_ID = TO_NUMBER(?))
+      WHERE C_DOCTYPE_ID IN (SELECT C_DOCTYPETARGET_ID FROM C_ORDER WHERE C_ORDER_ID = ?)
       ]]>
     </Sql>
     <Parameter name="cOrderId"/>
@@ -68,7 +68,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT DocumentNo FROM C_ORDER WHERE C_ORDER_ID = TO_NUMBER(?)
+      SELECT DocumentNo FROM C_ORDER WHERE C_ORDER_ID = ?
       ]]>
     </Sql>
     <Parameter name="cOrderId"/>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_PRICELIST_CREATE">
     <function name="M_PRICELIST_CREATE" type="NULL">
-      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -38,18 +38,18 @@
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     -- Parameter Variables
-    v_PriceList_Version_ID NUMBER;
+    v_PriceList_Version_ID VARCHAR2(32);
     v_DeleteOld CHAR(1):='N';
     --
-    v_Currency_ID NUMBER;
-    v_Client_ID NUMBER;
-    v_Org_ID NUMBER;
+    v_Currency_ID VARCHAR2(32);
+    v_Client_ID VARCHAR2(32);
+    v_Org_ID VARCHAR2(32);
     v_UpdatedBy NUMBER;
     v_StdPrecision NUMBER;
-    v_DiscountSchema_ID NUMBER;
-    v_PriceList_Version_Base_ID NUMBER;
+    v_DiscountSchema_ID VARCHAR2(32);
+    v_PriceList_Version_Base_ID VARCHAR2(32);
     --
-    v_NextNo NUMBER:=0;
+    v_NextNo VARCHAR2(32):=0;
     -- Get PL Parameter
     Cur_DiscountLine RECORD;
     rowcount NUMBER;
@@ -130,7 +130,7 @@
       -- All duplicate products
       Cur_Duplicates RECORD;
       -- All vendors of Product - expensive first
-      CURSOR Cur_Vendors (Product_ID NUMBER) IS
+      CURSOR Cur_Vendors (Product_ID VARCHAR) IS
         SELECT M_Product_ID,
           C_BPartner_ID
         FROM M_Product_PO
@@ -139,8 +139,8 @@
           AND M_Product_ID=Product_ID
         ORDER BY PriceList DESC;
         --
-        Product_ID NUMBER;
-        BPartner_ID NUMBER;
+        Product_ID VARCHAR2(32);
+        BPartner_ID VARCHAR2(32);
       BEGIN
         FOR Cur_Duplicates IN
           (SELECT DISTINCT M_Product_ID
@@ -238,7 +238,7 @@
             M_Product_PO po
           WHERE p.M_Product_ID=po.M_Product_ID
             AND(p.AD_Client_ID=v_Client_ID
-            OR p.AD_Client_ID=0)
+            OR p.AD_Client_ID='0')
             AND p.IsActive='Y'
             AND po.IsActive='Y'
             AND po.IsCurrentVendor='Y'  -- Optional Restrictions
@@ -384,7 +384,7 @@
           )
           ;
         -- --------
-        --  Rounding (AD_Reference_ID=155)
+        --  Rounding (AD_Reference_ID='155')
         -- --------
         v_ResultStr:=v_ResultStr || ',Round';
         UPDATE M_ProductPrice

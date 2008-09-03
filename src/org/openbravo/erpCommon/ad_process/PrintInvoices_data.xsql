@@ -38,7 +38,7 @@
     <![CDATA[
       SELECT HELP
       FROM AD_PROCESS
-      WHERE AD_PROCESS_ID = TO_NUMBER(?)
+      WHERE AD_PROCESS_ID = ?
      ]]></Sql>
     <Parameter name="adProcessId"/>
   </SqlMethod>

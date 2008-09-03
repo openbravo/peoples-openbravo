@@ -36,7 +36,7 @@
 				BPartnerUPC, BillTo_UPC, C_BPartner_Location_UPC, Vendor_UPC, Perform_Post, Paymentrule1, Paymentamount1, Paymentrule2, Paymentamount2
 				FROM I_Order
 				WHERE I_IsImported='N'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -49,20 +49,20 @@
 				UPDATE I_Order SET
 					BPartnerValue=?,
 					Name=?,
-					C_BPartner_ID=TO_NUMBER(?),
-					C_Location_ID=TO_NUMBER(?),
-					C_BPartner_Location_ID=TO_NUMBER(?),
-					billTo_ID=TO_NUMBER(?),
-					AD_User_ID=TO_NUMBER(?),
+					C_BPartner_id = ?,
+					C_Location_id = ?,
+					C_BPartner_Location_id = ?,
+					billTo_id = ?,
+					AD_User_id = ?,
 					Updated=TO_DATE(now()),
-					UpdatedBy=TO_NUMBER(?),
-					C_Order_ID=TO_NUMBER(?),
-					C_Tax_ID=TO_NUMBER(?),
-					C_OrderLine_ID=TO_NUMBER(?),
+					UpdatEDBY = ?,
+					C_Order_id = ?,
+					C_Tax_id = ?,
+					C_OrderLine_id = ?,
 					I_IsImported=?,
 					Processed=?,
 					Order_ReferenceNo=?
-				WHERE I_Order_ID = TO_NUMBER(?)
+				WHERE I_Order_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="bpartnervalue"/>
@@ -99,7 +99,7 @@
         FROM I_Order
 				WHERE I_IsImported='N'
 				AND C_BPartner_ID IS NULL
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -110,7 +110,7 @@
 		<Sql>
 			<![CDATA[
 			DELETE FROM I_Order WHERE I_IsImported='Y'
-			AND AD_Client_ID = TO_NUMBER(?)
+			AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -121,13 +121,13 @@
 		<Sql>
 			<![CDATA[
 				UPDATE I_Order 
-				SET AD_Client_ID = COALESCE(AD_Client_ID, TO_NUMBER(?)),
-				AD_Org_ID = COALESCE(AD_Org_ID, 0),
+				SET AD_Client_ID = COALESCE(AD_Client_ID, ?),
+				AD_Org_ID = COALESCE(AD_Org_ID, '0'),
 				IsActive = COALESCE(IsActive, 'Y'),
 				Created = COALESCE(Created, TO_DATE(now())),
-				CreatedBy = COALESCE(CreatedBy, 0),
+				CreatedBy = COALESCE(CreatedBy, '0'),
 				Updated = COALESCE(Updated, TO_DATE(now())),
-				UpdatedBy = COALESCE(UpdatedBy, 0),
+				UpdatedBy = COALESCE(UpdatedBy, '0'),
 				I_ErrorMsg = NULL,
 				I_IsImported = 'N' 
 				WHERE I_IsImported<>'Y' OR I_IsImported IS NULL
@@ -142,10 +142,10 @@
 			<![CDATA[
 		UPDATE I_Order 
 		SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'ERR=Invalid Org, '
-		WHERE (AD_Org_ID IS NULL OR AD_Org_ID=0
+		WHERE (AD_Org_ID IS NULL OR AD_Org_ID='0'
 		OR EXISTS (SELECT * FROM AD_Org oo WHERE I_Order.AD_Org_ID=oo.AD_Org_ID AND (oo.IsActive='N')))
 		AND I_IsImported<>'Y'
-		AND AD_Client_ID = TO_NUMBER(?)
+		AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -161,15 +161,15 @@
         AND (vendor_upc <> (
           select upc
           from ad_org
-          where ad_org_ID = TO_NUMBER(?)
+          where ad_org_id = ?
         )
         or not exists (
           select 1
           from ad_org
-          where ad_org_ID = TO_NUMBER(?)
+          where ad_org_id = ?
           and upc is not null
         )
-        and ad_client_ID = TO_NUMBER(?))
+        and ad_client_id = ?)
 			]]>
 		</Sql>
 		<Parameter name="adOrgId"/>
@@ -193,7 +193,7 @@
 				AND IsSOTrx='N'
 				AND DocTypeName IS NOT NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -215,7 +215,7 @@
 				AND IsSOTrx='Y'
 				AND DocTypeName IS NOT NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -236,7 +236,7 @@
 				WHERE C_DocType_ID IS NULL
 				AND DocTypeName IS NOT NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -251,7 +251,7 @@
 				WHERE C_DocType_ID IS NULL
 				AND DocTypeName IS NOT NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -272,7 +272,7 @@
 				WHERE C_DocType_ID IS NULL
 				AND IsSOTrx='N'
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -293,7 +293,7 @@
 				WHERE C_DocType_ID IS NULL
 				AND IsSOTrx='Y'
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -314,7 +314,7 @@
 			  WHERE C_DocType_ID IS NULL
 				AND IsSOTrx IS NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -328,7 +328,7 @@
 				SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'ERR=No DocType, '
 				WHERE C_DocType_ID IS NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -349,7 +349,7 @@
 				)
 				AND C_DocType_ID IS NOT NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -368,7 +368,7 @@
 				)
 				AND C_DocType_ID IS NOT NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -389,7 +389,7 @@
 				)
 				WHERE M_PriceList_ID IS NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -410,7 +410,7 @@
 				WHERE M_PriceList_ID IS NULL
 				AND C_Currency_ID IS NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -430,7 +430,7 @@
 				)
 				WHERE M_PriceList_ID IS NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -450,7 +450,7 @@
 				WHERE M_PriceList_ID IS NULL
 				AND C_Currency_ID IS NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -464,7 +464,7 @@
 				SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'ERR=No PriceList, '
 				WHERE M_PriceList_ID IS NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -484,7 +484,7 @@
 				WHERE C_PaymentTerm_ID IS NULL
 				AND PaymentTermValue IS NOT NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -504,7 +504,7 @@
 				WHERE C_PaymentTerm_ID IS NULL
 				AND I_Order.PaymentTermValue IS NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -518,7 +518,7 @@
 				SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'ERR=No PaymentTerm, '
 				WHERE C_PaymentTerm_ID IS NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -537,7 +537,7 @@
 				)
 				WHERE M_Warehouse_ID IS NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -562,7 +562,7 @@
 					HAVING COUNT(*)=1
 				)
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -576,7 +576,7 @@
 				SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'ERR=No Warehouse, '
 				WHERE M_Warehouse_ID IS NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -605,7 +605,7 @@
 				AND EMail IS NOT NULL
 				AND I_IsImported<>'Y'
 				AND BPartnerValue IS NULL
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -643,7 +643,7 @@
 				)
 				AND BPartnerValue IS NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -663,7 +663,7 @@
 				WHERE C_BPartner_ID IS NULL
 				AND BPartnerValue IS NOT NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -684,7 +684,7 @@
 				AND Name IS NOT NULL
 				AND I_IsImported<>'Y'
 				AND BPartnerValue IS NULL
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -704,7 +704,7 @@
 				WHERE C_BPartner_ID IS NULL
 				AND BPartnerValue IS NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -724,7 +724,7 @@
 				AND BPartnerValue IS NULL
 				AND Name IS NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -744,7 +744,7 @@
 				and c_bpartner_id is not null
 				and i_isimported <> 'Y'
 				and I_Order.issotrx = 'Y'
-				and ad_client_ID = TO_NUMBER(?)
+				and ad_client_id = ?
 				and exists (
 					select 1
 					from c_bpartner bp
@@ -769,7 +769,7 @@
 				where c_bpartner_id is not null
 				and i_isimported <> 'Y'
 				and I_Order.issotrx = 'N'
-				and ad_client_ID = TO_NUMBER(?)
+				and ad_client_id = ?
 				and exists (
 					select 1
 					from c_bpartner bp
@@ -794,7 +794,7 @@
 				where c_bpartner_id is not null
 				and i_isimported <> 'Y'
 				and I_Order.issotrx = 'Y'
-				and ad_client_ID = TO_NUMBER(?)
+				and ad_client_id = ?
 				and exists (
 					select 1
 					from c_bpartner bp
@@ -819,7 +819,7 @@
 				where c_bpartner_id is not null
 				and i_isimported <> 'Y'
 				and I_Order.issotrx = 'N'
-				and ad_client_ID = TO_NUMBER(?)
+				and ad_client_id = ?
 				and exists (
 					select 1
 					from c_bpartner bp
@@ -845,7 +845,7 @@
 				where i_isimported='N'
 				and I_Order.c_bpartner_location_id is null
 				and I_Order.c_bpartner_location_upc is not null
-				and ad_client_ID = TO_NUMBER(?)
+				and ad_client_id = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -865,7 +865,7 @@
 				where i_isimported='N'
 				and I_Order.billto_id is null
 				and I_Order.billto_upc is not null
-				and ad_client_ID = TO_NUMBER(?)
+				and ad_client_id = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -903,7 +903,7 @@
 				WHERE C_BPartner_ID IS NOT NULL
 				AND C_BPartner_Location_ID IS NULL
 				AND I_IsImported='N'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -924,7 +924,7 @@
 				WHERE C_BPartner_ID IS NOT NULL
 				AND BillTo_ID IS NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -945,7 +945,7 @@
 				WHERE C_BPartner_ID IS NOT NULL
 				AND C_BPartner_Location_ID IS NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -960,7 +960,7 @@
 				WHERE C_BPartner_ID IS NOT NULL
 				AND (BillTo_ID IS NULL OR C_BPartner_Location_ID IS NULL)
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -981,7 +981,7 @@
 				AND CountryCode IS NULL
 				AND C_Country_ID IS NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -1001,7 +1001,7 @@
 				AND C_Country_ID IS NULL
 				AND CountryCode IS NOT NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -1016,7 +1016,7 @@
 				WHERE C_BPartner_ID IS NULL
 				AND C_Country_ID IS NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -1037,7 +1037,7 @@
 				AND C_Region_ID IS NULL
 				AND RegionName IS NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -1059,7 +1059,7 @@
 				AND C_Region_ID IS NULL
 				AND RegionName IS NOT NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -1079,7 +1079,7 @@
 					AND c.HasRegion='Y'
 				)
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -1099,7 +1099,7 @@
 				WHERE M_Product_ID IS NULL
 				AND ProductValue IS NOT NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -1119,7 +1119,7 @@
 				WHERE M_Product_ID IS NULL
 				AND UPC IS NOT NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -1139,7 +1139,7 @@
 				WHERE M_Product_ID IS NULL
 				AND SKU IS NOT NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -1154,7 +1154,7 @@
 				WHERE M_Product_ID IS NULL
 				AND (ProductValue IS NOT NULL OR UPC IS NOT NULL OR SKU IS NOT NULL)
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -1173,7 +1173,7 @@
 				WHERE C_Tax_ID IS NULL
 				AND TaxIndicator IS NOT NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -1188,7 +1188,7 @@
 				WHERE C_Tax_ID IS NULL
 				AND TaxIndicator IS NOT NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -1202,7 +1202,7 @@
 				SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'ERR=No BPartner, '
 				WHERE C_BPartner_ID IS NULL
 				AND I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -1215,7 +1215,7 @@
         UPDATE I_Order
         SET I_IsImported = 'E',  I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||COALESCE(?,'')
         WHERE order_referenceno = ?
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
 			]]>
 		</Sql>
     <Parameter name="iErrormsg"/>
@@ -1238,7 +1238,7 @@
           BPartnerUPC, BillTo_UPC, C_BPartner_Location_UPC, Perform_Post, Paymentrule1, Paymentamount1, Paymentrule2, Paymentamount2
         FROM I_Order
 				WHERE I_IsImported='N'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 				ORDER BY C_BPartner_ID, BillTo_ID, C_BPartner_Location_ID, I_Order_ID
 			]]>
 		</Sql>
@@ -1251,7 +1251,7 @@
 				SELECT C_ORDER.C_ORDER_ID, C_ORDER.C_BPARTNER_ID, C_ORDER.BILLTO_ID, C_ORDER.C_BPARTNER_LOCATION_ID, C_ORDER.DOCUMENTNO, C_ORDER.M_PRICELIST_ID, C_ORDER.C_CURRENCY_ID, 
         MAX(C_ORDERLINE.LINE) AS LineDescription
         FROM C_ORDER, C_ORDERLINE
-        WHERE C_ORDER.AD_CLIENT_ID = TO_NUMBER(?)
+        WHERE C_ORDER.AD_CLIENT_ID = ?
         AND C_ORDER.DOCUMENTNO = ?
         AND TO_DATE(C_ORDER.DATEORDERED) = TO_DATE(?)
         AND C_ORDERLINE.C_ORDER_ID = C_ORDER.C_ORDER_ID
@@ -1269,7 +1269,7 @@
 				UPDATE I_Order
 				SET I_IsImported='N', Updated=TO_DATE(now())
 				WHERE I_IsImported<>'Y'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -1312,7 +1312,7 @@
       <![CDATA[
         select ad_user_id
         from ad_user
-        where c_bpartner_ID = TO_NUMBER(?)
+        where c_bpartner_id=?
         order by name
       ]]>
     </Sql>
@@ -1326,7 +1326,7 @@
         select ad_user_id
         from ad_user u, c_bpartner bp
         where bp.salesrep_id = u.c_bpartner_id
-        and bp.c_bpartner_ID = TO_NUMBER(?)
+        and bp.c_bpartner_id = ?
       ]]>
     </Sql>
     <Parameter name="cBpartnerId"/>
@@ -1346,7 +1346,7 @@
   <SqlMethod name="cOrderPost0" connection="true" type="callableStatement" return="object" object="ImportOrderData">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        CALL C_Order_Post(TO_NUMBER(?))
+        CALL C_Order_Post(?)
       ]]></Sql>
       <Parameter name="adPinstanceId"></Parameter>
    </SqlMethod>

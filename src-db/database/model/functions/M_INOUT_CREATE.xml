@@ -1,22 +1,22 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_INOUT_CREATE">
     <function name="M_INOUT_CREATE" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_inout_id" type="NUMERIC" mode="out">
+      <parameter name="p_inout_id" type="VARCHAR" mode="out">
         <default/>
       </parameter>
-      <parameter name="p_order_id" type="NUMERIC" mode="in">
+      <parameter name="p_order_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
-      <parameter name="p_invoice_id" type="NUMERIC" mode="in">
+      <parameter name="p_invoice_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
       <parameter name="p_forcedelivery" type="CHAR" mode="in">
         <default><![CDATA[N]]></default>
       </parameter>
-      <parameter name="p_locator_id" type="NUMERIC" mode="in">
+      <parameter name="p_locator_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -64,16 +64,16 @@
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     -- Record Info
-    v_AD_Org_ID NUMBER;
-    v_AD_Client_ID NUMBER;
+    v_AD_Org_ID VARCHAR2(32);
+    v_AD_Client_ID VARCHAR2(32);
     v_Ordered_Total NUMBER;
     v_Delivered_Total NUMBER;
-    v_Record_ID NUMBER:=NULL;
+    v_Record_ID VARCHAR2(32):=NULL;
     v_Selection VARCHAR2(1):='N';
     -- Orders to process  - one per warehouse
     Cur_Order RECORD;
     -- Order Lines per Warehouse
-    CURSOR Cur_OrderLine (Order_ID NUMBER, Warehouse_ID NUMBER, IsForced CHAR) IS
+    CURSOR Cur_OrderLine (Order_ID VARCHAR, Warehouse_ID VARCHAR, IsForced CHAR) IS
     SELECT *
     FROM C_ORDERLINE l
     WHERE C_Order_ID=Order_ID -- Parameter
@@ -92,7 +92,7 @@
       C_ORDER o
     WHERE s.M_Product_ID=l.M_Product_ID AND
       s.M_Locator_ID=loc.M_Locator_ID AND
-      loc.M_Warehouse_ID=l.M_Warehouse_ID AND(s.M_AttributeSetInstance_ID=COALESCE(l.M_AttributeSetInstance_ID, 0) OR
+      loc.M_Warehouse_ID=l.M_Warehouse_ID AND(s.M_AttributeSetInstance_ID=COALESCE(l.M_AttributeSetInstance_ID, '0') OR
       l.M_AttributeSetInstance_ID IS NULL) AND
       l.C_Order_ID=o.C_Order_ID -- Delivery Rule: (L)ine, (O)rder
     GROUP BY o.DeliveryRule
@@ -113,7 +113,7 @@
       l.M_Product_ID IS NULL)) --
     ORDER BY M_Product_ID;
     ol Cur_OrderLine%ROWTYPE;
-    CURSOR Cur_Storage (p_Product NUMBER, p_Warehouse NUMBER, p_UOM NUMBER, p_Product_UOM NUMBER, p_Attribute NUMBER) IS
+    CURSOR Cur_Storage (p_Product varchar, p_Warehouse varchar, p_UOM varchar, p_Product_UOM varchar, p_Attribute varchar) IS
     SELECT T.C_UOM_ID,
       T.M_LOCATOR_ID,
       T.M_ATTRIBUTESETINSTANCE_ID,
@@ -126,15 +126,15 @@
       T.M_LOCATOR_ID=L.M_LOCATOR_ID AND
       L.M_WAREHOUSE_ID=p_Warehouse AND
       T.C_UOM_ID=p_UOM AND
-      COALESCE(T.M_PRODUCT_UOM_ID, 0)=COALESCE(p_Product_UOM, 0) AND
-      COALESCE(T.M_ATTRIBUTESETINSTANCE_ID, 0)=COALESCE(p_Attribute, COALESCE(T.M_ATTRIBUTESETINSTANCE_ID, 0)) AND
+      COALESCE(T.M_PRODUCT_UOM_ID, '0')=COALESCE(p_Product_UOM, '0') AND
+      COALESCE(T.M_ATTRIBUTESETINSTANCE_ID, '0')=COALESCE(p_Attribute, COALESCE(T.M_ATTRIBUTESETINSTANCE_ID, '0')) AND
       COALESCE(T.QtyOnHand, 0)<>0
     ORDER BY L.PRIORITYNO,
       T.M_ATTRIBUTESETINSTANCE_ID;
     v_storage Cur_Storage%ROWTYPE;
     --
-    v_NextNo NUMBER;
-    v_DocType_ID NUMBER;
+    v_NextNo varchar2(32);
+    v_DocType_ID VARCHAR2(32);
     v_DocumentNo VARCHAR2(40) ;
     v_Qty NUMBER;
     --MODIFIED BY F.IRIAZABAL
@@ -178,7 +178,7 @@
         WHERE i.AD_PInstance_ID=p_PInstance_ID
         ORDER BY p.SeqNo) LOOP
         IF(Cur_Parameter.ParameterName='AD_Org_ID') THEN
-          v_AD_Org_ID:=Cur_Parameter.P_Number;
+          v_AD_Org_ID:=Cur_Parameter.P_String;
           DBMS_OUTPUT.PUT_LINE('  AD_Org_ID=' || v_AD_Org_ID) ;
         ELSIF(Cur_Parameter.ParameterName='Selection') THEN
           v_Selection:=Cur_Parameter.P_String;
@@ -200,7 +200,7 @@
       IF(NOT CREATE_FROM_INVOICE) THEN
         -- May be NULL or 0
         IF(v_Record_ID IS NULL) THEN
-          v_Record_ID:=0;
+          v_Record_ID:='0';
         END IF;
         IF(v_Selection IS NULL) THEN
           v_Selection:='N';
@@ -209,7 +209,7 @@
       IF(NOT CREATE_FROM_INVOICE) THEN
         /**************************************************************************
         * Order Loop goes though all open orders, where we would need to ship something
-        * (if v_Record_ID = 0)
+        * (if v_Record_ID = '0')
         *************************************************************************/
         FOR Cur_Order IN
           (SELECT o.AD_Client_ID, o.AD_Org_ID, o.C_Order_ID, o.IsSOTrx,
@@ -223,7 +223,7 @@
            FROM C_ORDER o INNER JOIN C_ORDERLINE l ON(o.C_Order_ID=l.C_Order_ID) --  Orders are IP  or CO if Standard Orders
            WHERE(o.DocStatus='IP' OR(o.DocStatus='CO'
                                      AND o.IsDelivered='N'
-                                     AND v_Record_ID=0)) -- Sales Orders Only and not Offers
+                                     AND v_Record_ID='0')) -- Sales Orders Only and not Offers
                  AND o.IsSOTrx='Y'
                  AND o.C_DocType_ID IN (SELECT C_DocType_ID
                                         FROM C_DOCTYPE
@@ -237,7 +237,7 @@
                AND(v_AD_Org_ID IS NULL OR
                    v_AD_Org_ID=o.AD_Org_ID) -- Specific order or all open orders
                AND(o.C_Order_ID=v_Record_ID -- Parameter
-                   OR(v_Record_ID=0
+                   OR(v_Record_ID='0'
                       AND EXISTS (SELECT *
                                   FROM C_ORDERLINE ll
                                   WHERE o.C_Order_ID=ll.C_Order_ID
@@ -296,7 +296,7 @@
             IF(v_DocumentNo IS NULL) THEN
               Ad_Sequence_Doc('DocumentNo_M_InOut', Cur_Order.AD_Client_ID, 'Y', v_DocumentNo) ;
             END IF;
-            --RAISE_APPLICATION_ERROR(-20100,'el numero documento es:'||COALESCE(v_DocumentNo,0)||' El doctypeId es: '||COALESCE(v_DocType_ID,0)||' El cOrderId es: '||COALESCE(Cur_Order.C_Order_ID,0));
+            --RAISE_APPLICATION_ERROR(-20100,'el numero documento es:'||COALESCE(v_DocumentNo,0)||' El doctypeId es: '||COALESCE(v_DocType_ID,0)||' El cOrderId es: '||COALESCE(Cur_Order.C_Order_ID,'0'));
             --
             DBMS_OUTPUT.PUT_LINE('  InOut_ID=' || p_InOut_ID || ', DocumentNo=' || v_DocumentNo || ', Ship_DocType_ID=' || v_DocType_ID || ', Order_DocType_ID=' || Cur_Order.C_DocType_ID) ;
             v_ResultStr:='InsertInOut ' || p_InOut_ID;
@@ -315,8 +315,8 @@
               DELIVERY_LOCATION_ID) -- Added by Rafa Roda to include delivery location
             VALUES
               (p_InOut_ID, Cur_Order.C_Order_ID, Cur_Order.IsSOTrx, Cur_Order.AD_Client_ID,
-              Cur_Order.AD_Org_ID, 'Y', now(), 0,
-              now(), 0, v_DocumentNo, v_DocType_ID,
+              Cur_Order.AD_Org_ID, 'Y', now(), '0',
+              now(), '0', v_DocumentNo, v_DocType_ID,
               Cur_Order.Description, 'N', 'C-', now(),
               now(), Cur_Order.C_BPartner_ID, Cur_Order.C_BPartner_Location_ID, Cur_Order.AD_User_ID,
               Cur_Order.M_Warehouse_ID, Cur_Order.POReference, Cur_Order.DateOrdered, Cur_Order.DeliveryRule,
@@ -333,11 +333,11 @@
             * for all qualifying order lines
             */
             DECLARE
-              v_Product_old NUMBER;
-              v_Warehouse_old NUMBER;
-              v_UOM_old NUMBER;
-              v_Attribute_old NUMBER;
-              v_Product_UOM_old NUMBER;
+              v_Product_old varchar2(32);
+              v_Warehouse_old varchar2(32);
+              v_UOM_old varchar2(32);
+              v_Attribute_old varchar2(32);
+              v_Product_UOM_old varchar2(32);
               v_QtyStorage NUMBER:=0;
             BEGIN
               LOOP
@@ -369,7 +369,7 @@
                   --
                   DECLARE
                     v_LocatorQty NUMBER;
-                    v_Locator_ID NUMBER(10) ;
+                    v_Locator_ID VARCHAR2(32) ;
                     v_IsStocked NUMBER:=0;
                   BEGIN
                     -- Is it a standard stocked product?
@@ -388,8 +388,8 @@
                         OR(v_Product_old<>ol.M_Product_ID
                            OR v_Warehouse_old<>ol.M_Warehouse_ID
                            OR v_UOM_old<>ol.C_UOM_ID
-                           OR COALESCE(v_Attribute_old, 0)<>COALESCE(ol.M_AttributeSetInstance_ID, 0)
-                           OR COALESCE(v_Product_UOM_old, 0)<>COALESCE(ol.M_Product_UOM_ID, 0)) THEN
+                           OR COALESCE(v_Attribute_old, '0')<>COALESCE(ol.M_AttributeSetInstance_ID, '0')
+                           OR COALESCE(v_Product_UOM_old, '0')<>COALESCE(ol.M_Product_UOM_ID, '0')) THEN
                         v_Product_old:=ol.M_Product_ID;
                         v_Warehouse_old:=ol.M_Warehouse_ID;
                         v_UOM_old:=ol.C_UOM_ID;
@@ -440,7 +440,7 @@
                             VALUES
                               (v_NextNo, v_lines, p_InOut_ID, ol.C_OrderLine_ID,
                               ol.AD_Client_ID, ol.AD_Org_ID, 'Y', now(),
-                              0, now(), 0, ol.M_Product_ID,
+                              '0', now(), '0', ol.M_Product_ID,
                               v_storage.C_UOM_ID, v_storage.M_Locator_ID, v_LocatorQty, ol.Description,
                               'N',
                               --MODIFIED BY F.IRIAZABAL
@@ -487,7 +487,7 @@
                         VALUES
                           (v_NextNo, v_lines, p_InOut_ID, ol.C_OrderLine_ID,
                           ol.AD_Client_ID, ol.AD_Org_ID, 'Y', now(),
-                          0, now(), 0, ol.M_Product_ID,
+                          '0', now(), '0', ol.M_Product_ID,
                           ol.C_UOM_ID, v_Locator_ID, v_Qty, ol.Description,
                           'N',
                           --MODIFIED BY F.IRIAZABAL
@@ -511,7 +511,7 @@
                       VALUES
                         (v_NextNo, v_lines, p_InOut_ID, ol.C_OrderLine_ID,
                         ol.AD_Client_ID, ol.AD_Org_ID, 'Y', now(),
-                        0, now(), 0, ol.M_Product_ID,
+                        '0', now(), '0', ol.M_Product_ID,
                         ol.C_UOM_ID, NULL, v_Qty, ol.Description,
                         'N',
                         --MODIFIED BY F.IRIAZABAL
@@ -586,7 +586,7 @@
         DECLARE
           Cur_Invoice RECORD;
           Cur_Lines RECORD;
-          v_Warehouse_ID NUMBER;
+          v_Warehouse_ID VARCHAR2(32);
           v_IsDocNoControlled CHAR(1) ;
         BEGIN
           FOR Cur_Invoice IN
@@ -630,7 +630,7 @@
             VALUES
               (p_InOut_ID, NULL, Cur_Invoice.IsSoTrx, Cur_Invoice.C_Invoice_ID,
               Cur_Invoice.AD_Client_ID, Cur_Invoice.AD_Org_ID, 'Y', now(),
-              0, now(), 0, v_DocumentNo,
+              '0', now(), '0', v_DocumentNo,
               v_DocType_ID, Cur_Invoice.Description, 'N', 'V+',
               Cur_Invoice.DateInvoiced, Cur_Invoice.DateInvoiced, Cur_Invoice.C_BPartner_ID, Cur_Invoice.C_BPartner_Location_ID,
               Cur_Invoice.AD_User_ID, v_Warehouse_ID, Cur_Invoice.POReference, Cur_Invoice.DateInvoiced,
@@ -664,7 +664,7 @@
               VALUES
                 (v_NextNo, Cur_Lines.Line, p_InOut_ID, Cur_Lines.C_OrderLine_ID,
                 Cur_Lines.AD_Client_ID, Cur_Lines.AD_Org_ID, 'Y', now(),
-                0, now(), 0, Cur_Lines.M_Product_ID,
+                '0', now(), '0', Cur_Lines.M_Product_ID,
                 Cur_Lines.C_UOM_ID, p_Locator_ID, Cur_Lines.QtyInvoiced, Cur_Lines.Description,
                 'Y',
                 --MODIFIED BY F.IRIAZABAL

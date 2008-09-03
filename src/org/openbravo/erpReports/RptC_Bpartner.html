@@ -22,11 +22,11 @@
 <LINK rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon"/>
 <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Popup/Popup.css" id="paramCSS"/>
 
-<script language="JavaScript" type="text/javascript" id="paramDirection">
-var baseDirection = "../../../../../web/";
+<script language="JavaScript" type="text/javascript" id="paramDirectory">
+var baseDirectory = "../../../../../web/";
 </script>
 <script language="JavaScript" type="text/javascript" id="paramLanguage">
-  var LNG_POR_DEFECTO = "en_US";
+  var defaultLang = "en_US";
 </script>
 <SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
@@ -70,12 +70,12 @@ function showHideLayer(id, imageId) {
 }
 
 
-function actualizarDatos(CommandValue, id) {
+function updateData(CommandValue, id) {
   var frm = document.frmMain;
   frm.inpProductTemplate.value = id;
   frm.inpTypeDocument.value = id;
-  var datosLayer = readLayer("returnText" + id, true);
-  if (datosLayer==null || datosLayer=="") {
+  var dataLayer = readLayer("returnText" + id, true);
+  if (dataLayer==null || dataLayer=="") {
     paramXMLRequest = new Array('returnText' + id, 'buttonTree' + id);
     return submitXmlHttpRequest(callback, frm, CommandValue, "RptC_Bpartner.pdf", false);
   } else {
@@ -120,7 +120,7 @@ function resizeAreaBpartner() {
             <tr class="Popup_NavBar_bg"><td></td>
               <td class="Popup_NavBar_separator_cell"></td>
               <td class="Popup_NavBar_bg_logo_left"></td>
-              <td class="Popup_NavBar_bg_logo" width="1" onclick="abrirNuevoBrowser('http://www.openbravo.com', 'Openbravo');return false;"><IMG src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
+              <td class="Popup_NavBar_bg_logo" width="1" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;"><IMG src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
               <td class="Popup_NavBar_bg_logo_right"></td>
               <td class="Popup_NavBar_Popup_title_cell"><span>Business Partner Card</span></td>
               <td class="Popup_NavBar_separator_cell"></td>
@@ -314,7 +314,7 @@ function resizeAreaBpartner() {
 <TABLE width="100%" border="0" >
 <TR >
 <TD width="33%" >
-<A href="#" onclick="actualizarDatos('OPENDOCUMENT', 'oo');return false;" onmouseover="window.status='Open';return true;" onmouseout="window.status='';return true;" id="fieldLeve2">
+<A href="#" onclick="updateData('OPENDOCUMENT', 'oo');return false;" onmouseover="window.status='Open';return true;" onmouseout="window.status='';return true;" id="fieldLeve2">
 <SPAN id="buttonTreeoo" class="datawarehouseclose"></SPAN></A>
 <SPAN class="LabelText">Orders until</SPAN>
 <SPAN  id="paramSysdate" class="LabelText">21/03/2005</SPAN></TD>
@@ -340,7 +340,7 @@ function resizeAreaBpartner() {
 <TABLE width="100%" border="0" >
 <TR >
 <TD width="33%" >
-<A href="#" onclick="actualizarDatos('OPENDOCUMENT', 'nn');return false;" onmouseover="window.status='Open';return true;" onmouseout="window.status='';return true;" id="fieldLeve4">
+<A href="#" onclick="updateData('OPENDOCUMENT', 'nn');return false;" onmouseover="window.status='Open';return true;" onmouseout="window.status='';return true;" id="fieldLeve4">
 <SPAN id="buttonTreenn" class="datawarehouseclose"></SPAN></A>
 <SPAN class="LabelText">Shipments</SPAN>
 <SPAN  id="paramSysdate" class="LabelText">xx21/03/2005</SPAN></TD>
@@ -366,7 +366,7 @@ function resizeAreaBpartner() {
 <TABLE width="100%" border="0" >
 <TR >
 <TD width="33%" >
-<A href="#" onclick="actualizarDatos('OPENDOCUMENT', 'ii');return false;" onmouseover="window.status='Open';return true;" onmouseout="window.status='';return true;" id="fieldLeve3">
+<A href="#" onclick="updateData('OPENDOCUMENT', 'ii');return false;" onmouseover="window.status='Open';return true;" onmouseout="window.status='';return true;" id="fieldLeve3">
 <SPAN id="buttonTreeii" class="datawarehouseclose"></SPAN></A>
 <SPAN class="LabelText">Invoices to</SPAN>
 <SPAN  id="paramSysdate" class="LabelText">21/03/2005</SPAN></TD>
@@ -397,7 +397,7 @@ function resizeAreaBpartner() {
 <TD width="7%" >
 <SPAN  id="fieldAmountABC" class="LabelText">xx56789</SPAN></TD>
 <TD width="8%" >
-<A href="#" onclick="actualizarDatos('OPENDOCUMENT', 'abc');return false;" onmouseover="window.status='Open';return true;" onmouseout="window.status='';return true;" id="fieldLeve5">
+<A href="#" onclick="updateData('OPENDOCUMENT', 'abc');return false;" onmouseover="window.status='Open';return true;" onmouseout="window.status='';return true;" id="fieldLeve5">
 <SPAN id="buttonTreeabc" class="datawarehouseclose"></SPAN></A>
 <SPAN class="LabelText">Total</SPAN>
 <SPAN id="fieldTotalABC" class="LabelText">xx56789</SPAN></TD>
@@ -408,7 +408,7 @@ function resizeAreaBpartner() {
 <TD width="6%" >
 <SPAN id="fieldAmountrefABC" class="LabelText">xx34566</SPAN></TD>
 <TD width="8%" >
-<A href="#" onclick="actualizarDatos('OPENDOCUMENT', 'abcr');return false;" onmouseover="window.status='Open';return true;" onmouseout="window.status='';return true;" id="fieldLeve6">
+<A href="#" onclick="updateData('OPENDOCUMENT', 'abcr');return false;" onmouseover="window.status='Open';return true;" onmouseout="window.status='';return true;" id="fieldLeve6">
 <SPAN id="buttonTreeabcr" class="datawarehouseclose"></SPAN></A>
 <SPAN class="LabelText">Total</SPAN>
 <SPAN  id="fieldTotalRefABC" class="LabelText">xx56789</SPAN></TD>
@@ -606,7 +606,7 @@ function resizeAreaBpartner() {
 <TR>
 <TD width="91%" >
 <SPAN  class="LabelText">
-<A href="#" onclick="actualizarDatos('OPEN', 'xx');return false;" onmouseover="window.status='Open';return true;" onmouseout="window.status='';return true;" id="fieldLevel">
+<A href="#" onclick="updateData('OPEN', 'xx');return false;" onmouseover="window.status='Open';return true;" onmouseout="window.status='';return true;" id="fieldLevel">
 <SPAN id="buttonTreexx" class="datawarehouseclose"></SPAN></A>
 <SPAN id="fieldNameTemplate" class="LabelText">xxAutoventa</SPAN></SPAN></TD></TR></TABLE>
 <SPAN id="returnTextsx"></SPAN></DIV></DIV></TD>

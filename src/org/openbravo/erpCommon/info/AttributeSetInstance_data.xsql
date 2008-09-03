@@ -37,7 +37,7 @@
                                                                  and A.ISACTIVE= 'Y')
                                 on a_s.M_ATTRIBUTESET_ID = a_u.M_ATTRIBUTESET_ID
         WHERE A_S.ISACTIVE = 'Y'
-        AND A_S.M_ATTRIBUTESET_ID = TO_NUMBER(?) 
+        AND A_S.M_ATTRIBUTESET_ID = ? 
         ORDER BY A_U.SEQNO
       ]]></Sql>
         <Parameter name="mAttributesetId"/>
@@ -52,7 +52,7 @@
         SELECT A_S.DESCRIPTION, A_S.GUARANTEEDATE, A_S.LOT, A_S.SERNO, A_S.M_ATTRIBUTESET_ID, 
         A.M_ATTRIBUTEVALUE_ID, A.M_ATTRIBUTE_ID, A.VALUE, A_S.ISLOCKED, A_S.LOCK_DESCRIPTION 
         FROM M_ATTRIBUTESETINSTANCE A_S left join M_ATTRIBUTEINSTANCE A on A_S.M_ATTRIBUTESETINSTANCE_ID = A.M_ATTRIBUTESETINSTANCE_ID
-        WHERE A_S.M_ATTRIBUTESETINSTANCE_ID = TO_NUMBER(?)
+        WHERE A_S.M_ATTRIBUTESETINSTANCE_ID = ?
       ]]></Sql>
         <Parameter name="mAttributesetinstanceId"/>
    </SqlMethod>
@@ -61,7 +61,7 @@
       <Sql> <![CDATA[
         SELECT M_ATTRIBUTEVALUE_ID AS VALUE, NAME, DESCRIPTION 
         FROM M_ATTRIBUTEVALUE
-        WHERE M_ATTRIBUTE_ID = TO_NUMBER(?)
+        WHERE M_ATTRIBUTE_ID = ?
         AND ISACTIVE='Y'
         ORDER BY NAME
       ]]></Sql>
@@ -73,7 +73,7 @@
         SELECT m.m_attributesetinstance_id 
         FROM m_storage_detail m, M_AttributeSetInstance a 
         WHERE m.M_ATTRIBUTESETINSTANCE_ID = a.M_ATTRIBUTESETINSTANCE_ID 
-        and m.M_LOCATOR_ID = TO_NUMBER(?) 
+        and m.M_LOCATOR_ID = ? 
         and upper(description) = upper(?)
       ]]></Sql>
         <Parameter name="mLocatorId"/>
@@ -85,7 +85,7 @@
         SELECT m_attributesetinstance_id 
         FROM M_AttributeSetInstance 
         WHERE (upper(description) = upper(?) OR ((description IS NULL) AND (? IS NULL)))
-        AND M_AttributeSet_ID = TO_NUMBER(?)
+        AND M_AttributeSet_ID = ?
       ]]></Sql>
         <Parameter name="description"/>
         <Parameter name="description"/>
@@ -94,7 +94,7 @@
    <SqlMethod name="selectDescription" type="preparedStatement" return="String" default="">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
-        SELECT DESCRIPTION FROM M_ATTRIBUTESETINSTANCE WHERE M_ATTRIBUTESETINSTANCE_ID = TO_NUMBER(?)
+        SELECT DESCRIPTION FROM M_ATTRIBUTESETINSTANCE WHERE M_ATTRIBUTESETINSTANCE_ID = ?
       ]]></Sql>
         <Parameter name="mAttributesetinstanceId"/>
    </SqlMethod>
@@ -103,7 +103,7 @@
       <Sql> <![CDATA[
         SELECT PREFIX||CURRENTNEXT||SUFFIX AS TOTAL
         FROM M_LOTCTL 
-        WHERE M_LOTCTL_ID = TO_NUMBER(?)
+        WHERE M_LOTCTL_ID = ?
       ]]></Sql>
         <Parameter name="mLotctlId"/>
    </SqlMethod>
@@ -112,7 +112,7 @@
       <Sql> <![CDATA[
         SELECT CURRENTNEXT AS TOTAL
         FROM M_SERNOCTL 
-        WHERE M_SERNOCTL_ID = TO_NUMBER(?)
+        WHERE M_SERNOCTL_ID = ?
       ]]></Sql>
         <Parameter name="mSernoctlId"/>
    </SqlMethod>
@@ -122,7 +122,7 @@
       <Sql> <![CDATA[
         SELECT CURRENTNEXT AS TOTAL
         FROM M_SERNOCTL 
-        WHERE M_SERNOCTL_ID = TO_NUMBER(?)
+        WHERE M_SERNOCTL_ID = ?
       ]]></Sql>
         <Parameter name="mSernoctlId"/>
    </SqlMethod>
@@ -130,7 +130,7 @@
    <SqlMethod name="selectProductAttr" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
-        SELECT m_attributeset_id, m_attributesetinstance_id FROM M_PRODUCT WHERE m_product_ID = TO_NUMBER(?)
+        SELECT m_attributeset_id, m_attributesetinstance_id FROM M_PRODUCT WHERE m_product_id=?
       ]]></Sql>
         <Parameter name="mProductId"/>
    </SqlMethod>
@@ -139,7 +139,7 @@
       <Sql> <![CDATA[
         SELECT s.M_ATTRIBUTESET_ID
         FROM M_ATTRIBUTESETINSTANCE s
-        WHERE s.M_ATTRIBUTESETINSTANCE_ID = TO_NUMBER(?)
+        WHERE s.M_ATTRIBUTESETINSTANCE_ID = ?
       ]]></Sql>
         <Parameter name="mAttributesetinstanceId"/>
    </SqlMethod>
@@ -152,7 +152,7 @@
                 AND M_ATTRIBUTEUSE.M_ATTRIBUTESET_ID = A_S.M_ATTRIBUTESET_ID) WHEN 'Y' THEN 1 ELSE 0 END) END) END) END) END) AS TOTAL 
         FROM M_ATTRIBUTESET A_S
         WHERE A_S.ISACTIVE = 'Y'
-        AND A_S.M_ATTRIBUTESET_ID = TO_NUMBER(?) 
+        AND A_S.M_ATTRIBUTESET_ID = ? 
       ]]></Sql>
         <Parameter name="mAttributesetId"/>
    </SqlMethod>
@@ -165,7 +165,7 @@
                                 left join M_ATTRIBUTE A on A_U.M_ATTRIBUTE_ID = A.M_ATTRIBUTE_ID 
                                                         and A_U.ISACTIVE = 'Y'
         WHERE  A_S.ISACTIVE = 'Y'
-        AND A_S.M_ATTRIBUTESET_ID = TO_NUMBER(?) 
+        AND A_S.M_ATTRIBUTESET_ID = ? 
         ORDER BY A_U.SEQNO
       ]]></Sql>
         <Parameter name="mAttributesetId"/>
@@ -173,7 +173,7 @@
    <SqlMethod name="selectAttributeValue" type="preparedStatement" return="String" default="">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
-        SELECT NAME FROM M_ATTRIBUTEVALUE WHERE M_ATTRIBUTEVALUE_ID = TO_NUMBER(?)
+        SELECT NAME FROM M_ATTRIBUTEVALUE WHERE M_ATTRIBUTEVALUE_ID=?
       ]]></Sql>
         <Parameter name="mAttributevalueId"/>
    </SqlMethod>
@@ -182,7 +182,7 @@
       <Sql> <![CDATA[
         INSERT INTO M_ATTRIBUTEINSTANCE (M_ATTRIBUTESETINSTANCE_ID, M_ATTRIBUTE_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, 
         CREATEDBY, UPDATED, UPDATEDBY, M_ATTRIBUTEVALUE_ID, VALUE) 
-        VALUES ( TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', now(), TO_NUMBER(?), now(), TO_NUMBER(?), TO_NUMBER(?), ?)
+        VALUES ( ?, ?, ?, ?, 'Y', now(), ?, now(), ?, ?, ?)
       ]]></Sql>
         <Parameter name="mAttributesetinstanceId"/>
         <Parameter name="mAttributeId"/>
@@ -196,9 +196,9 @@
    <SqlMethod name="update" type="preparedStatement" connection="true" return="rowCount">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
-        UPDATE M_ATTRIBUTEINSTANCE SET UPDATED=now(), UPDATEDBY=TO_NUMBER(?), M_ATTRIBUTEVALUE_ID=TO_NUMBER(?), VALUE=? 
-        WHERE M_ATTRIBUTESETINSTANCE_ID = TO_NUMBER(?) 
-        AND M_ATTRIBUTE_ID = TO_NUMBER(?) 
+        UPDATE M_ATTRIBUTEINSTANCE SET UPDATED=now(), UPDATEDBY = ?, M_ATTRIBUTEVALUE_id = ?, VALUE=? 
+        WHERE M_ATTRIBUTESETINSTANCE_ID = ? 
+        AND M_ATTRIBUTE_ID = ? 
         AND ISACTIVE = 'Y'
       ]]></Sql>
         <Parameter name="adUserId"/>
@@ -212,7 +212,7 @@
       <Sql> <![CDATA[
         INSERT INTO M_ATTRIBUTESETINSTANCE (M_ATTRIBUTESETINSTANCE_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, 
         UPDATED, UPDATEDBY, M_ATTRIBUTESET_ID, SERNO, LOT, GUARANTEEDATE, M_LOT_ID, ISLOCKED, LOCK_DESCRIPTION) 
-        VALUES ( TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', now(), TO_NUMBER(?), now(), TO_NUMBER(?), TO_NUMBER(?), ?, ?, TO_DATE(?), TO_NUMBER(?), ?, ?)
+        VALUES ( ?, ?, ?, 'Y', now(), ?, now(), ?, ?, ?, ?, TO_DATE(?), ?, ?, ?)
       ]]></Sql>
         <Parameter name="mAttributesetinstanceId"/>
         <Parameter name="adClientId"/>
@@ -230,9 +230,9 @@
    <SqlMethod name="updateHeader" type="preparedStatement" connection="true" return="rowCount">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
-        UPDATE M_ATTRIBUTESETINSTANCE SET UPDATED=now(), UPDATEDBY=TO_NUMBER(?), M_ATTRIBUTESET_ID = TO_NUMBER(?), SERNO=?, LOT=?, GUARANTEEDATE=TO_DATE(?), 
-        M_LOT_ID = TO_NUMBER(?), ISLOCKED = ?, LOCK_DESCRIPTION = ? 
-        WHERE M_ATTRIBUTESETINSTANCE_ID = TO_NUMBER(?)
+        UPDATE M_ATTRIBUTESETINSTANCE SET UPDATED=now(), UPDATEDBY = ?, M_ATTRIBUTESET_ID = ?, SERNO=?, LOT=?, GUARANTEEDATE=TO_DATE(?), 
+        M_LOT_ID = ?, ISLOCKED = ?, LOCK_DESCRIPTION = ? 
+        WHERE M_ATTRIBUTESETINSTANCE_ID = ?
       ]]></Sql>
         <Parameter name="adUserId"/>
         <Parameter name="mAttributesetId"/>
@@ -247,8 +247,8 @@
    <SqlMethod name="updateHeaderDescription" type="preparedStatement" connection="true" return="rowCount">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
-        UPDATE M_ATTRIBUTESETINSTANCE SET UPDATED=now(), UPDATEDBY=TO_NUMBER(?), DESCRIPTION=? 
-        WHERE M_ATTRIBUTESETINSTANCE_ID = TO_NUMBER(?)
+        UPDATE M_ATTRIBUTESETINSTANCE SET UPDATED=now(), UPDATEDBY = ?, DESCRIPTION=? 
+        WHERE M_ATTRIBUTESETINSTANCE_ID = ?
       ]]></Sql>
         <Parameter name="adUserId"/>
         <Parameter name="description"/>
@@ -257,8 +257,8 @@
    <SqlMethod name="updateLotSequence" type="preparedStatement" connection="true" return="rowCount">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
-        UPDATE M_LOTCTL SET UPDATED=now(), UPDATEDBY=TO_NUMBER(?), CURRENTNEXT=(CURRENTNEXT + INCREMENTNO) 
-        WHERE M_LOTCTL_ID = TO_NUMBER(?)
+        UPDATE M_LOTCTL SET UPDATED=now(), UPDATEDBY = ?, CURRENTNEXT=(CURRENTNEXT + INCREMENTNO) 
+        WHERE M_LOTCTL_ID = ?
       ]]></Sql>
         <Parameter name="adUserId"/>
         <Parameter name="mLotctlId"/>
@@ -266,8 +266,8 @@
    <SqlMethod name="updateSerNoSequence" type="preparedStatement" connection="true" return="rowCount">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
-        UPDATE M_SERNOCTL SET UPDATED=now(), UPDATEDBY=TO_NUMBER(?), CURRENTNEXT=(CURRENTNEXT + INCREMENTNO) 
-        WHERE M_SERNOCTL_ID = TO_NUMBER(?)
+        UPDATE M_SERNOCTL SET UPDATED=now(), UPDATEDBY = ?, CURRENTNEXT=(CURRENTNEXT + INCREMENTNO) 
+        WHERE M_SERNOCTL_ID = ?
       ]]></Sql>
         <Parameter name="adUserId"/>
         <Parameter name="mSernoctlId"/>

@@ -224,13 +224,13 @@ WHERE MA_PROCESSPLAN.MA_PROCESSPLAN_ID = MA_PROCESSPLAN_VERSION.MA_PROCESSPLAN_I
   AND MA_PROCESSPLAN.AD_CLIENT_ID IN ( $P!{USER_CLIENT} )
 ORDER BY MA_PROCESSPLAN.MA_PROCESSPLAN_ID, MA_PROCESSPLAN_VERSION.DATEFROM, MA_SEQUENCE.SEQNO]]></queryString>
 
-	<field name="MA_PROCESSPLAN_ID" class="java.math.BigDecimal"/>
+	<field name="MA_PROCESSPLAN_ID" class="java.lang.String"/>
 	<field name="PROCESSPLAN" class="java.lang.String"/>
-	<field name="MA_PROCESSPLAN_VERSION_ID" class="java.math.BigDecimal"/>
+	<field name="MA_PROCESSPLAN_VERSION_ID" class="java.lang.String"/>
 	<field name="VERSION" class="java.lang.String"/>
 	<field name="DATEFROM" class="java.sql.Timestamp"/>
 	<field name="DATETO" class="java.sql.Timestamp"/>
-	<field name="MA_SEQUENCE_ID" class="java.math.BigDecimal"/>
+	<field name="MA_SEQUENCE_ID" class="java.lang.String"/>
 	<field name="SEQUENCE" class="java.lang.String"/>
 
 	<variable name="DetailFieldTotal" class="java.lang.String" resetType="Report" calculation="Nothing">

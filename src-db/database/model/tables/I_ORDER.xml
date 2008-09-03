@@ -1,19 +1,19 @@
 <?xml version="1.0"?>
   <database name="TABLE I_ORDER">
     <table name="I_ORDER" primaryKey="I_ORDER_KEY">
-      <column name="I_ORDER_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="I_ORDER_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="AD_CLIENT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="AD_CLIENT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="AD_ORG_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="AD_ORG_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="AD_ORGTRX_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="AD_ORGTRX_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -25,7 +25,7 @@
         <default><![CDATA[SYSDATE]]></default>
         <onCreateDefault/>
       </column>
-      <column name="CREATEDBY" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="CREATEDBY" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -33,7 +33,7 @@
         <default><![CDATA[SYSDATE]]></default>
         <onCreateDefault/>
       </column>
-      <column name="UPDATEDBY" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="UPDATEDBY" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -53,23 +53,23 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="SALESREP_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="SALESREP_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="M_WAREHOUSE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="M_WAREHOUSE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="M_PRICELIST_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="M_PRICELIST_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_CURRENCY_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="C_CURRENCY_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="M_SHIPPER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="M_SHIPPER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -77,7 +77,7 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
-      <column name="C_BPARTNER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="C_BPARTNER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -89,15 +89,15 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_BPARTNER_LOCATION_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="C_BPARTNER_LOCATION_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="BILLTO_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="BILLTO_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_LOCATION_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="C_LOCATION_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -117,7 +117,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_REGION_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="C_REGION_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -125,7 +125,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_COUNTRY_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="C_COUNTRY_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -133,7 +133,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="AD_USER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="AD_USER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -149,15 +149,15 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_PROJECT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="C_PROJECT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_ACTIVITY_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="C_ACTIVITY_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_DOCTYPE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="C_DOCTYPE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -165,7 +165,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_PAYMENTTERM_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="C_PAYMENTTERM_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -173,7 +173,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_ORDER_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="C_ORDER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -185,7 +185,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="M_PRODUCT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="M_PRODUCT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -201,7 +201,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_TAX_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="C_TAX_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -213,7 +213,7 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <column name="C_ORDERLINE_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="C_ORDERLINE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -221,7 +221,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_UOM_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="C_UOM_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -233,7 +233,7 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <column name="C_CAMPAIGN_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="C_CAMPAIGN_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

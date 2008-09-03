@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION R_REQUEST_REOPEN">
     <function name="R_REQUEST_REOPEN" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -33,15 +33,15 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1; -- 0=failure
-  v_Record_ID NUMBER;
-  v_AD_User_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
+  v_AD_User_ID VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     -- Parameter Variables
-    p_R_Request_ID NUMBER(10) ;
+    p_R_Request_ID VARCHAR2(32) ;
     v_count NUMBER(10):=0;
-    v_R_RequestAction_ID NUMBER(10) ;
+    v_R_RequestAction_ID VARCHAR2(32) ;
     rowcount NUMBER;
   BEGIN
     --  Update AD_PInstance
@@ -68,7 +68,7 @@
       v_Record_ID:=Cur_Parameter.Record_ID;
       v_AD_User_ID:=Cur_Parameter.AD_User_ID;
       IF(Cur_Parameter.ParameterName='R_Request_ID') THEN
-        p_R_Request_ID:=Cur_Parameter.P_Number;
+        p_R_Request_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  R_Request_ID=' || p_R_Request_ID) ;
       ELSE
         DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;

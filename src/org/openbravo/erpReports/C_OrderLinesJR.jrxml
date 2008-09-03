@@ -49,8 +49,8 @@
 		rightPadding="2"
 	/>
 
-	<parameter name="C_ORDER_ID" isForPrompting="true" class="java.math.BigDecimal">
-		<defaultValueExpression ><![CDATA[new BigDecimal(1000069)]]></defaultValueExpression>
+	<parameter name="C_ORDER_ID" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["1000069"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
 	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>

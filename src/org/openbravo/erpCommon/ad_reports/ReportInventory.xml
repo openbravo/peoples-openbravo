@@ -20,7 +20,7 @@
 <REPORT>
   <template file="ReportInventory.html"/>
   <PARAMETER id="paramToolBar" name="toolbar" default=""/>
-  <PARAMETER id="paramDirection" name="direction"/>
+  <PARAMETER id="paramDirectory" name="directory"/>
   <PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
   <PARAMETER id="parameterDetalle" name="constantDetalle" default="-1"/>
   <PARAMETER id="paramDetalle" name="Detalle" boolean="checked" withId="parameterDetalle"/>

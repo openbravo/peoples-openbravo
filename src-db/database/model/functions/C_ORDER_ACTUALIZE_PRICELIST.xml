@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_ORDER_ACTUALIZE_PRICELIST">
     <function name="C_ORDER_ACTUALIZE_PRICELIST" type="NULL">
-      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -27,12 +27,12 @@
   v_ResultStr_aux VARCHAR2(2000):='';
   v_DateFrom DATE;
   v_DateTo DATE;
-  v_Warehouse_ID NUMBER(10) ;
-  v_BPartner_ID NUMBER(10) ;
+  v_Warehouse_ID VARCHAR2(32) ;
+  v_BPartner_ID VARCHAR2(32) ;
   --
-  v_pinstance NUMBER(10) ;
-  v_priceList NUMBER(10) ;
-  v_priceListVersion NUMBER(10) ;
+  v_pinstance VARCHAR2(32) ;
+  v_priceList VARCHAR2(32) ;
+  v_priceListVersion VARCHAR2(32) ;
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -68,7 +68,7 @@
         v_DateTo:=Cur_Parameter.P_Date;
         DBMS_OUTPUT.PUT_LINE('  DateTo=' || v_DateTo) ;
       ELSIF(Cur_Parameter.ParameterName='C_BPartner_ID') THEN
-        v_BPartner_ID:=Cur_Parameter.P_Number;
+        v_BPartner_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  C_BPartner_ID=' || v_BPartner_ID) ;
       ELSE
         DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
@@ -96,10 +96,10 @@
           )
           VALUES
           (
-            v_pinstance, 104, Cur_PEDIDOS.C_Order_ID, 'N',
-            now(), 100, now(), NULL,
-            NULL, Cur_PEDIDOS.Ad_Client_ID, 0, 100,
-            100, 'Y'
+            v_pinstance, '104', Cur_PEDIDOS.C_Order_ID, 'N',
+            now(), '100', now(), NULL,
+            NULL, Cur_PEDIDOS.Ad_Client_ID, '0', '100',
+            '100', 'Y'
           )
           ;
         -- This Commit must remanin due differences between PL execution in Oracle and Postgres
@@ -173,10 +173,10 @@
              )
              VALUES
              (
-               v_pinstance, 104, Cur_PEDIDOS.C_Order_ID, 'N',
-               now(), 100, now(), NULL,
-               NULL, Cur_PEDIDOS.Ad_Client_ID, 0, 100,
-               100, 'Y'
+               v_pinstance, '104', Cur_PEDIDOS.C_Order_ID, 'N',
+               now(), '100', now(), NULL,
+               NULL, Cur_PEDIDOS.Ad_Client_ID, '0', '100',
+               '100', 'Y'
              )
              ;
              -- This Commit must remanin due differences between PL execution in Oracle and Postgres

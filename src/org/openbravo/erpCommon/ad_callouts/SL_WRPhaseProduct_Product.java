@@ -117,7 +117,7 @@ public class SL_WRPhaseProduct_Product extends HttpSecureAppServlet {
     resultado.append(");\n");
 
     xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", (Utility.isTreeTab(this, strTabId)?"frameAplicacion.frameWindowTreeTab":"frameAplicacion"));
+    xmlDocument.setParameter("frameName", (Utility.isTreeTab(this, strTabId)?"appFrame.frameWindowTreeTab":"appFrame"));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

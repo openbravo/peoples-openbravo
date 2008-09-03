@@ -31,7 +31,7 @@
       <![CDATA[
        SELECT Service_Source
          FROM AD_Process
-        WHERE AD_Process_ID = to_number(?)         
+        WHERE AD_Process_ID = ?         
       ]]>
     </Sql>
     <Parameter name="processId"/>

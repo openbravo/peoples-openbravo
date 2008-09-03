@@ -25,16 +25,16 @@
 <SCRIPT language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
-<SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO = "en_US";</SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramDirectory">var baseDirectory = "../../../../../web/";</SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	defaultLang = "en_US";</SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript">
 
-function depurar(action)
+function validate(action)
 {
 	var frm = document.forms[0];
 	//Se controla que haya rellenado todos los campos
 	if (frm.user.value==null || frm.password.value==null || frm.user.value=="" || frm.password.value=="") {
-		mensaje(1);
+		showJSMessage(1);
 		return false;
 	}
 	return true;
@@ -57,7 +57,7 @@ function buttonOK_click() {
     resizeArea();
     try {
       onloadFunctions();
-      limpiar();
+      clearForm();
     } catch (e) {}
     setWindowElementFocus('firstElement');
     if (!revisionControl('6278')) alert("Your browser's cache has outdated files. Please clean it and reload the page.");
@@ -84,7 +84,7 @@ function buttonOK_click() {
             <TR class="Main_NavBar_bg">
               <TD width="100%"></TD>
               <TD><div class="Main_NavBar_bg_logo_left" /></TD>
-              <TD class="Main_NavBar_bg_logo" width="1" onclick="abrirNuevoBrowser('http://www.openbravo.com', 'Openbravo');return false;"><div class="Main_NavBar_logo" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" /></TD>
+              <TD class="Main_NavBar_bg_logo" width="1" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;"><div class="Main_NavBar_logo" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" /></TD>
               <TD><div class="Main_NavBar_bg_logo_right" /></TD>
             </TR>
           </TABLE>

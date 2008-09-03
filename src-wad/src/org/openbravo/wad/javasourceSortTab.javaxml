@@ -188,10 +188,10 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       }
     }
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("windowId", windowId);
     xmlDocument.setParameter("KeyName", "<FIELD_TMP id="keyData">Clave</FIELD_TMP>");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setData("structure1", data2);
     xmlDocument.setData("structure2", data);
 <PARAMETER_TMP id="parent">    if (vars.getLanguage().equals("en_US")) xmlDocument.setParameter("parent", <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.selectParent(this<FIELD_TMP id="language">, vars.getLanguage()</FIELD_TMP>, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>));

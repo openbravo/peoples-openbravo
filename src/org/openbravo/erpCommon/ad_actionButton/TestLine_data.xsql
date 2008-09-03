@@ -28,7 +28,7 @@
         SELECT w.NAME as name, '' as fieldlength, '' as tab
         FROM AD_WINDOW w, AD_MENU m
 	WHERE w.AD_WINDOW_ID=m.AD_WINDOW_ID
-	AND m.AD_MENU_ID = TO_NUMBER(?)
+	AND m.AD_MENU_ID=?
       ]]>
     </Sql>
       <Parameter name="adMenuId"/>
@@ -40,7 +40,7 @@
 	SELECT p.NAME as name 
 	FROM AD_PROCESS p, AD_MENU m
 	WHERE p.AD_PROCESS_ID=m.AD_PROCESS_ID
-	AND m.ad_menu_ID = TO_NUMBER(?)
+	AND m.ad_menu_id=?
 	AND p.CLASSNAME is null
       ]]>
     </Sql>
@@ -52,7 +52,7 @@
       <![CDATA[
 	SELECT m.NAME as name 
 	FROM AD_WINDOW w, AD_TAB t, ad_menu m
-	WHERE m.AD_MENU_ID = TO_NUMBER(?)
+	WHERE m.AD_MENU_ID=?
 	AND t.AD_WINDOW_ID=w.AD_WINDOW_ID
 	AND m.AD_WINDOW_ID=w.AD_WINDOW_ID
       ]]>
@@ -66,7 +66,7 @@
         select fieldlength from ad_column 
         where ad_Table_id=(
                 select ad_table_id from ad_tab 
-                where ad_tab_ID = TO_NUMBER(?)) 
+                where ad_tab_id=?) 
         and columnname like ?
       ]]>
     </Sql>
@@ -82,7 +82,7 @@
         where ad_table_id=
                 (select ad_table_id 
                 from ad_tab 
-                where ad_tab_ID = TO_NUMBER(?)) 
+                where ad_tab_id=?) 
         and columnname=?
       ]]>
     </Sql>
@@ -98,12 +98,12 @@
         FROM AD_TAB t, AD_WINDOW w, AD_MENU m
         WHERE t.AD_WINDOW_ID = w.AD_WINDOW_ID
         AND w.AD_WINDOW_ID = m.AD_WINDOW_ID
-        AND m.AD_MENU_ID = TO_NUMBER(?)
+        AND m.AD_MENU_ID = ?
         AND t.seqno = (SELECT min(t.seqno)  
         FROM AD_TAB t, AD_WINDOW w, AD_MENU m
         WHERE t.AD_WINDOW_ID = w.AD_WINDOW_ID
         AND w.AD_WINDOW_ID = m.AD_WINDOW_ID
-        AND m.AD_MENU_ID = TO_NUMBER(?))
+        AND m.AD_MENU_ID = ?)
     ]]>
     </Sql>
     <Parameter name="admenuid"/>

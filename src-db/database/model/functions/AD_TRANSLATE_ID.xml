@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_TRANSLATE_ID">
-    <function name="AD_TRANSLATE_ID" type="NUMERIC">
-      <parameter name="p_id" type="NUMERIC" mode="in">
+    <function name="AD_TRANSLATE_ID" type="VARCHAR">
+      <parameter name="p_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_offset" type="NUMERIC" mode="in">
@@ -13,7 +13,7 @@
       <parameter name="p_columnname" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_clientid" type="NUMERIC" mode="in">
+      <parameter name="p_clientid" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -35,7 +35,7 @@
 /*************************************************************************
 * Title: Return the value of the ID selected in the new client
 ************************************************************************/
-  v_ID NUMBER;
+  v_ID VARCHAR2(32);
 BEGIN
   IF(p_ID IS NOT NULL) THEN
     EXECUTE IMMEDIATE 'SELECT MAX('||p_columnName||') FROM '||p_tableName||' WHERE '||p_columnName||'='||p_ID||' AND AD_CLIENT_ID  ='||p_clientID INTO v_ID;

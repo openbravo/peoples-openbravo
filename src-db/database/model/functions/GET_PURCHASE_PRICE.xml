@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION GET_PURCHASE_PRICE">
     <function name="GET_PURCHASE_PRICE" type="NUMERIC">
-      <parameter name="p_product_id" type="NUMERIC" mode="in">
+      <parameter name="p_product_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************

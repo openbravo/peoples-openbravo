@@ -200,8 +200,8 @@ public class SQLExecutor extends HttpSecureAppServlet {
     log4j.info("print page");
     if (log4j.isDebugEnabled()) log4j.debug("printPage - Reading xml\n");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/SQLExecutor").createXmlDocument();    
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     
     //new message system
     //String strMessage = vars.getSessionValue("SQLExecutor|message");;

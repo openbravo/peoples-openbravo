@@ -1,8 +1,8 @@
 /*
 ************************************************************************************
-* Copyright (C) 2001-2008 Openbravo S.L.
-* Licensed under the Apache Software License version 2.0
-* You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+* Copyright (C) 2'0''0'1-2'0''0'8 Openbravo S.L.
+* Licensed under the Apache Software License version 2.'0'
+* You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.'0'
 * Unless required by applicable law or agreed to  in writing,  software  distributed
 * under the License is distributed  on  an  "AS IS"  BASIS,  WITHOUT  WARRANTIES  OR
 * CONDITIONS OF ANY KIND, either  express  or  implied.  See  the  License  for  the
@@ -49,17 +49,17 @@ public final class OpenbravoDataFilter extends AbstractDatabaseFilter {
         removeTable("TIME_DIMENSION");
         removeTable("AD_DEVELOPER");
         
-        addTable("AD_CLIENT", "AD_CLIENT_ID <> 0");
-        addTable("AD_CLIENTINFO", "AD_CLIENT_ID <> 0");
-        addTable("AD_ORG", "AD_CLIENT_ID <> 0");
-        addTable("AD_ORGINFO", "AD_CLIENT_ID <> 0");
-        addTable("AD_ROLE", "AD_CLIENT_ID <> 0");
-        addTable("AD_ROLE_ORGACCESS", "AD_CLIENT_ID <> 0");
-        addTable("AD_USER", "AD_USER_ID NOT IN (0,100)");
-        addTable("AD_USER_ROLES", "AD_CLIENT_ID <> 0");
+        addTable("AD_CLIENT", "AD_CLIENT_ID <> '0'");
+        addTable("AD_CLIENTINFO", "AD_CLIENT_ID <> '0'");
+        addTable("AD_ORG", "AD_CLIENT_ID <> '0'");
+        addTable("AD_ORGINFO", "AD_CLIENT_ID <> '0'");
+        addTable("AD_ROLE", "AD_CLIENT_ID <> '0'");
+        addTable("AD_ROLE_ORGACCESS", "AD_CLIENT_ID <> '0'");
+        addTable("AD_USER", "AD_USER_ID NOT IN ('0','100')");
+        addTable("AD_USER_ROLES", "AD_CLIENT_ID <> '0'");
 
-        addTable("AD_ALERTRULE", "AD_CLIENT_ID <> 0");
-        addTable("AD_ALERTRULE_TRL", "AD_CLIENT_ID <> 0 OR AD_LANGUAGE <> 'es_ES'");
+        addTable("AD_ALERTRULE", "AD_CLIENT_ID <> '0'");
+        addTable("AD_ALERTRULE_TRL", "AD_CLIENT_ID <> '0' OR AD_LANGUAGE <> 'es_ES'");
         removeTable("AD_AUXILIARINPUT");
         removeTable("AD_CALLOUT");
         removeTable("AD_COLUMN");
@@ -73,9 +73,9 @@ public final class OpenbravoDataFilter extends AbstractDatabaseFilter {
         removeTable("AD_FIELDGROUP_TRL");
         removeTable("AD_FORM");
         removeTable("AD_FORM_TRL");
-        addTable("AD_IMAGE", "AD_CLIENT_ID <> 0");
-        addTable("AD_IMPFORMAT", "AD_CLIENT_ID <> 0");
-        addTable("AD_IMPFORMAT_ROW", "AD_CLIENT_ID <> 0");
+        addTable("AD_IMAGE", "AD_CLIENT_ID <> '0'");
+        addTable("AD_IMPFORMAT", "AD_CLIENT_ID <> '0'");
+        addTable("AD_IMPFORMAT_ROW", "AD_CLIENT_ID <> '0'");
         removeTable("AD_LANGUAGE");
         removeTable("AD_MENU");
         removeTable("AD_MENU_TRL");
@@ -84,7 +84,7 @@ public final class OpenbravoDataFilter extends AbstractDatabaseFilter {
         removeTable("AD_MODEL_OBJECT");
         removeTable("AD_MODEL_OBJECT_MAPPING");
         removeTable("AD_MONTH");
-        addTable("AD_PREFERENCE", "AD_CLIENT_ID <> 0");
+        addTable("AD_PREFERENCE", "AD_CLIENT_ID <> '0'");
         removeTable("AD_PROCESS");
         removeTable("AD_PROCESS_TRL");
         removeTable("AD_PROCESS_PARA");
@@ -96,7 +96,7 @@ public final class OpenbravoDataFilter extends AbstractDatabaseFilter {
         removeTable("AD_REF_SEARCH");
         removeTable("AD_REF_SEARCH_COLUMN");
         removeTable("AD_REF_TABLE");
-        addTable("AD_SEQUENCE", "AD_CLIENT_ID <> 0");
+        addTable("AD_SEQUENCE", "AD_CLIENT_ID <> '0'");
         removeTable("AD_TAB");
         removeTable("AD_TAB_TRL");
         removeTable("AD_TABLE");
@@ -104,10 +104,10 @@ public final class OpenbravoDataFilter extends AbstractDatabaseFilter {
         removeTable("AD_TASK_TRL");
         removeTable("AD_TEXTINTERFACES");
         removeTable("AD_TEXTINTERFACES_TRL");
-        addTable("AD_TREE", "AD_CLIENT_ID <> 0");
-        addTable("AD_TREENODE", "AD_CLIENT_ID <> 0");
-        addTable("AD_TREENODEBP", "AD_CLIENT_ID <> 0");
-        addTable("AD_TREENODEPR", "AD_CLIENT_ID <> 0");
+        addTable("AD_TREE", "AD_CLIENT_ID <> '0'");
+        addTable("AD_TREENODE", "AD_CLIENT_ID <> '0'");
+        addTable("AD_TREENODEBP", "AD_CLIENT_ID <> '0'");
+        addTable("AD_TREENODEPR", "AD_CLIENT_ID <> '0'");
         removeTable("AD_VAL_RULE");
         removeTable("AD_WF_NODE");
         removeTable("AD_WF_NODE_TRL");
@@ -117,16 +117,16 @@ public final class OpenbravoDataFilter extends AbstractDatabaseFilter {
         removeTable("AD_WORKFLOW");
         removeTable("AD_WORKFLOW_TRL");
         
-        addTable("AD_ACCOUNTINGRPT_ELEMENT", "AD_CLIENT_ID <> 0");//
-        addTable("C_COUNTRY", "AD_CLIENT_ID <> 0");//
-        addTable("C_COUNTRY_TRL", "AD_CLIENT_ID <> 0");//
-        addTable("C_CURRENCY", "AD_CLIENT_ID <> 0");//
-        addTable("C_CURRENCY_TRL", "AD_CLIENT_ID <> 0");//
-        addTable("C_DOCTYPE", "AD_CLIENT_ID <> 0");
-        addTable("C_DOCTYPE_TRL", "AD_CLIENT_ID <> 0");
-        addTable("C_REGION", "AD_CLIENT_ID <> 0");//
-        addTable("C_UOM", "AD_CLIENT_ID <> 0");//
-        addTable("C_UOM_TRL", "AD_CLIENT_ID <> 0");//
-        addTable("GL_CATEGORY", "AD_CLIENT_ID <> 0");//
+        addTable("AD_ACCOUNTINGRPT_ELEMENT", "AD_CLIENT_ID <> '0'");//
+        addTable("C_COUNTRY", "AD_CLIENT_ID <> '0'");//
+        addTable("C_COUNTRY_TRL", "AD_CLIENT_ID <> '0'");//
+        addTable("C_CURRENCY", "AD_CLIENT_ID <> '0'");//
+        addTable("C_CURRENCY_TRL", "AD_CLIENT_ID <> '0'");//
+        addTable("C_DOCTYPE", "AD_CLIENT_ID <> '0'");
+        addTable("C_DOCTYPE_TRL", "AD_CLIENT_ID <> '0'");
+        addTable("C_REGION", "AD_CLIENT_ID <> '0'");//
+        addTable("C_UOM", "AD_CLIENT_ID <> '0'");//
+        addTable("C_UOM_TRL", "AD_CLIENT_ID <> '0'");//
+        addTable("GL_CATEGORY", "AD_CLIENT_ID <> '0'");//
     }
 }

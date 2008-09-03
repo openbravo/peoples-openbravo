@@ -18,7 +18,7 @@
 ************************************************************************
 -->
 <REPORT>
-	<PARAMETER id="paramDirection" name="direction" default=""/>
+	<PARAMETER id="paramDirectory" name="directory" default=""/>
 	<PARAMETER id="paramLanguage" name="language" default=""/>
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <template file="ReportInvoiceCustomerDimensionalAnalysesEdition.html"/>

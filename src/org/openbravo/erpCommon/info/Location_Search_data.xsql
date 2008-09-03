@@ -35,7 +35,7 @@
              C_COUNTRY C 
         WHERE L.C_COUNTRY_ID = C.C_COUNTRY_ID
         AND L.ISACTIVE = 'Y'
-        AND L.C_LOCATION_ID = TO_NUMBER(?)
+        AND L.C_LOCATION_ID = ?
         ]]>
       </Sql>
       <Parameter name="language"/>
@@ -55,7 +55,7 @@
              C_COUNTRY C
         WHERE L.C_COUNTRY_ID = C.C_COUNTRY_ID
         AND L.ISACTIVE = 'Y'
-        AND L.C_LOCATION_ID = TO_NUMBER(?)
+        AND L.C_LOCATION_ID = ?
         ]]>
       </Sql>
       <Parameter name="language"/>
@@ -64,8 +64,8 @@
    <SqlMethod name="update" type="preparedStatement" return="rowCount" static="false">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-      UPDATE C_LOCATION SET UPDATED = now(), UPDATEDBY = TO_NUMBER(?), ADDRESS1 = ?, ADDRESS2 = ?, CITY = ?, POSTAL = ?, C_COUNTRY_ID = TO_NUMBER(?), C_REGION_ID = TO_NUMBER(?)
-      WHERE C_LOCATION_ID = TO_NUMBER(?)
+      UPDATE C_LOCATION SET UPDATED = now(), UPDATEDBY = ?, ADDRESS1 = ?, ADDRESS2 = ?, CITY = ?, POSTAL = ?, C_COUNTRY_ID = ?, C_REGION_ID = ?
+      WHERE C_LOCATION_ID = ?
       </Sql>
       <Parameter name="updatedby"/>
       <Parameter name="address1"/>
@@ -79,7 +79,7 @@
    <SqlMethod name="insert" type="preparedStatement" return="rowCount" static="false">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-      INSERT INTO C_LOCATION (C_LOCATION_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ADDRESS1, ADDRESS2, CITY, POSTAL, C_COUNTRY_ID, C_REGION_ID) VALUES (TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', now(), TO_NUMBER(?), now(), TO_NUMBER(?), ?, ?, ?, ?, TO_NUMBER(?), TO_NUMBER(?))
+      INSERT INTO C_LOCATION (C_LOCATION_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ADDRESS1, ADDRESS2, CITY, POSTAL, C_COUNTRY_ID, C_REGION_ID) VALUES (?, ?, ?, 'Y', now(), ?, now(), ?, ?, ?, ?, ?, ?, ?)
       </Sql>
       <Parameter name="cLocationId"/>
       <Parameter name="adClientId"/>

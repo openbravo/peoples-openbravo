@@ -95,9 +95,9 @@ public class DropCloseFactAcct extends HttpSecureAppServlet {
       xmlDocument.setParameter("key", strKey);
       xmlDocument.setParameter("window", windowId);
       xmlDocument.setParameter("tab", strTab);
-      xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
       xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars.getLanguage()));
-      xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("description", strDescription);
       xmlDocument.setParameter("help", strHelp);
 

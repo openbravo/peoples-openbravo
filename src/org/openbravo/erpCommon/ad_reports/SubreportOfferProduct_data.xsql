@@ -42,7 +42,7 @@
               AND M_PRODUCT.M_PRODUCT_ID NOT IN (SELECT M_PRODUCT_ID FROM M_OFFER_PRODUCT WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID)) A
         WHERE A.AD_CLIENT_ID IN ('1')
         AND A.AD_ORG_ID IN ('1')
-        AND M_OFFER_ID = TO_NUMBER(?)
+        AND M_OFFER_ID = ?
         ORDER BY M_PRODUCT_NAME
       ]]></Sql>
     <Parameter name="adUserClient" type="replace" optional="true" after="A.AD_CLIENT_ID IN (" text="'1'"/>

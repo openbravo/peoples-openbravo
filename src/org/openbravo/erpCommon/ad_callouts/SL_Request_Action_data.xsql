@@ -29,7 +29,7 @@
       <![CDATA[
         SELECT EMAIL, EMAILUSER, EMAILUSERPW, NAME 
         FROM AD_USER 
-        WHERE AD_USER_ID = TO_NUMBER(?)
+        WHERE AD_USER_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_user_id"/>
@@ -38,7 +38,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
         SELECT SMTPHost FROM AD_Client 
-        WHERE AD_Client_ID = TO_NUMBER(?)
+        WHERE AD_Client_ID = ?
     </Sql>
     <Parameter name="ad_client_id"/>
   </SqlMethod>
@@ -48,8 +48,8 @@
         SELECT U.EMAIL
         FROM C_BPARTNER BP, AD_USER U
         WHERE BP.C_BPARTNER_ID = U.C_BPARTNER_ID
-        AND BP.C_BPARTNER_ID = TO_NUMBER(?)
-        AND U.AD_USER_ID = TO_NUMBER(?)
+        AND BP.C_BPARTNER_ID = ?
+        AND U.AD_USER_ID = ?
     </Sql>
     <Parameter name="c_bpartner_id"/>
     <Parameter name="ad_user_id"/>

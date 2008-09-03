@@ -28,7 +28,7 @@
     * Description:
     ************************************************************************/
   v_Difference NUMBER:=0;
-  v_ID NUMBER;
+  v_ID VARCHAR2(32);
   v_RO NUMBER;
 BEGIN
   -- Difference, ID

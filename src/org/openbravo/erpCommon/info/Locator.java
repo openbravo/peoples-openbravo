@@ -93,8 +93,8 @@ public class Locator extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 1 of Locators seeker");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Locator").createXmlDocument();
     xmlDocument.setParameter("key", strNameValue);
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("warehouse", strWarehousename);
 
@@ -124,10 +124,10 @@ public class Locator extends HttpSecureAppServlet {
   String generateResult(LocatorData[] data) throws IOException, ServletException {
     StringBuffer html = new StringBuffer();
     
-    html.append("\nfunction depurarSelector() {\n");
-    html.append("var clave = \"" + data[0].mLocatorId + "\";\n");
-    html.append("var texto = \"" + Replace.replace(data[0].value, "\"", "\\\"") + "\";\n");
-    html.append("parent.opener.closeSearch(\"SAVE\", clave, texto);\n");
+    html.append("\nfunction validateSelector() {\n");
+    html.append("var key = \"" + data[0].mLocatorId + "\";\n");
+    html.append("var text = \"" + Replace.replace(data[0].value, "\"", "\\\"") + "\";\n");
+    html.append("parent.opener.closeSearch(\"SAVE\", key, text);\n");
     html.append("}\n");
     return html.toString();
   }

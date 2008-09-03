@@ -31,13 +31,13 @@
   INSERT
   INTO AT_Command_Trl
     (
-      AT_Command_ID, AD_LANGUAGE, AD_Client_ID,
+      AT_Command_Trl_ID, AT_Command_ID, AD_LANGUAGE, AD_Client_ID,
       AD_Org_ID, IsActive, Created,
       CreatedBy, Updated, UpdatedBy,
       Name, Description, ArgHelp1,
       ArgHelp2, ArgHelp3, IsTranslated
     )
-  SELECT :NEW.AT_Command_ID,
+  SELECT get_uuid(), :NEW.AT_Command_ID,
     AD_LANGUAGE, :NEW.AD_Client_ID, :NEW.AD_Org_ID,
     :NEW.IsActive, :NEW.Created, :NEW.CreatedBy,
     :NEW.Updated, :NEW.UpdatedBy, :NEW.Name,

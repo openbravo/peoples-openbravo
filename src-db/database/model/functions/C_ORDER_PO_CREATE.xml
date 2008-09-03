@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_ORDER_PO_CREATE">
     <function name="C_ORDER_PO_CREATE" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -33,22 +33,22 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1; -- 0=failure
-  v_Record_ID NUMBER;
-  v_AD_User_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
+  v_AD_User_ID VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     -- Parameter Variables
     v_DateOrdered_From DATE;
     v_DateOrdered_To DATE;
-    v_C_BPartner_ID NUMBER;
-    v_Vendor_ID NUMBER;
-    v_C_Order_ID NUMBER;
+    v_C_BPartner_ID VARCHAR2(32);
+    v_Vendor_ID VARCHAR2(32);
+    v_C_Order_ID VARCHAR2(32);
     --
     v_Created NUMBER:=0;
     FINISH_PROCESS BOOLEAN:=false;
-    v_PInstance_Log_ID NUMBER;
-    v_Client_ID NUMBER;
+    v_PInstance_Log_ID VARCHAR2(32);
+    v_Client_ID VARCHAR2(32);
     
   BEGIN
     --  Update AD_PInstance
@@ -80,13 +80,13 @@
         v_DateOrdered_To:=Cur_Parameter.P_Date_To;
         DBMS_OUTPUT.PUT_LINE('  DateOrdered=' || v_DateOrdered_From || '-' || v_DateOrdered_To) ;
       ELSIF(Cur_Parameter.ParameterName='C_BPartner_ID') THEN
-        v_C_BPartner_ID:=Cur_Parameter.P_Number;
+        v_C_BPartner_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  C_BPartner_ID=' || v_C_BPartner_ID) ;
       ELSIF(Cur_Parameter.ParameterName='Vendor_ID') THEN
-        v_Vendor_ID:=Cur_Parameter.P_Number;
+        v_Vendor_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  Vendor_ID=' || v_Vendor_ID) ;
       ELSIF(Cur_Parameter.ParameterName='C_Order_ID') THEN
-        v_C_Order_ID:=Cur_Parameter.P_Number;
+        v_C_Order_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  C_Order_ID=' || v_C_Order_ID) ;
       ELSE
         DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
@@ -104,17 +104,17 @@
         --
         Cur_SOL RECORD;
         --
-        v_C_PaymentTerm_ID NUMBER:=NULL;
-        v_C_DocType_ID NUMBER:=NULL;
-        v_M_PriceList_Version_ID NUMBER:=NULL;
-        v_C_Tax_ID NUMBER:=NULL;
+        v_C_PaymentTerm_ID VARCHAR2(32):=NULL;
+        v_C_DocType_ID VARCHAR2(32):=NULL;
+        v_M_PriceList_Version_ID VARCHAR2(32):=NULL;
+        v_C_Tax_ID VARCHAR2(32):=NULL;
         --
-        v_BillTo_ID NUMBER;
-        v_C_BPartner_Location_ID NUMBER;
+        v_BillTo_ID VARCHAR2(32);
+        v_C_BPartner_Location_ID VARCHAR2(32);
         --
-        v_PO_Order_ID NUMBER;
+        v_PO_Order_ID VARCHAR2(32);
         v_DocumentNo NVARCHAR2(30) ;
-        v_NextID NUMBER;
+        v_NextID varchar2(32);
         v_Lines NUMBER:=0;
         --
       BEGIN
@@ -292,7 +292,7 @@
               Cur_SO.AD_Client_ID, Cur_SO.AD_Org_ID, 'Y', now(),
               Cur_SO.UpdatedBy, now(), Cur_SO.UpdatedBy, v_PO_Order_ID,
                'N', v_DocumentNo, 'DR', 'CO',
-               'N', 'N', 0, v_C_DocType_ID,
+               'N', 'N', '0', v_C_DocType_ID,
               Cur_SO.DocumentNo || ': ' || Cur_SO.Description,
               'N', 'N', 'N',
                'N', Cur_SO.SalesRep_ID, Cur_SO.DateOrdered, Cur_SO.DatePromised,

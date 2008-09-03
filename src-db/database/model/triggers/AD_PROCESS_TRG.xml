@@ -37,10 +37,10 @@ BEGIN
   THEN
     --  Create Translation Row
     INSERT INTO AD_Process_Trl
-                (AD_Process_ID, AD_Language, AD_Client_ID, AD_Org_ID,
+                (AD_Process_Trl_ID, AD_Process_ID, AD_Language, AD_Client_ID, AD_Org_ID,
                  IsActive, Created, CreatedBy, Updated, UpdatedBy, NAME,
                  Description, HELP, IsTranslated)
-      SELECT :NEW.AD_Process_ID, AD_Language, :NEW.AD_Client_ID,
+      SELECT get_uuid(), :NEW.AD_Process_ID, AD_Language, :NEW.AD_Client_ID,
              :NEW.AD_Org_ID, :NEW.IsActive, :NEW.Created, :NEW.CreatedBy,
              :NEW.Updated, :NEW.UpdatedBy, :NEW.NAME, :NEW.Description,
              :NEW.HELP, 'N'
@@ -49,11 +49,11 @@ BEGIN
 
     -- Add Access for all Roles
     INSERT INTO AD_Process_Access
-                (AD_Process_ID, AD_Role_ID, AD_Client_ID, AD_Org_ID,
+                (AD_Process_Access_ID, AD_Process_ID, AD_Role_ID, AD_Client_ID, AD_Org_ID,
                  IsActive, Created, CreatedBy, Updated, UpdatedBy,
                  IsReadWrite)
-      SELECT :NEW.AD_Process_ID, r.AD_Role_ID, r.AD_CLIENT_ID, r.AD_ORG_ID,
-             'Y', now(), 0, now(), 0, 'Y'
+      SELECT get_uuid(), :NEW.AD_Process_ID, r.AD_Role_ID, r.AD_CLIENT_ID, r.AD_ORG_ID,
+             'Y', now(), '0', now(), '0', 'Y'
         FROM AD_Role r
        where isManual='N';
   END IF;

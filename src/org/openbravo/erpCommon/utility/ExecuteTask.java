@@ -84,7 +84,7 @@ public class ExecuteTask extends HttpSecureAppServlet {
     out.println("<link REL=\"stylesheet\" TYPE=\"text/css\" HREF=\"" + strDireccion + "/web/skins/" + vars.getTheme() + "/Popup/Popup.css\" TITLE=\"Style\">");
     out.println("<script language=\"JavaScript\" type=\"text/javascript\" src=\"" + strDireccion + "/web/js/mensaje.js\"></script>");
     out.println("<script language=\"JavaScript\" type=\"text/javascript\" src=\"" + strDireccion + "/web/js/utils.js\"></script>");
-    out.println("<script language=\"JavaScript\" type=\"text/javascript\">  LNG_POR_DEFECTO = \"" + vars.getLanguage() + "\";</script>");
+    out.println("<script language=\"JavaScript\" type=\"text/javascript\">  defaultLang = \"" + vars.getLanguage() + "\";</script>");
     out.println("</head>");
     out.println("<body>");
     out.println("<form name=\"form1\" method=\"post\" action=\"ExecuteTask.html\">");
@@ -102,7 +102,7 @@ public class ExecuteTask extends HttpSecureAppServlet {
     out.println("        <tr class=\"Popup_NavBar_bg\"><td></td>");
     out.println("          <td class=\"Popup_NavBar_separator_cell\"></td>");
     out.println("          <td class=\"Popup_NavBar_bg_logo_left\"></td>");
-    out.println("          <td class=\"Popup_NavBar_bg_logo\" width=\"1\" onclick=\"abrirNuevoBrowser('http://www.openbravo.com', 'Openbravo');return false;\"><IMG src=\"" + strDireccion + "/web/images/blank.gif\" alt=\"Openbravo\" title=\"Openbravo\" border=\"0\" id=\"openbravoLogo\" class=\"Popup_NavBar_logo\" /></td>");
+    out.println("          <td class=\"Popup_NavBar_bg_logo\" width=\"1\" onclick=\"openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;\"><IMG src=\"" + strDireccion + "/web/images/blank.gif\" alt=\"Openbravo\" title=\"Openbravo\" border=\"0\" id=\"openbravoLogo\" class=\"Popup_NavBar_logo\" /></td>");
     out.println("          <td class=\"Popup_NavBar_bg_logo_right\"></td>");
     out.println("          <td class=\"Popup_NavBar_Popup_title_cell\"><span>" + Tittle + "</span></td>");
     out.println("          <td class=\"Popup_NavBar_separator_cell\"></td>");

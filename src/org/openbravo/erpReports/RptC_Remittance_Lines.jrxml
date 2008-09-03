@@ -189,8 +189,8 @@
 	<parameter name="ReportData" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA[""]]></defaultValueExpression>
 	</parameter>
-	<parameter name="C_REMITTANCE_ID" isForPrompting="true" class="java.math.BigDecimal">
-		<defaultValueExpression ><![CDATA[new BigDecimal(1000011)]]></defaultValueExpression>
+	<parameter name="C_REMITTANCE_ID" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["1000011"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="LOCALE" isForPrompting="true" class="java.util.Locale">
 		<defaultValueExpression ><![CDATA[new Locale("en","US")]]></defaultValueExpression>

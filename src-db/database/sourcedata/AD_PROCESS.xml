@@ -1,10 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--
-************************
-0. Core Range.
-************************
--->
 <!--100**************--><AD_PROCESS>
 <!--100 AD_PROCESS_ID-->
 <!--100-->              <AD_PROCESS_ID><![CDATA[100]]></AD_PROCESS_ID>
@@ -7153,7 +7148,7 @@
 <!--800091 ISUSERSTARTABLE-->
 <!--800091-->              <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800091 ISREPORT-->
-<!--800091-->              <ISREPORT><![CDATA[N]]></ISREPORT>
+<!--800091-->              <ISREPORT><![CDATA[Y]]></ISREPORT>
 <!--800091 ISDIRECTPRINT-->
 <!--800091-->              <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800091 CLASSNAME-->
@@ -10037,7 +10032,7 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800176 ISUSERSTARTABLE-->
 <!--800176-->              <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800176 ISREPORT-->
-<!--800176-->              <ISREPORT><![CDATA[N]]></ISREPORT>
+<!--800176-->              <ISREPORT><![CDATA[Y]]></ISREPORT>
 <!--800176 ISDIRECTPRINT-->
 <!--800176-->              <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800176 ISBACKGROUND-->
@@ -10115,7 +10110,7 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800178 ISUSERSTARTABLE-->
 <!--800178-->              <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800178 ISREPORT-->
-<!--800178-->              <ISREPORT><![CDATA[N]]></ISREPORT>
+<!--800178-->              <ISREPORT><![CDATA[Y]]></ISREPORT>
 <!--800178 ISDIRECTPRINT-->
 <!--800178-->              <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800178 ISBACKGROUND-->
@@ -10193,7 +10188,7 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800180 ISUSERSTARTABLE-->
 <!--800180-->              <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800180 ISREPORT-->
-<!--800180-->              <ISREPORT><![CDATA[N]]></ISREPORT>
+<!--800180-->              <ISREPORT><![CDATA[Y]]></ISREPORT>
 <!--800180 ISDIRECTPRINT-->
 <!--800180-->              <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800180 ISBACKGROUND-->
@@ -10897,7 +10892,7 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800199 ISUSERSTARTABLE-->
 <!--800199-->              <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800199 ISREPORT-->
-<!--800199-->              <ISREPORT><![CDATA[N]]></ISREPORT>
+<!--800199-->              <ISREPORT><![CDATA[Y]]></ISREPORT>
 <!--800199 ISDIRECTPRINT-->
 <!--800199-->              <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800199 ISBACKGROUND-->
@@ -10975,7 +10970,7 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800201 ISUSERSTARTABLE-->
 <!--800201-->              <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800201 ISREPORT-->
-<!--800201-->              <ISREPORT><![CDATA[N]]></ISREPORT>
+<!--800201-->              <ISREPORT><![CDATA[Y]]></ISREPORT>
 <!--800201 ISDIRECTPRINT-->
 <!--800201-->              <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
 <!--800201 ISBACKGROUND-->
@@ -11824,19 +11819,4 @@ The Service Point is the Warehouse needed in the Purchase Order headers.]]></HEL
 <!--1005800000-->              <ISJASPER><![CDATA[N]]></ISJASPER>
 <!--1005800000**************--></AD_PROCESS>
 
-<!--
-************************
-0. End of Core Range.
-************************
--->
-<!--
-************************
-1. Custom Range.
-************************
--->
-<!--
-************************
-1. End of Custom Range.
-************************
--->
 </data>

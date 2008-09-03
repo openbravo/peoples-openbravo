@@ -337,7 +337,7 @@ public class ImportAccount extends ImportProcess {
       int noParentUpdate = 0;
       ImportAccountData[] parents = ImportAccountData.selectParents(con, conn, getAD_Client_ID());
       for (int i=0;i<parents.length;i++) {
-        no = ImportAccountData.updateTree(con, conn, parents[i].parentelementvalueId, parents[i].iElementvalueId, parents[i].adTreeId, parents[i].cElementvalueId);
+        no = ImportAccountData.updateTree(con, conn, parents[i].parentelementvalueId, parents[i].adTreeId, parents[i].cElementvalueId); //FIXME: UUID branch: This should cause conflict when mergeing with trunk, take the code from trunk...
         noParentUpdate += no;
       }
       addLog("Parent updates: " + noParentUpdate + " ");
@@ -384,7 +384,7 @@ public class ImportAccount extends ImportProcess {
     try {
       ImportAccountData[] acctSchemas = ImportAccountData.selectAcctSchema(conn, m_C_Element_ID, getAD_Client_ID());
       for (int i =0;i<acctSchemas.length;i++)
-        updateDefaultAccounts(con, conn, Integer.valueOf(acctSchemas[i].cAcctschemaId).intValue());
+        updateDefaultAccounts(con, conn, acctSchemas[i].cAcctschemaId);
       no = ImportAccountData.updateDefaultAcct(con, conn, getAD_Client_ID());
       if (log4j.isDebugEnabled()) log4j.debug("ImportAccount updated default acct = " + no);
     } catch (ServletException e) {
@@ -392,17 +392,17 @@ public class ImportAccount extends ImportProcess {
     }
   }  //  updateDefaults
 
-  private void updateDefaultAccounts (Connection con, ConnectionProvider conn, int C_AcctSchema_ID) {
+  private void updateDefaultAccounts (Connection con, ConnectionProvider conn, String C_AcctSchema_ID) {
     try {
       int no = 0;
       if (log4j.isDebugEnabled()) log4j.debug("ImportAccount.updateDefaultAccounts :: C_AcctSchema_ID=" + String.valueOf(C_AcctSchema_ID));
       if (!ImportAccountData.selectAcctSchemaAC(conn, String.valueOf(C_AcctSchema_ID)).equals(m_C_Element_ID)) {
-        if (log4j.isDebugEnabled()) log4j.debug("ImportAccount.updateDefaultAccounts :: C_Element_ID=" + m_C_Element_ID + " not in AcctSchema=" + String.valueOf(C_AcctSchema_ID));
+        if (log4j.isDebugEnabled()) log4j.debug("ImportAccount.updateDefaultAccounts :: C_Element_ID=" + m_C_Element_ID + " not in AcctSchema=" + C_AcctSchema_ID);
         return;
       }
       ImportAccountData[] data = ImportAccountData.selectElementColumnTable(conn, m_C_Element_ID);
       for (int i =0;i<data.length;i++) {
-        int u = updateDefaultAccount(con, conn, data[i].tablename, data[i].columnname, C_AcctSchema_ID, Integer.parseInt(data[i].cElementvalueId,10));
+        int u = updateDefaultAccount(con, conn, data[i].tablename, data[i].columnname, C_AcctSchema_ID, data[i].cElementvalueId);
         if (u != 0) {
           no = ImportAccountData.updateProcessingN(con, conn, data[i].iElementvalueId);
           if (no != 1) if (log4j.isDebugEnabled()) log4j.debug("ImportAccount.updateDefaultAccounts - Updated=" + no);
@@ -413,36 +413,36 @@ public class ImportAccount extends ImportProcess {
     }
   }
 
-  private int updateDefaultAccount (Connection con, ConnectionProvider conn, String TableName, String ColumnName, int C_AcctSchema_ID, int C_ElementValue_ID) {
+  private int updateDefaultAccount (Connection con, ConnectionProvider conn, String TableName, String ColumnName, String C_AcctSchema_ID, String C_ElementValue_ID) {
     int no = 0;
     int retValue = UPDATE_ERROR;
     try {
       if (log4j.isDebugEnabled()) log4j.debug("ImportAccount.updateDefaultAccount - "  + TableName + "." + ColumnName + " - " + C_ElementValue_ID);
-      ImportAccountData[] data = ImportAccountData.selectValidCombination(conn, ColumnName, TableName, String.valueOf(C_AcctSchema_ID));
+      ImportAccountData[] data = ImportAccountData.selectValidCombination(conn, ColumnName, TableName, C_AcctSchema_ID);
       if (data.length > 0) {
-        if (data[0].accountId.equals(String.valueOf(C_ElementValue_ID))) {
+        if (data[0].accountId.equals(C_ElementValue_ID)) {
           retValue = UPDATE_SAME;
           if (log4j.isDebugEnabled()) log4j.debug("Account_ID same as new value");
         } else { // update the account value
           if (m_createNewCombination) {
             ImportAccountData[] account = ImportAccountData.selectValidCombinationAll(conn, data[0].cValidcombinationId);
-            ImportAccountData.updateAccountIdByVC(con, conn, String.valueOf(C_ElementValue_ID), data[0].cValidcombinationId);
+            ImportAccountData.updateAccountIdByVC(con, conn, C_ElementValue_ID, data[0].cValidcombinationId);
             RespuestaCS respuestaCS = ImportAccountData.getCValidCombination(con, conn, account[0].adClientId, account[0].adOrgId, account[0].cAcctschemaId, String.valueOf(C_ElementValue_ID), data[0].cValidcombinationId, account[0].isfullyqualified, account[0].alias, account[0].createdby, account[0].mProductId, account[0].cBpartnerId, account[0].adOrgtrxId, account[0].cLocfromId, account[0].cLoctoId, account[0].cSalesregionId, account[0].cProjectId, account[0].cCampaignId, account[0].cActivityId, account[0].user1Id, account[0].user2Id);
             int newC_ValidCombination_ID = Integer.valueOf(respuestaCS.CValidCombinationId).intValue();
             if (!data[0].cValidcombinationId.equals(String.valueOf(newC_ValidCombination_ID))) {
-              no = ImportAccountData.updateAbstract(con, conn, TableName, ColumnName, String.valueOf(newC_ValidCombination_ID), String.valueOf(C_AcctSchema_ID));
+              no = ImportAccountData.updateAbstract(con, conn, TableName, ColumnName, String.valueOf(newC_ValidCombination_ID), C_AcctSchema_ID);
               if (log4j.isDebugEnabled()) log4j.debug("ImportAccount.updateDefaultAccount - #" + no + " - " + TableName + "." + ColumnName + " - " + C_ElementValue_ID + " -- " + data[0].cValidcombinationId + " -> " + newC_ValidCombination_ID);
               if (no==1)
                 retValue = UPDATE_YES;
             }
           } else {
-            no = ImportAccountData.updateAccountIdByVC(con, conn, String.valueOf(C_ElementValue_ID), data[0].cValidcombinationId);
+            no = ImportAccountData.updateAccountIdByVC(con, conn, C_ElementValue_ID, data[0].cValidcombinationId);
             if (log4j.isDebugEnabled()) log4j.debug("ImportAccount.updateDefaultAccount - Replace #" + no + " - " + "C_ValidCombination_ID=" + data[0].cValidcombinationId + ", New Account_ID=" + C_ElementValue_ID);
             if (no == 1) {
               retValue = UPDATE_YES;
-              no = ImportAccountData.updateAccountId(con, conn, String.valueOf(C_ElementValue_ID), data[0].accountId);
+              no = ImportAccountData.updateAccountId(con, conn, C_ElementValue_ID, data[0].accountId);
               if (log4j.isDebugEnabled()) log4j.debug("ImportAccount.updateDefaultAccount - Replace VC #" + no + " - " + "Account_ID=" + data[0].accountId + ", New Account_ID=" + C_ElementValue_ID);
-              no = ImportAccountData.updateFact(con, conn, String.valueOf(C_ElementValue_ID), data[0].accountId);
+              no = ImportAccountData.updateFact(con, conn, C_ElementValue_ID, data[0].accountId);
               if (log4j.isDebugEnabled()) log4j.debug("ImportAccount.updateDefaultAccount - Replace Fact #" + no + " - " + "Account_ID=" + data[0].accountId + ", New Account_ID=" + C_ElementValue_ID);
             }
           }

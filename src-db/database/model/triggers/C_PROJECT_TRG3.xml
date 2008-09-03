@@ -23,8 +23,8 @@
     * Contributor(s):  ______________________________________.
     ************************************************************************/
   v_Count NUMBER;
-  v_Tree_ID   NUMBER;
-  v_Parent_ID NUMBER;
+  v_Tree_ID   varchar2(32);
+  v_Parent_ID VARCHAR2(32);
 BEGIN
   SELECT c.AD_Tree_Project_ID,
     n.Node_ID

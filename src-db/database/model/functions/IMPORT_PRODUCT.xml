@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION IMPORT_PRODUCT">
     <function name="IMPORT_PRODUCT" type="NULL">
-      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************

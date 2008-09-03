@@ -26,30 +26,30 @@
       <Sql><![CDATA[
         SELECT ACCESSLEVEL
           FROM AD_FORM
-         WHERE TO_CHAR('X') = TO_CHAR(?) 
-           AND AD_FORM_ID = TO_NUMBER(?)
+         WHERE TO_CHAR('X') = ? 
+           AND AD_FORM_ID = ?
          UNION 
          SELECT ACCESSLEVEL
           FROM AD_PROCESS 
-         WHERE (TO_CHAR('P') = TO_CHAR(?) OR TO_CHAR('R') = TO_CHAR(?))
-           AND AD_PROCESS_ID = TO_NUMBER(?)
+         WHERE (TO_CHAR('P') = ? OR TO_CHAR('R') = ?)
+           AND AD_PROCESS_ID = ?
          UNION
          SELECT T.ACCESSLEVEL
           FROM AD_TABLE T, 
                AD_TAB TB
          WHERE T.AD_TABLE_ID = TB.AD_TABLE_ID
-           AND TO_CHAR('W') = TO_CHAR(?)
-           AND TB.AD_TAB_ID = TO_NUMBER(?)
+           AND TO_CHAR('W') = ?
+           AND TB.AD_TAB_ID = ?
          UNION
          SELECT ACCESSLEVEL
           FROM AD_TASK
-         WHERE TO_CHAR('T') = TO_CHAR(?) 
-           AND AD_TASK_ID = TO_NUMBER(?)
+         WHERE TO_CHAR('T') = ? 
+           AND AD_TASK_ID = ?
          UNION
         SELECT ACCESSLEVEL
           FROM AD_WORKFLOW
-         WHERE TO_CHAR('F') = TO_CHAR(?) 
-           AND AD_WORKFLOW_ID = TO_NUMBER(?)
+         WHERE TO_CHAR('F') = ? 
+           AND AD_WORKFLOW_ID = ?
       ]]></Sql>
       <Parameter name="type"/>
       <Parameter name="id"/>
@@ -74,62 +74,62 @@
        SELECT SUM(TOTAL) AS TOTAL
          FROM (SELECT COUNT(*) AS TOTAL 
                 FROM AD_Process_Access 
-               WHERE AD_Role_ID = TO_NUMBER(?) 
-                 AND (TO_CHAR('P') = TO_CHAR(?) OR TO_CHAR('R') = TO_CHAR(?))
-                 AND AD_Process_ID = TO_NUMBER(?) 
+               WHERE AD_Role_ID = ? 
+                 AND (TO_CHAR('P') = ? OR TO_CHAR('R') = ?)
+                 AND AD_Process_ID = ? 
                  AND IsActive = 'Y'
                UNION
               SELECT COUNT(*) AS TOTAL 
                 FROM AD_Form_Access 
-               WHERE AD_Role_ID = TO_NUMBER(?)
-                 AND TO_CHAR('X') = TO_CHAR(?) 
-                 AND AD_Form_ID = TO_NUMBER(?) 
+               WHERE AD_Role_ID = ?
+                 AND TO_CHAR('X') = ? 
+                 AND AD_Form_ID = ? 
                  AND IsActive = 'Y'
                UNION
                SELECT COUNT(*) AS TOTAL 
                 FROM DUAL 
-                WHERE (TO_NUMBER('800017') = TO_NUMBER(?) 
-                   OR TO_NUMBER('800018') = TO_NUMBER(?)) 
+                WHERE (to_char('800017') = ? 
+                   OR to_char('800018') = ?) 
                    AND TO_CHAR('TABLE') <> TO_CHAR(?)
                UNION
                SELECT COUNT(*) AS TOTAL 
                  FROM AD_Window_Access 
-                WHERE AD_Role_ID = TO_NUMBER(?) 
-                  AND TO_CHAR('W') = TO_CHAR(?)
+                WHERE AD_Role_ID = ? 
+                  AND TO_CHAR('W') = ?
                   AND AD_Window_ID = (SELECT AD_WINDOW_ID
                                         FROM AD_TAB
-                                       WHERE AD_TAB_ID = TO_NUMBER(?)) 
+                                       WHERE AD_TAB_ID = ?) 
                   AND IsActive = 'Y'
                 UNION
                SELECT COUNT(*) AS TOTAL 
                  FROM AD_Table_Access t, AD_Tab tb
                 WHERE t.AD_Table_ID = tb.AD_Table_ID 
-                 AND t.AD_Role_ID = TO_NUMBER(?) 
-                 AND TO_CHAR('TABLE') = TO_CHAR(?) 
-                 AND tb.AD_Tab_ID = TO_NUMBER(?) 
+                 AND t.AD_Role_ID = ? 
+                 AND TO_CHAR('TABLE') = ? 
+                 AND tb.AD_Tab_ID = ? 
                  AND t.IsActive = 'Y' 
                  AND t.IsExclude = 'Y'
                UNION
               SELECT COUNT(*) AS TOTAL 
                 FROM AD_Task_Access 
-               WHERE AD_Role_ID = TO_NUMBER(?) 
-                 AND TO_CHAR('T') = TO_CHAR(?)
-                 AND AD_Task_ID = TO_NUMBER(?) 
+               WHERE AD_Role_ID = ? 
+                 AND TO_CHAR('T') = ?
+                 AND AD_Task_ID = ? 
                  AND IsActive = 'Y' 
                UNION
               SELECT COUNT(*) AS TOTAL 
                 FROM AD_Workflow_Access 
-               WHERE AD_Role_ID = TO_NUMBER(?)
-                 AND TO_CHAR('F') = TO_CHAR(?) 
-                 AND AD_Workflow_ID = TO_NUMBER(?) 
+               WHERE AD_Role_ID = ?
+                 AND TO_CHAR('F') = ? 
+                 AND AD_Workflow_ID = ? 
                  AND IsActive = 'Y'
                  UNION
                SELECT COUNT(*) AS TOTAL 
                 FROM AD_Process_Access A,
                      AD_Process P
-               WHERE AD_Role_ID = TO_NUMBER(?) 
+               WHERE AD_Role_ID = ? 
                  AND TO_CHAR('P') = TO_CHAR(?)
-                 AND A.AD_Process_ID = TO_NUMBER(?)
+                 AND A.AD_Process_ID = ?
                  AND P.AD_Process_ID = A.AD_Process_ID
                  AND A.IsActive = 'Y'
                  AND P.IsExternalService = 'Y' 
@@ -137,7 +137,7 @@
                SELECT 1 AS TOTAL
                 FROM AD_Process
                 WHERE  TO_CHAR('P') = TO_CHAR(?)
-                AND AD_Process_ID = TO_NUMBER(?) 
+                AND AD_Process_ID = ? 
                  AND IsActive = 'Y'
                  AND IsExternalService != 'Y') TOTAL
        
@@ -189,9 +189,9 @@
                  ad_window_access wa,
                  ad_window w,
                  ad_role r
-           where r.ad_role_id = TO_NUMBER(?)
-             and ad_reference_value_id = TO_NUMBER(?)
-             and ad_reference_id = 30
+           where r.ad_role_ID = ?
+             and ad_reference_value_ID = ?
+             and ad_reference_id = '30'
              and f.ad_column_id = c.ad_column_id
              and tb.ad_tab_id  = f.ad_tab_id
              and tb.ad_window_id = wa.ad_window_id

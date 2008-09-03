@@ -27,7 +27,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       SELECT PeriodType, StartDate, EndDate 
-      FROM C_Period WHERE C_Period_ID = TO_NUMBER(?)
+      FROM C_Period WHERE C_Period_ID=?
     </Sql>
     <Parameter name="cPeriodId"/>
   </SqlMethod>
@@ -38,7 +38,7 @@
       FROM C_Period 
       WHERE C_Year_ID IN 
       (SELECT C_Year_ID FROM C_Year WHERE C_Calendar_ID =
-      (SELECT C_Calendar_ID FROM AD_ClientInfo WHERE AD_Client_ID = TO_NUMBER(?)))
+      (SELECT C_Calendar_ID FROM AD_ClientInfo WHERE AD_Client_ID=?))
       AND to_date(?) BETWEEN StartDate AND EndDate
       AND PeriodType='S'
       AND exists (select 1 from c_periodcontrol where c_periodcontrol.c_period_id = c_period.c_period_id

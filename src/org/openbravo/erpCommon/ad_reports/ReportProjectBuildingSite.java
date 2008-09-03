@@ -213,8 +213,8 @@ public class ReportProjectBuildingSite extends HttpSecureAppServlet {
       if (!strSalesRep.equals("")) strTitle += ", " + Utility.messageBD(this, "ForTheSalesRep", vars.getLanguage()) + " " + ReportProjectBuildingSiteData.selectSalesRep(this, Utility.getContext(this, vars, "#User_Org", "ReportProjectBuildingSite"), Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSite"), strSalesRep);
       xmlDocument.setParameter("title", strTitle);
     }
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

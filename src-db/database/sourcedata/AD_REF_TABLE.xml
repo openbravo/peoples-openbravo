@@ -1,10 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--
-************************
-0. Core Range.
-************************
--->
 <!--1**************--><AD_REF_TABLE>
 <!--1 AD_REFERENCE_ID-->
 <!--1-->              <AD_REFERENCE_ID><![CDATA[1]]></AD_REFERENCE_ID>
@@ -468,7 +463,7 @@
 <!--130 ISVALUEDISPLAYED-->
 <!--130-->              <ISVALUEDISPLAYED><![CDATA[Y]]></ISVALUEDISPLAYED>
 <!--130 WHERECLAUSE-->
-<!--130-->              <WHERECLAUSE><![CDATA[AD_Org.IsSummary='N' AND AD_Org_ID <> 0]]></WHERECLAUSE>
+<!--130-->              <WHERECLAUSE><![CDATA[AD_Org.IsSummary='N' AND AD_Org_ID <> '0']]></WHERECLAUSE>
 <!--130 ORDERBYCLAUSE-->
 <!--130-->              <ORDERBYCLAUSE><![CDATA[AD_Org.Name]]></ORDERBYCLAUSE>
 <!--130**************--></AD_REF_TABLE>
@@ -1888,7 +1883,7 @@ WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
 <!--257 ISVALUEDISPLAYED-->
 <!--257-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--257 WHERECLAUSE-->
-<!--257-->              <WHERECLAUSE><![CDATA[AD_Column.AD_Reference_ID=11]]></WHERECLAUSE>
+<!--257-->              <WHERECLAUSE><![CDATA[AD_Column.AD_Reference_ID='11']]></WHERECLAUSE>
 <!--257 ORDERBYCLAUSE-->
 <!--257-->              <ORDERBYCLAUSE><![CDATA[AD_Column.Name]]></ORDERBYCLAUSE>
 <!--257**************--></AD_REF_TABLE>
@@ -1919,7 +1914,7 @@ WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
 <!--258 ISVALUEDISPLAYED-->
 <!--258-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--258 WHERECLAUSE-->
-<!--258-->              <WHERECLAUSE><![CDATA[AD_Column.AD_Reference_ID=20]]></WHERECLAUSE>
+<!--258-->              <WHERECLAUSE><![CDATA[AD_Column.AD_Reference_ID='20']]></WHERECLAUSE>
 <!--258 ORDERBYCLAUSE-->
 <!--258-->              <ORDERBYCLAUSE><![CDATA[AD_Column.Name]]></ORDERBYCLAUSE>
 <!--258**************--></AD_REF_TABLE>
@@ -1977,7 +1972,7 @@ WHERE C_BPartner.C_BPartner_ID=po.C_BPartner_ID)]]></WHERECLAUSE>
 <!--272 ISVALUEDISPLAYED-->
 <!--272-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--272 WHERECLAUSE-->
-<!--272-->              <WHERECLAUSE><![CDATA[AD_Column.AD_Table_ID IN (315,266) AND AD_Column.AD_Reference_ID=25]]></WHERECLAUSE>
+<!--272-->              <WHERECLAUSE><![CDATA[AD_Column.AD_Table_ID IN ('315','266') AND AD_Column.AD_Reference_ID='25']]></WHERECLAUSE>
 <!--272 ORDERBYCLAUSE-->
 <!--272-->              <ORDERBYCLAUSE><![CDATA[AD_Column.ColumnName]]></ORDERBYCLAUSE>
 <!--272**************--></AD_REF_TABLE>
@@ -2761,19 +2756,4 @@ AND isActive='Y']]></WHERECLAUSE>
 <!--1000300002-->              <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--1000300002**************--></AD_REF_TABLE>
 
-<!--
-************************
-0. End of Core Range.
-************************
--->
-<!--
-************************
-1. Custom Range.
-************************
--->
-<!--
-************************
-1. End of Custom Range.
-************************
--->
 </data>

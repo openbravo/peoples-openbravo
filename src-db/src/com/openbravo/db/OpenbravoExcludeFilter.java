@@ -84,7 +84,10 @@ public class OpenbravoExcludeFilter extends ExcludeFilter {
             "DBA_RECOMPILE",
             "DBA_AFTERIMPORT",
             "NOW",
-            "UPDATE_DATEFORMAT"
+            "UPDATE_DATEFORMAT",
+            "GET_UUID",
+            "HEX_TO_INT",
+            "UUID_GENERATE_V1"
             };
     }
 

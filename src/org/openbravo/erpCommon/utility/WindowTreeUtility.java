@@ -90,7 +90,7 @@ public class WindowTreeUtility {
     else if (TreeType.equals("BB")) data = WindowTreeData.selectBOM(conn, vars.getUser(), strEditable, strParentID, strNodeId, TreeID);
     else if (TreeType.equals("EV")) {
       String strElementId = vars.getSessionValue(Utility.getWindowID(conn, strTabID) + "|C_Element_ID");
-      data = WindowTreeData.selectElementValue(conn, vars.getUser(), strEditable, strParentID, strNodeId, TreeID, strElementId);
+      data = WindowTreeData.selectElementValue(conn, vars.getLanguage(), vars.getUser(), strEditable, strParentID, strNodeId, TreeID, strElementId);
     } else if (TreeType.equals("BP")) data = WindowTreeData.selectBPartner(conn, vars.getUser(), strEditable, strParentID, strNodeId, TreeID);
     else if (TreeType.equals("MC")) data = WindowTreeData.selectCampaign(conn, vars.getUser(), strEditable, strParentID, strNodeId, TreeID);
     else if (TreeType.equals("PJ")) data = WindowTreeData.selectProject(conn, vars.getUser(), strEditable, strParentID, strNodeId, TreeID);

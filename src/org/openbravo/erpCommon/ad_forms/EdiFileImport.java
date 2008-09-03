@@ -248,8 +248,8 @@ public class EdiFileImport extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
     
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     /*String strMessage = vars.getSessionValue("EdiFileImport.message").equals("")?"xx();":"alert('" + vars.getSessionValue("EdiFileImport.message") + "');";
     vars.removeSessionValue("EdiFileImport.message");
     xmlDocument.setParameter("mensaje", strMessage);*/

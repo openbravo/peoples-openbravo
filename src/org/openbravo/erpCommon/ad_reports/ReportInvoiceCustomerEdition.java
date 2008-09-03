@@ -114,8 +114,8 @@ public class ReportInvoiceCustomerEdition extends HttpSecureAppServlet {
     }
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("dateFrom", strdateFrom);
     xmlDocument.setParameter("dateTo", strdateTo);
     xmlDocument.setParameter("paramBPartnerId", strcBpartnerId);
@@ -209,8 +209,8 @@ public class ReportInvoiceCustomerEdition extends HttpSecureAppServlet {
     data = InvoiceCustomerEditionData.select(this, Utility.getContext(this, vars, "#User_Org", "InvoiceCustomerFilter"), Utility.getContext(this, vars, "#User_Client", "InvoiceCustomerFilter"), strdateFrom, strdateTo, strcBpartnerId, strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic, strcRegionId, strSalesRep, strProduct);
     xmlDocument.setData("structure1", data);
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
 
     response.setContentType("text/html; charset=UTF-8");

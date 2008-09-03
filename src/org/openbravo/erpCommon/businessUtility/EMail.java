@@ -17,9 +17,6 @@
 package org.openbravo.erpCommon.businessUtility;
 
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.utils.CryptoUtility;
-import org.openbravo.utils.FormatUtilities;
-
 import java.util.*;
 import java.io.*;
 import java.net.*;

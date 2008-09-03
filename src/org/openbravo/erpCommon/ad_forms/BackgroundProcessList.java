@@ -113,8 +113,8 @@ public class BackgroundProcessList extends HttpSecureAppServlet {
     data = removePeriodicHeartbeat(data); // Remove PeriodicHeartbeat
     
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setData("structure1", data);
     response.setContentType("text/html; charset=UTF-8");

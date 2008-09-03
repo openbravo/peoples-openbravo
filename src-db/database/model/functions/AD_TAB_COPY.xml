@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_TAB_COPY">
     <function name="AD_TAB_COPY" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -32,14 +32,14 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     -- Parameter Variables
-    v_AD_Tab_ID NUMBER;
+    v_AD_Tab_ID VARCHAR2(32);
     v_NoOfFields NUMBER:=0;
-    v_NextNo NUMBER;
+    v_NextNo VARCHAR2(32);
     v_EntityType CHAR(1) ;
     -- Copy
     Cur_Fields RECORD;
@@ -62,7 +62,7 @@
     LOOP
       v_Record_ID:=Cur_Parameter.Record_ID;
       IF(Cur_Parameter.ParameterName='AD_Tab_ID') THEN
-        v_AD_Tab_ID:=Cur_Parameter.P_Number;
+        v_AD_Tab_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  AD_Tab_ID=' || v_AD_Tab_ID) ;
       ELSE
         DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
@@ -92,8 +92,8 @@
         )
         VALUES
         (v_NextNo, v_Record_ID, Cur_Fields.AD_Client_ID, Cur_Fields.AD_Org_ID,
-        Cur_Fields.IsActive, now(), 0, now(),
-        0, Cur_Fields.Name, Cur_Fields.Description, Cur_Fields.Help,
+        Cur_Fields.IsActive, now(), '0', now(),
+        '0', Cur_Fields.Name, Cur_Fields.Description, Cur_Fields.Help,
         Cur_Fields.IsCentrallyMaintained, Cur_Fields.AD_Column_ID, Cur_Fields.AD_FieldGroup_ID, Cur_Fields.ISDISPLAYED,
         Cur_Fields.DISPLAYLOGIC, Cur_Fields.DISPLAYLENGTH, Cur_Fields.ISREADONLY,
         Cur_Fields.SEQNO, Cur_Fields.SORTNO, Cur_Fields.ISSAMELINE, 

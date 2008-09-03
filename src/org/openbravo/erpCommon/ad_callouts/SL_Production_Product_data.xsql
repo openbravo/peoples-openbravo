@@ -36,7 +36,7 @@
     <Sql>
       SELECT DESCRIPTION 
       FROM M_ATTRIBUTESETINSTANCE 
-      WHERE M_ATTRIBUTESETINSTANCE_ID = TO_NUMBER(?)
+      WHERE M_ATTRIBUTESETINSTANCE_ID = ?
     </Sql>
     <Parameter name="mAttributesetinstanceId"/>
   </SqlMethod>
@@ -45,7 +45,7 @@
     <Sql>
       SELECT VALUE 
       FROM M_LOCATOR 
-      WHERE M_LOCATOR_ID = TO_NUMBER(?)
+      WHERE M_LOCATOR_ID = ?
     </Sql>
     <Parameter name="mLocatorId"/>
   </SqlMethod>

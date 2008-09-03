@@ -23,7 +23,7 @@
 * with specified values.
 */
 
-var frameDefault = "frameAplicacion";
+var frameDefault = "appFrame";
 
 function displayLogic() {
   return true;
@@ -35,13 +35,19 @@ function setgWaitingCallOut(state, frameName) {
   objFrame.setGWaitingCallOut(state);
 }
 
-function returnResponse(arrRespuesta, calloutName, frameName, formName) {
+function returnResponse(arrResponse, calloutName, frameName, formName) {
+  // Deprecated in 2.50
+  // the following allows some backwards-compatibility so that custom callouts which
+  // still use the frameAplicacion target, to work with the new name appFrame
+  if (frameName == 'frameAplicacion') {
+    frameName = 'appFrame';
+  }
   setgWaitingCallOut(false, frameName);
-  if (arrRespuesta==null && (calloutName==null || calloutName=="")) return false;
+  if (arrResponse==null && (calloutName==null || calloutName=="")) return false;
   if (frameName==null || frameName=="") frameName=frameDefault;
   objFrame = eval("parent." + frameName);
   if (objFrame) {
-    objFrame.fillElementsFromArray(arrRespuesta, calloutName, formName);
+    objFrame.fillElementsFromArray(arrResponse, calloutName, formName);
     try {
       objFrame.displayLogic();
     } catch (ignored) {}

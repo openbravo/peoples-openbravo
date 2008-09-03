@@ -28,7 +28,7 @@
 <PARAMETER id="paramCheck" name="check" default="Y"/>
 
 <PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
-<PARAMETER id="paramDirection" name="direction" default=""/>
+<PARAMETER id="paramDirectory" name="directory" default=""/>
 <PARAMETER id="paramLanguage" name="language" default=""/>
 <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
 <PARAMETER id="keyMap" name="keyMap"/>

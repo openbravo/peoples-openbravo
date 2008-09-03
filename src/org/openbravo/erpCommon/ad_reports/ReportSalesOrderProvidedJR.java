@@ -190,8 +190,8 @@ public class ReportSalesOrderProvidedJR extends HttpSecureAppServlet {
       if (!strProduct.equals("")) strTitle += ", " + Utility.messageBD(this, "ForProduct", vars.getLanguage()) + " " + ReportSalesOrderProvidedData.selectProduct(this, strProduct);
       xmlDocument.setParameter("title", strTitle);
     } 
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();

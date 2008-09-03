@@ -24,9 +24,9 @@
     * Contributor(s):  ______________________________________.
     ************************************************************************/
   v_Processed CHAR(1) ;
-  v_C_Remittance_ID NUMBER(10) ;
+  v_C_Remittance_ID VARCHAR2(32) ;
   v_Prec NUMBER:=2;
-  v_Currency        NUMBER;
+  v_Currency        VARCHAR2(32);
 BEGIN
   IF INSERTING THEN
     v_C_Remittance_ID:=:NEW.C_Remittance_ID;
@@ -42,10 +42,10 @@ BEGIN
          (
        (COALESCE(:old.ISACTIVE, '')!=COALESCE(:NEW.ISACTIVE, ''))
        OR(COALESCE(:old.LINE, 0)!=COALESCE(:NEW.LINE, 0))
-       OR(COALESCE(:old.C_DEBT_PAYMENT_ID, 0)!=COALESCE(:NEW.C_DEBT_PAYMENT_ID, 0))
+       OR(COALESCE(:old.C_DEBT_PAYMENT_ID, '0')!=COALESCE(:NEW.C_DEBT_PAYMENT_ID, '0'))
        OR(COALESCE(:old.C_DEBT_PAYMENT_CANCELLED, 0)!=COALESCE(:NEW.C_DEBT_PAYMENT_CANCELLED, 0))
-       OR(COALESCE(:old.AD_ORG_ID, 0) <> COALESCE(:new.AD_ORG_ID, 0))
-       OR(COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0))
+       OR(COALESCE(:old.AD_ORG_ID, '0') <> COALESCE(:new.AD_ORG_ID, '0'))
+       OR(COALESCE(:old.AD_CLIENT_ID, '0') <> COALESCE(:new.AD_CLIENT_ID, '0'))
        )) THEN
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;

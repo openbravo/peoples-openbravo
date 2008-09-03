@@ -112,8 +112,8 @@ public class ActionButton_Responser extends HttpSecureAppServlet {
       xmlDocument.setParameter("processing", "Y");
       xmlDocument.setParameter("form", "ActionButton_Responser.html");
       xmlDocument.setParameter("css", vars.getTheme());
-      xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-      xmlDocument.setParameter("language", "LNG_POR_DEFECTO = \"" + vars.getLanguage() + "\";\n");
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("language", "defaultLang = \"" + vars.getLanguage() + "\";\n");
       xmlDocument.setParameter("cancel", Utility.messageBD(this, "Cancel", vars.getLanguage()));
       xmlDocument.setParameter("ok", Utility.messageBD(this, "OK", vars.getLanguage()));
       

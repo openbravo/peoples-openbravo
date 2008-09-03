@@ -31,7 +31,7 @@
         FROM  C_SALARY_CATEGORY_COST scc
         WHERE scc.c_salary_category_cost_id = (SELECT MAX(scc1.c_salary_category_cost_id) 
                                                FROM C_SALARY_CATEGORY_COST scc1 
-                                               WHERE scc1.c_salary_category_ID = TO_NUMBER(?)
+                                               WHERE scc1.c_salary_category_id = ?
                                                AND scc1.datefrom = (SELECT MAX(scc2.datefrom) 
                                                                     FROM C_SALARY_CATEGORY_COST scc2 
                                                                     WHERE scc2.c_salary_category_id = scc1.c_salary_category_id

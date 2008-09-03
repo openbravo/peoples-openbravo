@@ -41,6 +41,7 @@ public class ToolBar {
   boolean isFrame = false;
   boolean isRelation = false;
   boolean isEditable = false;
+  boolean hasAttachments = false;
   Hashtable<String, HTMLElement> buttons = new Hashtable<String, HTMLElement>();
 
   public ToolBar(ConnectionProvider _conn, String _language, String _action, boolean _isNew, String _keyINP, String _gridID, String _PDFName, boolean _isDirectPrinting, String _windowName, String _baseDirection, boolean _debug) {
@@ -54,6 +55,10 @@ public class ToolBar {
     this(_conn, true, _language, _action, _isNew, _keyINP, _gridID, _PDFName, _isDirectPrinting, _windowName, _baseDirection, _debug, _isSrcWindow, _isFrame);
   }
   
+  public ToolBar(ConnectionProvider _conn, String _language, String _action, boolean _isNew, String _keyINP, String _gridID, String _PDFName, boolean _isDirectPrinting, String _windowName, String _baseDirection, boolean _debug, boolean _isSrcWindow, boolean _isFrame, boolean _hasAttachements) {
+    this(_conn, true, _language, _action, _isNew, _keyINP, _gridID, _PDFName, _isDirectPrinting, _windowName, _baseDirection, _debug, _isSrcWindow, _isFrame, _hasAttachements);
+  }  
+  
   public ToolBar(ConnectionProvider _conn, boolean _isEditable, String _language, String _action, boolean _isNew, String _keyINP, String _gridID, String _PDFName, boolean _isDirectPrinting, String _windowName, String _baseDirection, boolean _debug) {
     this(_conn, _isEditable, _language, _action, _isNew,  _keyINP,  _gridID, _PDFName, _isDirectPrinting, _windowName, _baseDirection, _debug, false);
   }
@@ -62,6 +67,9 @@ public class ToolBar {
     this(_conn, _isEditable, _language, _action, _isNew,  _keyINP,  _gridID, _PDFName, _isDirectPrinting, _windowName, _baseDirection, _debug, _isSrcWindow, false);
   }
   public ToolBar(ConnectionProvider _conn, boolean _isEditable, String _language, String _action, boolean _isNew, String _keyINP, String _gridID, String _PDFName, boolean _isDirectPrinting, String _windowName, String _baseDirection, boolean _debug, boolean _isSrcWindow, boolean _isFrame) {
+    this(_conn, _isEditable, _language, _action, _isNew,  _keyINP,  _gridID, _PDFName, _isDirectPrinting, _windowName, _baseDirection, _debug, _isSrcWindow, false, false);
+  } 
+  public ToolBar(ConnectionProvider _conn, boolean _isEditable, String _language, String _action, boolean _isNew, String _keyINP, String _gridID, String _PDFName, boolean _isDirectPrinting, String _windowName, String _baseDirection, boolean _debug, boolean _isSrcWindow, boolean _isFrame, boolean _hasAttachments) {
     this.conn = _conn;
     this.language = _language;
     this.servlet_action = _action;
@@ -78,6 +86,7 @@ public class ToolBar {
     int i=this.keyfield.lastIndexOf(".");
     if (i!=-1) this.form = this.keyfield.substring(0, i);
     this.isSrcWindow = _isSrcWindow;
+    this.hasAttachments = _hasAttachments;
     createAllButtons();
   }
 
@@ -100,9 +109,9 @@ public class ToolBar {
     } else if (name.equals("TREE")) {
       return "openServletNewWindow('DEFAULT', false, '../utility/WindowTree.html', 'TREE', null, null,625, 750, true, false, false);";
     } else if (name.equals("ATTACHMENT")) {
-      return  ((grid_id==null || grid_id.equals(""))?"":"if (dojo.widget.byId('" + grid_id + "').getSelectedRows()=='') {mensaje(23);resizeArea(true);calculateMsgBoxWidth();return false;} ") + " openServletNewWindow('DEFAULT', false, '../businessUtility/TabAttachments_FS.html?inpKey=' + " + ((grid_id==null || grid_id.equals(""))?keyfield + ".value":"dojo.widget.byId('" + grid_id + "').getSelectedRows()") + "+'&inpEditable="+ (isEditable?"Y":"N") +"', 'ATTACHMENT', null, true, 600, 700, true);";
+      return  ((grid_id==null || grid_id.equals(""))?"":"if (dojo.widget.byId('" + grid_id + "').getSelectedRows()=='') {showJSMessage(23);resizeArea(true);calculateMsgBoxWidth();return false;} ") + " openServletNewWindow('DEFAULT', false, '../businessUtility/TabAttachments_FS.html?inpKey=' + " + ((grid_id==null || grid_id.equals(""))?keyfield + ".value":"dojo.widget.byId('" + grid_id + "').getSelectedRows()") + "+'&inpEditable="+ (isEditable?"Y":"N") +"', 'ATTACHMENT', null, true, 600, 700, true);";
     } else if (name.equals("EXCEL")) {
-      return "abrirExcel('" + servlet_action + "_Excel.xls?Command=RELATION_XLS', '_blank');";
+      return "openExcel('" + servlet_action + "_Excel.xls?Command=RELATION_XLS', '_blank');";
     } else if (name.equals("GRIDEXCEL")) {
       return "openServletNewWindow('EXCEL', false, '../utility/ExportGrid.xls?inpTabId=' + document.forms[0].inpTabId.value + '&inpWindowId=' + document.forms[0].inpwindowId.value + '&inpAccessLevel=' + document.forms[0].inpAccessLevel.value, 'GRIDEXCEL', null, null, 500, 350, true );";
     } else if (name.equals("GRIDCSV")) {
@@ -110,11 +119,11 @@ public class ToolBar {
     } else if (name.equals("GRIDPDF")) {
       return "openServletNewWindow('PDF', false, '../utility/ExportGrid.pdf?inpTabId=' + document.forms[0].inpTabId.value + '&inpWindowId=' + document.forms[0].inpwindowId.value + '&inpAccessLevel=' + document.forms[0].inpAccessLevel.value, 'GRIDPDF', null, null, 500, 350, true );";
     } else if (name.equals("PRINT")) {
-      return "abrirPDFSession('" + pdf + "', '" + (isDirectPrint?"Printing":"") + "', " + keyfield + ".name, " + ((grid_id==null || grid_id.equals(""))?"null":"dojo.widget.byId('" + grid_id + "').getSelectedRows()") + ", " + ((grid_id==null || grid_id.equals(""))?"true":"null") + ");";
+      return "openPDFSession('" + pdf + "', '" + (isDirectPrint?"Printing":"") + "', " + keyfield + ".name, " + ((grid_id==null || grid_id.equals(""))?"null":"dojo.widget.byId('" + grid_id + "').getSelectedRows()") + ", " + ((grid_id==null || grid_id.equals(""))?"true":"null") + ");";
     } else if (name.equals("UNDO")) {
       return "windowUndo(" + form + ");";
     } else if (name.equals("SEARCH")) {
-      return "abrirBusqueda('../businessUtility/Buscador.html', 'BUSCADOR', " + form + ".inpTabId.value, '" + window_name + "/" + servlet_action + (isSrcWindow?"":"_Relation") + ".html', " + form + ".inpwindowId.value, " + (debug?"true":"false") + ");";
+      return "openSearchWindow('../businessUtility/Buscador.html', 'BUSCADOR', " + form + ".inpTabId.value, '" + window_name + "/" + servlet_action + (isSrcWindow?"":"_Relation") + ".html', " + form + ".inpwindowId.value, " + (debug?"true":"false") + ");";
     } else if (name.equals("AUDIT_EDITION")) {
       return "changeAuditStatus();";
     } else if (name.equals("AUDIT_RELATION")) {
@@ -154,7 +163,7 @@ public class ToolBar {
     //buttons.put("REFRESH", new ToolBar_Button(base_direction, "Refresh", Utility.messageBD(conn, "Refresh", language), getButtonScript("REFRESH")));
     buttons.put("UNDO", new ToolBar_Button(base_direction, "Undo", Utility.messageBD(conn, "Undo", language), getButtonScript("UNDO")));
     buttons.put("TREE", new ToolBar_Button(base_direction, "Tree", Utility.messageBD(conn, "Tree", language), getButtonScript("TREE")));
-    buttons.put("ATTACHMENT", new ToolBar_Button(base_direction, "Attachment", Utility.messageBD(conn, "Attachment", language), getButtonScript("ATTACHMENT")));
+    buttons.put("ATTACHMENT", new ToolBar_Button(base_direction, "Attachment", Utility.messageBD(conn, "Attachment", language), getButtonScript("ATTACHMENT"), null, hasAttachments?"AttachedDocuments":"Attachment"));
     buttons.put("EXCEL", new ToolBar_Button(base_direction, "Excel", Utility.messageBD(conn, "ExportExcel", language), getButtonScript("EXCEL")));
     buttons.put("GRIDEXCEL", new ToolBar_Button(base_direction, "ExportExcel", Utility.messageBD(conn, "ExportExcel", language), getButtonScript("GRIDEXCEL")));
     buttons.put("GRIDCSV", new ToolBar_Button(base_direction, "ExportCsv", Utility.messageBD(conn, "ExportCsv", language), getButtonScript("GRIDCSV")));

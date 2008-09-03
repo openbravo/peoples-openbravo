@@ -1,10 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--
-************************
-0. Core Range.
-************************
--->
 <!--0**************--><M_ATTRIBUTESET>
 <!--0 M_ATTRIBUTESET_ID-->
 <!--0-->              <M_ATTRIBUTESET_ID><![CDATA[0]]></M_ATTRIBUTESET_ID>
@@ -36,16 +31,6 @@
 <!--0-->              <ISLOCKABLE><![CDATA[N]]></ISLOCKABLE>
 <!--0**************--></M_ATTRIBUTESET>
 
-<!--
-************************
-0. End of Core Range.
-************************
--->
-<!--
-************************
-1. Custom Range.
-************************
--->
 <!--1000001**************--><M_ATTRIBUTESET>
 <!--1000001 M_ATTRIBUTESET_ID-->
 <!--1000001-->              <M_ATTRIBUTESET_ID><![CDATA[1000001]]></M_ATTRIBUTESET_ID>
@@ -164,9 +149,4 @@
 <!--1000004-->              <ISLOCKABLE><![CDATA[N]]></ISLOCKABLE>
 <!--1000004**************--></M_ATTRIBUTESET>
 
-<!--
-************************
-1. End of Custom Range.
-************************
--->
 </data>

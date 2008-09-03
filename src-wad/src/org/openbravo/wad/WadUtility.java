@@ -53,9 +53,10 @@ public class WadUtility {
     if (fields==null) return "";
     StringBuffer texto = new StringBuffer();
     if (fields.reference.equals("17")) { //List
+      if (fields.referencevalue.equals("800024")) System.out.println("List: tablename="+tableName); //ALO
       ilist++;
       if (tableName!=null && tableName.length()!=0) {
-        vecTable.addElement("left join ad_ref_list_v list" + ilist + " on (" + tableName + "." + fields.name + " = list" + ilist + ".value and list" + ilist + ".ad_reference_id = " + fields.referencevalue + " and list" + ilist + ".ad_language = ?) ");
+        vecTable.addElement("left join ad_ref_list_v list" + ilist + " on (" + tableName + "." + fields.name + " = list" + ilist + ".value and list" + ilist + ".ad_reference_id = '" + fields.referencevalue + "' and list" + ilist + ".ad_language = ?) ");
         vecTableParameters.addElement("<Parameter name=\"paramLanguage\"/>");
       } else {
         vecTable.addElement("ad_ref_list_v list" + ilist);
@@ -182,7 +183,7 @@ public class WadUtility {
     } else if (fields.reference.equals("17")) { //List
       ilist++;
       if (tableName!=null && tableName.length()!=0) {
-        vecTable.addElement("left join ad_ref_list_v list" + ilist + " on (" + tableName + "." + fields.name + " = list" + ilist + ".value and list" + ilist + ".ad_reference_id = " + fields.referencevalue + " and list" + ilist + ".ad_language = ?) ");
+        vecTable.addElement("left join ad_ref_list_v list" + ilist + " on (" + tableName + "." + fields.name + " = list" + ilist + ".value and list" + ilist + ".ad_reference_id = '" + fields.referencevalue + "' and list" + ilist + ".ad_language = ?) ");
         vecTableParameters.addElement("<Parameter name=\"paramLanguage\"/>");
       } else {
         vecTable.addElement("ad_ref_list_v list" + ilist);
@@ -534,7 +535,7 @@ public class WadUtility {
     } else if (efd.reference.equals("32")) {
       if (!tabIsReadOnly && isupdateable) {
         html.append("<a href=\"#\" onclick=\"");
-        html.append("openSearch(null, null, '../info/ImageInfo_FS.html', null, false, 'frmMain', 'inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp) + "', 'inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp) + "_R', document.frmMain.inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp) + ".value);");
+        html.append("openSearch(null, null, '../info/ImageInfo.html', null, false, 'frmMain', 'inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp) + "', 'inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp) + "_R', document.frmMain.inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp) + ".value);");
         html.append("return false;\" onmouseover=\"window.status='").append(efd.referenceName).append("';return true;\" onmouseout=\"window.status='';return true;\">");
       }
       html.append("<img src=\"../../../../../web/images/xx\" border=\"0\"");
@@ -565,7 +566,7 @@ public class WadUtility {
       if (!isupdateable || tabIsReadOnly) {
         html.append(" readonly=\"true\"");
       }
-      html.append(" onkeypress=\"return tamanoMaximo(this, ").append(efd.fieldlength).append(");").append("\"");
+      html.append(" onkeypress=\"return handleFieldMaxLength(this, ").append(efd.fieldlength).append(");").append("\"");
       html.append(">");
       if (!isdesigne) html.append("xxV"); 
       html.append("</TEXTAREA>");
@@ -596,7 +597,7 @@ public class WadUtility {
       if (!isupdateable || tabIsReadOnly) {
         html.append(" readonly=\"true\"");
       }
-      html.append(" onkeypress=\"return tamanoMaximo(this, ").append(efd.fieldlength).append(");").append("\"");
+      html.append(" onkeypress=\"return handleFieldMaxLength(this, ").append(efd.fieldlength).append(");").append("\"");
       html.append(">");
       if (!isdesigne) html.append("xxV"); 
       html.append("</TEXTAREA>");
@@ -753,7 +754,7 @@ public class WadUtility {
         if (existDebug) {
           script.append("  if (keyField==\"inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp) + "\") {\n");
           /*if (isReload) {
-            script.append("    submitCommandForm('" + efd.columnname + "', false, null, '../ad_callouts/ComboReloads' + document.frmMain.inpTabId.value + '.html', 'frameOculto');");
+            script.append("    submitCommandForm('" + efd.columnname + "', false, null, '../ad_callouts/ComboReloads' + document.frmMain.inpTabId.value + '.html', 'hiddenFrame');");
           }*/
           script.append("    " + (isReload?"reload":"callout") + calloutName + "(keyField);\n");
           script.append("  }\n");
@@ -958,10 +959,10 @@ public class WadUtility {
         StringBuffer strCallOut = new StringBuffer();
         if (isReload) {
           strCallOut.append("\nfunction reload" + calloutName + "(changedField) {\n");
-          strCallOut.append("    submitCommandForm(changedField, false, null, '../ad_callouts/ComboReloads' + document.frmMain.inpTabId.value + '.html', 'frameOculto', null, null, true);\n");
+          strCallOut.append("    submitCommandForm(changedField, false, null, '../ad_callouts/ComboReloads' + document.frmMain.inpTabId.value + '.html', 'hiddenFrame', null, null, true);\n");
         } else {
           strCallOut.append("\nfunction callout" + calloutName + "(changedField) {\n");
-          strCallOut.append("submitCommandFormParameter('DEFAULT', frmMain.inpLastFieldChanged, changedField, false, null, '..").append(efd.mappingnameCallout).append("', 'frameOculto', null, null, true);\n");
+          strCallOut.append("submitCommandFormParameter('DEFAULT', frmMain.inpLastFieldChanged, changedField, false, null, '..").append(efd.mappingnameCallout).append("', 'hiddenFrame', null, null, true);\n");
         }
         strCallOut.append("return true;\n");
         strCallOut.append("}\n");
@@ -1686,8 +1687,7 @@ public class WadUtility {
   public static boolean isIntegerNumber (String reference) {
     if (reference==null || reference.equals("")) return false;
     switch (Integer.valueOf(reference).intValue()) {
-    case 11:
-    case 13: return true;
+    case 11: return true;
     }
     return false;
   }
@@ -1779,14 +1779,15 @@ public class WadUtility {
   public static String sqlCasting(ConnectionProvider conn, String reference, String referencevalue) {
     if (reference==null || reference.equals("")) return "";
     else if (isDateTimeField(reference)) return "TO_DATE";
-    else if (isIntegerNumber(reference) || isPriceNumber(reference) || isQtyNumber(reference) || isGeneralNumber(reference) || isDecimalNumber(reference) || reference.equals("19") || isSearchType(reference)) return "TO_NUMBER";
-    else if (reference.equals("19") || reference.equals("27") || reference.equals("33")) return "TO_NUMBER";
+    else if (reference.equals("19") || isSearchType(reference) ) return "";
+    else if (isIntegerNumber(reference) || isPriceNumber(reference) || isQtyNumber(reference) || isGeneralNumber(reference) || isDecimalNumber(reference) ) return "TO_NUMBER";
+    else if (reference.equals("27") || reference.equals("33")) return "TO_NUMBER";
     else if (reference.equals("28") && (referencevalue.equals("11"))) return "TO_NUMBER";
     else if (reference.equals("18")) {
-      if (referencevalue==null) return "TO_NUMBER";
+      if (referencevalue==null) return "";
       try {
         TableRelationData trd[] = TableRelationData.selectRefTable(conn, referencevalue);
-        if (trd==null || trd.length==0) return "TO_NUMBER";
+        if (trd==null || trd.length==0) return "";
         return sqlCasting(conn, trd[0].referencekey, trd[0].referencevaluekey);
       } catch (ServletException ex) {
         log4j.error("sqlCasting: " + ex);

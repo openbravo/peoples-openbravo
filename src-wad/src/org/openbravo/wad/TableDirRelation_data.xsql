@@ -28,7 +28,7 @@
       SELECT columnname, '' as tablename, '' as columndescriptionname, '' as code, '' as AD_VAL_RULE_ID, 
       '' as clause, '' as parameters, '' as reference_id, '' as fromclause
       FROM AD_column  
-      WHERE AD_reference_id=19
+      WHERE AD_reference_id='19'
       AND columnname not in ('Node_ID')
         GROUP BY columnname
       ]]>
@@ -47,7 +47,7 @@
         WHERE c.AD_VAL_RULE_ID = v.AD_VAL_RULE_ID 
         AND c.AD_REFERENCE_ID = r.AD_REFERENCE_ID 
         AND c.AD_VAL_RULE_ID IS NOT NULL 
-        AND r.AD_REFERENCE_ID = 19
+        AND r.AD_REFERENCE_ID = '19'
         UNION
         SELECT DISTINCT c.COLUMNNAME, '' AS tablename, '' AS columndescriptionname, v.code, 
         v.AD_VAL_RULE_ID, '' AS clause, '' AS PARAMETERS, '' AS reference_id, '' as fromclause
@@ -55,7 +55,7 @@
         WHERE c.AD_VAL_RULE_ID = v.AD_VAL_RULE_ID 
         AND c.AD_REFERENCE_ID = r.AD_REFERENCE_ID 
         AND c.AD_VAL_RULE_ID IS NOT NULL 
-        AND r.AD_REFERENCE_ID = 19) A
+        AND r.AD_REFERENCE_ID = '19') A
       ]]>
     </Sql>
   </SqlMethod>

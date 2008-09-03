@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION A_ASSET_GROUP_ACCT_COPY">
     <function name="A_ASSET_GROUP_ACCT_COPY" type="NULL">
-      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -23,12 +23,12 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     --
-    v_A_Asset_Group_ID NUMBER;
+    v_A_Asset_Group_ID VARCHAR2(32);
     Cur_Acct RECORD;
     --
     v_Updated NUMBER:=0;
@@ -55,7 +55,7 @@
     LOOP
       v_Record_ID:=Cur_Parameter.Record_ID;
       IF(Cur_Parameter.ParameterName='A_Asset_Group_ID') THEN
-        v_A_Asset_Group_ID:=Cur_Parameter.P_Number;
+        v_A_Asset_Group_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  A_Asset_Group_ID=' || v_A_Asset_Group_ID) ;
       ELSE
         DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
@@ -70,7 +70,7 @@
     LOOP
       -- Update existing Assets
       UPDATE A_Asset_Acct
-        SET A_DEPRECIATION_ACCT=Cur_Acct.A_DEPRECIATION_ACCT, A_ACCUMDEPRECIATION_ACCT=Cur_Acct.A_ACCUMDEPRECIATION_ACCT, A_DISPOSAL_LOSS=Cur_Acct.A_DISPOSAL_LOSS, A_DISPOSAL_GAIN=Cur_Acct.A_DISPOSAL_GAIN, updated=now(), UpdatedBy=0
+        SET A_DEPRECIATION_ACCT=Cur_Acct.A_DEPRECIATION_ACCT, A_ACCUMDEPRECIATION_ACCT=Cur_Acct.A_ACCUMDEPRECIATION_ACCT, A_DISPOSAL_LOSS=Cur_Acct.A_DISPOSAL_LOSS, A_DISPOSAL_GAIN=Cur_Acct.A_DISPOSAL_GAIN, updated=now(), UpdatedBy='0'
       WHERE A_Asset_Acct.C_AcctSchema_ID=Cur_Acct.C_AcctSchema_ID  AND exists
         (SELECT 1
         FROM A_Asset a
@@ -88,7 +88,7 @@
           UPDATEDBY, A_DEPRECIATION_ACCT, A_ACCUMDEPRECIATION_ACCT, A_DISPOSAL_LOSS,
           A_DISPOSAL_GAIN
         )
-      SELECT a.A_ASSET_ID, Cur_Acct.C_ACCTSCHEMA_ID, a.AD_CLIENT_ID, a.AD_ORG_ID, 'Y', now(), 0, now(), 0, Cur_Acct.A_DEPRECIATION_ACCT, Cur_Acct.A_ACCUMDEPRECIATION_ACCT, Cur_Acct.A_DISPOSAL_LOSS, Cur_Acct.A_DISPOSAL_GAIN
+      SELECT a.A_ASSET_ID, Cur_Acct.C_ACCTSCHEMA_ID, a.AD_CLIENT_ID, a.AD_ORG_ID, 'Y', now(), '0', now(), '0', Cur_Acct.A_DEPRECIATION_ACCT, Cur_Acct.A_ACCUMDEPRECIATION_ACCT, Cur_Acct.A_DISPOSAL_LOSS, Cur_Acct.A_DISPOSAL_GAIN
       FROM A_Asset a
       WHERE a.A_Asset_Group_ID=Cur_Acct.A_Asset_Group_ID  AND NOT EXISTS
         (SELECT 1

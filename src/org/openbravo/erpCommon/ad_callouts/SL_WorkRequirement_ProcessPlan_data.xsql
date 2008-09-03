@@ -29,7 +29,7 @@
       <![CDATA[
       SELECT explodephases, secondaryunit, conversionrate
       FROM MA_ProcessPlan p
-      WHERE p.MA_ProcessPlan_ID = TO_NUMBER(?)
+      WHERE p.MA_ProcessPlan_ID = ?
       ]]>
     </Sql>
     <Parameter name="maProcessPlanId"/>

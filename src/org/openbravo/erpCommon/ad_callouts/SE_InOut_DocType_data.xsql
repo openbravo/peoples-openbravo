@@ -30,7 +30,7 @@
         SELECT d.IsDocNoControlled,
         s.CurrentNext, d.DocBaseType
         FROM C_DocType d left join AD_Sequence s on d.DocNoSequence_ID=s.AD_Sequence_ID
-        WHERE C_DocType_ID = TO_NUMBER(?)
+        WHERE C_DocType_ID=?
       ]]>
     </Sql>
     <Parameter name="cDocTypeId"/>
@@ -41,7 +41,7 @@
       <![CDATA[
         SELECT C_DOCTYPETARGET_ID
         FROM C_INVOICE
-        WHERE C_INVOICE_ID = TO_NUMBER(?)
+        WHERE C_INVOICE_ID = ?
       ]]>
     </Sql>
     <Parameter name="cInvoiceId"/>
@@ -52,7 +52,7 @@
       <![CDATA[
         SELECT DOCUMENTNO
         FROM C_INVOICE
-        WHERE C_INVOICE_ID = TO_NUMBER(?)
+        WHERE C_INVOICE_ID = ?
       ]]>
     </Sql>
     <Parameter name="cInvoiceId"/>

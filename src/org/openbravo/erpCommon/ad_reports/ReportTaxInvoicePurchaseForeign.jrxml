@@ -147,7 +147,7 @@
 	<parameter name="DETAIL" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
 	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
-	<queryString><![CDATA[SELECT C_INVOICE.ISSOTRX AS SALES, 'N' AS NATIONAL, C_INVOICE.DOCUMENTNO AS DOCUMENTNO, C_INVOICE.DATEINVOICED, C_BPARTNER.NAME AS BPARTNER, LTRIM(RTRIM(C_TAX.NAME, ' '), ' ') AS TAXNAME, 
+	<queryString><![CDATA[SELECT C_INVOICE.ISSOTRX AS SALES, 'N' AS NATIONAL, COALESCE(C_INVOICE.POREFERENCE, C_INVOICE.DOCUMENTNO) AS REFERENCE, C_INVOICE.DATEINVOICED, C_BPARTNER.NAME AS BPARTNER, LTRIM(RTRIM(C_TAX.NAME, ' '), ' ') AS TAXNAME, 
       SUM(CASE WHEN DOCBASETYPE IN ('ARC','APC') THEN -1 * C_INVOICETAX.TAXBASEAMT ELSE C_INVOICETAX.TAXBASEAMT END) AS TAXBASEAMT, 
       SUM(CASE WHEN DOCBASETYPE IN ('ARC','APC') THEN -1 * C_INVOICETAX.TAXAMT ELSE C_INVOICETAX.TAXAMT END) AS TAXAMT, '' AS ADTREEID
       FROM C_TAX, C_INVOICETAX, C_INVOICE, C_BPARTNER_LOCATION, C_LOCATION, C_BPARTNER, C_DOCTYPE
@@ -166,13 +166,13 @@
       AND 1=1 $P!{aux_client} 
       AND 1=1 $P!{aux_org}
       AND 1=1
-      GROUP BY C_INVOICE.DOCUMENTNO, C_TAX.NAME, C_INVOICE.DATEINVOICED, C_BPARTNER.NAME, C_INVOICE.ISSOTRX
+      GROUP BY COALESCE(C_INVOICE.POREFERENCE, C_INVOICE.DOCUMENTNO), C_TAX.NAME, C_INVOICE.DATEINVOICED, C_BPARTNER.NAME, C_INVOICE.ISSOTRX
       HAVING SUM(C_INVOICETAX.TAXBASEAMT) <> 0
-      ORDER BY C_TAX.NAME, C_INVOICE.DATEINVOICED]]></queryString>
+      ORDER BY C_TAX.NAME, C_INVOICE.DATEINVOICED, COALESCE(C_INVOICE.POREFERENCE,  C_INVOICE.DOCUMENTNO)]]></queryString>
 
 	<field name="SALES" class="java.lang.String"/>
 	<field name="NATIONAL" class="java.lang.String"/>
-	<field name="DOCUMENTNO" class="java.lang.String"/>
+	<field name="REFERENCE" class="java.lang.String"/>
 	<field name="DATEINVOICED" class="java.sql.Timestamp"/>
 	<field name="BPARTNER" class="java.lang.String"/>
 	<field name="TAXNAME" class="java.lang.String"/>
@@ -490,7 +490,7 @@
 					<textElement verticalAlignment="Middle">
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DOCUMENTNO}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{REFERENCE}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="dd-MM-yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

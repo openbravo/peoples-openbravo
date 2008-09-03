@@ -51,8 +51,8 @@ public class HeartbeatConfirm extends HttpSecureAppServlet {
     XmlDocument xmlDocument = null;
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/HeartbeatConfirm").createXmlDocument();
     
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("result", Utility.messageBD(this, "HB_SUCCESS", vars.getLanguage()));
 

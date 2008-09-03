@@ -66,9 +66,9 @@
     <Parameter name="adUserClient" type="replace" optional="true" after="AND M_INOUT.AD_CLIENT_ID IN (" text="'6'"/>
     <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[AND M_INOUT.MOVEMENTDATE >= to_date(?)]]></Parameter>
     <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[AND M_INOUT.MOVEMENTDATE < to_date(?)]]></Parameter>
-    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
     <Parameter name="nivel1" type="replace" optional="true" after="UNION ALL SELECT to_char(" text="'7'"/>
     <Parameter name="nivel2" type="replace" optional="true" after=" AS NIVEL1 , to_char(" text="'8'"/>
@@ -79,9 +79,9 @@
     <Parameter name="adUserClient" type="replace" optional="true" after="AND M_INOUT.AD_CLIENT_ID IN(" text="'12'"/>
     <Parameter name="dateFromRef" optional="true" after="AND 2=2"><![CDATA[AND M_INOUT.MOVEMENTDATE >= to_date(?)]]></Parameter>
     <Parameter name="dateToRef" optional="true" after="AND 2=2"><![CDATA[AND M_INOUT.MOVEMENTDATE < to_date(?)]]></Parameter>
-    <Parameter name="cBpartnerGroupId" optional="true" after="AND 2=2"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 2=2"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="mProductCategoryId" optional="true" after="AND 2=2"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 2=2"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
     <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, UOMSYMBOL" text=", '13'"/>
   </SqlMethod>
@@ -120,9 +120,9 @@
     <Parameter name="adUserClient" type="replace" optional="true" after="AND M_INOUT.AD_CLIENT_ID IN (" text="'6'"/>
     <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[AND M_INOUT.MOVEMENTDATE >= to_date(?)]]></Parameter>
     <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[AND M_INOUT.MOVEMENTDATE < to_date(?)]]></Parameter>
-    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="cBpartnerGroupId" optional="true" after="AND 1=1"><![CDATA[AND C_BP_GROUP.C_BP_GROUP_ID = ?]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
     <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, UOMSYMBOL" text=", '7'"/>
   </SqlMethod>
@@ -162,7 +162,7 @@
     <![CDATA[
       SELECT C_BP_GROUP.NAME
       FROM C_BP_GROUP
-      WHERE C_BP_GROUP.C_BP_GROUP_ID = TO_NUMBER(?)
+      WHERE C_BP_GROUP.C_BP_GROUP_ID = ?
      ]]></Sql>
     <Parameter name="cBpGroupId"/>
   </SqlMethod>
@@ -173,7 +173,7 @@
     <![CDATA[
       SELECT M_PRODUCT_CATEGORY.NAME
       FROM M_PRODUCT_CATEGORY
-      WHERE M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = TO_NUMBER(?)
+      WHERE M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?
      ]]></Sql>
     <Parameter name="mProductCategoryId"/>
   </SqlMethod>
@@ -184,7 +184,7 @@
     <![CDATA[
       SELECT AD_CLIENT.NAME
       FROM AD_CLIENT
-      WHERE AD_CLIENT.AD_CLIENT_ID = TO_NUMBER(?)
+      WHERE AD_CLIENT.AD_CLIENT_ID = ?
      ]]></Sql>
     <Parameter name="adClientId"/>
   </SqlMethod>
@@ -196,7 +196,7 @@
       SELECT ID, NAME
       FROM (SELECT VALUE AS ID, NAME 
               FROM AD_REF_LIST 
-             WHERE AD_REFERENCE_ID = 800086 
+             WHERE AD_REFERENCE_ID = '800086' 
              AND AD_REF_LIST.VALUE IN ('1', '2', '3', '4', '5')
              ORDER BY TO_NUMBER(VALUE)) AA
       WHERE 1=1 
@@ -210,7 +210,7 @@
       SELECT ID, NAME
       FROM (SELECT VALUE AS ID, NAME 
               FROM AD_REF_LIST 
-             WHERE AD_REFERENCE_ID = 800086 
+             WHERE AD_REFERENCE_ID = '800086' 
              AND AD_REF_LIST.VALUE IN ('1', '2', '3', '4', '5')
              ORDER BY TO_NUMBER(VALUE)) AA
       WHERE 1=1 
@@ -226,7 +226,7 @@
       FROM (SELECT VALUE AS ID, T.NAME 
               FROM AD_REF_LIST_trl T,
                    AD_REF_LIST     L
-             WHERE l.AD_REFERENCE_ID = 800086
+             WHERE l.AD_REFERENCE_ID = '800086'
                AND l.AD_REF_LIST_ID  = t.AD_REF_LIST_ID
                AND L.VALUE IN ('1', '2', '3', '4', '5')
                AND t.AD_LANGUAGE = ?
@@ -244,7 +244,7 @@
       FROM (SELECT VALUE AS ID, T.NAME 
               FROM AD_REF_LIST_trl T,
                    AD_REF_LIST     L
-             WHERE l.AD_REFERENCE_ID = 800086
+             WHERE l.AD_REFERENCE_ID = '800086'
                AND l.AD_REF_LIST_ID  = t.AD_REF_LIST_ID
                AND L.VALUE IN ('1', '2', '3', '4', '5')
                AND t.AD_LANGUAGE = ?

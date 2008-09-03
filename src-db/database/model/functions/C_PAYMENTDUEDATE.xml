@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_PAYMENTDUEDATE">
     <function name="C_PAYMENTDUEDATE" type="TIMESTAMP">
-      <parameter name="p_bpartner_id" type="NUMERIC" mode="in">
+      <parameter name="p_bpartner_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_issotrx" type="CHAR" mode="in">

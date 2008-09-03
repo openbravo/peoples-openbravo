@@ -127,8 +127,8 @@ public class ReportProductionRunJR extends HttpSecureAppServlet {
       }
     }  
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("maWorkRequirement", strmaWorkRequirement);
     xmlDocument.setParameter("launchDateFrom", strLaunchDateFrom);
     xmlDocument.setParameter("launchDateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
@@ -200,8 +200,8 @@ public class ReportProductionRunJR extends HttpSecureAppServlet {
       }
     }  
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("maWorkRequirement", strmaWorkRequirement);
     xmlDocument.setParameter("launchDateFrom", strLaunchDateFrom);
     xmlDocument.setParameter("launchDateTo", strLaunchDateTo);

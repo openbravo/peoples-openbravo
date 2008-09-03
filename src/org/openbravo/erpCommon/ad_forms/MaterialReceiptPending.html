@@ -25,13 +25,13 @@
 <LINK rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon"/>
 <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Main_Manual.css" id="paramCSS"/>
     <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Client/DataGrid/DataGrid.css" id="paramCSS" />
-<script language="JavaScript" type="text/javascript" id="paramDirection">
-var baseDirection = "../../../../../web/";
+<script language="JavaScript" type="text/javascript" id="paramDirectory">
+var baseDirectory = "../../../../../web/";
 </script> 
 <SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></SCRIPT>
 <script language="JavaScript" type="text/javascript" id="paramLanguage">
-  var LNG_POR_DEFECTO = "en_US";
+  var defaultLang = "en_US";
 </script>
 <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
@@ -52,36 +52,36 @@ var baseDirection = "../../../../../web/";
 </script> 
 <SCRIPT language="JavaScript" type="text/javascript">
 
-function depurar(action) {
+function validate(action) {
   var frm=document.frmMain;
   	if (action=="GENERATE") {
 			if (radioValue(frm.inpOrder)==null) {
-			mensaje(1);
+			showJSMessage(1);
 			return false;
 			} 
 	} else if (action=="FIND") {
 			if (frm.inpadOrgId.value==null || frm.inpadOrgId.value=="") {
 			setWindowElementFocus(frm.inpadOrgId);
-			mensaje(7);
+			showJSMessage(7);
 			return false;
 			}
 	}
   return true;
 }
 
-function actualizarDatos(clave, marcar) {
-	if (marcar==null) marcar=false;
+function updateData(key, mark) {
+	if (mark==null) mark=false;
 	var frm = document.frmMain;
-	frm.elements["inpQtyordered" + clave].disabled=!marcar;
-	frm.elements["inpmLocatorId_D" + clave].disabled=!marcar;
+	frm.elements["inpQtyordered" + key].disabled=!mark;
+	frm.elements["inpmLocatorId_D" + key].disabled=!mark;
 
-  if (marcar)
+  if (mark)
   {
-    frm.elements["inpQtyordered" + clave].className = frm.elements["inpQtyordered" + clave].className.replace(' readonly', '');
-    frm.elements["inpmLocatorId_D" + clave].className = frm.elements["inpmLocatorId_D" + clave].className.replace(' readonly', '');
+    frm.elements["inpQtyordered" + key].className = frm.elements["inpQtyordered" + key].className.replace(' readonly', '');
+    frm.elements["inpmLocatorId_D" + key].className = frm.elements["inpmLocatorId_D" + key].className.replace(' readonly', '');
   } else {
-    frm.elements["inpQtyordered" + clave].className += " readonly";
-    frm.elements["inpmLocatorId_D" + clave].className += " readonly";
+    frm.elements["inpQtyordered" + key].className += " readonly";
+    frm.elements["inpmLocatorId_D" + key].className += " readonly";
   }
 	return true;
 }
@@ -436,7 +436,7 @@ function onloadFunctions() {
               <DIV id="sectionDetail"> 
 
                 <TR id="funcEvenOddRow" class="DataGrid_Body_Row DataGrid_Body_Row_xx"> 
-                  <TD width="20" class="DataGrid_Body_Cell"> <SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpOrder" onclick="actualizarDatos(this.value, this.checked);return true;" value="" id="fieldCOrderlineId"></INPUT></SPAN>
+                  <TD width="20" class="DataGrid_Body_Cell"> <SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpOrder" onclick="updateData(this.value, this.checked);return true;" value="" id="fieldCOrderlineId"></INPUT></SPAN>
                   </TD>
                   <TD width="409" class="DataGrid_Body_Cell" id="fieldProductName">xx</TD>
                   <TD width="198" class="DataGrid_Body_Cell" id="fieldDescription">xx</TD>

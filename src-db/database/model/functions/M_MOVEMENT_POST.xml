@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_MOVEMENT_POST">
     <function name="M_MOVEMENT_POST" type="NULL">
-      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -32,7 +32,7 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
   v_Result NUMBER:=1;
   --Added by PSarobe 13062007
   v_line NUMBER;
@@ -44,9 +44,9 @@
     v_IsProcessed CHAR(1) ;
     v_NoProcessed NUMBER:=0;
     v_MoveDate DATE;
-    v_Client_ID NUMBER(10) ;
-    v_Org_ID NUMBER;
-    v_p_User NUMBER;
+    v_Client_ID VARCHAR2(32) ;
+    v_Org_ID VARCHAR2(32);
+    v_p_User VARCHAR2(32);
     v_Count NUMBER:=0;
     END_PROCESS BOOLEAN:=false;
   BEGIN
@@ -104,7 +104,7 @@
         M_Product P
       WHERE M.M_PRODUCT_ID=P.M_PRODUCT_ID
         AND P.M_ATTRIBUTESET_ID IS NOT NULL
-        AND COALESCE(M.M_ATTRIBUTESETINSTANCE_ID, 0) = 0
+        AND COALESCE(M.M_ATTRIBUTESETINSTANCE_ID, '0') = '0'
         AND M.M_Movement_ID=v_Record_ID;
       IF v_Count<>0 THEN
        RAISE_APPLICATION_ERROR(-20000, 'Inline'||v_line||' '||'@productWithoutAttributeSet@') ;
@@ -120,7 +120,7 @@
       */
       DECLARE
         Cur_MoveLine RECORD;
-        NextNo NUMBER;
+        NextNo varchar2(32);
       BEGIN --FOR COMMIT
         FOR Cur_MoveLine IN
           (SELECT *  FROM M_MovementLine  WHERE M_Movement_ID=v_Record_ID  ORDER BY Line)
@@ -140,8 +140,8 @@
             VALUES
             (
               NextNo, Cur_MoveLine.AD_Client_ID, Cur_MoveLine.AD_Org_ID, 'Y',
-              now(), 0, now(), 0,
-              'M-', Cur_MoveLine.M_Locator_ID, Cur_MoveLine.M_Product_ID, COALESCE(Cur_MoveLine.M_AttributeSetInstance_ID, 0),
+              now(), '0', now(), '0',
+              'M-', Cur_MoveLine.M_Locator_ID, Cur_MoveLine.M_Product_ID, COALESCE(Cur_MoveLine.M_AttributeSetInstance_ID, '0'),
               v_MoveDate, (Cur_MoveLine.MovementQty * -1), Cur_MoveLine.M_MovementLine_ID, Cur_MoveLine.M_Product_UOM_ID,
               (Cur_MoveLine.QuantityOrder * -1), Cur_MoveLine.C_UOM_ID
             )
@@ -160,8 +160,8 @@
             VALUES
             (
               NextNo, Cur_MoveLine.AD_Client_ID, Cur_MoveLine.AD_Org_ID, 'Y',
-              now(), 0, now(), 0,
-              'M+', Cur_MoveLine.M_LocatorTo_ID, Cur_MoveLine.M_Product_ID, COALESCE(Cur_MoveLine.M_AttributeSetInstance_ID, 0),
+              now(), '0', now(), '0',
+              'M+', Cur_MoveLine.M_LocatorTo_ID, Cur_MoveLine.M_Product_ID, COALESCE(Cur_MoveLine.M_AttributeSetInstance_ID, '0'),
               v_MoveDate, Cur_MoveLine.MovementQty, Cur_MoveLine.M_MovementLine_ID, Cur_MoveLine.M_Product_UOM_ID,
               Cur_MoveLine.QuantityOrder, Cur_MoveLine.C_UOM_ID
             )

@@ -28,7 +28,7 @@
 		<td width="6%"></td>
         <td width="xx%" id="fieldWidthMargin"></td>
 		<td width="yy%" id="fieldWidthText" class="TextoGris2Bg"><div style="display: table-cell; display: -moz-inline-box;">
-        <a href="#" onclick="actualizarDatos('OPEN', 'xx', 'yy', 'zz', 'ww', 'mm', 'pp', 'aa');return false;" onMouseOver="window.status='Open';return true;" onMouseOut="window.status='';return true;" id="fieldParentLevel">
+        <a href="#" onclick="updateData('OPEN', 'xx', 'yy', 'zz', 'ww', 'mm', 'pp', 'aa');return false;" onMouseOver="window.status='Open';return true;" onMouseOut="window.status='';return true;" id="fieldParentLevel">
           <span id="buttonTreexx" > </span>
           <span id="fieldNivel"></span>
         </a>

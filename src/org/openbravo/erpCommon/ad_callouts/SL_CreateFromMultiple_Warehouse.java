@@ -77,7 +77,7 @@ public class SL_CreateFromMultiple_Warehouse extends HttpSecureAppServlet {
 
     log4j.debug("Array: " + resultado.toString());
     xmlDocument.setParameter("array", resultado.toString());
-    //xmlDocument.setParameter("frameName", (Utility.isTreeTab(this, strTabId)?"frameAplicacion.frameWindowTreeTab":"frameAplicacion"));
+    //xmlDocument.setParameter("frameName", (Utility.isTreeTab(this, strTabId)?"appFrame.frameWindowTreeTab":"appFrame"));
     xmlDocument.setParameter("frameName", "frameButton");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();

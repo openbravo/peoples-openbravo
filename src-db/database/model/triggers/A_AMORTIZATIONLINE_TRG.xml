@@ -24,7 +24,7 @@
 ************************************************************************/
   v_Processed CHAR(1) ;
   v_Posted CHAR(1) ;
-  v_AmortizationID NUMBER(10);
+  v_AmortizationID varchar2(32);
 BEGIN
   -- ReadOnly Check
   IF (UPDATING OR INSERTING) THEN
@@ -47,16 +47,16 @@ BEGIN
 
   if(UPDATING) THEN
     IF coalesce(v_Processed, 'N')='Y'
-   and(  COALESCE(:old.A_AMORTIZATIONLINE_ID, 0) <> COALESCE(:new.A_AMORTIZATIONLINE_ID, 0)
-       or COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0)
-       or COALESCE(:old.AD_ORG_ID, 0) <> COALESCE(:new.AD_ORG_ID, 0)
+   and(  COALESCE(:old.A_AMORTIZATIONLINE_ID, '0') <> COALESCE(:new.A_AMORTIZATIONLINE_ID, '0')
+       or COALESCE(:old.AD_CLIENT_ID, '0') <> COALESCE(:new.AD_CLIENT_ID, '0')
+       or COALESCE(:old.AD_ORG_ID, '0') <> COALESCE(:new.AD_ORG_ID, '0')
        or COALESCE(:old.ISACTIVE, '') <> COALESCE(:new.ISACTIVE, '')
-       or COALESCE(:old.A_AMORTIZATION_ID, 0) <> COALESCE(:new.A_AMORTIZATION_ID, 0)
+       or COALESCE(:old.A_AMORTIZATION_ID, '0') <> COALESCE(:new.A_AMORTIZATION_ID, '0')
        or COALESCE(:old.LINE, 0) <> COALESCE(:new.LINE, 0)
-       or COALESCE(:old.A_ASSET_ID, 0) <> COALESCE(:new.A_ASSET_ID, 0)
+       or COALESCE(:old.A_ASSET_ID, '0') <> COALESCE(:new.A_ASSET_ID, '0')
        or COALESCE(:old.AMORTIZATION_PORCENTAGE, 0) <> COALESCE(:new.AMORTIZATION_PORCENTAGE, 0)
        or COALESCE(:old.AMORTIZATIONAMT, 0) <> COALESCE(:new.AMORTIZATIONAMT, 0)
-       or COALESCE(:old.C_CURRENCY_ID, 0) <> COALESCE(:new.C_CURRENCY_ID, 0))
+       or COALESCE(:old.C_CURRENCY_ID, '0') <> COALESCE(:new.C_CURRENCY_ID, '0'))
   then
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     end if;

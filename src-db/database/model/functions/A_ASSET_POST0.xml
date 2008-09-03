@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION A_ASSET_POST0">
     <function name="A_ASSET_POST0" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************

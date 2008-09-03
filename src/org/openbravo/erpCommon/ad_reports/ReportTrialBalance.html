@@ -26,14 +26,14 @@
     <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Main_Manual.css" id="paramCSS" />
     <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Client/DataGrid/DataGrid.css" id="paramCSS" />
      
-    <script language="JavaScript" type="text/javascript" id="paramDirection">
-      var baseDirection = "../../../../../web/";
+    <script language="JavaScript" type="text/javascript" id="paramDirectory">
+      var baseDirectory = "../../../../../web/";
       </script>
       <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript">
       </script>
       <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
       <script language="JavaScript" type="text/javascript" id="paramLanguage">
-        var LNG_POR_DEFECTO = "en_US";
+        var defaultLang = "en_US";
       </script>
       <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
@@ -55,7 +55,7 @@
 
 function imprimir()
 {
-	abrirPDFFiltered("ReportTrialBalancePDF.pdf?Command=PDF","PDF");
+	openPDFFiltered("ReportTrialBalancePDF.pdf?Command=PDF","PDF");
 	return true;
 }
 </SCRIPT>
@@ -80,30 +80,30 @@ function onloadFunctions() {
 }
 
 
-function depurar() {
+function validate() {
   var frm=document.frmMain;
     if (inputValue(frm.inpDateFrom)==null || inputValue(frm.inpDateFrom)=="") {
       setWindowElementFocus(frm.inpDateFrom);
-      mensaje(7);
+      showJSMessage(7);
       return false;
     }  else if (inputValue(frm.inpDateTo)==null || inputValue(frm.inpDateTo)=="") {
       setWindowElementFocus(frm.inpDateTo);
-      mensaje(7);
+      showJSMessage(7);
       return false;
     }  else if (inputValue(frm.inpOrg)==null || inputValue(frm.inpOrg)=="") {
       setWindowElementFocus(frm.inpOrg);
-      mensaje(7);
+      showJSMessage(7);
       return false;
     }  else if (inputValue(frm.inpLevel)==null || inputValue(frm.inpLevel)=="") {
       setWindowElementFocus(frm.inpLevel);
-      mensaje(7);
+      showJSMessage(7);
       return false;
     }  else if (inputValue(frm.inpcAcctSchemaId)==null || inputValue(frm.inpcAcctSchemaId)=="") {
       setWindowElementFocus(frm.inpcAcctSchemaId);
-      mensaje(7);
+      showJSMessage(7);
       return false;
     }
-    seleccionarListCompleto(frm.inpcBPartnerId_IN);
+    markCheckedAllElements(frm.inpcBPartnerId_IN);
   return true;
 }
 
@@ -112,8 +112,8 @@ function refreshAccounts() {
   var cmbAccountSchema = document.frmMain.inpcAcctSchemaId;  
   var cmbAccountFrom = document.frmMain.inpAccountFrom;  
   var cmbAccountTo = document.frmMain.inpAccountTo;  
-  cambiarListaCombo(cmbAccountFrom, arrAccountFrom, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);
-  cambiarListaCombo(cmbAccountTo, arrAccountTo, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);  
+  changeComboData(cmbAccountFrom, arrAccountFrom, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);
+  changeComboData(cmbAccountTo, arrAccountTo, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);  
   return true;
 }
 </SCRIPT>
@@ -432,7 +432,7 @@ var arrAccountTo=null;
                             <TR>
                               <TD>
                                 <A class="List_Button_MiddleLink" href="#"
-                                  onclick="eliminarElementosList(document.frmMain.inpcBPartnerId_IN);return false;"
+                                  onclick="clearSelectedElements(document.frmMain.inpcBPartnerId_IN);return false;"
                                   onfocus="setWindowElementFocus(this); window.status='Delete selected elements'; return true;"
                                   onblur="window.status=''; return true;"
                                   onkeypress="this.className='List_Button_MiddleLink_active'; return true;"
@@ -458,7 +458,7 @@ var arrAccountTo=null;
                             <TR>
                               <TD>
                                 <A class="List_Button_BottomLink" href="#"
-                                  onclick="limpiarLista(document.frmMain.inpcBPartnerId_IN);return false;"
+                                  onclick="clearList(document.frmMain.inpcBPartnerId_IN);return false;"
                                   onfocus="setWindowElementFocus(this); window.status='Delete all elements'; return true;"
                                   onblur="window.status=''; return true;"
                                   onkeypress="this.className='List_Button_BottomLink_active'; return true;"
@@ -659,4 +659,3 @@ var arrAccountTo=null;
 </form>
 </body>
 </html>
-

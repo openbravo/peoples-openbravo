@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_DEBT_PAYMENT_CHANGE">
     <function name="C_DEBT_PAYMENT_CHANGE" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -24,8 +24,8 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1; -- 0=failure
-  v_Record_ID NUMBER(10) ;
-  v_AD_User_ID NUMBER(10) ;
+  v_Record_ID VARCHAR2(32) ;
+  v_AD_User_ID VARCHAR2(32) ;
   --  Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;

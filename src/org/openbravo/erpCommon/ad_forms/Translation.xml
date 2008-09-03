@@ -21,7 +21,7 @@
 <REPORT>
 <template file="Translation.html"></template>
 <PARAMETER id="paramToolBar" name="toolbar" default=""/>
-<PARAMETER id="paramDirection" name="direction" default=""/>
+<PARAMETER id="paramDirectory" name="directory" default=""/>
 <PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
 <PARAMETER id="paramSelLanguage" name="paramSelLanguage" default=""/>
 <PARAMETER id="paramSystem" name="paramSystem" attribute="value" default=""/>

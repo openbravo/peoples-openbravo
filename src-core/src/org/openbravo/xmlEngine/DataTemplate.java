@@ -12,7 +12,6 @@
 package org.openbravo.xmlEngine;
 
 import java.util.Vector;
-import java.util.Enumeration;
 import java.text.DecimalFormat;
 
 import org.apache.log4j.Logger ;

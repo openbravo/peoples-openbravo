@@ -39,7 +39,7 @@
         <![CDATA[ AND C_INVOICE.DOCUMENTNO <=? ]]>
         </Parameter>
         <Parameter name="cbPartner" optional="true" after="WHERE C_INVOICE.ISSOTRX = 'Y'">
-        <![CDATA[ AND C_INVOICE.C_BPARTNER_ID = TO_NUMBER(?) ]]>
+        <![CDATA[ AND C_INVOICE.C_BPARTNER_ID = ? ]]>
         </Parameter>
         <Parameter name="cDateFrom" optional="true" after="WHERE C_INVOICE.ISSOTRX = 'Y'">
         <![CDATA[ AND C_INVOICE.DATEINVOICED >= to_date(?) ]]>

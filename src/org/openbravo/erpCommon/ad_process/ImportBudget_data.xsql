@@ -26,7 +26,7 @@
         SELECT I_BudgetLine_ID, C_Budgetline_ID, '' as seqNo
         FROM I_BudgetLine
         WHERE I_IsImported='N'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -38,7 +38,7 @@
       <![CDATA[
         SELECT COALESCE(max(SeqNo),0) +10 as seqNo
         FROM C_BudgetLine
-        WHERE C_Budget_ID = TO_NUMBER(?)
+        WHERE C_Budget_ID = ?
       ]]>
     </Sql>
     <Parameter name="c_budget_id"/>
@@ -50,7 +50,7 @@
     <Sql>
       <![CDATA[
       DELETE FROM I_BudgetLine WHERE I_IsImported='Y'
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -61,16 +61,16 @@
     <Sql>
       <![CDATA[
         UPDATE I_BudgetLine
-        SET AD_Client_ID = COALESCE(AD_Client_ID, TO_NUMBER(?)),
-        AD_Org_ID = COALESCE(AD_Org_ID, 0),
+        SET AD_Client_ID = COALESCE(AD_Client_ID, ?),
+        AD_Org_ID = COALESCE(AD_Org_ID, '0'),
         IsActive = COALESCE(IsActive, 'Y'),
         Created = COALESCE(Created, now()),
-        CreatedBy = COALESCE(CreatedBy, 0),
+        CreatedBy = COALESCE(CreatedBy, '0'),
         Updated = COALESCE(Updated, now()),
-        UpdatedBy = COALESCE(UpdatedBy, 0),
+        UpdatedBy = COALESCE(UpdatedBy, '0'),
         I_ErrorMsg = NULL,
         I_IsImported = 'N',
-        C_Budget_ID = TO_NUMBER(?)
+        C_Budget_ID = ?
         WHERE I_IsImported<>'Y' OR I_IsImported IS NULL
       ]]>
     </Sql>
@@ -91,7 +91,7 @@
 			  WHERE C_BPartner_ID IS NULL
         AND PartnerIdent IS NOT NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="adlanguage"/>
@@ -107,7 +107,7 @@
         WHERE C_BPartner_ID IS NULL
         AND PartnerIdent IS NOT NULL
         AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -125,7 +125,7 @@
         )
 			  WHERE C_BP_Group_ID IS NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="adlanguage"/>
@@ -141,7 +141,7 @@
         WHERE C_BP_Group_ID IS NULL
         AND BPGROUPIDENT IS NOT NULL
         AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -160,7 +160,7 @@
 			  WHERE M_Product_ID IS NULL
         AND ProductIdent IS NOT NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="adlanguage"/>
@@ -179,7 +179,7 @@
         )
         WHERE M_Product_ID IS NOT NULL
         AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -194,7 +194,7 @@
         WHERE M_Product_ID IS NULL
         AND ProductIdent IS NOT NULL
         AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -213,7 +213,7 @@
 			  WHERE M_Product_Category_ID IS NULL
         AND ProdCategoryIdent IS NOT NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="adlanguage"/>
@@ -229,7 +229,7 @@
         WHERE M_Product_Category_ID IS NULL
         AND ProdCategoryIdent IS NOT NULL
         AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -247,7 +247,7 @@
         WHERE AD_OrgTrx_ID IS NULL
          AND OrgTrxIdent IS NOT NULL
          AND I_IsImported<>'Y'
-         AND AD_Client_ID = TO_NUMBER(?)
+         AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="adlanguage"/>
@@ -263,7 +263,7 @@
         WHERE AD_OrgTrx_ID IS NULL
         AND OrgTrxIdent IS NOT NULL
         AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -282,7 +282,7 @@
 			  WHERE C_SalesRegion_ID IS NULL
         AND SalesRegionIdent IS NOT NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="adlanguage"/>
@@ -298,7 +298,7 @@
         WHERE C_SalesRegion_ID IS NULL
         AND SalesRegionIdent IS NOT NULL
         AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -317,7 +317,7 @@
 			  WHERE C_Project_ID IS NULL
         AND ProjectIdent IS NOT NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="adlanguage"/>
@@ -333,7 +333,7 @@
         WHERE C_Project_ID IS NULL
         AND ProjectIdent IS NOT NULL
         AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -352,7 +352,7 @@
 			  WHERE C_Campaign_ID IS NULL
         AND CampaignIdent IS NOT NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="adlanguage"/>
@@ -368,7 +368,7 @@
         WHERE C_Campaign_ID IS NULL
         AND CampaignIdent IS NOT NULL
         AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -387,7 +387,7 @@
 			  WHERE C_Activity_ID IS NULL
         AND ActivityIdent IS NOT NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="adlanguage"/>
@@ -403,7 +403,7 @@
         WHERE C_Activity_ID IS NULL
         AND ActivityIdent IS NOT NULL
         AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -422,7 +422,7 @@
 			  WHERE C_ELEMENTVALUE_ID IS NULL
         AND ELEMENTVALUEIDENT IS NOT NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="adlanguage"/>
@@ -438,7 +438,7 @@
         WHERE C_ELEMENTVALUE_ID IS NULL
         AND ELEMENTVALUEIDENT IS NOT NULL
         AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -462,7 +462,7 @@
 			  WHERE C_ACCTSCHEMA_ID IS NULL
         AND ACCTSCHEMAIDENT IS NOT NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="adlanguage"/>
@@ -478,7 +478,7 @@
         WHERE C_ACCTSCHEMA_ID IS NULL
         AND ACCTSCHEMAIDENT IS NOT NULL
         AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -500,12 +500,12 @@
 			    WHERE I_BudgetLine.PeriodIdent=m.Name
           AND p.PeriodNo = m.Value
           AND p.AD_Client_ID=I_BudgetLine.AD_Client_ID
-          AND p.C_Year_ID = (SELECT C_Year_ID FROM C_Budget WHERE C_Budget_ID = TO_NUMBER(?))
+          AND p.C_Year_ID = (SELECT C_Year_ID FROM C_Budget WHERE C_Budget_ID = ?)
         )
 			  WHERE C_Period_ID IS NULL
         AND PeriodIdent IS NOT NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="cBudgetId"/>
@@ -521,7 +521,7 @@
         WHERE C_Period_ID IS NULL
         AND PeriodIdent IS NOT NULL
         AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -539,7 +539,7 @@
 			  WHERE C_Currency_ID IS NULL
         AND CurrencyIdent IS NOT NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="adlanguage"/>
@@ -555,7 +555,7 @@
         WHERE C_Currency_ID IS NULL
         AND CurrencyIdent IS NOT NULL
         AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -580,11 +580,11 @@
               AND COALESCE(I_BudgetLine.M_Product_ID,-1) = COALESCE(bl.M_Product_ID,-1)
               AND COALESCE(I_BudgetLine.M_Product_Category_ID,-1) = COALESCE(bl.M_Product_Category_ID,-1)
               AND COALESCE(I_BudgetLine.C_Currency_ID,-1) = COALESCE(bl.C_Currency_ID,-1)
-              AND bl.C_Budget_ID = TO_NUMBER(?)
+              AND bl.C_Budget_ID = ?
               AND bl.AD_Client_ID = I_BudgetLine.AD_Client_ID
             )
         WHERE I_IsImported='N'
-          AND AD_Client_ID = TO_NUMBER(?)
+          AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="cBudgetId"/>
@@ -599,12 +599,12 @@
             Updated, Updatedby, C_ELEMENTVALUE_ID, C_ACCTSCHEMA_ID, C_Period_ID, C_Currency_ID, C_Uom_ID, Qty, M_Product_ID, 
             C_Bpartner_ID, AD_Orgtrx_ID, C_Salesregion_ID, C_Project_ID, C_Campaign_ID, C_Activity_ID, Description, 
             Seqno, C_Bp_Group_ID, M_Product_Category_ID, C_Budget_ID, Amount, Price)
-            SELECT TO_NUMBER(?), AD_Client_ID, AD_Org_ID, 'Y',now(),CreatedBy,
+            SELECT ?, AD_Client_ID, AD_Org_ID, 'Y',now(),CreatedBy,
             now(),UpdatedBy, C_ELEMENTVALUE_ID, C_ACCTSCHEMA_ID, C_Period_ID, C_Currency_ID, C_Uom_ID, Qty, M_Product_ID, 
             C_Bpartner_ID, AD_Orgtrx_ID, C_Salesregion_ID, C_Project_ID, C_Campaign_ID, C_Activity_ID, Description, 
             TO_NUMBER(?), C_Bp_Group_ID, M_Product_Category_ID, C_Budget_ID, Amount, Price
             FROM I_BudgetLine
-            WHERE I_BudgetLine_ID = TO_NUMBER(?)
+            WHERE I_BudgetLine_ID=?
       ]]>
     </Sql>
     <Parameter name="CBudgetLineID"/>
@@ -618,7 +618,7 @@
       <![CDATA[
 	    UPDATE I_BudgetLine
         SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'') || 'Insert BudgetLine error: ' || ?
-        WHERE I_BudgetLine_ID = TO_NUMBER(?)
+        WHERE I_BudgetLine_ID=?
       ]]>
     </Sql>
 	<Parameter name="error"/>
@@ -634,26 +634,26 @@
           Qty=(
           SELECT Qty
           FROM I_BudgetLine
-          WHERE I_BudgetLine_ID = TO_NUMBER(?)
+          WHERE I_BudgetLine_ID=?
         ),
           Amount=(
           SELECT Amount
           FROM I_BudgetLine
-          WHERE I_BudgetLine_ID = TO_NUMBER(?)
+          WHERE I_BudgetLine_ID=?
         ),
           Price=(
           SELECT Price
           FROM I_BudgetLine
-          WHERE I_BudgetLine_ID = TO_NUMBER(?)
+          WHERE I_BudgetLine_ID=?
         ),
           Updated=now()
         ,
           UpdatedBy=(
           SELECT UpdatedBy
           FROM I_BudgetLine
-          WHERE I_BudgetLine_ID = TO_NUMBER(?)
+          WHERE I_BudgetLine_ID=?
         )
-        WHERE C_BudgetLine_ID = TO_NUMBER(?)
+        WHERE C_BudgetLine_ID=?
       ]]>
     </Sql>
     <Parameter name="IBudgetLineID"/>
@@ -666,7 +666,7 @@
       <![CDATA[
 	    UPDATE I_BudgetLine
         SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'') || 'Update BudgetLine error: ' || ?
-        WHERE I_BudgetLine_ID = TO_NUMBER(?)
+        WHERE I_BudgetLine_ID=?
       ]]>
     </Sql>
 	<Parameter name="error"/>
@@ -679,7 +679,7 @@
       <![CDATA[
 	    UPDATE I_BudgetLine
         SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'') || 'Set imported error: ' || ?
-        WHERE I_BudgetLine_ID = TO_NUMBER(?)
+        WHERE I_BudgetLine_ID=?
       ]]>
     </Sql>
 	<Parameter name="error"/>
@@ -691,8 +691,8 @@
     <Sql>
       <![CDATA[
         UPDATE I_BudgetLine
-        SET I_IsImported='Y', C_BudgetLine_ID=TO_NUMBER(?), Updated=now(), Processed='Y'
-        WHERE I_BudgetLine_ID = TO_NUMBER(?)
+        SET I_IsImported='Y', C_BudgetLine_id = ?, Updated=now(), Processed='Y'
+        WHERE I_BudgetLine_ID=?
       ]]>
     </Sql>
     <Parameter name="CBudgetLineID"/>
@@ -706,7 +706,7 @@
         UPDATE I_BudgetLine
         SET I_IsImported='N', Updated=now()
         WHERE I_IsImported<>'Y'
-        AND AD_CLIENT_ID = TO_NUMBER(?)
+        AND AD_CLIENT_ID = ?
       ]]>
     </Sql>
     <Parameter name="client"/>

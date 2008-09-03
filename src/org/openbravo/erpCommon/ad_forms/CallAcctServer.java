@@ -90,8 +90,8 @@ public class CallAcctServer extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("body", (strMessage.equals("")?"":"alert('" + strMessage + "');"));
 
 
@@ -116,7 +116,7 @@ public class CallAcctServer extends HttpSecureAppServlet {
 	  try {
 		  String adPinstanceId = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
 		  PInstanceProcessData.insertPInstance(this, adPinstanceId, adProcessId, "0", "N", vars.getUser(), vars.getClient(), vars.getOrg());
-		  PInstanceProcessData.insertPInstanceParamNumber(this, adPinstanceId, "10", "AD_Table_ID", strTableId, vars.getClient(), vars.getOrg(), vars.getUser());
+		  PInstanceProcessData.insertPInstanceParam(this, adPinstanceId, "10", "AD_Table_ID", strTableId, vars.getClient(), vars.getOrg(), vars.getUser());
 		  if (acctServer.directLaunch(vars, adPinstanceId)) {
 		      while(acctServer.isDirectProcess() && !acctServer.isProcessing()){ 
 		    	  if (log4j.isDebugEnabled()) log4j.debug("Waiting for the thread to begin");

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_ORGLIST">
     <function name="AD_ORGLIST" type="VARCHAR">
-      <parameter name="p_roleid" type="NUMERIC" mode="in">
+      <parameter name="p_roleid" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************

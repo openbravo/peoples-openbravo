@@ -29,7 +29,7 @@
     <Sql>
     <![CDATA[
         SELECT M_PRODUCT.NAME, C_BPARTNER.NAME AS PARTNERNAME, M_ATTRIBUTESETINSTANCE.GUARANTEEDATE AS GUARANTEEDATE, S.QTYONHAND AS MOVEMENTQTY, C1.NAME AS UOM,
-        (CASE WHEN S.M_PRODUCT_UOM_ID IS NULL THEN (CASE C1.C_UOM_ID WHEN 1000001 THEN NULL ELSE ((CASE WHEN M_PRODUCT.WEIGHT=0 THEN NULL WHEN M_PRODUCT.WEIGHT IS NULL THEN NULL ELSE M_PRODUCT.WEIGHT*S.QTYONHAND END)) END) ELSE S.QTYORDERONHAND END) AS WEIGHT, C2.NAME AS UOM2
+        (CASE WHEN S.M_PRODUCT_UOM_ID IS NULL THEN (CASE C1.C_UOM_ID WHEN '1000001' THEN NULL ELSE ((CASE WHEN M_PRODUCT.WEIGHT=0 THEN NULL WHEN M_PRODUCT.WEIGHT IS NULL THEN NULL ELSE M_PRODUCT.WEIGHT*S.QTYONHAND END)) END) ELSE S.QTYORDERONHAND END) AS WEIGHT, C2.NAME AS UOM2
         FROM M_STORAGE_DETAIL S left join M_PRODUCT on S.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
                                 left join M_PRODUCT_UOM on S.M_PRODUCT_UOM_ID = M_PRODUCT_UOM.M_PRODUCT_UOM_ID
                                 left join C_BPARTNER on M_PRODUCT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID 
@@ -48,8 +48,8 @@
     <Parameter name="adUserClient" type="replace" optional="true" after="AND S.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adOrgClient" type="replace" optional="true" after="AND S.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="parDate" optional="true" after="AND 1=1"><![CDATA[ AND COALESCE(M_ATTRIBUTESETINSTANCE.GUARANTEEDATE, TO_DATE('31/12/9999')) <= to_date(?)]]></Parameter>
-    <Parameter name="cBpartner" optional="true" after="AND 1=1"><![CDATA[ AND C_BPARTNER.C_BPARTNER_ID = TO_NUMBER(?)]]></Parameter>
-    <Parameter name="mWarehouse" optional="true" after="AND 1=1"><![CDATA[ AND M_WAREHOUSE.M_WAREHOUSE_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="cBpartner" optional="true" after="AND 1=1"><![CDATA[ AND C_BPARTNER.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="mWarehouse" optional="true" after="AND 1=1"><![CDATA[ AND M_WAREHOUSE.M_WAREHOUSE_ID = ?]]></Parameter>
   </SqlMethod>
 
   <SqlMethod name="selectBpartner" type="preparedStatement" return="String" default="">
@@ -58,7 +58,7 @@
     <![CDATA[
       SELECT C_BPARTNER.NAME
       FROM C_BPARTNER
-      WHERE C_BPARTNER.C_BPARTNER_ID = TO_NUMBER(?)
+      WHERE C_BPARTNER.C_BPARTNER_ID = ?
      ]]></Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>

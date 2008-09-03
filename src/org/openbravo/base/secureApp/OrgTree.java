@@ -32,7 +32,7 @@ public class OrgTree implements Serializable{
 	 */
 	public OrgTree(ConnectionProvider conn, String strClient) {
 	  try {
-	    String treeID = WindowTreeData.selectTreeID(conn, strClient, "OO")[0].id;
+	    String treeID = WindowTreeData.selectTreeID(conn, "'"+strClient+"'", "OO")[0].id;
 	    WindowTreeData[] data = WindowTreeData.selectOrg(conn, "", "", "", "", treeID);
 	    this.nodes = OrgTreeNode.createTree(data);
 	  } catch (Exception e) {
@@ -182,7 +182,7 @@ public class OrgTree implements Serializable{
     if (nodes == null) return "";
     for (int i=0;i<nodes.toArray().length;i++) {
       if (nodes.get(i)!=null)
-        s+= nodes.get(i).getId()+((i<nodes.toArray().length-1)?",":"");
+        s+= "'"+nodes.get(i).getId()+"'"+((i<nodes.toArray().length-1)?",":"");
     }
     return s;
   }

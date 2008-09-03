@@ -199,7 +199,7 @@ package="org.openbravo.wad.Window">
   <SqlMethod name="update" type="preparedStatement" return="rowCount" static="false">
     <Sql>&#60;&#33;[CDATA[
         UPDATE <PARAMETER_TMP id="table">table</PARAMETER_TMP>
-        SET <FIELDS_TMP id="sectionDetailColumns3"><FIELD_TMP id="fieldName3">column_a</FIELD_TMP> = <FIELD_TMP id="fieldFormat3">?</FIELD_TMP> </FIELDS_TMP>, updated = now(), updatedby = to_number(?) 
+        SET <FIELDS_TMP id="sectionDetailColumns3"><FIELD_TMP id="fieldName3">column_a</FIELD_TMP> = <FIELD_TMP id="fieldFormat3">?</FIELD_TMP> </FIELDS_TMP>, updated = now(), updatedby = ? 
         WHERE <PARAMETER_TMP id="key">table</PARAMETER_TMP> = ? 
         <PARAMETER_TMP id="parent">         AND <PARAMETER_TMP id="keyParent">xx</PARAMETER_TMP> = ? </PARAMETER_TMP>
         <PARAMETER_TMP id="client">AND <PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Client_ID IN ('1') </PARAMETER_TMP>
@@ -218,7 +218,7 @@ package="org.openbravo.wad.Window">
     <Sql>&#60;&#33;[CDATA[
         INSERT INTO <PARAMETER_TMP id="table">table</PARAMETER_TMP> 
         (<FIELDS_TMP id="sectionDetailColumns5"><FIELD_TMP id="fieldName5">column</FIELD_TMP></FIELDS_TMP>, created, createdby, updated, updatedBy)
-        VALUES (<FIELDS_TMP id="sectionDetailColumns6"><FIELD_TMP id="fieldName6">column</FIELD_TMP></FIELDS_TMP>, now(), to_number(?), now(), to_number(?))
+        VALUES (<FIELDS_TMP id="sectionDetailColumns6"><FIELD_TMP id="fieldName6">column</FIELD_TMP></FIELDS_TMP>, now(), ?, now(), ?)
     ]]&#62;</Sql>
     <FIELDS_TMP id="sectionDetailColumns7"><Parameter id="fieldName7" name="param1"/> </FIELDS_TMP>
     <Parameter name="createdby"/>

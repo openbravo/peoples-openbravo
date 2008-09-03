@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MRP_PROCESSPLAN_RECALCULATE">
     <function name="MRP_PROCESSPLAN_RECALCULATE" type="NULL">
-      <parameter name="p_user_id" type="NUMERIC" mode="in">
+      <parameter name="p_user_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_run_productionline_id" type="NUMERIC" mode="in">
+      <parameter name="p_run_productionline_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_timehorizon" type="NUMERIC" mode="in">

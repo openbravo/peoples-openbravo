@@ -1,19 +1,19 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MRP_PROCESSPLAN">
     <function name="MRP_PROCESSPLAN" type="NULL">
-      <parameter name="p_user_id" type="NUMERIC" mode="in">
+      <parameter name="p_user_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_org_id" type="NUMERIC" mode="in">
+      <parameter name="p_org_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_client_id" type="NUMERIC" mode="in">
+      <parameter name="p_client_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_run_id" type="NUMERIC" mode="in">
+      <parameter name="p_run_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_planner_id" type="NUMERIC" mode="in">
+      <parameter name="p_planner_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_timehorizon" type="NUMERIC" mode="in">
@@ -48,7 +48,7 @@
 
   v_Count NUMBER;
   v_Count_Aux NUMBER;
-  v_Aux_ID NUMBER;
+  v_Aux_ID VARCHAR2(32);
   v_planned CHAR(1) := 'N';
 
   FINISH_PROCESS BOOLEAN DEFAULT FALSE;

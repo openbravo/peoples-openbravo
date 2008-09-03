@@ -49,14 +49,14 @@
     <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[ AND C_PROJECT.CREATED >= to_date(?)]]></Parameter>
     <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[ AND C_PROJECT.CREATED < to_date(?)]]></Parameter>
     <Parameter name="cbPartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_PROJECT.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[ AND C_PROJECT.C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[ AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
     <Parameter name="cProductCategoryId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_CATEGORY_ID IN]]></Parameter>
     <Parameter name="cProjectKind" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_PROJECT.PROJECTKIND IN]]></Parameter>
     <Parameter name="cProjectPhase" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_PROJECT.PROJECTPHASE IN]]></Parameter>
     <Parameter name="cProjectStatus" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_PROJECT.PROJECTSTATUS IN]]></Parameter>
     <Parameter name="cProjectPublic" optional="true" after="AND 1=1"><![CDATA[ AND C_PROJECT.PUBLICPRIVATE = ?]]></Parameter>
     <Parameter name="cRegionId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_LOCATION.C_REGION_ID IN]]></Parameter>
-    <Parameter name="salesRep" optional="true" after="AND 1=1"><![CDATA[ AND C_PROJECT.SALESREP_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="salesRep" optional="true" after="AND 1=1"><![CDATA[ AND C_PROJECT.SALESREP_ID = ?]]></Parameter>
     <Parameter name="productId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
@@ -67,7 +67,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     SELECT NAME FROM C_BPARTNER 
-    WHERE C_BPARTNER_ID = TO_NUMBER(?)
+    WHERE C_BPARTNER_ID = ?
     </Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
@@ -75,7 +75,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     SELECT VALUE || ' - ' ||NAME FROM C_PROJECT 
-    WHERE C_PROJECT_ID = TO_NUMBER(?)
+    WHERE C_PROJECT_ID = ?
     </Sql>
     <Parameter name="cProjectId"/>
   </SqlMethod>
@@ -83,7 +83,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     SELECT INITCAP(NAME) AS NAME FROM C_REGION 
-    WHERE C_REGION_ID = TO_NUMBER(?)
+    WHERE C_REGION_ID = ?
     </Sql>
     <Parameter name="cRegionId"/>
   </SqlMethod>
@@ -93,7 +93,7 @@
     SELECT (CASE WHEN arl_t.NAME IS NULL THEN arl.NAME ELSE arl_t.NAME END) AS NAME 
     FROM AD_REF_LIST arl left join AD_REF_LIST_TRL arl_t on arl.ad_ref_list_id = arl_t.ad_ref_list_id
                                                          AND arl_t.AD_LANGUAGE = ?
-    WHERE arl.ad_reference_id = 800004 
+    WHERE arl.ad_reference_id = '800004' 
     AND arl.isActive = 'Y' 
     AND 1=1
     </Sql>
@@ -106,7 +106,7 @@
     SELECT (CASE WHEN arl_t.NAME IS NULL THEN arl.NAME ELSE arl_t.NAME END) AS NAME 
     FROM AD_REF_LIST arl left join AD_REF_LIST_TRL arl_t  on arl.ad_ref_list_id = arl_t.ad_ref_list_id 
                                                         AND arl_t.AD_LANGUAGE = ?
-    WHERE arl.ad_reference_id = 800003 
+    WHERE arl.ad_reference_id = '800003' 
     AND arl.isActive = 'Y' 
     AND 1=1
     </Sql>
@@ -119,7 +119,7 @@
     SELECT (CASE WHEN arl_t.NAME IS NULL THEN arl.NAME ELSE arl_t.NAME END) AS NAME 
     FROM AD_REF_LIST arl left join AD_REF_LIST_TRL arl_t on  arl.ad_ref_list_id = arl_t.ad_ref_list_id
                                                         AND arl_t.AD_LANGUAGE = ?
-    WHERE arl.ad_reference_id = 800002 
+    WHERE arl.ad_reference_id = '800002' 
     AND arl.isActive = 'Y' 
     AND 1=1
     </Sql>
@@ -132,7 +132,7 @@
     SELECT (CASE WHEN arl_t.NAME IS NULL THEN arl.NAME ELSE arl_t.NAME END) AS NAME 
     FROM AD_REF_LIST arl left join AD_REF_LIST_TRL arl_t on arl.ad_ref_list_id = arl_t.ad_ref_list_id 
                                                         AND arl_t.AD_LANGUAGE = ?
-    WHERE arl.ad_reference_id = 800005 
+    WHERE arl.ad_reference_id = '800005' 
     AND arl.isActive = 'Y' 
     AND 1=1
     </Sql>
@@ -147,7 +147,7 @@
       WHERE AD_User.AD_Org_ID IN('1') 
       AND AD_User.AD_Client_ID IN('1')  
       AND EXISTS (SELECT * FROM C_BPartner bp WHERE AD_User.C_BPartner_ID=bp.C_BPartner_ID AND bp.IsSalesRep='Y')
-      AND AD_USER.AD_USER_ID = TO_NUMBER(?)
+      AND AD_USER.AD_USER_ID = ?
       AND AD_User.isActive = 'Y' 
     ]]></Sql>
     <Parameter name="adOrgClient" type="replace" optional="true" after="AD_User.AD_Org_ID IN(" text="'1'"/>
@@ -159,7 +159,7 @@
     <Sql>
     SELECT M_PRODUCT.NAME AS NAME 
     FROM M_PRODUCT
-    WHERE M_PRODUCT.M_PRODUCT_ID = TO_NUMBER(?)
+    WHERE M_PRODUCT.M_PRODUCT_ID = ?
     </Sql>
     <Parameter name="productId"/>
   </SqlMethod>

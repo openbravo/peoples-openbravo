@@ -29,8 +29,8 @@
       WHERE W.AD_WINDOW_ID = T.AD_WINDOW_ID 
       AND W.ISACTIVE = 'Y' 
       AND T.ISACTIVE = 'Y' 
-      AND W.AD_WINDOW_ID = to_number(?) 
-      AND T.AD_TABLE_ID = to_number(?) 
+      AND W.AD_WINDOW_ID = ? 
+      AND T.AD_TABLE_ID = ? 
     </Sql>
     <Parameter name="adWindowId"/>
     <Parameter name="adTableId"/>
@@ -44,7 +44,7 @@
       AND W.ISACTIVE = 'Y' 
       AND T.ISACTIVE = 'Y' 
       AND T.tablevel = 0 
-      AND W.AD_WINDOW_ID = to_number(?)
+      AND W.AD_WINDOW_ID = ?
       ORDER BY T.SEQNO 
     </Sql>
     <Parameter name="adWindowId"/>
@@ -54,7 +54,7 @@
     <Sql>
       SELECT AD_WINDOW_ID, PO_WINDOW_ID 
       FROM AD_TABLE 
-      WHERE AD_TABLE_ID=to_number(?)
+      WHERE AD_TABLE_ID=?
     </Sql>
     <Parameter name="adTableId"/>
   </SqlMethod>
@@ -63,7 +63,7 @@
     <Sql>
       SELECT AD_TABLE_ID 
       FROM AD_REF_TABLE 
-      WHERE AD_REFERENCE_ID = to_number(?)
+      WHERE AD_REFERENCE_ID = ?
     </Sql>
     <Parameter name="adReferenceId"/>
   </SqlMethod>
@@ -83,7 +83,7 @@
       SELECT C.COLUMNNAME 
       FROM AD_REF_TABLE R, AD_COLUMN C 
       WHERE R.AD_KEY = C.AD_COLUMN_ID 
-      AND R.AD_REFERENCE_ID = to_number(?) 
+      AND R.AD_REFERENCE_ID = ? 
     </Sql>
     <Parameter name="adReferenceId"/>
   </SqlMethod>
@@ -103,7 +103,7 @@
   <SqlMethod name="hasTree" type="preparedStatement" return="String" default="">
     <SqlMethodComment>Names of the columns and name of the fields of a tab</SqlMethodComment>
     <Sql>
-      SELECT HASTREE FROM AD_TAB WHERE AD_TAB_ID= to_number(?)
+      SELECT HASTREE FROM AD_TAB WHERE AD_TAB_ID=?
     </Sql>
     <Parameter name="adTabId"/>
   </SqlMethod>

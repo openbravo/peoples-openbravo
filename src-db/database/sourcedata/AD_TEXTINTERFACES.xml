@@ -1,10 +1,105 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--
-************************
-0. Core Range.
-************************
--->
+<!--100000**************--><AD_TEXTINTERFACES>
+<!--100000 AD_TEXTINTERFACES_ID-->
+<!--100000-->              <AD_TEXTINTERFACES_ID><![CDATA[100000]]></AD_TEXTINTERFACES_ID>
+<!--100000 AD_CLIENT_ID-->
+<!--100000-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--100000 AD_ORG_ID-->
+<!--100000-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--100000 ISACTIVE-->
+<!--100000-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--100000 CREATED-->
+<!--100000-->              <CREATED><![CDATA[2008-05-27 13:36:55.0]]></CREATED>
+<!--100000 CREATEDBY-->
+<!--100000-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--100000 UPDATED-->
+<!--100000-->              <UPDATED><![CDATA[2008-05-27 13:36:55.0]]></UPDATED>
+<!--100000 UPDATEDBY-->
+<!--100000-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--100000 TEXT-->
+<!--100000-->              <TEXT><![CDATA[Open Pentaho]]></TEXT>
+<!--100000 FILENAME-->
+<!--100000-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/OpenPentaho.html]]></FILENAME>
+<!--100000 ISUSED-->
+<!--100000-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--100000**************--></AD_TEXTINTERFACES>
+
+<!--100001**************--><AD_TEXTINTERFACES>
+<!--100001 AD_TEXTINTERFACES_ID-->
+<!--100001-->              <AD_TEXTINTERFACES_ID><![CDATA[100001]]></AD_TEXTINTERFACES_ID>
+<!--100001 AD_CLIENT_ID-->
+<!--100001-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--100001 AD_ORG_ID-->
+<!--100001-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--100001 ISACTIVE-->
+<!--100001-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--100001 CREATED-->
+<!--100001-->              <CREATED><![CDATA[2008-05-27 13:36:56.0]]></CREATED>
+<!--100001 CREATEDBY-->
+<!--100001-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--100001 UPDATED-->
+<!--100001-->              <UPDATED><![CDATA[2008-05-27 13:36:56.0]]></UPDATED>
+<!--100001 UPDATEDBY-->
+<!--100001-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--100001 TEXT-->
+<!--100001-->              <TEXT><![CDATA[Your browser doesn't accept frames]]></TEXT>
+<!--100001 FILENAME-->
+<!--100001-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/OpenPentaho.html]]></FILENAME>
+<!--100001 ISUSED-->
+<!--100001-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--100001**************--></AD_TEXTINTERFACES>
+
+<!--100002**************--><AD_TEXTINTERFACES>
+<!--100002 AD_TEXTINTERFACES_ID-->
+<!--100002-->              <AD_TEXTINTERFACES_ID><![CDATA[100002]]></AD_TEXTINTERFACES_ID>
+<!--100002 AD_CLIENT_ID-->
+<!--100002-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--100002 AD_ORG_ID-->
+<!--100002-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--100002 ISACTIVE-->
+<!--100002-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--100002 CREATED-->
+<!--100002-->              <CREATED><![CDATA[2008-05-27 13:37:27.0]]></CREATED>
+<!--100002 CREATEDBY-->
+<!--100002-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--100002 UPDATED-->
+<!--100002-->              <UPDATED><![CDATA[2008-05-27 13:37:27.0]]></UPDATED>
+<!--100002 UPDATEDBY-->
+<!--100002-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--100002 TEXT-->
+<!--100002-->              <TEXT><![CDATA[Price (€/m2)]]></TEXT>
+<!--100002 FILENAME-->
+<!--100002-->              <FILENAME><![CDATA[/org/openbravo/erpReports/RptC_ProposalLines.fo]]></FILENAME>
+<!--100002 ISUSED-->
+<!--100002-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--100002**************--></AD_TEXTINTERFACES>
+
+<!--100003**************--><AD_TEXTINTERFACES>
+<!--100003 AD_TEXTINTERFACES_ID-->
+<!--100003-->              <AD_TEXTINTERFACES_ID><![CDATA[100003]]></AD_TEXTINTERFACES_ID>
+<!--100003 AD_CLIENT_ID-->
+<!--100003-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--100003 AD_ORG_ID-->
+<!--100003-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--100003 ISACTIVE-->
+<!--100003-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--100003 CREATED-->
+<!--100003-->              <CREATED><![CDATA[2008-06-23 14:38:33.0]]></CREATED>
+<!--100003 CREATEDBY-->
+<!--100003-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--100003 UPDATED-->
+<!--100003-->              <UPDATED><![CDATA[2008-06-23 14:38:33.0]]></UPDATED>
+<!--100003 UPDATEDBY-->
+<!--100003-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--100003 TEXT-->
+<!--100003-->              <TEXT><![CDATA[Date of First Sale]]></TEXT>
+<!--100003 FILENAME-->
+<!--100003-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_forms/MaterialReceiptPending.html]]></FILENAME>
+<!--100003 ISUSED-->
+<!--100003-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--100003**************--></AD_TEXTINTERFACES>
+
 <!--800002**************--><AD_TEXTINTERFACES>
 <!--800002 AD_TEXTINTERFACES_ID-->
 <!--800002-->              <AD_TEXTINTERFACES_ID><![CDATA[800002]]></AD_TEXTINTERFACES_ID>
@@ -958,7 +1053,7 @@
 <!--800208 TEXT-->
 <!--800208-->              <TEXT><![CDATA[Image]]></TEXT>
 <!--800208 FILENAME-->
-<!--800208-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/info/ImageInfo_F2.html]]></FILENAME>
+<!--800208-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/info/ImageInfo.html]]></FILENAME>
 <!--800208 ISUSED-->
 <!--800208-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--800208**************--></AD_TEXTINTERFACES>
@@ -4138,31 +4233,6 @@
 <!--802003-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--802003**************--></AD_TEXTINTERFACES>
 
-<!--802029**************--><AD_TEXTINTERFACES>
-<!--802029 AD_TEXTINTERFACES_ID-->
-<!--802029-->              <AD_TEXTINTERFACES_ID><![CDATA[802029]]></AD_TEXTINTERFACES_ID>
-<!--802029 AD_CLIENT_ID-->
-<!--802029-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--802029 AD_ORG_ID-->
-<!--802029-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--802029 ISACTIVE-->
-<!--802029-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--802029 CREATED-->
-<!--802029-->              <CREATED><![CDATA[2006-04-19 12:23:31.0]]></CREATED>
-<!--802029 CREATEDBY-->
-<!--802029-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--802029 UPDATED-->
-<!--802029-->              <UPDATED><![CDATA[2007-11-27 11:20:41.0]]></UPDATED>
-<!--802029 UPDATEDBY-->
-<!--802029-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--802029 TEXT-->
-<!--802029-->              <TEXT><![CDATA[GL JOURNAL selector]]></TEXT>
-<!--802029 FILENAME-->
-<!--802029-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_process/CopyFromGLJournal_F1.html]]></FILENAME>
-<!--802029 ISUSED-->
-<!--802029-->              <ISUSED><![CDATA[Y]]></ISUSED>
-<!--802029**************--></AD_TEXTINTERFACES>
-
 <!--802033**************--><AD_TEXTINTERFACES>
 <!--802033 AD_TEXTINTERFACES_ID-->
 <!--802033-->              <AD_TEXTINTERFACES_ID><![CDATA[802033]]></AD_TEXTINTERFACES_ID>
@@ -4183,7 +4253,7 @@
 <!--802033 TEXT-->
 <!--802033-->              <TEXT><![CDATA[Create from GLJournal]]></TEXT>
 <!--802033 FILENAME-->
-<!--802033-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_process/CopyFromGLJournal_F2.html]]></FILENAME>
+<!--802033-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_process/CopyFromGLJournal.html]]></FILENAME>
 <!--802033 ISUSED-->
 <!--802033-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--802033**************--></AD_TEXTINTERFACES>
@@ -4208,7 +4278,7 @@
 <!--802036 TEXT-->
 <!--802036-->              <TEXT><![CDATA[Accounting type]]></TEXT>
 <!--802036 FILENAME-->
-<!--802036-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_process/CopyFromGLJournal_F2.html]]></FILENAME>
+<!--802036-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_process/CopyFromGLJournal.html]]></FILENAME>
 <!--802036 ISUSED-->
 <!--802036-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--802036**************--></AD_TEXTINTERFACES>
@@ -4233,7 +4303,7 @@
 <!--802037 TEXT-->
 <!--802037-->              <TEXT><![CDATA[Document date]]></TEXT>
 <!--802037 FILENAME-->
-<!--802037-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_process/CopyFromGLJournal_F2.html]]></FILENAME>
+<!--802037-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_process/CopyFromGLJournal.html]]></FILENAME>
 <!--802037 ISUSED-->
 <!--802037-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--802037**************--></AD_TEXTINTERFACES>
@@ -4258,7 +4328,7 @@
 <!--802039 TEXT-->
 <!--802039-->              <TEXT><![CDATA[Control qty.]]></TEXT>
 <!--802039 FILENAME-->
-<!--802039-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_process/CopyFromGLJournal_F2.html]]></FILENAME>
+<!--802039-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_process/CopyFromGLJournal.html]]></FILENAME>
 <!--802039 ISUSED-->
 <!--802039-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--802039**************--></AD_TEXTINTERFACES>
@@ -4283,7 +4353,7 @@
 <!--802040 TEXT-->
 <!--802040-->              <TEXT><![CDATA[Deptor balance]]></TEXT>
 <!--802040 FILENAME-->
-<!--802040-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_process/CopyFromGLJournal_F2.html]]></FILENAME>
+<!--802040-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_process/CopyFromGLJournal.html]]></FILENAME>
 <!--802040 ISUSED-->
 <!--802040-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--802040**************--></AD_TEXTINTERFACES>
@@ -4308,7 +4378,7 @@
 <!--802041 TEXT-->
 <!--802041-->              <TEXT><![CDATA[Creditor balance]]></TEXT>
 <!--802041 FILENAME-->
-<!--802041-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_process/CopyFromGLJournal_F2.html]]></FILENAME>
+<!--802041-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_process/CopyFromGLJournal.html]]></FILENAME>
 <!--802041 ISUSED-->
 <!--802041-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--802041**************--></AD_TEXTINTERFACES>
@@ -4333,7 +4403,7 @@
 <!--802045 TEXT-->
 <!--802045-->              <TEXT><![CDATA[Copy Details from GLJournal]]></TEXT>
 <!--802045 FILENAME-->
-<!--802045-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_process/CopyFromGLJournal_FS.html]]></FILENAME>
+<!--802045-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_process/CopyFromGLJournal.html]]></FILENAME>
 <!--802045 ISUSED-->
 <!--802045-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--802045**************--></AD_TEXTINTERFACES>
@@ -4946,7 +5016,7 @@
 <!--802226 CREATEDBY-->
 <!--802226-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--802226 UPDATED-->
-<!--802226-->              <UPDATED><![CDATA[2007-11-27 11:20:34.0]]></UPDATED>
+<!--802226-->              <UPDATED><![CDATA[2008-08-18 14:57:06.0]]></UPDATED>
 <!--802226 UPDATEDBY-->
 <!--802226-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--802226 TEXT-->
@@ -4954,7 +5024,7 @@
 <!--802226 FILENAME-->
 <!--802226-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_forms/MatchingPO-Receipt-Invoice_F3.html]]></FILENAME>
 <!--802226 ISUSED-->
-<!--802226-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--802226-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--802226**************--></AD_TEXTINTERFACES>
 
 <!--802227**************--><AD_TEXTINTERFACES>
@@ -4971,7 +5041,7 @@
 <!--802227 CREATEDBY-->
 <!--802227-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--802227 UPDATED-->
-<!--802227-->              <UPDATED><![CDATA[2007-11-27 11:20:34.0]]></UPDATED>
+<!--802227-->              <UPDATED><![CDATA[2008-08-18 14:57:06.0]]></UPDATED>
 <!--802227 UPDATEDBY-->
 <!--802227-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--802227 TEXT-->
@@ -4979,7 +5049,7 @@
 <!--802227 FILENAME-->
 <!--802227-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_forms/MatchingPO-Receipt-Invoice_F3.html]]></FILENAME>
 <!--802227 ISUSED-->
-<!--802227-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--802227-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--802227**************--></AD_TEXTINTERFACES>
 
 <!--802228**************--><AD_TEXTINTERFACES>
@@ -4996,7 +5066,7 @@
 <!--802228 CREATEDBY-->
 <!--802228-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--802228 UPDATED-->
-<!--802228-->              <UPDATED><![CDATA[2007-11-27 11:20:34.0]]></UPDATED>
+<!--802228-->              <UPDATED><![CDATA[2008-08-18 14:57:06.0]]></UPDATED>
 <!--802228 UPDATEDBY-->
 <!--802228-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--802228 TEXT-->
@@ -5004,7 +5074,7 @@
 <!--802228 FILENAME-->
 <!--802228-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_forms/MatchingPO-Receipt-Invoice_F3.html]]></FILENAME>
 <!--802228 ISUSED-->
-<!--802228-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--802228-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--802228**************--></AD_TEXTINTERFACES>
 
 <!--802233**************--><AD_TEXTINTERFACES>
@@ -5021,7 +5091,7 @@
 <!--802233 CREATEDBY-->
 <!--802233-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--802233 UPDATED-->
-<!--802233-->              <UPDATED><![CDATA[2007-11-27 11:20:35.0]]></UPDATED>
+<!--802233-->              <UPDATED><![CDATA[2008-08-18 14:57:04.0]]></UPDATED>
 <!--802233 UPDATEDBY-->
 <!--802233-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--802233 TEXT-->
@@ -5029,7 +5099,7 @@
 <!--802233 FILENAME-->
 <!--802233-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_forms/MatchingPO-Receipt-Invoice_F4.html]]></FILENAME>
 <!--802233 ISUSED-->
-<!--802233-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--802233-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--802233**************--></AD_TEXTINTERFACES>
 
 <!--802241**************--><AD_TEXTINTERFACES>
@@ -5046,7 +5116,7 @@
 <!--802241 CREATEDBY-->
 <!--802241-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--802241 UPDATED-->
-<!--802241-->              <UPDATED><![CDATA[2007-11-27 11:20:35.0]]></UPDATED>
+<!--802241-->              <UPDATED><![CDATA[2008-08-18 14:56:58.0]]></UPDATED>
 <!--802241 UPDATEDBY-->
 <!--802241-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--802241 TEXT-->
@@ -5054,7 +5124,7 @@
 <!--802241 FILENAME-->
 <!--802241-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_forms/MatchingPO-Receipt-Invoice_FS.html]]></FILENAME>
 <!--802241 ISUSED-->
-<!--802241-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--802241-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--802241**************--></AD_TEXTINTERFACES>
 
 <!--802293**************--><AD_TEXTINTERFACES>
@@ -5171,7 +5241,7 @@
 <!--802318 CREATEDBY-->
 <!--802318-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--802318 UPDATED-->
-<!--802318-->              <UPDATED><![CDATA[2007-11-27 11:20:35.0]]></UPDATED>
+<!--802318-->              <UPDATED><![CDATA[2008-08-18 14:57:09.0]]></UPDATED>
 <!--802318 UPDATEDBY-->
 <!--802318-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--802318 TEXT-->
@@ -5179,7 +5249,7 @@
 <!--802318 FILENAME-->
 <!--802318-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_forms/MatchingPO-Receipt-Invoice_F1.html]]></FILENAME>
 <!--802318 ISUSED-->
-<!--802318-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--802318-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--802318**************--></AD_TEXTINTERFACES>
 
 <!--802342**************--><AD_TEXTINTERFACES>
@@ -6417,7 +6487,7 @@
 <!--802835 CREATEDBY-->
 <!--802835-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--802835 UPDATED-->
-<!--802835-->              <UPDATED><![CDATA[2007-11-27 11:20:37.0]]></UPDATED>
+<!--802835-->              <UPDATED><![CDATA[2008-08-18 14:29:33.0]]></UPDATED>
 <!--802835 UPDATEDBY-->
 <!--802835-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--802835 TEXT-->
@@ -6425,7 +6495,7 @@
 <!--802835 FILENAME-->
 <!--802835-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/info/UserContact_F2.html]]></FILENAME>
 <!--802835 ISUSED-->
-<!--802835-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--802835-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--802835**************--></AD_TEXTINTERFACES>
 
 <!--802840**************--><AD_TEXTINTERFACES>
@@ -6442,7 +6512,7 @@
 <!--802840 CREATEDBY-->
 <!--802840-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--802840 UPDATED-->
-<!--802840-->              <UPDATED><![CDATA[2007-11-27 11:20:37.0]]></UPDATED>
+<!--802840-->              <UPDATED><![CDATA[2008-08-18 14:29:33.0]]></UPDATED>
 <!--802840 UPDATEDBY-->
 <!--802840-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--802840 TEXT-->
@@ -6450,7 +6520,7 @@
 <!--802840 FILENAME-->
 <!--802840-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/info/UserContact_F2.html]]></FILENAME>
 <!--802840 ISUSED-->
-<!--802840-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--802840-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--802840**************--></AD_TEXTINTERFACES>
 
 <!--802841**************--><AD_TEXTINTERFACES>
@@ -6467,7 +6537,7 @@
 <!--802841 CREATEDBY-->
 <!--802841-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--802841 UPDATED-->
-<!--802841-->              <UPDATED><![CDATA[2007-11-27 11:20:37.0]]></UPDATED>
+<!--802841-->              <UPDATED><![CDATA[2008-08-18 14:29:33.0]]></UPDATED>
 <!--802841 UPDATEDBY-->
 <!--802841-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--802841 TEXT-->
@@ -6475,7 +6545,7 @@
 <!--802841 FILENAME-->
 <!--802841-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/info/UserContact_F2.html]]></FILENAME>
 <!--802841 ISUSED-->
-<!--802841-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--802841-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--802841**************--></AD_TEXTINTERFACES>
 
 <!--802842**************--><AD_TEXTINTERFACES>
@@ -6492,7 +6562,7 @@
 <!--802842 CREATEDBY-->
 <!--802842-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--802842 UPDATED-->
-<!--802842-->              <UPDATED><![CDATA[2007-11-27 11:20:37.0]]></UPDATED>
+<!--802842-->              <UPDATED><![CDATA[2008-08-18 14:29:33.0]]></UPDATED>
 <!--802842 UPDATEDBY-->
 <!--802842-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--802842 TEXT-->
@@ -6500,7 +6570,7 @@
 <!--802842 FILENAME-->
 <!--802842-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/info/UserContact_F2.html]]></FILENAME>
 <!--802842 ISUSED-->
-<!--802842-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--802842-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--802842**************--></AD_TEXTINTERFACES>
 
 <!--802846**************--><AD_TEXTINTERFACES>
@@ -6517,7 +6587,7 @@
 <!--802846 CREATEDBY-->
 <!--802846-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--802846 UPDATED-->
-<!--802846-->              <UPDATED><![CDATA[2007-11-27 11:20:37.0]]></UPDATED>
+<!--802846-->              <UPDATED><![CDATA[2008-08-18 14:29:33.0]]></UPDATED>
 <!--802846 UPDATEDBY-->
 <!--802846-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--802846 TEXT-->
@@ -6525,7 +6595,7 @@
 <!--802846 FILENAME-->
 <!--802846-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/info/UserContact_F2.html]]></FILENAME>
 <!--802846 ISUSED-->
-<!--802846-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--802846-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--802846**************--></AD_TEXTINTERFACES>
 
 <!--802847**************--><AD_TEXTINTERFACES>
@@ -6542,7 +6612,7 @@
 <!--802847 CREATEDBY-->
 <!--802847-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--802847 UPDATED-->
-<!--802847-->              <UPDATED><![CDATA[2007-11-27 11:20:37.0]]></UPDATED>
+<!--802847-->              <UPDATED><![CDATA[2008-08-18 14:29:33.0]]></UPDATED>
 <!--802847 UPDATEDBY-->
 <!--802847-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--802847 TEXT-->
@@ -6550,7 +6620,7 @@
 <!--802847 FILENAME-->
 <!--802847-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/info/UserContact_F2.html]]></FILENAME>
 <!--802847 ISUSED-->
-<!--802847-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--802847-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--802847**************--></AD_TEXTINTERFACES>
 
 <!--802869**************--><AD_TEXTINTERFACES>
@@ -10943,7 +11013,7 @@
 <!--803939 TEXT-->
 <!--803939-->              <TEXT><![CDATA[Scheduled Maintenance]]></TEXT>
 <!--803939 FILENAME-->
-<!--803939-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/UpdateMaintenanceScheduled_F1.html]]></FILENAME>
+<!--803939-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/UpdateMaintenanceScheduled.html]]></FILENAME>
 <!--803939 ISUSED-->
 <!--803939-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--803939**************--></AD_TEXTINTERFACES>
@@ -10968,7 +11038,7 @@
 <!--803940 TEXT-->
 <!--803940-->              <TEXT><![CDATA[Time]]></TEXT>
 <!--803940 FILENAME-->
-<!--803940-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/UpdateMaintenanceScheduled_F1.html]]></FILENAME>
+<!--803940-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/UpdateMaintenanceScheduled.html]]></FILENAME>
 <!--803940 ISUSED-->
 <!--803940-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--803940**************--></AD_TEXTINTERFACES>
@@ -11214,7 +11284,7 @@
 <!--804038 TEXT-->
 <!--804038-->              <TEXT><![CDATA[Last order]]></TEXT>
 <!--804038 FILENAME-->
-<!--804038-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder_F1.html]]></FILENAME>
+<!--804038-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder.html]]></FILENAME>
 <!--804038 ISUSED-->
 <!--804038-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--804038**************--></AD_TEXTINTERFACES>
@@ -11239,7 +11309,7 @@
 <!--804040 TEXT-->
 <!--804040-->              <TEXT><![CDATA[Invoiced ]]></TEXT>
 <!--804040 FILENAME-->
-<!--804040-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder_F1.html]]></FILENAME>
+<!--804040-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder.html]]></FILENAME>
 <!--804040 ISUSED-->
 <!--804040-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--804040**************--></AD_TEXTINTERFACES>
@@ -11264,7 +11334,7 @@
 <!--804044 TEXT-->
 <!--804044-->              <TEXT><![CDATA[Date ordered]]></TEXT>
 <!--804044 FILENAME-->
-<!--804044-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder_F1.html]]></FILENAME>
+<!--804044-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder.html]]></FILENAME>
 <!--804044 ISUSED-->
 <!--804044-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--804044**************--></AD_TEXTINTERFACES>
@@ -11289,7 +11359,7 @@
 <!--804046 TEXT-->
 <!--804046-->              <TEXT><![CDATA[Ship to]]></TEXT>
 <!--804046 FILENAME-->
-<!--804046-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder_F1.html]]></FILENAME>
+<!--804046-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder.html]]></FILENAME>
 <!--804046 ISUSED-->
 <!--804046-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--804046**************--></AD_TEXTINTERFACES>
@@ -11314,7 +11384,7 @@
 <!--804047 TEXT-->
 <!--804047-->              <TEXT><![CDATA[Products sales/purchase the last]]></TEXT>
 <!--804047 FILENAME-->
-<!--804047-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder_F1.html]]></FILENAME>
+<!--804047-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder.html]]></FILENAME>
 <!--804047 ISUSED-->
 <!--804047-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--804047**************--></AD_TEXTINTERFACES>
@@ -11339,7 +11409,7 @@
 <!--804048 TEXT-->
 <!--804048-->              <TEXT><![CDATA[days]]></TEXT>
 <!--804048 FILENAME-->
-<!--804048-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder_F1.html]]></FILENAME>
+<!--804048-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder.html]]></FILENAME>
 <!--804048 ISUSED-->
 <!--804048-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--804048**************--></AD_TEXTINTERFACES>
@@ -11364,7 +11434,7 @@
 <!--804050 TEXT-->
 <!--804050-->              <TEXT><![CDATA[Last price]]></TEXT>
 <!--804050 FILENAME-->
-<!--804050-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder_F1.html]]></FILENAME>
+<!--804050-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder.html]]></FILENAME>
 <!--804050 ISUSED-->
 <!--804050-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--804050**************--></AD_TEXTINTERFACES>
@@ -13033,7 +13103,7 @@
 <!--805010 TEXT-->
 <!--805010-->              <TEXT><![CDATA[Edit Control Point Measures]]></TEXT>
 <!--805010 FILENAME-->
-<!--805010-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/EditCCPMeasureValues_F1.html]]></FILENAME>
+<!--805010-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/EditCCPMeasureValues.html]]></FILENAME>
 <!--805010 ISUSED-->
 <!--805010-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--805010**************--></AD_TEXTINTERFACES>
@@ -13133,7 +13203,7 @@
 <!--805018 TEXT-->
 <!--805018-->              <TEXT><![CDATA[Pending delivery/receipt]]></TEXT>
 <!--805018 FILENAME-->
-<!--805018-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder_F1.html]]></FILENAME>
+<!--805018-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder.html]]></FILENAME>
 <!--805018 ISUSED-->
 <!--805018-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--805018**************--></AD_TEXTINTERFACES>
@@ -13158,7 +13228,7 @@
 <!--805019 TEXT-->
 <!--805019-->              <TEXT><![CDATA[Pending invoice]]></TEXT>
 <!--805019 FILENAME-->
-<!--805019-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder_F1.html]]></FILENAME>
+<!--805019-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder.html]]></FILENAME>
 <!--805019 ISUSED-->
 <!--805019-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--805019**************--></AD_TEXTINTERFACES>
@@ -13183,7 +13253,7 @@
 <!--805020 TEXT-->
 <!--805020-->              <TEXT><![CDATA[Pending debt payment]]></TEXT>
 <!--805020 FILENAME-->
-<!--805020-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder_F1.html]]></FILENAME>
+<!--805020-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder.html]]></FILENAME>
 <!--805020 ISUSED-->
 <!--805020-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--805020**************--></AD_TEXTINTERFACES>
@@ -13208,7 +13278,7 @@
 <!--805021 TEXT-->
 <!--805021-->              <TEXT><![CDATA[% total]]></TEXT>
 <!--805021 FILENAME-->
-<!--805021-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder_F1.html]]></FILENAME>
+<!--805021-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder.html]]></FILENAME>
 <!--805021 ISUSED-->
 <!--805021-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--805021**************--></AD_TEXTINTERFACES>
@@ -13233,7 +13303,7 @@
 <!--805023 TEXT-->
 <!--805023-->              <TEXT><![CDATA[Reference No]]></TEXT>
 <!--805023 FILENAME-->
-<!--805023-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder_F1.html]]></FILENAME>
+<!--805023-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder.html]]></FILENAME>
 <!--805023 ISUSED-->
 <!--805023-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--805023**************--></AD_TEXTINTERFACES>
@@ -13308,7 +13378,7 @@
 <!--805027 TEXT-->
 <!--805027-->              <TEXT><![CDATA[Update maintenance]]></TEXT>
 <!--805027 FILENAME-->
-<!--805027-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/UpdateMaintenanceScheduled_F1.html]]></FILENAME>
+<!--805027-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/UpdateMaintenanceScheduled.html]]></FILENAME>
 <!--805027 ISUSED-->
 <!--805027-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--805027**************--></AD_TEXTINTERFACES>
@@ -13333,7 +13403,7 @@
 <!--805029 TEXT-->
 <!--805029-->              <TEXT><![CDATA[Scheduled date from]]></TEXT>
 <!--805029 FILENAME-->
-<!--805029-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/UpdateMaintenanceScheduled_F1.html]]></FILENAME>
+<!--805029-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/UpdateMaintenanceScheduled.html]]></FILENAME>
 <!--805029 ISUSED-->
 <!--805029-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--805029**************--></AD_TEXTINTERFACES>
@@ -13412,31 +13482,6 @@
 <!--805039 ISUSED-->
 <!--805039-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--805039**************--></AD_TEXTINTERFACES>
-
-<!--805047**************--><AD_TEXTINTERFACES>
-<!--805047 AD_TEXTINTERFACES_ID-->
-<!--805047-->              <AD_TEXTINTERFACES_ID><![CDATA[805047]]></AD_TEXTINTERFACES_ID>
-<!--805047 AD_CLIENT_ID-->
-<!--805047-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--805047 AD_ORG_ID-->
-<!--805047-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--805047 ISACTIVE-->
-<!--805047-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--805047 CREATED-->
-<!--805047-->              <CREATED><![CDATA[2007-06-01 22:01:00.0]]></CREATED>
-<!--805047 CREATEDBY-->
-<!--805047-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--805047 UPDATED-->
-<!--805047-->              <UPDATED><![CDATA[2007-11-27 11:20:51.0]]></UPDATED>
-<!--805047 UPDATEDBY-->
-<!--805047-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--805047 TEXT-->
-<!--805047-->              <TEXT><![CDATA[Sales Order]]></TEXT>
-<!--805047 FILENAME-->
-<!--805047-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder.html]]></FILENAME>
-<!--805047 ISUSED-->
-<!--805047-->              <ISUSED><![CDATA[N]]></ISUSED>
-<!--805047**************--></AD_TEXTINTERFACES>
 
 <!--805051**************--><AD_TEXTINTERFACES>
 <!--805051 AD_TEXTINTERFACES_ID-->
@@ -15788,7 +15833,7 @@
 <!--806010 TEXT-->
 <!--806010-->              <TEXT><![CDATA[Copy from GL Journal]]></TEXT>
 <!--806010 FILENAME-->
-<!--806010-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_process/CopyFromGLJournal_F1.html]]></FILENAME>
+<!--806010-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_process/CopyFromGLJournal.html]]></FILENAME>
 <!--806010 ISUSED-->
 <!--806010-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--806010**************--></AD_TEXTINTERFACES>
@@ -16303,7 +16348,7 @@
 <!--806158 CREATEDBY-->
 <!--806158-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--806158 UPDATED-->
-<!--806158-->              <UPDATED><![CDATA[2007-11-27 11:20:37.0]]></UPDATED>
+<!--806158-->              <UPDATED><![CDATA[2008-08-18 14:29:38.0]]></UPDATED>
 <!--806158 UPDATEDBY-->
 <!--806158-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--806158 TEXT-->
@@ -16311,7 +16356,7 @@
 <!--806158 FILENAME-->
 <!--806158-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/info/UserContact_F1.html]]></FILENAME>
 <!--806158 ISUSED-->
-<!--806158-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--806158-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--806158**************--></AD_TEXTINTERFACES>
 
 <!--806160**************--><AD_TEXTINTERFACES>
@@ -17382,7 +17427,7 @@
 <!--806456 TEXT-->
 <!--806456-->              <TEXT><![CDATA[Measure date]]></TEXT>
 <!--806456 FILENAME-->
-<!--806456-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/EditCCPMeasureValues_F1.html]]></FILENAME>
+<!--806456-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/EditCCPMeasureValues.html]]></FILENAME>
 <!--806456 ISUSED-->
 <!--806456-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--806456**************--></AD_TEXTINTERFACES>
@@ -17407,7 +17452,7 @@
 <!--806457 TEXT-->
 <!--806457-->              <TEXT><![CDATA[Shift]]></TEXT>
 <!--806457 FILENAME-->
-<!--806457-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/EditCCPMeasureValues_F1.html]]></FILENAME>
+<!--806457-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/EditCCPMeasureValues.html]]></FILENAME>
 <!--806457 ISUSED-->
 <!--806457-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--806457**************--></AD_TEXTINTERFACES>
@@ -17432,7 +17477,7 @@
 <!--806458 TEXT-->
 <!--806458-->              <TEXT><![CDATA[Maintenance type]]></TEXT>
 <!--806458 FILENAME-->
-<!--806458-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/UpdateMaintenanceScheduled_F1.html]]></FILENAME>
+<!--806458-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/UpdateMaintenanceScheduled.html]]></FILENAME>
 <!--806458 ISUSED-->
 <!--806458-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--806458**************--></AD_TEXTINTERFACES>
@@ -18364,7 +18409,7 @@
 <!--806689 CREATEDBY-->
 <!--806689-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--806689 UPDATED-->
-<!--806689-->              <UPDATED><![CDATA[2007-11-27 11:20:34.0]]></UPDATED>
+<!--806689-->              <UPDATED><![CDATA[2008-08-18 14:57:00.0]]></UPDATED>
 <!--806689 UPDATEDBY-->
 <!--806689-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--806689 TEXT-->
@@ -18372,7 +18417,7 @@
 <!--806689 FILENAME-->
 <!--806689-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_forms/MatchingPO-Receipt-Invoice_F5.html]]></FILENAME>
 <!--806689 ISUSED-->
-<!--806689-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--806689-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--806689**************--></AD_TEXTINTERFACES>
 
 <!--806690**************--><AD_TEXTINTERFACES>
@@ -18389,7 +18434,7 @@
 <!--806690 CREATEDBY-->
 <!--806690-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--806690 UPDATED-->
-<!--806690-->              <UPDATED><![CDATA[2007-11-27 11:20:34.0]]></UPDATED>
+<!--806690-->              <UPDATED><![CDATA[2008-08-18 14:57:00.0]]></UPDATED>
 <!--806690 UPDATEDBY-->
 <!--806690-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--806690 TEXT-->
@@ -18397,7 +18442,7 @@
 <!--806690 FILENAME-->
 <!--806690-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_forms/MatchingPO-Receipt-Invoice_F5.html]]></FILENAME>
 <!--806690 ISUSED-->
-<!--806690-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--806690-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--806690**************--></AD_TEXTINTERFACES>
 
 <!--806695**************--><AD_TEXTINTERFACES>
@@ -18414,7 +18459,7 @@
 <!--806695 CREATEDBY-->
 <!--806695-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--806695 UPDATED-->
-<!--806695-->              <UPDATED><![CDATA[2007-11-27 11:20:35.0]]></UPDATED>
+<!--806695-->              <UPDATED><![CDATA[2008-08-18 14:57:09.0]]></UPDATED>
 <!--806695 UPDATEDBY-->
 <!--806695-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--806695 TEXT-->
@@ -18422,7 +18467,7 @@
 <!--806695 FILENAME-->
 <!--806695-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_forms/MatchingPO-Receipt-Invoice_F1.html]]></FILENAME>
 <!--806695 ISUSED-->
-<!--806695-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--806695-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--806695**************--></AD_TEXTINTERFACES>
 
 <!--806696**************--><AD_TEXTINTERFACES>
@@ -18439,7 +18484,7 @@
 <!--806696 CREATEDBY-->
 <!--806696-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--806696 UPDATED-->
-<!--806696-->              <UPDATED><![CDATA[2007-11-27 11:20:35.0]]></UPDATED>
+<!--806696-->              <UPDATED><![CDATA[2008-08-18 14:57:09.0]]></UPDATED>
 <!--806696 UPDATEDBY-->
 <!--806696-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--806696 TEXT-->
@@ -18447,7 +18492,7 @@
 <!--806696 FILENAME-->
 <!--806696-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_forms/MatchingPO-Receipt-Invoice_F1.html]]></FILENAME>
 <!--806696 ISUSED-->
-<!--806696-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--806696-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--806696**************--></AD_TEXTINTERFACES>
 
 <!--806697**************--><AD_TEXTINTERFACES>
@@ -18464,7 +18509,7 @@
 <!--806697 CREATEDBY-->
 <!--806697-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--806697 UPDATED-->
-<!--806697-->              <UPDATED><![CDATA[2007-11-27 11:20:35.0]]></UPDATED>
+<!--806697-->              <UPDATED><![CDATA[2008-08-18 14:57:09.0]]></UPDATED>
 <!--806697 UPDATEDBY-->
 <!--806697-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--806697 TEXT-->
@@ -18472,7 +18517,7 @@
 <!--806697 FILENAME-->
 <!--806697-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_forms/MatchingPO-Receipt-Invoice_F1.html]]></FILENAME>
 <!--806697 ISUSED-->
-<!--806697-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--806697-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--806697**************--></AD_TEXTINTERFACES>
 
 <!--806700**************--><AD_TEXTINTERFACES>
@@ -34971,31 +35016,6 @@
 <!--810065-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--810065**************--></AD_TEXTINTERFACES>
 
-<!--810099**************--><AD_TEXTINTERFACES>
-<!--810099 AD_TEXTINTERFACES_ID-->
-<!--810099-->              <AD_TEXTINTERFACES_ID><![CDATA[810099]]></AD_TEXTINTERFACES_ID>
-<!--810099 AD_CLIENT_ID-->
-<!--810099-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--810099 AD_ORG_ID-->
-<!--810099-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--810099 ISACTIVE-->
-<!--810099-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--810099 CREATED-->
-<!--810099-->              <CREATED><![CDATA[2007-09-17 11:50:59.0]]></CREATED>
-<!--810099 CREATEDBY-->
-<!--810099-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--810099 UPDATED-->
-<!--810099-->              <UPDATED><![CDATA[2007-11-27 11:20:51.0]]></UPDATED>
-<!--810099 UPDATEDBY-->
-<!--810099-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--810099 TEXT-->
-<!--810099-->              <TEXT><![CDATA[Movement Date]]></TEXT>
-<!--810099 FILENAME-->
-<!--810099-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromSettlement.html]]></FILENAME>
-<!--810099 ISUSED-->
-<!--810099-->              <ISUSED><![CDATA[Y]]></ISUSED>
-<!--810099**************--></AD_TEXTINTERFACES>
-
 <!--1000100000**************--><AD_TEXTINTERFACES>
 <!--1000100000 AD_TEXTINTERFACES_ID-->
 <!--1000100000-->              <AD_TEXTINTERFACES_ID><![CDATA[1000100000]]></AD_TEXTINTERFACES_ID>
@@ -39789,12 +39809,37 @@
 <!--1001300000 UPDATEDBY-->
 <!--1001300000-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--1001300000 TEXT-->
-<!--1001300000-->              <TEXT><![CDATA[Price (€/m2)]]></TEXT>
+<!--1001300000-->              <TEXT><![CDATA[Price (¿/m2)]]></TEXT>
 <!--1001300000 FILENAME-->
 <!--1001300000-->              <FILENAME><![CDATA[/org/openbravo/erpReports/RptC_ProposalLines.fo]]></FILENAME>
 <!--1001300000 ISUSED-->
 <!--1001300000-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--1001300000**************--></AD_TEXTINTERFACES>
+
+<!--1001600000**************--><AD_TEXTINTERFACES>
+<!--1001600000 AD_TEXTINTERFACES_ID-->
+<!--1001600000-->              <AD_TEXTINTERFACES_ID><![CDATA[1001600000]]></AD_TEXTINTERFACES_ID>
+<!--1001600000 AD_CLIENT_ID-->
+<!--1001600000-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1001600000 AD_ORG_ID-->
+<!--1001600000-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1001600000 ISACTIVE-->
+<!--1001600000-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1001600000 CREATED-->
+<!--1001600000-->              <CREATED><![CDATA[2008-08-08 17:00:28.0]]></CREATED>
+<!--1001600000 CREATEDBY-->
+<!--1001600000-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1001600000 UPDATED-->
+<!--1001600000-->              <UPDATED><![CDATA[2008-08-08 17:00:28.0]]></UPDATED>
+<!--1001600000 UPDATEDBY-->
+<!--1001600000-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1001600000 TEXT-->
+<!--1001600000-->              <TEXT><![CDATA[Copy lines from order]]></TEXT>
+<!--1001600000 FILENAME-->
+<!--1001600000-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder.html]]></FILENAME>
+<!--1001600000 ISUSED-->
+<!--1001600000-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1001600000**************--></AD_TEXTINTERFACES>
 
 <!--1002100000**************--><AD_TEXTINTERFACES>
 <!--1002100000 AD_TEXTINTERFACES_ID-->
@@ -43458,7 +43503,7 @@
 <!--1003900013 CREATEDBY-->
 <!--1003900013-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1003900013 UPDATED-->
-<!--1003900013-->              <UPDATED><![CDATA[2008-04-21 15:22:09.0]]></UPDATED>
+<!--1003900013-->              <UPDATED><![CDATA[2008-08-18 14:29:38.0]]></UPDATED>
 <!--1003900013 UPDATEDBY-->
 <!--1003900013-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--1003900013 TEXT-->
@@ -43466,7 +43511,7 @@
 <!--1003900013 FILENAME-->
 <!--1003900013-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/info/UserContact_F1.html]]></FILENAME>
 <!--1003900013 ISUSED-->
-<!--1003900013-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1003900013-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--1003900013**************--></AD_TEXTINTERFACES>
 
 <!--1003900014**************--><AD_TEXTINTERFACES>
@@ -45719,31 +45764,6 @@
 <!--1005400024-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--1005400024**************--></AD_TEXTINTERFACES>
 
-<!--1005500000**************--><AD_TEXTINTERFACES>
-<!--1005500000 AD_TEXTINTERFACES_ID-->
-<!--1005500000-->              <AD_TEXTINTERFACES_ID><![CDATA[1005500000]]></AD_TEXTINTERFACES_ID>
-<!--1005500000 AD_CLIENT_ID-->
-<!--1005500000-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1005500000 AD_ORG_ID-->
-<!--1005500000-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1005500000 ISACTIVE-->
-<!--1005500000-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1005500000 CREATED-->
-<!--1005500000-->              <CREATED><![CDATA[2008-02-29 16:54:42.0]]></CREATED>
-<!--1005500000 CREATEDBY-->
-<!--1005500000-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--1005500000 UPDATED-->
-<!--1005500000-->              <UPDATED><![CDATA[2008-02-29 16:54:42.0]]></UPDATED>
-<!--1005500000 UPDATEDBY-->
-<!--1005500000-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--1005500000 TEXT-->
-<!--1005500000-->              <TEXT><![CDATA[Â ]]></TEXT>
-<!--1005500000 FILENAME-->
-<!--1005500000-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_actionButton/CopyFromOrder.html]]></FILENAME>
-<!--1005500000 ISUSED-->
-<!--1005500000-->              <ISUSED><![CDATA[N]]></ISUSED>
-<!--1005500000**************--></AD_TEXTINTERFACES>
-
 <!--1005500001**************--><AD_TEXTINTERFACES>
 <!--1005500001 AD_TEXTINTERFACES_ID-->
 <!--1005500001-->              <AD_TEXTINTERFACES_ID><![CDATA[1005500001]]></AD_TEXTINTERFACES_ID>
@@ -47969,119 +47989,29 @@
 <!--1006300061-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--1006300061**************--></AD_TEXTINTERFACES>
 
-<!--
-************************
-0. End of Core Range.
-************************
--->
-<!--
-************************
-1. Custom Range.
-************************
--->
-<!--100000**************--><AD_TEXTINTERFACES>
-<!--100000 AD_TEXTINTERFACES_ID-->
-<!--100000-->              <AD_TEXTINTERFACES_ID><![CDATA[100000]]></AD_TEXTINTERFACES_ID>
-<!--100000 AD_CLIENT_ID-->
-<!--100000-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--100000 AD_ORG_ID-->
-<!--100000-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--100000 ISACTIVE-->
-<!--100000-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--100000 CREATED-->
-<!--100000-->              <CREATED><![CDATA[2008-05-27 13:36:55.0]]></CREATED>
-<!--100000 CREATEDBY-->
-<!--100000-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--100000 UPDATED-->
-<!--100000-->              <UPDATED><![CDATA[2008-05-27 13:36:55.0]]></UPDATED>
-<!--100000 UPDATEDBY-->
-<!--100000-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--100000 TEXT-->
-<!--100000-->              <TEXT><![CDATA[Open Pentaho]]></TEXT>
-<!--100000 FILENAME-->
-<!--100000-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/OpenPentaho.html]]></FILENAME>
-<!--100000 ISUSED-->
-<!--100000-->              <ISUSED><![CDATA[Y]]></ISUSED>
-<!--100000**************--></AD_TEXTINTERFACES>
+<!--55475CE61F5C3E65E040007F01016323**************--><AD_TEXTINTERFACES>
+<!--55475CE61F5C3E65E040007F01016323 AD_TEXTINTERFACES_ID-->
+<!--55475CE61F5C3E65E040007F01016323-->              <AD_TEXTINTERFACES_ID><![CDATA[55475CE61F5C3E65E040007F01016323]]></AD_TEXTINTERFACES_ID>
+<!--55475CE61F5C3E65E040007F01016323 AD_CLIENT_ID-->
+<!--55475CE61F5C3E65E040007F01016323-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--55475CE61F5C3E65E040007F01016323 AD_ORG_ID-->
+<!--55475CE61F5C3E65E040007F01016323-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--55475CE61F5C3E65E040007F01016323 ISACTIVE-->
+<!--55475CE61F5C3E65E040007F01016323-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--55475CE61F5C3E65E040007F01016323 CREATED-->
+<!--55475CE61F5C3E65E040007F01016323-->              <CREATED><![CDATA[2008-08-25 12:36:41.0]]></CREATED>
+<!--55475CE61F5C3E65E040007F01016323 CREATEDBY-->
+<!--55475CE61F5C3E65E040007F01016323-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--55475CE61F5C3E65E040007F01016323 UPDATED-->
+<!--55475CE61F5C3E65E040007F01016323-->              <UPDATED><![CDATA[2008-08-25 12:36:41.0]]></UPDATED>
+<!--55475CE61F5C3E65E040007F01016323 UPDATEDBY-->
+<!--55475CE61F5C3E65E040007F01016323-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--55475CE61F5C3E65E040007F01016323 TEXT-->
+<!--55475CE61F5C3E65E040007F01016323-->              <TEXT><![CDATA[PRICE]]></TEXT>
+<!--55475CE61F5C3E65E040007F01016323 FILENAME-->
+<!--55475CE61F5C3E65E040007F01016323-->              <FILENAME><![CDATA[/org/openbravo/erpReports/SubreportLines.jrxml]]></FILENAME>
+<!--55475CE61F5C3E65E040007F01016323 ISUSED-->
+<!--55475CE61F5C3E65E040007F01016323-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--55475CE61F5C3E65E040007F01016323**************--></AD_TEXTINTERFACES>
 
-<!--100001**************--><AD_TEXTINTERFACES>
-<!--100001 AD_TEXTINTERFACES_ID-->
-<!--100001-->              <AD_TEXTINTERFACES_ID><![CDATA[100001]]></AD_TEXTINTERFACES_ID>
-<!--100001 AD_CLIENT_ID-->
-<!--100001-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--100001 AD_ORG_ID-->
-<!--100001-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--100001 ISACTIVE-->
-<!--100001-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--100001 CREATED-->
-<!--100001-->              <CREATED><![CDATA[2008-05-27 13:36:56.0]]></CREATED>
-<!--100001 CREATEDBY-->
-<!--100001-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--100001 UPDATED-->
-<!--100001-->              <UPDATED><![CDATA[2008-05-27 13:36:56.0]]></UPDATED>
-<!--100001 UPDATEDBY-->
-<!--100001-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--100001 TEXT-->
-<!--100001-->              <TEXT><![CDATA[Your browser doesn't accept frames]]></TEXT>
-<!--100001 FILENAME-->
-<!--100001-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/OpenPentaho.html]]></FILENAME>
-<!--100001 ISUSED-->
-<!--100001-->              <ISUSED><![CDATA[Y]]></ISUSED>
-<!--100001**************--></AD_TEXTINTERFACES>
-
-<!--100002**************--><AD_TEXTINTERFACES>
-<!--100002 AD_TEXTINTERFACES_ID-->
-<!--100002-->              <AD_TEXTINTERFACES_ID><![CDATA[100002]]></AD_TEXTINTERFACES_ID>
-<!--100002 AD_CLIENT_ID-->
-<!--100002-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--100002 AD_ORG_ID-->
-<!--100002-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--100002 ISACTIVE-->
-<!--100002-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--100002 CREATED-->
-<!--100002-->              <CREATED><![CDATA[2008-05-27 13:37:27.0]]></CREATED>
-<!--100002 CREATEDBY-->
-<!--100002-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--100002 UPDATED-->
-<!--100002-->              <UPDATED><![CDATA[2008-05-27 13:37:27.0]]></UPDATED>
-<!--100002 UPDATEDBY-->
-<!--100002-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--100002 TEXT-->
-<!--100002-->              <TEXT><![CDATA[Price (€/m2)]]></TEXT>
-<!--100002 FILENAME-->
-<!--100002-->              <FILENAME><![CDATA[/org/openbravo/erpReports/RptC_ProposalLines.fo]]></FILENAME>
-<!--100002 ISUSED-->
-<!--100002-->              <ISUSED><![CDATA[Y]]></ISUSED>
-<!--100002**************--></AD_TEXTINTERFACES>
-
-<!--100003**************--><AD_TEXTINTERFACES>
-<!--100003 AD_TEXTINTERFACES_ID-->
-<!--100003-->              <AD_TEXTINTERFACES_ID><![CDATA[100003]]></AD_TEXTINTERFACES_ID>
-<!--100003 AD_CLIENT_ID-->
-<!--100003-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--100003 AD_ORG_ID-->
-<!--100003-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--100003 ISACTIVE-->
-<!--100003-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--100003 CREATED-->
-<!--100003-->              <CREATED><![CDATA[2008-06-23 14:38:33.0]]></CREATED>
-<!--100003 CREATEDBY-->
-<!--100003-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--100003 UPDATED-->
-<!--100003-->              <UPDATED><![CDATA[2008-06-23 14:38:33.0]]></UPDATED>
-<!--100003 UPDATEDBY-->
-<!--100003-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--100003 TEXT-->
-<!--100003-->              <TEXT><![CDATA[Date of First Sale]]></TEXT>
-<!--100003 FILENAME-->
-<!--100003-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_forms/MaterialReceiptPending.html]]></FILENAME>
-<!--100003 ISUSED-->
-<!--100003-->              <ISUSED><![CDATA[Y]]></ISUSED>
-<!--100003**************--></AD_TEXTINTERFACES>
-
-<!--
-************************
-1. End of Custom Range.
-************************
--->
 </data>

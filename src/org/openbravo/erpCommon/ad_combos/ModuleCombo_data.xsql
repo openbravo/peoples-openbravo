@@ -31,9 +31,9 @@
        SELECT DISTINCT tn.Node_ID AS CLAVE, menuData.NAME AS NAME, tn.Node_ID AS id
         FROM AD_TREENODE tn, AD_MENU menuData 
         WHERE tn.node_id = menuData.ad_menu_id 
-        AND tn.ad_tree_id = 10 
+        AND tn.ad_tree_id = '10' 
         AND tn.IsActive='Y' 
-        AND PARENT_ID=0 
+        AND PARENT_ID='0' 
        ]]></Sql>
    </SqlMethod>
 </SqlClass>

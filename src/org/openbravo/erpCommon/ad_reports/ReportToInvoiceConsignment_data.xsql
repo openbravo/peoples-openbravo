@@ -75,12 +75,12 @@
     <Parameter name="adOrgClient" type="replace" optional="true" after="AND M_INOUT.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[ AND M_INOUT.MOVEMENTDATE >= TO_DATE(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[ AND M_INOUT.MOVEMENTDATE < TO_DATE(?)]]></Parameter>
-    <Parameter name="mWarehouseId" optional="true" after="AND 1=1"><![CDATA[ AND M_WAREHOUSE.M_WAREHOUSE_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="mWarehouseId" optional="true" after="AND 1=1"><![CDATA[ AND M_WAREHOUSE.M_WAREHOUSE_ID = ?]]></Parameter>
     <Parameter name="adUserClient" type="replace" optional="true" after="AND M_MOVEMENT.AD_CLIENT_ID IN (" text="'2'"/>
     <Parameter name="adOrgClient" type="replace" optional="true" after="AND M_MOVEMENT.AD_ORG_ID IN (" text="'2'"/>
     <Parameter name="parDateFrom" optional="true" after="AND 2=2"><![CDATA[ AND M_MOVEMENT.MOVEMENTDATE >= TO_DATE(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 2=2"><![CDATA[ AND M_MOVEMENT.MOVEMENTDATE < TO_DATE(?)]]></Parameter>
-    <Parameter name="mWarehouseId" optional="true" after="AND 2=2"><![CDATA[ AND M_WAREHOUSE.M_WAREHOUSE_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="mWarehouseId" optional="true" after="AND 2=2"><![CDATA[ AND M_WAREHOUSE.M_WAREHOUSE_ID = ?]]></Parameter>
   </SqlMethod>
 
   <SqlMethod name="set" type="constant" return="multiple">

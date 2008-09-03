@@ -209,7 +209,7 @@
         AND CS.AD_ORG_ID = AD_ORGINFO.AD_ORG_ID
         AND CS.C_REMITTANCE_ID = 1000011]]></queryString>
 
-	<field name="C_REMITTANCE_ID" class="java.math.BigDecimal"/>
+	<field name="C_REMITTANCE_ID" class="java.lang.String"/>
 	<field name="DOCUMENTNO" class="java.lang.String"/>
 	<field name="DATETRX" class="java.util.Date"/>
 	<field name="DATEACCT" class="java.util.Date"/>

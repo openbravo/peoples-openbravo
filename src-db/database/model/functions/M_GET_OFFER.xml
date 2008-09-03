@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_GET_OFFER">
-    <function name="M_GET_OFFER" type="NUMERIC">
+    <function name="M_GET_OFFER" type="VARCHAR">
       <parameter name="p_date" type="TIMESTAMP" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_bpartner_id" type="NUMERIC" mode="in">
+      <parameter name="p_bpartner_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_product_id" type="NUMERIC" mode="in">
+      <parameter name="p_product_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -30,7 +30,7 @@
 DEPRECATED!
 This function should not be used, now more than one offer can be applied
 */
-  v_Offer_ID NUMBER;
+  v_Offer_ID VARCHAR2(32);
   TYPE RECORD IS REF CURSOR;
     Cur_Offer RECORD;
   BEGIN

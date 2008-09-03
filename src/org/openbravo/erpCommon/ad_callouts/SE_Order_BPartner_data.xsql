@@ -34,7 +34,7 @@
       COALESCE(p.SO_CreditLimit-p.SO_CreditUsed,-1) AS CreditAvailable,
       p.PO_PriceList_ID, p.PaymentRulePO, p.PO_PaymentTerm_ID, p.salesrep_Id
       FROM C_BPartner p
-      WHERE p.C_BPartner_ID = TO_NUMBER(?)
+      WHERE p.C_BPartner_ID=?
       ]]>
     </Sql>
     <Parameter name="cBpartnerId"/>
@@ -44,7 +44,7 @@
     <Sql>
       <![CDATA[
         SELECT MAX(M_WAREHOUSE_ID) AS ID FROM M_WAREHOUSE_SHIPPER
-        WHERE M_WAREHOUSE_SHIPPER.C_BPARTNER_ID = TO_NUMBER(?)
+        WHERE M_WAREHOUSE_SHIPPER.C_BPARTNER_ID = ?
       ]]>
     </Sql>
     <Parameter name="cBpartnerId"/>
@@ -71,7 +71,7 @@
         where ad_user.c_bpartner_id = c_bpartner.c_bpartner_id
         and c_bpartner.issalesrep='Y'
         and ad_user.isactive='Y' 
-        and ad_user.c_bpartner_ID = TO_NUMBER(?)
+        and ad_user.c_bpartner_id= ?
       ]]>
     </Sql>
     <Parameter name="cBpartnerId"/>

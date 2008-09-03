@@ -1,10 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--
-************************
-0. Core Range.
-************************
--->
 <!--101**************--><AD_MENU>
 <!--101 AD_MENU_ID-->
 <!--101-->              <AD_MENU_ID><![CDATA[101]]></AD_MENU_ID>
@@ -4254,35 +4249,6 @@
 <!--310 AD_WINDOW_ID-->
 <!--310-->              <AD_WINDOW_ID><![CDATA[233]]></AD_WINDOW_ID>
 <!--310**************--></AD_MENU>
-
-<!--312**************--><AD_MENU>
-<!--312 AD_MENU_ID-->
-<!--312-->              <AD_MENU_ID><![CDATA[312]]></AD_MENU_ID>
-<!--312 AD_CLIENT_ID-->
-<!--312-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--312 AD_ORG_ID-->
-<!--312-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--312 ISACTIVE-->
-<!--312-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--312 CREATED-->
-<!--312-->              <CREATED><![CDATA[2002-02-08 20:39:48.0]]></CREATED>
-<!--312 CREATEDBY-->
-<!--312-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--312 UPDATED-->
-<!--312-->              <UPDATED><![CDATA[2007-03-22 09:57:35.0]]></UPDATED>
-<!--312 NAME-->
-<!--312-->              <NAME><![CDATA[Matching PO-Receipt-Invoice]]></NAME>
-<!--312 UPDATEDBY-->
-<!--312-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--312 DESCRIPTION-->
-<!--312-->              <DESCRIPTION><![CDATA[Match Purchase Orders, Receipts, Vendor Invoices]]></DESCRIPTION>
-<!--312 ISSUMMARY-->
-<!--312-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--312 ACTION-->
-<!--312-->              <ACTION><![CDATA[X]]></ACTION>
-<!--312 AD_FORM_ID-->
-<!--312-->              <AD_FORM_ID><![CDATA[108]]></AD_FORM_ID>
-<!--312**************--></AD_MENU>
 
 <!--315**************--><AD_MENU>
 <!--315 AD_MENU_ID-->
@@ -11737,6 +11703,35 @@
 <!--800290-->              <AD_PROCESS_ID><![CDATA[800207]]></AD_PROCESS_ID>
 <!--800290**************--></AD_MENU>
 
+<!--1000001**************--><AD_MENU>
+<!--1000001 AD_MENU_ID-->
+<!--1000001-->              <AD_MENU_ID><![CDATA[1000001]]></AD_MENU_ID>
+<!--1000001 AD_CLIENT_ID-->
+<!--1000001-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000001 AD_ORG_ID-->
+<!--1000001-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000001 ISACTIVE-->
+<!--1000001-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000001 CREATED-->
+<!--1000001-->              <CREATED><![CDATA[2007-01-19 12:09:01.0]]></CREATED>
+<!--1000001 CREATEDBY-->
+<!--1000001-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--1000001 UPDATED-->
+<!--1000001-->              <UPDATED><![CDATA[2007-07-17 19:26:15.0]]></UPDATED>
+<!--1000001 NAME-->
+<!--1000001-->              <NAME><![CDATA[Openbravo ERP]]></NAME>
+<!--1000001 UPDATEDBY-->
+<!--1000001-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1000001 DESCRIPTION-->
+<!--1000001-->              <DESCRIPTION><![CDATA[Openbravo Homepage]]></DESCRIPTION>
+<!--1000001 ISSUMMARY-->
+<!--1000001-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
+<!--1000001 ACTION-->
+<!--1000001-->              <ACTION><![CDATA[L]]></ACTION>
+<!--1000001 URL-->
+<!--1000001-->              <URL><![CDATA[http://www.openbravo.com]]></URL>
+<!--1000001**************--></AD_MENU>
+
 <!--1000500000**************--><AD_MENU>
 <!--1000500000 AD_MENU_ID-->
 <!--1000500000-->              <AD_MENU_ID><![CDATA[1000500000]]></AD_MENU_ID>
@@ -12133,48 +12128,4 @@
 <!--1005500000-->              <AD_PROCESS_ID><![CDATA[1005500000]]></AD_PROCESS_ID>
 <!--1005500000**************--></AD_MENU>
 
-<!--
-************************
-0. End of Core Range.
-************************
--->
-<!--
-************************
-1. Custom Range.
-************************
--->
-<!--1000001**************--><AD_MENU>
-<!--1000001 AD_MENU_ID-->
-<!--1000001-->              <AD_MENU_ID><![CDATA[1000001]]></AD_MENU_ID>
-<!--1000001 AD_CLIENT_ID-->
-<!--1000001-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1000001 AD_ORG_ID-->
-<!--1000001-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1000001 ISACTIVE-->
-<!--1000001-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1000001 CREATED-->
-<!--1000001-->              <CREATED><![CDATA[2007-01-19 12:09:01.0]]></CREATED>
-<!--1000001 CREATEDBY-->
-<!--1000001-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--1000001 UPDATED-->
-<!--1000001-->              <UPDATED><![CDATA[2007-07-17 19:26:15.0]]></UPDATED>
-<!--1000001 NAME-->
-<!--1000001-->              <NAME><![CDATA[Openbravo ERP]]></NAME>
-<!--1000001 UPDATEDBY-->
-<!--1000001-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--1000001 DESCRIPTION-->
-<!--1000001-->              <DESCRIPTION><![CDATA[Openbravo Homepage]]></DESCRIPTION>
-<!--1000001 ISSUMMARY-->
-<!--1000001-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--1000001 ACTION-->
-<!--1000001-->              <ACTION><![CDATA[L]]></ACTION>
-<!--1000001 URL-->
-<!--1000001-->              <URL><![CDATA[http://www.openbravo.com]]></URL>
-<!--1000001**************--></AD_MENU>
-
-<!--
-************************
-1. End of Custom Range.
-************************
--->
 </data>

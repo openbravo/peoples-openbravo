@@ -31,13 +31,19 @@ function Tcalculator() {
 	// preloading images
 	var a_img = [], i, j;
   //Only when no baseDirection
-  if (baseDirection==null || baseDirection=="")
+  var _deprPreload;
+  if (typeof baseDirectory != "unknown") {
+    _deprPreload = (baseDirectory==null || baseDirectory=="");
+  } else {
+    _deprPreload = (baseDirection==null || baseDirection=="");
+  }
+  if (_deprPreload)
   {
 	for (i = 0; i < 19; i ++) {
 		a_img[i] = [];
 		for (j = 0; j < 3; j ++) {
 			a_img[i][j] = new Image();
-			a_img[i][j].src = baseDirection + 'images/calculator/' + i + '_' + j + '.gif'
+			a_img[i][j].src = 'images/calculator/' + i + '_' + j + '.gif'
 		} 
 	}
   }
@@ -118,7 +124,12 @@ function TCRPopup(obj_control) {
 			n_left = (screen.width - w) >> 1;
 			n_top = (screen.height - h) >> 1;
 		}
-		win_ch = window.open(baseDirection + "popups/calculator.html","win_ch", "width=" + w + ",height=" + h + ",help=no,status=no,scrollbars=no,resizable=no,top=" + n_top + ",left=" + n_left + ",dependent=yes,alwaysRaised=yes", true);
+		if (typeof baseDirectory != "unknown") {
+			win_ch = window.open(baseDirectory + "popups/calculator.html","win_ch", "width=" + w + ",height=" + h + ",help=no,status=no,scrollbars=no,resizable=no,top=" + n_top + ",left=" + n_left + ",dependent=yes,alwaysRaised=yes", true);
+		} else {
+			// Deprecated in 2.50, the following code is only for compatibility
+        	win_ch = window.open(baseDirection + "popups/calculator.html","win_ch", "width=" + w + ",height=" + h + ",help=no,status=no,scrollbars=no,resizable=no,top=" + n_top + ",left=" + n_left + ",dependent=yes,alwaysRaised=yes", true);
+        }
 		win_ch.focus();
 	}
 }

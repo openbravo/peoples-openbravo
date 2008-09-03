@@ -35,7 +35,7 @@
 				BPartnerUPC, BillTo_UPC, C_BPartner_Location_UPC, Vendor_UPC, Perform_Post, Paymentamount1, Paymentrule1, Paymentamount2, Paymentrule2, '' AS Date_Time_Format
 				FROM I_Order
 				WHERE I_IsImported='N'
-				AND AD_Client_ID = TO_NUMBER(?)
+				AND AD_Client_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -49,7 +49,7 @@
 		<Sql>
 			<![CDATA[
 				INSERT INTO I_Order (I_ORDER_ID, AD_CLIENT_ID, AD_ORG_ID, DOCUMENTNO, createdBy, created, C_Doctype_ID,dateordered ,BPartnervalue, name, C_BPartner_Location_ID,BillTo_ID,Address1,Address2,Postal,City,RegionName,CountryCode,C_OrderLine_ID,M_Product_Id, qtyOrdered, priceActual, C_Tax_ID, paymenttermvalue, c_PaymentTerm_Id, salesrep_Id, m_Shipper_Id, m_Pricelist_Id, m_Warehouse_Id, Perform_Post, Paymentamount1, Paymentrule1, Paymentamount2, Paymentrule2) VALUES 
-					(to_number(?),to_number(?),to_number(?),to_number(?),to_number(0),to_date(now()),to_number(?),to_date(?,?),?,?,to_number(?),to_number(?),to_char(?),to_char(?),to_char(?),to_char(?),to_char(?),to_char(?),to_number(?),to_number(?),to_number(?),to_number(?),to_number(?),to_number(?),to_number(?),to_number(?),to_number(?),to_number(?),to_number(?), to_char(?),to_number(?),to_char(?),to_number(?), to_char(?))
+					(?,?,?,?,to_number(0),to_date(now()),?,to_date(?,?),?,?,?,?,to_char(?),to_char(?),to_char(?),to_char(?),to_char(?),to_char(?),?,?,?,?,?,?,?,?,?,?,?, to_char(?),?,to_char(?),?, to_char(?))
 			]]>
 		</Sql>
 		<Parameter name="iOrderId"/>
@@ -93,20 +93,20 @@
 				UPDATE I_Order SET
 					BPartnerValue=?,
 					Name=?,
-					C_BPartner_ID = TO_NUMBER(?),
-					C_Location_ID = TO_NUMBER(?),
-					C_BPartner_Location_ID = TO_NUMBER(?),
-					billTo_ID = TO_NUMBER(?),
-					AD_User_ID = TO_NUMBER(?),
+					C_BPartner_ID=?,
+					C_Location_ID=?,
+					C_BPartner_Location_ID=?,
+					billTo_ID=?,
+					AD_User_ID=?,
 					Updated=TO_DATE(now()),
 					UpdatedBy=?,
-					C_Order_ID = TO_NUMBER(?),
-					C_Tax_ID = TO_NUMBER(?),
-					C_OrderLine_ID = TO_NUMBER(?),
+					C_Order_ID=?,
+					C_Tax_ID=?,
+					C_OrderLine_ID=?,
 					I_IsImported=?,
 					Processed=?,
 					Order_ReferenceNo=?
-				WHERE I_Order_ID = TO_NUMBER(?)
+				WHERE I_Order_ID = ?
 			]]>
 		</Sql>
 		<Parameter name="bpartnervalue"/>

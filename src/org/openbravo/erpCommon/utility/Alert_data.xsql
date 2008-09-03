@@ -27,7 +27,7 @@
 	              Created, CreatedBy, Updated, UpdatedBy, Description, AD_AlertRule_ID,
                   AD_Role_ID, AD_User_ID, Record_Id
       		 FROM AD_Alert
-      		WHERE AD_AlertRule_ID = TO_NUMBER(?)
+      		WHERE AD_AlertRule_ID = ?
       ]]>
    	</Sql>
    	<Parameter name="adAlertId" />
@@ -40,7 +40,7 @@
 	              Created, CreatedBy, Updated, UpdatedBy, Description, AD_AlertRule_ID,
                   AD_Role_ID, AD_User_ID, Record_Id
       		 FROM AD_Alert
-      		WHERE AD_AlertRule_ID = TO_NUMBER(?) AND Record_Id = ?
+      		WHERE AD_AlertRule_ID = ? AND Record_Id = ?
       ]]>
    	</Sql>
    	<Parameter name="adAlertId" />
@@ -54,7 +54,7 @@
 	              Created, CreatedBy, Updated, UpdatedBy, Description, AD_AlertRule_ID,
                   AD_Role_ID, AD_User_ID, Record_Id, Description
       		 FROM AD_Alert
-      		WHERE AD_AlertRule_ID = TO_NUMBER(?) AND Description = ?
+      		WHERE AD_AlertRule_ID = ? AND Description = ?
       ]]>
    	</Sql>
    	<Parameter name="adAlertId" />
@@ -67,7 +67,7 @@
    		<![CDATA[
        INSERT INTO AD_Alert (AD_Alert_ID, AD_Client_ID, AD_Org_ID, IsActive, 
                       Created, CreatedBy, Updated, UpdatedBy, Description, AD_AlertRule_ID, Record_Id)
-      		VALUES (AD_GET_NEXT_SEQUENCE('AD_Alert', 100000), 0, 0, 'Y', NOW(), 0, NOW(), 0, ?, TO_NUMBER(?), ?)
+      		VALUES (AD_GET_NEXT_SEQUENCE('AD_Alert', 100000), 0, 0, 'Y', NOW(), 0, NOW(), 0, ?, ?, ?)
       ]]>
    	</Sql>
    	<Parameter name="description" />

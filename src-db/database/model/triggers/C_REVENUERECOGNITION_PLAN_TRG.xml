@@ -29,9 +29,9 @@
       1
     )
     ;
-  v_NextNo       NUMBER;
+  v_NextNo       VARCHAR2(32);
   v_Qty          NUMBER;
-  v_M_Product_ID NUMBER;
+  v_M_Product_ID VARCHAR2(32);
 BEGIN
   -- Is RevenueRecognition Time Based
   SELECT IsTimeBased

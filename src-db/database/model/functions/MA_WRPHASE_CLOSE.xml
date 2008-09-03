@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MA_WRPHASE_CLOSE">
     <function name="MA_WRPHASE_CLOSE" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -27,10 +27,10 @@
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     --
-    v_Record_ID NUMBER:=NULL;
-    v_WorkRequirement_ID NUMBER;
+    v_Record_ID VARCHAR2(32):=NULL;
+    v_WorkRequirement_ID VARCHAR2(32);
     v_Count NUMBER;
-    v_Client_ID NUMBER;
+    v_Client_ID VARCHAR2(32);
   BEGIN
     --  Process Parameters
     IF(p_PInstance_ID IS NOT NULL) THEN

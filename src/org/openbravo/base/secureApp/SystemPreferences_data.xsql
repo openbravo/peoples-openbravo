@@ -21,7 +21,7 @@
         SELECT TAD_RecordRange, TAD_RecordRange_Info, TAD_TransactionalRange, TAD_THEME, 
         '' AS ID, '' AS CLASSNAME 
         FROM AD_SYSTEM 
-        WHERE AD_SYSTEM_ID = 0
+        WHERE AD_SYSTEM_ID = '0'
       ]]></Sql>
    </SqlMethod>
    <SqlMethod name="selectBackground" type="preparedStatement" return="multiple">
@@ -33,7 +33,7 @@
    <SqlMethod name="isActive" type="preparedStatement" return="Boolean">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        SELECT (CASE ISACTIVE WHEN 'Y' THEN 1 ELSE 0 END)AS ISACTIVE FROM AD_PROCESS WHERE AD_PROCESS_ID = to_number(?)
+        SELECT (CASE ISACTIVE WHEN 'Y' THEN 1 ELSE 0 END)AS ISACTIVE FROM AD_PROCESS WHERE AD_PROCESS_ID = ?
       ]]></Sql>
       <Parameter name="adProcessId"/>
    </SqlMethod>   

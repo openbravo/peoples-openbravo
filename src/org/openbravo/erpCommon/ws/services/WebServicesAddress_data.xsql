@@ -33,9 +33,9 @@
 			   AND L.C_LOCATION_ID = B.C_LOCATION_ID
 			   AND L.C_COUNTRY_ID = C.C_COUNTRY_ID
 			   AND L.C_REGION_ID = R.C_REGION_ID
-			   AND L.AD_CLIENT_ID = TO_NUMBER(?)     
-			   AND B.C_BPARTNER_ID = TO_NUMBER(?)	            
-			   AND L.C_LOCATION_ID = TO_NUMBER(?)
+			   AND L.AD_CLIENT_ID = ?     
+			   AND B.C_BPARTNER_ID = ?	            
+			   AND L.C_LOCATION_ID = ?
 	      ]]>
 	    </Sql>
     	<Parameter name="clientId"/>
@@ -63,8 +63,8 @@
 	               ADDRESS2 = ?, 
 	               CITY = ?,
 	               POSTAL = ?
-	         WHERE AD_CLIENT_ID = TO_NUMBER(?)
-	           AND C_LOCATION_ID = TO_NUMBER(?)
+	         WHERE AD_CLIENT_ID = ?
+	           AND C_LOCATION_ID = ?
       ]]></Sql>
       <Parameter name="address1"/>
       <Parameter name="address2"/>

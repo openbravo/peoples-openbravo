@@ -27,16 +27,16 @@
    TYPE RECORD IS REF CURSOR;
    Cur_Offer RECORD;
 
-  v_OrderLine_Offer_Id NUMBER;
+  v_OrderLine_Offer_ID VARCHAR2(32);
   v_lineno NUMBER:=0;
   v_Price NUMBER;
   v_PriceNew NUMBER;
   v_Amt NUMBER;
-  v_BPartner_ID NUMBER;
-  v_Order_ID NUMBER;
+  v_BPartner_ID VARCHAR2(32);
+  v_Order_ID VARCHAR2(32);
   v_Insert BOOLEAN :=FALSE;
   v_Precision NUMBER;
-  v_PriceList_ID NUMBER;
+  v_PriceList_ID VARCHAR2(32);
 BEGIN
 
 
@@ -51,7 +51,7 @@ BEGIN
   IF ((:NEW.DateOrdered != :OLD.DateOrdered)
      OR (COALESCE(:NEW.PriceActual,0) != COALESCE(:OLD.PriceActual,0))
      OR (COALESCE(:NEW.PriceList,0) != COALESCE(:OLD.PriceList,0))
-     OR (COALESCE(:NEW.M_Product_ID,0) != COALESCE(:OLD.M_Product_ID,0))
+     OR (COALESCE(:NEW.M_Product_ID,'0') != COALESCE(:OLD.M_Product_ID,'0'))
   OR (COALESCE(:NEW.QtyOrdered,0) != COALESCE(:OLD.QtyOrdered,0)))
  THEN
   DELETE FROM C_ORDERLINE_OFFER

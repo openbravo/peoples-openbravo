@@ -37,7 +37,7 @@
         '' AS AD_ORGTRX_ID, '' AS USER1_ID, '' AS USER2_ID, '' as AMOUNT, '' AS STATUS, '' AS ISRECEIPT, '' AS ISMANUAL, '' AS WRITEOFFAMT, 
         '' AS C_DEBT_PAYMENT_ID
         FROM C_Tax t, C_InvoiceTax it
-        WHERE t.C_Tax_ID=it.C_Tax_ID AND it.C_Invoice_ID = TO_NUMBER(?)
+        WHERE t.C_Tax_ID=it.C_Tax_ID AND it.C_Invoice_ID=?
      ]]>
      </Sql>
      <Parameter name="invoice"/>
@@ -51,8 +51,8 @@
         I.C_CURRENCY_ID, I.C_DOCTYPE_ID, I.C_CHARGE_ID, I.CHARGEAMT, I.POSTED, I.DATEINVOICED,
         I.ISTAXINCLUDED, I.C_BPARTNER_LOCATION_ID, I.GRANDTOTAL, I.TOTALLINES, I.CHARGEAMT
         FROM C_INVOICE I
-        WHERE AD_Client_ID = TO_NUMBER(?) 
-        AND C_INVOICE_ID = TO_NUMBER(?)
+        WHERE AD_Client_ID=? 
+        AND C_INVOICE_ID=?
      ]]>
      </Sql>
      <Parameter name="client"/>
@@ -64,7 +64,7 @@
       <![CDATA[
       SELECT (AMOUNT + coalesce(WITHHOLDINGAMOUNT,0)) AS AMOUNT, C_CURRENCY_ID, STATUS_INITIAL AS STATUS, ISRECEIPT, ISPAID, ISMANUAL, WRITEOFFAMT, C_DEBT_PAYMENT_ID
       FROM C_DEBT_PAYMENT
-      WHERE C_INVOICE_ID = TO_NUMBER(?)
+      WHERE C_INVOICE_ID =?
      ]]>
      </Sql>
      <Parameter name="invoice"/>
@@ -79,13 +79,13 @@
                 WHERE i.C_Invoice_ID=il.C_Invoice_ID
                 AND M_Product_PO.M_Product_ID=il.M_Product_ID 
                 AND M_Product_PO.C_BPartner_ID=i.C_BPartner_ID
-                AND i.C_Invoice_ID = TO_NUMBER(?))
+                AND i.C_Invoice_ID=?)
         WHERE EXISTS (SELECT * 
         FROM C_Invoice i, C_InvoiceLine il 
         WHERE i.C_Invoice_ID=il.C_Invoice_ID
         AND M_Product_PO.M_Product_ID=il.M_Product_ID 
         AND M_Product_PO.C_BPartner_ID=i.C_BPartner_ID
-        AND i.C_Invoice_ID = TO_NUMBER(?))
+        AND i.C_Invoice_ID=?)
      ]]>
      </Sql>
      <Parameter name="invoice"/>

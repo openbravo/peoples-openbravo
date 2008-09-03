@@ -64,8 +64,8 @@ public class UsedByLink extends HttpSecureAppServlet {
   void printPage(HttpServletResponse response, VariablesSecureApp vars, String strWindow, String TabId, String keyColumn, String keyId, String tableId) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: UsedBy links for tab: " + TabId);
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/UsedByLink").createXmlDocument();
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("tabID", TabId);
     xmlDocument.setParameter("windowID", strWindow);
@@ -127,8 +127,8 @@ public class UsedByLink extends HttpSecureAppServlet {
   void printPageDetail(HttpServletResponse response, VariablesSecureApp vars, String strWindow, String TabId, String keyColumn, String keyId, String strAD_TAB_ID, String strTABLENAME, String strCOLUMNNAME, String adTableId) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: UsedBy links for tab: " + TabId);
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/UsedByLink_Detail").createXmlDocument();
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("tabID", TabId);
     xmlDocument.setParameter("windowID", strWindow);

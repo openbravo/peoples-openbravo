@@ -18,12 +18,17 @@
 */
 package org.openbravo.erpReports;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+
 import org.openbravo.base.secureApp.*;
 import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-import java.text.NumberFormat;
 import java.util.*;
 
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -69,18 +74,41 @@ public class RptC_Invoice extends HttpSecureAppServlet {
     
     RptCInvoiceHeaderData[] pdfInvoicesData = RptCInvoiceHeaderData.select(this, strcInvoiceId);
     
-    String strReportName = "@basedesign@/org/openbravo/erpReports/RptC_Invoice.jrxml";
-    response.setHeader("Content-disposition", "inline; filename=RptC_Invoice.pdf");
+    String strLanguage = vars.getLanguage();
+    String strBaseDesign = getBaseDesignPath(strLanguage);
     
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("C_INVOICE_ID", strcInvoiceId);
 
     String currencyCode=pdfInvoicesData[0].currencyCode;
-    String currencySymbol=pdfInvoicesData[0].symbol;
+    //String currencySymbol=pdfInvoicesData[0].symbol;
 
-	parameters.put("CURRENCYSYMBOL",currencyCode );
-
+    parameters.put("CURRENCYSYMBOL",currencyCode);
     
+    JasperReport jasperReportLines;
+    try {
+      JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign + "/org/openbravo/erpReports/RptC_Invoice_Lines.jrxml");
+      jasperReportLines = JasperCompileManager.compileReport(jasperDesignLines);
+    } catch (JRException e) {
+      e.printStackTrace();
+      throw new ServletException(e.getMessage());
+    }
+    parameters.put("SR_LINES_1", jasperReportLines);
+
+
+    try {
+      JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign + "/org/openbravo/erpReports/RptC_Invoice_TaxLines.jrxml");
+      jasperReportLines = JasperCompileManager.compileReport(jasperDesignLines);
+    } catch (JRException e) {
+      e.printStackTrace();
+      throw new ServletException(e.getMessage());
+    }
+    parameters.put("SR_LINES_2", jasperReportLines);
+    
+    
+
+    String strReportName = "@basedesign@/org/openbravo/erpReports/RptC_Invoice.jrxml";
+    response.setHeader("Content-disposition", "inline; filename=RptC_Invoice.pdf");
     renderJR(vars, response, strReportName, "pdf", parameters, pdfInvoicesData, null );
   }
 

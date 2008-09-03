@@ -22,7 +22,7 @@
   <TD id="fieldName" class="cell">xxName</TD>
   <DIV id="sectionValues">
     <input type="hidden" name="strKey" value="" id="fieldValueId"></input>
-    <TD class="cell"><input size="5" type="text" name="strValuexx" value="xxValue" id="fieldValue"></input></TD>
+    <TD class="cell"><input class="dojoValidateValid number" size="3" type="text" name="strValuexx" value="xxValue" id="fieldValue"></input></TD>
   </DIV>
 </TR>
 </DIV>

@@ -914,7 +914,7 @@ function restoreFilaSelected(evt) {
     target = evt.srcElement;
   }
   if (gFilaActual==null) {
-    focoPrimerControl();
+    setFocusFirstControl();
   } else {
     if (gUltimoCampo!=null && gUltimoCampo!="") {
       var nd = buscarHijo(gFilaActual, "name", gUltimoCampo);
@@ -929,22 +929,22 @@ function restoreFilaSelected(evt) {
 function esTeclaInterna(evt, tecla, target) {
   var esInterna = false;
   switch (tecla) {
-    case obtenerCodigoTecla("TAB"): 
+    case obtainKeyCode("TAB"): 
             esInterna=(!evt.shiftKey && !evt.ctrlKey && !evt.altKey);
             break;
-    case obtenerCodigoTecla("ENTER"):
+    case obtainKeyCode("ENTER"):
             esInterna=(!evt.shiftKey && !evt.ctrlKey && !evt.altKey);
             break;
-    case obtenerCodigoTecla("F7"):
+    case obtainKeyCode("F7"):
             esInterna = (gIsDeleteableRows && !evt.shiftKey && !evt.ctrlKey && !evt.altKey);
             break;
-    case obtenerCodigoTecla("F8"):
+    case obtainKeyCode("F8"):
             esInterna = (gActivateTabJump && !evt.shiftKey && !evt.ctrlKey && !evt.altKey);
             break;
-    case obtenerCodigoTecla("UPARROW"):
+    case obtainKeyCode("UPARROW"):
             esInterna = ((target.type.indexOf("select")==-1) && (!evt.shiftKey && !evt.ctrlKey && !evt.altKey));
             break;
-    case obtenerCodigoTecla("DOWNARROW"):
+    case obtainKeyCode("DOWNARROW"):
             esInterna = ((target.type.indexOf("select")==-1) && (!evt.shiftKey && !evt.ctrlKey && !evt.altKey));
             break;
     default:
@@ -991,7 +991,7 @@ function controlarTecla(evt)
       var ndFila=buscarPadre(target, gId, gFila);
       if (ndFila==null) return true;
 
-      if (tecla == obtenerCodigoTecla("UPARROW")) //Subir
+      if (tecla == obtainKeyCode("UPARROW")) //Subir
       {
         ndFila = buscarAnterior(ndFila, gId, gFila);
         if (ndFila == null)
@@ -1012,7 +1012,7 @@ function controlarTecla(evt)
           gFilaActual = ndFila;
         }
       }
-      else if ((tecla == obtenerCodigoTecla("DOWNARROW") || tecla == obtenerCodigoTecla("ENTER")) && !evt.ctrlKey  && !evt.altKey && !evt.shiftKey) //Bajar
+      else if ((tecla == obtainKeyCode("DOWNARROW") || tecla == obtainKeyCode("ENTER")) && !evt.ctrlKey  && !evt.altKey && !evt.shiftKey) //Bajar
       {
         ndFila = buscarSiguiente(ndFila, gId, gFila);
         if (ndFila == null)
@@ -1037,7 +1037,7 @@ function controlarTecla(evt)
           }
         }
       }
-      else if (tecla == obtenerCodigoTecla("TAB") && !evt.shiftKey) //Salir campo
+      else if (tecla == obtainKeyCode("TAB") && !evt.shiftKey) //Salir campo
       {
         var ndLast = buscarUltimoElementoFila(ndFila);
         if (ndLast.name==target.name) {
@@ -1070,7 +1070,7 @@ function controlarTecla(evt)
           return true;
         }
       }
-      else if (tecla == obtenerCodigoTecla("F7") && (!evt.shiftKey && !evt.ctrlKey && !evt.altKey)) //Borrar registro
+      else if (tecla == obtainKeyCode("F7") && (!evt.shiftKey && !evt.ctrlKey && !evt.altKey)) //Borrar registro
       {
         fila = gFilaActual;
         enviarFila("DELETE");
@@ -1078,7 +1078,7 @@ function controlarTecla(evt)
         ndFila = gFilaActual;
         //fieldName = gUltimoCampo;
       }
-      else if (tecla == obtenerCodigoTecla("F8") && (!evt.shiftKey && !evt.ctrlKey && !evt.altKey)) //Cambiar de panel
+      else if (tecla == obtainKeyCode("F8") && (!evt.shiftKey && !evt.ctrlKey && !evt.altKey)) //Cambiar de panel
       {
         fila = gFilaActual;
         enviarFila("CAMBIO_PANEL");

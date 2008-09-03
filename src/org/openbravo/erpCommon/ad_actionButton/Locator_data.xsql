@@ -27,7 +27,7 @@
             SELECT L.M_WAREHOUSE_ID AS PADRE ,L.M_LOCATOR_ID AS ID, AD_COLUMN_IDENTIFIER(TO_CHAR('M_Locator'),TO_CHAR(M_LOCATOR_ID),TO_CHAR(?)) AS NAME 
             FROM M_LOCATOR L
 			WHERE L.IsActive='Y' 
-            AND L.AD_Client_ID = TO_NUMBER(?) 
+            AND L.AD_Client_ID = ? 
             ORDER BY L.M_WAREHOUSE_ID,NAME	
       ]]></Sql>
       <Parameter name="language"/>

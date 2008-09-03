@@ -31,12 +31,12 @@
   INSERT
   INTO AD_FieldGroup_Trl
     (
-      AD_FieldGroup_ID, AD_Language, AD_Client_ID,
+      AD_FieldGroup_Trl_ID, AD_FieldGroup_ID, AD_Language, AD_Client_ID,
       AD_Org_ID, IsActive, Created,
       CreatedBy, Updated, UpdatedBy,
       Name, IsTranslated
     )
-  SELECT :new.AD_FieldGroup_ID,
+  SELECT get_uuid(), :new.AD_FieldGroup_ID,
     AD_Language, :new.AD_Client_ID, :new.AD_Org_ID,
     :new.IsActive, :new.Created, :new.CreatedBy,
     :new.Updated, :new.UpdatedBy, :new.Name,

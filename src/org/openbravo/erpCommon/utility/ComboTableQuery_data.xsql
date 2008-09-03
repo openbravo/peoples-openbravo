@@ -35,7 +35,7 @@
         WHERE ad_ref_table.ad_table_id = ad_table.ad_table_id
           AND ad_ref_table.ad_key = c1.ad_column_id
           AND ad_ref_table.ad_display = c2.ad_column_id
-          AND ad_ref_table.ad_reference_ID = TO_NUMBER(?)
+          AND ad_ref_table.ad_reference_id = ?
       ]]>
     </Sql>
     <Parameter name="reference"/>
@@ -59,7 +59,7 @@
       <Sql>
         SELECT CODE
         FROM AD_VAL_RULE 
-        WHERE AD_VAL_RULE_ID = TO_NUMBER(?)
+        WHERE AD_VAL_RULE_ID = ?
       </Sql>
       <Parameter name="adValRuleId"/>
   </SqlMethod>
@@ -77,7 +77,7 @@
         AND (UPPER(T.TABLENAME) || '_TRL') = UPPER(T_TRL.TABLENAME) 
         AND T_TRL.AD_TABLE_ID = C_TRL.AD_TABLE_ID 
         AND UPPER(C.COLUMNNAME) = UPPER(C_TRL.COLUMNNAME)
-        AND T_TRL.AD_TABLE_ID = C_ID.AD_TABLE_ID 
+        AND T.AD_TABLE_ID = C_ID.AD_TABLE_ID 
         AND (C_ID.ISSECONDARYKEY = 'Y' OR C_ID.ISKEY = 'Y')
         AND UPPER(C_ID.COLUMNNAME) <> 'AD_LANGUAGE'
       ]]>

@@ -100,7 +100,7 @@ public class SL_Assets extends HttpSecureAppServlet {
     resultado.append("\n\n//"+strLastChanged);
 
     xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "frameAplicacion");
+    xmlDocument.setParameter("frameName", "appFrame");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

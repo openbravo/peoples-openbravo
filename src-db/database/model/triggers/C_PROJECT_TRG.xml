@@ -29,8 +29,8 @@
     *  - create default accounts
     *  - create treenode
     ************************************************************************/
-    v_Tree_ID NUMBER;
-  v_Parent_ID NUMBER;
+    v_Tree_ID VARCHAR2(32);
+  v_Parent_ID VARCHAR2(32);
   --
   TYPE RECORD IS REF CURSOR;
     Cur_Defaults RECORD;
@@ -53,14 +53,14 @@ BEGIN
       INSERT
       INTO C_Project_Acct
         (
-          C_Project_ID, C_AcctSchema_ID, AD_Client_ID,
+          C_Project_Acct_Id, C_Project_ID, C_AcctSchema_ID, AD_Client_ID,
           AD_Org_ID, IsActive, Created,
           CreatedBy, Updated, UpdatedBy,
           PJ_Asset_Acct, PJ_WIP_Acct
         )
         VALUES
         (
-          :new.C_Project_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
+          get_uuid(), :new.C_Project_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
           :new.AD_ORG_ID,  'Y', now(),
           :new.CreatedBy, now(), :new.UpdatedBy,
           Cur_Defaults.PJ_Asset_Acct, Cur_Defaults.PJ_WIP_Acct
@@ -83,14 +83,14 @@ BEGIN
     INSERT
     INTO AD_TreeNode
       (
-        AD_Client_ID, AD_Org_ID, IsActive,
+        AD_TreeNode_ID, AD_Client_ID, AD_Org_ID, IsActive,
         Created, CreatedBy, Updated,
         UpdatedBy, AD_Tree_ID, Node_ID,
         Parent_ID, SeqNo
       )
       VALUES
       (
-        :new.AD_Client_ID, :new.AD_Org_ID, :new.IsActive,
+        get_uuid(), :new.AD_Client_ID, :new.AD_Org_ID, :new.IsActive,
         :new.Created, :new.CreatedBy, :new.Updated,
         :new.UpdatedBy, v_Tree_ID, :new.C_Project_ID,
         v_Parent_ID,(

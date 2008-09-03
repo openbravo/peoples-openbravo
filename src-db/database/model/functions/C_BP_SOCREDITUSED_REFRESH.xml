@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_BP_SOCREDITUSED_REFRESH">
     <function name="C_BP_SOCREDITUSED_REFRESH" type="NULL">
-      <parameter name="p_bpartner_id" type="NUMERIC" mode="in">
+      <parameter name="p_bpartner_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************

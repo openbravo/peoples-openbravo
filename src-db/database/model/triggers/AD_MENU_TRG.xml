@@ -25,9 +25,9 @@
 
 
 
-  v_xTree_ID NUMBER;
-  v_xParent_ID NUMBER;
-  v_NextNo     NUMBER;
+  v_xTree_ID VARCHAR2(32);
+  v_xParent_ID VARCHAR2(32);
+  v_NextNo     VARCHAR2(32);
 BEGIN
   -- Insert AD_Menu Trigger
   --  for Translation
@@ -37,12 +37,12 @@ BEGIN
     INSERT
     INTO AD_Menu_Trl
       (
-        AD_Menu_ID, AD_Language, AD_Client_ID,
+        AD_Menu_Trl_ID, AD_Menu_ID, AD_Language, AD_Client_ID,
         AD_Org_ID, IsActive, Created,
         CreatedBy, Updated, UpdatedBy,
         Name, Description, IsTranslated
       )
-    SELECT :new.AD_Menu_ID,
+    SELECT get_uuid(), :new.AD_Menu_ID,
       AD_Language, :new.AD_Client_ID, :new.AD_Org_ID,
       :new.IsActive, :new.Created, :new.CreatedBy,
       :new.Updated, :new.UpdatedBy, :new.Name,
@@ -137,7 +137,7 @@ BEGIN
         AND c.AD_Client_ID=:old.AD_Client_ID;
     --Assign children to principal node
     UPDATE AD_Treenode
-      SET Parent_ID=0
+      SET Parent_ID='0'
     WHERE AD_Tree_ID=v_xTree_ID
       AND Parent_ID=:old.AD_Menu_ID;
     --Delete node

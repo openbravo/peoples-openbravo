@@ -52,8 +52,8 @@ public class ReportTotalProductTemplate extends HttpSecureAppServlet {
 
     data = ReportTotalProductTemplateData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportTotalProductTemplate"), Utility.getContext(this, vars, "#User_Org", "ReportTotalProductTemplate"));
     vars.removeSessionValue("Default.value");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());
@@ -99,8 +99,8 @@ public class ReportTotalProductTemplate extends HttpSecureAppServlet {
 
      
     vars.removeSessionValue("Default.value");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     
     out.println(xmlDocument.print());
     out.close();
@@ -143,8 +143,8 @@ public class ReportTotalProductTemplate extends HttpSecureAppServlet {
 
     //data = ReportTotalProductTemplateData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportTotalProductTemplate"), Utility.getContext(this, vars, "#User_Org", "ReportTotalProductTemplate"));
     vars.removeSessionValue("Default.value");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     //xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());
     out.close();

@@ -27,7 +27,7 @@
 	<PARAMETER id="fieldWindowGCheck" name="windowGlobal" boolean="checked" withId="paramChecked"/>
 	<PARAMETER id="fieldWindowCheck" name="window" default=""/>
 	<PARAMETER id="paramToolBar" name="toolbar" default=""/>
-	<PARAMETER id="paramDirection" name="direction" default=""/>
+	<PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="tdleftTabs" name="leftTabs" default=""/>
   <PARAMETER id="tdtopButtons" name="navigationBar" default=""/>

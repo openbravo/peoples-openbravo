@@ -34,7 +34,7 @@
       FROM
       (
       SELECT TO_CHAR(P.NAME) AS ARTICULO, NULL AS CLIENTE,
-      TO_DATE(TO_CHAR(I_O.MOVEMENTDATE,to_char(?))) AS FECHA_ENTRADA, to_date(NULL) AS FECHA_SALIDA, 
+      TO_DATE(I_O.MOVEMENTDATE,to_char(?)) AS FECHA_ENTRADA, to_date(NULL) AS FECHA_SALIDA, 
       SUM(I_O_L.MOVEMENTQTY)  AS CANTIDAD, U.NAME AS UNIDAD
       FROM M_PRODUCT P, M_INOUT I_O, M_INOUTLINE I_O_L, C_UOM U, M_PRODUCT_CATEGORY P_C
       WHERE I_O.M_INOUT_ID = I_O_L.M_INOUT_ID
@@ -56,21 +56,21 @@
       AND I_O.C_BPARTNER_ID= BP.C_BPARTNER_ID
       AND I_O.MOVEMENTTYPE='V+'
       AND 2=2
-      AND I_O.MOVEMENTDATE BETWEEN TO_DATE(?) AND TO_DATE(?)
+      AND I_O.MOVEMENTDATE BETWEEN ? AND ?
       GROUP BY P.NAME, BP.NAME, I_O.MOVEMENTDATE, U.NAME
       ) A
       GROUP BY ARTICULO, UNIDAD 
       ORDER BY ARTICULO
      ]]>
      </Sql>
+     <Parameter name="dateFormat"/>
      <Parameter name="fechaHasta"/>
      <Parameter name="fechaDesde"/>
-     <Parameter name="dateFormat"/>     
-     <Parameter name="categoria" optional="true" after="AND 1=1" text=" AND P_C.M_PRODUCT_CATEGORY_ID = TO_NUMBER(?) "/>
+     <Parameter name="categoria" optional="true" after="AND 1=1" text=" AND P_C.M_PRODUCT_CATEGORY_ID = ? "/>
+     <Parameter name="dateFormat"/>
      <Parameter name="fechaDesde"/>
      <Parameter name="fechaHasta"/>
-     <Parameter name="dateFormat"/>     
-     <Parameter name="categoria" optional="true" after="AND 2=2" text=" AND P_C.M_PRODUCT_CATEGORY_ID = TO_NUMBER(?) "/>
+     <Parameter name="categoria" optional="true" after="AND 2=2" text=" AND P_C.M_PRODUCT_CATEGORY_ID = ? "/>
      <Parameter name="fechaDesde"/>
      <Parameter name="fechaHasta"/>
    </SqlMethod>

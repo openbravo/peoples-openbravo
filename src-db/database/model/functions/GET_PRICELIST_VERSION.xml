@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION GET_PRICELIST_VERSION">
-    <function name="GET_PRICELIST_VERSION" type="NUMERIC">
-      <parameter name="p_pricelist_id" type="NUMERIC" mode="in">
+    <function name="GET_PRICELIST_VERSION" type="VARCHAR">
+      <parameter name="p_pricelist_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_date" type="TIMESTAMP" mode="in">
@@ -23,7 +23,7 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-  v_M_PriceList_Version_ID NUMBER;
+  v_M_PriceList_Version_ID VARCHAR2(32);
   TYPE RECORD IS REF CURSOR;
     Cur_Pricelist_Version RECORD;
   BEGIN

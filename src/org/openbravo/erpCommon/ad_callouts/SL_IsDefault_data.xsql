@@ -29,7 +29,7 @@
       <![CDATA[
       SELECT TableName, ColumnName, '' as total
         FROM AD_TABLE T, AD_Column C
-       WHERE T.AD_Table_ID = to_number(?)
+       WHERE T.AD_Table_ID = ?
          AND C.AD_Table_ID = T.AD_Table_ID
          AND (C.Iskey = 'Y' or C.IsSecondaryKey = 'Y')         
       ]]>
@@ -46,7 +46,7 @@
        WHERE isDefault = 'Y'
          AND 1=1 AND 2=2
          AND 3=3 AND 4=4
-         AND AD_Org_ID = to_number(?)
+         AND AD_Org_ID = ?
       ]]>
     </Sql>
     <Parameter name="tablename" type="replace" optional="true" after="FROM " text="AD_Window"/>

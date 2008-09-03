@@ -129,7 +129,7 @@ public class SL_Order_Product extends HttpSecureAppServlet {
     resultado.append("new Array(\"inphasseconduom\", " + strHasSecondaryUOM + "),\n");
 
     String strCTaxID = ""; 
-    String orgLocationID = SLOrderProductData.getOrgLocationId(this, Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), strADOrgID);
+    String orgLocationID = SLOrderProductData.getOrgLocationId(this, Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), "'"+strADOrgID+"'");
     if(orgLocationID.equals("")){
       resultado.append("new Array('MESSAGE', \"" + FormatUtilities.replaceJS(Utility.messageBD(this, "Tax can not be calculated, because the organization has not a location defined", vars.getLanguage())) + "\"),\n");
     }else{
@@ -189,7 +189,7 @@ public class SL_Order_Product extends HttpSecureAppServlet {
 
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "frameAplicacion");
+    xmlDocument.setParameter("frameName", "appFrame");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

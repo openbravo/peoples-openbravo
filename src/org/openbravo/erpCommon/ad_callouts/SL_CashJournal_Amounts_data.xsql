@@ -34,7 +34,7 @@
     <Sql>
       SELECT (CASE ISSOTRX WHEN 'Y' THEN C_ORDER.GRANDTOTAL ELSE -C_ORDER.GRANDTOTAL END) AS AMOUNT
       FROM C_ORDER 
-      WHERE C_ORDER_ID = TO_NUMBER(?)
+      WHERE C_ORDER_ID = ?
     </Sql>
     <Parameter name="cOrderId"/>
   </SqlMethod>
@@ -44,10 +44,10 @@
       SELECT C_Currency_Convert((CASE ISRECEIPT WHEN 'Y' THEN p.AMOUNT ELSE -p.AMOUNT END), p.C_Currency_ID, (SELECT b.C_CURRENCY_ID
                                                                               FROM C_CASH C, C_CASHBOOK B 
                                                                               WHERE C.C_CASHBOOK_ID = B.C_CASHBOOK_ID
-                                                                              AND C.C_CASH_ID = TO_NUMBER(?)),
-                                                    (SELECT STATEMENTDATE FROM C_CASH WHERE C_CASH_ID = TO_NUMBER(?)),null,p.AD_Client_ID,p.AD_Org_ID) as amount
+                                                                              AND C.C_CASH_ID = ?),
+                                                    (SELECT STATEMENTDATE FROM C_CASH WHERE C_CASH_ID = ?),null,p.AD_Client_ID,p.AD_Org_ID) as amount
       FROM C_DEBT_PAYMENT p
-      WHERE C_DEBT_PAYMENT_ID = TO_NUMBER(?)
+      WHERE C_DEBT_PAYMENT_ID = ?
     </Sql>
     <Parameter name="cCash"/> 
     <Parameter name="cCash"/>
@@ -59,10 +59,10 @@
       SELECT C_Currency_Convert((CASE ISRECEIPT WHEN 'Y' THEN p.AMOUNT ELSE -p.AMOUNT END), p.C_Currency_ID,(SELECT A.C_CURRENCY_ID
                                                                               FROM C_BANKSTATEMENT S, C_BANKACCOUNT A 
                                                                               WHERE S.C_BANKACCOUNT_ID = A.C_BANKACCOUNT_ID 
-                                                                              AND S.C_BankStatement_ID = TO_NUMBER(?)),
-                                                                        (SELECT STATEMENTDATE FROM C_BANKSTATEMENT WHERE C_BANKSTATEMENT_ID = TO_NUMBER(?)),null,p.AD_Client_ID,p.AD_Org_ID) as amount
+                                                                              AND S.C_BankStatement_ID = ?),
+                                                                        (SELECT STATEMENTDATE FROM C_BANKSTATEMENT WHERE C_BANKSTATEMENT_ID = ?),null,p.AD_Client_ID,p.AD_Org_ID) as amount
       FROM C_DEBT_PAYMENT p
-      WHERE C_DEBT_PAYMENT_ID = TO_NUMBER(?)
+      WHERE C_DEBT_PAYMENT_ID = ?
     </Sql>
     <Parameter name="cBankstatement"/>
     <Parameter name="cBankstatement"/>
@@ -73,7 +73,7 @@
     <Sql>
       SELECT DESCRIPTION
       FROM C_DEBT_PAYMENT
-      WHERE C_DEBT_PAYMENT_ID = TO_NUMBER(?)
+      WHERE C_DEBT_PAYMENT_ID = ?
     </Sql>
     <Parameter name="cDebtPaymentId"/>
   </SqlMethod>

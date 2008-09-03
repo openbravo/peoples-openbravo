@@ -37,17 +37,17 @@
  UPDATE C_CashLine cl SET C_Currency_ID = (SELECT b.C_Currency_ID FROM C_Cash c, C_CashBook b WHERE c.C_Cash_ID=cl.C_Cash_ID AND c.C_CashBook_ID=b.C_CashBook_ID) WHERE C_Currency_ID IS NULL;
  ************************************************************************/
 
- v_NextNo    NUMBER(10);
- v_Currency_ID   NUMBER(10) := NULL;
+ v_NextNo    VARCHAR2(32);
+ v_Currency_ID   varchar2(32) := NULL;
  -- CashBook
- v_CB_Currency_ID  NUMBER(10);
+ v_CB_Currency_ID  varchar2(32);
  v_CB_Date    DATE;
  --
  v_Difference NUMBER:= 0;
- v_Client_ID   NUMBER(10);
- v_Org_ID    NUMBER(10);
- v_Cash_ID    NUMBER(10);
- v_Debt_Payment_ID  NUMBER(10) := NULL;
+ v_Client_ID   varchar2(32);
+ v_Org_ID    varchar2(32);
+ v_Cash_ID    varchar2(32);
+ v_Debt_Payment_ID  varchar2(32) := NULL;
  v_RO     NUMBER;
  --
  v_Trace     VARCHAR2(2000) := 'CashLine: ';

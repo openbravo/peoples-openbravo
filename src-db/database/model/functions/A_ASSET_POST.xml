@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
   <database name="FUNCTION A_ASSET_POST">
     <function name="A_ASSET_POST" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_asset_id" type="NUMERIC" mode="in">
+      <parameter name="p_asset_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -27,7 +27,7 @@
 --  Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
   v_Result NUMBER:=1; --  Success
   --  Parameter
   TYPE RECORD IS REF CURSOR;
@@ -39,11 +39,11 @@
     v_Processed A_ASSET.Processed%TYPE;
     v_DateAcct DATE;
     v_DocumentNo A_ASSET.DocumentNo%TYPE;
-    BPartner_ID NUMBER;
+    BPartner_ID VARCHAR2(32);
     v_ACCTVALUEAMT NUMBER;
-    v_AD_CLIENT_ID NUMBER;
-    v_AD_ORG_ID NUMBER;
-    v_AD_USER_ID NUMBER;
+    v_AD_CLIENT_ID VARCHAR2(32);
+    v_AD_ORG_ID VARCHAR2(32);
+    v_AD_USER_ID VARCHAR2(32);
     v_AMORTIZATIONENDDATE DATE;
     v_AMORTIZATIONSTARTDATE DATE;
     v_AMORTIZATIONTYPE CHAR(2) ;
@@ -51,8 +51,8 @@
     v_AMORTIZATIONPORCENTAGE NUMBER;
     v_ASSETDEPRECIATIONDATE DATE;
     v_ASSETVALUEAMT NUMBER;
-    v_C_CURRENCY_ID NUMBER;
-    v_CREATEDBY NUMBER;
+    v_C_CURRENCY_ID VARCHAR2(32);
+    v_CREATEDBY varchar2(32);
     v_ISDEPRECIATED CHAR(1) ;
     v_RESIDUALASSETVALUEAMT NUMBER;
     v_USELIFEMONTHS NUMBER;
@@ -64,14 +64,14 @@
     v_ENDING_DATE DATE;
     v_AUXAMT NUMBER;
     v_AMORTIZATIONAMT NUMBER;
-    v_NEW_AMORTIZATION NUMBER;
+    v_NEW_AMORTIZATION VARCHAR2(32);
     v_LINE NUMBER;
-    v_AMORTIZATIONLINE NUMBER;
+    v_AMORTIZATIONLINE varchar2(32);
     v_FIRST_DAY_DATE DATE;
     v_LAST_DAY_DATE DATE;
     v_PERCENTAGE NUMBER;
     v_AMOUNT NUMBER;
-    v_CURRENCY_ID NUMBER;
+    v_CURRENCY_ID VARCHAR2(32);
     FINISH_PROCESS BOOLEAN:=false;
     v_DepreciatedLines NUMBER;
     v_DepreciatedPlan NUMBER;
@@ -208,11 +208,11 @@
               END IF;
               v_COUNT:=v_COUNT + 1;
               v_ENDING_DATE:=TO_DATE('31-12-' ||TO_CHAR(v_BEGINING_DATE, 'YYYY'), 'DD-MM-YYYY') ;
-              SELECT COALESCE(MAX(A_AMORTIZATION_ID), -1)
+              SELECT COALESCE(MAX(A_AMORTIZATION_ID), '-1')
               INTO v_NEW_AMORTIZATION
               FROM A_AMORTIZATION
               WHERE STARTDATE<=v_ENDING_DATE  AND ENDDATE>=v_ENDING_DATE  AND AD_CLIENT_ID=v_AD_CLIENT_ID  AND PROCESSED='N';
-              IF(v_NEW_AMORTIZATION=-1) THEN
+              IF(v_NEW_AMORTIZATION='-1') THEN
                 Ad_Sequence_Next('A_Amortization', 1000000, v_NEW_AMORTIZATION) ;
                 INSERT
                 INTO A_AMORTIZATION
@@ -317,12 +317,12 @@
                 v_Percentage:=v_PercentageGeneral;
               END IF;
               v_COUNT:=v_COUNT + 1;
-              SELECT COALESCE(MAX(A_AMORTIZATION_ID), -1)
+              SELECT COALESCE(MAX(A_AMORTIZATION_ID), '-1')
               INTO v_NEW_AMORTIZATION
               FROM A_AMORTIZATION
               WHERE STARTDATE<=v_BEGINING_DATE  AND ENDDATE>=v_BEGINING_DATE  AND AD_CLIENT_ID=v_AD_CLIENT_ID  AND PROCESSED='N';
               v_ENDING_DATE:= LAST_DAY(TO_DATE('01-' || TO_CHAR(v_BEGINING_DATE, 'MM') || '-' || TO_CHAR(v_BEGINING_DATE, 'yyyy'), 'DD-MM-YYYY')) ;
-              IF(v_NEW_AMORTIZATION=-1) THEN
+              IF(v_NEW_AMORTIZATION='-1') THEN
                 Ad_Sequence_Next('A_Amortization', 1000000, v_NEW_AMORTIZATION) ;
                 INSERT
                 INTO A_AMORTIZATION

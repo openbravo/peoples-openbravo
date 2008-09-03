@@ -1,20 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--
-************************
-0. Core Range.
-************************
--->
-<!--
-************************
-0. End of Core Range.
-************************
--->
-<!--
-************************
-1. Custom Range.
-************************
--->
 <!--1000000**************--><C_VALIDCOMBINATION>
 <!--1000000 C_VALIDCOMBINATION_ID-->
 <!--1000000-->              <C_VALIDCOMBINATION_ID><![CDATA[1000000]]></C_VALIDCOMBINATION_ID>
@@ -3142,9 +3127,4 @@
 <!--1000104-->              <ACCOUNT_ID><![CDATA[1001477]]></ACCOUNT_ID>
 <!--1000104**************--></C_VALIDCOMBINATION>
 
-<!--
-************************
-1. End of Custom Range.
-************************
--->
 </data>

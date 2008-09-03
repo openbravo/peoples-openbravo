@@ -79,8 +79,8 @@ public class TestHeartbeat extends HttpSecureAppServlet {
     xmlDocument.setParameter("ParamTexto", strTexto);
     
     xmlDocument.setParameter("result", strTexto);
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     
     response.setContentType("text/html; charset=UTF-8");

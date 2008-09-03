@@ -33,8 +33,8 @@
         WHERE F.AD_CLIENT_ID IN ('1') 
         AND F.AD_ORG_ID IN ('1') 
         AND F.ISACTIVE = 'Y' 
-        AND F.AD_TABLE_ID = TO_NUMBER(?) 
-        AND F.AD_RECORD_ID = TO_NUMBER(?) 
+        AND F.AD_TABLE_ID = ? 
+        AND F.AD_RECORD_ID = ? 
         ORDER BY F.SEQNO
       ]]></Sql>
         <Field name="position" value="count"/>
@@ -54,7 +54,7 @@
         '' AS ISREADONLY, D.FORMAT AS DATATYPE_CONTENT, F.AD_RECORD_ID 
         FROM C_FILE F left join AD_DATATYPE D on F.c_DATATYPE_ID = D.ad_DATATYPE_ID
         WHERE F.ISACTIVE = 'Y' 
-        AND F.C_FILE_ID = TO_NUMBER(?) 
+        AND F.C_FILE_ID = ? 
       ]]></Sql>
         <Parameter name="cFileId"/>
    </SqlMethod>
@@ -66,9 +66,9 @@
         WHERE ISACTIVE = 'Y'
         AND AD_CLIENT_ID IN ('1') 
         AND AD_ORG_ID IN ('1') 
-        AND SEQNO > (SELECT SEQNO FROM C_FILE WHERE C_FILE_ID = TO_NUMBER(?))
-        AND AD_TABLE_ID = TO_NUMBER(?)
-        AND AD_RECORD_ID = TO_NUMBER(?)
+        AND SEQNO > (SELECT SEQNO FROM C_FILE WHERE C_FILE_ID = ?)
+        AND AD_TABLE_ID = ?
+        AND AD_RECORD_ID = ?
         ORDER BY SEQNO
       ]]></Sql>
         <Field name="position" value="count"/>
@@ -83,7 +83,7 @@
       <Sql> <![CDATA[
         SELECT F.C_FILE_ID, F.NAME, D.FORMAT AS DATATYPE, F.AD_TABLE_ID, F.AD_RECORD_ID 
         FROM C_FILE F left join AD_DATATYPE D on F.c_DATATYPE_ID = D.ad_DATATYPE_ID
-        WHERE  F.C_FILE_ID = TO_NUMBER(?) 
+        WHERE  F.C_FILE_ID = ? 
       ]]></Sql>
         <Parameter name="cFileId"/>
    </SqlMethod>
@@ -91,7 +91,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
         SELECT AD_TABLE_ID, (CASE ISREADONLY WHEN 'Y' THEN 'Y' ELSE (CASE ISINFOTAB WHEN 'Y' THEN 'Y' ELSE 'N' END) END) AS ISREADONLY 
-        FROM AD_TAB WHERE AD_TAB_ID = TO_NUMBER(?)
+        FROM AD_TAB WHERE AD_TAB_ID = ?
       ]]></Sql>
         <Parameter name="adTabId"/>
    </SqlMethod>
@@ -100,8 +100,8 @@
       <Sql> <![CDATA[
         INSERT INTO C_FILE (C_FILE_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, 
         UPDATED, UPDATEDBY, AD_TABLE_ID, AD_RECORD_ID, C_DATATYPE_ID, TEXT, NAME, SEQNO)
-        VALUES(TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', now(), TO_NUMBER(?), 
-        now(), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), ?, ?, (SELECT COALESCE(MAX(SEQNO), 0) + 10 FROM C_FILE WHERE AD_TABLE_ID = TO_NUMBER(?) AND AD_RECORD_ID = TO_NUMBER(?)))
+        VALUES(?, ?, ?, 'Y', now(), ?, 
+        now(), ?, ?, ?, ?, ?, ?, (SELECT COALESCE(MAX(SEQNO), 0) + 10 FROM C_FILE WHERE AD_TABLE_ID = ? AND AD_RECORD_ID=?))
       ]]></Sql>
         <Parameter name="cFileId"/>
         <Parameter name="adClientId"/>
@@ -119,8 +119,8 @@
    <SqlMethod name="update" type="preparedStatement" return="rowCount">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
-        UPDATE C_FILE SET UPDATED=now(), UPDATEDBY=TO_NUMBER(?), C_DATATYPE_ID=TO_NUMBER(?), TEXT=?
-        WHERE C_FILE_ID = TO_NUMBER(?) 
+        UPDATE C_FILE SET UPDATED=now(), UPDATEDBY = ?, C_DATATYPE_id = ?, TEXT=?
+        WHERE C_FILE_ID = ? 
       ]]></Sql>
         <Parameter name="adUserId"/>
         <Parameter name="cDatatypeId"/>
@@ -130,7 +130,7 @@
    <SqlMethod name="delete" type="preparedStatement" connection="true" return="rowCount">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
-        DELETE FROM C_FILE WHERE C_FILE_ID = TO_NUMBER(?)
+        DELETE FROM C_FILE WHERE C_FILE_ID = ?
       ]]></Sql>
         <Parameter name="cFileId"/>
    </SqlMethod>
@@ -141,7 +141,7 @@
             select ad_column_identifier(tablename, to_char(?), ?) as ID
             from ad_tab a,
                  ad_table t
-            where ad_tab_ID = TO_NUMBER(?)
+            where ad_tab_id = ?
             and a.ad_table_id = t.ad_table_id
       ]]></Sql>
         <Parameter name="recordID"/>

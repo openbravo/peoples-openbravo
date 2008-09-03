@@ -1,10 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--
-************************
-0. Core Range.
-************************
--->
 <!--114**************--><AD_IMPFORMAT_ROW>
 <!--114 AD_IMPFORMAT_ROW_ID-->
 <!--114-->              <AD_IMPFORMAT_ROW_ID><![CDATA[114]]></AD_IMPFORMAT_ROW_ID>
@@ -833,6 +828,39 @@
 <!--800016-->              <DIVIDEBY100><![CDATA[N]]></DIVIDEBY100>
 <!--800016**************--></AD_IMPFORMAT_ROW>
 
+<!--1000004**************--><AD_IMPFORMAT_ROW>
+<!--1000004 AD_IMPFORMAT_ROW_ID-->
+<!--1000004-->              <AD_IMPFORMAT_ROW_ID><![CDATA[1000004]]></AD_IMPFORMAT_ROW_ID>
+<!--1000004 AD_CLIENT_ID-->
+<!--1000004-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000004 AD_ORG_ID-->
+<!--1000004-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000004 ISACTIVE-->
+<!--1000004-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000004 CREATED-->
+<!--1000004-->              <CREATED><![CDATA[2007-09-14 11:39:50.0]]></CREATED>
+<!--1000004 CREATEDBY-->
+<!--1000004-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--1000004 UPDATED-->
+<!--1000004-->              <UPDATED><![CDATA[2007-09-14 11:39:50.0]]></UPDATED>
+<!--1000004 UPDATEDBY-->
+<!--1000004-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1000004 AD_IMPFORMAT_ID-->
+<!--1000004-->              <AD_IMPFORMAT_ID><![CDATA[102]]></AD_IMPFORMAT_ID>
+<!--1000004 SEQNO-->
+<!--1000004-->              <SEQNO><![CDATA[100]]></SEQNO>
+<!--1000004 NAME-->
+<!--1000004-->              <NAME><![CDATA[J - Element Level]]></NAME>
+<!--1000004 AD_COLUMN_ID-->
+<!--1000004-->              <AD_COLUMN_ID><![CDATA[803877]]></AD_COLUMN_ID>
+<!--1000004 DATATYPE-->
+<!--1000004-->              <DATATYPE><![CDATA[S]]></DATATYPE>
+<!--1000004 DECIMALPOINT-->
+<!--1000004-->              <DECIMALPOINT><![CDATA[.]]></DECIMALPOINT>
+<!--1000004 DIVIDEBY100-->
+<!--1000004-->              <DIVIDEBY100><![CDATA[N]]></DIVIDEBY100>
+<!--1000004**************--></AD_IMPFORMAT_ROW>
+
 <!--1000600000**************--><AD_IMPFORMAT_ROW>
 <!--1000600000 AD_IMPFORMAT_ROW_ID-->
 <!--1000600000-->              <AD_IMPFORMAT_ROW_ID><![CDATA[1000600000]]></AD_IMPFORMAT_ROW_ID>
@@ -1427,52 +1455,4 @@
 <!--1005500010-->              <DIVIDEBY100><![CDATA[N]]></DIVIDEBY100>
 <!--1005500010**************--></AD_IMPFORMAT_ROW>
 
-<!--
-************************
-0. End of Core Range.
-************************
--->
-<!--
-************************
-1. Custom Range.
-************************
--->
-<!--1000004**************--><AD_IMPFORMAT_ROW>
-<!--1000004 AD_IMPFORMAT_ROW_ID-->
-<!--1000004-->              <AD_IMPFORMAT_ROW_ID><![CDATA[1000004]]></AD_IMPFORMAT_ROW_ID>
-<!--1000004 AD_CLIENT_ID-->
-<!--1000004-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1000004 AD_ORG_ID-->
-<!--1000004-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1000004 ISACTIVE-->
-<!--1000004-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1000004 CREATED-->
-<!--1000004-->              <CREATED><![CDATA[2007-09-14 11:39:50.0]]></CREATED>
-<!--1000004 CREATEDBY-->
-<!--1000004-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--1000004 UPDATED-->
-<!--1000004-->              <UPDATED><![CDATA[2007-09-14 11:39:50.0]]></UPDATED>
-<!--1000004 UPDATEDBY-->
-<!--1000004-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--1000004 AD_IMPFORMAT_ID-->
-<!--1000004-->              <AD_IMPFORMAT_ID><![CDATA[102]]></AD_IMPFORMAT_ID>
-<!--1000004 SEQNO-->
-<!--1000004-->              <SEQNO><![CDATA[100]]></SEQNO>
-<!--1000004 NAME-->
-<!--1000004-->              <NAME><![CDATA[J - Element Level]]></NAME>
-<!--1000004 AD_COLUMN_ID-->
-<!--1000004-->              <AD_COLUMN_ID><![CDATA[803877]]></AD_COLUMN_ID>
-<!--1000004 DATATYPE-->
-<!--1000004-->              <DATATYPE><![CDATA[S]]></DATATYPE>
-<!--1000004 DECIMALPOINT-->
-<!--1000004-->              <DECIMALPOINT><![CDATA[.]]></DECIMALPOINT>
-<!--1000004 DIVIDEBY100-->
-<!--1000004-->              <DIVIDEBY100><![CDATA[N]]></DIVIDEBY100>
-<!--1000004**************--></AD_IMPFORMAT_ROW>
-
-<!--
-************************
-1. End of Custom Range.
-************************
--->
 </data>

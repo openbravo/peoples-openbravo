@@ -26,7 +26,7 @@
   <PARAMETER id="processing" name="processing" default="N" attribute="value"/>
   <PARAMETER id="question" name="question" default=""/>
   <PARAMETER id="processDescription" name="processDescription" default=""/>
-  <PARAMETER id="paramDirection" name="direction" default=""/>
+  <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="linkButtonCancel" name="cancel" attribute="onmouseover" replace="xx" default=""/>
   <PARAMETER id="linkButtonOk" name="ok" attribute="onmouseover" replace="xx" default=""/>
   <PARAMETER id="buttonCancel" name="cancel" attribute="alt" replace="xx" default=""/>

@@ -30,13 +30,13 @@
       <![CDATA[
         select TO_CHAR(MEASUREHOUR, 'HH:MI') as hour, 0 as ord
                 from MA_MEASURE_TIME
-                where MA_Measure_Group_ID = TO_NUMBER(?)
+                where MA_Measure_Group_ID = ?
         union all
         select ' ' as hour, 1 as ord
         from ad_INTEGER
         where VALUE <= 10-(select count(*) 
                            from MA_MEASURE_TIME
-                           where MA_Measure_Group_ID = TO_NUMBER(?))
+                           where MA_Measure_Group_ID = ?)
         ORDER BY ord, hour
       ]]>
       </Sql>

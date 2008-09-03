@@ -34,9 +34,9 @@
    Cur_Defaults RECORD;
    Cur_Defaults2 RECORD;
 
-  v_xTree_ID        NUMBER;
-  v_xParent_ID      NUMBER;
-  v_BP_Acct_ID    NUMBER;
+  v_xTree_ID        varchar2(32);
+  v_xParent_ID      varchar2(32);
+  v_BP_Acct_ID    varchar2(32);
 
 BEGIN
     --  Default Accounts for all AcctSchema
@@ -72,11 +72,11 @@ BEGIN
            AND AD_Client_ID=:new.AD_Client_ID)) LOOP
    --  Employee
          INSERT INTO C_BP_Employee_Acct
-             (C_BPartner_ID, C_AcctSchema_ID,
+             (C_BP_Employee_Acct_ID, C_BPartner_ID, C_AcctSchema_ID,
              AD_Client_ID, AD_Org_ID, IsActive, Created, CreatedBy, Updated, UpdatedBy,
              E_Expense_Acct, E_Prepayment_Acct)
          VALUES
-             (:new.C_BPartner_ID, Cur_Defaults2.C_AcctSchema_ID,
+             (get_uuid(), :new.C_BPartner_ID, Cur_Defaults2.C_AcctSchema_ID,
              :new.AD_Client_ID, :new.AD_Org_ID, 'Y', now(), :new.CreatedBy, now(), :new.UpdatedBy,
              Cur_Defaults2.E_Expense_Acct, Cur_Defaults2.E_Prepayment_Acct);
      END LOOP;
@@ -94,12 +94,12 @@ BEGIN
 
      --  Insert into TreeNode
      INSERT INTO AD_TreeNodeBP
-         (AD_Client_ID, AD_Org_ID,
+         (AD_TreeNodeBP_ID, AD_Client_ID, AD_Org_ID,
          IsActive, Created, CreatedBy, Updated, UpdatedBy,
          AD_Tree_ID, Node_ID,
          Parent_ID, SeqNo)
      VALUES
-         (:new.AD_Client_ID, :new.AD_Org_ID,
+         (get_uuid(), :new.AD_Client_ID, :new.AD_Org_ID,
          :new.IsActive, :new.Created, :new.CreatedBy, :new.Updated, :new.UpdatedBy,
          v_xTree_ID, :new.C_BPartner_ID,
          v_xParent_ID, (CASE :new.IsSummary WHEN 'Y' THEN 100 ELSE 999 END));     -- Summary Nodes first

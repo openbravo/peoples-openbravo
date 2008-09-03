@@ -21,13 +21,13 @@
 <head>
   <title>Registration Confirmation</title>
   <LINK rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Popup/Popup.css" id="paramCSS"></LINK>
-  <SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
-  <script language="JavaScript" type="text/javascript" id="paramLanguage">var LNG_POR_DEFECTO = "en_US";</script>
+  <SCRIPT language="JavaScript" type="text/javascript" id="paramDirectory">var baseDirectory = "../../../../../web/";</SCRIPT>
+  <script language="JavaScript" type="text/javascript" id="paramLanguage">var defaultLang = "en_US";</script>
   <SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
   <script language="JavaScript" type="text/javascript">
   function confirm() {
   	submitCommandForm('CONFIRM', false, null);
-  	openLink('../Register/Register_Relation.html', 'frameAplicacion');
+  	openLink('../Register/Register_Relation.html', 'appFrame');
   	self.close();
   }
   </script>
@@ -52,7 +52,7 @@
         <tr class="Popup_NavBar_bg"><td></td>
           <td class="Popup_NavBar_separator_cell"></td>
           <td class="Popup_NavBar_bg_logo_left"></td>
-          <td class="Popup_NavBar_bg_logo" width="1" onclick="abrirNuevoBrowser('http://www.openbravo.com', 'Openbravo');return false;"><IMG src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
+          <td class="Popup_NavBar_bg_logo" width="1" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;"><IMG src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
           <td class="Popup_NavBar_bg_logo_right"></td>
           <td class="Popup_NavBar_Popup_title_cell"><span>Registration Confirm</span></td>
           <td class="Popup_NavBar_separator_cell"></td>

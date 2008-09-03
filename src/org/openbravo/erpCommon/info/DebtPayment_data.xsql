@@ -43,7 +43,7 @@
 	            C_CURRENCY C
 	        WHERE DP.C_CURRENCY_ID = C.C_CURRENCY_ID 
 	        AND DP.PAYMENTRULE = RL.VALUE
-	        AND RL.AD_REFERENCE_ID = 195       
+	        AND RL.AD_REFERENCE_ID = '195'       
 	        AND DP.AD_Client_ID IN ('1') 
 	        AND DP.AD_Org_ID IN ('1') 
 	        AND DP.IsActive='Y'
@@ -59,7 +59,7 @@
         <Parameter name="language"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="DP.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="DP.AD_Org_ID IN (" text="'1'"/>
-        <Parameter name="businesPartner" optional="true" after="AND DP.IsValid='Y'"><![CDATA[ AND b.C_BPartner_ID = TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="businesPartner" optional="true" after="AND DP.IsValid='Y'"><![CDATA[ AND b.C_BPartner_ID=? ]]></Parameter>
         <Parameter name="dateFrom" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.Dateplanned >= TO_DATE(?) ]]></Parameter>
         <Parameter name="dateTo" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.Dateplanned < TO_DATE(?) ]]></Parameter>
         <Parameter name="AmountFrom" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.amount >= TO_NUMBER(?) ]]></Parameter>

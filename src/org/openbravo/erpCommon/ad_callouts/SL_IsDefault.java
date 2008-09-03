@@ -96,7 +96,7 @@ public class SL_IsDefault extends HttpSecureAppServlet {
     
     result.append(");");
     xmlDocument.setParameter("array", result.toString());
-    xmlDocument.setParameter("frameName", "frameAplicacion");
+    xmlDocument.setParameter("frameName", "appFrame");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

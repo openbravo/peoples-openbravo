@@ -190,7 +190,7 @@ function setProcessingMode(target, value) {
     }
   } else {
     var frame_menu = top.frames['frameMenu'];
-    var frame_window = top.frames['frameAplicacion'];
+    var frame_window = top.frames['appFrame'];
     var menu_code = frame_menu.document.getElementsByTagName('BODY')[0].innerHTML;
     var window_code = frame_window.document.getElementsByTagName('BODY')[0].innerHTML;
     isKeyboardLocked=value;
@@ -205,4 +205,43 @@ function setProcessingMode(target, value) {
       frame_menu.document.getElementsByTagName('BODY')[0].innerHTML = processingModeCode('Menu', value) + menu_code;
     }
   }
+}
+
+function setAlertIcon(value) {
+    if (value==true) changeClass("alertImage", "Menu_ToolBar_Button_Icon_alert", "Menu_ToolBar_Button_Icon_alertActive");
+    if (value==false) changeClass("alertImage", "Menu_ToolBar_Button_Icon_alertActive", "Menu_ToolBar_Button_Icon_alert");
+    return true;
+}
+
+function setAttachmentIcon(value) {
+  if (value==true) changeClass("buttonAttachment", "Main_ToolBar_Button_Icon_Attachment", "Main_ToolBar_Button_Icon_AttachedDocuments");
+  if (value==false) changeClass("buttonAttachment", "Main_ToolBar_Button_Icon_AttachedDocuments", "Main_ToolBar_Button_Icon_Attachment");
+  return true;
+}
+
+function callbackAttachmentIcon(){
+  var strText = "";
+  if (getReadyStateHandler(xmlreq,null,false)) {
+    try {
+      if (xmlreq.responseText) strText = xmlreq.responseText;
+    } catch (e) {
+    }
+    if(strText == "true" && document.getElementById("buttonAttachment").className.indexOf("Main_ToolBar_Button_Icon_AttachedDocuments") == -1)
+      setAttachmentIcon(true);
+    else if(strText == "false" && document.getElementById("buttonAttachment").className.indexOf("Main_ToolBar_Button_Icon_AttachedDocuments") != -1) 
+      setAttachmentIcon(false);
+  }
+  return true;
+}
+
+function checkAttachmentIcon(){
+  if(document.getElementById('buttonAttachment'))
+    submitXmlHttpRequest(callbackAttachmentIcon, null, 'CHECK', "../businessUtility/TabAttachments_FS.html?inpKey=" +document.getElementsByName(document.frmMain.inpKeyName.value)[0].value , false);
+}
+
+function checkAttachmentIconRelation(){
+  var value = dojo.widget.byId('grid').getSelectedRows();
+  if (value==null || value=="" || value.length>1) return false;
+  setInputValue(document.frmMain.inpKeyName.value, value);    
+  checkAttachmentIcon();
 }

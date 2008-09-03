@@ -22,15 +22,15 @@
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
-  v_AcctSchema_ID NUMBER(10) ;
-  v_TargetCurrency_ID NUMBER(10) ;
+  v_AcctSchema_ID VARCHAR2(32) ;
+  v_TargetCurrency_ID VARCHAR2(32) ;
   v_StdPrecision      NUMBER(10) ;
   v_rate              NUMBER;
   v_CurrencyRate      NUMBER;
   v_CurrencyRateType  CHAR(1) ;
 BEGIN
   IF(UPDATING) THEN
-    IF NOT((COALESCE(:old.AMTSOURCEDR, 0) <> COALESCE(:NEW.AMTSOURCEDR, 0) OR COALESCE(:old.AMTSOURCECR, 0) <> COALESCE(:NEW.AMTSOURCECR, 0) OR COALESCE(:old.C_CURRENCY_ID, 0) <> COALESCE(:NEW.C_CURRENCY_ID, 0))) THEN
+    IF NOT((COALESCE(:old.AMTSOURCEDR, 0) <> COALESCE(:NEW.AMTSOURCEDR, 0) OR COALESCE(:old.AMTSOURCECR, 0) <> COALESCE(:NEW.AMTSOURCECR, 0) OR COALESCE(:old.C_CURRENCY_ID, '0') <> COALESCE(:NEW.C_CURRENCY_ID, '0'))) THEN
       RETURN;
     END IF;
   END IF;
@@ -42,7 +42,7 @@ BEGIN
     v_CurrencyRateType
   FROM GL_Journal
   WHERE GL_Journal_ID=:NEW.GL_Journal_ID;
-  SELECT COALESCE(MAX(c.C_Currency_ID), 0),
+  SELECT COALESCE(MAX(c.C_Currency_ID), '0'),
     COALESCE(MAX(c.StdPrecision), 2)
   INTO v_TargetCurrency_ID,
     v_StdPrecision

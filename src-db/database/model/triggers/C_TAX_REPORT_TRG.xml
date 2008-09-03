@@ -22,9 +22,9 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-  v_xTree_ID NUMBER;
-  v_xParent_ID NUMBER;
-  v_NextNo     NUMBER;
+  v_xTree_ID VARCHAR2(32);
+  v_xParent_ID VARCHAR2(32);
+  v_NextNo     VARCHAR2(32);
 BEGIN
   -- Insert AD_Menu Trigger
   --  for Translation

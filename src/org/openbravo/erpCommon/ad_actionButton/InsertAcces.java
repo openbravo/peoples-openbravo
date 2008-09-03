@@ -89,9 +89,9 @@ public class InsertAcces extends HttpSecureAppServlet {
       xmlDocument.setParameter("key", strKey);
       xmlDocument.setParameter("window", windowId);
       xmlDocument.setParameter("tab", strTab);
-      xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
       xmlDocument.setData("reportModules_S","liststructure", ModuleComboData.select(this));
-      xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\r\n");
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
       xmlDocument.setParameter("theme", vars.getTheme());
       xmlDocument.setParameter("description", strDescription);
       xmlDocument.setParameter("help", strHelp);

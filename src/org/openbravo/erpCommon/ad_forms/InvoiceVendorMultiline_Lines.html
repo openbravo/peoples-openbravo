@@ -32,8 +32,8 @@
 <SCRIPT language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</SCRIPT>
-<SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO = "en_US";</SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramDirectory">var baseDirectory = "../../../../../web/";</SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	defaultLang = "en_US";</SCRIPT>
 <SCRIPT language="javascript" type="text/javascript">
 
   function enableLocalShortcuts() {
@@ -76,17 +76,17 @@ function debugSearch(strClave, strTexto, gCampoClave) {
 function alEnviarLinea(fila, parametros, strAccion)
 {
   if (strAccion=="DELETE") {
-    if (!mensaje(2)) return false;
+    if (!showJSMessage(2)) return false;
   } else {
     var id = obtenerValor(parametros,"inpcInvoicelineId");
-    if (!esNumero(obtenerValor(parametros,"inpqtyinvoiced"), true, true)) {
-      mensaje(4);
+    if (!validateNumber(obtenerValor(parametros,"inpqtyinvoiced"), true, true)) {
+      showJSMessage(4);
       return false;
-    } else if (!esNumero(obtenerValor(parametros,"inppriceactual"), true, true)) {
-      mensaje(4);
+    } else if (!validateNumber(obtenerValor(parametros,"inppriceactual"), true, true)) {
+      showJSMessage(4);
       return false;
     } else if (obtenerValor(parametros,"inpmProductId" + id)==null || obtenerValor(parametros,"inpmProductId" + id)=="") {
-      mensaje(1);
+      showJSMessage(1);
       return false;
     }
   }
@@ -179,9 +179,9 @@ function openAcctDimension() {
 }
 
 function acctDimensionButton(cInvoicelineId, qty) {
-  if (!hasAcctDimension) return mensaje(3);
+  if (!hasAcctDimension) return showJSMessage(3);
   if (cInvoicelineId==null || cInvoicelineId=="") return false;
-  abrirPopUp("InvoiceVendorMultiline_Analitica.html?inpcInvoicelineId=" + cInvoicelineId + "&inpqtyinvoiced=" + qty, "ANALITICA", "300", "400", true, true);
+  openPopUpDefaultSize("InvoiceVendorMultiline_Analitica.html?inpcInvoicelineId=" + cInvoicelineId + "&inpqtyinvoiced=" + qty, "ANALITICA", "300", "400", true, true);
   return true;
 }
 </SCRIPT>

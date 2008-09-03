@@ -19,7 +19,7 @@
 -->
 <REPORT>
     <template file="SQLExecutor.html"/>
-    <PARAMETER id="paramDirection" name="direction" default=""/>
+    <PARAMETER id="paramDirectory" name="directory" default=""/>
     <PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
     <PARAMETER id="paramLanguage" name="language" attribute="value"/>
     <PARAMETER id="fieldSQL" name="sql" default=""/>

@@ -28,8 +28,8 @@
     <Sql>
       <![CDATA[
         SELECT MAX(FACT_ACCT_GROUP_ID) AS ID, MAX(AD_ORG_ID) AS ORG, MAX(AD_CLIENT_ID) AS CLIENT FROM FACT_ACCT
-        WHERE RECORD_ID = TO_NUMBER(?)
-        AND AD_TABLE_ID = TO_NUMBER(?)
+        WHERE RECORD_ID = ?
+        AND AD_TABLE_ID = ?
       ]]>
     </Sql>
     <Parameter name="record_id"/>
@@ -40,7 +40,7 @@
     <Sql>
       <![CDATA[
         SELECT AD_CLIENT_ID FROM FACT_ACCT
-        WHERE RECORD_ID = TO_NUMBER(?)
+        WHERE RECORD_ID = ?
       ]]>
     </Sql>
     <Parameter name="tablename" optional="true" type="replace" after="FROM " text="FACT_ACCT"/>
@@ -52,7 +52,7 @@
     <Sql>
       <![CDATA[
         SELECT TABLENAME FROM AD_TABLE
-        WHERE AD_TABLE_ID = TO_NUMBER(?)
+        WHERE AD_TABLE_ID = ?
       ]]>
     </Sql>
     <Parameter name="adTableId"/>

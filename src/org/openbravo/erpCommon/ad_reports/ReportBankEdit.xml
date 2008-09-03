@@ -19,7 +19,7 @@
 -->
 <REPORT>
 	<template file="ReportBankEdit.html"/>
-	<PARAMETER id="paramDirection" name="direction" default=""/>
+	<PARAMETER id="paramDirectory" name="directory" default=""/>
 	<PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
 	<PARAMETER id="paramSumAmount" name="sumAmount"/>

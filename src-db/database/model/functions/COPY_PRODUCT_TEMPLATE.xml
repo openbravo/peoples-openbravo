@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION COPY_PRODUCT_TEMPLATE">
     <function name="COPY_PRODUCT_TEMPLATE" type="NULL">
-      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -23,32 +23,32 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     -- Record Info
-    v_Bpartner NUMBER;
-    v_Mpricelist NUMBER;
-    v_Currency NUMBER;
-    v_Warehouse NUMBER;
+    v_Bpartner VARCHAR2(32);
+    v_Mpricelist VARCHAR2(32);
+    v_Currency VARCHAR2(32);
+    v_Warehouse VARCHAR2(32);
     v_SeqNo NUMBER;
-    v_CorderId NUMBER;
-    v_Client NUMBER;
-    v_Org NUMBER;
-    v_Createdby NUMBER;
+    v_CorderId varchar2(32);
+    v_Client VARCHAR2(32);
+    v_Org VARCHAR2(32);
+    v_Createdby VARCHAR2(32);
     v_Dateordered DATE;
     v_BillTo NUMBER;
-    v_BpartnerLocation NUMBER;
-    v_Pricelist NUMBER;
+    v_BpartnerLocation VARCHAR2(32);
+    v_Pricelist VARCHAR2(32);
     v_Pricelimit NUMBER;
     v_Pricestd NUMBER;
     v_Linenetamount NUMBER;
-    v_Discount NUMBER;
-    v_Tax NUMBER;
+    v_Discount VARCHAR2(32);
+    v_Tax VARCHAR2(32);
     v_Issotrx CHAR;
     v_NoOfLines NUMBER:=0;
-    v_projectID NUMBER;
+    v_projectID varchar2(32);
     -- Copy
     Cur_ProductTemplate RECORD;
   BEGIN

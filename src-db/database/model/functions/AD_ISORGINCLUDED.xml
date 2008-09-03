@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_ISORGINCLUDED">
     <function name="AD_ISORGINCLUDED" type="NUMERIC">
-      <parameter name="p_orgid" type="NUMERIC" mode="in">
+      <parameter name="p_orgid" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_parentorgid" type="NUMERIC" mode="in">
+      <parameter name="p_parentorgid" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_clientid" type="NUMERIC" mode="in">
+      <parameter name="p_clientid" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -31,9 +31,9 @@
 *    where parentOrgID is the root. Else return -1
 ************************************************************************/
   v_Level NUMBER:=0;
-  v_treeID NUMBER(10) ;
-  v_Parent NUMBER(10) ;
-  v_Node   NUMBER(10) ;
+  v_treeID varchar2(32) ;
+  v_Parent VARCHAR(32) ;
+  v_Node   VARCHAR(32) ;
 BEGIN
   SELECT MAX(AD_TREE_ORG_ID)
   INTO v_treeID

@@ -20,13 +20,13 @@
 <head>
 <title>Role information</title>
 <LINK rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Popup/Popup.css" id="paramCSS"></LINK>
-<script language="JavaScript" type="text/javascript" id="paramDirection">
-  var baseDirection = "../../../../../web/";
+<script language="JavaScript" type="text/javascript" id="paramDirectory">
+  var baseDirectory = "../../../../../web/";
 </script>
 <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
 <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
 <script language="JavaScript" type="text/javascript" id="paramLanguage">
-  LNG_POR_DEFECTO = "en_US";
+  defaultLang = "en_US";
 </script>
 <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
@@ -34,23 +34,23 @@
 <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
 <script language="JavaScript" type="text/javascript">
-function depurar() {
+function validate() {
   var frm = document.frmMain;
   if (frm.inpClaveOld.value==null || frm.inpClaveOld.value=="") {
     setWindowElementFocus(frm.inpClaveOld);
-    mensaje(7);
+    showJSMessage(7);
     return false;
     } else if (frm.inpClaveNew.value==null || frm.inpClaveNew.value=="") {
     setWindowElementFocus(frm.inpClaveNew);
-    mensaje(7);
+    showJSMessage(7);
     return false;
     } else if (frm.inpClaveNew2.value==null || frm.inpClaveNew2.value=="") {
     setWindowElementFocus(frm.inpClaveNew2);
-    mensaje(7);
+    showJSMessage(7);
     return false;
     } else if (frm.inpClaveNew.value != frm.inpClaveNew2.value) {
     setWindowElementFocus(frm.inpClaveNew);
-    mensaje(20);
+    showJSMessage(20);
     return false;
   }
   return true;
@@ -78,15 +78,15 @@ function onloadFunctions() {
 function refreshRole() {
   var cmbRole = document.frmMain.role;
   var cmbEntidad = document.frmMain.client;    
-  cambiarListaCombo(cmbEntidad, arrClientes, cmbRole.options[cmbRole.selectedIndex].value, false);
-  cambiarListaCombo(document.frmMain.organization, arrOrgs, cmbRole.options[cmbRole.selectedIndex].value, false);
-  cambiarListaCombo(document.frmMain.warehouse, arrWare, cmbRole.options[cmbRole.selectedIndex].value + "-" + cmbEntidad.options[cmbEntidad.selectedIndex].value, false);
+  changeComboData(cmbEntidad, arrClientes, cmbRole.options[cmbRole.selectedIndex].value, false);
+  changeComboData(document.frmMain.organization, arrOrgs, cmbRole.options[cmbRole.selectedIndex].value, false);
+  changeComboData(document.frmMain.warehouse, arrWare, cmbRole.options[cmbRole.selectedIndex].value + "-" + cmbEntidad.options[cmbEntidad.selectedIndex].value, false);
   return true;
 }
 function refreshEntity() {
   var cmbRole = document.frmMain.role;
   var cmbEntidad = document.frmMain.client;    
-  cambiarListaCombo(document.frmMain.warehouse, arrWare, cmbRole.options[cmbRole.selectedIndex].value + '-' + cmbEntidad.options[cmbEntidad.selectedIndex].value, false);
+  changeComboData(document.frmMain.warehouse, arrWare, cmbRole.options[cmbRole.selectedIndex].value + '-' + cmbEntidad.options[cmbEntidad.selectedIndex].value, false);
   return true;
 }
 function saveOptions() {
@@ -124,7 +124,7 @@ var arrWare=null;
 
   <script>
     function submitPassword() {
-      if (!depurar()) return false
+      if (!validate()) return false
       try {
         return submitXmlHttpRequest(callback, frmMain, "CHANGE", "Role.html", false);
       }
@@ -207,7 +207,7 @@ var arrWare=null;
           <tr class="Popup_NavBar_bg"><td></td>
             <td class="Popup_NavBar_separator_cell"></td>
             <td class="Popup_NavBar_bg_logo_left"></td>
-            <td class="Popup_NavBar_bg_logo" width="1" onclick="abrirNuevoBrowser('http://www.openbravo.com', 'Openbravo');return false;"><img src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
+            <td class="Popup_NavBar_bg_logo" width="1" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;"><img src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
             <td class="Popup_NavBar_bg_logo_right"></td>
             <td class="Popup_NavBar_Popup_title_cell"><span>User options: <i id="fieldUser">xxOpenbravo</i></a></td>
             <td class="Popup_NavBar_separator_cell"></td>

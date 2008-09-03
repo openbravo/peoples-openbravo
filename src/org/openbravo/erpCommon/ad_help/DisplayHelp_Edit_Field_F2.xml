@@ -19,7 +19,7 @@
 -->
 <REPORT>
   <template file="DisplayHelp_Edit_Field_F2.html"/>
-  <PARAMETER id="paramDirection" name="direction" default=""/>
+  <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="discardError" name="message" default=""/>
   <DISCARD id="discard"/>
 </REPORT>

@@ -30,10 +30,10 @@ BEGIN
   THEN
     --  Create Translation Row
     INSERT INTO AD_Reference_Trl
-                (AD_Reference_ID, AD_Language, AD_Client_ID, AD_Org_ID,
+                ( AD_Reference_Trl_ID, AD_Reference_ID, AD_Language, AD_Client_ID, AD_Org_ID,
                  IsActive, Created, CreatedBy, Updated, UpdatedBy, NAME,
                  Description, HELP, IsTranslated)
-      SELECT :NEW.AD_Reference_ID, AD_Language, :NEW.AD_Client_ID,
+      SELECT get_uuid(), :NEW.AD_Reference_ID, AD_Language, :NEW.AD_Client_ID,
              :NEW.AD_Org_ID, :NEW.IsActive, :NEW.Created, :NEW.CreatedBy,
              :NEW.Updated, :NEW.UpdatedBy, :NEW.NAME, :NEW.Description,
              :NEW.HELP, 'N'

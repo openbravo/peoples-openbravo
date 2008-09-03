@@ -19,11 +19,11 @@
 ************************************************************************/
 --Invoice
 vwithholdingtotal NUMBER;
-vBusPartId NUMBER;
+vBusPartId varchar2(32);
 vIsSalesInvoice CHAR(1);
 vProcessed  CHAR(1);
 --InvoiceLine
-v_invoiceid NUMBER;
+v_invoiceid varchar2(32);
 vexcludeforwh CHAR(1);
 vlinebaseamountnew NUMBER;
 vlinebaseamountold NUMBER;
@@ -31,7 +31,7 @@ vlinebaseamountold NUMBER;
 isbaseamountpercent CHAR(1);
 baseamountpercent NUMBER;
 includetaxinps CHAR(1);
-taxinps_id NUMBER;
+taxinps_ID VARCHAR2(32);
 -- Tax
 vTaxAmount  NUMBER;
 -- Withholding
@@ -41,7 +41,7 @@ vwithholdingnew NUMBER;
 vwithholdingold NUMBER;
 taxamountwith  NUMBER;
 vwithholdingtax NUMBER;
-vwithid NUMBER;
+vwithid varchar2(32);
 finish_process BOOLEAN := FALSE;
 BEGIN
   IF(INSERTING) THEN

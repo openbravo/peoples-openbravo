@@ -20,7 +20,7 @@
 <REPORT>
 	<template file="SendMailText.html"/>
 	<PARAMETER id="paramToolBar" name="toolbar" default=""/>
-	<PARAMETER id="paramDirection" name="direction" default=""/>
+	<PARAMETER id="paramDirectory" name="directory" default=""/>
 	<PARAMETER id="paramLanguage" name="paramLanguage"/>
 	<PARAMETER id="question" name="question" default=""/>
 	<PARAMETER id="processDescription" name="description" replaceCharacters="htmlHelp" default=""/>

@@ -25,7 +25,7 @@
     * Update Commission Amount Line
     * Convert Amount to Commission Currrency
     */
-  v_C_Currency_ID NUMBER;
+  v_C_Currency_ID VARCHAR2(32);
   v_ConvDate DATE;
 BEGIN
   IF(UPDATING OR DELETING) THEN

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_COPY_CLIENT">
     <function name="AD_COPY_CLIENT" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -34,7 +34,7 @@
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     --  Parameter Variables
-    p_AD_Client_ID NUMBER(10) ;
+    p_AD_Client_ID VARCHAR2(32) ;
     p_NewClientValue VARCHAR2(80) ;
     --
     Cur_Triggers RECORD;
@@ -51,21 +51,21 @@
     CUR_v_rc_ISOPEN BOOLEAN :=false;
     --
     v_seqNo NUMBER:=0;
-    v_NextNo NUMBER(10):=1000000;
+    v_NextNo VARCHAR2(32):='1000000';
     v_count NUMBER:=0;
     v_ID_Column VARCHAR2(30) ;
-    v_minID NUMBER(10) ;
-    v_maxID NUMBER(10) ;
-    v_nextID NUMBER(10) ;
+    v_minID varchar2(32) ;
+    v_maxID varchar2(32) ;
+    v_nextID varchar2(32) ;
     v_strTemp VARCHAR2(4000):='';
     v_strSql VARCHAR2(4000):='';
     v_tableActual VARCHAR2(30) ;
-    v_translatedId NUMBER:=0;
-    v_oldId NUMBER:=0;
+    v_translatedId varchar2(32):='0';
+    v_oldId varchar2(32):='0';
     v_dynamic_select VARCHAR2(4000):='';
   TYPE TYPE_Ref IS REF CURSOR;
     v_rc TYPE_REF;
-    v_Tree_ID NUMBER;
+    v_Tree_ID VARCHAR2(32);
     v_offset NUMBER;
     v_offset2 NUMBER;
   BEGIN
@@ -86,7 +86,7 @@
         )
       LOOP
         IF(Cur_Parameter.ParameterName='AD_Client_ID') THEN
-          p_AD_Client_ID:=Cur_Parameter.P_Number;
+          p_AD_Client_ID:=Cur_Parameter.P_String;
           DBMS_OUTPUT.PUT_LINE('  AD_Client_ID=' || p_AD_Client_ID) ;
         ELSIF(Cur_Parameter.ParameterName='ClientValue') THEN
           p_NewClientValue:=Cur_Parameter.P_String;
@@ -105,7 +105,6 @@
 
     -- Update sequence values
     v_ResultStr:='Updating sequences';
-    AD_UPDATE_SEQUENCE() ;
     v_ResultStr:='Deleting old data';
     DELETE FROM AD_SCRIPT_SQL;
     DELETE FROM AD_ID_TRANSLATION;
@@ -118,7 +117,7 @@
     v_ResultStr:='Dropping and recreating unique indexes';
     v_seqNo:= ad_script_drop_recreate_index(v_seqNo);
     v_ResultStr:='Insert client';
-    AD_Sequence_Next('AD_Client', 1000000, v_NextNo) ;
+    AD_Sequence_Next('AD_Client', '1000000', v_NextNo) ;
     --AD_Client
     v_seqNo:=v_seqNo + 1;
     INSERT
@@ -126,7 +125,7 @@
       (v_seqNo, 'INSERT INTO AD_Client (AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, '||
       'VALUE, NAME, DESCRIPTION, SMTPHOST, REQUESTEMAIL, REQUESTUSER, REQUESTUSERPW, REQUESTFOLDER, '||
       'AD_LANGUAGE) '||
-      'SELECT '||v_NextNo||', 0, ISACTIVE, to_date(now()), 0, to_date(now()), 0, '||''''||p_NewClientValue||''', '''||p_NewClientValue||''', DESCRIPTION, SMTPHOST, REQUESTEMAIL, '||
+      'SELECT '''||v_NextNo||''', ''0'', ISACTIVE, to_date(now()), ''0'', to_date(now()), ''0'', '||''''||p_NewClientValue||''', '''||p_NewClientValue||''', DESCRIPTION, SMTPHOST, REQUESTEMAIL, '||
       'REQUESTUSER, REQUESTUSERPW, REQUESTFOLDER, AD_LANGUAGE FROM AD_Client '|| 'WHERE AD_Client_ID = '||p_AD_Client_ID) ;
       v_ResultStr:='Insert role';
     --AD_Role
@@ -150,7 +149,7 @@
     INTO AD_SCRIPT_SQL VALUES
       (v_seqNo, 'INSERT INTO AD_Role (AD_ROLE_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, '||
       'NAME, DESCRIPTION, USERLEVEL, CLIENTLIST, ORGLIST, C_CURRENCY_ID, AMTAPPROVAL, AD_TREE_MENU_ID, ISMANUAL) '||
-      'SELECT AD_ROLE_ID + '||TO_CHAR(v_nextID-v_minID) ||', '||v_NextNo||', 0, ISACTIVE, to_date(now()), 0, to_date(now()), 0, '||
+      'SELECT AD_ROLE_ID + '||TO_CHAR(v_nextID-v_minID) ||', '''||v_NextNo||''', ''0'', ISACTIVE, to_date(now()), ''0'', to_date(now()), 0, '||
       'NAME, DESCRIPTION, USERLEVEL, '''||v_NextNo||''', ORGLIST, C_CURRENCY_ID, AMTAPPROVAL, AD_TREE_MENU_ID, ISMANUAL '||
       'FROM AD_Role '|| 'WHERE ClientList = '''||p_AD_Client_ID||'''') ;
     v_ResultStr:='Insert into role tables';
@@ -191,14 +190,14 @@
       )
     ORDER BY TableName)
     LOOP
-      EXECUTE IMMEDIATE 'SELECT COUNT(*) FROM '||Cur_Tables.NAME||' WHERE AD_Client_ID = '||p_AD_Client_ID INTO v_count;
+      EXECUTE IMMEDIATE 'SELECT COUNT(*) FROM '||Cur_Tables.NAME||' WHERE AD_Client_ID = '''||p_AD_Client_ID||'''' INTO v_count;
       IF(v_count>0) THEN
         SELECT MAX(UPPER(ColumnName))
         INTO v_ID_Column
         FROM AD_Column
-        WHERE AD_Table_ID=Cur_Tables.AD_Table_ID AND AD_Reference_ID=13 AND UPPER(ColumnName)=Cur_Tables.NAME||'_ID';
+        WHERE AD_Table_ID=Cur_Tables.AD_Table_ID AND AD_Reference_ID='13' AND UPPER(ColumnName)=Cur_Tables.NAME||'_ID';
         IF(v_ID_Column IS NOT NULL) THEN
-          EXECUTE IMMEDIATE 'SELECT MIN('||v_ID_Column||') FROM '||Cur_Tables.NAME||' WHERE AD_Client_ID = '||p_AD_Client_ID INTO v_minID;
+          EXECUTE IMMEDIATE 'SELECT MIN('||v_ID_Column||') FROM '||Cur_Tables.NAME||' WHERE AD_Client_ID = '''||p_AD_Client_ID||'''' INTO v_minID;
           SELECT CurrentNext
           INTO v_nextID
           FROM AD_Sequence
@@ -228,7 +227,7 @@
         IF(v_ID_Column IS NOT NULL) THEN
           v_strSql:=v_strSql || ',' || v_ID_Column || ' + '|| TO_CHAR(v_nextID-v_minID) ;
         END IF;
-        v_strSql:=v_strSql || v_strTemp || ' FROM '|| Cur_Tables.NAME || ' WHERE AD_CLIENT_ID = ' || p_AD_Client_ID;
+        v_strSql:=v_strSql || v_strTemp || ' FROM '|| Cur_Tables.NAME || ' WHERE AD_CLIENT_ID = ''' || p_AD_Client_ID||'''';
         v_seqNo:=v_seqNo + 1;
         INSERT INTO AD_SCRIPT_SQL VALUES(v_seqNo, v_strSql) ;
       END IF;
@@ -247,18 +246,18 @@
         v_count:=0;
         v_tableActual:=Cur_TranslateData.TABLENAME;
         IF(v_strSql IS NOT NULL) THEN
-          v_strSql:=v_strSql || ' WHERE AD_CLIENT_ID = '|| v_NextNo;
+          v_strSql:=v_strSql || ' WHERE AD_CLIENT_ID = '''|| v_NextNo||'''';
           v_seqNo:=v_seqNo + 1;
           INSERT INTO AD_SCRIPT_SQL VALUES(v_seqNo, v_strSql) ;
         END IF;
-        v_strSql:='UPDATE '||v_tableActual||' SET AD_CLIENT_ID = '|| v_NextNo || ' ';
+        v_strSql:='UPDATE '||v_tableActual||' SET AD_CLIENT_ID = '''|| v_NextNo || ''' ';
       END IF;
       v_strSql:=v_strSql || ', '||Cur_TranslateData.COLUMNNAME||' = AD_Translate_ID('||Cur_TranslateData.COLUMNNAME|| ',
         '||Cur_TranslateData."OFFSET"||','''||Cur_TranslateData.DEPENDS_ON_TABLENAME||''','''||Cur_TranslateData.DEPENDS_ON_COLUMNNAME||''',
         '||p_AD_Client_ID||')';
       v_count:=v_count + 1;
     END LOOP;
-    v_strSql:=v_strSql || ' WHERE AD_CLIENT_ID = '|| v_NextNo;
+    v_strSql:=v_strSql || ' WHERE AD_CLIENT_ID = '''|| v_NextNo||'''';
     v_seqNo:=v_seqNo + 1;
     INSERT INTO AD_SCRIPT_SQL VALUES(v_seqNo, v_strSql) ;
     v_ResultStr:='Updating tables';
@@ -275,12 +274,12 @@
         v_count:=0;
         v_tableActual:=Cur_TranslateDataSelfDep.TABLENAME;
         IF(v_strSql IS NOT NULL) THEN
-          v_strSql:=v_strSql || ' WHERE AD_CLIENT_ID = '|| v_NextNo;
+          v_strSql:=v_strSql || ' WHERE AD_CLIENT_ID = '''|| v_NextNo||'''';
           v_seqNo:=v_seqNo + 1;
           INSERT INTO AD_SCRIPT_SQL VALUES(v_seqNo, v_strSql) ;
         END IF;
       END IF;
-      v_dynamic_select:='SELECT DISTINCT ' || Cur_TranslateDataSelfDep.COLUMNNAME || ' FROM ' || Cur_TranslateDataSelfDep.TABLENAME || ' WHERE AD_CLIENT_ID = ' || p_AD_Client_ID || ' AND '||Cur_TranslateDataSelfDep.COLUMNNAME||' IS NOT NULL';
+      v_dynamic_select:='SELECT DISTINCT ' || Cur_TranslateDataSelfDep.COLUMNNAME || ' FROM ' || Cur_TranslateDataSelfDep.TABLENAME || ' WHERE AD_CLIENT_ID = ''' || p_AD_Client_ID || ''' AND '||Cur_TranslateDataSelfDep.COLUMNNAME||' IS NOT NULL';
  IF (CUR_v_rc_ISOPEN=true) THEN
   CUR_v_rc_ISOPEN:=false;
   CLOSE v_rc;
@@ -290,10 +289,10 @@
       LOOP
         FETCH v_rc INTO v_oldId;
         EXIT WHEN v_rc%NOTFOUND;
-        v_strSql:='UPDATE '||v_tableActual||' SET AD_CLIENT_ID = '|| v_NextNo || ' ';
+        v_strSql:='UPDATE '||v_tableActual||' SET AD_CLIENT_ID = '''|| v_NextNo || ''' ';
         v_translatedId:=AD_Translate_ID(v_oldId, Cur_TranslateDataSelfDep."OFFSET", Cur_TranslateDataSelfDep.DEPENDS_ON_TABLENAME, Cur_TranslateDataSelfDep.DEPENDS_ON_COLUMNNAME, p_AD_Client_ID) ;
-        v_strSql:=v_strSql || ', '||Cur_TranslateDataSelfDep.COLUMNNAME||' = ' || v_translatedId ;
-        v_strSql:=v_strSql || ' WHERE AD_CLIENT_ID = '|| v_NextNo || ' AND '||Cur_TranslateDataSelfDep.COLUMNNAME||' = ' || v_oldId;
+        v_strSql:=v_strSql || ', '||Cur_TranslateDataSelfDep.COLUMNNAME||' = ''' || v_translatedId ||'''';
+        v_strSql:=v_strSql || ' WHERE AD_CLIENT_ID = '''|| v_NextNo || ''' AND '||Cur_TranslateDataSelfDep.COLUMNNAME||' = ''' || v_oldId||'''';
         v_count:=v_count + 1;
         v_seqNo:=v_seqNo + 1;
         INSERT INTO AD_SCRIPT_SQL VALUES(v_seqNo, v_strSql) ;
@@ -306,7 +305,7 @@
       i RECORD;
     BEGIN
       --Accounting is not copied so any doc should be posted
-      for i in (select 'update '||t.tablename||' set posted=''N'' where ad_client_id='||v_NextNo as vsql
+      for i in (select 'update '||t.tablename||' set posted=''N'' where ad_client_id='''||v_NextNo||'''' as vsql
                   from ad_column c, ad_table t
                  where upper(columnname)='POSTED'
                   and c.ad_table_id = t.ad_table_id) loop
@@ -320,24 +319,24 @@
     v_seqNo:=v_seqNo + 1;
     INSERT
     INTO AD_SCRIPT_SQL VALUES
-      (v_seqNo, 'UPDATE AD_ROLE SET NAME = '''||p_NewClientValue||'_''||NAME WHERE AD_CLIENT_ID = ' ||v_NextNo) ;
+      (v_seqNo, 'UPDATE AD_ROLE SET NAME = '''||p_NewClientValue||'_''||NAME WHERE AD_CLIENT_ID = ''' ||v_NextNo||'''') ;
     v_seqNo:=v_seqNo + 1;
     INSERT
     INTO AD_SCRIPT_SQL VALUES
-      (v_seqNo, 'UPDATE AD_USER SET USERNAME = (CASE WHEN USERNAME IS NULL THEN NULL ELSE '''||p_NewClientValue||'_''||USERNAME END) WHERE AD_CLIENT_ID = ' ||v_NextNo) ;
+      (v_seqNo, 'UPDATE AD_USER SET USERNAME = (CASE WHEN USERNAME IS NULL THEN NULL ELSE '''||p_NewClientValue||'_''||USERNAME END) WHERE AD_CLIENT_ID = ''' ||v_NextNo||'''') ;
     v_seqNo:=v_seqNo + 1;
     INSERT
     INTO AD_SCRIPT_SQL VALUES
-      (v_seqNo, 'UPDATE AD_ORG SET NAME = '''||p_NewClientValue||'_''||NAME WHERE AD_CLIENT_ID = ' ||v_NextNo) ;
+      (v_seqNo, 'UPDATE AD_ORG SET NAME = '''||p_NewClientValue||'_''||NAME WHERE AD_CLIENT_ID = ''' ||v_NextNo||'''') ;
     v_seqNo:=v_seqNo + 1;
     INSERT
     INTO AD_SCRIPT_SQL VALUES
-      (v_seqNo, 'UPDATE M_WAREHOUSE SET NAME = '''||p_NewClientValue||'_''||NAME WHERE AD_CLIENT_ID = ' ||v_NextNo) ;
-    --AD_ORGINFO; AD_ORG_ID = 0
+      (v_seqNo, 'UPDATE M_WAREHOUSE SET NAME = '''||p_NewClientValue||'_''||NAME WHERE AD_CLIENT_ID = ''' ||v_NextNo||'''') ;
+    --AD_ORGINFO; AD_ORG_ID = '0'
     v_seqNo:=v_seqNo + 1;
     INSERT
     INTO AD_SCRIPT_SQL VALUES
-      (v_seqNo, 'DELETE FROM AD_ORGINFO WHERE AD_ORG_ID = 0 AND AD_CLIENT_ID = ' ||v_NextNo) ;
+      (v_seqNo, 'DELETE FROM AD_ORGINFO WHERE AD_ORG_ID = ''0'' AND AD_CLIENT_ID = ''' ||v_NextNo||'''') ;
     --AD_TreeNodes...
     --AD_TreeNodePR
     SELECT max("OFFSET")
@@ -350,7 +349,7 @@
       INTO AD_SCRIPT_SQL VALUES
         (v_seqNo, 'UPDATE AD_TREENODEPR SET '|| 'NODE_ID = AD_Translate_ID(Node_ID,'||v_offset||',''M_PRODUCT'',''M_PRODUCT_ID'',
         '||p_AD_Client_ID||')'|| ', PARENT_ID = AD_Translate_ID(Parent_ID,'||v_offset||',''M_PRODUCT'',''M_PRODUCT_ID'',
-        '||p_AD_Client_ID||') '|| 'WHERE AD_CLIENT_ID = ' ||v_NextNo) ;
+        '||p_AD_Client_ID||') '|| 'WHERE AD_CLIENT_ID = ''' ||v_NextNo||'''') ;
     end if;
     --AD_TreeNodeBP
     SELECT max("OFFSET")
@@ -456,7 +455,6 @@
     v_seqNo:= ad_script_enable_triggers(v_seqNo);
     -- Update sequence values
     v_ResultStr:='Updating sequences';
-    AD_UPDATE_SEQUENCE_GENERATE() ;
 
  v_ResultStr := ad_script_execute(v_ResultStr);
 

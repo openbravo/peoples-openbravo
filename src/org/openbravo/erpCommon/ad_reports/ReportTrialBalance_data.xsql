@@ -28,7 +28,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT SUM(PARENT_ID) AS PARENT_ID, ID, NAME, ACCOUNT_ID, ELEMENTLEVEL, SUM(AMTACCTDR) AS AMTACCTDR, 
+      SELECT SUM(TO_NUMBER(PARENT_ID)) AS PARENT_ID, ID, NAME, ACCOUNT_ID, ELEMENTLEVEL, SUM(AMTACCTDR) AS AMTACCTDR, 
       SUM(AMTACCTCR) AS AMTACCTCR, SUM(SALDO_INICIAL) AS SALDO_INICIAL,0 AS TOTALAMTACCTDR, 0 AS TOTALAMTACCTCR,
       SUM(SALDO_INICIAL+AMTACCTDR-AMTACCTCR) AS SALDO_FINAL, TO_DATE(?) AS DATE_FROM, TO_DATE(?) AS DATE_TO, ? AS AD_ORG_ID,
       '' AS BP, '' AS PADRE
@@ -38,12 +38,12 @@
       0 AS AMTACCTCR
       FROM AD_TREENODE, C_ELEMENTVALUE
       WHERE AD_TREENODE.NODE_ID = C_ELEMENTVALUE.C_ELEMENTVALUE_ID
-      AND AD_TREENODE.AD_TREE_ID = TO_NUMBER(?)
+      AND AD_TREENODE.AD_TREE_ID = ?
       AND AD_TREENODE.ISACTIVE = 'Y'
       AND C_ELEMENTVALUE.ISACTIVE = 'Y'
       AND (select max(c_element_id) from c_acctschema_element where c_acctschema_id = ? and ELEMENTTYPE = 'AC') = C_ELEMENTVALUE.C_ELEMENT_ID
       UNION		
-      SELECT 0 AS PARENT_ID, F.ACCOUNT_ID AS ID, EV.ELEMENTLEVEL, EV.NAME AS NAME, EV.VALUE AS ACCOUNT_ID, 
+      SELECT '0' AS PARENT_ID, F.ACCOUNT_ID AS ID, EV.ELEMENTLEVEL, EV.NAME AS NAME, EV.VALUE AS ACCOUNT_ID, 
       SUM((CASE f.FACTACCTTYPE WHEN 'O' THEN F.AMTACCTDR-F.AMTACCTCR ELSE 0 END)) AS SALDO_INICIAL, 
       SUM((CASE f.FACTACCTTYPE WHEN 'O' THEN 0 ELSE F.AMTACCTDR END)) AS AMTACCTDR, 
       SUM((CASE f.FACTACCTTYPE WHEN 'O' THEN 0 ELSE f.AMTACCTCR END)) AS AMTACCTCR 
@@ -73,7 +73,7 @@
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND F.DATEACCT < TO_DATE(?)]]></Parameter>
     <Parameter name="accountFrom" optional="true" after="AND 1=1"><![CDATA[AND EV.VALUE >= ?]]></Parameter>
     <Parameter name="accountTo" optional="true" after="AND 1=1"><![CDATA[AND EV.VALUE <= ?]]></Parameter>
-    <Parameter name="acctSchema" optional="true" after="AND 1=1"><![CDATA[ AND F.C_ACCTSCHEMA_ID = to_number(?)]]></Parameter>    
+    <Parameter name="acctSchema" optional="true" after="AND 1=1"><![CDATA[ AND F.C_ACCTSCHEMA_ID = ?]]></Parameter>    
   </SqlMethod>
   
   
@@ -115,7 +115,7 @@
     <Parameter name="accountFrom" optional="true" after="AND 1=1"><![CDATA[AND EV.VALUE >= ?]]></Parameter>
     <Parameter name="accountTo" optional="true" after="AND 1=1"><![CDATA[AND EV.VALUE <= ?]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND F.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="acctSchema" optional="true" after="AND 1=1"><![CDATA[ AND F.C_ACCTSCHEMA_ID = to_number(?)]]></Parameter>        
+    <Parameter name="acctSchema" optional="true" after="AND 1=1"><![CDATA[ AND F.C_ACCTSCHEMA_ID = ?]]></Parameter>        
   </SqlMethod>
   
   <SqlMethod name="set" type="constant" return="multiple">
@@ -126,7 +126,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
         SELECT AD_TREE_ORG_ID FROM AD_CLIENTINFO
-        WHERE AD_CLIENT_ID = TO_NUMBER(?)
+        WHERE AD_CLIENT_ID = ?
     </Sql>
     <Parameter name="client"/>
   </SqlMethod>
@@ -134,7 +134,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
         SELECT AD_TREE_ID FROM AD_TREE
-        WHERE AD_CLIENT_ID = TO_NUMBER(?)
+        WHERE AD_CLIENT_ID = ?
         AND TREETYPE = 'EV'
         
     </Sql>
@@ -145,7 +145,7 @@
     <Sql>
         SELECT NAME
         FROM AD_CLIENT
-        WHERE AD_CLIENT_ID = TO_NUMBER(?)
+        WHERE AD_CLIENT_ID = ?
     </Sql>
     <Parameter name="client"/>
   </SqlMethod>
@@ -158,7 +158,7 @@
         WHERE C_ElementValue.AD_Org_ID IN('1') 
         AND C_ElementValue.AD_Client_ID IN('1')  
         AND C_ElementValue.IsSummary='N' 
-        AND (C_ElementValue.isActive = 'Y' OR C_ElementValue.C_ElementValue_ID = TO_NUMBER(?) ) 
+        AND (C_ElementValue.isActive = 'Y' OR C_ElementValue.C_ElementValue_ID = ? ) 
         AND 1=1
         ORDER BY C_ElementValue.Value
     ]]></Sql>
@@ -176,7 +176,7 @@
         WHERE C_ElementValue.AD_Org_ID IN('1') 
         AND C_ElementValue.AD_Client_ID IN('1')  
         AND C_ElementValue.IsSummary='N' 
-        AND (C_ElementValue.isActive = 'Y' OR C_ElementValue.C_ElementValue_ID = TO_NUMBER(?) ) 
+        AND (C_ElementValue.isActive = 'Y' OR C_ElementValue.C_ElementValue_ID = ? ) 
         AND 1=1
         AND c_acctschema_element.ELEMENTTYPE = 'AC'
         and c_acctschema_element.c_acctschema_id = C_ElementValue.c_element_id         

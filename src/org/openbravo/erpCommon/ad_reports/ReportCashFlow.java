@@ -95,8 +95,8 @@ void printPageFrame1(HttpServletResponse response, VariablesSecureApp vars, Stri
 
       String strArray = arrayEntry(vars, strcAcctSchemaId);
 
-      xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-      xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("help", strHelp);
       xmlDocument.setParameter("cAcctschemaId", strcAcctSchemaId);    
       xmlDocument.setParameter("accounting", strAccountingReportId);
@@ -192,8 +192,8 @@ void printPagePopUp (HttpServletResponse response, VariablesSecureApp vars, Stri
       strTreeOrg = "";
 
       xmlDocument.setParameter("title", dataTree[0].name);
-      xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-      xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
       xmlDocument.setParameter("theme", vars.getTheme());
       xmlDocument.setData("structure", dataTree);
       response.setContentType("text/html; charset=UTF-8");
@@ -242,7 +242,7 @@ void printPageDepurar (HttpServletResponse response, VariablesSecureApp vars, St
         myError.setMessage(Utility.messageBD(this, "MissingCashFlowStatements", vars.getLanguage()));
         vars.setMessage("ReportCashFlow", myError);
       }
-      xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
       if (log4j.isDebugEnabled()) log4j.debug("language");
       xmlDocument.setParameter("org", strOrg);
       if (log4j.isDebugEnabled()) log4j.debug("org");

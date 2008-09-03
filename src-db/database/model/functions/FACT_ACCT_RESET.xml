@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION FACT_ACCT_RESET">
     <function name="FACT_ACCT_RESET" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -36,15 +36,15 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1; -- 0=failure
-  v_Record_ID NUMBER;
-  v_AD_User_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
+  v_AD_User_ID VARCHAR2(32);
   v_DateColumn VARCHAR2(2000):='';
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     -- Parameter Variables
-    v_AD_Client_ID NUMBER(10) ;
-    v_AD_Table_ID NUMBER(10) ;
+    v_AD_Client_ID VARCHAR2(32) ;
+    v_AD_Table_ID VARCHAR2(32) ;
     v_DeletePosting VARCHAR(1):='N';
     --
     v_Updated NUMBER(10):=0;
@@ -76,10 +76,10 @@
       v_Record_ID:=Cur_Parameter.Record_ID;
       v_AD_User_ID:=Cur_Parameter.AD_User_ID;
       IF(Cur_Parameter.ParameterName='AD_Client_ID') THEN
-        v_AD_Client_ID:=Cur_Parameter.P_Number;
+        v_AD_Client_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  AD_Client_ID=' || v_AD_Client_ID) ;
       ELSIF(Cur_Parameter.ParameterName='AD_Table_ID') THEN
-        v_AD_Table_ID:=Cur_Parameter.P_Number;
+        v_AD_Table_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  AD_Table_ID=' || v_AD_Table_ID) ;
       ELSIF(Cur_Parameter.ParameterName='DeletePosting') THEN
         v_DeletePosting:=Cur_Parameter.P_String;
@@ -100,7 +100,7 @@
         FROM AD_CLIENT
         WHERE(v_AD_Client_ID IS NULL
           OR AD_Client_ID=v_AD_Client_ID)
-          AND AD_Client_ID<>0
+          AND AD_Client_ID<>'0'
         )
       LOOP
         FOR Cur_Tables IN
@@ -150,22 +150,22 @@
                       AND fa_aux.RECORD_ID = FACT_ACCT.RECORD_ID
                     )
                 AND Record_ID=(
-                      CASE COALESCE(v_Record_ID, 0) WHEN 0 THEN Record_ID ELSE v_Record_ID
+                      CASE COALESCE(v_Record_ID, '0') WHEN '0' THEN Record_ID ELSE v_Record_ID
                       END)
                 AND AD_Client_ID = Cur_Clients.AD_Client_ID
               ) LOOP
-              IF(Cur_Tables.AD_Table_ID IN(472, 473)) THEN
+              IF(Cur_Tables.AD_Table_ID IN('472', '473')) THEN
                 v_DateColumn:='DATETRX';
-              ELSIF(Cur_Tables.AD_Table_ID IN(392)) THEN
+              ELSIF(Cur_Tables.AD_Table_ID IN('392')) THEN
                 v_DateColumn:='STATEMENTDATE';
-              ELSIF(Cur_Tables.AD_Table_ID IN(321, 323, 325)) THEN
+              ELSIF(Cur_Tables.AD_Table_ID IN('321', '323', '325')) THEN
                 v_DateColumn:='MOVEMENTDATE';
               ELSE
                 v_DateColumn:='DATEACCT';
               END IF;
-              v_Cmd:='UPDATE ' || Cur_Tables.TableName  || ' SET Posted=''N'', Processing=''N'' WHERE AD_Client_ID='  || Cur_Clients.AD_Client_ID
-        || ' AND (Posted<>''N'' OR Posted IS NULL OR Processing<>''N'' OR Processing IS NULL) AND '   ||
-        Cur_Tables.TableName||'_ID = '||Cur_Fact_Acct.Record_ID;
+              v_Cmd:='UPDATE ' || Cur_Tables.TableName  || ' SET Posted=''N'', Processing=''N'' WHERE AD_Client_ID='''  || Cur_Clients.AD_Client_ID
+        || ''' AND (Posted<>''N'' OR Posted IS NULL OR Processing<>''N'' OR Processing IS NULL) AND '   ||
+        Cur_Tables.TableName||'_ID = '''||Cur_Fact_Acct.Record_ID||'''';
               -- DBMS_OUTPUT.PUT_LINE('  executing: ' || v_Cmd);
               EXECUTE IMMEDIATE v_Cmd;
               v_rowcount:=SQL%ROWCOUNT;
@@ -194,21 +194,21 @@
               v_Deleted:=v_Deleted + v_rowcount;
               DBMS_OUTPUT.PUT_LINE('  deleted=' || v_rowcount) ;
             END LOOP;
-        v_Cmd:='UPDATE ' || Cur_Tables.TableName  || ' SET Posted=''N'', Processing=''N'' WHERE AD_Client_ID='  || Cur_Clients.AD_Client_ID
-        || ' AND (Posted=''Y'' OR Processing<>''N'' OR Processing IS NULL) AND NOT EXISTS (SELECT 1 FROM FACT_ACCT WHERE AD_TABLE_ID =' || Cur_Tables.AD_Table_ID ||
-        ' AND RECORD_ID = ' || Cur_Tables.TableName || '_ID AND AD_CLIENT_ID =' || Cur_Clients.AD_Client_ID || ' )';
+        v_Cmd:='UPDATE ' || Cur_Tables.TableName  || ' SET Posted=''N'', Processing=''N'' WHERE AD_Client_ID='''  || Cur_Clients.AD_Client_ID
+        || ''' AND (Posted=''Y'' OR Processing<>''N'' OR Processing IS NULL) AND NOT EXISTS (SELECT 1 FROM FACT_ACCT WHERE AD_TABLE_ID =''' || Cur_Tables.AD_Table_ID ||
+        ''' AND RECORD_ID = ' || Cur_Tables.TableName || '_ID AND AD_CLIENT_ID =''' || Cur_Clients.AD_Client_ID || ''' )';
             -- DBMS_OUTPUT.PUT_LINE('  executing: ' || v_Cmd);
             EXECUTE IMMEDIATE v_Cmd;
             v_rowcount:=SQL%ROWCOUNT;
             v_Updated:=v_Updated + v_rowcount;
             DBMS_OUTPUT.PUT_LINE('  updated=' || v_rowcount) ;
           ELSE
-            v_Cmd:='UPDATE ' || Cur_Tables.TableName  || ' SET Processing=''N'' WHERE AD_Client_ID='  || Cur_Clients.AD_Client_ID  || ' AND Processing<>''N'' OR Processing IS NULL';
+            v_Cmd:='UPDATE ' || Cur_Tables.TableName  || ' SET Processing=''N'' WHERE AD_Client_ID='''  || Cur_Clients.AD_Client_ID  || ''' AND Processing<>''N'' OR Processing IS NULL';
             EXECUTE IMMEDIATE v_Cmd;
             v_rowcount:=SQL%ROWCOUNT;
             v_Updated:=v_Updated + v_rowcount;
             DBMS_OUTPUT.PUT_LINE('  unlocked=' || v_rowcount) ;
-            v_Cmd:='UPDATE ' || Cur_Tables.TableName  || ' SET Posted=''N'' WHERE AD_Client_ID='  || Cur_Clients.AD_Client_ID  || ' AND Posted NOT IN (''Y'',''N'') AND Processed=''Y''';
+            v_Cmd:='UPDATE ' || Cur_Tables.TableName  || ' SET Posted=''N'' WHERE AD_Client_ID='''  || Cur_Clients.AD_Client_ID  || ''' AND Posted NOT IN (''Y'',''N'') AND Processed=''Y''';
             EXECUTE IMMEDIATE v_Cmd;
             v_rowcount:=SQL%ROWCOUNT;
             v_Updated:=v_Updated + v_rowcount;

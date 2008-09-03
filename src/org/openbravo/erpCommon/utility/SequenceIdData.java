@@ -81,105 +81,20 @@ public class SequenceIdData implements FieldProvider {
     vector.copyInto(objectSequenceIdData);
     return(objectSequenceIdData);
   }
-  /*
-     public static String getSequence(ConnectionProvider connectionProvider, String table, String client)
-     throws ServletException {
-   String strSql = "";
-   strSql = strSql + "";
-   strSql = strSql + "      SELECT CURRENTNEXT, CURRENTNEXTSYS FROM AD_SEQUENCE WHERE NAME=? AND IsActive = 'Y' AND IsTableID = 'Y' AND IsAutoSequence = 'Y'";
-   strSql = strSql + "    ";
-
-   PreparedStatement st = connectionProvider.getPreparedStatement(strSql);
-   ResultSet result;
-   Vector vector = new Vector(0);
-   String resultado = "", v_NextNoSys = "", v_NextNo = "";
-
-   int iParameter = 0;
-   try {
-   iParameter++; UtilSql.setValue(st, iParameter, 12, "Test", table);
-  //iParameter++; UtilSql.setValue(st, iParameter, 12, "Test", client);
-
-  result = st.executeQuery();
-  long countRecord = 0;
-  while(result.next()) {
-  countRecord++;
-  v_NextNoSys = UtilSql.getValue(result, "CURRENTNEXTSYS");
-  v_NextNo = UtilSql.getValue(result, "CURRENTNEXT");
+  
+  /**
+   * Returns a new UUID
+   * @return
+   */
+  public static String getUUID(){
+	return UUID.randomUUID().toString().replace("-", "").toUpperCase();
   }
-  result.close();
-  } catch(SQLException e){
-  System.out.println("Error of SQL in query: " + strSql + "Exception:"+ e);
-  throw new ServletException(Integer.toString(e.getErrorCode()));
-  } finally {
-  connectionProvider.releasePreparedStatement(st);
-  }
-
-  if (v_NextNoSys!=null && !v_NextNoSys.equals("") && Integer.valueOf(v_NextNoSys).intValue() != -1 && Integer.valueOf(client).intValue() < 1000000) {
-  if (updateSequence(connectionProvider, table, "CURRENTNEXTSYS")<=0) throw new ServletException("0 lines updated at AD_Sequence");
-  resultado = v_NextNoSys;
-  } else {
-  if (updateSequence(connectionProvider, table, "CURRENTNEXT")<=0) throw new ServletException("0 lines updated at AD_Sequence");
-  resultado = v_NextNo;
-  }
-  return(resultado);
-     }
-
-     public static int updateSequence(ConnectionProvider connectionProvider, String table, String column)
-     throws ServletException {
-   String strSql = "";
-   strSql = strSql + "";
-   strSql = strSql + "        UPDATE AD_SEQUENCE SET UPDATED=now(), " + column + "=" + column + " + IncrementNo ";
-   strSql = strSql + "        WHERE NAME = ?";
-   strSql = strSql + "      ";
-
-   PreparedStatement st = connectionProvider.getPreparedStatement(strSql);
-   int updateCount = 0;
-
-   int iParameter = 0;
-   try {
-   iParameter++; UtilSql.setValue(st, iParameter, 12, null, table);
-
-   updateCount = st.executeUpdate();
-   } catch(SQLException e){
-   System.out.println("Error of SQL in query: " + strSql + "Exception:"+ e);
-   throw new ServletException(Integer.toString(e.getErrorCode()));
-   } finally {
-   connectionProvider.releasePreparedStatement(st);
-   }
-   return(updateCount);
-   }*/
-
-  /**Get the sequence for the specified table 
+  
+  /**Get the sequence for the specified table
+   * this shouldn't be used anymore, use instead getUUID() 
   */
-  public static String getSequence(ConnectionProvider conn, String table, String client)
-    throws ServletException {
-    /*String strSql = "";
-      strSql = strSql + "";
-      strSql = strSql + "        CALL AD_Sequence_Next(?,?,?)";
-      strSql = strSql + "      ";
-
-      CallableStatement st = conn.getCallableStatement(strSql);
-      String object;
-
-      int iParameter = 0;*/
-    String object;
-    CSResponse response = SequenceData.getSequence(conn, table, client);
-    object = response.razon;
-    /*try {
-      iParameter++; UtilSql.setValue(st, iParameter, 12, "Test", table);
-      iParameter++; UtilSql.setValue(st, iParameter, 12, "Test", client);
-      int iParametersequence = iParameter + 1;
-      iParameter++; st.registerOutParameter(iParameter, 12);
-
-      st.execute();
-      object = UtilSql.getStringCallableStatement(st, iParametersequence);
-      } catch(SQLException e){
-      System.out.println("Error of SQL in query: getSequence Exception:"+ e);
-      throw new ServletException(Integer.toString(e.getErrorCode()));
-      } finally {
-      conn.releasePreparedStatement(st);
-      }*/
-    return(object);
+  public static String getSequence(ConnectionProvider conn, String table, String client) {
+    return getUUID();
   }
   
   /**Get the sequence for the specified table 

@@ -21,7 +21,7 @@
   <template file="ReportCashEdit.html"/>
   <PARAMETER id="paramSumAmount" name="sumAmount"/>
   <PARAMETER id="param0" name="Param0" default="0"/>
-	<PARAMETER id="paramDirection" name="direction" default=""/>
+	<PARAMETER id="paramDirectory" name="directory" default=""/>
 	<PARAMETER id="paramLanguage" name="language" default=""/>
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <structure name="structure1">

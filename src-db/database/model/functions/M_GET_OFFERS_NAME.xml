@@ -4,10 +4,10 @@
       <parameter name="p_date" type="TIMESTAMP" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_bpartner_id" type="NUMERIC" mode="in">
+      <parameter name="p_bpartner_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_product_id" type="NUMERIC" mode="in">
+      <parameter name="p_product_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -26,7 +26,7 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-  v_Offer_ID NUMBER;
+  v_Offer_ID VARCHAR2(32);
   TYPE RECORD IS REF CURSOR;
     Cur_Offer RECORD;
     v_Names varchar2(10000) := NULL;

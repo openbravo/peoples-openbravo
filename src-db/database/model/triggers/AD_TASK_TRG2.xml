@@ -22,8 +22,8 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-  v_ID NUMBER(10) ;
-  v_ID_MAP     NUMBER(10) ;
+  v_ID VARCHAR2(32) ;
+  v_ID_MAP     VARCHAR2(32) ;
   v_WindowName VARCHAR2(60):='ad_tasks';
   v_ClassName  VARCHAR2(60) ;
 BEGIN

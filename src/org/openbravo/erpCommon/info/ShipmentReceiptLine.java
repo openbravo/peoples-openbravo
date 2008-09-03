@@ -152,8 +152,8 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/ShipmentReceiptLine").createXmlDocument();
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("documentno", strDocumentNo);
     xmlDocument.setParameter("datefrom", strDateFrom);
@@ -193,10 +193,10 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
   String generateResult(ShipmentReceiptLineData[] data) throws IOException, ServletException {
     StringBuffer html = new StringBuffer();
     
-    html.append("\nfunction depurarSelector() {\n");
-    html.append("var clave = \"" + data[0].mInoutlineId + "\";\n");
-    html.append("var texto = \"" + Replace.replace(data[0].lineText, "\"", "\\\"") + "\";\n");
-    html.append("parent.opener.closeSearch(\"SAVE\", clave, texto);\n");
+    html.append("\nfunction validateSelector() {\n");
+    html.append("var key = \"" + data[0].mInoutlineId + "\";\n");
+    html.append("var text = \"" + Replace.replace(data[0].lineText, "\"", "\\\"") + "\";\n");
+    html.append("parent.opener.closeSearch(\"SAVE\", key, text);\n");
     html.append("}\n");
     return html.toString();
   }

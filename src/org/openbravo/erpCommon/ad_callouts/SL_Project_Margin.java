@@ -130,7 +130,7 @@ public class SL_Project_Margin extends HttpSecureAppServlet {
     
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "frameAplicacion");
+    xmlDocument.setParameter("frameName", "appFrame");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

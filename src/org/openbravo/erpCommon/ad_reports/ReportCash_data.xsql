@@ -38,7 +38,7 @@
       AND C_CASH.C_CASH_ID=C_CASHLINE.C_CASH_ID
       AND C_CASHBOOK.C_CURRENCY_ID=C_CURRENCY.C_CURRENCY_ID
       AND C_CASHLINE.CASHTYPE=AD_REF_LIST.VALUE
-      AND AD_REFERENCE_ID=217
+      AND AD_REFERENCE_ID='217'
       AND C_CASH.AD_Client_ID IN ('1') 
       AND C_CASH.AD_ORG_ID IN ('1') 
       AND 1=1
@@ -50,7 +50,7 @@
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND C_CASH.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[AND C_CASH.STATEMENTDATE >= TO_DATE(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND C_CASH.STATEMENTDATE < TO_DATE(?)]]></Parameter>
-    <Parameter name="cashBook" optional="true" after="AND 1=1"><![CDATA[AND C_CASHBOOK.C_CASHBOOK_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="cashBook" optional="true" after="AND 1=1"><![CDATA[AND C_CASHBOOK.C_CASHBOOK_ID = ?]]></Parameter>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
@@ -66,7 +66,7 @@
       AND C_CASH.AD_Client_ID IN ('1') 
       AND C_CASH.AD_ORG_ID IN ('1') 
       AND C_CASH.STATEMENTDATE < TO_DATE(?)
-      AND C_CASH.C_CASHBOOK_ID = TO_NUMBER(?)
+      AND C_CASH.C_CASHBOOK_ID = ?
       AND C_CASH.PROCESSED='Y'
       ]]></Sql>
     <Parameter name="adUserClient" type="replace" optional="true" after="AND C_CASH.AD_Client_ID IN (" text="'1'"/>

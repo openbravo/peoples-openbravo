@@ -21,7 +21,7 @@
   <template file="ReportAccountingCountDimensionalAnalysesEdit.html"/>
  
   <PARAMETER id="paramLanguage" name="language" default=""/>
-  <PARAMETER id="paramDirection" name="direction" default=""/>
+  <PARAMETER id="paramDirectory" name="directory" default=""/>
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="param100" name="constante" default="100"/>
   

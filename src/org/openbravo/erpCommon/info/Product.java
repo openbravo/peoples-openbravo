@@ -176,8 +176,8 @@ public class Product extends HttpSecureAppServlet {
     } else {
     xmlDocument.setParameter("key", strKeyValue);
     }
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("name", strNameValue);
     xmlDocument.setParameter("warehouse", strWarehouse);
@@ -216,9 +216,9 @@ public class Product extends HttpSecureAppServlet {
   String generateResult(ProductData[] data, String strWarehouse, String strPriceListVersion) throws IOException, ServletException {
     StringBuffer html = new StringBuffer();
     
-    html.append("\nfunction depurarSelector() {\n");
-    html.append("var clave = \"" + data[0].mProductId + "\";\n");
-    html.append("var texto = \"" + Replace.replace(data[0].name, "\"", "\\\"") + "\";\n");
+    html.append("\nfunction validateSelector() {\n");
+    html.append("var key = \"" + data[0].mProductId + "\";\n");
+    html.append("var text = \"" + Replace.replace(data[0].name, "\"", "\\\"") + "\";\n");
     html.append("var parameter = new Array(\n");
     html.append("new SearchElements(\"_UOM\", true, \"" + data[0].cUomId + "\"),\n");
     html.append("new SearchElements(\"_PSTD\", true, \"" + data[0].pricestd + "\"),\n");
@@ -226,7 +226,7 @@ public class Product extends HttpSecureAppServlet {
     html.append("new SearchElements(\"_CURR\", true, \"" + data[0].cCurrencyId + "\"),\n");
     html.append("new SearchElements(\"_PLIST\", true, \"" + data[0].pricelist + "\")\n");
     html.append(");\n");
-    html.append("parent.opener.closeSearch(\"SAVE\", clave, texto, parameter);\n");
+    html.append("parent.opener.closeSearch(\"SAVE\", key, text, parameter);\n");
     html.append("}\n");
     return html.toString();
   }

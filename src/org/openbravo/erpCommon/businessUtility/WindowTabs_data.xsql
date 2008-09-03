@@ -29,7 +29,7 @@
         '' AS ID, '' AS Action
         from ad_tab t left join ad_tab_trl t_trl on t.ad_tab_id = t_trl.ad_tab_id
                               and t_trl.ad_language = ?
-        where t.ad_window_ID = TO_NUMBER(?)
+        where t.ad_window_id = ?
         and t.isactive = 'Y'
         order by t.seqno, t.tablevel
        ]]>
@@ -45,7 +45,7 @@
         from ad_menu m left join ad_menu_trl m_trl on m.ad_menu_id = m_trl.ad_menu_id
                               and m_trl.ad_language = ?
         where m.isactive = 'Y'
-        and m.ad_menu_ID = TO_NUMBER(?)
+        and m.ad_menu_id = ?
        ]]>
       </Sql>
       <Parameter name="adTabId"/>
@@ -55,9 +55,9 @@
   <SqlMethod name="selectMenu" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        select AD_Parent_Menu_Element(m.AD_Menu_ID, m.AD_Client_ID, TO_CHAR(?)) AS NAME
+        select AD_Parent_Menu_Element(m.AD_Menu_ID, m.AD_Client_ID, ?) AS NAME
         from ad_menu m 
-        where m.ad_window_ID = TO_NUMBER(?)
+        where m.ad_window_id = ?
         and m.isactive = 'Y'
         and m.action = 'W'
        ]]>
@@ -68,9 +68,9 @@
   <SqlMethod name="selectMenuManual" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        select AD_Parent_Menu_Element(m.AD_Menu_ID, m.AD_Client_ID, TO_CHAR(?)) AS NAME
+        select AD_Parent_Menu_Element(m.AD_Menu_ID, m.AD_Client_ID, ?) AS NAME
         from ad_menu m 
-        where m.ad_menu_ID = TO_NUMBER(?)
+        where m.ad_menu_id = ?
        ]]>
       </Sql>
       <Parameter name="adLanguage"/>
@@ -84,11 +84,11 @@
                                                   and mt.ad_language = ?
         where (CASE m.action WHEN 'R' THEN 'P' 
                                   ELSE m.action END) = (CASE ? WHEN 'R' THEN 'P' ELSE ? END) 
-        and (m.ad_window_ID = TO_NUMBER(?) 
-        or m.ad_process_ID = TO_NUMBER(?) 
-        or m.ad_form_ID = TO_NUMBER(?) 
-        or m.ad_task_ID = TO_NUMBER(?) 
-        or m.ad_workflow_ID = TO_NUMBER(?) 
+        and (m.ad_window_ID = ? 
+        or m.ad_process_ID = ? 
+        or m.ad_form_ID = ? 
+        or m.ad_task_ID = ? 
+        or m.ad_workflow_ID = ? 
         )
        ]]>
       </Sql>
@@ -128,7 +128,7 @@
       <Sql><![CDATA[
         select ad_process_id as ad_tab_id, 'P' as action
           from ad_process
-          where ad_process_id = to_number(?)
+          where ad_process_ID = ?
        ]]>
       </Sql>
       <Parameter name="processId"/>
@@ -140,7 +140,7 @@
         select coalesce(mt.name, m.name) as name 
         from ad_menu m left join ad_menu_trl mt on m.ad_menu_id = mt.ad_menu_id 
                                                 and mt.ad_language = ?
-        where m.ad_window_ID = TO_NUMBER(?) 
+        where m.ad_window_id = ? 
         and m.action = 'W' 
        ]]>
       </Sql>

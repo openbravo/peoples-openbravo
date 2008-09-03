@@ -166,7 +166,7 @@
 	<field name="PLANNEDPOPRICE" class="java.math.BigDecimal"/>
 	<field name="MWAREHOUSE" class="java.lang.String"/>
 	<field name="PRODUCTNAME" class="java.lang.String"/>
-	<field name="C_PROJECT_ID" class="java.math.BigDecimal"/>
+	<field name="C_PROJECT_ID" class="java.lang.String"/>
 	<field name="MOVEMENTQTY" class="java.math.BigDecimal"/>
 	<field name="QUANTITYORDER" class="java.math.BigDecimal"/>
 	<field name="BPARTNERNAME" class="java.lang.String"/>

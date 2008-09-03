@@ -51,8 +51,8 @@
         AND O.AD_ORG_ID = RO.AD_ORG_ID 
         AND W.ISACTIVE = 'Y' 
         AND P.ISACTIVE = 'Y'
-        AND RO.AD_ROLE_ID = TO_NUMBER(?) 
-        AND (P.C_BPARTNER_ID IS NULL OR C_BPARTNER_ID = COALESCE(to_number(?), C_BPARTNER_ID)) 
+        AND RO.AD_ROLE_ID = ? 
+        AND (P.C_BPARTNER_ID IS NULL OR C_BPARTNER_ID = COALESCE(?, C_BPARTNER_ID)) 
         AND W.AD_CLIENT_ID IN ('1') 
         AND (T.QtyOnHand <> 0 OR COALESCE(T.QtyOrderOnHand, 0) <> 0) 
         ORDER BY P.VALUE
@@ -63,7 +63,7 @@
         <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
         <Parameter name="key" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Value) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="name" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Name) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="warehouse" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND W.M_Warehouse_ID = TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="warehouse" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND W.M_Warehouse_ID = ? ]]></Parameter>
         <Parameter name="adRoleId"/>
         <Parameter name="cBpartnerId"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="W.AD_CLIENT_ID IN (" text="'1'"/>
@@ -104,8 +104,8 @@
         AND O.AD_ORG_ID = RO.AD_ORG_ID 
         AND W.ISACTIVE = 'Y' 
         AND P.ISACTIVE = 'Y'
-        AND RO.AD_ROLE_ID = TO_NUMBER(?) 
-        AND (P.C_BPARTNER_ID IS NULL OR C_BPARTNER_ID = COALESCE(to_number(?), C_BPARTNER_ID)) 
+        AND RO.AD_ROLE_ID = ? 
+        AND (P.C_BPARTNER_ID IS NULL OR C_BPARTNER_ID = COALESCE(?, C_BPARTNER_ID)) 
         AND W.AD_CLIENT_ID IN ('1') 
         AND (T.QtyOnHand <> 0 OR COALESCE(T.QtyOrderOnHand, 0) <> 0) 
         ORDER BY P.VALUE
@@ -117,7 +117,7 @@
         <Parameter name="adLanguage"/>
         <Parameter name="key" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Value) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="name" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND UPPER(P.Name) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="warehouse" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND W.M_Warehouse_ID = TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="warehouse" optional="true" after="WHERE T.M_PRODUCT_ID = P.M_PRODUCT_ID "><![CDATA[ AND W.M_Warehouse_ID = ? ]]></Parameter>
         <Parameter name="adRoleId"/>
         <Parameter name="cBpartnerId"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="W.AD_CLIENT_ID IN (" text="'1'"/>  
@@ -140,7 +140,7 @@
         FROM M_PRODUCT P left join M_ATTRIBUTESETINSTANCE A  on P.M_ATTRIBUTESETINSTANCE_ID = A.M_ATTRIBUTESETINSTANCE_ID, 
              C_UOM U1
         WHERE P.C_UOM_ID = U1.C_UOM_ID 
-        AND (P.C_BPARTNER_ID IS NULL OR C_BPARTNER_ID = COALESCE(to_number(?), C_BPARTNER_ID)) 
+        AND (P.C_BPARTNER_ID IS NULL OR C_BPARTNER_ID = COALESCE(?, C_BPARTNER_ID)) 
         AND P.AD_CLIENT_ID IN ('1') 
         AND P.AD_ORG_ID IN ('1') 
         AND P.ISACTIVE = 'Y'
@@ -174,7 +174,7 @@
              C_UOM U1    left join C_UOM_TRL U1TRL on U1TRL.C_UOM_ID= U1.C_UOM_ID 
                                                   AND U1TRL.AD_LANGUAGE= ?
         WHERE P.C_UOM_ID = U1.C_UOM_ID 
-        AND (P.C_BPARTNER_ID IS NULL OR C_BPARTNER_ID = COALESCE(to_number(?), C_BPARTNER_ID)) 
+        AND (P.C_BPARTNER_ID IS NULL OR C_BPARTNER_ID = COALESCE(?, C_BPARTNER_ID)) 
         AND P.AD_CLIENT_ID IN ('1') 
         AND P.AD_ORG_ID IN ('1') 
         AND P.ISACTIVE = 'Y'
@@ -200,7 +200,7 @@
         SELECT value as value
         FROM M_Product 
         WHERE UPPER(AD_COLUMN_IDENTIFIER(TO_CHAR('M_Product'), TO_CHAR(M_Product_ID), TO_CHAR(?))) = UPPER(?)
-        AND M_Product_ID = TO_NUMBER(?) 
+        AND M_Product_ID = ? 
         ORDER BY value
       ]]></Sql>
         <Parameter name="language"/>

@@ -50,7 +50,7 @@ BEGIN
       INSERT
       INTO C_Tax_Acct
         (
-          C_Tax_ID, C_AcctSchema_ID, AD_Client_ID,
+          C_Tax_Acct_ID, C_Tax_ID, C_AcctSchema_ID, AD_Client_ID,
           AD_Org_ID, IsActive, Created,
           CreatedBy, Updated, UpdatedBy,
           T_Due_Acct, T_Liability_Acct, T_Credit_Acct,
@@ -58,7 +58,7 @@ BEGIN
         )
         VALUES
         (
-          :new.C_Tax_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
+          get_uuid(), :new.C_Tax_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
           :new.AD_ORG_ID,  'Y', now(),
           :new.CreatedBy, now(), :new.UpdatedBy,
           Cur_Defaults.T_Due_Acct, Cur_Defaults.T_Liability_Acct, Cur_Defaults.T_Credit_Acct,
@@ -70,13 +70,13 @@ BEGIN
     INSERT
     INTO C_Tax_Trl
       (
-        C_Tax_ID, AD_Language, AD_Client_ID,
+        C_Tax_Trl_ID, C_Tax_ID, AD_Language, AD_Client_ID,
         AD_Org_ID, IsActive, Created,
         CreatedBy, Updated, UpdatedBy,
         Name, Description, TaxIndicator,
         IsTranslated
       )
-    SELECT :new.C_Tax_ID,
+    SELECT get_uuid(), :new.C_Tax_ID,
       AD_Language, :new.AD_Client_ID, :new.AD_Org_ID,
       :new.IsActive, :new.Created, :new.CreatedBy,
       :new.Updated, :new.UpdatedBy, :new.Name,

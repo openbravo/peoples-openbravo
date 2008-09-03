@@ -24,14 +24,14 @@
 <TITLE>Sale invoices report</TITLE>
  <link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Main_Report.css" id="paramCSS" />
-    <script language="JavaScript" type="text/javascript" id="paramDirection">
-      var baseDirection = "../../../../../web/";
+    <script language="JavaScript" type="text/javascript" id="paramDirectory">
+      var baseDirectory = "../../../../../web/";
       </script>
       <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript">
       </script>
       <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
       <script language="JavaScript" type="text/javascript" id="paramLanguage">
-        var LNG_POR_DEFECTO = "en_US";
+        var defaultLang = "en_US";
       </script>
       <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
@@ -80,7 +80,7 @@ function callback(paramArray) {
   	}
   }
 
-	function actualizarDatos(CommandValue, nivel1, nivel2, nivel3, nivel4, id, level, columnLevel) {
+	function updateData(CommandValue, nivel1, nivel2, nivel3, nivel4, id, level, columnLevel) {
    
     var frm = document.frmMain;
     var paramLevel = new Array (nivel1, nivel2, nivel3, nivel4);
@@ -97,11 +97,11 @@ function callback(paramArray) {
     
    
     
-    var datosLayer = readLayer("returnText" + id + paramLevel[level-1], true);
-    if (datosLayer==null || datosLayer=="") {
-      seleccionarListCompleto(frm.inpmProductId_IN);
-      seleccionarListCompleto(frm.inpcBPartnerId_IN);
-      seleccionarListCompleto(frm.inpShown);
+    var dataLayer = readLayer("returnText" + id + paramLevel[level-1], true);
+    if (dataLayer==null || dataLayer=="") {
+      markCheckedAllElements(frm.inpmProductId_IN);
+      markCheckedAllElements(frm.inpcBPartnerId_IN);
+      markCheckedAllElements(frm.inpShown);
       paramXMLRequest = new Array('returnText' + id, 'buttonTree' + id);
       return submitXmlHttpRequest(callback, frm, CommandValue, "ReportAccountingCountDimensionalAnalysesFilter.html", false);
     } else {
@@ -151,7 +151,7 @@ function callback(paramArray) {
         <TABLE width="70%" align="center" id="selEliminar">
           <TR class="TableHeaderLevel1"> 
             <TD width="6%"></TD>
-            <TD width="76%"  id="fieldClassLevel"><div style="display: table-cell;"> <A href="#" onclick="actualizarDatos('OPEN', 'xx', 'yy', 'zz', 'ww', 'mm', 'pp', 'aa');return false;" onmouseover="window.status='Open';return true;" onmouseout="window.status='';return true;" id="fieldParentLevel"> 
+            <TD width="76%"  id="fieldClassLevel"><div style="display: table-cell;"> <A href="#" onclick="updateData('OPEN', 'xx', 'yy', 'zz', 'ww', 'mm', 'pp', 'aa');return false;" onmouseover="window.status='Open';return true;" onmouseout="window.status='';return true;" id="fieldParentLevel"> 
               <SPAN id="buttonTreexx" class="datawarehouseclose"></SPAN></A> <SPAN id="fieldNivel"></SPAN></div></TD>
             <TD width="18%" align="right"  id="fieldClassLevel"> 
               <SPAN id="fieldTotalAmt"></SPAN></TD>
@@ -180,7 +180,7 @@ function callback(paramArray) {
       <TABLE width="150%" align="center">
         <TR class="TableHeaderLevel1"> 
           <TD width="xx%" id="fieldPeriodWidthMargin">&nbsp;</TD>
-          <TD width="yy%" id="fieldPeriodWidthText" ><div style="display: table-cell;"><A href="#" onclick="actualizarDatos('OPEN', 'xx', 'yy', 'zz', 'ww', 'mm', 'pp', 'aa');return false;" onmouseover="window.status='Open';return true;" onmouseout="window.status='';return true;" id="fieldPeriodParentLevel"> 
+          <TD width="yy%" id="fieldPeriodWidthText" ><div style="display: table-cell;"><A href="#" onclick="updateData('OPEN', 'xx', 'yy', 'zz', 'ww', 'mm', 'pp', 'aa');return false;" onmouseover="window.status='Open';return true;" onmouseout="window.status='';return true;" id="fieldPeriodParentLevel"> 
             <SPAN id="buttonTreexy" class="datawarehouseclose"></SPAN></A> <SPAN id="fieldPeriodNivel"></SPAN></div></TD>
           <DIV id="sectionPeriodDetail"> 
             <TD width="6%" align="right" id="fieldPeriodClassLevel" > 
@@ -215,7 +215,7 @@ function callback(paramArray) {
           <TR class="TableHeaderLevel1"> 
             <TD width="xx%" id="fieldComparativeWidthMargin"></TD>
             <TD width="yy%" id="fieldComparativeWidthText" ><div style="display: table-cell;">
-              <A href="#" onclick="actualizarDatos('OPEN', 'xx', 'yy', 'zz', 'ww', 'mm', 'pp', 'aa');return false;" onmouseover="window.status='Open';return true;" onmouseout="window.status='';return true;" id="fieldComparativeParentLevel"> 
+              <A href="#" onclick="updateData('OPEN', 'xx', 'yy', 'zz', 'ww', 'mm', 'pp', 'aa');return false;" onmouseover="window.status='Open';return true;" onmouseout="window.status='';return true;" id="fieldComparativeParentLevel"> 
               <SPAN id="buttonTreexz" class="datawarehouseclose"></SPAN></A> <SPAN id="fieldComparativeNivel"></SPAN></div></TD>
             <TD width="18%" align="right"  id="fieldComparativeClassLevel"> 
               <SPAN id="fieldComparativeTotalAmt"></SPAN></TD>
@@ -257,7 +257,7 @@ function callback(paramArray) {
               <TR class="TableHeaderLevel1"> 
                 <TD width="xx%" id="fieldComparativePeriodWidthMargin">&nbsp;</TD>
                 <TD width="yy%" id="fieldComparativePeriodWidthText" ><div style="display: table-cell;">
-                  <A href="#" onclick="actualizarDatos('OPEN', 'xx', 'yy', 'zz', 'ww', 'mm', 'pp', 'aa');return false;" onmouseover="window.status='Open';return true;" onmouseout="window.status='';return true;" id="fieldComparativePeriodParentLevel"> 
+                  <A href="#" onclick="updateData('OPEN', 'xx', 'yy', 'zz', 'ww', 'mm', 'pp', 'aa');return false;" onmouseover="window.status='Open';return true;" onmouseout="window.status='';return true;" id="fieldComparativePeriodParentLevel"> 
                   <SPAN id="buttonTreexj" class="datawarehouseclose"></SPAN></A> 
                   <SPAN id="fieldComparativePeriodNivel"></SPAN></div></TD>
               </TR>

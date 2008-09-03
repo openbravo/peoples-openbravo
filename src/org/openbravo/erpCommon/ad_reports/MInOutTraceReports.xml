@@ -21,7 +21,7 @@
   <template file="MInOutTraceReports.html"/>
   <PARAMETER id="paramChecked" name="checked" default="Y"/>
   <PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
-  <PARAMETER id="paramDirection" name="direction" default=""/>
+  <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="paramLanguage" name="paramLanguage"/>
   <PARAMETER id="paramProductId" name="mProduct" attribute="value"/>
   <PARAMETER id="paramProductDescription" name="productDescription" attribute="value"/>

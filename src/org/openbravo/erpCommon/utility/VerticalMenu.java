@@ -37,7 +37,7 @@ import org.openbravo.erpCommon.security.AccessData;
 public class VerticalMenu extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  String target = "frameAplicacion";
+  String target = "appFrame";
   
   public void init (ServletConfig config) {
     super.init(config);
@@ -91,10 +91,10 @@ public class VerticalMenu extends HttpSecureAppServlet {
     
     MenuData[] data = MenuData.selectIdentificacion(this, strCliente);
     MenuData[] dataMenu;
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     dataMenu = MenuData.select(this, vars.getLanguage(), vars.getRole(), data[0].parentId);
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     StringBuffer menu = new StringBuffer();
     menu.append(generarMenuVertical(dataMenu, strDireccion, "0", open));
     menu.append(generateMenuSearchs(vars, open));
@@ -114,8 +114,8 @@ public class VerticalMenu extends HttpSecureAppServlet {
 
   public void printPageLoadingMenu(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/VerticalMenuLoading").createXmlDocument();
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
@@ -184,7 +184,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
               strText.append(getUrlString(strDireccion, menuData[i].name, menuData[i].action, menuData[i].classname, menuData[i].mappingname, menuData[i].adWorkflowId, menuData[i].adTaskId, menuData[i].adProcessId, menuData[i].isexternalservice, menuData[i].serviceType));
             }
             strText.append("', '");
-            if (menuData[i].action.equals("F") || menuData[i].action.equals("T") || (menuData[i].action.equals("P") && menuData[i].mappingname.equals("") && !(menuData[i].isexternalservice.equals("Y") && menuData[i].serviceType.equals("PS")) )) strText.append("frameOculto");
+            if (menuData[i].action.equals("F") || menuData[i].action.equals("T") || (menuData[i].action.equals("P") && menuData[i].mappingname.equals("") && !(menuData[i].isexternalservice.equals("Y") && menuData[i].serviceType.equals("PS")) )) strText.append("hiddenFrame");
             else if (menuData[i].action.equals("L")) strText.append("_blank");
             else strText.append(target);
             strText.append("'");

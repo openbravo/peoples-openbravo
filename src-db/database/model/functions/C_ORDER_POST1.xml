@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_ORDER_POST1">
     <function name="C_ORDER_POST1" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_order_id" type="NUMERIC" mode="in">
+      <parameter name="p_order_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -26,8 +26,8 @@
   -- Logistics
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
-  v_User NUMBER;
+  v_Record_ID VARCHAR2(32);
+  v_User VARCHAR2(32);
   v_IsProcessing CHAR(1) ;
   v_IsProcessed CHAR(1) ;
   v_Result NUMBER:=1; -- Success
@@ -35,24 +35,24 @@
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     -- Record Info
-    v_Client_ID NUMBER;
-    v_Org_ID NUMBER;
+    v_Client_ID VARCHAR2(32);
+    v_Org_ID VARCHAR2(32);
 	v_Org_Name VARCHAR2(60);
-    v_UpdatedBy NUMBER;
+    v_UpdatedBy VARCHAR2(32);
     v_DocAction CHAR(2) ;
     v_DocStatus CHAR(2) ;
     v_InvoiceRule CHAR(1) ;
-    v_M_Warehouse_ID NUMBER;
-    v_DocType_ID NUMBER;
-    v_DocTypeTarget_ID NUMBER;
+    v_M_Warehouse_ID VARCHAR2(32);
+    v_DocType_ID VARCHAR2(32);
+    v_DocTypeTarget_ID VARCHAR2(32);
     v_DocSubTypeSO CHAR(2) ;
     v_IsBinding CHAR(1):='Y';
     --
     ToDeliver NUMBER;
     ToInvoice NUMBER;
     --
-    InOut_ID NUMBER;
-    Invoice_ID NUMBER;
+    InOut_ID VARCHAR2(32);
+    Invoice_ID VARCHAR2(32);
     --Added by P.SAROBE
 	v_documentno_Settlement VARCHAR2(40);
 	v_dateSettlement DATE;
@@ -61,16 +61,16 @@
 	v_dateBankstatement DATE;
 	v_nameCash VARCHAR2 (60);
 	v_dateCash DATE;
-	v_Bankstatementline_ID NUMBER;
+	v_Bankstatementline_ID VARCHAR2(32);
 	--Finish added by P.Sarobe
-    v_AuxCashLine_ID NUMBER;
-    v_CashLine_ID NUMBER;
+    v_AuxCashLine_ID VARCHAR2(32);
+    v_CashLine_ID VARCHAR2(32);
 	v_ispaid CHAR(1);
-	v_Settlement_Cancel_ID NUMBER;
-    v_Cash_ID NUMBER:=NULL;
+	v_Settlement_Cancel_ID VARCHAR2(32);
+    v_Cash_ID VARCHAR2(32):=NULL;
     v_Line NUMBER:=0;
-    v_CashBook_ID NUMBER:=NULL;
-	v_Debtpayment_ID NUMBER;
+    v_CashBook_ID VARCHAR2(32):=NULL;
+	v_Debtpayment_ID VARCHAR2(32);
     v_ISO_Code VARCHAR(10) ;
     v_DocumentNo VARCHAR2(200) ;
     v_GrandTotal NUMBER;
@@ -81,13 +81,13 @@
     v_count NUMBER;
     v_isSoTrx CHAR(1) ;
     v_Aux NUMBER;
-    v_c_Bpartner_Id NUMBER;
-    v_c_currency_id NUMBER;
-    v_C_PROJECT_ID NUMBER;
-    v_PriceList_ID NUMBER;
+    v_c_Bpartner_ID VARCHAR2(32);
+    v_c_currency_ID VARCHAR2(32);
+    v_C_PROJECT_ID VARCHAR2(32);
+    v_PriceList_ID VARCHAR2(32);
     FINISH_PROCESS BOOLEAN:=FALSE;
     END_PROCESSING BOOLEAN:=FALSE;
-    v_CBPartner_ID NUMBER;
+    v_CBPartner_ID VARCHAR2(32);
     rowcount NUMBER;
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
@@ -537,7 +537,7 @@
         v_ResultStr:='ConvertingDocType';
         IF(v_DocType_ID<>v_DocTypeTarget_ID) THEN
           -- New
-          IF(v_DocStatus='DR' OR v_DocType_ID=0) THEN
+          IF(v_DocStatus='DR' OR v_DocType_ID='0') THEN
             -- Update to Target Document Type
             WHILE(v_DocType_ID<>v_DocTypeTarget_ID)
             LOOP
@@ -615,13 +615,13 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
     CUR_BOM RECORD;
     --
     CountNo NUMBER;
-    v_PriceList_Version_ID NUMBER;
-    NextNo NUMBER;
+    v_PriceList_Version_ID VARCHAR2(32);
+    NextNo varchar2(32);
     v_Line NUMBER;
     v_FreightAmt NUMBER;
     v_ChargeAmt NUMBER;
-    v_Parner_Id NUMBER;
- --v_PriceList_ID NUMBER;
+    v_Parner_ID VARCHAR2(32);
+ --v_PriceList_ID VARCHAR2(32);
     --
   BEGIN
     LOOP
@@ -646,7 +646,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
       BEGIN
         -- last shipment
         FOR Cur_MPriceListVersion IN
-          (SELECT COALESCE(v.M_PriceList_Version_ID, 0) AS PriceList_Version_ID, o.M_PriceList_ID
+          (SELECT COALESCE(v.M_PriceList_Version_ID, '0') AS PriceList_Version_ID, o.M_PriceList_ID
           FROM M_PRICELIST_VERSION v,
             C_ORDER o
           WHERE v.M_PriceList_ID=o.M_PriceList_ID
@@ -717,7 +717,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
             VALUES
             (
               NextNo, CUR_BOM_Line.AD_Client_ID, CUR_BOM_Line.AD_Org_ID, CUR_BOM_Line.IsActive,
-              now(), 0, now(), 0,
+              now(), '0', now(), '0',
               CUR_BOM_Line.C_Order_ID, v_Line, CUR_BOM_Line.C_BPartner_ID, CUR_BOM_Line.C_BPartner_Location_ID,
               CUR_BOM_Line.DateOrdered, CUR_BOM_Line.DatePromised, CUR_BOM_Line.DateDelivered, CUR_BOM_Line.DateInvoiced,
               CUR_BOM.Description, CUR_BOM.M_ProductBOM_ID, CUR_BOM_Line.M_Warehouse_ID, CUR_BOM_Line.DirectShip,
@@ -953,8 +953,8 @@ IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN
   */
   BEGIN
     v_ResultStr:='OrderCompleteCheck';
-    SELECT SUM(QtyOrdered*C_OrderLine_ID) -SUM(QtyDelivered*C_OrderLine_ID),
-      SUM(QtyOrdered*C_OrderLine_ID) -SUM(QtyInvoiced*C_OrderLine_ID)
+    SELECT SUM(QtyOrdered*hex_to_int(C_OrderLine_ID)) -SUM(QtyDelivered*hex_to_int(C_OrderLine_ID)),
+      SUM(QtyOrdered*hex_to_int(C_OrderLine_ID)) -SUM(QtyInvoiced*hex_to_int(C_OrderLine_ID))
     INTO ToDeliver,
       ToInvoice
     FROM C_ORDERLINE
@@ -1025,7 +1025,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
     v_ResultStr:='CreatePreInvoice';
     C_Invoice_Create(NULL, Invoice_ID, v_Record_ID) ;
     DBMS_OUTPUT.PUT_LINE('  PreInvoice - ' || Invoice_ID) ;
-    IF(Invoice_ID=0) THEN
+    IF(Invoice_ID='0') THEN
       RAISE_APPLICATION_ERROR(-20000, '@PreInvoiceCreateFailed@');
     END IF;
     IF(NOT END_PROCESSING) THEN
@@ -1074,7 +1074,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
       RAISE_APPLICATION_ERROR(-20000, SUBSTR(SQLERRM,12,2000)) ;
     END;
     DBMS_OUTPUT.PUT_LINE('  Shipment - ' || InOut_ID) ;
-    IF(InOut_ID=0) THEN
+    IF(InOut_ID='0') THEN
       RAISE_APPLICATION_ERROR(-20000, '@InOutCreateFailed@');
 	ELSE
 	SELECT documentno
@@ -1092,7 +1092,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
         v_ResultStr:='CreateInvoice';
         C_Invoice_Create(NULL, Invoice_ID, v_Record_ID) ;
         DBMS_OUTPUT.PUT_LINE('  Invoice - ' || Invoice_ID) ;
-        IF(Invoice_ID IS NULL OR Invoice_ID=0) THEN
+        IF(Invoice_ID IS NULL OR Invoice_ID='0') THEN
           RAISE_APPLICATION_ERROR(-20000, '@InvoiceCreateFailed@');
 		ELSE
 		SELECT documentno
@@ -1109,8 +1109,8 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
   /**
   * Final Completeness check
   */
-  SELECT SUM(QtyOrdered*C_OrderLine_ID) -SUM(QtyDelivered*C_OrderLine_ID),
-    SUM(QtyOrdered*C_OrderLine_ID) -SUM(QtyInvoiced*C_OrderLine_ID)
+  SELECT SUM(QtyOrdered*hex_to_int(C_OrderLine_ID)) -SUM(QtyDelivered*hex_to_int(C_OrderLine_ID)),
+    SUM(QtyOrdered*hex_to_int(C_OrderLine_ID)) -SUM(QtyInvoiced*hex_to_int(C_OrderLine_ID))
   INTO ToDeliver,
     ToInvoice
   FROM C_ORDERLINE
@@ -1176,7 +1176,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
   DECLARE
     v_PaymentRule CHAR(1) ;
     CUR_CB RECORD;
-    v_debtPaymentID NUMBER;
+    v_debtPaymentID varchar2(32);
     v_totalCash NUMBER;
   v_CB_Curr NUMBER;
   BEGIN
@@ -1203,7 +1203,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
     --PaymentRule C, WI and WR have already created DP, this won't be inserted in cashline
     --because it will processed with the invoice.
     IF(v_PaymentRule='C') AND (v_DocSubTypeSO NOT IN ('WI', 'WR') OR v_DocSubTypeSO IS NULL) THEN
-      IF(v_CashLine_ID IS NULL OR v_CashLine_ID=0) THEN
+      IF(v_CashLine_ID IS NULL OR v_CashLine_ID='0') THEN
         -- Create CashLine
         -- Find Defaylt CashBook
         v_ResultStr:='Find C_CashBook Org_ID=' || v_Org_ID;
@@ -1379,7 +1379,7 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
       DBMS_OUTPUT.PUT_LINE('  CashLine_ID=' || v_CashLine_ID) ;
 
 
-    END IF; -- CashLine_ID IS NULL OR CashLine_ID = 0
+    END IF; -- CashLine_ID IS NULL OR CashLine_ID = '0'
   END IF; -- v_PaymentRule = 'C'
 END;
 END IF;--FINISH_PROCESS

@@ -35,7 +35,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        select c_currency_convert(TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_DATE(?),null, TO_NUMBER(?),TO_NUMBER(?)) from dual
+        select c_currency_convert(TO_NUMBER(?),?,?,TO_DATE(?),null, ?,?) from dual
       ]]>
     </Sql>
     <Parameter name="expenseAmount"/>
@@ -51,7 +51,7 @@
       <![CDATA[
         SELECT PRICEPRECISION 
         FROM C_CURRENCY C
-        WHERE C.C_CURRENCY_ID = TO_NUMBER(?)
+        WHERE C.C_CURRENCY_ID = ?
       ]]>
     </Sql>
     <Parameter name="cCurrencyId"/>
@@ -62,7 +62,7 @@
       <![CDATA[
         SELECT TO_CHAR(S.DATEREPORT) 
 		FROM S_TIMEEXPENSE S
-		WHERE S.S_TIMEEXPENSE_ID = TO_NUMBER(?)
+		WHERE S.S_TIMEEXPENSE_ID = ?
       ]]>
     </Sql>
     <Parameter name="sTimeExpenseId"/>

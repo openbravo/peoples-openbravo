@@ -1,19 +1,23 @@
 <?xml version="1.0"?>
   <database name="TABLE AD_TREENODEMM">
     <table name="AD_TREENODEMM" primaryKey="AD_TREENODEMM_KEY">
-      <column name="AD_TREE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="AD_TREENODEMM_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault><![CDATA[get_uuid()]]></onCreateDefault>
+      </column>
+      <column name="AD_TREE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="NODE_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="NODE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -25,7 +29,7 @@
         <default><![CDATA[SYSDATE]]></default>
         <onCreateDefault/>
       </column>
-      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="CREATEDBY" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -33,11 +37,11 @@
         <default><![CDATA[SYSDATE]]></default>
         <onCreateDefault/>
       </column>
-      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PARENT_ID" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="PARENT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -57,6 +61,10 @@
       <index name="AD_TREENODEMM_PARENT" unique="false">
         <index-column name="PARENT_ID"/>
       </index>
+      <unique name="ADTREENODEMM_ADTREEID_NODEI_UN">
+        <unique-column name="AD_TREE_ID"/>
+        <unique-column name="NODE_ID"/>
+      </unique>
       <check name="AD_TREENODEMM_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

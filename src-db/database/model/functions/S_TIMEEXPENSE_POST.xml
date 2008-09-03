@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION S_TIMEEXPENSE_POST">
     <function name="S_TIMEEXPENSE_POST" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -33,12 +33,12 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1; -- 0=failure
-  v_Record_ID NUMBER;
-  v_AD_User_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
+  v_AD_User_ID VARCHAR2(32);
   v_DayHours  NUMBER;
   v_Processed CHAR;
-  v_CInvoicelineId NUMBER;
-  v_COrderlineId NUMBER;
+  v_CInvoicelineId varchar2(32);
+  v_COrderlineId varchar2(32);
   v_ExpenseLines NUMBER;
     -- Parameter
   TYPE RECORD IS REF CURSOR;

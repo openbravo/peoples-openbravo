@@ -117,7 +117,7 @@
         (select C_TAXREGISTER_TYPE_ID from c_taxregister_type where c_taxregister_type.ISSOTRX='Y')
         then coalesce(-lastregaccumamt,0)
         else coalesce(lastregaccumamt,0) end ) as prevvatcredit
-        from c_taxregister where c_taxregister.C_TAXPAYMENT_ID=TO_NUMBER(?)
+        from c_taxregister where c_taxregister.C_TAXPAYMENT_id = ?
       	
       ]]>
   </Sql>
@@ -133,7 +133,7 @@
         (select C_TAXREGISTER_TYPE_ID from c_taxregister_type where c_taxregister_type.ISSOTRX='Y')
         then coalesce(taxtotalamt,0) - coalesce(lastregaccumamt,0)
         else coalesce(lastregaccumamt,0) - coalesce(taxtotalamt,0) end ) as VatPayment
-        from c_taxregister where c_taxregister.C_TAXPAYMENT_ID=TO_NUMBER(?)
+        from c_taxregister where c_taxregister.C_TAXPAYMENT_id = ?
       	
       ]]>
   </Sql>

@@ -20,7 +20,7 @@
 <REPORT>
 	<template file="SQLExecutor_Excel.html"/>
 
-  	<!--PARAMETER id="paramDirection" name="direction" default=""/>
+  	<!--PARAMETER id="paramDirectory" name="directory" default=""/>
 	<PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
   	<PARAMETER id="paramLanguage" name="language" attribute="value"/>
 	<PARAMETER id="paramBuscador" name="buscador" attribute="onload" replace="xx();" default=""/>

@@ -224,7 +224,7 @@
 	<field name="WAREHOUSE" class="java.lang.String"/>
 	<field name="Z" class="java.lang.String"/>
 	<field name="UOMMOVEMENTQTY" class="java.lang.String"/>
-	<field name="M_ATTRIBUTESETINSTANCE_ID" class="java.math.BigDecimal"/>
+	<field name="M_ATTRIBUTESETINSTANCE_ID" class="java.lang.String"/>
 	<field name="DESCRIPTION" class="java.lang.String"/>
 	<field name="WEIGHT" class="java.math.BigDecimal"/>
 	<field name="UOMWEIGHT" class="java.lang.String"/>

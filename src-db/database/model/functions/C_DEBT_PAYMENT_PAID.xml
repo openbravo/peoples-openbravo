@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_DEBT_PAYMENT_PAID">
     <function name="C_DEBT_PAYMENT_PAID" type="CHAR">
-      <parameter name="p_debtpaymentid" type="NUMERIC" mode="in">
+      <parameter name="p_debtpaymentid" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************

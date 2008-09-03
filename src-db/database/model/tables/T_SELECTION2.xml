@@ -1,13 +1,21 @@
 <?xml version="1.0"?>
   <database name="TABLE T_SELECTION2">
     <table name="T_SELECTION2" primaryKey="T_SELECTION2_KEY">
-      <column name="QUERY_ID" primaryKey="true" required="true" type="DECIMAL" autoIncrement="false">
+      <column name="T_SELECTION2_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault><![CDATA[get_uuid()]]></onCreateDefault>
+      </column>
+      <column name="QUERY_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="T_SELECTION_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="T_SELECTION_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
+      <unique name="TSELECTION2_QUERYID_TSELECT_UN">
+        <unique-column name="QUERY_ID"/>
+        <unique-column name="T_SELECTION_ID"/>
+      </unique>
     </table>
   </database>

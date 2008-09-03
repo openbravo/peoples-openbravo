@@ -29,7 +29,7 @@
       <Sql>
         select columnname AS paramname, AD_Reference_ID AS reference 
         FROM AD_Process_Para 
-        WHERE AD_Process_ID = TO_NUMBER(?) 
+        WHERE AD_Process_ID = ? 
       </Sql>
       <Parameter name="adProcessId"/>
    </SqlMethod>
@@ -38,7 +38,7 @@
       <Sql>
         select JRName AS paramname
         FROM AD_Process 
-        WHERE AD_Process_ID = TO_NUMBER(?) 
+        WHERE AD_Process_ID = ? 
       </Sql>
       <Parameter name="adProcessId"/>
     </SqlMethod>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_COMMISSION_COPY">
     <function name="C_COMMISSION_COPY" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -32,12 +32,12 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     -- Parameter Variables
-    p_C_Commission_ID NUMBER;
+    p_C_Commission_ID VARCHAR2(32);
   BEGIN
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
@@ -61,7 +61,7 @@
     LOOP
       v_Record_ID:=Cur_Parameter.Record_ID;
       IF(Cur_Parameter.ParameterName='C_Commission_ID') THEN
-        p_C_Commission_ID:=Cur_Parameter.P_Number;
+        p_C_Commission_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  C_Commission_ID=' || p_C_Commission_ID) ;
       ELSE
         DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
@@ -71,7 +71,7 @@
     -- Copy Lines from p_C_Commission_ID to Record_ID
     DECLARE
       CUR_Commission RECORD;
-      v_NextNo NUMBER;
+      v_NextNo VARCHAR2(32);
     BEGIN
       FOR CUR_Commission IN
         (SELECT *
@@ -104,8 +104,8 @@
             v_NextNo, v_Record_ID,
             CUR_Commission.AD_Client_ID, CUR_Commission.AD_Org_ID,
              'Y', now(),
-            0, now(),
-            0, CUR_Commission.Line,
+            '0', now(),
+            '0', CUR_Commission.Line,
             CUR_Commission.Description, CUR_Commission.AmtSubtract,
             CUR_Commission.AmtMultiplier, CUR_Commission.QtySubtract,
             CUR_Commission.QtyMultiplier, CUR_Commission.IsPositiveOnly,

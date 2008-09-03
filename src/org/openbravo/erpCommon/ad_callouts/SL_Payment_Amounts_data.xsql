@@ -30,7 +30,7 @@
         SELECT C_INVOICE.GRANDTOTAL AS GRAND, C_CURRENCY.C_CURRENCY_ID as CURRENCYID
         FROM C_INVOICE, C_CURRENCY
         WHERE C_INVOICE.C_CURRENCY_ID = C_CURRENCY.C_CURRENCY_ID
-        AND C_INVOICE.C_INVOICE_ID = TO_NUMBER(?)
+        AND C_INVOICE.C_INVOICE_ID = ?
       ]]>
     </Sql>
     <Parameter name="cInvoiceId"/>
@@ -42,8 +42,8 @@
       <![CDATA[
         SELECT C_CONVERSION_RATE.MULTIPLYRATE 
         FROM C_CONVERSION_RATE
-        WHERE C_CONVERSION_RATE.C_CURRENCY_ID = TO_NUMBER(?)
-        AND C_CONVERSION_RATE.C_CURRENCY_ID_TO = TO_NUMBER(?)
+        WHERE C_CONVERSION_RATE.C_CURRENCY_ID = ?
+        AND C_CONVERSION_RATE.C_CURRENCY_ID_TO = ?
       ]]>
     </Sql>
     <Parameter name="cCurrencyId"/>
@@ -53,7 +53,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT C_CURRENCY_RATE(TO_NUMBER(?),TO_NUMBER(?),TO_DATE(?),TO_CHAR(?),TO_NUMBER(?),TO_NUMBER(?)) AS TOTAL FROM DUAL
+        SELECT C_CURRENCY_RATE(?,?,TO_DATE(?),TO_CHAR(?),?,?) AS TOTAL FROM DUAL
       ]]>
     </Sql>
     <Parameter name="cCurrencyId"/>

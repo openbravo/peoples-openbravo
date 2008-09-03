@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MA_STANDARD_COST_SEQUENCE">
     <function name="MA_STANDARD_COST_SEQUENCE" type="NULL">
-      <parameter name="p_sequence_id" type="NUMERIC" mode="in">
+      <parameter name="p_sequence_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_budget_id" type="NUMERIC" mode="in">
+      <parameter name="p_budget_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_calcdate" type="TIMESTAMP" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_user" type="NUMERIC" mode="in">
+      <parameter name="p_user" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_message" type="VARCHAR" mode="out">
@@ -46,7 +46,7 @@
   v_ProducedKg            NUMBER;
   v_ProducedUd            NUMBER;
   v_CompCostSum           NUMBER;
-  v_ID                    NUMBER;
+  v_ID                    varchar2(32);
   v_No_Cost               BOOLEAN := TRUE;
   v_Cost                  NUMBER;
 

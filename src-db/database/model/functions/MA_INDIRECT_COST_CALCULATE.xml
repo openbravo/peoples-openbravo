@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MA_INDIRECT_COST_CALCULATE">
     <function name="MA_INDIRECT_COST_CALCULATE" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -21,7 +21,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************/
 -- Logistice
-v_record_id NUMBER;
+v_record_ID VARCHAR2(32);
 v_resultstr VARCHAR2(2000);
 v_result NUMBER:= 1;
 v_message VARCHAR2(2000);

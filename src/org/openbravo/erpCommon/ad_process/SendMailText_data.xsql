@@ -32,7 +32,7 @@
         AND u.IsActive='Y' 
         AND ci.OptOutDate IS NULL 
         AND u.EMail IS NOT NULL 
-        AND ci.R_InterestArea_ID = TO_NUMBER(?)
+        AND ci.R_InterestArea_ID = ?
       ]]>
     </Sql>
     <Parameter name="rInterestareaId"/>
@@ -47,7 +47,7 @@
         AND u.IsActive='Y' 
         AND bp.IsActive='Y' 
         AND u.EMail IS NOT NULL 
-        AND bp.C_BP_Group_ID = TO_NUMBER(?) 
+        AND bp.C_BP_Group_ID = ? 
       ]]>
     </Sql>
     <Parameter name="cBpGroupId"/>
@@ -59,7 +59,7 @@
         SELECT mailheader, mailtext
         FROM R_MailText
         WHERE IsActive='Y' 
-        AND R_MailText_ID = TO_NUMBER(?)
+        AND R_MailText_ID = ?
       ]]>
     </Sql>
     <Parameter name="rMailtextId"/>
@@ -68,7 +68,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE AD_User SET IsActive='N', Help=Help||' - Invalid User EMail' WHERE AD_User_ID = TO_NUMBER(?)
+        UPDATE AD_User SET IsActive='N', Help=Help||' - Invalid User EMail' WHERE AD_User_ID=?
       ]]>
     </Sql>
     <Parameter name="adUserId"/>

@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
   <database name="FUNCTION BOM_QTY_RESERVED">
     <function name="BOM_QTY_RESERVED" type="NUMERIC">
-      <parameter name="p_product_id" type="NUMERIC" mode="in">
+      <parameter name="p_product_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_warehouse_id" type="NUMERIC" mode="in">
+      <parameter name="p_warehouse_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_locator_id" type="NUMERIC" mode="in">
+      <parameter name="p_locator_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -32,7 +32,7 @@
 *************************************************************************
 * Return quantity reserved for BOM
 */
-  v_Warehouse_ID NUMBER;
+  v_Warehouse_ID VARCHAR2(32);
   v_Quantity NUMBER:=99999; -- unlimited
   v_IsBOM        CHAR(1) ;
   v_IsStocked    CHAR(1) ;

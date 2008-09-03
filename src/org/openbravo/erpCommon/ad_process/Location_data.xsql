@@ -29,7 +29,7 @@
         SELECT C_Location_ID, Address1, Address2, City, Postal, C_Region_ID, C_Country_ID,
 				AD_Client_ID, AD_Org_ID
 			  FROM C_Location
-			  WHERE AD_Client_ID = TO_NUMBER(?)
+			  WHERE AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -41,7 +41,7 @@
       <![CDATA[
 			  INSERT INTO C_Location (C_Location_ID, AD_Client_ID, AD_Org_ID, isActive, Created, CreatedBy, Updated, UpdatedBy,
 				Address1, Address2, City, Postal, C_Region_ID, C_Country_ID)
-					VALUES (TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', now(), TO_NUMBER(?), now(), TO_NUMBER(?), ?, ?, ?, ?, TO_NUMBER(?), TO_NUMBER(?))
+					VALUES (?, ?, ?, 'Y', now(), ?, now(), ?, ?, ?, ?, ?, ?, ?)
       ]]>
     </Sql>
     <Parameter name="cLocationId"/>

@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_TABLE_IMPORT">
     <function name="AD_TABLE_IMPORT" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_ad_table_id" type="NUMERIC" mode="in">
+      <parameter name="p_ad_table_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -37,8 +37,8 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1; -- 0=failure
-  v_Record_ID NUMBER;
-  v_AD_User_ID NUMBER:=0;
+  v_Record_ID VARCHAR2(32);
+  v_AD_User_ID VARCHAR2(32):='0';
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -46,12 +46,12 @@
     --
     Cur_Column RECORD;
     --
-    v_NextNo NUMBER(10) ;
+    v_NextNo VARCHAR2(32) ;
     v_count NUMBER(10):=0;
     -- Added by Ismael Ciordia
-    v_AD_Reference_ID NUMBER;
-    v_AD_Reference_Value_ID NUMBER;
-    v_AD_Val_Rule_ID NUMBER;
+    v_AD_Reference_ID VARCHAR2(32);
+    v_AD_Reference_Value_ID VARCHAR2(32);
+    v_AD_Val_Rule_ID VARCHAR2(32);
     v_IsParent CHAR(1):='N';
     v_IsKey CHAR(1):='N';
     v_IsIdentifier CHAR(1):='N';
@@ -63,8 +63,8 @@
     v_LastColumnName VARCHAR2(40) ;
     v_varchar2 VARCHAR2(32767) ;
     v_FieldLength NUMBER(10) ;
-    v_PInstance_Log_ID NUMBER;
-    v_Client_ID NUMBER;
+    v_PInstance_Log_ID VARCHAR2(32);
+    v_Client_ID VARCHAR2(32);
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -186,25 +186,25 @@
       END IF;
       IF(v_AD_Reference_ID IS NULL) THEN
         IF(Cur_Column.Data_Type IN('CHAR','BPCHAR') AND Cur_Column.Data_Length=1) THEN
-          v_AD_Reference_ID:=20;
+          v_AD_Reference_ID:='20';
         ELSIF(Cur_Column.Data_Type IN('VARCHAR2', 'NVARCHAR2', 'CHAR', 'NCHAR') AND Cur_Column.Data_Length=4000) THEN
-          v_AD_Reference_ID:=14;
+          v_AD_Reference_ID:='14';
         ELSIF(Cur_Column.Data_Type IN('VARCHAR2', 'NVARCHAR2', 'CHAR', 'NCHAR')) THEN
-          v_AD_Reference_ID:=10;
+          v_AD_Reference_ID:='10';
         ELSIF(Cur_Column.Data_Type IN('VARCHAR2', 'NVARCHAR2', 'CHAR', 'NCHAR')) THEN
-          v_AD_Reference_ID:=10;
+          v_AD_Reference_ID:='10';
         ELSIF(Cur_Column.Data_Type='NUMBER' AND Cur_Column.DATA_SCALE=0) THEN
-          v_AD_Reference_ID:=11;
+          v_AD_Reference_ID:='11';
         ELSIF(Cur_Column.Data_Type='NUMBER' AND UPPER(Cur_Column.Column_Name) LIKE '%AMT%') THEN
-          v_AD_Reference_ID:=12;
+          v_AD_Reference_ID:='12';
         ELSIF(Cur_Column.Data_Type='NUMBER' AND UPPER(Cur_Column.Column_Name) LIKE '%QTY%') THEN
-          v_AD_Reference_ID:=29;
+          v_AD_Reference_ID:='29';
         ELSIF(Cur_Column.Data_Type='NUMBER') THEN
-          v_AD_Reference_ID:=22;
+          v_AD_Reference_ID:='22';
         ELSIF(Cur_Column.Data_Type='DATE') THEN
-          v_AD_Reference_ID:=15;
+          v_AD_Reference_ID:='15';
         ELSE
-          v_AD_Reference_ID:=10; -- if not found, use String
+          v_AD_Reference_ID:='10'; -- if not found, use String
         END IF;
       END IF;
       v_columnName:=InitCap(Cur_Column.Column_Name) ;
@@ -226,8 +226,8 @@
           AD_VAL_RULE_ID, DEFAULTVALUE, ISSESSIONATTR
         )
         VALUES
-        (v_NextNo, 0, 0, 'Y',
-        now(), 0, now(), 0,
+        (v_NextNo, '0', '0', 'Y',
+        now(), '0', now(), '0',
         v_columnName, v_columnName, Cur_Column.AD_Table_ID,
         v_AD_Reference_ID, v_FieldLength, v_IsKey, v_IsParent,
        (CASE Cur_Column.Nullable WHEN 'Y' THEN 'N' ELSE 'Y' END),

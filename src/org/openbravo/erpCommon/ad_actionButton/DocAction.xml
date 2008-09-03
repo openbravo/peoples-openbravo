@@ -26,7 +26,7 @@
 	<PARAMETER id="window" name="window" default="" attribute="value"/>
 	<PARAMETER id="question" name="question" default=""/>
 	<PARAMETER id="processHelp" name="processDescription" default=""/>
-	<PARAMETER id="paramDirection" name="direction" default=""/>
+	<PARAMETER id="paramDirectory" name="directory" default=""/>
 	<PARAMETER id="docstatus" name="docstatus" attribute="value" default=""/>
 	<PARAMETER id="adTableId" name="adTableId" attribute="value" default=""/>
 	<PARAMETER id="paramArray" name="array" default=""/>

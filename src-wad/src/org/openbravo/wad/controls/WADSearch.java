@@ -52,7 +52,7 @@ public class WADSearch extends WADControl {
     if (getData("IsMandatory").equals("Y")) {
       validation.append("  if (inputValue(frm.inp").append(getData("ColumnNameInp")).append(")==null || inputValue(frm.inp").append(getData("ColumnNameInp")).append(")==\"\") {\n");
       if (getData("IsDisplayed").equals("Y")) validation.append("    setWindowElementFocus(frm.inp").append(getData("ColumnNameInp")).append("_R);\n");
-      validation.append("    mensaje(1);\n");
+      validation.append("    showJSMessage(1);\n");
       validation.append("    return false;\n");
       validation.append("  }\n");
     }

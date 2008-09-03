@@ -96,7 +96,7 @@
       WHERE	 I.ISSOTRX  = 'N'
        AND	195  = L.AD_REFERENCE_ID
        AND	I.PAYMENTRULE  = L.VALUE
-       AND	I.C_INVOICE_ID = TO_NUMBER(?)
+       AND	I.C_INVOICE_ID  = ?
      ]]>
      </Sql>
      <Parameter name="dateformat"/>
@@ -122,7 +122,7 @@
     <Sql><![CDATA[
       SELECT name as id 
       FROM AD_REF_LIST_V 
-      WHERE AD_REFERENCE_ID = 135 
+      WHERE AD_REFERENCE_ID = '135' 
       AND AD_LANGUAGE = ?
       AND VALUE = ?
     ]]></Sql>
@@ -158,7 +158,7 @@
       FROM C_DocType
       WHERE C_DocType.AD_Org_ID IN('1') 
       AND C_DocType.AD_Client_ID IN('1') 
-      AND C_DocType.AD_Client_ID = TO_NUMBER(?) 
+      AND C_DocType.AD_Client_ID=? 
       AND C_DocType.DocBaseType IN ('ARI', 'API','ARC','APC') 
       AND C_DocType.IsSOTrx=? 
       AND C_DocType.isActive = 'Y'
@@ -209,15 +209,15 @@
   <SqlMethod name="update" type="preparedStatement" return="rowCount" static="false">
     <Sql><![CDATA[
         UPDATE C_Invoice SET IsTaxIncluded = ?, IsSOTrx = ?,
-        IsPrinted = ?, IsSelfService = ?, C_Invoice_ID = TO_NUMBER(?), DatePrinted = TO_DATE(?), 
-        AD_Client_ID = TO_NUMBER(?), AD_Org_ID = TO_NUMBER(?), C_Order_ID = TO_NUMBER(?), DateOrdered = TO_DATE(?), DocumentNo = ?, 
-        POReference = ?, Description = ?, IsActive = ?, C_DocTypeTarget_ID = TO_NUMBER(?), DateInvoiced = TO_DATE(?), DateAcct = TO_DATE(?), 
-        C_BPartner_ID = TO_NUMBER(?), C_BPartner_Location_ID = TO_NUMBER(?), AD_User_ID = TO_NUMBER(?), M_PriceList_ID = TO_NUMBER(?), C_Currency_ID = TO_NUMBER(?), 
-        SalesRep_ID = TO_NUMBER(?), IsDiscountPrinted = ?, C_Charge_ID = TO_NUMBER(?), ChargeAmt = TO_NUMBER(?), PaymentRule = ?, C_PaymentTerm_ID = TO_NUMBER(?), 
-        CreateFrom = ?, GenerateTo = ?, C_Project_ID = TO_NUMBER(?), C_Activity_ID = TO_NUMBER(?), C_Campaign_ID = TO_NUMBER(?), AD_OrgTrx_ID = TO_NUMBER(?), 
-        User1_ID = TO_NUMBER(?), User2_ID = TO_NUMBER(?), DocStatus = ?, C_DocType_ID = TO_NUMBER(?), CopyFrom = ?, 
-        DocAction = ?, Posted = ?, updated = now(), updatedby = TO_NUMBER(?) 
-        WHERE C_Invoice.C_Invoice_ID = TO_NUMBER(?) 
+        IsPrinted = ?, IsSelfService = ?, C_Invoice_ID = ?, DatePrinted = TO_DATE(?), 
+        AD_Client_ID = ?, AD_Org_ID = ?, C_Order_ID = ?, DateOrdered = TO_DATE(?), DocumentNo = ?, 
+        POReference = ?, Description = ?, IsActive = ?, C_DocTypeTarget_ID = ?, DateInvoiced = TO_DATE(?), DateAcct = TO_DATE(?), 
+        C_BPartner_ID = ?, C_BPartner_Location_ID = ?, AD_User_ID = ?, M_PriceList_ID = ?, C_Currency_ID = ?, 
+        SalesRep_ID = ?, IsDiscountPrinted = ?, C_Charge_ID = ?, ChargeAmt = TO_NUMBER(?), PaymentRule = ?, C_PaymentTerm_ID = ?, 
+        CreateFrom = ?, GenerateTo = ?, C_Project_ID = ?, C_Activity_ID = ?, C_Campaign_ID = ?, AD_OrgTrx_ID = ?, 
+        User1_ID = ?, User2_ID = ?, DocStatus = ?, C_DocType_ID = ?, CopyFrom = ?, 
+        DocAction = ?, Posted = ?, updated = now(), updatEDBY = ? 
+        WHERE C_Invoice.C_Invoice_ID = ? 
     ]]></Sql>
     <Parameter name="istaxincluded"></Parameter> 
     <Parameter name="issotrx"></Parameter> 
@@ -272,8 +272,8 @@
         ChargeAmt, PaymentRule, C_PaymentTerm_ID, CreateFrom, GenerateTo, C_Project_ID, C_Activity_ID, C_Campaign_ID, 
         AD_OrgTrx_ID, User1_ID, User2_ID, DocStatus, C_DocType_ID, CopyFrom, DocAction, Posted, 
         created, createdby, updated, updatedBy)
-        VALUES (?, ?, ?, ?, ?, ?, ?, TO_NUMBER(?), TO_DATE(?), ?, TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_DATE(?), ?, ?, ?, ?, TO_NUMBER(?), TO_DATE(?), TO_DATE(?), TO_DATE(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), ?, TO_NUMBER(?), TO_NUMBER(?), ?, TO_NUMBER(?), ?, ?, 
-        TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), ?, TO_NUMBER(?), ?, ?, ?, now(), TO_NUMBER(?), now(), TO_NUMBER(?))
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, TO_DATE(?), ?, ?, ?, ?, TO_DATE(?), ?, ?, ?, ?, ?, TO_DATE(?), TO_DATE(?), TO_DATE(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 
+        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now(), ?, now(), ?)
     ]]></Sql>
     <Parameter name="processing"></Parameter> 
     <Parameter name="istaxincluded"></Parameter> 
@@ -325,7 +325,7 @@
   <SqlMethod name="delete" type="preparedStatement" return="rowCount">
     <Sql><![CDATA[
         DELETE FROM C_INVOICE 
-        WHERE C_INVOICE.C_INVOICE_ID = TO_NUMBER(?) 
+        WHERE C_INVOICE.C_INVOICE_ID = ? 
     ]]></Sql>
     <Parameter name="cInvoiceId"/>
     

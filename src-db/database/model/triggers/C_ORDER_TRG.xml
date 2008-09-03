@@ -32,18 +32,18 @@
     BEGIN  IF(UPDATING)
     THEN  IF((COALESCE(:old.Description, '.') <> COALESCE(:NEW.Description, '.')
     OR COALESCE(:old.POReference, '.') <> COALESCE(:NEW.POReference, '.')
-    OR COALESCE(:old.C_BPartner_ID, 0) <> COALESCE(:NEW.C_BPartner_ID, 0)
-    OR COALESCE(:old.C_BPartner_Location_ID, 0) <> COALESCE(:NEW.C_BPartner_Location_ID, 0)
-    OR COALESCE(:old.M_Warehouse_ID, 0) <> COALESCE(:NEW.M_Warehouse_ID, 0)
-    OR COALESCE(:old.M_Shipper_ID, 0) <> COALESCE(:NEW.M_Shipper_ID, 0)
-    OR COALESCE(:old.C_Currency_ID, 0) <> COALESCE(:NEW.C_Currency_ID, 0) ))
+    OR COALESCE(:old.C_BPartner_ID, '0') <> COALESCE(:NEW.C_BPartner_ID, '0')
+    OR COALESCE(:old.C_BPartner_Location_ID, '0') <> COALESCE(:NEW.C_BPartner_Location_ID, '0')
+    OR COALESCE(:old.M_Warehouse_ID, '0') <> COALESCE(:NEW.M_Warehouse_ID, '0')
+    OR COALESCE(:old.M_Shipper_ID, '0') <> COALESCE(:NEW.M_Shipper_ID, '0')
+    OR COALESCE(:old.C_Currency_ID, '0') <> COALESCE(:NEW.C_Currency_ID, '0') ))
     THEN
     -- If order is processed, is not allowed to change C_BPartner nor M_WareHouse nor AD_ORG_ID nor AD_CLIENT_ID
     IF(:old.Processed='Y'
-    	AND ( (COALESCE(:old.C_BPartner_ID, 0) <> COALESCE(:new.C_BPartner_ID, 0))
-    		OR (COALESCE(:old.M_WareHouse_ID, 0) <> COALESCE(:new.M_WareHouse_ID, 0))
-    		OR (COALESCE(:old.AD_ORG_ID, 0) <> COALESCE(:new.AD_ORG_ID, 0))
-            OR (COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0))
+    	AND ( (COALESCE(:old.C_BPartner_ID, '0') <> COALESCE(:new.C_BPartner_ID, '0'))
+    		OR (COALESCE(:old.M_WareHouse_ID, '0') <> COALESCE(:new.M_WareHouse_ID, '0'))
+    		OR (COALESCE(:old.AD_ORG_ID, '0') <> COALESCE(:new.AD_ORG_ID, '0'))
+            OR (COALESCE(:old.AD_CLIENT_ID, '0') <> COALESCE(:new.AD_CLIENT_ID, '0'))
     	)
     )
     THEN  RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;

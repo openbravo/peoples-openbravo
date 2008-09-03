@@ -46,7 +46,7 @@ public class NavigationBar {
     toolbar.append("<TABLE class=\"Main_ContentPane_NavBar\" id=\"tdtopNavButtons\">\n");
     toolbar.append("  <TR class=\"Main_NavBar_bg\"><TD></TD>\n");
     toolbar.append("  <TD class=\"Main_NavBar_LeftButton_cell\">\n");
-    toolbar.append("    <a class=\"Main_NavBar_LeftButton\" href=\"#\" onclick=\"openLink('../secureApp/GoBack.html', 'frameAplicacion')\" border=\"0\" onmouseover=\"window.status='");
+    toolbar.append("    <a class=\"Main_NavBar_LeftButton\" href=\"#\" onclick=\"openLink('../secureApp/GoBack.html', 'appFrame')\" border=\"0\" onmouseover=\"window.status='");
     String auxText = Utility.messageBD(conn, "GoBack", language);
     toolbar.append(auxText);
     toolbar.append("';return true;\" onmouseout=\"window.status='';return true;\" id=\"buttonBack\"><IMG src=\"").append(base_direction).append("/images/blank.gif\" class=\"Main_NavBar_LeftButton_Icon Main_NavBar_LeftButton_Icon_back\" border=\"0\" alt=\"");
@@ -87,7 +87,7 @@ public class NavigationBar {
     toolbar.append("  </TD>\n");
     toolbar.append("  <TD class=\"Main_NavBar_separator_cell\"></TD>\n");
     toolbar.append("  <TD class=\"Main_NavBar_bg_logo_left\"></TD>\n");
-    toolbar.append("  <TD class=\"Main_NavBar_bg_logo\" width=\"1\" onclick=\"abrirNuevoBrowser('http://www.openbravo.com', 'Openbravo');return false;\"><IMG src=\"").append(base_direction).append("/images/blank.gif\" alt=\"Openbravo\" title=\"Openbravo\" border=\"0\" id=\"openbravoLogo\" class=\"Main_NavBar_logo\"></TD>\n");
+    toolbar.append("  <TD class=\"Main_NavBar_bg_logo\" width=\"1\" onclick=\"openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;\"><IMG src=\"").append(base_direction).append("/images/blank.gif\" alt=\"Openbravo\" title=\"Openbravo\" border=\"0\" id=\"openbravoLogo\" class=\"Main_NavBar_logo\"></TD>\n");
     toolbar.append("  <TD class=\"Main_NavBar_bg_logo_right\"></TD>\n");
     toolbar.append("  <TD></TD>\n");
     toolbar.append("  </TR>\n");

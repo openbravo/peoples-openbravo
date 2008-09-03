@@ -28,7 +28,7 @@
       <![CDATA[
         SELECT C_Location_ID as location, '' AS ORG, '' AS SALESREGION, '' AS UNEARNEDREVENUE, '' AS ACCOUNT, '' as value,
         '' AS DESCRIPTION
-        FROM AD_OrgInfo WHERE AD_Org_ID = TO_NUMBER(?)
+        FROM AD_OrgInfo WHERE AD_Org_ID=?
      ]]>
      </Sql>
      <Parameter name="AD_Org_ID"/>
@@ -37,7 +37,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT AD_Org_ID as org FROM M_Locator WHERE M_Locator_ID = TO_NUMBER(?) AND AD_Client_ID = TO_NUMBER(?)
+        SELECT AD_Org_ID as org FROM M_Locator WHERE M_Locator_ID=? AND AD_Client_ID=?
      ]]>
      </Sql>
      <Parameter name="M_Locator_ID"/>
@@ -47,7 +47,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT C_Location_ID as location FROM C_BPartner_Location WHERE C_BPartner_Location_ID = TO_NUMBER(?)
+        SELECT C_Location_ID as location FROM C_BPartner_Location WHERE C_BPartner_Location_ID=?
         ]]>
      </Sql>
      <Parameter name="C_BPartner_Location_ID"/>
@@ -56,7 +56,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT C_SalesRegion_ID as salesregion FROM C_BPartner_Location WHERE C_BPartner_Location_ID = TO_NUMBER(?)
+        SELECT C_SalesRegion_ID as salesregion FROM C_BPartner_Location WHERE C_BPartner_Location_ID=?
         ]]>
      </Sql>
      <Parameter name="C_BPartner_Location_ID"/>
@@ -69,8 +69,8 @@
         FROM C_BP_Group_Acct ga, C_BPartner p, C_ValidCombination vc 
         WHERE ga.C_BP_Group_ID=p.C_BP_Group_ID
         AND ga.UnearnedRevenue_Acct=vc.C_ValidCombination_ID
-        AND ga.C_AcctSchema_ID = TO_NUMBER(?) 
-        AND p.C_BPartner_ID = TO_NUMBER(?)
+        AND ga.C_AcctSchema_ID = ? 
+        AND p.C_BPartner_ID = ?
         ]]>
      </Sql>
      <Parameter name="C_AcctSchema_ID"/>
@@ -82,13 +82,20 @@
     <Sql>
       <![CDATA[
         INSERT INTO Fact_Acct 
-        (Fact_Acct_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,
-        C_AcctSchema_ID,Account_ID, AcctValue, AcctDescription,DateTrx,DateAcct,C_Period_ID,AD_Table_ID,Record_ID,Line_ID,
-        GL_Category_ID,C_Tax_ID,PostingType,C_Currency_ID,AmtSourceDR,AmtSourceCR,AmtAcctDR,AmtAcctCR,
+          (Fact_Acct_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,
+        C_AcctSchema_ID,Account_ID, AcctValue, AcctDescription,DateTrx,DateAcct,
+        C_Period_ID,AD_Table_ID,Record_ID,Line_ID,
+        GL_Category_ID,C_Tax_ID,PostingType,C_Currency_ID,
+        AmtSourceDR,AmtSourceCR,AmtAcctDR,AmtAcctCR,
         C_UOM_ID,Qty,M_Locator_ID,M_Product_ID,C_BPartner_ID,AD_OrgTrx_ID,C_LocFrom_ID,C_LocTo_ID,C_SalesRegion_ID,
         C_Project_ID,C_Campaign_ID,C_Activity_ID,User1_ID,User2_ID,Description, Fact_Acct_Group_ID, SeqNo, DocBaseType, Record_ID2, A_ASSET_ID) 
-        VALUES (TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?),'Y',now(),0,now(),0,TO_NUMBER(?), TO_NUMBER(?), ?, ?, TO_DATE(?), TO_DATE(?),TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?),TO_NUMBER(?), TO_NUMBER(?), ?,
-        TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?),TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?),TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?),TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?),TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?),TO_NUMBER(?), TO_NUMBER(?), ?, TO_NUMBER(?), TO_NUMBER(?), ?, TO_NUMBER(?), TO_NUMBER(?))
+        VALUES 
+          (?, ?, ?,'Y',now(),0,now(),0,
+           ?, ?, ?, ?, TO_DATE(?), TO_DATE(?),
+           ?, ?, ?, ?,
+           ?, ?, ?, ?, 
+           TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?),
+           ?, TO_NUMBER(?), ?,?, ?, ?,?, ?, ?,?, ?, ?,?, ?, ?, ?, TO_NUMBER(?), ?, ?, ?)
      ]]>
      </Sql>
      <Parameter name="m_Fact_Acct_ID"/>
@@ -138,8 +145,8 @@
     <Sql>
       <![CDATA[
         UPDATE Fact_Acct SET FACTACCTTYPE = 'O'
-        WHERE AD_TABLE_ID = TO_NUMBER(?)
-        AND RECORD_ID = TO_NUMBER(?)
+        WHERE AD_TABLE_ID = ?
+        AND RECORD_ID = ?
      ]]>
      </Sql>
      <Parameter name="table"/>
@@ -150,7 +157,7 @@
     <Sql>
       <![CDATA[
         SELECT w.C_Location_ID as location FROM M_Warehouse w, M_Locator l 
-        WHERE w.M_Warehouse_ID=l.M_Warehouse_ID AND l.M_Locator_ID = TO_NUMBER(?)
+        WHERE w.M_Warehouse_ID=l.M_Warehouse_ID AND l.M_Locator_ID=?
         ]]>
      </Sql>
      <Parameter name="M_Locator_ID"/>
@@ -159,7 +166,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        select value, name as description from c_elementvalue where c_elementvalue_ID = TO_NUMBER(?)
+        select value, name as description from c_elementvalue where c_elementvalue_id =?
         ]]>
      </Sql>
      <Parameter name="cElementvalueId"/>

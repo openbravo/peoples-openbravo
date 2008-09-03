@@ -35,7 +35,7 @@
       <Sql>
         INSERT INTO AD_SESSION (AD_SESSION_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, 
         WEBSESSION, REMOTE_ADDR, REMOTE_HOST, PROCESSED) 
-        VALUES (TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), ?, now(), TO_NUMBER(?), now(), TO_NUMBER(?), 
+        VALUES (?, ?, ?, ?, now(), ?, now(), ?, 
         ?, ?, ?, ?)
       </Sql>
       <Parameter name="adSessionId"/>
@@ -52,9 +52,9 @@
    <SqlMethod name="update" type="preparedStatement" return="rowCount">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        UPDATE AD_SESSION SET ISACTIVE = ?, UPDATED = now(), UPDATEDBY = TO_NUMBER(?), 
+        UPDATE AD_SESSION SET ISACTIVE = ?, UPDATED = now(), UPDATEDBY = ?, 
         WEBSESSION = ?, REMOTE_ADDR = ?, REMOTE_HOST = ?, PROCESSED = ? 
-        WHERE AD_SESSION_ID = TO_NUMBER(?)
+        WHERE AD_SESSION_ID = ?
       </Sql>
       <Parameter name="isactive"/>
       <Parameter name="adUserId"/>
@@ -67,9 +67,9 @@
    <SqlMethod name="saveProcessed" type="preparedStatement" return="rowCount">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        UPDATE AD_SESSION SET UPDATED = now(), UPDATEDBY = TO_NUMBER(?), 
+        UPDATE AD_SESSION SET UPDATED = now(), UPDATEDBY = ?, 
         PROCESSED = 'Y' 
-        WHERE AD_SESSION_ID = TO_NUMBER(?)
+        WHERE AD_SESSION_ID = ?
       </Sql>
       <Parameter name="adUserId"/>
       <Parameter name="adSessionId"/>

@@ -234,8 +234,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       }
     }
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("agno", strAgno);
     xmlDocument.setParameter("agnoRef", strAgnoRef);
     xmlDocument.setParameter("dateFrom", strDateFrom);

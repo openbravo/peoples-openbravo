@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MA_COPY_VERSION">
     <function name="MA_COPY_VERSION" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -23,21 +23,21 @@
   --  Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
   v_Result NUMBER:=1; --  Success
   --  Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     --  Record Info
     v_Version NUMBER;
-    v_ProcessPlanVersion_ID NUMBER;
-    v_Client_ID NUMBER;
-    v_Org_ID NUMBER;
-    v_User_ID NUMBER;
+    v_ProcessPlanVersion_ID VARCHAR2(32);
+    v_Client_ID VARCHAR2(32);
+    v_Org_ID VARCHAR2(32);
+    v_User_ID VARCHAR2(32);
     v_UpdatedBy NUMBER;
     v_DocumentNo NUMBER;
-    v_Sequence_ID NUMBER;
-    v_Product_ID NUMBER;
+    v_Sequence_ID VARCHAR2(32);
+    v_Product_ID VARCHAR2(32);
     v_DateFrom DATE :=now();
     v_DateTo DATE :=TO_DATE('31-12-9999', 'DD-MM-YYYY');
     v_Count NUMBER;
@@ -111,7 +111,7 @@
       VALUES
       (
         v_ProcessPlanVersion_ID, v_Client_ID, v_Org_ID, 'Y',
-        now(), COALESCE(v_User_ID, 0), now(), COALESCE(v_User_ID, 0),
+        now(), COALESCE(v_User_ID, '0'), now(), COALESCE(v_User_ID, '0'),
         v_Record_ID, v_DocumentNo, v_DateFrom, v_DateTo
       )
       ;
@@ -132,7 +132,7 @@
         VALUES
         (
           v_Sequence_ID, v_Client_ID, v_Org_ID, 'Y',
-          now(), COALESCE(v_User_ID, 0), now(), COALESCE(v_User_ID, 0),
+          now(), COALESCE(v_User_ID, '0'), now(), COALESCE(v_User_ID, '0'),
           v_ProcessPlanVersion_ID, Cur_Sequence.MA_Process_ID, Cur_Sequence.Value, Cur_Sequence.Name,
           Cur_Sequence.Description, Cur_Sequence.CostCenterUse, Cur_Sequence.Preptime, Cur_Sequence.Multiplier,
           Cur_Sequence.Seqno, Cur_Sequence.Noqty, Cur_Sequence.Groupuse, Cur_Sequence.Calculated
@@ -158,7 +158,7 @@
           VALUES
           (
             v_Product_ID, v_Client_ID, v_Org_ID, 'Y',
-            now(), COALESCE(v_User_ID, 0), now(), COALESCE(v_User_ID, 0),
+            now(), COALESCE(v_User_ID, '0'), now(), COALESCE(v_User_ID, '0'),
             v_Sequence_ID, Cur_Product.M_Product_ID, Cur_Product.Quantity, Cur_Product.Productiontype,
             Cur_Product.C_Uom_ID, Cur_Product.Quantityorder, Cur_Product.M_Product_Uom_ID, Cur_Product.Componentcost,
             Cur_Product.Decrease, Cur_Product.Rejected

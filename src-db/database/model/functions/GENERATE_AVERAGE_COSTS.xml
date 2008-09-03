@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION GENERATE_AVERAGE_COSTS">
     <function name="GENERATE_AVERAGE_COSTS" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -24,11 +24,11 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Result NUMBER;
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
   v_Date DATE;
   v_Qty NUMBER;
   v_Cost NUMBER;
-  v_User NUMBER;
+  v_User VARCHAR2(32);
   v_Price NUMBER;
   v_DateOld DATE;
   v_CumQty NUMBER;

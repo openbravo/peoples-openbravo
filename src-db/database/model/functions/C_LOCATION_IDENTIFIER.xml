@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_LOCATION_IDENTIFIER">
     <function name="C_LOCATION_IDENTIFIER" type="NVARCHAR">
-      <parameter name="p_c_location_id" type="NUMERIC" mode="in">
+      <parameter name="p_c_location_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -26,7 +26,7 @@
 *
 ************************************************************************/
   v_description NVARCHAR2(4000) ;
-  v_DefaultCountry NVARCHAR2(4000) ;
+  v_DefaultCountry VARCHAR2(4000) ;
 BEGIN  SELECT MAX(C_COUNTRY_ID)
   INTO v_DefaultCountry
   FROM C_COUNTRY
@@ -58,7 +58,7 @@ BEGIN  SELECT MAX(C_COUNTRY_ID)
     END
     ||(
     CASE C.C_COUNTRY_ID
-      WHEN TO_NUMBER(v_DefaultCountry)
+      WHEN v_DefaultCountry
       THEN ''
       ELSE ' (' || TO_CHAR(C.NAME) || ')'
     END

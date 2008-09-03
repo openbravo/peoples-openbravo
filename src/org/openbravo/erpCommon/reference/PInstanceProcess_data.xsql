@@ -27,7 +27,7 @@
       SELECT P.RESULT, REPLACE(REPLACE(P.ERRORMSG, CHR(10), CHR(92) || CHR(92) || 'n'), CHR(13), CHR(92) || CHR(92) || 'n') AS ERRORMSG, 
       REPLACE(REPLACE(L.P_MSG, CHR(10), CHR(92) || CHR(92) || 'n'), CHR(13), CHR(92) || CHR(92) || 'n') AS P_MSG 
       FROM AD_PINSTANCE P left join AD_PINSTANCE_LOG L on P.AD_PINSTANCE_ID = L.AD_PINSTANCE_ID 
-      WHERE P.AD_PINSTANCE_ID = TO_NUMBER(?)
+      WHERE P.AD_PINSTANCE_ID = ?
     </Sql>
     <Parameter name="adPinstanceId"/>
   </SqlMethod>
@@ -37,7 +37,7 @@
       SELECT P.RESULT, REPLACE(REPLACE(P.ERRORMSG, CHR(10), CHR(92) || CHR(92) || 'n'), CHR(13), CHR(92) || CHR(92) || 'n') AS ERRORMSG, 
       REPLACE(REPLACE(L.P_MSG, CHR(10), CHR(92) || CHR(92) || 'n'), CHR(13), CHR(92) || CHR(92) || 'n') AS P_MSG 
       FROM AD_PINSTANCE P left join AD_PINSTANCE_LOG L on P.AD_PINSTANCE_ID = L.AD_PINSTANCE_ID 
-      WHERE P.AD_PINSTANCE_ID = TO_NUMBER(?)
+      WHERE P.AD_PINSTANCE_ID = ?
     </Sql>
     <Parameter name="adPinstanceId"/>
   </SqlMethod>
@@ -45,7 +45,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       INSERT INTO AD_PINSTANCE (AD_PINSTANCE_ID, AD_PROCESS_ID, RECORD_ID, ISPROCESSING, CREATED, AD_USER_ID, UPDATED, AD_CLIENT_ID, AD_ORG_ID, CREATEDBY, UPDATEDBY)
-      VALUES(TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),?,now(),TO_NUMBER(?),now(), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?))
+      VALUES(?, ?, ?,?,now(), ?,now(), ?, ?, ?, ?)
     </Sql>
     <Parameter name="adPinstanceId"/>
     <Parameter name="adProcessId"/>
@@ -61,7 +61,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       INSERT INTO AD_PINSTANCE (AD_PINSTANCE_ID, AD_PROCESS_ID, RECORD_ID, ISPROCESSING, CREATED, AD_USER_ID, UPDATED, AD_CLIENT_ID, AD_ORG_ID, CREATEDBY, UPDATEDBY)
-      VALUES(TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),?,now(),TO_NUMBER(?),now(), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?))
+      VALUES(?,?,?,?,now(),?,now(), ?, ?, ?, ?)
     </Sql>
     <Parameter name="adPinstanceId"/>
     <Parameter name="adProcessId"/>
@@ -76,8 +76,8 @@
   <SqlMethod name="insertPInstanceParam" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      INSERT INTO AD_PINSTANCE_PARA (AD_PINSTANCE_ID, SEQNO, PARAMETERNAME, P_STRING, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
-      VALUES(TO_NUMBER(?),TO_NUMBER(?),?,?, TO_NUMBER(?), TO_NUMBER(?), now(), TO_NUMBER(?), now(), TO_NUMBER(?))
+      INSERT INTO AD_PINSTANCE_PARA (ad_pinstance_para_id, AD_PINSTANCE_ID, SEQNO, PARAMETERNAME, P_STRING, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
+      VALUES(get_uuid(), ?,?,?,?, ?, ?, now(), ?, now(), ?)
     </Sql>
     <Parameter name="adPinstanceId"/>
     <Parameter name="seqno"/>
@@ -91,8 +91,8 @@
   <SqlMethod name="insertPInstanceParamNumber" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      INSERT INTO AD_PINSTANCE_PARA (AD_PINSTANCE_ID, SEQNO, PARAMETERNAME, P_NUMBER, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
-      VALUES(TO_NUMBER(?),TO_NUMBER(?),?,TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), now(), TO_NUMBER(?), now(), TO_NUMBER(?))
+      INSERT INTO AD_PINSTANCE_PARA (ad_pinstance_para_id, AD_PINSTANCE_ID, SEQNO, PARAMETERNAME, P_NUMBER, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
+      VALUES(get_uuid(), ?,?,?,?, ?, ?, now(), ?, now(), ?)
     </Sql>
     <Parameter name="adPinstanceId"/>
     <Parameter name="seqno"/>
@@ -106,8 +106,8 @@
   <SqlMethod name="insertPInstanceParamDate" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      INSERT INTO AD_PINSTANCE_PARA (AD_PINSTANCE_ID, SEQNO, PARAMETERNAME, P_DATE, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
-      VALUES(TO_NUMBER(?),TO_NUMBER(?),?,TO_DATE(?), TO_NUMBER(?), TO_NUMBER(?), now(), TO_NUMBER(?), now(), TO_NUMBER(?))
+      INSERT INTO AD_PINSTANCE_PARA (ad_pinstance_para_id, AD_PINSTANCE_ID, SEQNO, PARAMETERNAME, P_DATE, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
+      VALUES(get_uuid(),?,?,?,TO_DATE(?), ?, ?, now(), ?, now(), ?)
     </Sql>
     <Parameter name="adPinstanceId"/>
     <Parameter name="seqno"/>

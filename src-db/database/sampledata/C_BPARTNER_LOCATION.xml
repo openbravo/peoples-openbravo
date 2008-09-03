@@ -1,20 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--
-************************
-0. Core Range.
-************************
--->
-<!--
-************************
-0. End of Core Range.
-************************
--->
-<!--
-************************
-1. Custom Range.
-************************
--->
 <!--1000001**************--><C_BPARTNER_LOCATION>
 <!--1000001 C_BPARTNER_LOCATION_ID-->
 <!--1000001-->              <C_BPARTNER_LOCATION_ID><![CDATA[1000001]]></C_BPARTNER_LOCATION_ID>
@@ -715,9 +700,4 @@
 <!--1000036-->              <ISTAXLOCATION><![CDATA[N]]></ISTAXLOCATION>
 <!--1000036**************--></C_BPARTNER_LOCATION>
 
-<!--
-************************
-1. End of Custom Range.
-************************
--->
 </data>

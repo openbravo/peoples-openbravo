@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_REMITTANCE_POST">
     <function name="C_REMITTANCE_POST" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_remittance_id" type="NUMERIC" mode="in">
+      <parameter name="p_remittance_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -27,22 +27,22 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1; -- 0=failure
-  v_Record_ID NUMBER(10) ;
-  v_AD_User_ID NUMBER(10) ;
-  v_AD_Client_ID NUMBER(10) ;
-  v_AD_Org_ID NUMBER(10) ;
+  v_Record_ID VARCHAR2(32) ;
+  v_AD_User_ID VARCHAR2(32) ;
+  v_AD_Client_ID VARCHAR2(32) ;
+  v_AD_Org_ID VARCHAR2(32) ;
   v_Processed CHAR(1) ;
   v_Posted CHAR(1) ;
   v_Processing CHAR(1);
-  v_Currency NUMBER;
+  v_Currency VARCHAR2(32);
   v_Date DATE;
   v_CashBook_ISO_Code VARCHAR(10) ;
   v_Record_Description VARCHAR2(2000):='';
-  v_SettlementDocType_ID NUMBER(10) ;
-  v_DPManagementDocType_ID NUMBER(10) ;
-  v_Debt_Payment_ID NUMBER(10) ;
+  v_SettlementDocType_ID VARCHAR2(32) ;
+  v_DPManagementDocType_ID VARCHAR2(32) ;
+  v_Debt_Payment_ID VARCHAR2(32) ;
   --Addesd by PSarobe 12062007
-  v_Remittanceline_ID NUMBER(10);
+  v_Remittanceline_ID VARCHAR2(32);
   v_documentno_Settlement VARCHAR2(40);
   v_dateSettlement DATE;
   v_Cancel_Processed CHAR(1);
@@ -50,10 +50,10 @@
   v_dateBankstatement DATE;
   v_nameCash VARCHAR2 (60);
   v_dateCash DATE;
-  v_Bankstatementline_ID NUMBER;
-  v_CashLine_ID NUMBER;
+  v_Bankstatementline_ID VARCHAR2(32);
+  v_CashLine_ID VARCHAR2(32);
   v_ispaid CHAR(1);
-  v_Settlement_Cancel_ID NUMBER;
+  v_Settlement_Cancel_ID VARCHAR2(32);
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     Cur_RemittanceLines RECORD;
@@ -65,18 +65,18 @@
     v_DueDate DATE;
     v_Status_to CHAR(2) ;
     v_Consolidate CHAR(1) ;
-    v_SettlementID NUMBER(10) ;
+    v_SettlementID varchar2(32) ;
     v_DocumentNo NUMBER;
-    v_DPMId NUMBER;
-    v_DPId NUMBER;
-    v_DPMLineId NUMBER;
+    v_DPMId varchar2(32);
+    v_DPId varchar2(32);
+    v_DPMLineId varchar2(32);
     v_GeneratedAmt NUMBER;
     v_PaymetRule VARCHAR2(2) ;
     v_IsReceipt CHAR(1) ;
-    v_BankPartner NUMBER;
-    v_vSettlementId NUMBER;
-    v_vDPManagementID NUMBER;
-    v_BankAccountID NUMBER;
+    v_BankPartner varchar2(32);
+    v_vSettlementId varchar2(32);
+    v_vDPManagementID varchar2(32);
+    v_BankAccountID varchar2(32);
     v_line NUMBER;
     v_remittanceLineCount NUMBER;
     FINISH_PROCESS BOOLEAN:=FALSE;

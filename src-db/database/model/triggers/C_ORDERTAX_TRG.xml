@@ -27,10 +27,10 @@
     * Title: ReadOnly Check
     * Description:
     ************************************************************************/
-    v_ID NUMBER;
+    v_ID VARCHAR2(32);
   v_RO         NUMBER;
   v_Processed  CHAR(1) ;
-  v_C_ORDER_ID NUMBER(10) ;
+  v_C_ORDER_ID VARCHAR2(32) ;
   v_Docaction NVARCHAR2(2) ;
 BEGIN
   IF INSERTING THEN
@@ -48,9 +48,9 @@ BEGIN
     IF(v_Processed='Y' AND v_Docaction <> 'CL'
     AND ((COALESCE(:old.TAXBASEAMT, 0) <> COALESCE(:new.TAXBASEAMT, 0))
     OR(COALESCE(:old.TAXAMT, 0) <> COALESCE(:new.TAXAMT, 0))
-    OR(COALESCE(:old.C_TAX_ID, 0) <> COALESCE(:new.C_TAX_ID, 0))
-    OR(COALESCE(:old.AD_ORG_ID, 0) <> COALESCE(:new.AD_ORG_ID, 0))
-    OR(COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0)))) THEN
+    OR(COALESCE(:old.C_TAX_ID, '0') <> COALESCE(:new.C_TAX_ID, '0'))
+    OR(COALESCE(:old.AD_ORG_ID, '0') <> COALESCE(:new.AD_ORG_ID, '0'))
+    OR(COALESCE(:old.AD_CLIENT_ID, '0') <> COALESCE(:new.AD_CLIENT_ID, '0')))) THEN
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
   END IF;

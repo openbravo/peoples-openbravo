@@ -106,8 +106,8 @@ public class Buscador extends HttpSecureAppServlet {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/businessUtility/Buscador").createXmlDocument();
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     StringBuffer script = new StringBuffer();
     Vector<StringBuffer> vecScript = new Vector<StringBuffer>();
@@ -195,7 +195,7 @@ public class Buscador extends HttpSecureAppServlet {
         }
       }
       strHtml.append(") {\n");
-      strHtml.append("    mensaje(1);\n");
+      strHtml.append("    showJSMessage(1);\n");
       strHtml.append("    return false;\n");
       strHtml.append("  }\n");
     } else if (fields!=null) {

@@ -26,9 +26,6 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-import java.sql.*;
-import org.openbravo.utils.FormatUtilities;
-
 
 public class Activation_Message extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -64,7 +61,7 @@ public class Activation_Message extends HttpSecureAppServlet {
     if (!msg.equals("")) resultado.append("new Array(\"MESSAGE\", \"" + msg + "\")");   
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "frameAplicacion");
+    xmlDocument.setParameter("frameName", "appFrame");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

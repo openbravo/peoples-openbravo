@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_PRODUCTION_RUN">
     <function name="M_PRODUCTION_RUN" type="NULL">
-      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -34,7 +34,7 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
   v_Result NUMBER:=1;
   -- Parameter
   TYPE RECORD IS REF CURSOR;
@@ -43,24 +43,24 @@
     MustBeStocked CHAR(1) ;
     v_IsCreated CHAR(1) ;
     v_Processed CHAR(1) ;
-    v_Client_ID NUMBER;
-    v_Org_ID NUMBER;
+    v_Client_ID VARCHAR2(32);
+    v_Org_ID VARCHAR2(32);
     --
     v_Line NUMBER;
-    NextNo NUMBER;
+    NextNo VARCHAR2(32);
     CountNo NUMBER;
     v_Count NUMBER;
     v_Qty NUMBER;
     v_QtyAcumulated NUMBER;
     v_QtyOrder NUMBER;
-    p_Warehouse NUMBER;
-    p_User NUMBER;
+    p_Warehouse VARCHAR2(32);
+    p_User VARCHAR2(32);
     -- ProductionPlan
     CUR_PP RECORD;
     -- BOM Lines
     CUR_BOM RECORD;
     -- Stocked BOMs
-    CURSOR CUR_STOCK (Product_ID NUMBER, UOM NUMBER, Warehouse_ID NUMBER) IS
+    CURSOR CUR_STOCK (Product_ID VARCHAR, UOM VARCHAR, Warehouse_ID VARCHAR) IS
       SELECT T.M_PRODUCT_ID,
         T.C_UOM_ID,
         T.M_LOCATOR_ID,
@@ -182,17 +182,17 @@
               VALUES
               (
                 NextNo, CUR_PP.M_ProductionPlan_ID, v_Line, CUR_PP.AD_Client_ID,
-                CUR_PP.AD_Org_ID, 'Y', now(), 0,
-                now(), 0, CUR_PP.M_Product_ID, CUR_PP.ProductionQty,
+                CUR_PP.AD_Org_ID, 'Y', now(), '0',
+                now(), '0', CUR_PP.M_Product_ID, CUR_PP.ProductionQty,
                 CUR_PP.M_Locator_ID, CUR_PP.Description, CUR_PP.C_UOM_ID
               )
               ;
           END LOOP;
           --Creating BOM Lines
           DECLARE
-            v_Product_old NUMBER;
-            v_Warehouse_old NUMBER;
-            v_UOM_old NUMBER;
+            v_Product_old VARCHAR2(32);
+            v_Warehouse_old VARCHAR2(32);
+            v_UOM_old VARCHAR2(32);
             v_QtyStorage NUMBER:=0;
           BEGIN
             FOR CUR_BOM IN
@@ -261,8 +261,8 @@
                       VALUES
                       (
                         NextNo, CUR_BOM.M_ProductionPlan_ID, v_Line, CUR_BOM.Client_ID,
-                        CUR_BOM.Org_ID, 'Y', now(), 0,
-                        now(), 0, CUR_BOM.M_ProductBOM_ID, CUR_BOM.C_UOM_ID,
+                        CUR_BOM.Org_ID, 'Y', now(), '0',
+                        now(), '0', CUR_BOM.M_ProductBOM_ID, CUR_BOM.C_UOM_ID,
                         -v_Qty, v_storage.M_Locator_ID, v_storage.M_AttributeSetInstance_ID, v_storage.M_Product_UOM_ID,
                         -v_QtyOrder
                       )
@@ -294,8 +294,8 @@
                   VALUES
                   (
                     NextNo, CUR_BOM.M_ProductionPlan_ID, v_Line, CUR_BOM.Client_ID,
-                    CUR_BOM.Org_ID, 'Y', now(), 0,
-                    now(), 0, CUR_BOM.M_ProductBOM_ID, -CUR_BOM.ProductionQty*CUR_BOM.BOMQty,
+                    CUR_BOM.Org_ID, 'Y', now(), '0',
+                    now(), '0', CUR_BOM.M_ProductBOM_ID, -CUR_BOM.ProductionQty*CUR_BOM.BOMQty,
                     CUR_BOM.M_Locator_ID, CUR_BOM.C_UOM_ID
                   )
                   ;
@@ -387,8 +387,8 @@
                   VALUES
                   (
                     NextNo, CUR_PLineBOM.M_ProductionPlan_ID, v_Line, CUR_PLineBOM.Client_ID,
-                    CUR_PLineBOM.Org_ID, 'Y', now(), 0,
-                    now(), 0, CUR_BOM_PRODUCT.M_ProductBOM_ID, CUR_PLineBOM.MovementQty*CUR_BOM_PRODUCT.BOMQty,
+                    CUR_PLineBOM.Org_ID, 'Y', now(), '0',
+                    now(), '0', CUR_BOM_PRODUCT.M_ProductBOM_ID, CUR_PLineBOM.MovementQty*CUR_BOM_PRODUCT.BOMQty,
                     CUR_PLineBOM.M_Locator_ID
                   )
                   ;
@@ -414,7 +414,7 @@
             M_PRODUCT P
           WHERE PL.M_PRODUCT_ID=P.M_PRODUCT_ID
             AND P.M_ATTRIBUTESET_ID IS NOT NULL
-            AND COALESCE(PL.M_ATTRIBUTESETINSTANCE_ID, 0) = 0
+            AND COALESCE(PL.M_ATTRIBUTESETINSTANCE_ID, '0') = '0'
             AND PL.M_ProductionPlan_ID=pp.M_ProductionPlan_ID
             AND pp.M_Production_ID=v_Record_ID;
           IF v_Count<>0 THEN
@@ -477,9 +477,9 @@
                   VALUES
                   (
                     NextNo, CUR_PL_Post.M_ProductionLine_ID, CUR_PL_Post.AD_Client_ID, CUR_PL_Post.AD_Org_ID,
-                     'Y', now(), 0, now(),
-                    0, 'P+', CUR_PL_Post.M_Locator_ID, CUR_PL_Post.M_Product_ID,
-                    COALESCE(CUR_PL_Post.M_AttributeSetInstance_ID, 0), -- not distinguishing between assemby/disassembly
+                     'Y', now(), '0', now(),
+                    '0', 'P+', CUR_PL_Post.M_Locator_ID, CUR_PL_Post.M_Product_ID,
+                    COALESCE(CUR_PL_Post.M_AttributeSetInstance_ID, '0'), -- not distinguishing between assemby/disassembly
                     CUR_PL_Post.MovementDate, CUR_PL_Post.MovementQty, CUR_PL_Post.M_Product_UOM_ID, CUR_PL_Post.QuantityOrder,
                     CUR_PL_Post.C_UOM_ID
                   )

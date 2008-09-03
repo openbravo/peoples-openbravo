@@ -29,23 +29,23 @@
  v_taxAmt NUMBER:= 0;
  v_HasTaxLine  BOOLEAN := FALSE;
  v_isPosted   CHAR(1);
- v_ID    NUMBER;
+ v_ID    varchar2(32);
  v_Processed   CHAR(1);
  v_Prec NUMBER:=2;
-  v_UOM_ID   NUMBER(10);
- v_Currency   NUMBER;
+  v_UOM_ID   varchar2(32);
+ v_Currency   VARCHAR2(32);
  v_ChargeAmt   NUMBER;
  v_LineNetAmt  NUMBER;
- v_CinvoiceTaxID NUMBER(10);
+ v_CinvoiceTaxID varchar2(32);
 
 BEGIN
 IF (UPDATING) THEN
  IF NOT(COALESCE(:old.QtyInvoiced,0) <> COALESCE(:NEW.QtyInvoiced,0)
   OR COALESCE(:old.LineNetAmt,0) <> COALESCE(:NEW.LineNetAmt,0)
   OR COALESCE(:old.ChargeAmt,0) <> COALESCE(:NEW.ChargeAmt,0)
-  OR COALESCE(:old.M_Product_ID,0) <> COALESCE(:NEW.M_Product_ID,0)
-  OR COALESCE(:old.C_Tax_ID,0) <> COALESCE(:NEW.C_Tax_ID,0)
-  OR COALESCE(:old.C_Uom_ID,0) <> COALESCE(:NEW.C_Uom_ID,0))
+  OR COALESCE(:old.M_Product_ID,'0') <> COALESCE(:NEW.M_Product_ID,'0')
+  OR COALESCE(:old.C_Tax_ID,'0') <> COALESCE(:NEW.C_Tax_ID,'0')
+  OR COALESCE(:old.C_Uom_ID,'0') <> COALESCE(:NEW.C_Uom_ID,'0'))
  THEN
   RETURN;
  END IF;
@@ -54,15 +54,15 @@ IF (UPDATING) THEN
  IF (UPDATING OR INSERTING) THEN
      IF (:NEW.M_PRODUCT_ID IS NOT NULL) THEN
        SELECT C_UOM_ID INTO v_UOM_ID FROM M_PRODUCT WHERE M_PRODUCT_ID=:NEW.M_PRODUCT_ID;
-       IF (COALESCE(v_UOM_ID,0) <> COALESCE(:NEW.C_UOM_ID,0)) THEN
+       IF (COALESCE(v_UOM_ID,'0') <> COALESCE(:NEW.C_UOM_ID,'0')) THEN
        IF (:NEW.M_INOUTLINE_ID IS NOT NULL) THEN
        SELECT C_UOM_ID INTO v_UOM_ID FROM M_INOUTLINE WHERE M_INOUTLINE_ID = :NEW.M_INOUTLINE_ID;
-    IF (COALESCE(v_UOM_ID,0) <> COALESCE(:NEW.C_UOM_ID,0)) THEN
+    IF (COALESCE(v_UOM_ID,'0') <> COALESCE(:NEW.C_UOM_ID,'0')) THEN
        RAISE_APPLICATION_ERROR(-20111, 'Unit of Measure mismatch (product/transaction)');
     END IF;
       ELSIF (:NEW.C_ORDERLINE_ID IS NOT NULL) THEN
        SELECT C_UOM_ID INTO v_UOM_ID FROM C_ORDERLINE WHERE C_ORDERLINE_ID = :NEW.C_ORDERLINE_ID;
-    IF (COALESCE(v_UOM_ID,0) <> COALESCE(:NEW.C_UOM_ID,0)) THEN
+    IF (COALESCE(v_UOM_ID,'0') <> COALESCE(:NEW.C_UOM_ID,'0')) THEN
        RAISE_APPLICATION_ERROR(-20111, 'Unit of Measure mismatch (product/transaction)');
     END IF;
     ELSE
@@ -122,7 +122,7 @@ IF (UPDATING) THEN
      SET TaxAmt = (SELECT ROUND(C_INVOICETAX.TaxBaseAmt * t.Rate / 100, 2)
          FROM C_TAX t WHERE C_INVOICETAX.C_Tax_ID=t.C_Tax_ID),
         Updated = now(),
-     UpdatedBy = 0
+     UpdatedBy = '0'
    WHERE C_Invoice_ID = :OLD.C_Invoice_ID
      AND C_Tax_ID = :OLD.C_Tax_ID
      AND Recalculate='Y';

@@ -20,7 +20,7 @@
 <REPORT>
   <template file="DisplayHelp_Edit_Field_F1.html"/>
   <PARAMETER id="paramLanguage" name="language" default=""/>
-  <PARAMETER id="paramDirection" name="direction" default=""/>
+  <PARAMETER id="paramDirectory" name="directory" default=""/>
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="paramField" name="field" attribute="value" default=""/>
   <PARAMETER id="fieldSave" name="save" attribute="value" default=""/>

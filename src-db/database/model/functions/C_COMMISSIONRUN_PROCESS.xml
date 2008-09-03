@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_COMMISSIONRUN_PROCESS">
     <function name="C_COMMISSIONRUN_PROCESS" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/******************************************************************************
@@ -21,7 +21,7 @@
  -- Logistice
  v_ResultStr     VARCHAR2(2000) := '';
  v_Message     VARCHAR2(2000) := '';
- v_Record_ID      NUMBER(10);
+ v_Record_ID      varchar2(32);
  v_Result      NUMBER(10) := 1; -- Success
  -- Parameter
 TYPE RECORD IS REF CURSOR;
@@ -30,23 +30,23 @@ TYPE RECORD IS REF CURSOR;
 
   CUR_ComRun RECORD;
  --
- v_C_DocType_ID     NUMBER;
- v_C_Invoice_ID     NUMBER;
- v_NextNo      NUMBER;
+ v_C_DocType_ID     varchar2(32);
+ v_C_Invoice_ID     varchar2(32);
+ v_NextNo      VARCHAR2(32);
  v_DocumentNo     VARCHAR2(40);
- v_SalesRep_ID     NUMBER;
+ v_SalesRep_ID     varchar2(32);
  --
- v_C_BPartner_ID     NUMBER;
- v_C_BPartner_Location_ID  NUMBER;
+ v_C_BPartner_ID     varchar2(32);
+ v_C_BPartner_Location_ID  varchar2(32);
  v_partnername VARCHAR2(100);
- v_C_PaymentTerm_ID    NUMBER;
- v_C_Currency_ID     NUMBER;
+ v_C_PaymentTerm_ID    varchar2(32);
+ v_C_Currency_ID     varchar2(32);
  v_PaymentRule     CHAR(1);
- v_M_PriceList_ID    NUMBER;
+ v_M_PriceList_ID    varchar2(32);
  v_POReference     NUMBER;
- v_Product_ID     NUMBER;
- v_Tax_ID      NUMBER;
- v_UOM_ID      NUMBER;
+ v_Product_ID     varchar2(32);
+ v_Tax_ID      varchar2(32);
+ v_UOM_ID      varchar2(32);
  v_IsDiscountPrinted    CHAR(1);
   FINISH_PROCESS BOOLEAN := false;
 BEGIN
@@ -151,7 +151,7 @@ BEGIN
    M_PriceList_ID, C_Campaign_ID, C_Project_ID, C_Activity_ID)
   VALUES
    (v_C_Invoice_ID, NULL,
-   CUR_ComRun.AD_Client_ID, CUR_ComRun.AD_Org_ID, 'Y', now(), 0, now(), 0,
+   CUR_ComRun.AD_Client_ID, CUR_ComRun.AD_Org_ID, 'Y', now(), '0', now(), '0',
    'N', v_DocumentNo, 'DR', 'CO', 'N', 'N',
    v_C_DocType_ID, v_C_DocType_ID, CUR_ComRun.Description,
    v_SalesRep_ID,
@@ -179,7 +179,7 @@ BEGIN
    PriceStd, M_Offer_ID)
   VALUES
    (v_NextNo,
-   CUR_ComRun.AD_Client_ID, CUR_ComRun.AD_Org_ID, 'Y', now(), 0, now(), 0,
+   CUR_ComRun.AD_Client_ID, CUR_ComRun.AD_Org_ID, 'Y', now(), '0', now(), '0',
    v_C_Invoice_ID, NULL, NULL,
    10, NULL,
    v_Product_ID, 1, CUR_ComRun.GrandTotal, CUR_ComRun.GrandTotal, CUR_ComRun.GrandTotal, CUR_ComRun.GrandTotal,

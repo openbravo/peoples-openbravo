@@ -17,7 +17,6 @@
 package org.openbravo.erpCommon.ad_process;
 
 import org.openbravo.erpCommon.utility.ToolBar;
-import org.openbravo.erpCommon.utility.KeyMap;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
@@ -99,8 +98,8 @@ public class SendMailText extends HttpSecureAppServlet {
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars.getLanguage()));
     xmlDocument.setParameter("description", strDescription);
     xmlDocument.setParameter("help", strHelp);

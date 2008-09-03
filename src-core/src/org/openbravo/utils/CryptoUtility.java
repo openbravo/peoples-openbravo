@@ -12,12 +12,9 @@
 
 package org.openbravo.utils;
 
-import java.io.IOException;
 import javax.crypto.*;
 import javax.crypto.spec.*;
 import javax.servlet.ServletException;
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
 
 public class CryptoUtility {
   private static Cipher s_cipher = null;
@@ -58,7 +55,7 @@ public class CryptoUtility {
     try {
       s_cipher.init(Cipher.ENCRYPT_MODE, s_key);
       encString = s_cipher.doFinal(clearText.getBytes());
-      result = new BASE64Encoder().encode(encString);
+      result = new String(org.apache.commons.codec.binary.Base64.encodeBase64(encString),"UTF-8");
     } catch (Exception ex) {
       ex.printStackTrace();
       throw new ServletException("CryptoUtility.encrypt() - Can't init cipher");
@@ -74,7 +71,7 @@ public class CryptoUtility {
     byte out[];
     byte decode[];
     try {
-      decode = new BASE64Decoder().decodeBuffer(value);
+      decode = org.apache.commons.codec.binary.Base64.decodeBase64(value.getBytes("UTF-8"));
       s_cipher.init(Cipher.DECRYPT_MODE, s_key, s_cipher.getParameters());
       out = s_cipher.doFinal(decode);
     } catch (Exception ex) {

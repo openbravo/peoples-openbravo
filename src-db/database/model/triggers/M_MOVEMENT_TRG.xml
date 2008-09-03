@@ -26,10 +26,10 @@ v_DateNull DATE := TO_DATE('01-01-1900', 'DD-MM-YYYY');
 BEGIN
   IF (:old.PROCESSED = 'Y' AND(
      (COALESCE(:old.MOVEMENTDATE, v_DateNull) <> COALESCE(:new.MOVEMENTDATE, v_DateNull))
-     OR (COALESCE(:old.AD_ORGTRX_ID, 0) <> COALESCE(:new.AD_ORGTRX_ID, 0))
+     OR (COALESCE(:old.AD_ORGTRX_ID, '0') <> COALESCE(:new.AD_ORGTRX_ID, '0'))
      OR (COALESCE(:old.DOCUMENTNO, '.') <> COALESCE(:new.DOCUMENTNO, '.'))
-     OR(COALESCE(:old.AD_ORG_ID, 0) <> COALESCE(:new.AD_ORG_ID, 0))
-     OR(COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0)))) THEN
+     OR(COALESCE(:old.AD_ORG_ID, '0') <> COALESCE(:new.AD_ORG_ID, '0'))
+     OR(COALESCE(:old.AD_CLIENT_ID, '0') <> COALESCE(:new.AD_CLIENT_ID, '0')))) THEN
     RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
   END IF;
 END M_MOVEMENT_TRG

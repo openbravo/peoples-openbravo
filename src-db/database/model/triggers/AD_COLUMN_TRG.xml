@@ -37,7 +37,7 @@
       IF((COALESCE(:old.Name, '.') <> COALESCE(:NEW.Name, '.')
         OR COALESCE(:old.Description, '.') <> COALESCE(:NEW.Description, '.')
         OR COALESCE(:old.Help, '.') <> COALESCE(:NEW.Help, '.'))
-        AND :NEW.AD_Reference_ID <> 28) THEN
+        AND :NEW.AD_Reference_ID <> '28') THEN
         UPDATE AD_Field
         SET Name=:new.Name,
         Description=:new.Description,

@@ -32,7 +32,7 @@
    <SqlMethod name="nextDocType" type="callableStatement" return="object" object="CSResponse">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        CALL AD_Sequence_DocType(TO_NUMBER(?),TO_NUMBER(?),?,?)
+        CALL AD_Sequence_DocType(?,?,?,?)
       ]]></Sql>
       <Parameter name="cDocTypeId"/>
       <Parameter name="adClientId"/>
@@ -42,7 +42,7 @@
    <SqlMethod name="nextDoc" type="callableStatement" return="object" object="CSResponse">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        CALL AD_Sequence_Doc(?,TO_NUMBER(?),?,?)
+        CALL AD_Sequence_Doc(?,?,?,?)
       ]]></Sql>
       <Parameter name="cDocTypeTableName"/>
       <Parameter name="adClientId"/>

@@ -35,7 +35,7 @@
       <Sql>
         SELECT ISSUMMARY 
         FROM AD_MENU 
-        WHERE AD_MENU_ID = TO_NUMBER(?)
+        WHERE AD_MENU_ID = ?
       </Sql>
         <Parameter name="table" optional="true" type="replace" after="FROM " text="AD_MENU"/>
         <Parameter name="column" optional="true" type="replace" after="WHERE " text="AD_MENU_ID"/>
@@ -45,7 +45,7 @@
    <SqlMethod name="isItsOwnChild" type="preparedStatement" return="String" default="N">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        select instr(ad_parent_tree(to_number(?), to_number(?)),'|'||?||'|') AS isItsOwnChild from dual
+        select instr(ad_parent_tree(?, ?),'|'||?||'|') AS isItsOwnChild from dual
       </Sql>
         <Parameter name="tree"/>
         <Parameter name="parent"/>

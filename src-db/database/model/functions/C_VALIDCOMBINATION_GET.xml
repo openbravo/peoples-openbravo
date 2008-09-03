@@ -1,22 +1,22 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_VALIDCOMBINATION_GET">
     <function name="C_VALIDCOMBINATION_GET" type="NULL">
-      <parameter name="p_c_validcombination_id" type="NUMERIC" mode="out">
+      <parameter name="p_c_validcombination_id" type="VARCHAR" mode="out">
         <default/>
       </parameter>
-      <parameter name="p_ad_client_id" type="NUMERIC" mode="in">
+      <parameter name="p_ad_client_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_ad_org_id" type="NUMERIC" mode="in">
+      <parameter name="p_ad_org_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_c_acctschema_id" type="NUMERIC" mode="in">
+      <parameter name="p_c_acctschema_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_account_id" type="NUMERIC" mode="in">
+      <parameter name="p_account_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_b_c_validcombination_id" type="NUMERIC" mode="in">
+      <parameter name="p_b_c_validcombination_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_mustbefullyqualified" type="CHAR" mode="in">
@@ -25,40 +25,40 @@
       <parameter name="p_alias" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
-      <parameter name="p_createdby" type="NUMERIC" mode="in">
+      <parameter name="p_createdby" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
-      <parameter name="p_m_product_id" type="NUMERIC" mode="in">
+      <parameter name="p_m_product_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
-      <parameter name="p_c_bpartner_id" type="NUMERIC" mode="in">
+      <parameter name="p_c_bpartner_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
-      <parameter name="p_ad_orgtrx_id" type="NUMERIC" mode="in">
+      <parameter name="p_ad_orgtrx_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
-      <parameter name="p_c_locfrom_id" type="NUMERIC" mode="in">
+      <parameter name="p_c_locfrom_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
-      <parameter name="p_c_locto_id" type="NUMERIC" mode="in">
+      <parameter name="p_c_locto_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
-      <parameter name="p_c_salesregion_id" type="NUMERIC" mode="in">
+      <parameter name="p_c_salesregion_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
-      <parameter name="p_c_project_id" type="NUMERIC" mode="in">
+      <parameter name="p_c_project_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
-      <parameter name="p_c_campaign_id" type="NUMERIC" mode="in">
+      <parameter name="p_c_campaign_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
-      <parameter name="p_c_activity_id" type="NUMERIC" mode="in">
+      <parameter name="p_c_activity_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
-      <parameter name="p_user1_id" type="NUMERIC" mode="in">
+      <parameter name="p_user1_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
-      <parameter name="p_user2_id" type="NUMERIC" mode="in">
+      <parameter name="p_user2_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -103,21 +103,21 @@
     Cur_Base_VC RECORD;
     Cur_Existing_VC RECORD;
     -- Target Combination
-    v_AD_Client_ID NUMBER:=NULL;
-    v_AD_Org_ID NUMBER:=NULL;
-    v_C_AcctSchema_ID NUMBER:=NULL;
-    v_Account_ID NUMBER:=NULL;
-    v_M_Product_ID NUMBER:=NULL;
-    v_C_BPartner_ID NUMBER:=NULL;
-    v_AD_OrgTrx_ID NUMBER:=NULL;
-    v_C_LocFrom_ID NUMBER:=NULL;
-    v_C_LocTo_ID NUMBER:=NULL;
-    v_C_SalesRegion_ID NUMBER:=NULL;
-    v_C_Project_ID NUMBER:=NULL;
-    v_C_Campaign_ID NUMBER:=NULL;
-    v_C_Activity_ID NUMBER:=NULL;
-    v_User1_ID NUMBER:=NULL;
-    v_User2_ID NUMBER:=NULL;
+    v_AD_Client_ID VARCHAR2(32):=NULL;
+    v_AD_Org_ID VARCHAR2(32):=NULL;
+    v_C_AcctSchema_ID VARCHAR2(32):=NULL;
+    v_Account_ID VARCHAR2(32):=NULL;
+    v_M_Product_ID VARCHAR2(32):=NULL;
+    v_C_BPartner_ID VARCHAR2(32):=NULL;
+    v_AD_OrgTrx_ID VARCHAR2(32):=NULL;
+    v_C_LocFrom_ID VARCHAR2(32):=NULL;
+    v_C_LocTo_ID VARCHAR2(32):=NULL;
+    v_C_SalesRegion_ID VARCHAR2(32):=NULL;
+    v_C_Project_ID VARCHAR2(32):=NULL;
+    v_C_Campaign_ID VARCHAR2(32):=NULL;
+    v_C_Activity_ID VARCHAR2(32):=NULL;
+    v_User1_ID VARCHAR2(32):=NULL;
+    v_User2_ID VARCHAR2(32):=NULL;
     v_CreatedBy NUMBER:=NULL;
     -- Existance Loop - Get first fully qualified matching combination
     --

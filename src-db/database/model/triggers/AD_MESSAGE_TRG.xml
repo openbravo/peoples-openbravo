@@ -33,10 +33,10 @@ BEGIN
   IF INSERTING
   THEN
     INSERT INTO AD_Message_Trl
-                (AD_Message_ID, AD_Language, AD_Client_ID, AD_Org_ID,
+                (AD_Message_Trl_ID, AD_Message_ID, AD_Language, AD_Client_ID, AD_Org_ID,
                  IsActive, Created, CreatedBy, Updated, UpdatedBy, MsgText,
                  MsgTip, IsTranslated)
-      SELECT :NEW.AD_Message_ID, AD_Language, :NEW.AD_Client_ID,
+      SELECT get_uuid(), :NEW.AD_Message_ID, AD_Language, :NEW.AD_Client_ID,
              :NEW.AD_Org_ID, :NEW.IsActive, :NEW.Created, :NEW.CreatedBy,
              :NEW.Updated, :NEW.UpdatedBy, :NEW.MsgText, :NEW.MsgTip, 'N'
         FROM AD_Language

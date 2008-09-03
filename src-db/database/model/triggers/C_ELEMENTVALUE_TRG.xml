@@ -22,9 +22,9 @@
 
 
 
-  v_xTree_ID NUMBER;
-  v_xParent_ID NUMBER;
-  v_NextNo     NUMBER;
+  v_xTree_ID VARCHAR2(32);
+  v_xParent_ID VARCHAR2(32);
+  v_NextNo     VARCHAR2(32);
 BEGIN
   -- Insert C_ElementValue Trigger
   --  for Translation
@@ -34,12 +34,12 @@ BEGIN
     INSERT
     INTO C_ElementValue_Trl
       (
-        C_ElementValue_ID, AD_Language, AD_Client_ID,
+        C_ElementValue_Trl_ID, C_ElementValue_ID, AD_Language, AD_Client_ID,
         AD_Org_ID, IsActive, Created,
         CreatedBy, Updated, UpdatedBy,
         Name, IsTranslated
       )
-    SELECT :new.C_ElementValue_ID,
+    SELECT get_uuid(), :new.C_ElementValue_ID,
       AD_Language, :new.AD_Client_ID, :new.AD_Org_ID,
       :new.IsActive, :new.Created, :new.CreatedBy,
       :new.Updated, :new.UpdatedBy, :new.Name,
@@ -63,14 +63,14 @@ BEGIN
     INSERT
     INTO AD_TreeNode
       (
-        AD_Client_ID, AD_Org_ID, IsActive,
+        AD_TreeNode_ID, AD_Client_ID, AD_Org_ID, IsActive,
         Created, CreatedBy, Updated,
         UpdatedBy, AD_Tree_ID, Node_ID,
         Parent_ID, SeqNo
       )
       VALUES
       (
-        :new.AD_Client_ID, :new.AD_Org_ID, :new.IsActive,
+        get_uuid(), :new.AD_Client_ID, :new.AD_Org_ID, :new.IsActive,
         :new.Created, :new.CreatedBy, :new.Updated,
         :new.UpdatedBy, v_xTree_ID, :new.C_ElementValue_ID,
         v_xParent_ID,(

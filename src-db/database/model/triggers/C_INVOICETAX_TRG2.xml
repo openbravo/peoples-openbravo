@@ -18,20 +18,20 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 -- Invoice
-v_buspartid NUMBER;
+v_buspartid varchar2(32);
 vIsSalesInvoice CHAR(1);
 whamountold NUMBER;
 vProcessed  CHAR(1);
 -- InvoiceTax
-v_invoiceid NUMBER;
-v_taxid NUMBER;
+v_invoiceid varchar2(32);
+v_taxid varchar2(32);
 taxamountnew NUMBER;
 taxamountold NUMBER;
 -- BP_Withholding
 isbaseamountpercent CHAR(1);
 baseamountpercent NUMBER;
 includetaxinps CHAR(1);
-taxinps_id NUMBER;
+taxinps_ID VARCHAR2(32);
 -- Withholding
 withpercent NUMBER;
 -- Tax
@@ -39,7 +39,7 @@ v_IsWithTax CHAR(1);
 -- Calculated Variables
 baseamount  NUMBER;
 whamountnew NUMBER;
-vwithid NUMBER;
+vwithid varchar2(32);
 finish_process BOOLEAN := FALSE;
 BEGIN
   IF(inserting) THEN

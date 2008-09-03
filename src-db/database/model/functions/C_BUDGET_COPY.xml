@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_BUDGET_COPY">
     <function name="C_BUDGET_COPY" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -23,18 +23,18 @@
   --  Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
   v_Result NUMBER:=1; --  Success
-  v_BudgetFrom_ID NUMBER;
+  v_BudgetFrom_ID VARCHAR2(32);
   --  Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     --  Record Info
-    v_Client_ID NUMBER;
-    v_Org_ID NUMBER;
-    v_User_ID NUMBER;
-    v_BudgetLine_ID NUMBER;
-    v_Period_ID NUMBER;
+    v_Client_ID VARCHAR2(32);
+    v_Org_ID VARCHAR2(32);
+    v_User_ID VARCHAR2(32);
+    v_BudgetLine_ID VARCHAR2(32);
+    v_Period_ID VARCHAR2(32);
     Cur_BudgetLine RECORD;
   BEGIN
     v_Result:=1;
@@ -55,7 +55,7 @@
       v_Org_ID:=Cur_Parameter.AD_Org_ID;
       v_Client_ID:=Cur_Parameter.AD_Client_ID;
       IF(Cur_Parameter.ParameterName='C_Budget_ID') THEN
-        v_BudgetFrom_ID:=Cur_Parameter.P_Number;
+        v_BudgetFrom_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  BudgetFrom_ID=' || v_BudgetFrom_ID) ;
       END IF;
     END LOOP; --  Get Parameter

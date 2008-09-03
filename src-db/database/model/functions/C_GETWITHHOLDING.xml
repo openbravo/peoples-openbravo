@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_GETWITHHOLDING">
     <function name="C_GETWITHHOLDING" type="NUMERIC">
-      <parameter name="id_invoice_in" type="NUMERIC" mode="in">
+      <parameter name="id_invoice_in" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -30,11 +30,11 @@ TYPE RECORD IS REF CURSOR;
     curTaxInps     RECORD;
 
 --Business Partner
-IdBusPart NUMBER;
+IdBusPart varchar(32);
 --Business Partner WithHolding
-IdWithHolding NUMBER;
+IdWithHolding varchar(32);
 IsIncludedTax char(1);
-IdTax NUMBER;
+IdTax varchar(32);
 IsPercentWh char(1);
 baseamountpercent NUMBER;
 --WithHolding
@@ -44,7 +44,7 @@ IsWithHoldingTax char(1);
 
 TotCompensi NUMBER;
 base_amount NUMBER;
-Withholding NUMBER;
+Withholding varchar(32);
 TaxInps NUMBER;
 TaxAmount NUMBER;
 

@@ -26,7 +26,7 @@
 	<PARAMETER id="linkButtonSaveNew" name="command" attribute="onclick" replace="xx"/>
 	<PARAMETER id="linkButtonSaveEdit" name="command" attribute="onclick" replace="xx"/>
 	<PARAMETER id="paramWindowId" name="windowId" attribute="value" default=""/>
-	<PARAMETER id="paramDirection" name="direction" default=""/>
+	<PARAMETER id="paramDirectory" name="directory" default=""/>
 	<PARAMETER id="paramCommandType" name="commandType" attribute="value"/>
 	<PARAMETER id="fieldWindowName" name="windowName"/>
 	<PARAMETER id="fieldTabName" name="tabName"/>

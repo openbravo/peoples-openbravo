@@ -69,7 +69,7 @@ public class DeleteClient extends HttpSecureAppServlet {
         myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), "@DeleteClient_SelectClient@")); 
       }else{
         PInstanceProcessData.insertPInstance(this, pinstance, "800147", strClient, "N", vars.getUser(), vars.getClient(), vars.getOrg());
-        PInstanceProcessData.insertPInstanceParamNumber(this, pinstance, "10", "AD_Client_ID", strClient, vars.getClient(), vars.getOrg(), vars.getUser());
+        PInstanceProcessData.insertPInstanceParam(this, pinstance, "10", "AD_Client_ID", strClient, vars.getClient(), vars.getOrg(), vars.getUser());
 
 		    DeleteClientData.adDeleteClient(this, pinstance);
 		    
@@ -115,10 +115,10 @@ public class DeleteClient extends HttpSecureAppServlet {
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
     
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("alertMsg", "ALERT_MSG=\"" + Utility.messageBD(this, "GoingToDeleteClient", vars.getLanguage()) + "\";");
     xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars.getLanguage()));
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("description", strDescription);
     xmlDocument.setParameter("help", strHelp);
     xmlDocument.setParameter("Client", strClient);

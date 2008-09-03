@@ -33,8 +33,8 @@
         AND pp.M_PriceList_Version_ID=pv.M_PriceList_Version_ID
         AND pv.M_PriceList_ID=pl.M_PriceList_ID
         AND pv.IsActive='Y'
-        AND p.M_Product_ID = TO_NUMBER(?)
-        AND pl.M_PriceList_ID = TO_NUMBER(?)
+        AND p.M_Product_ID = ?
+        AND pl.M_PriceList_ID = ?
         ORDER BY pv.ValidFrom DESC
       ]]>
     </Sql>
@@ -55,8 +55,8 @@
         AND pv.M_PriceList_ID=bpl.M_PriceList_ID
         AND pv.IsActive='Y'
         AND bpl.M_PriceList_ID=pl.BasePriceList_ID
-        AND p.M_Product_ID = TO_NUMBER(?)
-        AND pl.M_PriceList_ID = TO_NUMBER(?)
+        AND p.M_Product_ID=?
+        AND pl.M_PriceList_ID=?
         ORDER BY pv.ValidFrom DESC
       ]]>
     </Sql>
@@ -70,7 +70,7 @@
         SELECT PO_PRICELIST_ID
         FROM S_TIMEEXPENSE, C_BPARTNER
         WHERE S_TIMEEXPENSE.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
-        AND S_TIMEEXPENSE.S_TIMEEXPENSE_ID = TO_NUMBER(?)
+        AND S_TIMEEXPENSE.S_TIMEEXPENSE_ID = ?
       ]]>
     </Sql>
     <Parameter name="sTimeexpenseId"/>
@@ -81,7 +81,7 @@
       <![CDATA[
         SELECT C_UOM_ID
         FROM M_PRODUCT
-        WHERE M_PRODUCT_ID = TO_NUMBER(?)
+        WHERE M_PRODUCT_ID = ?
       ]]>
     </Sql>
     <Parameter name="mProductId"/>
@@ -90,7 +90,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        select c_currency_convert(TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_DATE(?),null, TO_NUMBER(?),TO_NUMBER(?)) from dual
+        select c_currency_convert(TO_NUMBER(?),?,?,TO_DATE(?),null, ?,?) from dual
       ]]>
     </Sql>
     <Parameter name="expenseAmount"/>
@@ -106,7 +106,7 @@
       <![CDATA[
         SELECT PRICEPRECISION 
         FROM C_CURRENCY C
-        WHERE C.C_CURRENCY_ID = TO_NUMBER(?)
+        WHERE C.C_CURRENCY_ID = ?
       ]]>
     </Sql>
     <Parameter name="cCurrencyId"/>
@@ -117,7 +117,7 @@
       <![CDATA[
         SELECT TO_CHAR(S.DATEREPORT) 
 		FROM S_TIMEEXPENSE S
-		WHERE S.S_TIMEEXPENSE_ID = TO_NUMBER(?)
+		WHERE S.S_TIMEEXPENSE_ID = ?
       ]]>
     </Sql>
     <Parameter name="sTimeExpenseId"/>

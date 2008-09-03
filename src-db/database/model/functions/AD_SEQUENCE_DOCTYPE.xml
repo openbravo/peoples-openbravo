@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_SEQUENCE_DOCTYPE">
     <function name="AD_SEQUENCE_DOCTYPE" type="NULL">
-      <parameter name="p_doctype_id" type="NUMERIC" mode="in">
+      <parameter name="p_doctype_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_id" type="NUMERIC" mode="in">
+      <parameter name="p_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_update_next" type="CHAR" mode="in">
@@ -42,9 +42,9 @@
   *  If no Document Sequence is defined, return null !
   *   Use AD_Sequence_Doc('DocumentNo_myTable',.. to get it directly
   ************************************************************************/
-  v_NextNo NUMBER;
+  v_NextNo VARCHAR2(32);
   v_NextNoSys NUMBER;
-  v_Sequence_ID NUMBER:=NULL;
+  v_Sequence_ID VARCHAR2(32):=NULL;
   v_Prefix VARCHAR2(30) ;
   v_Suffix VARCHAR2(30) ;
 BEGIN
@@ -70,7 +70,7 @@ INTO v_Sequence_ID, v_NextNo, v_NextNoSys, v_Prefix, v_Suffix
 FROM C_DocType d, AD_Sequence s
 WHERE d.C_DocType_ID=p_DocType_ID -- parameter
   AND d.DocNoSequence_ID=s.AD_Sequence_ID  AND s.IsActive='Y'  AND s.IsTableID='N'  AND s.IsAutoSequence='Y'  FOR UPDATE OF CurrentNext, CurrentNextSys;
-IF(v_NextNoSys<>-1 AND p_ID<1000000) THEN -- System No
+IF(v_NextNoSys<>-1 AND p_ID<'1000000') THEN -- System No
   IF p_Update_Next='Y' THEN
     UPDATE AD_Sequence
       SET CurrentNextSys=CurrentNextSys + IncrementNo

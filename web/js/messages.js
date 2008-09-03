@@ -26,7 +26,7 @@
 
 //Valores por defecto
 //var LNG_POR_DEFECTO = "en_US";
-var TIPO_POR_DEFECTO = 0;
+var gDefaultType = 0;
 
 function messageType(_messageID, _messageType) {
 	this.id = _messageID;
@@ -41,8 +41,14 @@ function messagesTexts(_language, _message, _text, _defaultText) {
 }
 
 function getMessage(index, _language) {
-	if (_language==null)
-		_language = LNG_POR_DEFECTO;
+	if (_language==null) {
+		if (typeof defaultLang != "undefined") {
+			_language = defaultLang;
+		} else {
+			// Deprecated in 2.50, the following code is only for compatibility
+			_language = LNG_POR_DEFECTO;
+		}
+	}
   var total = arrMessages.length;
 	for (var i=0;i<total;i++) {
 		if (arrMessages[i].language == _language)
@@ -53,7 +59,13 @@ function getMessage(index, _language) {
 }
 
 function getDefaultText(index, _language) {
-	if (_language==null) _language = LNG_POR_DEFECTO;
+  if (_language==null) {
+    if (typeof defaultLang != "undefined") {
+      _language = defaultLang;
+    } else {// Deprecated in 2.50, the following code is only for compatibility
+      _language = LNG_POR_DEFECTO;
+    }
+  }
   var total = arrMessages.length;
 	for (var i=0;i<total;i++) {
 		if (arrMessages[i].language == _language)
@@ -88,7 +100,13 @@ function showMessage(_text, _type, _defaultValue) {
 	return true;
 }
 
+// Deprecated in 2.50, use showJSMessage instead
 function mensaje(index, _language)
+{
+	showJSMessage(index, _language);
+}
+
+function showJSMessage(index, _language)
 {
   try {
     initialize_MessageBox('messageBoxID');
@@ -100,9 +118,11 @@ function mensaje(index, _language)
     return true;
   }
 	var strDefault = getDefaultText(index, _language);
-	if (strDefault == null)  getDefaultText(index, LNG_POR_DEFECTO);
+	if (strDefault == null) { 
+		strDefault = getDefaultText(index, 'en_US');
+	}
 	var type = getType(index, _language);
-	if (type==null) type=TIPO_POR_DEFECTO;
+	if (type==null) type=gDefaultType;
 	return showMessage(strMessage, type, strDefault);
 }
 

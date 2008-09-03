@@ -21,7 +21,7 @@
   <template file="GeneralAccountingReports.html"/>
   <PARAMETER id="paramToolBar" name="toolbar" default=""/>
   <PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
-  <PARAMETER id="paramDirection" name="direction"/>
+  <PARAMETER id="paramDirectory" name="directory"/>
   <PARAMETER id="paramLanguage" name="language"/>
   <PARAMETER id="paramAgno" name="agno" attribute="value"/>
   <PARAMETER id="paramAgnoRef" name="agnoRef" attribute="value"/>

@@ -67,7 +67,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
         SELECT AD_TREE_ORG_ID FROM AD_CLIENTINFO
-        WHERE AD_CLIENT_ID = TO_NUMBER(?)
+        WHERE AD_CLIENT_ID = ?
     </Sql>
     <Parameter name="client"/>
   </SqlMethod>
@@ -80,7 +80,7 @@
         AND A_R_O.ISACTIVE = 'Y' 
         AND A_R_O.AD_ROLE_ID = R.AD_ROLE_ID 
         AND R.ISACTIVE = 'Y' 
-        AND A_R_O.AD_ROLE_ID = TO_NUMBER(?) 
+        AND A_R_O.AD_ROLE_ID = ? 
         ORDER BY A_O.NAME
       ]]></Sql>
         <Parameter name="rol"/>

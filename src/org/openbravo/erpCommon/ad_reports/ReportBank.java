@@ -90,8 +90,8 @@ public class ReportBank extends HttpSecureAppServlet {
 
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("cBankAccount", strcbankaccount);
     xmlDocument.setParameter("dateFrom", strDateFrom);
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
@@ -127,8 +127,8 @@ public class ReportBank extends HttpSecureAppServlet {
         xmlDocument.setParameter("toolbar", toolbar.toString()); 
         
         xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-        xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-        xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+        xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+        xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
         xmlDocument.setParameter("theme", vars.getTheme());
         xmlDocument.setParameter("cBankAccount", strcbankaccount);
         xmlDocument.setParameter("dateFrom", strDateFrom);
@@ -139,8 +139,8 @@ public class ReportBank extends HttpSecureAppServlet {
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportBankEdit").createXmlDocument();
       data = ReportBankData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportBank"), Utility.getContext(this, vars, "#User_Org", "ReportBank"),strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strcbankaccount);
       xmlDocument.setParameter("sumAmount", ReportBankData.BeginningBalance(this, Utility.getContext(this, vars, "#User_Client", "ReportBank"), Utility.getContext(this, vars, "#User_Org", "ReportBank"),strDateFrom, strcbankaccount));
-      xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-      xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
       xmlDocument.setParameter("theme", vars.getTheme());
     }
 

@@ -24,7 +24,7 @@
     ************************************************************************/
   v_Qty NUMBER:=0;
   v_Processed         CHAR(1) ;
-  v_C_DEBT_PAYMENT_ID NUMBER(10) ;
+  v_C_DEBT_PAYMENT_ID VARCHAR2(32) ;
 BEGIN
   IF(DELETING) THEN
     v_C_DEBT_PAYMENT_ID:=:old.C_DEBT_PAYMENT_ID;

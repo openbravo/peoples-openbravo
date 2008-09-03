@@ -1,10 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--
-************************
-0. Core Range.
-************************
--->
 <!--800000**************--><C_ACCTSCHEMA_TABLE>
 <!--800000 C_ACCTSCHEMA_TABLE_ID-->
 <!--800000-->              <C_ACCTSCHEMA_TABLE_ID><![CDATA[800000]]></C_ACCTSCHEMA_TABLE_ID>
@@ -350,16 +345,6 @@
 <!--800014-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--800014**************--></C_ACCTSCHEMA_TABLE>
 
-<!--
-************************
-0. End of Core Range.
-************************
--->
-<!--
-************************
-1. Custom Range.
-************************
--->
 <!--1000000**************--><C_ACCTSCHEMA_TABLE>
 <!--1000000 C_ACCTSCHEMA_TABLE_ID-->
 <!--1000000-->              <C_ACCTSCHEMA_TABLE_ID><![CDATA[1000000]]></C_ACCTSCHEMA_TABLE_ID>
@@ -774,9 +759,4 @@
 <!--1000017-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--1000017**************--></C_ACCTSCHEMA_TABLE>
 
-<!--
-************************
-1. End of Custom Range.
-************************
--->
 </data>

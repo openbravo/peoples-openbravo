@@ -57,7 +57,7 @@
     <Parameter name="language"/>
     <Parameter name="from"/>
     <Parameter name="to"/>
-    <Parameter name="shipper" optional="true" after="AND 1=1" text=" AND i.M_SHIPPER_ID = TO_NUMBER(?) "/>
+    <Parameter name="shipper" optional="true" after="AND 1=1" text=" AND i.M_SHIPPER_ID = ? "/>
     <Parameter name="issotrx" optional="true" after="AND 1=1" text=" AND i.IsSOTrx = ? "/>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
@@ -76,7 +76,7 @@
         END AS qtyline
       FROM M_InOut i, M_InoutLine il, M_Product p, M_FreightCategory f
       WHERE i.M_InOut_ID = il.M_InOut_ID
-        AND i.M_Inout_ID = TO_NUMBER(?)
+        AND i.M_Inout_ID = ?
         AND il.M_PRODUCT_ID = p.M_PRODUCT_ID
         AND i.M_FREIGHTCATEGORY_ID = f.M_FREIGHTCATEGORY_ID
       ORDER BY line

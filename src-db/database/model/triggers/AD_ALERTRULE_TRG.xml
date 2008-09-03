@@ -25,20 +25,20 @@
     ************************************************************************/
       TYPE RECORD IS REF CURSOR;
       Cur_Role RECORD;
-      recipient_id NUMBER(10);
+      recipient_ID VARCHAR2(32);
     BEGIN
 
     IF INSERTING THEN
       -- insert translations
       INSERT INTO AD_AlertRule_Trl
         (
-          AD_AlertRule_ID, AD_Language, AD_Client_ID,
+          AD_AlertRule_Trl_ID, AD_AlertRule_ID, AD_Language, AD_Client_ID,
           AD_Org_ID, IsActive, Created,
           CreatedBy, Updated, UpdatedBy,
           Name, IsTranslated
         )
       SELECT
-        :new.AD_AlertRule_ID, AD_Language, :new.AD_Client_ID,
+        get_uuid(), :new.AD_AlertRule_ID, AD_Language, :new.AD_Client_ID,
         :new.AD_Org_ID, :new.IsActive, :new.Created,
         :new.CreatedBy, :new.Updated, :new.UpdatedBy,
         :new.Name, 'N'
@@ -58,7 +58,7 @@
             ) values
             (:new.AD_AlertRule_ID, Cur_Role.AD_Role_ID, Cur_Role.AD_CLIENT_ID,
             Cur_Role.AD_ORG_ID, 'Y', now(),
-            0, now(), 0, recipient_id);
+            '0', now(), '0', recipient_id);
        END LOOP;
      END IF;
 

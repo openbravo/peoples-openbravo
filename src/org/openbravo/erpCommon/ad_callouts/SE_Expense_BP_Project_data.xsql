@@ -35,7 +35,7 @@
       <![CDATA[
         SELECT C_BPARTNER_ID
         FROM C_PROJECT
-        WHERE C_PROJECT_ID = TO_NUMBER(?)
+        WHERE C_PROJECT_ID = ?
       ]]>
     </Sql>
     <Parameter name="CProjectId"/>
@@ -47,7 +47,7 @@
         SELECT C_BPARTNER.NAME
 		FROM C_BPARTNER, C_PROJECT 
 		WHERE C_PROJECT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID 
-		AND C_PROJECT.C_PROJECT_ID= TO_NUMBER(?)
+		AND C_PROJECT.C_PROJECT_id = ?
       ]]>
     </Sql>
     <Parameter name="CProjectId"/>
@@ -58,7 +58,7 @@
       <![CDATA[
         SELECT MAX(C_PROJECT_ID)
 		FROM C_PROJECT
-		WHERE C_BPARTNER_ID = TO_NUMBER(?)
+		WHERE C_BPARTNER_ID = ?
 		AND ISACTIVE = 'Y'
       ]]>
     </Sql>
@@ -70,8 +70,8 @@
       <![CDATA[
         SELECT MAX(C_PROJECT_ID)
 		FROM C_PROJECT
-		WHERE C_BPARTNER_ID = TO_NUMBER(?)
-		AND C_PROJECT_ID = TO_NUMBER(?)
+		WHERE C_BPARTNER_ID = ?
+		AND C_PROJECT_ID = ?
       ]]>
     </Sql>
     <Parameter name="CBPartnerId"/>

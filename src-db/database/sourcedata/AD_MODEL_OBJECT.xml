@@ -1,10 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--
-************************
-0. Core Range.
-************************
--->
 <!--574**************--><AD_MODEL_OBJECT>
 <!--574 AD_MODEL_OBJECT_ID-->
 <!--574-->              <AD_MODEL_OBJECT_ID><![CDATA[574]]></AD_MODEL_OBJECT_ID>
@@ -1976,33 +1971,6 @@
 <!--800529-->              <AD_FORM_ID><![CDATA[107]]></AD_FORM_ID>
 <!--800529**************--></AD_MODEL_OBJECT>
 
-<!--800530**************--><AD_MODEL_OBJECT>
-<!--800530 AD_MODEL_OBJECT_ID-->
-<!--800530-->              <AD_MODEL_OBJECT_ID><![CDATA[800530]]></AD_MODEL_OBJECT_ID>
-<!--800530 AD_CLIENT_ID-->
-<!--800530-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800530 AD_ORG_ID-->
-<!--800530-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800530 ISACTIVE-->
-<!--800530-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800530 CREATED-->
-<!--800530-->              <CREATED><![CDATA[2006-05-15 17:52:05.0]]></CREATED>
-<!--800530 CREATEDBY-->
-<!--800530-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--800530 UPDATED-->
-<!--800530-->              <UPDATED><![CDATA[2006-05-15 17:52:05.0]]></UPDATED>
-<!--800530 UPDATEDBY-->
-<!--800530-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--800530 ACTION-->
-<!--800530-->              <ACTION><![CDATA[X]]></ACTION>
-<!--800530 CLASSNAME-->
-<!--800530-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.MatchingPOReceiptInvoice]]></CLASSNAME>
-<!--800530 ISDEFAULT-->
-<!--800530-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
-<!--800530 AD_FORM_ID-->
-<!--800530-->              <AD_FORM_ID><![CDATA[108]]></AD_FORM_ID>
-<!--800530**************--></AD_MODEL_OBJECT>
-
 <!--800532**************--><AD_MODEL_OBJECT>
 <!--800532 AD_MODEL_OBJECT_ID-->
 <!--800532-->              <AD_MODEL_OBJECT_ID><![CDATA[800532]]></AD_MODEL_OBJECT_ID>
@@ -3335,7 +3303,7 @@
 <!--800742 UPDATEDBY-->
 <!--800742-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800742 ACTION-->
-<!--800742-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800742-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800742 CLASSNAME-->
 <!--800742-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportTrialBalanceDetail]]></CLASSNAME>
 <!--800742 ISDEFAULT-->
@@ -3595,7 +3563,7 @@
 <!--800787 UPDATEDBY-->
 <!--800787-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800787 ACTION-->
-<!--800787-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800787-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800787 CLASSNAME-->
 <!--800787-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportTrialBalance]]></CLASSNAME>
 <!--800787 ISDEFAULT-->
@@ -3622,7 +3590,7 @@
 <!--800788 UPDATEDBY-->
 <!--800788-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800788 ACTION-->
-<!--800788-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800788-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800788 CLASSNAME-->
 <!--800788-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.CustomerAssets]]></CLASSNAME>
 <!--800788 ISDEFAULT-->
@@ -3649,7 +3617,7 @@
 <!--800789 UPDATEDBY-->
 <!--800789-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800789 ACTION-->
-<!--800789-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800789-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800789 CLASSNAME-->
 <!--800789-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.AssetDelivery]]></CLASSNAME>
 <!--800789 ISDEFAULT-->
@@ -3676,7 +3644,7 @@
 <!--800790 UPDATEDBY-->
 <!--800790-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800790 ACTION-->
-<!--800790-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800790-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800790 CLASSNAME-->
 <!--800790-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportProjectDetailAccounting]]></CLASSNAME>
 <!--800790 ISDEFAULT-->
@@ -3703,7 +3671,7 @@
 <!--800791 UPDATEDBY-->
 <!--800791-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800791 ACTION-->
-<!--800791-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800791-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800791 CLASSNAME-->
 <!--800791-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ProjectLinesnotIssued]]></CLASSNAME>
 <!--800791 ISDEFAULT-->
@@ -3730,7 +3698,7 @@
 <!--800792 UPDATEDBY-->
 <!--800792-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800792 ACTION-->
-<!--800792-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800792-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800792 CLASSNAME-->
 <!--800792-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ProjectPOsnotIssued]]></CLASSNAME>
 <!--800792 ISDEFAULT-->
@@ -3757,7 +3725,7 @@
 <!--800793 UPDATEDBY-->
 <!--800793-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800793 ACTION-->
-<!--800793-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800793-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800793 CLASSNAME-->
 <!--800793-->              <CLASSNAME><![CDATA[org.openbravo.erpReports.RptC_Invoice]]></CLASSNAME>
 <!--800793 ISDEFAULT-->
@@ -3784,7 +3752,7 @@
 <!--800794 UPDATEDBY-->
 <!--800794-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800794 ACTION-->
-<!--800794-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800794-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800794 CLASSNAME-->
 <!--800794-->              <CLASSNAME><![CDATA[org.openbravo.erpReports.RptM_Inout]]></CLASSNAME>
 <!--800794 ISDEFAULT-->
@@ -3811,7 +3779,7 @@
 <!--800795 UPDATEDBY-->
 <!--800795-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800795 ACTION-->
-<!--800795-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800795-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800795 CLASSNAME-->
 <!--800795-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.InvoiceSummary]]></CLASSNAME>
 <!--800795 ISDEFAULT-->
@@ -3838,7 +3806,7 @@
 <!--800796 UPDATEDBY-->
 <!--800796-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800796 ACTION-->
-<!--800796-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800796-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800796 CLASSNAME-->
 <!--800796-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportInvoices]]></CLASSNAME>
 <!--800796 ISDEFAULT-->
@@ -3865,7 +3833,7 @@
 <!--800797 UPDATEDBY-->
 <!--800797-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800797 ACTION-->
-<!--800797-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800797-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800797 CLASSNAME-->
 <!--800797-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.DunningLetter]]></CLASSNAME>
 <!--800797 ISDEFAULT-->
@@ -3892,7 +3860,7 @@
 <!--800798 UPDATEDBY-->
 <!--800798-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800798 ACTION-->
-<!--800798-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800798-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800798 CLASSNAME-->
 <!--800798-->              <CLASSNAME><![CDATA[org.openbravo.erpReports.TireLetter]]></CLASSNAME>
 <!--800798 ISDEFAULT-->
@@ -3919,7 +3887,7 @@
 <!--800799 UPDATEDBY-->
 <!--800799-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800799 ACTION-->
-<!--800799-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800799-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800799 CLASSNAME-->
 <!--800799-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ProductTransactionValue]]></CLASSNAME>
 <!--800799 ISDEFAULT-->
@@ -3946,7 +3914,7 @@
 <!--800800 UPDATEDBY-->
 <!--800800-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800800 ACTION-->
-<!--800800-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800800-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800800 CLASSNAME-->
 <!--800800-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.CashJournalDetail]]></CLASSNAME>
 <!--800800 ISDEFAULT-->
@@ -3973,7 +3941,7 @@
 <!--800801 UPDATEDBY-->
 <!--800801-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800801 ACTION-->
-<!--800801-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800801-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800801 CLASSNAME-->
 <!--800801-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportInventoryValuation]]></CLASSNAME>
 <!--800801 ISDEFAULT-->
@@ -4000,7 +3968,7 @@
 <!--800803 UPDATEDBY-->
 <!--800803-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800803 ACTION-->
-<!--800803-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800803-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800803 CLASSNAME-->
 <!--800803-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.StatementofAccounts]]></CLASSNAME>
 <!--800803 ISDEFAULT-->
@@ -4027,7 +3995,7 @@
 <!--800804 UPDATEDBY-->
 <!--800804-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800804 ACTION-->
-<!--800804-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800804-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800804 CLASSNAME-->
 <!--800804-->              <CLASSNAME><![CDATA[org.openbravo.erpReports.RptC_Order]]></CLASSNAME>
 <!--800804 ISDEFAULT-->
@@ -4054,7 +4022,7 @@
 <!--800805 UPDATEDBY-->
 <!--800805-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800805 ACTION-->
-<!--800805-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800805-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800805 CLASSNAME-->
 <!--800805-->              <CLASSNAME><![CDATA[org.openbravo.erpReports.ProjectPrint]]></CLASSNAME>
 <!--800805 ISDEFAULT-->
@@ -4081,7 +4049,7 @@
 <!--800806 UPDATEDBY-->
 <!--800806-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800806 ACTION-->
-<!--800806-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800806-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800806 CLASSNAME-->
 <!--800806-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportProjectCycle]]></CLASSNAME>
 <!--800806 ISDEFAULT-->
@@ -4108,7 +4076,7 @@
 <!--800807 UPDATEDBY-->
 <!--800807-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800807 ACTION-->
-<!--800807-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800807-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800807 CLASSNAME-->
 <!--800807-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.OrderDrilldown]]></CLASSNAME>
 <!--800807 ISDEFAULT-->
@@ -4135,7 +4103,7 @@
 <!--800808 UPDATEDBY-->
 <!--800808-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800808 ACTION-->
-<!--800808-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800808-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800808 CLASSNAME-->
 <!--800808-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportExpense]]></CLASSNAME>
 <!--800808 ISDEFAULT-->
@@ -4162,7 +4130,7 @@
 <!--800809 UPDATEDBY-->
 <!--800809-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800809 ACTION-->
-<!--800809-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800809-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800809 CLASSNAME-->
 <!--800809-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ProjectStatusSummary]]></CLASSNAME>
 <!--800809 ISDEFAULT-->
@@ -4189,7 +4157,7 @@
 <!--800810 UPDATEDBY-->
 <!--800810-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800810 ACTION-->
-<!--800810-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800810-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800810 CLASSNAME-->
 <!--800810-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportDebtPaymentTrack]]></CLASSNAME>
 <!--800810 ISDEFAULT-->
@@ -4216,7 +4184,7 @@
 <!--800811 UPDATEDBY-->
 <!--800811-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800811 ACTION-->
-<!--800811-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800811-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800811 CLASSNAME-->
 <!--800811-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.CreateReport]]></CLASSNAME>
 <!--800811 ISDEFAULT-->
@@ -4243,7 +4211,7 @@
 <!--800812 UPDATEDBY-->
 <!--800812-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800812 ACTION-->
-<!--800812-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800812-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800812 CLASSNAME-->
 <!--800812-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.VendorSelection]]></CLASSNAME>
 <!--800812 ISDEFAULT-->
@@ -4270,7 +4238,7 @@
 <!--800813 UPDATEDBY-->
 <!--800813-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800813 ACTION-->
-<!--800813-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800813-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800813 CLASSNAME-->
 <!--800813-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.OrderTransactions]]></CLASSNAME>
 <!--800813 ISDEFAULT-->
@@ -4297,7 +4265,7 @@
 <!--800814 UPDATEDBY-->
 <!--800814-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800814 ACTION-->
-<!--800814-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800814-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800814 CLASSNAME-->
 <!--800814-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.OpenOrders]]></CLASSNAME>
 <!--800814 ISDEFAULT-->
@@ -4324,7 +4292,7 @@
 <!--800815 UPDATEDBY-->
 <!--800815-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800815 ACTION-->
-<!--800815-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800815-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800815 CLASSNAME-->
 <!--800815-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ProductTransactionSummary]]></CLASSNAME>
 <!--800815 ISDEFAULT-->
@@ -4351,7 +4319,7 @@
 <!--800816 UPDATEDBY-->
 <!--800816-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800816 ACTION-->
-<!--800816-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800816-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800816 CLASSNAME-->
 <!--800816-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportReplenish]]></CLASSNAME>
 <!--800816 ISDEFAULT-->
@@ -4378,7 +4346,7 @@
 <!--800817 UPDATEDBY-->
 <!--800817-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800817 ACTION-->
-<!--800817-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800817-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800817 CLASSNAME-->
 <!--800817-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.InvoiceTransactions]]></CLASSNAME>
 <!--800817 ISDEFAULT-->
@@ -4405,7 +4373,7 @@
 <!--800818 UPDATEDBY-->
 <!--800818-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800818 ACTION-->
-<!--800818-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800818-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800818 CLASSNAME-->
 <!--800818-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.DailyInvoice]]></CLASSNAME>
 <!--800818 ISDEFAULT-->
@@ -4432,7 +4400,7 @@
 <!--800819 UPDATEDBY-->
 <!--800819-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800819 ACTION-->
-<!--800819-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800819-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800819 CLASSNAME-->
 <!--800819-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.MonthlyInvoice]]></CLASSNAME>
 <!--800819 ISDEFAULT-->
@@ -4459,7 +4427,7 @@
 <!--800820 UPDATEDBY-->
 <!--800820-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800820 ACTION-->
-<!--800820-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800820-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800820 CLASSNAME-->
 <!--800820-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.WeeklyInvoice]]></CLASSNAME>
 <!--800820 ISDEFAULT-->
@@ -4486,7 +4454,7 @@
 <!--800821 UPDATEDBY-->
 <!--800821-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800821 ACTION-->
-<!--800821-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800821-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800821 CLASSNAME-->
 <!--800821-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.WeeklyInvoiceProduct]]></CLASSNAME>
 <!--800821 ISDEFAULT-->
@@ -4513,7 +4481,7 @@
 <!--800822 UPDATEDBY-->
 <!--800822-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800822 ACTION-->
-<!--800822-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800822-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800822 CLASSNAME-->
 <!--800822-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.MonthlyInvoiceProduct]]></CLASSNAME>
 <!--800822 ISDEFAULT-->
@@ -4540,7 +4508,7 @@
 <!--800823 UPDATEDBY-->
 <!--800823-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800823 ACTION-->
-<!--800823-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800823-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800823 CLASSNAME-->
 <!--800823-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.MonthlyInvoiceVendor]]></CLASSNAME>
 <!--800823 ISDEFAULT-->
@@ -4567,7 +4535,7 @@
 <!--800824 UPDATEDBY-->
 <!--800824-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800824 ACTION-->
-<!--800824-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800824-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800824 CLASSNAME-->
 <!--800824-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.QuarterlyInvoiceCustomerbyProduct]]></CLASSNAME>
 <!--800824 ISDEFAULT-->
@@ -4594,7 +4562,7 @@
 <!--800825 UPDATEDBY-->
 <!--800825-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800825 ACTION-->
-<!--800825-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800825-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800825 CLASSNAME-->
 <!--800825-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.QuarterlyInvoiceCustomerbyVendor]]></CLASSNAME>
 <!--800825 ISDEFAULT-->
@@ -4621,7 +4589,7 @@
 <!--800827 UPDATEDBY-->
 <!--800827-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800827 ACTION-->
-<!--800827-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800827-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800827 CLASSNAME-->
 <!--800827-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportValuationStock]]></CLASSNAME>
 <!--800827 ISDEFAULT-->
@@ -4648,7 +4616,7 @@
 <!--800829 UPDATEDBY-->
 <!--800829-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800829 ACTION-->
-<!--800829-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800829-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800829 CLASSNAME-->
 <!--800829-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportToInvoiceConsignmentJR]]></CLASSNAME>
 <!--800829 ISDEFAULT-->
@@ -4675,7 +4643,7 @@
 <!--800830 UPDATEDBY-->
 <!--800830-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800830 ACTION-->
-<!--800830-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800830-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800830 CLASSNAME-->
 <!--800830-->              <CLASSNAME><![CDATA[org.openbravo.erpReports.RptC_Settlement]]></CLASSNAME>
 <!--800830 ISDEFAULT-->
@@ -4702,7 +4670,7 @@
 <!--800831 UPDATEDBY-->
 <!--800831-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800831 ACTION-->
-<!--800831-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800831-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800831 CLASSNAME-->
 <!--800831-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.Pricelistsalesrep.]]></CLASSNAME>
 <!--800831 ISDEFAULT-->
@@ -4729,7 +4697,7 @@
 <!--800832 UPDATEDBY-->
 <!--800832-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800832 ACTION-->
-<!--800832-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800832-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800832 CLASSNAME-->
 <!--800832-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportRefundSalesDimensionalAnalyses]]></CLASSNAME>
 <!--800832 ISDEFAULT-->
@@ -4756,7 +4724,7 @@
 <!--800833 UPDATEDBY-->
 <!--800833-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800833 ACTION-->
-<!--800833-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800833-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800833 CLASSNAME-->
 <!--800833-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportTaxInvoiceJR]]></CLASSNAME>
 <!--800833 ISDEFAULT-->
@@ -4783,7 +4751,7 @@
 <!--800834 UPDATEDBY-->
 <!--800834-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800834 ACTION-->
-<!--800834-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800834-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800834 CLASSNAME-->
 <!--800834-->              <CLASSNAME><![CDATA[org.openbravo.erpReports.RptC_OrderPO]]></CLASSNAME>
 <!--800834 ISDEFAULT-->
@@ -4810,7 +4778,7 @@
 <!--800836 UPDATEDBY-->
 <!--800836-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800836 ACTION-->
-<!--800836-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800836-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800836 CLASSNAME-->
 <!--800836-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportGeneralLedgerJournal]]></CLASSNAME>
 <!--800836 ISDEFAULT-->
@@ -4837,7 +4805,7 @@
 <!--800837 UPDATEDBY-->
 <!--800837-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800837 ACTION-->
-<!--800837-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800837-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800837 CLASSNAME-->
 <!--800837-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.UpdateAccountingBalance]]></CLASSNAME>
 <!--800837 ISDEFAULT-->
@@ -4864,7 +4832,7 @@
 <!--800842 UPDATEDBY-->
 <!--800842-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800842 ACTION-->
-<!--800842-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800842-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800842 CLASSNAME-->
 <!--800842-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportGLItems]]></CLASSNAME>
 <!--800842 ISDEFAULT-->
@@ -4891,7 +4859,7 @@
 <!--800843 UPDATEDBY-->
 <!--800843-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800843 ACTION-->
-<!--800843-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800843-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800843 CLASSNAME-->
 <!--800843-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportCash]]></CLASSNAME>
 <!--800843 ISDEFAULT-->
@@ -4918,7 +4886,7 @@
 <!--800846 UPDATEDBY-->
 <!--800846-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800846 ACTION-->
-<!--800846-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800846-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800846 CLASSNAME-->
 <!--800846-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportInvoiceCustomerEdition]]></CLASSNAME>
 <!--800846 ISDEFAULT-->
@@ -4945,7 +4913,7 @@
 <!--800848 UPDATEDBY-->
 <!--800848-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800848 ACTION-->
-<!--800848-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800848-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800848 CLASSNAME-->
 <!--800848-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportMaterialTransactionEditionJR]]></CLASSNAME>
 <!--800848 ISDEFAULT-->
@@ -4972,7 +4940,7 @@
 <!--800850 UPDATEDBY-->
 <!--800850-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800850 ACTION-->
-<!--800850-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800850-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800850 CLASSNAME-->
 <!--800850-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportTotalProductTemplate]]></CLASSNAME>
 <!--800850 ISDEFAULT-->
@@ -4999,7 +4967,7 @@
 <!--800852 UPDATEDBY-->
 <!--800852-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800852 ACTION-->
-<!--800852-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800852-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800852 CLASSNAME-->
 <!--800852-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportProjectBuildingSiteJR]]></CLASSNAME>
 <!--800852 ISDEFAULT-->
@@ -5026,7 +4994,7 @@
 <!--800853 UPDATEDBY-->
 <!--800853-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800853 ACTION-->
-<!--800853-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800853-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800853 CLASSNAME-->
 <!--800853-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportRefundInvoiceCustomerDimensionalAnalyses]]></CLASSNAME>
 <!--800853 ISDEFAULT-->
@@ -5053,7 +5021,7 @@
 <!--800854 UPDATEDBY-->
 <!--800854-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800854 ACTION-->
-<!--800854-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800854-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800854 CLASSNAME-->
 <!--800854-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportInventory]]></CLASSNAME>
 <!--800854 ISDEFAULT-->
@@ -5080,7 +5048,7 @@
 <!--800855 UPDATEDBY-->
 <!--800855-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800855 ACTION-->
-<!--800855-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800855-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800855 CLASSNAME-->
 <!--800855-->              <CLASSNAME><![CDATA[org.openbravo.erpReports.RptC_Proposal]]></CLASSNAME>
 <!--800855 ISDEFAULT-->
@@ -5107,7 +5075,7 @@
 <!--800856 UPDATEDBY-->
 <!--800856-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800856 ACTION-->
-<!--800856-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800856-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800856 CLASSNAME-->
 <!--800856-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.GeneralAccountingReports]]></CLASSNAME>
 <!--800856 ISDEFAULT-->
@@ -5134,7 +5102,7 @@
 <!--800857 UPDATEDBY-->
 <!--800857-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800857 ACTION-->
-<!--800857-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800857-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800857 CLASSNAME-->
 <!--800857-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportDebtPayment]]></CLASSNAME>
 <!--800857 ISDEFAULT-->
@@ -5161,7 +5129,7 @@
 <!--800858 UPDATEDBY-->
 <!--800858-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800858 ACTION-->
-<!--800858-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800858-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800858 CLASSNAME-->
 <!--800858-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportWarehouseControl]]></CLASSNAME>
 <!--800858 ISDEFAULT-->
@@ -5188,7 +5156,7 @@
 <!--800860 UPDATEDBY-->
 <!--800860-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800860 ACTION-->
-<!--800860-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800860-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800860 CLASSNAME-->
 <!--800860-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.MInOutTraceReports]]></CLASSNAME>
 <!--800860 ISDEFAULT-->
@@ -5215,7 +5183,7 @@
 <!--800861 UPDATEDBY-->
 <!--800861-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800861 ACTION-->
-<!--800861-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800861-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800861 CLASSNAME-->
 <!--800861-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.GenerateModel347]]></CLASSNAME>
 <!--800861 ISDEFAULT-->
@@ -5242,7 +5210,7 @@
 <!--800862 UPDATEDBY-->
 <!--800862-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800862 ACTION-->
-<!--800862-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800862-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800862 CLASSNAME-->
 <!--800862-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.CashflowForecast]]></CLASSNAME>
 <!--800862 ISDEFAULT-->
@@ -5269,7 +5237,7 @@
 <!--800865 UPDATEDBY-->
 <!--800865-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800865 ACTION-->
-<!--800865-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800865-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800865 CLASSNAME-->
 <!--800865-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportProposals]]></CLASSNAME>
 <!--800865 ISDEFAULT-->
@@ -5296,7 +5264,7 @@
 <!--800866 UPDATEDBY-->
 <!--800866-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800866 ACTION-->
-<!--800866-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800866-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800866 CLASSNAME-->
 <!--800866-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportAccountingCountDimensionalAnalyses]]></CLASSNAME>
 <!--800866 ISDEFAULT-->
@@ -5323,7 +5291,7 @@
 <!--800871 UPDATEDBY-->
 <!--800871-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800871 ACTION-->
-<!--800871-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800871-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800871 CLASSNAME-->
 <!--800871-->              <CLASSNAME><![CDATA[org.openbravo.erpReports.RptMA_CCP_Group]]></CLASSNAME>
 <!--800871 ISDEFAULT-->
@@ -5350,7 +5318,7 @@
 <!--800872 UPDATEDBY-->
 <!--800872-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800872 ACTION-->
-<!--800872-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800872-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800872 CLASSNAME-->
 <!--800872-->              <CLASSNAME><![CDATA[org.openbravo.erpReports.RptMA_CCP_Measures]]></CLASSNAME>
 <!--800872 ISDEFAULT-->
@@ -5377,7 +5345,7 @@
 <!--800873 UPDATEDBY-->
 <!--800873-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800873 ACTION-->
-<!--800873-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800873-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800873 CLASSNAME-->
 <!--800873-->              <CLASSNAME><![CDATA[org.openbravo.erpReports.RptC_Bpartner]]></CLASSNAME>
 <!--800873 ISDEFAULT-->
@@ -5404,7 +5372,7 @@
 <!--800874 UPDATEDBY-->
 <!--800874-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800874 ACTION-->
-<!--800874-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800874-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800874 CLASSNAME-->
 <!--800874-->              <CLASSNAME><![CDATA[org.openbravo.erpReports.RptPromissoryNote]]></CLASSNAME>
 <!--800874 ISDEFAULT-->
@@ -5431,7 +5399,7 @@
 <!--800876 UPDATEDBY-->
 <!--800876-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800876 ACTION-->
-<!--800876-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800876-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800876 CLASSNAME-->
 <!--800876-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportBank]]></CLASSNAME>
 <!--800876 ISDEFAULT-->
@@ -5458,7 +5426,7 @@
 <!--800881 UPDATEDBY-->
 <!--800881-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800881 ACTION-->
-<!--800881-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800881-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800881 CLASSNAME-->
 <!--800881-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportProductMovement]]></CLASSNAME>
 <!--800881 ISDEFAULT-->
@@ -5485,7 +5453,7 @@
 <!--800882 UPDATEDBY-->
 <!--800882-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800882 ACTION-->
-<!--800882-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800882-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800882 CLASSNAME-->
 <!--800882-->              <CLASSNAME><![CDATA[org.openbravo.erpReports.RptM_Movement]]></CLASSNAME>
 <!--800882 ISDEFAULT-->
@@ -5512,7 +5480,7 @@
 <!--800889 UPDATEDBY-->
 <!--800889-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800889 ACTION-->
-<!--800889-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800889-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800889 CLASSNAME-->
 <!--800889-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportShipmentDimensionalAnalyzeJR]]></CLASSNAME>
 <!--800889 ISDEFAULT-->
@@ -5539,7 +5507,7 @@
 <!--800892 UPDATEDBY-->
 <!--800892-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800892 ACTION-->
-<!--800892-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800892-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800892 CLASSNAME-->
 <!--800892-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportPricelist]]></CLASSNAME>
 <!--800892 ISDEFAULT-->
@@ -5566,7 +5534,7 @@
 <!--800941 UPDATEDBY-->
 <!--800941-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800941 ACTION-->
-<!--800941-->              <ACTION><![CDATA[P]]></ACTION>
+<!--800941-->              <ACTION><![CDATA[R]]></ACTION>
 <!--800941 CLASSNAME-->
 <!--800941-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportGeneralLedger]]></CLASSNAME>
 <!--800941 ISDEFAULT-->
@@ -5855,7 +5823,7 @@
 <!--801050 UPDATEDBY-->
 <!--801050-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--801050 ACTION-->
-<!--801050-->              <ACTION><![CDATA[P]]></ACTION>
+<!--801050-->              <ACTION><![CDATA[R]]></ACTION>
 <!--801050 CLASSNAME-->
 <!--801050-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportBudgetGenerateExcel]]></CLASSNAME>
 <!--801050 ISDEFAULT-->
@@ -5988,7 +5956,7 @@
 <!--801104 UPDATEDBY-->
 <!--801104-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--801104 ACTION-->
-<!--801104-->              <ACTION><![CDATA[P]]></ACTION>
+<!--801104-->              <ACTION><![CDATA[R]]></ACTION>
 <!--801104 CLASSNAME-->
 <!--801104-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportShipper]]></CLASSNAME>
 <!--801104 ISDEFAULT-->
@@ -6015,7 +5983,7 @@
 <!--801111 UPDATEDBY-->
 <!--801111-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--801111 ACTION-->
-<!--801111-->              <ACTION><![CDATA[P]]></ACTION>
+<!--801111-->              <ACTION><![CDATA[R]]></ACTION>
 <!--801111 CLASSNAME-->
 <!--801111-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportRefundSalesDimensionalAnalysesPDF]]></CLASSNAME>
 <!--801111 ISDEFAULT-->
@@ -6094,7 +6062,7 @@
 <!--801140 UPDATEDBY-->
 <!--801140-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--801140 ACTION-->
-<!--801140-->              <ACTION><![CDATA[P]]></ACTION>
+<!--801140-->              <ACTION><![CDATA[R]]></ACTION>
 <!--801140 CLASSNAME-->
 <!--801140-->              <CLASSNAME><![CDATA[org.openbravo.erpReports.RptC_Remittance]]></CLASSNAME>
 <!--801140 ISDEFAULT-->
@@ -6281,7 +6249,7 @@
 <!--801238 UPDATEDBY-->
 <!--801238-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--801238 ACTION-->
-<!--801238-->              <ACTION><![CDATA[P]]></ACTION>
+<!--801238-->              <ACTION><![CDATA[R]]></ACTION>
 <!--801238 CLASSNAME-->
 <!--801238-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportOffer]]></CLASSNAME>
 <!--801238 ISDEFAULT-->
@@ -6335,7 +6303,7 @@
 <!--801262 UPDATEDBY-->
 <!--801262-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--801262 ACTION-->
-<!--801262-->              <ACTION><![CDATA[P]]></ACTION>
+<!--801262-->              <ACTION><![CDATA[R]]></ACTION>
 <!--801262 CLASSNAME-->
 <!--801262-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportCashflowForecast]]></CLASSNAME>
 <!--801262 ISDEFAULT-->
@@ -6389,7 +6357,7 @@
 <!--801296 UPDATEDBY-->
 <!--801296-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--801296 ACTION-->
-<!--801296-->              <ACTION><![CDATA[P]]></ACTION>
+<!--801296-->              <ACTION><![CDATA[R]]></ACTION>
 <!--801296 CLASSNAME-->
 <!--801296-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportProductionCost]]></CLASSNAME>
 <!--801296 ISDEFAULT-->
@@ -6416,7 +6384,7 @@
 <!--801297 UPDATEDBY-->
 <!--801297-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--801297 ACTION-->
-<!--801297-->              <ACTION><![CDATA[P]]></ACTION>
+<!--801297-->              <ACTION><![CDATA[R]]></ACTION>
 <!--801297 CLASSNAME-->
 <!--801297-->              <CLASSNAME><![CDATA[org.openbravo.erpReports.RptM_Product]]></CLASSNAME>
 <!--801297 ISDEFAULT-->
@@ -6443,7 +6411,7 @@
 <!--801298 UPDATEDBY-->
 <!--801298-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--801298 ACTION-->
-<!--801298-->              <ACTION><![CDATA[P]]></ACTION>
+<!--801298-->              <ACTION><![CDATA[R]]></ACTION>
 <!--801298 CLASSNAME-->
 <!--801298-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.Rpt_Etiquetas]]></CLASSNAME>
 <!--801298 ISDEFAULT-->
@@ -6794,7 +6762,7 @@
 <!--801415 UPDATEDBY-->
 <!--801415-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--801415 ACTION-->
-<!--801415-->              <ACTION><![CDATA[P]]></ACTION>
+<!--801415-->              <ACTION><![CDATA[R]]></ACTION>
 <!--801415 CLASSNAME-->
 <!--801415-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportNotPosted]]></CLASSNAME>
 <!--801415 ISDEFAULT-->
@@ -7081,7 +7049,7 @@
 <!--801700 UPDATEDBY-->
 <!--801700-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--801700 ACTION-->
-<!--801700-->              <ACTION><![CDATA[P]]></ACTION>
+<!--801700-->              <ACTION><![CDATA[R]]></ACTION>
 <!--801700 CLASSNAME-->
 <!--801700-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportProductionRunJR]]></CLASSNAME>
 <!--801700 ISDEFAULT-->
@@ -7432,7 +7400,7 @@
 <!--801720 UPDATEDBY-->
 <!--801720-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--801720 ACTION-->
-<!--801720-->              <ACTION><![CDATA[P]]></ACTION>
+<!--801720-->              <ACTION><![CDATA[R]]></ACTION>
 <!--801720 CLASSNAME-->
 <!--801720-->              <CLASSNAME><![CDATA[org.openbravo.erpReports.RptC_ProposalJr]]></CLASSNAME>
 <!--801720 ISDEFAULT-->
@@ -7567,7 +7535,7 @@
 <!--801727 UPDATEDBY-->
 <!--801727-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--801727 ACTION-->
-<!--801727-->              <ACTION><![CDATA[P]]></ACTION>
+<!--801727-->              <ACTION><![CDATA[R]]></ACTION>
 <!--801727 CLASSNAME-->
 <!--801727-->              <CLASSNAME><![CDATA[org.openbravo.erpReports.RptMA_ProcessPlan]]></CLASSNAME>
 <!--801727 ISDEFAULT-->
@@ -7648,7 +7616,7 @@
 <!--801734 UPDATEDBY-->
 <!--801734-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--801734 ACTION-->
-<!--801734-->              <ACTION><![CDATA[P]]></ACTION>
+<!--801734-->              <ACTION><![CDATA[R]]></ACTION>
 <!--801734 CLASSNAME-->
 <!--801734-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportWorkRequirementDaily]]></CLASSNAME>
 <!--801734 ISDEFAULT-->
@@ -35159,7 +35127,7 @@
 <!--1002100041 UPDATEDBY-->
 <!--1002100041-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1002100041 ACTION-->
-<!--1002100041-->              <ACTION><![CDATA[P]]></ACTION>
+<!--1002100041-->              <ACTION><![CDATA[R]]></ACTION>
 <!--1002100041 CLASSNAME-->
 <!--1002100041-->              <CLASSNAME><![CDATA[org.openbravo.erpReports.ReportVatRegisterJR]]></CLASSNAME>
 <!--1002100041 ISDEFAULT-->
@@ -35186,7 +35154,7 @@
 <!--1002100042 UPDATEDBY-->
 <!--1002100042-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1002100042 ACTION-->
-<!--1002100042-->              <ACTION><![CDATA[P]]></ACTION>
+<!--1002100042-->              <ACTION><![CDATA[R]]></ACTION>
 <!--1002100042 CLASSNAME-->
 <!--1002100042-->              <CLASSNAME><![CDATA[org.openbravo.erpReports.ReportTaxPaymentJR]]></CLASSNAME>
 <!--1002100042 ISDEFAULT-->
@@ -35213,7 +35181,7 @@
 <!--1002100043 UPDATEDBY-->
 <!--1002100043-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1002100043 ACTION-->
-<!--1002100043-->              <ACTION><![CDATA[P]]></ACTION>
+<!--1002100043-->              <ACTION><![CDATA[R]]></ACTION>
 <!--1002100043 CLASSNAME-->
 <!--1002100043-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.ReportAnnualCertification]]></CLASSNAME>
 <!--1002100043 ISDEFAULT-->
@@ -35726,7 +35694,7 @@
 <!--1004400018 UPDATEDBY-->
 <!--1004400018-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1004400018 ACTION-->
-<!--1004400018-->              <ACTION><![CDATA[P]]></ACTION>
+<!--1004400018-->              <ACTION><![CDATA[R]]></ACTION>
 <!--1004400018 CLASSNAME-->
 <!--1004400018-->              <CLASSNAME><![CDATA[org.openbravo.erpReports.RptM_Requisition]]></CLASSNAME>
 <!--1004400018 ISDEFAULT-->
@@ -36651,19 +36619,4 @@
 <!--1006100000-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--1006100000**************--></AD_MODEL_OBJECT>
 
-<!--
-************************
-0. End of Core Range.
-************************
--->
-<!--
-************************
-1. Custom Range.
-************************
--->
-<!--
-************************
-1. End of Custom Range.
-************************
--->
 </data>

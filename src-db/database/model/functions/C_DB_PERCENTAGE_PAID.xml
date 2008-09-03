@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_DB_PERCENTAGE_PAID">
     <function name="C_DB_PERCENTAGE_PAID" type="NUMERIC">
-      <parameter name="p_debt_payment_id" type="NUMERIC" mode="in">
+      <parameter name="p_debt_payment_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************

@@ -26,7 +26,7 @@
 	<tr>
 		<td width="xx%" id="fieldPeriodWidthMargin"></td>
 		<td width="yy%" id="fieldPeriodWidthText" class="TextoGris2Bg"><div style="display: table-cell; display: -moz-inline-box;">
-			<a href="#" onclick="actualizarDatos('OPEN', 'xx', 'yy', 'zz', 'ww', 'mm', 'pp', 'aa');return false;" onMouseOver="window.status='Open';return true;" onMouseOut="window.status='';return true;" id="fieldPeriodParentLevel">
+			<a href="#" onclick="updateData('OPEN', 'xx', 'yy', 'zz', 'ww', 'mm', 'pp', 'aa');return false;" onMouseOver="window.status='Open';return true;" onMouseOut="window.status='';return true;" id="fieldPeriodParentLevel">
       <span id="buttonTreexy" ></span>
       <span id="fieldPeriodNivel"></span>
       </a>

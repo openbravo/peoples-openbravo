@@ -22,7 +22,7 @@
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
-  v_ID NUMBER;
+  v_ID VARCHAR2(32);
   v_RO        NUMBER;
   v_Processed CHAR(1) ;
 BEGIN

@@ -65,7 +65,7 @@ public class WorkflowControl extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) log4j.debug("Output: print page redirect");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_workflow/WorkflowControl_Redirect").createXmlDocument();
 
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("href", strPath);
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -105,8 +105,8 @@ public class WorkflowControl extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) log4j.debug("Output: print page");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_workflow/WorkflowControl_Response").createXmlDocument();
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
 
     xmlDocument.setParameter("workflow", strAD_Workflow_ID);
     response.setContentType("text/html; charset=UTF-8");
@@ -127,8 +127,8 @@ public class WorkflowControl extends HttpSecureAppServlet {
     if (workflowName==null || workflowName.length==0 || workflowName[0].help.equals("")) discard[0] = new String("fieldWorkflowHelp");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_workflow/WorkflowControl", discard).createXmlDocument();
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     if (workflowName!=null && workflowName.length>0) {
       xmlDocument.setParameter("workflowName", workflowName[0].name);

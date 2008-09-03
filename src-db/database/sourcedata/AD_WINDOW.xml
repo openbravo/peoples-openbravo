@@ -1,10 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--
-************************
-0. Core Range.
-************************
--->
 <!--100**************--><AD_WINDOW>
 <!--100 AD_WINDOW_ID-->
 <!--100-->              <AD_WINDOW_ID><![CDATA[100]]></AD_WINDOW_ID>
@@ -6427,19 +6422,4 @@ For further information, please consult http://wiki.openbravo.com/wiki/User_Manu
 <!--1005400003-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--1005400003**************--></AD_WINDOW>
 
-<!--
-************************
-0. End of Core Range.
-************************
--->
-<!--
-************************
-1. Custom Range.
-************************
--->
-<!--
-************************
-1. End of Custom Range.
-************************
--->
 </data>

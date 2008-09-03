@@ -25,14 +25,14 @@
  <link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
  
     <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Main_Manual.css" id="paramCSS" />
-    <script language="JavaScript" type="text/javascript" id="paramDirection">
-      var baseDirection = "../../../../../web/";
+    <script language="JavaScript" type="text/javascript" id="paramDirectory">
+      var baseDirectory = "../../../../../web/";
       </script>
       <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript">
       </script>
       <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
       <script language="JavaScript" type="text/javascript" id="paramLanguage">
-        var LNG_POR_DEFECTO = "en_US";
+        var defaultLang = "en_US";
       </script>
       <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
@@ -53,44 +53,44 @@
 <SCRIPT language="JavaScript" type="text/javascript">
 function imprimir()
 {
-	if (depurar()){
-		abrirPDFFiltered("ReportAccountingCountDimensional.pdf","PDF");
+	if (validate()){
+		openPDFFiltered("ReportAccountingCountDimensional.pdf","PDF");
 	}
 	return true;
 }
 
-function depurar()
+function validate()
 {
 	var frm = document.frmMain;
 	if (frm.inpAccountingCount.value == null || frm.inpAccountingCount.value == ""){
 		setWindowElementFocus(frm.inpAccountingCount);
-		mensaje(7);
+		showJSMessage(7);
 		return false;
 	}
   if (frm.inpDateFrom.value == null || frm.inpDateFrom.value == "") {
 		setWindowElementFocus(frm.inpDateFrom);
-		mensaje(7);
+		showJSMessage(7);
 		return false;
 	} else if (frm.inpDateTo.value == null || frm.inpDateTo.value == ""){
 		setWindowElementFocus(frm.inpDateTo);
-		mensaje(7);
+		showJSMessage(7);
 		return false;
 	}
   if (frm.inpComparative.checked) {
     if ((frm.inpDateFromRef.value == null || frm.inpDateFromRef.value == "")) {
       setWindowElementFocus(frm.inpDateFromRef);
-      mensaje(7);
+      showJSMessage(7);
       return false;
     } else if ((frm.inpDateToRef.value == null || frm.inpDateToRef.value == "")){
       setWindowElementFocus(frm.inpDateToRef);
-      mensaje(7);
+      showJSMessage(7);
       return false;
     }
   }
 
-	seleccionarListCompleto(frm.inpmProductId_IN);
-	seleccionarListCompleto(frm.inpcBPartnerId_IN);
-	seleccionarListCompleto(frm.inpShown);
+	markCheckedAllElements(frm.inpmProductId_IN);
+	markCheckedAllElements(frm.inpcBPartnerId_IN);
+	markCheckedAllElements(frm.inpShown);
 	return true;
 }
 
@@ -128,7 +128,7 @@ function showHideLayer(id, imageId) {
 }
 
 
-function actualizarDatos(CommandValue, nivel1, nivel2, nivel3, nivel4, id, level, columnLevel) {
+function updateData(CommandValue, nivel1, nivel2, nivel3, nivel4, id, level, columnLevel) {
   var frm = document.frmMain;
   var paramLevel = new Array (nivel1, nivel2, nivel3, nivel4);
   if (nivel1 == '0') frm.inpNivel1.value = "";
@@ -141,11 +141,11 @@ function actualizarDatos(CommandValue, nivel1, nivel2, nivel3, nivel4, id, level
   else frm.inpNivel4.value = nivel4;
   frm.inpLevel.value = level;
   frm.inpColumnLevel.value = columnLevel;
-  var datosLayer = readLayer("returnText" + id + paramLevel[level-1], true);
-  if (datosLayer==null || datosLayer=="") {
-	  seleccionarListCompleto(frm.inpmProductId_IN);
-	  seleccionarListCompleto(frm.inpcBPartnerId_IN);
-	  seleccionarListCompleto(frm.inpShown);
+  var dataLayer = readLayer("returnText" + id + paramLevel[level-1], true);
+  if (dataLayer==null || dataLayer=="") {
+	  markCheckedAllElements(frm.inpmProductId_IN);
+	  markCheckedAllElements(frm.inpcBPartnerId_IN);
+	  markCheckedAllElements(frm.inpShown);
 	  paramXMLRequest = new Array('returnText' + id, 'buttonTree' + id);
 	  return submitXmlHttpRequest(callback, frm, CommandValue, "ReportAccountingCountDimensionalAnalysesFilter.html", false);
   } else {
@@ -504,7 +504,7 @@ function onloadFunctions() {
                             <TR>
                               <TD>
                                 <A class="List_Button_MiddleLink" href="#"
-                                  onclick="eliminarElementosList(document.frmMain.inpcBPartnerId_IN);return false;"
+                                  onclick="clearSelectedElements(document.frmMain.inpcBPartnerId_IN);return false;"
                                   onfocus="setWindowElementFocus(this); window.status='Delete selected elements'; return true;"
                                   onblur="window.status=''; return true;"
                                   onkeypress="this.className='List_Button_MiddleLink_active'; return true;"
@@ -530,7 +530,7 @@ function onloadFunctions() {
                             <TR>
                               <TD>
                                 <A class="List_Button_BottomLink" href="#"
-                                  onclick="limpiarLista(document.frmMain.inpcBPartnerId_IN);return false;"
+                                  onclick="clearList(document.frmMain.inpcBPartnerId_IN);return false;"
                                   onfocus="setWindowElementFocus(this); window.status='Delete all elements'; return true;"
                                   onblur="window.status=''; return true;"
                                   onkeypress="this.className='List_Button_BottomLink_active'; return true;"
@@ -594,7 +594,7 @@ function onloadFunctions() {
                             <TR>
                               <TD>
                                 <A class="List_Button_MiddleLink" href="#"
-                                  onclick="eliminarElementosList(document.frmMain.inpmProductId_IN);return false;"
+                                  onclick="clearSelectedElements(document.frmMain.inpmProductId_IN);return false;"
                                   onfocus="setWindowElementFocus(this); window.status='Delete selected elements'; return true;"
                                   onblur="window.status=''; return true;"
                                   onkeypress="this.className='List_Button_MiddleLink_active'; return true;"
@@ -620,7 +620,7 @@ function onloadFunctions() {
                             <TR>
                               <TD>
                                 <A class="List_Button_BottomLink" href="#"
-                                  onclick="limpiarLista(document.frmMain.inpmProductId_IN);return false;"
+                                  onclick="clearList(document.frmMain.inpmProductId_IN);return false;"
                                   onfocus="setWindowElementFocus(this); window.status='Delete all elements'; return true;"
                                   onblur="window.status=''; return true;"
                                   onkeypress="this.className='List_Button_BottomLink_active'; return true;"

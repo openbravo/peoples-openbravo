@@ -43,7 +43,7 @@
      ]]></Sql>
     <Parameter name="from"/>
     <Parameter name="to"/>
-    <Parameter name="category" optional="true" after="AND 1=1" text=" AND M_PRODUCT.M_PRODUCT_CATEGORY_ID = TO_NUMBER(?) "/>
+    <Parameter name="category" optional="true" after="AND 1=1" text=" AND M_PRODUCT.M_PRODUCT_CATEGORY_ID = ? "/>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>

@@ -28,7 +28,7 @@
     * Description:
     * - Update Journal Totals
     ************************************************************************/
-    v_ID NUMBER;
+    v_ID VARCHAR2(32);
   v_RO NUMBER;
 BEGIN
   -- Get ID

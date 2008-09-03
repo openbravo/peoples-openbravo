@@ -27,7 +27,7 @@
 	         SELECT BP.C_BPARTNER_ID AS ID, BP.AD_CLIENT_ID AS CLIENT_ID, 
        				BP.VALUE AS SEARCHKEY, BP.NAME, BP.DESCRIPTION 
   			   FROM C_BPARTNER BP
- 			  WHERE BP.AD_CLIENT_ID = TO_NUMBER(?)
+ 			  WHERE BP.AD_CLIENT_ID = ?
    				AND BP.ISACTIVE = 'Y'
    				AND BP.AD_CLIENT_ID IN (SELECT DISTINCT AR.AD_CLIENT_ID 
                 			              FROM AD_USER_ROLES AR, AD_USER U 
@@ -45,8 +45,8 @@
 	         SELECT BP.C_BPARTNER_ID AS ID, BP.AD_CLIENT_ID AS CLIENT_ID, 
 	         		BP.VALUE AS SEARCHKEY, BP.NAME
           	   FROM C_BPARTNER BP
-         	  WHERE BP.AD_CLIENT_ID = TO_NUMBER(?)
-         	    AND BP.C_BPARTNER_ID = TO_NUMBER(?)
+         	  WHERE BP.AD_CLIENT_ID = ?
+         	    AND BP.C_BPARTNER_ID = ?
                 AND BP.ISCUSTOMER = 'Y'
                 AND BP.AD_CLIENT_ID IN (SELECT DISTINCT AR.AD_CLIENT_ID 
                 			              FROM AD_USER_ROLES AR, AD_USER U 
@@ -65,7 +65,7 @@
 	         SELECT BP.C_BPARTNER_ID AS ID, BP.AD_CLIENT_ID AS CLIENT_ID, 
 	         		BP.VALUE AS SEARCHKEY, BP.NAME
           	   FROM C_BPARTNER BP
-         	  WHERE BP.AD_CLIENT_ID = TO_NUMBER(?)         	    
+         	  WHERE BP.AD_CLIENT_ID = ?         	    
                 AND BP.ISCUSTOMER = 'Y'
                 AND BP.AD_CLIENT_ID IN (SELECT DISTINCT AR.AD_CLIENT_ID 
                 			              FROM AD_USER_ROLES AR, AD_USER U 
@@ -85,8 +85,8 @@
 	        UPDATE C_BPARTNER SET 
  				   NAME = ?,
  				   VALUE = ?   
- 			 WHERE AD_CLIENT_ID = TO_NUMBER(?)
-               AND C_BPARTNER_ID = TO_NUMBER(?)
+ 			 WHERE AD_CLIENT_ID = ?
+               AND C_BPARTNER_ID = ?
                AND AD_CLIENT_ID IN (SELECT DISTINCT AR.AD_CLIENT_ID 
                 			          FROM AD_USER_ROLES AR, AD_USER U 
                             		 WHERE U.NAME = ? 

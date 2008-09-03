@@ -34,7 +34,7 @@ BEGIN
     FROM AD_TREE
     WHERE AD_TREE_ID = :new.AD_TREE_ID;
 
-    IF (v_TreeType='AR' AND :new.parent_id<>0) THEN
+    IF (v_TreeType='AR' AND :new.parent_id<>'0') THEN
 
       SELECT COUNT(*) INTO v_EqualAcctSchema
       FROM AD_ACCOUNTINGRPT_ELEMENT parent, AD_ACCOUNTINGRPT_ELEMENT node

@@ -155,8 +155,8 @@ public class Posted extends HttpSecureAppServlet {
       String strClient = PostedData.selectClient(this, PostedData.selectTableName(this, strTableId), strKey);
       String pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
       PInstanceProcessData.insertPInstance(this, pinstance, "176", strKey, "N", vars.getUser(), vars.getClient(), vars.getOrg());
-      PInstanceProcessData.insertPInstanceParamNumber(this, pinstance, "10", "AD_Client_ID", strClient, vars.getClient(), vars.getOrg(), vars.getUser());
-      PInstanceProcessData.insertPInstanceParamNumber(this, pinstance, "20", "AD_Table_ID", strTableId, vars.getClient(), vars.getOrg(), vars.getUser());
+      PInstanceProcessData.insertPInstanceParam(this, pinstance, "10", "AD_Client_ID", strClient, vars.getClient(), vars.getOrg(), vars.getUser());
+      PInstanceProcessData.insertPInstanceParam(this, pinstance, "20", "AD_Table_ID", strTableId, vars.getClient(), vars.getOrg(), vars.getUser());
       PInstanceProcessData.insertPInstanceParam(this, pinstance, "30", "DeletePosting", "Y", vars.getClient(), vars.getOrg(), vars.getUser());
       if (log4j.isDebugEnabled()) log4j.debug("delete, pinstance " + pinstance);
       ActionButtonData.process176(this, pinstance);
@@ -216,9 +216,9 @@ public class Posted extends HttpSecureAppServlet {
       vars.removeSessionValue("Posted|message");
       xmlDocument.setParameter("message", message);
       */
-      xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
       xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars.getLanguage()));
-      xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("theme", vars.getTheme());
       xmlDocument.setParameter("description", strDescription);
       xmlDocument.setParameter("help", strHelp);

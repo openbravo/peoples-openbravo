@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_PARENT_TREE">
     <function name="AD_PARENT_TREE" type="VARCHAR">
-      <parameter name="p_tree_id" type="NUMERIC" mode="in">
+      <parameter name="p_tree_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_node_id" type="NUMERIC" mode="in">
+      <parameter name="p_node_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -24,7 +24,7 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 p VARCHAR2(32767);
-  vp NUMBER(10);
+  vp VARCHAR2(32);
 BEGIN
 
   SELECT parent_id

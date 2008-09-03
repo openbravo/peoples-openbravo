@@ -37,9 +37,9 @@ new Array (0,31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31) //Leap year
 );
 
 var gByDefaultAction;
-var gEnviado=false;
+var gSubmitted=false;
 var keyArray=null;
-var gAUXILIAR=0;
+
 var gWaitingCallOut=false;
 
 var isKeyboardLocked=false;
@@ -80,7 +80,7 @@ function revisionControl(number) {
 * @param {String} field Optional - Name of the control where we want to set the focus. If is not present the first field will be used.
 */
 function setFocusFirstControl(form, field) {
-  var encontrado = false;
+  var found = false;
   if (form==null) form=document.forms[0];
   var total = form.length;
   for(var i=0;i<total; i++)
@@ -90,49 +90,49 @@ function setFocusFirstControl(form, field) {
       if(field!=null) {
         if (field == form.elements[i].name && !form.elements[i].readonly && !form.elements[i].disabled) {
           form.elements[i].focus();
-          encontrado=true;
+          found=true;
           break;
         }
       } else if (!form.elements[i].readonly && !form.elements[i].disabled) {
         try {
           form.elements[i].focus();
-          encontrado=true;
+          found=true;
           break;
         } catch (ignore) {}
       }
     }
   }
-  if (encontrado && form.elements[i].type && form.elements[i].type.indexOf("select")==-1)
+  if (found && form.elements[i].type && form.elements[i].type.indexOf("select")==-1)
     form.elements[i].select();
 }
 
 /** 
 * Clean the content of all text fields in a form
-* @param {Form} Formulario Optional - Form where the fields that we want to clean, are contained. If not exist, the first form in the page will be used.
+* @param {Form} form Optional - Form where the fields that we want to clean, are contained. If not exist, the first form in the page will be used.
 */
-function limpiar(Formulario) {
-  if (Formulario == null)
-    Formulario = document.forms[0];
+function clearForm(form) {
+  if (form == null)
+    form = document.forms[0];
 
-  var total = Formulario.length;
+  var total = form.length;
   for (var i=0;i<total;i++){
-    if (Formulario.elements[i].type == "text" || Formulario.elements[i].type == "password")
-      Formulario.elements[i].value = "";
+    if (form.elements[i].type == "text" || form.elements[i].type == "password")
+      form.elements[i].value = "";
   }
 }
 
 /**
-* Display a message depending on the accion parameter. Is used by other functions to submit forms.
-* @param {String} accion Text that identify the Command to execute
+* Display a message depending on the action parameter. Is used by other functions to submit forms.
+* @param {String} action Text that identify the Command to execute
 * @returns True in case of not having a message associated to the Command or by the user confirmation. False if the user cancel the confirmation message.
 * @type Boolean
 */
-function confirmar(accion) {
-  switch (accion)
+function confirmAction(action) {
+  switch (action)
   {
-  case 'DELETE': return mensaje(2);
-  case 'DELETE_RELATION': return mensaje(2);
-  case 'GUARDAR': return mensaje(3);
+  case 'DELETE': return showJSMessage(2);
+  case 'DELETE_RELATION': return showJSMessage(2);
+  case 'GUARDAR': return showJSMessage(3);
   default: return true;
   }
 }
@@ -160,22 +160,22 @@ function submitFormGetParams(Command, action) {
 
 /** 
 * Receive a form with filled fields and transform it into a String of GET paramaters
-* @param {Form} Formulario Form that we want to transform.
+* @param {Form} form Form that we want to transform.
 * @returns The transformed string for GET method submition.
 * @type String
 */
-function getParamsScript(Formulario) {
-  if (Formulario==null) return "";
+function getParamsScript(form) {
+  if (form==null) return "";
   var script="";
-  var total = Formulario.length;
+  var total = form.length;
   for (var i=0;i<total;i++) {
-    if (Formulario.elements[i].type && (Formulario.elements[i].type != "button") && (Formulario.elements[i].type != "submit") && (Formulario.elements[i].type != "image") && (Formulario.elements[i].type != "reset") && (Formulario.elements[i].readonly!="true") && (Formulario.elements[i].name != "Command") && (Formulario.elements[i].name!="") && !Formulario.elements[i].disabled) {
-      if (Formulario.elements[i].type.toUpperCase().indexOf("SELECT")!=-1 && Formulario.elements[i].selectedIndex!=-1) {
-        script += ((script=="")?"":"&") + Formulario.elements[i].name + "=" + escape(Formulario.elements[i].options[Formulario.elements[i].selectedIndex].value);
-      } else if (Formulario.elements[i].type.toUpperCase().indexOf("CHECKBOX")!=-1 || Formulario.elements[i].type.toUpperCase().indexOf("RADIO")!=-1) {
-        if (radioValue(Formulario.elements[i]) != null) script += ((script=="")?"":"&") + Formulario.elements[i].name + "=" + escape(radioValue(Formulario.elements[i]));
-      } else if (Formulario.elements[i].value!=null && Formulario.elements[i].value!="") {
-        script += ((script=="")?"":"&") + Formulario.elements[i].name + "=" + escape(Formulario.elements[i].value);
+    if (form.elements[i].type && (form.elements[i].type != "button") && (form.elements[i].type != "submit") && (form.elements[i].type != "image") && (form.elements[i].type != "reset") && (form.elements[i].readonly!="true") && (form.elements[i].name != "Command") && (form.elements[i].name!="") && !form.elements[i].disabled) {
+      if (form.elements[i].type.toUpperCase().indexOf("SELECT")!=-1 && form.elements[i].selectedIndex!=-1) {
+        script += ((script=="")?"":"&") + form.elements[i].name + "=" + escape(form.elements[i].options[form.elements[i].selectedIndex].value);
+      } else if (form.elements[i].type.toUpperCase().indexOf("CHECKBOX")!=-1 || form.elements[i].type.toUpperCase().indexOf("RADIO")!=-1) {
+        if (radioValue(form.elements[i]) != null) script += ((script=="")?"":"&") + form.elements[i].name + "=" + escape(radioValue(form.elements[i]));
+      } else if (form.elements[i].value!=null && form.elements[i].value!="") {
+        script += ((script=="")?"":"&") + form.elements[i].name + "=" + escape(form.elements[i].value);
       }
     }
   }
@@ -184,32 +184,32 @@ function getParamsScript(Formulario) {
 
 
 /**
-* Submit a form after setting a value to a field and control a single form submition
-* @param {Object} camp Reference to the field in the form
-* @param {String} valor Value to set in the field
-* @param {Form} Formulario Reference to the form, to submit 
-* @param {Boolean} bolComprobar To control if we want to validate only one form submition
+* Submit a form after setting a value to a field and control a single form submission
+* @param {Object} field Reference to the field in the form
+* @param {String} value Value to set in the field
+* @param {Form} form Reference to the form, to submit
+* @param {Boolean} bolOneFormSubmission To control if we want to validate only one form submission
 * @param {Boolean} isCallout Verify if we will wait for a CallOut response
 * @returns True if the form is sent correctly, false if an error occours and is not possible to send the data.
 * @type Boolean
 */
-function submitForm(campo, valor, Formulario, bolComprobar, isCallOut) {
-  if (Formulario == null) Formulario = document.forms[0];
+function submitForm(field, value, form, bolOneFormSubmission, isCallOut) {
+  if (form == null) form = document.forms[0];
   if (isCallOut==null) isCallOut = false;
-  if (bolComprobar!=null && bolComprobar) {
-    if (gEnviado==1) {
-      mensaje(16);
+  if (bolOneFormSubmission!=null && bolOneFormSubmission) {
+    if (gSubmitted==1) {
+      showJSMessage(16);
       return false;
     } else {
-      gEnviado=1;
+    	gSubmitted=1;
       if (isCallOut) setGWaitingCallOut(true);
-      campo.value = valor;
-      Formulario.submit();
+      field.value = value;
+      form.submit();
     }
   } else {
     if (isCallOut) setGWaitingCallOut(true);
-    campo.value = valor;
-    Formulario.submit();
+    field.value = value;
+    form.submit();
   }
   return true;
 }
@@ -225,32 +225,32 @@ function reloadFunction(text) {
 
 /**
 * Identify the last field changed, for on screen debugging. This function requires the inpLastFieldChanged field.
-* @param {Object} campo Reference to the modified field. 
-* @param {Form} Formulario Form where the inpLastFieldChanged is located 
+* @param {Object} field Reference to the modified field. 
+* @param {Form} form Form where the inpLastFieldChanged is located 
 * @returns True if everything was correct. False if the inpLastFieldChanged was not found
 * @type Boolean
 */
-function setChangedField(campo, Formulario) {
-  if (Formulario==null || !Formulario) Formulario = document.forms[0];
-  if (Formulario.inpLastFieldChanged==null) return false;
-  if (campo.type.toUpperCase().indexOf("SELECT")!=-1) {
-    if(campo.options[campo.selectedIndex].defaultSelected || campo.options[campo.selectedIndex].value == "")
+function setChangedField(field, form) {
+  if (form==null || !form) form = document.forms[0];
+  if (form.inpLastFieldChanged==null) return false;
+  if (field.type.toUpperCase().indexOf("SELECT")!=-1) {
+    if(field.options[field.selectedIndex].defaultSelected || field.options[field.selectedIndex].value == "")
       return false;
   }
-  Formulario.inpLastFieldChanged.value = campo.name;
+  form.inpLastFieldChanged.value = field.name;
   return true;
 }
 
 /**
 * Check for changes in a Form. This function requires the inpLastFieldChanged field. Is a complementary function to {@link #setChangedField}
-* @param {Form} Formulario Reference to a form where the inpLastFieldChanged is located.
+* @param {Form} form Reference to a form where the inpLastFieldChanged is located.
 * @returns True if the inpLastFieldChanged has data and the user confirm the pop-up message. False if the field has no data or the user no confirm the pop-up message.
 * @type Boolean
 */
-function checkForChanges(Formulario) {
-  if (Formulario==null) Formulario = document.forms[0];
-  if (inputValue(Formulario.inpLastFieldChanged)!="") {
-    if (!mensaje(10)) return false;
+function checkForChanges(form) {
+  if (form==null) form = document.forms[0];
+  if (inputValue(form.inpLastFieldChanged)!="") {
+    if (!showJSMessage(10)) return false;
   }
   return true;
 }
@@ -258,36 +258,36 @@ function checkForChanges(Formulario) {
 
 /**
 * Function Description
-* @param {Form} Formulario
+* @param {Form} form
 * @param {String} columName
 * @param {String} parentKey
 * @param {String} url
 * @param {String} keyId
 * @param {String} tableId
 * @param {String} newTarget
-* @param {Boolean} bolComprobarCambios
+* @param {Boolean} bolCheckChanges
 * @returns
 * @type Boolean
 */
-function sendDirectLink(Formulario, columnName, parentKey, url, keyId, tableId, newTarget, bolComprobarCambios) {
-  if (Formulario == null) Formulario = document.forms[0];
-  var frmDepuracion = document.forms[0];
-  var accion = "DEFAULT";
-  if (bolComprobarCambios==null) bolComprobarCambios = false;
-  if (arrGeneralChange!=null && arrGeneralChange.length>0 && bolComprobarCambios) {
-    var strFunction = "sendDirectLink('" + Formulario.name + "', '" + columnName + "', '" + parentKey + "', '" + url + "', '" + keyId + "', '" + tableId + "', " + ((newTarget==null)?"null":"'" + newTarget + "'") + ", " + bolComprobarCambios + ")";
+function sendDirectLink(form, columnName, parentKey, url, keyId, tableId, newTarget, bolCheckChanges) {
+  if (form == null) form = document.forms[0];
+  var frmDebug = document.forms[0];
+  var action = "DEFAULT";
+  if (bolCheckChanges==null) bolCheckChanges = false;
+  if (arrGeneralChange!=null && arrGeneralChange.length>0 && bolCheckChanges) {
+    var strFunction = "sendDirectLink('" + form.name + "', '" + columnName + "', '" + parentKey + "', '" + url + "', '" + keyId + "', '" + tableId + "', " + ((newTarget==null)?"null":"'" + newTarget + "'") + ", " + bolCheckChanges + ")";
     reloadFunction(strFunction);
     return false;
   }
-  if (bolComprobarCambios && !checkForChanges(frmDepuracion)) return false;
-  if (confirmar(accion)) {
-    Formulario.action = url;
-    if (newTarget != null) Formulario.target = newTarget;
-    Formulario.inpKeyReferenceColumnName.value = columnName;
-    Formulario.inpSecondKey.value = parentKey;
-    Formulario.inpKeyReferenceId.value = keyId;
-    Formulario.inpTableReferenceId.value = tableId;
-    submitForm(Formulario.Command, accion, Formulario, false, false);
+  if (bolCheckChanges && !checkForChanges(frmDebug)) return false;
+  if (confirmAction(action)) {
+    form.action = url;
+    if (newTarget != null) form.target = newTarget;
+    form.inpKeyReferenceColumnName.value = columnName;
+    form.inpSecondKey.value = parentKey;
+    form.inpKeyReferenceId.value = keyId;
+    form.inpTableReferenceId.value = tableId;
+    submitForm(form.Command, action, form, false, false);
   }
   return true;
 }
@@ -307,27 +307,45 @@ function dispatchEventChange(target) {
 }
 
 /**
+ * Created and Deprecated in 2.50
+ * It calls either the validate-function or if it does not exist
+ * the depurar-function. The depurar-function  has been renamed to validate.
+ * These functions are defined in each HTML-page and called from here.
+ * This wrapper-function is used to support both function-names until
+ * all custom code has been migrated to the new name.
+ */
+function depurar_validate_wrapper(action, form, value) {
+	// if new-style validate-function exists => call it
+	if (typeof validate == "function") {
+		return validate(action, form, value);
+	} else {
+		// call old-style depurar function
+		return depurar(action, form, value);
+	}	
+}
+
+/**
 * Submit a form after setting a value to the Command field. The Command field is a string to define the type of operation that the servlet will execute. Also allows to debug previous the submition. This function execution requires a hidden field with name Command in the form.
-* @param {String} accion Identify the operation that the servlet will execute.
-* @param {Boolean} bolDepurar Set if you want to debug previous the form submition. The default value is false. If is true, you must implement a boolean returning function named depurar that makes all the debugging functionality. If depurar returns false the form will not be submited.
-* @param {Form} Formulario A reference to the form that will be submited. If is null, the first form in the page will be used.
+* @param {String} action Identify the operation that the servlet will execute.
+* @param {Boolean} bolValidation Set if you want to debug previous the form submission. The default value is false. If is true, you must implement a boolean returning function named depurar that makes all the debugging functionality. If depurar returns false the form will not be submited.
+* @param {Form} form A reference to the form that will be submitted. If is null, the first form in the page will be used.
 * @param {String} newAction Set the URL where we want to send the form. If is null the URL in the form's action attribute will be used.
 * @param {String} newTarget Set the window or frame where we want to send the form. If is null the form's target attribute will be used.
-* @param {Boolean} bolComprobar Verify the form submition, waits for a server response. Prevents a multiple submition. The default value false.
-* @param {Boolean} bolComprobarCambios  If we want to check for changes in the window, and presents a pop-up message.
-* @param {Boolean} isCallOut Defines if we are making a submition to a CallOut.
+* @param {Boolean} bolOneFormSubmission Verify the form submission, waits for a server response. Prevents a multiple submission. The default value false.
+* @param {Boolean} bolCheckChanges  If we want to check for changes in the window, and presents a pop-up message.
+* @param {Boolean} isCallOut Defines if we are making a submission to a CallOut.
 * @param {Boolean} controlEvt
 * @param {Event} evt
 * @returns True if everything goes correct and the data is sent. False on any problem, is no able to send the data or by the user cancelation un the pop-up message.
 * @type Boolean
 */
-function submitCommandForm(accion, bolDepurar, Formulario, newAction, newTarget, bolComprobar, bolComprobarCambios, isCallOut, controlEvt, evt) {
-  if (Formulario == null) Formulario = document.forms[0];
-  if (bolDepurar!=null && bolDepurar==true){
+function submitCommandForm(action, bolValidation, form, newAction, newTarget, bolOneFormSubmission, bolCheckChanges, isCallOut, controlEvt, evt) {
+  if (form == null) form = document.forms[0];
+  if (bolValidation!=null && bolValidation==true){
   	try { initialize_MessageBox('messageBoxID'); } catch (ignored) {}
-  	if (!depurar(accion, Formulario, "")) return false;
+  	if (!depurar_validate_wrapper(action, form, "")) return false;
   } 
-  if (bolComprobarCambios==null) bolComprobarCambios = false;
+  if (bolCheckChanges==null) bolCheckChanges = false;
   if (isCallOut==null) isCallOut = false;
   if (controlEvt==null) controlEvt = false;
   if (controlEvt) {
@@ -335,16 +353,24 @@ function submitCommandForm(accion, bolDepurar, Formulario, newAction, newTarget,
     var target = (document.layers) ? evt.target : evt.srcElement;
     dispatchEventChange(target);
   }
-  if (gWaitingCallOut || (arrGeneralChange!=null && arrGeneralChange.length>0 && bolComprobarCambios)) {
-    var strFunction = "submitCommandForm('" + accion + "', " + bolDepurar + ", " + Formulario.name + ", " + ((newAction!=null)?("'" + newAction + "'"):"null") + ", " + ((newTarget!=null)?("'" + newTarget + "'"):"null") + ", " + bolComprobar + ", " + bolComprobarCambios + ")";
+  if (gWaitingCallOut || (arrGeneralChange!=null && arrGeneralChange.length>0 && bolCheckChanges)) {
+    var strFunction = "submitCommandForm('" + action + "', " + bolValidation + ", " + form.name + ", " + ((newAction!=null)?("'" + newAction + "'"):"null") + ", " + ((newTarget!=null)?("'" + newTarget + "'"):"null") + ", " + bolOneFormSubmission + ", " + bolCheckChanges + ")";
     reloadFunction(strFunction);
     return false;
   }
-  if (bolComprobarCambios && !checkForChanges(Formulario)) return false;
-  if (confirmar(accion)) {
-    if (newAction != null) Formulario.action = newAction;
-    if (newTarget != null) Formulario.target = newTarget;
-    submitForm(Formulario.Command, accion, Formulario, bolComprobar, isCallOut);
+  if (bolCheckChanges && !checkForChanges(form)) return false;
+  if (confirmAction(action)) {
+    if (newAction != null) form.action = newAction;
+    // Deprecated in 2.50, This code is only here fore backwards compatibility
+    // it allow callers which still use the old names to work
+    if ((newTarget != null) && (newTarget == 'frameAplicacion')) {
+      newTarget = 'appFrame';
+    }
+    if ((newTarget != null) && (newTarget == 'frameOculto')) {
+        newTarget = 'hiddenFrame';
+      }
+    if (newTarget != null) form.target = newTarget;
+    submitForm(form.Command, action, form, bolOneFormSubmission, isCallOut);
   }
   return true;
 }
@@ -352,28 +378,28 @@ function submitCommandForm(accion, bolDepurar, Formulario, newAction, newTarget,
 
 /**
 * Submit a form after setting a value to the Command field, and adding an additional parameter/value to the form. This function requires a hidden Command field in the form.
-* @param {String} accion Identify the operation to be executed by the servlet. 
-* @param {Object} campo Reference to the field where we want to set the value.
-* @param {String} valor Value to set at the selected field.
-* @param {Boolean} bolDepurar Set if you want to debug previous the form submition. The default value is false. If is true, you must implement a boolean returning function named depurar that makes all the debugging functionality. If depurar returns false the form will not be submited.
-* @param {Form} Formulario A reference to the form that will be submited. If is null, the first form in the page will be used.
+* @param {String} action Identify the operation to be executed by the servlet. 
+* @param {Object} field Reference to the field where we want to set the value.
+* @param {String} value Value to set at the selected field.
+* @param {Boolean} bolValidation Set if you want to debug previous the form submission. The default value is false. If is true, you must implement a boolean returning function named depurar that makes all the debugging functionality. If depurar returns false the form will not be submited.
+* @param {Form} form A reference to the form that will be submitted. If is null, the first form in the page will be used.
 * @param {String} formAction Set the URL where we want to send the form. If is null the URL in the form's action attribute will be used.
 * @param {String} newTarget Set the window or frame where we want to send the form. If is null the form's target attribute will be used.
-* @param {Boolean} bolComprobar Verify the form submition, waits for a server response. Prevents a multiple submition. The default value false.
-* @param {Boolean} bolComprobarCambios If we want to check for changes in the window, and presents a pop-up message.
+* @param {Boolean} bolOneFormSubmission Verify the form submission, waits for a server response. Prevents a multiple submission. The default value false.
+* @param {Boolean} bolCheckChanges If we want to check for changes in the window, and presents a pop-up message.
 * @param {Boolean} isCallOut Defines if we are sending the data to a CallOut 
 * @param {Boolean} controlEvt Set if the function should control the events.
 * @param {Event} evt Event handling object
-* @returns True if everything works correctly. False on any problem or by the user cancelation at the pop-up message.
+* @returns True if everything works correctly. False on any problem or by the user cancellation at the pop-up message.
 * @type Boolean
 */
-function submitCommandFormParameter(accion, campo, valor, bolDepurar, Formulario, formAction, newTarget, bolComprobar, bolComprobarCambios, isCallOut, controlEvt, evt) {
-  if (Formulario == null) Formulario = document.forms[0];
-  if (bolDepurar!=null && bolDepurar==true){
+function submitCommandFormParameter(action, field, value, bolValidation, form, formAction, newTarget, bolOneFormSubmission, bolCheckChanges, isCallOut, controlEvt, evt) {
+  if (form == null) form = document.forms[0];
+  if (bolValidation!=null && bolValidation==true){
   	try { initialize_MessageBox('messageBoxID'); } catch (ignored) {}
-	if (!depurar(accion, Formulario, valor)) return false;
+	if (!depurar_validate_wrapper(action, form, value)) return false;
   }
-  if (bolComprobarCambios==null) bolComprobarCambios = false;
+  if (bolCheckChanges==null) bolCheckChanges = false;
   if (isCallOut==null) isCallOut = false;
   if (controlEvt==null) controlEvt = false;
   if (controlEvt) {
@@ -381,51 +407,58 @@ function submitCommandFormParameter(accion, campo, valor, bolDepurar, Formulario
     var target = (document.layers) ? evt.target : evt.srcElement;
     dispatchEventChange(target);
   }
-  if (gWaitingCallOut || (arrGeneralChange!=null && arrGeneralChange.length>0 && bolComprobarCambios)) {
-    var strFunction = "submitCommandFormParameter('" + accion + "', " + campo.form.name + "." + campo.name + ", '" + valor + "', " + bolDepurar + ", " + Formulario.name + ", " + ((formAction!=null)?("'" + formAction + "'"):"null") + ", " + ((newTarget!=null)?("'" + newTarget + "'"):"null") + ", " + bolComprobar + ", " + bolComprobarCambios + ", " + isCallOut + ")";
+  if (gWaitingCallOut || (arrGeneralChange!=null && arrGeneralChange.length>0 && bolCheckChanges)) {
+    var strFunction = "submitCommandFormParameter('" + action + "', " + field.form.name + "." + field.name + ", '" + value + "', " + bolValidation + ", " + form.name + ", " + ((formAction!=null)?("'" + formAction + "'"):"null") + ", " + ((newTarget!=null)?("'" + newTarget + "'"):"null") + ", " + bolOneFormSubmission + ", " + bolCheckChanges + ", " + isCallOut + ")";
     reloadFunction(strFunction);
     return false;
   }
 
-  if (bolComprobarCambios && !checkForChanges(Formulario)) return false;
+  if (bolCheckChanges && !checkForChanges(form)) return false;
 
-  if (confirmar(accion)) {
-    campo.value = valor;
-    if (formAction != null) Formulario.action = formAction;
-    if (newTarget != null) Formulario.target = newTarget;
-    submitForm(Formulario.Command, accion, Formulario, bolComprobar, isCallOut);
+  if (confirmAction(action)) {
+    field.value = value;
+    if (formAction != null) form.action = formAction;
+    // Deprecated in 2.50, This code is only here fore backwards compatibility
+    // it allow callers which still use the old frameAplicacion name to work with the new name appFrame
+    if ((newTarget != null) && (newTarget == 'frameAplicacion')) {
+      newTarget = 'appFrame';
+    }
+    if ((newTarget != null) && (newTarget == 'frameOculto')) {
+      newTarget = 'hiddenFrame';
+    }
+    if (newTarget != null) form.target = newTarget;
+    submitForm(form.Command, action, form, bolOneFormSubmission, isCallOut);
   }
   return true;
 }
 
-
 /**
 * Verify if a text is an allowed number.
-* @param {String} strValorNumerico Text to evaluate.
-* @param {Boolean} bolDecimales Set if a float number is allowed
-* @param {Boolean} bolNegativo Set if a negative number is allowed
+* @param {String} strValue Text to evaluate.
+* @param {Boolean} isFloatAllowed Set if a float number is allowed
+* @param {Boolean} isNegativeAllowed Set if a negative number is allowed
 * @returns True if the text is a allowed number, false if not is a number or not an allowed number.
 * @type Boolean
 */
-function esNumero(strValorNumerico, bolDecimales, bolNegativo) {
-  var bolComa = false;
-  var esNegativo = false;
+function validateNumber(strValue, isFloatAllowed, isNegativeAllowed) {
+  var isComma = false;
+  var isNegative = false;
   var i=0;
-  if (strValorNumerico == null || strValorNumerico=="") return true;
-  if (strValorNumerico.substring(i, i+1)=="-") {
-    if (bolNegativo !=null && bolNegativo) {
-      esNegativo = true;
+  if (strValue == null || strValue=="") return true;
+  if (strValue.substring(i, i+1)=="-") {
+    if (isNegativeAllowed !=null && isNegativeAllowed) {
+    	isNegative = true;
       i++;
     } else {
       return false;
     }
-  } else if (strValorNumerico.substring(i, i+1)=="+")
+  } else if (strValue.substring(i, i+1)=="+")
     i++;
-  var total = strValorNumerico.length;
+  var total = strValue.length;
   for (i=i;i<total;i++) {
-    if (isNaN(strValorNumerico.substring(i,i+1))) {
-      if (bolDecimales && strValorNumerico.substring(i,i+1)=="." && !bolComa) 
-        bolComa = true;
+    if (isNaN(strValue.substring(i,i+1))) {
+      if (isFloatAllowed && strValue.substring(i,i+1)=="." && !isComma) 
+    	  isComma = true;
       else
         return false;
     }
@@ -435,19 +468,19 @@ function esNumero(strValorNumerico, bolDecimales, bolNegativo) {
 
 /**
 * Validate that the information entered in a field is a number, if not, this function displays an error message and set the focus on the field. Also you can control if the number is an Integer, positive or negative number.
-* @param {Object} CampoNumerico A reference to a field that will be evaluated.
-* @param {Boolean} bolDecimales Set if a float number is allowed.
-* @param {Boolean} bolNegativo Set if a negative number is allowed.
+* @param {Object} field A reference to a field that will be evaluated.
+* @param {Boolean} isFloatAllowed Set if a float number is allowed.
+* @param {Boolean} isNegativeAllowed Set if a negative number is allowed.
 * @returns True if the field's content is a number, false if the field's content is not a number or does not accomplish the requirements
 * @type Boolean
-* @see #esNumero
+* @see #validateNumber
 */
-function campoNumerico(CampoNumerico, bolDecimales, bolNegativo) {
-  if (!esNumero(CampoNumerico.value, bolDecimales, bolNegativo))
+function validateNumberField(field, isFloatAllowed, isNegativeAllowed) {
+  if (!validateNumber(field.value, isFloatAllowed, isNegativeAllowed))
   {
-    mensaje(4);
-    CampoNumerico.focus();
-    CampoNumerico.select();
+    showJSMessage(4);
+    field.focus();
+    field.select();
     return false;
   }
   return true;
@@ -536,7 +569,8 @@ function addUrlParameters(data) {
 function openPopUp(url, _name, height, width, top, left, checkChanges, target, doSubmit, closeControl, parameters, hasLoading) {
   var adds = "";
   var isPopup = null;
-  if (_name!='frameAplicacion' && _name!='frameMenu') isPopup =  true;
+  // Deprecated in 2.50, search for the old frameAplication and the new appFrame
+  if (_name!='appFrame' && _name!='frameAplicacion' && _name!='frameMenu') isPopup =  true;
   else isPopup = false;
   if (height==null) height = screen.height - 50;
   if (width==null) width = screen.width;
@@ -567,7 +601,7 @@ function openPopUp(url, _name, height, width, top, left, checkChanges, target, d
   adds += ", toolbar=" + getArrayValue(parameters, "toolbar", "0");
   adds += ", resizable=" + getArrayValue(parameters, "resizable", "1");
   if (doSubmit && (getArrayValue(parameters, "debug", false)==true)) {
-    if (!depurar(getArrayValue(parameters, "Command", "DEFAULT"), null, "")) return false;
+    if (!depurar_validate_wrapper(getArrayValue(parameters, "Command", "DEFAULT"), null, "")) return false;
   }
   if (isPopup == true && hasLoading == true) {
     isPopupLoadingWindowLoaded=false;
@@ -586,12 +620,12 @@ function openPopUp(url, _name, height, width, top, left, checkChanges, target, d
   return winPopUp;
 }
 
-function synchronizedSubmitCommandForm(accion, bolDepurar, Formulario, newAction, newTarget, bolComprobar, bolComprobarCambios, isCallOut, controlEvt, evt) {
+function synchronizedSubmitCommandForm(action, bolValidation, form, newAction, newTarget, bolOneFormSubmission, bolCheckChanges, isCallOut, controlEvt, evt) {
   if (isPopupLoadingWindowLoaded==false) {
-    setTimeout(function() {synchronizedSubmitCommandForm(accion, bolDepurar, Formulario, newAction, newTarget, bolComprobar, bolComprobarCambios, isCallOut, controlEvt, evt);},50);
+    setTimeout(function() {synchronizedSubmitCommandForm(action, bolValidation, form, newAction, newTarget, bolOneFormSubmission, bolCheckChanges, isCallOut, controlEvt, evt);},50);
     return;
   } else {
-    submitCommandForm(accion, bolDepurar, Formulario, newAction, newTarget, bolComprobar, bolComprobarCambios, isCallOut, controlEvt, evt);
+    submitCommandForm(action, bolValidation, form, newAction, newTarget, bolOneFormSubmission, bolCheckChanges, isCallOut, controlEvt, evt);
   }
 }
 
@@ -640,7 +674,7 @@ function openNewLink(url, _name, height, width, top, left, checkChanges, target,
 * @type Object
 * @see #openNewLink
 */
-function abrirNuevoBrowser(url, _name, height, width, top, left) {
+function openNewBrowser(url, _name, height, width, top, left) {
   return openNewLink(url, _name, height, width, top, left, null, null, null, true, null);
 }
 
@@ -653,7 +687,7 @@ function abrirNuevoBrowser(url, _name, height, width, top, left) {
 * @type Object
 * @see #openPopUp
 */
-function abrirExcel(url, _name, checkChanges) {
+function openExcel(url, _name, checkChanges) {
   return openPopUp(url, _name, null, null, null, null, checkChanges, null, null, false, null);
 }
 
@@ -666,7 +700,7 @@ function abrirExcel(url, _name, checkChanges) {
 * @type Object
 * @see #openPopUp
 */
-function abrirPDF(url, _name, checkChanges) {
+function openPDF(url, _name, checkChanges) {
   return openPopUp(url, _name, null, null, null, null, checkChanges, null, null, false, null);
 }
 
@@ -679,7 +713,7 @@ function abrirPDF(url, _name, checkChanges) {
 * @type Object
 * @see #openPopUp
 */
-function abrirPDFFiltered(url, _name, checkChanges) {
+function openPDFFiltered(url, _name, checkChanges) {
   return openPopUp(url, _name, null, null, null, null, checkChanges, null, true, false, null);
 }
 
@@ -694,7 +728,7 @@ function abrirPDFFiltered(url, _name, checkChanges) {
 * @type Object
 * @see #openPopUp
 */
-function abrirPopUp(url, _name, height, width, closeControl, showstatus) {
+function openPopUpDefaultSize(url, _name, height, width, closeControl, showstatus) {
   if (height==null) height = 250;
   if (width==null) width = 230;
   return openPopUp(url, _name, height, width, null, null, null, null, null, closeControl, null);
@@ -702,18 +736,18 @@ function abrirPopUp(url, _name, height, width, closeControl, showstatus) {
 
 /**
 * Opens a PDF session
-* @param {String} strPagina
+* @param {String} strPage
 * @param {String} strDirectPrinting
 * @param {String} strHiddenKey
 * @param {String} strHiddenValue
-* @param {Boolean} bolComprobarCambios
+* @param {Boolean} bolCheckChanges
 * @returns
 * @type Boolean
 * @see #submitCommandForm
 */
-function abrirPDFSession(strPagina, strDirectPrinting, strHiddenKey, strHiddenValue, bolComprobarCambios) {
+function openPDFSession(strPage, strDirectPrinting, strHiddenKey, strHiddenValue, bolCheckChanges) {
   var direct = (strDirectPrinting!="")?"Y":"N";
-  return submitCommandForm("DEFAULT", false, null, "../businessUtility/PrinterReports.html?inppdfpath=" + escape(strPagina) + "&inpdirectprint=" + escape(direct) + "&inphiddenkey=" + escape(strHiddenKey) + ((strHiddenValue!=null)?"&inphiddenvalue=" + escape(strHiddenValue):""), "frameOculto", null, bolComprobarCambios);
+  return submitCommandForm("DEFAULT", false, null, "../businessUtility/PrinterReports.html?inppdfpath=" + escape(strPage) + "&inpdirectprint=" + escape(direct) + "&inphiddenkey=" + escape(strHiddenKey) + ((strHiddenValue!=null)?"&inphiddenvalue=" + escape(strHiddenValue):""), "hiddenFrame", null, bolCheckChanges);
 }
 
 /**
@@ -729,7 +763,7 @@ function abrirPDFSession(strPagina, strDirectPrinting, strHiddenKey, strHiddenVa
 * @see #addArrayValue 
 * @see #openPopUp 
 */
-function abrirBusqueda(url, _name, tabId, windowName, windowId, checkChanges) {
+function openSearchWindow(url, _name, tabId, windowName, windowId, checkChanges) {
   var parameters = new Array();
   parameters = addArrayValue(parameters, "inpTabId", tabId, true);
   parameters = addArrayValue(parameters, "inpWindow", windowName, true);
@@ -765,7 +799,7 @@ function openHelp(windowId, url, _name, checkChanges, height, width, windowType,
 /**
 * Function Description
 * @param {String} Command
-* @param {Boolean} depurar
+* @param {Boolean} bolValidation
 * @param {String} url
 * @param {String} _name
 * @returns An ID reference pointing to the newly opened browser window.
@@ -773,13 +807,13 @@ function openHelp(windowId, url, _name, checkChanges, height, width, windowType,
 * @see #openPopUp 
 * @see #addArrayValue
 */
-function openServletNewWindow(Command, depurar, url, _name, processId, checkChanges, height, width, resizable, hasStatus, closeControl, hasLoading) {
+function openServletNewWindow(Command, bolValidation, url, _name, processId, checkChanges, height, width, resizable, hasStatus, closeControl, hasLoading) {
   if (height==null) height = 350;
   if (width==null) width = 500;
   if (closeControl==null) closeControl = true;
   var parameters = new Array();
   parameters = addArrayValue(parameters, "scrollbars", "1");
-  parameters = addArrayValue(parameters, "debug", depurar, false);
+  parameters = addArrayValue(parameters, "debug", bolValidation, false);
   if (processId!=null && processId!="") parameters = addArrayValue(parameters, "inpProcessId", processId, true);
   if (Command!=null && Command!="") parameters = addArrayValue(parameters, "Command", Command, false);
 
@@ -808,7 +842,7 @@ function openLink(url, _name, height, width) {
 /**
 * Opens a pop-up window 
 * @param {String} url
-* @param {String} tipo
+* @param {String} type
 * @param {String} id
 * @param {String} value
 * @param {Number} height
@@ -818,11 +852,11 @@ function openLink(url, _name, height, width) {
 * @see #openPopUp 
 * @see #addArrayValue
 */
-function editHelp(url, tipo, id, value, height, width) {
+function editHelp(url, type, id, value, height, width) {
   if (height==null) height = 500;
   if (width==null) width = 600;
   var parameters = new Array();
-  parameters = addArrayValue(parameters, "Command", tipo, true);
+  parameters = addArrayValue(parameters, "Command", type, true);
   parameters = addArrayValue(parameters, "inpClave", value, true);
   return openPopUp(url, "HELP_EDIT", height, width, null, null, null, null, false, true, parameters);
 }
@@ -971,7 +1005,7 @@ function obtainKeyCode(code) {
 * @param {Event} pushedKey Code of the key pressed.
 * @returns True if the key is not registered in the array, false if a event for this key is registered in keyArray array.
 * @type Boolean
-* @see #obtenerCodigoTecla
+* @see #obtainKeyCode
 */
 function keyControl(pushedKey) {
   try {
@@ -1210,7 +1244,7 @@ function keyControl(pushedKey) {
 * Put the focus on the Menu frame
 */
 function putFocusOnMenu() {
-  if (parent.frameAplicacion.selectedArea == 'tabs') parent.frameAplicacion.swichSelectedArea();
+  if (parent.appFrame.selectedArea == 'tabs') parent.appFrame.swichSelectedArea();
   parent.frameMenu.focus();
   return true;
 }
@@ -1220,11 +1254,11 @@ function putFocusOnMenu() {
 */
 function putFocusOnWindow() {
   parent.frameMenu.onBlurMenu();
-  parent.frameAplicacion.selectedArea = 'window'
-  parent.frameAplicacion.focus();
-  parent.frameAplicacion.setWindowElementFocus(parent.frameAplicacion.focusedWindowElement);
+  parent.appFrame.selectedArea = 'window'
+  parent.appFrame.focus();
+  parent.appFrame.setWindowElementFocus(parent.appFrame.focusedWindowElement);
   return true;
-  //parent.frameAplicacion.focus();
+  //parent.appFrame.focus();
 }
 
 /**
@@ -1294,158 +1328,117 @@ function setBrowserAutoComplete(state) {
 
 /**
 * Validates the name of a Field
-* @param {String} nombreArray Name of the field to verify
-* @param {String} nombreActual Name of the field to verify
+* @param {String} arrayName Name of the field to verify
+* @param {String} actualName Name of the field to verify
 * @returns True, False
 * @type Boolean
 */
-function isIdenticalField(nombreArray, nombreActual) {
-  if (nombreArray.substring(nombreArray.length-1)=="%") return (nombreActual.indexOf(nombreArray.substring(0, nombreArray.length-1))==0);
-  else return (nombreArray == nombreActual);
+function isIdenticalField(arrayName, actualName) {
+  if (arrayName.substring(arrayName.length-1)=="%") return (actualName.indexOf(arrayName.substring(0, arrayName.length-1))==0);
+  else return (arrayName == actualName);
 }
 
 /**
 * Function Description
-* @param {String} eventoJS
+* @param {String} eventJS
 * @param {String} inputname
 * @param {String} arrayName
 * @returns
 * @type String
 * @see #ReplaceText
 */
-function replaceEventString(eventoJS, inputname, arrayName) {
-  eventoJS = ReplaceText(eventoJS, "@inputname@", inputname);
+function replaceEventString(eventJS, inputname, arrayName) {
+  eventJS = ReplaceText(eventJS, "@inputname@", inputname);
   if (arrayName!=null && arrayName!="" && arrayName.substring(arrayName.length-1)=="%") {
     var endname = inputname.substring(arrayName.length-1);
-    eventoJS = ReplaceText(eventoJS, "@endinputname@", endname);
+    eventJS = ReplaceText(eventJS, "@endinputname@", endname);
   }
-  return eventoJS;
-}
-
-
-/**
-* Search an array for a given parent key, and fills a combo with the founded values.
-* @param {Object} combo A reference to the combo that will be filled.
-* @param {Array} arrayDatos A data array that contents the combo info. Must be in the following format:
-*               <ol>
-*                 <li>Parent key or grouping element</li>
-*                 <li>Element key</li>
-*                 <li>Element's string. That will be presented on the screen</li>
-*                 <li>Boolean flag to indicate if the element is a selected item</li>
-*               </ol>
-* @param {String} padre Parent key for search common elements.
-* @param {Boolean} bolSelected Sets if the array's last field will be used for select an item. If this parameters is null or false, the last field on the array is no mandatory. 
-* @param {Boolean} sinBlanco Set if a blank element should be added to the combo. The default value is false.
-* @returns True if everything was right, otherwise false.
-* @Type Boolean
-*/
-function rellenarComboHijo(combo, arrayDatos, padre, bolSelected, sinBlanco) {
-  var i, value="";
-  for (i = combo.options.length;i>=0;i--)
-    combo.options[i] = null;
-  i=0;
-  if (sinBlanco==null || !sinBlanco)
-    combo.options[i++] = new Option("", "");
-  if (arrayDatos==null) return false;
-
-  var total = arrayDatos.length;
-  for (var j=0;j<total;j++) {
-    if (arrayDatos[j][0]==padre) {
-      combo.options[i] = new Option(arrayDatos[j][2], arrayDatos[j][1]);
-      if (bolSelected!=null && bolSelected && arrayDatos[j][3]=="true") {
-        value = arrayDatos[j][1];
-        combo.options[i].selected = true;
-      }
-      else combo.options[i].selected = false;
-      i++;
-    }
-  }
-  return value;
+  return eventJS;
 }
 
 /**
-* Allows to set a text in a SPAN, DIV object. Used to dinamically change the text in a section of a HTML page.
-* @param {Object} nodo A reference to a SPAN or DIV object. Or an ID of an object existing in the page.
-* @param {String} strTexto The text that we want to change or set.
-* @param {Boolean} esId Set if the first parameter is an ID. True for an ID and false for an Object reference.
+* Allows to set a text in a SPAN, DIV object. Used to dynamically change the text in a section of a HTML page.
+* @param {Object} node A reference to a SPAN or DIV object. Or an ID of an object existing in the page.
+* @param {String} text The text that we want to change or set.
+* @param {Boolean} isId Set if the first parameter is an ID. True for an ID and false for an Object reference.
 * @param {Boolean} isAppend Set if we want to append the text to the existing one.
 */
-function layer(nodo, strTexto, esId, isAppend) {
-  if (strTexto==null)
-    strTexto = "";
+function layer(node, text, isId, isAppend) {
+  if (text==null)
+    text = "";
   if (isAppend==null) isAppend=false;
 
   if (document.layers)
   {
-    if (esId!=null && esId)
-      nodo = document.layers[nodo];
-    if (nodo==null) return;
-    nodo.document.write(strTexto);
-    nodo.document.close();
+    if (isId!=null && isId)
+      node = document.layers[node];
+    if (node==null) return;
+    node.document.write(text);
+    node.document.close();
   }
   else if (document.all)
   {
-    if (esId!=null && esId)
-      nodo = document.all[nodo];
-    if (nodo==null) return;
-    //nodo.innerHTML = '';
+    if (isId!=null && isId)
+      node = document.all[node];
+    if (node==null) return;
+    //node.innerHTML = '';
     try {
       if (isAppend) {
-        strTexto = ((nodo.innerHTML==null)?"":nodo.innerHTML) + strTexto;
+        text = ((node.innerHTML==null)?"":node.innerHTML) + text;
         isAppend = false;
       }
-      nodo.innerHTML = strTexto;
+      node.innerHTML = text;
     } catch (e) {
       if (isAppend) {
-        strTexto = ((nodo.outterHTML==null)?"":nodo.outterHTML) + strTexto;
+        text = ((node.outterHTML==null)?"":node.outterHTML) + text;
         isAppend = false;
       }
-      nodo.outterHTML = strTexto;
+      node.outterHTML = text;
     }
-    nodo=null;
+    node=null;
   }
   else if (document.getElementById) 
   {
-    if (esId!=null && esId)
-      nodo = document.getElementById(nodo);
-    if (nodo==null) return;
+    if (isId!=null && isId)
+      node = document.getElementById(node);
+    if (node==null) return;
     var range = document.createRange();
-    range.setStartBefore(nodo);
-    var domfrag = range.createContextualFragment(strTexto);
-    while (nodo.hasChildNodes())
+    range.setStartBefore(node);
+    var domfrag = range.createContextualFragment(text);
+    while (node.hasChildNodes())
     {
-      nodo.removeChild(nodo.lastChild);
+      node.removeChild(node.lastChild);
     }
-    nodo.appendChild(domfrag);
-    nodo=null;
+    node.appendChild(domfrag);
+    node=null;
   }
 }
 
 /**
 * Gets the inner HTML structure of an Layer
-* @param {Object} nodo The Id or reference to the layer.
-* @param {Boolean} esId Set if the first parameter is an ID or a reference to an object.
+* @param {Object} node The Id or reference to the layer.
+* @param {Boolean} isId Set if the first parameter is an ID or a reference to an object.
 * @returns A inner HTML structure of a given ID
 * @type String
 * @see #getChildText
 */
-function readLayer(nodo, esId) {
+function readLayer(node, isId) {
   if (document.layers) {
-    if (esId!=null && esId) nodo = document.layers[nodo];
-    if (nodo==null) return "";
-    return getChildText(nodo);
+    if (isId!=null && isId) node = document.layers[node];
+    if (node==null) return "";
+    return getChildText(node);
   } else if (document.all) {
-    if (esId!=null && esId) nodo = document.all[nodo];
-    if (nodo==null) return "";
+    if (isId!=null && isId) node = document.all[node];
+    if (node==null) return "";
     try {
-      return nodo.innerHTML;
+      return node.innerHTML;
     } catch (e) {
-      return nodo.outterHTML;
+      return node.outterHTML;
     }
   } else if (document.getElementById) {
-    if (esId!=null && esId) nodo = document.getElementById(nodo);
-    if (nodo==null) return "";
-    return getChildText(nodo);
+    if (isId!=null && isId) node = document.getElementById(node);
+    if (node==null) return "";
+    return getChildText(node);
   }
   return "";
 }
@@ -1487,26 +1480,26 @@ function getObjChild(obj) {
 /**
 * Fills a combo with a data from an Array. Allows to set a default selected item, defined as boolean field in the Array.
 * @param {Object} combo A reference to the combo object.
-* @param {Array} arrayDatos Array containing the data for the combo. The structure of the array must be value, text, selected. Value is value of the item, text the string that will show the combo, an selected a boolean value to set if the item should appear selected.
+* @param {Array} dataArray Array containing the data for the combo. The structure of the array must be value, text, selected. Value is value of the item, text the string that will show the combo, an selected a boolean value to set if the item should appear selected.
 * @param {Boolean} bolSelected Sets if the an item will be selected based on the last field of the Array.
-* @param {Boolean} sinBlanco Set if the first blank element should be removed.
+* @param {Boolean} withoutBlankOption Set if the first blank element should be removed.
 * @returns A string with the new combo structure. An empty string if an error ocurred.
 * @type String
 */
-function rellenarCombo(combo, arrayDatos, bolSelected, sinBlanco) {
+function fillCombo(combo, dataArray, bolSelected, withoutBlankOption) {
   var i, value="";
   for (i = combo.options.length;i>=0;i--)
     combo.options[i] = null;
   i=0;
-  if (sinBlanco==null || !sinBlanco)
+  if (withoutBlankOption==null || !withoutBlankOption)
     combo.options[i++] = new Option("", "");
-  if (arrayDatos==null) return "";
+  if (dataArray==null) return "";
 
-  var total = arrayDatos.length;
+  var total = dataArray.length;
   for (var j=0;j<total;j++) {
-    combo.options[i] = new Option(arrayDatos[j][1], arrayDatos[j][0]);
-    if (bolSelected!=null && bolSelected && arrayDatos[j][2]=="true") {
-      value = arrayDatos[j][0];
+    combo.options[i] = new Option(dataArray[j][1], dataArray[j][0]);
+    if (bolSelected!=null && bolSelected && dataArray[j][2]=="true") {
+      value = dataArray[j][0];
       combo.options[i].selected = true;
     }
     else combo.options[i].selected = false;
@@ -1517,7 +1510,7 @@ function rellenarCombo(combo, arrayDatos, bolSelected, sinBlanco) {
 
 /**
 * Search for an element in an Array
-* @param {Array} arrayDatos Array of data. The structure of the array is:
+* @param {Array} dataArray Array of data. The structure of the array is:
 *         <ol>
 *           <li>key - Element key</li>
 *           <li>text - Element text</li>
@@ -1527,15 +1520,15 @@ function rellenarCombo(combo, arrayDatos, bolSelected, sinBlanco) {
 * @returns Returns the key of the founded element. An empty string if was not found or for an empty array.
 * @type String
 */
-function selectDefaultValueFromArray (arrayDatos, bolSelected) {
+function selectDefaultValueFromArray (dataArray, bolSelected) {
   var value="";
-  if (arrayDatos==null) return "";
+  if (dataArray==null) return "";
 
-  value = arrayDatos[0][0];
-  var total = arrayDatos.length;
+  value = dataArray[0][0];
+  var total = dataArray.length;
   for (var j=0;j<total;j++) {
-    if (bolSelected!=null && bolSelected && arrayDatos[j][2]=="true") {
-      value = arrayDatos[j][0];
+    if (bolSelected!=null && bolSelected && dataArray[j][2]=="true") {
+      value = dataArray[j][0];
     }
   }
   return value;
@@ -1658,25 +1651,29 @@ function moveElementInList(list, incr) {
   return true;
 }
 
+// Depecated since 2.50, use searchArray instead
+function valorArray(dataArray, searchKey, valueIndex) {
+	searchArray(dataArray, searchKey, valueIndex);
+}
 
 /**
 * Search for a key and returns the value in the {intDevolverPosicion} index position of the Array.
-* @param {Array} arrDatos Array of elements 
-* @param {String} strClave Key to search for
-* @param {Number} intDevolverPosicion Index position of the returning value.
+* @param {Array} dataArray Array of elements 
+* @param {String} searchKey Key to search for
+* @param {Number} valueIndex Index position of the returning value.
 * @returns The value of the given index position, or an empty string if not was found.
 * @type String
 */
-function valorArray(arrDatos, strClave, intDevolverPosicion)
+function searchArray(dataArray, searchKey, valueIndex)
 {
-  if (arrDatos == null) return "";
-  else if (strClave==null) return "";
-  if (intDevolverPosicion==null) intDevolverPosicion = 1;
+  if (dataArray == null) return "";
+  else if (searchKey==null) return "";
+  if (valueIndex==null) valueIndex = 1;
 
-  var total = arrDatos.length;
+  var total = dataArray.length;
   for (var i=0;i<total;i++) {
-    if (arrDatos[i][0] == strClave) {
-      return arrDatos[i][intDevolverPosicion];
+    if (dataArray[i][0] == searchKey) {
+      return dataArray[i][valueIndex];
     }
   }
   return "";
@@ -1703,21 +1700,20 @@ function radioValue(radio)
   return null;
 }
 
-
 /**
 * Checks or unchecks all the elements associated to the parameter.
 * @param {Object} chk A reference to the check button that will be marked or unmarked.
-* @param {Boolean} bolMarcar Set if we will check or uncheck the element.
+* @param {Boolean} bolMark Set if we will check or uncheck the element.
 * @returns False if the element was not found, otherwise true.
 */
-function marcarTodos(chk, bolMarcar)
+function markAll(chk, bolMark)
 {
-  if (bolMarcar==null) bolMarcar = false;
+  if (bolMark==null) bolMark = false;
   if (!chk) return false;
-  else if (!chk.length) chk.checked = bolMarcar;
+  else if (!chk.length) chk.checked = bolMark;
   else {
     var total = chk.length;
-    for (var i=0;i<total;i++) chk[i].checked = bolMarcar;
+    for (var i=0;i<total;i++) chk[i].checked = bolMark;
   }
   return true;
 }
@@ -1725,11 +1721,11 @@ function marcarTodos(chk, bolMarcar)
 /**
 * Changes a combo's selected value based on an Array passed as parameter
 * @param {Object} combo A reference to the combo that will be filled with the new values 
-* @param {Array} arrayDatos Array that contains the data for the combo values
-* @param {String} clave Sets the array's key (index) that will be the value data of our combo
-* @param {Boolean} blanco Sets if we will add a blank value to the combo.
+* @param {Array} dataArray Array that contains the data for the combo values
+* @param {String} key Sets the array's key (index) that will be the value data of our combo
+* @param {Boolean} withBlankOption Sets if we will add a blank value to the combo.
 */
-function cambiarListaCombo(combo, arrayDatos, clave, blanco) {
+function changeComboData(combo, dataArray, key, withBlankOption) {
   var i;
   var n=0;
   if (combo.options.length!=null) {
@@ -1737,136 +1733,98 @@ function cambiarListaCombo(combo, arrayDatos, clave, blanco) {
       combo.options[i] = null;
   }
 
-  if (blanco)
+  if (withBlankOption)
     combo.options[n++] = new Option("", "");
-  if (arrayDatos==null) return false;
+  if (dataArray==null) return false;
 
-  var total = arrayDatos.length;
+  var total = dataArray.length;
   for (i=0;i<total;i++) {
-    if (arrayDatos[i][0]==clave)
-      combo.options[n++] = new Option(arrayDatos[i][2], arrayDatos[i][1]);
+    if (dataArray[i][0]==key)
+      combo.options[n++] = new Option(dataArray[i][2], dataArray[i][1]);
   }
 }
 
-
 /**
 * Removes all elements from a list
-* @param {Object} campo A referece to the list that holds all the elements
+* @param {Object} field A reference to the list that holds all the elements
 * @returns True if was processed correctly, otherwise false.
 */
-function limpiarLista(campo) {
-  if (campo==null) return false;
-  for (var i = campo.options.length - 1;i>=0;i--) campo.options[i] = null;
+function clearList(field) {
+  if (field==null) return false;
+  for (var i = field.options.length - 1;i>=0;i--) field.options[i] = null;
   return true;
 }
 
 /**
 * Removes elements from list. Used when the elements are passed to another list.
-* @param {Object} campo A reference to the list where the elements are contained.
+* @param {Object} field A reference to the list where the elements are contained.
 * @returns True is was processed correctly, otherwise false.
 */
-function eliminarElementosList(campo) {
-  if (campo==null) return false;
-  for (var i = campo.options.length - 1;i>=0;i--) {
-    if (campo.options[i].selected) campo.options[i] = null;
+function clearSelectedElements(field) {
+  if (field==null) return false;
+  for (var i = field.options.length - 1;i>=0;i--) {
+    if (field.options[i].selected) field.options[i] = null;
   }
   return true;
 }
 
-/**
-* Generates an Array based on a list of checkboxs selected.
-* @param {Form} frm A reference to the form where the checkbox are contained.
-* @param {Object} check A reference to the checkboxs list
-* @param {String} text The textbox that has the name/index of the array. 
-* @param {Array} resultado A reference parameter with the modified/generated array
-*/
-function generarArrayChecks(frm, check, text, resultado) {
-  var n=0;
-  if (check==null) {
-    resultado=null;
-    return;
-  }
-  if (!check.length || check.length<=1) {
-    if (check.checked) {
-      var texto = eval(frm.name + "." + text + check.value);
-      var valor = "";
-      if (texto!=null) {
-        if (!texto.length || texto.length<=1) valor = texto.value;
-        else valor = texto[0].value;
-      }
-      resultado[0] = new Array(check.value, valor);
-    }
-  } else {
-    for (var i = check.length-1;i>=0;i--) {
-      if (check[i].checked) {
-        var valor = "";
-        var texto = eval(frm.name + "." + text + check[i].value);
-        if (texto!=null) {
-          if (!texto.length || texto.length<=1) valor = texto.value;
-          else valor = texto[0].value;
-        }
-        resultado[n++] = new Array(check[i].value, valor);
-      }
-    }
-  }
-}
 
 /**
 * Search for a key in a combo elements.
 * @param {Object} combo A reference to the combo object.
-* @param {String} clave The search key to look for in the comobo elements
+* @param {String} searchKey The search key to look for in the comobo elements
 * @returns True if was found, otherwise false.
 */
-function estaEnCombo(combo, clave) {
-  if (combo==null || clave==null) return false;
+function comboContains(combo, searchKey) {
+  if (combo==null || searchKey==null) return false;
   var total = combo.options.length;
   for (var i=0;i<total;i++) {
-    if (combo.options[i].value == clave) return true;
+    if (combo.options[i].value == searchKey) return true;
   }
   return false;
 }
 
 /**
 * Adds new elements to a list based on a data Array.
-* @param {Object} campoDestino A reference to the object where the elements will be added.
-* @param {Array} arrayValores An array with the new data to add.
-* @param True if the array was processed correclty, false on any problem.
+* @param {Object} destList A reference to the object where the elements will be added.
+* @param {Array} arrayNewValues An array with the new data to add.
+* @param True if the array was processed correctly, false on any problem.
 */
-function insertarElementosList(campoDestino, arrayValores) {
-  if (campoDestino == null || arrayValores == null) return false;
-  var i = campoDestino.options.length;
-  var total = arrayValores.length;
+function addElementsToList(destList, arrayNewValues) {
+  if (destList == null || arrayNewValues == null) return false;
+  var i = destList.options.length;
+  var total = arrayNewValues.length;
   for (var j=0; j<total;j++) {
-      if (!estaEnCombo(campoDestino, arrayValores[j][0]))
-        campoDestino.options[i++] = new Option(arrayValores[j][1], arrayValores[j][0]);
+      if (!comboContains(destList, arrayNewValues[j][0]))
+        destList.options[i++] = new Option(arrayNewValues[j][1], arrayNewValues[j][0]);
   }
   return true;
 }
 
 /**
 * Selects all the elements of a list or combo. Used on multiple selectors where all the values will be selected prior the form submition.
-* @param {Object} campo A reference to the combo that we want to select.
+* @param {Object} field A reference to the combo that we want to select.
 * @returns True is everything was right, otherwise false.
 */
-function seleccionarListCompleto(campo) {
-  if (campo==null || campo==null) return false;
-  var total = campo.options.length;
+function markCheckedAllElements(field) {
+  if (field==null || field==null) return false;
+  var total = field.options.length;
   for (var i=0;i<total;i++) {
-    campo.options[i].selected = true;
+    field.options[i].selected = true;
   }
   return true;
 }
 
 /**
 * Handles the keypress event on textarea fields. Used to control the max length of a field.
-* @param {Object} campo A reference to the object in the page. Usually use the 'this' reference.
-* @param {Number} tamano Max length of the field.
+* @param {Object} field A reference to the object in the page. Usually use the 'this' reference.
+* @param {Number} maxLength Max length of the field.
 * @param {Event} evt Event handling object.
 * @returns True if is allowed to keep entering text, otherwise false.
 */
-function tamanoMaximo(campo, tamano, evt) {
-  if (campo==null || !campo) return false;
-  if (campo.value.length>=tamano) {
+function handleFieldMaxLength(field, maxLength, evt) {
+  if (field==null || !field) return false;
+  if (field.value.length>=maxLength) {
     if (document.layers) keyCode.which=0;
     else {
       if (evt==null) evt = window.event;
@@ -1874,7 +1832,7 @@ function tamanoMaximo(campo, tamano, evt) {
       evt.returnValue = false;
       evt.cancelBubble = true 
     }
-    mensaje(11);
+    showJSMessage(11);
     return false;
   }
   return true;
@@ -1883,15 +1841,15 @@ function tamanoMaximo(campo, tamano, evt) {
 /**
 * Function Description
 * @param {Object} combo A reference the the combo object
-* @param {String} clave The element key to select
+* @param {String} key The element key to select
 * @returns True if the element was selected, otherwise false.
 * @type Boolean
 */
-function selectCombo(combo, clave) {
+function selectCombo(combo, key) {
   if (!combo || combo==null) return false;
   var total = combo.length;
   for (var i=0;i<total;i++) {
-    combo.options[i].selected = (combo.options[i].value == clave);
+    combo.options[i].selected = (combo.options[i].value == key);
   }
   return true;
 }
@@ -2027,7 +1985,7 @@ function menuQuit() {
 }
 
 function menuAlerts() {
-  openLink('../ad_forms/AlertManagement.html', 'frameAplicacion');
+  openLink('../ad_forms/AlertManagement.html', 'appFrame');
   return true;
 }
 
@@ -2054,8 +2012,8 @@ function isVisibleElement(obj, appWindow) {
 function executeWindowButton(id,focus) {
   if (focus==null) focus=false;
   var appWindow = top;
-  if(top.frames['frameAplicacion'] || top.frames['frameMenu']) {
-    appWindow = top.frames['frameAplicacion'];
+  if(top.frames['appFrame'] || top.frames['frameMenu']) {
+    appWindow = top.frames['appFrame'];
   } else if (top.frames['superior']) {
     appWindow = top.frames['superior'];
   } else if (top.frames['frameSuperior']) {
@@ -2072,7 +2030,7 @@ function executeWindowButton(id,focus) {
 
 function executeMenuButton(id) {
   var appWindow = top;
-  if(top.frames['frameAplicacion'] || top.frames['frameMenu']) {
+  if(top.frames['appFrame'] || top.frames['frameMenu']) {
     appWindow = top.frames['frameMenu'];
   } 
   if (appWindow.document.getElementById(id) && isVisibleElement(appWindow.document.getElementById(id), appWindow)) {
@@ -2210,30 +2168,30 @@ function idName(name) {
 
 /**
 * Returns the position of a element in a form
-* @param {Form} Formulario A reference to the form in the page.
+* @param {Form} form A reference to the form in the page.
 * @param {Object} name Name of the element to search.
 * @returns If was found returns the position of the element, if not returns null.
 */
-function findElementPosition(Formulario, name) {
-  var total = Formulario.length;
+function findElementPosition(form, name) {
+  var total = form.length;
   for (var i=0;i<total;i++) {
-    if (Formulario.elements[i].name==name) return i;
+    if (form.elements[i].name==name) return i;
   }
   return null;
 }
 
 /**
 * Function Description
-* @param {Form} Formulario A reference to the form in the page
+* @param {Form} form A reference to the form in the page
 * @param {Object} field The currect field selected
 * @returns The position of the element
 * @type Number
 * @see #findElementPosition 
 * @see #recordSelectExplicit
 */
-function deselectActual(Formulario, field) {
+function deselectActual(form, field) {
   if (field==null || field.value==null || field.value=="") return null;
-  var i=findElementPosition(Formulario, "inpRecordW" + field.value);
+  var i=findElementPosition(form, "inpRecordW" + field.value);
   if (i==null) return null;
   recordSelectExplicit("inpRecord" + field.value, false);
   field.value="";
@@ -2246,12 +2204,12 @@ function deselectActual(Formulario, field) {
 * @returns The first element on a form
 * @type Object
 */
-function findFirstElement(Formulario) {
-  if (Formulario==null) return null;
+function findFirstElement(form) {
+  if (form==null) return null;
   var n=null;
-  var total = Formulario.length;
+  var total = form.length;
   for (var i=0;i<total;i++) {
-    if (Formulario.elements[i].name.indexOf("inpRecordW")==0) {
+    if (form.elements[i].name.indexOf("inpRecordW")==0) {
       n=i;
       break;
     }
@@ -2265,11 +2223,11 @@ function findFirstElement(Formulario) {
 * @returns The last element on a form
 * @type Object
 */
-function findLastElement(Formulario) {
-  if (Formulario==null) return null;
+function findLastElement(form) {
+  if (form==null) return null;
   var n=null;
-  for (var i=Formulario.length-1;i>=0;i--) {
-    if (Formulario.elements[i].name.indexOf("inpRecordW")==0) {
+  for (var i=form.length-1;i>=0;i--) {
+    if (form.elements[i].name.indexOf("inpRecordW")==0) {
       n=i;
       break;
     }
@@ -2279,8 +2237,8 @@ function findLastElement(Formulario) {
 
 /**
 * Selects the next element on a form
-* @param {Form} Formulario A reference to the form in the page
-* @param {Object} field The currect field selected
+* @param {Form} form A reference to the form in the page
+* @param {Object} field The current field selected
 * @returns True
 * @type Boolean 
 * @see #deselectActual 
@@ -2288,101 +2246,101 @@ function findLastElement(Formulario) {
 * @see #findLastElement 
 * @see #recordSelectExplicit 
 */
-function nextElement(Formulario, field) {
-  var i=deselectActual(Formulario, field);
+function nextElement(form, field) {
+  var i=deselectActual(form, field);
   if (i==null) {
-    i=findFirstElement(Formulario);
+    i=findFirstElement(form);
     if (i==null) return;
-  } else if (i<findLastElement(Formulario)) i++;
-  field.value = Formulario.elements[i].name.substring(10);
-  recordSelectExplicit("inpRecord" + Formulario.elements[i].name.substring(10) , true);
-  Formulario.elements[i].focus();
+  } else if (i<findLastElement(form)) i++;
+  field.value = form.elements[i].name.substring(10);
+  recordSelectExplicit("inpRecord" + form.elements[i].name.substring(10) , true);
+  form.elements[i].focus();
   return true;
 }
 
 /**
 * Selects the previous element on a form
-* @param {Form} Formulario A reference to the form in the page
-* @param {Object} field The currect field selected
+* @param {Form} form A reference to the form in the page
+* @param {Object} field The current field selected
 * @returns True
 * @type Boolean 
 * @see #deselectActual 
 * @see #findFirstElement 
 * @see #recordSelectExplicit 
 */
-function previousElement(Formulario, field) {
-  var i=deselectActual(Formulario, field);
-  var menor = findFirstElement(Formulario);
-  if (menor==null) return;
+function previousElement(form, field) {
+  var i=deselectActual(form, field);
+  var minor = findFirstElement(form);
+  if (minor==null) return;
   else if (i==null) {
-    i=menor;
+    i=minor;
     if (i==null) return;
-  } if (i>menor) i--;
-  field.value = Formulario.elements[i].name.substring(10);
-  recordSelectExplicit("inpRecord" + Formulario.elements[i].name.substring(10) , true);
-  Formulario.elements[i].focus();
+  } if (i>minor) i--;
+  field.value = form.elements[i].name.substring(10);
+  recordSelectExplicit("inpRecord" + form.elements[i].name.substring(10) , true);
+  form.elements[i].focus();
   return true;
 }
 
 /**
 * Selects the first element on a form
-* @param {Form} Formulario A reference to the form in the page
-* @param {Object} field The currect field selected
+* @param {Form} form A reference to the form in the page
+* @param {Object} field The current field selected
 * @returns True
 * @type Boolean
 * @see #deselectActual 
 * @see #findFirstElement 
 * @see #recordSelectExplicit
 */
-function firstElement(Formulario, field) {
-  var i=deselectActual(Formulario, field);
-  i=findFirstElement(Formulario);
+function firstElement(form, field) {
+  var i=deselectActual(form, field);
+  i=findFirstElement(form);
   if (i==null) return;
-  field.value = Formulario.elements[i].name.substring(10);
-  recordSelectExplicit("inpRecord" + Formulario.elements[i].name.substring(10) , true);
-  Formulario.elements[i].focus();
+  field.value = form.elements[i].name.substring(10);
+  recordSelectExplicit("inpRecord" + form.elements[i].name.substring(10) , true);
+  form.elements[i].focus();
   return true;
 }
 
 /**
-* Selects the las element on a form
-* @param {Form} Formulario A reference to the form in the page
-* @param {Object} field The currect field selected
+* Selects the last element on a form
+* @param {Form} form A reference to the form in the page
+* @param {Object} field The current field selected
 * @returns True
 * @type Boolean
 * @see #deselectActual 
 * @see #findLastElement 
 * @see #recordSelectExplicit
 */
-function lastElement(Formulario, field) {
-  var i=deselectActual(Formulario, field);
-  i=findLastElement(Formulario);
+function lastElement(form, field) {
+  var i=deselectActual(form, field);
+  i=findLastElement(form);
   if (i==null) return;
-  field.value = Formulario.elements[i].name.substring(10);
-  recordSelectExplicit("inpRecord" + Formulario.elements[i].name.substring(10) , true);
-  Formulario.elements[i].focus();
+  field.value = form.elements[i].name.substring(10);
+  recordSelectExplicit("inpRecord" + form.elements[i].name.substring(10) , true);
+  form.elements[i].focus();
   return true;
 }
 
 /**
 * Highlight an element on the page
 * @param {String} name The id of the element on the page 
-* @param {Boolean} seleccionar Sets if we want to highlight an element. 
-* @returns The seleccionar value
+* @param {Boolean} highlight Sets if we want to highlight an element. 
+* @returns The highlighted value
 * @type Boolean
 * @see #getStyle
 */
-function recordSelectExplicit(name, seleccionar) {
+function recordSelectExplicit(name, highlight) {
   var obj = getStyle(name);
   if (obj==null) return false;
   if (document.layers) {
-    if (seleccionar) obj.bgColor=gColorSelected;
+    if (highlight) obj.bgColor=gColorSelected;
     else obj.bgColor=gWhiteColor;
   } else {
-    if (seleccionar) obj.backgroundColor = gColorSelected;
+    if (highlight) obj.backgroundColor = gColorSelected;
     else obj.backgroundColor=gWhiteColor;
   }
-  return seleccionar;
+  return highlight;
 }
 
 /**
@@ -2420,24 +2378,24 @@ function selectCheckbox(obj, Value) {
 
 /**
 * Sets the message to display.  
-* @param {Form} Formulario A reference to the form
+* @param {Form} form A reference to the form
 * @param {String} ElementName The name of the element (INFO, ERROR, SUCCESS, WARNING, EXECUTE, DISPLAY, HIDE, CURSOR_FIELD).
 * @param {Value} The value to set
-* @returns True if the value was setted, othewise false.
+* @returns True if the value was set, otherwise false.
 * @type Boolean
 * @see #setValues_MessageBox
 */
-function formElementValue(Formulario, ElementName, Value) {
+function formElementValue(form, ElementName, Value) {
   var bolReadOnly=false;
   var onChangeFunction = "";
-  if (Formulario==null) {
-    Formulario=document.forms[0];
-    if (Formulario==null) return false;
+  if (form==null) {
+	  form=document.forms[0];
+    if (form==null) return false;
   } else if (ElementName==null) return false;
   if (ElementName=="MESSAGE") {
     initialize_MessageBox("messageBoxID");
     try {
-      setValues_MessageBox('messageBoxID', "INFO", "", Value);
+      if (Value!="") setValues_MessageBox('messageBoxID', "INFO", "", Value);
     } catch (err) {
       alert(Value);
     }
@@ -2454,7 +2412,7 @@ function formElementValue(Formulario, ElementName, Value) {
   } else if (ElementName=="HIDE") {
     displayLogicElement(Value, false);
   } else if (ElementName=="CURSOR_FIELD") {
-    var obj = eval("document." + Formulario.name + "." + Value + ";");
+    var obj = eval("document." + form.name + "." + Value + ";");
     if (obj==null || !obj || !obj.type || obj.type.toUpperCase()=="HIDDEN") return false;
     setWindowElementFocus(obj);
     if (obj.type.toUpperCase().indexOf("SELECT")==-1) obj.select();
@@ -2465,7 +2423,7 @@ function formElementValue(Formulario, ElementName, Value) {
       layer(ElementName, Value, true);
       return true;
     }
-    var obj = eval("document." + Formulario.name + "." + ElementName + ";");
+    var obj = eval("document." + form.name + "." + ElementName + ";");
     if (obj==null || !obj || !obj.type) return false;
     if (obj.getAttribute("readonly")=="true") bolReadOnly=true;
     if (bolReadOnly) {
@@ -2489,7 +2447,7 @@ function formElementValue(Formulario, ElementName, Value) {
           }
         }
         if (!hasMultiSelect) obj.selectedIndex = index;
-      } else Value = rellenarCombo(obj, Value, true, ((obj.className.toUpperCase().indexOf("REQUIRED")!=-1) || obj.className.toUpperCase().indexOf("KEY")!=-1 || (obj.className.toUpperCase().indexOf("READONLY")!=-1)));
+      } else Value = fillCombo(obj, Value, true, ((obj.className.toUpperCase().indexOf("REQUIRED")!=-1) || obj.className.toUpperCase().indexOf("KEY")!=-1 || (obj.className.toUpperCase().indexOf("READONLY")!=-1)));
     } else if (obj.type.toUpperCase().indexOf("CHECKBOX")!=-1) {
       selectCheckbox(obj, Value);
     } else if (obj.type.toUpperCase().indexOf("RADIO")!=-1 || obj.type.toUpperCase().indexOf("CHECK")!=-1) {
@@ -2554,18 +2512,18 @@ function getObjectClass(id, previousClass) {
 
 /**
 * Function Description
-* @param {Form} Formulario A reference to the form.
+* @param {Form} form A reference to the form.
 * @param {String} ElementName The name of the element.
 * @param {String} callout The CallOut associated.
 * @returns True if everything goes right, otherwise false.
 * @type Boolean
 */
-function formElementEvent(Formulario, ElementName, calloutName) {
-  if (Formulario==null) Formulario=document.forms[0].name;
+function formElementEvent(form, ElementName, calloutName) {
+  if (form==null) form=document.forms[0].name;
   else if (ElementName==null) return false;
   var isReload=false;
   if (ElementName!="MESSAGE" && ElementName!="CURSOR_FIELD" && ElementName!="EXECUTE" && ElementName!="DISPLAY" && ElementName!="HIDE" && ElementName.indexOf("_BTN")==-1) {
-    var obj = eval("document." + Formulario + "." + ElementName + ";");
+    var obj = eval("document." + form + "." + ElementName + ";");
     if (obj==null || !obj || !obj.type) return false;
     if (obj.type.toUpperCase().indexOf("RADIO")!=-1) {
       if (obj.onclick!=null && obj.onclick.toString().indexOf(calloutName)==-1) {
@@ -2646,18 +2604,18 @@ function setGWaitingCallOut(state) {
 * Function Description
 * @param {Array} arrElements The array of elements
 * @param {String} calloutName The CallOut to be associated.
-* @param {Form} Formulario A reference to the form, if is null, the first form in the page will be used.
+* @param {Form} form A reference to the form, if is null, the first form in the page will be used.
 * @returns True if everything goes right, otherwise false.
 * @type Boolean
 * @see #formElementEvent
 */
-function fillElementsFromArray(arrElements, calloutName, Formulario) {
+function fillElementsFromArray(arrElements, calloutName, form) {
   if (arrElements==null && arrGeneralChange==null) return false;
-  if (Formulario==null || !Formulario) Formulario=document.forms[0];
+  if (form==null || !form) form=document.forms[0];
   if (arrElements!=null) {
     var total = arrElements.length;
     for (var x=0;x<total;x++) {
-      formElementValue(Formulario, arrElements[x][0], arrElements[x][1]);
+      formElementValue(form, arrElements[x][0], arrElements[x][1]);
     }
   }
   if (arrGeneralChange==null) arrGeneralChange=new Array();
@@ -2665,7 +2623,7 @@ function fillElementsFromArray(arrElements, calloutName, Formulario) {
     var n=arrGeneralChange.length;
     var total = arrElements.length;
     for (var x=0;x<total;x++) {
-        arrGeneralChange[x+n] = new fillElements(Formulario.name , arrElements[x][0], calloutName);
+        arrGeneralChange[x+n] = new fillElements(form.name , arrElements[x][0], calloutName);
     }
   }
   while (arrGeneralChange!=null && arrGeneralChange.length>0) {
@@ -2697,42 +2655,42 @@ function fillElementsFromArray(arrElements, calloutName, Formulario) {
 /**
 * Returns the values of a selected field in a GET format method
 * @param {String} name The name of the command
-* @param {Object} campo A reference to the field where the values will be extracted.
+* @param {Object} field A reference to the field where the values will be extracted.
 * @returns A string with the extracted values in the form name=value
 * @type String
 */
-function inputValueForms(name, campo) {
+function inputValueForms(name, field) {
   var result = "";
-  if (campo==null || !campo) return "";
-  if (!campo.type && campo.length>1) campo = campo[0];
-  if (campo.type) {
-    if (campo.type.toUpperCase().indexOf("SELECT")!=-1) {
-      if (campo.selectedIndex==-1) return "";
+  if (field==null || !field) return "";
+  if (!field.type && field.length>1) field = field[0];
+  if (field.type) {
+    if (field.type.toUpperCase().indexOf("SELECT")!=-1) {
+      if (field.selectedIndex==-1) return "";
       else {
-        var length = campo.options.length;
+        var length = field.options.length;
         for (var fieldsCount=0;fieldsCount<length;fieldsCount++) {
-          if (campo.options[fieldsCount].selected) {
+          if (field.options[fieldsCount].selected) {
             if (result!="") result += "&";
-            result += name + "=" + escape(campo.options[fieldsCount].value);
+            result += name + "=" + escape(field.options[fieldsCount].value);
           }
         }
         return result;
       }
-    } else if (campo.type.toUpperCase().indexOf("RADIO")!=-1 || campo.type.toUpperCase().indexOf("CHECK")!=-1) {
-      if (!campo.length) {
-        if (campo.checked) return (name + "=" + escape(campo.value));
+    } else if (field.type.toUpperCase().indexOf("RADIO")!=-1 || field.type.toUpperCase().indexOf("CHECK")!=-1) {
+      if (!field.length) {
+        if (field.checked) return (name + "=" + escape(field.value));
         else return "";
       } else {
-        var total = campo.length;
+        var total = field.length;
         for (var i=0;i<total;i++) {
-          if (campo[i].checked) {
+          if (field[i].checked) {
             if (result!="") result += "&";
-            result += name + "=" + escape(campo[i].value);
+            result += name + "=" + escape(field[i].value);
           }
         }
         return result;
       }
-    } else return name + "=" + escape(campo.value);
+    } else return name + "=" + escape(field.value);
   }
 
   return "";
@@ -2740,15 +2698,15 @@ function inputValueForms(name, campo) {
 
 /**
 * Set the focus on the specified field.
-* @param {Object} campo A reference to the field where the focus will be set.
+* @param {Object} field A reference to the field where the focus will be set.
 * @returns An empty string
 * @type String
 */
-function setFocus(campo) {
-  if (campo==null || !campo) return "";
-  if (!campo.type && campo.length>1) campo = campo[0];
+function setFocus(field) {
+  if (field==null || !field) return "";
+  if (!field.type && field.length>1) field = field[0];
   try {
-    campo.focus();
+	  field.focus();
   } catch (ignored) {}
 
   return "";
@@ -2756,26 +2714,26 @@ function setFocus(campo) {
 
 /**
 * Gets the value of a field.
-* @param {Object} camp A reference to the object where the value will be extracted
+* @param {Object} field A reference to the object where the value will be extracted
 * @returns An empty string if the field does not exist, or the field's value.
 * @type String
 */
-function inputValue(campo) {
-  if (campo==null || !campo) return "";
-  if (!campo.type && campo.length>1) campo = campo[0];
-  if (campo.type) {
-    if (campo.type.toUpperCase().indexOf("SELECT")!=-1) {
-      if (campo.selectedIndex==-1) return "";
-      else return campo.options[campo.selectedIndex].value;
-    } else if (campo.type.toUpperCase().indexOf("RADIO")!=-1 || campo.type.toUpperCase().indexOf("CHECK")!=-1) {
-      if (!campo.length)
-      return ((campo.checked)?campo.value:"N");
-      var total = campo.length;
+function inputValue(field) {
+  if (field==null || !field) return "";
+  if (!field.type && field.length>1) field = field[0];
+  if (field.type) {
+    if (field.type.toUpperCase().indexOf("SELECT")!=-1) {
+      if (field.selectedIndex==-1) return "";
+      else return field.options[field.selectedIndex].value;
+    } else if (field.type.toUpperCase().indexOf("RADIO")!=-1 || field.type.toUpperCase().indexOf("CHECK")!=-1) {
+      if (!field.length)
+      return ((field.checked)?field.value:"N");
+      var total = field.length;
       for (var i=0;i<total;i++) {
-        if (campo[i].checked) return campo[i].value;
+        if (field[i].checked) return field[i].value;
       }
       return "N";
-    } else return campo.value;
+    } else return field.value;
   }
 
   return "";
@@ -2783,14 +2741,14 @@ function inputValue(campo) {
 
 /**
 * Sets a value to a field
-* @param {Object} campo A reference to the field
+* @param {Object} field A reference to the field
 * @param {String} myvalue The value to set.
 * @returns True if the value was set, otherwise false.
 * @type Boolean
 */
-function setInputValue(campo, myvalue) {
-  if (campo==null || campo=="") return false;
-  var obj = document.forms[0].elements[campo];
+function setInputValue(field, myvalue) {
+  if (field==null || field=="") return false;
+  var obj = document.forms[0].elements[field];
   if (obj==null) return false;
   if (obj.length>1) {
     var total = obj.length;
@@ -2867,34 +2825,17 @@ function readOnlyLogicElement(id, readonly) {
   return true;
 }
 
-
-/**
-* Search for a key in a combo elements.
-* @param {Object} combo A reference to the combo list.
-* @param {String} clave A key to search in the list.
-* @returns True if the key was found in the list, otherwise false.
-* @type Boolean
-*/
-function estaEnCombo(combo, clave) {
-  if (combo==null || clave==null) return false;
-  var total = combo.options.length;
-  for (var i=0;i<total;i++) {
-    if (combo.options[i].value == clave) return true;
-  }
-  return false;
-}
-
 /**
 * Handles the onKeyDown and onKeyUp event, for an specific numeric typing control.
 * @param {Object} obj Field where the numeric typing will be evaluated.
-* @param {Boolean} bolDecimal Defines if a float number is allowed.
-* @param {Boolean} bolNegativo Defines if a negative number is allowed.
+* @param {Boolean} isFloatAllowed Defines if a float number is allowed.
+* @param {Boolean} isNegativeAllowed Defines if a negative number is allowed.
 * @param {Event} evt The event handling object associated with the field.
 * @returns True if is an allowed number, otherwise false.
 * @type Boolean
 * @see #obtainKeyCode
 */
-function auto_complete_number(obj, bolDecimal, bolNegativo, evt) {
+function auto_complete_number(obj, isFloatAllowed, isNegativeAllowed, evt) {
   var number;
   if (document.all) evt = window.event;
   if (document.layers) { number = evt.which; }
@@ -2913,7 +2854,7 @@ function auto_complete_number(obj, bolDecimal, bolNegativo, evt) {
         return false;
       }
     } else if (number==obtainKeyCode("DECIMAL") || number==obtainKeyCode("NUMBERDECIMAL")) { //Es "."
-      if (bolDecimal) {
+      if (isFloatAllowed) {
         if (obj.value==null || obj.value=="") return true;
         else {
           var point = obj.value.indexOf(".");
@@ -2926,7 +2867,7 @@ function auto_complete_number(obj, bolDecimal, bolNegativo, evt) {
       if (document.all) evt.returnValue = false;
       return false;
     } else { //Es "-"
-      if (bolNegativo && (obj.value==null || obj.value.indexOf("-")==-1)) return true;
+      if (isNegativeAllowed && (obj.value==null || obj.value.indexOf("-")==-1)) return true;
       if (document.all) evt.returnValue = false;
       return false;
     }
@@ -2936,15 +2877,15 @@ function auto_complete_number(obj, bolDecimal, bolNegativo, evt) {
 
 /**
 * Used on the onChange event for field changes logging. Requires a field named inpLastFieldChanged in the form.
-* @param {Object} campo Reference to the field that will be logged. 
+* @param {Object} field Reference to the field that will be logged. 
 * @returns True if everything goes right, false if the field does not exist or an error occurred. 
 * @type Boolean
 * @see #setChangedField
 */
-function logChanges(campo) {
+function logChanges(field) {
   changeToEditingMode();
-  if (campo==null || !campo) return false;
-  return setChangedField(campo, campo.form);
+  if (field==null || !field) return false;
+  return setChangedField(field, field.form);
 }
 
 /**
@@ -3074,25 +3015,25 @@ function round(number,X) {
 
 /**
 * Replace the occurrence of the search string with the replacement string
-* @param {String} texto The original String.
+* @param {String} text The original String.
 * @param {String} replaceWhat The search String.
 * @param {String} replaceWith The replacement String.
 * @returns A String with the replaced text.
 * @type String
 */
-function ReplaceText(texto, replaceWhat, replaceWith) {
-  if (texto==null || texto.length==0) return "";
-  texto += "";
-  var i = texto.indexOf(replaceWhat);
+function ReplaceText(text, replaceWhat, replaceWith) {
+  if (text==null || text.length==0) return "";
+  text += "";
+  var i = text.indexOf(replaceWhat);
   var j = 0;
   while (i!=-1) {
-    var partial = texto.substring(0, i);
-    texto = texto.substring(i+replaceWhat.length);
-    texto = partial + replaceWith + texto;
+    var partial = text.substring(0, i);
+    text = text.substring(i+replaceWhat.length);
+    text = partial + replaceWith + text;
     j = i + replaceWith.length;
-    i = texto.indexOf(replaceWhat, j);
+    i = text.indexOf(replaceWhat, j);
   }
-  return texto;
+  return text;
 }
 
 /**
@@ -3119,22 +3060,6 @@ function updateOnChange(field) {
 */
 function xx()
 {
-  return true;
-}
-
-/**
-* @name menuContextual
-* @format function menuContextual()
-* @comment Se trata de un funciÃ³n manejadora de eventos que sirve para el control del click con el 
-*          botÃ³n derecho sobre la pÃ¡gina. Esta funciÃ³n no permite dicho evento, presentando un mensaje 
-*          en tal caso.
-*/
-function menuContextual(evt) {
-  var boton = (evt==null)?event.button:evt.which;
-  if (boton == 3 || boton == 2) {
-    if (document.all) alert('El boton derecho estÃ¡ deshabilitado por pruebas');
-    return false;
-  }
   return true;
 }
 
@@ -3371,7 +3296,12 @@ function about() {
   if (navigator.appName.indexOf("Netscape"))
     complementosNS4 = "alwaysRaised=1, dependent=1, directories=0, hotkeys=0, menubar=0, ";
   var complementos = complementosNS4 + "height=" + strHeight + ", width=" + strWidth + ", left=" + strLeft + ", top=" + strTop + ", screenX=" + strLeft + ", screenY=" + strTop + ", location=0, resizable=yes, scrollbars=yes, status=0, toolbar=0, titlebar=0";
-  var winPopUp = window.open(baseDirection + "../ad_forms/about.html", "ABOUT", complementos);
+  if (typeof baseDirectory != "undefined") {
+	  var winPopUp = window.open(baseDirectory + "../ad_forms/about.html", "ABOUT", complementos);
+  } else {
+    // Deprecated in 2.50, the following code is only for compatibility
+    var winPopUp = window.open(baseDirection + "../ad_forms/about.html", "ABOUT", complementos);
+  }
   if (winPopUp!=null) {
     winPopUp.focus();
     document.onunload = function(){winPopUp.close();};
@@ -3590,76 +3520,7 @@ function changeAuditIcon(newStatus) {
 * Start of deprecated functions in 2.40
 */
 
-var gBotonPorDefecto;
 var arrTeclas=null;
-
-/**
-* Deprecated in 2.40: Set the focus on the first visible control in the form
-* @param {Form} Formulario Optional- Defines the form containing the field, where we want to set the focus. If is not present, the first form of the page will be used.
-* @param {String} Campo Optional - Name of the control where we want to set the focus. If is not present the first field will be used.
-*/
-function focoPrimerControl(Formulario, Campo) {
-  var encontrado = false;
-  if (Formulario==null) Formulario=document.forms[0];
-  var total = Formulario.length;
-  for(var i=0;i<total; i++)
-  {
-    if ((Formulario.elements[i].type != "hidden") && (Formulario.elements[i].type != "button") && (Formulario.elements[i].type != "submit") && (Formulario.elements[i].type != "image") && (Formulario.elements[i].type != "reset")) 
-    { 
-      if(Campo!=null) {
-        if (Campo == Formulario.elements[i].name && !Formulario.elements[i].readonly && !Formulario.elements[i].disabled) {
-          Formulario.elements[i].focus();
-          encontrado=true;
-          break;
-        }
-      } else if (!Formulario.elements[i].readonly && !Formulario.elements[i].disabled) {
-        try {
-          Formulario.elements[i].focus();
-          encontrado=true;
-          break;
-        } catch (ignore) {}
-      }
-    }
-  }
-  if (encontrado && Formulario.elements[i].type && Formulario.elements[i].type.indexOf("select")==-1)
-    Formulario.elements[i].select();
-}
-
-/**
-* Deprecated in 2.40: Handles window events. This function handles events such as KeyDown; when a user hit the ENTER key to do somethig by default.
-* @param {Number} CodigoTecla ASCII code of the key pressed.
-* @returns True if the key pressed is not ment to be handled. False if is a handled key. 
-* @type Boolean
-*/
-function pulsarTecla(CodigoTecla) {
-  if (gBotonPorDefecto!=null)
-  {
-    var tecla = (!CodigoTecla) ? window.event.keyCode : CodigoTecla.which;
-    if (tecla == 13)
-    {
-      eval(gBotonPorDefecto);
-      return false;
-    }
-  }
-  return true;
-}
-
-/**
-* Deprecated in 2.40: Defines a defult action on each page, the one that will be executed when the user hit the ENTER key. This function is shared in pages containing frames.
-* @param {String} accion Default command to be executed when the user hit the ENTER key.
-* @returns Always retrun true.
-* @type Boolean
-* @see #pulsarTecla
-*/
-function porDefecto(accion) {
-  gBotonPorDefecto = accion;
-  if (!document.all)
-  {
-    document.captureEvents(Event.KEYDOWN);
-  }
-  document.onkeydown=pulsarTecla;
-  return true;
-}
 
 /**
 * Deprecated in 2.40: Builds the keys array on each screen. Each key that we want to use should have this structure.
@@ -3676,60 +3537,12 @@ function Teclas(tecla, evento, campo, teclaAuxiliar) {
 }
 
 /**
-* Deprecated in 2.40: Returns the ASCII code of the given key
-* @param {String} codigo Text version of a key
-* @returns The ASCII code of the key
-* @type Number
-*/
-function obtenerCodigoTecla(codigo) {
-  if (codigo==null) return 0;
-  else if (codigo.length==1) return codigo.toUpperCase().charCodeAt(0);
-  switch (codigo.toUpperCase()) {
-    case "BACKSPACE": return 8;
-    case "TAB": return 9;
-    case "ENTER": return 13;
-    case "SPACE": return 32;
-    case "DELETE": return 46;
-    case "INSERT": return 45;
-    case "END": return 35;
-    case "HOME": return 36;
-    case "REPAGE": return 33;
-    case "AVPAGE": return 34;
-    case "LEFTARROW": return 37;
-    case "RIGHTARROW": return 39;
-    case "UPARROW": return 38;
-    case "DOWNARROW": return 40;
-    case "NEGATIVE": return 189;
-    case "NUMBERNEGATIVE": return 109;
-    case "DECIMAL": return 190;
-    case "NUMBERDECIMAL": return 110;
-    case "ESCAPE": return 27;
-    case "F1": return 112;
-    case "F2": return 113;
-    case "F3": return 114;
-    case "F4": return 115;
-    case "F5": return 116;
-    case "F6": return 117;
-    case "F7": return 118;
-    case "F8": return 119;
-    case "F9": return 120;
-    case "F10": return 121;
-    case "F11": return 122;
-    case "F12": return 123;
-    case "P": return 80;
-/*    case "shiftKey": return 16;
-    case "ctrlKey": return 17;
-    case "altKey": return 18;*/
-    default: return 0;
-  }
-}
-
-/**
-* Deprecated in 2.40: Handles the events execution of keys pressed, based on the events registered in the arrTeclas global array.   
+* Deprecated in 2.40: still has one user: multilinea.js 
+* Handles the events execution of keys pressed, based on the events registered in the arrTeclas global array.   
 * @param {Event} CodigoTecla Code of the key pressed.
 * @returns True if the key is not registered in the array, false if a event for this key is registered in arrTeclas array.
 * @type Boolean
-* @see #obtenerCodigoTecla
+* @see #obtainKeyCode
 */
 function controlTecla(CodigoTecla) {
   if (arrTeclas==null || arrTeclas.length==0) return true;
@@ -3740,7 +3553,7 @@ function controlTecla(CodigoTecla) {
   var total = arrTeclas.length;
   for (var i=0;i<total;i++) {
     if (arrTeclas[i]!=null && arrTeclas[i]) {
-      if (tecla == obtenerCodigoTecla(arrTeclas[i].tecla)) {
+      if (tecla == obtainKeyCode(arrTeclas[i].tecla)) {
         if (arrTeclas[i].teclaAuxiliar==null || arrTeclas[i].teclaAuxiliar=="" || arrTeclas[i].teclaAuxiliar=="null") {
           if (arrTeclas[i].campo==null || (target!=null && target.name!=null && isIdenticalField(arrTeclas[i].campo, target.name))) {
             var eventoTrl = replaceEventString(arrTeclas[i].evento, target.name, arrTeclas[i].campo);
@@ -3768,108 +3581,199 @@ function controlTecla(CodigoTecla) {
   return true;
 }
 
-
-/**
-* Deprecated in 2.40: Used to activate the key-press handling. Must be called after set the keys global array <em>arraTeclas</em>.
-*/
-function activarControlTeclas() {
-  if (arrTeclas==null || arrTeclas.length==0) return true;
-
-    var agt=navigator.userAgent.toLowerCase();
-
-/*   if (agt.indexOf('gecko') != -1) { 
-        document.releaseEvents(Event.KEYDOWN);
-     }
-  if (agt.indexOf('gecko') != -1)
-    document.captureEvents(Event.KEYDOWN);*/
-  
-  document.onkeydown=controlTecla;
-  return true;
-}
-
-/**
-* Deprecated in 2.40: Function Description
-* Shows or hides a window in the application
-* @param {String} id The ID of the element
-* @returns True if the operation was made correctly, false if not.
-* @see #changeClass
-*/
-function mostrarMenu(id) {
-  if (!top.frameMenu) window.open(baseFrameServlet, "_blank");
-  else {
-    var frame = top.document;
-    var frameset = frame.getElementById("framesetMenu");
-    if (!frameset) return false;
-    /*try {
-      var frm2 = frame.getElementById("frameMenu");
-      var obj = document.onresize;
-      var obj2 = frm2.onresize;
-      document.onresize = null;
-      frm2.document.onresize = null;
-      progressiveHideMenu("framesetMenu", 30);
-      document.onresize = obj;
-      frm2.document.onresize = obj2;
-    } catch (e) {*/
-      if (frameset.cols.substring(0,1)=="0") frameset.cols = "25%,*";
-      else  frameset.cols = "0%,*";
-    //}
-    try {
-      changeClass(id, "_hide", "_show");
-    } catch (e) {}
-    return true;
-  }
-}
-
-/**
-* Deprecated in 2.40: Handles the onKeyDown and onKeyUp event, for an specific numeric typing control.
-* @param {Object} obj Field where the numeric typing will be evaluated.
-* @param {Boolean} bolDecimal Defines if a float number is allowed.
-* @param {Boolean} bolNegativo Defines if a negative number is allowed.
-* @param {Event} evt The event handling object associated with the field.
-* @returns True if is an allowed number, otherwise false.
-* @type Boolean
-* @see #obtenerCodigoTecla
-*/
-function auto_completar_numero(obj, bolDecimal, bolNegativo, evt) {
-  var numero;
-  if (document.all) evt = window.event;
-  if (document.layers) { numero = evt.which; }
-  if (document.all)    { numero = evt.keyCode;}
-  if (numero != obtenerCodigoTecla("ENTER") && numero != obtenerCodigoTecla("LEFTARROW") && numero != obtenerCodigoTecla("RIGHTARROW") && numero != obtenerCodigoTecla("UPARROW") && numero != obtenerCodigoTecla("DOWNARROW") && numero != obtenerCodigoTecla("DELETE") && numero != obtenerCodigoTecla("BACKSPACE") && numero != obtenerCodigoTecla("END") && numero != obtenerCodigoTecla("HOME") && !evt["ctrlKey"]) {
-    if (numero>95 && numero <106) { //Teclado numérico
-      numero = numero - 96;
-      if(isNaN(numero)) {
-        if (document.all) evt.returnValue = false;
-        return false;
-      }
-    } else if (numero!=obtenerCodigoTecla("DECIMAL") && numero != obtenerCodigoTecla("NUMBERDECIMAL") && numero != obtenerCodigoTecla("NEGATIVE") && numero != obtenerCodigoTecla("NUMBERNEGATIVE")) { //No es "-" ni "."
-      numero = String.fromCharCode(numero);
-      if(isNaN(numero)) {
-        if (document.all) evt.returnValue = false;
-        return false;
-      }
-    } else if (numero==obtenerCodigoTecla("DECIMAL") || numero==obtenerCodigoTecla("NUMBERDECIMAL")) { //Es "."
-      if (bolDecimal) {
-        if (obj.value==null || obj.value=="") return true;
-        else {
-          var point = obj.value.indexOf(".");
-          if (point != -1) {
-            point = obj.value.indexOf(".", point+1);
-            if (point==-1) return true;
-          } else return true;
-        }
-      }
-      if (document.all) evt.returnValue = false;
-      return false;
-    } else { //Es "-"
-      if (bolNegativo && (obj.value==null || obj.value.indexOf("-")==-1)) return true;
-      if (document.all) evt.returnValue = false;
-      return false;
-    }
-  }
-  return true;
-}
-
 /**
 * End of deprecated functions in 2.40
+*/
+
+/**
+* Start of deprecated functions for 2.50 (will be removed after the 2.50 release)
+*/
+
+//Deprecated in 2.50
+var gAUXILIAR=0;
+
+//Deprecated in 2.50 use clearForm instead
+function limpiar(form) {
+	clearForm(form);
+}
+
+//Deprecated in 2.50, use validateNumber instead
+function esNumero(strValue, isFloatAllowed, isNegativeAllowed) {
+	validateNumber(strValue, isFloatAllowed, isNegativeAllowed);
+}
+
+//Deprecated in 2.50, use validateNumberField instead
+function campoNumerico(field, isFloatAllowed, isNegativeAllowed) {
+	validateNumberField(field, isFloatAllowed, isNegativeAllowed);
+}
+
+//Deprecated in 2.50, use openNewBrowser instead
+function abrirNuevoBrowser(url, _name, height, width, top, left) {
+	openNewBrowser(url, _name, height, width, top, left);
+}
+
+//Deprecated in 2.50, use openExcel instead
+function abrirExcel(url, _name, checkChanges) {
+	openExcel(url, _name, checkChanges);
+}
+
+//Deprecated in 2.50, use openPDF instead
+function abrirPDF(url, _name, checkChanges) {
+	openPDF(url, _name, checkChanges);
+}
+
+//Deprecated in 2.50, use openPDFFiltered instead
+function abrirPDFFiltered(url, _name, checkChanges) {
+	openPDFFiltered(url, _name, checkChanges);
+}
+
+//Deprecated in 2.50, use openPopUpDefaultSize instead
+function abrirPopUp(url, _name, height, width, closeControl, showstatus) {
+	openPopUpDefaultSize(url, _name, height, width, closeControl, showstatus);
+}
+
+//Deprecated in 2.50, use openPDFSession instead
+function abrirPDFSession(strPage, strDirectPrinting, strHiddenKey, strHiddenValue, bolCheckChanges) {
+	openPDFSession(strPage, strDirectPrinting, strHiddenKey, strHiddenValue, bolCheckChanges);
+}
+
+//Deprecated in 2.50, use openSearchWindow instead
+function abrirBusqueda(url, _name, tabId, windowName, windowId, checkChanges) {
+	openSearchWindow(url, _name, tabId, windowName, windowId, checkChanges);
+}
+
+/**
+* Search an array for a given parent key, and fills a combo with the founded values.
+* @param {Object} combo A reference to the combo that will be filled.
+* @param {Array} arrayDatos A data array that contents the combo info. Must be in the following format:
+*               <ol>
+*                 <li>Parent key or grouping element</li>
+*                 <li>Element key</li>
+*                 <li>Element's string. That will be presented on the screen</li>
+*                 <li>Boolean flag to indicate if the element is a selected item</li>
+*               </ol>
+* @param {String} padre Parent key for search common elements.
+* @param {Boolean} bolSelected Sets if the array's last field will be used for select an item. If this parameters is null or false, the last field on the array is no mandatory. 
+* @param {Boolean} sinBlanco Set if a blank element should be added to the combo. The default value is false.
+* @returns True if everything was right, otherwise false.
+* @Type Boolean
+* Deprecated in 2.50
+*/
+function rellenarComboHijo(combo, arrayDatos, padre, bolSelected, sinBlanco) {
+  var i, value="";
+  for (i = combo.options.length;i>=0;i--)
+    combo.options[i] = null;
+  i=0;
+  if (sinBlanco==null || !sinBlanco)
+    combo.options[i++] = new Option("", "");
+  if (arrayDatos==null) return false;
+
+  var total = arrayDatos.length;
+  for (var j=0;j<total;j++) {
+    if (arrayDatos[j][0]==padre) {
+      combo.options[i] = new Option(arrayDatos[j][2], arrayDatos[j][1]);
+      if (bolSelected!=null && bolSelected && arrayDatos[j][3]=="true") {
+        value = arrayDatos[j][1];
+        combo.options[i].selected = true;
+      }
+      else combo.options[i].selected = false;
+      i++;
+    }
+  }
+  return value;
+}
+
+//Deprecated in 2.50, use fillCombo instead
+function rellenarCombo(combo, dataArray, bolSelected, withoutBlankOption) {
+	fillCombo(combo, dataArray, bolSelected, withoutBlankOption);
+}
+
+//Deprecated since 2.50, use markAll instead
+function marcarTodos(chk, bolMark) {
+	markAll(chk, bolMark);
+}
+
+//Deprecated in 2.50, use changeComboData instead
+function cambiarListaCombo(combo, dataArray, key, withBlankOption) {
+	changeComboData(combo, dataArray, key, withBlankOption);
+}
+
+//Deprecated in 2.50, use clearList instead
+function limpiarLista(field) {
+	clearList(field);
+}
+
+//Deprecated in 2.50, use clearSelectedElements instead
+function eliminarElementosList(field) {
+	clearSelectedElements(field);
+}
+
+/**
+* Generates an Array based on a list of checkboxs selected.
+* @param {Form} frm A reference to the form where the checkbox are contained.
+* @param {Object} check A reference to the checkboxs list
+* @param {String} text The textbox that has the name/index of the array. 
+* @param {Array} resultado A reference parameter with the modified/generated array
+* Deprecated in 2.50
+*/
+function generarArrayChecks(frm, check, text, resultado) {
+  var n=0;
+  if (check==null) {
+    resultado=null;
+    return;
+  }
+  if (!check.length || check.length<=1) {
+    if (check.checked) {
+      var texto = eval(frm.name + "." + text + check.value);
+      var valor = "";
+      if (texto!=null) {
+        if (!texto.length || texto.length<=1) valor = texto.value;
+        else valor = texto[0].value;
+      }
+      resultado[0] = new Array(check.value, valor);
+    }
+  } else {
+    for (var i = check.length-1;i>=0;i--) {
+      if (check[i].checked) {
+        var valor = "";
+        var texto = eval(frm.name + "." + text + check[i].value);
+        if (texto!=null) {
+          if (!texto.length || texto.length<=1) valor = texto.value;
+          else valor = texto[0].value;
+        }
+        resultado[n++] = new Array(check[i].value, valor);
+      }
+    }
+  }
+}
+
+//Deprecation in 2.50, use markCheckedAllElements instead
+function seleccionarListCompleto(field) {
+	markCheckedAllElements(field);
+}
+
+//Deprecation in 2.50, use markCheckedAllElements instead
+function seleccionarListCompleto(field) {
+	markCheckedAllElements(field);
+}
+
+/**
+* @name menuContextual
+* @format function menuContextual()
+* @comment Se trata de un funciÃ³n manejadora de eventos que sirve para el control del click con el 
+*          botÃ³n derecho sobre la pÃ¡gina. Esta funciÃ³n no permite dicho evento, presentando un mensaje 
+*          en tal caso.
+* Deprecated in 2.50
+*/
+function menuContextual(evt) {
+  var boton = (evt==null)?event.button:evt.which;
+  if (boton == 3 || boton == 2) {
+    if (document.all) alert('El boton derecho estÃ¡ deshabilitado por pruebas');
+    return false;
+  }
+  return true;
+}
+
+/**
+* End of deprecated functions in 2.50
 */

@@ -317,8 +317,9 @@ String strProductRMailTextID = "";
       xmlDocument.setParameter("toolbar", toolbar.toString());
       
       xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-      xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-      xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("description", strDescription);
       xmlDocument.setParameter("description", strDescription);
       xmlDocument.setParameter("help", strHelp);
       xmlDocument.setParameter("dateFrom", strDatereportFrom);
@@ -326,7 +327,7 @@ String strProductRMailTextID = "";
       xmlDocument.setParameter("dateInvoiced", strDateInvoiced);
 
       try {
-    	  ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "C_BPartner_ID", "C_BPartner Employee w Address", "", Utility.getContext(this, vars, "#User_Client",""), Utility.getContext(this, vars, "#AD_Client_ID", "ExpenseAPInvoice"), 0);
+    	  ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "C_BPartner_ID", "C_BPartner Employee w Address", "", Utility.getContext(this, vars, "#User_Org", "ExpenseAPInvoice"),Utility.getContext(this, vars, "#User_Client","ExpenseAPInvoice"), 0);
     	  Utility.fillSQLParameters(this, vars, null, comboTableData, "ExpenseAPInvoice", "");
     	  xmlDocument.setData("reportC_BPARTNERID","liststructure", comboTableData.select(false));
     	  comboTableData = null;

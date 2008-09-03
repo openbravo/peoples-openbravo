@@ -27,18 +27,18 @@
   <SCRIPT language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></SCRIPT>
   <SCRIPT language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></SCRIPT>
   <SCRIPT language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></SCRIPT>
-  <SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "http://yourSite/web/";</SCRIPT>
-  <SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">  LNG_POR_DEFECTO = "en_US";</SCRIPT>
+  <SCRIPT language="JavaScript" type="text/javascript" id="paramDirectory">var baseDirectory = "http://yourSite/web/";</SCRIPT>
+  <SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">  defaultLang = "en_US";</SCRIPT>
 
   <SCRIPT type="text/javascript">
     dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
   </SCRIPT>
   <SCRIPT language="JavaScript" type="text/javascript">
-  function callServlet(action, clave) {
+  function callServlet(action, key) {
     var frm = document.frmMain;
     frm.inpAction.value = action;
-    frm.inpClave.value = clave;
-    top.opener.submitCommandForm("WORKFLOW_ACTION", false, null, "../ad_workflow/WorkflowControl.html?inpAction=" + action + "&inpClave=" + clave, "_self");
+    frm.inpClave.value = key;
+    top.opener.submitCommandForm("WORKFLOW_ACTION", false, null, "../ad_workflow/WorkflowControl.html?inpAction=" + action + "&inpClave=" + key, "_self");
     return true;
   }
   </SCRIPT>
@@ -76,7 +76,7 @@
           <tr class="Popup_NavBar_bg"><td></td>
             <td class="Popup_NavBar_separator_cell"></td>
             <td class="Popup_NavBar_bg_logo_left"></td>
-            <td class="Popup_NavBar_bg_logo" width="1" onclick="abrirNuevoBrowser('http://www.openbravo.com', 'Openbravo');return false;"><IMG src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
+            <td class="Popup_NavBar_bg_logo" width="1" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;"><IMG src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
             <td class="Popup_NavBar_bg_logo_right"></td>
             <td class="Popup_NavBar_Popup_title_cell"><span id="fieldWorkflowName">xxSales Setup</a></td>
             <td class="Popup_NavBar_separator_cell"></td>

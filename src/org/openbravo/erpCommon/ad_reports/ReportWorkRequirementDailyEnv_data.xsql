@@ -35,7 +35,7 @@
         AND wrp.MA_WRPHASE_ID = wrpp.MA_WRPHASE_ID
         AND wrpp.M_PRODUCT_ID = pd.M_PRODUCT_ID
 	AND TO_CHAR(WR.STARTDATE, 'D') = AD_REF_LIST_V.VALUE
-	AND AD_REF_LIST_V.AD_REFERENCE_ID = 167
+	AND AD_REF_LIST_V.AD_REFERENCE_ID = '167'
 	AND AD_REF_LIST_V.AD_LANGUAGE = ?
         AND wrp.CLOSED = 'N'
         AND wrpp.PRODUCTIONTYPE = '+'
@@ -49,7 +49,7 @@
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND wr.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="parStartDateFrom" optional="true" after="AND 1=1"><![CDATA[AND wr.STARTDATE >= TO_DATE(?)]]></Parameter>
     <Parameter name="parStartDateTo" optional="true" after="AND 1=1"><![CDATA[AND wr.STARTDATE <= TO_DATE(?)]]></Parameter>
-    <Parameter name="parProcessPlan" optional="true" after="AND 1=1"><![CDATA[AND wr.MA_ProcessPlan_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="parProcessPlan" optional="true" after="AND 1=1"><![CDATA[AND wr.MA_ProcessPlan_id = ?]]></Parameter>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>

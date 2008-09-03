@@ -136,8 +136,8 @@ public class Role extends HttpSecureAppServlet {
     
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, boolean bSaveOK) throws IOException, ServletException{
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/Role").createXmlDocument();
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("roleInfo", Utility.messageBD(this,"RoleInfo",vars.getLanguage()));
     xmlDocument.setParameter("role", Utility.messageBD(this,"AD_Role_ID",vars.getLanguage()));

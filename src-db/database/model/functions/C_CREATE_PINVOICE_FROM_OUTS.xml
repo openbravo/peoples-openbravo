@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_CREATE_PINVOICE_FROM_OUTS">
     <function name="C_CREATE_PINVOICE_FROM_OUTS" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -32,30 +32,30 @@
     Cur_Parameter RECORD;
     v_DateFrom DATE;
     v_DateTo DATE;
-    v_Warehouse_ID NUMBER(10) ;
-    v_BPartner_ID NUMBER(10) ;
+    v_Warehouse_ID VARCHAR2(32) ;
+    v_BPartner_ID VARCHAR2(32) ;
     v_ReferenceNo NVARCHAR2(40) ;
     v_DateInvoiced DATE;
-    v_User_ID NUMBER(10) ;
+    v_User_ID VARCHAR2(32) ;
     --
-    v_Project_ID NUMBER(10):=0;
-    v_Doctype_ID NUMBER(10) ;
-    v_Invoice_ID NUMBER(10) ;
+    v_Project_ID VARCHAR2(32):='0';
+    v_Doctype_ID VARCHAR2(32) ;
+    v_Invoice_ID VARCHAR2(32) ;
     v_DocumentNo NVARCHAR2(60) ;
     v_PaymentRule CHAR(1) ;
-    v_PaymentTerm_ID NUMBER(10) ;
-    v_Currency_ID NUMBER(10) ;
+    v_PaymentTerm_ID VARCHAR2(32) ;
+    v_Currency_ID VARCHAR2(32) ;
     v_IsTaxIncluded CHAR(1) ;
     v_NoRecords NUMBER:=0;
-    v_InvoiceLine_ID NUMBER(10) ;
+    v_InvoiceLine_ID VARCHAR2(32) ;
     v_auxQty NUMBER;
     v_auxQtyTotal NUMBER;
     v_line NUMBER;
     v_priceList NUMBER;
     v_priceActual NUMBER;
     v_priceLimit NUMBER;
-    v_Tax_ID NUMBER(10) ;
-    v_BPLocation_ID NUMBER(10) ;
+    v_Tax_ID VARCHAR2(32) ;
+    v_BPLocation_ID VARCHAR2(32) ;
     -- Outs: shipments and inventory movements
     Cur_Outs RECORD;
     -- Pend: orderlines-inoutlines not invoiced
@@ -90,10 +90,10 @@
         v_DateTo:=Cur_Parameter.P_Date;
         DBMS_OUTPUT.PUT_LINE('  DateTo=' || v_DateTo) ;
       ELSIF(Cur_Parameter.ParameterName='M_Warehouse_ID') THEN
-        v_Warehouse_ID:=Cur_Parameter.P_Number;
+        v_Warehouse_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  M_Warehouse_ID=' || v_Warehouse_ID) ;
       ELSIF(Cur_Parameter.ParameterName='C_BPartner_ID') THEN
-        v_BPartner_ID:=Cur_Parameter.P_Number;
+        v_BPartner_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  C_BPartner_ID=' || v_BPartner_ID) ;
       ELSIF(Cur_Parameter.ParameterName='ReferenceNo') THEN
         v_ReferenceNo:=Cur_Parameter.P_String;
@@ -211,7 +211,7 @@
             v_Invoice_ID, Cur_Outs.AD_Client_ID, Cur_Outs.AD_Org_ID, 'Y',
             now(), v_User_ID, now(), v_User_ID,
              'N', v_DocumentNo, 'DR', 'CO',
-             'N', 'N', 'N', 0,
+             'N', 'N', 'N', '0',
             v_DocType_ID, NULL, NULL,
             'N', NULL, v_DateInvoiced, v_DateInvoiced,
             NULL, v_DateInvoiced, v_BPartner_ID, v_BPLocation_ID,

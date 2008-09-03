@@ -20,7 +20,7 @@
 <REPORT>
   <template file="ReportSalesOrderOpenItemEdit.html"/>
 
-  <PARAMETER id="paramDirection" name="direction" default=""/>
+  <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
 
   <structure name="structure1">

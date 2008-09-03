@@ -237,8 +237,8 @@ public class CreateFrom extends HttpSecureAppServlet {
     if (vars.commandIn("FRAME1") && strIsReceipt.equals("")) strIsReceipt = isSOTrx;
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("path", strPath);
     xmlDocument.setParameter("key", strKey);
@@ -349,8 +349,8 @@ public class CreateFrom extends HttpSecureAppServlet {
       }
     }
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("path", strPath);
     xmlDocument.setParameter("key", strKey);
@@ -433,8 +433,8 @@ public class CreateFrom extends HttpSecureAppServlet {
     }
 
 
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("path", strPath);
     xmlDocument.setParameter("key", strKey);
@@ -510,7 +510,7 @@ public class CreateFrom extends HttpSecureAppServlet {
       }
     }
 
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("array", strArray + "\n" + strArray2);
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -522,7 +522,7 @@ public class CreateFrom extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) log4j.debug("Output: Pay");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFrom_Pay").createXmlDocument();
 
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
@@ -582,8 +582,8 @@ public class CreateFrom extends HttpSecureAppServlet {
     }
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("path", strPath);
     xmlDocument.setParameter("key", strKey);
@@ -692,8 +692,8 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
     }
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("path", strPath);
     xmlDocument.setParameter("key", strKey);
@@ -806,8 +806,8 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
     }
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("path", strPath);
     xmlDocument.setParameter("key", strKey);
@@ -940,7 +940,7 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
     String strBPartner = vars.getRequiredStringParameter("inpcBpartnerId");
     String strPriceList = vars.getRequiredStringParameter("inpMPricelist");
     String strType = vars.getRequiredStringParameter("inpType");
-    String strClaves = vars.getRequiredInParameter("inpcOrderId");
+    String strClaves = Utility.stringList(vars.getRequiredInParameter("inpcOrderId"));
     String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
     String strPO="", priceActual="0", priceLimit="0", priceList="0", strPriceListVersion="", priceStd="0";
     CreateFromInvoiceData[] data=null;
@@ -1024,7 +1024,7 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
     if (log4j.isDebugEnabled()) log4j.debug("Save: Shipment");
     String strLocator = vars.getRequiredStringParameter("inpmLocatorId");
     String strType = vars.getRequiredStringParameter("inpType");
-    String strClaves = vars.getRequiredInParameter("inpId");
+    String strClaves = Utility.stringList(vars.getRequiredInParameter("inpId"));
     String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
     String strInvoice="", strPO="";
     CreateFromShipmentData[] data=null;

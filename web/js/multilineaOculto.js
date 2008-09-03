@@ -23,37 +23,37 @@
 * Header-Lines window structure.
 */
 
-function submitArray(parametros, frmFormulario, strAccion, strTarget)
+function submitArray(parameters, frmForm, strAction, strTarget)
 {
-	var formulario = document.forms[0];
-	if (strAccion==null)
-		strAccion = "ACTUALIZAR";
-	formulario.setAttribute("action",frmFormulario);
-	formulario.setAttribute("method","POST");
-	formulario.setAttribute("target","_self");
-	formulario.setAttribute("name", "frmFrameOculto");
-	var oculto = document.createElement("INPUT");
-	oculto.setAttribute("name", "Command");
-	oculto.setAttribute("value", strAccion);
-	oculto.setAttribute("type","hidden");
-	formulario.appendChild(oculto);
+	var form = document.forms[0];
+	if (strAction==null)
+		strAction = "ACTUALIZAR";
+	form.setAttribute("action",frmForm);
+	form.setAttribute("method","POST");
+	form.setAttribute("target","_self");
+	form.setAttribute("name", "frmFrameOculto");
+	var hiddenInput = document.createElement("INPUT");
+	hiddenInput.setAttribute("name", "Command");
+	hiddenInput.setAttribute("value", strAction);
+	hiddenInput.setAttribute("type","hidden");
+	form.appendChild(hiddenInput);
   if (strTarget!=null && strTarget!="") {
-    oculto = document.createElement("INPUT");
-    oculto.setAttribute("name", "target");
-    oculto.setAttribute("value", strTarget);
-    oculto.setAttribute("type","hidden");
-    formulario.appendChild(oculto);
+    hiddenInput = document.createElement("INPUT");
+    hiddenInput.setAttribute("name", "target");
+    hiddenInput.setAttribute("value", strTarget);
+    hiddenInput.setAttribute("type","hidden");
+    form.appendChild(hiddenInput);
   }
-  var total = parametros.length;
+  var total = parameters.length;
 	for (var i=0;i<total;i++)
 	{
-		oculto = document.createElement("INPUT");
-		oculto.setAttribute("name", parametros[i][0]);
-		oculto.setAttribute("value", parametros[i][1]);
-		oculto.setAttribute("type","hidden");
-		formulario.appendChild(oculto);
+		hiddenInput = document.createElement("INPUT");
+		hiddenInput.setAttribute("name", parameters[i][0]);
+		hiddenInput.setAttribute("value", parameters[i][1]);
+		hiddenInput.setAttribute("type","hidden");
+		form.appendChild(hiddenInput);
 	}
-	formulario.submit();
+	form.submit();
 }
 
 function devolverResultados()

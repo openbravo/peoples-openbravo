@@ -59,8 +59,8 @@ public class PrinterReports extends HttpSecureAppServlet {
       strPDFPath = FormatUtilities.replace(PrinterReportsData.select(this, strPDFPath));
     } else mapping = PrinterReportsData.selectMapping(this, strPDFPath);
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("pdfPath", mapping);
     xmlDocument.setParameter("directPrint", strDirectPrint);
     //if (strPDFPath.startsWith("..")) strPDFPath = strPDFPath.substring(2);
@@ -68,8 +68,8 @@ public class PrinterReports extends HttpSecureAppServlet {
     //String mapping = FormatUtilities.replace(PrinterReportsData.select(this, strPDFPath));
     strPDFPath = FormatUtilities.replace(strPDFPath);
 
-    vars.setSessionValue(strPDFPath + "." + strHiddenKey, "(" + strHiddenValue + ")");
-    if (!strHiddenValue.equals("")) vars.setSessionValue(strPDFPath + "." + strHiddenKey, "(" + strHiddenValue + ")");
+    vars.setSessionValue(strPDFPath + "." + strHiddenKey, "('" + strHiddenValue + "')");
+    if (!strHiddenValue.equals("")) vars.setSessionValue(strPDFPath + "." + strHiddenKey, "('" + strHiddenValue + "')");
     else vars.getRequestInGlobalVariable(strHiddenKey, strPDFPath + "." + strHiddenKey);
 
     //vars.getRequestInGlobalVariable(strHiddenKey + "_R", mapping + "." + strHiddenKey + "_R");

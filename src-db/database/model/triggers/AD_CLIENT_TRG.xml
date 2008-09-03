@@ -30,7 +30,7 @@
     ************************************************************************/
     TYPE RECORD IS REF CURSOR;
   CUR_DSequence RECORD;
-  v_NextNo NUMBER;
+  v_NextNo VARCHAR2(32);
 BEGIN
   -- See also: AD_Sequence_Check
   FOR CUR_DSequence IN
@@ -68,8 +68,8 @@ BEGIN
       VALUES
       (
         v_NextNo, :NEW.AD_Client_ID, 0,  'Y',
-        now(), 0, now(),
-        0, 'DocumentNo_' || CUR_DSequence.TableName,  'DocumentNo/Value for Table ' || CUR_DSequence.TableName,
+        now(), '0', now(),
+        '0', 'DocumentNo_' || CUR_DSequence.TableName,  'DocumentNo/Value for Table ' || CUR_DSequence.TableName,
         NULL,  'Y', 1,
         10000000, 10000000, 10000000,
         'N',  NULL,

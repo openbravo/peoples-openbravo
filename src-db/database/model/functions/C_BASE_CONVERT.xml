@@ -4,16 +4,16 @@
       <parameter name="p_amount" type="NUMERIC" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_curfrom_id" type="NUMERIC" mode="in">
+      <parameter name="p_curfrom_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_client_id" type="NUMERIC" mode="in">
+      <parameter name="p_client_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_convdate" type="TIMESTAMP" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_org_id" type="NUMERIC" mode="in">
+      <parameter name="p_org_id" type="VARCHAR" mode="in">
         <default><![CDATA[0]]></default>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -46,7 +46,7 @@
 * Test:
 *  SELECT C_Base_Convert(100,116,11,null) FROM DUAL => 64.72
 ************************************************************************/
-    v_CurTo_ID NUMBER;
+    v_CurTo_ID VARCHAR2(32);
   BEGIN
     -- Get Currency
     SELECT MAX(ac.C_Currency_ID)

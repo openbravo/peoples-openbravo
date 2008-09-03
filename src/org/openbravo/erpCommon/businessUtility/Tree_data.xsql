@@ -25,8 +25,8 @@
       <Sql><![CDATA[
         SELECT NODE_ID AS ID
         FROM AD_TREENODE 
-        WHERE AD_TREE_ID = TO_NUMBER(?)
-        AND AD_ISMEMBERINCLUDED(NODE_ID,to_number(?),AD_TREE_ID) <> -1
+        WHERE AD_TREE_ID = ?
+        AND AD_ISMEMBERINCLUDED(NODE_ID, ?,AD_TREE_ID) <> -1
       ]]></Sql>
       <Parameter name="treeId"/>
       <Parameter name="parentNodeId"/>
@@ -36,7 +36,7 @@
     <Sql><![CDATA[
         SELECT AD_ORG_ID AS ID 
         FROM AD_ORG
-        WHERE AD_CLIENT_ID = TO_NUMBER(?)
+        WHERE AD_CLIENT_ID = ?
       ]]></Sql>
     <Parameter name="client"/>
   </SqlMethod>
@@ -45,7 +45,7 @@
     <Sql><![CDATA[
         SELECT AD_TREE_ID AS ID
         FROM AD_TREE
-        WHERE AD_CLIENT_ID = TO_NUMBER(?)
+        WHERE AD_CLIENT_ID = ?
         AND TREETYPE = 'EV'
       ]]></Sql>
     <Parameter name="client"/>
@@ -55,7 +55,7 @@
     <Sql><![CDATA[
         SELECT AD_TREE_ORG_ID AS ID 
         FROM AD_CLIENTINFO
-        WHERE AD_CLIENT_ID = TO_NUMBER(?)
+        WHERE AD_CLIENT_ID = ?
       ]]></Sql>
     <Parameter name="client"/>
   </SqlMethod>
@@ -64,7 +64,7 @@
     <Sql><![CDATA[
         SELECT AD_TREE_ID AS ID
         FROM AD_TREE
-        WHERE AD_CLIENT_ID = TO_NUMBER(?)
+        WHERE AD_CLIENT_ID = ?
         AND TREETYPE = 'EV'
       ]]></Sql>
     <Parameter name="client"/>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_ORDER_FACT_RESET">
     <function name="C_ORDER_FACT_RESET" type="NULL">
-      <parameter name="p_c_order_id" type="NUMERIC" mode="in">
+      <parameter name="p_c_order_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -20,7 +20,7 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-  v_AD_Table_ID NUMBER(10) ;
+  v_AD_Table_ID VARCHAR2(32) ;
 BEGIN
   SELECT AD_Table_ID INTO v_AD_Table_ID FROM AD_Table WHERE TABLENAME='C_Order';
   IF v_AD_Table_ID IS NULL THEN

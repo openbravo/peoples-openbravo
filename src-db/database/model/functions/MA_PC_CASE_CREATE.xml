@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MA_PC_CASE_CREATE">
     <function name="MA_PC_CASE_CREATE" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -24,19 +24,19 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   --  Parameter
-  v_NextNo NUMBER;
+  v_NextNo VARCHAR2(32);
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     --
-    p_Record_ID NUMBER:=NULL;
+    p_Record_ID VARCHAR2(32):=NULL;
     --  Tests to include
     Cur_PC_Test RECORD;
     --
     v_StartDate DATE;
-    v_Periodic_Control_ID NUMBER;
-    v_User_ID NUMBER;
-    v_Client_ID NUMBER;
-    v_Org_ID NUMBER;
+    v_Periodic_Control_ID VARCHAR2(32);
+    v_User_ID VARCHAR2(32);
+    v_Client_ID VARCHAR2(32);
+    v_Org_ID VARCHAR2(32);
     v_Result NUMBER:=1;
   BEGIN
     --  Process Parameters

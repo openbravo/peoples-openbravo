@@ -44,7 +44,7 @@ GROUP BY C_BPARTNER_ID
 ORDER BY ORDERNO DESC]]></queryString>
 
 	<field name="PARTNER" class="java.lang.String"/>
-	<field name="C_BPARTNER_ID" class="java.math.BigDecimal"/>
+	<field name="C_BPARTNER_ID" class="java.lang.String"/>
 	<field name="GRANDTOTAL" class="java.math.BigDecimal"/>
 	<field name="ORDERNO" class="java.math.BigDecimal"/>
 

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,26 +48,12 @@ public class CopyFromOrder extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
-      vars.getGlobalVariable("inpcOrderId", "CopyFromOrder|mInoutId");
-      vars.getGlobalVariable("inpwindowId", "CopyFromOrder|windowId", "");
-      vars.getGlobalVariable("inpTabId", "CopyFromOrder|adTabId", "");
-      vars.getGlobalVariable("inpcBpartnerId", "CopyFromOrder|cBpartnerId", "");
-      vars.getGlobalVariable("inpmPricelistId", "CopyFromOrder|mPricelistId", "");
-      printPage_FS(response, vars);
-    } else if (vars.commandIn("FRAME2")) {
-      printPage_F2(response, vars);
-    } else if (vars.commandIn("FRAME1")) {
-      String strWindowId = vars.getGlobalVariable("inpWindowId", "CopyFromOrder|windowId");
+      String strWindowId = vars.getStringParameter("inpwindowId");
       String strSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
-      String strKey = vars.getGlobalVariable("inpcOrderId", "CopyFromOrder|mInoutId");
-      String strTabId = vars.getGlobalVariable("inpTabId", "CopyFromOrder|adTabId");
-      String strBpartner = vars.getGlobalVariable("inpcBpartnerId", "CopyFromOrder|cBpartnerId", "");
-      String strmPricelistId = vars.getGlobalVariable("inpmPricelistId", "CopyFromOrder|mPricelistId", "");
-      vars.removeSessionValue("CopyFromOrder|inpcOrderId");
-      vars.removeSessionValue("CopyFromOrder|windowId");
-      vars.removeSessionValue("CopyFromOrder|adTabId");
-      vars.removeSessionValue("CopyFromOrder|cBpartnerId");
-      vars.removeSessionValue("CopyFromOrder|inpmPricelistId");
+      String strKey = vars.getRequiredStringParameter("inpcOrderId");
+      String strTabId = vars.getStringParameter("inpTabId");
+      String strBpartner = vars.getStringParameter("inpcBpartnerId");
+      String strmPricelistId = vars.getStringParameter("inpmPricelistId" );
       printPageDataSheet(response, vars, strKey, strWindowId, strTabId, strSOTrx, strBpartner, strmPricelistId);
     } else if (vars.commandIn("SAVE")) {
       String strRownum = vars.getRequiredInStringParameter("inpRownumId");
@@ -86,27 +72,6 @@ public class CopyFromOrder extends HttpSecureAppServlet {
       vars.setMessage(strTabId, myError);      
       printPageClosePopUp(response, vars, strWindowPath);
     } else pageErrorPopUp(response);
-  }
-
-  void printPage_FS(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    log4j.debug("Output: FrameSet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CopyFromOrder_FS").createXmlDocument();
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-  void printPage_F2(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    log4j.debug("Output: Frame2");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CopyFromOrder_F2").createXmlDocument();
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
   }
 
   OBError copyLines(VariablesSecureApp vars, String strRownum, String strKey, String strWindowId, String strSOTrx) 
@@ -172,11 +137,11 @@ public class CopyFromOrder extends HttpSecureAppServlet {
   void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strKey, String strWindowId, String strTabId, String strSOTrx, String strBpartner, String strmPricelistId) throws IOException, ServletException {
     log4j.debug("Output: Shipment");
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CopyFromOrder_F1").createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CopyFromOrder").createXmlDocument();
     CopyFromOrderRecordData[] dataOrder = CopyFromOrderRecordData.select(this, strKey);
     CopyFromOrderData[] data = CopyFromOrderData.select(this, strBpartner, strmPricelistId, dataOrder[0].dateordered, strSOTrx, dataOrder[0].lastDays.equals("")?"0":dataOrder[0].lastDays);
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("key", strKey);
     xmlDocument.setParameter("windowId", strWindowId);

@@ -1,19 +1,23 @@
 <?xml version="1.0"?>
   <database name="TABLE M_PRODUCT_ACCT">
     <table name="M_PRODUCT_ACCT" primaryKey="M_PRODUCT_ACCT_KEY">
-      <column name="M_PRODUCT_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="M_PRODUCT_ACCT_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault><![CDATA[get_uuid()]]></onCreateDefault>
+      </column>
+      <column name="M_PRODUCT_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_ACCTSCHEMA_ID" primaryKey="true" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="C_ACCTSCHEMA_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="AD_ORG_ID" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -25,7 +29,7 @@
         <default><![CDATA[SYSDATE]]></default>
         <onCreateDefault/>
       </column>
-      <column name="CREATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="CREATEDBY" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -33,39 +37,39 @@
         <default><![CDATA[SYSDATE]]></default>
         <onCreateDefault/>
       </column>
-      <column name="UPDATEDBY" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="UPDATEDBY" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="P_REVENUE_ACCT" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="P_REVENUE_ACCT" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="P_EXPENSE_ACCT" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="P_EXPENSE_ACCT" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="P_ASSET_ACCT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="P_ASSET_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="P_PURCHASEPRICEVARIANCE_ACCT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="P_PURCHASEPRICEVARIANCE_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="P_INVOICEPRICEVARIANCE_ACCT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="P_INVOICEPRICEVARIANCE_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="P_COGS_ACCT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="P_COGS_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="P_TRADEDISCOUNTREC_ACCT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="P_TRADEDISCOUNTREC_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="P_TRADEDISCOUNTGRANT_ACCT" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+      <column name="P_TRADEDISCOUNTGRANT_ACCT" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -105,6 +109,10 @@
       <foreign-key foreignTable="C_VALIDCOMBINATION" name="VC_PTDISCOUNTREC_MPRODUCT">
         <reference local="P_TRADEDISCOUNTREC_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
       </foreign-key>
+      <unique name="MPRODUCTACCT_MPRODUCTID_CAC_UN">
+        <unique-column name="M_PRODUCT_ID"/>
+        <unique-column name="C_ACCTSCHEMA_ID"/>
+      </unique>
       <check name="M_PRODUCT_ACCT_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

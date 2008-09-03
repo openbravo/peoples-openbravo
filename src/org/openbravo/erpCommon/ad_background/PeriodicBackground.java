@@ -26,7 +26,6 @@ import java.io.*;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.database.ConnectionProvider;
-import java.util.TimerTask;
 
 public class PeriodicBackground implements Runnable {
   public ConnectionProvider conn;

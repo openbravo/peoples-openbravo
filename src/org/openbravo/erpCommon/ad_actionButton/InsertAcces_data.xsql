@@ -33,7 +33,7 @@
         m.AD_TASK_ID as adtaskid
         FROM AD_TREENODE tn, AD_MENU m
         WHERE tn.NODE_ID = m.AD_MENU_ID 
-        AND tn.ad_tree_id = 10 
+        AND tn.ad_tree_id = '10' 
         AND tn.IsActive='Y' 
     ]]>
     </Sql>
@@ -43,8 +43,8 @@
     <Sql>
     <![CDATA[
         select 1 from ad_window_Access
-        where ad_role_ID = TO_NUMBER(?)
-        and ad_window_ID = TO_NUMBER(?)
+        where ad_role_id=?
+        and ad_window_id=?
     ]]>
     </Sql>
         <Parameter name="roleId"/>
@@ -54,9 +54,9 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-        INSERT INTO ad_WINDOW_ACCESS (AD_WINDOW_ID, AD_ROLE_ID, AD_CLIENT_ID,
+        INSERT INTO ad_WINDOW_ACCESS (ad_WINDOW_ACCESS_ID, AD_WINDOW_ID, AD_ROLE_ID, AD_CLIENT_ID,
         AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ISREADWRITE )
-        VALUES (TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', now(), TO_NUMBER(?), now(), TO_NUMBER(?), 'Y')
+        VALUES (get_uuid(), ?, ?, ?, ?, 'Y', now(), ?, now(), ?, 'Y')
 
     ]]>
     </Sql>
@@ -72,8 +72,8 @@
     <Sql>
     <![CDATA[
         select 1 from ad_process_Access
-        where ad_role_ID = TO_NUMBER(?)
-        and ad_process_ID = TO_NUMBER(?)
+        where ad_role_id=?
+        and ad_process_id=?
     ]]>
     </Sql>
         <Parameter name="roleId"/>
@@ -83,9 +83,9 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-        INSERT INTO ad_process_ACCESS (AD_process_ID, AD_ROLE_ID, AD_CLIENT_ID,
+        INSERT INTO ad_process_ACCESS (ad_process_ACCESS_ID, AD_process_ID, AD_ROLE_ID, AD_CLIENT_ID,
         AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ISREADWRITE )
-        VALUES (TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', now(), TO_NUMBER(?), now(), TO_NUMBER(?), 'Y')
+        VALUES (get_uuid(), ?, ?, ?, ?, 'Y', now(), ?, now(), ?, 'Y')
 
     ]]>
     </Sql>
@@ -101,8 +101,8 @@
     <Sql>
     <![CDATA[
         select 1 from ad_form_Access
-        where ad_role_ID = TO_NUMBER(?)
-        and ad_form_ID = TO_NUMBER(?)
+        where ad_role_id=?
+        and ad_form_id=?
     ]]>
     </Sql>
         <Parameter name="roleId"/>
@@ -112,9 +112,9 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-        INSERT INTO ad_form_ACCESS (AD_form_ID, AD_ROLE_ID, AD_CLIENT_ID,
+        INSERT INTO ad_form_ACCESS (ad_form_ACCESS_ID, AD_form_ID, AD_ROLE_ID, AD_CLIENT_ID,
         AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ISREADWRITE )
-        VALUES (TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', now(), TO_NUMBER(?), now(), TO_NUMBER(?), 'Y')
+        VALUES (get_uuid(), ?, ?, ?, ?, 'Y', now(), ?, now(), ?, 'Y')
 
     ]]>
     </Sql>
@@ -130,8 +130,8 @@
     <Sql>
     <![CDATA[
         select 1 from ad_workflow_Access
-        where ad_role_ID = TO_NUMBER(?)
-        and ad_workflow_ID = TO_NUMBER(?)
+        where ad_role_id=?
+        and ad_workflow_id=?
     ]]>
     </Sql>
         <Parameter name="roleId"/>
@@ -141,9 +141,9 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-        INSERT INTO ad_workflow_ACCESS (AD_workflow_ID, AD_ROLE_ID, AD_CLIENT_ID,
+        INSERT INTO ad_workflow_ACCESS (ad_workflow_ACCESS_ID, AD_workflow_ID, AD_ROLE_ID, AD_CLIENT_ID,
         AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ISREADWRITE )
-        VALUES (TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', now(), TO_NUMBER(?), now(), TO_NUMBER(?), 'Y')
+        VALUES (get_uuid(), ?, ?, ?, ?, 'Y', now(), ?, now(), ?, 'Y')
 
     ]]>
     </Sql>
@@ -159,8 +159,8 @@
     <Sql>
     <![CDATA[
         select 1 from ad_task_Access
-        where ad_role_ID = TO_NUMBER(?)
-        and ad_task_ID = TO_NUMBER(?)
+        where ad_role_id=?
+        and ad_task_id=?
     ]]>
     </Sql>
         <Parameter name="roleId"/>
@@ -170,9 +170,9 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-        INSERT INTO AD_TASK_ACCESS (AD_TASK_ID, AD_ROLE_ID, AD_CLIENT_ID,
+        INSERT INTO AD_TASK_ACCESS (AD_TASK_ACCESS_ID, AD_TASK_ID, AD_ROLE_ID, AD_CLIENT_ID,
         AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ISREADWRITE)
-        VALUES (TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', now(), TO_NUMBER(?), now(), TO_NUMBER(?), 'Y')
+        VALUES (get_uuid(), ?, ?, ?, ?, 'Y', now(), ?, now(), ?, 'Y')
 
     ]]>
     </Sql>

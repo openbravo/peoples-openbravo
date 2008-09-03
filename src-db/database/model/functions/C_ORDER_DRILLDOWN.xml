@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_ORDER_DRILLDOWN">
     <function name="C_ORDER_DRILLDOWN" type="NULL">
-      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -29,15 +29,15 @@
   */
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     -- Parameter
-    C_Order_ID NUMBER;
+    C_Order_ID VARCHAR2(32);
     --
     Cur_Order RECORD;
-    v_T_Spool_ID NUMBER;
-    v_Client_ID NUMBER;
+    v_T_Spool_ID VARCHAR2(32);
+    v_Client_ID VARCHAR2(32);
   BEGIN
     -- No locking or Updating
     -- Get Parameters
@@ -59,7 +59,7 @@
       v_Record_ID:=Cur_Parameter.Record_ID;
       v_Client_ID:=Cur_Parameter.AD_CLIENT_ID;
       IF(Cur_Parameter.ParameterName='C_Order_ID') THEN
-        C_Order_ID:=Cur_Parameter.P_Number;
+        C_Order_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  C_Order_ID=' || C_Order_ID) ;
       ELSE
         DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;

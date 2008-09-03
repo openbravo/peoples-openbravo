@@ -22,7 +22,7 @@
 	<PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
 	<PARAMETER id="paramDesde" name="fechaDesde" attribute="value"/>
 	<PARAMETER id="paramHasta" name="fechaHasta" attribute="value"/>
-	<PARAMETER id="paramDirection" name="direction"/>
+	<PARAMETER id="paramDirectory" name="directory"/>
 	<PARAMETER id="paramLanguage" name="language"/>
 	<SUBREPORT id="reportProductCategory_M" name="reportCategoriaProducto" report="org/openbravo/erpCommon/ad_forms/CategoriaProducto">
 		<ARGUMENT name="parameterCategoriaProductoSelected"/>

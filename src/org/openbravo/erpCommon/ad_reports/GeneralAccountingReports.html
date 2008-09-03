@@ -24,14 +24,14 @@
     <TITLE>General accounting plan statements</TITLE>
     <link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Main_Manual.css" id="paramCSS" />
-    <script language="JavaScript" type="text/javascript" id="paramDirection">
-      var baseDirection = "../../../../../web/";
+    <script language="JavaScript" type="text/javascript" id="paramDirectory">
+      var baseDirectory = "../../../../../web/";
       </script>
       <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript">
       </script>
       <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
       <script language="JavaScript" type="text/javascript" id="paramLanguage">
-        var LNG_POR_DEFECTO = "en_US";
+        var defaultLang = "en_US";
       </script>
       <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
@@ -51,31 +51,31 @@
       </script>
 <SCRIPT language="JavaScript" type="text/javascript">
 
-function depurar(command) {
+function validate(command) {
 	var frm = document.frmMain;
 	if (frm.inpAgno.value == null || frm.inpAgno.value == "") {
 		setWindowElementFocus(frm.inpAgno);
-		mensaje(7);
+		showJSMessage(7);
 		return false;
 	} else if (frm.inpAgnoRef.value == null || frm.inpAgnoRef.value == "") {
 		setWindowElementFocus(frm.inpAgnoRef);
-		mensaje(7);
+		showJSMessage(7);
 		return false;
 	} else if (frm.inpOrganizacion.value == ""){
 		setWindowElementFocus(frm.inpOrganizacion);
-		mensaje(1);
+		showJSMessage(1);
 		return false;
 	} else if (frm.inpcAcctSchemaId.value == ""){
 		setWindowElementFocus(frm.inpcAcctSchemaId);
-		mensaje(1);
+		showJSMessage(1);
 		return false;
 	} else if (frm.inpcElementvalueId.value == ""){
 		setWindowElementFocus(frm.inpcElementvalueId);
-		mensaje(1);
+		showJSMessage(1);
 		return false;
 	} else if (frm.inpLevel.value == ""){
 		setWindowElementFocus(frm.inpLevel);
-		mensaje(1);
+		showJSMessage(1);
 		return false;
 	}
 	return true;
@@ -84,7 +84,7 @@ function depurar(command) {
 function refreshAccountingReports() {
   var cmbAccountSchema = document.frmMain.inpcAcctSchemaId;  
   var cmbAccountingReports = document.frmMain.inpcElementvalueId;  
-  cambiarListaCombo(cmbAccountingReports, arrAccountingReports, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);
+  changeComboData(cmbAccountingReports, arrAccountingReports, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);
   return true;
 }
 

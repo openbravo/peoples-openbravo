@@ -1,20 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--
-************************
-0. Core Range.
-************************
--->
-<!--
-************************
-0. End of Core Range.
-************************
--->
-<!--
-************************
-1. Custom Range.
-************************
--->
 <!--1000006**************--><MA_COSTCENTER_VERSION>
 <!--1000006 MA_COSTCENTER_VERSION_ID-->
 <!--1000006-->              <MA_COSTCENTER_VERSION_ID><![CDATA[1000006]]></MA_COSTCENTER_VERSION_ID>
@@ -160,9 +145,4 @@
 <!--1000010-->              <VALIDFROM><![CDATA[2007-01-01 00:00:00.0]]></VALIDFROM>
 <!--1000010**************--></MA_COSTCENTER_VERSION>
 
-<!--
-************************
-1. End of Custom Range.
-************************
--->
 </data>

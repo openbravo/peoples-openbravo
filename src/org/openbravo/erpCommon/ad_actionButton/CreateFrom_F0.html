@@ -21,15 +21,15 @@
 <TITLE></TITLE>
 <SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO = "en_US";</SCRIPT>
+<SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	defaultLang = "en_US";</SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" id="paramArray">
 var arrDatos = null;
 var arrDatos2 = null
 </SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript">
-function responseReturn(arrDatos, arrDatos2){
+function responseReturn(dataArray, dataArray2){
   if (parent.frameButton)
-    parent.frameButton.actualizarInvoices(arrDatos, arrDatos2);
+    parent.frameButton.updateInvoices(dataArray, dataArray2);
 }
 </SCRIPT>
 </HEAD>

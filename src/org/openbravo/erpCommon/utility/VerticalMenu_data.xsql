@@ -36,9 +36,9 @@
               AD_ALERTRECIPIENT R 
         WHERE A.ISACTIVE='Y'
           AND R.AD_ALERTRULE_ID = A.AD_ALERTRULE_ID
-          AND ((R.AD_USER_ID IS NOT NULL AND R.AD_USER_ID = TO_NUMBER(?)) 
+          AND ((R.AD_USER_ID IS NOT NULL AND R.AD_USER_ID = ?) 
                OR 
-              (R.AD_USER_ID IS NULL AND R.AD_ROLE_ID = TO_NUMBER(?)))          
+              (R.AD_USER_ID IS NULL AND R.AD_ROLE_ID = ?))          
       ]]>
     </Sql>
     <Parameter name="user"/>
@@ -55,7 +55,7 @@
           AND ISFIXED ='N'
           AND AD_CLIENT_ID IN ('1') 
           AND AD_ORG_ID IN ('1')
-          AND AD_ALERTRULE_ID = TO_NUMBER(?)
+          AND AD_ALERTRULE_ID = ?
           AND 1=1 AND 2=2
       ]]>
     </Sql>

@@ -38,7 +38,7 @@
                                         AND mom.isactive = 'Y'
                                         AND mom.isdefault = 'Y'
         where r.ad_reference_id = rf.ad_reference_id 
-        and r.ad_reference_id = to_number(?)
+        and r.ad_reference_id = ?
         order by rfc.columntype
           ]]>
       </Sql>

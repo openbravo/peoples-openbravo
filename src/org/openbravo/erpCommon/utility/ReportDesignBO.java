@@ -20,7 +20,6 @@ package org.openbravo.erpCommon.utility;
 
 import java.util.Iterator;
 
-import net.sf.jasperreports.engine.JRElement;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.design.JRDesignBand;
 import net.sf.jasperreports.engine.design.JRDesignExpression;

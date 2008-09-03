@@ -33,7 +33,7 @@
 				C_Currency_ID, PaymentRule, InvoiceRule, DeliveryRule, FreightcostRule, DeliveryviaRule,
 				PriorityRule, IsDiscountPrinted, Processing
 			  FROM C_Order
-			  WHERE AD_Client_ID = TO_NUMBER(?)
+			  WHERE AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
@@ -49,8 +49,8 @@
 				C_Activity_ID, DocStatus, DocAction, C_Doctype_ID, DateOrdered, DatePromised, DateAcct, C_Currency_ID,
 				PaymentRule, InvoiceRule, DeliveryRule, FreightcostRule, DeliveryviaRule, PriorityRule, IsDiscountPrinted,
 				Processing)
-				VALUES (TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', TO_DATE(now()), TO_NUMBER(?), TO_DATE(now()), TO_NUMBER(?), TO_NUMBER(?), ?, ?, TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), ?, TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), ?, ?, TO_NUMBER(?),
-				COALESCE(TO_DATE(?),TO_DATE(now())), COALESCE(TO_DATE(?),TO_DATE(now())), COALESCE(TO_DATE(?),TO_DATE(now())), TO_NUMBER(?), ?, ?, ?, ?, ?, ?, ?, ?)
+				VALUES (?, ?, ?, 'Y', TO_DATE(now()), ?, TO_DATE(now()), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+				COALESCE(TO_DATE(?),TO_DATE(now())), COALESCE(TO_DATE(?),TO_DATE(now())), COALESCE(TO_DATE(?),TO_DATE(now())), ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ]]>
     </Sql>
     <Parameter name="cOrderId"/>
@@ -97,8 +97,8 @@
 				SELECT MIN(pl.c_currency_id) AS C_CURRENCY_ID
 				FROM C_BPartner bp, M_Pricelist pl
 				WHERE bp.M_Pricelist_ID = pl.M_Pricelist_ID
-				AND pl.AD_Client_ID = TO_NUMBER(?)
-				AND bp.C_BPartner_ID = TO_NUMBER(?)
+				AND pl.AD_Client_ID = ?
+				AND bp.C_BPartner_ID = ?
       ]]>
     </Sql>
     <Parameter name="adClientId"/>

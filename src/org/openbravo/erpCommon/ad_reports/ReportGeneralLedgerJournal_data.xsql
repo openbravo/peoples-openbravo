@@ -51,7 +51,7 @@
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[ AND f.dateacct >= TO_DATE(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[ AND f.dateacct < TO_DATE(?)]]></Parameter>
     <Parameter name="docbasetype" optional="true" after="AND 1=1"><![CDATA[ AND f.DOCBASETYPE = ?]]></Parameter>
-    <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND f.C_ACCTSCHEMA_ID = to_number(?)]]></Parameter>
+    <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND f.C_ACCTSCHEMA_ID = ?]]></Parameter>
     <Parameter name="orgFamily" type="replace" optional="true" after="AND f.AD_ORG_ID IN(" text="'2'"/>
   </SqlMethod>
   <SqlMethod name="selectCount" type="preparedStatement" return="string" default="0">
@@ -73,14 +73,14 @@
         AND (CASE (SELECT MAX(ISSOTRX) FROM C_DOCTYPE D 
                     WHERE D.DOCBASETYPE = F.DOCBASETYPE) WHEN 'N' THEN COALESCE(T.PO_WINDOW_ID, T.AD_WINDOW_ID) ELSE T.AD_WINDOW_ID END) = W.AD_WINDOW_ID 
         GROUP BY F.DATEACCT, F.FACT_ACCT_GROUP_ID) AA
-        WHERE (DATEACCT< TO_DATE(?) OR (DATEACCT=TO_DATE(?) AND FACT_ACCT_GROUP_ID < TO_NUMBER(?)))
+        WHERE (DATEACCT< TO_DATE(?) OR (DATEACCT=TO_DATE(?) AND FACT_ACCT_GROUP_ID < ?))
       ]]></Sql>
     <Parameter name="adUserClient" type="replace" optional="true" after="WHERE F.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND F.AD_ORG_ID IN(" text="'1'"/>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[ AND f.dateacct >= TO_DATE(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[ AND f.dateacct < TO_DATE(?)]]></Parameter>
     <Parameter name="docbasetype" optional="true" after="AND 1=1"><![CDATA[ AND f.DOCBASETYPE = ?]]></Parameter>
-    <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND f.C_ACCTSCHEMA_ID = to_number(?)]]></Parameter>
+    <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND f.C_ACCTSCHEMA_ID = ?]]></Parameter>
     <Parameter name="orgFamily" type="replace" optional="true" after="AND f.AD_ORG_ID IN(" text="'2'"/>
     <Parameter name="dateAcct"/>
     <Parameter name="dateAcct"/>
@@ -122,10 +122,10 @@
     <Field name="rownum" value="count"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="WHERE F.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND F.AD_ORG_ID IN(" text="'1'"/>
-    <Parameter name="table" optional="true" after="AND 1=1"><![CDATA[ AND f.ad_table_Id = to_number(?)]]></Parameter>
-    <Parameter name="record" optional="true" after="AND 1=1"><![CDATA[ AND f.record_Id = to_number(?)]]></Parameter>   
-    <Parameter name="table" optional="true" after="AND 1=1"><![CDATA[ AND f.ad_table_ID = TO_NUMBER(?)]]></Parameter>
-    <Parameter name="record" optional="true" after="AND 1=1"><![CDATA[ AND f.record_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="table" optional="true" after="AND 1=1"><![CDATA[ AND f.ad_table_Id = ?]]></Parameter>
+    <Parameter name="record" optional="true" after="AND 1=1"><![CDATA[ AND f.record_Id = ?]]></Parameter>   
+    <Parameter name="table" optional="true" after="AND 1=1"><![CDATA[ AND f.ad_table_ID = ?]]></Parameter>
+    <Parameter name="record" optional="true" after="AND 1=1"><![CDATA[ AND f.record_ID = ?]]></Parameter>
   </SqlMethod>
   <SqlMethod name="selectCountDirect" type="preparedStatement" return="string" default="0">
     <SqlMethodComment></SqlMethodComment>
@@ -145,12 +145,12 @@
         AND (CASE (SELECT MAX(ISSOTRX) FROM C_DOCTYPE D 
         WHERE D.DOCBASETYPE = F.DOCBASETYPE) WHEN 'N' THEN COALESCE(T.PO_WINDOW_ID, T.AD_WINDOW_ID) ELSE T.AD_WINDOW_ID END) = W.AD_WINDOW_ID 
         GROUP BY F.DATEACCT, F.FACT_ACCT_GROUP_ID) AA
-        WHERE (DATEACCT< TO_DATE(?) OR (DATEACCT=to_date(?) AND FACT_ACCT_GROUP_ID < TO_NUMBER(?)))
+        WHERE (DATEACCT< TO_DATE(?) OR (DATEACCT=to_date(?) AND FACT_ACCT_GROUP_ID < ?))
       ]]></Sql>
     <Parameter name="adUserClient" type="replace" optional="true" after="WHERE F.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND F.AD_ORG_ID IN(" text="'1'"/>
-    <Parameter name="table" optional="true" after="AND 1=1"><![CDATA[ AND f.ad_table_ID = TO_NUMBER(?)]]></Parameter>
-    <Parameter name="record" optional="true" after="AND 1=1"><![CDATA[ AND f.record_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="table" optional="true" after="AND 1=1"><![CDATA[ AND f.ad_table_Id = ?]]></Parameter>
+    <Parameter name="record" optional="true" after="AND 1=1"><![CDATA[ AND f.record_Id = ?]]></Parameter>
     <Parameter name="dateAcct"/>
     <Parameter name="dateAcct"/>
     <Parameter name="factAcctGroupId"/>
@@ -169,7 +169,7 @@
       WHERE F.AD_CLIENT_ID IN ('1')
       AND F.AD_ORG_ID IN('1')
       AND f.C_ACCTSCHEMA_ID = SC.C_ACCTSCHEMA_ID
-      AND F.Fact_Acct_Group_ID = TO_NUMBER(?)
+      AND F.Fact_Acct_Group_ID = ?
       GROUP BY f.C_ACCTSCHEMA_ID, SC.NAME, F.AD_TABLE_ID, F.DATEACCT, F.ACCTDESCRIPTION, F.ACCTVALUE, F.DOCBASETYPE, F.RECORD_ID, 
       F.FACT_ACCT_GROUP_ID, F.ACCOUNT_ID,
       (CASE F.AMTACCTDR WHEN 0 THEN (CASE SIGN(F.AMTACCTCR) WHEN -1 THEN 1 ELSE 2 END) ELSE (CASE SIGN(F.AMTACCTDR) WHEN -1 THEN 3 ELSE 4 END) END)) AA
@@ -195,11 +195,11 @@
         WHERE F.AD_CLIENT_ID IN ('1')
         AND F.AD_ORG_ID IN('1')
         AND 1=1
-        and f.fact_acct_group_ID = TO_NUMBER(?)
+        and f.fact_acct_group_id = ?
         AND (CASE (SELECT MAX(ISSOTRX) FROM C_DOCTYPE D 
         WHERE D.DOCBASETYPE = F.DOCBASETYPE) WHEN 'N' THEN COALESCE(T.PO_WINDOW_ID, T.AD_WINDOW_ID) ELSE T.AD_WINDOW_ID END) = W.AD_WINDOW_ID 
         GROUP BY F.DATEACCT, F.FACT_ACCT_GROUP_ID) AA
-        WHERE (DATEACCT< to_date(?) OR (DATEACCT=to_date(?) AND FACT_ACCT_GROUP_ID < to_number(?)))
+        WHERE (DATEACCT< to_date(?) OR (DATEACCT=to_date(?) AND FACT_ACCT_GROUP_ID < ?))
       ]]></Sql>
     <Parameter name="adUserClient" type="replace" optional="true" after="WHERE F.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND F.AD_ORG_ID IN(" text="'1'"/>
@@ -214,7 +214,7 @@
     <![CDATA[
         SELECT NAME
         FROM AD_CLIENT
-        WHERE AD_CLIENT_ID = TO_NUMBER(?)
+        WHERE AD_CLIENT_ID = ?
       ]]></Sql>
     <Parameter name="client"/>
   </SqlMethod>

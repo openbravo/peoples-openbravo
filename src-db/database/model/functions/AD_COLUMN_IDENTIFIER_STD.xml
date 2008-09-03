@@ -29,7 +29,7 @@ BEGIN
   SELECT coalesce(ad_language,'en_US')
   INTO v_Language
   FROM AD_CLIENT
-  WHERE ad_client_id=0 ;
+  WHERE ad_client_id='0' ;
 
   SELECT AD_COLUMN_IDENTIFIER(p_TableName, p_Record_ID, v_Language ) INTO v_Display FROM DUAL;
   RETURN v_Display;

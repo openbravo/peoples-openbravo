@@ -65,7 +65,7 @@
         END IF;
         v_SQL:=v_SQL || AD_COLUMN_IDENTIFIER_REF_SQL('T', p_TableName, Cur_Columns.ColumnName, Cur_Columns.AD_Reference_ID, Cur_Columns.AD_Reference_Value_ID) ;
       END LOOP;
-      v_SQL:='SELECT ' || v_SQL || ' AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, '|| p_TableName || ' T WHERE ' || v_KeyName || '='||':c_ID';
+      v_SQL:='SELECT ' || v_SQL || ' AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, '|| p_TableName || ' T WHERE ' || v_KeyName || '='||''':c_ID''';
     ELSE
       v_SQL:='**No key found';
     END IF;

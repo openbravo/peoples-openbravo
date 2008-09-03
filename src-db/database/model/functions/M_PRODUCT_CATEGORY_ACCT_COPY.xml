@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_PRODUCT_CATEGORY_ACCT_COPY">
     <function name="M_PRODUCT_CATEGORY_ACCT_COPY" type="NULL">
-      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_product_category_id" type="NUMERIC" mode="in">
+      <parameter name="p_product_category_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
-      <parameter name="p_c_acctschema_id" type="NUMERIC" mode="in">
+      <parameter name="p_c_acctschema_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -38,13 +38,13 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     --
-    v_M_Product_Category_ID NUMBER;
-    v_C_Acctschema_ID NUMBER;
+    v_M_Product_Category_ID VARCHAR2(32);
+    v_C_Acctschema_ID VARCHAR2(32);
     -- Product Category is unique to Client
     Cur_Acct RECORD;
     --
@@ -76,10 +76,10 @@
     LOOP
       v_Record_ID:=Cur_Parameter.Record_ID;
       IF(Cur_Parameter.ParameterName='M_Product_Category_ID') THEN
-        v_M_Product_Category_ID:=Cur_Parameter.P_Number;
+        v_M_Product_Category_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  M_Product_Category_ID=' || v_M_Product_Category_ID) ;
       ELSIF(Cur_Parameter.ParameterName='C_AcctSchema_ID') THEN
-        v_C_Acctschema_ID:=Cur_Parameter.P_Number;
+        v_C_Acctschema_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  C_AcctSchema_ID=' || v_C_Acctschema_ID) ;
       ELSE
         DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
@@ -115,7 +115,7 @@
         P_TradeDiscountRec_Acct=Cur_Acct.P_TradeDiscountRec_Acct,
         P_TradeDiscountGrant_Acct=Cur_Acct.P_TradeDiscountGrant_Acct,
         Updated=now(),
-        UpdatedBy=0
+        UpdatedBy='0'
       WHERE M_Product_Acct.C_AcctSchema_ID=Cur_Acct.C_AcctSchema_ID
         AND EXISTS
         (SELECT *
@@ -138,7 +138,7 @@
         )
       SELECT p.M_Product_ID,
         Cur_Acct.C_AcctSchema_ID, p.AD_Client_ID, p.AD_Org_ID, 'Y',
-        now(), 0, now(), 0,
+        now(), '0', now(), '0',
         Cur_Acct.P_Revenue_Acct, Cur_Acct.P_Expense_Acct, Cur_Acct.P_Asset_Acct, Cur_Acct.P_CoGs_Acct,
         Cur_Acct.P_PurchasePriceVariance_Acct, Cur_Acct.P_InvoicePriceVariance_Acct, Cur_Acct.P_TradeDiscountRec_Acct, Cur_Acct.P_TradeDiscountGrant_Acct
       FROM M_Product p

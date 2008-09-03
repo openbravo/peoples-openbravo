@@ -4,7 +4,7 @@
       <parameter name="p_amount" type="NUMERIC" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_curto_id" type="NUMERIC" mode="in">
+      <parameter name="p_curto_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_costing" type="VARCHAR" mode="in">

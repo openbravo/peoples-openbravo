@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -45,32 +45,19 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
-      vars.getGlobalVariable("inpwindowId", "CopyFromGLJournal|windowId");
-      vars.getGlobalVariable("inpTabId", "CopyFromGLJournal|tabId");
-      vars.getGlobalVariable("inpglJournalbatchId", "CopyFromGLJournal|glJournalbatchId");
-      printPageFS(response, vars);
-    } else if (vars.commandIn("FRAME1")) {
-      String strWindow = vars.getGlobalVariable("inpwindowId", "CopyFromGLJournal|windowId");
-      String strTab = vars.getGlobalVariable("inpTabId", "CopyFromGLJournal|tabId");
+      String strWindow = vars.getRequiredStringParameter("inpwindowId");
+      String strTab = vars.getRequiredStringParameter("inpTabId");
+      String strKey = vars.getRequiredStringParameter("inpglJournalbatchId");
       String strDescription = vars.getStringParameter("inpDescription", "");
       String strDocumentNo = vars.getStringParameter("inpDocumentNo", "");
-      printPageFrame1(response, vars, strDescription, strDocumentNo, strWindow, strTab);
-    } else if (vars.commandIn("FRAME2")) {
-      String strWindow = vars.getGlobalVariable("inpwindowId", "CopyFromGLJournal|windowId");
-      String strTab = vars.getGlobalVariable("inpTabId", "CopyFromGLJournal|tabId");
-      String strDescription = vars.getStringParameter("inpDescription");
-      String strDocumentNo = vars.getStringParameter("inpDocumentNo");
-      String strKey = vars.getGlobalVariable("inpglJournalbatchId", "CopyFromGLJournal|glJournalbatchId");
-      printPageFrame2(response, vars, strDescription, strDocumentNo, strWindow, strTab, strKey);
+      printPage(response, vars, strDescription, strDocumentNo, strWindow, strTab, strKey);
     } else if (vars.commandIn("FIND")) {
-      String strWindow = vars.getGlobalVariable("inpwindowId", "CopyFromGLJournal|windowId");
-      String strTab = vars.getGlobalVariable("inpTabId", "CopyFromGLJournal|tabId");
+      String strWindow = vars.getRequiredStringParameter("inpwindowId");
+      String strTab = vars.getRequiredStringParameter("inpTabId");
+      String strKey = vars.getRequiredStringParameter("inpglJournalbatchId");
       String strDescription = vars.getStringParameter("inpDescription");
       String strDocumentNo = vars.getStringParameter("inpDocumentNo");
-      String strKey = vars.getGlobalVariable("inpglJournalbatchId", "CopyFromGLJournal|glJournalbatchId");
-      printPageFrame2(response, vars, strDescription, strDocumentNo, strWindow, strTab, strKey);
-    } else if (vars.commandIn("FRAME3")) {
-      printPageFrame3(response, vars);
+      printPage(response, vars, strDescription, strDocumentNo, strWindow, strTab, strKey);
     } else if (vars.commandIn("SAVE")) {
       String strWindow = vars.getStringParameter("inpwindowId");
       String strTab = vars.getStringParameter("inpTabId");
@@ -103,30 +90,6 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
       printPageClosePopUp(response, vars, strWindowPath);
     } else pageErrorPopUp(response);
   }
-
-  void printPageFS(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: GLJournalBatch seeker Frame Set");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_process/CopyFromGLJournal_FS").createXmlDocument();
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-  void printPageFrame1(HttpServletResponse response, VariablesSecureApp vars, String strDescription, String strDocumentNo, String strWindow, String strTab) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 1 of the GLJournalBatch seeker");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_process/CopyFromGLJournal_F1").createXmlDocument();
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setParameter("window", strWindow);
-    xmlDocument.setParameter("tab", strTab);
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
 
   OBError processButton(VariablesSecureApp vars, String strKey, String strGLJournalBatch, String windowId) throws ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Save: GLJournal");
@@ -171,15 +134,14 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
     return myError;
   }
 
-
-  void printPageFrame2(HttpServletResponse response, VariablesSecureApp vars, String strDescription, String strDocumentNo, String strWindow,String strTab, String strKey)
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strDescription, String strDocumentNo, String strWindow,String strTab, String strKey)
     throws IOException, ServletException {
       if (log4j.isDebugEnabled()) log4j.debug("Output: Button process copy GLJournalBatch details");
-      XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_process/CopyFromGLJournal_F2").createXmlDocument();
+      XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_process/CopyFromGLJournal").createXmlDocument();
       CopyFromGLJournalData [] data = CopyFromGLJournalData.selectFrom(this, strDescription, strDocumentNo, vars.getClient(), Utility.getContext(this, vars, "#User_Org", "CopyFromGLJournal"));
       xmlDocument.setData("structure1", data);
-      xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-      xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("theme", vars.getTheme());
       xmlDocument.setParameter("window", strWindow);
       xmlDocument.setParameter("tab", strTab);
@@ -198,19 +160,6 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
       out.println(xmlDocument.print());
       out.close();
     }
-
-  void printPageFrame3(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output:: Button process copy GLJournalBatch details");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_process/CopyFromGLJournal_F3").createXmlDocument();
-
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
 
   public String getServletInfo() {
     return "Servlet Project set Type";

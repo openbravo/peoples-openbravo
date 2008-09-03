@@ -127,6 +127,7 @@
 		<defaultValueExpression ><![CDATA[$P{BASE_DESIGN}+"/org/openbravo/erpReports/"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="C_PROJECTPROPOSAL_ID" isForPrompting="true" class="java.lang.String"/>
+	<parameter name="SR_LINES" isForPrompting="false" class="net.sf.jasperreports.engine.JasperReport"/>
 	<queryString><![CDATA[SELECT DISTINCT REPLACE(table3.HEADERNOTE, CHR(10), '') AS headernote, table3.C_PROJECTPROPOSAL_ID,
 table7.C_BPARTNER_ID, TO_CHAR(table8.address1) AS address1, to_char(table8.address2) as address2,
         TO_CHAR(table5.DESCRIPTION )  AS proposal, table5.VALUE AS reference,
@@ -155,8 +156,8 @@ table7.C_BPARTNER_ID, TO_CHAR(table8.address1) AS address1, to_char(table8.addre
         AND table14.C_LOCATION_ID= table13.C_LOCATION_ID]]></queryString>
 
 	<field name="HEADERNOTE" class="java.lang.String"/>
-	<field name="C_PROJECTPROPOSAL_ID" class="java.math.BigDecimal"/>
-	<field name="C_BPARTNER_ID" class="java.math.BigDecimal"/>
+	<field name="C_PROJECTPROPOSAL_ID" class="java.lang.String"/>
+	<field name="C_BPARTNER_ID" class="java.lang.String"/>
 	<field name="ADDRESS1" class="java.lang.String"/>
 	<field name="ADDRESS2" class="java.lang.String"/>
 	<field name="PROPOSAL" class="java.lang.String"/>
@@ -389,7 +390,7 @@ table7.C_BPARTNER_ID, TO_CHAR(table8.address1) AS address1, to_char(table8.addre
 						<subreportParameterExpression><![CDATA[$F{C_PROJECTPROPOSAL_ID}.toString()]]></subreportParameterExpression>
 					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "SubreportLines.jasper"]]></subreportExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SR_LINES}]]></subreportExpression>
 				</subreport>
 			</band>
 		</detail>

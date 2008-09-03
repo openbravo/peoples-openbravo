@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_COMMISSION_PROCESS">
     <function name="C_COMMISSION_PROCESS" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/******************************************************************************
@@ -21,26 +21,26 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     -- Parameter Variables
     p_StartDate DATE;
     --
-    v_AD_Client_ID NUMBER;
-    v_AD_Org_ID NUMBER;
+    v_AD_Client_ID VARCHAR2(32);
+    v_AD_Org_ID VARCHAR2(32);
     v_Name VARCHAR2(90) ;
     v_Currency VARCHAR2(10) ;
     v_FrequencyType CHAR(1) ;
     v_DocBasisType CHAR(1) ;
     v_ListDetails CHAR(1) ;
-    v_SalesRep_ID NUMBER(10) ;
+    v_SalesRep_ID VARCHAR2(32) ;
     --
     v_StartDate DATE;
     v_EndDate DATE;
-    v_C_CommissionRun_ID NUMBER(10) ;
-    v_NextNo NUMBER(10) ;
+    v_C_CommissionRun_ID VARCHAR2(32) ;
+    v_NextNo VARCHAR2(32) ;
     v_DocumentNo VARCHAR(40) ;
   BEGIN
     --  Update AD_PInstance
@@ -132,8 +132,8 @@
       VALUES
       (
         v_C_CommissionRun_ID, v_Record_ID, v_AD_Client_ID, v_AD_Org_ID,
-         'Y', now(), 0, now(),
-        0, v_DocumentNo, v_Name, v_StartDate,
+         'Y', now(), '0', now(),
+        '0', v_DocumentNo, v_Name, v_StartDate,
         0, 'N', 'N'
       )
       ;
@@ -151,13 +151,13 @@
       v_rc TYPE_REF;
       --
       v_Cmd VARCHAR2(2000):='';
-      v_C_CommissionAmt_ID NUMBER(10) ;
+      v_C_CommissionAmt_ID VARCHAR2(32) ;
       --
       v_C_Currency_ID C_CommissionDetail.C_Currency_ID%TYPE;
       v_Amt C_CommissionDetail.ActualAmt%TYPE;
       v_Qty C_CommissionDetail.ActualQty%TYPE;
-      v_C_OrderLine_ID NUMBER(10) ;
-      v_C_InvoiceLine_ID NUMBER(10) ;
+      v_C_OrderLine_ID VARCHAR2(32) ;
+      v_C_InvoiceLine_ID VARCHAR2(32) ;
       v_Reference C_CommissionDetail.Reference%TYPE;
       v_Info C_CommissionDetail.Info%TYPE;
       --
@@ -178,8 +178,8 @@
           VALUES
           (
             v_C_CommissionAmt_ID, v_C_CommissionRun_ID, CUR_CLine.C_CommissionLine_ID, v_AD_Client_ID,
-            v_AD_Org_ID, 'Y', now(), 0,
-            now(), 0, 0, 0,
+            v_AD_Org_ID, 'Y', now(), '0',
+            now(), '0', 0, 0,
             0
           )
           ; -- Calculation done by Trigger
@@ -322,8 +322,8 @@
             VALUES
             (
               v_NextNo, v_C_CommissionAmt_ID, v_AD_Client_ID, v_AD_Org_ID,
-               'Y', now(), 0, now(),
-              0, v_C_Currency_ID, v_Amt, 0,
+               'Y', now(), '0', now(),
+              '0', v_C_Currency_ID, v_Amt, 0,
               v_Qty, -- Conversion done by Trigger
               v_C_OrderLine_ID, v_C_InvoiceLine_ID, v_Reference, v_Info
             )

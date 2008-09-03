@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION CHANGEPROJECTSTATUS">
     <function name="CHANGEPROJECTSTATUS" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -23,8 +23,8 @@
   v_resultstr         VARCHAR2 (2000) := '';
   v_message           VARCHAR2 (2000) := '';
   v_result NUMBER:= 1;                      -- 0=failure
-  v_record_id         NUMBER;
-  v_ad_user_id        NUMBER;
+  v_record_id         varchar2(32);
+  v_ad_user_id        varchar2(32);
 
   TYPE RECORD IS REF CURSOR;
 

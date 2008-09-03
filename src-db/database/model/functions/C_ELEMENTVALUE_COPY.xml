@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_ELEMENTVALUE_COPY">
     <function name="C_ELEMENTVALUE_COPY" type="NULL">
-      <parameter name="p_source_element_id" type="NUMERIC" mode="in">
+      <parameter name="p_source_element_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_target_element_id" type="NUMERIC" mode="in">
+      <parameter name="p_target_element_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -32,11 +32,11 @@
   */
   TYPE RECORD IS REF CURSOR;
     Cur_ElementValue RECORD;
-    v_xAD_Client_ID NUMBER;
-    v_xAD_Org_ID NUMBER;
+    v_xAD_Client_ID VARCHAR2(32);
+    v_xAD_Org_ID VARCHAR2(32);
     v_xUpdated DATE;
     v_xUpdatedBy NUMBER;
-    v_NextNo NUMBER;
+    v_NextNo VARCHAR2(32);
   BEGIN
     --  Get target base info
     SELECT AD_Client_ID,

@@ -1,20 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--
-************************
-0. Core Range.
-************************
--->
-<!--
-************************
-0. End of Core Range.
-************************
--->
-<!--
-************************
-1. Custom Range.
-************************
--->
 <!--1000006**************--><MA_COSTCENTER_EMPLOYEE>
 <!--1000006 MA_COSTCENTER_EMPLOYEE_ID-->
 <!--1000006-->              <MA_COSTCENTER_EMPLOYEE_ID><![CDATA[1000006]]></MA_COSTCENTER_EMPLOYEE_ID>
@@ -150,9 +135,4 @@
 <!--1000010-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1000010**************--></MA_COSTCENTER_EMPLOYEE>
 
-<!--
-************************
-1. End of Custom Range.
-************************
--->
 </data>

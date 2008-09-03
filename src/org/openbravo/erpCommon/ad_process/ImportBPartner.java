@@ -220,7 +220,7 @@ public class ImportBPartner extends ImportProcess {
 					try
 					{
 						if (data[i].contactname != null && data[i].contactname != "") {
-							no = ImportBPartnerData.insertBPContact(con, conn, AD_User_ID, C_BPartner_ID, (Integer.valueOf(C_BPartner_Location_ID).intValue() == 0)?"NULL":C_BPartner_Location_ID, I_BPartner_ID);
+							no = ImportBPartnerData.insertBPContact(con, conn, AD_User_ID, C_BPartner_ID, (C_BPartner_Location_ID.equals("0"))?"NULL":C_BPartner_Location_ID, I_BPartner_ID);
 							if (log4j.isDebugEnabled()) log4j.debug("Insert BP Contact = " + no);
 						} else {
 							AD_User_ID = "0";
@@ -236,7 +236,7 @@ public class ImportBPartner extends ImportProcess {
 
 				//	Update I_BPARTNER
 				try {
-					no = ImportBPartnerData.setImported(con, conn, C_BPartner_ID, (Integer.valueOf(C_BPartner_Location_ID).intValue() == 0)?"":C_BPartner_Location_ID, (Integer.valueOf(AD_User_ID).intValue() == 0)?"":AD_User_ID, I_BPartner_ID);
+					no = ImportBPartnerData.setImported(con, conn, C_BPartner_ID, (C_BPartner_Location_ID.equals("0"))?"":C_BPartner_Location_ID, (AD_User_ID.equals("0"))?"":AD_User_ID, I_BPartner_ID);
 					conn.releaseCommitConnection(con);
 				} catch (ServletException ex) {
 					if (log4j.isDebugEnabled()) log4j.debug("Update Imported - " + ex.toString());
@@ -255,6 +255,9 @@ public class ImportBPartner extends ImportProcess {
 			myError.setType("Error");
 			myError.setTitle(Utility.messageBD(conn, "Error", vars.getLanguage()));
 			myError.setMessage(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
+			try {
+				conn.releaseCommitConnection(con);
+			} catch(Exception e){}
 			return myError;
 		}
     addLog(Utility.messageBD(conn, "Business partners not imported", vars.getLanguage()) + ": " + noBPartnerError + "; ");

@@ -30,11 +30,11 @@
         SELECT C_PERIOD_ID AS ID, NAME, '' AS TOTALAMTDR, '' AS TOTALAMTCR, '' AS ACCOUNT_ID, '' as org, '' as acctvalue, '' as acctdescription, '' as value,
         '' as c_bpartner_id, '' as record_id2, '' as m_product_id, '' as a_asset_id
         FROM C_PERIOD
-        WHERE C_YEAR_ID = TO_NUMBER(?)
+        WHERE C_YEAR_ID = ?
         AND PERIODNO>=(
                 SELECT MIN(PERIODNO)
                 FROM C_PERIOD
-                WHERE C_YEAR_ID = TO_NUMBER(?)
+                WHERE C_YEAR_ID = ?
                 AND REG_FACT_ACCT_GROUP_ID IS NULL)
         ORDER BY PERIODNO
       ]]>
@@ -50,16 +50,16 @@
         (CASE SIGN(SUM(AMTACCTCR)-SUM(AMTACCTDR)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTCR)-SUM(AMTACCTDR)) END) AS TOTALAMTDR, ACCOUNT_ID, ACCTDESCRIPTION, ACCTVALUE,
         RECORD_ID2, C_BPARTNER_ID, M_PRODUCT_ID, A_ASSET_ID
         FROM FACT_ACCT
-        WHERE C_PERIOD_ID BETWEEN (SELECT C_PERIOD_ID FROM  C_PERIOD WHERE C_YEAR_ID = TO_NUMBER(?) AND PERIODNO = (SELECT MIN(PERIODNO)
+        WHERE C_PERIOD_ID BETWEEN (SELECT C_PERIOD_ID FROM  C_PERIOD WHERE C_YEAR_ID = ? AND PERIODNO = (SELECT MIN(PERIODNO)
                 FROM C_PERIOD
-                WHERE C_YEAR_ID = TO_NUMBER(?)
-                AND REG_FACT_ACCT_GROUP_ID IS NULL)) AND TO_NUMBER(?)
+                WHERE C_YEAR_ID = ?
+                AND REG_FACT_ACCT_GROUP_ID IS NULL)) AND ?
         AND ACCOUNT_ID IN (SELECT ACCOUNT_ID 
                 FROM C_ELEMENTVALUE, C_VALIDCOMBINATION
                 WHERE C_VALIDCOMBINATION.ACCOUNT_ID = C_ELEMENTVALUE.C_ELEMENTVALUE_ID
                 AND C_ELEMENTVALUE.ACCOUNTTYPE = ?)
-        AND AD_ORG_ID = TO_NUMBER(?)
-        AND C_ACCTSCHEMA_ID = TO_NUMBER(?)
+        AND AD_ORG_ID = ?
+        AND C_ACCTSCHEMA_ID = ?
         GROUP BY ACCOUNT_ID, ACCTDESCRIPTION, ACCTVALUE, RECORD_ID2, C_BPARTNER_ID, M_PRODUCT_ID, A_ASSET_ID
       ]]>
     </Sql>
@@ -78,16 +78,16 @@
         (CASE sign(SUM(AMTACCTCR)-sum(amtacctdr)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTCR)-sum(amtacctdr)) END) AS TOTALAMTDR, ACCOUNT_ID, 
         ACCTDESCRIPTION, ACCTVALUE, RECORD_ID2, C_BPARTNER_ID, M_PRODUCT_ID, A_ASSET_ID
         FROM FACT_ACCT
-        WHERE C_PERIOD_ID BETWEEN (SELECT C_PERIOD_ID FROM  C_PERIOD WHERE C_YEAR_ID = TO_NUMBER(?) AND PERIODNO = (SELECT MIN(PERIODNO)
+        WHERE C_PERIOD_ID BETWEEN (SELECT C_PERIOD_ID FROM  C_PERIOD WHERE C_YEAR_ID = ? AND PERIODNO = (SELECT MIN(PERIODNO)
                 FROM C_PERIOD
-                WHERE C_YEAR_ID = TO_NUMBER(?)
-                AND CLOSE_FACT_ACCT_GROUP_ID IS NULL)) AND TO_NUMBER(?)
+                WHERE C_YEAR_ID = ?
+                AND CLOSE_FACT_ACCT_GROUP_ID IS NULL)) AND ?
         AND ACCOUNT_ID IN (SELECT ACCOUNT_ID 
                 FROM C_ELEMENTVALUE, C_VALIDCOMBINATION
                 WHERE C_VALIDCOMBINATION.ACCOUNT_ID = C_ELEMENTVALUE.C_ELEMENTVALUE_ID
                 AND C_ELEMENTVALUE.ACCOUNTTYPE IN ('1'))
-        AND AD_ORG_ID = TO_NUMBER(?)
-        AND C_ACCTSCHEMA_ID = TO_NUMBER(?)
+        AND AD_ORG_ID = ?
+        AND C_ACCTSCHEMA_ID = ?
         GROUP BY ACCOUNT_ID, ACCTDESCRIPTION, ACCTVALUE, RECORD_ID2, C_BPARTNER_ID, M_PRODUCT_ID, A_ASSET_ID
       ]]>
     </Sql>
@@ -102,13 +102,26 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        INSERT INTO FACT_ACCT (FACT_ACCT_ID, AD_CLIENT_ID, AD_ORG_ID,ISACTIVE, CREATED, CREATEDBY, 
-        UPDATED, UPDATEDBY, C_ACCTSCHEMA_ID,ACCOUNT_ID, DATETRX, DATEACCT,C_PERIOD_ID, AD_TABLE_ID, RECORD_ID, 
-        POSTINGTYPE,C_CURRENCY_ID, AMTSOURCEDR, AMTSOURCECR,AMTACCTDR, AMTACCTCR, 
-        FACT_ACCT_GROUP_ID,SEQNO, FACTACCTTYPE, ACCTDESCRIPTION, ACCTVALUE, C_BPARTNER_ID, RECORD_ID2, M_PRODUCT_ID, A_ASSET_ID) 
-        VALUES ( TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),'Y',now(),TO_NUMBER(?),now(),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),
-        TO_DATE(?),TO_DATE(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),?,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),
-        TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?), 'R', ?, ?, TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?))
+        INSERT INTO FACT_ACCT 
+          (FACT_ACCT_ID, AD_CLIENT_ID, AD_ORG_ID,
+           ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, 
+           C_ACCTSCHEMA_ID,ACCOUNT_ID, DATETRX, DATEACCT,
+           C_PERIOD_ID, AD_TABLE_ID, RECORD_ID, 
+           POSTINGTYPE,C_CURRENCY_ID, AMTSOURCEDR, 
+           AMTSOURCECR,AMTACCTDR, AMTACCTCR, 
+           FACT_ACCT_GROUP_ID,SEQNO, FACTACCTTYPE, 
+           ACCTDESCRIPTION, ACCTVALUE, C_BPARTNER_ID, 
+           RECORD_ID2, M_PRODUCT_ID, A_ASSET_ID) 
+        VALUES 
+          ( ?,?,?,
+           'Y',now(),?,now(),?,
+           ?,?,TO_DATE(?),TO_DATE(?),
+           ?,?,?,
+           ?,?,TO_NUMBER(?),
+           TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),
+           ?,TO_NUMBER(?), 'R', 
+           ?, ?, ?, 
+           ?, ?, ?)
       ]]>
     </Sql>
     <Parameter name="fact_acct_id"/>
@@ -142,7 +155,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT ENDDATE FROM C_PERIOD WHERE C_PERIOD_ID = TO_NUMBER(?)
+        SELECT ENDDATE FROM C_PERIOD WHERE C_PERIOD_ID = ?
       ]]>
     </Sql>
     <Parameter name="cPeriodId"/>
@@ -159,7 +172,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT C_CURRENCY_ID FROM C_ACCTSCHEMA WHERE C_ACCTSCHEMA_ID = TO_NUMBER(?)
+        SELECT C_CURRENCY_ID FROM C_ACCTSCHEMA WHERE C_ACCTSCHEMA_ID = ?
       ]]>
     </Sql>
     <Parameter name="cAcctschemaId"/>
@@ -172,7 +185,7 @@
       FROM C_ACCTSCHEMA_GL, C_VALIDCOMBINATION, C_ELEMENTVALUE
       WHERE C_ACCTSCHEMA_GL.INCOMESUMMARY_ACCT = C_VALIDCOMBINATION.C_VALIDCOMBINATION_ID
       AND C_VALIDCOMBINATION.ACCOUNT_ID = C_ELEMENTVALUE.C_ELEMENTVALUE_ID
-      AND C_ACCTSCHEMA_GL.C_ACCTSCHEMA_ID = TO_NUMBER(?)
+      AND C_ACCTSCHEMA_GL.C_ACCTSCHEMA_ID = ?
       ]]>
     </Sql>
     <Parameter name="cAcctschemaId"/>
@@ -185,7 +198,7 @@
       FROM C_ACCTSCHEMA_GL, C_VALIDCOMBINATION, C_ELEMENTVALUE
       WHERE C_ACCTSCHEMA_GL.RETAINEDEARNING_ACCT = C_VALIDCOMBINATION.C_VALIDCOMBINATION_ID
       AND C_VALIDCOMBINATION.ACCOUNT_ID = C_ELEMENTVALUE.C_ELEMENTVALUE_ID
-      AND C_ACCTSCHEMA_GL.C_ACCTSCHEMA_ID = TO_NUMBER(?)
+      AND C_ACCTSCHEMA_GL.C_ACCTSCHEMA_ID = ?
       ]]>
     </Sql>
     <Parameter name="cAcctschemaId"/>
@@ -194,11 +207,11 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE C_PERIOD SET REG_FACT_ACCT_GROUP_ID = TO_NUMBER(?), UPDATED = now(), UPDATEDBY = TO_NUMBER(?)
+        UPDATE C_PERIOD SET REG_FACT_ACCT_GROUP_ID = ?, UPDATED = now(), UPDATEDBY = ?
         WHERE C_PERIOD_ID IN (SELECT C_PERIOD_ID 
                          FROM C_PERIOD 
-                         WHERE C_YEAR_ID = TO_NUMBER(?)    
-                         AND PERIODNO <= (SELECT PERIODNO FROM C_PERIOD WHERE C_PERIOD_ID = TO_NUMBER(?))
+                         WHERE C_YEAR_ID = ?    
+                         AND PERIODNO <= (SELECT PERIODNO FROM C_PERIOD WHERE C_PERIOD_ID = ?)
                          AND REG_FACT_ACCT_GROUP_ID IS NULL)
       ]]>
     </Sql>
@@ -213,7 +226,7 @@
       <![CDATA[
         SELECT C_PERIOD_ID
         FROM C_PERIOD 
-        WHERE STARTDATE = (SELECT ENDDATE + 1 FROM C_PERIOD WHERE C_PERIOD_ID = TO_NUMBER(?))
+        WHERE STARTDATE = (SELECT ENDDATE + 1 FROM C_PERIOD WHERE C_PERIOD_ID = ?)
       ]]>
     </Sql>
     <Parameter name="cPeriodId"/>
@@ -222,13 +235,26 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        INSERT INTO FACT_ACCT (FACT_ACCT_ID, AD_CLIENT_ID, AD_ORG_ID,ISACTIVE, CREATED, CREATEDBY, 
-        UPDATED, UPDATEDBY, C_ACCTSCHEMA_ID,ACCOUNT_ID, DATETRX, DATEACCT,C_PERIOD_ID, AD_TABLE_ID, RECORD_ID, 
-        POSTINGTYPE,C_CURRENCY_ID, AMTSOURCEDR, AMTSOURCECR,AMTACCTDR, AMTACCTCR, 
-        FACT_ACCT_GROUP_ID,SEQNO, FACTACCTTYPE, ACCTDESCRIPTION, ACCTVALUE, C_BPARTNER_ID, RECORD_ID2, M_PRODUCT_ID, A_ASSET_ID) 
-        VALUES (TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),'Y',now(),TO_NUMBER(?),now(),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),
-        TO_DATE(?),TO_DATE(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),?,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),
-        TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),?,?,?,TO_NUMBER(?),TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?))
+        INSERT INTO FACT_ACCT 
+          (FACT_ACCT_ID, AD_CLIENT_ID, AD_ORG_ID,
+           ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, 
+           C_ACCTSCHEMA_ID,ACCOUNT_ID, DATETRX, DATEACCT,
+           C_PERIOD_ID, AD_TABLE_ID, RECORD_ID, 
+        POSTINGTYPE,C_CURRENCY_ID, AMTSOURCEDR, 
+        AMTSOURCECR,AMTACCTDR, AMTACCTCR, 
+        FACT_ACCT_GROUP_ID,SEQNO, FACTACCTTYPE, 
+        ACCTDESCRIPTION, ACCTVALUE, C_BPARTNER_ID, 
+        RECORD_ID2, M_PRODUCT_ID, A_ASSET_ID) 
+        VALUES 
+          (?,?,?,
+           'Y',now(),?,now(),?,
+           ?,?,TO_DATE(?),TO_DATE(?),
+           ?,?,?,
+           ?,?,TO_NUMBER(?),
+           TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),
+           ?,TO_NUMBER(?),?,
+           ?,?,?,
+           ?, ?, ?)
       ]]>
     </Sql>
     <Parameter name="fact_acct_id"/>
@@ -263,7 +289,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT STARTDATE FROM C_PERIOD WHERE C_PERIOD_ID = TO_NUMBER(?)
+        SELECT STARTDATE FROM C_PERIOD WHERE C_PERIOD_ID = ?
       ]]>
     </Sql>
     <Parameter name="cPeriodId"/>
@@ -272,11 +298,11 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE C_PERIOD SET CLOSE_FACT_ACCT_GROUP_ID = TO_NUMBER(?), DIVIDEUP_FACT_ACCT_GROUP_ID = TO_NUMBER(?), UPDATED = now(), UPDATEDBY = TO_NUMBER(?)
+        UPDATE C_PERIOD SET CLOSE_FACT_ACCT_GROUP_ID = ?, DIVIDEUP_FACT_ACCT_GROUP_ID = ?, UPDATED = now(), UPDATEDBY = ?
         WHERE C_PERIOD_ID IN (SELECT C_PERIOD_ID 
                          FROM C_PERIOD 
-                         WHERE C_YEAR_ID = TO_NUMBER(?)
-                         AND PERIODNO <= (SELECT PERIODNO FROM C_PERIOD WHERE C_PERIOD_ID = TO_NUMBER(?))
+                         WHERE C_YEAR_ID = ?
+                         AND PERIODNO <= (SELECT PERIODNO FROM C_PERIOD WHERE C_PERIOD_ID = ?)
                          AND CLOSE_FACT_ACCT_GROUP_ID IS NULL)
       ]]>
     </Sql>
@@ -291,11 +317,11 @@
     <Sql>
       <![CDATA[
         UPDATE C_PeriodControl
-        SET PeriodStatus = 'C', UPDATED = now(), UPDATEDBY = TO_NUMBER(?)
+        SET PeriodStatus = 'C', UPDATED = now(), UPDATEDBY = ?
         WHERE PeriodStatus <> 'P'
         AND C_PERIOD_ID IN (SELECT C_PERIOD_ID 
                 FROM C_PERIOD 
-                WHERE CLOSE_FACT_ACCT_GROUP_ID = TO_NUMBER(?))
+                WHERE CLOSE_FACT_ACCT_GROUP_ID = ?)
       ]]>
     </Sql>
     <Parameter name="user"/>
@@ -310,7 +336,7 @@
         AND A_R_O.ISACTIVE = 'Y' 
         AND A_R_O.AD_ROLE_ID = R.AD_ROLE_ID 
         AND R.ISACTIVE = 'Y' 
-        AND A_R_O.AD_ROLE_ID = TO_NUMBER(?) 
+        AND A_R_O.AD_ROLE_ID = ? 
         ORDER BY A_O.NAME
       ]]></Sql>
         <Parameter name="rol"/>
@@ -320,8 +346,8 @@
       <Sql><![CDATA[
         SELECT AD_ORG_id as org
         FROM AD_ORG
-        WHERE AD_CLIENT_ID = TO_NUMBER(?)
-        AND AD_ISORGINCLUDED(AD_ORG_ID,to_number(?),AD_CLIENT_ID) <> -1
+        WHERE AD_CLIENT_ID = ?
+        AND AD_ISORGINCLUDED(AD_ORG_ID, ?,AD_CLIENT_ID) <> -1
       ]]></Sql>
         <Parameter name="clientId"/>
         <Parameter name="orgId"/>
@@ -331,7 +357,7 @@
       <Sql><![CDATA[
         SELECT C_ACCTSCHEMA_id as id
         FROM C_ACCTSCHEMA
-        WHERE AD_CLIENT_ID = TO_NUMBER(?)
+        WHERE AD_CLIENT_ID = ?
       ]]></Sql>
         <Parameter name="clientId"/>
    </SqlMethod>
@@ -339,7 +365,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
         SELECT AD_TREE_ORG_ID FROM AD_CLIENTINFO
-        WHERE AD_CLIENT_ID = TO_NUMBER(?)
+        WHERE AD_CLIENT_ID = ?
     </Sql>
     <Parameter name="client"/>
   </SqlMethod>

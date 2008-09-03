@@ -38,28 +38,28 @@
 
 
 <link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico"></link> 
-<script language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "http://yourSite/web/";</script>
-<script language="JavaScript" type="text/javascript" id="paramLanguage">  LNG_POR_DEFECTO = "en_US";</script>
+<script language="JavaScript" type="text/javascript" id="paramDirectory">var baseDirectory = "http://yourSite/web/";</script>
+<script language="JavaScript" type="text/javascript" id="paramLanguage">  defaultLang = "en_US";</script>
 
 <script language="JavaScript" type="text/javascript">
-  function depurar() {
+  function validate() {
     var frm = document.frmSelector;
     if ((frm.inpKey.value==null || frm.inpKey.value=="") && (frm.inpName.value==null || frm.inpName.value=="") && (frm.inpContact.value==null || frm.inpContact.value=="") && (frm.inpZIP.value==null || frm.inpZIP.value=="") && (frm.inpPhone.value==null || frm.inpPhone.value=="") && !frm.inpClients.checked) {
       setWindowElementFocus(frm.inpKey);
-      mensaje(7);
+      showJSMessage(7);
       return false;
     }
     return true;
   }
 </script>
 <script type="text/javascript">    
-  function depurarSelector(action) {
-  	var pos; var keys;  var clave; var texto; var parameter;
+  function validateSelector(action) {
+  	var pos; var keys;  var key; var text; var parameter;
   	if(action == "SAVE") {
 	    pos = getSelectedPos();
 	    keys = getSelectedValues().split("#")
-	    clave = keys[0];
-	    texto = keys[1];
+	    key = keys[0];
+	    text = keys[1];
 	    parameter = new Array(
 		    new SearchElements("_LOC", true, keys[2]),
         new SearchElements("_ATR", true, keys[3]),
@@ -69,7 +69,7 @@
         new SearchElements("_UOM", true, keys[7])
 		);
     }    
-  	parent.opener.closeSearch(action, clave, texto, parameter);
+  	parent.opener.closeSearch(action, key, text, parameter);
   }
 </script>
 <script language="JavaScript" type="text/javascript" id="selectedColumn">
@@ -136,7 +136,7 @@ function onloadFunctions() {
           <tr class="Popup_NavBar_bg"><td></td>
             <td class="Popup_NavBar_separator_cell"></td>
             <td class="Popup_NavBar_bg_logo_left"></td>
-            <td class="Popup_NavBar_bg_logo" width="1" onclick="abrirNuevoBrowser('http://www.openbravo.com', 'Openbravo');return false;"><img src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
+            <td class="Popup_NavBar_bg_logo" width="1" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;"><img src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
             <td class="Popup_NavBar_bg_logo_right"></td>
             <td class="Popup_NavBar_Popup_title_cell"><span>Product Complete</span></td>
             <td class="Popup_NavBar_separator_cell"></td>
@@ -318,7 +318,7 @@ function onloadFunctions() {
                     onblur="window.status=''; return true;"
                     onkeypress="this.className='ButtonLink_active'; return true;"
                     onkeyup="this.className='ButtonLink_focus'; return true;"
-                    onclick="depurarSelector('SAVE');return false;"
+                    onclick="validateSelector('SAVE');return false;"
                     id="buttonOK">
                     <table class="Button"
                       onmousedown="this.className='Button_active'; return true;"
@@ -341,7 +341,7 @@ function onloadFunctions() {
                     onblur="window.status=''; return true;"
                     onkeypress="this.className='ButtonLink_active'; return true;"
                     onkeyup="this.className='ButtonLink_focus'; return true;"
-                    onclick="depurarSelector('CLEAR');return false;">
+                    onclick="validateSelector('CLEAR');return false;">
                     <table class="Button"
                       onmousedown="this.className='Button_active'; return true;"
                       onmouseup="this.className='Button'; return true;"

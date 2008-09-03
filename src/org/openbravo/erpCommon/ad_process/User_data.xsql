@@ -28,7 +28,7 @@
       <![CDATA[
         SELECT AD_User_ID, AD_Client_ID, AD_Org_ID, C_BPartner_ID, Name, Email, Phone
 			  FROM AD_User
-			  WHERE AD_Client_ID = TO_NUMBER(?)
+			  WHERE AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -40,7 +40,7 @@
       <![CDATA[
 			  INSERT INTO AD_User (AD_User_ID, AD_Client_ID, AD_Org_ID, isActive, Created, CreatedBy, Updated, UpdatedBy,
 				C_BPartner_ID, Name, Email, Phone)
-					VALUES (TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', TO_DATE(now()), TO_NUMBER(?), TO_DATE(now()), TO_NUMBER(?), TO_NUMBER(?), ?, ?, ?)
+					VALUES (?, ?, ?, 'Y', TO_DATE(now()), ?, TO_DATE(now()), ?, ?, ?, ?, ?)
       ]]>
     </Sql>
     <Parameter name="adUserId"/>

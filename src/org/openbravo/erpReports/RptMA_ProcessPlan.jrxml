@@ -164,8 +164,8 @@
 	<field name="COMPONENTCOST" class="java.math.BigDecimal"/>
 	<field name="DECREASE" class="java.math.BigDecimal"/>
 	<field name="REJECTED" class="java.math.BigDecimal"/>
-	<field name="MA_PROCESSPLAN_ID" class="java.math.BigDecimal"/>
-	<field name="MA_SEQUENCE_ID" class="java.math.BigDecimal"/>
+	<field name="MA_PROCESSPLAN_ID" class="java.lang.String"/>
+	<field name="MA_SEQUENCE_ID" class="java.lang.String"/>
 	<field name="EXPLODEPHASES" class="java.lang.String"/>
 
 

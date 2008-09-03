@@ -32,7 +32,7 @@
       '' as RetainedEarning_Acct, '' as IncomeSummary_Acct, '' as InterCompanyDueTo_Acct, '' as InterCompanyDueFrom_Acct,
       '' as C_AcctSchema1_ID, '' as Acct2_Active, '' as C_AcctSchema2_ID,'' as Acct3_Active, '' as C_AcctSchema3_ID
       FROM C_AcctSchema 
-      WHERE C_AcctSchema_ID = TO_NUMBER(?)
+      WHERE C_AcctSchema_ID=?
       </Sql>
     <Parameter name="C_AcctSchema_ID"/>
    </SqlMethod>
@@ -42,7 +42,7 @@
       SELECT UseSuspenseBalancing,SuspenseBalancing_Acct, UseSuspenseError,SuspenseError_Acct, UseCurrencyBalancing,
       CurrencyBalancing_Acct, RetainedEarning_Acct,IncomeSummary_Acct, InterCompanyDueTo_Acct,InterCompanyDueFrom_Acct 
       FROM C_AcctSchema_GL 
-      WHERE C_AcctSchema_ID = TO_NUMBER(?)
+      WHERE C_AcctSchema_ID=?
       </Sql>
     <Parameter name="C_AcctSchema_ID"/>
    </SqlMethod>
@@ -51,7 +51,7 @@
       <Sql>
 	SELECT C_AcctSchema1_ID, Acct2_Active,C_AcctSchema2_ID, Acct3_Active,C_AcctSchema3_ID 
 	FROM AD_ClientInfo 
-	WHERE AD_Client_ID = TO_NUMBER(?)
+	WHERE AD_Client_ID=?
       </Sql>
     <Parameter name="AD_Client_ID"/>
    </SqlMethod>
@@ -60,8 +60,8 @@
     <Sql>
       <![CDATA[
         SELECT count(C_ACCTSCHEMA_TABLE_ID) AS TOTAL FROM C_ACCTSCHEMA_TABLE
-        WHERE C_ACCTSCHEMA_ID = TO_NUMBER(?)
-        AND AD_TABLE_ID = TO_NUMBER(?)
+        WHERE C_ACCTSCHEMA_ID = ?
+        AND AD_TABLE_ID = ?
         AND ISACTIVE = 'Y'
      ]]>
      </Sql>

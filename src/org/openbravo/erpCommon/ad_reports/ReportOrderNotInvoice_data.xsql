@@ -46,7 +46,7 @@
       AND C_ORDERLINE.C_UOM_ID = C_UOM.C_UOM_ID
       AND C_ORDER.AD_ORG_ID = AD_ORG.AD_ORG_ID
       AND C_ORDER.C_CURRENCY_ID = C_CURRENCY.C_CURRENCY_ID
-      AND AD_REF_LIST.AD_REFERENCE_ID = 150
+      AND AD_REF_LIST.AD_REFERENCE_ID = '150'
       AND C_ORDER.PROCESSED = 'Y'
       AND C_ORDER.ISSOTRX = 'Y'
       AND C_ORDERLINE.QTYORDERED<>C_ORDERLINE.QTYINVOICED
@@ -66,7 +66,7 @@
       AND C.C_BPARTNER_ID=C_BPARTNER.C_BPARTNER_ID
       AND C.C_CURRENCY_ID = C_CURRENCY.C_CURRENCY_ID
       AND C.INVOICERULE = AD_REF_LIST.VALUE
-      AND AD_REF_LIST.AD_REFERENCE_ID = 150
+      AND AD_REF_LIST.AD_REFERENCE_ID = '150'
       AND C_ORDERTAX.C_TAX_ID = C_TAX.C_TAX_ID
       AND C.AD_ORG_ID = AD_ORG.AD_ORG_ID
       AND C.PROCESSED = 'Y'
@@ -84,16 +84,16 @@
     <Parameter name="adLanguage"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="C_ORDER.AD_Client_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="C_ORDER.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="cBpartnerId" optional="true" after="1=1">AND C_ORDER.C_BPARTNER_ID = TO_NUMBER(?)</Parameter>
-    <Parameter name="cOrgId" optional="true" after="1=1">AND C_ORDER.AD_ORG_ID = TO_NUMBER(?)</Parameter>
+    <Parameter name="cBpartnerId" optional="true" after="1=1">AND C_ORDER.C_BPARTNER_ID = ?</Parameter>
+    <Parameter name="cOrgId" optional="true" after="1=1">AND C_ORDER.AD_ORG_ID = ?</Parameter>
     <Parameter name="invoiceRule" optional="true" after="1=1">AND C_ORDER.INVOICERULE = ?</Parameter>
     <Parameter name="dateFrom" optional="true" after="1=1"><![CDATA[ AND C_ORDER.DATEORDERED >= to_date(?) ]]></Parameter>
     <Parameter name="dateTo" optional="true" after="1=1"><![CDATA[ AND C_ORDER.DATEORDERED < to_date(?) ]]></Parameter>
     <Parameter name="adLanguage"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="C.AD_Client_ID IN (" text="'2'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="C.AD_ORG_ID IN (" text="'2'"/>
-    <Parameter name="cBpartnerId" optional="true" after="2=2">AND C.C_BPARTNER_ID = TO_NUMBER(?)</Parameter>
-    <Parameter name="cOrgId" optional="true" after="2=2">AND C.AD_ORG_ID = TO_NUMBER(?)</Parameter>
+    <Parameter name="cBpartnerId" optional="true" after="2=2">AND C.C_BPARTNER_ID = ?</Parameter>
+    <Parameter name="cOrgId" optional="true" after="2=2">AND C.AD_ORG_ID = ?</Parameter>
     <Parameter name="invoiceRule" optional="true" after="2=2">AND C.INVOICERULE = ?</Parameter>
     <Parameter name="dateFrom" optional="true" after="2=2"><![CDATA[ AND C.DATEORDERED >= to_date(?) ]]></Parameter>
     <Parameter name="dateTo" optional="true" after="2=2"><![CDATA[ AND C.DATEORDERED < to_date(?) ]]></Parameter>
@@ -106,7 +106,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     SELECT max(NAME) as name FROM C_BPARTNER 
-    WHERE C_BPARTNER_ID = TO_NUMBER(?)
+    WHERE C_BPARTNER_ID = ?
     </Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>

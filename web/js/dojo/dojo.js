@@ -12216,7 +12216,12 @@ return obtenerMensaje(_b08);
 };
 openbravo.messages.getMessage=function(_b0a,_b0b){
 if(_b0b==null){
+if (typeof defaultLang != "undefined") {
+_b0b=defaultLang;
+// Deprecated in 2.50, only for compatibility
+} else {
 _b0b=LNG_POR_DEFECTO;
+}
 }
 if(typeof arrMessages!="undefined"){
 var _b0c=arrMessages.length;

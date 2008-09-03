@@ -72,9 +72,9 @@ public class CreateFile extends HttpSecureAppServlet {
       XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFile", discard).createXmlDocument();
       xmlDocument.setParameter("key", strKey);
       xmlDocument.setParameter("window", windowId);
-      xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
       xmlDocument.setData("reportTyperemittance","liststructure", TyperemittanceComboData.select(this, Utility.getContext(this, vars, "#User_Client", "CreateFile"), Utility.getContext(this, vars, "#User_Org", "CreateFile")));
-      xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\r\n");
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
       xmlDocument.setParameter("theme", vars.getTheme());
       xmlDocument.setParameter("description", strDescription);
       xmlDocument.setParameter("help", strHelp);

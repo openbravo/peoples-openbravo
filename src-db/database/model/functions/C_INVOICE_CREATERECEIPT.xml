@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_INVOICE_CREATERECEIPT">
     <function name="C_INVOICE_CREATERECEIPT" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -32,15 +32,15 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     -- Parameter Variables
-    v_M_Locator_ID NUMBER;
+    v_M_Locator_ID VARCHAR2(32);
     --
     v_DocStatus CHAR(2) ;
-    v_InOut_ID NUMBER;
+    v_InOut_ID VARCHAR2(32);
     FINISH_PROCESS BOOLEAN:=false;
   BEGIN
     --  Update AD_PInstance
@@ -64,7 +64,7 @@
       )
     LOOP
       IF(Cur_Parameter.ParameterName='M_Locator_ID') THEN
-        v_M_Locator_ID:=Cur_Parameter.P_Number;
+        v_M_Locator_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  M_Locator_ID=' || v_M_Locator_ID) ;
       END IF;
       v_Record_ID:=Cur_Parameter.Record_ID;
@@ -105,7 +105,7 @@
       v_ResultStr:='Create Shipment';
       M_InOut_Create(NULL, v_InOut_ID, NULL, v_Record_ID, 'Y', v_M_Locator_ID) ;
       DBMS_OUTPUT.PUT_LINE('  Shipment - ' || v_InOut_ID) ;
-      IF(v_InOut_ID=0) THEN
+      IF(v_InOut_ID='0') THEN
         RAISE_APPLICATION_ERROR(-20000, '@InOutCreateFailed@');
       END IF;
     END IF; --FINISH_PROCESS

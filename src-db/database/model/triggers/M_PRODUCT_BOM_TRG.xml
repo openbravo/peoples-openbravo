@@ -31,7 +31,7 @@
   WHERE M_Product_ID=:new.M_Product_ID
     AND IsVerified='Y';
   ELSIF(UPDATING) THEN
-  IF(COALESCE(:NEW.M_ProductBOM_ID, 0) <> COALESCE(:old.M_ProductBOM_ID, 0)) THEN
+  IF(COALESCE(:NEW.M_ProductBOM_ID, '0') <> COALESCE(:old.M_ProductBOM_ID, '0')) THEN
     UPDATE M_Product
       SET IsVerified='N'
     WHERE M_Product_ID=:new.M_Product_ID

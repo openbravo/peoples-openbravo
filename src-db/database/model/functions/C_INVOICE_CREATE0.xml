@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_INVOICE_CREATE0">
     <function name="C_INVOICE_CREATE0" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -29,7 +29,7 @@
   * Title: Create Invoice
   * Description:
   ************************************************************************/
-  v_Dummy NUMBER;
+  v_Dummy varchar2(32);
 BEGIN
   C_Invoice_Create(p_PInstance_ID, v_Dummy, NULL) ;
 END C_INVOICE_CREATE0

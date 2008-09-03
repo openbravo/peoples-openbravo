@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MA_MAINT_ALL">
     <function name="MA_MAINT_ALL" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -23,11 +23,11 @@
   --  Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
   v_Result NUMBER:=1; --  Success
-  v_AD_User_ID NUMBER;
-  v_Client_ID NUMBER;
-  v_Org_ID NUMBER;
+  v_AD_User_ID VARCHAR2(32);
+  v_Client_ID VARCHAR2(32);
+  v_Org_ID VARCHAR2(32);
   v_InitDate DATE;
   v_EndDate DATE;
   --  Parameter

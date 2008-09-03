@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_DELETE_CLIENT">
     <function name="AD_DELETE_CLIENT" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_ad_client_id" type="NUMERIC" mode="in">
+      <parameter name="p_ad_client_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -36,7 +36,7 @@
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     -- Parameter Variables
-    v_AD_Client_ID NUMBER(10) ;
+    v_AD_Client_ID VARCHAR2(32) ;
     p_NewClientValue VARCHAR2(80) ;
     --
     Cur_Triggers RECORD;
@@ -46,12 +46,12 @@
     Cur_Script RECORD;
     --
     v_seqNo NUMBER:=0;
-    v_NextNo NUMBER(10):=1000000;
+    v_NextNo VARCHAR2(32):='1000000';
     v_count NUMBER:=0;
     v_ID_Column VARCHAR2(30) ;
-    v_minID NUMBER(10) ;
-    v_maxID NUMBER(10) ;
-    v_nextID NUMBER(10) ;
+    v_minID varchar2(32) ;
+    v_maxID varchar2(32) ;
+    v_nextID varchar2(32) ;
     v_strTemp VARCHAR2(4000):='';
     v_strSql VARCHAR2(4000):='';
     v_tableActual VARCHAR2(30) ;
@@ -74,7 +74,7 @@
         )
       LOOP
         IF(Cur_Parameter.ParameterName='AD_Client_ID') THEN
-          v_AD_Client_ID:=Cur_Parameter.P_Number;
+          v_AD_Client_ID:=Cur_Parameter.P_String;
           DBMS_OUTPUT.PUT_LINE('  AD_Client_ID=' || v_AD_Client_ID) ;
         ELSE
           DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
@@ -86,7 +86,7 @@
       --GOTO END_PROCESS;
     END IF;
   BEGIN --BODY
-    IF (v_AD_Client_ID = 0) THEN
+    IF (v_AD_Client_ID = '0') THEN
       RAISE_APPLICATION_ERROR(-20000, '@DeletingSystemClient@') ;
     END IF;
 
@@ -95,7 +95,7 @@
     v_seqNo := ad_script_disable_triggers(v_seqNo);
     v_ResultStr:='Disabling constraints';
     v_seqNo := ad_script_disable_constraints(v_seqNo);
-    AD_Sequence_Next('AD_Client', 1000000, v_NextNo) ;
+    AD_Sequence_Next('AD_Client', '1000000', v_NextNo) ;
     FOR Cur_Tables IN
       (SELECT AD_Table_ID, UPPER(TableName) AS NAME
     FROM AD_Table
@@ -109,12 +109,12 @@
       v_seqNo:=v_seqNo + 1;
       INSERT
       INTO AD_SCRIPT_SQL VALUES
-        (v_seqNo, 'DELETE FROM '||Cur_Tables.NAME||' WHERE AD_Client_ID = '||v_AD_Client_ID) ;
+        (v_seqNo, 'DELETE FROM '||Cur_Tables.NAME||' WHERE AD_Client_ID = '''||v_AD_Client_ID||'''');
     END LOOP;
     v_seqNo:=v_seqNo + 1;
     INSERT
     INTO AD_SCRIPT_SQL VALUES
-      (v_seqNo, 'DELETE FROM AD_Client WHERE AD_Client_ID = '||v_AD_Client_ID) ;
+      (v_seqNo, 'DELETE FROM AD_Client WHERE AD_Client_ID = '''||v_AD_Client_ID||'''') ;
 -- Deal with users that have defaults set to the deleted client
  v_seqNo := v_seqNo + 1;
  INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo, 'UPDATE AD_USER SET DEFAULT_AD_CLIENT_ID=null where DEFAULT_AD_CLIENT_ID NOT IN (SELECT AD_Client_ID from AD_Client)');
@@ -126,7 +126,7 @@
  INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo, 'UPDATE AD_USER SET DEFAULT_M_WAREHOUSE_ID=null where DEFAULT_M_WAREHOUSE_ID NOT IN (SELECT M_Warehouse_ID from M_Warehouse)');
  -- make sure Openbravo user can logon
  v_seqNo := v_seqNo + 1;
- INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo, 'UPDATE AD_USER SET DEFAULT_AD_CLIENT_ID=0, DEFAULT_AD_ORG_ID=0, DEFAULT_AD_ROLE_ID=0 where AD_USER_ID=100 AND DEFAULT_AD_CLIENT_ID is null and DEFAULT_AD_ORG_ID is null and DEFAULT_AD_ROLE_ID is null');
+ INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo, 'UPDATE AD_USER SET DEFAULT_AD_CLIENT_ID=''0'', DEFAULT_AD_ORG_ID=''0'', DEFAULT_AD_ROLE_ID=''0'' where AD_USER_ID=''100'' AND DEFAULT_AD_CLIENT_ID is null and DEFAULT_AD_ORG_ID is null and DEFAULT_AD_ROLE_ID is null');
 
 
     v_ResultStr:='Enabling  constraints';
@@ -135,7 +135,6 @@
     v_seqNo := ad_script_enable_triggers(v_seqNo);
     -- Update sequence values
     v_ResultStr:='Updating sequences';
-    AD_UPDATE_SEQUENCE_GENERATE() ;
     v_ResultStr:='Executing';
     v_ResultStr := ad_script_execute(v_ResultStr);
 
@@ -171,7 +170,7 @@
   -- Commented by cromero 19102006 COMMIT;
   RETURN;
 END; --BODY
-
+ 
 EXCEPTION
 WHEN OTHERS THEN
   v_ResultStr:= '@ERROR=' || SQLERRM;

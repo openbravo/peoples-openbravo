@@ -21,7 +21,7 @@
   TYPE RECORD IS REF CURSOR;
   CUR_Clients RECORD;
   v_TableName VARCHAR2(40);
-  v_NextNo NUMBER;
+  v_NextNo VARCHAR2(32);
   BEGIN
   /**
   * Create Sequence for DocumentNo and Value columns
@@ -35,7 +35,7 @@
       SELECT ad_client_id
       FROM ad_client
       WHERE NOT EXISTS (SELECT 1 FROM ad_sequence WHERE name = 'DocumentNo_' || v_tablename)
-        AND ad_client_id <> 0
+        AND ad_client_id <> '0'
     ) LOOP
       Ad_Sequence_Next('AD_Sequence', CUR_Clients.ad_client_id, v_NextNo) ;
       INSERT INTO AD_Sequence (
@@ -46,8 +46,8 @@
         StartNo, CurrentNext, CurrentNextSys, 
         IsTableID, Prefix, Suffix, StartNewYear
       ) VALUES (
-        v_NextNo, CUR_Clients.ad_client_id, 0, 'Y',
-        now(), 0, now(), 0,
+        v_NextNo, CUR_Clients.ad_client_id, '0', 'Y',
+        now(), '0', now(), '0',
         'DocumentNo_' || v_TableName,  'DocumentNo/Value for Table ' || v_TableName,
         NULL,  'Y', 1,
         10000000, 10000000, 10000000,

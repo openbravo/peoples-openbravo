@@ -47,7 +47,7 @@ BEGIN
       INSERT
       INTO C_BankAccount_Acct
         (
-          C_BankAccount_ID, C_AcctSchema_ID, AD_Client_ID,
+          C_BankAccount_Acct_ID, C_BankAccount_ID, C_AcctSchema_ID, AD_Client_ID,
           AD_Org_ID, IsActive, Created,
           CreatedBy, Updated, UpdatedBy,
           B_InTransit_Acct, B_Asset_Acct, B_Expense_Acct,
@@ -57,7 +57,7 @@ BEGIN
         )
         VALUES
         (
-          :new.C_BankAccount_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
+          get_uuid(), :new.C_BankAccount_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
           :new.AD_ORG_ID,  'Y', now(),
           :new.CreatedBy, now(), :new.UpdatedBy,
           Cur_Defaults.B_InTransit_Acct, Cur_Defaults.B_Asset_Acct, Cur_Defaults.B_Expense_Acct,

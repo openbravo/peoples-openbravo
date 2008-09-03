@@ -16,78 +16,163 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
-<HTML>
-<HEAD>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <TITLE>Request process</TITLE>
-  <LINK rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Popup/Popup.css" id="paramCSS"></LINK>
+<html>
+<head>
+  <title>Copy lines from order</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Popup/Popup.css" id="paramCSS"/>
   <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
-  <SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
-  <SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">LNG_POR_DEFECTO = "en_US";</SCRIPT>
+  <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
+  <script language="JavaScript" type="text/javascript" id="paramDirectory">var baseDirectory = "../../../../../web/";</script>
+  <script language="JavaScript" type="text/javascript" id="paramLanguage">defaultLang = "en_US";</script>
+  <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
-  <SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
-  <script type="text/javascript">
-    dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
+  <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
+  <script language="JavaScript" type="text/javascript">
+
+
+
+function markAllData(chk, bolMark)
+{
+  if (bolMark==null) bolMark = false;
+  if (!chk) return false;
+  else if (!chk.length) {
+    chk.checked = bolMark;
+    loadData(chk.value, bolMark);
+  } else {
+    var total = chk.length;
+    for (var i=0;i<total;i++) {
+      chk[i].checked = bolMark;
+      loadData(chk[i].value, bolMark);
+    }
+  }
+  return true;
+}
+
+var state=false;
+function loadData(value, enable) {
+  if (enable == null) enable = false;
+  document.frmMain.elements["inpLastpriceso" + value].disabled = !enable;
+  if ( !document.frmMain.elements["inpLastpriceso" + value].disabled )
+  {
+    document.frmMain.elements["inpLastpriceso" + value].className = document.frmMain.elements["inpLastpriceso" + value].className.replace(' readonly', '');
+  } else if ( !document.frmMain.elements["inpLastpriceso" + value].enable ){
+    document.frmMain.elements["inpLastpriceso" + value].className += " readonly";
+  }
+  document.frmMain.elements["inpquantity" + value].disabled = !enable;
+  if ( !document.frmMain.elements["inpquantity" + value].disabled )
+  {
+    document.frmMain.elements["inpquantity" + value].className = document.frmMain.elements["inpquantity" + value].className.replace(' readonly', '');
+  } else if ( !document.frmMain.elements["inpquantity" + value].enable ){
+    document.frmMain.elements["inpquantity" + value].className += " readonly";
+  }
+  return true;
+}
+
+function validate(action) {
+  var frm=document.frmMain;
+  
+  return true;
+}
+</script>
+
+  <script language="JavaScript" type="text/javascript">
+    var selectedRow = "";
+    function selectActual(obj) {
+      if (selectedRow != "") {
+        selectedRow.className = selectedRow.className.replace(' DataGrid_Body_Row_selected', '');
+      }
+      selectedRow = obj;
+      selectedRow.className += " DataGrid_Body_Row_selected";
+    }
+
+    function checkActual(obj) {
+      selectedCheck = selectedRow.id.toString().replace('funcEvenOddRow', 'CheckNum');
+      document.getElementById(selectedCheck).checked = !document.getElementById(selectedCheck).checked;
+      loadData(document.getElementById(selectedCheck).value,document.getElementById(selectedCheck).checked);
+    }
+
+    function HoverCell(cell) {
+      cell.className = cell.className + ' DataGrid_Body_Cell_hover';
+    }
+
+    function unHoverCell(cell) {
+      cell.className = cell.className.replace(' DataGrid_Body_Cell_hover', '');
+    }
   </script>
-  <SCRIPT language="JavaScript" type="text/javascript" id="paramDirection">
-  var baseDirection="../../../../../web/";
-  </SCRIPT>
-  <SCRIPT language="JavaScript" type="text/javascript" id="fieldWindowIDArray">
-  function closeThisPage() {
-    window.close();
-    return true;
-  }
 
-  function submitThisPage(strCommand) {
-    submitCommandForm(strCommand, false, null, null, '_top');
-    return true;
-  }
-  </SCRIPT>
-	<SCRIPT language="JavaScript" type="text/javascript">
-	function onLoadDo(){
-		this.windowTables = new Array(
-		  new windowTableId('client', 'buttonOK')
-		);
-		setWindowTableParentElement();
-		enableShortcuts('popup');
-		setBrowserAutoComplete(false);
 
-		setWindowElementFocus('firstElement');
-	}
+  <script language="JavaScript" type="text/javascript">
+    function onLoadDo(){
+      this.windowTables = new Array(
+        new windowTableId('client_middle', 'buttonOK'),
+        new windowTableId('client_bottom', 'buttonOK')
+      );
+      setWindowTableParentElement();
+      this.tabsTables = new Array(
+        new tabTableId('tdtopTabs')
+      );
+      setTabTableParentElement();
 
-	function onResizeDo(){
-	}
-	</SCRIPT>    
-</HEAD>
+      enableShortcuts('popup');
+      setBrowserAutoComplete(false);
+		
+      resizeAreaCreateFrom();
 
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
-<FORM id="form" method="POST" action="CopyFromOrder.html" name="frmMain">
-  <INPUT type="hidden" name="Command">
-<INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>
-  <INPUT type="hidden" name="inpLastFieldChanged"></INPUT>
-  <INPUT type="hidden" name="inpKey" value="" id="paramKey"></INPUT>
-  <INPUT type="hidden" name="inpwindowId" value="" id="window"></INPUT>
-  <INPUT type="hidden" name="inpTabId" value="" id="tab"></INPUT>
+      setWindowElementFocus('firstElement');
+    }
+
+    function onResizeDo(){
+      resizeAreaCreateFrom();
+    }
+  </script>
+
+  <script language="JavaScript" type="text/javascript">
+    function closeThisPage() {
+      top.close();
+      return true;
+    }
+
+    function submitThisPage(strCommand) {
+      if (validate(strCommand)) {
+        submitCommandForm(strCommand, false, null, 'CopyFromOrder.html', null);
+        return true;
+      }
+      return true;
+    }
+  </script>
+</head>
+
+
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
+<form id="form" method="post" action="../ad_actionButton/CopyFromOrder.html" name="frmMain">
+  <input type="hidden" name="Command"/>
+  <input type="hidden" name="IsPopUpCall" value="1"/>
+  <input type="hidden" name="inpcOrderId" value="" id="paramKey"/>
+  <input type="hidden" name="inpWindowId" value="" id="paramWindowId"/>
+  <input type="hidden" name="inpTabId" value="" id="paramTabId"/>
+  <input type="hidden" name="inpissotrx" value="" id="paramisSOTrx"/>
 
   <div class="Popup_ContentPane_CircleLogo">
     <div class="Popup_WindowLogo">
-      <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_process" src="../../../../../web/images/blank.gif" border=0/></img>
+      <img class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_process" src="../../../../../web/images/blank.gif" border="0"/>
     </div>
   </div>
 
-  <table cellspacing="0" cellpadding="0" width="100%">
+  <table id="table_header" cellspacing="0" cellpadding="0" width="100%">
 
     <tr>
       <td>
-        <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_NavBar">
+        <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_NavBar" id="tdToolBar">
           <tr class="Popup_NavBar_bg"><td></td>
             <td class="Popup_NavBar_separator_cell"></td>
             <td class="Popup_NavBar_bg_logo_left"></td>
-            <td class="Popup_NavBar_bg_logo" width="1" onclick="abrirNuevoBrowser('http://www.openbravo.com', 'Openbravo');return false;"><IMG src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
+            <td class="Popup_NavBar_bg_logo" width="1" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;"><img src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
             <td class="Popup_NavBar_bg_logo_right"></td>
             <td class="Popup_NavBar_Popup_title_cell"><span>Copy From Order</span></td>
             <td class="Popup_NavBar_separator_cell"></td>
@@ -98,37 +183,117 @@
 
     <tr>
       <td>
-        <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_SeparatorBar">
+        <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_SeparatorBar" id="tdbottomSeparator">
           <tr>
             <td class="Popup_SeparatorBar_bg"></td>
           </tr>
         </table>
       </td>
     </tr>
+  </table>
 
+  <table cellspacing="0" cellpadding="0" width="100%">
     <tr>
       <td>
-        <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_InfoBar">
-          <tr>
-            <td class="Popup_InfoBar_Icon_cell"><IMG src="../../../../../web/images/blank.gif" border="0" class="Popup_InfoBar_Icon_info" /></td>
-            <td class="Popup_InfoBar_text_table">
-              <table>
-                <tr>
-                  <td class="Popup_InfoBar_text" id="helpDiscard"> <div id="processHelp">&nbsp;</div></TD>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        </table>
+        <div class="Popup_ContentPane_Client" style="overflow: auto;" id="client_messagebox">
+
+          <!-- MessageBox -->
+          <table cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxyy">
+            <tbody>
+            <tr class="MessageBox_TopMargin">
+              <td class="MessageBox_LeftMargin"></td>
+              <td></td>
+              <td class="MessageBox_RightMargin"></td>
+            </tr>
+            <tr>
+              <td class="MessageBox_LeftMargin"></td>
+              <td>
+
+                <table cellpadding="0" cellspacing="0" style="width: 100%;">
+                  <tbody>
+                  <tr>
+                    <td>
+                      <div class="MessageBox_TopLeft"></div>
+                      <div class="MessageBox_Left"></div>
+                    </td>
+                    <td class="MessageBox_bg">
+
+                      <table class="MessageBox_Top">
+                      <tbody>
+                        <tr>
+                          <td>
+                            <span>
+                            <table cellpadding="0" cellspacing="0" class="MessageBox_Body_ContentCell">
+                              <tbody>
+                              <tr>
+                                <td class="MessageBox_Icon_ContentCell">
+                                  <div class="MessageBox_Icon"></div>
+                                </td>
+                                <td style="vertical-align: top;" id="messageBoxIDContent">
+                                  <span>
+                                    <div class="MessageBox_TextTitle" id="messageBoxIDTitle">
+                                      xxInfo: AccessTableWithNoView
+                                    </div>
+                                    <div class="MessageBox_TextDescription" id="messageBoxIDMessage">
+                                      xxThe current information is empty.
+                                    </div>
+                                    <div class="MessageBox_TextSeparator"></div>
+                                  </span>
+                                </td>
+                              </tr>
+                              </tbody>
+                            </table>
+                            </span>
+                          </td>
+                        </tr>
+                        </tbody>
+                      </table>
+
+                    </td>
+                    <td class="MessageBox_RightTrans">
+                      <div class="MessageBox_TopRight"></div>
+                      <div class="MessageBox_Right"></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td rowspan="2" class="MessageBox_BottomLeft">
+                    </td>
+                    <td class="MessageBox_BottomTrans MessageBox_bg">
+                    </td>
+                    <td rowspan="2" class="MessageBox_BottomRight">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="MessageBox_Bottom">
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+
+              </td>
+              <td class="MessageBox_RightMargin"></td>
+            </tr>
+            <tr class="MessageBox_BottomMargin">
+              <td class="MessageBox_LeftMargin"></td>
+              <td></td>
+                <td class="MessageBox_RightMargin"></td>
+              </tr>
+            </tbody>
+          </table>
+        <!-- MessageBox END -->
+        </div>
       </td>
     </tr>
+  </table>
 
+  <table cellspacing="0" cellpadding="0" width="100%">
     <tr>
       <td>
-        <div class="Popup_ContentPane_Client" style="overflow: auto;" id="client">
-          <table cellspacing="0" cellpadding="0" class="Popup_Client_TablePopup">
-
+        <div class="Popup_ContentPane_Client" style="overflow: auto; height: 220px" id="client_top">
+          <table cellspacing="0" cellpadding="0" class="Popup_Client_TableSelector" id="tdtopTabs">
             <tr>
+              <td class="TableEdition_OneCell_width"></td>
+              <td class="TableEdition_OneCell_width"></td>
               <td class="TableEdition_OneCell_width"></td>
               <td class="TableEdition_OneCell_width"></td>
               <td class="TableEdition_OneCell_width"></td>
@@ -136,115 +301,195 @@
             </tr>
 
             <tr>
-              <td class="TitleCell">
-                <SPAN class="LabelText" id="C_BPartner_ID_lbl">
-                  <A class="LabelLink" href="#" onclick="sendDirectLink(document.frmMain, 'C_BPartner_ID', document.frmMain.inpcOrderId.value, '../utility/ReferencedLink.html', document.frmMain.inpcBpartnerId.value, '291', '_self', true);return false;" onmouseover="return true;" onmouseout="return true;">Order</A> </SPAN>
+              <td colspan="6">
+                <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                  <tr class="FieldGroup_TopMargin"/>
+                  <tr>
+                    <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                    <td class="FieldGroupTitle">Business Partner</td>
+                    <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                    <td class="FieldGroupContent"/>
+                  </tr>
+                  <tr class="FieldGroup_BottomMargin"/>
+                </tbody>
+                </table>
               </td>
-              <TD class="TextBox_btn_ContentCell">
-                <TABLE border="0" cellspacing="0" cellpadding="0" summary="" class="">
-                  <TR>
-                    <TD>
-                      <INPUT type="hidden" name="inpcOrderId" value="">
-                      <INPUT type="text" dojoType="openbravo:ValidationTextBox" class="dojoValidateValid required TextBox_btn_TwoCells_width" maxlength="22" name="inpcOrderId_D" id="inpcOrderId_D" value="" required="true" onkeyup="validateTextBox(this.id);"></INPUT>
-                    </TD>
-                    <TD class="FieldButton_ContentCell">
-                      <TABLE class="FieldButton" onclick="openSearch(null, null, '../info/SalesOrder.html', null, false, 'frmMain', 'inpcOrderId', 'inpcOrderId_D', document.frmMain.inpcOrderId_D.value, 'WindowID', 'xx');return false;" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Sales Order ';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;" id="fieldWindowID">
-                        <TR>
-                          <TD class="FieldButton_bg">
-                            <IMG alt="Business Partner " class="FieldButton_Icon FieldButton_Icon_SalesOrder" title="Sales Order" src="../../../../../web/images/blank.gif" border="0" id="buttonSalesOrder"></IMG>
-                          </TD>
-                        </TR>
-                      </TABLE>
-                    </TD>
-                  </TR>
-                </TABLE>
-                <SPAN class="invalid" id="SalesOrder_RinvalidSpan" style="display: none;">* The value entered is not valid.</SPAN>
-                <SPAN class="missing" id="SalesOrder_RmissingSpan" style="display: none;">* This value is required.</SPAN>
-                <SPAN class="range" id="SalesOrder_RrangeSpan" style="display: none;">* This value is out of range.</SPAN>
-              </DIV>
-              </DIV>
-              </TD>
-              <td></td>
-              <td></td>
             </tr>
 
-            <tr><td height="20px"></td></tr>
+            <tr>
+              <td class="TitleCell"><span class="LabelText">Name</span></td>
+              <td class="ReadOnly_Text_ContentCell"><span class="Label_ReadOnly_Text" id="paramBpartnername">xxBPartner</span></td>
+              <td class="TitleCell"><span class="LabelText">Organization</span></td>
+              <td class="ReadOnly_Text_ContentCell"><span class="Label_ReadOnly_Text" id="paramOrgname">xxPamplona</span></td>
+              <td class="TitleCell"><span class="LabelText">Contact</span></td>
+              <td class="ReadOnly_Text_ContentCell"><span class="Label_ReadOnly_Text" id="paramContact">xxContact</span></td>
+            </tr>
+            <tr>
+              <td class="TitleCell"><span class="LabelText">Pending delivery/receipt</span></td>
+              <td class="ReadOnly_Text_ContentCell"><span class="Label_ReadOnly_Text" id="paramPendingdelivery">xxxx12345</span></td>
+              <td class="TitleCell"><span class="LabelText">Pending invoice</span></td>
+              <td class="ReadOnly_Text_ContentCell"><span class="Label_ReadOnly_Text" id="paramPendingInvoice">xx3456</span></td>
+              <td class="TitleCell"><span class="LabelText">Pending debt payment</span></td>
+              <td class="ReadOnly_Text_ContentCell"><span class="Label_ReadOnly_Text" id="paramDebtpending">xxx1234.5</span></td>
+            </tr>
+            <tr>
+              <td class="TitleCell"><span class="LabelText">Last order</span></td>
+              <td class="ReadOnly_Text_ContentCell"><span class="Label_ReadOnly_Text" id="paramLastorder">xx25/04/2001</span></td>
+              <td class="TitleCell"><span class="LabelText">Invoiced&nbsp;<span id="paramYearactual">xx2006</span></span></td>
+              <td class="ReadOnly_Text_ContentCell"><span class="Label_ReadOnly_Text" id="paramInvoicing">xx23464.4</span></td>
+              <td class="TitleCell"><span class="LabelText">% total</span></td>
+              <td class="ReadOnly_Text_ContentCell"><span class="Label_ReadOnly_Text" id="paramTotalAverage">xx15</span></td>
+            </tr>
 
             <tr>
-              <td></td>
-              <td class="Button_RightAlign_ContentCell">
-                <div>
-                  <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Accept'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" id="buttonOK">
-            <table class="Button" onclick="submitThisPage('SAVE');return false;" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='OK';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                    <tr>
-                      <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Accept" title="Accept" src="../../../../../web/images/blank.gif" border=0/></td>
-                      <td class="Button_text Button_width">OK</td>
-                      <td class="Button_right"></td>
-                    </tr>
-                  </table>
-                  </a>
-                </div>
+              <td colspan="6">
+                <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                  <tr class="FieldGroup_TopMargin"/>
+                  <tr>
+                    <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                    <td class="FieldGroupTitle">Order</td>
+                    <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
+                    <td class="FieldGroupContent"/>
+                  </tr>
+                  <tr class="FieldGroup_BottomMargin"/>
+                </tbody>
+                </table>
               </td>
-              <td class="Button_LeftAlign_ContentCell">
-                <div>
-                  <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Cancel'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="closeThisPage();return false;">
-            <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Cancel';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                    <tr>
-                      <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Cancel" title="Cancel" src="../../../../../web/images/blank.gif" border=0/></td>
-                      <td class="Button_text Button_width">Cancel</td>
-                      <td class="Button_right"></td>
-                    </tr>
-                  </table>
-                  </a>
-                </div>
+            </tr>
+
+            <div id="sectionDetail2">
+              <tr>
+                <td class="TitleCell"><span class="LabelText">Order No.</span></td>
+                <td class="ReadOnly_Text_ContentCell"><span class="Label_ReadOnly_Text" id="fieldDocumentno">xxxx12345</span></td>
+                <td class="TitleCell"><span class="LabelText">Reference No</span></td>
+                <td class="ReadOnly_Text_ContentCell"><span class="Label_ReadOnly_Text" id="fieldPoreference">xx3456</span></td>
+                <td class="TitleCell"><span class="LabelText">Date ordered</span></td>
+                <td class="ReadOnly_Text_ContentCell"><span class="Label_ReadOnly_Text" id="fieldDateordered">xxx25/01/1900</span></td>
+              </tr>
+              <tr>
+                <td class="TitleCell"><span class="LabelText">Price list</span></td>
+                <td class="ReadOnly_Text_ContentCell"><span class="Label_ReadOnly_Text" id="fieldPricelistname">xxPricelist1</span></td>
+                <td class="TitleCell"><span class="LabelText">Ship to</span></td>
+                <td class="ReadOnly_Text_ContentCell"><span class="Label_ReadOnly_Text" id="fieldLocationname">xxHermanos Imaz 123</span></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </div>
+
+            <tr>
+              <td colspan="6">
+                <table class="RelationInfo">
+                  <tr>
+                    <td class="RelationInfoContent">Products sales/purchase the last <span id="paramLastmonth">xx2</span> days</td>
+                  </tr>
+                </table>
               </td>
-              <td></td>
             </tr>
 
         </table>
-      </div>
-    </td>
-  </tr>
-</table>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <div class="Popup_ContentPane_Client" style="overflow: auto; display: none;" id="client_middle">
+          <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
 
-</body>
-</html>
+            <tr>
+              <td valign="top" class="Popup_Client_Selector_DataGrid_LeftMargin">
+                <table width="100%" border="0" cellspacing="0" cellpadding="0" id="tdleftSeparator">
+                  <tr><td class="Popup_Client_Selector_DataGrid_LeftMargin"></td></tr>
+                </table>
+              </td>
+              <td valign="top">
+                  <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
+                    <tr class="DataGrid_Body_Row">
+                      <th width="24px" class="DataGrid_Header_LineNoCell DataGrid_Body_Cell_CheckBox"><span class="Checkbox_container_NOT_Focused"><input class="DataGrid_CheckBox" type="checkbox" name="inpTodos" onclick="markAllData(document.frmMain.inpRownumId, this.checked);return true;"/></span></th>
+                      <th width="20%" class="DataGrid_Header_Cell">Product</th>
+                      <th width="9%"  class="DataGrid_Header_Cell">Attribute</th>
+                      <th width="11%" class="DataGrid_Header_Cell">Offer</th>
+                      <th width="9%"  class="DataGrid_Header_Cell">Price</th>
+                      <th width="9%"  class="DataGrid_Header_Cell">Last price</th>
+                      <th width="7%"  class="DataGrid_Header_Cell">Quantity</th>
+                      <th width="13%" class="DataGrid_Header_Cell">UOM</th>
+                      <th width="11%" class="DataGrid_Header_Cell">Tax</th>
+                    </tr>
+                    <div id="sectionDetail">
+                      <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" onclick="selectActual(this); return true;" ondblclick="checkActual(this); return true;" id="funcEvenOddRowxx"> 
+                        <td width="2%" class="DataGrid_Body_LineNoCell DataGrid_Body_Cell_CheckBox">
+                          <span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpRownumId" onclick="loadData(this.value, this.checked);return true;" id="CheckNumxx" value="xx"/></span>
+                        </td>
+                        <td width="20%" class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id=""><input type="hidden" name="inpmProductIdxx" id="fieldProductid" value=""/><span id="fieldProductname">xxPimientos de vinagre</span></td>
+                        <td width="9%" class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);"><input type="hidden" name="inpmAttributesetinstanceIdxx" id="fieldmAttributesetinstanceId" value=""/><span id="fieldDescription">xxExtraLarge</span></td>
+                        <td width="11%" class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);"><input type="hidden" name="inpmOfferIdxx" id="fieldMofferid" value=""/><span id="fieldOffername">xx15%descuentoFebrero</span></td>
+                        <td width="9%" class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);"><input type="hidden" name="inpmPricestdvaluexx" id="fieldPricestdvalue" value=""/><span id="fieldPricestd">xx15.345</span></td>
+                        <td width="9%" class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);"><input class="dojoValidateValid readonly" style="font-weight: normal;" name="inpLastpricesoxx" type="text" id="fieldLastpriceso" size="6" value="" onkeyup="auto_complete_number(this, true, true);return true;" disabled="" class="xx"/></td>
+                        <td width="7%" class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);"><input class="dojoValidateValid readonly" style="font-weight: normal;" name="inpquantityxx" type="text" id="fieldQty" size="5" value="0" onkeyup="auto_complete_number(this, true, true);return true;" disabled=""/></td>
+                        <td width="13%" class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);"><input type="hidden" name="inpcUOMIdxx" id="fieldUomid" value=""/><span id="fieldUomsymbol">xxKg</span></td>
+                        <td width="11%" class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);"><input type="hidden" name="inpcTaxIdxx" id="fieldTaxid" value=""/><span id="fieldNametax">xx16%</span></td>
+                      </tr>
+                    </div>
+                  </table>
+              </td>
 
-
-
-<!--  <table width
-    <tr> 
-      <td>&nbsp;</td>
-      <td align="center"> <TABLE cellspacing="0" cellpadding="0" border="0">
-          <TR> 
-            <TD > <SPAN >Order:</SPAN>&nbsp;</TD>
-            <TD > <INPUT type="hidden" name="inpcOrderId" value=""></INPUT> 
-              <INPUT type="text" name="inpcOrderId_D" size="20" maxlength="20" value=""></INPUT>
+              <td valign="top" class="Popup_Client_Selector_DataGrid_RightMargin">
+                <table width="100%" border="0" cellspacing="0" cellpadding="0" id="tdrightSeparator">
+                  <tr><td class="Popup_Client_Selector_DataGrid_RightMargin"></td></tr>
+                </table>
+              </td>
+            </tr>
+            
+          </table>
+        </div>
+     </td>
+    </tr>
+    <tr>
+      <td>
+        <div class="Popup_ContentPane_Client" style="overflow: auto; height: 75px" id="client_bottom">
+        <table cellspacing="0" cellpadding="0" class="Popup_Client_TablePopup">
+          <tr>
+            <td class="TableEdition_OneCell_width"></td>
+            <td class="TableEdition_OneCell_width"></td>
+            <td class="TableEdition_OneCell_width"></td>
+            <td class="TableEdition_OneCell_width"></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td class="Button_RightAlign_ContentCell">
+              <div>
+                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Accept'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitThisPage('SAVE');return false;" id="buttonOK">
+            <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='OK';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                  <tr>
+                    <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Accept" title="Accept" src="../../../../../web/images/blank.gif" border="0"/></td>
+                    <td class="Button_text Button_width">OK</td>
+                    <td class="Button_right"></td>
+                  </tr>
+                </table>
+                  </a>
+              </div>
             </td>
-            <td>&nbsp;</td>
-            <td width="30px"> <A href="#" onclick="openSearch(null, null, '../info/SalesOrder.html', null, false, 'frmMain', 'inpcOrderId', 'inpcOrderId_D', document.frmMain.inpcOrderId_D.value, 'WindowID', 'xx');return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Search';return true;" id="fieldWindowID" > 
-              <img  alt="Purchase Order" title="Purchase Order" width="16" height="16" border="0" src="../../../../../web/images/SalesOrder.jpg" id="buttonSalesOrder"></IMG></A></TD>
-          </TR>
-        </TABLE></td>
-      <td>&nbsp;</td>
+            <td class="Button_LeftAlign_ContentCell">
+              <div>
+                <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Cancel'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="closeThisPage();return false;">
+            <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Cancel';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                  <tr>
+                    <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Cancel" title="Cancel" src="../../../../../web/images/blank.gif" border="0"/></td>
+                    <td class="Button_text Button_width">Cancel</td>
+                    <td class="Button_right"></td>
+                  </tr>
+                </table>
+                  </a>
+            </td>
+            <td></td>
+          </tr>
+        </table>
+      </div>
+      </td>
     </tr>
   </table>
-  <BR></BR>
-  <TABLE cellspacing="0" cellpadding="0" border="0">
-    <TR> 
-      <TD id="question">&nbsp;</TD>
-    </TR>
-  </TABLE>
-  <TABLE summary="" cellpadding="0" cellspacing="0" border="0" width="100%">
-    <TR> 
-      <td>&nbsp;</td>
-      <TD width="30px"> <A href="#" onclick="closeThisPage();return false;" onmouseover="window.status='Cancel';return true;" onmouseout="window.status='';return true;" > 
-        <img width="16" height="16" src="../../../../../web/images/Cancel.jpg"  alt="Cancel" title="Cancel" border="0" id="buttonCancel"></IMG></A></TD>
-      <TD width="30px"> <A href="#" onclick="submitThisPage('SAVE');return false;" onmouseover="window.status='Accept';return true;" onmouseout="window.status='';return true;" > 
-        <img width="16" height="16" src="../../../../../web/images/Ok.jpg"  alt="Accept" title="Accept" border="0" id="buttonOk"></IMG></A></TD>
-      <td>&nbsp;</td>
-    </TR>
-  </TABLE>
-</FORM>
-</BODY>
-</HTML>-->
+ 
+</form>
+</body>
+</html>

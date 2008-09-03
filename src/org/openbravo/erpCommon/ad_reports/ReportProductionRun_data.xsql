@@ -53,7 +53,7 @@
     <Parameter name="parStartDateTo" optional="true" after="AND 1=1"><![CDATA[AND wr.STARTDATE < to_date(?)]]></Parameter>
     <Parameter name="parEndDateFrom" optional="true" after="AND 1=1"><![CDATA[AND wr.ENDDATE > to_date(?)]]></Parameter>
     <Parameter name="parEndDateTo" optional="true" after="AND 1=1"><![CDATA[AND wr.ENDDATE < to_date(?)]]></Parameter>
-    <Parameter name="parWorkRequirement" optional="true" after="AND 1=1"><![CDATA[AND wr.MA_WORKREQUIREMENT_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="parWorkRequirement" optional="true" after="AND 1=1"><![CDATA[AND wr.MA_WORKREQUIREMENT_ID = ?]]></Parameter>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>

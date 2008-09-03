@@ -24,13 +24,13 @@
 <TITLE>Initial Client Setup</TITLE>
 <LINK rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon"/>
 <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Main_Manual.css" id="paramCSS"/>
-<script language="JavaScript" type="text/javascript" id="paramDirection">
-var baseDirection = "../../../../../web/";
+<script language="JavaScript" type="text/javascript" id="paramDirectory">
+var baseDirectory = "../../../../../web/";
 </script>
 <SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></SCRIPT>
 <script language="JavaScript" type="text/javascript" id="paramLanguage">
-  var LNG_POR_DEFECTO = "en_US";
+  var defaultLang = "en_US";
 </script>
 <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
@@ -52,20 +52,20 @@ var arrRegion=null;
       dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
 </script> 
 <SCRIPT language="JavaScript" type="text/javascript">
-function actualizarDatos(combo) {
-	cambiarListaCombo(document.frmMain.inpRegion, arrRegion, combo.options[combo.selectedIndex].value, false);
+function updateData(combo) {
+	changeComboData(document.frmMain.inpRegion, arrRegion, combo.options[combo.selectedIndex].value, false);
 }
 </SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript">
-function depurar(accion) {
+function validate(action) {
 	var frm = document.frmMain;
-  if (frm.inpCliente.value==null || frm.inpCliente.value=="") {setWindowElementFocus(frm.inpCliente);  mensaje(7); return false; }
-  if (frm.inpMoneda.value==null || frm.inpMoneda.value=="") {setWindowElementFocus(frm.inpMoneda);  mensaje(7); return false; }
-  if (frm.inpPais.value==null || frm.inpPais.value=="") {setWindowElementFocus(frm.inpPais);  mensaje(7); return false; }
-  if (frm.inpOrganizacion.value==null || frm.inpOrganizacion.value=="") {setWindowElementFocus(frm.inpOrganizacion); mensaje(7); return false; }
-  if (frm.inpClienteUsuario.value==null || frm.inpClienteUsuario.value=="") {setWindowElementFocus(frm.inpClienteUsuario); mensaje(7); return false; }
-  if (frm.inpOrganizacionUsuario.value==null || frm.inpOrganizacionUsuario.value=="") {setWindowElementFocus(frm.inpOrganizacionUsuario);  mensaje(7); return false; }
-  if (frm.inpCiudad.value==null || frm.inpCiudad.value=="") {setWindowElementFocus(frm.inpCiudad); mensaje(7); return false; }
+  if (frm.inpCliente.value==null || frm.inpCliente.value=="") {setWindowElementFocus(frm.inpCliente);  showJSMessage(7); return false; }
+  if (frm.inpMoneda.value==null || frm.inpMoneda.value=="") {setWindowElementFocus(frm.inpMoneda);  showJSMessage(7); return false; }
+  if (frm.inpPais.value==null || frm.inpPais.value=="") {setWindowElementFocus(frm.inpPais);  showJSMessage(7); return false; }
+  if (frm.inpOrganizacion.value==null || frm.inpOrganizacion.value=="") {setWindowElementFocus(frm.inpOrganizacion); showJSMessage(7); return false; }
+  if (frm.inpClienteUsuario.value==null || frm.inpClienteUsuario.value=="") {setWindowElementFocus(frm.inpClienteUsuario); showJSMessage(7); return false; }
+  if (frm.inpOrganizacionUsuario.value==null || frm.inpOrganizacionUsuario.value=="") {setWindowElementFocus(frm.inpOrganizacionUsuario);  showJSMessage(7); return false; }
+  if (frm.inpCiudad.value==null || frm.inpCiudad.value=="") {setWindowElementFocus(frm.inpCiudad); showJSMessage(7); return false; }
 	return true;
 }
 
@@ -246,7 +246,7 @@ function onloadFunctions() {
                 <TR>
                   <TD class="TitleCell"><SPAN class="LabelText">Country</SPAN></TD>
                   <TD class="Combo_ContentCell" colspan="2">
-                    <SELECT name="inpPais" onchange="actualizarDatos(document.frmMain.inpPais);return true;" id="inpPais" class="Combo Combo_TwoCells_width required">
+                    <SELECT name="inpPais" onchange="updateData(document.frmMain.inpPais);return true;" id="inpPais" class="Combo Combo_TwoCells_width required">
                       <OPTION value=""></OPTION><DIV id="reportCountry_M"></DIV>
                     </SELECT>
                   </TD>

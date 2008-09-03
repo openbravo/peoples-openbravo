@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_TAXPAYMENT_POST">
     <function name="C_TAXPAYMENT_POST" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -22,19 +22,19 @@
 ************************************************************************/
 v_resultstr VARCHAR2(2000) := '';
 v_message VARCHAR2(200) := '';
-v_record_id NUMBER;
+v_record_ID VARCHAR2(32);
 v_result NUMBER:= 1;
 -- Success
 v_total NUMBER;
-v_c_settlement_cancel_id NUMBER;
+v_c_settlement_cancel_ID VARCHAR2(32);
 -- Parameter
 TYPE record IS REF CURSOR;
 cur_parameter record;
 cur_registertype record;
 cur_line record;
 -- Record Info
-v_client_id NUMBER;
-v_org_id NUMBER;
+v_client_ID VARCHAR2(32);
+v_org_ID VARCHAR2(32);
 v_updatedby c_taxpayment.updatedby%TYPE;
 v_createdby c_taxpayment.createdby%TYPE;
 v_processed c_taxpayment.processed%TYPE;
@@ -53,26 +53,26 @@ v_taxamtfromreglines NUMBER;
 v_taxregistertotal NUMBER;
 
 v_date DATE;
-v_settlementid NUMBER;
-v_settlementdoctype_id NUMBER;
+v_settlementid varchar2(32);
+v_settlementdoctype_ID VARCHAR2(32);
 v_sdocumentno NUMBER;
-v_debtpaymentid NUMBER;
-v_debtpaymentbalancingid NUMBER;
+v_debtpaymentid varchar2(32);
+v_debtpaymentbalancingid varchar2(32);
 v_paymentrule VARCHAR2(30);
-v_bpartner_id NUMBER;
+v_bpartner_ID VARCHAR2(32);
 
 
-v_gl_journalbatchid NUMBER;
+v_gl_journalbatchid varchar2(32);
 v_gljbdocumentno NUMBER;
-v_gl_journaldoctype_id NUMBER;
-v_gl_journalid NUMBER;
+v_gl_journaldoctype_ID VARCHAR2(32);
+v_gl_journalid varchar2(32);
 v_gljdocumentno NUMBER;
-v_gl_journallineid NUMBER;
+v_gl_journallineid varchar2(32);
 v_line NUMBER;
-v_validcombination_id NUMBER;
+v_validcombination_ID VARCHAR2(32);
 
 v_glitem_acct NUMBER;
-v_glitem_id NUMBER;
+v_glitem_ID VARCHAR2(32);
 
 v_debit NUMBER;
 v_credit NUMBER;
@@ -80,16 +80,16 @@ v_credit NUMBER;
 v_totalcredit NUMBER;
 
 
-v_acctschema_id NUMBER;
-v_currency_id NUMBER;
+v_acctschema_ID VARCHAR2(32);
+v_currency_ID VARCHAR2(32);
 v_currencyratetype VARCHAR2(30);
-v_gl_category_id NUMBER;
-v_period_id NUMBER;
+v_gl_category_ID VARCHAR2(32);
+v_period_ID VARCHAR2(32);
 
 v_name NVARCHAR2(255);
 v_TRTcountY  NUMBER;
 v_TRTcountN  NUMBER;
-v_DBA_ErrorLog_ID NUMBER;
+v_DBA_ErrorLog_ID VARCHAR2(32);
 
 
 

@@ -23,13 +23,13 @@
   <LINK rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon"/>
 <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Popup/Popup.css" id="paramCSS"/>
 <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Main_Manual.css" id="paramCSS"/>
-<script language="JavaScript" type="text/javascript" id="paramDirection">
-var baseDirection = "../../../../../web/";
+<script language="JavaScript" type="text/javascript" id="paramDirectory">
+var baseDirectory = "../../../../../web/";
 </script>
 <SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></SCRIPT>
 <script language="JavaScript" type="text/javascript" id="paramLanguage">
-  var LNG_POR_DEFECTO = "en_US";
+  var defaultLang = "en_US";
 </script>
 <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
@@ -63,28 +63,28 @@ var baseDirection = "../../../../../web/";
 function enableLocalShortcuts() {
 	keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_D', document.frmMain.inpcBpartnerId_D.value, 'Command', 'KEY', 'inpisSOTrxTab', 'Y');", "inpcBpartnerId_D", "null");
 }
-function depurar() {
+function validate() {
 	var frm = document.frmMain;
 	if (frm.inpDateFrom.value!=null && frm.inpDateFrom.value!="" && !isValidDate(frm.inpDateFrom.value, frm.inpDateFrom.displayFormat)) {
 			setWindowElementFocus(frm.inpDateFrom);
 			frm.inpDateFrom.select();
-			mensaje(5);
+			showJSMessage(5);
 			return false;
 	} else if (frm.inpDateTo.value!=null && frm.inpDateTo.value!="" && !isValidDate(frm.inpDateTo.value, frm.inpDateTo.displayFormat)) {
 			setWindowElementFocus(frm.inpDateTo);
 			frm.inpDateTo.select();
-			mensaje(5);
+			showJSMessage(5);
 			return false;
 	} else if (frm.inpDateordered.value!=null && frm.inpDateordered.value!="" && !isValidDate(frm.inpDateordered.value, frm.inpDateordered.displayFormat)) {
 			setWindowElementFocus(frm.inpDateordered);
 			frm.inpDateordered.select();
-			mensaje(5);
+			showJSMessage(5);
 			return false;
 	}
   	if ((frm.inpDateordered.value == null || frm.inpDateordered.value == "")) {
     	frm.inpDateordered.focus();
 		frm.inpDateordered.select();
-		mensaje(1);
+		showJSMessage(1);
 		return false;
 	}
 	return true;

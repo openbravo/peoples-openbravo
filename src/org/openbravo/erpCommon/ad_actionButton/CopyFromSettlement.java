@@ -148,8 +148,8 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateFrom","");
     xmlDocument.setParameter("dateTo","");
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -175,8 +175,8 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTodisplayFormat", strDateFormat);
     xmlDocument.setParameter("dateTosaveFormat", strDateFormat);
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("paramSettlement", strSettlement);
     xmlDocument.setParameter("documentNo", strDocumentNo);  
@@ -214,8 +214,8 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTodisplayFormat", strDateFormat);
     xmlDocument.setParameter("dateTosaveFormat", strDateFormat);
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("paramSettlement", strSettlement);
     xmlDocument.setParameter("paramSettlementId", strSettlement);

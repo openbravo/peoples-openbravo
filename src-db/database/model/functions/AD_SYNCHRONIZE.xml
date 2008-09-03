@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_SYNCHRONIZE">
     <function name="AD_SYNCHRONIZE" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -38,8 +38,8 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1; -- 0=failure
-  v_Record_ID NUMBER;
-  v_AD_User_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
+  v_AD_User_ID VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -71,7 +71,7 @@
     ---------------------------------------------------------------------------
     DBMS_OUTPUT.PUT_LINE('Adding missing Elements') ;
     DECLARE
-      NextNo NUMBER;
+      NextNo varchar2(32);
       Cur_Column RECORD;
       Cur_Process RECORD;
     BEGIN
@@ -93,8 +93,8 @@
             Help
           )
           VALUES
-          (NextNo, 0, 0, 'Y',
-          now(), 0, now(), 0,
+          (NextNo, '0', '0', 'Y',
+          now(), '0', now(), '0',
           Cur_Column.ColumnName, Cur_Column.NAME, Cur_Column.NAME, Cur_Column.Description,
           Cur_Column.Help) ;
         DBMS_OUTPUT.PUT_LINE('  added ' || Cur_Column.ColumnName) ;
@@ -118,8 +118,8 @@
             Help
           )
           VALUES
-          (NextNo, 0, 0, 'Y',
-          now(), 0, now(), 0,
+          (NextNo, '0', '0', 'Y',
+          now(), '0', now(), '0',
           Cur_Process.ColumnName, Cur_Process.NAME, Cur_Process.NAME, Cur_Process.Description,
           Cur_Process.Help) ;
         DBMS_OUTPUT.PUT_LINE('  added ' || Cur_Process.ColumnName) ;

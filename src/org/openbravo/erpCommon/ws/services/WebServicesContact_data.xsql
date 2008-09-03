@@ -27,9 +27,9 @@
 	        SELECT AD_USER_ID, AD_CLIENT_ID, C_BPARTNER_ID,
 			       FIRSTNAME, LASTNAME, EMAILUSER, PHONE, PHONE2, FAX
 			  FROM AD_USER 
-			 WHERE AD_CLIENT_ID = TO_NUMBER(?)
-			   AND C_BPARTNER_ID = TO_NUMBER(?)
-			   AND AD_USER_ID = TO_NUMBER(?)	
+			 WHERE AD_CLIENT_ID = ?
+			   AND C_BPARTNER_ID = ?
+			   AND AD_USER_ID = ?	
 	      ]]>
 	    </Sql>
     	<Parameter name="clientId"/>
@@ -46,9 +46,9 @@
 	               PHONE = ?,
 	               PHONE2 = ?,
 	               FAX = ?            
-	         WHERE AD_CLIENT_ID = TO_NUMBER(?)
-	           AND C_BPARTNER_ID = TO_NUMBER(?)
-	           AND AD_USER_ID = TO_NUMBER(?)
+	         WHERE AD_CLIENT_ID = ?
+	           AND C_BPARTNER_ID = ?
+	           AND AD_USER_ID = ?
       ]]></Sql>      
       <Parameter name="firstName"/>
       <Parameter name="lastName"/>

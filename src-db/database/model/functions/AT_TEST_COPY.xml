@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AT_TEST_COPY">
     <function name="AT_TEST_COPY" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -23,13 +23,13 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     -- Parameter Variables
-    v_AT_Test_ID NUMBER;
-    v_NextNo NUMBER;
+    v_AT_Test_ID VARCHAR2(32);
+    v_NextNo VARCHAR2(32);
     v_NoOfLines NUMBER:=0;
     v_MaxSeqNo NUMBER;
     Cur_Lines RECORD;
@@ -52,7 +52,7 @@
     LOOP
       v_Record_ID:=Cur_Parameter.Record_ID;
       IF(Cur_Parameter.ParameterName='AT_Test_ID') THEN
-        v_AT_Test_ID:=Cur_Parameter.P_Number;
+        v_AT_Test_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  AT_Test_ID=' || v_AT_Test_ID) ;
       ELSE
         DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;

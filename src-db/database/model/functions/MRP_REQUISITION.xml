@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MRP_REQUISITION">
     <function name="MRP_REQUISITION" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -23,16 +23,16 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
-  v_User_ID NUMBER:=0;
-  v_Client_ID NUMBER;
-  v_Org_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
+  v_User_ID VARCHAR2(32):='0';
+  v_Client_ID VARCHAR2(32);
+  v_Org_ID VARCHAR2(32);
   v_Description0 VARCHAR(255);
   v_Description VARCHAR(255);
   v_Count NUMBER;
 
-  v_MRequisition_ID NUMBER:=NULL;
-  v_MRequisitionLine_ID NUMBER;
+  v_MRequisition_ID VARCHAR2(32):=NULL;
+  v_MRequisitionLine_ID VARCHAR2(32);
   v_DocumentNo NVARCHAR2(60);
   v_Line NUMBER:= 0;
 

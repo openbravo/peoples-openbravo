@@ -36,7 +36,7 @@
         AND M_PriceList_Version.AD_Client_ID IN ('1') 
         ORDER BY M_PriceList_Version.Name
       ]]></Sql>
-      <Parameter name="priceList" optional="true" after="AND M_PriceList_Version.IsActive='Y' " text="AND EXISTS (SELECT * FROM M_PriceList xp WHERE xp.M_PriceList_ID = TO_NUMBER(?) AND p.C_Currency_ID=xp.C_Currency_ID)"/>
+      <Parameter name="priceList" optional="true" after="AND M_PriceList_Version.IsActive='Y' " text="AND EXISTS (SELECT * FROM M_PriceList xp WHERE xp.M_PriceList_ID= ? AND p.C_Currency_ID=xp.C_Currency_ID)"/>
       <Parameter name="adUserClient" type="replace" optional="true" after="M_PriceList_Version.AD_Client_ID IN (" text="'1'"/>
    </SqlMethod>
 
@@ -47,7 +47,7 @@
         FROM M_PriceList pl, M_PriceList_Version plv 
         WHERE pl.M_PriceList_ID=plv.M_PriceList_ID 
         AND plv.IsActive= 'Y' 
-        AND pl.M_PriceList_ID = TO_NUMBER(?) 
+        AND pl.M_PriceList_ID = ? 
         AND plv.ValidFrom <= TO_DATE(?) 
         AND plv.AD_Client_ID IN ('1') 
         ORDER BY plv.ValidFrom Desc

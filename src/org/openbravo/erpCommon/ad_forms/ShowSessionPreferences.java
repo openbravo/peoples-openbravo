@@ -110,8 +110,8 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/ShowSessionPreferences").createXmlDocument();
     
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
 
     xmlDocument.setParameter("translate", vars.getSessionValue("#ShowTrl", "N"));
     xmlDocument.setParameter("accounting", vars.getSessionValue("#ShowAcct", "N"));

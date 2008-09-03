@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MA_PRODUCTION_COST">
     <function name="MA_PRODUCTION_COST" type="NULL">
-      <parameter name="p_production_id" type="NUMERIC" mode="in">
+      <parameter name="p_production_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_user_id" type="NUMERIC" mode="in">
+      <parameter name="p_user_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="v_message" type="VARCHAR" mode="out">
@@ -33,8 +33,8 @@
   TYPE RECORD IS REF CURSOR;
   Cur_Parameter RECORD;
 
-  v_Org_ID                              NUMBER;
-  v_Client_ID                           NUMBER;
+  v_Org_ID                              varchar2(32);
+  v_Client_ID                           varchar2(32);
   v_count                               NUMBER;
   v_countAux                            NUMBER;
   v_count2                              NUMBER;
@@ -51,11 +51,11 @@
   v_Cost                                NUMBER;
   v_Qty                                 NUMBER;
   v_DateTo                              DATE;
-  v_Costing_ID                          NUMBER;
-  v_CostCenter_ID                       NUMBER;
+  v_Costing_ID                          varchar2(32);
+  v_CostCenter_ID                       varchar2(32);
   v_IC_Value                            NUMBER;
   v_Cost_UOM                            CHAR;
-  v_NextNo                              NUMBER;
+  v_NextNo                              VARCHAR2(32);
   v_ProductionNo                        NUMBER;
   Cur_ProductionPlan RECORD;
   Cur_ProductionLine RECORD;

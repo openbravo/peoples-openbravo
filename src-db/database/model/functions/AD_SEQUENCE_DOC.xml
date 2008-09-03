@@ -4,7 +4,7 @@
       <parameter name="p_sequencename" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_ad_client_id" type="NUMERIC" mode="in">
+      <parameter name="p_ad_client_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_update_next" type="CHAR" mode="in">
@@ -40,7 +40,7 @@
   *  store in parameter p_DocumentNo
   *  if ID < 1000000, use System Doc Sequence
   ************************************************************************/
-  v_NextNo NUMBER;
+  v_NextNo VARCHAR2(32);
   v_NextNoSys NUMBER;
   v_Prefix VARCHAR2(30) ;
   v_Suffix VARCHAR2(30) ;
@@ -49,7 +49,7 @@ BEGIN
   INTO v_NextNo, v_NextNoSys, v_Prefix, v_Suffix
   FROM AD_Sequence
   WHERE Name=p_SequenceName  AND IsActive='Y'  AND IsTableID='N'  AND IsAutoSequence='Y'  AND AD_Client_ID=p_AD_Client_ID  FOR UPDATE OF CurrentNext, CurrentNextSys;
-  IF(v_NextNoSys<>-1 AND p_AD_Client_ID<1000000) THEN -- System No
+  IF(v_NextNoSys<>-1 AND p_AD_Client_ID<'1000000') THEN -- System No
     IF p_Update_Next='Y' THEN
       UPDATE AD_Sequence
         SET CurrentNextSys=CurrentNextSys + IncrementNo, Updated=now()

@@ -52,8 +52,8 @@ public class InformeInOut extends HttpSecureAppServlet {
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
     xmlDocument.setParameter("fechaDesde",strDesde);
     xmlDocument.setParameter("fechaHasta",strHasta);
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setData("reportCategoriaProducto", "structure1", CategoriaProductoComboData.select(this));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -64,7 +64,7 @@ public class InformeInOut extends HttpSecureAppServlet {
   void printPage(HttpServletResponse response, VariablesSecureApp vars,  String strDesde, String strHasta, String strCategoriaProducto) throws IOException, ServletException {
     response.setContentType("application/xls");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/InformeInOut_Excel").createXmlDocument();
-    xmlDocument.setData("structure1", InformeInOutData.select(this, strHasta, strDesde,  vars.getSqlDateFormat(), strCategoriaProducto));
+    xmlDocument.setData("structure1", InformeInOutData.select(this, vars.getSqlDateFormat(), strHasta, strDesde, strCategoriaProducto));
 
 
     response.setContentType("application/xls");

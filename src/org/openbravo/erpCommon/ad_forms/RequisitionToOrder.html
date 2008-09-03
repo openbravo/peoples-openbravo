@@ -25,11 +25,11 @@
     <link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon"></link>
     <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Main_Manual.css" id="paramCSS"></link>
     <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Client/DataGrid/DataGrid.css" id="paramCSS"></link>
-    <script language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";
+    <script language="JavaScript" type="text/javascript" id="paramDirectory">var baseDirectory = "../../../../../web/";
     </script> 
     <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
     <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
-    <script language="JavaScript" type="text/javascript" id="paramLanguage">LNG_POR_DEFECTO="en_US";</script>
+    <script language="JavaScript" type="text/javascript" id="paramLanguage">defaultLang="en_US";</script>
 <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
     <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
@@ -49,41 +49,41 @@
     </script> 
     <script language="JavaScript" type="text/javascript">
 
-      function depurar(action) {
+      function validate(action) {
         var frm=document.frmMain;
         if (action=="FIND") {
           if (frm.inpadOrgId.value==null || frm.inpadOrgId.value=="") {
             setWindowElementFocus(frm.inpadOrgId);
-            mensaje(7);
+            showJSMessage(7);
             return false;
           }
         } else if (action=="ADD") {
           if (radioValue(frm.inpRequisitionLine)==null) {
-            mensaje(1);
+            showJSMessage(1);
             return false;
           }
         } else if (action=="REMOVE" || action=="OPEN_CREATE") {
           if (radioValue(frm.inpSelectedReq)==null) {
-            mensaje(1);
+            showJSMessage(1);
             return false;
           }
         }
         return true;
       }
 
-      function updateData(clave, marcar) {
-        if (marcar==null) marcar=false;
+      function updateData(key, mark) {
+        if (mark==null) mark=false;
         var frm = document.frmMain;
-        frm.elements["inpQty" + clave].disabled=!marcar;
-        frm.elements["inpPrice" + clave].disabled=!marcar;
+        frm.elements["inpQty" + key].disabled=!mark;
+        frm.elements["inpPrice" + key].disabled=!mark;
 
-        if (marcar)
+        if (mark)
         {
-          frm.elements["inpQty" + clave].className = frm.elements["inpQty" + clave].className.replace(' readonly', '');
-          frm.elements["inpPrice" + clave].className = frm.elements["inpPrice" + clave].className.replace(' readonly', '');
+          frm.elements["inpQty" + key].className = frm.elements["inpQty" + key].className.replace(' readonly', '');
+          frm.elements["inpPrice" + key].className = frm.elements["inpPrice" + key].className.replace(' readonly', '');
         } else {
-          frm.elements["inpQty" + clave].className += " readonly";
-          frm.elements["inpPrice" + clave].className += " readonly";
+          frm.elements["inpQty" + key].className += " readonly";
+          frm.elements["inpPrice" + key].className += " readonly";
         }
         return true;
       }
@@ -385,7 +385,7 @@
                                 <div class="Popup_ContentPane_Client" style="overflow: auto;">
                                   <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table">
                                     <tr class="Popup_Client_Selector_DataGrid_HeaderRow"> 
-                                      <td class="DataGrid_Body_LineNoCell" width="24"> <input type="checkbox" name="inpAllLines" onclick="marcarTodos(document.frmMain.inpRequisitionLine, this.checked);return true;"></input>
+                                      <td class="DataGrid_Body_LineNoCell" width="24"> <input type="checkbox" name="inpAllLines" onclick="markAll(document.frmMain.inpRequisitionLine, this.checked);return true;"></input>
                                       </td>
                                       <th class="DataGrid_Header_Cell" width="80">Need by date</th>
                                       <th class="DataGrid_Header_Cell" width="195">Product</th>

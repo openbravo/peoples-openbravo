@@ -28,7 +28,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT CONSTANT1, MODEL, EJERCICIO, NIF_DECLARANTE, NOMBRE_DECLARANTE, SOPORTE, PERSONA, NUMERO_JUSTIF, TIPO_DECLARACION, TIPO_DECLARACION2, NUMERO_DEC, LPAD(TO_CHAR(COUNT(DISTINCT C_BPARTNER_ID)), 9, '0') AS NUMERO_PERSONAS, LPAD(REPLACE(TO_CHAR(SUM(TO_NUMBER(IMPORTE)), 'FM000000000000.00'), '.', ''), 15, '0') AS IMPORTE, TOTAL_INMUEBLES, IMPORTE_TOTAL_INMUEBLES, BLANCOS, '' AS NIF_DECLARADO, '' AS NIF_REPRESENTANTE, '' AS NOMBRE_SOCIAL, '' AS CODIGO_PROVINCIA, '' AS CODIGO_PAIS, '' AS CLAVE_CODIGO, '' AS OPERACION_SEGURO, '' AS ARRENDAMIENTO
+      SELECT CONSTANT1, MODEL, EJERCICIO, NIF_DECLARANTE, NOMBRE_DECLARANTE, SOPORTE, PERSONA, NUMERO_JUSTIF, TIPO_DECLARACION, TIPO_DECLARACION2, NUMERO_DEC, LPAD(TO_CHAR(COUNT(DISTINCT C_BPARTNER_ID)), 9, '0') AS NUMERO_PERSONAS, LPAD(REPLACE(TO_CHAR(SUM(to_number(IMPORTE)), 'FM000000000000.00'), '.', ''), 15, '0') AS IMPORTE, TOTAL_INMUEBLES, IMPORTE_TOTAL_INMUEBLES, BLANCOS, '' AS NIF_DECLARADO, '' AS NIF_REPRESENTANTE, '' AS NOMBRE_SOCIAL, '' AS CODIGO_PROVINCIA, '' AS CODIGO_PAIS, '' AS CLAVE_CODIGO, '' AS OPERACION_SEGURO, '' AS ARRENDAMIENTO
       FROM (SELECT C_INVOICE.C_BPARTNER_ID, to_char('1') AS CONSTANT1, to_char('347') AS MODEL, to_number(TO_CHAR(now(), 'YYYY'))-1 AS EJERCICIO, 
       COALESCE(LPAD(replace(translate((SELECT MAX(TAXID) FROM AD_ORGINFO),'.-_/'||CHR(92),' '),' ',''), 9, '0'), '000000000') AS NIF_DECLARANTE, 
       COALESCE(TO_CHAR(RPAD(UPPER(AD_CLIENT.DESCRIPTION), 40, ' ')), '                                        ') AS NOMBRE_DECLARANTE, 
@@ -45,8 +45,8 @@
                                                       AND EXISTS (SELECT 1                                                      
                                                                     FROM C_TAX T LEFT JOIN C_REGION R ON R.C_REGION_ID = T.TO_REGION_ID,
                                                                          C_COUNTRY C1, C_COUNTRY C2
-                                                                   WHERE COALESCE(T.C_COUNTRY_ID,0) = C1.C_COUNTRY_ID 
-                                                                     AND COALESCE(T.TO_COUNTRY_ID,0)  = C2.C_COUNTRY_ID
+                                                                   WHERE COALESCE(T.C_COUNTRY_ID,'0') = C1.C_COUNTRY_ID 
+                                                                     AND COALESCE(T.TO_COUNTRY_ID,'0')  = C2.C_COUNTRY_ID
                                                                      AND C1.COUNTRYCODE = 'ES'
                                                                      AND C2.COUNTRYCODE = 'ES'
                                                                      AND IT.C_INVOICE_ID = C_INVOICE.C_INVOICE_ID
@@ -59,8 +59,8 @@
                                                                 SELECT 1
                                                                     FROM C_TAX_ZONE T LEFT JOIN C_REGION R ON R.C_REGION_ID = T.TO_REGION_ID,
                                                                          C_COUNTRY C1, C_COUNTRY C2, C_TAX CT
-                                                                   WHERE COALESCE(T.FROM_COUNTRY_ID,0) = C1.C_COUNTRY_ID 
-                                                                     AND COALESCE(T.TO_COUNTRY_ID,0)  = C2.C_COUNTRY_ID
+                                                                   WHERE COALESCE(T.FROM_COUNTRY_ID,'0') = C1.C_COUNTRY_ID 
+                                                                     AND COALESCE(T.TO_COUNTRY_ID,'0')  = C2.C_COUNTRY_ID
                                                                      AND C1.COUNTRYCODE = 'ES'
                                                                      AND C2.COUNTRYCODE = 'ES'
                                                                      AND IT.C_INVOICE_ID = C_INVOICE.C_INVOICE_ID
@@ -80,8 +80,8 @@
                     FROM C_TAX T LEFT JOIN C_REGION R ON R.C_REGION_ID = T.TO_REGION_ID,
                          C_COUNTRY C1, C_COUNTRY C2,
                          C_INVOICETAX IT
-                   WHERE COALESCE(T.C_COUNTRY_ID,0) = C1.C_COUNTRY_ID 
-                     AND COALESCE(T.TO_COUNTRY_ID,0)  = C2.C_COUNTRY_ID
+                   WHERE COALESCE(T.C_COUNTRY_ID,'0') = C1.C_COUNTRY_ID 
+                     AND COALESCE(T.TO_COUNTRY_ID,'0')  = C2.C_COUNTRY_ID
                      AND C1.COUNTRYCODE = 'ES'
                      AND C2.COUNTRYCODE = 'ES'
                      AND IT.C_INVOICE_ID = C_INVOICE.C_INVOICE_ID
@@ -95,8 +95,8 @@
                     FROM C_TAX_ZONE T LEFT JOIN C_REGION R ON R.C_REGION_ID = T.TO_REGION_ID,
                          C_COUNTRY C1, C_COUNTRY C2,
                          C_INVOICETAX IT, C_TAX CT
-                   WHERE COALESCE(T.FROM_COUNTRY_ID,0) = C1.C_COUNTRY_ID 
-                     AND COALESCE(T.TO_COUNTRY_ID,0)  = C2.C_COUNTRY_ID
+                   WHERE COALESCE(T.FROM_COUNTRY_ID,'0') = C1.C_COUNTRY_ID 
+                     AND COALESCE(T.TO_COUNTRY_ID,'0')  = C2.C_COUNTRY_ID
                      AND C1.COUNTRYCODE = 'ES'
                      AND C2.COUNTRYCODE = 'ES'
                      AND IT.C_INVOICE_ID = C_INVOICE.C_INVOICE_ID
@@ -116,8 +116,8 @@
                                                       AND EXISTS (SELECT 1                                                      
                                                                     FROM C_TAX T LEFT JOIN C_REGION R ON R.C_REGION_ID = T.TO_REGION_ID,
                                                                          C_COUNTRY C1, C_COUNTRY C2
-                                                                   WHERE COALESCE(T.C_COUNTRY_ID,0) = C1.C_COUNTRY_ID 
-                                                                     AND COALESCE(T.TO_COUNTRY_ID,0)  = C2.C_COUNTRY_ID
+                                                                   WHERE COALESCE(T.C_COUNTRY_ID,'0') = C1.C_COUNTRY_ID 
+                                                                     AND COALESCE(T.TO_COUNTRY_ID,'0')  = C2.C_COUNTRY_ID
                                                                      AND C1.COUNTRYCODE = 'ES'
                                                                      AND C2.COUNTRYCODE = 'ES'
                                                                      AND IT.C_INVOICE_ID = C_INVOICE.C_INVOICE_ID
@@ -130,8 +130,8 @@
                                                                 SELECT 1
                                                                     FROM C_TAX_ZONE T LEFT JOIN C_REGION R ON R.C_REGION_ID = T.TO_REGION_ID,
                                                                          C_COUNTRY C1, C_COUNTRY C2, C_TAX CT
-                                                                   WHERE COALESCE(T.FROM_COUNTRY_ID,0) = C1.C_COUNTRY_ID 
-                                                                     AND COALESCE(T.TO_COUNTRY_ID,0)  = C2.C_COUNTRY_ID
+                                                                   WHERE COALESCE(T.FROM_COUNTRY_ID,'0') = C1.C_COUNTRY_ID 
+                                                                     AND COALESCE(T.TO_COUNTRY_ID,'0')  = C2.C_COUNTRY_ID
                                                                      AND C1.COUNTRYCODE = 'ES'
                                                                      AND C2.COUNTRYCODE = 'ES'
                                                                      AND IT.C_INVOICE_ID = C_INVOICE.C_INVOICE_ID
@@ -178,8 +178,8 @@
                                                       AND EXISTS (SELECT 1                                                      
                                                                     FROM C_TAX T LEFT JOIN C_REGION R ON R.C_REGION_ID = T.TO_REGION_ID,
                                                                          C_COUNTRY C1, C_COUNTRY C2
-                                                                   WHERE COALESCE(T.C_COUNTRY_ID,0) = C1.C_COUNTRY_ID 
-                                                                     AND COALESCE(T.TO_COUNTRY_ID,0)  = C2.C_COUNTRY_ID
+                                                                   WHERE COALESCE(T.C_COUNTRY_ID,'0') = C1.C_COUNTRY_ID 
+                                                                     AND COALESCE(T.TO_COUNTRY_ID,'0')  = C2.C_COUNTRY_ID
                                                                      AND C1.COUNTRYCODE = 'ES'
                                                                      AND C2.COUNTRYCODE = 'ES'
                                                                      AND IT.C_INVOICE_ID = I.C_INVOICE_ID
@@ -192,8 +192,8 @@
                                                                 SELECT 1
                                                                     FROM C_TAX_ZONE T LEFT JOIN C_REGION R ON R.C_REGION_ID = T.TO_REGION_ID,
                                                                          C_COUNTRY C1, C_COUNTRY C2, C_TAX CT
-                                                                   WHERE COALESCE(T.FROM_COUNTRY_ID,0) = C1.C_COUNTRY_ID 
-                                                                     AND COALESCE(T.TO_COUNTRY_ID,0)  = C2.C_COUNTRY_ID
+                                                                   WHERE COALESCE(T.FROM_COUNTRY_ID,'0') = C1.C_COUNTRY_ID 
+                                                                     AND COALESCE(T.TO_COUNTRY_ID,'0')  = C2.C_COUNTRY_ID
                                                                      AND C1.COUNTRYCODE = 'ES'
                                                                      AND C2.COUNTRYCODE = 'ES'
                                                                      AND IT.C_INVOICE_ID = I.C_INVOICE_ID
@@ -221,8 +221,8 @@
                     FROM C_TAX T LEFT JOIN C_REGION R ON R.C_REGION_ID = T.TO_REGION_ID,
                          C_COUNTRY C1, C_COUNTRY C2,
                          C_INVOICETAX IT
-                   WHERE COALESCE(T.C_COUNTRY_ID,0) = C1.C_COUNTRY_ID 
-                     AND COALESCE(T.TO_COUNTRY_ID,0)  = C2.C_COUNTRY_ID
+                   WHERE COALESCE(T.C_COUNTRY_ID,'0') = C1.C_COUNTRY_ID 
+                     AND COALESCE(T.TO_COUNTRY_ID,'0')  = C2.C_COUNTRY_ID
                      AND C1.COUNTRYCODE = 'ES'
                      AND C2.COUNTRYCODE = 'ES'
                      AND IT.C_INVOICE_ID = I.C_INVOICE_ID
@@ -236,8 +236,8 @@
                     FROM C_TAX_ZONE T LEFT JOIN C_REGION R ON R.C_REGION_ID = T.TO_REGION_ID,
                          C_COUNTRY C1, C_COUNTRY C2,
                          C_INVOICETAX IT, C_TAX CT
-                   WHERE COALESCE(T.FROM_COUNTRY_ID,0) = C1.C_COUNTRY_ID 
-                     AND COALESCE(T.TO_COUNTRY_ID,0)  = C2.C_COUNTRY_ID
+                   WHERE COALESCE(T.FROM_COUNTRY_ID,'0') = C1.C_COUNTRY_ID 
+                     AND COALESCE(T.TO_COUNTRY_ID,'0')  = C2.C_COUNTRY_ID
                      AND C1.COUNTRYCODE = 'ES'
                      AND C2.COUNTRYCODE = 'ES'
                      AND IT.C_INVOICE_ID = I.C_INVOICE_ID
@@ -255,8 +255,8 @@
                                                       AND EXISTS (SELECT 1                                                      
                                                                     FROM C_TAX T LEFT JOIN C_REGION R ON R.C_REGION_ID = T.TO_REGION_ID,
                                                                          C_COUNTRY C1, C_COUNTRY C2
-                                                                   WHERE COALESCE(T.C_COUNTRY_ID,0) = C1.C_COUNTRY_ID 
-                                                                     AND COALESCE(T.TO_COUNTRY_ID,0)  = C2.C_COUNTRY_ID
+                                                                   WHERE COALESCE(T.C_COUNTRY_ID,'0') = C1.C_COUNTRY_ID 
+                                                                     AND COALESCE(T.TO_COUNTRY_ID,'0')  = C2.C_COUNTRY_ID
                                                                      AND C1.COUNTRYCODE = 'ES'
                                                                      AND C2.COUNTRYCODE = 'ES'
                                                                      AND IT.C_INVOICE_ID = I.C_INVOICE_ID
@@ -269,8 +269,8 @@
                                                                 SELECT 1
                                                                     FROM C_TAX_ZONE T LEFT JOIN C_REGION R ON R.C_REGION_ID = T.TO_REGION_ID,
                                                                          C_COUNTRY C1, C_COUNTRY C2, C_TAX CT
-                                                                   WHERE COALESCE(T.FROM_COUNTRY_ID,0) = C1.C_COUNTRY_ID 
-                                                                     AND COALESCE(T.TO_COUNTRY_ID,0)  = C2.C_COUNTRY_ID
+                                                                   WHERE COALESCE(T.FROM_COUNTRY_ID,'0') = C1.C_COUNTRY_ID 
+                                                                     AND COALESCE(T.TO_COUNTRY_ID,'0')  = C2.C_COUNTRY_ID
                                                                      AND C1.COUNTRYCODE = 'ES'
                                                                      AND C2.COUNTRYCODE = 'ES'
                                                                      AND IT.C_INVOICE_ID = I.C_INVOICE_ID

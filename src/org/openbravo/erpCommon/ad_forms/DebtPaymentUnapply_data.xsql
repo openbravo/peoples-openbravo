@@ -39,7 +39,7 @@
       c_bpartner,  ad_ref_list_v, c_currency
       WHERE  c_bpartner.C_BPARTNER_ID = c_debt_payment.C_BPARTNER_ID
       AND c_debt_payment.paymentrule = ad_ref_list_v.VALUE
-      AND ad_ref_list_v.ad_reference_id = 195
+      AND ad_ref_list_v.ad_reference_id = '195'
       AND ad_ref_list_v.ad_language = 'es_ES' 
       AND c_debt_payment.C_CURRENCY_ID = c_currency.c_currency_id
       AND c_debt_payment.ispaid = 'Y'
@@ -74,7 +74,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       UPDATE C_DEBT_PAYMENT SET ispaid = 'N'
-      WHERE c_debt_payment_ID = TO_NUMBER(?)
+      WHERE c_debt_payment_id = ?
     </Sql>
    <Parameter name="cDebtPaymentId"/>
   </SqlMethod>
@@ -82,7 +82,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       UPDATE C_DEBT_PAYMENT SET ispaid = 'N', c_settlement_cancel_id = NULL, CANCEL_PROCESSED = 'N'
-      WHERE c_debt_payment_ID = TO_NUMBER(?)
+      WHERE c_debt_payment_id = ?
     </Sql>
    <Parameter name="cDebtPaymentId"/>
   </SqlMethod>

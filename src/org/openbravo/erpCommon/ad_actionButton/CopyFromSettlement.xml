@@ -24,7 +24,7 @@
   <PARAMETER id="paramKey" name="key" default="" attribute="value"/>
   <PARAMETER id="window" name="window" default="" attribute="value"/>
   <PARAMETER id="tab" name="tab" default="" attribute="value"/>
-  <PARAMETER id="paramDirection" name="direction" default=""/>
+  <PARAMETER id="paramDirectory" name="directory" default=""/>
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="paramDateFrom" name="dateFrom" attribute="value" default=""/>  
   <PARAMETER id="paramDateFrom" name="dateFromdisplayFormat" attribute="displayformat" replace="xx"/>

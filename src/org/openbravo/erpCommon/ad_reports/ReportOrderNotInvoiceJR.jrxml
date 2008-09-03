@@ -243,9 +243,9 @@
       ORDER BY ORGNAME, BPARTNERNAME, DATEORDERED DESC, DOCUMENTNO, LINE]]></queryString>
 
 	<field name="ORGNAME" class="java.lang.String"/>
-	<field name="C_BPARTNER_ID" class="java.math.BigDecimal"/>
+	<field name="C_BPARTNER_ID" class="java.lang.String"/>
 	<field name="BPARTNERNAME" class="java.lang.String"/>
-	<field name="C_ORDER_ID" class="java.math.BigDecimal"/>
+	<field name="C_ORDER_ID" class="java.lang.String"/>
 	<field name="DOCUMENTNO" class="java.lang.String"/>
 	<field name="DATEORDERED" class="java.util.Date"/>
 	<field name="GRANDTOTAL" class="java.math.BigDecimal"/>

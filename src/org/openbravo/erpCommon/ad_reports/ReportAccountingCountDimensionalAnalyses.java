@@ -210,8 +210,8 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
     xmlDocument.setParameter("eliminar3", discard[2]);
     xmlDocument.setParameter("eliminar4", discard[3]);
 
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
 
     xmlDocument.setParameter("constante", "100");
@@ -259,8 +259,8 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
     xmlDocument.setParameter("toolbar", toolbar.toString()); 
 
   
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("calendarLanguage", vars.getLanguage().substring(0,2));
     xmlDocument.setParameter("dateFrom", strDateFrom);
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
@@ -349,8 +349,8 @@ public class ReportAccountingCountDimensionalAnalyses extends HttpSecureAppServl
     xmlDocument.setParameter("toolbar", toolbar.toString()); 
 
 
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("calendarLanguage", vars.getLanguage().substring(0,2));
     xmlDocument.setParameter("dateFrom", strDateFrom);
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));

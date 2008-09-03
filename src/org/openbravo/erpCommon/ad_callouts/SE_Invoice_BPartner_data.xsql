@@ -35,7 +35,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT C_DocType.DocBaseType FROM C_DocType WHERE C_DocType.C_DocType_ID = TO_NUMBER(?)
+      SELECT C_DocType.DocBaseType FROM C_DocType WHERE C_DocType.C_DocType_ID = ?
       ]]>
     </Sql>
     <Parameter name="cDoctypeId"/>
@@ -44,7 +44,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT max(C_WithHolding_Id) AS ID FROM C_BP_WithHolding WHERE IsDefault='Y' and C_BPartner_ID=to_number(?) 
+      SELECT max(C_WithHolding_Id) AS ID FROM C_BP_WithHolding WHERE IsDefault='Y' and C_BPartner_id = ? 
       ]]>
     </Sql>
     <Parameter name="cBpartnerId"/>

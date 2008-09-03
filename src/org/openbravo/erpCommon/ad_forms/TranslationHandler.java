@@ -169,11 +169,11 @@ public class TranslationHandler extends DefaultHandler
 				m_sql.append(",IsTranslated='Y'");
 			//	Where section
 			m_sql.append(" WHERE ")
-				.append(m_TableName).append("_ID=").append(m_curID);
+				.append(m_TableName).append("_ID='").append(m_curID).append("'");
 			if (!m_isBaseLanguage)
 				m_sql.append(" AND AD_Language='").append(m_AD_Language).append("'");
 			if (m_AD_Client_ID >= 0)
-				m_sql.append(" AND AD_Client_ID=").append(m_AD_Client_ID);
+				m_sql.append(" AND AD_Client_ID='").append(m_AD_Client_ID).append("'");
 			//	Update section
 			m_sql.insert(0, m_updateSQL);
      if (log4j.isDebugEnabled()) log4j.debug(m_sql.toString());

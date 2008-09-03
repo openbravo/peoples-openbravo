@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
   <database name="FUNCTION A_ASSET_CREATE">
     <function name="A_ASSET_CREATE" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_inoutline_id" type="NUMERIC" mode="in">
+      <parameter name="p_inoutline_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -39,8 +39,8 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1; -- 0=failure
-  v_Record_ID NUMBER;
-  v_AD_User_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
+  v_AD_User_ID VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -48,8 +48,8 @@
     -- Create from ShipmentLine
     Cur_ShipLine RECORD;
     --
-    v_A_Asset_ID NUMBER(10) ;
-    v_A_Asset_Delivery_ID NUMBER(10) ;
+    v_A_Asset_ID VARCHAR2(32) ;
+    v_A_Asset_Delivery_ID VARCHAR2(32) ;
     v_DocumentNo VARCHAR2(40) ;
     v_Value VARCHAR2(60) ;
     v_Name VARCHAR2(80) ;
@@ -120,7 +120,7 @@
               LocationComment, C_BPartner_ID, C_BPartner_Location_ID, AD_User_ID
             )
             VALUES
-            (v_A_Asset_ID, Cur_Shipline.AD_Client_ID, Cur_Shipline.AD_Org_ID, 'Y', now(), 0, now(), 0, SUBSTR(Cur_Shipline.BP_Value, 1, 40-LENGTH(v_Value)) || v_Value, SUBSTR(Cur_Shipline.BP_Name, 1,
+            (v_A_Asset_ID, Cur_Shipline.AD_Client_ID, Cur_Shipline.AD_Org_ID, 'Y', now(), '0', now(), '0', SUBSTR(Cur_Shipline.BP_Value, 1, 40-LENGTH(v_Value)) || v_Value, SUBSTR(Cur_Shipline.BP_Name, 1,
             60-LENGTH(v_Name)) || v_Name, SUBSTR(Cur_Shipline.Description || ' ' || Cur_Shipline.LineDescription, 1, 255), Cur_Shipline.Help, Cur_Shipline.A_Asset_Group_ID, Cur_Shipline.M_Product_ID,
             Cur_Shipline.VersionNo, Cur_Shipline.GuaranteeDate, Cur_Shipline.MovementDate, 'N', 'N', null, 'N', v_DocumentNo, Cur_Shipline.C_BPartner_ID, Cur_Shipline.C_BPartner_Location_ID, Cur_Shipline.AD_User_ID) ;
             DBMS_OUTPUT.PUT_LINE('A_Asset_ID=' || v_A_Asset_ID || ' - ' || Cur_Shipline.Value||v_DocumentNo) ;

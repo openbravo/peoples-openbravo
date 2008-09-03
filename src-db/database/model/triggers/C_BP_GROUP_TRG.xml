@@ -29,7 +29,7 @@
     ************************************************************************/
     TYPE RECORD IS REF CURSOR;
   Cur_Defaults RECORD;
-  v_acc_id NUMBER(10) ;
+  v_acc_ID VARCHAR2(32) ;
 BEGIN
   IF(INSERTING) THEN
     FOR Cur_Defaults IN

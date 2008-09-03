@@ -47,7 +47,7 @@ BEGIN
       INSERT
       INTO C_Cashbook_Acct
         (
-          C_Cashbook_ID, C_AcctSchema_ID, AD_Client_ID,
+          C_Cashbook_Acct_ID, C_Cashbook_ID, C_AcctSchema_ID, AD_Client_ID,
           AD_Org_ID, IsActive, Created,
           CreatedBy, Updated, UpdatedBy,
           CB_Asset_Acct, CB_Differences_Acct, CB_Expense_Acct,
@@ -55,7 +55,7 @@ BEGIN
         )
         VALUES
         (
-          :new.C_Cashbook_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
+          get_uuid(), :new.C_Cashbook_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
           :new.AD_ORG_ID,  'Y', now(),
           :new.CreatedBy, now(), :new.UpdatedBy,
           Cur_Defaults.CB_Asset_Acct, Cur_Defaults.CB_Differences_Acct, Cur_Defaults.CB_Expense_Acct,

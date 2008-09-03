@@ -21,7 +21,7 @@
   <template file="ChangeOrderOrg.html"/>
   <PARAMETER id="paramToolBar" name="toolbar" default=""/>
   <PARAMETER id="paramLanguage" name="language" default=""/>
-  <PARAMETER id="paramDirection" name="direction" default=""/>
+  <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="paramBPartnerId" name="bpartner" attribute="value"/>
   <PARAMETER id="paramBPartnerDescription" name="bpartnerDes" attribute="value"/>
   <PARAMETER id="paramADOrgID" name="organization"/>

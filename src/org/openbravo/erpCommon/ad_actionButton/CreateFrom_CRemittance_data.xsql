@@ -30,8 +30,8 @@
         SELECT DP.C_DEBT_PAYMENT_ID, L.NAME AS PAYMENTRULE, B.NAME AS BPARTNER, 
         Ad_Column_Identifier(to_char('C_Invoice'), to_char(i.C_Invoice_ID), to_char(?)) AS INVOICE, DP.DATEPLANNED, 
         DP.AMOUNT, C.ISO_CODE,  O.Name as Org, 
-        (CASE ? WHEN 'Y' THEN DP.C_DEBT_PAYMENT_ID ELSE -1 END) AS MARCAR_ID, 
-        (CASE ? WHEN 'Y' THEN -1 ELSE DP.C_DEBT_PAYMENT_ID END) AS DISABLE_INPUTS,
+        (CASE ? WHEN 'Y' THEN DP.C_DEBT_PAYMENT_ID ELSE '-1' END) AS MARCAR_ID, 
+        (CASE ? WHEN 'Y' THEN '-1' ELSE DP.C_DEBT_PAYMENT_ID END) AS DISABLE_INPUTS,
         L1.name as status, '' as line
         FROM C_DEBT_PAYMENT DP left join AD_REF_LIST_V L on DP.PAYMENTRULE = L.VALUE
                                                         and L.AD_REFERENCE_ID = '195'
@@ -72,7 +72,7 @@
     <Parameter name="userClient" optional="true" type="replace" after="AND DP.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="userOrg" optional="true" type="replace" after="AND DP.AD_ORG_ID IN (" text="'1'"/>    
     <Parameter name="adOrgId" optional="true" type="replace" after="AND  DP.AD_ORG_ID IN (" text="'2'"/>    
-    <Parameter name="cBPartnerId" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID " text=" AND DP.C_BPARTNER_ID = TO_NUMBER(?) "/>
+    <Parameter name="cBPartnerId" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID " text=" AND DP.C_BPARTNER_ID = ? "/>
     <Parameter name="paymentrule" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID " text=" AND DP.PAYMENTRULE = ? "/>
     <Parameter name="planneddateFrom" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID "><![CDATA[ AND DP.DATEPLANNED >= TO_DATE(?) ]]></Parameter>
     <Parameter name="planneddateTo" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID "><![CDATA[ AND DP.DATEPLANNED <= TO_DATE(?) ]]></Parameter>
@@ -89,7 +89,7 @@
   <SqlMethod name="bpartner" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT NAME FROM C_BPARTNER WHERE C_BPARTNER_ID = TO_NUMBER(?)
+      SELECT NAME FROM C_BPARTNER WHERE C_BPARTNER_ID=?
     </Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
@@ -98,7 +98,7 @@
     <Sql><![CDATA[
       SELECT COUNT(*) 
       FROM C_DEBT_PAYMENT DP 
-      WHERE DP.C_DEBT_PAYMENT_ID = TO_NUMBER(?) 
+      WHERE DP.C_DEBT_PAYMENT_ID = ? 
       AND C_DEBT_PAYMENT_STATUS(DP.C_Settlement_Cancel_ID, DP.Cancel_Processed, DP.Generate_Processed, 
       DP.IsPaid, DP.IsValid, DP.C_CashLine_ID, DP.C_BankStatementLine_ID)='P' 
       AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE DP.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID) 
@@ -112,10 +112,10 @@
       <![CDATA[
         insert into C_RemittanceLine(C_REMITTANCELINE_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, 
                                      CREATED, CREATEDBY, UPDATED, UPDATEDBY, C_REMITTANCE_ID, LINE, C_DEBT_PAYMENT_ID)
-         SELECT TO_NUMBER(?),TO_NUMBER(?), AD_ORG_ID ,'Y', 
-                now(), TO_NUMBER(?), now(), TO_NUMBER(?), TO_NUMBER(?),TO_NUMBER(?), C_DEBT_PAYMENT_ID
+         SELECT ?,?, AD_ORG_ID ,'Y', 
+                now(), ?, now(), ?, ?,?, C_DEBT_PAYMENT_ID
                 FROM C_DEBT_PAYMENT
-                WHERE C_DEBT_PAYMENT_ID = TO_NUMBER(?)
+                WHERE C_DEBT_PAYMENT_ID = ?
         ]]>
     </Sql>
     <Parameter name="LineID"/>
@@ -134,7 +134,7 @@
       <![CDATA[
           SELECT COALESCE(MAX(LINE),0) AS LINE
             FROM C_REMITTANCELINE 
-           WHERE C_REMITTANCE_ID = TO_NUMBER(?)
+           WHERE C_REMITTANCE_ID = ?
         ]]>
     </Sql>
     <Parameter name="remittaceID"/>

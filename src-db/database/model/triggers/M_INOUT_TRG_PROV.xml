@@ -25,7 +25,7 @@
     /*************************************************************************
     * Description: Provisional. Added by Ismael Ciordia. Update movement type depending on document type
     ************************************************************************/
-  v_docType_ID NUMBER(10) ;
+  v_docType_ID VARCHAR2(32) ;
   v_movementType CHAR(2) ;
 BEGIN
   v_docType_ID:=:NEW.C_DocType_ID;

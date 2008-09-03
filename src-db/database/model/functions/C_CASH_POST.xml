@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_CASH_POST">
     <function name="C_CASH_POST" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -34,10 +34,10 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Result NUMBER;
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER(10) ;
-  v_User NUMBER;
-  v_C_Debt_Payment_Id NUMBER;
-  v_C_Order_Id NUMBER;
+  v_Record_ID VARCHAR2(32) ;
+  v_User VARCHAR2(32);
+  v_C_Debt_Payment_ID VARCHAR2(32);
+  v_C_Order_ID VARCHAR2(32);
   --Added by P.SAROBE
 	v_documentno_Settlement VARCHAR2(40);
 	v_dateSettlement DATE;
@@ -46,9 +46,9 @@
 	v_dateBankstatement DATE;
 	v_nameCash VARCHAR2 (60);
 	v_dateCash DATE;
-	v_Bankstatementline_ID NUMBER;
-	v_CashLine_ID NUMBER;
-	v_Settlement_Cancel_ID NUMBER;
+	v_Bankstatementline_ID VARCHAR2(32);
+	v_CashLine_ID VARCHAR2(32);
+	v_Settlement_Cancel_ID VARCHAR2(32);
 	v_ispaid CHAR(1);
 	--Finish added by P.Sarobe
   --  Parameter
@@ -59,17 +59,17 @@
     v_Processed CHAR(1) ;
     v_Posted CHAR(1) ;
     v_count NUMBER;
-    v_SettlementDocType_ID NUMBER(10) ;
-    v_settlementID NUMBER(10) ;
+    v_SettlementDocType_ID VARCHAR2(32) ;
+    v_settlementID varchar2(32) ;
     v_DocumentNo NUMBER(10) ;
     v_line C_CASHLINE.LINE%TYPE;
     -- CashBook
-    v_CB_Currency_ID NUMBER(10) ;
+    v_CB_Currency_ID VARCHAR2(32) ;
     v_CB_Date DATE;
-    v_AD_Org_ID NUMBER;
-    v_AD_Client_ID NUMBER;
-    v_C_Settlement_Id NUMBER;
-    v_C_CashBook_ID NUMBER(10) ;
+    v_AD_Org_ID VARCHAR2(32);
+    v_AD_Client_ID VARCHAR2(32);
+    v_C_Settlement_ID VARCHAR2(32);
+    v_C_CashBook_ID VARCHAR2(32) ;
     FINISH_PROCESS BOOLEAN:=false;
   BEGIN
     --  Update AD_PInstance
@@ -128,7 +128,7 @@
     END IF;--FINISH_PROCESS
     IF(NOT FINISH_PROCESS) THEN
       DECLARE
-        v_Settlement_Cancel NUMBER(10):=NULL;
+        v_Settlement_Cancel VARCHAR2(32):=NULL;
         CurDebtPaymentOrder RECORD;
       BEGIN
         /*
@@ -162,7 +162,7 @@
 
           IF(v_Settlement_Cancel IS NOT NULL) THEN --This is the generated settlement (it only can be one)
            DELETE FROM FACT_ACCT
-            WHERE AD_TABLE_ID = 800019
+            WHERE AD_TABLE_ID = '800019'
             AND RECORD_ID = v_Settlement_Cancel;
 
       UPDATE C_Settlement set posted='N' where c_Settlement_ID= v_Settlement_Cancel;
@@ -419,7 +419,7 @@
       */
       /* Now this goes to c_order_post ALO
       DECLARE
-      v_debtPaymentID NUMBER(10);
+      v_debtPaymentID varchar2(32);
       CurCashLinesOrder RECORD;
       BEGIN
       FOR CurCashLinesOrder IN (SELECT o.AD_CLIENT_ID, o.AD_ORG_ID, o.ISSOTRX, o.DOCUMENTNO, bp.NAME, o.POREFERENCE, o.C_ORDER_ID, o.C_BPARTNER_ID,
@@ -512,7 +512,7 @@
       */
       DECLARE
         v_Total NUMBER:=0;
-        v_Currency_ID NUMBER(10):=NULL;
+        v_Currency_ID VARCHAR2(32):=NULL;
         -- Lines
         Cur_Lines RECORD;
       BEGIN

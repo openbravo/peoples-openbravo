@@ -14,7 +14,6 @@ package org.openbravo.base;
 
 import org.openbravo.base.secureApp.SystemPreferencesData;
 import org.openbravo.erpCommon.ad_background.PeriodicBackground;
-import org.openbravo.database.ConnectionProviderImpl;
 import org.openbravo.database.ConnectionProvider;
 
 import javax.servlet.ServletContextEvent;

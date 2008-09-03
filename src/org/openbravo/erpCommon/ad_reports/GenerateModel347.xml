@@ -27,7 +27,7 @@
   <PARAMETER id="paramDateTo" name="dateTo" attribute="value"/>
   <PARAMETER id="paramDateTo" name="dateTodisplayFormat" attribute="displayformat" replace="xx"/>
   <PARAMETER id="paramDateTo" name="dateTosaveFormat" attribute="saveformat" replace="yy"/>
-  <PARAMETER id="paramDirection" name="direction" default=""/>
+  <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
   <PARAMETER id="paramAD_ORGID" name="adOrgId" default=""/>
   <PARAMETER id="paramConstanteNewType" name="constanteNewType" default="New"/>

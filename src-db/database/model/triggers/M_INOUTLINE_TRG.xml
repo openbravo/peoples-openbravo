@@ -6,7 +6,7 @@
 
 
 
-  v_ID          NUMBER;
+  v_ID          varchar2(32);
   v_RO    NUMBER;
   v_movementtype  VARCHAR2(2);
   v_qty    NUMBER;
@@ -14,7 +14,7 @@
   v_qtyold   NUMBER;
   v_qtyorderold  NUMBER;
   v_STOCKED   NUMBER;
-  v_UOM_ID    NUMBER(10);
+  v_UOM_ID    varchar2(32);
 /******************************************************************************
  * The contents of this file are subject to the   Compiere License  Version 1.1
  * ("License"); You may not use this file except in compliance with the License
@@ -33,10 +33,10 @@
  IF (INSERTING) THEN
   IF (:NEW.M_PRODUCT_ID IS NOT NULL) THEN
      SELECT C_UOM_ID INTO v_UOM_ID FROM M_PRODUCT WHERE M_PRODUCT_ID=:NEW.M_PRODUCT_ID;
-     IF (COALESCE(v_UOM_ID,0) <> COALESCE(:NEW.C_UOM_ID,0)) THEN
+     IF (COALESCE(v_UOM_ID,'0') <> COALESCE(:NEW.C_UOM_ID,'0')) THEN
        IF (:NEW.C_ORDERLINE_ID IS NOT NULL) THEN
          SELECT C_UOM_ID INTO v_UOM_ID FROM C_ORDERLINE WHERE C_ORDERLINE_ID = :NEW.C_ORDERLINE_ID;
-           IF (COALESCE(v_UOM_ID,0) <> COALESCE(:NEW.C_UOM_ID,0)) THEN
+           IF (COALESCE(v_UOM_ID,'0') <> COALESCE(:NEW.C_UOM_ID,'0')) THEN
              RAISE_APPLICATION_ERROR(-20111, 'Unit of Measure mismatch (product/transaction)');
            END IF;
        ELSE
@@ -59,13 +59,13 @@
     END IF;
  END IF;
  IF (UPDATING) THEN
-  IF (COALESCE(:OLD.C_UOM_ID, 0) <> COALESCE(:NEW.C_UOM_ID, 0)) THEN
+  IF (COALESCE(:OLD.C_UOM_ID, '0') <> COALESCE(:NEW.C_UOM_ID, '0')) THEN
     IF (:NEW.M_PRODUCT_ID IS NOT NULL) THEN
       SELECT C_UOM_ID INTO v_UOM_ID FROM M_PRODUCT WHERE M_PRODUCT_ID=:NEW.M_PRODUCT_ID;
-      IF (COALESCE(v_UOM_ID,0) <> COALESCE(:NEW.C_UOM_ID,0)) THEN
+      IF (COALESCE(v_UOM_ID,'0') <> COALESCE(:NEW.C_UOM_ID,'0')) THEN
         IF (:NEW.C_ORDERLINE_ID IS NOT NULL) THEN
           SELECT C_UOM_ID INTO v_UOM_ID FROM C_ORDERLINE WHERE C_ORDERLINE_ID = :NEW.C_ORDERLINE_ID;
-            IF (COALESCE(v_UOM_ID,0) <> COALESCE(:NEW.C_UOM_ID,0)) THEN
+            IF (COALESCE(v_UOM_ID,'0') <> COALESCE(:NEW.C_UOM_ID,'0')) THEN
               RAISE_APPLICATION_ERROR(-20111, 'Unit of Measure mismatch (product/transaction)');
             END IF;
         ELSE
@@ -114,8 +114,8 @@
   IF (INSERTING OR DELETING) THEN
    RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
   ELSIF (:new.M_Product_ID<>:old.M_Product_ID OR :new.MovementQty<>:old.MovementQty
-  OR COALESCE(:new.M_AttributeSetInstance_ID, 0) <> COALESCE(:old.M_AttributeSetInstance_ID, 0)
-  OR COALESCE(:new.M_Locator_ID,-1) <> COALESCE(:old.M_Locator_ID,-1))
+  OR COALESCE(:new.M_AttributeSetInstance_ID, '0') <> COALESCE(:old.M_AttributeSetInstance_ID, '0')
+  OR COALESCE(:new.M_Locator_ID,'-1') <> COALESCE(:old.M_Locator_ID,'-1'))
  THEN
   RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
    END IF;

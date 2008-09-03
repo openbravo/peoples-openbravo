@@ -34,13 +34,13 @@
   INSERT
   INTO C_UOM_Trl
     (
-      C_UOM_ID, AD_Language, AD_Client_ID,
+      C_UOM_Trl_ID, C_UOM_ID, AD_Language, AD_Client_ID,
       AD_Org_ID, IsActive, Created,
       CreatedBy, Updated, UpdatedBy,
       UOMSymbol, Name, Description,
       IsTranslated
     )
-  SELECT :new.C_UOM_ID,
+  SELECT get_uuid, :new.C_UOM_ID,
     AD_Language, :new.AD_Client_ID, :new.AD_Org_ID,
     :new.IsActive, :new.Created, :new.CreatedBy,
     :new.Updated, :new.UpdatedBy, :new.UOMSymbol,

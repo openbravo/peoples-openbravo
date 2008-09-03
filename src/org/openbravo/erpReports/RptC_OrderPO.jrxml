@@ -217,7 +217,7 @@ AND C_ORDER.C_CURRENCY_ID = C_CURRENCY.C_CURRENCY_ID
 AND C_ORDER.C_PAYMENTTERM_ID = PAYMENTTERM.C_PAYMENTTERM_ID
 AND C_ORDER.C_ORDER_ID IN $P!{ORDER_ID}]]></queryString>
 
-	<field name="C_ORDER_ID" class="java.math.BigDecimal"/>
+	<field name="C_ORDER_ID" class="java.lang.String"/>
 	<field name="DATEORDERED" class="java.util.Date"/>
 	<field name="DOCUMENTNO" class="java.lang.String"/>
 	<field name="NAME" class="java.lang.String"/>
@@ -451,7 +451,7 @@ AND C_ORDER.C_ORDER_ID IN $P!{ORDER_ID}]]></queryString>
 						height="76"
 						key="subreport-1"/>
 					<subreportParameter  name="ORDER_ID">
-						<subreportParameterExpression><![CDATA[$F{C_ORDER_ID}.toPlainString()]]></subreportParameterExpression>
+						<subreportParameterExpression><![CDATA[$F{C_ORDER_ID}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter  name="LOCALE">
 						<subreportParameterExpression><![CDATA[$P{LOCALE}]]></subreportParameterExpression>

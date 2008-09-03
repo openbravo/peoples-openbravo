@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_GET_OFFERS_APPLIED">
     <function name="M_GET_OFFERS_APPLIED" type="VARCHAR">
-      <parameter name="p_id" type="NUMERIC" mode="in">
+      <parameter name="p_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_type" type="VARCHAR" mode="in">

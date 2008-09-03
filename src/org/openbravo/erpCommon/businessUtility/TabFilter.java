@@ -79,8 +79,8 @@ public class TabFilter extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) log4j.debug("Output: 'order by' selector");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/businessUtility/TabFilter").createXmlDocument();
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("tab", strTab);
     xmlDocument.setParameter("windowId", strWindowId);
 

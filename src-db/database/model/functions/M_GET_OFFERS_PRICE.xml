@@ -4,10 +4,10 @@
       <parameter name="p_date" type="TIMESTAMP" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_bpartner_id" type="NUMERIC" mode="in">
+      <parameter name="p_bpartner_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_product_id" type="NUMERIC" mode="in">
+      <parameter name="p_product_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_pricestd" type="NUMERIC" mode="in">
@@ -16,7 +16,7 @@
       <parameter name="p_qty" type="NUMERIC" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_pricelist" type="NUMERIC" mode="in">
+      <parameter name="p_pricelist" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************

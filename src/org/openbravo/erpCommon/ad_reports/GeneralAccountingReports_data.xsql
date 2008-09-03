@@ -32,7 +32,7 @@
         AND A_R_O.ISACTIVE = 'Y' 
         AND A_R_O.AD_ROLE_ID = R.AD_ROLE_ID 
         AND R.ISACTIVE = 'Y' 
-        AND A_R_O.AD_ROLE_ID = TO_NUMBER(?) 
+        AND A_R_O.AD_ROLE_ID = ? 
         ORDER BY A_O.NAME
       ]]></Sql>
         <Parameter name="rol"/>
@@ -50,7 +50,7 @@
       ]]></Sql>
 		<Parameter name="org" optional="true" type="replace" after="WHERE AD_ORG_ID IN (" text="'1'"/>      
 		<Parameter name="client" optional="true" type="replace" after="AND AD_CLIENT_ID IN (" text="'1'"/>      
-		<Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND C_ACCT_RPT.C_ACCTSCHEMA_ID = TO_NUMBER(?)]]></Parameter>
+		<Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND C_ACCT_RPT.C_ACCTSCHEMA_ID = ?]]></Parameter>
    </SqlMethod>
    <SqlMethod name="selectRptDouble" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
@@ -66,7 +66,7 @@
       <Sql><![CDATA[
         SELECT C_ACCT_RPT_GROUP_ID AS ID, name, 'page' as pagebreak
         FROM C_ACCT_RPT_GROUP
-        WHERE C_ACCT_RPT_ID = TO_NUMBER(?)
+        WHERE C_ACCT_RPT_ID = ?
         ORDER BY LINE
       ]]></Sql>
         <Parameter name="rpt"/>
@@ -77,7 +77,7 @@
       <Sql><![CDATA[
         SELECT c_elementvalue_id AS ID
         FROM C_ACCT_RPT_NODE
-        WHERE C_ACCT_RPT_GROUP_ID = TO_NUMBER(?)
+        WHERE C_ACCT_RPT_GROUP_ID = ?
         ORDER BY LINE
       ]]></Sql>
         <Parameter name="grp"/>
@@ -88,7 +88,7 @@
       <Sql><![CDATA[
         SELECT name
         FROM C_ACCT_RPT_GROUP
-        WHERE C_ACCT_RPT_GROUP_ID = TO_NUMBER(?)
+        WHERE C_ACCT_RPT_GROUP_ID = ?
       ]]></Sql>
         <Parameter name="grp"/>
    </SqlMethod>
@@ -98,7 +98,7 @@
       <Sql><![CDATA[
         SELECT name
         FROM C_ACCT_RPT
-        WHERE C_ACCT_RPT_ID = TO_NUMBER(?)
+        WHERE C_ACCT_RPT_ID = ?
       ]]></Sql>
         <Parameter name="rpt"/>
    </SqlMethod>
@@ -111,7 +111,7 @@
       <Sql><![CDATA[
         SELECT m.Name 
         FROM C_ElementValue m
-        WHERE m.C_ElementValue_ID = TO_NUMBER(?)
+        WHERE m.C_ElementValue_ID = ?
       ]]></Sql>
         <Parameter name="cElementvalueId"/>
   </SqlMethod>
@@ -121,7 +121,7 @@
         SELECT COALESCE(mt.Name, m.Name) AS NAME 
         FROM C_ElementValue m left join C_ElementValue_Trl mt on m.C_ElementValue_ID = mt.C_ElementValue_ID 
                                                              AND mt.AD_Language  = ?
-        WHERE m.C_ElementValue_ID = TO_NUMBER(?) 
+        WHERE m.C_ElementValue_ID = ? 
       ]]></Sql>
         <Parameter name="adLanguage"/>
         <Parameter name="cElementvalueId"/>     
@@ -131,7 +131,7 @@
       <Sql><![CDATA[
         SELECT m.AccountType 
         FROM C_ElementValue m
-        WHERE m.C_ElementValue_ID = TO_NUMBER(?)
+        WHERE m.C_ElementValue_ID = ?
       ]]></Sql>
         <Parameter name="cElementvalueId"/>
   </SqlMethod>
@@ -139,7 +139,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
         SELECT AD_TREE_ORG_ID FROM AD_CLIENTINFO
-        WHERE AD_CLIENT_ID = TO_NUMBER(?)
+        WHERE AD_CLIENT_ID = ?
     </Sql>
     <Parameter name="client"/>
   </SqlMethod>
@@ -147,7 +147,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
         SELECT NAME FROM AD_CLIENT
-        WHERE AD_CLIENT_ID = TO_NUMBER(?)
+        WHERE AD_CLIENT_ID = ?
     </Sql>
     <Parameter name="client"/>
   </SqlMethod>
@@ -171,7 +171,7 @@
       FROM C_ACCTSCHEMA_GL, C_VALIDCOMBINATION, C_ELEMENTVALUE
       WHERE C_ACCTSCHEMA_GL.INCOMESUMMARY_ACCT = C_VALIDCOMBINATION.C_VALIDCOMBINATION_ID
       AND C_VALIDCOMBINATION.ACCOUNT_ID = C_ELEMENTVALUE.C_ELEMENTVALUE_ID
-      AND C_ACCTSCHEMA_GL.C_ACCTSCHEMA_ID = TO_NUMBER(?)
+      AND C_ACCTSCHEMA_GL.C_ACCTSCHEMA_ID = ?
       ]]>
     </Sql>
     <Parameter name="cAcctschemaId"/>
@@ -194,7 +194,7 @@
         <Parameter name="accountType"/>
         <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT >= TO_DATE(?)]]></Parameter>
         <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.DATEACCT < TO_DATE(?)]]></Parameter>
-        <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.C_ACCTSCHEMA_ID = TO_NUMBER(?)]]></Parameter>
+        <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND FACT_ACCT.C_ACCTSCHEMA_ID = ?]]></Parameter>
         <Parameter name="year"/>
         <Parameter name="adOrgId" optional="true" type="replace" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'1'"/>
    </SqlMethod>

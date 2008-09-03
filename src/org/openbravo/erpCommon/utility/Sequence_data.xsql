@@ -31,7 +31,7 @@
    <SqlMethod name="getSequence" type="callableStatement" return="object" object="CSResponse">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        CALL AD_Sequence_Next(?,to_number(?),?)
+        CALL AD_Sequence_Next(?,?,?)
       ]]></Sql>
       <Parameter name="table"/>
       <Parameter name="adClientId"/>

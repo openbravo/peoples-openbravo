@@ -18,6 +18,12 @@
  */
 package org.openbravo.erpCommon.ad_reports;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+
 import org.openbravo.erpCommon.utility.*;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.businessUtility.Tree;
@@ -28,7 +34,6 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import java.util.*;
 
@@ -148,7 +153,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         if (strcelementvalueto.equals("")) {
           strcelementvalueto=strcelementvaluefrom;
         }
-        String strRange = getRange(strcelementvaluefrom, strcelementvalueto);
+        String strRange = Utility.stringList(getRange(strcelementvaluefrom, strcelementvalueto));
         if (log4j.isDebugEnabled()) log4j.debug("##################### strRange= " + strRange);
         if (log4j.isDebugEnabled()) log4j.debug("##################### strcelementvaluefrom= " + strcelementvaluefrom);
         if (log4j.isDebugEnabled()) log4j.debug("##################### strcelementvalueto= " + strcelementvalueto);
@@ -244,8 +249,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
     xmlDocument.setData("reportAD_ORGID", "liststructure", GeneralAccountingReportsData.selectCombo(this, vars.getRole()));
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("cElementValueFrom", strcelementvaluefrom);
     xmlDocument.setParameter("cElementValueTo", strcelementvalueto);
     xmlDocument.setParameter("dateFrom", strDateFrom);
@@ -299,7 +304,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         if (strcelementvalueto.equals("")) {
           strcelementvalueto=strcelementvaluefrom;
         }
-        String strRange = getRange(strcelementvaluefrom, strcelementvalueto);
+        String strRange = Utility.stringList(getRange(strcelementvaluefrom, strcelementvalueto));
         //String strAcctFamily = getFamily(strTreeAccount, strcelementvaluefrom);
         if (strHide.equals(""))
           data = ReportGeneralLedgerData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strOrgFamily, strRange.equals("")?"":"("+ strRange + ")", strcBpartnerId,strAmtFrom, strAmtTo, (strcBpartnerId.equals("")&&strAll.equals(""))?"value":"partner");
@@ -336,8 +341,26 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportGeneralLedger.jrxml";
     
     HashMap<String, Object> parameters = new HashMap<String, Object>();
+    
+    String strLanguage = vars.getLanguage();
+    String strBaseDesign = getBaseDesignPath(strLanguage);
+    
+    JasperReport jasperReportLines;
+    try {
+      JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign + "/org/openbravo/erpCommon/ad_reports/ReportGeneralLedger_Previous.jrxml");
+      jasperReportLines = JasperCompileManager.compileReport(jasperDesignLines);
+    } catch (JRException e) {
+      e.printStackTrace();
+      throw new ServletException(e.getMessage());
+    }
+    parameters.put("SR_LINES", jasperReportLines);
+ 
+    
     parameters.put("Title", classInfo.name);
     parameters.put("ShowPartner",new Boolean(!(strcBpartnerId.equals("")&&strAll.equals(""))));
+    parameters.put("Subtitle", Utility.messageBD(this, "GL_Previous", strLanguage));
+    parameters.put("Final", Utility.messageBD(this, "Final", strLanguage));
+    
     renderJR(vars, response, strReportName, strOutput, parameters, data, null );
  }
 

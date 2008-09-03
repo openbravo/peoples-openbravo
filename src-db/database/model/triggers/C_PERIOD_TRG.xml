@@ -24,12 +24,12 @@
     *************************************************************************
     * Fill Period Control
     */
-    v_NextNo NUMBER;
+    v_NextNo VARCHAR2(32);
   TYPE RECORD IS REF CURSOR;
     CUR_DocType RECORD;
   BEGIN
     FOR CUR_DocType IN
-      (SELECT Value  FROM AD_Ref_List  WHERE AD_Reference_ID=183  ORDER BY 1)
+      (SELECT Value  FROM AD_Ref_List  WHERE AD_Reference_ID='183'  ORDER BY 1)
     LOOP
       AD_Sequence_Next('C_PeriodControl', :new.AD_Client_ID, v_NextNo) ;
       INSERT
@@ -44,8 +44,8 @@
         VALUES
         (
           v_NextNo, :new.AD_Client_ID, :new.AD_Org_ID,
-           'Y', now(),  0,
-          now(), 0, :new.C_Period_ID,
+           'Y', now(),  '0',
+          now(), '0', :new.C_Period_ID,
           CUR_DocType.Value, 'N', 'N',
           NULL
         )

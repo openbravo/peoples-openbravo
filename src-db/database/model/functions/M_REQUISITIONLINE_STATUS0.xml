@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_REQUISITIONLINE_STATUS0">
     <function name="M_REQUISITIONLINE_STATUS0" type="NULL">
-      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************

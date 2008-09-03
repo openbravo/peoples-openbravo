@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION COPY_PROJECT_LINES">
     <function name="COPY_PROJECT_LINES" type="NULL">
-      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -23,13 +23,13 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     -- Parameter Variables
     v_NoOfLines NUMBER:=0;
-    v_NextNo NUMBER;
+    v_NextNo VARCHAR2(32);
     -- Copy
     Cur_ProjectLine RECORD;
   BEGIN
@@ -83,7 +83,7 @@
         VALUES
         (
           v_NextNo, Cur_ProjectLine.AD_Client_ID, Cur_ProjectLine.AD_Org_ID, Cur_ProjectLine.IsActive,
-          now(), 0, now(), 0,
+          now(), '0', now(), '0',
           v_Record_ID, Cur_ProjectLine.Line, Cur_ProjectLine.M_Product_ID, Cur_ProjectLine.PlannedQty,
           Cur_ProjectLine.PlannedPrice, Cur_ProjectLine.Description, Cur_ProjectLine.Product_Value, Cur_ProjectLine.Product_Name,
           Cur_ProjectLine.Product_Description

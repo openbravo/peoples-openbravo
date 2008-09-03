@@ -107,8 +107,8 @@ public class Project extends HttpSecureAppServlet {
     } else {
       xmlDocument.setParameter("key", strKeyValue);
     }
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("windowId", strWindow);
     xmlDocument.setParameter("name", strNameValue);
@@ -143,10 +143,10 @@ public class Project extends HttpSecureAppServlet {
   String generateResult(ProjectData[] data) throws IOException, ServletException {
     StringBuffer html = new StringBuffer();
     
-    html.append("\nfunction depurarSelector() {\n");
-    html.append("var clave = \"" + data[0].cProjectId + "\";\n");
-    html.append("var texto = \"" + Replace.replace((data[0].value + " - " + data[0].name), "\"", "\\\"") + "\";\n");
-    html.append("parent.opener.closeSearch(\"SAVE\", clave, texto);\n");
+    html.append("\nfunction validateSelector() {\n");
+    html.append("var key = \"" + data[0].cProjectId + "\";\n");
+    html.append("var text = \"" + Replace.replace((data[0].value + " - " + data[0].name), "\"", "\\\"") + "\";\n");
+    html.append("parent.opener.closeSearch(\"SAVE\", key, text);\n");
     html.append("}\n");
     return html.toString();
   }

@@ -96,8 +96,8 @@ void printPage(HttpServletResponse response, VariablesSecureApp vars, String str
 
 
       xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-      xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-      xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("description", strDescription);
       xmlDocument.setParameter("help", strHelp);
       

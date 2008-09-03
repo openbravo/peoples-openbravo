@@ -86,7 +86,7 @@
       <![CDATA[
         SELECT mw.name
         FROM M_WAREHOUSE mw
-        WHERE mw.M_WAREHOUSE_ID = TO_NUMBER(?)
+        WHERE mw.M_WAREHOUSE_ID = ?
       ]]>
       </Sql>
         <Parameter name="mWarehouseId"/>

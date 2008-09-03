@@ -161,10 +161,10 @@ WHERE C_CASHBOOK.C_CASHBOOK_ID=C_CASH.C_CASHBOOK_ID
   AND C_CASH.PROCESSED='Y'
   ORDER BY NAMECASHBOOK, STATEMENTDATE, C_CASH_ID, C_CASHLINE.LINE]]></queryString>
 
-	<field name="C_CASHBOOK_ID" class="java.math.BigDecimal"/>
+	<field name="C_CASHBOOK_ID" class="java.lang.String"/>
 	<field name="NAMECASHBOOK" class="java.lang.String"/>
 	<field name="STATEMENTDATE" class="java.sql.Timestamp"/>
-	<field name="C_CASH_ID" class="java.math.BigDecimal"/>
+	<field name="C_CASH_ID" class="java.lang.String"/>
 	<field name="NAMECASH" class="java.lang.String"/>
 	<field name="BEGINNINGBALANCE" class="java.math.BigDecimal"/>
 	<field name="ENDINGBALANCE" class="java.math.BigDecimal"/>

@@ -24,7 +24,7 @@
 ************************************************************************/
    TYPE RECORD IS REF CURSOR;
   Cur_Discounts RECORD;
-  v_Key NUMBER(10) ;
+  v_Key VARCHAR2(32) ;
 BEGIN
   FOR Cur_Discounts IN
     (

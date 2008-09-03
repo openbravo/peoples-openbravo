@@ -47,7 +47,7 @@
     <Sql>
       <![CDATA[
       INSERT INTO AD_Client(AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,Value,Name,Description)
-      VALUES (TO_NUMBER(?),0,'Y',now(),0,now(),0,?, ?, ?)
+      VALUES (?,0,'Y',now(),0,now(),0,?, ?, ?)
       ]]>
     </Sql>
     <Parameter name="claveCliente"/>
@@ -60,7 +60,7 @@
     <Sql>
       <![CDATA[
       INSERT INTO AD_Tree(AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,AD_Tree_ID,Name,Description,TreeType)
-      VALUES (TO_NUMBER(?),0,'Y',now(),0,now(),0,TO_NUMBER(?),?,?,?)
+      VALUES (?,0,'Y',now(),0,now(),0,?,?,?,?)
       ]]>
     </Sql>
     <Parameter name="claveCliente"/>
@@ -97,8 +97,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      UPDATE AD_ClientInfo SET C_AcctSchema1_ID = TO_NUMBER(?), C_Calendar_ID = TO_NUMBER(?)
-      WHERE AD_Client_ID = TO_NUMBER(?)
+      UPDATE AD_ClientInfo SET C_AcctSchema1_ID = ?, C_Calendar_ID = ?
+      WHERE AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="C_AcctSchema_ID"/>
@@ -110,7 +110,7 @@
     <Sql>
       <![CDATA[
       INSERT INTO AD_ClientInfo(AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,Acct2_Active,Acct3_Active,AD_Tree_Menu_ID, AD_Tree_Org_ID,AD_Tree_BPartner_ID,AD_Tree_Project_ID,AD_Tree_SalesRegion_ID,AD_Tree_Product_ID)
-      VALUES (TO_NUMBER(?),0,'Y',now(),0,now(),0 ,'N','N',TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?))
+      VALUES (?,0,'Y',now(),0,now(),0 ,'N','N',?,?,?,?,?,?)
       ]]>
     </Sql>
     <Parameter name="claveCliente"/>
@@ -126,7 +126,7 @@
     <Sql>
       <![CDATA[
       INSERT INTO AD_Org (AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,Value,Name,IsSummary)
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),'Y',now(),0,now(),0 ,?,?,'N')
+      VALUES (?,?,'Y',now(),0,now(),0 ,?,?,'N')
       ]]>
     </Sql>
     <Parameter name="AD_Client_ID"/>
@@ -140,7 +140,7 @@
       <![CDATA[
       INSERT INTO AD_Role (AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,AD_Role_ID,Name,
       Description,UserLevel,ClientList,OrgList)
-      VALUES (TO_NUMBER(?),0,'Y',now(),0,now(),0,TO_NUMBER(?),?,?,' CO',?,?)
+      VALUES (?,0,'Y',now(),0,now(),0,?,?,?,' CO',?,?)
       ]]>
     </Sql>
     <Parameter name="AD_Client_ID"/>
@@ -156,7 +156,7 @@
       <![CDATA[
       INSERT INTO AD_Role(AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,AD_Role_ID,Name,
       Description,UserLevel,ClientList,OrgList)
-      VALUES (TO_NUMBER(?),0,'Y',now(),0,now(),0,TO_NUMBER(?),?,?,'  O',?,?)
+      VALUES (?,0,'Y',now(),0,now(),0,?,?,?,'  O',?,?)
       ]]>
     </Sql>
     <Parameter name="AD_Client_ID"/>
@@ -170,8 +170,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      INSERT INTO AD_Role_OrgAccess(AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,AD_Role_ID) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),'Y',now(),0,now(),0,TO_NUMBER(?))
+      INSERT INTO AD_Role_OrgAccess(AD_Role_OrgAccess_ID, AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,AD_Role_ID) 
+      VALUES (get_uuid(), ?,?,'Y',now(),0,now(),0,?)
       ]]>
     </Sql>
     <Parameter name="AD_Client_ID"/>
@@ -183,7 +183,7 @@
     <Sql>
       <![CDATA[
       INSERT INTO AD_User(AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,AD_User_ID,Name,UserName,Description,Password, DEFAULT_AD_LANGUAGE)
-      VALUES (TO_NUMBER(?),0,'Y',now(),0,now(),0,TO_NUMBER(?),?,?,?,?,?)
+      VALUES (?,0,'Y',now(),0,now(),0,?,?,?,?,?,?)
       ]]>
     </Sql>
     <Parameter name="AD_Client_ID"/>
@@ -192,14 +192,14 @@
     <Parameter name="name"/>
     <Parameter name="name"/>
     <Parameter name="password"/>
-	<Parameter name="DEFAULT_AD_LANGUAGE"/>
+	  <Parameter name="DEFAULT_AD_LANGUAGE"/>
   </SqlMethod>
       <SqlMethod name="insertUserRoles" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      INSERT INTO AD_User_Roles(AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,AD_User_ID,AD_Role_ID)
-      VALUES (TO_NUMBER(?),0,'Y',now(),0,now(),0,TO_NUMBER(?),TO_NUMBER(?))
+      INSERT INTO AD_User_Roles(AD_User_Roles_ID, AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,AD_User_ID,AD_Role_ID)
+      VALUES (get_uuid(), ?,0,'Y',now(),0,now(),0,?,?)
       ]]>
     </Sql>
     <Parameter name="AD_Client_ID"/>
@@ -211,7 +211,7 @@
     <Sql>
       <![CDATA[
       INSERT INTO C_Calendar(AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,C_Calendar_ID,Name) 
-      VALUES ( TO_NUMBER(?),0,'Y',now(),0,now(),0,TO_NUMBER(?),?)
+      VALUES (?,0,'Y',now(),0,now(),0,?,?)
       ]]>
     </Sql>
     <Parameter name="AD_Client_ID"/>
@@ -223,7 +223,7 @@
     <Sql>
       <![CDATA[
       INSERT INTO C_Year(C_Year_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,Year,C_Calendar_ID) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,TO_CHAR(now(),'YYYY'),TO_NUMBER(?))
+      VALUES (?,?,0,'Y',now(),'0',now(),'0',TO_CHAR(now(),'YYYY'),?)
       ]]>
     </Sql>
     <Parameter name="C_Year_ID"/>
@@ -236,7 +236,7 @@
       <![CDATA[
         INSERT INTO C_ELEMENT(AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,C_Element_ID,Name,Description,
         VFormat,ElementType,IsBalancing,IsNaturalAccount,AD_Tree_ID)
-        VALUES (TO_NUMBER(?),0,'Y',now(),0,now(),0,TO_NUMBER(?),?,?,NULL,'A','N','Y',TO_NUMBER(?))
+        VALUES (?,'0','Y',now(),'0',now(),'0',?,?,?,NULL,'A','N','Y',?)
       ]]>
     </Sql>
     <Parameter name="AD_Client_ID"/>
@@ -251,7 +251,7 @@
       <![CDATA[
         INSERT INTO C_AcctSchema(AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,
         C_AcctSchema_ID,Name,GAAP,IsAccrual,CostingMethod,C_Currency_ID,AutoPeriodControl,Separator,HasAlias,HasCombination)
-        VALUES (TO_NUMBER(?),0,'Y',now(),0,now(),0,TO_NUMBER(?),?,?,'Y',?,TO_NUMBER(?),'N','-','Y','N')
+        VALUES (?,'0','Y',now(),'0',now(),'0',?,?,?,'Y',?,?,'N','-','Y','N')
       ]]>
     </Sql>
     <Parameter name="AD_Client_ID"/>
@@ -267,7 +267,7 @@
       <![CDATA[
         INSERT INTO C_AcctSchema_Element(AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,
         C_AcctSchema_Element_ID,C_AcctSchema_ID,ElementType,Name,SeqNo,IsMandatory,IsBalanced) 
-        VALUES (TO_NUMBER(?),0,'Y',now(),0,now(),0,TO_NUMBER(?),TO_NUMBER(?),?,?,TO_NUMBER(?),?,?)
+        VALUES (?,0,'Y',now(),'0',now(),'0',?,?,?,?,to_number(?),?,?)
       ]]>
     </Sql>
     <Parameter name="AD_Client_ID"/>
@@ -283,8 +283,9 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      UPDATE C_AcctSchema_Element SET Org_ID=  TO_NUMBER(?)
-      WHERE C_AcctSchema_Element_ID = TO_NUMBER(?)
+      UPDATE C_AcctSchema_Element 
+      SET Org_ID=?
+      WHERE C_AcctSchema_Element_ID= ?
       ]]>
     </Sql>
     <Parameter name="AD_Org_ID"/>
@@ -294,8 +295,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      UPDATE C_AcctSchema_Element SET C_ElementValue_ID= TO_NUMBER(?), C_Element_ID= TO_NUMBER(?)
-      WHERE C_AcctSchema_Element_ID = TO_NUMBER(?)
+      UPDATE C_AcctSchema_Element SET C_ElementValue_id = ?, C_Element_id = ?
+      WHERE C_AcctSchema_Element_ID=?
       ]]>
     </Sql>
     <Parameter name="C_ElementValue_ID"/>
@@ -306,8 +307,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      UPDATE C_AcctSchema_Element SET C_Project_ID = TO_NUMBER(?)
-      WHERE C_AcctSchema_ID = TO_NUMBER(?)
+      UPDATE C_AcctSchema_Element SET C_Project_ID = ?
+      WHERE C_AcctSchema_ID = ?
       AND ElementType='PJ'
       ]]>
     </Sql>
@@ -322,7 +323,7 @@
       USESUSPENSEBALANCING,SUSPENSEBALANCING_ACCT,USESUSPENSEERROR,SUSPENSEERROR_ACCT,USECURRENCYBALANCING,
       CURRENCYBALANCING_ACCT,RETAINEDEARNING_ACCT,INCOMESUMMARY_ACCT,INTERCOMPANYDUETO_ACCT,INTERCOMPANYDUEFROM_ACCT,
       PPVOFFSET_ACCT) 
-      VALUES (TO_NUMBER(?),0,'Y',now(),0,now(),0,TO_NUMBER(?),'Y',TO_NUMBER(?),'Y',TO_NUMBER(?),'Y',TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?))
+      VALUES (?,0,'Y',now(),0,now(),0,?,'Y',?,'Y',?,'Y',?,?,?,?,?,?)
       ]]>
     </Sql>
     <Parameter name="AD_Client_ID"/>
@@ -353,9 +354,9 @@
       UNEARNEDREVENUE_ACCT,NOTINVOICEDRECEIVABLES_ACCT,NOTINVOICEDREVENUE_ACCT,NOTINVOICEDRECEIPTS_ACCT, 
       CB_ASSET_ACCT,CB_CASHTRANSFER_ACCT,CB_DIFFERENCES_ACCT,CB_EXPENSE_ACCT,CB_RECEIPT_ACCT,C_ACCTSCHEMA_DEFAULT_ID,
     A_DEPRECIATION_ACCT, A_ACCUMDEPRECIATION_ACCT, A_DISPOSAL_LOSS, A_DISPOSAL_GAIN)
-      VALUES (TO_NUMBER(?),0,'Y',now(),0,now(),0, TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),
-      TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?), TO_NUMBER(?),
-    TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?))
+      VALUES (?,0,'Y',now(),0,now(),0, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,
+      ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?,
+    ?,?,?,?)
       ]]>
     </Sql>
     <Parameter name="AD_Client_ID"/>
@@ -429,7 +430,7 @@
       <![CDATA[
         INSERT INTO GL_Category (GL_Category_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,Name
         ,CategoryType,IsDefault) 
-        VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,?,?,?)
+        VALUES (?,?,0,'Y',now(),0,now(),0,?,?,?)
       ]]>
     </Sql>
     <Parameter name="GL_Category_ID"/>
@@ -444,7 +445,7 @@
       <![CDATA[
         INSERT INTO AD_Sequence (AD_Sequence_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,
         UpdatedBy,Name,IsAutoSequence,IncrementNo,StartNo,CurrentNext,CurrentNextSys,IsTableID) 
-        VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,?,'Y',1,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?)/10,'N')
+        VALUES (?,?,0,'Y',now(),0,now(),0,?,'Y',1,to_number(?),to_number(?),to_number(?)/10,'N')
       ]]>
     </Sql>
     <Parameter name="AD_Sequence_ID"/>
@@ -460,7 +461,7 @@
       <![CDATA[
         INSERT INTO AD_Preference (AD_Preference_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,
         UpdatedBy,Attribute,Value,AD_Window_ID) 
-        VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,?,?,TO_NUMBER(?))
+        VALUES (?,?,0,'Y',now(),0,now(),0,?,?,?)
       ]]>
     </Sql>
     <Parameter name="AD_Preference_ID"/>
@@ -477,7 +478,7 @@
         Name,PrintName,DocBaseType,DocSubTypeSO,
         C_DocTypeShipment_ID,C_DocTypeInvoice_ID,IsDocNoControlled,DocNoSequence_ID,GL_Category_ID,
         DocumentCopies,IsSOTrx, ad_table_id)
-        VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,?,?,?,?,TO_NUMBER(?),TO_NUMBER(?),?,TO_NUMBER(?),TO_NUMBER(?),0,?,TO_NUMBER(?))
+        VALUES (?,?,0,'Y',now(),0,now(),0,?,?,?,?,?,?,?,?,?,0,?,?)
       ]]>
     </Sql>
     <Parameter name="C_DocType_ID"/>
@@ -501,7 +502,7 @@
         INSERT INTO C_ElementValue (C_ELEMENTVALUE_ID,C_ELEMENT_ID, AD_CLIENT_ID,AD_ORG_ID,ISACTIVE,CREATED,CREATEDBY,UPDATED,UPDATEDBY,
         VALUE,NAME,DESCRIPTION,ACCOUNTTYPE,ACCOUNTSIGN,ISDOCCONTROLLED,ISSUMMARY,VALIDFROM,VALIDTO,
         POSTACTUAL,POSTBUDGET,POSTENCUMBRANCE,POSTSTATISTICAL,ISBANKACCOUNT,C_BANKACCOUNT_ID,ISFOREIGNCURRENCY,C_CURRENCY_ID, ELEMENTLEVEL) 
-        VALUES (TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),'Y',now(),0,now(),0,?,?,?,?,?,?,?,NULL,NULL,'Y','Y','Y','Y', 'N',NULL, 'N',NULL,COALESCE(SUBSTR(?,0,1),'S'))
+        VALUES (?,?,?,?,'Y',now(),0,now(),0,?,?,?,?,?,?,?,NULL,NULL,'Y','Y','Y','Y', 'N',NULL, 'N',NULL,COALESCE(SUBSTR(?,0,1),'S'))
       ]]>
     </Sql>
     <Parameter name="C_ElementValue_ID"/>
@@ -522,7 +523,7 @@
     <Sql>
         SELECT MAX(AD_TREE_ID) AS ID 
         FROM AD_TREE
-        WHERE AD_CLIENT_ID = TO_NUMBER(?) 
+        WHERE AD_CLIENT_ID = ? 
         AND TREETYPE = 'EV'
     </Sql>
     <Parameter name="client"/>
@@ -533,7 +534,7 @@
         SELECT C_ELEMENTVALUE_ID AS ID 
         FROM C_ELEMENTVALUE
         WHERE VALUE = ? 
-        AND AD_CLIENT_ID = TO_NUMBER(?)
+        AND AD_CLIENT_ID = ?
     </Sql>
     <Parameter name="value"/>
     <Parameter name="client"/>
@@ -541,13 +542,13 @@
   <SqlMethod name="updateTreeNode" type="preparedStatement" connection="true" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-    UPDATE AD_TREENODE SET PARENT_ID = to_number(?), SEQNO = (SELECT COALESCE(MAX(B.SEQNO),0)+10 FROM AD_TREENODE B
+    UPDATE AD_TREENODE SET PARENT_ID = ?, SEQNO = (SELECT COALESCE(MAX(B.SEQNO),0)+10 FROM AD_TREENODE B
                                                WHERE B.AD_TREE_ID = AD_TREENODE.AD_TREE_ID
                                                AND B.AD_CLIENT_ID = AD_TREENODE.AD_CLIENT_ID
-                                               AND B.PARENT_ID = TO_NUMBER(?))
-    WHERE AD_TREE_ID = to_number(?)
-    AND NODE_ID = to_number(?)
-    AND AD_CLIENT_ID = to_number(?)
+                                               AND B.PARENT_ID = ?)
+    WHERE AD_TREE_ID = ?
+    AND NODE_ID = ?
+    AND AD_CLIENT_ID = ?
     </Sql>
     <Parameter name="parent"/>
     <Parameter name="parent"/>
@@ -560,7 +561,7 @@
     <Sql>
       SELECT Description
       FROM C_Currency 
-      where  C_Currency_ID = TO_NUMBER(?)
+      where  C_Currency_ID = ?
     </Sql>
     <Parameter name="moneda"/>
   </SqlMethod>
@@ -569,7 +570,7 @@
     <Sql>
       <![CDATA[
       INSERT INTO C_Channel (C_Channel_ID,Name,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy) 
-      VALUES (TO_NUMBER(?),?,TO_NUMBER(?),0,'Y',now(),0,now(),0)
+      VALUES (?,?,?,0,'Y',now(),0,now(),0)
       ]]>
     </Sql>
     <Parameter name="C_Channel_ID"/>
@@ -581,7 +582,7 @@
     <Sql>
       <![CDATA[
       INSERT INTO C_Campaign (C_Campaign_ID,C_Channel_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,Value,Name,Costs) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,?,?,0)
+      VALUES (?,?,?,0,'Y',now(),0,now(),0,?,?,0)
       ]]>
     </Sql>
     <Parameter name="C_Campaign_ID"/>
@@ -594,8 +595,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       UPDATE C_AcctSchema_Element 
-      SET C_SalesRegion_ID = TO_NUMBER(?)
-      WHERE C_AcctSchema_ID = TO_NUMBER(?)
+      SET C_SalesRegion_ID = ?
+      WHERE C_AcctSchema_ID= ?
       AND ElementType='SR'
     </Sql>
     <Parameter name="C_SalesRegion_ID"/>
@@ -605,8 +606,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       UPDATE C_AcctSchema_Element 
-      SET C_Campaign_ID = TO_NUMBER(?)
-      WHERE C_AcctSchema_ID = TO_NUMBER(?)
+      SET C_Campaign_ID = ?
+      WHERE C_AcctSchema_ID= ?
       AND ElementType='MC'
     </Sql>
     <Parameter name="C_Campaign_ID"/>
@@ -616,8 +617,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       UPDATE C_AcctSchema_Element 
-      SET C_BPartner_ID = TO_NUMBER(?)
-      WHERE C_AcctSchema_ID = TO_NUMBER(?)
+      SET C_BPartner_ID = ?
+      WHERE C_AcctSchema_ID= ?
       AND ElementType='BP'
     </Sql>
     <Parameter name="C_BPartner_ID"/>
@@ -627,8 +628,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       UPDATE C_AcctSchema_Element 
-      SET M_Product_ID = TO_NUMBER(?)
-      WHERE C_AcctSchema_ID = TO_NUMBER(?)
+      SET M_Product_ID = ?
+      WHERE C_AcctSchema_ID= ?
       AND ElementType='PR'
     </Sql>
     <Parameter name="M_Product_ID"/>
@@ -638,7 +639,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       INSERT INTO C_SalesRegion (C_SalesRegion_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,Value,Name,IsSummary) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,?,?,'N')
+      VALUES (?,?,0,'Y',now(),0,now(),0,?,?,'N')
     </Sql>
     <Parameter name="C_SalesRegion_ID"/>
     <Parameter name="AD_Client_ID"/>
@@ -650,7 +651,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       INSERT INTO A_Asset_Group (A_ASSET_GROUP_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME)
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,?)
+      VALUES (?,?,0,'Y',now(),0,now(),0,?)
     </Sql>
     <Parameter name="A_Asset_Group_ID"/>
     <Parameter name="AD_Client_ID"/>
@@ -661,7 +662,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       INSERT INTO C_BP_Group (C_BP_Group_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,Value,Name,IsDefault) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,?,?,'Y')
+      VALUES (?,?,0,'Y',now(),0,now(),0,?,?,'Y')
     </Sql>
     <Parameter name="C_BP_Group_ID"/>
     <Parameter name="AD_Client_ID"/>
@@ -674,8 +675,13 @@
   <SqlMethod name="insertBPartner" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      INSERT INTO C_BPartner (C_BPartner_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,Value,Name,C_BP_Group_ID,IsSummary) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,?,?,TO_NUMBER(?),'N')
+      INSERT INTO C_BPartner 
+         (C_BPartner_ID,AD_Client_ID,AD_Org_ID,IsActive,
+         Created,CreatedBy,Updated,UpdatedBy,
+         Value,Name,C_BP_Group_ID,IsSummary) 
+      VALUES (?,?,'0','Y',
+              now(),'0',now(),'0',
+              ?,?,?,'N')
     </Sql>
     <Parameter name="C_BPartner_ID"/>
     <Parameter name="AD_Client_ID"/>
@@ -687,7 +693,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       INSERT INTO M_Product_Category (M_Product_Category_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,Value,Name,IsDefault,PlannedMargin) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,?,?,'Y',0)
+      VALUES (?,?,0,'Y',now(),0,now(),0,?,?,'Y',0)
     </Sql>
     <Parameter name="M_Product_Category_ID"/>
     <Parameter name="AD_Client_ID"/>
@@ -698,7 +704,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       INSERT INTO C_TaxCategory (C_TaxCategory_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,Name,IsDefault) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,?, 'Y')
+      VALUES (?,?,0,'Y',now(),0,now(),0,?, 'Y')
     </Sql>
     <Parameter name="C_TaxCategory_ID"/>
     <Parameter name="AD_Client_ID"/>
@@ -710,7 +716,7 @@
       INSERT INTO C_Tax (C_Tax_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,
       Name,Rate,C_TaxCategory_ID,C_Country_ID,TO_Country_ID,
       ValidFrom,SoPoType,IsDefault) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,?,0,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_DATE('1990-01-01','YYYY-MM-DD'),'B','Y')
+      VALUES (?,?,0,'Y',now(),0,now(),0,?,0,?,?,?,TO_DATE('1990-01-01','YYYY-MM-DD'),'B','Y')
     </Sql>
     <Parameter name="C_Tax_ID"/>
     <Parameter name="AD_Client_ID"/>
@@ -724,7 +730,7 @@
     <Sql>
       INSERT INTO M_Product (M_Product_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,
       Value,Name,C_UOM_ID,M_Product_Category_ID,C_TaxCategory_ID) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,?,?,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?))
+      VALUES (?,?,0,'Y',now(),0,now(),0,?,?,?,?,?)
     </Sql>
     <Parameter name="M_Product_ID"/>
     <Parameter name="AD_Client_ID"/>
@@ -739,7 +745,7 @@
     <Sql>
       INSERT INTO C_Location (C_Location_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,City,
       C_Country_ID,C_Region_ID) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,?,TO_NUMBER(?),TO_NUMBER(?))
+      VALUES (?,?,0,'Y',now(),0,now(),0,?,?,?)
     </Sql>
     <Parameter name="C_Location_ID"/>
     <Parameter name="AD_Client_ID"/>
@@ -750,8 +756,8 @@
   <SqlMethod name="updateOrgInfo" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      UPDATE AD_OrgInfo SET C_Location_ID = TO_NUMBER(?)
-      WHERE AD_Org_ID = TO_NUMBER(?)
+      UPDATE AD_OrgInfo SET C_Location_ID = ?
+      WHERE AD_Org_ID = ?
     </Sql>
     <Parameter name="C_Location_ID"/>
     <Parameter name="AD_Org_ID"/>
@@ -761,7 +767,7 @@
     <Sql>
     INSERT INTO M_Warehouse (M_Warehouse_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,
     Value,Name,C_Location_ID,Separator) 
-    VALUES (TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),'Y',now(),0,now(),0,?,?,TO_NUMBER(?),'-') 
+    VALUES (?,?,?,'Y',now(),0,now(),0,?,?,?,'-') 
     </Sql>
   <Parameter name="M_Warehouse_ID"/>
   <Parameter name="AD_Client_ID"/>
@@ -775,7 +781,7 @@
     <Sql>
       INSERT INTO M_Locator (M_Locator_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,
       Updated,UpdatedBy,Value,M_Warehouse_ID,X,Y,Z,PriorityNo,IsDefault) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,?,TO_NUMBER(?),0,0,0,50,'Y')
+      VALUES (?,?,0,'Y',now(),0,now(),0,?,?,0,0,0,50,'Y')
     </Sql>
     <Parameter name="M_Locator_ID"/>
     <Parameter name="AD_Client_ID"/>
@@ -786,8 +792,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       UPDATE AD_ClientInfo 
-      SET C_BPartnerCashTrx_ID = TO_NUMBER(?), M_ProductFreight_ID = TO_NUMBER(?)
-      WHERE AD_Client_ID = TO_NUMBER(?)
+      SET C_BPartnerCashTrx_ID = ?, M_ProductFreight_ID = ?
+      WHERE AD_Client_ID = ?
     </Sql>
     <Parameter name="C_BPartner_ID"/>
     <Parameter name="M_Product_ID"/>
@@ -798,7 +804,7 @@
     <Sql>
       INSERT INTO M_PriceList (M_PriceList_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,
       CreatedBy,Updated,UpdatedBy,Name,C_Currency_ID,IsDefault) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,?,TO_NUMBER(?),'Y')
+      VALUES (?,?,0,'Y',now(),0,now(),0,?,?,'Y')
     </Sql>
     <Parameter name="M_PriceList_ID"/>
     <Parameter name="AD_Client_ID"/>
@@ -810,7 +816,7 @@
     <Sql>
       INSERT INTO M_DiscountSchema (M_DiscountSchema_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,
       Updated,UpdatedBy,Name,ValidFrom,DiscountType, FlatDiscount) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,?,now(),'P',0)
+      VALUES (?,?,0,'Y',now(),0,now(),0,?,now(),'P',0)
     </Sql>
     <Parameter name="M_DiscountSchema_ID"/>
     <Parameter name="AD_Client_ID"/>
@@ -821,7 +827,7 @@
     <Sql>
       INSERT INTO M_PriceList_Version (M_PriceList_Version_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,
       UpdatedBy,Name,ValidFrom,M_PriceList_ID,M_DiscountSchema_ID) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,?,TO_DATE(now()),TO_NUMBER(?),TO_NUMBER(?))
+      VALUES (?,?,'0','Y',now(),'0',now(),'0',?,TO_DATE(now()),?,?)
     </Sql>
     <Parameter name="M_PriceList_Version_ID"/>
     <Parameter name="AD_Client_ID"/>
@@ -832,9 +838,9 @@
   <SqlMethod name="insertProductPrice" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      INSERT INTO M_ProductPrice (M_PriceList_Version_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,
+      INSERT INTO M_ProductPrice (M_ProductPrice_ID, M_PriceList_Version_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,
       UpdatedBy,M_Product_ID,PriceList,PriceStd,PriceLimit) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,TO_NUMBER(?),1,1,1)
+      VALUES (get_uuid(), ?,?,0,'Y',now(),0,now(),0,?,1,1,1)
     </Sql>
     <Parameter name="M_PriceList_Version_ID"/>
     <Parameter name="AD_Client_ID"/>
@@ -845,7 +851,7 @@
     <Sql>
       INSERT INTO C_BPartner_Location (C_BPartner_Location_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,
       UpdatedBy,Name,C_BPartner_ID,C_Location_ID) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,?,TO_NUMBER(?),TO_NUMBER(?))
+      VALUES (?,?,0,'Y',now(),0,now(),0,?,?,?)
     </Sql>
     <Parameter name="C_BPartner_Location_ID"/>
     <Parameter name="AD_Client_ID"/>
@@ -856,9 +862,15 @@
   <SqlMethod name="insertBPartner2" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      INSERT INTO C_BPartner (C_BPartner_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,
-      UpdatedBy,Value,Name,C_BP_Group_ID,IsSummary,IsEmployee,IsSalesRep,IsVendor) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,?,?,TO_NUMBER(?),'N','Y','Y','Y')
+      INSERT INTO C_BPartner 
+        (C_BPartner_ID,AD_Client_ID,AD_Org_ID,IsActive,
+        Created,CreatedBy,Updated, UpdatedBy,
+        Value,Name,C_BP_Group_ID,IsSummary,
+        IsEmployee,IsSalesRep,IsVendor) 
+      VALUES (?,?,'0','Y',
+              now(),'0',now(),'0',
+              ?,?,?,'N',
+              'Y','Y','Y')
     </Sql>
     <Parameter name="C_BPartner_ID"/>
     <Parameter name="AD_Client_ID"/>
@@ -869,8 +881,8 @@
   <SqlMethod name="updateUser" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      UPDATE AD_User SET C_BPartner_ID = TO_NUMBER(?)
-      WHERE AD_User_ID = TO_NUMBER(?)
+      UPDATE AD_User SET C_BPartner_ID = ?
+      WHERE AD_User_ID = ?
     </Sql>
     <Parameter name="C_BPartner_ID"/>
     <Parameter name="AD_User_U_ID"/>
@@ -880,7 +892,7 @@
     <Sql>
       INSERT INTO C_PaymentTerm (C_PaymentTerm_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,
       CreatedBy,Updated,UpdatedBy,Value,Name,NetDays,IsDefault) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,'Immediate','Immediate',0,'Y')
+      VALUES (?,?,0,'Y',now(),0,now(),0,'Immediate','Immediate',0,'Y')
     </Sql>
     <Parameter name="C_PaymentTerm_ID"/>
     <Parameter name="AD_Client_ID"/>
@@ -889,7 +901,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       INSERT INTO C_Cycle (C_Cycle_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,Name,C_Currency_ID) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,?,TO_NUMBER(?))
+      VALUES (?,?,0,'Y',now(),0,now(),0,?,?)
     </Sql>
     <Parameter name="C_Cycle_ID"/>
     <Parameter name="AD_Client_ID"/>
@@ -901,7 +913,7 @@
     <Sql>
       INSERT INTO C_CycleStep (C_CycleStep_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,
       C_Cycle_ID,SeqNo,C_ProjectStatus_ID,RelativeWeight) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),0,'Y',now(),0,now(),0,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),1)
+      VALUES (?,?,0,'Y',now(),0,now(),0,?,?,?,1)
     </Sql>
     <Parameter name="C_CycleStep_ID"/>
     <Parameter name="AD_Client_ID"/>
@@ -914,7 +926,7 @@
     <Sql>
       INSERT INTO C_Project (C_Project_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,
       UpdatedBy,Value,Name,C_Currency_ID,IsSummary) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),'Y',now(),0,now(),0,?,?,TO_NUMBER(?),'N')
+      VALUES (?,?,?,'Y',now(),0,now(),0,?,?,?,'N')
     </Sql>
     <Parameter name="C_Project_ID"/>
     <Parameter name="AD_Client_ID"/>
@@ -928,7 +940,7 @@
     <Sql>
       INSERT INTO C_CashBook (C_CashBook_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,
       Updated,UpdatedBy,Name,C_Currency_ID) 
-      VALUES (TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),'Y',now(),0,now(),0,?,TO_NUMBER(?))
+      VALUES (?,?,?,'Y',now(),0,now(),0,?,?)
     </Sql>
     <Parameter name="C_CashBook_ID"/>
     <Parameter name="AD_Client_ID"/>

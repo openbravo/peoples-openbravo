@@ -36,7 +36,7 @@
     <Sql>
       <![CDATA[
         SELECT C_UOM_ID FROM M_Product 
-        WHERE M_Product_ID = TO_NUMBER(?)
+        WHERE M_Product_ID=?
       ]]>
     </Sql>
     <Parameter name="product"/>

@@ -110,7 +110,7 @@ function submitXmlHttpRequest(callbackFunction, formObject, Command, Action, deb
   for (var i=0;i<length;i++) {
     if (formObject.elements[i].type) {
       var text = inputValueForms(formObject.elements[i].name, formObject.elements[i]);
-      if (text!=null && text!="") sendText += "&" + text;
+      if (text!=null && text!="" && text!="=") sendText += "&" + text;
     }
   }
   if (debug)

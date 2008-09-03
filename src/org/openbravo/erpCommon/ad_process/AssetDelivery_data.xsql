@@ -35,9 +35,9 @@
         AND 1=1
       ]]>
     </Sql>
-    <Parameter name="bpartner" optional="true" after="AND 1=1"><![CDATA[ AND A.C_BPARTNER_ID = TO_NUMBER(?)]]></Parameter>
-    <Parameter name="product" optional="true" after="AND 1=1"><![CDATA[ AND P.M_PRODUCT_ID = TO_NUMBER(?)]]></Parameter>
-    <Parameter name="assetgroup" optional="true" after="AND 1=1"><![CDATA[ AND A.A_ASSET_GROUP_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="bpartner" optional="true" after="AND 1=1"><![CDATA[ AND A.C_BPARTNER_ID= ?]]></Parameter>
+    <Parameter name="product" optional="true" after="AND 1=1"><![CDATA[ AND P.M_PRODUCT_ID= ?]]></Parameter>
+    <Parameter name="assetgroup" optional="true" after="AND 1=1"><![CDATA[ AND A.A_ASSET_GROUP_ID= ?]]></Parameter>
     <Parameter name="GuaranteeDate" optional="true" after="AND 1=1"><![CDATA[ AND TRUNC(GUARANTEEDATE) >= TRUNC(TO_DATE(?))]]></Parameter>
   </SqlMethod>
   <SqlMethod name="getUser" type="preparedStatement" return="String">
@@ -46,7 +46,7 @@
       <![CDATA[
       SELECT AD_USER_ID 
       FROM A_ASSET
-      WHERE A_ASSET_ID = TO_NUMBER(?)
+      WHERE A_ASSET_ID = ?
       ]]>
     </Sql>
     <Parameter name="aAssetId"/>
@@ -57,7 +57,7 @@
       <![CDATA[
       SELECT ISACTIVE 
       FROM A_ASSET
-      WHERE A_ASSET_ID = TO_NUMBER(?)
+      WHERE A_ASSET_ID = ?
       ]]>
     </Sql>
     <Parameter name="aAssetId"/>
@@ -68,7 +68,7 @@
       <![CDATA[
       SELECT to_char(GUARANTEEDATE , to_char(?)) AS GUARANTEEDATE
       FROM A_ASSET
-      WHERE A_ASSET_ID = TO_NUMBER(?)
+      WHERE A_ASSET_ID = ?
       ]]>
     </Sql>
     <Parameter name="dateFormat"/>
@@ -79,7 +79,7 @@
     <Sql>
       <![CDATA[
       SELECT ISSMTPAUTHORIZATION FROM AD_CLIENT
-      WHERE AD_CLIENT_ID = TO_NUMBER(?)
+      WHERE AD_CLIENT_ID = ?
       ]]>
     </Sql>
     <Parameter name="AdClientId"/>
@@ -88,7 +88,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT SMTPHost AS NAME FROM AD_Client WHERE AD_Client_ID = TO_NUMBER(?)
+        SELECT SMTPHost AS NAME FROM AD_Client WHERE AD_Client_ID=?
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
@@ -99,7 +99,7 @@
       <![CDATA[
       SELECT HELP 
       FROM A_ASSET
-      WHERE A_ASSET_ID = TO_NUMBER(?)
+      WHERE A_ASSET_ID = ?
       ]]>
     </Sql>
     <Parameter name="aAssetId"/>
@@ -109,7 +109,7 @@
     <Sql>
       <![CDATA[
       SELECT EMAIL FROM AD_USER
-      WHERE AD_USER_ID = TO_NUMBER(?)
+      WHERE AD_USER_ID = ?
       ]]>
     </Sql>
     <Parameter name="adUserId"/>
@@ -120,7 +120,7 @@
       <![CDATA[
       SELECT ISHTML, MAILHEADER, MAILTEXT 
       FROM R_MAILTEXT
-      WHERE R_MAILTEXT_ID = TO_NUMBER(?)
+      WHERE R_MAILTEXT_ID = ?
       ]]>
     </Sql>
     <Parameter name="rMailtextId"/>
@@ -130,7 +130,7 @@
     <Sql>
       <![CDATA[
         SELECT RequestEMail AS EMail, RequestUser AS EMailUser, RequestUserPw AS EMailUserPw 
-        FROM AD_Client WHERE AD_Client_ID = TO_NUMBER(?)
+        FROM AD_Client WHERE AD_Client_ID=?
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
@@ -142,7 +142,7 @@
       SELECT P.DOWNLOADURL, P.VERSIONNO, P.M_PRODUCT_ID
       FROM M_PRODUCT P, A_ASSET A
       WHERE P.M_PRODUCT_ID = A.M_PRODUCT_ID
-      AND A.A_ASSET_ID = TO_NUMBER(?)
+      AND A.A_ASSET_ID = ?
       ]]>
     </Sql>
     <Parameter name="aAssetId"/>
@@ -153,7 +153,7 @@
       <![CDATA[
       SELECT AD_USER_ID, LOT, SERNO, VERSIONNO
       FROM A_ASSET A
-      WHERE A.A_ASSET_ID = TO_NUMBER(?)
+      WHERE A.A_ASSET_ID = ?
       ]]>
     </Sql>
     <Parameter name="aAssetId"/>
@@ -163,7 +163,7 @@
     <Sql>
       <![CDATA[
       UPDATE A_ASSET SET HELP = HELP || ?, ISACTIVE = 'N'
-      WHERE A_ASSET_ID = TO_NUMBER(?)
+      WHERE A_ASSET_ID = ?
       ]]>
     </Sql>
     <Parameter name="help"/>
@@ -175,7 +175,7 @@
       <![CDATA[
       INSERT INTO A_ASSET_DELIVERY (AD_CLIENT_ID, AD_ORG_ID,ISACTIVE,CREATED, CREATEDBY,UPDATED, UPDATEDBY,
       A_ASSET_DELIVERY_ID,A_ASSET_ID, MOVEMENTDATE, VERSIONNO, LOT, SERNO, EMAIL, AD_USER_ID)
-      VALUES(TO_NUMBER(?), TO_NUMBER(?), 'Y',now(), TO_NUMBER(?), now(), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_DATE(?), ?, ?, ?, ?, TO_NUMBER(?))
+      VALUES(?, ?, 'Y',now(), ?, now(), ?, ?, ?, TO_DATE(?), ?, ?, ?, ?, ?)
       ]]>
     </Sql>
     <Parameter name="adClientId"/>

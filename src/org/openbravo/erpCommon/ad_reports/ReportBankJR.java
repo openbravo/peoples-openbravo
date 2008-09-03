@@ -27,8 +27,6 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.util.HashMap;
-import java.math.BigDecimal;
-
 import org.openbravo.erpCommon.ad_combos.AccountNumberComboData;
 
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -92,8 +90,8 @@ public class ReportBankJR extends HttpSecureAppServlet {
 
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("cBankAccount", strcbankaccount);
     xmlDocument.setParameter("dateFrom", strDateFrom);
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
@@ -129,8 +127,8 @@ public class ReportBankJR extends HttpSecureAppServlet {
         xmlDocument.setParameter("toolbar", toolbar.toString()); 
         
         xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-        xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-        xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+        xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+        xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
         xmlDocument.setParameter("cBankAccount", strcbankaccount);
         xmlDocument.setParameter("dateFrom", strDateFrom);
         xmlDocument.setParameter("dateTo", strDateTo);

@@ -32,12 +32,12 @@
         from (
         select TO_CHAR(MEASUREHOUR, 'HH24:MI') as hour
                 from MA_MEASURE_TIME
-                where MA_Measure_Group_ID = TO_NUMBER(?)
+                where MA_Measure_Group_ID = ?
             union all
             select null as hour
             from ad_integer
             where value <= (select 10-count(*) from MA_Measure_time
-                   where ma_measure_group_ID = TO_NUMBER(?))
+                   where ma_measure_group_id=?)
             ORDER BY hour) A
       ]]>
       </Sql>

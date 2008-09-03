@@ -34,15 +34,12 @@
                r.duedate, '' as line
           from c_debt_payment    dp,
                c_remittanceLine  rl,
-               c_Remittance		 r,
-               c_remittance_type rt
+               c_Remittance			 r
          where rl.c_debt_payment_id = dp.c_debt_payment_id
            and coalesce(rl.returned,'N') = 'N'
            and dp.C_SETTLEMENT_CANCEL_ID is null
            and r.processed = 'Y'
            and r.C_Remittance_ID    = rl.C_Remittance_ID
-           and r.c_remittance_type_id = rt.c_remittance_type_id
-           and rt.consolidate = 'Y'
            AND r.AD_CLIENT_ID IN ('1') 
            AND r.AD_ORG_ID IN ('1') 
            AND 1=1 
@@ -53,7 +50,7 @@
       <Parameter name="adLanguage"/>
       <Parameter name="userClient" optional="true" type="replace" after="AND r.AD_CLIENT_ID IN (" text="'1'"/>
       <Parameter name="userOrg" optional="true" type="replace" after="AND r.AD_ORG_ID IN (" text="'1'"/>
-      <Parameter name="cRemittanceId" optional="true" after="AND 1=1 " text=" and r.C_Remittance_ID = TO_NUMBER(?) "/> 
+      <Parameter name="cRemittanceId" optional="true" after="AND 1=1 " text=" and r.C_Remittance_ID = ? "/> 
       <Parameter name="from" optional="true" after="AND 1=1 "><![CDATA[ and r.duedate >= TO_DATE(?) ]]></Parameter>
       <Parameter name="to" optional="true" after="AND 1=1 "><![CDATA[ and r.duedate <= TO_DATE(?) ]]></Parameter>
   </SqlMethod>
@@ -75,7 +72,7 @@
            '*RT*'||?,TO_DATE(?), TO_DATE(?),'C', Ad_Get_DocType(TO_NUMBER(?), TO_NUMBER(?), 'STT'),  (select c_currency_id
                                        from  c_remittanceLine rl,
                                              c_debt_payment   dp
-                                      where c_RemittanceLine_ID = TO_NUMBER(?)
+                                      where c_RemittanceLine_Id = ?
                                         and dp.c_debt_payment_id = rl.c_debt_payment_id),
            '*RT* Cancel','Y')
       ]]></Sql>
@@ -105,7 +102,7 @@
         ?, TO_DATE(?), Ad_Get_DocType(TO_NUMBER(?), TO_NUMBER(?), 'DPM'), TO_DATE(?), (select c_currency_id
                                  from  c_remittanceLine rl,
                                        c_debt_payment   dp
-                                where c_RemittanceLine_ID = TO_NUMBER(?)
+                                where c_RemittanceLine_Id = ?
                                   and dp.c_debt_payment_id = rl.c_debt_payment_id))
       ]]></Sql>
     <Parameter name="CDPID"/>
@@ -126,7 +123,7 @@
     <![CDATA[
       SELECT C_REMITTANCE.AD_ORG_ID FROM C_REMITTANCE, C_REMITTANCELINE
       WHERE C_REMITTANCE.C_REMITTANCE_ID =  C_REMITTANCELINE.C_REMITTANCE_ID
-      AND C_REMITTANCELINE_ID = TO_NUMBER(?)
+      AND C_REMITTANCELINE_ID = ?
       ]]></Sql>
     <Parameter name="line"/>
   </SqlMethod>
@@ -135,14 +132,14 @@
     <Sql>
     <![CDATA[
         update c_debt_payment
-           set c_Settlement_Cancel_ID = TO_NUMBER(?)
+           set c_Settlement_Cancel_ID = ?
         where c_debt_payment_id in (select c_debt_payment_cancelled
                                       from c_remittanceLine 
-                                     where c_RemittanceLine_ID = TO_NUMBER(?)
+                                     where c_RemittanceLine_ID = ?
                                      union
                                     select c_debt_payment_id
                                       from c_remittanceLine 
-                                     where c_RemittanceLine_ID = TO_NUMBER(?))
+                                     where c_RemittanceLine_ID = ?)
       ]]></Sql>
     <Parameter name="cSettlementID"/>
     <Parameter name="cRemittanceLine"/>
@@ -162,7 +159,7 @@
             TO_NUMBER(?), (select dp.status
                         from c_debt_payment dp,
                              c_remittanceLine rl
-                       where c_RemittanceLine_ID = TO_NUMBER(?)
+                       where c_RemittanceLine_ID = ?
                          and dp.c_debt_payment_id = rl.c_debt_payment_id), 
                      (select STATUS_RETURNED
                         from c_remittanceLine rl,
@@ -170,10 +167,10 @@
                              c_remittance_type rt
                        where rl.c_remittance_id = r.c_remittance_id
                          and r.c_remittance_type_id  = rt.c_remittance_type_id
-                         and rl.c_RemittanceLine_ID = TO_NUMBER(?)),
+                         and rl.c_RemittanceLine_ID = ?),
                      (select c_debt_payment_id
                         from c_remittanceLine rl
-                       where c_RemittanceLine_ID = TO_NUMBER(?)), TO_NUMBER(?))
+                       where c_RemittanceLine_ID = ?), ?)
       ]]></Sql>
     <Parameter name="LID"/>
     <Parameter name="client"/>
@@ -199,7 +196,7 @@
             TO_NUMBER(?), (select dp.status
                         from c_debt_payment dp,
                              c_remittanceLine rl
-                       where c_RemittanceLine_ID = TO_NUMBER(?)
+                       where c_RemittanceLine_ID = ?
                          and dp.c_debt_payment_id = rl.C_DEBT_PAYMENT_CANCELLED), 
                      (select STATUS_RETURNED
                         from c_remittanceLine rl,
@@ -207,10 +204,10 @@
                              c_remittance_type rt
                        where rl.c_remittance_id = r.c_remittance_id
                          and r.c_remittance_type_id  = rt.c_remittance_type_id
-                         and rl.c_RemittanceLine_ID = TO_NUMBER(?)),
+                         and rl.c_RemittanceLine_ID = ?),
                      (select C_DEBT_PAYMENT_CANCELLED
                         from c_remittanceLine rl
-                       where c_RemittanceLine_ID = TO_NUMBER(?)), TO_NUMBER(?))
+                       where c_RemittanceLine_ID = ?), ?)
       ]]></Sql>
     <Parameter name="LID"/>
     <Parameter name="client"/>
@@ -229,7 +226,7 @@
       <![CDATA[
           SELECT COALESCE(MAX(LINE),0) AS LINE
             FROM C_REMITTANCELINE 
-           WHERE C_REMITTANCE_ID = TO_NUMBER(?)
+           WHERE C_REMITTANCE_ID = ?
         ]]>
     </Sql>
     <Parameter name="remittaceID"/>
@@ -242,7 +239,7 @@
     <![CDATA[
         update c_RemittanceLine
            set returned = 'Y'
-         where c_RemittanceLine_ID = TO_NUMBER(?)
+         where c_RemittanceLine_Id = ?
       ]]></Sql>
     <Parameter name="cRemittanceLineID"/>
   </SqlMethod>
@@ -251,7 +248,7 @@
   <SqlMethod name="process800140" connection="true" type="callableStatement" return="object" object="RemittanceCancelData">
       <SqlMethodComment>procedure C_DP_Management_Post</SqlMethodComment>
       <Sql><![CDATA[
-        CALL C_DP_Management_Post(TO_NUMBER(?), NULL)
+        CALL C_DP_Management_Post(?, NULL)
       ]]></Sql>
       <Parameter name="adPinstanceId"></Parameter>
    </SqlMethod>
@@ -259,7 +256,7 @@
    <SqlMethod name="process800025" connection="true" type="callableStatement" return="object" object="RemittanceCancelData">
       <SqlMethodComment>procedure C_Settlement_Post0</SqlMethodComment>
       <Sql><![CDATA[
-        CALL C_Settlement_Post(NULL, TO_NUMBER(?))
+        CALL C_Settlement_Post(NULL, ?)
       ]]></Sql>
       <Parameter name="cSettlementId"></Parameter>
    </SqlMethod>
@@ -270,7 +267,7 @@
       <![CDATA[
 	    SELECT COALESCE(MAX(LINE),0) AS LINE
 		  FROM C_DP_ManagementLine
-		 WHERE C_DP_MANAGEMENT_ID = TO_NUMBER(?)
+		 WHERE C_DP_MANAGEMENT_ID = ?
       ]]>
     </Sql>
     <Parameter name="dpmId"/>

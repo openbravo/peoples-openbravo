@@ -47,7 +47,7 @@
   <PARAMETER id="paramDateFrom2" name="dateFrom2" attribute="value"/>
   
   <PARAMETER id="paramLanguage" name="paramLanguage"/>
-  <PARAMETER id="paramDirection" name="direction" default=""/>
+  <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
   <PARAMETER id="paramToolBar" name="toolbar" default=""/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>

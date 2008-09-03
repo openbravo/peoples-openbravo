@@ -47,8 +47,14 @@ openbravo.messages.getDataBaseMessage = function(/*String*/value, /*String*/resp
 
 openbravo.messages.getMessage = function(index, _language)
 {
-  if (_language==null)
-    _language = LNG_POR_DEFECTO;
+  if (_language==null) {
+	if (typeof defaultLang != "undefined") {
+      _language = defaultLang;
+	} else {
+      // Deprecated in 2.50, only for compatibility
+      _language = LNG_POR_DEFECTO;
+    }
+  }
   if (typeof arrMessages != "undefined") {
     var total = arrMessages.length;
     for (var i=0;i<total;i++)

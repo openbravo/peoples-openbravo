@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION GENERATESOFROMPROJECTORDER">
     <function name="GENERATESOFROMPROJECTORDER" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -23,14 +23,14 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1; -- 0=failure
-  v_Record_ID NUMBER;
-  v_AD_User_ID NUMBER;
-  v_M_PriceList_ID2 NUMBER;
+  v_Record_ID VARCHAR2(32);
+  v_AD_User_ID VARCHAR2(32);
+  v_M_PriceList_ID2 VARCHAR2(32);
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
-    v_C_Order_ID NUMBER;
-    v_C_OrderLine_ID NUMBER;
-    v_C_DOCTYPE_ID NUMBER;
+    v_C_Order_ID VARCHAR2(32);
+    v_C_OrderLine_ID VARCHAR2(32);
+    v_C_DOCTYPE_ID VARCHAR2(32);
     v_DocumentNo NUMBER;
   BEGIN
     --  Update AD_PInstance
@@ -59,9 +59,9 @@
       v_PriceStd NUMBER;
       v_PriceList NUMBER;
       v_PriceLimit NUMBER;
-      v_C_UOM_ID NUMBER;
-      v_C_Currency_ID NUMBER;
-      v_M_PriceList_ID NUMBER;
+      v_C_UOM_ID VARCHAR2(32);
+      v_C_Currency_ID VARCHAR2(32);
+      v_M_PriceList_ID VARCHAR2(32);
     TYPE RECORD IS REF CURSOR;
       Cur_SO RECORD;
       SOLINES RECORD;
@@ -108,7 +108,7 @@
             (
               v_C_Order_ID, Cur_SO.AD_CLIENT_ID, Cur_SO.AD_ORG_ID, v_AD_User_ID,
               v_AD_User_ID, 'Y', v_DocumentNo, 'DR',
-               'CO', 0, v_C_DOCTYPE_ID, TRUNC(now(), 'DD'),
+               'CO', '0', v_C_DOCTYPE_ID, TRUNC(now(), 'DD'),
               TRUNC(now(), 'DD'), Cur_SO.C_BPARTNER_ID, Cur_SO.C_BPARTNER_LOCATION_ID, 'N',
               Cur_SO.C_CURRENCY_ID, COALESCE(Cur_SO.PAYMENTRULE, 'P'), Cur_SO.C_PAYMENTTERM_ID, 'D',
                'A', 'I', 'D', '5',

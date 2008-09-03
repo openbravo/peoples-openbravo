@@ -30,10 +30,7 @@ import java.util.Vector;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-import org.openbravo.utils.Replace;
 import org.openbravo.utils.FormatUtilities;
-import org.openbravo.erpCommon.utility.*;
-
 import org.openbravo.erpCommon.ad_combos.WarehouseComboData;
 
 
@@ -148,8 +145,8 @@ public class ProductComplete extends HttpSecureAppServlet {
     } else {
     xmlDocument.setParameter("key", strKeyValue);
     }
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("name", strNameValue);
     xmlDocument.setParameter("warehouse", strWarehouse);
@@ -186,9 +183,9 @@ public class ProductComplete extends HttpSecureAppServlet {
   String generateResult(ProductCompleteData[] data, String strWarehouse) throws IOException, ServletException {
     StringBuffer html = new StringBuffer();
     
-    html.append("\nfunction depurarSelector() {\n");
-    html.append("var clave = \"" + data[0].mProductId + "\";\n");
-    html.append("var texto = \"" + FormatUtilities.replaceJS(data[0].name) + "\";\n");
+    html.append("\nfunction validateSelector() {\n");
+    html.append("var key = \"" + data[0].mProductId + "\";\n");
+    html.append("var text = \"" + FormatUtilities.replaceJS(data[0].name) + "\";\n");
     html.append("var parameter = new Array(\n");
     html.append("new SearchElements(\"_LOC\", true, \"" + data[0].mLocatorId + "\"),\n");
     html.append("new SearchElements(\"_ATR\", true, \"" + data[0].mAttributesetinstanceId + "\"),\n");
@@ -197,7 +194,7 @@ public class ProductComplete extends HttpSecureAppServlet {
     html.append("new SearchElements(\"_QTY\", true, \"" + data[0].qty + "\"),\n");
     html.append("new SearchElements(\"_UOM\", true, \"" + data[0].cUom1Id + "\")\n");
     html.append(");\n");
-    html.append("parent.opener.closeSearch(\"SAVE\", clave, texto, parameter);\n");
+    html.append("parent.opener.closeSearch(\"SAVE\", key, text, parameter);\n");
     html.append("}\n");
     return html.toString();
   }

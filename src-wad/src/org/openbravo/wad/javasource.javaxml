@@ -274,7 +274,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       } else {
         try {
           data = getEditVariables(vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
-  <PARAMETER_TMP id="keySequence">        String strSequence = SequenceIdData.getSequence(this, "<PARAMETER_TMP id="table">table</PARAMETER_TMP>", vars.getClient());
+  <PARAMETER_TMP id="keySequence">        String strSequence = SequenceIdData.getUUID();
           log4j.info("Sequence: " + strSequence);
           data.<KEY_TMP id="keyData">Almacen</KEY_TMP> = strSequence;</PARAMETER_TMP>
           <PARAMETER_TMP id="client">if (Utility.isElementInList(Utility.getContext(this, vars, "#User_Client", windowId, accesslevel),data.adClientId) <FIELDS_TMP id="sectionOrganizationCheck"> &amp;&amp; Utility.isElementInList(Utility.getContext(this, vars, "#User_Org", windowId, accesslevel),data.adOrgId)</FIELDS_TMP>)</PARAMETER_TMP>
@@ -432,7 +432,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         String strProcessing = vars.getStringParameter("inpprocessing");
         OBError myMessage = null;
         try {
-          String pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
+          String pinstance = SequenceIdData.getUUID();
           PInstanceProcessData.insertPInstance(this, pinstance, "<FIELD_TMP id="ProcessID3">button</FIELD_TMP>", (("<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>".equalsIgnoreCase("AD_Language"))?"0":str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>), strProcessing, vars.getUser(), vars.getClient(), vars.getOrg());
           <FIELD_TMP id="FieldsLoadParams3">PInstanceProcessData.insertPInstanceParam(this, pinstance, )</FIELD_TMP>
           <FIELD_TMP id="AdditionalCode3">code</FIELD_TMP>
@@ -790,10 +790,10 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
 //    }
 
     xmlDocument.setParameter("selectedColumn", "\nvar selectedRow = " + selectedRow + ";\n" + orderByArray.toString());
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("windowId", windowId);
     xmlDocument.setParameter("KeyName", "<FIELD_TMP id="keyData">Clave</FIELD_TMP>");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     //xmlDocument.setParameter("buttonReference", Utility.messageBD(this, "Reference", vars.getLanguage()));
     try {
@@ -872,7 +872,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         discard[0] = new String("newDiscard");
         <PARAMETER_TMP id="sectionIsHighVolume"><FIELDS_TMP id="sectionIsHighVolume4">
         if (<PARAMETER_TMP id="paramSearchName">xx</PARAMETER_TMP> &amp;&amp; str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) {
-          buscador = "abrirBusqueda('../businessUtility/Buscador.html', 'BUSCADOR', " + tabId + ", '<PARAMETER_TMP id="package">Window</PARAMETER_TMP>/<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Relation.html', " + windowId + ");";
+          buscador = "openSearchWindow('../businessUtility/Buscador.html', 'BUSCADOR', " + tabId + ", '<PARAMETER_TMP id="package">Window</PARAMETER_TMP>/<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Relation.html', " + windowId + ");";
         } else if (str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) {
           <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data[] data1 = <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.select(this, vars.getLanguage()<PARAMETER_TMP id="whereClauseParams"></PARAMETER_TMP><FIELDS_TMP id="isTransactional">, strParamTransaccional</FIELDS_TMP><FIELDS_TMP id="sectionFilter">, strParamFilter</FIELDS_TMP><PARAMETER_TMP id="sectionIsHighVolume2Edit">, strParam<PARAMETER_TMP id="searchName2Edit">xx</PARAMETER_TMP></PARAMETER_TMP><PARAMETER_TMP id="sectionIsHighVolume4">, strParamSessionDate, vars.getUser()</PARAMETER_TMP><PARAMETER_TMP id="client">, Utility.getContext(this, vars, "#User_Client", windowId, accesslevel)</PARAMETER_TMP><PARAMETER_TMP id="org">, Utility.getContext(this, vars, "#AccessibleOrgTree", windowId, accesslevel)</PARAMETER_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, strOrderByFilter);
           data = new <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data[1];
@@ -924,16 +924,18 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     }
     <PARAMETER_TMP id="parent">String currentPOrg=<PARENT_TMP id="parentClass">Almacen</PARENT_TMP>Data.selectOrg(this, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>);</PARAMETER_TMP>
     String currentOrg = (boolNew?"":(dataField!=null?dataField.getField("adOrgId"):data[0].getField("adOrgId")));
+    if (!currentOrg.equals("") &amp;&amp; !currentOrg.startsWith("'")) currentOrg = "'"+currentOrg+"'";
     String currentClient = (boolNew?"":(dataField!=null?dataField.getField("adClientId"):data[0].getField("adClientId")));
+    if (!currentClient.equals("") &amp;&amp; !currentClient.startsWith("'")) currentClient = "'"+currentClient+"'";
     
-    boolean editableTab = (!org.openbravo.erpCommon.utility.WindowAccessData.hasReadOnlyAccess(this, vars.getRole(), tabId) &amp;&amp; (currentOrg.equals("") || Utility.isElementInList(Utility.getContext(this, vars, "#User_Org", windowId, accesslevel),currentOrg)) &amp;&amp; (currentClient.equals("") || Utility.isElementInList(Utility.getContext(this, vars, "#User_Client", windowId, accesslevel),currentClient)));
+    boolean editableTab = (!org.openbravo.erpCommon.utility.WindowAccessData.hasReadOnlyAccess(this, vars.getRole(), tabId) &amp;&amp; (currentOrg.equals("") || Utility.isElementInList(Utility.getContext(this, vars, "#User_Org", windowId, accesslevel),currentOrg)) &amp;&amp; (currentClient.equals("") || Utility.isElementInList(Utility.getContext(this, vars, "#User_Client", windowId, accesslevel), currentClient)));
     if (editableTab)
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpWindows/<PARAMETER_TMP id="package">Window</PARAMETER_TMP>/<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Edition",discard).createXmlDocument();
     else
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpWindows/<PARAMETER_TMP id="package">Window</PARAMETER_TMP>/<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_NonEditable",discard).createXmlDocument();
 
     
-    ToolBar toolbar = new ToolBar(this, editableTab, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>", (strCommand.equals("NEW") || boolNew || (dataField==null &amp;&amp; (data==null || data.length==0))), "document.frmMain.inp<FIELD_TMP id="keyData">Clave</FIELD_TMP>", "", "..<PARAMETER_TMP id="paramReportPDF">xx</PARAMETER_TMP>", "<PARAMETER_TMP id="paramReportDirectPrint">xx</PARAMETER_TMP>".equals("Y"), "<PARAMETER_TMP id="package">Window</PARAMETER_TMP>", strReplaceWith, true);
+    ToolBar toolbar = new ToolBar(this, editableTab, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>", (strCommand.equals("NEW") || boolNew || (dataField==null &amp;&amp; (data==null || data.length==0))), "document.frmMain.inp<FIELD_TMP id="keyData">Clave</FIELD_TMP>", "", "..<PARAMETER_TMP id="paramReportPDF">xx</PARAMETER_TMP>", "<PARAMETER_TMP id="paramReportDirectPrint">xx</PARAMETER_TMP>".equals("Y"), "<PARAMETER_TMP id="package">Window</PARAMETER_TMP>", strReplaceWith, true, false, false, Utility.hasTabAttachments(this, vars, tabId, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>));
     toolbar.prepareEditionTemplate<PARAMETER_TMP id="sameParent">NoSearch</PARAMETER_TMP>("<PARAMETER_TMP id="paramHasTree">hasTree</PARAMETER_TMP>".equals("Y"), hasSearchCondition, vars.getSessionValue("#ShowTest", "N").equals("Y"), "<PARAMETER_TMP id="paramIsReadOnly">readonly</PARAMETER_TMP>".equals("Y"), Utility.getContext(this, vars, "ShowAudit", windowId).equals("Y"));
     xmlDocument.setParameter("toolbar", toolbar.toString());
 
@@ -967,13 +969,13 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     xmlDocument.setParameter("buscador",buscador);
     xmlDocument.setParameter("windowId", windowId);
     xmlDocument.setParameter("changed", (strCommand.equals("NEW")?"1":""));
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     //xmlDocument.setParameter("buttonReference", Utility.messageBD(this, "Reference", vars.getLanguage()));
 
 <PARAMETER_TMP id="sectionIsHighVolume4">    xmlDocument.setParameter("paramSessionDate", strParamSessionDate);</PARAMETER_TMP>
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     OBError myMessage = vars.getMessage(tabId);
     vars.removeMessage(tabId);
     if (myMessage!=null) {
@@ -1028,8 +1030,8 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       xmlDocument.setParameter("form", "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Edition.html");
       xmlDocument.setParameter("window", windowId);
       xmlDocument.setParameter("css", vars.getTheme());
-      xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-      xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("cancel", Utility.messageBD(this, "Cancel", vars.getLanguage()));
       xmlDocument.setParameter("ok", Utility.messageBD(this, "OK", vars.getLanguage()));
       
@@ -1085,8 +1087,8 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         <PARAMETER_TMP id="parent">      xmlDocument.setParameter("parentKey", strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>);
         xmlDocument.setParameter("parentKeyName", "<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
         </PARAMETER_TMP>
-        xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-        xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+        xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+        xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
         xmlDocument.setParameter("cancel", Utility.messageBD(this, "Cancel", vars.getLanguage()));
         xmlDocument.setParameter("ok", Utility.messageBD(this, "OK", vars.getLanguage()));
   

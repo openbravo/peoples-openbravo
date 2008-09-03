@@ -29,7 +29,7 @@
       <Sql>
         SELECT A_C.AD_CLIENT_ID, A_C.NAME, '' AS ID 
         FROM AD_CLIENT A_C
-        WHERE A_C.AD_CLIENT_ID IN (SELECT CLIENTLIST FROM AD_ROLE WHERE AD_ROLE_ID = TO_NUMBER(?))
+        WHERE A_C.AD_CLIENT_ID IN (SELECT CLIENTLIST FROM AD_ROLE WHERE AD_ROLE_ID = ?)
         ORDER BY A_C.NAME
       </Sql>
         <Parameter name="rol"/>
@@ -39,8 +39,8 @@
       <Sql>
         SELECT COUNT(*) AS TOTAL
         FROM AD_CLIENT A_C
-        WHERE A_C.AD_CLIENT_ID IN (SELECT CLIENTLIST FROM AD_ROLE WHERE AD_ROLE_ID = TO_NUMBER(?)) 
-        AND A_C.AD_CLIENT_ID = TO_NUMBER(?)
+        WHERE A_C.AD_CLIENT_ID IN (SELECT CLIENTLIST FROM AD_ROLE WHERE AD_ROLE_ID = ?) 
+        AND A_C.AD_CLIENT_ID = ?
       </Sql>
         <Parameter name="rol"/>
         <Parameter name="client"/>
@@ -65,7 +65,7 @@
         <![CDATA[      
         SELECT A_C.AD_CLIENT_ID AS ID, A_C.NAME 
         FROM AD_CLIENT A_C
-        WHERE A_C.AD_CLIENT_ID <> 0
+        WHERE A_C.AD_CLIENT_ID <> '0'
         ORDER BY A_C.NAME
         ]]>
       </Sql>

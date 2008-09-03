@@ -541,6 +541,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
     }
     if (isCell && (!this.editingRow || !this.editingRow.error) && success)
       this.handleSelection(evt);
+    checkAttachmentIconRelation();
   },
 
 /**
@@ -1274,7 +1275,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 */
   deleteRow: function() {
     if (this.selectedRows.count() > 0 &&
-      this.selectedRows.getLastSelected() != null && mensaje(2)) {
+      this.selectedRows.getLastSelected() != null && showJSMessage(2)) {
       if (this.editing)
         this.cancelEdit();
       this.editingRow = null;
@@ -1551,6 +1552,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
           this.moveTableContent(rowNo);
       }
     }
+    checkAttachmentIconRelation();
   },
 
 /**

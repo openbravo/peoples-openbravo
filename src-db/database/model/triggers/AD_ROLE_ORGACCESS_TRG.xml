@@ -33,7 +33,7 @@
   Cur_Org RECORD;
   v_ClientList VARCHAR2(2000):='';
   v_OrgList    VARCHAR2(2000):='';
-  v_Client_ID NUMBER:=-1;
+  v_Client_ID VARCHAR2(32):=-1;
 BEGIN
   -- For each Role
   FOR CUR_Role IN

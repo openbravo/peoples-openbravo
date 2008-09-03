@@ -93,8 +93,8 @@ public class ReportMaterialTransactionEdition extends HttpSecureAppServlet {
 
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("dateFrom", strdateFrom);
     xmlDocument.setParameter("dateTo", strdateTo);
     String strDateFormat = vars.getSessionValue("#AD_SqlDateFormat");
@@ -136,8 +136,8 @@ public class ReportMaterialTransactionEdition extends HttpSecureAppServlet {
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportMaterialTransactionEdition").createXmlDocument();
     InoutEditionData[] data = null;
     data = InoutEditionData.select(this, Utility.getContext(this, vars, "#User_Org", "MaterialReceiptFilter"), Utility.getContext(this, vars, "#User_Client", "MaterialReceiptFilter"), strdateFrom, strdateTo, strcBpartnetId, strmWarehouseId, strcProjectId, strissotrx);
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setData("structure1", data);
     response.setContentType("text/html; charset=UTF-8");

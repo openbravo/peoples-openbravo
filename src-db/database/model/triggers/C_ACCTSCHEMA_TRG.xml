@@ -24,7 +24,7 @@
     ************************************************************************/
   TYPE RECORD IS REF CURSOR;
   cur_tables RECORD;
-  v_AcctSchema_Table_ID NUMBER;
+  v_AcctSchema_Table_ID VARCHAR2(32);
 BEGIN
   FOR cur_tables IN
     (

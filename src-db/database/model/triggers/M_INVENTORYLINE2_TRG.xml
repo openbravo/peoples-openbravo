@@ -23,7 +23,7 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
     BEGIN IF(UPDATING)
-    THEN  IF NOT((COALESCE(:OLD.M_Product_Uom_ID, 0) <> COALESCE(:NEW.M_Product_Uom_ID, 0)
+    THEN  IF NOT((COALESCE(:OLD.M_Product_Uom_ID, '0') <> COALESCE(:NEW.M_Product_Uom_ID, '0')
     OR COALESCE(:OLD.QuantityOrderBook, 0) <> COALESCE(:NEW.QuantityOrderBook, 0)))
     THEN  RETURN;
     END IF;

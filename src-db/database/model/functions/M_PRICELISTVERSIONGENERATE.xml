@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_PRICELISTVERSIONGENERATE">
     <function name="M_PRICELISTVERSIONGENERATE" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -23,10 +23,10 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1;
-  v_Record_ID NUMBER;
-  v_M_PriceList_Version_ID NUMBER;
-  v_User_ID NUMBER;
-  v_Client_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
+  v_M_PriceList_Version_ID VARCHAR2(32);
+  v_User_ID VARCHAR2(32);
+  v_Client_ID VARCHAR2(32);
   v_NameFrom NVARCHAR2(60) ;
   v_NameTo NVARCHAR2(60) ;
   v_Count NUMBER:=1;
@@ -61,7 +61,7 @@
       v_User_ID:=Cur_Parameter.AD_User_ID;
       v_Client_ID:=Cur_Parameter.AD_Client_ID;
       IF(Cur_Parameter.ParameterName='M_PriceList_Version_Origen_ID') THEN
-        v_M_PriceList_Version_ID:=Cur_Parameter.P_Number;
+        v_M_PriceList_Version_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  M_PriceList_Version_Origen_ID=' || v_M_PriceList_Version_ID) ;
       ELSE
         DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;

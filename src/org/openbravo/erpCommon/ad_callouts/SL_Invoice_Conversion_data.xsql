@@ -34,21 +34,21 @@
   <SqlMethod name="initUOMId" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT C_UOM_ID FROM M_PRODUCT_UOM WHERE M_PRODUCT_UOM_ID = TO_NUMBER(?) 
+      SELECT C_UOM_ID FROM M_PRODUCT_UOM WHERE M_PRODUCT_UOM_ID = ? 
     </Sql>
     <Parameter name="mProductUOMId"/>
   </SqlMethod>
   <SqlMethod name="stdPrecision" type="preparedStatement" return="String" default="0">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT STDPRECISION FROM C_UOM WHERE C_UOM_ID = TO_NUMBER(?) 
+      SELECT STDPRECISION FROM C_UOM WHERE C_UOM_ID = ? 
     </Sql>
     <Parameter name="mProductUOMId"/>
   </SqlMethod>
   <SqlMethod name="multiplyRate" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT MULTIPLYRATE FROM C_UOM_CONVERSION WHERE C_UOM_ID = TO_NUMBER(?) AND C_UOM_TO_ID = TO_NUMBER(?)
+      SELECT MULTIPLYRATE FROM C_UOM_CONVERSION WHERE C_UOM_ID = ? AND C_UOM_TO_ID = ?
     </Sql>
     <Parameter name="mProductUOM"/>
     <Parameter name="mProduct"/>
@@ -56,7 +56,7 @@
   <SqlMethod name="divideRate" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT DIVIDERATE FROM C_UOM_CONVERSION WHERE C_UOM_ID = TO_NUMBER(?) AND C_UOM_TO_ID = TO_NUMBER(?)
+      SELECT DIVIDERATE FROM C_UOM_CONVERSION WHERE C_UOM_ID = ? AND C_UOM_TO_ID = ?
     </Sql>
     <Parameter name="mProduct"/>
     <Parameter name="mProductUOM"/>

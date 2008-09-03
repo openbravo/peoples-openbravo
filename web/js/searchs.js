@@ -25,9 +25,9 @@
 var winSelector=null;
 
 var gForm=null;
-var gCampoClave=null;
-var gCampoTexto=null;
-var gDepurar=false;
+var gFieldKey=null;
+var gFieldText=null;
+var gValidate=false;
 var gIsMultiLineSearch=false;
 var baseImage="Question.jpg";
 
@@ -44,6 +44,7 @@ function SearchElements(campo, esRef, valor) {
   this.valor = valor;
 }
 
+// Deprecated in 2.50, but not use
 /*  Saca el valor seleccionado del combo que se le indique. No admite selecciones múltiples y
   devolverá null en caso de que no se halla seleccionado ninguna opción
 */
@@ -55,6 +56,7 @@ function valorCombo(combo)
     return combo.options[combo.selectedIndex].value;
 }
 
+//Deprecated in 2.50, but not use
 function textoCombo(combo)
 {
   if (combo.selectedIndex == -1)
@@ -64,9 +66,9 @@ function textoCombo(combo)
 }
 
 
-function windowSearch(strPagina, strHeight, strWidth, strTop, strLeft, strVentana, parametros, strValueID) {
-  var complementosNS4 = ""
-  var camposAccesorios = "";
+function windowSearch(strPage, strHeight, strWidth, strTop, strLeft, strWindow, parameters, strValueID) {
+  var complementsNS4 = ""
+  var auxField = "";
   closeWindowSearch();
   winSelector=null;
   if (strHeight==null)
@@ -77,32 +79,32 @@ function windowSearch(strPagina, strHeight, strWidth, strTop, strLeft, strVentan
     strTop=parseInt((screen.height - strHeight)/2);
   if (strLeft==null) 
     strLeft=parseInt((screen.width - strWidth)/2);
-  if (strVentana==null)
-    strVentana="SELECTOR";
+  if (strWindow==null)
+    strWindow="SELECTOR";
   if (strValueID!=null && strValueID!="") {
-    camposAccesorios = "inpNameValue=" + escape(strValueID);
+    auxField = "inpNameValue=" + escape(strValueID);
   }
-  var oculta;
-  if (parametros!=null) {
-    var total = parametros.length;
+  var hidden;
+  if (parameters!=null) {
+    var total = parameters.length;
     for (var i=0;i<total;i++) {
-      if (camposAccesorios!="") camposAccesorios+="&";
-      if (parametros[i]=="isMultiLine" && parametros[i+1]=="Y") gIsMultiLineSearch=true;
-      camposAccesorios += parametros[i] + "=" + ((parametros[i+1]!=null)?escape(parametros[i+1]):"");
-      if (parametros[i]=="Command") oculta=true;
+      if (auxField!="") auxField+="&";
+      if (parameters[i]=="isMultiLine" && parameters[i+1]=="Y") gIsMultiLineSearch=true;
+      auxField += parameters[i] + "=" + ((parameters[i+1]!=null)?escape(parameters[i+1]):"");
+      if (parameters[i]=="Command") hidden=true;
       i++;
     }
   }
   
   if (navigator.appName.indexOf("Netscape"))
-    complementosNS4 = "alwaysRaised=1, dependent=1, directories=0, hotkeys=0, menubar=0, ";
-  var complementos = complementosNS4 + "height=" + strHeight + ", width=" + strWidth + ", left=" + strLeft + ", top=" + strTop + ", screenX=" + strLeft + ", screenY=" + strTop + ", location=0, resizable=0, scrollbars=1, status=0, toolbar=0, titlebar=0";
-  winSelector = window.open(strPagina + ((camposAccesorios=="")?"":"?" + camposAccesorios), strVentana, complementos);
+    complementsNS4 = "alwaysRaised=1, dependent=1, directories=0, hotkeys=0, menubar=0, ";
+  var complements = complementsNS4 + "height=" + strHeight + ", width=" + strWidth + ", left=" + strLeft + ", top=" + strTop + ", screenX=" + strLeft + ", screenY=" + strTop + ", location=0, resizable=0, scrollbars=1, status=0, toolbar=0, titlebar=0";
+  winSelector = window.open(strPage + ((auxField=="")?"":"?" + auxField), strWindow, complements);
   if (winSelector!=null) {
-    if (oculta) window.focus();
+    if (hidden) window.focus();
     else winSelector.focus();
     //winSelector.onunload = function(){top.opener.closeWindowSearch();};
-    activarEventos();
+    enableEvents();
   }
 }
 
@@ -110,71 +112,71 @@ function closeWindowSearch() {
   if (winSelector && !winSelector.closed) {
     winSelector.close();
     winSelector=null;
-    desactivarEventos();
+    disableEvents();
   }
 }
 
 
-function openSearch(strTop, strLeft, strNombreSelector, strWindowName, depurar, strForm, strItem, strSpanId, strValueID)
+function openSearch(strTop, strLeft, strSelectorName, strWindowName, validate, strForm, strItem, strSpanId, strValueID)
 {
-  if (strNombreSelector!=null) {
+  if (strSelectorName!=null) {
     gForm = (strForm==null)?"forms[0]":strForm;
-    gCampoClave=strItem;
-    gCampoTexto=strSpanId;
+    gFieldKey=strItem;
+    gFieldText=strSpanId;
     strValueId = (strValueID==null)?"":strValueID;
-    gDepurar = (depurar==null)?false:depurar;
-    var parametros=new Array();
+    gValidate = (validate==null)?false:validate;
+    var parameters=new Array();
     for (var i=9;arguments[i]!=null;i++) {
-      parametros[i-9] = arguments[i];
+      parameters[i-9] = arguments[i];
     }
-    if (strNombreSelector.indexOf("Location")!=-1) windowSearch(strNombreSelector, 300, 600, strTop, strLeft, strWindowName, parametros, strValueID);
-    else windowSearch(strNombreSelector, null, 900, strTop, strLeft, strWindowName, parametros, strValueID);
+    if (strSelectorName.indexOf("Location")!=-1) windowSearch(strSelectorName, 300, 600, strTop, strLeft, strWindowName, parameters, strValueID);
+    else windowSearch(strSelectorName, null, 900, strTop, strLeft, strWindowName, parameters, strValueID);
   }
 }
 
-function openMultiSearch(strTop, strLeft, strNombreSelector, strWindowName, depurar, strForm, strItem)
+function openMultiSearch(strTop, strLeft, strSelectorName, strWindowName, validate, strForm, strItem)
 {
-  if (strNombreSelector!=null) {
+  if (strSelectorName!=null) {
     gForm = (strForm==null)?"forms[0]":strForm;
-    gCampoClave=strItem;
-    gDepurar = (depurar==null)?false:depurar;
-    var parametros=new Array();
+    gFieldKey=strItem;
+    gValidate = (validate==null)?false:validate;
+    var parameters=new Array();
     for (var i=7;arguments[i]!=null;i++) {
-      parametros[i-7] = arguments[i];
+      parameters[i-7] = arguments[i];
     }
-    windowSearch(strNombreSelector, null, 900, strTop, strLeft, strWindowName, parametros, null);
+    windowSearch(strSelectorName, null, 900, strTop, strLeft, strWindowName, parameters, null);
   }
 }
 
-function openPAttribute(strTop, strLeft, strNombreSelector, strWindowName, depurar, strForm, strItem, strSpanId, strValueID)
+function openPAttribute(strTop, strLeft, strSelectorName, strWindowName, validate, strForm, strItem, strSpanId, strValueID)
 {
-  if (strNombreSelector!=null) {
+  if (strSelectorName!=null) {
     gForm = (strForm==null)?"forms[0]":strForm;
-    gCampoClave=strItem;
-    gCampoTexto=strSpanId;
+    gFieldKey=strItem;
+    gFieldText=strSpanId;
     strValueId = (strValueID==null)?"":strValueID;
-    gDepurar = (depurar==null)?false:depurar;
-    var parametros=new Array();
+    gValidate = (validate==null)?false:validate;
+    var parameters=new Array();
     for (var i=9;arguments[i]!=null;i++) {
-      parametros[i-9] = arguments[i];
+      parameters[i-9] = arguments[i];
     }
-    windowSearch(strNombreSelector, 450, 650, strTop, strLeft, strWindowName, parametros, strValueID);
+    windowSearch(strSelectorName, 450, 650, strTop, strLeft, strWindowName, parameters, strValueID);
   }
 }
 /*
-function openLocation(strTop, strLeft, strNombreSelector, strWindowName, depurar, strForm, strItem, strSpanId, strValueID)
+function openLocation(strTop, strLeft, strSelectorName, strWindowName, validate, strForm, strItem, strSpanId, strValueID)
 {
-  if (strNombreSelector!=null) {
+  if (strSelectorName!=null) {
     gForm = (strForm==null)?"forms[0]":strForm;
-    gCampoClave=strItem;
-    gCampoTexto=strSpanId;
+    gFieldKey=strItem;
+    gFieldText=strSpanId;
     strValueId = (strValueID==null)?"":strValueID;
-    gDepurar = (depurar==null)?false:depurar;
-    var parametros=new Array();
+    gValidate = (validate==null)?false:validate;
+    var parameters=new Array();
     for (var i=9;arguments[i]!=null;i++) {
-      parametros[i-9] = arguments[i];
+      parameters[i-9] = arguments[i];
     }
-    windowSearch(strNombreSelector, 290, 500, strTop, strLeft, strWindowName, parametros, strValueID);
+    windowSearch(strSelectorName, 290, 500, strTop, strLeft, strWindowName, parameters, strValueID);
   }
 }*/
 
@@ -186,90 +188,100 @@ function getField(fieldName) {
   }
 }
 
-function closeSearch(action, strClave, strTexto, parametros, wait) {
+function closeSearch(action, strKey, strText, parameters, wait) {
   if (wait!=false) {
-    setTimeout(function() {closeSearch(action, strClave, strTexto, parametros, false);},100);
+    setTimeout(function() {closeSearch(action, strKey, strText, parameters, false);},100);
     return;
   } else {
     if (winSelector==null) return true;
-    if (gForm!=null && gCampoClave!=null && gCampoTexto!=null) {
-      var clave = getField(gCampoClave);
-      if (clave!=null) {
+    if (gForm!=null && gFieldKey!=null && gFieldText!=null) {
+      var key = getField(gFieldKey);
+      if (key!=null) {
         if (action=="SAVE") {
-          if (strClave==null || strClave=="") {
-            mensaje(31);
+          if (strKey==null || strKey=="") {
+            showJSMessage(31);
             winSelector.focus();
             return false;
           }
           
-          clave.value = strClave;
-          var text = getField(gCampoTexto);
-          //if (text!=null) text.value = ReplaceText(strTexto, "\"", "\\\"");
-          if (text!=null) text.value = strTexto;
-          if (parametros!=null && parametros.length>0) {
-            var total = parametros.length;
+          key.value = strKey;
+          var text = getField(gFieldText);
+          //if (text!=null) text.value = ReplaceText(strText, "\"", "\\\"");
+          if (text!=null) text.value = strText;
+          if (parameters!=null && parameters.length>0) {
+            var total = parameters.length;
             for (var i=0;i<total;i++) {
-              //var obj = eval("document." + gForm + "." + ((parametros[i].esRef)?gCampoClave:"") + parametros[i].campo);
-              var obj = getField(((parametros[i].esRef)?gCampoClave:"") + parametros[i].campo);
-              if (obj!=null && obj.type) obj.value=parametros[i].valor;
+              //var obj = eval("document." + gForm + "." + ((parameters[i].esRef)?gFieldKey:"") + parameters[i].campo);
+              var obj = getField(((parameters[i].esRef)?gFieldKey:"") + parameters[i].campo);
+              if (obj!=null && obj.type) obj.value=parameters[i].valor;
             }
           }
-          if (clave.onchange) clave.onchange();
+          if (key.onchange) key.onchange();
           try { changeToEditingMode(true); } catch (e) {}
         } else if (action=="CLEAR") {
-          strClave="";
-          strTexto="";
-          clave.value= "";
-          var text = getField(gCampoTexto);
+          strKey="";
+          strText="";
+          key.value= "";
+          var text = getField(gFieldText);
           text.value="";
-          if (parametros!=null && parametros.length>0) {
-            var total = parametros.length;
+          if (parameters!=null && parameters.length>0) {
+            var total = parameters.length;
             for (var i=0;i<total;i++) {
-              var obj = getField(((parametros[i].esRef)?gCampoClave:"") + parametros[i].campo);
+              var obj = getField(((parameters[i].esRef)?gFieldKey:"") + parameters[i].campo);
               if (obj!=null && obj.type) obj.value="";
             }
           }
-          if (clave.onchange) clave.onchange();
+          if (key.onchange) key.onchange();
           try { changeToEditingMode(true); } catch (e) {}
         } else if (action=="SAVE_IMAGE") {
-          if (strClave==null || strClave=="") {
-            mensaje(31);
+          if (strKey==null || strKey=="") {
+            showJSMessage(31);
             winSelector.focus();
             return false;
           }
           
-          clave.value=strClave;
-          eval("document.images['" + gCampoTexto + "'].src=\"" + baseDirection + "images/" + strTexto + "\"");
-          if (parametros!=null && parametros.length>0) {
-            var total = parametros.length;
+          key.value=strKey;
+          if (typeof baseDirectory != "unknown") {
+            eval("document.images['" + gFieldText + "'].src=\"" + baseDirectory + "images/" + strText + "\"");
+          } else {
+            // Deprecated in 2.50, the following code is only for compatibility
+            eval("document.images['" + gFieldText + "'].src=\"" + baseDirection + "images/" + strText + "\"");
+          }
+          if (parameters!=null && parameters.length>0) {
+            var total = parameters.length;
             for (var i=0;i<total;i++) {
-              var obj = getField(((parametros[i].esRef)?gCampoClave:"") + parametros[i].campo);
-              if (obj!=null && obj.type) obj.value=parametros[i].valor;
+              var obj = getField(((parameters[i].esRef)?gFieldKey:"") + parameters[i].campo);
+              if (obj!=null && obj.type) obj.value=parameters[i].valor;
             }
           }
-          if (clave.onchange) clave.onchange();
+          if (key.onchange) key.onchange();
           try { changeToEditingMode(true); } catch (e) {}
         } else if (action=="CLEAR_IMAGE") {
-          strClave="";
-          strTexto="";
-          clave.value="";
-          var text = getField(gCampoTexto);
-          text.src= baseDirection + "images/" + baseImage ;
-          if (parametros!=null && parametros.length>0) {
-            var total = parametros.length;
+          strKey="";
+          strText="";
+          key.value="";
+          var text = getField(gFieldText);
+          if (typeof baseDirectory != "unknown") {
+            text.src= baseDirectory + "images/" + baseImage ;
+          } else {
+            // Deprecated in 2.50, the following code is only for compatibility
+            text.src= baseDirection + "images/" + baseImage ;
+          }
+          if (parameters!=null && parameters.length>0) {
+            var total = parameters.length;
             for (var i=0;i<total;i++) {
-              var obj = getField(((parametros[i].esRef)?gCampoClave:"") + parametros[i].campo);
+              var obj = getField(((parameters[i].esRef)?gFieldKey:"") + parameters[i].campo);
               if (obj!=null && obj.type) obj.value="";
             }
           }
-          if (clave.onchange) clave.onchange();
+          if (key.onchange) key.onchange();
           try { changeToEditingMode(true); } catch (e) {}
         }
       }
     }
     closeWindowSearch();
-    if (gDepurar) {
-      if (!debugSearch(strClave, strTexto, gCampoClave, parametros)) {
+    if (gValidate) {
+      if (!debugSearch(strKey, strText, gFieldKey, parameters)) {
         return false;
       }
     }
@@ -278,33 +290,33 @@ function closeSearch(action, strClave, strTexto, parametros, wait) {
   }
 }
 
-function closeMultiSearch(action, data, parametros) {
+function closeMultiSearch(action, data, parameters) {
   if (winSelector==null) return true;
   
-  if (gForm!=null && gCampoClave!=null) {
-    var clave = eval("document." + gForm + "." + gCampoClave);
-    if (clave!=null) {
+  if (gForm!=null && gFieldKey!=null) {
+    var key = eval("document." + gForm + "." + gFieldKey);
+    if (key!=null) {
       if (action=="SAVE") {
         if (data==null || data.length==0) {
-          mensaje(31);
+          showJSMessage(31);
           winSelector.focus();
           return false;
         }
         
-        insertarElementosList(clave, data);
-        if (parametros!=null && parametros.length>0) {
-          var total = parametros.length;
+        addElementsToList(key, data);
+        if (parameters!=null && parameters.length>0) {
+          var total = parameters.length;
           for (var i=0;i<total;i++) {
-            var obj = eval("document." + gForm + "." + ((parametros[i].esRef)?gCampoClave:"") + parametros[i].campo);
-            if (obj!=null && obj.type) obj.value=parametros[i].valor;
+            var obj = eval("document." + gForm + "." + ((parameters[i].esRef)?gFieldKey:"") + parameters[i].campo);
+            if (obj!=null && obj.type) obj.value=parameters[i].valor;
           }
         }
       } else if (action=="CLEAR") {
-        limpiarLista(clave);
-        if (parametros!=null && parametros.length>0) {
-          var total = parametros.length;
+    	clearList(key);
+        if (parameters!=null && parameters.length>0) {
+          var total = parameters.length;
           for (var i=0;i<total;i++) {
-            var obj = eval("document." + gForm + "." + ((parametros[i].esRef)?gCampoClave:"") + parametros[i].campo);
+            var obj = eval("document." + gForm + "." + ((parameters[i].esRef)?gFieldKey:"") + parameters[i].campo);
             if (obj!=null && obj.type) obj.value="";
           }
         }
@@ -313,8 +325,8 @@ function closeMultiSearch(action, data, parametros) {
   }
 
   closeWindowSearch();
-  if (gDepurar) {
-    if (!debugSearch(data, gCampoClave)) {
+  if (gValidate) {
+    if (!debugSearch(data, gFieldKey)) {
       return false;
     }
   }
@@ -351,7 +363,7 @@ function toLayer(strHtml, strLayer) {
 }
 
 
-function activarEventos() {
+function enableEvents() {
 if (document.layers) {
     document.captureEvents(Event.UNLOAD);
   }
@@ -359,7 +371,7 @@ if (document.layers) {
   hasCloseWindowSearch = true;
 }
 
-function desactivarEventos() {
+function disableEvents() {
   if (document.layers) {
     window.releaseEvents(Event.UNLOAD);
   }
@@ -378,10 +390,28 @@ function updateHeader(liveGrid, offset) {
       return true;
   }
 
+/**
+ * Created and Deprecated in 2.50
+ * It calls either the validateSelector-function or if it does not exist
+ * the depurarSelector-function. The depurarSelector-function  has been renamed to validateSelector.
+ * These functions are defined in each (selector) HTML-page and called from here.
+ * This wrapper-function is used to support both function-names until
+ * all custom code has been migrated to the new name.
+ */
+function depurarSelector_validateSelector_wrapper(action) {
+	// if new-style validateSelector-function exists => call it
+	if (typeof validateSelector == "function") {
+		return validateSelector(action);
+	} else {
+		// call old-style depurarSelector function
+		return depurarSelector(action);
+	}	
+}
+
   function onRowDblClick(cell) {
     var value = dojo.widget.byId('grid').getSelectedRows();
     if (value==null || value=="" || value.length>1) return false;    
-    depurarSelector('SAVE');
+    depurarSelector_validateSelector_wrapper('SAVE');
   }
 
   function getSelectedValues() {

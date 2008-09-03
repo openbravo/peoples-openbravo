@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_GET_OFFER_STD_PRICE">
     <function name="M_GET_OFFER_STD_PRICE" type="NUMERIC">
-      <parameter name="p_offer_id" type="NUMERIC" mode="in">
+      <parameter name="p_offer_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_priceactual" type="NUMERIC" mode="in">

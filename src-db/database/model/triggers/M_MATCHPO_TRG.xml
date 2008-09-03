@@ -8,10 +8,10 @@
 
   v_QtyOrdered NUMBER;
   v_QtyOrderOrdered NUMBER;
-  v_Product_UOM     NUMBER;
-  v_UOM             NUMBER;
-  v_Attribute       NUMBER;
-  v_Warehouse       NUMBER;
+  v_Product_UOM     VARCHAR2(32);
+  v_UOM             VARCHAR2(32);
+  v_Attribute       VARCHAR2(32);
+  v_Warehouse       VARCHAR2(32);
   V_STOCKED         NUMBER;
   /******************************************************************************
   * The contents of this file are subject to the   Compiere License  Version 1.1

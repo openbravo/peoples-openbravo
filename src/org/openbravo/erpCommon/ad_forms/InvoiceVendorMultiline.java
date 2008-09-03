@@ -179,8 +179,8 @@ public class InvoiceVendorMultiline extends HttpSecureAppServlet {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/InvoiceVendorMultiline", discard).createXmlDocument();
     
     xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("command", strCommand);
     xmlDocument.setParameter("commandType", strCommand);
     xmlDocument.setParameter("windowName", windowName);

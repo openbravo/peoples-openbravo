@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_BP_GROUP_ACCT_COPY">
     <function name="C_BP_GROUP_ACCT_COPY" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_bp_group_id" type="NUMERIC" mode="in">
+      <parameter name="p_bp_group_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
-      <parameter name="p_c_acctschema_id" type="NUMERIC" mode="in">
+      <parameter name="p_c_acctschema_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -40,7 +40,7 @@
   -- Logistics
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
   v_IsProcessing CHAR(1) ;
   v_IsProcessed CHAR(1) ;
   v_myResult NUMBER:=1; -- Success
@@ -48,8 +48,8 @@
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     --
-    v_C_BP_Group_ID NUMBER;
-    v_C_AcctSchema_ID NUMBER;
+    v_C_BP_Group_ID VARCHAR2(32);
+    v_C_AcctSchema_ID VARCHAR2(32);
     -- A Group can only have one client
     Cur_Acct RECORD;
     Cur_BPartner RECORD;
@@ -57,8 +57,6 @@
     --
     v_Deleted NUMBER:=0;
     v_Created NUMBER:=0;
-    v_C_BP_Customer_ID NUMBER(10) ;
-    v_C_BP_Vendor_ID NUMBER(10) ;
     rowcount NUMBER;
   BEGIN
     --  Update AD_PInstance
@@ -80,10 +78,10 @@
     LOOP
       v_Record_ID:=Cur_Parameter.Record_ID;
       IF(Cur_Parameter.ParameterName='C_BP_Group_ID') THEN
-        v_C_BP_Group_ID:=Cur_Parameter.P_Number;
+        v_C_BP_Group_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  C_BP_Group_ID=' || v_C_BP_Group_ID) ;
       ELSIF(Cur_Parameter.ParameterName='C_AcctSchema_ID') THEN
-        v_C_AcctSchema_ID:=Cur_Parameter.P_Number;
+        v_C_AcctSchema_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  C_AcctSchema_ID=' || v_C_AcctSchema_ID) ;
       ELSE
         DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
@@ -125,16 +123,15 @@
                      AND P.ISCUSTOMER = 'Y'
                      AND P.C_BP_Group_ID = v_C_BP_Group_ID
 					 AND (A.C_AcctSchema_ID = v_C_AcctSchema_ID OR v_C_AcctSchema_ID IS NULL)) LOOP
-     Ad_Sequence_Next('C_BP_Customer_Acct', Cur_BP.AD_Client_ID, v_C_BP_Customer_ID);
      INSERT INTO C_BP_Customer_Acct
-           (C_BP_Customer_Acct_Id, C_BPartner_ID, C_AcctSchema_ID, AD_Client_ID,
+           (C_BP_Customer_Acct_ID, C_BPartner_ID, C_AcctSchema_ID, AD_Client_ID,
             AD_Org_ID, IsActive, Created, CreatedBy,
             Updated, UpdatedBy, C_Receivable_Acct, C_PrePayment_Acct,
             Status)
        VALUES
-           (v_C_BP_Customer_ID, Cur_BP.C_BPartner_ID, Cur_BP.C_AcctSchema_ID, Cur_BP.AD_Client_ID,
-            Cur_BP.AD_Org_ID,'Y', now(), 0,
-            now(), 0, Cur_BP.C_Receivable_Acct, Cur_BP.C_PrePayment_Acct,
+           (get_uuid(), Cur_BP.C_BPartner_ID, Cur_BP.C_AcctSchema_ID, Cur_BP.AD_Client_ID,
+            Cur_BP.AD_Org_ID,'Y', now(), '0',
+            now(), '0', Cur_BP.C_Receivable_Acct, Cur_BP.C_PrePayment_Acct,
             Cur_BP.Status);
        rowcount:=SQL%ROWCOUNT;
        v_Created := rowcount;
@@ -150,16 +147,15 @@
                      AND P.ISVENDOR = 'Y'
                      AND P.C_BP_Group_ID = v_C_BP_Group_ID
 					 AND (A.C_AcctSchema_ID = v_C_AcctSchema_ID OR v_C_AcctSchema_ID IS NULL)) LOOP
-     Ad_Sequence_Next('C_BP_Vendor_Acct', Cur_BP.AD_Client_ID, v_C_BP_Vendor_ID);
      INSERT INTO C_BP_Vendor_Acct
-           (C_BP_Vendor_Acct_Id, C_BPartner_ID, C_AcctSchema_ID, AD_Client_ID,
+           (C_BP_Vendor_Acct_ID, C_BPartner_ID, C_AcctSchema_ID, AD_Client_ID,
             AD_Org_ID, IsActive, Created, CreatedBy,
             Updated, UpdatedBy, V_Liability_Acct, V_Liability_Services_Acct,
             V_PrePayment_Acct, Status)
        VALUES
-           (v_C_BP_Vendor_ID, Cur_BP.C_BPartner_ID, Cur_BP.C_AcctSchema_ID, Cur_BP.AD_Client_ID,
-            Cur_BP.AD_Org_ID,'Y', now(), 0,
-            now(), 0, Cur_BP.V_Liability_Acct, Cur_BP.V_Liability_Services_Acct,
+           (get_uuid(), Cur_BP.C_BPartner_ID, Cur_BP.C_AcctSchema_ID, Cur_BP.AD_Client_ID,
+            Cur_BP.AD_Org_ID,'Y', now(), '0',
+            now(), '0', Cur_BP.V_Liability_Acct, Cur_BP.V_Liability_Services_Acct,
             Cur_BP.V_PrePayment_Acct, Cur_BP.Status);
        rowcount:=SQL%ROWCOUNT;
        v_Created := v_Created + rowcount;

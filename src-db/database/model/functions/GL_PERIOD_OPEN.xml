@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION GL_PERIOD_OPEN">
-    <function name="GL_PERIOD_OPEN" type="NUMERIC">
-      <parameter name="p_ad_client_id" type="NUMERIC" mode="in">
+    <function name="GL_PERIOD_OPEN" type="VARCHAR">
+      <parameter name="p_ad_client_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_dateacct" type="TIMESTAMP" mode="in">
@@ -10,7 +10,7 @@
       <parameter name="p_docbasetype" type="CHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_c_acctschema_id" type="NUMERIC" mode="in">
+      <parameter name="p_c_acctschema_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -47,8 +47,8 @@
 * Test:
 *  SELECT GL_Period_Open (11, '01-JAN-2002', 'ARI') FROM DUAL
 ************************************************************************/
-    v_C_Calendar_ID NUMBER(10) ;
-    v_C_Period_ID   NUMBER(10) := -1; -- not found
+    v_C_Calendar_ID VARCHAR2(32) ;
+    v_C_Period_ID   varchar2(32) := -1; -- not found
     v_Temp_Period   NUMBER(10) ;
     v_PeriodStatus  C_PeriodControl.PeriodStatus%TYPE;
     --

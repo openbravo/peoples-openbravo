@@ -29,7 +29,7 @@
     <Sql>
     <![CDATA[
      SELECT ORGID, SEARCHKEY, NAME, PORCENTAJE, QTY, UNIT, COST, QTY*COST AS VALUE,
-     GET_PARETO_ABC(TO_NUMBER(?), TO_NUMBER(?), PORCENTAJE) AS ISABC,
+     GET_PARETO_ABC(?, ?, PORCENTAJE) AS ISABC,
      '' AS PADRE, '' AS ID
      FROM  
      (
@@ -71,10 +71,10 @@
     <Field name="rownum" value="count"/>
     <Parameter name="mWarehouseId"/>
     <Parameter name="adOrgId"/>    
-    <Parameter name="mWarehouseId" optional="true" after="1=1" text=" AND MW1.M_WAREHOUSE_ID = TO_NUMBER(?) "/>
-    <Parameter name="adOrgId" optional="true" after="2=2" text=" AND MW1.AD_ORG_ID = TO_NUMBER(?) "/>    
-    <Parameter name="mWarehouseId" optional="true" after="3=3" text=" AND MW.M_WAREHOUSE_ID = TO_NUMBER(?) "/>    
-    <Parameter name="adOrgId" optional="true" after="4=4" text=" AND MW.AD_ORG_ID = TO_NUMBER(?) "/>
+    <Parameter name="mWarehouseId" optional="true" after="1=1" text=" AND MW1.M_WAREHOUSE_ID = ? "/>
+    <Parameter name="adOrgId" optional="true" after="2=2" text=" AND MW1.AD_ORG_ID = ? "/>    
+    <Parameter name="mWarehouseId" optional="true" after="3=3" text=" AND MW.M_WAREHOUSE_ID = ? "/>    
+    <Parameter name="adOrgId" optional="true" after="4=4" text=" AND MW.AD_ORG_ID = ? "/>
   </SqlMethod>
 
   <SqlMethod name="set" type="constant" return="multiple">
@@ -103,7 +103,7 @@
   <SqlMethod name="mUpdateParetoProduct0" type="callableStatement" return="object" object="ReportParetoProductData">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        CALL M_UPDATE_PARETO_PRODUCT0(TO_NUMBER(?))
+        CALL M_UPDATE_PARETO_PRODUCT0(?)
       ]]></Sql>
       <Parameter name="adPinstanceId"/>    
    </SqlMethod> 

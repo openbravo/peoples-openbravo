@@ -19,13 +19,10 @@
 package org.openbravo.erpCommon.utility;
 
 import org.openbravo.base.secureApp.*;
-import org.openbravo.data.Sqlc;
 import org.openbravo.xmlEngine.XmlDocument;
 import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
-import org.openbravo.utils.Replace;
-import org.openbravo.utils.FormatUtilities;
 
 
 public class PopupLoading extends HttpSecureAppServlet {
@@ -46,8 +43,8 @@ public class PopupLoading extends HttpSecureAppServlet {
 
   public void printPageData(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/PopupLoading").createXmlDocument();
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

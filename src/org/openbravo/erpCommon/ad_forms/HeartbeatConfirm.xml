@@ -20,7 +20,7 @@
 <REPORT>
 	<template file="HeartbeatConfirm.html"/>
 	<PARAMETER id="paramResult" name="result" replaceCharacters="htmlHelp" />
-	<PARAMETER id="paramDirection" name="direction" default=""/>
+	<PARAMETER id="paramDirectory" name="directory" default=""/>
 	<PARAMETER id="paramLanguage" name="language" default=""/>
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
 	<PARAMETER id="paramTipo" name="ParamTipo" replace="ERROR" attribute="class" />

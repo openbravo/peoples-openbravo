@@ -48,41 +48,41 @@
   <SqlMethod name="usuario" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT USERNAME FROM AD_USER WHERE AD_USER_ID = TO_NUMBER(?)
+      SELECT USERNAME FROM AD_USER WHERE AD_USER_ID = ?
     ]]></Sql>
     <Parameter name="adUserId"/>
   </SqlMethod>
   <SqlMethod name="rol" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT NAME FROM AD_ROLE WHERE AD_ROLE_ID = TO_NUMBER(?)
+      SELECT NAME FROM AD_ROLE WHERE AD_ROLE_ID = ?
     ]]></Sql>
     <Parameter name="adRoleId"/>
   </SqlMethod>
   <SqlMethod name="cliente" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT NAME FROM AD_CLIENT WHERE AD_CLIENT_ID = TO_NUMBER(?)
+      SELECT NAME FROM AD_CLIENT WHERE AD_CLIENT_ID = ?
     ]]></Sql>
     <Parameter name="adClientId"/>
   </SqlMethod>
   <SqlMethod name="organizacion" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT NAME FROM AD_ORG WHERE AD_ORG_ID = TO_NUMBER(?)
+      SELECT NAME FROM AD_ORG WHERE AD_ORG_ID = ?
     ]]></Sql>
     <Parameter name="adOrgId"/>
   </SqlMethod>
   <SqlMethod name="versionBBDD" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT TAD_VERSION FROM AD_SYSTEM WHERE AD_SYSTEM_ID = 0
+      SELECT TAD_VERSION FROM AD_SYSTEM WHERE AD_SYSTEM_ID = '0'
     ]]></Sql>
   </SqlMethod>
   <SqlMethod name="versionVerticalBBDD" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT TAD_PARENT_VERSION FROM AD_SYSTEM WHERE AD_SYSTEM_ID = 0
+      SELECT TAD_PARENT_VERSION FROM AD_SYSTEM WHERE AD_SYSTEM_ID = '0'
     ]]></Sql>
   </SqlMethod>
   <SqlMethod name="selectPreference" type="preparedStatement" return="String" default="">
@@ -92,7 +92,7 @@
       FROM AD_Preference 
       WHERE AD_Client_ID IN ('1') 
       AND AD_Org_ID IN ('2') 
-      AND (AD_User_ID IS NULL OR AD_User_ID=0 OR AD_User_ID = TO_NUMBER(?)) 
+      AND (AD_User_ID IS NULL OR AD_User_ID='0' OR AD_User_ID = ?) 
       AND IsActive='Y' 
       AND UPPER(Attribute) = UPPER(?)
       ORDER BY AD_Client_ID, AD_Org_ID, AD_User_ID
@@ -105,8 +105,8 @@
   <SqlMethod name="update" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      UPDATE AD_PREFERENCE SET UPDATED=now(), UPDATEDBY=TO_NUMBER(?), VALUE=?
-      WHERE AD_Preference_ID = TO_NUMBER(?)
+      UPDATE AD_PREFERENCE SET UPDATED=now(), UPDATEDBY = ?, VALUE=?
+      WHERE AD_Preference_ID = ?
     ]]></Sql>
       <Parameter name="adUserId"/>
       <Parameter name="value"/>
@@ -115,8 +115,8 @@
   <SqlMethod name="updateRange" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      UPDATE AD_SYSTEM SET UPDATED=now(), UPDATEDBY=TO_NUMBER(?), TAD_RECORDRANGE=TO_NUMBER(?), TAD_RECORDRANGE_INFO=TO_NUMBER(?), TAD_TRANSACTIONALRANGE=TO_NUMBER(?), TAD_THEME=?
-      WHERE AD_System_ID = 0
+      UPDATE AD_SYSTEM SET UPDATED=now(), UPDATEDBY = ?, TAD_RECORDRANGE=TO_NUMBER(?), TAD_RECORDRANGE_INFO=TO_NUMBER(?), TAD_TRANSACTIONALRANGE=TO_NUMBER(?), TAD_THEME=?
+      WHERE AD_System_ID = '0'
     ]]></Sql>
       <Parameter name="adUserId"/>
       <Parameter name="tadRecordrange"/>

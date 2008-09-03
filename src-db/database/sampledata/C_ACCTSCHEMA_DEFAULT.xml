@@ -1,10 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--
-************************
-0. Core Range.
-************************
--->
 <!--1**************--><C_ACCTSCHEMA_DEFAULT>
 <!--1 C_ACCTSCHEMA_ID-->
 <!--1-->              <C_ACCTSCHEMA_ID><![CDATA[1000000]]></C_ACCTSCHEMA_ID>
@@ -148,16 +143,6 @@
 <!--1-->              <C_ACCTSCHEMA_DEFAULT_ID><![CDATA[1]]></C_ACCTSCHEMA_DEFAULT_ID>
 <!--1**************--></C_ACCTSCHEMA_DEFAULT>
 
-<!--
-************************
-0. End of Core Range.
-************************
--->
-<!--
-************************
-1. Custom Range.
-************************
--->
 <!--1000000**************--><C_ACCTSCHEMA_DEFAULT>
 <!--1000000 C_ACCTSCHEMA_ID-->
 <!--1000000-->              <C_ACCTSCHEMA_ID><![CDATA[1000001]]></C_ACCTSCHEMA_ID>
@@ -227,9 +212,4 @@
 <!--1000000-->              <C_ACCTSCHEMA_DEFAULT_ID><![CDATA[1000000]]></C_ACCTSCHEMA_DEFAULT_ID>
 <!--1000000**************--></C_ACCTSCHEMA_DEFAULT>
 
-<!--
-************************
-1. End of Custom Range.
-************************
--->
 </data>

@@ -32,7 +32,7 @@
       '' as UseSuspenseError, '' as SuspenseError_Acct, '' as UseCurrencyBalancing, '' as CurrencyBalancing_Acct, 
       '' as RetainedEarning_Acct, '' as IncomeSummary_Acct, '' as InterCompanyDueTo_Acct, '' as InterCompanyDueFrom_Acct
       FROM C_ValidCombination 
-      WHERE C_ValidCombination_ID = TO_NUMBER(?)
+      WHERE C_ValidCombination_ID=?
       </Sql>
     <Parameter name="C_AcctSchema_ID"/>
    </SqlMethod>
@@ -45,7 +45,7 @@
       '' as UseSuspenseError, '' as SuspenseError_Acct, '' as UseCurrencyBalancing, '' as CurrencyBalancing_Acct, 
       '' as RetainedEarning_Acct, '' as IncomeSummary_Acct, '' as InterCompanyDueTo_Acct, '' as InterCompanyDueFrom_Acct
       FROM C_ValidCombination 
-      WHERE C_ValidCombination_ID = TO_NUMBER(?)
+      WHERE C_ValidCombination_ID=?
       </Sql>
     <Parameter name="C_AcctSchema_ID"/>
    </SqlMethod>
@@ -55,23 +55,27 @@
       SELECT UseSuspenseBalancing,SuspenseBalancing_Acct, UseSuspenseError,SuspenseError_Acct, UseCurrencyBalancing,
       CurrencyBalancing_Acct, RetainedEarning_Acct,IncomeSummary_Acct, InterCompanyDueTo_Acct,InterCompanyDueFrom_Acct 
       FROM C_AcctSchema_GL 
-      WHERE C_AcctSchema_ID = TO_NUMBER(?)
+      WHERE C_AcctSchema_ID=?
       </Sql>
     <Parameter name="C_AcctSchema_ID"/>
    </SqlMethod>
    <SqlMethod name="GetValidAccountCombination" connection="true" type="callableStatement" return="object" object="RespuestaCS">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        CALL C_ValidCombination_Get(?,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?), TO_NUMBER(?),?,?,TO_NUMBER(?),TO_NUMBER(?), TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?), TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?))
+        CALL C_ValidCombination_Get(?,?,?,?,
+                                    ?,?,?,?,
+                                    ?,?,?,?,?,?,?, ?,?,?,?,?)
       </Sql>
       <Parameter name="CValidCombinationId" type="out"/>
       <Parameter name="AdClientId"/>
       <Parameter name="AdOrgId"/>
       <Parameter name="CAcctSchemaId"/>
+      
       <Parameter name="AccountId"/>
       <Parameter name="CInValidCombinationId"/>
       <Parameter name="mustBeFullyQualified"/>
       <Parameter name="alias"/>
+      
       <Parameter name="createdBy"/>
       <Parameter name="MProductId"/>
       <Parameter name="CBPartnerId"/>

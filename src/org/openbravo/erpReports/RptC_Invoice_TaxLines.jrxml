@@ -168,7 +168,7 @@
 		fontSize="11"
 	/>
 
-	<parameter name="C_INVOICE_ID" isForPrompting="true" class="java.math.BigDecimal"/>
+	<parameter name="C_INVOICE_ID" isForPrompting="true" class="java.lang.String"/>
 	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
 	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
 	<queryString><![CDATA[SELECT C_INVOICE_ID, C_TAX.NAME, C_INVOICETAX.TAXBASEAMT, C_INVOICETAX.TAXAMT
@@ -177,7 +177,7 @@
         AND C_INVOICETAX.C_INVOICE_ID = $P{C_INVOICE_ID}
         ORDER BY C_INVOICETAX.LINE, C_TAX.RATE]]></queryString>
 
-	<field name="C_INVOICE_ID" class="java.math.BigDecimal"/>
+	<field name="C_INVOICE_ID" class="java.lang.String"/>
 	<field name="NAME" class="java.lang.String"/>
 	<field name="TAXBASEAMT" class="java.math.BigDecimal"/>
 	<field name="TAXAMT" class="java.math.BigDecimal"/>

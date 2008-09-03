@@ -139,7 +139,7 @@ public class KeyMap {
     script.append("new keyArrayItem(\"M\", \"menuShowHide('buttonMenu');\", null, \"ctrlKey\"),\n");
     script.append("new keyArrayItem(\"N\", \"submitCommandForm('NEW', false, null, '").append(getData("TabNameUrl")).append("_Edition.html', '_self');\", null, \"ctrlKey\"),\n");
     script.append("new keyArrayItem(\"E\", \"submitCommandForm('EDIT', true, null, '").append(getData("TabNameUrl")).append("_Edition.html', '_self');\", null, \"ctrlKey\"),\n");
-    script.append("new keyArrayItem(\"B\", \"abrirBusqueda('../businessUtility/Buscador.html', 'BUSCADOR', document.frmMain.inpTabId.value, '").append(getData("WindowNameUrl")).append("/").append(getData("TabNameUrl")).append("_Edition.html', document.frmMain.inpwindowId.value, true);\", null, \"ctrlKey\")\n");
+    script.append("new keyArrayItem(\"B\", \"openSearchWindow('../businessUtility/Buscador.html', 'BUSCADOR', document.frmMain.inpTabId.value, '").append(getData("WindowNameUrl")).append("/").append(getData("TabNameUrl")).append("_Edition.html', document.frmMain.inpwindowId.value, true);\", null, \"ctrlKey\")\n");
     script.append(");\n");
     script.append("enableShortcuts();");
     return script.toString();
@@ -157,7 +157,7 @@ public class KeyMap {
     script.append("new keyArrayItem(\"M\", \"menuShowHide('buttonMenu');\", null, \"ctrlKey\")\n");
     script.append(",new keyArrayItem(\"N\", \"submitCommandForm('NEW', false, null, '").append(getData("TabNameUrl")).append("_Edition.html', '_self', null, true, null, true);\", null, \"ctrlKey\")\n");
     script.append(",new keyArrayItem(\"L\", \"submitCommandForm('RELATION', true, null, '").append(getData("TabNameUrl")).append("_Relation.html', '_self', null, true, null, true);\", null, \"ctrlKey\")\n");
-    script.append(",new keyArrayItem(\"B\", \"abrirBusqueda('../businessUtility/Buscador.html', 'BUSCADOR', document.frmMain.inpTabId.value, '").append(getData("WindowNameUrl")).append("/").append(getData("TabNameUrl")).append("_Edition.html', document.frmMain.inpwindowId.value, true);\", null, \"ctrlKey\")\n");
+    script.append(",new keyArrayItem(\"B\", \"openSearchWindow('../businessUtility/Buscador.html', 'BUSCADOR', document.frmMain.inpTabId.value, '").append(getData("WindowNameUrl")).append("/").append(getData("TabNameUrl")).append("_Edition.html', document.frmMain.inpwindowId.value, true);\", null, \"ctrlKey\")\n");
     if (!getData("IsTabReadOnly").equals("Y")) {
       if (!isNew) {
         script.append(",new keyArrayItem(\"D\", \"submitCommandForm('DELETE', true, null, '").append(getData("TabNameUrl")).append("_Relation.html', '_self');\", null, \"ctrlKey\")\n");

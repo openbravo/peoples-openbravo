@@ -31,13 +31,13 @@
   INSERT
   INTO AD_Form_Trl
     (
-      AD_Form_ID, AD_Language, AD_Client_ID,
+      AD_Form_Trl_ID, AD_Form_ID, AD_Language, AD_Client_ID,
       AD_Org_ID, IsActive, Created,
       CreatedBy, Updated, UpdatedBy,
       Name, Description, Help,
       IsTranslated
     )
-  SELECT :new.AD_Form_ID,
+  SELECT get_uuid(), :new.AD_Form_ID,
     AD_Language, :new.AD_Client_ID, :new.AD_Org_ID,
     :new.IsActive, :new.Created, :new.CreatedBy,
     :new.Updated, :new.UpdatedBy, :new.Name,
@@ -56,8 +56,8 @@
     )
   SELECT :new.AD_Form_ID,
     r.AD_Role_ID,  r.AD_CLIENT_ID, r.AD_ORG_ID,
-     'Y', now(), 0,
-    now(), 0,  'Y'
+     'Y', now(), '0',
+    now(), '0',  'Y'
   FROM AD_Role r
   where ismanual = 'N';
  END IF;

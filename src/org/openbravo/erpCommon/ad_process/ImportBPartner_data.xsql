@@ -29,7 +29,7 @@
 		Address1, Address2, City, Postal, RegionName
 			  FROM I_BPartner
 			  WHERE I_IsImported='N'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -40,7 +40,7 @@
     <Sql>
       <![CDATA[
       DELETE FROM I_BPartner WHERE I_IsImported='Y'
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -51,13 +51,13 @@
     <Sql>
       <![CDATA[
         UPDATE I_BPartner 
-        SET AD_Client_ID = COALESCE(AD_Client_ID, TO_NUMBER(?)),
-        AD_Org_ID = COALESCE(AD_Org_ID, 0),
+        SET AD_Client_ID = COALESCE(AD_Client_ID, ?),
+        AD_Org_ID = COALESCE(AD_Org_ID, '0'),
         IsActive = COALESCE(IsActive, 'Y'),
         Created = COALESCE(Created, now()),
-        CreatedBy = COALESCE(CreatedBy, 0),
+        CreatedBy = COALESCE(CreatedBy, '0'),
         Updated = COALESCE(Updated, now()),
-        UpdatedBy = COALESCE(UpdatedBy, 0),
+        UpdatedBy = COALESCE(UpdatedBy, '0'),
         I_ErrorMsg = NULL,
         I_IsImported = 'N' 
         WHERE I_IsImported<>'Y' OR I_IsImported IS NULL
@@ -79,7 +79,7 @@
 			  WHERE GroupValue IS NULL
           AND C_BP_Group_ID IS NULL
 			    AND I_IsImported<>'Y'
-          AND AD_Client_ID = TO_NUMBER(?)
+          AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -96,7 +96,7 @@
         )
 			  WHERE C_BP_Group_ID IS NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -110,7 +110,7 @@
 			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'ERR=Invalid Group, ' 
 			  WHERE C_BP_Group_ID IS NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -124,12 +124,12 @@
 			  SET CountryCode=(
           SELECT MIN(CountryCode) FROM C_Country c
           WHERE c.IsDefault='Y'
-            AND c.AD_Client_ID IN (0, I_BPartner.AD_Client_ID)
+            AND c.AD_Client_ID IN ('0', I_BPartner.AD_Client_ID)
         )
 			  WHERE CountryCode IS NULL
         AND C_Country_ID IS NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -143,11 +143,11 @@
 			  SET C_Country_ID=(
           SELECT C_Country_ID FROM C_Country c
   			  WHERE I_BPartner.CountryCode=c.CountryCode
-          AND c.AD_Client_ID IN (0, I_BPartner.AD_Client_ID)
+          AND c.AD_Client_ID IN ('0', I_BPartner.AD_Client_ID)
         )
 			  WHERE C_Country_ID IS NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -161,7 +161,7 @@
 			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'ERR=Invalid Country, '
 			  WHERE C_Country_ID IS NULL
   			  AND I_IsImported<>'Y'
-          AND AD_Client_ID = TO_NUMBER(?)
+          AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -176,12 +176,12 @@
           SELECT MIN(Name) FROM C_Region r
 			    WHERE r.IsDefault='Y'
           AND r.C_Country_ID=I_BPartner.C_Country_ID
-			    AND r.AD_Client_ID IN (0, I_BPartner.AD_Client_ID)
+			    AND r.AD_Client_ID IN ('0', I_BPartner.AD_Client_ID)
         )
 			  WHERE RegionName IS NULL
         AND C_Region_ID IS NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -196,11 +196,11 @@
           SELECT C_Region_ID FROM C_Region r
 			    WHERE r.Name=I_BPartner.RegionName
           AND r.C_Country_ID=I_BPartner.C_Country_ID
-			    AND r.AD_Client_ID IN (0, I_BPartner.AD_Client_ID)
+			    AND r.AD_Client_ID IN ('0', I_BPartner.AD_Client_ID)
         )
 			  WHERE C_Region_ID IS NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -219,7 +219,7 @@
           AND c.HasRegion='Y'
         )
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -233,12 +233,12 @@
 			  SET C_Greeting_ID=(
           SELECT C_Greeting_ID FROM C_Greeting g
 			    WHERE I_BPartner.BPContactGreeting=g.Name
-          AND g.AD_Client_ID IN (0, I_BPartner.AD_Client_ID)
+          AND g.AD_Client_ID IN ('0', I_BPartner.AD_Client_ID)
         )
 			  WHERE C_Greeting_ID IS NULL
         AND BPContactGreeting IS NOT NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -253,7 +253,7 @@
 			  WHERE C_Greeting_ID IS NULL
         AND BPContactGreeting IS NOT NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -272,7 +272,7 @@
 			  WHERE C_BPartner_ID IS NULL
         AND Value IS NOT NULL
 			  AND I_IsImported='N'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -293,7 +293,7 @@
         AND AD_User_ID IS NULL
         AND ContactName IS NOT NULL
 			  AND I_IsImported='N'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -319,7 +319,7 @@
         )
 			  WHERE C_BPartner_ID IS NOT NULL AND C_BPartner_Location_ID IS NULL
 			  AND I_IsImported='N'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -332,11 +332,11 @@
 			  INSERT INTO C_BPartner (C_BPartner_ID, AD_Client_ID, AD_Org_ID,
           IsActive,Created,CreatedBy,Updated,UpdatedBy,Value,Name,Name2,
           Description,DUNS,TaxID,NAICS,C_BP_Group_ID,IsSummary)
-  				  SELECT TO_NUMBER(?), AD_Client_ID, AD_Org_ID,
+  				  SELECT ?, AD_Client_ID, AD_Org_ID,
             'Y',now(),CreatedBy,now(),UpdatedBy,Value,Name,Name2,
             Description,DUNS,TaxID,NAICS,C_BP_Group_ID,'N'
 			  	  FROM I_BPartner
-				    WHERE I_BPartner_ID = TO_NUMBER(?)
+				    WHERE I_BPartner_ID=?
       ]]>
     </Sql>
     <Parameter name="CBPartnerID"/>
@@ -349,7 +349,7 @@
       <![CDATA[
         UPDATE I_BPartner
 			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'') || 'Insert BPartner error: ' || ? 
-				WHERE I_BPartner_ID = TO_NUMBER(?)
+				WHERE I_BPartner_ID=?
       ]]>
     </Sql>
 	<Parameter name="error"/>
@@ -365,51 +365,51 @@
           Value=(
           SELECT Value
           FROM I_BPartner
-				  WHERE I_BPartner_ID = TO_NUMBER(?)
+				  WHERE I_BPartner_ID=?
         ),
           Name=(
           SELECT Name
           FROM I_BPartner
-				  WHERE I_BPartner_ID = TO_NUMBER(?)
+				  WHERE I_BPartner_ID=?
         ),
           Name2=(
           SELECT Name2
           FROM I_BPartner
-				  WHERE I_BPartner_ID = TO_NUMBER(?)
+				  WHERE I_BPartner_ID=?
         ),
           Description=(
           SELECT Description
           FROM I_BPartner
-				  WHERE I_BPartner_ID = TO_NUMBER(?)
+				  WHERE I_BPartner_ID=?
         ),
           DUNS=(
           SELECT DUNS
           FROM I_BPartner
-				  WHERE I_BPartner_ID = TO_NUMBER(?)
+				  WHERE I_BPartner_ID=?
         ),
           TaxID=(
           SELECT TaxID
           FROM I_BPartner
-				  WHERE I_BPartner_ID = TO_NUMBER(?)
+				  WHERE I_BPartner_ID=?
         ),
           NAICS=(
           SELECT NAICS
           FROM I_BPartner
-				  WHERE I_BPartner_ID = TO_NUMBER(?)
+				  WHERE I_BPartner_ID=?
         ),
           C_BP_Group_ID=(
           SELECT C_BP_Group_ID
           FROM I_BPartner
-				  WHERE I_BPartner_ID = TO_NUMBER(?)
+				  WHERE I_BPartner_ID=?
         ),
           Updated = now(),
           UpdatedBy
         =(
           SELECT UpdatedBy
           FROM I_BPartner
-				  WHERE I_BPartner_ID = TO_NUMBER(?)
+				  WHERE I_BPartner_ID=?
         )
-				WHERE C_BPartner_ID = TO_NUMBER(?)
+				WHERE C_BPartner_ID=?
       ]]>
     </Sql>
     <Parameter name="IBPartnerID"/>
@@ -430,7 +430,7 @@
       <![CDATA[
         UPDATE I_BPartner
 			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'') || 'Update BPartner error: ' || ? 
-				WHERE I_BPartner_ID = TO_NUMBER(?)
+				WHERE I_BPartner_ID=?
       ]]>
     </Sql>
 	<Parameter name="error"/>
@@ -445,10 +445,10 @@
           C_Location_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,
           Address1,Address2,City,Postal,Postal_Add,C_Country_ID,C_Region_ID
         )
-				SELECT TO_NUMBER(?),AD_Client_ID,AD_Org_ID,'Y',now(),CreatedBy,now(),UpdatedBy,
+				SELECT ?,AD_Client_ID,AD_Org_ID,'Y',now(),CreatedBy,now(),UpdatedBy,
 				Address1,Address2,City,Postal,Postal_Add,C_Country_ID,C_Region_ID
 				FROM I_BPartner
-				WHERE I_BPartner_ID = TO_NUMBER(?)
+				WHERE I_BPartner_ID=?
       ]]>
     </Sql>
     <Parameter name="CLocationID"/>
@@ -461,7 +461,7 @@
       <![CDATA[
         UPDATE I_BPartner
 			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'') || 'Insert location error: ' || ? 
-				WHERE I_BPartner_ID = TO_NUMBER(?)
+				WHERE I_BPartner_ID=?
       ]]>
     </Sql>
 	<Parameter name="error"/>
@@ -477,11 +477,11 @@
 				  Name,
 				  IsBillTo,IsShipTo,IsPayFrom,IsRemitTo,Phone,Phone2,Fax, C_BPartner_ID,C_Location_ID
         )
-				SELECT TO_NUMBER(?),AD_Client_ID,AD_Org_ID,'Y',now(),CreatedBy,now(),UpdatedBy,
+				SELECT ?,AD_Client_ID,AD_Org_ID,'Y',now(),CreatedBy,now(),UpdatedBy,
 				TO_CHAR(?),
-				'Y','Y','Y','Y',Phone,Phone2,Fax, TO_NUMBER(?),TO_NUMBER(?)
+				'Y','Y','Y','Y',Phone,Phone2,Fax, ?,?
 				FROM I_BPartner
-				WHERE I_BPartner_ID = TO_NUMBER(?)
+				WHERE I_BPartner_ID=?
       ]]>
     </Sql>
     <Parameter name="CBPLocationID"/>
@@ -497,7 +497,7 @@
       <![CDATA[
         UPDATE I_BPartner
 			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'') || 'Insert BPartner location error: ' || ?
-				WHERE I_BPartner_ID = TO_NUMBER(?)
+				WHERE I_BPartner_ID=?
       ]]>
     </Sql>
 	<Parameter name="error"/>
@@ -512,10 +512,10 @@
           AD_User_ID,AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,
 				  C_BPartner_ID,C_BPartner_Location_ID,C_Greeting_ID,Name,Title,Description,Comments,Phone,Phone2,Fax,EMail,Birthday
         )
-				SELECT TO_NUMBER(?),AD_Client_ID,AD_Org_ID,'Y',now(),CreatedBy,now(),UpdatedBy,
-				TO_NUMBER(?),TO_NUMBER(?),C_Greeting_ID,ContactName,Title,ContactDescription,Comments,Phone,Phone2,Fax,EMail,Birthday
+				SELECT ?,AD_Client_ID,AD_Org_ID,'Y',now(),CreatedBy,now(),UpdatedBy,
+				?,?,C_Greeting_ID,ContactName,Title,ContactDescription,Comments,Phone,Phone2,Fax,EMail,Birthday
 				FROM I_BPartner
-				WHERE I_BPartner_ID = TO_NUMBER(?)
+				WHERE I_BPartner_ID=?
       ]]>
     </Sql>
     <Parameter name="ADUserID"/>
@@ -530,7 +530,7 @@
       <![CDATA[
         UPDATE I_BPartner
 			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'') || 'Insert BPartner contact error: ' || ?
-				WHERE I_BPartner_ID = TO_NUMBER(?)
+				WHERE I_BPartner_ID=?
       ]]>
     </Sql>
 	<Parameter name="error"/>
@@ -546,61 +546,61 @@
           C_Greeting_ID=(
           SELECT C_Greeting_ID
 				  FROM I_BPartner
-          WHERE I_BPartner_ID = TO_NUMBER(?)
+          WHERE I_BPartner_ID=?
         ),
           Name=(
           SELECT ContactName
 				  FROM I_BPartner
-          WHERE I_BPartner_ID = TO_NUMBER(?)
+          WHERE I_BPartner_ID=?
         ),
           Title=(
           SELECT Title
 				  FROM I_BPartner
-          WHERE I_BPartner_ID = TO_NUMBER(?)
+          WHERE I_BPartner_ID=?
         ),
           Description=(
           SELECT ContactDescription
 				  FROM I_BPartner
-          WHERE I_BPartner_ID = TO_NUMBER(?)
+          WHERE I_BPartner_ID=?
         ),
           Comments=(
           SELECT Comments
 				  FROM I_BPartner
-          WHERE I_BPartner_ID = TO_NUMBER(?)
+          WHERE I_BPartner_ID=?
         ),
           Phone=(
           SELECT Phone
 				  FROM I_BPartner
-          WHERE I_BPartner_ID = TO_NUMBER(?)
+          WHERE I_BPartner_ID=?
         ),
           Phone2=(
           SELECT Phone2
 				  FROM I_BPartner
-          WHERE I_BPartner_ID = TO_NUMBER(?)
+          WHERE I_BPartner_ID=?
         ),
           Fax=(
           SELECT Fax
 				  FROM I_BPartner
-          WHERE I_BPartner_ID = TO_NUMBER(?)
+          WHERE I_BPartner_ID=?
         ),
           EMail=(
           SELECT EMail
 				  FROM I_BPartner
-          WHERE I_BPartner_ID = TO_NUMBER(?)
+          WHERE I_BPartner_ID=?
         ),
           Birthday=(
           SELECT Birthday
 				  FROM I_BPartner
-          WHERE I_BPartner_ID = TO_NUMBER(?)
+          WHERE I_BPartner_ID=?
         ),
           Updated=now()
          ,
           UpdatedBy=(
           SELECT UpdatedBy
 				  FROM I_BPartner
-          WHERE I_BPartner_ID = TO_NUMBER(?)
+          WHERE I_BPartner_ID=?
         )
-				WHERE AD_User_ID = TO_NUMBER(?)
+				WHERE AD_User_ID=?
       ]]>
     </Sql>
     <Parameter name="IBPartnerID"/>
@@ -623,7 +623,7 @@
       <![CDATA[
         UPDATE I_BPartner
 			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'') || 'Update BPartner contact error: ' || ?
-				WHERE I_BPartner_ID = TO_NUMBER(?)
+				WHERE I_BPartner_ID=?
       ]]>
     </Sql>
 	<Parameter name="error"/>
@@ -636,7 +636,7 @@
       <![CDATA[
         UPDATE I_BPartner
 			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'') || 'Set Imported error: ' || ? 
-				WHERE I_BPartner_ID = TO_NUMBER(?)
+				WHERE I_BPartner_ID=?
       ]]>
     </Sql>
 	<Parameter name="error"/>
@@ -648,8 +648,8 @@
     <Sql>
       <![CDATA[
 				UPDATE I_BPartner
-        SET I_IsImported='Y', C_BPartner_ID=TO_NUMBER(?), C_BPartner_Location_ID=TO_NUMBER(?), AD_User_ID=TO_NUMBER(?), Updated=now(), Processed='Y'
-        WHERE I_BPartner_ID = TO_NUMBER(?)
+        SET I_IsImported='Y', C_BPartner_id = ?, C_BPartner_Location_id = ?, AD_User_id = ?, Updated=now(), Processed='Y'
+        WHERE I_BPartner_ID=?
       ]]>
     </Sql>
     <Parameter name="CBPartnerID"/>
@@ -665,7 +665,7 @@
 				UPDATE I_BPartner
         SET I_IsImported='N', Updated=now()
 			  WHERE I_IsImported<>'Y'
-        AND AD_CLIENT_ID = TO_NUMBER(?)
+        AND AD_CLIENT_ID=?
       ]]>
     </Sql>
     <Parameter name="adClientId"/>

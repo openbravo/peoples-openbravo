@@ -168,7 +168,7 @@
 		fontSize="11"
 	/>
 
-	<parameter name="C_INVOICE_ID" isForPrompting="true" class="java.math.BigDecimal"/>
+	<parameter name="C_INVOICE_ID" isForPrompting="true" class="java.lang.String"/>
 	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
 	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
 	<queryString><![CDATA[SELECT C_INVOICE.C_INVOICE_ID, COALESCE(M_PRODUCT.NAME, C_INVOICELINE.DESCRIPTION) AS NAME_PRODUCT, C_INVOICELINE.QTYINVOICED, C_UOM.NAME AS UOMNAME, C_INVOICELINE.DESCRIPTION,
@@ -185,7 +185,7 @@
         AND C_INVOICE.C_INVOICE_ID = $P{C_INVOICE_ID}
         ORDER BY C_INVOICELINE.LINE]]></queryString>
 
-	<field name="C_INVOICE_ID" class="java.math.BigDecimal"/>
+	<field name="C_INVOICE_ID" class="java.lang.String"/>
 	<field name="NAME_PRODUCT" class="java.lang.String"/>
 	<field name="QTYINVOICED" class="java.math.BigDecimal"/>
 	<field name="UOMNAME" class="java.lang.String"/>

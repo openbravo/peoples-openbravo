@@ -21,8 +21,6 @@ package org.openbravo.erpCommon.ad_callouts;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
-import org.openbravo.utils.FormatUtilities;
-import org.openbravo.erpCommon.utility.*;
 import java.io.*;
 import java.math.BigDecimal;
 import javax.servlet.*;
@@ -116,7 +114,7 @@ public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
     resultado.append("new Array(\"inplinenetamt\", \"" + strLineNetAmt + "\")");
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "frameAplicacion");
+    xmlDocument.setParameter("frameName", "appFrame");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

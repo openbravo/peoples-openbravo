@@ -45,7 +45,7 @@
     <Sql>
       SELECT description 
       FROM M_AttributeSetInstance 
-      WHERE M_AttributeSetInstance_ID = TO_NUMBER(?) 
+      WHERE M_AttributeSetInstance_ID = ? 
     </Sql>
     <Parameter name="mAttributesetinstanceId"/>
   </SqlMethod>
@@ -54,7 +54,7 @@
     <Sql>
       SELECT COALESCE(count (*),0) AS orders
       FROM M_INOUTLINE
-      WHERE M_INOUTLINE_ID = TO_NUMBER(?)
+      WHERE M_INOUTLINE_ID=?
     </Sql>
     <Parameter name="strmInoutlineId"/>
   </SqlMethod>

@@ -47,7 +47,7 @@ public class WadActionButton {
    */
   public static boolean isNumericType (String reference) {
     if (reference==null || reference.equals("")) return false;
-    if (WadUtility.isGeneralNumber(reference) || WadUtility.isDecimalNumber(reference) || WadUtility.isPriceNumber(reference) || WadUtility.isIntegerNumber(reference) || WadUtility.isQtyNumber(reference) || reference.equals("18") || reference.equals("19") || reference.equals("21") || reference.equals("23") || reference.equals("25") || reference.equals("26") || reference.equals("27") || reference.equals("28") || reference.equals("30") || reference.equals("31") || reference.equals("35") || reference.equals("32") || reference.equals("33") || reference.equals("800011")) {
+    if (WadUtility.isGeneralNumber(reference) || WadUtility.isDecimalNumber(reference) || WadUtility.isPriceNumber(reference) || WadUtility.isIntegerNumber(reference) || WadUtility.isQtyNumber(reference)) {
       return true;
     }
     return false;
@@ -591,7 +591,7 @@ public class WadActionButton {
         String _name = (String)e.nextElement();
         script.append(javaScriptFunctions.getProperty(_name)).append("\n");
       }
-      script.append("\nfunction depurarClient(action, Formulario, valor) {\n");
+      script.append("\nfunction validateClient(action, form, value) {\n");
       script.append("  var frm=document.frmMain;\n");
       script.append(validations);
       script.append("  setProcessingMode('popup', true);\n");

@@ -147,15 +147,15 @@
         AND wrpp.ConsumeRM = 'N'
       ORDER BY enddate, wr.DocumentNo, wrp.SeqNo]]></queryString>
 
-	<field name="WRID" class="java.math.BigDecimal"/>
+	<field name="WRID" class="java.lang.String"/>
 	<field name="PROCESSPLAN" class="java.lang.String"/>
 	<field name="STARTDATE" class="java.sql.Timestamp"/>
 	<field name="ENDDATE" class="java.sql.Timestamp"/>
-	<field name="WRPID" class="java.math.BigDecimal"/>
+	<field name="WRPID" class="java.lang.String"/>
 	<field name="PROCESS" class="java.lang.String"/>
 	<field name="QUANTITY" class="java.math.BigDecimal"/>
 	<field name="NEEDQTY" class="java.math.BigDecimal"/>
-	<field name="PRODUCTID" class="java.math.BigDecimal"/>
+	<field name="PRODUCTID" class="java.lang.String"/>
 	<field name="PRODUCT" class="java.lang.String"/>
 	<field name="NEEDED" class="java.math.BigDecimal"/>
 	<field name="SEQNO" class="java.math.BigDecimal"/>

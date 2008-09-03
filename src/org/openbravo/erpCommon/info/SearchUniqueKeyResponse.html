@@ -25,19 +25,19 @@
 <SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript" id="paramScript">
 <!--
-function depurarSelector(action) {
-	var clave = radioValue(parent.medio.document.frmSelector.inpClave);
-	var texto = parent.medio.document.frmSelector.inpTexto.value;
+function validateSelector(action) {
+	var key = radioValue(parent.medio.document.frmSelector.inpClave);
+	var text = parent.medio.document.frmSelector.inpTexto.value;
 	var parameter = new Array(
 	new SearchElements("_LOC", true, "\"" + parent.medio.document.frmSelector.inpLocation.value + "\""),
 	new SearchElements("_CON", true, "\"" + parent.medio.document.frmSelector.inpContact.value + "\"")
 	);
-	parent.opener.closeSearch(action, clave, texto, parameter);
+	parent.opener.closeSearch(action, key, text, parameter);
 }
 //-->
 </SCRIPT>
 </HEAD>
-<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onLoad="depurarSelector();">
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onLoad="validateSelector();">
 <BR></BR>
 <BR></BR>
 <BR></BR>

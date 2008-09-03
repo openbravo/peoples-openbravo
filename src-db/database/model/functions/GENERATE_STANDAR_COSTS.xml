@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION GENERATE_STANDAR_COSTS">
     <function name="GENERATE_STANDAR_COSTS" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_date" type="TIMESTAMP" mode="in">
@@ -30,8 +30,8 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Result NUMBER;
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
-  v_User NUMBER;
+  v_Record_ID VARCHAR2(32);
+  v_User VARCHAR2(32);
   v_Deleted NUMBER;
   -- Parameter
   TYPE RECORD IS REF CURSOR;

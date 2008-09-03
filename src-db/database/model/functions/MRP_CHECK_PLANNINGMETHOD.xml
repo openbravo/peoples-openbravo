@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MRP_CHECK_PLANNINGMETHOD">
     <function name="MRP_CHECK_PLANNINGMETHOD" type="NUMERIC">
-      <parameter name="p_planningmethod_id" type="NUMERIC" mode="in">
+      <parameter name="p_planningmethod_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_type" type="CHAR" mode="in">

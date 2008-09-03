@@ -16,10 +16,10 @@
       <parameter name="p_ratetype" type="CHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_client_id" type="NUMERIC" mode="in">
+      <parameter name="p_client_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_org_id" type="NUMERIC" mode="in">
+      <parameter name="p_org_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -52,8 +52,8 @@
 * Test:
 *  SELECT C_Currency_Convert0(100,'CND','USD',null,null) FROM DUAL => 64.72
 ************************************************************************/
-  v_CurFrom_ID NUMBER(10):=NULL;
-  v_CurTo_ID   NUMBER(10):=NULL;
+  v_CurFrom_ID VARCHAR2(32):=NULL;
+  v_CurTo_ID   varchar2(32):=NULL;
 BEGIN
   -- Nothing to do
   IF(p_CurFrom=p_CurTo  OR p_Amount=0 OR p_Amount IS NULL) THEN

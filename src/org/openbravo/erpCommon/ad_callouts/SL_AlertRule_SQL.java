@@ -94,10 +94,10 @@ public class SL_AlertRule_SQL extends HttpSecureAppServlet {
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_AlertRule_SQL';\n\n");
     resultado.append("var respuesta = new Array(");
-    if (!msg.equals("")) resultado.append("new Array(\"MESSAGE\", \"" + msg + "\")");
+    resultado.append("new Array(\"MESSAGE\", \"" + msg + "\")");
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "frameAplicacion");
+    xmlDocument.setParameter("frameName", "appFrame");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

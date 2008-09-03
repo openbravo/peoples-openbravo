@@ -93,12 +93,12 @@
         FROM M_PRODUCT_TEMPLATE PT, AD_REF_LIST_V 
         WHERE PT.TYPE_TEMPLATE = AD_REF_LIST_V.VALUE
         AND AD_REF_LIST_V.AD_LANGUAGE = ?
-        AND AD_REF_LIST_V.AD_REFERENCE_ID = 800009
+        AND AD_REF_LIST_V.AD_REFERENCE_ID = '800009'
         ORDER BY name2
      ]]></Sql>
     <Field name="position" value="count"/>
     <Parameter name="adLanguage"/>
-    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND AD_REF_LIST_V.AD_REFERENCE_ID = 800009">
+    <Parameter name="cBpartnerId" optional="true" type="argument" after="AND AD_REF_LIST_V.AD_REFERENCE_ID = '800009'">
         <![CDATA[ AND PT.C_BPARTNER_ID IN ]]>
         </Parameter>
   </SqlMethod>
@@ -109,7 +109,7 @@
         SELECT P.NAME, PT.QTY
         FROM M_PRODUCT_TEMPLATE PT, M_PRODUCT P
         WHERE PT.M_PRODUCT_ID = P.M_PRODUCT_ID
-        AND PT.C_BPARTNER_ID = TO_NUMBER(?)
+        AND PT.C_BPARTNER_ID = ?
         AND PT.TYPE_TEMPLATE = ?
         ORDER BY P.NAME
      ]]></Sql>

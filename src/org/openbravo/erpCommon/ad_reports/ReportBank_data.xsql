@@ -48,7 +48,7 @@
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND C_BANK.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[AND C_BANKSTATEMENTLINE.DATEACCT >= TO_DATE(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND C_BANKSTATEMENTLINE.DATEACCT < TO_DATE(?)]]></Parameter>
-    <Parameter name="parBankaccount" optional="true" after="AND 1=1"><![CDATA[AND c_bankaccount.c_bankaccount_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="parBankaccount" optional="true" after="AND 1=1"><![CDATA[AND c_bankaccount.c_bankaccount_id = ?]]></Parameter>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
@@ -66,7 +66,7 @@
       AND C_BANK.AD_CLIENT_ID IN ('1')
       AND C_BANK.AD_ORG_ID IN ('1')
       AND C_BANKSTATEMENTLINE.DATEACCT < TO_DATE(?)
-      AND c_bankaccount.c_bankaccount_ID = TO_NUMBER(?)
+      AND c_bankaccount.c_bankaccount_id = ?
       AND C_BANKSTATEMENT.PROCESSED='Y'
       ]]></Sql>
     <Parameter name="adUserClient" type="replace" optional="true" after="AND C_BANK.AD_CLIENT_ID IN (" text="'1'"/>

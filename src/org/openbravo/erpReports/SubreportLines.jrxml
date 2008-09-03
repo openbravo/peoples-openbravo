@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE jasperReport PUBLIC "-//JasperReports//DTD JasperReport//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+
+<jasperReport name="SubreportLines" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="default" isDefault="false" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="10"/>
+	<style name="Report_Title" isDefault="false" leftPadding="5" fontName="Bitstream Vera Sans" fontSize="18"/>
+	<style name="Report_Subtitle" isDefault="false" forecolor="#555555" leftPadding="5" fontName="Bitstream Vera Sans" fontSize="14"/>
+	<style name="Total_Field" isDefault="false" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" vAlign="Middle" leftPadding="5"/>
+	<style name="Detail_Header" isDefault="false" mode="Opaque" forecolor="#FFFFFF" backcolor="#555555" vAlign="Middle" leftBorder="1Point" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="1Point" rightBorderColor="#FFFFFF"/>
+	<style name="GroupHeader_DarkGray" isDefault="false" mode="Opaque" forecolor="#FFFFFF" backcolor="#555555" vAlign="Middle" leftPadding="5" fontName="Bitstream Vera Sans" fontSize="14"/>
+	<style name="GroupHeader_Gray" isDefault="false" mode="Opaque" backcolor="#999999"/>
+	<style name="Detail_Line" isDefault="false">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==1)]]></conditionExpression>
+			<style isDefault="false" style="Detail_Line" mode="Opaque" backcolor="#CCCCCC"/>
+		</conditionalStyle>
+	</style>
+	<style name="Total_Gray" isDefault="false" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC"/>
+	<parameter name="ATTACH" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="BASE_WEB" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="BASE_DESIGN" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="LANGUAGE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["en_US"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="USER_CLIENT" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["(1000000)"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="USER_ORG" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["(0)"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORT_TITLE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["REPORT TITLE"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="REPORT_SUBTITLE" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[".\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="C_PROJECTPROPOSAL_ID" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT table3.C_BPartner_ID, '' as proposal, 
+        replace(C_ProjectProposalLine.Description, chr(10), '')as line_desc,to_char( table6.Name ) as M_Product_ID_D, table6.description as description, C_ProjectProposalLine.Price as price,C_ProjectProposalLine.Qty as quantity, table7.NAME as UOMNAME,'' as address1, '' as localidad, '' as phone, '' as fax, '' as fecha, '' as BPname , '' as namecontacto, '' as contacto, '' as city, '' as headernote, '' as footnote, '' as reference, '' as CURSYMBOL, '' AS GREET, '' AS GREETAUX
+        FROM C_ProjectProposalLine, AD_Client table1, 
+        AD_Org table2, C_Projectproposal table3, C_BPartner table4, C_Project table5, M_Product table6, C_UOM table7
+        WHERE C_ProjectProposalLine.C_Projectproposal_ID = $P{C_PROJECTPROPOSAL_ID}
+        AND C_ProjectProposalLine.AD_Client_ID = table1.AD_Client_ID 
+        AND C_ProjectProposalLine.AD_Org_ID = table2.AD_Org_ID 
+        AND C_ProjectProposalLine.C_Projectproposal_ID = table3.C_Projectproposal_ID 
+        AND table3.C_BPartner_ID = table4.C_BPartner_ID 
+        AND table3.C_Project_ID = table5.C_Project_ID 
+        AND C_ProjectProposalLine.M_Product_ID = table6.M_Product_ID
+        AND table6.C_UOM_ID = table7.C_UOM_ID
+        and C_ProjectProposalLine.IsActive = 'Y'
+        ORDER BY C_PROJECTPROPOSALLINE.LINENO ASC]]>
+	</queryString>
+	<field name="DESCRIPTION" class="java.lang.String"/>
+	<field name="QUANTITY" class="java.math.BigDecimal"/>
+	<field name="PRICE" class="java.math.BigDecimal"/>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<columnHeader>
+		<band height="16">
+			<staticText>
+				<reportElement key="element-90" style="Detail_Header" x="0" y="0" width="254" height="16"/>
+				<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#FFFFFF" leftPadding="5" bottomBorder="None" bottomBorderColor="#000000" rightBorder="1Point" rightBorderColor="#FFFFFF" rightPadding="2"/>
+				<textElement/>
+				<text><![CDATA[DESCRIPTION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="element-90" style="Detail_Header" x="254" y="0" width="130" height="16"/>
+				<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#FFFFFF" leftPadding="5" bottomBorder="None" bottomBorderColor="#000000" rightBorder="1Point" rightBorderColor="#FFFFFF" rightPadding="2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[QUANTITY]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="element-90" style="Detail_Header" x="383" y="0" width="122" height="16"/>
+				<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#FFFFFF" leftPadding="5" bottomBorder="None" bottomBorderColor="#000000" rightBorder="1Point" rightBorderColor="#FFFFFF" rightPadding="2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[PRICE]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="67">
+			<frame>
+				<reportElement key="frame-1" x="0" y="0" width="535" height="16"/>
+				<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" bottomBorder="None" bottomBorderColor="#000000" rightBorder="None" rightBorderColor="#000000"/>
+			</frame>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" hyperlinkType="None">
+				<reportElement key="textField" x="0" y="0" width="254" height="16"/>
+				<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" bottomBorder="None" bottomBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times-Roman" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{DESCRIPTION}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" hyperlinkType="None">
+				<reportElement key="textField" x="254" y="0" width="130" height="16"/>
+				<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" bottomBorder="None" bottomBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times-Roman" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{QUANTITY}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" hyperlinkType="None">
+				<reportElement key="textField" x="383" y="0" width="122" height="16"/>
+				<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" bottomBorder="None" bottomBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times-Roman" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{PRICE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

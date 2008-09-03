@@ -21,9 +21,6 @@ package org.openbravo.erpCommon.ad_callouts;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
-import org.openbravo.utils.FormatUtilities;
-import org.openbravo.erpCommon.utility.*;
-import org.openbravo.data.FieldProvider;
 import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -68,7 +65,7 @@ public class SL_Requisition_BPartner extends HttpSecureAppServlet {
     resultado.append("new Array(\"inpmPricelistId\", \"" + strPriceList + "\")");
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "frameAplicacion");
+    xmlDocument.setParameter("frameName", "appFrame");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

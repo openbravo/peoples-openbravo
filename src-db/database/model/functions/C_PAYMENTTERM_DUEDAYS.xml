@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_PAYMENTTERM_DUEDAYS">
     <function name="C_PAYMENTTERM_DUEDAYS" type="NUMERIC">
-      <parameter name="p_paymentterm_id" type="NUMERIC" mode="in">
+      <parameter name="p_paymentterm_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_docdate" type="TIMESTAMP" mode="in">

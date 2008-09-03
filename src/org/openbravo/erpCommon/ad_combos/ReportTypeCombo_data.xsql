@@ -29,27 +29,27 @@
     <Sql>
     <![CDATA[
       SELECT MAX(NAME) || '-' || MAX(name1) AS NAME,MAX(ID1) || '-' || MAX(id2) AS ID  FROM(
-	    SELECT (CASE E.accounttype WHEN 'E' THEN 1 ELSE 2 END) AS TYPE, 0 AS ID1, '' AS NAME1, E.C_ElementValue_ID AS ID2, TO_CHAR(E.VALUE || ' - ' || COALESCE(ET.NAME, E.NAME)) AS NAME 
+	    SELECT (CASE E.accounttype WHEN 'E' THEN 1 ELSE 2 END) AS TYPE, '0' AS ID1, '' AS NAME1, E.C_ElementValue_ID AS ID2, TO_CHAR(E.VALUE || ' - ' || COALESCE(ET.NAME, E.NAME)) AS NAME 
       FROM C_ElementValue E left join C_ElementValue_Trl ET on E.C_ElementValue_ID = ET.C_ElementValue_ID 
                                                             and  ET.AD_Language  = 'es_ES' , 
       AD_TREENODE T
       WHERE E.C_ELEMENTVALUE_ID = T.NODE_ID 
-      AND T.AD_TREE_ID = TO_NUMBER(?)
+      AND T.AD_TREE_ID = ?
       AND (T.PARENT_ID IS NULL 
-      OR T.PARENT_ID = 0)
+      OR T.PARENT_ID = '0')
       AND E.AD_Org_ID IN('1') 
       AND E.AD_Client_ID IN('1') 
       AND E.isActive = 'Y' 	  	  
 	    AND E.accounttype IN ('E', 'A')	  
 	    UNION	    
-      SELECT (CASE E.accounttype WHEN 'R' THEN 1 ELSE 2 END) AS TYPE, E.C_ElementValue_ID AS ID1, TO_CHAR(E.VALUE || ' - ' || COALESCE(ET.NAME, E.NAME)) AS NAME1, 0 AS ID2, '' AS NAME
+      SELECT (CASE E.accounttype WHEN 'R' THEN 1 ELSE 2 END) AS TYPE, E.C_ElementValue_ID AS ID1, TO_CHAR(E.VALUE || ' - ' || COALESCE(ET.NAME, E.NAME)) AS NAME1, '0' AS ID2, '' AS NAME
       FROM C_ElementValue E left join C_ElementValue_Trl ET on E.C_ElementValue_ID = ET.C_ElementValue_ID
                                                             and ET.AD_Language = 'es_ES' , 
       AD_TREENODE T
       WHERE E.C_ELEMENTVALUE_ID = T.NODE_ID 
-      AND T.AD_TREE_ID = TO_NUMBER(?)
+      AND T.AD_TREE_ID = ?
       AND (T.PARENT_ID IS NULL 
-      OR T.PARENT_ID = 0)  
+      OR T.PARENT_ID = '0')  
       AND E.AD_Org_ID IN ('2') 
       AND E.AD_Client_ID IN ('2') 
       AND E.isActive = 'Y' 	  	  

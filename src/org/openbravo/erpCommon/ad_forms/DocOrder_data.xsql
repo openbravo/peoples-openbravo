@@ -38,7 +38,7 @@
         '' AS DROPSHIP_USER_ID, '' AS ISSELFSERVICE, '' AS AD_ORGTRX_ID, '' AS USER1_ID, '' AS USER2_ID, '' AS DELIVERYNOTES, '' AS C_INCOTERMS_ID,
         '' AS INCOTERMSDESCRIPTION, '' AS GENERATETEMPLATE, '' AS ISINVOICED, '' AS ISTRANSFERRED
         FROM C_Tax t, C_OrderTax it 
-        WHERE t.C_Tax_ID=it.C_Tax_ID AND it.C_Order_ID = TO_NUMBER(?)
+        WHERE t.C_Tax_ID=it.C_Tax_ID AND it.C_Order_ID=?
      ]]>
      </Sql>
      <Parameter name="C_Order_ID"/>
@@ -52,8 +52,8 @@
         O.C_CURRENCY_ID, O.C_DOCTYPE_ID, O.C_CHARGE_ID, O.CHARGEAMT, O.POSTED, O.DATEORDERED,
         O.ISTAXINCLUDED, O.GRANDTOTAL, O.TOTALLINES
         FROM C_ORDER O          
-        WHERE AD_Client_ID = TO_NUMBER(?) 
-        AND C_ORDER_ID = TO_NUMBER(?)
+        WHERE AD_Client_ID=? 
+        AND C_ORDER_ID=?
      ]]>
      </Sql>
      <Parameter name="client"/>
@@ -63,15 +63,15 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-          UPDATE M_Product_PO SET PriceLastPO = (SELECT AVG(C_Currency_Convert(to_number(ol.PriceActual),to_number(ol.C_Currency_ID),to_number(M_Product_PO.C_Currency_ID),to_date(o.DateOrdered),to_char(null),to_number(o.AD_Client_ID),to_number(o.AD_Org_ID)))
+          UPDATE M_Product_PO SET PriceLastPO = (SELECT AVG(C_Currency_Convert(to_number(ol.PriceActual),ol.C_Currency_ID,M_Product_PO.C_Currency_ID,to_date(o.DateOrdered),to_char(null),o.AD_Client_ID,o.AD_Org_ID))
                   FROM C_Order o, C_OrderLine ol 
                   WHERE o.C_Order_ID = ol.C_Order_ID
                   AND M_Product_PO.M_Product_ID = ol.M_Product_ID AND M_Product_PO.C_BPartner_ID=o.C_BPartner_ID
-                  AND o.C_Order_ID = TO_NUMBER(?))
+                  AND o.C_Order_ID = ?)
           WHERE EXISTS (SELECT * FROM C_Order o, C_OrderLine ol 
                   WHERE o.C_Order_ID = ol.C_Order_ID
                   AND M_Product_PO.M_Product_ID = ol.M_Product_ID AND M_Product_PO.C_BPartner_ID=o.C_BPartner_ID
-                  AND o.C_Order_ID = TO_NUMBER(?))
+                  AND o.C_Order_ID = ?)
      ]]>
      </Sql>
      <Parameter name="Record_ID"/>

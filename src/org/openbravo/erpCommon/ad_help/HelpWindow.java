@@ -78,8 +78,8 @@ public class HelpWindow {
       strWindowHelp = vars.getLanguage().equals("en_US")?DisplayHelpData.windowHelp(conn, strKeyId):DisplayHelpData.windowHelpTrl(conn, vars.getLanguage(), strKeyId );
       strCommand = "WINDOW";
     }
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + xmlEngine.strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + xmlEngine.strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("windowId", strKeyId);
     xmlDocument.setParameter("windowName", strWindowName);

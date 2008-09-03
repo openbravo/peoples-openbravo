@@ -64,8 +64,8 @@ public class ReportWorkRequirementDailyEnv extends HttpSecureAppServlet {
     data = ReportWorkRequirementDailyEnvData.select(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "ReportWorkRequirementDailyEnv"), Utility.getContext(this, vars, "#User_Org", "ReportWorkRequirementDailyEnv"), strStartDateFrom, strStartDateTo, strmaProcessPlan);
 
     
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());
@@ -107,8 +107,8 @@ public class ReportWorkRequirementDailyEnv extends HttpSecureAppServlet {
       }
     }  
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("maProcessPlan", strmaProcessPlan);
     xmlDocument.setParameter("dateFrom", strStartDateFrom);
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
@@ -159,8 +159,8 @@ public class ReportWorkRequirementDailyEnv extends HttpSecureAppServlet {
       }
     }  
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("maProcessPlan", strmaProcessPlan);
     xmlDocument.setParameter("startDateFrom", strStartDateFrom);
     xmlDocument.setParameter("startDateTo", strStartDateTo);

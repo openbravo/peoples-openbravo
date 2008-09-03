@@ -80,8 +80,8 @@ void printPage(HttpServletResponse response, VariablesSecureApp vars, String str
       //String strArray = arrayEntry(vars);
 
       xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-      xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-      xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("description", strDescription);
       xmlDocument.setParameter("help", strHelp);
       xmlDocument.setParameter("dateFrom", strDateFrom);
@@ -157,8 +157,8 @@ void printPagePopUp (HttpServletResponse response, VariablesSecureApp vars, Stri
 
       CreateTaxReportData[] dataTree = convertVector(vectorArray);
       strTreeOrg = "";
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
       xmlDocument.setParameter("title", dataTree[0].name);
       xmlDocument.setData("structure", dataTree);

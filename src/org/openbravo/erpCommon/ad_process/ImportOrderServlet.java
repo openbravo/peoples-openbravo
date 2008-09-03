@@ -85,8 +85,8 @@ public class ImportOrderServlet extends HttpSecureAppServlet {
       String[] discard = {""};
       if (strHelp.equals("")) discard[0] = new String("helpDiscard");
       XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_process/ImportOrderServlet").createXmlDocument();
-      xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-      xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("theme", vars.getTheme());
       xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars.getLanguage()));
       xmlDocument.setParameter("description", strDescription);

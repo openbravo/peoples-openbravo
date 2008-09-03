@@ -27,7 +27,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT NAME, DESCRIPTION, HELP FROM AD_PROCESS WHERE AD_PROCESS_ID = to_number(?)
+        SELECT NAME, DESCRIPTION, HELP FROM AD_PROCESS WHERE AD_PROCESS_ID = ?
       ]]>
     </Sql>
     <Parameter name="adProcessId"/>
@@ -41,7 +41,7 @@
         COALESCE(PT.HELP, P.HELP) AS HELP 
         FROM AD_PROCESS P left join AD_PROCESS_TRL PT on P.AD_PROCESS_ID = PT.AD_PROCESS_ID
                                       AND PT.AD_LANGUAGE = ?
-        WHERE P.AD_PROCESS_ID = to_number(?) 
+        WHERE P.AD_PROCESS_ID = ? 
       ]]>
     </Sql>
     <Parameter name="adLanguage"/>
@@ -53,7 +53,7 @@
       <![CDATA[
         SELECT T.HASTREE AS HELP, W.NAME AS DESCRIPTION, T.NAME AS NAME 
         FROM AD_WINDOW W, AD_TAB T 
-        WHERE T.AD_TAB_ID = to_number(?) 
+        WHERE T.AD_TAB_ID = ? 
         AND W.AD_WINDOW_ID = T.AD_WINDOW_ID 
       ]]>
     </Sql>
@@ -66,7 +66,7 @@
         select coalesce(tt.name, t.name) as name 
         from ad_ref_list t left join ad_ref_list_trl tt on t.ad_ref_list_id = tt.ad_ref_list_id 
                                                         and tt.ad_language = ?
-        where ad_reference_id = to_number(?)
+        where ad_reference_id = ?
         and value = (CASE TO_CHAR(?) WHEN '--' THEN 'CL' ELSE TO_CHAR(?) END)
       ]]>
     </Sql>

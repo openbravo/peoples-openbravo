@@ -1,10 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--
-************************
-0. Core Range.
-************************
--->
 <!--123**************--><AD_PROCESS_PARA>
 <!--123 AD_PROCESS_PARA_ID-->
 <!--123-->              <AD_PROCESS_PARA_ID><![CDATA[123]]></AD_PROCESS_PARA_ID>
@@ -11657,19 +11652,4 @@ Price Lists are used to determine the pricing, margin and cost of items purchase
 <!--1004400004-->              <AD_ELEMENT_ID><![CDATA[459]]></AD_ELEMENT_ID>
 <!--1004400004**************--></AD_PROCESS_PARA>
 
-<!--
-************************
-0. End of Core Range.
-************************
--->
-<!--
-************************
-1. Custom Range.
-************************
--->
-<!--
-************************
-1. End of Custom Range.
-************************
--->
 </data>

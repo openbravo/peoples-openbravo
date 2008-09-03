@@ -1,23 +1,38 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--
-************************
-0. Core Range.
-************************
--->
-<!--
-************************
-0. End of Core Range.
-************************
--->
-<!--
-************************
-1. Custom Range.
-************************
--->
-<!--
-************************
-1. End of Custom Range.
-************************
--->
+<!--0**************--><AD_REGISTRATION_INFO>
+<!--0 AD_REGISTRATION_INFO_ID-->
+<!--0-->              <AD_REGISTRATION_INFO_ID><![CDATA[0]]></AD_REGISTRATION_INFO_ID>
+<!--0 AD_CLIENT_ID-->
+<!--0-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--0 AD_ORG_ID-->
+<!--0-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--0 ISACTIVE-->
+<!--0-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--0 CREATED-->
+<!--0-->              <CREATED><![CDATA[2008-07-18 13:55:58.0]]></CREATED>
+<!--0 CREATEDBY-->
+<!--0-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--0 UPDATED-->
+<!--0-->              <UPDATED><![CDATA[2008-07-18 13:55:58.0]]></UPDATED>
+<!--0 UPDATEDBY-->
+<!--0-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--0 REGISTERNOW-->
+<!--0-->              <REGISTERNOW><![CDATA[Y]]></REGISTERNOW>
+<!--0 WANTTOPARTNER-->
+<!--0-->              <WANTTOPARTNER><![CDATA[Y]]></WANTTOPARTNER>
+<!--0 ISEVALUATING-->
+<!--0-->              <ISEVALUATING><![CDATA[Y]]></ISEVALUATING>
+<!--0 CONTACTME-->
+<!--0-->              <CONTACTME><![CDATA[Y]]></CONTACTME>
+<!--0 OB_VISION-->
+<!--0-->              <OB_VISION><![CDATA[Y]]></OB_VISION>
+<!--0 OB_DEVELOPMENT-->
+<!--0-->              <OB_DEVELOPMENT><![CDATA[Y]]></OB_DEVELOPMENT>
+<!--0 OB_DEVELOPMENT_ANNOUNCE-->
+<!--0-->              <OB_DEVELOPMENT_ANNOUNCE><![CDATA[Y]]></OB_DEVELOPMENT_ANNOUNCE>
+<!--0 OB_COMMITS-->
+<!--0-->              <OB_COMMITS><![CDATA[N]]></OB_COMMITS>
+<!--0**************--></AD_REGISTRATION_INFO>
+
 </data>

@@ -34,11 +34,8 @@ import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.utils.Replace;
 import java.io.*;
 import javax.servlet.*;
-import java.util.*;
 import javax.servlet.http.*;
 import java.math.BigDecimal;
-
-import org.openbravo.utils.Replace;
 
 // imports for transactions
 import java.sql.Connection;
@@ -160,8 +157,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     }
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("paramProductId", strProductId);
     xmlDocument.setParameter("paramProductDescription", strProductId.equals("")?"":RequisitionToOrderData.mProductDescription(this, strProductId, vars.getLanguage()));
     xmlDocument.setParameter("displayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
@@ -286,8 +283,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) log4j.debug("Print Create Purchase order");
     String strDescription=Utility.messageBD(this, "RequisitionToOrderCreate", vars.getLanguage());
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/RequisitionToOrderCreate").createXmlDocument();
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\r\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("help", Replace.replace(strDescription, "\\n", "\n"));
     {

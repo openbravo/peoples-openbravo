@@ -126,8 +126,8 @@ public class BusinessPartner extends HttpSecureAppServlet {
 	    } else {
 	      xmlDocument.setParameter("key", strKeyValue);
 	    }
-	    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-	    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+	    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+	    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
 	    xmlDocument.setParameter("theme", vars.getTheme());
 	    xmlDocument.setParameter("name", strNameValue);
 	    xmlDocument.setParameter("clients", strBpartners);
@@ -163,14 +163,14 @@ public class BusinessPartner extends HttpSecureAppServlet {
   String generateResult(BusinessPartnerData[] data) throws IOException, ServletException {
     StringBuffer html = new StringBuffer();
     
-    html.append("\nfunction depurarSelector() {\n");
-    html.append("var clave = \"" + data[0].cBpartnerId + "\";\n");
-    html.append("var texto = \"" + Replace.replace(data[0].name, "\"", "\\\"") + "\";\n");
+    html.append("\nfunction validateSelector() {\n");
+    html.append("var key = \"" + data[0].cBpartnerId + "\";\n");
+    html.append("var text = \"" + Replace.replace(data[0].name, "\"", "\\\"") + "\";\n");
     html.append("var parameter = new Array(\n");
     html.append("new SearchElements(\"_LOC\", true, \"" + data[0].cBpartnerLocationId + "\"),\n");
     html.append("new SearchElements(\"_CON\", true, \"" + data[0].cBpartnerContactId + "\")\n");
     html.append(");\n");
-    html.append("parent.opener.closeSearch(\"SAVE\", clave, texto, parameter);\n");
+    html.append("parent.opener.closeSearch(\"SAVE\", key, text, parameter);\n");
     html.append("}\n");
     return html.toString();
   }

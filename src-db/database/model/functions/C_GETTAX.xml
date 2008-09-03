@@ -1,25 +1,25 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_GETTAX">
-    <function name="C_GETTAX" type="NUMERIC">
-      <parameter name="p_product_id" type="NUMERIC" mode="in">
+    <function name="C_GETTAX" type="VARCHAR">
+      <parameter name="p_product_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_shipdate" type="TIMESTAMP" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_org_id" type="NUMERIC" mode="in">
+      <parameter name="p_org_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_warehouse_id" type="NUMERIC" mode="in">
+      <parameter name="p_warehouse_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_billbpartnerloc_id" type="NUMERIC" mode="in">
+      <parameter name="p_billbpartnerloc_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_shipbpartnerloc_id" type="NUMERIC" mode="in">
+      <parameter name="p_shipbpartnerloc_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_project_id" type="NUMERIC" mode="in">
+      <parameter name="p_project_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_issotrx" type="CHAR" mode="in">
@@ -44,15 +44,15 @@
 /*************************************************************************
 * Title: Get C_Tax_ID from product, bpartner, ...
 ************************************************************************/
-  v_billFrom      NUMBER(10) ;
-  v_billTo        NUMBER(10) ;
+  v_billFrom      VARCHAR2(32);
+  v_billTo        VARCHAR2(32) ;
   v_isTaxExempt   CHAR(1) ;
-  v_TaxID         NUMBER(10) ;
-  v_TaxCategoryID NUMBER(10) ;
-  v_shipFrom      NUMBER(10) ;
-  v_shipTo        NUMBER(10) ;
-  v_aux           NUMBER(10) ;
-  v_BPTaxCategory NUMBER(10);
+  v_TaxID         varchar2(32) ;
+  v_TaxCategoryID varchar2(32) ;
+  v_shipFrom      VARCHAR2(32) ;
+  v_shipTo        VARCHAR2(32) ;
+  v_aux           VARCHAR2(32) ;
+  v_BPTaxCategory VARCHAR2(32);
   TYPE RECORD IS REF CURSOR;
     BILLTO RECORD;
   BEGIN

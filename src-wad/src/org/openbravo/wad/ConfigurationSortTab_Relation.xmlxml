@@ -25,7 +25,7 @@
 <PARAMETER id="paramLanguage" name="language" default=""/>
 <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
 <PARAMETER id="paramWindowId" name = "windowId" attribute="value" default=""/>
-<PARAMETER id="paramDirection" name="direction" default=""/>
+<PARAMETER id="paramDirectory" name="directory" default=""/>
 <PARAMETER id="paramShowName" name = "showName" default=" "/>
 <PARAMETER id="tdleftTabs" name="leftTabs" default=""/>
 <PARAMETER id="KeyField" name="KeyName" default=""/>

@@ -25,23 +25,23 @@
     * Insert AD_Tree Trigger
     *  add Parent TreeNode
     */
-  v_NextNo NUMBER;
-  v_Tree_ID NUMBER;
+  v_NextNo VARCHAR2(32);
+  v_Tree_ID VARCHAR2(32);
 BEGIN
   --  Insert into TreeNode
   INSERT
   INTO AD_TreeNode
     (
-      AD_Client_ID, AD_Org_ID, IsActive,
+      AD_TreeNode_ID, AD_Client_ID, AD_Org_ID, IsActive,
       Created, CreatedBy, Updated,
       UpdatedBy, AD_Tree_ID, Node_ID,
       Parent_ID, SeqNo
     )
     VALUES
     (
-      :new.AD_Client_ID, :new.AD_Org_ID, :new.IsActive,
+      get_uuid(), :new.AD_Client_ID, :new.AD_Org_ID, :new.IsActive,
       :new.Created, :new.CreatedBy, :new.Updated,
-      :new.UpdatedBy, :new.AD_Tree_ID, 0,
+      :new.UpdatedBy, :new.AD_Tree_ID, '0',
       NULL, 0
     )
     ;
@@ -50,16 +50,16 @@ BEGIN
     INSERT
     INTO AD_TreeNodeMM
       (
-        AD_Client_ID, AD_Org_ID, IsActive,
+        AD_TreeNodeMM_ID, AD_Client_ID, AD_Org_ID, IsActive,
         Created, CreatedBy, Updated,
         UpdatedBy, AD_Tree_ID, Node_ID,
         Parent_ID, SeqNo
       )
       VALUES
       (
-        :new.AD_Client_ID, :new.AD_Org_ID, :new.IsActive,
+        get_uuid(), :new.AD_Client_ID, :new.AD_Org_ID, :new.IsActive,
         :new.Created, :new.CreatedBy, :new.Updated,
-        :new.UpdatedBy, :new.AD_Tree_ID, 0,
+        :new.UpdatedBy, :new.AD_Tree_ID, '0',
         NULL, 0
       )
       ;
@@ -69,16 +69,16 @@ BEGIN
     INSERT
     INTO AD_TreeNodeBP
       (
-        AD_Client_ID, AD_Org_ID, IsActive,
+        AD_TreeNodeBP_ID, AD_Client_ID, AD_Org_ID, IsActive,
         Created, CreatedBy, Updated,
         UpdatedBy, AD_Tree_ID, Node_ID,
         Parent_ID, SeqNo
       )
       VALUES
       (
-        :new.AD_Client_ID, :new.AD_Org_ID, :new.IsActive,
+        get_uuid(), :new.AD_Client_ID, :new.AD_Org_ID, :new.IsActive,
         :new.Created, :new.CreatedBy, :new.Updated,
-        :new.UpdatedBy, :new.AD_Tree_ID, 0,
+        :new.UpdatedBy, :new.AD_Tree_ID, '0',
         NULL, 0
       )
       ;
@@ -88,16 +88,16 @@ BEGIN
     INSERT
     INTO AD_TreeNodePR
       (
-        AD_Client_ID, AD_Org_ID, IsActive,
+        AD_TreeNodePR_ID, AD_Client_ID, AD_Org_ID, IsActive,
         Created, CreatedBy, Updated,
         UpdatedBy, AD_Tree_ID, Node_ID,
         Parent_ID, SeqNo
       )
       VALUES
       (
-        :new.AD_Client_ID, :new.AD_Org_ID, :new.IsActive,
+        get_uuid(), :new.AD_Client_ID, :new.AD_Org_ID, :new.IsActive,
         :new.Created, :new.CreatedBy, :new.Updated,
-        :new.UpdatedBy, :new.AD_Tree_ID, 0,
+        :new.UpdatedBy, :new.AD_Tree_ID, '0',
         NULL, 0
       )
       ;

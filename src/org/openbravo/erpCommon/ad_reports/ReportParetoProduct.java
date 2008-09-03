@@ -18,18 +18,13 @@
  */
 package org.openbravo.erpCommon.ad_reports;
 
-import org.openbravo.erpCommon.reference.ActionButtonData;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.*;
-import org.openbravo.erpCommon.ad_forms.GenerateInvoicesmanualData;
-import org.openbravo.erpCommon.ad_forms.MaterialReceiptPendingData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
 import java.io.*;
-import java.sql.Connection;
-
 import javax.servlet.*;
 import javax.servlet.http.*;
 
@@ -120,8 +115,8 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
 
     //Pass parameters to the window
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
       
     //Load Business Partner Group combo with data
     try {

@@ -42,7 +42,6 @@ import java.util.Properties;
 
 import org.xml.sax.helpers.DefaultHandler;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
@@ -1176,7 +1175,7 @@ public class Wad extends DefaultHandler {
           } else {
             strWhere.append(" AND " + tableName + "." + fieldsData[i].name + " = TO_CHAR(list" + ilist + ".value)");
           }
-          vecTables.addElement("left join ad_ref_list_v list" + ilist + " on (" + "list" + ilist + ".ad_reference_id = " + fieldsData[i].referencevalue + " and list" + ilist + ".ad_language = ? " + strWhere.toString() + ")");
+          vecTables.addElement("left join ad_ref_list_v list" + ilist + " on (" + "list" + ilist + ".ad_reference_id = '" + fieldsData[i].referencevalue + "' and list" + ilist + ".ad_language = ? " + strWhere.toString() + ")");
           vecTableParameters.addElement("<Parameter name=\"paramLanguage\"/>");
           vecCounters.set(1, Integer.toString(ilist));
         } else {
@@ -2750,7 +2749,7 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("importJS", getVectorElementsNotRepeated(control.getImport(), new Vector<String>(), 2));
     StringBuffer script = new StringBuffer();
     script.append(getVectorElementsNotRepeated(control.getJSCode(), new Vector<String>(), 0));
-    script.append("function depurarClient(action, Formulario, valor) {\n");
+    script.append("function validateClient(action, form, value) {\n");
     script.append("  var frm=document.frmMain;\n");
     script.append(control.getValidation()).append("\n");
     script.append("  return true;\n");
@@ -3149,10 +3148,10 @@ public class Wad extends DefaultHandler {
     
     String buttonShorcuts =  WadUtility.getbuttonShortcuts(shortcuts);
     script.append("\nfunction reloadComboReloads").append(strTab).append("(changedField) {\n");
-    script.append("  submitCommandForm(changedField, false, null, '../ad_callouts/ComboReloads' + document.frmMain.inpTabId.value + '.html', 'frameOculto', null, null, true);\n");
+    script.append("  submitCommandForm(changedField, false, null, '../ad_callouts/ComboReloads' + document.frmMain.inpTabId.value + '.html', 'hiddenFrame', null, null, true);\n");
     script.append("  return true;\n");
     script.append("}\n");
-    script.append("\nfunction depurarClient(action, Formulario, valor) {\n");
+    script.append("\nfunction validateClient(action, form, value) {\n");
     script.append("  var frm=document.frmMain;\n");
     script.append(validations);
     script.append("  return true;\n");
@@ -3262,8 +3261,8 @@ public class Wad extends DefaultHandler {
       tab.href = "return false;";
     } else {
       tab.tdClass="";
-      tab.href = "submitCommandForm('DEFAULT', false, null, '" + tabName + "_Relation.html', 'frameAplicacion');return false;";
-      if ((level+1)>=Integer.valueOf(tab.tablevel).intValue()) tab.href = "submitCommandForm('" + ((level>Integer.valueOf(tab.tablevel).intValue())?"DEFAULT":"TAB") + "', " + ((level>=Integer.valueOf(tab.tablevel).intValue())?"false":"true") + ", null, '" + tabName + "_Relation.html', 'frameAplicacion');return false;";
+      tab.href = "submitCommandForm('DEFAULT', false, null, '" + tabName + "_Relation.html', 'appFrame');return false;";
+      if ((level+1)>=Integer.valueOf(tab.tablevel).intValue()) tab.href = "submitCommandForm('" + ((level>Integer.valueOf(tab.tablevel).intValue())?"DEFAULT":"TAB") + "', " + ((level>=Integer.valueOf(tab.tablevel).intValue())?"false":"true") + ", null, '" + tabName + "_Relation.html', 'appFrame');return false;";
       else tab.href = "return false;";
     }
     

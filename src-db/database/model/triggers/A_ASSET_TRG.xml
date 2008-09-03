@@ -20,7 +20,7 @@
 ************************************************************************/
 
   TYPE RECORD IS REF CURSOR;
-  v_Acct_ID NUMBER;
+  v_Acct_ID VARCHAR2(32);
   Cur_Defaults RECORD;
 BEGIN
   --  Default Accounts for all AcctSchema

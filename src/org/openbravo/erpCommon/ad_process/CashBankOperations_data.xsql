@@ -28,7 +28,7 @@
     <Sql>
       <![CDATA[
         SELECT C_BPARTNER_ID FROM AD_ORGINFO
-        WHERE AD_ORG_ID = TO_NUMBER(?)
+        WHERE AD_ORG_ID = ?
       ]]>
     </Sql>
     <Parameter name="org"/>
@@ -37,7 +37,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        select iso_code from c_currency where c_currency_ID = TO_NUMBER(?)
+        select iso_code from c_currency where c_currency_id = ?
       ]]>
     </Sql>
     <Parameter name="currencyId"/>
@@ -47,7 +47,7 @@
     <Sql>
       <![CDATA[
         SELECT COALESCE(MAX(line),0) + 10 FROM c_cashline
-        WHERE c_cash_ID = TO_NUMBER(?)
+        WHERE c_cash_id =?
       ]]>
     </Sql>
     <Parameter name="cashId"/>
@@ -58,7 +58,7 @@
       <![CDATA[
         SELECT MAX(C.C_CASH_ID)
         FROM C_CASH C
-        WHERE C.C_CASHBOOK_ID = TO_NUMBER(?)
+        WHERE C.C_CASHBOOK_ID=?
         AND C.DATEACCT = TO_DATE(?)
         AND C.PROCESSED = 'N'
       ]]>
@@ -80,7 +80,7 @@
     <Sql>
       <![CDATA[
       SELECT c_currency_id FROM C_BANKACCOUNT
-      WHERE c_bankaccount_ID = TO_NUMBER(?)
+      WHERE c_bankaccount_id = ?
       ]]>
     </Sql>
     <Parameter name="bankAccount"/>
@@ -90,7 +90,7 @@
     <Sql>
       <![CDATA[
       SELECT c_currency_id FROM C_CASHBOOK
-      WHERE c_cashbook_ID = TO_NUMBER(?)
+      WHERE c_cashbook_id = ?
       ]]>
     </Sql>
     <Parameter name="cashBook"/>
@@ -102,8 +102,8 @@
      INSERT INTO C_SETTLEMENT (C_SETTLEMENT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY,
      DOCUMENTNO, DATETRX, DATEACCT, SETTLEMENTTYPE, C_DOCTYPE_ID, PROCESSING, PROCESSED, POSTED, C_CURRENCY_ID, C_PROJECT_ID, C_CAMPAIGN_ID,
      C_ACTIVITY_ID, USER1_ID, USER2_ID, CREATEFROM, CANCELEDNOTCHARGEAMT,GENERATEDAMT,CHARGEDAMT,ISGENERATED)
-     VALUES (TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y',now(), TO_NUMBER(?), now(), TO_NUMBER(?),
-     '*FT*'||?, TO_DATE(?), TO_DATE(?),'B',TO_NUMBER(?), 'N','N','N', TO_NUMBER(?),NULL, NULL,NULL, NULL, NULL, 'N',0,0,0,'Y')
+     VALUES (?, ?, ?, 'Y',now(), ?, now(), ?,
+     '*FT*'||?, TO_DATE(?), TO_DATE(?),'B',?, 'N','N','N', ?,NULL, NULL,NULL, NULL, NULL, 'N',0,0,0,'Y')
       ]]>
     </Sql>
     <Parameter name="settlementId"/>
@@ -163,10 +163,16 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-          INSERT INTO C_CASH (C_Cash_ID,AD_Client_ID, AD_Org_ID, IsActive, Created,CreatedBy, Updated,UpdatedBy,
-          C_CashBook_ID, NAME, StatementDate,DateAcct, BeginningBalance,EndingBalance,StatementDifference,
+          INSERT INTO C_CASH 
+            (C_Cash_ID,AD_Client_ID, AD_Org_ID, IsActive, 
+             Created,CreatedBy, Updated,UpdatedBy,
+             C_CashBook_ID, NAME, StatementDate,DateAcct, BeginningBalance,EndingBalance,StatementDifference,
           Processing,Processed,Posted)
-          VALUES (TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', now(),TO_NUMBER(?), now(),TO_NUMBER(?), TO_NUMBER(?), ?, TO_DATE(?), TO_DATE(?), 0,0,0, 'N','N','N')
+          VALUES 
+            (?, ?, ?, 'Y', 
+             now(),?, now(),?, 
+             ?, ?, TO_DATE(?), TO_DATE(?), 
+             0,0,0, 'N','N','N')
       ]]>
     </Sql>
     <Parameter name="cashId"/>
@@ -215,7 +221,7 @@
     <Sql>
       <![CDATA[
         UPDATE C_SETTLEMENT SET PROCESSED = 'Y'
-        WHERE C_SETTLEMENT_ID = TO_NUMBER(?)
+        WHERE C_SETTLEMENT_ID = ?
       ]]>
     </Sql>
     <Parameter name="settlementId"/>
@@ -224,7 +230,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT NAME FROM C_CASHBOOK WHERE C_CASHBOOK_ID = TO_NUMBER(?)
+        SELECT NAME FROM C_CASHBOOK WHERE C_CASHBOOK_ID = ?
       ]]>
     </Sql>
     <Parameter name="cashBook"/>

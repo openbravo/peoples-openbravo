@@ -144,7 +144,7 @@ public class FileImport extends HttpSecureAppServlet {
         }
         constant = 0;
         if (log4j.isDebugEnabled()) log4j.debug("##########iteration - " + (i+1) + " - strFields = " + strFields);
-        FileImportData.update(con, this, strTable, strFields.toString(), (strTable + "_id = " + sequence));
+        FileImportData.update(con, this, strTable, strFields.toString(), (strTable + "_id = '" + sequence+"'"));
         strFields.delete(0,strFields.length());
       }
       releaseCommitConnection(con);
@@ -183,7 +183,7 @@ public class FileImport extends HttpSecureAppServlet {
       int len = Integer.valueOf(strLength).intValue();
       strTexto = strTexto.substring(0, (len>strTexto.length())?strTexto.length():len);
       if (log4j.isDebugEnabled()) log4j.debug("########## end of iteration - ");
-      return strTexto.replace('\'','´');
+      return strTexto.replace('\'','´').trim();
     }
   }
 
@@ -225,8 +225,8 @@ public class FileImport extends HttpSecureAppServlet {
 
 if (log4j.isDebugEnabled()) log4j.debug("3");
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("firstLineHeader", strFirstLineHeader);
     if (log4j.isDebugEnabled()) log4j.debug("4");
 
@@ -253,12 +253,12 @@ if (log4j.isDebugEnabled()) log4j.debug("3");
     String strJS = "";
     if(command.equalsIgnoreCase("FIND")) {
       strJS = "\n var r = '" + text + "'; \n" +
-          "top.frames['frameAplicacion'].setResult(r); \n " +
-          "top.frames['frameAplicacion'].setProcessingMode('window', false); \n";
+          "top.frames['appFrame'].setResult(r); \n " +
+          "top.frames['appFrame'].setProcessingMode('window', false); \n";
     }
     else if(command.equalsIgnoreCase("SAVE")) {
-      strJS = "\n top.frames['frameAplicacion'].setProcessingMode('window', false); \n" + 
-              "top.frames['frameAplicacion'].document.getElementById('buttonRefresh').onclick();\n";    
+      strJS = "\n top.frames['appFrame'].setProcessingMode('window', false); \n" + 
+              "top.frames['appFrame'].document.getElementById('buttonRefresh').onclick();\n";    
     }    
     xmlDocument.setParameter("result", strJS);
     PrintWriter out = response.getWriter();    

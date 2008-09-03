@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.utility;
 
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.businessUtility.TabAttachmentsData;
 import org.openbravo.erpCommon.reference.*;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.base.secureApp.OrgTree;
@@ -96,17 +97,15 @@ public class Utility {
    * Checks if the record has attachments associated.
    * 
    * @param conn: Handler for the database connection.
-   * @param userClient: String with the list of granted clients.
-   * @param userOrg: String with the list of granted organizations.
-   * @param tableId: String with the table id.
+   * @param vars: Handler for the session info.
+   * @param strTab: String with the tab id.
    * @param recordId: String with the record id.
    * @return True if the record has attachments or false if not.
    * @throws ServletException
    */
-  public static boolean hasAttachments(ConnectionProvider conn, String userClient, String userOrg, String tableId, String recordId) throws ServletException {
-    if (tableId.equals("") || recordId.equals("")) return false;
-    else return UtilityData.select(conn, userClient, userOrg, tableId, recordId);
-  }
+  public static boolean hasTabAttachments(ConnectionProvider conn, VariablesSecureApp vars, String strTab, String recordId) throws ServletException {
+    return UtilityData.hasTabAttachments(conn, Utility.getContext(conn, vars, "#User_Client", ""), Utility.getContext(conn, vars, "#User_Org", ""), strTab, recordId);
+  } 
 
   /**
    * Translate the given code into some message from the application dictionary.
@@ -203,31 +202,31 @@ public class Utility {
       String userLevel = vars.getSessionValue("#User_Level");
       
       if (context.equalsIgnoreCase("#AccessibleOrgTree")) {
-        if (!retValue.equals("0") && !retValue.startsWith("0,") && retValue.indexOf(",0")==-1) {// add *
-          retValue = "0" + (retValue.equals("")?"":",") + retValue;
+        if (!retValue.equals("'0'") && !retValue.startsWith("'0',") && retValue.indexOf(",'0'")==-1) {// add *
+          retValue = "'0'" + (retValue.equals("")?"":",") + retValue;
         }
       }
           
       if (context.equalsIgnoreCase("#User_Org")) {
-        if (userLevel.contains("S")||userLevel.equals(" C ")) return "0"; //force org *
+        if (userLevel.contains("S")||userLevel.equals(" C ")) return "'0'"; //force org *
         
         if (userLevel.equals("  O")) { // remove *
-          if (retValue.equals("0")) 
+          if (retValue.equals("'0'")) 
             retValue="";
-          else if (retValue.startsWith("0,"))
+          else if (retValue.startsWith("'0',"))
             retValue = retValue.substring(2);
           else
-            retValue = retValue.replace(",0","");
+            retValue = retValue.replace(",'0'","");
         } else { // add *
-          if (!retValue.equals("0") && !retValue.startsWith("0,") && retValue.indexOf(",0")==-1) {// Any: current list and *
-            retValue = "0" + (retValue.equals("")?"":",") + retValue;
+          if (!retValue.equals("0") && !retValue.startsWith("'0',") && retValue.indexOf(",'0'")==-1) {// Any: current list and *
+            retValue = "'0'" + (retValue.equals("")?"":",") + retValue;
           }
         }
       }
       
       if (context.equalsIgnoreCase("#User_Client")) {
-        if (retValue!="0" && !retValue.startsWith("0,") && retValue.indexOf(",0")==-1) {
-          retValue = "0" + (retValue.equals("")?"":",") + retValue;
+        if (retValue!="'0'" && !retValue.startsWith("'0',") && retValue.indexOf(",'0'")==-1) {
+          retValue = "'0'" + (retValue.equals("")?"":",") + retValue;
         }
       }
     }
@@ -268,44 +267,44 @@ public class Utility {
       
       String userLevel = vars.getSessionValue("#User_Level");
       if (context.equalsIgnoreCase("#AccessibleOrgTree")) {
-        if (!retValue.equals("0") && !retValue.startsWith("0,") && retValue.indexOf(",0")==-1) {// add *
-          retValue = "0" + (retValue.equals("")?"":",") + retValue;
+        if (!retValue.equals("0") && !retValue.startsWith("'0',") && retValue.indexOf(",'0'")==-1) {// add *
+          retValue = "'0'" + (retValue.equals("")?"":",") + retValue;
         }
       }
       if (context.equalsIgnoreCase("#User_Org") ) {
-        if (accessLevel==4||accessLevel==6) return "0"; //force to be org *
+        if (accessLevel==4||accessLevel==6) return "'0'"; //force to be org *
       
         if ((accessLevel==1) || (userLevel.equals("  O"))) { //No *: remove 0 from current list
-          if (retValue.equals("0")) 
+          if (retValue.equals("'0'")) 
             retValue="";
-          else if (retValue.startsWith("0,"))
-            retValue = retValue.substring(2);
+          else if (retValue.startsWith("'0',"))
+            retValue = retValue.substring(4);
           else
-            retValue = retValue.replace(",0","");
+            retValue = retValue.replace(",'0'","");
         } else {// Any: add 0 to current list 
-          if (!retValue.equals("0") && !retValue.startsWith("0,") && retValue.indexOf(",0")==-1) {// Any: current list and *
-            retValue = "0" + (retValue.equals("")?"":",") + retValue;
+          if (!retValue.equals("'0'") && !retValue.startsWith("'0',") && retValue.indexOf(",'0'")==-1) {// Any: current list and *
+            retValue = "'0'" + (retValue.equals("")?"":",") + retValue;
           } 
         }
       }
       
       if (context.equalsIgnoreCase("#User_Client")) {
         if (accessLevel==4) {
-          if (userLevel.contains("S")) return "0"; //force client 0
+          if (userLevel.contains("S")) return "'0'"; //force client 0
           else return "";
         }
         
         if ((accessLevel==1)||(accessLevel==3))  { //No 0
           if (userLevel.contains("S")) return "";
-          if (retValue.equals("0")) 
+          if (retValue.equals("'0'")) 
             retValue="";
-          else if (retValue.startsWith("0,"))
+          else if (retValue.startsWith("'0',"))
             retValue = retValue.substring(2);
           else
-            retValue = retValue.replace(",0","");
+            retValue = retValue.replace(",'0'","");
         } else if (userLevel.contains("S")){ //Any: add 0
-          if (retValue!="0" && !retValue.startsWith("0,") && retValue.indexOf(",0")==-1) {
-            retValue = "0" + (retValue.equals("")?"":",") + retValue;
+          if (retValue!="'0'" && !retValue.startsWith("'0',") && retValue.indexOf(",'0'")==-1) {
+            retValue = "'0'" + (retValue.equals("")?"":",") + retValue;
           }
         }
       }
@@ -338,7 +337,7 @@ public class Utility {
    * @return
    */
   public static String getReferenceableOrg(ConnectionProvider conn, VariablesSecureApp vars, String currentOrg,  String window, int accessLevel) {
-    if (accessLevel==4||accessLevel==6) return "0"; //force to be org *
+    if (accessLevel==4||accessLevel==6) return "'0'"; //force to be org *
     Vector<String> vComplete = getStringVector(getReferenceableOrg(vars, currentOrg));
     Vector<String> vAccessible = getStringVector(getContext(conn, vars, "#User_Org", window, accessLevel));
     return getVectorToString(getIntersectionVector(vComplete, vAccessible));
@@ -1050,9 +1049,10 @@ public class Utility {
   public static boolean isElementInList(String strList, String strElement){
     strList = strList.replace("(", "").replace(")", "");
     StringTokenizer st = new StringTokenizer(strList, ",", false);
+    strElement = strElement.replaceAll("'", "");
     
     while (st.hasMoreTokens()) {
-      String token = st.nextToken().trim();
+      String token = st.nextToken().trim().replaceAll("'", "");
       if (token.equals(strElement)) return true;
     }
     return false;
@@ -1070,6 +1070,26 @@ public class Utility {
                " return true; \n" +
                "} \n";
     return r;
+  }
+  
+  /**
+   * Returns a string list comma separated as SQL strings.
+   * @param list
+   * @return
+   */
+  public static String stringList(String list) {
+	  String ret="";
+	  boolean hasBrackets = list.startsWith("(") && list.endsWith(")");
+	  if (hasBrackets) list = list.substring(1, list.length()-1);
+	  StringTokenizer st = new StringTokenizer(list, ",", false);
+	  while (st.hasMoreTokens()) {
+	    String token = st.nextToken().trim();
+	    if (!ret.equals("")) ret += ", ";
+	    if (!(token.startsWith("'") && token.endsWith("'"))) token = "'"+token+"'";
+	    ret += token;
+	  }
+	  if (hasBrackets) ret = "("+ret+")";
+	  return ret;
   }
   
   @Deprecated
@@ -1177,5 +1197,12 @@ public class Utility {
 		   
 		return retValue;
 	}
-
+  
+  @ Deprecated // in 2.50
+  public static boolean hasAttachments(ConnectionProvider conn, String userClient, String userOrg, String tableId, String recordId) throws ServletException {
+    if (tableId.equals("") || recordId.equals("")) return false;
+    else return UtilityData.select(conn, userClient, userOrg, tableId, recordId);
+  }
+  
+  
 }

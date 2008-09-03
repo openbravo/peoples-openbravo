@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_LANGUAGE_CREATE">
     <function name="AD_LANGUAGE_CREATE" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -36,8 +36,8 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1; -- 0=failure
-  v_Record_ID NUMBER;
-  v_AD_User_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
+  v_AD_User_ID VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -86,12 +86,12 @@
     INSERT
     INTO AD_Element_Trl
       (
-        AD_Element_ID, AD_Language, Name, PrintName,
+        AD_Element_Trl_ID,AD_Element_ID, AD_Language, Name, PrintName,
         Description, Help, PO_Name, PO_PrintName,
         PO_Description, PO_Help, IsTranslated, Createdby,
         UpdatedBy, AD_Client_ID, AD_Org_ID
       )
-    SELECT AD_Element_ID, AD_Language, AD_Element.Name, AD_Element.PrintName, AD_Element.Description, AD_Element.Help, AD_Element.PO_Name, AD_Element.PO_PrintName, AD_Element.PO_Description, AD_Element.PO_Help, 'N', 0, 0, 0, 0
+    SELECT get_uuid(), AD_Element_ID, AD_Language, AD_Element.Name, AD_Element.PrintName, AD_Element.Description, AD_Element.Help, AD_Element.PO_Name, AD_Element.PO_PrintName, AD_Element.PO_Description, AD_Element.PO_Help, 'N', '0', '0','0', '0'
     FROM AD_Element, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(AD_Element_ID, AD_Language) NOT IN
       (SELECT AD_Element_ID, AD_Language FROM AD_Element_Trl)
@@ -103,9 +103,9 @@
     INSERT
     INTO AD_FieldGroup_Trl
       (
-        AD_FieldGroup_ID, AD_Language, Name, IsTranslated, Createdby, UpdatedBy, AD_Client_ID, AD_Org_ID
+        AD_FieldGroup_Trl_ID, AD_FieldGroup_ID, AD_Language, Name, IsTranslated, Createdby, UpdatedBy, AD_Client_ID, AD_Org_ID
       )
-    SELECT AD_FieldGroup_ID, AD_Language, AD_FieldGroup.Name, 'N', 0, 0, 0, 0
+    SELECT get_uuid(), AD_FieldGroup_ID, AD_Language, AD_FieldGroup.Name, 'N', '0', '0', '0', '0'
     FROM AD_FieldGroup, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(AD_FieldGroup_ID, AD_Language) NOT IN
       (SELECT AD_FieldGroup_ID, AD_Language FROM AD_FieldGroup_Trl)
@@ -117,9 +117,9 @@
     INSERT
     INTO AD_Field_Trl
       (
-        AD_Field_ID, AD_Language, Name, Description, Help, IsTranslated, Createdby, UpdatedBy, AD_Client_ID, AD_Org_ID
+        AD_Field_Trl_ID, AD_Field_ID, AD_Language, Name, Description, Help, IsTranslated, Createdby, UpdatedBy, AD_Client_ID, AD_Org_ID
       )
-    SELECT AD_Field_ID, AD_Language, AD_Field.Name, AD_Field.Description, AD_Field.Help, 'N', 0, 0, 0, 0
+    SELECT get_uuid(), AD_Field_ID, AD_Language, AD_Field.Name, AD_Field.Description, AD_Field.Help, 'N', '0', '0', '0','0'
     FROM AD_Field, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(AD_Field_ID, AD_Language) NOT IN
       (SELECT AD_Field_ID, AD_Language FROM AD_Field_Trl)
@@ -131,11 +131,11 @@
     INSERT
     INTO AD_Form_Trl
       (
-        AD_Form_ID, AD_Language, Name, Description,
+        AD_Form_Trl_ID, AD_Form_ID, AD_Language, Name, Description,
         Help, IsTranslated, Createdby, UpdatedBy,
         AD_Client_ID, AD_Org_ID
       )
-    SELECT AD_Form_ID, AD_Language, AD_Form.Name, AD_Form.Description, AD_Form.Help, 'N', 0, 0, 0, 0
+    SELECT get_uuid(), AD_Form_ID, AD_Language, AD_Form.Name, AD_Form.Description, AD_Form.Help, 'N', '0', '0', '0', '0'
     FROM AD_Form, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(AD_Form_ID, AD_Language) NOT IN
       (SELECT AD_Form_ID, AD_Language FROM AD_Form_Trl)
@@ -147,11 +147,11 @@
     INSERT
     INTO AD_Menu_Trl
       (
-        AD_Menu_ID, AD_Language, Name, Description,
+        AD_Menu_Trl_ID, AD_Menu_ID, AD_Language, Name, Description,
         IsTranslated, Createdby, UpdatedBy, AD_Client_ID,
         AD_Org_ID
       )
-    SELECT AD_Menu_ID, AD_Language, AD_Menu.Name, AD_Menu.Description, 'N', 0, 0, 0, 0
+    SELECT get_uuid(), AD_Menu_ID, AD_Language, AD_Menu.Name, AD_Menu.Description, 'N', '0', '0', '0', '0'
     FROM AD_Menu, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(AD_Menu_ID, AD_Language) NOT IN
       (SELECT AD_Menu_ID, AD_Language FROM AD_Menu_Trl)
@@ -163,9 +163,9 @@
     INSERT
     INTO AD_Message_Trl
       (
-        AD_Message_ID, AD_Language, MsgText, MsgTip, IsTranslated, Createdby, UpdatedBy, AD_Client_ID, AD_Org_ID
+        ad_message_trl_id, AD_Message_ID, AD_Language, MsgText, MsgTip, IsTranslated, Createdby, UpdatedBy, AD_Client_ID, AD_Org_ID
       )
-    SELECT AD_Message_ID, AD_Language, MsgText, MsgTip, 'N', 0, 0, 0, 0
+    SELECT get_uuid(), AD_Message_ID, AD_Language, MsgText, MsgTip, 'N', '0', '0', '0', '0'
     FROM AD_Message, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(AD_Message_ID, AD_Language) NOT IN
       (SELECT AD_Message_ID, AD_Language FROM AD_Message_Trl)
@@ -178,11 +178,11 @@
     INSERT
     INTO AD_Process_Trl
       (
-        AD_Process_ID, AD_Language, Name, Description,
+        AD_Process_Trl_ID, AD_Process_ID, AD_Language, Name, Description,
         Help, IsTranslated, Createdby, UpdatedBy,
         AD_Client_ID, AD_Org_ID
       )
-    SELECT AD_Process_ID, AD_Language, AD_Process.Name, AD_Process.Description, AD_Process.Help, 'N', 0, 0, 0, 0
+    SELECT get_uuid(), AD_Process_ID, AD_Language, AD_Process.Name, AD_Process.Description, AD_Process.Help, 'N', '0', '0', '0', '0'
     FROM AD_Process, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(AD_Process_ID, AD_Language) NOT IN
       (SELECT AD_Process_ID, AD_Language FROM AD_Process_Trl)
@@ -194,11 +194,11 @@
     INSERT
     INTO AD_Process_Para_Trl
       (
-        AD_Process_Para_ID, AD_Language, Name, Description,
+        AD_Process_Para_Trl_ID, AD_Process_Para_ID, AD_Language, Name, Description,
         Help, IsTranslated, Createdby, UpdatedBy,
         AD_Client_ID, AD_Org_ID
       )
-    SELECT AD_Process_Para_ID, AD_Language, AD_Process_Para.Name, AD_Process_Para.Description, AD_Process_Para.Help, 'N', 0, 0, 0, 0
+    SELECT get_uuid(), AD_Process_Para_ID, AD_Language, AD_Process_Para.Name, AD_Process_Para.Description, AD_Process_Para.Help, 'N', '0', '0', '0', '0'
     FROM AD_Process_Para, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(AD_Process_Para_ID, AD_Language) NOT IN
       (SELECT AD_Process_Para_ID, AD_Language FROM AD_Process_Para_Trl)
@@ -210,11 +210,11 @@
     INSERT
     INTO AD_Reference_Trl
       (
-        AD_Reference_ID, AD_Language, Name, Description,
+        AD_Reference_Trl_ID, AD_Reference_ID, AD_Language, Name, Description,
         Help, IsTranslated, Createdby, UpdatedBy,
         AD_Client_ID, AD_Org_ID
       )
-    SELECT AD_Reference_ID, AD_Language, AD_Reference.Name, AD_Reference.Description, AD_Reference.Help, 'N', 0, 0, 0, 0
+    SELECT get_uuid(), AD_Reference_ID, AD_Language, AD_Reference.Name, AD_Reference.Description, AD_Reference.Help, 'N', '0', '0', '0', '0'
     FROM AD_Reference, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(AD_Reference_ID, AD_Language) NOT IN
       (SELECT AD_Reference_ID, AD_Language FROM AD_Reference_Trl)
@@ -226,11 +226,11 @@
     INSERT
     INTO AD_Ref_List_Trl
       (
-        AD_Ref_List_ID, AD_Language, Name, Description,
+        AD_Ref_List_Trl_ID, AD_Ref_List_ID, AD_Language, Name, Description,
         IsTranslated, Createdby, UpdatedBy, AD_Client_ID,
         AD_Org_ID
       )
-    SELECT AD_Ref_List_ID, AD_Language, AD_Ref_List.Name, AD_Ref_List.Description, 'N', 0, 0, 0, 0
+    SELECT get_uuid(), AD_Ref_List_ID, AD_Language, AD_Ref_List.Name, AD_Ref_List.Description, 'N', '0', '0', '0', '0'
     FROM AD_Ref_List, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(AD_Ref_List_ID, AD_Language) NOT IN
       (SELECT AD_Ref_List_ID, AD_Language FROM AD_Ref_List_Trl)
@@ -241,11 +241,11 @@
     INSERT
     INTO AD_Tab_Trl
       (
-        AD_Tab_ID, AD_Language, Name, Description,
+        AD_Tab_Trl_ID, AD_Tab_ID, AD_Language, Name, Description,
         Help, IsTranslated, Createdby, UpdatedBy,
         AD_Client_ID, AD_Org_ID
       )
-    SELECT AD_Tab_ID, AD_Language, AD_Tab.Name, AD_Tab.Description, AD_Tab.Help, 'N', 0, 0, 0, 0
+    SELECT get_uuid(), AD_Tab_ID, AD_Language, AD_Tab.Name, AD_Tab.Description, AD_Tab.Help, 'N', '0', '0', '0', '0'
     FROM AD_Tab, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(AD_Tab_ID, AD_Language) NOT IN
       (SELECT AD_Tab_ID, AD_Language FROM AD_Tab_Trl)
@@ -256,11 +256,11 @@
     INSERT
     INTO AD_Task_Trl
       (
-        AD_Task_ID, AD_Language, Name, Description,
+        AD_Task_Trl_ID, AD_Task_ID, AD_Language, Name, Description,
         Help, IsTranslated, Createdby, UpdatedBy,
         AD_Client_ID, AD_Org_ID
       )
-    SELECT AD_Task_ID, AD_Language, AD_Task.Name, AD_Task.Description, AD_Task.Help, 'N', 0, 0, 0, 0
+    SELECT get_uuid(), AD_Task_ID, AD_Language, AD_Task.Name, AD_Task.Description, AD_Task.Help, 'N', '0', '0', '0', '0'
     FROM AD_Task, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(AD_Task_ID, AD_Language) NOT IN
       (SELECT AD_Task_ID, AD_Language FROM AD_Task_Trl)
@@ -271,11 +271,11 @@
     INSERT
     INTO AD_Workflow_Trl
       (
-        AD_Workflow_ID, AD_Language, Name, Description,
+        AD_Workflow_Trl_ID, AD_Workflow_ID, AD_Language, Name, Description,
         Help, IsTranslated, Createdby, UpdatedBy,
         AD_Client_ID, AD_Org_ID
       )
-    SELECT AD_Workflow_ID, AD_Language, AD_Workflow.Name, AD_Workflow.Description, AD_Workflow.Help, 'N', 0, 0, 0, 0
+    SELECT get_uuid(), AD_Workflow_ID, AD_Language, AD_Workflow.Name, AD_Workflow.Description, AD_Workflow.Help, 'N', '0', '0', '0', '0'
     FROM AD_Workflow, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(AD_Workflow_ID, AD_Language) NOT IN
       (SELECT AD_Workflow_ID, AD_Language FROM AD_Workflow_Trl)
@@ -286,11 +286,11 @@
     INSERT
     INTO AD_WF_Node_Trl
       (
-        AD_WF_Node_ID, AD_Language, Name, Description,
+        AD_WF_Node_Trl_ID, AD_WF_Node_ID, AD_Language, Name, Description,
         Help, IsTranslated, Createdby, UpdatedBy,
         AD_Client_ID, AD_Org_ID
       )
-    SELECT AD_WF_Node_ID, AD_Language, AD_WF_Node.Name, AD_WF_Node.Description, AD_WF_Node.Help, 'N', 0, 0, 0, 0
+    SELECT get_uuid(), AD_WF_Node_ID, AD_Language, AD_WF_Node.Name, AD_WF_Node.Description, AD_WF_Node.Help, 'N', '0', '0', '0', '0'
     FROM AD_WF_Node, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(AD_WF_Node_ID, AD_Language) NOT IN
       (SELECT AD_WF_Node_ID, AD_Language FROM AD_WF_Node_Trl)
@@ -301,9 +301,9 @@
     INSERT
     INTO AD_Window_Trl
       (
-        AD_Window_ID, AD_Language, Name, Description, Help, IsTranslated, Createdby, UpdatedBy, AD_Client_ID, AD_Org_ID
+        AD_Window_Trl_ID, AD_Window_ID, AD_Language, Name, Description, Help, IsTranslated, Createdby, UpdatedBy, AD_Client_ID, AD_Org_ID
       )
-    SELECT AD_Window_ID, AD_Language, AD_Window.Name, AD_Window.Description, AD_Window.Help, 'N', 0, 0, 0, 0
+    SELECT get_uuid(), AD_Window_ID, AD_Language, AD_Window.Name, AD_Window.Description, AD_Window.Help, 'N', '0', '0', '0', '0'
     FROM AD_Window, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(AD_Window_ID, AD_Language) NOT IN
       (SELECT AD_Window_ID, AD_Language FROM AD_Window_Trl)
@@ -315,11 +315,11 @@
     INSERT
     INTO C_Country_Trl
       (
-        C_Country_ID, AD_Language, Name, Description,
+        C_Country_Trl_ID, C_Country_ID, AD_Language, Name, Description,
         RegionName, DisplaySequence, IsTranslated, Createdby,
         UpdatedBy, AD_Client_ID, AD_Org_ID
       )
-    SELECT C_Country_ID, AD_Language.AD_Language, C_Country.Name, C_Country.Description, C_Country.RegionName, C_Country.DisplaySequence, 'N', 0, 0, C_Country.AD_Client_ID, C_Country.AD_Org_ID
+    SELECT get_uuid(), C_Country_ID, AD_Language.AD_Language, C_Country.Name, C_Country.Description, C_Country.RegionName, C_Country.DisplaySequence, 'N', '0', '0', C_Country.AD_Client_ID, C_Country.AD_Org_ID
     FROM C_Country, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(C_Country_ID, AD_Language.AD_Language) NOT IN
       (SELECT C_Country_ID, AD_Language FROM C_Country_Trl)
@@ -330,11 +330,11 @@
     INSERT
     INTO C_Currency_Trl
       (
-        C_Currency_ID, AD_Language, CurSymbol, Description,
+        C_Currency_Trl_ID, C_Currency_ID, AD_Language, CurSymbol, Description,
         IsTranslated, Createdby, UpdatedBy, AD_Client_ID,
         AD_Org_ID
       )
-    SELECT C_Currency_ID, AD_Language.AD_Language, C_Currency.CurSymbol, C_Currency.Description, 'N', 0, 0, C_Currency.AD_Client_ID, C_Currency.AD_Org_ID
+    SELECT get_uuid(), C_Currency_ID, AD_Language.AD_Language, C_Currency.CurSymbol, C_Currency.Description, 'N', '0', '0', C_Currency.AD_Client_ID, C_Currency.AD_Org_ID
     FROM C_Currency, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(C_Currency_ID, AD_Language.AD_Language) NOT IN
       (SELECT C_Currency_ID, AD_Language FROM C_Currency_Trl)
@@ -347,11 +347,11 @@
     INSERT
     INTO C_DocType_Trl
       (
-        C_DocType_ID, AD_Language, Name, PrintName,
+        C_DocType_Trl_ID, C_DocType_ID, AD_Language, Name, PrintName,
         DocumentNote, IsTranslated, Createdby, UpdatedBy,
         AD_Client_ID, AD_Org_ID
       )
-    SELECT C_DocType_ID, AD_Language, C_DocType.Name, C_DocType.PrintName, C_DocType.DocumentNote, 'N', 0, 0, C_DocType.AD_Client_ID, C_DocType.AD_Org_ID
+    SELECT get_uuid(), C_DocType_ID, AD_Language, C_DocType.Name, C_DocType.PrintName, C_DocType.DocumentNote, 'N', '0', '0', C_DocType.AD_Client_ID, C_DocType.AD_Org_ID
     FROM C_DocType, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(C_DocType_ID, AD_Language) NOT IN
       (SELECT C_DocType_ID, AD_Language FROM C_DocType_Trl)
@@ -363,11 +363,11 @@
     INSERT
     INTO C_ElementValue_Trl
       (
-        C_ElementValue_ID, AD_Language, Name, Description,
+        C_ElementValue_Trl_ID, C_ElementValue_ID, AD_Language, Name, Description,
         IsTranslated, Createdby, UpdatedBy, AD_Client_ID,
         AD_Org_ID
       )
-    SELECT C_ElementValue_ID, AD_Language, C_ElementValue.Name, C_ElementValue.Description, 'N', 0, 0, C_ElementValue.AD_Client_ID, C_ElementValue.AD_Org_ID
+    SELECT get_uuid(), C_ElementValue_ID, AD_Language, C_ElementValue.Name, C_ElementValue.Description, 'N', '0', '0', C_ElementValue.AD_Client_ID, C_ElementValue.AD_Org_ID
     FROM C_ElementValue, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(C_ElementValue_ID, AD_Language) NOT IN
       (SELECT C_ElementValue_ID, AD_Language FROM C_ElementValue_Trl)
@@ -378,11 +378,11 @@
     INSERT
     INTO C_Greeting_Trl
       (
-        C_Greeting_ID, AD_Language, Name, Greeting,
+        C_Greeting_Trl_ID, C_Greeting_ID, AD_Language, Name, Greeting,
         IsTranslated, Createdby, UpdatedBy, AD_Client_ID,
         AD_Org_ID
       )
-    SELECT C_Greeting_ID, AD_Language, C_Greeting.Name, C_Greeting.Greeting, 'N', 0, 0, C_Greeting.AD_Client_ID, C_Greeting.AD_Org_ID
+    SELECT get_uuid(), C_Greeting_ID, AD_Language, C_Greeting.Name, C_Greeting.Greeting, 'N', '0', '0', C_Greeting.AD_Client_ID, C_Greeting.AD_Org_ID
     FROM C_Greeting, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(C_Greeting_ID, AD_Language) NOT IN
       (SELECT C_Greeting_ID, AD_Language FROM C_Greeting_Trl)
@@ -393,11 +393,11 @@
     INSERT
     INTO C_PaymentTerm_Trl
       (
-        C_PaymentTerm_ID, AD_Language, Name, Description,
+        C_PaymentTerm_Trl_ID, C_PaymentTerm_ID, AD_Language, Name, Description,
         DocumentNote, IsTranslated, Createdby, UpdatedBy,
         AD_Client_ID, AD_Org_ID
       )
-    SELECT C_PaymentTerm_ID, AD_Language, C_PaymentTerm.Name, C_PaymentTerm.Description, C_PaymentTerm.DocumentNote, 'N', 0, 0, C_PaymentTerm.AD_Client_ID, C_PaymentTerm.AD_Org_ID
+    SELECT get_uuid, C_PaymentTerm_ID, AD_Language, C_PaymentTerm.Name, C_PaymentTerm.Description, C_PaymentTerm.DocumentNote, 'N', '0', '0', C_PaymentTerm.AD_Client_ID, C_PaymentTerm.AD_Org_ID
     FROM C_PaymentTerm, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(C_PaymentTerm_ID, AD_Language) NOT IN
       (SELECT C_PaymentTerm_ID, AD_Language FROM C_PaymentTerm_Trl)
@@ -408,11 +408,11 @@
     INSERT
     INTO C_TaxCategory_Trl
       (
-        C_TaxCategory_ID, AD_Language, Name, Description,
+        C_TaxCategory_Trl_ID, C_TaxCategory_ID, AD_Language, Name, Description,
         IsTranslated, Createdby, UpdatedBy, AD_Client_ID,
         AD_Org_ID
       )
-    SELECT C_TaxCategory_ID, AD_Language, C_TaxCategory.Name, C_TaxCategory.Description, 'N', 0, 0, C_TaxCategory.AD_Client_ID, C_TaxCategory.AD_Org_ID
+    SELECT get_uuid(), C_TaxCategory_ID, AD_Language, C_TaxCategory.Name, C_TaxCategory.Description, 'N', '0', '0', C_TaxCategory.AD_Client_ID, C_TaxCategory.AD_Org_ID
     FROM C_TaxCategory, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(C_TaxCategory_ID, AD_Language) NOT IN
       (SELECT C_TaxCategory_ID, AD_Language FROM C_TaxCategory_Trl)
@@ -423,11 +423,11 @@
     INSERT
     INTO C_UOM_Trl
       (
-        C_UOM_ID, AD_Language, Name, Description,
+        C_UOM_Trl_ID, C_UOM_ID, AD_Language, Name, Description,
         UOMSymbol, IsTranslated, Createdby, UpdatedBy,
         AD_Client_ID, AD_Org_ID
       )
-    SELECT C_UOM_ID, AD_Language, C_UOM.Name, C_UOM.Description, C_UOM.UOMSymbol, 'N', 0, 0, C_UOM.AD_Client_ID, C_UOM.AD_Org_ID
+    SELECT get_uuid(), C_UOM_ID, AD_Language, C_UOM.Name, C_UOM.Description, C_UOM.UOMSymbol, 'N', '0', '0', C_UOM.AD_Client_ID, C_UOM.AD_Org_ID
     FROM C_UOM, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(C_UOM_ID, AD_Language) NOT IN
       (SELECT C_UOM_ID, AD_Language FROM C_UOM_Trl)
@@ -438,11 +438,11 @@
     INSERT
     INTO C_Tax_Trl
       (
-        C_Tax_ID, AD_Language, Name, Description,
+        C_Tax_Trl_ID, C_Tax_ID, AD_Language, Name, Description,
         TaxIndicator, IsTranslated, Createdby, UpdatedBy,
         AD_Client_ID, AD_Org_ID
       )
-    SELECT C_Tax_ID, AD_Language, C_Tax.Name, C_Tax.Description, C_Tax.TaxIndicator, 'N', 0, 0, C_Tax.AD_Client_ID, C_Tax.AD_Org_ID
+    SELECT get_uuid(), C_Tax_ID, AD_Language, C_Tax.Name, C_Tax.Description, C_Tax.TaxIndicator, 'N', '0', '0', C_Tax.AD_Client_ID, C_Tax.AD_Org_ID
     FROM C_Tax, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(C_Tax_ID, AD_Language) NOT IN
       (SELECT C_Tax_ID, AD_Language FROM C_Tax_Trl)
@@ -453,11 +453,11 @@
     INSERT
     INTO M_Product_Trl
       (
-        M_Product_ID, AD_Language, Name, DocumentNote,
+        M_Product_Trl_ID, M_Product_ID, AD_Language, Name, DocumentNote,
         IsTranslated, Createdby, UpdatedBy, AD_Client_ID,
         AD_Org_ID
       )
-    SELECT M_Product_ID, AD_Language, M_Product.Name, M_Product.DocumentNote, 'N', 0, 0, M_Product.AD_Client_ID, M_Product.AD_Org_ID
+    SELECT get_uuid(), M_Product_ID, AD_Language, M_Product.Name, M_Product.DocumentNote, 'N', '0', '0', M_Product.AD_Client_ID, M_Product.AD_Org_ID
     FROM M_Product, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(M_Product_ID, AD_Language) NOT IN
       (SELECT M_Product_ID, AD_Language FROM M_Product_Trl)
@@ -469,11 +469,11 @@
     INSERT
     INTO AD_TextInterfaces_Trl
       (
-        AD_TextInterfaces_ID, AD_Language, Text, IsTranslated,
+        AD_TextInterfaces_Trl_ID, AD_TextInterfaces_ID, AD_Language, Text, IsTranslated,
         Createdby, UpdatedBy, Created, Updated,
         AD_Client_ID, AD_Org_ID, IsActive
       )
-    SELECT AD_TextInterfaces_ID, AD_Language, AD_TextInterfaces.Text, 'N', 0, 0, now(), now(), AD_TextInterfaces.AD_Client_ID, AD_TextInterfaces.AD_Org_ID, 'Y'
+    SELECT get_uuid(), AD_TextInterfaces_ID, AD_Language, AD_TextInterfaces.Text, 'N', '0', '0', now(), now(), AD_TextInterfaces.AD_Client_ID, AD_TextInterfaces.AD_Org_ID, 'Y'
     FROM AD_TextInterfaces, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(AD_TextInterfaces_ID, AD_Language) NOT IN
       (SELECT AD_TextInterfaces_ID, AD_Language FROM AD_TextInterfaces_Trl)

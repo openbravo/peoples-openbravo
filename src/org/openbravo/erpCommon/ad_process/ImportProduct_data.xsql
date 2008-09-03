@@ -25,7 +25,7 @@
       <![CDATA[
       SELECT I_Product_ID, M_Product_ID, C_BPartner_ID, 0 as C_TaxCategory_ID, '' AS ID, '' AS NAME
       FROM I_Product WHERE I_IsImported='N'
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -35,7 +35,7 @@
     <Sql>
       <![CDATA[
       DELETE FROM I_Product WHERE I_IsImported='Y'
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -45,13 +45,13 @@
     <Sql>
       <![CDATA[
         UPDATE I_Product 
-        SET AD_Client_ID = COALESCE(AD_Client_ID, TO_NUMBER(?)),
-        AD_Org_ID = COALESCE(AD_Org_ID, 0),
+        SET AD_Client_ID = COALESCE(AD_Client_ID, ?),
+        AD_Org_ID = COALESCE(AD_Org_ID, '0'),
         IsActive = COALESCE(IsActive, 'Y'),
         Created = COALESCE(Created, now()),
-        CreatedBy = COALESCE(CreatedBy, 0),
+        CreatedBy = COALESCE(CreatedBy, '0'),
         Updated = COALESCE(Updated, now()),
-        UpdatedBy = COALESCE(UpdatedBy, 0),
+        UpdatedBy = COALESCE(UpdatedBy, '0'),
         ProductType = COALESCE(ProductType, 'I'),
         I_ErrorMsg = NULL,
         I_IsImported = 'N' 
@@ -70,7 +70,7 @@
       WHERE C_BPartner_ID IS NULL
       AND BPartner_Value IS NOT NULL
       AND I_IsImported<>'Y'
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -84,7 +84,7 @@
       WHERE C_BPartner_ID IS NULL
       AND BPartner_Value IS NOT NULL
       AND I_IsImported<>'Y'
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -98,7 +98,7 @@
       WHERE I_Product.UPC=p.UPC AND I_Product.AD_Client_ID=p.AD_Client_ID) 
       WHERE M_Product_ID IS NULL
       AND I_IsImported='N'
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -112,7 +112,7 @@
       WHERE I_Product.Value=p.Value AND I_Product.AD_Client_ID=p.AD_Client_ID) 
       WHERE M_Product_ID IS NULL
       AND I_IsImported='N'
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -127,7 +127,7 @@
       AND I_Product.VendorProductNo=p.VendorProductNo AND I_Product.AD_Client_ID=p.AD_Client_ID) 
       WHERE M_Product_ID IS NULL
       AND I_IsImported='N'
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -142,7 +142,7 @@
       WHERE M_Product_ID IS NOT NULL
       AND    value   IS NULL
       AND I_IsImported='N'
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
      <Parameter name="field" type="replace" optional="true" after="SET    " text="value"/>
@@ -158,9 +158,9 @@
       SET    C_UOM_ID  = (SELECT   C_UOM_ID   FROM M_Product p
       WHERE I_Product.M_Product_ID=p.M_Product_ID AND I_Product.AD_Client_ID=p.AD_Client_ID) 
       WHERE M_Product_ID IS NOT NULL
-      AND (   C_UOM_ID  IS NULL OR      C_UOM_ID=0)
+      AND (   C_UOM_ID  IS NULL OR      C_UOM_ID='0')
       AND I_IsImported='N'
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
      <Parameter name="field" type="replace" optional="true" after="SET    " text="C_UOM_ID"/>
@@ -179,7 +179,7 @@
       WHERE M_Product_ID IS NOT NULL AND C_BPartner_ID IS NOT NULL
       AND    UPC   IS NULL
       AND I_IsImported='N'      
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
      <Parameter name="field" type="replace" optional="true" after="SET    " text="UPC"/>
@@ -196,9 +196,9 @@
       FROM M_Product_PO p
       WHERE I_Product.M_Product_ID=p.M_Product_ID AND I_Product.C_BPartner_ID=p.C_BPartner_ID AND I_Product.AD_Client_ID=p.AD_Client_ID) 
       WHERE M_Product_ID IS NOT NULL AND C_BPartner_ID IS NOT NULL
-      AND (     C_UOM_ID      IS NULL OR     C_UOM_ID     =0)
+      AND (     C_UOM_ID      IS NULL OR     C_UOM_ID     ='0')
       AND I_IsImported='N'
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
      <Parameter name="field" type="replace" optional="true" after="SET    " text="C_UOM_ID"/>
@@ -219,7 +219,7 @@
       WHERE X12DE355 IS NULL AND C_UOM_ID IS NULL
       AND I_IsImported<>'Y'
       AND C_UOM_ID IS NULL      
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -229,10 +229,10 @@
     <Sql>
       <![CDATA[
       UPDATE I_Product  
-      SET C_UOM_ID = (SELECT max(C_UOM_ID) FROM C_UOM u WHERE u.X12DE355=I_Product.X12DE355 AND u.AD_Client_ID IN (0,I_Product.AD_Client_ID)) 
+      SET C_UOM_ID = (SELECT max(C_UOM_ID) FROM C_UOM u WHERE u.X12DE355=I_Product.X12DE355 AND u.AD_Client_ID IN ('0',I_Product.AD_Client_ID)) 
       WHERE C_UOM_ID IS NULL
       AND I_IsImported<>'Y'
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -245,7 +245,7 @@
       SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'ERR=Invalid UOM, ' 
       WHERE C_UOM_ID IS NULL
       AND I_IsImported<>'Y'
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -256,10 +256,10 @@
       <![CDATA[
       UPDATE I_Product 
       SET ProductCategory_Value=(SELECT MIN(Value) FROM M_Product_Category
-      WHERE IsDefault='Y' AND AD_Client_ID = TO_NUMBER(?)) 
+      WHERE IsDefault='Y' AND AD_Client_ID=   ?) 
       WHERE ProductCategory_Value IS NULL AND M_Product_Category_ID IS NULL
       AND I_IsImported<>'Y'
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -274,7 +274,7 @@
       WHERE I_Product.ProductCategory_Value=c.Value AND I_Product.AD_Client_ID=c.AD_Client_ID) 
       WHERE M_Product_Category_ID IS NULL
       AND I_IsImported<>'Y'
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -287,7 +287,7 @@
       SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'ERR=Invalid ProdCategorty,' 
       WHERE M_Product_Category_ID IS NULL
       AND I_IsImported<>'Y'
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -303,7 +303,7 @@
       and ci.AD_Client_ID=I_Product.AD_Client_ID) 
       WHERE C_Currency_ID IS NULL AND ISO_Code IS NULL
       AND I_IsImported<>'Y'
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -314,10 +314,10 @@
       <![CDATA[
       UPDATE I_Product  
       SET C_Currency_ID=(SELECT C_Currency_ID FROM C_Currency c
-      WHERE I_Product.ISO_Code=c.ISO_Code AND c.AD_Client_ID IN (0,I_Product.AD_Client_ID)) 
+      WHERE I_Product.ISO_Code=c.ISO_Code AND c.AD_Client_ID IN ('0',I_Product.AD_Client_ID)) 
       WHERE C_Currency_ID IS NULL
       AND I_IsImported<>'Y'
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -330,7 +330,7 @@
       SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'ERR=Currency,' 
       WHERE C_Currency_ID IS NULL
       AND I_IsImported<>'Y'
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -343,7 +343,7 @@
       SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'ERR=Invalid ProductType,' 
       WHERE ProductType NOT IN ('I','S')
       AND I_IsImported<>'Y'
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -356,7 +356,7 @@
       SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'ERR=Value not unique,' 
       WHERE I_IsImported<>'Y'
       AND Value IN (SELECT Value FROM I_Product ii WHERE I_Product.AD_Client_ID=ii.AD_Client_ID GROUP BY Value HAVING COUNT(*) > 1)
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -369,7 +369,7 @@
       SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'ERR=UPC not unique,' 
       WHERE I_IsImported<>'Y'
       AND UPC IN (SELECT UPC FROM I_Product ii WHERE I_Product.AD_Client_ID=ii.AD_Client_ID GROUP BY UPC HAVING COUNT(*) > 1)
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -382,7 +382,7 @@
       SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'ERR=No Mandatory Value,' 
       WHERE Value IS NULL
       AND I_IsImported<>'Y'
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -395,7 +395,7 @@
       SET VendorProductNo=Value 
       WHERE C_BPartner_ID IS NOT NULL AND VendorProductNo IS NULL
       AND I_IsImported='N'
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -410,7 +410,7 @@
         AND C_BPartner_ID IS NOT NULL
         AND (C_BPartner_ID, VendorProductNo) IN 
         (SELECT C_BPartner_ID, VendorProductNo FROM I_Product ii WHERE I_Product.AD_Client_ID=ii.AD_Client_ID GROUP BY C_BPartner_ID, VendorProductNo HAVING COUNT(*) > 1)
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -420,7 +420,7 @@
     <Sql>
       <![CDATA[
       SELECT C_TaxCategory_ID FROM C_TaxCategory WHERE IsDefault='Y'
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -431,7 +431,7 @@
       <![CDATA[
       SELECT I_Product_ID, M_Product_ID, C_BPartner_ID 
       FROM I_Product WHERE I_IsImported='N'
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -445,13 +445,13 @@
       Value,Name,Description,DocumentNote,Help,
       UPC,SKU,C_UOM_ID,IsSummary,M_Product_Category_ID,C_TaxCategory_ID,
       ProductType,ImageURL,DescriptionURL) 
-      SELECT TO_NUMBER(?),
+      SELECT ?,
       AD_Client_ID,AD_Org_ID,'Y',now(),CreatedBy,now(),UpdatedBy,
       Value,Name,Description,DocumentNote,Help,
-      UPC,SKU,C_UOM_ID,'N',M_Product_Category_ID,TO_NUMBER(?) ,
+      UPC,SKU,C_UOM_ID,'N',M_Product_Category_ID,? ,
       ProductType,ImageURL,DescriptionURL 
       FROM I_Product 
-      WHERE I_Product_ID = TO_NUMBER(?)
+      WHERE I_Product_ID=?
       ]]>
     </Sql>
     <Parameter name="MProductID"/>
@@ -465,66 +465,66 @@
       UPDATE M_PRODUCT 
       SET Value= 
       (SELECT Value
-      FROM I_Product WHERE I_Product_ID = TO_NUMBER(?)) ,
+      FROM I_Product WHERE I_Product_ID=?) ,
       Name= 
       (SELECT Name
-      FROM I_Product WHERE I_Product_ID = TO_NUMBER(?)) ,
+      FROM I_Product WHERE I_Product_ID=?) ,
       Description= 
       (SELECT Description
-      FROM I_Product WHERE I_Product_ID = TO_NUMBER(?)) ,
+      FROM I_Product WHERE I_Product_ID=?) ,
       DocumentNote= 
       (SELECT DocumentNote
-      FROM I_Product WHERE I_Product_ID = TO_NUMBER(?)) ,
+      FROM I_Product WHERE I_Product_ID=?) ,
       Help= 
       (SELECT Help
-      FROM I_Product WHERE I_Product_ID = TO_NUMBER(?)) ,
+      FROM I_Product WHERE I_Product_ID=?) ,
       UPC= 
       (SELECT UPC
-      FROM I_Product WHERE I_Product_ID = TO_NUMBER(?)) ,
+      FROM I_Product WHERE I_Product_ID=?) ,
       SKU= 
       (SELECT SKU
-      FROM I_Product WHERE I_Product_ID = TO_NUMBER(?)) ,
+      FROM I_Product WHERE I_Product_ID=?) ,
       C_UOM_ID= 
       (SELECT C_UOM_ID
-      FROM I_Product WHERE I_Product_ID = TO_NUMBER(?)) ,
+      FROM I_Product WHERE I_Product_ID=?) ,
       M_Product_Category_ID= 
       (SELECT M_Product_Category_ID
-      FROM I_Product WHERE I_Product_ID = TO_NUMBER(?)) ,
+      FROM I_Product WHERE I_Product_ID=?) ,
       Classification= 
       (SELECT Classification
-      FROM I_Product WHERE I_Product_ID = TO_NUMBER(?)) ,
+      FROM I_Product WHERE I_Product_ID=?) ,
       ProductType= 
       (SELECT ProductType
-      FROM I_Product WHERE I_Product_ID = TO_NUMBER(?)) ,
+      FROM I_Product WHERE I_Product_ID=?) ,
       Volume= 
       (SELECT Volume
-      FROM I_Product WHERE I_Product_ID = TO_NUMBER(?)) ,
+      FROM I_Product WHERE I_Product_ID=?) ,
       Weight= 
       (SELECT Weight
-      FROM I_Product WHERE I_Product_ID = TO_NUMBER(?)) ,
+      FROM I_Product WHERE I_Product_ID=?) ,
       ShelfWidth= 
       (SELECT ShelfWidth
-      FROM I_Product WHERE I_Product_ID = TO_NUMBER(?)) ,
+      FROM I_Product WHERE I_Product_ID=?) ,
       ShelfHeight= 
       (SELECT ShelfHeight
-      FROM I_Product WHERE I_Product_ID = TO_NUMBER(?)) ,
+      FROM I_Product WHERE I_Product_ID=?) ,
       ShelfDepth= 
       (SELECT ShelfDepth
-      FROM I_Product WHERE I_Product_ID = TO_NUMBER(?)) ,
+      FROM I_Product WHERE I_Product_ID=?) ,
       UnitsPerPallet= 
       (SELECT UnitsPerPallet
-      FROM I_Product WHERE I_Product_ID = TO_NUMBER(?)) ,
+      FROM I_Product WHERE I_Product_ID=?) ,
       Discontinued= 
       (SELECT Discontinued
-      FROM I_Product WHERE I_Product_ID = TO_NUMBER(?)) ,
+      FROM I_Product WHERE I_Product_ID=?) ,
       DiscontinuedBy= 
       (SELECT DiscontinuedBy
-      FROM I_Product WHERE I_Product_ID = TO_NUMBER(?)) ,
+      FROM I_Product WHERE I_Product_ID=?) ,
       Updated=  now() ,
       UpdatedBy= 
       (SELECT UpdatedBy
-      FROM I_Product WHERE I_Product_ID = TO_NUMBER(?)) 
-      WHERE M_Product_ID = TO_NUMBER(?)
+      FROM I_Product WHERE I_Product_ID=?) 
+      WHERE M_Product_ID=?
       ]]>
     </Sql>
     <Parameter name="IProductID"/>
@@ -558,73 +558,73 @@
       C_UOM_ID= 
       (SELECT C_UOM_ID
       FROM I_Product
-      WHERE I_Product_ID = TO_NUMBER(?)) ,
+      WHERE I_Product_ID=?) ,
       C_Currency_ID= 
       (SELECT C_Currency_ID
       FROM I_Product
-      WHERE I_Product_ID = TO_NUMBER(?)) ,
+      WHERE I_Product_ID=?) ,
       UPC= 
       (SELECT UPC
       FROM I_Product
-      WHERE I_Product_ID = TO_NUMBER(?)) ,
+      WHERE I_Product_ID=?) ,
       PriceList= 
       (SELECT PriceList
       FROM I_Product
-      WHERE I_Product_ID = TO_NUMBER(?)) ,
+      WHERE I_Product_ID=?) ,
       PricePO= 
       (SELECT PricePO
       FROM I_Product
-      WHERE I_Product_ID = TO_NUMBER(?)) ,
+      WHERE I_Product_ID=?) ,
       RoyaltyAmt= 
       (SELECT RoyaltyAmt
       FROM I_Product
-      WHERE I_Product_ID = TO_NUMBER(?)) ,
+      WHERE I_Product_ID=?) ,
       PriceEffective= 
       (SELECT PriceEffective
       FROM I_Product
-      WHERE I_Product_ID = TO_NUMBER(?)) ,
+      WHERE I_Product_ID=?) ,
       VendorProductNo= 
       (SELECT VendorProductNo
       FROM I_Product
-      WHERE I_Product_ID = TO_NUMBER(?)) ,
+      WHERE I_Product_ID=?) ,
       VendorCategory= 
       (SELECT VendorCategory
       FROM I_Product
-      WHERE I_Product_ID = TO_NUMBER(?)) ,
+      WHERE I_Product_ID=?) ,
       Manufacturer= 
       (SELECT Manufacturer
       FROM I_Product
-      WHERE I_Product_ID = TO_NUMBER(?)) ,
+      WHERE I_Product_ID=?) ,
       Discontinued= 
       (SELECT Discontinued
       FROM I_Product
-      WHERE I_Product_ID = TO_NUMBER(?)) ,
+      WHERE I_Product_ID=?) ,
       DiscontinuedBy= 
       (SELECT DiscontinuedBy
       FROM I_Product
-      WHERE I_Product_ID = TO_NUMBER(?)) ,
+      WHERE I_Product_ID=?) ,
       Order_Min= 
       (SELECT Order_Min
       FROM I_Product
-      WHERE I_Product_ID = TO_NUMBER(?)) ,
+      WHERE I_Product_ID=?) ,
       Order_Pack= 
       (SELECT Order_Pack
       FROM I_Product
-      WHERE I_Product_ID = TO_NUMBER(?)) ,
+      WHERE I_Product_ID=?) ,
       CostPerOrder= 
       (SELECT CostPerOrder
       FROM I_Product
-      WHERE I_Product_ID = TO_NUMBER(?)) ,
+      WHERE I_Product_ID=?) ,
       DeliveryTime_Promised= 
       (SELECT DeliveryTime_Promised
       FROM I_Product
-      WHERE I_Product_ID = TO_NUMBER(?)) ,
+      WHERE I_Product_ID=?) ,
       Updated=now(),
       UpdatedBy= 
       (SELECT UpdatedBy
       FROM I_Product
-      WHERE I_Product_ID = TO_NUMBER(?)) 
-      WHERE M_Product_ID = TO_NUMBER(?) AND C_BPartner_ID = TO_NUMBER(?)
+      WHERE I_Product_ID=?) 
+      WHERE M_Product_ID=? AND C_BPartner_ID=?
       ]]>
     </Sql>
     <Parameter name="IProductID"/>
@@ -658,7 +658,7 @@
       VendorProductNo,VendorCategory,Manufacturer,
       Discontinued,DiscontinuedBy,Order_Min,Order_Pack,
       CostPerOrder,DeliveryTime_Promised) 
-      SELECT TO_NUMBER(?),TO_NUMBER(?), 
+      SELECT ?,?, 
       AD_Client_ID,AD_Org_ID,'Y',now(),CreatedBy,now(),UpdatedBy,
       'Y',C_UOM_ID,C_Currency_ID,UPC,
       PriceList,PricePO,RoyaltyAmt,PriceEffective,
@@ -666,7 +666,7 @@
       Discontinued,DiscontinuedBy,Order_Min,Order_Pack,
       CostPerOrder,DeliveryTime_Promised 
       FROM I_Product 
-      WHERE I_Product_ID = TO_NUMBER(?)
+      WHERE I_Product_ID=?
       ]]>
     </Sql>
     <Parameter name="MProductID"/>
@@ -677,8 +677,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      UPDATE I_Product SET I_IsImported='Y', M_Product_ID=TO_NUMBER(?), 
-      Updated=now(), Processed='Y' WHERE I_Product_ID = TO_NUMBER(?)
+      UPDATE I_Product SET I_IsImported='Y', M_Product_id = ?, 
+      Updated=now(), Processed='Y' WHERE I_Product_ID=?
       ]]>
     </Sql>
     <Parameter name="MProductID"/>
@@ -690,7 +690,7 @@
       <![CDATA[
       UPDATE I_Product  
       SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'') || 'Insert Product: ' || ?
-      WHERE I_Product_ID = TO_NUMBER(?)
+      WHERE I_Product_ID = ?
       ]]>
     </Sql>
     <Parameter name="error"/>
@@ -702,7 +702,7 @@
       <![CDATA[
       UPDATE I_Product  
       SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'Update Product: ' || ?
-      WHERE I_Product_ID = TO_NUMBER(?)
+      WHERE I_Product_ID = ?
       ]]>
     </Sql>
     <Parameter name="error"/>
@@ -714,7 +714,7 @@
       <![CDATA[
       UPDATE I_Product  
       SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'Update Product_PO: ' || ?
-      WHERE I_Product_ID = TO_NUMBER(?)
+      WHERE I_Product_ID = ?
       ]]>
     </Sql>
     <Parameter name="error"/>
@@ -726,7 +726,7 @@
       <![CDATA[
       UPDATE I_Product  
       SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'Insert Product_PO: ' || ?
-      WHERE I_Product_ID = TO_NUMBER(?)
+      WHERE I_Product_ID = ?
       ]]>
     </Sql>
     <Parameter name="error"/>
@@ -739,7 +739,7 @@
       UPDATE I_Product 
       SET I_IsImported='N', Updated=now()
       WHERE I_IsImported<>'Y'
-      AND AD_CLIENT_ID = TO_NUMBER(?)
+      AND AD_CLIENT_ID = ?
       ]]>
     </Sql>
     <Parameter name="client"/>

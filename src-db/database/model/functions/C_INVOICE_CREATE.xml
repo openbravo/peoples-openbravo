@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_INVOICE_CREATE">
     <function name="C_INVOICE_CREATE" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_invoice_id" type="NUMERIC" mode="out">
+      <parameter name="p_invoice_id" type="VARCHAR" mode="out">
         <default/>
       </parameter>
-      <parameter name="p_order_id" type="NUMERIC" mode="in">
+      <parameter name="p_order_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -43,10 +43,10 @@
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
-    v_Record_ID NUMBER:=NULL;
-    v_AD_Org_ID NUMBER:=NULL;
-    v_C_Order_ID NUMBER:=NULL;
-    v_BPartner_ID NUMBER:=NULL;
+    v_Record_ID VARCHAR2(32):=NULL;
+    v_AD_Org_ID VARCHAR2(32):=NULL;
+    v_C_Order_ID VARCHAR2(32):=NULL;
+    v_BPartner_ID VARCHAR2(32):=NULL;
     v_Selection VARCHAR2(1):='N';
     v_DateInvoiced_aux DATE:=NULL;
     v_DateOrdered DATE:=NULL;
@@ -57,8 +57,8 @@
     -- Orders to process
     Cur_Order RECORD;
     --
-    v_NextNo NUMBER;
-    v_DocType_ID NUMBER;
+    v_NextNo VARCHAR2(32);
+    v_DocType_ID VARCHAR2(32);
     v_DocumentNo VARCHAR2(40) ;
     v_Qty NUMBER;
     --MODIFIED BY F.IRIAZABAL
@@ -71,9 +71,9 @@
     v_count NUMBER:=0;
     Cur_OrderLine_ISOPEN BOOLEAN:=false;
     Cur_InOutLine_ISOPEN BOOLEAN:=false;
-    v_AD_Client_ID NUMBER;
+    v_AD_Client_ID VARCHAR2(32);
     -- Order Lines not invoiced   Invoice Rule: Immediate
-    CURSOR Cur_OrderLine (Order_ID NUMBER) IS
+    CURSOR Cur_OrderLine (Order_ID VARCHAR) IS
       SELECT *
       FROM C_ORDERLINE l
       WHERE QtyOrdered<>QtyInvoiced
@@ -81,7 +81,7 @@
       ORDER BY Line  FOR UPDATE;
       ptr_ol Cur_OrderLine%ROWTYPE;
       -- Shipment Lines of Order Lines  Invoice Rule: Delivery
-      CURSOR Cur_InOutLine (Order_ID NUMBER) IS
+      CURSOR Cur_InOutLine (Order_ID VARCHAR) IS
         SELECT ol.AD_Client_ID,
           ol.AD_Org_ID,
           sl.M_InOut_ID,
@@ -161,13 +161,13 @@
               v_InvoiceToDate:=Cur_Parameter.P_Date;
               DBMS_OUTPUT.PUT_LINE('  InvoiceToDate=' || v_InvoiceToDate) ;
             ELSIF(Cur_Parameter.ParameterName='AD_Org_ID') THEN
-              v_AD_Org_ID:=Cur_Parameter.P_Number;
+              v_AD_Org_ID:=Cur_Parameter.P_String;
               DBMS_OUTPUT.PUT_LINE('  AD_Org_ID=' || v_AD_Org_ID) ;
             ELSIF(Cur_Parameter.ParameterName='C_Order_ID') THEN
-              v_C_Order_ID:=Cur_Parameter.P_Number;
+              v_C_Order_ID:=Cur_Parameter.P_String;
               DBMS_OUTPUT.PUT_LINE('  C_Order_ID=' || v_C_Order_ID) ;
             ELSIF(Cur_Parameter.ParameterName='C_BPartner_ID') THEN
-              v_BPartner_ID:=Cur_Parameter.P_Number;
+              v_BPartner_ID:=Cur_Parameter.P_String;
               DBMS_OUTPUT.PUT_LINE('  C_BPartner_ID=' || v_BPartner_ID) ;
             ELSIF(Cur_Parameter.ParameterName='Selection') THEN
               v_Selection:=Cur_Parameter.P_String;
@@ -400,7 +400,7 @@
                 VALUES
                 (
                   p_Invoice_ID, Cur_Order.C_Order_ID, Cur_Order.AD_Client_ID, Cur_Order.AD_Org_ID,
-                  'Y', now(), 0, now(),0, 
+                  'Y', now(), '0', now(),'0', 
                   Cur_Order.IsSOTrx, v_DocumentNo, 'DR', 'CO', 
                   'N', 'N', v_DocType_ID, v_DocType_ID, 
                   Cur_Order.Description, Cur_Order.SalesRep_ID, 
@@ -437,7 +437,7 @@
                   VALUES
                   (
                     v_NextNo, Cur_Order.AD_Client_ID, Cur_Order.AD_Org_ID, 'Y',
-                    now(), 0, now(), 0,
+                    now(), '0', now(), '0',
                     p_Invoice_ID, NULL, NULL, v_LineNo,
                     v_Reference, NULL, 0, 0,
                     0, 0, 0, NULL,
@@ -486,7 +486,7 @@
                       VALUES
                       (
                         v_NextNo, ptr_ol.AD_Client_ID, ptr_ol.AD_Org_ID, 'Y',
-                        now(), 0, now(), 0,
+                        now(), '0', now(), '0',
                         p_Invoice_ID, ptr_ol.C_OrderLine_ID, NULL, v_LineNo,
                         ptr_ol.Description, ptr_ol.M_Product_ID, v_Qty, ptr_ol.PriceList,
                         ptr_ol.PriceActual, ptr_ol.PriceLimit, C_Currency_Round(v_Qty*ptr_ol.PriceActual, Cur_Order.C_Currency_ID, NULL), ptr_ol.C_Charge_ID,
@@ -534,7 +534,7 @@
                       VALUES
                       (
                         v_NextNo, ptr_sl.AD_Client_ID, ptr_sl.AD_Org_ID, 'Y',
-                        now(), 0, now(), 0,
+                        now(), '0', now(), '0',
                         p_Invoice_ID, ptr_sl.C_OrderLine_ID, ptr_sl.M_InOutLine_ID, v_LineNo,
                         ptr_sl.Description, ptr_sl.M_Product_ID, ptr_sl.MovementQty, ptr_sl.PriceList,
                         ptr_sl.PriceActual, ptr_sl.PriceLimit, C_Currency_Round(ptr_sl.MovementQty*ptr_sl.PriceActual, Cur_Order.C_Currency_ID, NULL), ptr_sl.C_Charge_ID,
@@ -554,7 +554,7 @@
               -- Post it
               C_INVOICE_POST(NULL, p_Invoice_ID) ;
 			  --Added by p.Sarobe
-			  IF(p_Invoice_ID=0) THEN
+			  IF(p_Invoice_ID='0') THEN
           	  	  RAISE_APPLICATION_ERROR(-20000, '@InvoiceCreateFailed@');
 			  ELSE
 			  	  SELECT documentno
@@ -585,26 +585,26 @@
           DECLARE
             -- Invoice Schedule Lines
             Cur_InvoiceSchedule RECORD;
-            v_Partner_ID NUMBER:=-1;
-            v_InOut_ID NUMBER:=-1;
-            v_gOrg_ID NUMBER(10) ;
-            v_gOrder_ID NUMBER(10) ;
-            v_gInOut_ID NUMBER(10) ;
-            v_gBillTo_ID NUMBER(10) ;
-            v_gBPartner_Location_ID NUMBER(10) ;
-            v_gSalesRep_ID NUMBER(10) ;
+            v_Partner_ID VARCHAR2(32):='-1';
+            v_InOut_ID VARCHAR2(32):='-1';
+            v_gOrg_ID VARCHAR2(32) ;
+            v_gOrder_ID VARCHAR2(32) ;
+            v_gInOut_ID VARCHAR2(32) ;
+            v_gBillTo_ID VARCHAR2(32) ;
+            v_gBPartner_Location_ID VARCHAR2(32) ;
+            v_gSalesRep_ID VARCHAR2(32) ;
             v_gPaymentRule CHAR(1) ;
-            v_gPaymentTerm_ID NUMBER(10) ;
-            v_gCurrency_ID NUMBER(10) ;
-            v_gCampaign_ID NUMBER(10) ;
-            v_gProject_ID NUMBER(10) ;
-            v_gActivitiy_ID NUMBER(10) ;
-            v_gOrgTrx_ID NUMBER(10) ;
-            v_gUser1_ID NUMBER(10) ;
-            v_gUser2_ID NUMBER(10) ;
+            v_gPaymentTerm_ID VARCHAR2(32) ;
+            v_gCurrency_ID VARCHAR2(32) ;
+            v_gCampaign_ID VARCHAR2(32) ;
+            v_gProject_ID VARCHAR2(32) ;
+            v_gActivitiy_ID VARCHAR2(32) ;
+            v_gOrgTrx_ID VARCHAR2(32) ;
+            v_gUser1_ID VARCHAR2(32) ;
+            v_gUser2_ID VARCHAR2(32) ;
             v_description NVARCHAR2(120) ;
           BEGIN
-            p_Invoice_ID:=-1;
+            p_Invoice_ID:='-1';
             DBMS_OUTPUT.PUT_LINE('  BPartner_ID=' || v_BPartner_ID || ', AD_Org_ID=' || v_AD_Org_ID) ;
             FOR Cur_InvoiceSchedule IN
               (SELECT sh.AD_Client_ID,
@@ -714,37 +714,37 @@
               ORDER BY sh.C_BPartner_ID, (
                 CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 1, 1))
                   WHEN '0'
-                  THEN 0
+                  THEN '0'
                   ELSE sh.AD_Org_ID
                 END
                 ) ||'-'|| (
                 CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 2, 1))
                   WHEN '0'
-                  THEN 0
+                  THEN '0'
                   ELSE sh.C_Order_ID
                 END
                 ) ||'-'|| (
                 CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 3, 1))
                   WHEN '0'
-                  THEN 0
+                  THEN '0'
                   ELSE sh.M_InOut_ID
                 END
                 ) ||'-'|| (
                 CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 4, 1))
                   WHEN '0'
-                  THEN 0
+                  THEN '0'
                   ELSE o.BillTo_ID
                 END
                 ) ||'-'|| (
                 CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 5, 1))
                   WHEN '0'
-                  THEN 0
+                  THEN '0'
                   ELSE o.C_BPartner_Location_ID
                 END
                 ) ||'-'|| (
                 CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 6, 1))
                   WHEN '0'
-                  THEN 0
+                  THEN '0'
                   ELSE o.SalesRep_ID
                 END
                 ) ||'-'|| (
@@ -756,49 +756,49 @@
                 ) ||'-'|| (
                 CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 8, 1))
                   WHEN '0'
-                  THEN 0
+                  THEN '0'
                   ELSE COALESCE(o.C_PaymentTerm_ID, bp.C_PaymentTerm_ID)
                 END
                 ) ||'-'|| (
                 CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 8, 1))
                   WHEN '0'
-                  THEN 0
+                  THEN '0'
                   ELSE o.C_Currency_ID
                 END
                 ) ||'-'|| (
                 CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 10, 1))
                   WHEN '0'
-                  THEN 0
+                  THEN '0'
                   ELSE o.C_Campaign_ID
                 END
                 ) ||'-'|| (
                 CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 11, 1))
                   WHEN '0'
-                  THEN 0
+                  THEN '0'
                   ELSE o.C_Project_ID
                 END
                 ) ||'-'|| (
                 CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 12, 1))
                   WHEN '0'
-                  THEN 0
+                  THEN '0'
                   ELSE o.C_Activity_ID
                 END
                 ) ||'-'|| (
                 CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 13, 1))
                   WHEN '0'
-                  THEN 0
+                  THEN '0'
                   ELSE o.AD_OrgTrx_ID
                 END
                 ) ||'-'|| (
                 CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 14, 1))
                   WHEN '0'
-                  THEN 0
+                  THEN '0'
                   ELSE o.User1_ID
                 END
                 ) ||'-'|| (
                 CASE TO_CHAR(SUBSTR(RPAD(bp.InvoiceGrouping, 15, '0'), 15, 1))
                   WHEN '0'
-                  THEN 0
+                  THEN '0'
                   ELSE o.User2_ID
                 END
                 ),
@@ -811,7 +811,7 @@
               v_DateInvoiced:=COALESCE(v_DateInvoiced_aux, COALESCE(v_DateOrdered, now())) ; -- si.DateOrdered);
               --  Summary Invoice only if BP has Schedule setup and selected in invoice
               IF(NOT(Cur_InvoiceSchedule.C_InvoiceSchedule_ID IS NOT NULL AND Cur_InvoiceSchedule.InvoiceRule='S') AND v_InOut_ID<>Cur_InvoiceSchedule.M_InOut_ID) THEN -- and new document
-                v_Partner_ID:=-2; -- indicate BP change to force new invoice
+                v_Partner_ID:='-2'; -- indicate BP change to force new invoice
               END IF;
               -- BPartner changed - New Invoice
               /*
@@ -857,7 +857,7 @@
                   v_description:=NULL;
                 END IF;
                 -- Post it, if not first time
-                IF(p_Invoice_ID<>-1) THEN
+                IF(p_Invoice_ID<>'-1') THEN
                   UPDATE C_INVOICE
                     SET DateInvoiced=v_DateInvoiced,
                     DateAcct=v_DateInvoiced
@@ -913,8 +913,8 @@
                     VALUES
                     (
                       p_Invoice_ID, Cur_InvoiceSchedule.C_Order_ID, Cur_InvoiceSchedule.AD_Client_ID, Cur_InvoiceSchedule.AD_Org_ID,
-                       'Y', now(), 0, now(),
-                      0, 'Y', v_DocumentNo, 'DR',
+                       'Y', now(), '0', now(),
+                      '0', 'Y', v_DocumentNo, 'DR',
                        'CO', 'N', 'N', v_DocType_ID,
                       v_DocType_ID, v_description,
                       Cur_InvoiceSchedule.SalesRep_ID, v_DateInvoiced, NULL, 'N',
@@ -931,7 +931,7 @@
                   
                   v_NoRecords:=v_NoRecords + 1;
                   v_LineNo:=0;
-                  v_InOut_ID:=-1;
+                  v_InOut_ID:='-1';
                 END IF;
               END IF;--FINISH_PROCESS
               IF(NOT FINISH_PROCESS) THEN
@@ -965,7 +965,7 @@
                     VALUES
                     (
                       v_NextNo, Cur_InvoiceSchedule.AD_Client_ID, Cur_InvoiceSchedule.AD_Org_ID, 'Y',
-                      now(), 0, now(), 0,
+                      now(), '0', now(), '0',
                       p_Invoice_ID, NULL, NULL, v_LineNo,
                       v_Reference, NULL, 0, 0,
                       0, 0, 0, Cur_InvoiceSchedule.C_Charge_ID,
@@ -995,7 +995,7 @@
                   VALUES
                   (
                     v_NextNo, Cur_InvoiceSchedule.AD_Client_ID, Cur_InvoiceSchedule.Line_AD_Org_ID, 'Y',
-                    now(), 0, now(), 0,
+                    now(), '0', now(), '0',
                     p_Invoice_ID, Cur_InvoiceSchedule.C_OrderLine_ID, Cur_InvoiceSchedule.M_InOutLine_ID, v_LineNo,
                     Cur_InvoiceSchedule.Line_Description, Cur_InvoiceSchedule.M_Product_ID, Cur_InvoiceSchedule.MovementQty, Cur_InvoiceSchedule.PriceList,
                     Cur_InvoiceSchedule.PriceActual, Cur_InvoiceSchedule.PriceLimit, C_Currency_Round(Cur_InvoiceSchedule.MovementQty*Cur_InvoiceSchedule.PriceActual, Cur_InvoiceSchedule.C_Currency_ID, NULL), Cur_InvoiceSchedule.Line_C_Charge_ID,
@@ -1009,7 +1009,7 @@
             END LOOP; -- Invoice Schedule
             IF(NOT FINISH_PROCESS) THEN
               -- Post last invoice, if exists
-              IF(p_Invoice_ID<>-1) THEN
+              IF(p_Invoice_ID<>'-1') THEN
                 v_DateInvoiced:=COALESCE(v_DateInvoiced_aux, COALESCE(v_DateOrdered, now())) ;
                 UPDATE C_INVOICE
                   SET DateInvoiced=v_DateInvoiced,

@@ -20,7 +20,7 @@
 <REPORT>
 	<template id="class" file="EncryptedButtons.html"/>
 	<PARAMETER id="paramLanguage" name="language"/>
-	<PARAMETER id="paramDirection" name="direction"/>
+	<PARAMETER id="paramDirectory" name="directory"/>
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
 	<PARAMETER id="paramBody" name="body" attribute="onload" replace="xx();" default=""/>
 	<PARAMETER id="linkButtonCancel" name="cancel" attribute="onmouseover" replace="xx" default=""/>

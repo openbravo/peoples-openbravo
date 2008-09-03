@@ -70,7 +70,7 @@ public class RequestReOpen extends HttpSecureAppServlet {
     try {
       String pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
       PInstanceProcessData.insertPInstance(this, pinstance, "195", strRequest, "N", vars.getUser(), vars.getClient(), vars.getOrg());
-      PInstanceProcessData.insertPInstanceParamNumber(this, pinstance, "10", "R_Request_ID", strRequest, vars.getClient(), vars.getOrg(), vars.getUser());
+      PInstanceProcessData.insertPInstanceParam(this, pinstance, "10", "R_Request_ID", strRequest, vars.getClient(), vars.getOrg(), vars.getUser());
       RequestReOpenData.processRequest(this, pinstance);
     } catch (ServletException e) {
       e.printStackTrace();
@@ -104,8 +104,8 @@ public class RequestReOpen extends HttpSecureAppServlet {
       toolbar.prepareSimpleToolBarTemplate();
       xmlDocument.setParameter("toolbar", toolbar.toString());
       
-      xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-      xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars.getLanguage()));
       xmlDocument.setParameter("description", strDescription);
       xmlDocument.setParameter("help", strHelp);

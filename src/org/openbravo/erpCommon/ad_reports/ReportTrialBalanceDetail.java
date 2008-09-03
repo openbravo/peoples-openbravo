@@ -111,8 +111,8 @@ toolbar.prepareSimpleToolBarTemplate();
       }
     }
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("account", ReportTrialBalanceDetailData.selectAccountName(this, strId));
     xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());

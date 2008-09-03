@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_CURRENCY_RATE">
     <function name="C_CURRENCY_RATE" type="NUMERIC">
-      <parameter name="p_curfrom_id" type="NUMERIC" mode="in">
+      <parameter name="p_curfrom_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_curto_id" type="NUMERIC" mode="in">
+      <parameter name="p_curto_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_convdate" type="TIMESTAMP" mode="in">
@@ -13,10 +13,10 @@
       <parameter name="p_ratetype" type="CHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_client_id" type="NUMERIC" mode="in">
+      <parameter name="p_client_id" type="VARCHAR" mode="in">
         <default><![CDATA[0]]></default>
       </parameter>
-      <parameter name="p_org_id" type="NUMERIC" mode="in">
+      <parameter name="p_org_id" type="VARCHAR" mode="in">
         <default><![CDATA[0]]></default>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -85,8 +85,8 @@ BEGIN
         AND C_Currency_ID_To = v_CurrencyTo
         AND ConversionRateType = v_RateType
         AND v_ConvDate BETWEEN ValidFrom AND ValidTo
-        AND AD_Client_ID IN(0, p_Client_ID)
-        AND AD_Org_ID IN(0, p_Org_ID)
+        AND AD_Client_ID IN ('0', p_Client_ID)
+        AND AD_Org_ID IN ('0', p_Org_ID)
       ORDER BY AD_Client_ID DESC,
         AD_Org_ID DESC,
         ValidFrom DESC

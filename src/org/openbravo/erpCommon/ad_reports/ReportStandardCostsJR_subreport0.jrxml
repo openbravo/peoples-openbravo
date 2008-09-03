@@ -207,7 +207,7 @@ WHERE MA_SEQUENCEPRODUCT.MA_SEQUENCE_ID = $P{SEQUENCE_ID}
   AND MA_SEQUENCEPRODUCT.PRODUCTIONTYPE = '+'
   AND A.MA_SEQUENCE_ID = MA_SEQUENCEPRODUCT.MA_SEQUENCE_ID]]></queryString>
 
-	<field name="MA_SEQUENCE_ID" class="java.math.BigDecimal"/>
+	<field name="MA_SEQUENCE_ID" class="java.lang.String"/>
 	<field name="COMPONENTCOSTSUM" class="java.math.BigDecimal"/>
 	<field name="COMPONENTCOST" class="java.math.BigDecimal"/>
 	<field name="CONCEPT" class="java.lang.String"/>

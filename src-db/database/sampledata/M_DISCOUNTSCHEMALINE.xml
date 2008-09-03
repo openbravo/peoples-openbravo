@@ -1,20 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--
-************************
-0. Core Range.
-************************
--->
-<!--
-************************
-0. End of Core Range.
-************************
--->
-<!--
-************************
-1. Custom Range.
-************************
--->
 <!--1000000**************--><M_DISCOUNTSCHEMALINE>
 <!--1000000 M_DISCOUNTSCHEMALINE_ID-->
 <!--1000000-->              <M_DISCOUNTSCHEMALINE_ID><![CDATA[1000000]]></M_DISCOUNTSCHEMALINE_ID>
@@ -508,9 +493,4 @@
 <!--1000008-->              <LIMIT_FIXED><![CDATA[0]]></LIMIT_FIXED>
 <!--1000008**************--></M_DISCOUNTSCHEMALINE>
 
-<!--
-************************
-1. End of Custom Range.
-************************
--->
 </data>

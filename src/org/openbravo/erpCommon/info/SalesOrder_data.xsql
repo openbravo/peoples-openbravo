@@ -34,7 +34,7 @@
         o.DateOrdered, o.DocumentNo,
         (SELECT ISO_Code FROM C_Currency c WHERE c.C_Currency_ID=o.C_Currency_ID) AS Currency,
         o.GrandTotal,
-        C_Base_Convert(o.GrandTotal,o.C_Currency_ID,o.AD_Client_ID,o.DateAcct, 0) as Converted, o.IsSOTrx, o.Description, o.POReference,
+        C_Base_Convert(o.GrandTotal,o.C_Currency_ID,o.AD_Client_ID,o.DateAcct, '0') as Converted, o.IsSOTrx, o.Description, o.POReference,
 				o.C_Order_ID || '#' || o.DocumentNo as rowkey
         FROM C_Order o
         WHERE o.AD_Client_ID IN ('1') 
@@ -52,7 +52,7 @@
         <Parameter name="key" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.DocumentNo) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="description" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.Description) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="orderReference" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.POReference) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="businesPartner" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.C_BPartner_ID = TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="businesPartner" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.C_BPartner_ID=? ]]></Parameter>
         <Parameter name="dateFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered >= to_date(?) ]]></Parameter>
         <Parameter name="dateTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered < to_date(?) ]]></Parameter>
         <Parameter name="grandTotalFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.GrandTotal >= ? ]]></Parameter>
@@ -74,7 +74,7 @@
         o.DateOrdered, o.DocumentNo,
         (SELECT ISO_Code FROM C_Currency c WHERE c.C_Currency_ID=o.C_Currency_ID) AS Currency,
         o.GrandTotal,
-        C_Base_Convert(o.GrandTotal,o.C_Currency_ID,o.AD_Client_ID,o.DateAcct, 0) as Converted, o.IsSOTrx, o.Description, o.POReference
+        C_Base_Convert(o.GrandTotal,o.C_Currency_ID,o.AD_Client_ID,o.DateAcct, '0') as Converted, o.IsSOTrx, o.Description, o.POReference
         FROM C_Order o
         WHERE o.AD_Client_ID IN ('1') 
         AND o.AD_Org_ID IN ('1') 

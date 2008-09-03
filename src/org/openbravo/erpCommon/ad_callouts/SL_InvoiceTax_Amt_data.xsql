@@ -30,9 +30,9 @@
         from c_tax        t,
              c_currency   c,
              c_invoice    i
-        where t.c_tax_ID = TO_NUMBER(?)
+        where t.c_tax_id = ?
         and c.c_currency_id = i.c_currency_id
-        and i.c_invoice_ID = TO_NUMBER(?)
+        and i.c_invoice_id = ?
     </Sql>
     <Parameter name="cTaxId"/>
     <Parameter name="cInvoiceId"/>

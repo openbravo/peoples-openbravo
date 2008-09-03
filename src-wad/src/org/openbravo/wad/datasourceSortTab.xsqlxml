@@ -38,7 +38,7 @@
         <PARAMETER_TMP id="where">tablesWhere</PARAMETER_TMP>
         AND <PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Client_ID IN ('1') 
 <PARAMETER_TMP id="org">        AND <PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Org_ID IN ('1') </PARAMETER_TMP>
-<PARAMETER_TMP id="parent">        AND <PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = TO_NUMBER(?)</PARAMETER_TMP>
+<PARAMETER_TMP id="parent">        AND <PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = ?</PARAMETER_TMP>
         AND <PARAMETER_TMP id="table">table</PARAMETER_TMP>.<PARAMETER_TMP id="SortConditionField">table</PARAMETER_TMP> = 'Y' 
         <PARAMETER_TMP id="order">tablesOrder</PARAMETER_TMP>
     ]]&#62;</Sql>
@@ -63,7 +63,7 @@
         <PARAMETER_TMP id="where">tablesWhere</PARAMETER_TMP>
         AND <PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Client_ID IN ('1') 
 <PARAMETER_TMP id="org">        AND <PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Org_ID IN ('1') </PARAMETER_TMP>
-<PARAMETER_TMP id="parent">        AND <PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = TO_NUMBER(?)</PARAMETER_TMP>
+<PARAMETER_TMP id="parent">        AND <PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = ?</PARAMETER_TMP>
         AND <PARAMETER_TMP id="table">table</PARAMETER_TMP>.<PARAMETER_TMP id="SortConditionField">table</PARAMETER_TMP> = 'N' 
         <PARAMETER_TMP id="order">tablesOrder</PARAMETER_TMP>
     ]]&#62;</Sql>

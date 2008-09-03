@@ -1,10 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--
-************************
-0. Core Range.
-************************
--->
 <!--126**************--><AT_TESTDOCUMENTLINE>
 <!--126 AT_TESTDOCUMENTLINE_ID-->
 <!--126-->              <AT_TESTDOCUMENTLINE_ID><![CDATA[126]]></AT_TESTDOCUMENTLINE_ID>
@@ -1196,19 +1191,4 @@ sleep 2]]></TEXT2>
 <!--252-->              <ARGTYPE1><![CDATA[1]]></ARGTYPE1>
 <!--252**************--></AT_TESTDOCUMENTLINE>
 
-<!--
-************************
-0. End of Core Range.
-************************
--->
-<!--
-************************
-1. Custom Range.
-************************
--->
-<!--
-************************
-1. End of Custom Range.
-************************
--->
 </data>

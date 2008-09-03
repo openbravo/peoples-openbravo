@@ -195,7 +195,7 @@
 	<field name="WAREHOUSE" class="java.lang.String"/>
 	<field name="PRODUCT" class="java.lang.String"/>
 	<field name="UOM" class="java.lang.String"/>
-	<field name="CATEGORY_ID" class="java.math.BigDecimal"/>
+	<field name="CATEGORY_ID" class="java.lang.String"/>
 	<field name="OUTERORDER" class="java.math.BigDecimal"/>
 	<field name="MULTIPLYRATE" class="java.math.BigDecimal"/>
 	<field name="OUTERMOVEMENT" class="java.math.BigDecimal"/>

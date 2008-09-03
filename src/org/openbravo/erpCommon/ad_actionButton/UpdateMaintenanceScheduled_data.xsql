@@ -46,9 +46,9 @@
             USEDTIME = TO_NUMBER(?),
             OBSERVATION = ?,
             UPDATED = now(),
-            UPDATEDBY = TO_NUMBER(?),
-            MA_MAINT_PART_ID = TO_NUMBER(?)
-        WHERE MA_MAINT_SCHEDULED_ID = TO_NUMBER(?)
+            UPDATEDBY = ?,
+            MA_MAINT_PART_ID = ?
+        WHERE MA_MAINT_SCHEDULED_ID = ?
       ]]>
     </Sql>
     <Parameter name="result"/>

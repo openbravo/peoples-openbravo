@@ -41,15 +41,15 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
 
 
     if (vars.commandIn("DEFAULT")) {
-      String strStartDateFrom = vars.getGlobalVariable("inpStartDateFrom", "ReportWorkRequirementDaily|StartDateFrom", "");
-      String strStartDateTo = vars.getGlobalVariable("inpStartDateTo", "ReportWorkRequirementDaily|StartDateTo", "");
+      String strStartDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportWorkRequirementDaily|dateFrom", "");
+      String strStartDateTo = vars.getGlobalVariable("inpDateTo", "ReportWorkRequirementDaily|dateTo", "");
       String strmaProcessPlan = vars.getGlobalVariable("inpmaProcessPlanId", "ReportWorkRequirementDaily|MA_ProcessPlan_ID", "");
       strStartDateTo = DateTimeData.today(this);
       strStartDateFrom = DateTimeData.today(this);
       printPageDataSheet(response, vars, strStartDateFrom, strStartDateTo, strmaProcessPlan);
     } else if (vars.commandIn("FIND")) {
-      String strStartDateFrom = vars.getRequestGlobalVariable("inpStartDateFrom", "ReportWorkRequirementDaily|StartDateFrom");
-      String strStartDateTo = vars.getRequestGlobalVariable("inpStartDateTo", "ReportWorkRequirementDaily|StartDateTo");
+      String strStartDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportWorkRequirementDaily|dateFrom");
+      String strStartDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportWorkRequirementDaily|dateTo");
       String strmaProcessPlan = vars.getRequestGlobalVariable("inpmaProcessPlanId", "ReportWorkRequirementDaily|MA_ProcessPlan_ID");
       printPageDataHtml(response, vars, strStartDateFrom, strStartDateTo, strmaProcessPlan);
     } else pageError(response);
@@ -122,13 +122,13 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
       }
     }  
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("maProcessPlan", strmaProcessPlan);
-    xmlDocument.setParameter("startDateFrom", strStartDateFrom);
+    xmlDocument.setParameter("dateFrom", strStartDateFrom);
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("startDateTo", strStartDateTo);
+    xmlDocument.setParameter("dateTo", strStartDateTo);
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setData("reportMA_PROCESSPLAN", "liststructure", ProcessPlanComboData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportWorkRequirementDaily"), Utility.getContext(this, vars, "#User_Org", "ReportWorkRequirementDaily")));
@@ -184,8 +184,8 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
       }
     }  
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("maProcessPlan", strmaProcessPlan);
     xmlDocument.setParameter("startDateFrom", strStartDateFrom);
     xmlDocument.setParameter("startDateTo", strStartDateTo);

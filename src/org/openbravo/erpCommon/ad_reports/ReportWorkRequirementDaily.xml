@@ -20,12 +20,12 @@
 <REPORT>
   <template file="ReportWorkRequirementDaily.html"/>
   <PARAMETER id="paramToolBar" name="toolbar" default=""/>
-  <PARAMETER id="paramDirection" name="direction" default=""/>
+  <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
-  <PARAMETER id="paramDateFrom" name="startDateFrom" attribute="value"/>
+  <PARAMETER id="paramDateFrom" name="dateFrom" attribute="value"/>
 	<PARAMETER id="paramDateFrom" name="dateFromdisplayFormat" attribute="displayformat" replace="xx"/>
 	<PARAMETER id="paramDateFrom" name="dateFromsaveFormat" attribute="saveformat" replace="yy"/>
-  <PARAMETER id="paramDateTo" name="startDateTo" attribute="value"/>
+  <PARAMETER id="paramDateTo" name="dateTo" attribute="value"/>
 	<PARAMETER id="paramDateTo" name="dateTodisplayFormat" attribute="displayformat" replace="xx"/>
 	<PARAMETER id="paramDateTo" name="dateTosaveFormat" attribute="saveformat" replace="yy"/>
   <PARAMETER id="paramMA_PROCESSPLAN_ID" name="maProcessPlan" default=""/>

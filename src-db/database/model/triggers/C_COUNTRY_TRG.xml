@@ -25,13 +25,13 @@
   INSERT
   INTO C_COUNTRY_Trl
     (
-      C_COUNTRY_ID, AD_Language, AD_Client_ID,
+      C_COUNTRY_Trl_ID, C_COUNTRY_ID, AD_Language, AD_Client_ID,
       AD_Org_ID, IsActive, Created,
       CreatedBy, Updated, UpdatedBy,
       IsTranslated, Name, Description,
       RegionName, DisplaySequence
     )
-  SELECT :new.C_COUNTRY_ID,
+  SELECT get_uuid(), :new.C_COUNTRY_ID,
     AD_Language, :new.AD_Client_ID, :new.AD_Org_ID,
     :new.IsActive, :new.Created, :new.CreatedBy,
     :new.Updated, :new.UpdatedBy,

@@ -193,6 +193,8 @@
 	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
 	<parameter name="CURRENCYFORMAT" isForPrompting="false" class="java.text.NumberFormat"/>
 	<parameter name="CURRENCYSYMBOL" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="SR_LINES_1" isForPrompting="false" class="net.sf.jasperreports.engine.JasperReport"/>
+	<parameter name="SR_LINES_2" isForPrompting="false" class="net.sf.jasperreports.engine.JasperReport"/>
 	<queryString><![CDATA[SELECT C_INVOICE.C_INVOICE_ID, C_BPARTNER.NAME, C_BPARTNER.TAXID AS CIF, AD_USER.NAME AS CONTACT_NAME, C_LOCATION.ADDRESS1, 
        C_LOCATION.POSTAL, C_LOCATION.CITY, C_REGION.NAME AS REGION,C_COUNTRY.NAME AS COUNTRY,C_BPARTNER_LOCATION.PHONE AS PHONE, C_BPARTNER_LOCATION.FAX AS FAX,
        C_INVOICE.DATEINVOICED, C_INVOICE.DOCUMENTNO, C_BPARTNER.VALUE AS CODE_BPARTNER, 
@@ -208,7 +210,7 @@
     AND C_INVOICE.ad_client_id = AD_CLIENT.ad_client_id
     AND C_INVOICE.C_INVOICE_ID IN (1000032)]]></queryString>
 
-	<field name="C_INVOICE_ID" class="java.math.BigDecimal"/>
+	<field name="C_INVOICE_ID" class="java.lang.String"/>
 	<field name="NAME" class="java.lang.String"/>
 	<field name="CIF" class="java.lang.String"/>
 	<field name="CONTACT_NAME" class="java.lang.String"/>
@@ -473,7 +475,7 @@
 					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					<returnValue subreportVariable="TOTAL_LINENETAMT" toVariable="TOTAL_LINENETAMT"/>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/RptC_Invoice_Lines.jasper"]]></subreportExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SR_LINES_1}]]></subreportExpression>
 				</subreport>
 				<subreport  isUsingCache="true">
 					<reportElement
@@ -495,7 +497,7 @@
 					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					<returnValue subreportVariable="TOTAL_TAXAMT" toVariable="TOTAL_TAXAMT"/>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/RptC_Invoice_TaxLines.jasper"]]></subreportExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SR_LINES_2}]]></subreportExpression>
 				</subreport>
 			</band>
 		</detail>

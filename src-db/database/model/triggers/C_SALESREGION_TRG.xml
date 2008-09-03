@@ -28,8 +28,8 @@
     * Description:
     *  - create treenode
     ************************************************************************/
-    v_Tree_ID NUMBER;
-  v_Parent_ID NUMBER;
+    v_Tree_ID VARCHAR2(32);
+  v_Parent_ID VARCHAR2(32);
   --
 BEGIN
   IF(INSERTING) THEN
@@ -49,14 +49,14 @@ BEGIN
     INSERT
     INTO AD_TreeNode
       (
-        AD_Client_ID, AD_Org_ID, IsActive,
+        AD_TreeNode_Id, AD_Client_ID, AD_Org_ID, IsActive,
         Created, CreatedBy, Updated,
         UpdatedBy, AD_Tree_ID, Node_ID,
         Parent_ID, SeqNo
       )
       VALUES
       (
-        :new.AD_Client_ID, :new.AD_Org_ID, :new.IsActive,
+        get_uuid(), :new.AD_Client_ID, :new.AD_Org_ID, :new.IsActive,
         :new.Created, :new.CreatedBy, :new.Updated,
         :new.UpdatedBy, v_Tree_ID, :new.C_SalesRegion_ID,
         v_Parent_ID,(

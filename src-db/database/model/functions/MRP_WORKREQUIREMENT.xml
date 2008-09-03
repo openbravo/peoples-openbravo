@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MRP_WORKREQUIREMENT">
     <function name="MRP_WORKREQUIREMENT" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -24,15 +24,15 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1; -- 0=failure
-  v_Record_ID NUMBER;
-  v_User_ID NUMBER:=0;
-  v_Client_ID NUMBER;
-  v_Org_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
+  v_User_ID VARCHAR2(32):='0';
+  v_Client_ID VARCHAR2(32);
+  v_Org_ID VARCHAR2(32);
   v_TimeHorizon NUMBER;
   v_PlanningDate DATE;
   v_SecurityMargin NUMBER;
 
-  v_WR_ID NUMBER;
+  v_WR_ID VARCHAR2(32);
   v_DocumentNo NVARCHAR2(60);
 
   FINISH_PROCESS BOOLEAN DEFAULT FALSE;

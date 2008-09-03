@@ -153,7 +153,7 @@ public class SL_InOutLine_Product extends HttpSecureAppServlet {
     resultado.append(");");
 
     if (log4j.isDebugEnabled()) log4j.debug("Array: " + resultado.toString());
-    xmlDocument.setParameter("frameName", "frameAplicacion");
+    xmlDocument.setParameter("frameName", "appFrame");
     xmlDocument.setParameter("array", resultado.toString());
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();

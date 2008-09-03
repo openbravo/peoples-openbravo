@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_INOUT_CREATE0">
     <function name="M_INOUT_CREATE0" type="NULL">
-      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -28,7 +28,7 @@
   ***
   * Title: Create Shipment from Order
   ************************************************************************/
-  Dummy NUMBER;
+  Dummy varchar2(32);
 BEGIN
   -- No forced Delivery
   M_InOut_Create(PInstance_ID, Dummy, NULL, NULL, 'N') ;

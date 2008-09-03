@@ -30,19 +30,19 @@ BEGIN
         AND (   (COALESCE (:OLD.documentno, '.') <>
                                                COALESCE (:NEW.documentno, '.')
                 )
-             OR (COALESCE (:OLD.c_doctype_id, 0) <>
-                                               COALESCE (:NEW.c_doctype_id, 0)
+             OR (COALESCE (:OLD.c_doctype_id, '0') <>
+                                               COALESCE (:NEW.c_doctype_id, '0')
                 )
              OR (COALESCE (:OLD.datetrx, v_DateNull) <>
                                          COALESCE (:NEW.datetrx, v_DateNull)
                 )
-             OR (COALESCE (:OLD.c_currency_id, 0) <>
-                                              COALESCE (:NEW.c_currency_id, 0)
+             OR (COALESCE (:OLD.c_currency_id, '0') <>
+                                              COALESCE (:NEW.c_currency_id, '0')
                 )
-             OR (COALESCE (:OLD.user1_id, 0) <> COALESCE (:NEW.user1_id, 0))
-             OR (COALESCE (:OLD.user2_id, 0) <> COALESCE (:NEW.user2_id, 0))
-             OR (COALESCE(:old.AD_ORG_ID, 0) <> COALESCE(:new.AD_ORG_ID, 0))
-             OR (COALESCE(:old.AD_CLIENT_ID, 0) <> COALESCE(:new.AD_CLIENT_ID, 0))
+             OR (COALESCE (:OLD.user1_id, '0') <> COALESCE (:NEW.user1_id, '0'))
+             OR (COALESCE (:OLD.user2_id, '0') <> COALESCE (:NEW.user2_id, '0'))
+             OR (COALESCE(:old.AD_ORG_ID, '0') <> COALESCE(:new.AD_ORG_ID, '0'))
+             OR (COALESCE(:old.AD_CLIENT_ID, '0') <> COALESCE(:new.AD_CLIENT_ID, '0'))
             )
        ) THEN
       RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted');
@@ -52,14 +52,14 @@ BEGIN
         AND (   (COALESCE (:OLD.dateacct, v_DateNull) <>
                                         COALESCE (:NEW.dateacct, v_DateNull)
                 )
-             OR (COALESCE (:OLD.c_campaign_id, 0) <>
-                                              COALESCE (:NEW.c_campaign_id, 0)
+             OR (COALESCE (:OLD.c_campaign_id, '0') <>
+                                              COALESCE (:NEW.c_campaign_id, '0')
                 )
-             OR (COALESCE (:OLD.c_project_id, 0) <>
-                                               COALESCE (:NEW.c_project_id, 0)
+             OR (COALESCE (:OLD.c_project_id, '0') <>
+                                               COALESCE (:NEW.c_project_id, '0')
                 )
-             OR (COALESCE (:OLD.c_activity_id, 0) <>
-                                              COALESCE (:NEW.c_activity_id, 0)
+             OR (COALESCE (:OLD.c_activity_id, '0') <>
+                                              COALESCE (:NEW.c_activity_id, '0')
                 )
             )
        ) THEN

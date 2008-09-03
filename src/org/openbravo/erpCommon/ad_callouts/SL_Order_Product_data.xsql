@@ -25,7 +25,7 @@
     <Sql>
       <![CDATA[
       SELECT C_ORDER_ID AS ID, DATEORDERED, C_BPARTNER_ID, M_PRICELIST_ID, '' AS DATEINVOICED 
-        FROM C_ORDER WHERE C_ORDER_ID = TO_NUMBER(?)
+        FROM C_ORDER WHERE C_ORDER_ID = ?
       ]]>
     </Sql>
     <Parameter name="cOrderId"/>
@@ -35,7 +35,7 @@
     <Sql>
       <![CDATA[
       SELECT C_INVOICE_ID AS ID, DATEINVOICED, C_BPARTNER_ID, M_PRICELIST_ID
-      	FROM C_INVOICE WHERE C_INVOICE_ID = TO_NUMBER(?)
+      	FROM C_INVOICE WHERE C_INVOICE_ID = ?
       ]]>
     </Sql>
     <Parameter name="cInvoiceId"/>
@@ -43,7 +43,7 @@
   <!--SqlMethod name="strMProductUOMID" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT M_PRODUCT_UOM_ID FROM M_PRODUCT_UOM WHERE M_PRODUCT_ID = TO_NUMBER(?) AND C_UOM_ID = TO_NUMBER(?)
+      SELECT M_PRODUCT_UOM_ID FROM M_PRODUCT_UOM WHERE M_PRODUCT_ID = ? AND C_UOM_ID = ?
     </Sql>
     <Parameter name="mProductId"/>
     <Parameter name="cUOMId"/>
@@ -53,7 +53,7 @@
     <Sql>
       SELECT (CASE COUNT(*) WHEN 0 THEN 0 ELSE 1 END) AS TOTAL 
       FROM M_PRODUCT_UOM 
-      WHERE M_PRODUCT_ID = TO_NUMBER(?)
+      WHERE M_PRODUCT_ID = ?
     </Sql>
     <Parameter name="mProductId"/>
   </SqlMethod>
@@ -61,12 +61,12 @@
   <SqlMethod name="getOffersPrice" type="preparedStatement" return="String" default="0">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT ROUND(M_GET_OFFERS_PRICE(TO_DATE(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?)),
+      SELECT ROUND(M_GET_OFFERS_PRICE(TO_DATE(?),?,?,TO_NUMBER(?), TO_NUMBER(?), ?),
                    (SELECT PRICEPRECISION 
                        FROM C_CURRENCY C,
                             C_ORDER    O 
                       WHERE C.C_CURRENCY_ID = O.C_CURRENCY_ID
-                        AND O.C_ORDER_ID = TO_NUMBER(?))) AS TOTAL FROM DUAL
+                        AND O.C_ORDER_ID    = ?)) AS TOTAL FROM DUAL
     </Sql>
     <Parameter name="dateordered"/>
     <Parameter name="cBpartnerId"/>
@@ -81,12 +81,12 @@
   <SqlMethod name="getOffersPriceInvoice" type="preparedStatement" return="String" default="0">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT ROUND(M_GET_OFFERS_PRICE(TO_DATE(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?)),
+      SELECT ROUND(M_GET_OFFERS_PRICE(TO_DATE(?),?,?,TO_NUMBER(?), TO_NUMBER(?), ?),
                     (SELECT PRICEPRECISION 
                        FROM C_CURRENCY C,
                             C_INVOICE  I 
                       WHERE C.C_CURRENCY_ID = I.C_CURRENCY_ID
-                        AND I.C_INVOICE_ID = TO_NUMBER(?))) AS TOTAL FROM DUAL
+                        AND I.C_INVOICE_ID  = ?)) AS TOTAL FROM DUAL
     </Sql>
     <Parameter name="dateordered"/>
     <Parameter name="cBpartnerId"/>
@@ -101,12 +101,12 @@
    <SqlMethod name="getOffersStdPrice" type="preparedStatement" return="String" default="0">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-	  SELECT ROUND(M_GET_OFFERS_STD_PRICE(TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_DATE(?), TO_NUMBER(?), TO_NUMBER(?)),
+	  SELECT ROUND(M_GET_OFFERS_STD_PRICE(?,TO_NUMBER(?),?,TO_DATE(?), TO_NUMBER(?), ?),
                     (SELECT PRICEPRECISION 
                        FROM C_CURRENCY C,
                             C_ORDER    O 
                       WHERE C.C_CURRENCY_ID = O.C_CURRENCY_ID
-                        AND O.C_ORDER_ID = TO_NUMBER(?))) as TOTAL FROM DUAL
+                        AND O.C_ORDER_ID    = ?)) as TOTAL FROM DUAL
 	 </Sql>
     <Parameter name="cBpartnerId"/>
 	<Parameter name="pricestd"/>
@@ -120,12 +120,12 @@
   <SqlMethod name="getOffersStdPriceInvoice" type="preparedStatement" return="String" default="0">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-	  SELECT ROUND(M_GET_OFFERS_STD_PRICE(TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_DATE(?), TO_NUMBER(?), TO_NUMBER(?)),
+	  SELECT ROUND(M_GET_OFFERS_STD_PRICE(?,TO_NUMBER(?),?,TO_DATE(?), TO_NUMBER(?), ?),
                     (SELECT PRICEPRECISION 
                        FROM C_CURRENCY C,
                             C_INVOICE  I 
                       WHERE C.C_CURRENCY_ID = I.C_CURRENCY_ID
-                        AND I.C_INVOICE_ID    = TO_NUMBER(?))) as TOTAL FROM DUAL
+                        AND I.C_INVOICE_ID    = ?)) as TOTAL FROM DUAL
 	 </Sql>
     <Parameter name="cBpartnerId"/>
 	<Parameter name="pricestd"/>

@@ -47,7 +47,7 @@
 	<PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
 	<PARAMETER id="paramLanguage" name="language" default=""/>
 
-	<PARAMETER id="paramDirection" name="direction" default=""/>
+	<PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="processHelp" name="help" replaceCharacters="htmlHelp" default=""/>
   <PARAMETER id="paramDateFrom" name="dateFrom" default="" attribute="value"/>
   <PARAMETER id="paramDateTo" name="dateTo" default="" attribute="value"/>

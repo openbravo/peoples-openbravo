@@ -48,9 +48,9 @@
     <Parameter name="adOrgClient" type="replace" optional="true" after="AND S.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[ AND S.DATEREPORT >= TO_DATE(?)]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[ AND S.DATEREPORT < TO_DATE(?)]]></Parameter>
-    <Parameter name="cBpartner" optional="true" after="AND 1=1"><![CDATA[ AND S_L.C_BPARTNER_ID = TO_NUMBER(?)]]></Parameter>
-    <Parameter name="partner" optional="true" after="AND 1=1"><![CDATA[ AND S.C_BPARTNER_ID = TO_NUMBER(?)]]></Parameter>
-    <Parameter name="project" optional="true" after="AND 1=1"><![CDATA[ AND S_L.C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="cBpartner" optional="true" after="AND 1=1"><![CDATA[ AND S_L.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="partner" optional="true" after="AND 1=1"><![CDATA[ AND S.C_BPARTNER_ID = ?]]></Parameter>
+    <Parameter name="project" optional="true" after="AND 1=1"><![CDATA[ AND S_L.C_PROJECT_ID = ?]]></Parameter>
     <Parameter name="time" optional="true" after="AND 1=1"><![CDATA[ AND S_L.ISTIMEREPORT = ?]]></Parameter>
     <Parameter name="expense" optional="true" after="AND 1=1"><![CDATA[ AND S_L.ISTIMEREPORT = ?]]></Parameter>
   </SqlMethod>
@@ -61,7 +61,7 @@
     <![CDATA[
       SELECT C_BPARTNER.NAME
       FROM C_BPARTNER
-      WHERE C_BPARTNER.C_BPARTNER_ID = TO_NUMBER(?)
+      WHERE C_BPARTNER.C_BPARTNER_ID = ?
      ]]></Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>

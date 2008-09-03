@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_ORDER_STATUS">
     <function name="C_ORDER_STATUS" type="CHAR">
-      <parameter name="p_orderid" type="NUMERIC" mode="in">
+      <parameter name="p_orderid" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -24,7 +24,7 @@
   v_OrderStatus       CHAR(2) ;
   v_CountNotDelivered NUMBER;
   v_CountNotInvoiced  NUMBER;
-  v_CountNotPaid      NUMBER;
+  v_CountNotPaid      varchar2(32);
 BEGIN
   SELECT MAX(Docstatus)
   INTO v_OrderStatus

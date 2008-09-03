@@ -29,7 +29,7 @@
       <![CDATA[
         SELECT pl.IsTaxIncluded, pl.C_Currency_ID 
         FROM M_PriceList pl 
-        WHERE pl.M_PriceList_ID = TO_NUMBER(?)
+        WHERE pl.M_PriceList_ID=?
       ]]>
     </Sql>
     <Parameter name="mPricelistId"/>

@@ -34,7 +34,7 @@
         AND WN.ISACTIVE = 'Y' 
         AND WN.AD_CLIENT_ID IN ('1') 
         AND WN.AD_ORG_ID IN ('1') 
-        AND WN.AD_WF_NODE_ID = TO_NUMBER(?) 
+        AND WN.AD_WF_NODE_ID = ? 
       ]]>
     </Sql>
     <Parameter name="adClientId" optional="true" type="replace" after="AND WN.AD_CLIENT_ID IN (" text="'1'"/>
@@ -54,7 +54,7 @@
         AND WN.ISACTIVE = 'Y' 
         AND WN.AD_CLIENT_ID IN ('1') 
         AND WN.AD_ORG_ID IN ('1') 
-        AND WN.AD_WF_NODE_ID = TO_NUMBER(?) 
+        AND WN.AD_WF_NODE_ID = ? 
       ]]>
     </Sql>
     <Parameter name="adLanguage"/>
@@ -66,7 +66,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT AD_WF_NODE_ID FROM AD_WORKFLOW WHERE AD_WORKFLOW_ID = TO_NUMBER(?) 
+        SELECT AD_WF_NODE_ID FROM AD_WORKFLOW WHERE AD_WORKFLOW_ID = ? 
       ]]>
     </Sql>
     <Parameter name="adWorkflowId"/>
@@ -78,7 +78,7 @@
         SELECT W.AD_WF_NODE_ID, W.ACTION, W.NAME, W.AD_FORM_ID, W.AD_PROCESS_ID, W.AD_TASK_ID, 
         W.AD_WINDOW_ID, W.WORKFLOW_ID, XPOSITION, YPOSITION
         FROM AD_WF_NODE W
-        WHERE W.AD_WF_NODE_ID = TO_NUMBER(?) 
+        WHERE W.AD_WF_NODE_ID = ? 
       ]]>
     </Sql>
     <Parameter name="adWfNodeId"/>
@@ -91,7 +91,7 @@
         W.AD_WINDOW_ID, W.WORKFLOW_ID, XPOSITION, YPOSITION
         FROM AD_WF_NODE W left join AD_WF_NODE_TRL WT on W.AD_WF_NODE_ID = WT.AD_WF_NODE_ID 
                                                     AND WT.AD_LANGUAGE  = ? 
-        WHERE  W.AD_WF_NODE_ID = TO_NUMBER(?) 
+        WHERE  W.AD_WF_NODE_ID = ? 
       ]]>
     </Sql>
     <Parameter name="adLanguage"/>
@@ -101,7 +101,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT NAME, HELP FROM AD_WORKFLOW WHERE AD_WORKFLOW_ID = TO_NUMBER(?) 
+        SELECT NAME, HELP FROM AD_WORKFLOW WHERE AD_WORKFLOW_ID = ? 
       ]]>
     </Sql>
     <Parameter name="adWorkflowId"/>
@@ -113,7 +113,7 @@
         SELECT COALESCE(WT.NAME, W.NAME) AS NAME, COALESCE(WT.HELP, W.HELP) AS HELP 
         FROM AD_WORKFLOW W left join AD_WORKFLOW_TRL WT on W.AD_WORKFLOW_ID = WT.AD_WORKFLOW_ID 
                                                       AND WT.AD_LANGUAGE = ? 
-        WHERE W.AD_WORKFLOW_ID = TO_NUMBER(?) 
+        WHERE W.AD_WORKFLOW_ID = ? 
       ]]>
     </Sql>
     <Parameter name="adLanguage"/>

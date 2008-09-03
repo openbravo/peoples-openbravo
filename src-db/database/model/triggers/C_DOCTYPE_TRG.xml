@@ -32,13 +32,13 @@
   INSERT
   INTO C_DocType_Trl
     (
-      C_DocType_ID, AD_Language, AD_Client_ID,
+      C_DocType_Trl_ID, C_DocType_ID, AD_Language, AD_Client_ID,
       AD_Org_ID, IsActive, Created,
       CreatedBy, Updated, UpdatedBy,
       Name, PrintName, DocumentNote,
       IsTranslated
     )
-  SELECT :new.C_DocType_ID,
+  SELECT get_uuid(), :new.C_DocType_ID,
     AD_Language, :new.AD_Client_ID, :new.AD_Org_ID,
     :new.IsActive, :new.Created, :new.CreatedBy,
     :new.Updated, :new.UpdatedBy, :new.Name,

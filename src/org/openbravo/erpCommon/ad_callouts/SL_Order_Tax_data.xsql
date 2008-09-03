@@ -29,7 +29,7 @@
       <![CDATA[
       SELECT C_Order.BillTo_ID, C_Order.DateOrdered, C_Order.C_Project_ID
       FROM C_Order
-      WHERE C_Order_ID = TO_NUMBER(?)
+      WHERE C_Order_ID = ?
       ]]>
     </Sql>
     <Parameter name="cOrderId"/>

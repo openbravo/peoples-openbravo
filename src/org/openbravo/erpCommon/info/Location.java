@@ -115,10 +115,10 @@ LocationSearchData getEditVariables(VariablesSecureApp vars) {
   String generateResult(LocationSearchData data) throws IOException, ServletException {
     StringBuffer html = new StringBuffer();
     
-    html.append("\nfunction depurarSelector() {\n");
-    html.append("var clave = \"" + data.cLocationId + "\";\n");
-    html.append("var texto = \"" + Replace.replace(Replace.replace(data.name, "\\", "\\\\"), "\"", "\\\\\\\"") + "\";\n");
-    html.append("parent.opener.closeSearch(\"SAVE\", clave, texto);\n");
+    html.append("\nfunction validateSelector() {\n");
+    html.append("var key = \"" + data.cLocationId + "\";\n");
+    html.append("var text = \"" + Replace.replace(Replace.replace(data.name, "\\", "\\\\"), "\"", "\\\\\\\"") + "\";\n");
+    html.append("parent.opener.closeSearch(\"SAVE\", key, text);\n");
     html.append("}\n");
     return html.toString();
   }
@@ -151,8 +151,8 @@ LocationSearchData getEditVariables(VariablesSecureApp vars) {
       if (log4j.isDebugEnabled()) log4j.debug("2 Location: "+strcLocationId);
       data = LocationSearchData.select(this, vars.getLanguage(), strcLocationId);
     }
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     // Get the country id; default
     xmlDocument.setData("structure1", data);
@@ -195,8 +195,8 @@ LocationSearchData getEditVariables(VariablesSecureApp vars) {
       throw new ServletException(ex);
     }
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();

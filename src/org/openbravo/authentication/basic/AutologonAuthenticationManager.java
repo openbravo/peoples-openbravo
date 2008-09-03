@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationManager;
-import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.secureApp.SeguridadData;

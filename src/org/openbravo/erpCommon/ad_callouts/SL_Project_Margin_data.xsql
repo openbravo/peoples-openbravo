@@ -30,7 +30,7 @@
       FROM C_Project, M_PriceList, C_Currency 
       WHERE C_Project.M_PriceList_ID = M_PriceList.M_PriceList_ID
       AND M_PriceList.C_Currency_ID = C_Currency.C_Currency_ID
-      AND C_Project.C_Project_ID = TO_NUMBER(?)
+      AND C_Project.C_Project_ID = ?
     </Sql>
     <Parameter name="cProjectId"/>
   </SqlMethod>

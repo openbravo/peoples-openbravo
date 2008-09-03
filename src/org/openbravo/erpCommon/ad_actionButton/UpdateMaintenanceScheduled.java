@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -45,40 +45,26 @@ public class UpdateMaintenanceScheduled extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     if (vars.commandIn("DEFAULT")) {
-      vars.getRequestGlobalVariable("inpmaMaintPartId", "UpdateMaintenanceScheduled|inpmaMaintPartId");
-      vars.getGlobalVariable("inpwindowId", "UpdateMaintenanceScheduled|windowId", "");
-      vars.getGlobalVariable("inpTabId", "UpdateMaintenanceScheduled|adTabId", "");
       vars.getRequestGlobalVariable("inppartdate", "UpdateMaintenanceScheduled|inppartdate");
 
-      vars.setSessionValue("UpdateMaintenanceScheduled|adProcessId", "800062");
-
-      printPage_FS(response, vars);
-    } else if (vars.commandIn("FRAME2")) {
-      printPage_F2(response, vars);
-    } else if (vars.commandIn("FRAME1")) {
-      String strWindowId = vars.getGlobalVariable("inpWindowId", "UpdateMaintenanceScheduled|windowId");
-      String strKey = vars.getGlobalVariable("inpmaMaintPartId", "UpdateMaintenanceScheduled|inpmaMaintPartId");
-      String strTabId = vars.getGlobalVariable("inpTabId", "UpdateMaintenanceScheduled|adTabId");
-      String strProcessId = vars.getGlobalVariable("inpadProcessId", "UpdateMaintenanceScheduled|adProcessId");
-      String strPartDate = vars.getRequestGlobalVariable("inppartdate", "UpdateMaintenanceScheduled|inppartdate");
-      vars.removeSessionValue("UpdateMaintenanceScheduled|windowId");
-      vars.removeSessionValue("UpdateMaintenanceScheduled|adTabId");
-      //vars.removeSessionValue("UpdateMaintenanceScheduled|adProcessId");
+      String strWindowId = vars.getStringParameter("inpwindowId");
+      String strKey = vars.getRequiredStringParameter("inpmaMaintPartId");
+      String strTabId = vars.getStringParameter("inpTabId");
+      String strPartDate = vars.getRequiredStringParameter("inppartdate");
       //vars.removeSessionValue("UpdateMaintenanceScheduled|inpmaMaintScheduledId");
       //vars.removeSessionValue("UpdateMaintenanceScheduled|inppartdate");
 
-      printPageDataSheet(response, vars, strKey, strWindowId, strTabId, strProcessId, strPartDate, strPartDate, null);
+      printPageDataSheet(response, vars, strKey, strWindowId, strTabId, strPartDate, strPartDate, null);
     } else if (vars.commandIn("FIND")) {
-      String strWindowId = vars.getGlobalVariable("inpWindowId", "UpdateMaintenanceScheduled|windowId");
-      String strKey = vars.getGlobalVariable("inpmaMaintPartId", "UpdateMaintenanceScheduled|inpmaMaintPartId");
-      String strTabId = vars.getGlobalVariable("inpTabId", "UpdateMaintenanceScheduled|adTabId");
-      String strProcessId = vars.getGlobalVariable("inpadProcessId", "UpdateMaintenanceScheduled|adProcessId");
-      String strPartDateFrom = vars.getRequestGlobalVariable("inpPartDateFrom", "UpdateMaintenanceScheduled|inpPartDateFrom");
-      String strPartDateTo = vars.getRequestGlobalVariable("inpPartDateTo", "UpdateMaintenanceScheduled|inpPartDateTo");
-      String strMaintType = vars.getRequestGlobalVariable("inpMaintType", "UpdateMaintenanceScheduled|inpMaintType");
+      String strWindowId = vars.getRequiredStringParameter("inpWindowId");
+      String strKey = vars.getRequiredStringParameter("inpmaMaintPartId");
+      String strTabId = vars.getStringParameter("inpTabId");
+      String strPartDateFrom = vars.getStringParameter("inpPartDateFrom");
+      String strPartDateTo = vars.getStringParameter("inpPartDateTo");
+      String strMaintType = vars.getStringParameter("inpMaintType");
 
 
-      printPageDataSheet(response, vars, strKey, strWindowId, strTabId, strProcessId, strPartDateFrom, strPartDateTo, strMaintType);
+      printPageDataSheet(response, vars, strKey, strWindowId, strTabId, strPartDateFrom, strPartDateTo, strMaintType);
     } else if (vars.commandIn("SAVE")) {
       String strKey = vars.getStringParameter("inpmaMaintPartId");
       String strWindowId = vars.getStringParameter("inpWindowId");
@@ -95,31 +81,7 @@ public class UpdateMaintenanceScheduled extends HttpSecureAppServlet {
     } else pageErrorPopUp(response);
   }
 
-
-  void printPage_FS(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: FrameSet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/UpdateMaintenanceScheduled_FS").createXmlDocument();
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-    if (log4j.isDebugEnabled()) log4j.debug("Output: FrameSet - out");
-  }
-
-  void printPage_F2(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Frame2");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/UpdateMaintenanceScheduled_F2").createXmlDocument();
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Frame2 - Out");
-  }
-
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strKey, String strWindowId, String strTabId, String strProcessId, String strPartDateFrom, String strPartDateTo, String strMaintType) throws IOException, ServletException {
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strKey, String strWindowId, String strTabId, String strPartDateFrom, String strPartDateTo, String strMaintType) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: values ");
     String[] discard = {""};
     UpdateMaintenanceScheduledData[] data = null;
@@ -127,10 +89,10 @@ public class UpdateMaintenanceScheduled extends HttpSecureAppServlet {
     if (strPartDateTo == null) strPartDateTo = "";
     data = UpdateMaintenanceScheduledData.select(this, vars.getLanguage(), strPartDateFrom, strPartDateTo, strMaintType);
 
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/UpdateMaintenanceScheduled_F1", discard).createXmlDocument();
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/UpdateMaintenanceScheduled", discard).createXmlDocument();
     
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("key", strKey);
     xmlDocument.setParameter("windowId", strWindowId);

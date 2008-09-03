@@ -4,10 +4,10 @@
       <parameter name="p_qty" type="NUMERIC" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_uomfrom_id" type="NUMERIC" mode="in">
+      <parameter name="p_uomfrom_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_uomto_id" type="NUMERIC" mode="in">
+      <parameter name="p_uomto_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_stdprecision" type="VARCHAR" mode="in">

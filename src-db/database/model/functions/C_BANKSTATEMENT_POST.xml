@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_BANKSTATEMENT_POST">
     <function name="C_BANKSTATEMENT_POST" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -34,13 +34,13 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Result NUMBER;
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
-  v_User NUMBER;
-  v_DPManagementDocType_ID NUMBER;
-  v_DPMId NUMBER;
-  v_DPMLineId NUMBER;
+  v_Record_ID VARCHAR2(32);
+  v_User VARCHAR2(32);
+  v_DPManagementDocType_ID VARCHAR2(32);
+  v_DPMId varchar2(32);
+  v_DPMLineId varchar2(32);
    --Added by P.SAROBE
-    v_C_Debt_Payment_Id NUMBER;
+    v_C_Debt_Payment_ID VARCHAR2(32);
  v_documentno_Settlement VARCHAR2(40);
  v_documentno_Dp_Management VARCHAR2(50);
  v_column_identifier VARCHAR2(200);
@@ -50,9 +50,9 @@
  v_dateBankstatement DATE;
  v_nameCash VARCHAR2 (60);
  v_dateCash DATE;
- v_Bankstatementline_ID NUMBER;
- v_CashLine_ID NUMBER;
- v_Settlement_Cancel_ID NUMBER;
+ v_Bankstatementline_ID VARCHAR2(32);
+ v_CashLine_ID VARCHAR2(32);
+ v_Settlement_Cancel_ID VARCHAR2(32);
  v_ispaid CHAR(1);
  --Finish added by P.Sarobe
   -- Parameter
@@ -64,15 +64,15 @@
     v_Processed CHAR(1) ;
     v_Posted CHAR(1) ;
     v_count NUMBER;
-    v_SettlementDocType_ID NUMBER(10) ;
-    v_settlementID NUMBER(10) ;
+    v_SettlementDocType_ID VARCHAR2(32) ;
+    v_settlementID varchar2(32) ;
     v_DocumentNo NUMBER(10) ;
     v_line C_CASHLINE.LINE%TYPE;
     -- BankAccount
-    v_BA_Currency_ID NUMBER(10) ;
+    v_BA_Currency_ID VARCHAR2(32) ;
     v_BS_Date DATE;
-    v_AD_Org_ID NUMBER;
-    v_AD_Client_ID NUMBER(10) ;
+    v_AD_Org_ID VARCHAR2(32);
+    v_AD_Client_ID VARCHAR2(32) ;
     FINISH_PROCESS BOOLEAN:=false;
   BEGIN
     --  Update AD_PInstance
@@ -135,7 +135,7 @@
              WHERE C_BANKSTATEMENT_ID = v_Record_ID)
             AND S.DOCUMENTNO LIKE '*BSP*%') LOOP
       -- Reset fact acct
-     DELETE FROM FACT_ACCT WHERE AD_TABLE_ID = 800019 AND RECORD_ID = Cur_AutomaticSettlementCancel.C_SETTLEMENT_ID;
+     DELETE FROM FACT_ACCT WHERE AD_TABLE_ID = '800019' AND RECORD_ID = Cur_AutomaticSettlementCancel.C_SETTLEMENT_ID;
      UPDATE C_SETTLEMENT SET POSTED='N' WHERE C_SETTLEMENT_ID = Cur_AutomaticSettlementCancel.C_SETTLEMENT_ID;
 
 
@@ -164,7 +164,7 @@
                                       FROM C_DP_MANAGEMENT
                                      WHERE BSL.C_DP_MANAGEMENT_ID=C_DP_MANAGEMENT.C_DP_MANAGEMENT_ID)) LOOP
     begin
-      DELETE FROM FACT_ACCT WHERE AD_TABLE_ID = 800176 AND RECORD_ID = CUR_MANAGEMENTLINES.C_DP_MANAGEMENT_ID;
+      DELETE FROM FACT_ACCT WHERE AD_TABLE_ID = '800176' AND RECORD_ID = CUR_MANAGEMENTLINES.C_DP_MANAGEMENT_ID;
       UPDATE C_DP_MANAGEMENT SET POSTED='N' WHERE C_DP_MANAGEMENT_ID = CUR_MANAGEMENTLINES.C_DP_MANAGEMENT_ID;
 
       C_DP_MANAGEMENT_POST(NULL, CUR_MANAGEMENTLINES.C_DP_MANAGEMENT_ID);
@@ -549,7 +549,7 @@
       */
       DECLARE
         v_Total NUMBER:=0;
-        v_Currency_ID NUMBER(10):=NULL;
+        v_Currency_ID VARCHAR2(32):=NULL;
         -- Lines
         Cur_Lines RECORD;
       BEGIN

@@ -27,7 +27,7 @@
       <Sql>
         SELECT ARGNO AS argno, ARGHELP1 AS arghelp1, ARGHELP2 AS arghelp2, ARGHELP3 AS arghelp3
         FROM AT_Command
-        WHERE AT_Command_ID = TO_NUMBER(?)
+        WHERE AT_Command_Id = ?
       </Sql>
       <Parameter name="atCommandId"/>
    </SqlMethod>
@@ -35,7 +35,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
         INSERT INTO AT_Line (AT_Line_ID, AD_Client_ID, AD_Org_ID, Isactive, Created, Createdby, Updated, Updatedby, AT_Test_ID, AT_Command_ID, Seqno, Arg1, Arg2, Arg3, Type, Argno, Arghelp1, Arghelp2, Arghelp3, child_test)
-        VALUES ( TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),'Y',now(),TO_NUMBER(?),now(),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),?,?,?,?,TO_NUMBER(?),?,?,?,'')
+        VALUES ( ?,?,?,'Y',now(),?,now(),?,?,?,?,?,?,?,?,?,?,?,?,'')
       </Sql>
       <Parameter name="AT_Line_ID"/>
       <Parameter name="AD_Client_ID"/>
@@ -59,7 +59,7 @@
       <Sql>
         SELECT count(*)
         FROM AT_Line
-        WHERE AT_Test_ID = TO_NUMBER(?)
+        WHERE AT_Test_Id = ?
       </Sql>
       <Parameter name="atTestId"/>
    </SqlMethod>

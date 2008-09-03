@@ -1,45 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--
-************************
-0. Core Range.
-************************
--->
-<!--1000100001**************--><AD_PREFERENCE>
-<!--1000100001 AD_PREFERENCE_ID-->
-<!--1000100001-->              <AD_PREFERENCE_ID><![CDATA[1000100001]]></AD_PREFERENCE_ID>
-<!--1000100001 AD_CLIENT_ID-->
-<!--1000100001-->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
-<!--1000100001 AD_ORG_ID-->
-<!--1000100001-->              <AD_ORG_ID><![CDATA[1000000]]></AD_ORG_ID>
-<!--1000100001 ISACTIVE-->
-<!--1000100001-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1000100001 CREATED-->
-<!--1000100001-->              <CREATED><![CDATA[2008-01-18 14:52:15.0]]></CREATED>
-<!--1000100001 CREATEDBY-->
-<!--1000100001-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--1000100001 UPDATED-->
-<!--1000100001-->              <UPDATED><![CDATA[2008-01-18 15:24:14.0]]></UPDATED>
-<!--1000100001 UPDATEDBY-->
-<!--1000100001-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--1000100001 AD_WINDOW_ID-->
-<!--1000100001-->              <AD_WINDOW_ID><![CDATA[800004]]></AD_WINDOW_ID>
-<!--1000100001 ATTRIBUTE-->
-<!--1000100001-->              <ATTRIBUTE><![CDATA[C_DocTypeTarget_ID]]></ATTRIBUTE>
-<!--1000100001 VALUE-->
-<!--1000100001-->              <VALUE><![CDATA[1000026]]></VALUE>
-<!--1000100001**************--></AD_PREFERENCE>
-
-<!--
-************************
-0. End of Core Range.
-************************
--->
-<!--
-************************
-1. Custom Range.
-************************
--->
 <!--1000000**************--><AD_PREFERENCE>
 <!--1000000 AD_PREFERENCE_ID-->
 <!--1000000-->              <AD_PREFERENCE_ID><![CDATA[1000000]]></AD_PREFERENCE_ID>
@@ -311,9 +271,29 @@
 <!--1000010-->              <VALUE><![CDATA[100]]></VALUE>
 <!--1000010**************--></AD_PREFERENCE>
 
-<!--
-************************
-1. End of Custom Range.
-************************
--->
+<!--1000100001**************--><AD_PREFERENCE>
+<!--1000100001 AD_PREFERENCE_ID-->
+<!--1000100001-->              <AD_PREFERENCE_ID><![CDATA[1000100001]]></AD_PREFERENCE_ID>
+<!--1000100001 AD_CLIENT_ID-->
+<!--1000100001-->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!--1000100001 AD_ORG_ID-->
+<!--1000100001-->              <AD_ORG_ID><![CDATA[1000000]]></AD_ORG_ID>
+<!--1000100001 ISACTIVE-->
+<!--1000100001-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000100001 CREATED-->
+<!--1000100001-->              <CREATED><![CDATA[2008-01-18 14:52:15.0]]></CREATED>
+<!--1000100001 CREATEDBY-->
+<!--1000100001-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--1000100001 UPDATED-->
+<!--1000100001-->              <UPDATED><![CDATA[2008-01-18 15:24:14.0]]></UPDATED>
+<!--1000100001 UPDATEDBY-->
+<!--1000100001-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1000100001 AD_WINDOW_ID-->
+<!--1000100001-->              <AD_WINDOW_ID><![CDATA[800004]]></AD_WINDOW_ID>
+<!--1000100001 ATTRIBUTE-->
+<!--1000100001-->              <ATTRIBUTE><![CDATA[C_DocTypeTarget_ID]]></ATTRIBUTE>
+<!--1000100001 VALUE-->
+<!--1000100001-->              <VALUE><![CDATA[1000026]]></VALUE>
+<!--1000100001**************--></AD_PREFERENCE>
+
 </data>

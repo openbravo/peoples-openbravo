@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_YEARPERIODS">
     <function name="C_YEARPERIODS" type="NULL">
-      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -32,19 +32,19 @@
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
-    v_Year_ID NUMBER;
+    v_Year_ID VARCHAR2(32);
     --
-    v_NextNo NUMBER;
+    v_NextNo VARCHAR2(32);
     v_MonthNo NUMBER;
     v_StartDate DATE;
     Test NUMBER;
     v_ResultStr VARCHAR(300) ;
     --  C_Year Variables
-    v_Client_ID NUMBER;
-    v_Org_ID NUMBER;
-    v_Calendar_ID NUMBER;
+    v_Client_ID VARCHAR2(32);
+    v_Org_ID VARCHAR2(32);
+    v_Calendar_ID VARCHAR2(32);
     v_Year_Str VARCHAR(20) ;
-    v_User_ID NUMBER;
+    v_User_ID VARCHAR2(32);
   BEGIN
     --  Update AD_PInstance
     --  DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing');

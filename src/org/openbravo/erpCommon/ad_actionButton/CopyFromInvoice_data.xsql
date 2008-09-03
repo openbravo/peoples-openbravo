@@ -28,7 +28,7 @@
     <Sql>
       <![CDATA[
         SELECT C_InvoiceLine_ID FROM C_InvoiceLine 
-        WHERE C_Invoice_ID = to_number(?) 
+        WHERE C_Invoice_ID = ? 
         AND AD_CLIENT_ID IN ('1') 
         AND AD_ORG_ID IN ('1') 
         AND ISACTIVE = 'Y'
@@ -48,12 +48,12 @@
         S_RESOURCEASSIGNMENT_ID, TAXAMT, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION, QUANTITYORDER, M_PRODUCT_UOM_ID, 
         PRICESTD)
         SELECT TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', now(), TO_NUMBER(?), now(), TO_NUMBER(?),'', '', 
-        (SELECT COALESCE(MAX(LINE),0)+10 FROM C_InvoiceLine WHERE C_InvoiceLine_ID = to_number(?)), DESCRIPTION, M_PRODUCT_ID, 
+        (SELECT COALESCE(MAX(LINE),0)+10 FROM C_InvoiceLine WHERE C_InvoiceLine_ID = ?), DESCRIPTION, M_PRODUCT_ID, 
         QTYINVOICED, PRICELIST, PRICEACTUAL, PRICELIMIT, LINENETAMT, C_CHARGE_ID, CHARGEAMT, C_UOM_ID, C_TAX_ID, 
         S_RESOURCEASSIGNMENT_ID, TAXAMT, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION, QUANTITYORDER, M_PRODUCT_UOM_ID, 
         PRICESTD
         FROM C_INVOICELINE 
-        WHERE C_INVOICELINE_ID = to_number(?) 
+        WHERE C_INVOICELINE_ID = ? 
       ]]>
     </Sql>
     <Parameter name="cNewInvoiceId"/>

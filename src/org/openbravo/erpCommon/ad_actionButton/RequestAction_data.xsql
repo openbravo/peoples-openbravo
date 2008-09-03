@@ -30,7 +30,7 @@
         SELECT AD_Client_ID, DocumentNo, ActionType, Summary, MailSubject,MailText, 
         C_BPartner_ID,AD_User_ID, SalesRep_ID, UpdatedBy, '' AS EMail, '' AS EMailUser, '' AS EMailUserPw, '' AS NAME 
         FROM R_Request 
-        WHERE R_Request_ID = TO_NUMBER(?) 
+        WHERE R_Request_ID = ? 
       ]]>
     </Sql>
     <Parameter name="rRequestId"/>
@@ -39,7 +39,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT EMail, EMailUser, EMailUserPw, Name FROM AD_User WHERE AD_User_ID = TO_NUMBER(?)
+        SELECT EMail, EMailUser, EMailUserPw, Name FROM AD_User WHERE AD_User_ID=?
       ]]>
     </Sql>
     <Parameter name="adUserId"/>
@@ -48,7 +48,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT RequestEMail AS EMail, RequestUser AS EMailUser, RequestUserPw AS EMailUserPw FROM AD_Client WHERE AD_Client_ID = TO_NUMBER(?)
+        SELECT RequestEMail AS EMail, RequestUser AS EMailUser, RequestUserPw AS EMailUserPw FROM AD_Client WHERE AD_Client_ID=?
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
@@ -59,17 +59,17 @@
       <![CDATA[
         SELECT bpc.EMail AS NAME 
         FROM C_BPartner bp INNER JOIN AD_User bpc ON (bp.C_BPartner_ID=bpc.C_BPartner_ID) 
-        WHERE bp.C_BPartner_ID = TO_NUMBER(?) 
+        WHERE bp.C_BPartner_ID = ? 
       ]]>
     </Sql>
-    <Parameter name="adUserId" optional="true" after="WHERE " text=" bpc.AD_User_ID = TO_NUMBER(?) AND "/>
+    <Parameter name="adUserId" optional="true" after="WHERE " text=" bpc.AD_User_ID = ? AND "/>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
   <SqlMethod name="selectSMTPHost" type="preparedStatement" connection="true" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT SMTPHost AS NAME FROM AD_Client WHERE AD_Client_ID = TO_NUMBER(?)
+        SELECT SMTPHost AS NAME FROM AD_Client WHERE AD_Client_ID=?
       ]]>
     </Sql>
     <Parameter name="adClientId"/>
@@ -78,7 +78,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE R_Request SET Result=? WHERE R_Request_ID = TO_NUMBER(?)
+        UPDATE R_Request SET Result=? WHERE R_Request_ID=?
       ]]>
     </Sql>
     <Parameter name="resulttxt"/>

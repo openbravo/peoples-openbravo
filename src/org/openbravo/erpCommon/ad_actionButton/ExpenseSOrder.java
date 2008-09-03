@@ -83,10 +83,9 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
     myMessage = new OBError();
     myMessage.setTitle("");
     String strCust = "";
-    
     try {
       conn = getTransactionConnection();
-      ExpenseSOrderData[] data = ExpenseSOrderData.select(this, strBPartner, strDatefrom, DateTimeData.nDaysAfter(this, strDateto,"1"), Utility.getContext(this, vars, "#User_Client", "ExpenseSOrder"), strOrganization.equals("")?Utility.getContext(this, vars, "#User_Org", "ExpenseSOrder"):strOrganization);
+      ExpenseSOrderData[] data = ExpenseSOrderData.select(this, strBPartner, strDatefrom, DateTimeData.nDaysAfter(this, strDateto,"1"), Utility.getContext(this, vars, "#User_Client", "ExpenseSOrder"), strOrganization.equals("")?Utility.getContext(this, vars, "#User_Org", "ExpenseSOrder"):Utility.stringList(strOrganization));
       String strOldOrganization = "-1";
       String strOldBPartner = "-1";
       String strOldProject = "-1";
@@ -353,8 +352,9 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
       xmlDocument.setParameter("toolbar", toolbar.toString()); 
       
       xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-      xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-      xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("description", strDescription);
       xmlDocument.setParameter("description", strDescription);
       xmlDocument.setParameter("help", strHelp);
       xmlDocument.setParameter("Bpartnerdescription", ExpenseSOrderData.selectBpartner(this, strBPartner));

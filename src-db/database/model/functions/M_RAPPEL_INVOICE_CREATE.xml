@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_RAPPEL_INVOICE_CREATE">
     <function name="M_RAPPEL_INVOICE_CREATE" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -26,25 +26,25 @@
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
-    v_Record_ID NUMBER:=NULL;
-    v_AD_User_ID NUMBER:=NULL;
+    v_Record_ID VARCHAR2(32):=NULL;
+    v_AD_User_ID VARCHAR2(32):=NULL;
     v_LimitDate DATE;
     --
-    v_invoiceId NUMBER:=NULL;
-    v_rappelInvoiceId NUMBER:=NULL;
-    v_invoicelineId NUMBER:=NULL;
+    v_invoiceId varchar2(32):=NULL;
+    v_rappelInvoiceId varchar2(32):=NULL;
+    v_invoicelineId varchar2(32):=NULL;
     v_NoRecords NUMBER:=0;
-    v_DocType_ID NUMBER;
+    v_DocType_ID VARCHAR2(32);
     v_DocumentNo VARCHAR2(40) ;
     v_seqno NUMBER(10) ;
     v_line NUMBER(10):=0;
     v_paymentRule CHAR(1) ;
-    v_paymenttermId NUMBER(10) ;
-    v_pricelistId NUMBER(10) ;
+    v_paymenttermId varchar2(32) ;
+    v_pricelistId varchar2(32) ;
     v_description VARCHAR2(100) ;
     v_validTo DATE;
     v_TotalLines NUMBER;
-    v_RappelID NUMBER;
+    v_RappelID varchar2(32);
     v_Scaled char(1) ;
     v_Discount NUMBER;
     v_Discount1 NUMBER;

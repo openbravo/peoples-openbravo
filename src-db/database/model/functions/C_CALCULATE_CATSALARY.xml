@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_CALCULATE_CATSALARY">
     <function name="C_CALCULATE_CATSALARY" type="NUMERIC">
-      <parameter name="pcbpartner" type="NUMERIC" mode="in">
+      <parameter name="pcbpartner" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="pdate" type="TIMESTAMP" mode="in">

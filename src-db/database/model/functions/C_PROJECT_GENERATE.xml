@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_PROJECT_GENERATE">
     <function name="C_PROJECT_GENERATE" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -32,12 +32,12 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     -- Parameter Variables
-    v_M_Warehouse_ID NUMBER;
+    v_M_Warehouse_ID VARCHAR2(32);
     --
     v_DocumentNo VARCHAR2(40) ;
     --
@@ -65,7 +65,7 @@
     LOOP
       v_Record_ID:=Cur_Parameter.Record_ID;
       IF(Cur_Parameter.ParameterName='M_Warehouse_ID') THEN
-        v_M_Warehouse_ID:=Cur_Parameter.P_Number;
+        v_M_Warehouse_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  M_Warehouse_ID=' || v_M_Warehouse_ID) ;
       ELSE
         DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
@@ -76,17 +76,17 @@
     TYPE RECORD IS REF CURSOR;
       CUR_Project RECORD;
       CUR_PLines RECORD;
-      v_C_Order_ID NUMBER(10) ;
-      v_C_DocType_ID NUMBER(10) ;
-      v_NextNo NUMBER(10) ;
-      v_M_PriceList_ID NUMBER(10) ;
-      v_C_PaymentTerm_ID NUMBER(10) ;
+      v_C_Order_ID VARCHAR2(32) ;
+      v_C_DocType_ID VARCHAR2(32) ;
+      v_NextNo VARCHAR2(32) ;
+      v_M_PriceList_ID VARCHAR2(32) ;
+      v_C_PaymentTerm_ID VARCHAR2(32) ;
       --
-      v_Line NUMBER(10) ;
+      v_Line VARCHAR2(32) ;
       v_PriceList NUMBER;
       v_PriceLimit NUMBER;
-      v_C_UOM_ID NUMBER(10) ;
-      v_C_Tax_ID NUMBER(10) ;
+      v_C_UOM_ID VARCHAR2(32) ;
+      v_C_Tax_ID VARCHAR2(32) ;
       v_Discount NUMBER;
       v_PriceStd NUMBER;
     BEGIN
@@ -144,8 +144,8 @@
           VALUES
           (
             v_C_Order_ID, v_DocumentNo, CUR_Project.AD_Client_ID, CUR_Project.AD_Org_ID,
-             'Y', now(), 0, now(),
-            0, 'Y', 'DR', 'CO',
+             'Y', now(), '0', now(),
+            '0', 'Y', 'DR', 'CO',
              'N', v_C_DocType_ID, v_C_DocType_ID, CUR_Project.Description,
             CUR_Project.AD_User_ID, CUR_Project.DateContract, CUR_Project.DateContract, CUR_Project.POReference,
             CUR_Project.C_BPartner_ID, CUR_Project.C_BPartner_Location_ID, CUR_Project.C_BPartner_Location_ID, CUR_Project.AD_User_ID,
@@ -181,7 +181,7 @@
           END IF;
           -- Get UOM - Tax -- VERY simplified, but should work in most cases
           v_ResultStr:='NoUOM+Tax';
-          SELECT COALESCE(MAX(C_UOM_ID), 100),
+          SELECT COALESCE(MAX(C_UOM_ID), '100'),
             MAX(C_Tax_ID) -- UOM 100=EA
           INTO v_C_UOM_ID,
             v_C_Tax_ID
@@ -218,8 +218,8 @@
             VALUES
             (
               v_NextNo, v_C_Order_ID, CUR_PLines.AD_Client_ID, CUR_PLines.AD_Org_ID,
-               'Y', now(), 0, now(),
-              0, v_Line, CUR_Project.C_BPartner_ID, CUR_Project.C_BPartner_Location_ID,
+               'Y', now(), '0', now(),
+              '0', v_Line, CUR_Project.C_BPartner_ID, CUR_Project.C_BPartner_Location_ID,
               CUR_Project.DateContract, CUR_PLines.Description, v_M_Warehouse_ID, CUR_PLines.M_Product_ID,
                'N', v_C_UOM_ID, CUR_Project.C_Currency_ID, CUR_PLines.PlannedQty,
               v_PriceList,

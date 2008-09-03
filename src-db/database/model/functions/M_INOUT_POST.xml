@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_INOUT_POST">
     <function name="M_INOUT_POST" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_inout_id" type="NUMERIC" mode="in">
+      <parameter name="p_inout_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -45,8 +45,8 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
-  v_User NUMBER;
+  v_Record_ID VARCHAR2(32);
+  v_User VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -55,9 +55,9 @@
     Cur_InOutLine RECORD;
     --
     v_Result NUMBER:=1;
-    v_AD_Org_ID NUMBER;
-    v_AD_Client_ID NUMBER;
-    v_NextNo NUMBER;
+    v_AD_Org_ID VARCHAR2(32);
+    v_AD_Client_ID VARCHAR2(32);
+    v_NextNo VARCHAR2(32);
     v_Qty NUMBER;
     v_QtyPO NUMBER;
     v_QtySO NUMBER;
@@ -65,9 +65,9 @@
     v_QuantityOrderPO NUMBER;
     v_QuantityOrderSO NUMBER;
     v_RDocumentNo VARCHAR2(40) ;
-    v_RInOut_ID NUMBER;
+    v_RInOut_ID VARCHAR2(32);
     v_IsStocked NUMBER;
-    v_DoctypeReversed_ID NUMBER;
+    v_DoctypeReversed_ID VARCHAR2(32);
     --MODIFIED BY F.IRIAZABAL
     v_QtyOrder NUMBER;
     v_ProductUOM NUMBER;
@@ -150,7 +150,7 @@
         M_Product P
       WHERE M.M_PRODUCT_ID=P.M_PRODUCT_ID
         AND P.M_ATTRIBUTESET_ID IS NOT NULL
-        AND COALESCE(M.M_ATTRIBUTESETINSTANCE_ID, 0) = 0
+        AND COALESCE(M.M_ATTRIBUTESETINSTANCE_ID, '0') = '0'
         AND M.M_INOUT_ID=v_Record_ID;
       IF v_Count<>0 THEN
         RAISE_APPLICATION_ERROR(-20000, '@Inline@ '||v_line||' '||'@productWithoutAttributeSet@') ;
@@ -243,7 +243,7 @@
                   v_NextNo, Cur_InOutLine.M_InOutLine_ID, Cur_InOutLine.AD_Client_ID, Cur_InOutLine.AD_Org_ID,
                    'Y', now(), Cur_InOutLine.UpdatedBy, now(),
                   Cur_InOutLine.UpdatedBy, Cur_InOut.MovementType, Cur_InOutLine.M_Locator_ID, Cur_InOutLine.M_Product_ID,
-                  COALESCE(Cur_InOutLine.M_AttributeSetInstance_ID, 0), Cur_InOut.MovementDate, v_Qty, Cur_InOutLine.M_Product_UOM_ID,
+                  COALESCE(Cur_InOutLine.M_AttributeSetInstance_ID, '0'), Cur_InOut.MovementDate, v_Qty, Cur_InOutLine.M_Product_UOM_ID,
                   v_QuantityOrder, Cur_InOutLine.C_UOM_ID
                 )
                 ;
@@ -286,8 +286,8 @@
               Cur_SLines RECORD;
               Cur_ILines RECORD;
               v_Qty NUMBER;
-              v_MatchPO_ID NUMBER(10) ;
-              v_MatchInv_ID NUMBER(10) ;
+              v_MatchPO_ID VARCHAR2(32) ;
+              v_MatchInv_ID VARCHAR2(32) ;
             BEGIN
               v_ResultStr:='MatchPO';
               FOR Cur_SLines IN
@@ -324,7 +324,7 @@
                   VALUES
                   (
                     v_MatchPO_ID, Cur_SLines.AD_Client_ID, Cur_SLines.AD_Org_ID, 'Y',
-                    now(), 0, now(), 0,
+                    now(), '0', now(), '0',
                     Cur_SLines.M_InOutLine_ID, Cur_SLines.C_OrderLine_ID, Cur_SLines.M_Product_ID, now(),
                     v_Qty, 'N', 'Y', 'N'
                   )
@@ -364,7 +364,7 @@
                   VALUES
                   (
                     v_MatchInv_ID, Cur_ILines.AD_Client_ID, Cur_ILines.AD_Org_ID, 'Y',
-                    now(), 0, now(), 0,
+                    now(), '0', now(), '0',
                     Cur_ILines.M_InOutLine_ID, Cur_ILines.C_InvoiceLine_ID, Cur_ILines.M_Product_ID, now(),
                     v_Qty, 'N', 'Y', 'N'
                   )
@@ -422,8 +422,8 @@
             VALUES
             (
               v_RInOut_ID, Cur_InOut.C_Order_ID, Cur_InOut.IsSOTrx, Cur_InOut.AD_Client_ID,
-              Cur_InOut.AD_Org_ID, 'Y', now(), 0,
-              now(), 0, v_RDocumentNo, v_DoctypeReversed_ID,
+              Cur_InOut.AD_Org_ID, 'Y', now(), '0',
+              now(), '0', v_RDocumentNo, v_DoctypeReversed_ID,
                '(*R*: ' || Cur_InOut.DocumentNo || ') ' || Cur_InOut.Description, 'N', Cur_InOut.MovementType, Cur_InOut.MovementDate,
               Cur_InOut.DateAcct, Cur_InOut.C_BPartner_ID, Cur_InOut.C_BPartner_Location_ID, Cur_InOut.AD_User_ID,
               Cur_InOut.M_Warehouse_ID, Cur_InOut.POReference, Cur_InOut.DateOrdered, Cur_InOut.DeliveryRule,
@@ -459,7 +459,7 @@
               (
                 v_NextNo, Cur_InOutLine.Line, v_RInOut_ID, Cur_InOutLine.C_OrderLine_ID,
                 Cur_InOut.AD_Client_ID, Cur_InOut.AD_Org_ID, 'Y', now(),
-                0, now(), 0, Cur_InOutLine.M_Product_ID,
+                '0', now(), '0', Cur_InOutLine.M_Product_ID,
                 Cur_InOutLine.M_AttributeSetInstance_ID, Cur_InOutLine.C_UOM_ID, Cur_InOutLine.M_Locator_ID, Cur_InOutLine.MovementQty * -1,
                  '*R*: ' || Cur_InOutLine.Description, Cur_InOutLine.IsInvoiced, --MODIFIED BY F.IRIAZABAL
                 Cur_InOutLine.QuantityOrder * -1, Cur_InOutLine.M_PRODUCT_UOM_ID

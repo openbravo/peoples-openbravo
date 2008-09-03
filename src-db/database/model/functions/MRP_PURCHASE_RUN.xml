@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MRP_PURCHASE_RUN">
     <function name="MRP_PURCHASE_RUN" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -24,16 +24,16 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1; -- 0=failure
-  v_Record_ID NUMBER;
-  v_User_ID NUMBER:=0;
-  v_Org_ID NUMBER;
-  v_Client_ID NUMBER;
-  v_Planner_ID NUMBER;
-  v_Product_ID NUMBER;
-  v_Product_Category_ID NUMBER;
-  v_BPartner_ID NUMBER;
-  v_BP_Group_ID NUMBER;
-  v_Vendor_ID   NUMBER;
+  v_Record_ID VARCHAR2(32);
+  v_User_ID VARCHAR2(32):='0';
+  v_Org_ID VARCHAR2(32);
+  v_Client_ID VARCHAR2(32);
+  v_Planner_ID VARCHAR2(32);
+  v_Product_ID VARCHAR2(32);
+  v_Product_Category_ID VARCHAR2(32);
+  v_BPartner_ID VARCHAR2(32);
+  v_BP_Group_ID VARCHAR2(32);
+  v_Vendor_ID   varchar2(32);
   v_TimeHorizon NUMBER;
   v_PlanningDate DATE;
   v_SecurityMargin NUMBER;

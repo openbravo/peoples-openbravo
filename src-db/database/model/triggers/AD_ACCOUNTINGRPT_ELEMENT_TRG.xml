@@ -22,9 +22,9 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-  v_xTree_ID NUMBER;
-  v_xParent_ID NUMBER;
-  v_NextNo     NUMBER;
+  v_xTree_ID VARCHAR2(32);
+  v_xParent_ID VARCHAR2(32);
+  v_NextNo     VARCHAR2(32);
 BEGIN
   -- Insert AD_Menu Trigger
   --  for Translation
@@ -39,7 +39,7 @@ BEGIN
     --    AND n.Parent_ID IS NULL
     --AND c.AD_Client_ID=:NEW.AD_Client_ID;
     SELECT AD_TREE_ID,
-      0
+      '0'
     INTO v_xTree_ID,
       v_xParent_ID
     FROM AD_TREE
@@ -64,8 +64,8 @@ BEGIN
         v_xParent_ID,(
         CASE :NEW.IsSummary
           WHEN 'Y'
-          THEN 100
-          ELSE 999
+          THEN '100'
+          ELSE '999'
         END
         )
       )

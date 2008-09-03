@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
   <database name="FUNCTION BOM_PRICELIMIT">
     <function name="BOM_PRICELIMIT" type="NUMERIC">
-      <parameter name="p_product_id" type="NUMERIC" mode="in">
+      <parameter name="p_product_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_pricelist_version_id" type="NUMERIC" mode="in">
+      <parameter name="p_pricelist_version_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/******************************************************************************

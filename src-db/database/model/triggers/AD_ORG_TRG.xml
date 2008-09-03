@@ -22,8 +22,8 @@
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
   *************************************************************************/
-  v_xTree_ID NUMBER;
-  v_xParent_ID NUMBER;
+  v_xTree_ID VARCHAR2(32);
+  v_xParent_ID VARCHAR2(32);
 BEGIN
   IF(INSERTING) THEN
     -- Add to all roles of the client
@@ -55,14 +55,14 @@ BEGIN
     INSERT
     INTO AD_TreeNode
       (
-        AD_Client_ID, AD_Org_ID, IsActive,
+        ad_treeNode_Id, AD_Client_ID, AD_Org_ID, IsActive,
         Created, CreatedBy, Updated,
         UpdatedBy, AD_Tree_ID, Node_ID,
         Parent_ID, SeqNo
       )
       VALUES
       (
-        :new.AD_Client_ID, :new.AD_Org_ID, :new.IsActive,
+        get_uuid(), :new.AD_Client_ID, :new.AD_Org_ID, :new.IsActive,
         :new.Created, :new.CreatedBy, :new.Updated,
         :new.UpdatedBy, v_xTree_ID, :new.AD_Org_ID,
         v_xParent_ID,(

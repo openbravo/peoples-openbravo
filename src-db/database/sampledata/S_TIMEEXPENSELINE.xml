@@ -1,20 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--
-************************
-0. Core Range.
-************************
--->
-<!--
-************************
-0. End of Core Range.
-************************
--->
-<!--
-************************
-1. Custom Range.
-************************
--->
 <!--1000001**************--><S_TIMEEXPENSELINE>
 <!--1000001 S_TIMEEXPENSELINE_ID-->
 <!--1000001-->              <S_TIMEEXPENSELINE_ID><![CDATA[1000001]]></S_TIMEEXPENSELINE_ID>
@@ -213,9 +198,4 @@
 <!--1000004-->              <C_PROJECTTASK_ID><![CDATA[1000004]]></C_PROJECTTASK_ID>
 <!--1000004**************--></S_TIMEEXPENSELINE>
 
-<!--
-************************
-1. End of Custom Range.
-************************
--->
 </data>

@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
   <database name="FUNCTION GET_PARETO_ABC">
     <function name="GET_PARETO_ABC" type="VARCHAR">
-      <parameter name="p_warehouse_id" type="NUMERIC" mode="in">
+      <parameter name="p_warehouse_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_org_id" type="NUMERIC" mode="in">
+      <parameter name="p_org_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_porcentajeactual" type="NUMERIC" mode="in">

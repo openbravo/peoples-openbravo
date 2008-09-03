@@ -36,7 +36,7 @@
       SELECT CASE WHEN B.C_CURRENCY_ID = P.C_CURRENCY_ID THEN 'N' ELSE 'Y'  END AS CONVERSION
       FROM C_BANKSTATEMENTLINE B, C_DEBT_PAYMENT P 
       WHERE B.C_DEBT_PAYMENT_ID = P.C_DEBT_PAYMENT_ID 
-      AND B.C_BANKSTATEMENTLINE_ID = TO_NUMBER(?)
+      AND B.C_BANKSTATEMENTLINE_ID = ?
     </Sql>
     <Parameter name="bankstmtline"/>
   </SqlMethod-->
@@ -44,9 +44,9 @@
   <SqlMethod name="isConversion" type="preparedStatement" return="String">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT (CASE WHEN C_CURRENCY_ID = TO_NUMBER(?) THEN 'N' ELSE 'Y' END) as CONVERSION
+      SELECT (CASE WHEN C_CURRENCY_ID = ? THEN 'N' ELSE 'Y' END) as CONVERSION
       FROM C_DEBT_PAYMENT
-	    WHERE C_DEBT_PAYMENT_ID = TO_NUMBER(?)
+	    WHERE C_DEBT_PAYMENT_ID = ?
     </Sql>
     <Parameter name="currency"/>
     <Parameter name="dp"/>

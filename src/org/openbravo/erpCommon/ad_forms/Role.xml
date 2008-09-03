@@ -19,7 +19,7 @@
 -->
 <REPORT>
 	<template file="Role.html"/>
-	<PARAMETER id="paramDirection" name="direction"/>
+	<PARAMETER id="paramDirectory" name="directory"/>
 	<PARAMETER id="paramLanguage" name="language"/>
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
 	<PARAMETER id="paramRoleInfo" name="roleInfo"/>

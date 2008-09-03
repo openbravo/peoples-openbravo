@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
   <database name="FUNCTION GET_PRODUCT_PRICE_DATE">
     <function name="GET_PRODUCT_PRICE_DATE" type="NUMERIC">
-      <parameter name="p_ad_client_id" type="NUMERIC" mode="in">
+      <parameter name="p_ad_client_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_m_product_id" type="NUMERIC" mode="in">
+      <parameter name="p_m_product_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_date" type="TIMESTAMP" mode="in">
@@ -26,7 +26,7 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-  v_M_PriceList_Version_ID NUMBER;
+  v_M_PriceList_Version_ID VARCHAR2(32);
   v_Price                  NUMBER;
 BEGIN
   SELECT MAX(M_PRICELIST_VERSION_ID)

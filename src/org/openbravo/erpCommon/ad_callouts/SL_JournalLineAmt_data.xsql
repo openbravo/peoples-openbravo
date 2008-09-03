@@ -29,14 +29,14 @@
 	SELECT c.C_Currency_ID, c.StdPrecision 
 	FROM C_AcctSchema a, C_Currency c 
 	WHERE a.C_Currency_ID=c.C_Currency_ID 
-	AND a.C_AcctSchema_ID = TO_NUMBER(?)
+	AND a.C_AcctSchema_ID = ?
     </Sql>
     <Parameter name="cAcctSchemaId"/>
   </SqlMethod>
   <SqlMethod name="currencyRate" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      select c_currency_rate(TO_NUMBER(?), TO_NUMBER(?), TO_DATE(?), TO_CHAR(?), TO_NUMBER(?), TO_NUMBER(?)) from dual
+      select c_currency_rate(?, ?, TO_DATE(?), ?, ?, ?) from dual
     </Sql>
     <Parameter name="cCurrencyId"/>
     <Parameter name="targetCurrencyId"/>
@@ -50,8 +50,8 @@
     <Sql>
 	SELECT CurrencyRate 
 	FROM GL_Journal 
-	WHERE GL_Journal_ID = TO_NUMBER(?) 
-	AND C_Currency_ID = TO_NUMBER(?) 
+	WHERE GL_Journal_ID=? 
+	AND C_Currency_ID=? 
 	AND CurrencyRateType=?
     </Sql>
     <Parameter name="GLJournalId"/>

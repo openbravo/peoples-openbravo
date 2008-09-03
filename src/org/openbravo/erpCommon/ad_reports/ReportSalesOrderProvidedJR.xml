@@ -22,7 +22,7 @@
   <PARAMETER id="paramToolBar" name="toolbar" default=""/>
   <PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
   <PARAMETER id="paramLanguage" name="language" default=""/>
-  <PARAMETER id="paramDirection" name="direction" default=""/>
+  <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="M_Product_ID" name="paramMProductId" attribute="value"/>
   <PARAMETER id="M_Product_ID_DES" name="paramMProductIDDES" attribute="value"/>
   <PARAMETER id="paramDateFrom" name="dateFrom" attribute="value"/>

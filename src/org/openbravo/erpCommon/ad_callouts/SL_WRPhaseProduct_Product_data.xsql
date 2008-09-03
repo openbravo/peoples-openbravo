@@ -36,14 +36,14 @@
     <Sql>
       SELECT C_UOM_ID
       FROM M_PRODUCT
-      WHERE M_PRODUCT_ID = TO_NUMBER(?)
+      WHERE M_PRODUCT_ID = ?
     </Sql>
     <Parameter name="mProductId"/>
 </SqlMethod>
   <SqlMethod name="strMProductUOMID" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT M_PRODUCT_UOM_ID FROM M_PRODUCT_UOM WHERE M_PRODUCT_ID = TO_NUMBER(?) AND C_UOM_ID = TO_NUMBER(?)
+      SELECT M_PRODUCT_UOM_ID FROM M_PRODUCT_UOM WHERE M_PRODUCT_ID = ? AND C_UOM_ID = ?
     </Sql>
     <Parameter name="mProductId"/>
     <Parameter name="cUOMId"/>
@@ -53,7 +53,7 @@
     <Sql>
       SELECT (CASE COUNT(*) WHEN 0 THEN 0 ELSE 1 END) AS TOTAL 
       FROM M_PRODUCT_UOM 
-      WHERE M_PRODUCT_ID = TO_NUMBER(?)
+      WHERE M_PRODUCT_ID = ?
     </Sql>
     <Parameter name="mProductId"/>
   </SqlMethod>
@@ -66,11 +66,11 @@
       WHERE C_ORDER.C_ORDER_ID = C_ORDERLINE.C_ORDER_ID
       AND C_ORDER.DATEORDERED = (SELECT MAX(C_ORDER.DATEORDERED) FROM C_ORDER, C_ORDERLINE
       WHERE C_ORDER.C_ORDER_ID = C_ORDERLINE.C_ORDER_ID
-      AND C_ORDER.C_BPARTNER_ID = TO_NUMBER(?)
-      AND C_ORDERLINE.M_PRODUCT_ID = TO_NUMBER(?)
+      AND C_ORDER.C_BPARTNER_ID = ?
+      AND C_ORDERLINE.M_PRODUCT_ID = ?
       AND C_ORDER.DOCSTATUS = 'CO')
-      AND C_ORDER.C_BPARTNER_ID = TO_NUMBER(?)
-      AND C_ORDERLINE.M_PRODUCT_ID = TO_NUMBER(?)
+      AND C_ORDER.C_BPARTNER_ID = ?
+      AND C_ORDERLINE.M_PRODUCT_ID = ?
       AND C_ORDER.DOCSTATUS = 'CO'
     </Sql>
     <Parameter name="cBpartnerId"/>

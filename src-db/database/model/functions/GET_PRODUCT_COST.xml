@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION GET_PRODUCT_COST">
     <function name="GET_PRODUCT_COST" type="NUMERIC">
-      <parameter name="p_product_id" type="NUMERIC" mode="in">
+      <parameter name="p_product_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_movementdate" type="TIMESTAMP" mode="in">

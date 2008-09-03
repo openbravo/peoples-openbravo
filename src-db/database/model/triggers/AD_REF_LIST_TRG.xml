@@ -36,12 +36,12 @@
   INSERT
   INTO AD_Ref_List_Trl
     (
-      AD_Ref_List_ID, AD_Language, AD_Client_ID,
+      AD_Ref_List_Trl_ID, AD_Ref_List_ID, AD_Language, AD_Client_ID,
       AD_Org_ID, IsActive, Created,
       CreatedBy, Updated, UpdatedBy,
       Name, Description, IsTranslated
     )
-  SELECT :new.AD_Ref_List_ID,
+  SELECT get_uuid(), :new.AD_Ref_List_ID,
     AD_Language, :new.AD_Client_ID, :new.AD_Org_ID,
     :new.IsActive, :new.Created, :new.CreatedBy,
     :new.Updated, :new.UpdatedBy, :new.Name,

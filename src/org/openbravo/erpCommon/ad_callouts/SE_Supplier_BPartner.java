@@ -65,7 +65,7 @@ public class SE_Supplier_BPartner extends HttpSecureAppServlet {
     resultado.append("new Array(\"inpmPricelistId\", \"" + strPriceList + "\")");
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "frameAplicacion");
+    xmlDocument.setParameter("frameName", "appFrame");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

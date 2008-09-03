@@ -36,14 +36,14 @@
   INSERT
   INTO AD_Element_Trl
     (
-      AD_Element_ID, AD_Language, AD_Client_ID,
+      AD_Element_Trl_ID, AD_Element_ID, AD_Language, AD_Client_ID,
       AD_Org_ID, IsActive, Created,
       CreatedBy, Updated, UpdatedBy,
       Name, PrintName, Description,
       Help, PO_Name, PO_PrintName,
       PO_Description, PO_Help, IsTranslated
     )
-  SELECT :new.AD_Element_ID,
+  SELECT get_uuid(), :new.AD_Element_ID,
     AD_Language, :new.AD_Client_ID, :new.AD_Org_ID,
     :new.IsActive, :new.Created, :new.CreatedBy,
     :new.Updated, :new.UpdatedBy, :new.Name,
@@ -73,7 +73,7 @@
   WHERE EXISTS (SELECT * FROM AD_Column c
   WHERE c.AD_Column_ID=pi.AD_Column_ID
   AND c.AD_Element_ID=:new.AD_Element_ID)
-  AND (AD_Client_ID=0 OR PrintName=:old.PrintName);
+  AND (AD_Client_ID='0' OR PrintName=:old.PrintName);
   END IF;
   **/
   --  reset Translation flag

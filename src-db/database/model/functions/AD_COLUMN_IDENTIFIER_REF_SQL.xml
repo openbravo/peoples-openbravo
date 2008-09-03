@@ -10,10 +10,10 @@
       <parameter name="p_columnname" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_reference_id" type="NUMERIC" mode="in">
+      <parameter name="p_reference_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_reference_value_id" type="NUMERIC" mode="in">
+      <parameter name="p_reference_value_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -40,18 +40,18 @@
   v_IsTranslated      CHAR(1):='N';
   v_NewTableName      VARCHAR2(60) ;
   v_NewColumnName     VARCHAR2(60) ;
-  v_NewReference      NUMBER;
-  v_NewReferenceValue NUMBER;
-  v_KeyReference      NUMBER;
+  v_NewReference      VARCHAR2(32);
+  v_NewReferenceValue VARCHAR2(32);
+  v_KeyReference      VARCHAR2(32);
   v_firstColumn       BOOLEAN:=TRUE;
   END_PROCESS         BOOLEAN:=FALSE;
 BEGIN
-  IF p_Reference_ID=17 THEN -- LIST
+  IF p_Reference_ID='17' THEN -- LIST
     v_SQL:='(SELECT NAME FROM AD_REF_LIST_V ';
     v_SQL:=v_SQL || 'WHERE AD_Language=L.AD_LANGUAGE ';
     v_SQL:=v_SQL || 'AND Value=' || p_TableRef||'.'|| p_ColumnName || ' ';
     v_SQL:=v_SQL || 'AND AD_Reference_ID=' || p_Reference_Value_ID || ')';
-  ELSIF p_Reference_ID=18 THEN -- TABLE
+  ELSIF p_Reference_ID='18' THEN -- TABLE
     SELECT ad_table.tablename,
       c1.columnname as keyName,
       c1.ad_reference_id,
@@ -80,14 +80,14 @@ BEGIN
     END IF;
     v_SQL:=v_SQL || AD_COLUMN_IDENTIFIER_REF_SQL(p_TableRef||'T', v_TableDir, v_FieldDisplay, v_NewReference, v_NewReferenceValue) ;
     v_SQL:=v_SQL || ' FROM ' || v_TableDir || ' '||p_TableRef||'T WHERE '||p_TableRef||'T.' || v_FieldValue || '='|| p_TableRef||'.'|| p_ColumnName||') ';
-  ELSIF p_Reference_ID IN(19, 30, 31, 35, 25, 800011, 32) THEN -- SEARCHS
-    IF p_Reference_ID=25 THEN
+  ELSIF p_Reference_ID IN('19', '30', '31', '35', '25', '800011', '32') THEN -- SEARCHS
+    IF p_Reference_ID='25' THEN
       v_TableDir:='C_ValidCombination';
-    ELSIF p_Reference_ID=31 THEN
+    ELSIF p_Reference_ID='31' THEN
       v_TableDir:='M_Locator';
-    ELSIF p_Reference_ID=800011 THEN
+    ELSIF p_Reference_ID='800011' THEN
       v_TableDir:='M_Product';
-    ELSIF p_Reference_ID=32 THEN
+    ELSIF p_Reference_ID='32' THEN
       v_TableDir:='AD_Image';
     ELSE
       v_TableDir:=SUBSTR(p_ColumnName, 1, LENGTH(p_ColumnName) -3) ;
@@ -119,10 +119,9 @@ BEGIN
           FROM AD_COLUMN c,
             AD_TABLE t
           WHERE c.AD_TABLE_ID=t.AD_TABLE_ID
-            AND UPPER(t.TABLENAME)=UPPER(v_NewTableName)
+            AND UPPER(t.TABLENAME)=UPPER(p_TableName)
             AND(c.ISKEY='Y'
             OR c.ISSECONDARYKEY='Y')
-            AND c.ISPARENT='Y'
             AND UPPER(c.COLUMNNAME) <> 'AD_LANGUAGE';
           v_SQL:='(SELECT COALESCE(TO_CHAR(MAX(' || p_TableRef || 'T.' || v_NewColumnName || ')), TO_CHAR(' || p_TableRef || '.' || p_ColumnName || ')) FROM ' || v_NewTableName || ' ' || p_TableRef || 'T WHERE '|| p_TableRef||'T.' || v_FieldValue || '='|| p_TableRef||'.'|| v_FieldValue || ' AND ' || p_TableRef || 'T.AD_LANGUAGE=L.AD_LANGUAGE) ';
         END IF;
@@ -132,7 +131,7 @@ BEGIN
       v_SQL:='TO_CHAR(COALESCE(TO_CHAR('||p_TableRef||'.'|| p_ColumnName||'),''''))';
     END IF;
   END IF;
-  IF p_Reference_ID IN(19, 32, 30, 31, 35, 25, 800011) THEN
+  IF p_Reference_ID IN('19', '32', '30', '31', '35', '25', '800011') THEN
     DECLARE
       v_PartialDisplay VARCHAR2(2000) ;
       v_KeyName        VARCHAR2(50) ;

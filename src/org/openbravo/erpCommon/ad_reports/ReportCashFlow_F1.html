@@ -25,13 +25,13 @@
 <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Popup/Popup.css" id="paramCSS"/>
 <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Main/Main_Manual.css" id="paramCSS"/>
 
-<script language="JavaScript" type="text/javascript" id="paramDirection">
-var baseDirection = "../../../../../web/";
+<script language="JavaScript" type="text/javascript" id="paramDirectory">
+var baseDirectory = "../../../../../web/";
 </script>
 <SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
 <SCRIPT language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></SCRIPT>
 <script language="JavaScript" type="text/javascript" id="paramLanguage">
-  var LNG_POR_DEFECTO = "en_US";
+  var defaultLang = "en_US";
 </script>
 <SCRIPT language="JavaScript" type="text/javascript" id="paramAlertMsg">ALERT_MSG = "Are you sure?";</SCRIPT>
 <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
@@ -52,7 +52,7 @@ var baseDirection = "../../../../../web/";
 
 <SCRIPT language="JavaScript" type="text/javascript" id="paramArray">var array=null;</SCRIPT>
 <SCRIPT language="JavaScript" type="text/javascript">
-function depurarCombo(){
+function validateCombo(){
   var frm = document.frmMain;
   var id = frm.inpAccountingReportId.value;
   var value = null;
@@ -70,7 +70,7 @@ function depurarCombo(){
         count = count+1;
       }
     }
-	rellenarCombo(frm.inpPeriodId, arrayCombo, false, false);
+    fillCombo(frm.inpPeriodId, arrayCombo, false, false);
   }
   return true;
 }
@@ -86,7 +86,7 @@ function displayCombos(){
 			break;
 		}
 	}
-  depurarCombo();
+	validateCombo();
 	return true;
 	}
 }
@@ -94,27 +94,27 @@ function displayCombos(){
 function refreshAccounts() {
   var cmbAccountSchema = document.frmMain.inpcAcctSchemaId;  
   var cmbAccount = document.frmMain.inpAccountingReportId;  
-  cambiarListaCombo(cmbAccount, arrAccount, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);
-  depurarCombo();  
+  changeComboData(cmbAccount, arrAccount, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value, false);
+  validateCombo();  
   return true;
 }
-function depurar(command) {
+function validate(command) {
 	var frm = document.frmMain;
 	if (frm.inpcAcctSchemaId.value == ""){
     setWindowElementFocus(frm.inpcAcctSchemaId);
-    mensaje(7);
+    showJSMessage(7);
     return false;
   } else if (frm.inpAccountingReportId.value == ""){
 		setWindowElementFocus(frm.inpAccountingReportId);
-		mensaje(7);
+		showJSMessage(7);
 		return false;
 	} else if ((document.getElementById('selEliminarOrg').style.display!="none") && frm.inpadOrgId.value == ""){
 		setWindowElementFocus(frm.inpadOrgId);
-		mensaje(7);
+		showJSMessage(7);
 		return false;
 	} else if (frm.inpPeriodId.value == ""){
 		setWindowElementFocus(frm.inpPeriodId);
-		mensaje(7);
+		showJSMessage(7);
 		return false;
 	}
 	return true;

@@ -51,7 +51,7 @@
      ]]></Sql>
     <Parameter name="adUserClient" type="replace" optional="true" after="AND CORDER.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND CORDER.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="mWarehouseId" optional="true" after="AND 1=1"><![CDATA[AND CORDER.M_WAREHOUSE_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="mWarehouseId" optional="true" after="AND 1=1"><![CDATA[AND CORDER.M_WAREHOUSE_ID = ?]]></Parameter>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>

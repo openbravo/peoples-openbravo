@@ -44,7 +44,7 @@ BEGIN
       INSERT
       INTO M_Product_Category_Acct
         (
-          M_Product_Category_ID, C_AcctSchema_ID, AD_Client_ID,
+          M_Product_Category_Acct_ID, M_Product_Category_ID, C_AcctSchema_ID, AD_Client_ID,
           AD_Org_ID, IsActive, Created,
           CreatedBy, Updated, UpdatedBy,
           P_Revenue_Acct, P_Expense_Acct, P_Asset_Acct,
@@ -53,7 +53,7 @@ BEGIN
         )
         VALUES
         (
-          :new.M_Product_Category_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
+          get_uuid(), :new.M_Product_Category_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
           :new.AD_ORG_ID,  'Y', now(),
           :new.CreatedBy, now(), :new.UpdatedBy,
           Cur_Defaults.P_Revenue_Acct, Cur_Defaults.P_Expense_Acct, Cur_Defaults.P_Asset_Acct,

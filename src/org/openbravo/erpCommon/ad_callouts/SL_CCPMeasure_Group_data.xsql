@@ -29,7 +29,7 @@
       <![CDATA[
       SELECT seqno
       FROM MA_CCP_Group
-      WHERE MA_CCP_Group_ID = TO_NUMBER(?)
+      WHERE MA_CCP_Group_ID = ?
       ]]>
     </Sql>
     <Parameter name="maCCPGroupId"/>

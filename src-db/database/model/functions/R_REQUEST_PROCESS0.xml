@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION R_REQUEST_PROCESS0">
     <function name="R_REQUEST_PROCESS0" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************

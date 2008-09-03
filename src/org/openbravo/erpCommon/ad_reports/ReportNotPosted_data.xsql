@@ -69,9 +69,9 @@
         from GL_Journal
         where processed = 'Y'
         and posted = 'N') AAA
-        where dateacct >= TO_DATE(?)
-        and dateacct <= TO_DATE(?)
-        and ad_client_ID = TO_NUMBER(?)
+        where dateacct >= ?
+        and dateacct <= ?
+        and ad_client_id = ?
         order by  document, dateacct, name
       ]]></Sql>
     <Parameter name="adLanguage"/>

@@ -22,8 +22,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
   <link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
   <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Popup/Popup.css" id="paramCSS" />
-  <script language="JavaScript" type="text/javascript" id="paramDirection">var baseDirection = "../../../../../web/";</script>
-  <script language="JavaScript" type="text/javascript" id="paramLanguage">	LNG_POR_DEFECTO="en_US";</script>
+  <script language="JavaScript" type="text/javascript" id="paramDirectory">var baseDirectory = "../../../../../web/";</script>
+  <script language="JavaScript" type="text/javascript" id="paramLanguage">	defaultLang="en_US";</script>
   <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
   <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
@@ -48,7 +48,7 @@
     }
 
     function submitThisPage(strCommand) {
-      if (depurar(strCommand)) {
+      if (validate(strCommand)) {
         submitCommandForm(strCommand, false, null, null, '_top');
         return true;
       }
@@ -61,7 +61,7 @@
       keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', document.frmMain.inpBpartnerId_DES.value, 'Command', 'KEY');", "inpBpartnerId_DES", "null");
     }
 
-    function depurar(action) {
+    function validate(action) {
       return true;
     }
 
@@ -76,7 +76,7 @@
       layer("paramTotalPrice", price.value, true);
       return true;
     }
-    function actualizarDatos(obj) {
+    function updateData(obj) {
       if (obj==null) marcar=false;
       var frm = document.frmMain;
       frm.elements["inpwriteoff" + obj.value].disabled=!obj.checked;
@@ -85,7 +85,7 @@
       return true;
     }
 
-    function cargarDatos(obj) {
+    function loadData(obj) {
       var radio=document.frmMain.inpcDebtPaymentId;
       if (obj.checked==null) obj.checked=false;
         var frm = document.frmMain;
@@ -161,7 +161,7 @@
           <tr class="Popup_NavBar_bg"><td></td>
             <td class="Popup_NavBar_separator_cell"></td>
             <td class="Popup_NavBar_bg_logo_left"></td>
-            <td class="Popup_NavBar_bg_logo" width="1" onclick="abrirNuevoBrowser('http://www.openbravo.com', 'Openbravo');return false;"><img 
+            <td class="Popup_NavBar_bg_logo" width="1" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;"><img 
   src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
             <td class="Popup_NavBar_bg_logo_right"></td>
             <td class="Popup_NavBar_Popup_title_cell"><span>Create From Settlement</span></td>
@@ -518,7 +518,7 @@
           <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
 
             <tr class="Popup_Client_Selector_DataGrid_HeaderRow"> 
-              <td width="27" class="DataGrid_Body_LineNoCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpTodos" onclick="cargarDatos(this);return true;" value="Y" id="fieldMarcarTodos"></input></span></td>
+              <td width="27" class="DataGrid_Body_LineNoCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpTodos" onclick="loadData(this);return true;" value="Y" id="fieldMarcarTodos"></input></span></td>
               <th width="175" class="DataGrid_Header_Cell">Business Partner</th>
               <th width="109" class="DataGrid_Header_Cell">Organization</th>
               <th width="136" class="DataGrid_Header_Cell">Invoice</th>
@@ -531,7 +531,7 @@
             </tr>
             <div id="sectionDetail">
               <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="inpRecord10000003"> 
-                <td class="DataGrid_Body_LineNoCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpcDebtPaymentId" value="" id="fieldCDebtPaymentId" onclick="actualizarDatos(this);return true;"></span><input type="hidden" name="inpPricexx" value="" id="fieldPrice"></td>
+                <td class="DataGrid_Body_LineNoCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpcDebtPaymentId" value="" id="fieldCDebtPaymentId" onclick="updateData(this);return true;"></span><input type="hidden" name="inpPricexx" value="" id="fieldPrice"></td>
                 <td class="DataGrid_Body_Cell" id="fieldBpartner">xxQuantity</td>
                 <td class="DataGrid_Body_Cell" id="fieldOrg">xx</td>
                 <td class="DataGrid_Body_Cell" id="fieldInvoice">xxUOM</td>

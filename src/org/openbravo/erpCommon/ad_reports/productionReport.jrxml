@@ -140,6 +140,7 @@
 	</parameter>
 	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
 	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
+	<parameter name="SR_LINES" isForPrompting="false" class="net.sf.jasperreports.engine.JasperReport"/>
 	<queryString><![CDATA[SELECT PRODUCTION_NAME, MOVEMENTDATE, PRODUCT_NAME, MOVEMENTQTY, DESCRIPTION, UOM_NAME
   FROM (SELECT M_PRODUCTION.NAME AS PRODUCTION_NAME, M_PRODUCTION.MOVEMENTDATE, M_PRODUCT.NAME AS PRODUCT_NAME, 
                SUM((CASE 'Y' WHEN 'Y' THEN ROUND(M_PRODUCTIONLINE.MOVEMENTQTY, 2) ELSE (CASE SIGN(M_PRODUCTIONLINE.MOVEMENTQTY) WHEN -1 THEN 0 ELSE ROUND(M_PRODUCTIONLINE.MOVEMENTQTY, 2) END) END)) AS MOVEMENTQTY, M_ATTRIBUTESETINSTANCE.DESCRIPTION, C_UOM.NAME AS UOM_NAME
@@ -425,8 +426,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{MOVEMENTQTY}!=null)?$P{NUMBERFORMAT}.format($F{MOVEMENTQTY}):new String(" ")
-]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{MOVEMENTQTY}!=null)?$P{NUMBERFORMAT}.format($F{MOVEMENTQTY}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -582,7 +582,7 @@
 						<subreportParameterExpression><![CDATA[$P{LOCALE}]]></subreportParameterExpression>
 					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/org/openbravo/erpCommon/ad_reports/productionSubReport.jasper"]]></subreportExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SR_LINES}]]></subreportExpression>
 				</subreport>
 			</band>
 		</summary>

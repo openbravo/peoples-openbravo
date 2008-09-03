@@ -1,10 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--
-************************
-0. Core Range.
-************************
--->
 <!--800000**************--><AD_REF_SEARCH_COLUMN>
 <!--800000 AD_REF_SEARCH_COLUMN_ID-->
 <!--800000-->              <AD_REF_SEARCH_COLUMN_ID><![CDATA[800000]]></AD_REF_SEARCH_COLUMN_ID>
@@ -1345,19 +1340,4 @@
 <!--1006300013-->              <COLUMNTYPE><![CDATA[I]]></COLUMNTYPE>
 <!--1006300013**************--></AD_REF_SEARCH_COLUMN>
 
-<!--
-************************
-0. End of Core Range.
-************************
--->
-<!--
-************************
-1. Custom Range.
-************************
--->
-<!--
-************************
-1. End of Custom Range.
-************************
--->
 </data>

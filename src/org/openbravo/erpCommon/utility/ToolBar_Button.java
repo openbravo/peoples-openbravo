@@ -26,6 +26,7 @@ public class ToolBar_Button implements HTMLElement {
   String href = "#";
   ToolBar_Image image;
   String base_direction;
+  String imageClass;
   boolean selected=false;
 
   public ToolBar_Button(String _base_direction, String _name, String _description, String _onclick) {
@@ -36,14 +37,24 @@ public class ToolBar_Button implements HTMLElement {
     this(_base_direction, _name, _description, _onclick, "#");
     this.selected = _selected;
   }
+  
+  public ToolBar_Button(String _base_direction, String _name, String _description, String _onclick, boolean _selected, String _imageClass) {
+    this(_base_direction, _name, _description, _onclick, "#", _imageClass);
+    this.selected = _selected;
+  }
 
   public ToolBar_Button(String _base_direction, String _name, String _description, String _onclick, String _href) {
+    this(_base_direction, _name, _description, _onclick, _href, _name);
+  }
+  
+  public ToolBar_Button(String _base_direction, String _name, String _description, String _onclick, String _href, String _imageClass) {
     this.base_direction = _base_direction;
     this.name = _name;
     this.click = _onclick;
     this.description = _description;
     this.href = _href;
-    this.image = new ToolBar_Image(this.base_direction, this.name, this.description);
+    this.imageClass = _imageClass;
+    this.image = new ToolBar_Image(this.base_direction, this.name, this.description, this.imageClass);
   }
 
   public String getWidth() {

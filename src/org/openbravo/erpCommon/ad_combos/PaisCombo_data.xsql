@@ -36,7 +36,7 @@
       <Sql>
       SELECT Name 
         FROM C_Country
-       WHERE C_Country_ID = TO_NUMBER(?)
+       WHERE C_Country_ID = ?
       </Sql>
       <Parameter name="countryId"/>
    </SqlMethod>

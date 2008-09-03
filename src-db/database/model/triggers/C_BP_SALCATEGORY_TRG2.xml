@@ -21,7 +21,7 @@
 ************************************************************************/
   v_count NUMBER;
   v_dateFrom DATE;
-  v_cBPSalCategory NUMBER(10);
+  v_cBPSalCategory varchar2(32);
 
   TYPE RECORD IS REF CURSOR;
   Cur_Employees RECORD;

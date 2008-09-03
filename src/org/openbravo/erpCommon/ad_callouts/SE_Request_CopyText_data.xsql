@@ -29,7 +29,7 @@
       <![CDATA[
         SELECT MailHeader, MailText 
         FROM R_MailText 
-        WHERE R_MailText_ID = TO_NUMBER(?)
+        WHERE R_MailText_ID = ?
       ]]>
     </Sql>
     <Parameter name="r_mailtext_id"/>

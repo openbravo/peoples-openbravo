@@ -18,21 +18,14 @@ import java.sql.*;
 import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
-import java.util.*;
 import org.xml.sax.*;
-import org.apache.fop.messaging.*;
 import org.apache.fop.apps.Driver;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import java.rmi.*;
 import rmi.*;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.database.*;
 import org.openbravo.exception.*;
-import org.apache.commons.pool.ObjectPool;
-
-import org.apache.avalon.framework.logger.Log4JLogger;
-
 import javax.net.ssl.*;
 
 /**

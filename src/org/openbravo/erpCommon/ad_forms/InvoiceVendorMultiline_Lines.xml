@@ -21,7 +21,7 @@
 	<template id="class" file="InvoiceVendorMultiline_Lines.html"/>
 	<PARAMETER id="paramCheck" name="check" default="Y"/>
 	<PARAMETER id="paramLanguage" name="language" default=""/>
-	<PARAMETER id="paramDirection" name="direction" default=""/>
+	<PARAMETER id="paramDirectory" name="directory" default=""/>
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
 	<PARAMETER id="C_Invoice_ID" name="cInvoiceId" attribute="value" default=""/>
 	<structure name="structure1">

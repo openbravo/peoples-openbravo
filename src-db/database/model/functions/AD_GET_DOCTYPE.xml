@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
   <database name="FUNCTION AD_GET_DOCTYPE">
-    <function name="AD_GET_DOCTYPE" type="NUMERIC">
-      <parameter name="p_clientid" type="NUMERIC" mode="in">
+    <function name="AD_GET_DOCTYPE" type="VARCHAR">
+      <parameter name="p_clientid" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_orgid" type="NUMERIC" mode="in">
+      <parameter name="p_orgid" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_docbasetype" type="CHAR" mode="in">
@@ -29,7 +29,7 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-  v_DocTypeId NUMBER(10) ;
+  v_DocTypeId varchar2(32) ;
   TYPE RECORD IS REF CURSOR;
     Cur_DocType RECORD;
   BEGIN

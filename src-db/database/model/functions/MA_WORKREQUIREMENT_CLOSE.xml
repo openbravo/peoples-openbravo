@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION MA_WORKREQUIREMENT_CLOSE">
     <function name="MA_WORKREQUIREMENT_CLOSE" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -27,11 +27,11 @@
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     --
-    v_Record_ID NUMBER:=NULL;
+    v_Record_ID VARCHAR2(32):=NULL;
     --  Phases to close
     Cur_Phase RECORD;
     --
-    v_Client_ID NUMBER;
+    v_Client_ID VARCHAR2(32);
   BEGIN
     --  Process Parameters
     IF(p_PInstance_ID IS NOT NULL) THEN

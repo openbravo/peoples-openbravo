@@ -158,7 +158,11 @@ public class TabAttachments extends HttpSecureAppServlet {
     } else if (vars.commandIn("DISPLAY_DATA")) {
       String strFileReference = vars.getRequiredStringParameter("inpcFileId");
       printPageFile(response, vars, strFileReference);
-    } else pageError(response);
+    } else if (vars.commandIn("CHECK")) {
+      String tabId = vars.getStringParameter("inpTabId");
+      String inpKey = vars.getStringParameter("inpKey");
+      printPageCheck(response, vars, tabId, inpKey);
+    }else pageError(response);
   }
 
   OBError insert(VariablesSecureApp vars, String strFileReference, String tableId, String key, String strDataType, String strText) throws IOException, ServletException {
@@ -283,8 +287,8 @@ public class TabAttachments extends HttpSecureAppServlet {
     if ((files==null)||(files.length==0)) discard[0] ="widthData";
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/businessUtility/TabAttachments_F1", discard).createXmlDocument();
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("tab", strTab);
     xmlDocument.setParameter("window", strWindow);
@@ -320,8 +324,8 @@ public class TabAttachments extends HttpSecureAppServlet {
     if (strFileReference.equals("")) discard[0] = new String("newDiscard");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/businessUtility/TabAttachments_Edition", discard).createXmlDocument();
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("tab", strTab);
     xmlDocument.setParameter("window", strWindow);
@@ -381,6 +385,13 @@ public class TabAttachments extends HttpSecureAppServlet {
     response.getOutputStream().flush();
     response.getOutputStream().close();
   }
+  
+  void printPageCheck(HttpServletResponse response, VariablesSecureApp vars, String strTab, String recordId) throws IOException, ServletException {
+    response.setContentType("text/plain; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.print(Utility.hasTabAttachments(this, vars, strTab, recordId));
+    out.close();
+  }  
 
   public String getServletInfo() {
     return "Servlet that presents the attachments";

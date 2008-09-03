@@ -48,7 +48,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
             SELECT NAME FROM AD_IMAGE 
-            WHERE AD_IMAGE_ID = TO_NUMBER(?)
+            WHERE AD_IMAGE_ID = ?
       ]]></Sql>
         <Parameter name="adImageId"/>
    </SqlMethod>

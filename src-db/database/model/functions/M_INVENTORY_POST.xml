@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_INVENTORY_POST">
     <function name="M_INVENTORY_POST" type="NULL">
-      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -34,9 +34,9 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
   v_Result NUMBER:=0; -- failure
-  v_User NUMBER;
+  v_User VARCHAR2(32);
   v_IsProcessing CHAR(1) ;
   v_IsProcessed CHAR(1) ;
   v_NoProcessed NUMBER:=0;
@@ -50,8 +50,8 @@
     Cur_Lines RECORD;
     -- Parameter Variables
     v_InvDate DATE;
-    v_Client_ID NUMBER(10) ;
-    v_Org_ID NUMBER;
+    v_Client_ID VARCHAR2(32) ;
+    v_Org_ID VARCHAR2(32);
     v_Count NUMBER:=0;
     PROCESS_ERROR BOOLEAN:=false;
     END_PROCESS BOOLEAN:=false;
@@ -119,7 +119,7 @@
       M_Product P
     WHERE M.M_PRODUCT_ID=P.M_PRODUCT_ID
       AND P.M_ATTRIBUTESET_ID IS NOT NULL
-      AND COALESCE(M.M_ATTRIBUTESETINSTANCE_ID, 0) = 0
+      AND COALESCE(M.M_ATTRIBUTESETINSTANCE_ID, '0') = '0'
       AND M.M_Inventory_ID=v_Record_ID;
     IF v_Count<>0 THEN
       RAISE_APPLICATION_ERROR(-20000, '@Inline@ '||v_line||' '||'@productWithoutAttributeSet@') ;
@@ -131,22 +131,22 @@
 	SELECT MAX(count)
 	INTO v_Aux
 	FROM (
-		 SELECT COUNT(*) as count, il.M_Product_ID, COALESCE(il.M_AttributeSetInstance_ID, 0), COALESCE(il.M_Product_UOM_ID, 0), il.M_Locator_ID
+		 SELECT COUNT(*) as count, il.M_Product_ID, COALESCE(il.M_AttributeSetInstance_ID, '0'), COALESCE(il.M_Product_UOM_ID, '0'), il.M_Locator_ID
 		 FROM M_Inventoryline il
 		 WHERE il.M_INVENTORY_ID = v_Record_ID
-		 GROUP BY il.M_Product_ID, COALESCE(il.M_AttributeSetInstance_ID, 0), COALESCE(il.M_Product_UOM_ID, 0), il.M_Locator_ID
+		 GROUP BY il.M_Product_ID, COALESCE(il.M_AttributeSetInstance_ID, '0'), COALESCE(il.M_Product_UOM_ID, '0'), il.M_Locator_ID
 		 HAVING COUNT(*)>1) A;
 	IF v_Aux <>0 THEN
-	   FOR Cur_Inventorylines IN (SELECT M_Product_ID, COALESCE(M_AttributeSetInstance_ID, 0) AS Atributte, COALESCE(M_Product_UOM_ID, 0) as ProductUOM, M_Locator_ID
+	   FOR Cur_Inventorylines IN (SELECT M_Product_ID, COALESCE(M_AttributeSetInstance_ID, '0') AS Atributte, COALESCE(M_Product_UOM_ID, '0') as ProductUOM, M_Locator_ID
 	   	   					  	  FROM M_Inventoryline
 								  WHERE M_Inventory_Id=v_Record_ID
-								  GROUP BY M_Product_ID, COALESCE(M_AttributeSetInstance_ID, 0), COALESCE(M_Product_UOM_ID, 0), M_Locator_ID
+								  GROUP BY M_Product_ID, COALESCE(M_AttributeSetInstance_ID, '0'), COALESCE(M_Product_UOM_ID, '0'), M_Locator_ID
 								  HAVING COUNT(*)>1) LOOP
 				FOR Cur_Lines IN (SELECT line
 							  	  FROM M_Inventoryline
 								  WHERE M_PRODUCT_ID = Cur_Inventorylines.M_Product_ID
-								  AND COALESCE(M_AttributeSetInstance_ID, 0) = Cur_Inventorylines.Atributte
-								  AND COALESCE(M_Product_UOM_ID, 0) = Cur_Inventorylines.ProductUOM
+								  AND COALESCE(M_AttributeSetInstance_ID, '0') = Cur_Inventorylines.Atributte
+								  AND COALESCE(M_Product_UOM_ID, '0') = Cur_Inventorylines.ProductUOM
 								  AND M_Locator_ID = Cur_Inventorylines.M_Locator_ID
 								  AND M_Inventory_Id=v_Record_ID) LOOP
 
@@ -167,7 +167,7 @@
     */
     DECLARE
       Cur_InvLine RECORD;
-      NextNo NUMBER;
+      NextNo VARCHAR2(32);
     BEGIN --FOR COMMIT
       FOR Cur_InvLine IN
         (SELECT *  FROM M_InventoryLine  WHERE M_Inventory_ID=v_Record_ID  ORDER BY Line)
@@ -185,8 +185,8 @@
           VALUES
           (
             NextNo, Cur_InvLine.AD_Client_ID, Cur_InvLine.AD_Org_ID, 'Y',
-            now(), 0, now(), 0,
-            'I+', Cur_InvLine.M_Locator_ID, Cur_InvLine.M_Product_ID, COALESCE(Cur_InvLine.M_AttributeSetInstance_ID, 0),
+            now(), '0', now(), '0',
+            'I+', Cur_InvLine.M_Locator_ID, Cur_InvLine.M_Product_ID, COALESCE(Cur_InvLine.M_AttributeSetInstance_ID, '0'),
             v_InvDate, Cur_InvLine.QtyCount-COALESCE(Cur_InvLine.QtyBook, 0), Cur_InvLine.M_InventoryLine_ID, Cur_InvLine.M_Product_UOM_ID,
             Cur_InvLine.QuantityOrder-COALESCE(Cur_InvLine.QuantityOrderBook, 0), Cur_InvLine.C_UOM_ID
           )

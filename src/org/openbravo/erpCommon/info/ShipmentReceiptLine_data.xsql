@@ -58,10 +58,10 @@
         <Parameter name="documentno" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND UPPER(m.DocumentNo) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="description" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND UPPER(m.Description) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="orderReference" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND UPPER(m.POReference) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="businesPartner" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND m.C_BPartner_ID = TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="businesPartner" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND m.C_BPartner_ID=? ]]></Parameter>
         <Parameter name="dateFrom" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND m.MovementDate >= to_date(?) ]]></Parameter>
         <Parameter name="dateTo" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND m.MovementDate < to_date(?) ]]></Parameter>
-        <Parameter name="product" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND ml.M_Product_ID = TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="product" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND ml.M_Product_ID=? ]]></Parameter>
         <Parameter name="isinvoiced"/>
 				<Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="ml.M_INOUTLINE_ID" />
         <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
@@ -108,10 +108,10 @@
         <Parameter name="documentno" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND UPPER(m.DocumentNo) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="description" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND UPPER(m.Description) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="orderReference" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND UPPER(m.POReference) LIKE UPPER(?) ]]></Parameter>
-        <Parameter name="businesPartner" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND m.C_BPartner_ID = TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="businesPartner" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND m.C_BPartner_ID=? ]]></Parameter>
         <Parameter name="dateFrom" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND m.MovementDate >= to_date(?) ]]></Parameter>
         <Parameter name="dateTo" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND m.MovementDate < to_date(?) ]]></Parameter>
-        <Parameter name="product" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND ml.M_Product_ID = TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="product" optional="true" after="AND m.IsActive='Y'"><![CDATA[ AND ml.M_Product_ID=? ]]></Parameter>
         <Parameter name="isinvoiced" optional="true" type="replace" after="(ml.MOVEMENTQTY - COALESCE(SUM(mi.QTY),0)) " text="="/>
 				<Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="ml.M_INOUTLINE_ID" />
         <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
@@ -178,7 +178,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql> 
       <![CDATA[
-        SELECT NAME FROM C_BPARTNER WHERE C_BPARTNER_ID = TO_NUMBER(?)
+        SELECT NAME FROM C_BPARTNER WHERE C_BPARTNER_ID=?
       ]]>
       </Sql>
         <Parameter name="cBpartnerId"/>
@@ -187,7 +187,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql> 
       <![CDATA[
-        SELECT NAME FROM M_PRODUCT WHERE M_PRODUCT_ID = TO_NUMBER(?)
+        SELECT NAME FROM M_PRODUCT WHERE M_PRODUCT_ID=?
       ]]>
       </Sql>
         <Parameter name="mProductId"/>

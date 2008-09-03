@@ -29,8 +29,8 @@
         SELECT G.AD_CLIENT_ID, G.AD_ORG_ID, G.DOCUMENTNO, G.DATEACCT, G.DATEDOC,
         G.C_CURRENCY_ID, G.C_DOCTYPE_ID, G.POSTED, G.POSTINGTYPE, G.ISOPENING
         FROM GL_JOURNAL G
-        WHERE AD_CLIENT_ID = TO_NUMBER(?) 
-        AND GL_JOURNAL_ID = TO_NUMBER(?)
+        WHERE AD_CLIENT_ID=? 
+        AND GL_JOURNAL_ID=?
      ]]>
      </Sql>
      <Parameter name="client"/>

@@ -21,17 +21,18 @@
   <template file="ReportProductMovement.html"/>
   <PARAMETER id="paramToolBar" name="toolbar" default=""/>
   <PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
-  <PARAMETER id="paramDirection" name="direction" default=""/>
+  <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
   <PARAMETER id="paramDateFrom" name="dateFrom" attribute="value"/>
-	<PARAMETER id="paramDateFrom" name="dateFromdisplayFormat" attribute="displayformat" replace="xx"/>
-	<PARAMETER id="paramDateFrom" name="dateFromsaveFormat" attribute="saveformat" replace="yy"/>
+  <PARAMETER id="paramDateFrom" name="dateFromdisplayFormat" attribute="displayformat" replace="xx"/>
+  <PARAMETER id="paramDateFrom" name="dateFromsaveFormat" attribute="saveformat" replace="yy"/>
   <PARAMETER id="paramDateTo" name="dateTo" attribute="value"/>
-	<PARAMETER id="paramDateTo" name="dateTodisplayFormat" attribute="displayformat" replace="xx"/>
-	<PARAMETER id="paramDateTo" name="dateTosaveFormat" attribute="saveformat" replace="yy"/>
+  <PARAMETER id="paramDateTo" name="dateTodisplayFormat" attribute="displayformat" replace="xx"/>
+  <PARAMETER id="paramDateTo" name="dateTosaveFormat" attribute="saveformat" replace="yy"/>
   <PARAMETER id="paramBPartnerId" name="paramBPartnerId" attribute="value"/>
   <PARAMETER id="paramBPartnerDescription" name="bPartnerDescription" attribute="value"/>
   <PARAMETER id="paramProductId" name="mProduct" attribute="value"/>
+  <PARAMETER id="paramM_ATTRIBUTESETINSTANCE_ID" name="parameterM_ATTRIBUTESETINSTANCE_ID"/>
   <PARAMETER id="paramProductDescription" name="productDescription" attribute="value"/>
   <PARAMETER id="parameterInOut" name="constantInout" default="-1"/>
   <PARAMETER id="paramInOut" name="inout" boolean="checked" withId="parameterInOut"/>
@@ -52,6 +53,10 @@
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
 
   <PARAMETER id="param2" name="param2" default="2"/>
+  
+  <SUBREPORT id="reportM_ATTRIBUTESETINSTANCE_ID" name="reportM_ATTRIBUTESETINSTANCE_ID" report="org/openbravo/erpCommon/reference/List">
+    <ARGUMENT name="parameterListSelected" withId="paramM_ATTRIBUTESETINSTANCE_ID"/>
+  </SUBREPORT>
 
   <structure name="structure1">
     <FIELD id="fieldRownum1">rownum</FIELD>

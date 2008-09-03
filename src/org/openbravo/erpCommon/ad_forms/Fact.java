@@ -320,11 +320,11 @@ public  class Fact {
     public boolean isSegmentBalanced (String segmentType, ConnectionProvider conn){
         if (segmentType.equals(AcctSchemaElement.SEGMENT_Org)){
             log4jFact.debug("Starting isSegmentBalanced");
-            HashMap<Integer, BigDecimal> map = new HashMap<Integer, BigDecimal>();
+            HashMap<String, BigDecimal> map = new HashMap<String, BigDecimal>();
             //  Add up values by key
             for (int i = 0; i < m_lines.size(); i++){
                 FactLine line = (FactLine)m_lines.get(i);
-                Integer key = new Integer(line.getAD_Org_ID(conn));
+                String key = line.getAD_Org_ID(conn);
                 BigDecimal bal = line.getSourceBalance();
                 BigDecimal oldBal = map.get(key);
                 if (oldBal != null)

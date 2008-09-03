@@ -24,7 +24,7 @@
       <![CDATA[
       SELECT p.PO_PriceList_ID
       FROM C_BPartner p
-      WHERE p.C_BPartner_ID = TO_NUMBER(?)
+      WHERE p.C_BPartner_ID = ?
       ]]>
     </Sql>
     <Parameter name="cBpartnerId"/>

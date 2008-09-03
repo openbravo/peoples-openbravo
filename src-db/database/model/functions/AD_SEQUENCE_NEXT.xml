@@ -4,10 +4,10 @@
       <parameter name="p_tablename" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_id" type="NUMERIC" mode="in">
+      <parameter name="p_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_nextno" type="NUMERIC" mode="out">
+      <parameter name="p_nextno" type="VARCHAR" mode="out">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -33,35 +33,11 @@
   * $Id: AD_Sequence_Next.sql,v 1.5 2003/08/06 06:51:27 jjanke Exp $
   ***
   * Title: Get the next sequence number of TableName
-  * Description:
-  *  store in parameter p_NextNo
-  *  if ID < 1000000, use System Doc Sequence
+  * This procedure is mantained only for backwards compatibility purposes:
+  * use instead get_uuid() function
   ************************************************************************/
-  v_NextNoSys NUMBER;
-  v_ResultStr VARCHAR(255) ;
 BEGIN
-  v_ResultStr:='Read';
-  SELECT CurrentNext, CurrentNextSys
-  INTO p_NextNo, v_NextNoSys
-  FROM AD_Sequence
-  WHERE Name=p_TableName  AND IsActive='Y'  AND IsTableID='Y'  AND IsAutoSequence='Y'  FOR UPDATE OF CurrentNext, CurrentNextSys;
-  --DBMS_OUTPUT.PUT_LINE('CurrentNext: ' || p_NextNo || ' - CurrentNextSys: ' || v_NextNoSys) ;
-  v_ResultStr:='Write';
-  IF(v_NextNoSys<>-1 AND p_ID<1000000) THEN -- System No
-    UPDATE AD_Sequence
-      SET CurrentNextSys=CurrentNextSys + IncrementNo, Updated=now()
-    WHERE Name=p_TableName;
-    p_NextNo:=v_NextNoSys;
-  ELSE -- Standard No
-    UPDATE AD_Sequence
-      SET CurrentNext=CurrentNext + IncrementNo, Updated=now()
-    WHERE Name=p_TableName;
-  END IF;
-  --DBMS_OUTPUT.PUT_LINE('Next: ' || p_NextNo) ;
-EXCEPTION
-WHEN NO_DATA_FOUND THEN
-  RAISE_APPLICATION_ERROR(-20000, '@NoIDsequence@') ;
-  --   || v_ResultStr || ': ' || p_TableName);
+   p_NextNo := get_uuid();
 END AD_SEQUENCE_NEXT
 ]]></body>
     </function>

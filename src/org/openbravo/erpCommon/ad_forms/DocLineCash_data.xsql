@@ -34,7 +34,7 @@
       FROM C_CashLine C left join C_DEBT_PAYMENT DP on C.C_DEBT_PAYMENT_ID = DP.C_DEBT_PAYMENT_ID
                         left join C_ORDER O on C.C_ORDER_ID = O.C_ORDER_ID,   
            C_CASHBOOK CB, C_CASH CA
-      WHERE CA.C_Cash_ID = TO_NUMBER(?)
+      WHERE CA.C_Cash_ID= ?
       AND CB.C_CASHBOOK_ID = CA.C_CASHBOOK_ID
       AND CA.C_CASH_ID = C.C_CASH_ID
       ORDER BY Line
@@ -46,7 +46,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT AD_Org_ID, C_Currency_ID, 0 AS C_BPARTNER_ID FROM C_BankAccount WHERE C_BankAccount_ID = TO_NUMBER(?)
+      SELECT AD_Org_ID, C_Currency_ID, 0 AS C_BPARTNER_ID FROM C_BankAccount WHERE C_BankAccount_ID=?
      ]]>
      </Sql>
      <Parameter name="bankAccount"/>
@@ -55,7 +55,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT AD_Org_ID, C_Currency_ID, C_BPartner_ID FROM C_Invoice WHERE C_Invoice_ID = TO_NUMBER(?)
+      SELECT AD_Org_ID, C_Currency_ID, C_BPartner_ID FROM C_Invoice WHERE C_Invoice_ID=?
      ]]>
      </Sql>
      <Parameter name="invoice"/>
@@ -64,7 +64,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT AD_Org_ID, C_Currency_ID, C_BPartner_ID FROM C_Order WHERE C_Order_ID = TO_NUMBER(?)
+      SELECT AD_Org_ID, C_Currency_ID, C_BPartner_ID FROM C_Order WHERE C_Order_ID=?
      ]]>
      </Sql>
      <Parameter name="C_Order_ID"/>
@@ -73,7 +73,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT AD_Org_ID, C_Currency_ID, C_BPartner_ID FROM C_DEBT_PAYMENT WHERE C_DEBT_PAYMENT_ID = TO_NUMBER(?)
+      SELECT AD_Org_ID, C_Currency_ID, C_BPartner_ID FROM C_DEBT_PAYMENT WHERE C_DEBT_PAYMENT_ID = ?
      ]]>
      </Sql>
      <Parameter name="C_DEBT_PAYMENT_ID"/>
@@ -82,7 +82,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT C_BPartner_ID FROM C_DEBT_PAYMENT WHERE C_DEBT_PAYMENT_ID = TO_NUMBER(?)
+      SELECT C_BPartner_ID FROM C_DEBT_PAYMENT WHERE C_DEBT_PAYMENT_ID = ?
      ]]>
      </Sql>
      <Parameter name="C_DEBT_PAYMENT_ID"/>
@@ -93,8 +93,8 @@
       <![CDATA[
 		SELECT GLITEM_DEBIT_ACCT, GLITEM_CREDIT_ACCT
 		FROM C_GLITEM_ACCT 
-		WHERE C_GLITEM_ID=TO_NUMBER(?)
-		AND C_ACCTSCHEMA_ID=TO_NUMBER(?)
+		WHERE C_GLITEM_id = ?
+		AND C_ACCTSCHEMA_id = ?
      ]]>
      </Sql>
      <Parameter name="C_Glitem_ID"/>

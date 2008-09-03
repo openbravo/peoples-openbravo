@@ -30,11 +30,11 @@
         SELECT t.C_Tax_ID, '' AS billToC_Location_ID, '' AS IsTaxExempt, '' AS IsSpecialTax
         FROM C_Tax t, C_Location lf, C_Location lt
         WHERE t.Parent_Tax_ID IS NULL
-        AND t.C_TaxCategory_ID = TO_NUMBER(?) 
-        AND lf.C_Location_ID = TO_NUMBER(?) 
+        AND t.C_TaxCategory_ID=? 
+        AND lf.C_Location_ID=? 
         AND (t.C_Country_ID=lf.C_Country_ID OR (t.C_Country_ID IS NULL))
         AND (t.C_Region_ID=lf.C_Region_ID OR (t.C_Region_ID IS NULL)) 
-        AND lt.C_Location_ID = TO_NUMBER(?) 
+        AND lt.C_Location_ID=? 
         AND (t.To_Country_ID=lt.C_Country_ID OR (t.To_Country_ID IS NULL))
         AND (t.To_Region_ID=lt.C_Region_ID OR (t.To_Region_ID IS NULL)) 
         AND t.ValidFrom <= to_date(?) 
@@ -53,8 +53,8 @@
         SELECT t.C_Tax_ID 
         FROM C_Tax t, C_Location lf
         WHERE t.Parent_Tax_ID IS NULL
-        AND t.C_TaxCategory_ID = TO_NUMBER(?) 
-        AND lf.C_Location_ID = TO_NUMBER(?) 
+        AND t.C_TaxCategory_ID = ? 
+        AND lf.C_Location_ID = ? 
         AND (t.C_Country_ID=lf.C_Country_ID OR (t.C_Country_ID IS NULL))
         AND (t.C_Region_ID=lf.C_Region_ID OR (t.C_Region_ID IS NULL))
         AND t.To_Country_ID IS NULL AND t.To_Region_ID IS NULL 
@@ -73,7 +73,7 @@
         SELECT t.C_Tax_ID 
         FROM C_Tax t, C_Location lf 
         WHERE t.AD_Client_ID=lf.AD_Client_ID 
-        AND lf.C_Location_ID = TO_NUMBER(?) 
+        AND lf.C_Location_ID=? 
         AND t.IsDefault='Y'
         AND t.ValidFrom <= to_date(?)
         ORDER BY t.ValidFrom
@@ -87,7 +87,7 @@
         SELECT il.C_Location_ID AS billToC_Location_ID, b.IsTaxExempt, b.IsSpecialTax
         FROM C_BPartner_Location il, C_BPartner b
         WHERE il.C_BPartner_ID=b.C_BPartner_ID
-        AND il.C_BPartner_Location_ID = TO_NUMBER(?)
+        AND il.C_BPartner_Location_ID=?
       ]]></Sql>
       <Parameter name="cBpartnerLocationId"/>
    </SqlMethod>
@@ -98,7 +98,7 @@
         FROM C_Tax t
         INNER JOIN AD_Org o ON (t.AD_Client_ID=o.AD_Client_ID)
         WHERE t.ISTAXEXEMPT = 'Y' 
-        AND o.AD_Org_ID = TO_NUMBER(?)
+        AND o.AD_Org_ID=?
         ORDER BY t.VALIDFROM DESC 
       ]]></Sql>
       <Parameter name="adOrgId"/>
@@ -107,7 +107,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
         SELECT C_TaxCategory_ID FROM M_Product
-        WHERE M_Product_ID = TO_NUMBER(?)
+        WHERE M_Product_ID=?
       ]]></Sql>
       <Parameter name="mProductId"/>
    </SqlMethod>
@@ -115,7 +115,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
         SELECT C_Location_ID AS shipFromC_Location_ID FROM M_Warehouse
-        WHERE M_Warehouse_ID = TO_NUMBER(?)
+        WHERE M_Warehouse_ID=?
       ]]></Sql>
       <Parameter name="mWarehouseId"/>
    </SqlMethod>
@@ -123,7 +123,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
         SELECT C_Location_ID AS shipToC_Location_ID FROM C_BPartner_Location
-        WHERE C_BPartner_Location_ID = TO_NUMBER(?) 
+        WHERE C_BPartner_Location_ID=? 
       ]]></Sql>
       <Parameter name="cBpartnerLocationId"/>
    </SqlMethod>
@@ -131,14 +131,14 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
         SELECT C_Location_ID AS billFromC_Location_ID FROM AD_OrgInfo 
-        WHERE AD_Org_ID = TO_NUMBER(?)
+        WHERE AD_Org_ID = ?
       ]]></Sql>
       <Parameter name="adOrgId"/>
    </SqlMethod-->
    <SqlMethod name="taxGet" type="preparedStatement" return="String" default="">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        SELECT C_GetTax(TO_NUMBER(?), TO_DATE(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), ?) AS TAX FROM DUAL
+        SELECT C_GetTax(?, TO_DATE(?), ?, ?, ?, ?, ?, ?) AS TAX FROM DUAL
       ]]></Sql>
       <Parameter name="mProductId"/>
       <Parameter name="shipdate"/>

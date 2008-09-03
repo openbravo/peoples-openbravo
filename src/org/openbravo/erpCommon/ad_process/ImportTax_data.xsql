@@ -28,7 +28,7 @@
                '' as n
 			  FROM I_Tax
 			  WHERE I_IsImported='N'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -41,7 +41,7 @@
         SELECT C_TaxCategory_ID
 			  FROM C_TaxCategory
 			  WHERE Name = ?
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="name"/>
@@ -55,7 +55,7 @@
         SELECT C_BP_TaxCategory_ID
 			  FROM C_BP_TaxCategory
 			  WHERE Name = ?
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="name"/>
@@ -72,7 +72,7 @@
                             and t1.name = ? 
         where t.name = ?
           and coalesce(to_char(t1.name),'.')=coalesce(to_char(?),'.')
-          and t.ad_client_id = to_number(?)
+          and t.ad_client_ID = ?
       ]]>
     </Sql>
     <Parameter name="parentName"/> 
@@ -87,7 +87,7 @@
     <Sql>
       <![CDATA[
       DELETE FROM I_Tax WHERE I_IsImported='Y'
-      AND AD_Client_ID = TO_NUMBER(?)
+      AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -98,13 +98,13 @@
     <Sql>
       <![CDATA[
         UPDATE I_Tax 
-        SET AD_Client_ID = COALESCE(AD_Client_ID, TO_NUMBER(?)),
-        AD_Org_ID = COALESCE(AD_Org_ID, 0),
+        SET AD_Client_ID = COALESCE(AD_Client_ID, ?),
+        AD_Org_ID = COALESCE(AD_Org_ID, '0'),
         IsActive = COALESCE(IsActive, 'Y'),
         Created = COALESCE(Created, now()),
-        CreatedBy = COALESCE(CreatedBy, 0),
+        CreatedBy = COALESCE(CreatedBy, '0'),
         Updated = COALESCE(Updated, now()),
-        UpdatedBy = COALESCE(UpdatedBy, 0),
+        UpdatedBy = COALESCE(UpdatedBy, '0'),
         I_ErrorMsg = NULL,
         I_IsImported = 'N' 
         WHERE I_IsImported<>'Y' OR I_IsImported IS NULL
@@ -127,7 +127,7 @@
 			  WHERE C_TaxCategory_ID IS NULL
         AND TC_Name IS NOT NULL
 			  AND I_IsImported='N'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -147,7 +147,7 @@
 			  WHERE C_BP_TaxCategory_ID IS NULL
         AND BPTC_Name IS NOT NULL
 			  AND I_IsImported='N'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -167,7 +167,7 @@
 			  WHERE C_Tax_ID IS NULL
         AND T_Name IS NOT NULL
 			  AND I_IsImported='N'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -181,13 +181,13 @@
 			  SET C_Country_ID=(
           SELECT MAX(C_Country_ID) 
             FROM C_Country c
-  			   WHERE c.AD_Client_ID IN (0, I_Tax.AD_Client_ID)
+  			   WHERE c.AD_Client_ID IN ('0', I_Tax.AD_Client_ID)
              AND  (UPPER(c.CountryCode) = UPPER(I_Tax.from_code_Country)
                OR  UPPER(c.Name) = UPPER(I_Tax.from_code_Country)))
 			  WHERE C_Country_ID IS NULL
         AND from_code_Country IS NOT NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -202,7 +202,7 @@
 			  WHERE C_Country_ID IS NULL
           AND from_code_Country IS NOT NULL
   			  AND I_IsImported<>'Y'
-          AND AD_Client_ID = TO_NUMBER(?)
+          AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -216,13 +216,13 @@
 			  SET TO_Country_ID=(
           SELECT MAX(C_Country_ID) 
             FROM C_Country c
-  			   WHERE c.AD_Client_ID IN (0, I_Tax.AD_Client_ID)
+  			   WHERE c.AD_Client_ID IN ('0', I_Tax.AD_Client_ID)
              AND  (UPPER(c.CountryCode) = UPPER(I_Tax.to_code_Country)
                OR  UPPER(c.Name) = UPPER(I_Tax.to_code_Country)))
 			  WHERE TO_Country_ID IS NULL
         AND to_code_Country IS NOT NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -237,7 +237,7 @@
 			  WHERE TO_Country_ID IS NULL
           AND to_code_Country IS NOT NULL
   			  AND I_IsImported<>'Y'
-          AND AD_Client_ID = TO_NUMBER(?)
+          AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -251,13 +251,13 @@
 			  SET C_Region_ID=(
           SELECT MAX(C_Region_ID) 
             FROM C_Region r
-  			   WHERE r.AD_Client_ID IN (0, I_Tax.AD_Client_ID)
+  			   WHERE r.AD_Client_ID IN ('0', I_Tax.AD_Client_ID)
              AND  (UPPER(r.Value) = UPPER(I_Tax.from_code_region)
                OR  UPPER(r.Name) = UPPER(I_Tax.from_code_region)))
 			  WHERE C_Region_ID IS NULL
         AND from_code_Region IS NOT NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -272,7 +272,7 @@
 			  WHERE C_Region_ID IS NULL
           AND from_code_Region IS NOT NULL
   			  AND I_IsImported<>'Y'
-          AND AD_Client_ID = TO_NUMBER(?)
+          AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -286,13 +286,13 @@
 			  SET TO_Region_ID=(
           SELECT MAX(C_Region_ID) 
             FROM C_Region r
-  			   WHERE r.AD_Client_ID IN (0, I_Tax.AD_Client_ID)
+  			   WHERE r.AD_Client_ID IN ('0', I_Tax.AD_Client_ID)
              AND  (UPPER(r.Value) = UPPER(I_Tax.to_code_region)
                OR  UPPER(r.Name) = UPPER(I_Tax.to_code_region)))
 			  WHERE TO_Region_ID IS NULL
         AND to_code_Region IS NOT NULL
 			  AND I_IsImported<>'Y'
-        AND AD_Client_ID = TO_NUMBER(?)
+        AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -307,7 +307,7 @@
 			  WHERE TO_Region_ID IS NULL
           AND to_code_Region IS NOT NULL
   			  AND I_IsImported<>'Y'
-          AND AD_Client_ID = TO_NUMBER(?)
+          AND AD_Client_ID = ?
       ]]>
     </Sql>
     <Parameter name="ad_client_id"/>
@@ -324,11 +324,11 @@
           (C_TaxCategory_ID, AD_Client_ID, AD_Org_ID,
           IsActive,Created,CreatedBy,Updated,UpdatedBy,
           Name, Description)
-  		  SELECT TO_NUMBER(?), AD_Client_ID, AD_Org_ID,
+  		  SELECT ?, AD_Client_ID, AD_Org_ID,
             'Y',now(),CreatedBy,now(),UpdatedBy,
             TC_Name, TC_Description
 			  	  FROM I_Tax
-				    WHERE I_Tax_ID = TO_NUMBER(?)
+				    WHERE I_Tax_ID=?
       ]]>
     </Sql>
     <Parameter name="CTaxCategoryID"/>
@@ -341,9 +341,9 @@
       <![CDATA[
 			  UPDATE C_TaxCategory 
            SET updated = now(),
-               updatedBy = (SELECT updatedBy FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)),
-               description = COALESCE((SELECT TC_Description FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)),description)
-         WHERE C_TaxCategory_ID = TO_NUMBER(?)
+               updatedBy = (SELECT updatedBy FROM I_Tax WHERE I_Tax_ID = ?),
+               description = COALESCE((SELECT TC_Description FROM I_Tax WHERE I_Tax_ID = ?),description)
+         WHERE C_TaxCategory_ID = ?
       ]]>
     </Sql>
     <Parameter name="ITaxID"/>
@@ -359,11 +359,11 @@
           (C_BP_TaxCategory_ID, AD_Client_ID, AD_Org_ID,
           IsActive,Created,CreatedBy,Updated,UpdatedBy,
           Name, Description)
-  		  SELECT TO_NUMBER(?), AD_Client_ID, AD_Org_ID,
+  		  SELECT ?, AD_Client_ID, AD_Org_ID,
             'Y',now(),CreatedBy,now(),UpdatedBy,
             BPTC_Name, BPTC_Description
 			  	  FROM I_Tax
-				    WHERE I_Tax_ID = TO_NUMBER(?)
+				    WHERE I_Tax_ID=?
       ]]>
     </Sql>
     <Parameter name="CBPTaxCategoryID"/>
@@ -376,9 +376,9 @@
       <![CDATA[
 			  UPDATE C_BP_TaxCategory 
            SET updated        = now(),
-               updatedBy      = (SELECT updatedBy FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)),
-               description    = COALESCE((SELECT BPTC_Description FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)),description)
-         WHERE C_BP_TaxCategory_ID = TO_NUMBER(?)
+               updatedBy      = (SELECT updatedBy FROM I_Tax WHERE I_Tax_ID = ?),
+               description    = COALESCE((SELECT BPTC_Description FROM I_Tax WHERE I_Tax_ID = ?),description)
+         WHERE C_BP_TaxCategory_ID = ?
       ]]>
     </Sql>
     <Parameter name="ITaxID"/>
@@ -395,12 +395,12 @@
           IsActive,Created,CreatedBy,Updated,UpdatedBy,
           Name, ValidFrom, Rate,
           c_TaxCategory_ID)
-        SELECT TO_NUMBER(?), AD_Client_ID, AD_Org_ID,
+        SELECT ?, AD_Client_ID, AD_Org_ID,
             'Y',now(),CreatedBy,now(),UpdatedBy,
             parent_Name, COALESCE(ValidFrom,now()), 0,
-            TO_NUMBER(?)
+            ?
 			  	  FROM I_Tax
-				    WHERE I_Tax_ID = TO_NUMBER(?)
+				    WHERE I_Tax_ID=?
       ]]>
     </Sql>
     <Parameter name="TaxID"/>
@@ -419,14 +419,14 @@
           c_TaxCategory_ID, c_BP_TaxCategory_ID, PARENT_TAX_ID,
           TAXINDICATOR, ISSUMMARY, ISTAXEXEMPT,    
           SOPOTYPE, LINE, CASCADE)
-  		  SELECT TO_NUMBER(?), AD_Client_ID, AD_Org_ID,
+  		  SELECT ?, AD_Client_ID, AD_Org_ID,
             'Y',now(),CreatedBy,now(),UpdatedBy,
             T_Name, T_Description, COALESCE(ValidFrom,now()), Rate,
-            TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?),
+            ?, ?, ?,
             TAXINDICATOR, COALESCE(ISSUMMARY,'N'), COALESCE(ISTAXEXEMPT,'N'),    
             COALESCE(SOPOTYPE,'B'), LINE, COALESCE(CASCADE,'N')
 			  	  FROM I_Tax
-				    WHERE I_Tax_ID = TO_NUMBER(?)
+				    WHERE I_Tax_ID=?
       ]]>
     </Sql>
     <Parameter name="TaxID"/>
@@ -442,20 +442,20 @@
       <![CDATA[
 			  UPDATE C_Tax 
            SET updated            = now(),
-               updatedBy          = (SELECT updatedBy FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)),
-               description        = COALESCE((SELECT T_Description     FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)), description),
-               ValidFrom          = COALESCE((SELECT ValidFrom         FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)), ValidFrom),
-               Rate               = COALESCE((SELECT Rate              FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)), Rate),
-               C_TaxCategory_ID   = COALESCE(TO_NUMBER(?),C_TaxCategory_ID),
-               C_BP_TaxCategory_ID= COALESCE(TO_NUMBER(?),C_BP_TaxCategory_ID),
-               Parent_Tax_ID      = COALESCE(TO_NUMBER(?),Parent_Tax_ID),
-               TAXINDICATOR       = COALESCE((SELECT TAXINDICATOR      FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)),TAXINDICATOR),   
-               ISSUMMARY          = COALESCE((SELECT ISSUMMARY         FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)),ISSUMMARY),      
-               ISTAXEXEMPT        = COALESCE((SELECT ISTAXEXEMPT       FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)),ISTAXEXEMPT),    
-               SOPOTYPE           = COALESCE((SELECT SOPOTYPE          FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)),SOPOTYPE),       
-               LINE               = COALESCE((SELECT LINE              FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)),LINE),           
-               CASCADE            = COALESCE((SELECT CASCADE           FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)),CASCADE) 
-         WHERE C_Tax_ID = TO_NUMBER(?)
+               updatedBy          = (SELECT updatedBy FROM I_Tax WHERE I_Tax_ID = ?),
+               description        = COALESCE((SELECT T_Description     FROM I_Tax WHERE I_Tax_ID = ?), description),
+               ValidFrom          = COALESCE((SELECT ValidFrom         FROM I_Tax WHERE I_Tax_ID = ?), ValidFrom),
+               Rate               = COALESCE((SELECT Rate              FROM I_Tax WHERE I_Tax_ID = ?), Rate),
+               C_TaxCategory_ID   = COALESCE(?,C_TaxCategory_ID),
+               C_BP_TaxCategory_ID= COALESCE(?,C_BP_TaxCategory_ID),
+               Parent_Tax_ID      = COALESCE(?,Parent_Tax_ID),
+               TAXINDICATOR       = COALESCE((SELECT TAXINDICATOR      FROM I_Tax WHERE I_Tax_ID = ?),TAXINDICATOR),   
+               ISSUMMARY          = COALESCE((SELECT ISSUMMARY         FROM I_Tax WHERE I_Tax_ID = ?),ISSUMMARY),      
+               ISTAXEXEMPT        = COALESCE((SELECT ISTAXEXEMPT       FROM I_Tax WHERE I_Tax_ID = ?),ISTAXEXEMPT),    
+               SOPOTYPE           = COALESCE((SELECT SOPOTYPE          FROM I_Tax WHERE I_Tax_ID = ?),SOPOTYPE),       
+               LINE               = COALESCE((SELECT LINE              FROM I_Tax WHERE I_Tax_ID = ?),LINE),           
+               CASCADE            = COALESCE((SELECT CASCADE           FROM I_Tax WHERE I_Tax_ID = ?),CASCADE) 
+         WHERE C_Tax_ID = ?
       ]]>
     </Sql>
     <Parameter name="ITaxID"/>
@@ -484,7 +484,7 @@
             OR C_Region_ID is not null
             OR TO_Country_ID is not null
             OR TO_Region_ID is not null)
-           AND C_Tax_ID = TO_NUMBER(?)
+           AND C_Tax_ID = ?
       ]]>
     </Sql>
     <Parameter name="taxID"/>
@@ -495,11 +495,11 @@
     <Sql>
       <![CDATA[
          UPDATE C_Tax
-            SET C_Country_ID  = (SELECT C_Country_ID  FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)),
-                C_Region_ID   = (SELECT C_Region_ID   FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)),
-                TO_Country_ID = (SELECT TO_Country_ID FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?)),
-                TO_Region_ID  = (SELECT TO_Region_ID  FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?))
-          WHERE C_Tax_ID = TO_NUMBER(?)
+            SET C_Country_ID  = (SELECT C_Country_ID  FROM I_Tax WHERE I_Tax_ID = ?),
+                C_Region_ID   = (SELECT C_Region_ID   FROM I_Tax WHERE I_Tax_ID = ?),
+                TO_Country_ID = (SELECT TO_Country_ID FROM I_Tax WHERE I_Tax_ID = ?),
+                TO_Region_ID  = (SELECT TO_Region_ID  FROM I_Tax WHERE I_Tax_ID = ?)
+          WHERE C_Tax_ID = ?
       ]]>
     </Sql>
     <Parameter name="ItaxID"/>
@@ -516,19 +516,19 @@
         SELECT COUNT(*) AS N
           FROM (SELECT 1
                   FROM C_TAX
-                 WHERE COALESCE(C_Country_ID,0) =(SELECT COALESCE(C_Country_ID,0)  FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?))
-                   AND COALESCE(C_Region_ID,0)  =(SELECT COALESCE(C_Region_ID,0)   FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?))
-                   AND COALESCE(TO_Country_ID,0)=(SELECT COALESCE(TO_Country_ID,0) FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?))
-                   AND COALESCE(TO_Region_ID,0) =(SELECT COALESCE(TO_Region_ID,0)  FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?))
-                   AND C_Tax_ID = TO_NUMBER(?)
+                 WHERE COALESCE(C_Country_ID,'0') =(SELECT COALESCE(C_Country_ID,'0')  FROM I_Tax WHERE I_Tax_ID = ?)
+                   AND COALESCE(C_Region_ID,'0')  =(SELECT COALESCE(C_Region_ID,'0')   FROM I_Tax WHERE I_Tax_ID = ?)
+                   AND COALESCE(TO_Country_ID,'0')=(SELECT COALESCE(TO_Country_ID,'0') FROM I_Tax WHERE I_Tax_ID = ?)
+                   AND COALESCE(TO_Region_ID,'0') =(SELECT COALESCE(TO_Region_ID,'0')  FROM I_Tax WHERE I_Tax_ID = ?)
+                   AND C_Tax_ID = ?
                 UNION
                 SELECT 1
                   FROM C_TAX_ZONE
-                 WHERE COALESCE(FROM_Country_ID,0)=(SELECT COALESCE(C_Country_ID,0)   FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?))
-                   AND COALESCE(FROM_Region_ID,0) =(SELECT COALESCE(C_Region_ID,0)    FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?))
-                   AND COALESCE(TO_Country_ID,0)  =(SELECT COALESCE(TO_Country_ID,0)  FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?))
-                   AND COALESCE(TO_Region_ID,0)   =(SELECT COALESCE(TO_Region_ID,0)   FROM I_Tax WHERE I_Tax_ID = TO_NUMBER(?))
-                   AND C_Tax_ID = TO_NUMBER(?)) AAA
+                 WHERE COALESCE(FROM_Country_ID,'0')=(SELECT COALESCE(C_Country_ID,'0')   FROM I_Tax WHERE I_Tax_ID = ?)
+                   AND COALESCE(FROM_Region_ID,'0') =(SELECT COALESCE(C_Region_ID,'0')    FROM I_Tax WHERE I_Tax_ID = ?)
+                   AND COALESCE(TO_Country_ID,'0')  =(SELECT COALESCE(TO_Country_ID,'0')  FROM I_Tax WHERE I_Tax_ID = ?)
+                   AND COALESCE(TO_Region_ID,'0')   =(SELECT COALESCE(TO_Region_ID,'0')   FROM I_Tax WHERE I_Tax_ID = ?)
+                   AND C_Tax_ID = ?) AAA
       ]]>
     </Sql>
     <Parameter name="ItaxID"/>
@@ -552,12 +552,12 @@
             IsActive,Created,CreatedBy,Updated,UpdatedBy,
             C_Tax_ID, From_Country_ID, From_Region_ID,
             TO_country_ID, To_region_ID)
-         SELECT TO_NUMBER(?), AD_Client_ID, AD_Org_ID,
+         SELECT ?, AD_Client_ID, AD_Org_ID,
                 'Y',now(),CreatedBy,now(),UpdatedBy,
-                TO_NUMBER(?), C_Country_ID, C_Region_ID,
+                ?, C_Country_ID, C_Region_ID,
                 TO_Country_ID, To_Region_ID
            FROM I_Tax
-          WHERE I_Tax_ID=TO_NUMBER(?)
+          WHERE I_Tax_id = ?
       ]]>
     </Sql>
     <Parameter name="taxZoneID"/>
@@ -573,7 +573,7 @@
       <![CDATA[
         UPDATE I_Tax
 			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||?
-				WHERE I_Tax_ID = TO_NUMBER(?)
+				WHERE I_Tax_ID=?
       ]]>
     </Sql>
     <Parameter name="error"/>
@@ -586,9 +586,9 @@
       <![CDATA[
 				UPDATE I_Tax
         SET I_IsImported='Y', 
-            C_TaxCategory_ID=TO_NUMBER(?),
+            C_TaxCategory_id = ?,
             Updated=now(), Processed='Y'
-        WHERE I_Tax_ID = TO_NUMBER(?)
+        WHERE I_Tax_ID=?
       ]]>
     </Sql>
     <Parameter name="CTaxCategoryID"/>
@@ -601,7 +601,7 @@
       <![CDATA[
         UPDATE I_Tax
 			  SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'Set Imported, '
-				WHERE I_Tax_ID = TO_NUMBER(?)
+				WHERE I_Tax_ID=?
       ]]>
     </Sql>
     <Parameter name="i_tax_id"/>
@@ -614,7 +614,7 @@
 				UPDATE I_BPartner
         SET I_IsImported='N', Updated=now()
 			  WHERE I_IsImported<>'Y'
-        AND AD_CLIENT_ID = TO_NUMBER(?)
+        AND AD_CLIENT_ID=?
       ]]>
     </Sql>
     <Parameter name="adClientId"/>

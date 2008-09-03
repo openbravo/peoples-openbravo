@@ -65,7 +65,7 @@
       <Sql><![CDATA[
           SELECT COUNT(*) AS EXISTING
             FROM AD_ALERT
-           WHERE AD_ALERTRULE_ID = TO_NUMBER(?)
+           WHERE AD_ALERTRULE_ID = ?
              AND REFERENCEKEY_ID = ?
              AND ISACTIVE = 'Y'
       ]]></Sql>
@@ -121,7 +121,7 @@
            SET ISACTIVE  = 'N',
                UPDATED   = NOW(),
                UPDATEDBY = 0 
-         WHERE AD_ALERTRULE_ID = TO_NUMBER(?)
+         WHERE AD_ALERTRULE_ID = ?
            AND ISACTIVE = 'Y'
            AND NOT EXISTS 
                    (SELECT 1 FROM (SELECT '' AS AD_REFERENCEKEY_ID FROM DUAL) A WHERE 1=1
@@ -142,7 +142,7 @@
             FROM AD_ALERTRECIPIENT R,
                  AD_USER U,
                  AD_CLIENT C
-           WHERE AD_ALERTRULE_ID = TO_NUMBER(?)
+           WHERE AD_ALERTRULE_ID = ?
              AND SENDEMAIL = 'Y'
              AND R.AD_USER_ID = U.AD_USER_ID
              AND C.AD_CLIENT_ID = U.AD_CLIENT_ID
@@ -156,7 +156,7 @@
             FROM AD_ALERTRECIPIENT R,
                  AD_CLIENT C,
                  AD_USER U
-           WHERE AD_ALERTRULE_ID = TO_NUMBER(?)
+           WHERE AD_ALERTRULE_ID = ?
              AND SENDEMAIL = 'Y'
              AND C.AD_CLIENT_ID = U.AD_CLIENT_ID
              and u.ad_user_id in (select ad_user_id

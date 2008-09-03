@@ -30,7 +30,7 @@
         SELECT f.SeqNo,c.ColumnName,f.StartNo,f.EndNo,f.DataType,c.FieldLength,
         f.DataFormat,f.DecimalPoint,f.DivideBy100,f.ConstantValue,f.Callout, f.Name
         FROM AD_ImpFormat_Row f,AD_Column c
-        WHERE AD_ImpFormat_ID = TO_NUMBER(?)
+        WHERE AD_ImpFormat_ID = ?
         AND f.AD_Column_ID=c.AD_Column_ID
         ORDER BY SeqNo
       ]]></Sql>
@@ -46,7 +46,7 @@
     <Sql>
       <![CDATA[
         INSERT INTO C_ORDER ('1', ad_client_id, ad_org_id, created, createdby, updated, updatedby)
-        VALUES(TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), now(), TO_NUMBER(?), now(), TO_NUMBER(?))
+        VALUES(?, ?, ?, now(), ?, now(), ?)
      ]]>
      </Sql>
      <Parameter name="tableName" type="replace" optional="true" after="INSERT INTO " text="C_ORDER"/>
@@ -61,20 +61,20 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE C_ORDER SET C_ORDER_ID = 3
-        WHERE C_ORDER_ID = 1
+        UPDATE C_ORDER SET C_ORDER_ID = '3'
+        WHERE C_ORDER_ID = '1'
      ]]>
      </Sql>
      <Parameter name="tableName" type="replace" optional="true" after="UPDATE " text="C_ORDER"/>
-     <Parameter name="fields"  type="replace" optional="true" after=" SET " text="C_ORDER_ID = 3"/>
-     <Parameter name="values" type="replace" optional="true" after="WHERE " text="C_ORDER_ID = 1"/>
+     <Parameter name="fields"  type="replace" optional="true" after=" SET " text="C_ORDER_ID = '3'"/>
+     <Parameter name="values" type="replace" optional="true" after="WHERE " text="C_ORDER_ID = '1'"/>
    </SqlMethod>
   <SqlMethod name="table" type="preparedStatement" return="String">
     <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
       SELECT t.TableName
       FROM AD_Table t
-      WHERE t.AD_Table_ID in (SELECT ad_table_id FROM AD_ImpFormat WHERE ad_impformat_ID = TO_NUMBER(?))
+      WHERE t.AD_Table_ID in (SELECT ad_table_id FROM AD_ImpFormat WHERE ad_impformat_id = ?)
       ]]></Sql>
         <Parameter name="adImpformatId"/>
   </SqlMethod>
@@ -85,14 +85,14 @@
       FROM AD_Table t, AD_Column c 
       WHERE t.AD_Table_ID=c.AD_Table_ID 
       AND c.IsKey='Y' 
-      and t.AD_Table_ID in (SELECT ad_table_id FROM AD_ImpFormat WHERE ad_impformat_ID = TO_NUMBER(?))
+      and t.AD_Table_ID in (SELECT ad_table_id FROM AD_ImpFormat WHERE ad_impformat_id = ?)
       ]]></Sql>
         <Parameter name="adImpformatId"/>
   </SqlMethod>
   <SqlMethod name="parse" type="preparedStatement" return="String">
     <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-      select substr(to_char(?),0, to_number(?)) AS FIELD from dual
+      select substr(to_char(?),to_number(0), to_number(?)) AS FIELD from dual
       ]]></Sql>
     <Parameter name="text"/>
     <Parameter name="length"/>
@@ -109,7 +109,7 @@
     <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
       SELECT FORMATTYPE FROM AD_IMPFORMAT
-      WHERE AD_IMPFORMAT_ID = TO_NUMBER(?) 
+      WHERE AD_IMPFORMAT_ID = ? 
       ]]></Sql>
     <Parameter name="impFormat"/>
   </SqlMethod>

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -42,23 +42,14 @@ public class ImageInfo extends HttpSecureAppServlet {
       String strKey = vars.getStringParameter("inpNameValue");
       String strNameValue = ImageInfoData.selectName(this, strKey);
       if (!strNameValue.equals("")) vars.setSessionValue("ImageInfo.name", strNameValue + "%");
-      printPageFS(response, vars);
-    } else if (vars.commandIn("FRAME1")) {
-      String strNameValue = vars.getGlobalVariable("inpName", "ImageInfo.name", "");
-      printPageFrame1(response, vars, strNameValue);
-    } else if (vars.commandIn("FRAME2")) {
-      String strName = vars.getGlobalVariable("inpName", "ImageInfo.name", "");
-      String strURL = vars.getStringParameter("inpURL");
-      printPageFrame2(response, vars, strName, strURL);
+      printPageFrame(response, vars, strNameValue, "");
     } else if (vars.commandIn("FIND")) {
       String strName = vars.getRequestGlobalVariable("inpName", "ImageInfo.name");
       String strURL = vars.getStringParameter("inpURL");
 
       vars.setSessionValue("ImageInfo.initRecordNumber", "0");
 
-      printPageFrame2(response, vars, strName, strURL);
-    } else if (vars.commandIn("FRAME3")) {
-      printPageFrame3(response, vars);
+      printPageFrame(response, vars, strName, strURL);
     } else if (vars.commandIn("PREVIOUS")) {
       String strInitRecord = vars.getSessionValue("ImageInfo.initRecordNumber");
       String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "ImageInfo");
@@ -71,7 +62,7 @@ public class ImageInfo extends HttpSecureAppServlet {
         vars.setSessionValue("ImageInfo.initRecordNumber", strInitRecord);
       }
 
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME2");
+      response.sendRedirect(strDireccion + request.getServletPath());
     } else if (vars.commandIn("NEXT")) {
       String strInitRecord = vars.getSessionValue("ImageInfo.initRecordNumber");
       String strRecordRange = Utility.getContext(this, vars, "#RecordRangeInfo", "ImageInfo");
@@ -82,38 +73,11 @@ public class ImageInfo extends HttpSecureAppServlet {
       strInitRecord = ((initRecord<0)?"0":Integer.toString(initRecord));
       vars.setSessionValue("ImageInfo.initRecordNumber", strInitRecord);
 
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=FRAME2");
+      response.sendRedirect(strDireccion + request.getServletPath());
     } else pageError(response);
   }
 
-  void printPageFS(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Image seeker Frame Set");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/ImageInfo_FS").createXmlDocument();
-
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-  void printPageFrame1(HttpServletResponse response, VariablesSecureApp vars, String strNameValue) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 1 of the image seeker");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/ImageInfo_F1").createXmlDocument();
-    if (strNameValue.equals("")) {
-      xmlDocument.setParameter("name", "%");
-    } else {
-      xmlDocument.setParameter("name", strNameValue);
-    }
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-  void printPageFrame2(HttpServletResponse response, VariablesSecureApp vars, String strName, String strURL) throws IOException, ServletException {
+  void printPageFrame(HttpServletResponse response, VariablesSecureApp vars, String strName, String strURL) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 2 of the image seeker");
     XmlDocument xmlDocument;
 
@@ -124,30 +88,23 @@ public class ImageInfo extends HttpSecureAppServlet {
 
     if (strName.equals("") && strURL.equals("")) {
       String[] discard = {"sectionDetail", "hasPrevious", "hasNext"};
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/ImageInfo_F2", discard).createXmlDocument();
+      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/ImageInfo", discard).createXmlDocument();
       xmlDocument.setData("structure1", ImageInfoData.set());
     } else {
       String[] discard = {"withoutPrevious", "withoutNext"};
       ImageInfoData[] data = ImageInfoData.select(this, Utility.getContext(this, vars, "#User_Client", "ImageInfo"), Utility.getContext(this, vars, "#User_Org", "ImageInfo"), strName, strURL, initRecordNumber, intRecordRange);
       if (data==null || data.length==0 || initRecordNumber<=1) discard[0] = new String("hasPrevious");
       if (data==null || data.length==0 || data.length<intRecordRange) discard[1] = new String("hasNext");
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/ImageInfo_F2", discard).createXmlDocument();
+      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/ImageInfo", discard).createXmlDocument();
       xmlDocument.setData("structure1", data);
     }
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-  void printPageFrame3(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 3 of the image seeker");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/ImageInfo_F3").createXmlDocument();
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    if (strName.equals("")) {
+        xmlDocument.setParameter("name", "%");
+    } else {
+        xmlDocument.setParameter("name", strName);
+    }
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();

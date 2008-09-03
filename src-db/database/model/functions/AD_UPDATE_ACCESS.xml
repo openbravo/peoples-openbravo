@@ -21,13 +21,13 @@ BEGIN
 --AD_FORM_ACCESS
   INSERT INTO AD_Form_Access
     (
-      AD_Form_ID, AD_Role_ID, AD_Client_ID,
+      AD_Form_Access_ID, AD_Form_ID, AD_Role_ID, AD_Client_ID,
       AD_Org_ID, IsActive, Created,
       CreatedBy, Updated, UpdatedBy, IsReadWrite
     )
-  SELECT AD_FORM.AD_FORM_ID, AD_ROLE.AD_ROLE_ID, AD_ROLE.AD_CLIENT_ID,
+  SELECT get_uuid(), AD_FORM.AD_FORM_ID, AD_ROLE.AD_ROLE_ID, AD_ROLE.AD_CLIENT_ID,
     AD_ROLE.AD_ORG_ID, 'Y', now(),
-    0, now(), 0, 'Y'
+    '0', now(), '0', 'Y'
   FROM AD_FORM, AD_ROLE
   WHERE AD_ROLE.ISMANUAL = 'N'
     AND (
@@ -44,12 +44,12 @@ BEGIN
 
 --AD_PROCESS_ACCESS
   INSERT INTO AD_Process_Access
-    (AD_Process_ID, AD_Role_ID, AD_Client_ID,
+    (AD_Process_Access_ID, AD_Process_ID, AD_Role_ID, AD_Client_ID,
      AD_Org_ID, IsActive, Created,
      CreatedBy, Updated, UpdatedBy, IsReadWrite)
-  SELECT AD_PROCESS.AD_PROCESS_ID, AD_ROLE.AD_ROLE_ID, AD_ROLE.AD_CLIENT_ID,
+  SELECT get_uuid(), AD_PROCESS.AD_PROCESS_ID, AD_ROLE.AD_ROLE_ID, AD_ROLE.AD_CLIENT_ID,
     AD_ROLE.AD_ORG_ID, 'Y', now(),
-    0, now(), 0, 'Y'
+    '0', now(), '0', 'Y'
   FROM AD_PROCESS, AD_ROLE
   WHERE AD_ROLE.ISMANUAL = 'N'
     AND (
@@ -67,13 +67,13 @@ BEGIN
 --AD_ROLE_ORGACCESS
   INSERT INTO AD_Role_OrgAccess
     (
-      AD_Role_ID, AD_Client_ID, AD_Org_ID,
+       AD_Role_OrgAccess_ID, AD_Role_ID, AD_Client_ID, AD_Org_ID,
       IsActive, Created, CreatedBy,
       Updated, UpdatedBy
     )
-  SELECT AD_ROLE.AD_ROLE_ID, AD_ORG.AD_CLIENT_ID, AD_ORG.AD_ORG_ID,
-    'Y', now(), 0,
-    now(), 0
+  SELECT get_uuid(), AD_ROLE.AD_ROLE_ID, AD_ORG.AD_CLIENT_ID, AD_ORG.AD_ORG_ID,
+    'Y', now(), '0',
+    now(), '0'
   FROM AD_ROLE, AD_ORG
   WHERE AD_ROLE.ISMANUAL = 'N'
     AND AD_ROLE.AD_CLIENT_ID = AD_ORG.AD_CLIENT_ID
@@ -83,12 +83,12 @@ BEGIN
 
 --AD_TASK_ACCESS
   INSERT INTO AD_TASK_Access
-    (AD_TASK_ID, AD_Role_ID, AD_Client_ID,
+    (AD_TASK_Access_ID, AD_TASK_ID, AD_Role_ID, AD_Client_ID,
      AD_Org_ID, IsActive, Created,
      CreatedBy, Updated, UpdatedBy, IsReadWrite)
-  SELECT AD_TASK.AD_TASK_ID, AD_ROLE.AD_ROLE_ID, AD_ROLE.AD_CLIENT_ID,
+  SELECT get_uuid(), AD_TASK.AD_TASK_ID, AD_ROLE.AD_ROLE_ID, AD_ROLE.AD_CLIENT_ID,
     AD_ROLE.AD_ORG_ID, 'Y', now(),
-    0, now(), 0, 'Y'
+    '0', now(), '0', 'Y'
   FROM AD_TASK, AD_ROLE
   WHERE AD_ROLE.ISMANUAL = 'N'
     AND (
@@ -104,15 +104,15 @@ BEGIN
                        AND AD_ROLE_ID = AD_ROLE.AD_ROLE_ID);
 
 --AD_WINDOW_ACCESS
-  INSERT INTO AD_Window_Access
+  INSERT INTO aD_Window_Access
     (
-      AD_Window_ID, AD_Role_ID, AD_Client_ID,
+      aD_Window_Access_ID, AD_Window_ID, AD_Role_ID, AD_Client_ID,
       AD_Org_ID, IsActive, Created,
       CreatedBy, Updated, UpdatedBy, IsReadWrite
     )
-  SELECT DISTINCT AD_WINDOW.AD_WINDOW_ID, AD_ROLE.AD_ROLE_ID, AD_ROLE.AD_CLIENT_ID,
+  SELECT DISTINCT get_uuid(), AD_WINDOW.AD_WINDOW_ID, AD_ROLE.AD_ROLE_ID, AD_ROLE.AD_CLIENT_ID,
     AD_ROLE.AD_ORG_ID, 'Y', now(),
-    0, now(), 0, 'Y'
+    '0', now(), '0', 'Y'
   FROM AD_WINDOW, AD_ROLE, AD_TAB, AD_TABLE
   WHERE AD_ROLE.ISMANUAL = 'N'
     AND AD_WINDOW.AD_WINDOW_ID = AD_TAB.AD_WINDOW_ID
@@ -133,14 +133,14 @@ BEGIN
 --AD_WORKFLOW_ACCESS
   INSERT INTO AD_WorkFlow_Access
     (
-      AD_WorkFlow_ID, AD_Role_ID, AD_Client_ID,
+      AD_WorkFlow_Access_ID, AD_WorkFlow_ID, AD_Role_ID, AD_Client_ID,
       AD_Org_ID, IsActive, Created,
       CreatedBy, Updated, UpdatedBy,
       IsReadWrite
     )
-  SELECT AD_WORKFLOW.AD_WORKFLOW_ID, AD_ROLE.AD_ROLE_ID, AD_ROLE.AD_CLIENT_ID,
+  SELECT get_uuid(), AD_WORKFLOW.AD_WORKFLOW_ID, AD_ROLE.AD_ROLE_ID, AD_ROLE.AD_CLIENT_ID,
     AD_ROLE.AD_ORG_ID, 'Y', now(),
-    0, now(), 0, 'Y'
+    '0', now(), '0', 'Y'
   FROM AD_WORKFLOW, AD_ROLE
   WHERE AD_ROLE.ISMANUAL = 'N'
     AND (

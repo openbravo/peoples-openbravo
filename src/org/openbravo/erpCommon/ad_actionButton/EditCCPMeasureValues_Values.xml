@@ -29,6 +29,7 @@
 		<FIELD id="fieldValue" attribute="type">type</FIELD>
     <FIELD id="fieldValue" boolean="checked" withId="paramCheck">valuec</FIELD>
 		<FIELD id="fieldName">name</FIELD>
+		<FIELD id="fieldValue" attribute="class" replace="number" default="">validatetype</FIELD>
 		<SECTION id="sectionPunto" field="seqno"/>
 		<SECTION id="sectionValues"/>
 	</structure>

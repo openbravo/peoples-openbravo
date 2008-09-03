@@ -32,14 +32,14 @@
     <Sql>
       SELECT M_Requisition.M_Pricelist_ID as pricelist_version
       FROM M_Requisition
-      WHERE M_Requisition.M_Requisition_ID = to_number(?)
+      WHERE M_Requisition.M_Requisition_ID = ?
     </Sql>
     <Parameter name="mRequisitionId"/>
   </SqlMethod>
   <SqlMethod name="selectPriceListVersion" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT GET_PRICELIST_VERSION(to_number(?), to_date(?)) as pricelist_version
+      SELECT GET_PRICELIST_VERSION(?, to_date(?)) as pricelist_version
       FROM DUAL
     </Sql>
     <Parameter name="mPriceListId"/>
@@ -48,9 +48,9 @@
   <SqlMethod name="getPrices" type="preparedStatement" return="Multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT BOM_PRICELIMIT(to_number(?), to_number(?)) AS pricelimit,
-             BOM_PRICELIST(to_number(?), to_number(?)) AS pricelist,
-             BOM_PRICESTD(to_number(?), to_number(?)) AS pricestd
+      SELECT BOM_PRICELIMIT(?, ?) AS pricelimit,
+             BOM_PRICELIST(?, ?) AS pricelist,
+             BOM_PRICESTD(?, ?) AS pricestd
       FROM DUAL
     </Sql>
     <Parameter name="mProductId"/>
@@ -65,7 +65,7 @@
     <Sql>
       SELECT (CASE COUNT(*) WHEN 0 THEN 0 ELSE 1 END) AS TOTAL 
       FROM M_PRODUCT_UOM 
-      WHERE M_PRODUCT_ID = to_number(?)
+      WHERE M_PRODUCT_ID = ?
     </Sql>
     <Parameter name="mProductId"/>
   </SqlMethod>
@@ -74,7 +74,7 @@
     <Sql>
       SELECT description 
       FROM M_AttributeSetInstance 
-      WHERE M_AttributeSetInstance_ID = to_number(?) 
+      WHERE M_AttributeSetInstance_ID = ? 
     </Sql>
     <Parameter name="mAttributesetinstanceId"/>
   </SqlMethod>

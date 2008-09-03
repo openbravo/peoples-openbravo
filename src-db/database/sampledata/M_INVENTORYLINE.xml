@@ -1,20 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
-<!--
-************************
-0. Core Range.
-************************
--->
-<!--
-************************
-0. End of Core Range.
-************************
--->
-<!--
-************************
-1. Custom Range.
-************************
--->
 <!--1000001**************--><M_INVENTORYLINE>
 <!--1000001 M_INVENTORYLINE_ID-->
 <!--1000001-->              <M_INVENTORYLINE_ID><![CDATA[1000001]]></M_INVENTORYLINE_ID>
@@ -595,9 +580,4 @@
 <!--1000017-->              <QUANTITYORDERBOOK><![CDATA[0]]></QUANTITYORDERBOOK>
 <!--1000017**************--></M_INVENTORYLINE>
 
-<!--
-************************
-1. End of Custom Range.
-************************
--->
 </data>

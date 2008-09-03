@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
   <database name="FUNCTION R_REQUEST_PROCESS">
     <function name="R_REQUEST_PROCESS" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_r_request_id" type="NUMERIC" mode="in">
+      <parameter name="p_r_request_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -38,14 +38,14 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1; -- 0=failure
-  v_Record_ID NUMBER;
-  v_AD_User_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
+  v_AD_User_ID VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     -- Parameter Variables
     --
-    v_NextNo NUMBER(10) ;
+    v_NextNo VARCHAR2(32) ;
     v_Rows NUMBER(10) ;
     FINISH_PROCESS BOOLEAN:=false;
 

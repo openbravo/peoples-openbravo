@@ -48,14 +48,14 @@
     <Parameter name="dateFrom" optional="true" after="AND 1=1"><![CDATA[ AND C_INVOICE.DATEINVOICED >= to_date(?)]]></Parameter>
     <Parameter name="dateTo" optional="true" after="AND 1=1"><![CDATA[ AND C_INVOICE.DATEINVOICED <= to_date(?)]]></Parameter>
     <Parameter name="cbPartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[ AND C_PROJECT.C_PROJECT_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="cProjectId" optional="true" after="AND 1=1"><![CDATA[ AND C_PROJECT.C_PROJECT_ID = ?]]></Parameter>
     <Parameter name="cProductCategoryId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_CATEGORY_ID IN]]></Parameter>
     <Parameter name="cProjectKind" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_PROJECT.PROJECTKIND IN]]></Parameter>
     <Parameter name="cProjectPhase" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_PROJECT.PROJECTPHASE IN]]></Parameter>
     <Parameter name="cProjectStatus" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_PROJECT.PROJECTSTATUS IN]]></Parameter>
     <Parameter name="cProjectPublic" optional="true" after="AND 1=1"><![CDATA[ AND C_PROJECT.PUBLICPRIVATE = ?]]></Parameter>
     <Parameter name="cRegionId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND C_LOCATION.C_REGION_ID IN]]></Parameter>
-    <Parameter name="salesRep" optional="true" after="AND 1=1"><![CDATA[ AND C_PROJECT.SALESREP_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="salesRep" optional="true" after="AND 1=1"><![CDATA[ AND C_PROJECT.SALESREP_ID = ?]]></Parameter>
     <Parameter name="productId" optional="true" type="argument" after="AND 1=1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
@@ -66,7 +66,7 @@
     <SqlMethodComment>Standard Precision</SqlMethodComment>
     <Sql>
     SELECT VALUE || ' - ' ||NAME FROM C_PROJECT 
-    WHERE C_PROJECT_ID = TO_NUMBER(?)
+    WHERE C_PROJECT_ID = ?
     </Sql>
     <Parameter name="cProjectId"/>
   </SqlMethod>

@@ -24,8 +24,6 @@ import org.openbravo.erpCommon.utility.*;
 
 import org.openbravo.erpCommon.ad_actionButton.*;
 import org.openbravo.erpCommon.ad_reports.ReportGeneralLedgerData;
-import org.openbravo.erpCommon.ad_reports.ReportTrialBalanceData;
-
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -93,8 +91,8 @@ void printPage(HttpServletResponse response, VariablesSecureApp vars, String str
 
       String strArray = arrayEntry(vars, strcAcctSchemaId);
 
-      xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
-      xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
       xmlDocument.setParameter("description", strDescription);
       xmlDocument.setParameter("help", strHelp);
       xmlDocument.setParameter("accounting", strAccountingReportId);
@@ -203,8 +201,8 @@ void printPagePopUp (HttpServletResponse response, VariablesSecureApp vars, Stri
       strTreeOrg = "";
 
       xmlDocument.setParameter("title", dataTree[0].name);
-      xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-      xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
       xmlDocument.setParameter("theme", vars.getTheme());
       xmlDocument.setData("structure", dataTree);
       response.setContentType("text/html; charset=UTF-8");

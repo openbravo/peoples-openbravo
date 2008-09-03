@@ -21,8 +21,6 @@ package org.openbravo.erpCommon.ad_forms;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_background.PeriodicHeartbeatData;
-import org.openbravo.erpCommon.ad_process.Register;
 import org.openbravo.erpCommon.ad_process.RegisterData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -63,8 +61,8 @@ public class Registration extends HttpSecureAppServlet {
     XmlDocument xmlDocument = null;
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/Registration").createXmlDocument();
     
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("welcome", Utility.messageBD(this, "REG_WELCOME", vars.getLanguage()));
 

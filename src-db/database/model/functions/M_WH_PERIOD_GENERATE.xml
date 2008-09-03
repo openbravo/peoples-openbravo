@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_WH_PERIOD_GENERATE">
     <function name="M_WH_PERIOD_GENERATE" type="NULL">
-      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -23,21 +23,21 @@
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
-    v_WHSchedule_ID NUMBER;
+    v_WHSchedule_ID VARCHAR2(32);
     v_DateFrom DATE;
     v_DateTo DATE;
     --
     v_no NUMBER;
     v_count NUMBER;
-    v_nextNo NUMBER(10) ;
+    v_nextNo VARCHAR2(32) ;
     v_startDate DATE;
     v_endDate DATE;
     v_ResultStr VARCHAR(60) ;
     --  WHSchedule Variables
-    v_Client_ID NUMBER;
-    v_Org_ID NUMBER;
+    v_Client_ID VARCHAR2(32);
+    v_Org_ID VARCHAR2(32);
     v_Periodicity CHAR(1) ;
-    v_User_ID NUMBER;
+    v_User_ID VARCHAR2(32);
   BEGIN
     --  Update AD_PInstance
     v_ResultStr:='PInstanceNotFound';

@@ -81,8 +81,8 @@ public class Login extends HttpBaseServlet {
   public void printPageBlank(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login_F0").createXmlDocument();
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
 
     response.setContentType("text/html; charset=UTF-8");
@@ -94,7 +94,7 @@ public class Login extends HttpBaseServlet {
   public void printPageWelcome(HttpServletResponse response) throws IOException, ServletException {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login_Welcome").createXmlDocument();
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -105,8 +105,8 @@ public class Login extends HttpBaseServlet {
   public void printPageLogo(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login_Logo").createXmlDocument();
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
 
     response.setContentType("text/html; charset=UTF-8");
@@ -118,7 +118,7 @@ public class Login extends HttpBaseServlet {
   public void printPageIdentificacion(HttpServletResponse response) throws IOException, ServletException {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login_F1").createXmlDocument();
 
-    xmlDocument.setParameter("direction", "var baseDirection = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -143,7 +143,7 @@ public class Login extends HttpBaseServlet {
 //      goToRetry(response);
 //      return;
 //    }
-//    xmlDocument.setParameter("language", "LNG_POR_DEFECTO=\"" + vars.getLanguage() + "\";");
+//    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
 //    ClientData[] clients = null;
 //    {
 //      ClientData[] data1 = ClientData.select(this);

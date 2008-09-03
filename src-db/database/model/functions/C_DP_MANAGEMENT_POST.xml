@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_DP_MANAGEMENT_POST">
     <function name="C_DP_MANAGEMENT_POST" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_dp_management_id" type="NUMERIC" mode="in">
+      <parameter name="p_dp_management_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -27,21 +27,21 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1; -- 0=failure
-  v_Record_ID NUMBER(10) ;
-  v_AD_User_ID NUMBER(10) ;
-  v_AD_Client_ID NUMBER(10) ;
-  v_AD_Org_ID NUMBER(10) ;
+  v_Record_ID VARCHAR2(32) ;
+  v_AD_User_ID VARCHAR2(32) ;
+  v_AD_Client_ID VARCHAR2(32) ;
+  v_AD_Org_ID VARCHAR2(32) ;
   v_Processed CHAR(1) ;
   v_Posted char(1) ;
-  v_Currency NUMBER;
+  v_Currency VARCHAR2(32);
   v_Date DATE;
   v_CashBook_ISO_Code VARCHAR(10) ;
   v_Record_Description VARCHAR2(2000):='';
-  v_Debt_Payment_ID NUMBER(10) ;
+  v_Debt_Payment_ID VARCHAR2(32) ;
   --Addesd by PSarobe 12062007
   v_line NUMBER;
-  v_DpManagementline_ID NUMBER (10);
-  v_Remittanceline_ID NUMBER(10);
+  v_DpManagementline_ID VARCHAR2(32);
+  v_Remittanceline_ID VARCHAR2(32);
   v_documentno_Settlement VARCHAR2(40);
   v_dateSettlement DATE;
   v_Cancel_Processed CHAR(1);
@@ -49,10 +49,10 @@
   v_dateBankstatement DATE;
   v_nameCash VARCHAR2 (60);
   v_dateCash DATE;
-  v_Bankstatementline_ID NUMBER;
-  v_CashLine_ID NUMBER;
+  v_Bankstatementline_ID VARCHAR2(32);
+  v_CashLine_ID VARCHAR2(32);
   v_ispaid CHAR(1);
-  v_Settlement_Cancel_ID NUMBER;
+  v_Settlement_Cancel_ID VARCHAR2(32);
   --  Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;

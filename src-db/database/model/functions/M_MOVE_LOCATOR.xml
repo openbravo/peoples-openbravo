@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_MOVE_LOCATOR">
     <function name="M_MOVE_LOCATOR" type="NULL">
-      <parameter name="pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -23,20 +23,20 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     -- Lines to create
     Cur_MovementLine RECORD;
     -- Parameter Variables
-    v_AD_User_ID NUMBER(10) ;
-    v_LocatorFrom NUMBER(10) ;
-    v_LocatorTo NUMBER(10) ;
-    v_ClientID NUMBER(10) ;
-    v_OrgID NUMBER(10) ;
+    v_AD_User_ID VARCHAR2(32) ;
+    v_LocatorFrom  VARCHAR2(32);
+    v_LocatorTo VARCHAR2(32) ;
+    v_ClientID varchar2(32) ;
+    v_OrgID varchar2(32) ;
     v_Processed CHAR(1) ;
-    v_MovementLine_ID NUMBER(10) ;
+    v_MovementLine_ID VARCHAR2(32) ;
     v_LineNo NUMBER(10) ;
     END_PROCESS BOOLEAN:=false;
   BEGIN
@@ -64,10 +64,10 @@
       v_Record_ID:=Cur_Parameter.Record_ID;
       v_AD_User_ID:=Cur_Parameter.AD_User_ID;
       IF(Cur_Parameter.ParameterName='M_LocatorFrom') THEN
-        v_LocatorFrom:=Cur_Parameter.P_Number;
+        v_LocatorFrom:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE(' M_LocatorFrom=' || v_LocatorFrom) ;
       ELSIF(Cur_Parameter.ParameterName='M_LocatorTo') THEN
-        v_LocatorTo:=Cur_Parameter.P_Number;
+        v_LocatorTo:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE(' M_LocatorTo=' || v_LocatorTo) ;
       ELSE
         DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;

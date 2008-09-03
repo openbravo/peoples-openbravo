@@ -35,7 +35,7 @@
       (SELECT M_PRODUCT_ID, SUM(MOVEMENTQTY) AS QTY, C_UOM_ID FROM M_TRANSACTION, M_LOCATOR
       WHERE M_TRANSACTION.M_LOCATOR_ID = M_LOCATOR.M_LOCATOR_ID
       AND MOVEMENTDATE < to_date(?)
-      AND M_LOCATOR.M_WAREHOUSE_ID = TO_NUMBER(?)
+      AND M_LOCATOR.M_WAREHOUSE_ID = ?
       GROUP BY M_PRODUCT_ID, C_UOM_ID) A, C_UOM
       WHERE A.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
       AND A.C_UOM_ID = C_UOM.C_UOM_ID
@@ -49,7 +49,7 @@
       <Parameter name="date"/>
       <Parameter name="datePlus"/>
       <Parameter name="warehouse"/>
-      <Parameter name="categoryProduct" optional="true" after="AND 1=1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_CATEGORY_ID = TO_NUMBER(?) ]]></Parameter>
+      <Parameter name="categoryProduct" optional="true" after="AND 1=1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_CATEGORY_ID= ? ]]></Parameter>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>

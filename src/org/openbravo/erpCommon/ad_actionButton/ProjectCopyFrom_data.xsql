@@ -32,7 +32,7 @@
 	        '' as C_PROJECTLINE_ID, '' as LINE, '' as PLANNEDQTY, '' as M_PRODUCT_CATEGORY_ID,
 	        '' as PRODUCT_DESCRIPTION, '' as PRODUCT_NAME, '' as PRODUCT_VALUE 
         FROM C_PROJECTPHASE P 
-		WHERE P.C_PROJECT_ID = TO_NUMBER(?)
+		WHERE P.C_PROJECT_ID = ?
         ORDER BY P.SEQNO
       ]]>
     </Sql>
@@ -46,7 +46,7 @@
         	PL.PLANNEDQTY, PL.M_PRODUCT_ID, PL.M_PRODUCT_CATEGORY_ID,
         	PL.PRODUCT_DESCRIPTION, PL.PRODUCT_NAME, PL.PRODUCT_VALUE 
         FROM C_PROJECTLINE PL
-        WHERE PL.C_PROJECT_ID = TO_NUMBER(?)
+        WHERE PL.C_PROJECT_ID = ?
         ORDER BY PL.LINE
       ]]>
     </Sql>
@@ -58,7 +58,7 @@
       <![CDATA[
 	SELECT C_PROJECTTYPE_ID
 	FROM C_PROJECT
-	WHERE C_PROJECT_ID = TO_NUMBER(?)
+	WHERE C_PROJECT_ID = ?
       ]]>
     </Sql>
     <Parameter name="c_project_id"/>
@@ -69,7 +69,7 @@
       <![CDATA[
 	SELECT PROJECTCATEGORY
 	FROM C_PROJECT
-	WHERE C_PROJECT_ID = TO_NUMBER(?)
+	WHERE C_PROJECT_ID = ?
       ]]>
     </Sql>
     <Parameter name="c_project_id"/>
@@ -80,8 +80,8 @@
       <![CDATA[
         SELECT COUNT(C_PROJECTPHASE_ID) AS TOTAL 
         FROM C_PROJECTPHASE
-        WHERE C_PROJECT_ID = TO_NUMBER(?)
-        AND C_PHASE_ID = TO_NUMBER(?)
+        WHERE C_PROJECT_ID = ?
+        AND C_PHASE_ID = ?
       ]]>
     </Sql>
     <Parameter name="c_project_id"/>
@@ -94,7 +94,7 @@
         SELECT T.C_TASK_ID, T.SEQNO, T.NAME, T.DESCRIPTION, T.HELP,
         T.M_PRODUCT_ID, T.QTY
         FROM C_PROJECTTASK T
-        WHERE T.C_PROJECTPHASE_ID = TO_NUMBER(?)
+        WHERE T.C_PROJECTPHASE_ID = ?
         ORDER BY T.SEQNO
       ]]>
     </Sql>
@@ -104,10 +104,18 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        INSERT INTO C_PROJECTPHASE (C_PROJECT_ID, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, 
-        UPDATED, UPDATEDBY, DESCRIPTION, M_PRODUCT_ID, C_PHASE_ID, C_PROJECTPHASE_ID, 
-        HELP, NAME, QTY, SEQNO) 
-        VALUES (TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),now(),TO_NUMBER(?),now(),TO_NUMBER(?),?,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),?,?,TO_NUMBER(?),TO_NUMBER(?))
+        INSERT INTO C_PROJECTPHASE 
+          (C_PROJECT_ID, AD_CLIENT_ID, AD_ORG_ID, 
+           CREATED, CREATEDBY, UPDATED, UPDATEDBY, 
+           DESCRIPTION, M_PRODUCT_ID, C_PHASE_ID, 
+           C_PROJECTPHASE_ID, HELP, NAME, 
+           QTY, SEQNO) 
+        VALUES 
+          (?,?,?,
+           now(),?,now(),?,
+           ?,?,?,
+           ?,?,?,
+           ?,?)
       ]]>
     </Sql>
     <Parameter name="c_project_id"/>
@@ -128,9 +136,16 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        INSERT INTO C_PROJECTTASK (C_PROJECTTASK_ID, C_TASK_ID, AD_CLIENT_ID, AD_ORG_ID, CREATED, 
-        CREATEDBY, UPDATED, UPDATEDBY, SEQNO, NAME, DESCRIPTION, HELP, M_PRODUCT_ID, C_PROJECTPHASE_ID, QTY) 
-        VALUES (TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),now(),TO_NUMBER(?),now(),TO_NUMBER(?),TO_NUMBER(?),?,?,?,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?))
+        INSERT INTO C_PROJECTTASK 
+          (C_PROJECTTASK_ID, C_TASK_ID, AD_CLIENT_ID, AD_ORG_ID, 
+           CREATED, CREATEDBY, UPDATED, UPDATEDBY, 
+           SEQNO, NAME, DESCRIPTION, 
+           HELP, M_PRODUCT_ID, C_PROJECTPHASE_ID, QTY) 
+        VALUES 
+          (?,?,?,?,
+           now(),?,now(),?,
+           TO_NUMBER(?),?,?,
+           ?,?,?,TO_NUMBER(?))
       ]]>
     </Sql>
     <Parameter name="c_projecttask_id"/>
@@ -154,8 +169,8 @@
         INSERT INTO C_PROJECTLINE (C_PROJECTLINE_ID, C_PROJECT_ID, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, 
 	        UPDATED, UPDATEDBY, LINE, DESCRIPTION, PLANNEDQTY, M_PRODUCT_ID, M_PRODUCT_CATEGORY_ID, 
 	        PRODUCT_DESCRIPTION, PRODUCT_NAME, PRODUCT_VALUE) 
-        VALUES (TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),now(),TO_NUMBER(?),
-        	now(),TO_NUMBER(?),TO_NUMBER(?),?,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),
+        VALUES (?,?,?,?,now(),?,
+        	now(),?,?,?,?,?,?,
         	?,?,?)
       ]]>
     </Sql>
@@ -179,7 +194,7 @@
     <Sql>
       <![CDATA[
         SELECT PROJECTCATEGORY FROM C_PROJECT
-        WHERE C_PROJECT_ID = TO_NUMBER(?)
+        WHERE C_PROJECT_ID = ?
       ]]>
     </Sql>
     <Parameter name="cprojectid"/>
@@ -189,8 +204,8 @@
     <Sql><![CDATA[
       SELECT C_Project.C_Project_ID as id, (C_Project.Value || ' - ' || C_Project.Name) as name FROM C_Project
       WHERE C_Project.AD_Org_ID IN('1') AND C_Project.AD_Client_ID IN('1') AND C_Project.isActive = 'Y' 
-      AND C_Project.C_Project_ID NOT IN (SELECT C_Project_ID FROM c_project WHERE c_project_ID = TO_NUMBER(?))
-      AND C_Project.projectcategory IN (SELECT projectcategory FROM c_project WHERE c_project_ID = TO_NUMBER(?))
+      AND C_Project.C_Project_ID NOT IN (SELECT C_Project_ID FROM c_project WHERE c_project_ID = ?)
+      AND C_Project.projectcategory IN (SELECT projectcategory FROM c_project WHERE c_project_ID = ?)
       ORDER BY name
     ]]></Sql>
     <Parameter name="adOrgClient" type="replace" optional="true" after="C_Project.AD_Org_ID IN(" text="'1'"/>

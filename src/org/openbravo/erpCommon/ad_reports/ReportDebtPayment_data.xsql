@@ -28,7 +28,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT (CASE WHEN I.C_INVOICE_ID IS NULL THEN 0 ELSE I.C_INVOICE_ID END) AS C_INVOICE_ID, (CASE WHEN DP.C_DEBT_PAYMENT_ID IS NULL THEN 0 ELSE DP.C_DEBT_PAYMENT_ID END) AS C_DEBT_PAYMENT_ID, B.NAME AS BPARTNER, (CASE WHEN I.DOCUMENTNO IS NOT NULL THEN I.DOCUMENTNO||' ('||I.DATEINVOICED||')' END) AS INVOICE, DP.DATEPLANNED,
+      SELECT (CASE WHEN I.C_INVOICE_ID IS NULL THEN '0' ELSE I.C_INVOICE_ID END) AS C_INVOICE_ID, (CASE WHEN DP.C_DEBT_PAYMENT_ID IS NULL THEN '0' ELSE DP.C_DEBT_PAYMENT_ID END) AS C_DEBT_PAYMENT_ID, B.NAME AS BPARTNER, (CASE WHEN I.DOCUMENTNO IS NOT NULL THEN I.DOCUMENTNO||' ('||I.DATEINVOICED||')' END) AS INVOICE, DP.DATEPLANNED,
       DP.AMOUNT, DP.WRITEOFFAMT, C.ISO_CODE AS CURRENCY,
       (CASE WHEN S1.DOCUMENTNO IS NOT NULL THEN S1.DOCUMENTNO||' ('||S1.DATETRX||')' END) AS DEBTCANCEL, (CASE WHEN S2.DOCUMENTNO IS NOT NULL THEN S2.DOCUMENTNO||' ('||S2.DATETRX||')' END) AS DEBTGENERATE, COALESCE(RLT.NAME, RL.NAME) AS PAYMENTRULE,
       (CASE C_DEBT_PAYMENT_STATUS(DP.C_Settlement_Cancel_ID, DP.CANCEL_PROCESSED, DP.GENERATE_PROCESSED, DP.ISPAID, DP.ISVALID, 
@@ -48,14 +48,14 @@
            C_CURRENCY C    
       WHERE DP.C_CURRENCY_ID = C.C_CURRENCY_ID 
       AND DP.PAYMENTRULE = RL.VALUE
-      AND RL.AD_REFERENCE_ID = 195
+      AND RL.AD_REFERENCE_ID = '195'
       AND DP.STATUS = RL2.VALUE
-      AND RL2.AD_REFERENCE_ID = 800070
+      AND RL2.AD_REFERENCE_ID = '800070'
       AND DP.AD_Client_ID IN ('1') 
       AND DP.AD_Org_ID IN ('1') 
       AND DP.IsActive='Y'
       AND DP.IsValid='Y'
-      GROUP BY (CASE WHEN I.C_INVOICE_ID IS NULL THEN 0 ELSE I.C_INVOICE_ID END), (CASE WHEN DP.C_DEBT_PAYMENT_ID IS NULL THEN 0 ELSE DP.C_DEBT_PAYMENT_ID END), B.NAME, (CASE WHEN I.DOCUMENTNO IS NOT NULL THEN I.DOCUMENTNO||' ('||I.DATEINVOICED||')' END), DP.DATEPLANNED, DP.AMOUNT,
+      GROUP BY (CASE WHEN I.C_INVOICE_ID IS NULL THEN '0' ELSE I.C_INVOICE_ID END), (CASE WHEN DP.C_DEBT_PAYMENT_ID IS NULL THEN '0' ELSE DP.C_DEBT_PAYMENT_ID END), B.NAME, (CASE WHEN I.DOCUMENTNO IS NOT NULL THEN I.DOCUMENTNO||' ('||I.DATEINVOICED||')' END), DP.DATEPLANNED, DP.AMOUNT,
       DP.WRITEOFFAMT, C.ISO_CODE, (CASE WHEN S1.DOCUMENTNO IS NOT NULL THEN S1.DOCUMENTNO||' ('||S1.DATETRX||')' END), (CASE WHEN S2.DOCUMENTNO IS NOT NULL THEN S2.DOCUMENTNO||' ('||S2.DATETRX||')' END), RLT.NAME, RL.NAME, RLT2.NAME, RL2.NAME, DP.C_Settlement_Cancel_ID,
       DP.CANCEL_PROCESSED, DP.GENERATE_PROCESSED, DP.ISPAID, DP.ISVALID, DP.C_CASHLINE_ID, DP.C_BANKSTATEMENTLINE_ID, DP.DESCRIPTION, (CASE DP.ISRECEIPT WHEN 'Y' THEN 'SalesInvoice' ELSE 'PurchaseInvoice' END),s2.SETTLEMENTTYPE, DP.STATUS
       ORDER BY BPARTNER, STATUS, DP.DATEPLANNED
@@ -72,7 +72,7 @@
       <Parameter name="adUserClient" type="replace" optional="true" after="DP.AD_Client_ID IN (" text="'1'"/>
       <Parameter name="adUserOrg" type="replace" optional="true" after="DP.AD_Org_ID IN (" text="'1'"/>
       <Parameter name="cBpartnerId" optional="true" type="argument" after="AND DP.IsValid='Y'"><![CDATA[ AND dp.C_BPARTNER_ID IN ]]></Parameter>
-      <!-- <Parameter name="businesPartner" optional="true" after="AND DP.IsValid='Y'"><![CDATA[ AND b.C_BPartner_ID = TO_NUMBER(?) ]]></Parameter>  -->
+      <!-- <Parameter name="businesPartner" optional="true" after="AND DP.IsValid='Y'"><![CDATA[ AND b.C_BPartner_ID = ? ]]></Parameter>  -->
       <Parameter name="dateFrom" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.Dateplanned >= to_date(?) ]]></Parameter>
       <Parameter name="dateTo" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.Dateplanned < to_date(?) ]]></Parameter>
       <Parameter name="AmountFrom" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.amount >= ? ]]></Parameter>
@@ -82,13 +82,13 @@
       <Parameter name="status" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.status=? ]]></Parameter>
       <Parameter name="isSettle" optional="true" type="argument" after="DP.IsValid='Y'" text="AND C_DEBT_PAYMENT_STATUS(DP.C_Settlement_Cancel_ID, DP.CANCEL_PROCESSED, DP.GENERATE_PROCESSED, DP.ISPAID, DP.ISVALID, 
       DP.C_CASHLINE_ID, DP.C_BANKSTATEMENTLINE_ID) IN"/>
-      <Parameter name="cbankaccount" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND DP.C_BANKACCOUNT_ID = TO_NUMBER(?) ]]></Parameter>
+      <Parameter name="cbankaccount" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND DP.C_BANKACCOUNT_ID= ? ]]></Parameter>
   </SqlMethod>
   <SqlMethod name="selectNoBpartner" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT (CASE WHEN I.C_INVOICE_ID IS NULL THEN 0 ELSE I.C_INVOICE_ID END) AS C_INVOICE_ID, (CASE WHEN DP.C_DEBT_PAYMENT_ID IS NULL THEN 0 ELSE DP.C_DEBT_PAYMENT_ID END) AS C_DEBT_PAYMENT_ID, B.NAME AS BPARTNER, (CASE WHEN I.DOCUMENTNO IS NOT NULL THEN I.DOCUMENTNO||' ('||I.DATEINVOICED||')' END) AS INVOICE, DP.DATEPLANNED,
+      SELECT (CASE WHEN I.C_INVOICE_ID IS NULL THEN '0' ELSE I.C_INVOICE_ID END) AS C_INVOICE_ID, (CASE WHEN DP.C_DEBT_PAYMENT_ID IS NULL THEN '0' ELSE DP.C_DEBT_PAYMENT_ID END) AS C_DEBT_PAYMENT_ID, B.NAME AS BPARTNER, (CASE WHEN I.DOCUMENTNO IS NOT NULL THEN I.DOCUMENTNO||' ('||I.DATEINVOICED||')' END) AS INVOICE, DP.DATEPLANNED,
       DP.AMOUNT, DP.WRITEOFFAMT, C.ISO_CODE AS CURRENCY,
       (CASE WHEN S1.DOCUMENTNO IS NOT NULL THEN S1.DOCUMENTNO||' ('||S1.DATETRX||')' END) AS DEBTCANCEL, (CASE WHEN S2.DOCUMENTNO IS NOT NULL THEN S2.DOCUMENTNO||' ('||S2.DATETRX||')' END) AS DEBTGENERATE, COALESCE(RLT.NAME, RL.NAME) AS PAYMENTRULE,
       (CASE C_DEBT_PAYMENT_STATUS(DP.C_Settlement_Cancel_ID, DP.CANCEL_PROCESSED, DP.GENERATE_PROCESSED, DP.ISPAID, DP.ISVALID, 
@@ -108,14 +108,14 @@
            C_CURRENCY C    
       WHERE DP.C_CURRENCY_ID = C.C_CURRENCY_ID 
       AND DP.PAYMENTRULE = RL.VALUE
-      AND RL.AD_REFERENCE_ID = 195
+      AND RL.AD_REFERENCE_ID = '195'
       AND DP.STATUS = RL2.VALUE
-      AND RL2.AD_REFERENCE_ID = 800070
+      AND RL2.AD_REFERENCE_ID = '800070'
       AND DP.AD_Client_ID IN ('1') 
       AND DP.AD_Org_ID IN ('1') 
       AND DP.IsActive='Y'
       AND DP.IsValid='Y'
-      GROUP BY (CASE WHEN I.C_INVOICE_ID IS NULL THEN 0 ELSE I.C_INVOICE_ID END), (CASE WHEN DP.C_DEBT_PAYMENT_ID IS NULL THEN 0 ELSE DP.C_DEBT_PAYMENT_ID END), B.NAME, (CASE WHEN I.DOCUMENTNO IS NOT NULL THEN I.DOCUMENTNO||' ('||I.DATEINVOICED||')' END), DP.DATEPLANNED, DP.AMOUNT,
+      GROUP BY (CASE WHEN I.C_INVOICE_ID IS NULL THEN '0' ELSE I.C_INVOICE_ID END), (CASE WHEN DP.C_DEBT_PAYMENT_ID IS NULL THEN '0' ELSE DP.C_DEBT_PAYMENT_ID END), B.NAME, (CASE WHEN I.DOCUMENTNO IS NOT NULL THEN I.DOCUMENTNO||' ('||I.DATEINVOICED||')' END), DP.DATEPLANNED, DP.AMOUNT,
       DP.WRITEOFFAMT, C.ISO_CODE, (CASE WHEN S1.DOCUMENTNO IS NOT NULL THEN S1.DOCUMENTNO||' ('||S1.DATETRX||')' END), (CASE WHEN S2.DOCUMENTNO IS NOT NULL THEN S2.DOCUMENTNO||' ('||S2.DATETRX||')' END), RLT.NAME, RL.NAME, RLT2.NAME, RL2.NAME, DP.C_Settlement_Cancel_ID,
       DP.CANCEL_PROCESSED, DP.GENERATE_PROCESSED, DP.ISPAID, DP.ISVALID, DP.C_CASHLINE_ID, DP.C_BANKSTATEMENTLINE_ID, DP.DESCRIPTION, (CASE DP.ISRECEIPT WHEN 'Y' THEN 'SalesInvoice' ELSE 'PurchaseInvoice' END),s2.SETTLEMENTTYPE, DP.STATUS
       ORDER BY STATUS, DP.DATEPLANNED, BPARTNER
@@ -132,7 +132,7 @@
       <Parameter name="adUserClient" type="replace" optional="true" after="DP.AD_Client_ID IN (" text="'1'"/>
       <Parameter name="adUserOrg" type="replace" optional="true" after="DP.AD_Org_ID IN (" text="'1'"/>
       <Parameter name="cBpartnerId" optional="true" type="argument" after="AND DP.IsValid='Y'"><![CDATA[ AND dp.C_BPARTNER_ID IN ]]></Parameter>
-      <!-- <Parameter name="businesPartner" optional="true" after="AND DP.IsValid='Y'"><![CDATA[ AND b.C_BPartner_ID = TO_NUMBER(?) ]]></Parameter>  -->
+      <!-- <Parameter name="businesPartner" optional="true" after="AND DP.IsValid='Y'"><![CDATA[ AND b.C_BPartner_ID = ? ]]></Parameter>  -->
       <Parameter name="dateFrom" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.Dateplanned >= to_date(?) ]]></Parameter>
       <Parameter name="dateTo" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.Dateplanned < to_date(?) ]]></Parameter>
       <Parameter name="AmountFrom" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.amount >= ? ]]></Parameter>
@@ -142,7 +142,7 @@
       <Parameter name="status" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.status=? ]]></Parameter>
       <Parameter name="isSettle" optional="true" type="argument" after="DP.IsValid='Y'" text="AND C_DEBT_PAYMENT_STATUS(DP.C_Settlement_Cancel_ID, DP.CANCEL_PROCESSED, DP.GENERATE_PROCESSED, DP.ISPAID, DP.ISVALID, 
       DP.C_CASHLINE_ID, DP.C_BANKSTATEMENTLINE_ID) IN"/>
-      <Parameter name="cbankaccount" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND DP.C_BANKACCOUNT_ID = TO_NUMBER(?) ]]></Parameter>
+      <Parameter name="cbankaccount" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND DP.C_BANKACCOUNT_ID= ? ]]></Parameter>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
@@ -152,7 +152,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     SELECT NAME FROM C_BPARTNER 
-    WHERE C_BPARTNER_ID = TO_NUMBER(?)
+    WHERE C_BPARTNER_ID = ?
     </Sql>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>

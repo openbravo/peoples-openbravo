@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION CHANGEPROJECTSTATUSTOORDER">
     <function name="CHANGEPROJECTSTATUSTOORDER" type="NULL">
-      <parameter name="p_pinstance_id" type="NUMERIC" mode="in">
+      <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <body><![CDATA[/*************************************************************************
@@ -23,10 +23,10 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Result NUMBER:=1; -- 0=failure
-  v_Record_ID NUMBER;
-  v_AD_User_ID NUMBER;
-  v_AD_Client_ID NUMBER;
-  v_AD_Org_ID NUMBER;
+  v_Record_ID VARCHAR2(32);
+  v_AD_User_ID VARCHAR2(32);
+  v_AD_Client_ID VARCHAR2(32);
+  v_AD_Org_ID VARCHAR2(32);
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
     v_ProjectStatus CHAR(2) ;
@@ -37,7 +37,7 @@
     v_PriceList NUMBER;
     v_PriceListVersionPO NUMBER;
     v_PriceListPO NUMBER;
-    v_C_Currency_ID NUMBER;
+    v_C_Currency_ID VARCHAR2(32);
     v_TotalPhases NUMBER;
     v_TotalLines NUMBER;
     v_BPName VARCHAR2(2000):='';
