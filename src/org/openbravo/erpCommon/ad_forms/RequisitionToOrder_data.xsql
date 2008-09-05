@@ -430,7 +430,7 @@
         ?,?,?,
         ?, ?,?,?,
         TO_NUMBER(?), 
-        M_GET_OFFERS_PRICE(to_date(now()), ?, ?,?,?,?),
+        M_GET_OFFERS_PRICE(to_date(now()),?,?,TO_NUMBER(?),TO_NUMBER(?),?),
         TO_NUMBER(?), ?, ?,TO_NUMBER(?), 
         TO_NUMBER(?))
       ]]>
