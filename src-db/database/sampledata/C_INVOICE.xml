@@ -71,8 +71,6 @@
 <!--1000000-->              <AD_USER_ID><![CDATA[1000008]]></AD_USER_ID>
 <!--1000000 ISSELFSERVICE-->
 <!--1000000-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000000 TAXDATE-->
-<!--1000000-->              <TAXDATE><![CDATA[2006-03-29 11:47:26.0]]></TAXDATE>
 <!--1000000**************--></C_INVOICE>
 
 <!--1000001**************--><C_INVOICE>
@@ -152,8 +150,6 @@
 <!--1000001-->              <COPYFROM><![CDATA[N]]></COPYFROM>
 <!--1000001 ISSELFSERVICE-->
 <!--1000001-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000001 TAXDATE-->
-<!--1000001-->              <TAXDATE><![CDATA[2006-03-29 00:00:00.0]]></TAXDATE>
 <!--1000001**************--></C_INVOICE>
 
 <!--1000002**************--><C_INVOICE>
@@ -235,8 +231,6 @@
 <!--1000002-->              <COPYFROM><![CDATA[N]]></COPYFROM>
 <!--1000002 ISSELFSERVICE-->
 <!--1000002-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000002 TAXDATE-->
-<!--1000002-->              <TAXDATE><![CDATA[2006-03-29 00:00:00.0]]></TAXDATE>
 <!--1000002**************--></C_INVOICE>
 
 <!--1000003**************--><C_INVOICE>
@@ -316,8 +310,6 @@
 <!--1000003-->              <COPYFROM><![CDATA[N]]></COPYFROM>
 <!--1000003 ISSELFSERVICE-->
 <!--1000003-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000003 TAXDATE-->
-<!--1000003-->              <TAXDATE><![CDATA[2006-03-31 00:00:00.0]]></TAXDATE>
 <!--1000003**************--></C_INVOICE>
 
 <!--1000004**************--><C_INVOICE>
@@ -395,8 +387,6 @@
 <!--1000004-->              <COPYFROM><![CDATA[N]]></COPYFROM>
 <!--1000004 ISSELFSERVICE-->
 <!--1000004-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000004 TAXDATE-->
-<!--1000004-->              <TAXDATE><![CDATA[2006-03-31 00:00:00.0]]></TAXDATE>
 <!--1000004**************--></C_INVOICE>
 
 <!--1000005**************--><C_INVOICE>
@@ -470,8 +460,6 @@
 <!--1000005-->              <AD_USER_ID><![CDATA[1000006]]></AD_USER_ID>
 <!--1000005 ISSELFSERVICE-->
 <!--1000005-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000005 TAXDATE-->
-<!--1000005-->              <TAXDATE><![CDATA[2006-03-31 11:37:05.0]]></TAXDATE>
 <!--1000005**************--></C_INVOICE>
 
 <!--1000006**************--><C_INVOICE>
@@ -545,8 +533,6 @@
 <!--1000006-->              <AD_USER_ID><![CDATA[1000009]]></AD_USER_ID>
 <!--1000006 ISSELFSERVICE-->
 <!--1000006-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000006 TAXDATE-->
-<!--1000006-->              <TAXDATE><![CDATA[2006-03-31 11:37:18.0]]></TAXDATE>
 <!--1000006**************--></C_INVOICE>
 
 <!--1000007**************--><C_INVOICE>
@@ -630,8 +616,6 @@
 <!--1000007-->              <COPYFROM><![CDATA[N]]></COPYFROM>
 <!--1000007 ISSELFSERVICE-->
 <!--1000007-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000007 TAXDATE-->
-<!--1000007-->              <TAXDATE><![CDATA[2006-03-31 00:00:00.0]]></TAXDATE>
 <!--1000007**************--></C_INVOICE>
 
 <!--1000008**************--><C_INVOICE>
@@ -707,8 +691,6 @@
 <!--1000008-->              <AD_USER_ID><![CDATA[1000003]]></AD_USER_ID>
 <!--1000008 ISSELFSERVICE-->
 <!--1000008-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000008 TAXDATE-->
-<!--1000008-->              <TAXDATE><![CDATA[2006-03-30 00:00:00.0]]></TAXDATE>
 <!--1000008**************--></C_INVOICE>
 
 <!--1000009**************--><C_INVOICE>
@@ -786,8 +768,6 @@
 <!--1000009-->              <AD_USER_ID><![CDATA[1000006]]></AD_USER_ID>
 <!--1000009 ISSELFSERVICE-->
 <!--1000009-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000009 TAXDATE-->
-<!--1000009-->              <TAXDATE><![CDATA[2006-03-31 13:37:32.0]]></TAXDATE>
 <!--1000009**************--></C_INVOICE>
 
 <!--1000010**************--><C_INVOICE>
@@ -863,8 +843,6 @@
 <!--1000010-->              <COPYFROM><![CDATA[N]]></COPYFROM>
 <!--1000010 ISSELFSERVICE-->
 <!--1000010-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000010 TAXDATE-->
-<!--1000010-->              <TAXDATE><![CDATA[2006-04-03 00:00:00.0]]></TAXDATE>
 <!--1000010**************--></C_INVOICE>
 
 <!--1000011**************--><C_INVOICE>
@@ -942,8 +920,6 @@
 <!--1000011-->              <COPYFROM><![CDATA[N]]></COPYFROM>
 <!--1000011 ISSELFSERVICE-->
 <!--1000011-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000011 TAXDATE-->
-<!--1000011-->              <TAXDATE><![CDATA[2006-04-03 00:00:00.0]]></TAXDATE>
 <!--1000011**************--></C_INVOICE>
 
 <!--1000012**************--><C_INVOICE>
@@ -1019,8 +995,6 @@
 <!--1000012-->              <AD_USER_ID><![CDATA[1000008]]></AD_USER_ID>
 <!--1000012 ISSELFSERVICE-->
 <!--1000012-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000012 TAXDATE-->
-<!--1000012-->              <TAXDATE><![CDATA[2006-04-03 00:00:00.0]]></TAXDATE>
 <!--1000012**************--></C_INVOICE>
 
 <!--1000013**************--><C_INVOICE>
@@ -1098,8 +1072,6 @@
 <!--1000013-->              <AD_USER_ID><![CDATA[1000003]]></AD_USER_ID>
 <!--1000013 ISSELFSERVICE-->
 <!--1000013-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000013 TAXDATE-->
-<!--1000013-->              <TAXDATE><![CDATA[2006-04-03 10:32:50.0]]></TAXDATE>
 <!--1000013**************--></C_INVOICE>
 
 <!--1000014**************--><C_INVOICE>
@@ -1175,8 +1147,6 @@
 <!--1000014-->              <AD_USER_ID><![CDATA[1000015]]></AD_USER_ID>
 <!--1000014 ISSELFSERVICE-->
 <!--1000014-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000014 TAXDATE-->
-<!--1000014-->              <TAXDATE><![CDATA[2006-04-01 20:12:45.0]]></TAXDATE>
 <!--1000014**************--></C_INVOICE>
 
 <!--1000015**************--><C_INVOICE>
@@ -1252,8 +1222,6 @@
 <!--1000015-->              <AD_USER_ID><![CDATA[1000015]]></AD_USER_ID>
 <!--1000015 ISSELFSERVICE-->
 <!--1000015-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000015 TAXDATE-->
-<!--1000015-->              <TAXDATE><![CDATA[2006-04-03 10:49:15.0]]></TAXDATE>
 <!--1000015**************--></C_INVOICE>
 
 <!--1000016**************--><C_INVOICE>
@@ -1329,8 +1297,6 @@
 <!--1000016-->              <COPYFROM><![CDATA[N]]></COPYFROM>
 <!--1000016 ISSELFSERVICE-->
 <!--1000016-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000016 TAXDATE-->
-<!--1000016-->              <TAXDATE><![CDATA[2006-04-03 00:00:00.0]]></TAXDATE>
 <!--1000016**************--></C_INVOICE>
 
 <!--1000017**************--><C_INVOICE>
@@ -1406,8 +1372,6 @@
 <!--1000017-->              <AD_USER_ID><![CDATA[1000006]]></AD_USER_ID>
 <!--1000017 ISSELFSERVICE-->
 <!--1000017-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000017 TAXDATE-->
-<!--1000017-->              <TAXDATE><![CDATA[2006-04-03 11:43:24.0]]></TAXDATE>
 <!--1000017**************--></C_INVOICE>
 
 <!--1000018**************--><C_INVOICE>
@@ -1483,8 +1447,6 @@
 <!--1000018-->              <AD_USER_ID><![CDATA[1000006]]></AD_USER_ID>
 <!--1000018 ISSELFSERVICE-->
 <!--1000018-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000018 TAXDATE-->
-<!--1000018-->              <TAXDATE><![CDATA[2006-04-03 11:45:24.0]]></TAXDATE>
 <!--1000018**************--></C_INVOICE>
 
 <!--1000019**************--><C_INVOICE>
@@ -1560,8 +1522,6 @@
 <!--1000019-->              <AD_USER_ID><![CDATA[1000017]]></AD_USER_ID>
 <!--1000019 ISSELFSERVICE-->
 <!--1000019-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000019 TAXDATE-->
-<!--1000019-->              <TAXDATE><![CDATA[2006-04-03 00:00:00.0]]></TAXDATE>
 <!--1000019**************--></C_INVOICE>
 
 <!--1000020**************--><C_INVOICE>
@@ -1637,8 +1597,6 @@
 <!--1000020-->              <AD_USER_ID><![CDATA[1000009]]></AD_USER_ID>
 <!--1000020 ISSELFSERVICE-->
 <!--1000020-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000020 TAXDATE-->
-<!--1000020-->              <TAXDATE><![CDATA[2006-03-31 00:00:00.0]]></TAXDATE>
 <!--1000020**************--></C_INVOICE>
 
 <!--1000021**************--><C_INVOICE>
@@ -1714,8 +1672,6 @@
 <!--1000021-->              <AD_USER_ID><![CDATA[1000009]]></AD_USER_ID>
 <!--1000021 ISSELFSERVICE-->
 <!--1000021-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000021 TAXDATE-->
-<!--1000021-->              <TAXDATE><![CDATA[2006-04-01 20:22:26.0]]></TAXDATE>
 <!--1000021**************--></C_INVOICE>
 
 <!--1000022**************--><C_INVOICE>
@@ -1793,8 +1749,6 @@
 <!--1000022-->              <COPYFROM><![CDATA[N]]></COPYFROM>
 <!--1000022 ISSELFSERVICE-->
 <!--1000022-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000022 TAXDATE-->
-<!--1000022-->              <TAXDATE><![CDATA[2006-04-03 00:00:00.0]]></TAXDATE>
 <!--1000022**************--></C_INVOICE>
 
 <!--1000023**************--><C_INVOICE>
@@ -1874,8 +1828,6 @@
 <!--1000023-->              <COPYFROM><![CDATA[N]]></COPYFROM>
 <!--1000023 ISSELFSERVICE-->
 <!--1000023-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000023 TAXDATE-->
-<!--1000023-->              <TAXDATE><![CDATA[2006-04-03 00:00:00.0]]></TAXDATE>
 <!--1000023**************--></C_INVOICE>
 
 <!--1000024**************--><C_INVOICE>
@@ -1951,8 +1903,6 @@
 <!--1000024-->              <AD_USER_ID><![CDATA[1000004]]></AD_USER_ID>
 <!--1000024 ISSELFSERVICE-->
 <!--1000024-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000024 TAXDATE-->
-<!--1000024-->              <TAXDATE><![CDATA[2006-04-03 00:00:00.0]]></TAXDATE>
 <!--1000024**************--></C_INVOICE>
 
 <!--1000025**************--><C_INVOICE>
@@ -2030,8 +1980,6 @@
 <!--1000025-->              <COPYFROM><![CDATA[N]]></COPYFROM>
 <!--1000025 ISSELFSERVICE-->
 <!--1000025-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000025 TAXDATE-->
-<!--1000025-->              <TAXDATE><![CDATA[2006-04-03 00:00:00.0]]></TAXDATE>
 <!--1000025**************--></C_INVOICE>
 
 <!--1000026**************--><C_INVOICE>
@@ -2105,8 +2053,6 @@
 <!--1000026-->              <AD_USER_ID><![CDATA[1000018]]></AD_USER_ID>
 <!--1000026 ISSELFSERVICE-->
 <!--1000026-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000026 TAXDATE-->
-<!--1000026-->              <TAXDATE><![CDATA[2006-04-12 11:27:10.0]]></TAXDATE>
 <!--1000026**************--></C_INVOICE>
 
 <!--1000027**************--><C_INVOICE>
@@ -2180,8 +2126,6 @@
 <!--1000027-->              <AD_USER_ID><![CDATA[1000005]]></AD_USER_ID>
 <!--1000027 ISSELFSERVICE-->
 <!--1000027-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000027 TAXDATE-->
-<!--1000027-->              <TAXDATE><![CDATA[2006-04-12 11:27:54.0]]></TAXDATE>
 <!--1000027**************--></C_INVOICE>
 
 <!--1000028**************--><C_INVOICE>
@@ -2255,8 +2199,6 @@
 <!--1000028-->              <AD_USER_ID><![CDATA[1000007]]></AD_USER_ID>
 <!--1000028 ISSELFSERVICE-->
 <!--1000028-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000028 TAXDATE-->
-<!--1000028-->              <TAXDATE><![CDATA[2006-04-12 11:52:56.0]]></TAXDATE>
 <!--1000028**************--></C_INVOICE>
 
 <!--1000029**************--><C_INVOICE>
@@ -2330,8 +2272,6 @@
 <!--1000029-->              <COPYFROM><![CDATA[N]]></COPYFROM>
 <!--1000029 ISSELFSERVICE-->
 <!--1000029-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000029 TAXDATE-->
-<!--1000029-->              <TAXDATE><![CDATA[2006-08-07 00:00:00.0]]></TAXDATE>
 <!--1000029**************--></C_INVOICE>
 
 <!--1000030**************--><C_INVOICE>
@@ -2407,8 +2347,6 @@
 <!--1000030-->              <AD_USER_ID><![CDATA[1000003]]></AD_USER_ID>
 <!--1000030 ISSELFSERVICE-->
 <!--1000030-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000030 TAXDATE-->
-<!--1000030-->              <TAXDATE><![CDATA[2006-08-08 14:24:22.0]]></TAXDATE>
 <!--1000030**************--></C_INVOICE>
 
 <!--1000031**************--><C_INVOICE>
@@ -2486,8 +2424,6 @@
 <!--1000031-->              <AD_USER_ID><![CDATA[1000006]]></AD_USER_ID>
 <!--1000031 ISSELFSERVICE-->
 <!--1000031-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000031 TAXDATE-->
-<!--1000031-->              <TAXDATE><![CDATA[2006-08-31 16:12:32.0]]></TAXDATE>
 <!--1000031**************--></C_INVOICE>
 
 <!--1000032**************--><C_INVOICE>
@@ -2565,8 +2501,6 @@
 <!--1000032-->              <AD_USER_ID><![CDATA[1000006]]></AD_USER_ID>
 <!--1000032 ISSELFSERVICE-->
 <!--1000032-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000032 TAXDATE-->
-<!--1000032-->              <TAXDATE><![CDATA[2006-08-31 16:12:32.0]]></TAXDATE>
 <!--1000032**************--></C_INVOICE>
 
 <!--1000033**************--><C_INVOICE>
@@ -2642,8 +2576,6 @@
 <!--1000033-->              <COPYFROM><![CDATA[N]]></COPYFROM>
 <!--1000033 ISSELFSERVICE-->
 <!--1000033-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000033 TAXDATE-->
-<!--1000033-->              <TAXDATE><![CDATA[2006-08-31 00:00:00.0]]></TAXDATE>
 <!--1000033**************--></C_INVOICE>
 
 <!--1000034**************--><C_INVOICE>
@@ -2717,8 +2649,6 @@
 <!--1000034-->              <COPYFROM><![CDATA[N]]></COPYFROM>
 <!--1000034 ISSELFSERVICE-->
 <!--1000034-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000034 TAXDATE-->
-<!--1000034-->              <TAXDATE><![CDATA[2006-10-19 00:00:00.0]]></TAXDATE>
 <!--1000034**************--></C_INVOICE>
 
 <!--1000035**************--><C_INVOICE>
@@ -2794,8 +2724,6 @@
 <!--1000035-->              <AD_USER_ID><![CDATA[1000018]]></AD_USER_ID>
 <!--1000035 ISSELFSERVICE-->
 <!--1000035-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000035 TAXDATE-->
-<!--1000035-->              <TAXDATE><![CDATA[2006-04-03 00:00:00.0]]></TAXDATE>
 <!--1000035**************--></C_INVOICE>
 
 <!--1000037**************--><C_INVOICE>
@@ -2875,8 +2803,6 @@
 <!--1000037-->              <COPYFROM><![CDATA[N]]></COPYFROM>
 <!--1000037 ISSELFSERVICE-->
 <!--1000037-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000037 TAXDATE-->
-<!--1000037-->              <TAXDATE><![CDATA[2007-02-01 00:00:00.0]]></TAXDATE>
 <!--1000037**************--></C_INVOICE>
 
 <!--1000039**************--><C_INVOICE>
@@ -2950,8 +2876,6 @@
 <!--1000039-->              <C_PROJECT_ID><![CDATA[1000005]]></C_PROJECT_ID>
 <!--1000039 ISSELFSERVICE-->
 <!--1000039-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000039 TAXDATE-->
-<!--1000039-->              <TAXDATE><![CDATA[2007-02-01 22:08:28.0]]></TAXDATE>
 <!--1000039**************--></C_INVOICE>
 
 <!--1000040**************--><C_INVOICE>
@@ -3027,8 +2951,6 @@
 <!--1000040-->              <COPYFROM><![CDATA[N]]></COPYFROM>
 <!--1000040 ISSELFSERVICE-->
 <!--1000040-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000040 TAXDATE-->
-<!--1000040-->              <TAXDATE><![CDATA[2007-12-11 00:00:00.0]]></TAXDATE>
 <!--1000040**************--></C_INVOICE>
 
 <!--1000041**************--><C_INVOICE>
@@ -3104,8 +3026,6 @@
 <!--1000041-->              <COPYFROM><![CDATA[N]]></COPYFROM>
 <!--1000041 ISSELFSERVICE-->
 <!--1000041-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000041 TAXDATE-->
-<!--1000041-->              <TAXDATE><![CDATA[2007-12-11 00:00:00.0]]></TAXDATE>
 <!--1000041**************--></C_INVOICE>
 
 <!--1000042**************--><C_INVOICE>
@@ -3181,8 +3101,6 @@
 <!--1000042-->              <COPYFROM><![CDATA[N]]></COPYFROM>
 <!--1000042 ISSELFSERVICE-->
 <!--1000042-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000042 TAXDATE-->
-<!--1000042-->              <TAXDATE><![CDATA[2007-12-11 00:00:00.0]]></TAXDATE>
 <!--1000042**************--></C_INVOICE>
 
 <!--1000043**************--><C_INVOICE>
@@ -3258,8 +3176,6 @@
 <!--1000043-->              <COPYFROM><![CDATA[N]]></COPYFROM>
 <!--1000043 ISSELFSERVICE-->
 <!--1000043-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000043 TAXDATE-->
-<!--1000043-->              <TAXDATE><![CDATA[2007-12-11 00:00:00.0]]></TAXDATE>
 <!--1000043**************--></C_INVOICE>
 
 <!--1000044**************--><C_INVOICE>
@@ -3335,8 +3251,6 @@
 <!--1000044-->              <COPYFROM><![CDATA[N]]></COPYFROM>
 <!--1000044 ISSELFSERVICE-->
 <!--1000044-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000044 TAXDATE-->
-<!--1000044-->              <TAXDATE><![CDATA[2007-12-11 00:00:00.0]]></TAXDATE>
 <!--1000044**************--></C_INVOICE>
 
 <!--1000045**************--><C_INVOICE>
@@ -3408,8 +3322,6 @@
 <!--1000045-->              <COPYFROM><![CDATA[N]]></COPYFROM>
 <!--1000045 ISSELFSERVICE-->
 <!--1000045-->              <ISSELFSERVICE><![CDATA[N]]></ISSELFSERVICE>
-<!--1000045 TAXDATE-->
-<!--1000045-->              <TAXDATE><![CDATA[2008-02-22 00:00:00.0]]></TAXDATE>
 <!--1000045**************--></C_INVOICE>
 
 </data>

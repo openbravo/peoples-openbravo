@@ -41,10 +41,6 @@
 <!--1000000-->              <SOPOTYPE><![CDATA[B]]></SOPOTYPE>
 <!--1000000 CASCADE-->
 <!--1000000-->              <CASCADE><![CDATA[N]]></CASCADE>
-<!--1000000 ISTAXUNDEDUCTABLE-->
-<!--1000000-->              <ISTAXUNDEDUCTABLE><![CDATA[N]]></ISTAXUNDEDUCTABLE>
-<!--1000000 ISNOVAT-->
-<!--1000000-->              <ISNOVAT><![CDATA[N]]></ISNOVAT>
 <!--1000000**************--></C_TAX>
 
 <!--1000001**************--><C_TAX>
@@ -88,10 +84,6 @@
 <!--1000001-->              <SOPOTYPE><![CDATA[B]]></SOPOTYPE>
 <!--1000001 CASCADE-->
 <!--1000001-->              <CASCADE><![CDATA[N]]></CASCADE>
-<!--1000001 ISTAXUNDEDUCTABLE-->
-<!--1000001-->              <ISTAXUNDEDUCTABLE><![CDATA[N]]></ISTAXUNDEDUCTABLE>
-<!--1000001 ISNOVAT-->
-<!--1000001-->              <ISNOVAT><![CDATA[N]]></ISNOVAT>
 <!--1000001**************--></C_TAX>
 
 <!--1000002**************--><C_TAX>
@@ -135,10 +127,6 @@
 <!--1000002-->              <SOPOTYPE><![CDATA[B]]></SOPOTYPE>
 <!--1000002 CASCADE-->
 <!--1000002-->              <CASCADE><![CDATA[N]]></CASCADE>
-<!--1000002 ISTAXUNDEDUCTABLE-->
-<!--1000002-->              <ISTAXUNDEDUCTABLE><![CDATA[N]]></ISTAXUNDEDUCTABLE>
-<!--1000002 ISNOVAT-->
-<!--1000002-->              <ISNOVAT><![CDATA[N]]></ISNOVAT>
 <!--1000002**************--></C_TAX>
 
 <!--1000003**************--><C_TAX>
@@ -178,10 +166,6 @@
 <!--1000003-->              <SOPOTYPE><![CDATA[B]]></SOPOTYPE>
 <!--1000003 CASCADE-->
 <!--1000003-->              <CASCADE><![CDATA[N]]></CASCADE>
-<!--1000003 ISTAXUNDEDUCTABLE-->
-<!--1000003-->              <ISTAXUNDEDUCTABLE><![CDATA[N]]></ISTAXUNDEDUCTABLE>
-<!--1000003 ISNOVAT-->
-<!--1000003-->              <ISNOVAT><![CDATA[N]]></ISNOVAT>
 <!--1000003**************--></C_TAX>
 
 <!--1000004**************--><C_TAX>
@@ -225,10 +209,6 @@
 <!--1000004-->              <SOPOTYPE><![CDATA[B]]></SOPOTYPE>
 <!--1000004 CASCADE-->
 <!--1000004-->              <CASCADE><![CDATA[N]]></CASCADE>
-<!--1000004 ISTAXUNDEDUCTABLE-->
-<!--1000004-->              <ISTAXUNDEDUCTABLE><![CDATA[N]]></ISTAXUNDEDUCTABLE>
-<!--1000004 ISNOVAT-->
-<!--1000004-->              <ISNOVAT><![CDATA[N]]></ISNOVAT>
 <!--1000004**************--></C_TAX>
 
 <!--1000005**************--><C_TAX>
@@ -274,10 +254,6 @@
 <!--1000005-->              <SOPOTYPE><![CDATA[B]]></SOPOTYPE>
 <!--1000005 CASCADE-->
 <!--1000005-->              <CASCADE><![CDATA[N]]></CASCADE>
-<!--1000005 ISTAXUNDEDUCTABLE-->
-<!--1000005-->              <ISTAXUNDEDUCTABLE><![CDATA[N]]></ISTAXUNDEDUCTABLE>
-<!--1000005 ISNOVAT-->
-<!--1000005-->              <ISNOVAT><![CDATA[N]]></ISNOVAT>
 <!--1000005**************--></C_TAX>
 
 <!--1000006**************--><C_TAX>
@@ -323,10 +299,6 @@
 <!--1000006-->              <SOPOTYPE><![CDATA[B]]></SOPOTYPE>
 <!--1000006 CASCADE-->
 <!--1000006-->              <CASCADE><![CDATA[N]]></CASCADE>
-<!--1000006 ISTAXUNDEDUCTABLE-->
-<!--1000006-->              <ISTAXUNDEDUCTABLE><![CDATA[N]]></ISTAXUNDEDUCTABLE>
-<!--1000006 ISNOVAT-->
-<!--1000006-->              <ISNOVAT><![CDATA[N]]></ISNOVAT>
 <!--1000006**************--></C_TAX>
 
 <!--1000007**************--><C_TAX>
@@ -368,10 +340,6 @@
 <!--1000007-->              <SOPOTYPE><![CDATA[B]]></SOPOTYPE>
 <!--1000007 CASCADE-->
 <!--1000007-->              <CASCADE><![CDATA[N]]></CASCADE>
-<!--1000007 ISTAXUNDEDUCTABLE-->
-<!--1000007-->              <ISTAXUNDEDUCTABLE><![CDATA[N]]></ISTAXUNDEDUCTABLE>
-<!--1000007 ISNOVAT-->
-<!--1000007-->              <ISNOVAT><![CDATA[N]]></ISNOVAT>
 <!--1000007**************--></C_TAX>
 
 <!--1000008**************--><C_TAX>
@@ -413,10 +381,6 @@
 <!--1000008-->              <CASCADE><![CDATA[N]]></CASCADE>
 <!--1000008 LINE-->
 <!--1000008-->              <LINE><![CDATA[10]]></LINE>
-<!--1000008 ISTAXUNDEDUCTABLE-->
-<!--1000008-->              <ISTAXUNDEDUCTABLE><![CDATA[N]]></ISTAXUNDEDUCTABLE>
-<!--1000008 ISNOVAT-->
-<!--1000008-->              <ISNOVAT><![CDATA[N]]></ISNOVAT>
 <!--1000008**************--></C_TAX>
 
 </data>
