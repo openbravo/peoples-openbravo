@@ -19,19 +19,8 @@
 
 // Function to build the validation for text box
 validateTextArea= function(/*String*/ id){
-  isValidTextArea(id);
   var required = document.getElementById(id).getAttribute("required");
   if (required == "true") isMissingTextArea(id);
-  isInRangeTextArea(id);
-}
-
-isValidTextArea= function(/*String*/ id){
-  var isValid = true;
-  var element = document.getElementById(id+"invalidSpan");
-  if (isValid)
-    element.style.display="none";
-  else
-    element.style.display="";
 }
 
 isMissingTextArea= function(/*String*/ id){
@@ -42,13 +31,3 @@ isMissingTextArea= function(/*String*/ id){
   else
     element.style.display="none";
 }
-
-isInRangeTextArea= function(/*String*/ id){
-  var isInRange = true;
-  var element = document.getElementById(id+"rangeSpan");
-  if (isInRange)
-    element.style.display="none";
-  else
-    element.style.display="";
-}
-

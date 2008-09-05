@@ -79,9 +79,7 @@ public class WADString extends WADControl {
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
     xmlDocument.setParameter("size", (textButton.equals("")?"":"btn_") + getData("CssSize"));
     xmlDocument.setParameter("maxlength", getData("FieldLength"));
-    xmlDocument.setParameter("invalid", this.invalid);
     xmlDocument.setParameter("missing", this.missing);
-    xmlDocument.setParameter("range", this.range);
 
     if (!isDisabled) isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData("IsUpdateable").equals("N"));
     xmlDocument.setParameter("disabled", (isDisabled?"Y":"N"));
@@ -126,9 +124,7 @@ public class WADString extends WADControl {
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
     xmlDocument.setParameter("size", (textButton.equals("")?"":"btn_") + getData("CssSize"));
     xmlDocument.setParameter("maxlength", getData("FieldLength"));
-    xmlDocument.setParameter("invalid", this.invalid);
     xmlDocument.setParameter("missing", this.missing);
-    xmlDocument.setParameter("range", this.range);
 
     if (!isDisabled) isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y"));
     xmlDocument.setParameter("disabled", (isDisabled?"Y":"N"));

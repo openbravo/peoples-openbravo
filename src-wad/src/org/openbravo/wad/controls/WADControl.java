@@ -200,9 +200,7 @@ public class WADControl {
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
     xmlDocument.setParameter("size", getData("CssSize"));
     xmlDocument.setParameter("maxlength", getData("FieldLength"));
-    xmlDocument.setParameter("invalid", invalid);
     xmlDocument.setParameter("missing", missing);
-    xmlDocument.setParameter("range", range);
     boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData("IsUpdateable").equals("N"));
     xmlDocument.setParameter("disabled", (isDisabled?"Y":"N"));
 
@@ -226,9 +224,7 @@ public class WADControl {
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
     xmlDocument.setParameter("size", getData("CssSize"));
     xmlDocument.setParameter("maxlength", getData("FieldLength"));
-    xmlDocument.setParameter("invalid", invalid);
     xmlDocument.setParameter("missing", missing);
-    xmlDocument.setParameter("range", range);
 
     boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y"));
     xmlDocument.setParameter("disabled", (isDisabled?"Y":"N"));

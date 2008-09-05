@@ -22,7 +22,6 @@ validateDateTextBox= function(/*String*/ id){
   isValidDateTextBox(id);
   var required = document.getElementById(id).getAttribute("required");
   if (required == "true") isMissingDateTextBox(id);
-  isInRangeDateTextBox(id);
 }
 
 isValidDateTextBox= function(/*String*/ id){
@@ -41,15 +40,6 @@ isMissingDateTextBox= function(/*String*/ id){
     element.style.display="";
   else
     element.style.display="none";
-}
-
-isInRangeDateTextBox= function(/*String*/ id){
-  var isInRange = true;
-  var element = document.getElementById(id+"rangeSpan");
-  if (isInRange)
-    element.style.display="none";
-  else
-    element.style.display="";
 }
 
 isValidDate = function(/*String*/str_datetime, /*String*/str_dateFormat) {

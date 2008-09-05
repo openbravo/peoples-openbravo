@@ -22,7 +22,6 @@ validateUrlTextBox= function(/*String*/ id){
   isValidUrlTextBox(id);
   var required = document.getElementById(id).getAttribute("required");
   if (required == "true") isMissingUrlTextBox(id);
-  isInRangeUrlTextBox(id);
 }
 
 isValidUrlTextBox= function(/*String*/ id){
@@ -41,15 +40,6 @@ isMissingUrlTextBox= function(/*String*/ id){
     element.style.display="";
   else
     element.style.display="none";
-}
-
-isInRangeUrlTextBox= function(/*String*/ id){
-  var isInRange = true;
-  var element = document.getElementById(id+"rangeSpan");
-  if (isInRange)
-    element.style.display="none";
-  else
-    element.style.display="";
 }
 
 isValidUrl = function(/*String*/str_url) {

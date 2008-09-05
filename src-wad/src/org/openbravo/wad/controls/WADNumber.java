@@ -85,7 +85,6 @@ public class WADNumber extends WADControl {
     xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
     xmlDocument.setParameter("invalid", this.invalid);
     xmlDocument.setParameter("missing", this.missing);
-    xmlDocument.setParameter("range", this.range);
     xmlDocument.setParameter("button", textButton);
 
     boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData("IsUpdateable").equals("N"));
@@ -122,7 +121,6 @@ public class WADNumber extends WADControl {
     xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
     xmlDocument.setParameter("invalid", this.invalid);
     xmlDocument.setParameter("missing", this.missing);
-    xmlDocument.setParameter("range", this.range);
     xmlDocument.setParameter("button", textButton);
 
     boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y"));

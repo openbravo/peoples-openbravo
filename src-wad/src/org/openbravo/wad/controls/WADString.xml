@@ -33,15 +33,9 @@
   <PARAMETER id="xx" name="required" attribute="required"/>
   <PARAMETER id="xx" name="requiredClass" attribute="class" replace="xx"/>
   <PARAMETER id="xx" name="callout" attribute="onchange" replace="xx();"/>
-  <PARAMETER id="xxinvalidSpan" name="columnName" attribute="id" replace="xx"/>
-  <PARAMETER id="xxinvalidSpanText" name="columnName" attribute="id" replace="xx"/>
-  <PARAMETER id="xxinvalidSpanText" name="invalid"/>
   <PARAMETER id="xxmissingSpan" name="columnName" attribute="id" replace="xx"/>
   <PARAMETER id="xxmissingSpanText" name="columnName" attribute="id" replace="xx"/>
   <PARAMETER id="xxmissingSpanText" name="missing"/>
-  <PARAMETER id="xxrangeSpan" name="columnName" attribute="id" replace="xx"/>
-  <PARAMETER id="xxrangeSpanText" name="columnName" attribute="id" replace="xx"/>
-  <PARAMETER id="xxrangeSpanText" name="range"/>
 
   <DISCARD id="discard"/>
 </REPORT>

@@ -38,15 +38,9 @@
   <PARAMETER id="fieldButton" name="button"/>
   <PARAMETER id="fieldButton" name="buttonClass" attribute="class"/>
   <PARAMETER id="fieldHasButton" name="hasButton" attribute="class"/>
-  <PARAMETER id="xx_RinvalidSpan" name="columnName" attribute="id" replace="xx"/>
-  <PARAMETER id="xx_RinvalidSpanText" name="columnName" attribute="id" replace="xx"/>
-  <PARAMETER id="xx_RinvalidSpanText" name="invalid"/>
   <PARAMETER id="xx_RmissingSpan" name="columnName" attribute="id" replace="xx"/>
   <PARAMETER id="xx_RmissingSpanText" name="columnName" attribute="id" replace="xx"/>
   <PARAMETER id="xx_RmissingSpanText" name="missing"/>
-  <PARAMETER id="xx_RrangeSpan" name="columnName" attribute="id" replace="xx"/>
-  <PARAMETER id="xx_RrangeSpanText" name="columnName" attribute="id" replace="xx"/>
-  <PARAMETER id="xx_RrangeSpanText" name="range"/>
 
   <DISCARD id="discard"/>
 </REPORT>

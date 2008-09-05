@@ -39,9 +39,6 @@
   <PARAMETER id="xxmissingSpan" name="columnName" attribute="id" replace="xx"/>
   <PARAMETER id="xxmissingSpanText" name="columnName" attribute="id" replace="xx"/>
   <PARAMETER id="xxmissingSpanText" name="missing"/>
-  <PARAMETER id="xxrangeSpan" name="columnName" attribute="id" replace="xx"/>
-  <PARAMETER id="xxrangeSpanText" name="columnName" attribute="id" replace="xx"/>
-  <PARAMETER id="xxrangeSpanText" name="range"/>
 
   <DISCARD id="discard"/>
 </REPORT>

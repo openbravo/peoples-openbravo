@@ -22,7 +22,6 @@ validateNumberBox= function(/*String*/ id){
   isValidNumberBox(id);
   var required = document.getElementById(id).getAttribute("required");
   if (required == "true") isMissingNumberBox(id);
-  isInRangeNumberBox(id);
 }
 
 isValidNumberBox= function(/*String*/ id){
@@ -41,15 +40,6 @@ isMissingNumberBox= function(/*String*/ id){
     element.style.display="";
   else
     element.style.display="none";
-}
-
-isInRangeNumberBox= function(/*String*/ id){
-  var isInRange = true;
-  var element = document.getElementById(id+"rangeSpan");
-  if (isInRange)
-    element.style.display="none";
-  else
-    element.style.display="";
 }
 
 isNumber= function(strValorNumerico, bolDecimales, bolNegativo) {
