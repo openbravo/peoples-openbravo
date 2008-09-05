@@ -164,7 +164,7 @@
            ?,TO_DATE(?),TO_DATE(?),
            ?,?,?,
            ?,TO_NUMBER(?),?,
-           ?, M_GET_OFFERS_PRICE(to_date(?),?,?,TO_NUMBER(?),TO_NUMBER(?),?), ?, 
+           TO_NUMBER(?), M_GET_OFFERS_PRICE(to_date(?),?,?,TO_NUMBER(?),TO_NUMBER(?),?),TO_NUMBER(?), 
            ?, ?,TO_NUMBER(?), 
            TO_NUMBER(?))
       ]]>
