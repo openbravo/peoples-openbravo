@@ -195,13 +195,6 @@ public class ComboTableData {
    * @throws Exception
    */
   public void setObjectReference(String _reference) throws Exception {
-    if (_reference!=null && !_reference.equals("")) {
-      try {
-        Integer.valueOf(_reference).intValue();
-      } catch (Exception ignore) {
-        _reference = ComboTableQueryData.getReferenceID(getPool(), _reference, (getReferenceType().equals("17")?"L":"T"));
-      }
-    }
     setParameter(internalPrefix + "objectReference", _reference);
   }
 
