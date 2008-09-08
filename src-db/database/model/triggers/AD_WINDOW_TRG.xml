@@ -58,12 +58,12 @@
   INSERT
   INTO AD_Window_Access
     (
-      AD_Window_ID, AD_Role_ID, AD_Client_ID,
+      AD_Window_Access_ID, AD_Window_ID, AD_Role_ID, AD_Client_ID,
       AD_Org_ID, IsActive, Created,
       CreatedBy, Updated, UpdatedBy,
       IsReadWrite
     )
-  SELECT DISTINCT :new.AD_Window_ID,
+  SELECT DISTINCT get_uuid(), :new.AD_Window_ID,
     r.AD_Role_ID, r.AD_CLIENT_ID, r.AD_ORG_ID,
      'Y', now(), '0',
     now(), '0',  'Y'
