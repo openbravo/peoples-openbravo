@@ -78,6 +78,7 @@ a.Popup_Client_Help_Icon_LabelLink {
 }
 
 a.Popup_Client_Help_Icon_LabelLink_focus {
+  padding-top: 8px;
   background-color: #C8E9F9 !important;
   border-style: solid;
   border-width: 2px;

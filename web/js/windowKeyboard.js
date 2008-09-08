@@ -329,6 +329,8 @@ function drawWindowElementFocus(obj) {
     if(obj.tagName == 'A') {
       if (obj.className.indexOf(' Popup_Client_Help_LabelLink_focus') == -1 && obj.className.indexOf('Popup_Client_Help_LabelLink') != -1) {
         obj.className = obj.className + ' Popup_Client_Help_LabelLink_focus';
+      } else if (obj.className.indexOf('Popup_Client_Help_Icon_LabelLink_focus') == -1 && obj.className.indexOf('Popup_Client_Help_Icon_LabelLink') != -1) {
+        obj.className = 'Popup_Client_Help_Icon_LabelLink_focus';
       } else if (obj.className.indexOf(' Popup_Client_UserOps_LabelLink_Selected_focus') == -1 && obj.className.indexOf('Popup_Client_UserOps_LabelLink_Selected') != -1) {
         obj.className = obj.className + ' Popup_Client_UserOps_LabelLink_Selected_focus';
       } else if (obj.className.indexOf(' Popup_Client_UserOps_LabelLink_focus') == -1 && obj.className.indexOf('Popup_Client_UserOps_LabelLink') != -1) {
@@ -359,8 +361,6 @@ function drawWindowElementFocus(obj) {
         obj.className = 'Popup_Workflow_Button_focus';
       } else if (obj.className.indexOf('Popup_Workflow_text_focus') == -1 && obj.className.indexOf('Popup_Workflow_text') != -1) {
         obj.className = 'Popup_Workflow_text_focus';
-      } else if (obj.className.indexOf('Popup_Client_Help_Icon_LabelLink_focus') == -1 && obj.className.indexOf('Popup_Client_Help_Icon_LabelLink') != -1) {
-        obj.className = 'Popup_Client_Help_Icon_LabelLink_focus';
       }
       isFirstTime = false;
     } else if (obj.tagName == 'SELECT') {
