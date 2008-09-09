@@ -49660,7 +49660,7 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005900000 CREATEDBY-->
 <!--1005900000-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1005900000 UPDATED-->
-<!--1005900000-->              <UPDATED><![CDATA[2008-04-03 11:48:36.0]]></UPDATED>
+<!--1005900000-->              <UPDATED><![CDATA[2008-09-09 16:17:07.0]]></UPDATED>
 <!--1005900000 UPDATEDBY-->
 <!--1005900000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005900000 COLUMNNAME-->
@@ -49668,13 +49668,11 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005900000 NAME-->
 <!--1005900000-->              <NAME><![CDATA[Create Temporary Price List]]></NAME>
 <!--1005900000 PRINTNAME-->
-<!--1005900000-->              <PRINTNAME><![CDATA[Hi,
-
-Create Temporary Price List]]></PRINTNAME>
+<!--1005900000-->              <PRINTNAME><![CDATA[Create Temporary Price List]]></PRINTNAME>
 <!--1005900000 DESCRIPTION-->
-<!--1005900000-->              <DESCRIPTION><![CDATA[This options permits to indicate if a temporary price list will be created.]]></DESCRIPTION>
+<!--1005900000-->              <DESCRIPTION><![CDATA[This option permits to indicate if a temporary price list will be created.]]></DESCRIPTION>
 <!--1005900000 HELP-->
-<!--1005900000-->              <HELP><![CDATA[This options permits to indicate if a temporary price list will be created.]]></HELP>
+<!--1005900000-->              <HELP><![CDATA[This option permits to indicate if a temporary price list will be created for the current project when changing its status to 'Order'.]]></HELP>
 <!--1005900000**************--></AD_ELEMENT>
 
 <!--1006100000**************--><AD_ELEMENT>
