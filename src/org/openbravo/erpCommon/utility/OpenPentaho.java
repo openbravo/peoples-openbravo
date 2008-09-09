@@ -36,18 +36,20 @@ public class OpenPentaho extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     String adProcessId = vars.getStringParameter("inpadProcessId");
     String pentahoServer = vars.getSessionValue("#pentahoServer");
+    String userRole = vars.getSessionValue("#AD_ROLE_ID");
     if (!hasGeneralAccess(vars, "P", adProcessId)) bdError(response, "AccessTableNoView", vars.getLanguage());
     else if (pentahoServer.equals("")) bdError (response, "NoPentahoServerDefined", vars.getLanguage());
     else {
       String source = OpenPentahoData.selectSource(this, adProcessId);
       if (source.equals("")) bdError (response, "NoSourceDefined", vars.getLanguage());
-      else printPageDataSheet(response, vars, pentahoServer, source, adProcessId);
+      else printPageDataSheet(response, vars, pentahoServer, source, adProcessId, userRole);
     }
   } 
   
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String pentahoServer, String source, String adProcessId) throws IOException, ServletException {    
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String pentahoServer, String source, String adProcessId, String userRole) throws IOException, ServletException {    
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/OpenPentaho").createXmlDocument();
     if (!source.startsWith("/")) source="/"+source;
+    source = source+((source.indexOf("?")!=-1)?"&":"?")+"ob_role='"+userRole+"'";
     xmlDocument.setParameter("paramURL", pentahoServer+source);
     
     try {

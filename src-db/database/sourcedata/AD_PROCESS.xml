@@ -11629,7 +11629,7 @@ The Service Point is the Warehouse needed in the Purchase Order headers.]]></HEL
 <!--1004400007 ISEXTERNALSERVICE-->
 <!--1004400007-->              <ISEXTERNALSERVICE><![CDATA[Y]]></ISEXTERNALSERVICE>
 <!--1004400007 SERVICE_SOURCE-->
-<!--1004400007-->              <SERVICE_SOURCE><![CDATA[/OpenbravoDashboard]]></SERVICE_SOURCE>
+<!--1004400007-->              <SERVICE_SOURCE><![CDATA[/RevenueAndExpensesAnalysis]]></SERVICE_SOURCE>
 <!--1004400007**************--></AD_PROCESS>
 
 <!--1005200000**************--><AD_PROCESS>
