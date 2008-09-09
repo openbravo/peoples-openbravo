@@ -51,8 +51,8 @@ public class MessagesJS extends HttpSecureAppServlet {
   /**
    * Prints the javascript with the messages.
    * 
-   * @param response: Handler for the response.
-   * @param vars: Handler for the session info.
+   * @param response Handler for the response.
+   * @param vars Handler for the session info.
    * @throws IOException
    * @throws ServletException
    */

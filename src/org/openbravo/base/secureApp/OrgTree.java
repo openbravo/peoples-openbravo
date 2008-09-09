@@ -27,8 +27,8 @@ public class OrgTree implements Serializable{
 	/**
 	 * Creates a new Organization tree with all the nodes
 	 * 
-	 * @param conn: DB connection
-	 * @param strClient: client to get the org tree from
+	 * @param conn DB connection
+	 * @param strClient client to get the org tree from
 	 */
 	public OrgTree(ConnectionProvider conn, String strClient) {
 	  try {

@@ -42,7 +42,7 @@ public class WadActionButton {
 
   /**
    * Checks if the given reference is a numeric type
-   * @param reference: The reference to check.
+   * @param reference The reference to check.
    * @return Boolean that indicates if the reference is a numeric type or not.
    */
   public static boolean isNumericType (String reference) {
@@ -55,7 +55,7 @@ public class WadActionButton {
 
   /**
    * Checks if the given reference is a date type
-   * @param reference: The reference to check.
+   * @param reference The reference to check.
    * @return Boolean that indicates if the reference is a date type or not.
    */
   public static boolean isDateType (String reference) {
@@ -68,12 +68,12 @@ public class WadActionButton {
 
   /**
    * Generates the action button call for the java of the window.
-   * @param conn: Object with the database connection implementation.
-   * @param strTab: Id of the tab
-   * @param tabName: The tab name.
-   * @param keyName: The name of the key.
-   * @param isSOTrx: If is a sales tab.
-   * @param window: The id of the window.
+   * @param conn Object with the database connection implementation.
+   * @param strTab Id of the tab
+   * @param tabName The tab name.
+   * @param keyName The name of the key.
+   * @param isSOTrx If is a sales tab.
+   * @param window The id of the window.
    * @return Array of ActionButtonRelationData with the info to build the source.
    */
   public static ActionButtonRelationData[] buildActionButtonCall(ConnectionProvider conn, String strTab, String tabName, String keyName, String isSOTrx, String window) {
@@ -121,7 +121,7 @@ public class WadActionButton {
 
   /**
    * Generates the action button call for the java of the menu processes.
-   * @param conn: Object with the database connection implementation.
+   * @param conn Object with the database connection implementation.
    * @return Array of ActionButtonRelationData with the info to build the source.
    */
   public static ActionButtonRelationData[] buildActionButtonCallGenerics(ConnectionProvider conn) {
@@ -169,8 +169,8 @@ public class WadActionButton {
 
   /**
    * Adds some fields to the vector of tab's fields, depending on the column that it is processing.
-   * @param columnname: The name of the column.
-   * @param vecFields: Vector with the fields.
+   * @param columnname The name of the column.
+   * @param vecFields Vector with the fields.
    */
   public static void getFieldsLoad(String columnname, Vector<Object> vecFields) {
     if (columnname.equalsIgnoreCase("DocAction")) {
@@ -188,9 +188,9 @@ public class WadActionButton {
 
   /**
    * Adds some fields to the vector of tab's fields, depending on the column that it is processing.
-   * @param fd: Object with the column info.
-   * @param vecFields: Vector of fields in vars format. 
-   * @param vecTotalFields: Vector of fields.
+   * @param fd Object with the column info.
+   * @param vecFields Vector of fields in vars format. 
+   * @param vecTotalFields Vector of fields.
    * @return String with the java call.
    */
   public static String getFieldsLoad(ActionButtonRelationData fd, Vector<Object> vecFields, Vector<Object> vecTotalFields) {
@@ -221,13 +221,13 @@ public class WadActionButton {
 
   /**
    * Auxiliar method that generates the printPage java code of the action button.
-   * @param conn: Object with the database connection.
-   * @param fd: Object with the button column info
-   * @param vecFields: Vector with the fields.
-   * @param vecParams: Vector with the parameters.
-   * @param isSOTrx: If is sales tab.
-   * @param window: Id of the window.
-   * @param tabName: Name of the tab.
+   * @param conn Object with the database connection.
+   * @param fd Object with the button column info
+   * @param vecFields Vector with the fields.
+   * @param vecParams Vector with the parameters.
+   * @param isSOTrx If is sales tab.
+   * @param window Id of the window.
+   * @param tabName Name of the tab.
    * @return String with the java code.
    */
   public static String getPrintPageJavaCode(ConnectionProvider conn, ActionButtonRelationData fd, Vector<Object> vecFields, Vector<Object> vecParams, String isSOTrx, String window, String tabName) {
@@ -357,9 +357,9 @@ public class WadActionButton {
 
   /**
    * Returns the process call needed to fill the ad_pinstance's tables to execute the procedure.
-   * @param data: Array with the parameters of the process.
-   * @param fd: Object with the column information.
-   * @param vecParams: Vector of parameters.
+   * @param data Array with the parameters of the process.
+   * @param fd Object with the column information.
+   * @param vecParams Vector of parameters.
    * @return String with all the calls.
    */
   public static String getProcessParamsJava(ProcessRelationData[] data, ActionButtonRelationData fd, Vector<Object> vecParams) {
@@ -380,9 +380,9 @@ public class WadActionButton {
 
   /**
    * Generates the aditional code needed for some specifics processes.
-   * @param fd: Object with the column info.
-   * @param tabName: Name of the tab.
-   * @param keyName: Name of the key.
+   * @param fd Object with the column info.
+   * @param tabName Name of the tab.
+   * @param keyName Name of the key.
    * @return String with the specific code.
    */
   public static String getAdditionalCode(ActionButtonRelationData fd, String tabName, String keyName) {
@@ -399,8 +399,8 @@ public class WadActionButton {
 
   /**
    * Generates the info to create the sql for the action button
-   * @param conn: Object with the database connection.
-   * @param strTab: Id of the tab.
+   * @param conn Object with the database connection.
+   * @param strTab Id of the tab.
    * @return Array of ActionButtonRelationData objects with the info.
    */
   public static ActionButtonRelationData[] buildActionButtonSQL(ConnectionProvider conn, String strTab) {
@@ -420,12 +420,12 @@ public class WadActionButton {
 
   /**
    * Generates the xml file for the action button
-   * @param conn: Object with the database connection.
-   * @param xmlEngine: The XmlEngine object to manage the templates.
-   * @param fileDir: Path where is gonna be created the xml file.
-   * @param fd: Object with the column info.
-   * @param vecFields: Vector with the fields.
-   * @param max_textbox_length: Max length for the textbox controls.
+   * @param conn Object with the database connection.
+   * @param xmlEngine The XmlEngine object to manage the templates.
+   * @param fileDir Path where is gonna be created the xml file.
+   * @param fd Object with the column info.
+   * @param vecFields Vector with the fields.
+   * @param max_textbox_length Max length for the textbox controls.
    * @throws ServletException
    * @throws IOException
    */
@@ -464,19 +464,19 @@ public class WadActionButton {
 
   /**
    * Generates the html file for the action button.
-   * @param conn: Object with the database connection.
-   * @param xmlEngine: XmlEngine object to manage the templates.
-   * @param fileDir: Path where is gonna be created the file.
-   * @param fd: Object with the column info.
-   * @param vecFields: Vector with the fields.
-   * @param max_textbox_length: Max length for the textbox controls.
-   * @param max_size_edition_1_columns: Max size for the one column in the edition mode.
-   * @param strLanguage: Language to translate.
-   * @param isGeneric: Indicates if is a generic action button or not.
-   * @param calendarDescription: String with the description for the calendar controls.
-   * @param clockDescription: String with the description for the clock controls.
-   * @param calculatorDescription: String with the description for the calc controls.
-   * @param jsDateFormat: Date format for js.
+   * @param conn Object with the database connection.
+   * @param xmlEngine XmlEngine object to manage the templates.
+   * @param fileDir Path where is gonna be created the file.
+   * @param fd Object with the column info.
+   * @param vecFields Vector with the fields.
+   * @param max_textbox_length Max length for the textbox controls.
+   * @param max_size_edition_1_columns Max size for the one column in the edition mode.
+   * @param strLanguage Language to translate.
+   * @param isGeneric Indicates if is a generic action button or not.
+   * @param calendarDescription String with the description for the calendar controls.
+   * @param clockDescription String with the description for the clock controls.
+   * @param calculatorDescription String with the description for the calc controls.
+   * @param jsDateFormat Date format for js.
    * @throws ServletException
    * @throws IOException
    */
@@ -614,7 +614,7 @@ public class WadActionButton {
   /*#######################################################################################*/
   /**
    * Sets the correct format parameter for the xml, which depends on the column type.
-   * @param data: Object with the column info.
+   * @param data Object with the column info.
    */
   public static void xmlFormatAttribute(ProcessRelationData data) {
     if (data==null) return;
@@ -626,10 +626,10 @@ public class WadActionButton {
 
   /**
    * Returns the string with the xml fields for the xml file.
-   * @param fd: Object with the column info.
-   * @param completeName: Complete name of the column.
-   * @param maxTextboxLength: Maximum size for a textbox control.
-   * @param forcedAttribute: Indicates if the column is a parameter or not.
+   * @param fd Object with the column info.
+   * @param completeName Complete name of the column.
+   * @param maxTextboxLength Maximum size for a textbox control.
+   * @param forcedAttribute Indicates if the column is a parameter or not.
    * @return String with the xml code.
    */
   public static String xmlFields(ProcessRelationData fd, String completeName, int maxTextboxLength, boolean forcedAttribute) {
@@ -709,7 +709,7 @@ public class WadActionButton {
 
   /**
    * Returns the specific class for the column.
-   * @param efd: Object with the column info.
+   * @param efd Object with the column info.
    * @return String with the class.
    */
   public static String classRequiredUpdateable(ProcessRelationData efd) {
@@ -732,13 +732,13 @@ public class WadActionButton {
 
   /**
    * Returns the code of a control in html.
-   * @param efd: Object with the column info.
-   * @param completeName: Suffix for the name.
-   * @param completeID: Suffix for the id.
-   * @param isupdateable: If is an updateable column.
-   * @param maxTextboxLength: Maximum size for the textbox control.
-   * @param forcedAttribute: If is an attribute.
-   * @param isdesigne: If is a design control.
+   * @param efd Object with the column info.
+   * @param completeName Suffix for the name.
+   * @param completeID Suffix for the id.
+   * @param isupdateable If is an updateable column.
+   * @param maxTextboxLength Maximum size for the textbox control.
+   * @param forcedAttribute If is an attribute.
+   * @param isdesigne If is a design control.
    * @return String with the html code.
    */
   public static String htmlFields(ProcessRelationData efd, String completeName, String completeID, boolean isupdateable, int maxTextboxLength, boolean forcedAttribute, boolean isdesigne) {
@@ -807,8 +807,8 @@ public class WadActionButton {
 
   /**
    * Searchs a field in a vector.
-   * @param vecFields: Vector with the fields.
-   * @param token: The field to search.
+   * @param vecFields Vector with the fields.
+   * @param token The field to search.
    * @return String with the name of the field.
    */
   public static String findField(Vector<Object> vecFields, String token) {
@@ -822,10 +822,10 @@ public class WadActionButton {
 
   /**
    * Generates the js command for the searchs.
-   * @param efd: Object with the column info.
-   * @param fromButton: Boolean that indicates if is a button.
-   * @param vecFields: Vector with the fields.
-   * @param conn: Object with the database connection.
+   * @param efd Object with the column info.
+   * @param fromButton Boolean that indicates if is a button.
+   * @param vecFields Vector with the fields.
+   * @param conn Object with the database connection.
    * @return String with the js command.
    */
   public static String searchsCommand(ProcessRelationData efd, boolean fromButton, Vector<Object> vecFields, ConnectionProvider conn) {
@@ -881,10 +881,10 @@ public class WadActionButton {
 
   /**
    * Generates the html code of the search button.
-   * @param efd: Object with the column info.
-   * @param maxTextboxLength: Maximum size for a textbox control.
-   * @param vecFields: Vector with the fields.
-   * @param conn: Object with the database connection.
+   * @param efd Object with the column info.
+   * @param maxTextboxLength Maximum size for a textbox control.
+   * @param vecFields Vector with the fields.
+   * @param conn Object with the database connection.
    * @return String with the button code.
    */
   public static String searchs(ProcessRelationData efd, int maxTextboxLength, Vector<Object> vecFields, ConnectionProvider conn) {
@@ -912,10 +912,10 @@ public class WadActionButton {
 
   /**
    * Generates the html code of the product search button.
-   * @param efd: Object with the column info.
-   * @param maxTextboxLength: Maximum size of the textbox control.
-   * @param vecFields: Vector with the fields.
-   * @param conn: Object with the database connection.
+   * @param efd Object with the column info.
+   * @param maxTextboxLength Maximum size of the textbox control.
+   * @param vecFields Vector with the fields.
+   * @param conn Object with the database connection.
    * @return String with the control code.
    */
   public static String productSearch(ProcessRelationData efd, int maxTextboxLength, Vector<Object> vecFields, ConnectionProvider conn) {

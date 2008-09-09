@@ -259,8 +259,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
   /**
    * Cheks access passing all the parameters
    * @param vars
-   * @param type: type of element
-   * @param id: id for the element
+   * @param type type of element
+   * @param id id for the element
    * @return true in case it has access false if not
    */
   protected boolean hasGeneralAccess(VariablesSecureApp vars, String type, String id){

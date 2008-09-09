@@ -110,7 +110,7 @@ public class Wad extends DefaultHandler {
    * <li>Path to the src</li>
    * <li>Boolean to indicate if it's gonna be made a complete generation or not</li>
    * </ol>
-   * @param argv[]: Arguments array
+   * @param argv Arguments array
    * @throws Exception
    */
   public static void main(String argv[]) throws Exception {
@@ -363,7 +363,7 @@ public class Wad extends DefaultHandler {
 
   /**
    * Generates the action button's xsql files
-   * @param fileReference: The path where to create the files.
+   * @param fileReference The path where to create the files.
    */
   private void processActionButton(File fileReference) {
     try {
@@ -384,7 +384,7 @@ public class Wad extends DefaultHandler {
 
   /**
    * Generates the action button's xml files
-   * @param fileReference: The path where to create the files.
+   * @param fileReference The path where to create the files.
    */
   private void processActionButtonXml(File fileReference) {
     try {
@@ -407,7 +407,7 @@ public class Wad extends DefaultHandler {
 
   /**
    * Generates the action button's html files
-   * @param fileReference: The path where to create the files.
+   * @param fileReference The path where to create the files.
    */
   private void processActionButtonHtml(File fileReference) {
     try {
@@ -430,8 +430,8 @@ public class Wad extends DefaultHandler {
 
   /**
    * Generates the action button's html files for the translated resources
-   * @param fileReference: The path where to create the files.
-   * @param strLanguage: The language of the translation.
+   * @param fileReference The path where to create the files.
+   * @param strLanguage The language of the translation.
    */
   private void processActionButtonHtmlTrl(File fileReference, String strLanguage) {
     try {
@@ -455,7 +455,7 @@ public class Wad extends DefaultHandler {
   /**
    * Generates the main file to manage the action buttons 
    * (ActionButton_Responser.java). These are the menu's action buttons.
-   * @param fileReference: The path where to create the files.
+   * @param fileReference The path where to create the files.
    */
   private void processActionButtonGenerics(File fileReference) {
     try {
@@ -477,7 +477,7 @@ public class Wad extends DefaultHandler {
   /**
    * Generates the action button's xml files. These are the menu's
    * action buttons.
-   * @param fileReference: The path where to create the files.
+   * @param fileReference The path where to create the files.
    */
   private void processActionButtonXmlGenerics(File fileReference) {
     try {
@@ -501,7 +501,7 @@ public class Wad extends DefaultHandler {
   /**
    * Generates the action button's html files. These are the menu's
    * action button
-   * @param fileReference: The path where to create the files.
+   * @param fileReference The path where to create the files.
    */
   private void processActionButtonHtmlGenerics(File fileReference) {
     try {
@@ -525,8 +525,8 @@ public class Wad extends DefaultHandler {
   /**
    * Generates the translated htmls files for the action buttons. These are
    * the menu's action button.
-   * @param fileReference: The path where to create the files.
-   * @param strLanguage: The language to translate.
+   * @param fileReference The path where to create the files.
+   * @param strLanguage The language to translate.
    */
   private void processActionButtonHtmlGenericsTrl(File fileReference, String strLanguage) {
     try {
@@ -549,10 +549,10 @@ public class Wad extends DefaultHandler {
 
   /**
    * Generates the web.xml file
-   * @param fileWebXml: path to generate the new web.xml file.
-   * @param fileClients: Path where is allocated the client web.xml file.
-   * @param attachPath: The path where are the attached files.
-   * @param webPath: The url where are the static web content.
+   * @param fileWebXml path to generate the new web.xml file.
+   * @param fileClients Path where is allocated the client web.xml file.
+   * @param attachPath The path where are the attached files.
+   * @param webPath The url where are the static web content.
    * @throws ServletException
    * @throws IOException
    */
@@ -594,14 +594,14 @@ public class Wad extends DefaultHandler {
   /**
    * Generates all the windows defined in the dictionary. Also generates the
    * translated files for the defineds languages.
-   * @param fileFin: Path where are gonna be created the sources.
-   * @param fileFinReloads: Path where are gonna be created the reloads sources.
-   * @param tabsData: An object containing the tabs info.
-   * @param fileTrl: Path where are gonna be created the translated sources.
-   * @param dirBaseTrl: Base path of the translated sources.
-   * @param translateStr: The base package structure for the translated sources.
-   * @param fileBase: The path to the project's manual sources.
-   * @param fileBaseAplication: The path to the project root directory.
+   * @param fileFin Path where are gonna be created the sources.
+   * @param fileFinReloads Path where are gonna be created the reloads sources.
+   * @param tabsData An object containing the tabs info.
+   * @param fileTrl Path where are gonna be created the translated sources.
+   * @param dirBaseTrl Base path of the translated sources.
+   * @param translateStr The base package structure for the translated sources.
+   * @param fileBase The path to the project's manual sources.
+   * @param fileBaseAplication The path to the project root directory.
    * @throws Exception
    */
   private void processTab(File fileFin, File fileFinReloads, TabsData tabsData, File fileTrl, String dirBaseTrl, String translateStr, File fileBase, File fileBaseAplication) throws Exception {
@@ -915,8 +915,8 @@ public class Wad extends DefaultHandler {
 
   /**
    * Generates all the info to build the selection columns structure.
-   * @param selCol: The array with the info of the selection columns.
-   * @param tableName: The name of the selection column's table.
+   * @param selCol The array with the info of the selection columns.
+   * @param tableName The name of the selection column's table.
    * @return Array with the selection columns info.
    */
   private EditionFieldsData[] processSelCol(EditionFieldsData[] selCol, String tableName) {
@@ -1032,18 +1032,18 @@ public class Wad extends DefaultHandler {
 
   /**
    * Generates the structure for the query fields.
-   * @param parentsFieldsData: Array with the parents fields.
-   * @param strTab: The id of the tab.
-   * @param vecFields: Vector of query fields (select fields).
-   * @param vecTables: Vector of query tables (from tables).
-   * @param vecWhere: Vector of where clauses.
-   * @param vecOrder: Vector of order clauses.
-   * @param vecParameters: Vector of query parameters.
-   * @param tableName: The name of the table.
-   * @param windowType: The type of window.
-   * @param tablevel: The tab level.
-   * @param vecTableParameters: Vector of the from clause parameters.
-   * @param fieldsDataSelectAux: Array with the fields of the tab.
+   * @param parentsFieldsData Array with the parents fields.
+   * @param strTab The id of the tab.
+   * @param vecFields Vector of query fields (select fields).
+   * @param vecTables Vector of query tables (from tables).
+   * @param vecWhere Vector of where clauses.
+   * @param vecOrder Vector of order clauses.
+   * @param vecParameters Vector of query parameters.
+   * @param tableName The name of the table.
+   * @param windowType The type of window.
+   * @param tablevel The tab level.
+   * @param vecTableParameters Vector of the from clause parameters.
+   * @param fieldsDataSelectAux Array with the fields of the tab.
    * @throws ServletException
    * @throws IOException
    */
@@ -1198,8 +1198,8 @@ public class Wad extends DefaultHandler {
 
   /**
    * Searchs a field in the order vector and returns the column name.
-   * @param vecOrder: Vector with the order fields
-   * @param name: The name of the field to find
+   * @param vecOrder Vector with the order fields
+   * @param name The name of the field to find
    * @return String with the name of the column.
    */
   private String findOrderVector(Vector<Object> vecOrder, String name) {
@@ -1214,37 +1214,37 @@ public class Wad extends DefaultHandler {
 
   /**
    * Generates the java files for a sort tab type.
-   * @param parentsFieldsData: Array with the parents fields.
-   * @param fileDir: Path where is gonna be created the file.
-   * @param strTab: The id of the tab.
-   * @param tabName: The name of the tab.
-   * @param tableName: The name of the tab's table.
-   * @param windowName: The name of the window.
-   * @param keyColumnName: The name of the key column.
-   * @param strTables: String with from clause of the query.
-   * @param strOrder: String with the order clause of the query.
-   * @param strWhere: String with the where clause of the query.
-   * @param vecFields: Vector with the fields of the query.
-   * @param isSOTrx: String that indicates if is a Sales Order tab or not (Y | N).
-   * @param allTabs: Array with the tabs.
-   * @param strWindow: The window id.
-   * @param accesslevel: The access level defined for this tab.
-   * @param selCol: Array with selection columns.
-   * @param isSecondaryKey: Boolean that indicates if the tab key 
+   * @param parentsFieldsData Array with the parents fields.
+   * @param fileDir Path where is gonna be created the file.
+   * @param strTab The id of the tab.
+   * @param tabName The name of the tab.
+   * @param tableName The name of the tab's table.
+   * @param windowName The name of the window.
+   * @param keyColumnName The name of the key column.
+   * @param strTables String with from clause of the query.
+   * @param strOrder String with the order clause of the query.
+   * @param strWhere String with the where clause of the query.
+   * @param vecFields Vector with the fields of the query.
+   * @param isSOTr String that indicates if is a Sales Order tab or not (Y | N).
+   * @param allTabs Array with the tabs.
+   * @param strWindow The window id.
+   * @param accesslevel The access level defined for this tab.
+   * @param selCol Array with selection columns.
+   * @param isSecondaryKey Boolean that indicates if the tab key 
    * 						is a secondary key.
-   * @param grandfatherField: The grnadfather field of this tab.
-   * @param tablevel: The tab level.
-   * @param tableId: The id of the tab's table.
-   * @param windowType: The type of window.
-   * @param strColumnSortOrderId: The id of the column defined 
+   * @param grandfatherField The grnadfather field of this tab.
+   * @param tablevel The tab level.
+   * @param tableId The id of the tab's table.
+   * @param windowType The type of window.
+   * @param strColumnSortOrderId The id of the column defined 
    * 							  for the sort order.
-   * @param whereClauseParams: Array with the where clause's parameters.
-   * @param parentwhereclause: The where clause of the parent tab.
-   * @param strProcess: The id of the process associated to the tab.
-   * @param strDirectPrint: If is a direct print process (Y | N).
-   * @param strReadOnly: If is a readonly tab (Y | N)
-   * @param vecParametersTop: Array of query's parameters for the where clause.
-   * @param vecTableParametersTop: Array of query's parameters for from clause.
+   * @param whereClauseParams Array with the where clause's parameters.
+   * @param parentwhereclause The where clause of the parent tab.
+   * @param strProcess The id of the process associated to the tab.
+   * @param strDirectPrint If is a direct print process (Y | N).
+   * @param strReadOnly If is a readonly tab (Y | N)
+   * @param vecParametersTop Array of query's parameters for the where clause.
+   * @param vecTableParametersTop Array of query's parameters for from clause.
    * @throws ServletException
    * @throws IOException
    */
@@ -1345,42 +1345,42 @@ public class Wad extends DefaultHandler {
 
   /**
    * Generates the java files for a normal tab type.
-   * @param allfields: Array with the fields of the tab.
-   * @param auxiliarsData: Array with the auxiliar inputs for this tab.
-   * @param parentsFieldsData: Array with the parents fields for the tab.
-   * @param fileDir: Path where to build the file.
-   * @param strTab: The id of the tab.
-   * @param tabName: The name of the tab.
-   * @param tableName: The name of the tab's table.
-   * @param windowName: The name of the window.
-   * @param keyColumnName: The name of the key column.
-   * @param strTables: String with the from clause.
-   * @param strOrder: String with the order clause.
-   * @param strWhere: String with the where clause.
-   * @param strFilter: String with the filter clause.
-   * @param vecFields: Vector with the fields of the tab.
-   * @param vecParametersTop: Vector with parameters for the query.
-   * @param isSOTrx: String that indicates if is a Sales Order tab or not (Y | N).
-   * @param allTabs: Array with all the tabs.
-   * @param strWindow: The id of the window.
-   * @param accesslevel: The access level.
-   * @param selCol: Array with the selection columns.
-   * @param isSecondaryKey: Boolean that identifies if the key column 
+   * @param allfields Array with the fields of the tab.
+   * @param auxiliarsData Array with the auxiliar inputs for this tab.
+   * @param parentsFieldsData Array with the parents fields for the tab.
+   * @param fileDir Path where to build the file.
+   * @param strTab The id of the tab.
+   * @param tabName The name of the tab.
+   * @param tableName The name of the tab's table.
+   * @param windowName The name of the window.
+   * @param keyColumnName The name of the key column.
+   * @param strTables String with the from clause.
+   * @param strOrder String with the order clause.
+   * @param strWhere String with the where clause.
+   * @param strFilter String with the filter clause.
+   * @param vecFields Vector with the fields of the tab.
+   * @param vecParametersTop Vector with parameters for the query.
+   * @param isSOTrx String that indicates if is a Sales Order tab or not (Y | N).
+   * @param allTabs Array with all the tabs.
+   * @param strWindow The id of the window.
+   * @param accesslevel The access level.
+   * @param selCol Array with the selection columns.
+   * @param isSecondaryKey Boolean that identifies if the key column 
    * 						is a secondary key.
-   * @param grandfatherField: The grandfather column of the tab.
-   * @param tablevel: The tab level.
-   * @param tableId: The id of the tab's table.
-   * @param windowType: The tab's window type.
-   * @param strReadOnly: If the tab is readonly (Y | N).
-   * @param whereClauseParams: Array of where clause's parameters.
-   * @param parentwhereclause: The where clause for the parent tab.
-   * @param editReference: The id of the manual tab for the edition mode.
-   * @param strProcess: The id of the tab's process.
-   * @param strDirectPrint: If is a direct printing type process (Y | N).
-   * @param vecTableParametersTop: Vector with parameters for the from clause
+   * @param grandfatherField The grandfather column of the tab.
+   * @param tablevel The tab level.
+   * @param tableId The id of the tab's table.
+   * @param windowType The tab's window type.
+   * @param strReadOnly If the tab is readonly (Y | N).
+   * @param whereClauseParams Array of where clause's parameters.
+   * @param parentwhereclause The where clause for the parent tab.
+   * @param editReference The id of the manual tab for the edition mode.
+   * @param strProcess The id of the tab's process.
+   * @param strDirectPrint If is a direct printing type process (Y | N).
+   * @param vecTableParametersTop Vector with parameters for the from clause
    * 							   of the query.
-   * @param fieldsDataSelectAux: Array with the auxiliar inputs info
-   * @param relationControl: Object with the WADGrid control
+   * @param fieldsDataSelectAux Array with the auxiliar inputs info
+   * @param relationControl Object with the WADGrid control
    * @throws ServletException
    * @throws IOException
    */
@@ -1899,8 +1899,8 @@ public class Wad extends DefaultHandler {
   /**
    * Generates the where with the params as java vars, to put it in the java file to be used in
    * all the internal searchs, like gotoFirstRow...
-   * @param strWhere: The tab's where clause
-   * @param vecParameters: Vector with the parameters for the where clause.
+   * @param strWhere The tab's where clause
+   * @param vecParameters Vector with the parameters for the where clause.
    * @return String with the new static where clause.
    */
   private String generateStaticWhere(String strWhere, Vector<Object> vecParameters) {
@@ -1925,17 +1925,17 @@ public class Wad extends DefaultHandler {
 
   /**
    * Generates the xsql file for a sort tab type.
-   * @param parentsFieldsData: Array with the parents fields.
-   * @param fileDir: Path where to generate the file
-   * @param strTab: Id of the tab.
-   * @param tabName: Name of the tab.
-   * @param tableName: Name of the tab's table.
-   * @param windowName: Name of the window.
-   * @param keyColumnName: Name of the key column.
-   * @param strColumnSortOrderId: Column that makes the sorting.
-   * @param strColumnSortYNId: Column to know if has to be in shown listbox.
-   * @param vecParametersTop: Vector with the where clause parameters.
-   * @param vecTableParametersTop: Vector with the from clause parameters.
+   * @param parentsFieldsData Array with the parents fields.
+   * @param fileDir Path where to generate the file
+   * @param strTab Id of the tab.
+   * @param tabName Name of the tab.
+   * @param tableName Name of the tab's table.
+   * @param windowName Name of the window.
+   * @param keyColumnName Name of the key column.
+   * @param strColumnSortOrderId Column that makes the sorting.
+   * @param strColumnSortYNId Column to know if has to be in shown listbox.
+   * @param vecParametersTop Vector with the where clause parameters.
+   * @param vecTableParametersTop Vector with the from clause parameters.
    * @throws ServletException
    * @throws IOException
    */
@@ -2078,24 +2078,24 @@ public class Wad extends DefaultHandler {
 
   /**
    * Generates the xsql file for the tab
-   * @param parentsFieldsData: Array with the parent fields of the tab
-   * @param fileDir: Path where the file is gonna be created.
-   * @param strTab: Id of the tab.
-   * @param tabName: Name of the tab.
-   * @param tableName: Tab's table name.
-   * @param windowName: Window name.
-   * @param keyColumnName: Name of the key column.
-   * @param strFields: Select clause for the tab.
-   * @param strTables: From clause for the tab.
-   * @param strOrder: Order clause for the tab.
-   * @param strWhere: Where clause for the tab.
-   * @param vecParametersTop: Vector of where clause parameters.
-   * @param strFilter: Filter clause for the tab.
-   * @param selCol: Array with the selection columns.
-   * @param tablevel: Tab level.
-   * @param windowType: Type of window.
-   * @param vecTableParametersTop: Array of from clause parameters.
-   * @param fieldsDataSelectAux: Array with the tab's fields.
+   * @param parentsFieldsData Array with the parent fields of the tab
+   * @param fileDir Path where the file is gonna be created.
+   * @param strTab Id of the tab.
+   * @param tabName Name of the tab.
+   * @param tableName Tab's table name.
+   * @param windowName Window name.
+   * @param keyColumnName Name of the key column.
+   * @param strFields Select clause for the tab.
+   * @param strTables From clause for the tab.
+   * @param strOrder Order clause for the tab.
+   * @param strWhere Where clause for the tab.
+   * @param vecParametersTop Vector of where clause parameters.
+   * @param strFilter Filter clause for the tab.
+   * @param selCol Array with the selection columns.
+   * @param tablevel Tab level.
+   * @param windowType Type of window.
+   * @param vecTableParametersTop Array of from clause parameters.
+   * @param fieldsDataSelectAux Array with the tab's fields.
    * @throws ServletException
    * @throws IOException
    */
@@ -2488,11 +2488,11 @@ public class Wad extends DefaultHandler {
   /**
    * Generates the combo reloads for the tab. Combo reloads are the callouts to reloads the values
    * of the subordinated combos in the tab.
-   * @param fileDir: Path where to generate the file.
-   * @param strTab: Id of the tab.
-   * @param parentsFieldsData: Array with the parents fields.
-   * @param vecFields: Vector with the tab's fields.
-   * @param isSOTrx: Indicates if the tab of sales or not (Y | N).
+   * @param fileDir Path where to generate the file.
+   * @param strTab Id of the tab.
+   * @param parentsFieldsData Array with the parents fields.
+   * @param vecFields Vector with the tab's fields.
+   * @param isSOTrx Indicates if the tab of sales or not (Y | N).
    * @throws ServletException
    * @throws IOException
    */
@@ -2615,11 +2615,11 @@ public class Wad extends DefaultHandler {
 
   /**
    * Generates the xml file for a sort type tab.
-   * @param parentsFieldsData: Array with the parent fields.
-   * @param fileDir: Path where is gonna be created the file.
-   * @param strTab: Id of the tab.
-   * @param tabName: The name of the tab.
-   * @param keyColumnName: The name of the tab's key column.
+   * @param parentsFieldsData Array with the parent fields.
+   * @param fileDir Path where is gonna be created the file.
+   * @param strTab Id of the tab.
+   * @param tabName The name of the tab.
+   * @param keyColumnName The name of the tab's key column.
    * @throws ServletException
    * @throws IOException
    */
@@ -2638,19 +2638,19 @@ public class Wad extends DefaultHandler {
 
   /**
    * Generates the html file for a sort type tab.
-   * @param parentsFieldsData: Array with the parent fields.
-   * @param fileDir: Path where is gonna be created the file.
-   * @param strTab: Id of the tab.
-   * @param tabName: The name of the tab.
-   * @param windowName: The name of the window.
-   * @param keyColumnName: The name of the key column.
-   * @param tabNamePresentation: The human name of the tab.
-   * @param allTabs: Array with all the tabs of the window.
-   * @param strProcess: Id of the process associated to the tab.
-   * @param strDirectPrint: Indicate if the process is a direct print or has a preview mode.
-   * @param strParentNameDescription: The human description of the parent tab.
-   * @param WindowPathName: The name of the window for the path.
-   * @param strLanguage: The language for which is gonna be created the file.
+   * @param parentsFieldsData Array with the parent fields.
+   * @param fileDir Path where is gonna be created the file.
+   * @param strTab Id of the tab.
+   * @param tabName The name of the tab.
+   * @param windowName The name of the window.
+   * @param keyColumnName The name of the key column.
+   * @param tabNamePresentation The human name of the tab.
+   * @param allTabs Array with all the tabs of the window.
+   * @param strProcess Id of the process associated to the tab.
+   * @param strDirectPrint Indicate if the process is a direct print or has a preview mode.
+   * @param strParentNameDescription The human description of the parent tab.
+   * @param WindowPathName The name of the window for the path.
+   * @param strLanguage The language for which is gonna be created the file.
    * @throws ServletException
    * @throws IOException
    */
@@ -2686,12 +2686,12 @@ public class Wad extends DefaultHandler {
 
   /**
    * Generates the xml for the relation window of the tab.
-   * @param parentsFieldsData: Array with the parent fields.
-   * @param fileDir: Path where is gonna be created the file.
-   * @param strTab: Id of the tab.
-   * @param tabName: Name of the tab.
-   * @param keyColumnName: Name of the tab's key column.
-   * @param relationControl: Object with the WADGrid control.
+   * @param parentsFieldsData Array with the parent fields.
+   * @param fileDir Path where is gonna be created the file.
+   * @param strTab Id of the tab.
+   * @param tabName Name of the tab.
+   * @param keyColumnName Name of the tab's key column.
+   * @param relationControl Object with the WADGrid control.
    * @throws ServletException
    * @throws IOException
    */
@@ -2711,18 +2711,18 @@ public class Wad extends DefaultHandler {
 
   /**
    * Generates the html file for the relation windows of the tab.
-   * @param parentsFieldsData: Array with the parent fields
-   * @param fileDir: Path where is gonna be created the file.
-   * @param strTab: Id of the tab.
-   * @param tabName: Name of the tab.
-   * @param keyColumnName: Name of the tab's key column.
-   * @param isreadonly: Boolean that means if is a read only tab or not.
-   * @param strParentNameDescription: The human description of the parent tab.
-   * @param control: Object of type WADGrid control.
-   * @param isTranslated: Boolean that indicates if is a translated file (non-english).
-   * @param adLanguage: Language to translate.
-   * @param tabNamePresentation: The human name of the tab.
-   * @param strTable: The id of the tab's table.
+   * @param parentsFieldsData Array with the parent fields
+   * @param fileDir Path where is gonna be created the file.
+   * @param strTab Id of the tab.
+   * @param tabName Name of the tab.
+   * @param keyColumnName Name of the tab's key column.
+   * @param isreadonly Boolean that means if is a read only tab or not.
+   * @param strParentNameDescription The human description of the parent tab.
+   * @param control Object of type WADGrid control.
+   * @param isTranslated Boolean that indicates if is a translated file (non-english).
+   * @param adLanguage Language to translate.
+   * @param tabNamePresentation The human name of the tab.
+   * @param strTable The id of the tab's table.
    * @throws ServletException
    * @throws IOException
    */
@@ -2762,9 +2762,9 @@ public class Wad extends DefaultHandler {
 
   /**
    * Manage the Vector of imports for the html files. Is in charged of keep them with unique values.
-   * @param data: The main Vector.
-   * @param addedElements: Vector with the new values to add.
-   * @param type: Indicates the type of import (1=CSS, 2=JS).
+   * @param data The main Vector.
+   * @param addedElements Vector with the new values to add.
+   * @param type Indicates the type of import (1=CSS, 2=JS).
    * @return String with the list of imports in html format.
    */
   private String getVectorElementsNotRepeated(Vector<String[]> data, Vector<String> addedElements, int type) {
@@ -2788,8 +2788,8 @@ public class Wad extends DefaultHandler {
 
   /**
    * Checks if a value exists inside a Vector.
-   * @param data: Vector with the data.
-   * @param value: The value to search.
+   * @param data Vector with the data.
+   * @param value The value to search.
    * @return Boolean to indicate if the value exists in the Vector.
    */
   private boolean isInVector(Vector<String> data, String value) {
@@ -2804,13 +2804,13 @@ public class Wad extends DefaultHandler {
 
   /**
    * Generates the xml file for the edition window of the tab.
-   * @param fileDir: Path where is gonna be created the file.
-   * @param strTab: Id of the tab.
-   * @param tabName: Name of the tab.
-   * @param windowId: Id of the window.
-   * @param isreadonly: Boolean that indicates if is a read only tab or not.
-   * @param efd: Array with the fields of the tab.
-   * @param efdauxiliar: Array with the auxiliar inputs of the tab.
+   * @param fileDir Path where is gonna be created the file.
+   * @param strTab Id of the tab.
+   * @param tabName Name of the tab.
+   * @param windowId Id of the window.
+   * @param isreadonly Boolean that indicates if is a read only tab or not.
+   * @param efd Array with the fields of the tab.
+   * @param efdauxiliar Array with the auxiliar inputs of the tab.
    * @throws ServletException
    * @throws IOException
    */
@@ -2853,21 +2853,21 @@ public class Wad extends DefaultHandler {
 
   /**
    * Generates html file for edition window of the tab.
-   * @param efd: Array of fields.
-   * @param efdauxiliar: Array of auxiliar inputs.
-   * @param fileDir: Path where is gonna be created the file.
-   * @param strTab: Id of the tab.
-   * @param tabName: Name of the tab.
-   * @param keyColumnName: Name of the tab's column name.
-   * @param tabNamePresentation: The human name of the tab.
-   * @param windowId: The id of the window.
-   * @param parentsFieldsData: Array of parent fields.
-   * @param vecFields: Vector with the select clause.
-   * @param isreadonly: Boolean that indicates if the tab is read only or not.
-   * @param isSOTrx: Indicates if the tab is a sales tab or not (Y | N).
-   * @param strTable: The id of the tab's table.
-   * @param pixelSize: The size of one pixel. To use it as a multiplier.
-   * @param strLanguage: The language of translation.
+   * @param efd Array of fields.
+   * @param efdauxiliar Array of auxiliar inputs.
+   * @param fileDir Path where is gonna be created the file.
+   * @param strTab Id of the tab.
+   * @param tabName Name of the tab.
+   * @param keyColumnName Name of the tab's column name.
+   * @param tabNamePresentation The human name of the tab.
+   * @param windowId The id of the window.
+   * @param parentsFieldsData Array of parent fields.
+   * @param vecFields Vector with the select clause.
+   * @param isreadonly Boolean that indicates if the tab is read only or not.
+   * @param isSOTrx Indicates if the tab is a sales tab or not (Y | N).
+   * @param strTable The id of the tab's table.
+   * @param pixelSize The size of one pixel. To use it as a multiplier.
+   * @param strLanguage The language of translation.
    * @throws ServletException
    * @throws IOException
    */
@@ -3194,10 +3194,10 @@ public class Wad extends DefaultHandler {
 ###############################################################################################################################*/
   /**
    * Returns the subtabs for a given parent tab id. Also marks as selected one of them.
-   * @param vec: Vector with the subtabs.
-   * @param strTabParent: Id of the parent tab.
-   * @param strTabSelected: Id of the selected tab.
-   * @param strLanguage: Language to translate the names of the subtabs.
+   * @param vec Vector with the subtabs.
+   * @param strTabParent Id of the parent tab.
+   * @param strTabSelected Id of the selected tab.
+   * @param strLanguage Language to translate the names of the subtabs.
    * @throws IOException
    * @throws ServletException
    */
@@ -3214,12 +3214,12 @@ public class Wad extends DefaultHandler {
 
   /**
    * Returns the primary tabs of a given window.
-   * @param strWindowId: Id of the window.
-   * @param strTabSelected: The selected tab.
-   * @param level: The level of the tab to return.
-   * @param heightTabs: The default height for the tabs.
-   * @param incrTabs: The increment over the height.
-   * @param strLanguage: The language to translate.
+   * @param strWindowId Id of the window.
+   * @param strTabSelected The selected tab.
+   * @param level The level of the tab to return.
+   * @param heightTabs The default height for the tabs.
+   * @param incrTabs The increment over the height.
+   * @param strLanguage The language to translate.
    * @return Array with the primary tabs.
    * @throws IOException
    * @throws ServletException
@@ -3246,12 +3246,12 @@ public class Wad extends DefaultHandler {
 
   /**
    * Assigns the correct command to the given tab.
-   * @param tab: Tab to manipulate.
-   * @param strTab: The id of the actual tab.
-   * @param level: The level of the actual tab.
-   * @param heightTabs: The height of the tab.
-   * @param incrTabs: The increment for the height.
-   * @param mayor: operand to calculate the height.
+   * @param tab Tab to manipulate.
+   * @param strTab The id of the actual tab.
+   * @param level The level of the actual tab.
+   * @param heightTabs The height of the tab.
+   * @param incrTabs The increment for the height.
+   * @param mayor operand to calculate the height.
    * @throws ServletException
    */
   private void debugTab(TabsData tab, String strTab, int level, int heightTabs, int incrTabs, int mayor) throws ServletException {
@@ -3272,8 +3272,8 @@ public class Wad extends DefaultHandler {
 
   /**
    * Returns the index of the parent tab in the given array.
-   * @param allTabs: Array of tabs.
-   * @param tabId: The id of the actual tab.
+   * @param allTabs Array of tabs.
+   * @param tabId The id of the actual tab.
    * @return Int with the index of the parent tab or -1 if there is no parent.
    * @throws ServletException
    * @throws IOException
@@ -3300,12 +3300,12 @@ public class Wad extends DefaultHandler {
 
   /**
    * Auxiliar method to get the query for a tableDir control.
-   * @param tableInit: The name of the parent table.
-   * @param name: The name of the reference column.
-   * @param required: Is a required join
-   * @param vecFields: Vector with the select clause.
-   * @param vecTables: Vector with the from clause.
-   * @param vecWhere: Vector with the where clause.
+   * @param tableInit The name of the parent table.
+   * @param name The name of the reference column.
+   * @param required Is a required join
+   * @param vecFields Vector with the select clause.
+   * @param vecTables Vector with the from clause.
+   * @param vecWhere Vector with the where clause.
    * @throws ServletException
    */
   public void fieldsOfTableDir(String tableInit, String name, String required, Vector<Object> vecFields, Vector<Object> vecTables, Vector<Object> vecWhere) throws ServletException{
@@ -3321,16 +3321,16 @@ public class Wad extends DefaultHandler {
 
   /**
    * Auxiliar method to get the query for a search control.
-   * @param tableInit: The name of the parent table.
-   * @param name: The name of the reference column.
-   * @param FilterName: The filtered name with the real name of the reference column.
-   * @param required: Is a required join.
-   * @param vecFields: Vector with the select clause.
-   * @param vecTables: Vector with the from clause.
-   * @param vecWhere: Vector with the where clause.
-   * @param itable: Index to naming the alias of the join tables.
-   * @param reference: The reference id.
-   * @param referencevalue: The id of the reference value.
+   * @param tableInit The name of the parent table.
+   * @param name The name of the reference column.
+   * @param FilterName The filtered name with the real name of the reference column.
+   * @param required Is a required join.
+   * @param vecFields Vector with the select clause.
+   * @param vecTables Vector with the from clause.
+   * @param vecWhere Vector with the where clause.
+   * @param itable Index to naming the alias of the join tables.
+   * @param reference The reference id.
+   * @param referencevalue The id of the reference value.
    * @return Int with the new index to naming the aliases.
    * @throws ServletException
    */
@@ -3371,15 +3371,15 @@ public class Wad extends DefaultHandler {
 
   /**
    * Auxiliar method to get the query for a search control. This'll be used to build combo's controls.
-   * @param tableInit: The name of the parent table.
-   * @param name: The name of the reference column.
-   * @param required: Is a required join.
-   * @param vecFields: Vector with the select clause.
-   * @param vecTables: Vector with the from clause.
-   * @param vecWhere: Vector with the where clause.
-   * @param itable: Index to naming the alias of the join tables.
-   * @param reference: The reference id.
-   * @param referencevalue: The id of the reference value.
+   * @param tableInit The name of the parent table.
+   * @param name The name of the reference column.
+   * @param required Is a required join.
+   * @param vecFields Vector with the select clause.
+   * @param vecTables Vector with the from clause.
+   * @param vecWhere Vector with the where clause.
+   * @param itable Index to naming the alias of the join tables.
+   * @param reference The reference id.
+   * @param referencevalue The id of the reference value.
    * @return Int with the new index to naming the aliases.
    * @throws ServletException
    */
@@ -3418,7 +3418,7 @@ public class Wad extends DefaultHandler {
 
   /**
    * Method to prepare the XmlEngine object, which is the one in charged of the templates.
-   * @param fileConnection: The path to the connection file.
+   * @param fileConnection The path to the connection file.
    */
   public void createXmlEngine(String fileConnection) {
     xmlEngine = new XmlEngine();
@@ -3434,7 +3434,7 @@ public class Wad extends DefaultHandler {
 
   /**
    * Creates an instance of the connection's pool.
-   * @param strFileConnection: Path where is allocated the connection file.
+   * @param strFileConnection Path where is allocated the connection file.
    */
   public void createPool(String strFileConnection) {
     pool = new WadConnection(strFileConnection);
@@ -3442,7 +3442,7 @@ public class Wad extends DefaultHandler {
   
   /**
    * Auxiliar method to make a copy of a FieldsData element.
-   * @param from: The FieldsData object to copy.
+   * @param from The FieldsData object to copy.
    * @return The new copy of the given FieldsData object.
    */
   public FieldsData copyarrayElement(FieldsData from) {
@@ -3489,7 +3489,7 @@ public class Wad extends DefaultHandler {
 
   /**
    * Auxiliar method to copy an array of FieldsData objects.
-   * @param from: The array of FieldsData objects to copy.
+   * @param from The array of FieldsData objects to copy.
    * @return The copy array of FieldsData objects.
    */
   public FieldsData[] copyarray(FieldsData[] from) {
@@ -3505,7 +3505,7 @@ public class Wad extends DefaultHandler {
 
   /**
    * Method to read the Openbravo.properties file.
-   * @param strFileProperties: The path of the property file to read.
+   * @param strFileProperties The path of the property file to read.
    */
   public void readProperties(String strFileProperties) {
 //  Read properties file.

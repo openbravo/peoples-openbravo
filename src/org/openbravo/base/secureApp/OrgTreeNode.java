@@ -25,7 +25,7 @@ public class OrgTreeNode implements Serializable {
   
   /**
    * Creates a node from data related to it
-   * @param nodeData: info for the node
+   * @param nodeData info for the node
    */
   public OrgTreeNode(WindowTreeData nodeData){
     id = nodeData.id;
@@ -35,7 +35,7 @@ public class OrgTreeNode implements Serializable {
   /**
    * Creates a tree from data and returns the root node
    * 
-   * @param data: information to generete the tree
+   * @param data information to generete the tree
    * @return Node[]: Complete tree's nodes
    */
   public static List<OrgTreeNode> createTree(WindowTreeData[] data){

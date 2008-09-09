@@ -41,10 +41,10 @@ public class KeyMap {
   /**
    * Constructor
    * 
-   * @param _conn: Handler for the database connection.
-   * @param _vars: Handler for the session info.
-   * @param _tabId: String with the tab's id.
-   * @param _windowId: String with the window's id.
+   * @param _conn Handler for the database connection.
+   * @param _vars Handler for the session info.
+   * @param _tabId String with the tab's id.
+   * @param _windowId String with the window's id.
    * @throws Exception
    */
   public KeyMap(ConnectionProvider _conn, VariablesSecureApp _vars, String _tabId, String _windowId) throws Exception {
@@ -58,9 +58,9 @@ public class KeyMap {
   /**
    * Constructor
    * 
-   * @param _conn: Handler for the database connection.
-   * @param _vars: Handler for the session info.
-   * @param _action: String with the window type (form, report, process...)
+   * @param _conn Handler for the database connection.
+   * @param _vars Handler for the session info.
+   * @param _action String with the window type (form, report, process...)
    * @throws Exception
    */
   public KeyMap(ConnectionProvider _conn, VariablesSecureApp _vars, String _action) throws Exception {
@@ -72,8 +72,8 @@ public class KeyMap {
   /**
    * Setter for any internal attribute.
    * 
-   * @param name: String with the name of the attribute.
-   * @param value: String with the value of the attribute.
+   * @param name String with the name of the attribute.
+   * @param value String with the value of the attribute.
    */
   private void setData(String name, String value) {
     if (name==null || name.equals("")) return;
@@ -84,7 +84,7 @@ public class KeyMap {
   /**
    * Getter for any internal attribute.
    * 
-   * @param name: String with the name of the attribute.
+   * @param name String with the name of the attribute.
    * @return String with the value of the attribute.
    */
   private String getData(String name) {
@@ -97,7 +97,7 @@ public class KeyMap {
   /**
    * Adds new structure of additional information for this tab.
    * 
-   * @param _prop: Properties with all the additional info for this tab.
+   * @param _prop Properties with all the additional info for this tab.
    */
   public void addStructure(Properties _prop) {
     if (_prop==null) return;
@@ -148,7 +148,7 @@ public class KeyMap {
   /**
    * Gets the keymap for the Edition window type.
    * 
-   * @param isNew: Boolean to indicate if is a new record or not.
+   * @param isNew Boolean to indicate if is a new record or not.
    * @return String with the javascript for the keynap.
    */
   public String getEditionKeyMaps(boolean isNew) {
