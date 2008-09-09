@@ -55,7 +55,7 @@ build.war: build a war file in the lib directory.
   <property name="tab" value="%"/>
   <property name="base.translate.structure" value="org/openbravo/erpWindows"/>
   <property name="client.web.xml" value="${base.client.src}/web.xml"/>
-  <property name="package" value="/org"/>
+  <property name="package" value=""/>
   <property name="extension" value="html"/>
   <property name="src" value="."/>
   <property name="tr" value="yes"/>
