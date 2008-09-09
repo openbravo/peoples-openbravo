@@ -96,7 +96,7 @@ doc: generates the api for the project.
 
 <target name="doc" depends="init" description="Generate api">
   <javadoc packagenames="org.openbravo.*" 
-    sourcepath="${build.wad.sqlc}/src:${build.wad}"
+    sourcepath="${build.wad.sqlc}/src:${build.wad.src}"
     destdir="${build.wad.docs}"
     author="true"
     version="true"
