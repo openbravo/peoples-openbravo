@@ -55,7 +55,7 @@ public class WindowTreeChecks {
       if (isChild && !topNodeId.equals("0") && WindowTreeChecksData.selectIsSummary(conn, table, key, topNodeId).equals("N")) return Utility.messageBD(conn, "NotIsSummary", vars.getLanguage());
       if (log4j.isDebugEnabled()) log4j.debug("key:"+key+", nodeId:"+nodeId+",topNodeId:"+topNodeId);
       String treeID;
-      WindowTreeData[] data = WindowTreeData.selectTreeID(conn, vars.getClient(), TreeType);
+      WindowTreeData[] data = WindowTreeData.selectTreeID(conn, vars.getUserClient(), TreeType);
     
       if (!(data==null || data.length==0)) {
         treeID = data[0].id;
