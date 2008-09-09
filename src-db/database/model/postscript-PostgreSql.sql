@@ -56,7 +56,16 @@ $BODY$ DECLARE
  v_seqNo      NUMERIC := p_seqNoStart;
  Cur_Constraints RECORD;
 BEGIN
- INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo, 'update pg_class set reltriggers = 0 WHERE PG_CLASS.RELNAMESPACE IN (SELECT PG_NAMESPACE.OID FROM PG_NAMESPACE WHERE PG_NAMESPACE.NSPNAME = CURRENT_SCHEMA());');
+ RAISE NOTICE '%','ad_script_disable_constraints';
+ FOR Cur_Constraints IN  (SELECT TABLE_NAME, CONSTRAINT_NAME
+                          FROM USER_CONSTRAINTS C1
+                          WHERE CONSTRAINT_TYPE IN ('P','U','R')
+                          --AND DELETE_RULE NOT LIKE 'C'
+                          ORDER BY (CASE CONSTRAINT_TYPE WHEN 'R' THEN 1 WHEN 'U' THEN 2 WHEN 'P' THEN 3 END), TABLE_NAME, CONSTRAINT_NAME) LOOP
+   v_seqNo := v_seqNo + 1;
+   --INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo, 'ALTER TABLE '||Cur_Constraints.TABLE_NAME||' DISABLE CONSTRAINT '||Cur_Constraints.CONSTRAINT_NAME);
+  INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo, 'ALTER TABLE '||Cur_Constraints.TABLE_NAME||' DROP CONSTRAINT '||Cur_Constraints.CONSTRAINT_NAME);
+ END LOOP;
  RETURN v_seqNo+1;
 END;   $BODY$
   LANGUAGE 'plpgsql' VOLATILE
@@ -118,9 +127,37 @@ $BODY$ DECLARE
 * Contributor(s):  ______________________________________.
 ************************************************************************/
  v_seqNo      NUMERIC := p_seqNoStart;
+ Cur_Constraints RECORD;
 BEGIN
-  INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo + 100000, 'update pg_class set reltriggers = (SELECT count(*) from pg_trigger where pg_class.oid=tgrelid) WHERE PG_CLASS.RELNAMESPACE IN (SELECT PG_NAMESPACE.OID FROM PG_NAMESPACE WHERE PG_NAMESPACE.NSPNAME = CURRENT_SCHEMA());');
-  RETURN v_seqNo+100001;
+-- Make sure all foreign keys are satisfied
+/*  FOR Cur_Constraints IN  (SELECT TABLE_NAME, CONSTRAINT_NAME, CONSTRAINT_TYPE, DELETE_RULE, COLUMN_NAMES, FK_TABLE, FK_COLUMN_NAMES, FK_MATCHTYPE
+                           FROM USER_CONSTRAINTS C1
+                           WHERE CONSTRAINT_TYPE = 'R'
+                           --AND DELETE_RULE = 'C'
+            ) LOOP
+    v_seqNo := v_seqNo + 1;
+    INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo+100000, 'DELETE FROM '||Cur_Constraints.TABLE_NAME||' WHERE '||Cur_Constraints.COLUMN_NAMES|| 
+                    ' IS NOT NULL AND ' ||Cur_Constraints.COLUMN_NAMES|| 
+                    ' NOT IN (SELECT ' ||Cur_Constraints.FK_COLUMN_NAMES || ' FROM ' || Cur_Constraints.FK_TABLE || ')'
+                    );
+  END LOOP;*/
+ 
+ FOR Cur_Constraints IN  (SELECT TABLE_NAME, CONSTRAINT_NAME, CONSTRAINT_TYPE, DELETE_RULE, COLUMN_NAMES, FK_TABLE, FK_COLUMN_NAMES, FK_MATCHTYPE
+                           FROM USER_CONSTRAINTS C1
+                           WHERE CONSTRAINT_TYPE IN ('P','U','R')
+                           --AND DELETE_RULE NOT LIKE 'C'
+                           ORDER BY (CASE CONSTRAINT_TYPE WHEN 'R' THEN 3 WHEN 'U' THEN 2 WHEN 'P' THEN 1 END), TABLE_NAME, CONSTRAINT_NAME) LOOP
+    v_seqNo := v_seqNo + 1;
+   INSERT INTO AD_SCRIPT_SQL VALUES (v_seqNo+100000, 'ALTER TABLE '||Cur_Constraints.TABLE_NAME||' ADD CONSTRAINT '||Cur_Constraints.CONSTRAINT_NAME|| (CASE Cur_Constraints.CONSTRAINT_TYPE
+     WHEN 'P' THEN '  PRIMARY KEY ('||Cur_Constraints.COLUMN_NAMES||')'
+     WHEN 'U' THEN '  UNIQUE ('||Cur_Constraints.COLUMN_NAMES||')'
+     WHEN 'R' THEN '  FOREIGN KEY ('||Cur_Constraints.COLUMN_NAMES||') REFERENCES '||Cur_Constraints.FK_TABLE||' ('||Cur_Constraints.FK_COLUMN_NAMES||') '||
+                                (CASE Cur_Constraints.FK_MATCHTYPE WHEN 'f' THEN ' MATCH FULL' WHEN 'p' THEN ' MATCH PARTIAL' ELSE '' END) ||
+                                (CASE Cur_Constraints.DELETE_RULE WHEN 'N' THEN ' ON DELETE SET NULL' WHEN 'D' THEN ' ON DELETE SET DEFAULT' WHEN 'C' THEN ' ON DELETE CASCADE' ELSE '' END)
+
+     END));
+  END LOOP;
+  RETURN v_seqNo + 100001;
 END;   $BODY$
   LANGUAGE 'plpgsql' VOLATILE
 /-- END
