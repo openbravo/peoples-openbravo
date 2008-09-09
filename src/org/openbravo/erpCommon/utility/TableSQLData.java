@@ -628,7 +628,6 @@ public class TableSQLData {
   public Vector<Properties> getFilteredStructure(String propertyName, String propertyValue) {
     Vector<Properties> vAux = new Vector<Properties>();
     if (this.structure==null) return vAux;
-    String p="";
     for (Enumeration<Properties> e = this.structure.elements();e.hasMoreElements();) {
       Properties prop = e.nextElement();
       if (prop.getProperty(propertyName).equals(propertyValue)) vAux.addElement(prop);
@@ -638,7 +637,6 @@ public class TableSQLData {
 
   public void addAuditFields(Vector<Properties> properties) {
     if (this.structure==null) return;
-    String p="";
     for (Enumeration<Properties> e = this.structure.elements();e.hasMoreElements();) {
       Properties prop = e.nextElement();
       if (prop.getProperty("ColumnName").equalsIgnoreCase("Created")

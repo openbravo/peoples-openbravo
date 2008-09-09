@@ -24,7 +24,6 @@ import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class WADButton extends WADControl {
-  private String shortcut="";
   public WADButton() {
   }
 
@@ -63,11 +62,9 @@ public class WADButton extends WADControl {
         if (i<10) {
           retVal +="<span>(<u>"+i+"</u>)</span>";
           sc.put(new Integer(i).toString(), "executeWindowButton('"+buttonId+"');");
-          shortcut=new Integer(i).toString();
         }
       } else {
         sc.put(name.substring(i,i+1).toUpperCase(), "executeWindowButton('"+buttonId+"');");
-        shortcut=name.substring(i,i+1).toUpperCase();
         retVal += "<u>"+name.substring(i,i+1)+"</u>"+name.substring(i+1);
       }
     }       

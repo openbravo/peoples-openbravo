@@ -17,9 +17,6 @@ import org.apache.fop.messaging.MessageHandler;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,7 +46,6 @@ public class ConfigParameters {
     public final String strContext;
     private final String strFileFormat;
     public final String strSystemLanguage;
-    private final String strFileSeparator;
     public final String strDefaultServlet;
     public final String strServidorRenderFo;
     private final String stcFileProperties;
@@ -60,7 +56,6 @@ public class ConfigParameters {
     private Logger log4j = Logger.getLogger(this.getClass());
 
     private Log4JLogger fopLogger;
-    private final String strServletIdentificacion;
     public final String strServletSinIdentificar;
     private final String strServletGoBack;
     public final String strFTPDirectory;
@@ -110,14 +105,12 @@ public class ConfigParameters {
         strParentVersion = getResolvedParameter(context, "Parent_Version");
 
         strSystemLanguage = getSystemLanguage();
-        strFileSeparator = getFileSeparator();
         strLocalReplaceWith = getResolvedParameter(context, "ReplaceWith");
         strServidorRenderFo = getResolvedParameter(context, "ServidorRenderFo");
         strTextDividedByZero = getResolvedParameter(context, "TextDividedByZero");
 
         poolFileName = getResolvedParameter(context, "PoolFile");
 
-        strServletIdentificacion = getResolvedParameter(context, "LoginServlet");
         strServletSinIdentificar = getResolvedParameter(context, "ServletSinIdentificar");
         strServletGoBack = getResolvedParameter(context, "ServletGoBack");
         log4j.debug("strServletGoBack: " + strServletGoBack);
@@ -132,15 +125,6 @@ public class ConfigParameters {
             e.printStackTrace();
         }
 
-    }
-
-    private <T> T getEnvEntry(String entryName) {
-        try {
-            Context env = (Context) new InitialContext().lookup("java:comp/env");
-            return (T) env.lookup(entryName);
-        } catch (NamingException e) {
-            return null;
-        }
     }
 
     private String getResolvedParameter(ServletContext context, String name) {
@@ -164,16 +148,6 @@ public class ConfigParameters {
 
     public void storeIn(ServletContext context) {
         context.setAttribute(CONFIG_ATTRIBUTE, this);
-    }
-
-
-    private String getFileSeparator() {
-        try {
-            return System.getProperty("file.separator");
-        } catch (java.security.AccessControlException err) {
-            log4j.warn(err.getMessage());
-            return "/";
-        }
     }
 
     private String getSystemLanguage() {

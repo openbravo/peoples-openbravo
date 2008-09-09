@@ -54,7 +54,6 @@ public class InitialClientSetup extends HttpSecureAppServlet {
   String C_Calendar_ID = null;
   StringBuffer strSummary = new StringBuffer();
   AcctSchema m_AcctSchema;
-  private String     C_Cycle_ID;
   boolean m_hasProject ;
   boolean m_hasMCampaign ;
   boolean m_hasSRegion ;

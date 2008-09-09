@@ -19,7 +19,6 @@
 package org.openbravo.erpCommon.utility;
 
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.businessUtility.TabAttachmentsData;
 import org.openbravo.erpCommon.reference.*;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.base.secureApp.OrgTree;

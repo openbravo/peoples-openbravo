@@ -28,8 +28,6 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.util.*;
 
-import org.openbravo.erpCommon.utility.DateTimeData;
-
 public class ReportCashJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
