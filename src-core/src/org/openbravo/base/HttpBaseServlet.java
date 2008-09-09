@@ -64,7 +64,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
       xmlEngine.strReplaceWhat = globalParameters.strReplaceWhat;
       xmlEngine.strReplaceWith = globalParameters.strLocalReplaceWith;
       log4j.debug("Replace attribute value: \"" + xmlEngine.strReplaceWhat + "\" with: \"" + xmlEngine.strReplaceWith + "\".");
-      xmlEngine.strTextDividedByZero = globalParameters.strTextDividedByZero;
+      XmlEngine.strTextDividedByZero = globalParameters.strTextDividedByZero;
       xmlEngine.fileXmlEngineFormat = new File (globalParameters.getXmlEngineFileFormatPath());
       xmlEngine.initialize();
 

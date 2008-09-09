@@ -139,7 +139,7 @@ public class WADSearch extends WADControl {
     xmlDocument.setParameter("hiddens", this.hiddenFields);
     xmlDocument.setParameter("hasButton", (textButton.equals("")?"TextButton_ContentCell":""));
     xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
-    xmlDocument.setParameter("missing", this.missing);
+    xmlDocument.setParameter("missing", WADControl.missing);
     xmlDocument.setParameter("button", textButton);
     String className = "";
     boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData("IsUpdateable").equals("N"));
@@ -179,7 +179,7 @@ public class WADSearch extends WADControl {
     xmlDocument.setParameter("hiddens", this.hiddenFields);
     xmlDocument.setParameter("hasButton", (textButton.equals("")?"TextButton_ContentCell":""));
     xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
-    xmlDocument.setParameter("missing", this.missing);
+    xmlDocument.setParameter("missing", WADControl.missing);
     xmlDocument.setParameter("button", textButton);
     String className = "";
     boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y"));

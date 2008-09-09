@@ -59,7 +59,7 @@ public class WADMemo extends WADControl {
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
     xmlDocument.setParameter("size", getData("CssSize"));
     xmlDocument.setParameter("maxlength", getData("FieldLength"));
-    xmlDocument.setParameter("missing", this.missing);
+    xmlDocument.setParameter("missing", WADControl.missing);
 
     boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y") || getData("IsUpdateable").equals("N"));
     xmlDocument.setParameter("disabled", (isDisabled?"Y":"N"));
@@ -85,7 +85,7 @@ public class WADMemo extends WADControl {
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
     xmlDocument.setParameter("size", getData("CssSize"));
     xmlDocument.setParameter("maxlength", getData("FieldLength"));
-    xmlDocument.setParameter("missing", this.missing);
+    xmlDocument.setParameter("missing", WADControl.missing);
 
     boolean isDisabled = (getData("IsReadOnly").equals("Y") || getData("IsReadOnlyTab").equals("Y"));
     xmlDocument.setParameter("disabled", (isDisabled?"Y":"N"));
