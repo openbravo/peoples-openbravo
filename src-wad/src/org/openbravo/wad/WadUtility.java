@@ -1976,7 +1976,7 @@ public class WadUtility {
   /**
    * Replaces special characters in str to make it a valid java string
    * @param str
-   * @return
+   * @return String with special characters replaced
    */
   public static String toJavaString(String str){
     return (str.replace("\n", "\\n").replace("\"","\\\""));
