@@ -268,7 +268,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
       if (!actualLanguage.equals("")) {
         out.write(strBuffer.toString());
         out.flush();
-        resultsFile.close();
+        if (resultsFile!=null) resultsFile.close();
       }
       if (error) {
 //          fileHTML.delete();

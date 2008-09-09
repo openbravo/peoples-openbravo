@@ -2126,11 +2126,11 @@ public class Wad extends DefaultHandler {
     xmlDocumentXsql.setParameter("package", "org.openbravo.erpWindows." + windowName);
     xmlDocumentXsql.setParameter("table", tableName);
     xmlDocumentXsql.setParameter("key", tableName + "." + keyColumnName);
-    if (parentsFieldsData.length > 0) {
+    if (parentsFieldsData!=null && parentsFieldsData.length > 0) {
       xmlDocumentXsql.setParameter("keyParent", tableName + "." + parentsFieldsData[0].name);
     }
     xmlDocumentXsql.setParameter("paramKey", Sqlc.TransformaNombreColumna(keyColumnName));
-    if (parentsFieldsData.length > 0) {
+    if (parentsFieldsData!=null && parentsFieldsData.length > 0) {
       xmlDocumentXsql.setParameter("paramKeyParent", Sqlc.TransformaNombreColumna(parentsFieldsData[0].name));
       if (isSecondaryKey && (!EditionFieldsData.isOrgKey(pool, strTab).equals("0"))) {
         xmlDocumentXsql.setParameter("paramKeyParentOrg", "currentAdOrgId");

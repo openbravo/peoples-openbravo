@@ -150,7 +150,7 @@ public void setDataArray(String subXmlDocumentName, String dataName, FieldProvid
 public void setParameter(String strName, String strValue) {
   ParameterValue parameter = hasParameterValue.get(strName);
   if (parameter != null) parameter.setValue(strValue);
-  if (!parameter.parameterTemplate.strName.equals("menu")) {
+  if (parameter!=null && !parameter.parameterTemplate.strName.equals("menu")) {
     log4jXmlDocument.debug("Parameter: " + parameter.parameterTemplate.strName + " valor: " + parameter.print() );
   }
 }

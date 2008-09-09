@@ -69,7 +69,7 @@ class CommandLine_CopyFiles {
 
       conn.destroy();
     } catch (Exception ex) {
-      conn.destroy();
+      if (conn!=null) conn.destroy();
       throw ex;
     }
   }
