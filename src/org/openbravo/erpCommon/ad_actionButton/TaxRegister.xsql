@@ -53,9 +53,11 @@
   <Sql>
   <![CDATA[
   		INSERT INTO C_TAXREGISTER 
-  		(AD_Client_ID, AD_Org_ID, C_TaxRegister_ID, C_TaxPayment_ID, C_TaxRegister_Type_ID,PageNo,NAME,ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
+  		(AD_Client_ID, AD_Org_ID, C_TaxRegister_ID, C_TaxPayment_ID, 
+  		C_TaxRegister_Type_ID,PageNo,NAME,ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
   		VALUES 
-  		(TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?), ? ,'Y', now(), TO_NUMBER(?), now(), TO_NUMBER(?))
+  		(?,?,?,?,
+  		?,TO_NUMBER(?), ? ,'Y', now(), ?, now(), ?)
  		
       ]]>
   </Sql>
@@ -76,10 +78,12 @@
   <![CDATA[
   		INSERT INTO C_TAXREGISTERLINE 
   		(AD_Client_ID, AD_Org_ID, C_TaxRegisterLine_ID, C_TaxRegister_ID, C_InvoiceTax_ID, DocumentNO,C_Tax_ID,
-  		TAXBASEAMT,TAXAMT,TAXUNDAMT,EXEMPTAMT,NOVATAMT,TOTALAMT,INVOICEDATE, NAME,ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
+  		TAXBASEAMT,TAXAMT,TAXUNDAMT,EXEMPTAMT,NOVATAMT,TOTALAMT,INVOICEDATE, 
+  		NAME,ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
   		VALUES 
-  		(TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),
-  		TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_DATE(?) , ?,'Y', now(), TO_NUMBER(?), now(), TO_NUMBER(?))
+  		(?,?,?,?,?,?,?,
+  		TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_DATE(?) , 
+  		?,'Y', now(), ?, now(), ?)
  		
       ]]>
   </Sql>
