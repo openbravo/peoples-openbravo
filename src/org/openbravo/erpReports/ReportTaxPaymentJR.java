@@ -87,7 +87,7 @@ public class ReportTaxPaymentJR extends HttpSecureAppServlet {
 		xmlDocument.setParameter("toolbar", toolbar.toString());
 
 		try {
-			KeyMap key = new KeyMap(this, vars, "ReportRegisterPayment.html");
+			KeyMap key = new KeyMap(this, "ReportRegisterPayment.html");
 			xmlDocument.setParameter("keyMap", key.getReportKeyMaps());
 		} catch (Exception ex) {
 			throw new ServletException(ex);

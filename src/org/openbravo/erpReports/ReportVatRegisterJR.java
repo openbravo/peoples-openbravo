@@ -93,7 +93,7 @@ public class ReportVatRegisterJR extends HttpSecureAppServlet {
 		xmlDocument.setParameter("toolbar", toolbar.toString());
 
 		try {
-			KeyMap key = new KeyMap(this, vars, "ReportRegisterFilter.html");
+			KeyMap key = new KeyMap(this, "ReportRegisterFilter.html");
 			xmlDocument.setParameter("keyMap", key.getReportKeyMaps());
 		} catch (Exception ex) {
 			throw new ServletException(ex);

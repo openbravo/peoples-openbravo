@@ -809,7 +809,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       throw new ServletException(ex);
     }
     try {
-      KeyMap key = new KeyMap(this, vars, tabId, windowId);
+      KeyMap key = new KeyMap(this, tabId, windowId);
       xmlDocument.setParameter("keyMap", key.getRelationKeyMaps());
     } catch (Exception ex) {
       throw new ServletException(ex);
@@ -953,7 +953,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       throw new ServletException(ex);
     }
     try {
-      KeyMap key = new KeyMap(this, vars, tabId, windowId);
+      KeyMap key = new KeyMap(this, tabId, windowId);
       xmlDocument.setParameter("keyMap", key.getEditionKeyMaps(boolNew));
     } catch (Exception ex) {
       throw new ServletException(ex);

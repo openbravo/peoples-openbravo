@@ -19,7 +19,6 @@
 package org.openbravo.erpCommon.utility;
 
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.utils.FormatUtilities;
 import java.util.*;
 import org.apache.log4j.Logger ;
@@ -32,7 +31,6 @@ import org.apache.log4j.Logger ;
  */
 public class KeyMap {
   static Logger log4j = Logger.getLogger(KeyMap.class);
-  private VariablesSecureApp vars;
   private ConnectionProvider conn;
   private String TabID = "";
   private Properties myData = new Properties();
@@ -42,15 +40,13 @@ public class KeyMap {
    * Constructor
    * 
    * @param _conn Handler for the database connection.
-   * @param _vars Handler for the session info.
    * @param _tabId String with the tab's id.
    * @param _windowId String with the window's id.
    * @throws Exception
    */
-  public KeyMap(ConnectionProvider _conn, VariablesSecureApp _vars, String _tabId, String _windowId) throws Exception {
-    if (_conn==null || _vars==null || _tabId==null || _tabId.equals("") || _windowId==null || _windowId.equals("")) throw new Exception("Missing parameters");
+  public KeyMap(ConnectionProvider _conn, String _tabId, String _windowId) throws Exception {
+    if (_conn==null || _tabId==null || _tabId.equals("") || _windowId==null || _windowId.equals("")) throw new Exception("Missing parameters");
     this.conn = _conn;
-    this.vars = _vars;
     this.TabID = _tabId;
     generateStructure();
   }
@@ -59,14 +55,12 @@ public class KeyMap {
    * Constructor
    * 
    * @param _conn Handler for the database connection.
-   * @param _vars Handler for the session info.
    * @param _action String with the window type (form, report, process...)
    * @throws Exception
    */
-  public KeyMap(ConnectionProvider _conn, VariablesSecureApp _vars, String _action) throws Exception {
-    if (_conn==null || _vars==null || _action==null || _action.equals("")) throw new Exception("Missing parameters");
+  public KeyMap(ConnectionProvider _conn, String _action) throws Exception {
+    if (_conn==null || _action==null || _action.equals("")) throw new Exception("Missing parameters");
     this.conn = _conn;
-    this.vars = _vars;
   }
 
   /**
