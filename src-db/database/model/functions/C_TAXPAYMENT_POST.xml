@@ -81,6 +81,7 @@ v_totalcredit NUMBER;
 
 
 v_acctschema_ID VARCHAR2(32);
+v_calendar_ID VARCHAR2(32);
 v_currency_ID VARCHAR2(32);
 v_currencyratetype VARCHAR2(30);
 v_gl_category_ID VARCHAR2(32);
@@ -133,9 +134,18 @@ BEGIN
 
         v_paymentrule := 'T';
         v_currencyratetype := 'S';
-
-      select c_period_id into v_period_id from c_period
-      where enddate = (select max(enddate) from c_period where enddate <=v_date);
+      
+      select c_calendar_id into v_calendar_ID
+      from ad_clientinfo
+      where ad_client_id = v_client_id;
+      
+      select c_period_id into v_period_id 
+      from c_period
+      where enddate = (select max(enddate) from c_period where enddate <=v_date
+                      and exists (select 1 from c_year where c_calendar_id = v_calendar_ID
+                    and c_period.c_year_id = c_year.c_year_id))
+      and exists (select 1 from c_year where c_calendar_id = v_calendar_ID
+                    and c_period.c_year_id = c_year.c_year_id);
 
      --start processing
 
