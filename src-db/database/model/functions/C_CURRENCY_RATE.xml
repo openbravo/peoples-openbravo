@@ -51,9 +51,9 @@
   -- Currency From variables
   v_cf_IsEuro      char(1);
   -- Triangle
-  v_CurrencyFrom VARCHAR;
-  v_CurrencyTo   VARCHAR;
-  v_CurrencyEuro VARCHAR;
+  v_CurrencyFrom VARCHAR(32);
+  v_CurrencyTo   VARCHAR(32);
+  v_CurrencyEuro VARCHAR(32);
   --
   v_ConvDate DATE := now();
   v_RateType CHAR := 'S';
