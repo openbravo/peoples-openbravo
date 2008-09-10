@@ -80,7 +80,12 @@ public class WADTime extends WADControl {
       textButton = this.button.toString();
       buttonClass = this.button.getType();
     }*/
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADTime").createXmlDocument();
+    String[] discard = { "" };
+    if (!getData("IsMandatory").equals("Y")) {
+      // if field is not mandatory, discard it
+      discard[0] = "xxmissingSpan";
+    }
+    XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADTime", discard).createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
@@ -116,7 +121,12 @@ public class WADTime extends WADControl {
       textButton = this.button.toString();
       buttonClass = this.button.getType();
     }*/
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADTime").createXmlDocument();
+    String[] discard = { "" };
+    if (!getData("IsMandatory").equals("Y")) {
+      // if field is not mandatory, discard it
+      discard[0] = "xxmissingSpan";
+    }
+    XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADTime", discard).createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));

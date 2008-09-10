@@ -129,8 +129,13 @@ public class WADSearch extends WADControl {
         tabIndex = "1";
       }
     }
-    
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADSearch").createXmlDocument();
+    String[] discard = { "" };
+    if (!getData("IsMandatory").equals("Y")) {
+      // if field is not mandatory, discard it
+      discard[0] = "xxmissingSpan";
+    }
+
+    XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADSearch", discard).createXmlDocument();
     xmlDocument.setParameter("tabindex", tabIndex);
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
@@ -170,7 +175,12 @@ public class WADSearch extends WADControl {
         tabIndex = "1";
       }
     }
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADSearch").createXmlDocument();
+    String[] discard = { "" };
+    if (!getData("IsMandatory").equals("Y")) {
+      // if field is not mandatory, discard it
+      discard[0] = "xxmissingSpan";
+    }
+    XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADSearch", discard).createXmlDocument();
     xmlDocument.setParameter("tabindex", tabIndex);
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));

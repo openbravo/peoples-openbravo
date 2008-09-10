@@ -57,7 +57,12 @@ public class WADLink extends WADControl {
     this.button.setReportEngine(getReportEngine());
     textButton = this.button.toString();
     buttonClass = this.button.getType();
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADLink").createXmlDocument();
+    String[] discard = { "" };
+    if (!getData("IsMandatory").equals("Y")) {
+      // if field is not mandatory, discard it
+      discard[0] = "xxmissingSpan";
+    }
+    XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADLink", discard).createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
@@ -90,7 +95,12 @@ public class WADLink extends WADControl {
     this.button.setReportEngine(getReportEngine());
     textButton = this.button.toString();
     buttonClass = this.button.getType();
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADLink").createXmlDocument();
+    String[] discard = { "" };
+    if (!getData("IsMandatory").equals("Y")) {
+      // if field is not mandatory, discard it
+      discard[0] = "xxmissingSpan";
+    }
+    XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADLink", discard).createXmlDocument();
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
     xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));

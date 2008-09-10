@@ -60,19 +60,24 @@ public class WADString extends WADControl {
     String textButton = "";
     String buttonClass = "";
     boolean isDisabled = false;
+    String[] discard = { "" };
+    if (!getData("IsMandatory").equals("Y")) {
+      // if field is not mandatory, discard it
+      discard[0] = "xxmissingSpan";
+    }
     if (getData("IsEncrypted").equals("Y")) {
       if (getData("IsReadOnly").equals("N") && getData("IsReadOnlyTab").equals("N") && getData("IsUpdateable").equals("Y")) {
         this.button.setReportEngine(getReportEngine());
         textButton = this.button.toString();
         buttonClass = this.button.getType();
       }
-      xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADStringEncrypted").createXmlDocument();
+      xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADStringEncrypted", discard).createXmlDocument();
       xmlDocument.setParameter("hasButton", (textButton.equals("")?"TextButton_ContentCell":""));
       xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
       xmlDocument.setParameter("button", textButton);
       isDisabled = true;
     } else {
-      xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADString").createXmlDocument();
+      xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADString", discard).createXmlDocument();
     }
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
@@ -105,19 +110,24 @@ public class WADString extends WADControl {
     String textButton = "";
     String buttonClass = "";
     boolean isDisabled = false;
+    String[] discard = { "" };
+    if (!getData("IsMandatory").equals("Y")) {
+      // if field is not mandatory, discard it
+      discard[0] = "xxmissingSpan";
+    }
     if (getData("IsEncrypted").equals("Y")) {
       if (getData("IsReadOnly").equals("N") && getData("IsReadOnlyTab").equals("N")) {
         this.button.setReportEngine(getReportEngine());
         textButton = this.button.toString();
         buttonClass = this.button.getType();
       }
-      xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADStringEncrypted").createXmlDocument();
+      xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADStringEncrypted", discard).createXmlDocument();
       xmlDocument.setParameter("hasButton", (textButton.equals("")?"TextButton_ContentCell":""));
       xmlDocument.setParameter("buttonClass", buttonClass + "_ContentCell");
       xmlDocument.setParameter("button", textButton);
       isDisabled = true;
     } else {
-      xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADString").createXmlDocument();
+      xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADString", discard).createXmlDocument();
     }
 
     xmlDocument.setParameter("columnName", getData("ColumnName"));
