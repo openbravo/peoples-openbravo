@@ -92,11 +92,11 @@
          AD_ALERTRULE_ID, RECORD_ID, REFERENCEKEY_ID, 
          DESCRIPTION, AD_USER_ID, AD_ROLE_ID)
         VALUES
-         (TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),
-          'Y',TO_DATE(?),TO_NUMBER(?),
+         (?,?,?,
+          'Y',TO_DATE(?),?,
           now(),0,
-          TO_NUMBER(?),?,?,
-          ?,TO_NUMBER(?),TO_NUMBER(?))
+          ?,?,?,
+          ?,?,?)
     ]]></Sql>
     <Parameter name="alertId"/>
     <Parameter name="clientId"/>
