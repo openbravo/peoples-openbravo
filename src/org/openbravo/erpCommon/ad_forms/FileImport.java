@@ -118,21 +118,14 @@ public class FileImport extends HttpSecureAppServlet {
     FileImportData [] data = null;    
     int constant = 0;
     OBError myMessage = null;
-    int i = 0;
     
     try{
       con = getTransactionConnection();
       data = FileImportData.select(this, strAdImpformatId);
       String strTable = FileImportData.table(this, strAdImpformatId);
-      for (i=0; i<data2.length; i++){
+      for (int i=0;i<data2.length;i++){
         String sequence = SequenceIdData.getSequence(this, FileImportData.table(this,strAdImpformatId), vars.getClient());
-        try {
         FileImportData.insert(con, this, strTable, (strTable + "_ID"), sequence, vars.getClient(), vars.getOrg(), vars.getUser());
-        } catch(ServletException ex) {
-          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-          releaseRollbackConnection(con);
-          return myMessage;
-        }
         int jj=0;
         for (int j=0;j<data.length;j++){
           if((data2[i].getField(String.valueOf(j-constant))==null || data2[i].getField(String.valueOf(j-constant)).equals("")) && data[j].constantvalue.equals(""))
@@ -151,38 +144,27 @@ public class FileImport extends HttpSecureAppServlet {
         }
         constant = 0;
         if (log4j.isDebugEnabled()) log4j.debug("##########iteration - " + (i+1) + " - strFields = " + strFields);
-        try {
         FileImportData.update(con, this, strTable, strFields.toString(), (strTable + "_id = '" + sequence+"'"));
-        } catch(ServletException ex) {
-          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-          if (i == 0 && !firstRowHeaders) {              
-            myMessage.setTitle(Utility.messageBD(this, "Error while inserting data. Please check if the CSV file contains a header", vars.getLanguage()));
-          }else{
-            myMessage.setTitle(Utility.messageBD(this, "Error while inserting data", vars.getLanguage()));
-          }
-          String strMessage = myMessage.getMessage();          
-          myMessage.setMessage( "<strong>" + Utility.messageBD(this, "Line", vars.getLanguage()) + ":&nbsp;</strong>" + (i+1) + 
-              "<br><strong>" + Utility.messageBD(this, "Inserting data", vars.getLanguage()) + ":&nbsp;&nbsp;</strong>" + strFields + 
-              "<br><strong>" + Utility.messageBD(this, "Error", vars.getLanguage()) + ":&nbsp;&nbsp;</strong>" + strMessage);          
-          releaseRollbackConnection(con);
-          return myMessage;
-        }
         strFields.delete(0,strFields.length());
       }
-      
       releaseCommitConnection(con);
+      //return "OK";
+      //New message system
       myMessage = new OBError();
       myMessage.setType("Success");
-      myMessage.setTitle("Success");
-      myMessage.setMessage(Utility.messageBD(this, "Records inserted in the temporary table", vars.getLanguage()) + ": " + (i+1));
+      myMessage.setTitle("");
+      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+      return myMessage;
     }catch(Exception e){
       try {
         releaseRollbackConnection(con);
       } catch (Exception ignored) {}
       e.printStackTrace();
+      //return "";
+      //New message system
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+      return myMessage;
     }
-    return myMessage;
   }
 
   public String parseField(String strTexto, String strLength, String strDataType, String strDataFormat, String strDecimalPoint) throws ServletException {
