@@ -1369,7 +1369,7 @@ public class TableSQLData {
       result = field;
       break;
     default:
-      result = "COALESCE(TO_CHAR(" + field + "), '')";
+      result = "TO_CHAR(" + field + ")";
       break;
     }
     return result;
