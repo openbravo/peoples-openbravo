@@ -397,7 +397,7 @@
         DocumentNote, IsTranslated, Createdby, UpdatedBy,
         AD_Client_ID, AD_Org_ID
       )
-    SELECT get_uuid, C_PaymentTerm_ID, AD_Language, C_PaymentTerm.Name, C_PaymentTerm.Description, C_PaymentTerm.DocumentNote, 'N', '0', '0', C_PaymentTerm.AD_Client_ID, C_PaymentTerm.AD_Org_ID
+    SELECT get_uuid(), C_PaymentTerm_ID, AD_Language, C_PaymentTerm.Name, C_PaymentTerm.Description, C_PaymentTerm.DocumentNote, 'N', '0', '0', C_PaymentTerm.AD_Client_ID, C_PaymentTerm.AD_Org_ID
     FROM C_PaymentTerm, AD_Language
     WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(C_PaymentTerm_ID, AD_Language) NOT IN
       (SELECT C_PaymentTerm_ID, AD_Language FROM C_PaymentTerm_Trl)
