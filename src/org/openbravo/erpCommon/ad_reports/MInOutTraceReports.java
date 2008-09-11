@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -74,7 +74,7 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     if (strmProductIdGlobal.equals("")) {
       data = new MInOutTraceReportsData[0];
     } else {
-      data = MInOutTraceReportsData.select(this, strmProductIdGlobal, strmAttributesetinstanceIdGlobal, Utility.getContext(this, vars, "#User_Org", "MInOutTraceReports"), Utility.getContext(this, vars, "#User_Client", "MInOutTraceReports"));
+      data = MInOutTraceReportsData.select(this, vars.getLanguage(), strmProductIdGlobal, strmAttributesetinstanceIdGlobal, Utility.getContext(this, vars, "#User_Org", "MInOutTraceReports"), Utility.getContext(this, vars, "#User_Client", "MInOutTraceReports"));
     }
 
     xmlDocument.setParameter("calendar", vars.getLanguage());

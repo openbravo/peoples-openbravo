@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -98,7 +98,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     } else {
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/MaterialReceiptPending").createXmlDocument();
       String strDateFormat = vars.getSessionValue("#AD_SqlDateFormat");
-      data = MaterialReceiptPendingData.selectLines(this, strDateFormat, Utility.getContext(this, vars, "#User_Client", "MaterialReceiptPending"), Tree.getMembers(this, strTreeOrg, strAD_Org_ID), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strC_BPartner_ID, strDocumentNo);
+      data = MaterialReceiptPendingData.selectLines(this, strDateFormat, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "MaterialReceiptPending"), Tree.getMembers(this, strTreeOrg, strAD_Org_ID), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strC_BPartner_ID, strDocumentNo);
     }
       
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "MaterialReceiptPending", false, "", "", "",false, "ad_forms",  strReplaceWith, false,  true);

@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,7 +27,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT S.M_STORAGE_DETAIL_ID, P.NAME, ad_column_identifier(TO_CHAR('M_LOCATOR'),TO_CHAR(S.M_LOCATOR_ID),TO_CHAR('es_ES')) as M_LOCATOR_ID, A.DESCRIPTION, U1.NAME AS UOM1, U2.NAME AS UOM2, 
+        SELECT S.M_STORAGE_DETAIL_ID, P.NAME, ad_column_identifier(TO_CHAR('M_LOCATOR'),TO_CHAR(S.M_LOCATOR_ID),TO_CHAR(?)) as M_LOCATOR_ID, A.DESCRIPTION, U1.NAME AS UOM1, U2.NAME AS UOM2, 
         S.QTYONHAND, S.QTYORDERONHAND as QTYORDERONHAND
         FROM M_STORAGE_DETAIL S left join M_ATTRIBUTESETINSTANCE A on S.M_ATTRIBUTESETINSTANCE_ID = A.M_ATTRIBUTESETINSTANCE_Id
                                 left join M_PRODUCT_UOM PU         on S.M_PRODUCT_UOM_ID = PU.M_PRODUCT_UOM_ID
@@ -43,6 +43,7 @@
       ]]>
     </Sql>
     <Field name="rownum" value="count"/>
+    <Parameter name="adLanguage"/>
     <Parameter name="bpartner" optional="true" after="WHERE " text=" P.C_BPARTNER_ID = ? AND "/>
     <Parameter name="product" optional="true" after="WHERE " text=" S.M_PRODUCT_ID = ? AND "/>
     <Parameter name="warehouse" optional="true" after="WHERE " text=" L.M_WAREHOUSE_ID = ? AND "/>

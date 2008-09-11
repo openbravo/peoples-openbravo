@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,7 +49,7 @@
       FROM(  
       SELECT C_ORDERLINE.C_ORDERLINE_ID AS ID, C_ORDER.C_ORDER_ID AS C_ORDER_ID, C_ORDER.DOCUMENTNO AS DOCUMENTNO, C_ORDER.DATEORDERED AS DATEORDERED, 
       C_BPARTNER.C_BPARTNER_ID AS C_BPARTNER_ID, C_BPARTNER.NAME AS PARTNER_NAME, 
-      AD_COLUMN_IDENTIFIER(TO_CHAR('M_Product'), TO_CHAR(C_ORDERLINE.M_PRODUCT_ID), TO_CHAR('es_ES')) AS PRODUCT_NAME, M_ATTRIBUTESETINSTANCE.DESCRIPTION AS DESCRIPTION, C_ORDERLINE.QTYORDERED AS TOTAL_QTY,
+      AD_COLUMN_IDENTIFIER(TO_CHAR('M_Product'), TO_CHAR(C_ORDERLINE.M_PRODUCT_ID), TO_CHAR(?)) AS PRODUCT_NAME, M_ATTRIBUTESETINSTANCE.DESCRIPTION AS DESCRIPTION, C_ORDERLINE.QTYORDERED AS TOTAL_QTY,
       C_ORDERLINE.QTYORDERED-SUM(COALESCE(M_MATCHPO.QTY,0)) AS QTYORDERED, '-1' AS ISACTIVE
       FROM C_ORDERLINE left join M_MATCHPO on C_ORDERLINE.C_ORDERLINE_ID = M_MATCHPO.C_ORDERLINE_ID
                                            and M_MATCHPO.M_INOUTLINE_ID IS NOT NULL
@@ -69,6 +69,7 @@
       ]]></Sql>
 	<Field name="rownum" value="count"/>
     <Parameter name="dateFormat"/>
+    <Parameter name="adLanguage"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="AND C_ORDER.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adOrgId" optional="true" type="replace" after="AND C_ORDER.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="parDateFrom" optional="true" after="AND C_ORDER.ISSOTRX='N'"><![CDATA[ AND C_ORDER.DATEORDERED >= TO_DATE(?)]]></Parameter>

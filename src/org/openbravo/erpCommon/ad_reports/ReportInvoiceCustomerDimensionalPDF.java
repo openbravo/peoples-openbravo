@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -132,7 +132,7 @@ public class ReportInvoiceCustomerDimensionalPDF extends HttpSecureAppServlet {
         intOrder++;
       }
       else if (strShownArray[i].equals("2")) {
-        strTextShow[i] = "AD_COLUMN_IDENTIFIER('C_Bpartner', TO_CHAR(C_BPARTNER.C_BPARTNER_ID), 'es_ES')";
+        strTextShow[i] = "AD_COLUMN_IDENTIFIER('C_Bpartner', TO_CHAR(C_BPARTNER.C_BPARTNER_ID), '"+ vars.getLanguage() +"')";
         discard[i] = "10";
         intDiscard++;
         intOrder++;
@@ -144,7 +144,7 @@ public class ReportInvoiceCustomerDimensionalPDF extends HttpSecureAppServlet {
         intOrder++;
       }
       else if (strShownArray[i].equals("4")) {
-        strTextShow[i] = "AD_COLUMN_IDENTIFIER('M_Product', TO_CHAR(M_PRODUCT.M_PRODUCT_ID), 'es_ES')||' ('||UOMSYMBOL||')'";
+        strTextShow[i] = "AD_COLUMN_IDENTIFIER('M_Product', TO_CHAR(M_PRODUCT.M_PRODUCT_ID), '"+ vars.getLanguage() +"')||' ('||UOMSYMBOL||')'";
         discard[i] = "10";
         strEliminateQty = "Cant";
         strEliminateQtyRef = "Cant ref";
@@ -173,7 +173,7 @@ public class ReportInvoiceCustomerDimensionalPDF extends HttpSecureAppServlet {
         intOrder++;
       }
       else if (strShownArray[i].equals("9")) {
-        strTextShow[i] = "AD_COLUMN_IDENTIFIER('C_Bpartner', TO_CHAR(CB.C_BPARTNER_ID), 'es_ES')";
+        strTextShow[i] = "AD_COLUMN_IDENTIFIER('C_Bpartner', TO_CHAR(CB.C_BPARTNER_ID), '"+ vars.getLanguage() +"')";
         discard[i] = "10";
         intDiscard++;
         intOrder++;
@@ -185,7 +185,7 @@ public class ReportInvoiceCustomerDimensionalPDF extends HttpSecureAppServlet {
         intOrder++;
       }
       else if (strShownArray[i].equals("11")) {
-        strTextShow[i] = "AD_COLUMN_IDENTIFIER('C_Bpartner_Location', TO_CHAR(M_INOUT.C_BPARTNER_LOCATION_ID), 'es_ES')";
+        strTextShow[i] = "AD_COLUMN_IDENTIFIER('C_Bpartner_Location', TO_CHAR(M_INOUT.C_BPARTNER_LOCATION_ID), '"+ vars.getLanguage() +"')";
         intDiscard++;
         intOrder++;
       }

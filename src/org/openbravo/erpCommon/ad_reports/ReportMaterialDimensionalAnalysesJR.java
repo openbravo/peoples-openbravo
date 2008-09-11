@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -247,7 +247,7 @@ public class ReportMaterialDimensionalAnalysesJR extends HttpSecureAppServlet {
         strLevelLabel[i] = dimensionLabel[0].name;
       }
       else if (strShownArray[i].equals("2")) {
-        strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('C_Bpartner'), to_char( C_BPARTNER.C_BPARTNER_ID), to_char( 'es_ES'))";
+        strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('C_Bpartner'), to_char( C_BPARTNER.C_BPARTNER_ID), to_char('"+ vars.getLanguage() +"'))";
         intDiscard++;
         strLevelLabel[i] = dimensionLabel[1].name;
       }
@@ -257,7 +257,7 @@ public class ReportMaterialDimensionalAnalysesJR extends HttpSecureAppServlet {
         strLevelLabel[i] = dimensionLabel[2].name;
       }
       else if (strShownArray[i].equals("4")) {
-        strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('M_Product'), to_char( M_PRODUCT.M_PRODUCT_ID), to_char( 'es_ES'))";
+        strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('M_Product'), to_char( M_PRODUCT.M_PRODUCT_ID), to_char('"+ vars.getLanguage() +"'))";
         intAuxDiscard = i;
         intDiscard++;
         intProductLevel = i+1;

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -89,7 +89,7 @@ public class CashBankOperations extends HttpSecureAppServlet {
      //   CashBankOperationsData.updateCashLine(con,this, strDebtPaymentId, strCashline);
         strDebtPaymentId = SequenceIdData.getSequence(this, "C_Debt_Payment", vars.getClient());
         CashBankOperationsData.insertDebtpayment(con,this, strDebtPaymentId, vars.getClient(), vars.getOrg(), vars.getUser(), 
-        "N",strSettlement, strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage()) + CashBankOperationsData.selectBankAccount(this,strBankFrom), strBPartner, strBankCurrency, "",strBankFrom, "", strPaymentRuleTo, strAmount, strMovementDate, "");
+        "N",strSettlement, strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage()) + CashBankOperationsData.selectBankAccount(this,strBankFrom, vars.getLanguage()), strBPartner, strBankCurrency, "",strBankFrom, "", strPaymentRuleTo, strAmount, strMovementDate, "");
         CashBankOperationsData.updateSettlement(con,this, strSettlement);
       }else if (strCashTo.equals("") && strBankFrom.equals("")){ //cash -> bank
         CashBankOperationsData.insertSettlement(con,this, strSettlement, vars.getClient(), vars.getOrg(), vars.getUser(), strSettlementDocumentNo, strMovementDate, strDoctypeId, strBankCurrency);
@@ -101,7 +101,7 @@ public class CashBankOperations extends HttpSecureAppServlet {
         //CashBankOperationsData.updateCashLine(con,this, strDebtPaymentId, strCashline);
         strDebtPaymentId = SequenceIdData.getSequence(this, "C_Debt_Payment", vars.getClient());
         CashBankOperationsData.insertDebtpayment(con,this, strDebtPaymentId, vars.getClient(), vars.getOrg(), vars.getUser(), 
-        "Y",strSettlement, strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage()) + CashBankOperationsData.selectBankAccount(this,strBankTo), strBPartner, strBankCurrency, "",strBankTo, "", strPaymentRuleTo, strAmount, strMovementDate, "");
+        "Y",strSettlement, strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage()) + CashBankOperationsData.selectBankAccount(this,strBankTo, vars.getLanguage()), strBPartner, strBankCurrency, "",strBankTo, "", strPaymentRuleTo, strAmount, strMovementDate, "");
         CashBankOperationsData.updateSettlement(con,this, strSettlement);
       }else if (strBankTo.equals("") && strBankFrom.equals("")){ // cash -> cash
         CashBankOperationsData.insertSettlement(con,this, strSettlement, vars.getClient(), vars.getOrg(), vars.getUser(), strSettlementDocumentNo, strMovementDate, strDoctypeId, strCashCurrency);
@@ -122,10 +122,10 @@ public class CashBankOperations extends HttpSecureAppServlet {
         CashBankOperationsData.insertSettlement(con,this, strSettlement, vars.getClient(), vars.getOrg(), vars.getUser(), strSettlementDocumentNo, strMovementDate, strDoctypeId, strBankCurrency);
         String strDebtPaymentId = SequenceIdData.getSequence(this, "C_Debt_Payment", vars.getClient());
         CashBankOperationsData.insertDebtpayment(con,this, strDebtPaymentId, vars.getClient(), vars.getOrg(), vars.getUser(), 
-        "N",strSettlement, strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage()) + CashBankOperationsData.selectBankAccount(this,strBankFrom), strBPartner, strBankCurrency, "", strBankFrom,"", strPaymentRuleFrom, strAmount, strMovementDate, "");
+        "N",strSettlement, strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage()) + CashBankOperationsData.selectBankAccount(this,strBankFrom, vars.getLanguage()), strBPartner, strBankCurrency, "", strBankFrom,"", strPaymentRuleFrom, strAmount, strMovementDate, "");
         strDebtPaymentId = SequenceIdData.getSequence(this, "C_Debt_Payment", vars.getClient());
         CashBankOperationsData.insertDebtpayment(con,this, strDebtPaymentId, vars.getClient(), vars.getOrg(), vars.getUser(), 
-        "Y",strSettlement, strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage()) + CashBankOperationsData.selectBankAccount(this,strBankTo), strBPartner, strBankCurrency, "", strBankTo,"", strPaymentRuleTo, strAmount, strMovementDate, "");
+        "Y",strSettlement, strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage()) + CashBankOperationsData.selectBankAccount(this,strBankTo, vars.getLanguage()), strBPartner, strBankCurrency, "", strBankTo,"", strPaymentRuleTo, strAmount, strMovementDate, "");
         CashBankOperationsData.updateSettlement(con,this, strSettlement);
       }
       releaseCommitConnection(con);

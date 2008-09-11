@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -55,7 +55,7 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     String discard[]={"discard"};
     XmlDocument xmlDocument;
-    ReportValuationStockData[] data= ReportValuationStockData.select(this, strDate , DateTimeData.nDaysAfter(this, strDate,"1"), strWarehouse, strCategoryProduct);
+    ReportValuationStockData[] data= ReportValuationStockData.select(this, vars.getLanguage(), strDate , DateTimeData.nDaysAfter(this, strDate,"1"), strWarehouse, strCategoryProduct);
     if (data == null || data.length == 0) {
       data = ReportValuationStockData.set();
       discard[0] = "sectionCategoryProduct";

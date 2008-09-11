@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -136,7 +136,7 @@ public class ReportBankJR extends HttpSecureAppServlet {
         xmlDocument.setData("reportC_ACCOUNTNUMBER","liststructure",AccountNumberComboData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportBankJR"), Utility.getContext(this, vars, "#User_Org", "ReportBankJR")));
     } else {
 //      initialBalance = new BigDecimal( ReportBankJRData.BeginningBalance(this, Utility.getContext(this, vars, "#User_Client", "ReportBankJR"), Utility.getContext(this, vars, "#User_Org", "ReportBankJR"),strDateFrom, strcbankaccount));
-      data = ReportBankJRData.select(this,Utility.getContext(this, vars, "#User_Client", "ReportBankJR"), Utility.getContext(this, vars, "#User_Org", "ReportBankJR"),strDateFrom,DateTimeData.nDaysAfter(this, strDateTo,"1"), strcbankaccount);
+      data = ReportBankJRData.select(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "ReportBankJR"), Utility.getContext(this, vars, "#User_Org", "ReportBankJR"),strDateFrom,DateTimeData.nDaysAfter(this, strDateTo,"1"), strcbankaccount);
 //     xmlDocument.setParameter("sumAmount", ReportBankJRData.BeginningBalance(this, Utility.getContext(this, vars, "#User_Client", "ReportBankJR"), Utility.getContext(this, vars, "#User_Org", "ReportBankJR"),strDateFrom, strcbankaccount));
     }
 

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -268,7 +268,7 @@ public class ReportInvoiceCustomerDimensionalAnalyses extends HttpSecureAppServl
         intOrder++;
       }
       else if (strShownArray[i].equals("2")) {
-        strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('C_Bpartner'), to_char( C_BPARTNER.C_BPARTNER_ID), to_char( 'es_ES'))";
+        strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('C_Bpartner'), to_char( C_BPARTNER.C_BPARTNER_ID), to_char('"+ vars.getLanguage() +"'))";
         intDiscard++;
         intOrder++;
       }
@@ -278,7 +278,7 @@ public class ReportInvoiceCustomerDimensionalAnalyses extends HttpSecureAppServl
         intOrder++;
       }
       else if (strShownArray[i].equals("4")) {
-        strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('M_Product'), to_char( M_PRODUCT.M_PRODUCT_ID), to_char( 'es_ES'))||' ('||UOMSYMBOL||')'";
+        strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('M_Product'), to_char( M_PRODUCT.M_PRODUCT_ID), to_char('"+ vars.getLanguage() +"'))||' ('||UOMSYMBOL||')'";
         intAuxDiscard = i;
         intOrder++;
       }
@@ -298,7 +298,7 @@ public class ReportInvoiceCustomerDimensionalAnalyses extends HttpSecureAppServl
         intOrder++;
       }
       else if (strShownArray[i].equals("9")) {
-        strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('C_Bpartner'), to_char( CB.C_BPARTNER_ID), to_char( 'es_ES'))";
+        strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('C_Bpartner'), to_char( CB.C_BPARTNER_ID), to_char('"+ vars.getLanguage() +"'))";
         intDiscard++;
         intOrder++;
       }
@@ -308,7 +308,7 @@ public class ReportInvoiceCustomerDimensionalAnalyses extends HttpSecureAppServl
         intOrder++;
       }
       else if (strShownArray[i].equals("11")) {
-        strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('C_Bpartner_Location'), to_char( M_INOUT.C_BPARTNER_LOCATION_ID), to_char( 'es_ES'))";
+        strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('C_Bpartner_Location'), to_char( M_INOUT.C_BPARTNER_LOCATION_ID), to_char('"+ vars.getLanguage() +"'))";
         intDiscard++;
         intOrder++;
       }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -79,7 +79,7 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
     if (strisReceipt.equals("")) strisReceipt="N";
 
     if (vars.commandIn("FIND")) {
-      data = ReportAgingBalanceData.select(this, strOrgTrx, strcolumn1, strcolumn2, strcolumn3, strcolumn4, strisReceipt, strcBpartnerId, strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportAgingBalance"), Utility.getContext(this, vars, "#User_Org", "ReportAgingBalance"));
+      data = ReportAgingBalanceData.select(this, vars.getLanguage(), strOrgTrx, strcolumn1, strcolumn2, strcolumn3, strcolumn4, strisReceipt, strcBpartnerId, strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportAgingBalance"), Utility.getContext(this, vars, "#User_Org", "ReportAgingBalance"));
     }
     if (strfirstPrint=="Y" || data == null || data.length == 0) {
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportAgingBalance", discard).createXmlDocument();

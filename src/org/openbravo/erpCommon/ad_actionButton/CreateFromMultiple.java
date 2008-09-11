@@ -197,7 +197,7 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
       discard[0] = new String("sectionDetail");
       data = new CreateFromMultipleShipmentData[0];
     } else {
-      data = CreateFromMultipleShipmentData.select(this, strBpartner, strProduct, strmWarehouseId, strX, strY, strZ, Utility.getContext(this, vars, "#User_Client", strWindowId));
+      data = CreateFromMultipleShipmentData.select(this, vars.getLanguage(), strBpartner, strProduct, strmWarehouseId, strX, strY, strZ, Utility.getContext(this, vars, "#User_Client", strWindowId));
     }
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Shipment", discard).createXmlDocument();
     
@@ -257,7 +257,7 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
     try {
       conn = this.getTransactionConnection();
       int total = Integer.valueOf(strNumero).intValue();
-      CreateFromMultipleReceiptData[] locators = CreateFromMultipleReceiptData.select(conn, this, Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org", strWindowId), strWarehouse, strLocator, strLocatorType);
+      CreateFromMultipleReceiptData[] locators = CreateFromMultipleReceiptData.select(conn, this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org", strWindowId), strWarehouse, strLocator, strLocatorType);
       int count = 0;
       if (locators!=null && locators.length>0) {
         for (count=0;count<total;count++) {
