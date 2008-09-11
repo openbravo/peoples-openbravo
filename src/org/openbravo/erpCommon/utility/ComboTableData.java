@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -154,7 +154,7 @@ public class ComboTableData {
       try {
         Integer.valueOf(_reference).intValue();
       } catch (Exception ignore) {
-        _reference = ComboTableQueryData.getReferenceID(getPool(), _reference, "D");
+        if(!Utility.isUUIDString(_reference)) _reference = ComboTableQueryData.getReferenceID(getPool(), _reference, "D");
       }
     }
     setParameter(internalPrefix + "reference", _reference);
@@ -195,6 +195,13 @@ public class ComboTableData {
    * @throws Exception
    */
   public void setObjectReference(String _reference) throws Exception {
+    if (_reference!=null && !_reference.equals("")) {
+      try {
+        Integer.valueOf(_reference).intValue();
+      } catch (Exception ignore) {
+        if(!Utility.isUUIDString(_reference)) _reference = ComboTableQueryData.getReferenceID(getPool(), _reference, (getReferenceType().equals("17")?"L":"T"));
+      }
+    }
     setParameter(internalPrefix + "objectReference", _reference);
   }
 
@@ -218,7 +225,7 @@ public class ComboTableData {
       try {
         Integer.valueOf(_reference).intValue();
       } catch (Exception ignore) {
-        _reference = ComboTableQueryData.getValidationID(getPool(), _reference);
+        if(!Utility.isUUIDString(_reference)) _reference = ComboTableQueryData.getValidationID(getPool(), _reference);
       }
     }
     setParameter(internalPrefix + "validation", _reference);

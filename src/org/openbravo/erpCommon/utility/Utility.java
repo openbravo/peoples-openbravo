@@ -1091,6 +1091,33 @@ public class Utility {
 	  return ret;
   }
   
+  /**
+   * Determines if a string of characters is an Openbravo UUID (Universal Unique Identifier),
+   * i.e., if it is a 32 length hexadecimal string.
+   *  
+   * @param CharacterString: A string of characters.
+   * @return Returns true if this string of characters is an UUID.
+   */
+  public static boolean isUUIDString(String CharacterString) {
+    if(CharacterString.length() == 32) {
+      for (int i=0;i<CharacterString.length();i++) {
+        if (!isHexStringChar(CharacterString.charAt(i))) return false;
+      } return true;
+    }
+    return false;
+  }
+
+  /**
+   * Returns true if the input argument character is
+   * A-F, a-f or 0-9.
+   * 
+   * @param c: A single character.
+   * @return Returns true if this character is hexadecimal.
+   */
+  public static final boolean isHexStringChar(char c) {
+    return (("0123456789abcdefABCDEF".indexOf(c)) >= 0);
+  }
+  
   @Deprecated
   public static boolean hasFormAccess (ConnectionProvider conn, VariablesSecureApp vars, String process) {
   	return hasFormAccess (conn, vars, process, "");
