@@ -25,6 +25,8 @@
 <!--100-->              <TYPE><![CDATA[S]]></TYPE>
 <!--100 CODE-->
 <!--100-->              <CODE><![CDATA[AD_Column.AD_Table_ID=@AD_Table_ID@]]></CODE>
+<!--100 AD_MODULE_ID-->
+<!--100-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--100**************--></AD_VAL_RULE>
 
 <!--102**************--><AD_VAL_RULE>
@@ -52,6 +54,8 @@
 <!--102-->              <TYPE><![CDATA[S]]></TYPE>
 <!--102 CODE-->
 <!--102-->              <CODE><![CDATA[C_DocType.DocBaseType='GLJ' AND AD_ISORGINCLUDED( @AD_Org_ID@, C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1']]></CODE>
+<!--102 AD_MODULE_ID-->
+<!--102-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--102**************--></AD_VAL_RULE>
 
 <!--103**************--><AD_VAL_RULE>
@@ -79,6 +83,8 @@
 <!--103-->              <TYPE><![CDATA[S]]></TYPE>
 <!--103 CODE-->
 <!--103-->              <CODE><![CDATA[AD_Client.AD_Client_ID in (@#User_Client@)]]></CODE>
+<!--103 AD_MODULE_ID-->
+<!--103-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--103**************--></AD_VAL_RULE>
 
 <!--104**************--><AD_VAL_RULE>
@@ -106,6 +112,8 @@
 <!--104-->              <TYPE><![CDATA[S]]></TYPE>
 <!--104 CODE-->
 <!--104-->              <CODE><![CDATA[(@AD_Client_ID@='0' AND AD_Org.AD_Org_ID='0') OR (@AD_Client_ID@!='0' AND ((AD_Org.AD_Client_ID IN (@#User_Client@) AND AD_Org.AD_Org_ID IN (@#User_Org@)) OR AD_Org.AD_Org_ID='0' AND AD_Org.IsSummary='N'))]]></CODE>
+<!--104 AD_MODULE_ID-->
+<!--104-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--104**************--></AD_VAL_RULE>
 
 <!--105**************--><AD_VAL_RULE>
@@ -133,6 +141,8 @@
 <!--105-->              <TYPE><![CDATA[S]]></TYPE>
 <!--105 CODE-->
 <!--105-->              <CODE><![CDATA[AD_User.AD_Client_ID=@AD_Client_ID@ AND AD_User.AD_Org_ID in (@User_Org@)]]></CODE>
+<!--105 AD_MODULE_ID-->
+<!--105-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--105**************--></AD_VAL_RULE>
 
 <!--106**************--><AD_VAL_RULE>
@@ -160,6 +170,8 @@
 <!--106-->              <TYPE><![CDATA[S]]></TYPE>
 <!--106 CODE-->
 <!--106-->              <CODE><![CDATA[C_AcctSchema.AD_Client_ID=@AD_Client_ID@]]></CODE>
+<!--106 AD_MODULE_ID-->
+<!--106-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--106**************--></AD_VAL_RULE>
 
 <!--115**************--><AD_VAL_RULE>
@@ -187,6 +199,8 @@
 <!--115-->              <TYPE><![CDATA[S]]></TYPE>
 <!--115 CODE-->
 <!--115-->              <CODE><![CDATA[AD_Reference.ValidationType=(CASE @AD_Reference_ID@ WHEN '17' THEN 'L' WHEN '25' THEN 'L' WHEN '30' THEN 'S' WHEN '28' THEN 'L' ELSE 'T' END)]]></CODE>
+<!--115 AD_MODULE_ID-->
+<!--115-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--115**************--></AD_VAL_RULE>
 
 <!--116**************--><AD_VAL_RULE>
@@ -214,6 +228,8 @@
 <!--116-->              <TYPE><![CDATA[S]]></TYPE>
 <!--116 CODE-->
 <!--116-->              <CODE><![CDATA[AD_Client.AD_Client_ID=@#AD_Client_ID@]]></CODE>
+<!--116 AD_MODULE_ID-->
+<!--116-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--116**************--></AD_VAL_RULE>
 
 <!--117**************--><AD_VAL_RULE>
@@ -241,6 +257,8 @@
 <!--117-->              <TYPE><![CDATA[S]]></TYPE>
 <!--117 CODE-->
 <!--117-->              <CODE><![CDATA[AD_Org.AD_Org_ID=@#AD_Org_ID@ AND AD_Org.IsSummary='N']]></CODE>
+<!--117 AD_MODULE_ID-->
+<!--117-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--117**************--></AD_VAL_RULE>
 
 <!--118**************--><AD_VAL_RULE>
@@ -268,6 +286,8 @@
 <!--118-->              <TYPE><![CDATA[S]]></TYPE>
 <!--118 CODE-->
 <!--118-->              <CODE><![CDATA[GL_Category.CategoryType='M']]></CODE>
+<!--118 AD_MODULE_ID-->
+<!--118-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--118**************--></AD_VAL_RULE>
 
 <!--119**************--><AD_VAL_RULE>
@@ -293,6 +313,8 @@
 <!--119-->              <TYPE><![CDATA[S]]></TYPE>
 <!--119 CODE-->
 <!--119-->              <CODE><![CDATA[C_BPartner_Location.C_BPartner_ID=@C_BPartner_ID@ AND C_BPartner_Location.IsBillTo='Y' AND C_BPartner_Location.IsActive='Y']]></CODE>
+<!--119 AD_MODULE_ID-->
+<!--119-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--119**************--></AD_VAL_RULE>
 
 <!--120**************--><AD_VAL_RULE>
@@ -318,6 +340,8 @@
 <!--120-->              <TYPE><![CDATA[S]]></TYPE>
 <!--120 CODE-->
 <!--120-->              <CODE><![CDATA[C_BPartner_Location.C_BPartner_ID=@DropShip_BPartner_ID@ AND C_BPartner_Location.IsShipTo='Y']]></CODE>
+<!--120 AD_MODULE_ID-->
+<!--120-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--120**************--></AD_VAL_RULE>
 
 <!--121**************--><AD_VAL_RULE>
@@ -345,6 +369,8 @@
 <!--121-->              <TYPE><![CDATA[S]]></TYPE>
 <!--121 CODE-->
 <!--121-->              <CODE><![CDATA[C_DocType.DocBaseType='GLD']]></CODE>
+<!--121 AD_MODULE_ID-->
+<!--121-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--121**************--></AD_VAL_RULE>
 
 <!--123**************--><AD_VAL_RULE>
@@ -370,6 +396,8 @@
 <!--123-->              <TYPE><![CDATA[S]]></TYPE>
 <!--123 CODE-->
 <!--123-->              <CODE><![CDATA[AD_User.C_BPartner_ID=@C_BPartner_ID@]]></CODE>
+<!--123 AD_MODULE_ID-->
+<!--123-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--123**************--></AD_VAL_RULE>
 
 <!--124**************--><AD_VAL_RULE>
@@ -397,6 +425,8 @@
 <!--124-->              <TYPE><![CDATA[S]]></TYPE>
 <!--124 CODE-->
 <!--124-->              <CODE><![CDATA[C_DocType.DocBaseType IN ('ARI', 'API','ARC','APC') AND C_DocType.IsSOTrx='@IsSOTrx@' AND AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1']]></CODE>
+<!--124 AD_MODULE_ID-->
+<!--124-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--124**************--></AD_VAL_RULE>
 
 <!--125**************--><AD_VAL_RULE>
@@ -424,6 +454,8 @@
 <!--125-->              <TYPE><![CDATA[S]]></TYPE>
 <!--125 CODE-->
 <!--125-->              <CODE><![CDATA[C_DocType.DocBaseType IN ('MMR', 'MMS') AND C_DocType.IsSOTrx='@IsSOTrx@' AND AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1']]></CODE>
+<!--125 AD_MODULE_ID-->
+<!--125-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--125**************--></AD_VAL_RULE>
 
 <!--126**************--><AD_VAL_RULE>
@@ -451,6 +483,8 @@
 <!--126-->              <TYPE><![CDATA[S]]></TYPE>
 <!--126 CODE-->
 <!--126-->              <CODE><![CDATA[C_DocType.DocBaseType='ARF']]></CODE>
+<!--126 AD_MODULE_ID-->
+<!--126-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--126**************--></AD_VAL_RULE>
 
 <!--127**************--><AD_VAL_RULE>
@@ -476,6 +510,8 @@
 <!--127-->              <TYPE><![CDATA[S]]></TYPE>
 <!--127 CODE-->
 <!--127-->              <CODE><![CDATA[M_Locator.M_Warehouse_ID=@M_Warehouse_ID@]]></CODE>
+<!--127 AD_MODULE_ID-->
+<!--127-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--127**************--></AD_VAL_RULE>
 
 <!--128**************--><AD_VAL_RULE>
@@ -501,6 +537,8 @@
 <!--128-->              <TYPE><![CDATA[S]]></TYPE>
 <!--128 CODE-->
 <!--128-->              <CODE><![CDATA[AD_Process.IsReport='Y']]></CODE>
+<!--128 AD_MODULE_ID-->
+<!--128-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--128**************--></AD_VAL_RULE>
 
 <!--129**************--><AD_VAL_RULE>
@@ -526,6 +564,8 @@
 <!--129-->              <TYPE><![CDATA[S]]></TYPE>
 <!--129 CODE-->
 <!--129-->              <CODE><![CDATA[AD_Client.AD_Client_ID<>'0']]></CODE>
+<!--129 AD_MODULE_ID-->
+<!--129-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--129**************--></AD_VAL_RULE>
 
 <!--130**************--><AD_VAL_RULE>
@@ -551,6 +591,8 @@
 <!--130-->              <TYPE><![CDATA[S]]></TYPE>
 <!--130 CODE-->
 <!--130-->              <CODE><![CDATA[AD_Org.AD_Org_ID<> '0']]></CODE>
+<!--130 AD_MODULE_ID-->
+<!--130-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--130**************--></AD_VAL_RULE>
 
 <!--131**************--><AD_VAL_RULE>
@@ -576,6 +618,8 @@
 <!--131-->              <TYPE><![CDATA[S]]></TYPE>
 <!--131 CODE-->
 <!--131-->              <CODE><![CDATA[C_BPartner_Location.C_BPartner_ID=@C_BPartner_ID@]]></CODE>
+<!--131 AD_MODULE_ID-->
+<!--131-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--131**************--></AD_VAL_RULE>
 
 <!--132**************--><AD_VAL_RULE>
@@ -603,6 +647,8 @@
 <!--132-->              <TYPE><![CDATA[S]]></TYPE>
 <!--132 CODE-->
 <!--132-->              <CODE><![CDATA[M_PriceList.C_Currency_ID=@C_Currency_ID@]]></CODE>
+<!--132 AD_MODULE_ID-->
+<!--132-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--132**************--></AD_VAL_RULE>
 
 <!--133**************--><AD_VAL_RULE>
@@ -630,6 +676,8 @@
 <!--133-->              <TYPE><![CDATA[S]]></TYPE>
 <!--133 CODE-->
 <!--133-->              <CODE><![CDATA[C_DocType.DocBaseType IN ('SOO', 'POO') AND C_DocType.IsSOTrx='@IsSOTrx@' AND AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1']]></CODE>
+<!--133 AD_MODULE_ID-->
+<!--133-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--133**************--></AD_VAL_RULE>
 
 <!--134**************--><AD_VAL_RULE>
@@ -657,6 +705,8 @@
 <!--134-->              <TYPE><![CDATA[S]]></TYPE>
 <!--134 CODE-->
 <!--134-->              <CODE><![CDATA[DocStatus NOT IN ('DR','IP') AND InvoiceRule <> 'S' AND EXISTS (SELECT * FROM C_OrderLine WHERE C_Order.C_Order_ID=C_OrderLine.C_Order_ID AND QtyOrdered <> QtyInvoiced) AND IsSOTrx='Y']]></CODE>
+<!--134 AD_MODULE_ID-->
+<!--134-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--134**************--></AD_VAL_RULE>
 
 <!--135**************--><AD_VAL_RULE>
@@ -689,6 +739,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
   WHERE o.DocStatus NOT IN ('DR','IP') AND l.QtyOrdered <> l.QtyInvoiced
   AND o.IsSOTrx='Y'
  )]]></CODE>
+<!--135 AD_MODULE_ID-->
+<!--135-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--135**************--></AD_VAL_RULE>
 
 <!--136**************--><AD_VAL_RULE>
@@ -716,6 +768,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--136-->              <TYPE><![CDATA[S]]></TYPE>
 <!--136 CODE-->
 <!--136-->              <CODE><![CDATA[AD_Column.AD_Table_ID=@Find_Table_ID@]]></CODE>
+<!--136 AD_MODULE_ID-->
+<!--136-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--136**************--></AD_VAL_RULE>
 
 <!--137**************--><AD_VAL_RULE>
@@ -743,6 +797,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--137-->              <TYPE><![CDATA[S]]></TYPE>
 <!--137 CODE-->
 <!--137-->              <CODE><![CDATA[EXISTS (SELECT * FROM C_AcctSchema_Element ae WHERE C_ElementValue.C_Element_ID=ae.C_Element_ID AND ae.ElementType='AC' AND ae.C_AcctSchema_ID=@C_AcctSchema_ID@)]]></CODE>
+<!--137 AD_MODULE_ID-->
+<!--137-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--137**************--></AD_VAL_RULE>
 
 <!--138**************--><AD_VAL_RULE>
@@ -770,6 +826,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--138-->              <TYPE><![CDATA[S]]></TYPE>
 <!--138 CODE-->
 <!--138-->              <CODE><![CDATA[EXISTS (SELECT * FROM C_AcctSchema_Element ae WHERE C_ElementValue.C_Element_ID=ae.C_Element_ID AND ae.ElementType='U1' AND ae.C_AcctSchema_ID=@C_AcctSchema_ID@)]]></CODE>
+<!--138 AD_MODULE_ID-->
+<!--138-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--138**************--></AD_VAL_RULE>
 
 <!--139**************--><AD_VAL_RULE>
@@ -797,6 +855,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--139-->              <TYPE><![CDATA[S]]></TYPE>
 <!--139 CODE-->
 <!--139-->              <CODE><![CDATA[EXISTS (SELECT * FROM C_AcctSchema_Element ae WHERE C_ElementValue.C_Element_ID=ae.C_Element_ID AND ae.ElementType='U2' AND ae.C_AcctSchema_ID=@C_AcctSchema_ID@)]]></CODE>
+<!--139 AD_MODULE_ID-->
+<!--139-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--139**************--></AD_VAL_RULE>
 
 <!--140**************--><AD_VAL_RULE>
@@ -822,6 +882,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--140-->              <TYPE><![CDATA[S]]></TYPE>
 <!--140 CODE-->
 <!--140-->              <CODE><![CDATA[AD_WF_Node.AD_WorkFlow_ID=@AD_Workflow_ID@]]></CODE>
+<!--140 AD_MODULE_ID-->
+<!--140-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--140**************--></AD_VAL_RULE>
 
 <!--141**************--><AD_VAL_RULE>
@@ -847,6 +909,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--141-->              <TYPE><![CDATA[S]]></TYPE>
 <!--141 CODE-->
 <!--141-->              <CODE><![CDATA[AD_Table.TableName LIKE 'I%']]></CODE>
+<!--141 AD_MODULE_ID-->
+<!--141-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--141**************--></AD_VAL_RULE>
 
 <!--142**************--><AD_VAL_RULE>
@@ -872,6 +936,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--142-->              <TYPE><![CDATA[S]]></TYPE>
 <!--142 CODE-->
 <!--142-->              <CODE><![CDATA[IsSOTrx='N']]></CODE>
+<!--142 AD_MODULE_ID-->
+<!--142-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--142**************--></AD_VAL_RULE>
 
 <!--143**************--><AD_VAL_RULE>
@@ -897,6 +963,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--143-->              <TYPE><![CDATA[S]]></TYPE>
 <!--143 CODE-->
 <!--143-->              <CODE><![CDATA[IsSOTrx='Y']]></CODE>
+<!--143 AD_MODULE_ID-->
+<!--143-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--143**************--></AD_VAL_RULE>
 
 <!--144**************--><AD_VAL_RULE>
@@ -922,6 +990,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--144-->              <TYPE><![CDATA[S]]></TYPE>
 <!--144 CODE-->
 <!--144-->              <CODE><![CDATA[C_Payment.IsReconciled='N']]></CODE>
+<!--144 AD_MODULE_ID-->
+<!--144-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--144**************--></AD_VAL_RULE>
 
 <!--145**************--><AD_VAL_RULE>
@@ -947,6 +1017,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--145-->              <TYPE><![CDATA[S]]></TYPE>
 <!--145 CODE-->
 <!--145-->              <CODE><![CDATA[C_Invoice.C_BPartner_ID=@C_BPartner_ID@]]></CODE>
+<!--145 AD_MODULE_ID-->
+<!--145-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--145**************--></AD_VAL_RULE>
 
 <!--146**************--><AD_VAL_RULE>
@@ -972,6 +1044,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--146-->              <TYPE><![CDATA[S]]></TYPE>
 <!--146 CODE-->
 <!--146-->              <CODE><![CDATA[C_Invoice.IsPaid<>'Y']]></CODE>
+<!--146 AD_MODULE_ID-->
+<!--146-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--146**************--></AD_VAL_RULE>
 
 <!--147**************--><AD_VAL_RULE>
@@ -997,6 +1071,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--147-->              <TYPE><![CDATA[S]]></TYPE>
 <!--147 CODE-->
 <!--147-->              <CODE><![CDATA[C_Order.C_BPartner_ID=@C_BPartner_ID@]]></CODE>
+<!--147 AD_MODULE_ID-->
+<!--147-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--147**************--></AD_VAL_RULE>
 
 <!--148**************--><AD_VAL_RULE>
@@ -1022,6 +1098,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--148-->              <TYPE><![CDATA[S]]></TYPE>
 <!--148 CODE-->
 <!--148-->              <CODE><![CDATA[(AD_Org.AD_Client_ID=@AD_Client_ID@ OR AD_Org.AD_Org_ID='0')]]></CODE>
+<!--148 AD_MODULE_ID-->
+<!--148-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--148**************--></AD_VAL_RULE>
 
 <!--149**************--><AD_VAL_RULE>
@@ -1047,6 +1125,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--149-->              <TYPE><![CDATA[S]]></TYPE>
 <!--149 CODE-->
 <!--149-->              <CODE><![CDATA[C_DocType.DocBaseType=@DOCTYPE_SETTLEMENT@ AND AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1']]></CODE>
+<!--149 AD_MODULE_ID-->
+<!--149-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--149**************--></AD_VAL_RULE>
 
 <!--150**************--><AD_VAL_RULE>
@@ -1074,6 +1154,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--150-->              <TYPE><![CDATA[S]]></TYPE>
 <!--150 CODE-->
 <!--150-->              <CODE><![CDATA[AD_Tree.TreeType='MM']]></CODE>
+<!--150 AD_MODULE_ID-->
+<!--150-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--150**************--></AD_VAL_RULE>
 
 <!--151**************--><AD_VAL_RULE>
@@ -1099,6 +1181,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--151-->              <TYPE><![CDATA[S]]></TYPE>
 <!--151 CODE-->
 <!--151-->              <CODE><![CDATA[M_DiscountSchema.DiscountType='P']]></CODE>
+<!--151 AD_MODULE_ID-->
+<!--151-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--151**************--></AD_VAL_RULE>
 
 <!--152**************--><AD_VAL_RULE>
@@ -1124,6 +1208,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--152-->              <TYPE><![CDATA[S]]></TYPE>
 <!--152 CODE-->
 <!--152-->              <CODE><![CDATA[NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE l.C_Payment_ID=C_Payment.C_Payment_ID)]]></CODE>
+<!--152 AD_MODULE_ID-->
+<!--152-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--152**************--></AD_VAL_RULE>
 
 <!--153**************--><AD_VAL_RULE>
@@ -1149,6 +1235,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--153-->              <TYPE><![CDATA[S]]></TYPE>
 <!--153 CODE-->
 <!--153-->              <CODE><![CDATA[C_Region.C_Country_ID=@C_Country_ID@]]></CODE>
+<!--153 AD_MODULE_ID-->
+<!--153-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--153**************--></AD_VAL_RULE>
 
 <!--154**************--><AD_VAL_RULE>
@@ -1174,6 +1262,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--154-->              <TYPE><![CDATA[S]]></TYPE>
 <!--154 CODE-->
 <!--154-->              <CODE><![CDATA[AD_PrintFormatItem.AD_PrintFormat_ID=@AD_PrintFormat_ID@]]></CODE>
+<!--154 AD_MODULE_ID-->
+<!--154-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--154**************--></AD_VAL_RULE>
 
 <!--155**************--><AD_VAL_RULE>
@@ -1199,6 +1289,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--155-->              <TYPE><![CDATA[S]]></TYPE>
 <!--155 CODE-->
 <!--155-->              <CODE><![CDATA[C_Region.C_Country_ID=@To_Country_ID@]]></CODE>
+<!--155 AD_MODULE_ID-->
+<!--155-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--155**************--></AD_VAL_RULE>
 
 <!--156**************--><AD_VAL_RULE>
@@ -1226,6 +1318,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--156-->              <TYPE><![CDATA[S]]></TYPE>
 <!--156 CODE-->
 <!--156-->              <CODE><![CDATA[R_Request.Processed='Y']]></CODE>
+<!--156 AD_MODULE_ID-->
+<!--156-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--156**************--></AD_VAL_RULE>
 
 <!--157**************--><AD_VAL_RULE>
@@ -1251,6 +1345,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--157-->              <TYPE><![CDATA[S]]></TYPE>
 <!--157 CODE-->
 <!--157-->              <CODE><![CDATA[PA_ReportLine.PA_ReportLineSet_ID=@PA_ReportLineSet_ID@]]></CODE>
+<!--157 AD_MODULE_ID-->
+<!--157-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--157**************--></AD_VAL_RULE>
 
 <!--158**************--><AD_VAL_RULE>
@@ -1276,6 +1372,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--158-->              <TYPE><![CDATA[S]]></TYPE>
 <!--158 CODE-->
 <!--158-->              <CODE><![CDATA[AD_Role.AD_Client_ID=@#AD_Client_ID@]]></CODE>
+<!--158 AD_MODULE_ID-->
+<!--158-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--158**************--></AD_VAL_RULE>
 
 <!--159**************--><AD_VAL_RULE>
@@ -1303,6 +1401,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--159-->              <TYPE><![CDATA[S]]></TYPE>
 <!--159 CODE-->
 <!--159-->              <CODE><![CDATA[AD_Tree.TreeType='EV']]></CODE>
+<!--159 AD_MODULE_ID-->
+<!--159-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--159**************--></AD_VAL_RULE>
 
 <!--160**************--><AD_VAL_RULE>
@@ -1328,6 +1428,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--160-->              <TYPE><![CDATA[S]]></TYPE>
 <!--160 CODE-->
 <!--160-->              <CODE><![CDATA[PA_ReportColumn.PA_ReportColumnSet_ID=@PA_ReportColumnSet_ID@]]></CODE>
+<!--160 AD_MODULE_ID-->
+<!--160-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--160**************--></AD_VAL_RULE>
 
 <!--161**************--><AD_VAL_RULE>
@@ -1353,6 +1455,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--161-->              <TYPE><![CDATA[S]]></TYPE>
 <!--161 CODE-->
 <!--161-->              <CODE><![CDATA[AD_Ref_List.Value <> 'B']]></CODE>
+<!--161 AD_MODULE_ID-->
+<!--161-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--161**************--></AD_VAL_RULE>
 
 <!--162**************--><AD_VAL_RULE>
@@ -1378,6 +1482,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--162-->              <TYPE><![CDATA[S]]></TYPE>
 <!--162 CODE-->
 <!--162-->              <CODE><![CDATA[AD_Ref_List.Value IN ('S','T')]]></CODE>
+<!--162 AD_MODULE_ID-->
+<!--162-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--162**************--></AD_VAL_RULE>
 
 <!--163**************--><AD_VAL_RULE>
@@ -1403,6 +1509,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--163-->              <TYPE><![CDATA[S]]></TYPE>
 <!--163 CODE-->
 <!--163-->              <CODE><![CDATA[AD_Tab.AD_Window_ID=@AD_Window_ID@]]></CODE>
+<!--163 AD_MODULE_ID-->
+<!--163-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--163**************--></AD_VAL_RULE>
 
 <!--164**************--><AD_VAL_RULE>
@@ -1430,6 +1538,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--164-->              <TYPE><![CDATA[S]]></TYPE>
 <!--164 CODE-->
 <!--164-->              <CODE><![CDATA[EXISTS (SELECT * FROM C_BPartner bp WHERE AD_User.C_BPartner_ID=bp.C_BPartner_ID AND (bp.IsEmployee='Y' OR bp.IsSalesRep='Y'))]]></CODE>
+<!--164 AD_MODULE_ID-->
+<!--164-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--164**************--></AD_VAL_RULE>
 
 <!--165**************--><AD_VAL_RULE>
@@ -1455,6 +1565,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--165-->              <TYPE><![CDATA[S]]></TYPE>
 <!--165 CODE-->
 <!--165-->              <CODE><![CDATA[C_ProjectPhase.C_Project_ID=@C_Project_ID@]]></CODE>
+<!--165 AD_MODULE_ID-->
+<!--165-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--165**************--></AD_VAL_RULE>
 
 <!--166**************--><AD_VAL_RULE>
@@ -1480,6 +1592,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--166-->              <TYPE><![CDATA[S]]></TYPE>
 <!--166 CODE-->
 <!--166-->              <CODE><![CDATA[C_ProjectTask.C_ProjectPhase_ID=@C_ProjectPhase_ID@]]></CODE>
+<!--166 AD_MODULE_ID-->
+<!--166-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--166**************--></AD_VAL_RULE>
 
 <!--167**************--><AD_VAL_RULE>
@@ -1505,6 +1619,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--167-->              <TYPE><![CDATA[S]]></TYPE>
 <!--167 CODE-->
 <!--167-->              <CODE><![CDATA[C_BPartner_Location.C_BPartner_ID=@C_BPartner_ID@ AND C_BPartner_Location.IsShipTo='Y' AND C_BPartner_Location.IsActive='Y']]></CODE>
+<!--167 AD_MODULE_ID-->
+<!--167-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--167**************--></AD_VAL_RULE>
 
 <!--168**************--><AD_VAL_RULE>
@@ -1530,6 +1646,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--168-->              <TYPE><![CDATA[S]]></TYPE>
 <!--168 CODE-->
 <!--168-->              <CODE><![CDATA[AD_User.C_BPartner_ID=@DropShip_BPartner_ID@]]></CODE>
+<!--168 AD_MODULE_ID-->
+<!--168-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--168**************--></AD_VAL_RULE>
 
 <!--169**************--><AD_VAL_RULE>
@@ -1555,6 +1673,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--169-->              <TYPE><![CDATA[S]]></TYPE>
 <!--169 CODE-->
 <!--169-->              <CODE><![CDATA[K_Category_ID=@K_Category_ID@]]></CODE>
+<!--169 AD_MODULE_ID-->
+<!--169-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--169**************--></AD_VAL_RULE>
 
 <!--170**************--><AD_VAL_RULE>
@@ -1580,6 +1700,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--170-->              <TYPE><![CDATA[S]]></TYPE>
 <!--170 CODE-->
 <!--170-->              <CODE><![CDATA[AD_Org.AD_Client_ID=@Remote_Client_ID@]]></CODE>
+<!--170 AD_MODULE_ID-->
+<!--170-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--170**************--></AD_VAL_RULE>
 
 <!--171**************--><AD_VAL_RULE>
@@ -1605,6 +1727,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--171-->              <TYPE><![CDATA[S]]></TYPE>
 <!--171 CODE-->
 <!--171-->              <CODE><![CDATA[C_Phase.C_ProjectType_ID=@C_ProjectType_ID@]]></CODE>
+<!--171 AD_MODULE_ID-->
+<!--171-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--171**************--></AD_VAL_RULE>
 
 <!--172**************--><AD_VAL_RULE>
@@ -1632,6 +1756,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--172-->              <TYPE><![CDATA[S]]></TYPE>
 <!--172 CODE-->
 <!--172-->              <CODE><![CDATA[C_DocType.DocBaseType IN ('SOO', 'POO') AND AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1']]></CODE>
+<!--172 AD_MODULE_ID-->
+<!--172-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--172**************--></AD_VAL_RULE>
 
 <!--173**************--><AD_VAL_RULE>
@@ -1659,6 +1785,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--173-->              <TYPE><![CDATA[S]]></TYPE>
 <!--173 CODE-->
 <!--173-->              <CODE><![CDATA[C_DocType.DocBaseType IN ('ARI', 'API','ARC','APC') AND AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID, @#AD_Client_ID@) <> '-1']]></CODE>
+<!--173 AD_MODULE_ID-->
+<!--173-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--173**************--></AD_VAL_RULE>
 
 <!--174**************--><AD_VAL_RULE>
@@ -1684,6 +1812,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--174-->              <TYPE><![CDATA[S]]></TYPE>
 <!--174 CODE-->
 <!--174-->              <CODE><![CDATA[C_ProjectLine.C_Project_ID=@C_Project_ID@]]></CODE>
+<!--174 AD_MODULE_ID-->
+<!--174-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--174**************--></AD_VAL_RULE>
 
 <!--175**************--><AD_VAL_RULE>
@@ -1709,6 +1839,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--175-->              <TYPE><![CDATA[S]]></TYPE>
 <!--175 CODE-->
 <!--175-->              <CODE><![CDATA[C_ProjectLine.C_Project_ID=@C_Project_ID@ AND C_ProjectLine.C_ProjectIssue_ID IS NULL]]></CODE>
+<!--175 AD_MODULE_ID-->
+<!--175-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--175**************--></AD_VAL_RULE>
 
 <!--176**************--><AD_VAL_RULE>
@@ -1734,6 +1866,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--176-->              <TYPE><![CDATA[S]]></TYPE>
 <!--176 CODE-->
 <!--176-->              <CODE><![CDATA[C_Project.ProjectCategory IN ('W','A')]]></CODE>
+<!--176 AD_MODULE_ID-->
+<!--176-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--176**************--></AD_VAL_RULE>
 
 <!--177**************--><AD_VAL_RULE>
@@ -1759,6 +1893,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--177-->              <TYPE><![CDATA[S]]></TYPE>
 <!--177 CODE-->
 <!--177-->              <CODE><![CDATA[C_Project.ProjectCategory IN ('W','A') AND C_Project.Processed<>'Y']]></CODE>
+<!--177 AD_MODULE_ID-->
+<!--177-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--177**************--></AD_VAL_RULE>
 
 <!--178**************--><AD_VAL_RULE>
@@ -1784,6 +1920,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--178-->              <TYPE><![CDATA[S]]></TYPE>
 <!--178 CODE-->
 <!--178-->              <CODE><![CDATA[(M_InOut.C_Project_ID IS NULL OR M_InOut.C_Project_ID=@C_Project_ID@) AND M_InOut.Processed='Y' AND M_InOut.IsSOTrx='N']]></CODE>
+<!--178 AD_MODULE_ID-->
+<!--178-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--178**************--></AD_VAL_RULE>
 
 <!--800000**************--><AD_VAL_RULE>
@@ -1809,6 +1947,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--800000-->              <TYPE><![CDATA[S]]></TYPE>
 <!--800000 CODE-->
 <!--800000-->              <CODE><![CDATA[M_Product_UOM.M_Product_ID = @M_Product_ID@]]></CODE>
+<!--800000 AD_MODULE_ID-->
+<!--800000-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800000**************--></AD_VAL_RULE>
 
 <!--800001**************--><AD_VAL_RULE>
@@ -1834,6 +1974,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--800001-->              <TYPE><![CDATA[S]]></TYPE>
 <!--800001 CODE-->
 <!--800001-->              <CODE><![CDATA[C_Project.projectstatus in ('OP', 'OR') and (C_Project.c_bpartner_id=@C_BPartner_ID@ or '@IsSOTrx@'='N') or C_Project.c_project_id = @c_project_id@]]></CODE>
+<!--800001 AD_MODULE_ID-->
+<!--800001-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800001**************--></AD_VAL_RULE>
 
 <!--800003**************--><AD_VAL_RULE>
@@ -1859,6 +2001,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--800003-->              <TYPE><![CDATA[S]]></TYPE>
 <!--800003 CODE-->
 <!--800003-->              <CODE><![CDATA[M_WH_Schedule_ID=@M_WH_Schedule_ID@]]></CODE>
+<!--800003 AD_MODULE_ID-->
+<!--800003-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800003**************--></AD_VAL_RULE>
 
 <!--800004**************--><AD_VAL_RULE>
@@ -1884,6 +2028,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--800004-->              <TYPE><![CDATA[S]]></TYPE>
 <!--800004 CODE-->
 <!--800004-->              <CODE><![CDATA[AD_Process.IsBackground='Y']]></CODE>
+<!--800004 AD_MODULE_ID-->
+<!--800004-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800004**************--></AD_VAL_RULE>
 
 <!--800005**************--><AD_VAL_RULE>
@@ -1909,6 +2055,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--800005-->              <TYPE><![CDATA[S]]></TYPE>
 <!--800005 CODE-->
 <!--800005-->              <CODE><![CDATA[AD_Process.entitytype = 'U' and isreport='Y']]></CODE>
+<!--800005 AD_MODULE_ID-->
+<!--800005-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800005**************--></AD_VAL_RULE>
 
 <!--800006**************--><AD_VAL_RULE>
@@ -1936,6 +2084,8 @@ SELECT distinct o.C_BPartner_ID FROM C_Order o
 <!--800006-->              <CODE><![CDATA[MA_WRPhase.Closed = 'N'
 
 AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
+<!--800006 AD_MODULE_ID-->
+<!--800006-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800006**************--></AD_VAL_RULE>
 
 <!--800007**************--><AD_VAL_RULE>
@@ -1961,6 +2111,8 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--800007-->              <TYPE><![CDATA[S]]></TYPE>
 <!--800007 CODE-->
 <!--800007-->              <CODE><![CDATA[C_BPartner.IsEmployee = 'Y' AND C_BPartner.IsWorker = 'Y']]></CODE>
+<!--800007 AD_MODULE_ID-->
+<!--800007-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800007**************--></AD_VAL_RULE>
 
 <!--800008**************--><AD_VAL_RULE>
@@ -1986,6 +2138,8 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--800008-->              <TYPE><![CDATA[S]]></TYPE>
 <!--800008 CODE-->
 <!--800008-->              <CODE><![CDATA[MA_Sequence.MA_Processplan_Version_ID IN (SELECT MA_Processplan_Version_ID FROM MA_Processplan_Version WHERE MA_Processplan_Id=@MA_Processplan_ID@ AND datefrom <= TO_DATE(@Launchdate@) and dateto>TO_DATE(@Launchdate@))]]></CODE>
+<!--800008 AD_MODULE_ID-->
+<!--800008-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800008**************--></AD_VAL_RULE>
 
 <!--800009**************--><AD_VAL_RULE>
@@ -2011,6 +2165,8 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--800009-->              <TYPE><![CDATA[S]]></TYPE>
 <!--800009 CODE-->
 <!--800009-->              <CODE><![CDATA[M_Product.Production = 'Y']]></CODE>
+<!--800009 AD_MODULE_ID-->
+<!--800009-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800009**************--></AD_VAL_RULE>
 
 <!--800010**************--><AD_VAL_RULE>
@@ -2036,6 +2192,8 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--800010-->              <TYPE><![CDATA[S]]></TYPE>
 <!--800010 CODE-->
 <!--800010-->              <CODE><![CDATA[C_Region.C_Country_ID=@From_Country_ID@]]></CODE>
+<!--800010 AD_MODULE_ID-->
+<!--800010-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800010**************--></AD_VAL_RULE>
 
 <!--800011**************--><AD_VAL_RULE>
@@ -2061,6 +2219,8 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--800011-->              <TYPE><![CDATA[S]]></TYPE>
 <!--800011 CODE-->
 <!--800011-->              <CODE><![CDATA[COALESCE(MA_Machine.MA_Machine_Type_ID,'-1') = COALESCE(@MA_Machine_Type_ID@, COALESCE(MA_Machine.MA_Machine_Type_ID,'-1'))]]></CODE>
+<!--800011 AD_MODULE_ID-->
+<!--800011-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800011**************--></AD_VAL_RULE>
 
 <!--800012**************--><AD_VAL_RULE>
@@ -2086,6 +2246,8 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--800012-->              <TYPE><![CDATA[S]]></TYPE>
 <!--800012 CODE-->
 <!--800012-->              <CODE><![CDATA[C_Period.C_Year_ID IN (SELECT C_Budget.C_Year_ID FROM C_Budget WHERE C_Budget.C_Budget_ID = @C_Budget_ID@)]]></CODE>
+<!--800012 AD_MODULE_ID-->
+<!--800012-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800012**************--></AD_VAL_RULE>
 
 <!--800013**************--><AD_VAL_RULE>
@@ -2111,6 +2273,8 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--800013-->              <TYPE><![CDATA[S]]></TYPE>
 <!--800013 CODE-->
 <!--800013-->              <CODE><![CDATA[C_DocType.DocBaseType IN ('DPM') AND AD_ISORGINCLUDED(@AD_Org_ID@,C_DocType.AD_Org_ID,@#AD_Client_ID@) <> '-1']]></CODE>
+<!--800013 AD_MODULE_ID-->
+<!--800013-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800013**************--></AD_VAL_RULE>
 
 <!--800014**************--><AD_VAL_RULE>
@@ -2136,6 +2300,8 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--800014-->              <TYPE><![CDATA[S]]></TYPE>
 <!--800014 CODE-->
 <!--800014-->              <CODE><![CDATA[PRODUCTTYPE = (CASE WHEN @ISTIMEREPORT@ IS NULL THEN 'E' WHEN @ISTIMEREPORT@='Y' THEN 'S' ELSE 'E' END)]]></CODE>
+<!--800014 AD_MODULE_ID-->
+<!--800014-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800014**************--></AD_VAL_RULE>
 
 <!--800015**************--><AD_VAL_RULE>
@@ -2163,6 +2329,8 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--800015-->              <TYPE><![CDATA[S]]></TYPE>
 <!--800015 CODE-->
 <!--800015-->              <CODE><![CDATA[td0.AD_Org_ID = @AD_Org_Forced@]]></CODE>
+<!--800015 AD_MODULE_ID-->
+<!--800015-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800015**************--></AD_VAL_RULE>
 
 <!--800016**************--><AD_VAL_RULE>
@@ -2190,6 +2358,8 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--800016-->              <TYPE><![CDATA[S]]></TYPE>
 <!--800016 CODE-->
 <!--800016-->              <CODE><![CDATA[NOT EXISTS (SELECT 1 FROM MA_MachineStation ms WHERE ms.MA_WorkStation_ID = @MA_WorkStation_ID@ AND ms.MA_Machine_ID = MA_Machine.MA_Machine_ID )]]></CODE>
+<!--800016 AD_MODULE_ID-->
+<!--800016-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800016**************--></AD_VAL_RULE>
 
 <!--800017**************--><AD_VAL_RULE>
@@ -2215,6 +2385,8 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--800017-->              <TYPE><![CDATA[S]]></TYPE>
 <!--800017 CODE-->
 <!--800017-->              <CODE><![CDATA[NOT EXISTS (SELECT 1 FROM M_Product_UOM pu WHERE pu.M_Product_ID = @M_Product_ID@ AND pu.C_UOM_ID = td0.C_UOM_ID AND pu.M_Product_UOM_ID <>@M_Product_UOM_ID@)]]></CODE>
+<!--800017 AD_MODULE_ID-->
+<!--800017-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800017**************--></AD_VAL_RULE>
 
 <!--800018**************--><AD_VAL_RULE>
@@ -2240,6 +2412,8 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--800018-->              <TYPE><![CDATA[S]]></TYPE>
 <!--800018 CODE-->
 <!--800018-->              <CODE><![CDATA[C_ProjectType.ProjectCategory = 'S']]></CODE>
+<!--800018 AD_MODULE_ID-->
+<!--800018-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800018**************--></AD_VAL_RULE>
 
 <!--800019**************--><AD_VAL_RULE>
@@ -2265,6 +2439,8 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--800019-->              <TYPE><![CDATA[S]]></TYPE>
 <!--800019 CODE-->
 <!--800019-->              <CODE><![CDATA[C_Region.C_Country_ID=@To_Country_ID@]]></CODE>
+<!--800019 AD_MODULE_ID-->
+<!--800019-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800019**************--></AD_VAL_RULE>
 
 <!--800020**************--><AD_VAL_RULE>
@@ -2292,6 +2468,8 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--800020-->              <TYPE><![CDATA[S]]></TYPE>
 <!--800020 CODE-->
 <!--800020-->              <CODE><![CDATA[AD_User.AD_User_ID in (select AD_User_ID from AD_User_Roles where @AD_Role_Id@=AD_Role_ID)]]></CODE>
+<!--800020 AD_MODULE_ID-->
+<!--800020-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800020**************--></AD_VAL_RULE>
 
 <!--800021**************--><AD_VAL_RULE>
@@ -2323,6 +2501,8 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
         WHERE A_U_R.AD_ROLE_ID = AD_Role.AD_Role_ID
         AND A_U_R.ISACTIVE = 'Y' 
         AND A_U_R.AD_USER_ID = @AD_User_ID@)]]></CODE>
+<!--800021 AD_MODULE_ID-->
+<!--800021-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800021**************--></AD_VAL_RULE>
 
 <!--800022**************--><AD_VAL_RULE>
@@ -2350,6 +2530,8 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--800022-->              <TYPE><![CDATA[S]]></TYPE>
 <!--800022 CODE-->
 <!--800022-->              <CODE><![CDATA[AD_CLIENT.AD_CLIENT_ID IN (SELECT CLIENTLIST FROM AD_ROLE WHERE AD_ROLE_ID = @Default_AD_Role_ID@)]]></CODE>
+<!--800022 AD_MODULE_ID-->
+<!--800022-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800022**************--></AD_VAL_RULE>
 
 <!--800023**************--><AD_VAL_RULE>
@@ -2384,6 +2566,8 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
         AND R.ISACTIVE = 'Y' 
         AND (LPAD(TO_CHAR(R.USERLEVEL), 1, '1')='S' OR AD_ORG.AD_ORG_ID <> '0') 
         AND A_R_O.AD_ROLE_ID = @Default_AD_Role_ID@)]]></CODE>
+<!--800023 AD_MODULE_ID-->
+<!--800023-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800023**************--></AD_VAL_RULE>
 
 <!--800024**************--><AD_VAL_RULE>
@@ -2411,6 +2595,8 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--800024-->              <TYPE><![CDATA[S]]></TYPE>
 <!--800024 CODE-->
 <!--800024-->              <CODE><![CDATA[M_Warehouse.AD_Client_ID = @Default_AD_Client_ID@]]></CODE>
+<!--800024 AD_MODULE_ID-->
+<!--800024-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800024**************--></AD_VAL_RULE>
 
 <!--1000100000**************--><AD_VAL_RULE>
@@ -2436,6 +2622,8 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--1000100000-->              <TYPE><![CDATA[S]]></TYPE>
 <!--1000100000 CODE-->
 <!--1000100000-->              <CODE><![CDATA[C_Tax.Parent_Tax_ID IS NULL]]></CODE>
+<!--1000100000 AD_MODULE_ID-->
+<!--1000100000-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000100000**************--></AD_VAL_RULE>
 
 <!--1000200000**************--><AD_VAL_RULE>
@@ -2461,6 +2649,8 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--1000200000-->              <TYPE><![CDATA[S]]></TYPE>
 <!--1000200000 CODE-->
 <!--1000200000-->              <CODE><![CDATA[AD_Ref_List.Value IN ('MF', 'PO', 'SF', 'SO', 'WR')]]></CODE>
+<!--1000200000 AD_MODULE_ID-->
+<!--1000200000-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000200000**************--></AD_VAL_RULE>
 
 <!--1000200001**************--><AD_VAL_RULE>
@@ -2489,6 +2679,8 @@ AND MA_WRPhase.AD_Org_ID = @AD_Org_Forced@]]></CODE>
 <!--1000200001 CODE-->
 <!--1000200001-->              <CODE><![CDATA[MA_Toolset.Discarded = 'N'
 AND MA_Toolset.MA_Toolset_Type_ID IN (SELECT MA_Toolset_Type_ID FROM MA_ToolsetProcess, MA_WRPhase, M_ProductionPlan WHERE M_ProductionPlan.M_ProductionPlan_ID = @M_ProductionPlan_ID@ AND M_ProductionPlan.MA_WRPhase_ID = MA_WRPhase.MA_WRPhase_ID AND MA_WRPhase.MA_Process_ID =  MA_ToolsetProcess.MA_Process_ID)]]></CODE>
+<!--1000200001 AD_MODULE_ID-->
+<!--1000200001-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000200001**************--></AD_VAL_RULE>
 
 <!--1000200002**************--><AD_VAL_RULE>
@@ -2514,6 +2706,8 @@ AND MA_Toolset.MA_Toolset_Type_ID IN (SELECT MA_Toolset_Type_ID FROM MA_ToolsetP
 <!--1000200002-->              <TYPE><![CDATA[S]]></TYPE>
 <!--1000200002 CODE-->
 <!--1000200002-->              <CODE><![CDATA[AD_Ref_List.value NOT IN ('html')]]></CODE>
+<!--1000200002 AD_MODULE_ID-->
+<!--1000200002-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000200002**************--></AD_VAL_RULE>
 
 <!--1000200003**************--><AD_VAL_RULE>
@@ -2541,6 +2735,8 @@ AND MA_Toolset.MA_Toolset_Type_ID IN (SELECT MA_Toolset_Type_ID FROM MA_ToolsetP
 <!--1000200003-->              <TYPE><![CDATA[S]]></TYPE>
 <!--1000200003 CODE-->
 <!--1000200003-->              <CODE><![CDATA[(AD_Ref_List.value IN ('I', 'D', 'O') OR @OrderType@<>'WR')]]></CODE>
+<!--1000200003 AD_MODULE_ID-->
+<!--1000200003-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000200003**************--></AD_VAL_RULE>
 
 <!--1000600000**************--><AD_VAL_RULE>
@@ -2568,6 +2764,8 @@ AND MA_Toolset.MA_Toolset_Type_ID IN (SELECT MA_Toolset_Type_ID FROM MA_ToolsetP
 <!--1000600000-->              <TYPE><![CDATA[S]]></TYPE>
 <!--1000600000 CODE-->
 <!--1000600000-->              <CODE><![CDATA[EXISTS (SELECT 1 FROM C_ACCTSCHEMA_ELEMENT WHERE C_ACCTSCHEMA_ELEMENT.ELEMENTTYPE='AC' AND C_ACCTSCHEMA_ELEMENT.C_ELEMENT_ID=C_ELEMENTVALUE.C_ELEMENT_ID AND C_ACCTSCHEMA_ELEMENT.C_Acctschema_ID=@C_Acctschema_ID@)]]></CODE>
+<!--1000600000 AD_MODULE_ID-->
+<!--1000600000-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000600000**************--></AD_VAL_RULE>
 
 <!--1001100000**************--><AD_VAL_RULE>
@@ -2595,6 +2793,8 @@ AND MA_Toolset.MA_Toolset_Type_ID IN (SELECT MA_Toolset_Type_ID FROM MA_ToolsetP
 <!--1001100000-->              <TYPE><![CDATA[S]]></TYPE>
 <!--1001100000 CODE-->
 <!--1001100000-->              <CODE><![CDATA[AD_ImpFormat.AD_ImpFormat_ID<>@AD_ImpFormat_ID@]]></CODE>
+<!--1001100000 AD_MODULE_ID-->
+<!--1001100000-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1001100000**************--></AD_VAL_RULE>
 
 <!--1002100000**************--><AD_VAL_RULE>
@@ -2620,6 +2820,8 @@ AND MA_Toolset.MA_Toolset_Type_ID IN (SELECT MA_Toolset_Type_ID FROM MA_ToolsetP
 <!--1002100000-->              <TYPE><![CDATA[S]]></TYPE>
 <!--1002100000 CODE-->
 <!--1002100000-->              <CODE><![CDATA[C_TAX.SOPOTYPE<>(SELECT CASE WHEN ISSOTRX='Y' THEN 'P' ELSE 'S' END FROM C_TAXREGISTER_TYPE WHERE C_TAXREGISTER_TYPE_ID=@C_TAXREGISTER_TYPE_ID@)]]></CODE>
+<!--1002100000 AD_MODULE_ID-->
+<!--1002100000-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1002100000**************--></AD_VAL_RULE>
 
 <!--1002100001**************--><AD_VAL_RULE>
@@ -2645,6 +2847,8 @@ AND MA_Toolset.MA_Toolset_Type_ID IN (SELECT MA_Toolset_Type_ID FROM MA_ToolsetP
 <!--1002100001-->              <TYPE><![CDATA[S]]></TYPE>
 <!--1002100001 CODE-->
 <!--1002100001-->              <CODE><![CDATA[C_DOCTYPE.DOCBASETYPE IN ('ARI', 'ARC', 'API', 'APC') AND C_DOCTYPE.ISSOTRX = (SELECT ISSOTRX FROM C_TAXREGISTER_TYPE WHERE C_TAXREGISTER_TYPE_ID=@C_TAXREGISTER_TYPE_ID@)]]></CODE>
+<!--1002100001 AD_MODULE_ID-->
+<!--1002100001-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1002100001**************--></AD_VAL_RULE>
 
 <!--1004400000**************--><AD_VAL_RULE>
@@ -2672,6 +2876,8 @@ AND MA_Toolset.MA_Toolset_Type_ID IN (SELECT MA_Toolset_Type_ID FROM MA_ToolsetP
 <!--1004400000-->              <TYPE><![CDATA[S]]></TYPE>
 <!--1004400000 CODE-->
 <!--1004400000-->              <CODE><![CDATA[C_Currency.C_Currency_ID IN (SELECT C_Currency_ID FROM M_Pricelist WHERE M_Pricelist_ID = @M_Pricelist_ID@)]]></CODE>
+<!--1004400000 AD_MODULE_ID-->
+<!--1004400000-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1004400000**************--></AD_VAL_RULE>
 
 <!--1004400001**************--><AD_VAL_RULE>
@@ -2699,6 +2905,8 @@ AND MA_Toolset.MA_Toolset_Type_ID IN (SELECT MA_Toolset_Type_ID FROM MA_ToolsetP
 <!--1004400001-->              <TYPE><![CDATA[S]]></TYPE>
 <!--1004400001 CODE-->
 <!--1004400001-->              <CODE><![CDATA[M_Pricelist.IsSOPricelist='N']]></CODE>
+<!--1004400001 AD_MODULE_ID-->
+<!--1004400001-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1004400001**************--></AD_VAL_RULE>
 
 <!--1005500000**************--><AD_VAL_RULE>
@@ -2724,6 +2932,8 @@ AND MA_Toolset.MA_Toolset_Type_ID IN (SELECT MA_Toolset_Type_ID FROM MA_ToolsetP
 <!--1005500000-->              <TYPE><![CDATA[S]]></TYPE>
 <!--1005500000 CODE-->
 <!--1005500000-->              <CODE><![CDATA[C_ELEMENTVALUE.ELEMENTLEVEL='S']]></CODE>
+<!--1005500000 AD_MODULE_ID-->
+<!--1005500000-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005500000**************--></AD_VAL_RULE>
 
 </data>

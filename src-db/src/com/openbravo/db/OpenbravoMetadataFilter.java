@@ -63,6 +63,7 @@ public class OpenbravoMetadataFilter extends AbstractDatabaseFilter {
         addTable("AD_MESSAGE_TRL", "AD_CLIENT_ID = '0' ");
         addTable("AD_MODEL_OBJECT", "AD_CLIENT_ID = '0'");
         addTable("AD_MODEL_OBJECT_MAPPING", "AD_CLIENT_ID = '0'");
+        addTable("AD_MODULE", "AD_MODULE_ID = '0'");
         addTable("AD_MONTH", "AD_CLIENT_ID = '0'");
         addTable("AD_PREFERENCE", "AD_CLIENT_ID = '0'");
         addTable("AD_PROCESS", "AD_CLIENT_ID = '0'");

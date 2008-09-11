@@ -27,6 +27,8 @@
 <!--102-->              <FORMATTYPE><![CDATA[C]]></FORMATTYPE>
 <!--102 PROCESSING-->
 <!--102-->              <PROCESSING><![CDATA[N]]></PROCESSING>
+<!--102 AD_MODULE_ID-->
+<!--102-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--102**************--></AD_IMPFORMAT>
 
 <!--1000004**************--><AD_IMPFORMAT>
@@ -54,6 +56,8 @@
 <!--1000004-->              <FORMATTYPE><![CDATA[C]]></FORMATTYPE>
 <!--1000004 PROCESSING-->
 <!--1000004-->              <PROCESSING><![CDATA[N]]></PROCESSING>
+<!--1000004 AD_MODULE_ID-->
+<!--1000004-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000004**************--></AD_IMPFORMAT>
 
 <!--1000007**************--><AD_IMPFORMAT>
@@ -81,6 +85,8 @@
 <!--1000007-->              <FORMATTYPE><![CDATA[C]]></FORMATTYPE>
 <!--1000007 PROCESSING-->
 <!--1000007-->              <PROCESSING><![CDATA[N]]></PROCESSING>
+<!--1000007 AD_MODULE_ID-->
+<!--1000007-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000007**************--></AD_IMPFORMAT>
 
 </data>

@@ -18,13 +18,11 @@
 <!--123 UPDATEDBY-->
 <!--123-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--123 NAME-->
-<!--123-->              <NAME><![CDATA[Search Key]]></NAME>
+<!--123-->              <NAME><![CDATA[Product Search Key]]></NAME>
 <!--123 DESCRIPTION-->
-<!--123-->              <DESCRIPTION><![CDATA[A fast method for finding a particular record.]]></DESCRIPTION>
+<!--123-->              <DESCRIPTION><![CDATA[A fast method for finding an item.]]></DESCRIPTION>
 <!--123 HELP-->
-<!--123-->              <HELP><![CDATA[A search key allows for a fast method of finding a particular record. If you leave the search key empty, the system automatically creates a numeric number originating from a document sequence defined in the  "Document Sequence" window. The sequence naming convention follows a rule "DocumentNo_TableName", where TableName is the actual name of the database table (e.g. C_Order).
-
-Usually, company's internal identifiers for various records (products, customers, etc) are stored here.]]></HELP>
+<!--123-->              <HELP><![CDATA[A fast method for finding an item.]]></HELP>
 <!--123 AD_PROCESS_ID-->
 <!--123-->              <AD_PROCESS_ID><![CDATA[105]]></AD_PROCESS_ID>
 <!--123 SEQNO-->
@@ -9765,11 +9763,11 @@ The values of the actual Product Attributes]]></HELP>
 <!--800025 UPDATEDBY-->
 <!--800025-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800025 NAME-->
-<!--800025-->              <NAME><![CDATA[Vendor]]></NAME>
+<!--800025-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--800025 DESCRIPTION-->
-<!--800025-->              <DESCRIPTION><![CDATA[A business partner who sells products or services.]]></DESCRIPTION>
+<!--800025-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
 <!--800025 HELP-->
-<!--800025-->              <HELP><![CDATA[Identifies a business partner that is a vendor.]]></HELP>
+<!--800025-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
 <!--800025 AD_PROCESS_ID-->
 <!--800025-->              <AD_PROCESS_ID><![CDATA[800075]]></AD_PROCESS_ID>
 <!--800025 SEQNO-->
@@ -9810,11 +9808,11 @@ The values of the actual Product Attributes]]></HELP>
 <!--800026 UPDATEDBY-->
 <!--800026-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800026 NAME-->
-<!--800026-->              <NAME><![CDATA[Order Reference]]></NAME>
+<!--800026-->              <NAME><![CDATA[Reference No.]]></NAME>
 <!--800026 DESCRIPTION-->
-<!--800026-->              <DESCRIPTION><![CDATA[A reference or document order number as listed in business partner application.]]></DESCRIPTION>
+<!--800026-->              <DESCRIPTION><![CDATA[The number for a specific reference.]]></DESCRIPTION>
 <!--800026 HELP-->
-<!--800026-->              <HELP><![CDATA[This can be used to input a reference for this specific transaction. For example, a Purchase Order number can be input on a Sales Order for easier reference.]]></HELP>
+<!--800026-->              <HELP><![CDATA[The reference number can be printed on orders and invoices to allow your business partner to faster identify your records.]]></HELP>
 <!--800026 AD_PROCESS_ID-->
 <!--800026-->              <AD_PROCESS_ID><![CDATA[800075]]></AD_PROCESS_ID>
 <!--800026 SEQNO-->
@@ -10246,11 +10244,11 @@ The values of the actual Product Attributes]]></HELP>
 <!--800036 UPDATEDBY-->
 <!--800036-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800036 NAME-->
-<!--800036-->              <NAME><![CDATA[Due Date]]></NAME>
+<!--800036-->              <NAME><![CDATA[Planned Date]]></NAME>
 <!--800036 DESCRIPTION-->
-<!--800036-->              <DESCRIPTION><![CDATA[The date when a specified request must be carried out by.]]></DESCRIPTION>
+<!--800036-->              <DESCRIPTION><![CDATA[The expected or provisional date when a transaction will occur.]]></DESCRIPTION>
 <!--800036 HELP-->
-<!--800036-->              <HELP><![CDATA[Refers to a date by which the payment must be completed.]]></HELP>
+<!--800036-->              <HELP><![CDATA[Expected date of the transaction.]]></HELP>
 <!--800036 AD_PROCESS_ID-->
 <!--800036-->              <AD_PROCESS_ID><![CDATA[800126]]></AD_PROCESS_ID>
 <!--800036 SEQNO-->
@@ -10426,7 +10424,7 @@ The values of the actual Product Attributes]]></HELP>
 <!--800040 AD_REFERENCE_ID-->
 <!--800040-->              <AD_REFERENCE_ID><![CDATA[15]]></AD_REFERENCE_ID>
 <!--800040 COLUMNNAME-->
-<!--800040-->              <COLUMNNAME><![CDATA[InitDate]]></COLUMNNAME>
+<!--800040-->              <COLUMNNAME><![CDATA[Initdate]]></COLUMNNAME>
 <!--800040 ISCENTRALLYMAINTAINED-->
 <!--800040-->              <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--800040 FIELDLENGTH-->
@@ -11106,7 +11104,7 @@ The values of the actual Product Attributes]]></HELP>
 <!--800056 AD_REFERENCE_VALUE_ID-->
 <!--800056-->              <AD_REFERENCE_VALUE_ID><![CDATA[800104]]></AD_REFERENCE_VALUE_ID>
 <!--800056 COLUMNNAME-->
-<!--800056-->              <COLUMNNAME><![CDATA[outputtype]]></COLUMNNAME>
+<!--800056-->              <COLUMNNAME><![CDATA[outputType]]></COLUMNNAME>
 <!--800056 ISCENTRALLYMAINTAINED-->
 <!--800056-->              <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--800056 FIELDLENGTH-->

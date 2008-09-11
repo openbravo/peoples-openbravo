@@ -105,6 +105,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="AD_MODULE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default><![CDATA[0]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_COLUMN" name="AD_COLUMN_FIELD">
         <reference local="AD_COLUMN_ID" foreign="AD_COLUMN_ID"/>
       </foreign-key>
@@ -113,6 +117,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_FIELDGROUP" name="ADFIELDGROUP_ADFIELD">
         <reference local="AD_FIELDGROUP_ID" foreign="AD_FIELDGROUP_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_MODULE" name="ADMODULE_ADFIELD">
+        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="FIELDCLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>

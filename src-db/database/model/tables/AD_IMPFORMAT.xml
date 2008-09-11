@@ -53,8 +53,15 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="AD_MODULE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default><![CDATA[0]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADIMPFORMAT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_MODULE" name="ADMODULE_ADIMPFORMAT">
+        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_ADIMPFORMAT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
