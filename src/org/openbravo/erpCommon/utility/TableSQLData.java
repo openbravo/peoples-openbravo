@@ -2037,7 +2037,7 @@ public class TableSQLData {
         try {
           if (getPool().getRDBMS().equalsIgnoreCase("ORACLE")) {
             addWrapperParameter("ORAstartPosition", "RANGE", ""); 
-            setParameter("ORAstartPosition", Integer.toString(startPosition));
+            setParameter("ORAstartPosition", Integer.toString(startPosition+1));
             if (hasRangeLimit) {
               addWrapperParameter("ORArangeLimit", "RANGE", ""); 
               setParameter("ORArangeLimit", Integer.toString(startPosition+rangeLength));
