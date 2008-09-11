@@ -149,7 +149,7 @@ String strProductRMailTextID = "";
          
          //Creates a new purchase invoice header       
          strcInvoiceId = SequenceIdData.getSequence(this, "C_Invoice", data[i].adClientId);
-         String strDocumentno = Utility.getDocumentNo(this, vars, "", "C_Invoice", Utility.getContext(this, vars, "C_DocTypeTarget_ID", docTargetType), Utility.getContext(this, vars, "C_DocType_ID", docTargetType), false, true);
+         String strDocumentno = Utility.getDocumentNo(this, vars, "", "C_Invoice", docTargetType, docTargetType, false, true);
          String strDocType = ExpenseAPInvoiceData.cDoctypeTarget(this, data[i].adClientId, data[i].adOrgId);
          
          ExpenseAPInvoiceData.insert(conn, this, strcInvoiceId, "N", "", "N", "N", "N", "N", "N", data[i].adClientId, data[i].adOrgId, "", "", strDocumentno, "", "", "Y", docTargetType, strDateInvoiced, strDateInvoiced, data[i].cBpartnerId, strcBpartnerLocationId, "", strPricelistId, strBPCCurrencyId, strSalesrepId, "N", "", "", strPaymentRule, strPaymentterm, "N", "N", data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId, vars.getOrg(), "", "", "0", "0", "DR", strDocType, "N", "CO", "N", vars.getUser(), vars.getUser());

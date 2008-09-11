@@ -143,7 +143,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
               
               strCOrderId = SequenceIdData.getSequence(this, "C_Order", vars.getClient());
               //order.add(strCOrderId);
-              String strDocumentNo = Utility.getDocumentNo(this, vars, "", "C_Order", Utility.getContext(this, vars, "C_DocTypeTarget_ID", docTargetType), Utility.getContext(this, vars, "C_DocType_ID", docTargetType), false, true);
+              String strDocumentNo = Utility.getDocumentNo(this, vars, "", "C_Order", docTargetType, docTargetType, false, true);
 
               ExpenseSOrderData.insertCOrder(conn, this, strCOrderId, data[i].adClientId, data[i].adOrgId, vars.getUser(), strDocumentNo, strDocStatus, strDocAction, strProcessing, docType, docTargetType, strDateOrdered, strDateOrdered, strDateOrdered, data[i].cBpartnerId, ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), ExpenseSOrderData.billto(this, data[i].cBpartnerId).equals("")?ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId):ExpenseSOrderData.billto(this, data[i].cBpartnerId), strBPCCurrencyId, data1[0].paymentrule, data1[0].cPaymenttermId.equals("")?SEOrderBPartnerData.selectPaymentTerm(this, data[i].adClientId):data1[0].cPaymenttermId, data1[0].invoicerule.equals("")?"I":data1[0].invoicerule, data1[0].deliveryrule.equals("")?"A":data1[0].deliveryrule, "I", data1[0].deliveryviarule.equals("")?"D":data1[0].deliveryviarule, data[i].mWarehouseId.equals("")?vars.getWarehouse():data[i].mWarehouseId, data[i].mPricelistId, data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId);
               
