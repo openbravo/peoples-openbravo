@@ -112,7 +112,7 @@
       ORDER BY uc.COLUMN_ID
       )
     LOOP
-      AD_Sequence_Next('AD_Column', 0, v_NextNo) ; -- get ID
+      AD_Sequence_Next('AD_Column', '0', v_NextNo) ; -- get ID
       -- Added by Ismael Ciordia
       v_AD_Reference_ID:=NULL;
       v_AD_Reference_Value_ID:=NULL;
