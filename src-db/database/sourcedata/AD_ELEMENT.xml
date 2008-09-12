@@ -12060,11 +12060,11 @@ Usually, company's internal identifiers for various records (products, customers
 <!--891 CREATEDBY-->
 <!--891-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--891 UPDATED-->
-<!--891-->              <UPDATED><![CDATA[2008-06-19 16:07:49.0]]></UPDATED>
+<!--891-->              <UPDATED><![CDATA[2008-09-12 12:40:10.0]]></UPDATED>
 <!--891 UPDATEDBY-->
 <!--891-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--891 COLUMNNAME-->
-<!--891-->              <COLUMNNAME><![CDATA[Last Day Cut-off]]></COLUMNNAME>
+<!--891-->              <COLUMNNAME><![CDATA[FixMonthCutoff]]></COLUMNNAME>
 <!--891 NAME-->
 <!--891-->              <NAME><![CDATA[Last Day Cut-off]]></NAME>
 <!--891 PRINTNAME-->
@@ -52982,11 +52982,11 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005500006 CREATEDBY-->
 <!--1005500006-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1005500006 UPDATED-->
-<!--1005500006-->              <UPDATED><![CDATA[2008-04-17 17:08:19.0]]></UPDATED>
+<!--1005500006-->              <UPDATED><![CDATA[2008-09-12 12:38:36.0]]></UPDATED>
 <!--1005500006 UPDATEDBY-->
 <!--1005500006-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005500006 COLUMNNAME-->
-<!--1005500006-->              <COLUMNNAME><![CDATA[IBANLength]]></COLUMNNAME>
+<!--1005500006-->              <COLUMNNAME><![CDATA[IBANNoDigits]]></COLUMNNAME>
 <!--1005500006 NAME-->
 <!--1005500006-->              <NAME><![CDATA[IBAN Length]]></NAME>
 <!--1005500006 PRINTNAME-->
@@ -53075,11 +53075,11 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005500009 CREATEDBY-->
 <!--1005500009-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1005500009 UPDATED-->
-<!--1005500009-->              <UPDATED><![CDATA[2008-04-17 18:48:14.0]]></UPDATED>
+<!--1005500009-->              <UPDATED><![CDATA[2008-09-12 12:39:26.0]]></UPDATED>
 <!--1005500009 UPDATEDBY-->
 <!--1005500009-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005500009 COLUMNNAME-->
-<!--1005500009-->              <COLUMNNAME><![CDATA[ShowGeneric]]></COLUMNNAME>
+<!--1005500009-->              <COLUMNNAME><![CDATA[ShowAccountNo]]></COLUMNNAME>
 <!--1005500009 NAME-->
 <!--1005500009-->              <NAME><![CDATA[Show Generic]]></NAME>
 <!--1005500009 PRINTNAME-->

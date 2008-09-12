@@ -5314,7 +5314,7 @@ Employee defines a Business Partner who is an Employee of this organization.  If
 <!--298 ISDEFAULTACCT-->
 <!--298-->              <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--298 SQL_RECORD_IDENTIFIER-->
-<!--298-->              <SQL_RECORD_IDENTIFIER><![CDATA[SELECT TO_CHAR(COALESCE(TO_CHAR(T.DisplayedAccount),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, C_BP_BankAccount T WHERE C_BP_BankAccount_ID=':c_ID']]></SQL_RECORD_IDENTIFIER>
+<!--298-->              <SQL_RECORD_IDENTIFIER><![CDATA[SELECT TO_CHAR(COALESCE(TO_CHAR(T.Displayedaccount),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, C_BP_BankAccount T WHERE C_BP_BankAccount_ID=':c_ID']]></SQL_RECORD_IDENTIFIER>
 <!--298 DEVELOPMENTSTATUS-->
 <!--298-->              <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--298 AD_MODULE_ID-->
@@ -15429,11 +15429,11 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800058 CREATEDBY-->
 <!--800058-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800058 UPDATED-->
-<!--800058-->              <UPDATED><![CDATA[2007-05-11 10:03:58.0]]></UPDATED>
+<!--800058-->              <UPDATED><![CDATA[2008-09-12 12:39:51.0]]></UPDATED>
 <!--800058 UPDATEDBY-->
 <!--800058-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800058 NAME-->
-<!--800058-->              <NAME><![CDATA[C_Paymenttermline]]></NAME>
+<!--800058-->              <NAME><![CDATA[C_PaymentTermLine]]></NAME>
 <!--800058 DESCRIPTION-->
 <!--800058-->              <DESCRIPTION><![CDATA[Line in a Pyament Term]]></DESCRIPTION>
 <!--800058 HELP-->
@@ -17610,7 +17610,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--800147 ISDEFAULTACCT-->
 <!--800147-->              <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--800147 SQL_RECORD_IDENTIFIER-->
-<!--800147-->              <SQL_RECORD_IDENTIFIER><![CDATA[SELECT TO_CHAR(COALESCE(TO_CHAR(T.Text),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, AD_TextInterfaces_Trl T WHERE AD_Textinterfaces_ID=':c_ID']]></SQL_RECORD_IDENTIFIER>
+<!--800147-->              <SQL_RECORD_IDENTIFIER><![CDATA[SELECT TO_CHAR(COALESCE(TO_CHAR(T.Text),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, AD_TextInterfaces_Trl T WHERE AD_TextInterfaces_Trl_ID=':c_ID']]></SQL_RECORD_IDENTIFIER>
 <!--800147 DEVELOPMENTSTATUS-->
 <!--800147-->              <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--800147 AD_MODULE_ID-->
