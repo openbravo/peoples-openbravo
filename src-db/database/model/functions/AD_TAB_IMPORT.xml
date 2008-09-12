@@ -102,7 +102,7 @@
       AND c.AD_Table_ID=v_AD_Table_ID  AND c.AD_Table_ID=t.AD_Table_ID  -- added by Pablo Sarobe
       AND UPPER(c.Columnname) NOT IN ('CREATED', 'UPDATED', 'CREATEDBY', 'UPDATEDBY') AND c.IsActive='Y')
     LOOP
-      AD_Sequence_Next('AD_Field', 0, v_NextNo) ; -- get ID
+      AD_Sequence_Next('AD_Field', '0', v_NextNo) ; -- get ID
       -- added by Pablo Sarobe
       v_isDisplayed:='Y';
       v_showInRelation:='Y';
