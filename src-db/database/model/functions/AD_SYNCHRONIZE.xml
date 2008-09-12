@@ -83,7 +83,7 @@
           (SELECT * FROM AD_ELEMENT e  WHERE UPPER(c.ColumnName)=UPPER(e.ColumnName))
         )
       LOOP
-        Ad_Sequence_Next('AD_Element', 0, NextNo) ; -- get ID
+        Ad_Sequence_Next('AD_Element', '0', NextNo) ; -- get ID
         INSERT
         INTO AD_ELEMENT
           (
@@ -108,7 +108,7 @@
         (SELECT * FROM AD_ELEMENT e  WHERE UPPER(p.ColumnName)=UPPER(e.ColumnName))
         )
       LOOP
-        Ad_Sequence_Next('AD_Element', 0, NextNo) ; -- get ID
+        Ad_Sequence_Next('AD_Element', '0', NextNo) ; -- get ID
         INSERT
         INTO AD_ELEMENT
           (
