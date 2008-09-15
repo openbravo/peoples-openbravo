@@ -23242,11 +23242,11 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800221 CREATEDBY-->
 <!--800221-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800221 UPDATED-->
-<!--800221-->              <UPDATED><![CDATA[2006-10-04 13:56:33.0]]></UPDATED>
+<!--800221-->              <UPDATED><![CDATA[2008-09-15 11:43:56.0]]></UPDATED>
 <!--800221 UPDATEDBY-->
 <!--800221-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800221 NAME-->
-<!--800221-->              <NAME><![CDATA[Price Adjustments]]></NAME>
+<!--800221-->              <NAME><![CDATA[Price Adjustment]]></NAME>
 <!--800221 DESCRIPTION-->
 <!--800221-->              <DESCRIPTION><![CDATA[View applied price adjustments for each order line.]]></DESCRIPTION>
 <!--800221 HELP-->

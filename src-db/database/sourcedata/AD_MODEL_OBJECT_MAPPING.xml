@@ -44664,13 +44664,13 @@
 <!--807923 CREATEDBY-->
 <!--807923-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--807923 UPDATED-->
-<!--807923-->              <UPDATED><![CDATA[2007-07-25 18:29:00.0]]></UPDATED>
+<!--807923-->              <UPDATED><![CDATA[2008-09-15 11:43:56.0]]></UPDATED>
 <!--807923 UPDATEDBY-->
 <!--807923-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--807923 AD_MODEL_OBJECT_ID-->
 <!--807923-->              <AD_MODEL_OBJECT_ID><![CDATA[804080]]></AD_MODEL_OBJECT_ID>
 <!--807923 MAPPINGNAME-->
-<!--807923-->              <MAPPINGNAME><![CDATA[/PurchaseOrder/PriceAdjustments_Relation.html]]></MAPPINGNAME>
+<!--807923-->              <MAPPINGNAME><![CDATA[/PurchaseOrder/PriceAdjustment_Relation.html]]></MAPPINGNAME>
 <!--807923 ISDEFAULT-->
 <!--807923-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--807923**************--></AD_MODEL_OBJECT_MAPPING>
@@ -44689,13 +44689,13 @@
 <!--807924 CREATEDBY-->
 <!--807924-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--807924 UPDATED-->
-<!--807924-->              <UPDATED><![CDATA[2007-07-25 18:29:00.0]]></UPDATED>
+<!--807924-->              <UPDATED><![CDATA[2008-09-15 11:43:56.0]]></UPDATED>
 <!--807924 UPDATEDBY-->
 <!--807924-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--807924 AD_MODEL_OBJECT_ID-->
 <!--807924-->              <AD_MODEL_OBJECT_ID><![CDATA[804080]]></AD_MODEL_OBJECT_ID>
 <!--807924 MAPPINGNAME-->
-<!--807924-->              <MAPPINGNAME><![CDATA[/PurchaseOrder/PriceAdjustments_Edition.html]]></MAPPINGNAME>
+<!--807924-->              <MAPPINGNAME><![CDATA[/PurchaseOrder/PriceAdjustment_Edition.html]]></MAPPINGNAME>
 <!--807924 ISDEFAULT-->
 <!--807924-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--807924**************--></AD_MODEL_OBJECT_MAPPING>
@@ -44714,13 +44714,13 @@
 <!--807925 CREATEDBY-->
 <!--807925-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--807925 UPDATED-->
-<!--807925-->              <UPDATED><![CDATA[2007-07-25 18:29:00.0]]></UPDATED>
+<!--807925-->              <UPDATED><![CDATA[2008-09-15 11:43:56.0]]></UPDATED>
 <!--807925 UPDATEDBY-->
 <!--807925-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--807925 AD_MODEL_OBJECT_ID-->
 <!--807925-->              <AD_MODEL_OBJECT_ID><![CDATA[804080]]></AD_MODEL_OBJECT_ID>
 <!--807925 MAPPINGNAME-->
-<!--807925-->              <MAPPINGNAME><![CDATA[/PurchaseOrder/PriceAdjustments_Excel.xls]]></MAPPINGNAME>
+<!--807925-->              <MAPPINGNAME><![CDATA[/PurchaseOrder/PriceAdjustment_Excel.xls]]></MAPPINGNAME>
 <!--807925 ISDEFAULT-->
 <!--807925-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--807925**************--></AD_MODEL_OBJECT_MAPPING>
@@ -44739,7 +44739,7 @@
 <!--807926 CREATEDBY-->
 <!--807926-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--807926 UPDATED-->
-<!--807926-->              <UPDATED><![CDATA[2007-07-25 18:29:00.0]]></UPDATED>
+<!--807926-->              <UPDATED><![CDATA[2008-09-15 11:43:56.0]]></UPDATED>
 <!--807926 UPDATEDBY-->
 <!--807926-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--807926 AD_MODEL_OBJECT_ID-->
