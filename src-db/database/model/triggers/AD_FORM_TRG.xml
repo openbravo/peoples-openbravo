@@ -49,12 +49,12 @@
   INSERT
   INTO AD_Form_Access
     (
-      AD_Form_ID, AD_Role_ID, AD_Client_ID,
+      AD_Form_Access_ID, AD_Form_ID, AD_Role_ID, AD_Client_ID,
       AD_Org_ID, IsActive, Created,
       CreatedBy, Updated, UpdatedBy,
       IsReadWrite
     )
-  SELECT :new.AD_Form_ID,
+  SELECT get_uuid(), :new.AD_Form_ID,
     r.AD_Role_ID,  r.AD_CLIENT_ID, r.AD_ORG_ID,
      'Y', now(), '0',
     now(), '0',  'Y'
