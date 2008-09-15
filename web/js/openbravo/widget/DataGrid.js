@@ -1781,6 +1781,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
   handleTimedOut: function() {
     this.processingRequest = null;
     this.processQueuedRequest();
+    showJSMessage(24);
   },
 
 /**
