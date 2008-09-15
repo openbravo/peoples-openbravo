@@ -234,7 +234,7 @@ function setChangedField(field, form) {
   if (form==null || !form) form = document.forms[0];
   if (form.inpLastFieldChanged==null) return false;
   if (field.type.toUpperCase().indexOf("SELECT")!=-1) {
-    if(field.options[field.selectedIndex].defaultSelected || field.options[field.selectedIndex].value == "")
+    if(field.selectedIndex==-1 || field.options[field.selectedIndex].defaultSelected || field.options[field.selectedIndex].value == "")
       return false;
   }
   form.inpLastFieldChanged.value = field.name;
@@ -2425,7 +2425,7 @@ function formElementValue(form, ElementName, Value) {
     }
     var obj = eval("document." + form.name + "." + ElementName + ";");
     if (obj==null || !obj || !obj.type) return false;
-    if (obj.getAttribute("readonly")=="true") bolReadOnly=true;
+    if (obj.getAttribute("readonly")=="true" || obj.readOnly || obj.getAttribute("readonly")=="") bolReadOnly=true;
     if (bolReadOnly) {
       onChangeFunction = obj.onchange;
       obj.onchange = "";
@@ -2475,10 +2475,12 @@ function formElementValue(form, ElementName, Value) {
             onChangeFunction = onChangeFunction.toString().replace("function anonymous()", "");
           }
         }
+        obj.onchange = onChangeFunction;
+      } else {
+        if (onChangeFunction.toString().indexOf("function")==-1) obj.onchange = new Function("", onChangeFunction.toString());
+        else obj.onchange = onChangeFunction;
+      	//obj.onchange = function anonymous() {selectCombo(this, Value);return true;};
       }
-      if (onChangeFunction.toString().indexOf("function anonymous()")==-1) obj.onchange = new Function("", onChangeFunction.toString());
-      else obj.onchange = onChangeFunction.toString();
-      //obj.onchange = function anonymous() {selectCombo(this, Value);return true;};
       obj.readOnly = true;
     }
   }
@@ -2534,13 +2536,13 @@ function formElementEvent(form, ElementName, calloutName) {
       var bolReadOnly = false;
       if (obj.onchange!=null && obj.onchange.toString().indexOf(calloutName)==-1) {
         if (obj.onchange.toString().indexOf("callout")!=-1 || obj.onchange.toString().indexOf("reload")!=-1) isReload=true;
-        if (obj.getAttribute("readonly")=="true") {
+        if (obj.getAttribute("readonly")=="true" || obj.readOnly==true || obj.getAttribute("readonly")=="") {
           bolReadOnly=true;
           obj.readOnly = false;
         }
 
       if (obj.className.indexOf("Combo")!=-1) {
-        var onchange_text = obj.getAttribute("onChange");
+        var onchange_text = obj.getAttribute("onChange").toString();
         if (onchange_text.indexOf("selectCombo")!=-1) {
           onchange_text = onchange_text.substring(0,onchange_text.indexOf("selectCombo"))+onchange_text.substring(onchange_text.indexOf(";",onchange_text.indexOf("selectCombo"))+1, onchange_text.length);
           var onchange_text2 = onchange_text;
