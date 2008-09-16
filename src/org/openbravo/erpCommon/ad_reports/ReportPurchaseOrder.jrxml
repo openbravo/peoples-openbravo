@@ -174,18 +174,21 @@
 	<parameter name="DateFrom" isForPrompting="false" class="java.util.Date">
 		<defaultValueExpression ><![CDATA[(new SimpleDateFormat("dd-MM-yyyy")).parse("01-04-1900")]]></defaultValueExpression>
 	</parameter>
-	<parameter name="aux_datefrom" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA[$P{DateFrom}==null ? "" : " AND C_ORDER.DATEORDERED >= TO_DATE('01-01-2000', "+ $P{DateFormat} + ")"]]></defaultValueExpression>
-	</parameter>
-	<parameter name="aux_partner" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA[$P{C_BPartner_ID}.equals("") ? " " : " AND C_ORDER.C_BPARTNER_ID = " + $P{C_BPartner_ID}]]></defaultValueExpression>
-	</parameter>
 	<parameter name="DateFormat" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["DD-MM-YYYY"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="aux_datefrom" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[$P{DateFrom}==null ? "" : " AND C_ORDER.DATEORDERED >= TO_DATE('01-01-2000', '"+ $P{DateFormat} + "')"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="aux_partner" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[$P{C_BPartner_ID}.equals("") ? " " : " AND C_ORDER.C_BPARTNER_ID = '" + $P{C_BPartner_ID} +"'"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="DateTo" isForPrompting="false" class="java.util.Date">
 		<defaultValueExpression ><![CDATA[(new SimpleDateFormat("dd-MM-yyyy")).parse("01-04-3000")]]></defaultValueExpression>
 	</parameter>
+	<parameter name="aux_dateto" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA[$P{DateTo}==null ? "" : " AND C_ORDER.DATEORDERED <= TO_DATE('01-01-2999', '"+ $P{DateFormat} + "')"]]></defaultValueExpression>
+	</parameter>	
 	<parameter name="M_Warehouse_ID" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA[""]]></defaultValueExpression>
 	</parameter>
@@ -213,8 +216,8 @@ WHERE C_ORDER.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
   AND 1=1  $P!{aux_partner}
   $P!{aux_warehouse} 
   $P!{aux_project}
-  AND C_ORDER.DATEORDERED >= $P{DateFrom}
-  AND C_ORDER.DATEORDERED <= $P{DateTo}
+  $P!{aux_datefrom}
+  $P!{aux_dateto}
   AND C_ORDER.ISSOTRX = 'N'
 GROUP BY C_BPARTNER.NAME, C_ORDERLINE.PRICEACTUAL, M_PRODUCT.NAME, C_UOM.NAME, C_ORDER.DOCUMENTNO, C_ORDER.DATEORDERED
 ORDER BY C_BPARTNER.NAME, C_ORDER.DATEORDERED]]></queryString>
