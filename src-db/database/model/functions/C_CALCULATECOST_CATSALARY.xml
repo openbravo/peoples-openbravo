@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_CALCULATECOST_CATSALARY">
     <function name="C_CALCULATECOST_CATSALARY" type="NUMERIC">
-      <parameter name="pcatsal" type="NUMERIC" mode="in">
+      <parameter name="pcatsal" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="pdate" type="TIMESTAMP" mode="in">

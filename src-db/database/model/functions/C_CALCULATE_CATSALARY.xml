@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="FUNCTION C_CALCULATE_CATSALARY">
-    <function name="C_CALCULATE_CATSALARY" type="NUMERIC">
+    <function name="C_CALCULATE_CATSALARY" type="VARCHAR">
       <parameter name="pcbpartner" type="VARCHAR" mode="in">
         <default/>
       </parameter>
@@ -24,7 +24,7 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 
-vResult NUMBER;
+vResult VARCHAR(32);
 BEGIN
 
  SELECT c_salary_category_id INTO vResult

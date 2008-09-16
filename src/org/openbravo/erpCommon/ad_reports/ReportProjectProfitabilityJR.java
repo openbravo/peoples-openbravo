@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -84,7 +84,7 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     
     String discard[]={"discard"};
-    strTreeOrg = strOrg;
+    strTreeOrg = "'" + strOrg + "'";
     if (strExpand.equals("Y")) treeOrg(vars, strOrg);
     ReportProjectProfitabilityData[] data = null;
     data = ReportProjectProfitabilityData.select(this, strDateFrom2, DateTimeData.nDaysAfter(this, strDateTo2,"1"), strTreeOrg, Utility.getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), strDateFrom , DateTimeData.nDaysAfter(this, strDateTo,"1"), strProjectType, strProject, strResponsible, strPartner);
@@ -113,7 +113,7 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
    
     XmlDocument xmlDocument;
-    strTreeOrg = strOrg;
+    strTreeOrg = "'" + strOrg + "'";
     if (strExpand.equals("Y")) treeOrg(vars, strOrg);
     
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportProjectProfitabilityJR").createXmlDocument();
@@ -206,7 +206,7 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
   void treeOrg(VariablesSecureApp vars, String strOrg) throws ServletException{
     ReportProjectProfitabilityData[] dataOrg = ReportProjectProfitabilityData.selectOrg(this, strOrg, vars.getClient());
     for (int i = 0; i<dataOrg.length; i++) {
-      strTreeOrg += "," + dataOrg[i].nodeId;
+      strTreeOrg += "," + "'" + dataOrg[i].nodeId + "'";
       if (dataOrg[i].issummary.equals("Y")) treeOrg(vars, dataOrg[i].nodeId);
     }
     return;
