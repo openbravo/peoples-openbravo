@@ -61,7 +61,7 @@ function validate(action)
 		showJSMessage(7);
 		return false;
 	}
-	if (action == "EDIT_HTML_COMPARATIVE" || action == "EDIT_PDF_COMPARATIVE") {
+	if (frm.inpComparative.checked) {
 		if (frm.inpDateFromRef.value == null || frm.inpDateFromRef.value == "") {
 			setWindowElementFocus(frm.inpDateFromRef);
 			showJSMessage(7);
