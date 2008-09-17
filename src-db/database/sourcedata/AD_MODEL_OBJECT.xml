@@ -11230,7 +11230,7 @@
 <!--803328 CREATEDBY-->
 <!--803328-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--803328 UPDATED-->
-<!--803328-->              <UPDATED><![CDATA[2007-07-25 18:28:56.0]]></UPDATED>
+<!--803328-->              <UPDATED><![CDATA[2008-09-16 17:14:56.0]]></UPDATED>
 <!--803328 UPDATEDBY-->
 <!--803328-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--803328 ACTION-->
@@ -11238,7 +11238,7 @@
 <!--803328 AD_TAB_ID-->
 <!--803328-->              <AD_TAB_ID><![CDATA[800264]]></AD_TAB_ID>
 <!--803328 CLASSNAME-->
-<!--803328-->              <CLASSNAME><![CDATA[org.openbravo.erpWindows.TaxReport.TaxReport]]></CLASSNAME>
+<!--803328-->              <CLASSNAME><![CDATA[org.openbravo.erpWindows.TaxReportSetup.TaxReportSetup]]></CLASSNAME>
 <!--803328 ISDEFAULT-->
 <!--803328-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--803328**************--></AD_MODEL_OBJECT>
@@ -11257,7 +11257,7 @@
 <!--803329 CREATEDBY-->
 <!--803329-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--803329 UPDATED-->
-<!--803329-->              <UPDATED><![CDATA[2007-07-25 18:28:56.0]]></UPDATED>
+<!--803329-->              <UPDATED><![CDATA[2008-09-16 17:14:56.0]]></UPDATED>
 <!--803329 UPDATEDBY-->
 <!--803329-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--803329 ACTION-->
@@ -24738,7 +24738,7 @@
 <!--803990 AD_TAB_ID-->
 <!--803990-->              <AD_TAB_ID><![CDATA[800261]]></AD_TAB_ID>
 <!--803990 CLASSNAME-->
-<!--803990-->              <CLASSNAME><![CDATA[org.openbravo.erpWindows.GeneralAccountReportSetup.Setup]]></CLASSNAME>
+<!--803990-->              <CLASSNAME><![CDATA[org.openbravo.erpWindows.BalancesheetandPLstructureSetup.Setup]]></CLASSNAME>
 <!--803990 ISDEFAULT-->
 <!--803990-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--803990**************--></AD_MODEL_OBJECT>
@@ -29868,7 +29868,7 @@
 <!--804210 AD_TAB_ID-->
 <!--804210-->              <AD_TAB_ID><![CDATA[800262]]></AD_TAB_ID>
 <!--804210 CLASSNAME-->
-<!--804210-->              <CLASSNAME><![CDATA[org.openbravo.erpWindows.GeneralAccountReportSetup.Node]]></CLASSNAME>
+<!--804210-->              <CLASSNAME><![CDATA[org.openbravo.erpWindows.BalancesheetandPLstructureSetup.Node]]></CLASSNAME>
 <!--804210 ISDEFAULT-->
 <!--804210-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--804210**************--></AD_MODEL_OBJECT>
@@ -32776,7 +32776,7 @@
 <!--804322 CREATEDBY-->
 <!--804322-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--804322 UPDATED-->
-<!--804322-->              <UPDATED><![CDATA[2007-07-25 18:29:02.0]]></UPDATED>
+<!--804322-->              <UPDATED><![CDATA[2008-09-16 17:46:23.0]]></UPDATED>
 <!--804322 UPDATEDBY-->
 <!--804322-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--804322 ACTION-->
@@ -32784,7 +32784,7 @@
 <!--804322 AD_TAB_ID-->
 <!--804322-->              <AD_TAB_ID><![CDATA[800212]]></AD_TAB_ID>
 <!--804322 CLASSNAME-->
-<!--804322-->              <CLASSNAME><![CDATA[org.openbravo.erpWindows.AccountingReport.AccountingReport]]></CLASSNAME>
+<!--804322-->              <CLASSNAME><![CDATA[org.openbravo.erpWindows.UserDefinedAccountingReportSetup.UserDefinedAccountingReportSetup]]></CLASSNAME>
 <!--804322 ISDEFAULT-->
 <!--804322-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--804322**************--></AD_MODEL_OBJECT>
@@ -32803,7 +32803,7 @@
 <!--804323 CREATEDBY-->
 <!--804323-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--804323 UPDATED-->
-<!--804323-->              <UPDATED><![CDATA[2007-07-25 18:29:02.0]]></UPDATED>
+<!--804323-->              <UPDATED><![CDATA[2008-09-16 17:46:23.0]]></UPDATED>
 <!--804323 UPDATEDBY-->
 <!--804323-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--804323 ACTION-->
@@ -34645,7 +34645,7 @@
 <!--1000500006 AD_TAB_ID-->
 <!--1000500006-->              <AD_TAB_ID><![CDATA[800263]]></AD_TAB_ID>
 <!--1000500006 CLASSNAME-->
-<!--1000500006-->              <CLASSNAME><![CDATA[org.openbravo.erpWindows.GeneralAccountReportSetup.Groupingcategory]]></CLASSNAME>
+<!--1000500006-->              <CLASSNAME><![CDATA[org.openbravo.erpWindows.BalancesheetandPLstructureSetup.Groupingcategory]]></CLASSNAME>
 <!--1000500006 ISDEFAULT-->
 <!--1000500006-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--1000500006**************--></AD_MODEL_OBJECT>

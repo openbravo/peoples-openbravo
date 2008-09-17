@@ -3311,17 +3311,17 @@
 <!--233 AD_ORG_ID-->
 <!--233-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--233 ISACTIVE-->
-<!--233-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--233-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--233 CREATED-->
 <!--233-->              <CREATED><![CDATA[2000-12-18 22:11:17.0]]></CREATED>
 <!--233 CREATEDBY-->
 <!--233-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--233 UPDATED-->
-<!--233-->              <UPDATED><![CDATA[2000-12-18 22:11:17.0]]></UPDATED>
+<!--233-->              <UPDATED><![CDATA[2008-09-16 16:29:47.0]]></UPDATED>
 <!--233 NAME-->
 <!--233-->              <NAME><![CDATA[Notice]]></NAME>
 <!--233 UPDATEDBY-->
-<!--233-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--233-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--233 DESCRIPTION-->
 <!--233-->              <DESCRIPTION><![CDATA[Create and edit messages to appear while performing processes.]]></DESCRIPTION>
 <!--233 ISSUMMARY-->
@@ -6952,13 +6952,13 @@
 <!--800025 CREATEDBY-->
 <!--800025-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800025 UPDATED-->
-<!--800025-->              <UPDATED><![CDATA[2004-02-25 10:21:55.0]]></UPDATED>
+<!--800025-->              <UPDATED><![CDATA[2008-09-16 16:20:54.0]]></UPDATED>
 <!--800025 NAME-->
-<!--800025-->              <NAME><![CDATA[General Accounting Report]]></NAME>
+<!--800025-->              <NAME><![CDATA[Balance sheet and P&L structure]]></NAME>
 <!--800025 UPDATEDBY-->
 <!--800025-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800025 DESCRIPTION-->
-<!--800025-->              <DESCRIPTION><![CDATA[General Accounting Report]]></DESCRIPTION>
+<!--800025-->              <DESCRIPTION><![CDATA[Balance sheet and P&L structure]]></DESCRIPTION>
 <!--800025 ISSUMMARY-->
 <!--800025-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800025 ACTION-->
@@ -7386,7 +7386,7 @@
 <!--800042 CREATEDBY-->
 <!--800042-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800042 UPDATED-->
-<!--800042-->              <UPDATED><![CDATA[2008-06-04 11:26:25.0]]></UPDATED>
+<!--800042-->              <UPDATED><![CDATA[2008-09-16 16:30:36.0]]></UPDATED>
 <!--800042 NAME-->
 <!--800042-->              <NAME><![CDATA[Trial Balance Report]]></NAME>
 <!--800042 UPDATEDBY-->
@@ -10246,9 +10246,9 @@
 <!--800194 CREATEDBY-->
 <!--800194-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800194 UPDATED-->
-<!--800194-->              <UPDATED><![CDATA[2006-06-13 13:51:36.0]]></UPDATED>
+<!--800194-->              <UPDATED><![CDATA[2008-09-16 16:25:02.0]]></UPDATED>
 <!--800194 NAME-->
-<!--800194-->              <NAME><![CDATA[Accounting Report]]></NAME>
+<!--800194-->              <NAME><![CDATA[User Defined Accounting Report Setup]]></NAME>
 <!--800194 UPDATEDBY-->
 <!--800194-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800194 DESCRIPTION-->
@@ -10370,9 +10370,9 @@
 <!--800198 CREATEDBY-->
 <!--800198-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800198 UPDATED-->
-<!--800198-->              <UPDATED><![CDATA[2006-06-16 17:01:30.0]]></UPDATED>
+<!--800198-->              <UPDATED><![CDATA[2008-09-16 16:24:12.0]]></UPDATED>
 <!--800198 NAME-->
-<!--800198-->              <NAME><![CDATA[Create Accounting Report]]></NAME>
+<!--800198-->              <NAME><![CDATA[User Defined Accounting Report]]></NAME>
 <!--800198 UPDATEDBY-->
 <!--800198-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800198 DESCRIPTION-->
@@ -11050,9 +11050,9 @@
 <!--800224 CREATEDBY-->
 <!--800224-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800224 UPDATED-->
-<!--800224-->              <UPDATED><![CDATA[2007-03-19 10:12:37.0]]></UPDATED>
+<!--800224-->              <UPDATED><![CDATA[2008-09-16 16:26:04.0]]></UPDATED>
 <!--800224 NAME-->
-<!--800224-->              <NAME><![CDATA[General Account Report Setup]]></NAME>
+<!--800224-->              <NAME><![CDATA[Balance sheet and P&L structure Setup]]></NAME>
 <!--800224 UPDATEDBY-->
 <!--800224-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800224 DESCRIPTION-->
@@ -11081,13 +11081,13 @@
 <!--800225 CREATEDBY-->
 <!--800225-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800225 UPDATED-->
-<!--800225-->              <UPDATED><![CDATA[2007-04-18 16:04:09.0]]></UPDATED>
+<!--800225-->              <UPDATED><![CDATA[2008-09-16 16:18:41.0]]></UPDATED>
 <!--800225 NAME-->
-<!--800225-->              <NAME><![CDATA[Report Not Posted]]></NAME>
+<!--800225-->              <NAME><![CDATA[Not Posted Transaction Report]]></NAME>
 <!--800225 UPDATEDBY-->
 <!--800225-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800225 DESCRIPTION-->
-<!--800225-->              <DESCRIPTION><![CDATA[Report Not Posted]]></DESCRIPTION>
+<!--800225-->              <DESCRIPTION><![CDATA[Not Posted Transaction Report]]></DESCRIPTION>
 <!--800225 ISSUMMARY-->
 <!--800225-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800225 ACTION-->
@@ -11112,9 +11112,9 @@
 <!--800226 CREATEDBY-->
 <!--800226-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800226 UPDATED-->
-<!--800226-->              <UPDATED><![CDATA[2007-04-18 18:56:39.0]]></UPDATED>
+<!--800226-->              <UPDATED><![CDATA[2008-09-16 16:27:26.0]]></UPDATED>
 <!--800226 NAME-->
-<!--800226-->              <NAME><![CDATA[Tax Report]]></NAME>
+<!--800226-->              <NAME><![CDATA[Tax Report Setup]]></NAME>
 <!--800226 UPDATEDBY-->
 <!--800226-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800226 DESCRIPTION-->
@@ -11143,13 +11143,13 @@
 <!--800227 CREATEDBY-->
 <!--800227-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800227 UPDATED-->
-<!--800227-->              <UPDATED><![CDATA[2007-04-20 11:56:57.0]]></UPDATED>
+<!--800227-->              <UPDATED><![CDATA[2008-09-16 16:26:46.0]]></UPDATED>
 <!--800227 NAME-->
-<!--800227-->              <NAME><![CDATA[Create Tax Report]]></NAME>
+<!--800227-->              <NAME><![CDATA[Tax Report]]></NAME>
 <!--800227 UPDATEDBY-->
 <!--800227-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800227 DESCRIPTION-->
-<!--800227-->              <DESCRIPTION><![CDATA[Create Tax Report]]></DESCRIPTION>
+<!--800227-->              <DESCRIPTION><![CDATA[Tax Report]]></DESCRIPTION>
 <!--800227 ISSUMMARY-->
 <!--800227-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800227 ACTION-->
@@ -12481,13 +12481,13 @@
 <!--800289 CREATEDBY-->
 <!--800289-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800289 UPDATED-->
-<!--800289-->              <UPDATED><![CDATA[2007-09-17 10:45:35.0]]></UPDATED>
+<!--800289-->              <UPDATED><![CDATA[2008-09-16 16:29:06.0]]></UPDATED>
 <!--800289 NAME-->
-<!--800289-->              <NAME><![CDATA[Report Cash Flow]]></NAME>
+<!--800289-->              <NAME><![CDATA[Cash Flow Statement]]></NAME>
 <!--800289 UPDATEDBY-->
 <!--800289-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800289 DESCRIPTION-->
-<!--800289-->              <DESCRIPTION><![CDATA[Report Cash Flow]]></DESCRIPTION>
+<!--800289-->              <DESCRIPTION><![CDATA[Cash Flow Statement]]></DESCRIPTION>
 <!--800289 ISSUMMARY-->
 <!--800289-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800289 ACTION-->
@@ -12512,13 +12512,13 @@
 <!--800290 CREATEDBY-->
 <!--800290-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800290 UPDATED-->
-<!--800290-->              <UPDATED><![CDATA[2007-09-17 10:46:29.0]]></UPDATED>
+<!--800290-->              <UPDATED><![CDATA[2008-09-16 16:28:10.0]]></UPDATED>
 <!--800290 NAME-->
-<!--800290-->              <NAME><![CDATA[Create Cash Flow Statement]]></NAME>
+<!--800290-->              <NAME><![CDATA[Generate Cash Flow Statement]]></NAME>
 <!--800290 UPDATEDBY-->
 <!--800290-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800290 DESCRIPTION-->
-<!--800290-->              <DESCRIPTION><![CDATA[Create Cash Flow Statement]]></DESCRIPTION>
+<!--800290-->              <DESCRIPTION><![CDATA[Generate Cash Flow Statement]]></DESCRIPTION>
 <!--800290 ISSUMMARY-->
 <!--800290-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--800290 ACTION-->
@@ -12698,13 +12698,13 @@
 <!--1002100006 CREATEDBY-->
 <!--1002100006-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1002100006 UPDATED-->
-<!--1002100006-->              <UPDATED><![CDATA[2008-04-16 18:24:10.0]]></UPDATED>
+<!--1002100006-->              <UPDATED><![CDATA[2008-09-16 16:17:24.0]]></UPDATED>
 <!--1002100006 NAME-->
-<!--1002100006-->              <NAME><![CDATA[Report Annual Certification]]></NAME>
+<!--1002100006-->              <NAME><![CDATA[Withholding Report]]></NAME>
 <!--1002100006 UPDATEDBY-->
 <!--1002100006-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1002100006 DESCRIPTION-->
-<!--1002100006-->              <DESCRIPTION><![CDATA[Report Annual Certification]]></DESCRIPTION>
+<!--1002100006-->              <DESCRIPTION><![CDATA[Withholding Report]]></DESCRIPTION>
 <!--1002100006 ISSUMMARY-->
 <!--1002100006-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--1002100006 ACTION-->

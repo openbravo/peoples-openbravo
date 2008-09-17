@@ -15664,13 +15664,13 @@
 <!--806419 CREATEDBY-->
 <!--806419-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--806419 UPDATED-->
-<!--806419-->              <UPDATED><![CDATA[2007-07-25 18:28:56.0]]></UPDATED>
+<!--806419-->              <UPDATED><![CDATA[2008-09-16 17:14:56.0]]></UPDATED>
 <!--806419 UPDATEDBY-->
 <!--806419-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--806419 AD_MODEL_OBJECT_ID-->
 <!--806419-->              <AD_MODEL_OBJECT_ID><![CDATA[803328]]></AD_MODEL_OBJECT_ID>
 <!--806419 MAPPINGNAME-->
-<!--806419-->              <MAPPINGNAME><![CDATA[/TaxReport/TaxReport_Relation.html]]></MAPPINGNAME>
+<!--806419-->              <MAPPINGNAME><![CDATA[/TaxReportSetup/TaxReportSetup_Relation.html]]></MAPPINGNAME>
 <!--806419 ISDEFAULT-->
 <!--806419-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--806419**************--></AD_MODEL_OBJECT_MAPPING>
@@ -15689,13 +15689,13 @@
 <!--806420 CREATEDBY-->
 <!--806420-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--806420 UPDATED-->
-<!--806420-->              <UPDATED><![CDATA[2007-07-25 18:28:56.0]]></UPDATED>
+<!--806420-->              <UPDATED><![CDATA[2008-09-16 17:14:56.0]]></UPDATED>
 <!--806420 UPDATEDBY-->
 <!--806420-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--806420 AD_MODEL_OBJECT_ID-->
 <!--806420-->              <AD_MODEL_OBJECT_ID><![CDATA[803328]]></AD_MODEL_OBJECT_ID>
 <!--806420 MAPPINGNAME-->
-<!--806420-->              <MAPPINGNAME><![CDATA[/TaxReport/TaxReport_Edition.html]]></MAPPINGNAME>
+<!--806420-->              <MAPPINGNAME><![CDATA[/TaxReportSetup/TaxReportSetup_Edition.html]]></MAPPINGNAME>
 <!--806420 ISDEFAULT-->
 <!--806420-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--806420**************--></AD_MODEL_OBJECT_MAPPING>
@@ -15714,13 +15714,13 @@
 <!--806421 CREATEDBY-->
 <!--806421-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--806421 UPDATED-->
-<!--806421-->              <UPDATED><![CDATA[2007-07-25 18:28:56.0]]></UPDATED>
+<!--806421-->              <UPDATED><![CDATA[2008-09-16 17:14:56.0]]></UPDATED>
 <!--806421 UPDATEDBY-->
 <!--806421-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--806421 AD_MODEL_OBJECT_ID-->
 <!--806421-->              <AD_MODEL_OBJECT_ID><![CDATA[803328]]></AD_MODEL_OBJECT_ID>
 <!--806421 MAPPINGNAME-->
-<!--806421-->              <MAPPINGNAME><![CDATA[/TaxReport/TaxReport_Excel.xls]]></MAPPINGNAME>
+<!--806421-->              <MAPPINGNAME><![CDATA[/TaxReportSetup/TaxReportSetup_Excel.xls]]></MAPPINGNAME>
 <!--806421 ISDEFAULT-->
 <!--806421-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--806421**************--></AD_MODEL_OBJECT_MAPPING>
@@ -15739,7 +15739,7 @@
 <!--806422 CREATEDBY-->
 <!--806422-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--806422 UPDATED-->
-<!--806422-->              <UPDATED><![CDATA[2007-07-25 18:28:56.0]]></UPDATED>
+<!--806422-->              <UPDATED><![CDATA[2008-09-16 17:14:56.0]]></UPDATED>
 <!--806422 UPDATEDBY-->
 <!--806422-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--806422 AD_MODEL_OBJECT_ID-->
@@ -40670,7 +40670,7 @@
 <!--807743 AD_MODEL_OBJECT_ID-->
 <!--807743-->              <AD_MODEL_OBJECT_ID><![CDATA[803990]]></AD_MODEL_OBJECT_ID>
 <!--807743 MAPPINGNAME-->
-<!--807743-->              <MAPPINGNAME><![CDATA[/GeneralAccountReportSetup/Setup_Relation.html]]></MAPPINGNAME>
+<!--807743-->              <MAPPINGNAME><![CDATA[/BalancesheetandPLstructureSetup/Setup_Relation.html]]></MAPPINGNAME>
 <!--807743 ISDEFAULT-->
 <!--807743-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--807743**************--></AD_MODEL_OBJECT_MAPPING>
@@ -40695,7 +40695,7 @@
 <!--807744 AD_MODEL_OBJECT_ID-->
 <!--807744-->              <AD_MODEL_OBJECT_ID><![CDATA[803990]]></AD_MODEL_OBJECT_ID>
 <!--807744 MAPPINGNAME-->
-<!--807744-->              <MAPPINGNAME><![CDATA[/GeneralAccountReportSetup/Setup_Edition.html]]></MAPPINGNAME>
+<!--807744-->              <MAPPINGNAME><![CDATA[/BalancesheetandPLstructureSetup/Setup_Edition.html]]></MAPPINGNAME>
 <!--807744 ISDEFAULT-->
 <!--807744-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--807744**************--></AD_MODEL_OBJECT_MAPPING>
@@ -40720,7 +40720,7 @@
 <!--807745 AD_MODEL_OBJECT_ID-->
 <!--807745-->              <AD_MODEL_OBJECT_ID><![CDATA[803990]]></AD_MODEL_OBJECT_ID>
 <!--807745 MAPPINGNAME-->
-<!--807745-->              <MAPPINGNAME><![CDATA[/GeneralAccountReportSetup/Setup_Excel.xls]]></MAPPINGNAME>
+<!--807745-->              <MAPPINGNAME><![CDATA[/BalancesheetandPLstructureSetup/Setup_Excel.xls]]></MAPPINGNAME>
 <!--807745 ISDEFAULT-->
 <!--807745-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--807745**************--></AD_MODEL_OBJECT_MAPPING>
@@ -50170,7 +50170,7 @@
 <!--808183 AD_MODEL_OBJECT_ID-->
 <!--808183-->              <AD_MODEL_OBJECT_ID><![CDATA[804210]]></AD_MODEL_OBJECT_ID>
 <!--808183 MAPPINGNAME-->
-<!--808183-->              <MAPPINGNAME><![CDATA[/GeneralAccountReportSetup/Node_Relation.html]]></MAPPINGNAME>
+<!--808183-->              <MAPPINGNAME><![CDATA[/BalancesheetandPLstructureSetup/Node_Relation.html]]></MAPPINGNAME>
 <!--808183 ISDEFAULT-->
 <!--808183-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--808183**************--></AD_MODEL_OBJECT_MAPPING>
@@ -50195,7 +50195,7 @@
 <!--808184 AD_MODEL_OBJECT_ID-->
 <!--808184-->              <AD_MODEL_OBJECT_ID><![CDATA[804210]]></AD_MODEL_OBJECT_ID>
 <!--808184 MAPPINGNAME-->
-<!--808184-->              <MAPPINGNAME><![CDATA[/GeneralAccountReportSetup/Node_Edition.html]]></MAPPINGNAME>
+<!--808184-->              <MAPPINGNAME><![CDATA[/BalancesheetandPLstructureSetup/Node_Edition.html]]></MAPPINGNAME>
 <!--808184 ISDEFAULT-->
 <!--808184-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--808184**************--></AD_MODEL_OBJECT_MAPPING>
@@ -50220,7 +50220,7 @@
 <!--808185 AD_MODEL_OBJECT_ID-->
 <!--808185-->              <AD_MODEL_OBJECT_ID><![CDATA[804210]]></AD_MODEL_OBJECT_ID>
 <!--808185 MAPPINGNAME-->
-<!--808185-->              <MAPPINGNAME><![CDATA[/GeneralAccountReportSetup/Node_Excel.xls]]></MAPPINGNAME>
+<!--808185-->              <MAPPINGNAME><![CDATA[/BalancesheetandPLstructureSetup/Node_Excel.xls]]></MAPPINGNAME>
 <!--808185 ISDEFAULT-->
 <!--808185-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--808185**************--></AD_MODEL_OBJECT_MAPPING>
@@ -55564,13 +55564,13 @@
 <!--808407 CREATEDBY-->
 <!--808407-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--808407 UPDATED-->
-<!--808407-->              <UPDATED><![CDATA[2007-07-25 18:29:02.0]]></UPDATED>
+<!--808407-->              <UPDATED><![CDATA[2008-09-16 17:46:23.0]]></UPDATED>
 <!--808407 UPDATEDBY-->
 <!--808407-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--808407 AD_MODEL_OBJECT_ID-->
 <!--808407-->              <AD_MODEL_OBJECT_ID><![CDATA[804322]]></AD_MODEL_OBJECT_ID>
 <!--808407 MAPPINGNAME-->
-<!--808407-->              <MAPPINGNAME><![CDATA[/AccountingReport/AccountingReport_Relation.html]]></MAPPINGNAME>
+<!--808407-->              <MAPPINGNAME><![CDATA[/UserDefinedAccountingReportSetup/UserDefinedAccountingReportSetup_Relation.html]]></MAPPINGNAME>
 <!--808407 ISDEFAULT-->
 <!--808407-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--808407**************--></AD_MODEL_OBJECT_MAPPING>
@@ -55589,13 +55589,13 @@
 <!--808408 CREATEDBY-->
 <!--808408-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--808408 UPDATED-->
-<!--808408-->              <UPDATED><![CDATA[2007-07-25 18:29:02.0]]></UPDATED>
+<!--808408-->              <UPDATED><![CDATA[2008-09-16 17:46:23.0]]></UPDATED>
 <!--808408 UPDATEDBY-->
 <!--808408-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--808408 AD_MODEL_OBJECT_ID-->
 <!--808408-->              <AD_MODEL_OBJECT_ID><![CDATA[804322]]></AD_MODEL_OBJECT_ID>
 <!--808408 MAPPINGNAME-->
-<!--808408-->              <MAPPINGNAME><![CDATA[/AccountingReport/AccountingReport_Edition.html]]></MAPPINGNAME>
+<!--808408-->              <MAPPINGNAME><![CDATA[/UserDefinedAccountingReportSetup/UserDefinedAccountingReportSetup_Edition.html]]></MAPPINGNAME>
 <!--808408 ISDEFAULT-->
 <!--808408-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--808408**************--></AD_MODEL_OBJECT_MAPPING>
@@ -55614,13 +55614,13 @@
 <!--808409 CREATEDBY-->
 <!--808409-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--808409 UPDATED-->
-<!--808409-->              <UPDATED><![CDATA[2007-07-25 18:29:02.0]]></UPDATED>
+<!--808409-->              <UPDATED><![CDATA[2008-09-16 17:46:23.0]]></UPDATED>
 <!--808409 UPDATEDBY-->
 <!--808409-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--808409 AD_MODEL_OBJECT_ID-->
 <!--808409-->              <AD_MODEL_OBJECT_ID><![CDATA[804322]]></AD_MODEL_OBJECT_ID>
 <!--808409 MAPPINGNAME-->
-<!--808409-->              <MAPPINGNAME><![CDATA[/AccountingReport/AccountingReport_Excel.xls]]></MAPPINGNAME>
+<!--808409-->              <MAPPINGNAME><![CDATA[/UserDefinedAccountingReportSetup/UserDefinedAccountingReportSetup_Excel.xls]]></MAPPINGNAME>
 <!--808409 ISDEFAULT-->
 <!--808409-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--808409**************--></AD_MODEL_OBJECT_MAPPING>
@@ -55639,7 +55639,7 @@
 <!--808410 CREATEDBY-->
 <!--808410-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--808410 UPDATED-->
-<!--808410-->              <UPDATED><![CDATA[2007-07-25 18:29:02.0]]></UPDATED>
+<!--808410-->              <UPDATED><![CDATA[2008-09-16 17:46:23.0]]></UPDATED>
 <!--808410 UPDATEDBY-->
 <!--808410-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--808410 AD_MODEL_OBJECT_ID-->
@@ -58895,7 +58895,7 @@
 <!--1000500012 AD_MODEL_OBJECT_ID-->
 <!--1000500012-->              <AD_MODEL_OBJECT_ID><![CDATA[1000500006]]></AD_MODEL_OBJECT_ID>
 <!--1000500012 MAPPINGNAME-->
-<!--1000500012-->              <MAPPINGNAME><![CDATA[/GeneralAccountReportSetup/Groupingcategory_Relation.html]]></MAPPINGNAME>
+<!--1000500012-->              <MAPPINGNAME><![CDATA[/BalancesheetandPLstructureSetup/Groupingcategory_Relation.html]]></MAPPINGNAME>
 <!--1000500012 ISDEFAULT-->
 <!--1000500012-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
 <!--1000500012**************--></AD_MODEL_OBJECT_MAPPING>
@@ -58920,7 +58920,7 @@
 <!--1000500013 AD_MODEL_OBJECT_ID-->
 <!--1000500013-->              <AD_MODEL_OBJECT_ID><![CDATA[1000500006]]></AD_MODEL_OBJECT_ID>
 <!--1000500013 MAPPINGNAME-->
-<!--1000500013-->              <MAPPINGNAME><![CDATA[/GeneralAccountReportSetup/Groupingcategory_Edition.html]]></MAPPINGNAME>
+<!--1000500013-->              <MAPPINGNAME><![CDATA[/BalancesheetandPLstructureSetup/Groupingcategory_Edition.html]]></MAPPINGNAME>
 <!--1000500013 ISDEFAULT-->
 <!--1000500013-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--1000500013**************--></AD_MODEL_OBJECT_MAPPING>
@@ -58945,7 +58945,7 @@
 <!--1000500014 AD_MODEL_OBJECT_ID-->
 <!--1000500014-->              <AD_MODEL_OBJECT_ID><![CDATA[1000500006]]></AD_MODEL_OBJECT_ID>
 <!--1000500014 MAPPINGNAME-->
-<!--1000500014-->              <MAPPINGNAME><![CDATA[/GeneralAccountReportSetup/Groupingcategory_Excel.xls]]></MAPPINGNAME>
+<!--1000500014-->              <MAPPINGNAME><![CDATA[/BalancesheetandPLstructureSetup/Groupingcategory_Excel.xls]]></MAPPINGNAME>
 <!--1000500014 ISDEFAULT-->
 <!--1000500014-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--1000500014**************--></AD_MODEL_OBJECT_MAPPING>

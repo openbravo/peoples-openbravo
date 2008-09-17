@@ -22769,11 +22769,11 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800212 CREATEDBY-->
 <!--800212-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800212 UPDATED-->
-<!--800212-->              <UPDATED><![CDATA[2006-06-13 16:48:07.0]]></UPDATED>
+<!--800212-->              <UPDATED><![CDATA[2008-09-16 17:46:23.0]]></UPDATED>
 <!--800212 UPDATEDBY-->
 <!--800212-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800212 NAME-->
-<!--800212-->              <NAME><![CDATA[Accounting Report]]></NAME>
+<!--800212-->              <NAME><![CDATA[User Defined Accounting Report Setup]]></NAME>
 <!--800212 DESCRIPTION-->
 <!--800212-->              <DESCRIPTION><![CDATA[View detailed general ledger entries for a specified time period.]]></DESCRIPTION>
 <!--800212 HELP-->
@@ -25193,11 +25193,11 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800264 CREATEDBY-->
 <!--800264-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800264 UPDATED-->
-<!--800264-->              <UPDATED><![CDATA[2007-04-18 18:11:35.0]]></UPDATED>
+<!--800264-->              <UPDATED><![CDATA[2008-09-16 17:14:56.0]]></UPDATED>
 <!--800264 UPDATEDBY-->
 <!--800264-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800264 NAME-->
-<!--800264-->              <NAME><![CDATA[Tax Report]]></NAME>
+<!--800264-->              <NAME><![CDATA[Tax Report Setup]]></NAME>
 <!--800264 DESCRIPTION-->
 <!--800264-->              <DESCRIPTION><![CDATA[Define parameters and the way of showing the reports]]></DESCRIPTION>
 <!--800264 HELP-->

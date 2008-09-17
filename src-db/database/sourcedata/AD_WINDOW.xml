@@ -6061,11 +6061,11 @@
 <!--800081 CREATEDBY-->
 <!--800081-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800081 UPDATED-->
-<!--800081-->              <UPDATED><![CDATA[2007-03-19 09:46:28.0]]></UPDATED>
+<!--800081-->              <UPDATED><![CDATA[2008-09-16 16:25:17.0]]></UPDATED>
 <!--800081 UPDATEDBY-->
 <!--800081-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800081 NAME-->
-<!--800081-->              <NAME><![CDATA[Accounting Report]]></NAME>
+<!--800081-->              <NAME><![CDATA[User Defined Accounting Report Setup]]></NAME>
 <!--800081 DESCRIPTION-->
 <!--800081-->              <DESCRIPTION><![CDATA[Define parameters and methods of showing reports.]]></DESCRIPTION>
 <!--800081 HELP-->
@@ -6516,11 +6516,11 @@
 <!--800099 CREATEDBY-->
 <!--800099-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800099 UPDATED-->
-<!--800099-->              <UPDATED><![CDATA[2007-03-19 09:37:05.0]]></UPDATED>
+<!--800099-->              <UPDATED><![CDATA[2008-09-16 16:26:11.0]]></UPDATED>
 <!--800099 UPDATEDBY-->
 <!--800099-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800099 NAME-->
-<!--800099-->              <NAME><![CDATA[General Account Report Setup]]></NAME>
+<!--800099-->              <NAME><![CDATA[Balance sheet and P&L structure Setup]]></NAME>
 <!--800099 DESCRIPTION-->
 <!--800099-->              <DESCRIPTION><![CDATA[Create a report showing profits and losses as well as the balance sheet.]]></DESCRIPTION>
 <!--800099 HELP-->
@@ -6551,11 +6551,11 @@
 <!--800100 CREATEDBY-->
 <!--800100-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800100 UPDATED-->
-<!--800100-->              <UPDATED><![CDATA[2007-04-18 18:10:06.0]]></UPDATED>
+<!--800100-->              <UPDATED><![CDATA[2008-09-16 16:27:33.0]]></UPDATED>
 <!--800100 UPDATEDBY-->
 <!--800100-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800100 NAME-->
-<!--800100-->              <NAME><![CDATA[Tax Report]]></NAME>
+<!--800100-->              <NAME><![CDATA[Tax Report Setup]]></NAME>
 <!--800100 DESCRIPTION-->
 <!--800100-->              <DESCRIPTION><![CDATA[Define parameters and methods of showing reports.]]></DESCRIPTION>
 <!--800100 HELP-->

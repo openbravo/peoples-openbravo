@@ -5501,17 +5501,17 @@
 <!--800021 CREATEDBY-->
 <!--800021-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800021 UPDATED-->
-<!--800021-->              <UPDATED><![CDATA[2004-02-25 10:20:54.0]]></UPDATED>
+<!--800021-->              <UPDATED><![CDATA[2008-09-16 16:21:45.0]]></UPDATED>
 <!--800021 UPDATEDBY-->
 <!--800021-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800021 VALUE-->
-<!--800021-->              <VALUE><![CDATA[GeneralAccountingReports]]></VALUE>
+<!--800021-->              <VALUE><![CDATA[BalanceSheet]]></VALUE>
 <!--800021 NAME-->
-<!--800021-->              <NAME><![CDATA[General Accounting Report]]></NAME>
+<!--800021-->              <NAME><![CDATA[Balance sheet and P&L structure]]></NAME>
 <!--800021 DESCRIPTION-->
-<!--800021-->              <DESCRIPTION><![CDATA[General Accounting Report]]></DESCRIPTION>
+<!--800021-->              <DESCRIPTION><![CDATA[Balance sheet and P&L structure]]></DESCRIPTION>
 <!--800021 HELP-->
-<!--800021-->              <HELP><![CDATA[General Accounting Report]]></HELP>
+<!--800021-->              <HELP><![CDATA[Balance sheet and P&L structure]]></HELP>
 <!--800021 ACCESSLEVEL-->
 <!--800021-->              <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--800021 ISUSERSTARTABLE-->
@@ -5524,6 +5524,8 @@
 <!--800021-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800021 ISJASPER-->
 <!--800021-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800021 ISEXTERNALSERVICE-->
+<!--800021-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800021 AD_MODULE_ID-->
 <!--800021-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800021**************--></AD_PROCESS>
@@ -9318,13 +9320,13 @@ Depending on the configuration of the Cost Center the process will also calculat
 <!--800144 CREATEDBY-->
 <!--800144-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800144 UPDATED-->
-<!--800144-->              <UPDATED><![CDATA[2006-06-16 16:57:14.0]]></UPDATED>
+<!--800144-->              <UPDATED><![CDATA[2008-09-16 16:24:35.0]]></UPDATED>
 <!--800144 UPDATEDBY-->
 <!--800144-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800144 VALUE-->
-<!--800144-->              <VALUE><![CDATA[CreateAccountingReport]]></VALUE>
+<!--800144-->              <VALUE><![CDATA[UserDefinedAccountingReport]]></VALUE>
 <!--800144 NAME-->
-<!--800144-->              <NAME><![CDATA[Create Accounting Report]]></NAME>
+<!--800144-->              <NAME><![CDATA[User Defined Accounting Report]]></NAME>
 <!--800144 DESCRIPTION-->
 <!--800144-->              <DESCRIPTION><![CDATA[Selects an accounting model to obtain its report.]]></DESCRIPTION>
 <!--800144 HELP-->
@@ -9343,6 +9345,8 @@ Depending on the configuration of the Cost Center the process will also calculat
 <!--800144-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800144 ISJASPER-->
 <!--800144-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800144 ISEXTERNALSERVICE-->
+<!--800144-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800144 AD_MODULE_ID-->
 <!--800144-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800144**************--></AD_PROCESS>
@@ -10172,17 +10176,17 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800168 CREATEDBY-->
 <!--800168-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800168 UPDATED-->
-<!--800168-->              <UPDATED><![CDATA[2007-07-23 10:32:54.0]]></UPDATED>
+<!--800168-->              <UPDATED><![CDATA[2008-09-16 16:19:44.0]]></UPDATED>
 <!--800168 UPDATEDBY-->
 <!--800168-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800168 VALUE-->
 <!--800168-->              <VALUE><![CDATA[ReportNotPosted]]></VALUE>
 <!--800168 NAME-->
-<!--800168-->              <NAME><![CDATA[Report Not Posted]]></NAME>
+<!--800168-->              <NAME><![CDATA[Not Posted Transaction Report]]></NAME>
 <!--800168 DESCRIPTION-->
-<!--800168-->              <DESCRIPTION><![CDATA[Report Not Posted]]></DESCRIPTION>
+<!--800168-->              <DESCRIPTION><![CDATA[Not Posted Transaction Report]]></DESCRIPTION>
 <!--800168 HELP-->
-<!--800168-->              <HELP><![CDATA[Report Not Posted]]></HELP>
+<!--800168-->              <HELP><![CDATA[Not Posted Transaction Report]]></HELP>
 <!--800168 ACCESSLEVEL-->
 <!--800168-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800168 ISUSERSTARTABLE-->
@@ -10195,6 +10199,8 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800168-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800168 ISJASPER-->
 <!--800168-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800168 ISEXTERNALSERVICE-->
+<!--800168-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800168 AD_MODULE_ID-->
 <!--800168-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800168**************--></AD_PROCESS>
@@ -10213,17 +10219,17 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800169 CREATEDBY-->
 <!--800169-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800169 UPDATED-->
-<!--800169-->              <UPDATED><![CDATA[2007-04-20 11:57:30.0]]></UPDATED>
+<!--800169-->              <UPDATED><![CDATA[2008-09-16 16:27:04.0]]></UPDATED>
 <!--800169 UPDATEDBY-->
 <!--800169-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800169 VALUE-->
-<!--800169-->              <VALUE><![CDATA[CreateTaxReport]]></VALUE>
+<!--800169-->              <VALUE><![CDATA[TaxReport]]></VALUE>
 <!--800169 NAME-->
-<!--800169-->              <NAME><![CDATA[Create Tax Report]]></NAME>
+<!--800169-->              <NAME><![CDATA[Tax Report]]></NAME>
 <!--800169 DESCRIPTION-->
-<!--800169-->              <DESCRIPTION><![CDATA[Create Tax Report]]></DESCRIPTION>
+<!--800169-->              <DESCRIPTION><![CDATA[Tax Report]]></DESCRIPTION>
 <!--800169 HELP-->
-<!--800169-->              <HELP><![CDATA[Create Tax Report]]></HELP>
+<!--800169-->              <HELP><![CDATA[Tax Report]]></HELP>
 <!--800169 ACCESSLEVEL-->
 <!--800169-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800169 ISUSERSTARTABLE-->
@@ -10238,6 +10244,8 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800169-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800169 ISJASPER-->
 <!--800169-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800169 ISEXTERNALSERVICE-->
+<!--800169-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800169 AD_MODULE_ID-->
 <!--800169-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800169**************--></AD_PROCESS>
@@ -11621,15 +11629,15 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800206 CREATEDBY-->
 <!--800206-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800206 UPDATED-->
-<!--800206-->              <UPDATED><![CDATA[2007-09-17 10:44:49.0]]></UPDATED>
+<!--800206-->              <UPDATED><![CDATA[2008-09-16 16:29:25.0]]></UPDATED>
 <!--800206 UPDATEDBY-->
 <!--800206-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800206 VALUE-->
-<!--800206-->              <VALUE><![CDATA[ReportCashFlow]]></VALUE>
+<!--800206-->              <VALUE><![CDATA[CashFlowStatement]]></VALUE>
 <!--800206 NAME-->
-<!--800206-->              <NAME><![CDATA[Report Cash Flow]]></NAME>
+<!--800206-->              <NAME><![CDATA[Cash Flow Statement]]></NAME>
 <!--800206 DESCRIPTION-->
-<!--800206-->              <DESCRIPTION><![CDATA[Report Cash Flow]]></DESCRIPTION>
+<!--800206-->              <DESCRIPTION><![CDATA[Cash Flow Statement]]></DESCRIPTION>
 <!--800206 ACCESSLEVEL-->
 <!--800206-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800206 ISUSERSTARTABLE-->
@@ -11642,6 +11650,8 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800206-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800206 ISJASPER-->
 <!--800206-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800206 ISEXTERNALSERVICE-->
+<!--800206-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800206 AD_MODULE_ID-->
 <!--800206-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800206**************--></AD_PROCESS>
@@ -11660,15 +11670,15 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800207 CREATEDBY-->
 <!--800207-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800207 UPDATED-->
-<!--800207-->              <UPDATED><![CDATA[2007-09-17 10:43:37.0]]></UPDATED>
+<!--800207-->              <UPDATED><![CDATA[2008-09-16 16:28:30.0]]></UPDATED>
 <!--800207 UPDATEDBY-->
 <!--800207-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800207 VALUE-->
-<!--800207-->              <VALUE><![CDATA[CreateCashFlowStatement]]></VALUE>
+<!--800207-->              <VALUE><![CDATA[GenerateCashFlowStatement]]></VALUE>
 <!--800207 NAME-->
-<!--800207-->              <NAME><![CDATA[Create Cash Flow Statement]]></NAME>
+<!--800207-->              <NAME><![CDATA[Generate Cash Flow Statement]]></NAME>
 <!--800207 DESCRIPTION-->
-<!--800207-->              <DESCRIPTION><![CDATA[Create Cash Flow Statement]]></DESCRIPTION>
+<!--800207-->              <DESCRIPTION><![CDATA[Generate Cash Flow Statement]]></DESCRIPTION>
 <!--800207 ACCESSLEVEL-->
 <!--800207-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800207 ISUSERSTARTABLE-->
@@ -11681,6 +11691,8 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800207-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--800207 ISJASPER-->
 <!--800207-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--800207 ISEXTERNALSERVICE-->
+<!--800207-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--800207 AD_MODULE_ID-->
 <!--800207-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800207**************--></AD_PROCESS>
@@ -11930,17 +11942,17 @@ The second one is to update one property in the product organization specific ta
 <!--1002100003 CREATEDBY-->
 <!--1002100003-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1002100003 UPDATED-->
-<!--1002100003-->              <UPDATED><![CDATA[2008-04-10 11:35:58.0]]></UPDATED>
+<!--1002100003-->              <UPDATED><![CDATA[2008-09-16 16:17:55.0]]></UPDATED>
 <!--1002100003 UPDATEDBY-->
 <!--1002100003-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1002100003 VALUE-->
-<!--1002100003-->              <VALUE><![CDATA[RV_ReportAnnualCertification]]></VALUE>
+<!--1002100003-->              <VALUE><![CDATA[RV_WithholdingReport]]></VALUE>
 <!--1002100003 NAME-->
-<!--1002100003-->              <NAME><![CDATA[Report Annual Certification]]></NAME>
+<!--1002100003-->              <NAME><![CDATA[Withholding Report]]></NAME>
 <!--1002100003 DESCRIPTION-->
-<!--1002100003-->              <DESCRIPTION><![CDATA[Report Annual Certification]]></DESCRIPTION>
+<!--1002100003-->              <DESCRIPTION><![CDATA[Withholding Report]]></DESCRIPTION>
 <!--1002100003 HELP-->
-<!--1002100003-->              <HELP><![CDATA[Report Annual Certification]]></HELP>
+<!--1002100003-->              <HELP><![CDATA[Withholding Report]]></HELP>
 <!--1002100003 ACCESSLEVEL-->
 <!--1002100003-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--1002100003 ISUSERSTARTABLE-->
@@ -11953,6 +11965,8 @@ The second one is to update one property in the product organization specific ta
 <!--1002100003-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--1002100003 ISJASPER-->
 <!--1002100003-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--1002100003 ISEXTERNALSERVICE-->
+<!--1002100003-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--1002100003 AD_MODULE_ID-->
 <!--1002100003-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1002100003**************--></AD_PROCESS>
