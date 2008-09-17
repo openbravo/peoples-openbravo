@@ -51,21 +51,21 @@ BEGIN
     INTO AD_TREENODE
       -- AD_TreeNodeMM
       (
-        AD_Client_ID, AD_Org_ID, IsActive,
+        AD_TreeNode_ID, AD_Client_ID, AD_Org_ID, IsActive,
         Created, CreatedBy, Updated,
         UpdatedBy, AD_Tree_ID, Node_ID,
         Parent_ID, SeqNo
       )
       VALUES
       (
-        :NEW.AD_Client_ID, :NEW.AD_Org_ID, :NEW.IsActive,
+        get_UUID(), :NEW.AD_Client_ID, :NEW.AD_Org_ID, :NEW.IsActive,
         :NEW.Created, :NEW.CreatedBy, :NEW.Updated,
         :NEW.UpdatedBy, v_xTree_ID, :NEW.AD_Accountingrpt_Element_ID,
         v_xParent_ID,(
         CASE :NEW.IsSummary
           WHEN 'Y'
-          THEN '100'
-          ELSE '999'
+          THEN 100
+          ELSE 999
         END
         )
       )
