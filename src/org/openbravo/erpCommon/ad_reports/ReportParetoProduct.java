@@ -36,13 +36,16 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
 
     if (vars.commandIn("DEFAULT")) {
       String strWarehouse = vars.getGlobalVariable("inpmWarehouseId", "ReportParetoProduct|M_Warehouse_ID", "");
+      String strClient = vars.getClient();
       String strAD_Org_ID = vars.getGlobalVariable("inpadOrgId", "ReportParetoProduct|AD_Org_ID", "");
-      printPageDataSheet(response, vars, strWarehouse, strAD_Org_ID);
+      printPageDataSheet(response, vars, strWarehouse, strAD_Org_ID, strClient);
     } else if (vars.commandIn("FIND")) {
       String strWarehouse = vars.getRequestGlobalVariable("inpmWarehouseId", "ReportParetoProduct|M_Warehouse_ID");
+      String strClient = vars.getClient();
       String strAD_Org_ID = vars.getRequestGlobalVariable("inpadOrgId", "ReportParetoProduct|AD_Org_ID");      
-      printPageDataSheet(response, vars, strWarehouse, strAD_Org_ID);
+      printPageDataSheet(response, vars, strWarehouse, strAD_Org_ID, strClient);
     } else if (vars.commandIn("GENERATE")) {
+      String strClient = vars.getClient();
       String strWarehouse = vars.getRequestGlobalVariable("inpmWarehouseId", "ReportParetoProduct|M_Warehouse_ID");
       String strAD_Org_ID = vars.getRequestGlobalVariable("inpadOrgId", "ReportParetoProduct|AD_Org_ID");      
       //ReportParetoProductData result = ReportParetoProductData.updateOrgSpecific(this, strWarehouse, strAD_Org_ID);
@@ -52,11 +55,11 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
         myMessage.setType("Success");
         myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
         vars.setMessage("ReportParetoProduct", myMessage);
-        printPageDataSheet(response, vars, strWarehouse, strAD_Org_ID);
+        printPageDataSheet(response, vars, strWarehouse, strAD_Org_ID, strClient);
      } else pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strWarehouse, String strAD_Org_ID)
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strWarehouse, String strAD_Org_ID, String strClient)
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -68,7 +71,7 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
 
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportParetoProduct", discard).createXmlDocument();
     if (vars.commandIn("FIND")){
-        data = ReportParetoProductData.select(this, strWarehouse, strAD_Org_ID);
+        data = ReportParetoProductData.select(this, strWarehouse, strAD_Org_ID, strClient);
         if (data == null || data.length == 0){
           discard[0] = "selEliminar";
           data = ReportParetoProductData.set();

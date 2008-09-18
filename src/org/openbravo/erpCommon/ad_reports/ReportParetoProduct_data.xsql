@@ -46,7 +46,8 @@
                                                            LEFT JOIN M_PRODUCT PR1 ON MSD1.M_PRODUCT_ID=PR1.M_PRODUCT_ID   
                                                            WHERE MSD1.QTYONHAND>0
                                                            AND 1=1
-                                                           AND 2=2 
+                                                           AND 2=2
+                                                           AND 6=6  
                                                            ) ) as PORCENTAJE,
       PR.M_PRODUCT_ID,
       MW.AD_ORG_ID,
@@ -59,6 +60,7 @@
        AD_ORG, C_UOM   
      WHERE 3=3
        AND 4=4
+       AND 5=5
        AND MSD.QTYONHAND>0
        AND GET_PRODUCT_COST(PR.M_PRODUCT_ID,to_date(now()),'AV') IS NOT NULL
        AND GET_PRODUCT_COST(PR.M_PRODUCT_ID,to_date(now()),'AV') <> 0
@@ -72,9 +74,11 @@
     <Parameter name="mWarehouseId"/>
     <Parameter name="adOrgId"/>    
     <Parameter name="mWarehouseId" optional="true" after="1=1" text=" AND MW1.M_WAREHOUSE_ID = ? "/>
-    <Parameter name="adOrgId" optional="true" after="2=2" text=" AND MW1.AD_ORG_ID = ? "/>    
+    <Parameter name="adOrgId" optional="true" after="2=2" text=" AND MW1.AD_ORG_ID = ? "/>
+    <Parameter name="adClientId" optional="true" after="6=6" text=" AND MW1.AD_CLIENT_ID = TO_NUMBER(?) "/>    
     <Parameter name="mWarehouseId" optional="true" after="3=3" text=" AND MW.M_WAREHOUSE_ID = ? "/>    
     <Parameter name="adOrgId" optional="true" after="4=4" text=" AND MW.AD_ORG_ID = ? "/>
+    <Parameter name="adClientId" optional="true" after="5=5" text=" AND MW.AD_CLIENT_ID = TO_NUMBER(?) "/>
   </SqlMethod>
 
   <SqlMethod name="set" type="constant" return="multiple">
