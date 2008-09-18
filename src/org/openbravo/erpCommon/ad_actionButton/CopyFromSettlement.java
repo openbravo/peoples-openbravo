@@ -201,7 +201,7 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
     
     if(data == null || data.length == 0) discard[0] = new String("sectionDetail");    
     
-    CopyFromSettlementData [] data2 = CopyFromSettlementData.selectDebtPaymentBalancingF4(this, strDateFormat, strSettlementFrom);
+    CopyFromSettlementData [] data2 = CopyFromSettlementData.selectDebtPaymentBalancingF4(this, strDateFormat, vars.getLanguage(), strSettlementFrom);
     
     if(data2 == null || data2.length == 0) discard[1] = new String("sectionDetail2");
     

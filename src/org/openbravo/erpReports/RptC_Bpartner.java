@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -65,8 +65,8 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
     RptCBpartnerData[] dataShipper = RptCBpartnerData.selectShipper(this, strcBpartnerId);
     RptCBpartnerData[] dataTemplate = RptCBpartnerData.selectTemplate(this, vars.getLanguage(), strcBpartnerId);
     RptCBpartnerData[] dataDiscount = RptCBpartnerData.selectDiscount(this, strcBpartnerId);
-    RptCBpartnerCustomerData[] dataCustomer = RptCBpartnerCustomerData.select(this, strcBpartnerId);
-    RptCBpartnerVendorData[] dataVendor = RptCBpartnerVendorData.select(this, strcBpartnerId);
+    RptCBpartnerCustomerData[] dataCustomer = RptCBpartnerCustomerData.select(this, vars.getLanguage(), strcBpartnerId);
+    RptCBpartnerVendorData[] dataVendor = RptCBpartnerVendorData.select(this, vars.getLanguage(), strcBpartnerId);
     RptCBpartnerlocationData[] dataLocation = RptCBpartnerlocationData.select(this, strcBpartnerId);
     RptCBpartnercontactData[] dataContact = RptCBpartnercontactData.select(this, strcBpartnerId);
     RptCBpartnerSalesData[] dataSales = RptCBpartnerSalesData.selectOrder(this, strcBpartnerId);

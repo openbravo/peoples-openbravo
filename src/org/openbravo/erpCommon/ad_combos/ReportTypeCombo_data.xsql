@@ -31,7 +31,7 @@
       SELECT MAX(NAME) || '-' || MAX(name1) AS NAME,MAX(ID1) || '-' || MAX(id2) AS ID  FROM(
 	    SELECT (CASE E.accounttype WHEN 'E' THEN 1 ELSE 2 END) AS TYPE, '0' AS ID1, '' AS NAME1, E.C_ElementValue_ID AS ID2, TO_CHAR(E.VALUE || ' - ' || COALESCE(ET.NAME, E.NAME)) AS NAME 
       FROM C_ElementValue E left join C_ElementValue_Trl ET on E.C_ElementValue_ID = ET.C_ElementValue_ID 
-                                                            and  ET.AD_Language  = 'es_ES' , 
+                                                            and  ET.AD_Language  = ? , 
       AD_TREENODE T
       WHERE E.C_ELEMENTVALUE_ID = T.NODE_ID 
       AND T.AD_TREE_ID = ?
@@ -44,7 +44,7 @@
 	    UNION	    
       SELECT (CASE E.accounttype WHEN 'R' THEN 1 ELSE 2 END) AS TYPE, E.C_ElementValue_ID AS ID1, TO_CHAR(E.VALUE || ' - ' || COALESCE(ET.NAME, E.NAME)) AS NAME1, '0' AS ID2, '' AS NAME
       FROM C_ElementValue E left join C_ElementValue_Trl ET on E.C_ElementValue_ID = ET.C_ElementValue_ID
-                                                            and ET.AD_Language = 'es_ES' , 
+                                                            and ET.AD_Language = ? , 
       AD_TREENODE T
       WHERE E.C_ELEMENTVALUE_ID = T.NODE_ID 
       AND T.AD_TREE_ID = ?
@@ -56,9 +56,11 @@
 	    AND E.accounttype IN ('R', 'L')) A
 	   GROUP BY TYPE
      ]]></Sql>
+	<Parameter name="adLanguage"/>
     <Parameter name="adTreeId"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="AND E.AD_Org_ID IN(" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND E.AD_Client_ID IN(" text="'1'"/>
+	<Parameter name="adLanguage"/>
     <Parameter name="adTreeId"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="AND E.AD_Org_ID IN (" text="'2'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND E.AD_Client_ID IN (" text="'2'"/>

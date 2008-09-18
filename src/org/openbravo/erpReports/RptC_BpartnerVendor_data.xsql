@@ -30,7 +30,7 @@
     <![CDATA[
         SELECT PR.NAME AS PAYMENTRULEPO, P.NAME AS PRICELISTPO, C_ELEMENTVALUE.VALUE||' - '||C_ELEMENTVALUE.NAME AS ACCOUNTVENDOR, PT.NAME AS PAYMENTTERMNAMEPO
         FROM C_BPARTNER BP left join C_PAYMENTTERM PT on  BP.PO_PAYMENTTERM_ID = PT.C_PAYMENTTERM_ID
-                           left join  (SELECT VALUE, NAME from AD_REF_LIST_V WHERE AD_REFERENCE_ID='195' AND AD_LANGUAGE='es_ES') PR on BP.PAYMENTRULEPO = PR.VALUE
+                           left join  (SELECT VALUE, NAME from AD_REF_LIST_V WHERE AD_REFERENCE_ID='195' AND AD_LANGUAGE= ?) PR on BP.PAYMENTRULEPO = PR.VALUE
                            left join M_PRICELIST P on BP.PO_PRICELIST_ID = P.M_PRICELIST_ID
                            left join C_BP_VENDOR_ACCT on BP.C_BPARTNER_ID = C_BP_VENDOR_ACCT.C_BPARTNER_ID 
                            left join C_VALIDCOMBINATION on C_BP_VENDOR_ACCT.V_LIABILITY_ACCT = C_VALIDCOMBINATION.C_VALIDCOMBINATION_ID 
@@ -38,6 +38,7 @@
         WHERE 
         BP.ISVENDOR = 'Y'
      ]]></Sql>
+	<Parameter name="adLanguage"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="BP.ISVENDOR = 'Y'">
         <![CDATA[ AND BP.C_BPARTNER_ID IN ]]>
         </Parameter>

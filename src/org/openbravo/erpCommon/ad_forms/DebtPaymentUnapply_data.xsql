@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,7 +40,7 @@
       WHERE  c_bpartner.C_BPARTNER_ID = c_debt_payment.C_BPARTNER_ID
       AND c_debt_payment.paymentrule = ad_ref_list_v.VALUE
       AND ad_ref_list_v.ad_reference_id = '195'
-      AND ad_ref_list_v.ad_language = 'es_ES' 
+      AND ad_ref_list_v.ad_language = ? 
       AND c_debt_payment.C_CURRENCY_ID = c_currency.c_currency_id
       AND c_debt_payment.ispaid = 'Y'
       AND c_debt_payment.c_cashline_id IS NULL
@@ -50,10 +50,10 @@
       ORDER BY c_debt_payment.DATEPLANNED
       ]]></Sql>
    <Field name="rownum" value="count"/>
-   <Parameter name="language"/>
-   <Parameter name="language"/>
-   <Parameter name="language"/>
-   <Parameter name="language" type="replace" optional="true" after="AND ad_ref_list_v.ad_language = '" text="es_ES"/>
+   <Parameter name="adLanguage"/>
+   <Parameter name="adLanguage"/>
+   <Parameter name="adLanguage"/>
+   <Parameter name="adLanguage"/>   
    <Parameter name="adOrgClient" type="replace" optional="true" after="AND c_debt_payment.AD_ORG_ID IN (" text="'1'"/>
    <Parameter name="adUserClient" type="replace" optional="true" after="AND c_debt_payment.AD_CLIENT_ID IN (" text="'1'"/>   
   </SqlMethod>

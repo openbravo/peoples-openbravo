@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2007 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -168,7 +168,7 @@
         LEFT JOIN C_DEBT_PAYMENT_BALANCING ON C_DEBT_PAYMENT_BALANCING.C_DEBT_PAYMENT_ID = C_DEBT_PAYMENT.C_DEBT_PAYMENT_ID
         LEFT JOIN C_GLITEM ON C_DEBT_PAYMENT_BALANCING.C_GLITEM_ID = C_GLITEM.C_GLITEM_ID
         LEFT JOIN C_BPARTNER ON C_DEBT_PAYMENT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
-        LEFT JOIN AD_REF_LIST_V ON C_DEBT_PAYMENT.PAYMENTRULE = AD_REF_LIST_V.VALUE AND AD_REF_LIST_V.AD_LANGUAGE = 'es_ES' AND AD_REF_LIST_V.AD_REFERENCE_ID = '195'
+        LEFT JOIN AD_REF_LIST_V ON C_DEBT_PAYMENT.PAYMENTRULE = AD_REF_LIST_V.VALUE AND AD_REF_LIST_V.AD_LANGUAGE = ? AND AD_REF_LIST_V.AD_REFERENCE_ID = '195'
         WHERE C_DEBT_PAYMENT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID	
         AND C_SETTLEMENT.C_SETTLEMENT_ID = ?
         ORDER BY C_DEBT_PAYMENT.DATEPLANNED, TERCERO, EFECTO
@@ -177,6 +177,7 @@
     <Field name="rownum" value="count"/>
     <Parameter name="dateformat"/>
     <Parameter name="dateformat"/>
+	<Parameter name="adLanguage"/>
     <Parameter name="cSettlementId"/>
   </SqlMethod>
 </SqlClass>
