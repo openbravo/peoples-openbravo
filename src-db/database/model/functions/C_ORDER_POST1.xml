@@ -887,13 +887,13 @@ IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN
         INSERT
         INTO C_ORDERTAX
           (
-            C_Order_ID, C_Tax_ID, AD_Client_ID, AD_Org_ID,
+            C_OrderTax_ID, C_Order_ID, C_Tax_ID, AD_Client_ID, AD_Org_ID,
             IsActive, Created, CreatedBy, Updated,
             UpdatedBy, TaxBaseAmt, TaxAmt, Line
           )
           VALUES
           (
-            v_Record_ID, Cur_Tax.C_Tax_ID, v_Client_ID, v_Org_ID,
+            get_uuid(), v_Record_ID, Cur_Tax.C_Tax_ID, v_Client_ID, v_Org_ID,
              'Y', now(), v_UpdatedBy, now(),
             v_UpdatedBy, v_TaxBaseAmt, xTaxAmt, v_LineNo
           )
@@ -919,13 +919,13 @@ IF(NOT END_PROCESSING AND NOT FINISH_PROCESS) THEN
           --
           INSERT INTO C_ORDERTAX
             (
-              C_Order_ID, C_Tax_ID, AD_Client_ID, AD_Org_ID,
+              C_OrderTax_ID, C_Order_ID, C_Tax_ID, AD_Client_ID, AD_Org_ID,
               IsActive, Created, CreatedBy, Updated,
               UpdatedBy, TaxBaseAmt, TaxAmt, Line
             )
             VALUES
             (
-              v_Record_ID, Cur_MultiTax.C_Tax_ID, v_Client_ID, v_Org_ID,
+              get_uuid(), v_Record_ID, Cur_MultiTax.C_Tax_ID, v_Client_ID, v_Org_ID,
                'Y', now(), v_UpdatedBy, now(),
               v_UpdatedBy, v_ActualBaseAmt, xTaxAmt, v_LineNo
             );
