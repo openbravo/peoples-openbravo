@@ -77,7 +77,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       INSERT INTO AD_PINSTANCE_PARA (ad_pinstance_para_id, AD_PINSTANCE_ID, SEQNO, PARAMETERNAME, P_STRING, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
-      VALUES(get_uuid(), ?,?,?,?, ?, ?, now(), ?, now(), ?)
+      VALUES(get_uuid(), ?,TO_NUMBER(?),?,?, ?, ?, now(), ?, now(), ?)
     </Sql>
     <Parameter name="adPinstanceId"/>
     <Parameter name="seqno"/>
@@ -92,7 +92,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       INSERT INTO AD_PINSTANCE_PARA (ad_pinstance_para_id, AD_PINSTANCE_ID, SEQNO, PARAMETERNAME, P_NUMBER, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
-      VALUES(get_uuid(), ?,?,?,?, ?, ?, now(), ?, now(), ?)
+      VALUES(get_uuid(), ?,TO_NUMBER(?),?,TO_NUMBER(?), ?, ?, now(), ?, now(), ?)
     </Sql>
     <Parameter name="adPinstanceId"/>
     <Parameter name="seqno"/>
@@ -107,7 +107,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       INSERT INTO AD_PINSTANCE_PARA (ad_pinstance_para_id, AD_PINSTANCE_ID, SEQNO, PARAMETERNAME, P_DATE, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY)
-      VALUES(get_uuid(),?,?,?,TO_DATE(?), ?, ?, now(), ?, now(), ?)
+      VALUES(get_uuid(),?,TO_NUMBER(?),?,TO_DATE(?), ?, ?, now(), ?, now(), ?)
     </Sql>
     <Parameter name="adPinstanceId"/>
     <Parameter name="seqno"/>
