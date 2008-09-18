@@ -1690,13 +1690,13 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--164 CREATEDBY-->
 <!--164-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--164 UPDATED-->
-<!--164-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--164-->              <UPDATED><![CDATA[2008-09-18 14:32:27.0]]></UPDATED>
 <!--164 UPDATEDBY-->
-<!--164-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--164-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--164 COLUMNNAME-->
 <!--164-->              <COLUMNNAME><![CDATA[AmtSourceCr]]></COLUMNNAME>
 <!--164 NAME-->
-<!--164-->              <NAME><![CDATA[Foriegn Currency Credit]]></NAME>
+<!--164-->              <NAME><![CDATA[Foreign Currency Credit]]></NAME>
 <!--164 PRINTNAME-->
 <!--164-->              <PRINTNAME><![CDATA[Source Credit]]></PRINTNAME>
 <!--164 DESCRIPTION-->
@@ -1721,13 +1721,13 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--165 CREATEDBY-->
 <!--165-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--165 UPDATED-->
-<!--165-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--165-->              <UPDATED><![CDATA[2008-09-18 14:31:30.0]]></UPDATED>
 <!--165 UPDATEDBY-->
-<!--165-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--165-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--165 COLUMNNAME-->
 <!--165-->              <COLUMNNAME><![CDATA[AmtSourceDr]]></COLUMNNAME>
 <!--165 NAME-->
-<!--165-->              <NAME><![CDATA[Foriegn Currency Debit]]></NAME>
+<!--165-->              <NAME><![CDATA[Foreign Currency Debit]]></NAME>
 <!--165 PRINTNAME-->
 <!--165-->              <PRINTNAME><![CDATA[Source Debit]]></PRINTNAME>
 <!--165 DESCRIPTION-->
