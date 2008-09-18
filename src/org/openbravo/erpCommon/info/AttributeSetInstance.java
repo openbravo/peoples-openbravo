@@ -67,7 +67,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       vars.setSessionValue("AttributeSetInstance.attribute", strAttributeSet);
       vars.setSessionValue("AttributeSetInstance.productInstance", strProductInstance);
       vars.setSessionValue("AttributeSetInstance.close", "N");
-      if (strAttributeSet.equals("") || strAttributeSet.equals("0")) advisePopUp(response, "Info", Utility.messageBD(this, "PAttributeNoSelection", vars.getLanguage()));
+      if (strAttributeSet.equals("") || strAttributeSet.equals("0")) advisePopUp(response, "INFO", Utility.messageBD(this, "Info", vars.getLanguage()), Utility.messageBD(this, "PAttributeNoSelection", vars.getLanguage()));
       else response.sendRedirect(strDireccion + request.getServletPath() + "?Command=DISPLAY");
     } else if (vars.commandIn("DISPLAY")) {
       String strNameValue = vars.getGlobalVariable("inpInstance", "AttributeSetInstance.instance", "");
@@ -80,7 +80,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
       if (log4j.isDebugEnabled()) log4j.debug("strNameValue: " + strNameValue);
       if (!strAttributeSet.equals("")) printPage(response, vars, strNameValue, strAttributeSet, strProductInstance, strWindowId, strTabId, strLocator, strIsSOTrx, strProduct);
-      else advisePopUp(response, "Info", Utility.messageBD(this, "PAttributeNoSelection", vars.getLanguage()));
+      else advisePopUp(response, "INFO", Utility.messageBD(this, "Info", vars.getLanguage()), Utility.messageBD(this, "PAttributeNoSelection", vars.getLanguage()));
     } else if (vars.commandIn("SAVE")) {
       String strAttributeSet = vars.getRequiredStringParameter("inpAttribute");
       String strInstance = vars.getStringParameter("inpInstance");

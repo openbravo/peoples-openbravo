@@ -44,7 +44,7 @@ public class TestHeartbeat extends HttpSecureAppServlet {
     
     if (!PeriodicHeartbeat.isInternetAvailable(this)) {
       String message = Utility.messageBD(myPool, "HB_INTERNET_UNAVAILABLE", vars.getLanguage());
-      advisePopUp(response, "ERROR", "Heartbeat", message);
+      advisePopUp(response, "ERROR", Utility.messageBD(this, "Heartbeat", vars.getLanguage()), message);
       return;
     } else {
       String message = null;
@@ -52,21 +52,21 @@ public class TestHeartbeat extends HttpSecureAppServlet {
       try {
         phb.beat(myPool);
         message = Utility.messageBD(myPool, "HB_SUCCESS", vars.getLanguage());
-        adviseHeartbeatConfirm(response, vars, "SUCCESS", "Heartbeat Configuration", message);
+        adviseHeartbeatConfirm(response, vars, "SUCCESS", Utility.messageBD(this, "Heartbeat Configuration", vars.getLanguage()), message);
       } catch (IOException e) {
         if (e instanceof SSLHandshakeException) {
           message = Utility.messageBD(myPool, "HB_SECURE_CONNECTION_ERROR", vars.getLanguage());
-          advisePopUp(response, "ERROR", "Heartbeat", message);
+          advisePopUp(response, "ERROR", Utility.messageBD(this, "Heartbeat", vars.getLanguage()), message);
         } else {
           message = Utility.messageBD(myPool, "HB_SEND_ERROR", vars.getLanguage());
-          advisePopUp(response, "ERROR", "Heartbeat", message);
+          advisePopUp(response, "ERROR", Utility.messageBD(this, "Heartbeat", vars.getLanguage()), message);
         }
       } catch (ServletException e) {
         message = Utility.messageBD(myPool, "HB_INTERNAL_ERROR", vars.getLanguage());
-        advisePopUp(response, "ERROR", "Heartbeat Configuration", message);
+        advisePopUp(response, "ERROR", Utility.messageBD(this, "Heartbeat Configuration", vars.getLanguage()), message);
       } catch (GeneralSecurityException e) {
         message = Utility.messageBD(myPool, "HB_CERTIFICATE_ERROR", vars.getLanguage());
-        advisePopUp(response, "ERROR", "Heartbeat Configuration", message);
+        advisePopUp(response, "ERROR", Utility.messageBD(this, "Heartbeat Configuration", vars.getLanguage()), message);
       }
     }
   }

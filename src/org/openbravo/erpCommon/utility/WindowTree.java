@@ -54,7 +54,7 @@ public class WindowTree extends HttpSecureAppServlet {
         WindowTreeData[] data = WindowTreeData.selectTreeID(this, Utility.getContext(this, vars, "#User_Client", ""), TreeType);
         if (data!=null && data.length>0) strTreeID = data[0].id;
       }
-      if (strTreeID.equals("")) advisePopUp(response, "Error", Utility.messageBD(this, "AccessTableNoView", vars.getLanguage()));
+      if (strTreeID.equals("")) advisePopUp(response, "ERROR", Utility.messageBD(this, "Error", vars.getLanguage()), Utility.messageBD(this, "AccessTableNoView", vars.getLanguage()));
       else printPageDataSheet(response, vars, strTabId);
     } else if (vars.commandIn("ASSIGN")) {
       String strTabId = vars.getRequiredStringParameter("inpTabId");

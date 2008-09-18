@@ -58,7 +58,7 @@ public class Register extends HttpSecureAppServlet {
     if (!PeriodicHeartbeat.isInternetAvailable(this)) {
       String message = Utility.messageBD(myPool, "HB_INTERNET_UNAVAILABLE", vars.getLanguage());
       log4j.error(message);
-      advisePopUp(response, "ERROR", "Registration", message);
+      advisePopUp(response, "ERROR", Utility.messageBD(this, "Registration", vars.getLanguage()), message);
     } else {
       
       RegisterData[] data = RegisterData.select(this);
@@ -89,18 +89,18 @@ public class Register extends HttpSecureAppServlet {
           else
             message = Utility.messageBD(myPool, "REG_SUCCESS", vars.getLanguage());
           
-          adviseRegistrationConfirm(response, vars, "SUCCESS", "Registration", message);
+          adviseRegistrationConfirm(response, vars, "SUCCESS", Utility.messageBD(this, "Registration", vars.getLanguage()), message);
         } catch (IOException e) {
           if (e instanceof SSLHandshakeException) {
             message = Utility.messageBD(myPool, "HB_SECURE_CONNECTION_ERROR", vars.getLanguage());
-            advisePopUp(response, "ERROR", "Registration", message);
+            advisePopUp(response, "ERROR", Utility.messageBD(this, "Registration", vars.getLanguage()), message);
           } else {
             message = Utility.messageBD(myPool, "HB_SEND_ERROR", vars.getLanguage());
-            advisePopUp(response, "ERROR", "Registration", message);
+            advisePopUp(response, "ERROR", Utility.messageBD(this, "Registration", vars.getLanguage()), message);
           }
         } catch (GeneralSecurityException e) {
           message = Utility.messageBD(myPool, "HB_CERTIFICATE_ERROR", vars.getLanguage());
-          advisePopUp(response, "ERROR", "Registration", message);
+          advisePopUp(response, "ERROR", Utility.messageBD(this, "Registration", vars.getLanguage()), message);
         }
       }
     }
