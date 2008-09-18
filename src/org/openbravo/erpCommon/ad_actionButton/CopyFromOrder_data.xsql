@@ -121,7 +121,7 @@
         QTYORDERED, C_CURRENCY_ID, PRICELIST, PRICEACTUAL, PRICELIMIT, C_TAX_ID, M_ATTRIBUTESETINSTANCE_ID) 
         VALUES (?,?,?,NOW(),?,NOW(),?,
                 ?,(SELECT (coalesce(Max(Line),0))+10 FROM C_OrderLine WHERE C_Order_id = ?),?,?,TO_DATE(?),TO_DATE(?),?,?,?,
-                ?,?,?,?,?,?, ?)
+                TO_NUMBER(?),?,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),?, ?)
       ]]>
     </Sql>
     <Parameter name="cOrderlineId"/>
