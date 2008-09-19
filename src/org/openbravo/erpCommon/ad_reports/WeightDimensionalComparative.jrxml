@@ -507,61 +507,61 @@ GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9,
 		<variableExpression><![CDATA[$F{AMOUNTREF}]]></variableExpression>
 	</variable>
 	<variable name="AMT_PCT_1" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL1" calculation="Nothing">
-		<variableExpression><![CDATA[($V{AMOUNTREF_SUM1}.equals(new BigDecimal(0.0)))?null:$V{AMOUNT_SUM1}.subtract( $V{AMOUNTREF_SUM1} ).divide( $V{AMOUNTREF_SUM1}, 4)]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNTREF_SUM1}.equals(new BigDecimal(0.0)))?null:$V{AMOUNT_SUM1}.subtract( $V{AMOUNTREF_SUM1} ).divide( $V{AMOUNTREF_SUM1}, 4).multiply(new BigDecimal(100.0))]]></variableExpression>
 	</variable>
 	<variable name="AMT_PCT_2" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL2" calculation="Nothing">
-		<variableExpression><![CDATA[($V{AMOUNTREF_SUM2}.equals(new BigDecimal(0.0)))?null:$V{AMOUNT_SUM2}.subtract( $V{AMOUNTREF_SUM2} ).divide( $V{AMOUNTREF_SUM2}, 0)]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNTREF_SUM2}.equals(new BigDecimal(0.0)))?null:$V{AMOUNT_SUM2}.subtract( $V{AMOUNTREF_SUM2} ).divide( $V{AMOUNTREF_SUM2}, 0).multiply(new BigDecimal(100.0))]]></variableExpression>
 	</variable>
 	<variable name="AMT_PCT_3" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL3" calculation="Nothing">
-		<variableExpression><![CDATA[($V{AMOUNTREF_SUM3}.equals(new BigDecimal(0.0)))?null:$V{AMOUNT_SUM3}.subtract( $V{AMOUNTREF_SUM3} ).divide( $V{AMOUNTREF_SUM3}, 4)]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNTREF_SUM3}.equals(new BigDecimal(0.0)))?null:$V{AMOUNT_SUM3}.subtract( $V{AMOUNTREF_SUM3} ).divide( $V{AMOUNTREF_SUM3}, 4).multiply(new BigDecimal(100.0))]]></variableExpression>
 	</variable>
 	<variable name="AMT_PCT_4" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL4" calculation="Nothing">
-		<variableExpression><![CDATA[($V{AMOUNTREF_SUM4}.equals(new BigDecimal(0.0)))?null:$V{AMOUNT_SUM4}.subtract( $V{AMOUNTREF_SUM4} ).divide( $V{AMOUNTREF_SUM4}, 4)]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNTREF_SUM4}.equals(new BigDecimal(0.0)))?null:$V{AMOUNT_SUM4}.subtract( $V{AMOUNTREF_SUM4} ).divide( $V{AMOUNTREF_SUM4}, 4).multiply(new BigDecimal(100.0))]]></variableExpression>
 	</variable>
 	<variable name="AMT_PCT_5" class="java.math.BigDecimal" resetType="Group" resetGroup="LEVEL5" calculation="Nothing">
-		<variableExpression><![CDATA[($V{AMOUNTREF_SUM5}.equals(new BigDecimal(0.0)))?null:$V{AMOUNT_SUM5}.subtract( $V{AMOUNTREF_SUM5} ).divide( $V{AMOUNTREF_SUM5}, 4)]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNTREF_SUM5}.equals(new BigDecimal(0.0)))?null:$V{AMOUNT_SUM5}.subtract( $V{AMOUNTREF_SUM5} ).divide( $V{AMOUNTREF_SUM5}, 4).multiply(new BigDecimal(100.0))]]></variableExpression>
 	</variable>
 	<variable name="AMT_PCT_6" class="java.math.BigDecimal" resetType="Group" resetGroup="LEVEL6" calculation="Nothing">
-		<variableExpression><![CDATA[($V{AMOUNTREF_SUM6}.equals(new BigDecimal(0.0)))?null:$V{AMOUNT_SUM6}.subtract( $V{AMOUNTREF_SUM6} ).divide( $V{AMOUNTREF_SUM6}, 4)]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNTREF_SUM6}.equals(new BigDecimal(0.0)))?null:$V{AMOUNT_SUM6}.subtract( $V{AMOUNTREF_SUM6} ).divide( $V{AMOUNTREF_SUM6}, 4).multiply(new BigDecimal(100.0))]]></variableExpression>
 	</variable>
 	<variable name="AMT_PCT_7" class="java.math.BigDecimal" resetType="Group" resetGroup="LEVEL7" calculation="Nothing">
-		<variableExpression><![CDATA[($V{AMOUNTREF_SUM7}.equals(new BigDecimal(0.0)))?null:$V{AMOUNT_SUM7}.subtract( $V{AMOUNTREF_SUM7} ).divide( $V{AMOUNTREF_SUM7}, 4)]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNTREF_SUM7}.equals(new BigDecimal(0.0)))?null:$V{AMOUNT_SUM7}.subtract( $V{AMOUNTREF_SUM7} ).divide( $V{AMOUNTREF_SUM7}, 4).multiply(new BigDecimal(100.0))]]></variableExpression>
 	</variable>
 	<variable name="AMT_PCT_8" class="java.math.BigDecimal" resetType="Group" resetGroup="LEVEL8" calculation="Nothing">
-		<variableExpression><![CDATA[($V{AMOUNTREF_SUM8}.equals(new BigDecimal(0.0)))?null:$V{AMOUNT_SUM8}.subtract( $V{AMOUNTREF_SUM8} ).divide( $V{AMOUNTREF_SUM8}, 4)]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNTREF_SUM8}.equals(new BigDecimal(0.0)))?null:$V{AMOUNT_SUM8}.subtract( $V{AMOUNTREF_SUM8} ).divide( $V{AMOUNTREF_SUM8}, 4).multiply(new BigDecimal(100.0))]]></variableExpression>
 	</variable>
 	<variable name="AMT_PCT_9" class="java.math.BigDecimal" resetType="Group" resetGroup="LEVEL9" calculation="Nothing">
-		<variableExpression><![CDATA[($V{AMOUNTREF_SUM9}.equals(new BigDecimal(0.0)))?null:$V{AMOUNT_SUM9}.subtract( $V{AMOUNTREF_SUM9} ).divide( $V{AMOUNTREF_SUM9}, 4)]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNTREF_SUM9}.equals(new BigDecimal(0.0)))?null:$V{AMOUNT_SUM9}.subtract( $V{AMOUNTREF_SUM9} ).divide( $V{AMOUNTREF_SUM9}, 4).multiply(new BigDecimal(100.0))]]></variableExpression>
 	</variable>
 	<variable name="AMT_PCT_T" class="java.math.BigDecimal" resetType="Report" calculation="Nothing">
-		<variableExpression><![CDATA[($V{AMOUNTREF_TOTAL}.equals(new BigDecimal(0.0)))?null:$V{AMOUNT_TOTAL}.subtract( $V{AMOUNTREF_TOTAL} ).divide( $V{AMOUNTREF_TOTAL}, 6)]]></variableExpression>
+		<variableExpression><![CDATA[($V{AMOUNTREF_TOTAL}.equals(new BigDecimal(0.0)))?null:$V{AMOUNT_TOTAL}.subtract( $V{AMOUNTREF_TOTAL} ).divide( $V{AMOUNTREF_TOTAL}, 6).multiply(new BigDecimal(100.0))]]></variableExpression>
 	</variable>
 	<variable name="QTY_PCT_1" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL1" calculation="Nothing">
-		<variableExpression><![CDATA[($V{QTYREF_SUM1}.equals(new BigDecimal(0.0)))?null:$V{QTY_SUM1}.subtract( $V{QTYREF_SUM1} ).divide( $V{QTYREF_SUM1}, 4)]]></variableExpression>
+		<variableExpression><![CDATA[($V{QTYREF_SUM1}.equals(new BigDecimal(0.0)))?null:$V{QTY_SUM1}.subtract( $V{QTYREF_SUM1} ).divide( $V{QTYREF_SUM1}, 4).multiply(new BigDecimal(100.0))]]></variableExpression>
 	</variable>
 	<variable name="QTY_PCT_2" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL2" calculation="Nothing">
-		<variableExpression><![CDATA[($V{QTYREF_SUM2}.equals(new BigDecimal(0.0)))?null:$V{QTY_SUM2}.subtract( $V{QTYREF_SUM2} ).divide( $V{QTYREF_SUM2}, 0)]]></variableExpression>
+		<variableExpression><![CDATA[($V{QTYREF_SUM2}.equals(new BigDecimal(0.0)))?null:$V{QTY_SUM2}.subtract( $V{QTYREF_SUM2} ).divide( $V{QTYREF_SUM2}, 0).multiply(new BigDecimal(100.0))]]></variableExpression>
 	</variable>
 	<variable name="QTY_PCT_3" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL3" calculation="Nothing">
-		<variableExpression><![CDATA[($V{QTYREF_SUM3}.equals(new BigDecimal(0.0)))?null:$V{QTY_SUM3}.subtract( $V{QTYREF_SUM3} ).divide( $V{QTYREF_SUM3}, 4)]]></variableExpression>
+		<variableExpression><![CDATA[($V{QTYREF_SUM3}.equals(new BigDecimal(0.0)))?null:$V{QTY_SUM3}.subtract( $V{QTYREF_SUM3} ).divide( $V{QTYREF_SUM3}, 4).multiply(new BigDecimal(100.0))]]></variableExpression>
 	</variable>
 	<variable name="QTY_PCT_4" class="java.math.BigDecimal" resetType="Group" resetGroup="NIVEL4" calculation="Nothing">
-		<variableExpression><![CDATA[($V{QTYREF_SUM4}.equals(new BigDecimal(0.0)))?null:$V{QTY_SUM4}.subtract( $V{QTYREF_SUM4} ).divide( $V{QTYREF_SUM4}, 4)]]></variableExpression>
+		<variableExpression><![CDATA[($V{QTYREF_SUM4}.equals(new BigDecimal(0.0)))?null:$V{QTY_SUM4}.subtract( $V{QTYREF_SUM4} ).divide( $V{QTYREF_SUM4}, 4).multiply(new BigDecimal(100.0))]]></variableExpression>
 	</variable>
 	<variable name="QTY_PCT_5" class="java.math.BigDecimal" resetType="Group" resetGroup="LEVEL5" calculation="Nothing">
-		<variableExpression><![CDATA[($V{QTYREF_SUM5}.equals(new BigDecimal(0.0)))?null:$V{QTY_SUM5}.subtract( $V{QTYREF_SUM5} ).divide( $V{QTYREF_SUM5}, 4)]]></variableExpression>
+		<variableExpression><![CDATA[($V{QTYREF_SUM5}.equals(new BigDecimal(0.0)))?null:$V{QTY_SUM5}.subtract( $V{QTYREF_SUM5} ).divide( $V{QTYREF_SUM5}, 4).multiply(new BigDecimal(100.0))]]></variableExpression>
 	</variable>
 	<variable name="QTY_PCT_6" class="java.math.BigDecimal" resetType="Group" resetGroup="LEVEL6" calculation="Nothing">
-		<variableExpression><![CDATA[($V{QTYREF_SUM6}.equals(new BigDecimal(0.0)))?null:$V{QTY_SUM6}.subtract( $V{QTYREF_SUM6} ).divide( $V{QTYREF_SUM6}, 4)]]></variableExpression>
+		<variableExpression><![CDATA[($V{QTYREF_SUM6}.equals(new BigDecimal(0.0)))?null:$V{QTY_SUM6}.subtract( $V{QTYREF_SUM6} ).divide( $V{QTYREF_SUM6}, 4).multiply(new BigDecimal(100.0))]]></variableExpression>
 	</variable>
 	<variable name="QTY_PCT_7" class="java.math.BigDecimal" resetType="Group" resetGroup="LEVEL7" calculation="Nothing">
-		<variableExpression><![CDATA[($V{QTYREF_SUM7}.equals(new BigDecimal(0.0)))?null:$V{QTY_SUM7}.subtract( $V{QTYREF_SUM7} ).divide( $V{QTYREF_SUM7}, 4)]]></variableExpression>
+		<variableExpression><![CDATA[($V{QTYREF_SUM7}.equals(new BigDecimal(0.0)))?null:$V{QTY_SUM7}.subtract( $V{QTYREF_SUM7} ).divide( $V{QTYREF_SUM7}, 4).multiply(new BigDecimal(100.0))]]></variableExpression>
 	</variable>
 	<variable name="QTY_PCT_8" class="java.math.BigDecimal" resetType="Group" resetGroup="LEVEL8" calculation="Nothing">
-		<variableExpression><![CDATA[($V{QTYREF_SUM8}.equals(new BigDecimal(0.0)))?null:$V{QTY_SUM8}.subtract( $V{QTYREF_SUM8} ).divide( $V{QTYREF_SUM8}, 4)]]></variableExpression>
+		<variableExpression><![CDATA[($V{QTYREF_SUM8}.equals(new BigDecimal(0.0)))?null:$V{QTY_SUM8}.subtract( $V{QTYREF_SUM8} ).divide( $V{QTYREF_SUM8}, 4).multiply(new BigDecimal(100.0))]]></variableExpression>
 	</variable>
 	<variable name="QTY_PCT_9" class="java.math.BigDecimal" resetType="Group" resetGroup="LEVEL9" calculation="Nothing">
-		<variableExpression><![CDATA[($V{QTYREF_SUM9}.equals(new BigDecimal(0.0)))?null:$V{QTY_SUM9}.subtract( $V{QTYREF_SUM9} ).divide( $V{QTYREF_SUM9}, 4)]]></variableExpression>
+		<variableExpression><![CDATA[($V{QTYREF_SUM9}.equals(new BigDecimal(0.0)))?null:$V{QTY_SUM9}.subtract( $V{QTYREF_SUM9} ).divide( $V{QTYREF_SUM9}, 4).multiply(new BigDecimal(100.0))]]></variableExpression>
 	</variable>
 
 		<group  name="TOTALIZE" >
