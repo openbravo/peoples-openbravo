@@ -104,8 +104,10 @@ BEGIN
    IF (Cur_AC%NOTFOUND) THEN -- mandatory
     v_IsFullyQualified := 'N';
    ELSE
-    IF (:old.Alias is null) THEN
-     :new.Alias := v_TempValue; --Alias is the account no
+    IF NOT INSERTING THEN
+      IF (:old.Alias is null) THEN
+       :new.Alias := v_TempValue; --Alias is the account no
+      END IF;
     END IF;
    END IF;
    CLOSE Cur_AC;
