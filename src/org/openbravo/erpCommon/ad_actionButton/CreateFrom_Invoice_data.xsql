@@ -285,6 +285,7 @@
         FROM M_INOUT s 
         WHERE s.IsSOTrx='N' 
         AND s.DocStatus IN ('CL','CO') 
+        AND s.ISLOGISTIC <> 'Y'
         AND s.AD_Client_ID IN ('1') 
         AND s.AD_Org_ID IN ('1') 
         AND s.C_BPartner_ID = ? 
@@ -339,6 +340,7 @@
         SELECT s.M_InOut_ID AS ID, Ad_Column_Identifier(to_char('M_InOut'), to_char(s.M_InOut_ID), to_char(?)) AS NAME 
         FROM M_INOUT s 
         WHERE s.IsSOTrx='Y' 
+        AND s.ISLOGISTIC <> 'Y'
         AND s.DocStatus IN ('CL','CO') 
         AND s.AD_Client_ID IN ('1') 
         AND s.AD_Org_ID IN ('1')
