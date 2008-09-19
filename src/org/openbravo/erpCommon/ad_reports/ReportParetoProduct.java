@@ -49,7 +49,7 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       String strWarehouse = vars.getRequestGlobalVariable("inpmWarehouseId", "ReportParetoProduct|M_Warehouse_ID");
       String strAD_Org_ID = vars.getRequestGlobalVariable("inpadOrgId", "ReportParetoProduct|AD_Org_ID");      
       //ReportParetoProductData result = ReportParetoProductData.updateOrgSpecific(this, strWarehouse, strAD_Org_ID);
-      OBError myMessage = mUpdateParetoProduct(vars, strWarehouse, strAD_Org_ID);
+      OBError myMessage = mUpdateParetoProduct(vars, strWarehouse, strAD_Org_ID, strClient);
       String message="";
       myMessage.setTitle("");      
         myMessage.setType("Success");
@@ -150,13 +150,14 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
     out.close();
   }
 
-  OBError mUpdateParetoProduct(VariablesSecureApp vars, String strWarehouse, String strAD_Org_ID)
+  OBError mUpdateParetoProduct(VariablesSecureApp vars, String strWarehouse, String strAD_Org_ID, String strAD_Client_ID)
   throws IOException, ServletException {
     String pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
 
     PInstanceProcessData.insertPInstance(this, pinstance, "1000500001", "0", "N", vars.getUser(), vars.getClient(), vars.getOrg());
     PInstanceProcessData.insertPInstanceParam(this, pinstance, "1", "m_warehouse_id", strWarehouse, vars.getClient(), vars.getOrg(), vars.getUser());
     PInstanceProcessData.insertPInstanceParam(this, pinstance, "2", "ad_org_id", strAD_Org_ID, vars.getClient(), vars.getOrg(), vars.getUser());
+    PInstanceProcessData.insertPInstanceParam(this, pinstance, "3", "ad_client_id", strAD_Client_ID, vars.getClient(), vars.getOrg(), vars.getUser());    
     ReportParetoProductData.mUpdateParetoProduct0(this, pinstance);
 
     PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);

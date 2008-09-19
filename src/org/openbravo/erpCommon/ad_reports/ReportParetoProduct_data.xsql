@@ -28,8 +28,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-     SELECT ORGID, SEARCHKEY, NAME, PORCENTAJE, QTY, UNIT, COST, QTY*COST AS VALUE,
-     GET_PARETO_ABC(?, ?, PORCENTAJE) AS ISABC,
+     SELECT ORGID, SEARCHKEY, NAME, PERCENTAGE, QTY, UNIT, COST, QTY*COST AS VALUE,
+     GET_PARETO_ABC(?, ?, ?, PERCENTAGE) AS ISABC,
      '' AS PADRE, '' AS ID
      FROM  
      (
@@ -48,7 +48,7 @@
                                                            AND 1=1
                                                            AND 2=2
                                                            AND 6=6  
-                                                           ) ) as PORCENTAJE,
+                                                           ) ) as PERCENTAGE,
       PR.M_PRODUCT_ID,
       MW.AD_ORG_ID,
       C_UOM.NAME AS UNIT
@@ -67,12 +67,13 @@
        AND MW.AD_ORG_ID = AD_ORG.AD_ORG_ID
        AND PR.C_UOM_ID = C_UOM.C_UOM_ID
      GROUP BY AD_ORG.NAME ,PR.VALUE, PR.NAME, PR.M_PRODUCT_ID, MW.AD_ORG_ID, C_UOM.NAME
-     ORDER BY ORGID ASC, PORCENTAJE DESC       
+     ORDER BY ORGID ASC, PERCENTAGE DESC       
      ) BBB
     ]]></Sql>
     <Field name="rownum" value="count"/>
     <Parameter name="mWarehouseId"/>
-    <Parameter name="adOrgId"/>    
+    <Parameter name="adOrgId"/> 
+    <Parameter name="adClientId"/>   
     <Parameter name="mWarehouseId" optional="true" after="1=1" text=" AND MW1.M_WAREHOUSE_ID = ? "/>
     <Parameter name="adOrgId" optional="true" after="2=2" text=" AND MW1.AD_ORG_ID = ? "/>
     <Parameter name="adClientId" optional="true" after="6=6" text=" AND MW1.AD_CLIENT_ID = TO_NUMBER(?) "/>    
