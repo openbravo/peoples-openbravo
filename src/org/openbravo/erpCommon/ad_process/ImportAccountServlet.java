@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SL
- * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
+ * Contributions are Copyright (C) 2001-2008 Openbravo S.L.
  ******************************************************************************
 */
 
@@ -44,13 +44,16 @@ public class ImportAccountServlet extends HttpSecureAppServlet {
     String process = ImportData.processId(this, "ImportAccount");
 		String strTabId = vars.getGlobalVariable("inpTabId", "ImportAccountServlet|tabId");
 		String strWindowId = vars.getGlobalVariable("inpwindowId", "ImportAccountServlet|windowId");
-		String strDeleteOld = vars.getStringParameter("inpDeleteOld", "N");
+		String strDeleteOld = vars.getStringParameter("inpDeleteOld", "Y");
 		String strCElementId = vars.getStringParameter("inpElementId", "");
-		String strUpdateDefault = vars.getStringParameter("inpUpdateDefault", "N");
-		String strCreateNewCombination = vars.getStringParameter("inpCreateNewCombination", "N");
+		String strUpdateDefault = vars.getStringParameter("inpUpdateDefault", "Y");
+		String strCreateNewCombination = vars.getStringParameter("inpCreateNewCombination", "Y");
     if (vars.commandIn("DEFAULT")) {
       printPage(response, vars, process, strWindowId, strTabId, strDeleteOld, strCElementId, strUpdateDefault, strCreateNewCombination);
     } else if (vars.commandIn("SAVE")) {
+		strDeleteOld = vars.getStringParameter("inpDeleteOld", "N");
+		strUpdateDefault = vars.getStringParameter("inpUpdateDefault", "N");
+		strCreateNewCombination = vars.getStringParameter("inpCreateNewCombination", "N");
       ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTabId);
       String strWindowPath="";
       String strTabName="";
