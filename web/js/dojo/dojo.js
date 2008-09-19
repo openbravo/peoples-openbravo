@@ -12188,7 +12188,7 @@ dojo.widget.defineWidget("openbravo.widget.LayoutContainer",dojo.widget.LayoutCo
 openbravo.widget.LayoutContainer.superclass.fillInTemplate.apply(this,arguments);
 }});
 dojo.provide("openbravo.widget.Checkbox");
-dojo.widget.defineWidget("openbravo.widget.Checkbox",dojo.widget.Checkbox,{templatePath:dojo.uri.dojoUri("../openbravo/widget/templates/Checkbox.html"),templateCssPath:null});
+dojo.widget.defineWidget("openbravo.widget.Checkbox",dojo.widget.Checkbox,{templatePath:dojo.uri.dojoUri("deprecated250/Checkbox.html"),templateCssPath:null});
 dojo.provide("openbravo.messages.common");
 var invalidMessage="";
 var missingMessage="";
@@ -12216,10 +12216,10 @@ return obtenerMensaje(_b08);
 };
 openbravo.messages.getMessage=function(_b0a,_b0b){
 if(_b0b==null){
-if (typeof defaultLang != "undefined") {
+if(typeof defaultLang!="undefined"){
 _b0b=defaultLang;
 // Deprecated in 2.50, only for compatibility
-} else {
+}else if (typeof LNG_POR_DEFECTO!="undefined"){
 _b0b=LNG_POR_DEFECTO;
 }
 }
@@ -12249,7 +12249,7 @@ rangeMessage=this.messages.rangeMessage;
 }
 };
 dojo.provide("openbravo.widget.ValidationTextbox");
-dojo.widget.defineWidget("openbravo.widget.ValidationTextbox",dojo.widget.ValidationTextbox,{readonly:false,disabled:false,listenOnKeyPress:false,templatePath:dojo.uri.dojoUri("../openbravo/widget/templates/ValidationTextbox.html"),templateCssPath:null,postMixInProperties:function(_b0e,frag){
+dojo.widget.defineWidget("openbravo.widget.ValidationTextbox",dojo.widget.ValidationTextbox,{readonly:false,disabled:false,listenOnKeyPress:false,templatePath:dojo.uri.dojoUri("deprecated250/ValidationTextbox.html"),templateCssPath:null,postMixInProperties:function(_b0e,frag){
 openbravo.widget.ValidationTextbox.superclass.postMixInProperties.apply(this,arguments);
 this.invalidMessage=openbravo.messages.getDataBaseMessage("Invalid");
 this.missingMessage=openbravo.messages.getDataBaseMessage("Missing");
@@ -12282,7 +12282,7 @@ this.rangeSpan.style.display="none";
 },onchange:function(){
 }});
 dojo.provide("openbravo.widget.ValidationTextArea");
-dojo.widget.defineWidget("openbravo.widget.ValidationTextArea",dojo.widget.ValidationTextbox,{readonly:false,disabled:false,listenOnKeyPress:false,cols:"",rows:"",templatePath:dojo.uri.dojoUri("../openbravo/widget/templates/ValidationTextArea.html"),templateCssPath:null,postMixInProperties:function(_b12,frag){
+dojo.widget.defineWidget("openbravo.widget.ValidationTextArea",dojo.widget.ValidationTextbox,{readonly:false,disabled:false,listenOnKeyPress:false,cols:"",rows:"",templatePath:dojo.uri.dojoUri("deprecated250/ValidationTextArea.html"),templateCssPath:null,postMixInProperties:function(_b12,frag){
 openbravo.widget.ValidationTextArea.superclass.postMixInProperties.apply(this,arguments);
 this.invalidMessage=openbravo.messages.getDataBaseMessage("Invalid");
 this.missingMessage=openbravo.messages.getDataBaseMessage("Missing");
@@ -12315,7 +12315,7 @@ this.rangeSpan.style.display="none";
 },onchange:function(){
 }});
 dojo.provide("openbravo.widget.RealNumberTextbox");
-dojo.widget.defineWidget("openbravo.widget.RealNumberTextbox",dojo.widget.RealNumberTextbox,{readonly:false,disabled:false,listenOnKeyPress:false,greaterThan:"",lowerThan:"",isWrong:false,templatePath:dojo.uri.dojoUri("../openbravo/widget/templates/ValidationTextbox.html"),templateCssPath:null,postMixInProperties:function(_b14,frag){
+dojo.widget.defineWidget("openbravo.widget.RealNumberTextbox",dojo.widget.RealNumberTextbox,{readonly:false,disabled:false,listenOnKeyPress:false,greaterThan:"",lowerThan:"",isWrong:false,templatePath:dojo.uri.dojoUri("deprecated250/ValidationTextbox.html"),templateCssPath:null,postMixInProperties:function(_b14,frag){
 openbravo.widget.RealNumberTextbox.superclass.postMixInProperties.apply(this,arguments);
 this.invalidMessage=openbravo.messages.getDataBaseMessage("Invalid");
 this.missingMessage=openbravo.messages.getDataBaseMessage("Missing");
@@ -12425,7 +12425,7 @@ this.rangeSpan.style.display="";
 this.highlight();
 }});
 dojo.provide("openbravo.widget.DateTextbox");
-dojo.widget.defineWidget("openbravo.widget.DateTextbox",dojo.widget.DateTextbox,{displayFormat:"",saveFormat:"",listenOnKeyPress:false,greaterThan:"",lowerThan:"",isWrong:false,inputDate:new Date(0,0,0),templatePath:dojo.uri.dojoUri("../openbravo/widget/templates/DateTextbox.html"),templateCssPath:null,postMixInProperties:function(_b04,frag){
+dojo.widget.defineWidget("openbravo.widget.DateTextbox",dojo.widget.DateTextbox,{displayFormat:"",saveFormat:"",listenOnKeyPress:false,greaterThan:"",lowerThan:"",isWrong:false,inputDate:new Date(0,0,0),templatePath:dojo.uri.dojoUri("deprecated250/DateTextbox.html"),templateCssPath:null,postMixInProperties:function(_b04,frag){
 openbravo.widget.DateTextbox.superclass.postMixInProperties.apply(this,arguments);
 this.invalidMessage=openbravo.messages.getDataBaseMessage("Invalid");
 this.missingMessage=openbravo.messages.getDataBaseMessage("Missing");
@@ -12643,7 +12643,7 @@ this.onclick();
 this.onchange();
 }});
 dojo.provide("openbravo.widget.DropdownDatePicker");
-dojo.widget.defineWidget("openbravo.widget.DropdownDatePicker",dojo.widget.DropdownDatePicker,{iconURL:dojo.uri.dojoUri("../openbravo/widget/templates/dateIcon.gif"),displayFormat:"",saveFormat:"",templateString:"",templatePath:dojo.uri.dojoUri("../openbravo/widget/templates/DropdownDatePicker.html"),templateCssPath:null,postMixInProperties:function(_b2f,frag){
+dojo.widget.defineWidget("openbravo.widget.DropdownDatePicker",dojo.widget.DropdownDatePicker,{iconURL:dojo.uri.dojoUri("deprecated250/dateIcon.gif"),displayFormat:"",saveFormat:"",templateString:"",templatePath:dojo.uri.dojoUri("deprecated250/DropdownDatePicker.html"),templateCssPath:null,postMixInProperties:function(_b2f,frag){
 this.value=this.dateToRfc3339(this.value,this.displayFormat);
 },fillInTemplate:function(args,frag){
 this.displayFormat=this.displayFormat.replace("mm","MM").replace("DD","dd").replace("YYYY","yyyy");
@@ -12680,7 +12680,7 @@ break;
 return _b34;
 }});
 dojo.provide("openbravo.widget.MessageBox");
-dojo.widget.defineWidget("openbravo.widget.MessageBox",dojo.widget.HtmlWidget,{maxLevel:"Hidden",arrMessages:new Array(),title:"",type:"Hidden",isContainer:"true",templatePath:dojo.uri.dojoUri("../openbravo/widget/templates/MessageBox.html"),templateCssPath:null,fillInTemplate:function(args,frag){
+dojo.widget.defineWidget("openbravo.widget.MessageBox",dojo.widget.HtmlWidget,{maxLevel:"Hidden",arrMessages:new Array(),title:"",type:"Hidden",isContainer:"true",templatePath:dojo.uri.dojoUri("deprecated250/MessageBox.html"),templateCssPath:null,fillInTemplate:function(args,frag){
 if((this.type!=null&&this.type!="")&&((this.title!=null&&this.title!="")||(frag.value!=null&&frag.value!=""))){
 this.setValues(this.type,this.title,frag.value);
 }
@@ -12835,7 +12835,7 @@ this.flags.listSeparator=_b54.listseparator;
 return dojo.validate.isEmailAddressList(this.textbox.value,this.flags);
 }});
 dojo.provide("openbravo.widget.HyperLink");
-dojo.widget.defineWidget("openbravo.widget.HyperLink",dojo.widget.HtmlWidget,{name:"",iconURL:dojo.uri.dojoUri("../openbravo/widget/templates/linkIcon.gif"),iconAlt:"Go to",value:"",containerToggle:"plain",containerToggleDuration:150,templatePath:dojo.uri.dojoUri("../openbravo/widget/templates/HyperLink.html"),templateCssPath:null,fillInTemplate:function(args,frag){
+dojo.widget.defineWidget("openbravo.widget.HyperLink",dojo.widget.HtmlWidget,{name:"",iconURL:dojo.uri.dojoUri("deprecated250/linkIcon.gif"),iconAlt:"Go to",value:"",containerToggle:"plain",containerToggleDuration:150,templatePath:dojo.uri.dojoUri("deprecated250/HyperLink.html"),templateCssPath:null,fillInTemplate:function(args,frag){
 dojo.event.connect(this.inputHyperLinkNode,"onchange",this,"onInputChange");
 dojo.event.connect(this.inputHyperLinkNode,"onkeyup",this,"onInputKeyUp");
 },onClick:function(){

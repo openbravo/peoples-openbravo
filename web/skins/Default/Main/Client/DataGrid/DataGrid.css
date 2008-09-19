@@ -24,21 +24,23 @@
 /* Icons */
 
 .DataGrid_Header_icon_ascArrow {
+  display: inline;
   border: 0px none;
   width: 7px;
   height: 5px;
-  margin: 0px;
+  margin-right: 3px;
   vertical-align: middle;
-  background: url(iconAscArrow.png);
+  background: url(iconAscArrow.png) no-repeat center center;
 }
 
 .DataGrid_Header_icon_descArrow {
+  display: inline;
   border: 0px hidden;
   width: 7px;
   height: 5px;
-  margin: 0px;
+  margin-right: 3px;
   vertical-align: middle;
-  background: url(iconDescArrow.png);
+  background: url(iconDescArrow.png) no-repeat center center;
 }
 
 .DataGrid_Header_icon_delete {

@@ -69,7 +69,7 @@ function windowKeyboardCaptureEvents() {
 }
 
 function activateDefaultAction(){
-  if (defaultActionElement != null || defaultActionElement != 'null' || defaultActionElement != '') {
+  if (defaultActionElement != null && defaultActionElement != 'null' && defaultActionElement != '') {
     if (isSelectedComboOpened != true) {
       keyArray[defaultActionElementArrayPosition] = new keyArrayItem("ENTER", "executeWindowButton(defaultActionElement.getAttribute('id'));", null, null, false, 'onkeydown');
       drawWindowElementDefaultAction(defaultActionElement);
@@ -80,14 +80,14 @@ function activateDefaultAction(){
 }
 
 function disableDefaultAction() {
-  if (defaultActionElement != null || defaultActionElement != 'null' || defaultActionElement != '') {
+  if (defaultActionElement != null && defaultActionElement != 'null' && defaultActionElement != '') {
     keyArray[defaultActionElementArrayPosition] = new keyArrayItem(null, null, null, null, false, null);
     eraseWindowElementDefaultAction(defaultActionElement);
   }
 }
 
 function comboDefaultAction() {
-  if (defaultActionElement != null || defaultActionElement != 'null' || defaultActionElement != '') {
+  if (defaultActionElement != null && defaultActionElement != 'null' && defaultActionElement != '') {
     eraseWindowElementDefaultAction(defaultActionElement);
     keyArray[defaultActionElementArrayPosition] = new keyArrayItem("ENTER", "isSelectedComboOpened=false; activateDefaultAction();", null, null, false, 'onkeydown');
   }
@@ -258,6 +258,7 @@ function cursorFocus(evt, obj) {
 function isInsideWindowTable(obj) {
   try {
     for(;;) {
+      if(obj == null) { return false; }
       obj=obj.parentNode;
       for(var i=0;i<windowTables.length;i++) {
         if (obj==document.getElementById(windowTables[i].tableId)) {
@@ -1569,25 +1570,25 @@ function getActiveTabContainer() {
 
 function focusGrid() {
   try {
-    dojo.widget.byId('grid').focusGrid();
+    dijit.byId('grid').focusGrid();
   } catch(e){}
 }
 
 function blurGrid() {
   try {
-    dojo.widget.byId('grid').blurGrid();
+    dijit.byId('grid').blurGrid();
   } catch(e){}
 }
 
 function windowUpKey() {
   if (isGridFocused) {
-    dojo.widget.byId('grid').goToPreviousRow();
+    dijit.byId('grid').goToPreviousRow();
   }
 }
 
 function windowDownKey() {
   if (isGridFocused) {
-    dojo.widget.byId('grid').goToNextRow();
+    dijit.byId('grid').goToNextRow();
   }
 }
 
@@ -1603,25 +1604,25 @@ function windowRightKey() {
 
 function windowHomeKey() {
   if (isGridFocused) {
-    dojo.widget.byId('grid').goToFirstRow();
+    dijit.byId('grid').goToFirstRow();
   }
 }
 
 function windowEndKey() {
   if (isGridFocused) {
-    dojo.widget.byId('grid').goToLastRow();
+    dijit.byId('grid').goToLastRow();
   }
 }
 
 function windowAvpageKey() {
   if (isGridFocused) {
-    dojo.widget.byId('grid').goToNextPage();
+    dijit.byId('grid').goToNextPage();
   }
 }
 
 function windowRepageKey() {
   if (isGridFocused) {
-    dojo.widget.byId('grid').goToPreviousPage();
+    dijit.byId('grid').goToPreviousPage();
   }
 }
 

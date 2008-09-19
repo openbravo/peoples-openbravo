@@ -25,7 +25,7 @@
 */
 
 //Valores por defecto
-//var LNG_POR_DEFECTO = "en_US";
+//var defaultLang = "en_US";
 var gDefaultType = 0;
 
 function messageType(_messageID, _messageType) {
@@ -44,7 +44,7 @@ function getMessage(index, _language) {
 	if (_language==null) {
 		if (typeof defaultLang != "undefined") {
 			_language = defaultLang;
-		} else {
+		} else if (typeof LNG_POR_DEFECTO != "undefined") {
 			// Deprecated in 2.50, the following code is only for compatibility
 			_language = LNG_POR_DEFECTO;
 		}
@@ -62,7 +62,8 @@ function getDefaultText(index, _language) {
   if (_language==null) {
     if (typeof defaultLang != "undefined") {
       _language = defaultLang;
-    } else {// Deprecated in 2.50, the following code is only for compatibility
+    } else if (typeof LNG_POR_DEFECTO != "undefined") {
+      // Deprecated in 2.50, the following code is only for compatibility
       _language = LNG_POR_DEFECTO;
     }
   }

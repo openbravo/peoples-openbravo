@@ -240,7 +240,7 @@ function checkAttachmentIcon(){
 }
 
 function checkAttachmentIconRelation(){
-  var value = dojo.widget.byId('grid').getSelectedRows();
+  var value = dijit.byId('grid').getSelectedRows();
   if (value==null || value=="" || value.length>1) return false;
   setInputValue(document.frmMain.inpKeyName.value, value);    
   checkAttachmentIcon();

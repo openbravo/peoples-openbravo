@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2007 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,45 +23,41 @@
 
 dojo.provide("openbravo.widget.DataGrid");
 
-dojo.require("dojo.widget.*");
-dojo.require("dojo.event.*");
-dojo.require("dojo.lfx.html.*");
-dojo.require("dojo.html.*");
-dojo.require("dojo.html.metrics");
-dojo.require("dojo.collections.Dictionary");
-dojo.require("dojo.widget.Dialog");
-dojo.require("openbravo.html");
-dojo.require("openbravo.io");
+dojo.require("dijit._Widget");
+dojo.require("dojox.collections.Dictionary");
+dojo.require("dojox.data.dom");
 
 function createTextCellElement(colMetadata) {
-
   var hoverCell = function(evt) {
-    if (dojo && !dojo.html.hasClass(this, 'DataGrid_Body_Cell_hover')
-        && !dojo.html.hasClass(this, 'DataGrid_Body_Cell_clicked'))
-      dojo.html.prependClass(this, 'DataGrid_Body_Cell_hover');
+    if (dojo && !dojo.hasClass(this, 'DataGrid_Body_Cell_hover')
+        && !dojo.hasClass(this, 'DataGrid_Body_Cell_clicked')){
+      dojo.addClass(this, 'DataGrid_Body_Cell_hover');
+    }
   };
 
   var plainCell = function(evt) {
-    if (dojo && dojo.html.hasClass(this, 'DataGrid_Body_Cell_hover'))
-      dojo.html.removeClass(this, 'DataGrid_Body_Cell_hover', false);
+    if (dojo && dojo.hasClass(this, 'DataGrid_Body_Cell_hover')){
+      dojo.removeClass(this, 'DataGrid_Body_Cell_hover', false);
+    }
   };
 
   var text = document.createElement("nobr");
   text.className = openbravo.widget.DataGrid.Column.prototype.DEFAULT_CLASS;
-  dojo.html.prependClass(text, colMetadata.className);
+  dojo.addClass(text, colMetadata.className);
   text.onmouseover = hoverCell;
   text.onmouseout = plainCell;
-  dojo.html.disableSelection(text);
+  openbravo.widget.DataGrid.html.disableSelection(text);
   var emptyText = document.createTextNode("");
   text.appendChild(emptyText);
-  if (colMetadata.visible)
+  if (colMetadata.visible){
     text.style.width = colMetadata.width;
-  else 
+  }else{ 
     text.style.display = "none";
+  }
   return text;
 };
 
-dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
+dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
   structureUrl: "",
   dataUrl: "",
   updatesUrl: "",
@@ -81,7 +77,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
   lineNoColumnTitle: "#",
   lineNoColumnClass: "DataGrid_Body_LineNoCell",
   lineNoColumnHeaderClass: "DataGrid_Header_LineNoCell",
-  bufferSize: 7.0,		
+  bufferSize: 7.0,
   maxWidth: "100%",
   percentageWidthRelativeToId: "body",
   isFirstLoad: true,
@@ -98,8 +94,9 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 * @param {Object} parentComp - component parent
 */
   postMixInProperties: function(args, frag, parentComp) {
-    if (this.updatesUrl == "")
+    if (this.updatesUrl == ""){
       this.updatesUrl = dataUrl;
+    }
     this.selectedRows = new openbravo.widget.DataGrid.IndexedRows();
     if (this.calculateNumRows == true) {
       this.numRows = calculateNumRows();
@@ -117,16 +114,17 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
     this.requestParams = [];
     this.visibleRows = this.numRows;
     this.visibleRowsMax = this.numRows;
-    this.scrollWidth = dojo.html.getScrollbar().width;
-    if (this.onInvalidValue == alert)
+    this.scrollWidth = openbravo.widget.DataGrid.html.getScrollbar().width;
+    if (this.onInvalidValue == alert){
       this.onInvalidValue = function(msg) { alert(msg); };
+    }
     this.savingInterface = {
-      save: dojo.lang.hitch(this, "saveCell"),
-      cancel: dojo.lang.hitch(this, "cancelEdit"),
-      lockGrid: dojo.lang.hitch(this, function() {
+      save: dojo.hitch(this, "saveCell"),
+      cancel: dojo.hitch(this, "cancelEdit"),
+      lockGrid: dojo.hitch(this, function() {
         this.locked = true;
       }),
-      unlockGrid: dojo.lang.hitch(this, function() {
+      unlockGrid: dojo.hitch(this, function() {
         this.locked = false;
         this.setFocus();
       }),
@@ -134,7 +132,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
       updatesUrl: this.updatesUrl
     };
     this.errorHandler = {
-      handleError: dojo.lang.hitch(this, "handleUpdateError")
+      handleError: dojo.hitch(this, "handleUpdateError")
     };
     this.columns = new openbravo.widget.DataGrid.Columns();
     this.numberOfResizes = 0;
@@ -147,8 +145,8 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
   postCreate: function() {
     var row = document.createElement("tr");
     row.className = 'DataGrid_Body_Row';
-    var height = dojo.html.getStyle(row, "height", "15px");
-    // height = openbravo.html.extractPx(height);
+    var height = dojo.style(row, "height", "15px");
+    // height = openbravo.widget.DataGrid.html.extractPx(height);
     this.domNode.style.height = (28) * (this.numRows + 1) + "px";
     var pos = this.maxWidth.indexOf("%");
     if (pos > 0) {
@@ -166,14 +164,14 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 */
   requestStructure: function(url, handler, content) {
     var parser = new openbravo.widget.DataGrid.Parser(this);
-    var handlerRef = dojo.lang.hitch(parser, "ajaxUpdate");
+    var handlerRef = dojo.hitch(parser, "ajaxUpdate");
     var serviceUrl = {
       url: this.structureUrl,
       handler: handlerRef,
       method: "GET",
-      mimetype: "text/xml"
+      handleAs: "xml"
     };
-    openbravo.io.asyncCall(serviceUrl, {});
+    openbravo.widget.DataGrid.io.asyncCall(serviceUrl, {});
   },
 
 /**
@@ -181,25 +179,26 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 * @param {Object} cell - Object pointing to the actual cell
 */
   editCell: function(cell) {
-    if (this.editing)
-  	  this.saveCell();
+    if (this.editing){
+      this.saveCell();
+    }
     if (!this.editing && this.editable) {
       var rowNode = cell.parentNode;
-      var columnNo = dojo.lang.indexOf(cell.parentNode.cells, cell);
+      var columnNo = dojo.indexOf(cell.parentNode.cells, cell);
       var column = this.columns.get(columnNo);
-      if (column.readonly) return;
+      if (column.readonly) { return; }
       var rowNo = this.getCurrentOffset() + rowNode.rowIndex;
       var rowChanged = this.editingRow && this.editingRow.offset != rowNo;
-      if (!this.editingRow || rowChanged)
+      if (!this.editingRow || rowChanged){
         this.editingRow = this.buffer.getRow(rowNo);
+      }
       this.editingRow.setStatus(this.editingRow.EDITING);
       this.editor = column.renderEditor(cell, this.editingRow, this.savingInterface);
-      dojo.html.enableSelection(cell);
+      openbravo.widget.DataGrid.html.enableSelection(cell);
       this.editingCell = cell;
       this.editing = true;
     }
   },
-		
 
 /**
 * Saves the modified content of a cell that is in edition mode, hidding its edition mode. At the same time, it checks data, so if invalid data were found, it will launch the method onInvalidValue. If the column is defined as synchronized column, the launch to the backend for the synchronization will be launched.
@@ -208,8 +207,8 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 */
   saveCell: function() {
     var cell = this.editingCell;
-    if (!cell) return;
-    var columnNo = dojo.lang.indexOf(cell.parentNode.cells, cell);
+    if (!cell) { return; }
+    var columnNo = dojo.indexOf(cell.parentNode.cells, cell);
     var column = this.columns.get(columnNo);
     var storedValue = this.editingRow.getValue(column.index);
     var inputValue = this.editor.getValue();
@@ -224,11 +223,12 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
         for (var i = 0; i < column.invalidates.length; i++) {
           var invalidIndex = this.columns.get(column.invalidates[i]).index;
           this.editingRow.setValue(column.invalidates[i], "");
-          openbravo.html.clearElement(cell.parentNode.childNodes[invalidIndex]);
+          openbravo.widget.DataGrid.html.clearElement(cell.parentNode.childNodes[invalidIndex]);
         }
       }
-      if (column.sync)
+      if (column.sync){
         this.saveRow(true);
+      }
       this.hideEditor(inputValue);
       return true;
     } else {
@@ -247,8 +247,9 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 */
   saveRow: function(skipAlerts) {
     var row = this.editingRow;
-    if (!row.modified && !row.error)
+    if (!row.modified && !row.error){
       return true;
+    }
     skipAlerts = skipAlerts == true;
 
     var emptyFields = row.checkFields();
@@ -257,7 +258,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
         this.onInvalidValue("A required field is empty");
         var cellNumber = emptyFields[0];
         var isVisible = this.isVisible(row.offset);
-        var edit = dojo.lang.hitch(this, function() {
+        var edit = dojo.hitch(this, function() {
           this.options.onRefreshComplete.remove(edit);
           this.editCell(row.rowNode.cells[cellNumber]);
         });
@@ -268,9 +269,9 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
           edit();
         }
       }
-    }
-    else
+    }else{
       row.validate(this.validators);
+    }
     if (!row.error) {
       row.sendRow(this.updatesUrl);
       return true;
@@ -287,7 +288,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 */
   createRowObject: function(offset) {
     return new openbravo.widget.DataGrid.Row(offset, this.columns, 
-      this.options, this.errorHandler, dojo.lang.hitch(this, "isVisible"));
+      this.options, this.errorHandler, dojo.hitch(this, "isVisible"));
   },
 
 /**
@@ -302,12 +303,12 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
     var tbody = document.createElement("tbody");
     var titleRow = document.createElement("tr");
     var titleCell = document.createElement("td");
-    dojo.html.prependClass(titleCell, "messageDialogTitle");
+    dojo.addClass(titleCell, "messageDialogTitle");
     titleCell.appendChild(document.createTextNode(title));
     titleRow.appendChild(titleCell);
     var descRow = document.createElement("tr");
     var descCell = document.createElement("td");
-    dojo.html.prependClass(descCell, "messageDialogText");
+    dojo.addClass(descCell, "messageDialogText");
     descCell.appendChild(document.createTextNode(description));
     descCell.innerHTML = descCell.innerHTML + '<br/><br/>';
     descRow.appendChild(descCell);
@@ -317,7 +318,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
     var saveButton = document.createElement("input");
     saveButton.type= "button";
     saveButton.value= "OK";
-    dojo.html.prependClass(saveButton, 'dialogButton');
+    dojo.addClass(saveButton, 'dialogButton');
     buttonCell.appendChild(saveButton);
     buttonRow.appendChild(buttonCell);
     tbody.appendChild(titleRow);
@@ -333,8 +334,8 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
       // toggleDuration: 250
     }
     var dialog = dojo.widget.createWidget("dojo:Dialog", options, contentForm);
-    dojo.event.connect(saveButton, "onclick", dialog, "hide");
-    dojo.event.connect(dialog, "hide", dialog, "destroy");
+    dojo.connect(saveButton, "onclick", dialog, "hide");
+    dojo.connect(dialog, "hide", dialog, "destroy");
     dialog.show();
   },
 
@@ -342,12 +343,13 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 * It cancels the edition of a cell. It verifies if some mistake had been produced in the same one, to show the mistake instead of cancelling. It is the method used to go out of a cell in edition.
 */
   cancelEdit: function() {
-    if (!this.editing) return;
+    if (!this.editing) { return; }
     var rowId = this.editingRow.getValue(this.columns.getIdentifier().index);
-    if (this.options.failedRows.contains(rowId))
+    if (this.options.failedRows.contains(rowId)){
       this.editingRow.setStatus(this.editingRow.ERROR);
-    else
+    }else{
       this.editingRow.setStatus(this.editingRow.CORRECT);
+    }
     this.hideEditor(this._getEditingCellContent(this.editingCell));
   },
 
@@ -357,22 +359,22 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 */
   hideEditor: function(newContent) {
     var s = newContent;
-    if (s && typeof s == 'string') newContent = s.split(" ").join("&nbsp;");
+    if (s && typeof s == 'string') { newContent = s.split(" ").join("&nbsp;"); }
     var editingElement = this.editingCell;
-    if (!editingElement) return;
-    dojo.html.disableSelection(editingElement);
+    if (!editingElement) { return; }
+    openbravo.widget.DataGrid.html.disableSelection(editingElement);
     this.editing = false;
     this.editingCell = null;
     var column = null;
-    var columnNo = dojo.lang.indexOf(editingElement.parentNode.cells, editingElement);
+    var columnNo = dojo.indexOf(editingElement.parentNode.cells, editingElement);
     column = this.columns.get(columnNo);
     /*try {
       while (column.hasChildNodes()) column.removeChild(column.lastChild);
     } catch (ignored) {column.innerHTML="";}
     var textNode = createTextCellElement(column);*/
-    if (column && column.type.name == 'url' && newContent != '') editingElement.innerHTML = "<a href=\"" + newContent + "\" target=_blank><img src=\"../web/js/openbravo/widget/templates/popup1.gif\" border=\"0\ title=\"Link\" alt=\"Link\"></a>&nbsp;" + newContent;
-    if (column && column.type.name == 'img' && newContent != '') editingElement.innerHTML = "<img src=\"" + newContent + "\" border=\"0\" height=\"15px\">";
-    else editingElement.innerHTML = newContent;
+    if (column && column.type.name == 'url' && newContent != '') { editingElement.innerHTML = "<a href=\"" + newContent + "\" target=_blank><img src=\"../web/js/openbravo/templates/popup1.gif\" border=\"0\" title=\"Link\" alt=\"Link\"></a>&nbsp;" + newContent; }
+    if (column && column.type.name == 'img' && newContent != '') { editingElement.innerHTML = "<img src=\"" + newContent + "\" border=\"0\" height=\"15px\">"; }
+    else { editingElement.innerHTML = newContent; }
     //editingElement.appendChild(textNode);
   },
 
@@ -383,7 +385,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 * @type String
 */
   _getEditingCellContent: function(cell) {
-    var columnNo = dojo.lang.indexOf(cell.parentNode.cells, cell);
+    var columnNo = dojo.indexOf(cell.parentNode.cells, cell);
     var column = this.columns.get(columnNo);
     return this.editingRow.getValue(column.index);
   },
@@ -395,53 +397,55 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
     var selectedCount = this.selectedRows.count();
     var offset = this.getCurrentOffset();
     var lastRowFound = false;
-    if (selectedCount > 0)
+    if (selectedCount > 0){
       var lastSelectedRowId = this.selectedRows.getLastSelected().id;
+    }
     for (var i = 0; i < this.numRows; i++) {
       var currentRow = this.buffer.getRow(offset + i);
-      if (!currentRow) continue;
+      if (!currentRow) { continue; }
       if (selectedCount > 0 && this.selectedRows.contains(currentRow.getValue(this.columns.getIdentifier().index)) || currentRow.isNewRow) {
         if(isGridFocused) {
-          openbravo.html.prereplaceClass(this.tableNode.rows[i], 
+          openbravo.widget.DataGrid.html.prereplaceClass(this.tableNode.rows[i], 
             "DataGrid_Body_Row_focus",
             i % 2 == 0 ? "DataGrid_Body_Row_Even" : "DataGrid_Body_Row_Odd");
         } else {
-          openbravo.html.prereplaceClass(this.tableNode.rows[i], 
+          openbravo.widget.DataGrid.html.prereplaceClass(this.tableNode.rows[i], 
             "DataGrid_Body_Row_selected",
             i % 2 == 0 ? "DataGrid_Body_Row_Even" : "DataGrid_Body_Row_Odd");
         }
         for (var j = 0; j < this.columns.count(); j++) {
-          if (!dojo.html.hasClass(this.tableNode.rows[i].cells[j], "DataGrid_Body_Cell_selected")) {
-            dojo.html.prependClass(this.tableNode.rows[i].cells[j], "DataGrid_Body_Cell_selected");
+          if (!dojo.hasClass(this.tableNode.rows[i].cells[j], "DataGrid_Body_Cell_selected")) {
+            dojo.addClass(this.tableNode.rows[i].cells[j], "DataGrid_Body_Cell_selected");
           }
-          if (dojo.html.hasClass(this.tableNode.rows[i].cells[j], "DataGrid_Body_Cell_clicked")) {
-            dojo.html.removeClass(this.tableNode.rows[i].cells[j], "DataGrid_Body_Cell_clicked");
+          if (dojo.hasClass(this.tableNode.rows[i].cells[j], "DataGrid_Body_Cell_clicked")) {
+            dojo.removeClass(this.tableNode.rows[i].cells[j], "DataGrid_Body_Cell_clicked");
           }
         }
         selectedCount--;
         if (this.selectedCell >= 0 && !lastRowFound) {
           if (currentRow.getValue(this.columns.getIdentifier().index) == lastSelectedRowId){ 
-            if (!dojo.html.hasClass(this.tableNode.rows[i].cells[this.selectedCell], "DataGrid_Body_Cell_clicked"))
-              dojo.html.prependClass(this.tableNode.rows[i].cells[this.selectedCell], " DataGrid_Body_Cell_clicked");
+            if (!dojo.hasClass(this.tableNode.rows[i].cells[this.selectedCell], "DataGrid_Body_Cell_clicked")){
+              dojo.addClass(this.tableNode.rows[i].cells[this.selectedCell], " DataGrid_Body_Cell_clicked");
+            }
             lastRowFound = true;
           }
         }
       } else {
         if(isGridFocused) {
-          openbravo.html.prereplaceClass(this.tableNode.rows[i], 
+          openbravo.widget.DataGrid.html.prereplaceClass(this.tableNode.rows[i], 
             i % 2 == 0 ? "DataGrid_Body_Row_Even" : "DataGrid_Body_Row_Odd", 
             "DataGrid_Body_Row_focus");
         } else {
-          openbravo.html.prereplaceClass(this.tableNode.rows[i], 
+          openbravo.widget.DataGrid.html.prereplaceClass(this.tableNode.rows[i], 
             i % 2 == 0 ? "DataGrid_Body_Row_Even" : "DataGrid_Body_Row_Odd", 
             "DataGrid_Body_Row_selected");
         }
         for (var j = 0; j < this.columns.count(); j++) {
-          if (dojo.html.hasClass(this.tableNode.rows[i].cells[j], "DataGrid_Body_Cell_selected")) {
-            dojo.html.removeClass(this.tableNode.rows[i].cells[j], "DataGrid_Body_Cell_selected");
+          if (dojo.hasClass(this.tableNode.rows[i].cells[j], "DataGrid_Body_Cell_selected")) {
+            dojo.removeClass(this.tableNode.rows[i].cells[j], "DataGrid_Body_Cell_selected");
           }
-          if (dojo.html.hasClass(this.tableNode.rows[i].cells[j], "DataGrid_Body_Cell_clicked")) {
-            dojo.html.removeClass(this.tableNode.rows[i].cells[j], "DataGrid_Body_Cell_clicked");
+          if (dojo.hasClass(this.tableNode.rows[i].cells[j], "DataGrid_Body_Cell_clicked")) {
+            dojo.removeClass(this.tableNode.rows[i].cells[j], "DataGrid_Body_Cell_clicked");
           }
         }
       }
@@ -453,8 +457,9 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 * @param {EventHandler} evt - event handler
 */
   handleScroll: function(evt) {
-    if (this.editing)
+    if (this.editing){
       this.cancelEdit();
+    }
   },
 
 /**
@@ -480,10 +485,11 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
     try {
       isNobr = (node.nodeName.toLowerCase() == "nobr");
     } catch (ignored) {isNobr = false;}
-    while (node && (!dojo.html.hasClass(node, 'DataGrid_Body_Cell_hover') || isNobr)) {
-      node = dojo.html.getParentByType(node, "td");
-      if (node && !dojo.html.hasClass(node, 'DataGrid_Body_Cell_hover'))
+    while (node && (!dojo.hasClass(node, 'DataGrid_Body_Cell_hover') || isNobr)) {
+      node = openbravo.widget.DataGrid.html.getParentByType(node, "td");
+      if (node && !dojo.hasClass(node, 'DataGrid_Body_Cell_hover')){
         node = node.parentNode;
+      }
       try {
         isNobr = (node.nodeName.toLowerCase() == "nobr");
       } catch (ignored) {isNobr = false;}
@@ -506,10 +512,11 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
       node = this._getContainerCell(node);
       isCell = (node.nodeName.toLowerCase() == "nobr");
     }
-    if (this.editable && node && node != this.editingCell)
+    if (this.editable && node && node != this.editingCell){
       this.editCell(node);
-    else if (node)
+    }else if (node){
       onRowDblClick(node);
+    }
   },
 
 /**
@@ -521,7 +528,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
     focusGrid();
     currentWindowElementType = 'grid';
     setWindowElementFocus('grid_table_dummy_input','id');
-    if (this.locked) return;
+    if (this.locked) { return; }
     this.lastHoveredColumn = null;
     var isCell = (evt.target.nodeName.toLowerCase() == "td");
     var cell = evt.target;
@@ -529,7 +536,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
       cell = this._getContainerCell(cell);
       isCell = (evt.target.nodeName.toLowerCase() == "nobr");
     }
-    if (!cell) return;
+    if (!cell) { return; }
     var rowNode = cell.parentNode;
     var offset = this.getCurrentOffset() + rowNode.rowIndex;
     var success = true;
@@ -539,8 +546,9 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
     if (this.editingRow && this.editingRow.offset != offset && isCell && success) {
       success = this.saveRow();
     }
-    if (isCell && (!this.editingRow || !this.editingRow.error) && success)
+    if (isCell && (!this.editingRow || !this.editingRow.error) && success) {
       this.handleSelection(evt);
+    }
     checkAttachmentIconRelation();
   },
 
@@ -555,12 +563,13 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
       cell = this._getContainerCell(cell);
     }
     var rowNode = cell.parentNode;
-    if (!rowNode) return;
-    if ((!evt.ctrlKey && !evt.shiftKey) || this.multipleRowSelection==false)
+    if (!rowNode) { return; }
+    if ((!evt.ctrlKey && !evt.shiftKey) || this.multipleRowSelection==false){
       this.selectedRows.clear();
-    var rowNo =	this.getCurrentOffset() + rowNode.rowIndex;
+    }
+    var rowNo = this.getCurrentOffset() + rowNode.rowIndex;
     var gridRow = this.buffer.getRow(rowNo);
-    if (!gridRow) return;
+    if (!gridRow) { return; }
     this.tableNode.focus();
     if (evt.shiftKey) {
       if(this.selectedRows.count() > 0) {
@@ -581,9 +590,9 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
         } else {
           var serviceUrl = {
             url: this.dataUrl,
-            handler: dojo.lang.curry(this, "idsReceived", minValue),
+            handler: dojo.hitch(this, "idsReceived", minValue),
             method: "POST",
-            mimetype: "text/xml"
+            handleAs: "xml"
           };
           if (this.requestParams) {
             for (var param in this.requestParams) {
@@ -598,20 +607,21 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
             content["sort_cols"] = this.sortCols;
             content["sort_dirs"] = this.sortDirs;
           }
-          openbravo.io.asyncCall(serviceUrl, content);
+          openbravo.widget.DataGrid.io.asyncCall(serviceUrl, content);
         }
       }
     }
-    if (evt.ctrlKey && dojo.html.hasClass(rowNode, "DataGrid_Body_Row_focus")) {
+    if (evt.ctrlKey && dojo.hasClass(rowNode, "DataGrid_Body_Row_focus")) {
       this.selectedRows.remove(gridRow.getValue(this.columns.getIdentifier().name));
     } else {
       var row = {id: gridRow.getValue(this.columns.getIdentifier().name), offset: rowNo};
       this.selectedRows.add(row);
-      this.selectedCell = dojo.lang.indexOf(cell.parentNode.cells, cell);
+      this.selectedCell = dojo.indexOf(cell.parentNode.cells, cell);
     }
     this.showSelection();
-    if (evt.shiftKey || evt.ctrlKey)
-      dojo.event.browser.stopEvent(evt);
+    if (evt.shiftKey || evt.ctrlKey){
+      dojo.stopEvent(evt);
+    }
   },
 
 /**
@@ -621,7 +631,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 */
   addSelectedRow: function(id, offset) {
     var row = {id: id, offset: offset};
-    this.selectedRows.add(row);	
+    this.selectedRows.add(row);
   },
 
 /**
@@ -634,17 +644,17 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
       var type = status[0].getElementsByTagName('type');
       var title = status[0].getElementsByTagName('title');
       var description = status[0].getElementsByTagName('description');
-      if (dojo.dom.textContent(type[0]).toUpperCase() != 'HIDDEN') {
+      if (dojox.data.dom.textContent(type[0]).toUpperCase() != 'HIDDEN') {
         try {
-          renderMessageBox(dojo.dom.textContent(type[0]),dojo.dom.textContent(title[0]),dojo.dom.textContent(description[0]));
+          renderMessageBox(dojox.data.dom.textContent(type[0]),dojox.data.dom.textContent(title[0]),dojox.data.dom.textContent(description[0]));
         } catch (err) {
-          alert(dojo.dom.textContent(title[0]) + ":\n" + dojo.dom.textContent(description[0]));
+          alert(dojox.data.dom.textContent(title[0]) + ":\n" + dojox.data.dom.textContent(description[0]));
         }
       }
     }
     var ids = xmlrangeid[0].getElementsByTagName('id');
     for (var i = 0; i < ids.length; i++) {
-      this.addSelectedRow(dojo.dom.textContent(ids[i]), minOffset + i);
+      this.addSelectedRow(dojox.data.dom.textContent(ids[i]), minOffset + i);
     }
     this.showSelection();
   },
@@ -655,7 +665,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
   enterKeyPressed: function() {
     if (this.editing) {
       this.saveCell();
-      dojo.lang.setTimeout(this, dojo.lang.hitch(this, function() {
+      setTimeout( dojo.hitch(this, function() {
         this.setFocus();
       }), 200);
     } else {
@@ -667,8 +677,9 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
           this.goToRow(rowOffset);
         } else {
           var rowNo = rowOffset - this.getCurrentOffset();
-          if (rowNo >= 0)
+          if (rowNo >= 0){
             this.editCell(this.tableNode.rows[rowNo].cells[this.selectedCell]);
+          }
         }
       }
     }
@@ -682,19 +693,17 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 */
   getStartEditingFunction: function(rowOffset) {
     var _this = this;
-    var curry =  function() {
-      dojo.lang.curry(_this, "startEditingCell", rowOffset, curry);
-    };  
-    return curry;
+    var hitch =  dojo.hitch(_this, "startEditingCell", rowOffset, hitch);
+    return hitch;
   },
 
 /**
 * Manage the begining of the edition of a cell
 * @param {Number} rowOffset - row offset
-* @param {Handler} curry - handler to itself
+* @param {Handler} hitch - handler to itself
 */
-  startEditingCell: function(rowOffset, curry) {
-    this.options.onRefreshComplete.remove(curry);
+  startEditingCell: function(rowOffset, hitch) {
+    this.options.onRefreshComplete.remove(hitch);
     var currentOffset = this.getCurrentOffset();
     var rowNo = rowOffset - currentOffset;
     if (rowNo >= 0) {
@@ -709,8 +718,9 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 */
   _getKeyMapping: function() {
     if (!this.keyMapping) {
-      var k = dojo.event.browser.keys;
-      var m = this.keyMapping = [];
+      var k = dojo.keys;
+      this.keyMapping = [];
+      var m = this.keyMapping;
       /* Remove to let the shortcuts.js to do the job
       m[k.KEY_ESCAPE] = this.cancelEdit;
       m[k.KEY_ENTER] = this.enterKeyPressed;
@@ -725,7 +735,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
       m[k.KEY_PAGE_UP] = this.goToPreviousPage;
       m[k.KEY_PAGE_DOWN] = this.goToNextPage;
       for (var key in m) {
-        m[key] = dojo.lang.hitch(this, m[key]);
+        m[key] = dojo.hitch(this, m[key]);
       }*/
     }
     return this.keyMapping;
@@ -738,7 +748,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 */
   _getKeyEventsToStop: function() {
     if (!this.keyEventsToStop) {
-      var k = dojo.event.browser.keys;
+      var k = dojo.keys;
       this.keyEventsToStop = [k.KEY_UP_ARROW, k.KEY_DOWN_ARROW,
         k.KEY_HOME, k.KEY_END];
     }
@@ -751,7 +761,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 * @type Array.
 */
   _allowedKeys: function() {
-    var k = dojo.event.browser.keys;
+    var k = dojo.keys;
     return [k.KEY_ENTER, k.KEY_ESCAPE];
   },
 
@@ -760,16 +770,18 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 * @param {EventHandler} evt - event handler
 */
   keyPressed: function(evt) {
-    if (this.locked) return;
-    var k = dojo.event.browser.keys;
+    if (this.locked) { return; }
+    var k = dojo.keys;
     var keyCode = evt.keyCode;
-    var stopEvent = dojo.lang.inArray(this._getKeyEventsToStop(), keyCode);
-    if (this.editing && !dojo.lang.inArray(this._allowedKeys(), keyCode)) return;
+    var stopEvent = openbravo.widget.DataGrid.html.inArray(this._getKeyEventsToStop(), keyCode);
+    if (this.editing && !openbravo.widget.DataGrid.html.inArray(this._allowedKeys(), keyCode)) { return; }
     var handler = this._getKeyMapping()[keyCode];
-    if (handler)
+    if (handler){
       handler();
-    if (stopEvent || keyCode == k.KEY_ENTER && dojo.render.html.ie)
-      dojo.event.browser.stopEvent(evt);
+    }
+    if (stopEvent || keyCode == k.KEY_ENTER && dojo.isIE){
+      dojo.stopEvent(evt);
+    }
   },
 
 /**
@@ -777,8 +789,9 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 * @param {EventHandler} evt - event handler
 */
   onPageUnload: function(evt) {
-    if (this.editingRow)
+    if (this.editingRow){
       this.saveRow();
+    }
   },
 
 /**
@@ -805,13 +818,14 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
       var cellNo = this.selectedCell + mov;
       while(cellNo >= 0 && cellNo < this.columns.count() && !validRow) {
         validRow = this.checkCell(cellNo);
-        if (!validRow)
+        if (!validRow){
           cellNo += mov;
+        }
       }
       if (validRow) {
         this.selectedCell = cellNo;
         this.showSelection();
-        dojo.html.scrollIntoView(this.tableNode.rows[0].cells[this.selectedCell]);
+        dijit.scrollIntoView(this.tableNode.rows[0].cells[this.selectedCell]);
       }
     }
   },
@@ -836,10 +850,11 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 * @param {EventHandler} evt - event handler
 */
   hoverCellHeader: function(evt) {
-    if (!dojo.html.hasClass(evt.target, 'DataGrid_Header_Cell_hover'))
-      dojo.html.prependClass(evt.target, 'DataGrid_Header_Cell_hover');
-    var header = dojo.html.getParentByType(evt.target, "th");
-    var columnNo = dojo.lang.indexOf(header.parentNode.cells, header);
+    if (!dojo.hasClass(evt.target, 'DataGrid_Header_Cell_hover')){
+      dojo.addClass(evt.target, 'DataGrid_Header_Cell_hover');
+    }
+    var header = openbravo.widget.DataGrid.html.getParentByType(evt.target, "th");
+    var columnNo = dojo.indexOf(header.parentNode.cells, header);
     var column = this.columns.get(columnNo);
     if (column != null && this.selectedRows.count() > 0) {
       var index = column.index;
@@ -856,11 +871,11 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
             if (this.buffer.isInRange(offset)) {
               var bufferedRow = this.buffer.getRow(offset);
               total += parseFloat(bufferedRow.getValue(index));
-            } else dataInBuffer = false;
+            } else { dataInBuffer = false; }
           }
-          if (!dataInBuffer)
+          if (!dataInBuffer){
             this.requestColumnTotals(column.name);
-          else {
+          } else {
             this.lastAddition = total;
             window.status = parseFloat(this.lastAddition);
           }
@@ -869,8 +884,9 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
         }
       } else {
         var type = this.lastHoveredColumn.type.name;
-        if (type == "integer" || type == "float")
+        if (type == "integer" || type == "float"){
           window.status = parseFloat(this.lastAddition);
+        }
       }
     }
   },
@@ -880,7 +896,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 * @param {String} rowName - name of the row
 */
   requestColumnTotals: function(rowName){
-    var handlerRef = dojo.lang.hitch(this, "showColumnTotals");
+    var handlerRef = dojo.hitch(this, "showColumnTotals");
     var params = [];
     params["action"] = "getColumnTotals";
     params["columnName"] = rowName;
@@ -889,9 +905,9 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
       url: this.dataUrl,
       handler: handlerRef,
       method: "POST",
-      mimetype: "text/xml"
+      handleAs: "xml"
     };
-    openbravo.io.asyncCall(serviceUrl, params);
+    openbravo.widget.DataGrid.io.asyncCall(serviceUrl, params);
   },
 
 /**
@@ -899,8 +915,9 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 * @param {EventHandler} evt - event handler
 */
   plainCellHeader: function(evt) {
-    if (dojo.html.hasClass(evt.target, 'DataGrid_Header_Cell_hover'))
-      dojo.html.removeClass(evt.target, 'DataGrid_Header_Cell_hover', false);
+    if (dojo.hasClass(evt.target, 'DataGrid_Header_Cell_hover')){
+      dojo.removeClass(evt.target, 'DataGrid_Header_Cell_hover', false);
+    }
     window.status = "";
   },
 
@@ -911,7 +928,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 * @param {EventHandler} evt - event handler
 */
   showColumnTotals: function(type, data, evt) {
-    this.lastAddition = openbravo.html.getContentAsString(data.getElementsByTagName('total')[0]);
+    this.lastAddition = openbravo.widget.DataGrid.html.getContentAsString(data.getElementsByTagName('total')[0]);
     window.status = parseFloat(this.lastAddition);
   },
 
@@ -919,7 +936,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 * It manages the grid width, taking into account the scrollbars.
 */
   setBounds: function() {
-    var maxWidthInt = openbravo.html.extractPx(this.maxWidth);
+    var maxWidthInt = openbravo.widget.DataGrid.html.extractPx(this.maxWidth);
     if (maxWidthInt > 0 && maxWidthInt <= this.domNode.offsetWidth) {
       this.tableNode.parentNode.style.width = this.maxWidth;
       this.domNode.style.width = maxWidthInt +
@@ -950,7 +967,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
     if(this.percentageWidthRelativeToId != "body") {
       var maxWidthInt = Math.round(this.proportion * document.getElementById(this.percentageWidthRelativeToId).clientWidth);
     } else {
-      var maxWidthInt = Math.round(this.proportion * dojo.html.getViewport().width);
+      var maxWidthInt = Math.round(this.proportion * dijit.getViewport().width);
     }
     maxWidthInt -= 2 * this.scrollWidth;
     this.maxWidth = maxWidthInt + "px";
@@ -978,7 +995,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
     if(this.percentageWidthRelativeToId != "body") {
       var desiredWidth = Math.round(this.proportion * document.getElementById(this.percentageWidthRelativeToId).clientWidth);
     } else {
-      var desiredWidth = Math.round(this.proportion * dojo.html.getViewport().width);
+      var desiredWidth = Math.round(this.proportion * dijit.getViewport().width);
     }
     this.tableNode.parentNode.style.width = desiredWidth - 
       2 * this.scrollWidth + "px";
@@ -991,22 +1008,25 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 */
   render: function() {
     var hoverCell = function(evt) {
-      if (dojo && !dojo.html.hasClass(this, 'DataGrid_Body_Cell_hover')
-        && !dojo.html.hasClass(this, 'DataGrid_Body_Cell_clicked'))
-        dojo.html.prependClass(this, 'DataGrid_Body_Cell_hover');
+      if (dojo && !dojo.hasClass(this, 'DataGrid_Body_Cell_hover')
+        && !dojo.hasClass(this, 'DataGrid_Body_Cell_clicked')){
+        dojo.addClass(this, 'DataGrid_Body_Cell_hover');
+      }
     };
 
     var plainCell = function(evt) {
-      if (dojo && dojo.html.hasClass(this, 'DataGrid_Body_Cell_hover'))
-        dojo.html.removeClass(this, 'DataGrid_Body_Cell_hover', false);
+      if (dojo && dojo.hasClass(this, 'DataGrid_Body_Cell_hover')){
+        dojo.removeClass(this, 'DataGrid_Body_Cell_hover', false);
+      }
     };
 
     var gridId = this.widgetId;
     var tableHeader = document.createElement("table");
-    if(isGridFocused) tableHeader.className = 'DataGrid_Header_Table_focus';
-    else tableHeader.className = 'DataGrid_Header_Table';
-    if (this.sortable)
+    if(isGridFocused) { tableHeader.className = 'DataGrid_Header_Table_focus'; }
+    else { tableHeader.className = 'DataGrid_Header_Table'; }
+    if (this.sortable){
       tableHeader.id = gridId + '_table_header';
+    }
     tableHeader.cellspacing = 0;
     tableHeader.cellpadding = 0;
     var thead = document.createElement('tbody');
@@ -1017,10 +1037,10 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
       var cell = document.createElement("th");
       var colMetadata = this.columns.get(j);
       cell.className = openbravo.widget.DataGrid.Column.prototype.DEFAULT_HEADER_CLASS;
-      dojo.html.prependClass(cell, colMetadata.headerClassName);
-      dojo.event.connect(cell, "onmouseover", this, "hoverCellHeader");
-      dojo.event.connect(cell, "onmouseout", this, "plainCellHeader");
-      dojo.event.connect(cell, "onmousedown", this, "resizeHeader");
+      dojo.addClass(cell, colMetadata.headerClassName);
+      dojo.connect(cell, "onmouseover", this, "hoverCellHeader");
+      dojo.connect(cell, "onmouseout", this, "plainCellHeader");
+      dojo.connect(cell, "onmousedown", this, "resizeHeader");
 
       var s = colMetadata.title;
       cell.innerHTML = (s && typeof s == 'string')? s.split(" ").join("&nbsp;") : s; 
@@ -1029,9 +1049,9 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
         var end = colMetadata.width.indexOf("px");
         var rowWidth = colMetadata.width.substring(0, end);
         totalWidth += parseInt(rowWidth);
-      }    
-      else
+      }else{
         cell.style.display = "none";
+      }
       row.appendChild(cell);
     }
     thead.appendChild(row);
@@ -1041,30 +1061,31 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
     table.id = gridId + "_table";
     table.cellspacing = "0";
     table.cellpadding = "0";
-    if(isGridFocused) table.className = 'DataGrid_Body_Table_focus';
-    else table.className = 'DataGrid_Body_Table';
+    if(isGridFocused) { table.className = 'DataGrid_Body_Table_focus'; }
+    else { table.className = 'DataGrid_Body_Table'; }
     table.style.width = totalWidth + 'px';
     var tbody = document.createElement("tbody");
     for (var i = 0; i < this.numRows; i++) {
       var row = document.createElement("tr");
       row.className = 'DataGrid_Body_Row';
-      dojo.html.prependClass(row,( i % 2 == 0 ? "DataGrid_Body_Row_Even" : "DataGrid_Body_Row_Odd"));
-      dojo.event.connect(row, "onclick", this, "cellClicked");
-      dojo.event.connect(row, "ondblclick", this, "cellDoubleClicked");
+      dojo.addClass(row,( i % 2 == 0 ? "DataGrid_Body_Row_Even" : "DataGrid_Body_Row_Odd"));
+      dojo.connect(row, "onclick", this, "cellClicked");
+      dojo.connect(row, "ondblclick", this, "cellDoubleClicked");
       for(var j = 0; j < numCols; j++) {
         var cell = document.createElement("td");
         var colMetadata = this.columns.get(j);
         cell.className = openbravo.widget.DataGrid.Column.prototype.DEFAULT_CLASS;
-        dojo.html.prependClass(cell, colMetadata.className);
+        dojo.addClass(cell, colMetadata.className);
         cell.onmouseover = hoverCell;
         cell.onmouseout = plainCell;
-        dojo.html.disableSelection(cell);
+        openbravo.widget.DataGrid.html.disableSelection(cell);
         var emptyText = document.createTextNode("");
         cell.appendChild(emptyText);
-        if (colMetadata.visible)
+        if (colMetadata.visible){
           cell.style.width = colMetadata.width;
-        else 
+        }else{ 
           cell.style.display = "none";
+        }
         row.appendChild(cell);
       }
       tbody.appendChild(row);
@@ -1073,10 +1094,10 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
     table.focus();
     this.tableNode = table;
     this.tableHeader = tableHeader;
-    if (dojo.render.html.ie && !this.hasBeenResized) {
-      dojo.event.connect(this.domNode, "onkey", this, "keyPressed");
+    if (dojo.isIE && !this.hasBeenResized) {
+      dojo.connect(this.domNode, "onkey", this, "keyPressed");
     } else if (!this.hasBeenResized) {
-      dojo.event.connect(document, "onkey", this, "keyPressed");
+      dojo.connect(document, "onkey", this, "keyPressed");
     }
     var container = this.domNode;
     var gridContainer = document.createElement("div");
@@ -1122,9 +1143,10 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
     }
 
     this.postRendering(opts);
-    if (this.proportion)
-      dojo.event.connect(window, "onresize", this, "onResize");
-    dojo.event.connect(this.scroller, "handleScroll", this, "handleScroll");
+    if (this.proportion){
+      dojo.connect(window, "onresize", this, "onResize");
+    }
+    dojo.connect(this.scroller, "handleScroll", this, "handleScroll");
     dojo.addOnUnload(this, "cleanup");
   },
 
@@ -1134,7 +1156,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 * @param {Object} handler - handler
 */
   captureEvent: function(eventName, handler) {
-    dojo.event.connect(this.tableNode, eventName, handler);
+    dojo.connect(this.tableNode, eventName, handler);
   },
 
 /**
@@ -1176,48 +1198,54 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 * It moves the focus to the previous row. It will be associated with the key cursor up.
 */
   goToPreviousRow: function() {
-    if (this.checkEditingRow())
+    if (this.checkEditingRow()){
       this.moveFromLastSelected(-1);
+    }
   },
 
 /**
 * It moves the focus to the following row. It will be associated with the key cursor down.
 */
   goToNextRow: function() {
-    if (this.checkEditingRow())
+    if (this.checkEditingRow()){
       this.moveFromLastSelected(1);
+    }
   },
 
 /**
 * It moves the focus to the first row of the grid. It will be associated with the key home.
 */
   goToFirstRow: function() {
-    if (this.checkEditingRow())
+    if (this.checkEditingRow()){
       this.goToRow(0);  
+    }
   },
 
 /**
 * It moves the area to the last row of the grid. It will be associated with the key end.
 */
   goToLastRow: function() {
-    if (this.checkEditingRow())
+    if (this.checkEditingRow()){
       this.goToRow(this.metaData.totalRows - 1);
+    }
   },
 
 /**
 * It moves the area to the previous visible page.
 */
   goToPreviousPage: function() {
-    if (!this.editing)
+    if (!this.editing){
       this.moveCurrentPosition(-this.numRows);
+    }
   },
 
 /**
 * It moves the area to the next visible page.
 */
   goToNextPage: function() {
-    if (!this.editing)
+    if (!this.editing){
       this.moveCurrentPosition(this.numRows);
+    }
   },
 
 /**
@@ -1225,9 +1253,10 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 */
   setFocus: function() {
     this.tableNode.focus();
-    if (this.selectedRows.count() == 0)
+    if (this.selectedRows.count() == 0){
       this.goToFirstRow();
-    else this.goToRow(this.selectedRows.getLastSelected().offset);
+    }
+    else { this.goToRow(this.selectedRows.getLastSelected().offset); }
     this.showSelection();
   },
 
@@ -1245,17 +1274,18 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 * It adds a new record to the grid.
 */
   addNewRow: function() {
-    if (!this.checkEditingRow()) return;
-    if (this.editingRow && this.editingRow.isNewRow) return;
-    var handler = dojo.lang.hitch(this, function() {
+    if (!this.checkEditingRow()) { return; }
+    if (this.editingRow && this.editingRow.isNewRow) { return; }
+    var handler = dojo.hitch(this, function() {
       this.options.onRefreshComplete.remove(handler);
       var contentOffset = this.getCurrentOffset();
       var rowNo = this.numRows - 1 + contentOffset;
       var pos = rowNo - this.buffer.startPos;
       this.editingRow = this.createRowObject(this.metaData.totalRows - 1);
       var values = [];
-      for ( var i=0; i < this.metaData.columnCount; i++ ) 
+      for ( var i=0; i < this.metaData.columnCount; i++ ){ 
         values[i] = "";
+      }
       this.editingRow.setValues(values);
       this.editingRow.isNewRow = true;
       this.editingRow.rowNode = this.tableNode.rows[this.visibleRows - 1];
@@ -1276,31 +1306,34 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
   deleteRow: function() {
     if (this.selectedRows.count() > 0 &&
       this.selectedRows.getLastSelected() != null && showJSMessage(2)) {
-      if (this.editing)
+      if (this.editing){
         this.cancelEdit();
+      }
       this.editingRow = null;
       var content = [];
       content["action"] = "deleteRow";
       var rows = [];
-      this.selectedRows.forEach(dojo.lang.hitch(this, function(row) {
-        if (row.value.id)
+      this.selectedRows.forEach(dojo.hitch(this, function(row) {
+        if (row.value.id){
           rows.push(row.value.id);
+        }
         //this.metaData.totalRows--;
       }));
       if (rows.length > 0) {
         content["rows"] = rows;
         //this.selectedRows.clear();
-        var handlerRef = dojo.lang.hitch(this, "refreshGridDataAfterDelete");
+        var handlerRef = dojo.hitch(this, "refreshGridDataAfterDelete");
         var serviceUrl = {
           url: this.updatesUrl,
           handler: handlerRef,
           method: "POST",
-          mimetype: "text/xml"
+          handleAs: "xml"
         };
-        openbravo.io.asyncCall(serviceUrl, content);
+        openbravo.widget.DataGrid.io.asyncCall(serviceUrl, content);
       }
-      else
+      else{
         this.refreshGridData();
+      }
     }
   },
 
@@ -1310,29 +1343,29 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 * @param {XML Structure} data - data structure
 * @param {EventHandler} evt - event handler
 */
-  refreshGridDataAfterDelete: function(type, data, evt) {
+  refreshGridDataAfterDelete: function(data, evt) {
     var xmldelete = data.getElementsByTagName('xml-delete');
     var status = xmldelete[0].getElementsByTagName('status');
     if (status.length>0){
       var type = status[0].getElementsByTagName('type');
       var title = status[0].getElementsByTagName('title');
       var description = status[0].getElementsByTagName('description');
-      if (dojo.dom.textContent(type[0]).toUpperCase() != 'HIDDEN') {
+      if (dojox.data.dom.textContent(type[0]).toUpperCase() != 'HIDDEN') {
         try {
           initialize_MessageBox('messageBoxID');
         } catch (ignored) {}
         try {
-          setValues_MessageBox('messageBoxID',dojo.dom.textContent(type[0]), dojo.dom.textContent(title[0]), dojo.dom.textContent(description[0]));
+          setValues_MessageBox('messageBoxID',dojox.data.dom.textContent(type[0]), dojox.data.dom.textContent(title[0]), dojox.data.dom.textContent(description[0]));
         } catch (err) {
-          alert(dojo.dom.textContent(title[0]) + ":\n" + dojo.dom.textContent(description[0]));
+          alert(dojox.data.dom.textContent(title[0]) + ":\n" + dojox.data.dom.textContent(description[0]));
         }
       }
     }
     var info = xmldelete[0].getElementsByTagName('info');
     var result = info[0].getElementsByTagName('result');
     var total = info[0].getElementsByTagName('total');
-    if (dojo.dom.textContent(result[0]) != 0){
-      this.metaData.totalRows = this.metaData.totalRows - parseInt(dojo.dom.textContent(total[0]));
+    if (dojox.data.dom.textContent(result[0]) != 0){
+      this.metaData.totalRows = this.metaData.totalRows - parseInt(dojox.data.dom.textContent(total[0]));
       this.selectedRows.clear();
       this.refreshGridData();
     }
@@ -1349,7 +1382,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
     selectedRow = 0;
     this.setTotalRows(this.visibleRowsMax);
     this.moveTableContent(0);
-    this.isIE = dojo.render.html.ie;
+    this.isIE = dojo.isIE;
     if(!this.isIE){
       this.goToFirstRow();
     }
@@ -1362,20 +1395,22 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
   refreshGridData: function() {
     for (var i = 0; i < this.numRows; i++) {
       if(isGridFocused) {
-        openbravo.html.prereplaceClass(this.tableNode.rows[i], 
+        openbravo.widget.DataGrid.html.prereplaceClass(this.tableNode.rows[i], 
           i % 2 == 0 ? "DataGrid_Body_Row_Even" : "DataGrid_Body_Row_Odd",
           "DataGrid_Body_Row_focus");
       } else {
-        openbravo.html.prereplaceClass(this.tableNode.rows[i], 
+        openbravo.widget.DataGrid.html.prereplaceClass(this.tableNode.rows[i], 
           i % 2 == 0 ? "DataGrid_Body_Row_Even" : "DataGrid_Body_Row_Odd",
           "DataGrid_Body_Row_selected");
       }
     }
     var contentOffset = this.getCurrentOffset();
-    if (contentOffset > this.metaData.totalRows - this.numRows)
+    if (contentOffset > this.metaData.totalRows - this.numRows){
       contentOffset = this.metaData.totalRows - this.numRows;
-    if (contentOffset < 0)
+    }
+    if (contentOffset < 0){
       contentOffset = 0;
+    }
     this.setTotalRows(this.metaData.totalRows);
     this.moveTableContent(contentOffset);
   },
@@ -1385,11 +1420,11 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 */
   focusGrid: function() {
     isGridFocused = true;
-    openbravo.html.prereplaceClass(this.table, 'DataGrid_Body_Table_focus', 'DataGrid_Body_Table');
-    openbravo.html.prereplaceClass(this.tableHeader, 'DataGrid_Header_Table_focus', 'DataGrid_Header_Table');
+    openbravo.widget.DataGrid.html.prereplaceClass(this.table, 'DataGrid_Body_Table_focus', 'DataGrid_Body_Table');
+    openbravo.widget.DataGrid.html.prereplaceClass(this.tableHeader, 'DataGrid_Header_Table_focus', 'DataGrid_Header_Table');
     for (var i = 0; i < this.numRows; i++) {
       if (this.tableNode.rows[i].className.indexOf('DataGrid_Body_Row_selected') != -1) {
-        openbravo.html.prereplaceClass(this.tableNode.rows[i], 'DataGrid_Body_Row_focus', 'DataGrid_Body_Row_selected');
+        openbravo.widget.DataGrid.html.prereplaceClass(this.tableNode.rows[i], 'DataGrid_Body_Row_focus', 'DataGrid_Body_Row_selected');
       }
     }
     return true;
@@ -1400,11 +1435,11 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 */
   blurGrid: function() {
     isGridFocused = false;
-    openbravo.html.prereplaceClass(this.table, 'DataGrid_Body_Table', 'DataGrid_Body_Table_focus');
-    openbravo.html.prereplaceClass(this.tableHeader, 'DataGrid_Header_Table', 'DataGrid_Header_Table_focus');
+    openbravo.widget.DataGrid.html.prereplaceClass(this.table, 'DataGrid_Body_Table', 'DataGrid_Body_Table_focus');
+    openbravo.widget.DataGrid.html.prereplaceClass(this.tableHeader, 'DataGrid_Header_Table', 'DataGrid_Header_Table_focus');
     for (var i = 0; i < this.numRows; i++) {
       if (this.tableNode.rows[i].className.indexOf('DataGrid_Body_Row_focus') != -1) {
-        openbravo.html.prereplaceClass(this.tableNode.rows[i], 'DataGrid_Body_Row_selected', 'DataGrid_Body_Row_focus');
+        openbravo.widget.DataGrid.html.prereplaceClass(this.tableNode.rows[i], 'DataGrid_Body_Row_selected', 'DataGrid_Body_Row_focus');
       }
     }
     return true;
@@ -1423,8 +1458,9 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
     }
     if (row != null) {
       var selectedColumn = this.columns.get(column);
-      if (!isNaN(value))
+      if (!isNaN(value)){
         value = parseFloat(value);
+      }
       row.setValue(selectedColumn.index, value);
       row.sendRow();
     }
@@ -1438,24 +1474,27 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
     if (this.selectedRows.count() > 0) {
       var lastRowOffset = this.selectedRows.getLastSelected().offset;
       var newRowNo = lastRowOffset + mov;
-      if (newRowNo >= 0 && newRowNo < this.metaData.totalRows)
+      if (newRowNo >= 0 && newRowNo < this.metaData.totalRows){
         this.goToRow(newRowNo);
+      }
     }
   },
 
 /**
 * It set a row as selected, deleting the rest of selections. It registers the new row in the internal array of selected rows, deleting the rest of selected rows.
 * @param {Number} rowNo - number of row
-* @param {Handler} curry - handler to itself
+* @param {Handler} hitch - handler to itself
 */
-  selectRow: function(rowNo, curry) {
+  selectRow: function(rowNo, hitch) {
     var row = this.buffer.getRow(rowNo);
-    if (!row)
+    if (!row){
       row = this.createRowObject(null);
+    }
     var id = row.getValue(this.columns.getIdentifier().name);
     if (escape(id) != "%A0") {
-      if (curry)
-        this.options.onRefreshComplete.remove(curry);
+      if (hitch){
+        this.options.onRefreshComplete.remove(hitch);
+      }
       var newRow = {id: id, offset: rowNo};
       this.selectedRows.clear();
       this.selectedRows.add(newRow);
@@ -1469,8 +1508,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 * @type Number
 */
   getCurrentOffset: function() {
-    return parseInt(this.scroller.
-      scrollerDiv.scrollTop /  this.viewPort.rowHeight);
+    return parseInt(this.scroller.scrollerDiv.scrollTop /  this.viewPort.rowHeight);
   },
 
 /**
@@ -1497,10 +1535,11 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 */
   moveCurrentPosition: function(mov) {
     var newPosition = this.getCurrentOffset() + mov;
-    if (newPosition < 0)
+    if (newPosition < 0){
       newPosition = 0;
-    else if (newPosition >= (this.metaData.totalRows - 1))
+    }else if (newPosition >= (this.metaData.totalRows - 1)){
       newPosition = this.metaData.totalRows - this.numRows;
+    }
     this.moveTableContent(newPosition);
     this.selectRow(newPosition);
     this.showSelection();
@@ -1514,10 +1553,8 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 */
   getSelectRowFunction: function (rowNo) {
     var _this = this;
-    var curry =  function() {
-      dojo.lang.curry(_this, "selectRow", rowNo, curry);
-    };
-    return curry;
+    var hitch =  dojo.hitch(this, "selectRow", rowNo, hitch);
+    return hitch;
   },
 
 /**
@@ -1526,33 +1563,33 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 */
   goToRow: function(rowNo) {
     var _this = this;
-    var curry =  function() {
-      dojo.lang.curry(_this, "selectRow", rowNo, curry);
-    };
+    var hitch =  dojo.hitch(this, "selectRow", rowNo, hitch);
     if (rowNo >= 0) {
       var minOffset = this.getCurrentOffset();
       var maxOffset = minOffset + this.numRows;
       if (minOffset <= rowNo && rowNo < maxOffset) {
-        if (this.metaData.totalRows <= this.numRows)
+        if (this.metaData.totalRows <= this.numRows) {
           this.moveTableContent(0);
+        }
         this.selectRow(rowNo);
-      }
-      else {
-        if (curry != null)
-          this.options.onRefreshComplete.push(curry);
-        if (rowNo == (minOffset - 1))
+      } else {
+        if (hitch != null){
+          this.options.onRefreshComplete.push(hitch);
+        }
+        if (rowNo == (minOffset - 1)) {
           this.moveTableContent(minOffset - 1);
-        else if (rowNo == maxOffset)
+        } else if (rowNo == maxOffset) {
           this.moveTableContent(minOffset + 1);
-        else if (rowNo >= (this.metaData.totalRows - 1))
+        } else if (rowNo >= (this.metaData.totalRows - 1)) {
           this.moveTableContent(rowNo - this.visibleRows + 1);
-        else if (rowNo >= (this.metaData.totalRows - this.visibleRows))
+        } else if (rowNo >= (this.metaData.totalRows - this.visibleRows)) {
           this.moveTableContent(this.metaData.totalRows - this.visibleRows);
-        else
+        } else {
           this.moveTableContent(rowNo);
+        }
       }
+      checkAttachmentIconRelation();
     }
-    checkAttachmentIconRelation();
   },
 
 /**
@@ -1565,17 +1602,18 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
     if (column) {
       var columnNo = column.index;
       newWidth = (newWidth > 9 ? newWidth : 9);
-      var currentTableWidth = openbravo.html.extractPx(this.tableNode.style.width);
+      var currentTableWidth = openbravo.widget.DataGrid.html.extractPx(this.tableNode.style.width);
       var newTableWidth = currentTableWidth + 
-      (newWidth - openbravo.html.extractPx(column.width));
-      if (currentTableWidth != newTableWidth)
+      (newWidth - openbravo.widget.DataGrid.html.extractPx(column.width));
+      if (currentTableWidth != newTableWidth){
         this.hasResized = true;    
+      }
       newWidth += "px";
       this.columns.get(columnNo).width = newWidth;
       headerRow.cells[columnNo].style.width = newWidth;
       this.tableNode.style.width = newTableWidth + "px";
       this.tableHeader.style.width = newTableWidth + "px";
-      dojo.lang.forEach(this.tableNode.rows, function(row) {
+      dojo.forEach(this.tableNode.rows, function(row) {
         row.cells[columnNo].style.width = newWidth;
       });
     }
@@ -1600,8 +1638,8 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
     var body = dojo.body();
     var p = this.resizingParams;
     var newWidth = p.width + evt.clientX - p.start; 
-    dojo.event.disconnect(body, "onmousemove", this, "doResize"); 
-    dojo.event.disconnect(body, "onmouseup", this, "endResize"); 
+    dojo.disconnect(this.startResizeConnection); 
+    dojo.disconnect(this.endResizeConnection); 
     p.self.resizeColumn(p.target.parentNode, p.column, newWidth);
   },
 
@@ -1610,27 +1648,27 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 * @param {EventHandler} evt - event handler
 */
   resizeHeader: function(evt) {
-    var target = dojo.html.getParentByType(evt.target, "th");
+    var target = openbravo.widget.DataGrid.html.getParentByType(evt.target, "th");
     var body = dojo.body();
-    var columnNo = dojo.lang.indexOf(target.parentNode.cells, target);
+    var columnNo = dojo.indexOf(target.parentNode.cells, target);
     var column = this.columns.get(columnNo);
     //  var column = this.columns.get(--columnNo);
     //  while (column && !column.visible) {
     //    column = this.columns.get(--columnNo);
     //  }
-    if (!column) return;
+    if (!column) { return; }
     this.resizingParams = {
       start: evt.clientX, 
       self: this,
       target: target,
-      width: openbravo.html.extractPx(column.width),
+      width: openbravo.widget.DataGrid.html.extractPx(column.width),
       scroll: target.parentNode.parentNode.scrollLeft,
       column: column
     }
     this.hasResized = false;
-    dojo.event.connect(body, "onmousemove", this, "doResize");
-    dojo.event.connect(body, "onmouseup", this, "endResize"); 
-    dojo.event.browser.stopEvent(evt);
+    this.startResizeConnection = dojo.connect(body, "onmousemove", this, "doResize");
+    this.endResizeConnection = dojo.connect(body, "onmouseup", this, "endResize"); 
+    dojo.stopEvent(evt);
   },
 
 /**
@@ -1643,13 +1681,13 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
       loadingClass:         this.tableNode.className,
       scrollerBorderRight:  '1px solid #ababab',
       bufferTimeout:        15000,
-      blankImg:             dojo.uri.dojoUri("../openbravo/widget/templates/blank.gif"),
-      sortAscendImg:        dojo.uri.dojoUri("../openbravo/widget/templates/sort_asc.gif"),
-      sortDescendImg:       dojo.uri.dojoUri("../openbravo/widget/templates/sort_desc.gif"),
-      rowEditingImg:        dojo.uri.dojoUri("../openbravo/widget/templates/editingRow.png"),
-      rowErrorImg:          dojo.uri.dojoUri("../openbravo/widget/templates/rowError.png"),
-      rowRefreshingImg:     dojo.uri.dojoUri("../openbravo/widget/templates/refreshingRow.png"),
-      rowSavedImg:          dojo.uri.dojoUri("../openbravo/widget/templates/rowSaved.png"),
+      blankImg:             dojo.baseUrl + "../../openbravo/templates/blank.gif",
+      sortAscendImg:        dojo.baseUrl + "../../openbravo/templates/sort_asc.gif",
+      sortDescendImg:       dojo.baseUrl + "../../openbravo/templates/sort_desc.gif",
+      rowEditingImg:        dojo.baseUrl + "../../openbravo/templates/editingRow.png",
+      rowErrorImg:          dojo.baseUrl + "../../openbravo/templates/rowError.png",
+      rowRefreshingImg:     dojo.baseUrl + "../../openbravo/templates/refreshingRow.png",
+      rowSavedImg:          dojo.baseUrl + "../../openbravo/templates/rowSaved.png",
       iconImages:           [],
       largeBufferSize:      this.bufferSize,
       sortImageWidth:       9,
@@ -1658,10 +1696,10 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
       onRefreshComplete:    [],
       requestParameters:    null,
       inlineStyles:         true,
-      hasResized:           dojo.lang.hitch(this, function() { return this.hasResized; }),
-      failedRows:           new dojo.collections.Dictionary()
+      hasResized:           dojo.hitch(this, function() { return this.hasResized; }),
+      failedRows:           new dojox.collections.Dictionary()
     };
-    dojo.lang.mixin(this.options, options);
+    dojo.mixin(this.options, options);
     new Image().src = this.options.rowEditingImg;
     new Image().src = this.options.rowErrorImg;
     new Image().src = this.options.rowRefreshingImg;
@@ -1673,7 +1711,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
     var _this = this;
 
     this.options.onRefreshComplete.remove = function(element) {
-      var pos = dojo.lang.indexOf(_this.options.onRefreshComplete, element);
+      var pos = dojo.indexOf(_this.options.onRefreshComplete, element);
       _this.options.onRefreshComplete.splice(pos, 1);
     };
 
@@ -1690,9 +1728,10 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
       this.numRows,
       this.buffer, this);
     this.scroller    = new openbravo.widget.DataGrid.Scroller(this, this.viewPort);
-    this.options.sortHandler = dojo.lang.hitch(this, "sortHandler");
-    if ( dojo.byId(this.tableId + '_header') )
+    this.options.sortHandler = dojo.hitch(this, "sortHandler");
+    if ( dojo.byId(this.tableId + '_header') ){
       this.sort = new openbravo.widget.DataGrid.SortingHandler(this.tableId + '_header', this.options)
+    }
     this.processingRequest = null;
     this.unprocessedRequest = null;
     if ( this.options.prefetchBuffer || this.options.prefetchOffset > 0) {
@@ -1725,10 +1764,10 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 * @param {Object} columns - Object with the columns of the grid
 */
   sortHandler: function(columns) {
-    if (!columns) return;
+    if (!columns) { return; }
     this.sortCols = [];
     this.sortDirs = [];
-    dojo.lang.forEach(columns, dojo.lang.hitch(this, function(column) {
+    dojo.forEach(columns, dojo.hitch(this, function(column) {
       this.sortCols.push(column.name);
       this.sortDirs.push(column.currentSort);
     }));
@@ -1745,25 +1784,25 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
   setTotalRows: function( newTotalRows ) {
     if (newTotalRows <= this.numRows) {
       this.visibleRows = newTotalRows;
-      if (dojo.render.html.ie) {
-        for (var i = 0; i < newTotalRows; i++)
+      if (dojo.isIE) {
+        for (var i = 0; i < newTotalRows; i++){
           this.tableNode.rows[i].style.display = "block";
-        for (var i = newTotalRows; i < this.numRows; i++)
+        }
+        for (var i = newTotalRows; i < this.numRows; i++){
           this.tableNode.rows[i].style.display = "none";
-        
-
-      }
-      else {
-        if (newTotalRows > 0)
+        }    
+      }else {
+        if (newTotalRows > 0){
           var rowHeight = this.tableNode.rows[0].clientHeight;
+        }
         for (var i = 0; i < newTotalRows; i++) {
           this.tableNode.rows[i].style.height = rowHeight + "px";
-          dojo.html.setVisibility(this.tableNode.rows[i], true);
+          openbravo.widget.DataGrid.html.setVisibility(this.tableNode.rows[i], true);
         }
         for (var i = newTotalRows; i < this.numRows; i++) {
           //-> to show the empty rows with the same height than the filled cells -> this.tableNode.rows[i].style.height = rowHeight + "px";
           //-> this removes completly the empty cells -> this.tableNode.rows[i].style.display = 'none';
-          dojo.html.setVisibility(this.tableNode.rows[i], false);
+          openbravo.widget.DataGrid.html.setVisibility(this.tableNode.rows[i], false);
         }
       }
       this.tableNode.style.height = this.viewPort.rowHeight * this.visibleRows + "px";  
@@ -1811,18 +1850,18 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
     content["page_size"] = fetchSize;
     content["offset"] = bufferStartPos;
     if (this.sortCols) {
-      content["sort_cols"] = this.sortCols;
-      content["sort_dirs"] = this.sortDirs;
+      content["sort_cols"] = this.sortCols.reverse();
+      content["sort_dirs"] = this.sortDirs.reverse();
     }
-    var handlerRef = dojo.lang.hitch(this, "ajaxUpdate");
+    var handlerRef = dojo.hitch(this, "ajaxUpdate");
     var serviceUrl = {
       url: this.dataUrl,
       handler: handlerRef,
       method: "POST",
-      mimetype: "text/xml"
+      handleAs: "xml"
     };
-    openbravo.io.asyncCall(serviceUrl, content);
-    this.timeoutHandler = setTimeout(dojo.lang.hitch(this, "handleTimedOut"), this.options.bufferTimeout);
+    openbravo.widget.DataGrid.io.asyncCall(serviceUrl, content);
+    this.timeoutHandler = setTimeout(dojo.hitch(this, "handleTimedOut"), this.options.bufferTimeout);
   },
 
 /**
@@ -1839,14 +1878,14 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 * @param {XML Structure} data - data structure
 * @param {EventHandler} evt - event handler
 */
-  ajaxUpdate: function(type, data, evt) {
+  ajaxUpdate: function(data, evt) {
     try {
       clearTimeout( this.timeoutHandler );
       this.buffer.update(data,this.processingRequest.bufferOffset);
       this.viewPort.bufferChanged();
     }
     catch(err) {
-      dojo.debug(err);
+      //dojo.debug(err);
     }
     finally {
       this.processingRequest = null;
@@ -1866,7 +1905,7 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 * A function to manage the queued requests
 */
   processQueuedRequest: function() {
-    if (this.unprocessedRequest != null) {
+    if (this.unprocessedRequest != null && this.unprocessedRequest.requestOffset > 0) {
       this.requestContentRefresh(this.unprocessedRequest.requestOffset);
       this.unprocessedRequest = null
     }
@@ -1882,37 +1921,40 @@ dojo.widget.defineWidget("openbravo.widget.DataGrid",	dojo.widget.HtmlWidget,	{
 function createTextCellElement(colMetadata) {
 
   var hoverCell = function(evt) {
-    if (dojo && !dojo.html.hasClass(this, 'DataGrid_Body_Cell_hover')
-        && !dojo.html.hasClass(this, 'DataGrid_Body_Cell_clicked'))
-      dojo.html.prependClass(this, 'DataGrid_Body_Cell_hover');
+    if (dojo && !dojo.hasClass(this, 'DataGrid_Body_Cell_hover')
+        && !dojo.hasClass(this, 'DataGrid_Body_Cell_clicked')){
+      dojo.addClass(this, 'DataGrid_Body_Cell_hover');
+    }
   };
 
   var plainCell = function(evt) {
-    if (dojo && dojo.html.hasClass(this, 'DataGrid_Body_Cell_hover'))
-      dojo.html.removeClass(this, 'DataGrid_Body_Cell_hover', false);
+    if (dojo && dojo.hasClass(this, 'DataGrid_Body_Cell_hover')){
+      dojo.removeClass(this, 'DataGrid_Body_Cell_hover', false);
+    }
   };
 
   var text = document.createElement("nobr");
   text.className = openbravo.widget.DataGrid.Column.prototype.DEFAULT_CLASS;
-  dojo.html.prependClass(text, colMetadata.className);
+  dojo.addClass(text, colMetadata.className);
   text.onmouseover = hoverCell;
   text.onmouseout = plainCell;
-  dojo.html.disableSelection(text);
+  openbravo.widget.DataGrid.html.disableSelection(text);
   var emptyText = document.createTextNode("");
   text.appendChild(emptyText);
-  if (colMetadata.visible)
+  if (colMetadata.visible){
     text.style.width = colMetadata.width;
-  else 
+  }else{
     text.style.display = "none";
+  }
   return text;
 };
 
 dojo.declare("openbravo.widget.DataGrid.Parser", null, {
-  initializer: function(datagrid) {
+  constructor: function(datagrid) {
     this.datagrid = datagrid;
   },
 
-  ajaxUpdate: function(type, data, evt) {
+  ajaxUpdate: function(data, evt) {
     this.parseStructure(data);
   },
 
@@ -1929,11 +1971,11 @@ dojo.declare("openbravo.widget.DataGrid.Parser", null, {
         var type = status[0].getElementsByTagName('type');
         var title = status[0].getElementsByTagName('title');
         var description = status[0].getElementsByTagName('description');
-        if (dojo.dom.textContent(type[0]).toUpperCase() != 'HIDDEN') {
+        if (dojox.data.dom.textContent(type[0]).toUpperCase() != 'HIDDEN') {
           try {
-            renderMessageBox(dojo.dom.textContent(type[0]),dojo.dom.textContent(title[0]),dojo.dom.textContent(description[0]));
+            renderMessageBox(dojox.data.dom.textContent(type[0]),dojox.data.dom.textContent(title[0]),dojox.data.dom.textContent(description[0]));
           } catch (err) {
-            alert(dojo.dom.textContent(title[0]) + ":\n" + dojo.dom.textContent(description[0]));
+            alert(dojox.data.dom.textContent(title[0]) + ":\n" + dojox.data.dom.textContent(description[0]));
           }
         }
       }
@@ -1971,13 +2013,14 @@ dojo.declare("openbravo.widget.DataGrid.Parser", null, {
       var typeName = "string";
       var type = typeFactory.getType(typeName);
       var gridWidth;
-      if (this.datagrid.maxWidth == "0px")
-        gridWidth = dojo.html.getViewport().width - 80 -
-          openbravo.html.extractPx(this.datagrid.lineNoColumnWidth);
-      else 
-        gridWidth = openbravo.html.extractPx(this.datagrid.maxWidth) - 
+      if (this.datagrid.maxWidth == "0px"){
+        gridWidth = dijit.getViewport().width - 80 -
+          openbravo.widget.DataGrid.html.extractPx(this.datagrid.lineNoColumnWidth);
+      }else{
+        gridWidth = openbravo.widget.DataGrid.html.extractPx(this.datagrid.maxWidth) - 
           3 * this.datagrid.scrollWidth -
-          openbravo.html.extractPx(this.datagrid.lineNoColumnWidth);
+          openbravo.widget.DataGrid.html.extractPx(this.datagrid.lineNoColumnWidth);
+      }
       var params = {
         width: this.datagrid.lineNoColumnWidth,
         readonly: "true",
@@ -2000,8 +2043,9 @@ dojo.declare("openbravo.widget.DataGrid.Parser", null, {
           var invalidColumns = [];
           if (invalidatesElem.length > 0) {
             var invalidColumnsElem = invalidatesElem[0].getElementsByTagName('column');
-            for (var j = 0; j < invalidColumnsElem.length; j++)
+            for (var j = 0; j < invalidColumnsElem.length; j++){
               invalidColumns.push(invalidColumnsElem[j].getAttribute('name'));
+            }
           }
           var colWidth = columns[i].getAttribute('width');
           if (colWidth) {
@@ -2028,8 +2072,9 @@ dojo.declare("openbravo.widget.DataGrid.Parser", null, {
           this.datagrid.columns.addColumn(column);
         }
       }
-      if (!this.datagrid.columns.getIdentifier())
+      if (!this.datagrid.columns.getIdentifier()){
         throw Error("No identifier specified");
+      }
       var size = this.datagrid.columns.count();
       for (var i = 0; i < size; i++) {
         var currentColumn = this.datagrid.columns.get(i);
@@ -2046,8 +2091,7 @@ dojo.declare("openbravo.widget.DataGrid.Parser", null, {
         currentColumn.subordinated = masterColumns;
       }
       this.datagrid.render();
-    }
-    catch (ex) {
+    } catch (ex) {
       this.xmlError(ex);
     }
   },
@@ -2062,7 +2106,7 @@ dojo.declare("openbravo.widget.DataGrid.Type", null, {
 * It is the builder that dojo needs to initialize an object.
 * @param {String} name - New name
 */
-  initializer: function(name) {
+  constructor: function(name) {
     this.name = name;
   },
 
@@ -2094,8 +2138,8 @@ dojo.declare("openbravo.widget.DataGrid.StringType", openbravo.widget.DataGrid.T
 });
 
 dojo.declare("openbravo.widget.DataGrid.IntegerType", openbravo.widget.DataGrid.Type, {
-  initializer: function(name) {
-    dojo.require("dojo.validate.common");
+  constructor: function(name) {
+    dojo.require("dojox.validate");
   },  
 
   renderEditor: function(params) {
@@ -2117,13 +2161,13 @@ dojo.declare("openbravo.widget.DataGrid.IntegerType", openbravo.widget.DataGrid.
   },
 
   validate: function(value) {
-    return dojo.validate.isInteger(value);
+    return dojox.validate.isNumberFormat(value);
   }
 });
 
 dojo.declare("openbravo.widget.DataGrid.FloatType", openbravo.widget.DataGrid.Type, {
-  initializer: function(name) {
-    dojo.require("dojo.validate.common");
+  constructor: function(name) {
+    dojo.require("dojox.validate");
   },
 
   renderEditor: function(params) {
@@ -2145,13 +2189,13 @@ dojo.declare("openbravo.widget.DataGrid.FloatType", openbravo.widget.DataGrid.Ty
   },
 
   validate: function(value) {
-    return dojo.validate.isRealNumber(value);
+    return dojox.validate.isNumberFormat(value);
   }
 });
 
 dojo.declare("openbravo.widget.DataGrid.DateType", openbravo.widget.DataGrid.Type, {
-  initializer: function(name) {
-    dojo.require("dojo.widget.DropdownDatePicker");
+  constructor: function(name) {
+    dojo.require("dijit.form.DateTextBox");
   },
 
   renderEditor: function(params) {
@@ -2168,7 +2212,7 @@ dojo.declare("openbravo.widget.DataGrid.DateType", openbravo.widget.DataGrid.Typ
   },
 
   validate: function(value) {
-    return dojo.validate.isValidDate(value);
+    return dojox.validate.isNumberFormat(value);
   }
 });
 
@@ -2179,8 +2223,8 @@ dojo.declare("openbravo.widget.DataGrid.ImgType", openbravo.widget.DataGrid.Type
 });
 
 dojo.declare("openbravo.widget.DataGrid.EnumType", openbravo.widget.DataGrid.Type, {
-  initializer: function(name) {
-    dojo.require("dojo.widget.Select");
+  constructor: function(name) {
+    //dojo.require("dojo.widget.Select");
     this.values = [];
   },
 
@@ -2210,20 +2254,20 @@ dojo.declare("openbravo.widget.DataGrid.EnumType", openbravo.widget.DataGrid.Typ
   },
 
   validate: function(value) {
-    return value == "" || dojo.lang.inArray(this.values, value);
+    return value == "" || openbravo.widget.DataGrid.html.inArray(this.values, value);
   }
 });
 
 dojo.declare("openbravo.widget.DataGrid.DynamicEnumType", openbravo.widget.DataGrid.EnumType, {
-  initializer: function(name) {
+  constructor: function(name) {
     this.widget = null;
   },
 
-  populateCombo: function(type, data, evt) {
+  populateCombo: function(data, evt) {
     var options = data.getElementsByTagName('option');
     var availableOptions = [];
     for (var i = 0; i < options.length; i++) {
-      var option = openbravo.html.getContentAsString(options[i]);
+      var option = openbravo.widget.DataGrid.html.getContentAsString(options[i]);
       availableOptions.push([option, option]);
       this.values.push(option);
     }
@@ -2238,13 +2282,14 @@ dojo.declare("openbravo.widget.DataGrid.DynamicEnumType", openbravo.widget.DataG
       var columnName = params.subordinated[i];
       columnNames.push(columnName);
       var invalidatorValue = params.row.getValue(columnName);
-      if (invalidatorValue == "")
+      if (invalidatorValue == ""){
         success = false;
-      else 
+      }else {
         values[columnName] = invalidatorValue;
+      }
     }
     if (success) {
-      var handlerRef = dojo.lang.hitch(this, "populateCombo");
+      var handlerRef = dojo.hitch(this, "populateCombo");
       var content = [];
       content["action"] = "getComboContent";
       content["subordinatedColumn"] = params.name;
@@ -2256,9 +2301,9 @@ dojo.declare("openbravo.widget.DataGrid.DynamicEnumType", openbravo.widget.DataG
         url: params.cellSaver.dataUrl,
         handler: handlerRef,
         method: "POST",
-        mimetype: "text/xml"
+        handleAs: "xml"
       };
-      openbravo.io.asyncCall(serviceUrl, content);
+      openbravo.widget.DataGrid.io.asyncCall(serviceUrl, content);
     }
   },  
 
@@ -2281,20 +2326,21 @@ dojo.declare("openbravo.widget.DataGrid.DynamicEnumType", openbravo.widget.DataG
 });
 
 dojo.declare("openbravo.widget.DataGrid.CustomType", openbravo.widget.DataGrid.Type, {
-  initializer: function(name) {
+  constructor: function(name) {
     this.className = "";
   },
 
   renderEditor: function(params) {
     params.cell.innerHTML = params.initialValue;
-    var customEditor = dojo.evalObjPath(this.className, true);
+    var customEditor = dojo.getObject(this.className, true);
     var editorHandler = new openbravo.widget.DataGrid.EditorHandler(function() {
       return params.initialValue;
     });
     var handler = {
       save: function(values) {
-        for (var columnName in values)
+        for (var columnName in values){
           params.row.setValue(columnName, values[columnName]);
+        }
         params.row.updateGrid();
 
         editorHandler.getValue = function() {
@@ -2317,7 +2363,7 @@ dojo.declare("openbravo.widget.DataGrid.CustomType", openbravo.widget.DataGrid.T
 });
 
 dojo.declare("openbravo.widget.DataGrid.TypeFactory", null, {
-  initializer: function() {
+  constructor: function() {
     var supportedTypes = [];
     supportedTypes["string"] = "openbravo.widget.DataGrid.StringType";
     supportedTypes["integer"] = "openbravo.widget.DataGrid.IntegerType";
@@ -2333,17 +2379,17 @@ dojo.declare("openbravo.widget.DataGrid.TypeFactory", null, {
     };
 
     this.getType = function(typeName) {
-      if (types[typeName])
+      if (types[typeName]){
         return types[typeName];
-      else {
+      }else {
         var className = supportedTypes[typeName];
         var type;
         if (className) {
-          var typeClass = dojo.evalObjPath(className, true);
+          var typeClass = dojo.getObject(className, true);
           type = new typeClass(typeName);
-        }
-        else
+        }else{
           type = new openbravo.widget.DataGrid.Type(typeName);
+        }
         types[typeName] = type;
         return type;
       }
@@ -2353,29 +2399,30 @@ dojo.declare("openbravo.widget.DataGrid.TypeFactory", null, {
 });
 
 dojo.declare("openbravo.widget.DataGrid.EditorHandler", null, {
-  initializer: function() {
+  constructor: function() {
     this.getValue = function() {};
     this.setFocus = function() {};
   }
 });
 
 dojo.declare("openbravo.widget.DataGrid.InputEditorHandler", openbravo.widget.DataGrid.EditorHandler, {
-  initializer: function(input) {
+  constructor: function(input) {
 
     this.getValue = function() {
       return input.value;
     };
 
     this.setFocus = function() {
-      if (input.parentNode)
+      if (input.parentNode){
         input.focus();
+      }
     };
 
   }
 });
 
 dojo.declare("openbravo.widget.DataGrid.Columns", null, {
-  initializer: function() {
+  constructor: function() {
     var columns = [];
     var identifier = null;
 
@@ -2387,27 +2434,31 @@ dojo.declare("openbravo.widget.DataGrid.Columns", null, {
       column.index = columns.length;
       columns[columns.length] = column;
       if (column.identifier) {
-        if (identifier)
+        if (identifier){
           throw Error("Column " + column.name + " set as an identifier, but " + 
             identifier.name + " is already the identifier.");
+        }
         identifier = column;
       }
     };
 
     this.removeColumn = function(position) {
-      if(columns[position].identifier)
+      if(columns[position].identifier){
         identifier = null;
+      }
       columns[position] = null;
     };
 
     this.get = function(position) {
-      if (!isNaN(position))
+      if (!isNaN(position)){
         return columns[position];
-      else
+      }else{
         for (var i in columns) {
-          if (columns[i].name == position)
+          if (columns[i].name == position){
             return columns[i];
+          }
         }
+      }
     };
 
     this.getIdentifier = function() {
@@ -2423,7 +2474,7 @@ dojo.declare("openbravo.widget.DataGrid.Column", null, {
   DEFAULT_HEADER_CLASS: 'DataGrid_Header_Cell',
   DEFAULT_HEADER_CLASS_INVERSE: 'DataGrid_Header_Cell DataGrid_Header_Cell_Inverse',
 
-  initializer: function(name, type, params) {
+  constructor: function(name, type, params) {
     this.index = -1;
     this.name = name;
     this.type = type;
@@ -2445,19 +2496,21 @@ dojo.declare("openbravo.widget.DataGrid.Column", null, {
     this.invalidates = params.invalidates ? params.invalidates : [];
     this.subordinated = [];
     this.currentSort = openbravo.widget.DataGrid.Column.UNSORTED;
-    if (this.identifier || !this.visible || this.readonly)
+    if (this.identifier || !this.visible || this.readonly){
       this.required = false;
-    if (this.identifier)
+    }
+    if (this.identifier){
       this.readonly = true;
+    }
   },
 
   renderEditor: function(cell, row, cellSaver) {
     var container = document.createElement("span");
     container.style.display = "none";
-    var columnNo = dojo.lang.indexOf(cell.parentNode.cells, cell);
+    var columnNo = dojo.indexOf(cell.parentNode.cells, cell);
     var content = row.getValue(columnNo);
-    openbravo.html.clearElement(cell);
-    var tdWidth = openbravo.html.extractPx(cell.style.width);
+    openbravo.widget.DataGrid.html.clearElement(cell);
+    var tdWidth = openbravo.widget.DataGrid.html.extractPx(cell.style.width);
     var params = {
       parentNode: container,
       initialValue: content,
@@ -2491,10 +2544,11 @@ dojo.declare("openbravo.widget.DataGrid.Column", null, {
 
   toggleSort: function() {
     if (this.currentSort == openbravo.widget.DataGrid.Column.UNSORTED ||
-        this.currentSort == openbravo.widget.DataGrid.Column.SORT_DESC)
+        this.currentSort == openbravo.widget.DataGrid.Column.SORT_DESC){
       this.currentSort = openbravo.widget.DataGrid.Column.SORT_ASC;
-    else if ( this.currentSort == openbravo.widget.DataGrid.Column.SORT_ASC )
+    }else if ( this.currentSort == openbravo.widget.DataGrid.Column.SORT_ASC ){
       this.currentSort = openbravo.widget.DataGrid.Column.SORT_DESC;
+    }
   },
 
   setUnsorted: function(direction) {
@@ -2518,7 +2572,7 @@ dojo.declare("openbravo.widget.DataGrid.Row", null, {
   EDITING:    3,
   REFRESHING: 4,
 
-  initializer: function(offset, columns, options, errorHandler, isVisible) {
+  constructor: function(offset, columns, options, errorHandler, isVisible) {
     this.modified = false;
     this.error = false;
     this.offset = offset;
@@ -2526,12 +2580,13 @@ dojo.declare("openbravo.widget.DataGrid.Row", null, {
     this.status = 0;
     this.isNewRow = false;
     var values = [];
-    var storedValues = dojo.lang.toArray(values);
+    var storedValues = openbravo.widget.DataGrid.html.toArray(values);
 
     var toObject = function() {
       var object = {};
-      for (var i = 0; i < values.length; i++)
+      for (var i = 0; i < values.length; i++){
         object[columns.get(i).name] = values[i];
+      }
       return object;
     };
 
@@ -2553,12 +2608,12 @@ dojo.declare("openbravo.widget.DataGrid.Row", null, {
             column.innerHTML="";
           }
           var textNode = createTextCellElement(column);*/
-          if (column.type.name == 'url' && value != '') this.rowNode.cells[i].innerHTML = "<a href=\"" + value + "\" target=_blank><img src=\"../web/js/openbravo/widget/templates/popup1.gif\" border=\"0\ title=\"Link\" alt=\"Link\"></a>&nbsp;" + value;
-          if (column.type.name == 'img' && value != '') this.rowNode.cells[i].innerHTML = "<img src=\"" + value + "\" border=\"0\" height=\"15px\">";
-          else this.rowNode.cells[i].innerHTML = value;
+          if (column.type.name == 'url' && value != '') { this.rowNode.cells[i].innerHTML = "<a href=\"" + value + "\" target=_blank><img src=\"../web/js/openbravo/templates/popup1.gif\" border=\"0\ title=\"Link\" alt=\"Link\"></a>&nbsp;" + value; }
+          if (column.type.name == 'img' && value != '') { this.rowNode.cells[i].innerHTML = "<img src=\"" + value + "\" border=\"0\" height=\"15px\">"; }
+          else { this.rowNode.cells[i].innerHTML = value; }
           //this.rowNode.cells[i].appendChild(textNode);
         }
-        if (this.status > 0) this.setIcon();
+        if (this.status > 0) { this.setIcon(); }
       }
     };
 
@@ -2569,8 +2624,9 @@ dojo.declare("openbravo.widget.DataGrid.Row", null, {
 * @type String
 */
     this.getValue = function(columnNo) {
-      if (isNaN(columnNo))
+      if (isNaN(columnNo)) {
         columnNo = columns.get(columnNo).index;
+      }
       return values[columnNo];
     };
 
@@ -2580,10 +2636,12 @@ dojo.declare("openbravo.widget.DataGrid.Row", null, {
 * @param {String} value - The new value
 */
     this.setValue = function(columnNo, value) {
-      if (isNaN(columnNo))
+      if (isNaN(columnNo)){
         columnNo = columns.get(columnNo).index;
-      if (values[columnNo] != value)
+      }
+      if (values[columnNo] != value){
         values[columnNo] = value;
+      }
       this.modified = true;
     };
 
@@ -2595,7 +2653,7 @@ dojo.declare("openbravo.widget.DataGrid.Row", null, {
       for (var i = 0; i < columnValues.length; i++) {
         values[i] = columnValues[i];
       }
-      storedValues = dojo.lang.toArray(values);      
+      storedValues = openbravo.widget.DataGrid.html.toArray(values);      
     };
 
 /**
@@ -2607,8 +2665,9 @@ dojo.declare("openbravo.widget.DataGrid.Row", null, {
       var emptyFields = [];
       for (var i = 0; i < values.length; i++) {
         var column = columns.get(i);
-        if (column.required && values[i] == "")
+        if (column.required && values[i] == ""){
           emptyFields[emptyFields.length] = i;
+        }
       };
       this.error = emptyFields.length > 0;
       return emptyFields;
@@ -2621,10 +2680,11 @@ dojo.declare("openbravo.widget.DataGrid.Row", null, {
     this.validate = function(validators) {
       var correct = true;
       for (var i = 0; i < validators.length; i++) {
-        var validator = dojo.evalObjPath(validators[i], true);
+        var validator = dojo.getObject(validators[i], true);
         correct = new validator().validate(toObject());
-        if (!correct)
+        if (!correct){
           break;
+        }
       }
       this.error = !correct;
     };
@@ -2637,9 +2697,9 @@ dojo.declare("openbravo.widget.DataGrid.Row", null, {
       this.setStatus(this.ERROR);
       var id = values[columns.getIdentifier().index];
       options.failedRows.add(id);
-      var title = openbravo.html.getContentAsString(errorElement.getElementsByTagName("title")[0]);
-      var description = openbravo.html.getContentAsString(errorElement.getElementsByTagName("description")[0]);
-      values = dojo.lang.toArray(storedValues);
+      var title = openbravo.widget.DataGrid.html.getContentAsString(errorElement.getElementsByTagName("title")[0]);
+      var description = openbravo.widget.DataGrid.html.getContentAsString(errorElement.getElementsByTagName("description")[0]);
+      values = openbravo.widget.DataGrid.html.toArray(storedValues);
       this.updateGrid();
       errorHandler.handleError(title, description);
     };
@@ -2649,11 +2709,11 @@ dojo.declare("openbravo.widget.DataGrid.Row", null, {
 * @param {Object} rowElement - The pointer to the row that we want to populate
 */
     this.populateDefaultValues = function(rowElement) {
-      dojo.lang.forEach(rowElement.childNodes, dojo.lang.hitch(this, function(element) {
-        if (element.nodeType == dojo.dom.ELEMENT_NODE) {
+      dojo.forEach(rowElement.childNodes, dojo.hitch(this, function(element) {
+        if (element.nodeType == dojox.data.dom.ELEMENT_NODE) {
           var column = columns.get(element.tagName);
           if (column) {
-            this.setValue(column.index, openbravo.html.getContentAsString(element));
+            this.setValue(column.index, openbravo.widget.DataGrid.html.getContentAsString(element));
             this.updateGrid();
           }
         }
@@ -2667,14 +2727,14 @@ dojo.declare("openbravo.widget.DataGrid.Row", null, {
     this.getDefaultValues = function(url) {
       var content = [];
       content["action"] = "getDefaultValues";
-      handlerRef = dojo.lang.hitch(this, parseResponse);
+      handlerRef = dojo.hitch(this, parseResponse);
       var serviceUrl = {
         url: url,
         handler: handlerRef,
         method: "POST",
-        mimetype: "text/xml"
+        handleAs: "xml"
       };
-      openbravo.io.asyncCall(serviceUrl, content);
+      openbravo.widget.DataGrid.io.asyncCall(serviceUrl, content);
     };
 
 /**
@@ -2683,19 +2743,19 @@ dojo.declare("openbravo.widget.DataGrid.Row", null, {
 * @param {XML Structure} data - data structure
 * @param {EventHandler} evt - event handler
 */
-    var parseResponse = function(type, data, evt) {
-      if (!data) return;
+    var parseResponse = function(data, evt) {
+      if (!data) { return; }
       var xmldata = data.getElementsByTagName('xml-data');
       var status = xmldata[0].getElementsByTagName('status');
       if (status.length>0){
         var type = status[0].getElementsByTagName('type');
         var title = status[0].getElementsByTagName('title');
         var description = status[0].getElementsByTagName('description');
-        if (dojo.dom.textContent(type[0]).toUpperCase() != 'HIDDEN') {
+        if (dojox.data.dom.textContent(type[0]).toUpperCase() != 'HIDDEN') {
           try {
-            renderMessageBox(dojo.dom.textContent(type[0]),dojo.dom.textContent(title[0]),dojo.dom.textContent(description[0]));
+            renderMessageBox(dojox.data.dom.textContent(type[0]),dojox.data.dom.textContent(title[0]),dojox.data.dom.textContent(description[0]));
           } catch (err) {
-            alert(dojo.dom.textContent(title[0]) + ":\n" + dojo.dom.textContent(description[0]));
+            alert(dojox.data.dom.textContent(title[0]) + ":\n" + dojox.data.dom.textContent(description[0]));
           }
         }
       }
@@ -2704,19 +2764,21 @@ dojo.declare("openbravo.widget.DataGrid.Row", null, {
         this.handleError(errors[0]);
       } else {
         var rowId = this.getValue(columns.getIdentifier().index);
-        if (rowId)
+        if (rowId){
           this.setStatus(this.SAVED);
-        storedValues = dojo.lang.toArray(values);
+        }
+        storedValues = openbravo.widget.DataGrid.html.toArray(values);
         if (options.failedRows.contains(rowId)) {
           options.failedRows.remove(rowId);
         }
-        dojo.lang.setTimeout(this, dojo.lang.hitch(this, function() {
+        setTimeout( dojo.hitch(this, function() {
           this.setStatus(this.CORRECT);
         }), 2000);
       }
       var rows = xmldata[0].getElementsByTagName('rows');
-      if (rows.length > 0)
+      if (rows.length > 0){
         this.populateDefaultValues(rows[0]);
+      }
     };
 
 /**
@@ -2726,8 +2788,9 @@ dojo.declare("openbravo.widget.DataGrid.Row", null, {
     this.setStatus = function(statusName) {
       this.status = statusName;
       //  if (this.offset || isVisible(this.offset))
-      if (this.rowNode)
+      if (this.rowNode){
         this.setIcon();
+      }
     };
 
 /**
@@ -2749,8 +2812,9 @@ dojo.declare("openbravo.widget.DataGrid.Row", null, {
 * It eliminates of the row the current icon.
 */
     this.removeIcon = function() {
-      if (this.rowNode.cells[0].innerHTML != "")
+      if (this.rowNode.cells[0].innerHTML != ""){
         this.rowNode.cells[0].innerHTML = this.offset + 1;
+      }
     };
 
 /**
@@ -2760,31 +2824,31 @@ dojo.declare("openbravo.widget.DataGrid.Row", null, {
     this.sendRow = function(url) {
       this.setStatus(this.REFRESHING);
       var content = toObject();
-      var  handlerRef = dojo.lang.hitch(this, parseResponse);
+      var  handlerRef = dojo.hitch(this, parseResponse);
       if (this.isNewRow) {
         content["action"] = "addNewRow";
-      }
-      else {
+      } else {
         content["action"] = "updateRow";
       }
       var serviceUrl = {
         url: url,
         handler: handlerRef,
         method: "POST",
-        mimetype: "text/xml"
+        handleAs: "xml"
       };
-      openbravo.io.asyncCall(serviceUrl, content);
+      openbravo.widget.DataGrid.io.asyncCall(serviceUrl, content);
       this.modified = false;
-      if (this.isNewRow)
+      if (this.isNewRow){
         this.isNewRow = false;
+      }
     };
 
   }
 });
 
 dojo.declare("openbravo.widget.DataGrid.IndexedRows", null, {
-  initializer: function() {
-    var selectedRows = new dojo.collections.Dictionary();
+  constructor: function() {
+    var selectedRows = new dojox.collections.Dictionary();
     var lastSelected;
     var selectedIds = [];
 
@@ -2830,11 +2894,12 @@ dojo.declare("openbravo.widget.DataGrid.IndexedRows", null, {
         lastSelected = selectedRows.item(id);
       } else {
         var size = selectedIds.length;
-        for(var i = 0; i < size; i++)
+        for(var i = 0; i < size; i++){
           if (id == selectedIds[i]) {
             selectedIds.splice(i,1);
             break;
           }
+        }
       }
     };
 
@@ -2864,7 +2929,7 @@ dojo.declare("openbravo.widget.DataGrid.MetaData", null, {
 * @param {Number} columnCount - columns count
 * @param {Array} options - Array of options
 */
-  initializer: function( pageSize, totalRows, columnCount, options ) {
+  constructor: function( pageSize, totalRows, columnCount, options ) {
     this.pageSize  = pageSize;
     this.totalRows = totalRows;
     this.setOptions(options);
@@ -2881,7 +2946,7 @@ dojo.declare("openbravo.widget.DataGrid.MetaData", null, {
       largeBufferSize    : 7.0,   // 7 pages
       nearLimitFactor    : 0.2    // 20% of buffer
     };
-    dojo.lang.mixin(this.options, options || {});
+    dojo.mixin(this.options, options || {});
   },
 
 /**
@@ -2930,8 +2995,8 @@ dojo.declare("openbravo.widget.DataGrid.MetaData", null, {
 });
 
 dojo.declare("openbravo.widget.DataGrid.Scroller", null, {
-  initializer: function(liveGrid, viewPort) {
-    this.isIE = dojo.render.html.ie;
+  constructor: function(liveGrid, viewPort) {
+    this.isIE = dojo.isIE;
     this.liveGrid = liveGrid;
     this.metaData = liveGrid.metaData;
     this.createScrollBar();
@@ -2954,7 +3019,7 @@ dojo.declare("openbravo.widget.DataGrid.Scroller", null, {
 * Plug in the onscroll method.
 */
   plugin: function() {
-    this.scrollerDiv.onscroll = dojo.lang.hitch(this, "handleScroll");
+    this.scrollerDiv.onscroll = dojo.hitch(this, "handleScroll");
   },
 
 /**
@@ -2968,11 +3033,12 @@ dojo.declare("openbravo.widget.DataGrid.Scroller", null, {
 * A header hack function for ie.
 */
   sizeIEHeaderHack: function() {
-    if ( !this.isIE ) return;
+    if ( !this.isIE ) { return; }
     var headerTable = dojo.byId(this.liveGrid.tableId + "_header");
-    if ( headerTable )
+    if ( headerTable ) {
       headerTable.rows[0].cells[0].style.width =
         (headerTable.rows[0].cells[0].offsetWidth + 1) + "px";
+    }
   },
 
 /**
@@ -3005,12 +3071,12 @@ dojo.declare("openbravo.widget.DataGrid.Scroller", null, {
     this.heightDiv.style.width  = "1px";
     this.updateHeight();
     this.scrollerDiv.appendChild(this.heightDiv);
-    this.scrollerDiv.onscroll = dojo.lang.hitch(this, "handleScroll");
+    this.scrollerDiv.onscroll = dojo.hitch(this, "handleScroll");
     table.parentNode.parentNode.insertBefore( this.scrollerDiv, table.parentNode.nextSibling );
     //  if (this.isIE)
     table.parentNode.style.overflowX = "auto";
     var eventName = this.isIE ? "onmousewheel" : "DOMMouseScroll";
-    //  dojo.event.connect(window, eventName, dojo.lang.hitch(this, 
+    //  dojo.connect(window, eventName, dojo.hitch(this, 
     //  function(evt) {
     //  if (evt.wheelDelta>=0 || evt.detail < 0) //wheel-up
     //  this.scrollerDiv.scrollTop -= (2*this.viewPort.rowHeight);
@@ -3018,32 +3084,37 @@ dojo.declare("openbravo.widget.DataGrid.Scroller", null, {
     //  this.scrollerDiv.scrollTop += (2*this.viewPort.rowHeight);
     //  this.handleScroll(false);
     //  }));
-    var handler = dojo.lang.hitch(this, function(event){
+    var handler = dojo.hitch(this, function(event){
       var delta = 0;
-      if (!event)
+      if (!event){
         event = window.event;
+      }
       if (event.wheelDelta) {
         delta = event.wheelDelta/120;
-        if (window.opera)
+        if (window.opera){
           delta = -delta;
+        }
       } else if (event.detail) {
         delta = -event.detail/3;
       }
       if (delta) {
-        if (delta >0)
+        if (delta >0){
           this.scrollerDiv.scrollTop -= (2*this.viewPort.rowHeight);
-        else
+        }else{
           this.scrollerDiv.scrollTop += (2*this.viewPort.rowHeight);
+        }
         this.handleScroll(false);
       }
-      if (event.preventDefault)
+      if (event.preventDefault){
         event.preventDefault();
+      }
       event.returnValue = false;
     });
-    if (window.addEventListener)
+    if (window.addEventListener){
       this.liveGrid.domNode.addEventListener('DOMMouseScroll', handler, false);
-    else
-      dojo.event.connect(this.liveGrid.domNode, eventName, handler);
+    }else{
+      dojo.connect(this.liveGrid.domNode, eventName, handler);
+    }
   },
 
 /**
@@ -3072,8 +3143,9 @@ dojo.declare("openbravo.widget.DataGrid.Scroller", null, {
 */
   moveScroll: function(rowOffset) {
     this.scrollerDiv.scrollTop = this.rowToPixel(rowOffset);
-    if ( this.metaData.options.onscroll )
+    if ( this.metaData.options.onscroll ){
       this.metaData.options.onscroll( this.liveGrid, rowOffset );
+    }
   },
 
 /**
@@ -3081,8 +3153,9 @@ dojo.declare("openbravo.widget.DataGrid.Scroller", null, {
 */
   handleScroll: function() {
     if (this.metaData.totalRows != '0') {
-      if ( this.scrollTimeout )
+      if ( this.scrollTimeout ){
         clearTimeout( this.scrollTimeout );
+      }
       var scrollDiff = this.lastScrollPos-this.scrollerDiv.scrollTop;
       if (scrollDiff != 0.00) {
         var r = this.scrollerDiv.scrollTop % this.viewPort.rowHeight;
@@ -3099,9 +3172,10 @@ dojo.declare("openbravo.widget.DataGrid.Scroller", null, {
       var contentOffset = parseInt(this.scrollerDiv.scrollTop / this.viewPort.rowHeight);
       this.liveGrid.requestContentRefresh(contentOffset);
       this.viewPort.scrollTo(this.scrollerDiv.scrollTop);
-      if ( this.metaData.options.onscroll )
+      if ( this.metaData.options.onscroll ){
         this.metaData.options.onscroll( this.liveGrid, contentOffset );
-      this.scrollTimeout = setTimeout(dojo.lang.hitch(this, "scrollIdle"), 1200 );
+      }
+      this.scrollTimeout = setTimeout(dojo.hitch(this, "scrollIdle"), 1200 );
       this.lastScrollPos = this.scrollerDiv.scrollTop;
     }
   },
@@ -3110,8 +3184,9 @@ dojo.declare("openbravo.widget.DataGrid.Scroller", null, {
 * Method to launch the function that manages the onscrollidle event.
 */
   scrollIdle: function() {
-    if ( this.metaData.options.onscrollidle )
+    if ( this.metaData.options.onscrollidle ){
       this.metaData.options.onscrollidle();
+    }
   }
 });
 
@@ -3122,7 +3197,7 @@ dojo.declare("openbravo.widget.DataGrid.Buffer", null, {
 * @param {Object} metaData - meta data handler
 * @param {Object} liveGrid - pointer to the live grid
 */
-  initializer: function(metaData, liveGrid) {
+  constructor: function(metaData, liveGrid) {
     this.startPos = 0;
     this.size     = 0;
     this.metaData = metaData;
@@ -3144,8 +3219,9 @@ dojo.declare("openbravo.widget.DataGrid.Buffer", null, {
     if (!this.blankRow ) {
       this.blankRow = this.liveGrid.createRowObject(null);
       var values = [];
-      for ( var i=0; i < this.metaData.columnCount; i++ ) 
+      for ( var i=0; i < this.metaData.columnCount; i++ ) {
         values[i] = "";
+      }
       this.blankRow.setValues(values);
     }
     return this.blankRow;
@@ -3164,11 +3240,11 @@ dojo.declare("openbravo.widget.DataGrid.Buffer", null, {
       var type = status[0].getElementsByTagName('type');
       var title = status[0].getElementsByTagName('title');
       var description = status[0].getElementsByTagName('description');
-      if (dojo.dom.textContent(type[0]).toUpperCase() != 'HIDDEN') {
+      if (dojox.data.dom.textContent(type[0]).toUpperCase() != 'HIDDEN') {
         try {
-          renderMessageBox(dojo.dom.textContent(type[0]),dojo.dom.textContent(title[0]),dojo.dom.textContent(description[0]));
+          renderMessageBox(dojox.data.dom.textContent(type[0]),dojox.data.dom.textContent(title[0]),dojox.data.dom.textContent(description[0]));
         } catch (err) {
-          alert(dojo.dom.textContent(title[0]) + ":\n" + dojo.dom.textContent(description[0]));
+          alert(dojox.data.dom.textContent(title[0]) + ":\n" + dojox.data.dom.textContent(description[0]));
         }
       }
     }
@@ -3183,8 +3259,9 @@ dojo.declare("openbravo.widget.DataGrid.Buffer", null, {
     if (this.metaData.totalRows == 0) {
       this.liveGrid.setTotalRows(numRows);
       this.liveGrid.fetchBuffer(0);
-      if (this.metaData.options.onscroll)
+      if (this.metaData.options.onscroll){
         this.metaData.options.onscroll(this.liveGrid, 0);
+      }
     }
     var newRows = [];
     var trs = rowsElement.getElementsByTagName("tr");
@@ -3195,7 +3272,7 @@ dojo.declare("openbravo.widget.DataGrid.Buffer", null, {
         var values = [this.lastOffset + i + 1];
         for ( var j=0; j < cells.length ; j++ ) {
           var cell = cells[j];
-          var cellContent = dojo.dom.textContent(cell);
+          var cellContent = dojox.data.dom.textContent(cell);
           values.push(cellContent);
         }
         row.setValues(values);
@@ -3217,6 +3294,7 @@ dojo.declare("openbravo.widget.DataGrid.Buffer", null, {
 */
   update: function(ajaxResponse, start) {
     var newRows = this.loadRows(ajaxResponse);
+    if (newRows==null) { newRows=[]; }
     if (this.rows.length == 0) {
       this.rows = newRows;
       this.size = this.rows.length;
@@ -3240,8 +3318,9 @@ dojo.declare("openbravo.widget.DataGrid.Buffer", null, {
         this.rows =  newRows;
       } else {
         this.rows = newRows.slice(0, this.startPos).concat(this.rows);
-        if (this.rows.length > this.maxBufferSize) 
+        if (this.rows.length > this.maxBufferSize) {
           this.rows = this.rows.slice(0, this.maxBufferSize)
+        }
       }
       this.startPos =  start;
     }
@@ -3347,16 +3426,18 @@ dojo.declare("openbravo.widget.DataGrid.Buffer", null, {
     var adjustedSize = 0;
     if (adjustedOffset >= this.startPos) {
       var endFetchOffset = this.maxFetchSize  + adjustedOffset;
-      if (this.metaData.totalRows > 0 && endFetchOffset > this.metaData.totalRows)
+      if (this.metaData.totalRows > 0 && endFetchOffset > this.metaData.totalRows){
         endFetchOffset = this.metaData.totalRows;
+      }
       adjustedSize = endFetchOffset - adjustedOffset;  
       if(adjustedOffset == 0 && adjustedSize < this.maxFetchSize){
         adjustedSize = this.maxFetchSize;
       }
     } else {
       var adjustedSize = this.startPos - adjustedOffset;
-      if (adjustedSize > this.maxFetchSize)
+      if (adjustedSize > this.maxFetchSize){
         adjustedSize = this.maxFetchSize;
+      }
     }
     return adjustedSize;
   }, 
@@ -3374,8 +3455,9 @@ dojo.declare("openbravo.widget.DataGrid.Buffer", null, {
     } else {
       if (offset + this.maxFetchSize >= this.startPos) {
         var adjustedOffset = this.startPos - this.maxFetchSize;
-        if (adjustedOffset < 0)
+        if (adjustedOffset < 0){
           adjustedOffset = 0;
+        }
       }
     }
     this.lastOffset = adjustedOffset;
@@ -3390,10 +3472,11 @@ dojo.declare("openbravo.widget.DataGrid.Buffer", null, {
 */
   getRow: function(offset) {
     var rows = this.getRows(offset, 1);
-    if (rows.length > 0)
+    if (rows.length > 0){
       return rows[0];
-    else
+    }else{
       return this.liveGrid.editingRow;
+    }
   },
 
 /**
@@ -3406,8 +3489,9 @@ dojo.declare("openbravo.widget.DataGrid.Buffer", null, {
   getRows: function(start, count) {
     var begPos = start - this.startPos;
     var endPos = begPos + count;
-    if ( endPos > this.size )
+    if ( endPos > this.size ){
       endPos = this.size;
+    }
     var results = [];
     var index = 0;
     for ( var i=begPos ; i < endPos; i++ ) {
@@ -3427,7 +3511,7 @@ dojo.declare("openbravo.widget.DataGrid.ViewPort", null, {
 * @param {Object} buffer - buffer handler
 * @param {Object} liveGrid - pointer to the live grid
 */
-  initializer: function(table, rowHeight, visibleRows, buffer, liveGrid) {
+  constructor: function(table, rowHeight, visibleRows, buffer, liveGrid) {
     this.lastDisplayedStartPos = 0;
     this.div = table.parentNode;
     this.table = table;
@@ -3472,8 +3556,9 @@ dojo.declare("openbravo.widget.DataGrid.ViewPort", null, {
   clearRows: function() {
     if (!this.isBlank) {
       this.liveGrid.table.className = this.liveGrid.options.loadingClass;
-      for (var i=0; i < this.visibleRows; i++)
+      for (var i=0; i < this.visibleRows; i++){
         this.populateRow(this.table.rows[i], this.buffer.getBlankRow());
+      }
       this.isBlank = true;
     }
   },
@@ -3541,8 +3626,9 @@ dojo.declare("openbravo.widget.DataGrid.ViewPort", null, {
 * @param {Number} pixelOffset - pixel offset
 */
   scrollTo: function(pixelOffset) {
-    if (this.lastPixelOffset == pixelOffset)
+    if (this.lastPixelOffset == pixelOffset){
       return;
+    }
     this.refreshContents(parseInt(pixelOffset / this.rowHeight))
     this.div.scrollTop = pixelOffset % this.rowHeight
     this.lastPixelOffset = pixelOffset;
@@ -3554,7 +3640,7 @@ dojo.declare("openbravo.widget.DataGrid.ViewPort", null, {
 * @type Number.
 */
   visibleHeight: function() {
-    return parseInt(dojo.html.getComputedStyle(this.div, 'height')) - 15 - this.div.firstChild.offsetHeight;
+    return parseInt(dojo.getComputedStyle(this.div).height) - 15 - this.div.firstChild.offsetHeight;
   },
 
 /**
@@ -3571,7 +3657,7 @@ dojo.declare("openbravo.widget.DataGrid.ContentRequest", null, {
 * @param {Object} requestOffset - requests handler
 * @param {Array} options - Array of options
 */
-  initializer: function( requestOffset, options ) {
+  constructor: function( requestOffset, options ) {
     this.requestOffset = requestOffset;
   }
 });
@@ -3582,7 +3668,7 @@ dojo.declare("openbravo.widget.DataGrid.SortingHandler", null, {
 * @param {String} headerTableId - id of the header table
 * @param {Array} options - Array of options
 */
-  initializer: function(headerTableId, options) {
+  constructor: function(headerTableId, options) {
     this.headerTableId = headerTableId;
     this.headerTable   = dojo.byId(headerTableId);
     this.options = options;
@@ -3602,8 +3688,9 @@ dojo.declare("openbravo.widget.DataGrid.SortingHandler", null, {
   setSortUI: function( columnNames, sortDirections ) {
     for (var i = 0; i < columnNames.length; i++) {
       var column = this.options.columns.get(columnNames[i]) 
-      if (column)
+      if (column){
         this.setColumnSort(column.index, sortDirections[i]);
+      }
     };
   },
 
@@ -3636,7 +3723,7 @@ dojo.declare("openbravo.widget.DataGrid.SortingHandler", null, {
     if ( this.options.columns.get(n).isSortable() ) {
       cell.id            = this.headerTableId + '_' + n;
       cell.style.cursor  = 'pointer';
-      dojo.event.connect(cell, "onclick", this, "headerCellClicked");
+      dojo.connect(cell, "onclick", this, "headerCellClicked");
       //var nobr1 = document.createElement("nobr");
       //var nobr1 = document.createElement("span");
       //nobr1.setAttribute("id", 'nobr_' + this.headerTableId + '_img_' + n);
@@ -3653,24 +3740,27 @@ dojo.declare("openbravo.widget.DataGrid.SortingHandler", null, {
 * @param {EventHandler} evt - event handler
 */
   headerCellClicked: function(evt) {
-    if (this.options.hasResized()) return;
-    var eventTarget = dojo.html.getEventTarget(evt);
+    if (this.options.hasResized()) { return; }
+    var eventTarget = openbravo.widget.DataGrid.html.getEventTarget(evt);
     var cellId = eventTarget.id;
     var columnNumber = parseInt(cellId.substring( cellId.lastIndexOf('_') + 1 ));
     var column = this.options.columns.get(columnNumber);
-    if (!column) return;
+    if (!column) { return; }
     var isSorted = column.isSorted();
     if ( this.sortColumns.length > 0 ) {
       if (!isSorted) {
-        if (!evt.ctrlKey)
+        if (!evt.ctrlKey){
           this.removeAllColumnsSort();
+        }
         this.setColumnSort(columnNumber, openbravo.widget.DataGrid.Column.SORT_ASC);
       } else {
-        if (!evt.ctrlKey)
-          dojo.lang.forEach(this.sortColumns, dojo.lang.hitch(this, function(sortColumn) {
-            if (sortColumn != column)
-              this.removeColumnSort(sortColumn.index);  
+        if (!evt.ctrlKey){
+          dojo.forEach(this.sortColumns, dojo.hitch(this, function(sortColumn) {
+            if (sortColumn != column){
+              this.removeColumnSort(sortColumn.index);
+            }
           }));
+        }
         this.toggleColumnSort(columnNumber);
       }
     } else {
@@ -3685,7 +3775,7 @@ dojo.declare("openbravo.widget.DataGrid.SortingHandler", null, {
 * It eliminates all the arrangements of the visualization and the internal array columns.
 */
   removeAllColumnsSort: function() {
-    dojo.lang.forEach(this.sortColumns, dojo.lang.hitch(this, function(column) {
+    dojo.forEach(this.sortColumns, dojo.hitch(this, function(column) {
       this.options.columns.get(column.index).setUnsorted();
       this.setSortImage(column.index);
     }));
@@ -3699,7 +3789,7 @@ dojo.declare("openbravo.widget.DataGrid.SortingHandler", null, {
   removeColumnSort: function(n) {
     var column = this.options.columns.get(n);
     column.setUnsorted();
-    var index = dojo.lang.indexOf(this.sortColumns, column);
+    var index = dojo.indexOf(this.sortColumns, column);
     this.sortColumns.splice(index, 1);
     this.setSortImage(n);
   },
@@ -3710,7 +3800,7 @@ dojo.declare("openbravo.widget.DataGrid.SortingHandler", null, {
 * @param {String} direction - Direction for the new order
 */
   setColumnSort: function(n, direction) {
-    if(isNaN(n)) return ;
+    if(isNaN(n)) { return; }
     var column = this.options.columns.get(n);
     column.setSorted(direction);
     this.sortColumns.push(column);
@@ -3733,11 +3823,237 @@ dojo.declare("openbravo.widget.DataGrid.SortingHandler", null, {
   setSortImage: function(n) {
     var sortDirection = this.options.columns.get(n).getSortDirection();
     var sortImageSpan = dojo.byId( this.headerTableId + '_img_' + n );
-    if ( sortDirection == openbravo.widget.DataGrid.Column.UNSORTED )
+    if ( sortDirection == openbravo.widget.DataGrid.Column.UNSORTED ){
       sortImageSpan.innerHTML = '';
-    else if ( sortDirection == openbravo.widget.DataGrid.Column.SORT_ASC )
-      sortImageSpan.innerHTML = '<img class="DataGrid_Header_icon_ascArrow" src="' + this.options.blankImg + '" alt=""/>&nbsp;&nbsp;';
-    else if ( sortDirection == openbravo.widget.DataGrid.Column.SORT_DESC )
-      sortImageSpan.innerHTML = '<img class="DataGrid_Header_icon_descArrow" src="' + this.options.blankImg + '" alt=""/>&nbsp;&nbsp;';
+    }else if ( sortDirection == openbravo.widget.DataGrid.Column.SORT_ASC ){
+      sortImageSpan.innerHTML = '<div class="DataGrid_Header_icon_ascArrow"/>&nbsp;&nbsp;';
+    }else if ( sortDirection == openbravo.widget.DataGrid.Column.SORT_DESC ){
+      sortImageSpan.innerHTML = '<div class="DataGrid_Header_icon_descArrow"/>&nbsp;&nbsp;';
+    }
   }
 });
+
+
+openbravo.widget.DataGrid.html = {
+
+  getEventTarget: function(evt){
+    if (!evt) { evt = dojo.global.event || {}; }
+    var t = (evt.srcElement ? evt.srcElement : (evt.target ? evt.target : null));
+    while ((t)&&(t.nodeType!=1)) { t = t.parentNode; }
+    return t;
+  },
+
+  getParentByType: function(node, type) {
+    var _document = dojo.doc;
+    var parent = dojo.byId(node);
+    type = type.toLowerCase();
+    while ((parent)&&(parent.nodeName.toLowerCase()!=type)) {
+      if (parent==(_document["body"]||_document["documentElement"])) {
+        return null;
+      }
+      parent = parent.parentNode;
+    }
+    return parent;
+  },
+
+  getScrollbar: function() {
+    var scroll = document.createElement("div");
+    scroll.style.width="100px";
+    scroll.style.height="100px";
+    scroll.style.overflow="scroll";
+    scroll.style.position="absolute";
+    scroll.style.top="-300px";
+    scroll.style.left="0px"
+    var test = document.createElement("div");
+    test.style.width="400px";
+    test.style.height="400px";
+    scroll.appendChild(test);
+    dojo.body().appendChild(scroll);
+    var width=scroll.offsetWidth - scroll.clientWidth;
+    dojo.body().removeChild(scroll);
+    scroll.removeChild(test);
+    scroll=test=null;
+    return { width: width };
+  },
+
+  setVisibility: function(node, visibility) {
+    dojo.style(node, 'visibility', ((visibility instanceof String || typeof visibility == "string") ? visibility : (visibility ? 'visible' : 'hidden')));
+  },
+
+  disableSelection: function(element) {
+    element = dojo.byId(element)||dojo.body();
+    if (dojo.isFF) {
+      element.style.MozUserSelect = "none";
+    } else if (dojo.isSafari) {
+      element.style.KhtmlUserSelect = "none"; 
+    } else if (dojo.isIE) {
+      element.unselectable = "on";
+    } else {
+      return false;
+    }
+    return true;
+  },
+
+  enableSelection: function(element) {
+    element = dojo.byId(element)||dojo.body();
+    if (dojo.isFF) { 
+      element.style.MozUserSelect = ""; 
+    } else if (dojo.isSafari) {
+      element.style.KhtmlUserSelect = "";
+    } else if (dojo.isIE) {
+      element.unselectable = "off";
+    } else {
+      return false;
+    }
+    return true;
+  },
+
+  inArray: function(array , value) {
+    return dojo.indexOf(array, value) > -1;
+  },
+
+  toArray:function(array,value) {
+    var collection=[];
+    for (var i=value||0; i<array.length; i++) {
+      collection.push(array[i]);
+    }
+    return collection;
+  },
+
+  setContent: function(element, content) {
+    if (element.innerText != undefined){
+      element.innerText = content;
+    }else{
+      element.textContent = content;
+    }
+  },
+
+  prereplaceClass: function(node, newClass, oldClass) {
+    if (dojo.hasClass(node, oldClass)){
+      dojo.removeClass(node, oldClass);
+    }
+    if (!dojo.hasClass(node, newClass)){
+      dojo.addClass(node, newClass);
+    }
+  },
+
+  stripNbsp: function(string) {
+    return string;
+  },
+
+  extractPx: function(property) {
+    return parseInt(property.substring(0, property.indexOf("px")));
+  },
+
+  getContent: function(node) {
+    return node.innerText != undefined ? node.innerText : node.textContent;
+  },
+
+  getContentAsString: function(node){
+    if (typeof node.xml != "undefined"){
+      return this.getContentAsStringIE(node);
+    }else if (typeof XMLSerializer != "undefined" ){
+      return this.getContentAsStringMozilla(node);
+    }else{
+      return this.getContentAsStringGeneric(node);
+    }
+  },
+
+  getContentAsStringIE: function(node){
+    var s="";
+      for (var i = 0; i < node.childNodes.length; i++){
+        s += node.childNodes[i].xml;
+      }
+      return s;
+  },
+
+  getContentAsStringMozilla: function(node){
+    var xmlSerializer = new XMLSerializer();
+    var s = "";
+    for (var i = 0; i < node.childNodes.length; i++) {
+      s += xmlSerializer.serializeToString(node.childNodes[i]);
+      if (s == "undefined"){
+        return this.getContentAsStringGeneric(node);
+      }
+    }
+    return s;
+  },
+
+  getContentAsStringGeneric: function(node){
+    var s="";
+    if (node == null) { return s; }
+    for (var i = 0; i < node.childNodes.length; i++) {
+      switch (node.childNodes[i].nodeType) {
+        case 1: // ELEMENT_NODE
+        case 5: // ENTITY_REFERENCE_NODE
+          s += this.getElementAsStringGeneric(node.childNodes[i]);
+          break;
+        case 3: // TEXT_NODE
+        case 2: // ATTRIBUTE_NODE
+        case 4: // CDATA_SECTION_NODE
+          s += node.childNodes[i].nodeValue;
+          break;
+        default:
+          break;
+      }
+    }
+    return s;
+  },
+
+  getElementAsStringGeneric: function(node){
+    if (!node) { return ""; }
+    
+    var s='<' + node.nodeName;
+    // add attributes
+    if (node.attributes && node.attributes.length > 0) {
+      for (var i=0; i < node.attributes.length; i++) {
+        s += " " + node.attributes[i].name + "=\"" + node.attributes[i].value + "\"";
+      }
+    }
+    // close start tag
+    s += '>';
+    // content of tag
+    s += this.getContentAsStringGeneric(node);
+    // end tag
+    s += '</' + node.nodeName + '>';
+    return s;
+  },
+
+  clearElement: function(element) {
+    if (typeof(element) == 'string'){
+      element = dojo.byId(element);
+    }
+    while (element.firstChild){
+      element.removeChild(element.firstChild);
+    }
+  }
+};
+
+
+openbravo.widget.DataGrid.io = {
+  asyncCall: function(serviceUrl, content) {
+    if (serviceUrl.method == 'GET') {
+      dojo.xhrGet({
+        url: serviceUrl.url,
+        preventCache: true,
+        handleAs: serviceUrl.handleAs,
+        content: content,
+        load: serviceUrl.handler,
+        error: openbravo.widget.DataGrid.io.handleError
+      });
+    } else if (serviceUrl.method == 'POST') {
+      dojo.xhrPost({
+        url: serviceUrl.url,
+        preventCache: true,
+        handleAs: serviceUrl.handleAs,
+        content: content,
+        load: serviceUrl.handler,
+        error: openbravo.widget.DataGrid.io.handleError
+      });
+    }
+  },
+
+  handleError: function(exception, http, kwArgs){
+    setValues_MessageBox('messageBoxID',"ERROR", "Error received in IO response:", exception.message);
+  }
+};

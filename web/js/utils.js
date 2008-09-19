@@ -56,7 +56,7 @@ var isInputFile = false;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '6278';
+  var number = '7528';
   return number;
 }
 
@@ -3338,10 +3338,10 @@ function resizeArea(isOnResize) {
   if (mbottomButtons) mbottomButtons.style.width = w - ((mleft?mleft.clientWidth:0) + (mleftSeparator?mleftSeparator.clientWidth:0) + (mright?mright.clientWidth:0)) - ((name.indexOf("Microsoft")==-1)?2:0);
 
 /*  try {
-    dojo.addOnLoad(dojo.widget.byId('grid').onResize);
+    dojo.addOnLoad(dijit.byId('grid').onResize);
   } catch (e) {}*/
   try {
-    if (isOnResize) dojo.widget.byId('grid').onResize();
+    if (isOnResize) dijit.byId('grid').onResize();
   } catch (e) {}
   mnu.style.display = "";
 }
@@ -3406,7 +3406,7 @@ function resizeAreaInfo(isOnResize) {
   client_middle.style.height = h -((table_header?table_header.clientHeight:0) + (client_top?client_top.clientHeight:0) + (client_bottom?client_bottom.clientHeight:0)) - ((name.indexOf("Microsoft")==-1)?1:0);
 
   try {
-    if (isOnResize) dojo.widget.byId('grid').onResize();
+    if (isOnResize) dijit.byId('grid').onResize();
   } catch (e) {}
 }
 
@@ -3429,7 +3429,7 @@ function resizeAreaCreateFrom(isOnResize) {
   client_middle.style.display = "";
 
   try {
-    if (isOnResize) dojo.widget.byId('grid').onResize();
+    if (isOnResize) dijit.byId('grid').onResize();
   } catch (e) {}
 }
 

@@ -31,10 +31,9 @@
 <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
-<script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
-<script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
-<script language="JavaScript" src="../../../../../web/js/openbravo/core.js" type="text/javascript"></script>
-<script language="JavaScript" src="../../../../../web/js/openbravo/widget/DataGrid.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/djConfig.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/dojotoolkit/dojo/dojo.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/djDependencies.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/default/ValidationDateTextBox.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/default/ValidationNumberBox.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/default/ValidationIntegerBox.js" type="text/javascript"></script>
@@ -42,9 +41,6 @@
 <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/calculator.js" type="text/javascript"></script>
 
-<script type="text/javascript">
-  dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
-</script>
 <link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico"></link>
 
 <script language="JavaScript" type="text/javascript">
@@ -66,8 +62,6 @@
   }
 </script>
 <script language="JavaScript" type="text/javascript" id="selectedColumn">
-  
-  dojo.require("openbravo.widget.DataGrid");
   var selectedRow = 0;
   var orderByPositions = new Array("1");
   var orderByDirections = new Array("ASC");
@@ -726,7 +720,7 @@ function onloadFunctions() {
 							<table width="100%" cellspacing="0" cellpadding="0" border="0" class="Main_Client_TableRelation" id="grid_table">
 								<tr>
 									<td>
-										<div id="grid" dojotype="openbravo:DataGrid"
+										<div id="grid" dojotype="openbravo.widget.DataGrid"
 											structureurl="../info/DebtPayment.html?Command=STRUCTURE"
 											dataurl="../info/DebtPayment.html?Command=DATA"
 											updatesurl="../info/DebtPayment.html?Command=DATA"
@@ -738,7 +732,6 @@ function onloadFunctions() {
 											multiplerowselection="false" preventcache="true" usecache="true"
 											cachecontent="false">
 										</div>
-										<script>djConfig.searchIds.push("grid");</script>
 									</td>
 								</tr>
 							</table>

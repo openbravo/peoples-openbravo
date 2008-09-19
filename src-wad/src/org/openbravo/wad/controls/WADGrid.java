@@ -48,7 +48,7 @@ public class WADGrid extends WADControl {
 
       StringBuffer text = new StringBuffer();
       text.append("function onRowDblClick(cell) {\n");
-      text.append("  var value = dojo.widget.byId('").append(getData("id")).append("').getSelectedRows();\n");
+      text.append("  var value = dijit.byId('").append(getData("id")).append("').getSelectedRows();\n");
       text.append("  if (value==null || value==\"\" || value.length>1) return false;\n");
       text.append("  setInputValue('").append(getData("inpKeyName")).append("', value);\n");
       text.append("  return submitCommandForm('EDIT', true, null, document.frmMain.urlwin.value, '_self');\n");
@@ -57,7 +57,7 @@ public class WADGrid extends WADControl {
 
       text = new StringBuffer();
       text.append("function getSelectedValues() {\n");
-      text.append("  var value = dojo.widget.byId('").append(getData("id")).append("').getSelectedRows();\n");
+      text.append("  var value = dijit.byId('").append(getData("id")).append("').getSelectedRows();\n");
       text.append("  if (value==null || value.length==0) return \"\";\n");
       text.append("  return value[0];\n"); 
       text.append('}');
@@ -65,7 +65,7 @@ public class WADGrid extends WADControl {
 
       text = new StringBuffer();
       text.append("function isMultipleSelected() {\n");
-      text.append("  var value = dojo.widget.byId('").append(getData("id")).append("').getSelectedRows();\n");
+      text.append("  var value = dijit.byId('").append(getData("id")).append("').getSelectedRows();\n");
       text.append("  if (value==null || value==\"\") return false;\n");
       text.append("  return (value.length>1);\n");
       text.append('}');
@@ -74,8 +74,8 @@ public class WADGrid extends WADControl {
       text = new StringBuffer();
       text.append("function onGridLoadDo() {\n");
       text.append("  if (selectedRow==null) return true;\n");
-      text.append("  if (selectedRow<=0) dojo.widget.byId('").append(getData("id")).append("').goToFirstRow();\n");
-      text.append("  else dojo.widget.byId('").append(getData("id")).append("').goToRow(selectedRow);\n");
+      text.append("  if (selectedRow<=0) dijit.byId('").append(getData("id")).append("').goToFirstRow();\n");
+      text.append("  else dijit.byId('").append(getData("id")).append("').goToRow(selectedRow);\n");
       
       text.append("  return true;\n");
       text.append('}');
@@ -91,21 +91,21 @@ public class WADGrid extends WADControl {
     		      "      params[newparams[i][0]] = newparams[i][1];\n" +
                   "    }\n" +
                   "  }\n");
-      text.append("  dojo.widget.byId('").append(getData("id")).append("').setRequestParams(params);\n");
+      text.append("  dijit.byId('").append(getData("id")).append("').setRequestParams(params);\n");
       text.append("  return true;\n");
       text.append('}');
       addJSCode("setGridFilters", text.toString());
 
       text = new StringBuffer();
       text.append("function updateGridData() {\n");
-      text.append("  dojo.widget.byId('").append(getData("id")).append("').refreshGridData();\n");
+      text.append("  dijit.byId('").append(getData("id")).append("').refreshGridData();\n");
       text.append("  return true;\n");
       text.append('}');
       addJSCode("updateGridData", text.toString());
 
       text = new StringBuffer();
       text.append("function updateGridDataAfterFilter() {\n");
-      text.append("  dojo.widget.byId('").append(getData("id")).append("').refreshGridDataAfterFilter();\n");
+      text.append("  dijit.byId('").append(getData("id")).append("').refreshGridDataAfterFilter();\n");
       text.append("  return true;\n");
       text.append('}');
       addJSCode("updateGridDataAfterFilter", text.toString());
@@ -114,7 +114,7 @@ public class WADGrid extends WADControl {
   public String toString() {
     StringBuffer text = new StringBuffer();
     text.append("<TABLE width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" class=\"Main_Client_TableRelation\" id=\"grid_table\"><TR><TD>");
-    text.append("<div id=\"").append(getData("id")).append("\" dojoType=\"openbravo:DataGrid\"\n");
+    text.append("<div id=\"").append(getData("id")).append("\" dojoType=\"openbravo.widget.DataGrid\"\n");
     text.append("      structureUrl=\"../utility/DataGrid.html?Command=STRUCTURE&inpadTabId=");
     text.append(getData("AD_Tab_ID")).append("&inpadWindowId=");
     text.append(getData("AD_Window_ID")).append("&inpAccessLevel=").append(getData("accessLevel")).append("\" \n");
@@ -138,7 +138,6 @@ public class WADGrid extends WADControl {
     text.append("      percentageWidthRelativeToId=\"client\" \n");
     text.append("      preventCache=\"true\" useCache=\"true\" cacheContent=\"false\">\n");
     text.append("    </div>\n");
-    text.append("<script>djConfig.searchIds.push(\"").append(getData("id")).append("\");</script>");
     text.append("</TD></TR></TABLE>");
     return text.toString();
   }

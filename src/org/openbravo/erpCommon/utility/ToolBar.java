@@ -109,7 +109,7 @@ public class ToolBar {
     } else if (name.equals("TREE")) {
       return "openServletNewWindow('DEFAULT', false, '../utility/WindowTree.html', 'TREE', null, null,625, 750, true, false, false);";
     } else if (name.equals("ATTACHMENT")) {
-      return  ((grid_id==null || grid_id.equals(""))?"":"if (dojo.widget.byId('" + grid_id + "').getSelectedRows()=='') {showJSMessage(23);resizeArea(true);calculateMsgBoxWidth();return false;} ") + " openServletNewWindow('DEFAULT', false, '../businessUtility/TabAttachments_FS.html?inpKey=' + " + ((grid_id==null || grid_id.equals(""))?keyfield + ".value":"dojo.widget.byId('" + grid_id + "').getSelectedRows()") + "+'&inpEditable="+ (isEditable?"Y":"N") +"', 'ATTACHMENT', null, true, 600, 700, true);";
+      return  ((grid_id==null || grid_id.equals(""))?"":"if (dijit.byId('" + grid_id + "').getSelectedRows()=='') {showJSMessage(23);resizeArea(true);calculateMsgBoxWidth();return false;} ") + " openServletNewWindow('DEFAULT', false, '../businessUtility/TabAttachments_FS.html?inpKey=' + " + ((grid_id==null || grid_id.equals(""))?keyfield + ".value":"dijit.byId('" + grid_id + "').getSelectedRows()") + "+'&inpEditable="+ (isEditable?"Y":"N") +"', 'ATTACHMENT', null, true, 600, 700, true);";
     } else if (name.equals("EXCEL")) {
       return "openExcel('" + servlet_action + "_Excel.xls?Command=RELATION_XLS', '_blank');";
     } else if (name.equals("GRIDEXCEL")) {
@@ -119,7 +119,7 @@ public class ToolBar {
     } else if (name.equals("GRIDPDF")) {
       return "openServletNewWindow('PDF', false, '../utility/ExportGrid.pdf?inpTabId=' + document.forms[0].inpTabId.value + '&inpWindowId=' + document.forms[0].inpwindowId.value + '&inpAccessLevel=' + document.forms[0].inpAccessLevel.value, 'GRIDPDF', null, null, 500, 350, true );";
     } else if (name.equals("PRINT")) {
-      return "openPDFSession('" + pdf + "', '" + (isDirectPrint?"Printing":"") + "', " + keyfield + ".name, " + ((grid_id==null || grid_id.equals(""))?"null":"dojo.widget.byId('" + grid_id + "').getSelectedRows()") + ", " + ((grid_id==null || grid_id.equals(""))?"true":"null") + ");";
+      return "openPDFSession('" + pdf + "', '" + (isDirectPrint?"Printing":"") + "', " + keyfield + ".name, " + ((grid_id==null || grid_id.equals(""))?"null":"dijit.byId('" + grid_id + "').getSelectedRows()") + ", " + ((grid_id==null || grid_id.equals(""))?"true":"null") + ");";
     } else if (name.equals("UNDO")) {
       return "windowUndo(" + form + ");";
     } else if (name.equals("SEARCH")) {
@@ -129,15 +129,15 @@ public class ToolBar {
     } else if (name.equals("AUDIT_RELATION")) {
       return "changeAuditStatusRelation();";
     } else if (grid_id!=null && !grid_id.equals("") && name.equals("PREVIOUS")) {
-      return "dojo.widget.byId('grid').goToPreviousRow();";
+      return "dijit.byId('grid').goToPreviousRow();";
     } else if (grid_id!=null && !grid_id.equals("") && name.equals("NEXT")) {
-      return "dojo.widget.byId('grid').goToNextRow();";
+      return "dijit.byId('grid').goToNextRow();";
     } else if (name.equals("DELETE_RELATION")) {
-      return "dojo.widget.byId('grid').deleteRow();";
+      return "dijit.byId('grid').deleteRow();";
     } else if (name.equals("FIRST_RELATION")) {
-      return "dojo.widget.byId('grid').goToFirstRow();";
+      return "dijit.byId('grid').goToFirstRow();";
       } else if (name.equals("LAST_RELATION")) {
-      return "dojo.widget.byId('grid').goToLastRow();";
+      return "dijit.byId('grid').goToLastRow();";
     } else {
       return "submitCommandForm('" + (name.equals("REFRESH")?"DEFAULT":name) + "', false, null, '" + servlet_action + (isSrcWindow?"":"_Relation") + ".html', '"+(isFrame?"_parent":"_self")+"', null, " + (debug?"true":"false") + ");";
     }
