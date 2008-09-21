@@ -1,3 +1,0 @@
-Dojo 1.2.0b2
-
-SVN Revision: 15218
