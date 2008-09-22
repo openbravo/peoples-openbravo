@@ -3522,7 +3522,7 @@ function changeAuditIcon(newStatus) {
 * Start of deprecated functions in 2.40
 */
 
-var arrTeclas=null;
+var arrTeclas=new Array();
 
 /**
 * Deprecated in 2.40: Builds the keys array on each screen. Each key that we want to use should have this structure.
