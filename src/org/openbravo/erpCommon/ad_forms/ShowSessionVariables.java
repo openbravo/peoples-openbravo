@@ -328,7 +328,6 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
       for (int i=0;i<windows.size();i++) {
         String aux = (String)windows.elementAt(i);
         try {
-          Integer.valueOf(aux).intValue(); // To catch illegal number conversion
           if (i>0) strWindows.append(", ");
           strWindows.append("'").append(aux).append("'");
         } catch (Exception e) {
