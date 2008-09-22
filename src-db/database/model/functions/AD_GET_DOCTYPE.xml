@@ -37,6 +37,7 @@
       (SELECT C_DocType_ID
       FROM C_DOCTYPE
       WHERE DOCBASETYPE=p_DocBaseType
+        AND ISACTIVE='Y' 
         AND(p_DocSubTypeSO IS NULL
         OR DOCSUBTYPESO=p_DocSubTypeSO)
         AND AD_Client_Id=p_ClientId
