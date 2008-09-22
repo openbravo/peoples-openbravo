@@ -330,7 +330,7 @@ public class ShowSessionVariables extends HttpSecureAppServlet {
         try {
           Integer.valueOf(aux).intValue(); // To catch illegal number conversion
           if (i>0) strWindows.append(", ");
-          strWindows.append(aux);
+          strWindows.append("'").append(aux).append("'");
         } catch (Exception e) {
         	ShowSessionVariablesData d = new ShowSessionVariablesData();
           d.id=aux;
