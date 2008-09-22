@@ -9628,7 +9628,7 @@ The values of the actual Product Attributes]]></HELP>
 <!--800022 CREATEDBY-->
 <!--800022-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800022 UPDATED-->
-<!--800022-->              <UPDATED><![CDATA[2005-03-07 12:17:46.0]]></UPDATED>
+<!--800022-->              <UPDATED><![CDATA[2008-09-22 13:55:23.0]]></UPDATED>
 <!--800022 UPDATEDBY-->
 <!--800022-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800022 NAME-->
@@ -9650,7 +9650,7 @@ The values of the actual Product Attributes]]></HELP>
 <!--800022 FIELDLENGTH-->
 <!--800022-->              <FIELDLENGTH><![CDATA[10]]></FIELDLENGTH>
 <!--800022 ISMANDATORY-->
-<!--800022-->              <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
+<!--800022-->              <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
 <!--800022 ISRANGE-->
 <!--800022-->              <ISRANGE><![CDATA[N]]></ISRANGE>
 <!--800022 AD_ELEMENT_ID-->
@@ -9671,7 +9671,7 @@ The values of the actual Product Attributes]]></HELP>
 <!--800023 CREATEDBY-->
 <!--800023-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800023 UPDATED-->
-<!--800023-->              <UPDATED><![CDATA[2005-03-07 12:17:46.0]]></UPDATED>
+<!--800023-->              <UPDATED><![CDATA[2008-09-22 13:55:27.0]]></UPDATED>
 <!--800023 UPDATEDBY-->
 <!--800023-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800023 NAME-->
@@ -9693,7 +9693,7 @@ The values of the actual Product Attributes]]></HELP>
 <!--800023 FIELDLENGTH-->
 <!--800023-->              <FIELDLENGTH><![CDATA[10]]></FIELDLENGTH>
 <!--800023 ISMANDATORY-->
-<!--800023-->              <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
+<!--800023-->              <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
 <!--800023 ISRANGE-->
 <!--800023-->              <ISRANGE><![CDATA[N]]></ISRANGE>
 <!--800023 AD_ELEMENT_ID-->
@@ -9714,7 +9714,7 @@ The values of the actual Product Attributes]]></HELP>
 <!--800024 CREATEDBY-->
 <!--800024-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800024 UPDATED-->
-<!--800024-->              <UPDATED><![CDATA[2005-03-07 12:17:46.0]]></UPDATED>
+<!--800024-->              <UPDATED><![CDATA[2008-09-22 13:55:33.0]]></UPDATED>
 <!--800024 UPDATEDBY-->
 <!--800024-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800024 NAME-->
@@ -9738,7 +9738,7 @@ The values of the actual Product Attributes]]></HELP>
 <!--800024 FIELDLENGTH-->
 <!--800024-->              <FIELDLENGTH><![CDATA[0]]></FIELDLENGTH>
 <!--800024 ISMANDATORY-->
-<!--800024-->              <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
+<!--800024-->              <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
 <!--800024 ISRANGE-->
 <!--800024-->              <ISRANGE><![CDATA[N]]></ISRANGE>
 <!--800024 AD_ELEMENT_ID-->
@@ -9759,15 +9759,15 @@ The values of the actual Product Attributes]]></HELP>
 <!--800025 CREATEDBY-->
 <!--800025-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800025 UPDATED-->
-<!--800025-->              <UPDATED><![CDATA[2008-09-11 13:55:44.0]]></UPDATED>
+<!--800025-->              <UPDATED><![CDATA[2008-09-22 13:56:24.0]]></UPDATED>
 <!--800025 UPDATEDBY-->
 <!--800025-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800025 NAME-->
-<!--800025-->              <NAME><![CDATA[Business Partner]]></NAME>
+<!--800025-->              <NAME><![CDATA[Vendor]]></NAME>
 <!--800025 DESCRIPTION-->
-<!--800025-->              <DESCRIPTION><![CDATA[Anyone who takes part in daily business operations by acting as a customer, employee, etc.]]></DESCRIPTION>
+<!--800025-->              <DESCRIPTION><![CDATA[A business partner who sells products or services.]]></DESCRIPTION>
 <!--800025 HELP-->
-<!--800025-->              <HELP><![CDATA[A Business Partner is anyone with whom you transact.  This can include a customer, vendor, employee or any combination of these.]]></HELP>
+<!--800025-->              <HELP><![CDATA[Identifies a business partner that is a vendor.]]></HELP>
 <!--800025 AD_PROCESS_ID-->
 <!--800025-->              <AD_PROCESS_ID><![CDATA[800075]]></AD_PROCESS_ID>
 <!--800025 SEQNO-->
@@ -9783,7 +9783,7 @@ The values of the actual Product Attributes]]></HELP>
 <!--800025 FIELDLENGTH-->
 <!--800025-->              <FIELDLENGTH><![CDATA[0]]></FIELDLENGTH>
 <!--800025 ISMANDATORY-->
-<!--800025-->              <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
+<!--800025-->              <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
 <!--800025 ISRANGE-->
 <!--800025-->              <ISRANGE><![CDATA[N]]></ISRANGE>
 <!--800025 AD_ELEMENT_ID-->
@@ -9847,7 +9847,7 @@ The values of the actual Product Attributes]]></HELP>
 <!--800027 CREATEDBY-->
 <!--800027-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800027 UPDATED-->
-<!--800027-->              <UPDATED><![CDATA[2005-03-07 12:17:46.0]]></UPDATED>
+<!--800027-->              <UPDATED><![CDATA[2008-09-22 13:55:57.0]]></UPDATED>
 <!--800027 UPDATEDBY-->
 <!--800027-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800027 NAME-->
@@ -9869,7 +9869,7 @@ The values of the actual Product Attributes]]></HELP>
 <!--800027 FIELDLENGTH-->
 <!--800027-->              <FIELDLENGTH><![CDATA[10]]></FIELDLENGTH>
 <!--800027 ISMANDATORY-->
-<!--800027-->              <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
+<!--800027-->              <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
 <!--800027 ISRANGE-->
 <!--800027-->              <ISRANGE><![CDATA[N]]></ISRANGE>
 <!--800027 AD_ELEMENT_ID-->
