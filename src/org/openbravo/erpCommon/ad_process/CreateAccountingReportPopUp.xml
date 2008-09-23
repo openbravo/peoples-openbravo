@@ -23,7 +23,6 @@
 	<PARAMETER id="paramDirectory" name="directory" default=""/>
 	<PARAMETER id="paramLanguage" name="language" default=""/>
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
-	<PARAMETER id="paramCSS2" name="theme" attribute="href" replace="Default"/>
     <PARAMETER id="paramTitle" name="title" default=""/>
     <PARAMETER id="param2" name="param2" default="2"/>
 

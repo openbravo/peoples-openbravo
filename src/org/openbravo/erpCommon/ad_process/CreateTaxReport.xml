@@ -31,7 +31,6 @@
   
   <PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
-  <PARAMETER id="paramCSS2" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="tdleftTabs" name="leftTabs" default=""/>
   <PARAMETER id="paramParentTabContainer" name="parentTabContainer" default=" "/>
   <PARAMETER id="paramMainTabContainer" name="mainTabContainer" default=" "/>

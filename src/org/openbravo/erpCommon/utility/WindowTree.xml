@@ -23,7 +23,6 @@
 	<PARAMETER id="paramLanguage" name="language" default=""/>
 	<PARAMETER id="paramDirectory" name="directory" default=""/>
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
-	<PARAMETER id="paramCSS2" name="theme" attribute="href" replace="Default"/>
 	<PARAMETER id="paramMenu" name="menu"/>
   <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
