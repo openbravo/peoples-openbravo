@@ -17,29 +17,4 @@
  ************************************************************************
 */
 
-@import url(./ContentPane/ContentPane.css);
-@import url(./NavBar/NavBar.css);
-@import url(./ToolBar/ToolBar.css);
-@import url(./LeftTabsBar/LeftTabsBar.css);
-@import url(./Tabs/Tabs.css);
-@import url(./Client/Client_Relation.css);
-@import url(./Bottom/Bottom.css);
-@import url(./Status/Status.css);
-
-* {margin: 0px; padding: 0px;}
-
-body {
-  font-family: tahoma, arial, helvetica, sans-serif;
-  font-size: 8pt;
-  font-weight: normal;
-  COLOR: #000000;
-  background-color: #505050;
-}
-
-#main {
-  height: 100%;
-  width: 100%;
-  left: 0%;
-  top: 0%;
-  position: relative;
-}
+@import url(../Openbravo_ERP_240.css);
