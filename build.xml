@@ -121,6 +121,9 @@ compare.database.structure: refer to compare.database.structure target of databa
     <fileset dir="${build.wad.lib}">
       <include name="openbravo-wad.jar"/>
     </fileset>
+    <fileset dir="${base.lib}">
+      <include name="**/*.jar"/>
+    </fileset>
   </path>
 
   <target name="init">

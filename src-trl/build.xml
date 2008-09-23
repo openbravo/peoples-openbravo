@@ -37,8 +37,8 @@ doc: generates the api for the project.
  
   <path id="trl.class.path">
     <pathelement path="../src-core/build/classes"/>
-    <fileset dir="${build.trl.lib}">
-      <include name="**/*.jar"/>
+    <fileset dir="${base.lib}">
+     <include name="**/*.jar"/>
     </fileset>
   </path>   
 
