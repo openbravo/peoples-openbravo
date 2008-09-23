@@ -259,17 +259,18 @@ public class ProductComplete extends HttpSecureAppServlet {
     if (headers!=null) {
       try{
 	  	if(strNewFilter.equals("1") || strNewFilter.equals("")) { // New filter or first load    	
-	  		//data = BusinessPartnerData.select(this, "1", Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg), strKey, strName, strContact, strZIP, strProvincia, (strBpartners.equals("costumer")?"clients":""), (strBpartners.equals("vendor")?"vendors":""), strCity, strOrderBy, "", "");
-
       		if (strStore.equals("Y")) {
         		if (vars.getLanguage().equals("en_US")) data = ProductCompleteData.select(this, "1", strKey, strName, strWarehouse, vars.getRole(), strBpartner, strClients, strOrderBy, "", "");
         		else data = ProductCompleteData.selecttrl(this, "1", vars.getLanguage(), strKey, strName, strWarehouse, vars.getRole(), strBpartner, strClients, strOrderBy, "", "");
+    			strNumRows = String.valueOf(data.length);
       		}else {
-        		if (vars.getLanguage().equals("en_US")) data = ProductCompleteData.selectNotStored(this, "1", strKey, strName, strBpartner, strClients, strOrgs, strOrderBy, "", "");
-        		else data = ProductCompleteData.selectNotStoredtrl(this, "1", vars.getLanguage(), strKey, strName, strBpartner, strClients, strOrgs, strOrderBy, "", "");
+        		if (vars.getLanguage().equals("en_US")) { 
+        			strNumRows = ProductCompleteData.countRowsNotStored(this, strKey, strName, strBpartner, strClients, strOrgs);
+        		} else {
+        			strNumRows = ProductCompleteData.countRowsNotStoredtrl(this, vars.getLanguage(), strKey, strName, strBpartner, strClients, strOrgs);
+        		}
       		}
 
-	  		strNumRows = String.valueOf(data.length);
 	  		vars.setSessionValue("ProductComplete.numrows", strNumRows);
 	  	}
   		else {
