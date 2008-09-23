@@ -121,7 +121,7 @@ public class Product extends HttpSecureAppServlet {
 
       String strPriceListVersion = getPriceListVersion(vars, strPriceList, strDate);
       vars.setSessionValue("Product.priceListVersion", strPriceListVersion);
-      ProductData[] data = ProductData.select(this, "1", vars.getLanguage(), strWarehouse, strKeyValue + "%", "", strPriceListVersion, Utility.getContext(this, vars, "#User_Client", "Product"), Utility.getContext(this, vars, "#User_Org", "Product"), "1", "", "");
+      ProductData[] data = ProductData.select(this, strWarehouse, "1", strKeyValue + "%", "", Utility.getContext(this, vars, "#User_Client", "Product"), Utility.getContext(this, vars, "#User_Org", "Product"), "1", "", "", strPriceListVersion);
       if (data!=null && data.length==1) printPageKey(response, vars, data, strWarehouse, strPriceListVersion);
       else printPage(response, vars, strKeyValue, "", strWarehouse, strPriceList, strPriceListVersion, windowId, "paramKey");
     } else if(vars.commandIn("STRUCTURE")) {
@@ -256,6 +256,7 @@ public class Product extends HttpSecureAppServlet {
 	  SQLReturnObject[] data = null;
 	  Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();	  
 	  String[] colNames = {"value", "name","qtyavailable","pricelist", "pricestd", "qtyonhand", "qtyordered", "margin", "pricelimit", "rowkey"};
+	  boolean[] colSortable = {true,true,false,false,false,false,false,false,false,false};
 //	  String[] gridNames = {"Key", "Name","Disp. Credit","Credit used", "Contact", "Phone no.", "Zip", "City", "Income", "c_bpartner_id", "c_bpartner_contact_id", "c_bpartner_location_id", "rowkey"};
 	  String[] colWidths = { "58", "129", "48", "95", "96", "124", "121", "48", "48", "0"};
 	  for(int i=0; i < colNames.length; i++) {
@@ -271,6 +272,7 @@ public class Product extends HttpSecureAppServlet {
 	      dataAux.setData("name", (name.startsWith("PS_")?colNames[i]:name));
 	      dataAux.setData("type", "string");
 	      dataAux.setData("width", colWidths[i]);
+	      dataAux.setData("issortable", colSortable[i]?"true":"false");
 	      vAux.addElement(dataAux);
 	  }
 	  data = new SQLReturnObject[vAux.size()];
@@ -290,9 +292,8 @@ public class Product extends HttpSecureAppServlet {
     
     if (headers!=null) {
       try{
-	  	if(strNewFilter.equals("1") || strNewFilter.equals("")) { // New filter or first load    	
-	  		data = ProductData.select(this, "1", vars.getLanguage(), strWarehouse, strKey, strName, strPriceListVersion, Utility.getContext(this, vars, "#User_Client", "Product"), Utility.getContext(this, vars, "#User_Org", "Product"), strOrderBy, "", "");
-	  		strNumRows = String.valueOf(data.length);
+	  	if(strNewFilter.equals("1") || strNewFilter.equals("")) { // New filter or first load
+	  		strNumRows = ProductData.countRows(this, strKey, strName, strPriceListVersion, Utility.getContext(this, vars, "#User_Client", "Product"), Utility.getContext(this, vars, "#User_Org", "Product"));
 	  		vars.setSessionValue("Product.numrows", strNumRows);
 	  	}
   		else {
@@ -301,12 +302,12 @@ public class Product extends HttpSecureAppServlet {
 	  			
   		// Filtering result
     	if(this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-    		String oraLimit = strOffset + " AND " + String.valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));    		
-    		data = ProductData.select(this, "ROWNUM", vars.getLanguage(), strWarehouse, strKey, strName, strPriceListVersion, Utility.getContext(this, vars, "#User_Client", "Product"), Utility.getContext(this, vars, "#User_Org", "Product"), strOrderBy, oraLimit, "");
+    		String oraLimit = strOffset + " AND " + String.valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));
+    		data = ProductData.select(this, strWarehouse, "ROWNUM", strKey, strName, Utility.getContext(this, vars, "#User_Client", "Product"), Utility.getContext(this, vars, "#User_Org", "Product"), strOrderBy, oraLimit, "", strPriceListVersion);
     	}
     	else {
     		String pgLimit = strPageSize + " OFFSET " + strOffset;
-    		data = ProductData.select(this, "1", vars.getLanguage(), strWarehouse, strKey, strName, strPriceListVersion, Utility.getContext(this, vars, "#User_Client", "Product"), Utility.getContext(this, vars, "#User_Org", "Product"), strOrderBy, "", pgLimit);
+    		data = ProductData.select(this, strWarehouse, "1", strKey, strName, Utility.getContext(this, vars, "#User_Client", "Product"), Utility.getContext(this, vars, "#User_Org", "Product"), strOrderBy, "", pgLimit, strPriceListVersion);
     	}    	
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);

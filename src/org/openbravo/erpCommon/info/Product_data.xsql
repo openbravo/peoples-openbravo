@@ -27,53 +27,85 @@
    <SqlMethod name="select" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
-      SELECT * FROM ( SELECT '0' AS RN1, A.* FROM (
-      
-        SELECT p.M_Product_ID, p.Discontinued, p.Value, p.Name, AD_COLUMN_IDENTIFIER(TO_CHAR('M_Product'), TO_CHAR(p.M_Product_ID), 
-        TO_CHAR(?)) AS NAME_HIDDEN, 
-        BOM_Qty_Available(p.M_Product_ID, ?, NULL) AS QtyAvailable, 
+      SELECT A.*,
+        PriceStd-PriceLimit AS Margin,
+        M_Product_ID || '#' || Name || '#' || C_UOM_ID || '#' || PriceList
+           || '#' || PriceStd
+           || '#' || PriceLimit || '#' || C_Currency_ID AS rowKey
+      FROM (
+        SELECT p.M_Product_ID, p.Discontinued, p.Value, p.Name,
+        BOM_Qty_Available(p.M_Product_ID,?, NULL) AS QtyAvailable, 
         BOM_PriceList(p.M_Product_ID, pr.M_PriceList_Version_ID) AS PriceList,
         BOM_PriceStd(p.M_Product_ID, pr.M_PriceList_Version_ID) AS PriceStd, 
-        BOM_Qty_OnHand(p.M_Product_ID, ?, NULL) AS QtyOnHand, 
-        BOM_Qty_Reserved(p.M_Product_ID, ?, null) AS QtyReserved, 
-        BOM_Qty_Ordered(p.M_Product_ID, ?, NULL) AS QtyOrdered, 
-        BOM_PriceStd(p.M_Product_ID, pr.M_PriceList_Version_ID)-BOM_PriceLimit(p.M_Product_ID, pr.M_PriceList_Version_ID) AS Margin,
+        BOM_Qty_OnHand(p.M_Product_ID,?, NULL) AS QtyOnHand, 
+        BOM_Qty_Reserved(p.M_Product_ID,?, null) AS QtyReserved, 
+        BOM_Qty_Ordered(p.M_Product_ID,?, NULL) AS QtyOrdered, 
         BOM_PriceLimit(p.M_Product_ID, pr.M_PriceList_Version_ID) AS PriceLimit,
-        p.C_UOM_ID, pl.C_Currency_ID,
-        p.M_Product_ID || '#' || p.Name || '#' || p.C_UOM_ID || '#' || BOM_PriceList(p.M_Product_ID, pr.M_PriceList_Version_ID)
-           || '#' || BOM_PriceStd(p.M_Product_ID, pr.M_PriceList_Version_ID)
-           || '#' || BOM_PriceLimit(p.M_Product_ID, pr.M_PriceList_Version_ID) || '#' || pl.C_Currency_ID AS rowKey
+        p.C_UOM_ID, pl.C_Currency_ID
+        FROM M_Product p join
+        (
+          SELECT * 
+          FROM ( SELECT '0' AS RN1, C.* FROM
+            (
+              SELECT ip.m_product_id, ip.value, ip.name
+              FROM M_Product ip 
+              WHERE
+                ip.IsSummary='N' AND 
+                ip.IsActive='Y'
+                AND ip.AD_Client_ID IN ('1') 
+                AND ip.AD_Org_ID IN ('1') 
+				ORDER BY ip.Value
+            ) C
+          ) B WHERE 1=1
+        ) p2 on p.m_product_id = p2.m_product_id,        
+        
+        M_ProductPrice pr,  M_Pricelist pl, M_PriceList_Version pv
+        WHERE p.M_Product_ID=pr.M_Product_ID 
+        AND pr.IsActive='Y'
+        AND pr.M_PriceList_Version_ID = ?
+        AND pr.M_PriceList_Version_ID=pv.M_PriceList_Version_ID
+        AND pv.M_PriceList_ID=pl.M_PriceList_ID
+        ) A ORDER BY Value
+      ]]></Sql>
+        <Field name="position" value="count"/>
+        <Parameter name="warehouse"/>
+        <Parameter name="warehouse"/>
+        <Parameter name="warehouse"/>
+        <Parameter name="warehouse"/>
+        <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
+        <Parameter name="key" optional="true" after="ip.IsSummary='N' AND "><![CDATA[ UPPER(ip.Value) LIKE UPPER(?) AND ]]></Parameter>
+        <Parameter name="name" optional="true" after="ip.IsSummary='N' AND "><![CDATA[ UPPER(ip.Name) LIKE UPPER(?) AND ]]></Parameter>
+        <Parameter name="adUserClient" type="replace" optional="true" after="ip.AD_Client_ID IN (" text="'1'"/>
+        <Parameter name="adUserOrg" type="replace" optional="true" after="ip.AD_Org_ID IN (" text="'1'"/>
+        <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="ip.Value" />
+        <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
+        <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
+        <Parameter name="priceListVersion"/>
+        <Parameter name="orderBy" type="replace" optional="true" after="A ORDER BY " text="Value" />
+   </SqlMethod>
+
+   <SqlMethod name="countRows" type="preparedStatement" return="String">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql> <![CDATA[
+        SELECT count(*) as value
         FROM M_Product p, M_ProductPrice pr,  M_Pricelist pl, M_PriceList_Version pv
         WHERE p.M_Product_ID=pr.M_Product_ID 
         AND p.IsSummary='N' 
         AND p.IsActive='Y' 
         AND pr.IsActive='Y'
-        AND pr.M_PriceList_Version_ID=?
+        AND pr.M_PriceList_Version_ID = ?
         AND pr.M_PriceList_Version_ID=pv.M_PriceList_Version_ID
         AND pv.M_PriceList_ID=pl.M_PriceList_ID
         AND p.AD_Client_ID IN ('1') 
         AND p.AD_Org_ID IN ('1') 
-        ORDER BY p.Value
-        
-        ) A ) B
-      WHERE 1=1
       ]]></Sql>
-        <Field name="position" value="count"/>
-        <Parameter name="rownum" type="replace" optional="true" after="FROM ( SELECT " text="'0'" />
-        <Parameter name="language"/>
-        <Parameter name="warehouse"/>
-        <Parameter name="warehouse"/>
-        <Parameter name="warehouse"/>
-        <Parameter name="warehouse"/>
         <Parameter name="key" optional="true" after="WHERE "><![CDATA[ UPPER(p.Value) LIKE UPPER(?) AND ]]></Parameter>
         <Parameter name="name" optional="true" after="WHERE "><![CDATA[ UPPER(p.Name) LIKE UPPER(?) AND ]]></Parameter>
         <Parameter name="priceListVersion"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="p.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="p.AD_Org_ID IN (" text="'1'"/>
-        <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="p.Value" />
-        <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
-        <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
    </SqlMethod>
+  
    <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql></Sql>
