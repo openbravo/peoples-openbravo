@@ -33,6 +33,7 @@
     <FIELD id="fieldColumn" attribute="title">name</FIELD>
     <FIELD id="fieldColumn" attribute="type">type</FIELD>
     <FIELD id="fieldColumn" attribute="width" replace="xx">width</FIELD>
+    <FIELD id="fieldColumn" attribute="sortable">issortable</FIELD>
 
     <SECTION id="fieldColumns"/>
   </structure>

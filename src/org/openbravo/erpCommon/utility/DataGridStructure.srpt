@@ -25,7 +25,7 @@
   </status>
   <datagrid readonly="true" fixed="false">
     <columns id="fieldColumns">
-      <column name="xx" identifier="false" visible="true" title="xx" type="xx" width="xxpx" id="fieldColumn"/>
+      <column name="xx" identifier="false" visible="true" title="xx" type="xx" width="xxpx" sortable="true" id="fieldColumn"/>
     </columns>
   </datagrid>
 </xml-structure>
