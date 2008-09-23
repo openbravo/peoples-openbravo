@@ -890,6 +890,7 @@ public class Wad extends DefaultHandler {
             // *             HTML of the Edition view
             // *************************************************
             processTabHtmlEdition(efdTRL, efdauxiliar, fileDirTrl, tabsData.tabid, tabName, keyColumnName, tabNamePresentation, tabsData.key, parentsFieldsData, vecFields, tabsData.isreadonly.equals("Y"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, dataLang[pos].adLanguage, true, isSecondaryKey);
+            processTabHtmlEdition(efdTRL, efdauxiliar, fileDirTrl, tabsData.tabid, tabName, keyColumnName, tabNamePresentation, tabsData.key, parentsFieldsData, vecFields, tabsData.isreadonly.equals("Y"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, dataLang[pos].adLanguage, false, isSecondaryKey);
           }
           File languageBase = new File(fileTrl, dataLang[pos].adLanguage);
           languageBase.mkdir();
