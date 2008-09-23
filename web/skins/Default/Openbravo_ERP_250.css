@@ -1008,6 +1008,7 @@ div.calendar {
 /* Icons */
 
 .DataGrid_Header_icon_ascArrow {
+  display: inline;
   border: 0px none;
   width: 7px;
   height: 5px;
@@ -1017,6 +1018,7 @@ div.calendar {
 }
 
 .DataGrid_Header_icon_descArrow {
+  display: inline;
   border: 0px hidden;
   width: 7px;
   height: 5px;
