@@ -25,6 +25,7 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.Utility;
 import java.io.*;
+import java.util.Enumeration;
 import java.util.Vector;
 
 import javax.servlet.*;
@@ -43,8 +44,8 @@ public class BusinessPartner extends HttpSecureAppServlet {
   }
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-
+	 VariablesSecureApp vars = new VariablesSecureApp(request);   
+    
     if (vars.commandIn("DEFAULT")) {
       
       clearSessionValue(vars);
@@ -52,8 +53,7 @@ public class BusinessPartner extends HttpSecureAppServlet {
       String strWindowId = vars.getStringParameter("WindowID");
       String strNameValue = vars.getRequestGlobalVariable("inpNameValue", "BusinessPartner.name");
       String strIDValue = vars.getStringParameter("inpIDValue");
-      String strKeyValue = vars.getGlobalVariable("inpKey", "BusinessPartner.key", "");
-      String strBpartners = vars.getGlobalVariable("inpBpartner", "BusinessPartner.bpartner", "all");
+      String strKeyValue = vars.getGlobalVariable("inpKey", "BusinessPartner.key", "");      
       if (!strIDValue.equals("")) {
         String strNameAux = BusinessPartnerData.existsActual(this, strNameValue, strIDValue);
         if (!strNameAux.equals("")) strNameValue = strNameAux;
@@ -112,7 +112,7 @@ public class BusinessPartner extends HttpSecureAppServlet {
         String strOffset = vars.getStringParameter("offset");
         String strPageSize = vars.getStringParameter("page_size");
         String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
-        String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
+        String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();        
     	printGridData(response, vars, strKey, strName, strOrg, strContact, strZIP, strProvincia, strBpartners, strCity, strSortCols + " " + strSortDirs, strOffset, strPageSize, strNewFilter);
     } else pageError(response);
   }
@@ -200,6 +200,7 @@ public class BusinessPartner extends HttpSecureAppServlet {
 	  SQLReturnObject[] data = null;
 	  Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();	  
 	  String[] colNames = {"value", "name","so_creditavailable","so_creditused", "contact", "phone", "pc", "city", "income", "c_bpartner_id", "c_bpartner_contact_id", "c_bpartner_location_id", "rowkey"};
+	  boolean[] colSortable = {true, true, true, true, false, false, false, false, false, false, false, false, false};
 	  String[] colWidths = {"98", "172", "50", "83", "104", "63", "43", "100", "63", "0", "0", "0", "0"};
 	  for(int i=0; i < colNames.length; i++) {
 		  SQLReturnObject dataAux = new SQLReturnObject();
@@ -214,6 +215,7 @@ public class BusinessPartner extends HttpSecureAppServlet {
 	      dataAux.setData("name", (name.startsWith("BPS_")?colNames[i]:name));
 	      dataAux.setData("type", "string");
 	      dataAux.setData("width", colWidths[i]);
+	      dataAux.setData("issortable", colSortable[i]?"true":"false");
 	      vAux.addElement(dataAux);
 	  }
 	  data = new SQLReturnObject[vAux.size()];
@@ -229,27 +231,25 @@ public class BusinessPartner extends HttpSecureAppServlet {
     String type = "Hidden";
     String title = "";
     String description = "";
-    String strNumRows = "0";
-    
+    String strNumRows = "0";    
     if (headers!=null) {
       try{
-	  	if(strNewFilter.equals("1") || strNewFilter.equals("")) { // New filter or first load    	
-	  		data = BusinessPartnerData.select(this, "1", Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg), strKey, strName, strContact, strZIP, strProvincia, (strBpartners.equals("costumer")?"clients":""), (strBpartners.equals("vendor")?"vendors":""), strCity, strOrderBy, "", "");
-	  		strNumRows = String.valueOf(data.length);
+	  	if(strNewFilter.equals("1") || strNewFilter.equals("")) { // New filter or first load
+	  		strNumRows = BusinessPartnerData.countRows(this, Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg), (strKey.equals("%")?"":strKey), (strName.equals("%")?"":strName), (strContact.equals("%")?"":strContact), (strZIP.equals("%")?"":strZIP), (strProvincia.equals("%")?"":strProvincia), (strBpartners.equals("costumer")?"clients":""), (strBpartners.equals("vendor")?"vendors":""), (strCity.equals("%")?"":strCity));	  		 
 	  		vars.setSessionValue("BusinessPartnerInfo.numrows", strNumRows);
 	  	}
   		else {
   			strNumRows = vars.getSessionValue("BusinessPartnerInfo.numrows");
   		}
-	  			
+	  	  	
   		// Filtering result
     	if(this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
     		String oraLimit = strOffset + " AND " + String.valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));    		
-    		data = BusinessPartnerData.select(this, "ROWNUM", Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg), strKey, strName, strContact, strZIP, strProvincia, (strBpartners.equals("costumer")?"clients":""), (strBpartners.equals("vendor")?"vendors":""), strCity, strOrderBy, oraLimit, "");
+    		data = BusinessPartnerData.select(this, "ROWNUM", Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg), (strKey.equals("%")?"":strKey), (strName.equals("%")?"":strName), (strBpartners.equals("costumer")?"clients":""), (strBpartners.equals("vendor")?"vendors":""), strOrderBy, oraLimit, "", (strZIP.equals("%")?"":strZIP), (strCity.equals("%")?"":strCity), (strProvincia.equals("%")?"":strProvincia) ,(strContact.equals("%")?"":strContact));    		
     	}
     	else {
-    		String pgLimit = strPageSize + " OFFSET " + strOffset;
-    		data = BusinessPartnerData.select(this, "1", Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg), strKey, strName, strContact, strZIP, strProvincia, (strBpartners.equals("costumer")?"clients":""), (strBpartners.equals("vendor")?"vendors":""), strCity, strOrderBy, "", pgLimit);
+    		String pgLimit = strPageSize + " OFFSET " + strOffset;    		
+    		data = BusinessPartnerData.select(this, "1", Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg), (strKey.equals("%")?"":strKey), (strName.equals("%")?"":strName), (strBpartners.equals("costumer")?"clients":""), (strBpartners.equals("vendor")?"vendors":""), strOrderBy, "", pgLimit, (strZIP.equals("%")?"":strZIP), (strCity.equals("%")?"":strCity), (strProvincia.equals("%")?"":strProvincia), (strContact.equals("%")?"":strContact));
     	}    	
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
@@ -272,8 +272,7 @@ public class BusinessPartner extends HttpSecureAppServlet {
         else description = e.getMessage();
         e.printStackTrace();
       }
-    }
-    
+    }    
     if (!type.startsWith("<![CDATA[")) type = "<![CDATA[" + type + "]]>";
     if (!title.startsWith("<![CDATA[")) title = "<![CDATA[" + title + "]]>";
     if (!description.startsWith("<![CDATA[")) description = "<![CDATA[" + description + "]]>";
@@ -306,8 +305,7 @@ public class BusinessPartner extends HttpSecureAppServlet {
       }
     }
     strRowsData.append("  </rows>\n");
-    strRowsData.append("</xml-data>\n");
-        
+    strRowsData.append("</xml-data>\n");        
     response.setContentType("text/xml; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
     PrintWriter out = response.getWriter();
