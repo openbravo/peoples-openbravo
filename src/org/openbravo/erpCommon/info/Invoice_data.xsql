@@ -70,8 +70,8 @@
         <Parameter name="order" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.POReference = ? ]]></Parameter>
         <Parameter name="dateFrom" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.DateInvoiced >= TO_DATE(?) ]]></Parameter>
         <Parameter name="dateTo" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.DateInvoiced < TO_DATE(?) ]]></Parameter>
-        <Parameter name="grandTotalFrom" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.GrandTotal >= ? ]]></Parameter>
-        <Parameter name="grandTotalTo" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.GrandTotal <= ? ]]></Parameter>
+        <Parameter name="grandTotalFrom" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.GrandTotal >= TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="grandTotalTo" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.GrandTotal <= TO_NUMBER(?) ]]></Parameter>
         <Parameter name="sotrx" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.IsSOTrx = ? ]]></Parameter>
         <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="2" />
         <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
