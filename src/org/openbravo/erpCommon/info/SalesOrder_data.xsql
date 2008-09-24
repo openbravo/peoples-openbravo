@@ -76,7 +76,6 @@
         WHERE o.AD_Client_ID IN ('1') 
         AND o.AD_Org_ID IN ('1') 
         AND o.IsActive='Y'
-        ORDER BY o.C_Order_ID
         ]]>
         </Sql>
         <Field name="position" value="count"/>
