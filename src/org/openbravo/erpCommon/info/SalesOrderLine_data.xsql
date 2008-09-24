@@ -24,15 +24,17 @@
 
 <SqlClass name="SalesOrderLineData" package="org.openbravo.erpCommon.info">
    <SqlClassComment></SqlClassComment>
+
    <SqlMethod name="select" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
-      SELECT * FROM ( SELECT '0' AS RN1, A.* FROM (  
+      SELECT B.*,
+      	(DOCUMENTNO || ' - ' || DATEORDERED || ' - ' || GRANDTOTAL || ' - ' || LINE || ' - ' || LINENETAMT) AS LINE_TEXT,
+		C_ORDERLINE_ID || '#' || DOCUMENTNO || ' - ' || DATEORDERED || ' - ' || GRANDTOTAL || ' - ' || LINE || ' - ' || LINENETAMT as rowkey
+      FROM ( SELECT '0' AS RN1, A.* FROM (  
           SELECT ol.C_ORDERLINE_ID, b.NAME AS BPARTNER_NAME, p.NAME AS PRODUCT_NAME, o.DATEORDERED, o.DOCUMENTNO, 
-          o.ISSOTRX, ol.QTYORDERED AS QTY, ol.PRICEACTUAL, ol.LINENETAMT, 
-          (o.DOCUMENTNO || ' - ' || o.DATEORDERED || ' - ' || o.GRANDTOTAL || ' - ' || ol.LINE || ' - ' || ol.LINENETAMT) AS LINE_TEXT,
-			 ol.C_ORDERLINE_ID || '#' || o.DOCUMENTNO || ' - ' || o.DATEORDERED || ' - ' || o.GRANDTOTAL || ' - ' || ol.LINE || ' - ' || ol.LINENETAMT as rowkey
+          o.ISSOTRX, ol.QTYORDERED AS QTY, ol.PRICEACTUAL, ol.LINENETAMT, ol.LINE, o.GRANDTOTAL
           FROM C_ORDER o, C_ORDERLINE ol, M_PRODUCT p, C_BPARTNER b
           WHERE o.C_ORDER_ID = ol.C_ORDER_ID 
           AND o.C_BPARTNER_ID = b.C_BPARTNER_ID 
@@ -65,6 +67,38 @@
         <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
         <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
    </SqlMethod>
+
+   <SqlMethod name="countRows" type="preparedStatement" return="String">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+      <![CDATA[
+          SELECT COUNT(*) AS RN1
+          FROM C_ORDER o, C_ORDERLINE ol, M_PRODUCT p, C_BPARTNER b
+          WHERE o.C_ORDER_ID = ol.C_ORDER_ID 
+          AND o.C_BPARTNER_ID = b.C_BPARTNER_ID 
+          AND ol.M_PRODUCT_ID = p.M_PRODUCT_ID
+          AND o.AD_CLIENT_ID IN ('1') 
+          AND o.AD_ORG_ID IN ('1') 
+          AND o.IsActive='Y' 
+          AND o.ISSOTRX = 'Y'
+        ]]>
+        </Sql>
+        <Field name="position" value="count"/>
+        <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_CLIENT_ID IN (" text="'1'"/>
+        <Parameter name="adUserOrg" type="replace" optional="true" after="o.AD_ORG_ID IN (" text="'1'"/>
+        <Parameter name="documentno" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.DocumentNo) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="description" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.Description) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="orderReference" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.POReference) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="businesPartner" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.C_BPartner_ID = TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="dateFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered >= to_date(?) ]]></Parameter>
+        <Parameter name="dateTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered < to_date(?) ]]></Parameter>
+        <Parameter name="grandTotalFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.GrandTotal >= ? ]]></Parameter>
+        <Parameter name="grandTotalTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.GrandTotal <= ? ]]></Parameter>
+        <Parameter name="product" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND ol.M_Product_ID = TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="isdelivered" optional="true" type="none" after="AND o.IsActive='Y'"><![CDATA[ AND (ol.QTYORDERED - COALESCE(ol.QTYDELIVERED, 0)) <> 0 ]]></Parameter>
+        <Parameter name="isinvoiced" optional="true" type="none" after="AND o.IsActive='Y'"><![CDATA[ AND (ol.QTYORDERED - COALESCE(ol.QTYINVOICED, 0)) <> 0 ]]></Parameter>
+   </SqlMethod>
+
    <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql></Sql>

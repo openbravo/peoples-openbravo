@@ -274,13 +274,25 @@ public class SalesOrderLine extends HttpSecureAppServlet {
     
     if (headers!=null) {
       try{
+
+    	  // remove single % in parameters used in like upper(parameter)
+    	  if (strDocumentNo.equals("%")) {
+    		  strDocumentNo = null;
+    	  }
+    	  if (strDescription.equals("%")) {
+    		  strDescription = null;
+    	  }
+    	  if (strOrder.equals("%")) {
+    		  strOrder = null;
+    	  }
+
 	  	if(strNewFilter.equals("1") || strNewFilter.equals("")) { // New filter or first load    	
 	  		if (strSOTrx.equals("Y")) {
-        		data = SalesOrderLineData.select(this, "1", Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"), Utility.getContext(this, vars, "#User_Org", "SalesOrderLine"), strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1,  strCalc2, strProduct, (strDelivered.equals("Y")?"isdelivered":""), (strInvoiced.equals("Y")?"isinvoiced":""), strOrderBy, "", "");
+        		strNumRows = SalesOrderLineData.countRows(this, Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"), Utility.getContext(this, vars, "#User_Org", "SalesOrderLine"), strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1,  strCalc2, strProduct, (strDelivered.equals("Y")?"isdelivered":""), (strInvoiced.equals("Y")?"isinvoiced":""));
       	   } else {
         		data = SalesOrderLineData.selectSOTrx(this, "1", Utility.getContext(this, vars, "#User_Client", "SalesOrderLine"), Utility.getContext(this, vars, "#User_Org", "SalesOrderLine"), strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1,  strCalc2, strProduct, (strDelivered.equals("Y")?"isdelivered":""), (strInvoiced.equals("Y")?"isinvoiced":""), strOrderBy, "", "");
+        		strNumRows = String.valueOf(data.length);
       	   }
-	  		strNumRows = String.valueOf(data.length);
 	  		vars.setSessionValue("SalesOrderLine.numrows", strNumRows);
 	  	}
   		else {
