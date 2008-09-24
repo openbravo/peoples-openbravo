@@ -24,26 +24,31 @@
 
 <SqlClass name="InvoiceData" package="org.openbravo.erpCommon.info">
    <SqlClassComment></SqlClassComment>
+
    <SqlMethod name="select" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
-        SELECT * FROM ( SELECT '0' AS RN1, A.* FROM ( 
+        SELECT B.*,
+        	C_Invoice_ID || '#' || DocumentNo || ' - ' || TO_CHAR(DateInvoiced, TO_CHAR(?)) as RowKey,
+        	C_Base_Convert(GrandTotal, C_Currency_ID, AD_Client_ID, DateAcct, '0') AS ConvertedAmount,
+            DocumentNo||' - '||TO_CHAR(DateInvoiced,to_char(?))||' - '||GrandTotal AS Name,
+          	REPLACE(DocumentNo||' - '||TO_CHAR(DateInvoiced,to_char(?))||' - '||GrandTotal, '''', CHR(92) || '''') AS Name_HIDDEN
+        
+        FROM ( SELECT '0' AS RN1, A.* FROM ( 
           SELECT
-          i.C_Invoice_ID, i.DocumentNo||' - '||TO_CHAR(i.DateInvoiced,to_char(?))||' - '||i.GrandTotal AS Name,
-          REPLACE((i.DocumentNo||' - '||TO_CHAR(i.DateInvoiced,to_char(?))||' - '||i.GrandTotal), '''', CHR(92) || '''') AS Name_HIDDEN,
-          (SELECT Name FROM C_BPartner bp WHERE bp.C_BPartner_ID=i.C_BPartner_ID) AS BPartnerName,
+          i.C_Invoice_ID,
+          bp.name AS BPartnerName,
           i.DateInvoiced,
           i.DocumentNo,
           (SELECT ISO_Code FROM C_Currency c WHERE c.C_Currency_ID=i.C_Currency_ID) AS Currency,
           i.GrandTotal,
-          C_Base_Convert(i.GrandTotal, i.C_Currency_ID, i.AD_Client_ID, i.DateAcct, '0') AS ConvertedAmount,
           0 AS OpenAmt,
           i.IsSOTrx,
           i.Description,
           i.POReference,
-          i.C_Invoice_ID || '#' || i.DocumentNo || ' - ' || TO_CHAR(i.DateInvoiced, TO_CHAR(?)) as RowKey
-          FROM C_Invoice_v i
+          i.DateAcct, i.AD_Client_ID, i.C_Currency_ID
+          FROM C_Invoice_v i LEFT JOIN C_BPartner bp ON bp.C_BPartner_ID=i.C_BPartner_ID
           WHERE i.AD_Client_ID IN ('1') 
           AND i.AD_Org_ID IN ('1') 
           AND i.IsActive='Y'
@@ -72,10 +77,37 @@
         <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
         <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
    </SqlMethod>
+
+   <SqlMethod name="countRows" type="preparedStatement" return="String">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+      <![CDATA[
+          SELECT COUNT(*) AS RN1
+          FROM C_Invoice_v i
+          WHERE i.AD_Client_ID IN ('1') 
+          AND i.AD_Org_ID IN ('1') 
+          AND i.IsActive='Y'
+        ]]>
+        </Sql>
+        <Field name="position" value="count"/>
+        <Parameter name="adUserClient" type="replace" optional="true" after="i.AD_Client_ID IN (" text="'1'"/>
+        <Parameter name="adUserOrg" type="replace" optional="true" after="i.AD_Org_ID IN (" text="'1'"/>
+        <Parameter name="key" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND UPPER(i.DocumentNo) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="description" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND UPPER(i.Description) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="businesPartner" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.C_BPartner_ID = ? ]]></Parameter>
+        <Parameter name="order" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.POReference = TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="dateFrom" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.DateInvoiced >= TO_DATE(?) ]]></Parameter>
+        <Parameter name="dateTo" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.DateInvoiced < TO_DATE(?) ]]></Parameter>
+        <Parameter name="grandTotalFrom" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.GrandTotal >= TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="grandTotalTo" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.GrandTotal <= TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="sotrx" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.IsSOTrx = ? ]]></Parameter>
+   </SqlMethod>
+
    <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql></Sql>
    </SqlMethod>
+
    <SqlMethod name="selectKey" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql> 

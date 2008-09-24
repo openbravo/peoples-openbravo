@@ -192,6 +192,7 @@ public class Invoice extends HttpSecureAppServlet {
     SQLReturnObject[] data = null;
     Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();   
     String[] colNames = {"bpartnername", "dateinvoiced", "documentno", "currency", "grandtotal", "convertedamount", "openamt", "issOtrx", "description", "poreference", "rowkey"};
+    boolean[] colSortable = {true,true,true,true,true,false,true,true,true,true,true};
     String[] colWidths = {"160", "58", "65", "65", "70", "60", "55", "65", "90", "40" ,"0"};
 
     for(int i=0; i < colNames.length; i++) {
@@ -207,6 +208,7 @@ public class Invoice extends HttpSecureAppServlet {
         dataAux.setData("name", (name.startsWith("INS_")?colNames[i]:name));
         dataAux.setData("type", "string");
         dataAux.setData("width", colWidths[i]);
+        dataAux.setData("issortable", colSortable[i]?"true":"false");
         vAux.addElement(dataAux);
     }
     data = new SQLReturnObject[vAux.size()];
@@ -238,9 +240,17 @@ public class Invoice extends HttpSecureAppServlet {
     
     if (headers != null) {
       try {
-        if(strNewFilter.equals("1") || strNewFilter.equals("")) { // New filter or first load     
-          data = InvoiceData.select(this, "1", vars.getSqlDateFormat(), Utility.getContext(this, vars, "#User_Client", "Invoice"), Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription, strBpartnerId, strOrder, strDateFrom, DateTimeData.nDaysAfter(this,strFechaTo, "1"), strCal1,  strCalc2, strSOTrx, strOrderBy, "", "");
-          strNumRows = String.valueOf(data.length);
+
+    	  // remove single % in parameters used in like upper(parameter)
+    	  if (strName.equals("%")) {
+    		  strName = null;
+    	  }
+    	  if (strDescription.equals("%")) {
+    		  strDescription = null;
+    	  }
+
+        if(strNewFilter.equals("1") || strNewFilter.equals("")) { // New filter or first load
+          strNumRows = InvoiceData.countRows(this, Utility.getContext(this, vars, "#User_Client", "Invoice"), Utility.getSelectorOrgs(this, vars, strOrg), strName, strDescription, strBpartnerId, strOrder, strDateFrom, DateTimeData.nDaysAfter(this,strFechaTo, "1"), strCal1,  strCalc2, strSOTrx);
           vars.setSessionValue("Invoice.numrows", strNumRows);
         }
         else {
