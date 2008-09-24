@@ -171,6 +171,7 @@ public class SalesOrder extends HttpSecureAppServlet {
     SQLReturnObject[] data = null;
     Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();   
     String[] colNames = {"bpartnername", "dateordered","documentno", "currency", "grandtotal", "converted", "issotrx", "description", "poreference", "rowkey"};
+    boolean[] colSortable = {true,true,true,true,true,false,true,true,true,true};
     String[] colWidths = {"110", "70", "140", "60", "70", "70", "70", "75", "100", "0"};
     for(int i=0; i < colNames.length; i++) {
       SQLReturnObject dataAux = new SQLReturnObject();
@@ -185,6 +186,7 @@ public class SalesOrder extends HttpSecureAppServlet {
         dataAux.setData("name", (name.startsWith("SOS_")?colNames[i]:name));
         dataAux.setData("type", "string");
         dataAux.setData("width", colWidths[i]);
+        dataAux.setData("issortable", colSortable[i]?"true":"false");
         vAux.addElement(dataAux);
     }
     data = new SQLReturnObject[vAux.size()];
@@ -204,15 +206,26 @@ public class SalesOrder extends HttpSecureAppServlet {
     
     if (headers!=null) {
       try{
+
+          // remove single % in parameters used in like upper(parameter)
+          if (strName.equals("%")) {
+        	  strName = null;
+          }
+          if (strDescription.equals("%")) {
+        	  strDescription = null;
+          }
+          if (strOrder.equals("%")) {
+        	  strOrder = null;
+          }
+          
       if(strNewFilter.equals("1") || strNewFilter.equals("")) { // New filter or first load     
-        data = SalesOrderData.select(this, "1", Utility.getContext(this, vars, "#User_Client", "SalesOrder"), Utility.getContext(this, vars, "#User_Org", "SalesOrder"), strName, strDescription, strOrder, strBpartnerId,  strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1,  strCalc2, strOrderBy, "", "");
-        strNumRows = String.valueOf(data.length);
+        strNumRows = SalesOrderData.countRows(this, Utility.getContext(this, vars, "#User_Client", "SalesOrder"), Utility.getContext(this, vars, "#User_Org", "SalesOrder"), strName, strDescription, strOrder, strBpartnerId,  strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1,  strCalc2);
         vars.setSessionValue("SalesOrder.numrows", strNumRows);
       }
       else {
         strNumRows = vars.getSessionValue("SalesOrder.numrows");
       }
-          
+
       // Filtering result
       if(this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
         String oraLimit = strOffset + " AND " + String.valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));       

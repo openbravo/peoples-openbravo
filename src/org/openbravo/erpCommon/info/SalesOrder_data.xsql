@@ -24,19 +24,24 @@
 
 <SqlClass name="SalesOrderData" package="org.openbravo.erpCommon.info">
    <SqlClassComment></SqlClassComment>
-   <SqlMethod name="select" type="preparedStatement" return="multiple">
+
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
-	    SELECT * FROM ( SELECT '0' AS RN1, A.* FROM (
+	    SELECT B.*,
+			C_Order_ID || '#' || DocumentNo as rowkey,
+	        C_Base_Convert(GrandTotal,C_Currency_ID,AD_Client_ID,DateAcct, '0') as Converted
+	    FROM ( SELECT '0' AS RN1, A.* FROM (
         SELECT o.C_Order_ID,
-        (SELECT Name FROM C_BPartner bp WHERE bp.C_BPartner_ID=o.C_BPartner_ID) AS BPartnerName,
+        bp.Name AS BPartnerName,
         o.DateOrdered, o.DocumentNo,
-        (SELECT ISO_Code FROM C_Currency c WHERE c.C_Currency_ID=o.C_Currency_ID) AS Currency,
-        o.GrandTotal,
-        C_Base_Convert(o.GrandTotal,o.C_Currency_ID,o.AD_Client_ID,o.DateAcct, '0') as Converted, o.IsSOTrx, o.Description, o.POReference,
-				o.C_Order_ID || '#' || o.DocumentNo as rowkey
+        C.ISO_Code AS Currency,
+        o.GrandTotal, o.dateacct, o.ad_client_id, o.c_currency_id,
+        o.IsSOTrx, o.Description, o.POReference
         FROM C_Order o
+        	LEFT JOIN C_BPartner bp on bp.C_BPartner_ID=o.C_BPartner_ID
+        	LEFT JOIN C_Currency c ON c.C_Currency_ID=o.C_Currency_ID
         WHERE o.AD_Client_ID IN ('1') 
         AND o.AD_Org_ID IN ('1') 
         AND o.IsActive='Y'
@@ -61,10 +66,37 @@
         <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
         <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
    </SqlMethod>
+
+   <SqlMethod name="countRows" type="preparedStatement" return="String">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+      <![CDATA[
+        SELECT COUNT(*) AS rn1
+        FROM C_Order o
+        WHERE o.AD_Client_ID IN ('1') 
+        AND o.AD_Org_ID IN ('1') 
+        AND o.IsActive='Y'
+        ORDER BY o.C_Order_ID
+        ]]>
+        </Sql>
+        <Field name="position" value="count"/>
+        <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_Client_ID IN (" text="'1'"/>
+        <Parameter name="adUserOrg" type="replace" optional="true" after="o.AD_Org_ID IN (" text="'1'"/>
+        <Parameter name="key" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.DocumentNo) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="description" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.Description) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="orderReference" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND UPPER(o.POReference) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="businesPartner" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.C_BPartner_ID = ? ]]></Parameter>
+        <Parameter name="dateFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered >= to_date(?) ]]></Parameter>
+        <Parameter name="dateTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.DateOrdered < to_date(?) ]]></Parameter>
+        <Parameter name="grandTotalFrom" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.GrandTotal >= ? ]]></Parameter>
+        <Parameter name="grandTotalTo" optional="true" after="AND o.IsActive='Y'"><![CDATA[ AND o.GrandTotal <= ? ]]></Parameter>
+   </SqlMethod>
+
    <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql></Sql>
    </SqlMethod>
+
    <SqlMethod name="selectKey" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql> 
