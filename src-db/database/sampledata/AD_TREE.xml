@@ -621,4 +621,58 @@
 <!--1000022-->              <ISALLNODES><![CDATA[Y]]></ISALLNODES>
 <!--1000022**************--></AD_TREE>
 
+<!--1000023**************--><AD_TREE>
+<!--1000023 AD_TREE_ID-->
+<!--1000023-->              <AD_TREE_ID><![CDATA[1000023]]></AD_TREE_ID>
+<!--1000023 AD_CLIENT_ID-->
+<!--1000023-->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!--1000023 AD_ORG_ID-->
+<!--1000023-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000023 CREATED-->
+<!--1000023-->              <CREATED><![CDATA[2008-09-25 15:23:53.0]]></CREATED>
+<!--1000023 CREATEDBY-->
+<!--1000023-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--1000023 UPDATED-->
+<!--1000023-->              <UPDATED><![CDATA[2008-09-25 15:23:53.0]]></UPDATED>
+<!--1000023 UPDATEDBY-->
+<!--1000023-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1000023 ISACTIVE-->
+<!--1000023-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000023 NAME-->
+<!--1000023-->              <NAME><![CDATA[BigBazaar Tax Report]]></NAME>
+<!--1000023 DESCRIPTION-->
+<!--1000023-->              <DESCRIPTION><![CDATA[BigBazaar Tax Report Setup]]></DESCRIPTION>
+<!--1000023 TREETYPE-->
+<!--1000023-->              <TREETYPE><![CDATA[TR]]></TREETYPE>
+<!--1000023 ISALLNODES-->
+<!--1000023-->              <ISALLNODES><![CDATA[Y]]></ISALLNODES>
+<!--1000023**************--></AD_TREE>
+
+<!--1000024**************--><AD_TREE>
+<!--1000024 AD_TREE_ID-->
+<!--1000024-->              <AD_TREE_ID><![CDATA[1000024]]></AD_TREE_ID>
+<!--1000024 AD_CLIENT_ID-->
+<!--1000024-->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!--1000024 AD_ORG_ID-->
+<!--1000024-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000024 CREATED-->
+<!--1000024-->              <CREATED><![CDATA[2008-09-25 15:24:25.0]]></CREATED>
+<!--1000024 CREATEDBY-->
+<!--1000024-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--1000024 UPDATED-->
+<!--1000024-->              <UPDATED><![CDATA[2008-09-25 15:24:25.0]]></UPDATED>
+<!--1000024 UPDATEDBY-->
+<!--1000024-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1000024 ISACTIVE-->
+<!--1000024-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000024 NAME-->
+<!--1000024-->              <NAME><![CDATA[BigBazaar Accounting Report]]></NAME>
+<!--1000024 DESCRIPTION-->
+<!--1000024-->              <DESCRIPTION><![CDATA[BigBazaar Accounting Report Setup]]></DESCRIPTION>
+<!--1000024 TREETYPE-->
+<!--1000024-->              <TREETYPE><![CDATA[AR]]></TREETYPE>
+<!--1000024 ISALLNODES-->
+<!--1000024-->              <ISALLNODES><![CDATA[Y]]></ISALLNODES>
+<!--1000024**************--></AD_TREE>
+
 </data>
