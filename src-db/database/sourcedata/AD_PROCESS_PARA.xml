@@ -11131,7 +11131,7 @@ The values of the actual Product Attributes]]></HELP>
 <!--800057 CREATEDBY-->
 <!--800057-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800057 UPDATED-->
-<!--800057-->              <UPDATED><![CDATA[2008-06-13 18:20:40.0]]></UPDATED>
+<!--800057-->              <UPDATED><![CDATA[2008-09-25 17:18:14.0]]></UPDATED>
 <!--800057 UPDATEDBY-->
 <!--800057-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800057 NAME-->
@@ -11155,7 +11155,7 @@ The values of the actual Product Attributes]]></HELP>
 <!--800057 FIELDLENGTH-->
 <!--800057-->              <FIELDLENGTH><![CDATA[10]]></FIELDLENGTH>
 <!--800057 ISMANDATORY-->
-<!--800057-->              <ISMANDATORY><![CDATA[N]]></ISMANDATORY>
+<!--800057-->              <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
 <!--800057 ISRANGE-->
 <!--800057-->              <ISRANGE><![CDATA[N]]></ISRANGE>
 <!--800057 AD_ELEMENT_ID-->
