@@ -50,9 +50,7 @@ function validate() {
 }
 
 function onloadFunctions() {
-	/*
-  	keyArray[keyArray.lenght] = new keyArrayItem("B", "submitCommandForm('FIND', false, null, null, 'medio');", null, "ctrlKey");
-  	*/  
+	
 }
 </script>
 <script language="JavaScript" type="text/javascript" id="selectedColumn">  
@@ -217,18 +215,57 @@ function onloadFunctions() {
 				</tr>
 				<tr>
 					<td class="TitleCell"><span class="LabelText">Product</span></td>
-					<td class="Combo_ContentCell" colspan="2">
-						<select class="Combo Combo_TwoCells_width" name="inpProduct" id="inpProduct">
-							<option value=""></option>
-							<div id="reportM_Product_ID"></div>
-						</select>
+					<td class="Combo_ContentCell" colspan="1">
+						<input type="hidden" name="inpProduct" value="" id="inpProduct" />
+						<input class="dojoValidateValid TextBox_btn_TwoCells_width" type="text" name="inpProduct_DES" id="inpProduct_DES" maxlength="20" value="" />                								
+					</td>
+					<td class="FieldButton_ContentCell"><a class="FieldButtonLink"
+						href="#"
+						onfocus="setWindowElementFocus(this); window.status='Product'; return true;"
+						onblur="window.status=''; return true;"
+						onkeypress="this.className='FieldButtonLink_active'; return true;"
+						onkeyup="this.className='FieldButtonLink_focus'; return true;"
+						onclick="openSearch(null, null, '../info/Product.html', 'SELECTOR_PRODUCT', false, 'frmSelector', 'inpProduct', 'inpProduct_DES', document.frmSelector.inpProduct_DES.value);return false;">
+					<table class="FieldButton"
+						onmousedown="this.className='FieldButton_active'; return true;"
+						onmouseup="this.className='FieldButton'; return true;"
+						onmouseover="this.className='FieldButton_hover'; window.status='Product'; return true;"
+						onmouseout="this.className='FieldButton'; window.status=''; return true;">
+						<tr>
+							<td class="FieldButton_bg"><img alt="Product"
+								class="FieldButton_Icon FieldButton_Icon_Product" title="Product"
+								src="../../../../../web/images/blank.gif" border="0" "/></td>
+						</tr>
+					</table>
+					</a>
 					</td>
 					<td class="TitleCell"><span class="LabelText">Business Partner</span></td>
-					<td class="Combo_ContentCell" colspan="2">
-						<select class="Combo Combo_TwoCells_width" name="inpBPartner" id="inpBPartner">
-							<option value=""></option>
-							<div id="reportC_BPartner_ID"></div>
-						</select>
+					<td class="Combo_ContentCell" colspan="1">
+						<INPUT type="hidden" name="inpBPartner" id="inpBPartner" />
+						<INPUT class="dojoValidateValid TextBox_btn_TwoCells_width" type="text" name="inpBPartner_DES" id="paramBPartnerDescription" maxlength="20" value=""></INPUT>
+					</td>
+					<td class="FieldButton_ContentCell">
+						<a class="FieldButtonLink"
+							href="#"
+							onfocus="setWindowElementFocus(this); window.status='Business Partner'; return true;"
+							onblur="window.status=''; return true;"
+							onkeypress="this.className='FieldButtonLink_active'; return true;"
+							onkeyup="this.className='FieldButtonLink_focus'; return true;"
+							onclick="openSearch(null, null, '../info/BusinessPartner.html', 'SELECTOR_BUSINESS', false, 'frmSelector', 'inpBPartner', 'inpBPartner_DES', document.frmSelector.inpBPartner_DES.value);return false;">
+							<table class="FieldButton"
+								onmouseout="this.className='FieldButton';window.status='';return true;"
+								onmouseover="this.className='FieldButton_hover';window.status='Search';return true;"
+								onmousedown="this.className='FieldButton_active';return true;"
+								onmouseup="this.className='FieldButton';return true;">
+								<tr>
+									<td class="FieldButton_bg"><img alt="Business Partner"
+										class="FieldButton_Icon FieldButton_Icon_BusinessPartner"
+										title="Business Partner"
+										src="../../../../../web/images/blank.gif" border="0" />
+									</td>
+								</tr>
+							</table>
+						</a>
 					</td>
 				</tr>
 				<tr>
@@ -247,8 +284,8 @@ function onloadFunctions() {
 						</select>
 					</td>
 				</tr>
-				<tr>
-					<td />
+				<tr>	
+					<td />				
 					<td class="Button_LeftAlign_ContentCell">
 						<div>
 							<a class="ButtonLink" href="#"
@@ -272,8 +309,8 @@ function onloadFunctions() {
 									</table>
 							</a>
 						</div>
-					</td>
-					<td class="Button_LeftAlign_ContentCell">
+					</td>					
+					<td class="Button_LeftAlign_ContentCell" colspan="2">
 						<div>
 							<a class="ButtonLink" href="#"
 								onfocus="setWindowElementFocus(this); window.status='Save'; return true;"
@@ -295,10 +332,9 @@ function onloadFunctions() {
 								</table>
 							</a>
 						</div>
-					</td>
-					<td></td>
-					<td></td>
-					<td></td>
+					</td>					
+					<td />
+					<td />
 				</tr>				
 			</table>
 			</div>

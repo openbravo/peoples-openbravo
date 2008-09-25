@@ -37,16 +37,15 @@ import org.openbravo.utils.Replace;
 
 
 public class Account extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;  
 
   public void init (ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-
+  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {	
+    VariablesSecureApp vars = new VariablesSecureApp(request);    
     if (vars.commandIn("DEFAULT")) {
       String strNameValue = vars.getRequestGlobalVariable("inpNameValue", "Account.combination");
       String strAcctSchema = vars.getRequestGlobalVariable("inpAcctSchema", "Account.cAcctschemaId");
@@ -61,14 +60,14 @@ public class Account extends HttpSecureAppServlet {
       if (!strNameValue.equals("")) vars.setSessionValue("Account.combination", strNameValue + "%");
       
       String strAlias = vars.getGlobalVariable("inpAlias", "Account.alias", "");
-      String strCombination = vars.getGlobalVariable("inpCombination", "Account.combination", "");
+      String strCombination = vars.getGlobalVariable("inpCombination", "Account.combination", "");      
       printPage(response, vars, strAlias, strCombination, "", true);      
     } else if(vars.commandIn("STRUCTURE")) {
     	printGridStructure(response, vars);
     } else if(vars.commandIn("DATA")) {
         if(vars.getStringParameter("newFilter").equals("1"))
-          clearSessionValues(vars);
-    	  String strAlias = vars.getGlobalVariable("inpAlias", "Account.alias", "");
+        clearSessionValues(vars);
+    	String strAlias = vars.getGlobalVariable("inpAlias", "Account.alias", "");
         String strCombination = vars.getGlobalVariable("inpCombination", "Account.combination", "");
         String strOrganization = vars.getStringParameter("inpOrganization");
         String strAccount = vars.getStringParameter("inpAccount");
@@ -104,7 +103,7 @@ public class Account extends HttpSecureAppServlet {
       String strProduct = vars.getStringParameter("inpProduct");
       String strBPartner = vars.getStringParameter("inpBPartner");
       String strProject = vars.getStringParameter("inpProject");
-      String strCampaign = vars.getStringParameter("inpCampaign");
+      String strCampaign = vars.getStringParameter("inpCampaign");    
       AccountData data = AccountData.insert(this, vars.getClient(), strOrganization, strAcctSchema, strAccount, strClave, strAlias, vars.getUser(), strProduct, strBPartner, strProject, strCampaign);
       if (data!=null) strClave = data.cValidcombinationId;
       vars.removeSessionValue("Account.alias");
@@ -146,7 +145,7 @@ public class Account extends HttpSecureAppServlet {
   void printPage(HttpServletResponse response, VariablesSecureApp vars, String strAlias, String strCombination, String strValidCombination, boolean isDefault) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 1 of the accounts seeker");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Account").createXmlDocument();
-    AccountData[] data = null;
+    AccountData[] data = null;    
     if (isDefault) {
       if (strAlias.equals("") && strCombination.equals("")) strAlias = "%";
       data = AccountData.set(strAlias, strCombination);
@@ -197,26 +196,6 @@ public class Account extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
 
-
-    try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "M_Product_ID", "M_Product (no summary)", "", Utility.getContext(this, vars, "#User_Org", "Account"), Utility.getContext(this, vars, "#User_Client", "Account"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "Account", "");
-      xmlDocument.setData("reportM_Product_ID","liststructure", comboTableData.select(false));
-      comboTableData = null;
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-
-
-    try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "C_BPartner_ID", "C_BPartner", "", Utility.getContext(this, vars, "#User_Org", "Account"), Utility.getContext(this, vars, "#User_Client", "Account"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "Account", "");
-      xmlDocument.setData("reportC_BPartner_ID","liststructure", comboTableData.select(false));
-      comboTableData = null;
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-    
     xmlDocument.setParameter("orgs", vars.getStringParameter("inpAD_Org_ID"));
     
     xmlDocument.setParameter("grid", "20");
@@ -290,9 +269,9 @@ public class Account extends HttpSecureAppServlet {
 	    
 	    if (headers!=null) {
 	      try{
-		  	if(strNewFilter.equals("1") || strNewFilter.equals("")) { // New filter or first load    	
-		  		data = AccountData.select(this, "1", strAcctSchema, strAlias, strCombination, strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "", Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this, vars, "#User_Org", "Account"), strOrderBy, "", "");
-		  		strNumRows = String.valueOf(data.length);
+		  	if(strNewFilter.equals("1") || strNewFilter.equals("")) { // New filter or first load
+		  	  System.out.println("strAcctSchema: " + strAcctSchema);
+		  		strNumRows = AccountData.countRows(this, "1", strAcctSchema, strAlias, strCombination, strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "", Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this, vars, "#User_Org", "Account"), strOrderBy, "", "");
 		  		vars.setSessionValue("AccountInfo.numrows", strNumRows);
 		  	}
 	  		else {
@@ -302,11 +281,11 @@ public class Account extends HttpSecureAppServlet {
 	  		// Filtering result
 	    	if(this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
 	    		String oraLimit = strOffset + " AND " + String.valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));
-	    		data = AccountData.select(this, "1", strAcctSchema, strAlias, strCombination, strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "", Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this, vars, "#User_Org", "Account"), strOrderBy, oraLimit, "");
+	    		data = AccountData.select(this, "ROWNUM", (strAcctSchema.equals("%")?"":strAcctSchema), (strAlias.equals("%")?"":strAlias), (strCombination.equals("%")?"":strCombination), strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "", Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this, vars, "#User_Org", "Account"), strOrderBy, oraLimit, "");
 	    	}
 	    	else {
 	    		String pgLimit = strPageSize + " OFFSET " + strOffset;
-	    		data = AccountData.select(this, "1", strAcctSchema, strAlias, strCombination, strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "", Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this, vars, "#User_Org", "Account"), strOrderBy, "", pgLimit);
+	    		data = AccountData.select(this, "1", (strAcctSchema.equals("%")?"":strAcctSchema), (strAlias.equals("%")?"":strAlias), (strCombination.equals("%")?"":strCombination), strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "", Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this, vars, "#User_Org", "Account"), strOrderBy, "", pgLimit);
 	    	}    	
 	      } catch (ServletException e) {
 	        log4j.error("Error in print page data: " + e);

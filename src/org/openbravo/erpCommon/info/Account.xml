@@ -48,13 +48,7 @@
 	</SUBREPORT>
 	<SUBREPORT id="reportAccount_ID" name="reportAccount_ID" report="org/openbravo/erpCommon/reference/List">
 		<ARGUMENT name="parameterListSelected" withId="Account_ID"/>
-	</SUBREPORT>
-	<SUBREPORT id="reportM_Product_ID" name="reportM_Product_ID" report="org/openbravo/erpCommon/reference/List">
-		<ARGUMENT name="parameterListSelected" withId="M_Product_ID"/>
-	</SUBREPORT>
-	<SUBREPORT id="reportC_BPartner_ID" name="reportC_BPartner_ID" report="org/openbravo/erpCommon/reference/List">
-		<ARGUMENT name="parameterListSelected" withId="C_BPartner_ID"/>
-	</SUBREPORT>
+	</SUBREPORT>	
 	<SUBREPORT id="reportC_Project_ID" name="reportC_Project_ID" report="org/openbravo/erpCommon/reference/List">
 		<ARGUMENT name="parameterListSelected" withId="C_Project_ID"/>
 	</SUBREPORT>
