@@ -24,15 +24,18 @@
 
 <SqlClass name="InvoiceLineData" package="org.openbravo.erpCommon.info">
    <SqlClassComment></SqlClassComment>
+
    <SqlMethod name="select" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
-      	SELECT * FROM ( SELECT '0' AS RN1, A.* FROM (
+      	SELECT B.*,
+      		C_INVOICELINE_ID || '#' || (DOCUMENTNO || ' - ' || DATEINVOICED || ' - ' || GRANDTOTAL || ' - ' || LINE || ' - ' || LINENETAMT) AS ROWKEY,
+        	(DOCUMENTNO || ' - ' || DATEINVOICED || ' - ' || GRANDTOTAL || ' - ' || LINE || ' - ' || LINENETAMT) AS LINE_TEXT
+      	FROM ( SELECT '0' AS RN1, A.* FROM (
 	          SELECT IL.C_INVOICELINE_ID, b.NAME AS BPARTNER_NAME, p.NAME AS PRODUCT_NAME, I.DATEINVOICED, I.DOCUMENTNO, 
 	          I.ISSOTRX, IL.QTYINVOICED AS QTY, IL.PRICEACTUAL, IL.LINENETAMT, 
-	          (I.DOCUMENTNO || ' - ' || I.DATEINVOICED || ' - ' || I.GRANDTOTAL || ' - ' || IL.LINE || ' - ' || IL.LINENETAMT) AS LINE_TEXT,
-	          IL.C_INVOICELINE_ID || '#' || (I.DOCUMENTNO || ' - ' || I.DATEINVOICED || ' - ' || I.GRANDTOTAL || ' - ' || IL.LINE || ' - ' || IL.LINENETAMT) AS ROWKEY
+	          IL.LINE, I.GRANDTOTAL
 	          FROM C_INVOICE I, C_INVOICELINE IL, M_PRODUCT p, C_BPARTNER b
 	          WHERE I.C_INVOICE_ID = IL.C_INVOICE_ID 
 	          AND I.C_BPARTNER_ID = b.C_BPARTNER_ID 
@@ -63,6 +66,36 @@
         <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
         <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
       </SqlMethod>
+
+   <SqlMethod name="countRows" type="preparedStatement" return="String">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+      <![CDATA[
+	          SELECT COUNT(*) AS RN1 
+	          FROM C_INVOICE I, C_INVOICELINE IL, M_PRODUCT p, C_BPARTNER b
+	          WHERE I.C_INVOICE_ID = IL.C_INVOICE_ID 
+	          AND I.C_BPARTNER_ID = b.C_BPARTNER_ID 
+	          AND IL.M_PRODUCT_ID = p.M_PRODUCT_ID
+	          AND I.AD_CLIENT_ID IN ('1') 
+	          AND I.AD_ORG_ID IN ('1') 
+	          AND I.IsActive='Y' 
+	          AND I.ISSOTRX = 'Y'
+        ]]>
+        </Sql>
+        <Field name="position" value="count"/>
+        <Parameter name="adUserClient" type="replace" optional="true" after="I.AD_CLIENT_ID IN (" text="'1'"/>
+        <Parameter name="adUserOrg" type="replace" optional="true" after="I.AD_ORG_ID IN (" text="'1'"/>
+        <Parameter name="documentno" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND UPPER(I.DocumentNo) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="description" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND UPPER(I.Description) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="orderReference" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND UPPER(I.POReference) LIKE UPPER(?) ]]></Parameter>
+        <Parameter name="businesPartner" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND I.C_BPartner_ID = ? ]]></Parameter>
+        <Parameter name="dateFrom" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND I.DATEINVOICED >= TO_DATE(?) ]]></Parameter>
+        <Parameter name="dateTo" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND I.DATEINVOICED < TO_DATE(?) ]]></Parameter>
+        <Parameter name="grandTotalFrom" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND I.GrandTotal >= TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="grandTotalTo" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND I.GrandTotal <= TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="product" optional="true" after="AND I.IsActive='Y'"><![CDATA[ AND IL.M_Product_ID = ? ]]></Parameter>
+      </SqlMethod>
+
    <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql></Sql>

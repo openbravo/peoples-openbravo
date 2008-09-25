@@ -251,19 +251,29 @@ public class InvoiceLine extends HttpSecureAppServlet {
     
     if (headers!=null) {
       try{
+
+    	  // remove single % in parameters used in like upper(parameter)
+    	  if (strDocumentNo.equals("%")) {
+    		  strDocumentNo = null;
+    	  }
+    	  if (strDescription.equals("%")) {
+    		  strDescription = null;
+    	  }
+    	  if (strOrder.equals("%")) {
+    		  strOrder = null;
+    	  }
+
         if(strNewFilter.equals("1") || strNewFilter.equals("")) { // New filter or first load     
-          data = InvoiceLineData.select(this, "1", Utility.getContext(this, vars, "#User_Client", "InvoiceLine"), Utility.getContext(this, vars, "#User_Org", "InvoiceLine"), strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1,  strCal2, strProduct, strOrderBy, "", "");
-          strNumRows = String.valueOf(data.length);
+          strNumRows = InvoiceLineData.countRows(this, Utility.getContext(this, vars, "#User_Client", "InvoiceLine"), Utility.getContext(this, vars, "#User_Org", "InvoiceLine"), strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1,  strCal2, strProduct);
           vars.setSessionValue("BusinessPartnerInfo.numrows", strNumRows);
         }
         else {
           strNumRows = vars.getSessionValue("BusinessPartnerInfo.numrows");
         }
-          
       // Filtering result
       if(this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
         String oraLimit = strOffset + " AND " + String.valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));       
-        data = InvoiceLineData.select(this, "1", Utility.getContext(this, vars, "#User_Client", "InvoiceLine"), Utility.getContext(this, vars, "#User_Org", "InvoiceLine"), strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1,  strCal2, strProduct, strOrderBy, oraLimit, "");
+        data = InvoiceLineData.select(this, "ROWNUM", Utility.getContext(this, vars, "#User_Client", "InvoiceLine"), Utility.getContext(this, vars, "#User_Org", "InvoiceLine"), strDocumentNo, strDescription, strOrder, strBpartnerId, strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1,  strCal2, strProduct, strOrderBy, oraLimit, "");
       }
       else {
         String pgLimit = strPageSize + " OFFSET " + strOffset;
