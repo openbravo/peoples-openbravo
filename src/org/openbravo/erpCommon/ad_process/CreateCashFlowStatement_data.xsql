@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2007 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -244,7 +244,7 @@
         INSERT INTO FACT_ACCT_CFS
         (FACT_ACCT_CFS_ID,  FACT_ACCT_ID,  AD_CLIENT_ID,  AD_ORG_ID,  ISACTIVE,  CREATED,  CREATEDBY,  UPDATED,  UPDATEDBY,  ACCOUNT_ID,  AMOUNT, FACT_ACCT_REF_ID)
         VALUES
-        (?,?,?,?,'Y',NOW(),?,NOW(),?,?,?,?)
+        (?,?,?,?,'Y',NOW(),?,NOW(),?,?,TO_NUMBER(?),?)
       </Sql>
     <Parameter name="factAcctCFS"/>
     <Parameter name="factAcctId"/>
@@ -319,7 +319,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        update fact_acct_CFS set amount = ? + amount
+        update fact_acct_CFS set amount = TO_NUMBER(?) + amount
         where fact_acct_CFS_id = ?
       ]]>
     </Sql>
