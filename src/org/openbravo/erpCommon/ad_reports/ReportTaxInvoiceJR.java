@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All portions are Copyright (C) 2001-2008 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -111,7 +111,7 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("REPORT_TITLE", classInfo.name);
     parameters.put("DETAIL", strDetail.equals("-1")?"Y":"N");
-    parameters.put("cCountryId", new Integer(Utility.getContext(this, vars, "C_Country_Id", "ReportTaxInvoiceJR")));
+    parameters.put("cCountryId", new String(Utility.getContext(this, vars, "C_Country_Id", "ReportTaxInvoiceJR")));
     parameters.put("SALE", strSale);
     parameters.put("PURCHASE", strPurchase);
     parameters.put("PARAM_ORG", Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg));

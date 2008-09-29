@@ -196,8 +196,8 @@
 	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.lang.String">
 		<defaultValueExpression ><![CDATA[$P{BASE_DESIGN}+"/org/openbravo/erpCommon/ad_reports/"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="cCountryId" isForPrompting="true" class="java.lang.Integer">
-		<defaultValueExpression ><![CDATA[new Integer(100)]]></defaultValueExpression>
+	<parameter name="cCountryId" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["100"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="parDateFrom" isForPrompting="true" class="java.util.Date"/>
 	<parameter name="parDateTo" isForPrompting="true" class="java.util.Date"/>

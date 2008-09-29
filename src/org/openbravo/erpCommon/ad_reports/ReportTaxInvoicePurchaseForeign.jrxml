@@ -135,8 +135,8 @@
 	<parameter name="aux_org" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA[$P{USER_ORG}.equals("") ? "" : " AND C_INVOICE.AD_ORG_ID IN ("+$P{USER_ORG}+") "]]></defaultValueExpression>
 	</parameter>
-	<parameter name="cCountryId" isForPrompting="true" class="java.lang.Integer">
-		<defaultValueExpression ><![CDATA[new Integer(100)]]></defaultValueExpression>
+	<parameter name="cCountryId" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["100"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="parDateFrom" isForPrompting="true" class="java.util.Date"/>
 	<parameter name="parDateTo" isForPrompting="true" class="java.util.Date"/>
