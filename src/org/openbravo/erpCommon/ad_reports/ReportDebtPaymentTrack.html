@@ -62,6 +62,11 @@ function validate() {
 		showJSMessage(7);
 		return false;
 	}
+	if (frm.inpDateTo.value==null || frm.inpDateTo.value=="") {
+		setWindowElementFocus(frm.inpDateTo);
+		showJSMessage(7);
+		return false;
+	}
 	return true;
 }
 </SCRIPT>
