@@ -639,21 +639,17 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
   String nextElement(VariablesSecureApp vars, String strSelected) throws IOException, ServletException {
     if (strSelected == null || strSelected.equals("")) return firstElement(vars);
     if (tableSQL!=null) {
-      FieldProvider[] data = null;
+      String data = null;
       try{
         String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, (tableSQL.getTableName() + "." + tableSQL.getKeyColumn() + " AS ID"), new Vector&#60;String&#62;(), new Vector&#60;String&#62;(), 0, 0);
         ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValues());
-        data = execquery.select();
+        data = execquery.selectAndSearch(ExecuteQuery.SearchType.NEXT, strSelected);
       } catch (Exception e) { 
         if (log4j.isDebugEnabled()) log4j.debug("Error getting next element");
         e.printStackTrace();
       }
       if (data!=null) {
-        boolean found = false;
-        for (int i=0;i&#60;data.length;i++) {
-          if (!found &amp;&amp; data[i].getField("ID").equals(strSelected)) found=true;
-          else if (found) return data[i].getField("ID");
-        }
+        if (data!=null) return data;
       }
     }
     return strSelected;
@@ -662,20 +658,17 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
   int getKeyPosition(VariablesSecureApp vars, String strSelected) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("getKeyPosition: " + strSelected);
     if (tableSQL!=null) {
-      FieldProvider[] data = null;
+      String data = null;
       try{
         String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, (tableSQL.getTableName() + "." + tableSQL.getKeyColumn() + " AS ID"), new Vector&#60;String&#62;(), new Vector&#60;String&#62;(),0,0);
         ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValues());
-        data = execquery.select();
+        data = execquery.selectAndSearch(ExecuteQuery.SearchType.GETPOSITION, strSelected);
       } catch (Exception e) { 
         if (log4j.isDebugEnabled()) log4j.debug("Error getting key position");
         e.printStackTrace();
       }
       if (data!=null) {
-        for (int i=0;i&#60;data.length;i++) {
-          if (log4j.isDebugEnabled()) log4j.debug("row: " + i + " - key: " + data[i].getField("ID"));
-          if (data[i].getField("ID").equals(strSelected)) return i;
-        }
+        if (data!=null) return Integer.valueOf(data);
       }
     }
     return 0;
@@ -684,21 +677,17 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
   String previousElement(VariablesSecureApp vars, String strSelected) throws IOException, ServletException {
     if (strSelected == null || strSelected.equals("")) return firstElement(vars);
     if (tableSQL!=null) {
-      FieldProvider[] data = null;
+      String data = null;
       try{
         String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, (tableSQL.getTableName() + "." + tableSQL.getKeyColumn() + " AS ID"), new Vector&#60;String&#62;(), new Vector&#60;String&#62;(),0,0);
         ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValues());
-        data = execquery.select();
+        data = execquery.selectAndSearch(ExecuteQuery.SearchType.PREVIOUS, strSelected);
       } catch (Exception e) { 
         if (log4j.isDebugEnabled()) log4j.debug("Error getting previous element");
         e.printStackTrace();
       }
       if (data!=null) {
-        String previous = strSelected;
-        for (int i=0;i&#60;data.length;i++) {
-          if (data[i].getField("ID").equals(strSelected)) return previous;
-          previous = data[i].getField("ID");
-        }
+        return data;
       }
     }
     return strSelected;
@@ -706,32 +695,33 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
 
   String firstElement(VariablesSecureApp vars) throws IOException, ServletException {
     if (tableSQL!=null) {
-      FieldProvider[] data = null;
+      String data = null;
       try{
         String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, (tableSQL.getTableName() + "." + tableSQL.getKeyColumn() + " AS ID"), new Vector&#60;String&#62;(), new Vector&#60;String&#62;(),0,1);
         ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValues());
-        data = execquery.select();
+        data = execquery.selectAndSearch(ExecuteQuery.SearchType.FIRST, "");
+
       } catch (Exception e) { 
         if (log4j.isDebugEnabled()) log4j.debug("Error getting first element");
         e.printStackTrace();
       }
-      if (data!=null &amp;&amp; data.length!=0) return data[0].getField("ID");
+      if (data!=null) return data;
     }
     return "";
   }
 
   String lastElement(VariablesSecureApp vars) throws IOException, ServletException {
     if (tableSQL!=null) {
-      FieldProvider[] data = null;
+      String data = null;
       try{
         String strSQL = ModelSQLGeneration.generateSQL(this, vars, tableSQL, (tableSQL.getTableName() + "." + tableSQL.getKeyColumn() + " AS ID"), new Vector&#60;String&#62;(), new Vector&#60;String&#62;(),0,0);
         ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValues());
-        data = execquery.select();
+        data = execquery.selectAndSearch(ExecuteQuery.SearchType.LAST, "");
       } catch (Exception e) { 
         if (log4j.isDebugEnabled()) log4j.debug("Error getting last element");
         e.printStackTrace();
       }
-      if (data!=null &amp;&amp; data.length!=0) return data[data.length-1].getField("ID");
+      if (data!=null) return data;
     }
     return "";
   }

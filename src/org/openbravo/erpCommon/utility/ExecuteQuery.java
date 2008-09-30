@@ -34,6 +34,7 @@ import javax.servlet.ServletException;
  * in the database.
  */
 public class ExecuteQuery {
+  public static enum SearchType { FIRST, PREVIOUS, NEXT, LAST, GETPOSITION };
   static Logger log4j = Logger.getLogger(ExecuteQuery.class);
   private ConnectionProvider pool;
   private Vector<String> parameters = new Vector<String>();
@@ -137,6 +138,98 @@ public class ExecuteQuery {
   public String getParameter(int position) {
     if (this.parameters == null || this.parameters.size() < position) return "";
     else return this.parameters.elementAt(position);
+  }
+
+  /**
+   * Executes the query and tests the result list via the specified type.
+   * This way it is possible to directly search for the next value (in
+   * relation to the oldValue parameter) in the result. This next value
+   * is returned and the search is stopped leading to a speedup depending
+   * on the position inside the result list.
+   * @param searchType specifies for which value to look in the sql result
+   * @param oldValue specifies the related value
+   * @return one value of the result corresponding to searchType and oldValue
+   * @throws ServletException
+   */
+  public String selectAndSearch(SearchType searchType, String oldValue) throws ServletException {
+    PreparedStatement st = null ;
+    ResultSet result;
+
+    String strSQL = getSQL();
+    if (log4j.isDebugEnabled()) log4j.debug("SQL: " + strSQL);
+
+    try {
+      st = getPool().getPreparedStatement(strSQL);
+      Vector<String> params = getParameters();
+      if (params!=null) {
+        for (int iParameter=0;iParameter<params.size();iParameter++) {
+          if (log4j.isDebugEnabled()) log4j.debug("PARAMETER " + iParameter + ":" + getParameter(iParameter));
+          UtilSql.setValue(st, iParameter+1, 12, null, getParameter(iParameter));
+        }
+      }
+      result = st.executeQuery();
+
+      switch (searchType) {
+      case FIRST :
+        if (result.first()) {
+          return result.getString(1);
+        }
+        break;
+      case LAST :
+        if (result.last()) {
+          return result.getString(1);
+        }
+        break;
+      // linear search in list and return the previous when found
+      case PREVIOUS : 
+        String previous = oldValue;
+        while(result.next()) {
+          String value = result.getString(1);
+          if (value.equals(oldValue)) return previous;
+          previous = value;
+        }
+        break;
+      // linear search in list and return the next when found
+      case NEXT :
+        boolean found = false;
+        while(result.next()) {
+          String value = result.getString(1);
+          if (!found && value.equals(oldValue)) 
+            found=true;
+          else 
+            if (found) {
+              return value;
+            }
+        }
+        break;
+      // linear search in list and return the position in list when found
+      case GETPOSITION :
+        int rowIndex = 0;
+        while(result.next()) {
+          String value = result.getString(1);
+          if (value.equals(oldValue)) {
+            return String.valueOf(rowIndex);
+          }
+          rowIndex++;
+        }
+        return "0";
+      }
+
+      result.close();
+      return oldValue;
+    } catch(SQLException e){
+      log4j.error("SQL error in query: " + strSQL.toString() + "Exception:"+ e);
+      throw new ServletException("@CODE=" + Integer.toString(e.getErrorCode()) + "@" + e.getMessage());
+    } catch(Exception ex){
+      log4j.error("Exception in query: " + strSQL.toString() + "Exception:"+ ex);
+      throw new ServletException("@CODE=@" + ex.getMessage());
+    } finally {
+      try {
+        getPool().releasePreparedStatement(st);
+      } catch (Exception ignore) {
+        ignore.printStackTrace();
+      }
+    }
   }
 
   /**
