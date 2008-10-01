@@ -1,0 +1,7 @@
+	<class name="className" entity-name="mappingName" lazy="true" table="tableName" mutable="ismutable">
+		<cache usage="read-write"/>
+		<tuplizer entity-mode="dynamic-map" class="org.openbravo.dal.core.OBTuplizer"/>
+		<tuplizer entity-mode="pojo" class="org.openbravo.dal.core.OBTuplizer"/>
+		
+content	
+	</class>

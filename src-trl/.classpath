@@ -4,11 +4,11 @@
 	<classpathentry kind="src" path="build/javasqlc/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/OpenbravoCore"/>
-	<classpathentry kind="lib" path="/openbravo/lib/servlet-api.jar"/>
-	<classpathentry kind="lib" path="/openbravo/lib/log4j-1.3alpha-8.jar"/>
-	<classpathentry kind="lib" path="/openbravo/lib/nekohtml.jar"/>
-	<classpathentry kind="lib" path="/openbravo/lib/xercesImpl.jar"/>
-	<classpathentry kind="lib" path="/openbravo/lib/jdbc3-postgresql.jar"/>
-	<classpathentry kind="lib" path="/openbravo/lib/ojdbc14.jar"/>
+	<classpathentry kind="lib" path="/openbravo/lib/runtime/servlet-api.jar"/>
+	<classpathentry kind="lib" path="/openbravo/lib/runtime/log4j-1.3alpha-8.jar"/>
+	<classpathentry kind="lib" path="/openbravo/lib/runtime/nekohtml.jar"/>
+	<classpathentry kind="lib" path="/openbravo/lib/runtime/xercesImpl.jar"/>
+	<classpathentry kind="lib" path="/openbravo/lib/runtime/jdbc3-postgresql.jar"/>
+	<classpathentry kind="lib" path="/openbravo/lib/runtime/ojdbc14.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

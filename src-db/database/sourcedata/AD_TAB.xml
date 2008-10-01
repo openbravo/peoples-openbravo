@@ -11219,7 +11219,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--439 CREATEDBY-->
 <!--439-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--439 UPDATED-->
-<!--439-->              <UPDATED><![CDATA[2008-08-08 00:56:02.0]]></UPDATED>
+<!--439-->              <UPDATED><![CDATA[2008-09-19 11:08:17.0]]></UPDATED>
 <!--439 UPDATEDBY-->
 <!--439-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--439 NAME-->
@@ -11244,8 +11244,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--439-->              <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
 <!--439 ISREADONLY-->
 <!--439-->              <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--439 AD_COLUMN_ID-->
-<!--439-->              <AD_COLUMN_ID><![CDATA[7768]]></AD_COLUMN_ID>
 <!--439 HASTREE-->
 <!--439-->              <HASTREE><![CDATA[N]]></HASTREE>
 <!--439 PROCESSING-->
@@ -14480,7 +14478,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--536 CREATEDBY-->
 <!--536-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--536 UPDATED-->
-<!--536-->              <UPDATED><![CDATA[2008-08-08 00:59:38.0]]></UPDATED>
+<!--536-->              <UPDATED><![CDATA[2008-09-19 10:35:38.0]]></UPDATED>
 <!--536 UPDATEDBY-->
 <!--536-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--536 NAME-->
@@ -14505,8 +14503,6 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--536-->              <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
 <!--536 ISREADONLY-->
 <!--536-->              <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--536 AD_COLUMN_ID-->
-<!--536-->              <AD_COLUMN_ID><![CDATA[7768]]></AD_COLUMN_ID>
 <!--536 HASTREE-->
 <!--536-->              <HASTREE><![CDATA[N]]></HASTREE>
 <!--536 PROCESSING-->

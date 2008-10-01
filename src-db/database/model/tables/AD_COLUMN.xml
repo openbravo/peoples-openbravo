@@ -65,8 +65,8 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="FIELDLENGTH" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
-        <default/>
+      <column name="FIELDLENGTH" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
       <column name="DEFAULTVALUE" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false">

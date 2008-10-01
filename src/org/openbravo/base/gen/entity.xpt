@@ -1,0 +1,168 @@
+«IMPORT org::openbravo::base::model»
+ 
+«EXTENSION org::openbravo::base::gen::gen_util» 
+ 
+«DEFINE root FOR ModelProvider»
+  «EXPAND EntityTemplate FOREACH model»
+«ENDDEFINE» 
+
+«DEFINE EntityTemplate FOR Entity»
+	«FILE classFileName(this)-»
+/*   
+ *  
+ * Copyright (C) 2001-2008 Openbravo S.L. Licensed under the Apache Software
+ * License version 2.0 You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+package «packageName»;
+
+/** 
+ * Entity class for entity «name» (stored in table «tableName»).
+ *
+ * NOTE: This class should not be instantiated directly. To instantiate this
+ * class the OBFactory should be used. 
+ */
+public class «simpleClassName» extends org.openbravo.base.structure.BaseOBObject «implementsStatement» {
+
+	public final static String ENTITYNAME = "«name»";
+
+	«FOREACH properties AS p-»
+		«IF ((Property)p).hasDefaultValue()»
+	private «((Property)p).typeName» «((Property)p).name» = «((Property)p).formattedDefaultValue»;
+	«ELSEIF !((Property)p).partOfCompositeId-»
+	private «((Property)p).typeName» «((Property)p).name»;
+		«ENDIF-»
+	«ENDFOREACH-»
+	
+	public String getEntityName() {
+		return ENTITYNAME;
+	}
+	
+	«FOREACH properties AS p-»
+	public «((Property)p).typeName» «getter((Property)p)»() {
+	«IF ((Property)p).partOfCompositeId-»
+		return ((Id)getId()).«getter((Property)p)»();
+	«ELSE-»
+		return «((Property)p).name»;
+	«ENDIF-»
+	}
+	
+	public void set«((Property)p).name.toFirstUpper()»(«((Property)p).typeName» «((Property)p).name.toFirstLower()») {
+	«IF ((Property)p).partOfCompositeId-»
+		((Id)getId()).set«((Property)p).name.toFirstUpper()»(«((Property)p).name»);
+	«ELSE-»
+		this.«((Property)p).name» = «((Property)p).name»;
+	«ENDIF-»
+	}
+	
+	«ENDFOREACH-»
+	
+	public Object get(String featureName) {
+	«FOREACH properties AS p-»
+		if ("«((Property)p).name»".equals(featureName)) {
+			return «getter((Property)p)»();
+		}
+	«ENDFOREACH-»
+		return super.get(featureName);
+	}
+	
+	public void set(String featureName, Object value) {
+	«FOREACH properties AS p-»
+		if ("«((Property)p).name»".equals(featureName)) {
+		«IF !((Property)p).allowNullValues()-»
+			// the Openbravo db contains null values for primitivetypes
+			if (value == null) {
+				return;
+			}
+		«ENDIF-»
+			set«((Property)p).name.toFirstUpper()»((«((Property)p).objectTypeName»)value);
+			return;
+		}
+	«ENDFOREACH-»
+		super.set(featureName, value);		
+	}
+
+	«IF hasCompositeId()»
+	public static class Id implements java.io.Serializable {
+	    private static final long serialVersionUID = 1L;
+
+		«FOREACH properties AS p-»
+		«IF ((Property)p).partOfCompositeId-»
+		«IF ((Property)p).hasDefaultValue()»
+		private «((Property)p).typeName» «((Property)p).name» = «((Property)p).formattedDefaultValue»;
+		«ELSE-»
+		private «((Property)p).typeName» «((Property)p).name»;
+		«ENDIF-»
+		«ENDIF-»
+		«ENDFOREACH-»
+
+		«FOREACH properties AS p-»
+		«IF ((Property)p).partOfCompositeId-»
+		public «((Property)p).typeName» «getter((Property)p)»() {
+			return «((Property)p).name»;
+		}
+		
+		public void set«((Property)p).name.toFirstUpper()»(«((Property)p).typeName» «((Property)p).name.toFirstLower()») {
+			this.«((Property)p).name» = «((Property)p).name»;
+		}
+		«ENDIF»
+		«ENDFOREACH-»
+		
+	    public boolean equals(Object obj) {
+			if (this == obj) {
+    			return true;
+			}
+			if (!(obj instanceof Id)) {
+				return false;
+			}
+			final Id otherId = (Id)obj;
+		«FOREACH properties AS p-»
+		«IF ((Property)p).partOfCompositeId-»
+			if (!areEqual(«getter((Property)p)»(), otherId.«getter((Property)p)»())) {
+				return false;
+			} 
+		«ENDIF»
+		«ENDFOREACH-»
+			return true;
+		}
+
+		// hashCode assumes that keys can not change!
+    	public int hashCode() {
+    		int result = 0;
+    		«FOREACH properties AS p-»
+			«IF ((Property)p).partOfCompositeId-»
+			if («getter((Property)p)»() instanceof Object) {
+				result +=«getter((Property)p)»().hashCode(); 
+			}
+			«ENDIF-»
+			«ENDFOREACH-»
+    		
+    		if (result == 0) {
+    			return super.hashCode();
+    		}
+    		return result;
+    	}
+
+		private boolean areEqual(Object v1, Object v2) {
+			if (v1 == null || v2 == null) {
+				return v1 == v2;
+			}
+			return v1.equals(v2);
+		}		
+	}
+	«ENDIF»
+}
+	«ENDFILE»
+«ENDDEFINE»
+
+# this define is there to get rid of the error
+# displayed by the editor because for the 
+# statement EXPAND Entity FOREACH model
+# it can determine the type for model
+«DEFINE EntityTemplate FOR Object»
+«ENDDEFINE»
+ 

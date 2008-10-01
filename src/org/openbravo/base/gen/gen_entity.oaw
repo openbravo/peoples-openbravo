@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workflow>
+	<!-- sets the list of Tables in the model slot -->
+	<component class="org.openbravo.base.gen.ModelProviderComponent">
+		<propFile value="${ob.properties.location}" />
+	</component>	
+	<component class="oaw.xpand2.Generator">
+		 <metaModel class="oaw.type.impl.java.JavaMetaModel"/>
+		 <expand value="org::openbravo::base::gen::entity::root FOR model"/>
+	
+		 <!--  output configuration -->
+		 <outlet path="${base.src.gen}"/>
+		 <beautifier class="org.hybridlabs.source.formatter.JavaImportBeautifier"
+			organizeImports="true" format="true"/>
+
+		 <!--<beautifier class="oaw.xpand2.output.JavaBeautifier"/>-->
+	 
+		 <!-- TBD: protected regions configuration -->
+	</component>
+</workflow> 
+ 

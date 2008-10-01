@@ -76,6 +76,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   <property name="base.src.db" location="src-db"/>
   <property name="base.src.trl" location="src-trl"/>
   <property name="base.src.wad" location="src-wad"/>
+  <property name="base.src.gen" location="src-gen"/>
   <property name="base.client.src" location="srcClient"/>
   <property name="base.db" location="src-db/database"/>
   <property name="base.web" location="web"/>
@@ -109,6 +110,7 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <path id="project.class.path">
     <pathelement path="${build}"/>
+    <pathelement path="${base.src}" />
     <fileset dir="${base.lib}">
       <include name="**/*.jar"/>
     </fileset>
@@ -182,6 +184,14 @@ compare.database.structure: refer to compare.database.structure target of databa
     <eclipse.refreshLocal resource="openbravo" depth="infinite"/>
     <eclipse.incrementalBuild project="openbravo" kind="full"/>
   </target>
+  
+  <target name="compile.src.gen" depends="init">
+    <ant dir="${base.src}" target="compile.src.gen" inheritAll="true" inheritRefs="true"/>
+  </target>
+
+  <target name="generate.entities" depends="compile.src.gen">
+    <ant dir="${base.src}" target="generate.entities" inheritAll="true" inheritRefs="true"/>
+  </target>
 
   <target name="compile.src" depends="init">
     <ant dir="${base.src}" target="compile.src" inheritAll="true" inheritRefs="true"/>
@@ -197,7 +207,7 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <target name="core.lib" depends="init">
     <ant dir="${base.src.core}" target="build" inheritAll="true" inheritRefs="true"/>
-    <copy file="${base.src.core}/lib/openbravo-core.jar" todir="${base.lib}" overwrite="true" failonerror="false"/>
+    <copy file="${base.src.core}/lib/openbravo-core.jar" todir="${base.lib}/runtime" overwrite="true" failonerror="false"/>
   </target>
 
   <target name="eclipse.wad.lib" depends="init">
