@@ -11711,15 +11711,15 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--1000500000 CREATEDBY-->
 <!--1000500000-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1000500000 UPDATED-->
-<!--1000500000-->              <UPDATED><![CDATA[2008-04-10 20:12:08.0]]></UPDATED>
+<!--1000500000-->              <UPDATED><![CDATA[2008-09-30 15:16:11.0]]></UPDATED>
 <!--1000500000 UPDATEDBY-->
 <!--1000500000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1000500000 VALUE-->
-<!--1000500000-->              <VALUE><![CDATA[Report Pareto Product]]></VALUE>
+<!--1000500000-->              <VALUE><![CDATA[Pareto Product Report]]></VALUE>
 <!--1000500000 NAME-->
-<!--1000500000-->              <NAME><![CDATA[Report Pareto Product]]></NAME>
+<!--1000500000-->              <NAME><![CDATA[Pareto Product Report]]></NAME>
 <!--1000500000 DESCRIPTION-->
-<!--1000500000-->              <DESCRIPTION><![CDATA[Report Pareto Product]]></DESCRIPTION>
+<!--1000500000-->              <DESCRIPTION><![CDATA[Pareto Product Report]]></DESCRIPTION>
 <!--1000500000 HELP-->
 <!--1000500000-->              <HELP><![CDATA[The rationale for a Pareto report is usually that 20% of your products have 80% of the value and therefore these reports are usually structured as:
 
@@ -11756,6 +11756,8 @@ The second one is to update one property in the product organization specific ta
 <!--1000500000-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--1000500000 ISJASPER-->
 <!--1000500000-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--1000500000 ISEXTERNALSERVICE-->
+<!--1000500000-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
 <!--1000500000 AD_MODULE_ID-->
 <!--1000500000-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000500000**************--></AD_PROCESS>
