@@ -339,7 +339,11 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
     }
     if (intDiscard != 0 || intAuxDiscard != -1){
       int k=1;
-      strOrderby = " ORDER BY NIVEL"+k+",";
+      if (intDiscard == 1){
+        strOrderby = " ORDER BY NIVEL"+k+",";
+      } else {
+        strOrderby = " ORDER BY ";
+      }
       while (k<intDiscard){
         strOrderby = strOrderby+"NIVEL"+k+",";
         k++;

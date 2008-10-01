@@ -196,7 +196,11 @@ public class ReportInvoiceCustomerDimensionalPDF extends HttpSecureAppServlet {
     }
     if (intOrder != 0 || intAuxDiscard != -1){
       int k=1;
+      if (intOrder == 1){
       strOrderby = " ORDER BY NIVEL"+k+",";
+      } else {
+        strOrderby = " ORDER BY ";
+      }
       while (k<intOrder){
         strOrderby = strOrderby+"NIVEL"+k+",";
         k++;
