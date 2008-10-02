@@ -127,7 +127,7 @@ public abstract class SessionFactoryController {
     final Properties props = new Properties();
     props.setProperty(Environment.DIALECT, OBOracle10gDialect.class.getName());
     props.setProperty(Environment.DRIVER, "oracle.jdbc.driver.OracleDriver");
-    props.setProperty(Environment.URL, obProps.getProperty("bbdd.url") + "/" + obProps.getProperty("bbdd.sid"));
+    props.setProperty(Environment.URL, obProps.getProperty("bbdd.url"));
     props.setProperty(Environment.USER, obProps.getProperty("bbdd.user"));
     props.setProperty(Environment.PASS, obProps.getProperty("bbdd.password"));
     return props;
