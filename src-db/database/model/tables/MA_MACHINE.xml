@@ -53,10 +53,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="COST" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="MA_MACHINE_TYPE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>

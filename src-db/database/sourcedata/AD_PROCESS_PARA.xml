@@ -14,15 +14,17 @@
 <!--123 CREATEDBY-->
 <!--123-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--123 UPDATED-->
-<!--123-->              <UPDATED><![CDATA[2008-09-11 13:55:44.0]]></UPDATED>
+<!--123-->              <UPDATED><![CDATA[2008-10-02 19:16:04.0]]></UPDATED>
 <!--123 UPDATEDBY-->
 <!--123-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--123 NAME-->
-<!--123-->              <NAME><![CDATA[Product Search Key]]></NAME>
+<!--123-->              <NAME><![CDATA[Search Key]]></NAME>
 <!--123 DESCRIPTION-->
-<!--123-->              <DESCRIPTION><![CDATA[A fast method for finding an item.]]></DESCRIPTION>
+<!--123-->              <DESCRIPTION><![CDATA[A fast method for finding a particular record.]]></DESCRIPTION>
 <!--123 HELP-->
-<!--123-->              <HELP><![CDATA[A fast method for finding an item.]]></HELP>
+<!--123-->              <HELP><![CDATA[A search key allows for a fast method of finding a particular record. If you leave the search key empty, the system automatically creates a numeric number originating from a document sequence defined in the  "Document Sequence" window. The sequence naming convention follows a rule "DocumentNo_TableName", where TableName is the actual name of the database table (e.g. C_Order).
+
+Usually, company's internal identifiers for various records (products, customers, etc) are stored here.]]></HELP>
 <!--123 AD_PROCESS_ID-->
 <!--123-->              <AD_PROCESS_ID><![CDATA[105]]></AD_PROCESS_ID>
 <!--123 SEQNO-->
@@ -9804,15 +9806,15 @@ The values of the actual Product Attributes]]></HELP>
 <!--800026 CREATEDBY-->
 <!--800026-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800026 UPDATED-->
-<!--800026-->              <UPDATED><![CDATA[2008-09-11 13:55:44.0]]></UPDATED>
+<!--800026-->              <UPDATED><![CDATA[2008-10-02 19:16:04.0]]></UPDATED>
 <!--800026 UPDATEDBY-->
 <!--800026-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800026 NAME-->
-<!--800026-->              <NAME><![CDATA[Reference No.]]></NAME>
+<!--800026-->              <NAME><![CDATA[Order Reference]]></NAME>
 <!--800026 DESCRIPTION-->
-<!--800026-->              <DESCRIPTION><![CDATA[The number for a specific reference.]]></DESCRIPTION>
+<!--800026-->              <DESCRIPTION><![CDATA[A reference or document order number as listed in business partner application.]]></DESCRIPTION>
 <!--800026 HELP-->
-<!--800026-->              <HELP><![CDATA[The reference number can be printed on orders and invoices to allow your business partner to faster identify your records.]]></HELP>
+<!--800026-->              <HELP><![CDATA[This can be used to input a reference for this specific transaction. For example, a Purchase Order number can be input on a Sales Order for easier reference.]]></HELP>
 <!--800026 AD_PROCESS_ID-->
 <!--800026-->              <AD_PROCESS_ID><![CDATA[800075]]></AD_PROCESS_ID>
 <!--800026 SEQNO-->
@@ -10240,15 +10242,15 @@ The values of the actual Product Attributes]]></HELP>
 <!--800036 CREATEDBY-->
 <!--800036-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800036 UPDATED-->
-<!--800036-->              <UPDATED><![CDATA[2008-09-11 13:55:44.0]]></UPDATED>
+<!--800036-->              <UPDATED><![CDATA[2008-10-02 19:16:04.0]]></UPDATED>
 <!--800036 UPDATEDBY-->
 <!--800036-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800036 NAME-->
-<!--800036-->              <NAME><![CDATA[Planned Date]]></NAME>
+<!--800036-->              <NAME><![CDATA[Due Date]]></NAME>
 <!--800036 DESCRIPTION-->
-<!--800036-->              <DESCRIPTION><![CDATA[The expected or provisional date when a transaction will occur.]]></DESCRIPTION>
+<!--800036-->              <DESCRIPTION><![CDATA[The date when a specified request must be carried out by.]]></DESCRIPTION>
 <!--800036 HELP-->
-<!--800036-->              <HELP><![CDATA[Expected date of the transaction.]]></HELP>
+<!--800036-->              <HELP><![CDATA[Refers to a date by which the payment must be completed.]]></HELP>
 <!--800036 AD_PROCESS_ID-->
 <!--800036-->              <AD_PROCESS_ID><![CDATA[800126]]></AD_PROCESS_ID>
 <!--800036 SEQNO-->
