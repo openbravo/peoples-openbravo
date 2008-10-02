@@ -3413,19 +3413,19 @@ td.DimensionUDArrows_ContentCell {
 }
 
 .TextArea_Small_height {
-  height: 30px;
+  height: 30px !important;
 }
 
 .TextArea_Medium_height {
-  height: 60px;
+  height: 60px !important;
 }
 
 .TextArea_Large_height {
-  height: 120px;
+  height: 120px !important;
 }
 
 .TextArea_VeryLarge_height {
-  height: 180px;
+  height: 180px !important;
 }
 
 /*
