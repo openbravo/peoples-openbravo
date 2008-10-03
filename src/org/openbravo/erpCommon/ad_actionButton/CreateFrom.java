@@ -1091,13 +1091,13 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
               }
               String strConversion = conversion.toString();
               String strSequence = SequenceIdData.getSequence(this, "M_InOutLine", vars.getClient());
-              CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(), data[i].adOrgId, vars.getUser(), data[i].mProductId, data[i].cUomId, (qtyIsNegative?"-"+strConversion:strConversion), data[i].cOrderlineId, strLocator, CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId), (qtyIsNegative?"-"+total:total), data[i].mProductUomId, data[i].mAttributesetinstanceId);
+              CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(), data[i].adOrgId, vars.getUser(), data[i].description, data[i].mProductId, data[i].cUomId, (qtyIsNegative?"-"+strConversion:strConversion), data[i].cOrderlineId, strLocator, CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId), (qtyIsNegative?"-"+total:total), data[i].mProductUomId, data[i].mAttributesetinstanceId);
               if (!strInvoice.equals("")) CreateFromShipmentData.updateInvoice(conn, this, strSequence, data[i].cInvoicelineId);
               else CreateFromShipmentData.updateInvoiceOrder(conn, this, strSequence, data[i].cOrderlineId);
             }
           } else {
             String strSequence = SequenceIdData.getSequence(this, "M_InOutLine", vars.getClient());
-            CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(), data[i].adOrgId, vars.getUser(), data[i].mProductId, data[i].cUomId, data[i].id, data[i].cOrderlineId, strLocator, CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId), data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId);
+            CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(), data[i].adOrgId, vars.getUser(), data[i].description, data[i].mProductId, data[i].cUomId, data[i].id, data[i].cOrderlineId, strLocator, CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId), data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId);
             if (!strInvoice.equals("")) CreateFromShipmentData.updateInvoice(conn, this, strSequence, data[i].cInvoicelineId);
             else CreateFromShipmentData.updateInvoiceOrder(conn, this, strSequence, data[i].cOrderlineId);
           }

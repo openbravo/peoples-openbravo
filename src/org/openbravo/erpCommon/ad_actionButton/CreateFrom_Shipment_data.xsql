@@ -31,7 +31,7 @@
         l.QtyOrdered-SUM(COALESCE(m.Qty,0)) AS QTY, l.C_UOM_ID,uom.UOMSymbol, l.M_Product_ID,p.NAME AS RELATION_NAME, 
         l.C_OrderLine_ID,l.Line, l.ad_org_id, '' as C_InvoiceLine_ID, '' as M_InOutLine_ID, '' AS BREAKDOWN, '' AS STDPRECISION, 
         '' AS C_UOM_ID_Conversion, '' AS QUANTITYORDER, '' AS M_Product_UOM_ID, '' AS M_ATTRIBUTESETINSTANCE_ID, 
-        l.C_OrderLine_ID AS ID, '' AS C_Invoice_ID
+        l.C_OrderLine_ID AS ID, '' AS C_Invoice_ID, l.DESCRIPTION AS DESCRIPTION
         FROM C_ORDERLINE l left join  M_MATCHPO m on l.C_OrderLine_ID=m.C_OrderLine_ID
                                                  and m.M_InOutLine_ID IS NOT NULL,
         C_ORDER o, C_UOM uom, M_PRODUCT p
@@ -44,7 +44,7 @@
         AND l.M_Product_ID=p.M_Product_ID
         AND l.C_Order_ID = ? 
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal, l.QtyOrdered,l.qtydelivered, 
-        l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.ad_org_id
+        l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.ad_org_id, l.DESCRIPTION
         HAVING (l.QtyOrdered-SUM(COALESCE(m.Qty,0))) <> 0
         ORDER BY NAME, l.Line
       ]]>
@@ -87,7 +87,7 @@
       <![CDATA[
         SELECT o.C_ORDER_ID, Ad_Column_Identifier(TO_CHAR('C_Order'), TO_CHAR(o.c_order_id), TO_CHAR(?)) AS NAME, 
         l.QtyOrdered-COALESCE(l.qtydelivered,0) AS QTY, l.C_UOM_ID,uom.UOMSymbol, l.M_Product_ID,p.NAME AS RELATION_NAME, 
-        l.C_OrderLine_ID,l.Line, l.C_OrderLine_ID AS ID
+        l.C_OrderLine_ID,l.Line, l.C_OrderLine_ID AS ID, l.DESCRIPTION AS DESCRIPTION
         FROM M_INOUT_CANDIDATE_V ic, C_ORDER o, C_UOM uom, C_ORDERLINE l, M_PRODUCT p 
         WHERE o.C_ORDER_ID = l.C_ORDER_ID
         AND o.C_ORDER_ID = ic.C_ORDER_ID 
@@ -97,7 +97,7 @@
         AND l.M_Product_ID=p.M_Product_ID 
         AND ic.C_Order_ID = ? 
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal, l.QtyOrdered,l.qtydelivered, 
-        l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.ad_org_id
+        l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.ad_org_id, l.DESCRIPTION
         ORDER BY NAME, l.Line
       ]]>
     </Sql>
@@ -133,7 +133,7 @@
       <![CDATA[
       SELECT o.C_ORDER_ID, Ad_Column_Identifier(TO_CHAR('C_Order'), TO_CHAR(o.c_order_id), TO_CHAR(?)) AS NAME, 
         l.QtyOrdered-SUM(COALESCE(m.Qty,0)) AS QTY, l.C_UOM_ID,COALESCE(uomt.UOMSymbol, uom.UOMSymbol) AS UOMSymbol, l.M_Product_ID,
-        p.NAME AS RELATION_NAME, l.C_OrderLine_ID, l.Line, l.C_OrderLine_ID AS ID
+        p.NAME AS RELATION_NAME, l.C_OrderLine_ID, l.Line, l.C_OrderLine_ID AS ID, l.DESCRIPTION AS DESCRIPTION
         FROM C_UOM uom left join C_UOM_TRL uomt on uom.C_UOM_ID = uomt.C_UOM_ID
                                                 and uomt.AD_Language  = ?,
               C_ORDERLINE l left join M_MATCHPO m  on l.C_OrderLine_ID=m.C_OrderLine_ID
@@ -148,7 +148,7 @@
         AND l.M_Product_ID=p.M_Product_ID
         AND l.C_Order_ID = ? 
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal, l.QtyOrdered,l.qtydelivered, 
-        l.C_UOM_ID,uom.UOMSymbol, uomt.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID 
+        l.C_UOM_ID,uom.UOMSymbol, uomt.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.DESCRIPTION
         HAVING (l.QtyOrdered-SUM(COALESCE(m.Qty,0))) <> 0
         ORDER BY NAME, l.Line
       ]]>
@@ -166,7 +166,7 @@
       <![CDATA[
         SELECT o.C_ORDER_ID, Ad_Column_Identifier(TO_CHAR('C_Order'), TO_CHAR(o.c_order_id), TO_CHAR(?)) AS NAME, 
         l.QtyOrdered-COALESCE(l.qtydelivered,0) AS QTY, l.C_UOM_ID, COALESCE(uomt.UOMSymbol, uom.UOMSymbol) AS UOMSymbol, 
-        l.M_Product_ID,p.NAME AS RELATION_NAME, l.C_OrderLine_ID, l.Line, l.C_OrderLine_ID AS ID
+        l.M_Product_ID,p.NAME AS RELATION_NAME, l.C_OrderLine_ID, l.Line, l.C_OrderLine_ID AS ID, l.DESCRIPTION AS DESCRIPTION
         FROM C_UOM uom left join C_UOM_TRL uomt on uom.C_UOM_ID = uomt.C_UOM_ID
                                                 and uomt.AD_Language = ?,
         M_INOUT_CANDIDATE_V ic, C_ORDER o,   C_ORDERLINE l, M_PRODUCT p 
@@ -178,7 +178,7 @@
         AND l.M_Product_ID=p.M_Product_ID 
         AND ic.C_Order_ID = ? 
         GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal, l.QtyOrdered,l.qtydelivered, 
-        l.C_UOM_ID,uom.UOMSymbol,uomt.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID 
+        l.C_UOM_ID,uom.UOMSymbol,uomt.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, l.DESCRIPTION
         ORDER BY NAME, l.Line
       ]]>
     </Sql>
@@ -197,7 +197,7 @@
       l.Line, '' as C_InvoiceLine_ID, '' as M_InOutLine_ID, COALESCE(uom1.BREAKDOWN, 'N') AS BREAKDOWN, 
       MAX(mu.C_UOM_ID) AS C_UOM_ID_Conversion, MAX(uom1.STDPRECISION) AS STDPRECISION, 
       l.QUANTITYORDER*DIVIDE((l.QtyOrdered-SUM(COALESCE(m.Qty,0))),(l.QtyOrdered)) AS quantityOrder, l.M_Product_UOM_ID,
-      l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id
+      l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION AS DESCRIPTION
       FROM C_ORDERLINE l left join M_MATCHPO m on l.C_OrderLine_ID=m.C_OrderLine_ID
                                               and  m.M_InOutLine_ID IS NOT NULL 
                          left join M_Product_UOM mu on l.M_Product_UOM_ID = mu.M_Product_UOM_ID
@@ -206,7 +206,7 @@
       WHERE l.C_UOM_ID=uom.C_UOM_ID
       AND l.M_Product_ID=p.M_Product_ID
       GROUP BY l.QtyOrdered,l.qtydelivered,l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, 
-      uom1.BREAKDOWN, l.QUANTITYORDER, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id
+      uom1.BREAKDOWN, l.QUANTITYORDER, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION
       ORDER BY l.Line
       ]]>
     </Sql>
@@ -221,14 +221,14 @@
       l.Line, '' as C_InvoiceLine_ID, '' as M_InOutLine_ID, COALESCE(uom1.BREAKDOWN, 'N') AS BREAKDOWN, 
       MAX(mu.C_UOM_ID) AS C_UOM_ID_Conversion, MAX(uom1.STDPRECISION) AS STDPRECISION, 
       l.QUANTITYORDER*DIVIDE((l.QtyOrdered - COALESCE(l.QTYDELIVERED,0)),(l.QtyOrdered)) as quantityOrder, l.M_Product_UOM_ID,
-      l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id
+      l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION AS DESCRIPTION
       FROM C_ORDERLINE l left join M_Product_UOM mu on l.M_Product_UOM_ID = mu.M_Product_UOM_ID
                          left join C_UOM uom1 on mu.C_UOM_ID = uom1.C_UOM_ID ,
       C_UOM uom,  M_PRODUCT p  
       WHERE l.C_UOM_ID=uom.C_UOM_ID
       AND l.M_Product_ID=p.M_Product_ID
       GROUP BY l.QtyOrdered,l.qtydelivered,l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME,l.Line,l.C_OrderLine_ID, 
-      uom1.BREAKDOWN, l.QUANTITYORDER, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id
+      uom1.BREAKDOWN, l.QUANTITYORDER, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION
       HAVING l.QtyOrdered - COALESCE(l.QTYDELIVERED,0)<>0
       ORDER BY l.Line
       ]]>
@@ -242,7 +242,7 @@
       <![CDATA[
         SELECT i.C_Invoice_ID, Ad_Column_Identifier(TO_CHAR('C_Invoice'), TO_CHAR(i.C_Invoice_ID), TO_CHAR(?)) AS NAME, 
         l.QtyInvoiced-SUM(COALESCE(mi.Qty,0)) AS QTY, l.C_UOM_ID,uom.UOMSymbol,
-        l.M_Product_ID,p.NAME AS RELATION_NAME, l.C_InvoiceLine_ID,l.Line, l.C_OrderLine_ID, l.C_InvoiceLine_ID AS ID
+        l.M_Product_ID,p.NAME AS RELATION_NAME, l.C_InvoiceLine_ID,l.Line, l.C_OrderLine_ID, l.C_InvoiceLine_ID AS ID, l.DESCRIPTION AS DESCRIPTION
         FROM C_INVOICELINE l left join  M_MATCHINV mi  on l.C_InvoiceLine_ID=mi.C_InvoiceLine_ID,
         C_INVOICE i, C_UOM uom,  M_PRODUCT p
         WHERE i.C_INVOICE_ID = l.C_INVOICE_ID 
@@ -254,7 +254,7 @@
         AND l.M_Product_ID=p.M_Product_ID 
         AND l.C_Invoice_ID = ? 
         GROUP BY i.C_Invoice_ID, i.DocumentNo, DateInvoiced, GrandTotal, l.QtyInvoiced, 
-        l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.C_InvoiceLine_ID,l.Line,l.C_OrderLine_ID 
+        l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.C_InvoiceLine_ID,l.Line,l.C_OrderLine_ID, l.DESCRIPTION
         HAVING (l.QtyInvoiced-SUM(COALESCE(mi.Qty,0))) <> 0 
         ORDER BY NAME, l.Line
       ]]>
@@ -296,7 +296,8 @@
       <![CDATA[
         SELECT i.C_Invoice_ID, Ad_Column_Identifier(TO_CHAR('C_Invoice'), TO_CHAR(i.C_Invoice_ID), TO_CHAR(?)) AS NAME, 
         l.QtyInvoiced-SUM(COALESCE(mi.Qty,0)) AS QTY, l.C_UOM_ID,COALESCE(uomt.UOMSymbol, uom.UOMSymbol) AS UOMSymbol,
-        l.M_Product_ID,p.NAME AS RELATION_NAME, l.C_InvoiceLine_ID,l.Line, l.C_OrderLine_ID, l.C_InvoiceLine_ID AS ID
+        l.M_Product_ID,p.NAME AS RELATION_NAME, l.C_InvoiceLine_ID,l.Line, l.C_OrderLine_ID, l.C_InvoiceLine_ID AS ID, 
+        l.DESCRIPTION AS DESCRIPTION
         FROM C_UOM uom left join C_UOM_TRL uomt on uom.C_UOM_ID = uomt.C_UOM_ID
                                                AND uomt.AD_Language  = ?,
              C_INVOICELINE l left join M_MATCHINV mi on l.C_InvoiceLine_ID=mi.C_InvoiceLine_ID,
@@ -310,7 +311,7 @@
         AND l.M_Product_ID=p.M_Product_ID 
         AND l.C_Invoice_ID = ? 
         GROUP BY i.C_Invoice_ID, i.DocumentNo, DateInvoiced, GrandTotal, l.QtyInvoiced, 
-        l.C_UOM_ID,uom.UOMSymbol, uomt.UOMSymbol,l.M_Product_ID,p.NAME, l.C_InvoiceLine_ID,l.Line,l.C_OrderLine_ID 
+        l.C_UOM_ID,uom.UOMSymbol, uomt.UOMSymbol,l.M_Product_ID,p.NAME, l.C_InvoiceLine_ID,l.Line,l.C_OrderLine_ID, l.DESCRIPTION
         HAVING (l.QtyInvoiced-SUM(COALESCE(mi.Qty,0))) <> 0 
         ORDER BY NAME, l.Line
       ]]>
@@ -329,7 +330,7 @@
       SELECT l.QtyInvoiced-SUM(COALESCE(mi.Qty,0)) AS ID, l.C_UOM_ID,uom.UOMSymbol,
       l.M_Product_ID,p.NAME, l.C_InvoiceLine_ID,l.Line, l.C_OrderLine_ID, COALESCE(uom1.BREAKDOWN, 'N') AS BREAKDOWN, 
       MAX(mu.C_UOM_ID) AS C_UOM_ID_Conversion, MAX(uom1.STDPRECISION) AS STDPRECISION, l.QUANTITYORDER, l.M_Product_UOM_ID,
-      l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id
+      l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION AS DESCRIPTION
       FROM C_INVOICELINE l left join  M_Product_UOM mu on l.M_Product_UOM_ID = mu.M_Product_UOM_ID 
                            left join C_UOM uom1 on mu.C_UOM_ID = uom1.C_UOM_ID 
                            left join M_MATCHINV mi on l.C_InvoiceLine_ID=mi.C_InvoiceLine_ID,
@@ -338,7 +339,7 @@
       AND l.M_Product_ID=p.M_Product_ID 
       GROUP BY l.QtyInvoiced,
       l.C_UOM_ID,uom.UOMSymbol,l.M_Product_ID,p.NAME, l.C_InvoiceLine_ID,l.Line,l.C_OrderLine_ID, 
-      uom1.BREAKDOWN, l.QUANTITYORDER, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id
+      uom1.BREAKDOWN, l.QUANTITYORDER, l.M_Product_UOM_ID, l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION
       HAVING l.QtyInvoiced-SUM(COALESCE(mi.Qty,0))<>0
       ORDER BY l.Line
       ]]>
@@ -384,7 +385,7 @@
       VALUES 
         (?, ?, ?, ?, 
          'Y', now(), ?, now(), ?, 
-         (SELECT (COALESCE(Max(Line),0))+10 FROM M_InOutLine WHERE M_InOut_ID=?), NULL, ?, 
+         (SELECT (COALESCE(Max(Line),0))+10 FROM M_InOutLine WHERE M_InOut_ID=?), ?, ?, 
          ?, TO_NUMBER(?), ?, 
          ?, ?, TO_NUMBER(?), 
          ?, ?)
@@ -396,6 +397,7 @@
     <Parameter name="adUserId"/>
     <Parameter name="adUserId"/>
     <Parameter name="mInoutId"/>
+    <Parameter name="description"/>
     <Parameter name="mProductId"/>
     <Parameter name="cUomId"/>
     <Parameter name="movementqty"/>
