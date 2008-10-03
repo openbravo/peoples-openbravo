@@ -44,14 +44,14 @@ BEGIN
       INSERT
       INTO C_Withholding_Acct
         (
-          C_Withholding_ID, C_AcctSchema_ID, AD_Client_ID,
+          C_Withholding_Acct_ID, C_Withholding_ID, C_AcctSchema_ID, AD_Client_ID,
           AD_Org_ID, IsActive, Created,
           CreatedBy, Updated, UpdatedBy,
           Withholding_Acct
         )
         VALUES
         (
-          :new.C_Withholding_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
+          get_uuid(), :new.C_Withholding_ID, Cur_Defaults.C_AcctSchema_ID, :new.AD_Client_ID,
           :new.AD_ORG_ID,  'Y', now(),
           :new.CreatedBy, now(), :new.UpdatedBy,
           Cur_Defaults.Withholding_Acct
