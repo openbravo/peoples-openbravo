@@ -73,18 +73,6 @@
     ]]></Sql>
     <Parameter name="adOrgId"/>
   </SqlMethod>
-  <SqlMethod name="versionBBDD" type="preparedStatement" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql><![CDATA[
-      SELECT TAD_VERSION FROM AD_SYSTEM WHERE AD_SYSTEM_ID = '0'
-    ]]></Sql>
-  </SqlMethod>
-  <SqlMethod name="versionVerticalBBDD" type="preparedStatement" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql><![CDATA[
-      SELECT TAD_PARENT_VERSION FROM AD_SYSTEM WHERE AD_SYSTEM_ID = '0'
-    ]]></Sql>
-  </SqlMethod>
   <SqlMethod name="selectPreference" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[

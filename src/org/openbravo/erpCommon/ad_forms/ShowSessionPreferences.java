@@ -175,10 +175,6 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
     script.append(Utility.messageBD(this, "SearchsRecordRange", vars.getLanguage())).append(": ").append(vars.getSessionValue("#RecordRangeInfo")).append("\n");
     if (globalParameters.strVersion!=null && !globalParameters.strVersion.equals("")) script.append(Utility.messageBD(this, "SourceVersion", vars.getLanguage())).append(": ").append(globalParameters.strVersion).append("\n");
     if (globalParameters.strParentVersion!=null && !globalParameters.strParentVersion.equals("")) script.append(Utility.messageBD(this, "VerticalSourceVersion", vars.getLanguage())).append(": ").append(globalParameters.strParentVersion).append("\n");
-    String strBBDDVersion = ShowSessionPreferencesData.versionBBDD(this);
-    if (strBBDDVersion!=null && !strBBDDVersion.equals("")) script.append(Utility.messageBD(this, "DBVersion", vars.getLanguage())).append(": ").append(strBBDDVersion).append("\n");
-    String strBBDDParentVersion = ShowSessionPreferencesData.versionVerticalBBDD(this);
-    if (strBBDDParentVersion!=null && !strBBDDParentVersion.equals("")) script.append(Utility.messageBD(this, "VerticalDBVersion", vars.getLanguage())).append(": ").append(strBBDDParentVersion).append("\n");
     script.append(Utility.messageBD(this, "JavaVM", vars.getLanguage())).append(": ").append(System.getProperty("java.vm.name")).append("\n");
     script.append(Utility.messageBD(this, "VersionJavaVM", vars.getLanguage())).append(": ").append(System.getProperty("java.vm.version")).append("\n");
     script.append(Utility.messageBD(this, "SystemLanguage", vars.getLanguage())).append(": ").append(globalParameters.strSystemLanguage).append("\n");
