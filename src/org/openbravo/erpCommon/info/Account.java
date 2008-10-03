@@ -103,7 +103,7 @@ public class Account extends HttpSecureAppServlet {
       String strProduct = vars.getStringParameter("inpProduct");
       String strBPartner = vars.getStringParameter("inpBPartner");
       String strProject = vars.getStringParameter("inpProject");
-      String strCampaign = vars.getStringParameter("inpCampaign");    
+      String strCampaign = vars.getStringParameter("inpCampaign");
       AccountData data = AccountData.insert(this, vars.getClient(), strOrganization, strAcctSchema, strAccount, strClave, strAlias, vars.getUser(), strProduct, strBPartner, strProject, strCampaign);
       if (data!=null) strClave = data.cValidcombinationId;
       vars.removeSessionValue("Account.alias");
@@ -269,9 +269,11 @@ public class Account extends HttpSecureAppServlet {
 	    
 	    if (headers!=null) {
 	      try{
+	    	strAcctSchema = (strAcctSchema.equals("%")?"":strAcctSchema);
+	    	strAlias = (strAlias.equals("%")?"":strAlias);
+	    	strCombination = (strCombination.equals("%")?"":strCombination);
 		  	if(strNewFilter.equals("1") || strNewFilter.equals("")) { // New filter or first load
-		  	  System.out.println("strAcctSchema: " + strAcctSchema);
-		  		strNumRows = AccountData.countRows(this, "1", strAcctSchema, strAlias, strCombination, strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "", Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this, vars, "#User_Org", "Account"), strOrderBy, "", "");
+		  		strNumRows = AccountData.countRows(this, strAcctSchema, strAlias, strCombination, strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "", Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this, vars, "#User_Org", "Account"));
 		  		vars.setSessionValue("AccountInfo.numrows", strNumRows);
 		  	}
 	  		else {
@@ -281,11 +283,11 @@ public class Account extends HttpSecureAppServlet {
 	  		// Filtering result
 	    	if(this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
 	    		String oraLimit = strOffset + " AND " + String.valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));
-	    		data = AccountData.select(this, "ROWNUM", (strAcctSchema.equals("%")?"":strAcctSchema), (strAlias.equals("%")?"":strAlias), (strCombination.equals("%")?"":strCombination), strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "", Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this, vars, "#User_Org", "Account"), strOrderBy, oraLimit, "");
+	    		data = AccountData.select(this, "ROWNUM", strAcctSchema, strAlias, strCombination, strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "", Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this, vars, "#User_Org", "Account"), strOrderBy, oraLimit, "");
 	    	}
 	    	else {
 	    		String pgLimit = strPageSize + " OFFSET " + strOffset;
-	    		data = AccountData.select(this, "1", (strAcctSchema.equals("%")?"":strAcctSchema), (strAlias.equals("%")?"":strAlias), (strCombination.equals("%")?"":strCombination), strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "", Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this, vars, "#User_Org", "Account"), strOrderBy, "", pgLimit);
+	    		data = AccountData.select(this, "1", strAcctSchema, strAlias, strCombination, strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "", Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this, vars, "#User_Org", "Account"), strOrderBy, "", pgLimit);
 	    	}    	
 	      } catch (ServletException e) {
 	        log4j.error("Error in print page data: " + e);
