@@ -65,6 +65,7 @@
     v_FieldLength NUMBER(10) ;
     v_PInstance_Log_ID VARCHAR2(32);
     v_Client_ID VARCHAR2(32);
+    v_Aux NUMBER;
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -101,7 +102,7 @@
     END IF;
     FOR Cur_Column IN
       (SELECT Column_Name, Data_Type, Data_Length, Nullable, AD_Table_ID, -- added by Ismael Ciordia
-        uc.DATA_PRECISION, uc.DATA_SCALE, DATA_DEFAULT, Table_Name
+        uc.DATA_PRECISION, uc.DATA_SCALE, DATA_DEFAULT, Table_Name, uc.COLUMN_ID
       FROM User_Tab_Columns uc, AD_Table t
       WHERE uc.Table_Name=UPPER(t.TableName) AND NOT EXISTS
         (SELECT *
@@ -214,6 +215,24 @@
       IF(v_columnName LIKE '%_Id') THEN
         v_columnName:=SUBSTR(v_columnName, 1, LENGTH(v_columnName) -3) ||'_ID';
       END IF;
+      
+      --Check if it is necessary to recalculate positions
+      SELECT count(*)
+        INTO v_Aux
+        FROM AD_COLUMN
+       WHERE POSITION = Cur_Column.COLUMN_ID;
+       
+      IF v_Aux!=0 THEN
+        UPDATE AD_COLUMN C
+           SET POSITION = (SELECT COLUMN_ID
+                             FROM USER_TAB_COLUMNS U,
+                                  AD_TABLE T
+                            WHERE C.AD_TABLE_ID = T.AD_TABLE_ID
+                              AND U.TABLE_NAME = UPPER(T.TABLENAME)
+                              AND U.COLUMN_NAME = UPPER(C.COLUMNNAME))
+         WHERE AD_TABLE_ID = Cur_Column.AD_Table_ID;
+      END IF;
+      
       INSERT
       INTO AD_COLUMN
         (
@@ -223,7 +242,8 @@
           AD_REFERENCE_ID, FIELDLENGTH, ISKEY, ISPARENT,
           ISMANDATORY, ISIDENTIFIER, SEQNO, ISTRANSLATED,
           ISENCRYPTED, ISUPDATEABLE, AD_REFERENCE_VALUE_ID,
-          AD_VAL_RULE_ID, DEFAULTVALUE, ISSESSIONATTR
+          AD_VAL_RULE_ID, DEFAULTVALUE, ISSESSIONATTR, 
+          POSITION
         )
         VALUES
         (v_NextNo, '0', '0', 'Y',
@@ -231,7 +251,8 @@
         v_columnName, v_columnName, Cur_Column.AD_Table_ID,
         v_AD_Reference_ID, v_FieldLength, v_IsKey, v_IsParent,
        (CASE Cur_Column.Nullable WHEN 'Y' THEN 'N' ELSE 'Y' END),
-        v_IsIdentifier, v_SeqNo, 'N', 'N', v_IsUpdateable, v_AD_Reference_Value_ID, v_AD_Val_Rule_ID, v_DefaultValue, v_IsSessionAttr) ;
+        v_IsIdentifier, v_SeqNo, 'N', 'N', v_IsUpdateable, v_AD_Reference_Value_ID, v_AD_Val_Rule_ID, v_DefaultValue, v_IsSessionAttr,
+        Cur_Column.COLUMN_ID) ;
       --
       v_count:=v_count + 1;
       -- Added by Ismael Ciordia
