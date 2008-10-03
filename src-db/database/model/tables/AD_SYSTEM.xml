@@ -49,24 +49,12 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="TAD_VERSION" primaryKey="false" required="false" type="VARCHAR" size="10" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="TAD_RECORDRANGE" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
         <default><![CDATA[500]]></default>
         <onCreateDefault/>
       </column>
       <column name="TAD_RECORDRANGE_INFO" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
         <default><![CDATA[500]]></default>
-        <onCreateDefault/>
-      </column>
-      <column name="TAD_LEVEL" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
-        <default><![CDATA[1]]></default>
-        <onCreateDefault/>
-      </column>
-      <column name="TAD_PARENT_VERSION" primaryKey="false" required="false" type="VARCHAR" size="14" autoIncrement="false">
-        <default/>
         <onCreateDefault/>
       </column>
       <column name="TAD_TRANSACTIONALRANGE" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
