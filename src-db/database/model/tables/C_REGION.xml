@@ -49,10 +49,6 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="C_NATION_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="VALUE" primaryKey="false" required="false" type="CHAR" size="2" autoIncrement="false">
         <default/>
         <onCreateDefault/>
