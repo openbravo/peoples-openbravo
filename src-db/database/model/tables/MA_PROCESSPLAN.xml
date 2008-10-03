@@ -68,7 +68,6 @@
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <check name="MA_PROCESSPLAN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="MAPROCPLAN_CALCULATED_CHECK"><![CDATA[CALCULATED IN ('Y', 'N')]]></check>
       <check name="MAPROCPLAN_EXPLPHASES_CHECK"><![CDATA[EXPLODEPHASES IN ('Y', 'N')]]></check>
     </table>
   </database>
