@@ -272,6 +272,9 @@ dojo.declare("dojox.grid._FocusManager", null, {
 		if(!this.isNavHeader()){
 			this.focusHeader();
 			dojo.stopEvent(e);
+		}else if(this.grid.edit.isEditing()){
+			dojo.stopEvent(e);
+			this.previous();
 		}else{
 			this.tabOut(this.grid.domNode);
 		}
@@ -280,15 +283,17 @@ dojo.declare("dojox.grid._FocusManager", null, {
 		if(e.target === this.grid.domNode){
 			this.focusHeader();
 			dojo.stopEvent(e);
-		}
-		// if tabbing from col header, then go to grid proper.
-		else if(this.isNavHeader()){
+		}else if(this.isNavHeader()){
+			// if tabbing from col header, then go to grid proper.
 			this._colHeadNode = null;
 			if(this.isNoFocusCell()){
 				this.setFocusIndex(0, 0);
 			}else if(this.cell){
 				this.focusGrid();
 			}
+		}else if(this.grid.edit.isEditing()){
+			dojo.stopEvent(e);
+			this.next();
 		}else{
 			this.tabOut(this.grid.lastFocusNode);
 		}

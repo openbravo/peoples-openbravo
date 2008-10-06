@@ -1,41 +1,32 @@
 -------------------------------------------------------------------------------
-dojox.testing
+dojox.sql
 -------------------------------------------------------------------------------
-Version 0.1
-Release date: 06/18/08
+Version X.XXX
+Release date: MM/DD/YYYY
 -------------------------------------------------------------------------------
 Project state:
 experimental
 -------------------------------------------------------------------------------
 Credits
-	Wolfram Kriesing (wolfram@dojotoolkit.org)
+	Brad Neuberg
 -------------------------------------------------------------------------------
-Project description 
+Project description
 
-	A port of Python's DocTests module to Dojo and D.O.H. which is also
-	compatible with Dojo's API documentation system
- 
+Code to interface with the Google Gears-specific SQL engine, used
+by dojox.storage and dojox.off. 
 -------------------------------------------------------------------------------
 Dependencies:
 
-	dojo.string, DOH
-
+Google Gears (gears.google.com)
 -------------------------------------------------------------------------------
 Documentation
 
+TBD
 -------------------------------------------------------------------------------
 Installation instructions
 
-Grab the following from the Dojo SVN Repository:
-
-	http://svn.dojotoolkit.org/dojo/dojox/trunk/testing/*
-
-Install into the following directory structure:
-
-	/dojox/testing/
-
-...which should be at the same level as your Dojo checkout.
+TBD
 -------------------------------------------------------------------------------
 Additional Notes
 
-	None.
+We should consider relocating crypto code to dojox.encoding

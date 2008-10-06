@@ -8,13 +8,13 @@
 if(!dojo._hasResource["dojox.editor.plugins.UploadImage"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
 dojo._hasResource["dojox.editor.plugins.UploadImage"] = true;
 dojo.provide("dojox.editor.plugins.UploadImage");
-dojo.require("dojox.editor._Plugin");
+dojo.require("dijit._editor._Plugin");
 dojo.require("dojox.form.FileUploader");
 
 dojo.experimental("dojox.editor.plugins.UploadImage");
 
 dojo.declare("dojox.editor.plugins.UploadImage",
-	dojox.editor._Plugin,
+	dijit._editor._Plugin,
 	{
 		//summary: 
 		// 	Adds an icon to the Editor toolbar that when clicked, opens a system dialog
