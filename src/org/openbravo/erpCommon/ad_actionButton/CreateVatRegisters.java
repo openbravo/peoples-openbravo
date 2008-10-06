@@ -1,3 +1,21 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2008 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
 package org.openbravo.erpCommon.ad_actionButton;
 
 import java.io.IOException;
@@ -12,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.ad_forms.DocInvoice;
-import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.FormatUtilities;
@@ -54,10 +71,10 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
 			String strProcessed = vars.getStringParameter("inpProcessed");
 			String strGeneratePayment = vars.getStringParameter("inpGeneratePayment");
 			String strProcessing = vars.getStringParameter("inpProcessing");
-			OBError myMessage=CreateRegisters(vars, strTaxpaymentID, strDatefrom, strDateto, strProcessed, strGeneratePayment, strProcessing);
+			String message=CreateRegisters(vars, strTaxpaymentID, strDatefrom, strDateto, strProcessed, strGeneratePayment, strProcessing);
 			//try this
 			
-	//		  String strWindowId = vars.getStringParameter("inpWindowId");
+			  String strWindowId = vars.getStringParameter("inpWindowId");
 		      String strTabId = vars.getStringParameter("inpTabId");
 			ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTabId);
 		      String strWindowPath="", strTabName="";
@@ -65,12 +82,7 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
 		        strTabName = FormatUtilities.replace(tab[0].name);
 		        strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName + "_Relation.html";
 		      } else strWindowPath = strDefaultServlet;
-		      //if (!message.equals("")) vars.setSessionValue(strWindowId + "|" + strTabName + ".message", message);
-		 
-		     
-		      vars.setMessage(strTabId, myMessage);
-		     
-		      
+		      if (!message.equals("")) vars.setSessionValue(strWindowId + "|" + strTabName + ".message", message);
 		      printPageClosePopUp(response, vars, strWindowPath);
 		    } else pageErrorPopUp(response);
 			//advisePopUp(response,"INFO","Create VAT Register",message);
@@ -88,7 +100,7 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
 		 * 
 		 * //alp OBError myMessage = processButton(vars, strTaxpaymentID,
 		 * strDatefrom, strDateto, strGeneratepayment, strProcessed,
-		 * strProcessing); //alp vars.setMessage("PrintVatRegisters",
+		 * strProcessing); //alp vars.setMessage("CreateVatRegisters",
 		 * myMessage); //vars.setSessionValue("ExpenseSOrder|message",
 		 * messageResult);
 		 * 
@@ -98,10 +110,9 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
 		 */
 	
 
-	public OBError CreateRegisters(VariablesSecureApp vars, String  strTaxpaymentID, String strDatefrom, String strDateto, String strProcessed, String strGeneratePayment, String strProcessing) throws IOException,
+	public String CreateRegisters(VariablesSecureApp vars, String  strTaxpaymentID, String strDatefrom, String strDateto, String strProcessed, String strGeneratePayment, String strProcessing) throws IOException,
 			ServletException {
-		// Connection conn = getTransactionConnection();	
-		OBError myMessage = null;
+		// Connection conn = getTransactionConnection();		
 		TaxPayment[] taxpayment = TaxPayment.select(this, strTaxpaymentID);
 		String strUser = vars.getUser();
 				log4j.info("strTaxpaymentID: " + strTaxpaymentID + "strDatefrom: " + strDatefrom + "strDateto: " + strDateto  + "strProcessed: " + strProcessed + "strGeneratePayment: " + strGeneratePayment);
@@ -109,17 +120,15 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
 		// register lines
 		if (strProcessed.equalsIgnoreCase("N")) {
 			//check for already used periods)
-			Double CrossPeriodCount = new Double(TaxPayment.selectCrossPeriodCount(this, strDatefrom, strDateto));
-			if (CrossPeriodCount.intValue() > 0){
-				myMessage = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this, "PeriodsDontMatch", vars.getLanguage()));
-            return myMessage;
-            }
+			Double CrossPeriodCount = new Double(TaxPayment.selectCrossPeriodCount(this, vars.getClient(), strDatefrom, strDateto));
+			if (CrossPeriodCount.intValue() > 0)
+				return "Period Error";
 			
 			TaxPayment.deleteRegisterLinesChild(this, strTaxpaymentID);
 			TaxPayment.deleteRegisterChild(this, strTaxpaymentID);
 
 			// Select all active Register Type for create the Tax Registers
-			TaxRegisterType[] taxregistertypes = TaxRegisterType.select(this);
+			TaxRegisterType[] taxregistertypes = TaxRegisterType.select(this, vars.getClient());
 				log4j.info("2strTaxpaymentID: " + strTaxpaymentID + "strDatefrom: " + strDatefrom + "strDateto: " + strDateto  + "strProcessed: " + strProcessed + "strGeneratePayment: " + strGeneratePayment);
 			 
 			 
@@ -178,9 +187,7 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
 						//if (!(((myinvoice.istaxexempt.equals("Y") )
 						//	^ (myinvoice.istaxundeductable.equals("Y"))
 						//	^ (myinvoice.isnovat.equals("Y"))))) {
-						//return "InvoiceTax Error: istaxexempt, istaxundeduc or isnovat could have wrong values,  C_InvoiceTax_ID="+myinvoice.cInvoicetaxId;
-						myMessage = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this, "TaxCriteriaNotFound", vars.getLanguage()));
-				        return myMessage;	
+						return "InvoiceTax Error: istaxexempt, istaxundeductable or isnovat could have wrong values,  C_InvoiceTax_ID="+myinvoice.cInvoicetaxId;
 					}
 					if (myinvoice.docbasetype.equals(DocInvoice.DOCTYPE_APCredit) || myinvoice.docbasetype.equals(DocInvoice.DOCTYPE_ARCredit)){
 						strTaxBaseAmt = new Double(new Double(strTaxBaseAmt) * new Double(-1)).toString();
@@ -227,28 +234,15 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
 			//			.updateProcessed(this, "Y", strUser, strTaxpaymentID);
 			//}
 				log4j.info("5strTaxpaymentID: " + strTaxpaymentID + "strDatefrom: " + strDatefrom + "strDateto: " + strDateto  + "strProcessed: " + strProcessed + "strGeneratePayment: " + strGeneratePayment);
-		try{		
+
       if (new Double(TaxPayment.calculateVatPayment(this, strTaxpaymentID)).compareTo(new Double(0))>0) {
 				TaxPayment.updateGeneratePayment(this, "Y", strUser, strTaxpaymentID);
 			}else TaxPayment.updateGeneratePayment(this, "N", strUser, strTaxpaymentID);
-		}catch (NumberFormatException e){
-			myMessage = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this, "NoDataSelected", vars.getLanguage()));
-            return myMessage;
-		}
-			if (myMessage==null) {
-			      myMessage = new OBError();
-			      myMessage.setType("Success");
-			      myMessage.setTitle("");
-			      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
-			    }
-			    return myMessage;
-			
-			
+			return "Completed Operation";
 		}
 	 
 	   else
-		   myMessage = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
-        return myMessage;
+		    return "Error: the payment already exists";
 	
 		// Select all active Register Type Lines of Tax Register
 		// for (TaxRegisterType taxRegisterType : taxregistertypes) {
