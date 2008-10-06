@@ -23,7 +23,7 @@
   v_Bank NVARCHAR2(4);
   v_Branch NVARCHAR2(4);
   v_DigitBank NVARCHAR2(1);
-  v_Country NUMBER;
+  v_Location NVARCHAR2(32);
   v_CountryId NVARCHAR2(2);
   v_BankName NVARCHAR2(60);
   v_Length NUMBER;
@@ -53,11 +53,11 @@ BEGIN
          IF (v_IBAN_check <> 1) THEN
           RAISE_APPLICATION_ERROR(-20257, 'Incorrect IBAN Code.');
         END IF;
-        SELECT C_COUNTRY_ID
-        INTO v_Country
+        SELECT C_LOCATION_ID
+        INTO v_Location
         FROM C_BANK
         WHERE C_BANK_ID=:NEW.C_BANK_ID;
-        IF (v_Country IS NULL) THEN
+        IF (v_Location IS NULL) THEN
           RAISE_APPLICATION_ERROR(-20260, 'Bank does not have country defined.');
         END IF;
         SELECT IBANCOUNTRY, IBANNODIGITS
@@ -65,8 +65,8 @@ BEGIN
         FROM C_COUNTRY
         WHERE C_COUNTRY_ID=(
           SELECT C_COUNTRY_ID
-          FROM C_BANK
-          WHERE C_BANK_ID=:NEW.C_BANK_ID
+          FROM C_LOCATION
+          WHERE C_LOCATION_ID=v_Location
           );
         IF ((v_CountryId IS NULL OR v_Length IS NULL) OR (v_CountryId <> SUBSTR(UPPER(:NEW.IBAN),1,2) OR v_Length <> LENGTH(:NEW.IBAN))) THEN
           RAISE_APPLICATION_ERROR(-20259, 'The IBAN number defined in the bank account tab, must fit the IBAN data of the country defined in the bank tab.');
