@@ -564,7 +564,7 @@
          ACCOUNT_ID, SEQNO, AD_CLIENT_ID, 
          AD_ORG_ID, ISACTIVE, CREATED, 
          CREATEDBY, UPDATED, UPDATEDBY) 
-      VALUES ( ?, ?, ?, ?, ?, ?, 0, 'Y', NOW(), ?, NOW(), ?)
+      VALUES ( ?, TO_NUMBER(?), ?, ?, TO_NUMBER(?), ?, 0, 'Y', NOW(), ?, NOW(), ?)
       ]]>
     </Sql>
     <Parameter name="cElementValueOperandId"/>
