@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SL
- * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
+ * Contributions are Copyright (C) 2001-2008 Openbravo S.L.
  ******************************************************************************
 */
 package org.openbravo.erpCommon.ad_forms;
@@ -259,7 +259,7 @@ public abstract class AcctServer  {
         String strIDs = "";
         if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Run - TableName = " + tableName);
         AcctServerData [] data = AcctServerData.select(connectionProvider,tableName, AD_Client_ID, strDateColumn, 0, Integer.valueOf(batchSize).intValue());
-        if(data==null)if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Run -Select inicial realizada N = " + data.length + " - Key: " + data[0].id);
+        if(data!=null)if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Run -Select inicial realizada N = " + data.length + " - Key: " + data[0].id);
         for (int i=0;data != null && i<data.length;i++){
             strIDs += data[i].getField("ID") + ", ";
             if (!post(data[i].getField("ID"),false, vars,connectionProvider,con)) {
