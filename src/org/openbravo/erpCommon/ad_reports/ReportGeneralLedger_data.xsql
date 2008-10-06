@@ -307,13 +307,15 @@
       FROM FACT_ACCT
       WHERE 1=1
       AND FACT_ACCT.ACCOUNT_ID = ?
-      AND DATEACCT < to_date(?)
+      AND (DATEACCT < TO_DATE(?) OR (DATEACCT=TO_DATE(?) AND FACT_ACCT_ID < ?))
       AND FACT_ACCT.AD_ORG_ID IN ('1')
       ]]></Sql>
       <Parameter name="bpartner" optional="true" after="1=1"><![CDATA[ AND FACT_ACCT.C_BPARTNER_ID = ? ]]></Parameter>
       <Parameter name="acctschema" optional="true" after="1=1"><![CDATA[ and fact_acct.C_ACCTSCHEMA_ID = ? ]]></Parameter>
       <Parameter name="account"/>
       <Parameter name="date"/>
+      <Parameter name="date"/>
+      <Parameter name="factacct"/>
       <Parameter name="orgs" type="replace" optional="true" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'1'"/>
    </SqlMethod>
 
