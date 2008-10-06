@@ -118,7 +118,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
   }
 
   void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strAmtFrom, String strAmtTo, String strcelementvaluefrom, String strcelementvalueto, String strOrg, String strcBpartnerId, String strAll, String strHide, String strcAcctSchemaId) throws IOException, ServletException {
-    String strRecordRange="500";
+    String strRecordRange=Utility.getContext(this, vars, "#RecordRange", "ReportGeneralLedger");
 	int intRecordRange = (strRecordRange.equals("")?0:Integer.parseInt(strRecordRange));
     String strInitRecord = vars.getSessionValue("ReportGeneralLedger.initRecordNumber");
     int initRecordNumber = (strInitRecord.equals("")?0:Integer.parseInt(strInitRecord));
