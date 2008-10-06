@@ -53,7 +53,7 @@
       <Sql><![CDATA[
 		SELECT (case when ad_table.po_window_id is null then '' else ad_column_identifier('AD_Window',TO_CHAR(ad_table.po_window_id),?) end)||
 		  (case when ad_table.po_window_id is null then '' else ' - ' end)||
-		  ad_column_identifier('AD_Window',TO_CHAR(ad_table.ad_window_id),?)
+		  ad_column_identifier('AD_Window',TO_CHAR(ad_table.ad_window_id),?) AS DESCRIPTION
 		FROM AD_TABLE 
 		WHERE AD_TABLE_ID = ?
     ]]></Sql>
