@@ -5531,9 +5531,9 @@ Employee defines a Business Partner who is an Employee of this organization.  If
 <!--304 CREATEDBY-->
 <!--304-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--304 UPDATED-->
-<!--304-->              <UPDATED><![CDATA[2000-12-29 21:16:45.0]]></UPDATED>
+<!--304-->              <UPDATED><![CDATA[2008-10-06 15:46:35.0]]></UPDATED>
 <!--304 UPDATEDBY-->
-<!--304-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--304-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--304 NAME-->
 <!--304-->              <NAME><![CDATA[C_Withholding]]></NAME>
 <!--304 DESCRIPTION-->
@@ -5547,7 +5547,7 @@ Employee defines a Business Partner who is an Employee of this organization.  If
 <!--304 ACCESSLEVEL-->
 <!--304-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--304 AD_WINDOW_ID-->
-<!--304-->              <AD_WINDOW_ID><![CDATA[160]]></AD_WINDOW_ID>
+<!--304-->              <AD_WINDOW_ID><![CDATA[1002100000]]></AD_WINDOW_ID>
 <!--304 ISSECURITYENABLED-->
 <!--304-->              <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--304 ISDELETEABLE-->
