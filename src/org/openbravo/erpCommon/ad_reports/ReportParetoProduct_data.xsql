@@ -76,10 +76,10 @@
     <Parameter name="adClientId"/>   
     <Parameter name="mWarehouseId" optional="true" after="1=1" text=" AND MW1.M_WAREHOUSE_ID = ? "/>
     <Parameter name="adOrgId" optional="true" after="2=2" text=" AND MW1.AD_ORG_ID = ? "/>
-    <Parameter name="adClientId" optional="true" after="6=6" text=" AND MW1.AD_CLIENT_ID = TO_NUMBER(?) "/>    
+    <Parameter name="adClientId" optional="true" after="6=6" text=" AND MW1.AD_CLIENT_ID = ? "/>    
     <Parameter name="mWarehouseId" optional="true" after="3=3" text=" AND MW.M_WAREHOUSE_ID = ? "/>    
     <Parameter name="adOrgId" optional="true" after="4=4" text=" AND MW.AD_ORG_ID = ? "/>
-    <Parameter name="adClientId" optional="true" after="5=5" text=" AND MW.AD_CLIENT_ID = TO_NUMBER(?) "/>
+    <Parameter name="adClientId" optional="true" after="5=5" text=" AND MW.AD_CLIENT_ID = ? "/>
   </SqlMethod>
 
   <SqlMethod name="set" type="constant" return="multiple">
