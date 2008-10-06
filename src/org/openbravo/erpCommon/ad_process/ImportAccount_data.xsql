@@ -336,7 +336,7 @@
     <Parameter name="adClientId"/>
   </SqlMethod>
 
-  <SqlMethod name="selectOperands" type="preparedStatement" return="string">
+  <SqlMethod name="selectOperands" type="preparedStatement" connection="true" return="string">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[

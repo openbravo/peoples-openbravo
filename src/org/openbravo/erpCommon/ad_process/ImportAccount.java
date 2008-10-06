@@ -264,7 +264,7 @@ public class ImportAccount extends ImportProcess {
 
         if (log4j.isDebugEnabled()) log4j.debug("I_ElementValue_ID=" + I_ElementValue_ID + ", elementValue=" + elementValue);
         try {
-          String [][] strOperand = operandProcess(ImportAccountData.selectOperands(conn, I_ElementValue_ID));
+          String [][] strOperand = operandProcess(ImportAccountData.selectOperands(con, conn, I_ElementValue_ID));
           String strSeqNo = "10";
           for(int j=0;strOperand!=null && j<strOperand.length;j++){
               String C_ElementValue_Operand_ID = SequenceIdData.getSequence(conn, "C_ElementValue_Operand", vars.getClient());
@@ -279,6 +279,7 @@ public class ImportAccount extends ImportProcess {
           }
         } catch (ServletException ex) {
             log4j.warn("ServletException I_ElementValue_ID=" + I_ElementValue_ID);
+            ImportAccountData.insertElementValueError(con, conn, ex.toString(), I_ElementValue_ID);
             continue;
         }
       }
