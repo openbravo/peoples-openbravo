@@ -130,7 +130,7 @@ $BODY$ DECLARE
  Cur_Constraints RECORD;
 BEGIN
 -- Make sure all foreign keys are satisfied
-/*  FOR Cur_Constraints IN  (SELECT TABLE_NAME, CONSTRAINT_NAME, CONSTRAINT_TYPE, DELETE_RULE, COLUMN_NAMES, FK_TABLE, FK_COLUMN_NAMES, FK_MATCHTYPE
+  FOR Cur_Constraints IN  (SELECT TABLE_NAME, CONSTRAINT_NAME, CONSTRAINT_TYPE, DELETE_RULE, COLUMN_NAMES, FK_TABLE, FK_COLUMN_NAMES, FK_MATCHTYPE
                            FROM USER_CONSTRAINTS C1
                            WHERE CONSTRAINT_TYPE = 'R'
                            --AND DELETE_RULE = 'C'
@@ -140,7 +140,7 @@ BEGIN
                     ' IS NOT NULL AND ' ||Cur_Constraints.COLUMN_NAMES|| 
                     ' NOT IN (SELECT ' ||Cur_Constraints.FK_COLUMN_NAMES || ' FROM ' || Cur_Constraints.FK_TABLE || ')'
                     );
-  END LOOP;*/
+  END LOOP;
  
  FOR Cur_Constraints IN  (SELECT TABLE_NAME, CONSTRAINT_NAME, CONSTRAINT_TYPE, DELETE_RULE, COLUMN_NAMES, FK_TABLE, FK_COLUMN_NAMES, FK_MATCHTYPE
                            FROM USER_CONSTRAINTS C1
