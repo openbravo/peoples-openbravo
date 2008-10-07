@@ -52,6 +52,10 @@
     --
     v_seqNo NUMBER:=0;
     v_NextNo VARCHAR2(32):='1000000';
+    v_prev_const NUMBER:=0;
+    v_prev_trig NUMBER:=0;
+    v_post_const NUMBER:=0;
+    v_post_trig NUMBER:=0;
     v_count NUMBER:=0;
     v_ID_Column VARCHAR2(30) ;
     v_minID varchar2(32) ;
@@ -103,6 +107,18 @@
     END IF;
   BEGIN --BODY
 
+  
+    --Count ENABLED constraints and triggers before the process
+    select count(*)
+    into v_prev_const
+    from user_constraints
+    where status='ENABLED';
+  
+    select count(*)
+    into v_prev_trig
+    from user_triggers
+    where status='ENABLED';
+	
     -- Update sequence values
     v_ResultStr:='Updating sequences';
     v_ResultStr:='Deleting old data';
@@ -464,10 +480,18 @@
     from user_constraints
    where status!='ENABLED';
   if v_count>0 then
-    if v_Result!=0 then
-      v_Result:=2;
-    end if;
+    v_Result:=0;
     v_Message:=substr(v_Message||'<br><br>@ProcessLeft@ '||v_count||' @DisabledConstraints@',1,2000);
+  else
+    select count(*)
+     into v_post_const
+      from user_constraints
+     where status='ENABLED';
+    if (v_prev_const-v_post_const)>0 then
+    
+	  v_Result:=0;
+      v_Message:=substr(v_Message||'<br><br>@ProcessLeft@ '||(v_prev_const-v_post_const)||' @DisabledConstraints@',1,2000);
+    end if;
   end if;
 
   select count(*)
@@ -475,10 +499,17 @@
     from user_triggers
     where status!='ENABLED';
   if v_count>0 then
-    if v_Result!=0 then
-      v_Result:=2;
-    end if;
+    v_Result:=0;
     v_Message:=substr(v_Message||'<br><br>@ProcessLeft@ '||v_count||' @DisabledTriggers@',1,2000);
+  else
+    select count(*)
+    into v_post_trig
+      from user_triggers
+      where status='ENABLED';
+    if (v_prev_trig-v_post_trig)>0 then
+      v_Result:=0;
+      v_Message:=substr(v_Message||'<br><br>@ProcessLeft@ '||(v_prev_trig-v_post_trig)||' @DisabledTriggers@',1,2000);
+    end if;
   end if;
 
   --<<END_PROCESS>>
