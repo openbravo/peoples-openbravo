@@ -105,7 +105,7 @@ BEGIN
     v_IsFullyQualified := 'N';
    ELSE
     IF NOT INSERTING THEN
-      IF (:old.Alias is null) THEN
+      IF (:new.Alias IS NULL) THEN
        :new.Alias := v_TempValue; --Alias is the account no
       END IF;
     END IF;
