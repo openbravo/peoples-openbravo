@@ -975,7 +975,7 @@
 					SELECT MIN(CountryCode)
 					FROM C_Country c
 					WHERE c.IsDefault='Y'
-					AND c.AD_Client_ID IN (0, I_Order.AD_Client_ID)
+					AND c.AD_Client_ID IN ('0', I_Order.AD_Client_ID)
 				)
 				WHERE C_BPartner_ID IS NULL
 				AND CountryCode IS NULL
@@ -995,7 +995,7 @@
 				SET C_Country_ID=(
 					SELECT C_Country_ID FROM C_Country c
 					WHERE I_Order.CountryCode=c.CountryCode
-					AND c.AD_Client_ID IN (0, I_Order.AD_Client_ID)
+					AND c.AD_Client_ID IN ('0', I_Order.AD_Client_ID)
 				)
 				WHERE C_BPartner_ID IS NULL
 				AND C_Country_ID IS NULL
@@ -1031,7 +1031,7 @@
 					SELECT MIN(Name) FROM C_Region r
 					WHERE r.IsDefault='Y'
 					AND r.C_Country_ID=I_Order.C_Country_ID
-					AND r.AD_Client_ID IN (0, I_Order.AD_Client_ID)
+					AND r.AD_Client_ID IN ('0', I_Order.AD_Client_ID)
 				)
 				WHERE C_BPartner_ID IS NULL
 				AND C_Region_ID IS NULL
@@ -1053,7 +1053,7 @@
 					FROM C_Region r
 					WHERE r.Name=UPPER(I_Order.RegionName)
 					AND r.C_Country_ID=I_Order.C_Country_ID
-					AND r.AD_Client_ID IN (0, I_Order.AD_Client_ID)
+					AND r.AD_Client_ID IN ('0', I_Order.AD_Client_ID)
 				)
 				WHERE C_BPartner_ID IS NULL
 				AND C_Region_ID IS NULL
