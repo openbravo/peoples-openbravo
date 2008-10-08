@@ -30,11 +30,11 @@ BEGIN
     INSERT
     INTO AD_Role_OrgAccess
       (
-        AD_Role_ID, AD_Client_ID, AD_Org_ID,
+        AD_Role_OrgAccess_ID, AD_Role_ID, AD_Client_ID, AD_Org_ID,
         IsActive, Created, CreatedBy,
         Updated, UpdatedBy
       )
-    SELECT AD_Role_ID, :new.AD_Client_ID, :new.AD_Org_ID,
+    SELECT get_uuid(), AD_Role_ID, :new.AD_Client_ID, :new.AD_Org_ID,
        'Y', now(), :new.CreatedBy,
       now(), :new.CreatedBy
     FROM AD_Role
