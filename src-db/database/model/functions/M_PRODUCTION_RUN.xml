@@ -449,9 +449,9 @@
             LOOP
               -- M_ProductionLine_ID, AD_Client_ID, AD_Org_ID, MovementDate, M_Product_ID, MovementQty, M_Locator_ID
               -- DBMS_OUTPUT.PUT_LINE('ProductionLine=' || pl.M_ProductionLine_ID);
-              -- DBMS_OUTPUT.PUT_LINE('  Qty=' || pl.MovementQty || ', OnHand=' || BOM_Qty_OnHand(pl.M_Product_ID, NULL, pl.M_Locator_ID));
+              -- DBMS_OUTPUT.PUT_LINE('  Qty=' || pl.MovementQty || ', OnHand=' || M_BOM_Qty_OnHand(pl.M_Product_ID, NULL, pl.M_Locator_ID));
               -- Check Stock levels for reductions
-              IF(CUR_PL_Post.MovementQty<0 AND MustBeStocked<>'N'  AND Bom_Qty_Onhand(CUR_PL_Post.M_Product_ID, NULL, CUR_PL_Post.M_Locator_ID) +CUR_PL_Post.MovementQty<0) THEN
+              IF(CUR_PL_Post.MovementQty<0 AND MustBeStocked<>'N'  AND M_BOM_Qty_OnHand(CUR_PL_Post.M_Product_ID, NULL, CUR_PL_Post.M_Locator_ID) +CUR_PL_Post.MovementQty<0) THEN
                 ROLLBACK;
                 SELECT '@NotEnoughStocked@: ' || Name
                 INTO v_Message

@@ -2271,7 +2271,7 @@
 <!--164 ISUSERSTARTABLE-->
 <!--164-->              <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--164 PROCEDURENAME-->
-<!--164-->              <PROCEDURENAME><![CDATA[GenerateSOFromProjectOrder]]></PROCEDURENAME>
+<!--164-->              <PROCEDURENAME><![CDATA[C_GenerateSOFromProjectOrder]]></PROCEDURENAME>
 <!--164 ISREPORT-->
 <!--164-->              <ISREPORT><![CDATA[N]]></ISREPORT>
 <!--164 ISDIRECTPRINT-->
@@ -4251,7 +4251,7 @@
 <!--216 ISUSERSTARTABLE-->
 <!--216-->              <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--216 PROCEDURENAME-->
-<!--216-->              <PROCEDURENAME><![CDATA[GenerateSOFromProjectPhase]]></PROCEDURENAME>
+<!--216-->              <PROCEDURENAME><![CDATA[C_GenerateSOFromProjectPhase]]></PROCEDURENAME>
 <!--216 ISREPORT-->
 <!--216-->              <ISREPORT><![CDATA[N]]></ISREPORT>
 <!--216 ISDIRECTPRINT-->
@@ -4954,7 +4954,7 @@
 <!--800002 UPDATEDBY-->
 <!--800002-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800002 VALUE-->
-<!--800002-->              <VALUE><![CDATA[ChangeProjectStatus]]></VALUE>
+<!--800002-->              <VALUE><![CDATA[C_ChangeProjectStatus]]></VALUE>
 <!--800002 NAME-->
 <!--800002-->              <NAME><![CDATA[Change Project Status]]></NAME>
 <!--800002 DESCRIPTION-->
@@ -4966,7 +4966,7 @@
 <!--800002 ISUSERSTARTABLE-->
 <!--800002-->              <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800002 PROCEDURENAME-->
-<!--800002-->              <PROCEDURENAME><![CDATA[ChangeProjectStatus]]></PROCEDURENAME>
+<!--800002-->              <PROCEDURENAME><![CDATA[C_ChangeProjectStatus]]></PROCEDURENAME>
 <!--800002 ISREPORT-->
 <!--800002-->              <ISREPORT><![CDATA[N]]></ISREPORT>
 <!--800002 ISDIRECTPRINT-->
@@ -4997,7 +4997,7 @@
 <!--800003 UPDATEDBY-->
 <!--800003-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800003 VALUE-->
-<!--800003-->              <VALUE><![CDATA[Copy_Project_Lines]]></VALUE>
+<!--800003-->              <VALUE><![CDATA[C_Copy_Project_Lines]]></VALUE>
 <!--800003 NAME-->
 <!--800003-->              <NAME><![CDATA[Copy Project Lines]]></NAME>
 <!--800003 DESCRIPTION-->
@@ -5009,7 +5009,7 @@
 <!--800003 ISUSERSTARTABLE-->
 <!--800003-->              <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800003 PROCEDURENAME-->
-<!--800003-->              <PROCEDURENAME><![CDATA[Copy_Project_Lines]]></PROCEDURENAME>
+<!--800003-->              <PROCEDURENAME><![CDATA[C_Copy_Project_Lines]]></PROCEDURENAME>
 <!--800003 ISREPORT-->
 <!--800003-->              <ISREPORT><![CDATA[N]]></ISREPORT>
 <!--800003 ISDIRECTPRINT-->
@@ -5083,7 +5083,7 @@
 <!--800005 UPDATEDBY-->
 <!--800005-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800005 VALUE-->
-<!--800005-->              <VALUE><![CDATA[GenerateSOFromProject]]></VALUE>
+<!--800005-->              <VALUE><![CDATA[C_GenerateSOFromProject]]></VALUE>
 <!--800005 NAME-->
 <!--800005-->              <NAME><![CDATA[Create Sales Order from Project]]></NAME>
 <!--800005 DESCRIPTION-->
@@ -5095,7 +5095,7 @@
 <!--800005 ISUSERSTARTABLE-->
 <!--800005-->              <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800005 PROCEDURENAME-->
-<!--800005-->              <PROCEDURENAME><![CDATA[GenerateSOFromProject]]></PROCEDURENAME>
+<!--800005-->              <PROCEDURENAME><![CDATA[C_GenerateSOFromProject]]></PROCEDURENAME>
 <!--800005 ISREPORT-->
 <!--800005-->              <ISREPORT><![CDATA[N]]></ISREPORT>
 <!--800005 ISDIRECTPRINT-->
@@ -5126,7 +5126,7 @@
 <!--800006 UPDATEDBY-->
 <!--800006-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800006 VALUE-->
-<!--800006-->              <VALUE><![CDATA[GeneratePOFromProject]]></VALUE>
+<!--800006-->              <VALUE><![CDATA[C_GeneratePOFromProject]]></VALUE>
 <!--800006 NAME-->
 <!--800006-->              <NAME><![CDATA[Create Purchase Order from Project]]></NAME>
 <!--800006 DESCRIPTION-->
@@ -5138,7 +5138,7 @@
 <!--800006 ISUSERSTARTABLE-->
 <!--800006-->              <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800006 PROCEDURENAME-->
-<!--800006-->              <PROCEDURENAME><![CDATA[GeneratePOFromProject]]></PROCEDURENAME>
+<!--800006-->              <PROCEDURENAME><![CDATA[C_GeneratePOFromProject]]></PROCEDURENAME>
 <!--800006 ISREPORT-->
 <!--800006-->              <ISREPORT><![CDATA[N]]></ISREPORT>
 <!--800006 ISDIRECTPRINT-->
@@ -5548,7 +5548,7 @@
 <!--800022 UPDATEDBY-->
 <!--800022-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800022 VALUE-->
-<!--800022-->              <VALUE><![CDATA[Copy_Product_Template]]></VALUE>
+<!--800022-->              <VALUE><![CDATA[M_Copy_Product_Template]]></VALUE>
 <!--800022 NAME-->
 <!--800022-->              <NAME><![CDATA[Copy Product Template]]></NAME>
 <!--800022 DESCRIPTION-->
@@ -5560,7 +5560,7 @@
 <!--800022 ISUSERSTARTABLE-->
 <!--800022-->              <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800022 PROCEDURENAME-->
-<!--800022-->              <PROCEDURENAME><![CDATA[Copy_Product_Template]]></PROCEDURENAME>
+<!--800022-->              <PROCEDURENAME><![CDATA[M_Copy_Product_Template]]></PROCEDURENAME>
 <!--800022 ISREPORT-->
 <!--800022-->              <ISREPORT><![CDATA[N]]></ISREPORT>
 <!--800022 ISDIRECTPRINT-->
@@ -7035,7 +7035,7 @@
 <!--800077 ISUSERSTARTABLE-->
 <!--800077-->              <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--800077 PROCEDURENAME-->
-<!--800077-->              <PROCEDURENAME><![CDATA[Debt_Payment_Balancing_Replace]]></PROCEDURENAME>
+<!--800077-->              <PROCEDURENAME><![CDATA[C_Debt_Payment_Balancing_Replace]]></PROCEDURENAME>
 <!--800077 ISREPORT-->
 <!--800077-->              <ISREPORT><![CDATA[N]]></ISREPORT>
 <!--800077 ISDIRECTPRINT-->
@@ -7332,7 +7332,7 @@
 <!--800085 ISUSERSTARTABLE-->
 <!--800085-->              <ISUSERSTARTABLE><![CDATA[Y]]></ISUSERSTARTABLE>
 <!--800085 PROCEDURENAME-->
-<!--800085-->              <PROCEDURENAME><![CDATA[Generate_Average_Costs]]></PROCEDURENAME>
+<!--800085-->              <PROCEDURENAME><![CDATA[M_Generate_Average_Costs]]></PROCEDURENAME>
 <!--800085 ISREPORT-->
 <!--800085-->              <ISREPORT><![CDATA[N]]></ISREPORT>
 <!--800085 ISDIRECTPRINT-->

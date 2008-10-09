@@ -54,7 +54,7 @@
   <SqlMethod name="selectPriceListVersion" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT GET_PRICELIST_VERSION(?, to_date(?)) as pricelist_version
+      SELECT M_GET_PRICELIST_VERSION(?, to_date(?)) as pricelist_version
       FROM DUAL
     </Sql>
     <Parameter name="mPriceListId"/>

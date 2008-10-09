@@ -164,7 +164,7 @@ BEGIN --BODY
 
     -- Purchased raw material
     IF (v_No_Cost) THEN
-      SELECT COALESCE(MAX(bl.Price),GET_PRODUCT_PRICE_DATE(MAX(p.AD_CLIENT_ID), MAX(p.M_PRODUCT_ID), p_CalcDate)) INTO v_Cost
+      SELECT COALESCE(MAX(bl.Price),M_GET_PRODUCT_PRICE_DATE(MAX(p.AD_CLIENT_ID), MAX(p.M_PRODUCT_ID), p_CalcDate)) INTO v_Cost
       FROM M_Product p LEFT JOIN C_BudgetLine bl ON p.M_Product_ID = bl.M_Product_ID
                                                     AND bl.C_Budget_ID = p_Budget_ID
       WHERE p.M_Product_ID = Cur_UsedProducts.M_Product_ID

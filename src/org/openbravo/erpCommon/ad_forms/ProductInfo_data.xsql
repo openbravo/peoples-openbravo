@@ -80,7 +80,7 @@
    <SqlMethod name="selectProductAverageCost" type="preparedStatement" return="string">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT COALESCE(GET_PRODUCT_COST(?, TO_DATE(?), TO_CHAR(NULL)),0) FROM DUAL
+        SELECT COALESCE(M_GET_PRODUCT_COST(?, TO_DATE(?), TO_CHAR(NULL)),0) FROM DUAL
       </Sql>
       <Parameter name="M_Product_ID"/>
       <Parameter name="date"/>

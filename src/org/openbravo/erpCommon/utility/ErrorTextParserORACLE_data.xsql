@@ -27,7 +27,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       select constraint_name, constraint_type, table_name, 
-      DBA_USER_CONST_SEARCHCOND(constraint_name) AS search_condition 
+      AD_DBA_USER_CONST_SEARCHCOND(constraint_name) AS search_condition 
       from user_constraints 
       where UPPER(constraint_name) = UPPER(?)
     </Sql>

@@ -884,13 +884,13 @@ cWithHoldId varchar2(32);
                 CUR_BOM.Description,
                 CUR_BOM.M_ProductBOM_ID, CUR_BOM.C_UOM_ID,
                 CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty,
-                Bom_Pricelist(CUR_BOM.M_ProductBOM_ID, PriceList_Version_ID),M_GET_OFFER_PRICE(v_Offer_ID, Bom_Pricestd(CUR_BOM.M_ProductBOM_ID, PriceList_Version_ID)td),
-                Bom_Pricelimit(CUR_BOM.M_ProductBOM_ID, PriceList_Version_ID),
-                M_GET_OFFER_PRICE(v_Offer_ID, Bom_Pricestd(CUR_BOM.M_ProductBOM_ID, PriceList_Version_ID)) * CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty,
+                M_BOM_PriceList(CUR_BOM.M_ProductBOM_ID, PriceList_Version_ID),M_GET_OFFER_PRICE(v_Offer_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, PriceList_Version_ID)td),
+                M_BOM_PriceLimit(CUR_BOM.M_ProductBOM_ID, PriceList_Version_ID),
+                M_GET_OFFER_PRICE(v_Offer_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, PriceList_Version_ID)) * CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty,
                 CUR_BOM_Line.C_Charge_ID,v_ChargeAmt,
                 CUR_BOM_Line.C_Tax_ID);
                 */
-                -- Bom_Pricestd(CUR_BOM.M_ProductBOM_ID, PriceList_Version_ID), v_Offer_ID);
+                -- M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, PriceList_Version_ID), v_Offer_ID);
                 -- One Time variables
                 INSERT
                 INTO C_INVOICELINE
@@ -908,11 +908,11 @@ cWithHoldId varchar2(32);
                     v_NextNo, CUR_BOM_Line.AD_Client_ID, CUR_BOM_Line.AD_Org_ID, CUR_BOM_Line.IsActive,
                     now(), v_UpdatedBy, now(), v_UpdatedBy,
                     CUR_BOM_Line.C_Invoice_ID, v_Line, CUR_BOM.Description, CUR_BOM.M_ProductBOM_ID,
-                    CUR_BOM.C_UOM_ID, CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, Bom_Pricelist(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
-                    M_Get_Offers_Price(v_DateInvoiced, v_BPartner_ID, CUR_BOM.M_ProductBOM_ID, Bom_Pricestd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID),
-                    Bom_Pricelimit(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
-                    M_Get_Offers_Price(v_DateInvoiced, v_BPartner_ID, CUR_BOM.M_ProductBOM_ID, Bom_Pricestd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID) * CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, CUR_BOM_Line.C_Charge_ID, v_ChargeAmt,
-                    CUR_BOM_Line.C_Tax_ID, Bom_Pricestd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID)
+                    CUR_BOM.C_UOM_ID, CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, M_BOM_PriceList(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
+                    M_Get_Offers_Price(v_DateInvoiced, v_BPartner_ID, CUR_BOM.M_ProductBOM_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID),
+                    M_BOM_PriceLimit(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
+                    M_Get_Offers_Price(v_DateInvoiced, v_BPartner_ID, CUR_BOM.M_ProductBOM_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID) * CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, CUR_BOM_Line.C_Charge_ID, v_ChargeAmt,
+                    CUR_BOM_Line.C_Tax_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID)
                   )
                   ;
                 v_ChargeAmt:=0;

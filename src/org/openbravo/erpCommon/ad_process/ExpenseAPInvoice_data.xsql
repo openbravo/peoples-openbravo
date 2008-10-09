@@ -251,7 +251,7 @@
       SELECT Pricelist, Pricestd, Pricelimit
       FROM M_ProductPrice
       WHERE M_ProductPrice.M_Product_ID = ?
-      AND M_ProductPrice.M_PriceList_Version_ID = get_pricelist_version(?, TO_DATE(?)) 
+      AND M_ProductPrice.M_PriceList_Version_ID = M_Get_Pricelist_Version(?, TO_DATE(?)) 
       ]]></Sql>
     <Parameter name="mProductID"/>
     <Parameter name="mPricelistId"/>

@@ -254,7 +254,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT GET_PRICELIST_VERSION(?, to_date(?)) AS PRICELISTID
+        SELECT M_GET_PRICELIST_VERSION(?, to_date(?)) AS PRICELISTID
         FROM DUAL
         ]]></Sql>
     <Parameter name="pricelist"/>

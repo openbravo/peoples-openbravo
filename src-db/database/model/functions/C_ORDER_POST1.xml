@@ -723,11 +723,11 @@ IF(NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
               CUR_BOM.Description, CUR_BOM.M_ProductBOM_ID, CUR_BOM_Line.M_Warehouse_ID, CUR_BOM_Line.DirectShip,
               CUR_BOM.C_UOM_ID, CUR_BOM_Line.QtyOrdered*CUR_BOM.BOMQty, CUR_BOM_Line.QtyReserved*CUR_BOM.BOMQty, CUR_BOM_Line.QtyDelivered*CUR_BOM.BOMQty,
               CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, CUR_BOM_Line.M_Shipper_ID, CUR_BOM_Line.C_Currency_ID,
-     Bom_Pricelist(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
-              M_Get_Offers_Price(CUR_BOM_Line.DateOrdered, v_CBPartner_ID, CUR_BOM.M_ProductBOM_ID, Bom_Pricestd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID), CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID), Bom_Pricelimit(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
-     M_Get_Offers_Price(CUR_BOM_Line.DateOrdered, v_CBPartner_ID, CUR_BOM.M_ProductBOM_ID, Bom_Pricestd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID), CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID) * CUR_BOM_Line.QtyOrdered*CUR_BOM.BOMQty, CUR_BOM_Line.Discount,
+     M_BOM_PriceList(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
+              M_Get_Offers_Price(CUR_BOM_Line.DateOrdered, v_CBPartner_ID, CUR_BOM.M_ProductBOM_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID), CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID), M_BOM_PriceLimit(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID),
+     M_Get_Offers_Price(CUR_BOM_Line.DateOrdered, v_CBPartner_ID, CUR_BOM.M_ProductBOM_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID), CUR_BOM_Line.QtyInvoiced*CUR_BOM.BOMQty, v_PriceList_ID) * CUR_BOM_Line.QtyOrdered*CUR_BOM.BOMQty, CUR_BOM_Line.Discount,
               v_FreightAmt, CUR_BOM_Line.C_Charge_ID, v_ChargeAmt, CUR_BOM_Line.C_Tax_ID,
-              CUR_BOM_Line.QuantityOrder, CUR_BOM_Line.M_Product_UOM_ID, Bom_Pricestd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID)
+              CUR_BOM_Line.QuantityOrder, CUR_BOM_Line.M_Product_UOM_ID, M_BOM_PriceStd(CUR_BOM.M_ProductBOM_ID, v_PriceList_Version_ID)
             )
             ; -- no Lot/SerNo for BOMs
           -- One Time variables

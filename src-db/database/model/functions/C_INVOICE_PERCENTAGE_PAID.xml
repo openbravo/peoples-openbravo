@@ -26,7 +26,7 @@ BEGIN
       C_Currency_Convert(DB.amount,DB.C_Currency_ID,I.C_Currency_ID,
       now(), null, I.AD_Client_ID, I.AD_Org_ID))/
   (CASE SUM(C_Currency_Convert(DB.amount,DB.C_Currency_ID,I.C_Currency_ID,
-      now(), null, I.AD_Client_ID, I.AD_Org_ID)) WHEN 0 THEN NUMBER_NULL() ELSE SUM(C_Currency_Convert(DB.amount,DB.C_Currency_ID,I.C_Currency_ID,
+      now(), null, I.AD_Client_ID, I.AD_Org_ID)) WHEN 0 THEN to_number(NULL) ELSE SUM(C_Currency_Convert(DB.amount,DB.C_Currency_ID,I.C_Currency_ID,
       now(), null, I.AD_Client_ID, I.AD_Org_ID)) END) INTO v_percentaje
   FROM C_DEBT_PAYMENT DB, C_Invoice I
   WHERE DB.C_Invoice_ID = I.C_Invoice_ID

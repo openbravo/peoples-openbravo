@@ -36,7 +36,7 @@
         M_GET_OFFERS_NAME(TO_DATE(NOW()), ?, CL.M_PRODUCT_ID)
         ) END) AS OFFER_NAME,
         (CASE coalesce(M_GET_OFFER(TO_DATE(NOW()), ?, CL.M_PRODUCT_ID),'-1') WHEN '-1' THEN '' ELSE M_GET_OFFER(TO_DATE(NOW()), ?, CL.M_PRODUCT_ID) END) AS M_OFFER_ID,
-        BOM_PRICESTD(CL.M_PRODUCT_ID, GET_PRICELIST_VERSION(?, TO_DATE(?))) AS PRICESTD,
+        M_BOM_PRICESTD(CL.M_PRODUCT_ID, M_GET_PRICELIST_VERSION(?, TO_DATE(?))) AS PRICESTD,
         (CASE coalesce(M_GET_OFFER(TO_DATE(NOW()), ?, CL.M_PRODUCT_ID),'-1') WHEN '-1' 
                                                             THEN (SELECT MAX(PRICEACTUAL) 
                                                                     FROM C_ORDER, C_ORDERLINE
@@ -49,7 +49,7 @@
                                                                     AND C_ORDER.C_BPARTNER_ID = ?
                                                                     AND C_ORDERLINE.M_PRODUCT_ID = M.M_PRODUCT_ID
                                                                     AND C_ORDER.DOCSTATUS = 'CO') 
-                                                               ELSE M_GET_OFFERS_PRICE(TO_DATE(NOW()), ?, CL.M_PRODUCT_ID,BOM_PRICESTD(CL.M_PRODUCT_ID, GET_PRICELIST_VERSION(?, TO_DATE(?))), 1 /*CL.QTYORDERED what should be here*/, C.M_PRICELIST_ID) 
+                                                               ELSE M_GET_OFFERS_PRICE(TO_DATE(NOW()), ?, CL.M_PRODUCT_ID,M_BOM_PRICESTD(CL.M_PRODUCT_ID, M_GET_PRICELIST_VERSION(?, TO_DATE(?))), 1 /*CL.QTYORDERED what should be here*/, C.M_PRICELIST_ID) 
                                                                 END) AS LASTPRICESO,
         C_TAX.C_TAX_ID, C_TAX.NAME AS NAMETAX, C_UOM.C_UOM_ID, C_UOM.UOMSYMBOL
         FROM C_ORDER C, C_ORDERLINE CL LEFT JOIN (SELECT M_ATTRIBUTESETINSTANCE_ID , DESCRIPTION FROM M_ATTRIBUTESETINSTANCE) MA ON (CL.M_ATTRIBUTESETINSTANCE_ID = MA.M_ATTRIBUTESETINSTANCE_ID), M_PRODUCT M, C_UOM, C_TAX
@@ -95,8 +95,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT BOM_PRICELIST(P.M_PRODUCT_ID,PV.M_PRICELIST_VERSION_ID) AS PRICELIST,
-        BOM_PRICELIMIT(P.M_PRODUCT_ID,PV.M_PRICELIST_VERSION_ID) AS PRICELIMIT
+        SELECT M_BOM_PRICELIST(P.M_PRODUCT_ID,PV.M_PRICELIST_VERSION_ID) AS PRICELIST,
+        M_BOM_PRICELIMIT(P.M_PRODUCT_ID,PV.M_PRICELIST_VERSION_ID) AS PRICELIMIT
         FROM M_PRODUCT P, M_PRODUCTPRICE PP, M_PRICELIST PL, M_PRICELIST_VERSION PV 
         WHERE P.M_PRODUCT_ID=PP.M_PRODUCT_ID
         AND PP.M_PRICELIST_VERSION_ID=PV.M_PRICELIST_VERSION_ID

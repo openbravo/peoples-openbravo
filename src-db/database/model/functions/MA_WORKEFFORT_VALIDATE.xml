@@ -204,7 +204,7 @@
       LOOP
         -- M_ProductionLine_ID, AD_Client_ID, AD_Org_ID, MovementDate, M_Product_ID, MovementQty, M_Locator_ID
         -- DBMS_OUTPUT.PUT_LINE('ProductionLine=' || CUR_PL_Post.M_ProductionLine_ID);
-        -- DBMS_OUTPUT.PUT_LINE('  Qty=' || CUR_PL_Post.MovementQty || ', OnHand=' || BOM_Qty_OnHand(CUR_PL_Post.M_Product_ID, NULL, CUR_PL_Post.M_Locator_ID));
+        -- DBMS_OUTPUT.PUT_LINE('  Qty=' || CUR_PL_Post.MovementQty || ', OnHand=' || M_BOM_Qty_OnHand(CUR_PL_Post.M_Product_ID, NULL, CUR_PL_Post.M_Locator_ID));
         -- Check Stock levels for reductions
         -- Check, if product exists and if it is stocked
         -- Unlimited capacity if no item

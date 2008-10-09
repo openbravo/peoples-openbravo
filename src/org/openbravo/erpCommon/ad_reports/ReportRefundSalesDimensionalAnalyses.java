@@ -336,14 +336,14 @@ public class ReportRefundSalesDimensionalAnalyses extends HttpSecureAppServlet {
     else if (strMayor.equals("") && !strMenor.equals("")) {strHaving = " HAVING SUM(LINENETAMT) < "+strMenor;}
     else{}
     if (strHaving.equals("")){
-      if (!strRatioMayor.equals("") && !strRatioMenor.equals("")) {strHaving = " HAVING DIVIDE(SUM(REFUNDAMT), (SUM(LINENETAMT)+SUM(REFUNDAMT)))*100 > "+strRatioMayor+" AND DIVIDE(SUM(REFUNDAMT), (SUM(LINENETAMT)+SUM(REFUNDAMT)))*100 < "+strRatioMenor;}
-      else if (!strRatioMayor.equals("") && strRatioMenor.equals("")) {strHaving = " HAVING DIVIDE(SUM(REFUNDAMT), (SUM(LINENETAMT)+SUM(REFUNDAMT)))*100 > "+strRatioMayor;}
-      else if (strRatioMayor.equals("") && !strRatioMenor.equals("")) {strHaving = " HAVING DIVIDE(SUM(REFUNDAMT), (SUM(LINENETAMT)+SUM(REFUNDAMT)))*100 < "+strRatioMenor;}
+      if (!strRatioMayor.equals("") && !strRatioMenor.equals("")) {strHaving = " HAVING C_DIVIDE(SUM(REFUNDAMT), (SUM(LINENETAMT)+SUM(REFUNDAMT)))*100 > "+strRatioMayor+" AND C_DIVIDE(SUM(REFUNDAMT), (SUM(LINENETAMT)+SUM(REFUNDAMT)))*100 < "+strRatioMenor;}
+      else if (!strRatioMayor.equals("") && strRatioMenor.equals("")) {strHaving = " HAVING C_DIVIDE(SUM(REFUNDAMT), (SUM(LINENETAMT)+SUM(REFUNDAMT)))*100 > "+strRatioMayor;}
+      else if (strRatioMayor.equals("") && !strRatioMenor.equals("")) {strHaving = " HAVING C_DIVIDE(SUM(REFUNDAMT), (SUM(LINENETAMT)+SUM(REFUNDAMT)))*100 < "+strRatioMenor;}
       else{}
     } else {
-      if (!strRatioMayor.equals("") && !strRatioMenor.equals("")) {strHaving += " AND DIVIDE(SUM(REFUNDAMT), (SUM(LINENETAMT)+SUM(REFUNDAMT)))*100 > "+strRatioMayor+" AND DIVIDE(SUM(REFUNDAMT), (SUM(LINENETAMT)+SUM(REFUNDAMT)))*100 < "+strRatioMenor;}
-      else if (!strRatioMayor.equals("") && strRatioMenor.equals("")) {strHaving += " AND DIVIDE(SUM(REFUNDAMT), (SUM(LINENETAMT)+SUM(REFUNDAMT)))*100 > "+strRatioMayor;}
-      else if (strRatioMayor.equals("") && !strRatioMenor.equals("")) {strHaving += " AND DIVIDE(SUM(REFUNDAMT), (SUM(LINENETAMT)+SUM(REFUNDAMT)))*100 < "+strRatioMenor;}
+      if (!strRatioMayor.equals("") && !strRatioMenor.equals("")) {strHaving += " AND C_DIVIDE(SUM(REFUNDAMT), (SUM(LINENETAMT)+SUM(REFUNDAMT)))*100 > "+strRatioMayor+" AND C_DIVIDE(SUM(REFUNDAMT), (SUM(LINENETAMT)+SUM(REFUNDAMT)))*100 < "+strRatioMenor;}
+      else if (!strRatioMayor.equals("") && strRatioMenor.equals("")) {strHaving += " AND C_DIVIDE(SUM(REFUNDAMT), (SUM(LINENETAMT)+SUM(REFUNDAMT)))*100 > "+strRatioMayor;}
+      else if (strRatioMayor.equals("") && !strRatioMenor.equals("")) {strHaving += " AND C_DIVIDE(SUM(REFUNDAMT), (SUM(LINENETAMT)+SUM(REFUNDAMT)))*100 < "+strRatioMenor;}
       else{}
     }
     strOrderby = strHaving + strOrderby;

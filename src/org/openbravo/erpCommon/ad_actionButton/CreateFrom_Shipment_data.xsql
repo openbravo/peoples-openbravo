@@ -196,7 +196,7 @@
       SELECT l.QtyOrdered-SUM(COALESCE(m.Qty,0)) AS ID, l.C_UOM_ID,uom.UOMSymbol, l.M_Product_ID,p.NAME, l.C_OrderLine_ID,
       l.Line, '' as C_InvoiceLine_ID, '' as M_InOutLine_ID, COALESCE(uom1.BREAKDOWN, 'N') AS BREAKDOWN, 
       MAX(mu.C_UOM_ID) AS C_UOM_ID_Conversion, MAX(uom1.STDPRECISION) AS STDPRECISION, 
-      l.QUANTITYORDER*DIVIDE((l.QtyOrdered-SUM(COALESCE(m.Qty,0))),(l.QtyOrdered)) AS quantityOrder, l.M_Product_UOM_ID,
+      l.QUANTITYORDER*C_DIVIDE((l.QtyOrdered-SUM(COALESCE(m.Qty,0))),(l.QtyOrdered)) AS quantityOrder, l.M_Product_UOM_ID,
       l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION AS DESCRIPTION
       FROM C_ORDERLINE l left join M_MATCHPO m on l.C_OrderLine_ID=m.C_OrderLine_ID
                                               and  m.M_InOutLine_ID IS NOT NULL 
@@ -220,7 +220,7 @@
       SELECT l.QtyOrdered - COALESCE(l.QTYDELIVERED,0) AS ID, l.C_UOM_ID,uom.UOMSymbol, l.M_Product_ID,p.NAME, l.C_OrderLine_ID,
       l.Line, '' as C_InvoiceLine_ID, '' as M_InOutLine_ID, COALESCE(uom1.BREAKDOWN, 'N') AS BREAKDOWN, 
       MAX(mu.C_UOM_ID) AS C_UOM_ID_Conversion, MAX(uom1.STDPRECISION) AS STDPRECISION, 
-      l.QUANTITYORDER*DIVIDE((l.QtyOrdered - COALESCE(l.QTYDELIVERED,0)),(l.QtyOrdered)) as quantityOrder, l.M_Product_UOM_ID,
+      l.QUANTITYORDER*C_DIVIDE((l.QtyOrdered - COALESCE(l.QTYDELIVERED,0)),(l.QtyOrdered)) as quantityOrder, l.M_Product_UOM_ID,
       l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id, l.DESCRIPTION AS DESCRIPTION
       FROM C_ORDERLINE l left join M_Product_UOM mu on l.M_Product_UOM_ID = mu.M_Product_UOM_ID
                          left join C_UOM uom1 on mu.C_UOM_ID = uom1.C_UOM_ID ,

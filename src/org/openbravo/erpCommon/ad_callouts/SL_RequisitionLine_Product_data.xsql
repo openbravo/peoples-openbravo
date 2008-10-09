@@ -39,7 +39,7 @@
   <SqlMethod name="selectPriceListVersion" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT GET_PRICELIST_VERSION(?, to_date(?)) as pricelist_version
+      SELECT M_GET_PRICELIST_VERSION(?, to_date(?)) as pricelist_version
       FROM DUAL
     </Sql>
     <Parameter name="mPriceListId"/>
@@ -48,9 +48,9 @@
   <SqlMethod name="getPrices" type="preparedStatement" return="Multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      SELECT BOM_PRICELIMIT(?, ?) AS pricelimit,
-             BOM_PRICELIST(?, ?) AS pricelist,
-             BOM_PRICESTD(?, ?) AS pricestd
+      SELECT M_BOM_PRICELIMIT(?, ?) AS pricelimit,
+             M_BOM_PRICELIST(?, ?) AS pricelist,
+             M_BOM_PRICESTD(?, ?) AS pricestd
       FROM DUAL
     </Sql>
     <Parameter name="mProductId"/>
