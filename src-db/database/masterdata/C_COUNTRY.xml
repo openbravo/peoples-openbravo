@@ -8250,9 +8250,9 @@
 <!--333 CREATEDBY-->
 <!--333-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--333 UPDATED-->
-<!--333-->              <UPDATED><![CDATA[2003-03-09 00:00:00.0]]></UPDATED>
+<!--333-->              <UPDATED><![CDATA[2008-10-09 15:06:54.0]]></UPDATED>
 <!--333 UPDATEDBY-->
-<!--333-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--333-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--333 NAME-->
 <!--333-->              <NAME><![CDATA[United Kingdom]]></NAME>
 <!--333 DESCRIPTION-->
@@ -8260,7 +8260,9 @@
 <!--333 COUNTRYCODE-->
 <!--333-->              <COUNTRYCODE><![CDATA[GB]]></COUNTRYCODE>
 <!--333 HASREGION-->
-<!--333-->              <HASREGION><![CDATA[N]]></HASREGION>
+<!--333-->              <HASREGION><![CDATA[Y]]></HASREGION>
+<!--333 REGIONNAME-->
+<!--333-->              <REGIONNAME><![CDATA[County]]></REGIONNAME>
 <!--333 EXPRESSIONPHONE-->
 <!--333-->              <EXPRESSIONPHONE><![CDATA[Y]]></EXPRESSIONPHONE>
 <!--333 DISPLAYSEQUENCE-->
