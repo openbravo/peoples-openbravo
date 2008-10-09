@@ -20,7 +20,7 @@
   ************************************************************************/
   TYPE RECORD IS REF CURSOR;
   cur_Bank RECORD;
-  cur_BankAccout RECORD;
+  cur_BankAccount RECORD;
   v_IBANCount NUMBER;
 BEGIN
   FOR cur_Bank IN 
