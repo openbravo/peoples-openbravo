@@ -63,7 +63,7 @@ public class ReportGuaranteeDateJR extends HttpSecureAppServlet {
 	String discard[] = {"discard"};
       data = ReportGuaranteeDateData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportGuaranteeDateJR"), Utility.getContext(this, vars, "#User_Org", "ReportGuaranteeDateJR"), DateTimeData.nDaysAfter(this, strDate,"1"), strcBpartnerId, strmWarehouseId);
 
-  if (data == null && data.length == 0){
+  if (data == null || data.length == 0){
         discard[0] = "selEliminar";
         data = ReportGuaranteeDateData.set();
       }

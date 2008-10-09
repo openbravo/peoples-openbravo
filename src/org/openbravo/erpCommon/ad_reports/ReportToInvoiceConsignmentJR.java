@@ -115,7 +115,7 @@ public class ReportToInvoiceConsignmentJR extends HttpSecureAppServlet {
 
     ReportToInvoiceConsignmentData[] data = ReportToInvoiceConsignmentData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportToInvoiceConsignmentJR"), Utility.getContext(this, vars, "#User_Org", "ReportToInvoiceConsignmentJR"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strWarehouse);  
 
-	 if (data == null && data.length == 0){
+	 if (data == null || data.length == 0){
            data = ReportToInvoiceConsignmentData.set();
       }
       String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportToInvoiceConsignmentJR.jrxml";

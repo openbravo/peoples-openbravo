@@ -232,7 +232,7 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
 	
       data = ReportProjectBuildingSiteData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars, "#User_Org", "ReportProjectBuildingSiteJR"), strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,"1"), strcBpartnerId, strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic, strcRegionId, strSalesRep, strProduct);
 
-  if (data == null && data.length == 0){
+  if (data == null || data.length == 0){
         discard[0] = "selEliminar";
         data = ReportProjectBuildingSiteData.set();
       }
