@@ -47786,33 +47786,6 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800774-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800774**************--></AD_ELEMENT>
 
-<!--800775**************--><AD_ELEMENT>
-<!--800775 AD_ELEMENT_ID-->
-<!--800775-->              <AD_ELEMENT_ID><![CDATA[800775]]></AD_ELEMENT_ID>
-<!--800775 AD_CLIENT_ID-->
-<!--800775-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800775 AD_ORG_ID-->
-<!--800775-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800775 ISACTIVE-->
-<!--800775-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800775 CREATED-->
-<!--800775-->              <CREATED><![CDATA[2007-02-20 16:46:32.0]]></CREATED>
-<!--800775 CREATEDBY-->
-<!--800775-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--800775 UPDATED-->
-<!--800775-->              <UPDATED><![CDATA[2007-02-20 16:46:32.0]]></UPDATED>
-<!--800775 UPDATEDBY-->
-<!--800775-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--800775 COLUMNNAME-->
-<!--800775-->              <COLUMNNAME><![CDATA[C_Nation_ID]]></COLUMNNAME>
-<!--800775 NAME-->
-<!--800775-->              <NAME><![CDATA[C_Nation_ID]]></NAME>
-<!--800775 PRINTNAME-->
-<!--800775-->              <PRINTNAME><![CDATA[C_Nation_ID]]></PRINTNAME>
-<!--800775 AD_MODULE_ID-->
-<!--800775-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800775**************--></AD_ELEMENT>
-
 <!--800776**************--><AD_ELEMENT>
 <!--800776 AD_ELEMENT_ID-->
 <!--800776-->              <AD_ELEMENT_ID><![CDATA[800776]]></AD_ELEMENT_ID>

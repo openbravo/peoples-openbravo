@@ -868,7 +868,7 @@
 <!--121 UPDATEDBY-->
 <!--121-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--121 VALUE-->
-<!--121-->              <VALUE><![CDATA[RV_Order_Open]]></VALUE>
+<!--121-->              <VALUE><![CDATA[C_Order_Open]]></VALUE>
 <!--121 NAME-->
 <!--121-->              <NAME><![CDATA[Open Orders]]></NAME>
 <!--121 DESCRIPTION-->
@@ -995,7 +995,7 @@
 <!--124 UPDATEDBY-->
 <!--124-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--124 VALUE-->
-<!--124-->              <VALUE><![CDATA[RV_M_Transaction_Sum]]></VALUE>
+<!--124-->              <VALUE><![CDATA[M_Transaction_Sum]]></VALUE>
 <!--124 NAME-->
 <!--124-->              <NAME><![CDATA[Product Transaction Summary]]></NAME>
 <!--124 DESCRIPTION-->
@@ -1122,7 +1122,7 @@
 <!--127 UPDATEDBY-->
 <!--127-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--127 VALUE-->
-<!--127-->              <VALUE><![CDATA[RV_C_Invoice_Acct]]></VALUE>
+<!--127-->              <VALUE><![CDATA[C_Invoice_Acct]]></VALUE>
 <!--127 NAME-->
 <!--127-->              <NAME><![CDATA[Invoice Transactions]]></NAME>
 <!--127 DESCRIPTION-->
@@ -1163,7 +1163,7 @@
 <!--128 UPDATEDBY-->
 <!--128-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--128 VALUE-->
-<!--128-->              <VALUE><![CDATA[RV_C_Invoice_Day]]></VALUE>
+<!--128-->              <VALUE><![CDATA[C_Invoice_Day]]></VALUE>
 <!--128 NAME-->
 <!--128-->              <NAME><![CDATA[Daily Invoice]]></NAME>
 <!--128 DESCRIPTION-->
@@ -1204,7 +1204,7 @@
 <!--129 UPDATEDBY-->
 <!--129-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--129 VALUE-->
-<!--129-->              <VALUE><![CDATA[RV_C_Invoice_Month]]></VALUE>
+<!--129-->              <VALUE><![CDATA[C_Invoice_Month]]></VALUE>
 <!--129 NAME-->
 <!--129-->              <NAME><![CDATA[Monthly Invoice]]></NAME>
 <!--129 DESCRIPTION-->
@@ -1245,7 +1245,7 @@
 <!--130 UPDATEDBY-->
 <!--130-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--130 VALUE-->
-<!--130-->              <VALUE><![CDATA[RV_C_Invoice_Week]]></VALUE>
+<!--130-->              <VALUE><![CDATA[C_Invoice_Week]]></VALUE>
 <!--130 NAME-->
 <!--130-->              <NAME><![CDATA[Weekly Invoice]]></NAME>
 <!--130 DESCRIPTION-->
@@ -1286,7 +1286,7 @@
 <!--131 UPDATEDBY-->
 <!--131-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--131 VALUE-->
-<!--131-->              <VALUE><![CDATA[RV_C_Invoice_ProdWeek]]></VALUE>
+<!--131-->              <VALUE><![CDATA[C_Invoice_ProdWeek]]></VALUE>
 <!--131 NAME-->
 <!--131-->              <NAME><![CDATA[Weekly Product Invoice]]></NAME>
 <!--131 DESCRIPTION-->
@@ -1327,7 +1327,7 @@
 <!--132 UPDATEDBY-->
 <!--132-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--132 VALUE-->
-<!--132-->              <VALUE><![CDATA[RV_C_Invoice_ProdMonth]]></VALUE>
+<!--132-->              <VALUE><![CDATA[C_Invoice_ProdMonth]]></VALUE>
 <!--132 NAME-->
 <!--132-->              <NAME><![CDATA[Monthly Product Invoice]]></NAME>
 <!--132 DESCRIPTION-->
@@ -1368,7 +1368,7 @@
 <!--133 UPDATEDBY-->
 <!--133-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--133 VALUE-->
-<!--133-->              <VALUE><![CDATA[RV_C_Invoice_VendorMonth]]></VALUE>
+<!--133-->              <VALUE><![CDATA[C_Invoice_VendorMonth]]></VALUE>
 <!--133 NAME-->
 <!--133-->              <NAME><![CDATA[Monthly Vendor Invoice Report]]></NAME>
 <!--133 DESCRIPTION-->
@@ -1581,7 +1581,7 @@
 <!--138 UPDATEDBY-->
 <!--138-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--138 VALUE-->
-<!--138-->              <VALUE><![CDATA[RV_C_Invoice_CustomerProdQtr]]></VALUE>
+<!--138-->              <VALUE><![CDATA[C_Invoice_CustomerProdQtr]]></VALUE>
 <!--138 NAME-->
 <!--138-->              <NAME><![CDATA[Quarterly Customer Invoice by Product]]></NAME>
 <!--138 DESCRIPTION-->
@@ -1622,7 +1622,7 @@
 <!--139 UPDATEDBY-->
 <!--139-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--139 VALUE-->
-<!--139-->              <VALUE><![CDATA[RV_C_Invoice_CustomerVendQtr]]></VALUE>
+<!--139-->              <VALUE><![CDATA[C_Invoice_CustomerVendQtr]]></VALUE>
 <!--139 NAME-->
 <!--139-->              <NAME><![CDATA[Quarterly Customer Invoice by Vendor]]></NAME>
 <!--139 DESCRIPTION-->
@@ -1835,7 +1835,7 @@
 <!--151 UPDATEDBY-->
 <!--151-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--151 VALUE-->
-<!--151-->              <VALUE><![CDATA[RV_C_Invoice]]></VALUE>
+<!--151-->              <VALUE><![CDATA[C_Invoice_V2]]></VALUE>
 <!--151 NAME-->
 <!--151-->              <NAME><![CDATA[Invoice Summary]]></NAME>
 <!--151 DESCRIPTION-->
@@ -1876,7 +1876,7 @@
 <!--152 UPDATEDBY-->
 <!--152-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--152 VALUE-->
-<!--152-->              <VALUE><![CDATA[RV_C_InvoiceLine]]></VALUE>
+<!--152-->              <VALUE><![CDATA[C_InvoiceLine_V2]]></VALUE>
 <!--152 NAME-->
 <!--152-->              <NAME><![CDATA[Invoice Detail - old]]></NAME>
 <!--152 DESCRIPTION-->
@@ -2175,7 +2175,7 @@
 <!--161 UPDATEDBY-->
 <!--161-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--161 VALUE-->
-<!--161-->              <VALUE><![CDATA[RV_M_Transaction]]></VALUE>
+<!--161-->              <VALUE><![CDATA[M_Transaction_V]]></VALUE>
 <!--161 NAME-->
 <!--161-->              <NAME><![CDATA[Product Transaction Value]]></NAME>
 <!--161 DESCRIPTION-->
@@ -2517,7 +2517,7 @@
 <!--170 UPDATEDBY-->
 <!--170-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--170 VALUE-->
-<!--170-->              <VALUE><![CDATA[RV_Cash_Detail]]></VALUE>
+<!--170-->              <VALUE><![CDATA[C_Cash_Detail]]></VALUE>
 <!--170 NAME-->
 <!--170-->              <NAME><![CDATA[Cash Journal Detail]]></NAME>
 <!--170 DESCRIPTION-->

@@ -1017,9 +1017,9 @@
 <!--1000027 UPDATEDBY-->
 <!--1000027-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--1000027 NAME-->
-<!--1000027-->              <NAME><![CDATA[DocumentNo_RV_C_Invoice]]></NAME>
+<!--1000027-->              <NAME><![CDATA[DocumentNo_C_Invoice_V2]]></NAME>
 <!--1000027 DESCRIPTION-->
-<!--1000027-->              <DESCRIPTION><![CDATA[DocumentNo/Value for Table RV_C_Invoice]]></DESCRIPTION>
+<!--1000027-->              <DESCRIPTION><![CDATA[DocumentNo/Value for Table C_Invoice_V2]]></DESCRIPTION>
 <!--1000027 ISAUTOSEQUENCE-->
 <!--1000027-->              <ISAUTOSEQUENCE><![CDATA[Y]]></ISAUTOSEQUENCE>
 <!--1000027 INCREMENTNO-->
@@ -1054,9 +1054,9 @@
 <!--1000028 UPDATEDBY-->
 <!--1000028-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--1000028 NAME-->
-<!--1000028-->              <NAME><![CDATA[DocumentNo_RV_M_Transaction]]></NAME>
+<!--1000028-->              <NAME><![CDATA[DocumentNo_M_Transaction_V]]></NAME>
 <!--1000028 DESCRIPTION-->
-<!--1000028-->              <DESCRIPTION><![CDATA[DocumentNo/Value for Table RV_M_Transaction]]></DESCRIPTION>
+<!--1000028-->              <DESCRIPTION><![CDATA[DocumentNo/Value for Table M_Transaction_V]]></DESCRIPTION>
 <!--1000028 ISAUTOSEQUENCE-->
 <!--1000028-->              <ISAUTOSEQUENCE><![CDATA[Y]]></ISAUTOSEQUENCE>
 <!--1000028 INCREMENTNO-->
@@ -1424,9 +1424,9 @@
 <!--1000038 UPDATEDBY-->
 <!--1000038-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--1000038 NAME-->
-<!--1000038-->              <NAME><![CDATA[DocumentNo_RV_BPartner]]></NAME>
+<!--1000038-->              <NAME><![CDATA[DocumentNo_C_BPartner_V]]></NAME>
 <!--1000038 DESCRIPTION-->
-<!--1000038-->              <DESCRIPTION><![CDATA[DocumentNo/Value for Table RV_BPartner]]></DESCRIPTION>
+<!--1000038-->              <DESCRIPTION><![CDATA[DocumentNo/Value for Table C_BPartner_V]]></DESCRIPTION>
 <!--1000038 ISAUTOSEQUENCE-->
 <!--1000038-->              <ISAUTOSEQUENCE><![CDATA[Y]]></ISAUTOSEQUENCE>
 <!--1000038 INCREMENTNO-->
@@ -4737,9 +4737,9 @@
 <!--1000129 UPDATEDBY-->
 <!--1000129-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--1000129 NAME-->
-<!--1000129-->              <NAME><![CDATA[DocumentNo_RV_BPartner]]></NAME>
+<!--1000129-->              <NAME><![CDATA[DocumentNo_C_BPartner_V]]></NAME>
 <!--1000129 DESCRIPTION-->
-<!--1000129-->              <DESCRIPTION><![CDATA[DocumentNo/Value for Table RV_BPartner]]></DESCRIPTION>
+<!--1000129-->              <DESCRIPTION><![CDATA[DocumentNo/Value for Table C_BPartner_V]]></DESCRIPTION>
 <!--1000129 ISAUTOSEQUENCE-->
 <!--1000129-->              <ISAUTOSEQUENCE><![CDATA[Y]]></ISAUTOSEQUENCE>
 <!--1000129 INCREMENTNO-->
@@ -5033,9 +5033,9 @@
 <!--1000137 UPDATEDBY-->
 <!--1000137-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--1000137 NAME-->
-<!--1000137-->              <NAME><![CDATA[DocumentNo_RV_C_Invoice]]></NAME>
+<!--1000137-->              <NAME><![CDATA[DocumentNo_C_Invoice_V2]]></NAME>
 <!--1000137 DESCRIPTION-->
-<!--1000137-->              <DESCRIPTION><![CDATA[DocumentNo/Value for Table RV_C_Invoice]]></DESCRIPTION>
+<!--1000137-->              <DESCRIPTION><![CDATA[DocumentNo/Value for Table C_Invoice_V2]]></DESCRIPTION>
 <!--1000137 ISAUTOSEQUENCE-->
 <!--1000137-->              <ISAUTOSEQUENCE><![CDATA[Y]]></ISAUTOSEQUENCE>
 <!--1000137 INCREMENTNO-->
@@ -5070,9 +5070,9 @@
 <!--1000138 UPDATEDBY-->
 <!--1000138-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--1000138 NAME-->
-<!--1000138-->              <NAME><![CDATA[DocumentNo_RV_M_Transaction]]></NAME>
+<!--1000138-->              <NAME><![CDATA[DocumentNo_M_Transaction_V]]></NAME>
 <!--1000138 DESCRIPTION-->
-<!--1000138-->              <DESCRIPTION><![CDATA[DocumentNo/Value for Table RV_M_Transaction]]></DESCRIPTION>
+<!--1000138-->              <DESCRIPTION><![CDATA[DocumentNo/Value for Table M_Transaction_V]]></DESCRIPTION>
 <!--1000138 ISAUTOSEQUENCE-->
 <!--1000138-->              <ISAUTOSEQUENCE><![CDATA[Y]]></ISAUTOSEQUENCE>
 <!--1000138 INCREMENTNO-->
