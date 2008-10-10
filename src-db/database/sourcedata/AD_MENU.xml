@@ -2414,37 +2414,6 @@
 <!--195-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--195**************--></AD_MENU>
 
-<!--196**************--><AD_MENU>
-<!--196 AD_MENU_ID-->
-<!--196-->              <AD_MENU_ID><![CDATA[196]]></AD_MENU_ID>
-<!--196 AD_CLIENT_ID-->
-<!--196-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--196 AD_ORG_ID-->
-<!--196-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--196 ISACTIVE-->
-<!--196-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--196 CREATED-->
-<!--196-->              <CREATED><![CDATA[2000-05-11 21:11:25.0]]></CREATED>
-<!--196 CREATEDBY-->
-<!--196-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--196 UPDATED-->
-<!--196-->              <UPDATED><![CDATA[2001-05-22 21:21:56.0]]></UPDATED>
-<!--196 NAME-->
-<!--196-->              <NAME><![CDATA[Replenish Report]]></NAME>
-<!--196 UPDATEDBY-->
-<!--196-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--196 DESCRIPTION-->
-<!--196-->              <DESCRIPTION><![CDATA[Inventory Replenish Report]]></DESCRIPTION>
-<!--196 ISSUMMARY-->
-<!--196-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--196 ACTION-->
-<!--196-->              <ACTION><![CDATA[R]]></ACTION>
-<!--196 AD_PROCESS_ID-->
-<!--196-->              <AD_PROCESS_ID><![CDATA[125]]></AD_PROCESS_ID>
-<!--196 AD_MODULE_ID-->
-<!--196-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--196**************--></AD_MENU>
-
 <!--197**************--><AD_MENU>
 <!--197 AD_MENU_ID-->
 <!--197-->              <AD_MENU_ID><![CDATA[197]]></AD_MENU_ID>

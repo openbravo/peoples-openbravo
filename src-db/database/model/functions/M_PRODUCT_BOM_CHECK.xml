@@ -79,22 +79,22 @@
       -- Checking BOM Structure
       v_ResultStr:='InsertingRoot';
       -- Table to put all BOMs - duplicate will cause exception
-      DELETE FROM T_Selection2 WHERE Query_ID='0';
-      INSERT INTO T_Selection2(T_Selection2_ID, Query_ID, T_Selection_ID) VALUES(get_uuid(), '0', v_Record_ID) ;
+      DELETE FROM C_Selection2 WHERE Query_ID='0';
+      INSERT INTO C_Selection2(C_Selection2_ID, Query_ID, C_Selection_ID) VALUES(get_uuid(), '0', v_Record_ID) ;
       -- Table of root modes
-      DELETE FROM T_Selection;
-      INSERT INTO T_Selection(T_Selection_ID) VALUES(v_Record_ID) ;
+      DELETE FROM C_Selection;
+      INSERT INTO C_Selection(C_Selection_ID) VALUES(v_Record_ID) ;
       LOOP
         -- How many do we have:1
-        SELECT COUNT(*) INTO v_CountNo  FROM T_Selection;
+        SELECT COUNT(*) INTO v_CountNo  FROM C_Selection;
         -- Nothing to do
         EXIT WHEN(v_CountNo=0) ;
         -- Insert BOM Nodes into "All" table
         INSERT
-        INTO T_Selection2
+        INTO C_Selection2
           (
             Query_ID,
-            T_Selection_ID
+            C_Selection_ID
           )
         SELECT '0',
           p.M_Product_ID
@@ -105,16 +105,16 @@
           FROM M_Product_BOM b
           WHERE p.M_Product_ID=b.M_ProductBOM_ID
             AND b.M_Product_ID IN
-            (SELECT T_Selection_ID FROM T_Selection)
+            (SELECT C_Selection_ID FROM C_Selection)
           )
           ;
         -- Insert BOM Nodes into temporary table
-        DELETE FROM T_Selection2 WHERE Query_ID='1';
+        DELETE FROM C_Selection2 WHERE Query_ID='1';
         INSERT
-        INTO T_Selection2
+        INTO C_Selection2
           (
             Query_ID,
-            T_Selection_ID
+            C_Selection_ID
           )
         SELECT '1',
           p.M_Product_ID
@@ -125,17 +125,17 @@
           FROM M_Product_BOM b
           WHERE p.M_Product_ID=b.M_ProductBOM_ID
             AND b.M_Product_ID IN
-            (SELECT T_Selection_ID FROM T_Selection)
+            (SELECT C_Selection_ID FROM C_Selection)
           )
           ;
         -- Copy into root table
-        DELETE FROM T_Selection;
+        DELETE FROM C_Selection;
         INSERT
-        INTO T_Selection
+        INTO C_Selection
           (
-            T_Selection_ID
+            C_Selection_ID
           )
-        SELECT T_Selection_ID  FROM T_Selection2  WHERE Query_ID='1';
+        SELECT C_Selection_ID  FROM C_Selection2  WHERE Query_ID='1';
       END LOOP;
     END IF; --FINISH_PROCESS
     --<<FINISH_PROCESS>>

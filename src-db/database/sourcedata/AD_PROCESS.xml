@@ -1018,49 +1018,6 @@
 <!--124-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--124**************--></AD_PROCESS>
 
-<!--125**************--><AD_PROCESS>
-<!--125 AD_PROCESS_ID-->
-<!--125-->              <AD_PROCESS_ID><![CDATA[125]]></AD_PROCESS_ID>
-<!--125 AD_CLIENT_ID-->
-<!--125-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--125 AD_ORG_ID-->
-<!--125-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--125 ISACTIVE-->
-<!--125-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--125 CREATED-->
-<!--125-->              <CREATED><![CDATA[2000-05-11 21:06:15.0]]></CREATED>
-<!--125 CREATEDBY-->
-<!--125-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--125 UPDATED-->
-<!--125-->              <UPDATED><![CDATA[2003-02-22 02:19:53.0]]></UPDATED>
-<!--125 UPDATEDBY-->
-<!--125-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--125 VALUE-->
-<!--125-->              <VALUE><![CDATA[RV_T_Replenish]]></VALUE>
-<!--125 NAME-->
-<!--125-->              <NAME><![CDATA[Replenish Report]]></NAME>
-<!--125 DESCRIPTION-->
-<!--125-->              <DESCRIPTION><![CDATA[Inventory Replenish Report]]></DESCRIPTION>
-<!--125 HELP-->
-<!--125-->              <HELP><![CDATA[Report lists products to be replenished]]></HELP>
-<!--125 ACCESSLEVEL-->
-<!--125-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--125 ISUSERSTARTABLE-->
-<!--125-->              <ISUSERSTARTABLE><![CDATA[Y]]></ISUSERSTARTABLE>
-<!--125 PROCEDURENAME-->
-<!--125-->              <PROCEDURENAME><![CDATA[T_Replenish_Create]]></PROCEDURENAME>
-<!--125 ISREPORT-->
-<!--125-->              <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--125 ISDIRECTPRINT-->
-<!--125-->              <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--125 ISBACKGROUND-->
-<!--125-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--125 ISJASPER-->
-<!--125-->              <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--125 AD_MODULE_ID-->
-<!--125-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--125**************--></AD_PROCESS>
-
 <!--126**************--><AD_PROCESS>
 <!--126 AD_PROCESS_ID-->
 <!--126-->              <AD_PROCESS_ID><![CDATA[126]]></AD_PROCESS_ID>
