@@ -39,7 +39,7 @@
   <Sql>
   <![CDATA[
   		UPDATE C_TAXPAYMENT 
-  		SET Processed = ? , UPDATED=now() , UPDATEDBY = TO_NUMBER( ? ) 
+  		SET Processed = ? , UPDATED=now() , UPDATEDBY =  ?
   		WHERE C_TaxPayment_ID = ?
       ]]>
   </Sql>
@@ -53,7 +53,7 @@
   <Sql>
   <![CDATA[
   		UPDATE C_TAXPAYMENT 
-  		SET GeneratePayment = ? , UPDATED=now() , UPDATEDBY = TO_NUMBER( ? ) 
+  		SET GeneratePayment = ? , UPDATED=now() , UPDATEDBY = ? 
   		WHERE C_TaxPayment_ID = ?
       ]]>
   </Sql>

@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.ad_forms.DocInvoice;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.FormatUtilities;
@@ -71,10 +72,10 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
 			String strProcessed = vars.getStringParameter("inpProcessed");
 			String strGeneratePayment = vars.getStringParameter("inpGeneratePayment");
 			String strProcessing = vars.getStringParameter("inpProcessing");
-			String message=CreateRegisters(vars, strTaxpaymentID, strDatefrom, strDateto, strProcessed, strGeneratePayment, strProcessing);
+			OBError myMessage=CreateRegisters(vars, strTaxpaymentID, strDatefrom, strDateto, strProcessed, strGeneratePayment, strProcessing);
 			//try this
 			
-			  String strWindowId = vars.getStringParameter("inpWindowId");
+	//		  String strWindowId = vars.getStringParameter("inpWindowId");
 		      String strTabId = vars.getStringParameter("inpTabId");
 			ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTabId);
 		      String strWindowPath="", strTabName="";
@@ -82,7 +83,12 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
 		        strTabName = FormatUtilities.replace(tab[0].name);
 		        strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName + "_Relation.html";
 		      } else strWindowPath = strDefaultServlet;
-		      if (!message.equals("")) vars.setSessionValue(strWindowId + "|" + strTabName + ".message", message);
+		      //if (!message.equals("")) vars.setSessionValue(strWindowId + "|" + strTabName + ".message", message);
+		 
+		     
+		      vars.setMessage(strTabId, myMessage);
+		     
+		      
 		      printPageClosePopUp(response, vars, strWindowPath);
 		    } else pageErrorPopUp(response);
 			//advisePopUp(response,"INFO","Create VAT Register",message);
@@ -110,9 +116,10 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
 		 */
 	
 
-	public String CreateRegisters(VariablesSecureApp vars, String  strTaxpaymentID, String strDatefrom, String strDateto, String strProcessed, String strGeneratePayment, String strProcessing) throws IOException,
+	public OBError CreateRegisters(VariablesSecureApp vars, String  strTaxpaymentID, String strDatefrom, String strDateto, String strProcessed, String strGeneratePayment, String strProcessing) throws IOException,
 			ServletException {
-		// Connection conn = getTransactionConnection();		
+		// Connection conn = getTransactionConnection();	
+		OBError myMessage = null;
 		TaxPayment[] taxpayment = TaxPayment.select(this, strTaxpaymentID);
 		String strUser = vars.getUser();
 				log4j.info("strTaxpaymentID: " + strTaxpaymentID + "strDatefrom: " + strDatefrom + "strDateto: " + strDateto  + "strProcessed: " + strProcessed + "strGeneratePayment: " + strGeneratePayment);
@@ -121,8 +128,10 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
 		if (strProcessed.equalsIgnoreCase("N")) {
 			//check for already used periods)
 			Double CrossPeriodCount = new Double(TaxPayment.selectCrossPeriodCount(this, vars.getClient(), strDatefrom, strDateto));
-			if (CrossPeriodCount.intValue() > 0)
-				return "Period Error";
+			if (CrossPeriodCount.intValue() > 0){
+				myMessage = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this, "PeriodsDontMatch", vars.getLanguage()));
+            return myMessage;
+            }
 			
 			TaxPayment.deleteRegisterLinesChild(this, strTaxpaymentID);
 			TaxPayment.deleteRegisterChild(this, strTaxpaymentID);
@@ -187,7 +196,9 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
 						//if (!(((myinvoice.istaxexempt.equals("Y") )
 						//	^ (myinvoice.istaxundeductable.equals("Y"))
 						//	^ (myinvoice.isnovat.equals("Y"))))) {
-						return "InvoiceTax Error: istaxexempt, istaxundeductable or isnovat could have wrong values,  C_InvoiceTax_ID="+myinvoice.cInvoicetaxId;
+						//return "InvoiceTax Error: istaxexempt, istaxundeduc or isnovat could have wrong values,  C_InvoiceTax_ID="+myinvoice.cInvoicetaxId;
+						myMessage = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this, "TaxCriteriaNotFound", vars.getLanguage()));
+				        return myMessage;	
 					}
 					if (myinvoice.docbasetype.equals(DocInvoice.DOCTYPE_APCredit) || myinvoice.docbasetype.equals(DocInvoice.DOCTYPE_ARCredit)){
 						strTaxBaseAmt = new Double(new Double(strTaxBaseAmt) * new Double(-1)).toString();
@@ -235,14 +246,28 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
 			//}
 				log4j.info("5strTaxpaymentID: " + strTaxpaymentID + "strDatefrom: " + strDatefrom + "strDateto: " + strDateto  + "strProcessed: " + strProcessed + "strGeneratePayment: " + strGeneratePayment);
 
+		try{		
       if (new Double(TaxPayment.calculateVatPayment(this, strTaxpaymentID)).compareTo(new Double(0))>0) {
 				TaxPayment.updateGeneratePayment(this, "Y", strUser, strTaxpaymentID);
 			}else TaxPayment.updateGeneratePayment(this, "N", strUser, strTaxpaymentID);
-			return "Completed Operation";
+		}catch (NumberFormatException e){
+			myMessage = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this, "NoDataSelected", vars.getLanguage()));
+            return myMessage;
+		}
+			if (myMessage==null) {
+			      myMessage = new OBError();
+			      myMessage.setType("Success");
+			      myMessage.setTitle("");
+			      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+			    }
+			    return myMessage;
+			
+			
 		}
 	 
 	   else
-		    return "Error: the payment already exists";
+		   myMessage = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
+        return myMessage;
 	
 		// Select all active Register Type Lines of Tax Register
 		// for (TaxRegisterType taxRegisterType : taxregistertypes) {
