@@ -1704,7 +1704,7 @@ public class TableSQLData {
           type="img";
         } else if (prop.getProperty("AD_Reference_ID").equals("11")) { 
           type="integer";
-        } else if (prop.getProperty("AD_Reference_ID").equals("12") || prop.getProperty("AD_Reference_ID").equals("22")) {   
+        } else if (prop.getProperty("AD_Reference_ID").equals("12") || prop.getProperty("AD_Reference_ID").equals("22") || prop.getProperty("AD_Reference_ID").equals("800008")) {   
           type="float";
         }
         dataAux.setData("type", type);
