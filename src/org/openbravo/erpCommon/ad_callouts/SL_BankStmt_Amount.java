@@ -85,8 +85,8 @@ public class SL_BankStmt_Amount extends HttpSecureAppServlet {
         resultado.append("new Array(\"inpconvertchargeamt\", \"" + ConvChgAmount.toString() + "\")");
         resultado.append(");");
       } else {
-        ChgAmount = StmAmount.subtract(TrxAmount);
-        resultado.append("new Array(\"inpchargeamt\", \"" + ChgAmount.toString() + "\")");
+        TrxAmount = StmAmount.subtract(ChgAmount);
+        resultado.append("new Array(\"inptrxamt\", \"" + TrxAmount.toString() + "\")");
         resultado.append(");");
       }
     }
