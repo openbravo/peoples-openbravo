@@ -18,13 +18,13 @@
 */
 package org.openbravo.erpCommon.ad_actionButton;
 
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.reference.*;
 import org.openbravo.erpCommon.utility.*;
-import org.openbravo.utils.Replace;
 import org.openbravo.erpCommon.businessUtility.*;
 import org.openbravo.erpCommon.ad_callouts.*;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -39,8 +39,10 @@ import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
 
 // imports for transactions
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import org.openbravo.erpCommon.utility.DateTimeData;
+import org.openbravo.exception.NoConnectionAvailableException;
 
 public class ExpenseSOrder extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -68,7 +70,6 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
       
       OBError myMessage = processButton(vars, strBPartner, strDatefrom, strDateto, strDateOrdered, strOrganization, strCompleteAuto);
       vars.setMessage("ExpenseSOrder", myMessage);
-      //vars.setSessionValue("ExpenseSOrder|message", messageResult);
       
       printPage(response, vars, strDatefrom, strDateto, strDateOrdered, strBPartner, strOrganization, strCompleteAuto);
     } else pageErrorPopUp(response);
@@ -111,8 +112,13 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
               releaseCommitConnection(conn);
               // Automatically processes Sales Order
               if (strCompleteAuto.equals("Y")) {
-	              String mensaje = processOrder(vars, strCOrderId);
-	              if (!mensaje.equals("")) textoMensaje.append(" -> ").append(mensaje);
+                try {
+                  OBError myError = processOrder(vars, strCOrderId);
+                  if (myError != null) textoMensaje.append(" -> ").append(myError.getMessage());
+                } catch(ServletException ex) {
+                  myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());                  
+                  return myMessage;
+                }	              
               }
               conn = getTransactionConnection();
             }
@@ -144,9 +150,14 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
               strCOrderId = SequenceIdData.getSequence(this, "C_Order", vars.getClient());
               //order.add(strCOrderId);
               String strDocumentNo = Utility.getDocumentNo(this, vars, "", "C_Order", docTargetType, docTargetType, false, true);
-
-              ExpenseSOrderData.insertCOrder(conn, this, strCOrderId, data[i].adClientId, data[i].adOrgId, vars.getUser(), strDocumentNo, strDocStatus, strDocAction, strProcessing, docType, docTargetType, strDateOrdered, strDateOrdered, strDateOrdered, data[i].cBpartnerId, ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), ExpenseSOrderData.billto(this, data[i].cBpartnerId).equals("")?ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId):ExpenseSOrderData.billto(this, data[i].cBpartnerId), strBPCCurrencyId, data1[0].paymentrule, data1[0].cPaymenttermId.equals("")?SEOrderBPartnerData.selectPaymentTerm(this, data[i].adClientId):data1[0].cPaymenttermId, data1[0].invoicerule.equals("")?"I":data1[0].invoicerule, data1[0].deliveryrule.equals("")?"A":data1[0].deliveryrule, "I", data1[0].deliveryviarule.equals("")?"D":data1[0].deliveryviarule, data[i].mWarehouseId.equals("")?vars.getWarehouse():data[i].mWarehouseId, data[i].mPricelistId, data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId);
-              
+              // Catch database error message
+              try {
+                ExpenseSOrderData.insertCOrder(conn, this, strCOrderId, data[i].adClientId, data[i].adOrgId, vars.getUser(), strDocumentNo, strDocStatus, strDocAction, strProcessing, docType, docTargetType, strDateOrdered, strDateOrdered, strDateOrdered, data[i].cBpartnerId, ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), ExpenseSOrderData.billto(this, data[i].cBpartnerId).equals("")?ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId):ExpenseSOrderData.billto(this, data[i].cBpartnerId), strBPCCurrencyId, data1[0].paymentrule, data1[0].cPaymenttermId.equals("")?SEOrderBPartnerData.selectPaymentTerm(this, data[i].adClientId):data1[0].cPaymenttermId, data1[0].invoicerule.equals("")?"I":data1[0].invoicerule, data1[0].deliveryrule.equals("")?"A":data1[0].deliveryrule, "I", data1[0].deliveryviarule.equals("")?"D":data1[0].deliveryviarule, data[i].mWarehouseId.equals("")?vars.getWarehouse():data[i].mWarehouseId, data[i].mPricelistId, data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId);
+              } catch(ServletException ex) {
+                myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+                releaseRollbackConnection(conn);
+                return myMessage;
+              }
               textoMensaje.append(Utility.messageBD(this, "SalesOrderDocumentno", vars.getLanguage())).append(" ").append(strDocumentNo).append(" ").append(Utility.messageBD(this, "beenCreated", vars.getLanguage()));
             }     
             
@@ -238,19 +249,36 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
             } else {
               line = line + 10;
             }
-            
-            ExpenseSOrderData.insertCOrderline(conn, this, strCOrderlineID, data[i].adClientId, strOrganization.equals("")?data[i].adOrgId:strOrganization, vars.getUser(), strCOrderId, Integer.toString(line), data[i].cBpartnerId, ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), strDateOrdered, strDateOrdered, data[i].description, data[i].mProductId, data[i].mWarehouseId.equals("")?vars.getWarehouse():data[i].mWarehouseId, data[i].cUomId.equals("")?Utility.getContext(this, vars, "#C_UOM_ID", "ExpenseSOrder"):data[i].cUomId, data[i].qty, strBPCCurrencyId, pricelist, priceactual, pricelimit, strCTaxID, data[i].sResourceassignmentId, strDiscount);
-            
-            //Updates expense line with the sales order line ID
-            ExpenseSOrderData.updateTimeExpenseLine(conn, this, strCOrderlineID, data[i].sTimeexpenselineId);
+            // Catch database error message
+            try {
+              ExpenseSOrderData.insertCOrderline(conn, this, strCOrderlineID, data[i].adClientId, strOrganization.equals("")?data[i].adOrgId:strOrganization, vars.getUser(), strCOrderId, Integer.toString(line), data[i].cBpartnerId, ExpenseSOrderData.cBPartnerLocationId(this, data[i].cBpartnerId), strDateOrdered, strDateOrdered, data[i].description, data[i].mProductId, data[i].mWarehouseId.equals("")?vars.getWarehouse():data[i].mWarehouseId, data[i].cUomId.equals("")?Utility.getContext(this, vars, "#C_UOM_ID", "ExpenseSOrder"):data[i].cUomId, data[i].qty, strBPCCurrencyId, pricelist, priceactual, pricelimit, strCTaxID, data[i].sResourceassignmentId, strDiscount);
+            } catch(ServletException ex) {
+              myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+              releaseRollbackConnection(conn);
+              return myMessage;
+            }
+            // Catch database error message
+            try {
+              //Updates expense line with the sales order line ID
+              ExpenseSOrderData.updateTimeExpenseLine(conn, this, strCOrderlineID, data[i].sTimeexpenselineId);
+            } catch(ServletException ex) {
+              myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+              releaseRollbackConnection(conn);
+              return myMessage;
+            }
       }
       
       releaseCommitConnection(conn);
       if (!strCOrderId.equals("")) {
         // Automatically processes Sales Order
       	if (strCompleteAuto.equals("Y")) {
-  	        String mensaje = processOrder(vars, strCOrderId);
-  	        if (!mensaje.equals("")) textoMensaje.append(" -> ").append(mensaje);
+      	  try {
+  	        OBError myError = processOrder(vars, strCOrderId);
+  	        if (myError != null) textoMensaje.append(" -> ").append(myError.getMessage());
+      	  } catch(ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());           
+            return myMessage;
+          }  
   	    }
       }
       if (total != 0) textoMensaje.append("<br>");
@@ -258,10 +286,6 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
       myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
       myMessage.setMessage(textoMensaje.toString() + Utility.messageBD(this, "Created", vars.getLanguage()) + ": " + Integer.toString(total));
       return myMessage;
-      /*String [] allOrder = new String[order.size()];
-      order.toArray(allOrder);
-      if (processOrderPost(vars, allOrder)) return Utility.messageBD(this, "ProcessOK", vars.getLanguage());
-      else return "Se han creado los pedidos de venta pero no se han podido procesar";*/
     } catch (Exception e) {
       try {
         if (conn!=null) releaseRollbackConnection(conn);
@@ -282,53 +306,27 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
       return myMessage;
     }
   }
-    //processes the created order
-    /*boolean processOrderPost(VariablesSecureApp vars, String [] allOrder) {
-      Connection conn = this.getTransactionConnection();
-      try {
-        for (int i=0;i<allOrder.length;i++) {
-          String pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
-          ExpenseSOrderData.insertPInstance(conn, this, pinstance, "104", allOrder[i], vars.getUser(), vars.getClient(), vars.getOrg());
-          ExpenseSOrderData.processOrder(conn, this, pinstance);
-        }
-        releaseCommitConnection(conn);
-        return true;
-      } catch (ServletException e) {
-        releaseRollbackConnection(conn);
-        return false;
-      }
 
-    }*/
-
-  String processOrder(VariablesSecureApp vars, String strCOrderId) throws ServletException {
-    String pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
-    PInstanceProcessData.insertPInstance(this, pinstance, "104", strCOrderId, "N", vars.getUser(), vars.getClient(), vars.getOrg());
-    ActionButtonData.process104(this, pinstance);
-
-    PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);
-    String messageResult="";
-    if (pinstanceData!=null && pinstanceData.length>0) {
-      if (!pinstanceData[0].errormsg.equals("")) {
-        String message = pinstanceData[0].errormsg;
-        if (message.startsWith("@") && message.endsWith("@")) {
-          message = message.substring(1, message.length()-1);
-          if (message.indexOf("@")==-1) messageResult = Utility.messageBD(this, message, vars.getLanguage());
-          else messageResult = Utility.parseTranslation(this, vars, vars.getLanguage(), "@" + message + "@");
-        } else {
-          messageResult = Utility.parseTranslation(this, vars, vars.getLanguage(), message);
-        }
-      } else if (!pinstanceData[0].pMsg.equals("")) {
-        String message = pinstanceData[0].pMsg;
-        messageResult = Utility.parseTranslation(this, vars, vars.getLanguage(), message);
-      } else if (pinstanceData[0].result.equals("1")) {
-        messageResult = "";
-      } else {
-        messageResult = Utility.messageBD(this, "Error", vars.getLanguage());
-      }
-    }
-    messageResult = Replace.replace(messageResult, "'", "\\'");
-    if (log4j.isDebugEnabled()) log4j.debug(messageResult);
-    return (messageResult);
+  OBError processOrder(VariablesSecureApp vars, String strCOrderId) throws ServletException, NoConnectionAvailableException, SQLException {
+     Connection conn=null;
+     conn = getTransactionConnection();
+     
+     OBError myMessage = null;    
+    
+     String pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
+     try {
+       PInstanceProcessData.insertPInstance(this, pinstance, "104", strCOrderId, "N", vars.getUser(), vars.getClient(), vars.getOrg());
+     } catch(ServletException ex) {
+       myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+       releaseRollbackConnection(conn);
+       return myMessage;
+     }
+      
+     ActionButtonData.process104(this, pinstance);
+     PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);
+     myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
+     
+    return myMessage;
   }
 
   void printPage(HttpServletResponse response, VariablesSecureApp vars, String strDatefrom,String strDateto,String strDateOrdered,String strBPartner, String strOrganization, String strCompleteAuto) throws IOException, ServletException {

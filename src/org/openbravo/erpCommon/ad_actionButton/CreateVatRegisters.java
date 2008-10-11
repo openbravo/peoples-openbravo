@@ -133,8 +133,13 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
             return myMessage;
             }
 			
-			TaxPayment.deleteRegisterLinesChild(this, strTaxpaymentID);
-			TaxPayment.deleteRegisterChild(this, strTaxpaymentID);
+			try {
+			  TaxPayment.deleteRegisterLinesChild(this, strTaxpaymentID);
+			  TaxPayment.deleteRegisterChild(this, strTaxpaymentID);
+			} catch(ServletException ex) {
+			  myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+			  return myMessage;
+			}
 
 			// Select all active Register Type for create the Tax Registers
 			TaxRegisterType[] taxregistertypes = TaxRegisterType.select(this, vars.getClient());
@@ -148,10 +153,15 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
 						"C_TaxRegister", vars.getClient());
 				log4j.info("Sequence: " + strSequence);
 
-				TaxRegister.insert(this, taxpayment[0].adClientId,
+				try {
+				  TaxRegister.insert(this, taxpayment[0].adClientId,
 						taxpayment[0].adOrgId, strSequence, strTaxpaymentID,
 						taxRegisterType.cTaxregisterTypeId, "0", taxRegisterType.registername ,
 						strUser, strUser);
+				} catch(ServletException ex) {
+				  myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+				  return myMessage;
+				}
 			}
 			// For every TaxRegister i select the invoices with a specific
 			// doctype
@@ -223,7 +233,8 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
 							"C_TaxRegisterline", vars.getClient());
 					log4j.info("Sequence: " + strSequence);
 
-					TaxRegister
+					try {
+					  TaxRegister
 							.insertLines(this, taxRegister.adClientId,
 									taxRegister.adOrgId, strSequence,
 									taxRegister.cTaxregisterId,
@@ -233,10 +244,21 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
 									strExemptAmt, strNoVatAmt, strTotalAmt,
 									myinvoice.taxdate, "RegisterLine", strUser,
 									strUser);
+  				} catch(ServletException ex) {
+  				  myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+  				  return myMessage;
+  				}
+
 
 				}
-				TaxRegister.updateTaxTotalAmt(this, taxRegister.cTaxregisterId);
-				TaxRegister.updateRegAccumAmt(this, taxRegister.cTaxregisterId, taxRegister.cTaxregisterTypeId, strDatefrom);
+				
+				try {
+				  TaxRegister.updateTaxTotalAmt(this, taxRegister.cTaxregisterId);
+				  TaxRegister.updateRegAccumAmt(this, taxRegister.cTaxregisterId, taxRegister.cTaxregisterTypeId, strDatefrom);
+				} catch(ServletException ex) {
+				  myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+				  return myMessage;
+				}
 			}
 			// if GeneratePayment= Y then i set the field processing = N so next
 			// time i print only the tax registers

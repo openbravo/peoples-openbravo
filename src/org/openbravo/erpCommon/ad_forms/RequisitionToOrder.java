@@ -118,7 +118,6 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
     XmlDocument xmlDocument=null;
 
     String strTreeOrg = RequisitionToOrderData.treeOrg(this, vars.getClient());
-    String strDateFormat = vars.getSessionValue("#AD_SqlDateFormat");
     RequisitionToOrderData[] datalines = RequisitionToOrderData.selectLines(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "RequisitionToOrder"), Tree.getMembers(this, strTreeOrg, strOrgId), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strProductId, strRequesterId, (strIncludeVendor.equals("Y")?strVendorId:null), (strIncludeVendor.equals("Y")?null:strVendorId));
 
     RequisitionToOrderData[] dataselected = RequisitionToOrderData.selectSelected(this, vars.getLanguage(), vars.getUser(), Utility.getContext(this, vars, "#User_Client", "RequisitionToOrder"), Tree.getMembers(this, strTreeOrg, strOrgId));
@@ -355,8 +354,14 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
       String cCurrencyId = RequisitionToOrderData.selectCurrency(this, strPriceListId);
 
       RequisitionToOrderData[] data1 = RequisitionToOrderData.selectVendorData(this, strVendor);
-      RequisitionToOrderData.insertCOrder(conn, this, strCOrderId, vars.getClient(), strOrg, vars.getUser(), strDocumentNo, "DR", "CO", "0", docTargetType, strOrderDate, strOrderDate, strOrderDate, strVendor, RequisitionToOrderData.cBPartnerLocationId(this, strVendor), RequisitionToOrderData.billto(this, strVendor).equals("")?RequisitionToOrderData.cBPartnerLocationId(this, strVendor):RequisitionToOrderData.billto(this, strVendor), cCurrencyId, data1[0].paymentrulepo, data1[0].poPaymenttermId.equals("")?RequisitionToOrderData.selectPaymentTerm(this, vars.getClient()):data1[0].poPaymenttermId, data1[0].invoicerule.equals("")?"I":data1[0].invoicerule, data1[0].deliveryrule.equals("")?"A":data1[0].deliveryrule, "I", data1[0].deliveryviarule.equals("")?"D":data1[0].deliveryviarule, strWarehouse, strPriceListId, "", "", "");
-
+      try {
+        RequisitionToOrderData.insertCOrder(conn, this, strCOrderId, vars.getClient(), strOrg, vars.getUser(), strDocumentNo, "DR", "CO", "0", docTargetType, strOrderDate, strOrderDate, strOrderDate, strVendor, RequisitionToOrderData.cBPartnerLocationId(this, strVendor), RequisitionToOrderData.billto(this, strVendor).equals("")?RequisitionToOrderData.cBPartnerLocationId(this, strVendor):RequisitionToOrderData.billto(this, strVendor), cCurrencyId, data1[0].paymentrulepo, data1[0].poPaymenttermId.equals("")?RequisitionToOrderData.selectPaymentTerm(this, vars.getClient()):data1[0].poPaymenttermId, data1[0].invoicerule.equals("")?"I":data1[0].invoicerule, data1[0].deliveryrule.equals("")?"A":data1[0].deliveryrule, "I", data1[0].deliveryviarule.equals("")?"D":data1[0].deliveryviarule, strWarehouse, strPriceListId, "", "", "");
+      } catch(ServletException ex) {
+        myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+        releaseRollbackConnection(conn);
+        return myMessage;
+      }
+      
       int line = 0;
       String strCOrderlineID = "";
       BigDecimal qty = new BigDecimal("0");
@@ -386,8 +391,14 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           BigDecimal qtyAux = new BigDecimal(lines[i].lockqty);
           qtyOrder = qtyOrder.add(qtyAux);
           if (log4j.isDebugEnabled()) log4j.debug("Lockqty: " + lines[i].lockqty + " qtyorder: " + qtyOrder.toPlainString() + " new BigDecimal: " + (new BigDecimal(lines[i].lockqty)).toString() + " qtyAux: " + qtyAux.toString());
-
-          RequisitionToOrderData.insertCOrderline(conn, this, strCOrderlineID, vars.getClient(), strOrg, vars.getUser(), strCOrderId, Integer.toString(line), strVendor, RequisitionToOrderData.cBPartnerLocationId(this, strVendor), strOrderDate, strOrderDate, lines[i].description, lines[i].mProductId, lines[i].mAttributesetinstanceId, strWarehouse, lines[i].cUomId, qtyOrder.toPlainString(), cCurrencyId, lines[i].pricelist, lines[i].priceactual, lines[i].pricelimit, lines[i].tax, "", lines[i].discount);
+          
+          try {
+            RequisitionToOrderData.insertCOrderline(conn, this, strCOrderlineID, vars.getClient(), strOrg, vars.getUser(), strCOrderId, Integer.toString(line), strVendor, RequisitionToOrderData.cBPartnerLocationId(this, strVendor), strOrderDate, strOrderDate, lines[i].description, lines[i].mProductId, lines[i].mAttributesetinstanceId, strWarehouse, lines[i].cUomId, qtyOrder.toPlainString(), cCurrencyId, lines[i].pricelist, lines[i].priceactual, lines[i].pricelimit, lines[i].tax, "", lines[i].discount);
+          } catch(ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myMessage;
+          }
 
           strCOrderlineID = SequenceIdData.getSequence(this, "C_OrderLine", vars.getClient());
         }
@@ -395,7 +406,13 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
       unlockRequisitionLines(vars, strSelected);
       for (int i=0; lines!=null && i<lines.length; i++) {
         String strRequisitionOrderId = SequenceIdData.getSequence(this, "M_RequisitionOrder", vars.getClient());
-        RequisitionToOrderData.insertRequisitionOrder(conn, this, strRequisitionOrderId, vars.getClient(), strOrg, vars.getUser(), lines[i].mRequisitionlineId, lines[i].cOrderlineId, lines[i].lockqty);
+        try {
+          RequisitionToOrderData.insertRequisitionOrder(conn, this, strRequisitionOrderId, vars.getClient(), strOrg, vars.getUser(), lines[i].mRequisitionlineId, lines[i].cOrderlineId, lines[i].lockqty);
+        } catch(ServletException ex) {
+          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+          releaseRollbackConnection(conn);
+          return myMessage;
+        }
         if (lines[i].toClose.equals("Y")) RequisitionToOrderData.requisitionStatus(conn, this, lines[i].mRequisitionlineId, vars.getUser());
       }
 

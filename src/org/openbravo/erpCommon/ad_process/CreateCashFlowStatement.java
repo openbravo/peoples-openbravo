@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2007 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,38 +48,42 @@ public class CreateCashFlowStatement extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       printPage(response, vars, process);
     } else if (vars.commandIn("FIND")){
-      String strClient = vars.getClient();
-      CreateCashFlowStatementData[] data = CreateCashFlowStatementData.select(this, strClient);
-      Connection conn  = null;
-      OBError myError = new OBError();
-      myError.setTitle("");
-        try {
-          conn  = getTransactionConnection();
-          for (int i=0;i<data.length;i++){
-            insertCFS(conn, response, vars, data[i].recordId2, data[i].factAcctId, data[i].amount, data[i].accountId, 0);
-          }
-        } catch (Exception e){
-          try {
-            releaseRollbackConnection(conn);
-          } catch (Exception ignored) {}
-          e.printStackTrace();
-          log4j.warn("Rollback in transaction");
-          myError.setType("Error");
-          myError.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
-          vars.setMessage("CreateCashFlowStatement", myError);
-          return; 
-        } 
-        try {
-            releaseCommitConnection(conn);
-            myError.setType("Success");
-            myError.setMessage(Utility.messageBD(this, "ProcessOK", vars.getLanguage()));
-            vars.setMessage("CreateCashFlowStatement", myError);
-        } catch (Exception ignored) {}
-        printPage(response, vars, process);
+      OBError myError = process(response, vars);
+      vars.setMessage("CreateCashFlowStatement", myError);
+      printPage(response, vars, process);
     } else pageErrorPopUp(response);
   }
 
-
+OBError process(HttpServletResponse response, VariablesSecureApp vars){
+  
+  Connection conn  = null;
+  OBError myError = null;
+  int i = 0;
+  
+    try {
+      String strClient = vars.getClient();
+      CreateCashFlowStatementData[] data = CreateCashFlowStatementData.select(this, strClient);
+      conn  = getTransactionConnection();
+      for (i=0;i<data.length;i++){
+        insertCFS(conn, response, vars, data[i].recordId2, data[i].factAcctId, data[i].amount, data[i].accountId, 0);
+      }
+      
+      releaseCommitConnection(conn);
+      myError = new OBError();
+      myError.setType("Success");
+      myError.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
+      myError.setMessage(Utility.messageBD(this, "RecordsProcessed", vars.getLanguage()) + ": " + i); 
+    } catch (Exception e){
+      try {
+        releaseRollbackConnection(conn);
+      } catch (Exception ignored) {}
+      e.printStackTrace();
+      log4j.warn("Rollback in transaction");      
+      myError = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
+    }
+  return myError;
+}
+  
 void printPage(HttpServletResponse response, VariablesSecureApp vars, String strProcessId) throws IOException, ServletException {
       if (log4j.isDebugEnabled()) log4j.debug("Output: process CreateCashFlowStatement");
       
@@ -216,7 +220,7 @@ void printPage(HttpServletResponse response, VariablesSecureApp vars, String str
               }
           }
         }
-        if(level==0){ //Compensamos la diferencia con el valor mas alto en terminos absolutos
+        if(level==0){ //We make up for the difference with the higher value in absolute terms
           if (log4j.isDebugEnabled()) log4j.debug("CreateCashFlowStatement - Compensamos la diferencia con el valor mas alto en terminos absolutos");
           String strDifference = CreateCashFlowStatementData.selectCheckDifference(conn, this, strFactAcctId);
           CreateCashFlowStatementData[] records = CreateCashFlowStatementData.selectGetMaxId(conn, this, strFactAcctId);

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -65,7 +65,6 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
         OBError myError = processButton(vars, strKey, strInvoice, strWindow);
         vars.setMessage(strTab, myError);        
         printPageClosePopUp(response, vars, strWindowPath);
-      //response.sendRedirect(strDireccion + strWindowPath);
     } else pageErrorPopUp(response);
   }
 
@@ -79,7 +78,12 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
       if (data!=null && data.length!=0) {
         for (i=0;i<data.length;i++) {
           String strSequence = SequenceIdData.getSequence(this, "C_InvoiceLine", vars.getClient());
-          CopyFromInvoiceData.insert(conn, this, strSequence, strKey, vars.getClient(), vars.getOrg(), vars.getUser(), data[i].cInvoicelineId);
+          try {
+            CopyFromInvoiceData.insert(conn, this, strSequence, strKey, vars.getClient(), vars.getOrg(), vars.getUser(), data[i].cInvoicelineId);
+          } catch(ServletException ex) {
+            myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+          }          
         }
       }
       releaseCommitConnection(conn);

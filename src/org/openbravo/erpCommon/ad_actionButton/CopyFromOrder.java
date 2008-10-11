@@ -108,13 +108,23 @@ public class CopyFromOrder extends HttpSecureAppServlet {
             orderlineprice[0].pricelist ="0";
             orderlineprice[0].pricelimit = "0";
           }
-          CopyFromOrderData.insertCOrderline(conn, this, strCOrderlineID, order[0].adClientId, order[0].adOrgId, vars.getUser(),
-          strKey, order[0].cBpartnerId, order[0].cBpartnerLocationId, order[0].dateordered, order[0].dateordered, 
-          strmProductId, order[0].mWarehouseId.equals("")?vars.getWarehouse():order[0].mWarehouseId, strcUOMId, strQty, order[0].cCurrencyId, orderlineprice[0].pricelist, strLastpriceso, orderlineprice[0].pricelimit, strcTaxId, strmAttributesetinstanceId);
+          try {
+            CopyFromOrderData.insertCOrderline(conn, this, strCOrderlineID, order[0].adClientId, order[0].adOrgId, vars.getUser(),
+            strKey, order[0].cBpartnerId, order[0].cBpartnerLocationId, order[0].dateordered, order[0].dateordered, 
+            strmProductId, order[0].mWarehouseId.equals("")?vars.getWarehouse():order[0].mWarehouseId, strcUOMId, strQty, order[0].cCurrencyId, orderlineprice[0].pricelist, strLastpriceso, orderlineprice[0].pricelimit, strcTaxId, strmAttributesetinstanceId);
+          } catch(ServletException ex) {
+            myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myError;
+          }
           count++;
         }
       }
       releaseCommitConnection(conn);
+      myError = new OBError();
+      myError.setType("Success");
+      myError.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
+      myError.setMessage(Utility.messageBD(this, "RecordsCopied", vars.getLanguage()) + " " + count);
     } catch (Exception e){
       try {
         releaseRollbackConnection(conn);
@@ -122,13 +132,6 @@ public class CopyFromOrder extends HttpSecureAppServlet {
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
       myError = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
-      return myError;      
-    }
-    if (myError==null) {
-      myError = new OBError();
-      myError.setType("Success");
-      myError.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
-      myError.setMessage(Utility.messageBD(this, "RecordsCopied", vars.getLanguage()) + " " + count);
     }
     return myError;
   }

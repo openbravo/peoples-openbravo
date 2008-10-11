@@ -57,7 +57,17 @@ public class EditCCPMeasureValues extends HttpSecureAppServlet {
       String strKey = vars.getStringParameter("inpmaMeasureShiftId");
       String strWindowId = vars.getStringParameter("inpWindowId");
       String strTabId = vars.getStringParameter("inpTabId");
-      updateValues(response, request, vars, strKey, strWindowId, strTabId);
+      String[] strValueId = request.getParameterValues("strKey");
+      String[] strGroupId = request.getParameterValues("strGroup");
+      ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTabId);
+      String strWindowPath="", strTabName="";
+      if (tab!=null && tab.length!=0) {
+        strTabName = FormatUtilities.replace(tab[0].name);
+        strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName + "_Relation.html";
+      } else strWindowPath = strDefaultServlet;
+      OBError myMessage = updateValues(vars, strValueId, strGroupId, strKey, strWindowId);
+      vars.setMessage(strTabId, myMessage);      
+      printPageClosePopUp(response, vars, strWindowPath);      
     } else pageErrorPopUp(response);
   }
 
@@ -113,18 +123,19 @@ public class EditCCPMeasureValues extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) log4j.debug("Output: values - out");
   }
 
-  void updateValues(HttpServletResponse response, HttpServletRequest request, VariablesSecureApp vars, String strKey, String strWindowId, String strTabId) throws IOException, ServletException {
-    String strMessage="";
+  OBError updateValues(VariablesSecureApp vars, String[] strValueId, String[] strGroupId, String strKey, String strWindowId ){
+    
     if (log4j.isDebugEnabled()) log4j.debug("Update: values");
 
-    String[] strValueId = request.getParameterValues("strKey");
-    String[] strGroupId = request.getParameterValues("strGroup");
     OBError myError = null;
     int total = 0;
     Boolean  error = false;
 
     if (log4j.isDebugEnabled()) log4j.debug("Update: values after strValueID");
-    if (strValueId != null && strValueId.length > 0) {
+    if (strValueId == null || strValueId.length == 0) {
+      myError = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+      return myError; 
+    }
       Connection conn = null;
       try {
         conn = this.getTransactionConnection();
@@ -139,41 +150,36 @@ public class EditCCPMeasureValues extends HttpSecureAppServlet {
             else if (type.equals("T")) text = vars.getStringParameter("strValue"+strValueId[i]);
             else check = vars.getStringParameter("strValue"+strValueId[i]);
             if (log4j.isDebugEnabled()) log4j.debug("Values to update: " + strValueId[i] + ", " + numeric + ", " + text + ", " + check);
-            total = EditCCPMeasureValuesData.update(conn, this, numeric, text, check.equals("Y")?"Y":"N", strValueId[i]);
-            if (total == 0) error =true;
+            try {
+              total = EditCCPMeasureValuesData.update(conn, this, numeric, text, check.equals("Y")?"Y":"N", strValueId[i]);
+            } catch(ServletException ex) {
+              myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+              releaseRollbackConnection(conn);
+              return myError;
+            }
+            if (total == 0) error = true;
           }
         }
-        releaseCommitConnection(conn);
-      } catch (Exception e) {
-        myError = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
-        try {
-          releaseRollbackConnection(conn);
-        } catch (Exception ignored) {}
-        e.printStackTrace();
-        log4j.warn("Rollback in transaction");
-        if (!myError.isConnectionAvailable()) {
-          bdErrorConnection(response);
-          return;
+        
+        if (error){
+          myError = Utility.translateError(this, vars, vars.getLanguage(), "@CODE=DBExecuteError");
+          return myError; 
         }
-      }
-    }
-    if (error){
-      myError = Utility.translateError(this, vars, vars.getLanguage(), "@CODE=DBExecuteError");
-    } else if (myError == null) {
-      myError = new OBError();
-      myError.setType("Info");
-      myError.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
-      myError.setTitle("");
-    }
-    vars.setMessage(strTabId, myError);
-    ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTabId);
-    String strWindowPath="", strTabName="";
-    if (tab!=null && tab.length!=0) {
-      strTabName = FormatUtilities.replace(tab[0].name);
-      strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName + "_Relation.html";
-    } else strWindowPath = strDefaultServlet;
-    if (!strMessage.equals("")) vars.setSessionValue(strWindowId + "|" + strTabName + ".message", strMessage);
-    printPageClosePopUp(response, vars, strWindowPath);
+        
+        releaseCommitConnection(conn);
+        myError = new OBError();
+        myError.setType("Success");
+        myError.setTitle("");
+        myError.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));        
+      } catch (Exception e) {          
+          try {
+            releaseRollbackConnection(conn);
+          } catch (Exception ignored) {}
+          e.printStackTrace();
+          log4j.warn("Rollback in transaction");
+          myError = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+        }      
+     return myError;   
   }
 
 

@@ -64,7 +64,7 @@ public class ProjectCopyFrom extends HttpSecureAppServlet {
         strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName + "_Relation.html";
       } else strWindowPath = strDefaultServlet;
       OBError myMessage = processButton(vars, strKey, strProject, strWindow);
-      vars.setMessage(strTab, myMessage);
+      vars.setMessage(strTab, extracted(myMessage));
       printPageClosePopUp(response, vars, strWindowPath);
     } else pageErrorPopUp(response);
   }
@@ -72,16 +72,13 @@ public class ProjectCopyFrom extends HttpSecureAppServlet {
 
   OBError processButton(VariablesSecureApp vars, String strKey, String strProject, String windowId) {
     Connection conn = null;
-    OBError myMessage = new OBError();
+    OBError myMessage = null;
     if (strProject == null || strProject == ""){
-    	try {
-	        releaseRollbackConnection(conn);
-	      } catch (Exception ignored) {}
-	      log4j.warn("Rollback in transaction");
-	      myMessage.setType("Error");
-	      myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-	      myMessage.setMessage(Utility.messageBD(this, "NoProjectSelected", vars.getLanguage()));
-    } else {
+      extracted(myMessage).setType("Error");
+      extracted(myMessage).setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+      extracted(myMessage).setMessage(Utility.messageBD(this, "NoProjectSelected", vars.getLanguage()));
+      return extracted(myMessage);
+    } 
 	    try {
 	      conn = this.getTransactionConnection();
 	      String projectCategory = ProjectCopyFromData.selectProjectCategory(this, strKey);
@@ -92,47 +89,68 @@ public class ProjectCopyFrom extends HttpSecureAppServlet {
 	        String strProjectTask = "";
 	        for (int i=0;data!=null && i<data.length;i++){
 	          strProjectPhase = SequenceIdData.getSequence(this, "C_ProjectPhase", dataProject[0].adClientId);
-	          if (!ProjectCopyFromData.hasPhase(this, strKey, data[i].cPhaseId)) if (ProjectCopyFromData.insertProjectPhase(conn, this, strKey, dataProject[0].adClientId, dataProject[0].adOrgId, vars.getUser(), data[i].description, data[i].mProductId, data[i].cPhaseId, strProjectPhase, data[i].help, data[i].name, data[i].qty, data[i].seqno)==1){
-	              ProjectCopyFromData[] data1 = ProjectCopyFromData.selectTask(this, data[i].cProjectphaseId);
-	              for (int j=0;data1!=null && j<data1.length;j++){
-	                  strProjectTask = SequenceIdData.getSequence(this, "C_ProjectTask", dataProject[0].adClientId);
-	                  ProjectCopyFromData.insertProjectTask(conn, this,strProjectTask,data1[j].cTaskId, dataProject[0].adClientId, dataProject[0].adOrgId, vars.getUser(), data1[j].seqno, data1[j].name,data1[j].description, data1[j].help, data1[j].mProductId, strProjectPhase, data1[j].qty);
-	              }
+	          if (!ProjectCopyFromData.hasPhase(this, strKey, data[i].cPhaseId)){
+	            try {
+  	            if (ProjectCopyFromData.insertProjectPhase(conn, this, strKey, dataProject[0].adClientId, dataProject[0].adOrgId, vars.getUser(), data[i].description, data[i].mProductId, data[i].cPhaseId, strProjectPhase, data[i].help, data[i].name, data[i].qty, data[i].seqno)==1){
+  	              ProjectCopyFromData[] data1 = ProjectCopyFromData.selectTask(this, data[i].cProjectphaseId);
+  	              for (int j=0;data1!=null && j<data1.length;j++){
+  	                  strProjectTask = SequenceIdData.getSequence(this, "C_ProjectTask", dataProject[0].adClientId);
+  	                  ProjectCopyFromData.insertProjectTask(conn, this,strProjectTask,data1[j].cTaskId, dataProject[0].adClientId, dataProject[0].adOrgId, vars.getUser(), data1[j].seqno, data1[j].name,data1[j].description, data1[j].help, data1[j].mProductId, strProjectPhase, data1[j].qty);
+  	              }
+  	            }
+	            } catch(ServletException ex) {
+	              myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+	              releaseRollbackConnection(conn);
+	              return extracted(myMessage);
+	            }
 	          }
 	        }
 	      }else {		        
 	    	  ProjectCopyFromData[] dataServ = ProjectCopyFromData.selectServ(this, strProject);
 		      String strProjectLine = "";
 		      for (int i=0;dataServ!=null && i<dataServ.length;i++){	      
-				strProjectLine = SequenceIdData.getSequence(this, "C_ProjectLine", dataProject[0].adClientId);
-				ProjectCopyFromData.insertProjectLine(conn, this, strProjectLine, strKey, dataProject[0].adClientId, dataProject[0].adOrgId, vars.getUser(), dataServ[i].line, dataServ[i].description, dataServ[i].plannedqty, dataServ[i].mProductId, dataServ[i].mProductCategoryId, dataServ[i].productDescription, dataServ[i].productName, dataServ[i].productValue);
+		        strProjectLine = SequenceIdData.getSequence(this, "C_ProjectLine", dataProject[0].adClientId);
+		        try {
+		          ProjectCopyFromData.insertProjectLine(conn, this, strProjectLine, strKey, dataProject[0].adClientId, dataProject[0].adOrgId, vars.getUser(), dataServ[i].line, dataServ[i].description, dataServ[i].plannedqty, dataServ[i].mProductId, dataServ[i].mProductCategoryId, dataServ[i].productDescription, dataServ[i].productName, dataServ[i].productValue);
+		        } catch(ServletException ex) {
+		          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+		          releaseRollbackConnection(conn);
+		          return extracted(myMessage);
+		        }
 		      }
 	      }
 	      String strProjectType = ProjectCopyFromData.selectProjectType(this, strProject);
 	      String strProjectCategory = "";
 	      if (strProjectType == null || strProjectType == ""){
 	    	  strProjectCategory = ProjectCopyFromData.selectProjCategory(this, strProject);
-	      }
-	      else {
+	      }else {
 	    	  strProjectCategory = ProjectSetTypeData.selectProjectCategory(this, strProjectType);
 	      }
-	      ProjectSetTypeData.update(conn, this, vars.getUser(), strProjectType, strProjectCategory, strKey);
-	
+	      try {
+	        ProjectSetTypeData.update(conn, this, vars.getUser(), strProjectType, strProjectCategory, strKey);
+	      } catch(ServletException ex) {
+	        myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+	        releaseRollbackConnection(conn);
+	        return extracted(myMessage);
+	      }	
+	      
 	      releaseCommitConnection(conn);
-	      myMessage.setType("Success");
-	      myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
-	      myMessage.setMessage(Utility.messageBD(this, "ProcessOK", vars.getLanguage()));
+	      myMessage = new OBError();
+	      extracted(myMessage).setType("Success");
+	      extracted(myMessage).setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
+	      extracted(myMessage).setMessage(Utility.messageBD(this, "ProcessOK", vars.getLanguage()));	      
 	    } catch (Exception e) {
 	      try {
 	        releaseRollbackConnection(conn);
 	      } catch (Exception ignored) {}
 	      e.printStackTrace();
 	      log4j.warn("Rollback in transaction");
-	      myMessage.setType("Error");
-	      myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-	      myMessage.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
+	      myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
 	    }
-    }
+	    return extracted(myMessage);
+  }
+
+  private OBError extracted(OBError myMessage) {
     return myMessage;
   }
 

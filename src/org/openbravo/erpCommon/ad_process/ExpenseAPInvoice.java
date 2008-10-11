@@ -72,16 +72,15 @@ String strProductRMailTextID = "";
       String strDatereportFrom = vars.getRequestGlobalVariable("inpReportDateFrom", "ExpenseAPInvoice.reportdatefrom");
       String strDatereportTo = vars.getRequestGlobalVariable("inpReportDateTo", "ExpenseAPInvoice.reportdateto");
       String strDateInvoiced = vars.getRequestGlobalVariable("inpDateinvoiced", "ExpenseAPInvocie.dateinvoiced");
-      processExpense(vars, strcBpartnerId, strDatereportFrom, strDatereportTo, strDateInvoiced);
-
+      OBError myMessage = processExpense(vars, strcBpartnerId, strDatereportFrom, strDatereportTo, strDateInvoiced);
+      vars.setMessage("ExpenseAPInvoice", myMessage);
       printPage(response, vars, strcBpartnerId, strDatereportFrom, strDatereportTo, strDateInvoiced);
     } else pageErrorPopUp(response);
   }
 
-  void processExpense(VariablesSecureApp vars, String strcBpartnerId, String strDatereportFrom, String strDatereportTo, String strDateInvoiced) throws IOException, ServletException {
+  OBError processExpense(VariablesSecureApp vars, String strcBpartnerId, String strDatereportFrom, String strDatereportTo, String strDateInvoiced) {
     if (log4j.isDebugEnabled()) log4j.debug("Save: Expense AP Invoice");
     int line = 0;
-    ExpenseAPInvoiceData[] data = ExpenseAPInvoiceData.select(this, Utility.getContext(this, vars, "#User_Client", "ExpenseAPInvoice"), Utility.getContext(this, vars, "#User_Org", "ExpenseAPInvoice"), strDatereportFrom, DateTimeData.nDaysAfter(this, strDatereportTo, "1"), strcBpartnerId);
     
     String strcInvoiceId = "";
     String strCCurrencyId = "";
@@ -111,6 +110,8 @@ String strProductRMailTextID = "";
     Connection conn = null;
     try{
       conn = this.getTransactionConnection();
+
+      ExpenseAPInvoiceData[] data = ExpenseAPInvoiceData.select(this, Utility.getContext(this, vars, "#User_Client", "ExpenseAPInvoice"), Utility.getContext(this, vars, "#User_Org", "ExpenseAPInvoice"), strDatereportFrom, DateTimeData.nDaysAfter(this, strDatereportTo, "1"), strcBpartnerId);
       for (int i = 0; i<data.length; i++){
        String docTargetType = ExpenseAPInvoiceData.cDoctypeTarget(this, data[i].adClientId, data[i].adOrgId);
               
@@ -126,6 +127,7 @@ String strProductRMailTextID = "";
        if (strcInvoiceIdOld.equals("")) {
          //Checks some employee data
          strEmpl = data[i].bpname;
+         strProd = data[i].prodname;
          
          strPricelistId = ExpenseAPInvoiceData.pricelistId(this, data[i].cBpartnerId);      
          if (strPricelistId.equals("")){
@@ -152,8 +154,15 @@ String strProductRMailTextID = "";
          String strDocumentno = Utility.getDocumentNo(this, vars, "", "C_Invoice", docTargetType, docTargetType, false, true);
          String strDocType = ExpenseAPInvoiceData.cDoctypeTarget(this, data[i].adClientId, data[i].adOrgId);
          
-         ExpenseAPInvoiceData.insert(conn, this, strcInvoiceId, "N", "", "N", "N", "N", "N", "N", data[i].adClientId, data[i].adOrgId, "", "", strDocumentno, "", "", "Y", docTargetType, strDateInvoiced, strDateInvoiced, data[i].cBpartnerId, strcBpartnerLocationId, "", strPricelistId, strBPCCurrencyId, strSalesrepId, "N", "", "", strPaymentRule, strPaymentterm, "N", "N", data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId, vars.getOrg(), "", "", "0", "0", "DR", strDocType, "N", "CO", "N", vars.getUser(), vars.getUser());
-         
+         // Catch database error message
+         try {
+         	 ExpenseAPInvoiceData.insert(conn, this, strcInvoiceId, "N", "", "N", "N", "N", "N", "N", data[i].adClientId, data[i].adOrgId, "", "", strDocumentno, "", "", "Y", docTargetType, strDateInvoiced, strDateInvoiced, data[i].cBpartnerId, strcBpartnerLocationId, "", strPricelistId, strBPCCurrencyId, strSalesrepId, "N", "", "", strPaymentRule, strPaymentterm, "N", "N", data[i].cProjectId, data[i].cActivityId, data[i].cCampaignId, vars.getOrg(), "", "", "0", "0", "DR", strDocType, "N", "CO", "N", vars.getUser(), vars.getUser());
+         } catch(ServletException ex) {
+           myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+           releaseRollbackConnection(conn);
+           return myMessage;
+         }
+
          textoMensaje.append(Utility.messageBD(this, "PurchaseInvoiceDocumentno", vars.getLanguage())).append(" ").append(strDocumentno).append(" ").append(Utility.messageBD(this, "beenCreated", vars.getLanguage())).append("<br>");
          total++;        
        } else strcInvoiceId = strcInvoiceIdOld;        
@@ -223,7 +232,7 @@ String strProductRMailTextID = "";
 
        if (log4j.isDebugEnabled()) log4j.debug("dataInvoiceline: "+dataInvoiceline.length);
        if (dataInvoiceline == null || dataInvoiceline.length == 0){ 
-        //If it is a new line, calculates c_invoiceline_id and qty
+         //If it is a new line, calculates c_invoiceline_id and qty
          strcInvoiceLineId = SequenceIdData.getSequence(this, "C_InvoiceLine", data[i].adClientId);
          qty = Float.valueOf(data[i].qty);
          String strLine = ExpenseAPInvoiceData.selectLine(conn, this, strcInvoiceId);
@@ -231,12 +240,26 @@ String strProductRMailTextID = "";
          line+=Integer.valueOf(strLine);
 	 
          if (log4j.isDebugEnabled()) log4j.debug("*****************+client: "+ (data[i].invoiceprice.equals("")?dataPrice[0].pricestd:data[i].invoiceprice));
-         ExpenseAPInvoiceData.insertLine(conn, this, data[i].adClientId, data[i].adOrgId, strcInvoiceId, "", String.valueOf(line), "", data[i].mProductId, "", data[i].description, "", strmProductUomId, String.valueOf(qty), data[i].cUomId, strPricestd, strPricelist, strcTaxID, String.valueOf(Float.valueOf(strPricestd)*qty), "", strPricestd, strPricelimit, "", "", "", "Y", "0", "", "", strcInvoiceLineId, "N", vars.getUser(), vars.getUser());
+       	 // Catch database error message
+         try {
+           ExpenseAPInvoiceData.insertLine(conn, this, data[i].adClientId, data[i].adOrgId, strcInvoiceId, "", String.valueOf(line), "", data[i].mProductId, "", data[i].description, "", strmProductUomId, String.valueOf(qty), data[i].cUomId, strPricestd, strPricelist, strcTaxID, String.valueOf(Float.valueOf(strPricestd)*qty), "", strPricestd, strPricelimit, "", "", "", "Y", "0", "", "", strcInvoiceLineId, "N", vars.getUser(), vars.getUser());
+         } catch(ServletException ex) {
+           myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+           releaseRollbackConnection(conn);
+           return myMessage;
+         }
        } else {
          //If there are more lines that full filled the requirements, adds the new amount to the old
          strcInvoiceLineId = dataInvoiceline[0].cInvoicelineId;
          qty = Float.valueOf(dataInvoiceline[0].qtyinvoiced)+Float.valueOf(data[i].qty);
-         ExpenseAPInvoiceData.updateInvoiceline(conn, this, String.valueOf(qty), String.valueOf(Float.valueOf(strPricestd)*qty), strcInvoiceLineId);
+         // Catch database error message
+         try {
+           ExpenseAPInvoiceData.updateInvoiceline(conn, this, String.valueOf(qty), String.valueOf(Float.valueOf(strPricestd)*qty), strcInvoiceLineId);
+         } catch(ServletException ex) {
+           myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+           releaseRollbackConnection(conn);
+           return myMessage;
+         }
        }
 
        if (!data[i].cProjectId.equals("")){
@@ -244,23 +267,43 @@ String strProductRMailTextID = "";
          ExpenseAPInvoiceData[] dataAcctdimension = ExpenseAPInvoiceData.selectAcctdimension(conn, this, data[i].adClientId, data[i].adOrgId, strcInvoiceLineId, data[i].cProjectId, data[i].cCampaignId);
          if (dataAcctdimension == null || dataAcctdimension.length == 0) {
           String strcInvoicelineAcctdimension = SequenceIdData.getSequence(this, "C_InvoiceLine_AcctDimension", data[i].adClientId);
-          ExpenseAPInvoiceData.insertInvoicelineAcctdimension(conn, this, strcInvoicelineAcctdimension, data[i].adClientId, data[i].adOrgId, "Y", vars.getUser(), vars.getUser(), strcInvoiceLineId, String.valueOf(qty*Float.valueOf(strPricestd)), data[i].cProjectId, data[i].cCampaignId, "", "");
+          // Catch database error message
+          try {
+            ExpenseAPInvoiceData.insertInvoicelineAcctdimension(conn, this, strcInvoicelineAcctdimension, data[i].adClientId, data[i].adOrgId, "Y", vars.getUser(), vars.getUser(), strcInvoiceLineId, String.valueOf(qty*Float.valueOf(strPricestd)), data[i].cProjectId, data[i].cCampaignId, "", "");
+          } catch(ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myMessage;
+          }
          } else {
           //If there are more lines that full filled the requirements, adds the new amount to the old
           amount = Float.valueOf(dataAcctdimension[0].amt)+(Float.valueOf(data[i].qty)*Float.valueOf(strPricestd));
-          ExpenseAPInvoiceData.updateAcctdimension(conn, this, String.valueOf(amount), dataAcctdimension[0].cInvoicelineAcctdimensionId);
+          // Catch database error message
+          try {
+            ExpenseAPInvoiceData.updateAcctdimension(conn, this, String.valueOf(amount), dataAcctdimension[0].cInvoicelineAcctdimensionId);
+          } catch(ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myMessage;
+          }
          }
        }
-       
-       //Updates expense line with the invoice line ID
-       ExpenseAPInvoiceData.updateExpense(conn, this, strcInvoiceLineId, data[i].sTimeexpenselineId);
-       
+       // Catch database error message
+       try {
+         //Updates expense line with the invoice line ID
+         ExpenseAPInvoiceData.updateExpense(conn, this, strcInvoiceLineId, data[i].sTimeexpenselineId);
+       } catch(ServletException ex) {
+         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+         releaseRollbackConnection(conn);
+         return myMessage;
+       }
       }
       releaseCommitConnection(conn);
       
       myMessage.setType("Success");
       myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
       myMessage.setMessage(textoMensaje.toString() + Utility.messageBD(this, "Created", vars.getLanguage()) + ": " + Integer.toString(total));
+      return myMessage;
     } catch (ArrayIndexOutOfBoundsException f){
       try {
         releaseRollbackConnection(conn);
@@ -270,6 +313,7 @@ String strProductRMailTextID = "";
       myMessage.setType("Error");
       myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
       myMessage.setMessage(Utility.messageBD(this, "PriceListVersionNotFound", vars.getLanguage()) + ' ' + Utility.messageBD(this, "ForProduct", vars.getLanguage()) + ' ' + strProd + ' ' + Utility.messageBD(this, "And", vars.getLanguage()) + ' ' + Utility.messageBD(this, "Employee", vars.getLanguage()) + ' ' + strEmpl);
+      return myMessage;
     } catch (Exception e){
       try {
          releaseRollbackConnection(conn);
@@ -291,8 +335,9 @@ String strProductRMailTextID = "";
       } else {
     	  myMessage.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
       }
+      return myMessage;
     }      
-    vars.setMessage("ExpenseAPInvoice", myMessage);
+    
   }
 
 
@@ -325,7 +370,7 @@ String strProductRMailTextID = "";
       xmlDocument.setParameter("dateFrom", strDatereportFrom);
       xmlDocument.setParameter("dateTo", strDatereportTo);
       xmlDocument.setParameter("dateInvoiced", strDateInvoiced);
-
+      
       try {
     	  ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "C_BPartner_ID", "C_BPartner Employee w Address", "", Utility.getContext(this, vars, "#User_Org", "ExpenseAPInvoice"),Utility.getContext(this, vars, "#User_Client","ExpenseAPInvoice"), 0);
     	  Utility.fillSQLParameters(this, vars, null, comboTableData, "ExpenseAPInvoice", "");

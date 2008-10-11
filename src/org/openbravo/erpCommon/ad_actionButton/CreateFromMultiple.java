@@ -18,6 +18,7 @@
 */
 package org.openbravo.erpCommon.ad_actionButton;
 
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -87,7 +88,7 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
       String strWindowId = vars.getStringParameter("inpWindowId");
       String strSOTrx = vars.getStringParameter("inpissotrx");
       String strTabId = vars.getStringParameter("inpTabId");
-      String strMessage = saveMethod(vars, strKey, strWindowId, strSOTrx);
+      OBError myMessage = saveMethod(vars, strKey, strWindowId, strSOTrx);
       ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTabId);
       String strWindowPath="", strTabName="";
       if (tab!=null && tab.length!=0) {
@@ -95,7 +96,7 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
         if (tab[0].help.equals("Y")) strWindowPath="../utility/WindowTree_FS.html?inpTabId=" + strTabId;
         else strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName + "_Relation.html";
       } else strWindowPath = strDefaultServlet;
-      if (!strMessage.equals("")) vars.setSessionValue(strWindowId + "|" + strTabName + ".message", strMessage);
+      vars.setMessage(strTabId, myMessage);
       printPageClosePopUp(response, vars, strWindowPath);
     } else pageErrorPopUp(response);
   }
@@ -234,12 +235,12 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
     
   }
 
-  String saveMethod(VariablesSecureApp vars, String strKey, String strWindowId, String strSOTrx) throws IOException, ServletException {
+  OBError saveMethod(VariablesSecureApp vars, String strKey, String strWindowId, String strSOTrx) throws IOException, ServletException {
     if (strSOTrx.equals("Y")) return saveShipment(vars, strKey, strWindowId);
     else return saveReceipt(vars, strKey, strWindowId);
   }
 
-  String saveReceipt(VariablesSecureApp vars, String strKey, String strWindowId) throws IOException, ServletException {
+  OBError saveReceipt(VariablesSecureApp vars, String strKey, String strWindowId) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Save: Receipt");
     String strProduct = vars.getRequiredStringParameter("inpmProductId");
     String strAtributo = vars.getStringParameter("inpmAttributesetinstanceId");
@@ -251,66 +252,90 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
     String strLocator = vars.getStringParameter("inpmLocatorX");
     String strNumero = vars.getRequiredStringParameter("inpnumerolineas");
     String strLocatorType = vars.getStringParameter("inpmLocatorType");
-    String strMessage = "";
+    
+    OBError myMessage = null;
+    int count = 0;
 
     Connection conn = null;
     try {
       conn = this.getTransactionConnection();
       int total = Integer.valueOf(strNumero).intValue();
       CreateFromMultipleReceiptData[] locators = CreateFromMultipleReceiptData.select(conn, this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org", strWindowId), strWarehouse, strLocator, strLocatorType);
-      int count = 0;
       if (locators!=null && locators.length>0) {
         for (count=0;count<total;count++) {
           String strM_Locator_ID = (count>locators.length-1)?"":locators[count].mLocatorId;
           if (strM_Locator_ID.equals("")) break;
           String strSequence = SequenceIdData.getSequence(this, "M_InOutLine", vars.getClient());
-          CreateFromMultipleReceiptData.insert(conn, this, strSequence, vars.getClient(), vars.getOrg(), vars.getUser(), strKey, strM_Locator_ID, strProduct, strUOM, strQty, strAtributo, strQuantityOrder, strProductUOM);
+          try {
+            CreateFromMultipleReceiptData.insert(conn, this, strSequence, vars.getClient(), vars.getOrg(), vars.getUser(), strKey, strM_Locator_ID, strProduct, strUOM, strQty, strAtributo, strQuantityOrder, strProductUOM);
+          } catch(ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myMessage;
+          }
         }
       }
-      strMessage = Utility.messageBD(this, "Success", vars.getLanguage()) + " - " + Utility.messageBD(this, "Created", vars.getLanguage()) + ": " + count;
 
       releaseCommitConnection(conn);
+      myMessage = new OBError();
+      myMessage.setType("Success");
+      myMessage.setTitle("");
+      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()) + " - " + Utility.messageBD(this, "Created", vars.getLanguage()) + ": " + count);
     } catch (Exception e) {
       try {
         releaseRollbackConnection(conn);
       } catch (Exception ignored) {}
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
-      return Utility.messageBD(this, "ProcessRunError", vars.getLanguage());
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
     }
-    return strMessage;
+    return myMessage;
   }
 
-  String saveShipment(VariablesSecureApp vars, String strKey, String strWindowId) throws IOException, ServletException {
+  OBError saveShipment(VariablesSecureApp vars, String strKey, String strWindowId) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Save: Shipment");
     String strStorageDetail = vars.getInStringParameter("inpmStorageDetailId");
-    if (strStorageDetail.equals("")) return "";
+    if (strStorageDetail.equals("")) return null;
+    OBError myMessage = null;
     Connection conn = null;
+    int count = 0;
     try {
       conn = this.getTransactionConnection();
       if (strStorageDetail.startsWith("(")) strStorageDetail = strStorageDetail.substring(1, strStorageDetail.length()-1);
       if (!strStorageDetail.equals("")) {
         strStorageDetail = Replace.replace(strStorageDetail, "'", "");
         StringTokenizer st = new StringTokenizer(strStorageDetail, ",", false);
+        count = 0;
         while (st.hasMoreTokens()) {
           String strStorageDetailId = st.nextToken().trim();
           String strQty = vars.getStringParameter("inpmovementqty" + strStorageDetailId);
           String strQtyOrder = vars.getStringParameter("inpquantityorder" + strStorageDetailId);
           
           String strSequence = SequenceIdData.getSequence(this, "M_InOutLine", vars.getClient());
-          CreateFromMultipleShipmentData.insert(conn, this, strSequence, vars.getClient(), vars.getOrg(), vars.getUser(), strKey, strQty, strQtyOrder, strStorageDetailId);
+          try {
+            CreateFromMultipleShipmentData.insert(conn, this, strSequence, vars.getClient(), vars.getOrg(), vars.getUser(), strKey, strQty, strQtyOrder, strStorageDetailId);
+          } catch(ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myMessage;
+          }
+          count++;
         }
       }
       releaseCommitConnection(conn);
+      myMessage = new OBError();
+      myMessage.setType("Success");
+      myMessage.setTitle("");
+      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()) + " - " + Utility.messageBD(this, "Created", vars.getLanguage()) + ": " + count);
     } catch (Exception e) {
       try {
         releaseRollbackConnection(conn);
       } catch (Exception ignored) {}
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
-      return Utility.messageBD(this, "ProcessRunError", vars.getLanguage());
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
     }
-    return Utility.messageBD(this, "Success", vars.getLanguage());
+    return myMessage;
   }
 
 

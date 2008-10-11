@@ -60,12 +60,13 @@ public class CashBankOperations extends HttpSecureAppServlet {
       String strAmount = vars.getStringParameter("inpAmount");
       String strMovementDate = vars.getStringParameter("inpmovementdate");
       String strDescription = vars.getStringParameter("inpdescription");
-      process(vars, strCashFrom, strCashTo, strBankFrom, strBankTo, strPaymentRuleFrom, strPaymentRuleTo, strAmount,strMovementDate, strDescription);
+      OBError myMessage = process(vars, strCashFrom, strCashTo, strBankFrom, strBankTo, strPaymentRuleFrom, strPaymentRuleTo, strAmount,strMovementDate, strDescription);
+      vars.setMessage("CashBankOperations", myMessage);
       printPage(response, vars);
     } else pageErrorPopUp(response);
   }
 
-  void process(VariablesSecureApp vars, String strCashFrom, String strCashTo, String strBankFrom, String strBankTo, String strPaymentRuleFrom, String strPaymentRuleTo, String strAmount, String strMovementDate, String strDescription)throws ServletException {
+  OBError process(VariablesSecureApp vars, String strCashFrom, String strCashTo, String strBankFrom, String strBankTo, String strPaymentRuleFrom, String strPaymentRuleTo, String strAmount, String strMovementDate, String strDescription){
     if (log4j.isDebugEnabled()) log4j.debug("Save: CashBankOperations");
     Connection con = null;
      OBError myMessage = null;
@@ -86,7 +87,6 @@ public class CashBankOperations extends HttpSecureAppServlet {
                                                  "Y",strSettlement, strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage()) + Utility.messageBD(this, "Cash", vars.getLanguage()) + CashBankOperationsData.selectCashBook(this,strCashTo), strBPartner, strCashCurrency, "","", strCashTo, strPaymentRuleTo, strAmount, strMovementDate, "");
         insertCash(vars, strCashTo, strAmount, strMovementDate, strCashCurrency,strDescription, strDebtPaymentId, con);
         
-     //   CashBankOperationsData.updateCashLine(con,this, strDebtPaymentId, strCashline);
         strDebtPaymentId = SequenceIdData.getSequence(this, "C_Debt_Payment", vars.getClient());
         CashBankOperationsData.insertDebtpayment(con,this, strDebtPaymentId, vars.getClient(), vars.getOrg(), vars.getUser(), 
         "N",strSettlement, strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage()) + CashBankOperationsData.selectBankAccount(this,strBankFrom, vars.getLanguage()), strBPartner, strBankCurrency, "",strBankFrom, "", strPaymentRuleTo, strAmount, strMovementDate, "");
@@ -98,7 +98,6 @@ public class CashBankOperations extends HttpSecureAppServlet {
         CashBankOperationsData.insertDebtpayment(con,this, strDebtPaymentId, vars.getClient(), vars.getOrg(), vars.getUser(),"N",strSettlement, strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage()) + Utility.messageBD(this, "Cash", vars.getLanguage()) + CashBankOperationsData.selectCashBook(this,strCashFrom), strBPartner, strCashCurrency, "","", strCashFrom, strPaymentRuleFrom, strAmount, strMovementDate, "");
         
         insertCash(vars, strCashFrom, negate(strAmount), strMovementDate, strCashCurrency,strDescription,strDebtPaymentId, con);
-        //CashBankOperationsData.updateCashLine(con,this, strDebtPaymentId, strCashline);
         strDebtPaymentId = SequenceIdData.getSequence(this, "C_Debt_Payment", vars.getClient());
         CashBankOperationsData.insertDebtpayment(con,this, strDebtPaymentId, vars.getClient(), vars.getOrg(), vars.getUser(), 
         "Y",strSettlement, strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage()) + CashBankOperationsData.selectBankAccount(this,strBankTo, vars.getLanguage()), strBPartner, strBankCurrency, "",strBankTo, "", strPaymentRuleTo, strAmount, strMovementDate, "");
@@ -110,13 +109,11 @@ public class CashBankOperations extends HttpSecureAppServlet {
         
         CashBankOperationsData.insertDebtpayment(con,this, strDebtPaymentId, vars.getClient(), vars.getOrg(), vars.getUser(),"N",strSettlement, strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage()) + Utility.messageBD(this, "Cash", vars.getLanguage()) + CashBankOperationsData.selectCashBook(this,strCashFrom), strBPartner, strCashCurrency, "","", strCashFrom, strPaymentRuleFrom, strAmount, strMovementDate, "");
         insertCash(vars, strCashFrom, negate(strAmount), strMovementDate, strCashCurrency,strDescription, strDebtPaymentId, con);
-        //CashBankOperationsData.updateCashLine(con,this, strDebtPaymentId, strCashline);
         
         strDebtPaymentId = SequenceIdData.getSequence(this, "C_Debt_Payment", vars.getClient());
         
         CashBankOperationsData.insertDebtpayment(con,this, strDebtPaymentId, vars.getClient(), vars.getOrg(), vars.getUser(),"Y",strSettlement, strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage()) + Utility.messageBD(this, "Cash", vars.getLanguage()) + CashBankOperationsData.selectCashBook(this,strCashTo), strBPartner, strCashCurrency, "", "",strCashTo, strPaymentRuleTo, strAmount, strMovementDate, "");
         insertCash(vars, strCashTo, strAmount, strMovementDate, strCashCurrency,strDescription, strDebtPaymentId, con);
-        //CashBankOperationsData.updateCashLine(con,this, strDebtPaymentId, strCashline);
         CashBankOperationsData.updateSettlement(con,this, strSettlement);
       }else if (strCashTo.equals("") && strCashFrom.equals("")){ //bank -> bank
         CashBankOperationsData.insertSettlement(con,this, strSettlement, vars.getClient(), vars.getOrg(), vars.getUser(), strSettlementDocumentNo, strMovementDate, strDoctypeId, strBankCurrency);
@@ -129,6 +126,10 @@ public class CashBankOperations extends HttpSecureAppServlet {
         CashBankOperationsData.updateSettlement(con,this, strSettlement);
       }
       releaseCommitConnection(con);
+      myMessage = new OBError();
+      myMessage.setType("Success");
+      myMessage.setTitle("");
+      myMessage.setMessage(Utility.messageBD(this, "PaymentsSettlementDocNo", vars.getLanguage()) + "*FT*" + strSettlementDocumentNo);
     }catch (Exception e){
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
       try {
@@ -136,16 +137,7 @@ public class CashBankOperations extends HttpSecureAppServlet {
       } catch (Exception ignored) {}
       log4j.warn(e);
     }
-    
-    
-    if (myMessage==null) {
-      myMessage = new OBError();
-      myMessage.setType("Success");
-      myMessage.setTitle("");
-      myMessage.setMessage(Utility.messageBD(this, "PaymentsSettlementDocNo", vars.getLanguage()) + "*FT*" + strSettlementDocumentNo);
-    }
-    vars.setMessage("CashBankOperations", myMessage);
-    
+    return myMessage; 
   }
 
   String negate(String amount){
@@ -248,18 +240,7 @@ public class CashBankOperations extends HttpSecureAppServlet {
         comboTableData = null;
       } catch (Exception ex) {
         throw new ServletException(ex);
-      }
-
-/*
-      String strMessage = vars.getSessionValue("CashBankOperations.message");
-      if (!strMessage.equals("")) {
-        vars.removeSessionValue("CashBankOperations.message");
-        strMessage = "alert('" + Replace.replace(strMessage, "'", "\'") + "');";
-      }
-      xmlDocument.setParameter("body", strMessage);
-*/      
-      
-      
+      } 
       
       try {
       WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_process.CashBankOperations");

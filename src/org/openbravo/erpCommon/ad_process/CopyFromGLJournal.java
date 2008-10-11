@@ -70,28 +70,15 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
       } else strWindowPath = strDefaultServlet;
       String strKey = vars.getRequiredStringParameter("inpglJournalbatchId");
       String strGLJournalBatch = vars.getStringParameter("inpClave");
-      
-      
-     
-      
-       OBError myError = null;
-       try {
-        myError = processButton(vars, strKey, strGLJournalBatch, strWindow);
-      } catch(ServletException ex) {
-        myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-        if (!myError.isConnectionAvailable()) {
-          bdErrorConnection(response);
-          return;
-        }
-      }
-      
+       
+      OBError myError = processButton(vars, strKey, strGLJournalBatch, strWindow);
       vars.setMessage(strTab, myError);
       
       printPageClosePopUp(response, vars, strWindowPath);
     } else pageErrorPopUp(response);
   }
 
-  OBError processButton(VariablesSecureApp vars, String strKey, String strGLJournalBatch, String windowId) throws ServletException {
+  OBError processButton(VariablesSecureApp vars, String strKey, String strGLJournalBatch, String windowId){
     if (log4j.isDebugEnabled()) log4j.debug("Save: GLJournal");
     if (strGLJournalBatch.equals("")) return new OBError();;
     Connection conn = null;
@@ -103,20 +90,31 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
       for(int i=0;data != null && i<data.length;i++){
         String strSequence = SequenceIdData.getSequence(this, "GL_Journal", vars.getClient());
         String strDocumentNo = Utility.getDocumentNo(this, vars, windowId, "GL_Journal", Utility.getContext(this, vars, "C_DocTypeTarget_ID", "132"), Utility.getContext(this, vars, "C_DocType_ID", "132"), false, true);
-        if(CopyFromGLJournalData.insertGLJournal(conn,this,strSequence, vars.getClient(), vars.getOrg(), vars.getUser(), data[i].cAcctschemaId, data[i].cDoctypeId, "DR", "CO", data[i].isapproved, data[i].isprinted, data[i].description, data[i].postingtype, data[i].glCategoryId, data[i].datedoc, data[i].dateacct, data[i].cPeriodId, data[i].cCurrencyId, data[i].currencyratetype, data[i].currencyrate,strKey, data[i].controlamt, strDocumentNo, "N", "N", "N")==0)log4j.warn("Save: GLJournal record " + i + " not inserted. Sequence = " + strSequence);
+        try {
+          if(CopyFromGLJournalData.insertGLJournal(conn,this,strSequence, vars.getClient(), vars.getOrg(), vars.getUser(), data[i].cAcctschemaId, data[i].cDoctypeId, "DR", "CO", data[i].isapproved, data[i].isprinted, data[i].description, data[i].postingtype, data[i].glCategoryId, data[i].datedoc, data[i].dateacct, data[i].cPeriodId, data[i].cCurrencyId, data[i].currencyratetype, data[i].currencyrate,strKey, data[i].controlamt, strDocumentNo, "N", "N", "N")==0)log4j.warn("Save: GLJournal record " + i + " not inserted. Sequence = " + strSequence);
+        } catch(ServletException ex) {
+          myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+          releaseRollbackConnection(conn);
+          return myError;
+        }
         CopyFromGLJournalData [] dataLines = CopyFromGLJournalData.selectLines(this, data[i].glJournalId);
         for(int j=0;dataLines!=null && j<dataLines.length;j++){
           String strLineSequence = SequenceIdData.getSequence(this, "GL_JournalLine", vars.getClient());
-          if(CopyFromGLJournalData.insertGLJournalLine(conn, this, strLineSequence, vars.getClient(), vars.getOrg(), vars.getUser(), strSequence, dataLines[j].line, dataLines[j].isgenerated, dataLines[j].description, dataLines[j].amtsourcedr, dataLines[j].amtsourcecr, dataLines[j].cCurrencyId, dataLines[j].currencyratetype, dataLines[j].currencyrate, dataLines[j].amtacctdr, dataLines[j].amtacctcr, dataLines[j].cUomId, dataLines[j].qty, dataLines[j].cValidcombinationId)==0)log4j.warn("Save: GLJournalLine record " + j + " not inserted. Sequence = " + strLineSequence);
+          try {
+            if(CopyFromGLJournalData.insertGLJournalLine(conn, this, strLineSequence, vars.getClient(), vars.getOrg(), vars.getUser(), strSequence, dataLines[j].line, dataLines[j].isgenerated, dataLines[j].description, dataLines[j].amtsourcedr, dataLines[j].amtsourcecr, dataLines[j].cCurrencyId, dataLines[j].currencyratetype, dataLines[j].currencyrate, dataLines[j].amtacctdr, dataLines[j].amtacctcr, dataLines[j].cUomId, dataLines[j].qty, dataLines[j].cValidcombinationId)==0)log4j.warn("Save: GLJournalLine record " + j + " not inserted. Sequence = " + strLineSequence);
+          } catch(ServletException ex) {
+            myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myError;
+          }
         }
       }
-      releaseCommitConnection(conn);
       
-    } catch (ServletException ex) {
-        try {
-          releaseRollbackConnection(conn);
-        } catch (Exception ignored) {}
-        throw ex;
+      releaseCommitConnection(conn);
+      myError = new OBError();
+      myError.setType("Success");
+      myError.setTitle("");
+      myError.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));            
     } catch (Exception e) {
       try {
         releaseRollbackConnection(conn);
@@ -124,12 +122,6 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
       myError = Utility.translateError(this, vars, vars.getLanguage(), "@CODE=ProcessRunError");
-    }
-    if (myError==null) {
-      myError = new OBError();
-      myError.setType("Success");
-      myError.setTitle("");
-      myError.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
     }
     return myError;
   }

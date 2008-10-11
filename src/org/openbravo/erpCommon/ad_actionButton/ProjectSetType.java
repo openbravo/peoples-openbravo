@@ -11,14 +11,13 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
 package org.openbravo.erpCommon.ad_actionButton;
 
-//import com.sun.mail.smtp.SMTPMessage;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -92,16 +91,28 @@ public class ProjectSetType extends HttpSecureAppServlet {
 	      String strProjectTask = "";
 	      for (int i=0;data!=null && i<data.length;i++){
 	        strProjectPhase = SequenceIdData.getSequence(this, "C_ProjectPhase", dataProject[0].adClientId);
-	        if (ProjectSetTypeData.insertProjectPhase(conn, this, strKey, dataProject[0].adClientId, dataProject[0].adOrgId, vars.getUser(), data[i].description, data[i].mProductId, data[i].cPhaseId, strProjectPhase, data[i].help, data[i].name, data[i].standardqty, data[i].seqno)==1){
-	            ProjectSetTypeData[] data1 = ProjectSetTypeData.selectTask(this, data[i].cPhaseId);
-	            for (int j=0;data1!=null && j<data1.length;j++){
-	                strProjectTask = SequenceIdData.getSequence(this, "C_ProjectTask", dataProject[0].adClientId);
-	                ProjectSetTypeData.insertProjectTask(conn, this,strProjectTask,data1[j].cTaskId, dataProject[0].adClientId, dataProject[0].adOrgId, vars.getUser(), data1[j].seqno, data1[j].name,data1[j].description, data1[j].help, data1[j].mProductId, strProjectPhase, data1[j].standardqty);
-	            }
+	        try {
+  	        if (ProjectSetTypeData.insertProjectPhase(conn, this, strKey, dataProject[0].adClientId, dataProject[0].adOrgId, vars.getUser(), data[i].description, data[i].mProductId, data[i].cPhaseId, strProjectPhase, data[i].help, data[i].name, data[i].standardqty, data[i].seqno)==1){
+  	            ProjectSetTypeData[] data1 = ProjectSetTypeData.selectTask(this, data[i].cPhaseId);
+  	            for (int j=0;data1!=null && j<data1.length;j++){
+  	                strProjectTask = SequenceIdData.getSequence(this, "C_ProjectTask", dataProject[0].adClientId);
+  	                ProjectSetTypeData.insertProjectTask(conn, this,strProjectTask,data1[j].cTaskId, dataProject[0].adClientId, dataProject[0].adOrgId, vars.getUser(), data1[j].seqno, data1[j].name,data1[j].description, data1[j].help, data1[j].mProductId, strProjectPhase, data1[j].standardqty);
+  	            }
+  	        }
+	        } catch(ServletException ex) {
+	          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+	          releaseRollbackConnection(conn);
+	          return myMessage;
 	        }
 	      }
 	      String strProjectCategory = ProjectSetTypeData.selectProjectCategory(this, strProjectType);
-	      ProjectSetTypeData.update(conn, this, vars.getUser(), strProjectType, strProjectCategory, strKey);
+	      try {
+	        ProjectSetTypeData.update(conn, this, vars.getUser(), strProjectType, strProjectCategory, strKey);
+	      } catch(ServletException ex) {
+          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+          releaseRollbackConnection(conn);
+          return myMessage;
+	      }
 	      releaseCommitConnection(conn);
 	      myMessage.setType("Success");
 	      myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
@@ -112,9 +123,7 @@ public class ProjectSetType extends HttpSecureAppServlet {
 	      } catch (Exception ignored) {}
 	      e.printStackTrace();
 	      log4j.warn("Rollback in transaction");
-	      myMessage.setType("Error");
-	      myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-	      myMessage.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
+	      myMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
 	    }
   	}
     return myMessage;

@@ -892,9 +892,11 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
     String strStatementDate = vars.getStringParameter("inpstatementdate");
     String strDateplanned = "";
     String strChargeamt = "";
-    if (strPayment.equals("")) return null;
     OBError myMessage = null;
     Connection conn = null;
+    
+    if (strPayment.equals("")) return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+    
     try {
       conn = this.getTransactionConnection();
       if (strPayment.startsWith("(")) strPayment = strPayment.substring(1, strPayment.length()-1);
@@ -912,10 +914,21 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
           strDateplanned = vars.getStringParameter("inpplanneddate" + strDebtPaymentId.trim());
           strChargeamt = vars.getStringParameter("inpcost" + strDebtPaymentId.trim());
           String strSequence = SequenceIdData.getSequence(this, "C_BankStatementLine", vars.getClient());
-          CreateFromBankData.insert(conn, this, strSequence, vars.getClient(), vars.getUser(), strKey, strDateplanned.equals("")?strStatementDate:strDateplanned, strChargeamt, strDebtPaymentId);
+          try {
+            CreateFromBankData.insert(conn, this, strSequence, vars.getClient(), vars.getUser(), strKey, strDateplanned.equals("")?strStatementDate:strDateplanned, strChargeamt, strDebtPaymentId);
+          } catch(ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myMessage;
+          }
         }
       }
+      
       releaseCommitConnection(conn);
+      myMessage = new OBError();
+      myMessage.setType("Success");
+      myMessage.setTitle("");
+      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));      
     } catch (Exception e) {
       try {
         releaseRollbackConnection(conn);
@@ -923,12 +936,6 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
-    }
-    if (myMessage==null) {
-      myMessage = new OBError();
-      myMessage.setType("Success");
-      myMessage.setTitle("");
-      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
     }
     return myMessage;
   }
@@ -949,7 +956,6 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
     try {
       conn = this.getTransactionConnection();
       if (strType.equals("SHIPMENT")) {
-        //strShipment = vars.getStringParameter("inpShipmentReciept");
         if (isSOTrx.equals("Y")) data = CreateFromInvoiceData.selectFromShipmentUpdateSOTrx(conn, this, strClaves);
         else data = CreateFromInvoiceData.selectFromShipmentUpdate(conn, this, strClaves);
         CreateFromInvoiceData[] dataAux = CreateFromInvoiceData.selectPriceList(conn, this, strDateInvoiced, strPriceList);
@@ -976,7 +982,6 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
               priceActual = price[0].priceactual;
               priceLimit = price[0].pricelimit;
               priceStd = price[0].pricestd;
-              //offerId = price[0].mOfferId;
             }
             price=null;
           } else {
@@ -986,23 +991,39 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
               priceActual = price[0].priceactual;
               priceLimit = price[0].pricelimit;
               priceStd = price[0].pricestd;
-              //offerId = price[0].mOfferId;
             }
             price=null;
           }
           BigDecimal LineNetAmt = (new BigDecimal(priceActual)).multiply(new BigDecimal(data[i].id));
           LineNetAmt.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
-          CreateFromInvoiceData.insert(conn, this, strSequence, strKey, vars.getClient(), data[i].adOrgId, vars.getUser(), data[i].cOrderlineId, data[i].mInoutlineId, data[i].description, data[i].mProductId, data[i].cUomId, data[i].id, priceList, priceActual, priceLimit, LineNetAmt.toString(), C_Tax_ID, data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId, priceStd);
+          try {
+            CreateFromInvoiceData.insert(conn, this, strSequence, strKey, vars.getClient(), data[i].adOrgId, vars.getUser(), data[i].cOrderlineId, data[i].mInoutlineId, data[i].description, data[i].mProductId, data[i].cUomId, data[i].id, priceList, priceActual, priceLimit, LineNetAmt.toString(), C_Tax_ID, data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId, priceStd);
+          } catch(ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myMessage;
+          }
         }
       }
 
       if (!strPO.equals("")) {
-        int total = CreateFromInvoiceData.deleteC_Order_ID(conn, this, strKey, strPO);
-        if (total==0) CreateFromInvoiceData.updateC_Order_ID(conn, this, strPO, strKey);
+        try {
+          int total = CreateFromInvoiceData.deleteC_Order_ID(conn, this, strKey, strPO);
+          if (total==0) CreateFromInvoiceData.updateC_Order_ID(conn, this, strPO, strKey);
+        } catch(ServletException ex) {
+          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+          releaseRollbackConnection(conn);
+          return myMessage;
+        }
+
       }
 
       releaseCommitConnection(conn);
       if (log4j.isDebugEnabled()) log4j.debug("Save commit");
+      myMessage = new OBError();
+      myMessage.setType("Success");
+      myMessage.setTitle("");
+      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
     } catch(Exception e){
       try {
         releaseRollbackConnection(conn);
@@ -1010,12 +1031,6 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
-    }
-    if (myMessage==null) {
-      myMessage = new OBError();
-      myMessage.setType("Success");
-      myMessage.setTitle("");
-      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
     }
     return myMessage;
   }
@@ -1091,30 +1106,58 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
               }
               String strConversion = conversion.toString();
               String strSequence = SequenceIdData.getSequence(this, "M_InOutLine", vars.getClient());
-              CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(), data[i].adOrgId, vars.getUser(), data[i].description, data[i].mProductId, data[i].cUomId, (qtyIsNegative?"-"+strConversion:strConversion), data[i].cOrderlineId, strLocator, CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId), (qtyIsNegative?"-"+total:total), data[i].mProductUomId, data[i].mAttributesetinstanceId);
-              if (!strInvoice.equals("")) CreateFromShipmentData.updateInvoice(conn, this, strSequence, data[i].cInvoicelineId);
-              else CreateFromShipmentData.updateInvoiceOrder(conn, this, strSequence, data[i].cOrderlineId);
+              try {
+                CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(), data[i].adOrgId, vars.getUser(), data[i].description, data[i].mProductId, data[i].cUomId, (qtyIsNegative?"-"+strConversion:strConversion), data[i].cOrderlineId, strLocator, CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId), (qtyIsNegative?"-"+total:total), data[i].mProductUomId, data[i].mAttributesetinstanceId);
+                if (!strInvoice.equals("")) CreateFromShipmentData.updateInvoice(conn, this, strSequence, data[i].cInvoicelineId);
+                else CreateFromShipmentData.updateInvoiceOrder(conn, this, strSequence, data[i].cOrderlineId);
+              } catch(ServletException ex) {
+                myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+                releaseRollbackConnection(conn);
+                return myMessage;
+              }
             }
           } else {
             String strSequence = SequenceIdData.getSequence(this, "M_InOutLine", vars.getClient());
-            CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(), data[i].adOrgId, vars.getUser(), data[i].description, data[i].mProductId, data[i].cUomId, data[i].id, data[i].cOrderlineId, strLocator, CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId), data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId);
-            if (!strInvoice.equals("")) CreateFromShipmentData.updateInvoice(conn, this, strSequence, data[i].cInvoicelineId);
-            else CreateFromShipmentData.updateInvoiceOrder(conn, this, strSequence, data[i].cOrderlineId);
+            try {
+              CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(), data[i].adOrgId, vars.getUser(), data[i].description, data[i].mProductId, data[i].cUomId, data[i].id, data[i].cOrderlineId, strLocator, CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId), data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId);
+              if (!strInvoice.equals("")) CreateFromShipmentData.updateInvoice(conn, this, strSequence, data[i].cInvoicelineId);
+              else CreateFromShipmentData.updateInvoiceOrder(conn, this, strSequence, data[i].cOrderlineId);
+            } catch(ServletException ex) {
+              myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+              releaseRollbackConnection(conn);
+              return myMessage;
+            }
           }
         }
       }
 
       if (!strPO.equals("")) {
-        int total = CreateFromShipmentData.deleteC_Order_ID(conn, this, strKey, strPO);
-        if (total==0) CreateFromShipmentData.updateC_Order_ID(conn, this, strPO, strKey);
+        try {
+          int total = CreateFromShipmentData.deleteC_Order_ID(conn, this, strKey, strPO);
+          if (total==0) CreateFromShipmentData.updateC_Order_ID(conn, this, strPO, strKey);
+        } catch(ServletException ex) {
+          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+          releaseRollbackConnection(conn);
+          return myMessage;
+        }
       }
       if (!strInvoice.equals("")) {
-        int total = CreateFromShipmentData.deleteC_Invoice_ID(conn, this, strKey, strInvoice);
-        if (total==0) CreateFromShipmentData.updateC_Invoice_ID(conn, this, strInvoice, strKey);
+        try {
+          int total = CreateFromShipmentData.deleteC_Invoice_ID(conn, this, strKey, strInvoice);
+          if (total==0) CreateFromShipmentData.updateC_Invoice_ID(conn, this, strInvoice, strKey);
+        } catch(ServletException ex) {
+          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+          releaseRollbackConnection(conn);
+          return myMessage;
+        }
       }
 
       releaseCommitConnection(conn);
       if (log4j.isDebugEnabled()) log4j.debug("Save commit");
+      myMessage = new OBError();
+      myMessage.setType("Success");
+      myMessage.setTitle("");
+      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
     } catch(Exception e){
       try {
         releaseRollbackConnection(conn);
@@ -1122,12 +1165,6 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
-    }
-    if (myMessage==null) {
-      myMessage = new OBError();
-      myMessage.setType("Success");
-      myMessage.setTitle("");
-      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
     }
     return myMessage;
   }
@@ -1159,10 +1196,20 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), "DebtPaymentCancelled");
             return myMessage;
           }
-          CreateFromSettlementData.update(conn, this, vars.getUser(), strKey, strWriteOff, strIsPaid, strDebtPaymentId);
+          try {
+            CreateFromSettlementData.update(conn, this, vars.getUser(), strKey, strWriteOff, strIsPaid, strDebtPaymentId);
+          } catch(ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myMessage;
+          }
         }
       }
       releaseCommitConnection(conn);
+      myMessage = new OBError();
+      myMessage.setType("Success");
+      myMessage.setTitle("");
+      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
     } catch (Exception e) {
       try {
         releaseRollbackConnection(conn);
@@ -1170,12 +1217,6 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
-    }
-    if (myMessage==null) {
-      myMessage = new OBError();
-      myMessage.setType("Success");
-      myMessage.setTitle("");
-      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
     }
     return myMessage;
   }
@@ -1205,11 +1246,20 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
           String strDPManagementLineID = SequenceIdData.getSequence(this, "C_DP_ManagementLine", vars.getClient());
 
           line += 10;
-          CreateFromDPManagementData.insert(conn, this, strDPManagementLineID, vars.getClient(), vars.getUser(), strKey, strStatusTo, line.toString(), strDebtPaymentId);
-
+          try {
+            CreateFromDPManagementData.insert(conn, this, strDPManagementLineID, vars.getClient(), vars.getUser(), strKey, strStatusTo, line.toString(), strDebtPaymentId);
+          } catch(ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myMessage;
+          }
         }
       }
       releaseCommitConnection(conn);
+      myMessage = new OBError();
+      myMessage.setType("Success");
+      myMessage.setTitle("");
+      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
     } catch (Exception e) {
       try {
         releaseRollbackConnection(conn);
@@ -1217,12 +1267,6 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
-    }
-    if (myMessage==null) {
-      myMessage = new OBError();
-      myMessage.setType("Success");
-      myMessage.setTitle("");
-      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
     }
     return myMessage;
   }
@@ -1253,11 +1297,20 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
           }
           String strCRemittanceLineID = SequenceIdData.getSequence(this, "C_RemittanceLine", vars.getClient());
           lineNo += 10;
-          CreateFromCRemittanceData.insert(conn, this, strCRemittanceLineID, vars.getClient(), vars.getUser(), strKey, lineNo.toString(),strDebtPaymentId);
-
+          try {
+            CreateFromCRemittanceData.insert(conn, this, strCRemittanceLineID, vars.getClient(), vars.getUser(), strKey, lineNo.toString(),strDebtPaymentId);
+          } catch(ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myMessage;
+          }
         }
       }
       releaseCommitConnection(conn);
+      myMessage = new OBError();
+      myMessage.setType("Success");
+      myMessage.setTitle("");
+      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
     } catch (Exception e) {
       try {
         releaseRollbackConnection(conn);
@@ -1265,12 +1318,6 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
-    }
-    if (myMessage==null) {
-      myMessage = new OBError();
-      myMessage.setType("Success");
-      myMessage.setTitle("");
-      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
     }
     return myMessage;
   }

@@ -11,20 +11,22 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
 package org.openbravo.erpCommon.ad_actionButton;
 
-//import com.sun.mail.smtp.SMTPMessage;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
 import java.io.*;
+import java.sql.Connection;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
 
@@ -57,25 +59,37 @@ public class ProjectClose extends HttpSecureAppServlet {
         strTabName = FormatUtilities.replace(tab[0].name);
         strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName + "_Relation.html";
       } else strWindowPath = strDefaultServlet;
-      String messageResult = processButton(vars, strKey, strWindow);
-      vars.setSessionValue(strWindow + "|" + strTabName + ".message", messageResult);
+      OBError myMessage = processButton(vars, strKey, strWindow);
+      vars.setMessage(strTab, myMessage);
       printPageClosePopUp(response, vars, strWindowPath);
     } else pageErrorPopUp(response);
   }
 
 
-  String processButton(VariablesSecureApp vars, String strKey, String windowId) {
+  OBError processButton(VariablesSecureApp vars, String strKey, String windowId) {
+    Connection conn = null;
+    OBError myMessage = null;
     try {
-      if(ProjectCloseData.update(this, strKey)!=1)return Utility.messageBD(this, "ProcessRunError", vars.getLanguage());
+      conn = this.getTransactionConnection();
+      if(ProjectCloseData.update(this, strKey)!=1)return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
       ProjectCloseData.updateLines(this, strKey);
-      return Utility.messageBD(this, "ProcessOK", vars.getLanguage());
-    } catch (ServletException e) {
-      log4j.warn(e);
-      return Utility.messageBD(this, "ProcessRunError", vars.getLanguage());
+      
+      releaseCommitConnection(conn);
+      myMessage = new OBError();
+      myMessage.setType("Success");
+      myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
+      myMessage.setMessage(Utility.messageBD(this, "ProcessOK", vars.getLanguage()));       
+    } catch (Exception e) {
+      try {
+        releaseRollbackConnection(conn);
+      } catch (Exception ignored) {}
+      e.printStackTrace();
+      log4j.warn("Rollback in transaction");
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
     }
-  }
-
-
+    return myMessage;
+}  
+  
   void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey, String windowId, String strTab, String strProcessId)
     throws IOException, ServletException {
       if (log4j.isDebugEnabled()) log4j.debug("Output: Button process Project Close");

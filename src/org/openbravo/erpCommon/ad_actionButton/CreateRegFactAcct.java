@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,7 +19,6 @@
 package org.openbravo.erpCommon.ad_actionButton;
 
 import org.openbravo.erpCommon.utility.*;
-import org.openbravo.exception.*;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -28,7 +27,6 @@ import java.io.*;
 import java.math.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
-import java.sql.*;
 
 
 // imports for transactions
@@ -71,73 +69,74 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
         if (tab[0].help.equals("Y")) strWindowPath="../utility/WindowTree_FS.html?inpTabId=" + strTab;
         else strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName + "_Relation.html";
       } else strWindowPath = strDefaultServlet;
-      try {
-        Connection conn = this.getTransactionConnection();
-        String messageResult = processButton(conn, vars, strKey, strPediodId, strWindow, strClose);
-        if (messageResult.equals("Success")) releaseCommitConnection(conn);
-        else {
-          releaseRollbackConnection(conn);
-          messageResult = "Error";
-        }
-        OBError myError = new OBError();
-        myError.setType(messageResult);
-        myError.setMessage(Utility.messageBD(this, messageResult, vars.getLanguage()));
-        vars.setMessage(strTab, myError);
-      } catch (NoConnectionAvailableException ex) {
-        bdErrorConnection(response);
-        return;
-      } catch (SQLException ex2) {
-        OBError myError = Utility.translateError(this, vars, vars.getLanguage(), ex2.toString());
-        if (!myError.isConnectionAvailable()) {
-          bdErrorConnection(response);
-          return;
-        } else vars.setMessage(strTab, myError);
-      }
-      printPageClosePopUp(response, vars, strWindowPath);
+        OBError myError = processButton(vars, strKey, strPediodId, strWindow, strClose);        
+        vars.setMessage(strTab, myError);      
+        printPageClosePopUp(response, vars, strWindowPath);
     } else pageErrorPopUp(response);
   }
 
-  String processButton(Connection conn, VariablesSecureApp vars, String strKey, String strPediodId, String windowId, String strClose) throws ServletException{
-    String strRegId = SequenceIdData.getSequence(this, "Fact_Acct_Group", vars.getClient());
-    String strCloseId = strClose.equals("Y")?SequenceIdData.getSequence(this, "Fact_Acct_Group", vars.getClient()):"";
-    String strOpenId = strClose.equals("Y")?SequenceIdData.getSequence(this, "Fact_Acct_Group", vars.getClient()):"";
-    String strDivideUpId = strClose.equals("Y")?SequenceIdData.getSequence(this, "Fact_Acct_Group", vars.getClient()):"";
-    CreateRegFactAcctData [] data = CreateRegFactAcctData.treeOrg(this, vars.getClient(), "0");
-    CreateRegFactAcctData [] acctSchema = CreateRegFactAcctData.treeAcctSchema(this, vars.getClient());
-    for (int j=0;j<acctSchema.length;j++){
-      for (int i=0;i<data.length;i++){
-        if (!strClose.equals("Y")){
-          if(!(processButtonReg(conn, vars, strKey, strPediodId, windowId, data[i].org, strRegId, acctSchema[j].id)).equals("Success")) {
-            return "";
+  OBError processButton(VariablesSecureApp vars, String strKey, String strPediodId, String windowId, String strClose){
+    
+    Connection conn = null;
+    OBError myError = null;
+    try {
+      conn = this.getTransactionConnection();
+      String strRegId = SequenceIdData.getSequence(this, "Fact_Acct_Group", vars.getClient());
+      String strCloseId = strClose.equals("Y")?SequenceIdData.getSequence(this, "Fact_Acct_Group", vars.getClient()):"";
+      String strOpenId = strClose.equals("Y")?SequenceIdData.getSequence(this, "Fact_Acct_Group", vars.getClient()):"";
+      String strDivideUpId = strClose.equals("Y")?SequenceIdData.getSequence(this, "Fact_Acct_Group", vars.getClient()):"";
+      CreateRegFactAcctData [] data = CreateRegFactAcctData.treeOrg(this, vars.getClient(), "0");
+      CreateRegFactAcctData [] acctSchema = CreateRegFactAcctData.treeAcctSchema(this, vars.getClient());
+      for (int j=0;j<acctSchema.length;j++){
+        for (int i=0;i<data.length;i++){
+          if (!strClose.equals("Y")){
+            if(!(processButtonReg(conn, vars, strKey, strPediodId, windowId, data[i].org, strRegId, acctSchema[j].id)).equals("Success")) {
+              return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+            }
+          } else {
+            if (log4j.isDebugEnabled()) log4j.debug("Output: Before buttonReg");
+            String strRegOut = processButtonReg(conn, vars, strKey, strPediodId, windowId, data[i].org, strRegId, acctSchema[j].id);
+            String strCloseOut = processButtonClose(conn, vars, strKey, strPediodId, windowId, data[i].org, strCloseId, strOpenId, strDivideUpId, acctSchema[j].id);
+            if (log4j.isDebugEnabled()) log4j.debug("Output: After buttonClose - strRegOut:" + strRegOut);
+            if (log4j.isDebugEnabled()) log4j.debug("Output: After buttonClose - strCloseOut:" + strCloseOut);
+            if (!strRegOut.equals("Success") || !strCloseOut.equals("Success")){
+              return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+            }
           }
-        } else {
-          if (log4j.isDebugEnabled()) log4j.debug("Output: Before buttonReg");
-          String strRegOut = processButtonReg(conn, vars, strKey, strPediodId, windowId, data[i].org, strRegId, acctSchema[j].id);
-          String strCloseOut = processButtonClose(conn, vars, strKey, strPediodId, windowId, data[i].org, strCloseId, strOpenId, strDivideUpId, acctSchema[j].id);
-          if (log4j.isDebugEnabled()) log4j.debug("Output: After buttonClose - strRegOut:" + strRegOut);
-          if (log4j.isDebugEnabled()) log4j.debug("Output: After buttonClose - strCloseOut:" + strCloseOut);
-          if (!strRegOut.equals("Success") || !strCloseOut.equals("Success")) return "";
+          ExpenseAmtDr = new BigDecimal("0");
+          ExpenseAmtCr = new BigDecimal("0");
+          RevenueAmtDr = new BigDecimal("0");
+          RevenueAmtCr = new BigDecimal("0");
         }
-        ExpenseAmtDr = new BigDecimal("0");
-        ExpenseAmtCr = new BigDecimal("0");
-        RevenueAmtDr = new BigDecimal("0");
-        RevenueAmtCr = new BigDecimal("0");
       }
+      if(CreateRegFactAcctData.updatePeriods(conn, this, strRegId, vars.getUser(), strKey, strPediodId)==0){
+        return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+      }else if (strClose.equals("Y") && (CreateRegFactAcctData.updatePeriodsClose(conn, this, strCloseId, strDivideUpId, vars.getUser(), strKey, strPediodId)==0 || CreateRegFactAcctData.updateClose(conn, this, vars.getUser(), strCloseId)==0)){
+        return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+      }
+      
+      releaseCommitConnection(conn);
+      myError = new OBError();
+      myError.setType("Success");
+      myError.setTitle("");
+      myError.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+    } catch (Exception e) {
+      log4j.warn(e);
+      try {
+        releaseRollbackConnection(conn);
+      } catch (Exception ignored) {}
+      myError = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
     }
-    if(CreateRegFactAcctData.updatePeriods(conn, this, strRegId, vars.getUser(), strKey, strPediodId)==0) return "";
-    else if (strClose.equals("Y") && (CreateRegFactAcctData.updatePeriodsClose(conn, this, strCloseId, strDivideUpId, vars.getUser(), strKey, strPediodId)==0 || CreateRegFactAcctData.updateClose(conn, this, vars.getUser(), strCloseId)==0)) return "";
-    return "Success";
+  return myError;
   }
 
-  String processButtonReg(Connection conn, VariablesSecureApp vars, String strKey, String strPediodId, String windowId, String stradOrgId, String strID, String strAcctSchema) {
-    try {
+  String processButtonReg(Connection conn, VariablesSecureApp vars, String strKey, String strPediodId, String windowId, String stradOrgId, String strID, String strAcctSchema) throws ServletException {
+  
       CreateRegFactAcctData[] expense = CreateRegFactAcctData.getAmounts(this, strKey, strPediodId, "E", stradOrgId, strAcctSchema);
       CreateRegFactAcctData[] revenue = CreateRegFactAcctData.getAmounts(this, strKey, strPediodId, "R", stradOrgId, strAcctSchema);
-      //String strAcctSchema = Utility.getContext(this, vars, "$C_ACCTSCHEMA_ID", windowId);;
       String Fact_Acct_ID = "";
       String Fact_Acct_Group_ID = strID;
       if(CreateRegFactAcctData.getNextPeriod(this, strPediodId).equals("")) return "ProcessRunError1";
-      //Fact_Acct_Group_ID = SequenceIdData.getSequence(this, "Fact_Acct_Group", vars.getClient());
       int i;
       for (i=0;i<expense.length;i++){
         ExpenseAmtDr = ExpenseAmtDr.add(new BigDecimal(expense[i].totalamtdr));
@@ -160,24 +159,19 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
         CreateRegFactAcctData.insert(conn, this, Fact_Acct_ID, vars.getClient(), stradOrgId, vars.getUser(), strAcctSchema, account[0].accountId, CreateRegFactAcctData.getEndDate(this, strPediodId), strPediodId, CreateRegFactAcctData.adTableId(this), "A", CreateRegFactAcctData.cCurrencyId(this, strAcctSchema),ExpenseAmtCr.add(RevenueAmtCr).subtract(RevenueAmtDr).subtract(ExpenseAmtDr).toString(),"0",ExpenseAmtCr.add(RevenueAmtCr).subtract(RevenueAmtDr).subtract(ExpenseAmtDr).toString(),"0", Fact_Acct_Group_ID, "10", account[0].name, account[0].value, account[0].cBpartnerId, account[0].recordId2, account[0].mProductId, account[0].aAssetId);
       }
       return "Success";
-    } catch (ServletException e) {
-      log4j.warn(e);
-      return "ProcessRunError4";
-    }
   }
 
-  String processButtonClose(Connection conn, VariablesSecureApp vars, String strKey, String strPediodId, String windowId, String stradOrgId, String strCloseID, String strOpenID, String strDivideUpId, String strAcctSchema) {
-    try {
+  String processButtonClose(Connection conn, VariablesSecureApp vars, String strKey, String strPediodId, String windowId, String stradOrgId, String strCloseID, String strOpenID, String strDivideUpId, String strAcctSchema) throws ServletException {    
       BigDecimal assetAmtDr = new BigDecimal("0");
       BigDecimal assetAmtCr = new BigDecimal("0");
       BigDecimal liabilityAmtDr = new BigDecimal("0");
       BigDecimal liabilityAmtCr = new BigDecimal("0");
-      //String strAcctSchema = Utility.getContext(this, vars, "$C_ACCTSCHEMA_ID", windowId);;
       String Fact_Acct_ID = "";
       String Fact_Acct_Group_ID = strCloseID;
       String newPeriod = CreateRegFactAcctData.getNextPeriod(this, strPediodId);
-      if(newPeriod.equals("")) return "ProcessRunError";
-      //Fact_Acct_Group_ID = SequenceIdData.getSequence(this, "Fact_Acct_Group", vars.getClient());
+      if(newPeriod.equals("")){
+        return "ProcessRunError";
+      }
       CreateRegFactAcctData [] account2 = CreateRegFactAcctData.retainedearning(this, strAcctSchema);
       CreateRegFactAcctData [] account = null;
       if(account2!=null && account2.length>0){
@@ -226,10 +220,6 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
       }
 
       return "Success";
-    } catch (ServletException e) {
-      log4j.warn(e);
-      return "ProcessRunError";
-    }
   }
 
   void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey, String strPediodId, String windowId, String strTab, String strProcessId, String strClose) throws IOException, ServletException {

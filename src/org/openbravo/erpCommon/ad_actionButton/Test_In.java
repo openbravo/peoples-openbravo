@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,16 +19,15 @@
 
 package org.openbravo.erpCommon.ad_actionButton;
 
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.base.secureApp.*;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.FormatUtilities;
-import org.openbravo.exception.*;
 import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
-import java.sql.*;
 
 import org.openbravo.data.*;
 
@@ -44,11 +43,6 @@ public class Test_In extends HttpSecureAppServlet {
   static int YES_NO_OPTION;
   static int NO;
 
-  
-  //static String currentWindow = "Application managemente";
-  //static String currentFrame= "";
-  Connection conn;
-
 
   public void init (ServletConfig config) {
     super.init(config);
@@ -56,13 +50,7 @@ public class Test_In extends HttpSecureAppServlet {
   }
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    try {
-      conn = getTransactionConnection();
-    } catch (NoConnectionAvailableException ex) {
-      throw new ServletException("@CODE=NoConnectionAvailable");
-    } catch (SQLException ex2) {
-      throw new ServletException("@CODE=" + Integer.toString(ex2.getErrorCode()) + "@" + ex2.getMessage());
-    }
+
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
@@ -83,37 +71,54 @@ public class Test_In extends HttpSecureAppServlet {
         strTabName = FormatUtilities.replace(tab[0].name);
         strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName + "_Relation.html";
       } else strWindowPath = strDefaultServlet;
-      String messageResult = processButton(vars, tl.getFieldProvider(), strKey, strWindow);
-      vars.setSessionValue(strWindow + "|" + strTabName + ".message", messageResult);
+      OBError myMessage = processButton(vars, tl.getFieldProvider(), strKey, strWindow);
+      vars.setMessage(strTab, myMessage);
       printPageClosePopUp(response, vars, strWindowPath);
     } else pageErrorPopUp(response);
   }
 
 
-  String processButton(VariablesSecureApp vars, FieldProvider[] dataLineas, String strTestId, String windowId) {
-
-    if (dataLineas==null) return "";
+  OBError processButton(VariablesSecureApp vars, FieldProvider[] dataLineas, String strTestId, String windowId) {
+    OBError myMessage = null;
+    Connection conn = null;
+    if (dataLineas==null) {
+      return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+    }
     String strCommandId="";
     String strType = "C";
     String strLineId ="";
     int intSeqNo = 10;
     try {
-      if (!TestInData.countLines(this, strTestId).equals("0")) return "Las lineas del test ya han sido importadas previamente";
+      conn = getTransactionConnection();
+      if (!TestInData.countLines(this, strTestId).equals("0")) {
+        return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+      }
       for (int i=0;i<dataLineas.length;i++) {
         strCommandId = dataLineas[i].getField("comando");
         if (strCommandId != null){
           TestInData[] datacomando = TestInData.select(conn, this, strCommandId);
           strLineId = SequenceIdData.getSequence(this, "AT_Line", vars.getClient());
-          TestInData.insert(this, strLineId, vars.getClient(), vars.getOrg(), vars.getUser(), strTestId, strCommandId, String.valueOf(intSeqNo), dataLineas[i].getField("arg1"), dataLineas[i].getField("arg2"), dataLineas[i].getField("arg3"), strType, datacomando[0].argno, datacomando[0].arghelp1, datacomando[0].arghelp2, datacomando[0].arghelp3);
+          try {
+            TestInData.insert(conn, this, strLineId, vars.getClient(), vars.getOrg(), vars.getUser(), strTestId, strCommandId, String.valueOf(intSeqNo), dataLineas[i].getField("arg1"), dataLineas[i].getField("arg2"), dataLineas[i].getField("arg3"), strType, datacomando[0].argno, datacomando[0].arghelp1, datacomando[0].arghelp2, datacomando[0].arghelp3);
+          } catch(ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myMessage;
+          }
           intSeqNo = intSeqNo + 10;
         }
       }
-      return Utility.messageBD(this, "ProcessOK", vars.getLanguage());
-    } catch (Exception e) {
+      
+      myMessage = new OBError();
+      myMessage.setType("Success");
+      myMessage.setTitle("");
+      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+    } catch (Exception e) {      
       e.printStackTrace();
-      log4j.warn(e);
-      return Utility.messageBD(this, "ProcessRunError", vars.getLanguage());
-    }
+      log4j.warn("Rollback in transaction");
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+    }   
+    return myMessage;
   }
 
 

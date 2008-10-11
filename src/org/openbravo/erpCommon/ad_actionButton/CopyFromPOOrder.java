@@ -18,7 +18,6 @@
 */
 package org.openbravo.erpCommon.ad_actionButton;
 
-import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.*;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.erpCommon.ad_callouts.*;
@@ -76,8 +75,7 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
 
 
  OBError processButton(VariablesSecureApp vars, String strKey, String strOrder, String windowId) {
-    OBError myError = new OBError();
-    myError.setTitle("");
+    OBError myError = null;    
     int i = 0;
     String priceactual = "";
     String pricelist = "";
@@ -124,28 +122,34 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
           String strCTaxID = Tax.get(this, data[i].mProductId, DateTimeData.today(this), order[0].adOrgId, order[0].mWarehouseId.equals("")?vars.getWarehouse():order[0].mWarehouseId, CopyFromPOOrderData.cBPartnerLocationId(this, order[0].cBpartnerId), CopyFromPOOrderData.cBPartnerLocationId(this, order[0].cBpartnerId), order[0].cProjectId, true);
           line = Integer.valueOf(order[0].line.equals("")?"0":order[0].line).intValue() + ((i+1) * 10);
           String strCOrderlineID = SequenceIdData.getSequence(this, "C_OrderLine", vars.getClient());
-          CopyFromPOOrderData.insertCOrderline(conn, this, strCOrderlineID, order[0].adClientId, order[0].adOrgId, vars.getUser(),
-          strKey, Integer.toString(line), order[0].cBpartnerId, 
-          order[0].cBpartnerLocationId.equals("")?ExpenseSOrderData.cBPartnerLocationId(this, 
-          order[0].cBpartnerId):order[0].cBpartnerLocationId, DateTimeData.today(this), DateTimeData.today(this), data[i].description, 
-          data[i].mProductId, order[0].mWarehouseId.equals("")?vars.getWarehouse():order[0].mWarehouseId, data[i].cUomId, data[i].qtyordered, data[i].quantityorder,
-          data[i].cCurrencyId, pricelist, priceactual, pricelimit, strCTaxID, strDiscount, data[i].mProductUomId, data[i].orderline);
+          try {
+            CopyFromPOOrderData.insertCOrderline(conn, this, strCOrderlineID, order[0].adClientId, order[0].adOrgId, vars.getUser(),
+            strKey, Integer.toString(line), order[0].cBpartnerId, 
+            order[0].cBpartnerLocationId.equals("")?ExpenseSOrderData.cBPartnerLocationId(this, 
+            order[0].cBpartnerId):order[0].cBpartnerLocationId, DateTimeData.today(this), DateTimeData.today(this), data[i].description, 
+            data[i].mProductId, order[0].mWarehouseId.equals("")?vars.getWarehouse():order[0].mWarehouseId, data[i].cUomId, data[i].qtyordered, data[i].quantityorder,
+            data[i].cCurrencyId, pricelist, priceactual, pricelimit, strCTaxID, strDiscount, data[i].mProductUomId, data[i].orderline);
+          } catch(ServletException ex) {
+            myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myError;
+          }
+
       }
+      
       releaseCommitConnection(conn);
+      myError = new OBError();
+      myError.setType("Success");  
+      myError.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
+      myError.setMessage(Utility.messageBD(this, "RecordsCopied", vars.getLanguage()) + i);
     } catch (Exception e) {
       try {
         releaseRollbackConnection(conn);
       } catch (Exception ignored) {}
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
-      myError.setType("Error");
-      myError.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-      myError.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
-      return myError;
+      myError = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
     }
-    myError.setType("Success");  
-    myError.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
-    myError.setMessage(Utility.messageBD(this, "RecordsCopied", vars.getLanguage()) + i);
     return myError;
   }
 

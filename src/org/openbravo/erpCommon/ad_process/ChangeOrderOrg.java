@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -50,8 +50,6 @@ public class ChangeOrderOrg extends HttpSecureAppServlet {
       String strOrg = vars.getGlobalVariable("inpadOrgId", "ChangeOrderOrg.adOrgId", "");
       vars.getGlobalVariable("inpadShipperpathId", "ChangeOrderOrg.adShipperpathId", "");
       String strPayment = vars.getGlobalVariable("inppaymentrule", "ChangeOrderOrg.paymentrule", "");
-      /*String strNewOrg = vars.getGlobalVariable("inpadOrgIdNew", "ChangeOrderOrg.adOrgIdNew", "");
-      String strTax = vars.getGlobalVariable("inpcTaxId", "ChangeOrderOrg.cTaxId", "");*/
       printPage(response, vars, strBPartner, strOrg, "", strPayment, "", "");
     } else if (vars.commandIn("FIND")) {
       String strBPartner = vars.getRequestGlobalVariable("inpcBpartnerId", "ChangeOrderOrg.cBpartnerId");
@@ -65,9 +63,7 @@ public class ChangeOrderOrg extends HttpSecureAppServlet {
       String strNewOrg = vars.getRequiredStringParameter("inpadOrgIdNew");
       String strTax = vars.getStringParameter("inpcTaxId");
       String strOrder = vars.getRequiredInParameter("inpcOrderId");
-      // new message system
       OBError myMessage = processSave(vars, strOrder, strNewOrg, strTax);      
-      //if (!strMessage.equals("")) vars.setSessionValue("ChangeOrderOrg.message", strMessage);
       vars.setMessage("ChangeOrderOrg", myMessage);
       response.sendRedirect(strDireccion + request.getServletPath());
     } else pageErrorPopUp(response);
@@ -75,17 +71,11 @@ public class ChangeOrderOrg extends HttpSecureAppServlet {
 
   OBError processSave(VariablesSecureApp vars, String strOrder, String strNewOrg, String strTax) {
 	  OBError myMessage = null;
-	  
-	  myMessage = new OBError();	  
-	  myMessage.setTitle("");
-	  
+
     if (log4j.isDebugEnabled()) log4j.debug("Save: ChangeOrderOrg ");
-    if (strOrder.equals("")){
-    	myMessage.setType("Error");      
-        myMessage.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
-        return myMessage;
-    	//return "";
-    }
+    
+    if (strOrder.equals("")) return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+    
     Connection conn = null;
     try {
       conn = this.getTransactionConnection();
@@ -102,19 +92,37 @@ public class ChangeOrderOrg extends HttpSecureAppServlet {
           if (ChangeOrderOrgData.checkRestrictions(conn, this, strOrderId)) {
             releaseRollbackConnection(conn);
             log4j.warn("The order is incorrect");
+            myMessage = new OBError();
             myMessage.setType("Error");      
             myMessage.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
             return myMessage;
-            //return Utility.messageBD(this, "ProcessRunError", vars.getLanguage());
           }
           boolean shouldDelete = ChangeOrderOrgData.shouldDeleteCashLine(conn, this, strOrderId);
           ChangeOrderOrgData.resetOrder(conn, this, strOrderId);
-          ChangeOrderOrgData.updateDocAction(conn, this, vars.getUser(), strOrderId);
+          try {
+            ChangeOrderOrgData.updateDocAction(conn, this, vars.getUser(), strOrderId);
+          } catch(ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myMessage;
+          }
           String pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
-          ChangeOrderOrgData.insertPInstance(conn, this, pinstance, "104", strOrderId, vars.getUser(), vars.getClient(), vars.getOrg());
+          try {
+            ChangeOrderOrgData.insertPInstance(conn, this, pinstance, "104", strOrderId, vars.getUser(), vars.getClient(), vars.getOrg());
+          } catch(ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myMessage;
+          }
           ChangeOrderOrgData.processOrder(conn, this, pinstance);
-          ChangeOrderOrgData.updateLines(conn, this, strTax, vars.getUser(), strNewOrg, strOrderId);
-          ChangeOrderOrgData.update(conn, this, vars.getUser(), strNewOrg, StrDocTypeID, StrDocTypeID, strOrderId);
+          try {
+            ChangeOrderOrgData.updateLines(conn, this, strTax, vars.getUser(), strNewOrg, strOrderId);
+            ChangeOrderOrgData.update(conn, this, vars.getUser(), strNewOrg, StrDocTypeID, StrDocTypeID, strOrderId);
+          } catch(ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myMessage;
+          }
             if (!StrExistsShipment.equals("0")) {
                 int i=0;
                 ChangeOrderOrgData[] shipmentsData = ChangeOrderOrgData.selectShipment(this, strOrderId);
@@ -122,36 +130,51 @@ public class ChangeOrderOrg extends HttpSecureAppServlet {
                 ChangeOrderOrgData.updateProcessed(conn, this, vars.getUser(), shipmentsData[i].mInoutId);
                 String StrDocTypeIDShipment = ChangeOrderOrgData.cDocttypeshipment(this, StrDocTypeID);
                 String DocumentnoShipment = Utility.getDocumentNo(this, vars, "169", "M_Inout", StrDocTypeIDShipment, StrDocTypeIDShipment, false, true);
-                ChangeOrderOrgData.updateShipment(conn, this, vars.getUser(), DocumentnoShipment, StrDocTypeIDShipment, strNewOrg, shipmentsData[i].mInoutId);
-                ChangeOrderOrgData.updateShipmentlines(conn, this, vars.getUser(), strNewOrg, shipmentsData[i].mInoutId);
-                ChangeOrderOrgData.updateMtransaction(conn, this, strNewOrg, vars.getUser(), shipmentsData[i].mInoutId);
+                  try {
+                    ChangeOrderOrgData.updateShipment(conn, this, vars.getUser(), DocumentnoShipment, StrDocTypeIDShipment, strNewOrg, shipmentsData[i].mInoutId);
+                    ChangeOrderOrgData.updateShipmentlines(conn, this, vars.getUser(), strNewOrg, shipmentsData[i].mInoutId);
+                    ChangeOrderOrgData.updateMtransaction(conn, this, strNewOrg, vars.getUser(), shipmentsData[i].mInoutId);
+                  } catch(ServletException ex) {
+                    myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+                    releaseRollbackConnection(conn);
+                    return myMessage;
+                  }
                 }
             }
             /*Pending change org for the invoices related*/
           pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
-          ChangeOrderOrgData.insertPInstance(conn, this, pinstance, "104", strOrderId, vars.getUser(), vars.getClient(), vars.getOrg());
+          try {
+            ChangeOrderOrgData.insertPInstance(conn, this, pinstance, "104", strOrderId, vars.getUser(), vars.getClient(), vars.getOrg());
+          } catch(ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myMessage;
+          }
           ChangeOrderOrgData.processOrder(conn, this, pinstance);
-          if (shouldDelete) ChangeOrderOrgData.deleteCashLine(conn, this, strOrderId);
+          try {
+            if (shouldDelete) ChangeOrderOrgData.deleteCashLine(conn, this, strOrderId);
+          } catch(ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myMessage;
+          }
         }
       }
+      
       releaseCommitConnection(conn);
+      myMessage = new OBError();
+      myMessage.setType("Success"); 
+      myMessage.setTitle("");
+      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
     } catch (Exception e) {
       try {
         releaseRollbackConnection(conn);
       } catch (Exception ignored) {}
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
-      
-      myMessage.setType("Error");      
-      myMessage.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
-      return myMessage;
-      //return Utility.messageBD(this, "ProcessRunError", vars.getLanguage());
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
     }
-    //new message system    
-    myMessage.setType("Success");    
-    myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
     return myMessage;
-    //return Utility.messageBD(this, "Success", vars.getLanguage());
   }
 
   void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner, String strOrg, String strShipperpath, String strPayment, String strNewOrg, String strTax) throws IOException, ServletException {
@@ -196,14 +219,7 @@ public class ChangeOrderOrg extends HttpSecureAppServlet {
       xmlDocument.setParameter("shipperpath", strShipperpath);
       xmlDocument.setParameter("tax", strTax);
       xmlDocument.setParameter("bpartnerDes", ChangeOrderOrgData.selectBPartner(this, strBPartner));
-      //new message system
-      //String strMessage = vars.getSessionValue("ChangeOrderOrg.message");
-      //if (!strMessage.equals("")) {
-      //  vars.removeSessionValue("ChangeOrderOrg.message");
-      //  strMessage = "alert('" + Replace.replace(strMessage, "'", "\'") + "');";
-      //}
-      //xmlDocument.setParameter("body", strMessage);
-
+      
       xmlDocument.setData("reportAD_Org_ID", "liststructure", OrganizationComboData.selectCombo(this, vars.getRole()));
       xmlDocument.setData("reportAD_Org_IDNew", "liststructure", OrganizationComboData.selectCombo(this, vars.getRole()));
 

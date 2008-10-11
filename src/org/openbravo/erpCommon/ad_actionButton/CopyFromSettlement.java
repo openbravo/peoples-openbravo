@@ -85,8 +85,7 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
 
 
   OBError processButton(VariablesSecureApp vars, String strSettlement, String strKey) {
-    OBError myError = new OBError();
-    myError.setTitle("");
+    OBError myError = null;
     int i=0;
     Connection conn = null;
     
@@ -107,28 +106,39 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
         strCBPartnerId = vars.getStringParameter("inpcBpartnerId"+data[i].cDebtPaymentId);
         strDate = vars.getStringParameter("inpDate"+data[i].cDebtPaymentId);
         strImporte = vars.getStringParameter("inpAmount"+data[i].cDebtPaymentId);
-        CopyFromSettlementData.insertDebtPayment(conn,this, strDebtPayment, to[0].client, to[0].org, vars.getUser(), data[i].isreceipt, strSettlement, data[i].description, strCBPartnerId, data[i].cCurrencyId, data[i].cBankaccountId, data[i].cCashbookId, data[i].paymentrule, strImporte, data[i].writeoffamt, strDate, data[i].ismanual, data[i].cGlitemId, data[i].isdirectposting, data[i].status);
+        try {
+          CopyFromSettlementData.insertDebtPayment(conn,this, strDebtPayment, to[0].client, to[0].org, vars.getUser(), data[i].isreceipt, strSettlement, data[i].description, strCBPartnerId, data[i].cCurrencyId, data[i].cBankaccountId, data[i].cCashbookId, data[i].paymentrule, strImporte, data[i].writeoffamt, strDate, data[i].ismanual, data[i].cGlitemId, data[i].isdirectposting, data[i].status);
+        } catch(ServletException ex) {
+          myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+          releaseRollbackConnection(conn);
+          return myError;
+        }
         for (int j=0;j<data1.length;j++){
           strDebe = vars.getStringParameter("inpDebe"+data1[j].cDebtPaymentBalancingId);
           strHaber = vars.getStringParameter("inpHaber"+data1[j].cDebtPaymentBalancingId);
           strDebtPaymentBalancing = SequenceIdData.getSequence(this, "C_Debt_Payment_Balancing", vars.getClient());
-          CopyFromSettlementData.insert(conn,this, strDebtPaymentBalancing, to[0].client, to[0].org, vars.getUser(),strDebtPayment, strDebe, strHaber, data1[j].cGlitemId);
+          try {
+            CopyFromSettlementData.insert(conn,this, strDebtPaymentBalancing, to[0].client, to[0].org, vars.getUser(),strDebtPayment, strDebe, strHaber, data1[j].cGlitemId);
+          } catch(ServletException ex) {
+            myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myError;
+          }
         }
       }
       releaseCommitConnection(conn);
+      myError = new OBError();
+      myError.setType("Success");
+      myError.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
+      myError.setMessage(Utility.messageBD(this, "RecordsCopied", vars.getLanguage()) + i);
     } catch (Exception e) {
       try {
         releaseRollbackConnection(conn);
       } catch (Exception ignored) {}
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
-      myError.setType("Error");
-      myError.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
-      return myError;
+      myError = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
     }
-    myError.setType("Success");
-    myError.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
-    myError.setMessage(Utility.messageBD(this, "RecordsCopied", vars.getLanguage()) + i);
     return myError;
   }
 

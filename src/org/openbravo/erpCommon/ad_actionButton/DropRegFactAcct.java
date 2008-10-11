@@ -11,14 +11,14 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
 package org.openbravo.erpCommon.ad_actionButton;
 
-//import com.sun.mail.smtp.SMTPMessage;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -62,29 +62,41 @@ public class DropRegFactAcct extends HttpSecureAppServlet {
         strTabName = FormatUtilities.replace(tab[0].name);
         strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName + "_Relation.html";
       } else strWindowPath = strDefaultServlet;
-      String messageResult = processButton(vars, strRegFactAcctGroupId);
-      vars.setSessionValue(strWindow + "|" + strTabName + ".message", messageResult);
+      OBError myError = processButton(vars, strRegFactAcctGroupId);
+      vars.setMessage(strTab, myError);
       printPageClosePopUp(response, vars, strWindowPath);
     } else pageErrorPopUp(response);
   }
 
-  String processButton(VariablesSecureApp vars, String strRegFactAcctGroupId) {
+  OBError processButton(VariablesSecureApp vars, String strRegFactAcctGroupId) {
       Connection conn = null;
+      OBError myError = null;
     try {
       conn = this.getTransactionConnection();
       String strCloseFactAcctGroupId = DropRegFactAcctData.selectClose(this, strRegFactAcctGroupId);
       String strDivideUpFactAcctGroupId = DropRegFactAcctData.selectDivideUp(this, strRegFactAcctGroupId);
+      try {
       processButtonReg(conn, vars, strRegFactAcctGroupId);
       if (!strCloseFactAcctGroupId.equals(""))processButtonClose(conn, vars, strCloseFactAcctGroupId, strDivideUpFactAcctGroupId);
+      } catch(ServletException ex) {
+        myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+        releaseRollbackConnection(conn);
+        return myError;
+      }
+      
       releaseCommitConnection(conn);
-      return Utility.messageBD(this, "ProcessOK", vars.getLanguage());
+      myError = new OBError();
+      myError.setType("Success");
+      myError.setTitle("");
+      myError.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
     } catch (Exception e) {
       log4j.warn(e);
       try {
         releaseRollbackConnection(conn);
       } catch (Exception ignored) {}
-      return Utility.messageBD(this, "ProcessRunError", vars.getLanguage());
+        myError = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
     }
+    return myError; 
   }
 
   String processButtonReg(Connection conn, VariablesSecureApp vars, String strRegFactAcctGroupId) throws ServletException{

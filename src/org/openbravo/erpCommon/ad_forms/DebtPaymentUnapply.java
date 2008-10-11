@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -44,37 +44,41 @@ public class DebtPaymentUnapply extends HttpSecureAppServlet {
       String strWindow = vars.getStringParameter("inpwindowId");
       printPageDataSheet(response, vars, strWindow);
     } else if (vars.commandIn("PROCESS")) {
-      String strCDebtPaymentId = vars.getInStringParameter("inpDebtPayment");
-      OBError myMessage = new OBError();
-      String message = "";
-      if (strCDebtPaymentId.equals("")) {
-        myMessage.setType("Info");
-        myMessage.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
-        message = "No records selected";
-      } else {
-        int i = updateSelection(strCDebtPaymentId);
-        myMessage.setType("Success");
-        myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
-        message = "Updated = " + Integer.toString(i);
-      }
-      myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), message));
+      String strCDebtPaymentId = vars.getInStringParameter("inpDebtPayment");      
+      OBError myMessage = updateSelection(vars, strCDebtPaymentId);
       vars.setMessage("DebtPaymentUnapply", myMessage);
       response.sendRedirect(strDireccion + request.getServletPath());
      } else pageError(response);
   }
 
-  int updateSelection(String strCDebtPaymentId)
-    throws IOException, ServletException {
-    DebtPaymentUnapplyData [] data = DebtPaymentUnapplyData.selectRecord(this, strCDebtPaymentId);
-    int i=0;
-    for (i=0;i<data.length;i++) {
-      if (data[i].iscancel.equals("N")){
-        DebtPaymentUnapplyData.updateGenerate(this, data[i].cDebtPaymentId);
-      }else{
-        DebtPaymentUnapplyData.updateCancel(this, data[i].cDebtPaymentId);
-      }
+  OBError updateSelection(VariablesSecureApp vars, String strCDebtPaymentId){
+    OBError myMessage = new OBError();
+        
+    if (strCDebtPaymentId.equals("")) {
+      myMessage.setType("Info");
+      myMessage.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
+      myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), "No records selected"));
+      return myMessage;
     }
-    return i;
+    
+      try {
+      DebtPaymentUnapplyData [] data = DebtPaymentUnapplyData.selectRecord(this, strCDebtPaymentId);
+      int i=0;
+      for (i=0;i<data.length;i++) {
+        if (data[i].iscancel.equals("N")){
+          DebtPaymentUnapplyData.updateGenerate(this, data[i].cDebtPaymentId);
+        }else{
+          DebtPaymentUnapplyData.updateCancel(this, data[i].cDebtPaymentId);
+        }
+      }
+      
+      myMessage.setType("Success");
+      myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
+      myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), "Updated = " + Integer.toString(i)));
+      } catch(ServletException ex) {
+        myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());        
+      }    
+    return myMessage;
   }
 
 
@@ -86,11 +90,6 @@ public class DebtPaymentUnapply extends HttpSecureAppServlet {
     String discard[]={"sectionDetail"};
     XmlDocument xmlDocument=null;
     DebtPaymentUnapplyData[] data=null;
-//    if (log4j.isDebugEnabled()) log4j.debug("Language: " + vars.getLanguage());
-//    String language = vars.getLanguage();
-//    String lang = language.substring(0, 2);
-//    String country = language.substring(3, 5);
-//    language = lang + "_" + country;
     data = DebtPaymentUnapplyData.select(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Org", strWindow), Utility.getContext(this, vars, "#User_Client", strWindow));
     if (data==null || data.length == 0) {
      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/DebtPaymentUnapply", discard).createXmlDocument();

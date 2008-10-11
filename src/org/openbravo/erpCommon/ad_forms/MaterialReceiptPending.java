@@ -40,6 +40,7 @@ import org.openbravo.utils.Replace;
 
 // imports for transactions
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import org.openbravo.erpCommon.utility.DateTimeData;
 
@@ -164,11 +165,8 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     myMessage = new OBError();
     myMessage.setTitle("");
     if (strcOrderLineId.equals("")){
-//      New message system
-        myMessage.setType("Success");
-        myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
-        return myMessage;
-        //return "";
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+      return myMessage;
     }
 
     Connection conn = null;
@@ -209,7 +207,13 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
               myMessage.setMessage(Utility.messageBD(this, "DateReceipt", vars.getLanguage()) + " " + MaterialReceiptPendingData.bPartnerDescription(this, data[0].cBpartnerId));
               return myMessage;
             }
-            MaterialReceiptPendingData.insert(conn, this, strmInoutId, vars.getClient(), data[0].adOrgId, "Y", vars.getUser(), vars.getUser(), "N", strDocumentno, "CO", "DR", "N", "N", "N", docTargetType, data[0].description, data[0].cOrderId, data[0].dateordered, "N", "V+", strDateReceipt, strDateReceipt, data[0].cBpartnerId, data[0].cBpartnerLocationId, data[0].mWarehouseId, data[0].poreference, data[0].deliveryrule, data[0].freightcostrule, data[0].freightamt, data[0].deliveryviarule, data[0].mShipperId, data[0].cChargeId, data[0].chargeamt, data[0].priorityrule, "N", "N", data[0].adUserId, data[0].salesrepId, data[0].adOrgtrxId, data[0].cProjectId, data[0].cCampaignId, data[0].cActivityId, data[0].user1Id, data[0].user2Id, "N", "N", "N");
+            try {
+              MaterialReceiptPendingData.insert(conn, this, strmInoutId, vars.getClient(), data[0].adOrgId, "Y", vars.getUser(), vars.getUser(), "N", strDocumentno, "CO", "DR", "N", "N", "N", docTargetType, data[0].description, data[0].cOrderId, data[0].dateordered, "N", "V+", strDateReceipt, strDateReceipt, data[0].cBpartnerId, data[0].cBpartnerLocationId, data[0].mWarehouseId, data[0].poreference, data[0].deliveryrule, data[0].freightcostrule, data[0].freightamt, data[0].deliveryviarule, data[0].mShipperId, data[0].cChargeId, data[0].chargeamt, data[0].priorityrule, "N", "N", data[0].adUserId, data[0].salesrepId, data[0].adOrgtrxId, data[0].cProjectId, data[0].cCampaignId, data[0].cActivityId, data[0].user1Id, data[0].user2Id, "N", "N", "N");
+            } catch(ServletException ex) {
+              myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+              releaseRollbackConnection(conn);
+              return myMessage;
+            }
           }
           strLastBpartnerId = data[0].cBpartnerId;
           strLastOrgId = data[0].adOrgId;
@@ -217,8 +221,13 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
           String strLocator = vars.getStringParameter("inpmLocatorId" + strOrderlineId);
           String strSequenceLine = SequenceIdData.getSequence(this, "M_InOutLine", vars.getClient());
           MaterialReceiptPendingLinesData[] dataLine = MaterialReceiptPendingLinesData.select(this, strOrderlineId);
-
-          MaterialReceiptPendingLinesData.insert(conn, this, strSequenceLine, vars.getClient(), data[0].adOrgId, "Y", vars.getUser(), vars.getUser(), String.valueOf(line), dataLine[0].description, strmInoutId, strOrderlineId, strLocator, dataLine[0].mProductId, dataLine[0].cUomId, strQtyordered, "N", dataLine[0].mAttributesetinstanceId, "N", dataLine[0].quantityorder, dataLine[0].mProductUomId);
+          try {
+            MaterialReceiptPendingLinesData.insert(conn, this, strSequenceLine, vars.getClient(), data[0].adOrgId, "Y", vars.getUser(), vars.getUser(), String.valueOf(line), dataLine[0].description, strmInoutId, strOrderlineId, strLocator, dataLine[0].mProductId, dataLine[0].cUomId, strQtyordered, "N", dataLine[0].mAttributesetinstanceId, "N", dataLine[0].quantityorder, dataLine[0].mProductUomId);
+          } catch(ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myMessage;
+          }
           line += 10;
         }
         myMessageAux = mInoutPost(conn, vars, strmInoutId);
@@ -226,7 +235,11 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
         if (strMessageType.equals("Success")) strMessageType = myMessageAux.getType();
         else if (strMessageType.equals("Warning") && myMessageAux.getType().equals("Error")) strMessageType = "Error";
       }
+      
       releaseCommitConnection(conn);
+      myMessage.setType(strMessageType);
+      myMessage.setTitle(myMessageAux.getTitle());
+      myMessage.setMessage(strMessageResult);
     }
     catch (Exception e){
       try {
@@ -234,31 +247,30 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
       } catch (Exception ignored) {}
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
-      myMessage.setType("Error");
-      myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-      myMessage.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
-      return myMessage;
-    }
-    myMessage.setType(strMessageType);
-    myMessage.setTitle(myMessageAux.getTitle());
-    myMessage.setMessage(strMessageResult);
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");      
+    }    
     return myMessage;
-    //return strMessageResult.equals("")?Utility.messageBD(this, "Success", vars.getLanguage()):strMessageResult;
   }
 
   OBError mInoutPost(Connection conn, VariablesSecureApp vars, String strmInoutId)
-      throws IOException, ServletException {
+      throws IOException, ServletException, SQLException {
     String pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
-
-    PInstanceProcessData.insertPInstance(this, pinstance, "109", strmInoutId, "N", vars.getUser(), vars.getClient(), vars.getOrg());
-    //PInstanceProcessData.insertPInstanceParam(this, pinstance, "1", "Selection", "Y", vars.getClient(), vars.getOrg(), vars.getUser());
+    
+    OBError myMessage = null;
+    myMessage = new OBError();
+    try {
+      PInstanceProcessData.insertPInstance(this, pinstance, "109", strmInoutId, "N", vars.getUser(), vars.getClient(), vars.getOrg());
+    } catch(ServletException ex) {
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+      releaseRollbackConnection(conn);
+      return myMessage;
+    }
     MaterialReceiptPendingData.mInoutPost0(conn, this, pinstance);
 
     PInstanceProcessData[] pinstanceData = PInstanceProcessData.selectConnection(conn, this, pinstance);
-    OBError myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
+    myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
     return myMessage;
   }
-
 
   public String getServletInfo() {
     return "Servlet MaterialReceiptPending. This Servlet was made by Jon Alegría";

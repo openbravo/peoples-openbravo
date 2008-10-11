@@ -18,6 +18,7 @@
 */
 package org.openbravo.erpCommon.ad_actionButton;
 
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.base.secureApp.*;
@@ -51,8 +52,6 @@ public class UpdateMaintenanceScheduled extends HttpSecureAppServlet {
       String strKey = vars.getRequiredStringParameter("inpmaMaintPartId");
       String strTabId = vars.getStringParameter("inpTabId");
       String strPartDate = vars.getRequiredStringParameter("inppartdate");
-      //vars.removeSessionValue("UpdateMaintenanceScheduled|inpmaMaintScheduledId");
-      //vars.removeSessionValue("UpdateMaintenanceScheduled|inppartdate");
 
       printPageDataSheet(response, vars, strKey, strWindowId, strTabId, strPartDate, strPartDate, null);
     } else if (vars.commandIn("FIND")) {
@@ -67,16 +66,15 @@ public class UpdateMaintenanceScheduled extends HttpSecureAppServlet {
       printPageDataSheet(response, vars, strKey, strWindowId, strTabId, strPartDateFrom, strPartDateTo, strMaintType);
     } else if (vars.commandIn("SAVE")) {
       String strKey = vars.getStringParameter("inpmaMaintPartId");
-      String strWindowId = vars.getStringParameter("inpWindowId");
       String strTabId = vars.getStringParameter("inpTabId");
-      String strMessage = updateValues(request, vars, strKey);
+      OBError myMessage = updateValues(request, vars, strKey);
       ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTabId);
       String strWindowPath="", strTabName="";
       if (tab!=null && tab.length!=0) {
         strTabName = FormatUtilities.replace(tab[0].name);
         strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName + "_Relation.html";
       } else strWindowPath = strDefaultServlet;
-      if (!strMessage.equals("")) vars.setSessionValue(strWindowId + "|" + strTabName + ".message", strMessage);
+      vars.setMessage(strTabId, myMessage);
       printPageClosePopUp(response, vars, strWindowPath);
     } else pageErrorPopUp(response);
   }
@@ -124,12 +122,16 @@ public class UpdateMaintenanceScheduled extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) log4j.debug("Output: values - out");
   }
 
-  String updateValues(HttpServletRequest request, VariablesSecureApp vars, String strKey) throws IOException, ServletException {
+  OBError updateValues(HttpServletRequest request, VariablesSecureApp vars, String strKey) {
+    OBError myMessage = null;
     if (log4j.isDebugEnabled()) log4j.debug("Update: values");
 
     String[] strValueId = request.getParameterValues("strMaintScheduled");
     if (log4j.isDebugEnabled()) log4j.debug("Update: values after strValueID");
-    if (strValueId == null || strValueId.length == 0) return "";
+    
+    if (strValueId == null || strValueId.length == 0){      
+      return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+    }
     Connection conn = null;
     try {
       conn = this.getTransactionConnection();
@@ -143,19 +145,29 @@ public class UpdateMaintenanceScheduled extends HttpSecureAppServlet {
         String observation = vars.getStringParameter("strObservation"+strValueId[i]);
         if (done.equals("Y")) {
           if (log4j.isDebugEnabled()) log4j.debug("Values to update: " + strValueId[i] + ", " + result + ", " + usedtime + ", " + observation);
-          UpdateMaintenanceScheduledData.update(conn, this, result.equals("Y")?"Y":"N", usedtime, observation, vars.getUser(), strKey, strValueId[i]);
+          try {
+            UpdateMaintenanceScheduledData.update(conn, this, result.equals("Y")?"Y":"N", usedtime, observation, vars.getUser(), strKey, strValueId[i]);
+          } catch(ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            releaseRollbackConnection(conn);
+            return myMessage;
+          }
         }
       }
       releaseCommitConnection(conn);
+      myMessage = new OBError();
+      myMessage.setType("Success");
+      myMessage.setTitle("");
+      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage())); 
     } catch (Exception e) {
       try {
         releaseRollbackConnection(conn);
       } catch (Exception ignored) {}
       e.printStackTrace();
       log4j.warn("Rollback in transaction");
-      return Utility.messageBD(this, "ProcessRunError", vars.getLanguage());
-    }//*/
-    return Utility.messageBD(this, "Success", vars.getLanguage());
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+    }
+    return myMessage;
   }
 
 
