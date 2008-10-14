@@ -97,7 +97,7 @@ public class ReportToInvoiceConsignmentJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("mWarehouseId", strWarehouse);
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "M_Warehouse_ID", "M_Warehouse of Client", "", Utility.getContext(this, vars, "#User_Client",""), Utility.getContext(this, vars, "#AD_Client_ID", ""), 0);
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "M_Warehouse_ID", "M_Warehouse of Client", "", Utility.getContext(this, vars, "#User_Org",""), Utility.getContext(this, vars, "#User_Client", ""), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData,"", "");
       xmlDocument.setData("reportM_WAREHOUSEID","liststructure", comboTableData.select(false));
       comboTableData = null;
