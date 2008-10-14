@@ -65,7 +65,7 @@ public class DebtPayment extends HttpSecureAppServlet {
       String strPaymentRule = vars.getGlobalVariable("inpCPaymentRuleId", "DebtPayment.inpCPaymentRuleId", "");
       String strIsReceipt = vars.getGlobalVariable("inpIsReceipt", "DebtPayment.inpIsReceipt", "Y");
       String strIsPaid = vars.getGlobalVariable("inpIsPaid", "DebtPayment.inpIsPaid", "N");
-      String strIsPending = vars.getGlobalVariable("inpPending", "DebtPayment.inpPending", "");
+      String strIsPending = vars.getGlobalVariable("inpPending", "DebtPayment.inpPending", "P");
       String strInvoice = vars.getGlobalVariable("inpInvoice","DebtPayment.inpInvoice", "");
       String strOrder = vars.getGlobalVariable("inpOrder", "DebtPayment.inpOrder", "");
       
@@ -180,14 +180,14 @@ public class DebtPayment extends HttpSecureAppServlet {
     String title = "";
     String description = "";
     String strNumRows = "0";
-    if (!strIsPending.equals("P")) strIsPending = "";
-    
+
+    // adjust to either pending or any other state then pending
+    strIsPending = strIsPending.equals("P")?"= 'P'":"<> 'P'";
+
     if (headers!=null) {
       try{
       if(strNewFilter.equals("1") || strNewFilter.equals("")) { // New filter or first load
-        if(!strIsPending.equals(""))
-        data = DebtPaymentData.select(this, "1", vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "DebtPayment"), Utility.getContext(this, vars, "#User_Org", "DebtPayment"), strBpartnerId,  strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1, strCal2, strPaymentRule, strIsPaid, strIsReceipt, strInvoice, strOrder, strOrderBy, "", "");
-        else data = DebtPaymentData.selectNotPending(this, "1", vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "DebtPayment"), Utility.getContext(this, vars, "#User_Org", "DebtPayment"), strBpartnerId,  strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1, strCal2, strPaymentRule, strIsPaid, strIsReceipt, strInvoice, strOrder, strOrderBy, "", "");
+        data = DebtPaymentData.select(this, "1", vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "DebtPayment"), Utility.getContext(this, vars, "#User_Org", "DebtPayment"), strBpartnerId,  strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1, strCal2, strPaymentRule, strIsPaid, strIsReceipt, strInvoice, strOrder, strIsPending, strOrderBy, "", "");
         strNumRows = String.valueOf(data.length);
         vars.setSessionValue("DebtPaymentInfo.numrows", strNumRows);
       }
@@ -198,15 +198,11 @@ public class DebtPayment extends HttpSecureAppServlet {
       // Filtering result
       if(this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
         String oraLimit = strOffset + " AND " + String.valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));       
-      if(!strIsPending.equals(""))
-        data = DebtPaymentData.select(this, "ROWNUM", vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "DebtPayment"), Utility.getContext(this, vars, "#User_Org", "DebtPayment"), strBpartnerId,  strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1, strCal2, strPaymentRule, strIsPaid, strIsReceipt, strInvoice, strOrder, strOrderBy, oraLimit, "");
-      else data = DebtPaymentData.selectNotPending(this, "ROWNUM", vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "DebtPayment"), Utility.getContext(this, vars, "#User_Org", "DebtPayment"), strBpartnerId,  strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1, strCal2, strPaymentRule, strIsPaid, strIsReceipt, strInvoice, strOrder, strOrderBy, oraLimit, "");
+        data = DebtPaymentData.select(this, "ROWNUM", vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "DebtPayment"), Utility.getContext(this, vars, "#User_Org", "DebtPayment"), strBpartnerId,  strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1, strCal2, strPaymentRule, strIsPaid, strIsReceipt, strInvoice, strOrder, strIsPending, strOrderBy, oraLimit, "");
       }
       else {
         String pgLimit = strPageSize + " OFFSET " + strOffset;
-        if(!strIsPending.equals(""))
-        data = DebtPaymentData.select(this, "1", vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "DebtPayment"), Utility.getContext(this, vars, "#User_Org", "DebtPayment"), strBpartnerId,  strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1, strCal2, strPaymentRule, strIsPaid, strIsReceipt, strInvoice, strOrder, strOrderBy, "", pgLimit);
-        else data = DebtPaymentData.selectNotPending(this, "1", vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "DebtPayment"), Utility.getContext(this, vars, "#User_Org", "DebtPayment"), strBpartnerId,  strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1, strCal2, strPaymentRule, strIsPaid, strIsReceipt, strInvoice, strOrder, strOrderBy, "", pgLimit);
+        data = DebtPaymentData.select(this, "1", vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "DebtPayment"), Utility.getContext(this, vars, "#User_Org", "DebtPayment"), strBpartnerId,  strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1, strCal2, strPaymentRule, strIsPaid, strIsReceipt, strInvoice, strOrder, strIsPending, strOrderBy, "", pgLimit);
       }     
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
