@@ -1,4 +1,3 @@
--- Creating auxiliar functions for language creation
 CREATE OR REPLACE FUNCTION exist_language(varchar)
 RETURNS bigint AS ' 
   SELECT count(*) from pg_language where lanname = $1;
@@ -1274,7 +1273,10 @@ $BODY$ DECLARE
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
+var VARCHAR:=uuid_generate_v1();
 BEGIN
+ WHILE var=uuid_generate_v1()::varchar LOOP
+END LOOP; 
   return replace(upper(uuid_generate_v1()::varchar),'-','');
 END;   $BODY$
   LANGUAGE 'plpgsql' VOLATILE
