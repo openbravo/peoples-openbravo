@@ -93,7 +93,7 @@
              left join AD_Field_Trl f_trl on f.AD_Field_ID = f_trl.AD_Field_ID AND f_trl.AD_Language = ?
         WHERE t.AD_Tab_ID = ?
         AND c.IsActive = 'Y'
-        AND (c.IsKey = 'Y' or c.IsSecondaryKey = 'Y' or (f.IsDisplayed='Y' and f.ShowInRelation='Y' and c.IsEncrypted='N'))
+        AND (c.IsKey = 'Y' or c.IsSecondaryKey = 'Y' or c.IsSelectionColumn = 'Y' or (f.IsDisplayed='Y' and f.ShowInRelation='Y' and c.IsEncrypted='N'))
         ORDER BY f.SeqNo, c.SeqNo
        ]]>
      </Sql>
