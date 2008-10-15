@@ -12,7 +12,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SL
- * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
+ * Contributions are Copyright (C) 2001-2008 Openbravo S.L.
  ******************************************************************************
 -->
 
@@ -1222,6 +1222,20 @@
     <Parameter name="orderReference"/>
 		<Parameter name="ad_client_id"/>
 	</SqlMethod>
+	
+	<SqlMethod name="importOrderError" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      UPDATE I_Order  
+      SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'') || 'Import Order error: ' || ?
+      WHERE I_Order_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="error"/>
+    <Parameter name="IOrderID"/>
+  </SqlMethod>
+	
 	<SqlMethod name="selectNotImported" type="preparedStatement" return="multiple">
 		<SqlMethodComment></SqlMethodComment>
 		<Sql>

@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SL
- * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
+ * Contributions are Copyright (C) 2001-2008 Openbravo S.L.
  ******************************************************************************
 */
 package org.openbravo.erpCommon.ad_process;
@@ -37,17 +37,20 @@ import java.sql.Connection;
 public class ImportOrder extends ImportProcess {
   static Logger log4j = Logger.getLogger(ImportOrder.class);
 
-  static int total = 0;
+  //static int total = 0;
+  private int totalProcessed = 0;
 
   private String m_AD_Process_ID = "";
   private String m_Record_ID = "";
   private boolean m_deleteOldImported;
+  private boolean m_processOrders; 
 
-  public ImportOrder(ConnectionProvider conn, String AD_Process_ID, String recordId, boolean deleteOld) {
+  public ImportOrder(ConnectionProvider conn, String AD_Process_ID, String recordId, boolean deleteOld, boolean processOrders) {
     super(conn);
     m_AD_Process_ID = AD_Process_ID;
     m_Record_ID = recordId;
     m_deleteOldImported = deleteOld;
+    m_processOrders = processOrders; 
   }
 
   protected String getAD_Process_ID() {
@@ -204,6 +207,8 @@ public class ImportOrder extends ImportProcess {
       if (log4j.isDebugEnabled()) log4j.debug("Going through " + data.length + " records");
       for (int i=0; i<data.length; i++) {
         con = conn.getTransactionConnection();
+        String I_Order_ID = data[i].iOrderId;
+        
         if (data[i].bpartnervalue==null || data[i].bpartnervalue=="") {
           if (data[i].email != null && !data[i].email.equals(""))
             data[i].bpartnervalue = data[i].email;
@@ -224,7 +229,14 @@ public class ImportOrder extends ImportProcess {
         bp.adOrgId = data[i].adOrgId;
         bp.value = data[i].bpartnervalue;
         bp.name = data[i].name;
-        bp.insert(con, conn);
+        try {
+        	bp.insert(con, conn);
+        } catch(ServletException ex) {
+            if (log4j.isDebugEnabled()) log4j.debug("Insert Order - " + ex.toString());
+            conn.releaseRollbackConnection(con);
+            ImportOrderData.importOrderError(conn, ex.toString(), I_Order_ID);
+            continue;
+        }
         data[i].cBpartnerId = bp.cBpartnerId;
         LocationData loc = new LocationData();
         loc.cLocationId = SequenceIdData.getSequence(conn, "C_Location", vars.getClient());
@@ -237,7 +249,14 @@ public class ImportOrder extends ImportProcess {
         if (data[i].cRegionId != null)
           loc.cRegionId = data[i].cRegionId;
         loc.cCountryId = data[i].cCountryId;
-        loc.insert(con, conn);
+        try {
+        	loc.insert(con, conn);
+        } catch(ServletException ex) {            	  
+          if (log4j.isDebugEnabled()) log4j.debug("Insert Order - " + ex.toString());
+          conn.releaseRollbackConnection(con);
+          ImportOrderData.importOrderError(conn, ex.toString(), I_Order_ID);
+          continue;
+        }
         data[i].cLocationId = loc.cLocationId;
         BPartnerLocationData bpl = new BPartnerLocationData();
         bpl.cBpartnerLocationId = SequenceIdData.getSequence(conn, "C_BPartner_Location", vars.getClient());
@@ -245,7 +264,14 @@ public class ImportOrder extends ImportProcess {
         bpl.adOrgId = data[i].adOrgId;
         bpl.cBpartnerId = data[i].cBpartnerId;
         bpl.cLocationId = data[i].cLocationId;
-        bpl.insert(con, conn);
+        try {
+        	bpl.insert(con, conn);
+        } catch(ServletException ex) {            	  
+          if (log4j.isDebugEnabled()) log4j.debug("Insert Order - " + ex.toString());
+          conn.releaseRollbackConnection(con);
+          ImportOrderData.importOrderError(conn, ex.toString(), I_Order_ID);
+          continue;
+        }
         data[i].cBpartnerLocationId = bpl.cBpartnerLocationId;
         data[i].billtoId = bpl.cBpartnerLocationId;
         if (data[i].contactname != null || data[i].email != null || data[i].phone != null) {
@@ -260,7 +286,14 @@ public class ImportOrder extends ImportProcess {
             user.name = data[i].name;
           user.email = data[i].email;
           user.phone = data[i].phone;
-          user.insert(con, conn);
+          try {
+          	user.insert(con, conn);
+          } catch(ServletException ex) {            	  
+            if (log4j.isDebugEnabled()) log4j.debug("Insert Order - " + ex.toString());
+            conn.releaseRollbackConnection(con);
+            ImportOrderData.importOrderError(conn, ex.toString(), I_Order_ID);
+            continue;
+          }
           data[i].adUserId = user.adUserId;
           data[i].updatedby = user.adUserId;
         }
@@ -289,6 +322,8 @@ public class ImportOrder extends ImportProcess {
       int lineNo = 0;
       for (int i=0; i<data.length; i++) {
         con = conn.getTransactionConnection();
+        String I_Order_ID = data[i].iOrderId;
+        
         if (!order_documentno.equals(data[i].documentno)) {
   //      if (!C_BPartner_ID.equals(data[i].cBpartnerId) || !BillTo_ID.equals(data[i].billtoId) || !C_BPartner_Location_ID.equals(data[i].cBpartnerLocationId)) {
           order_documentno = data[i].documentno;
@@ -414,7 +449,14 @@ public class ImportOrder extends ImportProcess {
             corder_ccurrencyid = corder.cCurrencyId;
             corder_cbpartnerid = corder.cBpartnerId;
             corder_cbpartnerlocationid = corder.cBpartnerLocationId;
-            corder.insert(con, conn);
+            try {
+            	corder.insert(con, conn);
+            } catch(ServletException ex) {            	  
+              if (log4j.isDebugEnabled()) log4j.debug("Insert Order - " + ex.toString());
+              conn.releaseRollbackConnection(con);
+              ImportOrderData.importOrderError(conn, ex.toString(), I_Order_ID);
+              continue;
+            }
             noInsert++;
             lineNo = 10;
           }
@@ -481,7 +523,15 @@ public class ImportOrder extends ImportProcess {
           if (line.cUomId == null || line.cUomId.equals(""))  line.cUomId = ProductPriceData.selectCUomIdByProduct(conn, line.mProductId);
           if (line.cUomId == null || line.cUomId.equals(""))  line.cUomId = ProductPriceData.selectCUomIdDefault(conn);
           line.cCurrencyId = (data[i].cCurrencyId == null || data[i].cCurrencyId.equals("")) ? corder_ccurrencyid : data[i].cCurrencyId;
-          line.insert(con, conn);
+          try {
+          	line.insert(con, conn);
+          } catch(ServletException ex) {            	  
+            if (log4j.isDebugEnabled()) log4j.debug("Insert Order - " + ex.toString());
+            conn.releaseRollbackConnection(con);
+            ImportOrderData.importOrderError(conn, ex.toString(), I_Order_ID);
+            noInsert--;
+            continue;
+          }
           data[i].cOrderlineId = line.cOrderlineId;
           data[i].iIsimported = "Y";
           data[i].processed = "Y";
@@ -514,16 +564,24 @@ public class ImportOrder extends ImportProcess {
               cdebtpayment.status = "DE";
               cdebtpayment.statusInitial = "DE";
               cdebtpayment.cOrderId = data[i].cOrderId;
-              cdebtpayment.insert(con, conn);
+              try {
+              	cdebtpayment.insert(con, conn);
+              } catch(ServletException ex) {            	  
+                if (log4j.isDebugEnabled()) log4j.debug("Insert Order - " + ex.toString());
+                conn.releaseRollbackConnection(con);
+                ImportOrderData.importOrderError(conn, ex.toString(), I_Order_ID);
+                noInsert--;
+                continue;
+              }
             }
           }
         
           try {
-            if (data[i].performPost.equals("Y")) {
+            if (data[i].performPost.equals("Y") || m_processOrders) {
               if (i != data.length - 1) {
-                if (!order_documentno.equals(data[i+1].documentno)) strPostMessage += cOrderPost(con, conn, vars, data[i].cOrderId, order_documentno);
+                if (!order_documentno.equals(data[i+1].documentno)) strPostMessage += cOrderPost(con, conn, vars, data[i].cOrderId, order_documentno) + ", ";
               } else {
-                strPostMessage += cOrderPost(con, conn, vars, data[i].cOrderId, order_documentno);
+                strPostMessage += cOrderPost(con, conn, vars, data[i].cOrderId, order_documentno) + ", ";
               }
             }
           } catch (IOException e) {
@@ -539,9 +597,9 @@ public class ImportOrder extends ImportProcess {
             
       addLog(Utility.messageBD(conn, "Orders not imported", vars.getLanguage()) + ": " + noOrderError + "; ");
       addLog("Orders inserted: " + noInsert + "; ");
-      addLog("Orders line inserted: " + noInsertLine + "; ");
-      addLog("Processed: " + strPostMessage);
-      
+      addLog("Orders line inserted: " + noInsertLine + "; " + "<br>");
+      addLog("Orders processed: " + Integer.toString(totalProcessed) + "; " + "<br>");
+      addLog("Process result: " + strPostMessage);
       if (noOrderError == 0){
       	myError.setType("Success");
       	myError.setTitle(Utility.messageBD(conn, "Success", vars.getLanguage()));
@@ -579,8 +637,19 @@ public class ImportOrder extends ImportProcess {
     ImportOrderData.cOrderPost0(con, conn, pinstance);
     
     PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(conn, pinstance);
-    String messageResult="";
-    if (pinstanceData!=null && pinstanceData.length>0) {
+    OBError myMessage = Utility.getProcessInstanceMessage(conn, vars, pinstanceData);
+    
+    String messageResult = myMessage.getMessage();
+    if (myMessage.getMessage().equals("")){
+      messageResult = order_documentno + " - " + myMessage.getType();
+    }else{
+      messageResult = order_documentno + " - " + myMessage.getMessage();  
+    }
+    
+    if (myMessage.getType().equals("Success") || myMessage.getType().equals("Warning")) {
+      totalProcessed = totalProcessed + 1;
+    }
+    /* if (pinstanceData!=null && pinstanceData.length>0) {
       if (!pinstanceData[0].errormsg.equals("")) {
         String message = pinstanceData[0].errormsg;
         if (message.startsWith("@") && message.endsWith("@")) {
@@ -591,20 +660,17 @@ public class ImportOrder extends ImportProcess {
           messageResult = Utility.parseTranslation(conn, vars, vars.getLanguage(), message);
         }
       } else if (!pinstanceData[0].pMsg.equals("")) {
-        //String message = pinstanceData[0].pMsg;
-        //messageResult = Utility.parseTranslation(this, vars, vars.getLanguage(), message);
+        String message = pinstanceData[0].pMsg;
+        messageResult = Utility.parseTranslation(conn, vars, vars.getLanguage(), message);
         total += 1;
-        messageResult = Utility.messageBD(conn, "Created", vars.getLanguage()) + ": " + Integer.toString(total);
       } else if (pinstanceData[0].result.equals("1")) {
-        //messageResult = Utility.messageBD(this, "Success", vars.getLanguage());
+        messageResult = Utility.messageBD(conn, "Success", vars.getLanguage());
         total += 1;
-        messageResult = Utility.messageBD(conn, "Created", vars.getLanguage() + " :" + String.valueOf(total));
       } else {
-        messageResult = Utility.messageBD(conn, "Error", vars.getLanguage());
+        messageResult = Utility.messageBD(conn, "PostOrderError", vars.getLanguage());
         ImportOrderData.updatePostError(con, conn, messageResult, order_documentno, getAD_Client_ID());
-        
       }
-    }
+    } */
     return messageResult;
   }
 }

@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SL
- * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
+ * Contributions are Copyright (C) 2001-2008 Openbravo S.L.
  ******************************************************************************
 */
 package org.openbravo.erpCommon.ad_process;
@@ -43,14 +43,16 @@ public class ImportOrderServlet extends HttpSecureAppServlet {
       String strTabId = vars.getGlobalVariable("inpTabId", "ImportOrderServlet|tabId");
       String strWindowId = vars.getGlobalVariable("inpwindowId", "ImportOrderServlet|windowId");
       //String strKey = vars.getGlobalVariable("inpKey", "ImportOrderServlet|key");
-      String strKey = "00";
+      String strKey = "00";      
       String strDeleteOld = vars.getStringParameter("inpDeleteOld", "N");
-      printPage(response, vars, process, strWindowId, strTabId, strKey, strDeleteOld);
+      String strProcessOrders = vars.getStringParameter("inpProcessOrders", "Y");
+      printPage(response, vars, process, strWindowId, strTabId, strKey, strDeleteOld, strProcessOrders);
     } else if (vars.commandIn("SAVE")) {
       String strDeleteOld = vars.getStringParameter("inpDeleteOld", "N");
+      String strProcessOrders = vars.getStringParameter("inpProcessOrders", "N");
       String strRecord = vars.getGlobalVariable("inpKey", "ImportOrderServlet|key");
       String strTabId = vars.getRequestGlobalVariable("inpTabId", "ImportOrderServlet|tabId");
-      String strWindowId = vars.getRequestGlobalVariable("inpwindowId", "ImportOrderServlet|windowId");
+      //String strWindowId = vars.getRequestGlobalVariable("inpwindowId", "ImportOrderServlet|windowId");
 
       ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTabId);
       String strWindowPath="";
@@ -61,10 +63,8 @@ public class ImportOrderServlet extends HttpSecureAppServlet {
         else strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName + "_Relation.html";
       } else strWindowPath = strDefaultServlet;
 
-      ImportOrder io = new ImportOrder(this, process, strRecord, strDeleteOld.equals("Y"));
+      ImportOrder io = new ImportOrder(this, process, strRecord, strDeleteOld.equals("Y"), strProcessOrders.equals("Y"));
       io.startProcess(vars);
-      //String strMessage = io.getLog();
-      //if (!strMessage.equals("")) vars.setSessionValue(strWindowId + "|" + strTabName + ".message", strMessage);
       OBError myError = io.getError();      
       vars.setMessage(strTabId, myError);
       printPageClosePopUp(response, vars, strWindowPath);
@@ -72,7 +72,7 @@ public class ImportOrderServlet extends HttpSecureAppServlet {
   }
 
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strProcessId, String strWindowId, String strTabId, String strRecordId, String strDeleteOld) throws IOException, ServletException {
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strProcessId, String strWindowId, String strTabId, String strRecordId, String strDeleteOld, String strProcessOrders) throws IOException, ServletException {
       if (log4j.isDebugEnabled()) log4j.debug("Output: process ImportOrderServlet");
       ActionButtonDefaultData[] data = null;
       String strHelp="", strDescription="";
@@ -95,6 +95,7 @@ public class ImportOrderServlet extends HttpSecureAppServlet {
       xmlDocument.setParameter("tabId", strTabId);
       xmlDocument.setParameter("recordId", strRecordId);
       xmlDocument.setParameter("deleteOld", strDeleteOld);
+      xmlDocument.setParameter("processOrders", strProcessOrders);
 
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();

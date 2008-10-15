@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,8 +25,10 @@
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
 	<PARAMETER id="processDescription" name="description" replaceCharacters="htmlHelp" default=""/>
 	<PARAMETER id="processHelp" name="help" replaceCharacters="htmlHelp" default=""/>
-	<PARAMETER id="paramCheck" name="check" default="Y"/>
-	<PARAMETER id="paramDeleteOld" name="deleteOld" boolean="checked" withId="paramCheck"/>
+  	<PARAMETER id="parameterConstantDeleteOld" name="constantDeleteOld" default="Y"/>
+  	<PARAMETER id="paramDeleteOld" name="deleteOld" boolean="checked" withId="parameterConstantDeleteOld"/>
+  	<PARAMETER id="parameterConstantProcessOrders" name="ConstantProcessOrders" default="Y"/>
+  	<PARAMETER id="paramProcessOrders" name="processOrders" boolean="checked" withId="parameterConstantProcessOrders"/>		
 	<PARAMETER id="paramWindowId" name="windowId" attribute="value"/>
 	<PARAMETER id="paramTabId" name="tabId" attribute="value"/>
 	<PARAMETER id="paramRecordId" name="recordId" attribute="value"/>
