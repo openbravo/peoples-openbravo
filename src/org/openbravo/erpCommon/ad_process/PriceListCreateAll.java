@@ -126,7 +126,7 @@ public class PriceListCreateAll extends HttpSecureAppServlet {
 
   String processPL(Connection conn, VariablesSecureApp vars, PriceListCreateAllData data) throws ServletException {
     if (data.mPricelistVersionBaseId.equals("")) return "";
-    String pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
+    String pinstance = SequenceIdData.getUUID();
     PInstanceProcessData.insertPInstance(this, pinstance, "800040", data.mPricelistVersionId, "N", vars.getUser(), vars.getClient(), vars.getOrg());
 
     PriceListCreateAllData.process(conn, this, pinstance);

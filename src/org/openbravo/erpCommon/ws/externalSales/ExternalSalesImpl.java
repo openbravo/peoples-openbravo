@@ -276,7 +276,7 @@ public class ExternalSalesImpl implements ExternalSales{
               data[0].qtyordered = Double.toString(newOrders[i].getLines()[j].getUnits());
               data[0].priceactual = ""+newOrders[i].getLines()[j].getPrice();
               data[0].cTaxId = Integer.toString(newOrders[i].getLines()[j].getTaxId());
-              String sequence = SequenceIdData.getSequence(pool, "I_Order", Integer.toString(ClientID));
+              String sequence = SequenceIdData.getUUID();
               data[0].iOrderId = sequence;
               if (log4j.isDebugEnabled()) log4j.debug("sequence"+data[0].iOrderId+" data[0].paymentamount1"+data[0].paymentamount1+" data[0].paymentrule1"+data[0].paymentrule1+
                                                " data[0].paymentamount2"+data[0].paymentamount2+" data[0].paymentrule2"+data[0].paymentrule2);
@@ -285,7 +285,7 @@ public class ExternalSalesImpl implements ExternalSales{
             }
           }
           else{
-            String sequence = SequenceIdData.getSequence(pool, "I_ORDER", Integer.toString(ClientID));
+            String sequence = SequenceIdData.getUUID();
             data[0].iOrderId = sequence;
             if (log4j.isDebugEnabled()) log4j.debug("sequence"+data[0].iOrderId+" data[0].paymentamount1"+data[0].paymentamount1+" data[0].paymentrule1"+data[0].paymentrule1+
                                                " data[0].paymentamount2"+data[0].paymentamount2+" data[0].paymentrule2"+data[0].paymentrule2);

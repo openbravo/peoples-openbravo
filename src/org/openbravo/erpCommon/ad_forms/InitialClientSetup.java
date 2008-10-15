@@ -342,7 +342,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
   //     *  Create Client
 
       vars.setSessionValue("#CompiereSys", CompiereSys);
-      AD_Client_ID = SequenceIdData.getSequence(this, "AD_Client", client);
+      AD_Client_ID = SequenceIdData.getUUID();
       vars.setSessionValue("AD_Client_ID", AD_Client_ID);
       if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createClient - CLIENT_ID: " + AD_Client_ID);
 
@@ -384,31 +384,31 @@ public class InitialClientSetup extends HttpSecureAppServlet {
           String value = data[i].getField("id");
           String AD_Tree_ID = "0";
           if (value.equals("OO")) {
-            AD_Tree_ID = SequenceIdData.getSequence(this, "AD_Tree", client);
+            AD_Tree_ID = SequenceIdData.getUUID();
             AD_Tree_Org_ID = AD_Tree_ID;
           }else if (value.equals("BP")) {
-            AD_Tree_ID = SequenceIdData.getSequence(this, "AD_Tree", client);
+            AD_Tree_ID = SequenceIdData.getUUID();
             AD_Tree_BPartner_ID = AD_Tree_ID;
           }else if (value.equals("PJ")) {
-            AD_Tree_ID = SequenceIdData.getSequence(this, "AD_Tree", client);
+            AD_Tree_ID = SequenceIdData.getUUID();
             AD_Tree_Project_ID = AD_Tree_ID;
           }else if (value.equals("SR")) {
-            AD_Tree_ID = SequenceIdData.getSequence(this, "AD_Tree", client);
+            AD_Tree_ID = SequenceIdData.getUUID();
             AD_Tree_SalesRegion_ID = AD_Tree_ID;
           }else if (value.equals("PR")) {
-            AD_Tree_ID = SequenceIdData.getSequence(this, "AD_Tree", client);
+            AD_Tree_ID = SequenceIdData.getUUID();
             AD_Tree_Product_ID = AD_Tree_ID;
           }else if (value.endsWith("EV")) {
-            AD_Tree_ID = SequenceIdData.getSequence(this, "AD_Tree", client);
+            AD_Tree_ID = SequenceIdData.getUUID();
             AD_Tree_Account_ID = AD_Tree_ID;
           }else if (value.endsWith("TR")) {
-            AD_Tree_ID = SequenceIdData.getSequence(this, "AD_Tree", client);
+            AD_Tree_ID = SequenceIdData.getUUID();
            // Not added to clientinfo
           }else if (value.endsWith("AR")) {
-            AD_Tree_ID = SequenceIdData.getSequence(this, "AD_Tree", client);
+            AD_Tree_ID = SequenceIdData.getUUID();
            // Not added to clientinfo
           }else if (!value.equals("MM")){ //  No Menu
-            AD_Tree_ID = SequenceIdData.getSequence(this, "AD_Tree", client);
+            AD_Tree_ID = SequenceIdData.getUUID();
           }
           //
           if (!AD_Tree_ID.equals("0")){
@@ -442,7 +442,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 
 //     *  Create Org
 
-      AD_Org_ID = SequenceIdData.getSequence(this, "AD_Org", client);
+      AD_Org_ID = SequenceIdData.getUUID();
       name = orgName;
       if (name == null || name.length() == 0)
         name = "newOrg";
@@ -466,7 +466,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 
     
       name = clientName + " Admin";
-      String AD_Role_ID = SequenceIdData.getSequence(this, "AD_Role", client);
+      String AD_Role_ID = SequenceIdData.getUUID();
       if (InitialClientSetupData.insertRole(conn ,this, AD_Client_ID, AD_Role_ID, name, "0,"+AD_Org_ID) != 1) {
         String err = "InitialClientSetup - createClient - Admin Role A NOT inserted";
         log4j.warn(err);
@@ -489,7 +489,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 
       //
       name = clientName + " User";
-      String AD_Role_ID_U = SequenceIdData.getSequence(this, "AD_Role", client);
+      String AD_Role_ID_U = SequenceIdData.getUUID();
       if (InitialClientSetupData.insertRole2(conn ,this, AD_Client_ID, AD_Role_ID_U, name,AD_Org_ID) != 1){
         String err = "InitialClientSetup - createClient - User Role A NOT inserted";
         log4j.warn(err);
@@ -516,7 +516,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       name = userClient;
       if (name == null || name.length() == 0)
         name = clientName + "Client";
-      AD_User_ID = SequenceIdData.getSequence(this, "AD_User", client);
+      AD_User_ID = SequenceIdData.getUUID();
       AD_User_Name = name;
       if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createClient - AD_User_Name : " + AD_User_Name);
       if (InitialClientSetupData.insertUser(conn ,this, AD_Client_ID,AD_User_ID , name, FormatUtilities.sha1Base64(name), vars.getLanguage()) != 1) {
@@ -535,7 +535,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       name = userOrg;
       if (name == null || name.length() == 0 || userClient == userOrg)
         name = clientName + "Org";
-      AD_User_U_ID = SequenceIdData.getSequence(this, "AD_User", client);
+      AD_User_U_ID = SequenceIdData.getUUID();
       AD_User_U_Name = name;
       if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createClient - AD_User_U_Name : " + AD_User_U_Name);
       if (InitialClientSetupData.insertUser(conn ,this, AD_Client_ID,AD_User_U_ID , name, FormatUtilities.sha1Base64(name), vars.getLanguage()) != 1) {
@@ -592,7 +592,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     String strAccountTree = InitialClientSetupData.selectTree(this, AD_Client_ID);
     for (int i=0;i<data.length;i++) {
       if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - save - DATA LENGTH : " + data.length + ", POSICION : " + i + ", DEFAULT_ACCT: " + data[i].defaultAccount);
-      data[i].cElementValueId = SequenceIdData.getSequence(this, "C_ElementValue", client);
+      data[i].cElementValueId = SequenceIdData.getUUID();
       String IsDocControlled = data[i].accountDocument.equals("Yes") ? "Y" : "N";
       String C_ElementValue_ID = data[i].cElementValueId;
       String IsSummary =data[i].accountSummary.equals("Yes") ? "Y" : "N";
@@ -728,7 +728,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
   
   //     *  Create Calendar
   
-      C_Calendar_ID = SequenceIdData.getSequence(this, "C_Calendar", client);
+      C_Calendar_ID = SequenceIdData.getUUID();
       name = clientName + " " + Utility.messageBD(this, "C_Calendar_ID", vars.getLanguage());
       if (InitialClientSetupData.insertCalendar(conn ,this, AD_Client_ID,C_Calendar_ID , name) != 1) {
         String err = "InitialClientSetup - createAccounting - Calendar NOT inserted";
@@ -742,7 +742,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       m_info.append(Utility.messageBD(this, "C_Calendar_ID", vars.getLanguage())).append("=").append(name).append(SALTO_LINEA);
   
       //  Year
-      C_Year_ID = SequenceIdData.getSequence(this, "C_Year", client);
+      C_Year_ID = SequenceIdData.getUUID();
       if (InitialClientSetupData.insertYear(conn ,this, C_Year_ID, AD_Client_ID,C_Calendar_ID) != 1)
         log4j.warn("InitialClientSetup - createAccounting - Year NOT inserted");
       // @todo Create Periods 
@@ -751,7 +751,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       conn = this.getTransactionConnection();
 
       //  Create Account Elements
-      C_Element_ID = SequenceIdData.getSequence(this, "C_Element", client);
+      C_Element_ID = SequenceIdData.getUUID();
       name = clientName + " " + Utility.messageBD(this, "Account_ID", vars.getLanguage());
       if (InitialClientSetupData.insertElement(conn ,this, AD_Client_ID, C_Element_ID,name, AD_Tree_Account_ID) != 1) {
         String err = "InitialClientSetup - createAccounting - Acct Element NOT inserted";
@@ -779,7 +779,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
   
   //     *  Create AccountingSchema
       C_ElementValue_ID = getC_ElementValue_ID(data, "DEFAULT_ACCT");
-      C_AcctSchema_ID = SequenceIdData.getSequence(this, "C_AcctSchema", client);
+      C_AcctSchema_ID = SequenceIdData.getUUID();
       //
       GAAP = "US";             //  AD_Reference_ID=123
       CostingMethod = "A";     //  AD_Reference_ID=122
@@ -828,32 +828,32 @@ public class InitialClientSetup extends HttpSecureAppServlet {
         String  C_AcctSchema_Element_ID = "";
 
         if (ElementType.equals("OO")){
-          C_AcctSchema_Element_ID = SequenceIdData.getSequence(this, "C_AcctSchema_Element", client);
+          C_AcctSchema_Element_ID = SequenceIdData.getUUID();
           IsMandatory = "Y";
           IsBalanced = "Y";
           SeqNo = "10";
         } else if (ElementType.equals("AC")){
-          C_AcctSchema_Element_ID = SequenceIdData.getSequence(this, "C_AcctSchema_Element", client);
+          C_AcctSchema_Element_ID = SequenceIdData.getUUID();
           IsMandatory = "Y";
           SeqNo = "20";
         } else if (ElementType.equals("PR") && hasProduct){
-          C_AcctSchema_Element_ID = SequenceIdData.getSequence(this, "C_AcctSchema_Element", client);
+          C_AcctSchema_Element_ID = SequenceIdData.getUUID();
           IsMandatory = "N";
           SeqNo = "30";
         } else if (ElementType.equals("BP") && hasBPartner){
-          C_AcctSchema_Element_ID = SequenceIdData.getSequence(this, "C_AcctSchema_Element", client);
+          C_AcctSchema_Element_ID = SequenceIdData.getUUID();
           IsMandatory = "N";
           SeqNo = "40";
         } else if (ElementType.equals("PJ") && hasProject){
-          C_AcctSchema_Element_ID = SequenceIdData.getSequence(this, "C_AcctSchema_Element", client);
+          C_AcctSchema_Element_ID = SequenceIdData.getUUID();
           IsMandatory = "N";
           SeqNo = "50";
         } else if (ElementType.equals("MC") && hasMCampaign){
-          C_AcctSchema_Element_ID = SequenceIdData.getSequence(this, "C_AcctSchema_Element", client);
+          C_AcctSchema_Element_ID = SequenceIdData.getUUID();
           IsMandatory = "N";
           SeqNo = "60";
         } else if (ElementType.equals("SR") && hasSRegion){
-          C_AcctSchema_Element_ID = SequenceIdData.getSequence(this, "C_AcctSchema_Element", client);
+          C_AcctSchema_Element_ID = SequenceIdData.getUUID();
           IsMandatory = "N";
           SeqNo = "70";
         }
@@ -905,7 +905,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
           return false;
       }
 
-      String C_AcctSchema_Default_ID = SequenceIdData.getSequence(this, "C_AcctSchema_Default", AD_Client_ID);
+      String C_AcctSchema_Default_ID = SequenceIdData.getUUID();
       if(InitialClientSetupData.insertAcctSchemaDEFAULT(conn, this, AD_Client_ID, C_AcctSchema_ID, getAcct(conn, data, 
 "W_INVENTORY_ACCT"), getAcct(conn, data, "W_DIFFERENCES_ACCT"), getAcct(conn, data, "W_REVALUATION_ACCT"), getAcct(conn, data, 
 "W_INVACTUALADJUST_ACCT"), getAcct(conn, data, "P_REVENUE_ACCT"), getAcct(conn, data, "P_EXPENSE_ACCT"), getAcct(conn, data, 
@@ -1045,7 +1045,7 @@ getAcct(conn, data, "A_DEPRECIATION_ACCT"),getAcct(conn, data, "A_ACCUMDEPRECIAT
     String GL_Category_ID = "";
     try {
       conn = this.getTransactionConnection();
-      GL_Category_ID = SequenceIdData.getSequence(this, "GL_Category", client);
+      GL_Category_ID = SequenceIdData.getUUID();
       String strisDefault = (isDefault ? "Y" : "N");
       if (InitialClientSetupData.insertCategory(conn ,this,GL_Category_ID, AD_Client_ID, Name, CategoryType, strisDefault) != 1)
       log4j.warn("InitialClientSetup - createGLCategory - GL Logger NOT created - " + Name);
@@ -1072,7 +1072,7 @@ getAcct(conn, data, "A_DEPRECIATION_ACCT"),getAcct(conn, data, "A_ACCUMDEPRECIAT
     Connection conn = null;
     try {
       conn = this.getTransactionConnection();
-      String AD_Preference_ID = SequenceIdData.getSequence(this, "AD_Preference", client);
+      String AD_Preference_ID = SequenceIdData.getUUID();
       if (InitialClientSetupData.insertPreference(conn ,this,AD_Preference_ID, AD_Client_ID, Attribute, Value, AD_Window_ID) != 1)
         log4j.warn("InitialClientSetup - createPreference - Preference NOT inserted - " + Attribute);
       releaseCommitConnection(conn);
@@ -1100,14 +1100,14 @@ getAcct(conn, data, "A_DEPRECIATION_ACCT"),getAcct(conn, data, "A_ACCUMDEPRECIAT
       //  Get Sequence
       String AD_Sequence_ID = "";
       if (!StartNo.equals("0")){//  manual sequenec, if startNo == 0
-        AD_Sequence_ID = SequenceIdData.getSequence(this, "AD_Sequence", client);
+        AD_Sequence_ID = SequenceIdData.getUUID();
         log4j.debug("inserting sequence ID:"+AD_Sequence_ID+" name: "+Name);
         if (InitialClientSetupData.insertSequence(conn ,this,AD_Sequence_ID, AD_Client_ID, Name, StartNo) != 1)
         log4j.warn("InitialClientSetup - createDocType - Sequence NOT created - " + Name);
       }
   
       //  Get Document Type
-      C_DocType_ID = SequenceIdData.getSequence(this, "C_DocType", client);
+      C_DocType_ID = SequenceIdData.getUUID();
       String IsDocNoControlled = "";
       String IsSOTrx = "";
       if (AD_Sequence_ID.equals(""))
@@ -1153,10 +1153,10 @@ public boolean createEntities (VariablesSecureApp vars,String C_Country_ID, Stri
     String defaultName = Utility.messageBD(this, "Standard", vars.getLanguage());
   
     //    Create Marketing Channel/Campaign
-    String C_Channel_ID = SequenceIdData.getSequence(this, "C_Channel", client);
+    String C_Channel_ID = SequenceIdData.getUUID();
     if (InitialClientSetupData.insertChannel(conn ,this,C_Channel_ID, defaultName, AD_Client_ID) != 1)
       log4j.warn("InitialClientSetup - createEntities - Channel NOT inserted");
-    String C_Campaign_ID = SequenceIdData.getSequence(this, "C_Campaign", client);
+    String C_Campaign_ID = SequenceIdData.getUUID();
     if (InitialClientSetupData.insertCampaign(conn ,this,C_Campaign_ID,C_Channel_ID, AD_Client_ID, defaultName) == 1)
       m_info.append(Utility.messageBD(this, "C_Campaign_ID", vars.getLanguage())).append("=").append(defaultName).append(SALTO_LINEA);
     else
@@ -1170,7 +1170,7 @@ public boolean createEntities (VariablesSecureApp vars,String C_Country_ID, Stri
     conn = this.getTransactionConnection();
   
     //    Create Sales Region
-    String C_SalesRegion_ID = SequenceIdData.getSequence(this, "C_SalesRegion", client);
+    String C_SalesRegion_ID = SequenceIdData.getUUID();
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - C_SalesRegion_ID: " + C_SalesRegion_ID + ", AD_Client_ID: " + AD_Client_ID + ", defaultName: " + defaultName);
     if (InitialClientSetupData.insertSalesRegion(conn ,this,C_SalesRegion_ID,AD_Client_ID,defaultName) == 1)
       m_info.append(Utility.messageBD(this, "C_SalesRegion_ID", vars.getLanguage())).append("=").append(defaultName).append(SALTO_LINEA);
@@ -1188,14 +1188,14 @@ public boolean createEntities (VariablesSecureApp vars,String C_Country_ID, Stri
      *  Business Partner
      */
     //  Create BP Group
-    String C_BP_Group_ID = SequenceIdData.getSequence(this, "C_BP_Group", client);
+    String C_BP_Group_ID = SequenceIdData.getUUID();
     if (InitialClientSetupData.insertBPGroup(conn ,this,C_BP_Group_ID,AD_Client_ID,defaultName) == 1)
       m_info.append(Utility.messageBD(this, "C_BP_Group_ID", vars.getLanguage())).append("=").append(defaultName).append(SALTO_LINEA);
     else
       log4j.warn("InitialClientSetup - createEntities - BP Group NOT inserted");
   
     //    Create BPartner
-    String C_BPartner_ID = SequenceIdData.getSequence(this, "C_BPartner", client);
+    String C_BPartner_ID = SequenceIdData.getUUID();
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - C_BPartner_ID: " + C_BPartner_ID + ", AD_Client_ID: " + AD_Client_ID + ", defaultName: " + defaultName + ", C_BP_Group_ID: " + C_BP_Group_ID);
     if (InitialClientSetupData.insertBPartner(conn ,this,C_BPartner_ID,AD_Client_ID,defaultName, C_BP_Group_ID) == 1)
       m_info.append(Utility.messageBD(this, "C_BPartner_ID", vars.getLanguage())).append("=").append(defaultName).append(SALTO_LINEA);
@@ -1217,7 +1217,7 @@ public boolean createEntities (VariablesSecureApp vars,String C_Country_ID, Stri
      *  Asset
      */
     //  Create Asset Group
-    String A_Asset_Group_ID = SequenceIdData.getSequence(this, "A_Asset_Group", client);
+    String A_Asset_Group_ID = SequenceIdData.getUUID();
     if (InitialClientSetupData.insertAssetGroup(conn ,this,A_Asset_Group_ID,AD_Client_ID,defaultName) == 1)
       m_info.append(Utility.messageBD(this, "A_Asset_Group", vars.getLanguage())).append("=").append(defaultName).append(SALTO_LINEA);
     else
@@ -1228,7 +1228,7 @@ public boolean createEntities (VariablesSecureApp vars,String C_Country_ID, Stri
      *  Product
      */
     //  Create Product Category
-    String M_Product_Category_ID = SequenceIdData.getSequence(this, "M_Product_Category", client);
+    String M_Product_Category_ID = SequenceIdData.getUUID();
     if (InitialClientSetupData.insertProductCategory(conn ,this,M_Product_Category_ID,AD_Client_ID, defaultName) == 1)
       m_info.append(Utility.messageBD(this, "M_Product_Category_ID", vars.getLanguage())).append("=").append(defaultName).append(SALTO_LINEA);
     else
@@ -1239,7 +1239,7 @@ public boolean createEntities (VariablesSecureApp vars,String C_Country_ID, Stri
   
     //  TaxCategory
     String append="";
-    String C_TaxCategory_ID = SequenceIdData.getSequence(this, "C_TaxCategory", client);
+    String C_TaxCategory_ID = SequenceIdData.getUUID();
     if (C_Country_ID.equals("100"))    // US
       append="Sales Tax";
     else
@@ -1248,13 +1248,13 @@ public boolean createEntities (VariablesSecureApp vars,String C_Country_ID, Stri
       log4j.warn("InitialClientSetup - createEntities - TaxCategory NOT inserted");
   
     //  Tax - Zero Rate
-    String C_Tax_ID = SequenceIdData.getSequence(this, "C_Tax", client);
+    String C_Tax_ID = SequenceIdData.getUUID();
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - C_Tax_ID: " + C_Tax_ID + ", AD_Client_ID: " + AD_Client_ID + ", defaultName: " + defaultName + ", C_TaxCategory_ID: " + C_TaxCategory_ID + ", C_Country_ID: " + C_Country_ID);
     if (InitialClientSetupData.insertTax(conn ,this,C_Tax_ID,AD_Client_ID,defaultName,C_TaxCategory_ID, C_Country_ID) != 1)
       log4j.warn("InitialClientSetup - createEntities - Tax NOT inserted");
   
     //    Create Product
-    String M_Product_ID = SequenceIdData.getSequence(this, "M_Product", client);
+    String M_Product_ID = SequenceIdData.getUUID();
     if (InitialClientSetupData.insertProduct(conn ,this,M_Product_ID,AD_Client_ID,defaultName,C_UOM_ID,M_Product_Category_ID,C_TaxCategory_ID) == 1)
       m_info.append(Utility.messageBD(this, "M_Product_ID", vars.getLanguage())).append("=").append(defaultName).append(SALTO_LINEA);
     else
@@ -1279,7 +1279,7 @@ public boolean createEntities (VariablesSecureApp vars,String C_Country_ID, Stri
   
     //  Default Warehouse
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -M_Warehouse: ");
-    String M_Warehouse_ID = SequenceIdData.getSequence(this, "M_Warehouse", client);
+    String M_Warehouse_ID = SequenceIdData.getUUID();
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - THE SEQUENCE -M_Warehouse_ID: " + M_Warehouse_ID);
     //create warehouse location
     String whse_C_Location_ID = createLocation(C_Country_ID, City, C_Region_ID, conn);
@@ -1288,7 +1288,7 @@ public boolean createEntities (VariablesSecureApp vars,String C_Country_ID, Stri
   
     //   Locator
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -M_Locator: ");
-    String M_Locator_ID = SequenceIdData.getSequence(this, "M_Locator", client);
+    String M_Locator_ID = SequenceIdData.getUUID();
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -M_Locator_ID: " + M_Locator_ID);
     if (InitialClientSetupData.insertLocator(conn ,this,M_Locator_ID,AD_Client_ID, defaultName, M_Warehouse_ID) != 1)
       log4j.warn("InitialClientSetup - createEntities - Locator NOT inserted");
@@ -1309,19 +1309,19 @@ public boolean createEntities (VariablesSecureApp vars,String C_Country_ID, Stri
      */
     //  PriceList
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -M_PriceList: ");
-    String M_PriceList_ID = SequenceIdData.getSequence(this, "M_PriceList", client);
+    String M_PriceList_ID = SequenceIdData.getUUID();
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -M_PriceList_ID: " + M_PriceList_ID);
     if (InitialClientSetupData.insertPriceList(conn ,this,M_PriceList_ID, AD_Client_ID,defaultName, C_Currency_ID) != 1)
       log4j.warn("InitialClientSetup - createEntities - PriceList NOT inserted");
     //  DiscountSchema
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -M_DiscountSchema: ");
-    String M_DiscountSchema_ID = SequenceIdData.getSequence(this, "M_DiscountSchema", client);
+    String M_DiscountSchema_ID = SequenceIdData.getUUID();
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -M_DiscountSchema_ID: " + M_DiscountSchema_ID);
     if (InitialClientSetupData.insertDiscountSchema(conn ,this,M_DiscountSchema_ID, AD_Client_ID,defaultName) != 1)
       log4j.warn("InitialClientSetup - createEntities - DiscountSchema NOT inserted");
     //  PriceList Version
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -M_PriceList_Version: ");
-    String M_PriceList_Version_ID = SequenceIdData.getSequence(this, "M_PriceList_Version", client);
+    String M_PriceList_Version_ID = SequenceIdData.getUUID();
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -M_PriceList_Version_ID: " + M_PriceList_Version_ID);
     String strDateFormat = vars.getJavaDateFormat();
     SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
@@ -1340,14 +1340,14 @@ public boolean createEntities (VariablesSecureApp vars,String C_Country_ID, Stri
     //InitialClientSetupData.insertLocation(conn ,this,C_Location_ID, AD_Client_ID,City, C_Country_ID, C_Region_ID);
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -C_Location_ID: " + bPartner_C_Location_ID);
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -C_BPartner_Location: ");
-    String C_BPartner_Location_ID = SequenceIdData.getSequence(this, "C_BPartner_Location", client);
+    String C_BPartner_Location_ID = SequenceIdData.getUUID();
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -C_BPartner_Location_ID: " + C_BPartner_Location_ID);
     if (InitialClientSetupData.insertBPartnerLocation(conn ,this,C_BPartner_Location_ID, AD_Client_ID,City, C_BPartner_ID, bPartner_C_Location_ID) != 1)
       log4j.warn("InitialClientSetup - createEntities - BP_Location NOT inserted");
   
     //    Create Sales Rep for User
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -C_BPartner: ");
-    C_BPartner_ID = SequenceIdData.getSequence(this, "C_BPartner", client);
+    C_BPartner_ID = SequenceIdData.getUUID();
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -C_BPartner_ID: " + C_BPartner_ID);
     if (InitialClientSetupData.insertBPartner2(conn ,this,C_BPartner_ID, AD_Client_ID,AD_User_U_Name, C_BP_Group_ID) == 1)
       m_info.append(Utility.messageBD(this, "IsSalesRep", vars.getLanguage())).append("=").append(AD_User_U_Name).append(SALTO_LINEA);
@@ -1359,7 +1359,7 @@ public boolean createEntities (VariablesSecureApp vars,String C_Country_ID, Stri
   
     //    Create Sales Rep for Admin
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -C_BPartner: ");
-    C_BPartner_ID = SequenceIdData.getSequence(this, "C_BPartner", client);
+    C_BPartner_ID = SequenceIdData.getUUID();
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -C_BPartner_ID: " + C_BPartner_ID);
     if (InitialClientSetupData.insertBPartner2(conn ,this,C_BPartner_ID, AD_Client_ID,AD_User_Name, C_BP_Group_ID) == 1)
       m_info.append(Utility.messageBD(this, "IsSalesRep", vars.getLanguage())).append("=").append(AD_User_Name).append(SALTO_LINEA);
@@ -1371,7 +1371,7 @@ public boolean createEntities (VariablesSecureApp vars,String C_Country_ID, Stri
   
     //  Payment Term
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -C_PaymentTerm: ");
-    String C_PaymentTerm_ID = SequenceIdData.getSequence(this, "C_PaymentTerm", client);
+    String C_PaymentTerm_ID = SequenceIdData.getUUID();
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -C_PaymentTerm_ID: " + C_PaymentTerm_ID);
     if (InitialClientSetupData.insertPaymentTerm(conn ,this, C_PaymentTerm_ID,AD_Client_ID) != 1)
       log4j.warn("InitialClientSetup - createEntities - PaymentTerm NOT inserted");
@@ -1385,7 +1385,7 @@ public boolean createEntities (VariablesSecureApp vars,String C_Country_ID, Stri
   
     //    Create Default Project
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -C_Project: ");
-    String C_Project_ID = SequenceIdData.getSequence(this, "C_Project", client);
+    String C_Project_ID = SequenceIdData.getUUID();
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -C_Project_ID: " + C_Project_ID + ", AD_Client_ID: " + AD_Client_ID + ", AD_Org_ID: " + AD_Org_ID + ", defaultName: " + defaultName + ", C_Currency_ID: " + C_Currency_ID);
     if (InitialClientSetupData.insertProject(conn ,this, C_Project_ID,AD_Client_ID,AD_Org_ID, defaultName, C_Currency_ID) == 1)
       m_info.append(Utility.messageBD(this, "C_Project_ID", vars.getLanguage())).append("=").append(defaultName).append(SALTO_LINEA);
@@ -1399,7 +1399,7 @@ public boolean createEntities (VariablesSecureApp vars,String C_Country_ID, Stri
   
     //  CashBook
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -C_CashBook: ");
-    String C_CashBook_ID = SequenceIdData.getSequence(this, "C_CashBook", client);
+    String C_CashBook_ID = SequenceIdData.getUUID();
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -C_CashBook_ID: " + C_CashBook_ID);
     if (InitialClientSetupData.insertCashBook(conn ,this, C_CashBook_ID,AD_Client_ID,AD_Org_ID,defaultName,C_Currency_ID) == 1)
       m_info.append(Utility.messageBD(this, "C_CashBook_ID", vars.getLanguage())).append("=").append(defaultName).append(SALTO_LINEA);
@@ -1435,7 +1435,7 @@ public boolean createEntities (VariablesSecureApp vars,String C_Country_ID, Stri
 
   private String createLocation(String C_Country_ID, String City, String C_Region_ID, Connection conn) throws ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -C_Location: ");
-    String C_Location_ID = SequenceIdData.getSequence(this, "C_Location", client);
+    String C_Location_ID = SequenceIdData.getUUID();
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - THE SEQUENCE -C_Location_ID: " + C_Location_ID);
     InitialClientSetupData.insertLocation(conn ,this,C_Location_ID,AD_Client_ID,City ,C_Country_ID, C_Region_ID);
     return C_Location_ID;

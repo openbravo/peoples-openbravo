@@ -142,7 +142,7 @@ public abstract class ImportProcess {
       setAD_User_ID(vars.getUser());
       setAD_Client_ID(vars.getClient());
       setAD_Org_ID(vars.getOrg());
-      m_AD_PInstance_ID = SequenceIdData.getSequence(getConnection(), "AD_PInstance", getAD_Client_ID());
+      m_AD_PInstance_ID = SequenceIdData.getUUID();
 
       ImportProcessData.insertInstance(getConnection(), m_AD_PInstance_ID, getAD_Process_ID(), getRecord_ID(), getAD_User_ID(), getAD_Client_ID(), getAD_Org_ID());
     } catch (ServletException ex) {

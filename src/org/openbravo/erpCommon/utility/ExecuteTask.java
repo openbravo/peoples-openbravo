@@ -50,7 +50,7 @@ public class ExecuteTask extends HttpSecureAppServlet {
       }
       
       String command = Utility.parseTranslation(this, vars, vars.getLanguage(), data[0].osCommand);
-      String taskinstance = SequenceIdData.getSequence(this, "AD_TaskInstance", vars.getClient());
+      String taskinstance = SequenceIdData.getUUID();
       ExecuteTaskData.insert(this, taskinstance, vars.getClient(), vars.getOrg(), vars.getUser(), strTaskId);
       executeCommand(response, vars, data[0].name, command);
     } else if (vars.commandIn("EXECUTE_CMD")) {

@@ -68,7 +68,7 @@ public class InvoiceVendorMultiline extends HttpSecureAppServlet {
       printPageDataSheet(response, vars, "");
     } else if (vars.commandIn("SAVE_NEW_RELATION", "SAVE_NEW_NEW", "SAVE_NEW_EDIT")) {
       InvoiceVendorMultilineData data = getEditVariables(vars);
-      String strSequence = SequenceIdData.getSequence(this, "C_Invoice", vars.getClient());
+      String strSequence = SequenceIdData.getUUID();
       log4j.info("Sequence: " + strSequence);
       data.cInvoiceId = strSequence;
       if (data.insert(this)==0) {

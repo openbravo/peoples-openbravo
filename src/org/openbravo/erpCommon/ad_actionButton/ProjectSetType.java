@@ -90,12 +90,12 @@ public class ProjectSetType extends HttpSecureAppServlet {
 	      String strProjectPhase = "";
 	      String strProjectTask = "";
 	      for (int i=0;data!=null && i<data.length;i++){
-	        strProjectPhase = SequenceIdData.getSequence(this, "C_ProjectPhase", dataProject[0].adClientId);
+	        strProjectPhase = SequenceIdData.getUUID();
 	        try {
   	        if (ProjectSetTypeData.insertProjectPhase(conn, this, strKey, dataProject[0].adClientId, dataProject[0].adOrgId, vars.getUser(), data[i].description, data[i].mProductId, data[i].cPhaseId, strProjectPhase, data[i].help, data[i].name, data[i].standardqty, data[i].seqno)==1){
   	            ProjectSetTypeData[] data1 = ProjectSetTypeData.selectTask(this, data[i].cPhaseId);
   	            for (int j=0;data1!=null && j<data1.length;j++){
-  	                strProjectTask = SequenceIdData.getSequence(this, "C_ProjectTask", dataProject[0].adClientId);
+  	                strProjectTask = SequenceIdData.getUUID();
   	                ProjectSetTypeData.insertProjectTask(conn, this,strProjectTask,data1[j].cTaskId, dataProject[0].adClientId, dataProject[0].adOrgId, vars.getUser(), data1[j].seqno, data1[j].name,data1[j].description, data1[j].help, data1[j].mProductId, strProjectPhase, data1[j].standardqty);
   	            }
   	        }

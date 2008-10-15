@@ -149,8 +149,7 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
 			 
 			// For all active Register Type i create a Tax Register
 			for (TaxRegisterType taxRegisterType : taxregistertypes) {
-				String strSequence = SequenceIdData.getSequence(this,
-						"C_TaxRegister", vars.getClient());
+				String strSequence = SequenceIdData.getUUID();
 				log4j.info("Sequence: " + strSequence);
 
 				try {
@@ -229,8 +228,7 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
 
 					strTotalAmt = dbTotalAmt.toString();
 
-					String strSequence = SequenceIdData.getSequence(this,
-							"C_TaxRegisterline", vars.getClient());
+					String strSequence = SequenceIdData.getUUID();
 					log4j.info("Sequence: " + strSequence);
 
 					try {

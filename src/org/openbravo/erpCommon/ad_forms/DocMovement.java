@@ -119,7 +119,7 @@ public Fact createFact(AcctSchema as,ConnectionProvider conn,Connection con,Vari
   C_Currency_ID = as.getC_Currency_ID();
   //  create Fact Header
   Fact fact = new Fact(this, as, Fact.POST_Actual);
-  String Fact_Acct_Group_ID = SequenceIdData.getSequence(conn, "Fact_Acct_Group", vars.getClient());
+  String Fact_Acct_Group_ID = SequenceIdData.getUUID();
 
   //  Line pointers
   FactLine dr = null;

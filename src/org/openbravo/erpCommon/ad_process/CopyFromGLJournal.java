@@ -88,7 +88,7 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
       conn = this.getTransactionConnection();
       CopyFromGLJournalData [] data = CopyFromGLJournalData.select(this, strKey,strGLJournalBatch);
       for(int i=0;data != null && i<data.length;i++){
-        String strSequence = SequenceIdData.getSequence(this, "GL_Journal", vars.getClient());
+        String strSequence = SequenceIdData.getUUID();
         String strDocumentNo = Utility.getDocumentNo(this, vars, windowId, "GL_Journal", Utility.getContext(this, vars, "C_DocTypeTarget_ID", "132"), Utility.getContext(this, vars, "C_DocType_ID", "132"), false, true);
         try {
           if(CopyFromGLJournalData.insertGLJournal(conn,this,strSequence, vars.getClient(), vars.getOrg(), vars.getUser(), data[i].cAcctschemaId, data[i].cDoctypeId, "DR", "CO", data[i].isapproved, data[i].isprinted, data[i].description, data[i].postingtype, data[i].glCategoryId, data[i].datedoc, data[i].dateacct, data[i].cPeriodId, data[i].cCurrencyId, data[i].currencyratetype, data[i].currencyrate,strKey, data[i].controlamt, strDocumentNo, "N", "N", "N")==0)log4j.warn("Save: GLJournal record " + i + " not inserted. Sequence = " + strSequence);
@@ -99,7 +99,7 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
         }
         CopyFromGLJournalData [] dataLines = CopyFromGLJournalData.selectLines(this, data[i].glJournalId);
         for(int j=0;dataLines!=null && j<dataLines.length;j++){
-          String strLineSequence = SequenceIdData.getSequence(this, "GL_JournalLine", vars.getClient());
+          String strLineSequence = SequenceIdData.getUUID();
           try {
             if(CopyFromGLJournalData.insertGLJournalLine(conn, this, strLineSequence, vars.getClient(), vars.getOrg(), vars.getUser(), strSequence, dataLines[j].line, dataLines[j].isgenerated, dataLines[j].description, dataLines[j].amtsourcedr, dataLines[j].amtsourcecr, dataLines[j].cCurrencyId, dataLines[j].currencyratetype, dataLines[j].currencyrate, dataLines[j].amtacctdr, dataLines[j].amtacctcr, dataLines[j].cUomId, dataLines[j].qty, dataLines[j].cValidcombinationId)==0)log4j.warn("Save: GLJournalLine record " + j + " not inserted. Sequence = " + strLineSequence);
           } catch(ServletException ex) {

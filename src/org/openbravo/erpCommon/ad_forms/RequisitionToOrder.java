@@ -348,7 +348,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
 
     try {
       conn = getTransactionConnection();
-      String strCOrderId = SequenceIdData.getSequence(this, "C_Order", vars.getClient());
+      String strCOrderId = SequenceIdData.getUUID();
       String docTargetType = RequisitionToOrderData.cDoctypeTarget(conn, this, vars.getClient(), strOrg);
       String strDocumentNo = Utility.getDocumentNo(this, vars, "", "C_Order", docTargetType, docTargetType, false, true);
       String cCurrencyId = RequisitionToOrderData.selectCurrency(this, strPriceListId);
@@ -370,7 +370,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
 
       RequisitionToOrderData[] lines = RequisitionToOrderData.linesToOrder(this, cCurrencyId, strOrderDate, strOrg, strWarehouse, RequisitionToOrderData.billto(this, strVendor).equals("")?RequisitionToOrderData.cBPartnerLocationId(this, strVendor):RequisitionToOrderData.billto(this, strVendor), RequisitionToOrderData.cBPartnerLocationId(this, strVendor), strPriceListVersionId, strSelected);
       for (int i=0; lines!=null && i<lines.length; i++) {
-        if (i==0) strCOrderlineID = SequenceIdData.getSequence(this, "C_OrderLine", vars.getClient());
+        if (i==0) strCOrderlineID = SequenceIdData.getUUID();
         if (i==lines.length-1) {
           insertLine = true;
           qtyOrder = qty;
@@ -400,12 +400,12 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
             return myMessage;
           }
 
-          strCOrderlineID = SequenceIdData.getSequence(this, "C_OrderLine", vars.getClient());
+          strCOrderlineID = SequenceIdData.getUUID();
         }
       }
       unlockRequisitionLines(vars, strSelected);
       for (int i=0; lines!=null && i<lines.length; i++) {
-        String strRequisitionOrderId = SequenceIdData.getSequence(this, "M_RequisitionOrder", vars.getClient());
+        String strRequisitionOrderId = SequenceIdData.getUUID();
         try {
           RequisitionToOrderData.insertRequisitionOrder(conn, this, strRequisitionOrderId, vars.getClient(), strOrg, vars.getUser(), lines[i].mRequisitionlineId, lines[i].cOrderlineId, lines[i].lockqty);
         } catch(ServletException ex) {
@@ -440,7 +440,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
 
   OBError cOrderPost(Connection conn, VariablesSecureApp vars, String strcOrderId)
       throws IOException, ServletException {
-    String pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
+    String pinstance = SequenceIdData.getUUID();
 
     PInstanceProcessData.insertPInstance(this, pinstance, "104", strcOrderId, "N", vars.getUser(), vars.getClient(), vars.getOrg());
     RequisitionToOrderData.cOrderPost0(conn, this, pinstance);

@@ -102,7 +102,7 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
       CopyFromSettlementData [] to = CopyFromSettlementData.selectSettlement(this, strSettlement);
       for (i = 0;data!=null && i<data.length;i++){
         CopyFromSettlementData [] data1 =CopyFromSettlementData.selectDebtPaymentBalancing(this, data[i].cDebtPaymentId);
-        strDebtPayment = SequenceIdData.getSequence(this, "C_Debt_Payment", vars.getClient());
+        strDebtPayment = SequenceIdData.getUUID();
         strCBPartnerId = vars.getStringParameter("inpcBpartnerId"+data[i].cDebtPaymentId);
         strDate = vars.getStringParameter("inpDate"+data[i].cDebtPaymentId);
         strImporte = vars.getStringParameter("inpAmount"+data[i].cDebtPaymentId);
@@ -116,7 +116,7 @@ public class CopyFromSettlement extends HttpSecureAppServlet {
         for (int j=0;j<data1.length;j++){
           strDebe = vars.getStringParameter("inpDebe"+data1[j].cDebtPaymentBalancingId);
           strHaber = vars.getStringParameter("inpHaber"+data1[j].cDebtPaymentBalancingId);
-          strDebtPaymentBalancing = SequenceIdData.getSequence(this, "C_Debt_Payment_Balancing", vars.getClient());
+          strDebtPaymentBalancing = SequenceIdData.getUUID();
           try {
             CopyFromSettlementData.insert(conn,this, strDebtPaymentBalancing, to[0].client, to[0].org, vars.getUser(),strDebtPayment, strDebe, strHaber, data1[j].cGlitemId);
           } catch(ServletException ex) {

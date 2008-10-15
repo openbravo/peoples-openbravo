@@ -265,7 +265,7 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
         for (count=0;count<total;count++) {
           String strM_Locator_ID = (count>locators.length-1)?"":locators[count].mLocatorId;
           if (strM_Locator_ID.equals("")) break;
-          String strSequence = SequenceIdData.getSequence(this, "M_InOutLine", vars.getClient());
+          String strSequence = SequenceIdData.getUUID();
           try {
             CreateFromMultipleReceiptData.insert(conn, this, strSequence, vars.getClient(), vars.getOrg(), vars.getUser(), strKey, strM_Locator_ID, strProduct, strUOM, strQty, strAtributo, strQuantityOrder, strProductUOM);
           } catch(ServletException ex) {
@@ -311,7 +311,7 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
           String strQty = vars.getStringParameter("inpmovementqty" + strStorageDetailId);
           String strQtyOrder = vars.getStringParameter("inpquantityorder" + strStorageDetailId);
           
-          String strSequence = SequenceIdData.getSequence(this, "M_InOutLine", vars.getClient());
+          String strSequence = SequenceIdData.getUUID();
           try {
             CreateFromMultipleShipmentData.insert(conn, this, strSequence, vars.getClient(), vars.getOrg(), vars.getUser(), strKey, strQty, strQtyOrder, strStorageDetailId);
           } catch(ServletException ex) {

@@ -119,7 +119,7 @@ public Fact createFact (AcctSchema as,ConnectionProvider conn,Connection con,Var
     log4jDocAmortization.debug("createFact - Inicio");
     //  create Fact Header
     Fact fact = null;
-    String Fact_Acct_Group_ID = SequenceIdData.getSequence(conn, "Fact_Acct_Group", vars.getClient());
+    String Fact_Acct_Group_ID = SequenceIdData.getUUID();
     log4jDocAmortization.debug("createFact - object created");    
     log4jDocAmortization.debug("createFact - p_lines.length - " + p_lines.length);
     //  Lines

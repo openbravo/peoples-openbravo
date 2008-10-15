@@ -226,7 +226,7 @@ public class ImportAccount extends ImportProcess {
         if (log4j.isDebugEnabled()) log4j.debug("I_ElementValue_ID=" + I_ElementValue_ID + ", C_ElementValue_ID=" + C_ElementValue_ID);
         if (C_ElementValue_ID.equals("0") || C_ElementValue_ID == null || C_ElementValue_ID.equals("")) { // insert new
           try {
-            C_ElementValue_ID = SequenceIdData.getSequence(conn, "C_ElementValue", vars.getClient());
+            C_ElementValue_ID = SequenceIdData.getUUID();
             records[i].cElementvalueId = C_ElementValue_ID;
             no = ImportAccountData.insertElementValue(con, conn, C_ElementValue_ID, I_ElementValue_ID);
             if (log4j.isDebugEnabled()) log4j.debug("Insert ElementValue = " + no);
@@ -267,7 +267,7 @@ public class ImportAccount extends ImportProcess {
           String [][] strOperand = operandProcess(ImportAccountData.selectOperands(con, conn, I_ElementValue_ID));
           String strSeqNo = "10";
           for(int j=0;strOperand!=null && j<strOperand.length;j++){
-              String C_ElementValue_Operand_ID = SequenceIdData.getSequence(conn, "C_ElementValue_Operand", vars.getClient());
+              String C_ElementValue_Operand_ID = SequenceIdData.getUUID();
               String strAccount = ImportAccountData.selectAccount(con, conn, strOperand[j][0], vars.getClient());
               String strElementValue = ImportAccountData.selectAccount(con, conn, elementValue, vars.getClient());
               if(strAccount!=null && !strAccount.equals("")){
@@ -287,7 +287,7 @@ public class ImportAccount extends ImportProcess {
       for (int g =0;g<acctSchemas.length;g++){
         String defaultsRecordNo = ImportAccountData.selectDefaultsRecord(con, conn, acctSchemas[g].cAcctschemaId);
         if(defaultsRecordNo.equals("0")){ 
-          String C_AcctSchema_Default_ID = SequenceIdData.getSequence(conn, "C_AcctSchema_Default", acctSchemas[g].adClientId);
+          String C_AcctSchema_Default_ID = SequenceIdData.getUUID();
           ImportAccountData.insertDefaultsRecord(con, conn, acctSchemas[g].cAcctschemaId, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, vars.getUser(),
               getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[11][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[12][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[13][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[14][1], vars.getUser()), 
               getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[15][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[16][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[17][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[68][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[18][1], vars.getUser()), getValidCombination(con, conn, acctSchemas[g].adClientId, acctSchemas[g].adOrgId, acctSchemas[g].cAcctschemaId, defaults[19][1], vars.getUser()), 

@@ -106,7 +106,7 @@ public class ChangeOrderOrg extends HttpSecureAppServlet {
             releaseRollbackConnection(conn);
             return myMessage;
           }
-          String pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
+          String pinstance = SequenceIdData.getUUID();
           try {
             ChangeOrderOrgData.insertPInstance(conn, this, pinstance, "104", strOrderId, vars.getUser(), vars.getClient(), vars.getOrg());
           } catch(ServletException ex) {
@@ -142,7 +142,7 @@ public class ChangeOrderOrg extends HttpSecureAppServlet {
                 }
             }
             /*Pending change org for the invoices related*/
-          pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
+          pinstance = SequenceIdData.getUUID();
           try {
             ChangeOrderOrgData.insertPInstance(conn, this, pinstance, "104", strOrderId, vars.getUser(), vars.getClient(), vars.getOrg());
           } catch(ServletException ex) {

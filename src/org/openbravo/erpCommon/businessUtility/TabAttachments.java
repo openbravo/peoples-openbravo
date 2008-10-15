@@ -60,7 +60,7 @@ public class TabAttachments extends HttpSecureAppServlet {
       if (data==null || data.length==0) throw new ServletException("Tab not found: " + strTab);
       else tableId = data[0].adTableId;
 
-      String strFileReference = SequenceIdData.getSequence(this, "C_File", vars.getClient());
+      String strFileReference = SequenceIdData.getUUID();
       OBError oberrInsert = insert(vars, strFileReference, tableId, key, strDataType, strText);
       if (!oberrInsert.getType().equals("Success")) {
     	  vars.setMessage("TabAttachments", oberrInsert);

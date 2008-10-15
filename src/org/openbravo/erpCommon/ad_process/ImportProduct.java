@@ -204,7 +204,7 @@ public class ImportProduct extends ImportProcess {
 					boolean newProduct = M_Product_ID.equals("");
 					//  Product
 					if (newProduct){     //  Insert new Product
-						M_Product_ID = SequenceIdData.getSequence(conn, "M_Product", vars.getClient());
+						M_Product_ID = SequenceIdData.getUUID();
 						try {
 							if (log4j.isDebugEnabled()) log4j.debug("before insert");
 							no = ImportProductData.insertProductImport(con, conn, M_Product_ID, strcTaxcategoryId, I_Product_ID);

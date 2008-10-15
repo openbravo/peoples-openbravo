@@ -224,7 +224,7 @@ public class ImportOrder extends ImportProcess {
             data[i].name = data[i].bpartnervalue;
         }
         BPartnerData bp = new BPartnerData();
-        bp.cBpartnerId = SequenceIdData.getSequence(conn, "C_BPartner", vars.getClient());
+        bp.cBpartnerId = SequenceIdData.getUUID();
         bp.adClientId = data[i].adClientId;
         bp.adOrgId = data[i].adOrgId;
         bp.value = data[i].bpartnervalue;
@@ -239,7 +239,7 @@ public class ImportOrder extends ImportProcess {
         }
         data[i].cBpartnerId = bp.cBpartnerId;
         LocationData loc = new LocationData();
-        loc.cLocationId = SequenceIdData.getSequence(conn, "C_Location", vars.getClient());
+        loc.cLocationId = SequenceIdData.getUUID();
         loc.adClientId = data[i].adClientId;
         loc.adOrgId = data[i].adOrgId;
         loc.address1 = data[i].address1;
@@ -259,7 +259,7 @@ public class ImportOrder extends ImportProcess {
         }
         data[i].cLocationId = loc.cLocationId;
         BPartnerLocationData bpl = new BPartnerLocationData();
-        bpl.cBpartnerLocationId = SequenceIdData.getSequence(conn, "C_BPartner_Location", vars.getClient());
+        bpl.cBpartnerLocationId = SequenceIdData.getUUID();
         bpl.adClientId = data[i].adClientId;
         bpl.adOrgId = data[i].adOrgId;
         bpl.cBpartnerId = data[i].cBpartnerId;
@@ -276,7 +276,7 @@ public class ImportOrder extends ImportProcess {
         data[i].billtoId = bpl.cBpartnerLocationId;
         if (data[i].contactname != null || data[i].email != null || data[i].phone != null) {
           UserData user = new UserData();
-          user.adUserId = SequenceIdData.getSequence(conn, "AD_User", vars.getClient());
+          user.adUserId = SequenceIdData.getUUID();
           user.adClientId = data[i].adClientId;
           user.adOrgId = data[i].adOrgId;
           user.cBpartnerId = data[i].cBpartnerId;
@@ -331,7 +331,7 @@ public class ImportOrder extends ImportProcess {
           ImportOrderData[] orderInserted = ImportOrderData.selectOrderInserted(conn, getAD_Client_ID(), data[i].documentno, data[i].dateordered);
           if (orderInserted!=null && orderInserted.length==0) {
             corder = new COrderData();
-            corder.cOrderId = SequenceIdData.getSequence(conn, "C_Order", vars.getClient());
+            corder.cOrderId = SequenceIdData.getUUID();
             if (log4j.isDebugEnabled()) log4j.debug("Creating new order with id = " + corder.cOrderId);
             corder.adClientId = data[i].adClientId;
             corder.adOrgId = data[i].adOrgId;
@@ -475,7 +475,7 @@ public class ImportOrder extends ImportProcess {
         data[i].cOrderId = corder_corderid;
         //  New OrderLine
         COrderLineData line = new COrderLineData();
-        line.cOrderlineId = SequenceIdData.getSequence(conn, "C_OrderLine", vars.getClient());
+        line.cOrderlineId = SequenceIdData.getUUID();
         line.adClientId = data[i].adClientId;
         line.adOrgId = data[i].adOrgId;
         line.adUserId = vars.getUser();
@@ -541,7 +541,7 @@ public class ImportOrder extends ImportProcess {
           for (int k = 0; k<arrayPayment.length; k++) {
             if (!arrayPayment[k].equals("")) {
               CDebtpaymentData cdebtpayment = new CDebtpaymentData();
-              cdebtpayment.cDebtPaymentId = SequenceIdData.getSequence(conn, "C_Debt_Payment", vars.getClient());
+              cdebtpayment.cDebtPaymentId = SequenceIdData.getUUID();
               cdebtpayment.adClientId = data[i].adClientId;
               cdebtpayment.adOrgId = data[i].adOrgId;
               cdebtpayment.createdby = getAD_User_ID();
@@ -631,7 +631,7 @@ public class ImportOrder extends ImportProcess {
 
   String cOrderPost(Connection con, ConnectionProvider conn, VariablesSecureApp vars, String strcOrderId, String order_documentno)
       throws IOException, ServletException {
-    String pinstance = SequenceIdData.getSequence(conn, "AD_PInstance", vars.getClient());
+    String pinstance = SequenceIdData.getUUID();
     PInstanceProcessData.insertPInstance(conn, pinstance, "104", strcOrderId, "N", vars.getUser(), vars.getClient(), vars.getOrg());
     //PInstanceProcessData.insertPInstanceParam(this, pinstance, "1", "Selection", "Y", vars.getClient(), vars.getOrg(), vars.getUser());
     ImportOrderData.cOrderPost0(con, conn, pinstance);

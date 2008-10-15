@@ -159,7 +159,7 @@ public class ImportTax extends ImportProcess {
           newTaxCategory = ((C_TaxCategory_ID == "") || (C_TaxCategory_ID==null));
           if (log4j.isDebugEnabled()) log4j.debug("TCId: "+C_TaxCategory_ID);
           if (newTaxCategory) {	//	Insert new TaxCategory
-            C_TaxCategory_ID = SequenceIdData.getSequence(conn, "C_TaxCategory", vars.getClient());
+            C_TaxCategory_ID = SequenceIdData.getUUID();
             try {
               no = ImportTaxData.insertTaxCategory(con, conn, C_TaxCategory_ID, I_Tax_ID);
               if (log4j.isDebugEnabled()) log4j.debug("Insert TaxCategory = " + no);
@@ -195,7 +195,7 @@ public class ImportTax extends ImportProcess {
           if (newBPTaxCategory) C_BPTaxCategory_ID = ImportTaxData.selectBPTaxCategoryId(conn, data[i].bptcName, getAD_Client_ID());
           newBPTaxCategory = ((C_BPTaxCategory_ID == "") || (C_BPTaxCategory_ID==null));
           if (newBPTaxCategory) {	//	Insert new BPTaxCategory
-            C_BPTaxCategory_ID = SequenceIdData.getSequence(conn, "C_BP_TaxCategory", vars.getClient());
+            C_BPTaxCategory_ID = SequenceIdData.getUUID();
             try {
               no = ImportTaxData.insertBPTaxCategory(con, conn, C_BPTaxCategory_ID, I_Tax_ID);
               if (log4j.isDebugEnabled()) log4j.debug("Insert BPTaxCategory = " + no);
@@ -233,7 +233,7 @@ public class ImportTax extends ImportProcess {
              ParentTax_ID = ImportTaxData.selectTaxId(conn, "", data[i].parentName, getAD_Client_ID()); //Check if parent tax is created, if not create with default values
              if ((ParentTax_ID == "") || (ParentTax_ID==null)) {  //Insert parent tax
                try {
-                 ParentTax_ID = SequenceIdData.getSequence(conn, "C_Tax", vars.getClient());
+                 ParentTax_ID = SequenceIdData.getUUID();
                  if (log4j.isDebugEnabled()) log4j.debug("Insert Parent Tax = " + no);
                  no = ImportTaxData.insertDefaultTax(con,conn, ParentTax_ID, C_TaxCategory_ID,I_Tax_ID);             
                  noTaxInsert++;
@@ -253,7 +253,7 @@ public class ImportTax extends ImportProcess {
            newTax = ((C_Tax_ID == "")||(C_Tax_ID==null));
            if (log4j.isDebugEnabled()) log4j.debug("Tax:"+data[i].tName+" - new:"+newTax);
            if (newTax) {	//	Insert new Tax
-            C_Tax_ID = SequenceIdData.getSequence(conn, "C_Tax", vars.getClient());
+            C_Tax_ID = SequenceIdData.getUUID();
             try {
               no = ImportTaxData.insertTax(con, conn, C_Tax_ID, C_TaxCategory_ID, C_BPTaxCategory_ID, ParentTax_ID, I_Tax_ID);
               if (log4j.isDebugEnabled()) log4j.debug("Insert Tax = " + no);
@@ -301,7 +301,7 @@ public class ImportTax extends ImportProcess {
               }
             } else{ //create Location in c_tax_zone
               try {
-                String C_Tax_Zone_ID = SequenceIdData.getSequence(conn, "C_Tax_Zone", vars.getClient());
+                String C_Tax_Zone_ID = SequenceIdData.getUUID();
                 no = ImportTaxData.insertTaxZone(con, conn, C_Tax_Zone_ID, C_Tax_ID, I_Tax_ID);
                 if (log4j.isDebugEnabled()) log4j.debug("Insert tax Location (in c_tax_zone) = " + no);
               } catch (ServletException ex) {

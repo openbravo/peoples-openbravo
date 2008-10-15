@@ -147,7 +147,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
              	 throw new Exception ("FormofPaymentNotdefined");
               }    
               
-              strCOrderId = SequenceIdData.getSequence(this, "C_Order", vars.getClient());
+              strCOrderId = SequenceIdData.getUUID();
               //order.add(strCOrderId);
               String strDocumentNo = Utility.getDocumentNo(this, vars, "", "C_Order", docTargetType, docTargetType, false, true);
               // Catch database error message
@@ -242,7 +242,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
             if (pricelimit.equals("")) pricelimit="0";
             if (strDiscount.equals("")) strDiscount="0";   
             
-            String strCOrderlineID = SequenceIdData.getSequence(this, "C_OrderLine", vars.getClient());                       
+            String strCOrderlineID = SequenceIdData.getUUID();                       
             
             if (line==0) {
               line = 10;
@@ -313,7 +313,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
      
      OBError myMessage = null;    
     
-     String pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
+     String pinstance = SequenceIdData.getUUID();
      try {
        PInstanceProcessData.insertPInstance(this, pinstance, "104", strCOrderId, "N", vars.getUser(), vars.getClient(), vars.getOrg());
      } catch(ServletException ex) {

@@ -148,13 +148,13 @@ void printPage(HttpServletResponse response, VariablesSecureApp vars, String str
         if (log4j.isDebugEnabled() && ((data!=null && data.length!=0))) log4j.debug("cInvoiceId - " + data[0].cInvoiceId + " - cOrderId - " + data[0].cOrderId + " - cSettlementGenerateId - " + data[0].cSettlementGenerateId + " - ismanual - " + data[0].ismanual);
         if(data==null || data.length==0){
            if (log4j.isDebugEnabled()) log4j.debug("CreateCashFlowStatement - NO PAYMENT");
-           String strFactAcctCFS = SequenceIdData.getSequence(this, "Fact_Acct_CFS", vars.getClient());
+           String strFactAcctCFS = SequenceIdData.getUUID();
            if (log4j.isDebugEnabled()) log4j.debug("CreateCashFlowStatement - " + " - strNewAmount - " + strAmount);
            CreateCashFlowStatementData.insertStatements(conn, this, strFactAcctCFS, strFactAcctId, vars.getClient(), vars.getOrg(), vars.getUser(), strAccount, strAmount, "0");
         }else {
           CreateCashFlowStatementData[] writeOff = CreateCashFlowStatementData.selectPaymentWriteOff(this, strPaymentId, data[0].cSettlementCancelId);
           if(writeOff!=null && writeOff.length>0){
-            String strFactAcctCFS = SequenceIdData.getSequence(this, "Fact_Acct_CFS", vars.getClient());
+            String strFactAcctCFS = SequenceIdData.getUUID();
             CreateCashFlowStatementData.insertStatements(conn, this, strFactAcctCFS, strFactAcctId, vars.getClient(), vars.getOrg(), vars.getUser(), writeOff[0].accountId, writeOff[0].amount, writeOff[0].id);
           }
           if(!(data[0].cInvoiceId).equals("")){
@@ -165,7 +165,7 @@ void printPage(HttpServletResponse response, VariablesSecureApp vars, String str
             if(strTotal==null || strTotal.equals("")){
               if (log4j.isDebugEnabled()) log4j.debug("CreateCashFlowStatement - NOT POSTED INVOICE");
               String strOrderAccount = CreateCashFlowStatementData.selectOrderAccount(this);
-              String strFactAcctCFS = SequenceIdData.getSequence(this, "Fact_Acct_CFS", vars.getClient());
+              String strFactAcctCFS = SequenceIdData.getUUID();
               if (log4j.isDebugEnabled()) log4j.debug("CreateCashFlowStatement - " + " - strNewAmount - " + strAmount);
               CreateCashFlowStatementData.insertStatements(conn, this, strFactAcctCFS, strFactAcctId, vars.getClient(), vars.getOrg(), vars.getUser(), strOrderAccount, strAmount,"0");
             } else {
@@ -173,7 +173,7 @@ void printPage(HttpServletResponse response, VariablesSecureApp vars, String str
               String strRatio = calculateRatio(strTotal,strAmount);
               if (log4j.isDebugEnabled()) log4j.debug("strRatio - " + strRatio);
               for(int i = 0;i<statements.length;i++){
-                  String strFactAcctCFS = SequenceIdData.getSequence(this, "Fact_Acct_CFS", vars.getClient());
+                  String strFactAcctCFS = SequenceIdData.getUUID();
                   if (log4j.isDebugEnabled()) log4j.debug("CreateCashFlowStatement - " + " - strNewAmount - " + multiply(statements[i].amount,strRatio));
                   CreateCashFlowStatementData.insertStatements(conn, this, strFactAcctCFS, strFactAcctId, vars.getClient(), vars.getOrg(), vars.getUser(), statements[i].accountId, multiply(statements[i].amount,strRatio), statements[i].id);
               }
@@ -181,7 +181,7 @@ void printPage(HttpServletResponse response, VariablesSecureApp vars, String str
           }else if(!(data[0].cOrderId).equals("")){
               if (log4j.isDebugEnabled()) log4j.debug("CreateCashFlowStatement - ORDER");
               String strOrderAccount = CreateCashFlowStatementData.selectOrderAccount(this);
-              String strFactAcctCFS = SequenceIdData.getSequence(this, "Fact_Acct_CFS", vars.getClient());
+              String strFactAcctCFS = SequenceIdData.getUUID();
               if (log4j.isDebugEnabled()) log4j.debug("CreateCashFlowStatement - " + " - strNewAmount - " + strAmount);
               CreateCashFlowStatementData.insertStatements(conn, this, strFactAcctCFS, strFactAcctId, vars.getClient(), vars.getOrg(), vars.getUser(), strOrderAccount, strAmount,"0");
           }else if(!(data[0].cSettlementGenerateId).equals("")){
@@ -198,7 +198,7 @@ void printPage(HttpServletResponse response, VariablesSecureApp vars, String str
                   for (int j=0;j<glItems.length;j++){
                       String strNewAmount = multiply(calculateRatio(strTotal,strAmount),glItems[j].amount);
                       if (log4j.isDebugEnabled()) log4j.debug("CreateCashFlowStatement - Inserting glItem - " + (j+1) + " - strNewAmount - " + strNewAmount);
-                      String strFactAcctCFS = SequenceIdData.getSequence(this, "Fact_Acct_CFS", vars.getClient());
+                      String strFactAcctCFS = SequenceIdData.getUUID();
                       CreateCashFlowStatementData.insertStatements(conn, this, strFactAcctCFS, strFactAcctId, vars.getClient(), vars.getOrg(), vars.getUser(), glItems[j].account, strNewAmount, glItems[j].id);
                   }
               } else {
@@ -206,7 +206,7 @@ void printPage(HttpServletResponse response, VariablesSecureApp vars, String str
                   CreateCashFlowStatementData[] canceledPayments = CreateCashFlowStatementData.selectCancelledPayments(this, data[0].cSettlementGenerateId);
                   if(canceledPayments == null || canceledPayments.length == 0){
                      String strPaymentAccount = CreateCashFlowStatementData.selectPaymentAccount(this);
-                     String strFactAcctCFS = SequenceIdData.getSequence(this, "Fact_Acct_CFS", vars.getClient());
+                     String strFactAcctCFS = SequenceIdData.getUUID();
                      if (log4j.isDebugEnabled()) log4j.debug("CreateCashFlowStatement - " + " - strNewAmount - " + strAmount);
                      CreateCashFlowStatementData.insertStatements(conn, this, strFactAcctCFS, strFactAcctId, vars.getClient(), vars.getOrg(), vars.getUser(), strPaymentAccount, strAmount, "0");
                   } else{

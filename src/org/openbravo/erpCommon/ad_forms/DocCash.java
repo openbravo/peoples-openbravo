@@ -191,7 +191,7 @@ jarenor
 
         //  create Fact Header
         Fact fact = new Fact(this, as, Fact.POST_Actual);
-        String Fact_Acct_Group_ID = SequenceIdData.getSequence(conn, "Fact_Acct_Group", vars.getClient());
+        String Fact_Acct_Group_ID = SequenceIdData.getUUID();
         //  Header posting amt as Invoices and Transfer could be differenet currency
         //  CashAsset Total
         BigDecimal assetAmt = ZERO;

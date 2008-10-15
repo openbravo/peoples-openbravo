@@ -218,7 +218,7 @@ public class PeriodicBackground implements Runnable {
     String strMessage="", strNewMessage="";
     try {
       if (adNoteId==null || adNoteId.equals("")) {
-        adNoteId = SequenceIdData.getSequence(conn, "AD_Note", adClientId);
+        adNoteId = SequenceIdData.getUUID();
         PeriodicBackgroundData.insert(conn, adNoteId, adClientId, "");
       }
       if (this.message.length()>2000) {

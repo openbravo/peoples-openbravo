@@ -83,30 +83,30 @@ public class CreateCloseFactAcct extends HttpSecureAppServlet {
           return Utility.messageBD(this, "ProcessRunError", vars.getLanguage());
         else newPeriod = CreateCloseFactAcctData.getFirstPeriod(this, CreateCloseFactAcctData.getNextYear(this, strKey));
       else newPeriod = CreateCloseFactAcctData.getNextPeriod(this, strPediodId, strKey);
-      Fact_Acct_Group_ID = SequenceIdData.getSequence(this, "Fact_Acct_Group", vars.getClient());
+      Fact_Acct_Group_ID = SequenceIdData.getUUID();
       int i;
       for (i=0;i<asset.length;i++){
         assetAmtCr = assetAmtCr.add(new BigDecimal(asset[i].totalamtcr));
-        Fact_Acct_ID = SequenceIdData.getSequence(this, "Fact_Acct", vars.getClient());
+        Fact_Acct_ID = SequenceIdData.getUUID();
         CreateCloseFactAcctData.insert(this, Fact_Acct_ID, vars.getClient(), vars.getOrg(), vars.getUser(), strAcctSchema, asset[i].accountId, CreateCloseFactAcctData.getEndDate(this, strPediodId), strPediodId, CreateCloseFactAcctData.adTableId(this), "A", CreateCloseFactAcctData.cCurrencyId(this, strAcctSchema),asset[i].totalamtdr,asset[i].totalamtcr,asset[i].totalamtdr,asset[i].totalamtcr , Fact_Acct_Group_ID, Integer.toString((i+3)*10), "C");
       }
       for (int j=0;j<liability.length;j++){
         liabilityAmtDr = liabilityAmtDr.add(new BigDecimal(liability[j].totalamtdr));
         liabilityAmtCr = liabilityAmtCr.add(new BigDecimal(liability[j].totalamtcr));
-        Fact_Acct_ID = SequenceIdData.getSequence(this, "Fact_Acct", vars.getClient());
+        Fact_Acct_ID = SequenceIdData.getUUID();
         CreateCloseFactAcctData.insert(this, Fact_Acct_ID, vars.getClient(), vars.getOrg(), vars.getUser(), strAcctSchema, liability[j].accountId, CreateCloseFactAcctData.getEndDate(this, strPediodId), strPediodId, CreateCloseFactAcctData.adTableId(this), "A", CreateCloseFactAcctData.cCurrencyId(this, strAcctSchema),liability[j].totalamtdr,liability[j].totalamtcr,liability[j].totalamtdr,liability[j].totalamtcr , Fact_Acct_Group_ID, Integer.toString((i+j+3)*10), "C");
       }
-      String Fact_Acct_Group_ID2 = SequenceIdData.getSequence(this, "Fact_Acct_Group", vars.getClient());
+      String Fact_Acct_Group_ID2 = SequenceIdData.getUUID();
       i = 0;
       for (i=0;i<asset.length;i++){
         assetAmtCr = assetAmtCr.add(new BigDecimal(asset[i].totalamtcr));
-        Fact_Acct_ID = SequenceIdData.getSequence(this, "Fact_Acct", vars.getClient());
+        Fact_Acct_ID = SequenceIdData.getUUID();
         CreateCloseFactAcctData.insert(this, Fact_Acct_ID, vars.getClient(), vars.getOrg(), vars.getUser(), strAcctSchema, asset[i].accountId, CreateCloseFactAcctData.getStartDate(this, newPeriod), newPeriod, CreateCloseFactAcctData.adTableId(this), "A", CreateCloseFactAcctData.cCurrencyId(this, strAcctSchema),asset[i].totalamtcr,asset[i].totalamtdr,asset[i].totalamtcr,asset[i].totalamtdr , Fact_Acct_Group_ID2, Integer.toString((i+3)*10), "O");
       }
       for (int j=0;j<liability.length;j++){
         liabilityAmtDr = liabilityAmtDr.add(new BigDecimal(liability[j].totalamtdr));
         liabilityAmtCr = liabilityAmtCr.add(new BigDecimal(liability[j].totalamtcr));
-        Fact_Acct_ID = SequenceIdData.getSequence(this, "Fact_Acct", vars.getClient());
+        Fact_Acct_ID = SequenceIdData.getUUID();
         CreateCloseFactAcctData.insert(this, Fact_Acct_ID, vars.getClient(), vars.getOrg(), vars.getUser(), strAcctSchema, liability[j].accountId, CreateCloseFactAcctData.getStartDate(this, newPeriod), newPeriod, CreateCloseFactAcctData.adTableId(this), "A", CreateCloseFactAcctData.cCurrencyId(this, strAcctSchema),liability[j].totalamtcr,liability[j].totalamtdr,liability[j].totalamtcr,liability[j].totalamtdr, Fact_Acct_Group_ID2, Integer.toString((i+j+3)*10), "O");
       }
       if(CreateCloseFactAcctData.updatePeriods(this, Fact_Acct_Group_ID, strKey, strPediodId)!=0)

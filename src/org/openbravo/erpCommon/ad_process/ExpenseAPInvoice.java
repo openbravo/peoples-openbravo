@@ -150,7 +150,7 @@ String strProductRMailTextID = "";
            throw new Exception ("PaymenttermNotdefined");
          
          //Creates a new purchase invoice header       
-         strcInvoiceId = SequenceIdData.getSequence(this, "C_Invoice", data[i].adClientId);
+         strcInvoiceId = SequenceIdData.getUUID();
          String strDocumentno = Utility.getDocumentNo(this, vars, "", "C_Invoice", docTargetType, docTargetType, false, true);
          String strDocType = ExpenseAPInvoiceData.cDoctypeTarget(this, data[i].adClientId, data[i].adOrgId);
          
@@ -233,7 +233,7 @@ String strProductRMailTextID = "";
        if (log4j.isDebugEnabled()) log4j.debug("dataInvoiceline: "+dataInvoiceline.length);
        if (dataInvoiceline == null || dataInvoiceline.length == 0){ 
          //If it is a new line, calculates c_invoiceline_id and qty
-         strcInvoiceLineId = SequenceIdData.getSequence(this, "C_InvoiceLine", data[i].adClientId);
+         strcInvoiceLineId = SequenceIdData.getUUID();
          qty = Float.valueOf(data[i].qty);
          String strLine = ExpenseAPInvoiceData.selectLine(conn, this, strcInvoiceId);
          if (strLine.equals("")) strLine = "10";
@@ -266,7 +266,7 @@ String strProductRMailTextID = "";
          //If there are acctdimensions that full filled the requirements
          ExpenseAPInvoiceData[] dataAcctdimension = ExpenseAPInvoiceData.selectAcctdimension(conn, this, data[i].adClientId, data[i].adOrgId, strcInvoiceLineId, data[i].cProjectId, data[i].cCampaignId);
          if (dataAcctdimension == null || dataAcctdimension.length == 0) {
-          String strcInvoicelineAcctdimension = SequenceIdData.getSequence(this, "C_InvoiceLine_AcctDimension", data[i].adClientId);
+          String strcInvoicelineAcctdimension = SequenceIdData.getUUID();
           // Catch database error message
           try {
             ExpenseAPInvoiceData.insertInvoicelineAcctdimension(conn, this, strcInvoicelineAcctdimension, data[i].adClientId, data[i].adOrgId, "Y", vars.getUser(), vars.getUser(), strcInvoiceLineId, String.valueOf(qty*Float.valueOf(strPricestd)), data[i].cProjectId, data[i].cCampaignId, "", "");

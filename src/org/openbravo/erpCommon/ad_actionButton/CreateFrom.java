@@ -913,7 +913,7 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
           }
           strDateplanned = vars.getStringParameter("inpplanneddate" + strDebtPaymentId.trim());
           strChargeamt = vars.getStringParameter("inpcost" + strDebtPaymentId.trim());
-          String strSequence = SequenceIdData.getSequence(this, "C_BankStatementLine", vars.getClient());
+          String strSequence = SequenceIdData.getUUID();
           try {
             CreateFromBankData.insert(conn, this, strSequence, vars.getClient(), vars.getUser(), strKey, strDateplanned.equals("")?strStatementDate:strDateplanned, strChargeamt, strDebtPaymentId);
           } catch(ServletException ex) {
@@ -968,7 +968,7 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
       }
       if (data!=null) {
         for (int i=0;i<data.length;i++) {
-          String strSequence = SequenceIdData.getSequence(this, "C_InvoiceLine", vars.getClient());
+          String strSequence = SequenceIdData.getUUID();
           CreateFromInvoiceData[] price = null;
           String C_Tax_ID="";
           if (data[i].cOrderlineId.equals("")) C_Tax_ID = Tax.get (this, data[i].mProductId, strDateInvoiced, data[i].adOrgId, vars.getWarehouse(), strBPartnerLocation, strBPartnerLocation, CreateFromInvoiceData.selectProject(this, strKey), isSOTrx.equals("Y")?true:false);
@@ -1105,7 +1105,7 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
                 quantity = new BigDecimal(quantity.doubleValue() - 1.0);
               }
               String strConversion = conversion.toString();
-              String strSequence = SequenceIdData.getSequence(this, "M_InOutLine", vars.getClient());
+              String strSequence = SequenceIdData.getUUID();
               try {
                 CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(), data[i].adOrgId, vars.getUser(), data[i].description, data[i].mProductId, data[i].cUomId, (qtyIsNegative?"-"+strConversion:strConversion), data[i].cOrderlineId, strLocator, CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId), (qtyIsNegative?"-"+total:total), data[i].mProductUomId, data[i].mAttributesetinstanceId);
                 if (!strInvoice.equals("")) CreateFromShipmentData.updateInvoice(conn, this, strSequence, data[i].cInvoicelineId);
@@ -1117,7 +1117,7 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
               }
             }
           } else {
-            String strSequence = SequenceIdData.getSequence(this, "M_InOutLine", vars.getClient());
+            String strSequence = SequenceIdData.getUUID();
             try {
               CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(), data[i].adOrgId, vars.getUser(), data[i].description, data[i].mProductId, data[i].cUomId, data[i].id, data[i].cOrderlineId, strLocator, CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId), data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId);
               if (!strInvoice.equals("")) CreateFromShipmentData.updateInvoice(conn, this, strSequence, data[i].cInvoicelineId);
@@ -1243,7 +1243,7 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), "DebtPaymentCancelled");
             return myMessage;
           }
-          String strDPManagementLineID = SequenceIdData.getSequence(this, "C_DP_ManagementLine", vars.getClient());
+          String strDPManagementLineID = SequenceIdData.getUUID();
 
           line += 10;
           try {
@@ -1295,7 +1295,7 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), "DebtPaymentCancelled");
             return myMessage;
           }
-          String strCRemittanceLineID = SequenceIdData.getSequence(this, "C_RemittanceLine", vars.getClient());
+          String strCRemittanceLineID = SequenceIdData.getUUID();
           lineNo += 10;
           try {
             CreateFromCRemittanceData.insert(conn, this, strCRemittanceLineID, vars.getClient(), vars.getUser(), strKey, lineNo.toString(),strDebtPaymentId);

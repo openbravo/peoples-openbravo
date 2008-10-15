@@ -100,7 +100,7 @@ public class CopyFromOrder extends HttpSecureAppServlet {
           String strQty = vars.getStringParameter("inpquantity" + strRownum);
           String strcTaxId = vars.getStringParameter("inpcTaxId" + strRownum);
           String strcUOMId = vars.getStringParameter("inpcUOMId" + strRownum);
-          String strCOrderlineID = SequenceIdData.getSequence(this, "C_OrderLine", vars.getClient());
+          String strCOrderlineID = SequenceIdData.getUUID();
           CopyFromOrderRecordData[] order = CopyFromOrderRecordData.select(this, strKey);
           CopyFromOrderData[] orderlineprice = CopyFromOrderData.selectPrices(this, order[0].dateordered, strmProductId, order[0].mPricelistId);
           if (orderlineprice==null || orderlineprice.length==0) {

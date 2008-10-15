@@ -153,7 +153,7 @@ public class Posted extends HttpSecureAppServlet {
     try {
 
       String strClient = PostedData.selectClient(this, PostedData.selectTableName(this, strTableId), strKey);
-      String pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
+      String pinstance = SequenceIdData.getUUID();
       PInstanceProcessData.insertPInstance(this, pinstance, "176", strKey, "N", vars.getUser(), vars.getClient(), vars.getOrg());
       PInstanceProcessData.insertPInstanceParam(this, pinstance, "10", "AD_Client_ID", strClient, vars.getClient(), vars.getOrg(), vars.getUser());
       PInstanceProcessData.insertPInstanceParam(this, pinstance, "20", "AD_Table_ID", strTableId, vars.getClient(), vars.getOrg(), vars.getUser());

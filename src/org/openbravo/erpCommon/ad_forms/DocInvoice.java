@@ -194,7 +194,7 @@ public Fact createFact (AcctSchema as,ConnectionProvider conn,Connection con,Var
     log4jDocInvoice.debug("Starting create fact");
     //  create Fact Header
     Fact fact = new Fact(this, as, Fact.POST_Actual);
-    String Fact_Acct_Group_ID = SequenceIdData.getSequence(conn, "Fact_Acct_Group", vars.getClient());
+    String Fact_Acct_Group_ID = SequenceIdData.getUUID();
     //  Cash based accounting
     if (!as.isAccrual())
         return null;

@@ -77,7 +77,7 @@ public class SessionLogin {
 
   public int save(ConnectionProvider conn) throws ServletException {
     if (getSessionID().equals("")) {
-      String key = SequenceIdData.getSequence(conn, "AD_Session", getClient());
+      String key = SequenceIdData.getUUID();
       if (key==null || key.equals("")) throw new ServletException("SessionLogin.save() - key creation failed");
       setSessionID(key);
       return SessionLoginData.insert(conn, getSessionID(), getClient(), getOrg(), getIsActive(), getUser(), getWebSession(), getRemoteAddr(), getRemoteHost(), getProcessed());

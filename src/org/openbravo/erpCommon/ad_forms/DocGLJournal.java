@@ -147,7 +147,7 @@ public BigDecimal getBalance(){
 public Fact createFact (AcctSchema as,ConnectionProvider conn,Connection con,VariablesSecureApp vars) throws ServletException{
   //  create Fact Header
   Fact fact = new Fact (this, as, m_PostingType);
-  String Fact_Acct_Group_ID = SequenceIdData.getSequence(conn, "Fact_Acct_Group", vars.getClient());
+  String Fact_Acct_Group_ID = SequenceIdData.getUUID();
   //  GLJ
   if (DocumentType.equals(AcctServer.DOCTYPE_GLJournal)){
     //  account     DR      CR

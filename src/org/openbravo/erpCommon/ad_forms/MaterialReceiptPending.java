@@ -195,7 +195,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
               else if (strMessageType.equals("Warning") && myMessageAux.getType().equals("Error")) strMessageType = "Error";
             }
             line = 10;
-            strmInoutId = SequenceIdData.getSequence(this, "M_InOut", vars.getClient());
+            strmInoutId = SequenceIdData.getUUID();
             docTargetType = MaterialReceiptPendingData.cDoctypeTarget(this, vars.getClient(), data[0].adOrgId);
             docType = MaterialReceiptPendingData.cDoctypeId(this, docTargetType);
             strDocumentno = Utility.getDocumentNo(this, vars, "", "M_InOut", docTargetType, docType, false, true);
@@ -219,7 +219,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
           strLastOrgId = data[0].adOrgId;
           String strQtyordered = vars.getStringParameter("inpQtyordered" + strOrderlineId);
           String strLocator = vars.getStringParameter("inpmLocatorId" + strOrderlineId);
-          String strSequenceLine = SequenceIdData.getSequence(this, "M_InOutLine", vars.getClient());
+          String strSequenceLine = SequenceIdData.getUUID();
           MaterialReceiptPendingLinesData[] dataLine = MaterialReceiptPendingLinesData.select(this, strOrderlineId);
           try {
             MaterialReceiptPendingLinesData.insert(conn, this, strSequenceLine, vars.getClient(), data[0].adOrgId, "Y", vars.getUser(), vars.getUser(), String.valueOf(line), dataLine[0].description, strmInoutId, strOrderlineId, strLocator, dataLine[0].mProductId, dataLine[0].cUomId, strQtyordered, "N", dataLine[0].mAttributesetinstanceId, "N", dataLine[0].quantityorder, dataLine[0].mProductUomId);
@@ -254,7 +254,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
 
   OBError mInoutPost(Connection conn, VariablesSecureApp vars, String strmInoutId)
       throws IOException, ServletException, SQLException {
-    String pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
+    String pinstance = SequenceIdData.getUUID();
     
     OBError myMessage = null;
     myMessage = new OBError();

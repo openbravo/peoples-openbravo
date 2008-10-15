@@ -28,8 +28,6 @@ import javax.servlet.ServletException;
 
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.exception.*;
-import org.openbravo.data.UtilSql;
 
 public class SequenceIdData implements FieldProvider {
   public String dummy;
@@ -42,49 +40,9 @@ public class SequenceIdData implements FieldProvider {
     }
   }
 
-  /**Select void
-  */
-  public static SequenceIdData[] select(ConnectionProvider connectionProvider)
-    throws ServletException {
-    String strSql = "";
-    strSql = strSql + "";
-    strSql = strSql + "      SELECT Dummy FROM DUAL";
-    strSql = strSql + "    ";
-
-    PreparedStatement st = null;
-    ResultSet result;
-    Vector<Object> vector = new Vector<Object>(0);
-
-    try {
-      st = connectionProvider.getPreparedStatement(strSql);
-      result = st.executeQuery();
-      long countRecord = 0;
-      while(result.next()) {
-        countRecord++;
-        SequenceIdData objectSequenceIdData = new SequenceIdData();
-        objectSequenceIdData.dummy = UtilSql.getValue(result, "DUMMY");
-        vector.addElement(objectSequenceIdData);
-      }
-      result.close();
-    } catch (NoConnectionAvailableException ex) {
-      throw new ServletException("@CODE=NoConnectionAvailable");
-    } catch (SQLException ex2) {
-      throw new ServletException("@CODE=" + Integer.toString(ex2.getErrorCode()) + "@" + ex2.getMessage());
-    } catch (Exception ex3) {
-      throw new ServletException("@CODE=@" + ex3.getMessage());
-    } finally {
-      try {
-        connectionProvider.releasePreparedStatement(st);
-      } catch (Exception ignored) {}
-    }
-    SequenceIdData objectSequenceIdData[] = new SequenceIdData[vector.size()];
-    vector.copyInto(objectSequenceIdData);
-    return(objectSequenceIdData);
-  }
-  
   /**
    * Returns a new UUID
-   * @return
+   * @return a new random UUID
    */
   public static String getUUID(){
 	return UUID.randomUUID().toString().replace("-", "").toUpperCase();
@@ -92,6 +50,7 @@ public class SequenceIdData implements FieldProvider {
   
   /**Get the sequence for the specified table
    * this shouldn't be used anymore, use instead getUUID() 
+   * @deprecated
   */
   public static String getSequence(ConnectionProvider conn, String table, String client) {
     return getUUID();
@@ -101,32 +60,10 @@ public class SequenceIdData implements FieldProvider {
    */
    public static String getSequenceConnection(Connection conn, ConnectionProvider con, String table, String client)
      throws ServletException {
-     /*String strSql = "";
-       strSql = strSql + "";
-       strSql = strSql + "        CALL AD_Sequence_Next(?,?,?)";
-       strSql = strSql + "      ";
-
-       CallableStatement st = conn.getCallableStatement(strSql);
-       String object;
-
-       int iParameter = 0;*/
      String object;
      CSResponse response = SequenceData.getSequenceConnection(conn, con, table, client);
      object = response.razon;
-     /*try {
-       iParameter++; UtilSql.setValue(st, iParameter, 12, "Test", table);
-       iParameter++; UtilSql.setValue(st, iParameter, 12, "Test", client);
-       int iParametersequence = iParameter + 1;
-       iParameter++; st.registerOutParameter(iParameter, 12);
 
-       st.execute();
-       object = UtilSql.getStringCallableStatement(st, iParametersequence);
-       } catch(SQLException e){
-       System.out.println("Error of SQL in query: getSequence Exception:"+ e);
-       throw new ServletException(Integer.toString(e.getErrorCode()));
-       } finally {
-       conn.releasePreparedStatement(st);
-       }*/
      return(object);
    }
 }

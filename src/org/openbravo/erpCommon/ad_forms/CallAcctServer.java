@@ -114,7 +114,7 @@ public class CallAcctServer extends HttpSecureAppServlet {
 	  OBError myMessage = new OBError();
 	  myMessage.setTitle("");
 	  try {
-		  String adPinstanceId = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
+		  String adPinstanceId = SequenceIdData.getUUID();
 		  PInstanceProcessData.insertPInstance(this, adPinstanceId, adProcessId, "0", "N", vars.getUser(), vars.getClient(), vars.getOrg());
 		  PInstanceProcessData.insertPInstanceParam(this, adPinstanceId, "10", "AD_Table_ID", strTableId, vars.getClient(), vars.getOrg(), vars.getUser());
 		  if (acctServer.directLaunch(vars, adPinstanceId)) {

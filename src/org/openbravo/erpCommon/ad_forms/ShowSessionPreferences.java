@@ -56,14 +56,14 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
       ShowSessionPreferencesData.updateRange(this, vars.getUser(), strRecordRange, strRecordRangeInfo, strTransactionalRange, strTheme);
       if (!strPreference.equals("")) ShowSessionPreferencesData.update(this, vars.getUser(), strTranslate, strPreference);
       else {
-        strPreference = SequenceIdData.getSequence(this, "AD_Preference", vars.getClient());
+        strPreference = SequenceIdData.getUUID();
         ShowSessionPreferencesData.insert(this, strPreference, vars.getClient(), vars.getOrg(), vars.getUser(), "ShowTrl", strTranslate);
       }
       vars.setSessionValue("#ShowAcct", strAccounting);
       strPreference = ShowSessionPreferencesData.selectPreference(this, Utility.getContext(this, vars, "#User_Client", "ShowSessionPreferences"), Utility.getContext(this, vars, "#User_Org", "ShowSessionPreferences"), vars.getUser(), "ShowAcct");
       if (!strPreference.equals("")) ShowSessionPreferencesData.update(this, vars.getUser(), strAccounting, strPreference);
       else {
-        strPreference = SequenceIdData.getSequence(this, "AD_Preference", vars.getClient());
+        strPreference = SequenceIdData.getUUID();
         ShowSessionPreferencesData.insert(this, strPreference, vars.getClient(), vars.getOrg(), vars.getUser(), "ShowAcct", strAccounting);
       }
       vars.setSessionValue("#ShowTest", strTest);
@@ -71,14 +71,14 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
       ShowSessionPreferencesData.updateRange(this, vars.getUser(), strRecordRange, strRecordRangeInfo, strTransactionalRange, strTheme);
       if (!strPreference.equals("")) ShowSessionPreferencesData.update(this, vars.getUser(), strTest, strPreference);
       else {
-        strPreference = SequenceIdData.getSequence(this, "AD_Preference", vars.getClient());
+        strPreference = SequenceIdData.getUUID();
         ShowSessionPreferencesData.insert(this, strPreference, vars.getClient(), vars.getOrg(), vars.getUser(), "ShowTest", strTest);
       }
       vars.setSessionValue("#ShowAudit", strAudit);
       strPreference = ShowSessionPreferencesData.selectPreference(this, Utility.getContext(this, vars, "#User_Client", "ShowSessionPreferences"), Utility.getContext(this, vars, "#User_Org", "ShowSessionPreferences"), vars.getUser(), "ShowAuditDefault");
       if (!strPreference.equals("")) ShowSessionPreferencesData.update(this, vars.getUser(), strAudit, strPreference);
       else {
-        strPreference = SequenceIdData.getSequence(this, "AD_Preference", vars.getClient());
+        strPreference = SequenceIdData.getUUID();
         ShowSessionPreferencesData.insert(this, strPreference, vars.getClient(), vars.getOrg(), vars.getUser(), "ShowAuditDefault", strAudit);
       }
       response.sendRedirect(strDireccion + request.getServletPath());

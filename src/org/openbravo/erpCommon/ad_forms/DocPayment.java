@@ -146,7 +146,7 @@ public BigDecimal getBalance(){
   public Fact createFact (AcctSchema as,ConnectionProvider conn,Connection con,VariablesSecureApp vars) throws ServletException{
     if (log4j.isDebugEnabled()) log4j.debug("DocPayment - createFact - p_lines.length - " + p_lines.length);
     Fact fact = new Fact(this, as, Fact.POST_Actual);
-    String Fact_Acct_Group_ID = SequenceIdData.getSequence(conn, "Fact_Acct_Group", vars.getClient());
+    String Fact_Acct_Group_ID = SequenceIdData.getUUID();
 
     //Loop to cover C_Debt_Payment in settlement (SttType != 'I' || directPosting=Y)
     for (int i = 0;p_lines!=null && i < p_lines.length; i++) {

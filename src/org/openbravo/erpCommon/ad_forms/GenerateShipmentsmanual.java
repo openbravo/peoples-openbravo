@@ -71,7 +71,7 @@ public class GenerateShipmentsmanual extends HttpSecureAppServlet {
       GenerateShipmentsmanualData.update(this);
       GenerateShipmentsmanualData.updateSelection(this, strSalesOrder);
 
-      String pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
+      String pinstance = SequenceIdData.getUUID();
 
       PInstanceProcessData.insertPInstance(this, pinstance, "199", "0", "N", vars.getUser(), vars.getClient(), vars.getOrg());
       PInstanceProcessData.insertPInstanceParam(this, pinstance, "1", "Selection", "Y", vars.getClient(), vars.getOrg(), vars.getUser());

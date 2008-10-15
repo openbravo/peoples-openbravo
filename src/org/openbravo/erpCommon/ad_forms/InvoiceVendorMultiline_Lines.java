@@ -217,7 +217,7 @@ public class InvoiceVendorMultiline_Lines extends HttpSecureAppServlet {
         }
       } else if (vars.commandIn("SAVE_NEW", "SAVE_EDIT")) {
         if (data.cInvoicelineId.equals("")) {
-          strIDNew = SequenceIdData.getSequence(this, "C_InvoiceLine", vars.getClient());
+          strIDNew = SequenceIdData.getUUID();
           data.cInvoicelineId = strIDNew;
           if (data.insert(this) == 0) strMensaje = Utility.messageBD(this, "ProcessError", vars.getLanguage());
           strLineNo = InvoiceVendorMultilineLinesData.selectLineNo(this, strIDNew);

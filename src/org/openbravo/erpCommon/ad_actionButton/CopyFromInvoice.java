@@ -77,7 +77,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
       CopyFromInvoiceData[] data = CopyFromInvoiceData.select(conn, this, strInvoice, Utility.getContext(this, vars, "#User_Client", windowId), Utility.getContext(this, vars, "#User_Org", windowId));
       if (data!=null && data.length!=0) {
         for (i=0;i<data.length;i++) {
-          String strSequence = SequenceIdData.getSequence(this, "C_InvoiceLine", vars.getClient());
+          String strSequence = SequenceIdData.getUUID();
           try {
             CopyFromInvoiceData.insert(conn, this, strSequence, strKey, vars.getClient(), vars.getOrg(), vars.getUser(), data[i].cInvoicelineId);
           } catch(ServletException ex) {

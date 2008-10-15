@@ -181,7 +181,7 @@ public class EdiFileImport extends HttpSecureAppServlet {
 	}
 
 	EdiFileImportData insert(ConnectionProvider conn, VariablesSecureApp vars, Connection con, EdiFileImportData data) throws ServletException {
-		data.iOrderId = SequenceIdData.getSequence(this, "I_Order", vars.getClient());
+		data.iOrderId = SequenceIdData.getUUID();
 		data.adClientId = vars.getClient();
 		data.adOrgId = vars.getOrg();
 		data.adUserId = vars.getUser();

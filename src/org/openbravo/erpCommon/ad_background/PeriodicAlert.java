@@ -46,7 +46,7 @@ public class PeriodicAlert implements BackgroundProcess {
       String msg = "";
       for (int i=0; i<alert.length; i++){
         if (PeriodicAlertData.existsReference(periodicBG.conn, alertRule.adAlertruleId, alert[i].referencekeyId).equals("0")) {
-          String adAlertId = SequenceIdData.getSequence(periodicBG.conn, "AD_Alert", alert[i].adClientId);
+          String adAlertId = SequenceIdData.getUUID();
           periodicBG.addLog("inserting alert "+adAlertId+" org:"+alert[i].adOrgId+" client:"+alert[i].adClientId+" reference key:"+alert[i].referencekeyId+" created"+alert[i].created);
           PeriodicAlertData.InsertAlert(periodicBG.conn, adAlertId, alert[i].adClientId, alert[i].adOrgId,
                                                          alert[i].created, alert[i].createdby,

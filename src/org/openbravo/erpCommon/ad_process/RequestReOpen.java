@@ -68,7 +68,7 @@ public class RequestReOpen extends HttpSecureAppServlet {
     	//return "";
     }
     try {
-      String pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
+      String pinstance = SequenceIdData.getUUID();
       PInstanceProcessData.insertPInstance(this, pinstance, "195", strRequest, "N", vars.getUser(), vars.getClient(), vars.getOrg());
       PInstanceProcessData.insertPInstanceParam(this, pinstance, "10", "R_Request_ID", strRequest, vars.getClient(), vars.getOrg(), vars.getUser());
       RequestReOpenData.processRequest(this, pinstance);

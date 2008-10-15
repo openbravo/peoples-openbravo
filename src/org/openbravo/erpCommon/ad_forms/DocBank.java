@@ -174,7 +174,7 @@ public Fact createFact (AcctSchema as,ConnectionProvider conn,Connection con,Var
     log4jDocBank.debug("createFact - Inicio");
     //  create Fact Header
     Fact fact = null;
-    String Fact_Acct_Group_ID = SequenceIdData.getSequence(conn, "Fact_Acct_Group", vars.getClient());
+    String Fact_Acct_Group_ID = SequenceIdData.getUUID();
     log4jDocBank.debug("createFact - object created");
     //  Header -- there may be different currency amounts
     BigDecimal TrxAmt = null;

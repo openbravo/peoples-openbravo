@@ -707,7 +707,7 @@ public abstract class AcctServer  {
         //
         int no=0;
         try{
-            String AD_Note_ID = SequenceIdData.getSequence(connectionProvider, "AD_Note", vars.getClient());
+            String AD_Note_ID = SequenceIdData.getUUID();
             
 
             //  Create Entry
@@ -1104,7 +1104,7 @@ public abstract class AcctServer  {
         //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - createMatchInv - InvLine=" + C_InvoiceLine_ID + ",Rec=" + M_InOutLine_ID + ", Qty=" + Qty + ", " + DateTrx);
         int no = 0;
         try{
-            String M_MatchInv_ID = SequenceIdData.getSequence(conn, "M_MatchInv", vars.getClient());
+            String M_MatchInv_ID = SequenceIdData.getUUID();
             //
             no = AcctServerData.insertMatchInv(con,conn,  M_MatchInv_ID, AD_Client_ID, AD_Org_ID, M_InOutLine_ID, C_InvoiceLine_ID, M_Product_ID, DateTrx, Qty);
         }catch(ServletException e){

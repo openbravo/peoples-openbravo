@@ -149,7 +149,7 @@ public class ImportBPartner extends ImportProcess {
 
 				//	create/update BPartner
 				if (newBPartner) {	//	Insert new BPartner
-					C_BPartner_ID = SequenceIdData.getSequence(conn, "C_BPartner", vars.getClient());
+					C_BPartner_ID = SequenceIdData.getUUID();
 					try {
 						no = ImportBPartnerData.insertBPartner(con, conn, C_BPartner_ID, I_BPartner_ID);
 						if (log4j.isDebugEnabled()) log4j.debug("Insert BPartner = " + no);
@@ -176,7 +176,7 @@ public class ImportBPartner extends ImportProcess {
 				//	create/update BPartner Location
 				if (C_BPartner_Location_ID != "")	{	//	Update Location
 				}	else if (newLocation)	{				//	New Location
-					String C_Location_ID = SequenceIdData.getSequence(conn, "C_Location", vars.getClient());
+					String C_Location_ID = SequenceIdData.getUUID();
 					try {
 						no = ImportBPartnerData.insertLocation(con, conn, C_Location_ID, I_BPartner_ID);
 						if (log4j.isDebugEnabled()) log4j.debug("Insert Location = " + no);
@@ -187,7 +187,7 @@ public class ImportBPartner extends ImportProcess {
 						no = ImportBPartnerData.insertLocationError(conn, ex.toString(), I_BPartner_ID);						
 						continue;
 					}
-					C_BPartner_Location_ID = SequenceIdData.getSequence(conn, "C_BPartner_Location", vars.getClient());
+					C_BPartner_Location_ID = SequenceIdData.getUUID();
 					try	{
 					  String locationName = parseAddressName(data[i]);
 					  
@@ -216,7 +216,7 @@ public class ImportBPartner extends ImportProcess {
 						continue;
 					}
 				}	else if (newContact)	{				//	New Contact
-					AD_User_ID = SequenceIdData.getSequence(conn, "AD_User", vars.getClient());
+					AD_User_ID = SequenceIdData.getUUID();
 					try
 					{
 						if (data[i].contactname != null && data[i].contactname != "") {

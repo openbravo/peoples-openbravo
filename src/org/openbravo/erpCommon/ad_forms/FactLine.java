@@ -549,7 +549,7 @@ public class FactLine {
       /**
        *  Create SQL Statement
        */
-      m_Fact_Acct_ID = SequenceIdData.getSequence(conn, "Fact_Acct", vars.getClient());
+      m_Fact_Acct_ID = SequenceIdData.getUUID();
       /**
        *  Save to DB
        */

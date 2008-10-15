@@ -125,7 +125,7 @@ public class FileImport extends HttpSecureAppServlet {
       data = FileImportData.select(this, strAdImpformatId);
       String strTable = FileImportData.table(this, strAdImpformatId);
       for (i=0; i<data2.length; i++){
-        String sequence = SequenceIdData.getSequence(this, FileImportData.table(this,strAdImpformatId), vars.getClient());
+        String sequence = SequenceIdData.getUUID();
         try {
           FileImportData.insert(con, this, strTable, (strTable + "_ID"), sequence, vars.getClient(), vars.getOrg(), vars.getUser());
         } catch(ServletException ex) {

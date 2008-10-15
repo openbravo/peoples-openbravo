@@ -64,7 +64,7 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
       if (strCOrderId.equals("")) strCOrderId = "('0')";
       GenerateInvoicesmanualData.initUpdate(this);
       GenerateInvoicesmanualData.updateSelection(this, strCOrderId);
-      String pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
+      String pinstance = SequenceIdData.getUUID();
       PInstanceProcessData.insertPInstance(this, pinstance, "134", "0", "N", vars.getUser(), vars.getClient(), vars.getOrg());
       PInstanceProcessData.insertPInstanceParam(this, pinstance, "1", "Selection", "Y", vars.getClient(), vars.getOrg(), vars.getUser());
       ActionButtonData.process134(this, pinstance);

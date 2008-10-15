@@ -203,7 +203,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
         }
       } else if ((isinstance) || (strNewInstance.equals(""))) { //New or editable,if it's requestable or doesn't exist the identic, then it inserts a new one
         hasToUpdate = true;
-        strNewInstance = SequenceIdData.getSequence(this, "M_AttributeSetInstance", vars.getClient());
+        strNewInstance = SequenceIdData.getUUID();
         AttributeSetInstanceData.insertHeader(conn, this, strNewInstance, vars.getClient(), vars.getOrg(), vars.getUser(), data[0].mAttributesetId, serno, lot, guaranteedate, data[0].mLotctlId, locked, lockDescription);
       }
       if (hasToUpdate) {

@@ -66,7 +66,7 @@ public class Location extends HttpSecureAppServlet {
       printPageSheet(response, vars, strcLocationId, strWindow);
     } else if (vars.commandIn("SAVE_NEW")) {
       LocationSearchData data = getEditVariables(vars);
-      String strSequence = SequenceIdData.getSequence(this, "C_Location", vars.getClient());
+      String strSequence = SequenceIdData.getUUID();
       log4j.error("Sequence: " + strSequence);
       data.cLocationId = strSequence;
       data.insert(this);

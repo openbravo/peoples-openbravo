@@ -186,7 +186,7 @@ public class RemittanceCancel extends HttpSecureAppServlet {
           if (strSettlementID.equals(""))
           {
             String strOrg = RemittanceCancelData.selectOrg(this, strRLId);
-            strSettlementID = SequenceIdData.getSequence(this, "C_Settlement", vars.getClient());
+            strSettlementID = SequenceIdData.getUUID();
             strDocumentNo = Utility.getDocumentNo(this, vars.getClient(), "C_Settlement", true);
             try { 
               RemittanceCancelData.insertSettlement(conn, this, strSettlementID, vars.getClient(), strOrg, vars.getUser(), strDocumentNo, strDateAcct, strRLId);
@@ -202,7 +202,7 @@ public class RemittanceCancel extends HttpSecureAppServlet {
         }
         //Call c_settlement_poost
         if (!strSettlementID.equals("")){
-          String pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
+          String pinstance = SequenceIdData.getUUID();
           if (log4j.isDebugEnabled()) log4j.debug("call c_settlement_post pinstnce "+pinstance);
           RemittanceCancelData.process800025(conn, this, strSettlementID);
 

@@ -97,7 +97,7 @@ public class Test_In extends HttpSecureAppServlet {
         strCommandId = dataLineas[i].getField("comando");
         if (strCommandId != null){
           TestInData[] datacomando = TestInData.select(conn, this, strCommandId);
-          strLineId = SequenceIdData.getSequence(this, "AT_Line", vars.getClient());
+          strLineId = SequenceIdData.getUUID();
           try {
             TestInData.insert(conn, this, strLineId, vars.getClient(), vars.getOrg(), vars.getUser(), strTestId, strCommandId, String.valueOf(intSeqNo), dataLineas[i].getField("arg1"), dataLineas[i].getField("arg2"), dataLineas[i].getField("arg3"), strType, datacomando[0].argno, datacomando[0].arghelp1, datacomando[0].arghelp2, datacomando[0].arghelp3);
           } catch(ServletException ex) {

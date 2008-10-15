@@ -193,7 +193,7 @@ public class ImportBudget extends ImportProcess {
 
         //  create/update Budget
         if (newBudgetLine) {  //  Insert new BudgetLine
-          C_BudgetLine_ID = SequenceIdData.getSequence(conn, "C_BudgetLine", vars.getClient());
+          C_BudgetLine_ID = SequenceIdData.getUUID();
           try {
             no = ImportBudgetData.insertBudgetLine(con, conn, C_BudgetLine_ID, Integer.toString(seqNo), I_BudgetLine_ID);
             if (log4j.isDebugEnabled()) log4j.debug("Insert BudgetLine = " + no);

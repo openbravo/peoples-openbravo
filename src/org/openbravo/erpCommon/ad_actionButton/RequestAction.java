@@ -68,7 +68,7 @@ public class RequestAction extends HttpSecureAppServlet {
 
       processButton(vars, strKey, strWindow);
 
-      String pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
+      String pinstance = SequenceIdData.getUUID();
       PInstanceProcessData.insertPInstance(this, pinstance, "158", strKey, "N", vars.getUser(), vars.getClient(), vars.getOrg());
 
       ActionButtonData.process158(this, pinstance);

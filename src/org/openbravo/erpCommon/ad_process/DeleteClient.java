@@ -59,7 +59,7 @@ public class DeleteClient extends HttpSecureAppServlet {
   }
 
   void processButton(VariablesSecureApp vars, String strClient) throws ServletException {
-    String pinstance = SequenceIdData.getSequence(this, "AD_PInstance", vars.getClient());
+    String pinstance = SequenceIdData.getUUID();
     OBError myMessage= null;
     try {
       if(strClient.equals("")){
