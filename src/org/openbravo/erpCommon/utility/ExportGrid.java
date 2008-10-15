@@ -49,7 +49,7 @@ public class ExportGrid extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) log4j.debug("*********************Base design path: " + strBaseDesign);
 
     try {
-      GridReportVO gridReportVO = createGridReport(vars, strTabId, strWindowId, strAccessLevel);
+      GridReportVO gridReportVO = createGridReport(vars, strTabId, strWindowId, strAccessLevel, vars.commandIn("EXCEL"));
       os = response.getOutputStream();
       is = getInputStream(strBaseDesign+"/org/openbravo/erpCommon/utility/"+gridReportVO.getJrxmlTemplate());
       gridBO = new GridBO();
@@ -77,19 +77,24 @@ public class ExportGrid extends HttpSecureAppServlet {
       os.close();
     }
   }
+
   GridReportVO createGridReport(VariablesSecureApp vars, String strTabId, String strWindowId, String strAccessLevel) throws ServletException{
+	return createGridReport(vars, strTabId, strWindowId, strAccessLevel, false);
+  }
+
+  GridReportVO createGridReport(VariablesSecureApp vars, String strTabId, String strWindowId, String strAccessLevel, boolean useFieldLength) throws ServletException{
     if (log4j.isDebugEnabled()) log4j.debug("Create Grid Report, tabID: " + strTabId);
     LinkedList<GridColumnVO> columns = new LinkedList<GridColumnVO>();
     FieldProvider[] data = null;
     TableSQLData tableSQL = null;
-    try {      
+    try {
       tableSQL = new TableSQLData(vars, this, strTabId, Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId, Integer.valueOf(strAccessLevel).intValue()), Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars, "ShowAudit", strWindowId).equals("Y"));
     } catch (Exception ex) {
       ex.printStackTrace();
       log4j.error(ex.getMessage());
       throw new ServletException(ex.getMessage());
     }
-    SQLReturnObject[] headers = tableSQL.getHeaders(true);
+    SQLReturnObject[] headers = tableSQL.getHeaders(true, useFieldLength);
 
     if (tableSQL!=null && headers!=null) {
       try{

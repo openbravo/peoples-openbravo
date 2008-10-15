@@ -1665,18 +1665,24 @@ public class TableSQLData {
    * @return Array with the columns.
    */
   public SQLReturnObject[] getHeaders() {
-    return getHeaders(false);
+    return getHeaders(false, false);
+  }
+  
+  public SQLReturnObject[] getHeaders(boolean useFieldLength) {
+    return getHeaders(false, useFieldLength);
   }
 
   /**
    * Returns the columns defined for this tab, including the ones derived
    * from the references.
    * 
-   * @param withoutIdentifiers: Boolean to indicate if the identifier columns 
+   * @param withoutIdentifiers  Boolean to indicate if the identifier columns 
    *                            must be removed from the list.
+   * @param useFieldLength Boolean to indicate if the column width should be calculated based on 
+   *                            the FieldLength instead of DisplayLength.
    * @return Array with the columns.
    */
-  public SQLReturnObject[] getHeaders(boolean withoutIdentifiers) {
+  public SQLReturnObject[] getHeaders(boolean withoutIdentifiers, boolean useFieldLength) {
     SQLReturnObject[] data = null;
     Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();
     Vector<Properties> structure = getStructure();
@@ -1708,12 +1714,21 @@ public class TableSQLData {
           type="float";
         }
         dataAux.setData("type", type);
-        String strWidth = prop.getProperty("DisplayLength");
+        String strWidth = "";
+        
+        if(useFieldLength)
+        	strWidth = prop.getProperty("FieldLength");
+        else
+        	strWidth = prop.getProperty("DisplayLength");
+        
         if (strWidth==null || strWidth.equals("")) strWidth = "0";
         int width = Integer.valueOf(strWidth).intValue();
         width = width * 6;
-        if (width<23) width=23;
-        else if (width>300) width=300;
+        
+        if(!useFieldLength) {
+	        if (width<23) width=23;
+	        else if (width>300) width=300;
+        }
         dataAux.setData("width", Integer.toString(width));
         
         if (cloneRecord) {
