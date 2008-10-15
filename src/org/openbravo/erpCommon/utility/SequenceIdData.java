@@ -11,34 +11,20 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-//Sqlc generated VO.O11-2
-// modified manually to return a String;
 
 package org.openbravo.erpCommon.utility;
 
 import java.sql.*;
 import java.util.*;
 
-import javax.servlet.ServletException;
-
-import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 
-public class SequenceIdData implements FieldProvider {
-  public String dummy;
-
-  public String getField(String fieldName) {
-    if (fieldName.equalsIgnoreCase("dummy"))
-      return dummy;
-    else {
-      return null;
-    }
-  }
+public class SequenceIdData {
 
   /**
    * Returns a new UUID
@@ -49,21 +35,19 @@ public class SequenceIdData implements FieldProvider {
   }
   
   /**Get the sequence for the specified table
-   * this shouldn't be used anymore, use instead getUUID() 
+   * this shouldn't be used anymore, use instead getUUID()
+   * It is deprecated and will be removed before the 2.60 release 
    * @deprecated
   */
   public static String getSequence(ConnectionProvider conn, String table, String client) {
     return getUUID();
   }
   
-  /**Get the sequence for the specified table 
+  /**Get the sequence for the specified table.
+   * It is deprecated and will be removed before the 2.60 release 
+   * @deprecated 
    */
-   public static String getSequenceConnection(Connection conn, ConnectionProvider con, String table, String client)
-     throws ServletException {
-     String object;
-     CSResponse response = SequenceData.getSequenceConnection(conn, con, table, client);
-     object = response.razon;
-
-     return(object);
+   public static String getSequenceConnection(Connection conn, ConnectionProvider con, String table, String client) {
+     return getUUID();
    }
 }
