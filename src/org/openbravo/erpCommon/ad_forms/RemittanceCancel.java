@@ -110,7 +110,7 @@ public class RemittanceCancel extends HttpSecureAppServlet {
           String strRLId = st.nextToken().trim();
           RemittanceCancelData.setReturned(conn, this, strRLId);
           if (strDPMID.equals("")) {
-            strDPMID = SequenceIdData.getSequenceConnection(conn, this, "C_DP_Management", vars.getClient());
+            strDPMID = SequenceIdData.getUUID();
             line = new Integer(RemittanceCancelData.getLineDPMConnection(conn, this, strDPMID));
             String strDocumentNo = Utility.getDocumentNoConnection(conn, this, vars.getClient(), "C_DP_Management", true);
             try {
@@ -122,14 +122,14 @@ public class RemittanceCancel extends HttpSecureAppServlet {
             }
           }
           line += 10;
-          String strLID = SequenceIdData.getSequenceConnection(conn, this, "C_DP_ManagementLine", vars.getClient());
+          String strLID = SequenceIdData.getUUID();
           RemittanceCancelData.returnDPOriginal(conn, this, strLID, vars.getClient(), vars.getOrg(), vars.getUser(), strDPMID,strRLId, line.toString());
 
         }
         if (log4j.isDebugEnabled()) log4j.debug("*********************dpmid: "+strDPMID);
         //Call c_dp_management_post
         if (!strDPMID.equals("")){
-          String pinstance = SequenceIdData.getSequenceConnection(conn, this, "AD_PInstance", vars.getClient());
+          String pinstance = SequenceIdData.getUUID();
           try {
             PInstanceProcessData.insertPInstance(conn, this, pinstance, "800140", strDPMID, "N", vars.getUser(), vars.getClient(), vars.getOrg());
           } catch(ServletException ex) {
