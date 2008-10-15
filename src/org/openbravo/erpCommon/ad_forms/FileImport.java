@@ -174,7 +174,7 @@ public class FileImport extends HttpSecureAppServlet {
       myMessage = new OBError();
       myMessage.setType("Success");
       myMessage.setTitle("Success");
-      myMessage.setMessage(Utility.messageBD(this, "Records inserted in the temporary table", vars.getLanguage()) + ": " + (i+1));
+      myMessage.setMessage(Utility.messageBD(this, "Records inserted in the temporary table", vars.getLanguage()) + ": " + i);
     }catch(Exception e){
       try {
         releaseRollbackConnection(con);
