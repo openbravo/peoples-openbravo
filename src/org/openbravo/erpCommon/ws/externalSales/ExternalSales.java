@@ -21,8 +21,8 @@ package org.openbravo.erpCommon.ws.externalSales;
 
 public interface ExternalSales {
 
-    public Product[] getProductsCatalog( int entityId, int organizationId, int salesChannel, String username, String password);
-    public ProductPlus[] getProductsPlusCatalog( int entityId, int organizationId, int salesChannel, String username, String password);
-    public void uploadOrders(int entityId, int organizationId, int salesChannel, Order[] newOrders, String username, String password);
-    public Order[] getOrders(int entityId, int organizationId, OrderIdentifier[] orderIds, String username, String password);
+    public Product[] getProductsCatalog( String entityId, String organizationId, String salesChannel, String username, String password);
+    public ProductPlus[] getProductsPlusCatalog( String entityId, String organizationId, String salesChannel, String username, String password);
+    public void uploadOrders(String entityId, String organizationId, String salesChannel, Order[] newOrders, String username, String password);
+    public Order[] getOrders(String entityId, String organizationId, OrderIdentifier[] orderIds, String username, String password);
 }

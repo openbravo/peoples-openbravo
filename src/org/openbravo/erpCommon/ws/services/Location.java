@@ -20,9 +20,9 @@
 package org.openbravo.erpCommon.ws.services;
 
 public class Location {
-	private int id;
-	private int clientId;
-	private int businessPartnerId;
+	private String id;
+	private String clientId;
+	private String businessPartnerId;
 	private String address1;
 	private String address2;
 	private String city;
@@ -32,27 +32,27 @@ public class Location {
 	
 	public Location() {}
 	
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 	
-	public void setId(int value) {
+	public void setId(String value) {
 		id = value;
 	}
 	
-	public int getClientId() {
+	public String getClientId() {
 		return clientId;
 	}
 	
-	public void setClientId(int value) {
+	public void setClientId(String value) {
 		clientId = value;
 	}
 	
-	public int getBusinessPartnerId() {
+	public String getBusinessPartnerId() {
 		return businessPartnerId;
 	}
 	
-	public void setBusinessPartnerId(int value) {
+	public void setBusinessPartnerId(String value) {
 		businessPartnerId = value;
 	}
 	

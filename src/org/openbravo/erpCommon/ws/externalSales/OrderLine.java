@@ -21,29 +21,29 @@ package org.openbravo.erpCommon.ws.externalSales;
 
 public class OrderLine {
     
-   private int orderLineId;
-   private int productId;
+   private String orderLineId;
+   private String productId;
    private double units;
    private double price;
-   private int taxId;
+   private String taxId;
     
     /** Creates a new instance of OrderLine */
     public OrderLine() {
     }
     
-    public int getOrderLineId() {
+    public String getOrderLineId() {
         return orderLineId;
     }
 
-    public void setOrderLineId(int orderLineId) {
+    public void setOrderLineId(String orderLineId) {
         this.orderLineId = orderLineId;
     }
 
-    public int getProductId() {
+    public String getProductId() {
         return productId;
     }
 
-    public void setProductId(int productId) {
+    public void setProductId(String productId) {
         this.productId = productId;
     }
 
@@ -63,11 +63,11 @@ public class OrderLine {
         this.price = price;
     }
 
-    public int getTaxId() {
+    public String getTaxId() {
         return taxId;
     }
 
-    public void setTaxId(int taxId) {
+    public void setTaxId(String taxId) {
         this.taxId = taxId;
     }
 

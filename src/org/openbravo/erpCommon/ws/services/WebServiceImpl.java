@@ -46,7 +46,7 @@ public class WebServiceImpl implements WebService {
       }      
     }
 	
-	public Customer[] getCustomers(int clientId, String username, String password) {
+	public Customer[] getCustomers(String clientId, String username, String password) {
 		Customer[] customers = null;
 		if (!access(username, password)) {
 	      if (log4j.isDebugEnabled()) log4j.debug("Access denied for user: " + username); 
@@ -54,14 +54,14 @@ public class WebServiceImpl implements WebService {
 	    }
 		try {
 		  
-			WebServicesCustomerData[] data = WebServicesCustomerData.select(pool, Integer.toString(clientId), username);
+			WebServicesCustomerData[] data = WebServicesCustomerData.select(pool, clientId, username);
 		  
 			customers = new Customer[data.length];
 
 			for(int i=0; i < data.length; i++) {
 				customers[i] = new Customer();
-				customers[i].setId(Integer.valueOf(data[i].id).intValue());
-				customers[i].setClientId(Integer.valueOf(data[i].clientId).intValue());
+				customers[i].setId(data[i].id);
+				customers[i].setClientId(data[i].clientId);
 				customers[i].setName(data[i].name);
 				customers[i].setDescription(data[i].description);
 				customers[i].setSearchKey(data[i].searchkey);
@@ -77,7 +77,7 @@ public class WebServiceImpl implements WebService {
 		return customers;
 	}
 	
-	public Customer getCustomer(int clientId, int customerId, String username, String password) {
+	public Customer getCustomer(String clientId, String customerId, String username, String password) {
 		Customer customer = null;
 		if (!access(username, password)) {
 	      if (log4j.isDebugEnabled()) log4j.debug("Access denied for user: " + username); 
@@ -85,12 +85,12 @@ public class WebServiceImpl implements WebService {
 	    }
 		try {
 			
-			WebServicesCustomerData[] data = WebServicesCustomerData.selectCustomerById(pool, String.valueOf(clientId), String.valueOf(customerId), username);
+			WebServicesCustomerData[] data = WebServicesCustomerData.selectCustomerById(pool, clientId, customerId, username);
 
 			if(data.length > 0) {
 				customer = new Customer();
-				customer.setId(Integer.valueOf(data[0].id).intValue());
-				customer.setClientId(Integer.valueOf(data[0].clientId).intValue());
+				customer.setId(data[0].id);
+				customer.setClientId(data[0].clientId);
 				customer.setName(data[0].name);
 				customer.setSearchKey(data[0].searchkey);
 				customer.setComplete(false);
@@ -105,7 +105,7 @@ public class WebServiceImpl implements WebService {
 		return customer;
 	}
 	
-	public Customer getCustomer(int clientId, String name, String searchKey, String username, String password) {
+	public Customer getCustomer(String clientId, String name, String searchKey, String username, String password) {
 		Customer customer = null;
 		if (!access(username, password)) {
 	      if (log4j.isDebugEnabled()) log4j.debug("Access denied for user: " + username); 
@@ -113,12 +113,12 @@ public class WebServiceImpl implements WebService {
 	    }
 		try {
 			
-			WebServicesCustomerData[] data = WebServicesCustomerData.selectCustomer(pool, String.valueOf(clientId), username, (name==null?"":name), (searchKey==null?"":searchKey));
+			WebServicesCustomerData[] data = WebServicesCustomerData.selectCustomer(pool, clientId, username, (name==null?"":name), (searchKey==null?"":searchKey));
 
 			if(data.length == 1) {
 				customer = new Customer();
-				customer.setId(Integer.valueOf(data[0].id).intValue());
-				customer.setClientId(Integer.valueOf(data[0].clientId).intValue());
+				customer.setId(data[0].id);
+				customer.setClientId(data[0].clientId);
 				customer.setName(data[0].name);
 				customer.setSearchKey(data[0].searchkey);
 				customer.setComplete(false);
@@ -151,14 +151,14 @@ public class WebServiceImpl implements WebService {
 		return (updated == 0 ? false : true);
 	}
 	
-	public int[] getCustomerAddresses(int clientId, int customerId, String username, String password) {
+	public int[] getCustomerAddresses(String clientId, String customerId, String username, String password) {
 		int[] locationList = null;
 		if (!access(username, password)) {
 	      if (log4j.isDebugEnabled()) log4j.debug("Access denied for user: " + username); 
 	       return null;
 	    }
 		try {
-			WebServicesAddressData[] data = WebServicesAddressData.selectLocationList(pool, String.valueOf(clientId), String.valueOf(customerId));
+			WebServicesAddressData[] data = WebServicesAddressData.selectLocationList(pool, clientId, customerId);
 			locationList = new int[data.length];
 			for(int i=0; i < data.length; i++) {
 				locationList[i] = Integer.valueOf(data[i].cLocationId).intValue();
@@ -173,19 +173,19 @@ public class WebServiceImpl implements WebService {
 		return locationList;
 	}
 	
-	public Location getCustomerLocation(int clientId, int customerId, int locationId, String username, String password) {
+	public Location getCustomerLocation(String clientId, String customerId, String locationId, String username, String password) {
 		Location customerLocation = null;
 		if (!access(username, password)) {
 	      if (log4j.isDebugEnabled()) log4j.debug("Access denied for user: " + username); 
 	       return null;
 	    }
 		try {
-			WebServicesAddressData[] data = WebServicesAddressData.select(pool, String.valueOf(clientId), String.valueOf(customerId), String.valueOf(locationId));
+			WebServicesAddressData[] data = WebServicesAddressData.select(pool, clientId, customerId, locationId);
 			if(data.length > 0) {
 				customerLocation = new Location();
-				customerLocation.setId(Integer.valueOf(data[0].cLocationId).intValue());
-				customerLocation.setClientId(Integer.valueOf(data[0].adClientId).intValue());
-				customerLocation.setBusinessPartnerId(Integer.valueOf(data[0].cBpartnerId).intValue());
+				customerLocation.setId(data[0].cLocationId);
+				customerLocation.setClientId(data[0].adClientId);
+				customerLocation.setBusinessPartnerId(data[0].cBpartnerId);
 				customerLocation.setAddress1(data[0].address1);
 				customerLocation.setAddress2(data[0].address2);
 				customerLocation.setCity(data[0].city);
@@ -217,19 +217,19 @@ public class WebServiceImpl implements WebService {
 		return (updated == 0 ? false : true);
 	}
 	
-	public Contact getCustomerContact(int clientId, int customerId, int contactId, String username, String password) {
+	public Contact getCustomerContact(String clientId, String customerId, String contactId, String username, String password) {
 		Contact customerContact = null;
 		if (!access(username, password)) {
 	      if (log4j.isDebugEnabled()) log4j.debug("Access denied for user: " + username); 
 	       return null;
 	    }
 		try {
-			WebServicesContactData[] data = WebServicesContactData.select(pool, String.valueOf(clientId), String.valueOf(customerId), String.valueOf(contactId));
+			WebServicesContactData[] data = WebServicesContactData.select(pool, clientId, customerId, contactId);
 			if(data.length > 0) {
 				customerContact = new Contact();
-				customerContact.setId(Integer.valueOf(data[0].adUserId).intValue());
-				customerContact.setClientId(Integer.valueOf(data[0].adClientId).intValue());
-				customerContact.setBusinessPartnerId(Integer.valueOf(data[0].cBpartnerId).intValue());
+				customerContact.setId(data[0].adUserId);
+				customerContact.setClientId(data[0].adClientId);
+				customerContact.setBusinessPartnerId(data[0].cBpartnerId);
 				customerContact.setFirstName(data[0].firstname);
 				customerContact.setLastName(data[0].lastname);
 				customerContact.setPhone(data[0].phone);

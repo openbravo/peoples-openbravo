@@ -38,8 +38,13 @@ import javax.servlet.ServletContext;
 
 public class ExternalSalesImpl implements ExternalSales{
     protected static ConnectionProvider pool;
-    protected static String javaDateFormat;
+    //protected static String javaDateFormat;
     static Logger log4j = Logger.getLogger(ExternalSales.class);
+    
+    //date formats are hard coded because it is required by 
+    //synchronization of POS. 
+    private final String dateFormatStr = "yyyy-MM-dd HH:mm:ss";
+    private final String dateTimeFormatStr = "YYYY-MM-DD HH24:MI:SS";
 
     /** Creates a new instance of ExternalSalesImpl */
     public ExternalSalesImpl() {
@@ -57,7 +62,7 @@ public class ExternalSalesImpl implements ExternalSales{
     }
 
 
-    public Product[] getProductsCatalog( int ClientID, int organizationId, int salesChannel, String username, String password) {   	
+    public Product[] getProductsCatalog( String ClientID, String organizationId, String salesChannel, String username, String password) {   	
     	
         if (!access(username, password)) {
 			if (log4j.isDebugEnabled()) {
@@ -73,7 +78,7 @@ public class ExternalSalesImpl implements ExternalSales{
 		try {
 
 			//Select
-			ExternalSalesProductData[] data = ExternalSalesProductData.select(pool,  Integer.toString(ClientID), Integer.toString(salesChannel), Integer.toString(organizationId));
+			ExternalSalesProductData[] data = ExternalSalesProductData.select(pool,  ClientID, salesChannel, organizationId);
 
 			if (data != null && data.length > 0){
 				int i = 0;
@@ -87,21 +92,21 @@ public class ExternalSalesImpl implements ExternalSales{
 						log4j.debug("getProductsCatalog data[i].id "+data[i].id+" data[i].name "+data[i].name);
 					}						
 					products[i] = new Product();
-					products[i].setId((Integer.valueOf(data[i].id)).intValue());
+					products[i].setId(data[i].id);
 					products[i].setName(data[i].name);
 					products[i].setNumber(data[i].number1);
 					products[i].setDescription(data[i].description);
 					products[i].setListPrice(parseDouble(data[i].listPrice));
 					products[i].setPurchasePrice(parseDouble(data[i].purchasePrice));
 					Tax tax = new org.openbravo.erpCommon.ws.externalSales.Tax();
-					tax.setId((Integer.valueOf(data[i].taxId)).intValue());
+					tax.setId(data[i].taxId);
 					tax.setName(data[i].taxName);
 					tax.setPercentage(parseDouble(data[i].percentage));
 					products[i].setTax(tax);
 					products[i].setImageUrl(data[i].imageUrl);
 					products[i].setEan(data[i].ean);
 					Category category = new org.openbravo.erpCommon.ws.externalSales.Category();
-					category.setId((Integer.valueOf(data[i].mProductCategoryId)).intValue());
+					category.setId(data[i].mProductCategoryId);
 					category.setName(data[i].mProductCategoryName);
 					category.setDescription(data[i].mProductCategoryDescription);
 					products[i].setCategory(category);
@@ -123,7 +128,7 @@ public class ExternalSalesImpl implements ExternalSales{
         return null;
     }
     
-    public ProductPlus[] getProductsPlusCatalog( int ClientID, int organizationId, int salesChannel, String username, String password) {
+    public ProductPlus[] getProductsPlusCatalog( String ClientID, String organizationId, String salesChannel, String username, String password) {
     	
         if (!access(username, password)) {
 			if (log4j.isDebugEnabled()) {
@@ -139,7 +144,7 @@ public class ExternalSalesImpl implements ExternalSales{
 		try {
 
 			//Select
-			ExternalSalesProductData[] data = ExternalSalesProductData.select(pool,  Integer.toString(ClientID), Integer.toString(salesChannel), Integer.toString(organizationId));
+			ExternalSalesProductData[] data = ExternalSalesProductData.select(pool,  ClientID, salesChannel, organizationId);
 
 			if (data != null && data.length > 0){
 				int i = 0;
@@ -153,21 +158,21 @@ public class ExternalSalesImpl implements ExternalSales{
 						log4j.debug("getProductsCatalog data[i].id "+data[i].id+" data[i].name "+data[i].name);
 					}						
 					products[i] = new ProductPlus();
-					products[i].setId((Integer.valueOf(data[i].id)).intValue());
+					products[i].setId(data[i].id);
 					products[i].setName(data[i].name);
 					products[i].setNumber(data[i].number1);
 					products[i].setDescription(data[i].description);
 					products[i].setListPrice(parseDouble(data[i].listPrice));
 					products[i].setPurchasePrice(parseDouble(data[i].purchasePrice));
 					Tax tax = new org.openbravo.erpCommon.ws.externalSales.Tax();
-					tax.setId((Integer.valueOf(data[i].taxId)).intValue());
+					tax.setId(data[i].taxId);
 					tax.setName(data[i].taxName);
 					tax.setPercentage(parseDouble(data[i].percentage));
 					products[i].setTax(tax);
 					products[i].setImageUrl(data[i].imageUrl);
 					products[i].setEan(data[i].ean);
 					Category category = new org.openbravo.erpCommon.ws.externalSales.Category();
-					category.setId((Integer.valueOf(data[i].mProductCategoryId)).intValue());
+					category.setId(data[i].mProductCategoryId);
 					category.setName(data[i].mProductCategoryName);
 					category.setDescription(data[i].mProductCategoryDescription);
 					products[i].setCategory(category);
@@ -191,7 +196,7 @@ public class ExternalSalesImpl implements ExternalSales{
     }
 
 
-    public void uploadOrders(int ClientID, int organizationId, int salesChannel, Order[] newOrders, String username, String password)
+    public void uploadOrders(String ClientID, String organizationId, String salesChannel, Order[] newOrders, String username, String password)
     {
     if (!access(username, password)) {
        if (log4j.isDebugEnabled()) log4j.debug("Access denied");
@@ -204,7 +209,7 @@ public class ExternalSalesImpl implements ExternalSales{
       initPool();
       
       //Reading default parameters
-      ExternalSalesData[] externalPOS = ExternalSalesData.select(pool, Integer.toString(ClientID), Integer.toString(organizationId), Integer.toString(salesChannel));
+      ExternalSalesData[] externalPOS = ExternalSalesData.select(pool, ClientID, organizationId, salesChannel);
       
       int i = 0;
       while (newOrders != null && i < newOrders.length) {
@@ -230,9 +235,9 @@ public class ExternalSalesImpl implements ExternalSales{
           if (newOrders[i].getOrderId() != null)
           {
             data[0].orderReferenceno = newOrders[i].getOrderId().getDocumentNo();
-            SimpleDateFormat dateFormat = new SimpleDateFormat(javaDateFormat);
+            SimpleDateFormat dateFormat = new SimpleDateFormat(dateFormatStr);
             data[0].dateordered = ""+dateFormat.format(newOrders[i].getOrderId().getDateNew());
-            data[0].dateTimeFormat = javaDateFormat;
+            data[0].dateTimeFormat = dateTimeFormatStr;
           }
           if (newOrders[i].getBusinessPartner() != null)
           {
@@ -272,11 +277,16 @@ public class ExternalSalesImpl implements ExternalSales{
           {
             //Insert lines
             while (newOrders[i].getLines() != null && j < newOrders[i].getLines().length) {
-              data[0].mProductId = Integer.toString(newOrders[i].getLines()[j].getProductId());
+              data[0].mProductId = newOrders[i].getLines()[j].getProductId();
               data[0].qtyordered = Double.toString(newOrders[i].getLines()[j].getUnits());
               data[0].priceactual = ""+newOrders[i].getLines()[j].getPrice();
-              data[0].cTaxId = Integer.toString(newOrders[i].getLines()[j].getTaxId());
+
+             // data[0].cTaxId = newOrders[i].getLines()[j].getTaxId();
+             // String sequence = SequenceIdData.getSequence(pool, "I_Order", ClientID);
+
+              data[0].cTaxId = newOrders[i].getLines()[j].getTaxId();
               String sequence = SequenceIdData.getUUID();
+
               data[0].iOrderId = sequence;
               if (log4j.isDebugEnabled()) log4j.debug("sequence"+data[0].iOrderId+" data[0].paymentamount1"+data[0].paymentamount1+" data[0].paymentrule1"+data[0].paymentrule1+
                                                " data[0].paymentamount2"+data[0].paymentamount2+" data[0].paymentrule2"+data[0].paymentrule2);
@@ -285,7 +295,11 @@ public class ExternalSalesImpl implements ExternalSales{
             }
           }
           else{
+
+            //String sequence = SequenceIdData.getSequence(pool, "I_ORDER", ClientID);
+
             String sequence = SequenceIdData.getUUID();
+
             data[0].iOrderId = sequence;
             if (log4j.isDebugEnabled()) log4j.debug("sequence"+data[0].iOrderId+" data[0].paymentamount1"+data[0].paymentamount1+" data[0].paymentrule1"+data[0].paymentrule1+
                                                " data[0].paymentamount2"+data[0].paymentamount2+" data[0].paymentrule2"+data[0].paymentrule2);
@@ -300,7 +314,7 @@ public class ExternalSalesImpl implements ExternalSales{
       destroyPool();
     }
 
-    public Order[] getOrders(int ClientID, int organizationId, OrderIdentifier[] orderIds, String username, String password)
+    public Order[] getOrders(String ClientID, String organizationId, OrderIdentifier[] orderIds, String username, String password)
     {
     if (!access(username, password)) {
        if (log4j.isDebugEnabled()) log4j.debug("Access denied");
@@ -308,7 +322,7 @@ public class ExternalSalesImpl implements ExternalSales{
     }
 
     if (log4j.isDebugEnabled()) log4j.debug("getOrders");
-      SimpleDateFormat dateFormat = new SimpleDateFormat(javaDateFormat);
+      SimpleDateFormat dateFormat = new SimpleDateFormat(dateFormatStr);
 
       initPool();
       Vector<Order> vOrders = new Vector<Order>();
@@ -322,9 +336,9 @@ public class ExternalSalesImpl implements ExternalSales{
         try {
           //Select
 
-          ExternalSalesOrderData[] data = ExternalSalesOrderData.select(pool, Integer.toString(ClientID), dateFormat.format(orderIds[cont].getDateNew()).toString(), orderIds[cont].getDocumentNo());
+          ExternalSalesOrderData[] data = ExternalSalesOrderData.select(pool, ClientID, dateFormat.format(orderIds[cont].getDateNew()).toString(), orderIds[cont].getDocumentNo());
           if ((data == null) || (data.length == 0))
-            data = ExternalSalesOrderData.selectIOrder(pool, Integer.toString(ClientID), dateFormat.format(orderIds[cont].getDateNew()).toString(), orderIds[cont].getDocumentNo());
+            data = ExternalSalesOrderData.selectIOrder(pool, ClientID, dateFormat.format(orderIds[cont].getDateNew()).toString(), orderIds[cont].getDocumentNo());
 
           if (data != null && data.length > 0){
             if (log4j.isDebugEnabled()) log4j.debug("data.length "+data.length);
@@ -340,10 +354,10 @@ public class ExternalSalesImpl implements ExternalSales{
 
               ExternalSalesOrderData[] dataLines = null;
               if ((data[i].id != null) && (!data[i].id.equals(""))){
-                dataLines = ExternalSalesOrderData.selectLines(pool, Integer.toString(ClientID), data[i].id);
+                dataLines = ExternalSalesOrderData.selectLines(pool, ClientID, data[i].id);
               } else {
-                if (log4j.isDebugEnabled()) log4j.debug("ClientID "+Integer.toString(ClientID)+" orderIds "+ orderIds[cont].getDocumentNo()+" - "+dateFormat.format(orderIds[cont].getDateNew()).toString());
-                dataLines = ExternalSalesOrderData.selectLinesIOrder(pool, Integer.toString(ClientID), dateFormat.format(orderIds[cont].getDateNew()).toString(), orderIds[cont].getDocumentNo());
+                if (log4j.isDebugEnabled()) log4j.debug("ClientID "+ClientID+" orderIds "+ orderIds[cont].getDocumentNo()+" - "+dateFormat.format(orderIds[cont].getDateNew()).toString());
+                dataLines = ExternalSalesOrderData.selectLinesIOrder(pool,ClientID, dateFormat.format(orderIds[cont].getDateNew()).toString(), orderIds[cont].getDocumentNo());
               }
 
               OrderLine [] orderLines = null;
@@ -353,11 +367,11 @@ public class ExternalSalesImpl implements ExternalSales{
                 int j = 0;
                 while (j<dataLines.length) {
                   OrderLine orderLine = new org.openbravo.erpCommon.ws.externalSales.OrderLine();
-                  orderLine.setOrderLineId((!dataLines[j].orderLineId.equals(""))?(Integer.valueOf(dataLines[j].orderLineId)).intValue():0);
-                  orderLine.setProductId((Integer.valueOf(dataLines[j].productId)).intValue());
+                  orderLine.setOrderLineId((!dataLines[j].orderLineId.equals(""))?(dataLines[j].orderLineId):"0");
+                  orderLine.setProductId(dataLines[j].productId);
                   orderLine.setUnits((Double.valueOf(dataLines[j].units)).doubleValue());
                   orderLine.setPrice((Double.valueOf(dataLines[j].price)).doubleValue());
-                  orderLine.setTaxId((Integer.valueOf(dataLines[j].taxId)).intValue());
+                  orderLine.setTaxId(dataLines[j].taxId);
                   orderLines[j] = orderLine;
                   j++;
                 }
@@ -372,10 +386,10 @@ public class ExternalSalesImpl implements ExternalSales{
 
               ExternalSalesOrderData[] dataPayments = null;
               if ((data[i].id != null) && (!data[i].id.equals("")))
-                dataPayments = ExternalSalesOrderData.selectPayment(pool, Integer.toString(ClientID), data[i].id);
+                dataPayments = ExternalSalesOrderData.selectPayment(pool, ClientID, data[i].id);
               else {
-                if (log4j.isDebugEnabled()) log4j.debug("ClientID "+Integer.toString(ClientID)+" orderIds "+ orderIds[cont].getDocumentNo()+" - "+dateFormat.format(orderIds[cont].getDateNew()).toString());
-                dataPayments = ExternalSalesOrderData.selectPaymentIOrder(pool, Integer.toString(ClientID), dateFormat.format(orderIds[cont].getDateNew()).toString(), orderIds[cont].getDocumentNo());
+                if (log4j.isDebugEnabled()) log4j.debug("ClientID "+ClientID+" orderIds "+ orderIds[cont].getDocumentNo()+" - "+dateFormat.format(orderIds[cont].getDateNew()).toString());
+                dataPayments = ExternalSalesOrderData.selectPaymentIOrder(pool, ClientID, dateFormat.format(orderIds[cont].getDateNew()).toString(), orderIds[cont].getDocumentNo());
               }
 
               Payment [] payments = null;
@@ -414,8 +428,6 @@ public class ExternalSalesImpl implements ExternalSales{
         HttpServlet srv = (HttpServlet) MessageContext.getCurrentContext().getProperty(HTTPConstants.MC_HTTP_SERVLET);
         ServletContext context = srv.getServletContext();
         pool = ConnectionProviderContextListener.getPool(context);
-        javaDateFormat = ConfigParameters.retrieveFrom(context).getJavaDateTimeFormat();
-         log4j.info("Java Date Format : "+javaDateFormat);
        } catch (Exception e) {
           log4j.error("Error : initPool");
           e.printStackTrace();

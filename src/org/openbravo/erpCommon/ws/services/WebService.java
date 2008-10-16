@@ -20,13 +20,13 @@
 package org.openbravo.erpCommon.ws.services;
 
 public interface WebService {
-	public Customer[] getCustomers(int clientId, String username, String password);
-	public Customer getCustomer(int clientId, int customerId, String username, String password);
-	public Customer getCustomer(int clientId, String name, String searchKey, String username, String password);
+	public Customer[] getCustomers(String clientId, String username, String password);
+	public Customer getCustomer(String clientId, String customerId, String username, String password);
+	public Customer getCustomer(String clientId, String name, String searchKey, String username, String password);
 	public Boolean updateCustomer(BusinessPartner customer, String username, String password);
-	public int[] getCustomerAddresses(int clientId, int customerId, String username, String password);
-	public Location getCustomerLocation(int clientId, int customerId, int locationId, String username, String password);
+	public int[] getCustomerAddresses(String clientId, String customerId, String username, String password);
+	public Location getCustomerLocation(String clientId, String customerId, String locationId, String username, String password);
 	public Boolean updateAddress(Location addr, String username, String password);
-	public Contact getCustomerContact(int clientId, int customerId, int contactId, String username, String password);
+	public Contact getCustomerContact(String clientId, String customerId, String contactId, String username, String password);
 	public Boolean updateContact(Contact contact, String username, String password);
 }

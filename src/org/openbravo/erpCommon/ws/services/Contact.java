@@ -20,9 +20,9 @@
 package org.openbravo.erpCommon.ws.services;
 
 public class Contact {
-	private int id;
-	private int clientId;
-	private int businessPartnerId;
+	private String id;
+	private String clientId;
+	private String businessPartnerId;
 	private String firstname;
 	private String lastname;
 	private String email;
@@ -32,27 +32,27 @@ public class Contact {
 	
 	public Contact() {}
 	
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 	
-	public void setId(int value) {
+	public void setId(String value) {
 		id = value;
 	}
 	
-	public int getClientId() {
+	public String getClientId() {
 		return clientId;
 	}
 	
-	public void setClientId(int value) {
+	public void setClientId(String value) {
 		clientId = value;
 	}
 	
-	public int getBusinessPartnerId() {
+	public String getBusinessPartnerId() {
 		return businessPartnerId;
 	}
 	
-	public void setBusinessPartnerId(int value) {
+	public void setBusinessPartnerId(String value) {
 		businessPartnerId = value;
 	}
 	

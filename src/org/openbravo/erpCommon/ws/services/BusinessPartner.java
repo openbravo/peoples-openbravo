@@ -20,8 +20,8 @@
 package org.openbravo.erpCommon.ws.services;
 
 public class BusinessPartner {
-	private int id;
-	private int clientId;
+	private String id;
+	private String clientId;
 	private String name;
 	private String searchKey;	
 	private String description;
@@ -33,19 +33,19 @@ public class BusinessPartner {
 	
 	public BusinessPartner() {}
 	
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 	
-	public void setId(int value) {
+	public void setId(String value) {
 		id = value;
 	}
 	
-	public int getClientId() {
+	public String getClientId() {
 		return clientId;
 	}
 	
-	public void setClientId(int value) {
+	public void setClientId(String value) {
 		clientId = value;
 	}
 	
