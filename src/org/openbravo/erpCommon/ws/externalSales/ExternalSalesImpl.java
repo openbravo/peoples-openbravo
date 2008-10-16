@@ -281,9 +281,6 @@ public class ExternalSalesImpl implements ExternalSales{
               data[0].qtyordered = Double.toString(newOrders[i].getLines()[j].getUnits());
               data[0].priceactual = ""+newOrders[i].getLines()[j].getPrice();
 
-             // data[0].cTaxId = newOrders[i].getLines()[j].getTaxId();
-             // String sequence = SequenceIdData.getSequence(pool, "I_Order", ClientID);
-
               data[0].cTaxId = newOrders[i].getLines()[j].getTaxId();
               String sequence = SequenceIdData.getUUID();
 
@@ -295,8 +292,6 @@ public class ExternalSalesImpl implements ExternalSales{
             }
           }
           else{
-
-            //String sequence = SequenceIdData.getSequence(pool, "I_ORDER", ClientID);
 
             String sequence = SequenceIdData.getUUID();
 
