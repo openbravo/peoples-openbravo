@@ -48,8 +48,18 @@
 		<SqlMethodComment></SqlMethodComment>
 		<Sql>
 			<![CDATA[
-				INSERT INTO I_Order (I_ORDER_ID, AD_CLIENT_ID, AD_ORG_ID, DOCUMENTNO, createdBy, created, C_Doctype_ID,dateordered ,BPartnervalue, name, C_BPartner_Location_ID,BillTo_ID,Address1,Address2,Postal,City,RegionName,CountryCode,C_OrderLine_ID,M_Product_Id, qtyOrdered, priceActual, C_Tax_ID, paymenttermvalue, c_PaymentTerm_Id, salesrep_Id, m_Shipper_Id, m_Pricelist_Id, m_Warehouse_Id, Perform_Post, Paymentamount1, Paymentrule1, Paymentamount2, Paymentrule2) VALUES 
-					(?,?,?,?,to_number(0),to_date(now()),?,to_date(?,?),?,?,?,?,to_char(?),to_char(?),to_char(?),to_char(?),to_char(?),to_char(?),?,?,?,?,?,?,?,?,?,?,?, to_char(?),?,to_char(?),?, to_char(?))
+				INSERT INTO I_Order (I_ORDER_ID, AD_CLIENT_ID, AD_ORG_ID, DOCUMENTNO, createdBy, created, 
+				C_Doctype_ID,dateordered, C_CURRENCY_ID, BPartnervalue, name, C_BPartner_Location_ID,BillTo_ID,
+				Address1,Address2,Postal,City,RegionName,CountryCode,
+				C_OrderLine_ID,M_Product_Id, qtyOrdered, priceActual, 
+				C_Tax_ID, paymenttermvalue, c_PaymentTerm_Id, salesrep_Id, m_Shipper_Id, m_Pricelist_Id, m_Warehouse_Id, 
+				Perform_Post, Paymentamount1, Paymentrule1, Paymentamount2, Paymentrule2) VALUES 
+				(?,?,?,?,'0',to_date(now()),
+				?,to_date(?,?),?,?,?,?,?,
+				to_char(?),to_char(?),to_char(?),to_char(?),to_char(?),to_char(?),
+				?,?,to_number(?),to_number(?),
+				?,?,?,?,?,?,?, 
+				to_char(?),to_number(?),to_char(?),to_number(?),to_char(?))
 			]]>
 		</Sql>
 		<Parameter name="iOrderId"/>
@@ -59,6 +69,7 @@
 		<Parameter name="cDoctypeId"/>
 		<Parameter name="dateordered"/>
 		<Parameter name="dateTimeFormat"/>
+		<Parameter name="cCurrencyId"/>
 		<Parameter name="bpartnervalue"/>
 		<Parameter name="name"/>
 		<Parameter name="cBpartnerLocationId"/>

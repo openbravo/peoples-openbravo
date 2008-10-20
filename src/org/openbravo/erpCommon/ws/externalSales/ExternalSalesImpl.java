@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All portions are Copyright (C) 2001-2008 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,7 +25,6 @@ import java.util.Vector;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.base.ConnectionProviderContextListener;
-import org.openbravo.base.ConfigParameters;
 
 import org.apache.log4j.Logger ;
 
@@ -225,6 +224,7 @@ public class ExternalSalesImpl implements ExternalSales{
             data[0].mPricelistId = externalPOS[0].mPricelistId;
             data[0].cBpartnerId = externalPOS[0].cBpartnerId;
             data[0].cDoctypeId = externalPOS[0].cDoctypeId;
+            data[0].cCurrencyId = externalPOS[0].cCurrencyId;
             data[0].mWarehouseId = externalPOS[0].mWarehouseId;
             data[0].cBpartnerLocationId = externalPOS[0].cBpartnerLocationId;
             data[0].billtoId = externalPOS[0].billtoId;
