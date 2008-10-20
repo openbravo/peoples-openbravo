@@ -129,13 +129,16 @@
 	<parameter name="REPORT_SUBTITLE" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
 	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
-	<queryString><![CDATA[SELECT M_INOUT.DOCUMENTNO AS DOCUMENTNO, M_INOUT.MOVEMENTDATE AS MOVEMENTDATE, C_BPARTNER.NAME AS CLIENT_NAME, M_PRODUCT.NAME AS PRODUCT_NAME, SUM(M_INOUTLINE.MOVEMENTQTY) AS QUANTITYORDER, C_UOM.NAME AS UOMNAME
+	<queryString><![CDATA[SELECT M_INOUT.DOCUMENTNO AS DOCUMENTNO, M_INOUT.MOVEMENTDATE AS MOVEMENTDATE, C_BPARTNER.NAME AS CLIENT_NAME, M_PRODUCT.NAME AS PRODUCT_NAME, SUM(M_INOUTLINE.MOVEMENTQTY) AS QUANTITYORDER, C_UOM.NAME AS UOMNAME, (CASE M_INOUT.ISSOTRX 
+  		WHEN 'Y' THEN TO_CHAR(AD_MESSAGE_GET2('GOODSHIPMENT',?))
+  		WHEN 'N' THEN TO_CHAR(AD_MESSAGE_GET2('GOODRECEIPT',?))
+  		END) AS ISSOTRX
       FROM M_INOUT, M_INOUTLINE, C_BPARTNER, M_PRODUCT, C_UOM
       WHERE M_INOUT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
       AND M_INOUT.M_INOUT_ID = M_INOUTLINE.M_INOUT_ID
       AND M_INOUTLINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
       AND M_INOUTLINE.C_UOM_ID = C_UOM.C_UOM_ID
-      GROUP BY C_BPARTNER.NAME, M_PRODUCT.NAME, C_UOM.NAME, M_INOUT.DOCUMENTNO, M_INOUT.MOVEMENTDATE
+      GROUP BY C_BPARTNER.NAME, M_PRODUCT.NAME, C_UOM.NAME, M_INOUT.DOCUMENTNO, M_INOUT.MOVEMENTDATE, M_INOUT.ISSOTRX
       ORDER BY C_BPARTNER.NAME, M_INOUT.MOVEMENTDATE]]></queryString>
 
 	<field name="DOCUMENTNO" class="java.lang.String"/>
@@ -144,6 +147,7 @@
 	<field name="PRODUCT_NAME" class="java.lang.String"/>
 	<field name="QUANTITYORDER" class="java.math.BigDecimal"/>
 	<field name="UOMNAME" class="java.lang.String"/>
+	<field name="ISSOTRX" class="java.lang.String"/>
 
 
 		<group  name="CLIENT_NAME" >
@@ -241,7 +245,7 @@
 					<textElement>
 						<font pdfFontName="Helvetica" isBold="false"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DOCUMENTNO}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{ISSOTRX}+"  "+$F{DOCUMENTNO}]]></textFieldExpression>
 				</textField>
 				<line direction="TopDown">
 					<reportElement
@@ -496,8 +500,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{QUANTITYORDER}!=null)?$P{NUMBERFORMAT}.format($F{QUANTITYORDER}):new String(" ")
-]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{QUANTITYORDER}!=null)?$P{NUMBERFORMAT}.format($F{QUANTITYORDER}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

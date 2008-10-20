@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,8 +47,7 @@ public class ReportMaterialTransactionEditionJR extends HttpSecureAppServlet {
       String strcBpartnetId = vars.getStringParameter("inpcBPartnerId");
       String strmWarehouseId = vars.getStringParameter("inpmWarehouseId");
       String strcProjectId = vars.getStringParameter("inpcProjectId");
-      String strissotrx = "N";
-      printPageHtml(response, vars, strdateFrom, strdateTo, strcBpartnetId, strmWarehouseId, strcProjectId ,strissotrx, "html");
+      printPageHtml(response, vars, strdateFrom, strdateTo, strcBpartnetId, strmWarehouseId, strcProjectId , "html");
     } else if (vars.commandIn("EDIT_PDF")) {
       if (log4j.isDebugEnabled()) log4j.debug("WE EDIT THE PDF");
       String strdateFrom = vars.getStringParameter("inpDateFrom");
@@ -56,8 +55,7 @@ public class ReportMaterialTransactionEditionJR extends HttpSecureAppServlet {
       String strcBpartnetId = vars.getStringParameter("inpcBPartnerId");
       String strmWarehouseId = vars.getStringParameter("inpmWarehouseId");
       String strcProjectId = vars.getStringParameter("inpcProjectId");
-      String strissotrx = "N";
-      printPageHtml(response, vars, strdateFrom, strdateTo, strcBpartnetId, strmWarehouseId, strcProjectId ,strissotrx, "pdf");
+      printPageHtml(response, vars, strdateFrom, strdateTo, strcBpartnetId, strmWarehouseId, strcProjectId , "pdf");
     } else pageErrorPopUp(response);
   }
 
@@ -132,13 +130,13 @@ public class ReportMaterialTransactionEditionJR extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageHtml(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom, String strdateTo, String strcBpartnetId, String strmWarehouseId, String strcProjectId, String strissotrx, String strOutput) throws IOException, ServletException{
+  void printPageHtml(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom, String strdateTo, String strcBpartnetId, String strmWarehouseId, String strcProjectId, String strOutput) throws IOException, ServletException{
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     
    
     InoutEditionData[] data = null;
 	String discard[] = {"discard"};
-    data = InoutEditionData.select(this, Utility.getContext(this, vars, "#User_Org", "ReportMaterialTransactionEditionJR"), Utility.getContext(this, vars, "#User_Client", "ReportMaterialTransactionEditionJR"), strdateFrom, strdateTo, strcBpartnetId, strmWarehouseId, strcProjectId, strissotrx);
+    data = InoutEditionData.select(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Org", "ReportMaterialTransactionEditionJR"), Utility.getContext(this, vars, "#User_Client", "ReportMaterialTransactionEditionJR"), strdateFrom, strdateTo, strcBpartnetId, strmWarehouseId, strcProjectId);
     
     if (data.length<1)
     {
