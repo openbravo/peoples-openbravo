@@ -150,6 +150,7 @@ public class DebtPayment extends HttpSecureAppServlet {
     SQLReturnObject[] data = null;
     Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();   
     String[] colNames = {"BPARTNER", "ORDERNO","INVOICE","DATEPLANNED", "AMOUNT", "WRITEOFFAMT", "CURRENCY", "PAYMENTRULE", "DEBTCANCEL", "DEBTGENERATE", "C_DEBT_PAYMENT_ID", "ROWKEY"};
+    boolean[] colSortable = {true,true,true,true,true,true,true,false,false,false,false,false};
     String[] colWidths = {"113", "59", "57", "60", "65", "62", "55", "81", "110", "110", "0", "0"};
     for(int i=0; i < colNames.length; i++) {
       SQLReturnObject dataAux = new SQLReturnObject();
@@ -164,6 +165,7 @@ public class DebtPayment extends HttpSecureAppServlet {
         dataAux.setData("name", (name.startsWith("DPS_")?colNames[i]:name));
         dataAux.setData("type", "string");
         dataAux.setData("width", colWidths[i]);
+        dataAux.setData("issortable", colSortable[i]?"true":"false");
         vAux.addElement(dataAux);
     }
     data = new SQLReturnObject[vAux.size()];
@@ -187,8 +189,7 @@ public class DebtPayment extends HttpSecureAppServlet {
     if (headers!=null) {
       try{
       if(strNewFilter.equals("1") || strNewFilter.equals("")) { // New filter or first load
-        data = DebtPaymentData.select(this, "1", vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "DebtPayment"), Utility.getContext(this, vars, "#User_Org", "DebtPayment"), strBpartnerId,  strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1, strCal2, strPaymentRule, strIsPaid, strIsReceipt, strInvoice, strOrder, strIsPending, strOrderBy, "", "");
-        strNumRows = String.valueOf(data.length);
+        strNumRows = DebtPaymentData.countRows(this, Utility.getContext(this, vars, "#User_Client", "DebtPayment"), Utility.getContext(this, vars, "#User_Org", "DebtPayment"), strBpartnerId,  strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1, strCal2, strPaymentRule, strIsPaid, strIsReceipt, strInvoice, strOrder, strIsPending);
         vars.setSessionValue("DebtPaymentInfo.numrows", strNumRows);
       }
       else {
@@ -198,11 +199,11 @@ public class DebtPayment extends HttpSecureAppServlet {
       // Filtering result
       if(this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
         String oraLimit = strOffset + " AND " + String.valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));       
-        data = DebtPaymentData.select(this, "ROWNUM", vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "DebtPayment"), Utility.getContext(this, vars, "#User_Org", "DebtPayment"), strBpartnerId,  strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1, strCal2, strPaymentRule, strIsPaid, strIsReceipt, strInvoice, strOrder, strIsPending, strOrderBy, oraLimit, "");
+        data = DebtPaymentData.select(this, vars.getLanguage(), "ROWNUM", Utility.getContext(this, vars, "#User_Client", "DebtPayment"), Utility.getContext(this, vars, "#User_Org", "DebtPayment"), strBpartnerId,  strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1, strCal2, strPaymentRule, strIsPaid, strIsReceipt, strInvoice, strOrder, strIsPending, strOrderBy, oraLimit, "");
       }
       else {
         String pgLimit = strPageSize + " OFFSET " + strOffset;
-        data = DebtPaymentData.select(this, "1", vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "DebtPayment"), Utility.getContext(this, vars, "#User_Org", "DebtPayment"), strBpartnerId,  strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1, strCal2, strPaymentRule, strIsPaid, strIsReceipt, strInvoice, strOrder, strIsPending, strOrderBy, "", pgLimit);
+        data = DebtPaymentData.select(this, vars.getLanguage(), "1", Utility.getContext(this, vars, "#User_Client", "DebtPayment"), Utility.getContext(this, vars, "#User_Org", "DebtPayment"), strBpartnerId,  strDateFrom, DateTimeData.nDaysAfter(this,strDateTo, "1"), strCal1, strCal2, strPaymentRule, strIsPaid, strIsReceipt, strInvoice, strOrder, strIsPending, strOrderBy, "", pgLimit);
       }     
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
