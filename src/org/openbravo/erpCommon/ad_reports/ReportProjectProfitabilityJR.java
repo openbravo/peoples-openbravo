@@ -44,42 +44,34 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       String strResponsible = vars.getGlobalVariable("inpResponsible", "ReportProjectProfitabilityJR|Responsible", "");
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportProjectProfitabilityJR|DateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportProjectProfitabilityJR|DateTo", "");
-	  String strDateFrom2 = vars.getGlobalVariable("inpDateFrom2", "ReportProjectProfitabilityJR|DateFrom2", "");
+      String strDateFrom2 = vars.getGlobalVariable("inpDateFrom2", "ReportProjectProfitabilityJR|DateFrom2", "");
       String strDateTo2 = vars.getGlobalVariable("inpDateTo2", "ReportProjectProfitabilityJR|DateTo2", "");
+      String strDateFrom3 = vars.getGlobalVariable("inpDateFrom3", "ReportProjectProfitabilityJR|DateFrom3", "");
+      String strDateTo3 = vars.getGlobalVariable("inpDateTo3", "ReportProjectProfitabilityJR|DateTo3", "");
       String strExpand = vars.getGlobalVariable("inpExpand", "ReportProjectProfitabilityJR|Expand", "Y");
       String strPartner = vars.getGlobalVariable("inpcBPartnerId", "ReportProjectProfitabilityJR|Partner", "");
-      printPageDataSheet(response, vars, strOrg, strProject, strProjectType, strResponsible, strDateFrom, strDateTo, strExpand, strPartner, strDateFrom2, strDateTo2);
-    } else if (vars.commandIn("FIND")) {
+      printPageDataSheet(response, vars, strOrg, strProject, strProjectType, strResponsible, strDateFrom, strDateTo, strExpand, strPartner, strDateFrom2, strDateTo2, strDateFrom3, strDateTo3);
+    } else if (vars.commandIn("FIND") || vars.commandIn("PDF")) {
       String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportProjectProfitabilityJR|Org");
       String strProject = vars.getRequestGlobalVariable("inpcProjectId", "ReportProjectProfitabilityJR|Project");
       String strProjectType = vars.getRequestGlobalVariable("inpProjectType", "ReportProjectProfitabilityJR|ProjectType");
       String strResponsible = vars.getRequestGlobalVariable("inpResponsible", "ReportProjectProfitabilityJR|Responsible");
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportProjectProfitabilityJR|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportProjectProfitabilityJR|DateTo");
-	  String strDateFrom2 = vars.getRequestGlobalVariable("inpDateFrom2", "ReportProjectProfitabilityJR|DateFrom2");
+      String strDateFrom2 = vars.getRequestGlobalVariable("inpDateFrom2", "ReportProjectProfitabilityJR|DateFrom2");
       String strDateTo2 = vars.getRequestGlobalVariable("inpDateTo2", "ReportProjectProfitabilityJR|DateTo2");
+      String strDateFrom3 = vars.getRequestGlobalVariable("inpDateFrom3", "ReportProjectProfitabilityJR|DateFrom3");
+      String strDateTo3 = vars.getRequestGlobalVariable("inpDateTo3", "ReportProjectProfitabilityJR|DateTo3");
       String strExpand = vars.getRequestGlobalVariable("inpExpand", "ReportProjectProfitabilityJR|Expand");
       String strPartner = vars.getRequestGlobalVariable("inpcBPartnerId", "ReportProjectProfitabilityJR|Partner");
-      String strOutput="html";
-      printPageDataHtml(response, vars, strOrg, strProject, strProjectType, strResponsible, strDateFrom, strDateTo, strExpand, strPartner, strDateFrom2, strDateTo2, strOutput);
-    } else if (vars.commandIn("PDF")){
-		String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportProjectProfitabilityJR|Org");
-		String strProject = vars.getRequestGlobalVariable("inpcProjectId", "ReportProjectProfitabilityJR|Project");
-		String strProjectType = vars.getRequestGlobalVariable("inpProjectType", "ReportProjectProfitabilityJR|ProjectType");
-		String strResponsible = vars.getRequestGlobalVariable("inpResponsible", "ReportProjectProfitabilityJR|Responsible");
-		String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportProjectProfitabilityJR|DateFrom");
-		String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportProjectProfitabilityJR|DateTo");
-		String strDateFrom2 = vars.getRequestGlobalVariable("inpDateFrom2", "ReportProjectProfitabilityJR|DateFrom2");
-		String strDateTo2 = vars.getRequestGlobalVariable("inpDateTo2", "ReportProjectProfitabilityJR|DateTo2");
-		String strExpand = vars.getRequestGlobalVariable("inpExpand", "ReportProjectProfitabilityJR|Expand");
-		String strPartner = vars.getRequestGlobalVariable("inpcBPartnerId", "ReportProjectProfitabilityJR|Partner");
-		String strOutput="pdf";
-		printPageDataHtml(response, vars, strOrg, strProject, strProjectType, strResponsible, strDateFrom, strDateTo, strExpand, strPartner, strDateFrom2, strDateTo2, strOutput);
+      String strOutput= "html";
+      if (vars.commandIn("PDF")) strOutput="pdf";
+      printPageDataHtml(response, vars, strOrg, strProject, strProjectType, strResponsible, strDateFrom, strDateTo, strExpand, strPartner, strDateFrom2, strDateTo2, strDateFrom3, strDateTo3, strOutput);
     } else pageError(response);
   }
 
   
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strOrg, String strProject, String strProjectType, String strResponsible, String strDateFrom, String strDateTo, String strExpand, String strPartner, String strDateFrom2, String strDateTo2, String strOutput)
+  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strOrg, String strProject, String strProjectType, String strResponsible, String strDateFrom, String strDateTo, String strExpand, String strPartner, String strDateFrom2, String strDateTo2, String strDateFrom3, String strDateTo3, String strOutput)
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     
@@ -87,7 +79,7 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     strTreeOrg = "'" + strOrg + "'";
     if (strExpand.equals("Y")) treeOrg(vars, strOrg);
     ReportProjectProfitabilityData[] data = null;
-    data = ReportProjectProfitabilityData.select(this, strDateFrom2, DateTimeData.nDaysAfter(this, strDateTo2,"1"), strTreeOrg, Utility.getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), strDateFrom , DateTimeData.nDaysAfter(this, strDateTo,"1"), strProjectType, strProject, strResponsible, strPartner);
+    data = ReportProjectProfitabilityData.select(this, strDateFrom2, DateTimeData.nDaysAfter(this, strDateTo2,"1"), strTreeOrg, Utility.getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strDateFrom3, DateTimeData.nDaysAfter(this, strDateTo3,"1"), strProjectType, strProject, strResponsible, strPartner);
 
     if (data == null || data.length == 0) {
       data = ReportProjectProfitabilityData.set();
@@ -106,7 +98,7 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
   }
 
   
-   void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strOrg, String strProject, String strProjectType, String strResponsible, String strDateFrom, String strDateTo, String strExpand, String strPartner, String strDateFrom2, String strDateTo2)
+   void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strOrg, String strProject, String strProjectType, String strResponsible, String strDateFrom, String strDateTo, String strExpand, String strPartner, String strDateFrom2, String strDateTo2, String strDateFrom3, String strDateTo3)
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -156,12 +148,18 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTo", strDateTo);
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-	xmlDocument.setParameter("dateFrom2", strDateFrom2);
+    xmlDocument.setParameter("dateFrom2", strDateFrom2);
     xmlDocument.setParameter("dateFromdisplayFormat2", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateFromsaveFormat2", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTo2", strDateTo2);
     xmlDocument.setParameter("dateTodisplayFormat2", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat2", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateFrom3", strDateFrom3);
+    xmlDocument.setParameter("dateFromdisplayFormat3", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateFromsaveFormat3", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateTo3", strDateTo3);
+    xmlDocument.setParameter("dateTodisplayFormat3", vars.getSessionValue("#AD_SqlDateFormat"));
+    xmlDocument.setParameter("dateTosaveFormat3", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("orgid", strOrg);
     xmlDocument.setParameter("project", strProject);
     xmlDocument.setParameter("projecttype", strProjectType);

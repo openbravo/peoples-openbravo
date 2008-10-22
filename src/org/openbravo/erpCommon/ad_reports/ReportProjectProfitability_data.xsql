@@ -113,19 +113,21 @@
       ]]>
     </Sql>
     <Parameter name="datefrom2" optional="true" after="AND 1=1"><![CDATA[ AND s_timeexpense.DATEREPORT >= to_date(?) ]]></Parameter>
-    <Parameter name="dateto2" optional="true" after="AND 1=1"><![CDATA[ AND s_timeexpense.DATEREPORT  <= to_date(?) ]]></Parameter>
+    <Parameter name="dateto2" optional="true" after="AND 1=1"><![CDATA[ AND s_timeexpense.DATEREPORT  < to_date(?) ]]></Parameter>
     <Parameter name="datefrom2" optional="true" after="AND 2=2"><![CDATA[ AND i.dateinvoiced >= to_date(?) ]]></Parameter>
-    <Parameter name="dateto2" optional="true" after="AND 2=2"><![CDATA[ AND i.dateinvoiced  <= to_date(?) ]]></Parameter>
+    <Parameter name="dateto2" optional="true" after="AND 2=2"><![CDATA[ AND i.dateinvoiced  < to_date(?) ]]></Parameter>
     <Parameter name="datefrom2" optional="true" after="AND 3=3"><![CDATA[ AND i.dateinvoiced >= to_date(?) ]]></Parameter>
-    <Parameter name="dateto2" optional="true" after="AND 3=3"><![CDATA[ AND i.dateinvoiced  <= to_date(?) ]]></Parameter>
+    <Parameter name="dateto2" optional="true" after="AND 3=3"><![CDATA[ AND i.dateinvoiced  < to_date(?) ]]></Parameter>
     <Parameter name="datefrom2" optional="true" after="AND 4=4"><![CDATA[ AND i.dateinvoiced >= to_date(?) ]]></Parameter>
-    <Parameter name="dateto2" optional="true" after="AND 4=4"><![CDATA[ AND i.dateinvoiced  <= to_date(?) ]]></Parameter>
+    <Parameter name="dateto2" optional="true" after="AND 4=4"><![CDATA[ AND i.dateinvoiced  < to_date(?) ]]></Parameter>
     <Parameter name="datefrom2" optional="true" after="AND 5=5"><![CDATA[ AND i.dateinvoiced >= to_date(?) ]]></Parameter>
-    <Parameter name="dateto2" optional="true" after="AND 5=5"><![CDATA[ AND i.dateinvoiced  <= to_date(?) ]]></Parameter>
+    <Parameter name="dateto2" optional="true" after="AND 5=5"><![CDATA[ AND i.dateinvoiced  < to_date(?) ]]></Parameter>
     <Parameter name="org" optional="true" type="replace" after="AND p.AD_Org_ID IN (" text="'1'"/>
     <Parameter name="client" optional="true" type="replace" after="AND p.AD_Client_ID IN (" text="'1'"/>
-    <Parameter name="dateFrom" optional="true" after="AND 6=6"><![CDATA[ AND p.Datecontract > to_date(?) ]]></Parameter>
+    <Parameter name="dateFrom" optional="true" after="AND 6=6"><![CDATA[ AND p.Datecontract >= to_date(?) ]]></Parameter>
     <Parameter name="dateTo" optional="true" after="AND 6=6"><![CDATA[ AND p.Datecontract < to_date(?) ]]></Parameter>
+    <Parameter name="dateFrom3" optional="true" after="AND 6=6"><![CDATA[ AND p.Startdate >= to_date(?) ]]></Parameter>
+    <Parameter name="dateTo3" optional="true" after="AND 6=6"><![CDATA[ AND p.Startdate < to_date(?) ]]></Parameter>
     <Parameter name="projecttype" optional="true" after="AND 6=6"><![CDATA[ AND p.C_Projecttype_ID = ? ]]></Parameter>
     <Parameter name="project" optional="true" after="AND 6=6"><![CDATA[ AND p.C_Project_ID = ? ]]></Parameter>
     <Parameter name="Responsible" optional="true" after="AND 6=6"><![CDATA[ AND p.Responsible_ID = ? ]]></Parameter>

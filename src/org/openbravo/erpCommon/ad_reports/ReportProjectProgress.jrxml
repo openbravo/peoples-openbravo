@@ -1,0 +1,1357 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="ReportProjectProgress"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="842"
+		 pageHeight="595"
+		 columnWidth="782"
+		 columnSpacing="0"
+		 leftMargin="30"
+		 rightMargin="30"
+		 topMargin="20"
+		 bottomMargin="20"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+
+	<style 
+		name="default"
+		isDefault="false"
+		vAlign="Middle"
+		fontName="Bitstream Vera Sans"
+		fontSize="10"
+	/>
+	<style 
+		name="Report_Title"
+		isDefault="false"
+		leftPadding="5"
+		fontName="Bitstream Vera Sans"
+		fontSize="18"
+	/>
+	<style 
+		name="Report_Subtitle"
+		isDefault="false"
+		forecolor="#555555"
+		leftPadding="5"
+		fontName="Bitstream Vera Sans"
+		fontSize="14"
+	/>
+	<style 
+		name="Total_Field"
+		isDefault="false"
+		mode="Opaque"
+		forecolor="#000000"
+		backcolor="#CCCCCC"
+		vAlign="Middle"
+		leftPadding="5"
+	/>
+	<style 
+		name="Detail_Header"
+		isDefault="false"
+		mode="Opaque"
+		forecolor="#FFFFFF"
+		backcolor="#555555"
+		vAlign="Middle"
+		leftBorder="1Point"
+		leftBorderColor="#FFFFFF"
+		leftPadding="5"
+		rightBorder="1Point"
+		rightBorderColor="#FFFFFF"
+	/>
+	<style 
+		name="GroupHeader_DarkGray"
+		isDefault="false"
+		mode="Opaque"
+		forecolor="#FFFFFF"
+		backcolor="#555555"
+		vAlign="Middle"
+		leftPadding="5"
+		fontName="Bitstream Vera Sans"
+		fontSize="14"
+	/>
+	<style 
+		name="GroupHeader_Gray"
+		isDefault="false"
+		mode="Opaque"
+		backcolor="#999999"
+	/>
+	<style 
+		name="Detail_Task"
+		isDefault="false"
+	>
+
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==1)]]></conditionExpression>
+			<style 
+				name="Detail_Task"
+				isDefault="false"
+				mode="Opaque"
+				backcolor="#CCCCCC"
+			/>
+		</conditionalStyle>
+	</style>
+	<style 
+		name="Total_Gray"
+		isDefault="false"
+		mode="Opaque"
+		forecolor="#000000"
+		backcolor="#CCCCCC"
+	/>
+
+	<parameter name="REPORT_TITLE" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="REFERENCE_DATE" isForPrompting="false" class="java.lang.String"/>
+	<queryString><![CDATA[SELECT
+		PR.C_PROJECT_ID AS PROJECTID, PR.NAME AS PROJECTNAME, PR.DESCRIPTION AS PROJECTDESCRIPTION, PR.NOTE AS PROJECTCOMMENTS,
+		REFLISTV.NAME AS PROJECTSTATUS, BPCUSTOMER.NAME AS CUSTOMERNAME, BPRESPONSIBLE.NAME AS PERSONINCHARGE,
+		PR.STARTDATE AS STARTINGDATE, PR.DATECONTRACT AS CONTRACTDATE, PR.DATEFINISH AS ENDINGDATE,
+		'' AS  DAYSELAPSED, '' AS PROJECTCONTRACTDURATION, '' AS DAYSDELAYED,
+		'' AS TIMEBURNED, ''AS COMPLETIONPERC, '' AS CUMDAYSDELAYED,
+		
+		PRP.C_PROJECTPHASE_ID AS PHASEID, PRP.NAME AS PHASENAME, PRP.STARTDATE AS PHASESTARTINGDATE, PRP.DATECONTRACT AS PHASECONTRACTDATE, '' AS PHASECONTRACTDURATION, 
+		AD_MESSAGE_GET2(PRP.ISCOMPLETE,'es_US') AS PHASECOMPLETE, PRP.ISCOMPLETE AS PHASECOMP, PRP.ENDDATE AS PHASEENDINGDATE, '' AS PHASEDAYSDELAYED,
+		
+		PRT.C_PROJECTTASK_ID AS TASKID, PRT.NAME AS TASKNAME, PRT.STARTDATE AS TASKSTARTINGDATE, PRT.DATECONTRACT AS TASKCONTRACTDATE, '' AS TASKCONTRACTDURATION,
+		AD_MESSAGE_GET2(PRT.ISCOMPLETE,'en_US') AS TASKCOMPLETE, PRT.ISCOMPLETE AS TASKCOMP, PRT.ENDDATE AS TASKENDINGDATE, '' AS TASKDAYSDELAYED
+	  
+	  FROM AD_REF_LIST_V REFLISTV, C_BPARTNER BPCUSTOMER, C_PROJECT PR
+		LEFT JOIN C_BPARTNER BPRESPONSIBLE ON PR.RESPONSIBLE_ID = BPRESPONSIBLE.C_BPARTNER_ID
+	  	LEFT JOIN C_PROJECTPHASE PRP ON PR.C_PROJECT_ID = PRP.C_PROJECT_ID
+	  	LEFT JOIN C_PROJECTTASK PRT ON PRP.C_PROJECTPHASE_ID = PRT.C_PROJECTPHASE_ID
+	  
+	  WHERE PR.C_BPARTNER_ID = BPCUSTOMER.C_BPARTNER_ID
+	  	AND REFLISTV.AD_REFERENCE_ID = '800002'
+	    AND REFLISTV.AD_LANGUAGE = 'en_US'
+	    AND REFLISTV.VALUE = PR.PROJECTSTATUS
+	    AND PR.AD_CLIENT_ID IN ('1')
+	    AND PR.AD_ORG_ID IN ('1')
+	    AND 1=1
+
+      ORDER BY PR.NAME, 1]]></queryString>
+
+	<field name="projectid" class="java.lang.String"/>
+	<field name="projectname" class="java.lang.String"/>
+	<field name="projectdescription" class="java.lang.String"/>
+	<field name="projectcomments" class="java.lang.String"/>
+	<field name="projectstatus" class="java.lang.String"/>
+	<field name="customername" class="java.lang.String"/>
+	<field name="personincharge" class="java.lang.String"/>
+	<field name="startingdate" class="java.lang.String"/>
+	<field name="contractdate" class="java.lang.String"/>
+	<field name="endingdate" class="java.lang.String"/>
+	<field name="dayselapsed" class="java.lang.String"/>
+	<field name="projectcontractduration" class="java.lang.String"/>
+	<field name="daysdelayed" class="java.lang.String"/>
+	<field name="timeburned" class="java.lang.String"/>
+	<field name="completionperc" class="java.lang.String"/>
+	<field name="cumdaysdelayed" class="java.lang.String"/>
+	<field name="phaseid" class="java.lang.String"/>
+	<field name="phasename" class="java.lang.String"/>
+	<field name="phasestartingdate" class="java.lang.String"/>
+	<field name="phasecontractdate" class="java.lang.String"/>
+	<field name="phasecontractduration" class="java.lang.String"/>
+	<field name="phasecomplete" class="java.lang.String"/>
+	<field name="phaseendingdate" class="java.lang.String"/>
+	<field name="phasedaysdelayed" class="java.lang.String"/>
+	<field name="taskid" class="java.lang.String"/>
+	<field name="taskname" class="java.lang.String"/>
+	<field name="taskstartingdate" class="java.lang.String"/>
+	<field name="taskcontractdate" class="java.lang.String"/>
+	<field name="taskcontractduration" class="java.lang.String"/>
+	<field name="taskcomplete" class="java.lang.String"/>
+	<field name="taskendingdate" class="java.lang.String"/>
+	<field name="taskdaysdelayed" class="java.lang.String"/>
+
+
+		<group  name="projectid" >
+			<groupExpression><![CDATA[$F{projectid}]]></groupExpression>
+			<groupHeader>
+			<band height="182"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="GroupHeader_DarkGray"
+						x="1"
+						y="0"
+						width="781"
+						height="23"
+						forecolor="#FFFFFF"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{projectname}!=null)?$F{projectname}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="80"
+						y="30"
+						width="699"
+						height="17"
+						forecolor="#000000"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{projectdescription}!=null)?$F{projectdescription}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="6"
+						y="30"
+						width="73"
+						height="17"
+						key="staticText"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Description:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="80"
+						y="47"
+						width="699"
+						height="38"
+						forecolor="#000000"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Top">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{projectcomments}!=null)?$F{projectcomments}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="6"
+						y="47"
+						width="73"
+						height="17"
+						key="staticText"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Top">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Comments:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="96"
+						y="92"
+						width="132"
+						height="15"
+						forecolor="#000000"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{projectstatus}!=null)?$F{projectstatus}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="6"
+						y="92"
+						width="90"
+						height="15"
+						key="staticText"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Project Status:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="340"
+						y="92"
+						width="173"
+						height="15"
+						forecolor="#000000"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{customername}!=null)?$F{customername}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="235"
+						y="92"
+						width="105"
+						height="15"
+						key="staticText"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Business Partner:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="624"
+						y="92"
+						width="154"
+						height="15"
+						forecolor="#000000"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{personincharge}!=null)?$F{personincharge}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="519"
+						y="92"
+						width="105"
+						height="15"
+						key="staticText"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Person in Charge:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="91"
+						y="114"
+						width="137"
+						height="15"
+						forecolor="#000000"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{startingdate}!=null)?$F{startingdate}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="6"
+						y="114"
+						width="85"
+						height="15"
+						key="staticText"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Starting Date:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="325"
+						y="114"
+						width="132"
+						height="15"
+						forecolor="#000000"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{contractdate}!=null)?$F{contractdate}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="235"
+						y="114"
+						width="90"
+						height="15"
+						key="staticText"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Contract Date:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="596"
+						y="114"
+						width="145"
+						height="15"
+						forecolor="#000000"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{endingdate}!=null)?$F{endingdate}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="519"
+						y="114"
+						width="77"
+						height="15"
+						key="staticText"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Ending Date:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="89"
+						y="136"
+						width="139"
+						height="15"
+						forecolor="#000000"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{dayselapsed}!=null)?$F{dayselapsed}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="6"
+						y="136"
+						width="83"
+						height="15"
+						key="staticText"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Days elapsed:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="386"
+						y="136"
+						width="117"
+						height="15"
+						forecolor="#000000"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{projectcontractduration}!=null)?$F{projectcontractduration}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="234"
+						y="136"
+						width="152"
+						height="15"
+						key="staticText"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Project contract duration:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="602"
+						y="136"
+						width="161"
+						height="15"
+						forecolor="#000000"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{daysdelayed}!=null)?$F{daysdelayed}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="519"
+						y="136"
+						width="83"
+						height="15"
+						key="staticText"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Days delayed:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="85"
+						y="159"
+						width="36"
+						height="15"
+						forecolor="#000000"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{timeburned}!=null)?$F{timeburned}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="6"
+						y="159"
+						width="79"
+						height="15"
+						key="staticText"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Time burned:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="377"
+						y="159"
+						width="36"
+						height="15"
+						forecolor="#000000"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{completionperc}!=null)?$F{completionperc}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="235"
+						y="159"
+						width="142"
+						height="15"
+						key="staticText"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Completion percentage:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="668"
+						y="159"
+						width="80"
+						height="15"
+						forecolor="#000000"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{cumdaysdelayed}!=null)?$F{cumdaysdelayed}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="519"
+						y="159"
+						width="149"
+						height="15"
+						key="staticText"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Cumulative days delayed:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="413"
+						y="159"
+						width="28"
+						height="15"
+						forecolor="#000000"
+						key="staticText-2"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<text><![CDATA[%]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="121"
+						y="159"
+						width="28"
+						height="15"
+						forecolor="#000000"
+						key="staticText-3"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<text><![CDATA[%]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="0"
+						width="0"
+						height="182"
+						forecolor="#555555"
+						key="line-2"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight" pen="1Point"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="782"
+						y="0"
+						width="0"
+						height="182"
+						forecolor="#555555"
+						key="line-8"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight" pen="1Point"/>
+				</line>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="22"  isSplitAllowed="true" >
+				<line direction="TopDown">
+					<reportElement
+						x="1"
+						y="6"
+						width="781"
+						height="0"
+						forecolor="#555555"
+						key="line-4"/>
+					<graphicElement stretchType="NoStretch" pen="1Point"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="0"
+						width="0"
+						height="7"
+						forecolor="#555555"
+						key="line-5"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight" pen="1Point"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="782"
+						y="0"
+						width="0"
+						height="7"
+						forecolor="#555555"
+						key="line-16"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight" pen="1Point"/>
+				</line>
+			</band>
+			</groupFooter>
+		</group>
+		<group  name="phaseid" >
+			<groupExpression><![CDATA[$F{phaseid}]]></groupExpression>
+			<groupHeader>
+			<band height="48"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						style="GroupHeader_DarkGray"
+						x="7"
+						y="3"
+						width="197"
+						height="15"
+						forecolor="#FFFFFF"
+						key="staticText">
+							<printWhenExpression><![CDATA[new Boolean(($F{phasename}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Phase]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="7"
+						y="18"
+						width="197"
+						height="15"
+						forecolor="#000000"
+						key="textField">
+							<printWhenExpression><![CDATA[new Boolean(($F{phasename}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{phasename}!=null)?$F{phasename}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="204"
+						y="18"
+						width="96"
+						height="15"
+						forecolor="#000000"
+						key="textField">
+							<printWhenExpression><![CDATA[new Boolean(($F{phasename}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{phasestartingdate}!=null)?$F{phasestartingdate}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						style="GroupHeader_DarkGray"
+						x="204"
+						y="3"
+						width="96"
+						height="15"
+						forecolor="#FFFFFF"
+						key="staticText">
+							<printWhenExpression><![CDATA[new Boolean(($F{phasename}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Starting Date]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="300"
+						y="18"
+						width="100"
+						height="15"
+						forecolor="#000000"
+						key="textField">
+							<printWhenExpression><![CDATA[new Boolean(($F{phasename}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{phasecontractdate}!=null)?$F{phasecontractdate}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						style="GroupHeader_DarkGray"
+						x="300"
+						y="3"
+						width="100"
+						height="15"
+						forecolor="#FFFFFF"
+						key="staticText">
+							<printWhenExpression><![CDATA[new Boolean(($F{phasename}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Contract Date]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="400"
+						y="18"
+						width="119"
+						height="15"
+						forecolor="#000000"
+						key="textField">
+							<printWhenExpression><![CDATA[new Boolean(($F{phasename}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{phasecontractduration}!=null)?$F{phasecontractduration}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						style="GroupHeader_DarkGray"
+						x="400"
+						y="3"
+						width="119"
+						height="15"
+						forecolor="#FFFFFF"
+						key="staticText">
+							<printWhenExpression><![CDATA[new Boolean(($F{phasename}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Contract duration]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="519"
+						y="18"
+						width="69"
+						height="15"
+						forecolor="#000000"
+						key="textField">
+							<printWhenExpression><![CDATA[new Boolean(($F{phasename}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{phasecomplete}!=null)?$F{phasecomplete}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						style="GroupHeader_DarkGray"
+						x="519"
+						y="3"
+						width="69"
+						height="15"
+						forecolor="#FFFFFF"
+						key="staticText">
+							<printWhenExpression><![CDATA[new Boolean(($F{phasename}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Complete]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="588"
+						y="18"
+						width="100"
+						height="15"
+						forecolor="#000000"
+						key="textField">
+							<printWhenExpression><![CDATA[new Boolean(($F{phasename}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{phaseendingdate}!=null)?$F{phaseendingdate}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						style="GroupHeader_DarkGray"
+						x="588"
+						y="3"
+						width="100"
+						height="15"
+						forecolor="#FFFFFF"
+						key="staticText">
+							<printWhenExpression><![CDATA[new Boolean(($F{phasename}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Ending Date]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="688"
+						y="18"
+						width="93"
+						height="15"
+						forecolor="#000000"
+						key="textField">
+							<printWhenExpression><![CDATA[new Boolean(($F{phasename}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{phasedaysdelayed}!=null)?$F{phasedaysdelayed}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						style="GroupHeader_DarkGray"
+						x="688"
+						y="3"
+						width="94"
+						height="15"
+						forecolor="#FFFFFF"
+						key="staticText">
+							<printWhenExpression><![CDATA[new Boolean(($F{phasename}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Days delayed]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="GroupHeader_DarkGray"
+						x="19"
+						y="33"
+						width="185"
+						height="15"
+						forecolor="#FFFFFF"
+						key="staticText">
+							<printWhenExpression><![CDATA[new Boolean(($F{taskname}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Task]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="GroupHeader_DarkGray"
+						x="204"
+						y="33"
+						width="96"
+						height="15"
+						forecolor="#FFFFFF"
+						key="staticText-5">
+							<printWhenExpression><![CDATA[new Boolean(($F{taskname}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Starting Date]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="GroupHeader_DarkGray"
+						x="300"
+						y="33"
+						width="100"
+						height="15"
+						forecolor="#FFFFFF"
+						key="staticText-6">
+							<printWhenExpression><![CDATA[new Boolean(($F{taskname}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Contract Date]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="GroupHeader_DarkGray"
+						x="400"
+						y="33"
+						width="119"
+						height="15"
+						forecolor="#FFFFFF"
+						key="staticText-7">
+							<printWhenExpression><![CDATA[new Boolean(($F{taskname}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Contract duration]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="GroupHeader_DarkGray"
+						x="519"
+						y="33"
+						width="69"
+						height="15"
+						forecolor="#FFFFFF"
+						key="staticText-8">
+							<printWhenExpression><![CDATA[new Boolean(($F{taskname}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Complete]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="GroupHeader_DarkGray"
+						x="588"
+						y="33"
+						width="100"
+						height="15"
+						forecolor="#FFFFFF"
+						key="staticText-9">
+							<printWhenExpression><![CDATA[new Boolean(($F{taskname}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Ending Date]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="GroupHeader_DarkGray"
+						x="688"
+						y="33"
+						width="94"
+						height="15"
+						forecolor="#FFFFFF"
+						key="staticText-10">
+							<printWhenExpression><![CDATA[new Boolean(($F{taskname}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Days delayed]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="0"
+						width="0"
+						height="48"
+						forecolor="#555555"
+						key="line-3"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight" pen="1Point"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="782"
+						y="0"
+						width="0"
+						height="7"
+						forecolor="#555555"
+						key="line-9"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight" pen="1Point"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="782"
+						y="0"
+						width="0"
+						height="48"
+						forecolor="#555555"
+						key="line-10"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight" pen="1Point"/>
+				</line>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="5"  isSplitAllowed="true" >
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="0"
+						width="0"
+						height="5"
+						forecolor="#555555"
+						key="line-7"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight" pen="1Point"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="782"
+						y="0"
+						width="0"
+						height="5"
+						forecolor="#555555"
+						key="line-17"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight" pen="1Point"/>
+				</line>
+			</band>
+			</groupFooter>
+		</group>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="12"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="51"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="2"
+						y="5"
+						width="779"
+						height="26"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="18"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{REPORT_TITLE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="118"
+						y="34"
+						width="127"
+						height="17"
+						key="textField-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="12"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{REFERENCE_DATE}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="1"
+						y="34"
+						width="117"
+						height="17"
+						key="staticText-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="12" isBold="true"/>
+					</textElement>
+				<text><![CDATA[Reference Date:]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="31"
+						width="781"
+						height="3"
+						key="line-1"/>
+					<graphicElement stretchType="NoStretch" pen="2Point"/>
+				</line>
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="5"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="15"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Task"
+						x="19"
+						y="0"
+						width="185"
+						height="15"
+						forecolor="#000000"
+						key="textField">
+							<printWhenExpression><![CDATA[new Boolean(($F{taskname}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{taskname}!=null)?$F{taskname}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Task"
+						x="204"
+						y="0"
+						width="96"
+						height="15"
+						forecolor="#000000"
+						key="textField">
+							<printWhenExpression><![CDATA[new Boolean(($F{taskname}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{taskstartingdate}!=null)?$F{taskstartingdate}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Task"
+						x="300"
+						y="0"
+						width="100"
+						height="15"
+						forecolor="#000000"
+						key="textField">
+							<printWhenExpression><![CDATA[new Boolean(($F{taskname}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{taskcontractdate}!=null)?$F{taskcontractdate}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Task"
+						x="400"
+						y="0"
+						width="119"
+						height="15"
+						forecolor="#000000"
+						key="textField">
+							<printWhenExpression><![CDATA[new Boolean(($F{taskname}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{taskcontractduration}!=null)?$F{taskcontractduration}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Task"
+						x="519"
+						y="0"
+						width="69"
+						height="15"
+						forecolor="#000000"
+						key="textField">
+							<printWhenExpression><![CDATA[new Boolean(($F{taskname}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{taskcomplete}!=null)?$F{taskcomplete}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Task"
+						x="588"
+						y="0"
+						width="100"
+						height="15"
+						forecolor="#000000"
+						key="textField">
+							<printWhenExpression><![CDATA[new Boolean(($F{taskname}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{taskendingdate}!=null)?$F{taskendingdate}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Task"
+						x="688"
+						y="0"
+						width="94"
+						height="15"
+						forecolor="#000000"
+						key="textField">
+							<printWhenExpression><![CDATA[new Boolean(($F{taskname}!=null))]]></printWhenExpression>
+						</reportElement>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{taskdaysdelayed}!=null)?$F{taskdaysdelayed}:new String(" ")]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						style="Detail_Task"
+						x="0"
+						y="0"
+						width="0"
+						height="15"
+						forecolor="#555555"
+						key="line-6"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight" pen="1Point"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						style="Detail_Task"
+						x="782"
+						y="0"
+						width="0"
+						height="15"
+						forecolor="#555555"
+						key="line-15"
+						stretchType="RelativeToBandHeight"/>
+					<graphicElement stretchType="RelativeToBandHeight" pen="1Point"/>
+				</line>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="19"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="573"
+						y="2"
+						width="171"
+						height="15"
+						forecolor="#000000"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="Bitstream Vera Sans" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Page " + $V{PAGE_NUMBER} + " of "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="746"
+						y="2"
+						width="36"
+						height="15"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font fontName="Bitstream Vera Sans" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["" + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="364"
+						y="2"
+						width="47"
+						height="15"
+						forecolor="#000000"
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Bottom">
+						<font fontName="Bitstream Vera Sans" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="299"
+						y="2"
+						width="62"
+						height="15"
+						forecolor="#000000"
+						key="staticText-4"/>
+					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Bottom">
+						<font fontName="Bitstream Vera Sans" size="8"/>
+					</textElement>
+				<text><![CDATA[Printed on]]></text>
+				</staticText>
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

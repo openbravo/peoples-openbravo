@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,7 @@
     <Sql>
       <![CDATA[
         SELECT P.C_PHASE_ID, P.NAME, P.SEQNO, P.DESCRIPTION, P.HELP,
-        P.M_PRODUCT_ID, P.STANDARDQTY, P.AD_CLIENT_ID, P.AD_ORG_ID, '' as C_TASK_ID, '' AS C_PROJECT_ID
+        P.M_PRODUCT_ID, P.STANDARDQTY, P.STDDURATION, P.AD_CLIENT_ID, P.AD_ORG_ID, '' as C_TASK_ID, '' AS C_PROJECT_ID, '' as STARTDATE, '' as DATECONTRACT
         FROM C_PHASE P WHERE C_PROJECTTYPE_ID = ?
         ORDER BY P.SEQNO
       ]]>
@@ -57,12 +57,21 @@
     </Sql>
     <Parameter name="c_projecttype_id"/>
   </SqlMethod>
+  <SqlMethod name="selectDates" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT STARTDATE, DATECONTRACT FROM C_PROJECT WHERE C_PROJECT_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="c_project_id"/>
+  </SqlMethod>
   <SqlMethod name="selectTask" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
         SELECT T.C_TASK_ID, T.SEQNO, T.NAME, T.DESCRIPTION, T.HELP,
-        T.M_PRODUCT_ID, T.STANDARDQTY
+        T.M_PRODUCT_ID, T.STANDARDQTY, T.STDDURATION
         FROM C_TASK T
         WHERE T.C_PHASE_ID = ?
         ORDER BY T.SEQNO
@@ -83,8 +92,8 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE C_PROJECT SET UPDATEDBY = ?, UPDATED=now(), C_PROJECTTYPE_id = ? , PROJECTCATEGORY = ?
-        WHERE C_PROJECT_ID=?
+        UPDATE C_PROJECT SET UPDATEDBY = ?, UPDATED = now(), C_PROJECTTYPE_ID = ? , PROJECTCATEGORY = ?
+        WHERE C_PROJECT_ID = ?
       ]]>
     </Sql>
     <Parameter name="user"/>
@@ -92,20 +101,31 @@
     <Parameter name="projectcategory"/>
     <Parameter name="c_project_id"/>
   </SqlMethod>
+  <SqlMethod name="updateDates" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        UPDATE C_PROJECT SET UPDATEDBY = ?, UPDATED = now(), STARTDATE = TO_DATE(?) , DATECONTRACT = TO_DATE(?)
+        WHERE C_PROJECT_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="user"/>
+    <Parameter name="projectStartDate"/>
+    <Parameter name="projectContractDate"/>
+    <Parameter name="c_project_id"/>
+  </SqlMethod>
   <SqlMethod name="insertProjectPhase" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
         INSERT INTO C_PROJECTPHASE 
-          (C_PROJECT_ID, AD_CLIENT_ID, AD_ORG_ID, 
-           CREATED, CREATEDBY, UPDATED, UPDATEDBY, 
-           DESCRIPTION, M_PRODUCT_ID, C_PHASE_ID, C_PROJECTPHASE_ID, 
-           HELP, NAME, QTY, SEQNO) 
+        (C_PROJECT_ID, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, 
+        UPDATED, UPDATEDBY, DESCRIPTION, M_PRODUCT_ID, C_PHASE_ID, C_PROJECTPHASE_ID, 
+        HELP, NAME, QTY, STARTDATE, DATECONTRACT, SEQNO) 
         VALUES 
-          (?,?,?,
-           now(),?,now(),?,
-           ?,?,?,?,
-           ?,?,TO_NUMBER(?),TO_NUMBER(?))
+        (?,?,?,now(),?,
+        now(),?,?,?,?,?,
+        ?,?,TO_NUMBER(?), TO_DATE(?), TO_DATE(?), TO_NUMBER(?))
       ]]>
     </Sql>
     <Parameter name="c_project_id"/>
@@ -120,6 +140,8 @@
     <Parameter name="help"/>
     <Parameter name="name"/>
     <Parameter name="qty"/>
+    <Parameter name="startdate"/>
+    <Parameter name="datecontract"/>
     <Parameter name="seqno"/>
   </SqlMethod>
   <SqlMethod name="insertProjectTask" type="preparedStatement" connection="true" return="rowCount">
@@ -127,15 +149,13 @@
     <Sql>
       <![CDATA[
         INSERT INTO C_PROJECTTASK 
-          (C_PROJECTTASK_ID, C_TASK_ID, AD_CLIENT_ID, AD_ORG_ID, 
-           CREATED, CREATEDBY, UPDATED, UPDATEDBY, 
-           SEQNO, NAME, DESCRIPTION, 
-           HELP, M_PRODUCT_ID, C_PROJECTPHASE_ID, QTY) 
+        (C_PROJECTTASK_ID, C_TASK_ID, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, 
+        UPDATED, UPDATEDBY, SEQNO, NAME, DESCRIPTION, HELP, 
+        M_PRODUCT_ID, C_PROJECTPHASE_ID, QTY, STARTDATE, DATECONTRACT) 
         VALUES 
-          (?,?,?,?,
-           now(),?,now(),?,
-           TO_NUMBER(?),?,?,
-           ?,?,?,TO_NUMBER(?))
+        (?,?,?,?,now(),?,
+        now(),?,TO_NUMBER(?),?,?,?,
+        ?,?,TO_NUMBER(?), TO_DATE(?), TO_DATE(?))
       ]]>
     </Sql>
     <Parameter name="c_projecttask_id"/>
@@ -151,5 +171,7 @@
     <Parameter name="m_product_id"/>
     <Parameter name="c_projectphase_id"/>
     <Parameter name="qty"/>
+    <Parameter name="startdate"/>
+    <Parameter name="datecontract"/>
   </SqlMethod>
 </SqlClass>

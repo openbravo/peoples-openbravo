@@ -12378,6 +12378,49 @@ The Service Point is the Warehouse needed in the Purchase Order headers.]]></HEL
 <!--1005800000-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005800000**************--></AD_PROCESS>
 
+<!--1005900000**************--><AD_PROCESS>
+<!--1005900000 AD_PROCESS_ID-->
+<!--1005900000-->              <AD_PROCESS_ID><![CDATA[1005900000]]></AD_PROCESS_ID>
+<!--1005900000 AD_CLIENT_ID-->
+<!--1005900000-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1005900000 AD_ORG_ID-->
+<!--1005900000-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1005900000 ISACTIVE-->
+<!--1005900000-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1005900000 CREATED-->
+<!--1005900000-->              <CREATED><![CDATA[2008-08-28 15:04:18.0]]></CREATED>
+<!--1005900000 CREATEDBY-->
+<!--1005900000-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--1005900000 UPDATED-->
+<!--1005900000-->              <UPDATED><![CDATA[2008-08-28 15:06:11.0]]></UPDATED>
+<!--1005900000 UPDATEDBY-->
+<!--1005900000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1005900000 VALUE-->
+<!--1005900000-->              <VALUE><![CDATA[ReportProjectProgress]]></VALUE>
+<!--1005900000 NAME-->
+<!--1005900000-->              <NAME><![CDATA[Project Progress Report]]></NAME>
+<!--1005900000 DESCRIPTION-->
+<!--1005900000-->              <DESCRIPTION><![CDATA[Report that shows the progress of the projects.]]></DESCRIPTION>
+<!--1005900000 HELP-->
+<!--1005900000-->              <HELP><![CDATA[The Project Progress report permits to track the progress of projects with useful indicators such as the time burned or the completion percentage.]]></HELP>
+<!--1005900000 ACCESSLEVEL-->
+<!--1005900000-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
+<!--1005900000 ISUSERSTARTABLE-->
+<!--1005900000-->              <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
+<!--1005900000 ISREPORT-->
+<!--1005900000-->              <ISREPORT><![CDATA[Y]]></ISREPORT>
+<!--1005900000 ISDIRECTPRINT-->
+<!--1005900000-->              <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
+<!--1005900000 ISBACKGROUND-->
+<!--1005900000-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
+<!--1005900000 ISJASPER-->
+<!--1005900000-->              <ISJASPER><![CDATA[N]]></ISJASPER>
+<!--1005900000 ISEXTERNALSERVICE-->
+<!--1005900000-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
+<!--1005900000 AD_MODULE_ID-->
+<!--1005900000-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1005900000**************--></AD_PROCESS>
+
 <!--D56220370A774B7FA51323BE3C6E0F22**************--><AD_PROCESS>
 <!--D56220370A774B7FA51323BE3C6E0F22 AD_PROCESS_ID-->
 <!--D56220370A774B7FA51323BE3C6E0F22-->              <AD_PROCESS_ID><![CDATA[D56220370A774B7FA51323BE3C6E0F22]]></AD_PROCESS_ID>

@@ -52233,6 +52233,37 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1005900000-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005900000**************--></AD_ELEMENT>
 
+<!--1005900001**************--><AD_ELEMENT>
+<!--1005900001 AD_ELEMENT_ID-->
+<!--1005900001-->              <AD_ELEMENT_ID><![CDATA[1005900001]]></AD_ELEMENT_ID>
+<!--1005900001 AD_CLIENT_ID-->
+<!--1005900001-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1005900001 AD_ORG_ID-->
+<!--1005900001-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1005900001 ISACTIVE-->
+<!--1005900001-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1005900001 CREATED-->
+<!--1005900001-->              <CREATED><![CDATA[2008-08-22 12:35:49.0]]></CREATED>
+<!--1005900001 CREATEDBY-->
+<!--1005900001-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1005900001 UPDATED-->
+<!--1005900001-->              <UPDATED><![CDATA[2008-08-22 13:08:02.0]]></UPDATED>
+<!--1005900001 UPDATEDBY-->
+<!--1005900001-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1005900001 COLUMNNAME-->
+<!--1005900001-->              <COLUMNNAME><![CDATA[Stdduration]]></COLUMNNAME>
+<!--1005900001 NAME-->
+<!--1005900001-->              <NAME><![CDATA[Standard Duration in Days]]></NAME>
+<!--1005900001 PRINTNAME-->
+<!--1005900001-->              <PRINTNAME><![CDATA[Standard Duration in Days]]></PRINTNAME>
+<!--1005900001 DESCRIPTION-->
+<!--1005900001-->              <DESCRIPTION><![CDATA[Standard Duration in Days of a Standard Phase or a Standard Task]]></DESCRIPTION>
+<!--1005900001 HELP-->
+<!--1005900001-->              <HELP><![CDATA[Standard Duration in Days is used to schedule projects through Set Project Type process.]]></HELP>
+<!--1005900001 AD_MODULE_ID-->
+<!--1005900001-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1005900001**************--></AD_ELEMENT>
+
 <!--1006100000**************--><AD_ELEMENT>
 <!--1006100000 AD_ELEMENT_ID-->
 <!--1006100000-->              <AD_ELEMENT_ID><![CDATA[1006100000]]></AD_ELEMENT_ID>

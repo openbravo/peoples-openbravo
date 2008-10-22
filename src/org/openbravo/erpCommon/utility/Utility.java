@@ -30,6 +30,11 @@ import java.util.StringTokenizer;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.Calendar;
+import java.util.Date;
+import java.text.ParseException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.sql.Connection;
 import javax.servlet.ServletException;
 import java.io.*;
@@ -1230,5 +1235,100 @@ public class Utility {
     else return UtilityData.select(conn, userClient, userOrg, tableId, recordId);
   }
   
+  /**
+   * Determines the labor days between two dates
+   * 
+   * @param strDate1: Date 1.
+   * @param strDate2: Date 2.
+   * @param DateFormatter: Format of the dates.
+   * @return strLaborDays as the number of days between strDate1 and strDate2.
+   */
+  public static String calculateLaborDays(String strDate1, String strDate2, DateFormat DateFormatter) throws ParseException {
+    String strLaborDays = "";
+    if (strDate1 != null && strDate1 != "" && strDate2 != null && strDate2 != "") { 
+      Integer LaborDays = 0;
+      if(Utility.isBiggerDate(strDate1, strDate2, DateFormatter)) {
+        do {
+          strDate2 = Utility.addDaysToDate(strDate2, "1", DateFormatter); //Adds a day to the Date 2 until it reaches the Date 1
+          if (!Utility.isWeekendDay(strDate2, DateFormatter)) LaborDays ++; //If it is not a weekend day, it adds a day to the labor days
+        } while (!strDate2.equals(strDate1));
+      }
+      else {
+        do {
+          strDate1 = Utility.addDaysToDate(strDate1, "1", DateFormatter); //Adds a day to the Date 1 until it reaches the Date 2
+          if (!Utility.isWeekendDay(strDate1, DateFormatter)) LaborDays ++; //If it is not a weekend day, it adds a day to the labor days
+        } while (!strDate1.equals(strDate2));
+      }
+      strLaborDays = LaborDays.toString();
+    }
+    return strLaborDays;
+  }
   
+  /**
+   * Adds an integer number of days to a given date 
+   * 
+   * @param strDate: Start date.
+   * @param strDays: Number of days to add.
+   * @param DateFormatter: Format of the date.
+   * @return strFinalDate as the sum of strDate plus strDays.
+   */
+  public static String addDaysToDate(String strDate, String strDays, DateFormat DateFormatter) throws ParseException {
+    String strFinalDate = "";
+    if (strDate != null && strDate != "" && strDays != null && strDays != "") {      
+      Calendar FinalDate = Calendar.getInstance();
+      FinalDate.setTime((Date)DateFormatter.parse(strDate)); //FinalDate equals to strDate
+      FinalDate.add(Calendar.DATE, Integer.parseInt(strDays)); //FinalDate equals to strDate plus one day
+      strFinalDate = DateFormatter.format(FinalDate.getTime());
+    }
+    return strFinalDate;
+  }
+  
+  /**
+   * Determines the format of the date
+   * 
+   * @param vars: Global variables.
+   * @return DateFormatter as the format of the date.
+   */
+  public static DateFormat getDateFormatter (VariablesSecureApp vars) {
+  String strFormat = vars.getSessionValue("#AD_SqlDateFormat").toString();
+  strFormat = strFormat.replace('Y', 'y'); //Java accepts 'yy' for the year
+  strFormat = strFormat.replace('D', 'd'); //Java accepts 'dd' for the day of the date
+  DateFormat DateFormatter = new SimpleDateFormat(strFormat);
+  return DateFormatter;
+  }
+  
+  /**
+   * Determines if a day is a day of the weekend, i.e., Saturday or Sunday
+   * 
+   * @param strDay: Given Date.
+   * @param DateFormatter: Format of the date.
+   * @return true if the date is a Sunday or a Saturday.
+   */
+  public static boolean isWeekendDay(String strDay, DateFormat DateFormatter) throws ParseException{   
+    Calendar Day = Calendar.getInstance();
+    Day.setTime((Date)DateFormatter.parse(strDay));
+    int weekday = Day.get(Calendar.DAY_OF_WEEK); //Gets the number of the day of the week: 1-Sunday, 2-Monday, 3-Tuesday, 4-Wednesday, 5-Thursday, 6-Friday, 7-Saturday
+    if (weekday == 1 || weekday == 7) return true; //1-Sunday, 7-Saturday
+    return false;
+  }
+  
+  /**
+   * Determines if a date 1 is bigger than a date 2 
+   * 
+   * @param strDate1: Date 1.
+   * @param strDate2: Date 2.
+   * @param DateFormatter: Format of the dates.
+   * @return true if strDate1 is bigger than strDate2.
+   */
+  public static boolean isBiggerDate(String strDate1, String strDate2, DateFormat DateFormatter) throws ParseException{   
+    Calendar Date1 = Calendar.getInstance();
+    Date1.setTime((Date)DateFormatter.parse(strDate1));
+    long MillisDate1 = Date1.getTimeInMillis();
+    Calendar Date2 = Calendar.getInstance();    
+    Date2.setTime((Date)DateFormatter.parse(strDate2));
+    long MillisDate2 = Date2.getTimeInMillis();
+    if (MillisDate1 > MillisDate2) return true; //Date 1 is bigger than Date 2
+    return false;
+  }
+
 }

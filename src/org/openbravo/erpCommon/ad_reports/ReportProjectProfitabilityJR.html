@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All portions are Copyright (C) 2001-2008 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -234,6 +234,52 @@ function onloadFunctions() {
                   </tbody>
                   </table>
                 </td>
+                </TR>
+                <TR>
+                  <TD class="TitleCell"><SPAN class="LabelText">From Project Starting Date</SPAN></TD>
+                  <TD class="TextBox_btn_ContentCell">
+                    <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                      <TR>
+                        <TD class="TextBox_ContentCell">
+                          <INPUT dojoType="openbravo:DateTextbox" lowerThan="paramDateTo3" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateFrom3" id="paramDateFrom3" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramDateFrom3");</script>
+                        </TD>
+                        <TD class="FieldButton_bg">
+                          <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Calendar'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;" onclick="showCalendar('frmMain.paramDateFrom3', document.frmMain.paramDateFrom3.value, false);return false;" >
+                          <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                            <TR>
+                              <TD class="FieldButton_bg">
+                                <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></IMG>
+                              </TD>
+                            </TR>
+                          </TABLE>
+                          </a>
+                        </TD>
+                      </TR>
+                    </TABLE>
+                 </TD>
+                  <TD class="TitleCell"></TD>
+                  <TD class="TitleCell"> <SPAN class="LabelText">To Project Starting Date</SPAN></TD>
+                  <TD class="TextBox_btn_ContentCell">
+                    <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                      <TR>
+                        <TD class="TextBox_ContentCell">
+                          <INPUT dojoType="openbravo:DateTextbox" greaterThan="paramDateFrom3" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateTo3" id="paramDateTo3" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramDateTo3");</script>
+                        </TD>
+                        <TD class="FieldButton_bg">
+                          <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Calendar'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;" onclick="showCalendar('frmMain.inpDateTo3', document.frmMain.inpDateTo3.value, false);return false;" >
+                          <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                            <TR>
+                              <TD class="FieldButton_bg">
+                                <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></IMG>
+                              </TD>
+                            </TR>
+                          </TABLE>
+                          </a>
+                        </TD>
+                      </TR>
+                    </TABLE>
+                  </TD>
+                  <TD class="ContentCell"> </TD>
                 </TR>
                 <TR>
                   <TD class="TitleCell"><SPAN class="LabelText">From Project Contract Date</SPAN></TD>
