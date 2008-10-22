@@ -373,6 +373,37 @@
 		</Sql>
 		<Parameter name="ad_client_id"/>
 	</SqlMethod>
+	
+	<SqlMethod name="updateCurrencyDefault" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      UPDATE I_Order  
+      SET C_Currency_ID=(SELECT c.C_Currency_ID FROM C_Currency c, C_AcctSchema a, AD_ClientInfo ci
+      where a.C_Currency_ID=c.C_Currency_ID
+      and a.C_AcctSchema_ID=ci.C_AcctSchema1_ID
+      and ci.AD_Client_ID=I_Order.AD_Client_ID) 
+      WHERE C_Currency_ID IS NULL 
+      AND I_IsImported<>'Y'
+      AND AD_Client_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="ad_client_id"/>
+  	</SqlMethod>
+  	
+  	<SqlMethod name="updateInvalidCurrency" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      UPDATE I_Order 
+      SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||'ERR=Currency,' 
+      WHERE C_Currency_ID IS NULL
+      AND I_IsImported<>'Y'
+      AND AD_Client_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="ad_client_id"/>
+  	</SqlMethod>
 
 	<SqlMethod name="updatePriceListCurrencyDefault" type="preparedStatement" connection="true" return="rowCount">
 		<SqlMethodComment></SqlMethodComment>
