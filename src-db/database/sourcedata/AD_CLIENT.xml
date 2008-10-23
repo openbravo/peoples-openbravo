@@ -37,6 +37,8 @@
 <!--0-->              <ISMULTILINGUALDOCUMENT><![CDATA[Y]]></ISMULTILINGUALDOCUMENT>
 <!--0 ISSMTPAUTHORIZATION-->
 <!--0-->              <ISSMTPAUTHORIZATION><![CDATA[N]]></ISSMTPAUTHORIZATION>
+<!--0 C_CURRENCY_ID-->
+<!--0-->              <C_CURRENCY_ID><![CDATA[102]]></C_CURRENCY_ID>
 <!--0**************--></AD_CLIENT>
 
 </data>

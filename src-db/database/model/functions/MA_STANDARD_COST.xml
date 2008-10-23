@@ -25,6 +25,7 @@
   v_Result NUMBER:= 1;
 
   p_User VARCHAR2(32);
+  p_Currency VARCHAR2(32);
   p_CalcDate              DATE;
   p_Budget_ID             varchar2(32);
   p_ProcessPlan           VARCHAR2(32);
@@ -34,18 +35,20 @@
   Cur_Parameter RECORD;
   Cur_Sequences RECORD;
 
-  v_Client_ID             varchar2(32);
 
 
 BEGIN
 BEGIN --BODY
-  FOR Cur_Parameter IN (SELECT i.ad_client_id, i.Record_ID, i.AD_User_ID, p.ParameterName, p.P_String, p.P_Number, p.P_Date, i.UpdatedBy
-                        FROM AD_PINSTANCE i LEFT JOIN AD_PINSTANCE_PARA p ON i.AD_PInstance_ID=p.AD_PInstance_ID
+  FOR Cur_Parameter IN (SELECT i.ad_client_id, i.Record_ID, i.AD_User_ID, p.ParameterName, 
+                               p.P_String, p.P_Number, p.P_Date, i.UpdatedBy, ad_client.c_currency_id
+                        FROM AD_PINSTANCE i LEFT JOIN AD_PINSTANCE_PARA p ON i.AD_PInstance_ID=p.AD_PInstance_ID,
+                             AD_CLIENT
                         WHERE i.AD_PInstance_ID=p_PInstance_ID
+                          AND i.ad_client_ID = ad_client.ad_client_id
                         ORDER BY p.SeqNo) LOOP
     p_User := Cur_Parameter.AD_User_ID;
     p_CalcDate := now();
-    v_Client_ID:=Cur_Parameter.AD_Client_ID;
+    p_Currency := cur_parameter.C_Currency_ID;
     IF (Cur_Parameter.ParameterName = 'C_Budget_ID') THEN
       p_Budget_ID := Cur_Parameter.P_String;
     ELSIF (Cur_Parameter.ParameterName = 'MA_ProcessPlan_ID') THEN
@@ -86,7 +89,7 @@ BEGIN --BODY
     FROM MA_Sequence
     WHERE MA_Sequence_ID = Cur_Sequences.MA_Sequence_ID;
     IF (v_Calculated = 'N') THEN
-        MA_Standard_Cost_Sequence(Cur_Sequences.MA_Sequence_ID, p_Budget_ID, p_CalcDate, p_User, v_Message);
+        MA_Standard_Cost_Sequence(Cur_Sequences.MA_Sequence_ID, p_Budget_ID, p_CalcDate, p_User, p_Currency, v_Message);
     END IF;
   END LOOP;
 

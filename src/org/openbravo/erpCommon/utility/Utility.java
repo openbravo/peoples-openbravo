@@ -1123,6 +1123,18 @@ public class Utility {
     return (("0123456789abcdefABCDEF".indexOf(c)) >= 0);
   }
   
+  /**
+   * Returns the ID of the base currency of the given client
+   * 
+   * @param strClientId: ID of client.
+   * @return Returns String strBaseCurrencyId with the ID of the base currency.
+   * @throws ServletException 
+   */
+  public static String stringBaseCurrencyId(ConnectionProvider conn, String strClientId) throws ServletException {
+    String strBaseCurrencyId = UtilityData.getBaseCurrencyId(conn, strClientId);
+    return strBaseCurrencyId;
+  }
+  
   @Deprecated
   public static boolean hasFormAccess (ConnectionProvider conn, VariablesSecureApp vars, String process) {
   	return hasFormAccess (conn, vars, process, "");

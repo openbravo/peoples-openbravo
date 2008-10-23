@@ -22,13 +22,18 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2007 Openbravo SL
+* All portions are Copyright (C) 2007-2008 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   v_M_PriceList_Version_ID VARCHAR2(32);
   v_Price                  NUMBER;
+  v_BaseCurrency VARCHAR2(32);
 BEGIN
+  SELECT AD_CLIENT.C_CURRENCY_ID 
+  INTO v_BaseCurrency
+  FROM AD_CLIENT
+  WHERE AD_CLIENT.AD_CLIENT_ID = p_AD_Client_ID;
   SELECT MAX(M_PRICELIST_VERSION_ID)
   INTO v_M_PriceList_Version_ID
   FROM M_PRICELIST_VERSION
@@ -63,12 +68,14 @@ BEGIN
   IF(v_M_PriceList_Version_ID IS NULL) THEN
     RETURN 0;
   ELSE
-    SELECT COALESCE(PRICESTD, 0)
+   SELECT C_CURRENCY_CONVERT(COALESCE(M_PRODUCTPRICE.PRICESTD, 0), M_PRICELIST.C_CURRENCY_ID, v_BaseCurrency, TO_DATE(COALESCE(p_Date, now())), NULL, M_PRODUCTPRICE.AD_CLIENT_ID, M_PRODUCTPRICE.AD_ORG_ID)
     INTO v_Price
-    FROM M_PRODUCTPRICE
-    WHERE M_PRICELIST_VERSION_ID = v_M_PriceList_Version_ID
-      AND AD_CLIENT_ID = p_AD_Client_ID
-      AND M_PRODUCT_ID = p_M_Product_ID;
+    FROM M_PRODUCTPRICE, M_PRICELIST_VERSION, M_PRICELIST
+    WHERE M_PRODUCTPRICE.M_PRICELIST_VERSION_ID = v_M_PriceList_Version_ID
+      AND M_PRODUCTPRICE.AD_CLIENT_ID = p_AD_Client_ID
+      AND M_PRODUCTPRICE.M_PRODUCT_ID = p_M_Product_ID
+      AND M_PRICELIST_VERSION.M_PRICELIST_VERSION_ID = M_PRODUCTPRICE.M_PRICELIST_VERSION_ID
+      AND M_PRICELIST.M_PRICELIST_ID = M_PRICELIST_VERSION.M_PRICELIST_ID;
   END IF;
   IF v_Price IS NULL THEN
     v_Price := 0;

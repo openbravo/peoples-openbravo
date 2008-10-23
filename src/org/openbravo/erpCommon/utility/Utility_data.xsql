@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -96,5 +96,15 @@
         WHERE AD_TAB_ID = ?
       </Sql>
       <Parameter name="adTabId"/>
+   </SqlMethod>
+   <SqlMethod name="getBaseCurrencyId" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT c_currency_id
+	  FROM ad_client
+	  WHERE ad_client_id = ?
+     ]]></Sql>
+    <Parameter name="adClientId"/>
    </SqlMethod>
 </SqlClass>

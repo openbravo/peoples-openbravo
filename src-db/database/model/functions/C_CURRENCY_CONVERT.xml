@@ -69,6 +69,10 @@ BEGIN
   END IF;
   -- Standard Precision
   RETURN C_Currency_Round(p_Amount * v_Rate, p_CurTo_ID, null) ;
+EXCEPTION
+WHEN OTHERS THEN
+  DBMS_OUTPUT.PUT_LINE(SQLERRM) ;
+  RAISE;
 END C_CURRENCY_CONVERT
 ]]></body>
     </function>
