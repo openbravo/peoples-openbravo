@@ -21902,15 +21902,15 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1565 CREATEDBY-->
 <!--1565-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1565 UPDATED-->
-<!--1565-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--1565-->              <UPDATED><![CDATA[2008-10-22 19:32:30.0]]></UPDATED>
 <!--1565 UPDATEDBY-->
-<!--1565-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1565-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1565 COLUMNNAME-->
 <!--1565-->              <COLUMNNAME><![CDATA[PlannedMargin]]></COLUMNNAME>
 <!--1565 NAME-->
 <!--1565-->              <NAME><![CDATA[Planned Margin %]]></NAME>
 <!--1565 PRINTNAME-->
-<!--1565-->              <PRINTNAME><![CDATA[Planned Margin]]></PRINTNAME>
+<!--1565-->              <PRINTNAME><![CDATA[Planned Margin %]]></PRINTNAME>
 <!--1565 DESCRIPTION-->
 <!--1565-->              <DESCRIPTION><![CDATA[Project's planned margin as a percentage]]></DESCRIPTION>
 <!--1565 HELP-->
@@ -45599,15 +45599,15 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800696 CREATEDBY-->
 <!--800696-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800696 UPDATED-->
-<!--800696-->              <UPDATED><![CDATA[2008-06-03 19:05:28.0]]></UPDATED>
+<!--800696-->              <UPDATED><![CDATA[2008-10-22 19:33:33.0]]></UPDATED>
 <!--800696 UPDATEDBY-->
 <!--800696-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800696 COLUMNNAME-->
 <!--800696-->              <COLUMNNAME><![CDATA[Expmargin]]></COLUMNNAME>
 <!--800696 NAME-->
-<!--800696-->              <NAME><![CDATA[Planned Margin]]></NAME>
+<!--800696-->              <NAME><![CDATA[Expenses Margin %]]></NAME>
 <!--800696 PRINTNAME-->
-<!--800696-->              <PRINTNAME><![CDATA[Expected margin]]></PRINTNAME>
+<!--800696-->              <PRINTNAME><![CDATA[Expected Margin %]]></PRINTNAME>
 <!--800696 HELP-->
 <!--800696-->              <HELP><![CDATA[Expected margin for expenses.]]></HELP>
 <!--800696 AD_MODULE_ID-->
@@ -45686,15 +45686,15 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800699 CREATEDBY-->
 <!--800699-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800699 UPDATED-->
-<!--800699-->              <UPDATED><![CDATA[2008-06-03 18:58:12.0]]></UPDATED>
+<!--800699-->              <UPDATED><![CDATA[2008-10-22 19:33:03.0]]></UPDATED>
 <!--800699 UPDATEDBY-->
 <!--800699-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800699 COLUMNNAME-->
 <!--800699-->              <COLUMNNAME><![CDATA[Servmargin]]></COLUMNNAME>
 <!--800699 NAME-->
-<!--800699-->              <NAME><![CDATA[Service Margin]]></NAME>
+<!--800699-->              <NAME><![CDATA[Service Margin %]]></NAME>
 <!--800699 PRINTNAME-->
-<!--800699-->              <PRINTNAME><![CDATA[Service margin]]></PRINTNAME>
+<!--800699-->              <PRINTNAME><![CDATA[Service Margin %]]></PRINTNAME>
 <!--800699 HELP-->
 <!--800699-->              <HELP><![CDATA[Expected service margin. Real number will be calculated from actual service revenue and costs.]]></HELP>
 <!--800699 AD_MODULE_ID-->
