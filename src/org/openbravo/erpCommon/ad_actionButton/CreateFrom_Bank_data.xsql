@@ -79,8 +79,8 @@
     <Parameter name="paymentrule" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)" text=" AND p.PAYMENTRULE = ? "/>
     <Parameter name="planneddateFrom" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)"><![CDATA[ AND p.DATEPLANNED >= TO_DATE(?) ]]></Parameter>
     <Parameter name="planneddateTo" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)"><![CDATA[ AND p.DATEPLANNED <= TO_DATE(?) ]]></Parameter>
-    <Parameter name="amountFrom" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)"><![CDATA[ AND p.AMOUNT >= ? ]]></Parameter>
-    <Parameter name="amountTo" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)"><![CDATA[ AND p.AMOUNT <= ? ]]></Parameter>
+    <Parameter name="amountFrom" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)"><![CDATA[ AND p.AMOUNT >= TO_NUMBER(?) ]]></Parameter>
+    <Parameter name="amountTo" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)"><![CDATA[ AND p.AMOUNT <= TO_NUMBER(?) ]]></Parameter>
     <Parameter name="isreceipt" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)" text=" AND p.ISRECEIPT = ? "/>
     <Parameter name="cBankaccountId" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)" text=" AND p.C_BankAccount_ID = ? "/>
     <Parameter name="adOrgId" optional="true" after="AND NOT EXISTS (SELECT * FROM C_BankStatementLine l WHERE p.C_DEBT_Payment_ID=l.C_DEBT_PAYMENT_ID)" text=" AND p.AD_ORG_ID = ? "/>
@@ -117,8 +117,8 @@
     <Parameter name="paymentrule" optional="true" after="AND 1=1" text=" AND p.PAYMENTRULE = ? "/>
     <Parameter name="planneddateFrom" optional="true" after="AND 1=1"><![CDATA[ AND p.DATEPLANNED >= TO_DATE(?) ]]></Parameter>
     <Parameter name="planneddateTo" optional="true" after="AND 1=1"><![CDATA[ AND p.DATEPLANNED <= TO_DATE(?) ]]></Parameter>
-    <Parameter name="amountFrom" optional="true" after="AND 1=1"><![CDATA[ AND p.AMOUNT >= ? ]]></Parameter>
-    <Parameter name="amountTo" optional="true" after="AND 1=1"><![CDATA[ AND p.AMOUNT <= ? ]]></Parameter>
+    <Parameter name="amountFrom" optional="true" after="AND 1=1"><![CDATA[ AND p.AMOUNT >= TO_NUMBER(?) ]]></Parameter>
+    <Parameter name="amountTo" optional="true" after="AND 1=1"><![CDATA[ AND p.AMOUNT <= TO_NUMBER(?) ]]></Parameter>
     <Parameter name="isreceipt" optional="true" after="AND 1=1" text=" AND p.ISRECEIPT = ? "/>
     <Parameter name="cBankaccountId" optional="true" after="AND 1=1" text=" AND p.C_BankAccount_ID = ? "/>
     <Parameter name="adOrgId" optional="true" after="AND 1=1" text=" AND p.AD_ORG_ID = ? "/>
