@@ -44,6 +44,9 @@ bbdd.verbosity=INFO
 application.version=2.40
 development.environment.id=1
 
+# Root directory, used by modularity
+source.path=
+
 # External Services
 pentahoServer=
 
