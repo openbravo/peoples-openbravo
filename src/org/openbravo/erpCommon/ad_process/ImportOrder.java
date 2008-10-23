@@ -120,6 +120,11 @@ public class ImportOrder extends ImportProcess {
       if (log4j.isDebugEnabled()) log4j.debug("Updated PriceList with null currency = " + no);
       no = ImportOrderData.updatePriceListError(con, conn, getAD_Client_ID());
       if (log4j.isDebugEnabled()) log4j.debug("Invalid PriceList errors = " + no);
+      //  Set Currency
+      no = ImportOrderData.updateCurrencyDefaultFromPriceList(con, conn, getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("ImportOrder Set Currency Default =" + no);
+      no = ImportOrderData.updateInvalidCurrency(con, conn, getAD_Client_ID());
+      if (log4j.isDebugEnabled()) log4j.debug("ImportOrder Invalid Currency =" + no);      
       // Payment Term
       no = ImportOrderData.updatePaymentTerm(con, conn, getAD_Client_ID());
       if (log4j.isDebugEnabled()) log4j.debug("Updated PaymentTerm = " + no);
@@ -390,7 +395,12 @@ public class ImportOrder extends ImportProcess {
             String tmpCurrency = COrderData.selectCurrency(conn, vars.getUser(), data[i].cBpartnerId);
             corder.isdiscountprinted = "N";
             if (log4j.isDebugEnabled()) log4j.debug("stablishing default values");
-            corder.cCurrencyId = (tmpCurrency == null || tmpCurrency.equals(""))?"102":tmpCurrency; // euro as default
+            //corder.cCurrencyId = (tmpCurrency == null || tmpCurrency.equals(""))?"102":tmpCurrency; // euro as default
+            if (tmpCurrency != null && !tmpCurrency.equals("")){
+              corder.cCurrencyId = tmpCurrency;
+            }else{
+              corder.cCurrencyId = data[i].cCurrencyId;
+            }
             corder.paymentrule = data1[0].paymentrule.equals("")?"":data1[0].paymentrule;
             if (data1[0].paymentrule != null && !data1[0].paymentrule.equals("")) {
               corder.paymentrule = data1[0].paymentrule;
