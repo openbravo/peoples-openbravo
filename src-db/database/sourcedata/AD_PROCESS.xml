@@ -12392,13 +12392,13 @@ The Service Point is the Warehouse needed in the Purchase Order headers.]]></HEL
 <!--1005900000 CREATEDBY-->
 <!--1005900000-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1005900000 UPDATED-->
-<!--1005900000-->              <UPDATED><![CDATA[2008-08-28 15:06:11.0]]></UPDATED>
+<!--1005900000-->              <UPDATED><![CDATA[2008-10-23 12:31:47.0]]></UPDATED>
 <!--1005900000 UPDATEDBY-->
 <!--1005900000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005900000 VALUE-->
 <!--1005900000-->              <VALUE><![CDATA[ReportProjectProgress]]></VALUE>
 <!--1005900000 NAME-->
-<!--1005900000-->              <NAME><![CDATA[Project Progress Report]]></NAME>
+<!--1005900000-->              <NAME><![CDATA[Project Progress]]></NAME>
 <!--1005900000 DESCRIPTION-->
 <!--1005900000-->              <DESCRIPTION><![CDATA[Report that shows the progress of the projects.]]></DESCRIPTION>
 <!--1005900000 HELP-->
