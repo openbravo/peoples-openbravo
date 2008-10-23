@@ -444,12 +444,18 @@
       AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,
       Value,Name,Description,DocumentNote,Help,
       UPC,SKU,C_UOM_ID,IsSummary,M_Product_Category_ID,C_TaxCategory_ID,
-      ProductType,ImageURL,DescriptionURL) 
+      ProductType, Classification,
+      Volume, Weight, ShelfWidth,ShelfHeight,
+      ShelfDepth, UnitsPerPallet, Discontinued, 
+      DiscontinuedBy, ImageURL,DescriptionURL) 
       SELECT ?,
       AD_Client_ID,AD_Org_ID,'Y',now(),CreatedBy,now(),UpdatedBy,
       Value,Name,Description,DocumentNote,Help,
       UPC,SKU,C_UOM_ID,'N',M_Product_Category_ID,? ,
-      ProductType,ImageURL,DescriptionURL 
+      ProductType, Classification,
+      Volume, Weight, ShelfWidth,ShelfHeight,
+      ShelfDepth, UnitsPerPallet, Discontinued, 
+      DiscontinuedBy, ImageURL,DescriptionURL 
       FROM I_Product 
       WHERE I_Product_ID=?
       ]]>
@@ -520,6 +526,12 @@
       DiscontinuedBy= 
       (SELECT DiscontinuedBy
       FROM I_Product WHERE I_Product_ID=?) ,
+      ImageURL= 
+      (SELECT ImageURL
+      FROM I_Product WHERE I_Product_ID=?) ,
+      DescriptionURL= 
+      (SELECT DescriptionURL
+      FROM I_Product WHERE I_Product_ID=?) ,            
       Updated=  now() ,
       UpdatedBy= 
       (SELECT UpdatedBy
@@ -527,6 +539,8 @@
       WHERE M_Product_ID=?
       ]]>
     </Sql>
+    <Parameter name="IProductID"/>
+    <Parameter name="IProductID"/>
     <Parameter name="IProductID"/>
     <Parameter name="IProductID"/>
     <Parameter name="IProductID"/>
