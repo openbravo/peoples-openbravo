@@ -73,9 +73,9 @@
     <Parameter name="planneddateFrom" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID "><![CDATA[ AND DP.DATEPLANNED >= TO_DATE(?) ]]></Parameter>
     <Parameter name="planneddateTo" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID "><![CDATA[ AND DP.DATEPLANNED <= TO_DATE(?) ]]></Parameter>
     <Parameter name="isreceipt" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID " text=" AND DP.ISRECEIPT = ? "/>
-    <Parameter name="amountFrom" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID "><![CDATA[ AND DP.AMOUNT >= ? ]]></Parameter>
-    <Parameter name="amountTo" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID "><![CDATA[ AND DP.AMOUNT <= ? ]]></Parameter>
-    <Parameter name="amount" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID "><![CDATA[ AND ABS(DP.AMOUNT) < ? ]]></Parameter>
+    <Parameter name="amountFrom" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID "><![CDATA[ AND DP.AMOUNT >= TO_NUMBER(?) ]]></Parameter>
+    <Parameter name="amountTo" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID "><![CDATA[ AND DP.AMOUNT <= TO_NUMBER(?) ]]></Parameter>
+    <Parameter name="amount" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID "><![CDATA[ AND ABS(DP.AMOUNT) < TO_NUMBER(?) ]]></Parameter>
     <Parameter name="statusFrom" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID "><![CDATA[ AND DP.STATUS = ? ]]></Parameter>
     <Parameter name="adOrgId" optional="true" after="AND DP.C_CURRENCY_ID = C.C_CURRENCY_ID " text=" AND DP.AD_Org_ID = ? "/>
   </SqlMethod>
