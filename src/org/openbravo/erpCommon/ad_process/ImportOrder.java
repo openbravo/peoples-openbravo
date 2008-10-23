@@ -109,11 +109,6 @@ public class ImportOrder extends ImportProcess {
       if (log4j.isDebugEnabled()) log4j.debug("Updated IsSOTrx=Y = " + no);
       no = ImportOrderData.updateIsSOTrxN(con, conn, getAD_Client_ID());
       if (log4j.isDebugEnabled()) log4j.debug("Updated IsSOTrx=N = " + no);
-      //  Set Currency
-      no = ImportOrderData.updateCurrencyDefault(con, conn, getAD_Client_ID());
-      if (log4j.isDebugEnabled()) log4j.debug("ImportOrder Set Currency Default =" + no);
-      no = ImportOrderData.updateInvalidCurrency(con, conn, getAD_Client_ID());
-      if (log4j.isDebugEnabled()) log4j.debug("ImportOrder Invalid Currency =" + no);      
       // Price List
       no = ImportOrderData.updatePriceListCurrencyDefault(con, conn, getAD_Client_ID());
       if (log4j.isDebugEnabled()) log4j.debug("Updated PriceList by currency (default) = " + no);
@@ -392,13 +387,10 @@ public class ImportOrder extends ImportProcess {
               corder.datepromised = data[i].datepromised;
             if (log4j.isDebugEnabled()) log4j.debug("getting bp values as default");
             SEOrderBPartnerData[] data1 = SEOrderBPartnerData.select(conn, data[i].cBpartnerId);
-            //String tmpCurrency = COrderData.selectCurrency(conn, vars.getUser(), data[i].cBpartnerId);             
+            String tmpCurrency = COrderData.selectCurrency(conn, vars.getUser(), data[i].cBpartnerId);
             corder.isdiscountprinted = "N";
             if (log4j.isDebugEnabled()) log4j.debug("stablishing default values");
-            //corder.cCurrencyId = (tmpCurrency == null || tmpCurrency.equals(""))?"102":tmpCurrency; // euro as default
-            corder.cCurrencyId = (data[i].cCurrencyId == null || data[i].cCurrencyId.equals("")) ? "102" : data[i].cCurrencyId;
-            
-            
+            corder.cCurrencyId = (tmpCurrency == null || tmpCurrency.equals(""))?"102":tmpCurrency; // euro as default
             corder.paymentrule = data1[0].paymentrule.equals("")?"":data1[0].paymentrule;
             if (data1[0].paymentrule != null && !data1[0].paymentrule.equals("")) {
               corder.paymentrule = data1[0].paymentrule;
