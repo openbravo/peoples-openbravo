@@ -113,10 +113,14 @@ BEGIN
     INTO v_OrgName
     FROM ad_org
     WHERE ad_org.ad_org_id = p_Org_ID;
-    v_Message:='@NoConversionRate@' || ' ' || v_CurrencyFrom || ' '
-	|| '@to@' || ' ' || v_CurrencyTo || ' ' || '@ForDate@' || ' ''' || TO_CHAR(v_ConvDate)
+    IF (v_CurrencyFrom IS NULL OR v_CurrencyTo IS NULL OR v_ConvDate IS NULL OR v_ClientName IS NULL OR v_OrgName IS NULL) THEN
+      RETURN NULL;
+    ELSE
+      v_Message:='@NoConversionRate@' || ' ' || v_CurrencyFrom || ' '
+        || '@to@' || ' ' || v_CurrencyTo || ' ' || '@ForDate@' || ' ''' || TO_CHAR(v_ConvDate)
 	|| ''', ' || '@Client@' || ' ''' || v_ClientName || ''' ' || '@And@' || ' ' || '@ACCS_AD_ORG_ID_D@' || ' ''' || v_OrgName || '''.';
-    RAISE_APPLICATION_ERROR(-20000, v_Message);
+      RAISE_APPLICATION_ERROR(-20000, v_Message);
+    END IF;
   END IF;
   -- Currency From was EMU
   RETURN v_Rate;
