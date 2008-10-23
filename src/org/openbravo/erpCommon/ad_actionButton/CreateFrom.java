@@ -706,7 +706,24 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
         strIsReceipt = isSOTrx;
       }
     } else {
-      data = CreateFromDPManagementData.select(this, vars.getLanguage(), strMarcarTodos,  Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule, strPlannedDateFrom, strPlannedDateTo, strIsReceipt, strAmountFrom, strAmountTo, strTotalAmount, strStatusFrom, strOrg);
+        int numRows = Integer.valueOf(CreateFromDPManagementData.countRows(this, Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule, strPlannedDateFrom, strPlannedDateTo, strIsReceipt, strAmountFrom, strAmountTo, strTotalAmount, strStatusFrom, strOrg));
+        int maxRows = Integer.valueOf(vars.getSessionValue("#RECORDRANGEINFO"));
+
+        if(numRows > maxRows) {
+          String strMsg = Utility.messageBD(this, "MAX_RECORDS_REACHED", vars.getLanguage());
+          strMsg = strMsg.replaceAll("%returned%", String.valueOf(numRows));
+          strMsg = strMsg.replaceAll("%shown%", String.valueOf(maxRows));
+          xmlDocument.setParameter("messageType", "WARNING");
+          xmlDocument.setParameter("messageTitle", "");
+          xmlDocument.setParameter("messageMessage", strMsg);
+        }
+
+        // different limit/offset syntax in oracle and postgresql
+        if(this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
+            data = CreateFromDPManagementData.select(this, vars.getLanguage(), "ROWNUM", strMarcarTodos,  Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule, strPlannedDateFrom, strPlannedDateTo, strIsReceipt, strAmountFrom, strAmountTo, strTotalAmount, strStatusFrom, strOrg, String.valueOf(maxRows), null);
+        } else {
+            data = CreateFromDPManagementData.select(this, vars.getLanguage(), "1", strMarcarTodos,  Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule, strPlannedDateFrom, strPlannedDateTo, strIsReceipt, strAmountFrom, strAmountTo, strTotalAmount, strStatusFrom, strOrg, null, String.valueOf(maxRows));
+        }
 
       if (log4j.isDebugEnabled()) log4j.debug("DPSelect: lineas"+data.length+"client "+Utility.getContext(this, vars, "#User_Client", strWindowId)+ "userOrg "+Utility.getContext(this, vars, "#User_Org", strWindowId)+ " partner:"+strcBPartner+" rule:"+strPaymentRule+ "df"+strPlannedDateFrom+" dt:"+strPlannedDateTo+" rec:"+strIsReceipt+"amtF:"+strAmountFrom+"amt T:"+strAmountTo+"ttlamt:"+strTotalAmount+"org "+strOrg);
     }
