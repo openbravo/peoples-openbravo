@@ -23,7 +23,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT I_Product_ID, M_Product_ID, C_BPartner_ID, 0 as C_TaxCategory_ID, '' AS ID, '' AS NAME
+      SELECT I_Product_ID, M_Product_ID, C_BPartner_ID, '0' as C_TaxCategory_ID, '' AS ID, '' AS NAME
       FROM I_Product WHERE I_IsImported='N'
       AND AD_Client_ID = ?
       ]]>
@@ -214,7 +214,7 @@
       UPDATE I_Product  
       SET X12DE355 = COALESCE ((SELECT MIN(X12DE355) 
                FROM C_UOM u WHERE u.IsDefault='Y' 
-               AND u.AD_Client_ID IN (0,I_Product.AD_Client_ID) 
+               AND u.AD_Client_ID IN ('0',I_Product.AD_Client_ID) 
                ), 'EA')
       WHERE X12DE355 IS NULL AND C_UOM_ID IS NULL
       AND I_IsImported<>'Y'
