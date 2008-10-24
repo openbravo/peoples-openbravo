@@ -224,6 +224,7 @@ public class ProductComplete extends HttpSecureAppServlet {
 	  SQLReturnObject[] data = null;
 	  Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();	  
 	  String[] colNames = {"value", "name","locator","qty", "c_uom1", "attribute", "qtyorder", "c_uom2", "qty_ref", "quantityorder_ref", "rowkey"};
+	  boolean[] colSortable = {true,true,false,true,false,true,true,false,false,false,false};
 //	  String[] gridNames = {"Key", "Name","Disp. Credit","Credit used", "Contact", "Phone no.", "Zip", "City", "Income", "c_bpartner_id", "c_bpartner_contact_id", "c_bpartner_location_id", "rowkey"};
 	  String[] colWidths = {"73", "86", "166", "62", "32", "145", "104", "67", "97", "167", "0"};
 	  for(int i=0; i < colNames.length; i++) {
@@ -239,6 +240,7 @@ public class ProductComplete extends HttpSecureAppServlet {
 	      dataAux.setData("name", (name.startsWith("PCS_")?colNames[i]:name));
 	      dataAux.setData("type", "string");
 	      dataAux.setData("width", colWidths[i]);
+	      dataAux.setData("issortable", colSortable[i]?"true":"false");
 	      vAux.addElement(dataAux);
 	  }
 	  data = new SQLReturnObject[vAux.size()];
@@ -255,14 +257,17 @@ public class ProductComplete extends HttpSecureAppServlet {
     String title = "";
     String description = "";
     String strNumRows = "0";
-    
+
+    // strip out single '%' parameters used with like
+    strKey = strKey.equals("%")?"":strKey;
+    strName = strName.equals("%")?"":strName;
+
     if (headers!=null) {
       try{
-	  	if(strNewFilter.equals("1") || strNewFilter.equals("")) { // New filter or first load    	
+	  	if(strNewFilter.equals("1") || strNewFilter.equals("")) { // New filter or first load
       		if (strStore.equals("Y")) {
-        		if (vars.getLanguage().equals("en_US")) data = ProductCompleteData.select(this, "1", strKey, strName, strWarehouse, vars.getRole(), strBpartner, strClients, strOrderBy, "", "");
-        		else data = ProductCompleteData.selecttrl(this, "1", vars.getLanguage(), strKey, strName, strWarehouse, vars.getRole(), strBpartner, strClients, strOrderBy, "", "");
-    			strNumRows = String.valueOf(data.length);
+        		// countRows is the same in en_US and +trl case, so a single countRows method is used
+      			strNumRows = ProductCompleteData.countRows(this, strKey, strName, strWarehouse, vars.getRole(), strBpartner, strClients);
       		}else {
         		if (vars.getLanguage().equals("en_US")) { 
         			strNumRows = ProductCompleteData.countRowsNotStored(this, strKey, strName, strBpartner, strClients, strOrgs);
@@ -270,7 +275,6 @@ public class ProductComplete extends HttpSecureAppServlet {
         			strNumRows = ProductCompleteData.countRowsNotStoredtrl(this, vars.getLanguage(), strKey, strName, strBpartner, strClients, strOrgs);
         		}
       		}
-
 	  		vars.setSessionValue("ProductComplete.numrows", strNumRows);
 	  	}
   		else {
@@ -284,19 +288,18 @@ public class ProductComplete extends HttpSecureAppServlet {
 
       		if (strStore.equals("Y")) {
         		if (vars.getLanguage().equals("en_US")) data = ProductCompleteData.select(this, "ROWNUM", strKey, strName, strWarehouse, vars.getRole(), strBpartner, strClients, strOrderBy, oraLimit, "");
-        		else data = ProductCompleteData.selecttrl(this, "ROWNUM", vars.getLanguage(), strKey, strName, strWarehouse, vars.getRole(), strBpartner, strClients, strOrderBy, oraLimit, "");
+        		else data = ProductCompleteData.selecttrl(this, vars.getLanguage(), "ROWNUM", strKey, strName, strWarehouse, vars.getRole(), strBpartner, strClients, strOrderBy, oraLimit, "");
       		}else {
         		if (vars.getLanguage().equals("en_US")) data = ProductCompleteData.selectNotStored(this, "ROWNUM", strKey, strName, strBpartner, strClients, strOrgs, strOrderBy, oraLimit, "");
         		else data = ProductCompleteData.selectNotStoredtrl(this, "ROWNUM", vars.getLanguage(), strKey, strName, strBpartner, strClients, strOrgs, strOrderBy, oraLimit, "");
       		}
-    	    	
     	}else {
     		String pgLimit = strPageSize + " OFFSET " + strOffset;
     		//data = BusinessPartnerData.select(this, "1", Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg), strKey, strName, strContact, strZIP, strProvincia, (strBpartners.equals("costumer")?"clients":""), (strBpartners.equals("vendor")?"vendors":""), strCity, strOrderBy, "", pgLimit); 	
 
       		if (strStore.equals("Y")) {
         		if (vars.getLanguage().equals("en_US")) data = ProductCompleteData.select(this, "1", strKey, strName, strWarehouse, vars.getRole(), strBpartner, strClients, strOrderBy, "", pgLimit);
-        		else data = ProductCompleteData.selecttrl(this, "1", vars.getLanguage(), strKey, strName, strWarehouse, vars.getRole(), strBpartner, strClients, strOrderBy, "", pgLimit);
+        		else data = ProductCompleteData.selecttrl(this, vars.getLanguage(), "1", strKey, strName, strWarehouse, vars.getRole(), strBpartner, strClients, strOrderBy, "", pgLimit);
       		}else {
         		if (vars.getLanguage().equals("en_US")) data = ProductCompleteData.selectNotStored(this, "1", strKey, strName, strBpartner, strClients, strOrgs, strOrderBy, "", pgLimit);
         		else data = ProductCompleteData.selectNotStoredtrl(this, "1", vars.getLanguage(), strKey, strName, strBpartner, strClients, strOrgs, strOrderBy, "", pgLimit);
