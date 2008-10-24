@@ -163,7 +163,7 @@
       <![CDATA[
         insert into C_DP_ManagementLine (C_DP_MANAGEMENTLINE_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, 
                                          CREATED, CREATEDBY, UPDATED, UPDATEDBY, C_DP_MANAGEMENT_ID, STATUS_TO,C_DEBT_PAYMENT_ID, LINE)
-        SELECT TO_NUMBER(?),TO_NUMBER(?), ad_org_id,'Y', now(), TO_NUMBER(?), now(), TO_NUMBER(?), TO_NUMBER(?),?,C_DEBT_PAYMENT_ID, TO_NUMBER(?)
+        SELECT ?,?, ad_org_id,'Y', now(), ?, now(), ?, ?,?,C_DEBT_PAYMENT_ID, TO_NUMBER(?)
         FROM C_DEBT_PAYMENT
         WHERE C_DEBT_PAYMENT_ID = ?
 
