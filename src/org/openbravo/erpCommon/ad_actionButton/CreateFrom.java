@@ -597,8 +597,27 @@ public class CreateFrom extends HttpSecureAppServlet {
      
       // Modified 26-06-07
       if (log4j.isDebugEnabled()) log4j.debug("strIsReceipt: "+ strIsReceipt);
-     
-        data = CreateFromSettlementData.select(this, vars.getLanguage(), strMarcarTodos, strAutoCalcSelect, Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule, strPlannedDateFrom, strPlannedDateTo, strIsReceipt, strAmountFrom, strAmountTo, strTotalAmount, strOrg);
+      
+      int numRows = Integer.valueOf(CreateFromSettlementData.countRows(this, Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule, strPlannedDateFrom, strPlannedDateTo, strIsReceipt, strAmountFrom, strAmountTo, strTotalAmount, strOrg));
+      int maxRows = Integer.valueOf(vars.getSessionValue("#RECORDRANGEINFO"));
+      
+      if(numRows > maxRows) {
+    	  OBError obError = new OBError();
+    	  String strMsg = Utility.messageBD(this, "MAX_RECORDS_REACHED", vars.getLanguage());
+    	  strMsg = strMsg.replaceAll("%returned%", String.valueOf(numRows));
+    	  strMsg = strMsg.replaceAll("%shown%", String.valueOf(maxRows));
+    	  obError.setMessage(strMsg);
+    	  obError.setTitle("");
+    	  obError.setType("WARNING");
+    	  vars.setMessage("CreateFrom", obError);    	
+      }
+      
+      if(this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {    	  
+    	  data = CreateFromSettlementData.select(this, vars.getLanguage(), strMarcarTodos, "ROWNUM", strAutoCalcSelect, Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule, strPlannedDateFrom, strPlannedDateTo, strIsReceipt, strAmountFrom, strAmountTo, strTotalAmount, strOrg, String.valueOf(maxRows), null);
+      } else {
+    	  data = CreateFromSettlementData.select(this, vars.getLanguage(), strMarcarTodos, "1", strAutoCalcSelect, Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule, strPlannedDateFrom, strPlannedDateTo, strIsReceipt, strAmountFrom, strAmountTo, strTotalAmount, strOrg, null, String.valueOf(maxRows));
+      }
+      
     }
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
