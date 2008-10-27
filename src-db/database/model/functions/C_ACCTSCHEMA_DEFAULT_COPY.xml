@@ -116,13 +116,13 @@
       INSERT
       INTO M_Product_Category_Acct
         (
-          M_Product_Category_ID, C_AcctSchema_ID, AD_Client_ID, AD_Org_ID,
+          M_Product_Category_Acct_ID, M_Product_Category_ID, C_AcctSchema_ID, AD_Client_ID, AD_Org_ID,
           IsActive, Created, CreatedBy, Updated,
           UpdatedBy, P_Revenue_Acct, P_Expense_Acct, P_Asset_Acct,
           P_CoGs_Acct, P_PurchasePriceVariance_Acct, P_InvoicePriceVariance_Acct,
           P_TradeDiscountRec_Acct, P_TradeDiscountGrant_Acct
         )
-      SELECT p.M_Product_Category_ID, Cur_Acct.C_AcctSchema_ID, p.AD_Client_ID, p.AD_Org_ID,
+      SELECT get_uuid(), p.M_Product_Category_ID, Cur_Acct.C_AcctSchema_ID, p.AD_Client_ID, p.AD_Org_ID,
         'Y', now(), '0', now(),
         '0', Cur_Acct.P_Revenue_Acct, Cur_Acct.P_Expense_Acct,
         Cur_Acct.P_Asset_Acct, Cur_Acct.P_CoGs_Acct, Cur_Acct.P_PurchasePriceVariance_Acct,
@@ -183,7 +183,7 @@
           RealizedLoss_Acct, NotInvoicedReceipts_Acct, UnEarnedRevenue_Acct, NotInvoicedRevenue_Acct,
           NotInvoicedReceivables_Acct, Status
         )
-      SELECT AD_SEQUENCE_NEXTNO('C_BP_Group_Acct'), x.C_BP_Group_ID,
+      SELECT get_uuid(), x.C_BP_Group_ID,
         Cur_Acct.C_AcctSchema_ID, x.AD_Client_ID, x.AD_Org_ID, 'Y',
         now(), '0', now(), '0',
         Cur_Acct.C_Receivable_Acct, Cur_Acct.C_PrePayment_Acct, Cur_Acct.V_Liability_Acct, Cur_Acct.V_Liability_Services_Acct,
@@ -224,11 +224,11 @@
       INSERT
       INTO C_BP_Employee_Acct
         (
-          C_BPartner_ID, C_AcctSchema_ID, AD_Client_ID, AD_Org_ID,
+          C_BP_Employee_Acct_Id, C_BPartner_ID, C_AcctSchema_ID, AD_Client_ID, AD_Org_ID,
           IsActive, Created, CreatedBy, Updated,
           UpdatedBy, E_Expense_Acct, E_PrePayment_Acct
         )
-      SELECT x.C_BPartner_ID,
+      SELECT get_uuid(), x.C_BPartner_ID,
         Cur_Acct.C_AcctSchema_ID, x.AD_Client_ID, x.AD_Org_ID, 'Y',
         now(), '0', now(), '0',
         Cur_Acct.E_Expense_Acct, Cur_Acct.E_PrePayment_Acct
@@ -267,12 +267,12 @@
       INSERT
       INTO M_Warehouse_Acct
         (
-          M_Warehouse_ID, C_AcctSchema_ID, AD_Client_ID, AD_Org_ID,
+          M_Warehouse_Acct_ID, M_Warehouse_ID, C_AcctSchema_ID, AD_Client_ID, AD_Org_ID,
           IsActive, Created, CreatedBy, Updated,
           UpdatedBy, W_Inventory_Acct, W_Differences_Acct, W_Revaluation_Acct,
           W_InvActualAdjust_Acct
         )
-      SELECT x.M_Warehouse_ID,
+      SELECT get_uuid(), x.M_Warehouse_ID,
         Cur_Acct.C_AcctSchema_ID, x.AD_Client_ID, x.AD_Org_ID, 'Y',
         now(), '0', now(), '0',
         Cur_Acct.W_Inventory_Acct, Cur_Acct.W_Differences_Acct, Cur_Acct.W_Revaluation_Acct, Cur_Acct.W_InvActualAdjust_Acct
@@ -309,11 +309,11 @@
       INSERT
       INTO C_Project_Acct
         (
-          C_Project_ID, C_AcctSchema_ID, AD_Client_ID, AD_Org_ID,
+          C_Project_Acct_ID, C_Project_ID, C_AcctSchema_ID, AD_Client_ID, AD_Org_ID,
           IsActive, Created, CreatedBy, Updated,
           UpdatedBy, PJ_Asset_Acct, PJ_WIP_Acct
         )
-      SELECT x.C_Project_ID,
+      SELECT get_uuid(), x.C_Project_ID,
         Cur_Acct.C_AcctSchema_ID, x.AD_Client_ID, x.AD_Org_ID, 'Y',
         now(), '0', now(), '0',
         Cur_Acct.PJ_Asset_Acct, Cur_Acct.PJ_WIP_Acct
@@ -350,12 +350,12 @@
       INSERT
       INTO C_Tax_Acct
         (
-          C_Tax_ID, C_AcctSchema_ID, AD_Client_ID, AD_Org_ID,
+          C_Tax_Acct_ID, C_Tax_ID, C_AcctSchema_ID, AD_Client_ID, AD_Org_ID,
           IsActive, Created, CreatedBy, Updated,
           UpdatedBy, T_Due_Acct, T_Liability_Acct, T_Credit_Acct,
           T_Receivables_Acct, T_Expense_Acct
         )
-      SELECT x.C_Tax_ID, Cur_Acct.C_AcctSchema_ID, x.AD_Client_ID, x.AD_Org_ID,
+      SELECT get_uuid(), x.C_Tax_ID, Cur_Acct.C_AcctSchema_ID, x.AD_Client_ID, x.AD_Org_ID,
         'Y', now(), '0', now(), '0',
         Cur_Acct.T_Due_Acct, Cur_Acct.T_Liability_Acct, Cur_Acct.T_Credit_Acct, Cur_Acct.T_Receivables_Acct,
         Cur_Acct.T_Expense_Acct
@@ -402,13 +402,13 @@
       INSERT
       INTO C_BankAccount_Acct
         (
-          C_BankAccount_ID, C_AcctSchema_ID, AD_Client_ID, AD_Org_ID,
+          C_BankAccount_Acct_ID, C_BankAccount_ID, C_AcctSchema_ID, AD_Client_ID, AD_Org_ID,
           IsActive, Created, CreatedBy, Updated, UpdatedBy,
           B_InTransit_Acct, B_Asset_Acct, B_Expense_Acct, B_InterestRev_Acct,
           B_InterestExp_Acct, B_UnIdentified_Acct, B_UnAllocatedCash_Acct, B_PaymentSelect_Acct,
           B_SettlementGain_Acct, B_SettlementLoss_Acct, B_RevaluationGain_Acct, B_RevaluationLoss_Acct
         )
-      SELECT x.C_BankAccount_ID, Cur_Acct.C_AcctSchema_ID, x.AD_Client_ID, x.AD_Org_ID,
+      SELECT get_uuid(), x.C_BankAccount_ID, Cur_Acct.C_AcctSchema_ID, x.AD_Client_ID, x.AD_Org_ID,
         'Y', now(), '0', now(),
         '0', Cur_Acct.B_InTransit_Acct, Cur_Acct.B_Asset_Acct, Cur_Acct.B_Expense_Acct,
         Cur_Acct.B_InterestRev_Acct, Cur_Acct.B_InterestExp_Acct, Cur_Acct.B_UnIdentified_Acct, Cur_Acct.B_UnAllocatedCash_Acct,
@@ -446,11 +446,11 @@
       INSERT
       INTO C_Withholding_Acct
         (
-          C_Withholding_ID, C_AcctSchema_ID, AD_Client_ID, AD_Org_ID,
+          C_Withholding_Acct_ID, C_Withholding_ID, C_AcctSchema_ID, AD_Client_ID, AD_Org_ID,
           IsActive, Created, CreatedBy, Updated,
           UpdatedBy, Withholding_Acct
         )
-      SELECT x.C_Withholding_ID, Cur_Acct.C_AcctSchema_ID, x.AD_Client_ID, x.AD_Org_ID,
+      SELECT get_uuid(), x.C_Withholding_ID, Cur_Acct.C_AcctSchema_ID, x.AD_Client_ID, x.AD_Org_ID,
         'Y', now(), '0', now(),
         '0', Cur_Acct.Withholding_Acct
       FROM C_Withholding x
@@ -483,11 +483,11 @@
       INSERT
       INTO C_Charge_Acct
         (
-          C_Charge_ID, C_AcctSchema_ID, AD_Client_ID, AD_Org_ID,
+          C_Charge_Acct_ID, C_Charge_ID, C_AcctSchema_ID, AD_Client_ID, AD_Org_ID,
           IsActive, Created, CreatedBy, Updated,
           UpdatedBy, Ch_Expense_Acct, Ch_Revenue_Acct
         )
-      SELECT x.C_Charge_ID,
+      SELECT get_uuid(), x.C_Charge_ID,
         Cur_Acct.C_AcctSchema_ID, x.AD_Client_ID, x.AD_Org_ID, 'Y',
         now(), '0', now(), '0',
         Cur_Acct.Ch_Expense_Acct, Cur_Acct.Ch_Revenue_Acct
@@ -527,12 +527,12 @@
       INSERT
       INTO C_Cashbook_Acct
         (
-          C_Cashbook_ID, C_AcctSchema_ID, AD_Client_ID, AD_Org_ID,
+          C_Cashbook_Acct_ID, C_Cashbook_ID, C_AcctSchema_ID, AD_Client_ID, AD_Org_ID,
           IsActive, Created, CreatedBy, Updated,
           UpdatedBy, CB_Asset_Acct, CB_Differences_Acct, CB_CashTransfer_Acct,
           CB_Expense_Acct, CB_Receipt_Acct
         )
-      SELECT x.C_Cashbook_ID,
+      SELECT get_uuid(), x.C_Cashbook_ID,
         Cur_Acct.C_AcctSchema_ID, x.AD_Client_ID, x.AD_Org_ID, 'Y',
         now(), '0', now(), '0',
         Cur_Acct.CB_Asset_Acct, Cur_Acct.CB_Differences_Acct, Cur_Acct.CB_CashTransfer_Acct, Cur_Acct.CB_Expense_Acct,
