@@ -23,7 +23,6 @@
 ******************************************************************************/
   v_Price        NUMBER;
   v_ProductPrice NUMBER;
-  v_IsVerified   NUMBER;
   -- Get BOM Product info
   TYPE RECORD IS REF CURSOR;
     CUR_BOM RECORD;
@@ -35,10 +34,9 @@
     FROM M_ProductPrice
     WHERE M_PriceList_Version_ID=PriceList_Version_ID
       AND M_Product_ID=Product_ID;
-    SELECT ISVERIFIED INTO v_IsVerified FROM M_PRODUCT WHERE M_PRODUCT_ID=Product_ID;  
     -- DBMS_OUTPUT.PUT_LINE('Price=' || v_Price);
-    -- No Price - Check if BOM and check if BOM has been verified
-    IF(v_Price = 0 AND v_IsVerified = 'Y') THEN
+    -- No Price - Check if BOM
+    IF(v_Price=0) THEN
       FOR CUR_BOM IN
         (SELECT b.M_ProductBOM_ID,
           b.BOMQty,
