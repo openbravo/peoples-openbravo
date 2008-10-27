@@ -42,6 +42,7 @@
     v_Qty NUMBER;
     v_IsSOTrx CHAR(1) ;
     v_Amt NUMBER;
+    v_Currency_ID VARCHAR2(32);
     v_RoundLine CHAR(1) ;
     v_RoundTotal CHAR(1) ;
     v_FreightUnit CHAR(1) ;
@@ -171,7 +172,7 @@
         Cur_M_FreightSelect RECORD;
       BEGIN
         FOR Cur_M_FreightSelect IN
-          (SELECT f.M_Shipper_ID,
+          (SELECT f.M_Shipper_ID, f.C_Currency_ID,
             CASE isprice WHEN 'Y' THEN freightamt*v_Qty ELSE freightamt
             END as amount
           FROM M_Freight f,
@@ -199,6 +200,7 @@
         LOOP
           v_Shipper_ID:=Cur_M_FreightSelect.M_Shipper_ID;
           v_Amt:=Cur_M_FreightSelect.amount;
+          v_Currency_ID:=Cur_M_FreightSelect.C_Currency_ID;
           EXIT;
         END LOOP;
       END;
@@ -208,7 +210,7 @@
         Cur_M_FreightSelect RECORD;
       BEGIN
         FOR Cur_M_FreightSelect IN
-          (SELECT M_Shipper_ID,
+          (SELECT M_Shipper_ID, C_Currency_ID,
             CASE isprice WHEN 'Y' THEN freightamt*v_Qty ELSE freightamt
             END as amount
           FROM M_Freight
@@ -224,6 +226,7 @@
         LOOP
           v_Shipper_ID:=Cur_M_FreightSelect.M_Shipper_ID;
           v_Amt:=Cur_M_FreightSelect.amount;
+          v_Currency_ID:=Cur_M_FreightSelect.C_Currency_ID;
           EXIT;
         END LOOP;
       END;
@@ -238,7 +241,8 @@
     UPDATE M_InOut
       SET NoPackages=v_Qty,
       M_Shipper_ID=v_Shipper_ID,
-      FreightAmt=v_Amt
+      FreightAmt=v_Amt,
+      Freight_Currency_ID=v_Currency_ID
     WHERE M_InOut_ID=v_Record_ID;
   ELSE
     v_Result:=0;

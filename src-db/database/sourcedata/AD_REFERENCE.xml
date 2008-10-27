@@ -1170,13 +1170,13 @@
 <!--112 CREATEDBY-->
 <!--112-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--112 UPDATED-->
-<!--112-->              <UPDATED><![CDATA[2003-02-22 02:20:06.0]]></UPDATED>
+<!--112-->              <UPDATED><![CDATA[2008-10-27 14:11:18.0]]></UPDATED>
 <!--112 UPDATEDBY-->
-<!--112-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--112-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--112 NAME-->
-<!--112-->              <NAME><![CDATA[C_Conversion_Rate Currencies]]></NAME>
+<!--112-->              <NAME><![CDATA[C_Currency]]></NAME>
 <!--112 DESCRIPTION-->
-<!--112-->              <DESCRIPTION><![CDATA[Currencies with dynamic exchange rate selection]]></DESCRIPTION>
+<!--112-->              <DESCRIPTION><![CDATA[Currencies of C_Currency table]]></DESCRIPTION>
 <!--112 VALIDATIONTYPE-->
 <!--112-->              <VALIDATIONTYPE><![CDATA[T]]></VALIDATIONTYPE>
 <!--112 AD_MODULE_ID-->
