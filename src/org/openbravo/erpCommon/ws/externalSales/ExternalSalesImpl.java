@@ -195,11 +195,12 @@ public class ExternalSalesImpl implements ExternalSales{
     }
 
 
-    public void uploadOrders(String ClientID, String organizationId, String salesChannel, Order[] newOrders, String username, String password)
+    public boolean uploadOrders(String ClientID, String organizationId, String salesChannel, Order[] newOrders, String username, String password)
     {
+    	//boolean flag = false;
     if (!access(username, password)) {
        if (log4j.isDebugEnabled()) log4j.debug("Access denied");
-       return;
+       return false;
     }
 
     try {
@@ -302,11 +303,14 @@ public class ExternalSalesImpl implements ExternalSales{
           }
         i++;
         }
+      return true;
         } catch (Exception e) {
             log4j.error("Error : uploadOrders");
             e.printStackTrace();
+            
       }
       destroyPool();
+      return false;
     }
 
     public Order[] getOrders(String ClientID, String organizationId, OrderIdentifier[] orderIds, String username, String password)
@@ -428,8 +432,8 @@ public class ExternalSalesImpl implements ExternalSales{
           e.printStackTrace();
        }
     }
-
-    private void destroyPool() {
+    
+   private void destroyPool() {
       if (log4j.isDebugEnabled()) log4j.debug("destroy");
     }
     
