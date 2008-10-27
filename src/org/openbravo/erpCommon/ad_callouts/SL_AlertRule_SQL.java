@@ -67,10 +67,10 @@ public class SL_AlertRule_SQL extends HttpSecureAppServlet {
     String msg="";
     
     if(!strSQL.equals("")) {
- 
+      ResultSet result = null;
+      PreparedStatement st = null;
 	    try {
-	      PreparedStatement st = this.getPreparedStatement(strSQL);
-	      ResultSet result;
+	      st = this.getPreparedStatement(strSQL);
 	      result = st.executeQuery();
 	      ResultSetMetaData rmeta=result.getMetaData();
 	      if (!existsColumn(rmeta,"AD_CLIENT_ID"))    msg = "AD_CLIENT_ID ";
@@ -88,6 +88,19 @@ public class SL_AlertRule_SQL extends HttpSecureAppServlet {
 	      if (!msg.equals("")) msg = Utility.messageBD(this,"notColumnInQuery",vars.getLanguage()) + msg;
 	    } catch (Exception ex) {
 	      msg = "error in query: " + FormatUtilities.replaceJS(ex.toString());
+	    }finally {
+        try {
+          if (result != null) {
+            result.close();
+          }
+        } catch (SQLException e) {
+          e.printStackTrace();
+        }
+        try {
+          this.releasePreparedStatement(st);
+        } catch (SQLException e) {
+          e.printStackTrace();
+        }
 	    }
     }
     
