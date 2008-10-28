@@ -193,13 +193,13 @@
 	</parameter>
 	<parameter name="MA_PROCESSPLAN_ID" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="AUX_PROCESSPLAN" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA[($P{MA_PROCESSPLAN_ID}==null||$P{MA_PROCESSPLAN_ID}.equals(""))?"":" AND MA_PROCESSPLAN.MA_PROCESSPLAN_ID = "+$P{MA_PROCESSPLAN_ID}]]></defaultValueExpression>
+		<defaultValueExpression ><![CDATA[($P{MA_PROCESSPLAN_ID}==null||$P{MA_PROCESSPLAN_ID}.equals(""))?"":" AND MA_PROCESSPLAN.MA_PROCESSPLAN_ID = '"+$P{MA_PROCESSPLAN_ID}+"'"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="SR_COST" isForPrompting="false" class="net.sf.jasperreports.engine.JasperReport"/>
 	<parameter name="SR_PRODUCED" isForPrompting="false" class="net.sf.jasperreports.engine.JasperReport"/>
 	<parameter name="MA_PROCESSPLAN_VERSION_ID" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="AUX_VERSION" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA[($P{MA_PROCESSPLAN_VERSION_ID} == null || $P{MA_PROCESSPLAN_VERSION_ID}.equals(""))?"":" AND MA_PROCESSPLAN_VERSION.MA_PROCESSPLAN_VERSION_ID = " + $P{MA_PROCESSPLAN_VERSION_ID}]]></defaultValueExpression>
+		<defaultValueExpression ><![CDATA[($P{MA_PROCESSPLAN_VERSION_ID} == null || $P{MA_PROCESSPLAN_VERSION_ID}.equals(""))?"":" AND MA_PROCESSPLAN_VERSION.MA_PROCESSPLAN_VERSION_ID = '"+ $P{MA_PROCESSPLAN_VERSION_ID}+"'"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="DATETO" isForPrompting="false" class="java.util.Date">
 		<defaultValueExpression ><![CDATA[(new SimpleDateFormat("dd-MM-yyyy")).parse("01-01-1900")]]></defaultValueExpression>

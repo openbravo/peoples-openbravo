@@ -189,7 +189,9 @@
 	<parameter name="ReportData" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA[""]]></defaultValueExpression>
 	</parameter>
-	<parameter name="SEQUENCE_ID" isForPrompting="false" class="java.math.BigDecimal"/>
+	<parameter name="SEQUENCE_ID" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["1000004"]]></defaultValueExpression>
+	</parameter>
 	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
 	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
 	<queryString><![CDATA[SELECT  MA_SEQUENCEPRODUCT.MA_SEQUENCE_ID, A.COMPONENTCOSTSUM, MA_SEQUENCEPRODUCT.COMPONENTCOST,
