@@ -368,12 +368,14 @@ public abstract class AcctServer  {
                 acct.strDateColumn = "MovementDate";
                 acct.AD_Table_ID = "323";
                 acct.reloadAcctSchemaArray();
-                break;/*
+                break;
             case    325:
-                acct = new DocProduction (AD_Client_ID);
+                acct = new DocProduction (AD_Client_ID, connectionProvider);
+                acct.tableName = "M_Production";
                 acct.strDateColumn = "MovementDate";
+                acct.AD_Table_ID = "325";
                 acct.reloadAcctSchemaArray();
-                break;*/
+                break;
             case    224:
                 if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Before OBJECT CREATION");
                 acct = new DocGLJournal (AD_Client_ID, connectionProvider);
