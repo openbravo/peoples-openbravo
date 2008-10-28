@@ -56,7 +56,7 @@
     <FIELD id="fieldSearchKey">searchkey</FIELD>
     <FIELD id="fieldCost" format="euroInform">cost</FIELD>
     <FIELD id="fieldValue" format="euroInform">value</FIELD>	
-    <FIELD id="fieldPercentage" format="euroInform">porcentaje</FIELD>
+    <FIELD id="fieldPercentage" format="euroInform">percentage</FIELD>
     <FIELD id="fieldUnit">unit</FIELD>
     <FIELD id="fieldIsabc">isabc</FIELD>
 	<SECTION id="sectionOrg" field="orgid"/>     
