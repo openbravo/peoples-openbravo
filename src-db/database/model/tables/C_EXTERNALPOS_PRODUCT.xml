@@ -53,5 +53,8 @@
       <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_C_EXTERNALPOS_PROD">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
+      <unique name="C_EXTPOSPROD_PRODUCT_UN">
+        <unique-column name="M_PRODUCT_ID"/>
+      </unique>
     </table>
   </database>
