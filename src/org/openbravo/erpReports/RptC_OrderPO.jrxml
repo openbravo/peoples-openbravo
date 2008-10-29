@@ -172,7 +172,7 @@
 		<defaultValueExpression ><![CDATA["/usr/local/src/AppsOpenbravo/web"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="ORDER_ID" isForPrompting="true" class="java.lang.String">
-		<defaultValueExpression ><![CDATA["(1000012,1000029)"]]></defaultValueExpression>
+		<defaultValueExpression ><![CDATA["('1000012','1000029')"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["/usr/local/src/AppsOpenbravo/src/erpReports/"]]></defaultValueExpression>
@@ -198,11 +198,11 @@ FROM   C_ORDER left join C_BPARTNER_LOCATION on C_ORDER.BILLTO_ID = C_BPARTNER_L
        C_BPARTNER, AD_ORGINFO, AD_CLIENT, C_CURRENCY,
        (SELECT VALUE, NAME
   FROM AD_REF_LIST_V
-WHERE AD_REFERENCE_ID = 153
+WHERE AD_REFERENCE_ID = '153'
   AND AD_LANGUAGE = $P{LANGUAGE}) FREIGHTCOSTRULE,
   (SELECT VALUE, NAME
   FROM AD_REF_LIST_V
-WHERE AD_REFERENCE_ID = 151
+WHERE AD_REFERENCE_ID = '151'
   AND AD_LANGUAGE = $P{LANGUAGE}) DELIVERYRULE,
   (SELECT C_PAYMENTTERM.C_PAYMENTTERM_ID, COALESCE( C_PAYMENTTERM_TRL.NAME, C_PAYMENTTERM.NAME) AS TERM
   FROM C_PAYMENTTERM LEFT JOIN C_PAYMENTTERM_TRL ON C_PAYMENTTERM.C_PAYMENTTERM_ID = C_PAYMENTTERM_TRL.C_PAYMENTTERM_ID

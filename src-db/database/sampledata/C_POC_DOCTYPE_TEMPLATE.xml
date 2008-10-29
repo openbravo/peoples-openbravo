@@ -1,0 +1,381 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<data>
+<!--**************--><C_POC_DOCTYPE_TEMPLATE>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[7CB7E3D69378432BB9F8A74E49DE33D3]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-19 17:02:41.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-19 17:02:41.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_DOCTYPE_ID-->
+<!---->              <C_DOCTYPE_ID><![CDATA[1000026]]></C_DOCTYPE_ID>
+<!-- TEMPLATELOCATION-->
+<!---->              <TEMPLATELOCATION><![CDATA[@basedesign@/org/openbravo/erpReports]]></TEMPLATELOCATION>
+<!-- REPORTFILENAME-->
+<!---->              <REPORTFILENAME><![CDATA[StandardOrder-@our_ref@]]></REPORTFILENAME>
+<!-- TEMPLATEFILENAME-->
+<!---->              <TEMPLATEFILENAME><![CDATA[RptC_OrderPO.jrxml]]></TEMPLATEFILENAME>
+<!--**************--></C_POC_DOCTYPE_TEMPLATE>
+
+<!--**************--><C_POC_DOCTYPE_TEMPLATE>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[D4C73C789D3C492FAD400F3E62C661DE]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-24 13:08:33.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-24 13:08:33.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_DOCTYPE_ID-->
+<!---->              <C_DOCTYPE_ID><![CDATA[1000009]]></C_DOCTYPE_ID>
+<!-- TEMPLATELOCATION-->
+<!---->              <TEMPLATELOCATION><![CDATA[@basedesign@/org/openbravo/erpReports]]></TEMPLATELOCATION>
+<!-- REPORTFILENAME-->
+<!---->              <REPORTFILENAME><![CDATA[Purchase Invoice-@our_ref@]]></REPORTFILENAME>
+<!-- TEMPLATEFILENAME-->
+<!---->              <TEMPLATEFILENAME><![CDATA[RptC_Invoice.jrxml]]></TEMPLATEFILENAME>
+<!--**************--></C_POC_DOCTYPE_TEMPLATE>
+
+<!--**************--><C_POC_DOCTYPE_TEMPLATE>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[7CB2A4A96A1F494792C7BD450C37EF2E]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-24 18:33:54.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-24 18:33:54.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_DOCTYPE_ID-->
+<!---->              <C_DOCTYPE_ID><![CDATA[1000008]]></C_DOCTYPE_ID>
+<!-- TEMPLATELOCATION-->
+<!---->              <TEMPLATELOCATION><![CDATA[@basedesign@/org/openbravo/erpReports]]></TEMPLATELOCATION>
+<!-- REPORTFILENAME-->
+<!---->              <REPORTFILENAME><![CDATA[Invoice-@our_ref@]]></REPORTFILENAME>
+<!-- TEMPLATEFILENAME-->
+<!---->              <TEMPLATEFILENAME><![CDATA[RptC_Invoice.jrxml]]></TEMPLATEFILENAME>
+<!--**************--></C_POC_DOCTYPE_TEMPLATE>
+
+<!--**************--><C_POC_DOCTYPE_TEMPLATE>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[3A1741F575DE43CBB51BB025AA4B4D1B]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-24 18:35:20.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-24 18:35:20.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_DOCTYPE_ID-->
+<!---->              <C_DOCTYPE_ID><![CDATA[1000003]]></C_DOCTYPE_ID>
+<!-- TEMPLATELOCATION-->
+<!---->              <TEMPLATELOCATION><![CDATA[@basedesign@/org/openbravo/erpReports]]></TEMPLATELOCATION>
+<!-- REPORTFILENAME-->
+<!---->              <REPORTFILENAME><![CDATA[Sales Invoice-@our_ref@]]></REPORTFILENAME>
+<!-- TEMPLATEFILENAME-->
+<!---->              <TEMPLATEFILENAME><![CDATA[RptC_Invoice.jrxml]]></TEMPLATEFILENAME>
+<!--**************--></C_POC_DOCTYPE_TEMPLATE>
+
+<!--**************--><C_POC_DOCTYPE_TEMPLATE>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[A925CF5E2A904A6A95DC908F33B83151]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-24 18:36:16.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-24 18:36:16.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_DOCTYPE_ID-->
+<!---->              <C_DOCTYPE_ID><![CDATA[1000001]]></C_DOCTYPE_ID>
+<!-- TEMPLATELOCATION-->
+<!---->              <TEMPLATELOCATION><![CDATA[@basedesign@/org/openbravo/erpReports]]></TEMPLATELOCATION>
+<!-- REPORTFILENAME-->
+<!---->              <REPORTFILENAME><![CDATA[Sales Invoice-@our_ref@]]></REPORTFILENAME>
+<!-- TEMPLATEFILENAME-->
+<!---->              <TEMPLATEFILENAME><![CDATA[RptC_Invoice.jrxml]]></TEMPLATEFILENAME>
+<!--**************--></C_POC_DOCTYPE_TEMPLATE>
+
+<!--**************--><C_POC_DOCTYPE_TEMPLATE>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[E427D7A5685F47189F580B40C1CB40FD]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-24 18:37:24.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-24 18:37:24.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_DOCTYPE_ID-->
+<!---->              <C_DOCTYPE_ID><![CDATA[1000002]]></C_DOCTYPE_ID>
+<!-- TEMPLATELOCATION-->
+<!---->              <TEMPLATELOCATION><![CDATA[@basedesign@/org/openbravo/erpReports]]></TEMPLATELOCATION>
+<!-- REPORTFILENAME-->
+<!---->              <REPORTFILENAME><![CDATA[Sales Invoice-@our_ref@]]></REPORTFILENAME>
+<!-- TEMPLATEFILENAME-->
+<!---->              <TEMPLATEFILENAME><![CDATA[RptC_Invoice.jrxml]]></TEMPLATEFILENAME>
+<!--**************--></C_POC_DOCTYPE_TEMPLATE>
+
+<!--**************--><C_POC_DOCTYPE_TEMPLATE>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[C5D4D23216614E28A0F7FF70D5FEDE39]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-24 18:38:49.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-24 18:38:49.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_DOCTYPE_ID-->
+<!---->              <C_DOCTYPE_ID><![CDATA[1000011]]></C_DOCTYPE_ID>
+<!-- TEMPLATELOCATION-->
+<!---->              <TEMPLATELOCATION><![CDATA[@basedesign@/org/openbravo/erpReports]]></TEMPLATELOCATION>
+<!-- REPORTFILENAME-->
+<!---->              <REPORTFILENAME><![CDATA[Purchase Order-@our_ref@]]></REPORTFILENAME>
+<!-- TEMPLATEFILENAME-->
+<!---->              <TEMPLATEFILENAME><![CDATA[RptC_OrderPO.jrxml]]></TEMPLATEFILENAME>
+<!--**************--></C_POC_DOCTYPE_TEMPLATE>
+
+<!--**************--><C_POC_DOCTYPE_TEMPLATE>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[44C193FF301C4A9FBF4D98EDB1DCC3D5]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-24 18:41:56.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-24 18:41:56.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_DOCTYPE_ID-->
+<!---->              <C_DOCTYPE_ID><![CDATA[1000029]]></C_DOCTYPE_ID>
+<!-- TEMPLATELOCATION-->
+<!---->              <TEMPLATELOCATION><![CDATA[@basedesign@/org/openbravo/erpReports]]></TEMPLATELOCATION>
+<!-- REPORTFILENAME-->
+<!---->              <REPORTFILENAME><![CDATA[Sales Order-@our_ref@]]></REPORTFILENAME>
+<!-- TEMPLATEFILENAME-->
+<!---->              <TEMPLATEFILENAME><![CDATA[RptC_OrderPO.jrxml]]></TEMPLATEFILENAME>
+<!--**************--></C_POC_DOCTYPE_TEMPLATE>
+
+<!--**************--><C_POC_DOCTYPE_TEMPLATE>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[9BD891E9BE8E43A18A6ADD5F65FEA3CB]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-24 18:40:34.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-24 18:42:18.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_DOCTYPE_ID-->
+<!---->              <C_DOCTYPE_ID><![CDATA[1000027]]></C_DOCTYPE_ID>
+<!-- TEMPLATELOCATION-->
+<!---->              <TEMPLATELOCATION><![CDATA[@basedesign@/org/openbravo/erpReports]]></TEMPLATELOCATION>
+<!-- REPORTFILENAME-->
+<!---->              <REPORTFILENAME><![CDATA[Sales Order-@our_ref@]]></REPORTFILENAME>
+<!-- TEMPLATEFILENAME-->
+<!---->              <TEMPLATEFILENAME><![CDATA[RptC_OrderPO.jrxml]]></TEMPLATEFILENAME>
+<!--**************--></C_POC_DOCTYPE_TEMPLATE>
+
+<!--**************--><C_POC_DOCTYPE_TEMPLATE>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[DC8884793CA24A49809BEEC6956EC9F9]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-24 18:43:00.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-24 18:43:00.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_DOCTYPE_ID-->
+<!---->              <C_DOCTYPE_ID><![CDATA[1000024]]></C_DOCTYPE_ID>
+<!-- TEMPLATELOCATION-->
+<!---->              <TEMPLATELOCATION><![CDATA[@basedesign@/org/openbravo/erpReports]]></TEMPLATELOCATION>
+<!-- REPORTFILENAME-->
+<!---->              <REPORTFILENAME><![CDATA[Sales Order-@our_ref@]]></REPORTFILENAME>
+<!-- TEMPLATEFILENAME-->
+<!---->              <TEMPLATEFILENAME><![CDATA[RptC_OrderPO.jrxml]]></TEMPLATEFILENAME>
+<!--**************--></C_POC_DOCTYPE_TEMPLATE>
+
+<!--**************--><C_POC_DOCTYPE_TEMPLATE>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[6E7C7ACB7C7243609797D1A34E68D394]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-24 18:43:36.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-24 18:43:36.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_DOCTYPE_ID-->
+<!---->              <C_DOCTYPE_ID><![CDATA[1000023]]></C_DOCTYPE_ID>
+<!-- TEMPLATELOCATION-->
+<!---->              <TEMPLATELOCATION><![CDATA[@basedesign@/org/openbravo/erpReports]]></TEMPLATELOCATION>
+<!-- REPORTFILENAME-->
+<!---->              <REPORTFILENAME><![CDATA[Sales Order-@our_ref@]]></REPORTFILENAME>
+<!-- TEMPLATEFILENAME-->
+<!---->              <TEMPLATEFILENAME><![CDATA[RptC_OrderPO.jrxml]]></TEMPLATEFILENAME>
+<!--**************--></C_POC_DOCTYPE_TEMPLATE>
+
+<!--**************--><C_POC_DOCTYPE_TEMPLATE>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[7377D70E9BC549F78448D65F90534F75]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-24 18:44:09.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-24 18:44:09.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_DOCTYPE_ID-->
+<!---->              <C_DOCTYPE_ID><![CDATA[1000022]]></C_DOCTYPE_ID>
+<!-- TEMPLATELOCATION-->
+<!---->              <TEMPLATELOCATION><![CDATA[@basedesign@/org/openbravo/erpReports]]></TEMPLATELOCATION>
+<!-- REPORTFILENAME-->
+<!---->              <REPORTFILENAME><![CDATA[Sales Order-@our_ref@]]></REPORTFILENAME>
+<!-- TEMPLATEFILENAME-->
+<!---->              <TEMPLATEFILENAME><![CDATA[RptC_OrderPO.jrxml]]></TEMPLATEFILENAME>
+<!--**************--></C_POC_DOCTYPE_TEMPLATE>
+
+<!--**************--><C_POC_DOCTYPE_TEMPLATE>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[9C84C07500304FB1A50E1A97675EC833]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-24 18:44:42.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-24 18:44:42.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_DOCTYPE_ID-->
+<!---->              <C_DOCTYPE_ID><![CDATA[1000025]]></C_DOCTYPE_ID>
+<!-- TEMPLATELOCATION-->
+<!---->              <TEMPLATELOCATION><![CDATA[@basedesign@/org/openbravo/erpReports]]></TEMPLATELOCATION>
+<!-- REPORTFILENAME-->
+<!---->              <REPORTFILENAME><![CDATA[Sales Order-@our_ref@]]></REPORTFILENAME>
+<!-- TEMPLATEFILENAME-->
+<!---->              <TEMPLATEFILENAME><![CDATA[RptC_OrderPO.jrxml]]></TEMPLATEFILENAME>
+<!--**************--></C_POC_DOCTYPE_TEMPLATE>
+
+<!--**************--><C_POC_DOCTYPE_TEMPLATE>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[41C066636CD640FAB7B8C0D2697C53B5]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-24 18:45:42.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-24 18:45:42.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_DOCTYPE_ID-->
+<!---->              <C_DOCTYPE_ID><![CDATA[1000028]]></C_DOCTYPE_ID>
+<!-- TEMPLATELOCATION-->
+<!---->              <TEMPLATELOCATION><![CDATA[@basedesign@/org/openbravo/erpReports]]></TEMPLATELOCATION>
+<!-- REPORTFILENAME-->
+<!---->              <REPORTFILENAME><![CDATA[Sales Order-@our_ref@]]></REPORTFILENAME>
+<!-- TEMPLATEFILENAME-->
+<!---->              <TEMPLATEFILENAME><![CDATA[RptC_OrderPO.jrxml]]></TEMPLATEFILENAME>
+<!--**************--></C_POC_DOCTYPE_TEMPLATE>
+
+</data>

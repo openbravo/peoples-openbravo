@@ -1,0 +1,353 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<data>
+<!--**************--><C_POC_EMAILDEFINITION>
+<!-- C_POC_EMAILDEFINITION_ID-->
+<!---->              <C_POC_EMAILDEFINITION_ID><![CDATA[CD6EB534BCD0407CBA8CF7FA5F9D86DF]]></C_POC_EMAILDEFINITION_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-19 17:05:24.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-19 17:05:24.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[7CB7E3D69378432BB9F8A74E49DE33D3]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- ISDEFAULT-->
+<!---->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
+<!-- AD_LANGUAGE-->
+<!---->              <AD_LANGUAGE><![CDATA[en_US]]></AD_LANGUAGE>
+<!--**************--></C_POC_EMAILDEFINITION>
+
+<!--**************--><C_POC_EMAILDEFINITION>
+<!-- C_POC_EMAILDEFINITION_ID-->
+<!---->              <C_POC_EMAILDEFINITION_ID><![CDATA[63EC39B01EAF49EABF90DB268693FDA5]]></C_POC_EMAILDEFINITION_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-24 13:08:44.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-24 13:08:44.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[D4C73C789D3C492FAD400F3E62C661DE]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- ISDEFAULT-->
+<!---->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
+<!-- AD_LANGUAGE-->
+<!---->              <AD_LANGUAGE><![CDATA[en_US]]></AD_LANGUAGE>
+<!--**************--></C_POC_EMAILDEFINITION>
+
+<!--**************--><C_POC_EMAILDEFINITION>
+<!-- C_POC_EMAILDEFINITION_ID-->
+<!---->              <C_POC_EMAILDEFINITION_ID><![CDATA[9095A32AFE3D4A7598636EA7183DCB5D]]></C_POC_EMAILDEFINITION_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-24 18:34:03.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-24 18:34:03.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[7CB2A4A96A1F494792C7BD450C37EF2E]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- ISDEFAULT-->
+<!---->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
+<!-- AD_LANGUAGE-->
+<!---->              <AD_LANGUAGE><![CDATA[en_US]]></AD_LANGUAGE>
+<!--**************--></C_POC_EMAILDEFINITION>
+
+<!--**************--><C_POC_EMAILDEFINITION>
+<!-- C_POC_EMAILDEFINITION_ID-->
+<!---->              <C_POC_EMAILDEFINITION_ID><![CDATA[7C25E6165CA04B509E41022004381A6E]]></C_POC_EMAILDEFINITION_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-24 18:35:28.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-24 18:35:28.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[3A1741F575DE43CBB51BB025AA4B4D1B]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- ISDEFAULT-->
+<!---->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
+<!-- AD_LANGUAGE-->
+<!---->              <AD_LANGUAGE><![CDATA[en_US]]></AD_LANGUAGE>
+<!--**************--></C_POC_EMAILDEFINITION>
+
+<!--**************--><C_POC_EMAILDEFINITION>
+<!-- C_POC_EMAILDEFINITION_ID-->
+<!---->              <C_POC_EMAILDEFINITION_ID><![CDATA[B60ECA2E5D4A45C9BA5612071CC87C12]]></C_POC_EMAILDEFINITION_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-24 18:36:24.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-24 18:36:24.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[A925CF5E2A904A6A95DC908F33B83151]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- ISDEFAULT-->
+<!---->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
+<!-- AD_LANGUAGE-->
+<!---->              <AD_LANGUAGE><![CDATA[en_US]]></AD_LANGUAGE>
+<!--**************--></C_POC_EMAILDEFINITION>
+
+<!--**************--><C_POC_EMAILDEFINITION>
+<!-- C_POC_EMAILDEFINITION_ID-->
+<!---->              <C_POC_EMAILDEFINITION_ID><![CDATA[E3773F1B235543BC894D68862FED99FA]]></C_POC_EMAILDEFINITION_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-24 18:37:31.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-24 18:37:31.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[E427D7A5685F47189F580B40C1CB40FD]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- ISDEFAULT-->
+<!---->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
+<!-- AD_LANGUAGE-->
+<!---->              <AD_LANGUAGE><![CDATA[en_US]]></AD_LANGUAGE>
+<!--**************--></C_POC_EMAILDEFINITION>
+
+<!--**************--><C_POC_EMAILDEFINITION>
+<!-- C_POC_EMAILDEFINITION_ID-->
+<!---->              <C_POC_EMAILDEFINITION_ID><![CDATA[22A44155A4F74A8281C85244F62B8B44]]></C_POC_EMAILDEFINITION_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-24 18:38:54.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-24 18:38:54.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[C5D4D23216614E28A0F7FF70D5FEDE39]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- ISDEFAULT-->
+<!---->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
+<!-- AD_LANGUAGE-->
+<!---->              <AD_LANGUAGE><![CDATA[en_US]]></AD_LANGUAGE>
+<!--**************--></C_POC_EMAILDEFINITION>
+
+<!--**************--><C_POC_EMAILDEFINITION>
+<!-- C_POC_EMAILDEFINITION_ID-->
+<!---->              <C_POC_EMAILDEFINITION_ID><![CDATA[0439063DF95745CDB1893B130E8EF006]]></C_POC_EMAILDEFINITION_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-24 18:40:40.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-24 18:40:40.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[9BD891E9BE8E43A18A6ADD5F65FEA3CB]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- ISDEFAULT-->
+<!---->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
+<!-- AD_LANGUAGE-->
+<!---->              <AD_LANGUAGE><![CDATA[en_US]]></AD_LANGUAGE>
+<!--**************--></C_POC_EMAILDEFINITION>
+
+<!--**************--><C_POC_EMAILDEFINITION>
+<!-- C_POC_EMAILDEFINITION_ID-->
+<!---->              <C_POC_EMAILDEFINITION_ID><![CDATA[7AB0EF1083B44B19B9A7145BD4DC55A9]]></C_POC_EMAILDEFINITION_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-24 18:42:00.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-24 18:42:00.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[44C193FF301C4A9FBF4D98EDB1DCC3D5]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- ISDEFAULT-->
+<!---->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
+<!-- AD_LANGUAGE-->
+<!---->              <AD_LANGUAGE><![CDATA[en_US]]></AD_LANGUAGE>
+<!--**************--></C_POC_EMAILDEFINITION>
+
+<!--**************--><C_POC_EMAILDEFINITION>
+<!-- C_POC_EMAILDEFINITION_ID-->
+<!---->              <C_POC_EMAILDEFINITION_ID><![CDATA[2BC8B0E0EBA64BE8B0E2CAAA88C2E1D0]]></C_POC_EMAILDEFINITION_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-24 18:43:04.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-24 18:43:04.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[DC8884793CA24A49809BEEC6956EC9F9]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- ISDEFAULT-->
+<!---->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
+<!-- AD_LANGUAGE-->
+<!---->              <AD_LANGUAGE><![CDATA[en_US]]></AD_LANGUAGE>
+<!--**************--></C_POC_EMAILDEFINITION>
+
+<!--**************--><C_POC_EMAILDEFINITION>
+<!-- C_POC_EMAILDEFINITION_ID-->
+<!---->              <C_POC_EMAILDEFINITION_ID><![CDATA[E7EF8E74927B4B86B9BCADD0DAAE2E28]]></C_POC_EMAILDEFINITION_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-24 18:43:41.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-24 18:43:41.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[6E7C7ACB7C7243609797D1A34E68D394]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- ISDEFAULT-->
+<!---->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
+<!-- AD_LANGUAGE-->
+<!---->              <AD_LANGUAGE><![CDATA[en_US]]></AD_LANGUAGE>
+<!--**************--></C_POC_EMAILDEFINITION>
+
+<!--**************--><C_POC_EMAILDEFINITION>
+<!-- C_POC_EMAILDEFINITION_ID-->
+<!---->              <C_POC_EMAILDEFINITION_ID><![CDATA[F16DE80FFB8F4F8D8D742A0308FD91FC]]></C_POC_EMAILDEFINITION_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-24 18:44:13.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-24 18:44:13.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[7377D70E9BC549F78448D65F90534F75]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- ISDEFAULT-->
+<!---->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
+<!-- AD_LANGUAGE-->
+<!---->              <AD_LANGUAGE><![CDATA[en_US]]></AD_LANGUAGE>
+<!--**************--></C_POC_EMAILDEFINITION>
+
+<!--**************--><C_POC_EMAILDEFINITION>
+<!-- C_POC_EMAILDEFINITION_ID-->
+<!---->              <C_POC_EMAILDEFINITION_ID><![CDATA[847CB294260647D2B0205DE1D5A6CDDB]]></C_POC_EMAILDEFINITION_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-24 18:44:47.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-24 18:44:47.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[9C84C07500304FB1A50E1A97675EC833]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- ISDEFAULT-->
+<!---->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
+<!-- AD_LANGUAGE-->
+<!---->              <AD_LANGUAGE><![CDATA[en_US]]></AD_LANGUAGE>
+<!--**************--></C_POC_EMAILDEFINITION>
+
+<!--**************--><C_POC_EMAILDEFINITION>
+<!-- C_POC_EMAILDEFINITION_ID-->
+<!---->              <C_POC_EMAILDEFINITION_ID><![CDATA[5B7901EF2D3347CF97F8AA094CD240C9]]></C_POC_EMAILDEFINITION_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-24 18:45:48.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-24 18:45:48.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- C_POC_DOCTYPE_TEMPLATE_ID-->
+<!---->              <C_POC_DOCTYPE_TEMPLATE_ID><![CDATA[41C066636CD640FAB7B8C0D2697C53B5]]></C_POC_DOCTYPE_TEMPLATE_ID>
+<!-- ISDEFAULT-->
+<!---->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
+<!-- AD_LANGUAGE-->
+<!---->              <AD_LANGUAGE><![CDATA[en_US]]></AD_LANGUAGE>
+<!--**************--></C_POC_EMAILDEFINITION>
+
+</data>

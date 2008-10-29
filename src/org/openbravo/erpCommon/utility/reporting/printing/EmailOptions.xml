@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html 
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License. 
+* The Original Code is Openbravo ERP. 
+* The Initial Developer of the Original Code is Openbravo SL 
+* All portions are Copyright (C) 2001-2008 Openbravo SL 
+* All Rights Reserved. 
+* Contributor(s):  ______________________________________.
+************************************************************************
+-->
+<REPORT>
+	<template file="EmailOptions.html"/>
+	<PARAMETER id="strDocumentId" name="strDocumentId" attribute="value" default=""/>
+	<PARAMETER id="draftDocumentIds" name="draftDocumentIds" attribute="value" default=""/>
+  <PARAMETER id="paramDirectory" name="directory" default=""/>
+  <PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
+  <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
+	<PARAMETER id="emailSubject" name="emailSubject" attribute="value" default=""/>
+	<PARAMETER id="emailBody" name="emailBody" default=""/>
+
+	<structure name="structure1">
+		<FIELD id="bpartnerName">bpartner_name</FIELD>
+		<FIELD id="reportLocation" attribute="href">report_location</FIELD>
+		<FIELD id="docStatus-xx" attribute="href">docstatus</FIELD>
+		<FIELD id="ourReference" replace="xx">ourreference</FIELD>
+		<FIELD id="ourReference-xx" attribute="value">ourreference</FIELD>
+		
+		<FIELD id="cusReference" replace="xx">yourreference</FIELD>
+		<FIELD id="cusReference-xx" attribute="value">yourreference</FIELD>
+
+		<FIELD id="contactName-yy" attribute="name" replace="yy">contact_name</FIELD>
+		<FIELD id="salesrepName-yy" attribute="name" replace="yy">salesrep_name</FIELD>
+		<FIELD id="contactName-yy">contact_name</FIELD>
+		<FIELD id="salesrepName-yy">salesrep_name</FIELD>
+				
+		<FIELD id="contactName-xx" attribute="value">contact_name</FIELD>
+		<FIELD id="contactEmail-xx" attribute="value">contact_email</FIELD>		
+		<FIELD id="salesrepName-xx" attribute="value">salesrep_name</FIELD>
+		<FIELD id="salesrepEmail-xx" attribute="value">salesrep_email</FIELD>		
+
+		<FIELD id="docStatus-xx" attribute="name" replace="xx">document_id</FIELD>		
+		<FIELD id="contactName-xx" attribute="name" replace="xx">document_id</FIELD>		
+		<FIELD id="contactEmail-xx" attribute="name" replace="xx">document_id</FIELD>		
+		<FIELD id="salesrepName-xx" attribute="name" replace="xx">document_id</FIELD>		
+		<FIELD id="salesrepEmail-xx" attribute="name" replace="xx">document_id</FIELD>		
+		<FIELD id="ourReference-xx" attribute="name" replace="xx">document_id</FIELD>		
+		<FIELD id="cusReference-xx" attribute="name" replace="xx">document_id</FIELD>		
+		<FIELD id="contactName-xx" attribute="id" replace="xx">document_id</FIELD>		
+		<FIELD id="contactEmail-xx" attribute="id" replace="xx">document_id</FIELD>		
+		<FIELD id="salesrepName-xx" attribute="id" replace="xx">document_id</FIELD>		
+		<FIELD id="salesrepEmail-xx" attribute="id" replace="xx">document_id</FIELD>		
+		
+		<SECTION id="sectionDocuments" />
+	</structure>
+
+</REPORT>

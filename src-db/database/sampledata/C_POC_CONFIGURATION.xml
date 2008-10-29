@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<data>
+<!--**************--><C_POC_CONFIGURATION>
+<!-- C_POC_CONFIGURATION_ID-->
+<!---->              <C_POC_CONFIGURATION_ID><![CDATA[4A31472D7A7B41539B32EC83BEEA6DF6]]></C_POC_CONFIGURATION_ID>
+<!-- AD_CLIENT_ID-->
+<!---->              <AD_CLIENT_ID><![CDATA[1000000]]></AD_CLIENT_ID>
+<!-- AD_ORG_ID-->
+<!---->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!-- ISACTIVE-->
+<!---->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!-- CREATED-->
+<!---->              <CREATED><![CDATA[2008-10-19 17:12:47.0]]></CREATED>
+<!-- CREATEDBY-->
+<!---->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!-- UPDATED-->
+<!---->              <UPDATED><![CDATA[2008-10-19 17:12:47.0]]></UPDATED>
+<!-- UPDATEDBY-->
+<!---->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!-- SMTPSERVER-->
+<!---->              <SMTPSERVER><![CDATA[smtp.openbravo.com]]></SMTPSERVER>
+<!-- SMTPSERVERACCOUNT-->
+<!---->              <SMTPSERVERACCOUNT><![CDATA[ebb823c]]></SMTPSERVERACCOUNT>
+<!-- SMTPSERVERPASSWORD-->
+<!---->              <SMTPSERVERPASSWORD><![CDATA[openbravo]]></SMTPSERVERPASSWORD>
+<!-- ISSMTPAUTHORIZATION-->
+<!---->              <ISSMTPAUTHORIZATION><![CDATA[Y]]></ISSMTPAUTHORIZATION>
+<!--**************--></C_POC_CONFIGURATION>
+
+</data>

@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD Xhtml 1.0 Transitional//EN" "http://www.w3.org/tr/xhtml1/Dtd/xhtml1-transitional.dtd">
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2008 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<HTML>
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8"></META> 
+<TITLE>Status</TITLE>
+
+    <link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_240.css" id="paramCSS" />
+    <script language="JavaScript" type="text/javascript" id="paramDirectory">
+      var baseDirectory = "../../../../../web/";
+      </script>
+  <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
+  <SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
+  <SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">defaultLang = "en_US";</SCRIPT>
+  <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
+  <SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
+  <script type="text/javascript">
+    dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
+  </script>
+  	<SCRIPT language="JavaScript" type="text/javascript">
+
+function checkStatus()
+{
+	if( document.getElementById("nrOfEmailsSend").value > 0 )
+	{
+	}
+	else
+	{
+		document.getElementById("paramTitulo").innerHTML = "Process not completed successfully";
+		document.getElementById("bmMessage").innerHTML = "No emails were send. Please check if the documents are 'completed'.";
+	}
+}
+</SCRIPT>
+
+</HEAD>
+
+
+<BODY onload="checkStatus();">
+	<input id="nrOfEmailsSend" type="hidden" name="nrOfEmailsSend" value="">
+	
+<DIV class="Popup_ContentPane_CircleLogo">
+  <DIV class="Popup_WindowLogo">
+    <IMG class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_info" src="../../../../../web/images/blank.gif" border="0/"></IMG>
+  </DIV>
+</DIV>
+
+<TABLE cellspacing="0" cellpadding="0" width="100%">
+
+  <TR>
+    <TD>
+      <TABLE cellspacing="0" cellpadding="0" class="Popup_ContentPane_NavBar">
+
+        <TR class="Popup_NavBar_bg"><TD></TD>
+          <TD class="Popup_NavBar_separator_cell"></TD>
+          <TD class="Popup_NavBar_bg_logo_left"></TD>
+            <td class="Popup_NavBar_bg_logo" width="1" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;"><IMG src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
+          <TD class="Popup_NavBar_bg_logo_right"></TD>
+          <TD class="Popup_NavBar_Popup_title_cell"><SPAN id="paramTitulo">Process completed successfully</SPAN></TD>
+          <TD class="Popup_NavBar_separator_cell"></TD>
+        </TR>
+
+      </TABLE>
+    </TD>
+  </TR>
+
+  <TR>
+    <TD>
+      <TABLE cellspacing="0" cellpadding="0" class="Popup_ContentPane_SeparatorBar">
+        <TR>
+          <TD class="Popup_SeparatorBar_bg"></TD>
+
+        </TR>
+      </TABLE>
+    </TD>
+  </TR>
+
+  <TR>
+    <TD>
+      <DIV class="Popup_ContentPane_Client" style="overflow: auto;">
+          <TABLE>
+
+            <TR height="25px"><TD></TD></TR>
+            <TR>
+              <TD>
+                
+                <TABLE cellpadding="0" cellspacing="0" class="MessageBoxSUCCESS" id="paramTipo">
+                  <TBODY>
+                  <TR class="MessageBox_TopMargin">
+                    <TD class="MessageBox_LeftMargin"></TD>
+                    <TD></TD>
+                    <TD class="MessageBox_RightMargin"></TD>
+
+                  </TR>
+                  <TR>
+                    <TD class="MessageBox_LeftMargin"></TD>
+                    <TD>
+
+                      <TABLE cellpadding="0" cellspacing="0" style="width: 100%;">
+                        <TBODY>
+                        <TR>
+                          <TD>
+
+                            <DIV class="MessageBox_TopLeft"></DIV>
+                            <DIV class="MessageBox_Left"></DIV>
+                          </TD>
+                          <TD class="MessageBox_bg">
+
+                            <TABLE class="MessageBox_Top">
+                            <TBODY>
+                              <TR>
+                                <TD>
+
+                                  <SPAN>
+                                  <TABLE cellpadding="0" cellspacing="0" class="MessageBox_Body_ContentCell">
+                                    <TBODY>
+                                    <TR>
+                                      <TD class="MessageBox_Icon_ContentCell">
+                                        <DIV class="MessageBox_Icon"></DIV>
+                                      </TD>
+                                      <TD style="vertical-align: top;">
+                                        <SPAN>
+
+                                          <DIV class="MessageBox_TextTitle" id="bmMessage">Emails send successfully</DIV>
+                                          <DIV class="MessageBox_TextDescription" id="paramTexto"></DIV>
+                                          <DIV class="MessageBox_TextSeparator"></DIV>
+                                        </SPAN>
+                                      </TD>
+                                    </TR>
+                                    </TBODY>
+                                  </TABLE>
+
+                                  </SPAN>
+                                </TD>
+                              </TR>
+                              </TBODY>
+                            </TABLE>
+
+                          </TD>
+                          <TD class="MessageBox_RightTrans">
+                            <DIV class="MessageBox_TopRight"></DIV>
+
+                            <DIV class="MessageBox_Right"></DIV>
+                          </TD>
+                        </TR>
+                        <TR>
+                          <TD rowspan="2" class="MessageBox_BottomLeft">
+                          </TD>
+                          <TD class="MessageBox_BottomTrans MessageBox_bg">
+                          </TD>
+                          <TD rowspan="2" class="MessageBox_BottomRight">
+
+                          </TD>
+                        </TR>
+                        <TR>
+                          <TD class="MessageBox_Bottom">
+                          </TD>
+                        </TR>
+                        </TBODY>
+                      </TABLE>
+
+                    </TD>
+                    <TD class="MessageBox_RightMargin"></TD>
+                  </TR>
+                  <TR class="MessageBox_BottomMargin">
+                    <TD class="MessageBox_LeftMargin"></TD>
+                    <TD></TD>
+                    <TD class="MessageBox_RightMargin"></TD>
+                  </TR>
+                  </TBODY>
+
+                </TABLE>
+                <TABLE style="width: 550px !important;" cellspacing="0" cellpadding="0" border="0" class="Login_Home_TableEdition">
+                  <TR>
+                    <TD colspan="6" align="center" class="Button_CenterAlign_ContentCell">
+                      <A class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='Closed'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="window.close();return false;">
+                        <TABLE class="Button" onmousedown="this.className='Button_active'; return true;" onmouseup="this.className='Button'; return true;" onmouseover="this.className='Button_hover'; window.status='Closed'; return true;" onmouseout="this.className='Button'; window.status=''; return true;">
+                          <TR>
+                            <TD class="Button_left"><IMG class="Button_Icon Button_Icon_cancel" alt="Closed" title="Closed" src="../../../../../web/images/blank.gif" border="0"></IMG></TD>
+                            <TD class="Button_text Button_width">Close</TD>
+
+                            <TD class="Button_right"></TD>
+                          </TR>
+                        </TABLE>
+                      </A>
+                    </TD>
+                  </TR>
+
+                </TABLE>
+              </TD>
+
+            </TR>
+          </TABLE>
+        </DIV>
+    </TD>
+  </TR>
+</TABLE>
+
+
+
+</BODY></HTML>

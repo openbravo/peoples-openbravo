@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD Xhtml 1.0 Transitional//EN" "http://www.w3.org/tr/xhtml1/Dtd/xhtml1-transitional.dtd">
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2008 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Email options</title>
+    <link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS" />
+    <script language="JavaScript" type="text/javascript" id="paramDirectory">
+      var baseDirectory = "../../../../../web/";
+      </script>
+      <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript">
+      </script>
+      <script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
+      <script language="JavaScript" type="text/javascript" id="paramLanguage">
+        var defaultLang = "en_US";
+      </script>
+      <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
+      <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
+      <script type="text/javascript">
+        dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
+      </script>
+  	<SCRIPT language="JavaScript" type="text/javascript">
+		
+	function closeThisPage() {
+		window.close();
+		return true;
+	}
+
+	function submitThisPage(strCommand) {
+		submitCommandForm(strCommand, false, null, null, '_top');
+		return true;
+	}
+	
+	function actionSendEmail()
+	{
+			submitThisPage('EMAIL');
+	}
+  
+	
+	function resizeWindow()
+	{
+		window.resizeTo(600,425);
+	}
+	
+	function onLoadDo(){
+		
+		this.windowTables = new Array(
+		  new windowTableId('client', 'buttonOK')
+		);
+		setWindowTableParentElement();
+		enableShortcuts('popup');
+		setBrowserAutoComplete(false);
+		
+		var draftDocumentIds = document.getElementById("draftDocumentIds").value;
+		if( draftDocumentIds != "" )
+		{
+			var documentIds = draftDocumentIds.split( "," );
+			for( var index = 0; index < documentIds.length; index++ )
+			{
+				var documentId = documentIds[index];
+			}
+		} 
+		setWindowElementFocus('firstElement');
+        resizeWindow();
+	}
+
+	function onResizeDo(){
+		resizeArea();
+	}
+  </script>
+
+</head>
+
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
+<form id="form" method="POST" action="PrintOptions.html" name="frmMain">
+	
+	<input type="hidden" name="Command"></input>
+	<input type="hidden" name="IsPopUpCall" value="1"></input>
+	<input type="hidden" name="inpLastFieldChanged"></input>
+	<input type="hidden" name="inpKey" value="" id="paramKey"></input>
+	<input type="hidden" name="inpwindowId" value="" id="window"></input>
+	<input type="hidden" name="inpTabId" value="" id="tab"></input>
+	<input type="hidden" name="inpDocumentId" id="strDocumentId" value=""></input>
+	<input type="hidden" name="draftDocumentIds" id="draftDocumentIds" value=""></input>
+	
+	
+
+<div class="Popup_ContentPane_CircleLogo">
+<div class="Popup_WindowLogo"><img
+	class="Popup_WindowLogo_Icon Popup_WindowLogo_Icon_process"
+	src="../../../../../web/images/blank.gif" border=0></img></div>
+</div>
+
+<table cellspacing="0" cellpadding="0" width="100%">
+    <tr>
+      <td>
+        <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_NavBar">
+          <tr class="Popup_NavBar_bg"><td></td>
+            <td class="Popup_NavBar_separator_cell"></td>
+            <td class="Popup_NavBar_bg_logo_left"></td>
+            <td class="Popup_NavBar_bg_logo" width="1" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;"><IMG src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
+            <td class="Popup_NavBar_bg_logo_right"></td>
+            <td class="Popup_NavBar_Popup_title_cell"><span>Email Document</span></td>
+            <td class="Popup_NavBar_separator_cell"></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+	<tr>
+		<td>
+		<table cellspacing="0" cellpadding="0"
+			class="Popup_ContentPane_SeparatorBar">
+			<tr>
+				<td class="Popup_SeparatorBar_bg"></td>
+			</tr>
+		</table>
+		</td>
+	</tr>
+
+	<tr>
+		<td>
+
+		<div style="margin: 10px;" id="sectionDocuments">
+
+		<table cellspacing="0" cellpadding="0 style="height: 150px; overflow: auto;" class="form_table">
+
+					<tr id="emailInfo01">
+						<td>
+						</td>
+						<td>
+							<div class="LabelText">
+								Write a template email below. 
+							</div>
+							<div class="LabelText">
+								The following tags will be replaced by the values for each specific document when the mails are send.
+							</div>							
+						</td>
+					</tr>
+					<tr id="emailInfo02">
+						<td>
+						</td>
+						<td>
+							<div class="LabelText">
+								<table border="0" cellspacing="0" cellpadding="0" summary="" class="">
+								<tr>
+									<td class="LabelText">@cus_ref@:</td><td class="LabelText">The document reference of the customer</td>
+								</tr>
+								<tr>
+									<td class="LabelText">@our_ref@:</td><td class="LabelText">The reference of the document</td>
+								</tr>
+								</table>								 
+							</div>
+						</td>
+					</tr>
+
+
+					<tr id="emailField02">
+						<td style="width: 1%; text-align: right;">
+							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">Customer Email</span>
+						</td>
+						<td id="contactEmailArea" style="width: 99%;">
+							<input type="text" dojoType="openbravo:ValidationTextBox"
+									class="dojoValidateValid required TextBox_btn_TwoCells_width"
+									maxlength="200" name="contactEmail-xx" id="contactEmail-xx" value="xxxx"
+									required="true" onkeyup="validateTextBox(this.id);"><span>(</span><span class="LabelText" name="contactName-yy" id="contactName-yy"></span><input type="hidden" dojoType="openbravo:ValidationTextBox"
+									class="dojoValidateValid required TextBox_btn_TwoCells_width"
+									maxlength="200" name="contactName-xx" id="contactName-xx" value="xxxx"
+									required="true" onkeyup="validateTextBox(this.id);"><span class="LabelText">)</span>
+						</td>
+					</tr>
+
+					<tr id="emailField03">
+						<td style="width: 1%; text-align: right;">
+							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">SalesRep Email</span>
+						</td>						
+						<td id="salesrepEmailArea" style="width: 99%;">
+							<input type="text" dojoType="openbravo:ValidationTextBox"
+									class="dojoValidateValid required TextBox_btn_TwoCells_width"
+									maxlength="200" name="salesrepEmail-xx" id="salesrepEmail-xx" value="xxxx"
+									required="true" onkeyup="validateTextBox(this.id);"><span>(</span><span class="LabelText" name="salesrepName-yy" id="salesrepName-yy"></span><input type="hidden" dojoType="openbravo:ValidationTextBox"	class="dojoValidateValid required TextBox_btn_TwoCells_width" maxlength="200" name="salesrepName-xx" id="salesrepName-xx" value="xxxx"
+									required="true" onkeyup="validateTextBox(this.id);"><span class="LabelText">)</span>
+						</td>
+					</tr>
+
+					<tr id="emailField03">
+						<td style="width: 1%; text-align: right;">
+							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">Subject</span>
+						</td>
+						<td style="width: 99%;">
+							<table border="0" cellspacing="0" cellpadding="0" summary="" class="">
+							<tr>
+								<td>
+									<input type="text" dojoType="openbravo:ValidationTextBox"
+										class="dojoValidateValid required TextBox_btn_TwoCells_width"
+										maxlength="200" name="emailSubject" id="emailSubject" value=""
+										required="true" onkeyup="validateTextBox(this.id);">
+								</td>
+								<td class="FieldButton_ContentCell">
+								</td>
+							<tr>
+							</table>
+						</td>
+					</tr>
+
+					<tr id="emailField03">
+						<td style="width: 1%; text-align: right;">
+							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">Message body</span>
+						</td>
+						<td style="width: 99%">
+							<table style="width: 100%;" border="0" cellspacing="0" cellpadding="0" summary="" class="">
+							<tr>
+								<td>
+						            <textarea id="emailBody" style="width: 400px; height: 100px" class="dojoValidateValid" maxlength="2000" name="emailBody" onkeyup="" onchange=""></textarea>
+								</td>
+								<td class="FieldButton_ContentCell">
+								</td>
+							<tr>
+							</table>
+						</td>
+					</tr>
+					
+					<tr id="emailField03">
+						<td style="width: 1%; text-align: right;">
+							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">Our reference</span>
+						</td>
+						<td style="width: 99%" id="ourReference" class="LabelText">
+							<input type="hidden" name="ourReference-xx" id="ourReference-xx" value="xxxx">
+							xx
+						</td>
+					</tr>					
+
+					<tr id="emailField03">
+						<td style="width: 1%; text-align: right;">
+							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">Customer reference</span>
+						</td>
+						<td style="width: 99%" id="cusReference" class="LabelText">
+							<input type="hidden" name="cusReference-xx" id="cusReference-xx" value="xxxx">
+							xx
+						</td>						
+					</tr>					
+
+					<tr id="emailField03">						
+						<td style="width: 1%; text-align: right; white-space: nowrap; padding-right: 10px;"> <input type="checkbox" id="paramArchive" name="inpArchive" value="Y" checked/></td>
+						<td style="width: 99%"><span class="LabelText">Archive this document (This will attach the document to the record)</span></td>			
+					</tr>	
+					</table>
+				
+					<table cellspacing="0" cellpadding="0" style="margin: 0px; padding: 0px;" class="Popup_Client_TablePopup">	
+					<tr>
+						<td class="Button_RightAlign_ContentCell">
+							<div>
+								<a class="ButtonLink" href="#"
+									onfocus="this.className='ButtonLink_hover'; window.status='Send'; return true;"
+									onblur="this.className='ButtonLink'; window.status=''; return true;"
+									onkeypress="this.className='ButtonLink_active'; return true;"
+									onkeyup="this.className='ButtonLink_hover'; return true;">
+	
+									<table class="Button" onclick="actionSendEmail();return false;"
+										onmouseout="this.className='Button';window.status='';return true;"
+										onmouseover="this.className='Button_hover';window.status='Send';return true;"
+										onmousedown="this.className='Button_active';return true;"
+										onmouseup="this.className='Button';return true;">
+										<tr>
+											<td class="Button_left"><img
+												class="Button_Icon Button_Icon_ok" alt="Send" title="Send"
+												src="../../../../../web/images/blank.gif" border=0 /></td>
+											<td class="Button_text Button_width">Send</td>
+											<td class="Button_right"></td>
+										</tr>
+									</table>
+								</a>
+							</div>
+						</td>
+						<td class="Button_LeftAlign_ContentCell">
+							<div>
+								<a class="ButtonLink" href="#"
+									onfocus="this.className='ButtonLink_hover'; window.status='Cancel'; return true;"
+									onblur="this.className='ButtonLink'; window.status=''; return true;"
+									onkeypress="this.className='ButtonLink_active'; return true;"
+									onkeyup="this.className='ButtonLink_hover'; return true;"
+									onclick="closeThisPage();return false;">
+									
+									<table class="Button"
+										onmouseout="this.className='Button';window.status='';return true;"
+										onmouseover="this.className='Button_hover';window.status='Cancel';return true;"
+										onmousedown="this.className='Button_active';return true;"
+										onmouseup="this.className='Button';return true;">
+										<tr>
+											<td class="Button_left"><img
+												class="Button_Icon Button_Icon_cancel" alt="Cancel"
+												title="Cancel" src="../../../../../web/images/blank.gif" border=0 /></td>
+											<td class="Button_text Button_width">Cancel</td>
+											<td class="Button_right"></td>
+										</tr>
+									</table>
+								</a>
+							</div>
+						</td>
+					</tr>
+					</table>
+				
+				</div>
+			</td>
+		</tr>
+
+
+</table>
+</form>
+</body>
+</html>

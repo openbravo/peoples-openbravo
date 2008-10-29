@@ -120,6 +120,8 @@ public class ToolBar {
       return "openServletNewWindow('PDF', false, '../utility/ExportGrid.pdf?inpTabId=' + document.forms[0].inpTabId.value + '&inpWindowId=' + document.forms[0].inpwindowId.value + '&inpAccessLevel=' + document.forms[0].inpAccessLevel.value, 'GRIDPDF', null, null, 500, 350, true );";
     } else if (name.equals("PRINT")) {
       return "openPDFSession('" + pdf + "', '" + (isDirectPrint?"Printing":"") + "', " + keyfield + ".name, " + ((grid_id==null || grid_id.equals(""))?"null":"dijit.byId('" + grid_id + "').getSelectedRows()") + ", " + ((grid_id==null || grid_id.equals(""))?"true":"null") + ");";
+    } else if (name.equals("EMAIL")) {
+      return "openPDFSession('" + pdf.replaceAll("print.html", "send.html") + "', '" + (isDirectPrint?"Printing":"") + "', " + keyfield + ".name, " + ((grid_id==null || grid_id.equals(""))?"null":"dijit.byId('" + grid_id + "').getSelectedRows()") + ", " + ((grid_id==null || grid_id.equals(""))?"true":"null") + ");";      
     } else if (name.equals("UNDO")) {
       return "windowUndo(" + form + ");";
     } else if (name.equals("SEARCH")) {
@@ -168,7 +170,10 @@ public class ToolBar {
     buttons.put("GRIDEXCEL", new ToolBar_Button(base_direction, "ExportExcel", Utility.messageBD(conn, "ExportExcel", language), getButtonScript("GRIDEXCEL")));
     buttons.put("GRIDCSV", new ToolBar_Button(base_direction, "ExportCsv", Utility.messageBD(conn, "ExportCsv", language), getButtonScript("GRIDCSV")));
     buttons.put("GRIDPDF", new ToolBar_Button(base_direction, "ExportPDF", Utility.messageBD(conn, "ExportPDF", language), getButtonScript("GRIDPDF")));
-    if (pdf!=null && !pdf.equals("") && !pdf.equals("..")) buttons.put("PRINT", new ToolBar_Button(base_direction, "Print", Utility.messageBD(conn, "Print", language), getButtonScript("PRINT")));
+    if (pdf!=null && !pdf.equals("") && !pdf.equals("..")) {
+    	buttons.put("PRINT", new ToolBar_Button(base_direction, "Print", Utility.messageBD(conn, "Print", language), getButtonScript("PRINT")));
+    	buttons.put("EMAIL", new ToolBar_Button(base_direction, "Email", Utility.messageBD(conn, "Email", language), getButtonScript("EMAIL")));    	
+    }     
     buttons.put("SEARCH", new ToolBar_Button(base_direction, "Search", Utility.messageBD(conn, "Search", language), getButtonScript("SEARCH")));
     buttons.put("SEARCH_FILTERED", new ToolBar_Button(base_direction, "SearchFiltered", Utility.messageBD(conn, "Search", language), getButtonScript("SEARCH")));
     buttons.put("AUDIT_SHOW_EDITION_ENABLED", new ToolBar_Button(base_direction, "Audit", Utility.messageBD(conn, "HideAudit", language), getButtonScript("AUDIT_EDITION"), true));
@@ -226,6 +231,7 @@ public class ToolBar {
     removeElement("GRIDCSV");
     removeElement("GRIDPDF");
     removeElement("PRINT");
+    removeElement("EMAIL");    
     removeElement("SEARCH");
     removeElement("SEARCH_FILTERED");
     removeElement("SEPARATOR5");
@@ -365,8 +371,10 @@ public class ToolBar {
     removeElement("CAPTURE");
     removeElement("CHECK_CONTENT");
     removeElement("CHECK_ELEMENT");  
-    if (pdf!=null && !pdf.equals("") && !pdf.equals(".."))
+    if (pdf!=null && !pdf.equals("") && !pdf.equals("..")){
        buttons.put("PRINT", new ToolBar_Button(base_direction, "Print", Utility.messageBD(conn, "Print", language), pdf));
+       buttons.put("EMAIL", new ToolBar_Button(base_direction, "Email", Utility.messageBD(conn, "Email", language), pdf));       
+    }   
     removeElement("RELATED_INFO"); 
     
     removeElement("AUDIT_SHOW_EDITION_DISABLED");
@@ -413,9 +421,10 @@ public class ToolBar {
     removeElement("CAPTURE");
     removeElement("CHECK_CONTENT");
     removeElement("CHECK_ELEMENT");  
-    if (pdf!=null && !pdf.equals("") && !pdf.equals(".."))
+    if (pdf!=null && !pdf.equals("") && !pdf.equals("..")){
        buttons.put("PRINT", new ToolBar_Button(base_direction, "Print", Utility.messageBD(conn, "Print", language), pdf));
-    
+       buttons.put("EMAIL", new ToolBar_Button(base_direction, "Email", Utility.messageBD(conn, "Email", language), pdf));       
+    }
     removeElement("AUDIT_SHOW_EDITION_DISABLED");
     removeElement("AUDIT_SHOW_EDITION_ENABLED");
     removeElement("AUDIT_SHOW_RELATION_DISABLED");
@@ -463,8 +472,10 @@ public class ToolBar {
     removeElement("CHECK_CONTENT");
     removeElement("CHECK_ELEMENT");  
     removeElement("RELATED_INFO"); // Modified
-    if (pdf!=null && !pdf.equals("") && !pdf.equals(".."))
+    if (pdf!=null && !pdf.equals("") && !pdf.equals("..")){
        buttons.put("PRINT", new ToolBar_Button(base_direction, "Print", Utility.messageBD(conn, "Print", language), pdf));
+       buttons.put("EMAIL", new ToolBar_Button(base_direction, "Email", Utility.messageBD(conn, "Email", language), pdf));       
+    }
     if (!excelScript.equals("") && excelScript != null)
         buttons.put("EXCEL", new ToolBar_Button(base_direction, "Excel", Utility.messageBD(conn, "ExportExcel", language), excelScript));
     
@@ -708,6 +719,7 @@ public class ToolBar {
       toolbar.append(transformElementsToString(buttons.get("GRIDCSV"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("GRIDPDF"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("PRINT"), lastType, false));
+      toolbar.append(transformElementsToString(buttons.get("EMAIL"), lastType, false));      
       toolbar.append(transformElementsToString(buttons.get("SEARCH"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("SEARCH_FILTERED"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("AUDIT_SHOW_EDITION_ENABLED"), lastType, false));

@@ -177,10 +177,10 @@
 		<defaultValueExpression ><![CDATA["en_US"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="USER_CLIENT" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA["(1000000)"]]></defaultValueExpression>
+		<defaultValueExpression ><![CDATA["('1000000)"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="USER_ORG" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA["(0)"]]></defaultValueExpression>
+		<defaultValueExpression ><![CDATA["('0')"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="REPORT_TITLE" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["REPORT TITLE"]]></defaultValueExpression>
@@ -208,7 +208,7 @@
         AD_ORGINFO, AD_CLIENT
   WHERE C_INVOICE.ad_org_id = AD_ORGINFO.ad_org_id
     AND C_INVOICE.ad_client_id = AD_CLIENT.ad_client_id
-    AND C_INVOICE.C_INVOICE_ID IN (1000032)]]></queryString>
+    AND C_INVOICE.C_INVOICE_ID IN ('1000032')]]></queryString>
 
 	<field name="C_INVOICE_ID" class="java.lang.String"/>
 	<field name="NAME" class="java.lang.String"/>

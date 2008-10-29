@@ -3414,9 +3414,9 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--186 CREATEDBY-->
 <!--186-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--186 UPDATED-->
-<!--186-->              <UPDATED><![CDATA[2003-02-22 02:20:07.0]]></UPDATED>
+<!--186-->              <UPDATED><![CDATA[2008-10-12 17:40:04.0]]></UPDATED>
 <!--186 UPDATEDBY-->
-<!--186-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--186-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--186 NAME-->
 <!--186-->              <NAME><![CDATA[Header]]></NAME>
 <!--186 DESCRIPTION-->
@@ -3444,7 +3444,7 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--186 WHERECLAUSE-->
 <!--186-->              <WHERECLAUSE><![CDATA[C_Order.IsSOTrx='Y']]></WHERECLAUSE>
 <!--186 AD_PROCESS_ID-->
-<!--186-->              <AD_PROCESS_ID><![CDATA[110]]></AD_PROCESS_ID>
+<!--186-->              <AD_PROCESS_ID><![CDATA[1000500002]]></AD_PROCESS_ID>
 <!--186 PROCESSING-->
 <!--186-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--186 ISSORTTAB-->
@@ -6248,7 +6248,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--263 CREATEDBY-->
 <!--263-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--263 UPDATED-->
-<!--263-->              <UPDATED><![CDATA[2007-09-06 14:00:25.0]]></UPDATED>
+<!--263-->              <UPDATED><![CDATA[2008-10-16 23:22:19.0]]></UPDATED>
 <!--263 UPDATEDBY-->
 <!--263-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--263 NAME-->
@@ -6278,7 +6278,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--263 WHERECLAUSE-->
 <!--263-->              <WHERECLAUSE><![CDATA[C_Invoice.IsSOTrx='Y']]></WHERECLAUSE>
 <!--263 AD_PROCESS_ID-->
-<!--263-->              <AD_PROCESS_ID><![CDATA[116]]></AD_PROCESS_ID>
+<!--263-->              <AD_PROCESS_ID><![CDATA[1000500003]]></AD_PROCESS_ID>
 <!--263 PROCESSING-->
 <!--263-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--263 ISSORTTAB-->
@@ -6838,9 +6838,9 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--290 CREATEDBY-->
 <!--290-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--290 UPDATED-->
-<!--290-->              <UPDATED><![CDATA[2003-02-22 02:20:07.0]]></UPDATED>
+<!--290-->              <UPDATED><![CDATA[2008-10-28 10:57:35.0]]></UPDATED>
 <!--290 UPDATEDBY-->
-<!--290-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--290-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--290 NAME-->
 <!--290-->              <NAME><![CDATA[Header]]></NAME>
 <!--290 DESCRIPTION-->
@@ -6868,7 +6868,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--290 WHERECLAUSE-->
 <!--290-->              <WHERECLAUSE><![CDATA[C_Invoice.IsSOTrx='N']]></WHERECLAUSE>
 <!--290 AD_PROCESS_ID-->
-<!--290-->              <AD_PROCESS_ID><![CDATA[116]]></AD_PROCESS_ID>
+<!--290-->              <AD_PROCESS_ID><![CDATA[1000500003]]></AD_PROCESS_ID>
 <!--290 PROCESSING-->
 <!--290-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--290 ISSORTTAB-->
@@ -7040,7 +7040,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--294 CREATEDBY-->
 <!--294-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--294 UPDATED-->
-<!--294-->              <UPDATED><![CDATA[2003-11-11 12:46:16.0]]></UPDATED>
+<!--294-->              <UPDATED><![CDATA[2008-10-28 10:57:12.0]]></UPDATED>
 <!--294 UPDATEDBY-->
 <!--294-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--294 NAME-->
@@ -7070,7 +7070,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--294 WHERECLAUSE-->
 <!--294-->              <WHERECLAUSE><![CDATA[C_Order.IsSOTrx='N']]></WHERECLAUSE>
 <!--294 AD_PROCESS_ID-->
-<!--294-->              <AD_PROCESS_ID><![CDATA[800004]]></AD_PROCESS_ID>
+<!--294-->              <AD_PROCESS_ID><![CDATA[1000500002]]></AD_PROCESS_ID>
 <!--294 PROCESSING-->
 <!--294-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--294 ISSORTTAB-->
@@ -25431,6 +25431,155 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--800268 AD_MODULE_ID-->
 <!--800268-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800268**************--></AD_TAB>
+
+<!--1000500000**************--><AD_TAB>
+<!--1000500000 AD_TAB_ID-->
+<!--1000500000-->              <AD_TAB_ID><![CDATA[1000500000]]></AD_TAB_ID>
+<!--1000500000 AD_CLIENT_ID-->
+<!--1000500000-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500000 AD_ORG_ID-->
+<!--1000500000-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500000 ISACTIVE-->
+<!--1000500000-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500000 CREATED-->
+<!--1000500000-->              <CREATED><![CDATA[2008-10-12 17:28:51.0]]></CREATED>
+<!--1000500000 CREATEDBY-->
+<!--1000500000-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--1000500000 UPDATED-->
+<!--1000500000-->              <UPDATED><![CDATA[2008-10-16 12:50:39.0]]></UPDATED>
+<!--1000500000 UPDATEDBY-->
+<!--1000500000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1000500000 NAME-->
+<!--1000500000-->              <NAME><![CDATA[Poc Configuration]]></NAME>
+<!--1000500000 DESCRIPTION-->
+<!--1000500000-->              <DESCRIPTION><![CDATA[Configuration tab for the Point of Contact features]]></DESCRIPTION>
+<!--1000500000 AD_TABLE_ID-->
+<!--1000500000-->              <AD_TABLE_ID><![CDATA[1000500000]]></AD_TABLE_ID>
+<!--1000500000 AD_WINDOW_ID-->
+<!--1000500000-->              <AD_WINDOW_ID><![CDATA[109]]></AD_WINDOW_ID>
+<!--1000500000 SEQNO-->
+<!--1000500000-->              <SEQNO><![CDATA[30]]></SEQNO>
+<!--1000500000 TABLEVEL-->
+<!--1000500000-->              <TABLEVEL><![CDATA[1]]></TABLEVEL>
+<!--1000500000 ISSINGLEROW-->
+<!--1000500000-->              <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
+<!--1000500000 ISINFOTAB-->
+<!--1000500000-->              <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
+<!--1000500000 ISTRANSLATIONTAB-->
+<!--1000500000-->              <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
+<!--1000500000 ISREADONLY-->
+<!--1000500000-->              <ISREADONLY><![CDATA[N]]></ISREADONLY>
+<!--1000500000 HASTREE-->
+<!--1000500000-->              <HASTREE><![CDATA[N]]></HASTREE>
+<!--1000500000 PROCESSING-->
+<!--1000500000-->              <PROCESSING><![CDATA[N]]></PROCESSING>
+<!--1000500000 IMPORTFIELDS-->
+<!--1000500000-->              <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
+<!--1000500000 ISSORTTAB-->
+<!--1000500000-->              <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
+<!--1000500000 AD_MODULE_ID-->
+<!--1000500000-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500000**************--></AD_TAB>
+
+<!--1000500001**************--><AD_TAB>
+<!--1000500001 AD_TAB_ID-->
+<!--1000500001-->              <AD_TAB_ID><![CDATA[1000500001]]></AD_TAB_ID>
+<!--1000500001 AD_CLIENT_ID-->
+<!--1000500001-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500001 AD_ORG_ID-->
+<!--1000500001-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500001 ISACTIVE-->
+<!--1000500001-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500001 CREATED-->
+<!--1000500001-->              <CREATED><![CDATA[2008-10-12 17:35:32.0]]></CREATED>
+<!--1000500001 CREATEDBY-->
+<!--1000500001-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--1000500001 UPDATED-->
+<!--1000500001-->              <UPDATED><![CDATA[2008-10-14 23:21:56.0]]></UPDATED>
+<!--1000500001 UPDATEDBY-->
+<!--1000500001-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1000500001 NAME-->
+<!--1000500001-->              <NAME><![CDATA[Report Templates]]></NAME>
+<!--1000500001 AD_TABLE_ID-->
+<!--1000500001-->              <AD_TABLE_ID><![CDATA[1000500001]]></AD_TABLE_ID>
+<!--1000500001 AD_WINDOW_ID-->
+<!--1000500001-->              <AD_WINDOW_ID><![CDATA[135]]></AD_WINDOW_ID>
+<!--1000500001 SEQNO-->
+<!--1000500001-->              <SEQNO><![CDATA[30]]></SEQNO>
+<!--1000500001 TABLEVEL-->
+<!--1000500001-->              <TABLEVEL><![CDATA[1]]></TABLEVEL>
+<!--1000500001 ISSINGLEROW-->
+<!--1000500001-->              <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
+<!--1000500001 ISINFOTAB-->
+<!--1000500001-->              <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
+<!--1000500001 ISTRANSLATIONTAB-->
+<!--1000500001-->              <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
+<!--1000500001 ISREADONLY-->
+<!--1000500001-->              <ISREADONLY><![CDATA[N]]></ISREADONLY>
+<!--1000500001 AD_COLUMN_ID-->
+<!--1000500001-->              <AD_COLUMN_ID><![CDATA[1000500024]]></AD_COLUMN_ID>
+<!--1000500001 HASTREE-->
+<!--1000500001-->              <HASTREE><![CDATA[N]]></HASTREE>
+<!--1000500001 PROCESSING-->
+<!--1000500001-->              <PROCESSING><![CDATA[N]]></PROCESSING>
+<!--1000500001 IMPORTFIELDS-->
+<!--1000500001-->              <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
+<!--1000500001 ISSORTTAB-->
+<!--1000500001-->              <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
+<!--1000500001 AD_MODULE_ID-->
+<!--1000500001-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500001**************--></AD_TAB>
+
+<!--1000500002**************--><AD_TAB>
+<!--1000500002 AD_TAB_ID-->
+<!--1000500002-->              <AD_TAB_ID><![CDATA[1000500002]]></AD_TAB_ID>
+<!--1000500002 AD_CLIENT_ID-->
+<!--1000500002-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500002 AD_ORG_ID-->
+<!--1000500002-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500002 ISACTIVE-->
+<!--1000500002-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500002 CREATED-->
+<!--1000500002-->              <CREATED><![CDATA[2008-10-16 12:57:07.0]]></CREATED>
+<!--1000500002 CREATEDBY-->
+<!--1000500002-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
+<!--1000500002 UPDATED-->
+<!--1000500002-->              <UPDATED><![CDATA[2008-10-16 13:18:34.0]]></UPDATED>
+<!--1000500002 UPDATEDBY-->
+<!--1000500002-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1000500002 NAME-->
+<!--1000500002-->              <NAME><![CDATA[Email Definitions]]></NAME>
+<!--1000500002 AD_TABLE_ID-->
+<!--1000500002-->              <AD_TABLE_ID><![CDATA[1000500004]]></AD_TABLE_ID>
+<!--1000500002 AD_WINDOW_ID-->
+<!--1000500002-->              <AD_WINDOW_ID><![CDATA[135]]></AD_WINDOW_ID>
+<!--1000500002 SEQNO-->
+<!--1000500002-->              <SEQNO><![CDATA[40]]></SEQNO>
+<!--1000500002 TABLEVEL-->
+<!--1000500002-->              <TABLEVEL><![CDATA[2]]></TABLEVEL>
+<!--1000500002 ISSINGLEROW-->
+<!--1000500002-->              <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
+<!--1000500002 ISINFOTAB-->
+<!--1000500002-->              <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
+<!--1000500002 ISTRANSLATIONTAB-->
+<!--1000500002-->              <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
+<!--1000500002 ISREADONLY-->
+<!--1000500002-->              <ISREADONLY><![CDATA[N]]></ISREADONLY>
+<!--1000500002 AD_COLUMN_ID-->
+<!--1000500002-->              <AD_COLUMN_ID><![CDATA[1000500064]]></AD_COLUMN_ID>
+<!--1000500002 HASTREE-->
+<!--1000500002-->              <HASTREE><![CDATA[N]]></HASTREE>
+<!--1000500002 PROCESSING-->
+<!--1000500002-->              <PROCESSING><![CDATA[N]]></PROCESSING>
+<!--1000500002 IMPORTFIELDS-->
+<!--1000500002-->              <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
+<!--1000500002 ISSORTTAB-->
+<!--1000500002-->              <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
+<!--1000500002 INCLUDED_TAB_ID-->
+<!--1000500002-->              <INCLUDED_TAB_ID><![CDATA[1000500001]]></INCLUDED_TAB_ID>
+<!--1000500002 AD_MODULE_ID-->
+<!--1000500002-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500002**************--></AD_TAB>
 
 <!--1002100000**************--><AD_TAB>
 <!--1002100000 AD_TAB_ID-->

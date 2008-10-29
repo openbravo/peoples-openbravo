@@ -28328,7 +28328,7 @@
 <!--807346 TEXT-->
 <!--807346-->              <TEXT><![CDATA[Subject]]></TEXT>
 <!--807346 ISUSED-->
-<!--807346-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--807346-->              <ISUSED><![CDATA[Y]]></ISUSED>
 <!--807346 AD_MODULE_ID-->
 <!--807346-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--807346**************--></AD_TEXTINTERFACES>
@@ -39854,6 +39854,1518 @@
 <!--1000500027 AD_MODULE_ID-->
 <!--1000500027-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1000500027**************--></AD_TEXTINTERFACES>
+
+<!--1000500028**************--><AD_TEXTINTERFACES>
+<!--1000500028 AD_TEXTINTERFACES_ID-->
+<!--1000500028-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500028]]></AD_TEXTINTERFACES_ID>
+<!--1000500028 AD_CLIENT_ID-->
+<!--1000500028-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500028 AD_ORG_ID-->
+<!--1000500028-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500028 ISACTIVE-->
+<!--1000500028-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500028 CREATED-->
+<!--1000500028-->              <CREATED><![CDATA[2008-10-12 16:39:16.0]]></CREATED>
+<!--1000500028 CREATEDBY-->
+<!--1000500028-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500028 UPDATED-->
+<!--1000500028-->              <UPDATED><![CDATA[2008-10-12 16:39:16.0]]></UPDATED>
+<!--1000500028 UPDATEDBY-->
+<!--1000500028-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500028 TEXT-->
+<!--1000500028-->              <TEXT><![CDATA[Process completed successfully]]></TEXT>
+<!--1000500028 FILENAME-->
+<!--1000500028-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/reporting/printing/PrintStatus.html]]></FILENAME>
+<!--1000500028 ISUSED-->
+<!--1000500028-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500028 AD_MODULE_ID-->
+<!--1000500028-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500028**************--></AD_TEXTINTERFACES>
+
+<!--1000500029**************--><AD_TEXTINTERFACES>
+<!--1000500029 AD_TEXTINTERFACES_ID-->
+<!--1000500029-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500029]]></AD_TEXTINTERFACES_ID>
+<!--1000500029 AD_CLIENT_ID-->
+<!--1000500029-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500029 AD_ORG_ID-->
+<!--1000500029-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500029 ISACTIVE-->
+<!--1000500029-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500029 CREATED-->
+<!--1000500029-->              <CREATED><![CDATA[2008-10-12 16:39:16.0]]></CREATED>
+<!--1000500029 CREATEDBY-->
+<!--1000500029-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500029 UPDATED-->
+<!--1000500029-->              <UPDATED><![CDATA[2008-10-12 16:39:16.0]]></UPDATED>
+<!--1000500029 UPDATEDBY-->
+<!--1000500029-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500029 TEXT-->
+<!--1000500029-->              <TEXT><![CDATA[Emails send successfully]]></TEXT>
+<!--1000500029 FILENAME-->
+<!--1000500029-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/reporting/printing/PrintStatus.html]]></FILENAME>
+<!--1000500029 ISUSED-->
+<!--1000500029-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500029 AD_MODULE_ID-->
+<!--1000500029-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500029**************--></AD_TEXTINTERFACES>
+
+<!--1000500030**************--><AD_TEXTINTERFACES>
+<!--1000500030 AD_TEXTINTERFACES_ID-->
+<!--1000500030-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500030]]></AD_TEXTINTERFACES_ID>
+<!--1000500030 AD_CLIENT_ID-->
+<!--1000500030-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500030 AD_ORG_ID-->
+<!--1000500030-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500030 ISACTIVE-->
+<!--1000500030-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500030 CREATED-->
+<!--1000500030-->              <CREATED><![CDATA[2008-10-12 16:39:16.0]]></CREATED>
+<!--1000500030 CREATEDBY-->
+<!--1000500030-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500030 UPDATED-->
+<!--1000500030-->              <UPDATED><![CDATA[2008-10-12 16:39:16.0]]></UPDATED>
+<!--1000500030 UPDATEDBY-->
+<!--1000500030-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500030 TEXT-->
+<!--1000500030-->              <TEXT><![CDATA[Close]]></TEXT>
+<!--1000500030 FILENAME-->
+<!--1000500030-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/reporting/printing/PrintStatus.html]]></FILENAME>
+<!--1000500030 ISUSED-->
+<!--1000500030-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500030 AD_MODULE_ID-->
+<!--1000500030-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500030**************--></AD_TEXTINTERFACES>
+
+<!--1000500031**************--><AD_TEXTINTERFACES>
+<!--1000500031 AD_TEXTINTERFACES_ID-->
+<!--1000500031-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500031]]></AD_TEXTINTERFACES_ID>
+<!--1000500031 AD_CLIENT_ID-->
+<!--1000500031-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500031 AD_ORG_ID-->
+<!--1000500031-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500031 ISACTIVE-->
+<!--1000500031-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500031 CREATED-->
+<!--1000500031-->              <CREATED><![CDATA[2008-10-12 16:39:16.0]]></CREATED>
+<!--1000500031 CREATEDBY-->
+<!--1000500031-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500031 UPDATED-->
+<!--1000500031-->              <UPDATED><![CDATA[2008-10-12 16:39:16.0]]></UPDATED>
+<!--1000500031 UPDATEDBY-->
+<!--1000500031-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500031 TEXT-->
+<!--1000500031-->              <TEXT><![CDATA[Print options]]></TEXT>
+<!--1000500031 FILENAME-->
+<!--1000500031-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500031 ISUSED-->
+<!--1000500031-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500031 AD_MODULE_ID-->
+<!--1000500031-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500031**************--></AD_TEXTINTERFACES>
+
+<!--1000500032**************--><AD_TEXTINTERFACES>
+<!--1000500032 AD_TEXTINTERFACES_ID-->
+<!--1000500032-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500032]]></AD_TEXTINTERFACES_ID>
+<!--1000500032 AD_CLIENT_ID-->
+<!--1000500032-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500032 AD_ORG_ID-->
+<!--1000500032-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500032 ISACTIVE-->
+<!--1000500032-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500032 CREATED-->
+<!--1000500032-->              <CREATED><![CDATA[2008-10-12 16:39:16.0]]></CREATED>
+<!--1000500032 CREATEDBY-->
+<!--1000500032-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500032 UPDATED-->
+<!--1000500032-->              <UPDATED><![CDATA[2008-10-12 16:39:16.0]]></UPDATED>
+<!--1000500032 UPDATEDBY-->
+<!--1000500032-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500032 TEXT-->
+<!--1000500032-->              <TEXT><![CDATA[.form_table 		{ 			border: 0px none; 			padding-top: 20px; 			padding-left: 10px; 			padding-right: 10px; 			padding-bottom: 20px; 			background-color: #E8E8E8; 			border-collapse: collapse; 		}]]></TEXT>
+<!--1000500032 FILENAME-->
+<!--1000500032-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500032 ISUSED-->
+<!--1000500032-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500032 AD_MODULE_ID-->
+<!--1000500032-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500032**************--></AD_TEXTINTERFACES>
+
+<!--1000500033**************--><AD_TEXTINTERFACES>
+<!--1000500033 AD_TEXTINTERFACES_ID-->
+<!--1000500033-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500033]]></AD_TEXTINTERFACES_ID>
+<!--1000500033 AD_CLIENT_ID-->
+<!--1000500033-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500033 AD_ORG_ID-->
+<!--1000500033-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500033 ISACTIVE-->
+<!--1000500033-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500033 CREATED-->
+<!--1000500033-->              <CREATED><![CDATA[2008-10-12 16:39:16.0]]></CREATED>
+<!--1000500033 CREATEDBY-->
+<!--1000500033-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500033 UPDATED-->
+<!--1000500033-->              <UPDATED><![CDATA[2008-10-12 16:39:16.0]]></UPDATED>
+<!--1000500033 UPDATEDBY-->
+<!--1000500033-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500033 TEXT-->
+<!--1000500033-->              <TEXT><![CDATA[Print 				options]]></TEXT>
+<!--1000500033 FILENAME-->
+<!--1000500033-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500033 ISUSED-->
+<!--1000500033-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500033 AD_MODULE_ID-->
+<!--1000500033-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500033**************--></AD_TEXTINTERFACES>
+
+<!--1000500034**************--><AD_TEXTINTERFACES>
+<!--1000500034 AD_TEXTINTERFACES_ID-->
+<!--1000500034-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500034]]></AD_TEXTINTERFACES_ID>
+<!--1000500034 AD_CLIENT_ID-->
+<!--1000500034-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500034 AD_ORG_ID-->
+<!--1000500034-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500034 ISACTIVE-->
+<!--1000500034-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500034 CREATED-->
+<!--1000500034-->              <CREATED><![CDATA[2008-10-12 16:39:16.0]]></CREATED>
+<!--1000500034 CREATEDBY-->
+<!--1000500034-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500034 UPDATED-->
+<!--1000500034-->              <UPDATED><![CDATA[2008-10-12 16:39:16.0]]></UPDATED>
+<!--1000500034 UPDATEDBY-->
+<!--1000500034-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500034 TEXT-->
+<!--1000500034-->              <TEXT><![CDATA[  You can print the document(s) 						now or use the email function to send the document to the business 						partner directly through email.]]></TEXT>
+<!--1000500034 FILENAME-->
+<!--1000500034-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500034 ISUSED-->
+<!--1000500034-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500034 AD_MODULE_ID-->
+<!--1000500034-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500034**************--></AD_TEXTINTERFACES>
+
+<!--1000500035**************--><AD_TEXTINTERFACES>
+<!--1000500035 AD_TEXTINTERFACES_ID-->
+<!--1000500035-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500035]]></AD_TEXTINTERFACES_ID>
+<!--1000500035 AD_CLIENT_ID-->
+<!--1000500035-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500035 AD_ORG_ID-->
+<!--1000500035-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500035 ISACTIVE-->
+<!--1000500035-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500035 CREATED-->
+<!--1000500035-->              <CREATED><![CDATA[2008-10-12 16:39:16.0]]></CREATED>
+<!--1000500035 CREATEDBY-->
+<!--1000500035-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500035 UPDATED-->
+<!--1000500035-->              <UPDATED><![CDATA[2008-10-12 16:39:16.0]]></UPDATED>
+<!--1000500035 UPDATEDBY-->
+<!--1000500035-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500035 TEXT-->
+<!--1000500035-->              <TEXT><![CDATA[Email these documents]]></TEXT>
+<!--1000500035 FILENAME-->
+<!--1000500035-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500035 ISUSED-->
+<!--1000500035-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500035 AD_MODULE_ID-->
+<!--1000500035-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500035**************--></AD_TEXTINTERFACES>
+
+<!--1000500036**************--><AD_TEXTINTERFACES>
+<!--1000500036 AD_TEXTINTERFACES_ID-->
+<!--1000500036-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500036]]></AD_TEXTINTERFACES_ID>
+<!--1000500036 AD_CLIENT_ID-->
+<!--1000500036-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500036 AD_ORG_ID-->
+<!--1000500036-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500036 ISACTIVE-->
+<!--1000500036-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500036 CREATED-->
+<!--1000500036-->              <CREATED><![CDATA[2008-10-12 16:39:16.0]]></CREATED>
+<!--1000500036 CREATEDBY-->
+<!--1000500036-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500036 UPDATED-->
+<!--1000500036-->              <UPDATED><![CDATA[2008-10-12 16:39:16.0]]></UPDATED>
+<!--1000500036 UPDATEDBY-->
+<!--1000500036-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500036 TEXT-->
+<!--1000500036-->              <TEXT><![CDATA[Write a template email below. The following tags will be replaced by the values for each 								specific document when the mails are send.]]></TEXT>
+<!--1000500036 FILENAME-->
+<!--1000500036-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500036 ISUSED-->
+<!--1000500036-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500036 AD_MODULE_ID-->
+<!--1000500036-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500036**************--></AD_TEXTINTERFACES>
+
+<!--1000500037**************--><AD_TEXTINTERFACES>
+<!--1000500037 AD_TEXTINTERFACES_ID-->
+<!--1000500037-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500037]]></AD_TEXTINTERFACES_ID>
+<!--1000500037 AD_CLIENT_ID-->
+<!--1000500037-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500037 AD_ORG_ID-->
+<!--1000500037-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500037 ISACTIVE-->
+<!--1000500037-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500037 CREATED-->
+<!--1000500037-->              <CREATED><![CDATA[2008-10-12 16:39:16.0]]></CREATED>
+<!--1000500037 CREATEDBY-->
+<!--1000500037-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500037 UPDATED-->
+<!--1000500037-->              <UPDATED><![CDATA[2008-10-12 16:39:16.0]]></UPDATED>
+<!--1000500037 UPDATEDBY-->
+<!--1000500037-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500037 TEXT-->
+<!--1000500037-->              <TEXT><![CDATA[#CUS_REF#:]]></TEXT>
+<!--1000500037 FILENAME-->
+<!--1000500037-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500037 ISUSED-->
+<!--1000500037-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500037 AD_MODULE_ID-->
+<!--1000500037-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500037**************--></AD_TEXTINTERFACES>
+
+<!--1000500038**************--><AD_TEXTINTERFACES>
+<!--1000500038 AD_TEXTINTERFACES_ID-->
+<!--1000500038-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500038]]></AD_TEXTINTERFACES_ID>
+<!--1000500038 AD_CLIENT_ID-->
+<!--1000500038-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500038 AD_ORG_ID-->
+<!--1000500038-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500038 ISACTIVE-->
+<!--1000500038-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500038 CREATED-->
+<!--1000500038-->              <CREATED><![CDATA[2008-10-12 16:39:16.0]]></CREATED>
+<!--1000500038 CREATEDBY-->
+<!--1000500038-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500038 UPDATED-->
+<!--1000500038-->              <UPDATED><![CDATA[2008-10-12 16:39:16.0]]></UPDATED>
+<!--1000500038 UPDATEDBY-->
+<!--1000500038-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500038 TEXT-->
+<!--1000500038-->              <TEXT><![CDATA[The document reference of the customer]]></TEXT>
+<!--1000500038 FILENAME-->
+<!--1000500038-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500038 ISUSED-->
+<!--1000500038-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500038 AD_MODULE_ID-->
+<!--1000500038-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500038**************--></AD_TEXTINTERFACES>
+
+<!--1000500039**************--><AD_TEXTINTERFACES>
+<!--1000500039 AD_TEXTINTERFACES_ID-->
+<!--1000500039-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500039]]></AD_TEXTINTERFACES_ID>
+<!--1000500039 AD_CLIENT_ID-->
+<!--1000500039-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500039 AD_ORG_ID-->
+<!--1000500039-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500039 ISACTIVE-->
+<!--1000500039-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500039 CREATED-->
+<!--1000500039-->              <CREATED><![CDATA[2008-10-12 16:39:16.0]]></CREATED>
+<!--1000500039 CREATEDBY-->
+<!--1000500039-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500039 UPDATED-->
+<!--1000500039-->              <UPDATED><![CDATA[2008-10-12 16:39:16.0]]></UPDATED>
+<!--1000500039 UPDATEDBY-->
+<!--1000500039-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500039 TEXT-->
+<!--1000500039-->              <TEXT><![CDATA[#OUR_REF#:]]></TEXT>
+<!--1000500039 FILENAME-->
+<!--1000500039-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500039 ISUSED-->
+<!--1000500039-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500039 AD_MODULE_ID-->
+<!--1000500039-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500039**************--></AD_TEXTINTERFACES>
+
+<!--1000500040**************--><AD_TEXTINTERFACES>
+<!--1000500040 AD_TEXTINTERFACES_ID-->
+<!--1000500040-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500040]]></AD_TEXTINTERFACES_ID>
+<!--1000500040 AD_CLIENT_ID-->
+<!--1000500040-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500040 AD_ORG_ID-->
+<!--1000500040-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500040 ISACTIVE-->
+<!--1000500040-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500040 CREATED-->
+<!--1000500040-->              <CREATED><![CDATA[2008-10-12 16:39:16.0]]></CREATED>
+<!--1000500040 CREATEDBY-->
+<!--1000500040-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500040 UPDATED-->
+<!--1000500040-->              <UPDATED><![CDATA[2008-10-12 16:39:16.0]]></UPDATED>
+<!--1000500040 UPDATEDBY-->
+<!--1000500040-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500040 TEXT-->
+<!--1000500040-->              <TEXT><![CDATA[The reference of the document]]></TEXT>
+<!--1000500040 FILENAME-->
+<!--1000500040-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500040 ISUSED-->
+<!--1000500040-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500040 AD_MODULE_ID-->
+<!--1000500040-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500040**************--></AD_TEXTINTERFACES>
+
+<!--1000500041**************--><AD_TEXTINTERFACES>
+<!--1000500041 AD_TEXTINTERFACES_ID-->
+<!--1000500041-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500041]]></AD_TEXTINTERFACES_ID>
+<!--1000500041 AD_CLIENT_ID-->
+<!--1000500041-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500041 AD_ORG_ID-->
+<!--1000500041-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500041 ISACTIVE-->
+<!--1000500041-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500041 CREATED-->
+<!--1000500041-->              <CREATED><![CDATA[2008-10-12 16:39:16.0]]></CREATED>
+<!--1000500041 CREATEDBY-->
+<!--1000500041-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500041 UPDATED-->
+<!--1000500041-->              <UPDATED><![CDATA[2008-10-12 16:39:16.0]]></UPDATED>
+<!--1000500041 UPDATEDBY-->
+<!--1000500041-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500041 TEXT-->
+<!--1000500041-->              <TEXT><![CDATA[Message body]]></TEXT>
+<!--1000500041 FILENAME-->
+<!--1000500041-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500041 ISUSED-->
+<!--1000500041-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500041 AD_MODULE_ID-->
+<!--1000500041-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500041**************--></AD_TEXTINTERFACES>
+
+<!--1000500042**************--><AD_TEXTINTERFACES>
+<!--1000500042 AD_TEXTINTERFACES_ID-->
+<!--1000500042-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500042]]></AD_TEXTINTERFACES_ID>
+<!--1000500042 AD_CLIENT_ID-->
+<!--1000500042-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500042 AD_ORG_ID-->
+<!--1000500042-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500042 ISACTIVE-->
+<!--1000500042-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500042 CREATED-->
+<!--1000500042-->              <CREATED><![CDATA[2008-10-12 16:39:16.0]]></CREATED>
+<!--1000500042 CREATEDBY-->
+<!--1000500042-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500042 UPDATED-->
+<!--1000500042-->              <UPDATED><![CDATA[2008-10-12 16:39:16.0]]></UPDATED>
+<!--1000500042 UPDATEDBY-->
+<!--1000500042-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500042 TEXT-->
+<!--1000500042-->              <TEXT><![CDATA[Below is a table of the documents you selected with the contact details.]]></TEXT>
+<!--1000500042 FILENAME-->
+<!--1000500042-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500042 ISUSED-->
+<!--1000500042-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500042 AD_MODULE_ID-->
+<!--1000500042-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500042**************--></AD_TEXTINTERFACES>
+
+<!--1000500043**************--><AD_TEXTINTERFACES>
+<!--1000500043 AD_TEXTINTERFACES_ID-->
+<!--1000500043-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500043]]></AD_TEXTINTERFACES_ID>
+<!--1000500043 AD_CLIENT_ID-->
+<!--1000500043-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500043 AD_ORG_ID-->
+<!--1000500043-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500043 ISACTIVE-->
+<!--1000500043-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500043 CREATED-->
+<!--1000500043-->              <CREATED><![CDATA[2008-10-12 16:39:16.0]]></CREATED>
+<!--1000500043 CREATEDBY-->
+<!--1000500043-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500043 UPDATED-->
+<!--1000500043-->              <UPDATED><![CDATA[2008-10-12 16:39:16.0]]></UPDATED>
+<!--1000500043 UPDATEDBY-->
+<!--1000500043-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500043 TEXT-->
+<!--1000500043-->              <TEXT><![CDATA[Our reference]]></TEXT>
+<!--1000500043 FILENAME-->
+<!--1000500043-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500043 ISUSED-->
+<!--1000500043-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500043 AD_MODULE_ID-->
+<!--1000500043-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500043**************--></AD_TEXTINTERFACES>
+
+<!--1000500044**************--><AD_TEXTINTERFACES>
+<!--1000500044 AD_TEXTINTERFACES_ID-->
+<!--1000500044-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500044]]></AD_TEXTINTERFACES_ID>
+<!--1000500044 AD_CLIENT_ID-->
+<!--1000500044-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500044 AD_ORG_ID-->
+<!--1000500044-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500044 ISACTIVE-->
+<!--1000500044-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500044 CREATED-->
+<!--1000500044-->              <CREATED><![CDATA[2008-10-12 16:39:16.0]]></CREATED>
+<!--1000500044 CREATEDBY-->
+<!--1000500044-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500044 UPDATED-->
+<!--1000500044-->              <UPDATED><![CDATA[2008-10-12 16:39:16.0]]></UPDATED>
+<!--1000500044 UPDATEDBY-->
+<!--1000500044-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500044 TEXT-->
+<!--1000500044-->              <TEXT><![CDATA[Our contact]]></TEXT>
+<!--1000500044 FILENAME-->
+<!--1000500044-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500044 ISUSED-->
+<!--1000500044-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500044 AD_MODULE_ID-->
+<!--1000500044-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500044**************--></AD_TEXTINTERFACES>
+
+<!--1000500045**************--><AD_TEXTINTERFACES>
+<!--1000500045 AD_TEXTINTERFACES_ID-->
+<!--1000500045-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500045]]></AD_TEXTINTERFACES_ID>
+<!--1000500045 AD_CLIENT_ID-->
+<!--1000500045-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500045 AD_ORG_ID-->
+<!--1000500045-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500045 ISACTIVE-->
+<!--1000500045-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500045 CREATED-->
+<!--1000500045-->              <CREATED><![CDATA[2008-10-12 16:39:16.0]]></CREATED>
+<!--1000500045 CREATEDBY-->
+<!--1000500045-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500045 UPDATED-->
+<!--1000500045-->              <UPDATED><![CDATA[2008-10-12 16:39:16.0]]></UPDATED>
+<!--1000500045 UPDATEDBY-->
+<!--1000500045-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500045 TEXT-->
+<!--1000500045-->              <TEXT><![CDATA[Our email]]></TEXT>
+<!--1000500045 FILENAME-->
+<!--1000500045-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500045 ISUSED-->
+<!--1000500045-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500045 AD_MODULE_ID-->
+<!--1000500045-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500045**************--></AD_TEXTINTERFACES>
+
+<!--1000500046**************--><AD_TEXTINTERFACES>
+<!--1000500046 AD_TEXTINTERFACES_ID-->
+<!--1000500046-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500046]]></AD_TEXTINTERFACES_ID>
+<!--1000500046 AD_CLIENT_ID-->
+<!--1000500046-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500046 AD_ORG_ID-->
+<!--1000500046-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500046 ISACTIVE-->
+<!--1000500046-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500046 CREATED-->
+<!--1000500046-->              <CREATED><![CDATA[2008-10-12 16:39:16.0]]></CREATED>
+<!--1000500046 CREATEDBY-->
+<!--1000500046-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500046 UPDATED-->
+<!--1000500046-->              <UPDATED><![CDATA[2008-10-12 16:39:16.0]]></UPDATED>
+<!--1000500046 UPDATEDBY-->
+<!--1000500046-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500046 TEXT-->
+<!--1000500046-->              <TEXT><![CDATA[Customer reference]]></TEXT>
+<!--1000500046 FILENAME-->
+<!--1000500046-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500046 ISUSED-->
+<!--1000500046-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500046 AD_MODULE_ID-->
+<!--1000500046-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500046**************--></AD_TEXTINTERFACES>
+
+<!--1000500047**************--><AD_TEXTINTERFACES>
+<!--1000500047 AD_TEXTINTERFACES_ID-->
+<!--1000500047-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500047]]></AD_TEXTINTERFACES_ID>
+<!--1000500047 AD_CLIENT_ID-->
+<!--1000500047-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500047 AD_ORG_ID-->
+<!--1000500047-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500047 ISACTIVE-->
+<!--1000500047-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500047 CREATED-->
+<!--1000500047-->              <CREATED><![CDATA[2008-10-12 16:39:16.0]]></CREATED>
+<!--1000500047 CREATEDBY-->
+<!--1000500047-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500047 UPDATED-->
+<!--1000500047-->              <UPDATED><![CDATA[2008-10-12 16:39:16.0]]></UPDATED>
+<!--1000500047 UPDATEDBY-->
+<!--1000500047-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500047 TEXT-->
+<!--1000500047-->              <TEXT><![CDATA[Customer contact]]></TEXT>
+<!--1000500047 FILENAME-->
+<!--1000500047-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500047 ISUSED-->
+<!--1000500047-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500047 AD_MODULE_ID-->
+<!--1000500047-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500047**************--></AD_TEXTINTERFACES>
+
+<!--1000500048**************--><AD_TEXTINTERFACES>
+<!--1000500048 AD_TEXTINTERFACES_ID-->
+<!--1000500048-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500048]]></AD_TEXTINTERFACES_ID>
+<!--1000500048 AD_CLIENT_ID-->
+<!--1000500048-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500048 AD_ORG_ID-->
+<!--1000500048-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500048 ISACTIVE-->
+<!--1000500048-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500048 CREATED-->
+<!--1000500048-->              <CREATED><![CDATA[2008-10-12 16:39:16.0]]></CREATED>
+<!--1000500048 CREATEDBY-->
+<!--1000500048-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500048 UPDATED-->
+<!--1000500048-->              <UPDATED><![CDATA[2008-10-12 16:39:16.0]]></UPDATED>
+<!--1000500048 UPDATEDBY-->
+<!--1000500048-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500048 TEXT-->
+<!--1000500048-->              <TEXT><![CDATA[Customer email]]></TEXT>
+<!--1000500048 FILENAME-->
+<!--1000500048-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500048 ISUSED-->
+<!--1000500048-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500048 AD_MODULE_ID-->
+<!--1000500048-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500048**************--></AD_TEXTINTERFACES>
+
+<!--1000500049**************--><AD_TEXTINTERFACES>
+<!--1000500049 AD_TEXTINTERFACES_ID-->
+<!--1000500049-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500049]]></AD_TEXTINTERFACES_ID>
+<!--1000500049 AD_CLIENT_ID-->
+<!--1000500049-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500049 AD_ORG_ID-->
+<!--1000500049-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500049 ISACTIVE-->
+<!--1000500049-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500049 CREATED-->
+<!--1000500049-->              <CREATED><![CDATA[2008-10-15 00:01:22.0]]></CREATED>
+<!--1000500049 CREATEDBY-->
+<!--1000500049-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500049 UPDATED-->
+<!--1000500049-->              <UPDATED><![CDATA[2008-10-15 00:01:22.0]]></UPDATED>
+<!--1000500049 UPDATEDBY-->
+<!--1000500049-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500049 TEXT-->
+<!--1000500049-->              <TEXT><![CDATA[\n]]></TEXT>
+<!--1000500049 FILENAME-->
+<!--1000500049-->              <FILENAME><![CDATA[/org/openbravo/erpReports/RptC_OrderPO_B.jrxml]]></FILENAME>
+<!--1000500049 ISUSED-->
+<!--1000500049-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500049 AD_MODULE_ID-->
+<!--1000500049-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500049**************--></AD_TEXTINTERFACES>
+
+<!--1000500050**************--><AD_TEXTINTERFACES>
+<!--1000500050 AD_TEXTINTERFACES_ID-->
+<!--1000500050-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500050]]></AD_TEXTINTERFACES_ID>
+<!--1000500050 AD_CLIENT_ID-->
+<!--1000500050-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500050 AD_ORG_ID-->
+<!--1000500050-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500050 ISACTIVE-->
+<!--1000500050-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500050 CREATED-->
+<!--1000500050-->              <CREATED><![CDATA[2008-10-15 00:01:22.0]]></CREATED>
+<!--1000500050 CREATEDBY-->
+<!--1000500050-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500050 UPDATED-->
+<!--1000500050-->              <UPDATED><![CDATA[2008-10-15 00:01:22.0]]></UPDATED>
+<!--1000500050 UPDATEDBY-->
+<!--1000500050-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500050 TEXT-->
+<!--1000500050-->              <TEXT><![CDATA[Fax Order to:]]></TEXT>
+<!--1000500050 FILENAME-->
+<!--1000500050-->              <FILENAME><![CDATA[/org/openbravo/erpReports/RptC_OrderPO_B.jrxml]]></FILENAME>
+<!--1000500050 ISUSED-->
+<!--1000500050-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500050 AD_MODULE_ID-->
+<!--1000500050-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500050**************--></AD_TEXTINTERFACES>
+
+<!--1000500051**************--><AD_TEXTINTERFACES>
+<!--1000500051 AD_TEXTINTERFACES_ID-->
+<!--1000500051-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500051]]></AD_TEXTINTERFACES_ID>
+<!--1000500051 AD_CLIENT_ID-->
+<!--1000500051-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500051 AD_ORG_ID-->
+<!--1000500051-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500051 ISACTIVE-->
+<!--1000500051-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500051 CREATED-->
+<!--1000500051-->              <CREATED><![CDATA[2008-10-15 00:01:22.0]]></CREATED>
+<!--1000500051 CREATEDBY-->
+<!--1000500051-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500051 UPDATED-->
+<!--1000500051-->              <UPDATED><![CDATA[2008-10-15 00:01:22.0]]></UPDATED>
+<!--1000500051 UPDATEDBY-->
+<!--1000500051-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500051 TEXT-->
+<!--1000500051-->              <TEXT><![CDATA[Fax No.:]]></TEXT>
+<!--1000500051 FILENAME-->
+<!--1000500051-->              <FILENAME><![CDATA[/org/openbravo/erpReports/RptC_OrderPO_B.jrxml]]></FILENAME>
+<!--1000500051 ISUSED-->
+<!--1000500051-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500051 AD_MODULE_ID-->
+<!--1000500051-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500051**************--></AD_TEXTINTERFACES>
+
+<!--1000500052**************--><AD_TEXTINTERFACES>
+<!--1000500052 AD_TEXTINTERFACES_ID-->
+<!--1000500052-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500052]]></AD_TEXTINTERFACES_ID>
+<!--1000500052 AD_CLIENT_ID-->
+<!--1000500052-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500052 AD_ORG_ID-->
+<!--1000500052-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500052 ISACTIVE-->
+<!--1000500052-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500052 CREATED-->
+<!--1000500052-->              <CREATED><![CDATA[2008-10-15 00:01:22.0]]></CREATED>
+<!--1000500052 CREATEDBY-->
+<!--1000500052-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500052 UPDATED-->
+<!--1000500052-->              <UPDATED><![CDATA[2008-10-15 00:01:22.0]]></UPDATED>
+<!--1000500052 UPDATEDBY-->
+<!--1000500052-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500052 TEXT-->
+<!--1000500052-->              <TEXT><![CDATA[Order Number]]></TEXT>
+<!--1000500052 FILENAME-->
+<!--1000500052-->              <FILENAME><![CDATA[/org/openbravo/erpReports/RptC_OrderPO_B.jrxml]]></FILENAME>
+<!--1000500052 ISUSED-->
+<!--1000500052-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500052 AD_MODULE_ID-->
+<!--1000500052-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500052**************--></AD_TEXTINTERFACES>
+
+<!--1000500053**************--><AD_TEXTINTERFACES>
+<!--1000500053 AD_TEXTINTERFACES_ID-->
+<!--1000500053-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500053]]></AD_TEXTINTERFACES_ID>
+<!--1000500053 AD_CLIENT_ID-->
+<!--1000500053-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500053 AD_ORG_ID-->
+<!--1000500053-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500053 ISACTIVE-->
+<!--1000500053-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500053 CREATED-->
+<!--1000500053-->              <CREATED><![CDATA[2008-10-15 00:01:22.0]]></CREATED>
+<!--1000500053 CREATEDBY-->
+<!--1000500053-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500053 UPDATED-->
+<!--1000500053-->              <UPDATED><![CDATA[2008-10-15 00:01:22.0]]></UPDATED>
+<!--1000500053 UPDATEDBY-->
+<!--1000500053-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500053 TEXT-->
+<!--1000500053-->              <TEXT><![CDATA[PAGE:]]></TEXT>
+<!--1000500053 FILENAME-->
+<!--1000500053-->              <FILENAME><![CDATA[/org/openbravo/erpReports/RptC_OrderPO_B.jrxml]]></FILENAME>
+<!--1000500053 ISUSED-->
+<!--1000500053-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500053 AD_MODULE_ID-->
+<!--1000500053-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500053**************--></AD_TEXTINTERFACES>
+
+<!--1000500054**************--><AD_TEXTINTERFACES>
+<!--1000500054 AD_TEXTINTERFACES_ID-->
+<!--1000500054-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500054]]></AD_TEXTINTERFACES_ID>
+<!--1000500054 AD_CLIENT_ID-->
+<!--1000500054-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500054 AD_ORG_ID-->
+<!--1000500054-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500054 ISACTIVE-->
+<!--1000500054-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500054 CREATED-->
+<!--1000500054-->              <CREATED><![CDATA[2008-10-15 00:01:22.0]]></CREATED>
+<!--1000500054 CREATEDBY-->
+<!--1000500054-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500054 UPDATED-->
+<!--1000500054-->              <UPDATED><![CDATA[2008-10-15 00:01:22.0]]></UPDATED>
+<!--1000500054 UPDATEDBY-->
+<!--1000500054-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500054 TEXT-->
+<!--1000500054-->              <TEXT><![CDATA[Invoice Rule]]></TEXT>
+<!--1000500054 FILENAME-->
+<!--1000500054-->              <FILENAME><![CDATA[/org/openbravo/erpReports/RptC_OrderPO_B.jrxml]]></FILENAME>
+<!--1000500054 ISUSED-->
+<!--1000500054-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500054 AD_MODULE_ID-->
+<!--1000500054-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500054**************--></AD_TEXTINTERFACES>
+
+<!--1000500055**************--><AD_TEXTINTERFACES>
+<!--1000500055 AD_TEXTINTERFACES_ID-->
+<!--1000500055-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500055]]></AD_TEXTINTERFACES_ID>
+<!--1000500055 AD_CLIENT_ID-->
+<!--1000500055-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500055 AD_ORG_ID-->
+<!--1000500055-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500055 ISACTIVE-->
+<!--1000500055-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500055 CREATED-->
+<!--1000500055-->              <CREATED><![CDATA[2008-10-15 00:01:23.0]]></CREATED>
+<!--1000500055 CREATEDBY-->
+<!--1000500055-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500055 UPDATED-->
+<!--1000500055-->              <UPDATED><![CDATA[2008-10-15 00:01:23.0]]></UPDATED>
+<!--1000500055 UPDATEDBY-->
+<!--1000500055-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500055 TEXT-->
+<!--1000500055-->              <TEXT><![CDATA[\n]]></TEXT>
+<!--1000500055 FILENAME-->
+<!--1000500055-->              <FILENAME><![CDATA[/org/openbravo/erpReports/RptC_OrderPO_A.jrxml]]></FILENAME>
+<!--1000500055 ISUSED-->
+<!--1000500055-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500055 AD_MODULE_ID-->
+<!--1000500055-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500055**************--></AD_TEXTINTERFACES>
+
+<!--1000500056**************--><AD_TEXTINTERFACES>
+<!--1000500056 AD_TEXTINTERFACES_ID-->
+<!--1000500056-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500056]]></AD_TEXTINTERFACES_ID>
+<!--1000500056 AD_CLIENT_ID-->
+<!--1000500056-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500056 AD_ORG_ID-->
+<!--1000500056-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500056 ISACTIVE-->
+<!--1000500056-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500056 CREATED-->
+<!--1000500056-->              <CREATED><![CDATA[2008-10-15 00:01:23.0]]></CREATED>
+<!--1000500056 CREATEDBY-->
+<!--1000500056-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500056 UPDATED-->
+<!--1000500056-->              <UPDATED><![CDATA[2008-10-15 00:01:23.0]]></UPDATED>
+<!--1000500056 UPDATEDBY-->
+<!--1000500056-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500056 TEXT-->
+<!--1000500056-->              <TEXT><![CDATA[Fax Order to:]]></TEXT>
+<!--1000500056 FILENAME-->
+<!--1000500056-->              <FILENAME><![CDATA[/org/openbravo/erpReports/RptC_OrderPO_A.jrxml]]></FILENAME>
+<!--1000500056 ISUSED-->
+<!--1000500056-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500056 AD_MODULE_ID-->
+<!--1000500056-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500056**************--></AD_TEXTINTERFACES>
+
+<!--1000500057**************--><AD_TEXTINTERFACES>
+<!--1000500057 AD_TEXTINTERFACES_ID-->
+<!--1000500057-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500057]]></AD_TEXTINTERFACES_ID>
+<!--1000500057 AD_CLIENT_ID-->
+<!--1000500057-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500057 AD_ORG_ID-->
+<!--1000500057-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500057 ISACTIVE-->
+<!--1000500057-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500057 CREATED-->
+<!--1000500057-->              <CREATED><![CDATA[2008-10-15 00:01:23.0]]></CREATED>
+<!--1000500057 CREATEDBY-->
+<!--1000500057-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500057 UPDATED-->
+<!--1000500057-->              <UPDATED><![CDATA[2008-10-15 00:01:23.0]]></UPDATED>
+<!--1000500057 UPDATEDBY-->
+<!--1000500057-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500057 TEXT-->
+<!--1000500057-->              <TEXT><![CDATA[Fax No.:]]></TEXT>
+<!--1000500057 FILENAME-->
+<!--1000500057-->              <FILENAME><![CDATA[/org/openbravo/erpReports/RptC_OrderPO_A.jrxml]]></FILENAME>
+<!--1000500057 ISUSED-->
+<!--1000500057-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500057 AD_MODULE_ID-->
+<!--1000500057-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500057**************--></AD_TEXTINTERFACES>
+
+<!--1000500058**************--><AD_TEXTINTERFACES>
+<!--1000500058 AD_TEXTINTERFACES_ID-->
+<!--1000500058-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500058]]></AD_TEXTINTERFACES_ID>
+<!--1000500058 AD_CLIENT_ID-->
+<!--1000500058-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500058 AD_ORG_ID-->
+<!--1000500058-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500058 ISACTIVE-->
+<!--1000500058-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500058 CREATED-->
+<!--1000500058-->              <CREATED><![CDATA[2008-10-15 00:01:23.0]]></CREATED>
+<!--1000500058 CREATEDBY-->
+<!--1000500058-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500058 UPDATED-->
+<!--1000500058-->              <UPDATED><![CDATA[2008-10-15 00:01:23.0]]></UPDATED>
+<!--1000500058 UPDATEDBY-->
+<!--1000500058-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500058 TEXT-->
+<!--1000500058-->              <TEXT><![CDATA[Order Number]]></TEXT>
+<!--1000500058 FILENAME-->
+<!--1000500058-->              <FILENAME><![CDATA[/org/openbravo/erpReports/RptC_OrderPO_A.jrxml]]></FILENAME>
+<!--1000500058 ISUSED-->
+<!--1000500058-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500058 AD_MODULE_ID-->
+<!--1000500058-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500058**************--></AD_TEXTINTERFACES>
+
+<!--1000500059**************--><AD_TEXTINTERFACES>
+<!--1000500059 AD_TEXTINTERFACES_ID-->
+<!--1000500059-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500059]]></AD_TEXTINTERFACES_ID>
+<!--1000500059 AD_CLIENT_ID-->
+<!--1000500059-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500059 AD_ORG_ID-->
+<!--1000500059-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500059 ISACTIVE-->
+<!--1000500059-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500059 CREATED-->
+<!--1000500059-->              <CREATED><![CDATA[2008-10-15 00:01:23.0]]></CREATED>
+<!--1000500059 CREATEDBY-->
+<!--1000500059-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500059 UPDATED-->
+<!--1000500059-->              <UPDATED><![CDATA[2008-10-15 00:01:23.0]]></UPDATED>
+<!--1000500059 UPDATEDBY-->
+<!--1000500059-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500059 TEXT-->
+<!--1000500059-->              <TEXT><![CDATA[PAGE:]]></TEXT>
+<!--1000500059 FILENAME-->
+<!--1000500059-->              <FILENAME><![CDATA[/org/openbravo/erpReports/RptC_OrderPO_A.jrxml]]></FILENAME>
+<!--1000500059 ISUSED-->
+<!--1000500059-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500059 AD_MODULE_ID-->
+<!--1000500059-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500059**************--></AD_TEXTINTERFACES>
+
+<!--1000500060**************--><AD_TEXTINTERFACES>
+<!--1000500060 AD_TEXTINTERFACES_ID-->
+<!--1000500060-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500060]]></AD_TEXTINTERFACES_ID>
+<!--1000500060 AD_CLIENT_ID-->
+<!--1000500060-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500060 AD_ORG_ID-->
+<!--1000500060-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500060 ISACTIVE-->
+<!--1000500060-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500060 CREATED-->
+<!--1000500060-->              <CREATED><![CDATA[2008-10-15 00:01:23.0]]></CREATED>
+<!--1000500060 CREATEDBY-->
+<!--1000500060-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500060 UPDATED-->
+<!--1000500060-->              <UPDATED><![CDATA[2008-10-15 00:01:23.0]]></UPDATED>
+<!--1000500060 UPDATEDBY-->
+<!--1000500060-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500060 TEXT-->
+<!--1000500060-->              <TEXT><![CDATA[Invoice Rule]]></TEXT>
+<!--1000500060 FILENAME-->
+<!--1000500060-->              <FILENAME><![CDATA[/org/openbravo/erpReports/RptC_OrderPO_A.jrxml]]></FILENAME>
+<!--1000500060 ISUSED-->
+<!--1000500060-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500060 AD_MODULE_ID-->
+<!--1000500060-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500060**************--></AD_TEXTINTERFACES>
+
+<!--1000500061**************--><AD_TEXTINTERFACES>
+<!--1000500061 AD_TEXTINTERFACES_ID-->
+<!--1000500061-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500061]]></AD_TEXTINTERFACES_ID>
+<!--1000500061 AD_CLIENT_ID-->
+<!--1000500061-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500061 AD_ORG_ID-->
+<!--1000500061-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500061 ISACTIVE-->
+<!--1000500061-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500061 CREATED-->
+<!--1000500061-->              <CREATED><![CDATA[2008-10-16 10:39:57.0]]></CREATED>
+<!--1000500061 CREATEDBY-->
+<!--1000500061-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500061 UPDATED-->
+<!--1000500061-->              <UPDATED><![CDATA[2008-10-16 10:39:57.0]]></UPDATED>
+<!--1000500061 UPDATEDBY-->
+<!--1000500061-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500061 TEXT-->
+<!--1000500061-->              <TEXT><![CDATA[Process completed successfully]]></TEXT>
+<!--1000500061 FILENAME-->
+<!--1000500061-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintStatus.html]]></FILENAME>
+<!--1000500061 ISUSED-->
+<!--1000500061-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1000500061 AD_MODULE_ID-->
+<!--1000500061-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500061**************--></AD_TEXTINTERFACES>
+
+<!--1000500062**************--><AD_TEXTINTERFACES>
+<!--1000500062 AD_TEXTINTERFACES_ID-->
+<!--1000500062-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500062]]></AD_TEXTINTERFACES_ID>
+<!--1000500062 AD_CLIENT_ID-->
+<!--1000500062-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500062 AD_ORG_ID-->
+<!--1000500062-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500062 ISACTIVE-->
+<!--1000500062-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500062 CREATED-->
+<!--1000500062-->              <CREATED><![CDATA[2008-10-16 10:39:57.0]]></CREATED>
+<!--1000500062 CREATEDBY-->
+<!--1000500062-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500062 UPDATED-->
+<!--1000500062-->              <UPDATED><![CDATA[2008-10-16 10:39:57.0]]></UPDATED>
+<!--1000500062 UPDATEDBY-->
+<!--1000500062-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500062 TEXT-->
+<!--1000500062-->              <TEXT><![CDATA[Emails send successfully]]></TEXT>
+<!--1000500062 FILENAME-->
+<!--1000500062-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintStatus.html]]></FILENAME>
+<!--1000500062 ISUSED-->
+<!--1000500062-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1000500062 AD_MODULE_ID-->
+<!--1000500062-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500062**************--></AD_TEXTINTERFACES>
+
+<!--1000500063**************--><AD_TEXTINTERFACES>
+<!--1000500063 AD_TEXTINTERFACES_ID-->
+<!--1000500063-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500063]]></AD_TEXTINTERFACES_ID>
+<!--1000500063 AD_CLIENT_ID-->
+<!--1000500063-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500063 AD_ORG_ID-->
+<!--1000500063-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500063 ISACTIVE-->
+<!--1000500063-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500063 CREATED-->
+<!--1000500063-->              <CREATED><![CDATA[2008-10-16 10:39:57.0]]></CREATED>
+<!--1000500063 CREATEDBY-->
+<!--1000500063-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500063 UPDATED-->
+<!--1000500063-->              <UPDATED><![CDATA[2008-10-16 10:39:57.0]]></UPDATED>
+<!--1000500063 UPDATEDBY-->
+<!--1000500063-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500063 TEXT-->
+<!--1000500063-->              <TEXT><![CDATA[Close]]></TEXT>
+<!--1000500063 FILENAME-->
+<!--1000500063-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintStatus.html]]></FILENAME>
+<!--1000500063 ISUSED-->
+<!--1000500063-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--1000500063 AD_MODULE_ID-->
+<!--1000500063-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500063**************--></AD_TEXTINTERFACES>
+
+<!--1000500064**************--><AD_TEXTINTERFACES>
+<!--1000500064 AD_TEXTINTERFACES_ID-->
+<!--1000500064-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500064]]></AD_TEXTINTERFACES_ID>
+<!--1000500064 AD_CLIENT_ID-->
+<!--1000500064-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500064 AD_ORG_ID-->
+<!--1000500064-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500064 ISACTIVE-->
+<!--1000500064-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500064 CREATED-->
+<!--1000500064-->              <CREATED><![CDATA[2008-10-16 10:39:57.0]]></CREATED>
+<!--1000500064 CREATEDBY-->
+<!--1000500064-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500064 UPDATED-->
+<!--1000500064-->              <UPDATED><![CDATA[2008-10-16 10:39:57.0]]></UPDATED>
+<!--1000500064 UPDATEDBY-->
+<!--1000500064-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500064 TEXT-->
+<!--1000500064-->              <TEXT><![CDATA[Print options]]></TEXT>
+<!--1000500064 FILENAME-->
+<!--1000500064-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500064 ISUSED-->
+<!--1000500064-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500064 AD_MODULE_ID-->
+<!--1000500064-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500064**************--></AD_TEXTINTERFACES>
+
+<!--1000500065**************--><AD_TEXTINTERFACES>
+<!--1000500065 AD_TEXTINTERFACES_ID-->
+<!--1000500065-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500065]]></AD_TEXTINTERFACES_ID>
+<!--1000500065 AD_CLIENT_ID-->
+<!--1000500065-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500065 AD_ORG_ID-->
+<!--1000500065-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500065 ISACTIVE-->
+<!--1000500065-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500065 CREATED-->
+<!--1000500065-->              <CREATED><![CDATA[2008-10-16 10:39:57.0]]></CREATED>
+<!--1000500065 CREATEDBY-->
+<!--1000500065-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500065 UPDATED-->
+<!--1000500065-->              <UPDATED><![CDATA[2008-10-16 10:39:57.0]]></UPDATED>
+<!--1000500065 UPDATEDBY-->
+<!--1000500065-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500065 TEXT-->
+<!--1000500065-->              <TEXT><![CDATA[.form_table 		{ 			border: 0px none; 			padding-top: 20px; 			padding-left: 10px; 			padding-right: 10px; 			padding-bottom: 20px; 			background-color: #E8E8E8; 			border-collapse: collapse; 		}]]></TEXT>
+<!--1000500065 FILENAME-->
+<!--1000500065-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500065 ISUSED-->
+<!--1000500065-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500065 AD_MODULE_ID-->
+<!--1000500065-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500065**************--></AD_TEXTINTERFACES>
+
+<!--1000500066**************--><AD_TEXTINTERFACES>
+<!--1000500066 AD_TEXTINTERFACES_ID-->
+<!--1000500066-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500066]]></AD_TEXTINTERFACES_ID>
+<!--1000500066 AD_CLIENT_ID-->
+<!--1000500066-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500066 AD_ORG_ID-->
+<!--1000500066-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500066 ISACTIVE-->
+<!--1000500066-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500066 CREATED-->
+<!--1000500066-->              <CREATED><![CDATA[2008-10-16 10:39:57.0]]></CREATED>
+<!--1000500066 CREATEDBY-->
+<!--1000500066-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500066 UPDATED-->
+<!--1000500066-->              <UPDATED><![CDATA[2008-10-16 10:39:57.0]]></UPDATED>
+<!--1000500066 UPDATEDBY-->
+<!--1000500066-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500066 TEXT-->
+<!--1000500066-->              <TEXT><![CDATA[Print 				options]]></TEXT>
+<!--1000500066 FILENAME-->
+<!--1000500066-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500066 ISUSED-->
+<!--1000500066-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500066 AD_MODULE_ID-->
+<!--1000500066-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500066**************--></AD_TEXTINTERFACES>
+
+<!--1000500067**************--><AD_TEXTINTERFACES>
+<!--1000500067 AD_TEXTINTERFACES_ID-->
+<!--1000500067-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500067]]></AD_TEXTINTERFACES_ID>
+<!--1000500067 AD_CLIENT_ID-->
+<!--1000500067-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500067 AD_ORG_ID-->
+<!--1000500067-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500067 ISACTIVE-->
+<!--1000500067-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500067 CREATED-->
+<!--1000500067-->              <CREATED><![CDATA[2008-10-16 10:39:57.0]]></CREATED>
+<!--1000500067 CREATEDBY-->
+<!--1000500067-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500067 UPDATED-->
+<!--1000500067-->              <UPDATED><![CDATA[2008-10-16 10:39:57.0]]></UPDATED>
+<!--1000500067 UPDATEDBY-->
+<!--1000500067-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500067 TEXT-->
+<!--1000500067-->              <TEXT><![CDATA[  You can print the document(s) 						now or use the email function to send the document to the business 						partner directly through email.]]></TEXT>
+<!--1000500067 FILENAME-->
+<!--1000500067-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500067 ISUSED-->
+<!--1000500067-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500067 AD_MODULE_ID-->
+<!--1000500067-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500067**************--></AD_TEXTINTERFACES>
+
+<!--1000500068**************--><AD_TEXTINTERFACES>
+<!--1000500068 AD_TEXTINTERFACES_ID-->
+<!--1000500068-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500068]]></AD_TEXTINTERFACES_ID>
+<!--1000500068 AD_CLIENT_ID-->
+<!--1000500068-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500068 AD_ORG_ID-->
+<!--1000500068-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500068 ISACTIVE-->
+<!--1000500068-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500068 CREATED-->
+<!--1000500068-->              <CREATED><![CDATA[2008-10-16 10:39:57.0]]></CREATED>
+<!--1000500068 CREATEDBY-->
+<!--1000500068-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500068 UPDATED-->
+<!--1000500068-->              <UPDATED><![CDATA[2008-10-16 10:39:57.0]]></UPDATED>
+<!--1000500068 UPDATEDBY-->
+<!--1000500068-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500068 TEXT-->
+<!--1000500068-->              <TEXT><![CDATA[Email these documents]]></TEXT>
+<!--1000500068 FILENAME-->
+<!--1000500068-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500068 ISUSED-->
+<!--1000500068-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500068 AD_MODULE_ID-->
+<!--1000500068-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500068**************--></AD_TEXTINTERFACES>
+
+<!--1000500069**************--><AD_TEXTINTERFACES>
+<!--1000500069 AD_TEXTINTERFACES_ID-->
+<!--1000500069-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500069]]></AD_TEXTINTERFACES_ID>
+<!--1000500069 AD_CLIENT_ID-->
+<!--1000500069-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500069 AD_ORG_ID-->
+<!--1000500069-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500069 ISACTIVE-->
+<!--1000500069-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500069 CREATED-->
+<!--1000500069-->              <CREATED><![CDATA[2008-10-16 10:39:57.0]]></CREATED>
+<!--1000500069 CREATEDBY-->
+<!--1000500069-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500069 UPDATED-->
+<!--1000500069-->              <UPDATED><![CDATA[2008-10-16 10:39:57.0]]></UPDATED>
+<!--1000500069 UPDATEDBY-->
+<!--1000500069-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500069 TEXT-->
+<!--1000500069-->              <TEXT><![CDATA[Write a template email below. The following tags will be replaced by the values for each 								specific document when the mails are send.]]></TEXT>
+<!--1000500069 FILENAME-->
+<!--1000500069-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500069 ISUSED-->
+<!--1000500069-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500069 AD_MODULE_ID-->
+<!--1000500069-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500069**************--></AD_TEXTINTERFACES>
+
+<!--1000500070**************--><AD_TEXTINTERFACES>
+<!--1000500070 AD_TEXTINTERFACES_ID-->
+<!--1000500070-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500070]]></AD_TEXTINTERFACES_ID>
+<!--1000500070 AD_CLIENT_ID-->
+<!--1000500070-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500070 AD_ORG_ID-->
+<!--1000500070-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500070 ISACTIVE-->
+<!--1000500070-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500070 CREATED-->
+<!--1000500070-->              <CREATED><![CDATA[2008-10-16 10:39:58.0]]></CREATED>
+<!--1000500070 CREATEDBY-->
+<!--1000500070-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500070 UPDATED-->
+<!--1000500070-->              <UPDATED><![CDATA[2008-10-16 10:39:58.0]]></UPDATED>
+<!--1000500070 UPDATEDBY-->
+<!--1000500070-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500070 TEXT-->
+<!--1000500070-->              <TEXT><![CDATA[#CUS_REF#:]]></TEXT>
+<!--1000500070 FILENAME-->
+<!--1000500070-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500070 ISUSED-->
+<!--1000500070-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500070 AD_MODULE_ID-->
+<!--1000500070-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500070**************--></AD_TEXTINTERFACES>
+
+<!--1000500071**************--><AD_TEXTINTERFACES>
+<!--1000500071 AD_TEXTINTERFACES_ID-->
+<!--1000500071-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500071]]></AD_TEXTINTERFACES_ID>
+<!--1000500071 AD_CLIENT_ID-->
+<!--1000500071-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500071 AD_ORG_ID-->
+<!--1000500071-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500071 ISACTIVE-->
+<!--1000500071-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500071 CREATED-->
+<!--1000500071-->              <CREATED><![CDATA[2008-10-16 10:39:58.0]]></CREATED>
+<!--1000500071 CREATEDBY-->
+<!--1000500071-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500071 UPDATED-->
+<!--1000500071-->              <UPDATED><![CDATA[2008-10-16 10:39:58.0]]></UPDATED>
+<!--1000500071 UPDATEDBY-->
+<!--1000500071-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500071 TEXT-->
+<!--1000500071-->              <TEXT><![CDATA[The document reference of the customer]]></TEXT>
+<!--1000500071 FILENAME-->
+<!--1000500071-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500071 ISUSED-->
+<!--1000500071-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500071 AD_MODULE_ID-->
+<!--1000500071-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500071**************--></AD_TEXTINTERFACES>
+
+<!--1000500072**************--><AD_TEXTINTERFACES>
+<!--1000500072 AD_TEXTINTERFACES_ID-->
+<!--1000500072-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500072]]></AD_TEXTINTERFACES_ID>
+<!--1000500072 AD_CLIENT_ID-->
+<!--1000500072-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500072 AD_ORG_ID-->
+<!--1000500072-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500072 ISACTIVE-->
+<!--1000500072-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500072 CREATED-->
+<!--1000500072-->              <CREATED><![CDATA[2008-10-16 10:39:58.0]]></CREATED>
+<!--1000500072 CREATEDBY-->
+<!--1000500072-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500072 UPDATED-->
+<!--1000500072-->              <UPDATED><![CDATA[2008-10-16 10:39:58.0]]></UPDATED>
+<!--1000500072 UPDATEDBY-->
+<!--1000500072-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500072 TEXT-->
+<!--1000500072-->              <TEXT><![CDATA[#OUR_REF#:]]></TEXT>
+<!--1000500072 FILENAME-->
+<!--1000500072-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500072 ISUSED-->
+<!--1000500072-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500072 AD_MODULE_ID-->
+<!--1000500072-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500072**************--></AD_TEXTINTERFACES>
+
+<!--1000500073**************--><AD_TEXTINTERFACES>
+<!--1000500073 AD_TEXTINTERFACES_ID-->
+<!--1000500073-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500073]]></AD_TEXTINTERFACES_ID>
+<!--1000500073 AD_CLIENT_ID-->
+<!--1000500073-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500073 AD_ORG_ID-->
+<!--1000500073-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500073 ISACTIVE-->
+<!--1000500073-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500073 CREATED-->
+<!--1000500073-->              <CREATED><![CDATA[2008-10-16 10:39:58.0]]></CREATED>
+<!--1000500073 CREATEDBY-->
+<!--1000500073-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500073 UPDATED-->
+<!--1000500073-->              <UPDATED><![CDATA[2008-10-16 10:39:58.0]]></UPDATED>
+<!--1000500073 UPDATEDBY-->
+<!--1000500073-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500073 TEXT-->
+<!--1000500073-->              <TEXT><![CDATA[The reference of the document]]></TEXT>
+<!--1000500073 FILENAME-->
+<!--1000500073-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500073 ISUSED-->
+<!--1000500073-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500073 AD_MODULE_ID-->
+<!--1000500073-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500073**************--></AD_TEXTINTERFACES>
+
+<!--1000500074**************--><AD_TEXTINTERFACES>
+<!--1000500074 AD_TEXTINTERFACES_ID-->
+<!--1000500074-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500074]]></AD_TEXTINTERFACES_ID>
+<!--1000500074 AD_CLIENT_ID-->
+<!--1000500074-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500074 AD_ORG_ID-->
+<!--1000500074-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500074 ISACTIVE-->
+<!--1000500074-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500074 CREATED-->
+<!--1000500074-->              <CREATED><![CDATA[2008-10-16 10:39:58.0]]></CREATED>
+<!--1000500074 CREATEDBY-->
+<!--1000500074-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500074 UPDATED-->
+<!--1000500074-->              <UPDATED><![CDATA[2008-10-16 10:39:58.0]]></UPDATED>
+<!--1000500074 UPDATEDBY-->
+<!--1000500074-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500074 TEXT-->
+<!--1000500074-->              <TEXT><![CDATA[Message body]]></TEXT>
+<!--1000500074 FILENAME-->
+<!--1000500074-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500074 ISUSED-->
+<!--1000500074-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500074 AD_MODULE_ID-->
+<!--1000500074-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500074**************--></AD_TEXTINTERFACES>
+
+<!--1000500075**************--><AD_TEXTINTERFACES>
+<!--1000500075 AD_TEXTINTERFACES_ID-->
+<!--1000500075-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500075]]></AD_TEXTINTERFACES_ID>
+<!--1000500075 AD_CLIENT_ID-->
+<!--1000500075-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500075 AD_ORG_ID-->
+<!--1000500075-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500075 ISACTIVE-->
+<!--1000500075-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500075 CREATED-->
+<!--1000500075-->              <CREATED><![CDATA[2008-10-16 10:39:58.0]]></CREATED>
+<!--1000500075 CREATEDBY-->
+<!--1000500075-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500075 UPDATED-->
+<!--1000500075-->              <UPDATED><![CDATA[2008-10-16 10:39:58.0]]></UPDATED>
+<!--1000500075 UPDATEDBY-->
+<!--1000500075-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500075 TEXT-->
+<!--1000500075-->              <TEXT><![CDATA[Below is a table of the documents you selected with the contact details.]]></TEXT>
+<!--1000500075 FILENAME-->
+<!--1000500075-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500075 ISUSED-->
+<!--1000500075-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500075 AD_MODULE_ID-->
+<!--1000500075-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500075**************--></AD_TEXTINTERFACES>
+
+<!--1000500076**************--><AD_TEXTINTERFACES>
+<!--1000500076 AD_TEXTINTERFACES_ID-->
+<!--1000500076-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500076]]></AD_TEXTINTERFACES_ID>
+<!--1000500076 AD_CLIENT_ID-->
+<!--1000500076-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500076 AD_ORG_ID-->
+<!--1000500076-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500076 ISACTIVE-->
+<!--1000500076-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500076 CREATED-->
+<!--1000500076-->              <CREATED><![CDATA[2008-10-16 10:39:58.0]]></CREATED>
+<!--1000500076 CREATEDBY-->
+<!--1000500076-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500076 UPDATED-->
+<!--1000500076-->              <UPDATED><![CDATA[2008-10-16 10:39:58.0]]></UPDATED>
+<!--1000500076 UPDATEDBY-->
+<!--1000500076-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500076 TEXT-->
+<!--1000500076-->              <TEXT><![CDATA[Our reference]]></TEXT>
+<!--1000500076 FILENAME-->
+<!--1000500076-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500076 ISUSED-->
+<!--1000500076-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500076 AD_MODULE_ID-->
+<!--1000500076-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500076**************--></AD_TEXTINTERFACES>
+
+<!--1000500077**************--><AD_TEXTINTERFACES>
+<!--1000500077 AD_TEXTINTERFACES_ID-->
+<!--1000500077-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500077]]></AD_TEXTINTERFACES_ID>
+<!--1000500077 AD_CLIENT_ID-->
+<!--1000500077-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500077 AD_ORG_ID-->
+<!--1000500077-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500077 ISACTIVE-->
+<!--1000500077-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500077 CREATED-->
+<!--1000500077-->              <CREATED><![CDATA[2008-10-16 10:39:58.0]]></CREATED>
+<!--1000500077 CREATEDBY-->
+<!--1000500077-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500077 UPDATED-->
+<!--1000500077-->              <UPDATED><![CDATA[2008-10-16 10:39:58.0]]></UPDATED>
+<!--1000500077 UPDATEDBY-->
+<!--1000500077-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500077 TEXT-->
+<!--1000500077-->              <TEXT><![CDATA[Our contact]]></TEXT>
+<!--1000500077 FILENAME-->
+<!--1000500077-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500077 ISUSED-->
+<!--1000500077-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500077 AD_MODULE_ID-->
+<!--1000500077-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500077**************--></AD_TEXTINTERFACES>
+
+<!--1000500078**************--><AD_TEXTINTERFACES>
+<!--1000500078 AD_TEXTINTERFACES_ID-->
+<!--1000500078-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500078]]></AD_TEXTINTERFACES_ID>
+<!--1000500078 AD_CLIENT_ID-->
+<!--1000500078-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500078 AD_ORG_ID-->
+<!--1000500078-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500078 ISACTIVE-->
+<!--1000500078-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500078 CREATED-->
+<!--1000500078-->              <CREATED><![CDATA[2008-10-16 10:39:58.0]]></CREATED>
+<!--1000500078 CREATEDBY-->
+<!--1000500078-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500078 UPDATED-->
+<!--1000500078-->              <UPDATED><![CDATA[2008-10-16 10:39:58.0]]></UPDATED>
+<!--1000500078 UPDATEDBY-->
+<!--1000500078-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500078 TEXT-->
+<!--1000500078-->              <TEXT><![CDATA[Our email]]></TEXT>
+<!--1000500078 FILENAME-->
+<!--1000500078-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500078 ISUSED-->
+<!--1000500078-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500078 AD_MODULE_ID-->
+<!--1000500078-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500078**************--></AD_TEXTINTERFACES>
+
+<!--1000500079**************--><AD_TEXTINTERFACES>
+<!--1000500079 AD_TEXTINTERFACES_ID-->
+<!--1000500079-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500079]]></AD_TEXTINTERFACES_ID>
+<!--1000500079 AD_CLIENT_ID-->
+<!--1000500079-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500079 AD_ORG_ID-->
+<!--1000500079-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500079 ISACTIVE-->
+<!--1000500079-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500079 CREATED-->
+<!--1000500079-->              <CREATED><![CDATA[2008-10-16 10:39:58.0]]></CREATED>
+<!--1000500079 CREATEDBY-->
+<!--1000500079-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500079 UPDATED-->
+<!--1000500079-->              <UPDATED><![CDATA[2008-10-16 10:39:58.0]]></UPDATED>
+<!--1000500079 UPDATEDBY-->
+<!--1000500079-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500079 TEXT-->
+<!--1000500079-->              <TEXT><![CDATA[Customer reference]]></TEXT>
+<!--1000500079 FILENAME-->
+<!--1000500079-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500079 ISUSED-->
+<!--1000500079-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500079 AD_MODULE_ID-->
+<!--1000500079-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500079**************--></AD_TEXTINTERFACES>
+
+<!--1000500080**************--><AD_TEXTINTERFACES>
+<!--1000500080 AD_TEXTINTERFACES_ID-->
+<!--1000500080-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500080]]></AD_TEXTINTERFACES_ID>
+<!--1000500080 AD_CLIENT_ID-->
+<!--1000500080-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500080 AD_ORG_ID-->
+<!--1000500080-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500080 ISACTIVE-->
+<!--1000500080-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500080 CREATED-->
+<!--1000500080-->              <CREATED><![CDATA[2008-10-16 10:39:58.0]]></CREATED>
+<!--1000500080 CREATEDBY-->
+<!--1000500080-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500080 UPDATED-->
+<!--1000500080-->              <UPDATED><![CDATA[2008-10-16 10:39:58.0]]></UPDATED>
+<!--1000500080 UPDATEDBY-->
+<!--1000500080-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500080 TEXT-->
+<!--1000500080-->              <TEXT><![CDATA[Customer contact]]></TEXT>
+<!--1000500080 FILENAME-->
+<!--1000500080-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500080 ISUSED-->
+<!--1000500080-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500080 AD_MODULE_ID-->
+<!--1000500080-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500080**************--></AD_TEXTINTERFACES>
+
+<!--1000500081**************--><AD_TEXTINTERFACES>
+<!--1000500081 AD_TEXTINTERFACES_ID-->
+<!--1000500081-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500081]]></AD_TEXTINTERFACES_ID>
+<!--1000500081 AD_CLIENT_ID-->
+<!--1000500081-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500081 AD_ORG_ID-->
+<!--1000500081-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500081 ISACTIVE-->
+<!--1000500081-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500081 CREATED-->
+<!--1000500081-->              <CREATED><![CDATA[2008-10-16 10:39:58.0]]></CREATED>
+<!--1000500081 CREATEDBY-->
+<!--1000500081-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500081 UPDATED-->
+<!--1000500081-->              <UPDATED><![CDATA[2008-10-16 10:39:58.0]]></UPDATED>
+<!--1000500081 UPDATEDBY-->
+<!--1000500081-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500081 TEXT-->
+<!--1000500081-->              <TEXT><![CDATA[Customer email]]></TEXT>
+<!--1000500081 FILENAME-->
+<!--1000500081-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500081 ISUSED-->
+<!--1000500081-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500081 AD_MODULE_ID-->
+<!--1000500081-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500081**************--></AD_TEXTINTERFACES>
+
+<!--1000500082**************--><AD_TEXTINTERFACES>
+<!--1000500082 AD_TEXTINTERFACES_ID-->
+<!--1000500082-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500082]]></AD_TEXTINTERFACES_ID>
+<!--1000500082 AD_CLIENT_ID-->
+<!--1000500082-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500082 AD_ORG_ID-->
+<!--1000500082-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500082 ISACTIVE-->
+<!--1000500082-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500082 CREATED-->
+<!--1000500082-->              <CREATED><![CDATA[2008-10-16 14:04:01.0]]></CREATED>
+<!--1000500082 CREATEDBY-->
+<!--1000500082-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500082 UPDATED-->
+<!--1000500082-->              <UPDATED><![CDATA[2008-10-16 14:04:01.0]]></UPDATED>
+<!--1000500082 UPDATEDBY-->
+<!--1000500082-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500082 TEXT-->
+<!--1000500082-->              <TEXT><![CDATA[@cus_ref@:]]></TEXT>
+<!--1000500082 FILENAME-->
+<!--1000500082-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500082 ISUSED-->
+<!--1000500082-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500082 AD_MODULE_ID-->
+<!--1000500082-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500082**************--></AD_TEXTINTERFACES>
+
+<!--1000500083**************--><AD_TEXTINTERFACES>
+<!--1000500083 AD_TEXTINTERFACES_ID-->
+<!--1000500083-->              <AD_TEXTINTERFACES_ID><![CDATA[1000500083]]></AD_TEXTINTERFACES_ID>
+<!--1000500083 AD_CLIENT_ID-->
+<!--1000500083-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1000500083 AD_ORG_ID-->
+<!--1000500083-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1000500083 ISACTIVE-->
+<!--1000500083-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1000500083 CREATED-->
+<!--1000500083-->              <CREATED><![CDATA[2008-10-16 14:04:01.0]]></CREATED>
+<!--1000500083 CREATEDBY-->
+<!--1000500083-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1000500083 UPDATED-->
+<!--1000500083-->              <UPDATED><![CDATA[2008-10-16 14:04:01.0]]></UPDATED>
+<!--1000500083 UPDATEDBY-->
+<!--1000500083-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1000500083 TEXT-->
+<!--1000500083-->              <TEXT><![CDATA[@our_ref@:]]></TEXT>
+<!--1000500083 FILENAME-->
+<!--1000500083-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--1000500083 ISUSED-->
+<!--1000500083-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--1000500083 AD_MODULE_ID-->
+<!--1000500083-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1000500083**************--></AD_TEXTINTERFACES>
 
 <!--1000600000**************--><AD_TEXTINTERFACES>
 <!--1000600000 AD_TEXTINTERFACES_ID-->
@@ -52409,6 +53921,600 @@
 <!--1006300061-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1006300061**************--></AD_TEXTINTERFACES>
 
+<!--11F70E8CA2FD11DD8474FF0609901605**************--><AD_TEXTINTERFACES>
+<!--11F70E8CA2FD11DD8474FF0609901605 AD_TEXTINTERFACES_ID-->
+<!--11F70E8CA2FD11DD8474FF0609901605-->              <AD_TEXTINTERFACES_ID><![CDATA[11F70E8CA2FD11DD8474FF0609901605]]></AD_TEXTINTERFACES_ID>
+<!--11F70E8CA2FD11DD8474FF0609901605 AD_CLIENT_ID-->
+<!--11F70E8CA2FD11DD8474FF0609901605-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--11F70E8CA2FD11DD8474FF0609901605 AD_ORG_ID-->
+<!--11F70E8CA2FD11DD8474FF0609901605-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--11F70E8CA2FD11DD8474FF0609901605 ISACTIVE-->
+<!--11F70E8CA2FD11DD8474FF0609901605-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--11F70E8CA2FD11DD8474FF0609901605 CREATED-->
+<!--11F70E8CA2FD11DD8474FF0609901605-->              <CREATED><![CDATA[2008-10-26 02:26:10.0]]></CREATED>
+<!--11F70E8CA2FD11DD8474FF0609901605 CREATEDBY-->
+<!--11F70E8CA2FD11DD8474FF0609901605-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--11F70E8CA2FD11DD8474FF0609901605 UPDATED-->
+<!--11F70E8CA2FD11DD8474FF0609901605-->              <UPDATED><![CDATA[2008-10-26 02:26:10.0]]></UPDATED>
+<!--11F70E8CA2FD11DD8474FF0609901605 UPDATEDBY-->
+<!--11F70E8CA2FD11DD8474FF0609901605-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--11F70E8CA2FD11DD8474FF0609901605 TEXT-->
+<!--11F70E8CA2FD11DD8474FF0609901605-->              <TEXT><![CDATA[Archive this document]]></TEXT>
+<!--11F70E8CA2FD11DD8474FF0609901605 FILENAME-->
+<!--11F70E8CA2FD11DD8474FF0609901605-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/EmailOptions.html]]></FILENAME>
+<!--11F70E8CA2FD11DD8474FF0609901605 ISUSED-->
+<!--11F70E8CA2FD11DD8474FF0609901605-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--11F70E8CA2FD11DD8474FF0609901605 AD_MODULE_ID-->
+<!--11F70E8CA2FD11DD8474FF0609901605-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--11F70E8CA2FD11DD8474FF0609901605**************--></AD_TEXTINTERFACES>
+
+<!--272CF5C8A1F411DD8ED1EF26D1098B24**************--><AD_TEXTINTERFACES>
+<!--272CF5C8A1F411DD8ED1EF26D1098B24 AD_TEXTINTERFACES_ID-->
+<!--272CF5C8A1F411DD8ED1EF26D1098B24-->              <AD_TEXTINTERFACES_ID><![CDATA[272CF5C8A1F411DD8ED1EF26D1098B24]]></AD_TEXTINTERFACES_ID>
+<!--272CF5C8A1F411DD8ED1EF26D1098B24 AD_CLIENT_ID-->
+<!--272CF5C8A1F411DD8ED1EF26D1098B24-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--272CF5C8A1F411DD8ED1EF26D1098B24 AD_ORG_ID-->
+<!--272CF5C8A1F411DD8ED1EF26D1098B24-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--272CF5C8A1F411DD8ED1EF26D1098B24 ISACTIVE-->
+<!--272CF5C8A1F411DD8ED1EF26D1098B24-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--272CF5C8A1F411DD8ED1EF26D1098B24 CREATED-->
+<!--272CF5C8A1F411DD8ED1EF26D1098B24-->              <CREATED><![CDATA[2008-10-24 19:49:49.0]]></CREATED>
+<!--272CF5C8A1F411DD8ED1EF26D1098B24 CREATEDBY-->
+<!--272CF5C8A1F411DD8ED1EF26D1098B24-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--272CF5C8A1F411DD8ED1EF26D1098B24 UPDATED-->
+<!--272CF5C8A1F411DD8ED1EF26D1098B24-->              <UPDATED><![CDATA[2008-10-24 19:49:49.0]]></UPDATED>
+<!--272CF5C8A1F411DD8ED1EF26D1098B24 UPDATEDBY-->
+<!--272CF5C8A1F411DD8ED1EF26D1098B24-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--272CF5C8A1F411DD8ED1EF26D1098B24 TEXT-->
+<!--272CF5C8A1F411DD8ED1EF26D1098B24-->              <TEXT><![CDATA[Print Document]]></TEXT>
+<!--272CF5C8A1F411DD8ED1EF26D1098B24 FILENAME-->
+<!--272CF5C8A1F411DD8ED1EF26D1098B24-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--272CF5C8A1F411DD8ED1EF26D1098B24 ISUSED-->
+<!--272CF5C8A1F411DD8ED1EF26D1098B24-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--272CF5C8A1F411DD8ED1EF26D1098B24 AD_MODULE_ID-->
+<!--272CF5C8A1F411DD8ED1EF26D1098B24-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--272CF5C8A1F411DD8ED1EF26D1098B24**************--></AD_TEXTINTERFACES>
+
+<!--27446C44A1F411DD90E5475409233A52**************--><AD_TEXTINTERFACES>
+<!--27446C44A1F411DD90E5475409233A52 AD_TEXTINTERFACES_ID-->
+<!--27446C44A1F411DD90E5475409233A52-->              <AD_TEXTINTERFACES_ID><![CDATA[27446C44A1F411DD90E5475409233A52]]></AD_TEXTINTERFACES_ID>
+<!--27446C44A1F411DD90E5475409233A52 AD_CLIENT_ID-->
+<!--27446C44A1F411DD90E5475409233A52-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--27446C44A1F411DD90E5475409233A52 AD_ORG_ID-->
+<!--27446C44A1F411DD90E5475409233A52-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--27446C44A1F411DD90E5475409233A52 ISACTIVE-->
+<!--27446C44A1F411DD90E5475409233A52-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--27446C44A1F411DD90E5475409233A52 CREATED-->
+<!--27446C44A1F411DD90E5475409233A52-->              <CREATED><![CDATA[2008-10-24 19:49:49.0]]></CREATED>
+<!--27446C44A1F411DD90E5475409233A52 CREATEDBY-->
+<!--27446C44A1F411DD90E5475409233A52-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--27446C44A1F411DD90E5475409233A52 UPDATED-->
+<!--27446C44A1F411DD90E5475409233A52-->              <UPDATED><![CDATA[2008-10-24 19:49:49.0]]></UPDATED>
+<!--27446C44A1F411DD90E5475409233A52 UPDATEDBY-->
+<!--27446C44A1F411DD90E5475409233A52-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--27446C44A1F411DD90E5475409233A52 TEXT-->
+<!--27446C44A1F411DD90E5475409233A52-->              <TEXT><![CDATA[Do you want to archive this document after printing?]]></TEXT>
+<!--27446C44A1F411DD90E5475409233A52 FILENAME-->
+<!--27446C44A1F411DD90E5475409233A52-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--27446C44A1F411DD90E5475409233A52 ISUSED-->
+<!--27446C44A1F411DD90E5475409233A52-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--27446C44A1F411DD90E5475409233A52 AD_MODULE_ID-->
+<!--27446C44A1F411DD90E5475409233A52-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--27446C44A1F411DD90E5475409233A52**************--></AD_TEXTINTERFACES>
+
+<!--277F9CC4A1F411DDB2037B28514AAA63**************--><AD_TEXTINTERFACES>
+<!--277F9CC4A1F411DDB2037B28514AAA63 AD_TEXTINTERFACES_ID-->
+<!--277F9CC4A1F411DDB2037B28514AAA63-->              <AD_TEXTINTERFACES_ID><![CDATA[277F9CC4A1F411DDB2037B28514AAA63]]></AD_TEXTINTERFACES_ID>
+<!--277F9CC4A1F411DDB2037B28514AAA63 AD_CLIENT_ID-->
+<!--277F9CC4A1F411DDB2037B28514AAA63-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--277F9CC4A1F411DDB2037B28514AAA63 AD_ORG_ID-->
+<!--277F9CC4A1F411DDB2037B28514AAA63-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--277F9CC4A1F411DDB2037B28514AAA63 ISACTIVE-->
+<!--277F9CC4A1F411DDB2037B28514AAA63-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--277F9CC4A1F411DDB2037B28514AAA63 CREATED-->
+<!--277F9CC4A1F411DDB2037B28514AAA63-->              <CREATED><![CDATA[2008-10-24 19:49:49.0]]></CREATED>
+<!--277F9CC4A1F411DDB2037B28514AAA63 CREATEDBY-->
+<!--277F9CC4A1F411DDB2037B28514AAA63-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--277F9CC4A1F411DDB2037B28514AAA63 UPDATED-->
+<!--277F9CC4A1F411DDB2037B28514AAA63-->              <UPDATED><![CDATA[2008-10-24 19:49:49.0]]></UPDATED>
+<!--277F9CC4A1F411DDB2037B28514AAA63 UPDATEDBY-->
+<!--277F9CC4A1F411DDB2037B28514AAA63-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--277F9CC4A1F411DDB2037B28514AAA63 TEXT-->
+<!--277F9CC4A1F411DDB2037B28514AAA63-->              <TEXT><![CDATA[This will attach the document to the record]]></TEXT>
+<!--277F9CC4A1F411DDB2037B28514AAA63 FILENAME-->
+<!--277F9CC4A1F411DDB2037B28514AAA63-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--277F9CC4A1F411DDB2037B28514AAA63 ISUSED-->
+<!--277F9CC4A1F411DDB2037B28514AAA63-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--277F9CC4A1F411DDB2037B28514AAA63 AD_MODULE_ID-->
+<!--277F9CC4A1F411DDB2037B28514AAA63-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--277F9CC4A1F411DDB2037B28514AAA63**************--></AD_TEXTINTERFACES>
+
+<!--2783F652A1F411DDA89BDF610A666E97**************--><AD_TEXTINTERFACES>
+<!--2783F652A1F411DDA89BDF610A666E97 AD_TEXTINTERFACES_ID-->
+<!--2783F652A1F411DDA89BDF610A666E97-->              <AD_TEXTINTERFACES_ID><![CDATA[2783F652A1F411DDA89BDF610A666E97]]></AD_TEXTINTERFACES_ID>
+<!--2783F652A1F411DDA89BDF610A666E97 AD_CLIENT_ID-->
+<!--2783F652A1F411DDA89BDF610A666E97-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--2783F652A1F411DDA89BDF610A666E97 AD_ORG_ID-->
+<!--2783F652A1F411DDA89BDF610A666E97-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--2783F652A1F411DDA89BDF610A666E97 ISACTIVE-->
+<!--2783F652A1F411DDA89BDF610A666E97-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--2783F652A1F411DDA89BDF610A666E97 CREATED-->
+<!--2783F652A1F411DDA89BDF610A666E97-->              <CREATED><![CDATA[2008-10-24 19:49:49.0]]></CREATED>
+<!--2783F652A1F411DDA89BDF610A666E97 CREATEDBY-->
+<!--2783F652A1F411DDA89BDF610A666E97-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--2783F652A1F411DDA89BDF610A666E97 UPDATED-->
+<!--2783F652A1F411DDA89BDF610A666E97-->              <UPDATED><![CDATA[2008-10-24 19:49:49.0]]></UPDATED>
+<!--2783F652A1F411DDA89BDF610A666E97 UPDATEDBY-->
+<!--2783F652A1F411DDA89BDF610A666E97-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--2783F652A1F411DDA89BDF610A666E97 TEXT-->
+<!--2783F652A1F411DDA89BDF610A666E97-->              <TEXT><![CDATA[Print and Archive]]></TEXT>
+<!--2783F652A1F411DDA89BDF610A666E97 FILENAME-->
+<!--2783F652A1F411DDA89BDF610A666E97-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--2783F652A1F411DDA89BDF610A666E97 ISUSED-->
+<!--2783F652A1F411DDA89BDF610A666E97-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--2783F652A1F411DDA89BDF610A666E97 AD_MODULE_ID-->
+<!--2783F652A1F411DDA89BDF610A666E97-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--2783F652A1F411DDA89BDF610A666E97**************--></AD_TEXTINTERFACES>
+
+<!--2789FDAEA1F411DD92BB17615869AC3A**************--><AD_TEXTINTERFACES>
+<!--2789FDAEA1F411DD92BB17615869AC3A AD_TEXTINTERFACES_ID-->
+<!--2789FDAEA1F411DD92BB17615869AC3A-->              <AD_TEXTINTERFACES_ID><![CDATA[2789FDAEA1F411DD92BB17615869AC3A]]></AD_TEXTINTERFACES_ID>
+<!--2789FDAEA1F411DD92BB17615869AC3A AD_CLIENT_ID-->
+<!--2789FDAEA1F411DD92BB17615869AC3A-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--2789FDAEA1F411DD92BB17615869AC3A AD_ORG_ID-->
+<!--2789FDAEA1F411DD92BB17615869AC3A-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--2789FDAEA1F411DD92BB17615869AC3A ISACTIVE-->
+<!--2789FDAEA1F411DD92BB17615869AC3A-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--2789FDAEA1F411DD92BB17615869AC3A CREATED-->
+<!--2789FDAEA1F411DD92BB17615869AC3A-->              <CREATED><![CDATA[2008-10-24 19:49:49.0]]></CREATED>
+<!--2789FDAEA1F411DD92BB17615869AC3A CREATEDBY-->
+<!--2789FDAEA1F411DD92BB17615869AC3A-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--2789FDAEA1F411DD92BB17615869AC3A UPDATED-->
+<!--2789FDAEA1F411DD92BB17615869AC3A-->              <UPDATED><![CDATA[2008-10-24 19:49:49.0]]></UPDATED>
+<!--2789FDAEA1F411DD92BB17615869AC3A UPDATEDBY-->
+<!--2789FDAEA1F411DD92BB17615869AC3A-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--2789FDAEA1F411DD92BB17615869AC3A TEXT-->
+<!--2789FDAEA1F411DD92BB17615869AC3A-->              <TEXT><![CDATA[Yes]]></TEXT>
+<!--2789FDAEA1F411DD92BB17615869AC3A FILENAME-->
+<!--2789FDAEA1F411DD92BB17615869AC3A-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--2789FDAEA1F411DD92BB17615869AC3A ISUSED-->
+<!--2789FDAEA1F411DD92BB17615869AC3A-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--2789FDAEA1F411DD92BB17615869AC3A AD_MODULE_ID-->
+<!--2789FDAEA1F411DD92BB17615869AC3A-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--2789FDAEA1F411DD92BB17615869AC3A**************--></AD_TEXTINTERFACES>
+
+<!--278D38DEA1F411DDB135639D6DC47DC0**************--><AD_TEXTINTERFACES>
+<!--278D38DEA1F411DDB135639D6DC47DC0 AD_TEXTINTERFACES_ID-->
+<!--278D38DEA1F411DDB135639D6DC47DC0-->              <AD_TEXTINTERFACES_ID><![CDATA[278D38DEA1F411DDB135639D6DC47DC0]]></AD_TEXTINTERFACES_ID>
+<!--278D38DEA1F411DDB135639D6DC47DC0 AD_CLIENT_ID-->
+<!--278D38DEA1F411DDB135639D6DC47DC0-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--278D38DEA1F411DDB135639D6DC47DC0 AD_ORG_ID-->
+<!--278D38DEA1F411DDB135639D6DC47DC0-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--278D38DEA1F411DDB135639D6DC47DC0 ISACTIVE-->
+<!--278D38DEA1F411DDB135639D6DC47DC0-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--278D38DEA1F411DDB135639D6DC47DC0 CREATED-->
+<!--278D38DEA1F411DDB135639D6DC47DC0-->              <CREATED><![CDATA[2008-10-24 19:49:49.0]]></CREATED>
+<!--278D38DEA1F411DDB135639D6DC47DC0 CREATEDBY-->
+<!--278D38DEA1F411DDB135639D6DC47DC0-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--278D38DEA1F411DDB135639D6DC47DC0 UPDATED-->
+<!--278D38DEA1F411DDB135639D6DC47DC0-->              <UPDATED><![CDATA[2008-10-24 19:49:49.0]]></UPDATED>
+<!--278D38DEA1F411DDB135639D6DC47DC0 UPDATEDBY-->
+<!--278D38DEA1F411DDB135639D6DC47DC0-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--278D38DEA1F411DDB135639D6DC47DC0 TEXT-->
+<!--278D38DEA1F411DDB135639D6DC47DC0-->              <TEXT><![CDATA[Print]]></TEXT>
+<!--278D38DEA1F411DDB135639D6DC47DC0 FILENAME-->
+<!--278D38DEA1F411DDB135639D6DC47DC0-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--278D38DEA1F411DDB135639D6DC47DC0 ISUSED-->
+<!--278D38DEA1F411DDB135639D6DC47DC0-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--278D38DEA1F411DDB135639D6DC47DC0 AD_MODULE_ID-->
+<!--278D38DEA1F411DDB135639D6DC47DC0-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--278D38DEA1F411DDB135639D6DC47DC0**************--></AD_TEXTINTERFACES>
+
+<!--27919C80A1F411DDABEB7FC45987362E**************--><AD_TEXTINTERFACES>
+<!--27919C80A1F411DDABEB7FC45987362E AD_TEXTINTERFACES_ID-->
+<!--27919C80A1F411DDABEB7FC45987362E-->              <AD_TEXTINTERFACES_ID><![CDATA[27919C80A1F411DDABEB7FC45987362E]]></AD_TEXTINTERFACES_ID>
+<!--27919C80A1F411DDABEB7FC45987362E AD_CLIENT_ID-->
+<!--27919C80A1F411DDABEB7FC45987362E-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--27919C80A1F411DDABEB7FC45987362E AD_ORG_ID-->
+<!--27919C80A1F411DDABEB7FC45987362E-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--27919C80A1F411DDABEB7FC45987362E ISACTIVE-->
+<!--27919C80A1F411DDABEB7FC45987362E-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--27919C80A1F411DDABEB7FC45987362E CREATED-->
+<!--27919C80A1F411DDABEB7FC45987362E-->              <CREATED><![CDATA[2008-10-24 19:49:49.0]]></CREATED>
+<!--27919C80A1F411DDABEB7FC45987362E CREATEDBY-->
+<!--27919C80A1F411DDABEB7FC45987362E-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--27919C80A1F411DDABEB7FC45987362E UPDATED-->
+<!--27919C80A1F411DDABEB7FC45987362E-->              <UPDATED><![CDATA[2008-10-24 19:49:49.0]]></UPDATED>
+<!--27919C80A1F411DDABEB7FC45987362E UPDATEDBY-->
+<!--27919C80A1F411DDABEB7FC45987362E-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--27919C80A1F411DDABEB7FC45987362E TEXT-->
+<!--27919C80A1F411DDABEB7FC45987362E-->              <TEXT><![CDATA[No, just print it]]></TEXT>
+<!--27919C80A1F411DDABEB7FC45987362E FILENAME-->
+<!--27919C80A1F411DDABEB7FC45987362E-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/PrintOptions.html]]></FILENAME>
+<!--27919C80A1F411DDABEB7FC45987362E ISUSED-->
+<!--27919C80A1F411DDABEB7FC45987362E-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--27919C80A1F411DDABEB7FC45987362E AD_MODULE_ID-->
+<!--27919C80A1F411DDABEB7FC45987362E-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--27919C80A1F411DDABEB7FC45987362E**************--></AD_TEXTINTERFACES>
+
+<!--27944750A1F411DDA75C1361F37DC434**************--><AD_TEXTINTERFACES>
+<!--27944750A1F411DDA75C1361F37DC434 AD_TEXTINTERFACES_ID-->
+<!--27944750A1F411DDA75C1361F37DC434-->              <AD_TEXTINTERFACES_ID><![CDATA[27944750A1F411DDA75C1361F37DC434]]></AD_TEXTINTERFACES_ID>
+<!--27944750A1F411DDA75C1361F37DC434 AD_CLIENT_ID-->
+<!--27944750A1F411DDA75C1361F37DC434-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--27944750A1F411DDA75C1361F37DC434 AD_ORG_ID-->
+<!--27944750A1F411DDA75C1361F37DC434-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--27944750A1F411DDA75C1361F37DC434 ISACTIVE-->
+<!--27944750A1F411DDA75C1361F37DC434-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--27944750A1F411DDA75C1361F37DC434 CREATED-->
+<!--27944750A1F411DDA75C1361F37DC434-->              <CREATED><![CDATA[2008-10-24 19:49:49.0]]></CREATED>
+<!--27944750A1F411DDA75C1361F37DC434 CREATEDBY-->
+<!--27944750A1F411DDA75C1361F37DC434-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--27944750A1F411DDA75C1361F37DC434 UPDATED-->
+<!--27944750A1F411DDA75C1361F37DC434-->              <UPDATED><![CDATA[2008-10-24 19:49:49.0]]></UPDATED>
+<!--27944750A1F411DDA75C1361F37DC434 UPDATEDBY-->
+<!--27944750A1F411DDA75C1361F37DC434-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--27944750A1F411DDA75C1361F37DC434 TEXT-->
+<!--27944750A1F411DDA75C1361F37DC434-->              <TEXT><![CDATA[Email options]]></TEXT>
+<!--27944750A1F411DDA75C1361F37DC434 FILENAME-->
+<!--27944750A1F411DDA75C1361F37DC434-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/EmailOptions.html]]></FILENAME>
+<!--27944750A1F411DDA75C1361F37DC434 ISUSED-->
+<!--27944750A1F411DDA75C1361F37DC434-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--27944750A1F411DDA75C1361F37DC434 AD_MODULE_ID-->
+<!--27944750A1F411DDA75C1361F37DC434-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--27944750A1F411DDA75C1361F37DC434**************--></AD_TEXTINTERFACES>
+
+<!--279B1ABCA1F411DD85E38F3C766A23AE**************--><AD_TEXTINTERFACES>
+<!--279B1ABCA1F411DD85E38F3C766A23AE AD_TEXTINTERFACES_ID-->
+<!--279B1ABCA1F411DD85E38F3C766A23AE-->              <AD_TEXTINTERFACES_ID><![CDATA[279B1ABCA1F411DD85E38F3C766A23AE]]></AD_TEXTINTERFACES_ID>
+<!--279B1ABCA1F411DD85E38F3C766A23AE AD_CLIENT_ID-->
+<!--279B1ABCA1F411DD85E38F3C766A23AE-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--279B1ABCA1F411DD85E38F3C766A23AE AD_ORG_ID-->
+<!--279B1ABCA1F411DD85E38F3C766A23AE-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--279B1ABCA1F411DD85E38F3C766A23AE ISACTIVE-->
+<!--279B1ABCA1F411DD85E38F3C766A23AE-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--279B1ABCA1F411DD85E38F3C766A23AE CREATED-->
+<!--279B1ABCA1F411DD85E38F3C766A23AE-->              <CREATED><![CDATA[2008-10-24 19:49:49.0]]></CREATED>
+<!--279B1ABCA1F411DD85E38F3C766A23AE CREATEDBY-->
+<!--279B1ABCA1F411DD85E38F3C766A23AE-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--279B1ABCA1F411DD85E38F3C766A23AE UPDATED-->
+<!--279B1ABCA1F411DD85E38F3C766A23AE-->              <UPDATED><![CDATA[2008-10-24 19:49:49.0]]></UPDATED>
+<!--279B1ABCA1F411DD85E38F3C766A23AE UPDATEDBY-->
+<!--279B1ABCA1F411DD85E38F3C766A23AE-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--279B1ABCA1F411DD85E38F3C766A23AE TEXT-->
+<!--279B1ABCA1F411DD85E38F3C766A23AE-->              <TEXT><![CDATA[Email Document]]></TEXT>
+<!--279B1ABCA1F411DD85E38F3C766A23AE FILENAME-->
+<!--279B1ABCA1F411DD85E38F3C766A23AE-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/EmailOptions.html]]></FILENAME>
+<!--279B1ABCA1F411DD85E38F3C766A23AE ISUSED-->
+<!--279B1ABCA1F411DD85E38F3C766A23AE-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--279B1ABCA1F411DD85E38F3C766A23AE AD_MODULE_ID-->
+<!--279B1ABCA1F411DD85E38F3C766A23AE-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--279B1ABCA1F411DD85E38F3C766A23AE**************--></AD_TEXTINTERFACES>
+
+<!--279D4472A1F411DD926D233E1EDB451E**************--><AD_TEXTINTERFACES>
+<!--279D4472A1F411DD926D233E1EDB451E AD_TEXTINTERFACES_ID-->
+<!--279D4472A1F411DD926D233E1EDB451E-->              <AD_TEXTINTERFACES_ID><![CDATA[279D4472A1F411DD926D233E1EDB451E]]></AD_TEXTINTERFACES_ID>
+<!--279D4472A1F411DD926D233E1EDB451E AD_CLIENT_ID-->
+<!--279D4472A1F411DD926D233E1EDB451E-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--279D4472A1F411DD926D233E1EDB451E AD_ORG_ID-->
+<!--279D4472A1F411DD926D233E1EDB451E-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--279D4472A1F411DD926D233E1EDB451E ISACTIVE-->
+<!--279D4472A1F411DD926D233E1EDB451E-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--279D4472A1F411DD926D233E1EDB451E CREATED-->
+<!--279D4472A1F411DD926D233E1EDB451E-->              <CREATED><![CDATA[2008-10-24 19:49:49.0]]></CREATED>
+<!--279D4472A1F411DD926D233E1EDB451E CREATEDBY-->
+<!--279D4472A1F411DD926D233E1EDB451E-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--279D4472A1F411DD926D233E1EDB451E UPDATED-->
+<!--279D4472A1F411DD926D233E1EDB451E-->              <UPDATED><![CDATA[2008-10-24 19:49:49.0]]></UPDATED>
+<!--279D4472A1F411DD926D233E1EDB451E UPDATEDBY-->
+<!--279D4472A1F411DD926D233E1EDB451E-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--279D4472A1F411DD926D233E1EDB451E TEXT-->
+<!--279D4472A1F411DD926D233E1EDB451E-->              <TEXT><![CDATA[Write a template email below. The following tags will be replaced by the values for each 								specific document when the mails are send.]]></TEXT>
+<!--279D4472A1F411DD926D233E1EDB451E FILENAME-->
+<!--279D4472A1F411DD926D233E1EDB451E-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/EmailOptions.html]]></FILENAME>
+<!--279D4472A1F411DD926D233E1EDB451E ISUSED-->
+<!--279D4472A1F411DD926D233E1EDB451E-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--279D4472A1F411DD926D233E1EDB451E AD_MODULE_ID-->
+<!--279D4472A1F411DD926D233E1EDB451E-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--279D4472A1F411DD926D233E1EDB451E**************--></AD_TEXTINTERFACES>
+
+<!--279F3C14A1F411DDBFD057431D13A575**************--><AD_TEXTINTERFACES>
+<!--279F3C14A1F411DDBFD057431D13A575 AD_TEXTINTERFACES_ID-->
+<!--279F3C14A1F411DDBFD057431D13A575-->              <AD_TEXTINTERFACES_ID><![CDATA[279F3C14A1F411DDBFD057431D13A575]]></AD_TEXTINTERFACES_ID>
+<!--279F3C14A1F411DDBFD057431D13A575 AD_CLIENT_ID-->
+<!--279F3C14A1F411DDBFD057431D13A575-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--279F3C14A1F411DDBFD057431D13A575 AD_ORG_ID-->
+<!--279F3C14A1F411DDBFD057431D13A575-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--279F3C14A1F411DDBFD057431D13A575 ISACTIVE-->
+<!--279F3C14A1F411DDBFD057431D13A575-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--279F3C14A1F411DDBFD057431D13A575 CREATED-->
+<!--279F3C14A1F411DDBFD057431D13A575-->              <CREATED><![CDATA[2008-10-24 19:49:49.0]]></CREATED>
+<!--279F3C14A1F411DDBFD057431D13A575 CREATEDBY-->
+<!--279F3C14A1F411DDBFD057431D13A575-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--279F3C14A1F411DDBFD057431D13A575 UPDATED-->
+<!--279F3C14A1F411DDBFD057431D13A575-->              <UPDATED><![CDATA[2008-10-24 19:49:49.0]]></UPDATED>
+<!--279F3C14A1F411DDBFD057431D13A575 UPDATEDBY-->
+<!--279F3C14A1F411DDBFD057431D13A575-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--279F3C14A1F411DDBFD057431D13A575 TEXT-->
+<!--279F3C14A1F411DDBFD057431D13A575-->              <TEXT><![CDATA[@cus_ref@:]]></TEXT>
+<!--279F3C14A1F411DDBFD057431D13A575 FILENAME-->
+<!--279F3C14A1F411DDBFD057431D13A575-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/EmailOptions.html]]></FILENAME>
+<!--279F3C14A1F411DDBFD057431D13A575 ISUSED-->
+<!--279F3C14A1F411DDBFD057431D13A575-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--279F3C14A1F411DDBFD057431D13A575 AD_MODULE_ID-->
+<!--279F3C14A1F411DDBFD057431D13A575-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--279F3C14A1F411DDBFD057431D13A575**************--></AD_TEXTINTERFACES>
+
+<!--27A23EE6A1F411DDBEAAD33D289ADF44**************--><AD_TEXTINTERFACES>
+<!--27A23EE6A1F411DDBEAAD33D289ADF44 AD_TEXTINTERFACES_ID-->
+<!--27A23EE6A1F411DDBEAAD33D289ADF44-->              <AD_TEXTINTERFACES_ID><![CDATA[27A23EE6A1F411DDBEAAD33D289ADF44]]></AD_TEXTINTERFACES_ID>
+<!--27A23EE6A1F411DDBEAAD33D289ADF44 AD_CLIENT_ID-->
+<!--27A23EE6A1F411DDBEAAD33D289ADF44-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--27A23EE6A1F411DDBEAAD33D289ADF44 AD_ORG_ID-->
+<!--27A23EE6A1F411DDBEAAD33D289ADF44-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--27A23EE6A1F411DDBEAAD33D289ADF44 ISACTIVE-->
+<!--27A23EE6A1F411DDBEAAD33D289ADF44-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--27A23EE6A1F411DDBEAAD33D289ADF44 CREATED-->
+<!--27A23EE6A1F411DDBEAAD33D289ADF44-->              <CREATED><![CDATA[2008-10-24 19:49:50.0]]></CREATED>
+<!--27A23EE6A1F411DDBEAAD33D289ADF44 CREATEDBY-->
+<!--27A23EE6A1F411DDBEAAD33D289ADF44-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--27A23EE6A1F411DDBEAAD33D289ADF44 UPDATED-->
+<!--27A23EE6A1F411DDBEAAD33D289ADF44-->              <UPDATED><![CDATA[2008-10-24 19:49:50.0]]></UPDATED>
+<!--27A23EE6A1F411DDBEAAD33D289ADF44 UPDATEDBY-->
+<!--27A23EE6A1F411DDBEAAD33D289ADF44-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--27A23EE6A1F411DDBEAAD33D289ADF44 TEXT-->
+<!--27A23EE6A1F411DDBEAAD33D289ADF44-->              <TEXT><![CDATA[The document reference of the customer]]></TEXT>
+<!--27A23EE6A1F411DDBEAAD33D289ADF44 FILENAME-->
+<!--27A23EE6A1F411DDBEAAD33D289ADF44-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/EmailOptions.html]]></FILENAME>
+<!--27A23EE6A1F411DDBEAAD33D289ADF44 ISUSED-->
+<!--27A23EE6A1F411DDBEAAD33D289ADF44-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--27A23EE6A1F411DDBEAAD33D289ADF44 AD_MODULE_ID-->
+<!--27A23EE6A1F411DDBEAAD33D289ADF44-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--27A23EE6A1F411DDBEAAD33D289ADF44**************--></AD_TEXTINTERFACES>
+
+<!--27A4675CA1F411DD88EB6F3BE6E1388C**************--><AD_TEXTINTERFACES>
+<!--27A4675CA1F411DD88EB6F3BE6E1388C AD_TEXTINTERFACES_ID-->
+<!--27A4675CA1F411DD88EB6F3BE6E1388C-->              <AD_TEXTINTERFACES_ID><![CDATA[27A4675CA1F411DD88EB6F3BE6E1388C]]></AD_TEXTINTERFACES_ID>
+<!--27A4675CA1F411DD88EB6F3BE6E1388C AD_CLIENT_ID-->
+<!--27A4675CA1F411DD88EB6F3BE6E1388C-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--27A4675CA1F411DD88EB6F3BE6E1388C AD_ORG_ID-->
+<!--27A4675CA1F411DD88EB6F3BE6E1388C-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--27A4675CA1F411DD88EB6F3BE6E1388C ISACTIVE-->
+<!--27A4675CA1F411DD88EB6F3BE6E1388C-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--27A4675CA1F411DD88EB6F3BE6E1388C CREATED-->
+<!--27A4675CA1F411DD88EB6F3BE6E1388C-->              <CREATED><![CDATA[2008-10-24 19:49:50.0]]></CREATED>
+<!--27A4675CA1F411DD88EB6F3BE6E1388C CREATEDBY-->
+<!--27A4675CA1F411DD88EB6F3BE6E1388C-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--27A4675CA1F411DD88EB6F3BE6E1388C UPDATED-->
+<!--27A4675CA1F411DD88EB6F3BE6E1388C-->              <UPDATED><![CDATA[2008-10-24 19:49:50.0]]></UPDATED>
+<!--27A4675CA1F411DD88EB6F3BE6E1388C UPDATEDBY-->
+<!--27A4675CA1F411DD88EB6F3BE6E1388C-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--27A4675CA1F411DD88EB6F3BE6E1388C TEXT-->
+<!--27A4675CA1F411DD88EB6F3BE6E1388C-->              <TEXT><![CDATA[@our_ref@:]]></TEXT>
+<!--27A4675CA1F411DD88EB6F3BE6E1388C FILENAME-->
+<!--27A4675CA1F411DD88EB6F3BE6E1388C-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/EmailOptions.html]]></FILENAME>
+<!--27A4675CA1F411DD88EB6F3BE6E1388C ISUSED-->
+<!--27A4675CA1F411DD88EB6F3BE6E1388C-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--27A4675CA1F411DD88EB6F3BE6E1388C AD_MODULE_ID-->
+<!--27A4675CA1F411DD88EB6F3BE6E1388C-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--27A4675CA1F411DD88EB6F3BE6E1388C**************--></AD_TEXTINTERFACES>
+
+<!--27A647D4A1F411DD803CABBE0B9B05D8**************--><AD_TEXTINTERFACES>
+<!--27A647D4A1F411DD803CABBE0B9B05D8 AD_TEXTINTERFACES_ID-->
+<!--27A647D4A1F411DD803CABBE0B9B05D8-->              <AD_TEXTINTERFACES_ID><![CDATA[27A647D4A1F411DD803CABBE0B9B05D8]]></AD_TEXTINTERFACES_ID>
+<!--27A647D4A1F411DD803CABBE0B9B05D8 AD_CLIENT_ID-->
+<!--27A647D4A1F411DD803CABBE0B9B05D8-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--27A647D4A1F411DD803CABBE0B9B05D8 AD_ORG_ID-->
+<!--27A647D4A1F411DD803CABBE0B9B05D8-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--27A647D4A1F411DD803CABBE0B9B05D8 ISACTIVE-->
+<!--27A647D4A1F411DD803CABBE0B9B05D8-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--27A647D4A1F411DD803CABBE0B9B05D8 CREATED-->
+<!--27A647D4A1F411DD803CABBE0B9B05D8-->              <CREATED><![CDATA[2008-10-24 19:49:50.0]]></CREATED>
+<!--27A647D4A1F411DD803CABBE0B9B05D8 CREATEDBY-->
+<!--27A647D4A1F411DD803CABBE0B9B05D8-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--27A647D4A1F411DD803CABBE0B9B05D8 UPDATED-->
+<!--27A647D4A1F411DD803CABBE0B9B05D8-->              <UPDATED><![CDATA[2008-10-24 19:49:50.0]]></UPDATED>
+<!--27A647D4A1F411DD803CABBE0B9B05D8 UPDATEDBY-->
+<!--27A647D4A1F411DD803CABBE0B9B05D8-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--27A647D4A1F411DD803CABBE0B9B05D8 TEXT-->
+<!--27A647D4A1F411DD803CABBE0B9B05D8-->              <TEXT><![CDATA[The reference of the document]]></TEXT>
+<!--27A647D4A1F411DD803CABBE0B9B05D8 FILENAME-->
+<!--27A647D4A1F411DD803CABBE0B9B05D8-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/EmailOptions.html]]></FILENAME>
+<!--27A647D4A1F411DD803CABBE0B9B05D8 ISUSED-->
+<!--27A647D4A1F411DD803CABBE0B9B05D8-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--27A647D4A1F411DD803CABBE0B9B05D8 AD_MODULE_ID-->
+<!--27A647D4A1F411DD803CABBE0B9B05D8-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--27A647D4A1F411DD803CABBE0B9B05D8**************--></AD_TEXTINTERFACES>
+
+<!--27A80B00A1F411DD8E303BC32E76101D**************--><AD_TEXTINTERFACES>
+<!--27A80B00A1F411DD8E303BC32E76101D AD_TEXTINTERFACES_ID-->
+<!--27A80B00A1F411DD8E303BC32E76101D-->              <AD_TEXTINTERFACES_ID><![CDATA[27A80B00A1F411DD8E303BC32E76101D]]></AD_TEXTINTERFACES_ID>
+<!--27A80B00A1F411DD8E303BC32E76101D AD_CLIENT_ID-->
+<!--27A80B00A1F411DD8E303BC32E76101D-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--27A80B00A1F411DD8E303BC32E76101D AD_ORG_ID-->
+<!--27A80B00A1F411DD8E303BC32E76101D-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--27A80B00A1F411DD8E303BC32E76101D ISACTIVE-->
+<!--27A80B00A1F411DD8E303BC32E76101D-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--27A80B00A1F411DD8E303BC32E76101D CREATED-->
+<!--27A80B00A1F411DD8E303BC32E76101D-->              <CREATED><![CDATA[2008-10-24 19:49:50.0]]></CREATED>
+<!--27A80B00A1F411DD8E303BC32E76101D CREATEDBY-->
+<!--27A80B00A1F411DD8E303BC32E76101D-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--27A80B00A1F411DD8E303BC32E76101D UPDATED-->
+<!--27A80B00A1F411DD8E303BC32E76101D-->              <UPDATED><![CDATA[2008-10-24 19:49:50.0]]></UPDATED>
+<!--27A80B00A1F411DD8E303BC32E76101D UPDATEDBY-->
+<!--27A80B00A1F411DD8E303BC32E76101D-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--27A80B00A1F411DD8E303BC32E76101D TEXT-->
+<!--27A80B00A1F411DD8E303BC32E76101D-->              <TEXT><![CDATA[Customer Email (]]></TEXT>
+<!--27A80B00A1F411DD8E303BC32E76101D FILENAME-->
+<!--27A80B00A1F411DD8E303BC32E76101D-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/EmailOptions.html]]></FILENAME>
+<!--27A80B00A1F411DD8E303BC32E76101D ISUSED-->
+<!--27A80B00A1F411DD8E303BC32E76101D-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--27A80B00A1F411DD8E303BC32E76101D AD_MODULE_ID-->
+<!--27A80B00A1F411DD8E303BC32E76101D-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--27A80B00A1F411DD8E303BC32E76101D**************--></AD_TEXTINTERFACES>
+
+<!--27AA6328A1F411DDA173CF1595B1DE57**************--><AD_TEXTINTERFACES>
+<!--27AA6328A1F411DDA173CF1595B1DE57 AD_TEXTINTERFACES_ID-->
+<!--27AA6328A1F411DDA173CF1595B1DE57-->              <AD_TEXTINTERFACES_ID><![CDATA[27AA6328A1F411DDA173CF1595B1DE57]]></AD_TEXTINTERFACES_ID>
+<!--27AA6328A1F411DDA173CF1595B1DE57 AD_CLIENT_ID-->
+<!--27AA6328A1F411DDA173CF1595B1DE57-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--27AA6328A1F411DDA173CF1595B1DE57 AD_ORG_ID-->
+<!--27AA6328A1F411DDA173CF1595B1DE57-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--27AA6328A1F411DDA173CF1595B1DE57 ISACTIVE-->
+<!--27AA6328A1F411DDA173CF1595B1DE57-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--27AA6328A1F411DDA173CF1595B1DE57 CREATED-->
+<!--27AA6328A1F411DDA173CF1595B1DE57-->              <CREATED><![CDATA[2008-10-24 19:49:50.0]]></CREATED>
+<!--27AA6328A1F411DDA173CF1595B1DE57 CREATEDBY-->
+<!--27AA6328A1F411DDA173CF1595B1DE57-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--27AA6328A1F411DDA173CF1595B1DE57 UPDATED-->
+<!--27AA6328A1F411DDA173CF1595B1DE57-->              <UPDATED><![CDATA[2008-10-24 19:49:50.0]]></UPDATED>
+<!--27AA6328A1F411DDA173CF1595B1DE57 UPDATEDBY-->
+<!--27AA6328A1F411DDA173CF1595B1DE57-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--27AA6328A1F411DDA173CF1595B1DE57 TEXT-->
+<!--27AA6328A1F411DDA173CF1595B1DE57-->              <TEXT><![CDATA[SalesRep Email (]]></TEXT>
+<!--27AA6328A1F411DDA173CF1595B1DE57 FILENAME-->
+<!--27AA6328A1F411DDA173CF1595B1DE57-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/EmailOptions.html]]></FILENAME>
+<!--27AA6328A1F411DDA173CF1595B1DE57 ISUSED-->
+<!--27AA6328A1F411DDA173CF1595B1DE57-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--27AA6328A1F411DDA173CF1595B1DE57 AD_MODULE_ID-->
+<!--27AA6328A1F411DDA173CF1595B1DE57-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--27AA6328A1F411DDA173CF1595B1DE57**************--></AD_TEXTINTERFACES>
+
+<!--27AE8930A1F411DDB495B73EBCF68328**************--><AD_TEXTINTERFACES>
+<!--27AE8930A1F411DDB495B73EBCF68328 AD_TEXTINTERFACES_ID-->
+<!--27AE8930A1F411DDB495B73EBCF68328-->              <AD_TEXTINTERFACES_ID><![CDATA[27AE8930A1F411DDB495B73EBCF68328]]></AD_TEXTINTERFACES_ID>
+<!--27AE8930A1F411DDB495B73EBCF68328 AD_CLIENT_ID-->
+<!--27AE8930A1F411DDB495B73EBCF68328-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--27AE8930A1F411DDB495B73EBCF68328 AD_ORG_ID-->
+<!--27AE8930A1F411DDB495B73EBCF68328-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--27AE8930A1F411DDB495B73EBCF68328 ISACTIVE-->
+<!--27AE8930A1F411DDB495B73EBCF68328-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--27AE8930A1F411DDB495B73EBCF68328 CREATED-->
+<!--27AE8930A1F411DDB495B73EBCF68328-->              <CREATED><![CDATA[2008-10-24 19:49:50.0]]></CREATED>
+<!--27AE8930A1F411DDB495B73EBCF68328 CREATEDBY-->
+<!--27AE8930A1F411DDB495B73EBCF68328-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--27AE8930A1F411DDB495B73EBCF68328 UPDATED-->
+<!--27AE8930A1F411DDB495B73EBCF68328-->              <UPDATED><![CDATA[2008-10-24 19:49:50.0]]></UPDATED>
+<!--27AE8930A1F411DDB495B73EBCF68328 UPDATEDBY-->
+<!--27AE8930A1F411DDB495B73EBCF68328-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--27AE8930A1F411DDB495B73EBCF68328 TEXT-->
+<!--27AE8930A1F411DDB495B73EBCF68328-->              <TEXT><![CDATA[Message body]]></TEXT>
+<!--27AE8930A1F411DDB495B73EBCF68328 FILENAME-->
+<!--27AE8930A1F411DDB495B73EBCF68328-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/EmailOptions.html]]></FILENAME>
+<!--27AE8930A1F411DDB495B73EBCF68328 ISUSED-->
+<!--27AE8930A1F411DDB495B73EBCF68328-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--27AE8930A1F411DDB495B73EBCF68328 AD_MODULE_ID-->
+<!--27AE8930A1F411DDB495B73EBCF68328-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--27AE8930A1F411DDB495B73EBCF68328**************--></AD_TEXTINTERFACES>
+
+<!--27B0CBDCA1F411DDA565970BF92C32A0**************--><AD_TEXTINTERFACES>
+<!--27B0CBDCA1F411DDA565970BF92C32A0 AD_TEXTINTERFACES_ID-->
+<!--27B0CBDCA1F411DDA565970BF92C32A0-->              <AD_TEXTINTERFACES_ID><![CDATA[27B0CBDCA1F411DDA565970BF92C32A0]]></AD_TEXTINTERFACES_ID>
+<!--27B0CBDCA1F411DDA565970BF92C32A0 AD_CLIENT_ID-->
+<!--27B0CBDCA1F411DDA565970BF92C32A0-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--27B0CBDCA1F411DDA565970BF92C32A0 AD_ORG_ID-->
+<!--27B0CBDCA1F411DDA565970BF92C32A0-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--27B0CBDCA1F411DDA565970BF92C32A0 ISACTIVE-->
+<!--27B0CBDCA1F411DDA565970BF92C32A0-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--27B0CBDCA1F411DDA565970BF92C32A0 CREATED-->
+<!--27B0CBDCA1F411DDA565970BF92C32A0-->              <CREATED><![CDATA[2008-10-24 19:49:50.0]]></CREATED>
+<!--27B0CBDCA1F411DDA565970BF92C32A0 CREATEDBY-->
+<!--27B0CBDCA1F411DDA565970BF92C32A0-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--27B0CBDCA1F411DDA565970BF92C32A0 UPDATED-->
+<!--27B0CBDCA1F411DDA565970BF92C32A0-->              <UPDATED><![CDATA[2008-10-24 19:49:50.0]]></UPDATED>
+<!--27B0CBDCA1F411DDA565970BF92C32A0 UPDATEDBY-->
+<!--27B0CBDCA1F411DDA565970BF92C32A0-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--27B0CBDCA1F411DDA565970BF92C32A0 TEXT-->
+<!--27B0CBDCA1F411DDA565970BF92C32A0-->              <TEXT><![CDATA[Our reference]]></TEXT>
+<!--27B0CBDCA1F411DDA565970BF92C32A0 FILENAME-->
+<!--27B0CBDCA1F411DDA565970BF92C32A0-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/EmailOptions.html]]></FILENAME>
+<!--27B0CBDCA1F411DDA565970BF92C32A0 ISUSED-->
+<!--27B0CBDCA1F411DDA565970BF92C32A0-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--27B0CBDCA1F411DDA565970BF92C32A0 AD_MODULE_ID-->
+<!--27B0CBDCA1F411DDA565970BF92C32A0-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--27B0CBDCA1F411DDA565970BF92C32A0**************--></AD_TEXTINTERFACES>
+
+<!--27B2C5CCA1F411DDAFDB5BA21A4F4A92**************--><AD_TEXTINTERFACES>
+<!--27B2C5CCA1F411DDAFDB5BA21A4F4A92 AD_TEXTINTERFACES_ID-->
+<!--27B2C5CCA1F411DDAFDB5BA21A4F4A92-->              <AD_TEXTINTERFACES_ID><![CDATA[27B2C5CCA1F411DDAFDB5BA21A4F4A92]]></AD_TEXTINTERFACES_ID>
+<!--27B2C5CCA1F411DDAFDB5BA21A4F4A92 AD_CLIENT_ID-->
+<!--27B2C5CCA1F411DDAFDB5BA21A4F4A92-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--27B2C5CCA1F411DDAFDB5BA21A4F4A92 AD_ORG_ID-->
+<!--27B2C5CCA1F411DDAFDB5BA21A4F4A92-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--27B2C5CCA1F411DDAFDB5BA21A4F4A92 ISACTIVE-->
+<!--27B2C5CCA1F411DDAFDB5BA21A4F4A92-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--27B2C5CCA1F411DDAFDB5BA21A4F4A92 CREATED-->
+<!--27B2C5CCA1F411DDAFDB5BA21A4F4A92-->              <CREATED><![CDATA[2008-10-24 19:49:50.0]]></CREATED>
+<!--27B2C5CCA1F411DDAFDB5BA21A4F4A92 CREATEDBY-->
+<!--27B2C5CCA1F411DDAFDB5BA21A4F4A92-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--27B2C5CCA1F411DDAFDB5BA21A4F4A92 UPDATED-->
+<!--27B2C5CCA1F411DDAFDB5BA21A4F4A92-->              <UPDATED><![CDATA[2008-10-24 19:49:50.0]]></UPDATED>
+<!--27B2C5CCA1F411DDAFDB5BA21A4F4A92 UPDATEDBY-->
+<!--27B2C5CCA1F411DDAFDB5BA21A4F4A92-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--27B2C5CCA1F411DDAFDB5BA21A4F4A92 TEXT-->
+<!--27B2C5CCA1F411DDAFDB5BA21A4F4A92-->              <TEXT><![CDATA[Customer reference]]></TEXT>
+<!--27B2C5CCA1F411DDAFDB5BA21A4F4A92 FILENAME-->
+<!--27B2C5CCA1F411DDAFDB5BA21A4F4A92-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/EmailOptions.html]]></FILENAME>
+<!--27B2C5CCA1F411DDAFDB5BA21A4F4A92 ISUSED-->
+<!--27B2C5CCA1F411DDAFDB5BA21A4F4A92-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--27B2C5CCA1F411DDAFDB5BA21A4F4A92 AD_MODULE_ID-->
+<!--27B2C5CCA1F411DDAFDB5BA21A4F4A92-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--27B2C5CCA1F411DDAFDB5BA21A4F4A92**************--></AD_TEXTINTERFACES>
+
+<!--27B5251AA1F411DD8EAED3B037B9C016**************--><AD_TEXTINTERFACES>
+<!--27B5251AA1F411DD8EAED3B037B9C016 AD_TEXTINTERFACES_ID-->
+<!--27B5251AA1F411DD8EAED3B037B9C016-->              <AD_TEXTINTERFACES_ID><![CDATA[27B5251AA1F411DD8EAED3B037B9C016]]></AD_TEXTINTERFACES_ID>
+<!--27B5251AA1F411DD8EAED3B037B9C016 AD_CLIENT_ID-->
+<!--27B5251AA1F411DD8EAED3B037B9C016-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--27B5251AA1F411DD8EAED3B037B9C016 AD_ORG_ID-->
+<!--27B5251AA1F411DD8EAED3B037B9C016-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--27B5251AA1F411DD8EAED3B037B9C016 ISACTIVE-->
+<!--27B5251AA1F411DD8EAED3B037B9C016-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--27B5251AA1F411DD8EAED3B037B9C016 CREATED-->
+<!--27B5251AA1F411DD8EAED3B037B9C016-->              <CREATED><![CDATA[2008-10-24 19:49:50.0]]></CREATED>
+<!--27B5251AA1F411DD8EAED3B037B9C016 CREATEDBY-->
+<!--27B5251AA1F411DD8EAED3B037B9C016-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--27B5251AA1F411DD8EAED3B037B9C016 UPDATED-->
+<!--27B5251AA1F411DD8EAED3B037B9C016-->              <UPDATED><![CDATA[2008-10-24 19:49:50.0]]></UPDATED>
+<!--27B5251AA1F411DD8EAED3B037B9C016 UPDATEDBY-->
+<!--27B5251AA1F411DD8EAED3B037B9C016-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--27B5251AA1F411DD8EAED3B037B9C016 TEXT-->
+<!--27B5251AA1F411DD8EAED3B037B9C016-->              <TEXT><![CDATA[Send]]></TEXT>
+<!--27B5251AA1F411DD8EAED3B037B9C016 FILENAME-->
+<!--27B5251AA1F411DD8EAED3B037B9C016-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/EmailOptions.html]]></FILENAME>
+<!--27B5251AA1F411DD8EAED3B037B9C016 ISUSED-->
+<!--27B5251AA1F411DD8EAED3B037B9C016-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--27B5251AA1F411DD8EAED3B037B9C016 AD_MODULE_ID-->
+<!--27B5251AA1F411DD8EAED3B037B9C016-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--27B5251AA1F411DD8EAED3B037B9C016**************--></AD_TEXTINTERFACES>
+
+<!--2DD0E85EA59A11DD93D1B7F7941B0A40**************--><AD_TEXTINTERFACES>
+<!--2DD0E85EA59A11DD93D1B7F7941B0A40 AD_TEXTINTERFACES_ID-->
+<!--2DD0E85EA59A11DD93D1B7F7941B0A40-->              <AD_TEXTINTERFACES_ID><![CDATA[2DD0E85EA59A11DD93D1B7F7941B0A40]]></AD_TEXTINTERFACES_ID>
+<!--2DD0E85EA59A11DD93D1B7F7941B0A40 AD_CLIENT_ID-->
+<!--2DD0E85EA59A11DD93D1B7F7941B0A40-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--2DD0E85EA59A11DD93D1B7F7941B0A40 AD_ORG_ID-->
+<!--2DD0E85EA59A11DD93D1B7F7941B0A40-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--2DD0E85EA59A11DD93D1B7F7941B0A40 ISACTIVE-->
+<!--2DD0E85EA59A11DD93D1B7F7941B0A40-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--2DD0E85EA59A11DD93D1B7F7941B0A40 CREATED-->
+<!--2DD0E85EA59A11DD93D1B7F7941B0A40-->              <CREATED><![CDATA[2008-10-29 10:15:50.0]]></CREATED>
+<!--2DD0E85EA59A11DD93D1B7F7941B0A40 CREATEDBY-->
+<!--2DD0E85EA59A11DD93D1B7F7941B0A40-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--2DD0E85EA59A11DD93D1B7F7941B0A40 UPDATED-->
+<!--2DD0E85EA59A11DD93D1B7F7941B0A40-->              <UPDATED><![CDATA[2008-10-29 10:15:50.0]]></UPDATED>
+<!--2DD0E85EA59A11DD93D1B7F7941B0A40 UPDATEDBY-->
+<!--2DD0E85EA59A11DD93D1B7F7941B0A40-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--2DD0E85EA59A11DD93D1B7F7941B0A40 TEXT-->
+<!--2DD0E85EA59A11DD93D1B7F7941B0A40-->              <TEXT><![CDATA[The following tags will be replaced by the values for each specific document when the mails are send.]]></TEXT>
+<!--2DD0E85EA59A11DD93D1B7F7941B0A40 FILENAME-->
+<!--2DD0E85EA59A11DD93D1B7F7941B0A40-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/EmailOptions.html]]></FILENAME>
+<!--2DD0E85EA59A11DD93D1B7F7941B0A40 ISUSED-->
+<!--2DD0E85EA59A11DD93D1B7F7941B0A40-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--2DD0E85EA59A11DD93D1B7F7941B0A40 AD_MODULE_ID-->
+<!--2DD0E85EA59A11DD93D1B7F7941B0A40-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--2DD0E85EA59A11DD93D1B7F7941B0A40**************--></AD_TEXTINTERFACES>
+
 <!--55475CE61F5C3E65E040007F01016323**************--><AD_TEXTINTERFACES>
 <!--55475CE61F5C3E65E040007F01016323 AD_TEXTINTERFACES_ID-->
 <!--55475CE61F5C3E65E040007F01016323-->              <AD_TEXTINTERFACES_ID><![CDATA[55475CE61F5C3E65E040007F01016323]]></AD_TEXTINTERFACES_ID>
@@ -52894,5 +55000,140 @@
 <!--B0AFC4FC9B5411DD95D8001B388C05F0 AD_MODULE_ID-->
 <!--B0AFC4FC9B5411DD95D8001B388C05F0-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--B0AFC4FC9B5411DD95D8001B388C05F0**************--></AD_TEXTINTERFACES>
+
+<!--B69AC666A4E411DD8C9417FDC54E0CEF**************--><AD_TEXTINTERFACES>
+<!--B69AC666A4E411DD8C9417FDC54E0CEF AD_TEXTINTERFACES_ID-->
+<!--B69AC666A4E411DD8C9417FDC54E0CEF-->              <AD_TEXTINTERFACES_ID><![CDATA[B69AC666A4E411DD8C9417FDC54E0CEF]]></AD_TEXTINTERFACES_ID>
+<!--B69AC666A4E411DD8C9417FDC54E0CEF AD_CLIENT_ID-->
+<!--B69AC666A4E411DD8C9417FDC54E0CEF-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--B69AC666A4E411DD8C9417FDC54E0CEF AD_ORG_ID-->
+<!--B69AC666A4E411DD8C9417FDC54E0CEF-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--B69AC666A4E411DD8C9417FDC54E0CEF ISACTIVE-->
+<!--B69AC666A4E411DD8C9417FDC54E0CEF-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--B69AC666A4E411DD8C9417FDC54E0CEF CREATED-->
+<!--B69AC666A4E411DD8C9417FDC54E0CEF-->              <CREATED><![CDATA[2008-10-28 12:36:51.0]]></CREATED>
+<!--B69AC666A4E411DD8C9417FDC54E0CEF CREATEDBY-->
+<!--B69AC666A4E411DD8C9417FDC54E0CEF-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--B69AC666A4E411DD8C9417FDC54E0CEF UPDATED-->
+<!--B69AC666A4E411DD8C9417FDC54E0CEF-->              <UPDATED><![CDATA[2008-10-28 12:36:51.0]]></UPDATED>
+<!--B69AC666A4E411DD8C9417FDC54E0CEF UPDATEDBY-->
+<!--B69AC666A4E411DD8C9417FDC54E0CEF-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--B69AC666A4E411DD8C9417FDC54E0CEF TEXT-->
+<!--B69AC666A4E411DD8C9417FDC54E0CEF-->              <TEXT><![CDATA[Customer Email]]></TEXT>
+<!--B69AC666A4E411DD8C9417FDC54E0CEF FILENAME-->
+<!--B69AC666A4E411DD8C9417FDC54E0CEF-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/EmailOptions.html]]></FILENAME>
+<!--B69AC666A4E411DD8C9417FDC54E0CEF ISUSED-->
+<!--B69AC666A4E411DD8C9417FDC54E0CEF-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--B69AC666A4E411DD8C9417FDC54E0CEF AD_MODULE_ID-->
+<!--B69AC666A4E411DD8C9417FDC54E0CEF-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--B69AC666A4E411DD8C9417FDC54E0CEF**************--></AD_TEXTINTERFACES>
+
+<!--B6BD8E94A4E411DDBAFFDF33352AF356**************--><AD_TEXTINTERFACES>
+<!--B6BD8E94A4E411DDBAFFDF33352AF356 AD_TEXTINTERFACES_ID-->
+<!--B6BD8E94A4E411DDBAFFDF33352AF356-->              <AD_TEXTINTERFACES_ID><![CDATA[B6BD8E94A4E411DDBAFFDF33352AF356]]></AD_TEXTINTERFACES_ID>
+<!--B6BD8E94A4E411DDBAFFDF33352AF356 AD_CLIENT_ID-->
+<!--B6BD8E94A4E411DDBAFFDF33352AF356-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--B6BD8E94A4E411DDBAFFDF33352AF356 AD_ORG_ID-->
+<!--B6BD8E94A4E411DDBAFFDF33352AF356-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--B6BD8E94A4E411DDBAFFDF33352AF356 ISACTIVE-->
+<!--B6BD8E94A4E411DDBAFFDF33352AF356-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--B6BD8E94A4E411DDBAFFDF33352AF356 CREATED-->
+<!--B6BD8E94A4E411DDBAFFDF33352AF356-->              <CREATED><![CDATA[2008-10-28 12:36:51.0]]></CREATED>
+<!--B6BD8E94A4E411DDBAFFDF33352AF356 CREATEDBY-->
+<!--B6BD8E94A4E411DDBAFFDF33352AF356-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--B6BD8E94A4E411DDBAFFDF33352AF356 UPDATED-->
+<!--B6BD8E94A4E411DDBAFFDF33352AF356-->              <UPDATED><![CDATA[2008-10-28 12:36:51.0]]></UPDATED>
+<!--B6BD8E94A4E411DDBAFFDF33352AF356 UPDATEDBY-->
+<!--B6BD8E94A4E411DDBAFFDF33352AF356-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--B6BD8E94A4E411DDBAFFDF33352AF356 TEXT-->
+<!--B6BD8E94A4E411DDBAFFDF33352AF356-->              <TEXT><![CDATA[SalesRep Email]]></TEXT>
+<!--B6BD8E94A4E411DDBAFFDF33352AF356 FILENAME-->
+<!--B6BD8E94A4E411DDBAFFDF33352AF356-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/EmailOptions.html]]></FILENAME>
+<!--B6BD8E94A4E411DDBAFFDF33352AF356 ISUSED-->
+<!--B6BD8E94A4E411DDBAFFDF33352AF356-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--B6BD8E94A4E411DDBAFFDF33352AF356 AD_MODULE_ID-->
+<!--B6BD8E94A4E411DDBAFFDF33352AF356-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--B6BD8E94A4E411DDBAFFDF33352AF356**************--></AD_TEXTINTERFACES>
+
+<!--B6C8570CA4E411DDB025C3828ECECD1A**************--><AD_TEXTINTERFACES>
+<!--B6C8570CA4E411DDB025C3828ECECD1A AD_TEXTINTERFACES_ID-->
+<!--B6C8570CA4E411DDB025C3828ECECD1A-->              <AD_TEXTINTERFACES_ID><![CDATA[B6C8570CA4E411DDB025C3828ECECD1A]]></AD_TEXTINTERFACES_ID>
+<!--B6C8570CA4E411DDB025C3828ECECD1A AD_CLIENT_ID-->
+<!--B6C8570CA4E411DDB025C3828ECECD1A-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--B6C8570CA4E411DDB025C3828ECECD1A AD_ORG_ID-->
+<!--B6C8570CA4E411DDB025C3828ECECD1A-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--B6C8570CA4E411DDB025C3828ECECD1A ISACTIVE-->
+<!--B6C8570CA4E411DDB025C3828ECECD1A-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--B6C8570CA4E411DDB025C3828ECECD1A CREATED-->
+<!--B6C8570CA4E411DDB025C3828ECECD1A-->              <CREATED><![CDATA[2008-10-28 12:36:51.0]]></CREATED>
+<!--B6C8570CA4E411DDB025C3828ECECD1A CREATEDBY-->
+<!--B6C8570CA4E411DDB025C3828ECECD1A-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--B6C8570CA4E411DDB025C3828ECECD1A UPDATED-->
+<!--B6C8570CA4E411DDB025C3828ECECD1A-->              <UPDATED><![CDATA[2008-10-28 12:36:51.0]]></UPDATED>
+<!--B6C8570CA4E411DDB025C3828ECECD1A UPDATEDBY-->
+<!--B6C8570CA4E411DDB025C3828ECECD1A-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--B6C8570CA4E411DDB025C3828ECECD1A TEXT-->
+<!--B6C8570CA4E411DDB025C3828ECECD1A-->              <TEXT><![CDATA[Archive this document (This will attach the document to the record)]]></TEXT>
+<!--B6C8570CA4E411DDB025C3828ECECD1A FILENAME-->
+<!--B6C8570CA4E411DDB025C3828ECECD1A-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/EmailOptions.html]]></FILENAME>
+<!--B6C8570CA4E411DDB025C3828ECECD1A ISUSED-->
+<!--B6C8570CA4E411DDB025C3828ECECD1A-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--B6C8570CA4E411DDB025C3828ECECD1A AD_MODULE_ID-->
+<!--B6C8570CA4E411DDB025C3828ECECD1A-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--B6C8570CA4E411DDB025C3828ECECD1A**************--></AD_TEXTINTERFACES>
+
+<!--F38A36D2A59911DDA5829BF7FFA4945D**************--><AD_TEXTINTERFACES>
+<!--F38A36D2A59911DDA5829BF7FFA4945D AD_TEXTINTERFACES_ID-->
+<!--F38A36D2A59911DDA5829BF7FFA4945D-->              <AD_TEXTINTERFACES_ID><![CDATA[F38A36D2A59911DDA5829BF7FFA4945D]]></AD_TEXTINTERFACES_ID>
+<!--F38A36D2A59911DDA5829BF7FFA4945D AD_CLIENT_ID-->
+<!--F38A36D2A59911DDA5829BF7FFA4945D-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--F38A36D2A59911DDA5829BF7FFA4945D AD_ORG_ID-->
+<!--F38A36D2A59911DDA5829BF7FFA4945D-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--F38A36D2A59911DDA5829BF7FFA4945D ISACTIVE-->
+<!--F38A36D2A59911DDA5829BF7FFA4945D-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--F38A36D2A59911DDA5829BF7FFA4945D CREATED-->
+<!--F38A36D2A59911DDA5829BF7FFA4945D-->              <CREATED><![CDATA[2008-10-29 10:14:12.0]]></CREATED>
+<!--F38A36D2A59911DDA5829BF7FFA4945D CREATEDBY-->
+<!--F38A36D2A59911DDA5829BF7FFA4945D-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--F38A36D2A59911DDA5829BF7FFA4945D UPDATED-->
+<!--F38A36D2A59911DDA5829BF7FFA4945D-->              <UPDATED><![CDATA[2008-10-29 10:14:12.0]]></UPDATED>
+<!--F38A36D2A59911DDA5829BF7FFA4945D UPDATEDBY-->
+<!--F38A36D2A59911DDA5829BF7FFA4945D-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--F38A36D2A59911DDA5829BF7FFA4945D TEXT-->
+<!--F38A36D2A59911DDA5829BF7FFA4945D-->              <TEXT><![CDATA[Write a template email below.]]></TEXT>
+<!--F38A36D2A59911DDA5829BF7FFA4945D FILENAME-->
+<!--F38A36D2A59911DDA5829BF7FFA4945D-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/EmailOptions.html]]></FILENAME>
+<!--F38A36D2A59911DDA5829BF7FFA4945D ISUSED-->
+<!--F38A36D2A59911DDA5829BF7FFA4945D-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--F38A36D2A59911DDA5829BF7FFA4945D AD_MODULE_ID-->
+<!--F38A36D2A59911DDA5829BF7FFA4945D-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--F38A36D2A59911DDA5829BF7FFA4945D**************--></AD_TEXTINTERFACES>
+
+<!--F39E03C4A59911DD8BBA3F9698BB0F46**************--><AD_TEXTINTERFACES>
+<!--F39E03C4A59911DD8BBA3F9698BB0F46 AD_TEXTINTERFACES_ID-->
+<!--F39E03C4A59911DD8BBA3F9698BB0F46-->              <AD_TEXTINTERFACES_ID><![CDATA[F39E03C4A59911DD8BBA3F9698BB0F46]]></AD_TEXTINTERFACES_ID>
+<!--F39E03C4A59911DD8BBA3F9698BB0F46 AD_CLIENT_ID-->
+<!--F39E03C4A59911DD8BBA3F9698BB0F46-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--F39E03C4A59911DD8BBA3F9698BB0F46 AD_ORG_ID-->
+<!--F39E03C4A59911DD8BBA3F9698BB0F46-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--F39E03C4A59911DD8BBA3F9698BB0F46 ISACTIVE-->
+<!--F39E03C4A59911DD8BBA3F9698BB0F46-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--F39E03C4A59911DD8BBA3F9698BB0F46 CREATED-->
+<!--F39E03C4A59911DD8BBA3F9698BB0F46-->              <CREATED><![CDATA[2008-10-29 10:14:12.0]]></CREATED>
+<!--F39E03C4A59911DD8BBA3F9698BB0F46 CREATEDBY-->
+<!--F39E03C4A59911DD8BBA3F9698BB0F46-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--F39E03C4A59911DD8BBA3F9698BB0F46 UPDATED-->
+<!--F39E03C4A59911DD8BBA3F9698BB0F46-->              <UPDATED><![CDATA[2008-10-29 10:14:12.0]]></UPDATED>
+<!--F39E03C4A59911DD8BBA3F9698BB0F46 UPDATEDBY-->
+<!--F39E03C4A59911DD8BBA3F9698BB0F46-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--F39E03C4A59911DD8BBA3F9698BB0F46 TEXT-->
+<!--F39E03C4A59911DD8BBA3F9698BB0F46-->              <TEXT><![CDATA[The following tags will be replaced by the values for each specific document when the mails are send.]]></TEXT>
+<!--F39E03C4A59911DD8BBA3F9698BB0F46 FILENAME-->
+<!--F39E03C4A59911DD8BBA3F9698BB0F46-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/utility/reporting/printing/EmailOptions.html]]></FILENAME>
+<!--F39E03C4A59911DD8BBA3F9698BB0F46 ISUSED-->
+<!--F39E03C4A59911DD8BBA3F9698BB0F46-->              <ISUSED><![CDATA[N]]></ISUSED>
+<!--F39E03C4A59911DD8BBA3F9698BB0F46 AD_MODULE_ID-->
+<!--F39E03C4A59911DD8BBA3F9698BB0F46-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--F39E03C4A59911DD8BBA3F9698BB0F46**************--></AD_TEXTINTERFACES>
 
 </data>

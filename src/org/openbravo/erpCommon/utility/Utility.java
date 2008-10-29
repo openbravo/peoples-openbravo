@@ -26,6 +26,8 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.utils.Replace;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.StringTokenizer;
 import java.util.Hashtable;
 import java.util.Enumeration;
@@ -96,6 +98,19 @@ public class Utility {
     }
     return false;
   }
+  
+  /**
+   * Returns an String with the date in the specified format
+   * 
+   * @param date: Date to be formatted.
+   * @param pattern: Format expected for the output.
+   * @return String formatted.
+   */  
+  public static String formatDate( Date date, String pattern )
+  {
+    SimpleDateFormat dateFormatter = new SimpleDateFormat( pattern );
+    return dateFormatter.format( date );
+  }  
 
   /**
    * Checks if the record has attachments associated.
@@ -1075,6 +1090,26 @@ public class Utility {
                "} \n";
     return r;
   }
+
+  /**
+   * Write the output to a file
+   * @param fileLocation: the file where you are going to write
+   * @param outputstream: the data source
+   * @return nothing. It creates a file in the file location writing the content of the outputstream
+   */  
+  public static void dumpFile(String fileLocation, OutputStream outputstream)
+  {
+    byte dataPart[] = new byte[4096];
+    try
+    {
+      BufferedInputStream bufferedinputstream = new BufferedInputStream( new FileInputStream( new File( fileLocation ) ) );
+      int i;
+      while( (i = bufferedinputstream.read(dataPart, 0, 4096) ) != -1) 
+        outputstream.write(dataPart, 0, i);
+      bufferedinputstream.close();
+    }
+    catch(Exception exception) { }
+  }  
   
   /**
    * Returns a string list comma separated as SQL strings.

@@ -6423,6 +6423,10 @@ a.Main_ToolBar_Button_Selected:active {
   background-image: url(Main/ToolBar/iconPrint.png);  /** sprite-ref: OB_ERP_250_Sprite_V; sprite-alignment: left; */
 }
 
+.Main_ToolBar_Button_Icon_Email {
+  background: url(Main/ToolBar/iconEmail.png) no-repeat center center;
+}
+
 .Main_ToolBar_Button_Icon_Search {
   background-repeat: no-repeat;
   background-position: center center;
@@ -6573,6 +6577,10 @@ a.Main_ToolBar_Button_Selected:active {
   background-repeat: no-repeat;
   background-position: center center;
   background-image: url(Main/ToolBar/iconPrint.disabled.png);  /** sprite-ref: OB_ERP_250_Sprite_V; sprite-alignment: left; */
+}
+
+.Main_ToolBar_Button_Icon_Email_disabled {
+  background: url(Main/ToolBar/iconEmail.disabled.png) no-repeat center center;
 }
 
 .Main_ToolBar_Button_Icon_Search_disabled {
