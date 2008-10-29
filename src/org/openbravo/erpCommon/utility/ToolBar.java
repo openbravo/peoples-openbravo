@@ -732,8 +732,8 @@ public class ToolBar {
         toolbar.append("<nobr id=\"bookmark\" class=\"Main_ToolBar_text_bookmark\">");
         toolbar.append("</nobr>");
         toolbar.append("</TD>\n");
-        toolbar.append("<TD width=\"1\">");
-        toolbar.append("<IMG src=\"").append(base_direction).append("/images/blank.gif\" class=\"Main_ToolBar_textlabel_bg_right\" border=\"0\">");
+        toolbar.append("<TD width=\"1\" class=\"Main_ToolBar_textlabel_bg_right\">");
+        toolbar.append("<DIV style=\"padding: 0; margin: 0; border: 0; width: 9px;\" />");
         toolbar.append("</TD>\n");
       }
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR6"), lastType, false));

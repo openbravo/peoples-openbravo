@@ -75,13 +75,13 @@ public class WorkflowControl extends HttpSecureAppServlet {
 
   public String windowIcon(String action) {
     String strIcon="";
-    if (action.equals("W")) strIcon = "Popup_Workflow_Button_Icon Menu_Client_Button_Icon_childWindows";//Window
-    else if (action.equals("X")) strIcon = "Popup_Workflow_Button_Icon Menu_Client_Button_Icon_childForms";//Form
-    else if (action.equals("P")) strIcon = "Popup_Workflow_Button_Icon Menu_Client_Button_Icon_childProcesses";//Process
-    else if (action.equals("T")) strIcon = "Popup_Workflow_Button_Icon Menu_Client_Button_Icon_childTasks";//Task
-    else if (action.equals("R")) strIcon = "Popup_Workflow_Button_Icon Menu_Client_Button_Icon_childProcesses";//Process
-    else if (action.equals("F")) strIcon = "Popup_Workflow_Button_Icon Menu_Client_Button_Icon_childWorkflows";//WorkFlow
-    else strIcon = "Popup_Workflow_Button_Icon Menu_Client_Button_Icon_childWindows";//Windows
+    if (action.equals("W")) strIcon = "Popup_Workflow_Button_Icon Popup_Workflow_Button_Icon_childWindows";//Window
+    else if (action.equals("X")) strIcon = "Popup_Workflow_Button_Icon Popup_Workflow_Button_Icon_childForms";//Form
+    else if (action.equals("P")) strIcon = "Popup_Workflow_Button_Icon Popup_Workflow_Button_Icon_childProcesses";//Process
+    else if (action.equals("T")) strIcon = "Popup_Workflow_Button_Icon Popup_Workflow_Button_Icon_childTasks";//Task
+    else if (action.equals("R")) strIcon = "Popup_Workflow_Button_Icon Popup_Workflow_Button_Icon_childProcesses";//Process
+    else if (action.equals("F")) strIcon = "Popup_Workflow_Button_Icon Popup_Workflow_Button_Icon_childWorkflows";//WorkFlow
+    else strIcon = "Popup_Workflow_Button_Icon Popup_Workflow_Button_Icon_childWindows";//Windows
     return strIcon;
   }
 
