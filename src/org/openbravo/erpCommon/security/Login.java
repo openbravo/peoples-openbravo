@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -80,10 +80,6 @@ public class Login extends HttpBaseServlet {
 
   public void printPageBlank(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login_F0").createXmlDocument();
-
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
