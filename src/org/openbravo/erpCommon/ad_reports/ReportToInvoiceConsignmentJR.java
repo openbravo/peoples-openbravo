@@ -38,21 +38,24 @@ public class ReportToInvoiceConsignmentJR extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-
+    //Get user Client's base currency
+    String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     if (vars.commandIn("DEFAULT")) {
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportToInvoiceConsignmentJR|DateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportToInvoiceConsignmentJR|DateTo", "");
       String strWarehouse = vars.getGlobalVariable("inpmWarehouseId","ReportToInvoiceConsignmentJR|Warehouse", "");
-      printPageDataSheet(response, vars, strDateFrom, strDateTo, strWarehouse);
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportToInvoiceConsignmentJR|currency", strUserCurrencyId);
+      printPageDataSheet(response, vars, strDateFrom, strDateTo, strWarehouse, strCurrencyId);
     } else if (vars.commandIn("FIND")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportToInvoiceConsignmentJR|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportToInvoiceConsignmentJR|DateTo");
       String strWarehouse = vars.getRequestGlobalVariable("inpmWarehouseId", "ReportToInvoiceConsignmentJR|Warehouse");
-      printPagePDF(response, vars, strDateFrom, strDateTo, strWarehouse);
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportToInvoiceConsignmentJR|currency", strUserCurrencyId);
+      printPagePDF(response, vars, strDateFrom, strDateTo, strWarehouse, strCurrencyId);
     } else pageErrorPopUp(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strWarehouse)
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strWarehouse, String strCurrencyId)
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -104,31 +107,56 @@ public class ReportToInvoiceConsignmentJR extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
+    
+    xmlDocument.setParameter("ccurrencyid", strCurrencyId);    
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportToInvoiceConsignmentJR"), Utility.getContext(this, vars, "#User_Client", "ReportToInvoiceConsignmentJR"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportToInvoiceConsignmentJR", strCurrencyId);
+      xmlDocument.setData("reportC_Currency_ID","liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+    
     out.println(xmlDocument.print());
     out.close();
   }
 
-  void printPagePDF(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strWarehouse) throws IOException, ServletException {
+  void printPagePDF(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strWarehouse, String strCurrencyId) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: PDF");
-
-	response.setContentType("text/html; charset=UTF-8");
-
-    ReportToInvoiceConsignmentData[] data = ReportToInvoiceConsignmentData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportToInvoiceConsignmentJR"), Utility.getContext(this, vars, "#User_Org", "ReportToInvoiceConsignmentJR"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strWarehouse);  
-
-	 if (data == null || data.length == 0){
-           data = ReportToInvoiceConsignmentData.set();
+    
+    response.setContentType("text/html; charset=UTF-8");
+    
+    //Checks if there is a conversion rate for each of the transactions of the report
+    ReportToInvoiceConsignmentData[] data = null;
+    String strConvRateErrorMsg = "";
+    OBError myMessage = null;
+    myMessage = new OBError();
+    try {
+      data = ReportToInvoiceConsignmentData.select(this, strCurrencyId, Utility.getContext(this, vars, "#User_Client", "ReportToInvoiceConsignmentJR"), Utility.getContext(this, vars, "#User_Org", "ReportToInvoiceConsignmentJR"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strWarehouse);  
+    } catch(ServletException ex) {
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+    }
+    strConvRateErrorMsg = myMessage.getMessage();
+    //If a conversion rate is missing for a certain transaction, an error message window pops-up.
+    if(!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
+      advisePopUp(response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()), strConvRateErrorMsg);      
+    } else { //Launch the report as usual, calling the JRXML file
+  	  if (data == null || data.length == 0){
+  	    data = ReportToInvoiceConsignmentData.set();
       }
       String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportToInvoiceConsignmentJR.jrxml";
       String strOutput="pdf";
       if (strOutput.equals("pdf")) response.setHeader("Content-disposition", "inline; filename=ReportToInvoiceConsignmentJR.pdf");
-
-    String strSubTitle = "";
-		strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " "+strDateFrom+" " + Utility.messageBD(this, "To", vars.getLanguage()) + " "+strDateTo;
-       
-		HashMap<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("REPORT_TITLE", classInfo.name);
-		parameters.put("REPORT_SUBTITLE", strSubTitle);
-		renderJR(vars, response, strReportName, strOutput, parameters, data, null );
+  
+      String strSubTitle = "";
+  		strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " "+strDateFrom+" " + Utility.messageBD(this, "To", vars.getLanguage()) + " "+strDateTo;
+         
+  		HashMap<String, Object> parameters = new HashMap<String, Object>();
+  		parameters.put("REPORT_TITLE", classInfo.name);
+  		parameters.put("REPORT_SUBTITLE", strSubTitle);
+  		renderJR(vars, response, strReportName, strOutput, parameters, data, null );
+    }
   }
 
   public String getServletInfo() {

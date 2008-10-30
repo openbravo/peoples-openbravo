@@ -54,6 +54,11 @@
 
 function validate() {
 	var frm = document.frmMain;
+	if (frm.inpCurrencyId.value == null || frm.inpCurrencyId.value == "") {
+	    setWindowElementFocus(frm.inpCurrencyId);
+	    showJSMessage(7);
+	    return false;
+	}
 	if (frm.inpDateFrom.value == null || frm.inpDateFrom.value == "") {
 		setWindowElementFocus(frm.inpDateFrom);
 		showJSMessage(7);
@@ -316,10 +321,13 @@ new Array(2,4,'F4')
                         </TD>
                       </TR>
                     </TABLE>
-                  </TD>
-                    <TD class="ContentCell"></TD>
-                    <TD class="ContentCell"></TD>
-                    <TD class="ContentCell"></TD>
+                  </TD>                  
+                  <TD class="TitleCell"><SPAN class="LabelText">Currency</SPAN></TD>
+                  <TD class="Combo_ContentCell">
+  		     		<SELECT name="inpCurrencyId" id="inpCurrencyId" class="ComboKey Combo_OneCell_width" required="true">
+     		      	<OPTION value=""><DIV id="reportC_Currency_ID"></DIV></OPTION>
+   		     		</SELECT>
+		   		  </TD>
                 </TR>
                 <TR>
                   <TD class="TitleCell"><SPAN class="LabelText">Sales Representative</SPAN></TD>

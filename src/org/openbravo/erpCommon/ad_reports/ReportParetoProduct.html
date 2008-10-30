@@ -53,7 +53,13 @@
 <SCRIPT language="JavaScript" type="text/javascript">
 function validate()
 {
-  return true;
+	var frm=document.frmMain;
+	if (frm.inpCurrencyId.value == null || frm.inpCurrencyId.value == "") {
+    	setWindowElementFocus(frm.inpCurrencyId);
+    	showJSMessage(7);
+    	return false;
+	}
+	return true;
 }
 function onloadFunctions() {
 }
@@ -245,12 +251,20 @@ var arrWarehouse=null;
                   <OPTION value=""> <DIV id="reportAD_Org_ID"></DIV></OPTION>
                 </SELECT>
               </TD>
-	      <TD class="TitleCell"> <SPAN class="LabelText">Warehouse</SPAN></TD>
+              <TD class="TitleCell"><SPAN class="LabelText">Currency</SPAN></TD>
+                  <TD class="Combo_ContentCell">
+  		     		<SELECT name="inpCurrencyId" id="inpCurrencyId" class="ComboKey Combo_OneCell_width" required="true">
+     		      	<OPTION value=""><DIV id="reportC_Currency_ID"></DIV></OPTION>
+   		     		</SELECT>
+	   		  </TD>
+            </TR>
+            <TR>            	   		  
+	      	<TD class="TitleCell"> <SPAN class="LabelText">Warehouse</SPAN></TD>
              <TD class="Combo_ContentCell" colspan="2">
                  <SELECT name="inpmWarehouseId" id="inpmWarehouseId" class="Combo Combo_TwoCells_width" onchange="logChanges(this);return true;">
                   <OPTION value=""> <DIV id="reportM_Warehouse_ID"></DIV></OPTION>
                 </SELECT>
-             </TD>
+            </TD>
             </TR>
 			<TR>
               <td colspan="6">

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,49 +28,66 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.util.HashMap;
 
-import org.openbravo.erpCommon.utility.DateTimeData;
-
 public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-
+    //Get user Client's base currency
+    String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     if (vars.commandIn("DEFAULT")){
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportInvoiceDiscountJR|dateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportInvoiceDiscountJR|dateTo", "");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN", "ReportInvoiceDiscountJR|partner", "");
       String strDiscount = vars.getGlobalVariable("inpDiscount", "ReportInvoiceDiscountJR|discount", "N");
-      printPageDataSheet(response, vars, strDateFrom, strDateTo, strcBpartnerId, strDiscount);
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportInvoiceDiscountJR|currency", strUserCurrencyId);
+      printPageDataSheet(response, vars, strDateFrom, strDateTo, strcBpartnerId, strCurrencyId, strDiscount);
+      
     } else if (vars.commandIn("FIND")) {
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportInvoiceDiscountJR|dateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportInvoiceDiscountJR|dateTo", "");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN", "ReportInvoiceDiscountJR|partner");
       String strDiscount = vars.getRequestGlobalVariable("inpDiscount", "ReportInvoiceDiscountJR|discount");
-      printPageDataHtml(response, vars, strDateFrom, strDateTo, strcBpartnerId, strDiscount);
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportInvoiceDiscountJR|currency", strUserCurrencyId);
+      printPageDataHtml(response, vars, strDateFrom, strDateTo, strcBpartnerId, strDiscount, strCurrencyId);
     } else pageError(response);
   }
 
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strcBpartnerId, String strDiscount) throws IOException, ServletException {
+  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strcBpartnerId, String strDiscount, String strCurrencyId) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
  
     if (strDiscount.equals("")) strDiscount = "N";
-
-	 String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportInvoiceDiscountJR.jrxml";
-	 String strOutput = "html";
-      if (strOutput.equals("pdf")) response.setHeader("Content-disposition", "inline; filename=ReportInvoiceDiscountEdit.pdf");
-      ReportInvoiceDiscountData[] data =  ReportInvoiceDiscountData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportInvoiceDiscountJR"), Utility.getContext(this, vars, "#User_Org", "ReportInvoiceDiscountJR"), strDateFrom,DateTimeData.nDaysAfter(this, strDateTo,"1"), strcBpartnerId, (strDiscount.equals("N"))?"":"discount");
-        HashMap<String, Object> parameters = new HashMap<String, Object>();
-      parameters.put("REPORT_TITLE", classInfo.name);
-	  String strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " "+strDateFrom+" " + Utility.messageBD(this, "To", vars.getLanguage()) + " "+strDateTo;
-	  parameters.put("REPORT_SUBTITLE", strSubTitle);
     
+    String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportInvoiceDiscountJR.jrxml";
+    String strOutput = "html";
+    if (strOutput.equals("pdf")) response.setHeader("Content-disposition", "inline; filename=ReportInvoiceDiscountEdit.pdf");
+    
+    //Checks if there is a conversion rate for each of the transactions of the report
+    ReportInvoiceDiscountData[] data = null;
+    String strConvRateErrorMsg = "";
+    OBError myMessage = null;
+    myMessage = new OBError();
+    try {
+      data =  ReportInvoiceDiscountData.select(this, strCurrencyId, Utility.getContext(this, vars, "#User_Client", "ReportInvoiceDiscountJR"), Utility.getContext(this, vars, "#User_Org", "ReportInvoiceDiscountJR"), strDateFrom, strDateTo, strcBpartnerId, (strDiscount.equals("N"))?"":"discount");
+    } catch(ServletException ex) {
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+    }
+    strConvRateErrorMsg = myMessage.getMessage();
+    //If a conversion rate is missing for a certain transaction, an error message window pops-up.
+    if(!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
+      advisePopUp(response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()), strConvRateErrorMsg);      
+    } else { //Launch the report as usual, calling the JRXML file
+      HashMap<String, Object> parameters = new HashMap<String, Object>();
+      parameters.put("REPORT_TITLE", classInfo.name);
+  	  String strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " "+strDateFrom+" " + Utility.messageBD(this, "To", vars.getLanguage()) + " "+strDateTo;
+  	  parameters.put("REPORT_SUBTITLE", strSubTitle);
+      
       renderJR(vars, response, strReportName, strOutput, parameters, data, null );
-
+    }
   }
   
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strcBpartnerId, String strDiscount) throws IOException, ServletException {
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strcBpartnerId, String strCurrencyId, String strDiscount) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     
     XmlDocument xmlDocument=null;
@@ -114,59 +131,22 @@ public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("discount", strDiscount);
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportInvoiceDiscountData.selectBpartner(this, Utility.getContext(this, vars, "#User_Org", "ReportInvoiceDiscountJR"), Utility.getContext(this, vars, "#User_Client", "ReportInvoiceDiscountJR"), strcBpartnerId));
     
+    xmlDocument.setParameter("ccurrencyid", strCurrencyId);    
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportInvoiceDiscountJR"), Utility.getContext(this, vars, "#User_Client", "ReportInvoiceDiscountJR"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceDiscountJR", strCurrencyId);
+      xmlDocument.setData("reportC_Currency_ID","liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+
+    
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
   }
-
-  
-  /*void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strcBpartnerId, String strDiscount) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    String discard[]={"discard"};
-    XmlDocument xmlDocument=null;
-    if (strDiscount.equals("")) strDiscount = "N";
-    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportInvoiceDiscount").createXmlDocument();
-
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportInvoiceDiscountReportInvoiceDiscount", false, "", "", "",false, "ad_reports",  strReplaceWith, false,  true);
-    toolbar.prepareSimpleToolBarTemplate();
-    xmlDocument.setParameter("toolbar", toolbar.toString());
-    try {
-      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.ReportInvoiceDiscount");
-      xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
-      xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
-      xmlDocument.setParameter("childTabContainer", tabs.childTabs());
-      xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportInvoiceDiscount.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
-      xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportInvoiceDiscount.html", strReplaceWith);
-      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-    {
-      OBError myMessage = vars.getMessage("ReportInvoiceDiscount");
-      vars.removeMessage("ReportInvoiceDiscount");
-      if (myMessage!=null) {
-        xmlDocument.setParameter("messageType", myMessage.getType());
-        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-      }
-    }
-
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("dateFrom", strDateFrom);
-    xmlDocument.setParameter("dateTo", strDateTo);
-    xmlDocument.setParameter("discount", strDiscount);
-    xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportInvoiceDiscountData.selectBpartner(this, Utility.getContext(this, vars, "#User_Org", "ReportInvoiceDiscount"), Utility.getContext(this, vars, "#User_Client", "ReportInvoiceDiscount"), strcBpartnerId));
-    xmlDocument.setData("structure1", ReportInvoiceDiscountData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportInvoiceDiscount"), Utility.getContext(this, vars, "#User_Org", "ReportInvoiceDiscount"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strcBpartnerId, (strDiscount.equals("N"))?"":"discount"));
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }*/
-
 
   public String getServletInfo() {
     return "Servlet ReportInvoiceDiscount. This Servlet was made by Pablo Sarobe";

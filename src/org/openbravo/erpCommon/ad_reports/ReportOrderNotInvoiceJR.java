@@ -41,7 +41,8 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-
+    //Get user Client's base currency
+    String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     if (vars.commandIn("DEFAULT")){
       String strdateFrom = vars.getGlobalVariable("inpDateFrom", "ReportOrderNotInvoiceJR|dateFrom", "");
       String strdateTo = vars.getGlobalVariable("inpDateTo", "ReportOrderNotInvoiceJR|dateTo", "");
@@ -49,7 +50,8 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
       String strCOrgId = vars.getGlobalVariable("inpOrg", "ReportOrderNotInvoiceJR|Org", "");
       String strInvoiceRule = vars.getGlobalVariable("inpInvoiceRule", "ReportOrderNotInvoiceJR|invoiceRule", "");
       String strDetail = vars.getStringParameter("inpDetail", "0");
-      printPageDataSheet(response, vars, strdateFrom, strdateTo, strcBpartnetId, strCOrgId, strInvoiceRule, strDetail);
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportOrderNotInvoiceJR|currency", strUserCurrencyId);
+      printPageDataSheet(response, vars, strdateFrom, strdateTo, strcBpartnetId, strCOrgId, strInvoiceRule, strDetail, strCurrencyId);
     }else if (vars.commandIn("FIND")) {
       String strdateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportOrderNotInvoiceJR|dateFrom");
       String strdateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportOrderNotInvoiceJR|dateTo");
@@ -57,11 +59,12 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
       String strCOrgId = vars.getRequestGlobalVariable("inpOrg", "ReportOrderNotInvoiceJR|Org");
       String strInvoiceRule = vars.getRequestGlobalVariable("inpInvoiceRule", "ReportOrderNotInvoiceJR|invoiceRule");
       String strDetail = vars.getStringParameter("inpDetail", "0");
-      printPageHtml(response, vars, strdateFrom, strdateTo, strcBpartnetId, strCOrgId, strInvoiceRule, strDetail);
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportOrderNotInvoiceJR|currency", strUserCurrencyId);
+      printPageHtml(response, vars, strdateFrom, strdateTo, strcBpartnetId, strCOrgId, strInvoiceRule, strDetail, strCurrencyId);
     }  else pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom, String strdateTo, String strcBpartnetId, String  strCOrgId, String strInvoiceRule, String strDetail) throws IOException, ServletException {
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom, String strdateTo, String strcBpartnetId, String  strCOrgId, String strInvoiceRule, String strDetail, String strCurrencyId) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument=null;
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportOrderNotInvoiceFilterJR").createXmlDocument();
@@ -114,8 +117,18 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
-    //xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this, vars.getRole()));
     }
+    
+    xmlDocument.setParameter("ccurrencyid", strCurrencyId);    
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportOrderNotInvoiceJR"), Utility.getContext(this, vars, "#User_Client", "ReportOrderNotInvoiceJR"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportOrderNotInvoiceJR", strCurrencyId);
+      xmlDocument.setData("reportC_Currency_ID","liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+    
     xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this, vars.getRole()));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -123,24 +136,36 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageHtml(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom, String strdateTo, String strcBpartnetId, String  strCOrgId, String strInvoiceRule, String strDetail) throws IOException, ServletException{
+  void printPageHtml(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom, String strdateTo, String strcBpartnetId, String  strCOrgId, String strInvoiceRule, String strDetail, String strCurrencyId) throws IOException, ServletException{
     if (log4j.isDebugEnabled()) log4j.debug("Output: print html");
- 
+    
+    //Checks if there is a conversion rate for each of the transactions of the report
     ReportOrderNotInvoiceData[] data = null;
-    data = ReportOrderNotInvoiceData.select(this, vars.getLanguage(),  Utility.getContext(this, vars, "#User_Client", "ReportOrderNotInvoiceJR"), Utility.getContext(this, vars, "#User_Org", "ReportOrderNotInvoiceJR"), strcBpartnetId, strCOrgId, strInvoiceRule, strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,"1"));
-    
-    String strOutput = "html";
-    String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportOrderNotInvoiceJR.jrxml";
-    
-    String strSubTitle = "";
-    strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " "+strdateFrom+" " + Utility.messageBD(this, "To", vars.getLanguage()) + " "+strdateTo;
-    
-    HashMap<String, Object> parameters = new HashMap<String, Object>();
-    parameters.put("REPORT_TITLE", classInfo.name);
-    parameters.put("REPORT_SUBTITLE", strSubTitle);
-    parameters.put("Detail",new Boolean(strDetail.equals("-1")));
-    renderJR(vars, response, strReportName, strOutput, parameters, data, null );
-    
+    String strConvRateErrorMsg = "";
+    OBError myMessage = null;
+    myMessage = new OBError();
+    try {
+      data = ReportOrderNotInvoiceData.select(this, strCurrencyId, vars.getLanguage(),  Utility.getContext(this, vars, "#User_Client", "ReportOrderNotInvoiceJR"), Utility.getContext(this, vars, "#User_Org", "ReportOrderNotInvoiceJR"), strcBpartnetId, strCOrgId, strInvoiceRule, strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,"1"));
+    } catch(ServletException ex) {
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+    }
+    strConvRateErrorMsg = myMessage.getMessage();
+    //If a conversion rate is missing for a certain transaction, an error message window pops-up.
+    if(!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
+      advisePopUp(response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()), strConvRateErrorMsg);      
+    } else { //Launch the report as usual, calling the JRXML file
+      String strOutput = "html";
+      String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportOrderNotInvoiceJR.jrxml";
+      
+      String strSubTitle = "";
+      strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " "+strdateFrom+" " + Utility.messageBD(this, "To", vars.getLanguage()) + " "+strdateTo;
+      
+      HashMap<String, Object> parameters = new HashMap<String, Object>();
+      parameters.put("REPORT_TITLE", classInfo.name);
+      parameters.put("REPORT_SUBTITLE", strSubTitle);
+      parameters.put("Detail",new Boolean(strDetail.equals("-1")));
+      renderJR(vars, response, strReportName, strOutput, parameters, data, null );
+    }
   }
 
   public String getServletInfo() {

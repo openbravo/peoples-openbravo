@@ -62,4 +62,9 @@
 	<SECTION id="sectionOrg" field="orgid"/>     
     <SECTION id="sectionDetail"/>
   </structure>
+  
+  <PARAMETER id="paramC_Currency_ID" name="ccurrencyid" attribute="value"/>
+  <SUBREPORT id="reportC_Currency_ID" name="reportC_Currency_ID" report="org/openbravo/erpCommon/reference/List">
+    <ARGUMENT name="parameterListSelected" withId="paramC_Currency_ID"/>
+  </SUBREPORT> 
 </REPORT>

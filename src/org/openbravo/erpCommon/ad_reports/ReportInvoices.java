@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -72,7 +72,9 @@ public class ReportInvoices extends HttpSecureAppServlet {
       data = ReportInvoicesData.set();
     } else {
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportInvoicesEdit").createXmlDocument();
-      data = ReportInvoicesData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportInvoices"), Utility.getContext(this, vars, "#User_Org", "ReportInvoices"), strC_BpGroup_ID, strM_Product_Category_ID, strC_BPartner_ID, strM_Product_ID, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strDocumentNo, (strOrder.equals("PurchaseOrder"))?"":"sales", (strOrder.equals("PurchaseOrder"))?"purchase":"");
+      //Get user Client's base currency
+      String strCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
+      data = ReportInvoicesData.select(this, strCurrencyId, Utility.getContext(this, vars, "#User_Client", "ReportInvoices"), Utility.getContext(this, vars, "#User_Org", "ReportInvoices"), strC_BpGroup_ID, strM_Product_Category_ID, strC_BPartner_ID, strM_Product_ID, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strDocumentNo, (strOrder.equals("PurchaseOrder"))?"":"sales", (strOrder.equals("PurchaseOrder"))?"purchase":"");
     }
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");

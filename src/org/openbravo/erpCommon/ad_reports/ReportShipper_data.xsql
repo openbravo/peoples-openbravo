@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,7 +34,11 @@
                        WHEN 'N' THEN AD_COLUMN_IDENTIFIER('C_Region', to_char(COALESCE(dl.C_REGION_ID, l.C_REGION_ID)), ?) END AS ORIGIN, 
         CASE i.IsSOTrx WHEN 'Y' THEN AD_COLUMN_IDENTIFIER('C_Region', to_char(COALESCE(dl.C_REGION_ID, l.C_REGION_ID)), ?) 
                        WHEN 'N' THEN AD_COLUMN_IDENTIFIER('C_Region', to_char(wl.C_REGION_ID), ?) END AS DESTINATION,
-        i.NOPACKAGES AS QTY, i.FREIGHTAMT, i.MOVEMENTDATE, '' AS line, '' AS qtyline, '' AS product
+        i.NOPACKAGES AS QTY, 
+	    (CASE WHEN i.FREIGHT_CURRENCY_ID IS NOT NULL
+	    	THEN C_CURRENCY_CONVERT(i.FREIGHTAMT, i.FREIGHT_CURRENCY_ID, ?, TO_DATE(i.MOVEMENTDATE), NULL, i.AD_CLIENT_ID, i.AD_ORG_ID)
+	    	ELSE C_CURRENCY_CONVERT(i.FREIGHTAMT, ?, ?, TO_DATE(i.MOVEMENTDATE), NULL, i.AD_CLIENT_ID, i.AD_ORG_ID) END) AS FREIGHTAMT, 
+	    i.MOVEMENTDATE, '' AS line, '' AS qtyline, '' AS product
         FROM M_InOut i LEFT JOIN C_BPartner_Location dbl ON dbl.C_BPARTNER_LOCATION_ID = i.DELIVERY_LOCATION_ID
                        LEFT JOIN C_location dl ON dbl.C_LOCATION_ID = dl.C_LOCATION_ID,
         C_BPartner_Location bl, C_location l, M_Warehouse w, C_Location wl
@@ -55,6 +59,9 @@
     <Parameter name="language"/>
     <Parameter name="language"/>
     <Parameter name="language"/>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyBase"/>
+    <Parameter name="cCurrencyConv"/>
     <Parameter name="from"/>
     <Parameter name="to"/>
     <Parameter name="shipper" optional="true" after="AND 1=1" text=" AND i.M_SHIPPER_ID = ? "/>

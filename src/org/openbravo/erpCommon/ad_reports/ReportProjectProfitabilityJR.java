@@ -37,6 +37,8 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
+    //Get user Client's base currency
+    String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     if (vars.commandIn("DEFAULT")) {
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportProjectProfitabilityJR|Org", vars.getOrg());
       String strProject = vars.getGlobalVariable("inpcProjectId", "ReportProjectProfitabilityJR|Project", "");
@@ -50,7 +52,8 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       String strDateTo3 = vars.getGlobalVariable("inpDateTo3", "ReportProjectProfitabilityJR|DateTo3", "");
       String strExpand = vars.getGlobalVariable("inpExpand", "ReportProjectProfitabilityJR|Expand", "Y");
       String strPartner = vars.getGlobalVariable("inpcBPartnerId", "ReportProjectProfitabilityJR|Partner", "");
-      printPageDataSheet(response, vars, strOrg, strProject, strProjectType, strResponsible, strDateFrom, strDateTo, strExpand, strPartner, strDateFrom2, strDateTo2, strDateFrom3, strDateTo3);
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportProjectProfitabilityJR|currency", strUserCurrencyId);
+      printPageDataSheet(response, vars, strOrg, strProject, strProjectType, strResponsible, strDateFrom, strDateTo, strExpand, strPartner, strDateFrom2, strDateTo2, strDateFrom3, strDateTo3, strCurrencyId);
     } else if (vars.commandIn("FIND") || vars.commandIn("PDF")) {
       String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportProjectProfitabilityJR|Org");
       String strProject = vars.getRequestGlobalVariable("inpcProjectId", "ReportProjectProfitabilityJR|Project");
@@ -64,14 +67,14 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       String strDateTo3 = vars.getRequestGlobalVariable("inpDateTo3", "ReportProjectProfitabilityJR|DateTo3");
       String strExpand = vars.getRequestGlobalVariable("inpExpand", "ReportProjectProfitabilityJR|Expand");
       String strPartner = vars.getRequestGlobalVariable("inpcBPartnerId", "ReportProjectProfitabilityJR|Partner");
-      String strOutput= "html";
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportProjectProfitabilityJR|currency", strUserCurrencyId);
+      String strOutput="html";
       if (vars.commandIn("PDF")) strOutput="pdf";
-      printPageDataHtml(response, vars, strOrg, strProject, strProjectType, strResponsible, strDateFrom, strDateTo, strExpand, strPartner, strDateFrom2, strDateTo2, strDateFrom3, strDateTo3, strOutput);
+      printPageDataHtml(response, vars, strOrg, strProject, strProjectType, strResponsible, strDateFrom, strDateTo, strExpand, strPartner, strDateFrom2, strDateTo2, strDateFrom3, strDateTo3, strOutput, strCurrencyId);
     } else pageError(response);
   }
-
   
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strOrg, String strProject, String strProjectType, String strResponsible, String strDateFrom, String strDateTo, String strExpand, String strPartner, String strDateFrom2, String strDateTo2, String strDateFrom3, String strDateTo3, String strOutput)
+  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strOrg, String strProject, String strProjectType, String strResponsible, String strDateFrom, String strDateTo, String strExpand, String strPartner, String strDateFrom2, String strDateTo2, String strDateFrom3, String strDateTo3, String strOutput, String strCurrencyId)
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     
@@ -79,26 +82,38 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
     strTreeOrg = "'" + strOrg + "'";
     if (strExpand.equals("Y")) treeOrg(vars, strOrg);
     ReportProjectProfitabilityData[] data = null;
-    data = ReportProjectProfitabilityData.select(this, strDateFrom2, DateTimeData.nDaysAfter(this, strDateTo2,"1"), strTreeOrg, Utility.getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strDateFrom3, DateTimeData.nDaysAfter(this, strDateTo3,"1"), strProjectType, strProject, strResponsible, strPartner);
-
-    if (data == null || data.length == 0) {
-      data = ReportProjectProfitabilityData.set();
-      discard[0] = "discardAll";
-    }
     
-      String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportProjectProfitabilityJR.jrxml";
+    //Checks if there is a conversion rate for each of the transactions of the report
+    String strConvRateErrorMsg = "";
+    OBError myMessage = null;
+    myMessage = new OBError();
+    String strBaseCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());    
+    try {
+      data = ReportProjectProfitabilityData.select(this, strCurrencyId, strBaseCurrencyId, strDateFrom2, DateTimeData.nDaysAfter(this, strDateTo2,"1"), strTreeOrg, Utility.getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), strDateFrom , DateTimeData.nDaysAfter(this, strDateTo,"1"), strDateFrom3, DateTimeData.nDaysAfter(this, strDateTo3,"1"), strProjectType, strProject, strResponsible, strPartner);
+    } catch(ServletException ex) {
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+    }
+    strConvRateErrorMsg = myMessage.getMessage();   
+    
+    //If a conversion rate is missing for a certain transaction, an error message window pops-up.
+    if(!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
+      advisePopUp(response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()), strConvRateErrorMsg);      
+    } else { //Otherwise, the report is launched
+      if (data == null || data.length == 0) {
+        data = ReportProjectProfitabilityData.set();
+        discard[0] = "discardAll";
+      }
       
+      String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportProjectProfitabilityJR.jrxml";
       if (strOutput.equals("pdf")) response.setHeader("Content-disposition", "inline; filename=ReportProjectProfitabilityJR.pdf");
-
-       
-		HashMap<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("REPORT_TITLE", classInfo.name);
-	
-	renderJR(vars, response, strReportName, strOutput, parameters, data, null );
+  		HashMap<String, Object> parameters = new HashMap<String, Object>();
+  		parameters.put("REPORT_TITLE", classInfo.name);
+  	
+  		renderJR(vars, response, strReportName, strOutput, parameters, data, null );
+    }
   }
-
   
-   void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strOrg, String strProject, String strProjectType, String strResponsible, String strDateFrom, String strDateTo, String strExpand, String strPartner, String strDateFrom2, String strDateTo2, String strDateFrom3, String strDateTo3)
+   void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strOrg, String strProject, String strProjectType, String strResponsible, String strDateFrom, String strDateTo, String strExpand, String strPartner, String strDateFrom2, String strDateTo2, String strDateFrom3, String strDateTo3, String strCurrencyId)
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -192,6 +207,16 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
       comboTableData = null;
 
     } catch (Exception e) {throw new ServletException(e);}
+    
+    xmlDocument.setParameter("ccurrencyid", strCurrencyId);    
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportProjectProfitabilityJR"), Utility.getContext(this, vars, "#User_Client", "ReportProjectProfitabilityJR"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectProfitabilityJR", strCurrencyId);
+      xmlDocument.setData("reportC_Currency_ID","liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
 
     out.println(xmlDocument.print());
     out.close();

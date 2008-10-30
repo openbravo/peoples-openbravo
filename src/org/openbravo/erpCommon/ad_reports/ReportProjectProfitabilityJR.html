@@ -54,6 +54,11 @@
 function validate()
 {
 	var frm = document.frmMain;
+	if (frm.inpCurrencyId.value == null || frm.inpCurrencyId.value == "") {
+	  setWindowElementFocus(frm.inpCurrencyId);
+	  showJSMessage(7);
+	  return false;
+	}
 	if (inputValue(document.frmMain.inpOrg) == null || inputValue(document.frmMain.inpOrg) == "") {
       setWindowElementFocus(document.frmMain.inpOrg);
       showJSMessage(7);
@@ -434,9 +439,17 @@ function onloadFunctions() {
                   <TD class="Combo_ContentCell" colspan="2"> <SELECT  name="inpResponsible" id="inpResponsible" class="Combo Combo_TwoCells_width">
                       <OPTION value=""> <DIV id="reportResponsible"></DIV></OPTION>
                     </SELECT></TD>
-		<TD class="TitleCell"><SPAN class="LabelText">Include Suborganizations</SPAN></TD>
+				  <TD class="TitleCell"><SPAN class="LabelText">Include Suborganizations</SPAN></TD>
                   <TD class="Radio_Check_ContentCell"><SPAN class="Checkbox_container_NOT_Focused"><INPUT type="checkbox" name="inpExpand" id="paramExpand" value="Y" checked></INPUT></SPAN>
-                    <TD class="ContentCell"></TD>
+                  <TD class="ContentCell"></TD>
+                </TR>
+                <TR>
+                  <TD class="TitleCell"><SPAN class="LabelText">Currency</SPAN></TD>
+                  <TD class="Combo_ContentCell">
+  		     		<SELECT name="inpCurrencyId" id="inpCurrencyId" class="ComboKey Combo_OneCell_width" required="true">
+     		      	<OPTION value=""><DIV id="reportC_Currency_ID"></DIV></OPTION>
+   		     		</SELECT>
+		   		  </TD>
                 </TR>
                 <TR>
                     <td colspan="6">

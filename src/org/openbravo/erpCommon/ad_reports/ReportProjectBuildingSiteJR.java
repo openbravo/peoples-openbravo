@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@ import javax.servlet.http.*;
 
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.ToolBar;
+import org.openbravo.erpCommon.utility.Utility;
 
 import org.openbravo.erpCommon.utility.DateTimeData;
 import java.util.HashMap;
@@ -38,8 +39,9 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-
-
+    
+    //Get user Client's base currency
+    String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     if (vars.commandIn("DEFAULT")){
       String strdateFrom = vars.getGlobalVariable("inpDateFrom", "ReportProjectBuildingSiteJR|DateFrom", "");
       String strdateTo = vars.getGlobalVariable("inpDateTo", "ReportProjectBuildingSiteJR|DateTo", "");
@@ -53,8 +55,9 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
       String strProjectpublic = vars.getGlobalVariable("inpProjectpublic", "ReportProjectBuildingSiteJR|Projectpublic", "");
       String strSalesRep = vars.getGlobalVariable("inpSalesRepId", "ReportProjectBuildingSiteJR|SalesRepId", "");
       String strcRegionId = vars.getInGlobalVariable("inpcRegionId", "ReportProjectBuildingSiteJR|cRegionId", "");
-      printPageDataSheet(response, vars, strdateFrom, strdateTo, strcBpartnerId, strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic, strcRegionId, strSalesRep, strProduct);
-    }else if(vars.commandIn("FIND")){
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportProjectBuildingSiteJR|currency", strUserCurrencyId);
+      printPageDataSheet(response, vars, strdateFrom, strdateTo, strcBpartnerId, strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic, strcRegionId, strSalesRep, strProduct, strCurrencyId);
+    }else if(vars.commandIn("FIND") || vars.commandIn("PDF")){
       String strdateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportProjectBuildingSiteJR|DateFrom");
       String strdateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportProjectBuildingSiteJR|DateTo");
       String strcProjectId = vars.getRequestGlobalVariable("inpcProjectId", "ReportProjectBuildingSiteJR|cProjectId");
@@ -67,27 +70,14 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
       String strProjectpublic = vars.getRequestGlobalVariable("inpProjectpublic", "ReportProjectBuildingSiteJR|Projectpublic");
       String strSalesRep = vars.getRequestGlobalVariable("inpSalesRepId", "ReportProjectBuildingSiteJR|SalesRepId");
       String strcRegionId = vars.getRequestInGlobalVariable("inpcRegionId", "ReportProjectBuildingSiteJR|cRegionId");
-	  String strOutput="html";
-        printPageDataPDF(response, vars, strdateFrom, strdateTo, strcBpartnerId, strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic, strcRegionId, strSalesRep, strProduct, strOutput);
-    } else if (vars.commandIn("PDF")){
-      String strdateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportProjectBuildingSite|DateFrom");
-      String strdateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportProjectBuildingSite|DateTo");
-      String strcProjectId = vars.getRequestGlobalVariable("inpcProjectId", "ReportProjectBuildingSite|cProjectId");
-      String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN", "ReportProjectBuildingSite|cBPartnerId_IN");
-      String strmCategoryId = vars.getRequestInGlobalVariable("inpmProductCategoryId", "ReportProjectBuildingSite|mCategoryId");
-      String strProjectkind = vars.getRequestInGlobalVariable("inpProjectkind", "ReportProjectBuildingSite|Projectkind");
-      String strProjectstatus = vars.getRequestInGlobalVariable("inpProjectstatus", "ReportProjectBuildingSite|Projectstatus");
-      String strProjectphase = vars.getRequestInGlobalVariable("inpProjectphase", "ReportProjectBuildingSite|Projectphase");
-      String strProduct = vars.getRequestInGlobalVariable("inpmProductId_IN", "ReportProjectBuildingSite|mProductId_IN");
-      String strProjectpublic = vars.getRequestGlobalVariable("inpProjectpublic", "ReportProjectBuildingSite|Projectpublic");
-      String strSalesRep = vars.getRequestGlobalVariable("inpSalesRepId", "ReportProjectBuildingSite|SalesRepId");
-      String strcRegionId = vars.getRequestInGlobalVariable("inpcRegionId", "ReportProjectBuildingSite|cRegionId");
-	  String strOutput="pdf";
-      printPageDataPDF(response, vars, strdateFrom, strdateTo, strcBpartnerId, strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic, strcRegionId, strSalesRep, strProduct, strOutput);
-    }else pageErrorPopUp(response);
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportProjectBuildingSiteJR|currency", strUserCurrencyId);
+      String strOutput="html";
+      if (vars.commandIn("PDF")) strOutput="pdf";
+      printPageDataPDF(response, vars, strdateFrom, strdateTo, strcBpartnerId, strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic, strcRegionId, strSalesRep, strProduct, strCurrencyId, strOutput);
+    } else pageErrorPopUp(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom, String strdateTo, String strcBpartnerId, String strcProjectId, String strmCategoryId, String strProjectkind, String strProjectphase, String strProjectstatus, String strProjectpublic,String strcRegionId, String strSalesRep, String strProduct) throws IOException, ServletException {
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom, String strdateTo, String strcBpartnerId, String strcProjectId, String strmCategoryId, String strProjectkind, String strProjectphase, String strProjectstatus, String strProjectpublic,String strcRegionId, String strSalesRep, String strProduct, String strCurrencyId) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     String discard[]={"sectionPartner"};
     String strTitle = "";
@@ -122,15 +112,13 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
         }
       }  
 
-
-
       xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
       xmlDocument.setParameter("dateFrom", strdateFrom);
-    xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
       xmlDocument.setParameter("dateTo", strdateTo);
-    xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
       xmlDocument.setParameter("paramBPartnerId", strcBpartnerId);
       xmlDocument.setParameter("cProjectId", strcProjectId);
       xmlDocument.setParameter("projectName", ReportProjectBuildingSiteData.selectProject(this, strcProjectId));
@@ -196,11 +184,21 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
       } catch (Exception ex) {
         throw new ServletException(ex);
       }
+      
+      xmlDocument.setParameter("ccurrencyid", strCurrencyId);    
+      try {
+        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSiteJR"), 0);
+        Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportProjectBuildingSiteJR", strCurrencyId);
+        xmlDocument.setData("reportC_Currency_ID","liststructure", comboTableData.select(false));
+        comboTableData = null;
+      } catch (Exception ex) {
+        throw new ServletException(ex);
+      }
 
       xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportProjectBuildingSiteData.selectBpartner(this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerId));
       xmlDocument.setData("reportMProductId_IN", "liststructure", ReportProjectBuildingSiteData.selectMproduct(this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""), strProduct));
     } else {
-      ReportProjectBuildingSiteData[] data = ReportProjectBuildingSiteData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars, "#User_Org", "ReportProjectBuildingSiteJR"), strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,"1"), strcBpartnerId, strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic, strcRegionId, strSalesRep, strProduct);
+      ReportProjectBuildingSiteData[] data = ReportProjectBuildingSiteData.select(this, strCurrencyId, Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars, "#User_Org", "ReportProjectBuildingSiteJR"), strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,"1"), strcBpartnerId, strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic, strcRegionId, strSalesRep, strProduct);
 
       if (data == null || data.length == 0){
         xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportProjectBuildingSiteJR", discard).createXmlDocument();
@@ -224,29 +222,41 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageDataPDF(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom, String strdateTo, String strcBpartnerId, String strcProjectId, String strmCategoryId, String strProjectkind, String strProjectphase, String strProjectstatus, String strProjectpublic,String strcRegionId, String strSalesRep, String strProduct, String strOutput) throws IOException, ServletException {
+  void printPageDataPDF(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom, String strdateTo, String strcBpartnerId, String strcProjectId, String strmCategoryId, String strProjectkind, String strProjectphase, String strProjectstatus, String strProjectpublic,String strcRegionId, String strSalesRep, String strProduct, String strCurrencyId, String strOutput) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: PDF");
     String discard[]={"sectionPartner"};
 
-	ReportProjectBuildingSiteData[] data = null;
-	
-      data = ReportProjectBuildingSiteData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars, "#User_Org", "ReportProjectBuildingSiteJR"), strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,"1"), strcBpartnerId, strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic, strcRegionId, strSalesRep, strProduct);
-
-  if (data == null || data.length == 0){
+    ReportProjectBuildingSiteData[] data = null;
+    
+    //Checks if there is a conversion rate for each of the transactions of the report
+    String strConvRateErrorMsg = "";
+    OBError myMessage = null;
+    myMessage = new OBError();
+    try {
+      data = ReportProjectBuildingSiteData.select(this, strCurrencyId, Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSiteJR"), Utility.getContext(this, vars, "#User_Org", "ReportProjectBuildingSiteJR"), strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,"1"), strcBpartnerId, strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic, strcRegionId, strSalesRep, strProduct);
+    } catch(ServletException ex) {
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+    }
+    strConvRateErrorMsg = myMessage.getMessage();
+    //If a conversion rate is missing for a certain transaction, an error message window pops-up.
+    if(!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
+      advisePopUp(response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()), strConvRateErrorMsg);      
+    } else { //Launch the report as usual, calling the JRXML file
+      if (data == null || data.length == 0){
         discard[0] = "selEliminar";
         data = ReportProjectBuildingSiteData.set();
       }
       String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportProjectBuildingSiteJR.jrxml";
       
       if (strOutput.equals("pdf")) response.setHeader("Content-disposition", "inline; filename=ReportProjectBuildingSiteJR.pdf");
-
-       
-		HashMap<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("REPORT_TITLE", classInfo.name);
-		String strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " "+strdateFrom+" " + Utility.messageBD(this, "To", vars.getLanguage()) + " "+strdateTo;
-	    parameters.put("REPORT_SUBTITLE", strSubTitle);
-
-	renderJR(vars, response, strReportName, strOutput, parameters, data, null );
+  
+  		HashMap<String, Object> parameters = new HashMap<String, Object>();
+  		parameters.put("REPORT_TITLE", classInfo.name);
+  		String strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " "+strdateFrom+" " + Utility.messageBD(this, "To", vars.getLanguage()) + " "+strdateTo;
+  	  parameters.put("REPORT_SUBTITLE", strSubTitle);
+  
+  	  renderJR(vars, response, strReportName, strOutput, parameters, data, null );
+    }
   }
 
   public String getServletInfo() {

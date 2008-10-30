@@ -5,10 +5,10 @@
 		 name="ReportInvoiceCustomerJR"
 		 columnCount="1"
 		 printOrder="Vertical"
-		 orientation="Portrait"
-		 pageWidth="595"
-		 pageHeight="842"
-		 columnWidth="535"
+		 orientation="Landscape"
+		 pageWidth="842"
+		 pageHeight="595"
+		 columnWidth="782"
 		 columnSpacing="0"
 		 leftMargin="30"
 		 rightMargin="30"
@@ -194,17 +194,33 @@
 	</parameter>
 	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
 	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
-	<queryString><![CDATA[SELECT COALESCE(C_INVOICE.POREFERENCE, C_INVOICE.DOCUMENTNO) AS DOCUMENTNO, C_INVOICE.DATEINVOICED AS DATEINVOICED, C_BPARTNER.NAME AS CLIENT_NAME, M_PRODUCT.NAME AS PRODUCT_NAME, SUM(C_INVOICELINE.QTYINVOICED) AS QUANTITYORDER, 
-      C_UOM.NAME AS UOMNAME, C_INVOICELINE.PRICEACTUAL AS PRICEACTUAL, SUM(C_INVOICELINE.LINENETAMT) AS PRICELIST
+	<queryString><![CDATA[SELECT COALESCE(C_INVOICE.POREFERENCE, C_INVOICE.DOCUMENTNO) AS DOCUMENTNO, C_INVOICE.DATEINVOICED AS DATEINVOICED, 
+      C_BPARTNER.NAME AS CLIENT_NAME, M_PRODUCT.NAME AS PRODUCT_NAME, SUM(C_INVOICELINE.QTYINVOICED) AS QUANTITYORDER, C_UOM.NAME AS UOMNAME, 
+      C_INVOICELINE.PRICEACTUAL AS PRICEACTUAL, 
+      C_CURRENCY_SYMBOL (C_INVOICE.C_CURRENCY_ID, C_INVOICELINE.PRICEACTUAL, 'Y') AS PRICEACTUALSYM,
+	  C_CURRENCY_CONVERT(C_INVOICELINE.PRICEACTUAL, C_INVOICE.C_CURRENCY_ID, '102', TO_DATE(COALESCE(C_INVOICE.DATEINVOICED, NOW())), NULL, C_INVOICELINE.AD_CLIENT_ID, C_INVOICELINE.AD_ORG_ID) AS CONVPRICEACTUAL,
+      SUM(C_INVOICELINE.LINENETAMT) AS PRICELIST,
+      C_CURRENCY_SYMBOL (C_INVOICE.C_CURRENCY_ID, C_INVOICELINE.LINENETAMT, 'Y') AS PRICELISTSYM,
+	  SUM(C_CURRENCY_CONVERT(C_INVOICELINE.LINENETAMT, C_INVOICE.C_CURRENCY_ID, '102', TO_DATE(COALESCE(C_INVOICE.DATEINVOICED, NOW())), NULL, C_INVOICELINE.AD_CLIENT_ID, C_INVOICELINE.AD_ORG_ID)) AS CONVPRICELIST,
+	  C_CURRENCY_SYMBOL('102', '0', 'Y') AS CONVSYM,
+	  C_CURRENCY_ISOSYM('102') AS CONVISOSYM,
+	  TO_DATE(COALESCE(C_INVOICE.DATEINVOICED, NOW())) AS TRANSDATE,
+	  C_INVOICE.C_CURRENCY_ID AS TRANSCURRENCYID,
+      C_INVOICELINE.AD_CLIENT_ID AS TRANSCLIENTID, 
+	  C_INVOICELINE.AD_ORG_ID AS TRANSORGID
       FROM C_INVOICE LEFT JOIN C_PROJECT ON C_INVOICE.C_PROJECT_ID = C_PROJECT.C_PROJECT_ID 
                      LEFT JOIN C_LOCATION ON C_PROJECT.C_LOCATION_ID = C_LOCATION.C_LOCATION_ID, C_INVOICELINE, M_PRODUCT, C_UOM, C_BPARTNER
       WHERE C_INVOICE.C_INVOICE_ID = C_INVOICELINE.C_INVOICE_ID
       AND C_INVOICELINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
       AND C_INVOICELINE.C_UOM_ID = C_UOM.C_UOM_ID
-      AND C_INVOICE.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
+      AND C_INVOICE.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID      
+      AND C_INVOICE.AD_ORG_ID IN ('1')
+      AND C_INVOICE.AD_CLIENT_ID IN ('1')
       AND C_INVOICE.ISSOTRX = 'Y'
       AND 1=1
-      GROUP BY C_BPARTNER.NAME, M_PRODUCT.NAME, C_UOM.NAME, C_INVOICELINE.PRICEACTUAL, COALESCE(C_INVOICE.POREFERENCE, C_INVOICE.DOCUMENTNO), C_INVOICE.DATEINVOICED
+      GROUP BY C_BPARTNER.NAME, M_PRODUCT.NAME, C_UOM.NAME, C_INVOICELINE.PRICEACTUAL, 
+      COALESCE(C_INVOICE.POREFERENCE, C_INVOICE.DOCUMENTNO), C_INVOICE.DATEINVOICED,
+      C_INVOICE.C_CURRENCY_ID, C_INVOICELINE.AD_CLIENT_ID, C_INVOICELINE.AD_ORG_ID, C_INVOICELINE.LINENETAMT
       ORDER BY C_BPARTNER.NAME, COALESCE(C_INVOICE.POREFERENCE, C_INVOICE.DOCUMENTNO), C_INVOICE.DATEINVOICED]]></queryString>
 
 	<field name="DOCUMENTNO" class="java.lang.String"/>
@@ -215,9 +231,15 @@
 	<field name="UOMNAME" class="java.lang.String"/>
 	<field name="PRICEACTUAL" class="java.math.BigDecimal"/>
 	<field name="PRICELIST" class="java.math.BigDecimal"/>
+	<field name="CONVPRICELIST" class="java.math.BigDecimal"/>
+	<field name="CONVPRICEACTUAL" class="java.math.BigDecimal"/>
+	<field name="PRICEACTUALSYM" class="java.lang.String"/>
+	<field name="CONVSYM" class="java.lang.String"/>
+	<field name="CONVISOSYM" class="java.lang.String"/>
+	<field name="PRICELISTSYM" class="java.lang.String"/>
 
 	<variable name="DetailFieldTotal" class="java.math.BigDecimal" resetType="Group" resetGroup="CLIENT_NAME" calculation="Sum">
-		<variableExpression><![CDATA[$F{PRICELIST}]]></variableExpression>
+		<variableExpression><![CDATA[$F{CONVPRICELIST}]]></variableExpression>
 	</variable>
 	<variable name="TotalQty" class="java.math.BigDecimal" resetType="Group" resetGroup="CLIENT_NAME" calculation="Sum">
 		<variableExpression><![CDATA[$F{QUANTITYORDER}]]></variableExpression>
@@ -246,7 +268,7 @@
 						style="GroupHeader_DarkGray"
 						x="108"
 						y="0"
-						width="427"
+						width="598"
 						height="24"
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -257,7 +279,7 @@
 				</textField>
 				<line direction="TopDown">
 					<reportElement
-						x="535"
+						x="706"
 						y="0"
 						width="0"
 						height="24"
@@ -283,10 +305,10 @@
 				</line>
 				<line direction="TopDown">
 					<reportElement
-						x="535"
+						x="706"
 						y="0"
 						width="0"
-						height="24"
+						height="25"
 						forecolor="#555555"
 						key="line-33"
 						stretchType="RelativeToBandHeight"/>
@@ -296,7 +318,7 @@
 					<reportElement
 						x="0"
 						y="24"
-						width="535"
+						width="706"
 						height="0"
 						forecolor="#555555"
 						key="line-34"/>
@@ -322,7 +344,7 @@
 						mode="Opaque"
 						x="275"
 						y="2"
-						width="255"
+						width="407"
 						height="18"
 						key="textField-13"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#FFFFFF" leftPadding="4" rightBorder="None" rightBorderColor="#000000" rightPadding="4" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -344,6 +366,21 @@
 						<font pdfFontName="Helvetica-Bold"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($V{TotalQty}!=null)?$P{NUMBERFORMAT}.format($V{TotalQty}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="CLIENT_NAME"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Total_Field"
+						mode="Opaque"
+						x="682"
+						y="2"
+						width="22"
+						height="18"
+						key="textField-19"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#FFFFFF" leftPadding="4" rightBorder="None" rightBorderColor="#000000" rightPadding="4" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CONVSYM}]]></textFieldExpression>
 				</textField>
 			</band>
 			</groupFooter>
@@ -368,7 +405,7 @@
 				</textField>
 				<line direction="TopDown">
 					<reportElement
-						x="535"
+						x="706"
 						y="0"
 						width="0"
 						height="48"
@@ -393,7 +430,7 @@
 						style="Detail_Header"
 						x="420"
 						y="10"
-						width="115"
+						width="286"
 						height="16"
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="None" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -412,7 +449,7 @@
 						key="element-90"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#FFFFFF" leftPadding="2" rightBorder="None" rightBorderColor="#FFFFFF" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
-						<font/>
+						<font size="8"/>
 					</textElement>
 				<text><![CDATA[Article]]></text>
 				</staticText>
@@ -424,9 +461,9 @@
 						width="80"
 						height="16"
 						key="element-90"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#FFFFFF" leftPadding="2" rightBorder="None" rightBorderColor="#FFFFFF" rightPadding="4" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right">
-						<font pdfFontName="Helvetica-Bold"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#FFFFFF" leftPadding="2" rightBorder="None" rightBorderColor="#FFFFFF" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" size="8"/>
 					</textElement>
 				<text><![CDATA[Quantity]]></text>
 				</staticText>
@@ -439,8 +476,8 @@
 						height="16"
 						key="element-90"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#FFFFFF" leftPadding="2" rightBorder="None" rightBorderColor="#FFFFFF" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" size="8"/>
 					</textElement>
 				<text><![CDATA[UOM]]></text>
 				</staticText>
@@ -453,24 +490,10 @@
 						height="16"
 						key="element-90"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#FFFFFF" leftPadding="2" rightBorder="None" rightBorderColor="#FFFFFF" rightPadding="4" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right">
-						<font pdfFontName="Helvetica-Bold"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" size="8"/>
 					</textElement>
 				<text><![CDATA[Price	]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						style="Detail_Header"
-						x="446"
-						y="32"
-						width="85"
-						height="16"
-						key="element-90"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#FFFFFF" leftPadding="2" rightBorder="1Point" rightBorderColor="#FFFFFF" rightPadding="4" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right">
-						<font pdfFontName="Helvetica-Bold"/>
-					</textElement>
-				<text><![CDATA[Total]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
@@ -511,6 +534,76 @@
 						key="line-39"/>
 					<graphicElement stretchType="NoStretch"/>
 				</line>
+				<staticText>
+					<reportElement
+						style="Detail_Header"
+						x="446"
+						y="32"
+						width="41"
+						height="16"
+						key="element-91"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#FFFFFF" leftPadding="2" rightBorder="None" rightBorderColor="#FFFFFF" rightPadding="4" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font pdfFontName="Helvetica-Bold" size="8"/>
+					</textElement>
+				<text><![CDATA[Price	]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="Detail_Header"
+						x="621"
+						y="32"
+						width="36"
+						height="16"
+						key="element-92"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#FFFFFF" leftPadding="2" rightBorder="None" rightBorderColor="#FFFFFF" rightPadding="4" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font pdfFontName="Helvetica-Bold" size="8"/>
+					</textElement>
+				<text><![CDATA[Total]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						style="Detail_Header"
+						x="536"
+						y="32"
+						width="85"
+						height="16"
+						key="element-93"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#FFFFFF" leftPadding="2" rightBorder="1Point" rightBorderColor="#FFFFFF" rightPadding="4" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center">
+						<font pdfFontName="Helvetica-Bold" size="8"/>
+					</textElement>
+				<text><![CDATA[Total]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Header"
+						x="487"
+						y="32"
+						width="49"
+						height="16"
+						key="textField-23"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="1Point" rightBorderColor="#FFFFFF" rightPadding="4" bottomBorder="None" bottomBorderColor="#555555"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CONVISOSYM}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Header"
+						x="657"
+						y="32"
+						width="49"
+						height="16"
+						key="textField-24"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#FFFFFF" leftPadding="5" rightBorder="1Point" rightBorderColor="#FFFFFF" rightPadding="4" bottomBorder="None" bottomBorderColor="#555555"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CONVISOSYM}]]></textFieldExpression>
+				</textField>
 			</band>
 			</groupHeader>
 			<groupFooter>
@@ -528,7 +621,7 @@
 				</line>
 				<line direction="TopDown">
 					<reportElement
-						x="535"
+						x="706"
 						y="0"
 						width="0"
 						height="15"
@@ -542,7 +635,7 @@
 						style="Report_Footer"
 						x="20"
 						y="0"
-						width="511"
+						width="686"
 						height="0"
 						forecolor="#555555"
 						key="line-37"/>
@@ -564,7 +657,7 @@
 						style="Report_Footer"
 						x="10"
 						y="10"
-						width="525"
+						width="696"
 						height="0"
 						forecolor="#555555"
 						key="line-41"/>
@@ -589,7 +682,7 @@
 						mode="Transparent"
 						x="0"
 						y="0"
-						width="535"
+						width="705"
 						height="20"
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -602,7 +695,7 @@
 					<reportElement
 						x="0"
 						y="20"
-						width="535"
+						width="706"
 						height="0"
 						key="line-1"/>
 					<graphicElement stretchType="NoStretch" pen="1Point"/>
@@ -612,7 +705,7 @@
 						style="Report_Subtitle"
 						x="0"
 						y="20"
-						width="535"
+						width="705"
 						height="20"
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -631,7 +724,7 @@
 			<band height="16"  isSplitAllowed="true" >
 				<line direction="TopDown">
 					<reportElement
-						x="535"
+						x="706"
 						y="0"
 						width="0"
 						height="16"
@@ -661,7 +754,7 @@
 						key="textField-8"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#555555" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#555555"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Times-Roman" size="12"/>
+						<font fontName="Times-Roman" size="8"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($F{PRODUCT_NAME}!=null)?$F{PRODUCT_NAME}:new String(" ")]]></textFieldExpression>
 				</textField>
@@ -673,9 +766,9 @@
 						width="80"
 						height="16"
 						key="textField-9"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#555555" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="4" bottomBorder="None" bottomBorderColor="#555555"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#555555" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#555555"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Times-Roman" size="12"/>
+						<font fontName="Times-Roman" size="8"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($F{QUANTITYORDER}!=null)?$P{NUMBERFORMAT}.format($F{QUANTITYORDER}):new String(" ")]]></textFieldExpression>
 				</textField>
@@ -688,8 +781,8 @@
 						height="16"
 						key="textField-10"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#555555" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#555555"/>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Times-Roman" size="12"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times-Roman" size="8"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($F{UOMNAME}!=null)?$F{UOMNAME}:new String(" ")]]></textFieldExpression>
 				</textField>
@@ -698,28 +791,14 @@
 						style="Detail_Line"
 						x="356"
 						y="0"
-						width="90"
+						width="66"
 						height="16"
 						key="textField-11"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#555555" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="4" bottomBorder="None" bottomBorderColor="#555555"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Times-Roman" size="12"/>
+						<font fontName="Times-Roman" size="8"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($F{PRICEACTUAL}!=null)?$P{NUMBERFORMAT}.format($F{PRICEACTUAL}):new String(" ")]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="Detail_Line"
-						x="446"
-						y="0"
-						width="85"
-						height="16"
-						key="textField-12"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#555555" leftPadding="2" rightBorder="1Point" rightBorderColor="#555555" rightPadding="4" bottomBorder="None" bottomBorderColor="#555555"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Times-Roman" size="12"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{PRICELIST}!=null)?$P{NUMBERFORMAT}.format($F{PRICELIST}):new String(" ")]]></textFieldExpression>
 				</textField>
 				<line direction="TopDown">
 					<reportElement
@@ -732,6 +811,104 @@
 						key="line-38"/>
 					<graphicElement stretchType="NoStretch"/>
 				</line>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Line"
+						x="446"
+						y="0"
+						width="66"
+						height="16"
+						key="textField-15"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#555555" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="4" bottomBorder="None" bottomBorderColor="#555555"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Times-Roman" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{CONVPRICEACTUAL}!=null)?$P{NUMBERFORMAT}.format($F{CONVPRICEACTUAL}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Line"
+						x="621"
+						y="0"
+						width="61"
+						height="16"
+						key="textField-16"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#555555" leftPadding="2" rightBorder="None" rightBorderColor="#555555" rightPadding="4" bottomBorder="None" bottomBorderColor="#555555"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Times-Roman" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{CONVPRICELIST}!=null)?$P{NUMBERFORMAT}.format($F{CONVPRICELIST}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Line"
+						x="536"
+						y="0"
+						width="61"
+						height="16"
+						key="textField-17"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#555555" leftPadding="2" rightBorder="None" rightBorderColor="#555555" rightPadding="4" bottomBorder="None" bottomBorderColor="#555555"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Times-Roman" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{PRICELIST}!=null)?$P{NUMBERFORMAT}.format($F{PRICELIST}):new String(" ")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Line"
+						x="682"
+						y="0"
+						width="24"
+						height="16"
+						key="textField-18"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#555555" leftPadding="2" rightBorder="1Point" rightBorderColor="#555555" rightPadding="4" bottomBorder="None" bottomBorderColor="#555555"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times-Roman" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CONVSYM}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Line"
+						x="597"
+						y="0"
+						width="24"
+						height="16"
+						key="textField-20"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#555555" leftPadding="2" rightBorder="1Point" rightBorderColor="#555555" rightPadding="4" bottomBorder="None" bottomBorderColor="#555555"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times-Roman" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{PRICELISTSYM}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Line"
+						x="512"
+						y="0"
+						width="24"
+						height="16"
+						key="textField-21"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#555555" leftPadding="2" rightBorder="1Point" rightBorderColor="#555555" rightPadding="4" bottomBorder="None" bottomBorderColor="#555555"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times-Roman" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CONVSYM}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Detail_Line"
+						x="422"
+						y="0"
+						width="24"
+						height="16"
+						key="textField-22"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#555555" leftPadding="2" rightBorder="1Point" rightBorderColor="#555555" rightPadding="4" bottomBorder="None" bottomBorderColor="#555555"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Times-Roman" size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{PRICEACTUALSYM}]]></textFieldExpression>
+				</textField>
 			</band>
 		</detail>
 		<columnFooter>
@@ -743,7 +920,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Report_Footer"
-						x="402"
+						x="573"
 						y="4"
 						width="95"
 						height="16"
@@ -757,7 +934,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Report_Footer"
-						x="499"
+						x="670"
 						y="4"
 						width="36"
 						height="16"
@@ -774,7 +951,7 @@
 					<reportElement
 						x="0"
 						y="1"
-						width="535"
+						width="706"
 						height="0"
 						forecolor="#000000"
 						key="line"/>

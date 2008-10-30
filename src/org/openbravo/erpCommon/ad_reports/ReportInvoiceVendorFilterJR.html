@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2007 Openbravo SL
+ * All portions are Copyright (C) 2007-2008 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -54,7 +54,12 @@
 function validate()
 {
 	var frm = document.frmMain;
-	if (frm.inpDateFrom.value == null || frm.inpDateFrom.value == "") {
+	if (frm.inpCurrencyId.value == null || frm.inpCurrencyId.value == "") {
+	    setWindowElementFocus(frm.inpCurrencyId);
+	    showJSMessage(7);
+	    return false;
+	}
+	/*if (frm.inpDateFrom.value == null || frm.inpDateFrom.value == "") {
 		setWindowElementFocus(frm.inpDateFrom);
 		showJSMessage(7);
 		return false;
@@ -62,7 +67,7 @@ function validate()
 		setWindowElementFocus(frm.inpDateTo);
 		showJSMessage(7);
 		return false;
-	}
+	}*/
 	return true;
 }
 
@@ -258,7 +263,6 @@ function onloadFunctions(){
                       </TR>
                     </TABLE>
                  </TD>
-                  <TD class="TitleCell"></TD>
                   <TD class="TitleCell"><SPAN class="LabelText">To Date</SPAN></TD>
                   <TD class="TextBox_btn_ContentCell">
                     <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
@@ -280,9 +284,14 @@ function onloadFunctions(){
                       </TR>
                     </TABLE>
                   </TD>
-                  <TD class="ContentCell"> </TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">Currency</SPAN></TD>
+                  <TD class="Combo_ContentCell">
+                  	<SELECT name="inpCurrencyId" id="inpCurrencyId" class="ComboKey Combo_OneCell_width" required="true">
+                    <OPTION value=""><DIV id="reportC_Currency_ID"></DIV></OPTION>
+                    </SELECT>
+                  </TD>    
                 </TR>
-    		<TR> 
+    		    <TR> 
                   <TD class="TitleCell"><SPAN class="LabelText">Business Partner</SPAN></TD>
                   <TD class="TextBox_btn_ContentCell" colspan="2">
                     <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
@@ -348,7 +357,7 @@ function onloadFunctions(){
                     <TD class="TitleCell"></TD>
                     <TD class="Button_CenterAlign_ContentCell">
                       <div>
-                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='View Results in a New Window'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="openServletNewWindow('EDIT_HTML', false, 'ReportInvoiceVendorFilterJR.html', 'ReportInvoiceVendorFilterJR', null, false, '700', '1000', true);return false;" id="buttonHTML">
+                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='View Results in a New Window'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="openServletNewWindow('EDIT_HTML', true, 'ReportInvoiceVendorFilterJR.html', 'ReportInvoiceVendorFilterJR', null, false, '700', '1000', true);return false;" id="buttonHTML">
                         <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='HTML_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                           <tr>
                             <td class="Button_left"><img class="Button_Icon Button_Icon_html" alt="View Results in a New Window" title="View Results in a New Window" src="../../../../../web/images/blank.gif" border=0/></td>
@@ -361,7 +370,7 @@ function onloadFunctions(){
                     </TD>
                     <TD class="Button_CenterAlign_ContentCell">
                       <div>
-                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Export Results to PDF Format'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="openServletNewWindow('EDIT_PDF', false, 'ReportInvoiceVendorFilterJR.html', 'ReportInvoiceVendorFilterJR', null, false, '700', '1000', true);return false;">
+                        <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Export Results to PDF Format'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="openServletNewWindow('EDIT_PDF', true, 'ReportInvoiceVendorFilterJR.html', 'ReportInvoiceVendorFilterJR', null, false, '700', '1000', true);return false;">
                         <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='PDF_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                           <tr>
                             <td class="Button_left"><img class="Button_Icon Button_Icon_pdf" alt="Export Results to PDF Format" title="Export Results to PDF Format" src="../../../../../web/images/blank.gif" border=0/></td>

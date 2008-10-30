@@ -36,8 +36,9 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-
-
+    
+    //Get user Client's base currency
+    String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     if (vars.commandIn("DEFAULT")){
       String strdateFrom = vars.getGlobalVariable("inpDateFrom", "ReportInvoiceCustomerJR|DateFrom", "");
       String strdateTo = vars.getGlobalVariable("inpDateTo", "ReportInvoiceCustomerJR|DateTo", "");
@@ -51,7 +52,8 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
       String strProjectpublic = vars.getGlobalVariable("inpProjectpublic", "ReportInvoiceCustomerJR|Projectpublic", "");
       String strSalesRep = vars.getGlobalVariable("inpSalesRepId", "ReportInvoiceCustomerJR|SalesRepId", "");
       String strcRegionId = vars.getInGlobalVariable("inpcRegionId", "ReportInvoiceCustomerJR|cRegionId", "");
-      printPageDataSheet(response, vars, strdateFrom, strdateTo, strcProjectId, strcBpartnerId, strmCategoryId, strProjectkind, strProjectstatus, strProjectphase, strProduct, strProjectpublic, strSalesRep, strcRegionId);
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportInvoiceCustomerJR|currency", strUserCurrencyId);
+      printPageDataSheet(response, vars, strdateFrom, strdateTo, strcProjectId, strcBpartnerId, strmCategoryId, strProjectkind, strProjectstatus, strProjectphase, strProduct, strProjectpublic, strSalesRep, strcRegionId, strCurrencyId);
     }else if (vars.commandIn("EDIT_HTML","EDIT_PDF")) {
       String strdateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportInvoiceCustomerJR|DateFrom");
       String strdateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportInvoiceCustomerJR|DateTo");
@@ -65,11 +67,12 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
       String strProjectpublic = vars.getRequestGlobalVariable("inpProjectpublic", "ReportInvoiceCustomerJR|Projectpublic");
       String strSalesRep = vars.getRequestGlobalVariable("inpSalesRepId", "ReportInvoiceCustomerJR|SalesRepId");
       String strcRegionId = vars.getRequestInGlobalVariable("inpcRegionId", "ReportInvoiceCustomerJR|cRegionId");
-      printPageHtml(response, vars, strdateFrom, strdateTo, strcProjectId, strcBpartnerId, strmCategoryId, strProjectkind, strProjectstatus, strProjectphase, strProduct, strProjectpublic, strSalesRep, strcRegionId);
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportInvoiceCustomerJR|currency", strUserCurrencyId);
+      printPageHtml(response, vars, strdateFrom, strdateTo, strcProjectId, strcBpartnerId, strmCategoryId, strProjectkind, strProjectstatus, strProjectphase, strProduct, strProjectpublic, strSalesRep, strcRegionId, strCurrencyId);
    } else pageErrorPopUp(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom, String strdateTo, String strcProjectId, String strcBpartnerId, String strmCategoryId, String strProjectkind, String strProjectstatus, String strProjectphase, String strProduct, String strProjectpublic, String strSalesRep, String strcRegionId) throws IOException, ServletException {
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom, String strdateTo, String strcProjectId, String strcBpartnerId, String strmCategoryId, String strProjectkind, String strProjectstatus, String strProjectphase, String strProduct, String strProjectpublic, String strSalesRep, String strcRegionId, String strCurrencyId) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
 
 
@@ -174,6 +177,16 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
 
+    xmlDocument.setParameter("ccurrencyid", strCurrencyId);    
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportInvoiceCustomerJR"), Utility.getContext(this, vars, "#User_Client", "ReportInvoiceCustomerJR"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceCustomerJR", strCurrencyId);
+      xmlDocument.setData("reportC_Currency_ID","liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+    
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportProjectBuildingSiteData.selectBpartner(this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerId));
     xmlDocument.setData("reportMProductId_IN", "liststructure", ReportProjectBuildingSiteData.selectMproduct(this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""), strProduct));
 
@@ -190,21 +203,35 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageHtml(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom, String strdateTo, String strcProjectId, String strcBpartnerId, String strmCategoryId, String strProjectkind, String strProjectstatus, String strProjectphase, String strProduct, String strProjectpublic, String strSalesRep, String strcRegionId) throws IOException, ServletException{
+  void printPageHtml(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom, String strdateTo, String strcProjectId, String strcBpartnerId, String strmCategoryId, String strProjectkind, String strProjectstatus, String strProjectphase, String strProduct, String strProjectpublic, String strSalesRep, String strcRegionId, String strCurrencyId) throws IOException, ServletException{
     if (log4j.isDebugEnabled()) log4j.debug("Output: print html");
    
     InvoiceCustomerEditionData[] data = null;
-    data = InvoiceCustomerEditionData.select(this, Utility.getContext(this, vars, "#User_Org", "InvoiceCustomerFilter"), Utility.getContext(this, vars, "#User_Client", "InvoiceCustomerFilter"), strdateFrom, strdateTo, strcBpartnerId, strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic, strcRegionId, strSalesRep, strProduct);
-  
-    String strOutput = vars.commandIn("EDIT_HTML")?"html":"pdf";
-    String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerJR.jrxml";
-    
-    String strSubTitle = "";
-    strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " "+strdateFrom+" " + Utility.messageBD(this, "To", vars.getLanguage()) + " "+strdateTo;
-    
-    HashMap<String, Object> parameters = new HashMap<String, Object>();
-    parameters.put("REPORT_TITLE", classInfo.name);
-    parameters.put("REPORT_SUBTITLE", strSubTitle);
-    renderJR(vars, response, strReportName, strOutput, parameters, data, null );
+
+    //Checks if there is a conversion rate for each of the transactions of the report
+    String strConvRateErrorMsg = "";
+    OBError myMessage = null;
+    myMessage = new OBError();
+    try {
+      data = InvoiceCustomerEditionData.select(this, strCurrencyId, Utility.getContext(this, vars, "#User_Org", "InvoiceCustomerFilter"), Utility.getContext(this, vars, "#User_Client", "InvoiceCustomerFilter"), strdateFrom, strdateTo, strcBpartnerId, strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic, strcRegionId, strSalesRep, strProduct);
+    } catch(ServletException ex) {
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+    }
+    strConvRateErrorMsg = myMessage.getMessage();
+    //If a conversion rate is missing for a certain transaction, an error message window pops-up.
+    if(!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
+      advisePopUp(response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()), strConvRateErrorMsg);      
+    } else { //Launch the report as usual, calling the JRXML file
+      String strOutput = vars.commandIn("EDIT_HTML")?"html":"pdf";
+      String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerJR.jrxml";
+      
+      String strSubTitle = "";
+      strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " "+strdateFrom+" " + Utility.messageBD(this, "To", vars.getLanguage()) + " "+strdateTo;
+      
+      HashMap<String, Object> parameters = new HashMap<String, Object>();
+      parameters.put("REPORT_TITLE", classInfo.name);
+      parameters.put("REPORT_SUBTITLE", strSubTitle);
+      renderJR(vars, response, strReportName, strOutput, parameters, data, null );
+    }
   }
 }

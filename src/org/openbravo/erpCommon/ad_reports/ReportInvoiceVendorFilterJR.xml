@@ -12,7 +12,7 @@
 * under the License. 
 * The Original Code is Openbravo ERP. 
 * The Initial Developer of the Original Code is Openbravo SL 
-* All portions are Copyright (C) 2007 Openbravo SL 
+* All portions are Copyright (C) 2007-2008 Openbravo SL 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -33,6 +33,7 @@
   <PARAMETER id="paramM_WAREHOUSE_ID" name="mWarehouseId" attribute=""/>
   <PARAMETER id="C_PROJECT_ID" name="cProjectId" attribute="value"/>
   <PARAMETER id="C_PROJECT_ID_D" name="projectName" attribute="value"/>
+  <PARAMETER id="paramC_Currency_ID" name="ccurrencyid" attribute="value"/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="tdleftTabs" name="leftTabs" default=""/>
   <PARAMETER id="paramParentTabContainer" name="parentTabContainer" default=" "/>
@@ -44,6 +45,9 @@
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
   <SUBREPORT id="reportM_WAREHOUSEID" name="reportM_WAREHOUSEID" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramM_WAREHOUSE_ID"/>
+  </SUBREPORT>
+  <SUBREPORT id="reportC_Currency_ID" name="reportC_Currency_ID" report="org/openbravo/erpCommon/reference/List">
+    <ARGUMENT name="parameterListSelected" withId="paramC_Currency_ID"/>
   </SUBREPORT>
   <DISCARD id="discard"/>
 </REPORT>

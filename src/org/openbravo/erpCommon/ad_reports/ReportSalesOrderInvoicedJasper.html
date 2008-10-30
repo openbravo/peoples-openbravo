@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All portions are Copyright (C) 2001-2008 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -54,6 +54,11 @@
 function validate()
 {
 	var frm = document.frmMain;
+	if (frm.inpCurrencyId.value == null || frm.inpCurrencyId.value == "") {
+	    setWindowElementFocus(frm.inpCurrencyId);
+	    showJSMessage(7);
+	    return false;
+	}
 	if (frm.inpDateFrom.value == null || frm.inpDateFrom.value == "") {
 		setWindowElementFocus(frm.inpDateFrom);
 		showJSMessage(7);
@@ -266,7 +271,6 @@ new Array(2,4,'F4')
                       </TR>
                     </TABLE>
                  </TD>
-                  <TD class="TitleCell"></TD>
                   <TD class="TitleCell"><SPAN class="LabelText">To Date</SPAN></TD>
                   <TD class="TextBox_btn_ContentCell">
                     <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
@@ -288,7 +292,12 @@ new Array(2,4,'F4')
                       </TR>
                     </TABLE>
                   </TD>
-                  <TD class="ContentCell"> </TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">Currency</SPAN></TD>
+                  <TD class="Combo_ContentCell">
+  		     		<SELECT name="inpCurrencyId" id="inpCurrencyId" class="ComboKey Combo_OneCell_width" required="true">
+     		      	<OPTION value=""><DIV id="reportC_Currency_ID"></DIV></OPTION>
+   		     		</SELECT>
+		   		  </TD>
                 </TR>
                 <tr>
                   <TD class="TitleCell"><SPAN class="LabelText">Business Partner</SPAN></TD>

@@ -35,14 +35,17 @@ public class ReportExpense extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (vars.commandIn("DEFAULT")) {
+    //Get user Client's base currency
+    String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
+    if (vars.commandIn("DEFAULT")) {      
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportExpense|dateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportExpense|dateTo", "");
       String strcBpartnerId = vars.getGlobalVariable("inpcBPartnerId", "ReportExpense|cBpartnerId", "");
       String strPartner = vars.getGlobalVariable("inpUser", "ReportExpense|partner", "");
       String strProject = vars.getGlobalVariable("inpcProjectId", "ReportExpense|project", "");
 	    String strExpense = vars.getGlobalVariable("inpExpense", "ReportExpense|expense", "all");
-      printPageDataSheet(response, vars, strDateFrom, strDateTo, strcBpartnerId, strPartner, strProject, strExpense);
+	    String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportExpense|currency", strUserCurrencyId);
+      printPageDataSheet(response, vars, strDateFrom, strDateTo, strcBpartnerId, strPartner, strProject, strExpense, strCurrencyId);
     } else if (vars.commandIn("DIRECT")) {
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportExpense|dateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportExpense|dateTo", "");
@@ -51,7 +54,8 @@ public class ReportExpense extends HttpSecureAppServlet {
       String strProject = vars.getGlobalVariable("inpcProjectId", "ReportExpense|project", "");
 	    String strExpense = vars.getGlobalVariable("inpExpense", "ReportExpense|expense", "");
       setHistoryCommand(request, "DIRECT");
-      printPageDataHtml(response, vars, strDateFrom, strDateTo, strcBpartnerId, strPartner, strProject, strExpense);
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportExpense|currency", strUserCurrencyId);
+      printPageDataHtml(response, vars, strDateFrom, strDateTo, strcBpartnerId, strPartner, strProject, strExpense, strCurrencyId);
     } else if (vars.commandIn("FIND")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportExpense|dateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportExpense|dateTo");
@@ -60,40 +64,52 @@ public class ReportExpense extends HttpSecureAppServlet {
       String strProject = vars.getRequestGlobalVariable("inpcProjectId", "ReportExpense|project");
 	    String strExpense = vars.getStringParameter("inpExpense");
       setHistoryCommand(request, "DIRECT");
-      printPageDataHtml(response, vars, strDateFrom, strDateTo, strcBpartnerId, strPartner, strProject, strExpense);
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportExpense|currency", strUserCurrencyId);
+      printPageDataHtml(response, vars, strDateFrom, strDateTo, strcBpartnerId, strPartner, strProject, strExpense, strCurrencyId);
     } else pageError(response);
   }
 
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strcBpartnerId, String strPartner, String strProject, String strExpense)
+  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strcBpartnerId, String strPartner, String strProject, String strExpense, String strCurrencyId)
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument=null;
     ReportExpenseData[] data1 = null;
+    //Checks if there is a conversion rate for each of the transactions of the report
+    String strConvRateErrorMsg = "";
+    OBError myMessage = null;
+    myMessage = new OBError();
    
     if (vars.commandIn("DEFAULT") && strDateFrom.equals("") && strDateTo.equals("") && strcBpartnerId.equals("") && strPartner.equals("")){
-      printPageDataSheet(response, vars, strDateFrom, strDateTo, strcBpartnerId, strPartner, strProject, strExpense);
+      printPageDataSheet(response, vars, strDateFrom, strDateTo, strcBpartnerId, strPartner, strProject, strExpense, strCurrencyId);
     } else {
-      data1 = ReportExpenseData.select(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "ReportExpense"), Utility.getContext(this, vars, "#User_Org", "ReportExpense"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strcBpartnerId, strPartner, strProject, (strExpense.equals("time")?"Y":""), (strExpense.equals("expense")?"N":""));
+      String strBaseCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
+      try {        
+        data1 = ReportExpenseData.select(this, strCurrencyId, strBaseCurrencyId, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "ReportExpense"), Utility.getContext(this, vars, "#User_Org", "ReportExpense"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strcBpartnerId, strPartner, strProject, (strExpense.equals("time")?"Y":""), (strExpense.equals("expense")?"N":""));
+      } catch(ServletException ex) {
+        myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+      }
     }
-    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportExpenseEdit").createXmlDocument();
-
-
-    
-
-
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-
-    xmlDocument.setData("structure1", data1);
-
-    out.println(xmlDocument.print());
-    out.close();
+    strConvRateErrorMsg = myMessage.getMessage();
+    //If a conversion rate is missing for a certain transaction, an error message window pops-up.
+    if(!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
+      advisePopUp(response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()), strConvRateErrorMsg);
+    } else { //Otherwise, the report is launched
+      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportExpenseEdit").createXmlDocument();
+  
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("theme", vars.getTheme());
+  
+      xmlDocument.setData("structure1", data1);
+  
+      out.println(xmlDocument.print());
+      out.close();
+    }
   }
   
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strcBpartnerId, String strPartner, String strProject, String strExpense)
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strcBpartnerId, String strPartner, String strProject, String strExpense, String strCurrencyId)
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -160,6 +176,16 @@ public class ReportExpense extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }  
 
+    xmlDocument.setParameter("ccurrencyid", strCurrencyId);    
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportExpense"), Utility.getContext(this, vars, "#User_Client", "ReportExpense"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportExpense", strCurrencyId);
+      xmlDocument.setData("reportC_Currency_ID","liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+    
     out.println(xmlDocument.print());
     out.close();
   }

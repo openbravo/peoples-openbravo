@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,8 +26,6 @@ import org.openbravo.xmlEngine.XmlDocument;
 import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
-
-import org.openbravo.erpCommon.utility.DateTimeData;
 
 public class ReportInvoiceDiscount extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -61,8 +59,10 @@ public class ReportInvoiceDiscount extends HttpSecureAppServlet {
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
-
-    xmlDocument.setData("structure1", ReportInvoiceDiscountData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportInvoiceDiscount"), Utility.getContext(this, vars, "#User_Org", "ReportInvoiceDiscount"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strcBpartnerId, (strDiscount.equals("N"))?"":"discount"));
+    
+    //Get user Client's base currency
+    String strCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
+    xmlDocument.setData("structure1", ReportInvoiceDiscountData.select(this, strCurrencyId, Utility.getContext(this, vars, "#User_Client", "ReportInvoiceDiscount"), Utility.getContext(this, vars, "#User_Org", "ReportInvoiceDiscount"), strDateFrom, strDateTo, strcBpartnerId, (strDiscount.equals("N"))?"":"discount"));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

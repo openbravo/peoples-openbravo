@@ -36,9 +36,10 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-
-
-    if (vars.commandIn("DEFAULT")) {
+    
+    //Get user Client's base currency
+    String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
+    if (vars.commandIn("DEFAULT")) {      
       String strC_BPartner_ID = vars.getGlobalVariable("inpcBPartnerId", "ReportInvoices|C_BPartner_ID", "");
       String strM_Product_ID = vars.getGlobalVariable("inpmProductId", "ReportInvoices|M_Product_ID", "");
       String strDateFrom = vars.getGlobalVariable("inpDateInvoiceFrom", "ReportInvoices|DateFrom", "");
@@ -47,7 +48,8 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
       String strOrder = vars.getGlobalVariable("inpOrder", "ReportInvoices|Order", "SalesOrder");
       String strC_BpGroup_ID = vars.getGlobalVariable("inpcBpGroupId", "ReportInvoices|C_BpGroup_ID", "");
       String strM_Product_Category_ID = vars.getGlobalVariable("inpmProductCategoryId", "ReportInvoices|M_Product_Category_ID", "");
-      printPageDataSheet(response, vars, strC_BPartner_ID, strM_Product_ID, strDateFrom, strDateTo, strDocumentNo, strOrder, strC_BpGroup_ID, strM_Product_Category_ID);
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportInvoices|currency", strUserCurrencyId);
+      printPageDataSheet(response, vars, strC_BPartner_ID, strM_Product_ID, strDateFrom, strDateTo, strDocumentNo, strOrder, strC_BpGroup_ID, strM_Product_Category_ID, strCurrencyId);
     } else if (vars.commandIn("FIND")) {
       String strC_BPartner_ID = vars.getRequestGlobalVariable("inpcBPartnerId", "ReportInvoices|C_BPartner_ID");
       String strM_Product_ID = vars.getRequestGlobalVariable("inpmProductId", "ReportInvoices|M_Product_ID");
@@ -57,11 +59,12 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
       String strOrder = vars.getGlobalVariable("inpOrder", "ReportInvoices|Order");
       String strC_BpGroup_ID = vars.getRequestGlobalVariable("inpcBpGroupId", "ReportInvoices|C_BpGroup_ID");
       String strM_Product_Category_ID = vars.getRequestGlobalVariable("inpmProductCategoryId", "ReportInvoices|M_Product_Category_ID");
-      printPageDataHtml(response, vars, strC_BPartner_ID, strM_Product_ID, strDateFrom, strDateTo, strDocumentNo, strOrder, strC_BpGroup_ID, strM_Product_Category_ID);
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportInvoices|currency", strUserCurrencyId);
+      printPageDataHtml(response, vars, strC_BPartner_ID, strM_Product_ID, strDateFrom, strDateTo, strDocumentNo, strOrder, strC_BpGroup_ID, strM_Product_Category_ID, strCurrencyId);
     } else pageError(response);
   }
 
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strC_BPartner_ID, String strM_Product_ID, String strDateFrom, String strDateTo, String strDocumentNo, String strOrder, String strC_BpGroup_ID, String strM_Product_Category_ID)
+  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strC_BPartner_ID, String strM_Product_ID, String strDateFrom, String strDateTo, String strDocumentNo, String strOrder, String strC_BpGroup_ID, String strM_Product_Category_ID, String strCurrencyId)
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -70,21 +73,33 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
     String strOutput = "html";
     if (strOutput.equals("html")) response.setHeader("Content-disposition", "inline; filename=ReportInvoicesEdit.html");
 
+    //Checks if there is a conversion rate for each of the transactions of the report
     ReportInvoicesData[] data=null;
-
-    data = ReportInvoicesData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportInvoices"), Utility.getContext(this, vars, "#User_Org", "ReportInvoices"), strC_BpGroup_ID, strM_Product_Category_ID, strC_BPartner_ID, strM_Product_ID, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strDocumentNo, (strOrder.equals("PurchaseOrder"))?"":"sales", (strOrder.equals("PurchaseOrder"))?"purchase":"");
-
-    String strSubTitle = "";
-    strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " "+strDateFrom+" " + Utility.messageBD(this, "To", vars.getLanguage()) + " "+strDateTo;
-    
-    HashMap<String, Object> parameters = new HashMap<String, Object>();
-    parameters.put("REPORT_TITLE", classInfo.name);
-    parameters.put("REPORT_SUBTITLE", strSubTitle);
-
-    renderJR(vars, response, strReportName, strOutput, parameters, data, null );
+    String strConvRateErrorMsg = "";
+    OBError myMessage = null;
+    myMessage = new OBError();
+    try {
+      data = ReportInvoicesData.select(this, strCurrencyId, Utility.getContext(this, vars, "#User_Client", "ReportInvoices"), Utility.getContext(this, vars, "#User_Org", "ReportInvoices"), strC_BpGroup_ID, strM_Product_Category_ID, strC_BPartner_ID, strM_Product_ID, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strDocumentNo, (strOrder.equals("PurchaseOrder"))?"":"sales", (strOrder.equals("PurchaseOrder"))?"purchase":"");
+    } catch(ServletException ex) {
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+    }
+    strConvRateErrorMsg = myMessage.getMessage();
+    //If a conversion rate is missing for a certain transaction, an error message window pops-up.
+    if(!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
+      advisePopUp(response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()), strConvRateErrorMsg);      
+    } else { //Launch the report as usual, calling the JRXML file
+      String strSubTitle = "";
+      strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " "+strDateFrom+" " + Utility.messageBD(this, "To", vars.getLanguage()) + " "+strDateTo;
+      
+      HashMap<String, Object> parameters = new HashMap<String, Object>();
+      parameters.put("REPORT_TITLE", classInfo.name);
+      parameters.put("REPORT_SUBTITLE", strSubTitle);
+  
+      renderJR(vars, response, strReportName, strOutput, parameters, data, null );
+    }
   }
   
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strC_BPartner_ID, String strM_Product_ID, String strDateFrom, String strDateTo, String strDocumentNo, String strOrder, String strC_BpGroup_ID, String strM_Product_Category_ID)
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strC_BPartner_ID, String strM_Product_ID, String strDateFrom, String strDateTo, String strDocumentNo, String strOrder, String strC_BpGroup_ID, String strM_Product_Category_ID, String strCurrencyId)
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -159,8 +174,16 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-
-
+    
+    xmlDocument.setParameter("ccurrencyid", strCurrencyId);    
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportInvoices"), Utility.getContext(this, vars, "#User_Client", "ReportInvoices"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoices", strCurrencyId);
+      xmlDocument.setData("reportC_Currency_ID","liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
     
     out.println(xmlDocument.print());
     out.close();

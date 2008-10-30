@@ -47,7 +47,9 @@ public class ReportRefundSalesDimensionalAnalyses extends HttpSecureAppServlet {
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-
+    
+    //Get user Client's base currency
+    String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     if (vars.commandIn("DEFAULT", "DEFAULT_COMPARATIVE")){
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportRefundSalesDimensionalAnalyses|dateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportRefundSalesDimensionalAnalyses|dateTo", "");
@@ -67,10 +69,11 @@ public class ReportRefundSalesDimensionalAnalyses extends HttpSecureAppServlet {
       String strMenor = vars.getGlobalVariable("inpMenor", "ReportRefundSalesDimensionalAnalyses|menor", "");
       String strRatioMayor = vars.getGlobalVariable("inpRatioMayor", "ReportRefundSalesDimensionalAnalyses|ratioMayor", "");
       String strRatioMenor = vars.getGlobalVariable("inpRatioMenor", "ReportRefundSalesDimensionalAnalyses|ratioMenor", "");
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportRefundSalesDimensionalAnalyses|currency", strUserCurrencyId);
       String strComparative = "";
       if (vars.commandIn("DEFAULT_COMPARATIVE")) strComparative = vars.getRequestGlobalVariable("inpComparative", "ReportRefundSalesDimensionalAnalyses|comparative");
       else strComparative = vars.getGlobalVariable("inpComparative", "ReportRefundSalesDimensionalAnalyses|comparative", "N");
-      printPageDataSheet(response, vars, strComparative, strDateFrom, strDateTo, strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strNotShown, strShown, strDateFromRef, strDateToRef, strOrg, strsalesrepId, strmWarehouseId, strOrder, strMayor, strMenor, strRatioMayor, strRatioMenor);
+      printPageDataSheet(response, vars, strComparative, strDateFrom, strDateTo, strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strNotShown, strShown, strDateFromRef, strDateToRef, strOrg, strsalesrepId, strmWarehouseId, strOrder, strMayor, strMenor, strRatioMayor, strRatioMenor, strCurrencyId);
     }else if (vars.commandIn("EDIT_HTML", "EDIT_HTML_COMPARATIVE")) {
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportRefundSalesDimensionalAnalyses|dateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportRefundSalesDimensionalAnalyses|dateTo");
@@ -91,11 +94,12 @@ public class ReportRefundSalesDimensionalAnalyses extends HttpSecureAppServlet {
       String strRatioMayor = vars.getStringParameter("inpRatioMayor", "");
       String strRatioMenor = vars.getStringParameter("inpRatioMenor", "");
       String strComparative = vars.getStringParameter("inpComparative", "N");
-      printPageHtml(response, vars, strComparative, strDateFrom, strDateTo, strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strNotShown, strShown, strDateFromRef, strDateToRef, strOrg, strsalesrepId, strmWarehouseId, strOrder, strMayor, strMenor, strRatioMayor, strRatioMenor);
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportRefundSalesDimensionalAnalyses|currency", strUserCurrencyId);
+      printPageHtml(response, vars, strComparative, strDateFrom, strDateTo, strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strNotShown, strShown, strDateFromRef, strDateToRef, strOrg, strsalesrepId, strmWarehouseId, strOrder, strMayor, strMenor, strRatioMayor, strRatioMenor, strCurrencyId);
     } else pageErrorPopUp(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strComparative, String strDateFrom, String strDateTo, String strPartnerGroup, String strcBpartnerId, String strProductCategory, String strmProductId, String strNotShown, String strShown, String strDateFromRef, String strDateToRef, String strOrg, String strsalesrepId, String strmWarehouseId, String strOrder, String strMayor, String strMenor, String strRatioMayor, String strRatioMenor) throws IOException, ServletException {
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strComparative, String strDateFrom, String strDateTo, String strPartnerGroup, String strcBpartnerId, String strProductCategory, String strmProductId, String strNotShown, String strShown, String strDateFromRef, String strDateToRef, String strOrg, String strsalesrepId, String strmWarehouseId, String strOrder, String strMayor, String strMenor, String strRatioMayor, String strRatioMenor, String strCurrencyId) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     String discard[]={"selEliminarHeader1"};
     String strCommand = "EDIT_PDF";
@@ -196,16 +200,23 @@ public class ReportRefundSalesDimensionalAnalyses extends HttpSecureAppServlet {
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportRefundSalesDimensionalAnalysesData.selectBpartner(this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerId));
     xmlDocument.setData("reportMProductId_IN", "liststructure", ReportRefundSalesDimensionalAnalysesData.selectMproduct(this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""), strmProductId));
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportSalesDimensionalAnalyze"), Utility.getContext(this, vars, "#User_Client", "ReportSalesDimensionalAnalyze"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportSalesDimensionalAnalyze", strmWarehouseId);
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportSalesDimensionalAnalyze"), Utility.getContext(this, vars, "#User_Client", "ReportRefundSalesDimensionalAnalyses"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportRefundSalesDimensionalAnalyses", strmWarehouseId);
       xmlDocument.setData("reportM_WAREHOUSEID","liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
 
-
-
+    xmlDocument.setParameter("ccurrencyid", strCurrencyId);    
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportRefundSalesDimensionalAnalyses"), Utility.getContext(this, vars, "#User_Client", "ReportRefundSalesDimensionalAnalyses"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportRefundSalesDimensionalAnalyses", strCurrencyId);
+      xmlDocument.setData("reportC_Currency_ID","liststructure", comboTableData.select(false));
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
 
     if (vars.getLanguage().equals("en_US")) {
       xmlDocument.setData("structure1", ReportRefundSalesDimensionalAnalysesData.selectNotShown(this, strShown)); 
@@ -221,7 +232,7 @@ public class ReportRefundSalesDimensionalAnalyses extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageHtml(HttpServletResponse response, VariablesSecureApp vars, String strComparative, String strDateFrom, String strDateTo, String strPartnerGroup, String strcBpartnerId, String strProductCategory, String strmProductId, String strNotShown, String strShown, String strDateFromRef, String strDateToRef, String strOrg, String strsalesrepId, String strmWarehouseId, String strOrder, String strMayor, String strMenor, String strRatioMayor, String strRatioMenor) throws IOException, ServletException{
+  void printPageHtml(HttpServletResponse response, VariablesSecureApp vars, String strComparative, String strDateFrom, String strDateTo, String strPartnerGroup, String strcBpartnerId, String strProductCategory, String strmProductId, String strNotShown, String strShown, String strDateFromRef, String strDateToRef, String strOrg, String strsalesrepId, String strmWarehouseId, String strOrder, String strMayor, String strMenor, String strRatioMayor, String strRatioMenor, String strCurrencyId) throws IOException, ServletException{
     if (log4j.isDebugEnabled()) log4j.debug("Output: print html");
     XmlDocument xmlDocument=null;
     String strOrderby = "";
@@ -268,6 +279,7 @@ public class ReportRefundSalesDimensionalAnalyses extends HttpSecureAppServlet {
       else if (strShownArray[i].equals("4")) {
         strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('M_Product'), to_char( M_PRODUCT.M_PRODUCT_ID), to_char('"+ vars.getLanguage() +"'))";
         intAuxDiscard = i;
+        intDiscard++;
       }
       else if (strShownArray[i].equals("5")) {
         strTextShow[i] = "C_ORDER.DOCUMENTNO";
@@ -346,60 +358,81 @@ public class ReportRefundSalesDimensionalAnalyses extends HttpSecureAppServlet {
       else if (strRatioMayor.equals("") && !strRatioMenor.equals("")) {strHaving += " AND C_DIVIDE(SUM(REFUNDAMT), (SUM(LINENETAMT)+SUM(REFUNDAMT)))*100 < "+strRatioMenor;}
       else{}
     }
-    strOrderby = strHaving + strOrderby;
-    if (strComparative.equals("Y")){
-      data = ReportRefundSalesDimensionalAnalysesData.select(this, strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4], strTextShow[5], strTextShow[6], Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this, vars, "#User_Client", "ReportRefundInvoiceCustomerDimensionalAnalyses"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strsalesrepId, strmWarehouseId, strDateFromRef, DateTimeData.nDaysAfter(this, strDateToRef,"1"), strOrderby);
-    } else {
-      data = ReportRefundSalesDimensionalAnalysesData.selectNoComparative(this, strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4], strTextShow[5], strTextShow[6], Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this, vars, "#User_Client", "ReportRefundInvoiceCustomerDimensionalAnalyses"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strsalesrepId, strmWarehouseId, strOrderby);
-    }
+    strOrderby = strHaving + strOrderby;    
 
-    if (data.length == 0 || data == null){
-      //discard1[0] = "selEliminar1";
-      data = ReportRefundSalesDimensionalAnalysesData.set();
-    } else {
-      int contador = intDiscard;
-      if (intAuxDiscard != -1) contador = intAuxDiscard;
-      int k = 1;
-      if (strComparative.equals("Y")){
-        for (int j = contador; j>0; j--){
-          discard1[k] = "fieldTotalQtyNivel"+String.valueOf(j);
-          discard1[k+12] = "fieldTotalRefundQtyNivel"+String.valueOf(j);
-          discard1[k+24] = "fieldUomsymbol"+String.valueOf(j);
-          discard1[k+6] = "fieldTotalRefQtyNivel"+String.valueOf(j);
-          discard1[k+18] = "fieldTotalRefRefundQtyNivel"+String.valueOf(j);
-          k++;
-        }
-      } else {
-        for (int j = contador; j>0; j--){
-          discard1[k] = "fieldNoncomparativeTotalQtyNivel"+String.valueOf(j);
-          discard1[k+10] = "fieldNoncomparativeTotalRefundQtyNivel"+String.valueOf(j);
-          discard1[k+20] = "fieldNoncomparativeUomsymbol"+String.valueOf(j);
-          k++;
-        }
+    //Checks if there is a conversion rate for each of the transactions of the report
+    String strConvRateErrorMsg = "";
+    OBError myMessage = null;
+    myMessage = new OBError();
+    if (strComparative.equals("Y")){
+      try {
+        data = ReportRefundSalesDimensionalAnalysesData.select(this, strCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4], strTextShow[5], strTextShow[6], Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this, vars, "#User_Client", "ReportRefundInvoiceCustomerDimensionalAnalyses"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strsalesrepId, strmWarehouseId, strDateFromRef, DateTimeData.nDaysAfter(this, strDateToRef,"1"), strOrderby);
+      } catch(ServletException ex) {
+        myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
       }
-
-    }
-    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportRefundSalesDimensionalAnalysesEdition", discard1).createXmlDocument();
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setParameter("eliminar2", discard[1]);
-    xmlDocument.setParameter("eliminar3", discard[2]);
-    xmlDocument.setParameter("eliminar4", discard[3]);
-    xmlDocument.setParameter("eliminar5", discard[4]);
-    xmlDocument.setParameter("eliminar6", discard[5]);
-    xmlDocument.setParameter("eliminar7", discard[6]);
-    xmlDocument.setParameter("title", strTitle);
-    xmlDocument.setParameter("constante", "100");
-    if (strComparative.equals("Y")){
-      xmlDocument.setData("structure1", data);
     } else {
-      xmlDocument.setData("structure2", data);
+      try {
+        data = ReportRefundSalesDimensionalAnalysesData.selectNoComparative(this, strCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4], strTextShow[5], strTextShow[6], Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this, vars, "#User_Client", "ReportRefundInvoiceCustomerDimensionalAnalyses"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strsalesrepId, strmWarehouseId, strOrderby);
+      } catch(ServletException ex) {
+        myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+      }
     }
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+    strConvRateErrorMsg = myMessage.getMessage();
+    //If a conversion rate is missing for a certain transaction, an error message window pops-up.
+    if(!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
+      advisePopUp(response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()), strConvRateErrorMsg);      
+    } else { //Otherwise, the report is launched  
+      if (data.length == 0 || data == null){
+        data = ReportRefundSalesDimensionalAnalysesData.set();
+      } else {
+        int contador = intDiscard;
+        if (intAuxDiscard != -1) contador = intAuxDiscard;
+        int k = 1;
+        if (strComparative.equals("Y")){
+          for (int j = contador; j>0; j--){
+            discard1[k] = "fieldTotalQtyNivel"+String.valueOf(j);
+            discard1[k+12] = "fieldTotalRefundQtyNivel"+String.valueOf(j);
+            discard1[k+24] = "fieldUomsymbol"+String.valueOf(j);
+            discard1[k+6] = "fieldTotalRefQtyNivel"+String.valueOf(j);
+            discard1[k+18] = "fieldTotalRefRefundQtyNivel"+String.valueOf(j);
+            k++;
+          }
+        } else {
+          for (int j = contador; j>0; j--){
+            discard1[k] = "fieldNoncomparativeTotalQtyNivel"+String.valueOf(j);
+            discard1[k+10] = "fieldNoncomparativeTotalRefundQtyNivel"+String.valueOf(j);
+            discard1[k+20] = "fieldNoncomparativeUomsymbol"+String.valueOf(j);
+            k++;
+          }
+        }
+  
+      }
+      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportRefundSalesDimensionalAnalysesEdition", discard1).createXmlDocument();
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("theme", vars.getTheme());
+      xmlDocument.setParameter("eliminar2", discard[1]);
+      xmlDocument.setParameter("eliminar3", discard[2]);
+      xmlDocument.setParameter("eliminar4", discard[3]);
+      xmlDocument.setParameter("eliminar5", discard[4]);
+      xmlDocument.setParameter("eliminar6", discard[5]);
+      xmlDocument.setParameter("eliminar7", discard[6]);
+      xmlDocument.setParameter("title", strTitle);
+      String strCurISOSym = Utility.stringISOSymbol(this, strCurrencyId);
+      strCurISOSym = strCurISOSym.replace('(',' ');
+      strCurISOSym = strCurISOSym.replace(')',' ');
+      xmlDocument.setParameter("convisosym", strCurISOSym);
+      xmlDocument.setParameter("constante", "100");
+      if (strComparative.equals("Y")){
+        xmlDocument.setData("structure1", data);
+      } else {
+        xmlDocument.setData("structure2", data);
+      }
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.println(xmlDocument.print());
+      out.close();
+    }
   }
 
   public String getServletInfo() {

@@ -38,6 +38,8 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
+    //Get user Client's base currency
+    String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     if (vars.commandIn("DEFAULT")){
       String strdateFrom = vars.getStringParameter("inpDateFrom", "");
       String strdateTo = vars.getStringParameter("inpDateTo", "");
@@ -49,7 +51,8 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
       String strcRegionId = vars.getStringParameter("inpcRegionId", "");
       String strProjectpublic = vars.getStringParameter("inpProjectpublic", "");
       String strProduct = vars.getStringParameter("inpProductId", "");
-      printPageDataSheet(response, vars, strdateFrom, strdateTo, strcBpartnerId, strmWarehouseId, strcProjectId, strmCategoryId, strProjectkind, strcRegionId, strProjectpublic, strProduct);
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportSalesOrderInvoicedJasper|currency", strUserCurrencyId);
+      printPageDataSheet(response, vars, strdateFrom, strdateTo, strcBpartnerId, strmWarehouseId, strcProjectId, strmCategoryId, strProjectkind, strcRegionId, strProjectpublic, strProduct, strCurrencyId);
     }else if(vars.commandIn("FIND")){
       String strdateFrom = vars.getStringParameter("inpDateFrom");
       String strdateTo = vars.getStringParameter("inpDateTo");
@@ -61,11 +64,12 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
       String strcRegionId = vars.getStringParameter("inpcRegionId");
       String strProjectpublic = vars.getStringParameter("inpProjectpublic");
       String strProduct = vars.getStringParameter("inpmProductId");
-      printPageDataSheetJasper(response, vars, strdateFrom, strdateTo, strcBpartnerId, strmWarehouseId, strcProjectId, strmCategoryId, strProjectkind, strcRegionId, strProjectpublic, strProduct);
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportSalesOrderInvoicedJasper|currency", strUserCurrencyId);
+      printPageDataSheetJasper(response, vars, strdateFrom, strdateTo, strcBpartnerId, strmWarehouseId, strcProjectId, strmCategoryId, strProjectkind, strcRegionId, strProjectpublic, strProduct, strCurrencyId);
     } else pageErrorPopUp(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom, String strdateTo, String strcBpartnerId, String strmWarehouseId, String strcProjectId, String strmCategoryId, String strProjectkind, String strcRegionId, String strProjectpublic, String strProduct) throws IOException, ServletException {
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom, String strdateTo, String strcBpartnerId, String strmWarehouseId, String strcProjectId, String strmCategoryId, String strProjectkind, String strcRegionId, String strProjectpublic, String strProduct, String strCurrencyId) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     String discard[]={"sectionPartner"};
     String strTitle = "";
@@ -102,11 +106,11 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
 
       xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
       xmlDocument.setParameter("dateFrom", strdateFrom);
-    xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
       xmlDocument.setParameter("dateTo", strdateTo);
-    xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
       xmlDocument.setParameter("paramBPartnerId", strcBpartnerId);
       xmlDocument.setParameter("mWarehouseId", strmWarehouseId);
       xmlDocument.setParameter("cProjectId", strcProjectId);
@@ -128,7 +132,7 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportSalesOrderInvoicedJasper"), Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderInvoicedJasper"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportSalesOrderInvoicedJasper", strmCategoryId);
-		xmlDocument.setData("reportM_PRODUCT_CATEGORYID","liststructure", comboTableData.select(false));
+        xmlDocument.setData("reportM_PRODUCT_CATEGORYID","liststructure", comboTableData.select(false));
         comboTableData = null;
       } catch (Exception ex) {
         throw new ServletException(ex);
@@ -160,6 +164,16 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
       } catch (Exception ex) {
         throw new ServletException(ex);
       }
+      
+      xmlDocument.setParameter("ccurrencyid", strCurrencyId);    
+      try {
+        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportSalesOrderInvoicedJasper"), Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderInvoicedJasper"), 0);
+        Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportSalesOrderInvoicedJasper", strCurrencyId);
+        xmlDocument.setData("reportC_Currency_ID","liststructure", comboTableData.select(false));
+        comboTableData = null;
+      } catch (Exception ex) {
+        throw new ServletException(ex);
+      }
 
       SubCategoryProductData[] dataSub = SubCategoryProductData.select(this, Utility.getContext(this, vars, "#User_Org", "ReportSalesOrderInvoicedJasper"), Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderInvoicedJasper"));
       xmlDocument.setParameter("product", arrayDobleEntrada("array", SubCategoryProductData.selectProduct(this, Utility.getContext(this, vars, "#User_Org", "ReportSalesOrderInvoicedJasper"), Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderInvoicedJasper"))));
@@ -172,7 +186,7 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
       
     }
     else {
-      ReportSalesOrderInvoicedData[] data = ReportSalesOrderInvoicedData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderInvoiced"), Utility.getContext(this, vars, "#User_Org", "ReportSalesOrderInvoiced"), strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,"1"), strcBpartnerId, strmWarehouseId, strcProjectId, strmCategoryId, strProjectkind, strcRegionId, strProjectpublic, strProduct);
+      ReportSalesOrderInvoicedData[] data = ReportSalesOrderInvoicedData.select(this, strCurrencyId, Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderInvoiced"), Utility.getContext(this, vars, "#User_Org", "ReportSalesOrderInvoiced"), strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,"1"), strcBpartnerId, strmWarehouseId, strcProjectId, strmCategoryId, strProjectkind, strcRegionId, strProjectpublic, strProduct);
       if (data == null || data.length == 0){
         xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportSalesOrderInvoicedPop", discard).createXmlDocument();
         xmlDocument.setData("structure1", ReportSalesOrderInvoicedData.set());
@@ -201,24 +215,36 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
   }
 
 
-// Jasper calling starts here
+  // Jasper calling starts here
+  void printPageDataSheetJasper(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom, String strdateTo, String strcBpartnerId, String strmWarehouseId, String strcProjectId, String strmCategoryId, String strProjectkind, String strcRegionId, String strProjectpublic, String strProduct, String strCurrencyId) throws IOException, ServletException {
 
-  void printPageDataSheetJasper(HttpServletResponse response, VariablesSecureApp vars, String strdateFrom, String strdateTo, String strcBpartnerId, String strmWarehouseId, String strcProjectId, String strmCategoryId, String strProjectkind, String strcRegionId, String strProjectpublic, String strProduct) throws IOException, ServletException {
-
-    ReportSalesOrderInvoicedData[] data = ReportSalesOrderInvoicedData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderInvoiced"), Utility.getContext(this, vars, "#User_Org", "ReportSalesOrderInvoiced"), strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,"1"), strcBpartnerId, strmWarehouseId, strcProjectId, strmCategoryId, strProjectkind, strcRegionId, strProjectpublic, strProduct);
-
-    String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportSalesOrderInvoicedJasper.jrxml";
-    String strOutput = "html";
-    if (strOutput.equals("pdf")) response.setHeader("Content-disposition", "inline; filename=ReportSalesOrderInvoiced.pdf");
-
-    String strSubTitle = "";
-    strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " "+strdateFrom+" " + Utility.messageBD(this, "To", vars.getLanguage()) + " "+strdateTo;
-    
-    HashMap<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("REPORT_TITLE", classInfo.name);
-		parameters.put("REPORT_SUBTITLE", strSubTitle);
-    renderJR(vars, response, strReportName, strOutput, parameters, data, null ); 
-
+    //Checks if there is a conversion rate for each of the transactions of the report
+    ReportSalesOrderInvoicedData[] data = null;
+    String strConvRateErrorMsg = "";
+    OBError myMessage = null;
+    myMessage = new OBError();
+    try {
+      data = ReportSalesOrderInvoicedData.select(this, strCurrencyId, Utility.getContext(this, vars, "#User_Client", "ReportSalesOrderInvoiced"), Utility.getContext(this, vars, "#User_Org", "ReportSalesOrderInvoiced"), strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,"1"), strcBpartnerId, strmWarehouseId, strcProjectId, strmCategoryId, strProjectkind, strcRegionId, strProjectpublic, strProduct);
+    } catch(ServletException ex) {
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+    }
+    strConvRateErrorMsg = myMessage.getMessage();
+    //If a conversion rate is missing for a certain transaction, an error message window pops-up.
+    if(!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
+      advisePopUp(response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()), strConvRateErrorMsg);      
+    } else { //Launch the report as usual, calling the JRXML file
+      String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportSalesOrderInvoicedJasper.jrxml";
+      String strOutput = "html";
+      if (strOutput.equals("pdf")) response.setHeader("Content-disposition", "inline; filename=ReportSalesOrderInvoiced.pdf");
+  
+      String strSubTitle = "";
+      strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " "+strdateFrom+" " + Utility.messageBD(this, "To", vars.getLanguage()) + " "+strdateTo;
+      
+      HashMap<String, Object> parameters = new HashMap<String, Object>();
+  		parameters.put("REPORT_TITLE", classInfo.name);
+  		parameters.put("REPORT_SUBTITLE", strSubTitle);
+      renderJR(vars, response, strReportName, strOutput, parameters, data, null );
+    }
   }
 
   public String getServletInfo() {

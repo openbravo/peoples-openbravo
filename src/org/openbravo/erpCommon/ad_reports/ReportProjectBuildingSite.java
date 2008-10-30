@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@ import javax.servlet.http.*;
 
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.ToolBar;
+import org.openbravo.erpCommon.utility.Utility;
 
 import org.openbravo.erpCommon.utility.DateTimeData;
 
@@ -197,7 +198,9 @@ public class ReportProjectBuildingSite extends HttpSecureAppServlet {
       xmlDocument.setData("reportCBPartnerId_IN", "liststructure", ReportProjectBuildingSiteData.selectBpartner(this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""), strcBpartnerId));
       xmlDocument.setData("reportMProductId_IN", "liststructure", ReportProjectBuildingSiteData.selectMproduct(this, Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""), strProduct));
     } else {
-      ReportProjectBuildingSiteData[] data = ReportProjectBuildingSiteData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSite"), Utility.getContext(this, vars, "#User_Org", "ReportProjectBuildingSite"), strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,"1"), strcBpartnerId, strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic, strcRegionId, strSalesRep, strProduct);
+      //Get user Client's base currency
+      String strCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
+      ReportProjectBuildingSiteData[] data = ReportProjectBuildingSiteData.select(this, strCurrencyId, Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSite"), Utility.getContext(this, vars, "#User_Org", "ReportProjectBuildingSite"), strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,"1"), strcBpartnerId, strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic, strcRegionId, strSalesRep, strProduct);
 
       if (data == null || data.length == 0){
         xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportProjectBuildingSitePop", discard).createXmlDocument();
@@ -226,8 +229,10 @@ public class ReportProjectBuildingSite extends HttpSecureAppServlet {
     String discard[]={"sectionPartner"};
     String strTitle = "";
     XmlDocument xmlDocument=null;
-
-    ReportProjectBuildingSiteData[] data = ReportProjectBuildingSiteData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSite"), Utility.getContext(this, vars, "#User_Org", "ReportProjectBuildingSite"), strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,"1"), strcBpartnerId, strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic, strcRegionId, strSalesRep, strProduct);
+    
+    //Get user Client's base currency
+    String strCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
+    ReportProjectBuildingSiteData[] data = ReportProjectBuildingSiteData.select(this, strCurrencyId, Utility.getContext(this, vars, "#User_Client", "ReportProjectBuildingSite"), Utility.getContext(this, vars, "#User_Org", "ReportProjectBuildingSite"), strdateFrom, DateTimeData.nDaysAfter(this, strdateTo,"1"), strcBpartnerId, strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic, strcRegionId, strSalesRep, strProduct);
 
     if (data == null || data.length == 0){
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportProjectBuildingSitePDF", discard).createXmlDocument();

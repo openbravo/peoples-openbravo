@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -206,7 +206,9 @@ public class ReportInvoiceCustomerEdition extends HttpSecureAppServlet {
     XmlDocument xmlDocument=null;
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerEdition").createXmlDocument();
     InvoiceCustomerEditionData[] data = null;
-    data = InvoiceCustomerEditionData.select(this, Utility.getContext(this, vars, "#User_Org", "InvoiceCustomerFilter"), Utility.getContext(this, vars, "#User_Client", "InvoiceCustomerFilter"), strdateFrom, strdateTo, strcBpartnerId, strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic, strcRegionId, strSalesRep, strProduct);
+    //Get user Client's base currency
+    String strCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
+    data = InvoiceCustomerEditionData.select(this, strCurrencyId, Utility.getContext(this, vars, "#User_Org", "InvoiceCustomerFilter"), Utility.getContext(this, vars, "#User_Client", "InvoiceCustomerFilter"), strdateFrom, strdateTo, strcBpartnerId, strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic, strcRegionId, strSalesRep, strProduct);
     xmlDocument.setData("structure1", data);
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
@@ -224,7 +226,9 @@ public class ReportInvoiceCustomerEdition extends HttpSecureAppServlet {
     XmlDocument xmlDocument=null;
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportInvoiceCustomerEdition_Pdf").createXmlDocument();
     InvoiceCustomerEditionData[] data = null;
-    data = InvoiceCustomerEditionData.select(this, Utility.getContext(this, vars, "#User_Org", "InvoiceCustomerFilter"), Utility.getContext(this, vars, "#User_Client", "InvoiceCustomerFilter"), strdateFrom, strdateTo, strcBpartnerId, strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic, strcRegionId, strSalesRep, strProduct);
+    //Get user Client's base currency
+    String strCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
+    data = InvoiceCustomerEditionData.select(this, strCurrencyId, Utility.getContext(this, vars, "#User_Org", "InvoiceCustomerFilter"), Utility.getContext(this, vars, "#User_Client", "InvoiceCustomerFilter"), strdateFrom, strdateTo, strcBpartnerId, strcProjectId, strmCategoryId, strProjectkind, strProjectphase, strProjectstatus, strProjectpublic, strcRegionId, strSalesRep, strProduct);
     xmlDocument.setData("structure1", data);
     String strResult = xmlDocument.print();
     if (log4j.isDebugEnabled()) log4j.debug(strResult);

@@ -33,10 +33,8 @@ import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.Calendar;
-import java.util.Date;
 import java.text.ParseException;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.sql.Connection;
 import javax.servlet.ServletException;
 import java.io.*;
@@ -1168,6 +1166,19 @@ public class Utility {
   public static String stringBaseCurrencyId(ConnectionProvider conn, String strClientId) throws ServletException {
     String strBaseCurrencyId = UtilityData.getBaseCurrencyId(conn, strClientId);
     return strBaseCurrencyId;
+  }
+  
+  /**
+   * Returns the ISO code plus the symbol of the given currency
+   * in the form (ISO-SYM), e.g., (USD-$)
+   * 
+   * @param strCurrencyID: ID of the currency.
+   * @return Returns String strISOSymbol with the ISO code plus the symbol of the currency.
+   * @throws ServletException 
+   */
+  public static String stringISOSymbol(ConnectionProvider conn, String strCurrencyID) throws ServletException {
+    String strISOSymbol = UtilityData.getISOSymbol(conn, strCurrencyID);
+    return strISOSymbol;
   }
   
   @Deprecated

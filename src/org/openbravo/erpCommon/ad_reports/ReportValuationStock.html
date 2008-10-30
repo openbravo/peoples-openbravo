@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All portions are Copyright (C) 2001-2008 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,7 +56,12 @@ function onloadFunctions() {
 }
 
 function validate() {
-	  var frm=document.frmMain;
+	var frm=document.frmMain;
+	if (frm.inpCurrencyId.value == null || frm.inpCurrencyId.value == "") {
+	    setWindowElementFocus(frm.inpCurrencyId);
+	    showJSMessage(7);
+	    return false;
+	}
 	  if (inputValue(frm.inpmWarehouseId)==null || inputValue(frm.inpmWarehouseId)=="") {
 	      setWindowElementFocus(frm.inpmWarehouseId);
 	      showJSMessage(7);
@@ -266,8 +271,12 @@ function validate() {
                       <OPTION value=""> <DIV id="reportM_PRODUCT_CATEGORYID"></DIV></OPTION>
                     </SELECT></TD>
                   <TD class="ContentCell"></TD>
-                  <TD class="TitleCell"></TD>
-                  <TD class="ContentCell"></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">Currency</SPAN></TD>
+                  <TD class="Combo_ContentCell">
+  		     		<SELECT name="inpCurrencyId" id="inpCurrencyId" class="ComboKey Combo_OneCell_width" required="true">
+     		      	<OPTION value=""><DIV id="reportC_Currency_ID"></DIV></OPTION>
+   		     		</SELECT>
+		   		  </TD>
                 </TR>
                   <TR>
                     <td colspan="6">

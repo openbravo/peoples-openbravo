@@ -45,7 +45,7 @@
 <!--102 CREATEDBY-->
 <!--102-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--102 UPDATED-->
-<!--102-->              <UPDATED><![CDATA[2006-04-04 16:48:24.0]]></UPDATED>
+<!--102-->              <UPDATED><![CDATA[2008-09-01 12:42:38.0]]></UPDATED>
 <!--102 UPDATEDBY-->
 <!--102-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--102 ISO_CODE-->
@@ -60,6 +60,8 @@
 <!--102-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
 <!--102 PRICEPRECISION-->
 <!--102-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
+<!--102 ISSYMBOLRIGHTSIDE-->
+<!--102-->              <ISSYMBOLRIGHTSIDE><![CDATA[Y]]></ISSYMBOLRIGHTSIDE>
 <!--102**************--></C_CURRENCY>
 
 <!--103**************--><C_CURRENCY>

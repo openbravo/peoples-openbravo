@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,7 +32,9 @@ public class ReportShipper extends HttpSecureAppServlet {
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-
+    
+    //Get user Client's base currency
+    String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     if (vars.commandIn("DEFAULT")) {
       String strFrom = vars.getGlobalVariable("inpFrom", "ReportShipper|From", "");
       String strTo = vars.getGlobalVariable("inpTo", "ReportShipper|To", "");
@@ -40,7 +42,8 @@ public class ReportShipper extends HttpSecureAppServlet {
       String strSale = vars.getGlobalVariable("inpSale", "ReportShipper|Sale", "N");
       String strPurchase = vars.getGlobalVariable("inpPurchase", "ReportShipper|Purchase", "N");
       String strDetail = vars.getGlobalVariable("inpDetail", "ReportShipper|Detail", "N");
-      printPageDataSheet(response, vars, strFrom, strTo, strShipper, strSale, strPurchase, strDetail);
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "", strUserCurrencyId);
+      printPageDataSheet(response, vars, strFrom, strTo, strShipper, strSale, strPurchase, strDetail, strCurrencyId);
     } else if (vars.commandIn("FIND")) {
       String strFrom = vars.getRequestGlobalVariable("inpFrom", "ReportShipper|From");
       String strTo = vars.getRequestGlobalVariable("inpTo", "ReportShipper|To");
@@ -48,17 +51,19 @@ public class ReportShipper extends HttpSecureAppServlet {
       String strSale = vars.getRequestGlobalVariable("inpSale", "ReportShipper|Sale");
       String strPurchase = vars.getRequestGlobalVariable("inpPurchase", "ReportShipper|Purchase");
       String strDetail = vars.getRequestGlobalVariable("inpDetail", "ReportShipper|Detail");
-      printPageDataSheet(response, vars, strFrom, strTo, strShipper, strSale, strPurchase, strDetail);
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportShipper|currency", strUserCurrencyId);
+      printPageDataSheet(response, vars, strFrom, strTo, strShipper, strSale, strPurchase, strDetail, strCurrencyId);
     } else pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strFrom, String strTo, String strShipper, String strSale, String strPurchase, String strDetail)
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strFrom, String strTo, String strShipper, String strSale, String strPurchase, String strDetail, String strCurrencyId)
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument=null;
     ReportShipperData[] data=null;
+    ReportShipperData[][] dataLine = null;
 
     String discard[]= {""};
     if (!strDetail.equals("Y")) discard[0] = "reportLine";
@@ -73,75 +78,99 @@ public class ReportShipper extends HttpSecureAppServlet {
     else if (!strSale.equals("Y") && !strPurchase.equals("Y")) strIsSOTrx = "D";
 
     if (log4j.isDebugEnabled()) log4j.debug("****data passed from: " + strFrom + " to: " +strTo + " shiper: " + strShipper + " isso " + strIsSOTrx + " det " + strDetail);
-    data = ReportShipperData.select(this, vars.getLanguage(), strFrom, strTo, strShipper, strIsSOTrx);
-
-    ReportShipperData[][] dataLine = new ReportShipperData[0][0];
-    if (data != null && data.length > 0) {
-      dataLine = new ReportShipperData[data.length][];
-
-      for (int i=0; i<data.length ; i++) {
-        if (log4j.isDebugEnabled()) log4j.debug("shipment " + data[i].shipmentid);
-        dataLine[i] = ReportShipperData.selectLine(this, vars.getLanguage(), data[i].shipmentid);
-        //if (RawMaterialData[i] == null || RawMaterialData[i].length == 0) RawMaterialData[i] = ReportRawMaterialData.set();
-      }
-    } //else dataLine[0] = ReportShipperData.set();
-
-
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportShipper", false, "", "", "",false, "ad_reports", strReplaceWith, false, true);
-    toolbar.prepareSimpleToolBarTemplate();
-    xmlDocument.setParameter("toolbar", toolbar.toString());
-
+    //Checks if there is a conversion rate for each of the transactions of the report
+    String strConvRateErrorMsg = "";
+    OBError myMessage = null;
+    myMessage = new OBError();
+    String strBaseCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     try {
-      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.ReportShipper");
-      xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
-      xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
-      xmlDocument.setParameter("childTabContainer", tabs.childTabs());
-      xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportShipper.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
-      xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportShipper.html", strReplaceWith);
-      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
+      data = ReportShipperData.select(this, vars.getLanguage(), strCurrencyId, strBaseCurrencyId, strFrom, strTo, strShipper, strIsSOTrx);
+    } catch(ServletException ex) {
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
     }
-    {
-      OBError myMessage = vars.getMessage("ReportShipper");
-      vars.removeMessage("ReportShipper");
-      if (myMessage!=null) {
-        xmlDocument.setParameter("messageType", myMessage.getType());
-        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-      }
-    } 
-
-    xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("paramFrom", strFrom);
-    xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("paramTo", strTo);
-    xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("paramSale", strSale);
-    xmlDocument.setParameter("paramPurchase", strPurchase);
-    xmlDocument.setParameter("paramDetalle", strDetail);
-
-    xmlDocument.setParameter("paramShipper", strShipper);
-    try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Shipper_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportShipper"), Utility.getContext(this, vars, "#User_Client", "ReportShipper"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportShipper", strShipper);
-      xmlDocument.setData("reportShipper","liststructure", comboTableData.select(false));
-      comboTableData = null;
-    } catch (Exception ex) {
-      throw new ServletException(ex);
+    strConvRateErrorMsg = myMessage.getMessage();
+    //If a conversion rate is missing for a certain transaction, an error message window pops-up.
+    if(!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
+      advise(response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()), strConvRateErrorMsg);
+    } else { //Otherwise, the report is launched
+      dataLine = new ReportShipperData[0][0];
+      if (data != null && data.length > 0) {
+        dataLine = new ReportShipperData[data.length][];
+  
+        for (int i=0; i<data.length ; i++) {
+          if (log4j.isDebugEnabled()) log4j.debug("shipment " + data[i].shipmentid);
+          dataLine[i] = ReportShipperData.selectLine(this, vars.getLanguage(), data[i].shipmentid);
+          //if (RawMaterialData[i] == null || RawMaterialData[i].length == 0) RawMaterialData[i] = ReportRawMaterialData.set();
+        }
+      } //else dataLine[0] = ReportShipperData.set();
     }
 
-
-    xmlDocument.setData("structure", data);
-    xmlDocument.setDataArray("reportLine","structureLine", dataLine);
-    out.println(xmlDocument.print());
-    out.close();
+    if(strConvRateErrorMsg.equals("") || strConvRateErrorMsg == null) {
+      ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportShipper", false, "", "", "",false, "ad_reports", strReplaceWith, false, true);
+      toolbar.prepareSimpleToolBarTemplate();
+      xmlDocument.setParameter("toolbar", toolbar.toString());
+  
+      try {
+        WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.ReportShipper");
+        xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
+        xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
+        xmlDocument.setParameter("childTabContainer", tabs.childTabs());
+        xmlDocument.setParameter("theme", vars.getTheme());
+        NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportShipper.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+        xmlDocument.setParameter("navigationBar", nav.toString());
+        LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportShipper.html", strReplaceWith);
+        xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+      } catch (Exception ex) {
+        throw new ServletException(ex);
+      }
+      {
+        myMessage = vars.getMessage("ReportShipper");
+        vars.removeMessage("ReportShipper");
+        if (myMessage!=null) {
+          xmlDocument.setParameter("messageType", myMessage.getType());
+          xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+          xmlDocument.setParameter("messageMessage", myMessage.getMessage());
+        }
+      } 
+  
+      xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
+      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+      xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
+      xmlDocument.setParameter("paramFrom", strFrom);
+      xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("paramTo", strTo);
+      xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("paramSale", strSale);
+      xmlDocument.setParameter("paramPurchase", strPurchase);
+      xmlDocument.setParameter("paramDetalle", strDetail);
+  
+      xmlDocument.setParameter("paramShipper", strShipper);
+      try {
+        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Shipper_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportShipper"), Utility.getContext(this, vars, "#User_Client", "ReportShipper"), 0);
+        Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportShipper", strShipper);
+        xmlDocument.setData("reportShipper","liststructure", comboTableData.select(false));
+        comboTableData = null;
+      } catch (Exception ex) {
+        throw new ServletException(ex);
+      }
+  
+      xmlDocument.setParameter("ccurrencyid", strCurrencyId);    
+      try {
+        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportShipper"), Utility.getContext(this, vars, "#User_Client", "ReportShipper"), 0);
+        Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportShipper", strCurrencyId);
+        xmlDocument.setData("reportC_Currency_ID","liststructure", comboTableData.select(false));
+        comboTableData = null;
+      } catch (Exception ex) {
+        throw new ServletException(ex);
+      }
+      
+      xmlDocument.setData("structure", data);
+      xmlDocument.setDataArray("reportLine","structureLine", dataLine);
+      out.println(xmlDocument.print());
+      out.close();
+    }
   }
 
   public String getServletInfo() {

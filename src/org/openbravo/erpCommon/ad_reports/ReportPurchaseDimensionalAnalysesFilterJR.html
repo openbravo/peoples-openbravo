@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All portions are Copyright (C) 2001-2008 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -53,11 +53,15 @@ var baseDirectory = "../../../../../web/";
 function validate(action)
 {
 	var frm = document.frmMain;
-	if (frm.inpDateFrom.value == null || frm.inpDateFrom.value == "") {
+	if (frm.inpCurrencyId.value == null || frm.inpCurrencyId.value == "") {
+	    setWindowElementFocus(frm.inpCurrencyId);
+	    showJSMessage(7);
+	    return false;
+	}else if (frm.inpDateFrom.value == null || frm.inpDateFrom.value == "") {
 		setWindowElementFocus(frm.inpDateFrom);
 		showJSMessage(7);
 		return false;
-	} else if (frm.inpDateTo.value == null || frm.inpDateTo.value == ""){
+	}else if (frm.inpDateTo.value == null || frm.inpDateTo.value == "") {
 		setWindowElementFocus(frm.inpDateTo);
 		showJSMessage(7);
 		return false;
@@ -346,8 +350,12 @@ function onloadFunctions() {
                   <TD class="TitleCell"><SPAN class="LabelText">Less Than</SPAN></TD>
                   <TD class="TextBox_ContentCell"> <INPUT dojoType="openbravo:RealNumberTextbox" greaterThan="paramMayor" class="TextBox_OneCell_width" type="text" name="inpMenor" maxlength="10" id="paramMenor" value=""></INPUT><script>djConfig.searchIds.push("paramMenor");</script>
                   </TD>
-                  <TD class="TitleCell"></TD>
-                  <TD class="ContentCell"></TD>
+                  <TD class="TitleCell"><SPAN class="LabelText">Currency</SPAN></TD>
+                  <TD class="Combo_ContentCell">
+                  	<SELECT name="inpCurrencyId" id="inpCurrencyId" class="ComboKey Combo_OneCell_width" required="true">
+                    <OPTION value=""><DIV id="reportC_Currency_ID"></DIV></OPTION>
+                    </SELECT>
+                  </TD>                  
                 </TR>
                 <TR>
                   <td colspan="6">

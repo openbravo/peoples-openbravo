@@ -107,4 +107,12 @@
      ]]></Sql>
     <Parameter name="adClientId"/>
    </SqlMethod>
+   <SqlMethod name="getISOSymbol" type="preparedStatement" return="String" default="false">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT C_CURRENCY_ISOSYM(?)
+  		FROM DUAL
+      </Sql>
+      <Parameter name="cCurrencyId"/>
+   </SqlMethod>
 </SqlClass>
