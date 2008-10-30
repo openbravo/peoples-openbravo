@@ -190,10 +190,11 @@ function getParamsScript(form) {
 * @param {Form} form Reference to the form, to submit
 * @param {Boolean} bolOneFormSubmission To control if we want to validate only one form submission
 * @param {Boolean} isCallout Verify if we will wait for a CallOut response
+* @param {String} frameName Name of the frame that makes the commit needed for callouts 
 * @returns True if the form is sent correctly, false if an error occours and is not possible to send the data.
 * @type Boolean
 */
-function submitForm(field, value, form, bolOneFormSubmission, isCallOut) {
+function submitForm(field, value, form, bolOneFormSubmission, isCallOut, frameName) {
   if (form == null) form = document.forms[0];
   if (isCallOut==null) isCallOut = false;
   if (bolOneFormSubmission!=null && bolOneFormSubmission) {
@@ -202,12 +203,12 @@ function submitForm(field, value, form, bolOneFormSubmission, isCallOut) {
       return false;
     } else {
     	gSubmitted=1;
-      if (isCallOut) setGWaitingCallOut(true);
+      if (isCallOut) setGWaitingCallOut(true, frameName);
       field.value = value;
       form.submit();
     }
   } else {
-    if (isCallOut) setGWaitingCallOut(true);
+    if (isCallOut) setGWaitingCallOut(true, frameName);
     field.value = value;
     form.submit();
   }

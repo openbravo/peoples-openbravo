@@ -429,10 +429,16 @@ public class CreateFrom extends HttpSecureAppServlet {
     else if (vars.commandIn("FIND_INVOICE")) strPO="";
     if (strPO.equals("") && strInvoice.equals("")) {
       String[] discard = {"sectionDetail"};
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFrom_Shipment", discard).createXmlDocument();
+      if (isSOTrx.equals("Y"))
+        xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFrom_Shipment", discard).createXmlDocument();
+      else
+        xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFrom_ShipmentPO", discard).createXmlDocument();
       data=CreateFromShipmentData.set();
     } else {
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFrom_Shipment").createXmlDocument();
+      if (isSOTrx.equals("Y"))
+        xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFrom_Shipment").createXmlDocument();
+      else
+        xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFrom_ShipmentPO").createXmlDocument();
       if (strInvoice.equals("")) {
         if (vars.getLanguage().equals("en_US")) {
           if (isSOTrx.equals("Y")) data=CreateFromShipmentData.selectFromPOSOTrx(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org", strWindowId), strPO);
@@ -493,6 +499,29 @@ public class CreateFrom extends HttpSecureAppServlet {
       }
     }
 
+    if (isSOTrx.equals("N")){
+      CreateFromShipmentData[][] dataUOM= new CreateFromShipmentData[data.length][];
+
+	  for (int i=0; i<data.length; i++)
+      {
+	    // Obtain the specific units for each product
+	  
+	    dataUOM[i]=CreateFromShipmentData.selectUOM(this,data[i].mProductId );
+		
+	    // Check the hidden fields
+		
+	    String strhavesec = data[i].havesec;
+	  
+	    if ("0".equals(strhavesec)){
+		  data[i].havesec = "hidden";
+		  data[i].havesecuom = "none";
+		} else {
+		  data[i].havesec = "text";
+		  data[i].havesecuom = "block";
+		}
+	  }
+	xmlDocument.setDataArray("reportM_Product_Uom_To_ID", "liststructure", dataUOM);
+    }
     xmlDocument.setData("structure1", data);
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -1110,6 +1139,194 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
   }
 
   OBError saveShipment(VariablesSecureApp vars, String strKey, String strTableId, String strProcessId, String strWindowId) throws IOException, ServletException {
+	    if (log4j.isDebugEnabled()) log4j.debug("Save: Shipment");
+	    String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
+	    if (isSOTrx.equals("Y"))
+	    	return saveShipmentSO(vars,strKey,strTableId,strProcessId,strWindowId);
+	    else
+	    	return saveShipmentPO(vars,strKey,strTableId,strProcessId,strWindowId);
+  }
+  
+  OBError saveShipmentPO(VariablesSecureApp vars, String strKey, String strTableId, String strProcessId, String strWindowId) throws IOException, ServletException {
+    if (log4j.isDebugEnabled()) log4j.debug("Save: Shipment");
+    String strLocatorCommon = vars.getRequiredStringParameter("inpmLocatorId");
+    String strType = vars.getRequiredStringParameter("inpType");
+    String strClaves = Utility.stringList(vars.getRequiredInParameter("inpId"));
+    String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
+    String strInvoice="", strPO="";
+    CreateFromShipmentData[] data=null;
+    OBError myMessage = null;
+    Connection conn = null;
+    try {
+      conn = this.getTransactionConnection();
+      if (strType.equals("INVOICE")) {
+        strInvoice = vars.getStringParameter("inpInvoice");
+        if (!isSOTrx.equals("Y")) data = CreateFromShipmentData.selectFromInvoiceUpdate(conn, this, strClaves);
+      } else {
+        strPO = vars.getStringParameter("inpPurchaseOrder");
+        if (isSOTrx.equals("Y")) data = CreateFromShipmentData.selectFromPOUpdateSOTrx(conn, this, strClaves);
+        else data = CreateFromShipmentData.selectFromPOUpdate(conn, this, strClaves);
+      }
+      if (data!=null) {
+        for (int i=0;i<data.length;i++) {
+
+    		// Obtain the values from the window
+            
+            String strLineId = "";
+            
+            if (strType.equals("INVOICE")) {
+              strLineId = data[i].cInvoicelineId;
+            } else {
+              strLineId = data[i].cOrderlineId;
+            }
+            
+        		String strMovementqty = vars.getRequiredStringParameter("inpmovementqty"+strLineId);
+        		String strQuantityorder = "";
+        		String strProductUomId = "";
+        		String strLocator = vars.getStringParameter("inpmLocatorId"+strLineId);
+        		String strmAttributesetinstanceId = vars.getStringParameter("inpmAttributesetinstanceId"+strLineId);
+        		String strcUomIdConversion = "";
+        		String strbreakdown = "";
+            CreateFromShipmentData[] dataUomIdConversion=null;
+        		
+        		if ("".equals(strLocator)) {
+        		  strLocator = strLocatorCommon;
+        		}
+        		
+        		if ("".equals(data[i].mProductUomId)) {
+        			strQuantityorder = "";
+        			strProductUomId = "";		
+        		}else{
+        			strQuantityorder = vars.getRequiredStringParameter("inpquantityorder"+strLineId);
+        			strProductUomId = vars.getRequiredStringParameter("inpmProductUomId"+strLineId);
+        			dataUomIdConversion = CreateFromShipmentData.selectcUomIdConversion (this, strProductUomId);
+
+					if (dataUomIdConversion == null || dataUomIdConversion.length == 0){
+					dataUomIdConversion=CreateFromShipmentData.set();
+					strbreakdown="N";
+					}else{
+        			strbreakdown = dataUomIdConversion[0].breakdown;
+        			}
+				}
+        		
+        
+        		//
+
+
+
+          String strMultiplyRate="";
+          int stdPrecision =0;
+          if ("Y".equals(strbreakdown)) {
+            if (dataUomIdConversion[i].cUomIdConversion.equals("")) {
+              releaseRollbackConnection(conn);
+              myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+              return myMessage;
+            }
+            String strInitUOM = dataUomIdConversion[i].cUomIdConversion;
+            String strUOM = data[i].cUomId;
+            if (strInitUOM.equals(strUOM)) strMultiplyRate = "1";
+            else strMultiplyRate = CreateFromShipmentData.multiplyRate (this, strInitUOM, strUOM);
+            if (strMultiplyRate.equals("")) strMultiplyRate = CreateFromShipmentData.divideRate (this, strUOM, strInitUOM);
+            if (strMultiplyRate.equals("")) {
+              strMultiplyRate = "1";
+              releaseRollbackConnection(conn);
+              myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+              return myMessage;
+            }
+            stdPrecision = Integer.valueOf(dataUomIdConversion[i].stdprecision).intValue();
+            BigDecimal quantity, qty, multiplyRate;
+
+            multiplyRate = new BigDecimal(strMultiplyRate);
+            qty = new BigDecimal(strMovementqty);
+            boolean qtyIsNegative = false;
+            if (qty.doubleValue() < ZERO.doubleValue()) {
+              qtyIsNegative = true;
+              qty = new BigDecimal(-1.0 * qty.doubleValue());
+            }
+            quantity = new BigDecimal(multiplyRate.doubleValue() * qty.doubleValue());
+            if (quantity.scale() > stdPrecision) quantity = quantity.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+            while (qty.doubleValue()>ZERO.doubleValue()) {
+              String total = "1";
+              BigDecimal conversion;
+              if (quantity.doubleValue()<1.0) {
+                total=quantity.toString();
+                conversion = qty;
+                quantity=ZERO;
+                qty=ZERO;
+              } else {
+                conversion = new BigDecimal(1.0 * multiplyRate.doubleValue());
+                if (conversion.doubleValue()>qty.doubleValue()) {
+                  conversion=qty;
+                  qty=ZERO;
+                } else qty = new BigDecimal(qty.doubleValue() - conversion.doubleValue());
+                quantity = new BigDecimal(quantity.doubleValue() - 1.0);
+              }
+              String strConversion = conversion.toString();
+              String strSequence = SequenceIdData.getUUID();
+              try {
+              CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(), data[i].adOrgId, vars.getUser(), data[i].description, data[i].mProductId, data[i].cUomId, (qtyIsNegative?"-"+strConversion:strConversion), data[i].cOrderlineId, strLocator, CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId), (qtyIsNegative?"-"+total:total), data[i].mProductUomId, strmAttributesetinstanceId);
+              if (!strInvoice.equals("")) CreateFromShipmentData.updateInvoice(conn, this, strSequence, data[i].cInvoicelineId);
+              else CreateFromShipmentData.updateInvoiceOrder(conn, this, strSequence, data[i].cOrderlineId);
+              } catch(ServletException ex) {
+                myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+                releaseRollbackConnection(conn);
+                return myMessage;
+              }
+            }
+          } else {
+            String strSequence = SequenceIdData.getUUID();
+            try {
+            CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(), data[i].adOrgId, vars.getUser(), data[i].description, data[i].mProductId, data[i].cUomId, strMovementqty, data[i].cOrderlineId, strLocator, CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId), strQuantityorder, strProductUomId, strmAttributesetinstanceId);
+            if (!strInvoice.equals("")) CreateFromShipmentData.updateInvoice(conn, this, strSequence, data[i].cInvoicelineId);
+            else CreateFromShipmentData.updateInvoiceOrder(conn, this, strSequence, data[i].cOrderlineId);
+            } catch(ServletException ex) {
+              myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+              releaseRollbackConnection(conn);
+              return myMessage;
+            }
+          }
+        }
+      }
+
+      if (!strPO.equals("")) {
+        try {
+        int total = CreateFromShipmentData.deleteC_Order_ID(conn, this, strKey, strPO);
+        if (total==0) CreateFromShipmentData.updateC_Order_ID(conn, this, strPO, strKey);
+        } catch(ServletException ex) {
+          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+          releaseRollbackConnection(conn);
+          return myMessage;
+        }
+      }
+      if (!strInvoice.equals("")) {
+        try {
+        int total = CreateFromShipmentData.deleteC_Invoice_ID(conn, this, strKey, strInvoice);
+        if (total==0) CreateFromShipmentData.updateC_Invoice_ID(conn, this, strInvoice, strKey);
+        } catch(ServletException ex) {
+          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+          releaseRollbackConnection(conn);
+          return myMessage;
+        }
+      }
+
+      releaseCommitConnection(conn);
+      if (log4j.isDebugEnabled()) log4j.debug("Save commit");
+      myMessage = new OBError();
+      myMessage.setType("Success");
+      myMessage.setTitle("");
+      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+    } catch(Exception e){
+      try {
+        releaseRollbackConnection(conn);
+      } catch (Exception ignored) {}
+      e.printStackTrace();
+      log4j.warn("Rollback in transaction");
+      myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+    }
+    return myMessage;
+  }
+
+  OBError saveShipmentSO(VariablesSecureApp vars, String strKey, String strTableId, String strProcessId, String strWindowId) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Save: Shipment");
     String strLocator = vars.getRequiredStringParameter("inpmLocatorId");
     String strType = vars.getRequiredStringParameter("inpType");

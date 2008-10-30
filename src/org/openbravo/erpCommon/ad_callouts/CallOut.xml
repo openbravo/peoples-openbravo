@@ -21,4 +21,5 @@
 	<template file="CallOut.html"/>
 	<PARAMETER id="paramArray" name="array"/>
 	<PARAMETER id="paramFrameName" name="frameName" attribute="onload" replace="xx" default=""/>
+	<PARAMETER id="paramFrameName" name="frameName1" attribute="onload" replace="yy" default=""/>
 </REPORT>
