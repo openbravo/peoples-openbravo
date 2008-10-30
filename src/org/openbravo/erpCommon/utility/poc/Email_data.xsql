@@ -82,16 +82,16 @@
         	)
         	VALUES
         	(
-        		TO_NUMBER(?),
-        		TO_NUMBER(?),
-        		TO_NUMBER(?), 
+        		?,
+        		?,
+        		?, 
         		'Y', 
         		now(), 
-        		TO_NUMBER(?),
+        		?,
 				now(),
-				TO_NUMBER(?),
+				?,
 				
-				TO_NUMBER(?),
+				?,
 				?,
 				?,
 				?,
