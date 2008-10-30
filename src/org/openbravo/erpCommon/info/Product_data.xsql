@@ -35,12 +35,12 @@
       FROM (
         SELECT p.M_Product_ID, p.Discontinued, p.Value, p.Name,
         M_BOM_Qty_Available(p.M_Product_ID,?, NULL) AS QtyAvailable, 
-        M_BOM_PriceList(p.M_Product_ID, pr.M_PriceList_Version_ID) AS PriceList,
-        M_BOM_PriceStd(p.M_Product_ID, pr.M_PriceList_Version_ID) AS PriceStd, 
+        M_BOM_PriceList(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceList,
+        M_BOM_PriceStd(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceStd, 
         M_BOM_Qty_OnHand(p.M_Product_ID,?, NULL) AS QtyOnHand, 
         M_BOM_Qty_Reserved(p.M_Product_ID,?, null) AS QtyReserved, 
         M_BOM_Qty_Ordered(p.M_Product_ID,?, NULL) AS QtyOrdered, 
-        M_BOM_PriceLimit(p.M_Product_ID, pr.M_PriceList_Version_ID) AS PriceLimit,
+        M_BOM_PriceLimit(p.M_Product_ID, pv.M_PriceList_Version_ID) AS PriceLimit,
         p.C_UOM_ID, pl.C_Currency_ID
         FROM M_Product p join
         (
@@ -48,22 +48,22 @@
           FROM ( SELECT '0' AS RN1, C.* FROM
             (
               SELECT ip.m_product_id, ip.value, ip.name
-              FROM M_Product ip 
+              FROM M_Product ip, M_ProductPrice pr
               WHERE
                 ip.IsSummary='N' AND 
                 ip.IsActive='Y'
                 AND ip.AD_Client_ID IN ('1') 
-                AND ip.AD_Org_ID IN ('1') 
+                AND ip.AD_Org_ID IN ('1')
+                AND ip.M_Product_ID=pr.M_Product_ID
+                AND pr.M_PriceList_Version_ID = ?
+                AND pr.IsActive='Y'
 				ORDER BY ip.Value
             ) C
           ) B WHERE 1=1
         ) p2 on p.m_product_id = p2.m_product_id,        
-        
-        M_ProductPrice pr,  M_Pricelist pl, M_PriceList_Version pv
-        WHERE p.M_Product_ID=pr.M_Product_ID 
-        AND pr.IsActive='Y'
-        AND pr.M_PriceList_Version_ID = ?
-        AND pr.M_PriceList_Version_ID=pv.M_PriceList_Version_ID
+        M_Pricelist pl, M_PriceList_Version pv
+        WHERE
+            pv.M_PriceList_Version_ID = ?
         AND pv.M_PriceList_ID=pl.M_PriceList_ID
         ) A ORDER BY Value
       ]]></Sql>
@@ -77,6 +77,7 @@
         <Parameter name="name" optional="true" after="ip.IsSummary='N' AND "><![CDATA[ UPPER(ip.Name) LIKE UPPER(?) AND ]]></Parameter>
         <Parameter name="adUserClient" type="replace" optional="true" after="ip.AD_Client_ID IN (" text="'1'"/>
         <Parameter name="adUserOrg" type="replace" optional="true" after="ip.AD_Org_ID IN (" text="'1'"/>
+        <Parameter name="priceListVersion"/>
         <Parameter name="orderBy" type="replace" optional="true" after="ORDER BY " text="ip.Value" />
         <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
         <Parameter name="pgLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[LIMIT ]]></Parameter>
