@@ -36,6 +36,7 @@ public class VariablesSecureApp extends VariablesBase {
   private String userOrganization;
   private String dbSessionID;
   private String javaDateFormat;
+  private String javaDataTimeFormat;
   private String jsDateFormat;
   private String sqlDateFormat;
   private String accessLevel;
@@ -108,6 +109,7 @@ public class VariablesSecureApp extends VariablesBase {
     this.dbSessionID = getSessionValue("#AD_Session_ID");
     this.command = getStringParameter("Command", "DEFAULT");
     this.javaDateFormat = getSessionValue("#AD_JavaDateFormat");
+    this.javaDataTimeFormat = getSessionValue("#AD_JavaDateTimeFormat");
     this.jsDateFormat = getSessionValue("#AD_JsDateFormat");
     this.sqlDateFormat = getSessionValue("#AD_SqlDateFormat");
     this.accessLevel = getSessionValue("#CurrentAccessLevel");
@@ -322,6 +324,13 @@ public class VariablesSecureApp extends VariablesBase {
    */
   public String getJavaDateFormat() {
     return javaDateFormat;
+  }
+  
+  /**
+   * @return the javaDataTimeFormat
+   */
+  public String getJavaDataTimeFormat() {
+    return javaDataTimeFormat;
   }
   
   /**

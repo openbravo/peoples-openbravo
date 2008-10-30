@@ -291,6 +291,10 @@ public class ConfigParameters {
 
         return propFileProperties.getProperty(skey);
     }
+    
+    public Properties getOBProperties() {
+      return propFileProperties;
+    }
 
     public Properties loadOBProperties() {
 

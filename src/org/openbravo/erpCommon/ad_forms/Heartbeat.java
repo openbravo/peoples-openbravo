@@ -17,7 +17,7 @@ package org.openbravo.erpCommon.ad_forms;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_background.PeriodicHeartbeatData;
+import org.openbravo.erpCommon.ad_process.HeartbeatProcessData;
 import org.openbravo.erpCommon.ad_process.RegisterData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -37,7 +37,7 @@ public class Heartbeat extends HttpSecureAppServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     
-    PeriodicHeartbeatData[] data = PeriodicHeartbeatData.selectSystemProperties(this);
+    HeartbeatProcessData[] data = HeartbeatProcessData.selectSystemProperties(this);
     if (data.length > 0) {
       String servletContainer = data[0].servletContainer;
       String servletContainerVersion = data[0].servletContainerVersion;
@@ -47,7 +47,7 @@ public class Heartbeat extends HttpSecureAppServlet {
           servletContainer = serverInfo.split("/")[0];
           servletContainerVersion = serverInfo.split("/")[1];
           
-          PeriodicHeartbeatData.updateServletContainer(this, servletContainer, servletContainerVersion);
+          HeartbeatProcessData.updateServletContainer(this, servletContainer, servletContainerVersion);
         }
       }
     }
@@ -55,12 +55,12 @@ public class Heartbeat extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       printPageDataSheet(response, vars);
     } else if (vars.commandIn("DISABLE")) {
-      PeriodicHeartbeatData.disableHeartbeat(myPool);
+      HeartbeatProcessData.disableHeartbeat(myPool);
     } else if (vars.commandIn("POSTPONE")) {
       Calendar cal = Calendar.getInstance();
       cal.add(Calendar.DATE, 2);
       String date = new SimpleDateFormat(vars.getJavaDateFormat()).format(cal.getTime());
-      PeriodicHeartbeatData.postpone(myPool, date);
+      HeartbeatProcessData.postpone(myPool, date);
     } else
       pageError(response);
   }

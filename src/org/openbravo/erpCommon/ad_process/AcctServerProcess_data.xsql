@@ -18,55 +18,46 @@
  ************************************************************************
 -->
 
-
-
-
-
-<SqlClass name="PeriodicBackgroundData" package="org.openbravo.erpCommon.ad_background">
+<SqlClass name="AcctServerProcessData" package="org.openbravo.erpCommon.ad_process">
    <SqlClassComment></SqlClassComment>
-   <SqlMethod name="select" type="preparedStatement" return="multiple">
+   <SqlMethod name="selectUserOrg" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-      SELECT AD_CLIENT_ID, '' AS AD_USER_ID, '' as AD_ORG_ID
-      FROM AD_CLIENT WHERE ISACTIVE='Y'
-      ]]></Sql>
-      <Parameter name="adClientId" optional="true" after="WHERE " text=" AD_CLIENT_ID = ? AND "/>
+      SELECT CREATEDBY AS AD_USER_ID, AD_ORG_ID, '' AS AD_TABLE_ID FROM AD_PROCESS
+      WHERE AD_PROCESS_ID = ?
+    ]]></Sql>
+    <Parameter name="adProcessId"/>
    </SqlMethod>
-   <SqlMethod name="checkPlannedRange" type="preparedStatement" return="Boolean" default="false">
+   <SqlMethod name="selectTable" type="preparedStatement" return="String" default="">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        SELECT COUNT(*) AS TOTAL
-		  FROM AD_Process_Scheduling
-		 WHERE (Weekday IS NULL OR Weekday = TO_CHAR(NOW(), 'D'))
-		   AND TO_DATE(TO_CHAR(TRUNC(NOW()), 'DD-MM-YYYY') || ' ' || TO_CHAR(TimeFrom, 'HH24:MI:SS'),'DD-MM-YYYY HH24:MI:SS') <= NOW()
-		   AND (TimeTo IS NULL 
-		    OR  TO_DATE(TO_CHAR(TRUNC(NOW()), 'DD-MM-YYYY') || ' ' || TO_CHAR(TimeTo, 'HH24:MI:SS'),'DD-MM-YYYY HH24:MI:SS') > NOW())
-		   AND AD_Client_ID = ? 
-		   AND AD_Process_ID = ? 
-      ]]></Sql>
-      <Parameter name="adClientId"/>
-      <Parameter name="adProcessId"/>
+      SELECT P_STRING FROM AD_PINSTANCE_PARA
+      WHERE AD_PINSTANCE_ID = ?
+      AND PARAMETERNAME = 'AD_Table_ID'
+    ]]></Sql>
+    <Parameter name="adPinstanceId"/>
    </SqlMethod>
-   <SqlMethod name="getFullTime" type="preparedStatement" return="Boolean" default="false">
+   <SqlMethod name="selectAcctTable" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        select (CASE MAX(ISFULLTIME) WHEN 'Y' THEN 1 ELSE 0 END) AS TOTAL
-        from ad_process_scheduling 
-        where (weekday is null 
-        or weekday = to_char(now(), 'D')) 
-        AND to_char(timefrom, 'HH24:MI:SS')<= to_char(now(), 'HH24:MI:SS') 
-        AND (timeto is null OR
-        to_char(timeto, 'HH24:MI:SS') > to_char(now(), 'HH24:MI:SS'))
-        AND AD_Client_ID = ?
-      ]]></Sql>
-      <Parameter name="adClientId"/>
+      SELECT DISTINCT ad_table_id 
+      FROM C_ACCTSCHEMA_TABLE
+      WHERE isactive = 'Y'
+      ORDER BY ad_table_id
+    ]]></Sql>
    </SqlMethod>
-   <SqlMethod name="selectClientId" type="preparedStatement" return="String" default="">
+   <SqlMethod name="selectDescription" type="preparedStatement" return="string">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-      SELECT AD_CLIENT_ID FROM AD_PINSTANCE WHERE AD_PINSTANCE_ID=?
-      ]]></Sql>
-      <Parameter name="adPinstanceId"/>
+                SELECT (case when ad_table.po_window_id is null then '' else ad_column_identifier('AD_Window',TO_CHAR(ad_table.po_window_id),?) end)||
+                  (case when ad_table.po_window_id is null then '' else ' - ' end)||
+                  ad_column_identifier('AD_Window',TO_CHAR(ad_table.ad_window_id),?)
+                FROM AD_TABLE 
+                WHERE AD_TABLE_ID = ?
+    ]]></Sql>
+    <Parameter name="language"/>
+    <Parameter name="language"/>
+    <Parameter name="adTableId"/>
    </SqlMethod>
    <SqlMethod name="insert" type="preparedStatement" return="rowCount">
       <SqlMethodComment></SqlMethodComment>
@@ -78,6 +69,14 @@
       <Parameter name="adNoteId"/>
       <Parameter name="adClientId"/>
       <Parameter name="text"/>
+   </SqlMethod>
+   <SqlMethod name="selectLog" type="preparedStatement" return="string">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+      SELECT LOG FROM AD_PROCESS_RUN 
+      WHERE AD_PROCESS_RUN_ID = ?
+    ]]></Sql>
+    <Parameter name="adProcessRunId"/>
    </SqlMethod>
    <SqlMethod name="update" type="preparedStatement" return="rowCount">
       <SqlMethodComment></SqlMethodComment>

@@ -19,7 +19,7 @@
 package org.openbravo.erpCommon.utility;
 
 import org.openbravo.base.secureApp.*;
-import org.openbravo.erpCommon.ad_background.PeriodicHeartbeatData;
+import org.openbravo.erpCommon.ad_process.HeartbeatProcessData;
 import org.openbravo.erpCommon.ad_process.RegisterData;
 import org.openbravo.xmlEngine.XmlDocument;
 import java.io.*;
@@ -366,7 +366,7 @@ void decidePopups(XmlDocument xmlDocument, VariablesSecureApp vars) throws Servl
     
 	if (vars.getRole() != null && vars.getRole().equals("0")) {
 		// Check if the heartbeat popup needs to be displayed
-	    PeriodicHeartbeatData[] hbData = PeriodicHeartbeatData.selectSystemProperties(myPool);
+	  HeartbeatProcessData[] hbData = HeartbeatProcessData.selectSystemProperties(myPool);
 	    if (hbData.length > 0) {
 	      String isheartbeatactive = hbData[0].isheartbeatactive;
 	      String postponeDate = hbData[0].postponeDate;

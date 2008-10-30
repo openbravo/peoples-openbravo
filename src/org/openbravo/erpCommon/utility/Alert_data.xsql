@@ -25,7 +25,7 @@
    		<![CDATA[
 	       SELECT AD_Alert_ID, AD_Client_ID, AD_Org_ID, IsActive, 
 	              Created, CreatedBy, Updated, UpdatedBy, Description, AD_AlertRule_ID,
-                  AD_Role_ID, AD_User_ID, Record_Id
+                  AD_Role_ID, AD_User_ID, Record_Id, Referencekey_ID
       		 FROM AD_Alert
       		WHERE AD_AlertRule_ID = ?
       ]]>
@@ -66,12 +66,13 @@
    	<Sql>
    		<![CDATA[
        INSERT INTO AD_Alert (AD_Alert_ID, AD_Client_ID, AD_Org_ID, IsActive, 
-                      Created, CreatedBy, Updated, UpdatedBy, Description, AD_AlertRule_ID, Record_Id)
-      		VALUES (AD_GET_NEXT_SEQUENCE('AD_Alert', 100000), 0, 0, 'Y', NOW(), 0, NOW(), 0, ?, ?, ?)
+                      Created, CreatedBy, Updated, UpdatedBy, Description, AD_AlertRule_ID, Record_Id, Referencekey_ID)
+      		VALUES (AD_GET_NEXT_SEQUENCE('AD_Alert', 100000), 0, 0, 'Y', NOW(), 0, NOW(), 0, ?, ?, ?, ?)
       ]]>
    	</Sql>
    	<Parameter name="description" />
    	<Parameter name="adAlertRuleId" />
    	<Parameter name="recordId" />
+   	<Parameter name="referencekeyId" />
    </SqlMethod>
 </SqlClass>

@@ -1258,6 +1258,14 @@ public abstract class AcctServer  {
       return(Utility.messageBD(connectionProvider, "Created", vars.getLanguage()) + "=" + success /*+ ", " + Utility.messageBD(this, "Errors", vars.getLanguage()) + "=" + errors*/);
     } // end of getInfo() method
 
+    /**
+     * @param language
+     * @return
+     */
+    public String getInfo(String language) {
+      return(Utility.messageBD(connectionProvider, "Created", language) + "=" + success);
+    }
+    
     public boolean checkDocuments() throws ServletException{
       if(m_as.length==0) return false;
       AcctServerData [] docTypes = AcctServerData.selectDocTypes(connectionProvider, AD_Table_ID, AD_Client_ID);

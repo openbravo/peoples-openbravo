@@ -28,11 +28,16 @@ import org.openbravo.erpCommon.reference.*;
 <PARAMETER_TMP id="hasAdActionButton">
 import org.openbravo.erpCommon.ad_actionButton.*;
 </PARAMETER_TMP>
+
+
+
 import org.openbravo.erpCommon.utility.*;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.scheduling.ProcessBundle;
+import org.openbravo.scheduling.ProcessRunner;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.xmlEngine.XmlDocument;
 import java.util.Vector;
@@ -436,7 +441,9 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
           PInstanceProcessData.insertPInstance(this, pinstance, "<FIELD_TMP id="ProcessID3">button</FIELD_TMP>", (("<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>".equalsIgnoreCase("AD_Language"))?"0":str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>), strProcessing, vars.getUser(), vars.getClient(), vars.getOrg());
           <FIELD_TMP id="FieldsLoadParams3">PInstanceProcessData.insertPInstanceParam(this, pinstance, )</FIELD_TMP>
           <FIELD_TMP id="AdditionalCode3">code</FIELD_TMP>
-          <FIELD_TMP id="ProcessCode3">ActionButtonData.processxx(this, pinstance);</FIELD_TMP>
+          ProcessBundle bundle = ProcessBundle.pinstance(pinstance, vars, this);
+          new ProcessRunner(bundle).execute(this);
+          
           PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);
           myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
         } catch (ServletException ex) {

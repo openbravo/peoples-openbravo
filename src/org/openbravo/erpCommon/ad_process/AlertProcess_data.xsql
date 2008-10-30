@@ -22,7 +22,7 @@
 
 
 
-<SqlClass name="PeriodicAlertData" package="org.openbravo.erpCommon.ad_background">
+<SqlClass name="AlertProcessData" package="org.openbravo.erpCommon.ad_process">
    <SqlMethod name="select" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[

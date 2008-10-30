@@ -14,6 +14,7 @@ package org.openbravo.base.secureApp;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.erpCommon.utility.*;
+import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.utils.Replace;
 
 import java.text.DecimalFormat;
@@ -36,8 +37,6 @@ import net.sf.jasperreports.engine.export.JExcelApiExporterParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
-import org.openbravo.base.PeriodicBackgroundContextListener;
-import org.openbravo.erpCommon.ad_background.PeriodicBackground;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -64,8 +63,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
   public boolean boolHist = true;
   String myTheme = "";
   public ClassInfoData classInfo;
-  protected AuthenticationManager m_AuthManager = null;  
-
+  protected AuthenticationManager m_AuthManager = null; 
+  
   String servletClass = this.getClass().getName();
 
   public class Variables extends VariablesHistory {
@@ -114,7 +113,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
     } catch (AuthenticationException e) {
         log4j.error("Unable to initialize authentication manager", e);
     }
-
+    
     if (log4j.isDebugEnabled()) log4j.debug("strdireccion: " + strDireccion);
   }
 
@@ -551,13 +550,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
-  }
-
-  public PeriodicBackground getBackgroundProcess(String id) {
-    return PeriodicBackgroundContextListener.getBackgroundProcess(this.getServletContext(), id);
-  }
-  public void updateBackgroundProcess(String id, PeriodicBackground object) {
-    PeriodicBackgroundContextListener.updateBackgroundProcess(this.getServletContext(), id, object);
   }
 
   public void readProperties(VariablesSecureApp vars, String strFileProperties) {

@@ -1,0 +1,154 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2008 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+package org.openbravo.base;
+
+import static org.openbravo.base.ConfigParameters.CONFIG_ATTRIBUTE;
+import static org.openbravo.base.ConnectionProviderContextListener.POOL_ATTRIBUTE;
+import static org.quartz.ee.servlet.QuartzInitializerListener.QUARTZ_FACTORY_KEY;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+
+import org.openbravo.scheduling.OBScheduler;
+import org.quartz.Scheduler;
+import org.quartz.impl.StdSchedulerFactory;
+
+/**
+ * A copy of the QuartzInializerListener with some modifications to initialize the
+ * Openbravo scheduling items.
+ * 
+ * Places Openbravo ERP application resources such as ConnectionProvider and 
+ * ConfigParameters in the scheduling context so that OBScheduler singleton instance
+ * has access to them.
+ * 
+ * @author awolski
+ *
+ */
+public class OBSchedulerInitializerListener implements ServletContextListener {
+  
+  private boolean performShutdown = true;
+
+  private Scheduler scheduler = null;
+  
+  public void contextInitialized(ServletContextEvent sce) {
+    
+    System.out.println("Quartz Initializer Servlet loaded, initializing Scheduler...");
+
+    ServletContext servletContext = sce.getServletContext();
+    StdSchedulerFactory factory;
+    try {
+
+        String configFile = servletContext.getInitParameter("config-file");
+        String shutdownPref = servletContext.getInitParameter("shutdown-on-unload");
+
+        if (shutdownPref != null) {
+            performShutdown = Boolean.valueOf(shutdownPref).booleanValue();
+        }
+
+        // get Properties
+        if (configFile != null) {
+            factory = new StdSchedulerFactory(configFile);
+        } else {
+            factory = new StdSchedulerFactory();
+        }
+
+        // Always want to get the scheduler, even if it isn't starting, 
+        // to make sure it is both initialized and registered.
+        scheduler = factory.getScheduler();
+
+        // Should the Scheduler being started now or later
+        String startOnLoad = servletContext
+                .getInitParameter("start-scheduler-on-load");
+
+        int startDelay = 0;
+        String startDelayS = servletContext.getInitParameter("start-delay-seconds");
+        try {
+            if(startDelayS != null && startDelayS.trim().length() > 0)
+                startDelay = Integer.parseInt(startDelayS);
+        } catch(Exception e) {
+            System.out.println("Cannot parse value of 'start-delay-seconds' to an integer: " + startDelayS + ", defaulting to 5 seconds.");
+            startDelay = 5;
+        }
+
+        /*
+         * If the "start-scheduler-on-load" init-parameter is not specified,
+         * the scheduler will be started. This is to maintain backwards
+         * compatability.
+         */
+        if (startOnLoad == null || (Boolean.valueOf(startOnLoad).booleanValue())) {
+            if(startDelay <= 0) {
+                // Start now
+                scheduler.start();
+                System.out.println("Scheduler has been started...");
+            }
+            else {
+                // Start delayed
+                scheduler.startDelayed(startDelay);
+                System.out.println("Scheduler will start in " + startDelay + " seconds.");
+            }
+        } else {
+            System.out.println("Scheduler has not been started. Use scheduler.start()");
+        }
+
+        String factoryKey = 
+            servletContext.getInitParameter("servlet-context-factory-key");
+        if (factoryKey == null) {
+            factoryKey = QUARTZ_FACTORY_KEY;
+        }
+
+        /**
+         * Openbravo scheduling stuff.
+         */
+        System.out.println("Storing the Quartz Scheduler Factory in the servlet context at key: "
+                + factoryKey);
+        servletContext.setAttribute(factoryKey, factory);
+        
+        System.out.println("Storing ConfigParameters and ConnectionProvider in Scheduler Context.");
+        scheduler.getContext().put(POOL_ATTRIBUTE, servletContext.getAttribute(POOL_ATTRIBUTE));
+        scheduler.getContext().put(CONFIG_ATTRIBUTE, servletContext.getAttribute(CONFIG_ATTRIBUTE));
+        
+        System.out.println("Initalizing singleton instance of " + OBScheduler.class.getName());
+        OBScheduler.getInstance().initialize(scheduler);
+
+    } catch (Exception e) {
+        System.out.println("Quartz Scheduler failed to initialize: " + e.toString());
+        e.printStackTrace();
+    }
+  }
+
+  public void contextDestroyed(ServletContextEvent sce) {
+
+    if (!performShutdown) {
+        return;
+    }
+
+    try {
+        if (scheduler != null) {
+            scheduler.shutdown();
+        }
+    } catch (Exception e) {
+        System.out.println("Quartz Scheduler failed to shutdown cleanly: " + e.toString());
+        e.printStackTrace();
+    }
+
+    System.out.println("Quartz Scheduler successful shutdown.");
+}
+  
+}

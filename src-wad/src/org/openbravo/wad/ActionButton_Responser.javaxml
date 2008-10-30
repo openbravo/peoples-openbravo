@@ -22,11 +22,14 @@
 <java_TMP>
 package org.openbravo.erpCommon.ad_actionButton;
 
+
 import org.openbravo.erpCommon.utility.*;
 import org.openbravo.erpCommon.reference.*;
 import org.openbravo.utils.Replace;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.scheduling.ProcessBundle;
+import org.openbravo.scheduling.ProcessRunner;
 import org.openbravo.xmlEngine.XmlDocument;
 import java.io.*;
 import javax.servlet.*;
@@ -72,7 +75,8 @@ public class ActionButton_Responser extends HttpSecureAppServlet {
         PInstanceProcessData.insertPInstance(this, pinstance, "<FIELD_TMP id="ProcessID3">button</FIELD_TMP>", "0", strProcessing, vars.getUser(), vars.getClient(), vars.getOrg());
         <FIELD_TMP id="FieldsLoadParams3">PInstanceProcessData.insertPInstanceParam(this, pinstance, )</FIELD_TMP>
         <FIELD_TMP id="AdditionalCode3">code</FIELD_TMP>
-        <FIELD_TMP id="ProcessCode3">ActionButtonData.processxx(this, pinstance);</FIELD_TMP>
+        ProcessBundle bundle = ProcessBundle.pinstance(pinstance, vars, this);
+        new ProcessRunner(bundle).execute(this);
 
         processButtonHelper(response, vars, pinstance);        
 </FIELDS_TMP>
@@ -132,7 +136,6 @@ public class ActionButton_Responser extends HttpSecureAppServlet {
       out.close();
     }
 </FIELDS_TMP>
-
 
   public String getServletInfo() {
     return "Servlet ActionButton_Responser. This Servlet was made by Wad constructor";

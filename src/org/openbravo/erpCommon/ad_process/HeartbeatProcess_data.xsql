@@ -18,7 +18,7 @@
  ************************************************************************
 -->
 
-<SqlClass name="PeriodicHeartbeatData" package="org.openbravo.erpCommon.ad_background">
+<SqlClass name="HeartbeatProcessData" package="org.openbravo.erpCommon.ad_process">
    <SqlMethod name="selectSystemProperties" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
@@ -152,9 +152,10 @@
                           ACTIVITY_RATE, COMPLEXITY_RATE, OS, OS_VERSION, DB, DB_VERSION, SERVLET_CONTAINER,
                           SERVLET_CONTAINER_VERSION, WEBSERVER, WEBSERVER_VERSION, OB_VERSION, OB_INSTALLMODE, CODE_REVISION, NUM_REGISTERED_USERS,
                           JAVA_VERSION, ANT_VERSION) 
-      		VALUES (AD_GET_NEXT_SEQUENCE('AD_Heartbeat_Log', 0), ?, ?, 'Y', NOW(), 0, NOW(), 0, ?, ?, ?, ?, TO_NUMBER(?), TO_NUMBER(?), 
+      		VALUES (?, ?, ?, 'Y', NOW(), 0, NOW(), 0, ?, ?, ?, ?, TO_NUMBER(?), TO_NUMBER(?), 
       		TO_NUMBER(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, TO_NUMBER(?), TO_NUMBER(?), ?, ?)
     ]]></Sql>
+    <Parameter name="id"/>
     <Parameter name="adClientId"/>null
     <Parameter name="adOrgId"/>
     <Parameter name="systemIdentifier"/> 

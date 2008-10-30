@@ -26,6 +26,7 @@ public class Alert {
   private int alertRuleId;
   private String recordId;
   private String description;
+  private String referencekeyId = "0";
   
   static Logger log4j = Logger.getLogger(Alert.class);
   public static final char DATA_DRIVEN = 'D';
@@ -80,7 +81,7 @@ public class Alert {
         data = AlertData.selectByDescription(conn, String.valueOf(alertRuleId), description);
       }
       if (data.length <= 0) {
-        AlertData.insert(conn, description, String.valueOf(alertRuleId), recordId);
+        AlertData.insert(conn, description, String.valueOf(alertRuleId), recordId, referencekeyId);
       } 
     } catch(Exception e) {
       log4j.error("Error saving an alert instance: " + e.getMessage());

@@ -31,10 +31,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_background.PeriodicHeartbeat;
 import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -42,8 +40,6 @@ import org.openbravo.erpCommon.ad_combos.PaisComboData;
 
 public class Register extends HttpSecureAppServlet {
  
-  static Logger log4j = Logger.getLogger(PeriodicHeartbeat.class);
-  
   private static final long serialVersionUID = 1L;
   
   public static final String PROTOCOL = "https";
@@ -52,56 +48,57 @@ public class Register extends HttpSecureAppServlet {
   public static final String PATH = "/heartbeat-server/register";
   
   @Override
-  protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-    
-    if (!PeriodicHeartbeat.isInternetAvailable(this)) {
-      String message = Utility.messageBD(myPool, "HB_INTERNET_UNAVAILABLE", vars.getLanguage());
-      log4j.error(message);
-      advisePopUp(response, "ERROR", Utility.messageBD(this, "Registration", vars.getLanguage()), message);
-    } else {
-      
-      RegisterData[] data = RegisterData.select(this);
-      if (data.length > 0) {
-        RegisterData rd = data[0];
-        if (rd.isregistrationactive == null || rd.isregistrationactive.equals("")) {
-          rd.isregistrationactive = "N";
-          RegisterData.updateIsRegistrationActive(this, "N");
+    try {
+      if (!HeartbeatProcess.isInternetAvailable(this)) {
+        String message = Utility.messageBD(myPool, "HB_INTERNET_UNAVAILABLE", vars.getLanguage());
+        log4j.error(message);
+        advisePopUp(response, "ERROR", "Registration", message);
+      }
+    } catch (ServletException e) {
+      e.printStackTrace();
+    }
+    RegisterData[] data = RegisterData.select(this);
+    if (data.length > 0) {
+      RegisterData rd = data[0];
+      if (rd.isregistrationactive == null || rd.isregistrationactive.equals("")) {
+        rd.isregistrationactive = "N";
+        RegisterData.updateIsRegistrationActive(this, "N");
+      }
+      if (rd.registrationId == null || rd.registrationId.equals("")) {
+        String registrationId = UUID.randomUUID().toString();
+        rd.registrationId = registrationId;
+        RegisterData.updateRegistrationId(this, registrationId);
+      }
+      String queryStr = createQueryString(rd);
+      String encodedQueryStr = HttpsUtils.encode(queryStr, "UTF-8");
+      String result = null;
+      String message = null;
+      try {
+        result = register(encodedQueryStr);
+        if (result == null || result.equals(rd.registrationId)) {
+          // TODO Something went wrong. Handle.
         }
-        if (rd.registrationId == null || rd.registrationId.equals("")) {
-          String registrationId = UUID.randomUUID().toString();
-          rd.registrationId = registrationId;
-          RegisterData.updateRegistrationId(this, registrationId);
+        
+        if( (!rd.registrationId.equals("") && rd.registrationId != null) && 
+            (rd.isregistrationactive.equals("") || rd.isregistrationactive == null || rd.isregistrationactive.equals("N")))            
+          message = Utility.messageBD(myPool, "REG_UNREGISTER", vars.getLanguage());
+        else
+          message = Utility.messageBD(myPool, "REG_SUCCESS", vars.getLanguage());
+        
+        adviseRegistrationConfirm(response, vars, "SUCCESS", "Registration", message);
+      } catch (IOException e) {
+        if (e instanceof SSLHandshakeException) {
+          message = Utility.messageBD(myPool, "HB_SECURE_CONNECTION_ERROR", vars.getLanguage());
+          advisePopUp(response, "ERROR", "Registration", message);
+        } else {
+          message = Utility.messageBD(myPool, "HB_SEND_ERROR", vars.getLanguage());
+          advisePopUp(response, "ERROR", "Registration", message);
         }
-        String queryStr = createQueryString(rd);
-        String encodedQueryStr = HttpsUtils.encode(queryStr, "UTF-8");
-        String result = null;
-        String message = null;
-        try {
-          result = register(encodedQueryStr);
-          if (result == null || result.equals(rd.registrationId)) {
-            // TODO Something went wrong. Handle.
-          }
-          
-          if( (!rd.registrationId.equals("") && rd.registrationId != null) && 
-              (rd.isregistrationactive.equals("") || rd.isregistrationactive == null || rd.isregistrationactive.equals("N")))            
-            message = Utility.messageBD(myPool, "REG_UNREGISTER", vars.getLanguage());
-          else
-            message = Utility.messageBD(myPool, "REG_SUCCESS", vars.getLanguage());
-          
-          adviseRegistrationConfirm(response, vars, "SUCCESS", Utility.messageBD(this, "Registration", vars.getLanguage()), message);
-        } catch (IOException e) {
-          if (e instanceof SSLHandshakeException) {
-            message = Utility.messageBD(myPool, "HB_SECURE_CONNECTION_ERROR", vars.getLanguage());
-            advisePopUp(response, "ERROR", Utility.messageBD(this, "Registration", vars.getLanguage()), message);
-          } else {
-            message = Utility.messageBD(myPool, "HB_SEND_ERROR", vars.getLanguage());
-            advisePopUp(response, "ERROR", Utility.messageBD(this, "Registration", vars.getLanguage()), message);
-          }
-        } catch (GeneralSecurityException e) {
-          message = Utility.messageBD(myPool, "HB_CERTIFICATE_ERROR", vars.getLanguage());
-          advisePopUp(response, "ERROR", Utility.messageBD(this, "Registration", vars.getLanguage()), message);
-        }
+      } catch (GeneralSecurityException e) {
+        message = Utility.messageBD(myPool, "HB_CERTIFICATE_ERROR", vars.getLanguage());
+        advisePopUp(response, "ERROR", "Registration", message);
       }
     }
   }
@@ -133,7 +130,7 @@ public class Register extends HttpSecureAppServlet {
       e.printStackTrace(); // Won't happen.
     }
     log4j.info(("Sending registration info: '" + encodedQueryStr + "'"));
-    return HttpsUtils.sendSecure(url, encodedQueryStr, PeriodicHeartbeat.CERT_ALIAS, "changeit");
+    return HttpsUtils.sendSecure(url, encodedQueryStr, HeartbeatProcess.CERT_ALIAS, "changeit");
   }
   
   private String createQueryString(RegisterData data) {  

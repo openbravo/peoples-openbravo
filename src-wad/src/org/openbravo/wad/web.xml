@@ -26,10 +26,10 @@
       <listener-class>org.openbravo.base.ConnectionProviderContextListener</listener-class>
   </listener>
   <listener>
-      <listener-class>org.openbravo.base.PeriodicBackgroundContextListener</listener-class>
+      <listener-class>org.openbravo.dal.core.DalContextListener</listener-class>
   </listener>
   <listener>
-      <listener-class>org.openbravo.dal.core.DalContextListener</listener-class>
+	<listener-class>org.openbravo.base.OBSchedulerInitializerListener</listener-class>
   </listener>
 
   <filter>
@@ -136,6 +136,23 @@
   <context-param>
     <param-name>ServidorRenderFo</param-name>
     <param-value></param-value>
+  </context-param>
+  <!-- Quartz context params -->
+  <context-param>
+    <param-name>config-file</param-name>
+    <param-value>quartz.properties</param-value>
+  </context-param>
+  <context-param>
+	<param-name>shutdown-on-unload</param-name>
+	<param-value>true</param-value>
+  </context-param>
+  <context-param>
+	<param-name>start-scheduler-on-load</param-name>
+	<param-value>true</param-value>
+  </context-param>
+  <context-param>
+	<param-name>start-delay-seconds</param-name>
+	<param-value>30</param-value>
   </context-param>
   <servlet>
     <display-name>Apache-Axis Servlet</display-name>
