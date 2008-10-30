@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TABLE C_POC_DOCTYPE_TEMPLATE">
-    <table name="C_POC_DOCTYPE_TEMPLATE">
+    <table name="C_POC_DOCTYPE_TEMPLATE" primaryKey="C_POC_DOCTYPE_TEMPLATE_PK">
       <column name="C_POC_DOCTYPE_TEMPLATE_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault><![CDATA[get_uuid()]]></onCreateDefault>
