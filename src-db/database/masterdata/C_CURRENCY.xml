@@ -51,7 +51,7 @@
 <!--102 ISO_CODE-->
 <!--102-->              <ISO_CODE><![CDATA[EUR]]></ISO_CODE>
 <!--102 CURSYMBOL-->
-<!--102-->              <CURSYMBOL><![CDATA[E]]></CURSYMBOL>
+<!--102-->              <CURSYMBOL><![CDATA[€]]></CURSYMBOL>
 <!--102 DESCRIPTION-->
 <!--102-->              <DESCRIPTION><![CDATA[Euro]]></DESCRIPTION>
 <!--102 STDPRECISION-->
@@ -334,7 +334,7 @@
 <!--111 CURSYMBOL-->
 <!--111-->              <CURSYMBOL><![CDATA[Pts]]></CURSYMBOL>
 <!--111 DESCRIPTION-->
-<!--111-->              <DESCRIPTION><![CDATA[Spannish Peseto]]></DESCRIPTION>
+<!--111-->              <DESCRIPTION><![CDATA[Spanish Peseta]]></DESCRIPTION>
 <!--111 STDPRECISION-->
 <!--111-->              <STDPRECISION><![CDATA[0]]></STDPRECISION>
 <!--111 COSTINGPRECISION-->
@@ -703,6 +703,8 @@
 <!--143-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--143 ISO_CODE-->
 <!--143-->              <ISO_CODE><![CDATA[AMD]]></ISO_CODE>
+<!--143 CURSYMBOL-->
+<!--143-->              <CURSYMBOL><![CDATA[դր.]]></CURSYMBOL>
 <!--143 DESCRIPTION-->
 <!--143-->              <DESCRIPTION><![CDATA[Armenian Dram]]></DESCRIPTION>
 <!--143 STDPRECISION-->
@@ -732,6 +734,8 @@
 <!--144-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--144 ISO_CODE-->
 <!--144-->              <ISO_CODE><![CDATA[AOA]]></ISO_CODE>
+<!--144 CURSYMBOL-->
+<!--144-->              <CURSYMBOL><![CDATA[Kz]]></CURSYMBOL>
 <!--144 DESCRIPTION-->
 <!--144-->              <DESCRIPTION><![CDATA[Kwanza]]></DESCRIPTION>
 <!--144 STDPRECISION-->
@@ -761,6 +765,8 @@
 <!--145-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--145 ISO_CODE-->
 <!--145-->              <ISO_CODE><![CDATA[AZM]]></ISO_CODE>
+<!--145 CURSYMBOL-->
+<!--145-->              <CURSYMBOL><![CDATA[m]]></CURSYMBOL>
 <!--145 DESCRIPTION-->
 <!--145-->              <DESCRIPTION><![CDATA[Azerbaijanian Manat]]></DESCRIPTION>
 <!--145 STDPRECISION-->
@@ -790,6 +796,8 @@
 <!--146-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--146 ISO_CODE-->
 <!--146-->              <ISO_CODE><![CDATA[BOB]]></ISO_CODE>
+<!--146 CURSYMBOL-->
+<!--146-->              <CURSYMBOL><![CDATA[Bs.]]></CURSYMBOL>
 <!--146 DESCRIPTION-->
 <!--146-->              <DESCRIPTION><![CDATA[Boliviano]]></DESCRIPTION>
 <!--146 STDPRECISION-->
@@ -819,6 +827,8 @@
 <!--147-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--147 ISO_CODE-->
 <!--147-->              <ISO_CODE><![CDATA[CDF]]></ISO_CODE>
+<!--147 CURSYMBOL-->
+<!--147-->              <CURSYMBOL><![CDATA[Fr]]></CURSYMBOL>
 <!--147 DESCRIPTION-->
 <!--147-->              <DESCRIPTION><![CDATA[Franc Congolais]]></DESCRIPTION>
 <!--147 STDPRECISION-->
@@ -848,6 +858,8 @@
 <!--148-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--148 ISO_CODE-->
 <!--148-->              <ISO_CODE><![CDATA[CZK]]></ISO_CODE>
+<!--148 CURSYMBOL-->
+<!--148-->              <CURSYMBOL><![CDATA[Kč]]></CURSYMBOL>
 <!--148 DESCRIPTION-->
 <!--148-->              <DESCRIPTION><![CDATA[Czech Koruna]]></DESCRIPTION>
 <!--148 STDPRECISION-->
@@ -877,6 +889,8 @@
 <!--149-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--149 ISO_CODE-->
 <!--149-->              <ISO_CODE><![CDATA[GEL]]></ISO_CODE>
+<!--149 CURSYMBOL-->
+<!--149-->              <CURSYMBOL><![CDATA[ლ]]></CURSYMBOL>
 <!--149 DESCRIPTION-->
 <!--149-->              <DESCRIPTION><![CDATA[Lari]]></DESCRIPTION>
 <!--149 STDPRECISION-->
@@ -906,6 +920,8 @@
 <!--150-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--150 ISO_CODE-->
 <!--150-->              <ISO_CODE><![CDATA[IRR]]></ISO_CODE>
+<!--150 CURSYMBOL-->
+<!--150-->              <CURSYMBOL><![CDATA[﷼]]></CURSYMBOL>
 <!--150 DESCRIPTION-->
 <!--150-->              <DESCRIPTION><![CDATA[Iranian Rial]]></DESCRIPTION>
 <!--150 STDPRECISION-->
@@ -935,6 +951,8 @@
 <!--151-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--151 ISO_CODE-->
 <!--151-->              <ISO_CODE><![CDATA[LTL]]></ISO_CODE>
+<!--151 CURSYMBOL-->
+<!--151-->              <CURSYMBOL><![CDATA[Lt]]></CURSYMBOL>
 <!--151 DESCRIPTION-->
 <!--151-->              <DESCRIPTION><![CDATA[Lithuanian Litas]]></DESCRIPTION>
 <!--151 STDPRECISION-->
@@ -964,6 +982,8 @@
 <!--152-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--152 ISO_CODE-->
 <!--152-->              <ISO_CODE><![CDATA[MDL]]></ISO_CODE>
+<!--152 CURSYMBOL-->
+<!--152-->              <CURSYMBOL><![CDATA[L]]></CURSYMBOL>
 <!--152 DESCRIPTION-->
 <!--152-->              <DESCRIPTION><![CDATA[Moldovan Leu]]></DESCRIPTION>
 <!--152 STDPRECISION-->
@@ -993,6 +1013,8 @@
 <!--153-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--153 ISO_CODE-->
 <!--153-->              <ISO_CODE><![CDATA[PHP]]></ISO_CODE>
+<!--153 CURSYMBOL-->
+<!--153-->              <CURSYMBOL><![CDATA[₱]]></CURSYMBOL>
 <!--153 DESCRIPTION-->
 <!--153-->              <DESCRIPTION><![CDATA[Philippine Peso]]></DESCRIPTION>
 <!--153 STDPRECISION-->
@@ -1022,6 +1044,8 @@
 <!--154-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--154 ISO_CODE-->
 <!--154-->              <ISO_CODE><![CDATA[PLN]]></ISO_CODE>
+<!--154 CURSYMBOL-->
+<!--154-->              <CURSYMBOL><![CDATA[zł]]></CURSYMBOL>
 <!--154 DESCRIPTION-->
 <!--154-->              <DESCRIPTION><![CDATA[Zloty]]></DESCRIPTION>
 <!--154 STDPRECISION-->
@@ -1050,7 +1074,9 @@
 <!--155 UPDATEDBY-->
 <!--155-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--155 ISO_CODE-->
-<!--155-->              <ISO_CODE><![CDATA[RUR]]></ISO_CODE>
+<!--155-->              <ISO_CODE><![CDATA[RUB]]></ISO_CODE>
+<!--155 CURSYMBOL-->
+<!--155-->              <CURSYMBOL><![CDATA[руб.]]></CURSYMBOL>
 <!--155 DESCRIPTION-->
 <!--155-->              <DESCRIPTION><![CDATA[Russian Ruble]]></DESCRIPTION>
 <!--155 STDPRECISION-->
@@ -1079,9 +1105,11 @@
 <!--156 UPDATEDBY-->
 <!--156-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--156 ISO_CODE-->
-<!--156-->              <ISO_CODE><![CDATA[SDD]]></ISO_CODE>
+<!--156-->              <ISO_CODE><![CDATA[SDG]]></ISO_CODE>
+<!--156 CURSYMBOL-->
+<!--156-->              <CURSYMBOL><![CDATA[£]]></CURSYMBOL>
 <!--156 DESCRIPTION-->
-<!--156-->              <DESCRIPTION><![CDATA[Sudanese Dinar]]></DESCRIPTION>
+<!--156-->              <DESCRIPTION><![CDATA[Sudanese Pound]]></DESCRIPTION>
 <!--156 STDPRECISION-->
 <!--156-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--156 COSTINGPRECISION-->
@@ -1109,6 +1137,8 @@
 <!--157-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--157 ISO_CODE-->
 <!--157-->              <ISO_CODE><![CDATA[TJS]]></ISO_CODE>
+<!--157 CURSYMBOL-->
+<!--157-->              <CURSYMBOL><![CDATA[SM]]></CURSYMBOL>
 <!--157 DESCRIPTION-->
 <!--157-->              <DESCRIPTION><![CDATA[Somoni]]></DESCRIPTION>
 <!--157 STDPRECISION-->
@@ -1138,6 +1168,8 @@
 <!--158-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--158 ISO_CODE-->
 <!--158-->              <ISO_CODE><![CDATA[TMM]]></ISO_CODE>
+<!--158 CURSYMBOL-->
+<!--158-->              <CURSYMBOL><![CDATA[m]]></CURSYMBOL>
 <!--158 DESCRIPTION-->
 <!--158-->              <DESCRIPTION><![CDATA[Manat]]></DESCRIPTION>
 <!--158 STDPRECISION-->
@@ -1167,6 +1199,8 @@
 <!--159-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--159 ISO_CODE-->
 <!--159-->              <ISO_CODE><![CDATA[TPE]]></ISO_CODE>
+<!--159 CURSYMBOL-->
+<!--159-->              <CURSYMBOL><![CDATA[$]]></CURSYMBOL>
 <!--159 DESCRIPTION-->
 <!--159-->              <DESCRIPTION><![CDATA[Timor Escudo]]></DESCRIPTION>
 <!--159 STDPRECISION-->
@@ -1196,6 +1230,8 @@
 <!--160-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--160 ISO_CODE-->
 <!--160-->              <ISO_CODE><![CDATA[UAH]]></ISO_CODE>
+<!--160 CURSYMBOL-->
+<!--160-->              <CURSYMBOL><![CDATA[₴]]></CURSYMBOL>
 <!--160 DESCRIPTION-->
 <!--160-->              <DESCRIPTION><![CDATA[Hryvnia]]></DESCRIPTION>
 <!--160 STDPRECISION-->
@@ -1225,6 +1261,8 @@
 <!--161-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--161 ISO_CODE-->
 <!--161-->              <ISO_CODE><![CDATA[UZS]]></ISO_CODE>
+<!--161 CURSYMBOL-->
+<!--161-->              <CURSYMBOL><![CDATA[som]]></CURSYMBOL>
 <!--161 DESCRIPTION-->
 <!--161-->              <DESCRIPTION><![CDATA[Uzbekistan Sum]]></DESCRIPTION>
 <!--161 STDPRECISION-->
@@ -1534,7 +1572,7 @@
 <!--196 ISO_CODE-->
 <!--196-->              <ISO_CODE><![CDATA[AWG]]></ISO_CODE>
 <!--196 CURSYMBOL-->
-<!--196-->              <CURSYMBOL><![CDATA[Af.]]></CURSYMBOL>
+<!--196-->              <CURSYMBOL><![CDATA[ƒ]]></CURSYMBOL>
 <!--196 DESCRIPTION-->
 <!--196-->              <DESCRIPTION><![CDATA[Aruban Guilder]]></DESCRIPTION>
 <!--196 STDPRECISION-->
@@ -1565,7 +1603,7 @@
 <!--197 ISO_CODE-->
 <!--197-->              <ISO_CODE><![CDATA[PAB]]></ISO_CODE>
 <!--197 CURSYMBOL-->
-<!--197-->              <CURSYMBOL><![CDATA[B]]></CURSYMBOL>
+<!--197-->              <CURSYMBOL><![CDATA[B/.]]></CURSYMBOL>
 <!--197 DESCRIPTION-->
 <!--197-->              <DESCRIPTION><![CDATA[Balboa]]></DESCRIPTION>
 <!--197 STDPRECISION-->
@@ -1658,7 +1696,7 @@
 <!--200 ISO_CODE-->
 <!--200-->              <ISO_CODE><![CDATA[BHD]]></ISO_CODE>
 <!--200 CURSYMBOL-->
-<!--200-->              <CURSYMBOL><![CDATA[BD]]></CURSYMBOL>
+<!--200-->              <CURSYMBOL><![CDATA[ب.د]]></CURSYMBOL>
 <!--200 DESCRIPTION-->
 <!--200-->              <DESCRIPTION><![CDATA[Bahraini Dinar]]></DESCRIPTION>
 <!--200 STDPRECISION-->
@@ -1844,7 +1882,7 @@
 <!--206 ISO_CODE-->
 <!--206-->              <ISO_CODE><![CDATA[THB]]></ISO_CODE>
 <!--206 CURSYMBOL-->
-<!--206-->              <CURSYMBOL><![CDATA[Bt]]></CURSYMBOL>
+<!--206-->              <CURSYMBOL><![CDATA[฿]]></CURSYMBOL>
 <!--206 DESCRIPTION-->
 <!--206-->              <DESCRIPTION><![CDATA[Baht]]></DESCRIPTION>
 <!--206 STDPRECISION-->
@@ -2278,7 +2316,7 @@
 <!--234 ISO_CODE-->
 <!--234-->              <ISO_CODE><![CDATA[VND]]></ISO_CODE>
 <!--234 CURSYMBOL-->
-<!--234-->              <CURSYMBOL><![CDATA[D]]></CURSYMBOL>
+<!--234-->              <CURSYMBOL><![CDATA[₫]]></CURSYMBOL>
 <!--234 DESCRIPTION-->
 <!--234-->              <DESCRIPTION><![CDATA[Dong]]></DESCRIPTION>
 <!--234 STDPRECISION-->
@@ -2309,7 +2347,7 @@
 <!--235 ISO_CODE-->
 <!--235-->              <ISO_CODE><![CDATA[DZD]]></ISO_CODE>
 <!--235 CURSYMBOL-->
-<!--235-->              <CURSYMBOL><![CDATA[DA]]></CURSYMBOL>
+<!--235-->              <CURSYMBOL><![CDATA[د.ج]]></CURSYMBOL>
 <!--235 DESCRIPTION-->
 <!--235-->              <DESCRIPTION><![CDATA[Algerian Dinar]]></DESCRIPTION>
 <!--235 STDPRECISION-->
@@ -2402,7 +2440,7 @@
 <!--238 ISO_CODE-->
 <!--238-->              <ISO_CODE><![CDATA[AED]]></ISO_CODE>
 <!--238 CURSYMBOL-->
-<!--238-->              <CURSYMBOL><![CDATA[Dh]]></CURSYMBOL>
+<!--238-->              <CURSYMBOL><![CDATA[د.إ]]></CURSYMBOL>
 <!--238 DESCRIPTION-->
 <!--238-->              <DESCRIPTION><![CDATA[UAE Dirham]]></DESCRIPTION>
 <!--238 STDPRECISION-->
@@ -2433,7 +2471,7 @@
 <!--239 ISO_CODE-->
 <!--239-->              <ISO_CODE><![CDATA[MAD]]></ISO_CODE>
 <!--239 CURSYMBOL-->
-<!--239-->              <CURSYMBOL><![CDATA[DH]]></CURSYMBOL>
+<!--239-->              <CURSYMBOL><![CDATA[د.م.]]></CURSYMBOL>
 <!--239 DESCRIPTION-->
 <!--239-->              <DESCRIPTION><![CDATA[Moroccan Dirham]]></DESCRIPTION>
 <!--239 STDPRECISION-->
@@ -2774,7 +2812,7 @@
 <!--259 ISO_CODE-->
 <!--259-->              <ISO_CODE><![CDATA[HRK]]></ISO_CODE>
 <!--259 CURSYMBOL-->
-<!--259-->              <CURSYMBOL><![CDATA[HRK]]></CURSYMBOL>
+<!--259-->              <CURSYMBOL><![CDATA[kn]]></CURSYMBOL>
 <!--259 DESCRIPTION-->
 <!--259-->              <DESCRIPTION><![CDATA[Croatian Kuna]]></DESCRIPTION>
 <!--259 STDPRECISION-->
@@ -2805,7 +2843,7 @@
 <!--260 ISO_CODE-->
 <!--260-->              <ISO_CODE><![CDATA[IQD]]></ISO_CODE>
 <!--260 CURSYMBOL-->
-<!--260-->              <CURSYMBOL><![CDATA[ID]]></CURSYMBOL>
+<!--260-->              <CURSYMBOL><![CDATA[ع.د]]></CURSYMBOL>
 <!--260 DESCRIPTION-->
 <!--260-->              <DESCRIPTION><![CDATA[Iraqi Dinar]]></DESCRIPTION>
 <!--260 STDPRECISION-->
@@ -2898,7 +2936,7 @@
 <!--263 ISO_CODE-->
 <!--263-->              <ISO_CODE><![CDATA[JOD]]></ISO_CODE>
 <!--263 CURSYMBOL-->
-<!--263-->              <CURSYMBOL><![CDATA[JD]]></CURSYMBOL>
+<!--263-->              <CURSYMBOL><![CDATA[د.ا]]></CURSYMBOL>
 <!--263 DESCRIPTION-->
 <!--263-->              <DESCRIPTION><![CDATA[Jordanian Dinar]]></DESCRIPTION>
 <!--263 STDPRECISION-->
@@ -3022,7 +3060,7 @@
 <!--267 ISO_CODE-->
 <!--267-->              <ISO_CODE><![CDATA[KWD]]></ISO_CODE>
 <!--267 CURSYMBOL-->
-<!--267-->              <CURSYMBOL><![CDATA[KD]]></CURSYMBOL>
+<!--267-->              <CURSYMBOL><![CDATA[د.ك]]></CURSYMBOL>
 <!--267 DESCRIPTION-->
 <!--267-->              <DESCRIPTION><![CDATA[Kuwaiti Dinar]]></DESCRIPTION>
 <!--267 STDPRECISION-->
@@ -3084,7 +3122,7 @@
 <!--269 ISO_CODE-->
 <!--269-->              <ISO_CODE><![CDATA[LAK]]></ISO_CODE>
 <!--269 CURSYMBOL-->
-<!--269-->              <CURSYMBOL><![CDATA[KN]]></CURSYMBOL>
+<!--269-->              <CURSYMBOL><![CDATA[₭]]></CURSYMBOL>
 <!--269 DESCRIPTION-->
 <!--269-->              <DESCRIPTION><![CDATA[Kip]]></DESCRIPTION>
 <!--269 STDPRECISION-->
@@ -3115,7 +3153,7 @@
 <!--270 ISO_CODE-->
 <!--270-->              <ISO_CODE><![CDATA[ERN]]></ISO_CODE>
 <!--270 CURSYMBOL-->
-<!--270-->              <CURSYMBOL><![CDATA[KR]]></CURSYMBOL>
+<!--270-->              <CURSYMBOL><![CDATA[Nfk]]></CURSYMBOL>
 <!--270 DESCRIPTION-->
 <!--270-->              <DESCRIPTION><![CDATA[Nakfa]]></DESCRIPTION>
 <!--270 STDPRECISION-->
@@ -3363,7 +3401,7 @@
 <!--278 ISO_CODE-->
 <!--278-->              <ISO_CODE><![CDATA[LVL]]></ISO_CODE>
 <!--278 CURSYMBOL-->
-<!--278-->              <CURSYMBOL><![CDATA[Ls]]></CURSYMBOL>
+<!--278-->              <CURSYMBOL><![CDATA[ل.د]]></CURSYMBOL>
 <!--278 DESCRIPTION-->
 <!--278-->              <DESCRIPTION><![CDATA[Latvian Lats]]></DESCRIPTION>
 <!--278 STDPRECISION-->
@@ -3487,7 +3525,7 @@
 <!--282 ISO_CODE-->
 <!--282-->              <ISO_CODE><![CDATA[MKD]]></ISO_CODE>
 <!--282 CURSYMBOL-->
-<!--282-->              <CURSYMBOL><![CDATA[MKD]]></CURSYMBOL>
+<!--282-->              <CURSYMBOL><![CDATA[ден]]></CURSYMBOL>
 <!--282 DESCRIPTION-->
 <!--282-->              <DESCRIPTION><![CDATA[Denar]]></DESCRIPTION>
 <!--282 STDPRECISION-->
@@ -3516,9 +3554,9 @@
 <!--283 UPDATEDBY-->
 <!--283-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--283 ISO_CODE-->
-<!--283-->              <ISO_CODE><![CDATA[MZM]]></ISO_CODE>
+<!--283-->              <ISO_CODE><![CDATA[MZN]]></ISO_CODE>
 <!--283 CURSYMBOL-->
-<!--283-->              <CURSYMBOL><![CDATA[Mt]]></CURSYMBOL>
+<!--283-->              <CURSYMBOL><![CDATA[MTn]]></CURSYMBOL>
 <!--283 DESCRIPTION-->
 <!--283-->              <DESCRIPTION><![CDATA[Metical]]></DESCRIPTION>
 <!--283 STDPRECISION-->
@@ -3580,7 +3618,7 @@
 <!--285 ISO_CODE-->
 <!--285-->              <ISO_CODE><![CDATA[EEK]]></ISO_CODE>
 <!--285 CURSYMBOL-->
-<!--285-->              <CURSYMBOL><![CDATA[Nfa]]></CURSYMBOL>
+<!--285-->              <CURSYMBOL><![CDATA[KR]]></CURSYMBOL>
 <!--285 DESCRIPTION-->
 <!--285-->              <DESCRIPTION><![CDATA[Kroon]]></DESCRIPTION>
 <!--285 STDPRECISION-->
@@ -3611,7 +3649,7 @@
 <!--286 ISO_CODE-->
 <!--286-->              <ISO_CODE><![CDATA[ILS]]></ISO_CODE>
 <!--286 CURSYMBOL-->
-<!--286-->              <CURSYMBOL><![CDATA[NIS]]></CURSYMBOL>
+<!--286-->              <CURSYMBOL><![CDATA[₪]]></CURSYMBOL>
 <!--286 DESCRIPTION-->
 <!--286-->              <DESCRIPTION><![CDATA[New Israeli Sheqel]]></DESCRIPTION>
 <!--286 STDPRECISION-->
@@ -3828,7 +3866,7 @@
 <!--293 ISO_CODE-->
 <!--293-->              <ISO_CODE><![CDATA[QAR]]></ISO_CODE>
 <!--293 CURSYMBOL-->
-<!--293-->              <CURSYMBOL><![CDATA[QR]]></CURSYMBOL>
+<!--293-->              <CURSYMBOL><![CDATA[ر.ق]]></CURSYMBOL>
 <!--293 DESCRIPTION-->
 <!--293-->              <DESCRIPTION><![CDATA[Qatari Rial]]></DESCRIPTION>
 <!--293 STDPRECISION-->
@@ -4045,7 +4083,7 @@
 <!--302 ISO_CODE-->
 <!--302-->              <ISO_CODE><![CDATA[OMR]]></ISO_CODE>
 <!--302 CURSYMBOL-->
-<!--302-->              <CURSYMBOL><![CDATA[RO]]></CURSYMBOL>
+<!--302-->              <CURSYMBOL><![CDATA[ر.ع.]]></CURSYMBOL>
 <!--302 DESCRIPTION-->
 <!--302-->              <DESCRIPTION><![CDATA[Rial Omani]]></DESCRIPTION>
 <!--302 STDPRECISION-->
@@ -4229,11 +4267,11 @@
 <!--309 UPDATEDBY-->
 <!--309-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--309 ISO_CODE-->
-<!--309-->              <ISO_CODE><![CDATA[SRG]]></ISO_CODE>
+<!--309-->              <ISO_CODE><![CDATA[SRD]]></ISO_CODE>
 <!--309 CURSYMBOL-->
-<!--309-->              <CURSYMBOL><![CDATA[Sf.]]></CURSYMBOL>
+<!--309-->              <CURSYMBOL><![CDATA[$]]></CURSYMBOL>
 <!--309 DESCRIPTION-->
-<!--309-->              <DESCRIPTION><![CDATA[Suriname Guilder]]></DESCRIPTION>
+<!--309-->              <DESCRIPTION><![CDATA[Suriname Dollar]]></DESCRIPTION>
 <!--309 STDPRECISION-->
 <!--309-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
 <!--309 COSTINGPRECISION-->
@@ -4293,7 +4331,7 @@
 <!--311 ISO_CODE-->
 <!--311-->              <ISO_CODE><![CDATA[SEK]]></ISO_CODE>
 <!--311 CURSYMBOL-->
-<!--311-->              <CURSYMBOL><![CDATA[Sk]]></CURSYMBOL>
+<!--311-->              <CURSYMBOL><![CDATA[kr]]></CURSYMBOL>
 <!--311 DESCRIPTION-->
 <!--311-->              <DESCRIPTION><![CDATA[Swedish Krona]]></DESCRIPTION>
 <!--311 STDPRECISION-->
@@ -4448,7 +4486,7 @@
 <!--317 ISO_CODE-->
 <!--317-->              <ISO_CODE><![CDATA[SAR]]></ISO_CODE>
 <!--317 CURSYMBOL-->
-<!--317-->              <CURSYMBOL><![CDATA[SRls]]></CURSYMBOL>
+<!--317-->              <CURSYMBOL><![CDATA[ر.س]]></CURSYMBOL>
 <!--317 DESCRIPTION-->
 <!--317-->              <DESCRIPTION><![CDATA[Saudi Riyal]]></DESCRIPTION>
 <!--317 STDPRECISION-->
@@ -4541,7 +4579,7 @@
 <!--321 ISO_CODE-->
 <!--321-->              <ISO_CODE><![CDATA[TND]]></ISO_CODE>
 <!--321 CURSYMBOL-->
-<!--321-->              <CURSYMBOL><![CDATA[TD]]></CURSYMBOL>
+<!--321-->              <CURSYMBOL><![CDATA[د.ت]]></CURSYMBOL>
 <!--321 DESCRIPTION-->
 <!--321-->              <DESCRIPTION><![CDATA[Tunisian Dinar]]></DESCRIPTION>
 <!--321 STDPRECISION-->
@@ -4572,7 +4610,7 @@
 <!--322 ISO_CODE-->
 <!--322-->              <ISO_CODE><![CDATA[BDT]]></ISO_CODE>
 <!--322 CURSYMBOL-->
-<!--322-->              <CURSYMBOL><![CDATA[Tk]]></CURSYMBOL>
+<!--322-->              <CURSYMBOL><![CDATA[৳]]></CURSYMBOL>
 <!--322 DESCRIPTION-->
 <!--322-->              <DESCRIPTION><![CDATA[Taka]]></DESCRIPTION>
 <!--322 STDPRECISION-->
@@ -4601,9 +4639,9 @@
 <!--323 UPDATEDBY-->
 <!--323-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--323 ISO_CODE-->
-<!--323-->              <ISO_CODE><![CDATA[TRL]]></ISO_CODE>
+<!--323-->              <ISO_CODE><![CDATA[TRY]]></ISO_CODE>
 <!--323 CURSYMBOL-->
-<!--323-->              <CURSYMBOL><![CDATA[TL]]></CURSYMBOL>
+<!--323-->              <CURSYMBOL><![CDATA[YTL]]></CURSYMBOL>
 <!--323 DESCRIPTION-->
 <!--323-->              <DESCRIPTION><![CDATA[Turkish Lira]]></DESCRIPTION>
 <!--323 STDPRECISION-->
@@ -4882,7 +4920,7 @@
 <!--332 ISO_CODE-->
 <!--332-->              <ISO_CODE><![CDATA[CNY]]></ISO_CODE>
 <!--332 CURSYMBOL-->
-<!--332-->              <CURSYMBOL><![CDATA[Y]]></CURSYMBOL>
+<!--332-->              <CURSYMBOL><![CDATA[¥]]></CURSYMBOL>
 <!--332 DESCRIPTION-->
 <!--332-->              <DESCRIPTION><![CDATA[Yuan Renminbi]]></DESCRIPTION>
 <!--332 STDPRECISION-->
@@ -4913,7 +4951,7 @@
 <!--333 ISO_CODE-->
 <!--333-->              <ISO_CODE><![CDATA[YER]]></ISO_CODE>
 <!--333 CURSYMBOL-->
-<!--333-->              <CURSYMBOL><![CDATA[YRls]]></CURSYMBOL>
+<!--333-->              <CURSYMBOL><![CDATA[﷼]]></CURSYMBOL>
 <!--333 DESCRIPTION-->
 <!--333-->              <DESCRIPTION><![CDATA[Yemeni Rial]]></DESCRIPTION>
 <!--333 STDPRECISION-->
@@ -5005,6 +5043,8 @@
 <!--336-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--336 ISO_CODE-->
 <!--336-->              <ISO_CODE><![CDATA[CRC]]></ISO_CODE>
+<!--336 CURSYMBOL-->
+<!--336-->              <CURSYMBOL><![CDATA[₡]]></CURSYMBOL>
 <!--336 DESCRIPTION-->
 <!--336-->              <DESCRIPTION><![CDATA[Costa Rican Colon]]></DESCRIPTION>
 <!--336 STDPRECISION-->
@@ -5034,6 +5074,8 @@
 <!--337-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--337 ISO_CODE-->
 <!--337-->              <ISO_CODE><![CDATA[GNF]]></ISO_CODE>
+<!--337 CURSYMBOL-->
+<!--337-->              <CURSYMBOL><![CDATA[Fr]]></CURSYMBOL>
 <!--337 DESCRIPTION-->
 <!--337-->              <DESCRIPTION><![CDATA[Guinea Franc]]></DESCRIPTION>
 <!--337 STDPRECISION-->
@@ -5063,6 +5105,8 @@
 <!--338-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--338 ISO_CODE-->
 <!--338-->              <ISO_CODE><![CDATA[GWP]]></ISO_CODE>
+<!--338 CURSYMBOL-->
+<!--338-->              <CURSYMBOL><![CDATA[$]]></CURSYMBOL>
 <!--338 DESCRIPTION-->
 <!--338-->              <DESCRIPTION><![CDATA[Guinea-Bissau Peso]]></DESCRIPTION>
 <!--338 STDPRECISION-->
@@ -5092,6 +5136,8 @@
 <!--339-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--339 ISO_CODE-->
 <!--339-->              <ISO_CODE><![CDATA[KGS]]></ISO_CODE>
+<!--339 CURSYMBOL-->
+<!--339-->              <CURSYMBOL><![CDATA[som]]></CURSYMBOL>
 <!--339 DESCRIPTION-->
 <!--339-->              <DESCRIPTION><![CDATA[Som]]></DESCRIPTION>
 <!--339 STDPRECISION-->
@@ -5121,6 +5167,8 @@
 <!--340-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--340 ISO_CODE-->
 <!--340-->              <ISO_CODE><![CDATA[KPW]]></ISO_CODE>
+<!--340 CURSYMBOL-->
+<!--340-->              <CURSYMBOL><![CDATA[₩]]></CURSYMBOL>
 <!--340 DESCRIPTION-->
 <!--340-->              <DESCRIPTION><![CDATA[North Korean Won]]></DESCRIPTION>
 <!--340 STDPRECISION-->
@@ -5150,6 +5198,8 @@
 <!--341-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--341 ISO_CODE-->
 <!--341-->              <ISO_CODE><![CDATA[KZT]]></ISO_CODE>
+<!--341 CURSYMBOL-->
+<!--341-->              <CURSYMBOL><![CDATA[〒]]></CURSYMBOL>
 <!--341 DESCRIPTION-->
 <!--341-->              <DESCRIPTION><![CDATA[Tenge]]></DESCRIPTION>
 <!--341 STDPRECISION-->
@@ -5179,6 +5229,8 @@
 <!--342-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--342 ISO_CODE-->
 <!--342-->              <ISO_CODE><![CDATA[LBP]]></ISO_CODE>
+<!--342 CURSYMBOL-->
+<!--342-->              <CURSYMBOL><![CDATA[ل.ل]]></CURSYMBOL>
 <!--342 DESCRIPTION-->
 <!--342-->              <DESCRIPTION><![CDATA[Lebanese Pound]]></DESCRIPTION>
 <!--342 STDPRECISION-->
@@ -5208,6 +5260,8 @@
 <!--343-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--343 ISO_CODE-->
 <!--343-->              <ISO_CODE><![CDATA[NGN]]></ISO_CODE>
+<!--343 CURSYMBOL-->
+<!--343-->              <CURSYMBOL><![CDATA[₦]]></CURSYMBOL>
 <!--343 DESCRIPTION-->
 <!--343-->              <DESCRIPTION><![CDATA[Naira]]></DESCRIPTION>
 <!--343 STDPRECISION-->
@@ -5237,6 +5291,8 @@
 <!--344-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--344 ISO_CODE-->
 <!--344-->              <ISO_CODE><![CDATA[PYG]]></ISO_CODE>
+<!--344 CURSYMBOL-->
+<!--344-->              <CURSYMBOL><![CDATA[₲]]></CURSYMBOL>
 <!--344 DESCRIPTION-->
 <!--344-->              <DESCRIPTION><![CDATA[Guarani]]></DESCRIPTION>
 <!--344 STDPRECISION-->
@@ -5266,6 +5322,8 @@
 <!--345-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--345 ISO_CODE-->
 <!--345-->              <ISO_CODE><![CDATA[RSD]]></ISO_CODE>
+<!--345 CURSYMBOL-->
+<!--345-->              <CURSYMBOL><![CDATA[дин]]></CURSYMBOL>
 <!--345 DESCRIPTION-->
 <!--345-->              <DESCRIPTION><![CDATA[Serbian Dinar]]></DESCRIPTION>
 <!--345 STDPRECISION-->
@@ -5275,5 +5333,98 @@
 <!--345 PRICEPRECISION-->
 <!--345-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
 <!--345**************--></C_CURRENCY>
+
+<!--346**************--><C_CURRENCY>
+<!--346 C_CURRENCY_ID-->
+<!--346-->              <C_CURRENCY_ID><![CDATA[346]]></C_CURRENCY_ID>
+<!--346 AD_CLIENT_ID-->
+<!--346-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--346 AD_ORG_ID-->
+<!--346-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--346 ISACTIVE-->
+<!--346-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--346 CREATED-->
+<!--346-->              <CREATED><![CDATA[2008-10-31 13:15:01.0]]></CREATED>
+<!--346 CREATEDBY-->
+<!--346-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--346 UPDATED-->
+<!--346-->              <UPDATED><![CDATA[2008-10-31 13:15:01.0]]></UPDATED>
+<!--346 UPDATEDBY-->
+<!--346-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--346 ISO_CODE-->
+<!--346-->              <ISO_CODE><![CDATA[BSF]]></ISO_CODE>
+<!--346 CURSYMBOL-->
+<!--346-->              <CURSYMBOL><![CDATA[Bs F]]></CURSYMBOL>
+<!--346 DESCRIPTION-->
+<!--346-->              <DESCRIPTION><![CDATA[Venezuelan Bolívar Fuerte]]></DESCRIPTION>
+<!--346 STDPRECISION-->
+<!--346-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
+<!--346 COSTINGPRECISION-->
+<!--346-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
+<!--346 PRICEPRECISION-->
+<!--346-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
+<!--346**************--></C_CURRENCY>
+
+<!--347**************--><C_CURRENCY>
+<!--347 C_CURRENCY_ID-->
+<!--347-->              <C_CURRENCY_ID><![CDATA[347]]></C_CURRENCY_ID>
+<!--347 AD_CLIENT_ID-->
+<!--347-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--347 AD_ORG_ID-->
+<!--347-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--347 ISACTIVE-->
+<!--347-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--347 CREATED-->
+<!--347-->              <CREATED><![CDATA[2008-10-31 13:15:01.0]]></CREATED>
+<!--347 CREATEDBY-->
+<!--347-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--347 UPDATED-->
+<!--347-->              <UPDATED><![CDATA[2008-10-31 13:15:01.0]]></UPDATED>
+<!--347 UPDATEDBY-->
+<!--347-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--347 ISO_CODE-->
+<!--347-->              <ISO_CODE><![CDATA[RON]]></ISO_CODE>
+<!--347 CURSYMBOL-->
+<!--347-->              <CURSYMBOL><![CDATA[L]]></CURSYMBOL>
+<!--347 DESCRIPTION-->
+<!--347-->              <DESCRIPTION><![CDATA[Romanian Leu]]></DESCRIPTION>
+<!--347 STDPRECISION-->
+<!--347-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
+<!--347 COSTINGPRECISION-->
+<!--347-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
+<!--347 PRICEPRECISION-->
+<!--347-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
+<!--347**************--></C_CURRENCY>
+
+<!--348**************--><C_CURRENCY>
+<!--348 C_CURRENCY_ID-->
+<!--348-->              <C_CURRENCY_ID><![CDATA[348]]></C_CURRENCY_ID>
+<!--348 AD_CLIENT_ID-->
+<!--348-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--348 AD_ORG_ID-->
+<!--348-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--348 ISACTIVE-->
+<!--348-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--348 CREATED-->
+<!--348-->              <CREATED><![CDATA[2008-10-31 13:15:01.0]]></CREATED>
+<!--348 CREATEDBY-->
+<!--348-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--348 UPDATED-->
+<!--348-->              <UPDATED><![CDATA[2008-10-31 13:15:01.0]]></UPDATED>
+<!--348 UPDATEDBY-->
+<!--348-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--348 ISO_CODE-->
+<!--348-->              <ISO_CODE><![CDATA[BGN]]></ISO_CODE>
+<!--348 CURSYMBOL-->
+<!--348-->              <CURSYMBOL><![CDATA[лв]]></CURSYMBOL>
+<!--348 DESCRIPTION-->
+<!--348-->              <DESCRIPTION><![CDATA[Bulgarian Lev]]></DESCRIPTION>
+<!--348 STDPRECISION-->
+<!--348-->              <STDPRECISION><![CDATA[2]]></STDPRECISION>
+<!--348 COSTINGPRECISION-->
+<!--348-->              <COSTINGPRECISION><![CDATA[4]]></COSTINGPRECISION>
+<!--348 PRICEPRECISION-->
+<!--348-->              <PRICEPRECISION><![CDATA[4]]></PRICEPRECISION>
+<!--348**************--></C_CURRENCY>
 
 </data>
