@@ -149,8 +149,7 @@
         v_AD_Reference_ID:=16;
         v_IsUpdateable:='N';
       ELSIF(UPPER(Cur_Column.Column_Name) IN('UPDATEDBY', 'CREATEDBY')) THEN
-        v_AD_Reference_ID:=18;
-        v_AD_Reference_Value_ID:=110;
+        v_AD_Reference_ID:=30;
         v_IsUpdateable:='N';
       ELSIF(UPPER(Cur_Column.Column_Name) IN('NAME')) THEN
         v_IsIdentifier:='Y';
