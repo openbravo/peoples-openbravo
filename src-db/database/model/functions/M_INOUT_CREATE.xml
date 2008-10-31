@@ -59,7 +59,7 @@
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(4000):='';
-  result_String VARCHAR2(40):='';
+  result_String VARCHAR2(80):='';
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -277,6 +277,22 @@
             DBMS_OUTPUT.PUT_LINE('** DeliveryRule=' || Cur_Order.DeliveryRule || ' not implemented') ;
             Next_Order:=true;
           END IF;
+
+          --Ensure that for Delivery Rules = 'Complete Order' we have enough stock
+          SELECT SUM(QTYORDERED) INTO v_Ordered_Total
+            FROM C_ORDERLINE
+            WHERE C_ORDER_ID = Cur_Order.C_Order_ID
+            GROUP BY C_ORDER_ID;
+          SELECT SUM(QTYDELIVERED) INTO v_Delivered_Total
+            FROM C_ORDERLINE
+            WHERE C_ORDER_ID = Cur_Order.C_Order_ID
+            GROUP BY C_ORDER_ID;
+          IF(Cur_Order.DeliveryRule='O' AND (v_Delivered_Total<v_Ordered_Total)) THEN 
+            v_ResultStr:='Skiped Order '|| Cur_Order.C_Order_ID ||' because delivery rules = Complete (O)rder and we do not have enough stock';
+            DBMS_OUTPUT.PUT_LINE('Skiped Order '||Cur_Order.C_Order_ID||' because delivery rules = Complete (O)rder and we do not have enough stock');
+            Next_Order:=true;
+          END IF;
+		  		  
           IF(NOT Next_Order) THEN
             /**
             * Create Order Header
@@ -562,10 +578,12 @@
             FROM C_ORDERLINE
             WHERE C_ORDER_ID = Cur_Order.C_Order_ID
             GROUP BY C_ORDER_ID;
-          IF (v_DocumentNo='') THEN
-            result_String:='NO SHIPMENT CREATED';
-          ELSIF (v_DocumentNo IS NULL) THEN
-            result_String:='NO SHIPMENT CREATED';
+          IF (v_DocumentNo='') OR (v_DocumentNo IS NULL) THEN
+            IF(Cur_Order.DeliveryRule='O' AND (v_Delivered_Total<v_Ordered_Total)) THEN 
+              result_String:='NO SHIPMENT CREATED: NOT ENOUGH STOCK & DELIVERY RULE = ''Complete Order''';
+            ELSE
+              result_String:='NO SHIPMENT CREATED';
+            END IF;
           ELSIF (v_Delivered_Total=0) THEN
             result_String:='NO SHIPMENT CREATED';
           ELSIF (v_Delivered_Total<v_Ordered_Total) THEN
@@ -573,7 +591,7 @@
           ELSE 
             result_String:='COMPLETE SHIPMENT CREATED';
           END IF;
-          v_Message:=v_Message || '@OrderDocumentno@ ' || Cur_Order.DocumentNo || ' -> @InoutDocumentno@ ' || v_DocumentNo || '- ' || result_String || '; <br>';    
+          v_Message:=v_Message|| result_String  || ' - ' || ' @InoutDocumentno@ ' || v_DocumentNo || ' <-> @OrderDocumentno@ ' || Cur_Order.DocumentNo || '; <br>';    
         END LOOP; -- Order Header Loop
         FINISH_PROCESS:=true;
       END IF;--CREATE_FROM_INVOICE
