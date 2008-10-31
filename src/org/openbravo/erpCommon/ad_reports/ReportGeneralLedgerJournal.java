@@ -113,7 +113,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
   }
 
   void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strDocument, String strOrg, String strTable, String strRecord, String strFactAcctGroupId, String strcAcctSchemaId) throws IOException, ServletException {
-	String  strRecordRange="500";
+	String  strRecordRange=Utility.getContext(this, vars, "#RecordRange", "ReportGeneralLedgerJournal");
     int intRecordRange = (strRecordRange.equals("")?0:Integer.parseInt(strRecordRange));
     String strInitRecord = vars.getSessionValue("ReportGeneralLedgerJournal.initRecordNumber");
     int initRecordNumber = (strInitRecord.equals("")?0:Integer.parseInt(strInitRecord));
