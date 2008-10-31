@@ -315,6 +315,9 @@ public class ModelProvider {
       if (columnName.equals("Account_ID"))
         sTable = "C_ElementValue";
       
+      if(columnName.equalsIgnoreCase("CreatedBy") || columnName.equalsIgnoreCase("UpdatedBy"))
+        sTable = "AD_User";
+      
       try {
         c = getTable(sTable).getPrimaryKeyColumns().get(0);
       } catch (Exception e) {
