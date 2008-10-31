@@ -86,8 +86,8 @@
       AND 3=3 AND M_INOUT.AD_ORG_ID IN ('1')
       AND M_INOUT.AD_CLIENT_ID IN('16')
       AND 2=2) AA
-      GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, UOMSYMBOL, TRCURRENCYID, TRDATE, TRCLIENTID, TRORGID) ZZ      
-	  GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, UOMSYMBOL, CONVSYM, CONVISOSYM, 1 
+      GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, TRCURRENCYID, TRDATE, TRCLIENTID, TRORGID, UOMSYMBOL) ZZ      
+	  GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, UOMSYMBOL, 1 
      ]]></Sql>
     <Parameter name="cCurrencyConv"/>
 	<Parameter name="cCurrencyConv"/>
@@ -133,7 +133,7 @@
     <Parameter name="mWarehouseId" optional="true" after="AND 2=2"><![CDATA[AND M_WAREHOUSE.M_WAREHOUSE_ID = ?]]></Parameter>
     <Parameter name="salesrepId" optional="true" after="AND 2=2"><![CDATA[AND M_INOUT.SALESREP_ID = ?]]></Parameter>
     <Parameter name="partnerSalesrepId" optional="true" after="AND 2=2"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
-    <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, UOMSYMBOL, CONVSYM, CONVISOSYM" text=", 1"/>
+    <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, UOMSYMBOL" text=", 1"/>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
@@ -180,8 +180,8 @@
       AND 0=0 AND M_INOUT.AD_ORG_ID IN ('1')
       AND M_INOUT.AD_CLIENT_ID IN ('8')
       AND 1=1) AA
-      GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, UOMSYMBOL, TRCURRENCYID, TRDATE, TRCLIENTID, TRORGID) ZZ
-      GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, UOMSYMBOL, CONVSYM, CONVISOSYM, 1
+      GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, TRCURRENCYID, TRDATE, TRCLIENTID, TRORGID, UOMSYMBOL) ZZ
+      GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, UOMSYMBOL, 1
      ]]></Sql>
     <Parameter name="cCurrencyConv"/>
 	<Parameter name="cCurrencyConv"/>
@@ -206,7 +206,7 @@
     <Parameter name="mWarehouseId" optional="true" after="AND 1=1"><![CDATA[AND M_WAREHOUSE.M_WAREHOUSE_ID = ?]]></Parameter>
     <Parameter name="salesrepId" optional="true" after="AND 1=1"><![CDATA[AND M_INOUT.SALESREP_ID = ?]]></Parameter>
     <Parameter name="partnerSalesrepId" optional="true" after="AND 1=1"><![CDATA[AND CB.C_BPARTNER_ID = ?]]></Parameter>
-    <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, UOMSYMBOL, CONVSYM, CONVISOSYM" text=", 1"/>
+    <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, UOMSYMBOL" text=", 1"/>
   </SqlMethod>
   <SqlMethod name="selectBpartner" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>

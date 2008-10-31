@@ -45,7 +45,7 @@
                                                            LEFT JOIN M_LOCATOR ML1 ON ML1.M_WAREHOUSE_ID=MW1.M_WAREHOUSE_ID
                                                            LEFT JOIN M_STORAGE_DETAIL MSD1 ON ML1.M_LOCATOR_ID=MSD1.M_LOCATOR_ID
                                                            LEFT JOIN M_PRODUCT PR1 ON MSD1.M_PRODUCT_ID=PR1.M_PRODUCT_ID 
-                                                           LEFT JOIN M_COSTING MC ON PR.M_PRODUCT_ID=MC.M_PRODUCT_ID  
+                                                           LEFT JOIN M_COSTING MC ON PR1.M_PRODUCT_ID=MC.M_PRODUCT_ID  
                                                            WHERE MSD1.QTYONHAND>0
                                                            AND 1=1
                                                            AND 2=2
