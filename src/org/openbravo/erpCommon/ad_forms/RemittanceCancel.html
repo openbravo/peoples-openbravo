@@ -71,15 +71,9 @@ function loadData(mark) {
 	if (mark==null) mark=false;
   	var frm = document.frmMain;
 	if (!radio) return false;
-	else if (!radio.length) {
-    	radio.checked = mark;
-	} else if (radio.length > 20) {
-		return submitCommandForm('FIND_SETTLEMENT', true);
-	} else {
-    	var total = radio.length;
-		for (var i=0;i<total;i++) {
-      		radio[i].checked=mark;
-		}
+   	var total = radio.length;
+	for (var i=0;i<total;i++) {
+     		radio[i].checked=mark;
 	}
 	return true;
 }
