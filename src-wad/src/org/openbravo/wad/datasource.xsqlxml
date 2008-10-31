@@ -30,8 +30,11 @@ package="org.openbravo.wad.Window">
         '' AS TR_BGCOLOR, '' as total_count,
         <PARAMETER_TMP id="table">table</PARAMETER_TMP>.Created, 
         <PARAMETER_TMP id="table">table</PARAMETER_TMP>.CreatedBy, 
+        <PARAMETER_TMP id="table">table</PARAMETER_TMP>.CreatedBy AS CreatedByR,
         <PARAMETER_TMP id="table">table</PARAMETER_TMP>.Updated, 
-        <PARAMETER_TMP id="table">table</PARAMETER_TMP>.UpdatedBy, ? AS LANGUAGE, '' AS AD_USER_CLIENT, '' AS AD_ORG_CLIENT
+        <PARAMETER_TMP id="table">table</PARAMETER_TMP>.UpdatedBy,
+        <PARAMETER_TMP id="table">table</PARAMETER_TMP>.UpdatedBy AS UpdatedByR,
+        ? AS LANGUAGE, '' AS AD_USER_CLIENT, '' AS AD_ORG_CLIENT
         FROM <PARAMETER_TMP id="table">table</PARAMETER_TMP><PARAMETER_TMP id="tables">tables</PARAMETER_TMP>
         WHERE 2=2 <PARAMETER_TMP id="where">tablesWhere</PARAMETER_TMP>
         AND 1=1 
@@ -64,9 +67,11 @@ package="org.openbravo.wad.Window">
     <Sql>&#60;&#33;[CDATA[
         SELECT <PARAMETER_TMP id="fields">field</PARAMETER_TMP> 
         <PARAMETER_TMP id="table">table</PARAMETER_TMP>.Created, 
-        <PARAMETER_TMP id="table">table</PARAMETER_TMP>.CreatedBy, 
+        (SELECT NAME FROM AD_USER WHERE AD_USER_ID = <PARAMETER_TMP id="table">table</PARAMETER_TMP>.CreatedBy) as CreatedByR, 
         <PARAMETER_TMP id="table">table</PARAMETER_TMP>.Updated, 
-        <PARAMETER_TMP id="table">table</PARAMETER_TMP>.UpdatedBy, ? AS LANGUAGE 
+        <PARAMETER_TMP id="table">table</PARAMETER_TMP>.UpdatedBy, 
+        (SELECT NAME FROM AD_USER WHERE AD_USER_ID = <PARAMETER_TMP id="table">table</PARAMETER_TMP>.UpdatedBy) as UpdatedByR,
+        ? AS LANGUAGE 
         FROM <PARAMETER_TMP id="table">table</PARAMETER_TMP><PARAMETER_TMP id="tables">tables</PARAMETER_TMP>
         WHERE 2=2 
 <PARAMETER_TMP id="where">tablesWhere</PARAMETER_TMP>

@@ -2266,10 +2266,12 @@ public class Wad extends DefaultHandler {
             if (fieldsDef[i].referencevalue.equals("25")) tableN = "C_ValidCombination";
             else if (fieldsDef[i].referencevalue.equals("31")) tableN = "M_Locator";
             else if (fieldsDef[i].referencevalue.equals("800011")) tableN = "M_Product";
+            else if (fieldsDef[i].name.equalsIgnoreCase("createdBy") || fieldsDef[i].name.equalsIgnoreCase("updatedBy")) tableN = "AD_User";
             else tableN = fieldsDef[i].name.substring(0, fieldsDef[i].name.length()-3);
             if (fieldsDef[i].referencevalue.equals("25")) fieldsDef[i].name = "C_ValidCombination_ID";
             else if (fieldsDef[i].referencevalue.equals("31")) fieldsDef[i].name = "M_Locator_ID";
             else if (fieldsDef[i].referencevalue.equals("800011")) fieldsDef[i].name = "M_Product_ID";
+            else if (fieldsDef[i].name.equalsIgnoreCase("createdBy") || fieldsDef[i].name.equalsIgnoreCase("updatedBy")) fieldsDef[i].name = "AD_User_ID";
           } else {
             tableN = dataSearchs[0].reference;
             fieldsDef[i].name = dataSearchs[0].columnname;

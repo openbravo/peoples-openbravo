@@ -432,8 +432,20 @@
       WHERE ad_field.ad_column_id = ad_column.ad_column_id
 	  	AND ad_column.AD_TABLE_ID = ad_table.AD_TABLE_ID 
         AND ad_tab_id = ? 
+        AND upper(ad_column.columnname) <> 'BINARYDATA'
+      union
+      SELECT ad_column.AD_COLUMN_ID as reference, ad_column.ISMANDATORY as required, 
+      columnname Name, 
+      REPLACE(REPLACE(ad_column.defaultvalue, CHR(13), '\\n'), CHR(10), '') as defaultValue, '' as WHERECLAUSE, 
+      ad_reference_id as referencevalue,
+      'Y', ad_column.columnname as columnname, ad_table.ACCESSLEVEL, 
+      ad_table.TABLENAME as NameRef, ad_reference_value_id as type, ad_column.name as realname
+      FROM ad_column, ad_table, ad_tab t
+      WHERE lower(columnname) in ('createdby', 'updatedby')
+      AND ad_column.AD_TABLE_ID = ad_table.AD_TABLE_ID 
+        AND t.ad_tab_id = 'F53E35A11C564F20BE4082A7B8CFF6B7'
+        and ad_table.ad_table_id = t.ad_table_id
         AND upper(ad_column.columnname) <> 'BINARYDATA' 
-      ORDER BY ad_field.SEQNO
       ]]>
     </Sql>
     <Parameter name="sql" optional="true" after="WHERE " text="ad_column.defaultvalue LIKE ? || '%' AND "/>

@@ -53,7 +53,7 @@ public class WadUtility {
     if (fields==null) return "";
     StringBuffer texto = new StringBuffer();
     if (fields.reference.equals("17")) { //List
-      if (fields.referencevalue.equals("800024")) System.out.println("List: tablename="+tableName); //ALO
+      if (fields.referencevalue.equals("800024")) 
       ilist++;
       if (tableName!=null && tableName.length()!=0) {
         vecTable.addElement("left join ad_ref_list_v list" + ilist + " on (" + tableName + "." + fields.name + " = list" + ilist + ".value and list" + ilist + ".ad_reference_id = '" + fields.referencevalue + "' and list" + ilist + ".ad_language = ?) ");
@@ -697,7 +697,7 @@ public class WadUtility {
       return;
     }
 
-    if (strTableID.equals("") || strColumnName.equals("")) {
+    if ((strTableID.equals("") || strColumnName.equals("")) && !(auxControl.getData("ColumnName").equalsIgnoreCase("updatedBy") || auxControl.getData("ColumnName").equalsIgnoreCase("updatedBy"))) {
       log4j.warn("There're no table name or column name for: " + auxControl.getData("ColumnName") + " - TABLE_NAME: " + strTableName + " - COLUMN_NAME: " + strColumnName);
     }
 
