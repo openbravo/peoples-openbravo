@@ -697,7 +697,7 @@ public class WadUtility {
       return;
     }
 
-    if ((strTableID.equals("") || strColumnName.equals("")) && !(auxControl.getData("ColumnName").equalsIgnoreCase("updatedBy") || auxControl.getData("ColumnName").equalsIgnoreCase("updatedBy"))) {
+    if ((strTableID.equals("") || strColumnName.equals("")) && !(auxControl.getData("ColumnName").equalsIgnoreCase("updatedBy") || auxControl.getData("ColumnName").equalsIgnoreCase("createdBy"))) {
       log4j.warn("There're no table name or column name for: " + auxControl.getData("ColumnName") + " - TABLE_NAME: " + strTableName + " - COLUMN_NAME: " + strColumnName);
     }
 
