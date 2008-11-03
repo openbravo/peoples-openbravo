@@ -28,7 +28,7 @@ public class LoginUtils {
     private LoginUtils() {
     }
     
-    public static boolean fillSessionArguments(ConnectionProvider conn, VariablesSecureApp vars, String strUserAuth, String strLanguage, String strRol, String strCliente, String strOrg, String strAlmacen)  throws ServletException {
+    public static boolean fillSessionArguments(ConnectionProvider conn, VariablesSecureApp vars, String strUserAuth, String strLanguage, String strIsRTL,  String strRol, String strCliente, String strOrg, String strAlmacen)  throws ServletException {
 
          // Check session options 
         if (!RoleComboData.isUserRole(conn, strUserAuth, strRol)) {
@@ -123,7 +123,16 @@ public class LoginUtils {
             vars.setSessionValue("#RecordRange", dataSystem[0].tadRecordrange);
             vars.setSessionValue("#RecordRangeInfo", dataSystem[0].tadRecordrangeInfo);
             vars.setSessionValue("#Transactional$Range", dataSystem[0].tadTransactionalrange);
-            vars.setSessionValue("#Theme", dataSystem[0].tadTheme);
+            if (strIsRTL.equals("Y")) {
+              vars.setSessionValue("#Theme", "rtl/"+dataSystem[0].tadTheme);
+              vars.setSessionValue("#TextDirection", "RTL");
+            } else if (strIsRTL.equals("N")) {
+              vars.setSessionValue("#Theme", "ltr/"+dataSystem[0].tadTheme);
+              vars.setSessionValue("#TextDirection", "LTR");
+            } else {
+              log4j.error("Can't detect direction of language: ltr? rtl? parameter isRTL missing in call to LoginUtils.getStringParameter");
+              return false;
+            }
           }
 
         } catch (ServletException e) {

@@ -50,6 +50,9 @@ source.path=
 # External Services
 pentahoServer=
 
+# CSS Sprite Generator
+generateSprites=no
+
 # Login Handler
 # To login using a lam server use:  org.openbravo.authentication.lam.LamAuthenticationManager
 authentication.class=

@@ -67,11 +67,13 @@ function onloadFunctions() {
   document.frmMain.warehouse.value = document.frmInput.inputWarehouse.value;       
 
   if (document.frmInput.saveok.value == "true") {
-    // Refresh menu
-    opener.top.document.getElementById("paramFrameMenu").src = "../utility/VerticalMenu.html";
-    // Refresh main window
-    opener.top.document.getElementById("paramFrame1").src = "../utility/Home.html";
+	window.opener.top.document.location.href="../security/Menu.html";
   }
+    // Refresh menu
+//    opener.top.document.getElementById("paramFrameMenu").src = "../utility/VerticalMenu.html";
+    // Refresh main window
+//    opener.top.document.getElementById("paramFrame1").src = "../utility/Home.html";
+//  }
 
 }
 
@@ -90,6 +92,11 @@ function refreshEntity() {
   return true;
 }
 function saveOptions() {
+  if (document.frmMain.TextDirection.value=="RTL") {
+    window.opener.top.isRTL=true;
+  } else {
+    window.opener.top.isRTL=false;
+  }
   submitCommandForm("SAVE", false);
   window.opener.setMenuLoading(true);
   return false;
@@ -197,8 +204,9 @@ var arrWare=null;
 
 
 <form action="Role.html" method="post" name="frmMain">
-  <input type="hidden" name="Command" value="">
+<input type="hidden" name="Command" value="">
 <INPUT type="hidden" name="IsPopUpCall" value="1">
+<INPUT type="hidden" id="TextDirection" name="TextDirection" value="XX">
 
   <table cellspacing="0" cellpadding="0" width="100%">
     <tr>

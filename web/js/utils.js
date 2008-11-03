@@ -1903,14 +1903,22 @@ function menuShowHide(id) {
    frm2.document.onresize = obj2;
    } catch (e) {*/
     if (top.isMenuHide == true) {
-      frameset.cols = "0%,25%,*";
+      if (top.isRTL == true) {
+        frameset.cols = "*,25%,0";
+      } else {
+        frameset.cols = "0%,25%,*";
+      }
       top.isMenuHide = false;
       try {
         putFocusOnMenu();
       } catch(e) {
       }
     } else {
-      frameset.cols = "0%,0%,*";
+      if (top.isRTL == true) {
+        frameset.cols = "*,0%,0%";
+      } else {
+        frameset.cols = "0%,0%,*";
+      }
       top.isMenuHide = true;
       try {
         putFocusOnWindow();

@@ -206,10 +206,17 @@ build.war: build a war file in the lib directory.
 			<arg line="'${base.config}/Openbravo.properties' '${basedir}' '${base.design}' 'jasper' 'true' 'false'" />
 			<classpath refid="project.class.path" />
 		</java>
-		<antcall target="build.local.context" />
+		<antcall target="build.local.context" inheritAll="true" inheritrefs="true" />
+		<condition property="generateSpritesBool">
+			<istrue value="${generateSprites}" />
+		</condition>
+		<antcall target="generate.sprites" inheritAll="true" inheritrefs="true" />
 	</target>
 
 	<target name="build.local.context">
+		<delete quiet="yes">
+		  <fileset dir="${base.context}/web/skins"/>
+		</delete>
 		<copy todir="${base.context}" encoding="UTF-8">
 			<fileset file="${basedir}/index.html" />
 		</copy>
@@ -229,11 +236,51 @@ build.war: build a war file in the lib directory.
 			</fileset>
 		</copy>
 		<mkdir dir="${base.context}/web" />
-		<copy todir="${base.context}/web" encoding="UTF-8">
-			<fileset dir="${base.web}" />
-		</copy>
+	    <copy todir="${base.context}/web/images"  encoding="UTF-8">
+	      <fileset dir="${base.web}/images"/>
+	    </copy>
+	    <copy todir="${base.context}/web/js"  encoding="UTF-8">
+	      <fileset dir="${base.web}/js"/>
+	    </copy>
+	    <copy todir="${base.context}/web/popups"  encoding="UTF-8">
+	      <fileset dir="${base.web}/popups"/>
+	    </copy>
+	  	<mkdir dir="${base.context}/web/skins/ltr"/>
+	    <copy todir="${base.context}/web/skins/ltr"  encoding="UTF-8">
+	      <fileset dir="${base.web}/skins"/>
+	    </copy>
+	  	<mkdir dir="${base.context}/web/skins/rtl"/>
+	    <copy todir="${base.context}/web/skins/rtl"  encoding="UTF-8">
+	      <fileset dir="${base.web}/skins"/>
+	    </copy>
+        <java classname="org.openbravo.translate.RTLSkin" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
+	      <arg line="${base.context}/web/skins/rtl ${base.context}/web/skins/ltr ${base.web}/skins"/>
+	      <classpath refid="project.class.path"/>
+	    </java>
 		<chmod dir="${base.context}" perm="775" />
 	</target>
+
+  <target name="generate.sprites" description="Performs CSS sprite processing" if="generateSpritesBool">
+    <property name="skins.location" location="${base.context}/web/skins/"/>
+      <taskdef name="smartsprites" classname="org.carrot2.labs.smartsprites.ant.SmartSpritesTask">
+      <classpath refid="project.class.path"/>
+      </taskdef>
+      <smartsprites rootdir="${skins.location}"
+                    documentrootdir="${skins.location}"
+                    outputdir="${skins.location}"
+                    cssfilesuffix="-sprite"
+                    csspropertyindent="  "
+                    loglevel="WARN"
+                    spritepngdepth="DIRECT"
+                    spritepngie6="false" />
+      <move todir="${skins.location}">
+        <fileset dir="${skins.location}">
+          <include name="*/*-sprite.css"/>
+          <include name="*/*/*-sprite.css"/>
+        </fileset>
+        <mapper type="glob" from="*-sprite.css" to="*.css"/>
+      </move>
+  </target>
 
 	<target name="compile.src" depends="compileSqlc, postsrc, copy.files">
 	</target>

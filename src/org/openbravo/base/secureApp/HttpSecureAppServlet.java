@@ -161,6 +161,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
       if (strUserAuth != null) {
         if (variables.getRole().equals("") || !SeguridadData.loggedOK(this, variables.getDBSession())) {
           String strLanguage = "";
+          String strIsRTL = "";
           String strRole = "";
           String strClient = "";
           String strOrg = "";
@@ -191,13 +192,17 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
         		  strWarehouse = "";
           }
 
-          strLanguage = DefaultOptionsData.defaultLanguage(this, strUserAuth);
+          DefaultOptionsData dataLanguage [] = DefaultOptionsData.defaultLanguage(this, strUserAuth);
+          strLanguage = dataLanguage[0].getField("DEFAULT_AD_LANGUAGE");
+          strIsRTL = dataLanguage[0].getField("ISRTL");
           if(strLanguage == null) {
-            strLanguage = DefaultOptionsData.getDefaultLanguage(this);
+            dataLanguage = DefaultOptionsData.getDefaultLanguage(this);
+            strLanguage = dataLanguage[0].getField("AD_LANGUAGE");
+            strIsRTL = dataLanguage[0].getField("ISRTL");
           }
 
           VariablesSecureApp vars = new VariablesSecureApp(request);
-          if (LoginUtils.fillSessionArguments(this, vars, strUserAuth, strLanguage, strRole, strClient, strOrg, strWarehouse)) {
+          if (LoginUtils.fillSessionArguments(this, vars, strUserAuth, strLanguage, strIsRTL, strRole, strClient, strOrg, strWarehouse)) {
             readProperties(vars, globalParameters.getOpenbravoPropertiesPath());
             readNumberFormat(vars, globalParameters.getFormatPath());
             saveLoginBD(request, vars, strClient, strOrg);

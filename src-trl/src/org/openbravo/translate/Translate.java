@@ -65,7 +65,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
   /**
    * Constructor
    * 
-   * @param xmlPoolFile Path to the XmlPool.xml file.
+   * @param xmlPoolFile Path to the Openbravo.properties file.
    * @throws ServletException
    */
   public Translate (String xmlPoolFile) throws ServletException {
@@ -75,7 +75,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
   /**
    * Constructor
    * 
-   * @param xmlPoolFile Path to the XmlPool.xml file.
+   * @param xmlPoolFile Path to the Openbravo.properties file.
    * @param _fileTermination File extension to filter.
    * @throws ServletException
    */
@@ -97,9 +97,9 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    * 
    * @param argv List of arguments. There is 2 call ways, with 2 arguments; the first
    *              one is the attribute to indicate if the AD_TEXTINTERFACES must be 
-   *              cleaned ("clean") and the second one is the XmlPool.xml path.
+   *              cleaned ("clean") and the second one is the Openbravo.properties path.
    *              The other way is with more arguments, where:
-   *              0- XmlPool.xml path.
+   *              0- Openbravo.properties path.
    *              1- File extension.
    *              2- Path where are the files to translate.
    *              3- Path where the translated files must be created.
@@ -123,7 +123,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
         
         
     if (argv.length < 4) {
-      log4j.error("Usage: java Translate XmlPool.xml fileTermination sourceDir destinyDir relativePath");
+      log4j.error("Usage: java Translate Openbravo.properties fileTermination sourceDir destinyDir relativePath");
       return;
     }
 

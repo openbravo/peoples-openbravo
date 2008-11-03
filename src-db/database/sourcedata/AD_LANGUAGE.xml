@@ -16,9 +16,9 @@
 <!--100 CREATEDBY-->
 <!--100-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--100 UPDATED-->
-<!--100-->              <UPDATED><![CDATA[2003-08-06 18:41:25.0]]></UPDATED>
+<!--100-->              <UPDATED><![CDATA[2008-10-29 19:07:43.0]]></UPDATED>
 <!--100 UPDATEDBY-->
-<!--100-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--100-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--100 NAME-->
 <!--100-->              <NAME><![CDATA[Arabic (United Arab Emirates)]]></NAME>
 <!--100 LANGUAGEISO-->
@@ -31,6 +31,8 @@
 <!--100-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--100 PIXELSIZE-->
 <!--100-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--100 ISRTL-->
+<!--100-->              <ISRTL><![CDATA[Y]]></ISRTL>
 <!--100**************--></AD_LANGUAGE>
 
 <!--101**************--><AD_LANGUAGE>
@@ -49,9 +51,9 @@
 <!--101 CREATEDBY-->
 <!--101-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--101 UPDATED-->
-<!--101-->              <UPDATED><![CDATA[2003-08-06 18:41:26.0]]></UPDATED>
+<!--101-->              <UPDATED><![CDATA[2008-10-29 19:07:07.0]]></UPDATED>
 <!--101 UPDATEDBY-->
-<!--101-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--101-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--101 NAME-->
 <!--101-->              <NAME><![CDATA[Arabic (Bahrain)]]></NAME>
 <!--101 LANGUAGEISO-->
@@ -64,6 +66,8 @@
 <!--101-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--101 PIXELSIZE-->
 <!--101-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--101 ISRTL-->
+<!--101-->              <ISRTL><![CDATA[Y]]></ISRTL>
 <!--101**************--></AD_LANGUAGE>
 
 <!--102**************--><AD_LANGUAGE>
@@ -82,9 +86,9 @@
 <!--102 CREATEDBY-->
 <!--102-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--102 UPDATED-->
-<!--102-->              <UPDATED><![CDATA[2003-08-06 18:41:59.0]]></UPDATED>
+<!--102-->              <UPDATED><![CDATA[2008-10-29 19:07:05.0]]></UPDATED>
 <!--102 UPDATEDBY-->
-<!--102-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--102-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--102 NAME-->
 <!--102-->              <NAME><![CDATA[Arabic (Algeria)]]></NAME>
 <!--102 LANGUAGEISO-->
@@ -97,6 +101,8 @@
 <!--102-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--102 PIXELSIZE-->
 <!--102-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--102 ISRTL-->
+<!--102-->              <ISRTL><![CDATA[Y]]></ISRTL>
 <!--102**************--></AD_LANGUAGE>
 
 <!--103**************--><AD_LANGUAGE>
@@ -115,9 +121,9 @@
 <!--103 CREATEDBY-->
 <!--103-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--103 UPDATED-->
-<!--103-->              <UPDATED><![CDATA[2003-08-06 18:41:59.0]]></UPDATED>
+<!--103-->              <UPDATED><![CDATA[2008-10-29 19:07:11.0]]></UPDATED>
 <!--103 UPDATEDBY-->
-<!--103-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--103-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--103 NAME-->
 <!--103-->              <NAME><![CDATA[Arabic (Egypt)]]></NAME>
 <!--103 LANGUAGEISO-->
@@ -130,6 +136,8 @@
 <!--103-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--103 PIXELSIZE-->
 <!--103-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--103 ISRTL-->
+<!--103-->              <ISRTL><![CDATA[Y]]></ISRTL>
 <!--103**************--></AD_LANGUAGE>
 
 <!--104**************--><AD_LANGUAGE>
@@ -148,9 +156,9 @@
 <!--104 CREATEDBY-->
 <!--104-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--104 UPDATED-->
-<!--104-->              <UPDATED><![CDATA[2003-08-06 18:41:59.0]]></UPDATED>
+<!--104-->              <UPDATED><![CDATA[2008-10-29 19:07:13.0]]></UPDATED>
 <!--104 UPDATEDBY-->
-<!--104-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--104-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--104 NAME-->
 <!--104-->              <NAME><![CDATA[Arabic (Iraq)]]></NAME>
 <!--104 LANGUAGEISO-->
@@ -163,6 +171,8 @@
 <!--104-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--104 PIXELSIZE-->
 <!--104-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--104 ISRTL-->
+<!--104-->              <ISRTL><![CDATA[Y]]></ISRTL>
 <!--104**************--></AD_LANGUAGE>
 
 <!--105**************--><AD_LANGUAGE>
@@ -181,9 +191,9 @@
 <!--105 CREATEDBY-->
 <!--105-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--105 UPDATED-->
-<!--105-->              <UPDATED><![CDATA[2003-08-06 18:41:59.0]]></UPDATED>
+<!--105-->              <UPDATED><![CDATA[2008-10-29 19:07:15.0]]></UPDATED>
 <!--105 UPDATEDBY-->
-<!--105-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--105-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--105 NAME-->
 <!--105-->              <NAME><![CDATA[Arabic (Jordan)]]></NAME>
 <!--105 LANGUAGEISO-->
@@ -196,6 +206,8 @@
 <!--105-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--105 PIXELSIZE-->
 <!--105-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--105 ISRTL-->
+<!--105-->              <ISRTL><![CDATA[Y]]></ISRTL>
 <!--105**************--></AD_LANGUAGE>
 
 <!--106**************--><AD_LANGUAGE>
@@ -214,9 +226,9 @@
 <!--106 CREATEDBY-->
 <!--106-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--106 UPDATED-->
-<!--106-->              <UPDATED><![CDATA[2003-08-06 18:41:59.0]]></UPDATED>
+<!--106-->              <UPDATED><![CDATA[2008-10-29 19:07:17.0]]></UPDATED>
 <!--106 UPDATEDBY-->
-<!--106-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--106-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--106 NAME-->
 <!--106-->              <NAME><![CDATA[Arabic (Kuwait)]]></NAME>
 <!--106 LANGUAGEISO-->
@@ -229,6 +241,8 @@
 <!--106-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--106 PIXELSIZE-->
 <!--106-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--106 ISRTL-->
+<!--106-->              <ISRTL><![CDATA[Y]]></ISRTL>
 <!--106**************--></AD_LANGUAGE>
 
 <!--107**************--><AD_LANGUAGE>
@@ -247,9 +261,9 @@
 <!--107 CREATEDBY-->
 <!--107-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--107 UPDATED-->
-<!--107-->              <UPDATED><![CDATA[2003-08-06 18:41:59.0]]></UPDATED>
+<!--107-->              <UPDATED><![CDATA[2008-10-29 19:07:19.0]]></UPDATED>
 <!--107 UPDATEDBY-->
-<!--107-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--107-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--107 NAME-->
 <!--107-->              <NAME><![CDATA[Arabic (Lebanon)]]></NAME>
 <!--107 LANGUAGEISO-->
@@ -262,6 +276,8 @@
 <!--107-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--107 PIXELSIZE-->
 <!--107-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--107 ISRTL-->
+<!--107-->              <ISRTL><![CDATA[Y]]></ISRTL>
 <!--107**************--></AD_LANGUAGE>
 
 <!--108**************--><AD_LANGUAGE>
@@ -280,9 +296,9 @@
 <!--108 CREATEDBY-->
 <!--108-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--108 UPDATED-->
-<!--108-->              <UPDATED><![CDATA[2003-08-06 18:42:00.0]]></UPDATED>
+<!--108-->              <UPDATED><![CDATA[2008-10-29 19:07:21.0]]></UPDATED>
 <!--108 UPDATEDBY-->
-<!--108-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--108-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--108 NAME-->
 <!--108-->              <NAME><![CDATA[Arabic (Libya)]]></NAME>
 <!--108 LANGUAGEISO-->
@@ -295,6 +311,8 @@
 <!--108-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--108 PIXELSIZE-->
 <!--108-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--108 ISRTL-->
+<!--108-->              <ISRTL><![CDATA[Y]]></ISRTL>
 <!--108**************--></AD_LANGUAGE>
 
 <!--109**************--><AD_LANGUAGE>
@@ -313,9 +331,9 @@
 <!--109 CREATEDBY-->
 <!--109-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--109 UPDATED-->
-<!--109-->              <UPDATED><![CDATA[2003-08-06 18:42:00.0]]></UPDATED>
+<!--109-->              <UPDATED><![CDATA[2008-10-29 19:07:23.0]]></UPDATED>
 <!--109 UPDATEDBY-->
-<!--109-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--109-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--109 NAME-->
 <!--109-->              <NAME><![CDATA[Arabic (Morocco)]]></NAME>
 <!--109 LANGUAGEISO-->
@@ -328,6 +346,8 @@
 <!--109-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--109 PIXELSIZE-->
 <!--109-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--109 ISRTL-->
+<!--109-->              <ISRTL><![CDATA[Y]]></ISRTL>
 <!--109**************--></AD_LANGUAGE>
 
 <!--110**************--><AD_LANGUAGE>
@@ -346,9 +366,9 @@
 <!--110 CREATEDBY-->
 <!--110-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--110 UPDATED-->
-<!--110-->              <UPDATED><![CDATA[2003-08-06 18:42:00.0]]></UPDATED>
+<!--110-->              <UPDATED><![CDATA[2008-10-29 19:07:26.0]]></UPDATED>
 <!--110 UPDATEDBY-->
-<!--110-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--110-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--110 NAME-->
 <!--110-->              <NAME><![CDATA[Arabic (Oman)]]></NAME>
 <!--110 LANGUAGEISO-->
@@ -361,6 +381,8 @@
 <!--110-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--110 PIXELSIZE-->
 <!--110-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--110 ISRTL-->
+<!--110-->              <ISRTL><![CDATA[Y]]></ISRTL>
 <!--110**************--></AD_LANGUAGE>
 
 <!--111**************--><AD_LANGUAGE>
@@ -379,9 +401,9 @@
 <!--111 CREATEDBY-->
 <!--111-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--111 UPDATED-->
-<!--111-->              <UPDATED><![CDATA[2003-08-06 18:42:00.0]]></UPDATED>
+<!--111-->              <UPDATED><![CDATA[2008-10-29 19:07:28.0]]></UPDATED>
 <!--111 UPDATEDBY-->
-<!--111-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--111-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--111 NAME-->
 <!--111-->              <NAME><![CDATA[Arabic (Qatar)]]></NAME>
 <!--111 LANGUAGEISO-->
@@ -394,6 +416,8 @@
 <!--111-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--111 PIXELSIZE-->
 <!--111-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--111 ISRTL-->
+<!--111-->              <ISRTL><![CDATA[Y]]></ISRTL>
 <!--111**************--></AD_LANGUAGE>
 
 <!--112**************--><AD_LANGUAGE>
@@ -412,9 +436,9 @@
 <!--112 CREATEDBY-->
 <!--112-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--112 UPDATED-->
-<!--112-->              <UPDATED><![CDATA[2003-08-06 18:42:00.0]]></UPDATED>
+<!--112-->              <UPDATED><![CDATA[2008-10-29 19:07:30.0]]></UPDATED>
 <!--112 UPDATEDBY-->
-<!--112-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--112-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--112 NAME-->
 <!--112-->              <NAME><![CDATA[Arabic (Saudi Arabia)]]></NAME>
 <!--112 LANGUAGEISO-->
@@ -427,6 +451,8 @@
 <!--112-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--112 PIXELSIZE-->
 <!--112-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--112 ISRTL-->
+<!--112-->              <ISRTL><![CDATA[Y]]></ISRTL>
 <!--112**************--></AD_LANGUAGE>
 
 <!--113**************--><AD_LANGUAGE>
@@ -445,9 +471,9 @@
 <!--113 CREATEDBY-->
 <!--113-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--113 UPDATED-->
-<!--113-->              <UPDATED><![CDATA[2003-08-06 18:42:00.0]]></UPDATED>
+<!--113-->              <UPDATED><![CDATA[2008-10-29 19:07:32.0]]></UPDATED>
 <!--113 UPDATEDBY-->
-<!--113-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--113-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--113 NAME-->
 <!--113-->              <NAME><![CDATA[Arabic (Sudan)]]></NAME>
 <!--113 LANGUAGEISO-->
@@ -460,6 +486,8 @@
 <!--113-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--113 PIXELSIZE-->
 <!--113-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--113 ISRTL-->
+<!--113-->              <ISRTL><![CDATA[Y]]></ISRTL>
 <!--113**************--></AD_LANGUAGE>
 
 <!--114**************--><AD_LANGUAGE>
@@ -478,9 +506,9 @@
 <!--114 CREATEDBY-->
 <!--114-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--114 UPDATED-->
-<!--114-->              <UPDATED><![CDATA[2003-08-06 18:42:00.0]]></UPDATED>
+<!--114-->              <UPDATED><![CDATA[2008-10-29 19:07:37.0]]></UPDATED>
 <!--114 UPDATEDBY-->
-<!--114-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--114-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--114 NAME-->
 <!--114-->              <NAME><![CDATA[Arabic (Syria)]]></NAME>
 <!--114 LANGUAGEISO-->
@@ -493,6 +521,8 @@
 <!--114-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--114 PIXELSIZE-->
 <!--114-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--114 ISRTL-->
+<!--114-->              <ISRTL><![CDATA[Y]]></ISRTL>
 <!--114**************--></AD_LANGUAGE>
 
 <!--115**************--><AD_LANGUAGE>
@@ -511,9 +541,9 @@
 <!--115 CREATEDBY-->
 <!--115-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--115 UPDATED-->
-<!--115-->              <UPDATED><![CDATA[2003-08-06 18:42:01.0]]></UPDATED>
+<!--115-->              <UPDATED><![CDATA[2008-10-29 19:07:39.0]]></UPDATED>
 <!--115 UPDATEDBY-->
-<!--115-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--115-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--115 NAME-->
 <!--115-->              <NAME><![CDATA[Arabic (Tunisia)]]></NAME>
 <!--115 LANGUAGEISO-->
@@ -526,6 +556,8 @@
 <!--115-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--115 PIXELSIZE-->
 <!--115-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--115 ISRTL-->
+<!--115-->              <ISRTL><![CDATA[Y]]></ISRTL>
 <!--115**************--></AD_LANGUAGE>
 
 <!--116**************--><AD_LANGUAGE>
@@ -544,9 +576,9 @@
 <!--116 CREATEDBY-->
 <!--116-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--116 UPDATED-->
-<!--116-->              <UPDATED><![CDATA[2003-08-06 18:42:01.0]]></UPDATED>
+<!--116-->              <UPDATED><![CDATA[2008-10-29 19:07:45.0]]></UPDATED>
 <!--116 UPDATEDBY-->
-<!--116-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--116-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--116 NAME-->
 <!--116-->              <NAME><![CDATA[Arabic (Yemen)]]></NAME>
 <!--116 LANGUAGEISO-->
@@ -559,6 +591,8 @@
 <!--116-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--116 PIXELSIZE-->
 <!--116-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--116 ISRTL-->
+<!--116-->              <ISRTL><![CDATA[Y]]></ISRTL>
 <!--116**************--></AD_LANGUAGE>
 
 <!--117**************--><AD_LANGUAGE>
@@ -592,6 +626,8 @@
 <!--117-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--117 PIXELSIZE-->
 <!--117-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--117 ISRTL-->
+<!--117-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--117**************--></AD_LANGUAGE>
 
 <!--118**************--><AD_LANGUAGE>
@@ -625,6 +661,8 @@
 <!--118-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--118 PIXELSIZE-->
 <!--118-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--118 ISRTL-->
+<!--118-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--118**************--></AD_LANGUAGE>
 
 <!--119**************--><AD_LANGUAGE>
@@ -658,6 +696,8 @@
 <!--119-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--119 PIXELSIZE-->
 <!--119-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--119 ISRTL-->
+<!--119-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--119**************--></AD_LANGUAGE>
 
 <!--120**************--><AD_LANGUAGE>
@@ -691,6 +731,8 @@
 <!--120-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--120 PIXELSIZE-->
 <!--120-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--120 ISRTL-->
+<!--120-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--120**************--></AD_LANGUAGE>
 
 <!--121**************--><AD_LANGUAGE>
@@ -724,6 +766,8 @@
 <!--121-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--121 PIXELSIZE-->
 <!--121-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--121 ISRTL-->
+<!--121-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--121**************--></AD_LANGUAGE>
 
 <!--122**************--><AD_LANGUAGE>
@@ -757,6 +801,8 @@
 <!--122-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--122 PIXELSIZE-->
 <!--122-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--122 ISRTL-->
+<!--122-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--122**************--></AD_LANGUAGE>
 
 <!--123**************--><AD_LANGUAGE>
@@ -790,6 +836,8 @@
 <!--123-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--123 PIXELSIZE-->
 <!--123-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--123 ISRTL-->
+<!--123-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--123**************--></AD_LANGUAGE>
 
 <!--124**************--><AD_LANGUAGE>
@@ -823,6 +871,8 @@
 <!--124-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--124 PIXELSIZE-->
 <!--124-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--124 ISRTL-->
+<!--124-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--124**************--></AD_LANGUAGE>
 
 <!--125**************--><AD_LANGUAGE>
@@ -856,6 +906,8 @@
 <!--125-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--125 PIXELSIZE-->
 <!--125-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--125 ISRTL-->
+<!--125-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--125**************--></AD_LANGUAGE>
 
 <!--126**************--><AD_LANGUAGE>
@@ -889,6 +941,8 @@
 <!--126-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--126 PIXELSIZE-->
 <!--126-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--126 ISRTL-->
+<!--126-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--126**************--></AD_LANGUAGE>
 
 <!--127**************--><AD_LANGUAGE>
@@ -922,6 +976,8 @@
 <!--127-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--127 PIXELSIZE-->
 <!--127-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--127 ISRTL-->
+<!--127-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--127**************--></AD_LANGUAGE>
 
 <!--128**************--><AD_LANGUAGE>
@@ -955,6 +1011,8 @@
 <!--128-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--128 PIXELSIZE-->
 <!--128-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--128 ISRTL-->
+<!--128-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--128**************--></AD_LANGUAGE>
 
 <!--129**************--><AD_LANGUAGE>
@@ -988,6 +1046,8 @@
 <!--129-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--129 PIXELSIZE-->
 <!--129-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--129 ISRTL-->
+<!--129-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--129**************--></AD_LANGUAGE>
 
 <!--130**************--><AD_LANGUAGE>
@@ -1021,6 +1081,8 @@
 <!--130-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--130 PIXELSIZE-->
 <!--130-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--130 ISRTL-->
+<!--130-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--130**************--></AD_LANGUAGE>
 
 <!--131**************--><AD_LANGUAGE>
@@ -1054,6 +1116,8 @@
 <!--131-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--131 PIXELSIZE-->
 <!--131-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--131 ISRTL-->
+<!--131-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--131**************--></AD_LANGUAGE>
 
 <!--132**************--><AD_LANGUAGE>
@@ -1087,6 +1151,8 @@
 <!--132-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--132 PIXELSIZE-->
 <!--132-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--132 ISRTL-->
+<!--132-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--132**************--></AD_LANGUAGE>
 
 <!--133**************--><AD_LANGUAGE>
@@ -1120,6 +1186,8 @@
 <!--133-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--133 PIXELSIZE-->
 <!--133-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--133 ISRTL-->
+<!--133-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--133**************--></AD_LANGUAGE>
 
 <!--134**************--><AD_LANGUAGE>
@@ -1153,6 +1221,8 @@
 <!--134-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--134 PIXELSIZE-->
 <!--134-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--134 ISRTL-->
+<!--134-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--134**************--></AD_LANGUAGE>
 
 <!--135**************--><AD_LANGUAGE>
@@ -1186,6 +1256,8 @@
 <!--135-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--135 PIXELSIZE-->
 <!--135-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--135 ISRTL-->
+<!--135-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--135**************--></AD_LANGUAGE>
 
 <!--136**************--><AD_LANGUAGE>
@@ -1219,6 +1291,8 @@
 <!--136-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--136 PIXELSIZE-->
 <!--136-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--136 ISRTL-->
+<!--136-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--136**************--></AD_LANGUAGE>
 
 <!--137**************--><AD_LANGUAGE>
@@ -1252,6 +1326,8 @@
 <!--137-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--137 PIXELSIZE-->
 <!--137-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--137 ISRTL-->
+<!--137-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--137**************--></AD_LANGUAGE>
 
 <!--138**************--><AD_LANGUAGE>
@@ -1285,6 +1361,8 @@
 <!--138-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--138 PIXELSIZE-->
 <!--138-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--138 ISRTL-->
+<!--138-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--138**************--></AD_LANGUAGE>
 
 <!--139**************--><AD_LANGUAGE>
@@ -1318,6 +1396,8 @@
 <!--139-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--139 PIXELSIZE-->
 <!--139-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--139 ISRTL-->
+<!--139-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--139**************--></AD_LANGUAGE>
 
 <!--140**************--><AD_LANGUAGE>
@@ -1353,6 +1433,8 @@
 <!--140-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
 <!--140 TRANSLATEDBY-->
 <!--140-->              <TRANSLATEDBY><![CDATA[Openbravo]]></TRANSLATEDBY>
+<!--140 ISRTL-->
+<!--140-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--140**************--></AD_LANGUAGE>
 
 <!--141**************--><AD_LANGUAGE>
@@ -1386,6 +1468,8 @@
 <!--141-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--141 PIXELSIZE-->
 <!--141-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--141 ISRTL-->
+<!--141-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--141**************--></AD_LANGUAGE>
 
 <!--142**************--><AD_LANGUAGE>
@@ -1419,6 +1503,8 @@
 <!--142-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--142 PIXELSIZE-->
 <!--142-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--142 ISRTL-->
+<!--142-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--142**************--></AD_LANGUAGE>
 
 <!--143**************--><AD_LANGUAGE>
@@ -1452,6 +1538,8 @@
 <!--143-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--143 PIXELSIZE-->
 <!--143-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--143 ISRTL-->
+<!--143-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--143**************--></AD_LANGUAGE>
 
 <!--144**************--><AD_LANGUAGE>
@@ -1485,6 +1573,8 @@
 <!--144-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--144 PIXELSIZE-->
 <!--144-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--144 ISRTL-->
+<!--144-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--144**************--></AD_LANGUAGE>
 
 <!--145**************--><AD_LANGUAGE>
@@ -1518,6 +1608,8 @@
 <!--145-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--145 PIXELSIZE-->
 <!--145-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--145 ISRTL-->
+<!--145-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--145**************--></AD_LANGUAGE>
 
 <!--146**************--><AD_LANGUAGE>
@@ -1551,6 +1643,8 @@
 <!--146-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--146 PIXELSIZE-->
 <!--146-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--146 ISRTL-->
+<!--146-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--146**************--></AD_LANGUAGE>
 
 <!--147**************--><AD_LANGUAGE>
@@ -1584,6 +1678,8 @@
 <!--147-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--147 PIXELSIZE-->
 <!--147-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--147 ISRTL-->
+<!--147-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--147**************--></AD_LANGUAGE>
 
 <!--148**************--><AD_LANGUAGE>
@@ -1617,6 +1713,8 @@
 <!--148-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--148 PIXELSIZE-->
 <!--148-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--148 ISRTL-->
+<!--148-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--148**************--></AD_LANGUAGE>
 
 <!--149**************--><AD_LANGUAGE>
@@ -1650,6 +1748,8 @@
 <!--149-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--149 PIXELSIZE-->
 <!--149-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--149 ISRTL-->
+<!--149-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--149**************--></AD_LANGUAGE>
 
 <!--150**************--><AD_LANGUAGE>
@@ -1683,6 +1783,8 @@
 <!--150-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--150 PIXELSIZE-->
 <!--150-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--150 ISRTL-->
+<!--150-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--150**************--></AD_LANGUAGE>
 
 <!--151**************--><AD_LANGUAGE>
@@ -1716,6 +1818,8 @@
 <!--151-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--151 PIXELSIZE-->
 <!--151-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--151 ISRTL-->
+<!--151-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--151**************--></AD_LANGUAGE>
 
 <!--152**************--><AD_LANGUAGE>
@@ -1749,6 +1853,8 @@
 <!--152-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--152 PIXELSIZE-->
 <!--152-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--152 ISRTL-->
+<!--152-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--152**************--></AD_LANGUAGE>
 
 <!--153**************--><AD_LANGUAGE>
@@ -1782,6 +1888,8 @@
 <!--153-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--153 PIXELSIZE-->
 <!--153-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--153 ISRTL-->
+<!--153-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--153**************--></AD_LANGUAGE>
 
 <!--154**************--><AD_LANGUAGE>
@@ -1815,6 +1923,8 @@
 <!--154-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--154 PIXELSIZE-->
 <!--154-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--154 ISRTL-->
+<!--154-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--154**************--></AD_LANGUAGE>
 
 <!--155**************--><AD_LANGUAGE>
@@ -1848,6 +1958,8 @@
 <!--155-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--155 PIXELSIZE-->
 <!--155-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--155 ISRTL-->
+<!--155-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--155**************--></AD_LANGUAGE>
 
 <!--156**************--><AD_LANGUAGE>
@@ -1881,6 +1993,8 @@
 <!--156-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--156 PIXELSIZE-->
 <!--156-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--156 ISRTL-->
+<!--156-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--156**************--></AD_LANGUAGE>
 
 <!--157**************--><AD_LANGUAGE>
@@ -1914,6 +2028,8 @@
 <!--157-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--157 PIXELSIZE-->
 <!--157-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--157 ISRTL-->
+<!--157-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--157**************--></AD_LANGUAGE>
 
 <!--158**************--><AD_LANGUAGE>
@@ -1947,6 +2063,8 @@
 <!--158-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--158 PIXELSIZE-->
 <!--158-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--158 ISRTL-->
+<!--158-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--158**************--></AD_LANGUAGE>
 
 <!--159**************--><AD_LANGUAGE>
@@ -1980,6 +2098,8 @@
 <!--159-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--159 PIXELSIZE-->
 <!--159-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--159 ISRTL-->
+<!--159-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--159**************--></AD_LANGUAGE>
 
 <!--160**************--><AD_LANGUAGE>
@@ -2013,6 +2133,8 @@
 <!--160-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--160 PIXELSIZE-->
 <!--160-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--160 ISRTL-->
+<!--160-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--160**************--></AD_LANGUAGE>
 
 <!--161**************--><AD_LANGUAGE>
@@ -2046,6 +2168,8 @@
 <!--161-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--161 PIXELSIZE-->
 <!--161-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--161 ISRTL-->
+<!--161-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--161**************--></AD_LANGUAGE>
 
 <!--162**************--><AD_LANGUAGE>
@@ -2079,6 +2203,8 @@
 <!--162-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--162 PIXELSIZE-->
 <!--162-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--162 ISRTL-->
+<!--162-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--162**************--></AD_LANGUAGE>
 
 <!--163**************--><AD_LANGUAGE>
@@ -2112,6 +2238,8 @@
 <!--163-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--163 PIXELSIZE-->
 <!--163-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--163 ISRTL-->
+<!--163-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--163**************--></AD_LANGUAGE>
 
 <!--164**************--><AD_LANGUAGE>
@@ -2130,9 +2258,9 @@
 <!--164 CREATEDBY-->
 <!--164-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--164 UPDATED-->
-<!--164-->              <UPDATED><![CDATA[2003-08-06 18:42:08.0]]></UPDATED>
+<!--164-->              <UPDATED><![CDATA[2008-10-29 19:17:40.0]]></UPDATED>
 <!--164 UPDATEDBY-->
-<!--164-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--164-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--164 NAME-->
 <!--164-->              <NAME><![CDATA[Hebrew (Israel)]]></NAME>
 <!--164 LANGUAGEISO-->
@@ -2145,6 +2273,8 @@
 <!--164-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--164 PIXELSIZE-->
 <!--164-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--164 ISRTL-->
+<!--164-->              <ISRTL><![CDATA[Y]]></ISRTL>
 <!--164**************--></AD_LANGUAGE>
 
 <!--165**************--><AD_LANGUAGE>
@@ -2178,6 +2308,8 @@
 <!--165-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--165 PIXELSIZE-->
 <!--165-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--165 ISRTL-->
+<!--165-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--165**************--></AD_LANGUAGE>
 
 <!--166**************--><AD_LANGUAGE>
@@ -2211,6 +2343,8 @@
 <!--166-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--166 PIXELSIZE-->
 <!--166-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--166 ISRTL-->
+<!--166-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--166**************--></AD_LANGUAGE>
 
 <!--167**************--><AD_LANGUAGE>
@@ -2244,6 +2378,8 @@
 <!--167-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--167 PIXELSIZE-->
 <!--167-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--167 ISRTL-->
+<!--167-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--167**************--></AD_LANGUAGE>
 
 <!--168**************--><AD_LANGUAGE>
@@ -2277,6 +2413,8 @@
 <!--168-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--168 PIXELSIZE-->
 <!--168-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--168 ISRTL-->
+<!--168-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--168**************--></AD_LANGUAGE>
 
 <!--169**************--><AD_LANGUAGE>
@@ -2310,6 +2448,8 @@
 <!--169-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--169 PIXELSIZE-->
 <!--169-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--169 ISRTL-->
+<!--169-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--169**************--></AD_LANGUAGE>
 
 <!--170**************--><AD_LANGUAGE>
@@ -2343,6 +2483,8 @@
 <!--170-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--170 PIXELSIZE-->
 <!--170-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--170 ISRTL-->
+<!--170-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--170**************--></AD_LANGUAGE>
 
 <!--171**************--><AD_LANGUAGE>
@@ -2376,6 +2518,8 @@
 <!--171-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--171 PIXELSIZE-->
 <!--171-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--171 ISRTL-->
+<!--171-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--171**************--></AD_LANGUAGE>
 
 <!--172**************--><AD_LANGUAGE>
@@ -2409,6 +2553,8 @@
 <!--172-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--172 PIXELSIZE-->
 <!--172-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--172 ISRTL-->
+<!--172-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--172**************--></AD_LANGUAGE>
 
 <!--173**************--><AD_LANGUAGE>
@@ -2442,6 +2588,8 @@
 <!--173-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--173 PIXELSIZE-->
 <!--173-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--173 ISRTL-->
+<!--173-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--173**************--></AD_LANGUAGE>
 
 <!--174**************--><AD_LANGUAGE>
@@ -2475,6 +2623,8 @@
 <!--174-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--174 PIXELSIZE-->
 <!--174-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--174 ISRTL-->
+<!--174-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--174**************--></AD_LANGUAGE>
 
 <!--175**************--><AD_LANGUAGE>
@@ -2508,6 +2658,8 @@
 <!--175-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--175 PIXELSIZE-->
 <!--175-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--175 ISRTL-->
+<!--175-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--175**************--></AD_LANGUAGE>
 
 <!--176**************--><AD_LANGUAGE>
@@ -2541,6 +2693,8 @@
 <!--176-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--176 PIXELSIZE-->
 <!--176-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--176 ISRTL-->
+<!--176-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--176**************--></AD_LANGUAGE>
 
 <!--177**************--><AD_LANGUAGE>
@@ -2574,6 +2728,8 @@
 <!--177-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--177 PIXELSIZE-->
 <!--177-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--177 ISRTL-->
+<!--177-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--177**************--></AD_LANGUAGE>
 
 <!--178**************--><AD_LANGUAGE>
@@ -2607,6 +2763,8 @@
 <!--178-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--178 PIXELSIZE-->
 <!--178-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--178 ISRTL-->
+<!--178-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--178**************--></AD_LANGUAGE>
 
 <!--179**************--><AD_LANGUAGE>
@@ -2640,6 +2798,8 @@
 <!--179-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--179 PIXELSIZE-->
 <!--179-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--179 ISRTL-->
+<!--179-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--179**************--></AD_LANGUAGE>
 
 <!--180**************--><AD_LANGUAGE>
@@ -2673,6 +2833,8 @@
 <!--180-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--180 PIXELSIZE-->
 <!--180-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--180 ISRTL-->
+<!--180-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--180**************--></AD_LANGUAGE>
 
 <!--181**************--><AD_LANGUAGE>
@@ -2706,6 +2868,8 @@
 <!--181-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--181 PIXELSIZE-->
 <!--181-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--181 ISRTL-->
+<!--181-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--181**************--></AD_LANGUAGE>
 
 <!--182**************--><AD_LANGUAGE>
@@ -2739,6 +2903,8 @@
 <!--182-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--182 PIXELSIZE-->
 <!--182-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--182 ISRTL-->
+<!--182-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--182**************--></AD_LANGUAGE>
 
 <!--183**************--><AD_LANGUAGE>
@@ -2772,6 +2938,8 @@
 <!--183-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--183 PIXELSIZE-->
 <!--183-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--183 ISRTL-->
+<!--183-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--183**************--></AD_LANGUAGE>
 
 <!--184**************--><AD_LANGUAGE>
@@ -2805,6 +2973,8 @@
 <!--184-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--184 PIXELSIZE-->
 <!--184-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--184 ISRTL-->
+<!--184-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--184**************--></AD_LANGUAGE>
 
 <!--185**************--><AD_LANGUAGE>
@@ -2838,6 +3008,8 @@
 <!--185-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--185 PIXELSIZE-->
 <!--185-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--185 ISRTL-->
+<!--185-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--185**************--></AD_LANGUAGE>
 
 <!--186**************--><AD_LANGUAGE>
@@ -2871,6 +3043,8 @@
 <!--186-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--186 PIXELSIZE-->
 <!--186-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--186 ISRTL-->
+<!--186-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--186**************--></AD_LANGUAGE>
 
 <!--187**************--><AD_LANGUAGE>
@@ -2904,6 +3078,8 @@
 <!--187-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--187 PIXELSIZE-->
 <!--187-->              <PIXELSIZE><![CDATA[11]]></PIXELSIZE>
+<!--187 ISRTL-->
+<!--187-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--187**************--></AD_LANGUAGE>
 
 <!--188**************--><AD_LANGUAGE>
@@ -2937,6 +3113,8 @@
 <!--188-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--188 PIXELSIZE-->
 <!--188-->              <PIXELSIZE><![CDATA[11]]></PIXELSIZE>
+<!--188 ISRTL-->
+<!--188-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--188**************--></AD_LANGUAGE>
 
 <!--189**************--><AD_LANGUAGE>
@@ -2970,6 +3148,8 @@
 <!--189-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--189 PIXELSIZE-->
 <!--189-->              <PIXELSIZE><![CDATA[11]]></PIXELSIZE>
+<!--189 ISRTL-->
+<!--189-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--189**************--></AD_LANGUAGE>
 
 <!--190**************--><AD_LANGUAGE>
@@ -3005,6 +3185,8 @@
 <!--190-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--190 PIXELSIZE-->
 <!--190-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--190 ISRTL-->
+<!--190-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--190**************--></AD_LANGUAGE>
 
 <!--191**************--><AD_LANGUAGE>
@@ -3038,6 +3220,8 @@
 <!--191-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--191 PIXELSIZE-->
 <!--191-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--191 ISRTL-->
+<!--191-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--191**************--></AD_LANGUAGE>
 
 <!--192**************--><AD_LANGUAGE>
@@ -3073,6 +3257,8 @@
 <!--192-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
 <!--192 TRANSLATEDBY-->
 <!--192-->              <TRANSLATEDBY><![CDATA[Openbravo]]></TRANSLATEDBY>
+<!--192 ISRTL-->
+<!--192-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--192**************--></AD_LANGUAGE>
 
 <!--193**************--><AD_LANGUAGE>
@@ -3091,9 +3277,9 @@
 <!--193 CREATEDBY-->
 <!--193-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--193 UPDATED-->
-<!--193-->              <UPDATED><![CDATA[2003-08-24 20:55:12.0]]></UPDATED>
+<!--193-->              <UPDATED><![CDATA[2008-10-29 19:11:37.0]]></UPDATED>
 <!--193 UPDATEDBY-->
-<!--193-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--193-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--193 NAME-->
 <!--193-->              <NAME><![CDATA[Farsi (Iran)]]></NAME>
 <!--193 LANGUAGEISO-->
@@ -3108,6 +3294,8 @@
 <!--193-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--193 PIXELSIZE-->
 <!--193-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--193 ISRTL-->
+<!--193-->              <ISRTL><![CDATA[Y]]></ISRTL>
 <!--193**************--></AD_LANGUAGE>
 
 <!--800001**************--><AD_LANGUAGE>
@@ -3143,6 +3331,8 @@
 <!--800001-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800001 PIXELSIZE-->
 <!--800001-->              <PIXELSIZE><![CDATA[6]]></PIXELSIZE>
+<!--800001 ISRTL-->
+<!--800001-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--800001**************--></AD_LANGUAGE>
 
 <!--800002**************--><AD_LANGUAGE>
@@ -3172,6 +3362,8 @@
 <!--800002-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--800002 PROCESSING-->
 <!--800002-->              <PROCESSING><![CDATA[N]]></PROCESSING>
+<!--800002 ISRTL-->
+<!--800002-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--800002**************--></AD_LANGUAGE>
 
 <!--800003**************--><AD_LANGUAGE>
@@ -3190,17 +3382,23 @@
 <!--800003 CREATEDBY-->
 <!--800003-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800003 UPDATED-->
-<!--800003-->              <UPDATED><![CDATA[2007-06-18 15:15:43.0]]></UPDATED>
+<!--800003-->              <UPDATED><![CDATA[2008-10-29 19:19:46.0]]></UPDATED>
 <!--800003 UPDATEDBY-->
 <!--800003-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800003 NAME-->
 <!--800003-->              <NAME><![CDATA[Vietnamese]]></NAME>
+<!--800003 LANGUAGEISO-->
+<!--800003-->              <LANGUAGEISO><![CDATA[vi]]></LANGUAGEISO>
+<!--800003 COUNTRYCODE-->
+<!--800003-->              <COUNTRYCODE><![CDATA[VN]]></COUNTRYCODE>
 <!--800003 ISBASELANGUAGE-->
 <!--800003-->              <ISBASELANGUAGE><![CDATA[N]]></ISBASELANGUAGE>
 <!--800003 ISSYSTEMLANGUAGE-->
 <!--800003-->              <ISSYSTEMLANGUAGE><![CDATA[N]]></ISSYSTEMLANGUAGE>
 <!--800003 PROCESSING-->
 <!--800003-->              <PROCESSING><![CDATA[N]]></PROCESSING>
+<!--800003 ISRTL-->
+<!--800003-->              <ISRTL><![CDATA[N]]></ISRTL>
 <!--800003**************--></AD_LANGUAGE>
 
 </data>

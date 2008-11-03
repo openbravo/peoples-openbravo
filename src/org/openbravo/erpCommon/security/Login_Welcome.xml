@@ -20,4 +20,5 @@
 <REPORT>
 	<template file="Login_Welcome.html"/>
 	<PARAMETER id="paramDirectory" name="directory" default=""/>
+	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
 </REPORT>

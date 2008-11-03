@@ -86,10 +86,14 @@ http://people.apache.org/~andyc/neko/doc/html/
 # commons-collections-3.1.jar
 # commons-dbcp-1.2.1.jar
 # commons-digester-1.7.jar
+# commons-io-1.4.jar
 # commons-lang-2.1.jar
+# commons-lang-2.4.jar
 # commons-logging-1.0.4.jar
+# commons-math-1.2.jar
 # commons-pool-1.2.jar
 # fop.jar
+# google-collections.jar
 # Jakarta-oro-2.0.8.jar, 
 # log4j-1.2.8.jar, 
 # logkit.jar
@@ -110,6 +114,9 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 # JDBC3_PostgreSQL.jar 
 Under the BSD license, also available at http://jdbc.postgresql.org/license.html  
+
+# smartsprites-0.2.1-alpha.jar
+Under a modified BSD license (the smartsprites.license.txt), also available at http://smartsprites.osinski.name/
 
 # Xinha files in web/js/xinha/
 All filess available under the htmlarea license, available at

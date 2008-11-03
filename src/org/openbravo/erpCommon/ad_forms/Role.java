@@ -41,7 +41,7 @@ import java.util.StringTokenizer;
 
 public class Role extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-
+  private String strIsRTL="";
   public void init (ServletConfig config) {
     super.init(config);
     boolHist = false;
@@ -114,9 +114,16 @@ public class Role extends HttpSecureAppServlet {
         String strClient = vars.getStringParameter("client");
         String strOrg = vars.getStringParameter("organization");
         String strWarehouse = vars.getStringParameter("warehouse");
+
+        strIsRTL = RoleData.getIsRTL(this, strLanguage);
+        if (strIsRTL.equals("Y")){
+          vars.setSessionValue("#TextDirection", "RTL");
+        } else {
+          vars.setSessionValue("#TextDirection", "LTR");
+        }
         
         if (strSetDefault.equals("Y"))
-          DefaultOptionsData.saveDefaultOptions(this, strLanguage, strRol, strClient, strOrg, strWarehouse, strUserAuth); 
+          DefaultOptionsData.saveDefaultOptions(this, strLanguage, strRol, strClient, strOrg, strWarehouse, strUserAuth);
         
         if (strClient.equals("") || strOrg.equals("") || strRol.equals("")) return false;
         
@@ -126,8 +133,8 @@ public class Role extends HttpSecureAppServlet {
         vars.clearSession(false);
         vars.setSessionValue("#AD_Session_ID",sessionID);
         req.getSession(true).setAttribute("#Authenticated_user", sessionUser);
-        
-        boolean result = LoginUtils.fillSessionArguments(this, vars, strUserAuth, strLanguage, strRol, strClient, strOrg, strWarehouse);
+
+        boolean result = LoginUtils.fillSessionArguments(this, vars, strUserAuth, strLanguage, strIsRTL, strRol, strClient, strOrg, strWarehouse);
         if (!result) return false;
         readProperties(vars, globalParameters.getOpenbravoPropertiesPath());
         readNumberFormat(vars, globalParameters.getFormatPath());
@@ -139,6 +146,7 @@ public class Role extends HttpSecureAppServlet {
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
+    xmlDocument.setParameter("TextDirection", ((strIsRTL.equals("Y")?"RTL":"LTR")));
     xmlDocument.setParameter("roleInfo", Utility.messageBD(this,"RoleInfo",vars.getLanguage()));
     xmlDocument.setParameter("role", Utility.messageBD(this,"AD_Role_ID",vars.getLanguage()));
     xmlDocument.setParameter("client", Utility.messageBD(this,"AD_Client_ID",vars.getLanguage()));
@@ -148,7 +156,7 @@ public class Role extends HttpSecureAppServlet {
     
     
      // Input data
-        xmlDocument.setParameter("inputLanguage", vars.getLanguage() );
+        xmlDocument.setParameter("inputLanguage", vars.getLanguage());
         xmlDocument.setParameter("inputRole", vars.getRole());
         xmlDocument.setParameter("inputEntity", vars.getClient());
         xmlDocument.setParameter("inputOrg", vars.getOrg());

@@ -36,8 +36,10 @@ public class Login extends HttpBaseServlet {
 
     if (vars.commandIn("LOGIN")) {
       if (log4j.isDebugEnabled()) log4j.debug("Command: Login");
+      String strTheme = "ltr/Default"; 
+      if(!vars.getTheme().equals("")) strTheme=vars.getTheme();
       vars.clearSession(false);
-      printPageIdentificacion(response);
+      printPageIdentificacion(response, strTheme);
 
 //    } else if (vars.commandIn("OPTIONS")) {
 //      if (vars.getUser().equals("")) printPageIdentificacion(response);
@@ -46,8 +48,10 @@ public class Login extends HttpBaseServlet {
     } else if (vars.commandIn("BLANK")) {
       printPageBlank(response, vars);
     } else if (vars.commandIn("WELCOME")) {
+      String strTheme = "ltr/Default"; 
+      if(!vars.getTheme().equals("")) strTheme=vars.getTheme();
       if (log4j.isDebugEnabled()) log4j.debug("Command: Welcome");
-      printPageWelcome(response);
+      printPageWelcome(response, strTheme);
     } else if (vars.commandIn("LOGO")) {
       printPageLogo(response, vars);
 
@@ -62,16 +66,26 @@ public class Login extends HttpBaseServlet {
 //      response.sendRedirect(strDireccion + request.getServletPath());
 
     } else {
-      printPageFrameIdentificacion(response, "Login_Welcome.html?Command=WELCOME", "Login_F1.html?Command=LOGIN");
+      String textDirection = vars.getSessionValue("#TextDirection", "LTR");
+      printPageFrameIdentificacion(response, "Login_Welcome.html?Command=WELCOME", "Login_F1.html?Command=LOGIN", textDirection);
     }
   }
 
-  public void printPageFrameIdentificacion(HttpServletResponse response, String strMenu, String strDetalle) throws IOException, ServletException {
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login_FS").createXmlDocument();
+  public void printPageFrameIdentificacion(HttpServletResponse response, String strMenu, String strDetalle, String textDirection) throws IOException, ServletException {
 
-    xmlDocument.setParameter("frameMenu", strMenu);
-    xmlDocument.setParameter("frameMenuLoading", strMenu);
-    xmlDocument.setParameter("frame1", strDetalle);
+    XmlDocument xmlDocument;
+    if (textDirection.equals("RTL")) {
+      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login_FS_RTL").createXmlDocument();
+      xmlDocument.setParameter("frameMenu", strMenu);
+      xmlDocument.setParameter("frameMenuLoading", strDetalle);
+      xmlDocument.setParameter("frame1", strMenu);
+    } else {
+      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login_FS").createXmlDocument();
+      xmlDocument.setParameter("frameMenu", strMenu);
+      xmlDocument.setParameter("frameMenuLoading", strMenu);
+      xmlDocument.setParameter("frame1", strDetalle);
+    }
+
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
@@ -87,10 +101,11 @@ public class Login extends HttpBaseServlet {
     out.close();
   }
 
-  public void printPageWelcome(HttpServletResponse response) throws IOException, ServletException {
+  public void printPageWelcome(HttpServletResponse response, String strTheme) throws IOException, ServletException {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login_Welcome").createXmlDocument();
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("theme", strTheme);
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -111,10 +126,11 @@ public class Login extends HttpBaseServlet {
     out.close();
   }
 
-  public void printPageIdentificacion(HttpServletResponse response) throws IOException, ServletException {
+  public void printPageIdentificacion(HttpServletResponse response, String strTheme) throws IOException, ServletException {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/security/Login_F1").createXmlDocument();
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("theme", strTheme);
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();

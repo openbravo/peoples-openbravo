@@ -47,7 +47,8 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
       String strTest = vars.getStringParameter("inpTest", "N");
       String strRecordRange = vars.getGlobalVariable("inpRecordRange", "#RecordRange");
       String strRecordRangeInfo = vars.getGlobalVariable("inpRecordRangeInfo", "#RecordRangeInfo");
-      String strTheme = vars.getGlobalVariable("inpTheme", "#Theme");
+      String strTheme = vars.getStringParameter("inpTheme");
+      vars.setSessionValue("#Theme", vars.getSessionValue("#Theme").substring(0, 4)+strTheme);
       String strTransactionalRange = vars.getGlobalVariable("inpTransactionalRange", "#Transactional$Range");
       vars.setSessionValue("#Date", strFecha);
       vars.setSessionValue("#ShowTrl", strTranslate);
@@ -124,7 +125,7 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
     xmlDocument.setParameter("recordRange", vars.getSessionValue("#RecordRange"));
     xmlDocument.setParameter("recordRangeInfo", vars.getSessionValue("#RecordRangeInfo"));
     xmlDocument.setParameter("info", getInfo(vars));
-    xmlDocument.setParameter("theme", vars.getTheme());
+    xmlDocument.setParameter("theme", vars.getTheme().substring(4));
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ShowSessionPreferences", false, "", "", "",false, "ad_forms",  strReplaceWith, false,  true);
     toolbar.prepareSimpleToolBarTemplate();

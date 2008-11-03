@@ -22,7 +22,9 @@
                users.DEFAULT_AD_ORG_ID,
                users.DEFAULT_AD_LANGUAGE,
                users.DEFAULT_AD_ROLE_ID,
-               users.DEFAULT_M_WAREHOUSE_ID
+               users.DEFAULT_M_WAREHOUSE_ID,
+               '' AS ISRTL,
+               '' AS AD_LANGUAGE
           FROM AD_USER users
               INNER JOIN AD_CLIENT client ON users.DEFAULT_AD_CLIENT_ID = client.AD_CLIENT_ID
               INNER JOIN AD_ORG org ON users.DEFAULT_AD_ORG_ID = org.AD_ORG_ID
@@ -94,10 +96,10 @@
       <Parameter name="aduserid"/>
    </SqlMethod>
    
-   <SqlMethod name="defaultLanguage" type="preparedStatement" return="string">
+   <SqlMethod name="defaultLanguage" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        SELECT users.DEFAULT_AD_LANGUAGE
+        SELECT users.DEFAULT_AD_LANGUAGE, lang.ISRTL AS ISRTL
           FROM AD_USER users
             INNER JOIN AD_LANGUAGE lang ON users.DEFAULT_AD_LANGUAGE = lang.AD_LANGUAGE
          WHERE users.AD_USER_ID = ?
@@ -160,10 +162,10 @@
       <Parameter name="adroleid"/>
    </SqlMethod>
    
-   <SqlMethod name="getDefaultLanguage" type="preparedStatement" return="string">
+   <SqlMethod name="getDefaultLanguage" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        SELECT MIN(lang.AD_LANGUAGE) AS AD_LANGUAGE
+        SELECT lang.AD_LANGUAGE AS AD_LANGUAGE, lang.ISRTL AS ISRTL
           FROM AD_LANGUAGE lang
          WHERE lang.ISACTIVE = 'Y'
            AND lang.ISBASELANGUAGE = 'Y'

@@ -30,6 +30,7 @@
   <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
+  <PARAMETER id="TextDirection" name="TextDirection" attribute="value" replace="XX"/>
 	<structure name="structure">
 		<FIELD id="fieldRole">role</FIELD>
 		<FIELD id="fieldClient">client</FIELD>

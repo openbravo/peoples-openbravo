@@ -153,9 +153,17 @@ function setMenuLoading(value) {
     return false;
   try {
     if (value == true) {
-      frameset.cols = "25%,0%,*";
+      if (top.isRTL == true) {
+        frameset.cols = "*,0%,25%";
+      } else {
+        frameset.cols = "25%,0%,*";
+      }
     } else if (value == false) {
-      frameset.cols = "0%,25%,*";
+      if (top.isRTL == true) {
+        frameset.cols = "*,25%,0%";
+      } else {
+        frameset.cols = "0%,25%,*";
+      }
     }
   }
   catch (e) {

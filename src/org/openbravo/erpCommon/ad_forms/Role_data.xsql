@@ -73,4 +73,13 @@
       <Parameter name="adUserId"/>
       <Parameter name="adUserId"/>
    </SqlMethod>
+   <SqlMethod name="getIsRTL" type="preparedStatement" return="string">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+		SELECT ISRTL
+		FROM AD_LANGUAGE
+		WHERE AD_LANGUAGE = ?
+      </Sql>
+      <Parameter name="adLanguage"/>
+   </SqlMethod>
 </SqlClass>
