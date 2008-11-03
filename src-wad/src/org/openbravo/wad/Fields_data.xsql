@@ -443,12 +443,12 @@
       FROM ad_column, ad_table, ad_tab t
       WHERE lower(columnname) in ('createdby', 'updatedby')
       AND ad_column.AD_TABLE_ID = ad_table.AD_TABLE_ID 
-        AND t.ad_tab_id = 'F53E35A11C564F20BE4082A7B8CFF6B7'
+        AND t.ad_tab_id = ?
         and ad_table.ad_table_id = t.ad_table_id
-        AND upper(ad_column.columnname) <> 'BINARYDATA' 
       ]]>
     </Sql>
     <Parameter name="sql" optional="true" after="WHERE " text="ad_column.defaultvalue LIKE ? || '%' AND "/>
+    <Parameter name="tab"/>
     <Parameter name="tab"/>
   </SqlMethod>
   <SqlMethod name="selectSession" type="preparedStatement" return="multiple">
