@@ -49,5 +49,17 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_C_POC_DOCTYPE_TEMPL">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="ADORG_C_POC_DOCTYPE_TEMPL">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_DOCTYPE" name="CDOCTYPE_CPOC_DOCTYPE_TEMPL">
+        <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
+      <index name="CDOCTYPE_CPOC_DOCTYPE_TEMPL" unique="false">
+        <index-column name="C_DOCTYPE_ID"/>
+      </index>
     </table>
   </database>
