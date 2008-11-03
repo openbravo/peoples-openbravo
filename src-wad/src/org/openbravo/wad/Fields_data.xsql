@@ -435,7 +435,7 @@
         AND upper(ad_column.columnname) <> 'BINARYDATA'
       union
       SELECT ad_column.AD_COLUMN_ID as reference, ad_column.ISMANDATORY as required, 
-      columnname Name, 
+      columnname as Name, 
       REPLACE(REPLACE(ad_column.defaultvalue, CHR(13), '\\n'), CHR(10), '') as defaultValue, '' as WHERECLAUSE, 
       ad_reference_id as referencevalue,
       'Y', ad_column.columnname as columnname, ad_table.ACCESSLEVEL, 
