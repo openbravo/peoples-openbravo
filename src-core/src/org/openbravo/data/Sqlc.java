@@ -838,88 +838,6 @@ public class Sqlc extends DefaultHandler {
     out2.append(aux.toString());
   }
 
-  public void printKeySequenceSql() throws IOException {
-    printHeadFunctionSql(true, false, true);
-    out2.append("    boolean existsKey = false;\n");
-    printSQLBody();
-    printSQLParameters();
-
-    out2.append("      result = st." + sql.executeType + "(");
-    if (sql.sqlType.equals("statement")) out2.append("strSql");
-    out2.append(");\n");
-    out2.append("      long countRecord = 0;\n");
-    out2.append("      long initRecord = 0;\n");
-    out2.append("      boolean searchComplete = false;\n");
-    out2.append("      while(result.next() && !searchComplete) {\n");
-    out2.append("        countRecord++;\n");
-    out2.append("        " + sqlcName + " object" + sqlcName + " = new " + sqlcName + "();\n");
-    try {
-      for (int i=1; i<=numCols; i++) {
-        if (log4j.isDebugEnabled()) log4j.debug("Columna: " + rsmd.getColumnName(i) + " tipo: " + rsmd.getColumnType(i));
-        if (rsmd.getColumnType(i) == java.sql.Types.TIMESTAMP || rsmd.getColumnType(i) == 91 ) {
-          out2.append("        object" + sqlcName + "." + TransformaNombreColumna(rsmd.getColumnLabel(i)) + " = UtilSql.getDateValue(result, \"" + rsmd.getColumnLabel(i) +"\", \""+javaDateFormat+"\");\n");
-        } else if (rsmd.getColumnType(i) == java.sql.Types.BLOB) {
-          out2.append("        object" + sqlcName + "." + TransformaNombreColumna(rsmd.getColumnLabel(i)) + " = UtilSql.getBlobValue(result, \"" + rsmd.getColumnLabel(i) +"\");\n");
-        } else {
-          out2.append("        object" + sqlcName + "." + TransformaNombreColumna(rsmd.getColumnLabel(i)) + " = UtilSql.getValue(result, \"" + rsmd.getColumnLabel(i) +"\");\n");
-        }
-      }
-      for (Enumeration<Object> e = sql.vecFieldAdded.elements() ; e.hasMoreElements() ;) {
-        FieldAdded fieldAdded = (FieldAdded)e.nextElement();
-        if (fieldAdded.strValue.equals("count"))
-          out2.append("        object" + sqlcName + "." + fieldAdded.strName + " = Long.toString(countRecord);\n");
-        else if (fieldAdded.strValue.equals("void"))
-          out2.append("        object" + sqlcName + "." + fieldAdded.strName + " = \"\";\n");
-      }
-      out2.append("        object" + sqlcName + ".InitRecordNumber = Long.toString(initRecord);\n");
-    } catch(SQLException e){
-      log4j.error("SQL Exception error:"+ e);
-      e.printStackTrace();
-    }
-    out2.append("        if (!existsKey) existsKey = (object" + sqlcName + ".getField(keyName).equalsIgnoreCase(keyValue));\n");
-    out2.append("        vector.addElement(object" + sqlcName + ");\n");
-    out2.append("        if (countRecord == numberRegisters) {\n");
-    out2.append("          if (existsKey) searchComplete=true;\n");
-    out2.append("          else {\n");
-    out2.append("            countRecord = 0;\n");
-    out2.append("            initRecord += numberRegisters;\n");
-    out2.append("            vector.clear();\n");
-    out2.append("          }\n");
-    out2.append("        }\n");
-    out2.append("      }\n");
-
-
-    out2.append("      result.close();\n");
-    out2.append("    } catch(SQLException e){\n");
-    out2.append("      log4j.error(\"SQL error in query: \" + strSql + \"Exception:\"+ e);\n");
-    out2.append("      throw new ServletException(\"@CODE=\" + Integer.toString(e.getErrorCode()) + \"@\" + e.getMessage());\n");
-    out2.append("    } catch(Exception ex){\n");
-    out2.append("      log4j.error(\"Exception in query: \" + strSql + \"Exception:\"+ ex);\n");
-    out2.append("      throw new ServletException(\"@CODE=@\" + ex.getMessage());\n");
-    out2.append("    } finally {\n");
-    out2.append("      try {\n");
-    if (!sql.sqlConnection.equals("true")) {
-      if (sql.sqlType.equals("statement")) out2.append("        connectionProvider.releaseStatement(st);\n");
-      else out2.append("        connectionProvider.releasePreparedStatement(st);\n");
-    } else {
-      if (sql.sqlType.equals("statement")) out2.append("        connectionProvider.releaseTransactionalStatement(st);\n");
-      else if (sql.sqlType.equalsIgnoreCase("preparedstatement")) out2.append("        connectionProvider.releaseTransactionalPreparedStatement(st);\n");
-    }
-    out2.append("      } catch(Exception ignore){\n");
-    out2.append("        ignore.printStackTrace();\n");
-    out2.append("      }\n");
-    out2.append("    }\n");
-    if (sql.sqlType.equals("callableStatement")) out2.append("    }\n");
-
-    out2.append("    if (existsKey) {\n");
-    out2.append("      " + sqlcName + " object" + sqlcName + "[] = new " + sqlcName + "[vector.size()];\n");
-    out2.append("      vector.copyInto(object" + sqlcName + ");\n");
-    out2.append("      return(object" + sqlcName + ");\n");
-    out2.append("    }\n");
-    out2.append("    return(new " + sqlcName + "[0]);\n");
-    out2.append("  }\n");
-  }
-
   public void printFunctionSql() throws IOException {
     boolean boolSequence = false;
     //*** Call to the argument-less creation header, who calls the header with them 
@@ -930,7 +848,6 @@ public class Sqlc extends DefaultHandler {
       out2.append(";\n");
       out2.append("  }\n");
       boolSequence = true;
-      printKeySequenceSql();
     }
 
     printHeadFunctionSql(true, boolSequence, false);
