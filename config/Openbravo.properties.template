@@ -41,7 +41,7 @@ context.url=http://localhost:8080/openbravo
 # Development
 bbdd.outputscript=databasescript.sql
 bbdd.verbosity=INFO
-application.version=2.40
+application.version=2.50
 development.environment.id=1
 
 # Root directory, used by modularity
