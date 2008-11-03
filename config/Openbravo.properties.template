@@ -15,13 +15,51 @@
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
 
-# Date/time format
+####################
+# Date/time format #
+####################
+
 dateFormat.js=%d-%m-%Y
 dateFormat.sql=DD-MM-YYYY
 dateFormat.java=dd-MM-yyyy
 dateTimeFormat.java=dd-MM-yyyy HH:mm:ss
 
-# DB properties
+###########
+# General #
+###########
+
+# Static content URL. Use the default value to make it dynamic.
+# Don't change this unless you know what you are doing
+web.url=@actual_url_context@/web
+
+# Full URL of the context, *only* used by the Web Services installation
+context.url=http://localhost:8080/openbravo
+
+# Absolute path to the attachments directory
+attach.path=/opt/openbravo/attachments
+
+# Context name, used in the final war file
+context.name=openbravo
+
+# Openbravo ERP version
+application.version=2.50
+
+############
+# Database #
+############
+
+# PostgreSQL example:
+#
+# bbdd.sid=openbravo
+# bbdd.systemUser=system
+# bbdd.systemPassword=syspass
+# bbdd.user=tad
+# bbdd.pass=tad
+# bbdd.driver=org.postgresql.Driver
+# bbdd.url=jdbc:postgresql://localhost:5432
+# bbdd.rdbms=POSTGRE
+# bbdd.sessionConfig=select update_dateFormat('DD-MM-YYYY')
+
 bbdd.sid=xe
 bbdd.systemUser=SYSTEM
 bbdd.systemPassword=SYSTEM
@@ -32,27 +70,30 @@ bbdd.url=jdbc:oracle:thin:@localhost:1521:xe
 bbdd.rdbms=ORACLE
 bbdd.sessionConfig=ALTER SESSION SET NLS_DATE_FORMAT='DD-MM-YYYY' NLS_NUMERIC_CHARACTERS='.,'
 
-# build.xml properties
-attach.path=/opt/openbravo/attachments
-context.name=openbravo
-web.url=@actual_url_context@/web
-context.url=http://localhost:8080/openbravo
+##########################
+# Development parameters #
+##########################
 
-# Development
 bbdd.outputscript=databasescript.sql
 bbdd.verbosity=INFO
-application.version=2.50
-development.environment.id=1
 
-# Root directory, used by modularity
-source.path=
-
-# External Services
-pentahoServer=
-
-# CSS Sprite Generator
+# CSS Sprites Generator
 generateSprites=no
 
-# Login Handler
-# To login using a lam server use:  org.openbravo.authentication.lam.LamAuthenticationManager
+# Root sources directory, used by modularity
+source.path=/opt/openbravo
+
+##################
+# Authentication #
+##################
+
+# Leave this empty to use the default login hardler.
+# LAM server example: org.openbravo.authentication.lam.LamAuthenticationManager
 authentication.class=
+
+###########
+# Add-ons #
+###########
+
+# External Pentaho Services
+pentahoServer=
