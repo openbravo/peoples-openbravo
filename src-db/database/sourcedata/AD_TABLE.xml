@@ -17814,7 +17814,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--800157 NAME-->
 <!--800157-->              <NAME><![CDATA[MA_Machine_Type]]></NAME>
 <!--800157 HELP-->
-<!--800157-->              <HELP><![CDATA[In this table are stored the used machine types to group similar machines.]]></HELP>
+<!--800157-->              <HELP><![CDATA[In this table are stored the used machine categories to group similar machines.]]></HELP>
 <!--800157 TABLENAME-->
 <!--800157-->              <TABLENAME><![CDATA[MA_Machine_Type]]></TABLENAME>
 <!--800157 ISVIEW-->
@@ -17961,7 +17961,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--800160 NAME-->
 <!--800160-->              <NAME><![CDATA[MA_Maint_Periodicity]]></NAME>
 <!--800160 HELP-->
-<!--800160-->              <HELP><![CDATA[Periodicities of the maintenances defined for machines and machine types.]]></HELP>
+<!--800160-->              <HELP><![CDATA[Periodicities of the maintenances defined for machines and machine categories.]]></HELP>
 <!--800160 TABLENAME-->
 <!--800160-->              <TABLENAME><![CDATA[MA_Maint_Periodicity]]></TABLENAME>
 <!--800160 ISVIEW-->

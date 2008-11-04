@@ -157,7 +157,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ANNUALAMORTIZATIONPORCENTAGE" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+      <column name="ANNUALAMORTIZATIONPERCENTAGE" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

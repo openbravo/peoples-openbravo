@@ -37374,7 +37374,7 @@ For example, if you want to create different invoices for each ship location for
 <!--800258 UPDATEDBY-->
 <!--800258-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800258 COLUMNNAME-->
-<!--800258-->              <COLUMNNAME><![CDATA[Amortization_Porcentage]]></COLUMNNAME>
+<!--800258-->              <COLUMNNAME><![CDATA[Amortization_Percentage]]></COLUMNNAME>
 <!--800258 NAME-->
 <!--800258-->              <NAME><![CDATA[Amortization Percentage]]></NAME>
 <!--800258 PRINTNAME-->
@@ -37498,7 +37498,7 @@ For example, if you want to create different invoices for each ship location for
 <!--800262 UPDATEDBY-->
 <!--800262-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800262 COLUMNNAME-->
-<!--800262-->              <COLUMNNAME><![CDATA[Annualamortizationporcentage]]></COLUMNNAME>
+<!--800262-->              <COLUMNNAME><![CDATA[Annualamortizationpercentage]]></COLUMNNAME>
 <!--800262 NAME-->
 <!--800262-->              <NAME><![CDATA[Annual Depreciation %]]></NAME>
 <!--800262 PRINTNAME-->
@@ -42059,13 +42059,13 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800560 COLUMNNAME-->
 <!--800560-->              <COLUMNNAME><![CDATA[MA_Machine_Type_ID]]></COLUMNNAME>
 <!--800560 NAME-->
-<!--800560-->              <NAME><![CDATA[Machine Type]]></NAME>
+<!--800560-->              <NAME><![CDATA[Machine Category]]></NAME>
 <!--800560 PRINTNAME-->
-<!--800560-->              <PRINTNAME><![CDATA[Machine Type]]></PRINTNAME>
+<!--800560-->              <PRINTNAME><![CDATA[Machine Category]]></PRINTNAME>
 <!--800560 DESCRIPTION-->
 <!--800560-->              <DESCRIPTION><![CDATA[A distinct machine characteristic used for processes.]]></DESCRIPTION>
 <!--800560 HELP-->
-<!--800560-->              <HELP><![CDATA[Identifies a machine type.]]></HELP>
+<!--800560-->              <HELP><![CDATA[Identifies a machine category.]]></HELP>
 <!--800560 AD_MODULE_ID-->
 <!--800560-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800560**************--></AD_ELEMENT>
@@ -42245,7 +42245,7 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800567 DESCRIPTION-->
 <!--800567-->              <DESCRIPTION><![CDATA[The act of ensuring the proper working order for a specified item.]]></DESCRIPTION>
 <!--800567 HELP-->
-<!--800567-->              <HELP><![CDATA[Identifies a maintenance of a machine or machine type.]]></HELP>
+<!--800567-->              <HELP><![CDATA[Identifies a maintenance of a machine or machine category.]]></HELP>
 <!--800567 AD_MODULE_ID-->
 <!--800567-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800567**************--></AD_ELEMENT>

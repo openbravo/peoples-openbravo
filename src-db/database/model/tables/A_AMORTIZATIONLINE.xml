@@ -45,7 +45,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="AMORTIZATION_PORCENTAGE" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+      <column name="AMORTIZATION_PERCENTAGE" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
