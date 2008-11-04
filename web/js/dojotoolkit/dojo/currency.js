@@ -11,7 +11,7 @@ dojo.provide("dojo.currency");
 
 dojo.require("dojo.number");
 dojo.require("dojo.i18n");
-dojo.requireLocalization("dojo.cldr", "currency", null, "ja,en,fr,es,en-au,en-ca,it,ko,zh,pt,en-us,de,zh-tw,ROOT");
+dojo.requireLocalization("dojo.cldr", "currency", null, "es,it,en,ROOT,en-ca,zh-tw,ko,pt,en-us,en-au,fr,zh,ja,de");
 dojo.require("dojo.cldr.monetary");
 
 /*=====

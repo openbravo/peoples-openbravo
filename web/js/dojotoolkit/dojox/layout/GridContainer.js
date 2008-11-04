@@ -16,7 +16,7 @@ dojo.require("dijit._Container");
 dojo.require("dojo.dnd.move");
 dojo.require("dojox.layout.dnd.PlottedDnd");
 
-dojo.requireLocalization("dojox.layout", "GridContainer", null, "en,fr,ROOT");
+dojo.requireLocalization("dojox.layout", "GridContainer", null, "en,ROOT,fr");
 
 dojo.declare("dojox.layout.GridContainer", 
 	[dijit._Widget, dijit._Templated, dijit._Container, dijit._Contained], 

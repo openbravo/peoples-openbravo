@@ -29,6 +29,10 @@ dojo.require("dojox.lang.functional.reversed");
 			return this;
 		},
 		render: function(dim, offsets){
+			if(this._maxRunLength <= 0){
+				return this;
+			}
+
 			// stack all values
 			var acc = df.repeat(this._maxRunLength, "-> 0", 0);
 			for(var i = 0; i < this.series.length; ++i){
@@ -53,6 +57,7 @@ dojo.require("dojox.lang.functional.reversed");
 				gap = this.opt.gap < this._hScaler.bounds.scale / 3 ? this.opt.gap : 0,
 				width  = this._hScaler.bounds.scale - 2 * gap,
 				events = this.events();
+			this.resetEvents();
 			for(var i = this.series.length - 1; i >= 0; --i){
 				var run = this.series[i];
 				if(!this.dirty && !run.dirty){ continue; }

@@ -11,7 +11,7 @@ dojo.provide("dijit.layout.TabContainer");
 
 dojo.require("dijit.layout.StackContainer");
 dojo.require("dijit._Templated");
-dojo.requireLocalization("dijit", "common", null, "ja,ru,nb,ca,fr,es,sv,it,ko,pt-pt,zh,pt,ar,fi,da,th,nl,pl,he,de,zh-tw,tr,hu,el,sk,sl,ROOT,cs");
+dojo.requireLocalization("dijit", "common", null, "ROOT,th,es,sv,it,nl,el,zh-tw,ko,da,pt-pt,cs,pt,ar,fi,sk,sl,ca,he,tr,hu,fr,zh,ja,pl,ru,de,nb");
 
 dojo.declare("dijit.layout.TabContainer",
 	[dijit.layout.StackContainer, dijit._Templated],
@@ -168,6 +168,8 @@ dojo.declare("dijit.layout._TabButton",
 	baseClass: "dijitTab",
 
 	templateString:"<div waiRole=\"presentation\" dojoAttachEvent='onclick:onClick,onmouseenter:_onMouse,onmouseleave:_onMouse'>\n    <div waiRole=\"presentation\" class='dijitTabInnerDiv' dojoAttachPoint='innerDiv'>\n        <div waiRole=\"presentation\" class='dijitTabContent' dojoAttachPoint='tabContent'>\n\t        <span dojoAttachPoint='containerNode,focusNode' class='tabLabel'>${!label}</span><img class =\"dijitTabButtonSpacer\" src=\"${_blankGif}\" />\n\t        <div class=\"dijitInline closeNode\" dojoAttachPoint='closeNode' dojoAttachEvent='onclick:onClickCloseButton'>\n\t        \t<img src=\"${_blankGif}\" alt=\"\" dojoAttachPoint='closeButtonNode' class='closeImage' dojoAttachEvent='onmouseenter:_onMouse, onmouseleave:_onMouse' stateModifier='CloseButton' waiRole=\"presentation\"/>\n\t            <span dojoAttachPoint='closeText' class='closeText'>x</span>\n\t        </div>\n        </div>\n    </div>\n</div>\n",
+
+	scrollOnFocus: false, // don't scroll the whole tab container into view when the button is focused
 
 	postCreate: function(){
 		if(this.closeButton){

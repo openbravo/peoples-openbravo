@@ -101,30 +101,33 @@ djConfig = {
 (function(){
 	// firebug stubs
 
-	// if((!this["console"])||(!console["firebug"])){
+	if(typeof this["loadFirebugConsole"] == "function"){
+		// Firebug 1.2 is a PITA
+		this["loadFirebugConsole"]();
+	}else{
+		if(!this["console"]){
+			this.console = {
+			};
+		}
 
-	if(!this["console"]){
-		this.console = {
-		};
-	}
-
-	//	Be careful to leave 'log' always at the end
-	var cn = [
-		"assert", "count", "debug", "dir", "dirxml", "error", "group",
-		"groupEnd", "info", "profile", "profileEnd", "time", "timeEnd",
-		"trace", "warn", "log" 
-	];
-	var i=0, tn;
-	while((tn=cn[i++])){
-		if(!console[tn]){
-			(function(){
-				var tcn = tn+"";
-				console[tcn] = ('log' in console) ? function(){ 
-					var a = Array.apply({}, arguments);
-					a.unshift(tcn+":");
-					console["log"](a.join(" "));
-				} : function(){}
-			})();
+		//	Be careful to leave 'log' always at the end
+		var cn = [
+			"assert", "count", "debug", "dir", "dirxml", "error", "group",
+			"groupEnd", "info", "profile", "profileEnd", "time", "timeEnd",
+			"trace", "warn", "log" 
+		];
+		var i=0, tn;
+		while((tn=cn[i++])){
+			if(!console[tn]){
+				(function(){
+					var tcn = tn+"";
+					console[tcn] = ('log' in console) ? function(){ 
+						var a = Array.apply({}, arguments);
+						a.unshift(tcn+":");
+						console["log"](a.join(" "));
+					} : function(){}
+				})();
+			}
 		}
 	}
 
@@ -192,7 +195,7 @@ dojo.global = {
 =====*/
 	dojo.locale = d.config.locale;
 	
-	var rev = "$Rev: 15278 $".match(/\d+/);
+	var rev = "$Rev: 15541 $".match(/\d+/);
 
 	dojo.version = {
 		// summary: 
@@ -347,7 +350,7 @@ dojo.global = {
 		return obj && p ? (obj[p]=value) : undefined; // Object
 	}
 
-	dojo.getObject = function(/*String*/name, /*Boolean*/create, /*Object*/context){
+	dojo.getObject = function(/*String*/name, /*Boolean?*/create, /*Object?*/context){
 		// summary: 
 		//		Get a property from a dot-separated string, such as "A.B.C"
 		//	description: 
@@ -355,12 +358,12 @@ dojo.global = {
 		//		the chain, or when you have an object reference in string format.
 		//	name: 	
 		//		Path to an property, in the form "A.B.C".
-		//	context:
-		//		Optional. Object to use as root of path. Defaults to
-		//		'dojo.global'. Null may be passed.
 		//	create: 
 		//		Optional. Defaults to `false`. If `true`, Objects will be
 		//		created at any point along the 'path' that is undefined.
+		//	context:
+		//		Optional. Object to use as root of path. Defaults to
+		//		'dojo.global'. Null may be passed.
 		return d._getProp(name.split("."), create, context); // Object
 	}
 

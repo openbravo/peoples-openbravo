@@ -11,7 +11,7 @@ dojo.provide("dojox.form.BusyButton");
 
 dojo.require("dijit.form.Button");
 
-dojo.requireLocalization("dijit", "loading", null, "ja,ru,nb,ca,fr,es,sv,ROOT,it,ko,pt-pt,zh,pt,ar,fi,da,th,nl,pl,he,de,zh-tw,tr,hu,el,sk,sl,cs");
+dojo.requireLocalization("dijit", "loading", null, "th,es,sv,it,nl,el,zh-tw,ko,da,pt-pt,cs,pt,ar,fi,sk,sl,ROOT,ca,he,tr,hu,fr,zh,ja,pl,ru,de,nb");
 
 dojo.declare("dojox.form.BusyButton",
 	[dijit.form.Button], 

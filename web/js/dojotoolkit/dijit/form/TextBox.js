@@ -79,11 +79,11 @@ dojo.declare(
 				filteredValue = this.filter(value);
 				if(filteredValue !== null && ((typeof filteredValue != "number") || !isNaN(filteredValue))){
 					if(typeof formattedValue != "string"){
-						formattedValue = this.format(filteredValue, this.constraints);
+						formattedValue = this.filter(this.format(filteredValue, this.constraints));
 					}
 				}else{ formattedValue = ''; }
 			}
-			if(formattedValue != null && formattedValue != undefined){
+			if(formattedValue != null && formattedValue != undefined && this.textbox.value != formattedValue){
 				this.textbox.value = formattedValue;
 			}
 			dijit.form.TextBox.superclass._setValueAttr.call(this, filteredValue, priorityChange);
@@ -135,8 +135,8 @@ dojo.declare(
 			//		The widget value is also set to a corresponding,
 			//		but not necessarily the same, value.
 
-			this.textbox.value = value;
-			this._setValueAttr(this.attr('value'));
+			this.textbox.value = value = this.filter(value);
+			this._setValueAttr(this.attr('value'), undefined, value);
 		},
 
 		format: function(/* String */ value, /* Object */ constraints){
@@ -154,7 +154,7 @@ dojo.declare(
 		postCreate: function(){
 			// setting the value here is needed since value="" in the template causes "undefined"
 			// and setting in the DOM (instead of the JS object) helps with form reset actions
-			this.textbox.setAttribute("value", this.attr('displayedValue'));
+			this.textbox.setAttribute("value", this.textbox.value); // DOM and JS values shuld be the same
 			this.inherited(arguments);
 
 			/*#5297:if(this.srcNodeRef){

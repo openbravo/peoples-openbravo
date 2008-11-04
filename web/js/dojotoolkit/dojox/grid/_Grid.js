@@ -24,8 +24,7 @@ dojo.require("dojox.grid._Events");
 
 dojo.require("dijit.Menu");
 
-dojo.requireLocalization("dijit", "loading", null, "ja,ru,nb,ca,fr,es,sv,ROOT,it,ko,pt-pt,zh,pt,ar,fi,da,th,nl,pl,he,de,zh-tw,tr,hu,el,sk,sl,cs");
-dojo.requireLocalization("dojox.grid", "grid", null, "ROOT");
+dojo.requireLocalization("dijit", "loading", null, "th,es,sv,it,nl,el,zh-tw,ko,da,pt-pt,cs,pt,ar,fi,sk,sl,ROOT,ca,he,tr,hu,fr,zh,ja,pl,ru,de,nb");
 
 (function(){
 	var jobs = {
@@ -192,8 +191,10 @@ dojo.requireLocalization("dojox.grid", "grid", null, "ROOT");
 		errorMessage: "<span class='dojoxGridError'>${errorState}</span>",
 
 		// noDataMessage: String
-		//  Message that shows if the grid has no data
-		noDataMessage: "<span class='dojoxGridNoData'>${noData}</span>",
+		//  Message that shows if the grid has no data - wrap it in a 
+		//  span with class 'dojoxGridNoData' if you want it to be
+		//  styled similar to the loading and error messages
+		noDataMessage: "",
 
 		// private
 		sortInfo: 0,
@@ -229,11 +230,9 @@ dojo.requireLocalization("dojox.grid", "grid", null, "ROOT");
 		
 		postMixInProperties: function(){
 			this.inherited(arguments);
-			var messages = dojo.mixin(dojo.i18n.getLocalization("dijit", "loading", this.lang),
-								dojo.i18n.getLocalization("dojox.grid", "grid", this.lang));
+			var messages = dojo.i18n.getLocalization("dijit", "loading", this.lang);
 			this.loadingMessage = dojo.string.substitute(this.loadingMessage, messages);
 			this.errorMessage = dojo.string.substitute(this.errorMessage, messages);
-			this.noDataMessage = dojo.string.substitute(this.noDataMessage, messages);
 			if(this.srcNodeRef && this.srcNodeRef.style.height){
 				this.height = this.srcNodeRef.style.height;
 			}
@@ -1183,7 +1182,7 @@ dojo.requireLocalization("dojox.grid", "grid", null, "ROOT");
 						cell.relWidth = window.parseInt(dojo.attr(th, "relWidth"), 10);
 					}
 					if(d.hasAttr(th, "hidden")){
-						cell.hidden = d.getAttr(th, "hidden") == "true";
+						cell.hidden = d.attr(th, "hidden") == "true";
 					}
 
 					if(cellFunc){

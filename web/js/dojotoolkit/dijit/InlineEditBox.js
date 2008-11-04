@@ -16,7 +16,7 @@ dojo.require("dijit._Container");
 dojo.require("dijit.form.Button");
 dojo.require("dijit.form.TextBox");
 
-dojo.requireLocalization("dijit", "common", null, "ja,ru,nb,ca,fr,es,sv,it,ko,pt-pt,zh,pt,ar,fi,da,th,nl,pl,he,de,zh-tw,tr,hu,el,sk,sl,ROOT,cs");
+dojo.requireLocalization("dijit", "common", null, "ROOT,th,es,sv,it,nl,el,zh-tw,ko,da,pt-pt,cs,pt,ar,fi,sk,sl,ca,he,tr,hu,fr,zh,ja,pl,ru,de,nb");
 
 dojo.declare("dijit.InlineEditBox",
 	dijit._Widget,

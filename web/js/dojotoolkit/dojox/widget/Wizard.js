@@ -14,8 +14,8 @@ dojo.require("dijit.layout.ContentPane");
 dojo.require("dijit.form.Button");
 
 dojo.require("dojo.i18n"); 
-dojo.requireLocalization("dijit", "common", null, "ja,ru,nb,ca,fr,es,sv,it,ko,pt-pt,zh,pt,ar,fi,da,th,nl,pl,he,de,zh-tw,tr,hu,el,sk,sl,ROOT,cs"); 
-dojo.requireLocalization("dojox.widget", "Wizard", null, "ja,ru,nb,ca,fr,es,sv,it,ko,pt-pt,zh,pt,ar,ROOT,fi,da,th,nl,pl,he,de,zh-tw,tr,hu,el,sk,sl,cs"); 
+dojo.requireLocalization("dijit", "common", null, "ROOT,th,es,sv,it,nl,el,zh-tw,ko,da,pt-pt,cs,pt,ar,fi,sk,sl,ca,he,tr,hu,fr,zh,ja,pl,ru,de,nb"); 
+dojo.requireLocalization("dojox.widget", "Wizard", null, "th,es,sv,it,ROOT,nl,el,zh-tw,ko,da,pt-pt,cs,pt,ar,fi,sk,sl,ca,he,tr,hu,fr,zh,ja,pl,ru,de,nb"); 
 
 dojo.declare(
 	"dojox.widget.Wizard",

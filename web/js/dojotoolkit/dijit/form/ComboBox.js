@@ -13,7 +13,7 @@ dojo.require("dijit.form.ValidationTextBox");
 dojo.require("dojo.data.util.simpleFetch");
 dojo.require("dojo.data.util.filter");
 
-dojo.requireLocalization("dijit.form", "ComboBox", null, "ja,ru,nb,ca,fr,es,sv,it,ko,pt-pt,zh,pt,ar,fi,da,th,nl,pl,he,ROOT,de,zh-tw,tr,hu,el,sk,sl,cs");
+dojo.requireLocalization("dijit.form", "ComboBox", null, "th,es,sv,it,nl,el,zh-tw,ko,da,pt-pt,cs,pt,ar,fi,ROOT,sk,sl,ca,he,tr,hu,fr,zh,ja,pl,ru,de,nb");
 
 dojo.declare(
 	"dijit.form.ComboBoxMixin",
@@ -514,7 +514,7 @@ dojo.declare(
 		},
 
 		_startSearchFromInput: function(){
-			this._startSearch(this.focusNode.value);
+			this._startSearch(this.focusNode.value.replace(/([\\\*\?])/g, "\\$1"));
 		},
 
 		_getQueryString: function(/*String*/ text){
@@ -1018,6 +1018,11 @@ dojo.declare(
 		//		The drop down box's values are populated from an class called
 		//		a data provider, which returns a list of values based on the characters
 		//		that the user has typed into the input box.
+		//		If OPTION tags are used as the data provider via markup,
+		//		then the OPTION tag's child text node is used as the widget value 
+		//		when selected.  The OPTION tag's value attribute is ignored.
+		//		To set the default value when using OPTION tags, specify the selected 
+		//		attribute on 1 of the child OPTION tags.
 		// 
 		//		Some of the options to the ComboBox are actually arguments to the data
 		//		provider.

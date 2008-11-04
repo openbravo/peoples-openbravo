@@ -14,7 +14,7 @@ dojo.require("dojo.i18n");
 dojo.require("dijit.form.TextBox");
 dojo.require("dijit.Tooltip");
 
-dojo.requireLocalization("dijit.form", "validate", null, "ja,ru,nb,ca,fr,es,sv,it,ko,pt-pt,zh,pt,ar,fi,da,th,nl,pl,he,de,zh-tw,tr,hu,el,sk,ROOT,sl,cs");
+dojo.requireLocalization("dijit.form", "validate", null, "th,es,sv,it,nl,ROOT,el,zh-tw,ko,da,pt-pt,cs,pt,ar,fi,sk,sl,ca,he,tr,hu,fr,zh,ja,pl,ru,de,nb");
 
 /*=====
 	dijit.form.ValidationTextBox.__Constraints = function(){
@@ -206,16 +206,16 @@ dojo.declare(
 
 		_setDisabledAttr: function(/*Boolean*/ value){
 			this.inherited(arguments);	// call FormValueWidget._setDisabledAttr()
-					if(this.valueNode){
+			if(this.valueNode){
 				this.valueNode.disabled = value;
-					}
-					this._refreshState();
+			}
+			this._refreshState();
 		},
 		
 		_setRequiredAttr: function(/*Boolean*/ value){
 			this.required = value;
 			dijit.setWaiState(this.focusNode,"required", value);
-					this._refreshState();				
+			this._refreshState();				
 		},
 
 		postCreate: function(){
@@ -252,9 +252,7 @@ dojo.declare(
 
 		toString: function(){
 			// summary: display the widget as a printable string using the widget's value
-			
-			// TODO: seems like the filter() call here is unnecessary as attr('value') should do that
-			var val = this.filter(this.attr('value'));
+			var val = this.filter(this.attr('value')); // call filter in case value is nonstring and filter has been customized
 			return val != null ? (typeof val == "string" ? val : this.serialize(val, this.constraints)) : ""; // String
 		},
 

@@ -15,7 +15,7 @@ dojo.require("dijit._editor.plugins.EnterKeyHandling");
 dojo.require("dijit._editor.range");
 dojo.require("dijit._Container");
 dojo.require("dojo.i18n");
-dojo.requireLocalization("dijit._editor", "commands", null, "ja,ru,nb,ca,fr,es,sv,it,ko,pt-pt,zh,pt,ar,fi,ROOT,da,th,nl,pl,he,de,zh-tw,tr,hu,el,sk,sl,cs");
+dojo.requireLocalization("dijit._editor", "commands", null, "th,es,sv,it,nl,el,zh-tw,ko,da,pt-pt,cs,pt,ar,fi,sk,sl,ca,he,tr,hu,fr,zh,ja,pl,ru,de,ROOT,nb");
 
 dojo.declare(
 	"dijit.Editor",
@@ -214,18 +214,18 @@ dojo.declare(
 					this._beginEditing();
 				}
 				try{
-					var r = this.inherited('execCommand',arguments);
-                    if(dojo.isSafari && cmd=='paste' && !r){ //see #4598: safari does not support invoking paste from js
-                        var su = dojo.string.substitute, _isM = navigator.userAgent.indexOf("Macintosh") != -1;
-                        alert(su(this.commands.pasteShortcutSafari,[su(this.commands[_isM ? 'appleKey' : 'ctrlKey'], ['V'])]));
+					var r = this.inherited('execCommand', arguments);
+                    if(dojo.isSafari /*TODO isWebKit?*/&& cmd=='paste' && !r){ //see #4598: safari does not support invoking paste from js
+						throw { code: 1011 }; // throw an object like Mozilla's error
                     }
 				}catch(e){
-					if(dojo.isMoz && /copy|cut|paste/.test(cmd)){
-						// Warn user of platform limitation.  Cannot programmatically access keyboard. See ticket #4136
+					//TODO: when else might we get an exception?  Do we need the Mozilla test below?
+					if(e.code == 1011 /* Mozilla: service denied */ && /copy|cut|paste/.test(cmd)){
+						// Warn user of platform limitation.  Cannot programmatically access clipboard. See ticket #4136
 						var sub = dojo.string.substitute,
 							accel = {cut:'X', copy:'C', paste:'V'},
 							isMac = navigator.userAgent.indexOf("Macintosh") != -1;
-						alert(sub(this.commands.systemShortcutFF,
+						alert(sub(this.commands.systemShortcut,
 							[this.commands[cmd], sub(this.commands[isMac ? 'appleKey' : 'ctrlKey'], [accel[cmd]])]));
 					}
 					r = false;

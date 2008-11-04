@@ -149,30 +149,33 @@ djConfig = {
 (function(){
 	// firebug stubs
 
-	// if((!this["console"])||(!console["firebug"])){
+	if(typeof this["loadFirebugConsole"] == "function"){
+		// Firebug 1.2 is a PITA
+		this["loadFirebugConsole"]();
+	}else{
+		if(!this["console"]){
+			this.console = {
+			};
+		}
 
-	if(!this["console"]){
-		this.console = {
-		};
-	}
-
-	//	Be careful to leave 'log' always at the end
-	var cn = [
-		"assert", "count", "debug", "dir", "dirxml", "error", "group",
-		"groupEnd", "info", "profile", "profileEnd", "time", "timeEnd",
-		"trace", "warn", "log" 
-	];
-	var i=0, tn;
-	while((tn=cn[i++])){
-		if(!console[tn]){
-			(function(){
-				var tcn = tn+"";
-				console[tcn] = ('log' in console) ? function(){ 
-					var a = Array.apply({}, arguments);
-					a.unshift(tcn+":");
-					console["log"](a.join(" "));
-				} : function(){}
-			})();
+		//	Be careful to leave 'log' always at the end
+		var cn = [
+			"assert", "count", "debug", "dir", "dirxml", "error", "group",
+			"groupEnd", "info", "profile", "profileEnd", "time", "timeEnd",
+			"trace", "warn", "log" 
+		];
+		var i=0, tn;
+		while((tn=cn[i++])){
+			if(!console[tn]){
+				(function(){
+					var tcn = tn+"";
+					console[tcn] = ('log' in console) ? function(){ 
+						var a = Array.apply({}, arguments);
+						a.unshift(tcn+":");
+						console["log"](a.join(" "));
+					} : function(){}
+				})();
+			}
 		}
 	}
 
@@ -240,7 +243,7 @@ dojo.global = {
 =====*/
 	dojo.locale = d.config.locale;
 	
-	var rev = "$Rev: 15278 $".match(/\d+/);
+	var rev = "$Rev: 15541 $".match(/\d+/);
 
 	dojo.version = {
 		// summary: 
@@ -395,7 +398,7 @@ dojo.global = {
 		return obj && p ? (obj[p]=value) : undefined; // Object
 	}
 
-	dojo.getObject = function(/*String*/name, /*Boolean*/create, /*Object*/context){
+	dojo.getObject = function(/*String*/name, /*Boolean?*/create, /*Object?*/context){
 		// summary: 
 		//		Get a property from a dot-separated string, such as "A.B.C"
 		//	description: 
@@ -403,12 +406,12 @@ dojo.global = {
 		//		the chain, or when you have an object reference in string format.
 		//	name: 	
 		//		Path to an property, in the form "A.B.C".
-		//	context:
-		//		Optional. Object to use as root of path. Defaults to
-		//		'dojo.global'. Null may be passed.
 		//	create: 
 		//		Optional. Defaults to `false`. If `true`, Objects will be
 		//		created at any point along the 'path' that is undefined.
+		//	context:
+		//		Optional. Object to use as root of path. Defaults to
+		//		'dojo.global'. Null may be passed.
 		return d._getProp(name.split("."), create, context); // Object
 	}
 
@@ -1270,9 +1273,13 @@ dojo = {
 	//		major detected IE version (6, 7, 8, etc.)
 	isIE: 6,
 	//	isKhtml: Number | undefined
-	//		Version as a Number if client is a KTHML-derived browser (Konqueror,
-	//		Safari, etc.). undefined otherwise. Corresponds to major detected version.
+	//		Version as a Number if client is a KHTML browser. undefined otherwise. Corresponds to major
+	//		detected version.
 	isKhtml: 0,
+	//	isWebKit: Number | undefined
+	//		Version as a Number if client is a WebKit-derived browser (Konqueror,
+	//		Safari, Chrome, etc.). undefined otherwise.
+	isWebKit: 0,
 	//	isMozilla: Number | undefined
 	//		Version as a Number if client is a Mozilla-based browser (Firefox,
 	//		SeaMonkey). undefined otherwise. Corresponds to major detected version.
@@ -1284,6 +1291,9 @@ dojo = {
 	//	isSafari: Number | undefined
 	//		Version as a Number if client is Safari or iPhone. undefined otherwise.
 	isSafari: 0
+	//	isChrome: Number | undefined
+	//		Version as a Number if client is Chrome browser. undefined otherwise.
+	isChrome: 0
 }
 =====*/
 
@@ -1327,25 +1337,31 @@ if(typeof window != 'undefined'){
 
 		// fill in the rendering support information in dojo.render.*
 		var n = navigator;
-		var dua = n.userAgent;
-		var dav = n.appVersion;
-		var tv = parseFloat(dav);
+		var dua = n.userAgent,
+			dav = n.appVersion,
+			tv = parseFloat(dav);
 
 		if(dua.indexOf("Opera") >= 0){ d.isOpera = tv; }
+		if(dua.indexOf("AdobeAIR") >= 0){ d.isAIR = 1; }
+		d.isKhtml = (dav.indexOf("Konqueror") >= 0) ? tv : 0;
+		d.isWebKit = parseFloat(dua.split("WebKit/")[1]) || undefined;
+		d.isChrome = parseFloat(dua.split("Chrome/")[1]) || undefined;
+
 		// safari detection derived from:
 		//		http://developer.apple.com/internet/safari/faq.html#anchor2
 		//		http://developer.apple.com/internet/safari/uamatrix.html
 		var index = Math.max(dav.indexOf("WebKit"), dav.indexOf("Safari"), 0);
-		if(index){
+		if(index && !dojo.isChrome){
 			// try to grab the explicit Safari version first. If we don't get
-			// one, look for 419.3+ as the indication that we're on something
-			// "Safari 3-ish". Lastly, default to "Safari 2" handling.
-			d.isSafari = parseFloat(dav.split("Version/")[1]) ||
-				(parseFloat(dav.substr(index + 7)) > 419.3) ? 3 : 2;
+			// one, look for less than 419.3 as the indication that we're on something
+			// "Safari 2-ish".
+			d.isSafari = parseFloat(dav.split("Version/")[1]);
+			if(!d.isSafari || parseFloat(dav.substr(index + 7)) <= 419.3){
+				d.isSafari = 2;
+			}
 		}
-		if(dua.indexOf("AdobeAIR") >= 0){ d.isAIR = 1; }
-		if(dav.indexOf("Konqueror") >= 0 || d.isSafari){ d.isKhtml =  tv; }
-		if(dua.indexOf("Gecko") >= 0 && !d.isKhtml){ d.isMozilla = d.isMoz = tv; }
+
+		if(dua.indexOf("Gecko") >= 0 && !d.isKhtml && !d.isWebKit){ d.isMozilla = d.isMoz = tv; }
 		if(d.isMoz){
 			d.isFF = parseFloat(dua.split("Firefox/")[1]) || undefined;
 		}
@@ -1431,19 +1447,12 @@ if(typeof window != 'undefined'){
 			// returns: The response text. null is returned when there is a
 			//		failure and failure is okay (an exception otherwise)
 
-			// alert("_getText: " + uri);
-
 			// NOTE: must be declared before scope switches ie. this._xhrObj()
 			var http = this._xhrObj();
 
 			if(!hasBase && dojo._Url){
 				uri = (new dojo._Url(owloc, uri)).toString();
 			}
-			/*
-			console.debug("_getText:", uri);
-			console.debug(window.location+"");
-			alert(uri);
-			*/
 
 			if(d.config.cacheBust){
 				//Make sure we have a string before string methods are used on uri
@@ -1454,7 +1463,6 @@ if(typeof window != 'undefined'){
 			http.open('GET', uri, false);
 			try{
 				http.send(null);
-				// alert(http);
 				if(!d._isDocumentOk(http)){
 					var err = Error("Unable to load "+uri+" status:"+ http.status);
 					err.status = http.status;
@@ -1530,7 +1538,7 @@ if(typeof window != 'undefined'){
 			//		due to a threading issue in Firefox 2.0, we can't enable
 			//		DOMContentLoaded on that platform. For more information, see:
 			//		http://trac.dojotoolkit.org/ticket/1704
-			if(dojo.isOpera || dojo.isFF >= 3 || (dojo.isMoz && dojo.config.enableMozDomContentLoaded === true)){
+			if(dojo.isWebKit > 525 || dojo.isOpera || dojo.isFF >= 3 || (dojo.isMoz && dojo.config.enableMozDomContentLoaded === true)){
 				document.addEventListener("DOMContentLoaded", dojo._loadInit, null);
 			}
 	
@@ -1541,7 +1549,7 @@ if(typeof window != 'undefined'){
 	
 		if(dojo.isAIR){
 			window.addEventListener("load", dojo._loadInit, null);
-		}else if(/(WebKit|khtml)/i.test(navigator.userAgent)){ // sniff
+		}else if((dojo.isWebKit < 525) || dojo.isKhtml){
 			dojo._khtmlTimer = setInterval(function(){
 				if(/loaded|complete/.test(document.readyState)){
 					dojo._loadInit(); // call the onload handler
@@ -4098,7 +4106,7 @@ if(dojo.isIE || dojo.isOpera){
 		node = d.byId(node);
 		if(d.isMozilla){
 			node.style.MozUserSelect = selectable ? "" : "none";
-		}else if(d.isKhtml){
+		}else if(d.isKhtml || d.isWebKit){
 			node.style.KhtmlUserSelect = selectable ? "auto" : "none";
 		}else if(d.isIE){
 			var v = (node.unselectable = selectable ? "" : "on");
@@ -5249,12 +5257,6 @@ if(dojo.isIE || dojo.isOpera){
 		d.byId(node).removeAttribute(_fixAttrName(name));
 	}
 
-	/*
-	dojo.createElement = function(type, attrs, parent, position){
-		// TODO: need to finish this!
-	}
-	*/
-
 	// =============================
 	// (CSS) Class Functions
 	// =============================
@@ -5807,9 +5809,8 @@ dojo.provide("dojo._base.NodeList");
 
 	// syntactic sugar for DOM events
 	d.forEach([
-		"blur", "focus", "click", "keydown", "keypress", "keyup", "mousedown",
-		"mouseenter", "mouseleave", "mousemove", "mouseout", "mouseover",
-		"mouseup", "submit", "load", "error"
+		"blur", "focus", "click", "error", "keydown", "keypress", "keyup", "load", "mousedown",
+		"mouseenter", "mouseleave", "mousemove", "mouseout", "mouseover", "mouseup", "submit" 
 		], function(evt){
 			var _oe = "on"+evt;
 			d.NodeList.prototype[_oe] = function(a, b){
@@ -5846,8 +5847,11 @@ dojo.provide("dojo._base.NodeList");
 
 if(!dojo._hasResource["dojo._base.query"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
 dojo._hasResource["dojo._base.query"] = true;
-dojo.provide("dojo._base.query");
-
+if(dojo){
+	dojo.provide("dojo._base.query");
+	
+	
+}
 
 /*
 	dojo.query() architectural overview:
@@ -5882,52 +5886,92 @@ dojo.provide("dojo._base.query");
 				  evaluation of nodes based on each simple query section
 				- xpath queries can, thankfully, be executed in one shot
 			5.) matched nodes are pruned to ensure they are unique
+
+		NOTE: 
+				this design is likely to become simplified with the advent of
+				querySelectorAll for supported browsers which today use the
+				XPath variant. E.g., once Firefox 3.1 is on the street,
+				dropping the xpath engine (and the query optimizer to select
+				for it) should remove significant code (assuming that
+				querySelectorAll is indeed faster than xpath and DOM on FF 3.1).
 */
 
-;(function(){
+;(function(d){
 	// define everything in a closure for compressability reasons. "d" is an
 	// alias to "dojo" since it's so frequently used. This seems a
 	// transformation that the build system could perform on a per-file basis.
 
 	////////////////////////////////////////////////////////////////////////
+	// Toolkit aliases
+	////////////////////////////////////////////////////////////////////////
+
+	// if you are extracing dojo.query for use in your own system, you will
+	// need to provide over-rides for these methods. No other porting should be
+	// necessaray, save for configuring the system to use a class other than
+	// dojo.NodeList as the return instance instantiator
+	var trim = d.trim;
+	var each = d.forEach;
+	// d.isIE; // float
+	// d.isSafari; // float
+	// d.doc ; // float
+	var listCtor = d.NodeList;
+	var isString = d.isString;
+
+	var getDoc = function(){ return d.doc; };
+	var attr = d.attr; // FIXME: we probably don't need to use attr() for checked
+
+	////////////////////////////////////////////////////////////////////////
 	// Utility code
 	////////////////////////////////////////////////////////////////////////
 
-	var d = dojo;
-	var childNodesName = dojo.isIE ? "children" : "childNodes";
+
+	// on IE, using "children" can be much faster
+	var childNodesName = d.isIE ? "children" : "childNodes";
+
+	// global thunk to determine whether we should treat the current query as
+	// case sensitive or not. Set by the query evaluator based on the document
+	// passed as the current context to search.
 	var caseSensitive = false;
+
+	var yesman = function(){ return true; };
 
 	var getQueryParts = function(query){
 		// summary: state machine for query tokenization
+
+		// are we implicitly searching all children?
 		if(">~+".indexOf(query.charAt(query.length-1)) >= 0){
 			query += " *"
 		}
 		query += " "; // ensure that we terminate the state machine
 
-		var ts = function(s, e){
-			return d.trim(query.slice(s, e));
+		var ts = function(/*Integer*/ s, /*Integer*/ e){
+			// take an index to start a string slice from and an end position
+			// and return a trimmed copy of that sub-string
+			return trim(query.slice(s, e));
 		}
 
 		// the overall data graph of the full query, as represented by queryPart objects
 		var qparts = []; 
+
 		// state keeping vars
-		var inBrackets = -1;
-		var inParens = -1;
-		var inMatchFor = -1;
-		var inPseudo = -1;
-		var inClass = -1;
-		var inId = -1;
-		var inTag = -1;
-		var lc = ""; // the last character
-		var cc = ""; // the current character
-		var pStart;
+		var inBrackets = -1, inParens = -1, inMatchFor = -1, 
+			inPseudo = -1, inClass = -1, inId = -1, inTag = -1, 
+			lc = "", cc = "", pStart;
 		// iteration vars
 		var x = 0; // index in the query
 		var ql = query.length;
 		var currentPart = null; // data structure representing the entire clause
 		var _cp = null; // the current pseudo or attr matcher
+		// several temporary variables are assigned to this structure durring a
+		// potential sub-expression match:
+		//		attr: a string representing the current full attribute match in a bracket expression
+		//		type: if there's an operator in a bracket expression, this is used to keep track of it
+		//		value: the internals of parenthetical expression for a pseudo. for :nth-child(2n+1), value might be "2n+1"
 
 		var endTag = function(){
+			// called when the tokenizer hits the end of a particular tag name.
+			// Re-sets state variables for tag matching and sets up the matcher
+			// to handle the next type of token (tag or operator).
 			if(inTag >= 0){
 				var tv = (inTag == x) ? null : ts(inTag, x); // .toLowerCase();
 				currentPart[ (">~+".indexOf(tv) < 0) ? "tag" : "oper" ] = tv;
@@ -5936,6 +5980,7 @@ dojo.provide("dojo._base.query");
 		}
 
 		var endId = function(){
+			// called when the tokenizer might be at the end of an ID portion of a match
 			if(inId >= 0){
 				currentPart.id = ts(inId, x).replace(/\\/g, "");
 				inId = -1;
@@ -5943,6 +5988,9 @@ dojo.provide("dojo._base.query");
 		}
 
 		var endClass = function(){
+			// called when the tokenizer might be at the end of a class name
+			// match. CSS allows for multiple classes, so we augment the
+			// current item with another class in its list
 			if(inClass >= 0){
 				currentPart.classes.push(ts(inClass+1, x).replace(/\\/g, ""));
 				inClass = -1;
@@ -5950,44 +5998,88 @@ dojo.provide("dojo._base.query");
 		}
 
 		var endAll = function(){
+			// at the end of a simple fragment, so wall off the matches
 			endId(); endTag(); endClass();
 		}
 
+		// iterate over the query, charachter by charachter, building up a 
+		// list of query part objects
 		for(; lc=cc, cc=query.charAt(x),x<ql; x++){
-			if(lc == "\\"){ continue; }
-			if(!currentPart){
+			//		cc: the current character in the match
+			//		lc: the last charachter (if any)
+
+			// someone is trying to escape something, so don't try to match any
+			// fragments. We assume we're inside a literal.
+			if(lc == "\\"){ continue; } 
+			if(!currentPart){ // a part was just ended or none has yet been created
 				// NOTE: I hate all this alloc, but it's shorter than writing tons of if's
 				pStart = x;
+				//	rules describe full CSS sub-expressions, like:
+				//		#someId
+				//		.className:first-child
+				//	but not:
+				//		thinger > div.howdy[type=thinger]
+				//	the indidual components of the previous query would be
+				//	split into 3 parts that would be represented a structure
+				//	kind if like:
+				//		[
+				//			{
+				//				query: "thinger",
+				//				tag: "thinger",
+				//			},
+				//			{
+				//				query: ">",
+				//				oper: ">",
+				//			},
+				//			{
+				//				query: "div.howdy[type=thinger]",
+				//				classes: ["howdy"],
+				//			},
+				//		]
 				currentPart = {
-					query: null,
-					pseudos: [],
-					attrs: [],
-					classes: [],
-					tag: null,
-					oper: null,
-					id: null
+					query: null, // the full text of the part's rule
+					pseudos: [], // CSS supports multiple pseud-class matches in a single rule
+					attrs: [], 	// CSS supports multi-attribute match, so we need an array
+					classes: [], // class matches may be additive, e.g.: .thinger.blah.howdy
+					tag: null, 	// only one tag...
+					oper: null, // ...or operator per component. Note that these wind up being exclusive.
+					id: null  	// the id component of a rule
 				};
-				inTag = x;
+				// if we don't have a part, we assume we're going to start at
+				// the beginning of a match, which should be a tag name. This
+				// might fault a little later on, but we detect that and this
+				// iteration will still be fine.
+				inTag = x; 
 			}
 
 			if(inBrackets >= 0){
 				// look for a the close first
-				if(cc == "]"){
+				if(cc == "]"){ // if we're in a [...] clause and we end, do assignment
 					if(!_cp.attr){
+						// no attribute match was previously begun, so we
+						// assume this is an attribute existance match in the
+						// form of [someAttributeName]
 						_cp.attr = ts(inBrackets+1, x);
 					}else{
+						// we had an attribute already, so we know that we're matching some sort of value, as in [attrName=howdy]
 						_cp.matchFor = ts((inMatchFor||inBrackets+1), x);
 					}
 					var cmf = _cp.matchFor;
 					if(cmf){
+						// try to strip quotes from the matchFor value. We want
+						// [attrName=howdy] to match the same 
+						//	as [attrName = 'howdy' ]
 						if(	(cmf.charAt(0) == '"') || (cmf.charAt(0)  == "'") ){
 							_cp.matchFor = cmf.substring(1, cmf.length-1);
 						}
 					}
+					// end the attribute by adding it to the list of attributes. 
 					currentPart.attrs.push(_cp);
 					_cp = null; // necessaray?
 					inBrackets = inMatchFor = -1;
 				}else if(cc == "="){
+					// if the last char was an operator prefix, make sure we
+					// record it along with the "=" operator. 
 					var addToCc = ("|~^$*".indexOf(lc) >=0 ) ? lc : "";
 					_cp.type = addToCc+cc;
 					_cp.attr = ts(inBrackets+1, x-addToCc.length);
@@ -5995,6 +6087,7 @@ dojo.provide("dojo._base.query");
 				}
 				// now look for other clause parts
 			}else if(inParens >= 0){
+				// if we're in a parenthetical expression, we need to figure out if it's attached to a pseduo-selector rule like :nth-child(1)
 				if(cc == ")"){
 					if(inPseudo >= 0){
 						_cp.value = ts(inParens+1, x);
@@ -6002,24 +6095,32 @@ dojo.provide("dojo._base.query");
 					inPseudo = inParens = -1;
 				}
 			}else if(cc == "#"){
+				// start of an ID match
 				endAll();
 				inId = x+1;
 			}else if(cc == "."){
+				// start of a class match
 				endAll();
 				inClass = x;
 			}else if(cc == ":"){
+				// start of a pseudo-selector match
 				endAll();
 				inPseudo = x;
 			}else if(cc == "["){
+				// start of an attribute match. 
 				endAll();
 				inBrackets = x;
+				// provide a new structure for the attribute match to fill-in
 				_cp = {
 					/*=====
 					attr: null, type: null, matchFor: null
 					=====*/
 				};
 			}else if(cc == "("){
+				// we really only care if we've entered a parenthetical
+				// expression if we're already inside a pseudo-selector match
 				if(inPseudo >= 0){
+					// provide a new structure for the pseudo match to fill-in
 					_cp = { 
 						name: ts(inPseudo+1, x), 
 						value: null
@@ -6027,21 +6128,42 @@ dojo.provide("dojo._base.query");
 					currentPart.pseudos.push(_cp);
 				}
 				inParens = x;
-			}else if(cc == " " && lc != cc){
-				// note that we expect the string to be " " terminated
+			}else if(cc == " " && lc != cc){ 
+				// if it's a space char and the last char is too, consume the
+				// current one without doing more work
+
+				// NOTE: we expect the query to be " " terminated
 				endAll();
 				if(inPseudo >= 0){
 					currentPart.pseudos.push({ name: ts(inPseudo+1, x) });
 				}
+				// hint to the selector engine to tell it whether or not it
+				// needs to do any iteration. Many simple selectors don't, and
+				// we can avoid significant construction-time work by advising
+				// the system to skip them
 				currentPart.hasLoops = (	
 						currentPart.pseudos.length || 
 						currentPart.attrs.length || 
 						currentPart.classes.length	);
-				currentPart.query = ts(pStart, x);
+
+				currentPart.query = ts(pStart, x); // save the full expression as a string
+
+				// otag/tag are hints to suggest to the system whether or not
+				// it's an operator or a tag. We save a copy of otag since the
+				// tag name is cast to upper-case in regular HTML matches. The
+				// system has a global switch to figure out if the current
+				// expression needs to be case sensitive or not and it will use
+				// otag or tag accordingly
 				currentPart.otag = currentPart.tag = (currentPart["oper"]) ? null : (currentPart.tag || "*");
-				if(currentPart.tag){ // FIXME: not valid in case-sensitive documents
+
+				if(currentPart.tag){
+					// if we're in a case-insensitive HTML doc, we likely want
+					// the toUpperCase when matching on element.tagName. If we
+					// do it here, we can skip the string op per node
+					// comparison
 					currentPart.tag = currentPart.tag.toUpperCase();
 				}
+				// add the part to the list
 				qparts.push(currentPart);
 				currentPart = null;
 			}
@@ -6087,7 +6209,7 @@ dojo.provide("dojo._base.query");
 								query, 
 								getDefault, 
 								handleMatch){
-		d.forEach(query.attrs, function(attr){
+		each(query.attrs, function(attr){
 			var matcher;
 			// type, attr, matchFor
 			if(attr.type && attrList[attr.type]){
@@ -6100,8 +6222,9 @@ dojo.provide("dojo._base.query");
 	}
 
 	var buildPath = function(query){
+		// create an xpath expression from a full css query
 		var xpath = ".";
-		var qparts = getQueryParts(d.trim(query));
+		var qparts = getQueryParts(trim(query));
 		while(qparts.length){
 			var tqp = qparts.shift();
 			var prefix;
@@ -6135,7 +6258,7 @@ dojo.provide("dojo._base.query");
 				xpath += "[@id='"+tqp.id+"'][1]";
 			}
 
-			d.forEach(tqp.classes, function(cn){
+			each(tqp.classes, function(cn){
 				var cnl = cn.length;
 				var padding = " ";
 				if(cn.charAt(cnl-1) == "*"){
@@ -6155,7 +6278,9 @@ dojo.provide("dojo._base.query");
 				}
 			);
 
-			// FIXME: need to implement pseudo-class checks!!
+			// FIXME: 
+			//		need to implement pseudo-class checks!! Currently pseudos
+			//		force the DOM branch to be run instead
 		};
 		return xpath;
 	};
@@ -6166,7 +6291,7 @@ dojo.provide("dojo._base.query");
 			return _xpathFuncCache[path];
 		}
 
-		var doc = d.doc;
+		var doc = getDoc();
 		// don't need to memoize. The closure scope handles it for us.
 		var xpath = buildPath(path);
 
@@ -6227,6 +6352,7 @@ dojo.provide("dojo._base.query");
 	}
 
 	var _childElements = function(root){
+		// get an array of child *elements*, skipping text and comment nodes
 		var ret = [];
 		var te, x = 0, tret = root[childNodesName];
 		while((te = tret[x++])){
@@ -6441,7 +6567,7 @@ dojo.provide("dojo._base.query");
 		if(attr == "style"){
 			return elem.style.cssText || blank;
 		}
-		return elem.getAttribute(attr, 2) || blank;
+		return (caseSensitive ? elem.getAttribute(attr) : elem.getAttribute(attr, 2)) || blank;
 	}
 
 	var attrs = {
@@ -6508,6 +6634,7 @@ dojo.provide("dojo._base.query");
 	var pseudos = {
 		"checked": function(name, condition){
 			return function(elem){
+				// FIXME: need to make this more portable!!
 				return !!d.attr(elem, "checked");
 			}
 		},
@@ -6615,7 +6742,7 @@ dojo.provide("dojo._base.query");
 	var defaultGetter = (d.isIE) ? function(cond){
 		var clc = cond.toLowerCase();
 		return function(elem){
-			return elem[cond]||elem[clc];
+			return (caseSensitive ? elem.getAttribute(cond) : elem[cond]||elem[clc]);
 		}
 	} : function(cond){
 		return function(elem){
@@ -6640,7 +6767,7 @@ dojo.provide("dojo._base.query");
 		}
 
 		// if there's a class in our query, generate a match function for it
-		d.forEach(query.classes, function(cname, idx, arr){
+		each(query.classes, function(cname, idx, arr){
 			// get the class name
 			var isWildcard = cname.charAt(cname.length-1) == "*";
 			if(isWildcard){
@@ -6654,7 +6781,7 @@ dojo.provide("dojo._base.query");
 			ff.count = idx;
 		});
 
-		d.forEach(query.pseudos, function(pseudo){
+		each(query.pseudos, function(pseudo){
 			if(pseudos[pseudo.name]){
 				ff = agree(ff, pseudos[pseudo.name](pseudo.name, pseudo.value));
 			}
@@ -6664,7 +6791,7 @@ dojo.provide("dojo._base.query");
 			function(tmatcher){ ff = agree(ff, tmatcher); }
 		);
 		if(!ff){
-			ff = function(){ return true; };
+			ff = yesman; 
 		}
 		return _simpleFiltersCache[query.query] = ff;
 	}
@@ -6752,11 +6879,11 @@ dojo.provide("dojo._base.query");
 
 	var getStepQueryFunc = function(query){
 		// if it's trivial, get a fast-path dispatcher
-		var qparts = getQueryParts(d.trim(query));
+		var qparts = getQueryParts(trim(query));
 		// if(query[query.length-1] == ">"){ query += " *"; }
 		if(qparts.length == 1){
 			var tt = getElementsFunc(qparts[0]);
-			tt.nozip = true; // FIXME: is this right? Shouldn't this be wrapped in a closure to mark the return?
+			// tt.nozip = true; // FIXME: is this right? Shouldn't this be wrapped in a closure to mark the return?
 			return tt;
 		}
 
@@ -6833,7 +6960,7 @@ dojo.provide("dojo._base.query");
 	var getQueryFunc = function(query){
 		// return a cached version if one is available
 		var qcz = query.charAt(0);
-		if(d.doc["querySelectorAll"] && 
+		if(getDoc()["querySelectorAll"] && 
 			( (!d.isSafari) || (d.isSafari > 3.1) ) && // see #5832
 			// as per CSS 3, we can't currently start w/ combinator:
 			//		http://www.w3.org/TR/css3-selectors/#w3cselgrammar
@@ -6877,8 +7004,8 @@ dojo.provide("dojo._base.query");
 	// returning a list of "uniques", hopefully in doucment order
 	var _zipIdx = 0;
 	var _zip = function(arr){
-		if(arr && arr.nozip){ return d.NodeList._wrap(arr); }
-		var ret = new d.NodeList();
+		if(arr && arr.nozip){ return listCtor._wrap(arr); }
+		var ret = new listCtor();
 		if(!arr){ return ret; }
 		if(arr[0]){
 			ret.push(arr[0]);
@@ -6978,18 +7105,26 @@ dojo.provide("dojo._base.query");
 		//		dojo.query and XML Documents:
 		//		-----------------------------
 		//		
-		//		`dojo.query` currently only supports searching XML documents
-		//		whose tags and attributes are 100% lower-case. This is a known
-		//		limitation and will [be addressed soon](http://trac.dojotoolkit.org/ticket/3866)
+		//		`dojo.query` (as of dojo 1.2) supports searching XML documents
+		//		in a case-sensitive manner. If an HTML document is served with
+		//		a doctype that forces case-sensitivity (e.g., XHTML 1.1
+		//		Strict), dojo.query() will detect this and "do the right
+		//		thing". Case sensitivity is dependent upon the document being
+		//		searched and not the query used. It is therefore possible to
+		//		use case-sensitive queries on strict sub-documents (iframes,
+		//		etc.) or XML documents while still assuming case-insensitivity
+		//		for a host/root document.
+		//
 		//		Non-selector Queries:
 		//		---------------------
 		//
 		//		If something other than a String is passed for the query,
-		//		`dojo.query` will return a new `dojo.NodeList` constructed from
-		//		that parameter alone and all further processing will stop. This
-		//		means that if you have a reference to a node or NodeList, you
-		//		can quickly construct a new NodeList from the original by
-		//		calling `dojo.query(node)` or `dojo.query(list)`.
+		//		`dojo.query` will return a new `dojo.NodeList` instance
+		//		constructed from that parameter alone and all further
+		//		processing will stop. This means that if you have a reference
+		//		to a node or NodeList, you can quickly construct a new NodeList
+		//		from the original by calling `dojo.query(node)` or
+		//		`dojo.query(list)`.
 		//
 		//	query:
 		//		The CSS3 expression to match against. For details on the syntax of
@@ -7053,22 +7188,23 @@ dojo.provide("dojo._base.query");
 		//	|	});
 
 
-		// NOTE: elementsById is not currently supported
-		// NOTE: ignores xpath-ish queries for now
-
-		if(query.constructor == d.NodeList){
+		if(query.constructor == listCtor){
 			return query;
 		}
-		if(!d.isString(query)){
-			return new d.NodeList(query); // dojo.NodeList
+		if(!isString(query)){
+			return new listCtor(query); // dojo.NodeList
 		}
-		if(d.isString(root)){
+		if(isString(root)){
 			root = d.byId(root);
 		}
 
-		root = root||d.doc;
+		root = root||getDoc();
 		var od = root.ownerDocument||root.documentElement;
-		caseSensitive = (root.contentType && root.contentType=="application/xml") || (!!od) && (d.isIE ? od.xml : (root.xmlVersion||od.xmlVersion));
+		// FIXME: Opera in XHTML mode doesn't detect case-sensitivity correctly
+		caseSensitive = (root.contentType && root.contentType=="application/xml") || 
+						(d.isOpera && root.doctype) ||
+						(!!od) && 
+						(d.isIE ? od.xml : (root.xmlVersion||od.xmlVersion));
 		return _zip(getQueryFunc(query)(root)); // dojo.NodeList
 	}
 
@@ -7082,14 +7218,14 @@ dojo.provide("dojo._base.query");
 
 	// one-off function for filtering a NodeList based on a simple selector
 	d._filterQueryResult = function(nodeList, simpleFilter){
-		var tnl = new d.NodeList();
-		var ff = (simpleFilter) ? getFilterFunc(getQueryParts(simpleFilter)[0]) : function(){ return true; };
+		var tnl = new listCtor();
+		var ff = (simpleFilter) ? getFilterFunc(getQueryParts(simpleFilter)[0]) : yesman;
 		for(var x = 0, te; te = nodeList[x]; x++){
 			if(ff(te)){ tnl.push(te); }
 		}
 		return tnl;
 	}
-})();
+})(this["queryPortability"]||dojo);
 
 }
 
@@ -7327,16 +7463,17 @@ dojo.provide("dojo._base.xhr");
 			// FIXME: try Moz and IE specific eval variants?
 			return _d.eval(xhr.responseText);
 		},
-		"xml": function(xhr){ 
+		"xml": function(xhr){
 			var result = xhr.responseXML;
-			if(_d.isIE && (!result || result.documentElement == null)){
-				_d.forEach(["MSXML2", "Microsoft", "MSXML", "MSXML3"], function(prefix){
+			if(_d.isIE && (!result || !result.documentElement)){
+				_d.some(["MSXML2", "Microsoft", "MSXML", "MSXML3"], function(prefix){
 					try{
 						var dom = new ActiveXObject(prefix + ".XMLDOM");
 						dom.async = false;
 						dom.loadXML(xhr.responseText);
 						result = dom;
-					}catch(e){ /* Not available. Squelch and try next one. */ }
+					}catch(e){ return false; }
+					return true;
 				});
 			}
 			return result; // DOMDocument
@@ -8165,7 +8302,7 @@ dojo.provide("dojo._base.fx");
 		var props = (fArgs.properties.opacity = {});
 		props.start = !("start" in fArgs) ?
 			function(){ 
-				return Number(d.style(fArgs.node, "opacity")); 
+				return Number(d.style(fArgs.node, "opacity")||0); 
 			} : fArgs.start;
 		props.end = fArgs.end;
 
@@ -8229,7 +8366,7 @@ dojo.provide("dojo._base.fx");
 				if(start instanceof d.Color){
 					ret[p] = d.blendColors(start, prop.end, r, prop.tempColor).toCss();
 				}else if(!d.isArray(start)){
-					ret[p] = ((prop.end - start) * r) + start + (p != "opacity" ? prop.units||"px" : "");
+					ret[p] = ((prop.end - start) * r) + start + (p != "opacity" ? prop.units||"px" : 0);
 				}
 			}
 			return ret;
@@ -8598,6 +8735,26 @@ dojo.parser = new function(){
 	var dtName = d._scopeName + "Type";
 	var qry = "[" + dtName + "]";
 
+	var _anonCtr = 0, _anon = {};
+	var nameAnonFunc = function(/*Function*/anonFuncPtr, /*Object*/thisObj){
+		// summary:
+		//		Creates a reference to anonFuncPtr in thisObj with a completely
+		//		unique name. The new name is returned as a String. 
+		var nso = thisObj || _anon;
+		if(dojo.isIE){
+			var cn = anonFuncPtr["__dojoNameCache"];
+			if(cn && nso[cn] === anonFuncPtr){
+				return cn;
+			}
+		}
+		var name;
+		do{
+			name = "__" + _anonCtr++;
+		}while(name in nso)
+		nso[name] = anonFuncPtr;
+		return name; // String
+	}
+
 	function val2type(/*Object*/ value){
 		// summary:
 		//		Returns name of type of given value.
@@ -8634,7 +8791,7 @@ dojo.parser = new function(){
 				try{
 					if(value.search(/[^\w\.]+/i) != -1){
 						// TODO: "this" here won't work
-						value = d.parser._nameAnonFunc(new Function(value), this);
+						value = nameAnonFunc(new Function(value), this);
 					}
 					return d.getObject(value, false);
 				}catch(e){ return new Function(); }
@@ -8660,7 +8817,7 @@ dojo.parser = new function(){
 	
 	function getClassInfo(/*String*/ className){
 		// className:
-		//		fully qualified name (like "dijit.Button")
+		//		fully qualified name (like "dijit.form.Button")
 		// returns:
 		//		structure like
 		//			{ 
@@ -8718,15 +8875,15 @@ dojo.parser = new function(){
 		d.forEach(nodes, function(node){
 			if(!node){ return; }
 			var type = node.getAttribute(dtName);
-			if((!type)||(!type.length)){ return; }
-			var clsInfo = getClassInfo(type);
-			var clazz = clsInfo.cls;
-			var ps = clazz._noScript||clazz.prototype._noScript;
+			if(!type || !type.length){ return; }
+			var clsInfo = getClassInfo(type),
+				clazz = clsInfo.cls,
+				ps = clazz._noScript || clazz.prototype._noScript;
 
 			// read parameters (ie, attributes).
 			// clsInfo.params lists expected params like {"checked": "boolean", "n": "number"}
-			var params = {};
-			var attributes = node.attributes;
+			var params = {},
+				attributes = node.attributes;
 			for(var name in clsInfo.params){
 				var item = attributes.getNamedItem(name);
 				if(!item || (!item.specified && (!dojo.isIE || name.toLowerCase()!="value"))){ continue; }
@@ -8838,29 +8995,6 @@ dojo.parser = new function(){
 		dojo._loaders.unshift(parseRunner);
 	}
 })();
-
-//TODO: ported from 0.4.x Dojo.  Can we reduce this?
-dojo.parser._anonCtr = 0;
-dojo.parser._anon = {}; // why is this property required?
-dojo.parser._nameAnonFunc = function(/*Function*/anonFuncPtr, /*Object*/thisObj){
-	// summary:
-	//		Creates a reference to anonFuncPtr in thisObj with a completely
-	//		unique name. The new name is returned as a String. 
-	var jpn = "$joinpoint";
-	var nso = (thisObj|| dojo.parser._anon);
-	if(dojo.isIE){
-		var cn = anonFuncPtr["__dojoNameCache"];
-		if(cn && nso[cn] === anonFuncPtr){
-			return anonFuncPtr["__dojoNameCache"];
-		}
-	}
-	var ret = "__"+dojo.parser._anonCtr++;
-	while(typeof nso[ret] != "undefined"){
-		ret = "__"+dojo.parser._anonCtr++;
-	}
-	nso[ret] = anonFuncPtr;
-	return ret; // String
-}
 
 }
 
@@ -10596,11 +10730,7 @@ dojo.mixin(dijit,
 		// 		for backwards compatibility if role parameter not provided, 
 		// 		returns true if has non XHTML role 
 		var waiRole = this.getWaiRole(elem);		
-		if (role){
-			return (waiRole.indexOf(role) > -1);
-		}else{
-			return (waiRole.length >0);
-		}
+		return role ? (waiRole.indexOf(role) > -1) : (waiRole.length > 0);
 	},
 
 	getWaiRole: function(/*Element*/ elem){
@@ -10621,9 +10751,9 @@ dojo.mixin(dijit,
 		//		On Firefox 2 and below, "wairole:" is
 		//		prepended to the provided role value.
 
-		var curRole = (theRole = dojo.attr(elem, "role")) ? theRole : "";
-		if (dojo.isFF<3 || !this._XhtmlRoles.test(curRole)){
-			dojo.attr(elem, "role", dojo.isFF<3 ? "wairole:" + role : role);
+		var curRole = dojo.attr(elem, "role") || "";
+		if(dojo.isFF < 3 || !this._XhtmlRoles.test(curRole)){
+			dojo.attr(elem, "role", dojo.isFF < 3 ? "wairole:" + role : role);
 		}else{
 			if((" "+ curRole +" ").indexOf(" " + role + " ") < 0){
 				var clearXhtml = dojo.trim(curRole.replace(this._XhtmlRoles, ""));
@@ -10636,9 +10766,9 @@ dojo.mixin(dijit,
 	removeWaiRole: function(/*Element*/ elem, /*String*/ role){
 		// summary: Removes the specified non-XHTML role from an element.
 		// 		removes role attribute if no specific role provided (for backwards compat.)
-		
+
 		var roleValue = dojo.attr(elem, "role"); 
-		if (!roleValue){ return; }
+		if(!roleValue){ return; }
 		if(role){
 			var searchRole = dojo.isFF < 3 ? "wairole:" + role : role;
 			var t = dojo.trim((" " + roleValue + " ").replace(" " + searchRole + " ", " "));
@@ -10660,9 +10790,8 @@ dojo.mixin(dijit,
 		//		false if it does not.
 		if(dojo.isFF < 3){
 			return elem.hasAttributeNS("http://www.w3.org/2005/07/aaa", state);
-		}else{
-			return elem.hasAttribute ? elem.hasAttribute("aria-"+state) : !!elem.getAttribute("aria-"+state);
 		}
+		return elem.hasAttribute ? elem.hasAttribute("aria-"+state) : !!elem.getAttribute("aria-"+state);
 	},
 
 	getWaiState: function(/*Element*/ elem, /*String*/ state){
@@ -10677,10 +10806,8 @@ dojo.mixin(dijit,
 		//		or an empty string if elem has no value for state.
 		if(dojo.isFF < 3){
 			return elem.getAttributeNS("http://www.w3.org/2005/07/aaa", state);
-		}else{
-			var value = elem.getAttribute("aria-"+state);
-			return value ? value : "";
 		}
+		return elem.getAttribute("aria-"+state) || "";
 	},
 
 	setWaiState: function(/*Element*/ elem, /*String*/ state, /*String*/ value){
@@ -13070,7 +13197,7 @@ dojox.regexp.tld = function(/*Object?*/flags){
 
 	// Generic top-level domains RE.
 	var genericRE = 
-		"aero|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|xxx|jobs|mobi|post";
+		"aero|asia|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|xxx|jobs|mobi|post";
 	
 	// Country Code top-level domains RE
 	// after 2009-Sept-30, .yu will be invalid
@@ -14553,7 +14680,7 @@ dojo.date.locale._getGregorianBundle = function(/*String*/locale){
 
 dojo.date.locale.addCustomFormats("dojo.cldr","gregorian");
 
-dojo.date.locale.getNames = function(/*String*/item, /*String*/type, /*String?*/use, /*String?*/locale){
+dojo.date.locale.getNames = function(/*String*/item, /*String*/type, /*String?*/context, /*String?*/locale){
 	// summary:
 	//		Used to get localized strings from dojo.cldr for day or month names.
 	//
@@ -14561,15 +14688,15 @@ dojo.date.locale.getNames = function(/*String*/item, /*String*/type, /*String?*/
 	//	'months' || 'days'
 	// type:
 	//	'wide' || 'narrow' || 'abbr' (e.g. "Monday", "Mon", or "M" respectively, in English)
-	// use:
+	// context:
 	//	'standAlone' || 'format' (default)
 	// locale:
 	//	override locale used to find the names
 
 	var label;
 	var lookup = dojo.date.locale._getGregorianBundle(locale);
-	var props = [item, use, type];
-	if(use == 'standAlone'){
+	var props = [item, context, type];
+	if(context == 'standAlone'){
 		var key = props.join('-');
 		label = lookup[key];
 		// Fall back to 'format' flavor of name
@@ -14580,6 +14707,27 @@ dojo.date.locale.getNames = function(/*String*/item, /*String*/type, /*String?*/
 	// return by copy so changes won't be made accidentally to the in-memory model
 	return (label || lookup[props.join('-')]).concat(); /*Array*/
 };
+
+dojo.date.locale.displayPattern = function(/*String*/fixedPattern, /*String?*/locale){
+	// summary:
+	//	Provides a localized representation of a date/time pattern string
+	//
+	// description:
+	//	Takes a date/time pattern string like "MM/dd/yyyy" and substitutes
+	//	the letters appropriate to show a user in a particular locale, as
+	//	defined in [the CLDR specification](http://www.unicode.org/reports/tr35/tr35-4.html#Date_Format_Patterns)
+	// fixedPattern:
+	//	A date string using symbols from this set: "GyMdkHmsSEDFwWahKzYeugAZvcL"
+	// locale:
+	//	use a special locale, otherwise takes the default
+
+	var fixed = "GyMdkHmsSEDFwWahKzYeugAZvcL",
+		local = dojo.date.locale._getGregorianBundle(locale).patternChars;
+	return dojo.map(fixedPattern, function(c){
+		 var i = dojo.indexOf(fixed, c);
+		 return i < 0 ? c : local.substr(i, 1);
+	}).join(""); // String
+}
 
 dojo.date.locale.isWeekend = function(/*Date?*/dateObject, /*String?*/locale){
 	// summary:
@@ -15283,6 +15431,10 @@ dojo.declare("dijit.form._FormWidget", [dijit._Widget, dijit._Templated],
 	//		Fires onChange for each value change or only on demand
 	intermediateChanges: false,
 
+	// scrollOnFocus: Boolean
+	//              On focus, should this widget scroll into view?
+	scrollOnFocus: true,
+
 	// These mixins assume that the focus node is an INPUT, as many but not all _FormWidgets are.
 	// Don't attempt to mixin the 'type', 'name' attributes here programatically -- they must be declared
 	// directly in the template as read by the parser in order to function. IE is known to specifically 
@@ -15315,9 +15467,10 @@ dojo.declare("dijit.form._FormWidget", [dijit._Widget, dijit._Templated],
 		this.attr('disabled', disabled);
 	},
 
-
 	_onFocus: function(e){
-		dijit.scrollIntoView(this.domNode);
+		if(this.scrollOnFocus){
+			dijit.scrollIntoView(this.domNode);
+		}
 		this.inherited(arguments);
 	},
 
@@ -15701,11 +15854,11 @@ dojo.declare(
 				filteredValue = this.filter(value);
 				if(filteredValue !== null && ((typeof filteredValue != "number") || !isNaN(filteredValue))){
 					if(typeof formattedValue != "string"){
-						formattedValue = this.format(filteredValue, this.constraints);
+						formattedValue = this.filter(this.format(filteredValue, this.constraints));
 					}
 				}else{ formattedValue = ''; }
 			}
-			if(formattedValue != null && formattedValue != undefined){
+			if(formattedValue != null && formattedValue != undefined && this.textbox.value != formattedValue){
 				this.textbox.value = formattedValue;
 			}
 			dijit.form.TextBox.superclass._setValueAttr.call(this, filteredValue, priorityChange);
@@ -15757,8 +15910,8 @@ dojo.declare(
 			//		The widget value is also set to a corresponding,
 			//		but not necessarily the same, value.
 
-			this.textbox.value = value;
-			this._setValueAttr(this.attr('value'));
+			this.textbox.value = value = this.filter(value);
+			this._setValueAttr(this.attr('value'), undefined, value);
 		},
 
 		format: function(/* String */ value, /* Object */ constraints){
@@ -15776,7 +15929,7 @@ dojo.declare(
 		postCreate: function(){
 			// setting the value here is needed since value="" in the template causes "undefined"
 			// and setting in the DOM (instead of the JS object) helps with form reset actions
-			this.textbox.setAttribute("value", this.attr('displayedValue'));
+			this.textbox.setAttribute("value", this.textbox.value); // DOM and JS values shuld be the same
 			this.inherited(arguments);
 
 			/*#5297:if(this.srcNodeRef){
@@ -16345,16 +16498,16 @@ dojo.declare(
 
 		_setDisabledAttr: function(/*Boolean*/ value){
 			this.inherited(arguments);	// call FormValueWidget._setDisabledAttr()
-					if(this.valueNode){
+			if(this.valueNode){
 				this.valueNode.disabled = value;
-					}
-					this._refreshState();
+			}
+			this._refreshState();
 		},
 		
 		_setRequiredAttr: function(/*Boolean*/ value){
 			this.required = value;
 			dijit.setWaiState(this.focusNode,"required", value);
-					this._refreshState();				
+			this._refreshState();				
 		},
 
 		postCreate: function(){
@@ -16391,9 +16544,7 @@ dojo.declare(
 
 		toString: function(){
 			// summary: display the widget as a printable string using the widget's value
-			
-			// TODO: seems like the filter() call here is unnecessary as attr('value') should do that
-			var val = this.filter(this.attr('value'));
+			var val = this.filter(this.attr('value')); // call filter in case value is nonstring and filter has been customized
 			return val != null ? (typeof val == "string" ? val : this.serialize(val, this.constraints)) : ""; // String
 		},
 

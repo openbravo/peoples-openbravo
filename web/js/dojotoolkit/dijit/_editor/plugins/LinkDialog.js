@@ -17,7 +17,7 @@ dojo.require("dijit.form.Button");
 dojo.require("dijit.form.ValidationTextBox");
 dojo.require("dojo.i18n");
 dojo.require("dojo.string");
-dojo.requireLocalization("dijit._editor", "LinkDialog", null, "ja,ru,nb,ca,fr,es,sv,it,ko,pt-pt,zh,pt,ROOT,ar,fi,da,th,nl,pl,he,de,zh-tw,tr,hu,el,sk,sl,cs");
+dojo.requireLocalization("dijit._editor", "LinkDialog", null, "th,es,sv,it,nl,el,zh-tw,ko,da,ROOT,pt-pt,cs,pt,ar,fi,sk,sl,ca,he,tr,hu,fr,zh,ja,pl,ru,de,nb");
 
 dojo.declare("dijit._editor.plugins.LinkDialog",
 	dijit._editor._Plugin,

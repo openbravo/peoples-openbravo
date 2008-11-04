@@ -19,7 +19,7 @@ dojo.require("dojo.i18n");
 
 // Load the bundles containing localization information for
 // names and formats
-dojo.requireLocalization("dojo.cldr", "gregorian", null, "ja,en,pt-br,fr,es,en-au,en-ca,it,ko,zh,pt,ROOT,es-es,zh-cn,de,en-gb,zh-tw,ko-kr,it-it");
+dojo.requireLocalization("dojo.cldr", "gregorian", null, "es,it,it-it,en,en-ca,zh-tw,ko,pt,es-es,en-au,pt-br,zh-cn,ko-kr,ROOT,fr,zh,en-gb,ja,de");
 
 //NOTE: Everything in this module assumes Gregorian calendars.
 // Other calendars will be implemented in separate modules.
@@ -578,7 +578,7 @@ dojo.date.locale._getGregorianBundle = function(/*String*/locale){
 
 dojo.date.locale.addCustomFormats("dojo.cldr","gregorian");
 
-dojo.date.locale.getNames = function(/*String*/item, /*String*/type, /*String?*/use, /*String?*/locale){
+dojo.date.locale.getNames = function(/*String*/item, /*String*/type, /*String?*/context, /*String?*/locale){
 	// summary:
 	//		Used to get localized strings from dojo.cldr for day or month names.
 	//
@@ -586,15 +586,15 @@ dojo.date.locale.getNames = function(/*String*/item, /*String*/type, /*String?*/
 	//	'months' || 'days'
 	// type:
 	//	'wide' || 'narrow' || 'abbr' (e.g. "Monday", "Mon", or "M" respectively, in English)
-	// use:
+	// context:
 	//	'standAlone' || 'format' (default)
 	// locale:
 	//	override locale used to find the names
 
 	var label;
 	var lookup = dojo.date.locale._getGregorianBundle(locale);
-	var props = [item, use, type];
-	if(use == 'standAlone'){
+	var props = [item, context, type];
+	if(context == 'standAlone'){
 		var key = props.join('-');
 		label = lookup[key];
 		// Fall back to 'format' flavor of name
@@ -605,6 +605,27 @@ dojo.date.locale.getNames = function(/*String*/item, /*String*/type, /*String?*/
 	// return by copy so changes won't be made accidentally to the in-memory model
 	return (label || lookup[props.join('-')]).concat(); /*Array*/
 };
+
+dojo.date.locale.displayPattern = function(/*String*/fixedPattern, /*String?*/locale){
+	// summary:
+	//	Provides a localized representation of a date/time pattern string
+	//
+	// description:
+	//	Takes a date/time pattern string like "MM/dd/yyyy" and substitutes
+	//	the letters appropriate to show a user in a particular locale, as
+	//	defined in [the CLDR specification](http://www.unicode.org/reports/tr35/tr35-4.html#Date_Format_Patterns)
+	// fixedPattern:
+	//	A date string using symbols from this set: "GyMdkHmsSEDFwWahKzYeugAZvcL"
+	// locale:
+	//	use a special locale, otherwise takes the default
+
+	var fixed = "GyMdkHmsSEDFwWahKzYeugAZvcL",
+		local = dojo.date.locale._getGregorianBundle(locale).patternChars;
+	return dojo.map(fixedPattern, function(c){
+		 var i = dojo.indexOf(fixed, c);
+		 return i < 0 ? c : local.substr(i, 1);
+	}).join(""); // String
+}
 
 dojo.date.locale.isWeekend = function(/*Date?*/dateObject, /*String?*/locale){
 	// summary:

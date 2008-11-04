@@ -13,16 +13,17 @@ dojo.require("dojox.form._FormSelectWidget");
 dojo.require("dojox.form._HasDropDown");
 dojo.require("dijit.Menu");
 
-dojo.requireLocalization("dijit.form", "validate", null, "ja,ru,nb,ca,fr,es,sv,it,ko,pt-pt,zh,pt,ar,fi,da,th,nl,pl,he,de,zh-tw,tr,hu,el,sk,ROOT,sl,cs");
+dojo.requireLocalization("dijit.form", "validate", null, "th,es,sv,it,nl,ROOT,el,zh-tw,ko,da,pt-pt,cs,pt,ar,fi,sk,sl,ca,he,tr,hu,fr,zh,ja,pl,ru,de,nb");
 
 dojo.declare("dojox.form.DropDownSelect", [dojox.form._FormSelectWidget, dojox.form._HasDropDown], {
+	attributeMap: dojo.mixin(dojo.clone(dojox.form._FormSelectWidget.prototype.attributeMap),{value:"valueNode",name:"valueNode"}),
 	// summary:
 	//		This is a "Styleable" select box - it is basically a DropDownButton which
 	//		can take as its input a <select>.
 
 	baseClass: "dojoxDropDownSelect",
 	
-	templateString:"<span class=\"dijit dijitReset dijitLeft dijitInline\"\n\tdojoAttachPoint=\"dropDownNode\"\n\tdojoAttachEvent=\"onmouseenter:_onMouse,onmouseleave:_onMouse,onmousedown:_onMouse\"\n\t><span class='dijitReset dijitRight dijitInline'\n\t\t><span class='dijitReset dijitInline dijitButtonNode'\n\t\t\t><table class=\"dojoxDropDownSelectTable\" dojoAttachPoint=\"tableNode\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tbody><tr\n\t\t\t\t><td class=\"dojoxDropDownSelectTableContent\" \n\t\t\t\t\t><span class=\"dijitReset dijitInline dijitButtonText\"  dojoAttachPoint=\"containerNode,popupStateNode\" id=\"${id}_label\"></span\n\t\t\t\t></td><td class=\"dojoxDropDownSelectTableButton\" \n\t\t\t\t\t><button class=\"dijitReset dijitStretch dijitButtonContents\" type=\"button\" name=\"${name}\"\n\t\t\t\t\t\tdojoAttachPoint=\"focusNode,titleNode\" waiRole=\"button\" waiState=\"haspopup-true,labelledby-${id}_label\"\n\t\t\t\t\t\t><span class=\"dijitReset dijitInline dijitArrowButtonInner\">&thinsp;</span\n\t\t\t\t\t\t><span class=\"dijitReset dijitInline dijitArrowButtonChar\" waiRole=\"presentation\">&#9660;</span\n\t\t\t\t\t></button\n\t\t\t\t></td\n\t\t\t></tr></tbody></table\n\t\t></span\n\t></span\n></span>\n",
+	templateString:"<span class=\"dijit dijitReset dijitLeft dijitInline\"\n\tdojoAttachPoint=\"dropDownNode\"\n\tdojoAttachEvent=\"onmouseenter:_onMouse,onmouseleave:_onMouse,onmousedown:_onMouse\"\n\t><span class='dijitReset dijitRight dijitInline'\n\t\t><span class='dijitReset dijitInline dijitButtonNode'\n\t\t\t><table class=\"dojoxDropDownSelectTable\" dojoAttachPoint=\"tableNode\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tbody><tr\n\t\t\t\t><td class=\"dojoxDropDownSelectTableContent\" \n\t\t\t\t\t><span class=\"dijitReset dijitInline dijitButtonText\"  dojoAttachPoint=\"containerNode,popupStateNode\" id=\"${id}_label\"></span\n\t\t\t\t\t><input type=\"hidden\" name=\"${name}\" dojoAttachPoint=\"valueNode\" value=\"${value}\" />\n\t\t\t\t</td><td class=\"dojoxDropDownSelectTableButton\" \n\t\t\t\t\t><button class=\"dijitReset dijitStretch dijitButtonContents\" type=\"button\"\n\t\t\t\t\t\tdojoAttachPoint=\"focusNode,titleNode\" waiRole=\"button\" waiState=\"haspopup-true,labelledby-${id}_label\"\n\t\t\t\t\t\t><span class=\"dijitReset dijitInline dijitArrowButtonInner\">&thinsp;</span\n\t\t\t\t\t\t><span class=\"dijitReset dijitInline dijitArrowButtonChar\" waiRole=\"presentation\">&#9660;</span\n\t\t\t\t\t></button\n\t\t\t\t></td\n\t\t\t></tr></tbody></table\n\t\t></span\n\t></span\n></span>\n",
 	
 	// attributeMap: Object
 	//		Add in our style to be applied to the focus node
@@ -114,6 +115,11 @@ dojo.declare("dojox.form.DropDownSelect", [dojox.form._FormSelectWidget, dojox.f
 			delete this._iDisabled;
 		}
 		this._setValueAttr(this.value);
+	},
+	
+	_setValueAttr: function(value){
+		this.inherited(arguments);
+		dojo.attr(this.valueNode, "value", this.attr("value"));
 	},
 	
 	_setDisplay: function(/*String*/ newDisplay){

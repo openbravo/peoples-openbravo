@@ -122,7 +122,7 @@ if(dojo.isIE || dojo.isOpera){
 		node = d.byId(node);
 		if(d.isMozilla){
 			node.style.MozUserSelect = selectable ? "" : "none";
-		}else if(d.isKhtml){
+		}else if(d.isKhtml || d.isWebKit){
 			node.style.KhtmlUserSelect = selectable ? "auto" : "none";
 		}else if(d.isIE){
 			var v = (node.unselectable = selectable ? "" : "on");
@@ -1272,12 +1272,6 @@ if(dojo.isIE || dojo.isOpera){
 		//		the name of the attribute to remove
 		d.byId(node).removeAttribute(_fixAttrName(name));
 	}
-
-	/*
-	dojo.createElement = function(type, attrs, parent, position){
-		// TODO: need to finish this!
-	}
-	*/
 
 	// =============================
 	// (CSS) Class Functions

@@ -14,7 +14,7 @@ dojo.require("dijit.form.FilteringSelect");
 dojo.require("dojo.data.ItemFileReadStore");
 dojo.require("dojo.i18n");
 
-dojo.requireLocalization("dijit._editor", "FontChoice", null, "ja,ru,nb,ca,fr,es,sv,it,ROOT,ko,pt-pt,zh,pt,ar,fi,da,th,nl,pl,he,de,zh-tw,tr,hu,el,sk,sl,cs");
+dojo.requireLocalization("dijit._editor", "FontChoice", null, "th,es,sv,it,nl,el,zh-tw,ko,da,pt-pt,cs,pt,ar,fi,sk,sl,ca,he,ROOT,tr,hu,fr,zh,ja,pl,ru,de,nb");
 
 dojo.declare("dijit._editor.plugins.FontChoice",
 	dijit._editor._Plugin,

@@ -13,7 +13,7 @@ dojo.require("dijit._Widget");
 dojo.require("dijit._Templated");
 dojo.require("dojo.colors");
 dojo.require("dojo.i18n");
-dojo.requireLocalization("dojo", "colors", null, "ja,ru,nb,ca,fr,es,sv,it,ko,pt-pt,ROOT,zh,pt,ar,fi,da,th,nl,pl,he,de,zh-tw,tr,hu,el,sk,sl,cs");
+dojo.requireLocalization("dojo", "colors", null, "th,es,sv,it,ROOT,nl,el,zh-tw,ko,da,pt-pt,cs,pt,ar,fi,sk,sl,ca,he,tr,hu,fr,zh,ja,pl,ru,de,nb");
 
 dojo.declare("dijit.ColorPalette",
 	[dijit._Widget, dijit._Templated],

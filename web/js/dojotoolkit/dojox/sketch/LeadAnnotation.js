@@ -90,6 +90,18 @@ dojo.require("dojox.sketch.Anchor");
 				s=d[2].split(",");
 				this.end.x=parseFloat(s[0],10);
 				this.end.y=parseFloat(s[1],10);
+				var stroke=this.property('stroke');
+				var style=c.getAttribute('style');
+				var m=style.match(/stroke:([^;]+);/)[1];
+				if(m){
+					stroke.color=m
+					this.property('fill',m);
+				}
+				m=style.match(/stroke-width:([^;]+);/)[1];
+				if(m){
+					stroke.width=m;
+				}
+				this.property('stroke',stroke);
 			}
 		}
 	};
@@ -113,6 +125,7 @@ dojo.require("dojox.sketch.Anchor");
 			})
 			.setFont(font)
 			.setFill(this.property('fill'));
+		this.labelShape.getEventSource().setAttribute('id',this.id+"-labelShape");
 	};
 	p.destroy=function(){
 		if(!this.shape){ return; }
