@@ -139,8 +139,7 @@
       END LOOP;
     END IF; --FINISH_PROCESS
     --<<FINISH_PROCESS>>
-    -- OK
-    v_Message:='OK';
+    --  Update AD_PInstance
     UPDATE M_Product  SET IsVerified='Y'  WHERE M_Product_ID=v_Record_ID;
     --  Update AD_PInstance
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
