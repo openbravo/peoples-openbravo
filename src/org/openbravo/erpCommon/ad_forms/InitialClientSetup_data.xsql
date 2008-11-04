@@ -46,14 +46,15 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-      INSERT INTO AD_Client(AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,Value,Name,Description)
-      VALUES (?,0,'Y',now(),0,now(),0,?, ?, ?)
+      INSERT INTO AD_Client(AD_Client_ID,AD_Org_ID,IsActive,Created,CreatedBy,Updated,UpdatedBy,Value,Name,Description, C_Currency_ID)
+      VALUES (?,0,'Y',now(),0,now(),0,?, ?, ?, ?)
       ]]>
     </Sql>
     <Parameter name="claveCliente"/>
     <Parameter name="cliente"/>
     <Parameter name="cliente"/>
     <Parameter name="cliente"/>
+    <Parameter name="currency"/>    
   </SqlMethod>
   <SqlMethod name="insertTree" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>

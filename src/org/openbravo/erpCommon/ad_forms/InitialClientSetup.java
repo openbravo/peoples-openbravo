@@ -222,7 +222,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     try {
       m_info.append(SALTO_LINEA).append("*****************************************************").append(SALTO_LINEA);
       m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "StartingClient", vars.getLanguage())).append(SALTO_LINEA);
-      if (!createClient(vars, strCliente, strOrganizacion, strClienteUsuario, strOrganizacionUsuario)){
+      if (!createClient(vars, strCliente, strOrganizacion, strClienteUsuario, strOrganizacionUsuario, strMoneda)){
         releaseRollbackConnection(conn);
         m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateClientFailed", vars.getLanguage())).append(SALTO_LINEA);
         strSummary.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateClientFailed", vars.getLanguage())).append(SALTO_LINEA);
@@ -324,7 +324,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
   }
 
 
-  public boolean createClient(VariablesSecureApp vars, String m_ClientName, String orgName, String userClient, String userOrg) throws ServletException{
+  public boolean createClient(VariablesSecureApp vars, String m_ClientName, String orgName, String userClient, String userOrg, String strCurrency) throws ServletException{
 
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createClient");
     clientName = m_ClientName;
@@ -346,7 +346,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       vars.setSessionValue("AD_Client_ID", AD_Client_ID);
       if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createClient - CLIENT_ID: " + AD_Client_ID);
 
-      if (InitialClientSetupData.insertCliente(conn ,this, AD_Client_ID, clientName) != 1) {
+      if (InitialClientSetupData.insertCliente(conn ,this, AD_Client_ID, clientName, strCurrency) != 1) {
         String err = "InitialClientSetup - createClient - Client NOT inserted";
         log4j.warn(err);
         m_info.append(err).append(SALTO_LINEA);
