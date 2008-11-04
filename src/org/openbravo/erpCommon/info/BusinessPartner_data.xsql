@@ -68,7 +68,7 @@
         <Parameter name="adUserOrg" type="replace" optional="true" after="bp.ad_org_id IN (" text="'1'"/>
         <Parameter name="key" optional="true" after="AND bp.isactive = 'Y'"><![CDATA[AND UPPER(bp.value) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="name" optional="true" after="AND bp.isactive = 'Y'"><![CDATA[AND C_IGNORE_ACCENT(bp.name) LIKE C_IGNORE_ACCENT(?) ]]></Parameter>
-        <Parameter name="customers" optional="true" type="none" after="AND bp.isactive = 'Y'"><![CDATA[AND iscustomer = 'Y' ]]></Parameter>
+        <Parameter name="clients" optional="true" type="none" after="AND bp.isactive = 'Y'"><![CDATA[AND iscustomer = 'Y' ]]></Parameter>
         <Parameter name="vendors" optional="true" type="none" after="AND bp.isactive = 'Y'"><![CDATA[AND isvendor ='Y']]></Parameter>
         <Parameter name="orderBy" type="replace" optional="true" after="ORDER  BY " text="bp.value" />
         <Parameter name="oraLimit" type="argument" optional="true" after="WHERE 1=1"><![CDATA[AND RN1 BETWEEN ]]></Parameter>
