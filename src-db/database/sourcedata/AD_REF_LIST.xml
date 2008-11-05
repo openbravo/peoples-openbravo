@@ -8163,15 +8163,15 @@
 <!--447 AD_ORG_ID-->
 <!--447-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--447 ISACTIVE-->
-<!--447-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--447-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--447 CREATED-->
 <!--447-->              <CREATED><![CDATA[2001-03-11 18:49:20.0]]></CREATED>
 <!--447 CREATEDBY-->
 <!--447-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--447 UPDATED-->
-<!--447-->              <UPDATED><![CDATA[2003-02-22 02:20:03.0]]></UPDATED>
+<!--447-->              <UPDATED><![CDATA[2008-11-05 09:41:23.0]]></UPDATED>
 <!--447 UPDATEDBY-->
-<!--447-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--447-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--447 VALUE-->
 <!--447-->              <VALUE><![CDATA[R]]></VALUE>
 <!--447 NAME-->
