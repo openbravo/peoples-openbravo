@@ -65,7 +65,7 @@ public class BusinessPartner extends HttpSecureAppServlet {
       String strBpartner = strIsSOTrxTab;
       if (strIsSOTrxTab.equals("")) strBpartner = Utility.getContext(this, vars, "isSOTrx", strWindowId);
       String strSelected = "all";
-      if (strBpartner.equals("Y")) strSelected = "costumer";
+      if (strBpartner.equals("Y")) strSelected = "customer";
       else if (strBpartner.equals("N")) strSelected = "vendor";
       else strSelected = "all";
       vars.setSessionValue("BusinessPartner.bpartner", strSelected);
@@ -86,11 +86,11 @@ public class BusinessPartner extends HttpSecureAppServlet {
       String strBpartner = strIsSOTrxTab;
       if (strIsSOTrxTab.equals("")) strBpartner = Utility.getContext(this, vars, "isSOTrx", strWindowId);
       String strSelected = "all";
-      if (strBpartner.equals("Y")) strSelected = "costumer";
+      if (strBpartner.equals("Y")) strSelected = "customer";
       else if (strBpartner.equals("N")) strSelected = "vendor";
       else strSelected = "all";
       vars.setSessionValue("BusinessPartner.bpartner", strSelected);
-      BusinessPartnerData[] data = BusinessPartnerData.selectKey(this, Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg), (strSelected.equals("costumer")?"clients":""), (strSelected.equals("vendor")?"vendors":""), strKeyValue + "%");
+      BusinessPartnerData[] data = BusinessPartnerData.selectKey(this, Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg), (strSelected.equals("customer")?"clients":""), (strSelected.equals("vendor")?"vendors":""), strKeyValue + "%");
       if (data!=null && data.length==1) {
         printPageKey(response, vars, data);
       } else printPage(response, vars, strKeyValue + "%","", strSelected, "paramKey");
@@ -235,7 +235,7 @@ public class BusinessPartner extends HttpSecureAppServlet {
     if (headers!=null) {
       try{
 	  	if(strNewFilter.equals("1") || strNewFilter.equals("")) { // New filter or first load
-	  		strNumRows = BusinessPartnerData.countRows(this, Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg), (strKey.equals("%")?"":strKey), (strName.equals("%")?"":strName), (strContact.equals("%")?"":strContact), (strZIP.equals("%")?"":strZIP), (strProvincia.equals("%")?"":strProvincia), (strBpartners.equals("costumer")?"clients":""), (strBpartners.equals("vendor")?"vendors":""), (strCity.equals("%")?"":strCity));	  		 
+	  		strNumRows = BusinessPartnerData.countRows(this, Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg), (strKey.equals("%")?"":strKey), (strName.equals("%")?"":strName), (strContact.equals("%")?"":strContact), (strZIP.equals("%")?"":strZIP), (strProvincia.equals("%")?"":strProvincia), (strBpartners.equals("customer")?"clients":""), (strBpartners.equals("vendor")?"vendors":""), (strCity.equals("%")?"":strCity));	  		 
 	  		vars.setSessionValue("BusinessPartnerInfo.numrows", strNumRows);
 	  	}
   		else {
@@ -245,11 +245,11 @@ public class BusinessPartner extends HttpSecureAppServlet {
   		// Filtering result
     	if(this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
     		String oraLimit = strOffset + " AND " + String.valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));    		
-    		data = BusinessPartnerData.select(this, "ROWNUM", Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg), (strKey.equals("%")?"":strKey), (strName.equals("%")?"":strName), (strBpartners.equals("costumer")?"clients":""), (strBpartners.equals("vendor")?"vendors":""), strOrderBy, oraLimit, "", (strZIP.equals("%")?"":strZIP), (strCity.equals("%")?"":strCity), (strProvincia.equals("%")?"":strProvincia) ,(strContact.equals("%")?"":strContact));    		
+    		data = BusinessPartnerData.select(this, "ROWNUM", Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg), (strKey.equals("%")?"":strKey), (strName.equals("%")?"":strName), (strBpartners.equals("customer")?"clients":""), (strBpartners.equals("vendor")?"vendors":""), strOrderBy, oraLimit, "", (strZIP.equals("%")?"":strZIP), (strCity.equals("%")?"":strCity), (strProvincia.equals("%")?"":strProvincia) ,(strContact.equals("%")?"":strContact));    		
     	}
     	else {
     		String pgLimit = strPageSize + " OFFSET " + strOffset;    		
-    		data = BusinessPartnerData.select(this, "1", Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg), (strKey.equals("%")?"":strKey), (strName.equals("%")?"":strName), (strBpartners.equals("costumer")?"clients":""), (strBpartners.equals("vendor")?"vendors":""), strOrderBy, "", pgLimit, (strZIP.equals("%")?"":strZIP), (strCity.equals("%")?"":strCity), (strProvincia.equals("%")?"":strProvincia), (strContact.equals("%")?"":strContact));
+    		data = BusinessPartnerData.select(this, "1", Utility.getContext(this, vars, "#User_Client", "BusinessPartner"), Utility.getSelectorOrgs(this, vars, strOrg), (strKey.equals("%")?"":strKey), (strName.equals("%")?"":strName), (strBpartners.equals("customer")?"clients":""), (strBpartners.equals("vendor")?"vendors":""), strOrderBy, "", pgLimit, (strZIP.equals("%")?"":strZIP), (strCity.equals("%")?"":strCity), (strProvincia.equals("%")?"":strProvincia), (strContact.equals("%")?"":strContact));
     	}    	
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);
