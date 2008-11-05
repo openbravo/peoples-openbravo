@@ -256,7 +256,7 @@ cWithHoldId varchar2(32);
       IF v_aux > 0 THEN
           RAISE_APPLICATION_ERROR(-20615,   '@InvoiceInTaxRegister@');
       ELSE
-        delete from c_taxregisterline trl where trl.c_invoicetax_id in
+        delete from c_taxregisterline where c_taxregisterline.c_invoicetax_id in
         (select trl.c_invoicetax_id
         FROM c_taxregisterline trl
         inner join c_invoicetax it on trl.c_invoicetax_id = it.c_invoicetax_id
