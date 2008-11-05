@@ -1483,6 +1483,11 @@ public class TableSQLData {
         name = search[0].columnname;
         tableDirName = search[0].tablename;
       }
+    } else {
+      if (name.equalsIgnoreCase("CreatedBy") || name.equalsIgnoreCase("UpdatedBy")) {
+        tableDirName = "AD_User";
+        name = "AD_User_ID";
+      }
     }
     ComboTableQueryData trd[] = ComboTableQueryData.identifierColumns(getPool(), tableDirName);
     String tables = "(SELECT " + name;
