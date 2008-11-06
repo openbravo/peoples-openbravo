@@ -209,7 +209,7 @@ BEGIN
                                   AND WP.MA_WRPHASE_ID = WPP.MA_WRPHASE_ID
                                   AND WR.CLOSED = 'N'
                                   AND WPP.M_PRODUCT_ID = Cur_Product.M_Product_ID
-                                  AND (WR.ENDDATE - p_PlanningDate) < p_TimeHorizon
+                                  AND TO_NUMBER(WR.ENDDATE - p_PlanningDate) < p_TimeHorizon
                                   AND Mrp_Check_Planningmethod(Cur_Product.MRP_PlanningMethod_ID, 'WR',
                                   TO_NUMBER(WR.LAUNCHDATE - p_PlanningDate), p_TimeHorizon) <> -1
                                   AND Ad_Isorgincluded(WR.AD_ORG_ID, p_Org_ID, p_Client_ID) > -1
