@@ -24,7 +24,9 @@ public class OpenbravoExcludeFilter extends ExcludeFilter {
     public String[] getExcludedTables() {
         return new String[] {
             "PLAN_TABLE", 
-            "AD_SYSTEM_MODEL" };
+            "AD_SYSTEM_MODEL", 
+            "C_TEMP_SELECTION",
+            "C_TEMP_SELECTION2"};
     }
     
     public String[] getExcludedViews() {
@@ -87,7 +89,8 @@ public class OpenbravoExcludeFilter extends ExcludeFilter {
             "UPDATE_DATEFORMAT",
             "GET_UUID",
             "HEX_TO_INT",
-            "UUID_GENERATE_V1"
+            "UUID_GENERATE_V1",
+            "C_CREATE_TEMPORARY_TABLES"
             };
     }
 

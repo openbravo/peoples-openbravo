@@ -1282,3 +1282,29 @@ END;   $BODY$
   LANGUAGE 'plpgsql' VOLATILE
 /-- END
 
+CREATE OR REPLACE FUNCTION c_create_temporary_tables()
+  RETURNS varchar AS
+$BODY$ 
+BEGIN
+ -- create temporary tables
+ drop table if exists C_TEMP_SELECTION;
+ CREATE GLOBAL TEMPORARY TABLE C_TEMP_SELECTION
+ (
+  C_TEMP_SELECTION_ID  character varying(32) NOT NULL,
+  CONSTRAINT C_TEMP_SELECTION_key PRIMARY KEY (C_TEMP_SELECTION_ID)
+  )
+  ON COMMIT DELETE ROWS;
+
+  drop table if exists C_TEMP_SELECTION2;
+  CREATE GLOBAL TEMPORARY TABLE C_TEMP_SELECTION2
+  (
+   QUERY_ID        character varying(32)             NOT NULL,
+   C_TEMP_SELECTION_ID  character varying(32)             NOT NULL,
+   CONSTRAINT C_TEMP_SELECTION2_key PRIMARY KEY (QUERY_ID, C_TEMP_SELECTION_ID)	
+   )
+   ON COMMIT PRESERVE ROWS;
+RETURN null;
+END;
+$BODY$
+  LANGUAGE 'plpgsql' VOLATILE
+/-- END
