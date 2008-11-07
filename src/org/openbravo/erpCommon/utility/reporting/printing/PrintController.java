@@ -45,6 +45,7 @@ import org.openbravo.erpCommon.utility.reporting.ToolsData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.poc.EmailData;
 import org.openbravo.erpCommon.utility.poc.PocData;
+import org.openbravo.erpCommon.utility.poc.PocConfigurationData;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -338,7 +339,7 @@ public class PrintController extends HttpSecureAppServlet
 			Session session = EmailManager.newMailSession( this, vars.getClient() );
 
 			Message message = new MimeMessage(session);
-			message.setFrom(new InternetAddress( salesrepEmail ) );
+			message.setFrom(new InternetAddress( PocConfigurationData.getSenderAddress(this, vars.getClient()) ) );
 			message.addRecipient( Message.RecipientType.TO, new InternetAddress( contactEmail ) );
 			
 			message.addRecipient( Message.RecipientType.BCC, new InternetAddress( salesrepEmail ) );

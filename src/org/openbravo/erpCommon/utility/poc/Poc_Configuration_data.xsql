@@ -34,7 +34,8 @@
 			'' as smtpServer,
 			'' as smtpServerAccount,
 			'' as smtpServerPassword,
-			'' as isSmtpAuthorization
+			'' as isSmtpAuthorization,
+			'' as smtpServerSenderAddress
 		from
 			dual
         ]]>
@@ -49,15 +50,32 @@
 			C_poc_configuration.smtpServer,
 			C_poc_configuration.smtpServerAccount,
 			C_poc_configuration.smtpServerPassword,
-            C_poc_configuration.isSmtpAuthorization
+            C_poc_configuration.isSmtpAuthorization,
+            C_poc_configuration.smtpServerSenderAddress
 		from
 			C_poc_configuration
 		where
-			C_poc_configuration.ad_client_id = ?
+			C_poc_configuration.ad_client_id = ? AND 
+			C_poc_configuration.isActive = 'Y'
         ]]>
         </Sql>
         <Parameter name="adClientId" />
    </SqlMethod>
 
+   <SqlMethod name="getSenderAddress" type="preparedStatement" return="String">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+      <![CDATA[
+		select
+			C_poc_configuration.smtpServerSenderAddress
+		from
+			C_poc_configuration
+		where
+			C_poc_configuration.ad_client_id = ? AND
+			C_poc_configuration.isActive = 'Y'
+        ]]>
+        </Sql>
+        <Parameter name="adClientId" />
+   </SqlMethod>
 </SqlClass>
 
