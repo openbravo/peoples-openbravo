@@ -73,7 +73,8 @@
 
     <FUNCTION id="fieldTotalDebit" name="SUM" format="euroInform">amtacctdr</FUNCTION>
     <FUNCTION id="fieldTotalCredit" name="SUM" format="euroInform">amtacctcr</FUNCTION>
-    <FUNCTION id="fieldTotalBalance" name="SUM" format="euroInform">total</FUNCTION>
+    <FUNCTION id="fieldSubTotalBalance" name="SUM" attribute="value" format="euroInform">total</FUNCTION>
+    <FUNCTION id="fieldTotalBalance" name="ADD" arg1="fieldSubTotalBalance" arg2="fieldSaldo" format="euroInform"/>
 
     <SUBREPORT id="reportTotals" name="reportTotals" report="org/openbravo/erpCommon/ad_reports/Totals"></SUBREPORT>
     <SUBREPORT id="reportAll" name="reportAll" report="org/openbravo/erpCommon/ad_reports/Totals"></SUBREPORT>

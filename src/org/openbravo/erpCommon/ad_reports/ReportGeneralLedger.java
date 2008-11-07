@@ -189,11 +189,10 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
           if ((data2[i].partner.equals(data[0].partner) && (!(strcBpartnerId.equals("")&&(strAll.equals("")))))||(strcBpartnerId.equals("")&&(strAll.equals(""))))  
             amount += Double.valueOf(data2[i].total).doubleValue();
         }
-        /*  for (int i=0;data2!=null && i<data.length;i++){
-            if (data[i].id.equals(data[0].id)) data[i].saldo = Double.toString(amount);
-            else break;
-            }*/
-        data[0].saldo = Double.toString(amount);
+        for (int i=0;data2!=null && i<data.length;i++){
+          if (data[i].id.equals(data[0].id)) data[i].saldo = Double.toString(amount);
+          else break;
+        }
         if (log4j.isDebugEnabled()) log4j.debug("##################### BALANCE= " + data[0].saldo+" amount:"+amount);
       }
       subreport = new ReportGeneralLedgerData[data.length][];
@@ -274,7 +273,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     xmlDocument.setParameter("accounToArray", arrayDobleEntrada("arrAccountTo", ReportGeneralLedgerData.selectC_ElementValue_ID_Double(this, Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcelementvaluefrom)));    
  
     
-     if (log4j.isDebugEnabled()) log4j.debug("data.length: "+data.length);
+    if (log4j.isDebugEnabled()) log4j.debug("data.length: "+data.length);
     
     if (strcBpartnerId.equals("")&&strAll.equals("")) xmlDocument.setData("structure1", data);
     else xmlDocument.setData("structure2", data);
