@@ -172,14 +172,16 @@
     <Sql><![CDATA[
         SELECT c_acctschema_element.c_acctschema_id AS PADRE, C_ElementValue.value as id, 
         ((CASE C_ElementValue.isActive WHEN 'N' THEN '**' ELSE '' END) || C_ElementValue.value || ' - ' || C_ElementValue.Name) as name 
-        FROM C_ElementValue, c_acctschema_element
+        FROM c_acctschema, c_acctschema_element, c_element, c_elementvalue
         WHERE C_ElementValue.AD_Org_ID IN('1') 
         AND C_ElementValue.AD_Client_ID IN('1')  
         AND C_ElementValue.IsSummary='N' 
         AND (C_ElementValue.isActive = 'Y' OR C_ElementValue.C_ElementValue_ID = ? ) 
         AND 1=1
         AND c_acctschema_element.ELEMENTTYPE = 'AC'
-        and c_acctschema_element.c_acctschema_id = C_ElementValue.c_element_id         
+        AND c_acctschema.c_acctschema_id = c_acctschema_element.c_acctschema_id
+        AND c_acctschema_element.c_element_id = c_element.c_element_id
+        AND c_element.c_element_id = c_elementvalue.c_element_id
         ORDER BY C_ElementValue.Value
     ]]></Sql>
   <Parameter name="adOrgClient" type="replace" optional="true" after="C_ElementValue.AD_Org_ID IN(" text="'1'"/>
