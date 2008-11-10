@@ -158,7 +158,7 @@ LocationSearchData getEditVariables(VariablesSecureApp vars) {
     xmlDocument.setData("structure1", data);
     
     try {
-      ComboTableData comboTableData =  new ComboTableData(vars, this, "TABLEDIR", "C_Country_ID", "", "", Utility.getContext(this, vars, "#User_Org", strWindow), Utility.getContext(this, vars, "#User_Client", strWindow), 0); 
+      ComboTableData comboTableData =  new ComboTableData(vars, this, "TABLEDIR", "C_Country_ID", "", "", Utility.getReferenceableOrg(vars, vars.getOrg()), Utility.getContext(this, vars, "#User_Client", strWindow), 0); 
       Utility.fillSQLParameters(this, vars, null, comboTableData, strWindow, data[0].cCountryId);
       xmlDocument.setData("reportCountry","liststructure", comboTableData.select(false));
       comboTableData = null;
@@ -167,7 +167,7 @@ LocationSearchData getEditVariables(VariablesSecureApp vars) {
     }
 
     try {
-      ComboTableData comboTableData =  new ComboTableData(vars, this, "TABLEDIR", "C_Region_ID", "", "C_Region of Country", Utility.getContext(this, vars, "#User_Org", strWindow), Utility.getContext(this, vars, "#User_Client", strWindow), 0); 
+      ComboTableData comboTableData =  new ComboTableData(vars, this, "TABLEDIR", "C_Region_ID", "", "C_Region of Country", Utility.getReferenceableOrg(vars, vars.getOrg()), Utility.getContext(this, vars, "#User_Client", strWindow), 0); 
       Utility.fillSQLParameters(this, vars, data[0], comboTableData, strWindow, data[0].cRegionId);
       xmlDocument.setData("reportRegion","liststructure", comboTableData.select(false));
       comboTableData = null;
