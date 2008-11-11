@@ -216,11 +216,13 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
             if (data[i].islist.equals("Y")) strDescValue = AttributeSetInstanceData.selectAttributeValue(this, strValue);
             if (!strNewInstance.equals("")) {
               if (AttributeSetInstanceData.update(conn, this, vars.getUser(), (data[i].islist.equals("Y")?strValue:""), strDescValue, strNewInstance, data[i].mAttributeId) == 0) {
-                AttributeSetInstanceData.insert(conn, this, strNewInstance, data[i].mAttributeId, vars.getClient(), vars.getOrg(), vars.getUser(), (data[i].islist.equals("Y")?strValue:""), strDescValue);
+                String strNewAttrInstance = SequenceIdData.getUUID();
+                AttributeSetInstanceData.insert(conn, this, strNewAttrInstance, strNewInstance, data[i].mAttributeId, vars.getClient(), vars.getOrg(), vars.getUser(), (data[i].islist.equals("Y")?strValue:""), strDescValue);
               }
             } else {
               if (AttributeSetInstanceData.update(conn, this, vars.getUser(), (data[i].islist.equals("Y")?strValue:""), strDescValue, strInstance, data[i].mAttributeId) == 0) {
-                AttributeSetInstanceData.insert(conn, this, strInstance, data[i].mAttributeId, vars.getClient(), vars.getOrg(), vars.getUser(), (data[i].islist.equals("Y")?strValue:""), strDescValue);
+                String strNewAttrInstance = SequenceIdData.getUUID();
+                AttributeSetInstanceData.insert(conn, this, strNewAttrInstance, strInstance, data[i].mAttributeId, vars.getClient(), vars.getOrg(), vars.getUser(), (data[i].islist.equals("Y")?strValue:""), strDescValue);
               }
             }
             description += (description.equals("")?"":"_") + strDescValue;
