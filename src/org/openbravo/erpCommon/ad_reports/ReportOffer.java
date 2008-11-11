@@ -93,7 +93,7 @@ public class ReportOffer extends HttpSecureAppServlet {
     }
 
 
-
+    xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("dateFrom", strDateFrom);
