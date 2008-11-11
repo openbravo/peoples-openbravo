@@ -26,8 +26,8 @@
 	<PARAMETER id="fieldWindowID" name="windowId" attribute="value"/>
 	<PARAMETER id="fieldTercero" name="tercero" attribute="value"/>
 	<PARAMETER id="fieldClaveTercero" name="claveTercero" attribute="value"/>
-	<PARAMETER id="paramKey" name="key" attribute="value"/>
-	<PARAMETER id="paramName" name="name" attribute="value"/>
+	<PARAMETER id="paramKey" name="key" attribute="value" replaceCharacters="htmlPreformated"/>
+	<PARAMETER id="paramName" name="name" attribute="value" replaceCharacters="htmlPreformated"/>
 
 	<PARAMETER id="grid" name="grid" attribute="numrows" />
 	<PARAMETER id="grid" name="grid_Offset" attribute="offset" />
