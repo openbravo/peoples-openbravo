@@ -602,10 +602,13 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
         if(NumberNode.getNodeType() == Node.ELEMENT_NODE){
           Element NumberElement = (Element)NumberNode;
           String strNumberName = NumberElement.getAttributes().getNamedItem("name").getNodeValue();
+          //store in session all the formats
+          vars.setSessionValue("#FormatOutput|"+strNumberName, NumberElement.getAttributes().getNamedItem("formatOutput").getNodeValue()); 
+          vars.setSessionValue("#DecimalSeparator|"+strNumberName, NumberElement.getAttributes().getNamedItem("decimal").getNodeValue()); 
+          vars.setSessionValue("#GroupSeparator|"+strNumberName, NumberElement.getAttributes().getNamedItem("grouping").getNodeValue());
           if(strNumberName.equals(strName)) {
             strDecimalSeparator = NumberElement.getAttributes().getNamedItem("decimal").getNodeValue();
             strGroupingSeparator = NumberElement.getAttributes().getNamedItem("grouping").getNodeValue();
-            break;
           }
         }
       }
