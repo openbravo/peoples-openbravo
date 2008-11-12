@@ -51,11 +51,11 @@
 <!--1 UPDATEDBY-->
 <!--1-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1 VALUE-->
-<!--1-->              <VALUE><![CDATA[RD]]></VALUE>
+<!--1-->              <VALUE><![CDATA[ADRD]]></VALUE>
 <!--1 NAME-->
-<!--1-->              <NAME><![CDATA[RD]]></NAME>
+<!--1-->              <NAME><![CDATA[ADRD]]></NAME>
 <!--1 DESCRIPTION-->
-<!--1-->              <DESCRIPTION><![CDATA[Reference Data]]></DESCRIPTION>
+<!--1-->              <DESCRIPTION><![CDATA[Data referenced by AD]]></DESCRIPTION>
 <!--1 AD_MODULE_ID-->
 <!--1-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1 EXPORT-->
