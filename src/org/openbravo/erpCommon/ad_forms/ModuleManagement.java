@@ -590,7 +590,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
      XmlDocument xmlDocument=xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/ModuleManagement_InstallP2", discard).createXmlDocument();
      
      //Set positions to names in order to be able to use keyboard for navigation in the box
-     int position = 0;
+     int position = 1;
      if (selected!=null && selected.length>0) {
        FieldProvider[] fp = FieldProviderFactory.getFieldProviderArray(selected);
        for (int i=0; i<fp.length; i++)
