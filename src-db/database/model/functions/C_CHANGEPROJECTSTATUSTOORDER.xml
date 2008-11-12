@@ -33,10 +33,10 @@
     v_projectcategory   CHAR (2);
     v_temppricelist     CHAR (1);
     v_Created NUMBER:=0;
-    v_PriceListVersion NUMBER;
-    v_PriceList NUMBER;
-    v_PriceListVersionPO NUMBER;
-    v_PriceListPO NUMBER;
+    v_PriceListVersion varchar2(32);
+    v_PriceList varchar2(32);
+    v_PriceListVersionPO varchar2(32);
+    v_PriceListPO varchar2(32);
     v_C_Currency_ID VARCHAR2(32);
     v_TotalPhases NUMBER;
     v_TotalLines NUMBER;
@@ -192,13 +192,13 @@
               INSERT
               INTO M_PRODUCTPRICE
                 (
-                  M_PRICELIST_VERSION_ID, M_PRODUCT_ID, AD_CLIENT_ID, AD_ORG_ID,
+                  M_PRODUCTPRICE_ID, M_PRICELIST_VERSION_ID, M_PRODUCT_ID, AD_CLIENT_ID, AD_ORG_ID,
                   ISACTIVE, CREATED, CREATEDBY, UPDATED,
                   UPDATEDBY, PRICELIST, PRICESTD, PRICELIMIT
                 )
                 VALUES
                 (
-                  v_PriceListVersion, Cur_Lines.M_Product_ID, v_AD_Client_ID, v_AD_Org_ID,
+                  get_uuid(), v_PriceListVersion, Cur_Lines.M_Product_ID, v_AD_Client_ID, v_AD_Org_ID,
                   'Y', now(), v_AD_User_ID, now(), v_AD_User_ID,
                   Cur_Lines.PLANNEDPRICE, Cur_Lines.PLANNEDPRICE, Cur_Lines.PLANNEDPRICE
                 )
@@ -272,13 +272,13 @@
                 INSERT
                 INTO M_PRODUCTPRICE
                   (
-                    M_PRICELIST_VERSION_ID, M_PRODUCT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
+                    M_PRODUCTPRICE_ID, M_PRICELIST_VERSION_ID, M_PRODUCT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
                     CREATED, CREATEDBY, UPDATED, UPDATEDBY,
                     PRICELIST, PRICESTD, PRICELIMIT
                   )
                   VALUES
                   (
-                    v_PriceListVersionPO, Cur_LinesPO.M_Product_ID, v_AD_Client_ID, v_AD_Org_ID,
+                    get_uuid(), v_PriceListVersionPO, Cur_LinesPO.M_Product_ID, v_AD_Client_ID, v_AD_Org_ID,
                      'Y', now(), v_AD_User_ID, now(),
                     v_AD_User_ID, Cur_LinesPO.PLANNEDPOPRICE, Cur_LinesPO.PLANNEDPOPRICE, Cur_LinesPO.PLANNEDPOPRICE
                   )
