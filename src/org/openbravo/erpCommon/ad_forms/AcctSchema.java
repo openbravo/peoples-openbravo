@@ -201,8 +201,8 @@ public final class AcctSchema implements Serializable {
 	 *  @param AD_Client_ID client
 	 *  @return AcctSchema Array of Client
 	 */
-	public static AcctSchema[] getAcctSchemaArray(ConnectionProvider conn, String AD_Client_ID){
-		ArrayList<Object> list = getAcctSchemaList (conn, AD_Client_ID);
+	public static AcctSchema[] getAcctSchemaArray(ConnectionProvider conn, String AD_Client_ID, String AD_Org_ID){
+		ArrayList<Object> list = getAcctSchemaList (conn, AD_Client_ID, AD_Org_ID);
 		AcctSchema[] retValue = new AcctSchema [list.size()];
 		list.toArray(retValue);
 		return retValue;
@@ -213,29 +213,18 @@ public final class AcctSchema implements Serializable {
 	 *  @param AD_Client_ID client
 	 *  @return ArrayList of AcctSchema of Client
 	 */
-	public static synchronized ArrayList<Object> getAcctSchemaList (ConnectionProvider conn, String AD_Client_ID){
+	public static synchronized ArrayList<Object> getAcctSchemaList (ConnectionProvider conn, String AD_Client_ID, String AD_Org_ID){
 		//  Create New
 		ArrayList<Object> list = new ArrayList<Object>();
 		AcctSchemaData [] data = null;
 		try{
-			data = AcctSchemaData.selectAcctSchema123(conn, AD_Client_ID);
+			data = AcctSchemaData.selectAcctSchemas(conn, AD_Client_ID, AD_Org_ID);
 		}catch(ServletException e){
 			log4jAcctSchema.warn(e);
 		}
-		if (data.length>0){
-			String as = data[0].cAcctschema1Id;
+		for (int i=0;data.length>i;i++){
+			String as = data[i].cAcctschemaId;
 			list.add(new AcctSchema(conn, as));
-			//
-			if ( data[0].acct2Active.equals("Y")){
-				as = data[0].cAcctschema2Id;
-				if (!as.equals(""))
-					list.add(new AcctSchema(conn,as));
-			}
-			if (data[0].acct3Active.equals("Y")){
-				as = data[0].cAcctschema3Id;
-				if (!as.equals(""))
-					list.add(new AcctSchema(conn,as));
-			}
 		}
 		//  Save
 		return list;

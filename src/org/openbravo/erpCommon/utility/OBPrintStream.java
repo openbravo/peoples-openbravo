@@ -1,0 +1,100 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2008 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+
+package org.openbravo.erpCommon.utility;
+import java.io.*;
+
+
+/**
+ * OBPrintStream class is a PrintStream, it allows to obtain a log (using the getLog() method) as a String. Each time this method
+ * is called the log is emptied. Its purpose is to be used from an HTML using AJAX to fill a log textarea in real time.
+ * 
+ *  @see org.openbravo.erpCommon.ad_process.ApplyModules
+ *  @see AntExecutor
+ *
+ */
+public class OBPrintStream extends PrintStream{
+  private StringBuffer log;
+  private boolean finished;
+  private PrintWriter out;
+  public static final int TEXT_HTML=1;
+  public static final int TEXT_PLAIN=2;
+  
+  /**
+   * Crates a new OBPrintStream object
+   */
+  public OBPrintStream(PrintWriter p) {
+    
+    super(System.out); //It is needed to call a super constructor, though it is not going to be used
+    setPrintWritter(p);
+    log = new StringBuffer();
+    finished = false;
+  }
+  
+  public void setPrintWritter(PrintWriter p){
+    out = p;
+  }
+  
+  /**
+   * Writes the log in a StringBuffer, if the PrintWritter is set if also writes there
+   * and flushes it.
+   */
+  public void write(byte[] buf, int off, int len) {
+    String s = new String(buf, off,len);
+    if (out!=null) {
+      out.println(s.replace("\n", "<br/>"));
+      out.flush();
+    }
+    log.append(s);   
+  }
+  
+  /**
+   * Returns a String with the piece of log generated after the last call to this method.
+   * In case no log has been generated and the finished property is set to true, it returns and END String
+   * to be used in case the AJAX call has timed out.
+   * 
+   * @param showType - Defines the format to display the text
+   * @return - The newly generated log
+   */
+  public String getLog(int showType){
+    String rt = "";
+    if (log!=null) {
+      rt = log.toString();
+      log = new StringBuffer();
+    }
+    if (rt.equals("") && finished) {
+      rt="@END@"; //to force end
+    } else {
+      switch (showType) {
+      case TEXT_HTML:
+        rt = rt.replace("\n", "<br/>");
+      }
+    }
+    return rt;
+  }
+  
+  /**
+   * Sets the finished property to the passed value.
+   * 
+   * @param v - boolean value to set the finished property.
+   */
+  public void setFinished(boolean v) {
+    finished = v;
+  }
+}

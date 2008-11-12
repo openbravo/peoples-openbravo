@@ -34,14 +34,41 @@
   version="2.4"'/>
    
 
-    
-    
+<structure name="structureListener">
+  <FIELD id="fieldListenerDisplayName">displayname</FIELD>
+  <FIELD id="fieldListenerClassName">classname</FIELD>
+  <SECTION id="sectionListener"/>
+</structure>
+
+<structure name="structureResource">
+  <FIELD id="fieldResName">name</FIELD>
+  <FIELD id="fieldResType">classname</FIELD>
+  <FIELD id="fieldResAuth">auth</FIELD>
+  <SECTION id="sectionResource"/>
+</structure>
+
+<structure name="structureFilter">
+  <FIELD id="fieldFilterName">name</FIELD>
+  <FIELD id="fieldFilterClassName">classname</FIELD>
+  <SECTION id="sectionFilter"/>
+  <SUBREPORT id="reportFilterParams" name="reportFilterParams" report="org/openbravo/wad/webParams"/>
+</structure>
+
 <structure name="structure1">
   <FIELD id="fieldDisplayName">displayname</FIELD>
   <FIELD id="fieldName">name</FIELD>
   <FIELD id="fieldClassName">classname</FIELD>
+  <FIELD id="fieldLoadOnStartUp">loadonstartup</FIELD>
   <SECTION id="sectionDetail1"/>
+  <SUBREPORT id="reportServletParams" name="reportServletParams" report="org/openbravo/wad/webParams"/>
 </structure>
+
+<structure name="structureFilterMapping">
+  <FIELD id="fieldFilterMName">name</FIELD>
+  <FIELD id="fieldFilterMClassName">classname</FIELD>
+  <SECTION id="sectionFilterMapping"/>
+</structure>
+
 <structure name="structure2">
   <FIELD id="fieldDisplayName2">displayname</FIELD>
   <FIELD id="fieldName2">name</FIELD>

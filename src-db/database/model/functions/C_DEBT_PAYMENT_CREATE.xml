@@ -37,6 +37,7 @@
     v_DatePlanned DATE;
     v_IsReceipt VARCHAR2(1) ;
     v_Description VARCHAR2(60) ;
+    v_Status VARCHAR2(32);
     --Local variables
     v_Client_ID VARCHAR2(32);
     v_AD_Org_ID VARCHAR2(32);
@@ -91,6 +92,9 @@
       ELSIF(Cur_Parameter.ParameterName='Description') THEN
         v_Description:=Cur_Parameter.p_String;
         DBMS_OUTPUT.PUT_LINE('  Description='||v_Description) ;
+      ELSIF(Cur_Parameter.ParameterName='Status') THEN
+        v_Status:=Cur_Parameter.p_String;
+        DBMS_OUTPUT.PUT_LINE('  Status='||v_Status) ;
       ELSE
         DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
       END IF;
@@ -160,7 +164,7 @@
         v_C_BPartner_ID, v_C_Currency_ID,
         v_PaymentRule, 'N', v_Amount*(-1), 0, v_DatePlanned,
         'N', 'Y',
-        'N', 'N', 'Y', 'DE'
+        'N', 'N', 'Y', v_Status
       )
       ;
     Ad_Sequence_Next('C_Debt_Payment', v_Record_ID, v_debtPaymentID) ;
@@ -189,7 +193,7 @@
         v_CBankAccount_ID,
         v_PaymentRule, 'N', v_Amount, 0,
         v_DatePlanned, 'N', 'Y',
-        'N', 'N', 'Y', 'DE'
+        'N', 'N', 'Y', v_Status
       )
       ;
     C_SETTLEMENT_POST(null, v_settlementID);

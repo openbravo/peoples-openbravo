@@ -17,183 +17,169 @@ package org.openbravo.base.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openbravo.base.util.NamingUtil;
+import org.apache.log4j.Logger;
+
+/**
+ * Used by the {@link ModelProvider ModelProvider}, maps the AD_Table table in
+ * the application dictionary.
+ * 
+ * @author iperdomo
+ */
 
 public class Table extends ModelObject {
-  private Entity entity;
-  private String tableName;
-  private boolean view;
-  private boolean isDeletable;
-  private List<Column> columns;
-  private List<Column> primaryKeyColumns = null;
-  private List<Column> identifierColumns = null;
-  private String mappingName = null;
-  private String className = null;
-  
-  private boolean areEnabledMembersComputed = false;
-  private boolean isTraceable;
-  private boolean isActiveEnabled;
-  private boolean isOrganisationEnabled;
-  private boolean isClientEnabled;
-  
-  private String accessLevel;
-  
-  public String getTableName() {
-    return tableName;
-  }
-  
-  public void setTableName(String tableName) {
-    this.tableName = tableName;
-  }
-  
-  public List<Column> getColumns() {
-    return columns;
-  }
-  
-  public void setColumns(List<Column> columns) {
-    this.columns = columns;
-  }
-  
-  public List<Column> getPrimaryKeyColumns() {
-    if (primaryKeyColumns == null) {
-      primaryKeyColumns = new ArrayList<Column>();
-      
-      for (Column c : getColumns()) {
-        if (c.isKey())
-          primaryKeyColumns.add(c);
-      }
+    private static final Logger log = Logger.getLogger(Table.class);
+
+    private Entity entity;
+    private String tableName;
+    private boolean view;
+    private boolean isDeletable;
+    private List<Column> columns;
+    private List<Column> primaryKeyColumns = null;
+    private List<Column> identifierColumns = null;
+    private List<Column> parentColumns = null;
+    private String className = null;
+
+    private String accessLevel;
+
+    private Package thePackage;
+
+    public String getTableName() {
+	return tableName;
     }
-    return primaryKeyColumns;
-  }
-  
-  public void setPrimaryKeyColumns(List<Column> primaryKeyColumns) {
-    this.primaryKeyColumns = primaryKeyColumns;
-  }
-  
-  public List<Column> getIdentifierColumns() {
-    if (identifierColumns == null) {
-      identifierColumns = new ArrayList<Column>();
-      for (Column c : getColumns()) {
-        if (c.isIdentifier())
-          identifierColumns.add(c);
-      }
+
+    public void setTableName(String tableName) {
+	this.tableName = tableName;
     }
-    return identifierColumns;
-  }
-  
-  public void setIdentifierColumns(List<Column> identifierColumns) {
-    this.identifierColumns = identifierColumns;
-  }
-  
-  public void setView(boolean view) {
-    this.view = view;
-  }
-  
-  public boolean isView() {
-    return view;
-  }
-  
-  public String getMappingName() {
-    if (mappingName == null)
-      mappingName = NamingUtil.getMappingName(getName());
-    return mappingName;
-  }
-  
-  public String getClassName() {
-    if (className == null)
-      className = NamingUtil.getPackageName(getName()) + "." + NamingUtil.getEntityName(getName());
-    return className;
-  }
-  
-  public void setReferenceTypes(ModelProvider modelProvider) {
-    for (Column c : columns) {
-      if (!c.isPrimitiveType() && !c.getColumnName().equals("Node_ID")) // TODO:
-        // AD_TreeNode
-        // is a
-        // special
-        // case
-        c.setReferenceType(modelProvider);
+
+    public List<Column> getColumns() {
+	return columns;
     }
-  }
-  
-  private void setEnabledMembers() {
-    if (areEnabledMembersComputed) {
-      return;
+
+    public void setColumns(List<Column> columns) {
+	this.columns = columns;
     }
-    isTraceable = hasColumn("createdby");
-    isActiveEnabled = hasColumn("active");
-    isOrganisationEnabled = hasColumn("org");
-    isClientEnabled = hasColumn("client");
-    areEnabledMembersComputed = true;
-  }
-  
-  // checks for a certain column
-  // todo: it is saver to also check for the type!
-  private boolean hasColumn(String checkMappingName) {
-    for (Column c : getColumns()) {
-      if (!c.isKey() && c.getMappingName().compareTo(checkMappingName) == 0) {
-        return true;
-      }
+
+    public List<Column> getPrimaryKeyColumns() {
+	if (primaryKeyColumns == null) {
+	    primaryKeyColumns = new ArrayList<Column>();
+
+	    for (final Column c : getColumns()) {
+		if (c.isKey())
+		    primaryKeyColumns.add(c);
+	    }
+	}
+	return primaryKeyColumns;
     }
-    return false;
-  }
-  
-  public String getPackageName() {
-    final int lastIndexOf = getClassName().lastIndexOf('.');
-    return getClassName().substring(0, lastIndexOf);
-  }
-  
-  public String getSimpleClassName() {
-    final int lastIndexOf = getClassName().lastIndexOf('.');
-    return getClassName().substring(1 + lastIndexOf);
-  }
-  
-  public boolean isTraceable() {
-    setEnabledMembers();
-    return isTraceable;
-  }
-  
-  public boolean isActiveEnabled() {
-    setEnabledMembers();
-    return isActiveEnabled;
-  }
-  
-  public boolean isOrganisationEnabled() {
-    setEnabledMembers();
-    return isOrganisationEnabled;
-  }
-  
-  public boolean isClientEnabled() {
-    setEnabledMembers();
-    return isClientEnabled;
-  }
-  
-  public Entity getEntity() {
-    return entity;
-  }
-  
-  public void setEntity(Entity entity) {
-    this.entity = entity;
-  }
-  
-  @Override
-  public String toString() {
-    return getTableName();
-  }
-  
-  public boolean isDeletable() {
-    return isDeletable;
-  }
-  
-  public void setDeletable(boolean isDeletable) {
-    this.isDeletable = isDeletable;
-  }
-  
-  public String getAccessLevel() {
-    return accessLevel;
-  }
-  
-  public void setAccessLevel(String accessLevel) {
-    this.accessLevel = accessLevel;
-  }
+
+    public void setPrimaryKeyColumns(List<Column> primaryKeyColumns) {
+	this.primaryKeyColumns = primaryKeyColumns;
+    }
+
+    public List<Column> getIdentifierColumns() {
+	if (identifierColumns == null) {
+	    identifierColumns = new ArrayList<Column>();
+	    for (final Column c : getColumns()) {
+		if (c.isIdentifier())
+		    identifierColumns.add(c);
+	    }
+	}
+	return identifierColumns;
+    }
+
+    public void setParentColumns(List<Column> parentColums) {
+	this.parentColumns = parentColums;
+    }
+
+    public List<Column> getParentColumns() {
+	if (parentColumns == null) {
+	    parentColumns = new ArrayList<Column>();
+	    for (final Column c : getColumns()) {
+		if (c.isParent())
+		    parentColumns.add(c);
+	    }
+	}
+	return parentColumns;
+    }
+
+    public void setIdentifierColumns(List<Column> identifierColumns) {
+	this.identifierColumns = identifierColumns;
+    }
+
+    public void setView(boolean view) {
+	this.view = view;
+    }
+
+    public boolean isView() {
+	return view;
+    }
+
+    public String getNotNullClassName() {
+	if (getClassName() == null || getClassName().trim().length() == 0) {
+	    return getName();
+	}
+	return getClassName();
+    }
+
+    public String getClassName() {
+	return className;
+    }
+
+    public void setClassName(String className) {
+	this.className = className;
+    }
+
+    public void setReferenceTypes(ModelProvider modelProvider) {
+	for (final Column c : columns) {
+	    if (!c.isPrimitiveType())
+		c.setReferenceType(modelProvider);
+	}
+    }
+
+    public String getPackageName() {
+	if (getThePackage() != null) {
+	    return getThePackage().getJavaPackage();
+	}
+	log
+		.error("Can not determine package name, no package defined for table "
+			+ getName());
+	// ugly but effective
+	return "no.package.defined.for.table." + getName();
+    }
+
+    public Entity getEntity() {
+	return entity;
+    }
+
+    public void setEntity(Entity entity) {
+	this.entity = entity;
+    }
+
+    @Override
+    public String toString() {
+	return getTableName();
+    }
+
+    public boolean isDeletable() {
+	return isDeletable;
+    }
+
+    public void setDeletable(boolean isDeletable) {
+	this.isDeletable = isDeletable;
+    }
+
+    public String getAccessLevel() {
+	return accessLevel;
+    }
+
+    public void setAccessLevel(String accessLevel) {
+	this.accessLevel = accessLevel;
+    }
+
+    public Package getThePackage() {
+	return thePackage;
+    }
+
+    public void setThePackage(Package thePackage) {
+	this.thePackage = thePackage;
+    }
 }

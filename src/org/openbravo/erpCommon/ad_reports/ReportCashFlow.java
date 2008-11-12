@@ -108,7 +108,7 @@ void printPageFrame1(HttpServletResponse response, VariablesSecureApp vars, Stri
    
 
       try {
-        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportCashFlow"), Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), 0);
+        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "", "AD_OrgType_BU_LE", Utility.getContext(this, vars, "#User_Org", "ReportCashFlow"), Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportCashFlow", "");
         xmlDocument.setData("reportAD_ORG", "liststructure", comboTableData.select(false));
         comboTableData = null;

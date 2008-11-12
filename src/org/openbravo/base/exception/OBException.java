@@ -18,38 +18,31 @@ import org.apache.log4j.Logger;
  * @author mtaal
  */
 public class OBException extends RuntimeException {
-  
-  /**
-   * Default serial
-   */
-  private static final long serialVersionUID = 1L;
-  
-  /** Call super constructor and log the cause. */
-  public OBException() {
-    super();
-    getLogger().error(this);
-  }
-  
-  /** Call super constructor and log the cause. */
-  public OBException(String message, Throwable cause) {
-    super(message, cause);
-    getLogger().error(message, cause);
-  }
-  
-  /** Call super constructor and log the cause. */
-  public OBException(String message) {
-    super(message);
-    getLogger().error(message, this);
-  }
-  
-  /** Call super constructor and log the cause. */
-  public OBException(Throwable cause) {
-    super(cause);
-    getLogger().error(cause);
-  }
-  
-  /** @return class specific log */
-  private Logger getLogger() {
-    return Logger.getLogger(this.getClass());
-  }
+
+    private static final long serialVersionUID = 1L;
+
+    public OBException() {
+	super();
+	getLogger().error(this);
+    }
+
+    public OBException(String message, Throwable cause) {
+	super(message, cause);
+	getLogger().error(message, cause);
+    }
+
+    public OBException(String message) {
+	super(message);
+	getLogger().error(message, this);
+    }
+
+    public OBException(Throwable cause) {
+	super(cause);
+	getLogger().error(cause);
+    }
+
+    // returns class specific logger
+    protected Logger getLogger() {
+	return Logger.getLogger(this.getClass());
+    }
 }

@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<data>
+<!--0**************--><AD_DATASET>
+<!--0 AD_DATASET_ID-->
+<!--0-->              <AD_DATASET_ID><![CDATA[0]]></AD_DATASET_ID>
+<!--0 AD_CLIENT_ID-->
+<!--0-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--0 AD_ORG_ID-->
+<!--0-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--0 ISACTIVE-->
+<!--0-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--0 CREATED-->
+<!--0-->              <CREATED><![CDATA[2008-10-10 16:13:12.0]]></CREATED>
+<!--0 CREATEDBY-->
+<!--0-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--0 UPDATED-->
+<!--0-->              <UPDATED><![CDATA[2008-10-25 14:13:06.0]]></UPDATED>
+<!--0 UPDATEDBY-->
+<!--0-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--0 VALUE-->
+<!--0-->              <VALUE><![CDATA[AD]]></VALUE>
+<!--0 NAME-->
+<!--0-->              <NAME><![CDATA[AD]]></NAME>
+<!--0 DESCRIPTION-->
+<!--0-->              <DESCRIPTION><![CDATA[Application Dictionary]]></DESCRIPTION>
+<!--0 AD_MODULE_ID-->
+<!--0-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--0 EXPORT-->
+<!--0-->              <EXPORT><![CDATA[N]]></EXPORT>
+<!--0 ACCESSLEVEL-->
+<!--0-->              <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
+<!--0 EXPORTALLOWED-->
+<!--0-->              <EXPORTALLOWED><![CDATA[N]]></EXPORTALLOWED>
+<!--0**************--></AD_DATASET>
+
+<!--1**************--><AD_DATASET>
+<!--1 AD_DATASET_ID-->
+<!--1-->              <AD_DATASET_ID><![CDATA[1]]></AD_DATASET_ID>
+<!--1 AD_CLIENT_ID-->
+<!--1-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1 AD_ORG_ID-->
+<!--1-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1 ISACTIVE-->
+<!--1-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1 CREATED-->
+<!--1-->              <CREATED><![CDATA[2008-10-10 16:55:20.0]]></CREATED>
+<!--1 CREATEDBY-->
+<!--1-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1 UPDATED-->
+<!--1-->              <UPDATED><![CDATA[2008-10-25 14:11:05.0]]></UPDATED>
+<!--1 UPDATEDBY-->
+<!--1-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1 VALUE-->
+<!--1-->              <VALUE><![CDATA[RD]]></VALUE>
+<!--1 NAME-->
+<!--1-->              <NAME><![CDATA[RD]]></NAME>
+<!--1 DESCRIPTION-->
+<!--1-->              <DESCRIPTION><![CDATA[Reference Data]]></DESCRIPTION>
+<!--1 AD_MODULE_ID-->
+<!--1-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1 EXPORT-->
+<!--1-->              <EXPORT><![CDATA[N]]></EXPORT>
+<!--1 ACCESSLEVEL-->
+<!--1-->              <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
+<!--1 EXPORTALLOWED-->
+<!--1-->              <EXPORTALLOWED><![CDATA[N]]></EXPORTALLOWED>
+<!--1**************--></AD_DATASET>
+
+<!--2**************--><AD_DATASET>
+<!--2 AD_DATASET_ID-->
+<!--2-->              <AD_DATASET_ID><![CDATA[2]]></AD_DATASET_ID>
+<!--2 AD_CLIENT_ID-->
+<!--2-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--2 AD_ORG_ID-->
+<!--2-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--2 ISACTIVE-->
+<!--2-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--2 CREATED-->
+<!--2-->              <CREATED><![CDATA[2008-10-22 17:40:08.0]]></CREATED>
+<!--2 CREATEDBY-->
+<!--2-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--2 UPDATED-->
+<!--2-->              <UPDATED><![CDATA[2008-10-25 14:10:57.0]]></UPDATED>
+<!--2 UPDATEDBY-->
+<!--2-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--2 VALUE-->
+<!--2-->              <VALUE><![CDATA[ADCS]]></VALUE>
+<!--2 NAME-->
+<!--2-->              <NAME><![CDATA[ADCS]]></NAME>
+<!--2 DESCRIPTION-->
+<!--2-->              <DESCRIPTION><![CDATA[Application dictionary for configuration script generation]]></DESCRIPTION>
+<!--2 AD_MODULE_ID-->
+<!--2-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--2 EXPORT-->
+<!--2-->              <EXPORT><![CDATA[N]]></EXPORT>
+<!--2 ACCESSLEVEL-->
+<!--2-->              <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
+<!--2 EXPORTALLOWED-->
+<!--2-->              <EXPORTALLOWED><![CDATA[N]]></EXPORTALLOWED>
+<!--2**************--></AD_DATASET>
+
+</data>

@@ -19,12 +19,12 @@ package org.openbravo.base.structure;
  */
 
 public interface Identifiable {
-  
-  public Object getId();
-  
-  public void setId(Object id);
-  
-  public String getEntityName();
-  
-  public String getIdentifier();
+
+    public Object getId();
+
+    public void setId(Object id);
+
+    public String getEntityName();
+
+    public String getIdentifier();
 }

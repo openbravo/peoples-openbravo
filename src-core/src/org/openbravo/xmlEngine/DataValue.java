@@ -39,6 +39,7 @@ class DataValue implements XmlComponentValue {
   Vector<Object> vecParameterValue;   // vector of ParameterValues for the query
   Vector<Object> vecFunctionValueData;    // vector of functions of structure
   Vector<Object> vecFunctionValueOutSection;    // vector of functions out of a Section, therefore out a Data
+  Vector<Object> vecLabelValue;
 
   StringBuffer strDetailValue;
   FieldProvider[] data = null;

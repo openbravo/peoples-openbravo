@@ -11,6 +11,17 @@
 */
 package org.openbravo.base.secureApp;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.sql.Connection;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.erpCommon.utility.*;
@@ -19,28 +30,10 @@ import org.openbravo.utils.Replace;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.sql.Connection;
-import org.openbravo.authentication.AuthenticationException;
-import org.openbravo.authentication.AuthenticationManager;
-import org.openbravo.authentication.basic.DefaultAuthenticationManager;
-import org.openbravo.erpCommon.security.SessionLogin;
-import org.openbravo.erpCommon.security.SessionLoginData;
-import org.openbravo.erpCommon.security.AccessData;
-import org.openbravo.data.FieldProvider;
-
-
-
-import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.export.JExcelApiExporter;
-import net.sf.jasperreports.engine.export.JExcelApiExporterParameter;
-import net.sf.jasperreports.engine.export.JRHtmlExporter;
-import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -49,14 +42,43 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JRParameter;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.export.JExcelApiExporter;
+import net.sf.jasperreports.engine.export.JExcelApiExporterParameter;
+import net.sf.jasperreports.engine.export.JRHtmlExporter;
+import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+
+import org.apache.commons.beanutils.converters.FileConverter;
+import org.openbravo.authentication.AuthenticationException;
+import org.openbravo.authentication.AuthenticationManager;
+import org.openbravo.authentication.basic.DefaultAuthenticationManager;
+import org.openbravo.base.HttpBaseServlet;
+import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.security.AccessData;
+import org.openbravo.erpCommon.security.SessionLogin;
+import org.openbravo.erpCommon.security.SessionLoginData;
+import org.openbravo.erpCommon.utility.JRFieldProviderDataSource;
+import org.openbravo.erpCommon.utility.JRFormatFactory;
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.PrintJRData;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.uiTranslation.TranslationHandler;
+import org.openbravo.utils.Replace;
+import org.openbravo.xmlEngine.XmlDocument;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class HttpSecureAppServlet extends HttpBaseServlet{
   private static final long serialVersionUID = 1L;
@@ -578,6 +600,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
       String pentahoServer = properties.getProperty("pentahoServer");
       log4j.info("pentahoServer: " + pentahoServer);
       vars.setSessionValue("#pentahoServer", pentahoServer);
+      String sourcePath = properties.getProperty("source.path");
+      log4j.info("sourcePath: " + sourcePath);
+      vars.setSessionValue("#sourcePath", sourcePath);
     } catch (IOException e) {
      // catch possible io errors from readLine()
      e.printStackTrace();
@@ -640,9 +665,26 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
     strReportName = Replace.replace(Replace.replace(strReportName,"@basedesign@",strBaseDesign),"@attach@",strAttach);
     String strFileName = strReportName.substring(strReportName.lastIndexOf("/")+1);
 
+    File reportFile = new File(strReportName);
+    log4j.debug("renderJR() - strReportName: " + strReportName);
+
+    InputStream reportInputStream = null;
+    if (reportFile.exists()) {
+      TranslationHandler handler = new TranslationHandler(this);
+      handler.prepareFile(strReportName, strLanguage, reportFile);
+      reportInputStream = handler.getInputStream();
+    }
     ServletOutputStream os = null;
     try {
-      JasperDesign jasperDesign= JRXmlLoader.load(strReportName);
+      JasperDesign jasperDesign;
+      if (reportInputStream != null) {
+        log4j.debug("Jasper report being created with inputStream.");
+        jasperDesign= JRXmlLoader.load(reportInputStream);
+      } else {
+        log4j.debug("Jasper report being created with strReportName.");
+        jasperDesign= JRXmlLoader.load(strReportName);
+      }
+      
       JasperReport jasperReport= JasperCompileManager.compileReport(jasperDesign);
       if (designParameters == null) designParameters = new HashMap<String, Object>();
 

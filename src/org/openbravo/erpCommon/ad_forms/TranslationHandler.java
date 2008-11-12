@@ -56,8 +56,7 @@ public class TranslationHandler extends DefaultHandler
 	private int				m_AD_Client_ID = -1;
 	/** Language						*/
 	private String			m_AD_Language = null;
-	/** Is Base Language				*/
-	private boolean			m_isBaseLanguage = false;
+
 	/** Table							*/
 	private String			m_TableName = null;
 	/** Update SQL						*/
@@ -95,23 +94,15 @@ public class TranslationHandler extends DefaultHandler
 		if (qName.equals(Translation.XML_TAG))
 		{
 			m_AD_Language = attributes.getValue(Translation.XML_ATTRIBUTE_LANGUAGE);
-			try
-			{
-				m_isBaseLanguage = TranslationData.baseLanguage(DB, m_AD_Language).equals("Y");
-       
-			}
-			catch (Exception e)
-			{
-        log4j.error(e.toString());
-			}
+
       
       
 			m_TableName = attributes.getValue(Translation.XML_ATTRIBUTE_TABLE);
 			m_updateSQL = "UPDATE " + m_TableName;
-			if (!m_isBaseLanguage)
-				m_updateSQL += "_Trl";
+			
+			m_updateSQL += "_Trl";
 			m_updateSQL += " SET ";
-			if (log4j.isDebugEnabled()) log4j.debug("AD_Language=" + m_AD_Language + ", Base=" + m_isBaseLanguage + ", TableName=" + m_TableName);
+			if (log4j.isDebugEnabled()) log4j.debug("AD_Language=" + m_AD_Language + ", TableName=" + m_TableName);
 		}
 		else if (qName.equals(Translation.XML_ROW_TAG))
 		{
@@ -165,13 +156,11 @@ public class TranslationHandler extends DefaultHandler
 			if (m_sql.length() > 0)
 				m_sql.append(",");
 			m_sql.append("Updated=now()"); //.append(DB.TO_DATE(m_time, false));
-			if (!m_isBaseLanguage)
-				m_sql.append(",IsTranslated='Y'");
+			m_sql.append(",IsTranslated='Y'");
 			//	Where section
 			m_sql.append(" WHERE ")
 				.append(m_TableName).append("_ID='").append(m_curID).append("'");
-			if (!m_isBaseLanguage)
-				m_sql.append(" AND AD_Language='").append(m_AD_Language).append("'");
+			m_sql.append(" AND AD_Language='").append(m_AD_Language).append("'");
 			if (m_AD_Client_ID >= 0)
 				m_sql.append(" AND AD_Client_ID='").append(m_AD_Client_ID).append("'");
 			//	Update section

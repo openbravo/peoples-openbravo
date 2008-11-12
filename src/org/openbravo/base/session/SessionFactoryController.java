@@ -22,117 +22,167 @@ import org.hibernate.dialect.PostgreSQLDialect;
 import org.openbravo.base.exception.OBException;
 
 /**
- * Initializes and provides the session factory.
+ * Initializes and provides the session factory. Is subclassed for the bootstrap
+ * process and the runtime process.
  * 
  * @author mtaal
  */
 
 public abstract class SessionFactoryController {
-  private static final Logger log = Logger.getLogger(SessionFactoryController.class);
-  
-  private static SessionFactoryController instance = null;
-  
-  public static SessionFactoryController getInstance() {
-    return instance;
-  }
-  
-  public static void setInstance(SessionFactoryController sfc) {
-    log.debug("Setting instance of " + sfc.getClass().getName() + " as session factory controller");
-    instance = sfc;
-  }
-  
-  private SessionFactory sessionFactory = null;
-  private Configuration configuration = null;
-  
-  public SessionFactory getSessionFactory() {
-    initialize();
-    return sessionFactory;
-  }
-  
-  public Configuration getConfiguration() {
-    initialize();
-    return configuration;
-  }
-  
-  public void reInitialize() {
-    if (sessionFactory != null) {
-      sessionFactory.close();
-      sessionFactory = null;
+    private static final Logger log = Logger
+	    .getLogger(SessionFactoryController.class);
+
+    private static SessionFactoryController instance = null;
+
+    private static boolean runningInWebContainer = false;
+
+    public static boolean isRunningInWebContainer() {
+	return runningInWebContainer;
     }
-    initialize();
-  }
-  
-  public void initialize() {
-    if (sessionFactory != null)
-      return;
-    
-    log.debug("Initializing session factory");
-    
-    // TODO: mapping is automatically generated and should depend on the
-    // modules/tables
-    // which are actually used
-    // NOTE: reads the hibernate.properties in the root of the classpath
-    try {
-      configuration = new Configuration();
-      mapModel(configuration);
-      setInterceptor(configuration);
-      
-      configuration.addProperties(getOpenbravoProperties());
-      
-      // add a default second level cache
-      if (configuration.getProperties().get(Environment.CACHE_PROVIDER) == null) {
-        configuration.getProperties().setProperty(Environment.CACHE_PROVIDER, HashtableCacheProvider.class.getName());
-      }
-      
-      sessionFactory = configuration.buildSessionFactory();
-      
-      log.debug("Session Factory initialized");
-    } catch (Throwable t) {
-      // this is done to get better visibility of the exceptions
-      t.printStackTrace(System.err);
-      throw new OBException(t);
+
+    public static void setRunningInWebContainer(boolean runningInWebContainer) {
+	SessionFactoryController.runningInWebContainer = runningInWebContainer;
     }
-  }
-  
-  protected abstract void mapModel(Configuration configuration);
-  
-  private Properties getOpenbravoProperties() {
-    final Properties props = new Properties();
-    final Properties obProps = OBPropertiesProvider.getInstance().getOpenbravoProperties();    
-    if (obProps == null) {
-      return new Properties();
+
+    public static SessionFactoryController getInstance() {
+	return instance;
     }
-    
-    if (obProps.getProperty("bbdd.rdbms") != null) {
-      if (obProps.getProperty("bbdd.rdbms").equals("POSTGRE")) {
-        return getPostgresHbProps(obProps);
-      } else {
-        return getOracleHbProps(obProps);
-      }
+
+    public static void setInstance(SessionFactoryController sfc) {
+	log.debug("Setting instance of " + sfc.getClass().getName()
+		+ " as session factory controller");
+	instance = sfc;
     }
-    return props;
-  }
-  
-  private Properties getPostgresHbProps(Properties obProps) {
-    final Properties props = new Properties();
-    props.setProperty(Environment.DIALECT, PostgreSQLDialect.class.getName());
-    props.setProperty(Environment.DRIVER, "org.postgresql.Driver");
-    props.setProperty(Environment.URL, obProps.getProperty("bbdd.url") + "/" + obProps.getProperty("bbdd.sid"));
-    props.setProperty(Environment.USER, obProps.getProperty("bbdd.user"));
-    props.setProperty(Environment.PASS, obProps.getProperty("bbdd.password"));
-    return props;
-  }
-  
-  private Properties getOracleHbProps(Properties obProps) {
-    final Properties props = new Properties();
-    props.setProperty(Environment.DIALECT, OBOracle10gDialect.class.getName());
-    props.setProperty(Environment.DRIVER, "oracle.jdbc.driver.OracleDriver");
-    props.setProperty(Environment.URL, obProps.getProperty("bbdd.url"));
-    props.setProperty(Environment.USER, obProps.getProperty("bbdd.user"));
-    props.setProperty(Environment.PASS, obProps.getProperty("bbdd.password"));
-    return props;
-  }
-  
-  protected void setInterceptor(Configuration configuration) {
-  }
+
+    private SessionFactory sessionFactory = null;
+    private Configuration configuration = null;
+
+    public SessionFactory getSessionFactory() {
+	initialize();
+	return sessionFactory;
+    }
+
+    public Configuration getConfiguration() {
+	initialize();
+	return configuration;
+    }
+
+    public void reInitialize() {
+	if (sessionFactory != null) {
+	    sessionFactory.close();
+	    sessionFactory = null;
+	}
+	initialize();
+    }
+
+    public void initialize() {
+	if (sessionFactory != null)
+	    return;
+
+	log.debug("Initializing session factory");
+
+	// TODO: mapping is automatically generated and should depend on the
+	// modules/tables
+	// which are actually used
+	// NOTE: reads the hibernate.properties in the root of the classpath
+	try {
+	    configuration = new Configuration();
+	    mapModel(configuration);
+	    setInterceptor(configuration);
+
+	    configuration.addProperties(getOpenbravoProperties());
+
+	    // add a default second level cache
+	    if (configuration.getProperties().get(Environment.CACHE_PROVIDER) == null) {
+		configuration.getProperties().setProperty(
+			Environment.CACHE_PROVIDER,
+			HashtableCacheProvider.class.getName());
+	    }
+
+	    sessionFactory = configuration.buildSessionFactory();
+
+	    log.debug("Session Factory initialized");
+	} catch (final Throwable t) {
+	    // this is done to get better visibility of the exceptions
+	    t.printStackTrace(System.err);
+	    throw new OBException(t);
+	}
+    }
+
+    protected abstract void mapModel(Configuration theConfiguration);
+
+    private Properties getOpenbravoProperties() {
+	final Properties props = new Properties();
+	final Properties obProps = OBPropertiesProvider.getInstance()
+		.getOpenbravoProperties();
+	if (obProps == null) {
+	    return new Properties();
+	}
+
+	if (obProps.getProperty("bbdd.rdbms") != null) {
+	    if (obProps.getProperty("bbdd.rdbms").equals("POSTGRE")) {
+		return getPostgresHbProps(obProps);
+	    }
+
+	    return getOracleHbProps(obProps);
+	}
+	return props;
+    }
+
+    private Properties getPostgresHbProps(Properties obProps) {
+	final Properties props = new Properties();
+	props.setProperty(Environment.DIALECT, PostgreSQLDialect.class
+		.getName());
+	if (isJNDIModeOn(obProps)) {
+	    setJNDI(obProps, props);
+	} else {
+	    props.setProperty(Environment.DRIVER, "org.postgresql.Driver");
+	    props.setProperty(Environment.URL, obProps.getProperty("bbdd.url")
+		    + "/" + obProps.getProperty("bbdd.sid"));
+	    props.setProperty(Environment.USER, obProps
+		    .getProperty("bbdd.user"));
+	    props.setProperty(Environment.PASS, obProps
+		    .getProperty("bbdd.password"));
+	}
+	return props;
+    }
+
+    private Properties getOracleHbProps(Properties obProps) {
+	final Properties props = new Properties();
+	props.setProperty(Environment.DIALECT, OBOracle10gDialect.class
+		.getName());
+	if (isJNDIModeOn(obProps)) {
+	    setJNDI(obProps, props);
+	} else {
+	    props.setProperty(Environment.DRIVER,
+		    "oracle.jdbc.driver.OracleDriver");
+	    props.setProperty(Environment.URL, obProps.getProperty("bbdd.url"));
+	    props.setProperty(Environment.USER, obProps
+		    .getProperty("bbdd.user"));
+	    props.setProperty(Environment.PASS, obProps
+		    .getProperty("bbdd.password"));
+	}
+	return props;
+    }
+
+    private void setJNDI(Properties obProps, Properties hbProps) {
+	log.info("Using JNDI with resource name-> "
+		+ obProps.getProperty("JNDI.resourceName"));
+	hbProps.setProperty(Environment.DATASOURCE, "java:/comp/env/"
+		+ obProps.getProperty("JNDI.resourceName"));
+    }
+
+    // jndi should only be used if the application is running in a webcontainer
+    // in all other cases (ant etc.) jndi should not be used, but the direct
+    // openbravo.properties
+    // should be used.
+    private boolean isJNDIModeOn(Properties obProps) {
+	if (!isRunningInWebContainer()) {
+	    return false;
+	}
+	return ("yes".equals(obProps.getProperty("JNDI.usage")) ? true : false);
+    }
+
+    protected void setInterceptor(Configuration configuration) {
+    }
 }

@@ -14,9 +14,7 @@
  */
 package org.openbravo.base.validation;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.openbravo.base.model.BaseOBObjectDef;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
 
@@ -28,42 +26,53 @@ import org.openbravo.base.model.Property;
  */
 
 public class EntityValidator {
-  
-  private List<PropertyValidator> validators = new ArrayList<PropertyValidator>();
-  private boolean validateRequired = false;
-  private Entity entity;
-  
-  public void initialize(Entity e) {
-    entity = e;
-    for (Property p : e.getProperties()) {
-      if (StringPropertyValidator.isValidationRequired(p)) {
-        final StringPropertyValidator spv = new StringPropertyValidator();
-        spv.setProperty(p);
-        spv.initialize();
-        validators.add(spv);
-      } else if (NumericPropertyValidator.isValidationRequired(p)) {
-        final NumericPropertyValidator nv = new NumericPropertyValidator();
-        nv.setProperty(p);
-        nv.initialize();
-        validators.add(nv);
-      }
+
+    private boolean validateRequired = false;
+    private Entity entity;
+
+    public void validate(Object o) {
+	if (!validateRequired) {
+	    return;
+	}
+	final ValidationException ve = new ValidationException();
+	for (Property p : entity.getProperties()) {
+	    final PropertyValidator pv = p.getValidator();
+	    if (pv != null) {
+		final Object value = ((BaseOBObjectDef) o).get(p.getName());
+		final String msg = pv.validate(value);
+		if (msg != null) {
+		    ve.addMessage(p, msg);
+		}
+	    }
+	}
+	if (ve.hasMessages()) {
+	    throw ve;
+	}
     }
-    validateRequired = !validators.isEmpty();
-  }
-  
-  public void validate(Object o) {
-    if (!validateRequired) {
-      return;
+
+    public Entity getEntity() {
+	return entity;
     }
-    final ValidationException ve = new ValidationException();
-    for (PropertyValidator pv : validators) {
-      final String msg = pv.validate(o);
-      if (msg != null) {
-        ve.addMessage(pv.getProperty(), msg);
-      }
+
+    public void setEntity(Entity entity) {
+	this.entity = entity;
     }
-    if (ve.hasMessages()) {
-      throw ve;
+
+    public void initialize() {
+	for (Property p : entity.getProperties()) {
+	    if (StringPropertyValidator.isValidationRequired(p)) {
+		final StringPropertyValidator spv = new StringPropertyValidator();
+		spv.setProperty(p);
+		spv.initialize();
+		p.setValidator(spv);
+		validateRequired = true;
+	    } else if (NumericPropertyValidator.isValidationRequired(p)) {
+		final NumericPropertyValidator nv = new NumericPropertyValidator();
+		nv.setProperty(p);
+		nv.initialize();
+		p.setValidator(nv);
+		validateRequired = true;
+	    }
+	}
     }
-  }
 }

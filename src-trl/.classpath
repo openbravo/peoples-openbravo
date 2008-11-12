@@ -8,7 +8,7 @@
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/log4j-1.3alpha-8.jar"/>
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/nekohtml.jar"/>
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/xercesImpl.jar"/>
-	<classpathentry kind="lib" path="/openbravo/lib/runtime/jdbc3-postgresql.jar"/>
 	<classpathentry kind="lib" path="/openbravo/lib/runtime/ojdbc14.jar"/>
+	<classpathentry kind="lib" path="/openbravo/lib/runtime/postgresql-jdbc3-8.2.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

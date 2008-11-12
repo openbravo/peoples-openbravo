@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2008 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+<SqlClass name="ApplyModuleData" package="org.openbravo.erpCommon.modules">
+  <SqlClassComment></SqlClassComment>
+  <SqlMethod name="selectTranslationModules" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT M.JAVAPACKAGE, M.NAME, M.AD_LANGUAGE, L.ISSYSTEMLANGUAGE, '' as DS_NAME, '' AS AD_MODULE_ID
+        FROM AD_MODULE M LEFT JOIN AD_LANGUAGE L
+                           ON L.AD_LANGUAGE = M.AD_LANGUAGE
+       WHERE (STATUS = 'I' OR STATUS IS NULL)
+         AND ISTRANSLATIONMODULE = 'Y'
+    ]]></Sql>
+  </SqlMethod>
+  
+  <SqlMethod name="selectClientReferenceModules" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+      SELECT M.JAVAPACKAGE, M.NAME, M.AD_MODULE_ID
+        FROM AD_MODULE M
+       WHERE (M.STATUS = 'I' OR STATUS IS NULL)
+         AND M.HASREFERENCEDATA = 'Y'
+    ]]></Sql>
+  </SqlMethod>
+  
+  <SqlMethod name="setSystemLanguage" type="preparedStatement" return="rowcount">
+    <Sql>
+      <![CDATA[
+         UPDATE AD_LANGUAGE
+            SET ISSYSTEMLANGUAGE='Y'
+          WHERE AD_LANGUAGE = ?
+      ]]></Sql>
+    <Parameter name="lang"/>
+  </SqlMethod>
+  
+  <SqlMethod name="setInstalled" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+       UPDATE AD_MODULE
+          SET STATUS = 'A', ISINDEVELOPMENT='N'
+        WHERE (STATUS = 'I' OR STATUS IS NULL)
+    ]]></Sql>
+  </SqlMethod>
+  
+  <SqlMethod name="deleteUninstalled" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+       DELETE FROM AD_MODULE
+       WHERE STATUS = 'U'
+    ]]></Sql>
+  </SqlMethod>
+  
+  
+</SqlClass>

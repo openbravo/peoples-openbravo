@@ -85,8 +85,10 @@ public class AcctServerProcess implements Process {
     adNoteId = saveLog(adNoteId, vars.getClient());
     String[] tables=null;
     String strTable = "";
+    String strOrg="0";
     if (isDirect) {
       strTable = AcctServerProcessData.selectTable(connection, pinstanceId);
+      strOrg = AcctServerProcessData.selectOrg(connection, pinstanceId);
     }
     if (!strTable.equals("")) {
       tables = new String[1];
@@ -96,8 +98,7 @@ public class AcctServerProcess implements Process {
     }
     String strTableDesc;
     for (int i=0;i<tables.length;i++){
-      
-      AcctServer acct = AcctServer.get(tables[i], vars.getClient(), connection);
+      AcctServer acct = AcctServer.get(tables[i], vars.getClient(), strOrg, connection);
       acct.setBatchSize(BATCH_SIZE);
       strTableDesc = AcctServerProcessData.selectDescription(connection, ctx.getLanguage(), acct.AD_Table_ID);
       int total = 0;

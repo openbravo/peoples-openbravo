@@ -35,6 +35,8 @@ public class WADControl {
   public static String invalid = "";
   public static String range = "";
   public static String missing = "";
+  
+  private WADLabelControl label;
 
   public WADControl() {
   }
@@ -269,18 +271,10 @@ public class WADControl {
     String isLinkable = getData("IsLinkable");
     if (isLinkable==null || !isLinkable.equals("Y")) discard[0] = "isLinkable";
     
-    String column = getData("ColumnNameLabel");
-    if (column==null || column.equals("")) column = getData("ColumnName");
-
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADControlLabel", discard).createXmlDocument();
-
-    xmlDocument.setParameter("columnName", getData("ColumnName"));
-    xmlDocument.setParameter("columnNameLabel", column);
-    xmlDocument.setParameter("keyColumnName", getData("KeyColumnName"));
-    xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
-    xmlDocument.setParameter("tableID", getData("AD_Table_ID"));
-    xmlDocument.setParameter("name", getData("Name"));
-    return replaceHTML(xmlDocument.print());
+    createWADLabelControl();
+    WadControlLabelBuilder builder = new WadControlLabelBuilder(label);
+    builder.buildLabelControl();
+    return builder.getLabelString();
   }
 
   public String toJava() {
@@ -299,5 +293,31 @@ public class WADControl {
       text.append(getData("ColumnName")).append("</FIELD>");
     }
     return text.toString();
+  }
+
+  public String toLabelXML() {
+    StringBuffer labelText = new StringBuffer();
+    createWADLabelControl();
+    if (label.getLabelId() != null && !label.getLabelId().equals("") && label.getLabelPlaceHolderText() != null && !label.getLabelPlaceHolderText().equals("")) {
+      labelText.append("<LABEL id=\"").append(label.getLabelId());
+      labelText.append("\" name=\"").append(label.getLabelId());
+      labelText.append("\" replace=\"" + label.getLabelPlaceHolderText() + "\">");
+      labelText.append(label.getColumnName()).append("lbl");
+      labelText.append("</LABEL>");
+    } else {
+      labelText.append("");
+    }
+    
+    return labelText.toString();
+  }
+  
+  private void createWADLabelControl() {
+    String column = getData("ColumnNameLabel");
+    if (column==null || column.equals("")) column = getData("ColumnName");
+    String labelText = getData("ColumnLabelText");
+    if (labelText.trim().equals(""))  labelText = column;
+    String columnId = getData("AdColumnId");
+    
+    label = new WADLabelControl(WADLabelControl.FIELD_LABEL, null, null, columnId, column, null, null, getData("IsLinkable"), getData("KeyColumnName"), getData("ColumnNameInp"), getData("AD_Table_ID"));
   }
 }

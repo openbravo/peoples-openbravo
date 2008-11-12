@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,10 +25,13 @@
     <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT (ACTION || AD_MODEL_OBJECT_ID) AS NAME, CLASSNAME, CLASSNAME AS DISPLAYNAME
+      SELECT MAX(COALESCE(ACTION, '') || AD_MODEL_OBJECT_ID) AS NAME, CLASSNAME, CLASSNAME AS DISPLAYNAME, 
+      MAX(LOADONSTARTUP) AS LOADONSTARTUP, '' AS VALUE, '' AS LINE, '' AS AUTH
       FROM AD_MODEL_OBJECT 
       WHERE ISACTIVE = 'Y' 
-      ORDER BY ACTION, ISDEFAULT
+      AND OBJECT_TYPE = 'S'
+      GROUP BY CLASSNAME
+      ORDER BY NAME
       ]]>
     </Sql>
   </SqlMethod>
@@ -40,12 +43,89 @@
     <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
     <Sql>
       <![CDATA[
-      SELECT (MO.ACTION || MO.AD_MODEL_OBJECT_ID) AS NAME, MOM.MAPPINGNAME AS CLASSNAME, MO.CLASSNAME AS DISPLAYNAME 
+      SELECT MAX(MO.ACTION || MO.AD_MODEL_OBJECT_ID) AS NAME, MOM.MAPPINGNAME AS CLASSNAME, MO.CLASSNAME AS DISPLAYNAME 
       FROM AD_MODEL_OBJECT MO, AD_MODEL_OBJECT_MAPPING MOM
-      WHERE MO.ISACTIVE = 'Y' 
+      WHERE MO.ISACTIVE = 'Y'
+      AND MO.OBJECT_TYPE = 'S' 
       AND MO.AD_MODEL_OBJECT_ID = MOM.AD_MODEL_OBJECT_ID 
       AND MOM.ISACTIVE = 'Y' 
-      ORDER BY ACTION, MOM.ISDEFAULT
+      GROUP BY MO.CLASSNAME, MOM.MAPPINGNAME
+      ORDER BY NAME
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="selectFilter" type="preparedStatement" return="multiple">
+    <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      SELECT MAX(COALESCE(ACTION, '') || AD_MODEL_OBJECT_ID) AS NAME, CLASSNAME, CLASSNAME AS DISPLAYNAME
+      FROM AD_MODEL_OBJECT 
+      WHERE ISACTIVE = 'Y' 
+      AND OBJECT_TYPE = 'F'
+      GROUP BY CLASSNAME
+      ORDER BY NAME
+      ]]>
+    </Sql>
+  </SqlMethod>
+  
+  <SqlMethod name="selectResource" type="preparedStatement" return="multiple">
+    <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      SELECT NAME, CLASSNAME, (SELECT MAX(VALUE)
+                                 FROM AD_MODEL_OBJECT_PARA P
+                                WHERE O.AD_MODEL_OBJECT_ID = P.AD_MODEL_OBJECT_ID
+                                  AND UPPER(P.NAME) = 'AUTH') AS AUTH 
+      FROM AD_MODEL_OBJECT  O
+      WHERE ISACTIVE = 'Y' 
+      AND OBJECT_TYPE = 'R'
+      ORDER BY seqno
+      ]]>
+    </Sql>
+  </SqlMethod>
+  
+  <SqlMethod name="selectFilterMapping" type="preparedStatement" return="multiple">
+    <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      SELECT MAX(MO.ACTION || MO.AD_MODEL_OBJECT_ID) AS NAME, MOM.MAPPINGNAME AS CLASSNAME, MO.CLASSNAME AS DISPLAYNAME 
+      FROM AD_MODEL_OBJECT MO, AD_MODEL_OBJECT_MAPPING MOM
+      WHERE MO.ISACTIVE = 'Y'
+      AND MO.OBJECT_TYPE = 'F' 
+      AND MO.AD_MODEL_OBJECT_ID = MOM.AD_MODEL_OBJECT_ID 
+      AND MOM.ISACTIVE = 'Y'
+      GROUP BY MO.CLASSNAME, MOM.MAPPINGNAME 
+      ORDER BY NAME
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="selectParams" type="preparedStatement" return="multiple">
+    <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      SELECT MAX(LINE) AS  LINE, P.NAME, MAX(P.VALUE) AS VALUE
+      FROM AD_MODEL_OBJECT MO, AD_MODEL_OBJECT_PARA P
+      WHERE MO.ISACTIVE = 'Y'
+      AND MO.OBJECT_TYPE = ? 
+      AND MO.CLASSNAME = ?
+      AND MO.AD_MODEL_OBJECT_ID = P.AD_MODEL_OBJECT_ID 
+      AND P.ISACTIVE = 'Y'
+      GROUP BY P.NAME 
+      ORDER BY LINE, NAME
+      ]]>
+    </Sql>
+    <Parameter name="objectType"/>
+    <Parameter name="classname"/>
+  </SqlMethod>
+  <SqlMethod name="selectListener" type="preparedStatement" return="multiple">
+    <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      SELECT COALESCE(ACTION, '') || AD_MODEL_OBJECT_ID AS NAME, CLASSNAME, CLASSNAME AS DISPLAYNAME
+      FROM AD_MODEL_OBJECT 
+      WHERE ISACTIVE = 'Y' 
+      AND OBJECT_TYPE = 'L'
+      ORDER BY SEQNO, NAME
       ]]>
     </Sql>
   </SqlMethod>

@@ -27,6 +27,7 @@
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
   <PARAMETER id="tdleftTabs" name="leftTabs" default=""/>
   <PARAMETER id="paramWindowId" name = "windowId" attribute="value" default=""/>
+  <PARAMETER id="paramTabId" name = "tabId" attribute="value" default=""/>
   <PARAMETER id="paramMessageAlert" name="buscador" attribute="onload" replace="zz" default=""/>
   <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="paramSessionDate" name="paramSessionDate" attribute="value" default=""/>
@@ -50,6 +51,7 @@
   
   <PARAMETER_TMP id="hasParent"><PARAMETER id="parentOrg" name="parentOrg" default="" attribute="value"/> </PARAMETER_TMP>
   <FIELDS_TMP id="paramHiddenColumns"></FIELDS_TMP>
+  
 
   <structure name="structure1">
 
@@ -57,4 +59,7 @@
 
   <SECTION id="sectionDetail"/>
   </structure>
+
+  <LABELS_TMP id="labelsData"></LABELS_TMP>
+
 </REPORT>

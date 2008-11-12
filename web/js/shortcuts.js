@@ -102,6 +102,7 @@ function getShortcuts(type) {
         new keyArrayItem("TAB", "windowShiftTabKey(false);", null, "shiftKey", false, 'onkeyup'),
         new keyArrayItem("ENTER", "windowCtrlShiftEnterKey();", null, "ctrlKey+shiftKey", false, 'onkeydown'),
         new keyArrayItem("ENTER", "windowCtrlEnterKey();", null, "ctrlKey", false, 'onkeydown'),
+        new keyArrayItem("ENTER", "windowEnterKey();", null, null, false, 'onkeydown'),
         new keyArrayItem("G", "executeWindowButton('buttonRelation');", null, "ctrlKey", false, 'onkeydown')
       );
   } else if (type=='relationSpecificKeys') {
@@ -124,6 +125,14 @@ function getShortcuts(type) {
         new keyArrayItem("END", "windowEndKey();", null, null, true, 'onkeydown'),
         new keyArrayItem("REPAGE", "windowRepageKey();", null, null, true, 'onkeydown'),
         new keyArrayItem("AVPAGE", "windowAvpageKey();", null, null, true, 'onkeydown')
+      );
+  } else if (type=='genericTreeKeys') {
+      this.keyArray.splice(keyArray.length-1, 0,
+        new keyArrayItem("UPARROW", "windowUpKey();", null, null, true, 'onkeydown'),
+        new keyArrayItem("RIGHTARROW", "windowRightKey();", null, null, true, 'onkeydown'),
+        new keyArrayItem("DOWNARROW", "windowDownKey();", null, null, true, 'onkeydown'),
+        new keyArrayItem("LEFTARROW", "windowLeftKey();", null, null, true, 'onkeydown'),
+        new keyArrayItem("SPACE", "windowSpaceKey();", null, null, true, 'onkeydown')
       );
   } else if (type=='popupSpecificKeys') {
       this.keyArray.splice(keyArray.length-1, 0,

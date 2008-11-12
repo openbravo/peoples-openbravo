@@ -22,14 +22,16 @@ import org.openbravo.base.session.SessionFactoryController;
  */
 
 public class ModelSessionFactoryController extends SessionFactoryController {
-  
-  @Override
-  protected void mapModel(Configuration cfg) {
-    cfg.addClass(Table.class);
-    cfg.addClass(Column.class);
-    cfg.addClass(Reference.class);
-    cfg.addClass(RefSearch.class);
-    cfg.addClass(RefTable.class);
-    cfg.addClass(RefList.class);
-  }
+
+    @Override
+    protected void mapModel(Configuration cfg) {
+	cfg.addClass(Table.class);
+	cfg.addClass(Package.class);
+	cfg.addClass(Column.class);
+	cfg.addClass(Reference.class);
+	cfg.addClass(RefSearch.class);
+	cfg.addClass(RefTable.class);
+	cfg.addClass(RefList.class);
+	cfg.addClass(Module.class);
+    }
 }

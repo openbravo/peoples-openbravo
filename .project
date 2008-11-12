@@ -3,7 +3,6 @@
 	<name>openbravo</name>
 	<comment></comment>
 	<projects>
-		<project>OpenbravoCore</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

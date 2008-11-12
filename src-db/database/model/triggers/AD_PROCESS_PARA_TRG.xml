@@ -38,12 +38,15 @@ BEGIN
                 (AD_Process_Para_Trl_ID, AD_Process_Para_ID, AD_Language, AD_Client_ID, AD_Org_ID,
                  IsActive, Created, CreatedBy, Updated, UpdatedBy, NAME,
                  Description, HELP, IsTranslated)
-      SELECT get_uuid(), :NEW.AD_Process_Para_ID, AD_Language, :NEW.AD_Client_ID,
+      SELECT get_uuid(), :NEW.AD_Process_Para_ID, AD_Language.AD_Language, :NEW.AD_Client_ID,
              :NEW.AD_Org_ID, :NEW.IsActive, :NEW.Created, :NEW.CreatedBy,
              :NEW.Updated, :NEW.UpdatedBy, :NEW.NAME, :NEW.Description,
              :NEW.HELP, 'N'
-        FROM AD_Language
-       WHERE IsActive = 'Y' AND IsSystemLanguage = 'Y';
+        FROM AD_Language, ad_module m, ad_process p
+       WHERE AD_Language.IsActive = 'Y' AND IsSystemLanguage = 'Y'
+       AND M.AD_Module_ID = p.AD_Module_ID
+       and p.ad_process_id = :new.ad_process_id
+    AND M.AD_Language != AD_Language.AD_Language;
   END IF;
 
 -- Inserting

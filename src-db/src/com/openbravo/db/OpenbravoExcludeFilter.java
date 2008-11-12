@@ -90,6 +90,8 @@ public class OpenbravoExcludeFilter extends ExcludeFilter {
             "GET_UUID",
             "HEX_TO_INT",
             "UUID_GENERATE_V1",
+            "AD_ORG_CHK_DOCUMENTS",
+            "AD_ORG_CHK_DOC_PAYMENTS",
             "C_CREATE_TEMPORARY_TABLES"
             };
     }

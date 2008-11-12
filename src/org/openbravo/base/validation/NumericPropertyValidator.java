@@ -16,64 +16,66 @@ package org.openbravo.base.validation;
 
 import java.math.BigDecimal;
 
-import org.openbravo.base.model.BaseOBObjectDef;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.util.Check;
 
 /**
- * Validates min and maxValue
+ * Validates numeric properties (min and maxvalue).
  * 
  * @author mtaal
  */
 
-public class NumericPropertyValidator extends PropertyValidator {
-  
-  public static boolean isValidationRequired(Property p) {
-    if (p.isPrimitive() && (p.getPrimitiveType() == Float.class || p.getPrimitiveType() == BigDecimal.class || p.getPrimitiveType() == Integer.class)) {
-      if (p.getMinValue() != null || p.getMaxValue() != null) {
-        return true;
-      }
+public class NumericPropertyValidator extends BasePropertyValidator {
+
+    public static boolean isValidationRequired(Property p) {
+	if (p.isPrimitive()
+		&& (p.getPrimitiveType() == Float.class
+			|| p.getPrimitiveType() == BigDecimal.class || p
+			.getPrimitiveType() == Integer.class)) {
+	    if (p.getMinValue() != null || p.getMaxValue() != null) {
+		return true;
+	    }
+	}
+	return false;
     }
-    return false;
-  }
-  
-  private BigDecimal minValue;
-  private BigDecimal maxValue;
-  
-  public void initialize() {
-    Check.isTrue(getProperty().getFieldLength() > 0, "Fieldlength should be larger than 0 for validation");
-    if (getProperty().getMinValue() != null) {
-      minValue = new BigDecimal(getProperty().getMinValue());
+
+    private BigDecimal minValue;
+    private BigDecimal maxValue;
+
+    public void initialize() {
+	Check.isTrue(getProperty().getFieldLength() > 0,
+		"Fieldlength should be larger than 0 for validation");
+	if (getProperty().getMinValue() != null) {
+	    minValue = new BigDecimal(getProperty().getMinValue());
+	}
+	if (getProperty().getMaxValue() != null) {
+	    maxValue = new BigDecimal(getProperty().getMaxValue());
+	}
     }
-    if (getProperty().getMaxValue() != null) {
-      maxValue = new BigDecimal(getProperty().getMaxValue());
+
+    @Override
+    public String validate(Object value) {
+	if (value == null) {
+	    // mandatory is checked in Hibernate and in the property itself
+	    return null;
+	}
+	Check.isInstanceOf(value, Number.class);
+	final Number num = (Number) value;
+	final double thatValue = num.doubleValue();
+	if (minValue != null) {
+	    if (minValue.doubleValue() > thatValue) {
+		return "Value (" + thatValue
+			+ ") is smaller than the min value: "
+			+ minValue.doubleValue();
+	    }
+	}
+	if (maxValue != null) {
+	    if (maxValue.doubleValue() < thatValue) {
+		return "Value (" + thatValue
+			+ ") is larger than the max value: "
+			+ maxValue.doubleValue();
+	    }
+	}
+	return null;
     }
-  }
-  
-  @Override
-  public String validate(Object o) {
-    if (!(o instanceof BaseOBObjectDef)) {
-      return null;
-    }
-    final BaseOBObjectDef bob = (BaseOBObjectDef) o;
-    final Object value = bob.get(getProperty().getName());
-    if (value == null) {
-      // mandatory is checked in Hibernate
-      return null;
-    }
-    Check.isInstanceOf(value, Number.class);
-    final Number num = (Number) value;
-    final double thatValue = num.doubleValue();
-    if (minValue != null) {
-      if (minValue.doubleValue() > thatValue) {
-        return "Value (" + thatValue + ") is smaller than the min value: " + minValue.doubleValue();
-      }
-    }
-    if (maxValue != null) {
-      if (maxValue.doubleValue() < thatValue) {
-        return "Value (" + thatValue + ") is larger than the max value: " + maxValue.doubleValue();
-      }
-    }
-    return null;
-  }
 }

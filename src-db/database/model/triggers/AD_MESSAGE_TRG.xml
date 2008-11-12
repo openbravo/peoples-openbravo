@@ -27,7 +27,20 @@
 * Title: Message Translation
 * Description:
 ************************************************************************/
+ v_aux NUMBER;
 BEGIN
+  IF :new.AD_Module_ID != '0' THEN
+    SELECT COUNT(*)
+      INTO v_Aux
+      FROM AD_MODULE_DBPREFIX
+     WHERE AD_MODULE_ID = :new.AD_Module_ID
+       AND instr(upper(:new.value), upper(name)||'_') = 1;
+    
+    IF v_Aux = 0 THEN
+      RAISE_APPLICATION_ERROR(-20536, 'Messages must start with its module DB prefix') ;
+    END IF;
+  END IF;
+
   -- Insert AD_Ref_List Trigger
   --  for Translation
   IF INSERTING
@@ -36,11 +49,13 @@ BEGIN
                 (AD_Message_Trl_ID, AD_Message_ID, AD_Language, AD_Client_ID, AD_Org_ID,
                  IsActive, Created, CreatedBy, Updated, UpdatedBy, MsgText,
                  MsgTip, IsTranslated)
-      SELECT get_uuid(), :NEW.AD_Message_ID, AD_Language, :NEW.AD_Client_ID,
+      SELECT get_uuid(), :NEW.AD_Message_ID, AD_Language.AD_Language, :NEW.AD_Client_ID,
              :NEW.AD_Org_ID, :NEW.IsActive, :NEW.Created, :NEW.CreatedBy,
              :NEW.Updated, :NEW.UpdatedBy, :NEW.MsgText, :NEW.MsgTip, 'N'
-        FROM AD_Language
-       WHERE IsActive = 'Y' AND IsSystemLanguage = 'Y';
+        FROM AD_Language, aD_Module m
+       WHERE AD_Language.IsActive = 'Y' AND IsSystemLanguage = 'Y'
+       and m.ad_module_id = :new.ad_module_id
+       and m.ad_language != AD_Language.AD_Language;
   END IF;
 
 -- AD_Message update trigger

@@ -11,7 +11,6 @@
 
 package org.openbravo.base.gen;
 
-
 import org.openarchitectureware.workflow.WorkflowComponent;
 import org.openarchitectureware.workflow.WorkflowContext;
 import org.openarchitectureware.workflow.ast.parser.Location;
@@ -29,36 +28,36 @@ import org.openbravo.base.session.OBPropertiesProvider;
  */
 
 public class ModelProviderComponent implements WorkflowComponent {
-  
-  private String propFile;
-	
-  public void checkConfiguration(Issues arg0) {
-  }
-  
-  public CompositeComponent getContainer() {
-    return null;
-  }
-  
-  public Location getLocation() {
-    return null;
-  }
-  
-  public void invoke(WorkflowContext wc, ProgressMonitor pm, Issues issues) {
-    wc.set("model", ModelProvider.getInstance());
-  }
-  
-  public void setContainer(CompositeComponent arg0) {
-  }
-  
-  public void setLocation(Location arg0) {
-  }
-  
-  public void setPropFile(String propFile) {	  	  
-	  OBPropertiesProvider.getInstance().setProperties(propFile);
-	  this.propFile = propFile;
-  }
-  
-  public String getPropFile() {
-	  return propFile;
-  }
+
+    private String propFile;
+
+    public void checkConfiguration(Issues arg0) {
+    }
+
+    public CompositeComponent getContainer() {
+	return null;
+    }
+
+    public Location getLocation() {
+	return null;
+    }
+
+    public void invoke(WorkflowContext wc, ProgressMonitor pm, Issues issues) {
+	wc.set("model", ModelProvider.getInstance());
+    }
+
+    public void setContainer(CompositeComponent arg0) {
+    }
+
+    public void setLocation(Location arg0) {
+    }
+
+    public void setPropFile(String propFile) {
+	OBPropertiesProvider.getInstance().setProperties(propFile);
+	this.propFile = propFile;
+    }
+
+    public String getPropFile() {
+	return propFile;
+    }
 }

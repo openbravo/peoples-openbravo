@@ -56,7 +56,7 @@
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_C_EMAILDEFINITION">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_C_POC_EMAILEMAILDEFINITION">
+      <foreign-key foreignTable="AD_ORG" name="ADORG_C_POC_EMA_MAILDEFINITION">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_POC_DOCTYPE_TEMPLATE" name="CPOCDOCTYPETEM_CPOC_EMAILDEF">

@@ -21,6 +21,14 @@
 <!--1000000-->              <NAME><![CDATA[Main]]></NAME>
 <!--1000000 ISSUMMARY-->
 <!--1000000-->              <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
+<!--1000000 AD_ORGTYPE_ID-->
+<!--1000000-->              <AD_ORGTYPE_ID><![CDATA[1]]></AD_ORGTYPE_ID>
+<!--1000000 ISPERIODCONTROLALLOWED-->
+<!--1000000-->              <ISPERIODCONTROLALLOWED><![CDATA[Y]]></ISPERIODCONTROLALLOWED>
+<!--1000000 C_CALENDAR_ID-->
+<!--1000000-->              <C_CALENDAR_ID><![CDATA[1000000]]></C_CALENDAR_ID>
+<!--1000000 ISREADY-->
+<!--1000000-->              <ISREADY><![CDATA[Y]]></ISREADY>
 <!--1000000**************--></AD_ORG>
 
 <!--1000001**************--><AD_ORG>
@@ -44,6 +52,14 @@
 <!--1000001-->              <NAME><![CDATA[Accounting Test Org]]></NAME>
 <!--1000001 ISSUMMARY-->
 <!--1000001-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
+<!--1000001 AD_ORGTYPE_ID-->
+<!--1000001-->              <AD_ORGTYPE_ID><![CDATA[1]]></AD_ORGTYPE_ID>
+<!--1000001 ISPERIODCONTROLALLOWED-->
+<!--1000001-->              <ISPERIODCONTROLALLOWED><![CDATA[Y]]></ISPERIODCONTROLALLOWED>
+<!--1000001 C_CALENDAR_ID-->
+<!--1000001-->              <C_CALENDAR_ID><![CDATA[1000001]]></C_CALENDAR_ID>
+<!--1000001 ISREADY-->
+<!--1000001-->              <ISREADY><![CDATA[Y]]></ISREADY>
 <!--1000001**************--></AD_ORG>
 
 <!--1000002**************--><AD_ORG>
@@ -67,6 +83,12 @@
 <!--1000002-->              <NAME><![CDATA[A]]></NAME>
 <!--1000002 ISSUMMARY-->
 <!--1000002-->              <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
+<!--1000002 AD_ORGTYPE_ID-->
+<!--1000002-->              <AD_ORGTYPE_ID><![CDATA[2]]></AD_ORGTYPE_ID>
+<!--1000002 ISPERIODCONTROLALLOWED-->
+<!--1000002-->              <ISPERIODCONTROLALLOWED><![CDATA[N]]></ISPERIODCONTROLALLOWED>
+<!--1000002 ISREADY-->
+<!--1000002-->              <ISREADY><![CDATA[Y]]></ISREADY>
 <!--1000002**************--></AD_ORG>
 
 <!--1000003**************--><AD_ORG>
@@ -90,6 +112,12 @@
 <!--1000003-->              <NAME><![CDATA[A1]]></NAME>
 <!--1000003 ISSUMMARY-->
 <!--1000003-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
+<!--1000003 AD_ORGTYPE_ID-->
+<!--1000003-->              <AD_ORGTYPE_ID><![CDATA[2]]></AD_ORGTYPE_ID>
+<!--1000003 ISPERIODCONTROLALLOWED-->
+<!--1000003-->              <ISPERIODCONTROLALLOWED><![CDATA[N]]></ISPERIODCONTROLALLOWED>
+<!--1000003 ISREADY-->
+<!--1000003-->              <ISREADY><![CDATA[Y]]></ISREADY>
 <!--1000003**************--></AD_ORG>
 
 <!--1000004**************--><AD_ORG>
@@ -113,6 +141,12 @@
 <!--1000004-->              <NAME><![CDATA[A2]]></NAME>
 <!--1000004 ISSUMMARY-->
 <!--1000004-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
+<!--1000004 AD_ORGTYPE_ID-->
+<!--1000004-->              <AD_ORGTYPE_ID><![CDATA[2]]></AD_ORGTYPE_ID>
+<!--1000004 ISPERIODCONTROLALLOWED-->
+<!--1000004-->              <ISPERIODCONTROLALLOWED><![CDATA[N]]></ISPERIODCONTROLALLOWED>
+<!--1000004 ISREADY-->
+<!--1000004-->              <ISREADY><![CDATA[Y]]></ISREADY>
 <!--1000004**************--></AD_ORG>
 
 <!--1000005**************--><AD_ORG>
@@ -136,6 +170,12 @@
 <!--1000005-->              <NAME><![CDATA[B]]></NAME>
 <!--1000005 ISSUMMARY-->
 <!--1000005-->              <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
+<!--1000005 AD_ORGTYPE_ID-->
+<!--1000005-->              <AD_ORGTYPE_ID><![CDATA[2]]></AD_ORGTYPE_ID>
+<!--1000005 ISPERIODCONTROLALLOWED-->
+<!--1000005-->              <ISPERIODCONTROLALLOWED><![CDATA[N]]></ISPERIODCONTROLALLOWED>
+<!--1000005 ISREADY-->
+<!--1000005-->              <ISREADY><![CDATA[Y]]></ISREADY>
 <!--1000005**************--></AD_ORG>
 
 <!--1000006**************--><AD_ORG>
@@ -159,6 +199,12 @@
 <!--1000006-->              <NAME><![CDATA[B1]]></NAME>
 <!--1000006 ISSUMMARY-->
 <!--1000006-->              <ISSUMMARY><![CDATA[Y]]></ISSUMMARY>
+<!--1000006 AD_ORGTYPE_ID-->
+<!--1000006-->              <AD_ORGTYPE_ID><![CDATA[2]]></AD_ORGTYPE_ID>
+<!--1000006 ISPERIODCONTROLALLOWED-->
+<!--1000006-->              <ISPERIODCONTROLALLOWED><![CDATA[N]]></ISPERIODCONTROLALLOWED>
+<!--1000006 ISREADY-->
+<!--1000006-->              <ISREADY><![CDATA[Y]]></ISREADY>
 <!--1000006**************--></AD_ORG>
 
 <!--1000007**************--><AD_ORG>
@@ -182,6 +228,12 @@
 <!--1000007-->              <NAME><![CDATA[B2]]></NAME>
 <!--1000007 ISSUMMARY-->
 <!--1000007-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
+<!--1000007 AD_ORGTYPE_ID-->
+<!--1000007-->              <AD_ORGTYPE_ID><![CDATA[2]]></AD_ORGTYPE_ID>
+<!--1000007 ISPERIODCONTROLALLOWED-->
+<!--1000007-->              <ISPERIODCONTROLALLOWED><![CDATA[N]]></ISPERIODCONTROLALLOWED>
+<!--1000007 ISREADY-->
+<!--1000007-->              <ISREADY><![CDATA[Y]]></ISREADY>
 <!--1000007**************--></AD_ORG>
 
 <!--1000008**************--><AD_ORG>
@@ -205,6 +257,12 @@
 <!--1000008-->              <NAME><![CDATA[B11]]></NAME>
 <!--1000008 ISSUMMARY-->
 <!--1000008-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
+<!--1000008 AD_ORGTYPE_ID-->
+<!--1000008-->              <AD_ORGTYPE_ID><![CDATA[2]]></AD_ORGTYPE_ID>
+<!--1000008 ISPERIODCONTROLALLOWED-->
+<!--1000008-->              <ISPERIODCONTROLALLOWED><![CDATA[N]]></ISPERIODCONTROLALLOWED>
+<!--1000008 ISREADY-->
+<!--1000008-->              <ISREADY><![CDATA[Y]]></ISREADY>
 <!--1000008**************--></AD_ORG>
 
 <!--1000009**************--><AD_ORG>
@@ -228,6 +286,12 @@
 <!--1000009-->              <NAME><![CDATA[B12]]></NAME>
 <!--1000009 ISSUMMARY-->
 <!--1000009-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
+<!--1000009 AD_ORGTYPE_ID-->
+<!--1000009-->              <AD_ORGTYPE_ID><![CDATA[2]]></AD_ORGTYPE_ID>
+<!--1000009 ISPERIODCONTROLALLOWED-->
+<!--1000009-->              <ISPERIODCONTROLALLOWED><![CDATA[N]]></ISPERIODCONTROLALLOWED>
+<!--1000009 ISREADY-->
+<!--1000009-->              <ISREADY><![CDATA[Y]]></ISREADY>
 <!--1000009**************--></AD_ORG>
 
 </data>

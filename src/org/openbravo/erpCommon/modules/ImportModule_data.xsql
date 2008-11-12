@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2008 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+
+
+<SqlClass name="ImportModuleData" package="org.openbravo.erpCommon.modules">
+   <SqlMethod name="selectInstalled" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT AD_MODULE_ID, VERSION, NAME, '' AS TOTAL 
+         FROM AD_MODULE
+      </Sql>
+   </SqlMethod>
+   
+   
+   
+   <SqlMethod name="existsVersion" type="preparedStatement" return="boolean">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT COUNT(*) AS TOTAL
+          FROM AD_MODULE
+         WHERE COALESCE(UPDATE_AVAILABLE,'.') = ?
+      </Sql>
+      <Parameter name="moduleVersionNo"/>
+   </SqlMethod>
+   
+   <SqlMethod name="moduleInstalled" type="preparedStatement" return="boolean">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT COUNT(*) AS TOTAL
+          FROM AD_MODULE
+         WHERE AD_MODULE_ID = ?
+      </Sql>
+      <Parameter name="moduleId"/>
+   </SqlMethod>
+   
+   <SqlMethod name="updateNewVersionAvailable" type="preparedStatement" return="rowcount">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        UPDATE AD_MODULE
+           SET UPDATE_AVAILABLE = ?,
+               UPDATE_VER_ID = ?
+         WHERE AD_MODULE_ID = ?
+      </Sql>
+      <Parameter name="moduleVersionNo"/>
+      <Parameter name="moduleVersionId"/>
+      <Parameter name="moduleId"/>
+   </SqlMethod>
+   
+   <SqlMethod name="setModuleUpdated" type="preparedStatement" return="rowcount">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        UPDATE AD_MODULE
+           SET UPDATE_AVAILABLE = null,
+               STATUS = 'I'           
+         WHERE AD_MODULE_ID = ?
+      </Sql>
+      <Parameter name="moduleId"/>
+   </SqlMethod>
+   
+   <SqlMethod name="selectSeqNo" type="preparedStatement" return="string">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT MAX(COALESCE(SEQNO,0))
+          FROM AD_MODULE
+      </Sql>
+   </SqlMethod>
+   
+   <SqlMethod name="insertLog" type="preparedStatement" return="rowcount">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        INSERT INTO AD_MODULE_LOG
+              (AD_MODULE_LOG_ID, AD_CLIENT_ID, AD_ORG_ID,
+              ISACTIVE, CREATED, CREATEDBY,
+              UPDATED, UPDATEDBY, AD_MODULE_ID, 
+              AD_MODULE_VERSION_ID, MODULENAME, LOG, 
+              ACTION)
+            VALUES
+              (get_uuid(), '0', '0',
+              'Y', now(), ?,
+              now(), ?, ?,
+              ?, ?, ?,
+              ?)
+      </Sql>
+      <Parameter name="user"/>
+      <Parameter name="user"/>
+      <Parameter name="moduleId"/>
+      <Parameter name="moduleVersionId"/>
+      <Parameter name="name"/>
+      <Parameter name="log"/>
+      <Parameter name="action"/>
+   </SqlMethod>
+   
+   <SqlMethod name="setInDevelopment" type="preparedStatement" return="rowcount">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        UPDATE AD_MODULE
+           SET ISINDEVELOPMENT = 'Y'
+         WHERE AD_MODULE_ID = ?
+      </Sql>
+      <Parameter name="moduleId"/>
+   </SqlMethod>
+   
+   <SqlMethod name="deleteDependencies" type="preparedStatement" return="rowcount">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        DELETE FROM AD_MODULE_DEPENDENCY
+         WHERE AD_MODULE_ID = ?
+      </Sql>
+      <Parameter name="moduleId"/>
+   </SqlMethod>
+   
+   <SqlMethod name="deleteDBPrefix" type="preparedStatement" return="rowcount">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        DELETE FROM AD_MODULE_DBPREFIX
+         WHERE AD_MODULE_ID = ?
+      </Sql>
+      <Parameter name="moduleId"/>
+   </SqlMethod>
+   
+   <SqlMethod name="deleteModule" type="preparedStatement" return="rowcount">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        DELETE FROM AD_MODULE
+         WHERE AD_MODULE_ID = ?
+      </Sql>
+      <Parameter name="moduleId"/>
+   </SqlMethod>
+</SqlClass>

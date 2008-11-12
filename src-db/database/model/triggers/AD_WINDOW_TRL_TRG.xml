@@ -41,10 +41,25 @@
   WHERE AD_Language=:new.AD_Language
     AND EXISTS
     (
-    SELECT *
-    FROM AD_Menu m
+    SELECT 1
+    FROM AD_Menu m, ad_module mo
     WHERE m.AD_Menu_ID=AD_Menu_Trl.AD_Menu_ID
       AND m.AD_Window_ID=:new.AD_Window_ID
+      and m.ad_module_id = mo.ad_module_id
+      and mo.ad_language!= :new.AD_Language
+    )
+    ;
+    
+  UPDATE AD_Menu m
+    SET Name=:new.Name,
+    Description=:new.Description
+  WHERE EXISTS
+    (
+    SELECT 1
+    FROM  ad_module mo
+    WHERE m.AD_Window_ID=:new.AD_Window_ID
+      and m.ad_module_id = mo.ad_module_id
+      and mo.ad_language = :new.AD_Language
     )
     ;
   -- Update Workflow
@@ -55,11 +70,30 @@
   WHERE AD_Language=:new.AD_Language
     AND EXISTS
     (
-    SELECT *
-    FROM AD_WF_Node n
+    SELECT 1
+    FROM AD_WF_Node n, ad_module m, ad_workflow w
     WHERE n.AD_WF_Node_ID=AD_WF_Node_Trl.AD_WF_Node_ID
       AND n.AD_Window_ID=:new.AD_Window_ID
       AND n.IsCentrallyMaintained='Y'
+      and w.ad_workflow_id = n.ad_workflow_id
+      and m.ad_module_id = w.ad_module_id
+      and m.ad_language != :new.AD_Language
+    )
+    ;
+    
+    UPDATE AD_WF_Node n
+    SET Name=:new.Name,
+    Description=:new.Description,
+    Help=:new.Help
+  WHERE EXISTS
+    (
+    SELECT 1
+    FROM  ad_module m, ad_workflow w
+    WHERE n.AD_Window_ID=:new.AD_Window_ID
+      AND n.IsCentrallyMaintained='Y'
+      and w.ad_workflow_id = n.ad_workflow_id
+      and m.ad_module_id = w.ad_module_id
+      and m.ad_language = :new.AD_Language
     )
     ;
       END IF;

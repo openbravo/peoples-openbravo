@@ -39,6 +39,7 @@
   v_Result NUMBER:=1; -- 0=failure
   v_Record_ID VARCHAR2(32);
   v_AD_User_ID VARCHAR2(32):='0';
+  v_module_id varchar2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -87,10 +88,28 @@
     END IF;
     DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
   BEGIN --BODY
+   select max(t.ad_module_id)
+     into v_module_id
+     from ad_tab t, ad_module m
+    where ad_tab_id = v_Record_ID
+      and m.ad_module_id = t.ad_module_id
+      and ISINDEVELOPMENT ='Y';
+      
+    if v_module_id is null then
+      select max(ad_module_id)
+        into v_module_id
+        from ad_module
+       where isdefault = 'Y';
+      if v_module_id is null then
+        v_module_id := '0';
+      end if;
+    end if;
+  
     SELECT AD_Table_ID
     INTO v_AD_Table_ID
     FROM AD_Tab
     WHERE AD_Tab_ID=v_Record_ID  AND AD_Table_ID!='291'; -- C_BPartner (multiple tabs)
+    
     FOR Cur_Column IN(-- added by Pablo Sarobe
     SELECT c.Columnname, c.Name, c.Description, c.AD_Column_ID, c.FieldLength, t.tablename
     FROM AD_Column c, AD_Table t
@@ -144,14 +163,14 @@
           created, createdby, updated, updatedby,
           name, description, seqno, AD_Tab_ID,
           AD_Column_ID, DisplayLength, IsCentrallyMaintained,
-          isdisplayed, isreadonly, sortno, issameline, showinrelation
+          isdisplayed, isreadonly, sortno, issameline, showinrelation, ad_module_id
         )
         VALUES
         (v_NextNo, '0', '0', 'Y',
         now(), '0', now(), '0',
         Cur_Column.Name, Cur_Column.Description, v_SeqNo, v_Record_ID,
         Cur_Column.AD_Column_ID, v_DisplayLength, 'Y', 
-        v_isDisplayed, v_isReadOnly, v_sortNo, v_sameLine, v_showInRelation) ;
+        v_isDisplayed, v_isReadOnly, v_sortNo, v_sameLine, v_showInRelation, v_module_id) ;
       --
       v_count:=v_count + 1;
       -- Added by Pablo Sarobe

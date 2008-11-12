@@ -34,6 +34,11 @@ public class MultipartRequest implements FieldProvider {
     readSubmittedFile();
   }
 
+  public MultipartRequest(VariablesBase vars, InputStream in, boolean firstLineHeads, String format, FieldProvider[] data) throws IOException {
+    init(vars, "", firstLineHeads, format, data);
+    readSubmittedFile(in);
+  }
+  
   public String getField(String index) {
     int i = Integer.valueOf(index).intValue();
     if (i>=vector.size()) return null;
@@ -66,7 +71,7 @@ public class MultipartRequest implements FieldProvider {
 
   public void init(VariablesBase vars, String filename, boolean firstLineHeads, String format, FieldProvider[] data) throws IOException {
     if (vars==null) throw new IllegalArgumentException("VariablesBase cannot be null");
-    if (filename==null || filename.equals("")) throw new IllegalArgumentException("filename cannot be null");
+    //if (filename==null || filename.equals("")) throw new IllegalArgumentException("filename cannot be null");
     this.vars = vars;
     this.filename = filename;
     this.firstRowHeads = firstLineHeads;
@@ -107,12 +112,8 @@ public class MultipartRequest implements FieldProvider {
     return data;
   }
 
-
-  protected void readSubmittedFile() throws IOException {
-    FileItem fi = vars.getMultiFile(filename);
-    if (fi==null) throw new IOException("Invalid filename: " + filename);
-    InputStream in = fi.getInputStream();
-    if (in==null) throw new IOException("Corrupted filename: " + filename);
+  protected void readSubmittedFile(InputStream in) throws IOException{
+    
 
     Vector<FieldProvider> vector = new Vector<FieldProvider>();
     int result = 0;
@@ -154,4 +155,13 @@ public class MultipartRequest implements FieldProvider {
     objectFieldProvider = new FieldProvider[vector.size()];
     vector.copyInto(objectFieldProvider);
   }
+
+  protected void readSubmittedFile() throws IOException {
+    FileItem fi = vars.getMultiFile(filename);
+    if (fi==null) throw new IOException("Invalid filename: " + filename);
+    InputStream in = fi.getInputStream();
+    if (in==null) throw new IOException("Corrupted filename: " + filename);
+    readSubmittedFile(in);
+  }
+    
 }

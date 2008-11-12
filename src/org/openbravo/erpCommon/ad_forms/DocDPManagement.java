@@ -42,8 +42,8 @@ public class DocDPManagement extends AcctServer {
      *  Constructor
      *  @param AD_Client_ID AD_Client_ID
      */
-    public DocDPManagement(String AD_Client_ID, ConnectionProvider connectionProvider){
-        super(AD_Client_ID, connectionProvider);
+    public DocDPManagement(String AD_Client_ID, String AD_Org_ID, ConnectionProvider connectionProvider){
+        super(AD_Client_ID, AD_Org_ID, connectionProvider);
     }
 
 public void loadObjectFieldProvider(ConnectionProvider conn, String AD_Client_ID, String Id) throws ServletException{

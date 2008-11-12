@@ -87,4 +87,13 @@
       <Parameter name="text"/>
       <Parameter name="adNoteId"/>
    </SqlMethod>
+   <SqlMethod name="selectOrg" type="preparedStatement" return="String" default="">
+     <SqlMethodComment></SqlMethodComment>
+     <Sql><![CDATA[
+       SELECT P_STRING FROM AD_PINSTANCE_PARA
+       WHERE AD_PINSTANCE_ID = ?
+       AND PARAMETERNAME = 'AD_Org_ID'
+     ]]></Sql>
+     <Parameter name="adPinstanceId"/>
+   </SqlMethod>
 </SqlClass>

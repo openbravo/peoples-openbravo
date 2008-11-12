@@ -23,6 +23,12 @@
 <!--0-->              <DESCRIPTION><![CDATA[All Organizations]]></DESCRIPTION>
 <!--0 ISSUMMARY-->
 <!--0-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
+<!--0 AD_ORGTYPE_ID-->
+<!--0-->              <AD_ORGTYPE_ID><![CDATA[0]]></AD_ORGTYPE_ID>
+<!--0 ISPERIODCONTROLALLOWED-->
+<!--0-->              <ISPERIODCONTROLALLOWED><![CDATA[N]]></ISPERIODCONTROLALLOWED>
+<!--0 ISREADY-->
+<!--0-->              <ISREADY><![CDATA[Y]]></ISREADY>
 <!--0**************--></AD_ORG>
 
 </data>

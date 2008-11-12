@@ -40,12 +40,14 @@ BEGIN
                 (AD_Process_Trl_ID, AD_Process_ID, AD_Language, AD_Client_ID, AD_Org_ID,
                  IsActive, Created, CreatedBy, Updated, UpdatedBy, NAME,
                  Description, HELP, IsTranslated)
-      SELECT get_uuid(), :NEW.AD_Process_ID, AD_Language, :NEW.AD_Client_ID,
+      SELECT get_uuid(), :NEW.AD_Process_ID, AD_Language.AD_Language, :NEW.AD_Client_ID,
              :NEW.AD_Org_ID, :NEW.IsActive, :NEW.Created, :NEW.CreatedBy,
              :NEW.Updated, :NEW.UpdatedBy, :NEW.NAME, :NEW.Description,
              :NEW.HELP, 'N'
-        FROM AD_Language
-       WHERE IsActive = 'Y' AND IsSystemLanguage = 'Y';
+        FROM AD_Language, ad_module m
+       WHERE AD_Language.IsActive = 'Y' AND IsSystemLanguage = 'Y'
+       and m.ad_module_id = :new.ad_module_id
+       and m.ad_language != AD_Language.AD_Language;
 
     -- Add Access for all Roles
     INSERT INTO AD_Process_Access
@@ -79,7 +81,12 @@ BEGIN
              Description = :NEW.Description,
              HELP = :NEW.HELP,
              Updated = now()
-       WHERE AD_Process_ID = :NEW.AD_Process_ID;
+       WHERE AD_Process_ID = :NEW.AD_Process_ID
+         and exists (select 1
+                       from ad_module m, ad_module m1
+                       where m.ad_module_id = ad_column.ad_module_id
+                        and m1.ad_module_id = :new.ad_module_id
+                        and m1.ad_language = m.ad_language);
 
       UPDATE AD_Field
          SET NAME = :NEW.NAME,
@@ -87,11 +94,30 @@ BEGIN
              HELP = :NEW.HELP,
              Updated = now()
        WHERE EXISTS (
-               SELECT *
-                 FROM AD_Column c
+               SELECT 1
+                 FROM AD_Column c, ad_module m, ad_module m1
                 WHERE AD_Field.AD_Column_ID = c.AD_Column_ID
                   AND c.AD_Process_ID = :NEW.AD_Process_ID
-                  AND AD_Field.IsCentrallyMaintained = 'Y');
+                  AND AD_Field.IsCentrallyMaintained = 'Y'
+                  and m.ad_module_id = AD_Field.ad_module_id
+                  and m1.ad_module_id = :new.ad_module_id
+                  and m1.ad_language = m1.ad_language);
+                  
+      UPDATE AD_Field_trl
+         SET NAME = :NEW.NAME,
+             Description = :NEW.Description,
+             HELP = :NEW.HELP,
+             Updated = now(),
+             istranslated = 'Y'
+       WHERE EXISTS (
+               SELECT 1
+                 FROM AD_Column c, ad_module m, ad_module m1, ad_field
+                WHERE AD_Field.AD_Column_ID = c.AD_Column_ID
+                  AND c.AD_Process_ID = :NEW.AD_Process_ID
+                  AND AD_Field.IsCentrallyMaintained = 'Y'
+                  and m.ad_module_id = AD_Field.ad_module_id
+                  and m1.ad_module_id = :new.ad_module_id
+                  and m1.ad_language != m1.ad_language);
     END IF;
   END IF;
 

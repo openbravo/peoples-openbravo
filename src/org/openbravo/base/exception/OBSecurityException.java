@@ -11,27 +11,28 @@
 package org.openbravo.base.exception;
 
 /**
- * Unchecked exception which also logs itself.
+ * Unchecked exception which also logs itself. Is used in case of Security
+ * violation. For example updating an object of another client.
  * 
  * @author mtaal
  */
 public class OBSecurityException extends OBException {
-  
-  private static final long serialVersionUID = 1L;
-  
-  public OBSecurityException() {
-    super();
-  }
-  
-  public OBSecurityException(String message, Throwable cause) {
-    super(message, cause);
-  }
-  
-  public OBSecurityException(String message) {
-    super(message);
-  }
-  
-  public OBSecurityException(Throwable cause) {
-    super(cause);
-  }
+
+    private static final long serialVersionUID = 1L;
+
+    public OBSecurityException() {
+	super();
+    }
+
+    public OBSecurityException(String message, Throwable cause) {
+	super(message, cause);
+    }
+
+    public OBSecurityException(String message) {
+	super(message);
+    }
+
+    public OBSecurityException(Throwable cause) {
+	super(cause);
+    }
 }

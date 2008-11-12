@@ -64,13 +64,13 @@ doc: generates the api for the project.
   </target>
 
   <target name="compileSqlc" depends="sqlc">
-    <javac srcdir="${build.wad.sqlc}/src" destdir="${build.wad}" encoding="UTF-8" debug="${debug.level}">
+    <javac srcdir="${build.wad.sqlc}/src" destdir="${build.wad}" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
       <classpath refid="wad.class.path"/>
     </javac>
   </target>
 
   <target name="compile" depends="clean, compileSqlc">
-    <javac srcdir="${build.wad.src}" destdir="${build.wad}" deprecation="on" encoding="UTF-8" debug="${debug.level}">
+    <javac srcdir="${build.wad.src}" destdir="${build.wad}" deprecation="on" encoding="UTF-8" debug="true" debuglevel="lines,vars,source">
       <classpath refid="wad.class.path"/>  
     </javac>
     <copy todir="${build.wad}" encoding="UTF-8">

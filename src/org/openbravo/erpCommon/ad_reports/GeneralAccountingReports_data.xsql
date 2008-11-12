@@ -26,7 +26,7 @@
   <SqlMethod name="selectCombo" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        SELECT A_O.AD_ORG_ID AS ID, A_O.NAME, '' as pagebreak, '' AS PADRE 
+        SELECT A_O.AD_ORG_ID AS ID, A_O.NAME, '' as pagebreak, '' AS PADRE, '' AS ISBALANCED
         FROM AD_ORG A_O, AD_ROLE_ORGACCESS A_R_O, AD_ROLE R
         WHERE A_R_O.AD_ORG_ID = A_O.AD_ORG_ID 
         AND A_R_O.ISACTIVE = 'Y' 
@@ -41,7 +41,7 @@
    <SqlMethod name="selectRpt" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-		SELECT C_ACCT_RPT_ID AS ID, NAME 
+		SELECT C_ACCT_RPT_ID AS ID, NAME, ISORGBALANCED AS ISBALANCED
 		FROM C_ACCT_RPT
 		WHERE AD_ORG_ID IN ('1')
 		AND AD_CLIENT_ID IN ('1')

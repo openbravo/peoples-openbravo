@@ -19,7 +19,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All portions are Copyright (C) 2001-2008 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -31,6 +31,9 @@
   v_IsProcessing CHAR(1) ;
   v_IsProcessed CHAR(1) ;
   v_Result NUMBER:=1; -- Success
+  v_is_included NUMBER:=0;
+  v_is_ready AD_Org.IsReady%TYPE;
+  v_is_tr_allow AD_OrgType.IsTransactionsAllowed%TYPE;
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -492,6 +495,26 @@
     /**************************************************************************
       * Start Processing ------------------------------------------------------
       *************************************************************************/
+      -- Check the header belongs to a organization where transactions are posible and ready to use
+      SELECT AD_Org.IsReady, Ad_OrgType.IsTransactionsAllowed
+      INTO v_is_ready, v_is_tr_allow
+      FROM C_ORDER, AD_Org, AD_OrgType
+      WHERE AD_Org.AD_Org_ID=C_ORDER.AD_Org_ID
+      AND AD_Org.AD_OrgType_ID=AD_OrgType.AD_OrgType_ID
+      AND C_ORDER.C_ORDER_ID=v_Record_ID;
+      IF (v_is_ready='N') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotReady@');
+      END IF;
+      IF (v_is_tr_allow='N') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotTransAllowed@');
+      END IF;
+      
+      SELECT AD_ORG_CHK_DOCUMENTS('C_ORDER', 'C_ORDERLINE', v_Record_ID, 'C_ORDER_ID', 'C_ORDER_ID') INTO v_is_included FROM dual;
+      IF (v_is_included=-1) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@LinesAndHeaderDifferentLEorBU@');
+      END IF;
+      
+      
       IF(p_PInstance_ID IS NOT NULL) THEN
         v_ResultStr:='LockingOrder';
         UPDATE C_ORDER  SET Processing='Y'  WHERE C_Order_ID=v_Record_ID;

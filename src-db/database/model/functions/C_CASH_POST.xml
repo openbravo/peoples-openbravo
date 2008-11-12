@@ -20,7 +20,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 1999-2005 Openbravo, S.L
+  * Contributions are Copyright (C) 1999-2008 Openbravo, S.L
   *************************************************************************
   * $Id: C_Cash_Post.sql,v 1.10 2003/03/17 20:32:25 jjanke Exp $
   ***
@@ -50,6 +50,10 @@
 	v_CashLine_ID VARCHAR2(32);
 	v_Settlement_Cancel_ID VARCHAR2(32);
 	v_ispaid CHAR(1);
+  v_is_included NUMBER:=0;
+  v_available_period NUMBER:=0;
+  v_is_ready AD_Org.IsReady%TYPE;
+  v_is_tr_allow AD_OrgType.IsTransactionsAllowed%TYPE;
 	--Finish added by P.Sarobe
   --  Parameter
   TYPE RECORD IS REF CURSOR;
@@ -100,12 +104,12 @@
       POSTED,
       AD_Org_ID,
       AD_Client_ID,
-      C_CASHBOOK_ID
+      C_CASHBOOK_ID, DateAcct
     INTO v_Processed,
       v_Posted,
       v_AD_Org_ID,
       v_AD_Client_ID,
-      v_C_CashBook_ID
+      v_C_CashBook_ID, v_dateCash
     FROM C_CASH
     WHERE C_Cash_ID=v_Record_ID;
     /* Not needed: payments are updated to pending status
@@ -211,6 +215,48 @@
       /*
       *  Checking Restrictions
       */
+      -- Check the header belongs to a organization where transactions are posible and ready to use
+      SELECT AD_Org.IsReady, Ad_OrgType.IsTransactionsAllowed
+      INTO v_is_ready, v_is_tr_allow
+      FROM C_CASH, AD_Org, AD_OrgType
+      WHERE AD_Org.AD_Org_ID=C_CASH.AD_Org_ID
+      AND AD_Org.AD_OrgType_ID=AD_OrgType.AD_OrgType_ID
+      AND C_CASH.C_CASH_ID=v_Record_ID;
+      IF (v_is_ready='N') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotReady@');
+      END IF;
+      IF (v_is_tr_allow='N') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotTransAllowed@');
+      END IF;
+      
+      SELECT AD_ORG_CHK_DOCUMENTS('C_CASH', 'C_CASHLINE', v_Record_ID, 'C_CASH_ID', 'C_CASH_ID') INTO v_is_included FROM dual;
+      IF (v_is_included=-1) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@LinesAndHeaderDifferentLEorBU@');
+      END IF;
+      
+      SELECT AD_ORG_CHK_DOC_PAYMENTS('C_CASH', 'C_CASHLINE', v_Record_ID, 'C_CASH_ID', 'C_CASH_ID', 'C_DEBT_PAYMENT_ID') INTO v_is_included FROM dual;
+      IF (v_is_included=-1) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@PaymentsAndHeaderDifferentLEorBU@');
+      END IF;
+      
+      -- Check the period control is opened    
+      SELECT COUNT(C_Period_ID)
+      INTO v_available_period
+      FROM C_Period
+      WHERE v_dateCash BETWEEN STARTDATE AND ENDDATE
+      AND EXISTS (SELECT 1
+                  FROM C_PeriodControl
+                  WHERE C_PeriodControl.C_Period_ID=C_Period.C_Period_ID 
+                  AND DocBaseType='CMC'
+                  AND AD_Org_ID=v_AD_Org_ID
+                  AND PeriodStatus='O'
+                  );
+      
+      IF (v_available_period<>1) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@PeriodNotAvailable@');
+      END IF;
+      
+      
       v_ResultStr:='CheckingRestrictions - C_CASH ORG IS IN C_CASHBOOK ORG TREE';
       SELECT COUNT(*)
       INTO v_count

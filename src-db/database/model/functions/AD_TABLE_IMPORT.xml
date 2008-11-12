@@ -39,6 +39,9 @@
   v_Result NUMBER:=1; -- 0=failure
   v_Record_ID VARCHAR2(32);
   v_AD_User_ID VARCHAR2(32):='0';
+  v_module_table_id varchar2(32);
+  v_module_id varchar2(32);
+  db_prefix varchar2(30);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -100,6 +103,14 @@
     ELSE
       v_SeqNo:=0;
     END IF;
+    
+          
+      select p.ad_module_id
+        into v_module_table_id
+        from ad_table t, ad_package p
+      where t.ad_table_id = v_Record_ID
+        and t.ad_package_id = p.ad_package_id;
+        
     FOR Cur_Column IN
       (SELECT Column_Name, Data_Type, Data_Length, Nullable, AD_Table_ID, -- added by Ismael Ciordia
         uc.DATA_PRECISION, uc.DATA_SCALE, DATA_DEFAULT, Table_Name, uc.COLUMN_ID
@@ -231,6 +242,19 @@
                               AND U.COLUMN_NAME = UPPER(C.COLUMNNAME))
          WHERE AD_TABLE_ID = Cur_Column.AD_Table_ID;
       END IF;
+
+      IF substr(upper(v_columnName),1,3)='EM_' then
+        db_prefix := substr(v_columnName,4,length(v_columnName)-instr(v_columnName,'_',1,2));
+        select max(ad_module_id)
+          into v_module_id
+          from ad_module_dbprefix
+         where name = db_prefix;
+        if v_module_id is null then
+          v_module_id := v_module_table_id;
+        end if;
+      else
+        v_module_id := v_module_table_id;
+      end if;
       
       INSERT
       INTO AD_COLUMN
@@ -242,7 +266,7 @@
           ISMANDATORY, ISIDENTIFIER, SEQNO, ISTRANSLATED,
           ISENCRYPTED, ISUPDATEABLE, AD_REFERENCE_VALUE_ID,
           AD_VAL_RULE_ID, DEFAULTVALUE, ISSESSIONATTR, 
-          POSITION
+          POSITION, aD_module_id
         )
         VALUES
         (v_NextNo, '0', '0', 'Y',
@@ -251,7 +275,7 @@
         v_AD_Reference_ID, v_FieldLength, v_IsKey, v_IsParent,
        (CASE Cur_Column.Nullable WHEN 'Y' THEN 'N' ELSE 'Y' END),
         v_IsIdentifier, v_SeqNo, 'N', 'N', v_IsUpdateable, v_AD_Reference_Value_ID, v_AD_Val_Rule_ID, v_DefaultValue, v_IsSessionAttr,
-        Cur_Column.COLUMN_ID) ;
+        Cur_Column.COLUMN_ID, v_module_id) ;
       --
       v_count:=v_count + 1;
       -- Added by Ismael Ciordia

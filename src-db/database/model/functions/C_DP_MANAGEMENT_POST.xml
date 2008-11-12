@@ -19,7 +19,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All portions are Copyright (C) 2001-2008 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -53,6 +53,11 @@
   v_CashLine_ID VARCHAR2(32);
   v_ispaid CHAR(1);
   v_Settlement_Cancel_ID VARCHAR2(32);
+  v_is_included NUMBER:=0;
+  v_available_period NUMBER:=0;
+  v_is_ready AD_Org.IsReady%TYPE;
+  v_is_tr_allow AD_OrgType.IsTransactionsAllowed%TYPE;
+  v_DocType_ID VARCHAR2(32);
   --  Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -100,11 +105,11 @@
     SELECT UpdatedBy,
       AD_Client_ID,
       Processed,
-      Posted
+      Posted, AD_Org_ID, DateAcct, C_DocType_ID
     INTO v_AD_User_ID,
       v_AD_Client_ID,
       v_processed,
-      v_posted
+      v_posted, v_AD_Org_ID, v_Date, v_DocType_ID
     FROM c_DP_Management
     WHERE c_DP_Management_ID=v_Record_ID;
 
@@ -277,8 +282,49 @@
        RAISE_APPLICATION_ERROR(-20000, '@Inline@'||v_line||' '||'@LaterChangeStatus@') ;
       end if;
     END IF;--FINISH_PROCESS
-    --Processing...
     IF(NOT FINISH_PROCESS) THEN
+      -- Check the header belongs to a organization where transactions are posible and ready to use
+      SELECT AD_Org.IsReady, Ad_OrgType.IsTransactionsAllowed
+      INTO v_is_ready, v_is_tr_allow
+      FROM C_DP_MANAGEMENT, AD_Org, AD_OrgType
+      WHERE AD_Org.AD_Org_ID=C_DP_MANAGEMENT.AD_Org_ID
+      AND AD_Org.AD_OrgType_ID=AD_OrgType.AD_OrgType_ID
+      AND C_DP_MANAGEMENT.C_DP_MANAGEMENT_ID=v_Record_ID;
+      IF (v_is_ready='N') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotReady@');
+      END IF;
+      IF (v_is_tr_allow='N') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotTransAllowed@');
+      END IF;    
+    
+      SELECT AD_ORG_CHK_DOCUMENTS('C_DP_MANAGEMENT', 'C_DP_MANAGEMENTLINE', v_Record_ID, 'C_DP_MANAGEMENT_ID', 'C_DP_MANAGEMENT_ID') INTO v_is_included FROM dual;
+      IF (v_is_included=-1) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@LinesAndHeaderDifferentLEorBU@');
+      END IF;
+      
+      SELECT AD_ORG_CHK_DOC_PAYMENTS('C_DP_MANAGEMENT', 'C_DP_MANAGEMENTLINE', v_Record_ID, 'C_DP_MANAGEMENT_ID', 'C_DP_MANAGEMENT_ID', 'C_DEBT_PAYMENT_ID') INTO v_is_included FROM dual;
+      IF (v_is_included=-1) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@PaymentsAndHeaderDifferentLEorBU@');
+      END IF;
+      
+      -- Check the period control is opened
+      SELECT COUNT(C_Period_ID)
+      INTO v_available_period
+      FROM C_Period
+      WHERE v_Date BETWEEN STARTDATE AND ENDDATE
+      AND EXISTS (SELECT 1
+                  FROM C_PeriodControl
+                  WHERE C_PeriodControl.C_Period_ID=C_Period.C_Period_ID 
+                  AND DocBaseType=(SELECT DocBaseType FROM C_DocType WHERE C_DocType_ID=v_DocType_ID)
+                  AND AD_Org_ID=v_AD_Org_ID
+                  AND PeriodStatus='O'
+                  );
+      IF (v_available_period<>1) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@PeriodNotAvailable@');
+      END IF;
+    END IF;--FINISH_PROCESS
+    --Processing...
+    IF(NOT FINISH_PROCESS) THEN     
       UPDATE C_DP_Management
         SET Processed='Y',
         Updated=now(),

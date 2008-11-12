@@ -54,12 +54,12 @@
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
   <PARAMETER id="paramC_ACCTSCHEMA_ID" name="cAcctschemaId"/>  
   <PARAMETER id="paramArrayAccountingReports" name="accountingReports"/>
+  <PARAMETER id="paramArrayBalancedOrg" name="balancedOrg"/>
+  <PARAMETER id="paramArrayAllOrg" name="allOrg"/>
+  <PARAMETER id="paramArrayReportIsBalanced" name="reportIsBalanced"/>
 	
   <SUBREPORT id="reportC_ElementValue_ID" name="reportC_ElementValue_ID" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="fieldC_ElementValue_ID"/>
-  </SUBREPORT>
-  <SUBREPORT id="reportAD_ORGID" name="reportAD_ORGID" report="org/openbravo/erpCommon/reference/List">
-    <ARGUMENT name="parameterListSelected" withId="paramAD_ORGID"/>
   </SUBREPORT>
   <SUBREPORT id="reportLevel" name="reportLevel" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramLevel"/>

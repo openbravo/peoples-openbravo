@@ -220,6 +220,25 @@
     <Parameter name="c_year_id"/>
     <Parameter name="c_period_id"/>
   </SqlMethod>
+  <SqlMethod name="updatePeriodsClose" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        UPDATE C_PERIOD SET CLOSE_FACT_ACCT_GROUP_ID = ?, DIVIDEUP_FACT_ACCT_GROUP_ID = ?, OPEN_FACT_ACCT_GROUP_ID = ?, UPDATED = now(), UPDATEDBY = ?
+        WHERE C_PERIOD_ID IN (SELECT C_PERIOD_ID 
+                         FROM C_PERIOD 
+                         WHERE C_YEAR_ID = ?
+                         AND PERIODNO <= (SELECT PERIODNO FROM C_PERIOD WHERE C_PERIOD_ID = ?)
+                         AND CLOSE_FACT_ACCT_GROUP_ID IS NULL)
+      ]]>
+    </Sql>
+    <Parameter name="close_fact_acct_group_id"/>
+    <Parameter name="divideup_fact_acct_group_id"/>
+    <Parameter name="open_fact_acct_group_id"/>
+    <Parameter name="user"/>
+    <Parameter name="c_year_id"/>
+    <Parameter name="c_period_id"/>
+  </SqlMethod>
   <SqlMethod name="getNextPeriod" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -293,24 +312,6 @@
       ]]>
     </Sql>
     <Parameter name="cPeriodId"/>
-  </SqlMethod>
-  <SqlMethod name="updatePeriodsClose" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        UPDATE C_PERIOD SET CLOSE_FACT_ACCT_GROUP_ID = ?, DIVIDEUP_FACT_ACCT_GROUP_ID = ?, UPDATED = now(), UPDATEDBY = ?
-        WHERE C_PERIOD_ID IN (SELECT C_PERIOD_ID 
-                         FROM C_PERIOD 
-                         WHERE C_YEAR_ID = ?
-                         AND PERIODNO <= (SELECT PERIODNO FROM C_PERIOD WHERE C_PERIOD_ID = ?)
-                         AND CLOSE_FACT_ACCT_GROUP_ID IS NULL)
-      ]]>
-    </Sql>
-    <Parameter name="reg_fact_acct_group_id"/>
-    <Parameter name="divideup_fact_acct_group_id"/>
-    <Parameter name="user"/>
-    <Parameter name="c_year_id"/>
-    <Parameter name="c_period_id"/>
   </SqlMethod>
   <SqlMethod name="updateClose" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>

@@ -212,4 +212,121 @@
 
     <Parameter name="cPaymentId"/>
   </SqlMethod>
-  </SqlClass>
+  <SqlMethod name="insertSettlement" connection="true" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+    INSERT
+    INTO C_SETTLEMENT
+      (
+        C_SETTLEMENT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
+        CREATED, CREATEDBY, UPDATED, UPDATEDBY,
+        DOCUMENTNO, DATETRX, DATEACCT, SETTLEMENTTYPE,
+        C_DOCTYPE_ID, PROCESSING, PROCESSED, POSTED,
+        C_CURRENCY_ID, Description, ISGENERATED
+      )
+        select ?, C_DEBT_PAYMENT.AD_CLIENT_ID, C_DEBT_PAYMENT.AD_Org_ID, 'Y',
+        now(), ?, now(), ?,
+        '*DPS*'||'10000', TO_DATE(?), TO_DATE(?), 'C',
+        (SELECT MIN(C_DOCTYPE_ID) FROM C_DOCTYPE
+        WHERE DOCBASETYPE = 'STT' AND C_DOCTYPE.AD_CLIENT_ID = C_DEBT_PAYMENT.AD_CLIENT_ID
+        AND AD_ORG_ID = '0'), 'N', 'N', 'N',
+        C_DEBT_PAYMENT.C_CURRENCY_ID, COALESCE(C_DEBT_PAYMENT.DESCRIPTION, '(Splited) Nº ' || C_INVOICE.DOCUMENTNO), 'Y' 
+        FROM C_DEBT_PAYMENT LEFT JOIN C_INVOICE ON C_DEBT_PAYMENT.C_INVOICE_ID = C_INVOICE.C_INVOICE_ID
+        WHERE C_DEBT_PAYMENT_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="cSettlementId"/>
+    <Parameter name="adUserId"/>
+    <Parameter name="adUserId"/>
+    <Parameter name="date"/>
+    <Parameter name="date"/>
+    <!-- Parameter name="cDoctypeId"/ -->
+    <Parameter name="cPaymentId"/>
+  </SqlMethod>
+  <SqlMethod name="insertPayment" connection="true" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+    INSERT
+    INTO C_DEBT_PAYMENT
+      (
+        C_DEBT_PAYMENT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
+        CREATED, CREATEDBY, UPDATED, UPDATEDBY,
+        ISRECEIPT, C_SETTLEMENT_GENERATE_ID, DESCRIPTION, C_INVOICE_ID,
+        C_BPARTNER_ID, C_CURRENCY_ID,
+        PAYMENTRULE, ISPAID, AMOUNT, WRITEOFFAMT, DATEPLANNED,
+        ISMANUAL, ISVALID, 
+        CHANGESETTLEMENTCANCEL, CANCEL_PROCESSED, GENERATE_PROCESSED, STATUS_INITIAL
+      )
+      SELECT ?, C_DEBT_PAYMENT.AD_CLIENT_ID, C_DEBT_PAYMENT.AD_ORG_ID, C_DEBT_PAYMENT.ISACTIVE,
+        NOW(), ?, NOW(), ?,
+        C_DEBT_PAYMENT.ISRECEIPT, ?, COALESCE(C_DEBT_PAYMENT.DESCRIPTION, '(Splited) Nº ' || C_INVOICE.DOCUMENTNO), NULL,
+        C_DEBT_PAYMENT.C_BPARTNER_ID, C_DEBT_PAYMENT.C_CURRENCY_ID,
+        C_DEBT_PAYMENT.PAYMENTRULE, C_DEBT_PAYMENT.ISPAID, TO_NUMBER(?), C_DEBT_PAYMENT.WRITEOFFAMT, C_DEBT_PAYMENT.DATEPLANNED,
+        'N', 'N',
+        'N', 'N', 'N', STATUS
+        FROM C_DEBT_PAYMENT LEFT JOIN C_INVOICE ON C_DEBT_PAYMENT.C_INVOICE_ID = C_INVOICE.C_INVOICE_ID
+        WHERE C_DEBT_PAYMENT_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="cDebtPaymentId"/>
+    <Parameter name="adUserId"/>
+    <Parameter name="adUserId"/>
+    <Parameter name="cSettlementId"/>
+    <Parameter name="amount"/>
+    <Parameter name="cPaymentId"/>
+  </SqlMethod>
+  <SqlMethod name="insertSecondPayment" connection="true" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+    INSERT
+    INTO C_DEBT_PAYMENT
+      (
+        C_DEBT_PAYMENT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
+        CREATED, CREATEDBY, UPDATED, UPDATEDBY,
+        ISRECEIPT, C_SETTLEMENT_GENERATE_ID, DESCRIPTION, C_INVOICE_ID,
+        C_BPARTNER_ID, C_CURRENCY_ID,
+        PAYMENTRULE, ISPAID, AMOUNT, WRITEOFFAMT, DATEPLANNED,
+        ISMANUAL, ISVALID,
+        CHANGESETTLEMENTCANCEL, CANCEL_PROCESSED, GENERATE_PROCESSED, STATUS_INITIAL
+      )
+      SELECT get_uuid(), C_DEBT_PAYMENT.AD_CLIENT_ID, C_DEBT_PAYMENT.AD_ORG_ID, C_DEBT_PAYMENT.ISACTIVE,
+        NOW(), ?, NOW(), ?,
+        C_DEBT_PAYMENT.ISRECEIPT, ?, COALESCE(C_DEBT_PAYMENT.DESCRIPTION, '(Splited) Nº ' || C_INVOICE.DOCUMENTNO), NULL,
+        C_DEBT_PAYMENT.C_BPARTNER_ID, C_DEBT_PAYMENT.C_CURRENCY_ID,
+        C_DEBT_PAYMENT.PAYMENTRULE, C_DEBT_PAYMENT.ISPAID, C_DEBT_PAYMENT.AMOUNT-TO_NUMBER(?), C_DEBT_PAYMENT.WRITEOFFAMT, C_DEBT_PAYMENT.DATEPLANNED,
+        'N', 'N',
+        'N', 'N', 'N', C_DEBT_PAYMENT.STATUS
+        FROM C_DEBT_PAYMENT LEFT JOIN C_INVOICE ON C_DEBT_PAYMENT.C_INVOICE_ID = C_INVOICE.C_INVOICE_ID
+        WHERE C_DEBT_PAYMENT_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="adUserId"/>
+    <Parameter name="adUserId"/>
+    <Parameter name="cSettlementId"/>
+    <Parameter name="amount"/>
+    <Parameter name="cPaymentId"/>
+  </SqlMethod>
+  <SqlMethod name="cancelOriginalPayment" connection="true" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        UPDATE C_DEBT_PAYMENT SET C_SETTLEMENT_CANCEL_ID = ?, ISVALID = 'Y'
+        WHERE C_DEBT_PAYMENT_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="cSettlementId"/>
+    <Parameter name="cDebtPaymentId"/>
+  </SqlMethod>
+  <SqlMethod name="processSettlement" connection="true" type="callableStatement"  return="object" object="CreateFromBankData">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        CALL C_SETTLEMENT_POST(NULL,?)
+      ]]>
+    </Sql>
+    <Parameter name="cSettlementId"/>
+  </SqlMethod>
+</SqlClass>

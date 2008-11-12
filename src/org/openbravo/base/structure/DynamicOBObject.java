@@ -10,11 +10,16 @@
  */
 package org.openbravo.base.structure;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import static org.openbravo.model.ad.system.Client.PROPERTY_ORGANIZATION;
+import static org.openbravo.model.common.enterprise.Organization.PROPERTY_CLIENT;
 
-import org.openbravo.base.model.ad.User;
+import java.util.Date;
+
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.Property;
+import org.openbravo.model.ad.access.User;
+import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.common.enterprise.Organization;
 
 /**
  * Dynamic OB Object which supports full dynamic mapping without java members.
@@ -22,88 +27,104 @@ import org.openbravo.base.model.ad.User;
  * @author mtaal
  */
 
-public class DynamicOBObject extends BaseOBObject implements Traceable, Identifiable {
-  
-  private Map<String, Object> data = new HashMap<String, Object>();
-  
-  @Override
-  public void set(String propertyName, Object value) {
-    data.put(propertyName, value);
-  }
-  
-  @Override
-  public Object get(String propertyName) {
-    return data.get(propertyName);
-  }
-  
-  public boolean isNew() {
-    return getId() == null;
-  }
-  
-  public boolean isActive() {
-    return (Boolean) get("active");
-  }
-  
-  public void setActive(boolean active) {
-    set("active", active);
-  }
-  
-  @Override
-  public String getId() {
-    return (String) get("id");
-  }
-  
-  public void setId(String id) {
-    set("id", id);
-  }
-  
-  public User getUpdatedby() {
-    return (User) get("updatedby");
-  }
-  
-  public void setUpdatedby(User updatedby) {
-    set("updatedby", updatedby);
-  }
-  
-  public Date getUpdated() {
-    return (Date) get("updated");
-  }
-  
-  public void setUpdated(Date updated) {
-    set("updated", updated);
-  }
-  
-  public User getCreatedby() {
-    return (User) get("createdby");
-  }
-  
-  public void setCreatedby(User createdby) {
-    set("createdby", createdby);
-  }
-  
-  public Date getCreated() {
-    return (Date) get("created");
-  }
-  
-  public void setCreated(Date created) {
-    set("created", created);
-  }
-  
-  @Override
-  public String getEntityName() {
-    return (String) get("entityName");
-  }
-  
-  public void setEntityName(String entityName) {
-    set("entityName", entityName);
-  }
-  
-  public Map<String, Object> getData() {
-    return data;
-  }
-  
-  @Override
-  public String getIdentifier() {
-    return IdentifierProvider.getInstance().getIdentifier(this);
-  }
+public class DynamicOBObject extends BaseOBObject implements Traceable,
+	ClientEnabled, OrganizationEnabled {
+
+    private String entityName;
+
+    public boolean isNew() {
+	return getId() == null;
+    }
+
+    public boolean isActive() {
+	return (Boolean) get(Organization.PROPERTY_ISACTIVE);
+    }
+
+    public void setActive(boolean active) {
+	set(Organization.PROPERTY_ISACTIVE, active);
+    }
+
+    @Override
+    public String getId() {
+	return (String) get(Organization.PROPERTY_ID);
+    }
+
+    public void setId(String id) {
+	set(Organization.PROPERTY_ID, id);
+    }
+
+    public User getUpdatedBy() {
+	return (User) get(Organization.PROPERTY_UPDATEDBY);
+    }
+
+    public void setUpdatedBy(User updatedby) {
+	set(Organization.PROPERTY_UPDATEDBY, updatedby);
+    }
+
+    public Date getUpdated() {
+	return (Date) get(Organization.PROPERTY_UPDATED);
+    }
+
+    public void setUpdated(Date updated) {
+	set(Organization.PROPERTY_UPDATED, updated);
+    }
+
+    public User getCreatedBy() {
+	return (User) get(Organization.PROPERTY_CREATEDBY);
+    }
+
+    public void setCreatedBy(User createdby) {
+	set(Organization.PROPERTY_CREATEDBY, createdby);
+    }
+
+    public Date getCreated() {
+	return (Date) get(Organization.PROPERTY_CREATED);
+    }
+
+    public void setCreated(Date created) {
+	set(Organization.PROPERTY_CREATED, created);
+    }
+
+    @Override
+    public String getEntityName() {
+	return entityName;
+    }
+
+    public void setEntityName(String entityName) {
+	this.entityName = entityName;
+
+	// set the default values
+	final Entity e = getEntity();
+	for (Property p : e.getProperties()) {
+	    // only do primitive default values
+	    if (!p.isPrimitive()) {
+		continue;
+	    }
+	    final Object defaultValue = p.getActualDefaultValue();
+	    if (defaultValue != null) {
+		setValue(p.getName(), defaultValue);
+	    }
+	}
+    }
+
+    @Override
+    public String getIdentifier() {
+	return IdentifierProvider.getInstance().getIdentifier(this);
+    }
+
+    public Client getClient() {
+	return (Client) get(PROPERTY_CLIENT);
+    }
+
+    public void setClient(Client client) {
+	set(PROPERTY_CLIENT, client);
+    }
+
+    public Organization getOrganization() {
+	return (Organization) get(PROPERTY_ORGANIZATION);
+    }
+
+    public void setOrganization(Organization organisation) {
+	set(PROPERTY_ORGANIZATION, organisation);
+    }
 }

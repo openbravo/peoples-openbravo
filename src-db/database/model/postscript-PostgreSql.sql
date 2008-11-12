@@ -262,6 +262,205 @@ END;   $BODY$
   LANGUAGE 'plpgsql' VOLATILE
 /-- END
 
+CREATE OR REPLACE FUNCTION AD_ORG_CHK_DOCUMENTS(p_header_table character varying, p_lines_table character varying, p_document_id character varying, p_header_column_id character varying, p_lines_column_id character varying)
+   RETURNS numeric AS
+$BODY$ DECLARE
+/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2008 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+   v_org_header_id ad_org.ad_org_id%TYPE;
+   v_isbusinessunit ad_orgtype.isbusinessunit%TYPE;
+   v_islegalentity ad_orgtype.islegalentity%TYPE;
+   v_is_included NUMERIC:=0;
+   v_dyn_cur VARCHAR(2000);
+ 
+   TYPE_Ref REFCURSOR;
+   cur_doc_lines TYPE_REF%TYPE;
+ 
+   v_line_org VARCHAR(32);
+   v_org_line_id VARCHAR(32);
+ BEGIN
+ 
+   EXECUTE 
+     'SELECT ad_org.ad_org_id, ad_orgtype.isbusinessunit, ad_orgtype.islegalentity 
+     FROM '||p_header_table||', ad_org, ad_orgtype
+     WHERE '||p_header_table||'.'||p_header_column_id||'='||''''||p_document_id||''''||' 
+     AND ad_org.ad_orgtype_id = ad_orgtype.ad_orgtype_id
+     AND '||p_header_table||'.ad_org_id=ad_org.ad_org_id' 
+     INTO v_org_header_id, v_isbusinessunit, v_islegalentity;
+ 
+ 
+   WHILE (v_isbusinessunit='N' AND v_islegalentity='N') LOOP
+     SELECT hh.parent_id, ad_orgtype.isbusinessunit, ad_orgtype.islegalentity
+     INTO v_org_header_id, v_isbusinessunit, v_islegalentity
+     FROM ad_org, ad_orgtype, ad_treenode pp, ad_treenode hh
+     WHERE pp.node_id = hh.parent_id
+     AND hh.ad_tree_id = pp.ad_tree_id
+     AND pp.node_id=ad_org.ad_org_id
+     AND hh.node_id=v_org_header_id
+     AND ad_org.ad_orgtype_id=ad_orgtype.ad_orgtype_id
+     AND ad_org.isready='Y'
+     AND  EXISTS (SELECT 1 FROM ad_tree WHERE ad_tree.treetype='OO' AND hh.ad_tree_id=ad_tree.ad_tree_id and hh.ad_client_id=ad_tree.ad_client_id);     
+   END LOOP;
+ 
+   v_dyn_cur:='SELECT DISTINCT('||p_lines_table||'.ad_org_id) AS v_line_org FROM '||p_header_table||', '||p_lines_table||'   WHERE '||p_header_table||'.'||p_header_column_id||' = '||p_lines_table||'.'||p_lines_column_id||' AND '||p_lines_table||'.'||p_lines_column_id||'='||''''||p_document_id||'''';
+ 
+   OPEN cur_doc_lines FOR EXECUTE v_dyn_cur;   
+    LOOP
+      FETCH cur_doc_lines INTO v_line_org;
+      IF NOT FOUND THEN
+        EXIT;
+      END IF;
+
+      SELECT ad_orgtype.isbusinessunit, ad_orgtype.islegalentity
+      INTO v_isbusinessunit, v_islegalentity
+      FROM AD_Org, AD_OrgType
+      WHERE AD_Org.AD_OrgType_ID=AD_OrgType.AD_OrgType_ID
+      AND AD_Org.AD_Org_ID=v_line_org;
+
+      v_org_line_id:=v_line_org;
+      -- Gets recursively the organization parent until finding a Business Unit or a Legal Entity
+      WHILE (v_isbusinessunit='N' AND v_islegalentity='N') LOOP
+        SELECT hh.parent_id, ad_orgtype.isbusinessunit, ad_orgtype.islegalentity
+        INTO v_org_line_id, v_isbusinessunit, v_islegalentity
+        FROM ad_org, ad_orgtype, ad_treenode pp, ad_treenode hh
+        WHERE pp.node_id = hh.parent_id
+        AND hh.ad_tree_id = pp.ad_tree_id
+        AND pp.node_id=ad_org.ad_org_id
+        AND hh.node_id=v_line_org
+        AND ad_org.ad_orgtype_id=ad_orgtype.ad_orgtype_id
+        AND ad_org.isready='Y'
+        AND  EXISTS (SELECT 1 FROM ad_tree WHERE ad_tree.treetype='OO' AND hh.ad_tree_id=ad_tree.ad_tree_id AND hh.ad_client_id=ad_tree.ad_client_id);     
+      END LOOP;
+
+      IF (v_org_line_id<>v_org_header_id) THEN
+        v_is_included:=-1;
+      END IF;
+      EXIT WHEN v_is_included=-1;
+ 
+    END LOOP; 
+   CLOSE cur_doc_lines;
+ 
+   RETURN v_is_included;
+ 
+END;   $BODY$
+  LANGUAGE 'plpgsql' VOLATILE
+/-- END
+
+CREATE OR REPLACE FUNCTION AD_ORG_CHK_DOC_PAYMENTS(p_header_table IN character varying, p_lines_table IN character varying, p_document_id IN character varying, p_header_column_id IN character varying, p_lines_column_id IN character varying, p_lines_column_payment_id IN character varying) 
+ RETURNS numeric AS
+ $BODY$ DECLARE
+/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2008 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+   v_org_header_id ad_org.ad_org_id%TYPE;
+   v_isbusinessunit ad_orgtype.isbusinessunit%TYPE;
+   v_islegalentity ad_orgtype.islegalentity%TYPE;
+   v_is_included NUMERIC:=0;
+   v_dyn_cur VARCHAR(2000);
+ 
+   TYPE_Ref REFCURSOR;
+   cur_doc_lines_payment TYPE_REF%TYPE;
+ 
+   v_line_org_payment VARCHAR(32);
+   v_org_payment_line_id VARCHAR(32);
+ BEGIN
+ 
+   -- Gets the organization and the organization type of the document's header
+   EXECUTE
+     'SELECT ad_org.ad_org_id, ad_orgtype.isbusinessunit, ad_orgtype.islegalentity 
+     FROM '||p_header_table||', ad_org, ad_orgtype
+     WHERE '||p_header_table||'.'||p_header_column_id||'='||''''||p_document_id||''''||'
+     AND ad_org.ad_orgtype_id = ad_orgtype.ad_orgtype_id
+     AND '||p_header_table||'.ad_org_id=ad_org.ad_org_id ' 
+     INTO v_org_header_id, v_isbusinessunit, v_islegalentity;
+ 
+   -- Gets recursively the organization parent until finding a Business Unit or a Legal Entity
+   WHILE (v_isbusinessunit='N' AND v_islegalentity='N') LOOP
+     SELECT hh.parent_id, ad_orgtype.isbusinessunit, ad_orgtype.islegalentity
+     INTO v_org_header_id, v_isbusinessunit, v_islegalentity
+     FROM ad_org, ad_orgtype, ad_treenode pp, ad_treenode hh
+     WHERE pp.node_id = hh.parent_id
+     AND hh.ad_tree_id = pp.ad_tree_id
+     AND pp.node_id=ad_org.ad_org_id
+     AND hh.node_id=v_org_header_id
+     AND ad_org.ad_orgtype_id=ad_orgtype.ad_orgtype_id
+     AND ad_org.isready='Y'
+     AND  EXISTS (SELECT 1 FROM ad_tree WHERE ad_tree.treetype='OO' AND hh.ad_tree_id=ad_tree.ad_tree_id AND hh.ad_client_id=ad_tree.ad_client_id);     
+   END LOOP;
+ 
+   v_dyn_cur:='SELECT DISTINCT(C_DEBT_PAYMENT.ad_org_id) AS v_line_org_payment
+    FROM '||p_header_table||', '||p_lines_table||', C_DEBT_PAYMENT
+    WHERE '||p_header_table||'.'||p_header_column_id||' = '||p_lines_table||'.'||p_lines_column_id||'
+    AND C_DEBT_PAYMENT.C_DEBT_PAYMENT_ID='||p_lines_table||'.'||p_lines_column_payment_id||'
+    AND '||p_lines_table||'.'||p_lines_column_id||'='||''''||p_document_id||'''';
+
+   -- Check the payments of the lines belong to the same BU or LE as the document header
+   OPEN cur_doc_lines_payment FOR EXECUTE v_dyn_cur;
+    LOOP
+     FETCH cur_doc_lines_payment INTO v_line_org_payment;
+     IF NOT FOUND THEN
+       EXIT;
+     END IF;
 
 
+     SELECT ad_orgtype.isbusinessunit, ad_orgtype.islegalentity
+     INTO v_isbusinessunit, v_islegalentity
+     FROM AD_Org, AD_OrgType
+     WHERE AD_Org.AD_OrgType_ID=AD_OrgType.AD_OrgType_ID
+     AND AD_Org.AD_Org_ID=v_line_org_payment;
 
+      v_org_payment_line_id:=v_line_org_payment;
+      -- Gets recursively the organization parent until finding a Business Unit or a Legal Entity
+      WHILE (v_isbusinessunit='N' AND v_islegalentity='N') LOOP
+        SELECT hh.parent_id, ad_orgtype.isbusinessunit, ad_orgtype.islegalentity
+        INTO v_org_payment_line_id, v_isbusinessunit, v_islegalentity
+        FROM ad_org, ad_orgtype, ad_treenode pp, ad_treenode hh
+        WHERE pp.node_id = hh.parent_id
+        AND hh.ad_tree_id = pp.ad_tree_id
+        AND pp.node_id=ad_org.ad_org_id
+        AND hh.node_id=v_line_org_payment
+        AND ad_org.ad_orgtype_id=ad_orgtype.ad_orgtype_id
+        AND ad_org.isready='Y'
+        AND  EXISTS (SELECT 1 FROM ad_tree WHERE ad_tree.treetype='OO' AND hh.ad_tree_id=ad_tree.ad_tree_id AND hh.ad_client_id=ad_tree.ad_client_id);     
+      END LOOP;
+
+     IF (v_org_payment_line_id<>v_org_header_id) THEN
+       v_is_included:=-1;
+     END IF;
+     EXIT WHEN v_is_included=-1;
+ 
+    END LOOP; 
+   CLOSE cur_doc_lines_payment;
+ 
+  RETURN v_is_included;
+ 
+END;   $BODY$
+  LANGUAGE 'plpgsql' VOLATILE
+/-- END

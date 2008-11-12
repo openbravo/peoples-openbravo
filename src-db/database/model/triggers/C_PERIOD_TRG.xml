@@ -29,7 +29,16 @@
     CUR_DocType RECORD;
   BEGIN
     FOR CUR_DocType IN
-      (SELECT Value  FROM AD_Ref_List  WHERE AD_Reference_ID='183'  ORDER BY 1)
+      (SELECT Value , a.AD_Org_ID AS Organization
+       FROM AD_Ref_List , (SELECT AD_Org_ID 
+                           FROM AD_Org 
+                           WHERE C_Calendar_ID = (SELECT C_Calendar_ID
+                                                  FROM C_Year
+                                                  WHERE C_Year.C_Year_ID=:new.C_Year_ID
+                                                  )
+                          ) a
+       WHERE AD_Reference_ID='183'
+       ORDER BY 1)
     LOOP
       AD_Sequence_Next('C_PeriodControl', :new.AD_Client_ID, v_NextNo) ;
       INSERT
@@ -43,7 +52,7 @@
         )
         VALUES
         (
-          v_NextNo, :new.AD_Client_ID, :new.AD_Org_ID,
+          v_NextNo, :new.AD_Client_ID, CUR_DocType.Organization,
            'Y', now(),  '0',
           now(), '0', :new.C_Period_ID,
           CUR_DocType.Value, 'N', 'N',

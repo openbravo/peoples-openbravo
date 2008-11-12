@@ -75,9 +75,10 @@ public class DropRegFactAcct extends HttpSecureAppServlet {
       conn = this.getTransactionConnection();
       String strCloseFactAcctGroupId = DropRegFactAcctData.selectClose(this, strRegFactAcctGroupId);
       String strDivideUpFactAcctGroupId = DropRegFactAcctData.selectDivideUp(this, strRegFactAcctGroupId);
+      String strOpenUpFactAcctGroupId = DropRegFactAcctData.selectOpen(this, strRegFactAcctGroupId);
       try {
       processButtonReg(conn, vars, strRegFactAcctGroupId);
-      if (!strCloseFactAcctGroupId.equals(""))processButtonClose(conn, vars, strCloseFactAcctGroupId, strDivideUpFactAcctGroupId);
+      if (!strCloseFactAcctGroupId.equals(""))processButtonClose(conn, vars, strCloseFactAcctGroupId, strDivideUpFactAcctGroupId, strOpenUpFactAcctGroupId);
       } catch(ServletException ex) {
         myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
         releaseRollbackConnection(conn);
@@ -105,10 +106,10 @@ public class DropRegFactAcct extends HttpSecureAppServlet {
       return "ProcessOK";
   }
 
-  String processButtonClose(Connection conn, VariablesSecureApp vars, String strCloseFactAcctGroupId, String strDivideUpFactAcctGroupId) throws ServletException{
+  String processButtonClose(Connection conn, VariablesSecureApp vars, String strCloseFactAcctGroupId, String strDivideUpFactAcctGroupId, String strOpenUpFactAcctGroupId) throws ServletException{
     DropRegFactAcctData.updatePeriodsOpen(conn, this, vars.getUser(), strCloseFactAcctGroupId);
     DropRegFactAcctData.updatePeriodsClose(conn, this, vars.getUser(), strCloseFactAcctGroupId);
-    DropRegFactAcctData.deleteFactAcctClose(conn, this, strCloseFactAcctGroupId, strDivideUpFactAcctGroupId);
+    DropRegFactAcctData.deleteFactAcctClose(conn, this, strCloseFactAcctGroupId, strDivideUpFactAcctGroupId, strOpenUpFactAcctGroupId);
     return "ProcessOK";
   }
 

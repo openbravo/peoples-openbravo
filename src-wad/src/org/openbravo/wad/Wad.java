@@ -116,6 +116,7 @@ public class Wad extends DefaultHandler {
   public static void main(String argv[]) throws Exception {
     PropertyConfigurator.configure("log4j.lcf");
     String strWindowName;
+    String module;
     String dirFin;
     String dirReference;
     String dirWebXml;
@@ -130,6 +131,7 @@ public class Wad extends DefaultHandler {
     String webPath;
     String strBaseSrc;
     boolean complete;
+    
 
     if (argv.length < 1) {
       log4j.error("Usage: java Wad connection.xml [{% || Window} [destinyDir]]");
@@ -209,9 +211,14 @@ public class Wad extends DefaultHandler {
       //Boolean to indicate if we are doing a complete generation
       if (argv.length <= 14) complete = false;
       else complete = ((argv[14].equals("true"))?true:false);
+      
+      //Module to compile
+      if (argv.length <= 15) module = "%";
+      else module =argv[15].equals("%")?"%":"'"+argv[15].replace(", ",",").replace(",", "', '")+"'";
 
       log4j.info("File connection: " + strFileConnection);
       log4j.info("window: " + strWindowName);
+      log4j.info("module: " + module);
       log4j.info("directory destiny: " + dirFin);
       log4j.info("directory reference: " + dirReference + wad.strSystemSeparator + "reference");
       log4j.info("directory web.xml: " + dirWebXml);
@@ -303,31 +310,6 @@ public class Wad extends DefaultHandler {
         wad.processActionButtonGenerics(fileActionButton);
         wad.processActionButtonXmlGenerics(fileActionButton);
         wad.processActionButtonHtmlGenerics(fileActionButton);
-        //Also generates the translation of the action button sources
-        LanguagesData[] dataLang = LanguagesData.select(wad.pool);
-        if (dataLang!=null && dataLang.length>0) {
-          for (int pos=0;pos<dataLang.length;pos++) {
-            File languageBase = new File(fileTrl, dataLang[pos].adLanguage);
-            if (complete && languageBase.exists()) FileUtility.delete(languageBase);
-            languageBase.mkdir();
-            //FileUtility.copy(fileBase, languageBase,new DirFilter("html"), true, true);
-            //FileUtility.copy(fileBase, languageBase,new DirFilter("fo"), true, true);
-            FileUtility.copy(fileBase, languageBase,new DirFilter(".xml"), true, true);
-            //FileUtility.copy(fileBase, languageBase,new DirFilter("srpt"), true, true);
-            //FileUtility.copy(fileBase, languageBase,new DirFilter("jrxml"), true, true);
-            //executeCommandTask("ant precopyfiles -Dlanguage=" + dataLang[pos].adLanguage, dir);
-            File fileDirTrlBase = new File(fileTrl, dataLang[pos].adLanguage + wad.strSystemSeparator + "org" + wad.strSystemSeparator + "openbravo" + wad.strSystemSeparator +"erpCommon" + wad.strSystemSeparator + "ad_actionButton");
-            if (!fileDirTrlBase.exists()) {
-              fileDirTrlBase.mkdirs();
-            }
-            FileUtility.copy(fileActionButton, fileDirTrlBase,new DirFilter(".xml"), true, true); //copy xml for translated actionbuttons
-            calendarDescriptionTrl = WadUtilityData.getTranslatedText(wad.pool, calendarDescription, dataLang[pos].adLanguage);
-            clockDescriptionTrl = WadUtilityData.getTranslatedText(wad.pool, clockDescription, dataLang[pos].adLanguage);
-            calculatorDescriptionTrl = WadUtilityData.getTranslatedText(wad.pool, calculatorDescription, dataLang[pos].adLanguage);
-            wad.processActionButtonHtmlTrl(fileDirTrlBase, dataLang[pos].adLanguage);
-            wad.processActionButtonHtmlGenericsTrl(fileDirTrlBase, dataLang[pos].adLanguage);
-          }
-        }
       }
 
       //If generateWebXml parameter is true, the web.xml file should be generated
@@ -340,7 +322,12 @@ public class Wad extends DefaultHandler {
       StringTokenizer st = new StringTokenizer(strWindowName, ",", false);
       while (st.hasMoreTokens()) {
         strCurrentWindow = st.nextToken().trim();
-        TabsData tabsData[] = TabsData.selectTabs(wad.pool, strCurrentWindow);
+        TabsData tabsData[];
+        if (module.equals("%"))
+          tabsData = TabsData.selectTabs(wad.pool, strCurrentWindow);
+        else
+          tabsData = TabsData.selectTabsinModules(wad.pool, strCurrentWindow, module);
+        
         if (generateTabs) {
           for (int i=0;i< tabsData.length; i++) {
             log4j.info("Processing Window: " + tabsData[i].windowname +
@@ -428,29 +415,7 @@ public class Wad extends DefaultHandler {
     }
   }
 
-  /**
-   * Generates the action button's html files for the translated resources
-   * @param fileReference The path where to create the files.
-   * @param strLanguage The language of the translation.
-   */
-  private void processActionButtonHtmlTrl(File fileReference, String strLanguage) {
-    try {
-      log4j.info("Processing ActionButtonHtml - Translated");
-      FieldsData fd[] = FieldsData.selectActionButtonTrl(pool, strLanguage);
-      if (fd!=null) {
-        for (int i=0;i<fd.length;i++) {
-          Vector<Object> vecFields = new Vector<Object>();
-          WadActionButton.buildHtml(pool, xmlEngine, fileReference, fd[i], vecFields, MAX_TEXTBOX_LENGTH, MAX_SIZE_EDITION_1_COLUMNS, strLanguage, false, calendarDescriptionTrl, clockDescriptionTrl, calculatorDescriptionTrl, jsDateFormat);
-        }
-      }
-    } catch (ServletException e) {
-      e.printStackTrace();
-      log4j.error("Problem of ServletExceptio in process of ActionButtonHtml - Translated");
-    } catch (IOException e) {
-      e.printStackTrace();
-      log4j.error("Problem of IOExceptio in process of ActionButtonHtml - Translated");
-    }
-  }
+ 
 
   /**
    * Generates the main file to manage the action buttons 
@@ -523,31 +488,6 @@ public class Wad extends DefaultHandler {
   }
 
   /**
-   * Generates the translated htmls files for the action buttons. These are
-   * the menu's action button.
-   * @param fileReference The path where to create the files.
-   * @param strLanguage The language to translate.
-   */
-  private void processActionButtonHtmlGenericsTrl(File fileReference, String strLanguage) {
-    try {
-      log4j.info("Processing ActionButtonHtml for generics - Translated");
-      FieldsData fd[] = FieldsData.selectActionButtonGenericsTrl(pool, strLanguage);
-      if (fd!=null) {
-        for (int i=0;i<fd.length;i++) {
-          Vector<Object> vecFields = new Vector<Object>();
-          WadActionButton.buildHtml(pool, xmlEngine, fileReference, fd[i], vecFields, MAX_TEXTBOX_LENGTH, MAX_SIZE_EDITION_1_COLUMNS, strLanguage, true, calendarDescriptionTrl, clockDescriptionTrl, calculatorDescriptionTrl, jsDateFormat);
-        }
-      }
-    } catch (ServletException e) {
-      e.printStackTrace();
-      log4j.error("Problem of ServletExceptio in process of ActionButtonHtml Generics - Translated");
-    } catch (IOException e) {
-      e.printStackTrace();
-      log4j.error("Problem of IOExceptio in process of ActionButtonHtml Generics - Translated");
-    }
-  }
-
-  /**
    * Generates the web.xml file
    * @param fileWebXml path to generate the new web.xml file.
    * @param fileClients Path where is allocated the client web.xml file.
@@ -580,9 +520,31 @@ public class Wad extends DefaultHandler {
       xmlDocument.setParameter("webClients", sb.toString());
       xmlDocument.setParameter("webPath", webPath);
       xmlDocument.setParameter("attachPath", attachPath);
-      xmlDocument.setData("structure1", WadData.select(pool));
+      xmlDocument.setData("structureListener", WadData.selectListener(pool));
+      xmlDocument.setData("structureResource", WadData.selectResource(pool));
+      WadData[] filters =  WadData.selectFilter(pool);
+      WadData[][] filterParams = null;
+      if (filters!=null && filters.length>0) {
+        filterParams = new WadData[filters.length][];
+        for (int i=0;i<filters.length;i++) {
+          filterParams[i] = WadData.selectParams(pool, "F", filters[i].classname);
+        }
+      } else filterParams = new WadData[0][0];
+      xmlDocument.setData("structureFilter", filters);
+      xmlDocument.setDataArray("reportFilterParams", "structure1", filterParams);
+      WadData[] servlets =  WadData.select(pool);
+      WadData[][] servletParams = null;
+      if (servlets!=null && servlets.length>0) {
+        servletParams = new WadData[servlets.length][];
+        for (int i=0;i<servlets.length;i++) {
+          if (servlets[i].loadonstartup!=null && !servlets[i].loadonstartup.equals("")) servlets[i].loadonstartup = "<load-on-startup>"+servlets[i].loadonstartup+"</load-on-startup>";
+          servletParams[i] = WadData.selectParams(pool, "S", servlets[i].classname);
+        }
+      } else servletParams = new WadData[0][0];
+      xmlDocument.setData("structure1", servlets);
+      xmlDocument.setDataArray("reportServletParams", "structure1", servletParams);
+      xmlDocument.setData("structureFilterMapping", WadData.selectFilterMapping(pool));
       xmlDocument.setData("structure2", WadData.selectMapping(pool));
-      //WadUtility.writeFile(fileWebXml, "web.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<!DOCTYPE web-app PUBLIC \"-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN\" \"http://java.sun.com/j2ee/dtds/web-app_2_2.dtd\">\n" + xmlDocument.print());
       WadUtility.writeFile(fileWebXml, "web.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xmlDocument.print());
     } catch (IOException e) {
       e.printStackTrace();
@@ -611,8 +573,8 @@ public class Wad extends DefaultHandler {
       String windowName = FormatUtilities.replace(tabsData.windowname);
       String tableName = FieldsData.tableName(pool, tabsData.tabid);
       String isSOTrx = FieldsData.isSOTrx(pool, tabsData.tabid);
-      WADControl.initMessages(pool, LanguagesData.selectBase(pool));
-      TabsData[] allTabs = getPrimaryTabs(tabsData.key, tabsData.tabid, Integer.valueOf(tabsData.tablevel).intValue(), HEIGHT_TABS, INCR_TABS, "");
+      WADControl.initMessages(pool, "en_US");
+      TabsData[] allTabs = getPrimaryTabs(tabsData.key, tabsData.tabid, Integer.valueOf(tabsData.tablevel).intValue(), HEIGHT_TABS, INCR_TABS);
       FieldsData[] fieldsData = FieldsData.select(pool, tabsData.tabid);
       EditionFieldsData efd[] = EditionFieldsData.select(pool, tabsData.tabid);
       EditionFieldsData efdauxiliar[] = EditionFieldsData.selectAuxiliar(pool, tabsData.tabid);
@@ -722,8 +684,8 @@ public class Wad extends DefaultHandler {
       if (selCol==null || selCol.length==0) selCol = EditionFieldsData.selectSerchFields(pool, "", tabsData.tabid);
       selCol = processSelCol(selCol, tableName);
 
-
-      File fileDir = new File(fileFin, windowName);
+      String javaPackage = (!tabsData.javapackage.equals("")?tabsData.javapackage.replace(".", "/")+"/":"")+windowName; //Take into account java packages for modules
+      File fileDir = new File(fileFin, javaPackage);
       
       int grandfatherTabIndex=-1;
       String parentwhereclause = "";
@@ -784,11 +746,11 @@ public class Wad extends DefaultHandler {
         /************************************************
         *             XSQL of the SORT TAB
         *************************************************/
-        processTabXSQLSortTab(parentsFieldsData, fileDir, tabsData.tabid, tabName, tableName, windowName, keyColumnName, tabsData.adColumnsortorderId, tabsData.adColumnsortyesnoId, vecParameters, vecTableParameters);
+        processTabXSQLSortTab(parentsFieldsData, fileDir, tabsData.tabid, tabName, tableName, windowName, keyColumnName, tabsData.adColumnsortorderId, tabsData.adColumnsortyesnoId, vecParameters, vecTableParameters, tabsData.javapackage);
         /************************************************
         *             JAVA of the SORT TAB
         *************************************************/
-        processTabJavaSortTab(parentsFieldsData, fileDir, tabsData.tabid, tabName, tableName, windowName, keyColumnName, strTables.toString(), strOrder.toString(), strWhere.toString(), vecFields, isSOTrx, allTabs, tabsData.key, tabsData.accesslevel, selCol, isSecondaryKey, grandfatherField, tabsData.tablevel, tabsData.tableId, tabsData.windowtype, tabsData.adColumnsortorderId, whereClauseParams, parentwhereclause, strProcess, strDirectPrint, tabsData.isreadonly.equals("Y"), vecParameters, vecTableParameters);
+        processTabJavaSortTab(parentsFieldsData, fileDir, tabsData.tabid, tabName, tableName, windowName, keyColumnName, strTables.toString(), strOrder.toString(), strWhere.toString(), vecFields, isSOTrx, allTabs, tabsData.key, tabsData.accesslevel, selCol, isSecondaryKey, grandfatherField, tabsData.tablevel, tabsData.tableId, tabsData.windowtype, tabsData.adColumnsortorderId, whereClauseParams, parentwhereclause, strProcess, strDirectPrint, tabsData.isreadonly.equals("Y"), vecParameters, vecTableParameters, tabsData.javapackage);
         /************************************************
         *             XML of the SORT TAB
         *************************************************/
@@ -801,12 +763,12 @@ public class Wad extends DefaultHandler {
         /************************************************
         *                     JAVA
         *************************************************/
-        processTabJava(efd, efdauxiliar, parentsFieldsData, fileDir, tabsData.tabid, tabName, tableName, windowName, keyColumnName, strTables.toString(), strOrder.toString(), strWhere.toString(), tabsData.filterclause, vecFields, vecParameters, isSOTrx, allTabs, tabsData.key, tabsData.accesslevel, selCol, isSecondaryKey, grandfatherField, tabsData.tablevel, tabsData.tableId, tabsData.windowtype, tabsData.isreadonly.equals("Y"), whereClauseParams, parentwhereclause, tabsData.editreference, strProcess, strDirectPrint, vecTableParameters, fieldsData, gridControl);
+        processTabJava(efd, efdauxiliar, parentsFieldsData, fileDir, tabsData.tabid, tabName, tableName, windowName, keyColumnName, strTables.toString(), strOrder.toString(), strWhere.toString(), tabsData.filterclause, vecFields, vecParameters, isSOTrx, allTabs, tabsData.key, tabsData.accesslevel, selCol, isSecondaryKey, grandfatherField, tabsData.tablevel, tabsData.tableId, tabsData.windowtype, tabsData.isreadonly.equals("Y"), whereClauseParams, parentwhereclause, tabsData.editreference, strProcess, strDirectPrint, vecTableParameters, fieldsData, gridControl, tabsData.javapackage);
 
         /************************************************
         *                     XSQL
         *************************************************/
-        processTabXSQL(parentsFieldsData, fileDir, tabsData.tabid, tabName, tableName, windowName, keyColumnName, strFields.toString(), strTables.toString(), strOrder.toString(), strWhere.toString(), vecParameters, tabsData.filterclause, selCol, tabsData.tablevel, tabsData.windowtype, vecTableParameters, fieldsData, isSecondaryKey);
+        processTabXSQL(parentsFieldsData, fileDir, tabsData.tabid, tabName, tableName, windowName, keyColumnName, strFields.toString(), strTables.toString(), strOrder.toString(), strWhere.toString(), vecParameters, tabsData.filterclause, selCol, tabsData.tablevel, tabsData.windowtype, vecTableParameters, fieldsData, isSecondaryKey, tabsData.javapackage);
 
 
         /************************************************
@@ -837,70 +799,7 @@ public class Wad extends DefaultHandler {
         processTabHtmlEdition(efd, efdauxiliar, fileDir, tabsData.tabid, tabName, keyColumnName, tabNamePresentation, tabsData.key, parentsFieldsData, vecFields, tabsData.isreadonly.equals("Y"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, "",false, isSecondaryKey);
       }
 
-      LanguagesData[] dataLang = LanguagesData.select(pool);
-      if (dataLang!=null && dataLang.length>0) {
-        for (int pos=0;pos<dataLang.length;pos++) {
-          WADControl.initMessages(pool, dataLang[pos].adLanguage);
-          FieldsData parentsFieldsNameLngData[]=null;
-          if (tabsData.issorttab.equals("Y")) {
-            parentsFieldsNameLngData = FieldsData.parentsColumnDisplayNameSortTab(pool, dataLang[pos].adLanguage, tabsData.tableId);
-          } else {
-            parentsFieldsNameLngData = FieldsData.parentsColumnDisplayName(pool, dataLang[pos].adLanguage, tabsData.tabid, (parentTabIndex!=-1?allTabs[parentTabIndex].tabid:""));
-          }
-          if (parentTabIndex!=-1 && (parentsFieldsNameLngData==null || parentsFieldsNameLngData.length==0)) {
-            parentsFieldsNameLngData = FieldsData.parentsColumnDisplayNameReal(pool, dataLang[pos].adLanguage, tabsData.tabid, allTabs[parentTabIndex].tabid);
-          }
-          strParentNameDescription = (parentsFieldsNameLngData==null || parentsFieldsNameLngData.length==0)?"":(parentsFieldsNameLngData[0].columnname.equals("")?parentsFieldsNameLngData[0].name:parentsFieldsNameLngData[0].columnname);
-          tabNamePresentation = FieldsData.tabNameTrl(pool, dataLang[pos].adLanguage, tabsData.tabid);
-          String realWindowName = FieldsData.windowNameTrl(pool, dataLang[pos].adLanguage, tabsData.tabid);
-          File fileDirTrlBase = new File(fileTrl, dataLang[pos].adLanguage + strSystemSeparator + translateStr);
-          if (!fileDirTrlBase.exists()) {
-            fileDirTrlBase.mkdirs();
-          }
-          File fileDirTrl = new File(fileDirTrlBase, windowName);
-          fileDirTrl.mkdirs();
-          TabsData[] allTabstrl = getPrimaryTabs(tabsData.key, tabsData.tabid, Integer.valueOf(tabsData.tablevel).intValue(), HEIGHT_TABS, INCR_TABS, dataLang[pos].adLanguage);
-          TabsData[] tab1trl= new TabsData[(allTabstrl.length>NUM_TABS)?NUM_TABS:allTabstrl.length];
-          TabsData[] tab2trl = new TabsData[(allTabstrl.length>NUM_TABS)?NUM_TABS:0];
-          for (int i=0;i<NUM_TABS && i<allTabstrl.length;i++) {
-            tab1trl[i]=allTabstrl[i];
-          }
-          if (allTabstrl.length>NUM_TABS) {
-            int j=0;
-            for (int i=allTabstrl.length-NUM_TABS;i<allTabstrl.length;i++) tab2trl[j++]=allTabstrl[i];
-          }
-
-          calendarDescriptionTrl = WadUtilityData.getTranslatedText(pool, calendarDescription, dataLang[pos].adLanguage);
-          clockDescriptionTrl = WadUtilityData.getTranslatedText(pool, clockDescription, dataLang[pos].adLanguage);
-          calculatorDescriptionTrl = WadUtilityData.getTranslatedText(pool, calculatorDescription, dataLang[pos].adLanguage);
-
-          if (tabsData.issorttab.equals("Y")) {
-            /************************************************
-            *             HTML of the SORT TAB
-            *************************************************/
-            processTabHtmlSortTab(parentsFieldsData, fileDirTrl, tabsData.tabid, tabName, realWindowName, keyColumnName, tabNamePresentation, allTabstrl, strProcess, strDirectPrint, strParentNameDescription, windowName, dataLang[pos].adLanguage);
-          } else {
-            EditionFieldsData efdTRL[] = EditionFieldsData.selectTrl(pool, dataLang[pos].adLanguage, tabsData.tabid);
-            // ************************************************
-            // *             HTML of the Relation view
-            //*************************************************
-            processTabHtmlRelation(parentsFieldsData, fileDirTrl, tabsData.tabid, tabName, keyColumnName, tabsData.isreadonly.equals("Y"), strParentNameDescription, gridControl, true, dataLang[pos].adLanguage, tabNamePresentation, tabsData.tableId, tabsData.accesslevel);
-
-            // ************************************************
-            // *             HTML of the Edition view
-            // *************************************************
-            processTabHtmlEdition(efdTRL, efdauxiliar, fileDirTrl, tabsData.tabid, tabName, keyColumnName, tabNamePresentation, tabsData.key, parentsFieldsData, vecFields, tabsData.isreadonly.equals("Y"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, dataLang[pos].adLanguage, true, isSecondaryKey);
-            processTabHtmlEdition(efdTRL, efdauxiliar, fileDirTrl, tabsData.tabid, tabName, keyColumnName, tabNamePresentation, tabsData.key, parentsFieldsData, vecFields, tabsData.isreadonly.equals("Y"), isSOTrx, tabsData.tableId, PIXEL_TO_LENGTH, dataLang[pos].adLanguage, false, isSecondaryKey);
-          }
-          File languageBase = new File(fileTrl, dataLang[pos].adLanguage);
-          languageBase.mkdir();
-          File fTrl = new File(fileBaseAplication, "srcAD");
-          FileUtility.copy(fTrl, languageBase,new DirFilter("html"), true, false);
-          FileUtility.copy(fTrl, languageBase,new DirFilter("fo"), true, false);
-          FileUtility.copy(fTrl, languageBase,new DirFilter("xml"), true, false);
-          FileUtility.copy(fTrl, languageBase,new DirFilter("srpt"), true, false);
-        }
-      }
+      
 
     } catch(ServletException e) {
        e.printStackTrace();
@@ -1249,7 +1148,7 @@ public class Wad extends DefaultHandler {
    * @throws ServletException
    * @throws IOException
    */
-  private void processTabJavaSortTab(FieldsData[] parentsFieldsData, File fileDir, String strTab, String tabName, String tableName, String windowName, String keyColumnName, String strTables, String strOrder, String strWhere, Vector<Object> vecFields, String isSOTrx, TabsData[] allTabs, String strWindow, String accesslevel, EditionFieldsData[] selCol, boolean isSecondaryKey, String grandfatherField, String tablevel, String tableId, String windowType, String strColumnSortOrderId, String whereClauseParams, String parentwhereclause, String strProcess, String strDirectPrint, boolean strReadOnly, Vector<Object> vecParametersTop, Vector<Object> vecTableParametersTop) throws ServletException, IOException {
+  private void processTabJavaSortTab(FieldsData[] parentsFieldsData, File fileDir, String strTab, String tabName, String tableName, String windowName, String keyColumnName, String strTables, String strOrder, String strWhere, Vector<Object> vecFields, String isSOTrx, TabsData[] allTabs, String strWindow, String accesslevel, EditionFieldsData[] selCol, boolean isSecondaryKey, String grandfatherField, String tablevel, String tableId, String windowType, String strColumnSortOrderId, String whereClauseParams, String parentwhereclause, String strProcess, String strDirectPrint, boolean strReadOnly, Vector<Object> vecParametersTop, Vector<Object> vecTableParametersTop, String javaPackage) throws ServletException, IOException {
     log4j.debug("Processing Sort Tab java: " + strTab + ", " + tabName);
     XmlDocument xmlDocument;
     int parentTab = parentTabId(allTabs, strTab);
@@ -1265,7 +1164,9 @@ public class Wad extends DefaultHandler {
     
     fileDir.mkdirs();
     xmlDocument.setParameter("class", tabName);
-    xmlDocument.setParameter("package", windowName);
+    xmlDocument.setParameter("package", (!javaPackage.equals("")?javaPackage+".":"") + windowName);
+    xmlDocument.setParameter("path", (!javaPackage.equals("")?javaPackage+"/":"") + windowName);
+    xmlDocument.setParameter("windowName", windowName);
     xmlDocument.setParameter("key", keyColumnName);
     xmlDocument.setParameter("grandfatherName", grandfatherField);
     xmlDocument.setParameter("ShowName", FieldsData.columnName(pool, strColumnSortOrderId));
@@ -1385,7 +1286,7 @@ public class Wad extends DefaultHandler {
    * @throws ServletException
    * @throws IOException
    */
-  private void processTabJava(EditionFieldsData[] allfields, EditionFieldsData[] auxiliarsData, FieldsData[] parentsFieldsData, File fileDir, String strTab, String tabName, String tableName, String windowName, String keyColumnName, String strTables, String strOrder, String strWhere, String strFilter, Vector<Object> vecFields, Vector<Object> vecParametersTop, String isSOTrx, TabsData[] allTabs, String strWindow, String accesslevel, EditionFieldsData[] selCol, boolean isSecondaryKey, String grandfatherField, String tablevel, String tableId, String windowType, boolean strReadOnly, String whereClauseParams, String parentwhereclause, String editReference, String strProcess, String strDirectPrint, Vector<Object> vecTableParametersTop, FieldsData[] fieldsDataSelectAux, WADControl relationControl) throws ServletException, IOException {
+  private void processTabJava(EditionFieldsData[] allfields, EditionFieldsData[] auxiliarsData, FieldsData[] parentsFieldsData, File fileDir, String strTab, String tabName, String tableName, String windowName, String keyColumnName, String strTables, String strOrder, String strWhere, String strFilter, Vector<Object> vecFields, Vector<Object> vecParametersTop, String isSOTrx, TabsData[] allTabs, String strWindow, String accesslevel, EditionFieldsData[] selCol, boolean isSecondaryKey, String grandfatherField, String tablevel, String tableId, String windowType, boolean strReadOnly, String whereClauseParams, String parentwhereclause, String editReference, String strProcess, String strDirectPrint, Vector<Object> vecTableParametersTop, FieldsData[] fieldsDataSelectAux, WADControl relationControl, String javaPackage) throws ServletException, IOException {
     log4j.debug("Processing java: " + strTab + ", " + tabName);
     XmlDocument xmlDocument;
     boolean isHighVolumen = (FieldsData.isHighVolume(pool, strTab).equals("Y"));
@@ -1495,7 +1396,7 @@ public class Wad extends DefaultHandler {
     if (!editReference.equals("")) discard[21]="NothasReference";
     if ((noPInstance)&&(noActionButton)) discard[22]="hasAdPInstance";
     if (noActionButton) discard[23]="hasAdActionButton";
-    if (FieldsData.hasButtonList(pool, strTab).equals("0")) discard[25]="buttonList";
+    
     if (FieldsData.hasButtonFixed(pool, strTab).equals("0")) discard[26]="buttonFixed";
     if (strWindow.equals("110")) discard[27]="sectionOrganizationCheck";
     discard[28]="sameParent";
@@ -1505,10 +1406,13 @@ public class Wad extends DefaultHandler {
     if (strWindow.equals("250")) discard[30]="refreshTabParentSession"; //TODO: This fixes [1879633] and shoudn't be necessary in r2.5x because of new PKs
     
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/javasource", discard).createXmlDocument();
+
     
     fileDir.mkdirs();
     xmlDocument.setParameter("class", tabName);
-    xmlDocument.setParameter("package", windowName);
+    xmlDocument.setParameter("package", (!javaPackage.equals("")?javaPackage+".":"") + windowName);
+    xmlDocument.setParameter("path", (!javaPackage.equals("")?javaPackage.replace(".","/")+"/":"") + windowName);
+    xmlDocument.setParameter("windowName", windowName);
     xmlDocument.setParameter("key", keyColumnName);
     xmlDocument.setParameter("from", generateStaticWhere(strTables, vecTableParametersTop));
     xmlDocument.setParameter("order", (!strOrder.equals("")?strOrder.substring(9):strOrder));
@@ -1940,15 +1844,17 @@ public class Wad extends DefaultHandler {
    * @throws ServletException
    * @throws IOException
    */
-  private void processTabXSQLSortTab(FieldsData[] parentsFieldsData, File fileDir, String strTab, String tabName, String tableName, String windowName, String keyColumnName, String strColumnSortOrderId, String strColumnSortYNId, Vector<Object> vecParametersTop, Vector<Object> vecTableParametersTop) throws ServletException, IOException {
+  private void processTabXSQLSortTab(FieldsData[] parentsFieldsData, File fileDir, String strTab, String tabName, String tableName, String windowName, String keyColumnName, String strColumnSortOrderId, String strColumnSortYNId, Vector<Object> vecParametersTop, Vector<Object> vecTableParametersTop, String javaPackage) throws ServletException, IOException {
     log4j.debug("Processing Sort Tab xsql: " + strTab + ", " + tabName);
     XmlDocument xmlDocumentXsql;
     String[] discard = {"", "", "hasOrgKey"};
     if (parentsFieldsData==null || parentsFieldsData.length == 0) discard[0] = "parent";  // remove the parent tags
     xmlDocumentXsql = xmlEngine.readXmlTemplate("org/openbravo/wad/datasourceSortTab", discard).createXmlDocument();
     
+    xmlDocumentXsql.ignoreTranslation = true;
     xmlDocumentXsql.setParameter("class", tabName + "Data");
     xmlDocumentXsql.setParameter("package", "org.openbravo.erpWindows." + windowName);
+    xmlDocumentXsql.setParameter("package", "org.openbravo.erpWindows." + (!javaPackage.equals("")?javaPackage+".":"")+windowName);
     xmlDocumentXsql.setParameter("table", tableName);
     xmlDocumentXsql.setParameter("key", tableName + "." + keyColumnName);
     xmlDocumentXsql.setParameter("SortConditionField", FieldsData.columnName(pool, strColumnSortYNId));
@@ -2100,7 +2006,7 @@ public class Wad extends DefaultHandler {
    * @throws ServletException
    * @throws IOException
    */
-  private void processTabXSQL(FieldsData[] parentsFieldsData, File fileDir, String strTab, String tabName, String tableName, String windowName, String keyColumnName, String strFields, String strTables, String strOrder, String strWhere, Vector<Object> vecParametersTop, String strFilter, EditionFieldsData[] selCol, String tablevel, String windowType, Vector<Object> vecTableParametersTop, FieldsData[] fieldsDataSelectAux, boolean isSecondaryKey) throws ServletException, IOException {
+  private void processTabXSQL(FieldsData[] parentsFieldsData, File fileDir, String strTab, String tabName, String tableName, String windowName, String keyColumnName, String strFields, String strTables, String strOrder, String strWhere, Vector<Object> vecParametersTop, String strFilter, EditionFieldsData[] selCol, String tablevel, String windowType, Vector<Object> vecTableParametersTop, FieldsData[] fieldsDataSelectAux, boolean isSecondaryKey, String javaPackage) throws ServletException, IOException {
     log4j.debug("Procesig xsql: " + strTab + ", " + tabName);
     XmlDocument xmlDocumentXsql;
     String[] discard = {"", "", "", "", "", "", "", ""};
@@ -2123,8 +2029,9 @@ public class Wad extends DefaultHandler {
     
     xmlDocumentXsql = xmlEngine.readXmlTemplate("org/openbravo/wad/datasource", discard).createXmlDocument();
     
+    xmlDocumentXsql.ignoreTranslation = true;
     xmlDocumentXsql.setParameter("class", tabName + "Data");
-    xmlDocumentXsql.setParameter("package", "org.openbravo.erpWindows." + windowName);
+    xmlDocumentXsql.setParameter("package", "org.openbravo.erpWindows." + (!javaPackage.equals("")?javaPackage+".":"")+windowName);
     xmlDocumentXsql.setParameter("table", tableName);
     xmlDocumentXsql.setParameter("key", tableName + "." + keyColumnName);
     if (parentsFieldsData!=null && parentsFieldsData.length > 0) {
@@ -2834,17 +2741,41 @@ public class Wad extends DefaultHandler {
     xmlDocument.setParameter("hiddens", htmlHidden.toString());
 
     StringBuffer html = new StringBuffer();
+    StringBuffer labelsHTML = new StringBuffer();
+    
+    String strFieldGroup="";
+
     for (int i=0;i< efd.length; i++) {
       WADControl auxControl = null;
       try {
         auxControl = WadUtility.getControl(pool, efd[i], isreadonly, tabName, "", xmlEngine, false, false, false, false, false);
+        
+        
       } catch (Exception ex) {
         throw new ServletException(ex);
       }
       html.append(auxControl.toXml()).append("\n");
+      auxControl.setData("AdColumnId", efd[i].getField("adColumnId"));
+      String labelXML = auxControl.toLabelXML();
+      if (!labelXML.trim().equals("")) labelsHTML.append(auxControl.toLabelXML()).append("\n");
+      
+    //FieldGroups
+      if (WadUtility.isNewGroup(auxControl, strFieldGroup)) {
+        strFieldGroup = auxControl.getData("AD_FieldGroup_ID");
+        WADLabelControl fieldLabel = new WADLabelControl();
+        fieldLabel.setLabelType(WADLabelControl.FIELD_GROUP_LABEL);
+        fieldLabel.setFieldGroupId(strFieldGroup);
+        fieldLabel.setColumnName(EditionFieldsData.fieldGroupName(pool, strFieldGroup));
+        fieldLabel.setLinkable(false);
+        String labelXMLfg = fieldLabel.toLabelXML();
+        labelsHTML.append(labelXMLfg).append("\n");
+      }
+
     }
 
     xmlDocument.setParameter("fields", html.toString());
+    
+    xmlDocument.setParameter("labels", labelsHTML.toString());
     
     xmlDocument.setParameter("class", tabName + "_Edition.html");
     WadUtility.writeFile(fileDir, tabName + "_Edition.xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xmlDocument.print());
@@ -2965,7 +2896,6 @@ public class Wad extends DefaultHandler {
       
       try {
         auxControl = WadUtility.getControl(pool, efd[i], isreadonly, tabName, strLanguage, xmlEngine, (WadUtility.isInVector(vecDisplayLogic, efd[i].getField("columnname"))), WadUtility.isInVector(vecReloads, efd[i].getField("columnname")), WadUtility.isInVector(vecReadOnlyLogic, efd[i].getField("columnname")), false, isReadOnlyDefinedTab);
-        
       } catch (Exception ex) {
         throw new ServletException(ex);
       }
@@ -2985,9 +2915,20 @@ public class Wad extends DefaultHandler {
         html.append("      <table border=0 cellspacing=0 cellpadding=0 class=\"FieldGroup\" id=\"fldgrp"+strFieldGroup+"\"><tr class=\"FieldGroup_TopMargin\"></tr>\n<tr>\n");
         html.append("<td class=\"FieldGroupTitle_Left\"><img src=\"../../../../../web/images/blank.gif\" class=\"FieldGroupTitle_Left_bg\" border=0/></td>");
         String strText="";
-        if (strLanguage.equals("")) strText = EditionFieldsData.fieldGroupName(pool, strFieldGroup);
-        else strText = EditionFieldsData.fieldGroupNameTrl(pool, strLanguage, strFieldGroup);
-        html.append("<td class=\"FieldGroupTitle\">").append(strText).append("</td>");
+        strText = EditionFieldsData.fieldGroupName(pool, strFieldGroup);
+
+
+        WADLabelControl fieldLabel = new WADLabelControl();
+        fieldLabel.setLabelType(WADLabelControl.FIELD_GROUP_LABEL);
+        fieldLabel.setFieldGroupId(strFieldGroup);
+        fieldLabel.setColumnName(strText);
+        fieldLabel.setLinkable(false);
+        
+        WadControlLabelBuilder fieldGroupLabelBuilder = new WadControlLabelBuilder(fieldLabel);
+        fieldGroupLabelBuilder.buildLabelControl();
+        String labelText = fieldGroupLabelBuilder.getBasicLabelText();
+        
+        html.append("<td class=\"FieldGroupTitle\">").append(labelText).append("</td>");
         html.append("<td class=\"FieldGroupTitle_Right\"><img src=\"../../../../../web/images/blank.gif\" class=\"FieldGroupTitle_Right_bg\" border=0/></td>");
         html.append("<td class=\"FieldGroupContent\">&nbsp;</td></tr>\n<tr class=\"FieldGroup_BottomMargin\"></tr></table>");
         html.append("      </td></tr>\n");
@@ -3026,6 +2967,8 @@ public class Wad extends DefaultHandler {
           columnType = COLUMN_1_OF_1;
           html.append("<tr><td");
         }
+        auxControl.setData("ColumnNameLabel", auxControl.getData("ColumnName"));
+        auxControl.setData("AdColumnId", efd[i].getField("adColumnId"));
         WadUtility.setLabel(pool, auxControl, isSOTrx.equals("Y"), "inp" + Sqlc.TransformaNombreColumna(keyColumnName));
         String label = auxControl.toLabel();
         if (!label.equals("")) {
@@ -3204,14 +3147,13 @@ public class Wad extends DefaultHandler {
    * @throws IOException
    * @throws ServletException
    */
-  private void getSubTabs (Vector<Object> vec, String strTabParent, String strTabSelected, String strLanguage) throws IOException, ServletException {
+  private void getSubTabs (Vector<Object> vec, String strTabParent, String strTabSelected) throws IOException, ServletException {
     TabsData[] aux = null;
-    if (strLanguage==null || strLanguage.equals("")) aux = TabsData.selectSubtabs(pool, strTabParent);
-    else aux = TabsData.selectSubtabsTrl(pool, strLanguage, strTabParent);
+    aux = TabsData.selectSubtabs(pool, strTabParent);
     if (aux==null || aux.length<=0) return;
     for (int i=0;i<aux.length;i++) {
       vec.addElement(aux[i]);
-      getSubTabs(vec, aux[i].tabid, strTabSelected, strLanguage);
+      getSubTabs(vec, aux[i].tabid, strTabSelected);
     }
   }
 
@@ -3222,22 +3164,20 @@ public class Wad extends DefaultHandler {
    * @param level The level of the tab to return.
    * @param heightTabs The default height for the tabs.
    * @param incrTabs The increment over the height.
-   * @param strLanguage The language to translate.
    * @return Array with the primary tabs.
    * @throws IOException
    * @throws ServletException
    */
-  private TabsData[] getPrimaryTabs(String strWindowId, String strTabSelected, int level, int heightTabs, int incrTabs, String strLanguage) throws IOException, ServletException {
+  private TabsData[] getPrimaryTabs(String strWindowId, String strTabSelected, int level, int heightTabs, int incrTabs) throws IOException, ServletException {
     TabsData[] aux=null;
     TabsData[] aux1=null;
     int mayor=0;
     Vector<Object> vec = new Vector<Object>();
-    if (strLanguage!=null && !strLanguage.equals("")) aux1 = TabsData.selectTabParentTrl(pool, strLanguage, strWindowId);
-    else aux1 = TabsData.selectTabParent(pool, strWindowId);
+    aux1 = TabsData.selectTabParent(pool, strWindowId);
     if (aux1==null || aux1.length==0) return null;
     for (int i=0;i<aux1.length;i++) {
       vec.addElement(aux1[i]);
-      getSubTabs(vec, aux1[i].tabid, strTabSelected, strLanguage);
+      getSubTabs(vec, aux1[i].tabid, strTabSelected);
     }
     aux = new TabsData[vec.size()];
     vec.copyInto(aux);

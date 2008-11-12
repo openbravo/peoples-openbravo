@@ -700,7 +700,7 @@ public class FactLine {
     public String setC_Period_ID(AcctServer m_docVO,String strDateAcct, ConnectionProvider conn){
         AcctServerData [] data=null;
         try{
-          data = AcctServerData.periodOpen(conn,m_docVO.AD_Client_ID,m_docVO.DocumentType,strDateAcct);
+          data = AcctServerData.periodOpen(conn,m_docVO.AD_Client_ID,m_docVO.DocumentType,m_docVO.AD_Org_ID,strDateAcct);
         }catch (ServletException e){
             log4jFactLine.warn(e);
         }

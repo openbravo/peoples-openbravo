@@ -1,0 +1,72 @@
+/*
+ * 
+ * Copyright (C) 2001-2008 Openbravo S.L. Licensed under the Apache Software
+ * License version 2.0 You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+package org.openbravo.service.db;
+
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.provider.OBSingleton;
+import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.dal.xml.EntityXMLConverter;
+import org.openbravo.model.ad.utility.DataSet;
+import org.openbravo.model.ad.utility.DataSetTable;
+
+/**
+ * Exports business objects using datasets, makes use of the dataSetService.
+ * 
+ * @author Martin Taal
+ */
+public class DataExportService implements OBSingleton {
+    private static final Logger log = Logger.getLogger(DataExportService.class);
+
+    private static DataExportService instance;
+
+    public static DataExportService getInstance() {
+	if (instance == null) {
+	    instance = OBProvider.getInstance().get(DataExportService.class);
+	}
+	return instance;
+    }
+
+    public static void setInstance(DataExportService instance) {
+	DataExportService.instance = instance;
+    }
+
+    public String exportDataSetToXML(DataSet dataSet) {
+	return exportDataSetToXML(dataSet, null);
+    }
+
+    // note returns null if nothing has been generated
+    public String exportDataSetToXML(DataSet dataSet, String moduleId) {
+	log.debug("Exporting dataset " + dataSet.getName());
+
+	final EntityXMLConverter exc = EntityXMLConverter.newInstance();
+	exc.setOptionIncludeReferenced(true);
+	final List<DataSetTable> dts = dataSet.getDataSetTableList();
+	boolean generatedXML = false;
+	for (final DataSetTable dt : dts) {
+	    final Boolean isbo = dt.isBusinessObject();
+	    exc.setOptionIncludeChildren(isbo != null && isbo.booleanValue());
+	    final List<BaseOBObject> list = DataSetService.getInstance()
+		    .getExportableObjects(dt, moduleId);
+	    if (list.size() > 0) {
+		exc.process(list);
+		generatedXML = true;
+	    }
+	}
+	if (!generatedXML) {
+	    return null;
+	}
+	return exc.getProcessResult();
+    }
+}

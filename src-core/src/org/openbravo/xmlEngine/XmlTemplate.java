@@ -25,6 +25,7 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
   TemplateConfiguration configuration;
   Hashtable<Object, Object> hasSubXmlTemplates;  // hashtable of SubXmlTemplates
   Vector<Object> hasDataTemplate;  // hashtable of DataTemplate (the same that the hashtable DataTemplate in Configuration
+  Hashtable<String, LabelTemplate> hasLabelTemplate;
   SectionTemplate activeSection;
   XmlVectorTemplate activeXmlVector; // it may be the vecXmlVector, the vecDetail of a DataTemplate or the head or foot of a SectionTemplate
   XmlVectorTemplate vecXmlVector;  //contains XmlComponents before, after and between DataTemplates and the DataTemplate
@@ -52,7 +53,8 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
     hasSubXmlTemplates = new Hashtable<Object, Object>();
     hasDataTemplate = new Vector<Object>();
     hasParameterTemplate = new Hashtable<String, ParameterTemplate>();
-    configuration = new TemplateConfiguration(hasDataTemplate, xmlEngine, hasParameterTemplate, this);  // XmlEngineNP: unique argument in the cosntructor: this
+    hasLabelTemplate = new Hashtable<String, LabelTemplate>();
+    configuration = new TemplateConfiguration(hasDataTemplate, xmlEngine, hasParameterTemplate, hasLabelTemplate, this);  // XmlEngineNP: unique argument in the cosntructor: this
     for (int i=0; i<discard.length; i++ ) {
       configuration.hashtable.put (discard[i], new Discard());
     }
@@ -210,7 +212,6 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
                     activeSection.addFunction(functionAttributeComponent);
                   }
                 }
-
                 tag.setAttribute(attributeComponent);
                 break;
               case IDComponent.FUNCTION:
@@ -229,6 +230,12 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
                 stackElement.setSkipCharacters();   // to remove the characters
                 XmlTemplate subDocument = (XmlTemplate)iDComponent;
                 activeXmlVector.addElement(subDocument);
+                break;
+              case IDComponent.LABEL:
+                log4jXmlTemplate.debug("Case LABEL");
+                stackElement.setSkipCharacters();  // to remove the characters
+                LabelTemplate label = (LabelTemplate)iDComponent;
+                activeXmlVector.addElement(label);
                 break;
             }
           } // Discard2

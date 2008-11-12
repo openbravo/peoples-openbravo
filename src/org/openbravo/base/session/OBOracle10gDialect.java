@@ -25,19 +25,19 @@ import org.hibernate.dialect.Oracle10gDialect;
  */
 
 public class OBOracle10gDialect extends Oracle10gDialect {
-  private static final Logger log = Logger.getLogger(OBOracle10gDialect.class);
-  
-  public OBOracle10gDialect() {
-    super();
-    
-    registerHibernateType(Types.NUMERIC, Hibernate.LONG.getName());
-    
-    registerColumnType(Types.VARCHAR, 4000, "nvarchar2($l)");
-    registerColumnType(Types.VARCHAR, 100, "varchar2($l)");
-    registerColumnType(Types.VARCHAR, 5, "char($l)");
-    
-    log.debug("Created Openbravo specific Oracle DIalect");
-    ;
-  }
-  
+    private static final Logger log = Logger
+	    .getLogger(OBOracle10gDialect.class);
+
+    public OBOracle10gDialect() {
+	super();
+
+	registerHibernateType(Types.NUMERIC, Hibernate.LONG.getName());
+
+	registerColumnType(Types.VARCHAR, 4000, "nvarchar2($l)");
+	registerColumnType(Types.VARCHAR, 100, "varchar2($l)");
+	registerColumnType(Types.VARCHAR, 5, "char($l)");
+
+	log.debug("Created Openbravo specific Oracle DIalect");
+    }
+
 }

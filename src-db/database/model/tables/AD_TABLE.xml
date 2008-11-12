@@ -49,6 +49,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="CLASSNAME" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <column name="ISVIEW" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
@@ -97,15 +101,15 @@
         <default><![CDATA[RE]]></default>
         <onCreateDefault/>
       </column>
-      <column name="AD_MODULE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="AD_PACKAGE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
+      <foreign-key foreignTable="AD_PACKAGE" name="AD_PACKAGE_TABLE">
+        <reference local="AD_PACKAGE_ID" foreign="AD_PACKAGE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_WINDOW" name="AD_WINDOW_TABLE" onDelete="setnull">
         <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_MODULE" name="ADMODULE_ADTABLE">
-        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="TABLECLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
@@ -113,6 +117,9 @@
       <foreign-key foreignTable="AD_ORG" name="TABLEORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="FKI_AD_PACKAGE_KEY" unique="false">
+        <index-column name="AD_PACKAGE_ID"/>
+      </index>
       <unique name="AD_TABLE_NAME">
         <unique-column name="NAME"/>
       </unique>

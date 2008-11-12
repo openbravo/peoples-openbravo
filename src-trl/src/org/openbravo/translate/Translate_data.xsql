@@ -23,7 +23,7 @@
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment>Return the translation of a text</SqlMethodComment>
     <Sql>
-      select A.ad_textinterfaces_id, A.tr, '' AS NAME, A.o AS ORDEN
+      select A.ad_textinterfaces_id, A.tr, '' AS NAME, A.o AS ORDEN, '' as ad_language, '' AS TOTAL
         from (select tt.ad_textinterfaces_id AS ad_textinterfaces_id, trim(tt.text) AS tr, 1 AS o
                 from ad_textinterfaces_trl tt
                where tt.ad_textinterfaces_id =  (select min(ad_textinterfaces_id)
@@ -53,45 +53,122 @@
   <SqlMethod name="existsExpresion" type="preparedStatement" return="rowCount">
     <SqlMethodComment>Return the translation of a text</SqlMethodComment>
     <Sql>
-        update ad_textinterfaces
+         update ad_textinterfaces
            set isUsed = 'Y'
          where ad_textinterfaces_id = ( select min(A.ad_textinterfaces_id)
                                           from (select B.*
                                                 from (select min(ad_textinterfaces_id) AS ad_textinterfaces_id, 1 AS o
-                                                          from ad_textinterfaces
+                                                          from ad_textinterfaces t,
+                                                               ad_module m
                                                          where text     = ?
                                                            and filename = ?
+                                                           and m.ad_module_id = t.ad_module_id
+                                                           and m.ad_language = ?
                                                         union
-                                                        select min(ad_textinterfaces_id) AS ad_textinterfaces_id, 2 AS o
-                                                          from ad_textinterfaces
+                                                        select min(t.ad_textinterfaces_id) AS ad_textinterfaces_id, 2 AS o
+                                                          from ad_textinterfaces t, ad_textinterfaces_trl trl
+                                                         where trl.text     = ?
+                                                           and t.filename = ?
+                                                           and trl.ad_textinterfaces_id = t.ad_textinterfaces_id
+                                                           and trl.ad_language = ?
+                                                        union
+                                                        select min(ad_textinterfaces_id) AS ad_textinterfaces_id, 3 AS o
+                                                          from ad_textinterfaces t,
+                                                               ad_module m
                                                          where text = ?
                                                            and filename is null
+                                                           and m.ad_module_id = t.ad_module_id
+                                                           and m.ad_language = ?
+                                                        union
+                                                        select min(t.ad_textinterfaces_id) AS ad_textinterfaces_id, 4 AS o
+                                                          from ad_textinterfaces t, ad_textinterfaces_trl trl
+                                                         where trl.text = ?
+                                                           and t.filename is null
+                                                           and trl.ad_textinterfaces_id = t.ad_textinterfaces_id
+                                                           and trl.ad_language = ?
                                                          order by o) B
                                                  where ad_textinterfaces_id is not null) A)
     </Sql>
     <Parameter name="text"/>
     <Parameter name="filename"/>
+    <Parameter name="moduleLang"/>
+    
     <Parameter name="text"/>
+    <Parameter name="filename"/>
+    <Parameter name="moduleLang"/>
+    
+    <Parameter name="text"/>
+    <Parameter name="moduleLang"/>
+    
+    <Parameter name="text"/>
+    <Parameter name="moduleLang"/>
   </SqlMethod>
 
+   <SqlMethod name="getModuleID" type="preparedStatement" return="string">
+    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
+    <Sql>
+      SELECT AD_MODULE_ID
+        FROM AD_MODULE
+       WHERE JavaPackage = ?
+    </Sql>
+    <Parameter name="name"/>
+  </SqlMethod>
+  
+  <SqlMethod name="getModuleLang" type="preparedStatement" return="string">
+    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
+    <Sql>
+      SELECT AD_LANGUAGE
+        FROM AD_MODULE
+       WHERE AD_MODULE_ID = ?
+    </Sql>
+    <Parameter name="module_id"/>
+  </SqlMethod>
+  
+  <SqlMethod name="isInDevelopmentModule" type="preparedStatement" return="boolean">
+    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
+    <Sql>
+      SELECT COUNT(*) AS TOTAL
+        FROM AD_MODULE
+       WHERE AD_MODULE_ID = ?
+         AND ISINDEVELOPMENT = 'Y'
+    </Sql>
+    <Parameter name="name"/>
+  </SqlMethod>
+
+  <SqlMethod name="isInDevelopmentModulePack" type="preparedStatement" return="boolean">
+    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
+    <Sql>
+      SELECT COUNT(*) AS TOTAL
+        FROM AD_MODULE
+       WHERE JAVAPACKAGE = ?
+         AND ISINDEVELOPMENT = 'Y'
+    </Sql>
+    <Parameter name="pack"/>
+  </SqlMethod>
+  
   <SqlMethod name="insert" type="preparedStatement" return="rowCount">
     <SqlMethodComment>Return the translation of a text</SqlMethodComment>
     <Sql>
       insert into ad_textinterfaces
-        (AD_TEXTINTERFACES_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, TEXT, FILENAME, ISUSED)
+        (AD_TEXTINTERFACES_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, TEXT, FILENAME, ISUSED, AD_MODULE_ID)
       values
-        (get_uuid(),0 ,0, 'Y', now(), 0, now(), 0, ?, ?, 'Y')
+        (get_uuid(),'0' ,'0', 'Y', now(), '0', now(), '0', ?, ?, 'Y', ?)
     </Sql>
     <Parameter name="text"/>
     <Parameter name="filename"/>
+    <Parameter name="module"/>
   </SqlMethod>
 
   <SqlMethod name="update" type="preparedStatement" return="rowCount">
     <SqlMethodComment>Return the translation of a text</SqlMethodComment>
     <Sql>
-      update ad_textinterfaces
+      update ad_textinterfaces t
          set isUsed='Y'
        where ad_textinterfaces_id = ?
+         and exists (select 1 
+                       from ad_module m
+                      where m.ad_module_id = t.ad_module_id
+                        and m.isInDevelopment = 'Y')
     </Sql>
     <Parameter name="adTextinterfacesId"/>
   </SqlMethod>
@@ -112,8 +189,12 @@
   <SqlMethod name="clean" type="preparedStatement" return="rowCount">
     <SqlMethodComment>Return the translation of a text</SqlMethodComment>
     <Sql>
-      update ad_textinterfaces
+      update ad_textinterfaces t
          set isUsed='N'
+       where exists (select 1 
+                       from ad_module m
+                      where m.ad_module_id = t.ad_module_id
+                        and m.isInDevelopment = 'Y')  
     </Sql>
   </SqlMethod>
 </SqlClass>

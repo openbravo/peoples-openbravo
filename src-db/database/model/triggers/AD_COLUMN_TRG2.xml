@@ -22,7 +22,24 @@
   CUR_Clients RECORD;
   v_TableName VARCHAR2(40);
   v_NextNo VARCHAR2(32);
+  v_Aux NUMBER;
   BEGIN
+  SELECT count(*)
+    INTO v_Aux
+    FROM AD_TABLE T, 
+         AD_PACKAGE M
+   WHERE T.AD_TABLE_ID = :new.AD_Table_ID
+     AND M.AD_PACKAGE_ID = T.AD_PACKAGE_ID
+     AND M.AD_MODULE_ID != :new.AD_Module_ID
+     AND NOT EXISTS (SELECT 1 
+                      FROM AD_MODULE_DBPREFIX P
+                      WHERE P.AD_MODULE_ID = :new.AD_Module_ID 
+                      AND instr(upper(:new.columnname), upper(P.name)||'_') = 1);
+  
+  IF v_Aux != 0 THEN
+    RAISE_APPLICATION_ERROR(-20536, 'Names must start with its module''s DB prefix') ;
+  END IF;
+  
   /**
   * Create Sequence for DocumentNo and Value columns
   */

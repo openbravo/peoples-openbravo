@@ -16,13 +16,14 @@ import java.io.Serializable;
 import org.apache.log4j.Logger;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.tuple.Instantiator;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.DynamicOBObject;
 import org.openbravo.base.structure.Identifiable;
-import org.openbravo.base.structure.OBFactory;
 import org.openbravo.base.util.Check;
 
 /**
- * Instantiates a Openbravo business object and tells it which type it is.
+ * Instantiates a Openbravo business object and tells it which type it is. Is
+ * used by Hibernate.
  * 
  * Used to support dynamic business objects which can handle runtime model
  * changes.
@@ -33,44 +34,49 @@ import org.openbravo.base.util.Check;
  * @author mtaal
  */
 public class OBInstantiator implements Instantiator {
-  private static final long serialVersionUID = 1L;
-  private static final Logger log = Logger.getLogger(OBInstantiator.class);
-  
-  private String entityName;
-  private Class<?> mappedClass;
-  
-  public OBInstantiator() {
-    this.entityName = null;
-  }
-  
-  public OBInstantiator(PersistentClass mappingInfo) {
-    this.entityName = mappingInfo.getEntityName();
-    mappedClass = mappingInfo.getMappedClass();
-    log.debug("Creating dynamic instantiator for " + entityName);
-  }
-  
-  public Object instantiate() {
-    return OBFactory.getInstance().create(entityName);
-  }
-  
-  public Object instantiate(Serializable id) {
-    if (mappedClass != null) {
-      final Identifiable obObject = (Identifiable) OBFactory.getInstance().create(mappedClass);
-      obObject.setId(id);
-      Check.isTrue(obObject.getEntityName().equals(entityName), "Entityname of instantiated object " + obObject.getEntityName() + " and expected entityName: " + entityName + " is different.");
-      return obObject;
-    } else {
-      final DynamicOBObject dob = new DynamicOBObject();
-      dob.setEntityName(entityName);
-      dob.setId((String) id);
-      return dob;
+    private static final long serialVersionUID = 1L;
+    private static final Logger log = Logger.getLogger(OBInstantiator.class);
+
+    private String entityName;
+    private Class<?> mappedClass;
+
+    public OBInstantiator() {
+	this.entityName = null;
     }
-  }
-  
-  public boolean isInstance(Object object) {
-    if (object instanceof Identifiable) {
-      return entityName.equals(((Identifiable) object).getEntityName());
+
+    public OBInstantiator(PersistentClass mappingInfo) {
+	this.entityName = mappingInfo.getEntityName();
+	mappedClass = mappingInfo.getMappedClass();
+	log.debug("Creating dynamic instantiator for " + entityName);
     }
-    return false;
-  }
+
+    public Object instantiate() {
+	return OBProvider.getInstance().get(entityName);
+    }
+
+    public Object instantiate(Serializable id) {
+	if (mappedClass != null) {
+	    final Identifiable obObject = (Identifiable) OBProvider
+		    .getInstance().get(mappedClass);
+	    obObject.setId(id);
+	    Check.isTrue(obObject.getEntityName().equals(entityName),
+		    "Entityname of instantiated object "
+			    + obObject.getEntityName()
+			    + " and expected entityName: " + entityName
+			    + " is different.");
+	    return obObject;
+	} else {
+	    final DynamicOBObject dob = new DynamicOBObject();
+	    dob.setEntityName(entityName);
+	    dob.setId((String) id);
+	    return dob;
+	}
+    }
+
+    public boolean isInstance(Object object) {
+	if (object instanceof Identifiable) {
+	    return entityName.equals(((Identifiable) object).getEntityName());
+	}
+	return false;
+    }
 }

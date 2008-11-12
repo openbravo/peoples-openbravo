@@ -202,7 +202,7 @@ function submitForm(field, value, form, bolOneFormSubmission, isCallOut, frameNa
       showJSMessage(16);
       return false;
     } else {
-    	gSubmitted=1;
+      gSubmitted=1;
       if (isCallOut) setGWaitingCallOut(true, frameName);
       field.value = value;
       form.submit();
@@ -316,13 +316,13 @@ function dispatchEventChange(target) {
  * all custom code has been migrated to the new name.
  */
 function depurar_validate_wrapper(action, form, value) {
-	// if new-style validate-function exists => call it
-	if (typeof validate == "function") {
-		return validate(action, form, value);
-	} else {
-		// call old-style depurar function
-		return depurar(action, form, value);
-	}	
+  // if new-style validate-function exists => call it
+  if (typeof validate == "function") {
+    return validate(action, form, value);
+  } else {
+    // call old-style depurar function
+    return depurar(action, form, value);
+  } 
 }
 
 /**
@@ -343,8 +343,8 @@ function depurar_validate_wrapper(action, form, value) {
 function submitCommandForm(action, bolValidation, form, newAction, newTarget, bolOneFormSubmission, bolCheckChanges, isCallOut, controlEvt, evt) {
   if (form == null) form = document.forms[0];
   if (bolValidation!=null && bolValidation==true){
-  	try { initialize_MessageBox('messageBoxID'); } catch (ignored) {}
-  	if (!depurar_validate_wrapper(action, form, "")) return false;
+    try { initialize_MessageBox('messageBoxID'); } catch (ignored) {}
+    if (!depurar_validate_wrapper(action, form, "")) return false;
   } 
   if (bolCheckChanges==null) bolCheckChanges = false;
   if (isCallOut==null) isCallOut = false;
@@ -397,8 +397,8 @@ function submitCommandForm(action, bolValidation, form, newAction, newTarget, bo
 function submitCommandFormParameter(action, field, value, bolValidation, form, formAction, newTarget, bolOneFormSubmission, bolCheckChanges, isCallOut, controlEvt, evt) {
   if (form == null) form = document.forms[0];
   if (bolValidation!=null && bolValidation==true){
-  	try { initialize_MessageBox('messageBoxID'); } catch (ignored) {}
-	if (!depurar_validate_wrapper(action, form, value)) return false;
+    try { initialize_MessageBox('messageBoxID'); } catch (ignored) {}
+  if (!depurar_validate_wrapper(action, form, value)) return false;
   }
   if (bolCheckChanges==null) bolCheckChanges = false;
   if (isCallOut==null) isCallOut = false;
@@ -448,7 +448,7 @@ function validateNumber(strValue, isFloatAllowed, isNegativeAllowed) {
   if (strValue == null || strValue=="") return true;
   if (strValue.substring(i, i+1)=="-") {
     if (isNegativeAllowed !=null && isNegativeAllowed) {
-    	isNegative = true;
+      isNegative = true;
       i++;
     } else {
       return false;
@@ -459,7 +459,7 @@ function validateNumber(strValue, isFloatAllowed, isNegativeAllowed) {
   for (i=i;i<total;i++) {
     if (isNaN(strValue.substring(i,i+1))) {
       if (isFloatAllowed && strValue.substring(i,i+1)=="." && !isComma) 
-    	  isComma = true;
+        isComma = true;
       else
         return false;
     }
@@ -1048,16 +1048,19 @@ function keyControl(pushedKey) {
                   keyCode = 8;
                 }
               }
-              if (!keyArray[i].propagateKey || isGridFocused) 
-                //document.onkeypress = stopKeyPressEvent;
               if (keyArray[i].field==null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
                 var evalfuncTrl = replaceEventString(keyArray[i].evalfunc, keyTarget.name, keyArray[i].field);
                 try {
                   eval(evalfuncTrl);
                   thereIsShortcut = true;
-                  if (!keyArray[i].propagateKey || isGridFocused) 
-                    return false; else 
+                  if (!isEnterCatched() && keyArray[i].key == 'ENTER') { // Special ENTER case logic to propagate if there is no default action
                     return true;
+                  }
+                  if (!keyArray[i].propagateKey || isGridFocused) {
+                    return false;
+                  } else {
+                    return true;
+                  }
                 } catch (e) {
                   document.onkeypress = startKeyPressEvent;
                   return true;
@@ -1276,6 +1279,7 @@ function enableShortcuts(type) {
         getShortcuts('applicationCommonKeys');
         getShortcuts('windowCommonKeys');
         getShortcuts('editionSpecificKeys');
+        getShortcuts('genericTreeKeys');
         enableDefaultAction();
       } else if (type=='relation') {
         getShortcuts('applicationCommonKeys');
@@ -1287,6 +1291,7 @@ function enableShortcuts(type) {
         getShortcuts('windowCommonKeys');
         getShortcuts('editionSpecificKeys');
         getShortcuts('popupSpecificKeys');
+        getShortcuts('genericTreeKeys');
         getShortcuts('gridKeys');
         enableDefaultAction();
       }
@@ -1654,7 +1659,7 @@ function moveElementInList(list, incr) {
 
 // Depecated since 2.50, use searchArray instead
 function valorArray(dataArray, searchKey, valueIndex) {
-	searchArray(dataArray, searchKey, valueIndex);
+  searchArray(dataArray, searchKey, valueIndex);
 }
 
 /**
@@ -2398,7 +2403,7 @@ function formElementValue(form, ElementName, Value) {
   var bolReadOnly=false;
   var onChangeFunction = "";
   if (form==null) {
-	  form=document.forms[0];
+    form=document.forms[0];
     if (form==null) return false;
   } else if (ElementName==null) return false;
   if (ElementName=="MESSAGE") {
@@ -2488,7 +2493,7 @@ function formElementValue(form, ElementName, Value) {
       } else {
         if (onChangeFunction.toString().indexOf("function")==-1) obj.onchange = new Function("", onChangeFunction.toString());
         else obj.onchange = onChangeFunction;
-      	//obj.onchange = function anonymous() {selectCombo(this, Value);return true;};
+        //obj.onchange = function anonymous() {selectCombo(this, Value);return true;};
       }
       obj.readOnly = true;
     }
@@ -2717,7 +2722,7 @@ function setFocus(field) {
   if (field==null || !field) return "";
   if (!field.type && field.length>1) field = field[0];
   try {
-	  field.focus();
+    field.focus();
   } catch (ignored) {}
 
   return "";
@@ -3308,7 +3313,7 @@ function about() {
     complementosNS4 = "alwaysRaised=1, dependent=1, directories=0, hotkeys=0, menubar=0, ";
   var complementos = complementosNS4 + "height=" + strHeight + ", width=" + strWidth + ", left=" + strLeft + ", top=" + strTop + ", screenX=" + strLeft + ", screenY=" + strTop + ", location=0, resizable=yes, scrollbars=yes, status=0, toolbar=0, titlebar=0";
   if (typeof baseDirectory != "undefined") {
-	  var winPopUp = window.open(baseDirectory + "../ad_forms/about.html", "ABOUT", complementos);
+    var winPopUp = window.open(baseDirectory + "../ad_forms/about.html", "ABOUT", complementos);
   } else {
     // Deprecated in 2.50, the following code is only for compatibility
     var winPopUp = window.open(baseDirection + "../ad_forms/about.html", "ABOUT", complementos);
@@ -3445,6 +3450,25 @@ function resizeAreaCreateFrom(isOnResize) {
 /**
 * Function Description
 */
+function resizeAreaInstallationHistoryGrid(isOnResize) {
+  if (isOnResize==null) isOnResize = false;
+  var client = document.getElementById("client");
+  var client_top = document.getElementById("client_top");
+  var installationHistoryGrid = document.getElementById("installationHistoryGrid");
+  var name = window.navigator.appName;
+  installationHistoryGrid.style.height = client.clientHeight -((client_top?client_top.clientHeight:0) -((name.indexOf("Microsoft")==-1)?1:0) + 8);
+
+/*  try {
+    dojo.addOnLoad(dijit.byId('grid').onResize);
+  } catch (e) {}*/
+  try {
+    if (isOnResize) dijit.byId('grid').onResize();
+  } catch (e) {}
+}
+
+/**
+* Function Description
+*/
 function resizePopup() {
   var mnu = document.getElementById("client");
   var table_header = document.getElementById("table_header");
@@ -3516,6 +3540,12 @@ function changeAuditIcon(newStatus) {
    }
    return false;
  }
+ 
+   function goToDivAnchor(div,elementId){
+     div = document.getElementById(div);
+     elementId = document.getElementById(elementId);
+     div.scrollTop = elementId.offsetTop - (navigator.userAgent.toUpperCase().indexOf("MSIE")!=-1?0:div.offsetTop);
+   }
 
 //-->
 
@@ -3605,52 +3635,52 @@ var gAUXILIAR=0;
 
 //Deprecated in 2.50 use clearForm instead
 function limpiar(form) {
-	clearForm(form);
+  clearForm(form);
 }
 
 //Deprecated in 2.50, use validateNumber instead
 function esNumero(strValue, isFloatAllowed, isNegativeAllowed) {
-	validateNumber(strValue, isFloatAllowed, isNegativeAllowed);
+  validateNumber(strValue, isFloatAllowed, isNegativeAllowed);
 }
 
 //Deprecated in 2.50, use validateNumberField instead
 function campoNumerico(field, isFloatAllowed, isNegativeAllowed) {
-	validateNumberField(field, isFloatAllowed, isNegativeAllowed);
+  validateNumberField(field, isFloatAllowed, isNegativeAllowed);
 }
 
 //Deprecated in 2.50, use openNewBrowser instead
 function abrirNuevoBrowser(url, _name, height, width, top, left) {
-	openNewBrowser(url, _name, height, width, top, left);
+  openNewBrowser(url, _name, height, width, top, left);
 }
 
 //Deprecated in 2.50, use openExcel instead
 function abrirExcel(url, _name, checkChanges) {
-	openExcel(url, _name, checkChanges);
+  openExcel(url, _name, checkChanges);
 }
 
 //Deprecated in 2.50, use openPDF instead
 function abrirPDF(url, _name, checkChanges) {
-	openPDF(url, _name, checkChanges);
+  openPDF(url, _name, checkChanges);
 }
 
 //Deprecated in 2.50, use openPDFFiltered instead
 function abrirPDFFiltered(url, _name, checkChanges) {
-	openPDFFiltered(url, _name, checkChanges);
+  openPDFFiltered(url, _name, checkChanges);
 }
 
 //Deprecated in 2.50, use openPopUpDefaultSize instead
 function abrirPopUp(url, _name, height, width, closeControl, showstatus) {
-	openPopUpDefaultSize(url, _name, height, width, closeControl, showstatus);
+  openPopUpDefaultSize(url, _name, height, width, closeControl, showstatus);
 }
 
 //Deprecated in 2.50, use openPDFSession instead
 function abrirPDFSession(strPage, strDirectPrinting, strHiddenKey, strHiddenValue, bolCheckChanges) {
-	openPDFSession(strPage, strDirectPrinting, strHiddenKey, strHiddenValue, bolCheckChanges);
+  openPDFSession(strPage, strDirectPrinting, strHiddenKey, strHiddenValue, bolCheckChanges);
 }
 
 //Deprecated in 2.50, use openSearchWindow instead
 function abrirBusqueda(url, _name, tabId, windowName, windowId, checkChanges) {
-	openSearchWindow(url, _name, tabId, windowName, windowId, checkChanges);
+  openSearchWindow(url, _name, tabId, windowName, windowId, checkChanges);
 }
 
 /**
@@ -3696,27 +3726,27 @@ function rellenarComboHijo(combo, arrayDatos, padre, bolSelected, sinBlanco) {
 
 //Deprecated in 2.50, use fillCombo instead
 function rellenarCombo(combo, dataArray, bolSelected, withoutBlankOption) {
-	fillCombo(combo, dataArray, bolSelected, withoutBlankOption);
+  fillCombo(combo, dataArray, bolSelected, withoutBlankOption);
 }
 
 //Deprecated since 2.50, use markAll instead
 function marcarTodos(chk, bolMark) {
-	markAll(chk, bolMark);
+  markAll(chk, bolMark);
 }
 
 //Deprecated in 2.50, use changeComboData instead
 function cambiarListaCombo(combo, dataArray, key, withBlankOption) {
-	changeComboData(combo, dataArray, key, withBlankOption);
+  changeComboData(combo, dataArray, key, withBlankOption);
 }
 
 //Deprecated in 2.50, use clearList instead
 function limpiarLista(field) {
-	clearList(field);
+  clearList(field);
 }
 
 //Deprecated in 2.50, use clearSelectedElements instead
 function eliminarElementosList(field) {
-	clearSelectedElements(field);
+  clearSelectedElements(field);
 }
 
 /**
@@ -3760,12 +3790,12 @@ function generarArrayChecks(frm, check, text, resultado) {
 
 //Deprecation in 2.50, use markCheckedAllElements instead
 function seleccionarListCompleto(field) {
-	markCheckedAllElements(field);
+  markCheckedAllElements(field);
 }
 
 //Deprecation in 2.50, use markCheckedAllElements instead
 function seleccionarListCompleto(field) {
-	markCheckedAllElements(field);
+  markCheckedAllElements(field);
 }
 
 /**

@@ -18,7 +18,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All portions are Copyright (C) 2001-2008 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -28,16 +28,22 @@
  v_ClassName     VARCHAR2(60);
  v_IsActive      CHAR(1) := 'Y';
  v_Count       NUMBER(10);
+ v_JavaPackage VARCHAR2(315);
 BEGIN
   IF (UPDATING) THEN
     IF NOT((COALESCE(:old.NAME,'.')<>COALESCE(:NEW.NAME,'.') OR COALESCE(:old.IsActive,'.')<>COALESCE(:NEW.IsActive,'.'))) THEN
       RETURN;
     END IF;
 
-    SELECT MAX(TO_CHAR(ISACTIVE)) INTO v_IsActive
-    FROM AD_WINDOW
-    WHERE AD_WINDOW_ID = :NEW.AD_WINDOW_ID;
+    SELECT W.IsActive, 
+           (CASE WHEN M.AD_MODULE_ID ='0' THEN NULL ELSE JavaPackage END)
+    INTO v_IsActive, v_JavaPackage
+    FROM AD_WINDOW W, AD_MODULE M
+    WHERE AD_WINDOW_ID = :NEW.AD_WINDOW_ID
+     AND W.AD_MODULE_ID = M.AD_MODULE_ID;
 
+
+    
     IF v_IsActive <> 'Y' THEN
       v_IsActive := :NEW.ISACTIVE;
     END IF;
@@ -46,6 +52,12 @@ BEGIN
     INTO v_WindowName, v_ClassName
     FROM AD_WINDOW W
     WHERE W.AD_WINDOW_ID = :new.AD_WINDOW_ID;
+    
+    IF v_JavaPackage IS NOT NULL THEN
+      v_JavaPackage := v_JavaPackage||'.'||v_WindowName;
+    ELSE
+      v_JavaPackage := v_WindowName;
+    END IF;
 
     SELECT COUNT(*) INTO v_Count
     FROM AD_MODEL_OBJECT
@@ -58,13 +70,14 @@ BEGIN
       WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W'
       AND CLASSNAME LIKE 'org.openbravo.erpWindows.%';
 
+      
       UPDATE AD_MODEL_OBJECT
       SET AD_CLIENT_ID = :new.AD_CLIENT_ID,
         AD_ORG_ID = :new.AD_ORG_ID,
         ISACTIVE = v_IsActive,
         UPDATED = now(),
         UPDATEDBY = :new.UPDATEDBY,
-        CLASSNAME = 'org.openbravo.erpWindows.' || v_WindowName || '.' || v_ClassName
+        CLASSNAME = 'org.openbravo.erpWindows.' || v_JavaPackage || '.' || v_ClassName
       WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W'
       AND CLASSNAME LIKE 'org.openbravo.erpWindows.%';
 
@@ -73,7 +86,7 @@ BEGIN
       INSERT INTO AD_MODEL_OBJECT (AD_MODEL_OBJECT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY,
       UPDATED, UPDATEDBY, ACTION, AD_TAB_ID, CLASSNAME, ISDEFAULT)
       VALUES (v_ID, :new.AD_CLIENT_ID, :new.AD_ORG_ID, v_IsActive, now(), :new.CREATEDBY,
-      now(), :new.UPDATEDBY, 'W', :new.AD_TAB_ID, 'org.openbravo.erpWindows.' || v_WindowName || '.' || v_ClassName, 'Y');
+      now(), :new.UPDATEDBY, 'W', :new.AD_TAB_ID, 'org.openbravo.erpWindows.' || v_JavaPackage || '.' || v_ClassName, 'Y');
 
     END IF;
 
@@ -219,9 +232,12 @@ BEGIN
  END IF;
 
  IF (INSERTING) THEN
-     SELECT MAX(TO_CHAR(ISACTIVE)) INTO v_IsActive
-  FROM AD_WINDOW
-  WHERE AD_WINDOW_ID = :NEW.AD_WINDOW_ID;
+  
+      SELECT W.IsActive,  (CASE WHEN M.AD_MODULE_ID ='0' THEN NULL ELSE JavaPackage END)
+    INTO v_IsActive, v_JavaPackage
+    FROM AD_WINDOW W, AD_MODULE M
+    WHERE AD_WINDOW_ID = :NEW.AD_WINDOW_ID
+     AND W.AD_MODULE_ID = M.AD_MODULE_ID;
 
   IF v_IsActive <> 'Y' THEN
       v_IsActive := :NEW.ISACTIVE;
@@ -231,11 +247,17 @@ BEGIN
   FROM AD_WINDOW W
   WHERE W.AD_WINDOW_ID = :new.AD_WINDOW_ID;
 
+  IF (v_JavaPackage IS NOT NULL)  THEN
+    v_JavaPackage := v_JavaPackage||'.'||v_WindowName;
+  ELSE
+    v_JavaPackage := v_WindowName;
+  END IF;
+    
   Ad_Sequence_Next('AD_Model_Object', :new.AD_Client_ID, v_ID);
   INSERT INTO AD_MODEL_OBJECT (AD_MODEL_OBJECT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY,
   UPDATED, UPDATEDBY, ACTION, AD_TAB_ID, CLASSNAME, ISDEFAULT)
   VALUES (v_ID, :new.AD_CLIENT_ID, :new.AD_ORG_ID, v_IsActive, now(), :new.CREATEDBY,
-  now(), :new.UPDATEDBY, 'W', :new.AD_TAB_ID, 'org.openbravo.erpWindows.' || v_WindowName || '.' || v_ClassName, 'Y');
+  now(), :new.UPDATEDBY, 'W', :new.AD_TAB_ID, 'org.openbravo.erpWindows.' || v_JavaPackage || '.' || v_ClassName, 'Y');
 
   Ad_Sequence_Next('AD_Model_Object_Mapping', :new.AD_Client_ID, v_ID_MAP);
   INSERT INTO AD_MODEL_OBJECT_MAPPING (AD_MODEL_OBJECT_MAPPING_ID, AD_CLIENT_ID, AD_ORG_ID,

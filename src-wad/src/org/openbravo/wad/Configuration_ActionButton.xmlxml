@@ -31,6 +31,11 @@
 <PARAMETER id="window" name="window" default="" attribute="value"/>
 <PARAMETER id="paramCheck" name="check" default="Y"/>
 <PARAMETER id="paramDirectory" name="directory" default=""/>
+<PARAMETER id="processId" name="processId" default="PROCESS"/>
+<PARAMETER id="trlFormType" name="trlFormType" default="PROCESS"/>
+<PARAMETER id="processName" name="processName" replace="#processName#" default=""/>
+<PARAMETER id="processDescription" name="processDescription" replace="#processDescription#" default=""/>
+<PARAMETER id="processHelp" name="processHelp" replace="#processHelp#" default=""/>
 
 <PARAMETER id="linkButtonCancel" name="cancel" attribute="onmouseover" replace="xx" default=""/>
 <PARAMETER id="linkButtonOk" name="ok" attribute="onmouseover" replace="xx" default=""/>
@@ -50,4 +55,6 @@
 <FIELDS_TMP id="sectionDetailColumns">fields</FIELDS_TMP>
 
 <DISCARD id="discard"/>
+
+<LABELS_TMP id="labelsData"></LABELS_TMP>
 </REPORT>

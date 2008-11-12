@@ -11,9 +11,6 @@
 
 package org.openbravo.dal.core;
 
-
-
-
 /**
  * Ensures that the session/transaction are closed/committed/rolledback at the
  * end of the thread. It also ensures that the OBContext is removed from the
@@ -27,27 +24,30 @@ package org.openbravo.dal.core;
  */
 
 public abstract class DalThreadHandler extends ThreadHandler {
-  
-  @Override
-  public void doBefore() {
-  }
-  
-  @Override
-  public void doFinal(boolean errorOccured) {
-    try {
-      if (SessionHandler.isSessionHandlerPresent()) {
-        // application software can force a rollback
-        if (SessionHandler.getInstance().getDoRollback()) {
-          SessionHandler.getInstance().rollback();
-        } else if (errorOccured) {
-          SessionHandler.getInstance().rollback();
-        } else {
-          SessionHandler.getInstance().commitAndClose();
-        }
-      }
-    } finally {
-      SessionHandler.deleteSessionHandler();
-      OBContext.setOBContext((OBContext) null);
+
+    @Override
+    public void doBefore() {
     }
-  }
+
+    @Override
+    public void doFinal(boolean errorOccured) {
+	try {
+	    if (SessionHandler.isSessionHandlerPresent()) {
+		// application software can force a rollback
+		if (SessionHandler.getInstance().getDoRollback()) {
+		    SessionHandler.getInstance().rollback();
+		} else if (errorOccured) {
+		    SessionHandler.getInstance().rollback();
+		} else {
+		    SessionHandler.getInstance().commitAndClose();
+		}
+	    }
+	} finally {
+	    SessionHandler.deleteSessionHandler();
+	    if (OBContext.getOBContext() != null) {
+		OBContext.getOBContext().setInAdministratorMode(false);
+	    }
+	    OBContext.setOBContext((OBContext) null);
+	}
+    }
 }

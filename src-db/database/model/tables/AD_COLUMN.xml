@@ -161,7 +161,15 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <column name="POSITION" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
+      <column name="POSITION" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISTRANSIENT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="ISTRANSIENTCONDITION" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -183,6 +191,9 @@
       <foreign-key foreignTable="AD_CALLOUT" name="ADCOLUMN_FK_CALLOUT">
         <reference local="AD_CALLOUT_ID" foreign="AD_CALLOUT_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_MODULE" name="ADMODULE_ADCOLUMN">
+        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_PROCESS" name="ADPROCESS_ADCOLUMN" onDelete="setnull">
         <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
       </foreign-key>
@@ -198,10 +209,6 @@
       <unique name="AD_COLUMN_NAME">
         <unique-column name="AD_TABLE_ID"/>
         <unique-column name="COLUMNNAME"/>
-      </unique>
-      <unique name="AD_COLUMN_POSITION_UN">
-        <unique-column name="POSITION"/>
-        <unique-column name="AD_TABLE_ID"/>
       </unique>
       <check name="ADCOLUMN_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="ADCOLUMN_ISDESENCRYPT_CHECK"><![CDATA[ISDESENCRYPTABLE IN ('Y', 'N')]]></check>

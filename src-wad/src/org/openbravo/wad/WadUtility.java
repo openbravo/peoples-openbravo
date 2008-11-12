@@ -704,7 +704,7 @@ public class WadUtility {
     if (data1 == null || data1.length==0) {
       auxControl.setData("IsLinkable", "N");
       return;
-    }
+    } 
 
     String strWindowId = data1[0].adWindowId;
     if (!isSOTrx && !data1[0].poWindowId.equals("")) strWindowId = data1[0].poWindowId;
@@ -713,10 +713,12 @@ public class WadUtility {
       auxControl.setData("IsLinkable", "N");
       return;
     }
+    
     auxControl.setData("IsLinkable", "Y");
-    auxControl.setData("ColumnNameLabel", strColumnName);
+    //auxControl.setData("ColumnNameLabel", strColumnName);
     auxControl.setData("KeyColumnName", keyName);
     auxControl.setData("AD_Table_ID", strTableID);
+    auxControl.setData("ColumnLabelText", strColumnName);
   }
 
   public static void comboReloadScript(EditionFieldsData efd, Vector<Object> vecCallOuts, Vector<Object> vecReloads, int maxTextboxLength, String strTab) {
@@ -1817,6 +1819,7 @@ public class WadUtility {
     setPropertyValue(prop, field, "ColumnName", "columnname", null);
     prop.setProperty("ColumnNameInp", Sqlc.TransformaNombreColumna(field.getField("columnname")));
     setPropertyValue(prop, field, "Name", "name", null);
+    setPropertyValue(prop, field, "AD_Field_ID", "adFieldId", null);
     setPropertyValue(prop, field, "IsMandatory", "required", "N");
     setPropertyValue(prop, field, "AD_Reference_ID", "reference", null);
     setPropertyValue(prop, field, "ReferenceName", "referenceName", null);
@@ -1829,6 +1832,7 @@ public class WadUtility {
     setPropertyValue(prop, field, "IsUpdateable", "isupdateable", "N");
     setPropertyValue(prop, field, "IsParent", "isparent", "N");
     setPropertyValue(prop, field, "FieldLength", "fieldlength", "0");
+    setPropertyValue(prop, field, "AD_Column_ID", "adColumnId", "null");
     setPropertyValue(prop, field, "ColumnNameSearch", "realname", "");
     setPropertyValue(prop, field, "SearchName", "searchname", "");
     setPropertyValue(prop, field, "AD_CallOut_ID", "adCalloutId", "");

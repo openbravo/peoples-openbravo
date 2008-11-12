@@ -17,7 +17,7 @@ package org.openbravo.base.structure;
  */
 
 public interface ActiveEnabled {
-  public Boolean isActive();
-  
-  public void setActive(Boolean active);
+    public Boolean isActive();
+
+    public void setActive(Boolean active);
 }

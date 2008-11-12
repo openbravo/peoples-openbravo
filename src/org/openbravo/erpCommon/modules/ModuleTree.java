@@ -1,0 +1,166 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2008 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+*/
+package org.openbravo.erpCommon.modules;
+
+import javax.servlet.ServletException;
+
+
+
+import org.openbravo.base.*;
+import org.openbravo.xmlEngine.XmlDocument;
+import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.utility.FieldProviderFactory;
+import org.openbravo.erpCommon.utility.GenericTree;
+import org.openbravo.erpCommon.utility.Utility;
+
+/**
+ * Manages the tree of installed modules. 
+ *
+ * It implements GenericTree, detailed description is in that API doc.
+ */
+public class ModuleTree extends GenericTree {
+  
+  /**
+   * Constructor to generate a root tree 
+   * @param base
+   */
+  public ModuleTree(HttpBaseServlet base) {
+    super(base);
+    setRootTree();
+  }
+  
+  /**
+   * Constructor to generate a root tree 
+   * @param base
+   * @param small: Normal size or small size (true)
+   */
+  public ModuleTree(HttpBaseServlet base, boolean bSmall) {
+    super(base, bSmall);
+    //setRootTree();
+  }
+
+  /**
+   * Default constructor, needed by GenericTreeServlet
+   */
+  public ModuleTree() {}
+  
+  
+  /**
+   * sets to data the root tree
+   */
+  public void setRootTree() {
+    try {
+      data = ModuleTreeData.select(conn, (lang.equals("")?"en_US":lang));
+      addLinks();
+      setLevel(0);
+      setIcons();
+    } catch (ServletException ex) {
+      ex.printStackTrace();
+      data = null;
+    }
+  }
+  
+  /**
+   * Generates a subtree with nodeId as root node
+   * @param nodeId
+   */
+  public void setSubTree(String nodeId, String level) {
+    setIsSubTree(true);
+    try {
+      data = ModuleTreeData.selectSubTree(conn, (lang.equals("")?"en_US":lang), nodeId); 
+      addLinks();
+      setLevel(new Integer(level).intValue());
+      setIcons();
+    } catch (ServletException ex) {
+      ex.printStackTrace();
+      data = null;
+    }
+  }
+  
+  /**
+   * Returns a HTML with the description for the given node
+   * @param node
+   * @return
+   */
+  public String getHTMLDescription(String node) {
+    try {
+      
+      ModuleTreeData[] data=  ModuleTreeData.selectDescription(conn, lang, node);
+      addLinks(data, true);
+      String discard[]={""};
+      if (data!=null && data.length>0 && data[0].linkname!=null && !data[0].linkname.equals("")) 
+        data[0].statusName = "";
+      if (data!=null && data.length>0 && (data[0].updateAvailable==null || data[0].updateAvailable.equals(""))) 
+        discard[0] = "update";
+
+      XmlDocument xmlDocument=xmlEngine.readXmlTemplate("org/openbravo/erpCommon/modules/ModuleTreeDescription",discard).createXmlDocument();
+      xmlDocument.setData("structureDesc", data);
+      return xmlDocument.print();
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+      return "";
+    }
+  }
+  
+  /**
+   * Adds links to the current sets of nodes, these links can be Update or Apply
+   */
+  private void addLinks() {
+    addLinks((ModuleTreeData[])data, false);
+  }
+  
+  private void addLinks(ModuleTreeData[] modules, boolean showApplied){
+    if (modules==null || modules.length==0) return;
+    for (int i=0;i<modules.length;i++){
+      if (!modules[i].updateAvailable.equals("")) {
+        modules[i].linkname=Utility.messageBD(conn, "UpdateAvailable", lang);
+        modules[i].linkclick="gt_getUpdateDescription('"+modules[i].nodeId+"'); return false;";
+      }
+      if (modules[i].status.equals("I")) {
+        modules[i].linkname=Utility.messageBD(conn, "ApplyModules", lang)+", "+Utility.messageBD(conn, "RebuildNow", lang);
+        modules[i].linkclick="openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 600, 900);return false;";
+      }   
+      if (modules[i].status.equals("U")) {
+        modules[i].linkname=Utility.messageBD(conn, "UninstalledModule", lang);
+        modules[i].linkclick="openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 600, 900);return false;";
+      }
+    }
+  }
+  
+  /**
+   * Selects the correct icons for the current set of nodes depending on the module type (Module, Pack or Template), it also sets the secondary
+   * icon in case the node have available updates.
+   */
+  protected void setIcons(){
+    setIcons(data);
+  }
+  
+  private void setIcons(FieldProvider[] modules){
+    if (modules==null || modules.length==0) return;
+    for (int i=0;i<modules.length;i++){
+      if (modules[i].getField("type").equals("M")) FieldProviderFactory.setField(modules[i], "icon", "Tree_Icon_Module");
+      if (modules[i].getField("type").equals("P")) FieldProviderFactory.setField(modules[i], "icon", "Tree_Icon_Pack");
+      if (modules[i].getField("type").equals("T")) FieldProviderFactory.setField(modules[i], "icon", "Tree_Icon_Template");
+      if (modules[i].getField("updateAvailable")!=null && !modules[i].getField("updateAvailable").equals("")) FieldProviderFactory.setField(modules[i], "icon2", "Tree_Icon_Update");
+    }
+  }
+  
+
+}

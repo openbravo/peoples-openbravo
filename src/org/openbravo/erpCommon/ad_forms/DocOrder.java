@@ -40,8 +40,8 @@ public DocTax[]        m_taxes = null;
  *  Constructor
  *  @param AD_Client_ID client
  */
-public DocOrder(String AD_Client_ID, ConnectionProvider connectionProvider){
-	super(AD_Client_ID, connectionProvider);
+public DocOrder(String AD_Client_ID, String AD_Org_ID, ConnectionProvider connectionProvider){
+	super(AD_Client_ID, AD_Org_ID, connectionProvider);
 }
 
 

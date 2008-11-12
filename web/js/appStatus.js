@@ -79,6 +79,86 @@ function enableToolBarButton(id) {
   return true;
 }
 
+function disableAttributeWithFunction(element, type, attribute) {
+  if (type == 'obj') { var obj = element }
+  if (type == 'id') { var obj = document.getElementById(id); }
+  if (navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
+    obj.setAttribute(attribute, 'return true; tmp_water_mark; ' + obj.getAttribute(attribute));
+  } else {
+    var obj_attribute = obj.getAttribute(attribute).toString();
+    obj_attribute = obj_attribute.replace("function anonymous()","");
+    obj_attribute = obj_attribute.replace("{\n","");
+    obj_attribute = obj_attribute.replace("\n","");
+    obj_attribute = obj_attribute.replace("}","");
+    obj_attribute = 'return true; tmp_water_mark; ' + obj_attribute;
+    obj[attribute]=new Function(obj_attribute);
+  }
+}
+
+function enableAttributeWithFunction(element, type, attribute) {
+  if (type == 'obj') { var obj = element }
+  if (type == 'id') { var obj = document.getElementById(id); }
+  if (navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
+    obj.setAttribute(attribute, obj.getAttribute(attribute).replace('return true; tmp_water_mark; ', ''));
+  } else {
+    var obj_attribute = obj.getAttribute(attribute).toString();
+    obj_attribute = obj_attribute.replace("function anonymous()","");
+    obj_attribute = obj_attribute.replace("{\n","");
+    obj_attribute = obj_attribute.replace("\n","");
+    obj_attribute = obj_attribute.replace("}","");
+    obj_attribute = obj_attribute.replace('return true; tmp_water_mark; ', '');
+    obj[attribute]=new Function(obj_attribute);
+  }
+}
+
+function disableButton(id) {
+  var link = null;
+  var img = null;
+  try {
+    link = document.getElementById(id);
+    img = getObjChild(link);
+    if (link.className.indexOf('ButtonLink') != -1 && link.className.indexOf('ButtonLink_disabled') == -1) {
+      link.className = link.className.replace('ButtonLink', 'ButtonLink_disabled');
+      disableAttributeWithFunction(link, 'obj', 'onclick');
+      disableAttributeWithFunction(link, 'obj', 'onfocus');
+      disableAttributeWithFunction(link, 'obj', 'onkeypress');
+      disableAttributeWithFunction(link, 'obj', 'onkeyup');
+      link.setAttribute('id', link.getAttribute('id') + '_disabled');
+      disableAttributeWithFunction(img, 'obj', 'onmouseout');
+      disableAttributeWithFunction(img, 'obj', 'onmouseover');
+      disableAttributeWithFunction(img, 'obj', 'onmousedown');
+      disableAttributeWithFunction(img, 'obj', 'onmouseup');
+    }
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+
+function enableButton(id) {
+  var link = null;
+  var img = null;
+  try {
+    link = document.getElementById(id + "_disabled");
+    img = getObjChild(link);
+    if (link.className.indexOf('ButtonLink_disabled') != -1) {
+      link.className = link.className.replace('ButtonLink_disabled', 'ButtonLink');
+      enableAttributeWithFunction(link, 'obj', 'onclick');
+      enableAttributeWithFunction(link, 'obj', 'onfocus');
+      enableAttributeWithFunction(link, 'obj', 'onkeypress');
+      enableAttributeWithFunction(link, 'obj', 'onkeyup');
+      link.setAttribute('id', link.getAttribute('id').replace('_disabled', ''));
+      enableAttributeWithFunction(img, 'obj', 'onmouseout');
+      enableAttributeWithFunction(img, 'obj', 'onmouseover');
+      enableAttributeWithFunction(img, 'obj', 'onmousedown');
+      enableAttributeWithFunction(img, 'obj', 'onmouseup');
+    }
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+
 function setWindowEditing(value) {
   var isNewWindow;
   if (document.getElementById('linkButtonEdition').className.indexOf('Main_LeftTabsBar_ButtonRight_Icon_edition_selected') != -1) {

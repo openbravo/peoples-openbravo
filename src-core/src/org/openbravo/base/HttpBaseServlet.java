@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.
+ * Copyright (C) 2001-2008 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -11,22 +11,45 @@
 */
 package org.openbravo.base;
 
-import org.openbravo.xmlEngine.XmlEngine;
-import org.openbravo.data.FieldProvider;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.StringReader;
+import java.rmi.Naming;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Properties;
 
-import java.sql.*;
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
-import org.xml.sax.*;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.apache.fop.apps.Driver;
 import org.apache.log4j.Logger;
-import java.rmi.*;
-import rmi.*;
+import org.apache.log4j.PropertyConfigurator;
+import org.openbravo.data.FieldProvider;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.database.ConnectionProviderImpl;
+import org.openbravo.database.JNDIConnectionProvider;
+import org.openbravo.exception.NoConnectionAvailableException;
+import org.openbravo.exception.PoolNotFoundException;
 import org.openbravo.utils.FormatUtilities;
-import org.openbravo.database.*;
-import org.openbravo.exception.*;
-import javax.net.ssl.*;
+import org.openbravo.xmlEngine.XmlEngine;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+
+import rmi.RenderFoI;
 
 /**
  * This class is intended to be extended by the HttpSecureAppServlet
@@ -42,7 +65,12 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
   public String strReplaceWith;
   public String strReplaceWithFull;
   protected String strDefaultServlet;
-  public XmlEngine xmlEngine=null;
+  public XmlEngine xmlEngine = null;
+  public String strBaseConfigPath;
+  protected static String strContext = null;
+  protected static String prefix = null;
+  protected static String stcFileProperties = null;
+  protected boolean isJNDIModeOn;
   public Logger log4j = Logger.getLogger(this.getClass());
   protected String PoolFileName;
 
@@ -57,6 +85,60 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
   public void init (ServletConfig config) {
     try {
       super.init(config);
+      strBaseConfigPath = config.getServletContext().getInitParameter("BaseConfigPath");
+      if (prefix == null) {
+        prefix = config.getServletContext().getRealPath("/");
+        if (prefix == null || prefix.equals("")) {
+          // deployment in weblogic through ear file does not deploy phisically
+          // the files,
+          // so we need to obtain the path through getClass method
+          java.net.URL url = this.getClass().getResource("/");
+          String mSchemaPath = url.getFile();
+          if (mSchemaPath != null || !mSchemaPath.equals("")) {
+            String separator = "/";
+            int lastSlash = mSchemaPath.lastIndexOf(separator);
+            if (lastSlash == -1) {
+              separator = "\\";
+              lastSlash = mSchemaPath.lastIndexOf(separator);
+            }
+            prefix = mSchemaPath.substring(0, lastSlash);
+            prefix = prefix.substring(0, prefix.lastIndexOf(separator));
+            prefix = prefix.substring(0, prefix.lastIndexOf(separator) + 1);
+            // lastSlash = mSchemaPath.lastIndexOf(separator);
+            // mSchemaPath = mSchemaPath.substring(0, lastSlash);
+            // lastSlash = mSchemaPath.lastIndexOf(separator);
+            // prefix = mSchemaPath.substring(0, lastSlash+1);
+          }
+        }
+        if (log4j.isDebugEnabled())
+          log4j.debug("************************prefix: " + prefix);
+        if (strContext == null || strContext.equals("")) {
+          String path = "/";
+          int secondPath = -1;
+          int firstPath = prefix.lastIndexOf(path);
+          if (firstPath == -1) {
+            path = "\\";
+            firstPath = prefix.lastIndexOf(path);
+          }
+          if (firstPath != -1) {
+            secondPath = prefix.lastIndexOf(path, firstPath - 1);
+            strContext = prefix.substring(secondPath + 1, firstPath);
+          }
+        }
+        if (log4j.isDebugEnabled())
+          log4j.debug("context: " + strContext);
+        String file = config.getServletContext().getInitParameter("log4j-init-file");
+        if (log4j.isDebugEnabled())
+          log4j.debug("Log file: " + file);
+        // if the log4j-init-file is not set, then no point in trying
+        if (file != null) {
+          // PropertyConfigurator.configure(prefix+file);
+          PropertyConfigurator.configure(prefix + "/" + strBaseConfigPath + "/" + file);
+        }
+      }
+      stcFileProperties = prefix + "/" + strBaseConfigPath + "/" + "Openbravo.properties";
+//      OBProperties.getInstance(stcFileProperties);
+      
       globalParameters = ConfigParameters.retrieveFrom(config.getServletContext());
       strDefaultServlet = globalParameters.strDefaultServlet;
       xmlEngine = new XmlEngine();
@@ -69,8 +151,20 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
       xmlEngine.initialize();
 
       log4j.debug("Text of divided by zero: " + XmlEngine.strTextDividedByZero);
+     
 
-      myPool = ConnectionProviderContextListener.getPool(config.getServletContext());
+      
+      if (myPool == null) {
+        try {
+          PoolFileName = config.getServletContext().getInitParameter("PoolFile");
+          String strPoolFile = prefix + "/" + strBaseConfigPath + "/" + PoolFileName;
+          isJNDIModeOn=isJndiModeOn(strPoolFile);
+          makeConnection();
+        } catch (Exception ex) {
+          ex.printStackTrace();
+        }
+      }
+     
     } catch (ServletException e) {
       e.printStackTrace();
     }
@@ -156,9 +250,9 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
     log4j.info("*********************Base path: " + globalParameters.strBaseDesignPath);
     String strNewAddBase = globalParameters.strDefaultDesignPath;
     String strFinal = globalParameters.strBaseDesignPath;
-    if (!language.equals("") && !language.equals("en_US")) {
-      strNewAddBase = language;
-    }
+    //if (!language.equals("") && !language.equals("en_US")) {
+      //strNewAddBase = language;
+    //}
     if (!strFinal.endsWith("/" + strNewAddBase)) {
       strFinal += "/" + strNewAddBase;
     }
@@ -612,7 +706,55 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
     return strArray;
   }
 
+  
+  public void makeConnection() throws PoolNotFoundException {
+    if (myPool != null) {
+      try {
+        myPool.destroy();
+      } catch (Exception ignored) {
+      }
+      myPool = null;
+    }
+    try {
+      String strPoolFile = prefix + "/" + strBaseConfigPath + "/" + PoolFileName;
+      // myPool = new ConnectionProviderImpl(strPoolFile,
+      // (!strPoolFile.startsWith("/") &&
+      // !strPoolFile.substring(1,1).equals(":")), strContext);
+      // Now pool take datasources from a JNDI resource file
+      if (isJNDIModeOn) {
+        myPool = new JNDIConnectionProvider(strPoolFile, (!strPoolFile.startsWith("/") && !strPoolFile.substring(1, 1).equals(":")));
+      } else {
+        myPool = new ConnectionProviderImpl(strPoolFile,(!strPoolFile.startsWith("/") && !strPoolFile.substring(1,1).equals(":")), strContext);
+      }
+    } catch (Exception e) {
+       e.printStackTrace();	
+      throw new PoolNotFoundException(e.getMessage());
+    }
+  }
+  
+  private static boolean isJndiModeOn(String strPoolFile) {
+    Properties properties = new Properties();
+    String jndiUsage = null;
+    try {
+      properties.load(new FileInputStream(strPoolFile));
+      jndiUsage = properties.getProperty("JNDI.usage");
+    } catch (FileNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return ("yes".equals(jndiUsage)? true : false);
+  }
+  
+  public String getStatus() {
+    return myPool.getStatus();
+  }
+  
   public String getServletInfo() {
     return "This servlet adds some functions (connection to the database, xmlEngine, logging) over HttpServlet";
   }
+  
+  
 }

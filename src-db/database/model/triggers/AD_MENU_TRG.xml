@@ -43,14 +43,16 @@ BEGIN
         Name, Description, IsTranslated
       )
     SELECT get_uuid(), :new.AD_Menu_ID,
-      AD_Language, :new.AD_Client_ID, :new.AD_Org_ID,
+      AD_Language.AD_Language, :new.AD_Client_ID, :new.AD_Org_ID,
       :new.IsActive, :new.Created, :new.CreatedBy,
       :new.Updated, :new.UpdatedBy, :new.Name,
       :new.Description,
        'N'
-    FROM AD_Language
-    WHERE IsActive='Y'
-      AND IsSystemLanguage='Y';
+    FROM AD_Language, ad_module m
+    WHERE AD_Language.IsActive='Y'
+      AND IsSystemLanguage='Y'
+      and m.ad_module_id = :new.ad_module_id
+    and m.ad_language != AD_Language.AD_Language;
     --  Create TreeNode --
     --  get AD_Tree_ID + ParentID
     SELECT c.AD_Tree_Menu_ID,

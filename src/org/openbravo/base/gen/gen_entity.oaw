@@ -6,7 +6,7 @@
 	</component>	
 	<component class="oaw.xpand2.Generator">
 		 <metaModel class="oaw.type.impl.java.JavaMetaModel"/>
-		 <expand value="org::openbravo::base::gen::entity::root FOR model"/>
+		 <expand value="org::openbravo::base::gen::base::root FOR model"/>
 	
 		 <!--  output configuration -->
 		 <outlet path="${base.src.gen}"/>

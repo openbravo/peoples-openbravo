@@ -12,7 +12,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SL
- * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
+ * Contributions are Copyright (C) 2001-2008 Openbravo S.L.
  ******************************************************************************
 -->
 
@@ -27,7 +27,7 @@
     <Sql>
       <![CDATA[
 	      Select * from(
-        SELECT  C_INVOICE_ID AS ID, '' AS DOCBASETYPE, '' AS GL_CATEGORY_ID, '' AS AD_CLIENT_ID, '' AS AD_ORG_ID, '' AS ISACTIVE,
+        SELECT  a.C_INVOICE_ID AS ID, '' AS DOCBASETYPE, '' AS GL_CATEGORY_ID, '' AS AD_CLIENT_ID, '' AS AD_ORG_ID, '' AS ISACTIVE,
         '' AS CREATED, '' AS CREATEDBY, '' AS UPDATED, '' AS UPDATEDBY, '' AS ISSOTRX, '' AS DOCUMENTNO, '' AS DOCSTATUS,
         '' AS DOCACTION, '' AS PROCESSING, '' AS PROCESSED, '' AS POSTED, '' AS C_DOCTYPE_ID, '' AS C_DOCTYPETARGET_ID,
         '' AS C_ORDER_ID, '' AS DESCRIPTION, '' AS ISTRANSFERRED, '' AS ISPRINTED, '' AS SALESREP_ID, 
@@ -38,17 +38,20 @@
         '' AS CREATEFROM, '' AS GENERATETO, '' AS SENDEMAIL, '' AS AD_USER_ID, '' AS COPYFROM, '' AS ISSELFSERVICE, '' AS AD_ORGTRX_ID,
         '' AS USER1_ID, '' AS USER2_ID, '' AS CONVERTED, '' AS PERIOD, '' AS C_INVOICELINE_ID,'' AS M_INOUTLINE_ID, '' AS M_PRODUCT_ID,
         '' AS DATETRX1, '' AS DATETRX2, '' AS QTY1, '' AS QTY2, '' AS ACCOUNT_ID, '' AS C_INVOICE_ID, '' AS NAME
-        FROM C_INVOICE WHERE AD_CLIENT_ID=?
+        FROM C_INVOICE a, ad_org WHERE a.AD_CLIENT_ID=?
+        AND ad_org.ad_org_id=a.ad_org_id
+        AND AD_ISORGINCLUDED(ad_org.ad_org_id, ?, ad_org.ad_client_id)<>-1
         AND PROCESSED='Y' 
         AND (PROCESSING='N' OR PROCESSING IS NULL)
         AND POSTED='N' 
-        ORDER BY CREATED) A
+        ORDER BY a.CREATED) A
      ]]>
      </Sql>
-     <Parameter name="tableName" type="replace" optional="true" after="SELECT  " text="C_INVOICE"/>
+     <Parameter name="tableName" type="replace" optional="true" after="SELECT  a." text="C_INVOICE"/>
      <Parameter name="tableName" type="replace" optional="true" after="FROM " text="C_INVOICE"/>
      <Parameter name="client"/>
-     <Parameter name="dateColumn" type="replace" optional="true" after="ORDER BY " text="CREATED"/>
+     <Parameter name="org"/>
+     <Parameter name="dateColumn" type="replace" optional="true" after="ORDER BY a." text="CREATED"/>
    </SqlMethod>
   <SqlMethod name="update" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
@@ -145,19 +148,21 @@
       <Sql>
       <![CDATA[
       select max(c_period.c_period_id) as period
-      from c_year, c_period, c_periodcontrol, ad_clientinfo
+      from c_year, c_period, c_periodcontrol, ad_org
       where c_year.c_year_id = c_period.c_year_id
       and c_period.c_period_id = c_periodcontrol.c_period_id
-      and c_year.c_calendar_id = ad_clientinfo.c_calendar_id
-      and ad_clientinfo.ad_client_id = ?
+      and c_year.c_calendar_id = ad_org.c_calendar_id
+      and ad_org.ad_client_id = ?
       and c_periodcontrol.docbasetype = ?
       and c_periodcontrol.periodstatus = 'O'
+      and ad_org.ad_org_id = ad_org_getcalendarowner(?)
       and to_date(?) >= c_period.StartDate
       and to_date(?) < c_period.EndDate + 1
       ]]>
       </Sql>
       <Parameter name="AD_Client_ID"/>
       <Parameter name="DocumentType"/>
+      <Parameter name="Org"/>
       <Parameter name="DateAcct"/>
       <Parameter name="DateAcct"/>
    </SqlMethod>
@@ -505,7 +510,7 @@
    <SqlMethod name="selectTables" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-     SELECT AD_Table.AD_Table_ID as id, 
+     SELECT DISTINCT(AD_Table.AD_Table_ID) as id, 
                (case when ad_table.po_window_id is null then '' else ad_column_identifier('AD_Window',TO_CHAR(ad_table.po_window_id),?) end)||(case when ad_table.po_window_id is null then '' else ' - ' end)||ad_column_identifier('AD_Window',TO_CHAR(ad_table.ad_window_id),?) as name  
         FROM AD_TABLE, C_ACCTSCHEMA_TABLE  
        WHERE AD_TABLE.AD_TABLE_ID = C_ACCTSCHEMA_TABLE.AD_TABLE_ID         
@@ -518,21 +523,35 @@
       <Parameter name="language"/>
       <Parameter name="adUserClient" type="replace" optional="true" after="C_ACCTSCHEMA_TABLE.AD_CLIENT_ID IN (" text="'1'"/>      
    </SqlMethod>
+   
+   <SqlMethod name="selectOrganizations" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+      	SELECT AD_Org.AD_Org_ID as ID, AD_Org.Name
+      	FROM AD_Org, AD_OrgType
+      	WHERE AD_Org.AD_OrgType_ID=AD_OrgType.AD_OrgType_ID
+      	AND (IsLegalEntity='Y' OR IsBusinessUnit='Y') 
+      	AND AD_Org.AD_Client_ID IN ('1')
+      </Sql>
+      <Parameter name="adUserClient" type="replace" optional="true" after="AD_Org.AD_Client_ID IN (" text="'1'"/>      
+   </SqlMethod>
    <SqlMethod name="selectDocuments" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
       <![CDATA[
         select MIN(C_INVOICE_ID) as id
-        from c_invoice a
+        from c_invoice a, ad_org
         where posted = 'N'
         and processed = 'Y'
         and (processing = 'N' or processing is null)
+        AND ad_org.ad_org_id=a.ad_org_id
+        AND AD_ISORGINCLUDED(ad_org.ad_org_id, ?, ad_org.ad_client_id)<>-1
         AND EXISTS (select 1
-               from c_year, c_period, c_periodcontrol, ad_clientinfo
+               from c_year, c_period, c_periodcontrol, ad_org
                where c_year.c_year_id = c_period.c_year_id
               and c_period.c_period_id = c_periodcontrol.c_period_id
-              and c_year.c_calendar_id = ad_clientinfo.c_calendar_id
-              and ad_clientinfo.ad_client_id = a.ad_client_id
+              and c_year.c_calendar_id = ad_org.c_calendar_id
+              and ad_org.ad_client_id = a.ad_client_id
               and c_periodcontrol.docbasetype = ?
               and c_periodcontrol.periodstatus = 'O'
               and    a.dateacct >= c_period.StartDate
@@ -541,6 +560,7 @@
       </Sql>
       <Parameter name="tableName" type="replace" optional="true" after="select MIN(" text="C_INVOICE"/>
       <Parameter name="tableName" type="replace" optional="true" after="from " text="c_invoice"/>
+      <Parameter name="adOrgId"/>
       <Parameter name="docbasetype"/>
       <Parameter name="dateColumn" type="replace" optional="true" after="and    a." text="dateacct"/>
       <Parameter name="dateColumn" type="replace" optional="true" after="and     a." text="dateacct"/>

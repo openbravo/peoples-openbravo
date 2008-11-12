@@ -25,6 +25,8 @@ compile.complete: refer to compile.complete target of src.
 compile: refer to compile target of src.
 compile.complete.development: refer to compile.complete.development target of src.
 compile.development: refer to compile.development target of src.
+compile.web: refer to compile.web: target of src.
+compile.web.development: refer to compile.web.development: target of src.
 eclipse.compile: refer to eclipse.compile target of src.
 eclipse.compile.complete: refer to eclipse.compile.complete target of src.
 compile.src: refer to compile.src target of src.
@@ -83,6 +85,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   <property name="base.context" location="WebContent"/>
   <property name="base.design" location="${base.context}/src-loc"/>
   <property name="base.lib" location="lib"/>
+  <property name="base.modules" location="modules"/>
   <property name="build" location="build/classes"/>
   <property name="build.AD" location="srcAD"/>
   <property name="build.sqlc" location="build/javasqlc"/>
@@ -91,6 +94,33 @@ compare.database.structure: refer to compare.database.structure target of databa
   <property name="build.wad.lib" location="src-wad/lib"/>
   <property name="build.docs" location="docs/api"/>
   <property name="jakarta.home" location="${env.CATALINA_HOME}"/>
+  <property name="module" value="%"/>
+	<property name="apply.on.create" value="no"/>
+	<property name="obx.export.RD" value="false"/>
+	<property name="obx.export.DB" value="false"/>
+	<property name="obx.export.CS" value="false"/>
+	
+	<condition property="apply.modules.on.create">
+		<or>
+		  <equals arg1="yes" arg2="${apply.on.create}"/>
+			<equals arg1="true" arg2="${apply.on.create}"/>
+		</or>
+	</condition>
+	
+	<condition property="obx.exp.DB">
+		<or>
+	    <equals arg1="yes" arg2="${obx.export.DB}"/>
+			<equals arg1="true" arg2="${obx.export.DB}"/>
+		</or>
+	</condition>
+	
+	<condition property="obx.exp.CS">
+		<or>
+	    <equals arg1="yes" arg2="${obx.export.CS}"/>
+			<equals arg1="true" arg2="${obx.export.CS}"/>
+		</or>
+	</condition>
+	
   <condition property="jakarta.base" value="${env.CATALINA_BASE}" else="${jakarta.home}">
     <and>
       <isset property="env.CATALINA_BASE"/>
@@ -100,7 +130,6 @@ compare.database.structure: refer to compare.database.structure target of databa
   <property name="lib" location="${jakarta.home}/common"/>
   <property name="jakarta.context" location="${jakarta.base}/webapps/${context.name}"/>
   <property name="build.maxmemory" value="512M"/>
-  <property name="debug.level" value="false"/>
 
   <condition property="no.java.home" value="true">
     <not>
@@ -126,7 +155,19 @@ compare.database.structure: refer to compare.database.structure target of databa
     <fileset dir="${base.lib}">
       <include name="**/*.jar"/>
     </fileset>
+    <fileset dir="${base.db}/lib/">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${base.modules}">
+      <include name="*/lib/**"/>
+    </fileset>
   </path>
+	
+	<path id="tomcat.classpath">
+    <fileset file="${env.CATALINA_HOME}/server/lib/catalina-ant.jar"/>
+	</path>
+	
+	<taskdef resource="axis-tasks.properties" classpathref="project.class.path"/>
 
   <target name="init">
     <fail if="no.java.home" message="The environment variable JAVA_HOME is not set."/>
@@ -165,6 +206,14 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <target name="compile.development" depends="init">
     <ant dir="${base.src}" target="compile.development" inheritAll="true" inheritRefs="true"/>
+  </target>
+
+  <target name="compile.web" depends="init">
+    <ant dir="${base.src}" target="compile.web" inheritAll="true" inheritRefs="true"/>
+  </target>
+
+  <target name="compile.web.development" depends="init">
+    <ant dir="${base.src}" target="compile.web.development" inheritAll="true" inheritRefs="true"/>
   </target>
 
   <target name="eclipse.compile" depends="init">
@@ -271,7 +320,7 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <target name="install.source" depends="init,code.rev">
     <antcall target="database.lib"/>
-    <ant dir="${base.db}" target="create.database" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.db}" antfile="build-create.xml" target="create.database" inheritAll="true" inheritRefs="true"/>
     <antcall target="core.lib"/>
     <antcall target="wad.lib"/>
     <antcall target="trl.lib"/>
@@ -290,17 +339,20 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <target name="create.database" depends="init,code.rev">
     <antcall target="database.lib"/>
-    <ant dir="${base.db}" target="create.database" inheritAll="true" inheritRefs="true"/>
-  </target>
-
-  <target name="create.original.database" depends="init,code.rev">
-    <antcall target="database.lib"/>
-    <ant dir="${base.db}" target="create.original.database" inheritAll="true" inheritRefs="true"/>
+    <ant dir="${base.db}" antfile="build-create.xml" target="create.database" inheritAll="true" inheritRefs="true"/>
+  	<antcall target="db.apply.modules"/>
   </target>
 
   <target name="update.database" depends="init,code.rev">
     <antcall target="database.lib"/>
     <ant dir="${base.db}" target="update.database" inheritAll="true" inheritRefs="true"/>
+  	<antcall target="db.apply.modules"/>
+  </target>
+
+  <target name="update.database.mod" depends="init,code.rev">
+    <antcall target="database.lib"/>
+    <ant dir="${base.db}" target="update.database.mod" inheritAll="true" inheritRefs="true"/>
+  	<antcall target="db.apply.modules"/>
   </target>
 
   <target name="update.customized.database" depends="init,code.rev">
@@ -334,6 +386,10 @@ compare.database.structure: refer to compare.database.structure target of databa
     <ant dir="${base.db}" target="export.database.structure" inheritAll="true" inheritRefs="true"/>
   </target>
 
+  <target name="export.config.script" depends="init,code.rev">
+    <ant dir="${base.db}" target="export.config.script" inheritAll="true" inheritRefs="true"/>
+  </target>
+
   <target name="export.database.data" depends="init,code.rev">
     <ant dir="${base.db}" target="export.database.data" inheritAll="true" inheritRefs="true"/>
   </target>
@@ -357,16 +413,90 @@ compare.database.structure: refer to compare.database.structure target of databa
   <target name="import.database.masterdata" depends="init,code.rev">
     <ant dir="${base.db}" target="import.database.masterdata" inheritAll="true" inheritRefs="true"/>
   </target>
-
-  <target name="save.database.model" depends="init">
-    <ant dir="${base.db}" target="save.database.model" inheritAll="true" inheritRefs="true"/>
+	
+	<target name="db.apply.modules" if="apply.modules.on.create">
+    <taskdef name="applyModule"
+             classname="org.openbravo.erpCommon.modules.ApplyModuleTask">
+      <classpath refid="project.class.path"/>
+    </taskdef>
+    <applyModule/>
+	</target>
+	
+	<target name="apply.modules">
+	  <echo>Applying ${module} modules...</echo>
+    <taskdef name="applyModule"
+             classname="org.openbravo.erpCommon.modules.ApplyModuleTask">
+      <classpath refid="project.class.path"/>
+    </taskdef>
+    <antcall target="update.database.mod"/>
+    <antcall target="generate.entities"/>
+    <applyModule/>
+		<antcall target="compile"/>
+		<antcall target="war"/>
+		<!--antcall target="deploy.context"/-->
+	</target>
+  <target name="apply.modules.development">
+    <echo>Applying ${module} modules...</echo>
+    <taskdef name="applyModule"
+             classname="org.openbravo.erpCommon.modules.ApplyModuleTask">
+      <classpath refid="project.class.path"/>
+    </taskdef>
+    <antcall target="update.database.mod"/>
+    <applyModule/>
+    <antcall target="compile.development"/>
   </target>
-
-  <target name="compare.database.structure" depends="init">
-    <ant dir="${base.db}" target="compare.database.structure" inheritAll="true" inheritRefs="true"/>
+	<target name="tomcat.list">
+		<taskdef name="list"  classname="org.apache.catalina.ant.ListTask">
+		  <classpath refid="tomcat.classpath"/>
+		</taskdef>
+		<list url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}"/>
+	</target>
+	
+	<target name="deploy.context">
+		<taskdef name="undeploy"  classname="org.apache.catalina.ant.UndeployTask">
+		  <classpath refid="tomcat.classpath"/>
+	  </taskdef>
+		<taskdef name="deploy.tomcat" classname="org.apache.catalina.ant.DeployTask">
+		  <classpath refid="tomcat.classpath"/>
+		</taskdef>
+		<taskdef name="start"    classname="org.apache.catalina.ant.StartTask">
+		  <classpath refid="tomcat.classpath"/>
+		</taskdef>
+		
+		<undeploy url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}"
+      path="/${context.name}" failonerror="false"/>
+    <deploy.tomcat url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}"
+                path="/${context.name}" war="file:${base.lib}/${context.name}.war"/>
+		<start url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}"
+		          path="/${context.name}"/>
+	</target>
+	
+	
+  <target name="generate-wsdd">
+            <ant dir="${base.src}" target="generate-wsdd" inheritAll="true" inheritRefs="true"/>
+    </target>
+	
+	<target name="obx.export.database" if="obx.exp.DB">
+	  <antcall target="export.database"/>
+	</target>
+	  
+  <target name="obx.export.config.script" if="obx.exp.CS">
+    <antcall target="export.config.script"/>
   </target>
+	
+	<target name="extract.module">
+  	<taskdef name="extractModule"
+  	           classname="org.openbravo.erpCommon.modules.ExtractModuleTask">
+  	    <classpath refid="project.class.path"/>
+	  </taskdef>
+		
+    <antcall target="obx.export.database"/>
+    <antcall target="obx.export.config.script"/>
 
-  <target name="compare.database.data" depends="init">
-    <ant dir="${base.db}" target="compare.database.data" inheritAll="true" inheritRefs="true"/>
-  </target>
+		<extractModule moduleName="${module}"
+			  userId="0"
+			  propertiesFile="${base.config}/Openbravo.properties"
+			  exportRD="${obx.export.RD}"/>
+	</target>
+
 </project>

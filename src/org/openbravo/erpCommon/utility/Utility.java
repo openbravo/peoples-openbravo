@@ -26,6 +26,9 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.utils.Replace;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.StringTokenizer;
@@ -38,6 +41,7 @@ import java.text.DateFormat;
 import java.sql.Connection;
 import javax.servlet.ServletException;
 import java.io.*;
+
 import org.apache.log4j.Logger ;
 
 /**
@@ -1157,6 +1161,163 @@ public class Utility {
   }
   
   /**
+   * Deletes recursively a (non-empty) array of directories
+   * 
+   * @param f
+   * @return true in case the deletion has been successful
+   */
+  public static boolean deleteDir(File[] f) {
+    for (int i=0; i<f.length; i++) {
+      if (!deleteDir(f[i])) return false;
+    }
+    return true;
+  }
+  
+  /**
+   * Deletes recursively a (non-empty) directory
+   * 
+   * @param f
+   * @return true in case the deletion has been successful
+   */
+  public static boolean deleteDir(File f){
+    if (f.isDirectory()) {
+      File elements[] = f.listFiles();
+      for (int i=0; i<elements.length; i++) {
+        if (!deleteDir(elements[i])) return false;
+      }
+    }
+    return f.delete();
+  }
+  
+  /**
+   * Generates a String representing the file in a path
+   * 
+   * @param strPath
+   * @return file to a String
+   */
+  public static String fileToString(String strPath) throws FileNotFoundException {
+    FileReader myFileReader = new FileReader(strPath);
+    BufferedReader mybr = new BufferedReader(myFileReader);
+    StringBuffer strMyFile = new StringBuffer("");
+    try{
+      String strTemp = mybr.readLine();
+      strMyFile.append(strTemp);
+      while (strTemp!=null){
+        strTemp =  mybr.readLine();
+        if(strTemp!=null) strMyFile.append("\n").append(strTemp);
+        else {
+          mybr.close();
+          myFileReader.close();
+        }
+      }
+    } catch (IOException e){
+      e.printStackTrace();
+    }
+    return strMyFile.toString();
+  }
+  
+  /**
+   * Generates a String representing the wikified name from source
+   * 
+   * @param strSource
+   * @return strTarget: wikified name
+   */
+  public static String wikifiedName(String strSource) throws FileNotFoundException {
+    if(strSource==null || strSource.equals("")) return strSource;
+    strSource = strSource.trim();
+    if(strSource.equals("")) return strSource;
+    StringTokenizer source = new StringTokenizer(strSource, " ", false);
+    String strTarget = "";
+    String strTemp = "";
+    int i=0;
+    while(source.hasMoreTokens()){
+      strTemp = source.nextToken();
+      if(i!=0) strTarget = strTarget + "_" + strTemp;
+      else {
+        String strFirstChar = strTemp.substring(0, 1);
+        strTemp = strFirstChar.toUpperCase() + strTemp.substring(1, strTemp.length());   
+        strTarget = strTarget + strTemp;
+      }
+      i++;
+    }
+    return strTarget;
+  }
+  
+  
+  public static String getButtonName(ConnectionProvider conn, VariablesSecureApp vars, String reference, String currentValue, String buttonId, HashMap<String, String> usedButtonShortCuts, HashMap<String, String> reservedButtonShortCuts) {
+    try {
+      UtilityData[] data= UtilityData.selectReference(conn, vars.getLanguage(), reference);
+      String retVal="";
+      if (currentValue.equals("--")) currentValue="CL";
+      if (data==null) return retVal;
+      for (int j=0; j<data.length; j++) {
+        int i = 0;
+        String name = data[j].name;
+        while ((i<name.length()) &&(name.substring(i,i+1).equals(" ") || reservedButtonShortCuts.containsKey(name.substring(i, i+1).toUpperCase()))) { 
+          if (data[j].value.equals(currentValue)) retVal += name.substring(i, i+1);
+          i++;
+        }
+        if ((i==name.length()) && (data[j].value.equals(currentValue))) {
+          i = 1;
+          while (i<=10 && reservedButtonShortCuts.containsKey(new Integer(i).toString())) i++;
+          if (i<10) {
+            if (data[j].value.equals(currentValue)) { 
+              retVal +="<span>(<u>"+i+"</u>)</span>";
+              reservedButtonShortCuts.put(new Integer(i).toString(), "");
+              usedButtonShortCuts.put(new Integer(i).toString(), "executeWindowButton('"+buttonId+"');");
+            }
+          }
+        } else {
+          
+          if (data[j].value.equals(currentValue)) {
+            if (i<name.length()) reservedButtonShortCuts.put(name.substring(i,i+1).toUpperCase(), "");
+            usedButtonShortCuts.put(name.substring(i,i+1).toUpperCase(),  "executeWindowButton('"+buttonId+"');");
+            retVal += "<u>"+name.substring(i,i+1)+"</u>"+name.substring(i+1);
+          }
+        }
+      }
+      
+      return retVal;
+    } catch(Exception e) {
+      log4j.error(e.toString());
+      return currentValue;
+    }
+  }
+  
+  public static String getButtonName(ConnectionProvider conn, VariablesSecureApp vars, String fieldId, String buttonId,  HashMap<String, String> usedButtonShortCuts, HashMap<String, String> reservedButtonShortCuts) {
+    try {
+      UtilityData data= UtilityData.selectFieldName(conn, vars.getLanguage(), fieldId);
+      String retVal="";
+      if (data==null) return retVal;
+      String name = data.name;
+      int i = 0;
+      while ((i<name.length()) &&(name.substring(i,i+1).equals(" ") || reservedButtonShortCuts.containsKey(name.substring(i, i+1).toUpperCase()))) { 
+        retVal += name.substring(i, i+1);
+        i++;
+      }
+      
+      if (i==name.length()) {
+        i = 1;
+        while (i<=10 && reservedButtonShortCuts.containsKey(new Integer(i).toString())) i++;
+        if (i<10) {
+          retVal +="<span>(<u>"+i+"</u>)</span>";
+          reservedButtonShortCuts.put(new Integer(i).toString(), "");
+          usedButtonShortCuts.put(new Integer(i).toString(), "executeWindowButton('"+buttonId+"');");
+        }
+      } else {
+        if (i<name.length()) reservedButtonShortCuts.put(name.substring(i,i+1).toUpperCase(), "");
+        usedButtonShortCuts.put(name.substring(i,i+1).toUpperCase(),  "executeWindowButton('"+buttonId+"');");
+        retVal += "<u>"+name.substring(i,i+1)+"</u>"+name.substring(i+1);
+      }
+      
+      return retVal;
+    } catch(Exception e) {
+      log4j.error(e.toString());
+      return "";
+    }
+  }
+  
+  /**
    * Returns the ID of the base currency of the given client
    * 
    * @param strClientId: ID of client.
@@ -1166,6 +1327,36 @@ public class Utility {
   public static String stringBaseCurrencyId(ConnectionProvider conn, String strClientId) throws ServletException {
     String strBaseCurrencyId = UtilityData.getBaseCurrencyId(conn, strClientId);
     return strBaseCurrencyId;
+  }
+  
+  /**
+   * Trasnforms an ArrayList to a String comma separated
+   * 
+   * @param list
+   * @return
+   */
+  public static String arrayListToString(ArrayList<String> list, boolean addQuotes) {
+    String rt = "";
+    for (int i=0; i<list.size(); i++) {
+      rt += rt.equals("")?"":", "+(addQuotes?"'":"")+list.get(i)+(addQuotes?"'":"");
+    }
+    return rt;
+  }
+  
+  /**
+   * Transforms a comma separated String into an ArrayList
+   * 
+   * @param list
+   * @return
+   */
+  public static ArrayList<String> stringToArrayList(String list) {
+    ArrayList<String> rt = new ArrayList<String>();
+    StringTokenizer st = new StringTokenizer(list, ",");
+    while (st.hasMoreTokens()) {
+      String token = st.nextToken().trim();
+      rt.add(token);
+    }
+    return rt;
   }
   
   /**

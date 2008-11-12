@@ -35,9 +35,11 @@ var previousWindowElementType = null;
 
 var selectedArea = 'window';
 var isGridFocused = null;
+var isGenericTreeFocused = null;
 var isClickOnGrid = null;
+var isClickOnGenericTree = null;
 var defaultActionElement = null;
-var defaultActionElementArrayPosition = null;
+var defaultActionType = null;
 
 var isTabPressed = null;
 var isFirstTime = true;
@@ -71,7 +73,7 @@ function windowKeyboardCaptureEvents() {
 function activateDefaultAction(){
   if (defaultActionElement != null && defaultActionElement != 'null' && defaultActionElement != '') {
     if (isSelectedComboOpened != true) {
-      keyArray[defaultActionElementArrayPosition] = new keyArrayItem("ENTER", "executeWindowButton(defaultActionElement.getAttribute('id'));", null, null, false, 'onkeydown');
+      defaultActionType = 'button';
       drawWindowElementDefaultAction(defaultActionElement);
     } else {
       comboDefaultAction();
@@ -81,7 +83,7 @@ function activateDefaultAction(){
 
 function disableDefaultAction() {
   if (defaultActionElement != null && defaultActionElement != 'null' && defaultActionElement != '') {
-    keyArray[defaultActionElementArrayPosition] = new keyArrayItem(null, null, null, null, false, null);
+    defaultActionType = null;
     eraseWindowElementDefaultAction(defaultActionElement);
   }
 }
@@ -89,7 +91,7 @@ function disableDefaultAction() {
 function comboDefaultAction() {
   if (defaultActionElement != null && defaultActionElement != 'null' && defaultActionElement != '') {
     eraseWindowElementDefaultAction(defaultActionElement);
-    keyArray[defaultActionElementArrayPosition] = new keyArrayItem("ENTER", "isSelectedComboOpened=false; activateDefaultAction();", null, null, false, 'onkeydown');
+    defaultActionType = 'combo';
   }
 }
 
@@ -120,7 +122,6 @@ function defaultActionLogic(obj) {
 
 function enableDefaultAction() {
   defaultActionElement = null;
-  defaultActionElementArrayPosition = keyArray.length
   activateDefaultAction();
 }
 
@@ -195,6 +196,19 @@ function cursorFocus(evt, obj) {
   }
   if (obj.tagName == 'OPTION') {
     while(obj.tagName != 'SELECT') obj = obj.parentNode;
+  }
+  var obj_tmp = obj;
+  if(!isClickOnGenericTree==true) blurGenericTree();
+  isClickOnGenericTree=false;
+  if (isGenericTreeFocused) {
+    while(obj_tmp.tagName != 'BODY') {
+      obj_tmp = obj_tmp.parentNode;
+      if (obj_tmp.getAttribute('id') != null) {
+        if (obj_tmp.getAttribute('id').indexOf('genericTree') != -1) {
+          return true;
+        }
+      }
+    }
   }
   if (obj.tagName == 'SELECT' && isOnMouseDown!=true) {
     selectedCombo = obj;
@@ -303,7 +317,7 @@ function setWindowElementFocus(obj, type) {
 function drawWindowElementDefaultAction(obj) {
   try {
     if(obj.tagName == 'A') {
-      if (obj.className.indexOf('ButtonLink_default') == -1 && obj.className.indexOf('ButtonLink') != -1) {
+      if (obj.className.indexOf('ButtonLink_default') == -1 && obj.className.indexOf('ButtonLink') != -1 && obj.className.indexOf('ButtonLink_disabled') == -1) {
         obj.className = 'ButtonLink_default';
       }
     }
@@ -342,7 +356,7 @@ function drawWindowElementFocus(obj) {
         obj.className = obj.className + ' LabelLink_focus';
       } else if (obj.className.indexOf('FieldButtonLink_focus') == -1 && obj.className.indexOf('FieldButtonLink') != -1) {
         obj.className = 'FieldButtonLink_focus';
-      } else if (obj.className.indexOf('ButtonLink_focus') == -1 && obj.className.indexOf('ButtonLink') != -1) {
+      } else if (obj.className.indexOf('ButtonLink_focus') == -1 && obj.className.indexOf('ButtonLink') != -1 && obj.className.indexOf('ButtonLink_disabled') == -1) {
         obj.className = 'ButtonLink_focus';
       } else if (obj.className.indexOf('List_Button_TopLink_focus') == -1 && obj.className.indexOf('List_Button_TopLink') != -1) {
         obj.className = 'List_Button_TopLink_focus';
@@ -428,6 +442,8 @@ function drawWindowElementFocus(obj) {
       isFirstTime = false;
     } else if (currentWindowElementType == 'grid') {
       isFirstTime = false;
+    } else if (currentWindowElementType == 'genericTree') {
+      isFirstTime = false;
     } else {
     }
   } catch (e) {
@@ -442,6 +458,9 @@ function putWindowElementFocus(obj) {
     if (currentWindowElementType == 'grid') {
       obj.focus();
       focusGrid();
+    } else if (currentWindowElementType == 'genericTree') {
+      obj.focus();
+      focusGenericTree();
     } else {
       obj.focus();
     }
@@ -513,6 +532,8 @@ function eraseWindowElementFocus(obj) {
       obj.className = obj.className.replace('required_focus', 'required');
     } else if (previousWindowElementType == 'grid') {
       blurGrid();
+    } else if (previousWindowElementType == 'genericTree') {
+      blurGenericTree();
     } else {
     }
   } catch (e) {
@@ -524,6 +545,8 @@ function removeWindowElementFocus(obj) {
   try {
     if (previousWindowElementType == 'grid') {
       blurGrid();
+    } else if (previousWindowElementType == 'genericTree') {
+      blurGenericTree();
     } else {
       //obj.blur();
     }
@@ -533,6 +556,7 @@ function removeWindowElementFocus(obj) {
 
 function mustBeJumped(obj) {
   if (obj.style.display == 'none') return true;
+  if (obj.getAttribute('id') == 'genericTree') { return true; }
   return false;
 }
 
@@ -545,6 +569,7 @@ function mustBeIgnored(obj) {
   if (obj.disabled) return true;
   if (obj.className.indexOf('LabelLink')!=-1 && obj.className.indexOf('_LabelLink')==-1 && obj.className.indexOf('LabelLink_')==-1) return true;
   if (obj.className.indexOf('FieldButtonLink')!=-1) return true;  
+  if (obj.className.indexOf('ButtonLink_disabled')!=-1) return true;  
   return false;
 }
 
@@ -558,6 +583,13 @@ function couldHaveFocus(obj) {
   try {
     if (obj.tagName == 'INPUT' && obj.getAttribute('id') == 'grid_table_dummy_input') {
       currentWindowElementType = 'grid';
+      return true;
+    }
+  } catch(e) {
+  }
+  try {
+    if (obj.tagName == 'INPUT' && obj.getAttribute('id') == 'genericTree_dummy_input') {
+      currentWindowElementType = 'genericTree';
       return true;
     }
   } catch(e) {
@@ -892,12 +924,39 @@ function windowShiftTabKey(state) {
   return false;
 }
 
+function isEnterCatched() {
+  if (isGridFocused || isGenericTreeFocused || defaultActionType == 'button' || defaultActionType == 'combo') {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function windowEnterKey() {
+  if (isGridFocused) {
+    onRowDblClick();
+  } else if (isGenericTreeFocused) {
+    gt_showNodeDescription(gt_focusedNode);
+  } else if (defaultActionType == 'button') {
+    executeWindowButton(defaultActionElement.getAttribute('id'));
+  } else if (defaultActionType == 'combo') {
+    isSelectedComboOpened=false;
+    activateDefaultAction();
+  } else {
+    return true;
+  }
+}
+
 function windowCtrlShiftEnterKey() {
   executeAssociatedLink();
 }
 
 function windowCtrlEnterKey() {
-  executeAssociatedFieldButton();
+  if (isGenericTreeFocused) {
+    gt_goToNodeLink(gt_focusedNode);
+  } else {
+    executeAssociatedFieldButton();
+  }
 }
 
 function setFirstWindowElementFocus() {
@@ -1577,28 +1636,63 @@ function focusGrid() {
 function blurGrid() {
   try {
     dijit.byId('grid').blurGrid();
-  } catch(e){}
+  } catch(e) {}
+}
+
+function focusGenericTree() {
+  try {
+    gt_focusTreeContainer('genericTree','id');
+  } catch(e) {}
+}
+
+function blurGenericTree() {
+  try {
+    if (typeof gt_focusedNode != "undefined") { gt_blurTreeContainer('genericTree','id'); }
+  } catch(e) {}
 }
 
 function windowUpKey() {
   if (isGridFocused) {
     dijit.byId('grid').goToPreviousRow();
+  } else if (isGenericTreeFocused) {
+    gt_goToPreviousNode();
   }
 }
 
 function windowDownKey() {
   if (isGridFocused) {
     dijit.byId('grid').goToNextRow();
+  } else if (isGenericTreeFocused) {
+    gt_goToNextNode();
   }
 }
 
 function windowLeftKey() {
   if (isGridFocused) {
+  } else if (isGenericTreeFocused) {
+    if (gt_isClosedNode(gt_focusedNode)) {
+      gt_goToParentNode();
+    } else {
+      gt_closeNode(gt_focusedNode);
+    }
   }
 }
 
 function windowRightKey() {
   if (isGridFocused) {
+  } else if (isGenericTreeFocused) {
+    if (gt_isClosedNode(gt_focusedNode)) {
+      gt_openNode(gt_focusedNode);
+    } else {
+      gt_goToNextNode();
+    }
+  }
+}
+
+function windowSpaceKey() {
+  if (isGridFocused) {
+  } else if (isGenericTreeFocused) {
+    gt_checkToggleNode(gt_focusedNode);
   }
 }
 
@@ -1623,11 +1717,5 @@ function windowAvpageKey() {
 function windowRepageKey() {
   if (isGridFocused) {
     dijit.byId('grid').goToPreviousPage();
-  }
-}
-
-function windowEnterKey() {
-  if (isGridFocused) {
-    onRowDblClick();
   }
 }

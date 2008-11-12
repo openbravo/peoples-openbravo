@@ -90,10 +90,38 @@ function refreshAccountingReports() {
 
 function onloadFunctions() {
 }
+
+function validateOrgCombo() {
+  var id = document.frmMain.inpcElementvalueId.value;
+  var cmbOrganization = document.frmMain.inpOrganizacion; 
+  
+  for (i = 0; i < arrReportIsBalanced.length; i++) {
+	  if (id == arrReportIsBalanced[i][0] && arrReportIsBalanced[i][2]=='N') {
+		  fillCombo(cmbOrganization, arrAllOrg, false, false);
+	  }
+	  if (id == arrReportIsBalanced[i][0] && arrReportIsBalanced[i][2]=='Y') {
+		  fillCombo(cmbOrganization, arrBalancedOrg, false, false);
+	  }
+  }
+
+  return true;
+}
 </SCRIPT>
 
 <script language="JavaScript" type="text/javascript" id="paramArrayAccountingReports">
 var arrAccountingReports=null;
+</script>
+
+<script language="JavaScript" type="text/javascript" id="paramArrayBalancedOrg">
+var arrBalancedOrg=null;
+</script>
+
+<script language="JavaScript" type="text/javascript" id="paramArrayAllOrg">
+var arrAllOrg=null;
+</script>
+
+<script language="JavaScript" type="text/javascript" id="paramArrayReportIsBalanced">
+var arrReportIsBalanced = null;
 </script>
 
 	<SCRIPT language="JavaScript" type="text/javascript">
@@ -374,10 +402,10 @@ var arrAccountingReports=null;
                 </TR>
 
                 <TR>
-                  <TD class="TitleCell"><SPAN class="LabelText">Organization</SPAN></TD>
-                  <TD class="Combo_ContentCell" colspan="2"> <SELECT name="inpOrganizacion" id="inpOrganizacion" class="ComboKey Combo_TwoCells_width">
-                      <OPTION value=""> <DIV id="reportAD_ORGID"></DIV></OPTION>
-                    </SELECT></TD>
+                  <TD class="TitleCell"> <SPAN class="LabelText">Accounting schema</SPAN></TD>
+                  <TD class="Combo_ContentCell" colspan="2"> <SELECT name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width" onchange="refreshAccountingReports(); validateOrgCombo(); logChanges(this); return true;">
+                    <OPTION value=""></OPTION><DIV id="reportC_ACCTSCHEMA_ID"></DIV>
+                  </SELECT></TD>
                   <TD class="ContentCell"></TD>
                   <TD class="TitleCell"><SPAN class="LabelText">Show only accounts with value</SPAN></TD>
                   <TD class="Radio_Check_ContentCell"><INPUT name="inpConImporte" type="checkbox" id="fieldConImporte" value="Y"></INPUT></TD>
@@ -385,7 +413,7 @@ var arrAccountingReports=null;
 
                 <TR>
                   <TD class="TitleCell"><SPAN class="LabelText">Accounting Report</SPAN></TD>
-                  <TD class="Combo_ContentCell" colspan="2"> <SELECT name="inpcElementvalueId" id="inpcElementvalueId" class="ComboKey Combo_TwoCells_width" onchange="logChanges(this);return true;">
+                  <TD class="Combo_ContentCell" colspan="2"> <SELECT name="inpcElementvalueId" id="inpcElementvalueId" class="ComboKey Combo_TwoCells_width" onchange="validateOrgCombo(); logChanges(this); return true;">
                     <OPTION value=""></OPTION><DIV id="reportC_ElementValue_ID"></DIV>
                   </SELECT></TD>
                   <TD class="ContentCell"></TD>
@@ -394,15 +422,18 @@ var arrAccountingReports=null;
                 </TR>
 
                 <TR>
-                  <TD class="TitleCell"><SPAN class="LabelText">Account Level</SPAN></TD>
+				  <TD class="TitleCell"><SPAN class="LabelText">Organization</SPAN></TD>
+                  <TD class="Combo_ContentCell" colspan="2"> <SELECT name="inpOrganizacion" id="inpOrganizacion" class="ComboKey Combo_TwoCells_width">
+                      <OPTION value=""> <DIV id="reportAD_ORGID"></DIV></OPTION>
+                    </SELECT></TD>
+                </TR>
+                <TD class="TitleCell"><SPAN class="LabelText">Account Level</SPAN></TD>
                   <TD class="Combo_ContentCell"> <SELECT name="inpLevel" id="inpLevel" class="ComboKey Combo_OneCell_width" onchange="logChanges(this);return true;">
                     <OPTION value=""></OPTION><DIV id="reportLevel"></DIV>
                   </SELECT></TD>
                   <TD class="ContentCell"></TD>
-				  <TD class="TitleCell"> <SPAN class="LabelText">Accounting schema</SPAN></TD>
-                  <TD class="Combo_ContentCell"> <SELECT name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_OneCell_width" onchange="refreshAccountingReports(); logChanges(this); return true;">
-                    <OPTION value=""></OPTION><DIV id="reportC_ACCTSCHEMA_ID"></DIV>
-                  </SELECT></TD>
+                <TR>
+                
                 </TR>
 
                 <TR>

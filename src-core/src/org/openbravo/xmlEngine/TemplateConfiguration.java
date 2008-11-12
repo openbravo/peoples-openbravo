@@ -11,14 +11,14 @@
 */
 package org.openbravo.xmlEngine;
 
-import java.util.Vector;
 import java.util.Enumeration;
-import java.util.Stack;
 import java.util.Hashtable;
+import java.util.Stack;
+import java.util.Vector;
+
+import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
-
-import org.apache.log4j.Logger ;
 /**
   The configuration information of a XmlTemplate
  **/
@@ -29,6 +29,7 @@ class TemplateConfiguration extends DefaultHandler {
   Vector<Object> hasDataTemplate;
   XmlEngine xmlEngine; //need for add subreports to the xmlEngine
   Hashtable<String, ParameterTemplate> hasParameter;
+  Hashtable<String, LabelTemplate> hasLabels;
   XmlTemplate xmlTemplate;
   HashtableMultiple hashtable;
   String id;
@@ -50,10 +51,11 @@ class TemplateConfiguration extends DefaultHandler {
   StringBuffer buffer;
 
 
-  public TemplateConfiguration (Vector<Object> hasDataTemplate, XmlEngine xmlEngine, Hashtable<String, ParameterTemplate> hasParameter, XmlTemplate xmlTemplate) {  // XmlEngineNP: unico argumento en el constructor: this, y eliminar las tres variables actuales, guardar solo XmlTemplate
+  public TemplateConfiguration (Vector<Object> hasDataTemplate, XmlEngine xmlEngine, Hashtable<String, ParameterTemplate> hasParameter, Hashtable<String, LabelTemplate> hasLabels, XmlTemplate xmlTemplate) {  // XmlEngineNP: unico argumento en el constructor: this, y eliminar las tres variables actuales, guardar solo XmlTemplate
     this.hasDataTemplate = hasDataTemplate;
     this.xmlEngine = xmlEngine;
     this.hasParameter = hasParameter;
+    this.hasLabels = hasLabels;
     this.xmlTemplate = xmlTemplate;
     stcElement = new Stack<Object>();
     hashtable = new HashtableMultiple();  // XmlEngineNP: pass XmlTemplatepasarlo to XmlTemplate, in order to keep it after the reading, due
@@ -80,7 +82,9 @@ class TemplateConfiguration extends DefaultHandler {
       Attributes amap) { //throws SAXException {
     if(log4jTemplateConfiguration.isDebugEnabled()) log4jTemplateConfiguration.debug("TemplateConfiguration: startElement is called: " + name);
     readBuffer();
+     
     if (name.trim().equalsIgnoreCase("FIELD")) {
+      
       pushElement(name);
       id = null;
       strAttribute = null;
@@ -113,6 +117,31 @@ class TemplateConfiguration extends DefaultHandler {
           }
         }
       }
+    } else if (name.trim().equalsIgnoreCase("LABEL")) {
+      if (log4jTemplateConfiguration.isDebugEnabled()) log4jTemplateConfiguration.debug("LABEL name found.");
+      LabelTemplate label = new LabelTemplate();
+      pushElement(name);
+      id = null;
+      strReplace = null;
+      vecReplace = null;
+      for (int i = 0; i < amap.getLength(); i++) {
+        if (log4jTemplateConfiguration.isDebugEnabled()) log4jTemplateConfiguration.debug("  LABEL: attribute name="+amap.getQName(i)+" value="+amap.getValue(i));
+        if (amap.getQName(i).equals("id")) {
+          id = amap.getValue(i);
+        } else if (amap.getQName(i).equals("name")) {
+          label.strName = amap.getValue(i);
+        } else if (amap.getQName(i).equals("replace")) {
+          strReplace = amap.getValue(i);
+        }
+      }
+      hasLabels.put(label.strName, label);
+      if (id != null) {
+        log4jTemplateConfiguration.debug("putting label template in hashtable: " + id);
+        hashtable.put (id, label);
+      }
+      log4jTemplateConfiguration.debug("hashtable size checking if Id added to hashtable: " + hashtable.vecKeys.size());
+      log4jTemplateConfiguration.debug("hasLabels size: " + hasLabels.size());
+      
     } else if (name.trim().equalsIgnoreCase("FUNCTION")) {
       pushElement(name);
       id = null;
@@ -309,7 +338,7 @@ class TemplateConfiguration extends DefaultHandler {
             log4jTemplateConfiguration.warn("  replaceCharacters " + amap.getValue(i) + " not found");
           }
         }
-      }
+      } 
       if (name.equals("PARAMETER_SQL")) {
         activeDataTemplate.vecParameterTemplate.addElement(parameter);
       } else {

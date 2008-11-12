@@ -10,7 +10,7 @@
  */
 package org.openbravo.base.structure;
 
-import org.openbravo.base.model.ad.Client;
+import org.openbravo.model.ad.system.Client;
 
 /**
  * An interface modeling open bravo objects which have a client reference.
@@ -19,8 +19,8 @@ import org.openbravo.base.model.ad.Client;
  */
 
 public interface ClientEnabled {
-  
-  public Client getClient();
-  
-  public void setClient(Client client);
+
+    public Client getClient();
+
+    public void setClient(Client client);
 }

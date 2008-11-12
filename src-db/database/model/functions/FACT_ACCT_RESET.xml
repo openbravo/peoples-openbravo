@@ -39,6 +39,8 @@
   v_Record_ID VARCHAR2(32);
   v_AD_User_ID VARCHAR2(32);
   v_DateColumn VARCHAR2(2000):='';
+  v_AD_Org_ID VARCHAR2(32);
+  v_TableName VARCHAR2(48):='';
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -84,10 +86,31 @@
       ELSIF(Cur_Parameter.ParameterName='DeletePosting') THEN
         v_DeletePosting:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  DeletePosting=' || v_DeletePosting) ;
+      ELSIF(Cur_Parameter.ParameterName='AD_Org_ID') THEN
+        v_AD_Org_ID:=Cur_Parameter.P_String;
+        IF (v_AD_Org_ID IS NULL) THEN
+          v_AD_Org_ID:=0;
+        END IF;
+        DBMS_OUTPUT.PUT_LINE('  AD_ORG_ID=' || v_AD_Org_ID) ;
       ELSE
         DBMS_OUTPUT.PUT_LINE('*** Unknown Parameter=' || Cur_Parameter.ParameterName) ;
       END IF;
     END LOOP; -- Get Parameter
+
+    -- Get AD_Org_ID from the document header (useful when the process is executed from a document)
+    IF (v_AD_Table_ID IS NOT NULL AND v_Record_ID IS NOT NULL) THEN     
+        SELECT TableName
+        INTO v_TableName
+        FROM AD_Table 
+        WHERE AD_Table_ID=v_AD_Table_ID;
+        
+        EXECUTE IMMEDIATE 
+          'SELECT AD_Org_ID 
+          FROM ' ||  v_TableName || '
+          WHERE ' || v_TableName || '_ID =''' || v_Record_ID || ''' AND AD_CLIENT_ID =''' || v_AD_Client_ID || ''' '
+          INTO v_AD_Org_ID;
+    END IF;
+    
     DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
     DECLARE
     TYPE RECORD IS REF CURSOR;
@@ -135,19 +158,22 @@
               SELECT Record_ID
               FROM FACT_ACCT
               WHERE AD_TABLE_ID=Cur_Tables.AD_Table_ID
+              AND AD_ISORGINCLUDED(FACT_ACCT.ad_org_id, v_AD_Org_ID, FACT_ACCT.ad_client_id)<>-1
                 AND NOT EXISTS
                     (SELECT 1
-                    FROM C_YEAR, C_PERIOD, C_PERIODCONTROL, AD_CLIENTINFO, FACT_ACCT fa_aux
+                    FROM C_YEAR, C_PERIOD, C_PERIODCONTROL, AD_Org, FACT_ACCT fa_aux
                     WHERE C_YEAR.c_year_id=C_PERIOD.c_year_id
                       AND C_PERIOD.c_period_id=C_PERIODCONTROL.c_period_id
-                      AND C_YEAR.c_calendar_id=AD_CLIENTINFO.c_calendar_id
-                      AND AD_CLIENTINFO.ad_client_id=fa_aux.AD_CLIENT_ID
+                      AND C_YEAR.c_calendar_id=AD_Org.c_calendar_id
+                      AND AD_Org.ad_client_id=fa_aux.AD_CLIENT_ID
                       AND C_PERIODCONTROL.docbasetype=fa_aux.DOCBASETYPE
                       AND C_PERIODCONTROL.periodstatus<>'O'
                       AND fa_aux.DATEACCT>=C_PERIOD.StartDate
                       AND fa_aux.DATEACCT<C_PERIOD.EndDate + 1
                       AND fa_aux.AD_TABLE_ID = FACT_ACCT.AD_TABLE_ID
                       AND fa_aux.RECORD_ID = FACT_ACCT.RECORD_ID
+                      AND C_PeriodControl.AD_Org_ID=AD_Org.AD_Org_ID
+                      AND C_PeriodControl.AD_Org_ID=AD_ORG_GETCALENDAROWNER(v_AD_Org_ID)
                     )
                 AND Record_ID=(
                       CASE COALESCE(v_Record_ID, '0') WHEN '0' THEN Record_ID ELSE v_Record_ID

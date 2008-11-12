@@ -43,8 +43,8 @@ public class DocProduction extends AcctServer {
      *  Constructor
      *  @param AD_Client_ID AD_Client_ID
      */
-    public DocProduction(String AD_Client_ID, ConnectionProvider conn){
-        super(AD_Client_ID, conn);
+    public DocProduction(String AD_Client_ID, String AD_Org_ID, ConnectionProvider conn){
+        super(AD_Client_ID, AD_Org_ID, conn);
     }
 
 public void loadObjectFieldProvider(ConnectionProvider conn, String AD_Client_ID, String Id) throws ServletException{

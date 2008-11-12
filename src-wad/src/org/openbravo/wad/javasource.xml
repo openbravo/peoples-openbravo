@@ -32,6 +32,8 @@
 <structure name="structure1">
   <PARAMETER id="class" name = "class" default=" "/>
   <PARAMETER id="package" name = "package" default=" "/>
+  <PARAMETER id="path" name = "path" default=" "/>
+  <PARAMETER id="windowName" name = "windowName" default=" "/>
   <PARAMETER id="key" name = "key" default=" "/>
   <PARAMETER id="keyParent" name = "keyParent" default=" "/>
   <PARAMETER id="parentTab" name = "parentTab" default=" "/>

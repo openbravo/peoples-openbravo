@@ -29,6 +29,7 @@ import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
 import java.util.Vector;
 import java.util.StringTokenizer;
+import java.util.ArrayList;
 import org.xml.sax.InputSource;
 import javax.servlet.*;
 
@@ -48,16 +49,20 @@ public class Translate extends DefaultHandler implements LexicalHandler {
   static String fromLanguage;
   static String actualLanguage;
   static String fileTermination;
-  static OutputStreamWriter out;
+  
   static PrintWriter printWriterTxt;
   static boolean error;
   static boolean isHtml = false;
-  static StringBuffer strBuffer;
+
   static String actualTag;
   static String actualFile;
   static String actualPrefix;
   static StringBuffer translationText;
   static int count = 0;
+  static ArrayList<String> moduleDirectories;
+  static String moduleName="";
+  static String moduleLang="";
+  static String moduleID="";
   public static final String[] tokens = {"-", ":"};
 
   static Logger log4j = Logger.getLogger(Translate.class);
@@ -132,6 +137,11 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     dirIni = argv[2];
     dirFin = argv[3];
     if (argv.length > 4) relativePath = argv[4];
+    
+    if (argv.length > 5) {
+      moduleDirectories = getDirectories(argv[5]);
+      log4j.info("Translation for modules");
+    }
     boolFilter = true; 
     dirFilter = new  DirFilter(fileTermination);
     log4j.info("directory source: " + dirIni);
@@ -150,8 +160,16 @@ public class Translate extends DefaultHandler implements LexicalHandler {
       translate.destroy();
       return;
     }
-    listDir(path, boolFilter, dirFilter, fileFin, relativePath);
-    log4j.info("Translated files for " + fileTermination + ": " + count);
+    if (moduleDirectories==null) {
+      if (TranslateData.isInDevelopmentModule(pool, "0")) {
+        listDir(path, boolFilter, dirFilter, fileFin, relativePath, true, "", 0, "");
+        log4j.info("Translated files for " + fileTermination + ": " + count);
+      } else
+        log4j.info("Core is not in development: skipping it");
+    } else {
+      listDir(path, boolFilter, dirFilter, fileFin, relativePath, false, "", 0, "");
+      log4j.info("Translated files for " + fileTermination + ": " + count);
+    }
     translate.destroy();
   }
 
@@ -167,6 +185,19 @@ public class Translate extends DefaultHandler implements LexicalHandler {
   }
   
   /**
+   * Receives a list of directories and returns this list as an ArrayList
+   * @param s
+   * @return
+   */
+  private static ArrayList<String> getDirectories(String s) {
+    ArrayList <String> l = new ArrayList<String>();
+    StringTokenizer tok = new StringTokenizer(s,"/");
+    while (tok.hasMoreTokens()) 
+      l.add(tok.nextToken()); 
+    return l;
+  }
+  
+  /**
    * List all the files and folders in the selected path.
    * 
    * @param file The selected path to list.
@@ -175,28 +206,48 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    * @param fileFin Path where the new files must been created.
    * @param relativePath The relative path.
    */
-  public static void listDir(File file, boolean boolFilter, DirFilter dirFilter, File fileFin, String relativePath) {
+  public static void listDir(File file, boolean boolFilter, DirFilter dirFilter, File fileFin, String relativePath,  boolean parse, String parent, int level, String module) {
     File[] list;
     if(boolFilter) list = file.listFiles(dirFilter);
     else list = file.listFiles();
     for(int i = 0; i < list.length; i++) {
       File fileItem = list[i];
       if (fileItem.isDirectory()) {
-        // si es subdirectorio se lista recursivamente
+        // if it is a subdirectory then list recursively
         String prevRelativePath = new String(relativePath);
         relativePath += "/" + fileItem.getName();
-        listDir(fileItem, boolFilter, dirFilter, fileFin, relativePath);
+        
+        if (log4j.isDebugEnabled()) log4j.debug("dir: "+fileItem.getName()+" - parse:"+parse+" - parent:"+parent+" - level:"+level+" - include:"+(moduleDirectories!=null && moduleDirectories.size()>level?moduleDirectories.get(level):"--"));
+        if (parse) listDir(fileItem, boolFilter, dirFilter, fileFin, relativePath, true, parent, level+1, module);
+        else {
+          if ((moduleDirectories.size()==level+1) && (moduleDirectories.get(level).equals("*")||moduleDirectories.get(level).equals(fileItem.getName()))) {
+            log4j.info("Start parsing module: "+parent.replace("/", ""));
+            try {
+            if (TranslateData.isInDevelopmentModulePack(pool, parent.replace("/", ""))) 
+              listDir(fileItem, boolFilter, dirFilter, fileFin, relativePath, true, parent+"/"+fileItem.getName(), level+1, parent.replace("/", ""));
+            else
+              log4j.info("Module is not in development: skipping it");
+            } catch (Exception e) {e.printStackTrace();}
+          }
+          else if (moduleDirectories.size()>level && (moduleDirectories.get(level).equals("*")||moduleDirectories.get(level).equals(fileItem.getName())))
+            listDir(fileItem, boolFilter, dirFilter, fileFin, relativePath, false, parent+"/"+fileItem.getName(), level+1, module);
+          //other case don't follow deeping into the tree
+        }
+        
+        
         relativePath = prevRelativePath;
       } else {
         try {
-          if (log4j.isDebugEnabled()) log4j.debug(list[i] + " Parent: " + fileItem.getParent() + " getName() " + fileItem.getName() + " canonical: " + fileItem.getCanonicalPath());
-          for (int h=0;h<toLanguage.length;h++) {
-            actualLanguage = toLanguage[h].name;
-            parseFile(list[i], fileFin, relativePath);
-          }
-          if (toLanguage.length==0) {
-            actualLanguage="";
-            parseFile(list[i], fileFin, relativePath);
+          if (parse) {
+            if (log4j.isDebugEnabled()) log4j.debug(list[i] + " Parent: " + fileItem.getParent() + " getName() " + fileItem.getName() + " canonical: " + fileItem.getCanonicalPath());
+            for (int h=0;h<toLanguage.length;h++) {
+              actualLanguage = toLanguage[h].name;
+              parseFile(list[i], fileFin, relativePath, parent, module);
+            }
+            if (toLanguage.length==0) {
+              actualLanguage="";
+              parseFile(list[i], fileFin, relativePath, parent, module);
+            }
           }
         } catch (IOException e) {
           log4j.error("IOException: " + e);
@@ -212,7 +263,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    * @param fileFin Path where the new files must been created.
    * @param relativePath The relative path.
    */
-  private static void parseFile(File fileParsing, File fileFin, String relativePath) {
+  private static void parseFile(File fileParsing, File fileFin, String relativePath, String parent, String module) {
     String strFileName = fileParsing.getName();
     if (log4j.isDebugEnabled()) log4j.debug("Parsing of " + strFileName);
     int pos = strFileName.indexOf(fileTermination);
@@ -222,39 +273,32 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     }
     String strFileWithoutTermination = strFileName.substring(0, pos);
     if (log4j.isDebugEnabled()) log4j.debug("File without termination: " + strFileWithoutTermination);
-    actualFile = relativePath + "/" + strFileName;
-    FileOutputStream resultsFile = null;
+    
+    //In case moduleDirectories has value remove parent from path to keep clean the package
     try {
-      
-      File dirHTML = null;
-      File fileHTML = null;
-      if (!actualLanguage.equals("")) { //actualLangue == "" when no system languages in DB
-        dirHTML = new File(fileFin, actualLanguage + "/" + relativePath);
-        dirHTML.mkdirs();
-        fileHTML = new File(dirHTML, strFileWithoutTermination + fileTermination);
-        if (log4j.isDebugEnabled()) {
-          log4j.debug("Relative path: " + actualLanguage + "/" + relativePath);
-          log4j.debug(" dirHTML: " + dirHTML);
-          log4j.debug(" fileHTML: " + fileHTML);
-          log4j.debug(" time file parsed: " + fileParsing.lastModified() + " time file HTML new: " + fileHTML.lastModified());
-        }
-        if (fileHTML.exists()) {
-          java.util.Date newFileModified = new java.util.Date(fileHTML.lastModified());
-          java.util.Date oldFileModified = new java.util.Date(fileParsing.lastModified());
-          if (newFileModified.compareTo(oldFileModified) > 0) return;
-        }
-        resultsFile = new FileOutputStream(fileHTML);
-        out  = new OutputStreamWriter(resultsFile, "UTF-8");
-      }
-      
-      
+    moduleName = module.equals("")?"CORE":module;
+    moduleID = TranslateData.getModuleID(pool, moduleName);
+    if (moduleID==null || moduleID.equals("")) {
+      log4j.error("Trying to insert element in module "+moduleName+" which has no ID, it will be set to core");
+      moduleName = "CORE";
+      moduleID="0";
+    }
+    moduleLang = TranslateData.getModuleLang(pool, moduleID);
+    } catch (ServletException e) {e.printStackTrace();}
+    
+    if (log4j.isDebugEnabled()) log4j.debug("Module name: "+module+" - oldRelativePath:"+relativePath+" - parent:"+parent);
+    if (moduleDirectories!=null && relativePath.startsWith(parent)) {
+      relativePath = relativePath.substring(parent.length());
+      if (log4j.isDebugEnabled()) log4j.debug("new relativePath:"+relativePath);
+    }
+    
+    actualFile = relativePath + "/" + strFileName;
+   
       count++;
       
 
-      strBuffer = new StringBuffer();
-      log4j.info("F " + fileParsing);
-      java.util.Date date = new java.util.Date();  // there is date in java.sql.*
-      if (log4j.isDebugEnabled()) log4j.debug("Hour: " + date.getTime());
+      log4j.debug("File: " + fileParsing);
+      
       error = false;
       try {
         parser.parse(new InputSource(new FileReader(fileParsing)));
@@ -265,18 +309,6 @@ public class Translate extends DefaultHandler implements LexicalHandler {
         log4j.error("file: " + actualFile);
         e.printStackTrace();
       }
-      if (!actualLanguage.equals("")) {
-        out.write(strBuffer.toString());
-        out.flush();
-        if (resultsFile!=null) resultsFile.close();
-      }
-      if (error) {
-//          fileHTML.delete();
-      }
-    } catch(IOException e) {
-       e.printStackTrace();
-       log4j.error("Problem at close of the file");
-    }
   }
 
   /**
@@ -328,7 +360,6 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    * The start of the document to translate.
    */
   public void startDocument() {
-    if (!isHtml) strBuffer.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
   }
 
   /**
@@ -357,19 +388,15 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    * in the file, it calls to this method.
    */
   public void startElement(String uri, String name, String qName, Attributes amap) {//(String name, AttributeList amap) throws SAXException {
-    if (log4j.isDebugEnabled()) log4j.debug("Configuration: startElement is called: element name=" + qName);
+    if (log4j.isDebugEnabled()) log4j.info("Configuration: startElement is called: element name=" + qName);
     if (actualTag!=null && isParseable(actualTag) && translationText != null) {
-      strBuffer.append(translate(translationText.toString()));
-    } else if (translationText != null) strBuffer.append(translationText.toString());
+      translate(translationText.toString());
+    } 
     translationText = null;
-    if (strBuffer.toString().endsWith(">")) strBuffer.append("\n");
-    strBuffer.append("<" + qName);
-    strBuffer.append(parseAttributes(amap));
+    parseAttributes(amap);
     if (actualPrefix!=null && !actualPrefix.equals("")) {
-      strBuffer.append(actualPrefix);
       actualPrefix = "";
     }
-    strBuffer.append(">");
     actualTag=name.trim().toUpperCase();
   }
 
@@ -383,14 +410,14 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    * Method to insert begining of CDATA expresions.
    */
   public void startCDATA() {
-    strBuffer.append("<![CDATA[");
+   
   }
   
   /**
    * Method to insert ends of CDATA expresions.
    */
   public void endCDATA() {
-    strBuffer.append("]]>");
+   
   }
 
   /**
@@ -399,18 +426,8 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    */
   public void endElement(String uri, String name, String qName) {//(String name) throws SAXException {
     if (log4j.isDebugEnabled()) log4j.debug("Configuration: endElement is called: " + qName);
-    if (isParseable(actualTag) && translationText != null) {
-      if (fileTermination.equalsIgnoreCase("jrxml")) startCDATA();
-      strBuffer.append(translate(translationText.toString()));
-      if (log4j.isDebugEnabled()) log4j.debug("endElement - TranslationText: " + translationText.toString());
-      if (fileTermination.equalsIgnoreCase("jrxml")) endCDATA();
-    } else if (translationText != null) {
-      if (fileTermination.equalsIgnoreCase("jrxml")) startCDATA();
-      strBuffer.append(translationText.toString());
-      if (fileTermination.equalsIgnoreCase("jrxml")) endCDATA();
-    }
+
     translationText = null;
-    strBuffer.append("</" + qName + ">");
     actualTag="";
   }
 
@@ -471,8 +488,13 @@ public class Translate extends DefaultHandler implements LexicalHandler {
       resultado = tokenize(ini, 0, translated);
       try {
         aux = translated.elementAt(0).equals("Y");
-        if (!aux && TranslateData.existsExpresion(pool, ini, actualFile)==0) {
-          TranslateData.insert(pool,  ini, actualFile);
+        if (moduleLang==null ||moduleLang.equals("")) log4j.error("Module has not defined language");
+        if (!aux && TranslateData.existsExpresion(pool, ini, actualFile, moduleLang)==0) {
+          
+          if (!TranslateData.isInDevelopmentModule(pool, moduleID)) 
+            log4j.error("Module  is not in development, it will be inserted anyway");
+          if (log4j.isDebugEnabled()) log4j.debug("inserting in module:"+moduleName+" - ID:"+moduleID);
+          TranslateData.insert(pool,  ini, actualFile, moduleID);
           log4j.warn("Couldn't translate: " + ini + ".Result translated: " + resultado + ".Actual file: " + actualFile);
         }
       } catch (ServletException e) {

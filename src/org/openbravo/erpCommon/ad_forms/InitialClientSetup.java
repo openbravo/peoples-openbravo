@@ -16,22 +16,31 @@
 */
 package org.openbravo.erpCommon.ad_forms;
 
+import org.openbravo.service.db.DataImportService;
+import org.openbravo.service.db.ImportResult;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.erpCommon.utility.*;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.base.secureApp.*;
 import org.openbravo.xmlEngine.XmlDocument;
 import java.io.*;
+import java.math.BigDecimal;
+
 import javax.servlet.*;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 import java.util.Vector;
 import javax.servlet.http.*;
 
 import org.openbravo.erpCommon.ad_combos.*;
+import org.openbravo.erpCommon.modules.ModuleReferenceDataClientTree;
+import org.openbravo.erpCommon.modules.ModuleUtiltiy;
 import org.openbravo.exception.*;
 
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.*;
 
 // imports for transactions
@@ -47,7 +56,6 @@ public class InitialClientSetup extends HttpSecureAppServlet {
   String AD_User_U_Name="";
   String AD_User_U_ID="";
   String AD_Client_ID="";
-  String AD_Org_ID="";
   String C_AcctSchema_ID="";
   String client = "1000000";
   String strError = "";
@@ -68,22 +76,27 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
     if (vars.commandIn("DEFAULT")) {
       printPage(response, vars);
-    } else if (vars.commandIn("ACEPTAR")) {
-      AccountingValueData av = new AccountingValueData(vars, "inpArchivo", true, "C");
+    } else if (vars.commandIn("OK")) {
+      String strModules = vars.getInStringParameter("inpNodes");
       m_info.delete(0,m_info.length());
-      String strResultado = procesarFichero(av.getFieldProvider(), request, response, vars);
-      log4j.debug("InitialClientSetup - after procesarFichero");
+      String strResultado = process(request, response, vars, strModules);
+      log4j.debug("InitialClientSetup - after processFile");
       printPageResultado(response, vars, strResultado);
-    } else if (vars.commandIn("CANCELAR")) {
+    } else if (vars.commandIn("CANCEL")) {
     } else pageError(response);
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException{
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/InitialClientSetup").createXmlDocument();
+    ModuleReferenceDataClientTree tree = new ModuleReferenceDataClientTree(this, true);
+    XmlDocument xmlDocument = null;
+    String [] discard = {"selEliminar"};
+    if(tree.getData()==null || tree.getData().length==0)
+      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/InitialClientSetup").createXmlDocument();
+    else xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/InitialClientSetup", discard).createXmlDocument();
     
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "InitialClientSetup", false, "", "", "",false, "ad_forms",  strReplaceWith, false,  true);
+    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "InitialClientSetup", false, "", "", "", false, "ad_forms",  strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
     try {
@@ -107,23 +120,15 @@ public class InitialClientSetup extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageTitle", myMessage.getTitle());
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
+      xmlDocument.setParameter("moduleTree", tree.toHtml());
+      xmlDocument.setParameter("moduleTreeDescription", tree.descriptionToHtml());
     
-    xmlDocument.setParameter("region", arrayDobleEntrada("arrRegion", RegionComboData.selectTotal(this)));
-    xmlDocument.setData("reportMoneda","liststructure", MonedaComboData.select(this));
-    try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Country_ID", "156", "", Utility.getContext(this, vars, "#User_Org", ""), Utility.getContext(this, vars, "#User_Client", ""), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "", "");
-      xmlDocument.setData("reportPais", "liststructure", comboTableData.select(false));
-      comboTableData = null;
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }    
-
-	response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
+      xmlDocument.setData("reportCurrency","liststructure", MonedaComboData.select(this));
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.println(xmlDocument.print());
+      out.close();
+    }
   }
 
   private void printPageResultado(HttpServletResponse response, VariablesSecureApp vars, String strResultado) throws IOException, ServletException{
@@ -170,44 +175,35 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     out.close();
   }
 
-  public String procesarFichero(FieldProvider[] avData, HttpServletRequest request, HttpServletResponse response, VariablesSecureApp vars) throws IOException {
-
+  public String process(HttpServletRequest request, HttpServletResponse response, VariablesSecureApp vars, String strModules) throws IOException {
+    if(log4j.isDebugEnabled()) log4j.debug("InitialOrgSetup - strModules - " + strModules);
     Connection conn = null;
     isOK = true;
     strSummary = new StringBuffer();
     strSummary.append(Utility.messageBD(this, "ReportSummary", vars.getLanguage())).append(SALTO_LINEA);
-    String strCliente = vars.getStringParameter("inpCliente");
-    String strOrganizacion = vars.getStringParameter("inpOrganizacion");
-    String strClienteUsuario = vars.getStringParameter("inpClienteUsuario");
-    String strOrganizacionUsuario = vars.getStringParameter("inpOrganizacionUsuario");
-    String strMoneda = vars.getStringParameter("inpMoneda");
-    String strPais = vars.getStringParameter("inpPais");
-    String strCiudad = vars.getStringParameter("inpCiudad");
-    String strRegion = vars.getStringParameter("inpRegion");
-    boolean bProducto = isTrue(vars.getStringParameter("inpProducto"));
-    boolean bTercero = isTrue(vars.getStringParameter("inpTercero"));
-    boolean bProyecto = isTrue(vars.getStringParameter("inpProyecto"));
-    boolean bCampana = isTrue(vars.getStringParameter("inpCampana"));
-    boolean bZonaVentas = isTrue(vars.getStringParameter("inpZonaVentas"));
+    String strClient = vars.getStringParameter("inpClient");
+    String strClientUser = vars.getStringParameter("inpClientUser");
+    String strCurrency = vars.getStringParameter("inpCurrency");
+    C_Currency_ID = strCurrency;
+    boolean bProduct = isTrue(vars.getStringParameter("inpProduct"));
+    boolean bBPartner = isTrue(vars.getStringParameter("inpBPartner"));
+    boolean bProject = isTrue(vars.getStringParameter("inpProject"));
+    boolean bCampaign = isTrue(vars.getStringParameter("inpCampaign"));
+    boolean bSalesRegion = isTrue(vars.getStringParameter("inpSalesRegion"));
     boolean bIsSystemInstalation = isTrue(vars.getStringParameter("inpSystem"));
+    boolean bCreateAccounting = isTrue(vars.getStringParameter("inpCreateAccounting"));
     if (bIsSystemInstalation) client = vars.getClient();
     try {
       conn = this.getTransactionConnection();
-      if (InitialClientSetupData.updateClient2(conn, this, strCliente)!=0){
+      if (InitialClientSetupData.updateClient2(conn, this, strClient)!=0){
     	  m_info.append("Duplicate Client name").append(SALTO_LINEA);
     	  strError = Utility.messageBD(this, "Duplicate client name", vars.getLanguage());
     	  releaseRollbackConnection(conn);
     	  isOK = false;
     	  return m_info.toString();
-      } else if (InitialClientSetupData.updateUser2(conn, this,strClienteUsuario)!=0){
+      } else if (InitialClientSetupData.updateUser2(conn, this,strClientUser)!=0){
         m_info.append("Duplicate UserClient").append(SALTO_LINEA);
         strError = Utility.messageBD(this, "Duplicate Client Username", vars.getLanguage());
-        isOK = false;
-        releaseRollbackConnection(conn);
-        return m_info.toString();
-      } else if (InitialClientSetupData.updateUser2(conn, this,strOrganizacionUsuario)!=0){
-        m_info.append("Duplicate UserOrg").append(SALTO_LINEA);
-        strError = Utility.messageBD(this, "Duplicate Organization Username", vars.getLanguage());
         isOK = false;
         releaseRollbackConnection(conn);
         return m_info.toString();
@@ -222,7 +218,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     try {
       m_info.append(SALTO_LINEA).append("*****************************************************").append(SALTO_LINEA);
       m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "StartingClient", vars.getLanguage())).append(SALTO_LINEA);
-      if (!createClient(vars, strCliente, strOrganizacion, strClienteUsuario, strOrganizacionUsuario, strMoneda)){
+      if (!createClient(vars, strClient, strClientUser)){
         releaseRollbackConnection(conn);
         m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateClientFailed", vars.getLanguage())).append(SALTO_LINEA);
         strSummary.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateClientFailed", vars.getLanguage())).append(SALTO_LINEA);
@@ -241,31 +237,35 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       } catch (Exception ignored) {}
     }
     m_info.append(SALTO_LINEA).append("*****************************************************").append(SALTO_LINEA);
-    if(avData.length == 0) {    	
+    if(bCreateAccounting==false) {    	
 	    m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "SkippingAccounting", vars.getLanguage())).append(SALTO_LINEA);	    
     }
     else {
-	    try {	      
-	      m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "StartingAccounting", vars.getLanguage())).append(SALTO_LINEA);
-	      if (!createAccounting(vars, strMoneda, InitialClientSetupData.moneda(this, strMoneda), bProducto, bTercero, bProyecto, bCampana, bZonaVentas, avData)){
-	        releaseRollbackConnection(conn);
-	        m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(SALTO_LINEA);
-	        strSummary.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(SALTO_LINEA);
-	        isOK = false;
-	        return m_info.toString();
-	      }
-	    } catch (Exception err){
-	      log4j.warn(err);
-	      m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(SALTO_LINEA);
-	      strSummary.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(SALTO_LINEA);
-	      strError = err.toString();
-	      strError = strError.substring( (strError.lastIndexOf("@ORA-")>0?strError.lastIndexOf("@ORA-"):0) ,strError.length());
-	      log4j.debug("InitialClientSetup - after strError: " + strError);
-	      isOK = false;
-	      try {
-	        releaseRollbackConnection(conn);
-	      } catch (Exception ignored) {}
-	    }
+      AccountingValueData av = new AccountingValueData(vars, "inpFile", true, "C");
+      FieldProvider[] avData = (av!=null)?av.getFieldProvider():null;
+      if(avData!=null && avData.length != 0){ 
+  	    try {	      
+  	      m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "StartingAccounting", vars.getLanguage())).append(SALTO_LINEA);
+  	      if (!createAccounting(vars, strCurrency, InitialClientSetupData.currency(this, strCurrency), bProduct, bBPartner, bProject, bCampaign, bSalesRegion, avData)){
+  	        releaseRollbackConnection(conn);
+  	        m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(SALTO_LINEA);
+  	        strSummary.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(SALTO_LINEA);
+  	        isOK = false;
+  	        return m_info.toString();
+  	      }
+  	    } catch (Exception err){
+  	      log4j.warn(err);
+  	      m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(SALTO_LINEA);
+  	      strSummary.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateAccountingFailed", vars.getLanguage())).append(SALTO_LINEA);
+  	      strError = err.toString();
+  	      strError = strError.substring( (strError.lastIndexOf("@ORA-")>0?strError.lastIndexOf("@ORA-"):0) ,strError.length());
+  	      log4j.debug("InitialClientSetup - after strError: " + strError);
+  	      isOK = false;
+  	      try {
+  	        releaseRollbackConnection(conn);
+  	      } catch (Exception ignored) {}
+  	    }
+      }
     }
     try {
       m_info.append(SALTO_LINEA).append("*****************************************************").append(SALTO_LINEA);
@@ -289,27 +289,40 @@ public class InitialClientSetup extends HttpSecureAppServlet {
         releaseRollbackConnection(conn);
       } catch (Exception ignored) {}
     }
-    try {
-      m_info.append(SALTO_LINEA).append("*****************************************************").append(SALTO_LINEA);
-      m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "StartingMasterData", vars.getLanguage())).append(SALTO_LINEA);
-      if (!createEntities(vars, strPais, strCiudad, strRegion)){
-        releaseRollbackConnection(conn);
-        m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateMasterDataFailed", vars.getLanguage())).append(SALTO_LINEA);
-        strSummary.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateMasterDataFailed", vars.getLanguage())).append(SALTO_LINEA);
-        isOK = false;
-        return m_info.toString();
-      }
-    } catch (Exception err){
-      log4j.warn(err);
-      m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateMasterDataFailed", vars.getLanguage())).append(SALTO_LINEA);
-      strSummary.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateMasterDataFailed", vars.getLanguage())).append(SALTO_LINEA);
-      strError = err.toString();
-      strError = strError.substring( (strError.lastIndexOf("@ORA-")>0?strError.lastIndexOf("@ORA-"):0) ,strError.length());
-      isOK = false;
+    
+    
+//==========================================================================================================================================
+    if(!strModules.equals("")){
       try {
-        releaseRollbackConnection(conn);
-      } catch (Exception ignored) {}
+        m_info.append(SALTO_LINEA).append("*****************************************************").append(SALTO_LINEA);
+        m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "StartingReferenceData", vars.getLanguage())).append(SALTO_LINEA);
+        String strReferenceData = createReferenceData(vars, AD_Client_ID, strModules, strCurrency, bProduct, bBPartner, bProject, bCampaign, bSalesRegion, bCreateAccounting);
+        if (strReferenceData!=null && !strReferenceData.equals("")){
+          releaseRollbackConnection(conn);
+          m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateReferenceDataFailed", vars.getLanguage())).append(SALTO_LINEA);
+          m_info.append(SALTO_LINEA).append(Utility.messageBD(this, strReferenceData, vars.getLanguage())).append(SALTO_LINEA);
+          strSummary.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateReferenceDataFailed", vars.getLanguage())).append(SALTO_LINEA);
+          strSummary.append(SALTO_LINEA).append(Utility.messageBD(this, strReferenceData, vars.getLanguage())).append(SALTO_LINEA);
+          isOK = false;
+          return m_info.toString();
+        }
+      } catch (Exception err){
+        log4j.warn(err);
+        m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateReferenceDataFailed", vars.getLanguage())).append(SALTO_LINEA);
+        strSummary.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateReferenceDataFailed", vars.getLanguage())).append(SALTO_LINEA);
+        strError = err.toString();
+        strError = strError.substring( (strError.lastIndexOf("@ORA-")>0?strError.lastIndexOf("@ORA-"):0) ,strError.length());
+        log4j.debug("InitialClientSetup - after strError: " + strError);
+        isOK = false;
+        try {
+          releaseRollbackConnection(conn);
+        } catch (Exception ignored) {}
+      }
     }
+
+//==========================================================================================================================================    
+    
+
     log4j.debug("InitialClientSetup - after createEntities");
     if(isOK)strError = Utility.messageBD(this, "Success", vars.getLanguage());
     log4j.debug("InitialClientSetup - after strError");
@@ -324,7 +337,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
   }
 
 
-  public boolean createClient(VariablesSecureApp vars, String m_ClientName, String orgName, String userClient, String userOrg, String strCurrency) throws ServletException{
+  public boolean createClient(VariablesSecureApp vars, String m_ClientName, String userClient) throws ServletException{
 
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createClient");
     clientName = m_ClientName;
@@ -346,7 +359,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       vars.setSessionValue("AD_Client_ID", AD_Client_ID);
       if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createClient - CLIENT_ID: " + AD_Client_ID);
 
-      if (InitialClientSetupData.insertCliente(conn ,this, AD_Client_ID, clientName, strCurrency) != 1) {
+      if (InitialClientSetupData.insertClient(conn ,this, AD_Client_ID, clientName, C_Currency_ID) != 1) {
         String err = "InitialClientSetup - createClient - Client NOT inserted";
         log4j.warn(err);
         m_info.append(err).append(SALTO_LINEA);
@@ -439,24 +452,9 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       conn = this.getTransactionConnection();
       if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createClient - CLIENT INFO CREATED");
 
-
-//     *  Create Org
-
-      AD_Org_ID = SequenceIdData.getUUID();
-      name = orgName;
-      if (name == null || name.length() == 0)
-        name = "newOrg";
-      if (InitialClientSetupData.insertOrg(conn ,this, AD_Client_ID, AD_Org_ID, name) != 1) {
-        String err = "InitialClientSetup - createClient - Org NOT inserted";
-        log4j.warn(err);
-        m_info.append(err).append(SALTO_LINEA);
-        releaseRollbackConnection(conn);
-        return false;
-      }
-      //  Info
+      //  Infoxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
       releaseCommitConnection(conn);
       conn = this.getTransactionConnection();
-      m_info.append(Utility.messageBD(this, "AD_Org_ID", vars.getLanguage())).append("=").append(name).append(SALTO_LINEA);
       if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createClient - m_info: " + m_info.toString());
 
 
@@ -467,7 +465,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     
       name = clientName + " Admin";
       String AD_Role_ID = SequenceIdData.getUUID();
-      if (InitialClientSetupData.insertRole(conn ,this, AD_Client_ID, AD_Role_ID, name, "0,"+AD_Org_ID) != 1) {
+      if (InitialClientSetupData.insertRole(conn ,this, AD_Client_ID, AD_Role_ID, name, "0") != 1) {
         String err = "InitialClientSetup - createClient - Admin Role A NOT inserted";
         log4j.warn(err);
         m_info.append(err).append(SALTO_LINEA);
@@ -476,32 +474,13 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       }
       if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createClient - ROLE CREATED");
       //  OrgAccess x,0
-      if (InitialClientSetupData.insertRoleOrgAccess(conn ,this, AD_Client_ID,"0" , AD_Role_ID) != 1)
+      if (InitialClientSetupData.insertRoleOrgAccess(conn ,this, AD_Client_ID, "0" , AD_Role_ID) != 1)
         log4j.warn("InitialClientSetup - createClient - Admin Role_OrgAccess 0 NOT created");
       if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createClient - ROLE ORG ACCESS CREATED");
-      //  OrgAccess x,y
-      if (InitialClientSetupData.insertRoleOrgAccess(conn ,this, AD_Client_ID,AD_Org_ID, AD_Role_ID) != 1)
-        log4j.warn("InitialClientSetup - createClient - Admin Role_OrgAccess NOT created");
-      if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createClient - SECOND ROLE ORG ACCESS CREATED");
       //  Info - Admin Role
       m_info.append(Utility.messageBD(this, "AD_Role_ID", vars.getLanguage())).append("=").append(name).append(SALTO_LINEA);
       if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createClient - m_info: " + m_info.toString());
 
-      //
-      name = clientName + " User";
-      String AD_Role_ID_U = SequenceIdData.getUUID();
-      if (InitialClientSetupData.insertRole2(conn ,this, AD_Client_ID, AD_Role_ID_U, name,AD_Org_ID) != 1){
-        String err = "InitialClientSetup - createClient - User Role A NOT inserted";
-        log4j.warn(err);
-        m_info.append(err).append(SALTO_LINEA);
-        releaseRollbackConnection(conn);
-        return false;
-      }
-      else if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createClient - ROLE2 CREATED");
-      //  OrgAccess x,y
-      if (InitialClientSetupData.insertRoleOrgAccess(conn, this, AD_Client_ID,AD_Org_ID , AD_Role_ID_U) != 1)
-        log4j.warn("InitialClientSetup - createClient - User Role_OrgAccess NOT created");
-      else if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createClient - ROLE2 ORG ACCESS CREATED");
       //  Info - Client Role
       m_info.append(Utility.messageBD(this, "AD_Role_ID", vars.getLanguage())).append("=").append(name).append(SALTO_LINEA);
       if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createClient - m_info: " + m_info.toString());
@@ -519,7 +498,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       AD_User_ID = SequenceIdData.getUUID();
       AD_User_Name = name;
       if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createClient - AD_User_Name : " + AD_User_Name);
-      if (InitialClientSetupData.insertUser(conn ,this, AD_Client_ID,AD_User_ID , name, FormatUtilities.sha1Base64(name), vars.getLanguage(), AD_Role_ID ) != 1) {
+      if (InitialClientSetupData.insertUser(conn ,this, AD_Client_ID,AD_User_ID , name, FormatUtilities.sha1Base64(name), vars.getLanguage(), AD_Role_ID) != 1) {
         String err = "InitialClientSetup - createClient - Admin User A NOT inserted";
         log4j.warn(err);
         m_info.append(err).append(SALTO_LINEA);
@@ -532,23 +511,6 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createClient - m_info: " + m_info.toString());
 
 
-      name = userOrg;
-      if (name == null || name.length() == 0 || userClient == userOrg)
-        name = clientName + "Org";
-      AD_User_U_ID = SequenceIdData.getUUID();
-      AD_User_U_Name = name;
-      if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createClient - AD_User_U_Name : " + AD_User_U_Name);
-      if (InitialClientSetupData.insertUser(conn ,this, AD_Client_ID,AD_User_U_ID , name, FormatUtilities.sha1Base64(name), vars.getLanguage(), AD_Role_ID_U) != 1) {
-        String err = "InitialClientSetup - createClient - Org User A NOT inserted";
-        log4j.warn(err);
-        m_info.append(err).append(SALTO_LINEA);
-        releaseRollbackConnection(conn);
-        return false;
-      }
-      if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createClient - USER INSERTED " + name);
-      //  Info
-      m_info.append(Utility.messageBD(this, "AD_User_ID", vars.getLanguage())).append("=").append(name).append("/").append(name).append(SALTO_LINEA);
-      if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createClient - m_info: " + m_info.toString());
       releaseCommitConnection(conn);
       conn = this.getTransactionConnection();
 
@@ -556,18 +518,11 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 //     *  Create User-Role
 
       //  ClientUser          - Admin & User
-      if (InitialClientSetupData.insertUserRoles(conn ,this, AD_Client_ID,AD_User_ID , AD_Role_ID) != 1)
+      if (InitialClientSetupData.insertUserRoles(conn, this, AD_Client_ID, AD_User_ID, AD_Role_ID) != 1)
         log4j.warn("InitialClientSetup - createClient - UserRole ClientUser+Admin NOT inserted");
-      if (InitialClientSetupData.insertUserRoles(conn ,this, AD_Client_ID,AD_User_ID , AD_Role_ID_U) != 1)
-        log4j.warn("InitialClientSetup - createClient - UserRole ClientUser+User NOT inserted");
-      //  OrgUser             - User
-      if (InitialClientSetupData.insertUserRoles(conn ,this, AD_Client_ID,AD_User_U_ID , AD_Role_ID_U) != 1)
-        log4j.warn("InitialClientSetup - createClient - UserRole OrgUser+Org NOT inserted");
       //  SuperUser(100)      - Admin & User
-      if (InitialClientSetupData.insertUserRoles(conn ,this, AD_Client_ID,"100" , AD_Role_ID) != 1)
+      if (InitialClientSetupData.insertUserRoles(conn, this, AD_Client_ID,"100" , AD_Role_ID) != 1)
         log4j.warn("InitialClientSetup - createClient - UserRole SuperUser+Admin NOT inserted");
-      if (InitialClientSetupData.insertUserRoles(conn ,this, AD_Client_ID,"100" , AD_Role_ID_U) != 1)
-        log4j.warn("InitialClientSetup - createClient - UserRole SuperUser+User NOT inserted");
       releaseCommitConnection(conn);
     } catch (Exception e) {
       m_info.append(e).append(SALTO_LINEA);
@@ -587,8 +542,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 
 
 
-  public boolean save (Connection conn, VariablesSecureApp vars, String AD_Client_ID, String AD_Org_ID, String C_Element_ID, AccountingValueData[] data) throws ServletException {
-    boolean OK=true;
+  public boolean save (Connection conn, VariablesSecureApp vars, String AD_Client_ID, String C_Element_ID, AccountingValueData[] data) throws ServletException {
     String strAccountTree = InitialClientSetupData.selectTree(this, AD_Client_ID);
     for (int i=0;i<data.length;i++) {
       if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - save - DATA LENGTH : " + data.length + ", POSICION : " + i + ", DEFAULT_ACCT: " + data[i].defaultAccount);
@@ -623,7 +577,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 
       if (!data[i].accountValue.equals("")) {
         try {
-          if (InitialClientSetupData.insertElementValue(conn ,this, C_ElementValue_ID, C_Element_ID, AD_Client_ID, AD_Org_ID, data[i].accountValue, data[i].accountName, data[i].accountDescription, accountType, accountSign, IsDocControlled, IsSummary, data[i].elementLevel) != 1) {
+          if (InitialClientSetupData.insertElementValue(conn ,this, C_ElementValue_ID, C_Element_ID, AD_Client_ID, "0", data[i].accountValue, data[i].accountName, data[i].accountDescription, accountType, accountSign, IsDocControlled, IsSummary, data[i].elementLevel) != 1) {
             log4j.warn("InitialClientSetup - save - Natural Account not added");
             data[i].cElementValueId = "";
             return false;
@@ -640,8 +594,55 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     }
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - save - NATURAL ACCOUNT ADDED");
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - save - m_info last: " + m_info.toString());
-    return OK;
+    return updateOperands(conn, vars, AD_Client_ID, data);
   }//  save
+  public boolean updateOperands (Connection conn, VariablesSecureApp vars, String AD_Client_ID, AccountingValueData[] data) throws ServletException {
+    boolean OK = true;
+    for (int i=0;i<data.length;i++) {
+      String [][] strOperand = operandProcess(data[i].operands);
+      String strSeqNo = "10";
+      for(int j=0;strOperand!=null && j<strOperand.length;j++){
+          String C_ElementValue_Operand_ID = SequenceIdData.getUUID();
+          String strAccount = InitialClientSetupData.selectAccount(conn, this, strOperand[j][0], AD_Client_ID);
+          String strElementValue = InitialClientSetupData.selectAccount(conn, this, data[i].accountValue, AD_Client_ID);
+          if(strAccount!=null && !strAccount.equals("")){
+            InitialClientSetupData.insertOperands(conn, this, C_ElementValue_Operand_ID, (strOperand[j][1].equals("+")?"1":"-1"), strElementValue, strAccount, strSeqNo, AD_Client_ID, vars.getUser());
+            strSeqNo = nextSeqNo(strSeqNo);
+          } else {
+              if (log4j.isDebugEnabled()) log4j.error("Operand not inserted - Value = " + strOperand[j][0]);
+              OK = false;
+          }
+      }
+    } 
+    return OK;
+  }
+  
+  private String [][] operandProcess (String strOperand) {
+     if(strOperand==null || strOperand.equals("")) return null;
+     StringTokenizer st = new StringTokenizer(strOperand,"+-",true);
+     StringTokenizer stNo = new StringTokenizer(strOperand,"+-",false);
+     int no=stNo.countTokens();
+     String [][] strResult = new String [no][2];
+     no=0; //Token No
+     int i=0; // Array position
+     strResult[0][1] = "+";
+     while (st.hasMoreTokens()) {
+         if(i%2!=1){
+             strResult[no][0] = st.nextToken();
+             no++;
+         }
+         else strResult[no][1] = st.nextToken();
+         i++;
+     }
+//     strResult = filterArray(strResult);
+     return strResult;
+  }  //  operandProcess
+
+  public String nextSeqNo(String oldSeqNo){
+    BigDecimal seqNo = new BigDecimal(oldSeqNo);
+    String SeqNo = (seqNo.add(new BigDecimal("10"))).toString();
+    return SeqNo;
+  }
 
   public AccountingValueData[] parseData (FieldProvider[] data) throws ServletException {
     AccountingValueData[] result = null;
@@ -668,7 +669,9 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - dataAux.accountParent: " + dataAux.accountParent);
       dataAux.elementLevel = data[i].getField("elementLevel");
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - dataAux.elementLevel: " + dataAux.elementLevel);
-      dataAux.balanceSheet = data[i].getField("balanceSheet");
+    dataAux.balanceSheet = data[i].getField("balanceSheet");
+    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - dataAux.operands: " + dataAux.operands);
+    dataAux.operands = data[i].getField("operands");
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - dataAux.balanceSheet: " + dataAux.balanceSheet);
       dataAux.balanceSheetName = data[i].getField("balanceSheetName");
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - dataAux.balanceSheetName: " + dataAux.balanceSheetName);
@@ -699,11 +702,14 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 
   public String getC_ElementValue_ID (AccountingValueData[] data, String key) {
     if (data==null || data.length==0) return "";
-    for (int i=0;i<data.length;i++) if (data[i].defaultAccount.equalsIgnoreCase(key) && !data[i].defaultAccount.equals("")) return data[i].cElementValueId;
+    for (int i=0;i<data.length;i++){ 
+      if (data[i].defaultAccount.equalsIgnoreCase("INCOMESUMMARY_ACCT") && log4j.isDebugEnabled())  log4j.debug("InitialClientSetup - getC_ElementValue_ID: " + data[i].defaultAccount + " - KEY: " + key);
+      if (data[i].defaultAccount.equalsIgnoreCase(key) && !data[i].defaultAccount.equals("")) return data[i].cElementValueId;
+    }
     return "";
   }   //  getC_ElementValue_ID
-
-  public boolean createAccounting(VariablesSecureApp vars, String newC_Currency_ID, String curName,boolean hasProduct, boolean hasBPartner, boolean hasProject,
+ 
+  public boolean createAccounting(VariablesSecureApp vars, String newC_Currency_ID, String curName, boolean hasProduct, boolean hasBPartner, boolean hasProject,
     boolean hasMCampaign, boolean hasSRegion,FieldProvider[] avData) throws ServletException{
     //
     C_Currency_ID = newC_Currency_ID;
@@ -730,7 +736,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
   
       C_Calendar_ID = SequenceIdData.getUUID();
       name = clientName + " " + Utility.messageBD(this, "C_Calendar_ID", vars.getLanguage());
-      if (InitialClientSetupData.insertCalendar(conn ,this, AD_Client_ID,C_Calendar_ID , name) != 1) {
+      if (InitialClientSetupData.insertCalendar(conn ,this, AD_Client_ID, C_Calendar_ID, name) != 1) {
         String err = "InitialClientSetup - createAccounting - Calendar NOT inserted";
         log4j.warn(err);
         m_info.append(err).append(SALTO_LINEA);
@@ -743,7 +749,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
   
       //  Year
       C_Year_ID = SequenceIdData.getUUID();
-      if (InitialClientSetupData.insertYear(conn ,this, C_Year_ID, AD_Client_ID,C_Calendar_ID) != 1)
+      if (InitialClientSetupData.insertYear(conn ,this, C_Year_ID, AD_Client_ID, C_Calendar_ID) != 1)
         log4j.warn("InitialClientSetup - createAccounting - Year NOT inserted");
       // @todo Create Periods 
       if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createAccounting - YEAR INSERTED");
@@ -753,7 +759,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       //  Create Account Elements
       C_Element_ID = SequenceIdData.getUUID();
       name = clientName + " " + Utility.messageBD(this, "Account_ID", vars.getLanguage());
-      if (InitialClientSetupData.insertElement(conn ,this, AD_Client_ID, C_Element_ID,name, AD_Tree_Account_ID) != 1) {
+      if (InitialClientSetupData.insertElement(conn ,this, AD_Client_ID, C_Element_ID, name, AD_Tree_Account_ID) != 1) {
         String err = "InitialClientSetup - createAccounting - Acct Element NOT inserted";
         log4j.warn(err);
         m_info.append(err).append(SALTO_LINEA);
@@ -766,7 +772,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
   
       //  Create Account Values
       data = parseData(avData);
-      boolean errMsg = save(conn, vars, AD_Client_ID, AD_Org_ID, C_Element_ID, data);
+      boolean errMsg = save(conn, vars, AD_Client_ID, C_Element_ID, data);
       if (!errMsg) {
         releaseRollbackConnection(conn);
         String err = "InitialClientSetup - createAccounting - Acct Element Values NOT inserted";
@@ -785,7 +791,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       CostingMethod = "A";     //  AD_Reference_ID=122
       name = clientName + " " + GAAP + "/" + CostingMethod + "/" + curName;
       //
-      if (InitialClientSetupData.insertAcctSchema(conn ,this, AD_Client_ID, C_AcctSchema_ID,name, GAAP, CostingMethod, C_Currency_ID) != 1){
+      if (InitialClientSetupData.insertAcctSchema(conn ,this, AD_Client_ID, C_AcctSchema_ID, name, GAAP, CostingMethod, C_Currency_ID) != 1){
         String err = "InitialClientSetup - createAccounting - AcctSchema NOT inserted";
         log4j.warn(err);
         m_info.append(err).append(SALTO_LINEA);
@@ -867,7 +873,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 
           // Default value for mandatory elements: OO and AC 
           if (ElementType.equals("OO")){
-            if (InitialClientSetupData.updateAcctSchemaElement(conn, this, AD_Org_ID, C_AcctSchema_Element_ID) != 1){
+            if (InitialClientSetupData.updateAcctSchemaElement(conn, this, "0", C_AcctSchema_Element_ID) != 1){
               log4j.warn("InitialClientSetup - createAccounting - Default Org in AcctSchamaElement NOT updated");
               m_info.append("InitialClientSetup - createAccounting - Default Org in AcctSchamaElement NOT updated").append(SALTO_LINEA);
             }
@@ -893,11 +899,13 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       //  Create AcctSchema
       releaseCommitConnection(conn);
       conn = this.getTransactionConnection();
-
       m_AcctSchema = new AcctSchema(this, C_AcctSchema_ID);
+      String strAccount = getAcct(conn, data, "INCOMESUMMARY_ACCT");
+      log4j.debug("InitialClientSetup - getC_ElementValue_ID - strAccount: " + strAccount);
+
       if(InitialClientSetupData.insertAcctSchemaGL(conn, this, AD_Client_ID, C_AcctSchema_ID, getAcct(conn, data, 
 "SUSPENSEBALANCING_ACCT"), getAcct(conn, data, "SUSPENSEERROR_ACCT"), getAcct(conn, data, "CURRENCYBALANCING_ACCT"), getAcct(conn, data, 
-"RETAINEDEARNING_ACCT"), getAcct(conn, data, "INCOMESUMMARY_ACCT"), getAcct(conn, data, "INTERCOMPANYDUETO_ACCT"), getAcct(conn, data, 
+"RETAINEDEARNING_ACCT"), strAccount, getAcct(conn, data, "INTERCOMPANYDUETO_ACCT"), getAcct(conn, data, 
 "INTERCOMPANYDUEFROM_ACCT"), getAcct(conn, data, "PPVOFFSET_ACCT")) != 1) {
           String err = "InitialClientSetup - createAccounting - GL Accounts NOT inserted";
           log4j.warn(err);
@@ -945,12 +953,6 @@ getAcct(conn, data, "A_DEPRECIATION_ACCT"),getAcct(conn, data, "A_ACCUMDEPRECIAT
   }   //  createAccounting  
 
   public boolean createDocumentTypes(VariablesSecureApp vars) throws ServletException{
-    Connection conn = null;
-    //  Standard variables
-    m_info.append(SALTO_LINEA);
-    try {
-      conn = this.getTransactionConnection();
-    } catch (Exception ignored) {}
     //  GL Categories
     String GL_Standard = createGLCategory(vars,"Standard", "M", true);
     String GL_None = createGLCategory(vars,"None", "D", false);
@@ -1010,31 +1012,6 @@ getAcct(conn, data, "A_DEPRECIATION_ACCT"),getAcct(conn, data, "A_ACCUMDEPRECIAT
     createPreference(vars,"C_DocTypeTarget_ID", DT, "143");
     createPreference(vars,"C_DocTypeTarget_ID", DT_WO, "800004");
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createDocumentTypes - DOCTYPES & PREFERENCE CREATED");
-
-    try {
-      //  Update ClientInfo
-      if (InitialClientSetupData.updateClientInfo(conn ,this,C_AcctSchema_ID, C_Calendar_ID, AD_Client_ID) != 1){
-        String err = "InitialClientSetup - createDocumentTypes - ClientInfo not updated";
-        log4j.warn(err);
-        m_info.append(err).append(SALTO_LINEA);
-        releaseRollbackConnection(conn);
-        return false;
-      }
-      if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createDocumentTypes - CLIENT INFO UPDATED");
-      if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createDocumentTypes - m_info last: " + m_info.toString());
-      //
-      releaseCommitConnection(conn);
-    } catch (SQLException ex2) {
-      try {
-        releaseRollbackConnection(conn);
-      } catch (Exception ignored) {}
-      throw new ServletException("@CODE=" + Integer.toString(ex2.getErrorCode()) + "@" + ex2.getMessage());
-    } catch (Exception ex3) {
-      try {
-        releaseRollbackConnection(conn);
-      } catch (Exception ignored) {}
-      throw new ServletException("@CODE=@" + ex3.getMessage());
-    }
     m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateDocumentTypesSuccess", vars.getLanguage())).append(SALTO_LINEA);
     strSummary.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateDocumentTypesSuccess", vars.getLanguage())).append(SALTO_LINEA);
     return true;
@@ -1073,7 +1050,7 @@ getAcct(conn, data, "A_DEPRECIATION_ACCT"),getAcct(conn, data, "A_ACCUMDEPRECIAT
     try {
       conn = this.getTransactionConnection();
       String AD_Preference_ID = SequenceIdData.getUUID();
-      if (InitialClientSetupData.insertPreference(conn ,this,AD_Preference_ID, AD_Client_ID, Attribute, Value, AD_Window_ID) != 1)
+      if (InitialClientSetupData.insertPreference(conn, this, AD_Preference_ID, AD_Client_ID, Attribute, Value, AD_Window_ID) != 1)
         log4j.warn("InitialClientSetup - createPreference - Preference NOT inserted - " + Attribute);
       releaseCommitConnection(conn);
     } catch (NoConnectionAvailableException ex) {
@@ -1091,15 +1068,15 @@ getAcct(conn, data, "A_DEPRECIATION_ACCT"),getAcct(conn, data, "A_ACCUMDEPRECIAT
     }
   }   //  createPreference
 
-  private String createDocType (VariablesSecureApp vars, String Name, String PrintName,String DocBaseType, String DocSubTypeSO,
-    String C_DocTypeShipment_ID, String C_DocTypeInvoice_ID,String StartNo, String GL_Category_ID, String strTableId)throws ServletException{
+  private String createDocType (VariablesSecureApp vars, String Name, String PrintName, String DocBaseType, String DocSubTypeSO,
+    String C_DocTypeShipment_ID, String C_DocTypeInvoice_ID, String StartNo, String GL_Category_ID, String strTableId)throws ServletException{
     Connection conn = null;
     String C_DocType_ID = "";
     try {
       conn = this.getTransactionConnection();
       //  Get Sequence
       String AD_Sequence_ID = "";
-      if (!StartNo.equals("0")){//  manual sequenec, if startNo == 0
+      if (!StartNo.equals("0")){//  manual sequence, if startNo == 0
         AD_Sequence_ID = SequenceIdData.getUUID();
         log4j.debug("inserting sequence ID:"+AD_Sequence_ID+" name: "+Name);
         if (InitialClientSetupData.insertSequence(conn ,this,AD_Sequence_ID, AD_Client_ID, Name, StartNo) != 1)
@@ -1143,304 +1120,69 @@ getAcct(conn, data, "A_DEPRECIATION_ACCT"),getAcct(conn, data, "A_ACCUMDEPRECIAT
   }   //  createDocType
 
 
-
-public boolean createEntities (VariablesSecureApp vars,String C_Country_ID, String City, String C_Region_ID) throws ServletException{
-  m_info.append(SALTO_LINEA).append("----").append(SALTO_LINEA);
-  Connection conn = null;
-  try {
-    conn = this.getTransactionConnection();
-    //
-    String defaultName = Utility.messageBD(this, "Standard", vars.getLanguage());
-  
-    //    Create Marketing Channel/Campaign
-    String C_Channel_ID = SequenceIdData.getUUID();
-    if (InitialClientSetupData.insertChannel(conn ,this,C_Channel_ID, defaultName, AD_Client_ID) != 1)
-      log4j.warn("InitialClientSetup - createEntities - Channel NOT inserted");
-    String C_Campaign_ID = SequenceIdData.getUUID();
-    if (InitialClientSetupData.insertCampaign(conn ,this,C_Campaign_ID,C_Channel_ID, AD_Client_ID, defaultName) == 1)
-      m_info.append(Utility.messageBD(this, "C_Campaign_ID", vars.getLanguage())).append("=").append(defaultName).append(SALTO_LINEA);
-    else
-      log4j.warn("InitialClientSetup - createEntities - Campaign NOT inserted");
-    if (m_hasMCampaign) {
-      //  Default
-      if (InitialClientSetupData.updateAcctSchemaElementMC(conn ,this,C_Campaign_ID,C_AcctSchema_ID) != 1)
-        log4j.warn("InitialClientSetup - createEntities - AcctSchema ELement Campaign NOT updated");
-    }
-    releaseCommitConnection(conn);
-    conn = this.getTransactionConnection();
-  
-    //    Create Sales Region
-    String C_SalesRegion_ID = SequenceIdData.getUUID();
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - C_SalesRegion_ID: " + C_SalesRegion_ID + ", AD_Client_ID: " + AD_Client_ID + ", defaultName: " + defaultName);
-    if (InitialClientSetupData.insertSalesRegion(conn ,this,C_SalesRegion_ID,AD_Client_ID,defaultName) == 1)
-      m_info.append(Utility.messageBD(this, "C_SalesRegion_ID", vars.getLanguage())).append("=").append(defaultName).append(SALTO_LINEA);
-    else
-      log4j.warn("InitialClientSetup - createEntities - SalesRegion NOT inserted");
-    if (m_hasSRegion) {
-      //  Default
-      if (InitialClientSetupData.updateAcctSchemaElementSR(conn ,this,C_SalesRegion_ID,C_AcctSchema_ID) != 1)
-        log4j.warn("InitialClientSetup - createEntities - AcctSchema ELement SalesRegion NOT updated");
-    }
-    releaseCommitConnection(conn);
-    conn = this.getTransactionConnection();
-  
-    /**
-     *  Business Partner
-     */
-    //  Create BP Group
-    String C_BP_Group_ID = SequenceIdData.getUUID();
-    if (InitialClientSetupData.insertBPGroup(conn ,this,C_BP_Group_ID,AD_Client_ID,defaultName) == 1)
-      m_info.append(Utility.messageBD(this, "C_BP_Group_ID", vars.getLanguage())).append("=").append(defaultName).append(SALTO_LINEA);
-    else
-      log4j.warn("InitialClientSetup - createEntities - BP Group NOT inserted");
-  
-    //    Create BPartner
-    String C_BPartner_ID = SequenceIdData.getUUID();
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - C_BPartner_ID: " + C_BPartner_ID + ", AD_Client_ID: " + AD_Client_ID + ", defaultName: " + defaultName + ", C_BP_Group_ID: " + C_BP_Group_ID);
-    if (InitialClientSetupData.insertBPartner(conn ,this,C_BPartner_ID,AD_Client_ID,defaultName, C_BP_Group_ID) == 1)
-      m_info.append(Utility.messageBD(this, "C_BPartner_ID", vars.getLanguage())).append("=").append(defaultName).append(SALTO_LINEA);
-    else
-      log4j.warn("InitialClientSetup - createEntities - BPartner NOT inserted");
-    //  Default
-      if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - C_BPartner_ID: " + C_BPartner_ID + ", C_AcctSchema_ID: " + C_AcctSchema_ID);
-    if (InitialClientSetupData.updateAcctSchemaElementBP(conn ,this,C_BPartner_ID,C_AcctSchema_ID) != 1)
-      log4j.warn("InitialClientSetup - createEntities - AcctSchema Element BPartner NOT updated");
-      if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - C_BPartner_ID: " + C_BPartner_ID + ", C_AcctSchema_ID: " + C_AcctSchema_ID);
-  
-    //**************************************************************************************************************
-    //**************************************************************************************************************
-    //createPreference(vars,"C_BPartner_ID", C_BPartner_ID, "143");
-    releaseCommitConnection(conn);
-    conn = this.getTransactionConnection();
-  
-    /**
-     *  Asset
-     */
-    //  Create Asset Group
-    String A_Asset_Group_ID = SequenceIdData.getUUID();
-    if (InitialClientSetupData.insertAssetGroup(conn ,this,A_Asset_Group_ID,AD_Client_ID,defaultName) == 1)
-      m_info.append(Utility.messageBD(this, "A_Asset_Group", vars.getLanguage())).append("=").append(defaultName).append(SALTO_LINEA);
-    else
-      log4j.warn("InitialClientSetup - createEntities - Asset Group NOT inserted");
-  
-  
-    /**
-     *  Product
-     */
-    //  Create Product Category
-    String M_Product_Category_ID = SequenceIdData.getUUID();
-    if (InitialClientSetupData.insertProductCategory(conn ,this,M_Product_Category_ID,AD_Client_ID, defaultName) == 1)
-      m_info.append(Utility.messageBD(this, "M_Product_Category_ID", vars.getLanguage())).append("=").append(defaultName).append(SALTO_LINEA);
-    else
-      log4j.warn("InitialClientSetup - createEntities - Product Logger NOT inserted");
-  
-    //  UOM (EA)
-    String C_UOM_ID = "100";
-  
-    //  TaxCategory
-    String append="";
-    String C_TaxCategory_ID = SequenceIdData.getUUID();
-    if (C_Country_ID.equals("100"))    // US
-      append="Sales Tax";
-    else
-      append=defaultName;
-    if (InitialClientSetupData.insertTaxCategory(conn ,this,C_TaxCategory_ID,AD_Client_ID, append) != 1)
-      log4j.warn("InitialClientSetup - createEntities - TaxCategory NOT inserted");
-  
-    //  Tax - Zero Rate
-    String C_Tax_ID = SequenceIdData.getUUID();
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - C_Tax_ID: " + C_Tax_ID + ", AD_Client_ID: " + AD_Client_ID + ", defaultName: " + defaultName + ", C_TaxCategory_ID: " + C_TaxCategory_ID + ", C_Country_ID: " + C_Country_ID);
-    if (InitialClientSetupData.insertTax(conn ,this,C_Tax_ID,AD_Client_ID,defaultName,C_TaxCategory_ID, C_Country_ID) != 1)
-      log4j.warn("InitialClientSetup - createEntities - Tax NOT inserted");
-  
-    //    Create Product
-    String M_Product_ID = SequenceIdData.getUUID();
-    if (InitialClientSetupData.insertProduct(conn ,this,M_Product_ID,AD_Client_ID,defaultName,C_UOM_ID,M_Product_Category_ID,C_TaxCategory_ID) == 1)
-      m_info.append(Utility.messageBD(this, "M_Product_ID", vars.getLanguage())).append("=").append(defaultName).append(SALTO_LINEA);
-    else
-      log4j.warn("InitialClientSetup - createEntities - Product NOT inserted");
-    //  Default
-    if (InitialClientSetupData.updateAcctSchemaElementPR(conn ,this,M_Product_ID,C_AcctSchema_ID) != 1)
-      log4j.warn("InitialClientSetup - createEntities - AcctSchema Element Product NOT updated");
-    releaseCommitConnection(conn);
-    conn = this.getTransactionConnection();
-  
-    /**
-     *  Warehouse
-     */
-    //  Location (Company)
-    String org_C_Location_ID = createLocation(C_Country_ID, City, C_Region_ID, conn);
-    if (InitialClientSetupData.updateOrgInfo(conn ,this,org_C_Location_ID,AD_Org_ID) != 1)
-      log4j.warn("InitialClientSetup - createEntities - Location NOT inserted for Organisation");
-  
-    //*******************************************************************************************
-    //*******************************************************************************************
-    createPreference(vars,"C_Country_ID", C_Country_ID, "");
-  
-    //  Default Warehouse
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -M_Warehouse: ");
-    String M_Warehouse_ID = SequenceIdData.getUUID();
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - THE SEQUENCE -M_Warehouse_ID: " + M_Warehouse_ID);
-    //create warehouse location
-    String whse_C_Location_ID = createLocation(C_Country_ID, City, C_Region_ID, conn);
-    if (InitialClientSetupData.insertWarehouse(conn ,this,M_Warehouse_ID,AD_Client_ID,AD_Org_ID, defaultName, whse_C_Location_ID) != 1)
-      log4j.warn("InitialClientSetup - createEntities - Warehouse NOT inserted");
-  
-    //   Locator
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -M_Locator: ");
-    String M_Locator_ID = SequenceIdData.getUUID();
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -M_Locator_ID: " + M_Locator_ID);
-    if (InitialClientSetupData.insertLocator(conn ,this,M_Locator_ID,AD_Client_ID, defaultName, M_Warehouse_ID) != 1)
-      log4j.warn("InitialClientSetup - createEntities - Locator NOT inserted");
-  
-    //  Update ClientInfo
-    if (InitialClientSetupData.updateClientInfo2(conn ,this,C_BPartner_ID,M_Product_ID, AD_Client_ID) != 1)
-    {
-      String err = "InitialClientSetup - createEntities - ClientInfo not updated";
-      log4j.warn(err);
-      m_info.append(err).append(SALTO_LINEA);
-      return false;
-    }
-    releaseCommitConnection(conn);
-    conn = this.getTransactionConnection();
-  
-    /**
-     *  Other
-     */
-    //  PriceList
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -M_PriceList: ");
-    String M_PriceList_ID = SequenceIdData.getUUID();
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -M_PriceList_ID: " + M_PriceList_ID);
-    if (InitialClientSetupData.insertPriceList(conn ,this,M_PriceList_ID, AD_Client_ID,defaultName, C_Currency_ID) != 1)
-      log4j.warn("InitialClientSetup - createEntities - PriceList NOT inserted");
-    //  DiscountSchema
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -M_DiscountSchema: ");
-    String M_DiscountSchema_ID = SequenceIdData.getUUID();
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -M_DiscountSchema_ID: " + M_DiscountSchema_ID);
-    if (InitialClientSetupData.insertDiscountSchema(conn ,this,M_DiscountSchema_ID, AD_Client_ID,defaultName) != 1)
-      log4j.warn("InitialClientSetup - createEntities - DiscountSchema NOT inserted");
-    //  PriceList Version
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -M_PriceList_Version: ");
-    String M_PriceList_Version_ID = SequenceIdData.getUUID();
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -M_PriceList_Version_ID: " + M_PriceList_Version_ID);
-    String strDateFormat = vars.getJavaDateFormat();
-    SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
-    Date today = new Date();
-    if (InitialClientSetupData.insertPriceListVersion(conn ,this,M_PriceList_Version_ID, AD_Client_ID, dateFormat.format(today), M_PriceList_ID, M_DiscountSchema_ID) != 1)
-      log4j.warn("InitialClientSetup - createEntities - PriceList_Version NOT inserted");
-    //  ProductPrice
-    if (InitialClientSetupData.insertProductPrice(conn ,this,M_PriceList_Version_ID, AD_Client_ID,M_Product_ID) != 1)
-      log4j.warn("InitialClientSetup - createEntities - ProductPrice NOT inserted");
-  
-    //  Location for Standard BP
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -C_Location: ");
-    String bPartner_C_Location_ID = createLocation(C_Country_ID, City, C_Region_ID, conn);
-    //C_Location_ID = SequenceIdData.getSequence(this, "C_Location", client);
-    //if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -C_Location_ID: " + C_Location_ID);
-    //InitialClientSetupData.insertLocation(conn ,this,C_Location_ID, AD_Client_ID,City, C_Country_ID, C_Region_ID);
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -C_Location_ID: " + bPartner_C_Location_ID);
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -C_BPartner_Location: ");
-    String C_BPartner_Location_ID = SequenceIdData.getUUID();
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -C_BPartner_Location_ID: " + C_BPartner_Location_ID);
-    if (InitialClientSetupData.insertBPartnerLocation(conn ,this,C_BPartner_Location_ID, AD_Client_ID,City, C_BPartner_ID, bPartner_C_Location_ID) != 1)
-      log4j.warn("InitialClientSetup - createEntities - BP_Location NOT inserted");
-  
-    //    Create Sales Rep for User
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -C_BPartner: ");
-    C_BPartner_ID = SequenceIdData.getUUID();
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -C_BPartner_ID: " + C_BPartner_ID);
-    if (InitialClientSetupData.insertBPartner2(conn ,this,C_BPartner_ID, AD_Client_ID,AD_User_U_Name, C_BP_Group_ID) == 1)
-      m_info.append(Utility.messageBD(this, "IsSalesRep", vars.getLanguage())).append("=").append(AD_User_U_Name).append(SALTO_LINEA);
-    else
-      log4j.warn("InitialClientSetup - createEntities - SalesRep (User) NOT inserted");
-    //  Update User
-    if (InitialClientSetupData.updateUser(conn ,this, C_BPartner_ID,AD_User_U_ID) != 1)
-      log4j.warn("InitialClientSetup - createEntities - User of SalesRep (User) NOT updated");
-  
-    //    Create Sales Rep for Admin
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -C_BPartner: ");
-    C_BPartner_ID = SequenceIdData.getUUID();
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -C_BPartner_ID: " + C_BPartner_ID);
-    if (InitialClientSetupData.insertBPartner2(conn ,this,C_BPartner_ID, AD_Client_ID,AD_User_Name, C_BP_Group_ID) == 1)
-      m_info.append(Utility.messageBD(this, "IsSalesRep", vars.getLanguage())).append("=").append(AD_User_Name).append(SALTO_LINEA);
-    else
-      log4j.warn("InitialClientSetup - createEntities - SalesRep (Admin) NOT inserted");
-    //  Update User
-    if (InitialClientSetupData.updateUser(conn ,this, C_BPartner_ID,AD_User_ID) != 1)
-      log4j.warn("InitialClientSetup - createEntities - User of SalesRep (Admin) NOT updated");
-  
-    //  Payment Term
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -C_PaymentTerm: ");
-    String C_PaymentTerm_ID = SequenceIdData.getUUID();
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -C_PaymentTerm_ID: " + C_PaymentTerm_ID);
-    if (InitialClientSetupData.insertPaymentTerm(conn ,this, C_PaymentTerm_ID,AD_Client_ID) != 1)
-      log4j.warn("InitialClientSetup - createEntities - PaymentTerm NOT inserted");
-  
-    releaseCommitConnection(conn);
-    conn = this.getTransactionConnection();
-  
-    /**
-     *  Organization level data   ===========================================
-     */
-  
-    //    Create Default Project
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -C_Project: ");
-    String C_Project_ID = SequenceIdData.getUUID();
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -C_Project_ID: " + C_Project_ID + ", AD_Client_ID: " + AD_Client_ID + ", AD_Org_ID: " + AD_Org_ID + ", defaultName: " + defaultName + ", C_Currency_ID: " + C_Currency_ID);
-    if (InitialClientSetupData.insertProject(conn ,this, C_Project_ID,AD_Client_ID,AD_Org_ID, defaultName, C_Currency_ID) == 1)
-      m_info.append(Utility.messageBD(this, "C_Project_ID", vars.getLanguage())).append("=").append(defaultName).append(SALTO_LINEA);
-    else
-      log4j.warn("InitialClientSetup - createEntities - Project NOT inserted");
-    //  Default Project
-    if (m_hasProject) {
-      if (InitialClientSetupData.updateAcctSchemaElement3(conn ,this, C_Project_ID,C_AcctSchema_ID) != 1)
-        log4j.warn("InitialClientSetup - createEntities - AcctSchema ELement Project NOT updated");
-    }
-  
-    //  CashBook
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -C_CashBook: ");
-    String C_CashBook_ID = SequenceIdData.getUUID();
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities -  THE SEQUENCE -C_CashBook_ID: " + C_CashBook_ID);
-    if (InitialClientSetupData.insertCashBook(conn ,this, C_CashBook_ID,AD_Client_ID,AD_Org_ID,defaultName,C_Currency_ID) == 1)
-      m_info.append(Utility.messageBD(this, "C_CashBook_ID", vars.getLanguage())).append("=").append(defaultName).append(SALTO_LINEA);
-    else
-      log4j.warn("InitialClientSetup - createEntities - CashBook NOT inserted");
-  
-  
-    //  Create Other Defaults
-  /*  try {
-      InitialClientSetupData.setup(this, AD_Client_ID,AD_Org_ID);
-    }
-    catch (Exception e) {
-      log4j.warn("InitialClientSetup.CreateEntities - Call AD_Setup", e);
-    }*/
-    releaseCommitConnection(conn);
-  } catch (NoConnectionAvailableException ex) {
-    throw new ServletException("@CODE=NoConnectionAvailable");
-  } catch (SQLException ex2) {
-    try {
-      releaseRollbackConnection(conn);
-    } catch (Exception ignored) {}
-    throw new ServletException("@CODE=" + Integer.toString(ex2.getErrorCode()) + "@" + ex2.getMessage());
-  } catch (Exception ex3) {
-    try {
-      releaseRollbackConnection(conn);
-    } catch (Exception ignored) {}
-    throw new ServletException("@CODE=@" + ex3.getMessage());
-  }
-  m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateMasterDataSuccess", vars.getLanguage())).append(SALTO_LINEA).append(SALTO_LINEA).append(SALTO_LINEA).append(SALTO_LINEA);
-  strSummary.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateMasterDataSuccess", vars.getLanguage())).append(SALTO_LINEA);
-  return true;
-}
-
-  private String createLocation(String C_Country_ID, String City, String C_Region_ID, Connection conn) throws ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - SEQUENCE GENERATION -C_Location: ");
-    String C_Location_ID = SequenceIdData.getUUID();
-    if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createEntities - THE SEQUENCE -C_Location_ID: " + C_Location_ID);
-    InitialClientSetupData.insertLocation(conn ,this,C_Location_ID,AD_Client_ID,City ,C_Country_ID, C_Region_ID);
-    return C_Location_ID;
+  public String createReferenceData (VariablesSecureApp vars, String strClient, String strModules, String strCurrency, boolean hasProduct, boolean hasBPartner, boolean hasProject,
+      boolean hasMCampaign, boolean hasSRegion, boolean bCreateAccounting)throws ServletException, IOException{
+    if(strModules!=null && !strModules.equals("")){
+      InitialClientSetupData [] data = InitialClientSetupData.selectModules(this, strModules);
+      data = orderModuleByDependency(data);
+      if(data!=null && data.length!=0) {
+        DataImportService myData = DataImportService.getInstance();
+        for(int i=0;i<data.length;i++){
+          if(data[i].haschartofaccounts.equals("Y") && bCreateAccounting){ 
+            String strPath = vars.getSessionValue("#SOURCEPATH") + "/modules" + data[i].path;
+            FileInputStream in = new FileInputStream(strPath);
+            AccountingValueData av = new AccountingValueData(vars, in, true, "C");
+            createAccounting(vars, strCurrency, InitialClientSetupData.currency(this, strCurrency), hasProduct, hasBPartner, hasProject, hasMCampaign, hasSRegion, av.getFieldProvider());
+          }
+          String strPath = vars.getSessionValue("#SOURCEPATH") + "/modules/" + data[i].javapackage + "/referencedata/standard";
+          File myDir = new File(strPath);
+          File [] myFiles = myDir.listFiles();
+          ArrayList <File> myTargetFiles = new ArrayList <File>();
+          for(int j=0; j<myFiles.length; j++){
+            if(myFiles[j].getName().endsWith(".xml")) myTargetFiles.add(myFiles[j]);
+          }
+          myFiles = myTargetFiles.toArray(myFiles);
+          StringBuffer strError = new StringBuffer("");
+          for(int j=0;j<myFiles.length;j++){
+            String strXml = Utility.fileToString(myFiles[j].getPath());
+            ImportResult myResult = myData.importDataFromXML((Client)OBDal.getInstance().get(Client.class, strClient), (Organization)OBDal.getInstance().get(Organization.class, "'0'"), strXml);
+            if(myResult.getErrorMessages()!=null && !myResult.getErrorMessages().equals("")) strError = strError.append(myResult.getErrorMessages());
+          }
+          if (!strError.toString().equals("")) return strError.toString();
+          else {
+            InitialClientSetupData.insertClientModule(this, strClient, vars.getUser(), data[i].adModuleId, data[i].version);
+            m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateReferenceDataSuccess", vars.getLanguage())).append(SALTO_LINEA);
+            strSummary.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateReferenceDataSuccess", vars.getLanguage())).append(SALTO_LINEA);
+          }
+          return "";          
+        } 
+      }else return "WrongModules";
+    }else return "NoModules";
+    return strError;
   }
   
+  /**
+   * Returns the modules {@link FieldProvider} ordered taking into account dependencies
+   * 
+   * @param modules
+   * @return
+   */
+  private InitialClientSetupData[] orderModuleByDependency(InitialClientSetupData[] modules) {
+    if (modules==null || modules.length==0) return null;
+    ArrayList<String> list= new ArrayList<String>();
+    for (int i=0; i<modules.length; i++) {
+      list.add(modules[i].adModuleId);
+    }
+    ArrayList<String> orderList = ModuleUtiltiy.orderByDependency(this, list);
+    InitialClientSetupData[] rt = new InitialClientSetupData[orderList.size()];
+    for (int i=0; i<orderList.size(); i++){
+      int j=0;
+      while (j<modules.length && !modules[j].adModuleId.equals(orderList.get(i))) j++;
+      rt[i] = modules[j];
+    }
+    return rt;
+  }
+
   private String getAcct(Connection conn, AccountingValueData [] data, String key) throws ServletException {
       if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - getAcct - " + key);
       String C_ElementValue_ID = getC_ElementValue_ID(data, key);

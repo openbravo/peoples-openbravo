@@ -27,6 +27,7 @@
 <PARAMETER id="tdleftTabs" name="leftTabs" default=""/>
 <PARAMETER id="paramSessionDate" name="paramSessionDate" attribute="value" default=""/>
 <PARAMETER id="paramWindowId" name = "windowId" attribute="value" default=""/>
+<PARAMETER id="paramTabId" name = "tabId" attribute="value" default=""/>
 <PARAMETER id="paramDirectory" name="directory" default=""/>
 <PARAMETER id="paramParentTabContainer" name="parentTabContainer" default=" "/>
 <PARAMETER id="paramMainTabContainer" name="mainTabContainer" default=" "/>

@@ -39,8 +39,8 @@ public class DocCash extends AcctServer {
  *  Constructor
  *  @param AD_Client_ID AD_Client_ID
  */
-public DocCash(String AD_Client_ID, ConnectionProvider connectionProvider){
-    super(AD_Client_ID, connectionProvider);
+public DocCash(String AD_Client_ID, String AD_Org_ID, ConnectionProvider connectionProvider){
+    super(AD_Client_ID, AD_Org_ID, connectionProvider);
 }
 
 public void loadObjectFieldProvider(ConnectionProvider conn, String AD_Client_ID, String Id) throws ServletException{
@@ -256,14 +256,16 @@ jarenor
                 if (amount.signum() == 1){
                     log4jDocCash.debug("********** DocCash - factAcct - amount - " + amount.toString() + " - debit");
                     log4jDocCash.debug("********** DocCash - factAcct - account - " + getAccount(AcctServer.ACCTTYPE_BankInTransitDefault, as, conn).C_ValidCombination_ID);
-                    fact.createLine(line,getAccount(AcctServer.ACCTTYPE_BankInTransitDefault, as, conn),line.getC_Currency_ID(conn), "", amount.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+//                    fact.createLine(line,getAccountCashInTransit(line.m_TrxLine_ID, as, conn),line.getC_Currency_ID(conn), "", amount.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+                    fact.createLine(line,getAccount(AcctServer.ACCTTYPE_BankInTransitDefault, as,conn),line.getC_Currency_ID(conn), "", amount.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
                     fact.createLine(null, getAccount(AcctServer.ACCTTYPE_CashAsset, as, conn),C_Currency_ID, amount.toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
                     //fact.createLine(line,getAccount(AcctServer.ACCTTYPE_CashReceipt, as, conn),line.getC_Currency_ID(conn), "", amount.negate().toString(), conn);
                     //assetAmt = assetAmt.add(amount);
                 }else{
                     log4jDocCash.debug("********** DocCash - factAcct - amount - " + amount.toString() + " - credit");
                     //fact.createLine(line,getAccount(AcctServer.ACCTTYPE_CashExpense, as, conn),line.getC_Currency_ID(conn), "", amount.toString(), conn);
-                    fact.createLine(line,getAccount(AcctServer.ACCTTYPE_BankInTransitDefault, as, conn),line.getC_Currency_ID(conn), amount.negate().toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+                    fact.createLine(line,getAccount(AcctServer.ACCTTYPE_BankInTransitDefault, as,conn),line.getC_Currency_ID(conn), amount.negate().toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+//                    fact.createLine(line,getAccountCashInTransit(line.m_TrxLine_ID, as, conn),line.getC_Currency_ID(conn), amount.negate().toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
                     fact.createLine(null, getAccount(AcctServer.ACCTTYPE_CashAsset, as, conn),C_Currency_ID, "", amount.negate().toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
                     //assetAmt = assetAmt.subtract(amount.negate());
                 }
@@ -300,7 +302,7 @@ jarenor
                 String temp = C_BankAccount_ID;
                 C_BankAccount_ID = line.m_C_BankAccount_ID;
                 log4jDocCash.debug("********** DocCash - factAcct - account - " + getAccount(AcctServer.ACCTTYPE_BankInTransit, as, conn).C_ValidCombination_ID);
-                fact.createLine(line,getAccount(AcctServer.ACCTTYPE_BankInTransit, as, conn),line.getC_Currency_ID(conn), amount.negate().toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+                fact.createLine(line,getAccountBankInTransit(C_BankAccount_ID, as, conn),line.getC_Currency_ID(conn), amount.negate().toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
                 C_BankAccount_ID = temp;
                 if (line.getC_Currency_ID(conn) == C_Currency_ID)   assetAmt = assetAmt.add (amount);
                 else    fact.createLine(null,getAccount(AcctServer.ACCTTYPE_CashAsset, as, conn),line.getC_Currency_ID(conn), amount.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,conn);
@@ -319,17 +321,13 @@ jarenor
      *  @param AcctType see ACCTTYPE_*
      *  @param as accounting schema
      *  @return Account
-     */
-   /* public final Account getAccountBPartner (boolean receipt, String cBPartnerId, AcctSchema as,ConnectionProvider conn){
-        DocPaymentData [] data=null;
+     
+    public final Account getAccountCashInTransit(String strcCashlineId, AcctSchema as, ConnectionProvider conn){
+        DocCashData [] data=null;
         try{
-            if (receipt){
-                data = DocPaymentData.selectBPartnerCustomerAcct(conn, as.getC_AcctSchema_ID(), cBPartnerId);
-            }else {
-                data = DocPaymentData.selectBPartnerVendorAcct(conn, as.getC_AcctSchema_ID(), cBPartnerId);
-            }
+          data = DocCashData.selectCashLineAcct(conn, strcCashlineId, as.getC_AcctSchema_ID());
         }catch(ServletException e){
-            log4jDocCash.warn(e);
+            log4j.warn(e);
         }
         //  Get Acct
         String Account_ID = "";
@@ -338,8 +336,8 @@ jarenor
         }else   return null;
         //  No account
         if (Account_ID.equals("")){
-            log4jDocCash.warn("getAccountBPartner - NO account BPartner="
-                + cBPartnerId + ", Record=" + Record_ID);
+            log4j.warn("DocCash - getAccountCashInTransit - NO account CashLine="
+                + strcCashlineId + ", Record=" + Record_ID);
             return null;
         }
         //  Return Account
@@ -347,10 +345,44 @@ jarenor
         try{
             acct = Account.getAccount(conn, Account_ID);
         }catch(ServletException e){
-            log4jDocCash.warn(e);
+            log4j.warn(e);
         }
         return acct;
-    } */  //  getAccount
+    }   //  getAccount*/
+
+    /**
+     *  Get the account for Accounting Schema
+     *  @param Bank Account
+     *  @param as accounting schema
+     *  @return Account
+     */
+    public final Account getAccountBankInTransit(String strcBankAccountId, AcctSchema as, ConnectionProvider conn){
+        DocCashData [] data=null;
+        try{
+            data = DocCashData.selectBankInTransitAcct(conn, strcBankAccountId, as.getC_AcctSchema_ID());
+        }catch(ServletException e){
+            log4j.warn(e);
+        }
+        //  Get Acct
+        String Account_ID = "";
+        if (data != null && data.length!=0){
+            Account_ID = data[0].accountId;
+        }else   return null;
+        //  No account
+        if (Account_ID.equals("")){
+            log4j.warn("DocCash - getAccountBankInTransit - NO account strcBankAccountId="
+                + strcBankAccountId + ", Record=" + Record_ID);
+            return null;
+        }
+        //  Return Account
+        Account acct = null;
+        try{
+            acct = Account.getAccount(conn, Account_ID);
+        }catch(ServletException e){
+            log4j.warn(e);
+        }
+        return acct;
+    }   //  getAccount
 
     public String nextSeqNo(String oldSeqNo){
       log4jDocCash.debug("DocCash - oldSeqNo = " + oldSeqNo);

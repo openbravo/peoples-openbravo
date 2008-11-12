@@ -18,6 +18,7 @@
  */
 package org.openbravo.erpCommon.ad_reports;
 
+import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.*;
 import org.openbravo.erpCommon.ad_forms.AcctServerData;
 import org.openbravo.erpCommon.businessUtility.*;
@@ -266,8 +267,56 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
 
-    xmlDocument.setData("reportAD_ORGID", "liststructure", GeneralAccountingReportsData.selectCombo(this, vars.getRole()));
-    xmlDocument.setData("reportC_ElementValue_ID","liststructure", GeneralAccountingReportsData.selectRpt(this, Utility.getContext(this, vars, "#User_Org", "GeneralAccountingReports"), Utility.getContext(this, vars, "#User_Client", "GeneralAccountingReports"), strcAcctSchemaId));
+    String balancedOrg;
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "", "AD_OrgType_BU_LE", Utility.getContext(this, vars, "#User_Org", "ReportCashFlow"), Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportCashFlow", "");
+      FieldProvider[] dataOrg = comboTableData.select(false);
+      balancedOrg = "var arrBalancedOrg = new Array(\n";
+      for (int i = 0;i<dataOrg.length;i++) {
+        balancedOrg += "new Array(\"" + dataOrg[i].getField("id")  + "\",\"" + dataOrg[i].getField("name") + "\")";
+        if (i<dataOrg.length-1) balancedOrg += ",\n";
+      }
+      balancedOrg += ");";
+      
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+    xmlDocument.setParameter("balancedOrg", balancedOrg); 
+    
+    
+    String allOrg;
+    try {
+      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportCashFlow"), Utility.getContext(this, vars, "#User_Client", "ReportCashFlow"), 0);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportCashFlow", "");
+      FieldProvider[] dataOrg = comboTableData.select(false);
+      allOrg = "var arrAllOrg = new Array(\n";
+      for (int i = 0;i<dataOrg.length;i++) {
+        allOrg += "new Array(\"" + dataOrg[i].getField("id")  + "\",\"" + dataOrg[i].getField("name")  + "\")";
+        if (i<dataOrg.length-1) allOrg += ",\n";
+      }
+      allOrg += ");";
+      
+      comboTableData = null;
+    } catch (Exception ex) {
+      throw new ServletException(ex);
+    }
+    xmlDocument.setParameter("allOrg", allOrg); 
+    
+    String reportIsBalanced;
+    GeneralAccountingReportsData[] dataReportIsBalanced = GeneralAccountingReportsData.selectRpt(this, Utility.getContext(this, vars, "#User_Org", "GeneralAccountingReports"), Utility.getContext(this, vars, "#User_Client", "GeneralAccountingReports"), strcAcctSchemaId);
+    reportIsBalanced = "var arrReportIsBalanced = new Array(\n";
+    for (int i = 0; i < dataReportIsBalanced.length; i++) {
+      reportIsBalanced += "new Array(\"" + dataReportIsBalanced[i].getField("id") + "\",\"" + dataReportIsBalanced[i].getField("name") + "\",\"" + dataReportIsBalanced[i].getField("isbalanced") + "\")";
+      if (i < dataReportIsBalanced.length - 1)
+        reportIsBalanced += ",\n";
+    }
+    reportIsBalanced += ");";
+    xmlDocument.setParameter("reportIsBalanced", reportIsBalanced);
+    
+    
+    xmlDocument.setData("reportC_ElementValue_ID","liststructure", dataReportIsBalanced);
     
     xmlDocument.setParameter("accountingReports", arrayDobleEntrada("arrAccountingReports", GeneralAccountingReportsData.selectRptDouble(this)));
     /*try {

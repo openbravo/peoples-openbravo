@@ -47,13 +47,15 @@
       IsTranslated
     )
   SELECT get_uuid(), :new.AD_Window_ID,
-    AD_Language, :new.AD_Client_ID, :new.AD_Org_ID,
+    AD_Language.AD_Language, :new.AD_Client_ID, :new.AD_Org_ID,
     :new.IsActive, :new.Created, :new.CreatedBy,
     :new.Updated, :new.UpdatedBy, :new.Name,
     :new.Description, :new.Help, 'N'
-  FROM AD_Language
-  WHERE IsActive='Y'
-    AND IsSystemLanguage='Y';
+  FROM AD_Language, AD_Module M
+  WHERE AD_Language.IsActive='Y'
+    AND IsSystemLanguage='Y'
+     AND M.AD_Module_ID = :new.AD_Module_ID
+    AND M.AD_Language != AD_Language.AD_Language;
   -- Access for all
   INSERT
   INTO AD_Window_Access
@@ -78,6 +80,29 @@
   OR COALESCE(:old.Description, '.') <> COALESCE(:NEW.Description, '.')
   OR COALESCE(:old.Help, '.') <> COALESCE(:NEW.Help, '.'))
  THEN
+       UPDATE AD_Menu
+          SET Name=:new.Name,
+          Description=:new.Description
+        WHERE AD_Window_ID=:new.AD_Window_ID
+          and exists (select 1 
+                       from ad_module m, ad_module m1
+                       where m.ad_module_id = ad_menu.ad_module_id
+                       and m1.ad_module_id = :new.ad_module_id
+                       and m1.ad_language = m.ad_language);
+                       
+     UPDATE AD_Menu_Trl
+          SET Name=:new.Name,
+          Description=:new.Description,
+          IsTranslated ='Y'
+        WHERE exists (select 1 
+                       from ad_module m, ad_module m1, ad_window w, ad_menu
+                       where m.ad_module_id = ad_menu.ad_module_id
+                       and m1.ad_module_id = w.ad_module_id
+                       and ad_menu.AD_WINDOW_ID = w.AD_Window_ID
+                       and m1.ad_language = m.ad_language
+                       and w.AD_Window_ID=:new.AD_Window_ID
+                       and AD_Menu_Trl.ad_language = m1.ad_language);
+        
     IF (COALESCE(:old.IsActive, '.') <> COALESCE(:NEW.IsActive, '.')) THEN
         -- Update Menu
         UPDATE AD_Menu

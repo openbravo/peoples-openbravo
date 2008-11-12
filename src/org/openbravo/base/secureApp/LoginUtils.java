@@ -41,7 +41,7 @@ public class LoginUtils {
             log4j.error("Login client is not in role clients list");
             return false;
         }
-        if (!OrganizationComboData.isRoleOrg(conn, strRol, strOrg)) {
+        if (!OrganizationComboData.isLoginRoleOrg(conn, strRol, strOrg)) {
           log4j.error("Login organization is not in role organizations list");
           return false;
         }

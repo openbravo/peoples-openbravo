@@ -19,6 +19,8 @@
 <!--1000000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1000000 NAME-->
 <!--1000000-->              <NAME><![CDATA[Balance]]></NAME>
+<!--1000000 ISORGBALANCED-->
+<!--1000000-->              <ISORGBALANCED><![CDATA[Y]]></ISORGBALANCED>
 <!--1000000**************--></C_ACCT_RPT>
 
 </data>

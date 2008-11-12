@@ -25,16 +25,17 @@ public class OpenbravoMetadataFilter extends AbstractDatabaseFilter {
     public OpenbravoMetadataFilter() {
     }
 
+
     public void init(Database database) {
     
         addTable("AD_CLIENT", "AD_CLIENT_ID = '0'");
         addTable("AD_CLIENTINFO", "AD_CLIENT_ID = '0'");
         addTable("AD_ORG", "AD_CLIENT_ID = '0'");
+        addTable("AD_ORGTYPE", "AD_CLIENT_ID = '0'");
         addTable("AD_ORGINFO", "AD_CLIENT_ID = '0'");
         addTable("AD_ROLE", "AD_CLIENT_ID = '0'");
-        addTable("AD_ROLE_ORGACCESS", "AD_CLIENT_ID = '0'");
+        addTable("AD_MODEL_OBJECT_PARA", "AD_CLIENT_ID = '0'");
         addTable("AD_USER", "AD_USER_ID IN ('0','100')");
-        addTable("AD_USER_ROLES", "AD_CLIENT_ID = '0'");
     
         //addTable("AD_WORKBENCH", "AD_CLIENT_ID = '0'");
     
@@ -110,5 +111,12 @@ public class OpenbravoMetadataFilter extends AbstractDatabaseFilter {
         addTable("GL_CATEGORY", "AD_CLIENT_ID = '0'");//*/
         addTable("M_ATTRIBUTESET", "AD_CLIENT_ID = '0'");
         addTable("M_ATTRIBUTESETINSTANCE", "AD_CLIENT_ID = '0'");
+        addTable("AD_MODULE_DEPENDENCY", "AD_CLIENT_ID = '0'");
+        addTable("AD_MODULE_DBPREFIX", "AD_CLIENT_ID = '0'");
+        addTable("AD_DATASET", "AD_CLIENT_ID = '0'");
+        addTable("AD_DATASET_TABLE", "AD_CLIENT_ID = '0'");
+        addTable("AD_DATASET_COLUMN", "AD_CLIENT_ID = '0'");
+        addTable("AD_PACKAGE", "AD_CLIENT_ID = '0'");
+        addTable("AD_MODULE", "AD_CLIENT_ID = '0'");
     }
 }

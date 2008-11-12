@@ -33,7 +33,7 @@ public class WADButton extends WADControl {
   }
   
   public void setShortcuts(HashMap<String, String> sc){
-    setData("nameButton", getNameButton(sc));
+    setData("nameButton", "");
   }
 
   public void initialize() {
@@ -45,32 +45,6 @@ public class WADButton extends WADControl {
     setCalloutJS();
   }
   
-  private String getNameButton(HashMap<String, String> sc){
-    String name = getData("Name");
-    String retVal = "";
-    String buttonId = getData("ColumnName")+"_linkBTN";
-    
-    if (!(getData("IsDisplayed").equals("Y") && !getData("AD_Reference_Value_ID").equals("") && !getData("ColumnName").equalsIgnoreCase("ChangeProjectStatus"))) {
-      int i = 0;
-      while ((i<name.length()) && sc.containsKey(name.substring(i, i+1).toUpperCase())) { 
-        retVal += name.substring(i, i+1);
-        i++;
-      }
-      if (i==name.length()) {
-        i = 1;
-        while (i<=10 && sc.containsKey(new Integer(i).toString())) i++;
-        if (i<10) {
-          retVal +="<span>(<u>"+i+"</u>)</span>";
-          sc.put(new Integer(i).toString(), "executeWindowButton('"+buttonId+"');");
-        }
-      } else {
-        sc.put(name.substring(i,i+1).toUpperCase(), "executeWindowButton('"+buttonId+"');");
-        retVal += "<u>"+name.substring(i,i+1)+"</u>"+name.substring(i+1);
-      }
-    }       
-    return retVal;
-  }
-
   public String getType() {
     return "Button_CenterAlign";
   }
@@ -154,18 +128,18 @@ public class WADButton extends WADControl {
       text.append("<PARAMETER id=\"").append(getData("ColumnName"));
       text.append("\" name=\"").append(getData("ColumnName"));
       text.append("\" attribute=\"value\"/>");
-      if (getData("IsDisplayed").equals("Y") && !getData("AD_Reference_Value_ID").equals("") && !getData("ColumnName").equalsIgnoreCase("ChangeProjectStatus")) {
+      if (getData("IsDisplayed").equals("Y") && !getData("ColumnName").equalsIgnoreCase("ChangeProjectStatus")) {
         text.append("\n<PARAMETER id=\"").append(getData("ColumnName")).append("_BTN\" name=\"");
         text.append(getData("ColumnName"));
         text.append("_BTN\" replaceCharacters=\"htmlPreformated\"/>");
       }
     } else {
-      if (getData("IsDisplayed").equals("Y") && !getData("AD_Reference_Value_ID").equals("") && !getData("ColumnName").equalsIgnoreCase("ChangeProjectStatus")) {
+      if (getData("IsDisplayed").equals("Y")  && !getData("ColumnName").equalsIgnoreCase("ChangeProjectStatus")) {
         text.append("<PARAMETER id=\"").append(getData("ColumnName")).append("_BTNname\" name=\"").append(getData("ColumnName")).append("_BTNname\" default=\"\"/>\n");
       }
       text.append("<FIELD id=\"").append(getData("ColumnName"));
       text.append("\" attribute=\"value\">").append(getData("ColumnName")).append("</FIELD>");
-      if (getData("IsDisplayed").equals("Y") && !getData("AD_Reference_Value_ID").equals("") && !getData("ColumnName").equalsIgnoreCase("ChangeProjectStatus")) {
+      if (getData("IsDisplayed").equals("Y") && !getData("ColumnName").equalsIgnoreCase("ChangeProjectStatus")) {
         text.append("\n<FIELD id=\"").append(getData("ColumnName")).append("_BTN\" replaceCharacters=\"htmlPreformated\">");
         text.append(getData("ColumnName")).append("_BTN</FIELD>");
       }
@@ -174,9 +148,27 @@ public class WADButton extends WADControl {
   }
 
   public String toJava() {
-    if (getData("IsDisplayed").equals("Y") && !getData("AD_Reference_Value_ID").equals("") && !getData("ColumnName").equalsIgnoreCase("ChangeProjectStatus"))
-      return "xmlDocument.setParameter(\""+getData("ColumnName")+"_BTNname\", getButtonName(vars, \""+getData("AD_Reference_Value_ID")+"\", (dataField==null?data[0].getField(\""+getData("ColumnNameInp")+"\"):dataField.getField(\""+getData("ColumnNameInp")+"\")), \""+getData("ColumnName")+"_linkBTN\"));";
+    
+    if (getData("IsDisplayed").equals("Y") && !getData("ColumnName").equalsIgnoreCase("ChangeProjectStatus"))
+      if ( !getData("AD_Reference_Value_ID").equals(""))
+        return "xmlDocument.setParameter(\""+getData("ColumnName")+"_BTNname\", Utility.getButtonName(this, vars, \""+getData("AD_Reference_Value_ID")+"\", (dataField==null?data[0].getField(\""+getData("ColumnNameInp")+"\"):dataField.getField(\""+getData("ColumnNameInp")+"\")), \""+getData("ColumnName")+"_linkBTN\", usedButtonShortCuts, reservedButtonShortCuts));";
+      else
+        return "xmlDocument.setParameter(\""+getData("ColumnName")+"_BTNname\", Utility.getButtonName(this, vars, \""+getData("AD_Field_ID")+"\", \""+getData("ColumnName")+"_linkBTN\", usedButtonShortCuts, reservedButtonShortCuts));";
     else
       return "";
+  }
+  
+  private WADLabelControl prepareLabel(String columnName) {
+    WADLabelControl label = new WADLabelControl();
+    label.setLabelType(WADLabelControl.BUTTON_LABEL);
+    label.setColumnName(columnName);
+  
+    return label;
+  }
+  
+  private String createLabelText(WADLabelControl label) {
+    WadControlLabelBuilder builder = new WadControlLabelBuilder(label);
+    builder.buildLabelControl();
+    return builder.getBasicLabelText();
   }
 }

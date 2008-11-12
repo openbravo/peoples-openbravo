@@ -40,6 +40,9 @@
 		<many-to-one name="reference" not-null="true" class="org.openbravo.base.model.Reference" column="ad_reference_id" />
 		
 		<many-to-one name="referenceValue" class="org.openbravo.base.model.Reference" column="ad_reference_value_id" />
+
+		<property name="transient" type="yes_no" column="istransient"/>
+		<property name="isTransientCondition" column="istransientcondition"/>
 		
 	</class>
 </hibernate-mapping>

@@ -70,7 +70,7 @@
         AND C_PERIOD_ID IN (SELECT C_PERIOD_ID 
                 FROM C_PERIOD 
                 WHERE CLOSE_FACT_ACCT_GROUP_ID = ?)
-      ]]>
+        ]]>
     </Sql>
     <Parameter name="user"/>
     <Parameter name="close_fact_acct_group_id"/>
@@ -93,11 +93,20 @@
     </Sql>
     <Parameter name="reg_fact_acct_group_id"/>
   </SqlMethod>
+  <SqlMethod name="selectOpen" type="preparedStatement" return="String">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT DISTINCT OPEN_FACT_ACCT_GROUP_ID AS ID FROM C_PERIOD WHERE REG_FACT_ACCT_GROUP_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="open_fact_acct_group_id"/>
+  </SqlMethod>
   <SqlMethod name="updatePeriodsClose" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-  UPDATE C_PERIOD SET CLOSE_FACT_ACCT_GROUP_ID = NULL, UPDATED = now(), UPDATEDBY = ?
+  UPDATE C_PERIOD SET CLOSE_FACT_ACCT_GROUP_ID = NULL, DIVIDEUP_FACT_ACCT_GROUP_ID = NULL, OPEN_FACT_ACCT_GROUP_ID = NULL, UPDATED = now(), UPDATEDBY = ?
   WHERE CLOSE_FACT_ACCT_GROUP_ID = ?
       ]]>
     </Sql>
@@ -108,11 +117,11 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-  DELETE FROM FACT_ACCT WHERE FACT_ACCT_GROUP_ID IN (?, ?+1, ?)
+  DELETE FROM FACT_ACCT WHERE FACT_ACCT_GROUP_ID IN (?, ?, ?)
       ]]>
     </Sql>
     <Parameter name="fact_acct_group_id"/>
-    <Parameter name="fact_acct_group_id"/>
+    <Parameter name="open_acct_group_id"/>
     <Parameter name="divideup_fact_acct_group_id"/>
   </SqlMethod>
 </SqlClass>

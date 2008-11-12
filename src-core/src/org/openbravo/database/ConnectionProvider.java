@@ -34,4 +34,6 @@ public interface ConnectionProvider {
   public CallableStatement getCallableStatement(String strSql) throws Exception;
   public CallableStatement getCallableStatement(Connection conn, String strSql) throws SQLException;
   public void releaseCallableStatement(CallableStatement callableStatement) throws SQLException;
+  public void destroy() throws Exception;
+  public String getStatus();
 }

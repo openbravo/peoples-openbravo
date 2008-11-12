@@ -8,29 +8,22 @@ import org.openbravo.base.exception.OBException;
  * @author mtaal
  */
 public class CheckException extends OBException {
-  
-  /**
-   * Default serial
-   */
-  private static final long serialVersionUID = 1L;
-  
-  /** Call super constructor and log the cause. */
-  public CheckException() {
-    super();
-  }
-  
-  /** Call super constructor and log the cause. */
-  public CheckException(String message, Throwable cause) {
-    super(message, cause);
-  }
-  
-  /** Call super constructor and log the cause. */
-  public CheckException(String message) {
-    super(message);
-  }
-  
-  /** Call super constructor and log the cause. */
-  public CheckException(Throwable cause) {
-    super(cause);
-  }
+
+    private static final long serialVersionUID = 1L;
+
+    public CheckException() {
+	super();
+    }
+
+    public CheckException(String message, Throwable cause) {
+	super(message, cause);
+    }
+
+    public CheckException(String message) {
+	super(message);
+    }
+
+    public CheckException(Throwable cause) {
+	super(cause);
+    }
 }

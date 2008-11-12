@@ -27,7 +27,7 @@
     <Sql>&#60;&#33;[CDATA[
         SELECT <PARAMETER_TMP id="key">key</PARAMETER_TMP> AS ID, 
         <PARAMETER_TMP id="fields">field</PARAMETER_TMP> AS NAME, <PARAMETER_TMP id="key">key</PARAMETER_TMP>, '' AS SHOWN, 
-        '' AS seqno_Param, 
+        '' AS seqno_Param, '' AS TOTAL, '' AS ISINDEVELOPMENT,
         <PARAMETER_TMP id="parent">        <PARENT_TMP id="keyParent">Almacen</PARENT_TMP>, </PARAMETER_TMP>
         <PARAMETER_TMP id="table">table</PARAMETER_TMP>.Created, 
         <PARAMETER_TMP id="table">table</PARAMETER_TMP>.CreatedBy, 
@@ -72,6 +72,27 @@
     &#60;Parameter name="adUserClient" type="replace" optional="true" after="<PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Client_ID IN (" text="'1'"/&#62;
 <PARAMETER_TMP id="org">    &#60;Parameter name="adOrgClient" type="replace" optional="true" after="<PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Org_ID IN (" text="'1'"/&#62;</PARAMETER_TMP>
 <PARAMETER_TMP id="parent">    <Parameter name="param1"/></PARAMETER_TMP>
+  </SqlMethod>
+  
+  <SqlMethod name="selectInDevelopmentModule" type="preparedStatement" return="string">
+    <SqlMethodComment>Select for relation</SqlMethodComment>
+    <Sql>&#60;&#33;[CDATA[
+        SELECT ISINDEVELOPMENT  
+        FROM <PARAMETER_TMP id="table">table</PARAMETER_TMP>, AD_MODULE M
+        WHERE M.AD_MODULE_ID = <PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_MODULE_ID
+         AND <PARAMETER_TMP id="key">table</PARAMETER_TMP> = ? 
+    ]]&#62;</Sql>
+    <Parameter id="paramKey" name="param1"/>
+  </SqlMethod>
+  
+  <SqlMethod name="selectSeqNo" type="preparedStatement" return="string">
+    <SqlMethodComment>Select for relation</SqlMethodComment>
+    <Sql>&#60;&#33;[CDATA[
+        SELECT <FIELD_TMP id="SortField">column_a</FIELD_TMP>
+        FROM <PARAMETER_TMP id="table">table</PARAMETER_TMP>
+        WHERE <PARAMETER_TMP id="key">table</PARAMETER_TMP> = ? 
+    ]]&#62;</Sql>
+    <Parameter id="paramKey" name="param1"/>
   </SqlMethod>
 
 <PARAMETER_TMP id="parent"><FIELDS_TMP id="sectionParent">

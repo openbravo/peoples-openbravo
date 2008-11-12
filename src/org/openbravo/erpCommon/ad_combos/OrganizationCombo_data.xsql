@@ -14,7 +14,7 @@
  * The Initial Developer of the Original Code is Openbravo SL 
  * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
- * Contributor(s):  ______________________________________.
+ * Contributor(s):  ______________________________________.        AND (LPAD(TO_CHAR(R.USERLEVEL), 1, '1')='S' OR A_R_O.AD_ORG_ID <> '0') 
  ************************************************************************
 -->
 
@@ -53,6 +53,20 @@
         ORDER BY A_O.NAME
       ]]></Sql>
         <Parameter name="rol"/>
+   </SqlMethod>
+   <SqlMethod name="isLoginRoleOrg" type="preparedStatement" return="Boolean" default="false">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        SELECT COUNT(*) AS TOTAL 
+        FROM AD_ROLE_ORGACCESS A_R_O, AD_ROLE R 
+        WHERE A_R_O.ISACTIVE = 'Y' 
+        AND A_R_O.AD_ROLE_ID = R.AD_ROLE_ID 
+        AND R.ISACTIVE = 'Y' 
+        AND A_R_O.AD_ROLE_ID = ? 
+        AND A_R_O.AD_ORG_ID = ?
+      ]]></Sql>
+        <Parameter name="rol"/>
+        <Parameter name="org"/>
    </SqlMethod>
    <SqlMethod name="isRoleOrg" type="preparedStatement" return="Boolean" default="false">
       <SqlMethodComment></SqlMethodComment>

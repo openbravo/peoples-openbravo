@@ -135,6 +135,10 @@ cWithHoldId varchar2(32);
     V_Aux NUMBER;
     v_TargetDocBaseType C_DOCTYPE.DocBaseType%TYPE;
     v_MultiplierARC NUMBER:=1;
+    v_is_included NUMBER:=0;
+    v_available_period NUMBER:=0;
+    v_is_ready AD_Org.IsReady%TYPE;
+    v_is_tr_allow AD_OrgType.IsTransactionsAllowed%TYPE;
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -736,6 +740,42 @@ cWithHoldId varchar2(32);
         * Actions allowed: COmplete, APprove
         */
         IF(v_DocAction='AP' OR v_DocAction='CO') THEN
+          -- Check the header belongs to a organization where transactions are posible and ready to use
+          SELECT AD_Org.IsReady, Ad_OrgType.IsTransactionsAllowed
+          INTO v_is_ready, v_is_tr_allow
+          FROM C_INVOICE, AD_Org, AD_OrgType
+          WHERE AD_Org.AD_Org_ID=C_INVOICE.AD_Org_ID
+          AND AD_Org.AD_OrgType_ID=AD_OrgType.AD_OrgType_ID
+          AND C_INVOICE.C_INVOICE_ID=v_Record_ID;
+          IF (v_is_ready='N') THEN
+            RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotReady@');
+          END IF;
+          IF (v_is_tr_allow='N') THEN
+            RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotTransAllowed@');
+          END IF;
+          
+          SELECT AD_ORG_CHK_DOCUMENTS('C_INVOICE', 'C_INVOICELINE', v_Record_ID, 'C_INVOICE_ID', 'C_INVOICE_ID') INTO v_is_included FROM dual;
+          IF (v_is_included=-1) THEN
+            RAISE_APPLICATION_ERROR(-20000, '@LinesAndHeaderDifferentLEorBU@');
+          END IF;
+          
+          -- Check the period control is opened    
+          SELECT COUNT(C_Period_ID)
+          INTO v_available_period
+          FROM C_Period
+          WHERE v_DateAcct BETWEEN STARTDATE AND ENDDATE
+          AND EXISTS (SELECT 1
+                      FROM C_PeriodControl
+                      WHERE C_PeriodControl.C_Period_ID=C_Period.C_Period_ID 
+                      AND DocBaseType=(SELECT DocBaseType FROM C_DocType WHERE C_DocType_ID=v_DocTypeTarget_ID)
+                      AND AD_Org_ID=v_AD_Org_ID
+                      AND PeriodStatus='O'
+                      );
+          
+          IF (v_available_period<>1) THEN
+            RAISE_APPLICATION_ERROR(-20000, '@PeriodNotAvailable@');
+          END IF;
+          
           SELECT COUNT(*)
           INTO v_count
           FROM C_INVOICE c,

@@ -20,8 +20,10 @@ package org.openbravo.base.model;
  */
 
 public interface BaseOBObjectDef {
-  
-  public Object get(String featureName);
-  
-  public void set(String featureName, Object value);
+
+    public Object get(String propertyName);
+
+    public void set(String propertyName, Object value);
+
+    public Entity getEntity();
 }

@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All portions are Copyright (C) 2001-2008 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -28,10 +28,17 @@
   v_AD_User_ID VARCHAR2(32):='0';
   v_PROCESSED CHAR(1):='N';
   v_POSTED CHAR(1):='Y';
+  v_is_included NUMBER:=0;
+  v_AD_Org_ID VARCHAR2(32);
+  v_date DATE;
+  v_available_period NUMBER:=0; 
+  v_is_ready AD_Org.IsReady%TYPE;
+  v_is_tr_allow AD_OrgType.IsTransactionsAllowed%TYPE;
   FINISH_PROCESS BOOLEAN DEFAULT FALSE;
   --  Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
+ 
   BEGIN
     DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing ' || p_PInstance_ID) ;
     v_ResultStr:='PInstanceNotFound';
@@ -51,8 +58,8 @@
       v_Record_ID:=Cur_Parameter.Record_ID;
       v_AD_User_ID:=Cur_Parameter.AD_User_ID;
     END LOOP; -- Get Parameter
-    SELECT PROCESSED, POSTED
-    INTO v_PROCESSED, v_POSTED
+    SELECT PROCESSED, POSTED, AD_Org_ID, DateAcct
+    INTO v_PROCESSED, v_POSTED, v_AD_Org_ID, v_date
     FROM A_AMORTIZATION
     WHERE A_AMORTIZATION_ID=V_Record_ID;
     IF(v_PROCESSED='Y' AND v_POSTED='N') THEN
@@ -66,7 +73,44 @@
         )
       WHERE A_Amortization_ID=V_Record_ID;
     ELSIF(v_PROCESSED='N') THEN
-      --Process amortization
+      -- Check the header belongs to a organization where transactions are posible and ready to use
+      SELECT AD_Org.IsReady, Ad_OrgType.IsTransactionsAllowed
+      INTO v_is_ready, v_is_tr_allow
+      FROM A_Amortization, AD_Org, AD_OrgType
+      WHERE AD_Org.AD_Org_ID=A_Amortization.AD_Org_ID
+      AND AD_Org.AD_OrgType_ID=AD_OrgType.AD_OrgType_ID
+      AND A_Amortization.A_Amortization_ID=V_Record_ID;
+      IF (v_is_ready='N') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotReady@');
+      END IF;
+      IF (v_is_tr_allow='N') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotTransAllowed@');
+      END IF;    
+      
+      -- Check the document does not have elements of different business unit or legal entities.
+      SELECT AD_ORG_CHK_DOCUMENTS('A_AMORTIZATION', 'A_AMORTIZATIONLINE', V_Record_ID, 'A_AMORTIZATION_ID', 'A_AMORTIZATION_ID') INTO v_is_included FROM dual;
+      IF (v_is_included=-1) THEN
+         RAISE_APPLICATION_ERROR(-20000, '@LinesAndHeaderDifferentLEorBU@');
+      END IF;
+            
+      -- Check the period control is opened    
+      SELECT COUNT(C_Period_ID)
+      INTO v_available_period
+      FROM C_Period
+      WHERE v_date BETWEEN STARTDATE AND ENDDATE
+      AND EXISTS (SELECT 1
+                  FROM C_PeriodControl
+                  WHERE C_PeriodControl.C_Period_ID=C_Period.C_Period_ID 
+                  AND DocBaseType='AMZ'
+                  AND AD_Org_ID=v_AD_Org_ID
+                  AND PeriodStatus='O'
+                  );
+      
+      IF (v_available_period<>1) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@PeriodNotAvailable@');
+      END IF;
+      
+      --Process amortization    
       v_ResultStr:='ProcessAmortization';
       UPDATE A_Amortization
         SET Processed='Y', TotalAmortization=
@@ -118,7 +162,7 @@ WHEN OTHERS THEN
   IF(p_PInstance_ID IS NOT NULL) THEN
     AD_UPDATE_PINSTANCE(p_PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
   END IF;
-  RAISE_APPLICATION_ERROR(-20100, v_ResultStr) ;
+--  RAISE_APPLICATION_ERROR(-20100, v_ResultStr) ;
 --  RETURN;
 END A_AMORTIZATION_PROCESS
 ]]></body>

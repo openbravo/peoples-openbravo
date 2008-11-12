@@ -54,6 +54,10 @@
  v_CashLine_ID VARCHAR2(32);
  v_Settlement_Cancel_ID VARCHAR2(32);
  v_ispaid CHAR(1);
+ v_is_included NUMBER:=0;
+ v_available_period NUMBER:=0;
+ v_is_ready AD_Org.IsReady%TYPE;
+ v_is_tr_allow AD_OrgType.IsTransactionsAllowed%TYPE;
  --Finish added by P.Sarobe
   -- Parameter
   TYPE RECORD IS REF CURSOR;
@@ -201,6 +205,53 @@
       /*
       *  Checking Restrictions
       */
+      -- Check the header belongs to a organization where transactions are posible and ready to use
+      SELECT AD_Org.IsReady, Ad_OrgType.IsTransactionsAllowed
+      INTO v_is_ready, v_is_tr_allow
+      FROM C_BANKSTATEMENT, AD_Org, AD_OrgType
+      WHERE AD_Org.AD_Org_ID=C_BANKSTATEMENT.AD_Org_ID
+      AND AD_Org.AD_OrgType_ID=AD_OrgType.AD_OrgType_ID
+      AND C_BANKSTATEMENT.C_BANKSTATEMENT_ID=v_Record_ID;
+      IF (v_is_ready='N') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotReady@');
+      END IF;
+      IF (v_is_tr_allow='N') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotTransAllowed@');
+      END IF;    
+      
+      SELECT AD_ORG_CHK_DOCUMENTS('C_BANKSTATEMENT', 'C_BANKSTATEMENTLINE', v_Record_ID, 'C_BANKSTATEMENT_ID', 'C_BANKSTATEMENT_ID') INTO v_is_included FROM dual;
+      IF (v_is_included=-1) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@LinesAndHeaderDifferentLEorBU@');
+      END IF;
+      
+      SELECT AD_ORG_CHK_DOC_PAYMENTS('C_BANKSTATEMENT', 'C_BANKSTATEMENTLINE', v_Record_ID, 'C_BANKSTATEMENT_ID', 'C_BANKSTATEMENT_ID', 'C_DEBT_PAYMENT_ID') INTO v_is_included FROM dual;
+      IF (v_is_included=-1) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@PaymentsAndHeaderDifferentLEorBU@');
+      END IF;
+      
+      -- Check the period control is opened   
+      SELECT StatementDate
+      INTO v_BS_Date
+      FROM C_BankStatement
+      WHERE C_BankStatement_ID=v_Record_ID;
+      
+      SELECT COUNT(C_Period_ID)
+      INTO v_available_period
+      FROM C_Period
+      WHERE v_BS_Date BETWEEN STARTDATE AND ENDDATE
+      AND EXISTS (SELECT 1
+                  FROM C_PeriodControl
+                  WHERE C_PeriodControl.C_Period_ID=C_Period.C_Period_ID 
+                  AND DocBaseType='CMB'
+                  AND AD_Org_ID=v_AD_Org_ID
+                  AND PeriodStatus='O'
+                  );
+      
+      IF (v_available_period<>1) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@PeriodNotAvailable@');
+      END IF;
+      
+      
       v_ResultStr:='CheckingRestrictions - C_BANKSTATEMENT ORG IS IN C_BANKACCOUNT ORG TREE';
       SELECT COUNT(*)
       INTO v_count

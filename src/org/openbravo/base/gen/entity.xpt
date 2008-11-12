@@ -2,10 +2,6 @@
  
 «EXTENSION org::openbravo::base::gen::gen_util» 
  
-«DEFINE root FOR ModelProvider»
-  «EXPAND EntityTemplate FOREACH model»
-«ENDDEFINE» 
-
 «DEFINE EntityTemplate FOR Entity»
 	«FILE classFileName(this)-»
 /*   
@@ -28,63 +24,63 @@ package «packageName»;
  */
 public class «simpleClassName» extends org.openbravo.base.structure.BaseOBObject «implementsStatement» {
 
-	public final static String ENTITYNAME = "«name»";
-
+	public final static String TABLE_NAME = "«tableName»";
+	public final static String ENTITY_NAME = "«name»";
 	«FOREACH properties AS p-»
-		«IF ((Property)p).hasDefaultValue()»
-	private «((Property)p).typeName» «((Property)p).name» = «((Property)p).formattedDefaultValue»;
-	«ELSEIF !((Property)p).partOfCompositeId-»
-	private «((Property)p).typeName» «((Property)p).name»;
-		«ENDIF-»
+	public final static String PROPERTY_«((Property)p).name.toUpperCase()» = "«((Property)p).name»";
 	«ENDFOREACH-»
 	
+	public «simpleClassName»() {
+	«FOREACH properties AS p-»
+		«IF ((Property)p).hasDefaultValue()-»
+			setDefaultValue(PROPERTY_«((Property)p).name.toUpperCase()»,  «((Property)p).formattedDefaultValue»);
+		«ENDIF-»
+	«ENDFOREACH-»
+	}
+	
+    @Override
 	public String getEntityName() {
-		return ENTITYNAME;
+		return ENTITY_NAME;
 	}
 	
 	«FOREACH properties AS p-»
+	«IF !((Property)p).oneToMany»
+	«IF ((Property)p).name.matches("Id") -»
+    @Override
+    «ENDIF-»
 	public «((Property)p).typeName» «getter((Property)p)»() {
 	«IF ((Property)p).partOfCompositeId-»
 		return ((Id)getId()).«getter((Property)p)»();
 	«ELSE-»
-		return «((Property)p).name»;
+		return («((Property)p).typeName»)get(PROPERTY_«((Property)p).name.toUpperCase()»);
 	«ENDIF-»
 	}
 	
-	public void set«((Property)p).name.toFirstUpper()»(«((Property)p).typeName» «((Property)p).name.toFirstLower()») {
+	«IF ((Property)p).name.matches("Id") -»
+    @Override
+    «ENDIF-»
+	public void set«((Property)p).getterSetterName.toFirstUpper()»(«((Property)p).typeName» «((Property)p).javaName») {
 	«IF ((Property)p).partOfCompositeId-»
-		((Id)getId()).set«((Property)p).name.toFirstUpper()»(«((Property)p).name»);
+		((Id)getId()).set«((Property)p).getterSetterName.toFirstUpper()»(«((Property)p).javaName»);
 	«ELSE-»
-		this.«((Property)p).name» = «((Property)p).name»;
+		set(PROPERTY_«((Property)p).name.toUpperCase()», «((Property)p).javaName»);
 	«ENDIF-»
 	}
-	
+	«ENDIF»
 	«ENDFOREACH-»
 	
-	public Object get(String featureName) {
 	«FOREACH properties AS p-»
-		if ("«((Property)p).name»".equals(featureName)) {
-			return «getter((Property)p)»();
-		}
-	«ENDFOREACH-»
-		return super.get(featureName);
+	«IF ((Property)p).oneToMany-»
+	@SuppressWarnings("unchecked")
+	public java.util.List<«((Property)p).targetEntity.className»> get«((Property)p).name.toFirstUpper()»() {
+		return (java.util.List<«((Property)p).targetEntity.className»>) get(PROPERTY_«((Property)p).name.toUpperCase()»);
 	}
 	
-	public void set(String featureName, Object value) {
-	«FOREACH properties AS p-»
-		if ("«((Property)p).name»".equals(featureName)) {
-		«IF !((Property)p).allowNullValues()-»
-			// the Openbravo db contains null values for primitivetypes
-			if (value == null) {
-				return;
-			}
-		«ENDIF-»
-			set«((Property)p).name.toFirstUpper()»((«((Property)p).objectTypeName»)value);
-			return;
-		}
-	«ENDFOREACH-»
-		super.set(featureName, value);		
+	public void set«((Property)p).getterSetterName.toFirstUpper()»(java.util.List<«((Property)p).targetEntity.className»> «((Property)p).name») {
+		set(PROPERTY_«((Property)p).name.toUpperCase()», «((Property)p).name»);
 	}
+	«ENDIF»
+	«ENDFOREACH»
 
 	«IF hasCompositeId()»
 	public static class Id implements java.io.Serializable {
@@ -93,9 +89,9 @@ public class «simpleClassName» extends org.openbravo.base.structure.BaseOBObje
 		«FOREACH properties AS p-»
 		«IF ((Property)p).partOfCompositeId-»
 		«IF ((Property)p).hasDefaultValue()»
-		private «((Property)p).typeName» «((Property)p).name» = «((Property)p).formattedDefaultValue»;
+		private «((Property)p).typeName» «((Property)p).javaName» = «((Property)p).formattedDefaultValue»;
 		«ELSE-»
-		private «((Property)p).typeName» «((Property)p).name»;
+		private «((Property)p).typeName» «((Property)p).javaName»;
 		«ENDIF-»
 		«ENDIF-»
 		«ENDFOREACH-»
@@ -103,11 +99,11 @@ public class «simpleClassName» extends org.openbravo.base.structure.BaseOBObje
 		«FOREACH properties AS p-»
 		«IF ((Property)p).partOfCompositeId-»
 		public «((Property)p).typeName» «getter((Property)p)»() {
-			return «((Property)p).name»;
+			return «((Property)p).javaName»;
 		}
 		
-		public void set«((Property)p).name.toFirstUpper()»(«((Property)p).typeName» «((Property)p).name.toFirstLower()») {
-			this.«((Property)p).name» = «((Property)p).name»;
+		public void set«((Property)p).getterSetterName.toFirstUpper()»(«((Property)p).typeName» «((Property)p).javaName») {
+			this.«((Property)p).javaName» = «((Property)p).javaName»;
 		}
 		«ENDIF»
 		«ENDFOREACH-»

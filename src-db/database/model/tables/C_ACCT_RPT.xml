@@ -45,11 +45,16 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ISORGBALANCED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_CACCTRPT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ADORG_CACCTRPT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <check name="C_ACCT_RPT_ISORGBALANCED_CHECK"><![CDATA[ISORGBALANCED IN ('Y', 'N')]]></check>
     </table>
   </database>

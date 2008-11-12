@@ -27,53 +27,58 @@ import org.openbravo.base.util.Check;
  * @author Martin Taal
  */
 public class OBPropertiesProvider {
-  private final Logger log = Logger.getLogger(OBPropertiesProvider.class);
-  
-  private Properties obProperties = null;
-  
-  private static OBPropertiesProvider instance = new OBPropertiesProvider();
-  
-  public static OBPropertiesProvider getInstance() {
-	  return instance;
-  }
-  
-  public static void setInstance(OBPropertiesProvider instance) {
-	  OBPropertiesProvider.instance = instance;
-  }
-  
-  public Properties getOpenbravoProperties() {
-    return obProperties;
-  }
-  
-  public void setProperties(InputStream is) {
-    Check.isNull(obProperties, "Openbravo properties have already been set");
-    log.debug("Setting openbravo.properties through input stream");
-    obProperties = new Properties();
-    try {
-      obProperties.load(is);
-      is.close();
-    } catch (Exception e) {
-      throw new OBException(e);
+    private final Logger log = Logger.getLogger(OBPropertiesProvider.class);
+
+    private Properties obProperties = null;
+
+    private static OBPropertiesProvider instance = new OBPropertiesProvider();
+
+    public static OBPropertiesProvider getInstance() {
+	return instance;
     }
-  }
-  
-  public void setProperties(Properties props) {
-    Check.isNull(obProperties, "Openbravo properties have already been set");
-    log.debug("Setting openbravo.properties through properties");
-    obProperties = new Properties();
-    obProperties.putAll(props);
-  }
-  
-  public void setProperties(String fileLocation) {
-    Check.isNull(obProperties, "Openbravo properties have already been set");
-    log.debug("Setting openbravo.properties through a file");
-    obProperties = new Properties();
-    try {
-      final FileInputStream fis = new FileInputStream(fileLocation);
-      obProperties.load(fis);
-      fis.close();
-    } catch (Exception e) {
-      throw new OBException(e);
+
+    public static void setInstance(OBPropertiesProvider instance) {
+	OBPropertiesProvider.instance = instance;
     }
-  }
+
+    public Properties getOpenbravoProperties() {
+	return obProperties;
+    }
+
+    public void setProperties(InputStream is) {
+	Check
+		.isNull(obProperties,
+			"Openbravo properties have already been set");
+	log.debug("Setting openbravo.properties through input stream");
+	obProperties = new Properties();
+	try {
+	    obProperties.load(is);
+	    is.close();
+	} catch (Exception e) {
+	    throw new OBException(e);
+	}
+    }
+
+    public void setProperties(Properties props) {
+	Check
+		.isNull(obProperties,
+			"Openbravo properties have already been set");
+	log.debug("Setting openbravo.properties through properties");
+	obProperties = new Properties();
+	obProperties.putAll(props);
+    }
+
+    public void setProperties(String fileLocation) {
+	// Check.isNull(obProperties,
+	// "Openbravo properties have already been set");
+	log.debug("Setting openbravo.properties through a file");
+	obProperties = new Properties();
+	try {
+	    final FileInputStream fis = new FileInputStream(fileLocation);
+	    obProperties.load(fis);
+	    fis.close();
+	} catch (Exception e) {
+	    throw new OBException(e);
+	}
+    }
 }

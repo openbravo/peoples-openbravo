@@ -48,6 +48,10 @@
     v_Org_ID VARCHAR2(32);
     v_p_User VARCHAR2(32);
     v_Count NUMBER:=0;
+    v_is_included NUMBER:=0;
+    v_available_period NUMBER:=0;
+    v_is_ready AD_Org.IsReady%TYPE;
+    v_is_tr_allow AD_OrgType.IsTransactionsAllowed%TYPE;
     END_PROCESS BOOLEAN:=false;
   BEGIN
     --  Update AD_PInstance
@@ -112,6 +116,42 @@
     END IF;--END_PROCESS
     IF(NOT END_PROCESS) THEN
       -- Start Processing ------------------------------------------------------
+      -- Check the header belongs to a organization where transactions are posible and ready to use
+      SELECT AD_Org.IsReady, Ad_OrgType.IsTransactionsAllowed
+      INTO v_is_ready, v_is_tr_allow
+      FROM M_MOVEMENT, AD_Org, AD_OrgType
+      WHERE AD_Org.AD_Org_ID=M_MOVEMENT.AD_Org_ID
+      AND AD_Org.AD_OrgType_ID=AD_OrgType.AD_OrgType_ID
+      AND M_MOVEMENT.M_MOVEMENT_ID=v_Record_ID;
+      IF (v_is_ready='N') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotReady@');
+      END IF;
+      IF (v_is_tr_allow='N') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotTransAllowed@');
+      END IF;
+      
+      SELECT AD_ORG_CHK_DOCUMENTS('M_MOVEMENT', 'M_MOVEMENTLINE', v_Record_ID, 'M_MOVEMENT_ID', 'M_MOVEMENT_ID') INTO v_is_included FROM dual;
+      IF (v_is_included=-1) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@LinesAndHeaderDifferentLEorBU@');
+      END IF;
+      
+      -- Check the period control is opened    
+      SELECT COUNT(C_Period_ID)
+      INTO v_available_period
+      FROM C_Period
+      WHERE v_MoveDate BETWEEN STARTDATE AND ENDDATE
+      AND EXISTS (SELECT 1
+                  FROM C_PeriodControl
+                  WHERE C_PeriodControl.C_Period_ID=C_Period.C_Period_ID 
+                  AND DocBaseType='MMM'
+                  AND AD_Org_ID=v_Org_ID
+                  AND PeriodStatus='O'
+                  );
+      
+      IF (v_available_period<>1) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@PeriodNotAvailable@');
+      END IF;
+      
       v_ResultStr:='LockingMovement';
       UPDATE M_Movement  SET Processing='Y'  WHERE M_Movement_ID=v_Record_ID;
       -- Commented by cromero 19102006 COMMIT;

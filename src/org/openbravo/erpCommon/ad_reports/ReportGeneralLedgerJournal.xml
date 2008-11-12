@@ -45,6 +45,13 @@
   <PARAMETER id="inpTable" name="paramTable" attribute="value" default=""/>
   <PARAMETER id="paramC_ACCTSCHEMA_ID" name="cAcctschemaId"/>
 
+  <PARAMETER id="parameterShowClosing" name="constantShowClosing" default="1"/>
+  <PARAMETER id="paramShowClosing" name="showClosing" boolean="checked" withId="parameterShowClosing" default="0"/>
+  <PARAMETER id="parameterShowReg" name="constantShowReg" default="1"/>
+  <PARAMETER id="paramShowReg" name="showReg" boolean="checked" withId="parameterShowReg" default="0"/>
+  <PARAMETER id="parameterShowOpening" name="constantShowOpening" default="1"/>
+  <PARAMETER id="paramShowOpening" name="showOpening" boolean="checked" withId="parameterShowOpening" default="0"/>
+
   <SUBREPORT id="reportDocument" name="reportDocument" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramDocument"/>
   </SUBREPORT>

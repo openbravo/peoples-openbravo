@@ -130,4 +130,8 @@ public class CPStandAlone implements ConnectionProvider {
     } catch (Exception ex) {
     }
   }
+  public String getStatus() {
+    // TODO Auto-generated method stub
+    return null;
+  }
 }

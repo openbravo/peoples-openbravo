@@ -38,6 +38,8 @@ import javax.servlet.http.*;
 public class ActionButton_Responser extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   protected static final String windowId = "ActionButtonResponser";
+  
+  private String strProcessId;
 
   public void init (ServletConfig config) {
     super.init(config);
@@ -46,8 +48,8 @@ public class ActionButton_Responser extends HttpSecureAppServlet {
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
+    strProcessId = null;
     
-    String strProcessId = null;
     String command = vars.getCommand();
     
     if (command.equals("DEFAULT"))
@@ -89,7 +91,8 @@ public class ActionButton_Responser extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/ActionButtonDefault").createXmlDocument();
     xmlDocument.setParameter("processId", strProcessId);
-
+	xmlDocument.setParameter("trlFormType", "PROCESS");
+	xmlDocument.setParameter("language", "defaultLang = \"" + vars.getLanguage() + "\";\n");
     out.println(xmlDocument.print());
     out.close();
   }
@@ -100,7 +103,9 @@ public class ActionButton_Responser extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/ActionButtonResponse").createXmlDocument();
     xmlDocument.setParameter("message", (strMessage.equals("")?"":"alert('" + Replace.replace(strMessage, "\"", "") + "');"));
-
+    xmlDocument.setParameter("processId", strProcessId);
+	xmlDocument.setParameter("trlFormType", "PROCESS");
+	xmlDocument.setParameter("language", "defaultLang = \"" + vars.getLanguage() + "\";\n");
     out.println(xmlDocument.print());
     out.close();
   }
@@ -120,7 +125,9 @@ public class ActionButton_Responser extends HttpSecureAppServlet {
       xmlDocument.setParameter("language", "defaultLang = \"" + vars.getLanguage() + "\";\n");
       xmlDocument.setParameter("cancel", Utility.messageBD(this, "Cancel", vars.getLanguage()));
       xmlDocument.setParameter("ok", Utility.messageBD(this, "OK", vars.getLanguage()));
-      
+      xmlDocument.setParameter("processId", strProcessId);
+			xmlDocument.setParameter("trlFormType", "PROCESS");
+          
       {
         OBError myMessage = vars.getMessage("<FIELD_TMP id="ProcessID2">xx</FIELD_TMP>");
         vars.removeMessage("<FIELD_TMP id="ProcessID2">xx</FIELD_TMP>");

@@ -445,6 +445,7 @@ public class WadActionButton {
     }
 
     StringBuffer html = new StringBuffer();
+    StringBuffer labelsHTML = new StringBuffer();
     if (data!=null) {
       for (int i=0;i< data.length; i++) {
         WADControl auxControl = null;
@@ -455,10 +456,14 @@ public class WadActionButton {
           throw new ServletException(ex);
         }
         html.append(auxControl.toXml()).append("\n");
+        
+        String labelXML = auxControl.toLabelXML();
+        if (!labelXML.trim().equals("")) labelsHTML.append(auxControl.toLabelXML()).append("\n");
       }
     }
 
     xmlDocument.setParameter("column", html.toString());
+    xmlDocument.setParameter("labels", labelsHTML.toString());
     WadUtility.writeFile(fileDir, (fd.columnname + fd.reference) + ".xml", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xmlDocument.print());
   }
 

@@ -39,6 +39,7 @@
       AND F.AD_ORG_ID IN('1')
       AND 1=1
       AND f.AD_ORG_ID IN('2')
+      AND F.FactAcctType IN ('C','N','O','R')
       AND f.C_ACCTSCHEMA_ID = SC.C_ACCTSCHEMA_ID
       GROUP BY f.C_ACCTSCHEMA_ID, SC.NAME, F.AD_TABLE_ID, F.DATEACCT, F.ACCTDESCRIPTION, F.ACCTVALUE, F.DOCBASETYPE, F.RECORD_ID, 
       F.FACT_ACCT_GROUP_ID, F.ACCOUNT_ID,
@@ -53,6 +54,10 @@
     <Parameter name="docbasetype" optional="true" after="AND 1=1"><![CDATA[ AND f.DOCBASETYPE = ?]]></Parameter>
     <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND f.C_ACCTSCHEMA_ID = ?]]></Parameter>
     <Parameter name="orgFamily" type="replace" optional="true" after="AND f.AD_ORG_ID IN(" text="'2'"/>
+    <Parameter name="checks" type="replace" optional="true" after="AND F.FactAcctType IN (" text="'C','N','O','R'"/>
+    <!--Parameter name="closing" optional="true" type="none" after="2=2" text=" AND F.FactAcctType = 'C'"/>
+    <Parameter name="regularization" optional="true" type="none" after="2=2" text=" AND F.FactAcctType = 'R'"/>
+    <Parameter name="opening" optional="true" type="none" after="2=2" text=" AND F.FactAcctType = 'O'"/-->
   </SqlMethod>
   <SqlMethod name="selectCount" type="preparedStatement" return="string" default="0">
     <SqlMethodComment></SqlMethodComment>
@@ -69,7 +74,8 @@
         WHERE F.AD_CLIENT_ID IN ('1')
         AND F.AD_ORG_ID IN('1')
         AND 1=1
-        AND f.AD_ORG_ID IN('2')
+        AND f.AD_ORG_ID IN('2')     
+	      AND F.FactAcctType IN ('C','N','O','R')
         AND (CASE (SELECT MAX(ISSOTRX) FROM C_DOCTYPE D 
                     WHERE D.DOCBASETYPE = F.DOCBASETYPE) WHEN 'N' THEN COALESCE(T.PO_WINDOW_ID, T.AD_WINDOW_ID) ELSE T.AD_WINDOW_ID END) = W.AD_WINDOW_ID 
         GROUP BY F.DATEACCT, F.FACT_ACCT_GROUP_ID) AA
@@ -82,9 +88,13 @@
     <Parameter name="docbasetype" optional="true" after="AND 1=1"><![CDATA[ AND f.DOCBASETYPE = ?]]></Parameter>
     <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[ AND f.C_ACCTSCHEMA_ID = ?]]></Parameter>
     <Parameter name="orgFamily" type="replace" optional="true" after="AND f.AD_ORG_ID IN(" text="'2'"/>
+    <Parameter name="checks" type="replace" optional="true" after="AND F.FactAcctType IN (" text="'C','N','O','R'"/>
     <Parameter name="dateAcct"/>
     <Parameter name="dateAcct"/>
     <Parameter name="factAcctGroupId"/>
+    <!--Parameter name="closing" optional="true" type="none" after="2=2" text=" AND F.FactAcctType = 'C'"/>
+    <Parameter name="regularization" optional="true" type="none" after="2=2" text=" AND F.FactAcctType = 'R'"/>
+    <Parameter name="opening" optional="true" type="none" after="2=2" text=" AND F.FactAcctType = 'O'"/-->
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>

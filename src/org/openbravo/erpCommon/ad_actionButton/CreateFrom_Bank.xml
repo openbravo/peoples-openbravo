@@ -67,6 +67,7 @@
   <PARAMETER name="plannedDateFromdisplayFormat" id="inpterplanneddate" attribute="displayformat" replace="xx"/>
 	<PARAMETER name="plannedDateFromdisplayFormat" id="inpterplanneddate" attribute="saveformat" replace="yy"/>
 <PARAMETER name="paramcost" id="parameterCost" attribute="value"/>
+<PARAMETER name="paramproposed" id="parameterProposed" attribute="value"/>
 
 <SUBREPORT id="reportPaymentRule" name="reportPaymentRule" report="org/openbravo/erpCommon/reference/List">
 <ARGUMENT name="parameterListSelected" withId="paramPaymentRule"/></SUBREPORT>
@@ -78,6 +79,7 @@
 <ARGUMENT name="parameterListSelected" withId="paramADOrgID"/></SUBREPORT>
 
 
+
 <structure name="structure1">
 
 
@@ -87,6 +89,7 @@
 <FIELD id="fieldPrice" attribute="value">amount2</FIELD>
 <FIELD id="inpterplanneddate" attribute="name" replace="xx">cDebtPaymentId</FIELD>
 <FIELD id="parameterCost" attribute="name" replace="xx">cDebtPaymentId</FIELD>
+<FIELD id="parameterProposed" attribute="name" replace="xx">cDebtPaymentId</FIELD>
 <FIELD id="fieldDate">dateplanned</FIELD>
 <FIELD id="fieldOrg">org</FIELD>
 <FIELD id="fieldPayment">debtPayment</FIELD>

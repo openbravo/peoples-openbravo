@@ -32,13 +32,11 @@
   <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
-	<SUBREPORT id="reportCountry_M" name="reportPais" report="org/openbravo/erpCommon/reference/List">
-		<ARGUMENT name="parameterListSelected"/>
-	</SUBREPORT>
-	<SUBREPORT id="reportCurrency_M" name="reportMoneda" report="org/openbravo/erpCommon/reference/List">
-		<ARGUMENT name="parameterListSelected"/>
-	</SUBREPORT>
-	<SUBREPORT id="reportRegion_M" name="reportRegion" report="org/openbravo/erpCommon/reference/List">
+  
+  <PARAMETER id="moduleTree" name="moduleTree" default=""/>
+  <PARAMETER id="moduleTreeDescription" name="moduleTreeDescription" default=""/>
+
+	<SUBREPORT id="reportCurrency_M" name="reportCurrency" report="org/openbravo/erpCommon/reference/List">
 		<ARGUMENT name="parameterListSelected"/>
 	</SUBREPORT>
 	<DISCARD id="discard"/>

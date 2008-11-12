@@ -12,7 +12,7 @@ package org.openbravo.base.structure;
 
 import java.util.Date;
 
-import org.openbravo.base.model.ad.User;
+import org.openbravo.model.ad.access.User;
 
 /**
  * An interface modeling traced open bravo objects.
@@ -21,19 +21,19 @@ import org.openbravo.base.model.ad.User;
  */
 
 public interface Traceable {
-  public User getCreatedby();
-  
-  public void setCreatedby(User user);
-  
-  public Date getCreated();
-  
-  public void setCreated(Date date);
-  
-  public User getUpdatedby();
-  
-  public void setUpdatedby(User user);
-  
-  public Date getUpdated();
-  
-  public void setUpdated(Date date);
+    public User getCreatedBy();
+
+    public void setCreatedBy(User user);
+
+    public Date getCreated();
+
+    public void setCreated(Date date);
+
+    public User getUpdatedBy();
+
+    public void setUpdatedBy(User user);
+
+    public Date getUpdated();
+
+    public void setUpdated(Date date);
 }

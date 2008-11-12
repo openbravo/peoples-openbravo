@@ -10,6 +10,10 @@
  */
 package org.openbravo.base.util;
 
+import org.openbravo.base.exception.OBException;
+import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.provider.OBSingleton;
+
 /**
  * The OBClassLoader which can be from the outside. Two classloaders are
  * supported: the context (the default) and the class classloader.
@@ -17,45 +21,37 @@ package org.openbravo.base.util;
  * @author mtaal
  */
 
-public class OBClassLoader {
-  
-  private static OBClassLoader instance = new OBClassLoader();
-  
-  public static void setClassClassLoader() {
-    setInstance(new OBClassLoader() {
-      @Override
-      public Class<?> loadClass(String className) throws ClassNotFoundException {
-        return Class.forName(className);
-      }
-    });
-  }
-  
-  public static void setSpecificClassClassLoader(Class<?> clz) {
-    setInstance(new SpecificOBClassLoader(clz));
-  }
-  
-  public static OBClassLoader getInstance() {
-    return instance;
-  }
-  
-  public static void setInstance(OBClassLoader instance) {
-    OBClassLoader.instance = instance;
-  }
-  
-  public Class<?> loadClass(String className) throws ClassNotFoundException {
-    return Thread.currentThread().getContextClassLoader().loadClass(className);
-  }
-  
-  private static class SpecificOBClassLoader extends OBClassLoader {
-    private final Class<?> clz;
-    
-    SpecificOBClassLoader(Class<?> clz) {
-      this.clz = clz;
+public class OBClassLoader implements OBSingleton {
+
+    private static OBClassLoader instance;
+
+    public static OBClassLoader getInstance() {
+	if (instance == null) {
+	    instance = OBProvider.getInstance().get(OBClassLoader.class);
+	}
+	return instance;
     }
-    
-    @Override
-    public Class<?> loadClass(String className) throws ClassNotFoundException {
-      return clz.getClassLoader().loadClass(className);
+
+    public Class<?> loadClass(String className) {
+	try {
+	    return Thread.currentThread().getContextClassLoader().loadClass(
+		    className);
+	} catch (Exception e) {
+	    throw new OBException("Exception while loading class " + className
+		    + ", " + e.getMessage(), e);
+	}
     }
-  }
+
+    public static class ClassOBClassLoader extends OBClassLoader {
+
+	@Override
+	public Class<?> loadClass(String className) {
+	    try {
+		return Class.forName(className);
+	    } catch (Exception e) {
+		throw new OBException("Exception while loading class "
+			+ className + ", " + e.getMessage(), e);
+	    }
+	}
+    }
 }

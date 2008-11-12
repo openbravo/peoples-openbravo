@@ -28,7 +28,8 @@
       <![CDATA[
       SELECT BL.AD_ORG_ID, BL.LINE, BL.DESCRIPTION, BL.C_CHARGE_ID, BL.CHARGEAMT,
       BL.DATEACCT, BL.C_BANKSTATEMENTLINE_ID, BL.VALUTADATE, BL.C_DEBT_PAYMENT_ID,
-      BL.STMTAMT, BL.TRXAMT, DP.C_BPARTNER_ID AS C_BPARTNER_ID, DP.ISMANUAL AS ISMANUAL,  bl.CONVERTCHARGEAMT, bl.C_Currency_ID
+      BL.STMTAMT, BL.TRXAMT, DP.C_BPARTNER_ID AS C_BPARTNER_ID, DP.ISMANUAL AS ISMANUAL,  
+      bl.CONVERTCHARGEAMT, bl.C_Currency_ID, BL.C_GLITEM_ID, '' AS glitem_credit_acct, '' AS glitem_debit_acct
       FROM C_BANKSTATEMENTLINE BL left join C_DEBT_PAYMENT DP on BL.C_DEBT_PAYMENT_ID = DP.C_DEBT_PAYMENT_ID
       WHERE C_BANKSTATEMENT_ID = ? 
       ORDER BY LINE
@@ -70,5 +71,18 @@
      ]]>
      </Sql>
      <Parameter name="cBankaccountId"/>
+   </SqlMethod>
+  <SqlMethod name="selectGlitem" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+    SELECT GLITEM_DEBIT_ACCT, GLITEM_CREDIT_ACCT
+    FROM C_GLITEM_ACCT 
+    WHERE C_GLITEM_id = ?
+    AND C_ACCTSCHEMA_id = ?
+     ]]>
+     </Sql>
+     <Parameter name="C_Glitem_ID"/>
+     <Parameter name="C_AcctSchema_ID"/>
    </SqlMethod>
   </SqlClass>

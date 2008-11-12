@@ -320,7 +320,13 @@ public class StandAloneConnection implements ConnectionProvider {
     }
   }
 
-  public static void destroy() {
-    myPool.destroy();
+  public void destroy() {
+    // TODO Auto-generated method stub
+    
+  }
+
+  public String getStatus() {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

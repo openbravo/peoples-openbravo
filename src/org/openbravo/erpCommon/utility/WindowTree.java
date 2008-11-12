@@ -237,6 +237,14 @@ public class WindowTree extends HttpSecureAppServlet {
   /**
    * Makes the change of position of the elements in the tree.
    * 
+   * It positions the node and moves down all the nodes after this one.
+   * 
+   * For menu tree it looks whether the current node and the ones after that
+   * are within a module in development. It searchs the first node after the 
+   * current one that is not in development and modifies the seqno for the 
+   * current one (regardless it is in development or not) and the ones bellow
+   * it that are in development.
+   * 
    * @param vars: Handler for the session info.
    * @param strTabId: Tab id.
    * @param strTop: Parent node id.
@@ -273,24 +281,44 @@ public class WindowTree extends HttpSecureAppServlet {
       }
     } else strParent = strTop;
     WindowTreeData[] data = WindowTreeUtility.getTree(this, vars, TreeType, TreeID, editable, strParent, "", strTabId);
-    int seqNo=10;
+    int seqNo=0;
+    int add = 10;
     try {
       if (data==null || data.length==0) {
         WindowTreeUtility.setNode(this, vars, TreeType, TreeID, strParent, strLink, Integer.toString(seqNo));
       } else {
         boolean updated=false;
+        boolean finish=false;
         if (strParent.equals(strTop)) {
+          seqNo += add;
           WindowTreeUtility.setNode(this, vars, TreeType, TreeID, strParent, strLink, Integer.toString(seqNo));
-          seqNo += 10;
           updated=true;
         }
-        for (int i=0;i<data.length;i++) {
+        for (int i=0;!finish && i<data.length;i++) {
           if (!data[i].nodeId.equals(strLink)) {
-            WindowTreeUtility.setNode(this, vars, TreeType, TreeID, data[i].parentId, data[i].nodeId, Integer.toString(seqNo));
-            seqNo += 10;
+ 
+            if (updated && !finish) { //update only elements after the current one  
+              if (data[i].isindevelopment==null || data[i].isindevelopment.equals("") || data[i].isindevelopment.equals("Y")) {
+                seqNo += add;
+                WindowTreeUtility.setNode(this, vars, TreeType, TreeID, data[i].parentId, data[i].nodeId, Integer.toString(seqNo));
+              } else {
+                finish = true; //update elements till one is not in developement, then finish
+              }
+            }
+ 
             if (!updated && data[i].nodeId.equals(strTop)) {
+             
+              //Calculate the addition for the range of modules in development
+              int j=0;
+              
+              for (j=i+1; j<data.length && (data[j].isindevelopment==null || data[j].isindevelopment.equals("") || data[j].isindevelopment.equals("Y")); j++);
+              if (j==data.length)  add = 10; //it is at the end it can be expanded without problem
+              else add = new Float(((new Integer(data[j].seqno)- new Integer(data[i].seqno))/(j-i+1))).intValue();
+              
+              //Set the current node in its posisiton
+              if (i==0) seqNo=10;
+              else seqNo = new Integer(data[i].seqno).intValue()+add;
               WindowTreeUtility.setNode(this, vars, TreeType, TreeID, strParent, strLink, Integer.toString(seqNo));
-              seqNo += 10;
               updated=true;
             }
           }

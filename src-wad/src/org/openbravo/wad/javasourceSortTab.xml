@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,8 @@
 <template file="javasourceSortTab.javaxml" />
 <PARAMETER id="class" name = "class" default=" "/>
 <PARAMETER id="package" name = "package" default=" "/>
+<PARAMETER id="path" name = "path" default=" "/>
+<PARAMETER id="windowName" name = "windowName" default=" "/>
 <PARAMETER id="key" name = "key" default=" "/>
 <PARAMETER id="windowId" name = "windowId" default=" "/>
 <PARAMETER id="accessLevel" name = "accessLevel" default=" "/>

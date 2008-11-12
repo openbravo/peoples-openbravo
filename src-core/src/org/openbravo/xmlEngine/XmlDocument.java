@@ -11,12 +11,20 @@
 */
 package org.openbravo.xmlEngine;
 
-import org.openbravo.data.FieldProvider;
-
+import java.io.File;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 
-import org.apache.log4j.Logger ;
+import org.apache.log4j.Logger;
+import org.openbravo.data.FieldProvider;
+import org.openbravo.database.CPStandAlone;
+import org.openbravo.exception.PoolNotFoundException;
+import org.openbravo.uiTranslation.TranslationHandler;
+import org.openbravo.uiTranslation.TranslationUtils;
+import org.openbravo.uiTranslation.WindowLabel;
+
+import com.sun.corba.se.pept.transport.Connection;
 
 public class XmlDocument implements XmlComponentValue {
   XmlTemplate xmlTemplate;
@@ -24,9 +32,12 @@ public class XmlDocument implements XmlComponentValue {
   Hashtable<String, XmlDocument> hasSubXmlDocuments;  // hashtable of SubXmlDocuments corresponding to SubXmlTemplates
   Hashtable<String, DataValue> hasDataValue;  // hashtable of DataValue
   Hashtable<String, ParameterValue> hasParameterValue; // contains the ParameterValue that not are for the SQL query
+  Hashtable<String, LabelValue> hasLabelValue; //contains the label values in the template
   XmlVectorValue xmlVectorValue;  //contains Xml Components before, after and between DataValues and the DataValues
   Hashtable<Object, Object> hasXmlComponentValue; // contains the XmlComponentValues of the document CHX (Change to Hashtable of XmlComponentValue
+  public boolean ignoreTranslation = false;
   // it store pairs of XmlComponentTemplate (key), XmlComponentValue (value)
+  
 
   static Logger log4jXmlDocument = Logger.getLogger(XmlDocument.class);
 
@@ -58,6 +69,15 @@ public class XmlDocument implements XmlComponentValue {
       log4jXmlDocument.debug("Parameter: " + parameterValue.parameterTemplate.strName + " valor: " + parameterValue.strValue );
     }
 
+    hasLabelValue = new Hashtable<String, LabelValue>();
+    for (LabelTemplate labelTemplate : xmlTemplate.hasLabelTemplate.values()) {
+      log4jXmlDocument.debug("hasLabelTemplate: " + xmlTemplate.hasLabelTemplate.size());
+      LabelValue labelValue = labelTemplate.createLabelValue(this);
+      log4jXmlDocument.debug("LabelValue created: " + labelValue.strValue);
+      hasLabelValue.put(labelTemplate.strName, labelValue);
+      log4jXmlDocument.debug("Label: " + labelValue.labelTemplate.strName);
+    }
+
     //vector of Data
     hasDataValue = new Hashtable<String, DataValue>();
     for (Enumeration<Object> e1 = xmlTemplate.hasDataTemplate.elements() ; e1.hasMoreElements();) {
@@ -68,12 +88,14 @@ public class XmlDocument implements XmlComponentValue {
       dataValue.initialize();
       log4jXmlDocument.debug("End of Data: " + dataValue.dataTemplate.strName);
     }
+    
 
     //parameters of vector of Subdocuments
     log4jXmlDocument.debug("parameters of subdocuments: ");
     for (XmlDocument subXmlDocument : hasSubXmlDocuments.values()) {
       log4jXmlDocument.debug("parameters of subdocument: " + subXmlDocument.xmlTemplate.strName);
       subXmlDocument.setXmlComponentValueParameters();
+      subXmlDocument.setXmlComponentValueLabels();
       log4jXmlDocument.debug("parameters of data values of subdocument: " + subXmlDocument.xmlTemplate.strName);
       subXmlDocument.setXmlComponentValueParametersOfDataValues();
     }
@@ -93,12 +115,21 @@ public class XmlDocument implements XmlComponentValue {
 public XmlDocument() {
   hasDataValue = new Hashtable<String, DataValue>();
   hasParameterValue = new Hashtable<String, ParameterValue>();
+  hasLabelValue = new Hashtable<String, LabelValue>();
 }
 
 private void setXmlComponentValueParameters() {
   for (ParameterValue parameterValue : hasParameterValue.values()) {
     parameterValue.setXmlComponentValue(this);
     log4jXmlDocument.debug("setXmlComponentValue: " + parameterValue.parameterTemplate.strName);
+  }
+}
+
+private void setXmlComponentValueLabels() {
+  log4jXmlDocument.debug("setXmlComponentValueLabels() - hasLabelValues size: " + hasLabelValue.size());
+  for (LabelValue labelValue : hasLabelValue.values()) {
+    labelValue.setXmlComponentValue(this);
+    log4jXmlDocument.debug("setXmlComponentValueLabels() - labelValue.labelTemplate.strName: " + labelValue.labelTemplate.strName);
   }
 }
 
@@ -155,23 +186,74 @@ public void setParameter(String strName, String strValue) {
   }
 }
 
+public void setLabel(String strName, String strValue) {
+  log4jXmlDocument.debug("###setLabel(): trying to setLabel with strName: " + strName);
+  if (strName != null && !strName.equals("")) {
+    if (hasLabelValue.get(strName) != null) {
+      LabelValue label = hasLabelValue.get(strName);
+      if (label != null) label.setValue(strValue);
+      if (label!=null && !label.labelTemplate.strName.equals("menu")) {
+        log4jXmlDocument.debug("###setLabel(): " + label.labelTemplate.strName + " value: " + label.print() );
+      }
+    }
+  }
+}
+
 public String print() {
   return print(null);
 }
 
 public String print(String strBlank) {
-  if(log4jXmlDocument.isDebugEnabled()) log4jXmlDocument.debug("Start of print of: "+ xmlTemplate.strName);
-
+    if (!ignoreTranslation && xmlTemplate != null && xmlTemplate.strName != null) {
+      if(log4jXmlDocument.isDebugEnabled()) log4jXmlDocument.debug("Start of print of: "+ xmlTemplate.strName);
+      TranslationHandler handler = new TranslationHandler(this);
+      handler.setFileName(xmlTemplate.strName.replace("designorg/", "/org/") + ".html");
+      
+      log4jXmlDocument.debug("print() - xmlTemplate.xmlEngine.fileBaseLocation: " + xmlTemplate.xmlEngine.fileBaseLocation);
+      handler.setPropertiesFile(xmlTemplate.xmlEngine.fileBaseLocation + "/../../WEB-INF/Openbravo.properties");
+      
+      if (hasParameterValue != null && !hasParameterValue.isEmpty()) {
+        if (hasParameterValue.get("tabId") != null && hasParameterValue.get("tabId").strValue != null) {
+          log4jXmlDocument.debug("print(strBlank) - tabId: " + hasParameterValue.get("tabId").strValue);
+          handler.setTabId(hasParameterValue.get("tabId").strValue);
+          handler.setXmlDocumentType(TranslationHandler.ADWINDOW);
+        }
+        if (hasParameterValue.get("processId") != null && hasParameterValue.get("processId").strValue != null && !hasParameterValue.get("processId").strValue.equals("")) {
+          //String formType = hasParameterValue.get("trlFormType").strValue;
+          //if (formType.equalsIgnoreCase("PROCESS")) 
+          log4jXmlDocument.debug("ProcessId: " + hasParameterValue.get("processId").strValue);
+          handler.setXmlDocumentType(TranslationHandler.PROCESS);
+          handler.setXmlDocumentTypeId(hasParameterValue.get("processId").strValue);
+        }
+        //CPStandAlone cpStandAlone = new CPStandAlone(xmlTemplate.xmlEngine.fileBaseLocation + "/../../WEB-INF/Openbravo.properties");
+        if (hasParameterValue.get("language") != null && hasParameterValue.get("language").strValue != null) {
+          log4jXmlDocument.debug("print(strBlank) - language: " + hasParameterValue.get("language").strValue);
+          handler.setLanguage(hasParameterValue.get("language").strValue.replace("defaultLang=", "").replace("\"", ""));
+        }
+        log4jXmlDocument.debug("before running generateTranslations.");
+        handler.generateTranslations();
+        if (!ignoreTranslation && handler.getFormLabels() != null && !handler.getFormLabels().isEmpty()) {
+          xmlVectorValue.setTextMap(handler.getFormLabels());
+        }
+        if (xmlVectorValue != null) xmlVectorValue.handler = handler;
+      } else {
+        log4jXmlDocument.debug("print(String strBlank) - properties file not found");
+      }
+    } else {
+      log4jXmlDocument.debug("print(String strBlank) - hasParameterValue is null");
+    }
+      
   for (DataValue elementDataValue : hasDataValue.values()) {
-    if (strBlank != null) {
+    if (strBlank != null && !strBlank.equals("")) {
       elementDataValue.executeBlank(strBlank);
     } else {
       elementDataValue.printGenerated();
-      //        log4jXmlDocument.debug("printGenerated of "+ elementDataValue.dataTemplate.strName + " lng: " + elementDataValue.firstSectionValue.strSection.length());
+      //log4jXmlDocument.debug("printGenerated of "+ elementDataValue.dataTemplate.strName + " lng: " + elementDataValue.firstSectionValue.strSection.length());
     }
   }
 
   StringBuffer strPrint = xmlVectorValue.printStringBuffer();
+  //if (strPrint != null) log4jXmlDocument.debug("print(String strBlank) - returning strPrint: " + strPrint);
   //    log4jXmlDocument.debug("XmlDocument: StringBuffer length:" + strPrint.length() + " de " + xmlTemplate.strName);
   /*String strStringPrint = new String(strPrint);
     log4jXmlDocument.debug("XmlDocument: String length:" + strStringPrint.length());*/

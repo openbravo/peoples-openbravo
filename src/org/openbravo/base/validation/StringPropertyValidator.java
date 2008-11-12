@@ -14,64 +14,64 @@
  */
 package org.openbravo.base.validation;
 
-import org.openbravo.base.model.BaseOBObjectDef;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.util.Check;
 
 /**
- * Validates max field length of a string.
+ * Validates string properties (e.g. the max field length of a string).
  * 
  * @author mtaal
  */
 
-public class StringPropertyValidator extends PropertyValidator {
-  
-  private int fieldLength = -1;
-  
-  public static boolean isValidationRequired(Property p) {
-    if (p.isPrimitive() && p.getPrimitiveType() == String.class) {
-      if (p.getFieldLength() > 0 || p.doCheckAllowedValue()) {
-        return true;
-      }
+public class StringPropertyValidator extends BasePropertyValidator {
+
+    private int fieldLength = -1;
+
+    public static boolean isValidationRequired(Property p) {
+	if (p.isPrimitive() && p.getPrimitiveType() == String.class) {
+	    if (p.getFieldLength() > 0 || p.doCheckAllowedValue()) {
+		return true;
+	    }
+	}
+	return false;
     }
-    return false;
-  }
-  
-  public int getFieldLength() {
-    return fieldLength;
-  }
-  
-  public void setFieldLength(int fieldLength) {
-    this.fieldLength = fieldLength;
-  }
-  
-  public void initialize() {
-    Check.isTrue(getProperty().getFieldLength() > 0, "Fieldlength should be larger than 0 for validation");
-    setFieldLength(getProperty().getFieldLength());
-  }
-  
-  @Override
-  public String validate(Object o) {
-    if (!(o instanceof BaseOBObjectDef)) {
-      return null;
+
+    public int getFieldLength() {
+	return fieldLength;
     }
-    final BaseOBObjectDef bob = (BaseOBObjectDef) o;
-    final Property p = getProperty();
-    final Object value = bob.get(p.getName());
-    if (value == null) {
-      // mandatory is checked in Hibernate
-      return null;
+
+    public void setFieldLength(int fieldLength) {
+	this.fieldLength = fieldLength;
     }
-    Check.isInstanceOf(value, String.class);
-    final String str = (String) value;
-    if (str.length() > getFieldLength()) {
-      // TODO: i18n this
-      return "Value is too long, it has length " + str.length() + ", the maximum allowed length is " + getFieldLength();
+
+    public void initialize() {
+	Check.isTrue(getProperty().getFieldLength() > 0,
+		"Fieldlength should be larger than 0 for validation");
+	setFieldLength(getProperty().getFieldLength());
     }
-    
-    if (p.doCheckAllowedValue() && !p.isAllowedValue(str)) {
-      return "Value is not allowed, it should be one of the following values: " + p.getAllowedValues() + " but it is value " + str;
+
+    @Override
+    public String validate(Object value) {
+	if (value == null) {
+	    // mandatory is checked in Hibernate
+	    return null;
+	}
+	Check.isInstanceOf(value, String.class);
+	final String str = (String) value;
+	if (str.length() > getFieldLength()) {
+	    // TODO: i18n this
+	    return "Value (" + value + ")  is too long, it has length "
+		    + str.length() + ", the maximum allowed length is "
+		    + getFieldLength();
+	}
+
+	final Property p = getProperty();
+	if (p.doCheckAllowedValue() && !p.isAllowedValue(str)) {
+	    return "Value ("
+		    + value
+		    + ") is not allowed, it should be one of the following values: "
+		    + p.getAllowedValues() + " but it is value " + str;
+	}
+	return null;
     }
-    return null;
-  }
 }

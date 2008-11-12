@@ -25,4 +25,5 @@
   <PARAMETER id="additionalFields" name="additionalFields" default=""/>
   <PARAMETER id="class" name = "class" default=" " attribute="file"/>
   <PARAMETER id="sectionDetailColumns" name="column" default=""/>
+  <PARAMETER id="labelsData" name="labels"/>
 </REPORT>

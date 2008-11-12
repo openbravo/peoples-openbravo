@@ -37,10 +37,11 @@ BEGIN
       FROM C_AcctSchema_Default d
       WHERE EXISTS
         (
-        SELECT *
-        FROM AD_ClientInfo c
-        WHERE d.C_AcctSchema_ID IN(c.C_AcctSchema1_ID, c.C_AcctSchema2_ID, c.C_AcctSchema3_ID)
-          AND AD_Client_ID=:new.AD_Client_ID
+      SELECT 1 
+      FROM AD_Org_AcctSchema
+      WHERE AD_IsOrgIncluded(AD_Org_ID, :new.AD_ORG_ID, :new.AD_Client_ID)<>-1
+      AND IsActive = 'Y'
+      AND AD_Org_AcctSchema.C_AcctSchema_ID = d.C_AcctSchema_ID
         )
       )
     LOOP

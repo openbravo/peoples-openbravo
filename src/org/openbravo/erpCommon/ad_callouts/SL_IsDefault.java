@@ -83,7 +83,7 @@ public class SL_IsDefault extends HttpSecureAppServlet {
     
         //In case the current record already exists in DB not sum it to the total
         if (!currentKeyValue.equals(""))
-          currentClause="AND "+currentColumnKey+"!="+currentKeyValue;
+          currentClause="AND "+currentColumnKey+" != '"+currentKeyValue+"'";
   
         String strTotalDefaults = SLIsDefaultData.selectHasDefaults(this, data[0].tablename, parentClause, currentClause, strOrg);
         if (!strTotalDefaults.equals("0")) {

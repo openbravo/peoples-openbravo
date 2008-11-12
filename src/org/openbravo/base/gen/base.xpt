@@ -1,0 +1,16 @@
+«IMPORT org::openbravo::base::model»
+«IMPORT org::openbravo::base::gen»
+ 
+«EXTENSION org::openbravo::base::gen::gen_util» 
+ 
+«DEFINE root FOR ModelProvider»
+  «EXPAND org::openbravo::base::gen::entity::EntityTemplate FOREACH model»
+«ENDDEFINE» 
+
+# this define is there to get rid of the error
+# displayed by the editor because for the 
+# statement EXPAND Entity FOREACH model
+# it can determine the type for model
+«DEFINE EntityTemplate FOR Object»
+«ENDDEFINE»
+ 

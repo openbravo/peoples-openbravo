@@ -47,6 +47,8 @@ public class XmlEngine extends HttpServlet {
   public String strReplaceWhat;
   public String strReplaceWith;
   public boolean isResource = false;
+  
+  public ServletConfig configXMLEngine;
 
   static public String strTextDividedByZero;
 
@@ -62,6 +64,7 @@ public class XmlEngine extends HttpServlet {
   {
     if(log4jXmlEngine.isDebugEnabled()) log4jXmlEngine.debug("XmlEngine v0.846-2");
     super.init(config);
+    configXMLEngine = config;
     configureLog4j(getInitParameter("fileConfigurationLog4j"));
     strBaseLocation = getInitParameter("BaseLocation");
     strDriverDefault = getInitParameter("driver");
@@ -402,6 +405,17 @@ public class XmlEngine extends HttpServlet {
       }
       log4jXmlEngine.debug("getParameter: " + parameter.parameterTemplate.strName + " value: " + parameter.strValue );
     }
+    
+    //  Label of the report (not for the SQL query's)
+    for (LabelValue label : report.xmlDocument.hasLabelValue.values()) {
+      log4jXmlEngine.debug("getting labelValues for report.xmlDocument");
+      label.strValue = request.getParameter(label.labelTemplate.strName);
+      if (label.strValue == null) {
+        log4jXmlEngine.debug("getLabel of: " + label.labelTemplate.strName + " default assigned");
+        label.strValue = label.labelTemplate.strName;
+      }
+      log4jXmlEngine.debug("getLabel: " + label.labelTemplate.strName + " value: " + label.strValue );
+    }
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -478,6 +492,16 @@ public void closeConnections () {
           parameter.strValue = parameter.parameterTemplate.strDefault;
         }
         if(log4jXmlEngine.isDebugEnabled()) log4jXmlEngine.debug("Parameter(main): " + parameter.parameterTemplate.strName + " valor: " + parameter.strValue );
+      }
+      for (Enumeration<Object> e3 = elementDataValue.vecLabelValue.elements() ; e3.hasMoreElements();) {
+        LabelValue labelValue = (LabelValue) e3.nextElement();
+        i++;
+        labelValue.strValue = argv[1];
+        if (labelValue.strValue == null) {
+          if(log4jXmlEngine.isDebugEnabled()) log4jXmlEngine.debug("Label(main): default assigned");
+          labelValue.strValue = labelValue.labelTemplate.strName;
+        }
+        if(log4jXmlEngine.isDebugEnabled()) log4jXmlEngine.debug("Label(main): " + labelValue.labelTemplate.strName + " valor: " + labelValue.strValue );
       }
     }
 

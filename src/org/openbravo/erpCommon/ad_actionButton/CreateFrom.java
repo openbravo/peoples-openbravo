@@ -225,6 +225,7 @@ public class CreateFrom extends HttpSecureAppServlet {
     String strCharge = vars.getStringParameter("inpCharge");
     String strPlannedDate = vars.getStringParameter("inpplanneddate", strStatementDate);
     String strCost = vars.getStringParameter("inpcost", "0.00");
+    String strProposed = vars.getStringParameter("inpproposed", "0.00");
     String strDocumentNo = vars.getStringParameter("inpDocumentNo");
     CreateFromBankData[] data = null;
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CreateFrom_Bank").createXmlDocument();
@@ -271,6 +272,7 @@ public class CreateFrom extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramPlannedDate", strPlannedDate);
     xmlDocument.setParameter("paramplanneddate", strPlannedDate);
     xmlDocument.setParameter("paramcost", strCost);
+    xmlDocument.setParameter("paramproposed", strProposed);
     xmlDocument.setParameter("documentNo", strDocumentNo);
 
     xmlDocument.setParameter("paymentRule", strPaymentRule);
@@ -627,7 +629,9 @@ public class CreateFrom extends HttpSecureAppServlet {
       // Modified 26-06-07
       if (log4j.isDebugEnabled()) log4j.debug("strIsReceipt: "+ strIsReceipt);
       
-      int numRows = Integer.valueOf(CreateFromSettlementData.countRows(this, Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule, strPlannedDateFrom, strPlannedDateTo, strIsReceipt, strAmountFrom, strAmountTo, strTotalAmount, strOrg));
+      int numRows = Integer.valueOf(CreateFromSettlementData.countRows(this, Utility.getContext(this, vars, "#User_Client", strWindowId), 
+                    Utility.getContext(this, vars, "#User_Org", strWindowId), strcBPartner, strPaymentRule, strPlannedDateFrom, strPlannedDateTo, 
+                    strIsReceipt, strAmountFrom, strAmountTo, strTotalAmount, strOrg));
       int maxRows = Integer.valueOf(vars.getSessionValue("#RECORDRANGEINFO"));
       
       if(numRows > maxRows) {
@@ -995,6 +999,8 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
     String strStatementDate = vars.getStringParameter("inpstatementdate");
     String strDateplanned = "";
     String strChargeamt = "";
+    String strProposedAmt = "";
+    if (strPayment.equals("")) return null;
     OBError myMessage = null;
     Connection conn = null;
     
@@ -1016,6 +1022,17 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
           }
           strDateplanned = vars.getStringParameter("inpplanneddate" + strDebtPaymentId.trim());
           strChargeamt = vars.getStringParameter("inpcost" + strDebtPaymentId.trim());
+          strProposedAmt = vars.getStringParameter("inpproposed" + strDebtPaymentId.trim());
+          if(strProposedAmt!=null && !strProposedAmt.equals("") && new BigDecimal(strProposedAmt).signum()!=0){
+            String strSettlement = SequenceIdData.getUUID();
+            CreateFromBankData.insertSettlement(conn, this, strSettlement, vars.getUser(),strStatementDate, strDebtPaymentId);
+            String strNewPayment = SequenceIdData.getUUID();
+            CreateFromBankData.insertPayment(conn, this, strNewPayment, vars.getUser(), strSettlement, strProposedAmt, strDebtPaymentId);
+            CreateFromBankData.cancelOriginalPayment(conn, this, strSettlement, strDebtPaymentId);
+            CreateFromBankData.insertSecondPayment(conn, this, vars.getUser(), strSettlement, strProposedAmt, strDebtPaymentId);
+            strDebtPaymentId = strNewPayment;
+            CreateFromBankData.processSettlement(conn, this, strSettlement);
+          }
           String strSequence = SequenceIdData.getUUID();
           try {
             CreateFromBankData.insert(conn, this, strSequence, vars.getClient(), vars.getUser(), strKey, strDateplanned.equals("")?strStatementDate:strDateplanned, strChargeamt, strDebtPaymentId);

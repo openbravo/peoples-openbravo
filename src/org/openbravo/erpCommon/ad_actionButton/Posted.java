@@ -116,12 +116,12 @@ public class Posted extends HttpSecureAppServlet {
     OBError myMessage = null;
     try {
       con = getTransactionConnection();
-      AcctServer acct = AcctServer.get(strTableId, vars.getClient(), this.myPool);
+      AcctServer acct = AcctServer.get(strTableId, vars.getClient(), "0", this.myPool);
       if (acct==null) {
     	  releaseRollbackConnection(con);
           myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");          
           return myMessage;
-      }else if (!acct.post(strKey,false, vars,this,con)) {          
+      }else if (!acct.post(strKey,false, vars,this,con) || acct.errors!=0) {          
     	  releaseRollbackConnection(con);
          // return (Utility.messageBD(this, "ProcessRunError", vars.getLanguage()) + "\\n" + acct.getInfo(vars));          
           myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError"+ "\\n" + acct.getInfo(vars));          

@@ -25,5 +25,6 @@
   <PARAMETER id="paramHiddenColumns" name="hiddens"/>
   <PARAMETER id="class" name = "class" default=" " attribute="file"/>
   <PARAMETER id="fieldsData" name="fields"/>
+	<PARAMETER id="labelsData" name="labels"/>
 
 </REPORT>

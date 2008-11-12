@@ -20,28 +20,28 @@ package org.openbravo.base.model;
  * @author mtaal
  */
 public class RefList extends ModelObject {
-  
-  private Reference reference;
-  
-  private String value;
-  
-  public Reference getReference() {
-    return reference;
-  }
-  
-  public void setReference(Reference reference) {
-    this.reference = reference;
-  }
-  
-  public String getValue() {
-    return value;
-  }
-  
-  public void setValue(String value) {
-    this.value = value;
-  }
-  
-  public void setAllowedValue() {
-    reference.addAllowedValue(value);
-  }
+
+    private Reference reference;
+
+    private String value;
+
+    public Reference getReference() {
+	return reference;
+    }
+
+    public void setReference(Reference reference) {
+	this.reference = reference;
+    }
+
+    public String getValue() {
+	return value;
+    }
+
+    public void setValue(String value) {
+	this.value = value;
+    }
+
+    public void setAllowedValue() {
+	reference.addAllowedValue(value);
+    }
 }

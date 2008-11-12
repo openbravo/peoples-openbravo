@@ -19,7 +19,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All portions are Copyright (C) 2001-2008 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -52,6 +52,11 @@
   v_column_identifier VARCHAR2(4000);
   v_Cashline_ID VARCHAR2(32);
   v_Bankstatement_ID VARCHAR2(32);
+  v_DocType_ID VARCHAR2(32);
+  v_is_included NUMBER:=0;
+  v_available_period NUMBER:=0;
+  v_is_ready AD_Org.IsReady%TYPE;
+  v_is_tr_allow AD_OrgType.IsTransactionsAllowed%TYPE;
   --  Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -99,9 +104,9 @@
     END IF;
   BEGIN --BODY
     SELECT UpdatedBy, AD_Client_ID, AD_Org_ID, Processed,
-      C_Currency_ID, DATETRX, DateAcct, IsGenerated
+      C_Currency_ID, DATETRX, DateAcct, IsGenerated, C_DocType_ID
     INTO v_AD_User_ID, v_AD_Client_ID, v_AD_Org_ID, v_Processed,
-      v_Currency, v_Date, v_DateAcct, v_IsGenerated
+      v_Currency, v_Date, v_DateAcct, v_IsGenerated, v_DocType_ID
     FROM C_SETTLEMENT
     WHERE C_Settlement_ID=v_Record_ID;
     IF(v_Processed='Y') THEN
@@ -218,6 +223,47 @@
       /*
       *  Checking Restrictions
       */
+      -- Check the header belongs to a organization where transactions are posible and ready to use
+      SELECT AD_Org.IsReady, Ad_OrgType.IsTransactionsAllowed
+      INTO v_is_ready, v_is_tr_allow
+      FROM C_SETTLEMENT, AD_Org, AD_OrgType
+      WHERE AD_Org.AD_Org_ID=C_SETTLEMENT.AD_Org_ID
+      AND AD_Org.AD_OrgType_ID=AD_OrgType.AD_OrgType_ID
+      AND C_SETTLEMENT.C_SETTLEMENT_ID=v_Record_ID;
+      IF (v_is_ready='N') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotReady@');
+      END IF;
+      IF (v_is_tr_allow='N') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotTransAllowed@');
+      END IF;
+      
+      SELECT AD_ORG_CHK_DOCUMENTS('C_SETTLEMENT', 'C_DEBT_PAYMENT', v_Record_ID, 'C_SETTLEMENT_ID', 'C_SETTLEMENT_GENERATE_ID') INTO v_is_included FROM dual;
+      IF (v_is_included=-1) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@PaymentsAndHeaderDifferentLEorBU@');
+      END IF;
+      
+      SELECT AD_ORG_CHK_DOCUMENTS('C_SETTLEMENT', 'C_DEBT_PAYMENT', v_Record_ID, 'C_SETTLEMENT_ID', 'C_SETTLEMENT_CANCEL_ID') INTO v_is_included FROM dual;
+      IF (v_is_included=-1) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@PaymentsAndHeaderDifferentLEorBU@');
+      END IF;
+      
+      -- Check the period control is opened    
+      SELECT COUNT(C_Period_ID)
+      INTO v_available_period
+      FROM C_Period
+      WHERE v_DateAcct BETWEEN STARTDATE AND ENDDATE
+      AND EXISTS (SELECT 1
+                  FROM C_PeriodControl
+                  WHERE C_PeriodControl.C_Period_ID=C_Period.C_Period_ID 
+                  AND DocBaseType=(SELECT DocBaseType FROM C_DocType WHERE C_DocType_ID=v_DocType_ID)
+                  AND AD_Org_ID=v_AD_Org_ID
+                  AND PeriodStatus='O'
+                  );
+      
+      IF (v_available_period<>1) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@PeriodNotAvailable@');
+      END IF;
+      
       v_ResultStr:='CheckingRestrictions - C_DEBT_PAYMENT ORG IS IN C_BPARTNER ORG TREE';
       SELECT COUNT(*), AD_COLUMN_IDENTIFIER_STD ('C_Debt_Payment', TO_CHAR(MAX(c.C_Debt_Payment_Id)))
       INTO v_Aux, v_column_identifier

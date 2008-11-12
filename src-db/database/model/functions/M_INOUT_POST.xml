@@ -47,6 +47,12 @@
   v_Message VARCHAR2(2000):='';
   v_Record_ID VARCHAR2(32);
   v_User VARCHAR2(32);
+  v_is_included NUMBER:=0;
+  v_DocType_ID VARCHAR2(32);
+  v_available_period NUMBER:=0;
+  v_is_ready AD_Org.IsReady%TYPE;
+  v_is_tr_allow AD_OrgType.IsTransactionsAllowed%TYPE;
+  v_DateAcct DATE;
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -108,8 +114,8 @@
       v_Record_ID:=p_InOut_ID;
     END IF;
   BEGIN --BODY
-  	SELECT AD_Client_ID, AD_Org_ID, CreatedBy
-      INTO v_AD_Client_ID, v_AD_Org_ID, v_User
+  	SELECT AD_Client_ID, AD_Org_ID, CreatedBy, C_DocType_ID, DateAcct
+      INTO v_AD_Client_ID, v_AD_Org_ID, v_User, v_DocType_ID, v_DateAcct
       FROM M_InOut
       WHERE M_InOut_ID=v_Record_ID;
     SELECT count(*)
@@ -174,6 +180,42 @@
      UPDATE M_INOUTLINE
       SET AD_ORG_ID = (SELECT AD_ORG_ID FROM M_INOUT WHERE M_INOUT_ID = v_Record_ID)
     WHERE M_INOUT_ID = v_Record_ID;
+    
+    -- Check the header belongs to a organization where transactions are posible and ready to use
+    SELECT AD_Org.IsReady, Ad_OrgType.IsTransactionsAllowed
+    INTO v_is_ready, v_is_tr_allow
+    FROM M_INOUT, AD_Org, AD_OrgType
+    WHERE AD_Org.AD_Org_ID=M_INOUT.AD_Org_ID
+    AND AD_Org.AD_OrgType_ID=AD_OrgType.AD_OrgType_ID
+    AND M_INOUT.M_INOUT_ID=v_Record_ID;
+    IF (v_is_ready='N') THEN
+      RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotReady@');
+    END IF;
+    IF (v_is_tr_allow='N') THEN
+      RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotTransAllowed@');
+    END IF;
+      
+    SELECT AD_ORG_CHK_DOCUMENTS('M_INOUT', 'M_INOUTLINE', v_Record_ID, 'M_INOUT_ID', 'M_INOUT_ID') INTO v_is_included FROM dual;
+    IF (v_is_included=-1) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@LinesAndHeaderDifferentLEorBU@');
+    END IF;
+    
+    -- Check the period control is opened    
+    SELECT COUNT(C_Period_ID)
+    INTO v_available_period
+    FROM C_Period
+    WHERE v_DateAcct BETWEEN STARTDATE AND ENDDATE
+    AND EXISTS (SELECT 1
+                FROM C_PeriodControl
+                WHERE C_PeriodControl.C_Period_ID=C_Period.C_Period_ID 
+                AND DocBaseType=(SELECT DocBaseType FROM C_DocType WHERE C_DocType_ID=v_DocType_ID)
+                AND AD_Org_ID=v_AD_Org_ID
+                AND PeriodStatus='O'
+                );
+    
+    IF (v_available_period<>1) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@PeriodNotAvailable@');
+    END IF;
 
       FOR Cur_InOut IN
         (SELECT *

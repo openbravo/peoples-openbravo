@@ -21,7 +21,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title><TITLE_TMP id="tab">Window Title</TITLE_TMP></title>
+<title id="processName">#TITLE#</title>
 <LINK rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico"/>
 <LINK rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP.css" id="paramCSS"></LINK>
 <FIELD_TMP id="importCSS"></FIELD_TMP>
@@ -113,7 +113,7 @@ function closeThisPage() {
           <td class="Popup_NavBar_bg_logo_left"></td>
           <td class="Popup_NavBar_bg_logo" width="1" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;"><IMG src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
           <td class="Popup_NavBar_bg_logo_right"></td>
-          <td class="Popup_NavBar_Popup_title_cell"><span id="processDescription">xxProcess window</span></td>
+          <td class="Popup_NavBar_Popup_title_cell"><span id="processDescription">#processDescription#</span></td>
           <td class="Popup_NavBar_separator_cell"></td>
         </tr>
       </table>
@@ -137,7 +137,7 @@ function closeThisPage() {
           <td class="Popup_InfoBar_text_table">
             <table>
               <tr>
-                <td class="Popup_InfoBar_text" id="processHelp"></td>
+                <td class="Popup_InfoBar_text" id="processHelp">#processHelp#</td>
               </tr>
             </table>
           </td>
@@ -306,7 +306,7 @@ function closeThisPage() {
                     onmouseover="this.className='Button_hover';window.status='Cancel';return true;"
                     onmouseout="this.className='Button'; window.status=''; return true;">
                     <tr>
-                      <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="xx" title="PDF_Report" src="../../../../../web/images/blank.gif" border=0 title="xx" id="buttonCancel"/></td>
+                      <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="xx" title="xx" src="../../../../../web/images/blank.gif" border=0 title="xx" id="buttonCancel"/></td>
                       <td class="Button_text Button_width" id="tdButtonCancel">Cancel</td>
                       <td class="Button_right"></td>
                     </tr>

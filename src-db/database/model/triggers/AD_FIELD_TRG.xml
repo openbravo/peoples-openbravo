@@ -27,23 +27,25 @@
     */
     BEGIN  IF INSERTING
     THEN
-  INSERT
-  INTO AD_Field_Trl
-    (
-      AD_Field_Trl_ID, AD_Field_ID, AD_Language, AD_Client_ID,
-      AD_Org_ID, IsActive, Created,
-      CreatedBy, Updated, UpdatedBy,
-      Name, Description, Help,
-      IsTranslated
-    )
-  SELECT get_uuid(), :new.AD_Field_ID,
-    AD_Language, :new.AD_Client_ID, :new.AD_Org_ID,
-    :new.IsActive, :new.Created, :new.CreatedBy,
-    :new.Updated, :new.UpdatedBy, :new.Name,
-    :new.Description, :new.Help, 'N'
-  FROM AD_Language
-  WHERE IsActive='Y'
-    AND IsSystemLanguage='Y';
+      INSERT
+      INTO AD_Field_Trl
+        (
+          AD_Field_Trl_ID, AD_Field_ID, AD_Language, AD_Client_ID,
+          AD_Org_ID, IsActive, Created,
+          CreatedBy, Updated, UpdatedBy,
+          Name, Description, Help,
+          IsTranslated
+        )
+      SELECT get_uuid(), :new.AD_Field_ID,
+        AD_Language.AD_Language, :new.AD_Client_ID, :new.AD_Org_ID,
+        :new.IsActive, :new.Created, :new.CreatedBy,
+        :new.Updated, :new.UpdatedBy, :new.Name,
+        :new.Description, :new.Help, 'N'
+      FROM AD_Language, ad_module m
+      WHERE AD_Language.IsActive='Y'
+        AND IsSystemLanguage='Y'
+        and m.ad_module_id = :new.ad_module_id
+        and m.ad_language != AD_Language.AD_Language;
  END IF;
  -- Inserting
  -- AD_Field update trigger

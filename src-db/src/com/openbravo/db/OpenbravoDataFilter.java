@@ -52,6 +52,7 @@ public final class OpenbravoDataFilter extends AbstractDatabaseFilter {
         addTable("AD_CLIENT", "AD_CLIENT_ID <> '0'");
         addTable("AD_CLIENTINFO", "AD_CLIENT_ID <> '0'");
         addTable("AD_ORG", "AD_CLIENT_ID <> '0'");
+        addTable("AD_ORGTYPE", "AD_CLIENT_ID <> '0'");
         addTable("AD_ORGINFO", "AD_CLIENT_ID <> '0'");
         addTable("AD_ROLE", "AD_CLIENT_ID <> '0'");
         addTable("AD_ROLE_ORGACCESS", "AD_CLIENT_ID <> '0'");

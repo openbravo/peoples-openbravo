@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2007 Openbravo SL
+* All portions are Copyright (C) 2001-2008 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -57,6 +57,11 @@
     Cur_ProductionPlan RECORD;
 
     FINISH_PROCESS BOOLEAN:=FALSE;
+    v_is_included NUMBER:=0;
+    v_available_period NUMBER:=0;
+    v_is_ready AD_Org.IsReady%TYPE;
+    v_is_tr_allow AD_OrgType.IsTransactionsAllowed%TYPE;
+    v_AD_Org_ID VARCHAR2(32);
   BEGIN
     -- Process Parameters
     IF(p_PInstance_ID IS NOT NULL) THEN
@@ -83,8 +88,8 @@
       DBMS_OUTPUT.PUT_LINE('--<<MA_WorkEffort_Validate>>') ;
     END IF;
   BEGIN --BODY
-    SELECT Processed, MOVEMENTDATE
-    INTO p_Processed, v_ProductionDate
+    SELECT Processed, MOVEMENTDATE, AD_ORG_ID
+    INTO p_Processed, v_ProductionDate, v_AD_Org_ID
     FROM M_PRODUCTION
     WHERE M_Production_ID=v_Record_ID;
     --Check if is has been already processed
@@ -95,6 +100,43 @@
     END IF;
     IF(NOT FINISH_PROCESS) THEN
       -- Check that there are some parts of the job and that theay are processed
+      
+      -- Check the header belongs to a organization where transactions are posible and ready to use
+      SELECT AD_Org.IsReady, Ad_OrgType.IsTransactionsAllowed
+      INTO v_is_ready, v_is_tr_allow
+      FROM M_PRODUCTION, AD_Org, AD_OrgType
+      WHERE AD_Org.AD_Org_ID=M_PRODUCTION.AD_Org_ID
+      AND AD_Org.AD_OrgType_ID=AD_OrgType.AD_OrgType_ID
+      AND M_PRODUCTION.M_PRODUCTION_ID=v_Record_ID;
+      IF (v_is_ready='N') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotReady@');
+      END IF;
+      IF (v_is_tr_allow='N') THEN
+        RAISE_APPLICATION_ERROR(-20000, '@OrgHeaderNotTransAllowed@');
+      END IF;
+      
+      SELECT AD_ORG_CHK_DOCUMENTS('M_PRODUCTION', 'M_PRODUCTIONLINE', v_Record_ID, 'M_PRODUCTION_ID', 'M_PRODUCTION_ID') INTO v_is_included FROM dual;
+      IF (v_is_included=-1) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@LinesAndHeaderDifferentLEorBU@');
+      END IF;
+      
+       -- Check the period control is opened    
+      SELECT COUNT(C_Period_ID)
+      INTO v_available_period
+      FROM C_Period
+      WHERE v_ProductionDate BETWEEN STARTDATE AND ENDDATE
+      AND EXISTS (SELECT 1
+                  FROM C_PeriodControl
+                  WHERE C_PeriodControl.C_Period_ID=C_Period.C_Period_ID 
+                  AND DocBaseType='MMP'
+                  AND AD_Org_ID=v_AD_Org_ID
+                  AND PeriodStatus='O'
+                  );
+      
+      IF (v_available_period<>1) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@PeriodNotAvailable@');
+      END IF;
+      
       v_ResultStr:='Checking ProductionRun';
       SELECT COUNT(*)
       INTO v_count

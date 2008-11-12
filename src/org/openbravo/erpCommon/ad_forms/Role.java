@@ -192,7 +192,7 @@ public class Role extends HttpSecureAppServlet {
         
         xmlDocument.setData("structureRol", datarole);
         xmlDocument.setParameter("clientes", arrayDobleEntrada("arrClientes", vecClients.toArray(new ClientData[vecClients.size()])));        
-        xmlDocument.setParameter("organizaciones", arrayDobleEntrada("arrOrgs", OrganizationData.select(this)));
+        xmlDocument.setParameter("organizaciones", arrayDobleEntrada("arrOrgs", OrganizationData.selectLogin(this)));
         xmlDocument.setParameter("warehouses", arrayDobleEntrada("arrWare", WarehouseData.select(this)));
     
     
