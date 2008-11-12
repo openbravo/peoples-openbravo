@@ -98,6 +98,8 @@
       
       function finalize() {
         processing = false;
+        displayLogicElement('buttonOK',true);
+        document.getElementById('buttonOK').setAttribute('onclick','closeThisPage();return false;');
         setTimeout("getError()",100);
       }
       
@@ -119,6 +121,7 @@
         processing = true;
         var frm = document.frmMain;
         displayLogicElement('buttonOK',false);
+        displayLogicElement('buttonCancel',false);
         return submitXmlHttpRequest(endProcess, frm, "STARTAPPLY", "ApplyModules.html", false);
       }
     </script>
@@ -277,7 +280,7 @@
               <tr>
                 <td/>
                 <td colspan="2">
-                  <div style="overflow: auto; width: 700px; height: 400px; background-color: white; font-family: monospace; font-size: 9pt; border: #505050 1px solid; padding-left: 10px" id="log"></div>
+                  <div style="overflow: auto; width: 700px; height: 345px; background-color: white; font-family: monospace; font-size: 9pt; border: #505050 1px solid; padding-left: 10px" id="log"></div>
                 </td>
                 <td/>
               </tr>
@@ -298,7 +301,7 @@
                   </div>
                 </td>
                 <td class="Button_LeftAlign_ContentCell" id="displayLogicCancel">
-                  <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Cancel'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="closeThisPage();return false;">
+                  <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Cancel'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="closeThisPage();return false;" id="buttonCancel">
                     <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Cancel';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                       <tr>
                         <td class="Button_left"><img class="Button_Icon Button_Icon_cancel" alt="Cancel" title="Cancel" src="../../../../../web/images/blank.gif" border=0/></td>
