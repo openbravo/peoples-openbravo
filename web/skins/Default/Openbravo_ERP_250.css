@@ -2256,7 +2256,7 @@ table.FieldGroup {
 a.LabelLink {
   background-repeat: no-repeat;
   background-position: top left; /*~RTL   background-position: 98% 0; */
-  background-image: url(Common/Label/link.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: 98% 0; */
+  background-image: url(Common/Label/link.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; */
   padding-left: 9px; /*~RTL   padding-right: 10px; */
   color: #2985BA;
   text-decoration: none;
@@ -2587,7 +2587,7 @@ a.List_Button_BottomLink_focus table.List_Button_Bottom .List_Button_Bottom_bg, 
 .List_Button_Icon_Delete {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(Common/List/iconDelete.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-margin-left: 2px; ssprite-margin-right: 2px; prite-margin-top: 1px; sprite-margin-bottom: 1px */
+  background-image: url(Common/List/iconDelete.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-margin-left: 2px; sprite-margin-right: 2px; sprite-margin-top: 1px; sprite-margin-bottom: 1px */
 }
 
 .List_Button_Icon_DeleteAll {
@@ -6160,7 +6160,7 @@ A.Linkwhite {
   width: 9px;
   background-repeat: no-repeat;
   background-position: center left; /*~RTL   background-position: 100% 50%; */
-  background-image: url(Main/ToolBar/labelRight.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: 100% 50%; sprite-margin-top: 4px */
+  background-image: url(Main/ToolBar/labelRight.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; sprite-alignment-rtl: right; sprite-margin-top: 4px */
 }
 
 a.Main_ToolBar_text_relatedinfo {
