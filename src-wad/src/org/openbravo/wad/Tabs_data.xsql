@@ -206,7 +206,7 @@
       <Sql><![CDATA[
         SELECT coalesce(mom.mappingname, TO_CHAR(ad_process.value) || '.pdf') as name FROM ad_process 
                               left join ad_model_object mo on ad_process.ad_process_id = mo.ad_process_id 
-                                    and mo.action = 'P'
+                                    and mo.action IN ('P', 'R')
                                     and mo.isactive = 'Y'
                                     and mo.isdefault = 'Y'
                               left join ad_model_object_mapping mom on mo.ad_model_object_id = mom.ad_model_object_id 

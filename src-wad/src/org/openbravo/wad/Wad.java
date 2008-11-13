@@ -721,7 +721,7 @@ public class Wad extends DefaultHandler {
       String strProcess="", strDirectPrint="";
       if (!tabsData.adProcessId.equals("")) {
         strProcess = TabsData.processName(pool, tabsData.adProcessId);
-        if (strProcess.indexOf("/")==-1) strProcess = FormatUtilities.replace(strProcess);
+        if (strProcess.indexOf("/")==-1) strProcess = "/"+FormatUtilities.replace(strProcess);
         strDirectPrint = TabsData.directPrint(pool, tabsData.adProcessId);
       }
       WADGrid gridControl = null;
