@@ -41,7 +41,7 @@
     <FIELD id="fieldName" replaceCharacters="fo" boolean="start-indent='30pt' font-size='8pt'" withId="fieldLEVEL4">elementLevel</FIELD>
     <FIELD id="fieldName" replaceCharacters="fo" boolean="start-indent='35pt' font-size='7pt'" withId="fieldLEVEL5">elementLevel</FIELD>
     <FIELD id="fieldName" replaceCharacters="fo" boolean="start-indent='40pt' font-size='6pt'" withId="fieldLEVEL6">elementLevel</FIELD>
-    <FIELD id="fieldQty" replaceCharacters="fo" format="euroInform">qty</FIELD>
+    <FIELD id="fieldQty" format="amountInform">qty</FIELD>
     <FIELD id="fieldQty" replaceCharacters="fo" boolean="font-weight='bold' font-size='10pt'" withId="fieldLEVEL0">elementLevel</FIELD>
     <FIELD id="fieldQty" replaceCharacters="fo" boolean="space-after='8pt' space-before.optimum='6pt'" withId="fieldLEVEL0">elementLevel</FIELD>
     <FIELD id="fieldQty" replaceCharacters="fo" boolean="space-after='6pt' font-size='10pt'" withId="fieldLEVEL1">elementLevel</FIELD>
@@ -50,7 +50,7 @@
     <FIELD id="fieldQty" replaceCharacters="fo" boolean="font-size='10pt'" withId="fieldLEVEL4">elementLevel</FIELD>
     <FIELD id="fieldQty" replaceCharacters="fo" boolean="font-size='10pt'" withId="fieldLEVEL5">elementLevel</FIELD>
     <FIELD id="fieldQty" replaceCharacters="fo" boolean="font-size='10pt'" withId="fieldLEVEL6">elementLevel</FIELD>
-    <FIELD id="fieldQtyRef" replaceCharacters="fo" format="euroInform">qtyRef</FIELD>
+    <FIELD id="fieldQtyRef" format="amountInform">qtyRef</FIELD>
     <FIELD id="fieldQtyRef" replaceCharacters="fo" boolean="font-weight='bold' font-size='10pt'" withId="fieldLEVEL0">elementLevel</FIELD>
     <FIELD id="fieldQtyRef" replaceCharacters="fo" boolean="space-after='8pt' space-before.optimum='6pt'" withId="fieldLEVEL0">elementLevel</FIELD>
     <FIELD id="fieldQtyRef" replaceCharacters="fo" boolean="space-after='6pt' font-size='10pt'" withId="fieldLEVEL1">elementLevel</FIELD>

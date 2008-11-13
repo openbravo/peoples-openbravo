@@ -27,8 +27,8 @@
 	<fo:page-sequence master-reference="first">
 		<fo:static-content flow-name="xsl-region-before">
 			<fo:table>
-				<fo:table-column column-width="15cm"/>
-				<fo:table-column column-width="3cm"/>
+				<fo:table-column column-width="14.5cm"/>
+				<fo:table-column column-width="3.5cm"/>
 				<fo:table-body>
 					<fo:table-row>
 						<fo:table-cell border-bottom-width="0.5pt" border-bottom-style="solid" number-columns-spanned="2">
