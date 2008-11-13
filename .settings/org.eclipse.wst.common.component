@@ -8,6 +8,7 @@
 <wb-resource deploy-path="/WEB-INF/classes" source-path="/build/javasqlc/src"/>
 <wb-resource deploy-path="/WEB-INF/classes" source-path="/src-gen"/>
 <wb-resource deploy-path="/WEB-INF/classes" source-path="/src-test"/>
+<wb-resource deploy-path="/WEB-INF/classes" source-path="/config"/>
 <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/OpenbravoCore/OpenbravoCore">
 <dependency-type>uses</dependency-type>
 </dependent-module>
