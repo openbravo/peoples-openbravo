@@ -88,17 +88,19 @@ var baseDirectory = "../../../../../web/";
       try {
         if (xmlreq.responseText) {
           strText = xmlreq.responseText;
+
           elements = strText.split("|");
           document.getElementById('notifications').innerHTML=elements[0];
           for (var i=1;i<elements.length;i++) {
-            el = document.getElementById("icon2_"+elements[i]);
-            if (el!=null) {
-              el.className="Tree_Icon_Update";
+            updates = elements[i].split(",");
+            icon = document.getElementById("icon2_"+updates[0]);
+            link = document.getElementById("link_"+updates[0]);
+            if (icon!=null) {
+              icon.className="Tree_Icon_Update";
             }
-            el = document.getElementById("link_"+elements[i]);
-            if (el!=null) {
-              el.innerHTML = "Update available"; //TODO: set proper language  
-              el.setAttribute("onclick", "gt_getUpdateDescription('"+elements[i]+"');");
+            if (link!=null && updates!=null && updates.length>1 && updates[1]=="U") {
+              link.innerHTML = "Update available"; //TODO: set proper language  
+              link.setAttribute("onclick", "gt_getUpdateDescription('"+elements[i]+"');");
             }
             
           }

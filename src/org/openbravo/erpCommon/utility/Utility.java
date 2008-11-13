@@ -1360,6 +1360,19 @@ public class Utility {
   }
   
   /**
+   * Transforms a String[] into an ArrayList
+   * 
+   * @param list
+   * @return
+   */
+  public static ArrayList<String> stringToArrayList(String[] list) {
+    ArrayList<String> rt = new ArrayList<String>();
+    if (list == null) return rt;
+    for (int i=0; i<list.length; i++) rt.add(list[i]);
+    return rt;
+  }
+  
+  /**
    * Returns the ISO code plus the symbol of the given currency
    * in the form (ISO-SYM), e.g., (USD-$)
    * 

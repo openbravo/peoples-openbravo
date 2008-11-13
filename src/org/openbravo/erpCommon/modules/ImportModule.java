@@ -833,9 +833,9 @@ public class ImportModule {
    * @param vars
    * @return
    */
-  public static String[] scanForUpdates(ConnectionProvider conn, VariablesSecureApp vars){
+  public static HashMap<String, String> scanForUpdates(ConnectionProvider conn, VariablesSecureApp vars){
     try {
-      ArrayList<String> rt=new ArrayList<String>();
+      HashMap<String, String> updateModules=new HashMap<String ,String>();
       String user = vars==null?"0":vars.getUser();
       ImportModuleData.insertLog(conn, user, "", "", "", "Scanning For Updates", "S");
       WebServiceImplServiceLocator loc;
@@ -847,38 +847,57 @@ public class ImportModule {
         HashMap<String, String> currentlyInstalledModules = getInstalledModules(conn);
         updates =  ws.moduleScanForUpdates(currentlyInstalledModules); 
       } catch (Exception e) {
+        //do nothing just log the error
         e.printStackTrace();
         try {
           ImportModuleData.insertLog(conn, user, "", "", "",  "Scan for updates: Couldn't contact with webservice server", "E");
         } catch(ServletException ex) {ex.printStackTrace();}
-        return new String[0];
+        return updateModules; //return empty hashmap
       }
       
-
       if (updates != null && updates.length>0) {
-        
         for (int i=0; i<updates.length; i++) {
           if(!ImportModuleData.existsVersion(conn, updates[i].getVersionNo())) {
             ImportModuleData.updateNewVersionAvailable(conn, updates[i].getVersionNo(), updates[i].getModuleVersionID(), updates[i].getModuleID());
             ImportModuleData.insertLog(conn, user, updates[i].getModuleID(), updates[i].getModuleVersionID(), updates[i].getName(), 
                                       "Found new version "+updates[i].getVersionNo()+" for module "+updates[i].getName(), "S");
-            rt.add(updates[i].getModuleID());
+            updateModules.put(updates[i].getModuleID(), "U");
           }
         }
+        addParentUpdates(updateModules, conn);
       }
       try {
-        ImportModuleData.insertLog(conn, (vars==null?"0":vars.getUser()), "", "", "",  "Total: found "+rt.size()+" updates", "S");
+        ImportModuleData.insertLog(conn, (vars==null?"0":vars.getUser()), "", "", "",  "Total: found "+updateModules.size()+" updates", "S");
       } catch(ServletException ex) {ex.printStackTrace();}
-      String[] rt1 = new String[rt.size()];
-      rt.toArray(rt1);
-      return rt1;
+      return updateModules;
     } catch (Exception e) {
       e.printStackTrace();
       try {
         ImportModuleData.insertLog(conn, (vars==null?"0":vars.getUser()), "", "", "",  "Scan for updates: Error: "+e.toString(), "E");
       } catch(ServletException ex) {ex.printStackTrace();}
-      return new String[0];
+      return new HashMap<String,String>();
     }
+  }
+  
+  private static void addParentUpdates(HashMap<String, String> updates, ConnectionProvider conn) {
+    final HashMap<String, String> iniUpdates = (HashMap<String, String>) updates.clone(); 
+    for (String node: iniUpdates.keySet()) {
+      addParentNode(node, updates, iniUpdates, conn);
+    }
+  }
+  
+  private static void addParentNode(String node, HashMap<String, String> updates, HashMap<String, String> iniUpdates, ConnectionProvider conn){
+    String parentId;
+    try {
+      parentId = ImportModuleData.getParentNode(conn, node);
+    } catch (ServletException e) {
+      //do nothing just stop adding elements
+      e.printStackTrace();
+      return;
+    }
+    if (parentId == null || parentId.equals("")) return;
+    if (updates.get(parentId)==null && iniUpdates.get(parentId)==null) updates.put(parentId, "P");
+    addParentNode(parentId, updates, iniUpdates, conn);
   }
   
   /**
@@ -945,7 +964,7 @@ public class ImportModule {
     SimpleModule[] rt = new SimpleModule[2];
 
     rt[0] = new SimpleModule();
-    rt[0].setModuleID("2");
+    rt[0].setModuleID("E5FEF9F515D24E1FA3E8CC6A99DD82CE");
     rt[0].setName("test");
     rt[0].setModuleVersionID("45");
     rt[0].setVersionNo("1.5");

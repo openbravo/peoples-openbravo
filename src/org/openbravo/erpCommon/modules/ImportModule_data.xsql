@@ -143,4 +143,14 @@
       </Sql>
       <Parameter name="moduleId"/>
    </SqlMethod>
+   
+   <SqlMethod name="getParentNode" type="preparedStatement" return="string">
+     <Sql>
+       SELECT AD_MODULE_ID
+         FROM AD_MODULE_DEPENDENCY
+        WHERE AD_DEPENDENT_MODULE_ID = ?
+          AND ISINCLUDED = 'Y'
+     </Sql>
+     <Parameter name="moduleId"/>
+   </SqlMethod>
 </SqlClass>

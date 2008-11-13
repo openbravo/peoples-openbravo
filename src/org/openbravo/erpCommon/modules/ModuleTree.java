@@ -152,15 +152,44 @@ public class ModuleTree extends GenericTree {
     setIcons(data);
   }
   
+  /**
+   * Set the icons (module type) and subicons (update available) for each node
+   * 
+   * @param modules
+   */
   private void setIcons(FieldProvider[] modules){
     if (modules==null || modules.length==0) return;
     for (int i=0;i<modules.length;i++){
       if (modules[i].getField("type").equals("M")) FieldProviderFactory.setField(modules[i], "icon", "Tree_Icon_Module");
       if (modules[i].getField("type").equals("P")) FieldProviderFactory.setField(modules[i], "icon", "Tree_Icon_Pack");
       if (modules[i].getField("type").equals("T")) FieldProviderFactory.setField(modules[i], "icon", "Tree_Icon_Template");
-      if (modules[i].getField("updateAvailable")!=null && !modules[i].getField("updateAvailable").equals("")) FieldProviderFactory.setField(modules[i], "icon2", "Tree_Icon_Update");
+      
+      boolean updateAvailable = modules[i].getField("updateAvailable")!=null && !modules[i].getField("updateAvailable").equals("");
+      boolean updateAvailableInChildNode = !updateAvailable && hasChildUpdate(modules[i].getField("nodeId"));
+      
+      if (updateAvailable || updateAvailableInChildNode) FieldProviderFactory.setField(modules[i], "icon2", "Tree_Icon_Update");
     }
   }
   
+  /**
+   * Returns true in case one of the descendant of the current node has an update available
+   * 
+   * @param node
+   * @return
+   */
+  private boolean hasChildUpdate(String node){
+    try {
+      ModuleTreeData data[] = ModuleTreeData.selectSubTree(conn, "", node);
+      if (data == null || data.length ==0) return false;
+      for (int i=0; i<data.length; i++){
+        if (data[i].updateAvailable!=null && !data[i].updateAvailable.equals("")) return true;
+        if (hasChildUpdate(data[i].nodeId)) return true;
+      }
+      return false;
+    } catch (Exception e) {
+      e.printStackTrace();
+      return false;
+    }
+  }
 
 }

@@ -35,6 +35,8 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.openbravo.services.webservice.ModuleDependency;
 import org.openbravo.services.webservice.WebServiceImpl;
@@ -803,10 +805,10 @@ public class ModuleManagement extends HttpSecureAppServlet {
   void printScan(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: ajaxreponse");
     
-    String[] updates = ImportModule.scanForUpdates(this, vars);
+    HashMap<String, String> updates= ImportModule.scanForUpdates(this, vars);
     String up = "";
-    for (int i=0; i<updates.length; i++)
-      up += updates[i]+"|";
+    for (String node: updates.keySet()) 
+      up += node+","+updates.get(node)+"|";
     
     String notifications = getNotificationsHTML(vars.getLanguage());
     if (notifications.equals("")) notifications=Utility.messageBD(this, "NoUpdatesAvailable", vars.getLanguage());
@@ -817,5 +819,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
     out.println(up);
     out.close();
   }
+
 }
 
