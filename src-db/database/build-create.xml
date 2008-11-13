@@ -35,7 +35,6 @@ create.database: creates the database from scratch.
   <path id="runtime-classpath-create">
     <fileset dir="./lib">
       <include name="**/*.jar" />
-      <exclude name="**/dbsourcemanager.jar" />
     </fileset>
     <pathelement path="${build}" />
     <fileset dir="${base.lib}">
