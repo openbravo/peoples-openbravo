@@ -349,20 +349,20 @@ public class OBContext implements OBNotSingleton {
 	    Check.isNotNull(getRole(), "Role may not be null");
 	    setUserLevel(getRole().getUserLevel());
 
-	    if (orgId != null) {
+	    if (false && orgId != null) {
 		final Organization o = getOne(Organization.class,
 			"select r from " + Organization.class.getName()
 				+ " r where " + " r."
 				+ Organization.PROPERTY_ID + "='" + orgId + "'");
 		setCurrentOrganisation(o);
-	    } else if (getUser().getDefaultAdOrg() != null
+	    } else if (false && getUser().getDefaultAdOrg() != null
 		    && getUser().getDefaultAdOrg().isActive()) {
 		setCurrentOrganisation(getUser().getDefaultAdOrg());
 	    } else {
 		final RoleOrganization roa = getOne(RoleOrganization.class,
 			"select roa from " + RoleOrganization.class.getName()
 				+ " roa where roa."
-				+ RoleOrganization.PROPERTY_ORGANIZATION + "."
+				+ RoleOrganization.PROPERTY_ROLE + "."
 				+ Organization.PROPERTY_ID + "='"
 				+ getRole().getId() + "' and roa."
 				+ RoleOrganization.PROPERTY_ISACTIVE
@@ -371,7 +371,7 @@ public class OBContext implements OBNotSingleton {
 				+ Organization.PROPERTY_ISACTIVE
 				+ "='Y' order by roa."
 				+ RoleOrganization.PROPERTY_ORGANIZATION + "."
-				+ Organization.PROPERTY_ID + " desc");
+				+ Organization.PROPERTY_ID + " desc", false);
 		Hibernate.initialize(roa.getOrganization());
 		setCurrentOrganisation(roa.getOrganization());
 
