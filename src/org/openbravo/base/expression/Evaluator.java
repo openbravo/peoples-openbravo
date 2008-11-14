@@ -16,14 +16,13 @@
 package org.openbravo.base.expression;
 
 import org.apache.log4j.Logger;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Scriptable;
 import org.openbravo.base.model.BaseOBObjectDef;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.util.Check;
-
-import sun.org.mozilla.javascript.internal.Context;
-import sun.org.mozilla.javascript.internal.Scriptable;
 
 /**
  * Evaluates expressions, the expression language supported by this class is
