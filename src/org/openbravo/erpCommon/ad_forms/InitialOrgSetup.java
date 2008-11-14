@@ -233,7 +233,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
       String strIsTransactionAllowed = InitialOrgSetupData.isTransactionAllowed(this, strOrgType);
       if(!strIsLE.equals("Y") && strIsTransactionAllowed.equals("Y")){
         if (InitialOrgSetupData.verifyIsLE(this, strParentOrg).equals("N")){
-          m_info.append("Parent organization not correct").append(SALTO_LINEA);
+          m_info.append("ParentOrganizationNotCorrect").append(SALTO_LINEA);
           strError = Utility.messageBD(this, "Parent organization not correct", vars.getLanguage());
           isOK = false;
           releaseRollbackConnection(conn);
@@ -806,7 +806,7 @@ getAcct(conn, data, "A_DEPRECIATION_ACCT"),getAcct(conn, data, "A_ACCUMDEPRECIAT
         m_info.append(err);
         return false;
       }
-      InitialOrgSetupData.insertOrgAcctSchema(conn, this, AD_Client_ID, strOrganization, vars.getUser(), C_AcctSchema_ID);
+      InitialOrgSetupData.insertOrgAcctSchema(conn, this, AD_Client_ID, AD_Org_ID, vars.getUser(), C_AcctSchema_ID);
       releaseCommitConnection(conn);
     } catch (Exception ex) {
       try {
