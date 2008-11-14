@@ -44,16 +44,19 @@ public class DalLayerInitializer implements OBSingleton {
     private boolean initialized = false;
 
     public void initialize() {
+        if (initialized) {
+            return;
+        }
 	log.info("Initializing in-memory model...");
 	try {
 	    ModelProvider.getInstance().getModel();
-	} catch (Exception e) {
+	} catch (final Exception e) {
 	    e.printStackTrace(System.err);
 	    throw new OBException(e);
 	}
 
 	log.debug("Registering entity classes in the OBFactory");
-	for (Entity e : ModelProvider.getInstance().getModel()) {
+	for (final Entity e : ModelProvider.getInstance().getModel()) {
 	    OBProvider.getInstance().register(e.getMappingClass(),
 		    e.getMappingClass(), false);
 	    OBProvider.getInstance().register(e.getName(), e.getMappingClass(),

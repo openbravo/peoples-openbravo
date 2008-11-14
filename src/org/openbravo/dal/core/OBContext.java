@@ -349,13 +349,13 @@ public class OBContext implements OBNotSingleton {
 	    Check.isNotNull(getRole(), "Role may not be null");
 	    setUserLevel(getRole().getUserLevel());
 
-	    if (false && orgId != null) {
+	    if (orgId != null) {
 		final Organization o = getOne(Organization.class,
 			"select r from " + Organization.class.getName()
 				+ " r where " + " r."
 				+ Organization.PROPERTY_ID + "='" + orgId + "'");
 		setCurrentOrganisation(o);
-	    } else if (false && getUser().getDefaultAdOrg() != null
+	    } else if (getUser().getDefaultAdOrg() != null
 		    && getUser().getDefaultAdOrg().isActive()) {
 		setCurrentOrganisation(getUser().getDefaultAdOrg());
 	    } else {
