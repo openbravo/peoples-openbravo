@@ -20,6 +20,7 @@ package org.openbravo.erpCommon.ad_process;
 
 
 import org.openbravo.erpCommon.ad_actionButton.*;
+import org.openbravo.erpCommon.ad_reports.GeneralAccountingReportsData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.*;
 
@@ -51,6 +52,7 @@ public class CashBankOperations extends HttpSecureAppServlet {
     if (vars.commandIn("DEFAULT")) {
       printPage(response, vars);
     } else if (vars.commandIn("SAVE")) {
+      String strOrgTrx = vars.getStringParameter("inpadOrgId");
       String strCashFrom = vars.getStringParameter("inpCCashFromID");
       String strCashTo = vars.getStringParameter("inpCCashToID");
       String strBankFrom = vars.getStringParameter("inpCBankAccountFromID");
@@ -60,68 +62,68 @@ public class CashBankOperations extends HttpSecureAppServlet {
       String strAmount = vars.getStringParameter("inpAmount");
       String strMovementDate = vars.getStringParameter("inpmovementdate");
       String strDescription = vars.getStringParameter("inpdescription");
-      OBError myMessage = process(vars, strCashFrom, strCashTo, strBankFrom, strBankTo, strPaymentRuleFrom, strPaymentRuleTo, strAmount,strMovementDate, strDescription);
+      OBError myMessage = process(vars, strCashFrom, strCashTo, strBankFrom, strBankTo, strPaymentRuleFrom, strPaymentRuleTo, strAmount,strMovementDate, strDescription, strOrgTrx);
       vars.setMessage("CashBankOperations", myMessage);
       printPage(response, vars);
     } else pageErrorPopUp(response);
   }
 
-  OBError process(VariablesSecureApp vars, String strCashFrom, String strCashTo, String strBankFrom, String strBankTo, String strPaymentRuleFrom, String strPaymentRuleTo, String strAmount, String strMovementDate, String strDescription){
+  OBError process(VariablesSecureApp vars, String strCashFrom, String strCashTo, String strBankFrom, String strBankTo, String strPaymentRuleFrom, String strPaymentRuleTo, String strAmount, String strMovementDate, String strDescription, String strOrgTrx){
     if (log4j.isDebugEnabled()) log4j.debug("Save: CashBankOperations");
     Connection con = null;
      OBError myMessage = null;
      String strSettlementDocumentNo="";
     try {
       con = getTransactionConnection();
-      String strBPartner = CashBankOperationsData.select(this, vars.getOrg());
+      String strBPartner = CashBankOperationsData.select(this, strOrgTrx);
       String strCashCurrency = CashBankOperationsData.selectCashCurrency(this, strCashFrom.equals("")?strCashTo:strCashFrom);
       String strBankCurrency = CashBankOperationsData.selectBankCurrency(this, strBankFrom.equals("")?strBankTo:strBankFrom);
       String strSettlement = SequenceIdData.getUUID();
       String strDoctypeId = CashBankOperationsData.selectSettlementDoctypeId(this);
       strSettlementDocumentNo = Utility.getDocumentNo(this, vars, "CashBankOperations", "C_Settlement", "", strDoctypeId, false, true);
       if (strCashFrom.equals("") && strBankTo.equals("")){ //bank -> cash
-        CashBankOperationsData.insertSettlement(con,this, strSettlement, vars.getClient(), vars.getOrg(), vars.getUser(), strSettlementDocumentNo, strMovementDate, strDoctypeId, strCashCurrency);
+        CashBankOperationsData.insertSettlement(con,this, strSettlement, vars.getClient(), strOrgTrx, vars.getUser(), strSettlementDocumentNo, strMovementDate, strDoctypeId, strCashCurrency);
         String strDebtPaymentId = SequenceIdData.getUUID();
         
-        CashBankOperationsData.insertDebtpayment(con,this, strDebtPaymentId, vars.getClient(), vars.getOrg(), vars.getUser(),
+        CashBankOperationsData.insertDebtpayment(con,this, strDebtPaymentId, vars.getClient(), strOrgTrx, vars.getUser(),
                                                  "Y",strSettlement, strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage()) + Utility.messageBD(this, "Cash", vars.getLanguage()) + CashBankOperationsData.selectCashBook(this,strCashTo), strBPartner, strCashCurrency, "","", strCashTo, strPaymentRuleTo, strAmount, strMovementDate, "");
-        insertCash(vars, strCashTo, strAmount, strMovementDate, strCashCurrency,strDescription, strDebtPaymentId, con);
+        insertCash(vars, strCashTo, strAmount, strMovementDate, strCashCurrency,strDescription, strDebtPaymentId, strOrgTrx, con);
         
         strDebtPaymentId = SequenceIdData.getUUID();
-        CashBankOperationsData.insertDebtpayment(con,this, strDebtPaymentId, vars.getClient(), vars.getOrg(), vars.getUser(), 
+        CashBankOperationsData.insertDebtpayment(con,this, strDebtPaymentId, vars.getClient(), strOrgTrx, vars.getUser(), 
         "N",strSettlement, strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage()) + CashBankOperationsData.selectBankAccount(this,strBankFrom, vars.getLanguage()), strBPartner, strBankCurrency, "",strBankFrom, "", strPaymentRuleTo, strAmount, strMovementDate, "");
         CashBankOperationsData.updateSettlement(con,this, strSettlement);
       }else if (strCashTo.equals("") && strBankFrom.equals("")){ //cash -> bank
-        CashBankOperationsData.insertSettlement(con,this, strSettlement, vars.getClient(), vars.getOrg(), vars.getUser(), strSettlementDocumentNo, strMovementDate, strDoctypeId, strBankCurrency);
+        CashBankOperationsData.insertSettlement(con,this, strSettlement, vars.getClient(), strOrgTrx, vars.getUser(), strSettlementDocumentNo, strMovementDate, strDoctypeId, strBankCurrency);
         String strDebtPaymentId = SequenceIdData.getUUID();
         
-        CashBankOperationsData.insertDebtpayment(con,this, strDebtPaymentId, vars.getClient(), vars.getOrg(), vars.getUser(),"N",strSettlement, strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage()) + Utility.messageBD(this, "Cash", vars.getLanguage()) + CashBankOperationsData.selectCashBook(this,strCashFrom), strBPartner, strCashCurrency, "","", strCashFrom, strPaymentRuleFrom, strAmount, strMovementDate, "");
+        CashBankOperationsData.insertDebtpayment(con,this, strDebtPaymentId, vars.getClient(), strOrgTrx, vars.getUser(),"N",strSettlement, strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage()) + Utility.messageBD(this, "Cash", vars.getLanguage()) + CashBankOperationsData.selectCashBook(this,strCashFrom), strBPartner, strCashCurrency, "","", strCashFrom, strPaymentRuleFrom, strAmount, strMovementDate, "");
         
-        insertCash(vars, strCashFrom, negate(strAmount), strMovementDate, strCashCurrency,strDescription,strDebtPaymentId, con);
+        insertCash(vars, strCashFrom, negate(strAmount), strMovementDate, strCashCurrency,strDescription,strDebtPaymentId, strOrgTrx, con);
         strDebtPaymentId = SequenceIdData.getUUID();
-        CashBankOperationsData.insertDebtpayment(con,this, strDebtPaymentId, vars.getClient(), vars.getOrg(), vars.getUser(), 
+        CashBankOperationsData.insertDebtpayment(con,this, strDebtPaymentId, vars.getClient(), strOrgTrx, vars.getUser(), 
         "Y",strSettlement, strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage()) + CashBankOperationsData.selectBankAccount(this,strBankTo, vars.getLanguage()), strBPartner, strBankCurrency, "",strBankTo, "", strPaymentRuleTo, strAmount, strMovementDate, "");
         CashBankOperationsData.updateSettlement(con,this, strSettlement);
       }else if (strBankTo.equals("") && strBankFrom.equals("")){ // cash -> cash
-        CashBankOperationsData.insertSettlement(con,this, strSettlement, vars.getClient(), vars.getOrg(), vars.getUser(), strSettlementDocumentNo, strMovementDate, strDoctypeId, strCashCurrency);
+        CashBankOperationsData.insertSettlement(con,this, strSettlement, vars.getClient(), strOrgTrx, vars.getUser(), strSettlementDocumentNo, strMovementDate, strDoctypeId, strCashCurrency);
         String strDebtPaymentId = SequenceIdData.getUUID();
         
         
-        CashBankOperationsData.insertDebtpayment(con,this, strDebtPaymentId, vars.getClient(), vars.getOrg(), vars.getUser(),"N",strSettlement, strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage()) + Utility.messageBD(this, "Cash", vars.getLanguage()) + CashBankOperationsData.selectCashBook(this,strCashFrom), strBPartner, strCashCurrency, "","", strCashFrom, strPaymentRuleFrom, strAmount, strMovementDate, "");
-        insertCash(vars, strCashFrom, negate(strAmount), strMovementDate, strCashCurrency,strDescription, strDebtPaymentId, con);
+        CashBankOperationsData.insertDebtpayment(con,this, strDebtPaymentId, vars.getClient(), strOrgTrx, vars.getUser(),"N",strSettlement, strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage()) + Utility.messageBD(this, "Cash", vars.getLanguage()) + CashBankOperationsData.selectCashBook(this,strCashFrom), strBPartner, strCashCurrency, "","", strCashFrom, strPaymentRuleFrom, strAmount, strMovementDate, "");
+        insertCash(vars, strCashFrom, negate(strAmount), strMovementDate, strCashCurrency,strDescription, strDebtPaymentId, strOrgTrx, con);
         
         strDebtPaymentId = SequenceIdData.getUUID();
         
-        CashBankOperationsData.insertDebtpayment(con,this, strDebtPaymentId, vars.getClient(), vars.getOrg(), vars.getUser(),"Y",strSettlement, strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage()) + Utility.messageBD(this, "Cash", vars.getLanguage()) + CashBankOperationsData.selectCashBook(this,strCashTo), strBPartner, strCashCurrency, "", "",strCashTo, strPaymentRuleTo, strAmount, strMovementDate, "");
-        insertCash(vars, strCashTo, strAmount, strMovementDate, strCashCurrency,strDescription, strDebtPaymentId, con);
+        CashBankOperationsData.insertDebtpayment(con,this, strDebtPaymentId, vars.getClient(), strOrgTrx, vars.getUser(),"Y",strSettlement, strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage()) + Utility.messageBD(this, "Cash", vars.getLanguage()) + CashBankOperationsData.selectCashBook(this,strCashTo), strBPartner, strCashCurrency, "", "",strCashTo, strPaymentRuleTo, strAmount, strMovementDate, "");
+        insertCash(vars, strCashTo, strAmount, strMovementDate, strCashCurrency,strDescription, strDebtPaymentId, strOrgTrx, con);
         CashBankOperationsData.updateSettlement(con,this, strSettlement);
       }else if (strCashTo.equals("") && strCashFrom.equals("")){ //bank -> bank
-        CashBankOperationsData.insertSettlement(con,this, strSettlement, vars.getClient(), vars.getOrg(), vars.getUser(), strSettlementDocumentNo, strMovementDate, strDoctypeId, strBankCurrency);
+        CashBankOperationsData.insertSettlement(con,this, strSettlement, vars.getClient(), strOrgTrx, vars.getUser(), strSettlementDocumentNo, strMovementDate, strDoctypeId, strBankCurrency);
         String strDebtPaymentId = SequenceIdData.getUUID();
-        CashBankOperationsData.insertDebtpayment(con,this, strDebtPaymentId, vars.getClient(), vars.getOrg(), vars.getUser(), 
+        CashBankOperationsData.insertDebtpayment(con,this, strDebtPaymentId, vars.getClient(), strOrgTrx, vars.getUser(), 
         "N",strSettlement, strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage()) + CashBankOperationsData.selectBankAccount(this,strBankFrom, vars.getLanguage()), strBPartner, strBankCurrency, "", strBankFrom,"", strPaymentRuleFrom, strAmount, strMovementDate, "");
         strDebtPaymentId = SequenceIdData.getUUID();
-        CashBankOperationsData.insertDebtpayment(con,this, strDebtPaymentId, vars.getClient(), vars.getOrg(), vars.getUser(), 
+        CashBankOperationsData.insertDebtpayment(con,this, strDebtPaymentId, vars.getClient(), strOrgTrx, vars.getUser(), 
         "Y",strSettlement, strDescription + " - " + Utility.messageBD(this, "DebtPaymentFor", vars.getLanguage()) + CashBankOperationsData.selectBankAccount(this,strBankTo, vars.getLanguage()), strBPartner, strBankCurrency, "", strBankTo,"", strPaymentRuleTo, strAmount, strMovementDate, "");
         CashBankOperationsData.updateSettlement(con,this, strSettlement);
       }
@@ -146,14 +148,14 @@ public class CashBankOperations extends HttpSecureAppServlet {
     return amt.toString();
   }
 
-  String insertCash (VariablesSecureApp vars, String strCashBook, String strAmount, String strDate, String strCurrency, String strDescription, String strDPId, Connection con) throws ServletException{
+  String insertCash (VariablesSecureApp vars, String strCashBook, String strAmount, String strDate, String strCurrency, String strDescription, String strDPId, String strOrgTrx, Connection con) throws ServletException{
     String strCash = CashBankOperationsData.selectOpenCash(this, strCashBook, strDate);
     if (strCash.equals("")){
       strCash =SequenceIdData.getUUID();
-      CashBankOperationsData.insertCash(con,this, strCash, vars.getClient(), vars.getOrg(), vars.getUser(), strCashBook, strDate + " - " + CashBankOperationsData.selectCurrency(this, strCurrency), strDate);
+      CashBankOperationsData.insertCash(con,this, strCash, vars.getClient(), strOrgTrx, vars.getUser(), strCashBook, strDate + " - " + CashBankOperationsData.selectCurrency(this, strCurrency), strDate);
     }
     String strCashLine = SequenceIdData.getUUID();
-    CashBankOperationsData.insertCashLine(con,this, strCashLine, vars.getClient(), vars.getOrg(),vars.getUser(),strCash, strDPId, CashBankOperationsData.selectNextCashLine(this,strCash),strDescription,
+    CashBankOperationsData.insertCashLine(con,this, strCashLine, vars.getClient(), strOrgTrx,vars.getUser(),strCash, strDPId, CashBankOperationsData.selectNextCashLine(this,strCash),strDescription,
     strAmount,strCurrency);
     return strCashLine;
   }
@@ -183,7 +185,20 @@ public class CashBankOperations extends HttpSecureAppServlet {
       xmlDocument.setParameter("description", strDescription);
       xmlDocument.setParameter("help", strHelp);
       xmlDocument.setParameter("datedisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("datesaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      xmlDocument.setParameter("datesaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
+      
+      xmlDocument.setParameter("arrayBank", arrayDobleEntrada("arrBank", CashBankOperationsData.selectBankDouble(this,Utility.getContext(this, vars, "#User_Org", "CashBankOperations"), Utility.getContext(this, vars, "#User_Client", "CashBankOperations"))));
+      xmlDocument.setParameter("arrayCash", arrayDobleEntrada("arrCash", CashBankOperationsData.selectCashDouble(this,vars.getLanguage(), Utility.getContext(this, vars, "#User_Org", "CashBankOperations"), Utility.getContext(this, vars, "#User_Client", "CashBankOperations"))));
+      
+      try {
+        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "AD_Org_ID", "", "AD_Org is transactions allowed", Utility.getContext(this, vars, "#User_Org", "CashBankOperations"), Utility.getContext(this, vars, "#User_Client", "CashBankOperations"), 0);
+        Utility.fillSQLParameters(this, vars, null, comboTableData, "CreateAccountingReport", "");
+        xmlDocument.setData("reportAD_ORG", "liststructure", comboTableData.select(false));
+        comboTableData = null;
+      } catch (Exception ex) {
+        throw new ServletException(ex);
+      }
+/*
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_BankAccount_ID", "", "", Utility.getContext(this, vars, "#User_Org", "CashBankOperations"), Utility.getContext(this, vars, "#User_Client", "CashBankOperations"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "CashBankOperations", "");
@@ -223,7 +238,7 @@ public class CashBankOperations extends HttpSecureAppServlet {
         throw new ServletException(ex);
       }
 
-
+*/
       try {
         ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "", "All_Payment Rule", "", Utility.getContext(this, vars, "#User_Org", "CashBankOperations"), Utility.getContext(this, vars, "#User_Client", "CashBankOperations"), 0);
         Utility.fillSQLParameters(this, vars, null, comboTableData, "CashBankOperations", "");

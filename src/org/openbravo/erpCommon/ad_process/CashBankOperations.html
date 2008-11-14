@@ -102,6 +102,18 @@ function validate() {
 
 function onloadFunctions() {
 }
+function refreshCombos() {
+  var cmbOrg = document.frmMain.inpadOrgId;  
+  var cmbBankFrom = document.frmMain.inpCBankAccountFromID;  
+  var cmbBankTo = document.frmMain.inpCBankAccountToID;
+  changeComboData(cmbBankFrom, arrBank, cmbOrg.options[cmbOrg.selectedIndex].value, true);
+  changeComboData(cmbBankTo, arrBank, cmbOrg.options[cmbOrg.selectedIndex].value, true);
+  var cmbCashFrom = document.frmMain.inpCCashFromID;  
+  var cmbCashTo = document.frmMain.inpCCashToID;
+  changeComboData(cmbCashFrom, arrCash, cmbOrg.options[cmbOrg.selectedIndex].value, true);
+  changeComboData(cmbCashTo, arrCash, cmbOrg.options[cmbOrg.selectedIndex].value, true);
+  return true;
+}
 </SCRIPT>
 	<SCRIPT language="JavaScript" type="text/javascript">
 	function onLoadDo(){
@@ -123,12 +135,19 @@ function onloadFunctions() {
 		xx
 
 		setWindowElementFocus('firstElement');
+		refreshCombos();
 	}
 
 	function onResizeDo(){
 		resizeArea();
 	}
 	</SCRIPT>
+<script language="JavaScript" type="text/javascript" id="paramArrayBank">
+var arrBank=null;
+</script>
+<script language="JavaScript" type="text/javascript" id="paramArrayCash">
+var arrCash=null;
+</script>
 </HEAD>
 <BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();"  id="body">
 <FORM id="form" method="POST" action="CashBankOperations.html" name="frmMain">
@@ -270,6 +289,22 @@ function onloadFunctions() {
       </table>
     </td>
   </tr>
+
+
+
+	<tr id="selEliminarOrg">
+		<td class="TitleCell"><span class="LabelText">Organization&nbsp;</span></td>
+		<td class="Combo_ContentCell" colspan="2">
+			<select class="ComboKey Combo_TwoCells_width" name="inpadOrgId" id="inpadOrgId" onchange="refreshCombos();">
+				<option value=""></option>
+				<DIV id="reportAD_ORG"></DIV>
+			</select>
+		</td>
+	</tr>
+
+
+
+
   <TR>
           <TD colspan="6">
             <TABLE class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
@@ -303,7 +338,7 @@ function onloadFunctions() {
     <tr>
       <TD class="TitleCell"><SPAN class="LabelText">Payment rule</SPAN>&nbsp;</TD>
       <TD class="Combo_ContentCell"> 
-        <SELECT class="Combo Combo_OneCell_width" name="inppaymentruleFrom" id="inppaymentruleFrom">
+        <SELECT class="ComboKey Combo_OneCell_width" name="inppaymentruleFrom" id="inppaymentruleFrom">
           <OPTION value=""></OPTION><DIV id="reportPaymentRuleFrom"></DIV>
         </SELECT></TD>
      <td/><td/>
@@ -341,7 +376,7 @@ function onloadFunctions() {
    </tr>
    <tr>
       <TD class="TitleCell"><SPAN class="LabelText">Payment rule</SPAN>&nbsp;</TD>
-      <TD class="Combo_ContentCell"> <SELECT class="Combo Combo_OneCell_width" name="inppaymentruleTo" id="inppaymentruleTo">
+      <TD class="Combo_ContentCell"> <SELECT class="ComboKey Combo_OneCell_width" name="inppaymentruleTo" id="inppaymentruleTo">
           <OPTION value=""></OPTION><DIV id="reportPaymentRuleTo"></DIV>
         </SELECT></TD>
         <td/><td/>
@@ -369,7 +404,7 @@ function onloadFunctions() {
     
     <TR> 
       <TD class="TitleCell"><SPAN class="LabelText">Amount</SPAN>&nbsp;</TD>
-      <TD class="TextBox_ContentCell"> <INPUT class="dojoValidateValid TextBox_OneCell_width" type="text" name="inpAmount" value=""></INPUT>
+      <TD class="TextBox_ContentCell"> <INPUT class="dojoValidateValid required TextBox_OneCell_width" type="text" name="inpAmount" value=""></INPUT>
       </TD>
       <TD class="TitleCell"><SPAN class="LabelText">Movement date</SPAN></TD>
       <TD class="TextBox_btn_ContentCell">
@@ -377,7 +412,7 @@ function onloadFunctions() {
               <TABLE border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
                 <TR>
                   <TD class="TextBox_ContentCell">
-                    <INPUT dojotype="openbravo:DateTextbox" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width"  type="text" name="inpmovementdate" id="inpmovementdate" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><SCRIPT>djConfig.searchIds.push("inpmovementdate");</SCRIPT>
+                    <INPUT dojotype="openbravo:DateTextbox" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width required"  type="text" name="inpmovementdate" id="inpmovementdate" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><SCRIPT>djConfig.searchIds.push("inpmovementdate");</SCRIPT>
                   </TD>
                   <TD class="FieldButton_ContentCell">
                     <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpmovementdate', document.frmMain.inpmovementdate.value, false);return false;" >

@@ -32,6 +32,9 @@
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
   
+  <PARAMETER id="paramArrayBank" name="arrayBank"/>
+  <PARAMETER id="paramArrayCash" name="arrayCash"/>
+
 	<PARAMETER id="paramToolBar" name="toolbar" default=""/>
 	<PARAMETER id="fieldCalendar" name="calendar" attribute="src" replace="es" default="en"/>
 	<PARAMETER id="paramLanguage" name="language" default=""/>
@@ -40,6 +43,7 @@
 	<PARAMETER id="paramDirectory" name="directory" default=""/>
 	<PARAMETER id="processDescription" name="description" replaceCharacters="htmlHelp" default=""/>
 	<PARAMETER id="processHelp" name="help" replaceCharacters="htmlHelp" default=""/>
+<!-- 
 	<SUBREPORT id="reportC_BankAccountFrom_ID" name="reportC_BankAccountFrom_ID" report="org/openbravo/erpCommon/reference/List">
 		<ARGUMENT name="parameterListSelected"/>
 	</SUBREPORT>
@@ -52,11 +56,15 @@
 	<SUBREPORT id="reportC_CashTo_ID" name="reportC_CashTo_ID" report="org/openbravo/erpCommon/reference/List">
 		<ARGUMENT name="parameterListSelected"/>
 	</SUBREPORT>
+-->
 	<SUBREPORT id="reportPaymentRuleFrom" name="reportPaymentRuleFrom" report="org/openbravo/erpCommon/reference/List">
 		<ARGUMENT name="parameterListSelected"/>
 	</SUBREPORT>
 	<SUBREPORT id="reportPaymentRuleTo" name="reportPaymentRuleTo" report="org/openbravo/erpCommon/reference/List">
 		<ARGUMENT name="parameterListSelected"/>
 	</SUBREPORT>
+    <SUBREPORT id="reportAD_ORG" name="reportAD_ORG" report="/org/openbravo/erpCommon/reference/List">
+      <ARGUMENT name="paramterListSelected" widthId="paramOrgId"/>
+    </SUBREPORT>
 	<DISCARD id="discard"/>
 </REPORT>

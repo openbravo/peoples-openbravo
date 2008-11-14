@@ -18,11 +18,58 @@
  ************************************************************************
 -->
 
-
-
-
-
 <SqlClass name="CashBankOperationsData" package="org.openbravo.erpCommon.ad_process">
+   <SqlMethod name="selectDummy" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+      <![CDATA[
+		SELECT '' AS PADRE, 
+			   '' AS ID, 
+			   '' AS NAME, 
+			   '' AS C_BPARTNER_ID, 
+			   '' AS iso_code, 
+			   '' AS C_CASH_ID, 
+			   '' AS C_DOCTYPE_ID, 
+			   '' AS c_currency_id
+		FROM DUAL
+      ]]>
+      </Sql>
+   </SqlMethod>
+   <SqlMethod name="selectBankDouble" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+      <![CDATA[
+		SELECT P.AD_ORG_ID AS PADRE, C.C_BANKACCOUNT_ID AS ID, C.DISPLAYEDACCOUNT AS NAME
+		FROM AD_ORG O, AD_ORG P, C_BANKACCOUNT C
+		WHERE O.AD_ORG_ID = C.AD_ORG_ID
+		  AND AD_ISORGINCLUDED(C.AD_ORG_ID,P.AD_ORG_ID,O.AD_CLIENT_ID) <> -1
+		  AND (P.AD_CLIENT_ID = O.AD_CLIENT_ID OR P.AD_ORG_ID = 0)
+		  AND O.AD_ORG_ID IN ('1')
+		  AND O.AD_CLIENT_ID IN ('2')
+		ORDER BY PADRE, NAME
+      ]]>
+      </Sql>
+      <Parameter name="adOrgId" optional="true" type="replace" after="AND O.AD_ORG_ID IN (" text="'1'"/>
+      <Parameter name="adClientId" optional="true" type="replace" after="AND O.AD_CLIENT_ID IN (" text="'2'"/>
+   </SqlMethod>
+   <SqlMethod name="selectCashDouble" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+      <![CDATA[
+		SELECT P.AD_ORG_ID AS PADRE, C.C_CASHBOOK_ID AS ID, AD_COLUMN_IDENTIFIER(TO_CHAR('C_CASHBOOK'),TO_CHAR(C.C_CASHBOOK_ID),TO_CHAR(?)) AS NAME
+		FROM AD_ORG O, AD_ORG P, C_CASHBOOK C
+		WHERE O.AD_ORG_ID = C.AD_ORG_ID
+		  AND AD_ISORGINCLUDED(C.AD_ORG_ID,P.AD_ORG_ID,O.AD_CLIENT_ID) <> -1
+		  AND (P.AD_CLIENT_ID = O.AD_CLIENT_ID OR P.AD_ORG_ID = 0)
+		  AND O.AD_ORG_ID IN ('1')
+		  AND O.AD_CLIENT_ID IN ('2')
+		ORDER BY PADRE, NAME
+      ]]>
+      </Sql>
+      <Parameter name="adLanguage"/>
+      <Parameter name="adOrgId" optional="true" type="replace" after="AND O.AD_ORG_ID IN (" text="'1'"/>
+      <Parameter name="adClientId" optional="true" type="replace" after="AND O.AD_CLIENT_ID IN (" text="'2'"/>
+   </SqlMethod>
   <SqlMethod name="select" type="preparedStatement" return="String">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -131,13 +178,13 @@
            ISVALID, C_BANKSTATEMENTLINE_ID, CHANGESETTLEMENTCANCEL, CANCEL_PROCESSED, 
            GENERATE_PROCESSED,STATUS_INITIAL)
       VALUES 
-          (TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', 
-           now(), TO_NUMBER(?), now(), TO_NUMBER(?),
-           ?, NULL, TO_NUMBER(?), ?,
-           NULL, TO_NUMBER(?),TO_NUMBER(?), TO_NUMBER(?),
-           TO_NUMBER(?), TO_NUMBER(?), ?,'N',
-           TO_NUMBER(?), 0,TO_DATE(?),'N',
-           'Y', TO_NUMBER(?),'Y','N',
+          (?, ?, ?, 'Y', 
+           now(), ?, now(), ?,
+           ?, NULL, ?, ?,
+           NULL, ?, ?, ?,
+           ?, ?, ?,'N',
+           ?, 0,TO_DATE(?),'N',
+           'Y', ?,'Y','N',
            'Y','DE')
       ]]>
     </Sql>
@@ -196,10 +243,10 @@
              Amount,        CashType,     C_Currency_ID, DiscountAmt, 
              WriteOffAmt,   IsGenerated)
        VALUES
-            (TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), 'Y', 
-             now(),        TO_NUMBER(?), now(), TO_NUMBER(?), 
-             TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), ?, 
-             TO_NUMBER(?), 'P',  TO_NUMBER(?), 0, 
+            (?, ?, ?, 'Y', 
+             now(),        ?, now(), ?, 
+             ?, ?, ?, ?, 
+             ?, 'P',  ?, 0, 
              0, 'Y')
       ]]>
     </Sql>
