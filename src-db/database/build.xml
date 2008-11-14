@@ -171,7 +171,7 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
 		       dirFilter="*/src-db/database/model"
 		       datadir="${base.modules}/"
 		       dataFilter="*/src-db/database/sourcedata"/>  
-	      <antcall target="database.postcreate.${bbdd.rdbms}" />
+	      <antcall target="database.postupdate.${bbdd.rdbms}" />
     </target>
 
     <target name="update.database">
@@ -192,7 +192,7 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
 		       dataFilter="*/src-db/database/sourcedata"
 			userId="0"
 	  		propertiesFile="${base.config}/Openbravo.properties"/>  
-	      <antcall target="database.postcreate.${bbdd.rdbms}" />
+	      <antcall target="database.postupdate.${bbdd.rdbms}" />
     </target>
 
     <target name="update.database.mod">
@@ -214,7 +214,7 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
                        module="${module}"
 		       userId="0"
 	  	       propertiesFile="${base.config}/Openbravo.properties"/>  
-	      <antcall target="database.postcreate.${bbdd.rdbms}" />
+	      <antcall target="database.postupdate.${bbdd.rdbms}" />
     </target>
   <target name="clean.database.ORACLE">
     <sql driver="${bbdd.driver}"
@@ -477,7 +477,7 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
                 input="src-db/database/sourcedata"
                 verbosity="${bbdd.verbosity}" />
       <antcall target="database.postimport.${bbdd.rdbms}" />
-      <antcall target="database.postcreate.${bbdd.rdbms}" />
+      <antcall target="database.postupdate.${bbdd.rdbms}" />
   </target>
 	
 
@@ -508,7 +508,7 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
                 	  input="src-db/database/sampledata"
 	                  verbosity="${bbdd.verbosity}" />
 	      <antcall target="database.postimport.${bbdd.rdbms}" />
-	      <antcall target="database.postcreate.${bbdd.rdbms}" />
+	      <antcall target="database.postupdate.${bbdd.rdbms}" />
 	  </target>
 
 	  <target name="export.database.sampledata">
@@ -536,7 +536,7 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
                		  input="src-db/database/masterdata"
 	                  verbosity="${bbdd.verbosity}" />
 	      <antcall target="database.postimport.${bbdd.rdbms}" />
-	      <antcall target="database.postcreate.${bbdd.rdbms}" />
+	      <antcall target="database.postupdate.${bbdd.rdbms}" />
 	  </target>
 
 
@@ -612,6 +612,54 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
     </sql>
   </target>
 
+
+  <target name="database.postupdate.ORACLE">
+    <sql driver="${bbdd.driver}"
+         url="${bbdd.owner.url}"
+         userid="${bbdd.user}"
+         password="${bbdd.password}"
+         onerror="continue"
+         autocommit="true">
+        <classpath>
+            <fileset dir="${base.lib}">
+                <include name="**/*.jar">
+                </include>
+            </fileset>
+        </classpath>
+        <transaction>
+          DELETE FROM AD_SYSTEM;
+          INSERT INTO AD_SYSTEM (AD_SYSTEM_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME, TAD_RECORDRANGE, TAD_RECORDRANGE_INFO, TAD_TRANSACTIONALRANGE, TAD_THEME)
+          VALUES ('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '?', 20, 100, 1, 'Default');
+          CALL AD_UPDATE_SEQUENCE();
+          CALL AD_UPDATE_ACCESS();
+          UPDATE AD_MODULE SET ISINDEVELOPMENT='N', ISDEFAULT='N', SEQNO=NULL, STATUS='P', UPDATE_AVAILABLE=NULL, ISREGISTERED='N' WHERE STATUS IS NULL OR STATUS='I';
+        </transaction>
+    </sql>
+  </target>
+
+  <target name="database.postupdate.POSTGRE">
+    <sql driver="${bbdd.driver}"
+         url="${bbdd.owner.url}"
+         userid="${bbdd.user}"
+         password="${bbdd.password}"
+         onerror="continue"
+         autocommit="true">
+        <classpath>
+            <fileset dir="${base.lib}">
+                <include name="**/*.jar">
+                </include>
+            </fileset>
+        </classpath>
+        <transaction>
+          DELETE FROM AD_SYSTEM;
+          INSERT INTO AD_SYSTEM (AD_SYSTEM_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME, TAD_RECORDRANGE, TAD_RECORDRANGE_INFO, TAD_TRANSACTIONALRANGE, TAD_THEME)
+          VALUES ('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '?', 20, 100, 1, 'Default');
+          SELECT AD_UPDATE_SEQUENCE();
+          SELECT AD_UPDATE_ACCESS();
+          UPDATE AD_MODULE SET ISINDEVELOPMENT='N', ISDEFAULT='N', SEQNO=NULL, STATUS='P', UPDATE_AVAILABLE=NULL, ISREGISTERED='N' WHERE STATUS IS NULL OR STATUS='I';
+        </transaction>
+    </sql>
+  </target>
 
     <target name="update.customized.database">
         <altercustomizeddatabasedata driver="${bbdd.driver}"
