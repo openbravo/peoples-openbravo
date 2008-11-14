@@ -13,6 +13,9 @@ package org.openbravo.test.expression;
 
 import java.util.List;
 
+import javax.script.ScriptEngineFactory;
+import javax.script.ScriptEngineManager;
+
 import org.openbravo.base.expression.Evaluator;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Table;
@@ -33,10 +36,17 @@ public class EvaluationTest extends BaseTest {
     public void testEvaluation() {
 	setErrorOccured(true);
 	setUserContext("0");
+
+	// as a test print scripting language names
+	final ScriptEngineManager manager = new ScriptEngineManager();
+        for (final ScriptEngineFactory sef : manager.getEngineFactories()) {
+            System.err.println(sef.getEngineName());
+        }
+
 	final List<Table> tables = OBDal.getInstance().createCriteria(
 		Table.class).list();
 	boolean found = false;
-	for (Table t : tables) {
+	for (final Table t : tables) {
 	    final String script = Table.PROPERTY_CLIENT + "."
 		    + Client.PROPERTY_ID + " == '0' && "
 		    + Table.PROPERTY_TABLENAME + "== 'AD_Client' && "
