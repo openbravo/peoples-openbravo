@@ -99,7 +99,8 @@
       function finalize() {
         processing = false;
         displayLogicElement('buttonOK',true);
-        document.getElementById('buttonOK').setAttribute('onclick','closeThisPage();return false;');
+        document.getElementById('buttonOK').setAttribute('onclick','window.opener.submitCommandForm("DEFAULT", false, null, "ModuleManagement.html", "_self", null, true);closeThisPage();return false;');
+        
         setTimeout("getError()",100);
       }
       
