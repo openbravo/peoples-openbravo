@@ -1,6 +1,0 @@
-David Baz. October 31st, 2008.
-
-commons-io-1.4.jar, commons-lang-2.4.jar, commons-math-1.2.jar and google-collections.jar dependencies of smartsprites-alpha-2.1.jar
-
-quartz-1.6.2.jar is used for process scheduling.
-jettison-1.0.1.jar and xstream-1.3.jar are used for JSON support.
