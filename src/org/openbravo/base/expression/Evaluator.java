@@ -16,14 +16,14 @@
 package org.openbravo.base.expression;
 
 import org.apache.log4j.Logger;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.ContextFactory;
-import org.mozilla.javascript.Scriptable;
 import org.openbravo.base.model.BaseOBObjectDef;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.util.Check;
+
+import sun.org.mozilla.javascript.internal.Context;
+import sun.org.mozilla.javascript.internal.Scriptable;
 
 /**
  * Evaluates expressions, the expression language supported by this class is
@@ -61,11 +61,13 @@ public class Evaluator implements OBSingleton {
      */
     public Boolean evaluateBoolean(BaseOBObjectDef contextBob, String script) {
 	// TODO: check if the compiled javascript can be cached
+        // TODO: now this uses the jdk 1.6 Rhino implementation directly. 
+        // it should be changed to ScriptEngineManager/ScriptEngine object
 
 	log.debug("Evaluating script for " + contextBob + " script: " + script);
 
 	try {
-	    final Context cx = ContextFactory.getGlobal().enterContext();
+	    final Context cx = Context.enter();
 	    final Scriptable scope = cx.initStandardObjects();
 	    final OBScriptableObject obScope = new OBScriptableObject();
 	    obScope.setDelegate(scope);
