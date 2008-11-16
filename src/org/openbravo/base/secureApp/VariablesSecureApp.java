@@ -155,7 +155,11 @@ public class VariablesSecureApp extends VariablesBase {
    * @return String with the unique name of the theme.
    */
   public String getTheme() {
-    return theme;
+    if (!theme.equals("")) {
+      return theme;
+    } else {
+      return "ltr/Default";
+    }
   }
 
   /**
