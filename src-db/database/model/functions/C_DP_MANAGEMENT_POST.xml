@@ -316,7 +316,7 @@
                   FROM C_PeriodControl
                   WHERE C_PeriodControl.C_Period_ID=C_Period.C_Period_ID 
                   AND DocBaseType=(SELECT DocBaseType FROM C_DocType WHERE C_DocType_ID=v_DocType_ID)
-                  AND AD_Org_ID=v_AD_Org_ID
+                  AND AD_Org_ID=AD_ORG_GETCALENDAROWNER (v_AD_Org_ID)
                   AND PeriodStatus='O'
                   );
       IF (v_available_period<>1) THEN

@@ -243,7 +243,7 @@
                   FROM C_PeriodControl
                   WHERE C_PeriodControl.C_Period_ID=C_Period.C_Period_ID 
                   AND DocBaseType='CMB'
-                  AND AD_Org_ID=v_AD_Org_ID
+                  AND AD_Org_ID=AD_ORG_GETCALENDAROWNER (v_AD_Org_ID)
                   AND PeriodStatus='O'
                   );
       

@@ -54,7 +54,7 @@
 		FROM ad_org_acctschema, c_acctschema 
 		WHERE ad_org_acctschema.c_acctschema_id = c_acctschema.c_acctschema_id
 		 and ad_org_acctschema.AD_Client_ID=?
-		 and ad_isorgincluded(ad_org_acctschema.AD_org_ID,?,ad_org_acctschema.AD_Client_ID) <> -1
+		 and ad_isorgincluded(?, ad_org_acctschema.AD_org_ID, ad_org_acctschema.AD_Client_ID) <> -1
 		 and c_acctschema.isactive = 'Y'
 		 and ad_org_acctschema.isactive = 'Y'
       ]]>		 

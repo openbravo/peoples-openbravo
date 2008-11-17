@@ -57,4 +57,16 @@
     </Sql>
     <Parameter name="adTableId"/>
   </SqlMethod>
+  <SqlMethod name="selectDocOrg" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT AD_Org_ID FROM FACT_ACCT
+        WHERE FACT_ACCT_ID = ?
+      ]]>
+    </Sql>
+    <Parameter name="tablename" optional="false" type="replace" after="FROM " text="FACT_ACCT"/>
+    <Parameter name="tablename" optional="false" type="replace" after="WHERE " text="FACT_ACCT"/>
+    <Parameter name="keyId"/>
+  </SqlMethod>
 </SqlClass>

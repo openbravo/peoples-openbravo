@@ -110,13 +110,18 @@ public class Posted extends HttpSecureAppServlet {
   }
 
 
-  OBError processButton(VariablesSecureApp vars, String strKey, String strTableId) {
+  OBError processButton(VariablesSecureApp vars, String strKey, String strTableId) throws ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("ProcessButton strKey: "+strKey+"strTableId: "+strTableId );
+    String strOrg;
     Connection con = null;
     OBError myMessage = null;
+    
+    strOrg=PostedData.selectDocOrg(this, PostedData.selectTableName(this, strTableId), strKey);   
+    if (strOrg==null) strOrg="0";
+
     try {
       con = getTransactionConnection();
-      AcctServer acct = AcctServer.get(strTableId, vars.getClient(), "0", this.myPool);
+      AcctServer acct = AcctServer.get(strTableId, vars.getClient(), strOrg, this.myPool);
       if (acct==null) {
     	  releaseRollbackConnection(con);
           myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");          

@@ -144,7 +144,7 @@
                   FROM C_PeriodControl
                   WHERE C_PeriodControl.C_Period_ID=C_Period.C_Period_ID 
                   AND DocBaseType='MMM'
-                  AND AD_Org_ID=v_Org_ID
+                  AND AD_Org_ID=AD_ORG_GETCALENDAROWNER (v_Org_ID)
                   AND PeriodStatus='O'
                   );
       
