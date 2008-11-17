@@ -83,6 +83,13 @@
         setTimeout('resizeAreaCreateFrom()',100);
         return false;
       }
+      
+      if ((action=="SAVE") && (frm.inpStatusTo.value == null || frm.inpStatusTo.value == "")) {
+  		setWindowElementFocus(frm.inpStatusTo);
+  		showJSMessage(7);
+  		return false;
+  	  }
+  	  
         return true;
     }
 
@@ -544,7 +551,7 @@
             <tr>
               <td class="TitleCell"><span class="LabelText">Status</span></td>
               <td class="Combo_ContentCell">
-                <select name="inpStatusTo" id="inpStatusTo" class="Combo Combo_OneCell_width">
+                <select class="Combo Combo_OneCell_width required" required="true" name="inpStatusTo" id="inpStatusTo">
                 <option value=""></option>
                 <div id="reportStatusTo"></div></select>
               </td>
@@ -610,7 +617,7 @@
               <td></td>
               <td class="Button_RightAlign_ContentCell">
                 <div>
-                  <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Accept'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitThisPage('SAVE');return false;" id="buttonOK">
+                  <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Accept'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitThisPage('SAVE', true);return false;" id="buttonOK">
                   <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='OK';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                     <tr>
                       <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Accept" title="Accept" src="../../../../../web/images/blank.gif" border=0/></td>
