@@ -23,8 +23,9 @@ dojo.declare("dijit.form.MultiSelect",dijit.form._FormWidget,{
 	
 	templateString: "<select multiple='true' name='${name}' dojoAttachPoint='containerNode,focusNode' dojoAttachEvent='onchange: _onChange'></select>",
 
-	attributeMap: dojo.mixin(dojo.clone(dijit.form._FormWidget.prototype.attributeMap),
-		{size:"focusNode"}),
+	attributeMap: dojo.delegate(dijit.form._FormWidget.prototype.attributeMap, {
+		size: "focusNode"
+	}),
 
 	reset: function(){
 		// TODO: once we inherit from FormValueWidget this won't be needed
@@ -42,14 +43,6 @@ dojo.declare("dijit.form.MultiSelect",dijit.form._FormWidget,{
 		
 		select.getSelected().forEach(function(n){
 			this.containerNode.appendChild(n);
-			if(dojo.isIE){ // tweak the node to force IE to refresh (aka _layoutHack on FF2)
-				var s = dojo.getComputedStyle(n);
-				if(s){
-					var filter = s.filter;
-					n.style.filter = "alpha(opacity=99)";
-					n.style.filter = filter;
-				}
-			}
 			// scroll to bottom to see item
 			// cannot use scrollIntoView since <option> tags don't support all attributes
 			// does not work on IE due to a bug where <select> always shows scrollTop = 0

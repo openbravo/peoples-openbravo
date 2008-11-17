@@ -114,7 +114,7 @@ djConfig = {
 	//		some browsers (e.g. IE 6). The variable `dojo.baseUrl` is assigned
 	//		either the value of `djConfig.baseUrl` if one is provided or the
 	//		auto-detected root if not. Other modules are located relative to
-	//		this path.
+	//		this path. The path should end in a slash.
 	baseUrl: undefined,
 	// modulePaths: Object
 	//		A map of module names to paths relative to `dojo.baseUrl`. The
@@ -142,7 +142,20 @@ djConfig = {
 	// require: Array
 	//		An array of module names to be loaded immediately after dojo.js has been included
 	//		in a page. 
-	require: []
+	require: [],
+	// defaultDuration: Array
+	//		Default duration, in milliseconds, for wipe and fade animations within dijits.
+	//		Assigned to dijit.defaultDuration.
+	defaultDuration: 200,
+	// dojoBlankHtmlUrl: String
+	//		Used by some modules to configure an empty iframe. Used by dojo.io.iframe and
+	//		dojo.back, and dijit popup support in IE where an iframe is needed to make sure native
+	//		controls do not bleed through the popups. Normally this configuration variable 
+	//		does not need to be set, except when using cross-domain/CDN Dojo builds.
+	//		Save dojo/resources/blank.html to your domain and set `djConfig.dojoBlankHtmlUrl` 
+	//		to the path on your domain your copy of blank.html.
+	dojoBlankHtmlUrl: undefined
+	
 }
 =====*/
 
@@ -155,6 +168,7 @@ djConfig = {
 	}else{
 		if(!this["console"]){
 			this.console = {
+				fromDojo: true
 			};
 		}
 
@@ -243,7 +257,7 @@ dojo.global = {
 =====*/
 	dojo.locale = d.config.locale;
 	
-	var rev = "$Rev: 15541 $".match(/\d+/);
+	var rev = "$Rev: 15719 $".match(/\d+/);
 
 	dojo.version = {
 		// summary: 
@@ -4426,6 +4440,14 @@ if(dojo.isIE || dojo.isOpera){
 		//		Accesses styles on a node. If 2 arguments are
 		//		passed, acts as a getter. If 3 arguments are passed, acts
 		//		as a setter.
+		//	description:
+		//		Getting the style value uses the computed style for the node, so the value
+		//		will be a calculated value, not just the immediate node.style value.
+		//		Also when getting values, use specific style names,
+		//		like "borderBottomWidth" instead of "border" since compound values like
+		//		"border" are not necessarily reflected as expected.
+		//		If you want to get node dimensions, use dojo.marginBox() or
+		//		dojo.contentBox(). 
 		//	node:
 		//		id or reference to node to get/set style for
 		//	style:
@@ -5075,7 +5097,7 @@ if(dojo.isIE || dojo.isOpera){
 				// get/setAttribute works in all as long use same value for both get/set
 				return ieLT8 ? "htmlFor" : "for";
 			case "class" :
-				return d.isIE ? "className" : "class";
+				return ieLT8 ? "className" : "class";
 			default:
 				return name;
 		}
@@ -7072,8 +7094,8 @@ if(dojo){
 		//			|	* `[foo$='bar']` attribute end match
 		//			|	* `[foo*='bar']` attribute substring match
 		//			* `:first-child`, `:last-child` positional selectors
-		//			* `:empty` content emtpy selector
-		//			* `:empty` content emtpy selector
+		//			* `:empty` content empty selector
+		//			* `:empty` content empty selector
 		//			* `:checked` pseudo selector
 		//			* `:nth-child(n)`, `:nth-child(2n+1)` style positional calculations
 		//			* `:nth-child(even)`, `:nth-child(odd)` positional selectors
@@ -7083,14 +7105,14 @@ if(dojo){
 		//		`dojo.query()`, including compound selectors ("," delimited).
 		//		Very complex and useful searches can be constructed with this
 		//		palette of selectors and when combined with functions for
-		//		maniplation presented by dojo.NodeList, many types of DOM
+		//		manipulation presented by dojo.NodeList, many types of DOM
 		//		manipulation operations become very straightforward.
 		//		
 		//		Unsupported Selectors:
 		//		----------------------
 		//
 		//		While dojo.query handles many CSS3 selectors, some fall outside of
-		//		what's resaonable for a programmatic node querying engine to
+		//		what's reasonable for a programmatic node querying engine to
 		//		handle. Currently unsupported selectors include:
 		//		
 		//			* namespace-differentiated selectors of any form
@@ -8866,15 +8888,20 @@ dojo.parser = new function(){
 		return new Function(preamble+script.innerHTML+suffix);
 	}
 
-	this.instantiate = function(/* Array */nodes){
+	this.instantiate = function(/* Array */nodes, /* Object? */mixin){
 		// summary:
 		//		Takes array of nodes, and turns them into class instances and
 		//		potentially calls a layout method to allow them to connect with
 		//		any children		
+		// mixin: Object
+		//		An object that will be mixed in with each node in the array.
+		//		Values in the mixin will override values in the node, if they
+		//		exist.
 		var thelist = [];
+		mixin = mixin||{};
 		d.forEach(nodes, function(node){
 			if(!node){ return; }
-			var type = node.getAttribute(dtName);
+			var type = dtName in mixin?mixin[dtName]:node.getAttribute(dtName);
 			if(!type || !type.length){ return; }
 			var clsInfo = getClassInfo(type),
 				clazz = clsInfo.cls,
@@ -8885,19 +8912,23 @@ dojo.parser = new function(){
 			var params = {},
 				attributes = node.attributes;
 			for(var name in clsInfo.params){
-				var item = attributes.getNamedItem(name);
+				var item = name in mixin?{value:mixin[name],specified:true}:attributes.getNamedItem(name);
 				if(!item || (!item.specified && (!dojo.isIE || name.toLowerCase()!="value"))){ continue; }
 				var value = item.value;
 				// Deal with IE quirks for 'class' and 'style'
 				switch(name){
 				case "class":
-					value = node.className;
+					value = "className" in mixin?mixin.className:node.className;
 					break;
 				case "style":
-					value = node.style && node.style.cssText; // FIXME: Opera?
+					value = "style" in mixin?mixin.style:(node.style && node.style.cssText); // FIXME: Opera?
 				}
 				var _type = clsInfo.params[name];
-				params[name] = str2obj(value, _type);
+				if(typeof value == "string"){
+					params[name] = str2obj(value, _type);
+				}else{
+					params[name] = value;
+				}
 			}
 
 			// Process <script type="dojo/*"> script tags
@@ -9296,10 +9327,10 @@ dojo.mixin(dijit,
 			return;
 		}
 
-		if(node.nodeName && node.nodeName.toLowerCase() == "body"){
-			// Ignore focus events on main document <body>.  This is specifically here
-			// so that clicking the up/down arrows of a spinner (which don't get focus)
-			// won't cause that widget to blur.  (IIRC, IE issue)
+		if(node.nodeType == 9){
+			// Ignore focus events on the document itself.  This is here so that
+			// (for example) clicking the up/down arrows of a spinner
+			//  (which don't get focus) won't cause that widget to blur. (FF issue)
 			return;
 		}
 
@@ -9697,7 +9728,7 @@ dijit.getViewport = function(){
 	var w = 0, h = 0;
 	var de = _document.documentElement;
 	var dew = de.clientWidth, deh = de.clientHeight;
-	if(dojo.isMozilla){
+	if(dojo.isMozilla || dojo.isSafari){
 		// mozilla
 		// _window.innerHeight includes the height taken by the scroll bar
 		// clientHeight is ideal but has DTD issues:
@@ -9722,7 +9753,7 @@ dijit.getViewport = function(){
 		}
 		w = (maxw > _window.innerWidth) ? minw : maxw;
 		h = (maxh > _window.innerHeight) ? minh : maxh;
-	}else if(!dojo.isOpera && _window.innerWidth){
+	}else if(!dojo.isOpera &&  _window.innerWidth){
 		//in opera9, dojo.body().clientWidth should be used, instead
 		//of window.innerWidth/document.documentElement.clientWidth
 		//so we have to check whether it is opera
@@ -9739,7 +9770,6 @@ dijit.getViewport = function(){
 
 	// get scroll position
 	var scroll = dojo._docScroll();
-
 	return { w: w, h: h, l: scroll.x, t: scroll.y };	//	object
 };
 
@@ -10348,8 +10378,13 @@ dijit.scrollIntoView = function(/* DomNode */node){
 	function addPseudoAttrs(element){
 		var parent = element.parentNode;
 		var offsetParent = element.offsetParent;
-		if(offsetParent == null){ // process only 1 of BODY/HTML
-			element = scrollRoot;
+		if(offsetParent == null ||
+			(element.style && element.style.position == "fixed")){ // position:fixed has no real offsetParent
+			if(element == body || element == html){ // process only 1 of BODY/HTML
+				element = scrollRoot;
+			}else{ // position:fixed elements can have an offsetparent = null on IE7
+				scrollRoot = element; // position:fixed is the last node that needs to be viewed
+			}
 			offsetParent = html;
 			parent = null;
 		}
@@ -11357,11 +11392,11 @@ dojo.declare("dijit._Widget", null, {
 		//		If true, the preserveDom attribute is passed to all descendant
 		//		widget's .destroy() method. Not for use with _Templated
 		//		widgets.
-		
-		// TODO: should I destroy in the reverse order, to go bottom up?
-		dojo.forEach(this.getDescendants(), function(widget){ 
-			if(widget.destroy){
-				widget.destroy(preserveDom);
+
+		// get all direct descendants and destroy them recursively
+		dojo.forEach(this.getDescendants(true), function(widget){ 
+			if(widget.destroyRecursive){
+				widget.destroyRecursive(preserveDom);
 			}
 		});
 	},
@@ -11564,13 +11599,11 @@ dojo.declare("dijit._Widget", null, {
 		return '[Widget ' + this.declaredClass + ', ' + (this.id || 'NO ID') + ']'; // String
 	},
 
-	getDescendants: function(){
+	getDescendants: function(/*Boolean*/ directOnly, /*DomNode[]?*/ outAry){
 		// summary:
-		//		Returns all the widgets that contained by this, i.e., all widgets underneath this.containerNode.
+		//		Returns all the widgets contained by this, i.e., all widgets underneath this.containerNode.
 		// description:
-		//		This method is designed to *not* return widgets that are, for example,
-		//		used as part of a template, but rather to just return widgets that are defined in the
-		//		original markup as descendants of this widget, for example w/this markup:
+		//		For example w/this markup:
 		//
 		//		|	<div dojoType=myWidget>
 		//		|		<b> hello world </b>
@@ -11581,14 +11614,39 @@ dojo.declare("dijit._Widget", null, {
 		//		|		</div>
 		//		|	</div>
 		//
-		//		getDescendants() will return subwidget, but not anything that's part of the template
-		//		of myWidget.
-
+		//		myWidget.getDescendants() will return subwidget and subwidget2.
+		//
+		//		This method is designed to *not* return widgets that are
+		//		part of a widget's template, but rather to just return widgets that are defined in the
+		//		original markup as descendants of this widget.
+		// directOnly:
+		//		If directOnly is true then won't find nested widgets (subwidget2 in above example)
+		// outAry:
+		//		If specified, put results in here
+		outAry = outAry || [];
 		if(this.containerNode){
-			var list = dojo.query('[widgetId]', this.containerNode);
-			return list.map(dijit.byNode);		// Array
-		}else{
-			return [];
+			this._getDescendantsHelper(directOnly, outAry, this.containerNode);
+		}
+		return outAry;
+	},
+	_getDescendantsHelper: function(/*Boolean*/ directOnly, /* DomNode[] */ outAry, /*DomNode*/ root){
+		// summary:
+		//		Search subtree under root, putting found widgets in outAry
+		// directOnly:
+		//		If false, return widgets nested inside other widgets
+		var list = dojo.isIE ? root.children : root.childNodes, i = 0, node;
+		while(node = list[i++]){
+			if(node.nodeType != 1){ continue; }
+			var widgetId = node.getAttribute("widgetId");
+			if(widgetId){
+				var widget = dijit.byId(widgetId);
+				outAry.push(widget);
+				if(!directOnly){
+					widget.getDescendants(directOnly, outAry);
+				}
+			}else{
+				this._getDescendantsHelper(directOnly, outAry, node);
+			}
 		}
 	},
 
@@ -12726,32 +12784,38 @@ dojo.number._applyPattern = function(/*Number*/value, /*String*/pattern, /*dojo.
 		dojo.number._formatAbsolute(value, numberPattern[0], {decimal: decimal, group: group, places: options.places, round: options.round}));
 }
 
-dojo.number.round = function(/*Number*/value, /*Number*/places, /*Number?*/multiple){
+dojo.number.round = function(/*Number*/value, /*Number?*/places, /*Number?*/multiple){
 	//	summary:
-	//		Rounds the number at the given number of places
+	//		An inexact rounding method for low-precision values to compensate for
+	//		binary floating point artifacts.
+	//	description:
+	//		Rounds the value to the nearest value with the given number of decimal places (.5 up)
+	//		Also rounds up values which are very close to, but under the cut off, likely due to the
+	//		binary floating point representation.  Therefore, the rounding may not be mathematically correct
+	//		for full precision floating point values.
 	//	value:
 	//		the number to round
 	//	places:
-	//		the number of decimal places where rounding takes place
+	//		the number of decimal places where rounding takes place.  Defaults to 0 for whole rounding.
 	//	multiple:
 	//		rounds next place to nearest multiple
-
-	var pieces = String(value).split(".");
-	var length = (pieces[1] && pieces[1].length) || 0;
-	if(length > places){
-		var factor = Math.pow(10, places);
-		if(multiple > 0){factor *= 10/multiple;places++;} //FIXME
-		value = Math.round(value * factor)/factor;
-
-		// truncate to remove any residual floating point values
-		pieces = String(value).split(".");
-		length = (pieces[1] && pieces[1].length) || 0;
-		if(length > places){
-			pieces[1] = pieces[1].substr(0, places);
-			value = Number(pieces.join("."));
-		}
-	}
-	return value; //Number
+	//	example:
+	//		>>> 4.8-(1.1+2.2)
+	//		1.4999999999999996
+	//		>>> Math.round(4.8-(1.1+2.2))
+	//		1
+	//		>>> dojo.number.round(4.8-(1.1+2.2))
+	//		2
+	//		>>> ((4.8-(1.1+2.2))/100)
+	//		0.014999999999999996
+	//		>>> ((4.8-(1.1+2.2))/100).toFixed(2)
+	//		"0.01"
+	//		>>> dojo.number.round((4.8-(1.1+2.2))/100,2)
+	//		0.02
+	var wholeFigs = Math.log(Math.abs(value))/Math.log(10);
+	var factor = 10 / (multiple || 10);
+	var delta = Math.pow(10, -14+wholeFigs);
+	return (factor * (+value+delta)).toFixed(places) / factor; // Number
 }
 
 /*=====
@@ -12945,11 +13009,11 @@ dojo.number._parseInfo = function(/*Object?*/options){
 
 	if(isCurrency){
 		// substitute the currency symbol for the placeholder in the pattern
-		re = re.replace(/(\s*)(\u00a4{1,3})(\s*)/g, function(match, before, target, after){
+		re = re.replace(/([\s\xa0]*)(\u00a4{1,3})([\s\xa0]*)/g, function(match, before, target, after){
 			var prop = ["symbol", "currency", "displayName"][target.length-1];
 			var symbol = dojo.regexp.escapeString(options[prop] || options.currency || "");
-			before = before ? "\\s" : "";
-			after = after ? "\\s" : "";
+			before = before ? "[\\s\\xa0]" : "";
+			after = after ? "[\\s\\xa0]" : "";
 			if(!options.strict){
 				if(before){before += "*";}
 				if(after){after += "*";}
@@ -14724,8 +14788,8 @@ dojo.date.locale.displayPattern = function(/*String*/fixedPattern, /*String?*/lo
 	var fixed = "GyMdkHmsSEDFwWahKzYeugAZvcL",
 		local = dojo.date.locale._getGregorianBundle(locale).patternChars;
 	return dojo.map(fixedPattern, function(c){
-		 var i = dojo.indexOf(fixed, c);
-		 return i < 0 ? c : local.substr(i, 1);
+		 var i = fixed.indexOf(c);
+		 return i < 0 ? c : local.charAt(i);
 	}).join(""); // String
 }
 
@@ -14809,7 +14873,7 @@ dojo.declare("dijit._Templated",
 			// Cache contains a string because we need to do property replacement
 			// do the property replacement
 			return dojo.string.substitute(tmpl, this, function(value, key){
-				if(key.charAt(0) == '!'){ value = _this[key.substr(1)]; }
+				if(key.charAt(0) == '!'){ value = dojo.getObject(key.substr(1), _this); }
 				if(typeof value == "undefined"){ throw new Error(className+" template:"+key); } // a debugging aide
 				if(value == null){ return ""; }
 
@@ -15439,8 +15503,14 @@ dojo.declare("dijit.form._FormWidget", [dijit._Widget, dijit._Templated],
 	// Don't attempt to mixin the 'type', 'name' attributes here programatically -- they must be declared
 	// directly in the template as read by the parser in order to function. IE is known to specifically 
 	// require the 'name' attribute at element creation time.
-	attributeMap: dojo.mixin(dojo.clone(dijit._Widget.prototype.attributeMap),
-		{value:"focusNode", disabled:"focusNode", readOnly:"focusNode", id:"focusNode", tabIndex:"focusNode", alt:"focusNode"}),
+	attributeMap: dojo.delegate(dijit._Widget.prototype.attributeMap, {
+		value: "focusNode", 
+		disabled: "focusNode", 
+		readOnly: "focusNode", 
+		id: "focusNode", 
+		tabIndex: "focusNode", 
+		alt: "focusNode"
+	}),
 
 	_setDisabledAttr: function(/*Boolean*/ value){
 		this.disabled = value;
@@ -15695,8 +15765,7 @@ dojo.declare("dijit.form._FormValueWidget", dijit.form._FormWidget,
 	// so maybe {value: ""} is so the value *doesn't* get copied to focusNode?
 	// Seems like we really want value removed from attributeMap altogether
 	// (although there's no easy way to do that now)
-	attributeMap: dojo.mixin(dojo.clone(dijit.form._FormWidget.prototype.attributeMap),
-		{value:""}),
+	attributeMap: dojo.delegate(dijit.form._FormWidget.prototype.attributeMap, { value: "" }),
 
 	postCreate: function(){
 		if(dojo.isIE || dojo.isSafari){ // IE won't stop the event with keypress and Safari won't send an ESCAPE to keypress at all
@@ -15816,8 +15885,9 @@ dojo.declare(
 		templateString:"<input class=\"dijit dijitReset dijitLeft\" dojoAttachPoint='textbox,focusNode' name=\"${name}\"\n\tdojoAttachEvent='onmouseenter:_onMouse,onmouseleave:_onMouse,onfocus:_onMouse,onblur:_onMouse,onkeypress:_onKeyPress'\n\tautocomplete=\"off\" type=\"${type}\"\n\t/>\n",
 		baseClass: "dijitTextBox",
 
-		attributeMap: dojo.mixin(dojo.clone(dijit.form._FormValueWidget.prototype.attributeMap),
-			{maxLength:"focusNode"}),
+		attributeMap: dojo.delegate(dijit.form._FormValueWidget.prototype.attributeMap, {
+			maxLength: "focusNode" 
+		}),
 
 		_getValueAttr: function(){
 			// summary:
@@ -21591,7 +21661,6 @@ dojo.declare("openbravo.widget.ValidationTextBox.IntegerNumber", [openbravo.widg
 }
 
 	
-dojo.i18n._preloadLocalizations("dojo.nls.dojo", ["he","nl","tr","no","ko","el","en","en-gb","ROOT","zh-cn","hu","es","fi-fi","pt-br","ca","fi","he-il","xx","ru","it","fr","cs","de-de","fr-fr","it-it","es-es","ja","sk","da","sl","pl","de","sv","pt","pt-pt","nl-nl","zh-tw","ko-kr","ar","en-us","zh","th","ja-jp"]);
 
 
 	if(dojo.config.afterOnLoad && dojo.isBrowser){

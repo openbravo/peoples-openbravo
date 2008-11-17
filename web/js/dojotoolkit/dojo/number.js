@@ -123,32 +123,38 @@ dojo.number._applyPattern = function(/*Number*/value, /*String*/pattern, /*dojo.
 		dojo.number._formatAbsolute(value, numberPattern[0], {decimal: decimal, group: group, places: options.places, round: options.round}));
 }
 
-dojo.number.round = function(/*Number*/value, /*Number*/places, /*Number?*/multiple){
+dojo.number.round = function(/*Number*/value, /*Number?*/places, /*Number?*/multiple){
 	//	summary:
-	//		Rounds the number at the given number of places
+	//		An inexact rounding method for low-precision values to compensate for
+	//		binary floating point artifacts.
+	//	description:
+	//		Rounds the value to the nearest value with the given number of decimal places (.5 up)
+	//		Also rounds up values which are very close to, but under the cut off, likely due to the
+	//		binary floating point representation.  Therefore, the rounding may not be mathematically correct
+	//		for full precision floating point values.
 	//	value:
 	//		the number to round
 	//	places:
-	//		the number of decimal places where rounding takes place
+	//		the number of decimal places where rounding takes place.  Defaults to 0 for whole rounding.
 	//	multiple:
 	//		rounds next place to nearest multiple
-
-	var pieces = String(value).split(".");
-	var length = (pieces[1] && pieces[1].length) || 0;
-	if(length > places){
-		var factor = Math.pow(10, places);
-		if(multiple > 0){factor *= 10/multiple;places++;} //FIXME
-		value = Math.round(value * factor)/factor;
-
-		// truncate to remove any residual floating point values
-		pieces = String(value).split(".");
-		length = (pieces[1] && pieces[1].length) || 0;
-		if(length > places){
-			pieces[1] = pieces[1].substr(0, places);
-			value = Number(pieces.join("."));
-		}
-	}
-	return value; //Number
+	//	example:
+	//		>>> 4.8-(1.1+2.2)
+	//		1.4999999999999996
+	//		>>> Math.round(4.8-(1.1+2.2))
+	//		1
+	//		>>> dojo.number.round(4.8-(1.1+2.2))
+	//		2
+	//		>>> ((4.8-(1.1+2.2))/100)
+	//		0.014999999999999996
+	//		>>> ((4.8-(1.1+2.2))/100).toFixed(2)
+	//		"0.01"
+	//		>>> dojo.number.round((4.8-(1.1+2.2))/100,2)
+	//		0.02
+	var wholeFigs = Math.log(Math.abs(value))/Math.log(10);
+	var factor = 10 / (multiple || 10);
+	var delta = Math.pow(10, -14+wholeFigs);
+	return (factor * (+value+delta)).toFixed(places) / factor; // Number
 }
 
 /*=====
@@ -342,11 +348,11 @@ dojo.number._parseInfo = function(/*Object?*/options){
 
 	if(isCurrency){
 		// substitute the currency symbol for the placeholder in the pattern
-		re = re.replace(/(\s*)(\u00a4{1,3})(\s*)/g, function(match, before, target, after){
+		re = re.replace(/([\s\xa0]*)(\u00a4{1,3})([\s\xa0]*)/g, function(match, before, target, after){
 			var prop = ["symbol", "currency", "displayName"][target.length-1];
 			var symbol = dojo.regexp.escapeString(options[prop] || options.currency || "");
-			before = before ? "\\s" : "";
-			after = after ? "\\s" : "";
+			before = before ? "[\\s\\xa0]" : "";
+			after = after ? "[\\s\\xa0]" : "";
 			if(!options.strict){
 				if(before){before += "*";}
 				if(after){after += "*";}

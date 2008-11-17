@@ -147,8 +147,11 @@ dojo.declare(
 		
 		templateString: null,
 		templateString:"<div class=\"dijitDialog\" tabindex=\"-1\" waiRole=\"dialog\" waiState=\"labelledby-${id}_title\">\n\t<div dojoAttachPoint=\"titleBar\" class=\"dijitDialogTitleBar\">\n\t<span dojoAttachPoint=\"titleNode\" class=\"dijitDialogTitle\" id=\"${id}_title\"></span>\n\t<span dojoAttachPoint=\"closeButtonNode\" class=\"dijitDialogCloseIcon\" dojoAttachEvent=\"onclick: onCancel\" title=\"${buttonCancel}\">\n\t\t<span dojoAttachPoint=\"closeText\" class=\"closeText\" title=\"${buttonCancel}\">x</span>\n\t</span>\n\t</div>\n\t\t<div dojoAttachPoint=\"containerNode\" class=\"dijitDialogPaneContent\"></div>\n</div>\n",
-		attributeMap: dojo.mixin(dojo.clone(dijit._Widget.prototype.attributeMap), {
-			title: [{node: "titleNode", type: "innerHTML"}, {node: "titleBar", type: "attribute"}]
+		attributeMap: dojo.delegate(dijit._Widget.prototype.attributeMap, {
+			title: [
+				{ node: "titleNode", type: "innerHTML" }, 
+				{ node: "titleBar", type: "attribute" }
+			]
 		}),
 
 		// open: Boolean
@@ -259,7 +262,15 @@ dojo.declare(
 			this._fadeIn = dojo.fadeIn({
 				node: node,
 				duration: this.duration,
-				onBegin: dojo.hitch(underlay, "show")
+				onBegin: dojo.hitch(underlay, "show"),
+				onEnd:	dojo.hitch(this, function(){
+					if(this.autofocus){
+						// find focusable Items each time dialog is shown since if dialog contains a widget the 
+						// first focusable items can change
+						this._getFocusItems(this.domNode);
+						dijit.focus(this._firstFocusItem);
+					}
+				})
 			 });
 
 			this._fadeOut = dojo.fadeOut({
@@ -401,15 +412,6 @@ dojo.declare(
 			this._fadeIn.play();
 
 			this._savedFocus = dijit.getFocus(this);
-
-			if(this.autofocus){
-				// find focusable Items each time dialog is shown since if dialog contains a widget the 
-				// first focusable items can change
-				this._getFocusItems(this.domNode);
-	
-				// set timeout to allow the browser to render dialog
-				setTimeout(dojo.hitch(dijit,"focus",this._firstFocusItem), 50);
-			}
 		},
 
 		hide: function(){

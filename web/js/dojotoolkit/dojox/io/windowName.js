@@ -63,7 +63,6 @@ dojox.io.windowName = {
 		// |		location = loc;
 		// |	};
 		// |	</script></html>
-		
 		args.url += (args.url.match(/\?/) ? '&' : '?') + "windowname=" + (args.authElement ? "auth" : true); // indicate our desire for window.name communication
 		var authElement = args.authElement;
 		var cleanup = function(result){

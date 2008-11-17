@@ -14,6 +14,7 @@ dojo.require("dijit.layout._LayoutWidget");
 dojo.require("dijit.form.Button");
 dojo.require("dijit.Menu");
 dojo.requireLocalization("dijit", "common", null, "ROOT,th,es,sv,it,nl,el,zh-tw,ko,da,pt-pt,cs,pt,ar,fi,sk,sl,ca,he,tr,hu,fr,zh,ja,pl,ru,de,nb");
+dojo.require("dojo.cookie");
 
 dojo.declare(
 	"dijit.layout.StackContainer",
@@ -35,6 +36,10 @@ dojo.declare(
 	//  if true, change the size of my currently displayed child to match my size
 	doLayout: true,
 
+	// persist: Boolean
+	//	remembers the selected child across sessions
+	persist: false,	// Boolean
+
 	baseClass: "dijitStackContainer",
 
 	_started: false,
@@ -49,7 +54,7 @@ dojo.declare(
 		dijit.setWaiRole(this.containerNode, "tabpanel");
 		this.connect(this.domNode, "onkeypress", this._onKeyPress);
 	},
-	
+
 	startup: function(){
 		if(this._started){ return; }
 
@@ -59,12 +64,16 @@ dojo.declare(
 		dojo.forEach(children, this._setupChild, this);
 
 		// Figure out which child to initially display
-		dojo.some(children, function(child){
-			if(child.selected){
-				this.selectedChildWidget = child;
-			}
-			return child.selected;
-		}, this);
+		if(this.persist){
+			this.selectedChildWidget = dijit.byId(dojo.cookie(this.id + "_selectedChild"));
+		}else{
+			dojo.some(children, function(child){
+				if(child.selected){
+					this.selectedChildWidget = child;
+				}
+				return child.selected;
+			}, this);
+		}
 
 		var selected = this.selectedChildWidget;
 
@@ -159,6 +168,10 @@ dojo.declare(
 			this._transition(page, this.selectedChildWidget);
 			this.selectedChildWidget = page;
 			dojo.publish(this.id+"-selectChild", [page]);
+
+			if(this.persist){
+				dojo.cookie(this.id + "_selectedChild", this.selectedChildWidget.id);
+			}
 		}
 	},
 

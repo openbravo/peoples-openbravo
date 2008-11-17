@@ -133,13 +133,13 @@ dojo.require("dojox.sketch.Anchor");
 		//	draw the shapes
 		this.shape=this.figure.group.createGroup();
 		this.shape.getEventSource().setAttribute("id", this.id);
-		if(this.transform.dx||this.transform.dy){ this.shape.setTransform(this.transform); }
+		//if(this.transform.dx||this.transform.dy){ this.shape.setTransform(this.transform); }
 
 		this.pathShape=this.shape.createPath("M"+this.start.x+","+this.start.y+" Q"+this.control.x+","+this.control.y+" "+this.end.x+","+this.end.y+" l0,0")
-			.setStroke(this.property('stroke'));
+			//.setStroke(this.property('stroke'));
 
-		this.arrowheadGroup=this.shape.createGroup().setTransform({ dx:this.start.x, dy:this.start.y }).applyTransform(tRot);
-		this.arrowhead=this.arrowheadGroup.createPath("M0,0 l20,-5 -3,5 3,5 Z").setFill(this.property('fill'));
+		this.arrowheadGroup=this.shape.createGroup();//.setTransform({ dx:this.start.x, dy:this.start.y }).applyTransform(tRot);
+		this.arrowhead=this.arrowheadGroup.createPath();//"M0,0 l50,-10 -6,10 6,10 Z").setFill(this.property('fill'));
 
 		this.labelShape=this.shape.createText({
 				x:this.textPosition.x, 
@@ -147,9 +147,10 @@ dojo.require("dojox.sketch.Anchor");
 				text:this.property('label'), 
 				align:this.textAlign
 			})
-			.setFont(font)
-			.setFill(this.property('fill'));
+			//.setFont(font)
+			//.setFill(this.property('fill'));
 		this.labelShape.getEventSource().setAttribute('id',this.id+"-labelShape");
+		this.draw();
 	};
 
 	p.destroy=function(){
@@ -174,7 +175,7 @@ dojo.require("dojox.sketch.Anchor");
 
 		this.shape.setTransform(this.transform);
 		this.pathShape.setShape("M"+this.start.x+","+this.start.y+" Q"+this.control.x+","+this.control.y+" "+this.end.x+","+this.end.y+" l0,0")
-			.setStroke(this.property('stroke'));
+			//.setStroke(this.property('stroke'));
 
 		this.arrowheadGroup.setTransform({dx:this.start.x,dy:this.start.y}).applyTransform(tRot);
 		this.arrowhead.setFill(this.property('fill'));
@@ -186,6 +187,17 @@ dojo.require("dojox.sketch.Anchor");
 				align:this.textAlign
 			})
 			.setFill(this.property('fill'));
+		this.zoom();
+	};
+
+	p.zoom=function(pct){
+		pct = pct || this.figure.zoomFactor;
+		if(this._curPct!==pct){
+			this._curPct=pct;
+			var l=pct>1?20:Math.floor(20/pct), w=pct>1?5:Math.floor(5/pct),h=pct>1?3:Math.floor(3/pct);
+			this.arrowhead.setShape("M0,0 l"+l+",-"+w+" -"+h+","+w+" "+h+","+w+" Z");
+		}
+		ta.Annotation.prototype.zoom.call(this,pct);
 	};
 
 	p.getBBox=function(){

@@ -57,6 +57,7 @@ dojo.require("dojox.lang.utils");
 			stroke:        {},	// stroke for an axis
 			majorTick:     {},	// stroke + length for a tick
 			minorTick:     {},	// stroke + length for a tick
+			microTick:     {},	// stroke + length for a tick
 			font:          "",	// font for labels
 			fontColor:     ""	// color for labels as a string
 		},
@@ -226,6 +227,7 @@ dojo.require("dojox.lang.utils");
 				taStroke = "stroke" in this.opt ? this.opt.stroke : ta.stroke,
 				taMajorTick = "majorTick" in this.opt ? this.opt.majorTick : ta.majorTick,
 				taMinorTick = "minorTick" in this.opt ? this.opt.minorTick : ta.minorTick,
+				taMicroTick = "microTick" in this.opt ? this.opt.microTick : ta.minorTick,
 				taFont = "font" in this.opt ? this.opt.font : ta.font,
 				taFontColor = "fontColor" in this.opt ? this.opt.fontColor : ta.fontColor,
 				tickSize = Math.max(taMajorTick.length, taMinorTick.length),
@@ -294,7 +296,7 @@ dojo.require("dojox.lang.utils");
 
 				dx = tickVector.x * taMinorTick.length;
 				dy = tickVector.y * taMinorTick.length;
-				canLabel = c.minMinorStep <= c.minor.tick * c.scale;
+				canLabel = c.minMinorStep <= c.minor.tick * c.bounds.scale;
 				dojo.forEach(t.minor, function(tick){
 					var offset = f(tick.value), elem,
 						x = start.x + axisVector.x * offset,
@@ -312,9 +314,8 @@ dojo.require("dojox.lang.utils");
 						}
 				}, this);
 
-				// use minor ticks for now
-				//dx = tickVector.x * taMicroTick.length;
-				//dy = tickVector.y * taMicroTick.length;
+				dx = tickVector.x * taMicroTick.length;
+				dy = tickVector.y * taMicroTick.length;
 				dojo.forEach(t.micro, function(tick){
 					var offset = f(tick.value), elem,
 						x = start.x + axisVector.x * offset,
@@ -323,7 +324,7 @@ dojo.require("dojox.lang.utils");
 							x1: x, y1: y,
 							x2: x + dx,
 							y2: y + dy
-						}).setStroke(taMinorTick);	// use minor tick for now
+						}).setStroke(taMicroTick);
 				}, this);
 			}catch(e){
 				// squelch

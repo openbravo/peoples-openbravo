@@ -54,13 +54,13 @@ dojox.json.ref = {
 		//		An object, the result of the processing
 		args = args || {};
 		var idAttribute = args.idAttribute || 'id';
-		var prefix = args.idPrefix || '/'; 
+		var prefix = args.idPrefix || ''; 
 		var assignAbsoluteIds = args.assignAbsoluteIds;
 		var index = args.index || {}; // create an index if one doesn't exist
 		var ref,reWalk=[];
 		var pathResolveRegex = /^(.*\/)?(\w+:\/\/)|[^\/\.]+\/\.\.\/|^.*\/(\/)/;
 		var addProp = this._addProp;
-		function walk(it, stop, defaultId, defaultObject){
+		function walk(it, stop, defaultId, schema, defaultObject){
 			// this walks the new graph, resolving references and making other changes
 		 	var update, val, id = it[idAttribute] || defaultId;
 		 	if(id !== undefined){
@@ -71,6 +71,10 @@ dojox.json.ref = {
 				if(assignAbsoluteIds){
 					it.__id = id;
 				}
+				if(args.schemas && (!(it instanceof Array)) && // won't try on arrays to do prototypes, plus it messes with queries 
+		 					(val = id.match(/^(.+\/)[^\.\[]*$/))){ // if it has a direct table id (no paths)
+		 			schema = args.schemas[val[1]];
+				} 
 				// if the id already exists in the system, we should use the existing object, and just 
 				// update it... as long as the object is compatible
 				if(index[id] && ((it instanceof Array) == (index[id] instanceof Array))){ 
@@ -78,9 +82,7 @@ dojox.json.ref = {
 					delete target.$ref; // remove this artifact
 					update = true;
 				}else{
-				 	var proto = args.schemas && (!(it instanceof Array)) && // won't try on arrays to do prototypes, plus it messes with queries 
-		 					(val = id.match(/^(.+\/)[^\.\[]*$/)) && // if it has a direct table id (no paths)
-		 					(val = args.schemas[val[1]]) && val.prototype; // and if has a prototype
+				 	var proto = schema && schema.prototype; // and if has a prototype
 					if(proto){
 						// if the schema defines a prototype, that needs to be the prototype of the object
 						var F = function(){};
@@ -90,11 +92,18 @@ dojox.json.ref = {
 				}
 				index[id] = target; // add the prefix, set _id, and index it
 			}
-	
-	
+			var properties = schema && schema.properties; 
+			var length = it.length;
 			for(var i in it){
+				if(i==length){
+					break;		
+				}
 				if(it.hasOwnProperty(i)){
-					if((typeof (val=it[i]) =='object') && val){
+					val=it[i];
+					var propertyDefinition = properties && properties[i];
+					if(propertyDefinition && propertyDefinition.format == 'date-time' && typeof val == 'string'){
+						val = dojo.date.stamp.fromISOString(val);
+					}else if((typeof val =='object') && val){
 						ref=val.$ref;
 						if(ref){ // a reference was found
 							var stripped = ref.replace(/\\./g, '@').replace(/"[^"\\\n\r]*"/g, '');// trim it
@@ -124,7 +133,7 @@ dojox.json.ref = {
 										}
 										rewalking = true; // we only want to add it once
 									}else{
-										val = walk(val, false, val.$ref);
+										val = walk(val, false, val.$ref, propertyDefinition);
 										// create a lazy loaded object
 										val._loadObject = args.loader;
 									}
@@ -136,7 +145,8 @@ dojox.json.ref = {
 								val = walk(
 									val,
 									reWalk==it,
-									id && addProp(id, i), // the default id to use 
+									id && addProp(id, i), // the default id to use
+									propertyDefinition, 
 									// if we have an existing object child, we want to 
 									// maintain it's identity, so we pass it as the default object
 									target != it && typeof target[i] == 'object' && target[i] 
@@ -229,7 +239,7 @@ dojox.json.ref = {
 		var useRefs = this._useRefs;
 		var addProp = this._addProp;
 		idPrefix = idPrefix || ''; // the id prefix for this context
-		var paths=indexSubObjects || {};
+		var paths={};
 		function serialize(it,path,_indentStr){
 			if(typeof it == 'object' && it){
 				var value;
@@ -238,11 +248,12 @@ dojox.json.ref = {
 				}
 				var id = it.__id;
 				if(id){ // we found an identifiable object, we will just serialize a reference to it... unless it is the root
-					if(path != '#' && (useRefs || paths[id])){
-						var ref = id; // a pure path based reference, leave it alone
-	
+					if(path != '#' && ((useRefs && !id.match(/#/)) || paths[id])){
+						var ref = id;	
 						if(id.charAt(0)!='#'){
-							if(id.substring(0, idPrefix.length) == idPrefix){ // see if the reference is in the current context
+							if(it.__clientId == id){
+								ref = "cid:" + id;
+							}else if(id.substring(0, idPrefix.length) == idPrefix){ // see if the reference is in the current context
 								// a reference with a prefix matching the current context, the prefix should be removed
 								ref = id.substring(idPrefix.length);
 							}else{

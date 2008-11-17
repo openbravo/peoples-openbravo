@@ -13,8 +13,8 @@ dojo.require("dijit.form.Button");
 
 dojo.requireLocalization("dijit", "loading", null, "th,es,sv,it,nl,el,zh-tw,ko,da,pt-pt,cs,pt,ar,fi,sk,sl,ROOT,ca,he,tr,hu,fr,zh,ja,pl,ru,de,nb");
 
-dojo.declare("dojox.form.BusyButton",
-	[dijit.form.Button], 
+dojo.declare("dojox.form._BusyButtonMixin",
+	null, 
 	{
 		
 	isBusy: false,	
@@ -91,7 +91,7 @@ dojo.declare("dojox.form.BusyButton",
 		while (this.containerNode.firstChild){
 			this.containerNode.removeChild(this.containerNode.firstChild);
 		}
-		this.containerNode.appendChild(document.createTextNode(this.label));
+		this.containerNode.innerHTML = this.label;
 		
 		this._layoutHack();
 		if(this.showLabel == false && !(dojo.attr(this.domNode, "title"))){
@@ -126,5 +126,9 @@ dojo.declare("dojox.form.BusyButton",
 		}
 	}
 });
+
+dojo.declare("dojox.form.BusyButton", [dijit.form.Button, dojox.form._BusyButtonMixin], {});
+dojo.declare("dojox.form.BusyComboButton", [dijit.form.ComboButton, dojox.form._BusyButtonMixin], {});
+dojo.declare("dojox.form.BusyDropDownButton", [dijit.form.DropDownButton, dojox.form._BusyButtonMixin], {});
 
 }

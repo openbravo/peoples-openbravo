@@ -34,10 +34,7 @@ dojo.declare(
 	//  NOTE: Splitters must not be more than 50 pixels in width.
 	//
 	// example:
-	// |	<style>
-	// |		html, body { height: 100%; width: 100%; }
-	// |	</style>
-	// |	<div dojoType="BorderContainer" design="sidebar" style="width: 100%; height: 100%">
+	// |	<div dojoType="dijit.layout.BorderContainer" design="sidebar" style="width: 400px; height: 300px;">
 	// |		<div dojoType="ContentPane" region="top">header text</div>
 	// |		<div dojoType="ContentPane" region="right" style="width: 200px;">table of contents</div>
 	// |		<div dojoType="ContentPane" region="center">client area</div>
@@ -82,12 +79,6 @@ dojo.declare(
 
 		this._splitters = {};
 		this._splitterThickness = {};
-		this._regions = {};
-		dojo.forEach(this.getChildren(), function(child){
-			if(child.region){
-				this._regions[child.region] = child;
-			}
-		}, this);
 	},
 
 	startup: function(){
@@ -122,7 +113,7 @@ dojo.declare(
 					child: child,
 					region: region,
 //					oppNode: dojo.query('[region=' + flip[child.region] + ']', this.domNode)[0],
-					oppNode: this._regions[flip[child.region]],
+					oppNode: this["_" + flip[child.region]],
 					live: this.liveSplitters
 				});
 				splitter.isSplitter = true;
@@ -158,7 +149,6 @@ dojo.declare(
 		var splitter = this._splitters[region];
 		if(splitter){
 			dijit.byNode(splitter).destroy();
-			delete this._regions[region];
 			delete this._splitters[region];
 			delete this._splitterThickness[region];
 		}
@@ -382,7 +372,6 @@ dojo.declare(
 			dijit.byNode(splitter).destroy();
 			dojo._destroyElement(splitter);
 		}
-		delete this._regions;
 		delete this._splitters;
 		delete this._splitterThickness;
 		this.inherited(arguments);

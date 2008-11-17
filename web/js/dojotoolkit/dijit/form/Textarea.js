@@ -28,8 +28,9 @@ dojo.declare(
 	// example:
 	// |	<textarea dojoType="dijit.form.TextArea">...</textarea>
 
-	attributeMap: dojo.mixin(dojo.clone(dijit.form._FormValueWidget.prototype.attributeMap),
-		{style:"styleNode", 'class':"styleNode"}),
+	attributeMap: dojo.delegate(dijit.form._FormValueWidget.prototype.attributeMap, {
+		style: "styleNode", "class": "styleNode"
+	}),
 
 	templateString: (dojo.isIE || dojo.isSafari || dojo.isFF) ?
 				((dojo.isIE || dojo.isSafari || dojo.isFF >= 3) ? '<fieldset id="${id}" class="dijitInline" dojoAttachPoint="styleNode" waiRole="presentation"><div dojoAttachPoint="editNode,focusNode,eventNode" dojoAttachEvent="onpaste:_changing,oncut:_changing" waiRole="textbox" waiState="multiline-true" contentEditable="true"></div>'
@@ -101,7 +102,7 @@ dojo.declare(
 			if(this.iframe){ // strip sizeNode
 				value = value.replace(/<div><\/div>\r?\n?$/i,"");
 			}
-			value = value.replace(/\s*\r?\n|^\s+|\s+$|&nbsp;/g,"").replace(/>\s+</g,"><").replace(/<\/(p|div)>$|^<(p|div)[^>]*>/gi,"").replace(/([^>])<div>/g,"$1\n").replace(/<\/p>\s*<p[^>]*>|<br[^>]*>|<\/div>\s*<div[^>]*>/gi,"\n").replace(/<[^>]*>/g,"").replace(/&amp;/gi,"\&").replace(/&lt;/gi,"<").replace(/&gt;/gi,">");
+			value = value.replace(/\s*\r?\n|^\s+|\s+$/g,"").replace(/>\s+</g,"><").replace(/<\/(p|div)>$|^<(p|div)[^>]*>/gi,"").replace(/([^>])<div>/g,"$1\n").replace(/<\/p>\s*<p[^>]*>|<br[^>]*>|<\/div>\s*<div[^>]*>/gi,"\n").replace(/<[^>]*>/g,"").replace(/&nbsp;/gi," ").replace(/&amp;/gi,"\&").replace(/&lt;/gi,"<").replace(/&gt;/gi,">");
 			if(!dojo.isIE){
 				value = value.replace(/\n$/,""); // remove added <br>
 			}

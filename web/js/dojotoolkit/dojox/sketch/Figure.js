@@ -32,7 +32,6 @@ dojo.require("dojox.sketch.UndoStack");
 		this.zoomFactor=1;	//	multiplier for zooming.
 		
 		this.tools=null;	//	toolbar reference.
-		this.nextKey=function(){ return annCounter++; };
 
 		this.obj={};		//	lookup table for shapes.  Not keen on this solution.
 
@@ -144,12 +143,12 @@ dojo.require("dojox.sketch.UndoStack");
 		this._md=function(e){
 			var o=self._fromEvt(e);
 			self._startPoint={ x:e.pageX, y:e.pageY };
-			var win = dijit.getDocumentWindow(self.node.ownerDocument);
 
 			//	figure out the coordinates within the iframe
 			self._ctr=dojo._abs(self.node);
-			var scroll=dojo.withGlobal(win,dojo._docScroll);
-			self._ctr={x:self._ctr.x-scroll.x, y:self._ctr.y-scroll.y};
+			//var win = dijit.getDocumentWindow(self.node.ownerDocument);
+			//var scroll=dojo.withGlobal(win,dojo._docScroll);
+			self._ctr={x:self._ctr.x, y:self._ctr.y}; //-scroll.x -scroll.y
 			var X=e.clientX-self._ctr.x, Y=e.clientY-self._ctr.y;
 			self._lp={ x:X, y:Y };
 
@@ -181,8 +180,8 @@ dojo.require("dojox.sketch.UndoStack");
 			var dy=y-self._lp.y;
 			self._absEnd={x:x, y:y};
 			if(self._c){
-				self._c.doChange({dx:Math.round(dx/self.zoomFactor), dy:Math.round(dy/self.zoomFactor)});
-				self._c.setBinding({dx:Math.round(dx/self.zoomFactor), dy:Math.round(dy/self.zoomFactor)});
+				//self._c.doChange({dx:dx, dy:dy});
+				self._c.setBinding({dx:dx/self.zoomFactor, dy:dy/self.zoomFactor});
 				self._lp={x:x, y:y};
 			} else {
 				self._end={x:dx, y:dy};
@@ -247,20 +246,27 @@ dojo.require("dojox.sketch.UndoStack");
 			.setFill("white");
 		this.group=this.surface.createGroup();
 
-		//	kill any dragging events.
+		
 		this._cons=[];
-		this._cons.push(dojo.connect(this.node, "ondragstart",   dojo, "stopEvent"));
-		this._cons.push(dojo.connect(this.node, "onselectstart", dojo, "stopEvent"));
-
-		//	hook up the drag system.
 		var es=this.surface.getEventSource();
-		this._cons.push(dojo.connect(es, 'onmousedown', this._md));
-		this._cons.push(dojo.connect(es, 'onmousemove', this._mm));
-		this._cons.push(dojo.connect(es, 'onmouseup', this._mu));
-
-		this._cons.push(dojo.connect(es, 'onclick', this, 'onClick'));
-		this._cons.push(dojo.connect(es, 'ondblclick', this._dblclick));
-		this._cons.push(dojo.connect(es.ownerDocument, 'onkeydown', this._keydown));
+		this._cons.push(
+			//	kill any dragging events.
+			//		for FF
+			dojo.connect(es, "ondraggesture", dojo.stopEvent),
+			dojo.connect(es, "ondragenter", dojo.stopEvent),
+			dojo.connect(es, "ondragover", dojo.stopEvent),
+			dojo.connect(es, "ondragexit", dojo.stopEvent),
+			dojo.connect(es, "ondragstart", dojo.stopEvent),
+			//		for IE
+			dojo.connect(es, "onselectstart", dojo.stopEvent),
+			//	hook up the drag system.
+			dojo.connect(es, 'onmousedown', this._md),
+			dojo.connect(es, 'onmousemove', this._mm),
+			dojo.connect(es, 'onmouseup', this._mu),
+			// misc hooks
+			dojo.connect(es, 'onclick', this, 'onClick'),
+			dojo.connect(es, 'ondblclick', this._dblclick),
+			dojo.connect(es.ownerDocument, 'onkeydown', this._keydown));
 		
 		//	rect hack.  Fcuking VML.
 		this.group.createRect({ x:0, y:0, width:this.size.w, height:this.size.h });
@@ -284,7 +290,7 @@ dojo.require("dojox.sketch.UndoStack");
 		this.obj={};
 		this.shapes=[];
 	};
-
+	p.nextKey=function(){ return "annotation-"+annCounter++; };
 	p.draw=function(){ };
 	p.zoom=function(pct){
 		//	first get the new dimensions
@@ -297,6 +303,9 @@ dojo.require("dojox.sketch.UndoStack");
 		if(dojo.isIE){
 			this.image.rawNode.style.width=Math.max(w,this.size.w);
 			this.image.rawNode.style.height=Math.max(h,this.size.h);
+		}
+		for(var i=0; i<this.shapes.length; i++){
+			this.shapes[i].zoom(this.zoomFactor);
 		}
 		//this.rect.setShape({width:w,height:h});
 	};

@@ -227,6 +227,12 @@ dojo.declare("dijit.form._FormMixin", null,
 						// radio button
 						if(value !== false){
 							dojo.setObject(name, value, obj);
+						}else{
+							// give radio widgets a default of null
+							value = dojo.getObject(name, false, obj);
+							if(value === undefined){
+								dojo.setObject(name, null, obj);
+							}
 						}
 					}else{
 						// checkbox/toggle button
@@ -413,8 +419,14 @@ dojo.declare(
 
 		templateString: "<form dojoAttachPoint='containerNode' dojoAttachEvent='onreset:_onReset,onsubmit:_onSubmit' name='${name}'></form>",
 
-		attributeMap: dojo.mixin(dojo.clone(dijit._Widget.prototype.attributeMap),
-			{action: "", method: "", encType: "", "accept-charset": "", accept: "", target: ""}),
+		attributeMap: dojo.delegate(dijit._Widget.prototype.attributeMap, {
+			action: "", 
+			method: "", 
+			encType: "", 
+			"accept-charset": "", 
+			accept: "", 
+			target: ""
+		}),
 
 		execute: function(/*Object*/ formContents){
 			//	summary:

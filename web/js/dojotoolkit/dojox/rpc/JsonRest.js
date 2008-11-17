@@ -32,11 +32,12 @@ dojo.require("dojox.rpc.Rest");
 				var object = dirty.object;
 				var old = dirty.old;
 				var append = false;
-				if(!(kwArgs.service && (object || old) && (object || old).__id.indexOf(kwArgs.service.servicePath))){
+				if(!(kwArgs.service && (object || old) && 
+						(object || old).__id.indexOf(kwArgs.service.servicePath)) && dirty.save){
 					if(object){
 						if(old){
 							// changed object
-							while(!(dojox.json && dojox.json.ref && dojox.json.ref._useRefs) && object.__id.match(parentIdRegex)){ // it is a path reference
+							while(object.__id.match(parentIdRegex)){ // it is a path reference
 								// this means it is a sub object and the server doesn't support directly putting to
 								// this object by path, we must go to the parent object and save it
 								var parentId = object.__id.match(parentIdRegex)[1];
@@ -72,7 +73,7 @@ dojo.require("dojox.rpc.Rest");
 				// the last one should commit the transaction
 				args.headers['X-Transaction'] = actions.length - 1 == i ? "commit" : "open";
 				if(contentLocation){
-					args.headers['Content-Location'] = contentLocation;
+					args.headers['Content-ID'] = '<' + contentLocation + '>';
 				}
 				return plainXhr.apply(dojo,arguments);
 			};			
@@ -144,23 +145,31 @@ dojo.require("dojox.rpc.Rest");
 		getDirtyObjects: function(){
 			return dirtyObjects;
 		},
-		revert: function(){
+		revert: function(service){
 			// summary:
 			//		Reverts all the changes made to JSON/REST data
-			while (dirtyObjects.length>0){
-				var d = dirtyObjects.pop();
-				if(d.object && d.old){
-					// changed
-					for(var i in d.old){
-						if(d.old.hasOwnProperty(i)){
-							d.object[i] = d.old[i];
+			for(var i = dirtyObjects.length; i > 0;){
+				i--;
+				var dirty = dirtyObjects[i];
+				var object = dirty.object;
+				var old = dirty.old;
+				if(!(service && (object || old) && 
+					(object || old).__id.indexOf(kwArgs.service.servicePath))){
+					// if we are in the specified store or if this is a global revert
+					if(object && old){
+						// changed
+						for(var j in old){
+							if(old.hasOwnProperty(j)){
+								object[j] = old[j];
+							}
+						}
+						for(j in object){
+							if(!old.hasOwnProperty(j)){
+								delete object[j];
+							}
 						}
 					}
-					for(i in d.object){
-						if(!d.old.hasOwnProperty(i)){
-							delete d.object[i];
-						}
-					}
+					dirtyObjects.splice(i, 1);
 				}
 			}
 		},
@@ -176,10 +185,14 @@ dojo.require("dojox.rpc.Rest");
 			//if an object is already in the list of dirty objects, don't add it again
 			//or it will overwrite the premodification data set.
 			for(var i=0; i<dirtyObjects.length; i++){
-				if(object==dirtyObjects[i].object){
+				var dirty = dirtyObjects[i];
+				if(object==dirty.object){
 					if(_deleting){
 						// we are deleting, no object is an indicator of deletiong
-						dirtyObjects[i].object = false;
+						dirty.object = false;
+						if(!this._saveNotNeeded){
+							dirty.save = true;
+						}
 					}
 					return;
 				}
@@ -190,15 +203,13 @@ dojo.require("dojox.rpc.Rest");
 					old[i] = object[i];
 				}
 			}
-			dirtyObjects.push({object: !_deleting && object, old: old});
+			dirtyObjects.push({object: !_deleting && object, old: old, save: !this._saveNotNeeded});
 		},
 		deleteObject: function(object){
 			// summary:
 			//		deletes an object 
 			//	object:
 			//  	object to delete
-			//
-
 			this.changing(object,true);
 		},
 		getConstructor: function(/*Function|String*/service, schema){
@@ -222,10 +233,10 @@ dojo.require("dojox.rpc.Rest");
 					dojo.mixin(this,data);
 				}
 				var idAttribute = jr.getIdAttribute(service);
-				Rest._index[this.__id = this.__clientId = service.servicePath + (this[idAttribute] || (this[idAttribute] = Math.random().toString(16).substring(2,14)+Math.random().toString(16).substring(2,14)))] = this;
-				dirtyObjects.push({object:this});
-	//			this._getParent(parentInfo).push(data); // append to this list
-
+				Rest._index[this.__id = this.__clientId = 
+						service.servicePath + (this[idAttribute] || 
+							Math.random().toString(16).substring(2,14) + '@' + ((dojox.rpc.Client && dojox.rpc.Client.clientId) || "client"))] = this;
+				dirtyObjects.push({object:this, save: true});
 			};
 			return dojo.mixin(service._constructor, service._schema, {load:service});
 		},
@@ -337,6 +348,7 @@ dojo.require("dojox.rpc.Rest");
 			}
 			return false;
 		}
+		
 	};
 })();
 

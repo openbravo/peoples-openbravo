@@ -25,7 +25,9 @@ dojo.provide("dojox.data.ServiceStore");
 //
 
 dojo.declare("dojox.data.ServiceStore",
-	dojox.data.ClientFilter,
+	// ClientFilter is intentionally not required, ServiceStore does not need it, and is more 
+	// lightweight without it, but if it is provided, the ServiceStore will use it.
+	dojox.data.ClientFilter,  
 	{
 		constructor: function(options){
 			//summary:
@@ -52,7 +54,7 @@ dojo.declare("dojox.data.ServiceStore",
 			// The *syncMode* parameter
 			//		Setting this to true will set the store to using synchronous calls by default.
 			//		Sync calls return their data immediately from the calling function, so
-			//		callbacks are unnecessary
+			//		callbacks are unnecessary. This will only work with a synchronous capable service.
 			//
 			// description:
 			//		ServiceStore can do client side caching and result set updating if 
@@ -187,10 +189,20 @@ dojo.declare("dojox.data.ServiceStore",
 
 		loadItem: function(args){
 			// summary:
-			// 		Loads an item that has not been loaded yet. 
+			// 		Loads an item and calls the callback handler. Note, that this will call the callback
+			// 		handler even if the item is loaded. Consequently, you can use loadItem to ensure
+			// 		that an item is loaded is situations when the item may or may not be loaded yet. 
 			// 		If you access a value directly through property access, you can use this to load
-			// 		a lazy (Deferred) value.
+			// 		a lazy value as well (doesn't need to be an item).
 			//
+			//	example:
+			//		store.loadItem({
+			//			item: item, // this item may or may not be loaded
+			//			onItem: function(item){
+			// 				// do something with the item
+			//			}
+			//		});
+			
 			var item;
 			if(args.item._loadObject){
 				args.item._loadObject(function(result){
@@ -198,9 +210,13 @@ dojo.declare("dojox.data.ServiceStore",
 					delete item._loadObject;
 					var func = result instanceof Error ? args.onError : args.onItem;
 					if(func){
-						func.call(args.scope,result);				
+						func.call(args.scope, result);				
 					}
 				});
+			}else if(args.onItem){
+				// even if it is already loaded, we will use call the callback, this makes it easier to 
+				// use when it is not known if the item is loaded (you can always safely call loadItem). 
+				args.onItem.call(args.scope, result);
 			}
 			return item;
 		},
@@ -269,7 +285,7 @@ dojo.declare("dojox.data.ServiceStore",
 			var defResult = this.cachingFetch ? this.cachingFetch(args) : this._doQuery(args);
 			defResult.request = args; 
 			defResult.addCallback(function(results){
-				if(args.clientQuery){
+				if(args.clientFetch){
 					results = self.clientSideFetch({query:args.clientFetch,sort:args.sort,start:args.start,count:args.count},results);
 				}
 				var resultSet = self._processResults(results, defResult);

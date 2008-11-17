@@ -504,11 +504,11 @@ dojo.declare("dijit._Widget", null, {
 		//		If true, the preserveDom attribute is passed to all descendant
 		//		widget's .destroy() method. Not for use with _Templated
 		//		widgets.
-		
-		// TODO: should I destroy in the reverse order, to go bottom up?
-		dojo.forEach(this.getDescendants(), function(widget){ 
-			if(widget.destroy){
-				widget.destroy(preserveDom);
+
+		// get all direct descendants and destroy them recursively
+		dojo.forEach(this.getDescendants(true), function(widget){ 
+			if(widget.destroyRecursive){
+				widget.destroyRecursive(preserveDom);
 			}
 		});
 	},
@@ -711,13 +711,11 @@ dojo.declare("dijit._Widget", null, {
 		return '[Widget ' + this.declaredClass + ', ' + (this.id || 'NO ID') + ']'; // String
 	},
 
-	getDescendants: function(){
+	getDescendants: function(/*Boolean*/ directOnly, /*DomNode[]?*/ outAry){
 		// summary:
-		//		Returns all the widgets that contained by this, i.e., all widgets underneath this.containerNode.
+		//		Returns all the widgets contained by this, i.e., all widgets underneath this.containerNode.
 		// description:
-		//		This method is designed to *not* return widgets that are, for example,
-		//		used as part of a template, but rather to just return widgets that are defined in the
-		//		original markup as descendants of this widget, for example w/this markup:
+		//		For example w/this markup:
 		//
 		//		|	<div dojoType=myWidget>
 		//		|		<b> hello world </b>
@@ -728,14 +726,39 @@ dojo.declare("dijit._Widget", null, {
 		//		|		</div>
 		//		|	</div>
 		//
-		//		getDescendants() will return subwidget, but not anything that's part of the template
-		//		of myWidget.
-
+		//		myWidget.getDescendants() will return subwidget and subwidget2.
+		//
+		//		This method is designed to *not* return widgets that are
+		//		part of a widget's template, but rather to just return widgets that are defined in the
+		//		original markup as descendants of this widget.
+		// directOnly:
+		//		If directOnly is true then won't find nested widgets (subwidget2 in above example)
+		// outAry:
+		//		If specified, put results in here
+		outAry = outAry || [];
 		if(this.containerNode){
-			var list = dojo.query('[widgetId]', this.containerNode);
-			return list.map(dijit.byNode);		// Array
-		}else{
-			return [];
+			this._getDescendantsHelper(directOnly, outAry, this.containerNode);
+		}
+		return outAry;
+	},
+	_getDescendantsHelper: function(/*Boolean*/ directOnly, /* DomNode[] */ outAry, /*DomNode*/ root){
+		// summary:
+		//		Search subtree under root, putting found widgets in outAry
+		// directOnly:
+		//		If false, return widgets nested inside other widgets
+		var list = dojo.isIE ? root.children : root.childNodes, i = 0, node;
+		while(node = list[i++]){
+			if(node.nodeType != 1){ continue; }
+			var widgetId = node.getAttribute("widgetId");
+			if(widgetId){
+				var widget = dijit.byId(widgetId);
+				outAry.push(widget);
+				if(!directOnly){
+					widget.getDescendants(directOnly, outAry);
+				}
+			}else{
+				this._getDescendantsHelper(directOnly, outAry, node);
+			}
 		}
 	},
 
