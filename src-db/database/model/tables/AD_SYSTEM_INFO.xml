@@ -93,5 +93,12 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="CUSTOMIZATION_ALLOWED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <check name="ADSYSTEMINFO_CUSTOMALLOW_CHECK"><![CDATA[
+CUSTOMIZATION_ALLOWED IN ('Y', 'N')
+]]></check>
     </table>
   </database>
