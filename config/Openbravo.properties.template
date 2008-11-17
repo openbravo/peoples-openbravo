@@ -47,6 +47,9 @@ source.path=/opt/openbravo
 # Openbravo ERP version
 application.version=2.50
 
+#Deploy mode: valid values [class, war]
+deploy.mode=class
+
 ############
 # Database #
 ############
