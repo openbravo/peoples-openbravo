@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2007 Openbravo S.L.
+ * Copyright (C) 2001-2008 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -214,12 +214,16 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
           }
 
           DefaultOptionsData dataLanguage [] = DefaultOptionsData.defaultLanguage(this, strUserAuth);
-          strLanguage = dataLanguage[0].getField("DEFAULT_AD_LANGUAGE");
-          strIsRTL = dataLanguage[0].getField("ISRTL");
-          if(strLanguage == null) {
-            dataLanguage = DefaultOptionsData.getDefaultLanguage(this);
-            strLanguage = dataLanguage[0].getField("AD_LANGUAGE");
+          if (dataLanguage != null && dataLanguage.length > 0) {
+            strLanguage = dataLanguage[0].getField("DEFAULT_AD_LANGUAGE");
             strIsRTL = dataLanguage[0].getField("ISRTL");
+          }
+          if(strLanguage == null || strLanguage.equals("")) {
+            dataLanguage = DefaultOptionsData.getDefaultLanguage(this);
+            if (dataLanguage != null && dataLanguage.length > 0) {
+              strLanguage = dataLanguage[0].getField("AD_LANGUAGE");
+              strIsRTL = dataLanguage[0].getField("ISRTL");
+            }
           }
 
           VariablesSecureApp vars = new VariablesSecureApp(request);

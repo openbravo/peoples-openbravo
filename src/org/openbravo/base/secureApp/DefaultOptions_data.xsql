@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.
+ * Copyright (C) 2001-2008 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -166,9 +166,10 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
         SELECT lang.AD_LANGUAGE AS AD_LANGUAGE, lang.ISRTL AS ISRTL
-          FROM AD_LANGUAGE lang
+          FROM AD_LANGUAGE lang, AD_MODULE mod
          WHERE lang.ISACTIVE = 'Y'
-           AND lang.ISBASELANGUAGE = 'Y'
+           AND lang.AD_LANGUAGE = mod.AD_LANGUAGE
+           AND mod.AD_MODULE_ID = '0'
            ]]></Sql>      
    </SqlMethod>
    
