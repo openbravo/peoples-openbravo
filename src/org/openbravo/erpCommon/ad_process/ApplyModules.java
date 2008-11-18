@@ -140,7 +140,7 @@ public class ApplyModules extends HttpSecureAppServlet {
       ant.runTask(tasks);
       ant.setFinished(true);
       
-      PrintWriter out = response.getWriter();
+      PrintStream out = new PrintStream(response.getOutputStream());
       response.setContentType("text/plain; charset=UTF-8");
       out.println("finished");
       out.close();
