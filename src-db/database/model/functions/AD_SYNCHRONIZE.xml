@@ -940,7 +940,16 @@
         WHERE AD_MENU.AD_Window_ID=w.AD_Window_ID
           AND AD_MENU.AD_Module_ID = M.AD_MODULE_ID
           AND (COALESCE(T.AD_LANGUAGE, M.AD_LANGUAGE) = M.AD_LANGUAGE OR M.AD_LANGUAGE IS NULL))
-    WHERE AD_Window_ID IS NOT NULL  AND Action='W';
+    WHERE AD_Window_ID IS NOT NULL  
+      AND Action='W'
+      AND EXISTS
+        (SELECT 1 FROM AD_MODULE M,
+         AD_WINDOW W LEFT JOIN AD_WINDOW_TRL T
+           ON W.AD_WINDOW_ID = T.AD_WINDOW_ID
+         WHERE AD_MENU.AD_Window_ID=W.AD_Window_ID  
+          AND AD_MENU.AD_Module_ID = M.AD_Module_ID
+          AND (COALESCE(T.AD_LANGUAGE, M.AD_LANGUAGE) = M.AD_LANGUAGE OR M.AD_LANGUAGE IS NULL)
+        );
     v_rowcount:=SQL%ROWCOUNT;
     DBMS_OUTPUT.PUT_LINE('  rows updated: ' || v_rowcount) ;
     UPDATE AD_MENU_TRL
@@ -1016,7 +1025,17 @@
         WHERE AD_MENU.AD_PROCESS_ID=w.AD_PROCESS_ID
           AND AD_MENU.AD_Module_ID = M.AD_MODULE_ID
           AND (COALESCE(T.AD_LANGUAGE, M.AD_LANGUAGE) = M.AD_LANGUAGE OR M.AD_LANGUAGE IS NULL))
-    WHERE AD_MENU.AD_Process_ID IS NOT NULL  AND AD_MENU.Action IN('R', 'P') ;
+    WHERE AD_MENU.AD_Process_ID IS NOT NULL  
+    AND AD_MENU.Action IN('R', 'P')
+      AND EXISTS(
+        SELECT 1 
+          FROM AD_MODULE M,
+               AD_PROCESS w LEFT JOIN AD_PROCESS_TRL T
+                           ON w.AD_PROCESS_ID = T.AD_PROCESS_ID
+         WHERE AD_MENU.AD_PROCESS_ID=w.AD_PROCESS_ID
+           AND AD_MENU.AD_Module_ID = M.AD_MODULE_ID
+           AND (COALESCE(T.AD_LANGUAGE, M.AD_LANGUAGE) = M.AD_LANGUAGE OR M.AD_LANGUAGE IS NULL)
+      );
     v_rowcount:=SQL%ROWCOUNT;
     DBMS_OUTPUT.PUT_LINE('  rows updated: ' || v_rowcount) ;
     UPDATE AD_MENU_TRL
@@ -1089,7 +1108,16 @@
         WHERE AD_MENU.AD_FORM_ID=w.AD_FORM_ID
           AND AD_MENU.AD_Module_ID = M.AD_MODULE_ID
           AND (COALESCE(T.AD_LANGUAGE, M.AD_LANGUAGE) = M.AD_LANGUAGE OR M.AD_LANGUAGE IS NULL))
-    WHERE AD_Form_ID IS NOT NULL  AND Action='X';
+    WHERE AD_Form_ID IS NOT NULL  AND Action='X'
+      AND EXISTS(
+        SELECT 1 
+          FROM AD_MODULE M,
+               AD_FORM w LEFT JOIN AD_FORM_TRL T
+                           ON w.AD_FORM_ID = T.AD_FORM_ID
+         WHERE AD_MENU.AD_FORM_ID=w.AD_FORM_ID
+           AND AD_MENU.AD_Module_ID = M.AD_MODULE_ID
+           AND (COALESCE(T.AD_LANGUAGE, M.AD_LANGUAGE) = M.AD_LANGUAGE OR M.AD_LANGUAGE IS NULL)
+       );
     v_rowcount:=SQL%ROWCOUNT;
     DBMS_OUTPUT.PUT_LINE('  rows updated: ' || v_rowcount) ;
     UPDATE AD_MENU_TRL
