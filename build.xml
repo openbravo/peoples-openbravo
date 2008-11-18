@@ -518,4 +518,8 @@ compare.database.structure: refer to compare.database.structure target of databa
 			  exportRD="${obx.export.RD}"/>
 	</target>
 
+	 <target name="diagnostic">
+	    <ant dir="src-diagnostics" antfile="build-create.xml" target="build"/>
+	    <ant dir="src-diagnostics" target="check.all"/>
+	  </target>
 </project>
