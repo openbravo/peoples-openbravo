@@ -172,10 +172,19 @@
         
 	* Check the lines belong to the same business unit or legal entity as the header
         */     
-        SELECT AD_ORG_CHK_DOCUMENTS('M_PRODUCTION', 'M_PRODUCTIONLINE', v_Record_ID, 'M_PRODUCTION_ID', 'M_PRODUCTION_ID') INTO v_is_included FROM dual;
+        SELECT AD_ORG_CHK_DOCUMENTS('M_PRODUCTION', 'M_PRODUCTIONPLAN', v_Record_ID, 'M_PRODUCTION_ID', 'M_PRODUCTION_ID') INTO v_is_included FROM dual;
         IF (v_is_included=-1) THEN
           RAISE_APPLICATION_ERROR(-20000, '@LinesAndHeaderDifferentLEorBU@');
         END IF;
+        FOR CUR_PP IN
+          (SELECT M_PRODUCTIONPLAN_ID
+           FROM M_PRODUCTIONPLAN
+           WHERE M_PRODUCTION_ID = v_Record_ID) LOOP
+          SELECT AD_ORG_CHK_DOCUMENTS('M_PRODUCTIONPLAN', 'M_PRODUCTIONLINE', CUR_PP.M_PRODUCTIONPLAN_ID, 'M_PRODUCTIONPLAN_ID', 'M_PRODUCTIONPLAN_ID') INTO v_is_included FROM dual;
+          IF (v_is_included=-1) THEN
+            RAISE_APPLICATION_ERROR(-20000, '@LinesAndHeaderDifferentLEorBU@');
+          END IF;
+        END LOOP;
         
         -- Check the period control is opened    
         SELECT COUNT(C_Period_ID)
