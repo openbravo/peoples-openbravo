@@ -18,7 +18,6 @@ import java.net.URL;
 import junit.framework.TestCase;
 
 import org.apache.log4j.Logger;
-import org.apache.tools.ant.Project;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.erpCommon.utility.AntExecutor;
@@ -49,7 +48,7 @@ public class BaseAntTest extends TestCase {
         try {
             final AntExecutor ant = new AntExecutor(getProperty("source.path")
                     + (additionalPath != null ? "/" + additionalPath : ""));
-            ant.setLogLevel(Project.MSG_INFO);
+            // ant.setLogLevel(Project.MSG_INFO);
             ant.setOBPrintStreamLog(null);// outputLogWriter);
             ant.runTask(task);
             final String result = ant.getErr();
