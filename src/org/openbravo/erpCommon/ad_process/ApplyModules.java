@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.ad_process;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -33,6 +34,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.AntExecutor;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBPrintStream;
 import org.openbravo.erpCommon.utility.Utility;
 
 import org.openbravo.xmlEngine.XmlDocument;
@@ -107,12 +109,18 @@ public class ApplyModules extends HttpSecureAppServlet {
    * @throws ServletException
    */
   private void startApply(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
+    PrintStream oldOut=System.out;
     try {
       AntExecutor ant=new AntExecutor(vars.getSessionValue("#sourcePath"));
       String fileName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())+"-apply.log";
+      OBPrintStream obps=new OBPrintStream(new PrintStream(response.getOutputStream()));
+      System.setOut(obps);
       
-      ant.setOBPrintStreamLog(response.getWriter());
+      //ant.setOBPrintStreamLog(response.getWriter());
+      ant.setOBPrintStreamLog(new PrintStream(response.getOutputStream()));
       fileName = ant.setLogFile(fileName);
+      obps.setLogFile(new File(fileName+".db"));
+      ant.setLogFileInOBPrintStream(new File(fileName));
       vars.setSessionObject("ApplyModules|Log", ant);
       
       Vector<String> tasks = new Vector<String>();
@@ -137,6 +145,9 @@ public class ApplyModules extends HttpSecureAppServlet {
       out.println("finished");
       out.close();
     } catch (Exception e) {e.printStackTrace();}  
+    finally{
+      System.setOut(oldOut);
+    }
   }
   
   /**

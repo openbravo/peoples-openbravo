@@ -33,8 +33,11 @@ public class OBPrintStream extends PrintStream{
   private StringBuffer log;
   private boolean finished;
   private PrintWriter out;
+  private PrintStream psout;
   public static final int TEXT_HTML=1;
   public static final int TEXT_PLAIN=2;
+  private File logFile;
+  private PrintWriter logWriter;
   
   /**
    * Crates a new OBPrintStream object
@@ -46,9 +49,29 @@ public class OBPrintStream extends PrintStream{
     log = new StringBuffer();
     finished = false;
   }
+  public OBPrintStream(PrintStream p) {
+    
+    super(System.out); //It is needed to call a super constructor, though it is not going to be used
+    psout=p;
+    log = new StringBuffer();
+    finished = false;
+  }
   
   public void setPrintWritter(PrintWriter p){
     out = p;
+  }
+  
+  public void setLogFile(File f)
+  {
+    logFile=f;
+    try{
+      logWriter=new PrintWriter(f);
+      
+    }
+    catch(Exception e)
+    {
+      e.printStackTrace();
+    }
   }
   
   /**
@@ -57,9 +80,18 @@ public class OBPrintStream extends PrintStream{
    */
   public void write(byte[] buf, int off, int len) {
     String s = new String(buf, off,len);
-    if (out!=null) {
+    if(psout!=null){
+      psout.println(s.replace("\n", "<br/>"));
+      psout.flush();
+    }
+    else if (out!=null) {
       out.println(s.replace("\n", "<br/>"));
       out.flush();
+    }
+    if(logWriter!=null)
+    {
+      logWriter.print(s);
+      logWriter.flush();
     }
     log.append(s);   
   }

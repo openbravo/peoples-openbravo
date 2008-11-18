@@ -78,13 +78,13 @@ public class AntExecutor {
    * @throws Exception
    */
   public String setLogFile(String directory, String logFileName) throws Exception{
-    DefaultLogger logger = new DefaultLogger();
+    //DefaultLogger logger = new DefaultLogger();
     FileOutputStream logFile = new FileOutputStream(directory+"/"+logFileName);
-    PrintStream ps = new PrintStream(logFile);
-    logger.setOutputPrintStream(ps);
-    logger.setErrorPrintStream(ps);
-    logger.setMessageOutputLevel(Project.MSG_INFO);
-    project.addBuildListener(logger);
+    //PrintStream ps = new PrintStream(logFile);
+    //logger.setOutputPrintStream(ps);
+    //logger.setErrorPrintStream(ps);
+    //logger.setMessageOutputLevel(Project.MSG_INFO);
+    //project.addBuildListener(logger);
     return directory+"/"+logFileName;
   }
   
@@ -102,6 +102,12 @@ public class AntExecutor {
     return setLogFile(baseDir+"/log",name);
   }
   
+  public void setLogFileInOBPrintStream(File f)
+  {
+    log.setLogFile(f);
+    err.setLogFile(f);
+  }
+  
   /**
    * Sets two OBPrintStream objects to maintain the execution log. One is for standard log and
    * the other one for the errors.
@@ -113,6 +119,19 @@ public class AntExecutor {
     DefaultLogger logger1 = new DefaultLogger();
     OBPrintStream ps1 = new OBPrintStream(out);
     OBPrintStream ps2 = new OBPrintStream(out);
+    logger1.setOutputPrintStream(ps1);
+    logger1.setErrorPrintStream(ps2);
+    logger1.setMessageOutputLevel(Project.MSG_INFO);
+    project.addBuildListener(logger1);
+    err = ps2;
+    log = ps1;
+  }
+  
+  public void setOBPrintStreamLog(PrintStream p)
+  {
+    DefaultLogger logger1 = new DefaultLogger();
+    OBPrintStream ps1 = new OBPrintStream(p);
+    OBPrintStream ps2 = new OBPrintStream(p);
     logger1.setOutputPrintStream(ps1);
     logger1.setErrorPrintStream(ps2);
     logger1.setMessageOutputLevel(Project.MSG_INFO);
