@@ -41,7 +41,7 @@ public class CheckDB extends Task{
             log4j.info("Checking database...");
             final Properties properties = new Properties();
             try {
-                properties.load(new FileInputStream("../config/Openbravo.properties"));
+                properties.load(new FileInputStream("config/Openbravo.properties"));
             } catch (final Exception e) {
                 throw new BuildException(e);
             }
@@ -93,9 +93,7 @@ public class CheckDB extends Task{
                 log4j.info("Checking Oracle version...");
                 try {
                     st = connSystem.prepareStatement("select * from v$version where banner like '%Oracle%'");
-                
                     result = st.executeQuery();
-                    
                     while (result.next()){
                         versionString = UtilSql.getValue(result, 1);
                     }
@@ -104,9 +102,7 @@ public class CheckDB extends Task{
                 } catch (final Exception e) { 
                     throw new BuildException(e.getMessage()); 
                 }  
-                
                 if (versionString.contains("Express Edition")) throw new BuildException("Express Edition not suported");
-                
                 final String version = Version.getVersion(versionString);
                 final String minVersion = new PropertiesManager().getProperty("db.ora.version");
                 String msg = "Minimum required version: "+minVersion+", current version "+version;

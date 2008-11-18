@@ -37,7 +37,7 @@ public class PropertiesManager {
     }
     
     public PropertiesManager() {
-        this("config/diagnostics.properties");
+        this("src-diagnostics/config/diagnostics.properties");
     }
         
     

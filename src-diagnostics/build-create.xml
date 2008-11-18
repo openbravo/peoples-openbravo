@@ -37,7 +37,7 @@
   </target>
   
   <target name="clean">
-    <delete>
+    <delete failonerror="false">
       <fileset dir="WebContent/WEB-INF/lib"/>
       <fileset dir="build/classes"/>
     </delete>
