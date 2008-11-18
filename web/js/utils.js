@@ -1053,20 +1053,17 @@ function keyControl(pushedKey) {
                 try {
                   eval(evalfuncTrl);
                   thereIsShortcut = true;
-                  if (!isEnterCatched() && keyArray[i].key == 'ENTER') { // Special ENTER case logic to propagate if there is no default action
-                    return true;
+                  if (isEnterCatched() && keyArray[i].key == 'ENTER') { // Special ENTER case logic to not propagate if there is default action
+                    return false;
                   }
                   if (!keyArray[i].propagateKey || isGridFocused) {
                     return false;
                   } else {
-                    return true;
+                    //return true;
                   }
                 } catch (e) {
-                  document.onkeypress = startKeyPressEvent;
                   return true;
                 }
-                document.onkeypress = startKeyPressEvent;
-                return true;
               }
             }
           } else if (keyArray[i].field == null || (keyTarget!=null && keyTarget.name!=null && isIdenticalField(keyArray[i].field, keyTarget.name))) {
