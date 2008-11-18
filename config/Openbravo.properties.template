@@ -100,3 +100,11 @@ authentication.class=
 
 # External Pentaho Services
 pentahoServer=
+
+##################
+# Tomcat manager #
+##################
+#
+tomcat.manager.url=
+tomcat.manager.user=
+tomcat.manager.password=
