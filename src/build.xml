@@ -533,5 +533,9 @@ build.war: build a war file in the lib directory.
            </axis-wsdl2java>
    </target>
 
+	<target name="diagnostic">
+		<ant dir="src-diagnostics" antfile="build-create.xml" target="build"/>
+		<ant dir="src-diagnostics" target="check.all"/>
+	</target>
 
 </project>

@@ -17,7 +17,7 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************
 -->
-<project name="openbravo-diagnostics-build" basedir="." default="check.all">
+<project name="openbravo-diagnostics-build" basedir="." default="build">
 
   <path id="diagnostic.class.path">
     <fileset dir="WebContent/WEB-INF/lib">
