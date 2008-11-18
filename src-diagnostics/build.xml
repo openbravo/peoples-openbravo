@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2008 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************
+-->
+<project name="openbravo-diagnostics" basedir="." default="check.all">
+
+	<property file="config/diagnostics.properties"/>
+	<property file="config/Openbravo.properties"/>
+	<property environment="env"/>
+	
+  <condition property="context.running">
+     <http url="${tomcat.manager.url}/../OpenbravoDiagnostics/Check.html"/>
+   </condition>
+
+	
+	<path id="diagnostic.class.path">
+	  <pathelement path="build/classes"/>
+    <fileset dir="WebContent/WEB-INF/lib">
+      <include name="**/*.jar"/>
+    </fileset>
+	</path>
+	
+	 <path id="tomcat.classpath">
+	    <fileset file="${env.CATALINA_HOME}/server/lib/catalina-ant.jar"/>
+	 </path>
+	
+	 <taskdef name="compareVersion"
+	          classname="org.openbravo.task.CompareVersion">
+	   <classpath refid="diagnostic.class.path"/>
+	 </taskdef>
+
+	<target name="check.all">
+		<ant antfile="build-create.xml" target="build"/>
+		<antcall target="check.db"/>
+		<antcall target="check.ant"/>
+		<antcall target="check.tomcat"/>
+	</target>
+	
+	
+	
+	<target name="check.ant">
+		<antcall target="check.ant.version"/>
+		<antcall target="check.ant.jvm.size"/>
+		<antcall target="check.ant.jvm.version"/>
+	</target>
+	
+	<target name="check.tomcat">
+		<antcall target="deploy.context"/>
+
+		<antcall target="check.tomcat.version"/>
+		<antcall target="check.tomcat.jvm.size"/>
+		<antcall target="check.tomcat.jvm.version"/>	
+	</target>
+	
+	<target name="check.db">
+		<taskdef name="checkDB"
+		                 classname="org.openbravo.task.CheckDB">
+		          <classpath refid="diagnostic.class.path"/>
+		</taskdef>
+		<checkDB/>
+	</target>
+	
+  <target name="check.ant.version">
+  	<echo message="Checking ant version..."/>
+  	<echo message="Minimun ${ant.min.version}, current ${ant.version}"/>
+    <condition property="antversion">
+        <antversion atleast="${ant.min.version}"/>
+    </condition>
+  	<fail unless="antversion" message="Minimum ant version: ${ant.min.version}, current version ${ant.version}"/>
+  	<echo message="Version OK"/>
+  </target>
+	
+	<target name="check.ant.jvm.version">
+	     <echo message="Checking ant's JVM version..."/>
+	     <compareVersion v1="${ant.java.version}"
+	                     v2="${jvm-version}"/>
+	  </target>
+	
+	<target name="check.ant.jvm.size">
+		<taskdef name="checkAntMem"
+		             classname="org.openbravo.task.CheckMemory">
+		      <classpath refid="diagnostic.class.path"/>
+		    </taskdef>
+		    <checkAntMem/>
+	</target>
+	
+	
+	
+	<target name="check.tomcat.version">
+	    <taskdef name="checkTomcatVersion"
+	             classname="org.openbravo.task.CheckTomcatVersion">
+	      <classpath refid="diagnostic.class.path"/>
+	    </taskdef>
+	    <checkTomcatVersion/>
+	  </target>
+	
+	<target name="check.tomcat.jvm.size">
+    <taskdef name="checkMem"
+             classname="org.openbravo.task.CheckTomcatMemory">
+    	<classpath refid="diagnostic.class.path"/>
+    </taskdef>
+		<checkMem/>
+  </target>
+	
+	<target name="check.tomcat.jvm.version">
+	    <taskdef name="checkJVMversion"
+	             classname="org.openbravo.task.CheckJVMVersion">
+	      <classpath refid="diagnostic.class.path"/>
+	    </taskdef>
+	    <checkJVMversion/>
+	  </target>
+  
+	<target name="deploy.context" unless="context.running">
+		<ant antfile="build-create.xml" target="war"/>
+		<taskdef name="deploy.war" classname="org.apache.catalina.ant.DeployTask">
+		  <classpath refid="tomcat.classpath"/>
+		</taskdef>
+		<taskdef name="start"    classname="org.apache.catalina.ant.StartTask">
+		      <classpath refid="tomcat.classpath"/>
+		</taskdef>
+	
+		<deploy.war url="${tomcat.manager.url}" 
+			          username="${tomcat.manager.username}" 
+			          password="${tomcat.manager.password}"
+		            path="/OpenbravoDiagnostics" 
+			          war="file:OpenbravoDiagnostics.war"/>
+		
+		<start      url="${tomcat.manager.url}" 
+		            username="${tomcat.manager.username}" 
+			          password="${tomcat.manager.password}"
+		            path="/OpenbravoDiagnostics"/>
+		
+
+	</target>
+</project>
