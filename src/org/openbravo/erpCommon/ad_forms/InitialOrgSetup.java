@@ -233,8 +233,8 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
       String strIsTransactionAllowed = InitialOrgSetupData.isTransactionAllowed(this, strOrgType);
       if(!strIsLE.equals("Y") && strIsTransactionAllowed.equals("Y")){
         if (InitialOrgSetupData.verifyIsLE(this, strParentOrg).equals("N")){
-          m_info.append("ParentOrganizationNotCorrect").append(SALTO_LINEA);
-          strError = Utility.messageBD(this, "Parent organization not correct", vars.getLanguage());
+          m_info.append("Parent organization not correct").append(SALTO_LINEA);
+          strError = Utility.messageBD(this, "ParentOrganizationNotCorrect", vars.getLanguage());
           isOK = false;
           releaseRollbackConnection(conn);
           return m_info.toString();

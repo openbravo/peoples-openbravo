@@ -27,20 +27,17 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT C_PERIOD_ID AS ID, NAME, '' AS TOTALAMTDR, '' AS TOTALAMTCR, '' AS ACCOUNT_ID, '' as org, '' as acctvalue, '' as acctdescription, '' as value,
+		select ad_org.ad_org_id as id, ad_org.name as name, 
+        '' AS TOTALAMTDR, '' AS TOTALAMTCR, '' AS ACCOUNT_ID, '' as org, '' as acctvalue, '' as acctdescription, '' as value,
         '' as c_bpartner_id, '' as record_id2, '' as m_product_id, '' as a_asset_id
-        FROM C_PERIOD
-        WHERE C_YEAR_ID = ?
-        AND PERIODNO>=(
-                SELECT MIN(PERIODNO)
-                FROM C_PERIOD
-                WHERE C_YEAR_ID = ?
-                AND REG_FACT_ACCT_GROUP_ID IS NULL)
-        ORDER BY PERIODNO
+		from ad_org
+		where ad_org.isperiodcontrolallowed = 'Y'
+		and ad_client_id = ?
+		and ad_org_id in ('1')
       ]]>
     </Sql>
-    <Parameter name="c_year_id"/>
-    <Parameter name="c_year_id"/>
+    <Parameter name="ad_client_id"/>
+    <Parameter name="adOrgClient" type="replace" optional="true" after="and ad_org_id in (" text="'1'"/>
   </SqlMethod>
   <SqlMethod name="getAmounts" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
@@ -50,10 +47,9 @@
         (CASE SIGN(SUM(AMTACCTCR)-SUM(AMTACCTDR)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTCR)-SUM(AMTACCTDR)) END) AS TOTALAMTDR, ACCOUNT_ID, ACCTDESCRIPTION, ACCTVALUE,
         RECORD_ID2, C_BPARTNER_ID, M_PRODUCT_ID, A_ASSET_ID
         FROM FACT_ACCT
-        WHERE C_PERIOD_ID BETWEEN (SELECT C_PERIOD_ID FROM  C_PERIOD WHERE C_YEAR_ID = ? AND PERIODNO = (SELECT MIN(PERIODNO)
-                FROM C_PERIOD
-                WHERE C_YEAR_ID = ?
-                AND REG_FACT_ACCT_GROUP_ID IS NULL)) AND ?
+        WHERE EXISTS (SELECT 1 FROM C_PERIOD P
+                      WHERE P.C_YEAR_ID = ?
+                      AND P.C_PERIOD_ID = FACT_ACCT.C_PERIOD_ID)
         AND ACCOUNT_ID IN (SELECT ACCOUNT_ID 
                 FROM C_ELEMENTVALUE, C_VALIDCOMBINATION
                 WHERE C_VALIDCOMBINATION.ACCOUNT_ID = C_ELEMENTVALUE.C_ELEMENTVALUE_ID
@@ -64,8 +60,6 @@
       ]]>
     </Sql>
     <Parameter name="c_year_id"/>
-    <Parameter name="c_year_id"/>
-    <Parameter name="c_period_id"/>
     <Parameter name="accounttype"/>
     <Parameter name="org"/>
     <Parameter name="acctSchema"/>
@@ -78,10 +72,9 @@
         (CASE sign(SUM(AMTACCTCR)-sum(amtacctdr)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTCR)-sum(amtacctdr)) END) AS TOTALAMTDR, ACCOUNT_ID, 
         ACCTDESCRIPTION, ACCTVALUE, RECORD_ID2, C_BPARTNER_ID, M_PRODUCT_ID, A_ASSET_ID
         FROM FACT_ACCT
-        WHERE C_PERIOD_ID BETWEEN (SELECT C_PERIOD_ID FROM  C_PERIOD WHERE C_YEAR_ID = ? AND PERIODNO = (SELECT MIN(PERIODNO)
-                FROM C_PERIOD
-                WHERE C_YEAR_ID = ?
-                AND CLOSE_FACT_ACCT_GROUP_ID IS NULL)) AND ?
+        WHERE EXISTS (SELECT 1 FROM C_PERIOD P
+                      WHERE P.C_YEAR_ID = ?
+                      AND P.C_PERIOD_ID = FACT_ACCT.C_PERIOD_ID)
         AND ACCOUNT_ID IN (SELECT ACCOUNT_ID 
                 FROM C_ELEMENTVALUE, C_VALIDCOMBINATION
                 WHERE C_VALIDCOMBINATION.ACCOUNT_ID = C_ELEMENTVALUE.C_ELEMENTVALUE_ID
@@ -92,8 +85,6 @@
       ]]>
     </Sql>
     <Parameter name="c_year_id"/>
-    <Parameter name="c_year_id"/>
-    <Parameter name="c_period_id"/>
     <Parameter name="accounttype" optional="true" type="replace" after="AND C_ELEMENTVALUE.ACCOUNTTYPE IN (" text="'1'"/>
     <Parameter name="org"/>
     <Parameter name="acctSchema"/>
@@ -164,7 +155,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT AD_TABLE_ID FROM AD_TABLE WHERE NAME LIKE 'C_Period'
+        SELECT AD_TABLE_ID FROM AD_TABLE WHERE TABLENAME LIKE 'C_Period'
       ]]>
     </Sql>
   </SqlMethod>
@@ -203,41 +194,41 @@
     </Sql>
     <Parameter name="cAcctschemaId"/>
   </SqlMethod>
-  <SqlMethod name="updatePeriods" type="preparedStatement" connection="true" return="rowCount">
+  <SqlMethod name="orgAcctschema" type="preparedStatement" return="string">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE C_PERIOD SET REG_FACT_ACCT_GROUP_ID = ?, UPDATED = now(), UPDATEDBY = ?
-        WHERE C_PERIOD_ID IN (SELECT C_PERIOD_ID 
-                         FROM C_PERIOD 
-                         WHERE C_YEAR_ID = ?    
-                         AND PERIODNO <= (SELECT PERIODNO FROM C_PERIOD WHERE C_PERIOD_ID = ?)
-                         AND REG_FACT_ACCT_GROUP_ID IS NULL)
+		select ad_org_acctschema_id 
+		from ad_org_acctschema
+		where ad_org_id = ?
+		and c_acctschema_id = ?	
       ]]>
     </Sql>
-    <Parameter name="reg_fact_acct_group_id"/>
-    <Parameter name="user"/>
-    <Parameter name="c_year_id"/>
-    <Parameter name="c_period_id"/>
+    <Parameter name="adOrgId"/>
+    <Parameter name="cAcctschemaId"/>
   </SqlMethod>
-  <SqlMethod name="updatePeriodsClose" type="preparedStatement" connection="true" return="rowCount">
+  <SqlMethod name="insertOrgClosing" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE C_PERIOD SET CLOSE_FACT_ACCT_GROUP_ID = ?, DIVIDEUP_FACT_ACCT_GROUP_ID = ?, OPEN_FACT_ACCT_GROUP_ID = ?, UPDATED = now(), UPDATEDBY = ?
-        WHERE C_PERIOD_ID IN (SELECT C_PERIOD_ID 
-                         FROM C_PERIOD 
-                         WHERE C_YEAR_ID = ?
-                         AND PERIODNO <= (SELECT PERIODNO FROM C_PERIOD WHERE C_PERIOD_ID = ?)
-                         AND CLOSE_FACT_ACCT_GROUP_ID IS NULL)
+		INSERT INTO AD_ORG_CLOSING (AD_ORG_CLOSING_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY,
+					   C_YEAR_ID, AD_ORG_ACCTSCHEMA_ID, REG_FACT_ACCT_GROUP_ID, CLOSE_FACT_ACCT_GROUP_ID,
+					   DIVIDEUP_FACT_ACCT_GROUP_ID, OPEN_FACT_ACCT_GROUP_ID)
+		VALUES (GET_UUID(), ?, ?, 'Y', NOW(), ?, NOW(), ?, 
+		?, ?, ?, ?, 
+		?, ?)
       ]]>
     </Sql>
+    <Parameter name="adClientId"/>
+    <Parameter name="adOrgId"/>
+    <Parameter name="adUserId"/>
+    <Parameter name="adUserId"/>
+    <Parameter name="c_year_id"/>
+    <Parameter name="adOrgAcctschemaId"/>
+    <Parameter name="reg_fact_acct_group_id"/>
     <Parameter name="close_fact_acct_group_id"/>
     <Parameter name="divideup_fact_acct_group_id"/>
     <Parameter name="open_fact_acct_group_id"/>
-    <Parameter name="user"/>
-    <Parameter name="c_year_id"/>
-    <Parameter name="c_period_id"/>
   </SqlMethod>
   <SqlMethod name="getNextPeriod" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
@@ -249,6 +240,19 @@
       ]]>
     </Sql>
     <Parameter name="cPeriodId"/>
+  </SqlMethod>
+  <SqlMethod name="getLastPeriod" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT C_PERIOD_ID FROM C_PERIOD
+        WHERE C_YEAR_ID = ?
+        AND PERIODNO = (SELECT MAX(PERIODNO) FROM C_PERIOD
+                        WHERE C_YEAR_ID = ?)
+      ]]>
+    </Sql>
+    <Parameter name="cYearId"/>
+    <Parameter name="cYearId"/>
   </SqlMethod>
   <SqlMethod name="insertClose" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>

@@ -4,15 +4,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2008 Openbravo SL
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
@@ -34,7 +34,7 @@ import java.sql.Connection;
 
 public class DropRegFactAcct extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  
+
 
   public void init (ServletConfig config) {
     super.init(config);
@@ -48,13 +48,13 @@ public class DropRegFactAcct extends HttpSecureAppServlet {
       String strProcessId = vars.getStringParameter("inpProcessId");
       String strWindow = vars.getStringParameter("inpwindowId");
       String strTab = vars.getStringParameter("inpTabId");
-      String strRegFactAcctGroupId = vars.getStringParameter("inpRegFactAcctGroupId", "");
+      String stradOrgId = vars.getStringParameter("inpadOrgId", "");
       String strKey = vars.getRequiredGlobalVariable("inpcYearId", strWindow + "|C_Year_ID");
-      printPage(response, vars, strKey, strRegFactAcctGroupId, strWindow, strTab, strProcessId);
+      printPage(response, vars, strKey, stradOrgId, strWindow, strTab, strProcessId);
     } else if (vars.commandIn("SAVE")) {
       String strWindow = vars.getStringParameter("inpwindowId");
-      String strRegFactAcctGroupId = vars.getStringParameter("inpRegFactAcctGroupId", "");
-      vars.getRequiredGlobalVariable("inpcYearId", strWindow + "|C_Year_ID");
+      String stradOrgId = vars.getStringParameter("inpadOrgId", "");
+      String strKey = vars.getRequiredGlobalVariable("inpcYearId", strWindow + "|C_Year_ID");
       String strTab = vars.getStringParameter("inpTabId");
       ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTab);
       String strWindowPath="", strTabName="";
@@ -62,29 +62,40 @@ public class DropRegFactAcct extends HttpSecureAppServlet {
         strTabName = FormatUtilities.replace(tab[0].name);
         strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName + "_Relation.html";
       } else strWindowPath = strDefaultServlet;
-      OBError myError = processButton(vars, strRegFactAcctGroupId);
+      OBError myError = processButton(vars, stradOrgId, strKey);
       vars.setMessage(strTab, myError);
       printPageClosePopUp(response, vars, strWindowPath);
     } else pageErrorPopUp(response);
   }
 
-  OBError processButton(VariablesSecureApp vars, String strRegFactAcctGroupId) {
+  OBError processButton(VariablesSecureApp vars, String stradOrgId, String strKey) {
       Connection conn = null;
       OBError myError = null;
     try {
       conn = this.getTransactionConnection();
-      String strCloseFactAcctGroupId = DropRegFactAcctData.selectClose(this, strRegFactAcctGroupId);
-      String strDivideUpFactAcctGroupId = DropRegFactAcctData.selectDivideUp(this, strRegFactAcctGroupId);
-      String strOpenUpFactAcctGroupId = DropRegFactAcctData.selectOpen(this, strRegFactAcctGroupId);
+      String strRegFactAcctGroupId = "";
+      String strCloseFactAcctGroupId = "";
+      String strDivideUpFactAcctGroupId = "";
+      String strOpenUpFactAcctGroupId = "";
+      String strOrgSchemaId = "";
       try {
-      processButtonReg(conn, vars, strRegFactAcctGroupId);
-      if (!strCloseFactAcctGroupId.equals(""))processButtonClose(conn, vars, strCloseFactAcctGroupId, strDivideUpFactAcctGroupId, strOpenUpFactAcctGroupId);
+	      DropRegFactAcctData [] data = DropRegFactAcctData.selectFactAcctGroupId(this, stradOrgId, strKey);
+	      if(data!=null && data.length!=0){
+	    	  for(int i=0;i<data.length; i++){
+			      strRegFactAcctGroupId = data[0].regFactAcctGroupId;
+			      strCloseFactAcctGroupId = data[0].closeFactAcctGroupId;
+			      strDivideUpFactAcctGroupId = data[0].divideupFactAcctGroupId;
+			      strOpenUpFactAcctGroupId = data[0].openFactAcctGroupId;
+			      strOrgSchemaId = data[0].adOrgClosingId;
+			      processButtonClose(conn, vars, strKey, stradOrgId, strRegFactAcctGroupId, strCloseFactAcctGroupId, strDivideUpFactAcctGroupId, strOpenUpFactAcctGroupId, strOrgSchemaId);
+	    	  }
+	      }
       } catch(ServletException ex) {
         myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
         releaseRollbackConnection(conn);
         return myError;
       }
-      
+
       releaseCommitConnection(conn);
       myError = new OBError();
       myError.setType("Success");
@@ -97,24 +108,18 @@ public class DropRegFactAcct extends HttpSecureAppServlet {
       } catch (Exception ignored) {}
         myError = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
     }
-    return myError; 
+    return myError;
   }
 
-  String processButtonReg(Connection conn, VariablesSecureApp vars, String strRegFactAcctGroupId) throws ServletException{
-      DropRegFactAcctData.updatePeriods(conn, this, vars.getUser(), strRegFactAcctGroupId);
-      DropRegFactAcctData.deleteFactAcct(conn, this, strRegFactAcctGroupId);
-      return "ProcessOK";
-  }
-
-  String processButtonClose(Connection conn, VariablesSecureApp vars, String strCloseFactAcctGroupId, String strDivideUpFactAcctGroupId, String strOpenUpFactAcctGroupId) throws ServletException{
-    DropRegFactAcctData.updatePeriodsOpen(conn, this, vars.getUser(), strCloseFactAcctGroupId);
-    DropRegFactAcctData.updatePeriodsClose(conn, this, vars.getUser(), strCloseFactAcctGroupId);
-    DropRegFactAcctData.deleteFactAcctClose(conn, this, strCloseFactAcctGroupId, strDivideUpFactAcctGroupId, strOpenUpFactAcctGroupId);
+  String processButtonClose(Connection conn, VariablesSecureApp vars, String strKey, String stradOrgId, String strRegFactAcctGroupId, String strCloseFactAcctGroupId, String strDivideUpFactAcctGroupId, String strOpenUpFactAcctGroupId, String strOrgSchemaId) throws ServletException{
+    DropRegFactAcctData.updatePeriodsOpen(conn, this, vars.getUser(), strKey, strCloseFactAcctGroupId);
+    DropRegFactAcctData.deleteOrgClosing(conn, this, strOrgSchemaId);
+    DropRegFactAcctData.deleteFactAcctClose(conn, this, strRegFactAcctGroupId, strCloseFactAcctGroupId, strDivideUpFactAcctGroupId, strOpenUpFactAcctGroupId, stradOrgId);
     return "ProcessOK";
   }
 
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey, String strRegFactAcctGroupId, String windowId, String strTab, String strProcessId) throws IOException, ServletException {
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey, String stradOrgId, String windowId, String strTab, String strProcessId) throws IOException, ServletException {
       if (log4j.isDebugEnabled()) log4j.debug("Output: Button process Create Close Fact Acct");
 
       ActionButtonDefaultData[] data = null;
@@ -139,9 +144,9 @@ public class DropRegFactAcct extends HttpSecureAppServlet {
       xmlDocument.setParameter("description", strDescription);
       xmlDocument.setParameter("help", strHelp);
 
-      xmlDocument.setData("reportRegFactAcctGroupId", "liststructure", DropRegFactAcctData.select(this,strKey));
+      xmlDocument.setData("reportadOrgId", "liststructure", DropRegFactAcctData.select(this, vars.getLanguage(), strKey));
 
-      xmlDocument.setParameter("RegFactAcctGroupId", strRegFactAcctGroupId);
+      xmlDocument.setParameter("adOrgId", stradOrgId);
 
 
       response.setContentType("text/html; charset=UTF-8");

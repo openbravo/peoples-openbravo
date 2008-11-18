@@ -28,11 +28,9 @@
 	<PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
 	<PARAMETER id="processDescription" name="description" replaceCharacters="htmlHelp" default=""/>
 	<PARAMETER id="processHelp" name="help" replaceCharacters="htmlHelp" default=""/>
-	<PARAMETER id="parameterClose" name="constantClose"/>
-	<PARAMETER id="paramClose" name="Close" boolean="checked" withId="parameterClose"/>
-	<PARAMETER id="cPeriodId" name="cPeriodId" attribute="value"/>
-	<SUBREPORT id="reportcPeriodId" name="reportcPeriodId" report="org/openbravo/erpCommon/reference/List">
-		<ARGUMENT name="parameterListSelected" withId="cPeriodId"/>
+	<PARAMETER id="adOrgId" name="adOrgId" attribute="value"/>
+	<SUBREPORT id="reportadOrgId" name="reportadOrgId" report="org/openbravo/erpCommon/reference/List">
+		<ARGUMENT name="parameterListSelected" withId="adOrgId"/>
 	</SUBREPORT>
 	<DISCARD id="discard"/>
 </REPORT>

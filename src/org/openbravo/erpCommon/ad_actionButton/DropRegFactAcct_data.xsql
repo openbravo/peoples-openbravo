@@ -5,15 +5,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
@@ -27,101 +27,80 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT REG_FACT_ACCT_GROUP_ID AS ID, C_GETPERIODNAME(MIN(PERIODNO), ?)|| ' - ' || C_GETPERIODNAME(MAX(PERIODNO),?) AS NAME
-        FROM C_PERIOD 
-        WHERE REG_FACT_ACCT_GROUP_ID IS NOT NULL
-        AND C_YEAR_ID = ?
-        AND REG_FACT_ACCT_GROUP_ID = (select MAX(REG_FACT_ACCT_GROUP_ID) FROM C_PERIOD WHERE C_YEAR_ID = ?)
-        GROUP BY REG_FACT_ACCT_GROUP_ID
+		SELECT DISTINCT OAS.AD_ORG_ID AS ID, AD_COLUMN_IDENTIFIER('AD_ORG', OAS.AD_ORG_ID, ?) AS NAME,
+		'' AS REG_FACT_ACCT_GROUP_ID, '' AS CLOSE_FACT_ACCT_GROUP_ID, '' AS DIVIDEUP_FACT_ACCT_GROUP_ID,
+		'' AS OPEN_FACT_ACCT_GROUP_ID, '' AS AD_ORG_CLOSING_ID
+		FROM AD_ORG_ACCTSCHEMA OAS, AD_ORG O, C_YEAR Y
+		WHERE OAS.AD_ORG_ID = O.AD_ORG_ID
+		AND O.C_CALENDAR_ID = Y.C_CALENDAR_ID
+		AND Y.C_YEAR_ID = ?
       ]]>
     </Sql>
-    <Parameter name="c_year_id"/>
-    <Parameter name="c_year_id"/>
-    <Parameter name="c_year_id"/>
-    <Parameter name="c_year_id"/>
+    <Parameter name="adlanguage"/>
+    <Parameter name="cYearId"/>
   </SqlMethod>
-  <SqlMethod name="updatePeriods" type="preparedStatement" connection="true" return="rowCount">
+  <SqlMethod name="deleteOrgAcctschema" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-  UPDATE C_PERIOD SET REG_FACT_ACCT_GROUP_ID = NULL, UPDATED = now(), UPDATEDBY = ?
-  WHERE REG_FACT_ACCT_GROUP_ID = ?
+	  DELETE AD_ORG_ACCTSCHEMA
+	  WHERE AD_ORG_ACCTSCHEMA_ID = ?
       ]]>
     </Sql>
-    <Parameter name="user"/>
-    <Parameter name="reg_fact_acct_group_id"/>
-  </SqlMethod>
-  <SqlMethod name="deleteFactAcct" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-  DELETE FROM FACT_ACCT WHERE FACT_ACCT_GROUP_ID = ?
-      ]]>
-    </Sql>
-    <Parameter name="fact_acct_group_id"/>
+    <Parameter name="adOrgAcctschemaId"/>
   </SqlMethod>
   <SqlMethod name="updatePeriodsOpen" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE C_PeriodControl
-        SET PeriodStatus = 'O', UPDATED = now(), UPDATEDBY = ?
+        UPDATE C_PERIODCONTROL
+        SET PERIODSTATUS = 'O', UPDATED = now(), UPDATEDBY = ?
         WHERE PeriodStatus <> 'P'
-        AND C_PERIOD_ID IN (SELECT C_PERIOD_ID 
-                FROM C_PERIOD 
-                WHERE CLOSE_FACT_ACCT_GROUP_ID = ?)
+        AND C_PERIOD_ID IN (SELECT C_PERIOD_ID
+                FROM C_PERIOD
+                WHERE C_YEAR_ID = ?)
+        AND AD_ORG_ID = ?
         ]]>
     </Sql>
     <Parameter name="user"/>
-    <Parameter name="close_fact_acct_group_id"/>
+    <Parameter name="cYearId"/>
+    <Parameter name="adOrgId"/>
   </SqlMethod>
-  <SqlMethod name="selectClose" type="preparedStatement" return="String">
+  <SqlMethod name="selectFactAcctGroupId" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT DISTINCT CLOSE_FACT_ACCT_GROUP_ID AS ID FROM C_PERIOD WHERE REG_FACT_ACCT_GROUP_ID = ?
+        SELECT REG_FACT_ACCT_GROUP_ID, CLOSE_FACT_ACCT_GROUP_ID, DIVIDEUP_FACT_ACCT_GROUP_ID, OPEN_FACT_ACCT_GROUP_ID, AD_ORG_CLOSING_ID
+        FROM AD_ORG_CLOSING
+        WHERE AD_ORG_ID = ?
+        AND C_YEAR_ID = ?
       ]]>
     </Sql>
-    <Parameter name="reg_fact_acct_group_id"/>
+    <Parameter name="adOrgId"/>
+    <Parameter name="cYearId"/>
   </SqlMethod>
-  <SqlMethod name="selectDivideUp" type="preparedStatement" return="String">
+  <SqlMethod name="deleteOrgClosing" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT DISTINCT DIVIDEUP_FACT_ACCT_GROUP_ID AS ID FROM C_PERIOD WHERE REG_FACT_ACCT_GROUP_ID = ?
+	  DELETE FROM AD_ORG_CLOSING WHERE AD_ORG_CLOSING_ID = ?
       ]]>
     </Sql>
-    <Parameter name="reg_fact_acct_group_id"/>
-  </SqlMethod>
-  <SqlMethod name="selectOpen" type="preparedStatement" return="String">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT DISTINCT OPEN_FACT_ACCT_GROUP_ID AS ID FROM C_PERIOD WHERE REG_FACT_ACCT_GROUP_ID = ?
-      ]]>
-    </Sql>
-    <Parameter name="open_fact_acct_group_id"/>
-  </SqlMethod>
-  <SqlMethod name="updatePeriodsClose" type="preparedStatement" connection="true" return="rowCount">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-  UPDATE C_PERIOD SET CLOSE_FACT_ACCT_GROUP_ID = NULL, DIVIDEUP_FACT_ACCT_GROUP_ID = NULL, OPEN_FACT_ACCT_GROUP_ID = NULL, UPDATED = now(), UPDATEDBY = ?
-  WHERE CLOSE_FACT_ACCT_GROUP_ID = ?
-      ]]>
-    </Sql>
-    <Parameter name="user"/>
-    <Parameter name="close_fact_acct_group_id"/>
+    <Parameter name="adOrgClosingId"/>
   </SqlMethod>
   <SqlMethod name="deleteFactAcctClose" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-  DELETE FROM FACT_ACCT WHERE FACT_ACCT_GROUP_ID IN (?, ?, ?)
+	  DELETE FROM FACT_ACCT
+	  WHERE FACT_ACCT_GROUP_ID IN (?, ?, ?, ?)
+  	  AND AD_ISORGINCLUDED(FACT_ACCT.AD_ORG_ID, ?, FACT_ACCT.AD_CLIENT_ID)<>-1
       ]]>
     </Sql>
     <Parameter name="fact_acct_group_id"/>
     <Parameter name="open_acct_group_id"/>
     <Parameter name="divideup_fact_acct_group_id"/>
+    <Parameter name="reg_fact_acct_group_id"/>
+    <Parameter name="adOrgId"/>
   </SqlMethod>
 </SqlClass>

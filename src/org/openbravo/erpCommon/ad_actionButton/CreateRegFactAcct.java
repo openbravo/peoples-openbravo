@@ -52,16 +52,13 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
       String strProcessId = vars.getStringParameter("inpProcessId");
       String strWindow = vars.getStringParameter("inpwindowId");
       String strTab = vars.getStringParameter("inpTabId");
-      String strPediodId = vars.getStringParameter("inpcPeriodId", "");
       String strKey = vars.getRequiredGlobalVariable("inpcYearId", strWindow + "|C_Year_ID");
-      String strClose = vars.getGlobalVariable("inpClose", "CreateRegFactAcct|Close", "N");
-      printPage(response, vars, strKey, strPediodId, strWindow, strTab, strProcessId, strClose);
+      printPage(response, vars, strKey, "", strWindow, strTab, strProcessId);
     } else if (vars.commandIn("SAVE")) {
       String strWindow = vars.getStringParameter("inpwindowId");
-      String strPediodId = vars.getStringParameter("inpcPeriodId", "");
+      String strOrgId = vars.getStringParameter("inpadOrgId", "");
       String strKey = vars.getRequiredGlobalVariable("inpcYearId", strWindow + "|C_Year_ID");
       String strTab = vars.getStringParameter("inpTabId");
-      String strClose = vars.getRequestGlobalVariable("inpClose", "CreateRegFactAcct|Close");
       ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTab);
       String strWindowPath="", strTabName="";
       if (tab!=null && tab.length!=0) {
@@ -69,52 +66,44 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
         if (tab[0].help.equals("Y")) strWindowPath="../utility/WindowTree_FS.html?inpTabId=" + strTab;
         else strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName + "_Relation.html";
       } else strWindowPath = strDefaultServlet;
-        OBError myError = processButton(vars, strKey, strPediodId, strWindow, strClose);        
+        OBError myError = processButton(vars, strKey, strOrgId, strWindow);        
         vars.setMessage(strTab, myError);      
         printPageClosePopUp(response, vars, strWindowPath);
     } else pageErrorPopUp(response);
   }
 
-  OBError processButton(VariablesSecureApp vars, String strKey, String strPediodId, String windowId, String strClose){
+  OBError processButton(VariablesSecureApp vars, String strKey, String strOrgId, String windowId){
     
     Connection conn = null;
     OBError myError = null;
     try {
       conn = this.getTransactionConnection();
       String strRegId = SequenceIdData.getUUID();
-      String strCloseId = strClose.equals("Y")?SequenceIdData.getUUID():"";
-      String strOpenId = strClose.equals("Y")?SequenceIdData.getUUID():"";
-      String strDivideUpId = strClose.equals("Y")?SequenceIdData.getUUID():"";
-      CreateRegFactAcctData [] data = CreateRegFactAcctData.treeOrg(this, vars.getClient(), "0");
+      String strCloseId = SequenceIdData.getUUID();
+      String strOpenId = SequenceIdData.getUUID();
+      String strDivideUpId = SequenceIdData.getUUID();
+      CreateRegFactAcctData [] data = CreateRegFactAcctData.treeOrg(this, vars.getClient(), strOrgId);
       CreateRegFactAcctData [] acctSchema = CreateRegFactAcctData.treeAcctSchema(this, vars.getClient());
       for (int j=0;j<acctSchema.length;j++){
         for (int i=0;i<data.length;i++){
-          if (!strClose.equals("Y")){
-            if(!(processButtonReg(conn, vars, strKey, strPediodId, windowId, data[i].org, strRegId, acctSchema[j].id)).equals("Success")) {
-              return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
-            }
-          } else {
-            if (log4j.isDebugEnabled()) log4j.debug("Output: Before buttonReg");
-            String strRegOut = processButtonReg(conn, vars, strKey, strPediodId, windowId, data[i].org, strRegId, acctSchema[j].id);
-            String strCloseOut = processButtonClose(conn, vars, strKey, strPediodId, windowId, data[i].org, strCloseId, strOpenId, strDivideUpId, acctSchema[j].id);
-            if (log4j.isDebugEnabled()) log4j.debug("Output: After buttonClose - strRegOut:" + strRegOut);
-            if (log4j.isDebugEnabled()) log4j.debug("Output: After buttonClose - strCloseOut:" + strCloseOut);
-            if (!strRegOut.equals("Success") || !strCloseOut.equals("Success")){
-              return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
-            }
+          if (log4j.isDebugEnabled()) log4j.debug("Output: Before buttonReg");
+          String strRegOut = processButtonReg(conn, vars, strKey, windowId, data[i].org, strRegId, acctSchema[j].id);
+          String strCloseOut = processButtonClose(conn, vars, strKey, windowId, data[i].org, strCloseId, strOpenId, strDivideUpId, acctSchema[j].id);
+          if (log4j.isDebugEnabled()) log4j.debug("Output: After buttonClose - strRegOut:" + strRegOut);
+          if (log4j.isDebugEnabled()) log4j.debug("Output: After buttonClose - strCloseOut:" + strCloseOut);
+          if (!strRegOut.equals("Success") || !strCloseOut.equals("Success")){
+            return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
           }
           ExpenseAmtDr = new BigDecimal("0");
           ExpenseAmtCr = new BigDecimal("0");
           RevenueAmtDr = new BigDecimal("0");
           RevenueAmtCr = new BigDecimal("0");
+          String strOrgSchemaId = CreateRegFactAcctData.orgAcctschema(this, data[i].org, acctSchema[j].id);
+          if (strOrgSchemaId!=null && !strOrgSchemaId.equals("") && CreateRegFactAcctData.insertOrgClosing(conn, this, vars.getClient(), data[i].org, vars.getUser(), strKey, strOrgSchemaId, strRegId, strCloseId, strDivideUpId, strOpenId)==0){
+            return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+          }
         }
       }
-      if(CreateRegFactAcctData.updatePeriods(conn, this, strRegId, vars.getUser(), strKey, strPediodId)==0){
-        return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
-      }else if (strClose.equals("Y") && (CreateRegFactAcctData.updatePeriodsClose(conn, this, strCloseId, strDivideUpId, strOpenId, vars.getUser(), strKey, strPediodId)==0 || CreateRegFactAcctData.updateClose(conn, this, vars.getUser(), strCloseId)==0)){
-        return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
-      }
-      
       releaseCommitConnection(conn);
       myError = new OBError();
       myError.setType("Success");
@@ -130,12 +119,13 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
   return myError;
   }
 
-  String processButtonReg(Connection conn, VariablesSecureApp vars, String strKey, String strPediodId, String windowId, String stradOrgId, String strID, String strAcctSchema) throws ServletException {
+  String processButtonReg(Connection conn, VariablesSecureApp vars, String strKey, String windowId, String stradOrgId, String strID, String strAcctSchema) throws ServletException {
   
-      CreateRegFactAcctData[] expense = CreateRegFactAcctData.getAmounts(this, strKey, strPediodId, "E", stradOrgId, strAcctSchema);
-      CreateRegFactAcctData[] revenue = CreateRegFactAcctData.getAmounts(this, strKey, strPediodId, "R", stradOrgId, strAcctSchema);
+      CreateRegFactAcctData[] expense = CreateRegFactAcctData.getAmounts(this, strKey, "E", stradOrgId, strAcctSchema);
+      CreateRegFactAcctData[] revenue = CreateRegFactAcctData.getAmounts(this, strKey, "R", stradOrgId, strAcctSchema);
       String Fact_Acct_ID = "";
       String Fact_Acct_Group_ID = strID;
+      String strPediodId = CreateRegFactAcctData.getLastPeriod(this, strKey);
       if(CreateRegFactAcctData.getNextPeriod(this, strPediodId).equals("")) return "ProcessRunError1";
       int i;
       for (i=0;i<expense.length;i++){
@@ -161,13 +151,14 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
       return "Success";
   }
 
-  String processButtonClose(Connection conn, VariablesSecureApp vars, String strKey, String strPediodId, String windowId, String stradOrgId, String strCloseID, String strOpenID, String strDivideUpId, String strAcctSchema) throws ServletException {    
+  String processButtonClose(Connection conn, VariablesSecureApp vars, String strKey, String windowId, String stradOrgId, String strCloseID, String strOpenID, String strDivideUpId, String strAcctSchema) throws ServletException {    
       BigDecimal assetAmtDr = new BigDecimal("0");
       BigDecimal assetAmtCr = new BigDecimal("0");
       BigDecimal liabilityAmtDr = new BigDecimal("0");
       BigDecimal liabilityAmtCr = new BigDecimal("0");
       String Fact_Acct_ID = "";
       String Fact_Acct_Group_ID = strCloseID;
+      String strPediodId = CreateRegFactAcctData.getLastPeriod(this, strKey);
       String newPeriod = CreateRegFactAcctData.getNextPeriod(this, strPediodId);
       if(newPeriod.equals("")){
         return "ProcessRunError";
@@ -188,8 +179,8 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
           CreateRegFactAcctData.insertClose(conn, this, Fact_Acct_ID, vars.getClient(), stradOrgId, vars.getUser(), strAcctSchema, account2[0].accountId, CreateRegFactAcctData.getEndDate(this, strPediodId), strPediodId, CreateRegFactAcctData.adTableId(this), "A", CreateRegFactAcctData.cCurrencyId(this, strAcctSchema),ExpenseAmtCr.add(RevenueAmtCr).subtract(RevenueAmtDr).subtract(ExpenseAmtDr).toString(),"0",ExpenseAmtCr.add(RevenueAmtCr).subtract(RevenueAmtDr).subtract(ExpenseAmtDr).toString(),"0", strDivideUpId, "10", "C", account2[0].name, account2[0].value, account2[0].cBpartnerId, account2[0].recordId2, account2[0].mProductId, account2[0].aAssetId);
         }
       }
-      CreateRegFactAcctData[] asset = CreateRegFactAcctData.getAmountsClose(conn, this, strKey, strPediodId, "'A'", stradOrgId, strAcctSchema);
-      CreateRegFactAcctData[] liability = CreateRegFactAcctData.getAmountsClose(conn, this, strKey, strPediodId, "'L','O'", stradOrgId, strAcctSchema);
+      CreateRegFactAcctData[] asset = CreateRegFactAcctData.getAmountsClose(conn, this, strKey, "'A'", stradOrgId, strAcctSchema);
+      CreateRegFactAcctData[] liability = CreateRegFactAcctData.getAmountsClose(conn, this, strKey, "'L','O'", stradOrgId, strAcctSchema);
       int i;
       for (i=0;i<asset.length;i++){
         assetAmtDr = assetAmtDr.add(new BigDecimal(asset[i].totalamtdr));
@@ -222,7 +213,7 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
       return "Success";
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey, String strPediodId, String windowId, String strTab, String strProcessId, String strClose) throws IOException, ServletException {
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey, String strOrgId, String windowId, String strTab, String strProcessId) throws IOException, ServletException {
       if (log4j.isDebugEnabled()) log4j.debug("Output: Button process Create Close Fact Acct");
 
       ActionButtonDefaultData[] data = null;
@@ -246,11 +237,10 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
       xmlDocument.setParameter("theme", vars.getTheme());
       xmlDocument.setParameter("description", strDescription);
       xmlDocument.setParameter("help", strHelp);
-      xmlDocument.setParameter("Close", strClose);
 
-      xmlDocument.setData("reportcPeriodId", "liststructure", CreateRegFactAcctData.select(this,strKey));
+      xmlDocument.setData("reportadOrgId", "liststructure", CreateRegFactAcctData.select(this, vars.getClient(), Utility.getContext(this, vars, "#User_Org", "CreateRegFactAcct")));
 
-      xmlDocument.setParameter("cPeriodId", strPediodId);
+      xmlDocument.setParameter("adOrgId", strOrgId);
 
 
       response.setContentType("text/html; charset=UTF-8");
