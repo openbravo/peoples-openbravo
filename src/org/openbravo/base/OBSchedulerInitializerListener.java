@@ -1,19 +1,7 @@
 /*
  *************************************************************************
- * The contents of this file are subject to the Openbravo  Public  License
- * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
- * Version 1.1  with a permitted attribution clause; you may not  use this
- * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
- * Software distributed under the License  is  distributed  on  an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
- * All Rights Reserved. 
- * Contributor(s):  ______________________________________.
+ * This file is a copy of org.quartz.ee.servlet.QuartzInitializerListener
+ * with some minor modifications to accommodate the Openbravo ERP environment.
  ************************************************************************
 */
 package org.openbravo.base;
@@ -51,12 +39,12 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
     
     System.out.println("Quartz Initializer Servlet loaded, initializing Scheduler...");
 
-    ServletContext servletContext = sce.getServletContext();
+    final ServletContext servletContext = sce.getServletContext();
     StdSchedulerFactory factory;
     try {
 
-        String configFile = servletContext.getInitParameter("config-file");
-        String shutdownPref = servletContext.getInitParameter("shutdown-on-unload");
+        final String configFile = servletContext.getInitParameter("config-file");
+        final String shutdownPref = servletContext.getInitParameter("shutdown-on-unload");
 
         if (shutdownPref != null) {
             performShutdown = Boolean.valueOf(shutdownPref).booleanValue();
@@ -74,15 +62,15 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
         scheduler = factory.getScheduler();
 
         // Should the Scheduler being started now or later
-        String startOnLoad = servletContext
+        final String startOnLoad = servletContext
                 .getInitParameter("start-scheduler-on-load");
 
         int startDelay = 0;
-        String startDelayS = servletContext.getInitParameter("start-delay-seconds");
+        final String startDelayS = servletContext.getInitParameter("start-delay-seconds");
         try {
             if(startDelayS != null && startDelayS.trim().length() > 0)
                 startDelay = Integer.parseInt(startDelayS);
-        } catch(Exception e) {
+        } catch(final Exception e) {
             System.out.println("Cannot parse value of 'start-delay-seconds' to an integer: " + startDelayS + ", defaulting to 5 seconds.");
             startDelay = 5;
         }
@@ -127,7 +115,7 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
         System.out.println("Initalizing singleton instance of " + OBScheduler.class.getName());
         OBScheduler.getInstance().initialize(scheduler);
 
-    } catch (Exception e) {
+    } catch (final Exception e) {
         System.out.println("Quartz Scheduler failed to initialize: " + e.toString());
         e.printStackTrace();
     }
@@ -143,7 +131,7 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
         if (scheduler != null) {
             scheduler.shutdown();
         }
-    } catch (Exception e) {
+    } catch (final Exception e) {
         System.out.println("Quartz Scheduler failed to shutdown cleanly: " + e.toString());
         e.printStackTrace();
     }

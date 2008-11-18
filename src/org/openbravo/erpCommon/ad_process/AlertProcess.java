@@ -17,12 +17,11 @@ public class AlertProcess implements Process {
   private ConnectionProvider connection;
   private ProcessLogger logger;
   
-  public void initialize(ProcessBundle bundle) {
+  public void execute(ProcessBundle bundle) throws Exception {
+    
     logger = bundle.getLogger();
     connection = bundle.getConnection();
-  }
-  
-  public void execute(ProcessBundle bundle) throws Exception {
+    
     logger.log("Starting Alert Backgrouond Process. Loop "+ counter + "\n");
     
     try {

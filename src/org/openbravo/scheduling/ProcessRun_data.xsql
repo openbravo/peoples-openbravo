@@ -22,7 +22,7 @@
    <SqlMethod name="select" type="preparedStatement" return="single">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-      	SELECT AD_Process_Run_ID, AD_User_ID AS UserId, Status, Start_Time, Runtime	 
+      	SELECT AD_Process_Run_ID, Status, Start_Time, End_Time, Runtime	 
       	FROM AD_Process_Run
       	WHERE AD_Process_Run_ID = ?
     ]]></Sql>
@@ -32,15 +32,14 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
       	INSERT INTO AD_Process_Run 
-        (AD_Org_ID, AD_Client_ID, Isactive, Created, Createdby, Updated, UpdatedBy, AD_User_ID, 
+        (AD_Org_ID, AD_Client_ID, Isactive, Created, Createdby, Updated, UpdatedBy, 
         AD_Process_Run_ID, Status, Start_Time, Runtime, Log, AD_Process_Request_ID)
-        VALUES (?, ?, 'Y', NOW(), ?, NOW(), ?, ?, ?, ?, TO_TIMESTAMP(?, 'DD-MM-YYYY HH24:MI:SS'), ?, ?, ?)
+        VALUES (?, ?, 'Y', NOW(), ?, NOW(), ?, ?, ?, TO_TIMESTAMP(?, 'DD-MM-YYYY HH24:MI:SS'), ?, ?, ?)
     ]]></Sql>
     <Parameter name="adOrgId"/>
     <Parameter name="adClientId"/>
     <Parameter name="createdby"/>
     <Parameter name="updatedby"/>
-    <Parameter name="user"/>
     <Parameter name="id"/>
     <Parameter name="status"/>
     <Parameter name="startTime"/>
@@ -52,12 +51,13 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
       	UPDATE AD_Process_Run 
-        SET Updated = NOW(), UpdatedBy = ?, Status = ?, 
+        SET Updated = NOW(), UpdatedBy = ?, Status = ?, End_Time = TO_TIMESTAMP(?, 'DD-MM-YYYY HH24:MI:SS'),
         Runtime = ?, Log = ?
         WHERE AD_Process_Run_ID = ?
     ]]></Sql>
     <Parameter name="updatedby"/>
     <Parameter name="status"/>
+    <Parameter name="endTime"/>
     <Parameter name="runtime"/>
     <Parameter name="log"/>
     <Parameter name="id"/>

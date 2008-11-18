@@ -31,13 +31,10 @@ public class AcctServerProcess implements Process {
   private ProcessLogger logger;
   private ConnectionProvider connection;
   
-  public void initialize(ProcessBundle bundle) {
+  public void execute(ProcessBundle bundle) throws Exception {
+    
     logger = bundle.getLogger();
     connection = bundle.getConnection();
-    
-  }
-  
-  public void execute(ProcessBundle bundle) throws Exception {
     
     VariablesSecureApp vars = bundle.getContext().toVars();
     

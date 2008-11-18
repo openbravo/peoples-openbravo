@@ -18,7 +18,14 @@
 */
 package org.openbravo.scheduling;
 
-import static org.openbravo.scheduling.Process.*;
+import static org.openbravo.scheduling.Process.COMPLETE;
+import static org.openbravo.scheduling.Process.ERROR;
+import static org.openbravo.scheduling.Process.EXECUTION_ID;
+import static org.openbravo.scheduling.Process.MISFIRED;
+import static org.openbravo.scheduling.Process.PROCESSING;
+import static org.openbravo.scheduling.Process.SCHEDULED;
+import static org.openbravo.scheduling.Process.SUCCESS;
+import static org.openbravo.scheduling.Process.UNSCHEDULED;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,8 +35,6 @@ import javax.servlet.ServletException;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.ConnectionProviderContextListener;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.scheduling.ProcessRequestData;
-import org.openbravo.scheduling.ProcessRunData;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -58,15 +63,14 @@ public class ProcessMonitor implements SchedulerListener, JobListener, TriggerLi
   }
   
   public void jobScheduled(Trigger trigger) {
-    ProcessBundle bundle = (ProcessBundle) trigger.getJobDataMap().get(ProcessBundle.KEY);
-    ProcessContext ctx = bundle.getContext();
+    final ProcessBundle bundle = (ProcessBundle) trigger.getJobDataMap().get(ProcessBundle.KEY);
+    final ProcessContext ctx = bundle.getContext();
     try {
       ProcessRequestData.update(getConnection(), ctx.getUser(), ctx.getUser(), 
-          SCHEDULED, bundle.getChannel().toString(), format(trigger.getNextFireTime()), 
-          format(trigger.getPreviousFireTime()), format(trigger.getFinalFireTime()), 
-          ctx.toString(), trigger.getName());
+          SCHEDULED, bundle.getChannel().toString(), null, null, null,
+           ctx.toString(), trigger.getName());
     
-    } catch (ServletException e) {
+    } catch (final ServletException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
@@ -76,7 +80,7 @@ public class ProcessMonitor implements SchedulerListener, JobListener, TriggerLi
     try {
       ProcessRequestData.update(getConnection(), UNSCHEDULED, null, null, triggerName);
     
-    } catch (ServletException e) {
+    } catch (final ServletException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
@@ -106,7 +110,7 @@ public class ProcessMonitor implements SchedulerListener, JobListener, TriggerLi
     try {
       ProcessRequestData.update(getConnection(), COMPLETE, trigger.getName());
     
-    } catch (ServletException e) {
+    } catch (final ServletException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
@@ -128,40 +132,45 @@ public class ProcessMonitor implements SchedulerListener, JobListener, TriggerLi
   }
 
   public void jobToBeExecuted(JobExecutionContext jec) {
-    String executionId = SequenceIdData.getUUID();
-    ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap().get(ProcessBundle.KEY);
-    ProcessContext ctx = bundle.getContext();
+    final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap().get(ProcessBundle.KEY);
+    if (bundle == null) {
+        return;
+    }
+    final ProcessContext ctx = bundle.getContext();
+    final String executionId = SequenceIdData.getUUID();
     try {
       ProcessRunData.insert(getConnection(), ctx.getOrganization(), ctx.getClient(), 
-          ctx.getUser(), ctx.getUser(), ctx.getUser(), executionId, 
-          PROCESSING, format(jec.getFireTime()), null, null, 
-          jec.getJobDetail().getName());
+          ctx.getUser(), ctx.getUser(), executionId, PROCESSING, format(jec.getFireTime()), 
+          null, null, jec.getJobDetail().getName());
       
           jec.put(EXECUTION_ID, executionId);
           
           bundle.setConnection(getConnection());
           bundle.setConfig(getConfigParameters());
     
-    } catch (ServletException e){
+    } catch (final ServletException e){
       // TODO Auto-generated method stub
       e.printStackTrace();
     }
   }
 
   public void jobWasExecuted(JobExecutionContext jec, JobExecutionException jee) {
-    ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap().get(ProcessBundle.KEY);
-    ProcessContext ctx = bundle.getContext();
+    final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap().get(ProcessBundle.KEY);
+    if (bundle == null) {
+        return;
+    }
+    final ProcessContext ctx = bundle.getContext();
     try {
-      String executionId = (String) jec.get(EXECUTION_ID);
+      final String executionId = (String) jec.get(EXECUTION_ID);
       if (jee == null) {
-        ProcessRunData.update(getConnection(), ctx.getUser(), SUCCESS, 
+        ProcessRunData.update(getConnection(), ctx.getUser(), SUCCESS, format(new Date()),
             getDuration(jec.getJobRunTime()), bundle.getLog().toString(), executionId);
       } else {
-        ProcessRunData.update(getConnection(), ctx.getUser(), ERROR, 
+        ProcessRunData.update(getConnection(), ctx.getUser(), ERROR, format(new Date()),
             getDuration(jec.getJobRunTime()), bundle.getLog().toString(), executionId);
       }
     
-    } catch (ServletException e) {
+    } catch (final ServletException e) {
       // TODO Auto-generated method stub
       e.printStackTrace();
     }
@@ -174,15 +183,15 @@ public class ProcessMonitor implements SchedulerListener, JobListener, TriggerLi
   }
 
   public void triggerFired(Trigger trigger, JobExecutionContext jec) {
-    ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap().get(ProcessBundle.KEY);
-    ProcessContext ctx = bundle.getContext();
+    final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap().get(ProcessBundle.KEY);
+    final ProcessContext ctx = bundle.getContext();
     try {
       ProcessRequestData.update(getConnection(), ctx.getUser(), ctx.getUser(), 
           SCHEDULED, bundle.getChannel().toString(), 
           format(trigger.getPreviousFireTime()), format(trigger.getNextFireTime()), 
           format(trigger.getFinalFireTime()), ctx.toString(), trigger.getName());
     
-    } catch (ServletException e) {
+    } catch (final ServletException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
@@ -192,7 +201,7 @@ public class ProcessMonitor implements SchedulerListener, JobListener, TriggerLi
     try {
       ProcessRequestData.update(getConnection(), MISFIRED, trigger.getName());
     
-    } catch (ServletException e) {
+    } catch (final ServletException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
@@ -223,7 +232,7 @@ public class ProcessMonitor implements SchedulerListener, JobListener, TriggerLi
    * @return
    */
   public final String format(Date date) {
-    String dateTimeFormat = getConfigParameters().getJavaDateTimeFormat();
+    final String dateTimeFormat = getConfigParameters().getJavaDateTimeFormat();
     return date == null ? null : new SimpleDateFormat(dateTimeFormat).format(date);
   }
   
@@ -233,15 +242,15 @@ public class ProcessMonitor implements SchedulerListener, JobListener, TriggerLi
    */
   public static String getDuration(long duration) {
     
-    int milliseconds = (int) (duration % 1000);
-    int seconds = (int) ((duration / 1000) % 60);
-    int minutes = (int) ((duration / 60000) % 60);
-    int hours = (int) ((duration / 3600000) % 24);
+    final int milliseconds = (int) (duration % 1000);
+    final int seconds = (int) ((duration / 1000) % 60);
+    final int minutes = (int) ((duration / 60000) % 60);
+    final int hours = (int) ((duration / 3600000) % 24);
     
-    String m = (milliseconds < 10 ? "00" : (milliseconds<100 ? "0" : "")) + milliseconds;
-    String sec = (seconds < 10 ? "0" : "") + seconds;
-    String min = (minutes < 10 ? "0" : "") + minutes;
-    String hr = (hours < 10 ? "0" : "") + hours;
+    final String m = (milliseconds < 10 ? "00" : (milliseconds<100 ? "0" : "")) + milliseconds;
+    final String sec = (seconds < 10 ? "0" : "") + seconds;
+    final String min = (minutes < 10 ? "0" : "") + minutes;
+    final String hr = (hours < 10 ? "0" : "") + hours;
 
     return hr + ":" + min + ":" + sec + "." + m;
   }

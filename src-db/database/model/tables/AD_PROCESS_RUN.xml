@@ -33,11 +33,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="AD_USER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="STATUS" primaryKey="false" required="false" type="VARCHAR" size="20" autoIncrement="false">
+      <column name="STATUS" primaryKey="false" required="false" type="VARCHAR" size="3" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -61,16 +57,13 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PARAMS" primaryKey="false" required="false" type="VARCHAR" size="4000" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="REPORT" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_PROCESS_REQUEST" name="ADPROCESSREQUEST_ADPROCESSRUN" onDelete="cascade">
-        <reference local="AD_PROCESS_REQUEST_ID" foreign="AD_PROCESS_REQUEST_ID"/>
-      </foreign-key>
+      <column name="END_TIME" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
     </table>
   </database>

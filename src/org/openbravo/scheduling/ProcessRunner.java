@@ -18,7 +18,11 @@
 */
 package org.openbravo.scheduling;
 
-import static org.openbravo.scheduling.Process.*;
+import static org.openbravo.scheduling.Process.COMPLETE;
+import static org.openbravo.scheduling.Process.ERROR;
+import static org.openbravo.scheduling.Process.PROCESSING;
+import static org.openbravo.scheduling.Process.SCHEDULED;
+import static org.openbravo.scheduling.Process.SUCCESS;
 
 import java.util.Date;
 
@@ -26,8 +30,6 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.scheduling.ProcessRequestData;
-import org.openbravo.scheduling.ProcessRunData;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 
 /**
@@ -55,18 +57,27 @@ public class ProcessRunner {
     Process process = null;
     try {
       process = bundle.getProcessClass().newInstance();
-      process.initialize(bundle);
       
-    } catch (Exception e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+    } catch (final Exception e) {
+      log.error(e.getMessage(), e);
       throw new ServletException(e.getMessage(), e);
     } 
-    String requestId = SequenceIdData.getUUID();
-    String status = null;
+    final String requestId = SequenceIdData.getUUID();
+    String status = SCHEDULED;
     
-    long startTime = System.currentTimeMillis();
+    final ProcessContext ctx = bundle.getContext();
+    ProcessRequestData.insert(conn, ctx.getOrganization(), ctx.getClient(), 
+            ctx.getUser(), ctx.getUser(), requestId, bundle.getProcessId(), ctx.getUser(), 
+            status, "Direct", ctx.toString(), "", null, null, null);
+    
+    final String executionId = SequenceIdData.getUUID();
+    final long startTime = System.currentTimeMillis();
     long endTime = startTime;
+    
+    status = PROCESSING;
+    ProcessRunData.insert(conn, ctx.getOrganization(), ctx.getClient(), 
+            ctx.getUser(), ctx.getUser(), executionId, status, 
+            OBScheduler.format(new Date(startTime)), null, bundle.getLog(), requestId);
     
     try {
       log.debug("Calling execute on process " + requestId);
@@ -74,23 +85,18 @@ public class ProcessRunner {
       endTime = System.currentTimeMillis();
       status = SUCCESS;
     
-    } catch (Exception e) {
-      e.printStackTrace();
+    } catch (final Exception e) {
+      log.error(e.getMessage(), e);
       endTime = System.currentTimeMillis();
       status = ERROR;
       log.info("Process " + requestId + " threw an Exception: ", e);
     }
-    ProcessContext ctx = bundle.getContext();
-    ProcessRequestData.insert(conn, ctx.getOrganization(), ctx.getClient(), 
-        ctx.getUser(), ctx.getUser(), requestId, bundle.getProcessId(), ctx.getUser(), 
-        status, "Direct", ctx.toString(), "",
-        OBScheduler.format(new Date(startTime)), null, OBScheduler.format(new Date(startTime)));
     
-    String duration = ProcessMonitor.getDuration(endTime - startTime);
-    String executionId = SequenceIdData.getUUID();
-    ProcessRunData.insert(conn, ctx.getOrganization(), ctx.getClient(), 
-        ctx.getUser(), ctx.getUser(), ctx.getUser(), executionId, 
-        status, OBScheduler.format(new Date(startTime)), duration, bundle.getLog(), requestId);
+    final String duration = ProcessMonitor.getDuration(endTime - startTime);
+    ProcessRequestData.update(conn, COMPLETE, requestId);
+    final String end = OBScheduler.format(new Date(endTime));
+    ProcessRunData.update(conn, ctx.getUser(), SUCCESS, end, 
+            duration, bundle.getLog().toString(), executionId);
     
     return executionId;
   }

@@ -49,7 +49,7 @@ public class BaseAntTest extends TestCase {
             final AntExecutor ant = new AntExecutor(getProperty("source.path")
                     + (additionalPath != null ? "/" + additionalPath : ""));
             // ant.setLogLevel(Project.MSG_INFO);
-            ant.setOBPrintStreamLog(null);// outputLogWriter);
+            //ant.setOBPrintStreamLog(null);// outputLogWriter);
             ant.runTask(task);
             final String result = ant.getErr();
             if (result.equalsIgnoreCase("Success")) {

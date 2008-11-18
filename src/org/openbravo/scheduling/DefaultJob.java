@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.scheduling;
 
 import org.quartz.Job;
@@ -23,22 +23,20 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 public class DefaultJob implements Job {
-  
-  /* (non-Javadoc)
-   * @see org.quartz.Job#execute(org.quartz.JobExecutionContext)
-   */
-  public void execute(JobExecutionContext jec) throws JobExecutionException {
-    ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap().get(ProcessBundle.KEY);
-    try {
-      Process process = bundle.getProcessClass().newInstance();
-      process.initialize(bundle);
-      process.execute(bundle);
-    
-    } catch (Exception e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-      throw new JobExecutionException(e);
+
+    /**
+     * {@inheritDoc}
+     */
+    public void execute(JobExecutionContext jec) throws JobExecutionException {
+        final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap()
+                .get(ProcessBundle.KEY);
+        try {
+            final Process process = bundle.getProcessClass().newInstance();
+            process.execute(bundle);
+
+        } catch (final Exception e) {
+            e.printStackTrace();
+            throw new JobExecutionException(e);
+        }
     }
-  }
-  
 }

@@ -39,13 +39,10 @@ public class HeartbeatProcess implements Process {
   private ConnectionProvider connection;
   private ProcessLogger logger;
   
-  public void initialize(ProcessBundle bundle) {
+  public void execute(ProcessBundle bundle) throws Exception {
+    
     connection = bundle.getConnection();
     logger = bundle.getLogger();
-    
-  }
-  
-  public void execute(ProcessBundle bundle) throws Exception {
     
     this.ctx = bundle.getContext();
     
