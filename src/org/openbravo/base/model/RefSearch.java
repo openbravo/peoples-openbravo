@@ -27,18 +27,18 @@ public class RefSearch extends ModelObject {
     private Column column;
 
     public String getReference() {
-	return reference;
+        return reference;
     }
 
     public void setReference(String reference) {
-	this.reference = reference;
+        this.reference = reference;
     }
 
     public Column getColumn() {
-	return column;
+        return column;
     }
 
     public void setColumn(Column column) {
-	this.column = column;
+        this.column = column;
     }
 }

@@ -19,31 +19,31 @@ public class ValidationException extends OBException {
     private Map<Property, String> msgs = new HashMap<Property, String>();
 
     public ValidationException() {
-	super();
+        super();
     }
 
     public void addMessage(Property p, String msg) {
-	msgs.put(p, msg);
+        msgs.put(p, msg);
     }
 
     public boolean hasMessages() {
-	return !msgs.isEmpty();
+        return !msgs.isEmpty();
     }
 
     @Override
     public String getMessage() {
-	if (msgs == null) {
-	    // during construction
-	    return "";
-	}
-	final StringBuffer sb = new StringBuffer();
-	for (final Property p : msgs.keySet()) {
-	    final String msg = msgs.get(p);
-	    if (sb.length() > 0) {
-		sb.append("\n");
-	    }
-	    sb.append(p.getName() + ": " + msg);
-	}
-	return sb.toString();
+        if (msgs == null) {
+            // during construction
+            return "";
+        }
+        final StringBuffer sb = new StringBuffer();
+        for (final Property p : msgs.keySet()) {
+            final String msg = msgs.get(p);
+            if (sb.length() > 0) {
+                sb.append("\n");
+            }
+            sb.append(p.getName() + ": " + msg);
+        }
+        return sb.toString();
     }
 }

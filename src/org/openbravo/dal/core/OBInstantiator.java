@@ -41,42 +41,42 @@ public class OBInstantiator implements Instantiator {
     private Class<?> mappedClass;
 
     public OBInstantiator() {
-	this.entityName = null;
+        this.entityName = null;
     }
 
     public OBInstantiator(PersistentClass mappingInfo) {
-	this.entityName = mappingInfo.getEntityName();
-	mappedClass = mappingInfo.getMappedClass();
-	log.debug("Creating dynamic instantiator for " + entityName);
+        this.entityName = mappingInfo.getEntityName();
+        mappedClass = mappingInfo.getMappedClass();
+        log.debug("Creating dynamic instantiator for " + entityName);
     }
 
     public Object instantiate() {
-	return OBProvider.getInstance().get(entityName);
+        return OBProvider.getInstance().get(entityName);
     }
 
     public Object instantiate(Serializable id) {
-	if (mappedClass != null) {
-	    final Identifiable obObject = (Identifiable) OBProvider
-		    .getInstance().get(mappedClass);
-	    obObject.setId(id);
-	    Check.isTrue(obObject.getEntityName().equals(entityName),
-		    "Entityname of instantiated object "
-			    + obObject.getEntityName()
-			    + " and expected entityName: " + entityName
-			    + " is different.");
-	    return obObject;
-	} else {
-	    final DynamicOBObject dob = new DynamicOBObject();
-	    dob.setEntityName(entityName);
-	    dob.setId((String) id);
-	    return dob;
-	}
+        if (mappedClass != null) {
+            final Identifiable obObject = (Identifiable) OBProvider
+                    .getInstance().get(mappedClass);
+            obObject.setId(id);
+            Check.isTrue(obObject.getEntityName().equals(entityName),
+                    "Entityname of instantiated object "
+                            + obObject.getEntityName()
+                            + " and expected entityName: " + entityName
+                            + " is different.");
+            return obObject;
+        } else {
+            final DynamicOBObject dob = new DynamicOBObject();
+            dob.setEntityName(entityName);
+            dob.setId((String) id);
+            return dob;
+        }
     }
 
     public boolean isInstance(Object object) {
-	if (object instanceof Identifiable) {
-	    return entityName.equals(((Identifiable) object).getEntityName());
-	}
-	return false;
+        if (object instanceof Identifiable) {
+            return entityName.equals(((Identifiable) object).getEntityName());
+        }
+        return false;
     }
 }

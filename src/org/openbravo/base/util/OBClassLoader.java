@@ -26,32 +26,32 @@ public class OBClassLoader implements OBSingleton {
     private static OBClassLoader instance;
 
     public static OBClassLoader getInstance() {
-	if (instance == null) {
-	    instance = OBProvider.getInstance().get(OBClassLoader.class);
-	}
-	return instance;
+        if (instance == null) {
+            instance = OBProvider.getInstance().get(OBClassLoader.class);
+        }
+        return instance;
     }
 
     public Class<?> loadClass(String className) {
-	try {
-	    return Thread.currentThread().getContextClassLoader().loadClass(
-		    className);
-	} catch (Exception e) {
-	    throw new OBException("Exception while loading class " + className
-		    + ", " + e.getMessage(), e);
-	}
+        try {
+            return Thread.currentThread().getContextClassLoader().loadClass(
+                    className);
+        } catch (Exception e) {
+            throw new OBException("Exception while loading class " + className
+                    + ", " + e.getMessage(), e);
+        }
     }
 
     public static class ClassOBClassLoader extends OBClassLoader {
 
-	@Override
-	public Class<?> loadClass(String className) {
-	    try {
-		return Class.forName(className);
-	    } catch (Exception e) {
-		throw new OBException("Exception while loading class "
-			+ className + ", " + e.getMessage(), e);
-	    }
-	}
+        @Override
+        public Class<?> loadClass(String className) {
+            try {
+                return Class.forName(className);
+            } catch (Exception e) {
+                throw new OBException("Exception while loading class "
+                        + className + ", " + e.getMessage(), e);
+            }
+        }
     }
 }

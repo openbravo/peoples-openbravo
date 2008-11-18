@@ -27,71 +27,71 @@ import org.openbravo.dal.service.OBDal;
  */
 public class DalInitializingTask extends Task {
     private static final Logger log = Logger
-	    .getLogger(DalInitializingTask.class);
+            .getLogger(DalInitializingTask.class);
 
     protected String propertiesFile;
     protected String userId;
     private String providerConfigDirectory;
 
     public String getPropertiesFile() {
-	return propertiesFile;
+        return propertiesFile;
     }
 
     public void setPropertiesFile(String propertiesFile) {
-	this.propertiesFile = propertiesFile;
+        this.propertiesFile = propertiesFile;
     }
 
     public String getUserId() {
-	return userId;
+        return userId;
     }
 
     public void setUserId(String userId) {
-	this.userId = userId;
+        this.userId = userId;
     }
 
     @Override
     public void execute() {
-	OBProvider.getInstance().register(OBClassLoader.class,
-		OBClassLoader.ClassOBClassLoader.class, false);
+        OBProvider.getInstance().register(OBClassLoader.class,
+                OBClassLoader.ClassOBClassLoader.class, false);
 
-	if (!DalLayerInitializer.getInstance().isInitialized()) {
-	    log.debug("initializating dal layer, getting properties from "
-		    + getPropertiesFile());
-	    OBPropertiesProvider.getInstance().setProperties(
-		    getPropertiesFile());
+        if (!DalLayerInitializer.getInstance().isInitialized()) {
+            log.debug("initializating dal layer, getting properties from "
+                    + getPropertiesFile());
+            OBPropertiesProvider.getInstance().setProperties(
+                    getPropertiesFile());
 
-	    if (getProviderConfigDirectory() != null) {
-		OBConfigFileProvider.getInstance().setFileLocation(
-			getProviderConfigDirectory());
-	    }
+            if (getProviderConfigDirectory() != null) {
+                OBConfigFileProvider.getInstance().setFileLocation(
+                        getProviderConfigDirectory());
+            }
 
-	    DalLayerInitializer.getInstance().initialize();
-	} else {
-	    log.debug("Dal Layer already initialized");
-	}
-	boolean errorOccured = true;
-	try {
-	    log.debug("Setting user context to user " + getUserId());
-	    OBContext.setOBContext(getUserId());
-	    doExecute();
-	    errorOccured = false;
-	} finally {
-	    if (errorOccured) {
-		OBDal.getInstance().rollbackAndClose();
-	    } else {
-		OBDal.getInstance().commitAndClose();
-	    }
-	}
+            DalLayerInitializer.getInstance().initialize();
+        } else {
+            log.debug("Dal Layer already initialized");
+        }
+        boolean errorOccured = true;
+        try {
+            log.debug("Setting user context to user " + getUserId());
+            OBContext.setOBContext(getUserId());
+            doExecute();
+            errorOccured = false;
+        } finally {
+            if (errorOccured) {
+                OBDal.getInstance().rollbackAndClose();
+            } else {
+                OBDal.getInstance().commitAndClose();
+            }
+        }
     }
 
     protected void doExecute() {
     }
 
     public String getProviderConfigDirectory() {
-	return providerConfigDirectory;
+        return providerConfigDirectory;
     }
 
     public void setProviderConfigDirectory(String providerConfigDirectory) {
-	this.providerConfigDirectory = providerConfigDirectory;
+        this.providerConfigDirectory = providerConfigDirectory;
     }
 }

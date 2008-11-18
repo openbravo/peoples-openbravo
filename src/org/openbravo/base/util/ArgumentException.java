@@ -23,18 +23,18 @@ public class ArgumentException extends OBException {
     private static final long serialVersionUID = 1L;
 
     public ArgumentException() {
-	super();
+        super();
     }
 
     public ArgumentException(String message, Throwable cause) {
-	super(message, cause);
+        super(message, cause);
     }
 
     public ArgumentException(String message) {
-	super(message);
+        super(message);
     }
 
     public ArgumentException(Throwable cause) {
-	super(cause);
+        super(cause);
     }
 }

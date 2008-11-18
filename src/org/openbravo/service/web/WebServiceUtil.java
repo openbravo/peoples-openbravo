@@ -109,7 +109,7 @@ public class WebServiceUtil implements OBSingleton {
 	    return;
 	}
 	final Element groupElement = parentElement.addElement(elementName);
-	for (BaseOBObject bob : bobs) {
+	for (final BaseOBObject bob : bobs) {
 	    final Element bobElement = groupElement.addElement(bob
 		    .getEntityName());
 	    bobElement.addAttribute("id", (String) bob.getId());
@@ -123,9 +123,13 @@ public class WebServiceUtil implements OBSingleton {
 	if (path.startsWith("/")) {
 	    localPath = localPath.substring(1);
 	}
-	if (path.indexOf("/") != -1) {
-	    localPath = localPath.substring(0, path.indexOf("/"));
+	if (localPath.endsWith("/")) {
+	    localPath = localPath.substring(0, localPath.length() - 1);
 	}
+	if (localPath.indexOf("/") != -1) {
+	    localPath = localPath.substring(0, localPath.indexOf("/"));
+	}
+	
 	return localPath;
     }
 
@@ -150,7 +154,7 @@ public class WebServiceUtil implements OBSingleton {
 	    transformer.transform(source, result);
 
 	    return result.getDocument();
-	} catch (Exception e) {
+	} catch (final Exception e) {
 	    throw new OBException(e);
 	}
     }

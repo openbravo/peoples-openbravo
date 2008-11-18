@@ -24,10 +24,10 @@ public class Package extends ModelObject {
     private String javaPackage;
 
     public String getJavaPackage() {
-	return javaPackage;
+        return javaPackage;
     }
 
     public void setJavaPackage(String javaPackage) {
-	this.javaPackage = javaPackage;
+        this.javaPackage = javaPackage;
     }
 }

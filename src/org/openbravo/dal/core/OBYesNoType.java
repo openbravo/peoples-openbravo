@@ -27,16 +27,16 @@ public class OBYesNoType extends YesNoType {
 
     @Override
     public boolean isEqual(Object x, Object y) {
-	if (x == y) {
-	    return true;
-	}
-	if (x == null && y != null && y instanceof Boolean) {
-	    return ((Boolean) y).booleanValue() == false;
-	} else if (y == null && x != null && x instanceof Boolean) {
-	    return ((Boolean) x).booleanValue() == false;
-	}
+        if (x == y) {
+            return true;
+        }
+        if (x == null && y != null && y instanceof Boolean) {
+            return ((Boolean) y).booleanValue() == false;
+        } else if (y == null && x != null && x instanceof Boolean) {
+            return ((Boolean) x).booleanValue() == false;
+        }
 
-	return EqualsHelper.equals(x, y);
+        return EqualsHelper.equals(x, y);
     }
 
 }

@@ -28,50 +28,50 @@ public class StringPropertyValidator extends BasePropertyValidator {
     private int fieldLength = -1;
 
     public static boolean isValidationRequired(Property p) {
-	if (p.isPrimitive() && p.getPrimitiveType() == String.class) {
-	    if (p.getFieldLength() > 0 || p.doCheckAllowedValue()) {
-		return true;
-	    }
-	}
-	return false;
+        if (p.isPrimitive() && p.getPrimitiveType() == String.class) {
+            if (p.getFieldLength() > 0 || p.doCheckAllowedValue()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public int getFieldLength() {
-	return fieldLength;
+        return fieldLength;
     }
 
     public void setFieldLength(int fieldLength) {
-	this.fieldLength = fieldLength;
+        this.fieldLength = fieldLength;
     }
 
     public void initialize() {
-	Check.isTrue(getProperty().getFieldLength() > 0,
-		"Fieldlength should be larger than 0 for validation");
-	setFieldLength(getProperty().getFieldLength());
+        Check.isTrue(getProperty().getFieldLength() > 0,
+                "Fieldlength should be larger than 0 for validation");
+        setFieldLength(getProperty().getFieldLength());
     }
 
     @Override
     public String validate(Object value) {
-	if (value == null) {
-	    // mandatory is checked in Hibernate
-	    return null;
-	}
-	Check.isInstanceOf(value, String.class);
-	final String str = (String) value;
-	if (str.length() > getFieldLength()) {
-	    // TODO: i18n this
-	    return "Value (" + value + ")  is too long, it has length "
-		    + str.length() + ", the maximum allowed length is "
-		    + getFieldLength();
-	}
+        if (value == null) {
+            // mandatory is checked in Hibernate
+            return null;
+        }
+        Check.isInstanceOf(value, String.class);
+        final String str = (String) value;
+        if (str.length() > getFieldLength()) {
+            // TODO: i18n this
+            return "Value (" + value + ")  is too long, it has length "
+                    + str.length() + ", the maximum allowed length is "
+                    + getFieldLength();
+        }
 
-	final Property p = getProperty();
-	if (p.doCheckAllowedValue() && !p.isAllowedValue(str)) {
-	    return "Value ("
-		    + value
-		    + ") is not allowed, it should be one of the following values: "
-		    + p.getAllowedValues() + " but it is value " + str;
-	}
-	return null;
+        final Property p = getProperty();
+        if (p.doCheckAllowedValue() && !p.isAllowedValue(str)) {
+            return "Value ("
+                    + value
+                    + ") is not allowed, it should be one of the following values: "
+                    + p.getAllowedValues() + " but it is value " + str;
+        }
+        return null;
     }
 }

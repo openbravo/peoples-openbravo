@@ -42,13 +42,13 @@ public class OBTuplizer extends PojoEntityTuplizer {
     private final PersistentClass persistentClass;
 
     public OBTuplizer(EntityMetamodel entityMetamodel,
-	    PersistentClass mappedEntity) {
-	super(entityMetamodel, mappedEntity);
-	log.debug("Created tuplizer for "
-		+ (mappedEntity.getMappedClass() != null ? mappedEntity
-			.getMappedClass().getName() : mappedEntity
-			.getEntityName()));
-	persistentClass = mappedEntity;
+            PersistentClass mappedEntity) {
+        super(entityMetamodel, mappedEntity);
+        log.debug("Created tuplizer for "
+                + (mappedEntity.getMappedClass() != null ? mappedEntity
+                        .getMappedClass().getName() : mappedEntity
+                        .getEntityName()));
+        persistentClass = mappedEntity;
     }
 
     // this is done in the generated mapping
@@ -66,88 +66,88 @@ public class OBTuplizer extends PojoEntityTuplizer {
 
     @Override
     protected Instantiator buildInstantiator(PersistentClass mappingInfo) {
-	return new OBInstantiator(mappingInfo);
+        return new OBInstantiator(mappingInfo);
     }
 
     @Override
     protected ProxyFactory buildProxyFactory(
-	    PersistentClass thePersistentClass, Getter idGetter, Setter idSetter) {
-	// determine the id getter and setter methods from the proxy interface
-	// (if
-	// any)
-	// determine all interfaces needed by the resulting proxy
-	HashSet proxyInterfaces = new HashSet();
-	proxyInterfaces.add(HibernateProxy.class);
+            PersistentClass thePersistentClass, Getter idGetter, Setter idSetter) {
+        // determine the id getter and setter methods from the proxy interface
+        // (if
+        // any)
+        // determine all interfaces needed by the resulting proxy
+        HashSet proxyInterfaces = new HashSet();
+        proxyInterfaces.add(HibernateProxy.class);
 
-	Class mappedClass = thePersistentClass.getMappedClass();
-	Class proxyInterface = thePersistentClass.getProxyInterface();
+        Class mappedClass = thePersistentClass.getMappedClass();
+        Class proxyInterface = thePersistentClass.getProxyInterface();
 
-	if (proxyInterface != null && !mappedClass.equals(proxyInterface)) {
-	    if (!proxyInterface.isInterface()) {
-		throw new MappingException(
-			"proxy must be either an interface, or the class itself: "
-				+ getEntityName());
-	    }
-	    proxyInterfaces.add(proxyInterface);
-	}
+        if (proxyInterface != null && !mappedClass.equals(proxyInterface)) {
+            if (!proxyInterface.isInterface()) {
+                throw new MappingException(
+                        "proxy must be either an interface, or the class itself: "
+                                + getEntityName());
+            }
+            proxyInterfaces.add(proxyInterface);
+        }
 
-	if (mappedClass.isInterface()) {
-	    proxyInterfaces.add(mappedClass);
-	}
+        if (mappedClass.isInterface()) {
+            proxyInterfaces.add(mappedClass);
+        }
 
-	Iterator iter = thePersistentClass.getSubclassIterator();
-	while (iter.hasNext()) {
-	    Subclass subclass = (Subclass) iter.next();
-	    Class subclassProxy = subclass.getProxyInterface();
-	    Class subclassClass = subclass.getMappedClass();
-	    if (subclassProxy != null && !subclassClass.equals(subclassProxy)) {
-		if (proxyInterface == null || !proxyInterface.isInterface()) {
-		    throw new MappingException(
-			    "proxy must be either an interface, or the class itself: "
-				    + subclass.getEntityName());
-		}
-		proxyInterfaces.add(subclassProxy);
-	    }
-	}
+        Iterator iter = thePersistentClass.getSubclassIterator();
+        while (iter.hasNext()) {
+            Subclass subclass = (Subclass) iter.next();
+            Class subclassProxy = subclass.getProxyInterface();
+            Class subclassClass = subclass.getMappedClass();
+            if (subclassProxy != null && !subclassClass.equals(subclassProxy)) {
+                if (proxyInterface == null || !proxyInterface.isInterface()) {
+                    throw new MappingException(
+                            "proxy must be either an interface, or the class itself: "
+                                    + subclass.getEntityName());
+                }
+                proxyInterfaces.add(subclassProxy);
+            }
+        }
 
-	Method idGetterMethod = idGetter == null ? null : idGetter.getMethod();
-	Method idSetterMethod = idSetter == null ? null : idSetter.getMethod();
+        Method idGetterMethod = idGetter == null ? null : idGetter.getMethod();
+        Method idSetterMethod = idSetter == null ? null : idSetter.getMethod();
 
-	Method proxyGetIdentifierMethod = idGetterMethod == null
-		|| proxyInterface == null ? null : ReflectHelper.getMethod(
-		proxyInterface, idGetterMethod);
-	Method proxySetIdentifierMethod = idSetterMethod == null
-		|| proxyInterface == null ? null : ReflectHelper.getMethod(
-		proxyInterface, idSetterMethod);
+        Method proxyGetIdentifierMethod = idGetterMethod == null
+                || proxyInterface == null ? null : ReflectHelper.getMethod(
+                proxyInterface, idGetterMethod);
+        Method proxySetIdentifierMethod = idSetterMethod == null
+                || proxyInterface == null ? null : ReflectHelper.getMethod(
+                proxyInterface, idSetterMethod);
 
-	ProxyFactory pf = buildProxyFactoryInternal(thePersistentClass,
-		idGetter, idSetter);
-	try {
-	    pf
-		    .postInstantiate(
-			    getEntityName(),
-			    mappedClass,
-			    proxyInterfaces,
-			    proxyGetIdentifierMethod,
-			    proxySetIdentifierMethod,
-			    thePersistentClass.hasEmbeddedIdentifier() ? (AbstractComponentType) thePersistentClass
-				    .getIdentifier().getType()
-				    : null);
-	} catch (HibernateException he) {
-	    log.warn("could not create proxy factory for:" + getEntityName(),
-		    he);
-	    pf = null;
-	}
-	return pf;
+        ProxyFactory pf = buildProxyFactoryInternal(thePersistentClass,
+                idGetter, idSetter);
+        try {
+            pf
+                    .postInstantiate(
+                            getEntityName(),
+                            mappedClass,
+                            proxyInterfaces,
+                            proxyGetIdentifierMethod,
+                            proxySetIdentifierMethod,
+                            thePersistentClass.hasEmbeddedIdentifier() ? (AbstractComponentType) thePersistentClass
+                                    .getIdentifier().getType()
+                                    : null);
+        } catch (HibernateException he) {
+            log.warn("could not create proxy factory for:" + getEntityName(),
+                    he);
+            pf = null;
+        }
+        return pf;
     }
 
     @Override
     public Class getMappedClass() {
-	return persistentClass.getMappedClass();
+        return persistentClass.getMappedClass();
     }
 
     @Override
     public Class getConcreteProxyClass() {
-	return persistentClass.getMappedClass();
+        return persistentClass.getMappedClass();
     }
 }

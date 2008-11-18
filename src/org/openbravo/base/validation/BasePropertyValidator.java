@@ -28,11 +28,11 @@ public abstract class BasePropertyValidator implements PropertyValidator {
     private Property property;
 
     public Property getProperty() {
-	return property;
+        return property;
     }
 
     public void setProperty(Property property) {
-	this.property = property;
+        this.property = property;
     }
 
     public abstract String validate(Object o);

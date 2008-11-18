@@ -49,319 +49,328 @@ public class Column extends ModelObject {
     private String developmentStatus;
     private Boolean isTransient;
     private String isTransientCondition;
+    private Integer position;
 
     public boolean isBoolean() {
-	return isPrimitiveType()
-		&& (getPrimitiveType().getName().compareTo("boolean") == 0 || Boolean.class == getPrimitiveType());
+        return isPrimitiveType()
+                && (getPrimitiveType().getName().compareTo("boolean") == 0 || Boolean.class == getPrimitiveType());
     }
 
     public String getColumnName() {
-	return columnName;
+        return columnName;
     }
 
     public void setColumnName(String columnName) {
-	this.columnName = columnName;
+        this.columnName = columnName;
     }
 
     public Table getTable() {
-	return table;
+        return table;
     }
 
     public void setTable(Table table) {
-	this.table = table;
+        this.table = table;
     }
 
     public Reference getReference() {
-	return reference;
+        return reference;
     }
 
     public void setReference(Reference reference) {
-	this.reference = reference;
+        this.reference = reference;
     }
 
     public Reference getReferenceValue() {
-	return referenceValue;
+        return referenceValue;
     }
 
     public void setReferenceValue(Reference referenceValue) {
-	this.referenceValue = referenceValue;
+        this.referenceValue = referenceValue;
     }
 
     public int getFieldLength() {
-	return fieldLength;
+        return fieldLength;
     }
 
     public void setFieldLength(int fieldLength) {
-	this.fieldLength = fieldLength;
+        this.fieldLength = fieldLength;
     }
 
     public String getDefaultValue() {
-	return defaultValue;
+        return defaultValue;
     }
 
     public void setDefaultValue(String defaultValue) {
-	this.defaultValue = defaultValue;
+        this.defaultValue = defaultValue;
     }
 
     public boolean isKey() {
-	return key;
+        return key;
     }
 
     public void setKey(Boolean key) {
-	this.key = key;
+        this.key = key;
     }
 
     public boolean isSecondaryKey() {
-	return secondaryKey;
+        return secondaryKey;
     }
 
     public void setSecondaryKey(boolean secondaryKey) {
-	this.secondaryKey = secondaryKey;
+        this.secondaryKey = secondaryKey;
     }
 
     public boolean isParent() {
-	return parent;
+        return parent;
     }
 
     public void setParent(Boolean parent) {
-	this.parent = parent;
+        this.parent = parent;
     }
 
     public boolean isMandatory() {
-	return mandatory;
+        return mandatory;
     }
 
     public void setMandatory(Boolean mandatory) {
-	this.mandatory = mandatory;
+        this.mandatory = mandatory;
     }
 
     public boolean isUpdatable() {
-	return updatable;
+        return updatable;
     }
 
     public void setUpdatable(Boolean updatable) {
-	this.updatable = updatable;
+        this.updatable = updatable;
     }
 
     public boolean isIdentifier() {
-	return identifier;
+        return identifier;
     }
 
     public void setIdentifier(Boolean identifier) {
-	this.identifier = identifier;
+        this.identifier = identifier;
     }
 
     public String getValueMin() {
-	return valueMin;
+        return valueMin;
     }
 
     public void setValueMin(String valueMin) {
-	this.valueMin = valueMin;
+        this.valueMin = valueMin;
     }
 
     public String getValueMax() {
-	return valueMax;
+        return valueMax;
     }
 
     public void setValueMax(String valueMax) {
-	this.valueMax = valueMax;
+        this.valueMax = valueMax;
     }
 
     public String getDevelopmentStatus() {
-	return developmentStatus;
+        return developmentStatus;
     }
 
     public void setDevelopmentStatus(String developmentStatus) {
-	this.developmentStatus = developmentStatus;
+        this.developmentStatus = developmentStatus;
     }
 
     public boolean isPrimitiveType() {
-	if (!reference.getId().equals(Reference.TABLE)
-		&& !reference.getId().equals(Reference.TABLEDIR)
-		&& !reference.getId().equals(Reference.SEARCH)
-		&& !reference.getId().equals(Reference.IMAGE)
-		&& !reference.getId().equals(Reference.PRODUCT_ATTRIBUTE)
-		&& !reference.getId().equals(Reference.RESOURCE_ASSIGNMENT))
-	    return true;
-	return false;
+        if (!reference.getId().equals(Reference.TABLE)
+                && !reference.getId().equals(Reference.TABLEDIR)
+                && !reference.getId().equals(Reference.SEARCH)
+                && !reference.getId().equals(Reference.IMAGE)
+                && !reference.getId().equals(Reference.PRODUCT_ATTRIBUTE)
+                && !reference.getId().equals(Reference.RESOURCE_ASSIGNMENT))
+            return true;
+        return false;
     }
 
     @SuppressWarnings("unchecked")
     public Class getPrimitiveType() {
-	if (isPrimitiveType()) {
-	    final Class<?> clz = Reference.getPrimitiveType(reference.getId());
-	    if (clz == Boolean.class && getReferenceValue() != null) {
-		// a string list
-		return String.class;
-	    }
-	    return clz;
-	}
-	return null;
+        if (isPrimitiveType()) {
+            final Class<?> clz = Reference.getPrimitiveType(reference.getId());
+            if (clz == Boolean.class && getReferenceValue() != null) {
+                // a string list
+                return String.class;
+            }
+            return clz;
+        }
+        return null;
     }
 
     public Column getReferenceType() {
-	if (!isPrimitiveType())
-	    return referenceType;
-	return null;
+        if (!isPrimitiveType())
+            return referenceType;
+        return null;
     }
 
     public void setReferenceType(Column column) {
-	this.referenceType = column;
+        this.referenceType = column;
     }
 
     @Override
     public boolean isActive() {
-	if (super.isActive() && !isPrimitiveType()) {
-	    final Column thatColumn = getReferenceType();
+        if (super.isActive() && !isPrimitiveType()) {
+            final Column thatColumn = getReferenceType();
 
-	    if (thatColumn != null
-		    && (!thatColumn.isActive()
-			    || !thatColumn.getTable().isActive() || thatColumn
-			    .getTable().isView())) {
-		log
-			.error("Column "
-				+ this
-				+ " refers to a non active table or column or to a view"
-				+ thatColumn);
-		System.err
-			.println("Column "
-				+ this
-				+ " refers to a non active table or column or to a view"
-				+ thatColumn);
-		return false;
-	    }
-	}
-	return super.isActive();
+            if (thatColumn != null
+                    && (!thatColumn.isActive()
+                            || !thatColumn.getTable().isActive() || thatColumn
+                            .getTable().isView())) {
+                log
+                        .error("Column "
+                                + this
+                                + " refers to a non active table or column or to a view"
+                                + thatColumn);
+                System.err
+                        .println("Column "
+                                + this
+                                + " refers to a non active table or column or to a view"
+                                + thatColumn);
+                return false;
+            }
+        }
+        return super.isActive();
     }
 
     protected void setReferenceType(ModelProvider modelProvider) {
 
-	// reference type does not need to be set
-	if (isPrimitiveType()) {
-	    return;
-	}
+        // reference type does not need to be set
+        if (isPrimitiveType()) {
+            return;
+        }
 
-	try {
-	    final String referenceId = reference.getId();
-	    final String referenceValueId = (referenceValue != null ? referenceValue
-		    .getId()
-		    : Reference.NO_REFERENCE);
-	    final char validationType = (referenceValue != null ? referenceValue
-		    .getValidationType()
-		    : reference.getValidationType());
-	    final Column c = modelProvider.getColumnByReference(referenceId,
-		    referenceValueId, validationType, getColumnName());
-	    if (c != null)
-		setReferenceType(c);
-	} catch (final Exception e) {
-	    System.out.println("Error >> tableName: " + table.getTableName()
-		    + " - columnName: " + getColumnName());
-	    e.printStackTrace();
-	}
+        try {
+            final String referenceId = reference.getId();
+            final String referenceValueId = (referenceValue != null ? referenceValue
+                    .getId()
+                    : Reference.NO_REFERENCE);
+            final char validationType = (referenceValue != null ? referenceValue
+                    .getValidationType()
+                    : reference.getValidationType());
+            final Column c = modelProvider.getColumnByReference(referenceId,
+                    referenceValueId, validationType, getColumnName());
+            if (c != null)
+                setReferenceType(c);
+        } catch (final Exception e) {
+            System.out.println("Error >> tableName: " + table.getTableName()
+                    + " - columnName: " + getColumnName());
+            e.printStackTrace();
+        }
     }
 
     // returns the primitive type name or the class of the
     // referenced type
     public String getTypeName() {
-	final String typeName;
-	if (isPrimitiveType()) {
-	    typeName = getPrimitiveType().getName();
-	} else if (getReferenceType() == null) {
-	    System.err.println("ERROR NO REFERENCETYPE " + getTable().getName()
-		    + "." + getColumnName());
-	    return "java.lang.Object";
-	} else {
-	    typeName = getReferenceType().getTable().getNotNullClassName();
-	}
-	return typeName;
+        final String typeName;
+        if (isPrimitiveType()) {
+            typeName = getPrimitiveType().getName();
+        } else if (getReferenceType() == null) {
+            System.err.println("ERROR NO REFERENCETYPE " + getTable().getName()
+                    + "." + getColumnName());
+            return "java.lang.Object";
+        } else {
+            typeName = getReferenceType().getTable().getNotNullClassName();
+        }
+        return typeName;
     }
 
     // the last part of the class name
     public String getSimpleTypeName() {
-	final String typeName = getTypeName();
-	if (typeName.indexOf(".") == -1) {
-	    return typeName;
-	}
-	return typeName.substring(1 + typeName.lastIndexOf("."));
+        final String typeName = getTypeName();
+        if (typeName.indexOf(".") == -1) {
+            return typeName;
+        }
+        return typeName.substring(1 + typeName.lastIndexOf("."));
     }
 
     // returns the typename as an object variant
     public String getObjectTypeName() {
-	if (isPrimitiveType()) {
-	    final String typeName = getTypeName();
-	    if (typeName.indexOf('.') != -1) {
-		return typeName;
-	    }
-	    if ("boolean".equals(typeName)) {
-		return Boolean.class.getName();
-	    }
-	    if ("int".equals(typeName)) {
-		return Integer.class.getName();
-	    }
-	    if ("long".equals(typeName)) {
-		return Long.class.getName();
-	    }
-	    if ("byte".equals(typeName)) {
-		return Byte.class.getName();
-	    }
-	    if ("float".equals(typeName)) {
-		return Float.class.getName();
-	    }
-	    if ("double".equals(typeName)) {
-		return Double.class.getName();
-	    }
-	    // TODO: maybe throw an exception
-	    return typeName;
-	} else {
-	    return getTypeName();
-	}
+        if (isPrimitiveType()) {
+            final String typeName = getTypeName();
+            if (typeName.indexOf('.') != -1) {
+                return typeName;
+            }
+            if ("boolean".equals(typeName)) {
+                return Boolean.class.getName();
+            }
+            if ("int".equals(typeName)) {
+                return Integer.class.getName();
+            }
+            if ("long".equals(typeName)) {
+                return Long.class.getName();
+            }
+            if ("byte".equals(typeName)) {
+                return Byte.class.getName();
+            }
+            if ("float".equals(typeName)) {
+                return Float.class.getName();
+            }
+            if ("double".equals(typeName)) {
+                return Double.class.getName();
+            }
+            // TODO: maybe throw an exception
+            return typeName;
+        } else {
+            return getTypeName();
+        }
     }
 
     // method added for oaw template
     public boolean allowNullValues() {
-	if (!isPrimitiveType()) {
-	    return true;
-	}
-	return (getPrimitiveType().getName().indexOf('.') != -1);
+        if (!isPrimitiveType()) {
+            return true;
+        }
+        return (getPrimitiveType().getName().indexOf('.') != -1);
     }
 
     public Property getProperty() {
-	return property;
+        return property;
     }
 
     public void setProperty(Property property) {
-	this.property = property;
+        this.property = property;
     }
 
     @Override
     public String toString() {
-	return getTable() + "." + getColumnName();
+        return getTable() + "." + getColumnName();
     }
 
     public Set<String> getAllowedValues() {
-	if (getReferenceValue() != null) {
-	    return getReferenceValue().getAllowedValues();
-	}
-	return new HashSet<String>();
+        if (getReferenceValue() != null) {
+            return getReferenceValue().getAllowedValues();
+        }
+        return new HashSet<String>();
     }
 
     public Boolean isTransient() {
-	return isTransient;
+        return isTransient;
     }
 
     public void setTransient(Boolean isTransient) {
-	if (isTransient == null) {
-	    this.isTransient = new Boolean(false);
-	} else {
-	    this.isTransient = isTransient;
-	}
+        if (isTransient == null) {
+            this.isTransient = new Boolean(false);
+        } else {
+            this.isTransient = isTransient;
+        }
     }
 
     public String getIsTransientCondition() {
-	return isTransientCondition;
+        return isTransientCondition;
     }
 
     public void setIsTransientCondition(String isTransientCondition) {
-	this.isTransientCondition = isTransientCondition;
+        this.isTransientCondition = isTransientCondition;
+    }
+
+    public Integer getPosition() {
+        return position;
+    }
+
+    public void setPosition(Integer position) {
+        this.position = position;
     }
 }

@@ -22,18 +22,18 @@ public class OBProviderException extends OBException {
     private static final long serialVersionUID = 1L;
 
     public OBProviderException() {
-	super();
+        super();
     }
 
     public OBProviderException(String message, Throwable cause) {
-	super(message, cause);
+        super(message, cause);
     }
 
     public OBProviderException(String message) {
-	super(message);
+        super(message);
     }
 
     public OBProviderException(Throwable cause) {
-	super(cause);
+        super(cause);
     }
 }

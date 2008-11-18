@@ -12,18 +12,18 @@ public class EntityXMLException extends OBException {
     private static final long serialVersionUID = 1L;
 
     public EntityXMLException() {
-	super();
+        super();
     }
 
     public EntityXMLException(String message, Throwable cause) {
-	super(message, cause);
+        super(message, cause);
     }
 
     public EntityXMLException(String message) {
-	super(message);
+        super(message);
     }
 
     public EntityXMLException(Throwable cause) {
-	super(cause);
+        super(cause);
     }
 }

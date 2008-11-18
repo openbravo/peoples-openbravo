@@ -31,58 +31,58 @@ public class OBProviderConfigReader {
     private static final long serialVersionUID = 1L;
 
     public void read(String prefix, InputStream is) {
-	try {
-	    final SAXReader reader = new SAXReader();
-	    final Document doc = reader.read(is);
-	    process(prefix, doc);
-	} catch (final Exception e) {
-	    throw new OBProviderException(e);
-	}
+        try {
+            final SAXReader reader = new SAXReader();
+            final Document doc = reader.read(is);
+            process(prefix, doc);
+        } catch (final Exception e) {
+            throw new OBProviderException(e);
+        }
     }
 
     public void read(String prefix, String fileLocation) {
-	try {
-	    final SAXReader reader = new SAXReader();
-	    final Document doc = reader.read(new FileInputStream(fileLocation));
-	    process(prefix, doc);
-	} catch (final Exception e) {
-	    throw new OBProviderException(e);
-	}
+        try {
+            final SAXReader reader = new SAXReader();
+            final Document doc = reader.read(new FileInputStream(fileLocation));
+            process(prefix, doc);
+        } catch (final Exception e) {
+            throw new OBProviderException(e);
+        }
     }
 
     public void process(String prefix, Document doc) {
-	checkName(doc.getRootElement(), "provider");
-	for (final Object o : doc.getRootElement().elements()) {
-	    final Element elem = (Element) o;
-	    checkName(elem, "bean");
-	    // now check for three children:
-	    final String name = getValue(elem, "name", true);
-	    final String clzName = getValue(elem, "class", true);
-	    final Class<?> clz = OBClassLoader.getInstance().loadClass(clzName);
-	    if (OBModulePrefixRequired.class.isAssignableFrom(clz)
-		    && prefix != null && prefix.trim().length() > 0) {
-		OBProvider.getInstance().register(prefix + "." + name, clz,
-			true);
-	    } else {
-		OBProvider.getInstance().register(name, clz, true);
-	    }
-	}
+        checkName(doc.getRootElement(), "provider");
+        for (final Object o : doc.getRootElement().elements()) {
+            final Element elem = (Element) o;
+            checkName(elem, "bean");
+            // now check for three children:
+            final String name = getValue(elem, "name", true);
+            final String clzName = getValue(elem, "class", true);
+            final Class<?> clz = OBClassLoader.getInstance().loadClass(clzName);
+            if (OBModulePrefixRequired.class.isAssignableFrom(clz)
+                    && prefix != null && prefix.trim().length() > 0) {
+                OBProvider.getInstance().register(prefix + "." + name, clz,
+                        true);
+            } else {
+                OBProvider.getInstance().register(name, clz, true);
+            }
+        }
     }
 
     private String getValue(Element parentElem, String name, boolean mandatory) {
-	final Element valueElement = parentElem.element(name);
-	if (mandatory) {
-	    Check.isNotNull(valueElement, "Element with name " + name
-		    + " not found");
-	} else if (valueElement == null) {
-	    return null;
-	}
-	return valueElement.getText();
+        final Element valueElement = parentElem.element(name);
+        if (mandatory) {
+            Check.isNotNull(valueElement, "Element with name " + name
+                    + " not found");
+        } else if (valueElement == null) {
+            return null;
+        }
+        return valueElement.getText();
     }
 
     private void checkName(Element elem, String expectedName) {
-	Check.isTrue(elem.getName().equals(expectedName),
-		"The element should have the name: " + expectedName
-			+ " but is has name " + elem.getName());
+        Check.isTrue(elem.getName().equals(expectedName),
+                "The element should have the name: " + expectedName
+                        + " but is has name " + elem.getName());
     }
 }

@@ -35,15 +35,15 @@ public class ModelProviderComponent implements WorkflowComponent {
     }
 
     public CompositeComponent getContainer() {
-	return null;
+        return null;
     }
 
     public Location getLocation() {
-	return null;
+        return null;
     }
 
     public void invoke(WorkflowContext wc, ProgressMonitor pm, Issues issues) {
-	wc.set("model", ModelProvider.getInstance());
+        wc.set("model", ModelProvider.getInstance());
     }
 
     public void setContainer(CompositeComponent arg0) {
@@ -53,11 +53,11 @@ public class ModelProviderComponent implements WorkflowComponent {
     }
 
     public void setPropFile(String propFile) {
-	OBPropertiesProvider.getInstance().setProperties(propFile);
-	this.propFile = propFile;
+        OBPropertiesProvider.getInstance().setProperties(propFile);
+        this.propFile = propFile;
     }
 
     public String getPropFile() {
-	return propFile;
+        return propFile;
     }
 }

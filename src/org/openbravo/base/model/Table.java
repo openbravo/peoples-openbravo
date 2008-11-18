@@ -33,7 +33,7 @@ public class Table extends ModelObject {
     private String tableName;
     private boolean view;
     private boolean isDeletable;
-    private List<Column> columns;
+    private List<Column> columns = new ArrayList<Column>();
     private List<Column> primaryKeyColumns = null;
     private List<Column> identifierColumns = null;
     private List<Column> parentColumns = null;
@@ -44,142 +44,142 @@ public class Table extends ModelObject {
     private Package thePackage;
 
     public String getTableName() {
-	return tableName;
+        return tableName;
     }
 
     public void setTableName(String tableName) {
-	this.tableName = tableName;
+        this.tableName = tableName;
     }
 
     public List<Column> getColumns() {
-	return columns;
+        return columns;
     }
 
     public void setColumns(List<Column> columns) {
-	this.columns = columns;
+        this.columns = columns;
     }
 
     public List<Column> getPrimaryKeyColumns() {
-	if (primaryKeyColumns == null) {
-	    primaryKeyColumns = new ArrayList<Column>();
+        if (primaryKeyColumns == null) {
+            primaryKeyColumns = new ArrayList<Column>();
 
-	    for (final Column c : getColumns()) {
-		if (c.isKey())
-		    primaryKeyColumns.add(c);
-	    }
-	}
-	return primaryKeyColumns;
+            for (final Column c : getColumns()) {
+                if (c.isKey())
+                    primaryKeyColumns.add(c);
+            }
+        }
+        return primaryKeyColumns;
     }
 
     public void setPrimaryKeyColumns(List<Column> primaryKeyColumns) {
-	this.primaryKeyColumns = primaryKeyColumns;
+        this.primaryKeyColumns = primaryKeyColumns;
     }
 
     public List<Column> getIdentifierColumns() {
-	if (identifierColumns == null) {
-	    identifierColumns = new ArrayList<Column>();
-	    for (final Column c : getColumns()) {
-		if (c.isIdentifier())
-		    identifierColumns.add(c);
-	    }
-	}
-	return identifierColumns;
+        if (identifierColumns == null) {
+            identifierColumns = new ArrayList<Column>();
+            for (final Column c : getColumns()) {
+                if (c.isIdentifier())
+                    identifierColumns.add(c);
+            }
+        }
+        return identifierColumns;
     }
 
     public void setParentColumns(List<Column> parentColums) {
-	this.parentColumns = parentColums;
+        this.parentColumns = parentColums;
     }
 
     public List<Column> getParentColumns() {
-	if (parentColumns == null) {
-	    parentColumns = new ArrayList<Column>();
-	    for (final Column c : getColumns()) {
-		if (c.isParent())
-		    parentColumns.add(c);
-	    }
-	}
-	return parentColumns;
+        if (parentColumns == null) {
+            parentColumns = new ArrayList<Column>();
+            for (final Column c : getColumns()) {
+                if (c.isParent())
+                    parentColumns.add(c);
+            }
+        }
+        return parentColumns;
     }
 
     public void setIdentifierColumns(List<Column> identifierColumns) {
-	this.identifierColumns = identifierColumns;
+        this.identifierColumns = identifierColumns;
     }
 
     public void setView(boolean view) {
-	this.view = view;
+        this.view = view;
     }
 
     public boolean isView() {
-	return view;
+        return view;
     }
 
     public String getNotNullClassName() {
-	if (getClassName() == null || getClassName().trim().length() == 0) {
-	    return getName();
-	}
-	return getClassName();
+        if (getClassName() == null || getClassName().trim().length() == 0) {
+            return getName();
+        }
+        return getClassName();
     }
 
     public String getClassName() {
-	return className;
+        return className;
     }
 
     public void setClassName(String className) {
-	this.className = className;
+        this.className = className;
     }
 
     public void setReferenceTypes(ModelProvider modelProvider) {
-	for (final Column c : columns) {
-	    if (!c.isPrimitiveType())
-		c.setReferenceType(modelProvider);
-	}
+        for (final Column c : columns) {
+            if (!c.isPrimitiveType())
+                c.setReferenceType(modelProvider);
+        }
     }
 
     public String getPackageName() {
-	if (getThePackage() != null) {
-	    return getThePackage().getJavaPackage();
-	}
-	log
-		.error("Can not determine package name, no package defined for table "
-			+ getName());
-	// ugly but effective
-	return "no.package.defined.for.table." + getName();
+        if (getThePackage() != null) {
+            return getThePackage().getJavaPackage();
+        }
+        log
+                .error("Can not determine package name, no package defined for table "
+                        + getName());
+        // ugly but effective
+        return "no.package.defined.for.table." + getName();
     }
 
     public Entity getEntity() {
-	return entity;
+        return entity;
     }
 
     public void setEntity(Entity entity) {
-	this.entity = entity;
+        this.entity = entity;
     }
 
     @Override
     public String toString() {
-	return getTableName();
+        return getTableName();
     }
 
     public boolean isDeletable() {
-	return isDeletable;
+        return isDeletable;
     }
 
     public void setDeletable(boolean isDeletable) {
-	this.isDeletable = isDeletable;
+        this.isDeletable = isDeletable;
     }
 
     public String getAccessLevel() {
-	return accessLevel;
+        return accessLevel;
     }
 
     public void setAccessLevel(String accessLevel) {
-	this.accessLevel = accessLevel;
+        this.accessLevel = accessLevel;
     }
 
     public Package getThePackage() {
-	return thePackage;
+        return thePackage;
     }
 
     public void setThePackage(Package thePackage) {
-	this.thePackage = thePackage;
+        this.thePackage = thePackage;
     }
 }

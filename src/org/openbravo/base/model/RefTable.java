@@ -26,10 +26,10 @@ public class RefTable extends ModelObject {
     private Column column;
 
     public Column getColumn() {
-	return column;
+        return column;
     }
 
     public void setColumn(Column column) {
-	this.column = column;
+        this.column = column;
     }
 }

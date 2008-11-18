@@ -39,148 +39,148 @@ public class OBProvider {
     private static OBProvider instance = new OBProvider();
 
     public static OBProvider getInstance() {
-	return instance;
+        return instance;
     }
 
     public static void setInstance(OBProvider instance) {
-	OBProvider.instance = instance;
+        OBProvider.instance = instance;
     }
 
     private Map<String, Registration> registrations = new HashMap<String, Registration>();
 
     public boolean isRegistered(Class<?> clz) {
-	return isRegistered(clz.getName());
+        return isRegistered(clz.getName());
     }
 
     public boolean isRegistered(String name) {
-	return registrations.get(name) != null;
+        return registrations.get(name) != null;
     }
 
     public void register(String prefix, InputStream is) {
-	final OBProviderConfigReader reader = new OBProviderConfigReader();
-	reader.read(prefix, is);
+        final OBProviderConfigReader reader = new OBProviderConfigReader();
+        reader.read(prefix, is);
     }
 
     public void register(String prefix, String configFile) {
-	final OBProviderConfigReader reader = new OBProviderConfigReader();
-	reader.read(prefix, configFile);
+        final OBProviderConfigReader reader = new OBProviderConfigReader();
+        reader.read(prefix, configFile);
     }
 
     public void register(Class<?> registrationClass, Class<?> instanceClass,
-	    boolean overwrite) {
-	register(registrationClass.getName(), instanceClass, overwrite);
+            boolean overwrite) {
+        register(registrationClass.getName(), instanceClass, overwrite);
     }
 
     public void register(String name, Class<?> instanceClass, boolean overwrite) {
-	final Registration reg = new Registration();
-	reg.setSingleton(OBSingleton.class.isAssignableFrom(instanceClass));
-	reg.setInstanceClass(instanceClass);
-	reg.setName(name);
-	// a registration which overwrites others is not overwritable
-	reg.setOverwritable(!overwrite);
-	final Registration currentReg = registrations.get(name);
-	if (currentReg != null) {
-	    if (!overwrite || !currentReg.isOverwritable()) {
-		log
-			.warn("A different registration: "
-				+ currentReg
-				+ " already exists under this name, NOT overwriting it by "
-				+ reg);
-		return;
-	    } else {
-		log.warn(currentReg + " will be replaced by " + reg);
-	    }
-	} else {
-	    log.debug("Registering " + reg);
-	}
-	registrations.put(name, reg);
+        final Registration reg = new Registration();
+        reg.setSingleton(OBSingleton.class.isAssignableFrom(instanceClass));
+        reg.setInstanceClass(instanceClass);
+        reg.setName(name);
+        // a registration which overwrites others is not overwritable
+        reg.setOverwritable(!overwrite);
+        final Registration currentReg = registrations.get(name);
+        if (currentReg != null) {
+            if (!overwrite || !currentReg.isOverwritable()) {
+                log
+                        .warn("A different registration: "
+                                + currentReg
+                                + " already exists under this name, NOT overwriting it by "
+                                + reg);
+                return;
+            } else {
+                log.warn(currentReg + " will be replaced by " + reg);
+            }
+        } else {
+            log.debug("Registering " + reg);
+        }
+        registrations.put(name, reg);
     }
 
     @SuppressWarnings("unchecked")
     public <T extends Object> T get(Class<T> clz) {
-	Registration reg = registrations.get(clz.getName());
-	if (reg == null) {
-	    // register it
-	    log.info("Registration for class " + clz.getName()
-		    + " not found, creating a registration automatically");
-	    register(clz, clz, false);
+        Registration reg = registrations.get(clz.getName());
+        if (reg == null) {
+            // register it
+            log.info("Registration for class " + clz.getName()
+                    + " not found, creating a registration automatically");
+            register(clz, clz, false);
 
-	    reg = registrations.get(clz.getName());
-	    return (T) reg.getInstance();
-	}
-	return (T) reg.getInstance();
+            reg = registrations.get(clz.getName());
+            return (T) reg.getInstance();
+        }
+        return (T) reg.getInstance();
     }
 
     public Object get(String name) {
-	Registration reg = registrations.get(name);
-	if (reg == null) {
-	    throw new OBProviderException("No registration for name " + name);
-	}
-	return reg.getInstance();
+        Registration reg = registrations.get(name);
+        if (reg == null) {
+            throw new OBProviderException("No registration for name " + name);
+        }
+        return reg.getInstance();
     }
 
     class Registration {
-	private String name;
-	private Class<?> instanceClass;
-	private boolean singleton;
-	private Object theInstance;
-	// custom bean mappings are not overwritable
-	// by the system
-	private boolean overwritable;
+        private String name;
+        private Class<?> instanceClass;
+        private boolean singleton;
+        private Object theInstance;
+        // custom bean mappings are not overwritable
+        // by the system
+        private boolean overwritable;
 
-	public void setName(String name) {
-	    this.name = name;
-	}
+        public void setName(String name) {
+            this.name = name;
+        }
 
-	public Class<?> getInstanceClass() {
-	    return instanceClass;
-	}
+        public Class<?> getInstanceClass() {
+            return instanceClass;
+        }
 
-	public void setInstanceClass(Class<?> instanceClass) {
-	    this.instanceClass = instanceClass;
-	}
+        public void setInstanceClass(Class<?> instanceClass) {
+            this.instanceClass = instanceClass;
+        }
 
-	public void setSingleton(boolean singleton) {
-	    this.singleton = singleton;
-	}
+        public void setSingleton(boolean singleton) {
+            this.singleton = singleton;
+        }
 
-	public Object getInstance() {
-	    if (theInstance != null) {
-		return theInstance;
-	    }
+        public Object getInstance() {
+            if (theInstance != null) {
+                return theInstance;
+            }
 
-	    // instantiate the class
-	    try {
-		final Object value = instanceClass.newInstance();
-		if (singleton) {
-		    theInstance = value;
-		}
-		return value;
-	    } catch (Exception e) {
-		throw new OBProviderException(
-			"Exception when instantiating class "
-				+ instanceClass.getName()
-				+ " for registration " + name, e);
+            // instantiate the class
+            try {
+                final Object value = instanceClass.newInstance();
+                if (singleton) {
+                    theInstance = value;
+                }
+                return value;
+            } catch (Exception e) {
+                throw new OBProviderException(
+                        "Exception when instantiating class "
+                                + instanceClass.getName()
+                                + " for registration " + name, e);
 
-	    }
-	}
+            }
+        }
 
-	public void setInstance(Object instance) {
-	    this.theInstance = instance;
-	}
+        public void setInstance(Object instance) {
+            this.theInstance = instance;
+        }
 
-	@Override
-	public String toString() {
-	    return "Class Registration " + name + " instanceClass: "
-		    + instanceClass.getName() + ", singleton: " + singleton;
-	}
+        @Override
+        public String toString() {
+            return "Class Registration " + name + " instanceClass: "
+                    + instanceClass.getName() + ", singleton: " + singleton;
+        }
 
-	public boolean isOverwritable() {
-	    return overwritable;
-	}
+        public boolean isOverwritable() {
+            return overwritable;
+        }
 
-	public void setOverwritable(boolean overwritable) {
-	    this.overwritable = overwritable;
-	}
+        public void setOverwritable(boolean overwritable) {
+            this.overwritable = overwritable;
+        }
     }
 }

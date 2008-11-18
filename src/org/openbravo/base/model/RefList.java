@@ -26,22 +26,22 @@ public class RefList extends ModelObject {
     private String value;
 
     public Reference getReference() {
-	return reference;
+        return reference;
     }
 
     public void setReference(Reference reference) {
-	this.reference = reference;
+        this.reference = reference;
     }
 
     public String getValue() {
-	return value;
+        return value;
     }
 
     public void setValue(String value) {
-	this.value = value;
+        this.value = value;
     }
 
     public void setAllowedValue() {
-	reference.addAllowedValue(value);
+        reference.addAllowedValue(value);
     }
 }

@@ -61,251 +61,251 @@ public class OBCriteria<E extends BaseOBObject> implements Criteria {
 
     @SuppressWarnings("unchecked")
     public List<E> list() throws HibernateException {
-	initialize();
-	return criteria.list();
+        initialize();
+        return criteria.list();
     }
 
     public int count() {
-	initialize();
-	final Criteria c = getCriteria();
-	c.setProjection(Projections.rowCount());
-	log.debug("Counting using criteria " + c.toString());
-	return ((Number) c.uniqueResult()).intValue();
+        initialize();
+        final Criteria c = getCriteria();
+        c.setProjection(Projections.rowCount());
+        log.debug("Counting using criteria " + c.toString());
+        return ((Number) c.uniqueResult()).intValue();
     }
 
     public ScrollableResults scroll() throws HibernateException {
-	initialize();
-	return criteria.scroll();
+        initialize();
+        return criteria.scroll();
     }
 
     public ScrollableResults scroll(ScrollMode scrollMode)
-	    throws HibernateException {
-	initialize();
-	return criteria.scroll(scrollMode);
+            throws HibernateException {
+        initialize();
+        return criteria.scroll(scrollMode);
     }
 
     public Object uniqueResult() throws HibernateException {
-	initialize();
-	return criteria.uniqueResult();
+        initialize();
+        return criteria.uniqueResult();
     }
 
     void initialize() {
-	final OBContext obContext = OBContext.getOBContext();
-	final Criteria c = getCriteria();
-	final Entity e = getEntity();
+        final OBContext obContext = OBContext.getOBContext();
+        final Criteria c = getCriteria();
+        final Entity e = getEntity();
 
-	OBContext.getOBContext().getEntityAccessChecker().checkReadable(e);
+        OBContext.getOBContext().getEntityAccessChecker().checkReadable(e);
 
-	if (isFilterOnReadableOrganisation() && e.isOrganisationEnabled()) {
-	    getCriteria().add(
-		    Restrictions.in(PROPERTY_ORGANIZATION + ".id", obContext
-			    .getReadableOrganisations()));
-	}
+        if (isFilterOnReadableOrganisation() && e.isOrganisationEnabled()) {
+            getCriteria().add(
+                    Restrictions.in(PROPERTY_ORGANIZATION + ".id", obContext
+                            .getReadableOrganisations()));
+        }
 
-	if (isFilterOnReadableClients() && getEntity().isClientEnabled()) {
-	    c.add(Restrictions.in(PROPERTY_CLIENT + ".id", obContext
-		    .getReadableClients()));
-	}
+        if (isFilterOnReadableClients() && getEntity().isClientEnabled()) {
+            c.add(Restrictions.in(PROPERTY_CLIENT + ".id", obContext
+                    .getReadableClients()));
+        }
 
-	if (isFilterOnActive() && e.isActiveEnabled()) {
-	    c.add(Restrictions.eq(PROPERTY_ISACTIVE, true));
-	}
+        if (isFilterOnActive() && e.isActiveEnabled()) {
+            c.add(Restrictions.eq(PROPERTY_ISACTIVE, true));
+        }
 
-	// add the order by and create a join if necessary
-	for (OrderBy ob : getOrderBys()) {
-	    int j = 0;
-	    String orderOn = ob.getOrderOn();
-	    if (orderOn.indexOf(".") != -1) {
-		final String orderJoin = orderOn.substring(0, orderOn
-			.lastIndexOf("."));
-		final String alias = "order_ob_" + j;
-		c.createCriteria(orderJoin, alias,
-			CriteriaSpecification.LEFT_JOIN);
-		orderOn = alias + "."
-			+ orderOn.substring(orderOn.lastIndexOf(".") + 1);
-	    }
+        // add the order by and create a join if necessary
+        for (OrderBy ob : getOrderBys()) {
+            int j = 0;
+            String orderOn = ob.getOrderOn();
+            if (orderOn.indexOf(".") != -1) {
+                final String orderJoin = orderOn.substring(0, orderOn
+                        .lastIndexOf("."));
+                final String alias = "order_ob_" + j;
+                c.createCriteria(orderJoin, alias,
+                        CriteriaSpecification.LEFT_JOIN);
+                orderOn = alias + "."
+                        + orderOn.substring(orderOn.lastIndexOf(".") + 1);
+            }
 
-	    if (ob.isAscending()) {
-		c.addOrder(Order.asc(orderOn));
-	    } else {
-		c.addOrder(Order.desc(orderOn));
-	    }
-	}
+            if (ob.isAscending()) {
+                c.addOrder(Order.asc(orderOn));
+            } else {
+                c.addOrder(Order.desc(orderOn));
+            }
+        }
     }
 
     public void addOrderBy(String orderOn, boolean ascending) {
-	orderBys.add(new OrderBy(orderOn, ascending));
+        orderBys.add(new OrderBy(orderOn, ascending));
     }
 
     public Criteria getCriteria() {
-	return criteria;
+        return criteria;
     }
 
     void setCriteria(Criteria criteria) {
-	this.criteria = criteria;
+        this.criteria = criteria;
     }
 
     public Entity getEntity() {
-	return entity;
+        return entity;
     }
 
     void setEntity(Entity entity) {
-	this.entity = entity;
+        this.entity = entity;
     }
 
     public boolean isFilterOnReadableOrganisation() {
-	return filterOnReadableOrganisation;
+        return filterOnReadableOrganisation;
     }
 
     public void setFilterOnReadableOrganisation(
-	    boolean filterOnReadableOrganisation) {
-	this.filterOnReadableOrganisation = filterOnReadableOrganisation;
+            boolean filterOnReadableOrganisation) {
+        this.filterOnReadableOrganisation = filterOnReadableOrganisation;
     }
 
     public boolean isFilterOnActive() {
-	return filterOnActive;
+        return filterOnActive;
     }
 
     public void setFilterOnActive(boolean filterOnActive) {
-	this.filterOnActive = filterOnActive;
+        this.filterOnActive = filterOnActive;
     }
 
     public List<OrderBy> getOrderBys() {
-	return orderBys;
+        return orderBys;
     }
 
     public void setOrderBys(List<OrderBy> orderBys) {
-	this.orderBys = orderBys;
+        this.orderBys = orderBys;
     }
 
     // OrderBy to support multiple orderby clauses
     public static class OrderBy {
-	private final String orderOn;
-	private final boolean ascending;
+        private final String orderOn;
+        private final boolean ascending;
 
-	public OrderBy(String orderOn, boolean ascending) {
-	    this.orderOn = orderOn;
-	    this.ascending = ascending;
-	}
+        public OrderBy(String orderOn, boolean ascending) {
+            this.orderOn = orderOn;
+            this.ascending = ascending;
+        }
 
-	public String getOrderOn() {
-	    return orderOn;
-	}
+        public String getOrderOn() {
+            return orderOn;
+        }
 
-	public boolean isAscending() {
-	    return ascending;
-	}
+        public boolean isAscending() {
+            return ascending;
+        }
 
-	@Override
-	public String toString() {
-	    return getOrderOn() + (isAscending() ? " asc " : " desc ");
-	}
+        @Override
+        public String toString() {
+            return getOrderOn() + (isAscending() ? " asc " : " desc ");
+        }
     }
 
     public Criteria add(Criterion criterion) {
-	return criteria.add(criterion);
+        return criteria.add(criterion);
     }
 
     public Criteria addOrder(Order order) {
-	return criteria.addOrder(order);
+        return criteria.addOrder(order);
     }
 
     public Criteria createAlias(String associationPath, String alias,
-	    int joinType) throws HibernateException {
-	return criteria.createAlias(associationPath, alias, joinType);
+            int joinType) throws HibernateException {
+        return criteria.createAlias(associationPath, alias, joinType);
     }
 
     public Criteria createAlias(String associationPath, String alias)
-	    throws HibernateException {
-	return criteria.createAlias(associationPath, alias);
+            throws HibernateException {
+        return criteria.createAlias(associationPath, alias);
     }
 
     public Criteria createCriteria(String associationPath, int joinType)
-	    throws HibernateException {
-	return criteria.createCriteria(associationPath, joinType);
+            throws HibernateException {
+        return criteria.createCriteria(associationPath, joinType);
     }
 
     public Criteria createCriteria(String associationPath, String alias,
-	    int joinType) throws HibernateException {
-	return criteria.createCriteria(associationPath, alias, joinType);
+            int joinType) throws HibernateException {
+        return criteria.createCriteria(associationPath, alias, joinType);
     }
 
     public Criteria createCriteria(String associationPath, String alias)
-	    throws HibernateException {
-	return criteria.createCriteria(associationPath, alias);
+            throws HibernateException {
+        return criteria.createCriteria(associationPath, alias);
     }
 
     public Criteria createCriteria(String associationPath)
-	    throws HibernateException {
-	return criteria.createCriteria(associationPath);
+            throws HibernateException {
+        return criteria.createCriteria(associationPath);
     }
 
     public String getAlias() {
-	return criteria.getAlias();
+        return criteria.getAlias();
     }
 
     public Criteria setCacheable(boolean cacheable) {
-	return criteria.setCacheable(cacheable);
+        return criteria.setCacheable(cacheable);
     }
 
     public Criteria setCacheMode(CacheMode cacheMode) {
-	return criteria.setCacheMode(cacheMode);
+        return criteria.setCacheMode(cacheMode);
     }
 
     public Criteria setCacheRegion(String cacheRegion) {
-	return criteria.setCacheRegion(cacheRegion);
+        return criteria.setCacheRegion(cacheRegion);
     }
 
     public Criteria setComment(String comment) {
-	return criteria.setComment(comment);
+        return criteria.setComment(comment);
     }
 
     public Criteria setFetchMode(String associationPath, FetchMode mode)
-	    throws HibernateException {
-	return criteria.setFetchMode(associationPath, mode);
+            throws HibernateException {
+        return criteria.setFetchMode(associationPath, mode);
     }
 
     public Criteria setFetchSize(int fetchSize) {
-	return criteria.setFetchSize(fetchSize);
+        return criteria.setFetchSize(fetchSize);
     }
 
     public Criteria setFirstResult(int firstResult) {
-	return criteria.setFirstResult(firstResult);
+        return criteria.setFirstResult(firstResult);
     }
 
     public Criteria setFlushMode(FlushMode flushMode) {
-	return criteria.setFlushMode(flushMode);
+        return criteria.setFlushMode(flushMode);
     }
 
     public Criteria setLockMode(LockMode lockMode) {
-	return criteria.setLockMode(lockMode);
+        return criteria.setLockMode(lockMode);
     }
 
     public Criteria setLockMode(String alias, LockMode lockMode) {
-	return criteria.setLockMode(alias, lockMode);
+        return criteria.setLockMode(alias, lockMode);
     }
 
     public Criteria setMaxResults(int maxResults) {
-	return criteria.setMaxResults(maxResults);
+        return criteria.setMaxResults(maxResults);
     }
 
     public Criteria setProjection(Projection projection) {
-	return criteria.setProjection(projection);
+        return criteria.setProjection(projection);
     }
 
     public Criteria setResultTransformer(ResultTransformer resultTransformer) {
-	return criteria.setResultTransformer(resultTransformer);
+        return criteria.setResultTransformer(resultTransformer);
     }
 
     public Criteria setTimeout(int timeout) {
-	return criteria.setTimeout(timeout);
+        return criteria.setTimeout(timeout);
     }
 
     public boolean isFilterOnReadableClients() {
-	return filterOnReadableClients;
+        return filterOnReadableClients;
     }
 
     public void setFilterOnReadableClients(boolean filterOnReadableClients) {
-	this.filterOnReadableClients = filterOnReadableClients;
+        this.filterOnReadableClients = filterOnReadableClients;
     }
 }

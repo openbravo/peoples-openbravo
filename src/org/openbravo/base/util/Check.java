@@ -19,69 +19,69 @@ package org.openbravo.base.util;
 public class Check {
 
     public static void fail(String message) {
-	throw new CheckException(message);
+        throw new CheckException(message);
     }
 
     public static void isTrue(boolean value, String message) {
-	if (!value) {
-	    throw new CheckException(message);
-	}
+        if (!value) {
+            throw new CheckException(message);
+        }
     }
 
     public static void isFalse(boolean value, String message) {
-	if (value) {
-	    throw new CheckException(message);
-	}
+        if (value) {
+            throw new CheckException(message);
+        }
     }
 
     public static void isNotNull(Object value, String message) {
-	if (value == null) {
-	    throw new CheckException(message);
-	}
+        if (value == null) {
+            throw new CheckException(message);
+        }
     }
 
     public static void isNull(Object value, String message) {
-	if (value != null) {
-	    throw new CheckException(message);
-	}
+        if (value != null) {
+            throw new CheckException(message);
+        }
     }
 
     public static void notEmpty(String value, String message) {
-	if (value == null || value.trim().length() == 0) {
-	    throw new CheckException(message);
-	}
+        if (value == null || value.trim().length() == 0) {
+            throw new CheckException(message);
+        }
     }
 
     public static void notEmpty(Object[] array, String message) {
-	if (array == null || array.length == 0) {
-	    throw new CheckException(message);
-	}
+        if (array == null || array.length == 0) {
+            throw new CheckException(message);
+        }
     }
 
     // Checks if the passed object is of the class specified, null values are
     // ignored
     public static void isInstanceOf(Object obj, Class<?> expClass) {
-	if (obj == null) {
-	    return;
-	}
-	if (!(expClass.isAssignableFrom(obj.getClass()))) {
-	    throw new CheckException("Expected class: " + expClass.getName()
-		    + " but object has class: " + obj.getClass().getName());
-	}
+        if (obj == null) {
+            return;
+        }
+        if (!(expClass.isAssignableFrom(obj.getClass()))) {
+            throw new CheckException("Expected class: " + expClass.getName()
+                    + " but object has class: " + obj.getClass().getName());
+        }
     }
 
     // Checks object memory equality
     public static void isSameObject(Object obj1, Object obj2) {
-	if (obj1 != obj2) {
-	    throw new CheckException("Objects are not the same");
-	}
+        if (obj1 != obj2) {
+            throw new CheckException("Objects are not the same");
+        }
     }
 
     // Checks object memory inequality
     public static void isNotSameObject(Object obj1, Object obj2) {
-	if (obj1 == obj2) {
-	    throw new CheckException("Objects are not the same");
-	}
+        if (obj1 == obj2) {
+            throw new CheckException("Objects are not the same");
+        }
     }
 
     private Check() {

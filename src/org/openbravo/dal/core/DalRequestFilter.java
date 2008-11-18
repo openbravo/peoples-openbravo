@@ -48,30 +48,30 @@ import javax.servlet.http.HttpServletRequest;
 public class DalRequestFilter implements Filter {
 
     public void init(FilterConfig fConfig) throws ServletException {
-	DalLayerInitializer.getInstance().initialize();
+        DalLayerInitializer.getInstance().initialize();
     }
 
     public void destroy() {
     }
 
     public void doFilter(final ServletRequest request,
-	    final ServletResponse response, final FilterChain chain)
-	    throws IOException, ServletException {
-	final DalThreadHandler dth = new DalThreadHandler() {
+            final ServletResponse response, final FilterChain chain)
+            throws IOException, ServletException {
+        final DalThreadHandler dth = new DalThreadHandler() {
 
-	    @Override
-	    public void doBefore() {
-		OBContext.setOBContext((HttpServletRequest) request);
-	    }
+            @Override
+            public void doBefore() {
+                OBContext.setOBContext((HttpServletRequest) request);
+            }
 
-	    @Override
-	    protected void doAction() throws Exception {
-		chain.doFilter(request, response);
-	    }
+            @Override
+            protected void doAction() throws Exception {
+                chain.doFilter(request, response);
+            }
 
-	    // note OBContext is set to null in DalThreadHandler
-	};
+            // note OBContext is set to null in DalThreadHandler
+        };
 
-	dth.run();
+        dth.run();
     }
 }

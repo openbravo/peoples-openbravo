@@ -25,7 +25,7 @@ import org.openbravo.model.ad.utility.ReferenceDataStore;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Allows testing of hql
+ * Supports testing of xml imports/export.
  * 
  * @author mtaal
  */
@@ -33,55 +33,55 @@ import org.openbravo.test.base.BaseTest;
 public class XMLBaseTest extends BaseTest {
 
     protected void compare(String result, String file) {
-	try {
-	    final URL url = this.getClass().getResource("testdata/" + file);
-	    final File f = new File(new URI(url.toString()));
-	    final BufferedReader r1 = new BufferedReader(new FileReader(f));
-	    final BufferedReader r2 = new BufferedReader(new StringReader(
-		    result));
-	    String line = null;
-	    int lineNo = 1;
-	    while ((line = r1.readLine()) != null) {
-		final String otherLine = r2.readLine();
-		assertTrue("File: " + file + ": Lines are unequal: \n" + line
-			+ "\n" + otherLine + "\n Line number is " + lineNo,
-			line.equals(otherLine));
-		lineNo++;
-	    }
-	} catch (Exception e) {
-	    throw new OBException(e);
-	}
+        try {
+            final URL url = this.getClass().getResource("testdata/" + file);
+            final File f = new File(new URI(url.toString()));
+            final BufferedReader r1 = new BufferedReader(new FileReader(f));
+            final BufferedReader r2 = new BufferedReader(new StringReader(
+                    result));
+            String line = null;
+            int lineNo = 1;
+            while ((line = r1.readLine()) != null) {
+                final String otherLine = r2.readLine();
+                assertTrue("File: " + file + ": Lines are unequal: \n" + line
+                        + "\n" + otherLine + "\n Line number is " + lineNo,
+                        line.equals(otherLine));
+                lineNo++;
+            }
+        } catch (final Exception e) {
+            throw new OBException(e);
+        }
     }
 
     protected String getFileContent(String file) {
-	try {
-	    final URL url = this.getClass().getResource("testdata/" + file);
-	    final File f = new File(new URI(url.toString()));
-	    final BufferedReader r1 = new BufferedReader(new FileReader(f));
-	    final StringBuilder sb = new StringBuilder();
-	    String line;
-	    while ((line = r1.readLine()) != null) {
-		if (sb.length() > 0) {
-		    sb.append("\n");
-		}
-		sb.append(line);
-	    }
-	    return sb.toString();
-	} catch (Exception e) {
-	    throw new OBException(e);
-	}
+        try {
+            final URL url = this.getClass().getResource("testdata/" + file);
+            final File f = new File(new URI(url.toString()));
+            final BufferedReader r1 = new BufferedReader(new FileReader(f));
+            final StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = r1.readLine()) != null) {
+                if (sb.length() > 0) {
+                    sb.append("\n");
+                }
+                sb.append(line);
+            }
+            return sb.toString();
+        } catch (final Exception e) {
+            throw new OBException(e);
+        }
     }
 
     protected void cleanRefDataLoaded() {
-	setUserContext("0");
-	final OBCriteria<ReferenceDataStore> obc = OBDal.getInstance()
-		.createCriteria(ReferenceDataStore.class);
-	obc.setFilterOnActive(false);
-	obc.setFilterOnReadableClients(false);
-	obc.setFilterOnReadableOrganisation(false);
-	for (ReferenceDataStore rdl : obc.list()) {
-	    OBDal.getInstance().remove(rdl);
-	}
-	OBDal.getInstance().commitAndClose();
+        setUserContext("0");
+        final OBCriteria<ReferenceDataStore> obc = OBDal.getInstance()
+                .createCriteria(ReferenceDataStore.class);
+        obc.setFilterOnActive(false);
+        obc.setFilterOnReadableClients(false);
+        obc.setFilterOnReadableOrganisation(false);
+        for (final ReferenceDataStore rdl : obc.list()) {
+            OBDal.getInstance().remove(rdl);
+        }
+        OBDal.getInstance().commitAndClose();
     }
 }

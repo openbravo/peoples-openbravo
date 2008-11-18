@@ -32,46 +32,46 @@ public class IdentifierProvider implements OBSingleton {
     private static IdentifierProvider instance;
 
     public static IdentifierProvider getInstance() {
-	if (instance == null) {
-	    instance = OBProvider.getInstance().get(IdentifierProvider.class);
-	}
-	return instance;
+        if (instance == null) {
+            instance = OBProvider.getInstance().get(IdentifierProvider.class);
+        }
+        return instance;
     }
 
     public static void setInstance(IdentifierProvider instance) {
-	IdentifierProvider.instance = instance;
+        IdentifierProvider.instance = instance;
     }
 
     // also use refered to identifiables to create the identifier
     public String getIdentifier(Object o) {
-	return getIdentifier(o, true);
+        return getIdentifier(o, true);
     }
 
     // identifyDeep determines if refered to objects are used
     // to identify the object
     public String getIdentifier(Object o, boolean identifyDeep) {
-	// TODO: add support for null fields
-	final StringBuilder sb = new StringBuilder();
-	final DynamicEnabled dob = (DynamicEnabled) o;
-	final String entityName = ((Identifiable) dob).getEntityName();
-	final List<Property> identifiers = ModelProvider.getInstance()
-		.getEntity(entityName).getIdentifierProperties();
+        // TODO: add support for null fields
+        final StringBuilder sb = new StringBuilder();
+        final DynamicEnabled dob = (DynamicEnabled) o;
+        final String entityName = ((Identifiable) dob).getEntityName();
+        final List<Property> identifiers = ModelProvider.getInstance()
+                .getEntity(entityName).getIdentifierProperties();
 
-	for (Property identifier : identifiers) {
-	    if (sb.length() > 0) {
-		sb.append(" ");
-	    }
-	    final Object value = dob.get(identifier.getName());
+        for (Property identifier : identifiers) {
+            if (sb.length() > 0) {
+                sb.append(" ");
+            }
+            final Object value = dob.get(identifier.getName());
 
-	    if (value instanceof Identifiable && identifyDeep) {
-		sb.append(getIdentifier(value, false));
-	    } else if (value != null) {
-		sb.append(value);
-	    }
-	}
-	if (identifiers.size() == 0) {
-	    return entityName + " (" + ((Identifiable) dob).getId() + ")";
-	}
-	return sb.toString();
+            if (value instanceof Identifiable && identifyDeep) {
+                sb.append(getIdentifier(value, false));
+            } else if (value != null) {
+                sb.append(value);
+            }
+        }
+        if (identifiers.size() == 0) {
+            return entityName + " (" + ((Identifiable) dob).getId() + ")";
+        }
+        return sb.toString();
     }
 }

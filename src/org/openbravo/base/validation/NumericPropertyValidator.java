@@ -28,54 +28,54 @@ import org.openbravo.base.util.Check;
 public class NumericPropertyValidator extends BasePropertyValidator {
 
     public static boolean isValidationRequired(Property p) {
-	if (p.isPrimitive()
-		&& (p.getPrimitiveType() == Float.class
-			|| p.getPrimitiveType() == BigDecimal.class || p
-			.getPrimitiveType() == Integer.class)) {
-	    if (p.getMinValue() != null || p.getMaxValue() != null) {
-		return true;
-	    }
-	}
-	return false;
+        if (p.isPrimitive()
+                && (p.getPrimitiveType() == Float.class
+                        || p.getPrimitiveType() == BigDecimal.class || p
+                        .getPrimitiveType() == Integer.class)) {
+            if (p.getMinValue() != null || p.getMaxValue() != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private BigDecimal minValue;
     private BigDecimal maxValue;
 
     public void initialize() {
-	Check.isTrue(getProperty().getFieldLength() > 0,
-		"Fieldlength should be larger than 0 for validation");
-	if (getProperty().getMinValue() != null) {
-	    minValue = new BigDecimal(getProperty().getMinValue());
-	}
-	if (getProperty().getMaxValue() != null) {
-	    maxValue = new BigDecimal(getProperty().getMaxValue());
-	}
+        Check.isTrue(getProperty().getFieldLength() > 0,
+                "Fieldlength should be larger than 0 for validation");
+        if (getProperty().getMinValue() != null) {
+            minValue = new BigDecimal(getProperty().getMinValue());
+        }
+        if (getProperty().getMaxValue() != null) {
+            maxValue = new BigDecimal(getProperty().getMaxValue());
+        }
     }
 
     @Override
     public String validate(Object value) {
-	if (value == null) {
-	    // mandatory is checked in Hibernate and in the property itself
-	    return null;
-	}
-	Check.isInstanceOf(value, Number.class);
-	final Number num = (Number) value;
-	final double thatValue = num.doubleValue();
-	if (minValue != null) {
-	    if (minValue.doubleValue() > thatValue) {
-		return "Value (" + thatValue
-			+ ") is smaller than the min value: "
-			+ minValue.doubleValue();
-	    }
-	}
-	if (maxValue != null) {
-	    if (maxValue.doubleValue() < thatValue) {
-		return "Value (" + thatValue
-			+ ") is larger than the max value: "
-			+ maxValue.doubleValue();
-	    }
-	}
-	return null;
+        if (value == null) {
+            // mandatory is checked in Hibernate and in the property itself
+            return null;
+        }
+        Check.isInstanceOf(value, Number.class);
+        final Number num = (Number) value;
+        final double thatValue = num.doubleValue();
+        if (minValue != null) {
+            if (minValue.doubleValue() > thatValue) {
+                return "Value (" + thatValue
+                        + ") is smaller than the min value: "
+                        + minValue.doubleValue();
+            }
+        }
+        if (maxValue != null) {
+            if (maxValue.doubleValue() < thatValue) {
+                return "Value (" + thatValue
+                        + ") is larger than the max value: "
+                        + maxValue.doubleValue();
+            }
+        }
+        return null;
     }
 }

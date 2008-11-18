@@ -28,103 +28,103 @@ import org.openbravo.model.common.enterprise.Organization;
  */
 
 public class DynamicOBObject extends BaseOBObject implements Traceable,
-	ClientEnabled, OrganizationEnabled {
+        ClientEnabled, OrganizationEnabled {
 
     private String entityName;
 
     public boolean isNew() {
-	return getId() == null;
+        return getId() == null;
     }
 
     public boolean isActive() {
-	return (Boolean) get(Organization.PROPERTY_ISACTIVE);
+        return (Boolean) get(Organization.PROPERTY_ISACTIVE);
     }
 
     public void setActive(boolean active) {
-	set(Organization.PROPERTY_ISACTIVE, active);
+        set(Organization.PROPERTY_ISACTIVE, active);
     }
 
     @Override
     public String getId() {
-	return (String) get(Organization.PROPERTY_ID);
+        return (String) get(Organization.PROPERTY_ID);
     }
 
     public void setId(String id) {
-	set(Organization.PROPERTY_ID, id);
+        set(Organization.PROPERTY_ID, id);
     }
 
     public User getUpdatedBy() {
-	return (User) get(Organization.PROPERTY_UPDATEDBY);
+        return (User) get(Organization.PROPERTY_UPDATEDBY);
     }
 
     public void setUpdatedBy(User updatedby) {
-	set(Organization.PROPERTY_UPDATEDBY, updatedby);
+        set(Organization.PROPERTY_UPDATEDBY, updatedby);
     }
 
     public Date getUpdated() {
-	return (Date) get(Organization.PROPERTY_UPDATED);
+        return (Date) get(Organization.PROPERTY_UPDATED);
     }
 
     public void setUpdated(Date updated) {
-	set(Organization.PROPERTY_UPDATED, updated);
+        set(Organization.PROPERTY_UPDATED, updated);
     }
 
     public User getCreatedBy() {
-	return (User) get(Organization.PROPERTY_CREATEDBY);
+        return (User) get(Organization.PROPERTY_CREATEDBY);
     }
 
     public void setCreatedBy(User createdby) {
-	set(Organization.PROPERTY_CREATEDBY, createdby);
+        set(Organization.PROPERTY_CREATEDBY, createdby);
     }
 
     public Date getCreated() {
-	return (Date) get(Organization.PROPERTY_CREATED);
+        return (Date) get(Organization.PROPERTY_CREATED);
     }
 
     public void setCreated(Date created) {
-	set(Organization.PROPERTY_CREATED, created);
+        set(Organization.PROPERTY_CREATED, created);
     }
 
     @Override
     public String getEntityName() {
-	return entityName;
+        return entityName;
     }
 
     public void setEntityName(String entityName) {
-	this.entityName = entityName;
+        this.entityName = entityName;
 
-	// set the default values
-	final Entity e = getEntity();
-	for (Property p : e.getProperties()) {
-	    // only do primitive default values
-	    if (!p.isPrimitive()) {
-		continue;
-	    }
-	    final Object defaultValue = p.getActualDefaultValue();
-	    if (defaultValue != null) {
-		setValue(p.getName(), defaultValue);
-	    }
-	}
+        // set the default values
+        final Entity e = getEntity();
+        for (Property p : e.getProperties()) {
+            // only do primitive default values
+            if (!p.isPrimitive()) {
+                continue;
+            }
+            final Object defaultValue = p.getActualDefaultValue();
+            if (defaultValue != null) {
+                setValue(p.getName(), defaultValue);
+            }
+        }
     }
 
     @Override
     public String getIdentifier() {
-	return IdentifierProvider.getInstance().getIdentifier(this);
+        return IdentifierProvider.getInstance().getIdentifier(this);
     }
 
     public Client getClient() {
-	return (Client) get(PROPERTY_CLIENT);
+        return (Client) get(PROPERTY_CLIENT);
     }
 
     public void setClient(Client client) {
-	set(PROPERTY_CLIENT, client);
+        set(PROPERTY_CLIENT, client);
     }
 
     public Organization getOrganization() {
-	return (Organization) get(PROPERTY_ORGANIZATION);
+        return (Organization) get(PROPERTY_ORGANIZATION);
     }
 
     public void setOrganization(Organization organisation) {
-	set(PROPERTY_ORGANIZATION, organisation);
+        set(PROPERTY_ORGANIZATION, organisation);
     }
 }

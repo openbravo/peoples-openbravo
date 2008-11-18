@@ -32,35 +32,35 @@ public class DalContextListener implements ServletContextListener {
     private static ServletContext servletContext = null;
 
     public static ServletContext getServletContext() {
-	return servletContext;
+        return servletContext;
     }
 
     public static void setServletContext(ServletContext context) {
-	DalContextListener.servletContext = context;
+        DalContextListener.servletContext = context;
     }
 
     public static Properties getOpenBravoProperties() {
-	return obProperties;
+        return obProperties;
     }
 
     public void contextInitialized(ServletContextEvent event) {
-	// this allows the sessionfactory controller to use jndi
-	SessionFactoryController.setRunningInWebContainer(true);
+        // this allows the sessionfactory controller to use jndi
+        SessionFactoryController.setRunningInWebContainer(true);
 
-	final ServletContext context = event.getServletContext();
-	setServletContext(context);
-	final InputStream is = context
-		.getResourceAsStream("/WEB-INF/Openbravo.properties");
-	if (is != null) {
-	    OBPropertiesProvider.getInstance().setProperties(is);
-	}
+        final ServletContext context = event.getServletContext();
+        setServletContext(context);
+        final InputStream is = context
+                .getResourceAsStream("/WEB-INF/Openbravo.properties");
+        if (is != null) {
+            OBPropertiesProvider.getInstance().setProperties(is);
+        }
 
-	// set our own config file provider which uses the servletcontext
-	OBConfigFileProvider.getInstance().setServletContext(context);
-	OBConfigFileProvider.getInstance().setClassPathLocation("/WEB-INF");
+        // set our own config file provider which uses the servletcontext
+        OBConfigFileProvider.getInstance().setServletContext(context);
+        OBConfigFileProvider.getInstance().setClassPathLocation("/WEB-INF");
 
-	// initialize the dal layer
-	DalLayerInitializer.getInstance().initialize();
+        // initialize the dal layer
+        DalLayerInitializer.getInstance().initialize();
     }
 
     public void contextDestroyed(ServletContextEvent event) {

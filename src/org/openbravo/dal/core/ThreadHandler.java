@@ -27,37 +27,37 @@ public abstract class ThreadHandler {
     private static final Logger log = Logger.getLogger(ThreadHandler.class);
 
     public void run() {
-	boolean err = true;
-	try {
-	    log.debug("Thread started --> doBefore");
-	    doBefore();
-	    log.debug("Thread --> doAction");
-	    doAction();
-	    log.debug("Thread --> Action done");
-	    err = false;
-	    // TODO add exception logging/tracing/emailing
-	    // } catch (Throwable t) {
-	    // ExceptionHandler.reportThrowable(t, (HttpServletRequest)
-	    // request);
-	    // throw new ServletException(t);
-	} catch (ServletException se) {
-	    if (se.getRootCause() != null) {
-		se.getRootCause().printStackTrace(System.err);
-		log.error(se);
-		throw new OBException("Exception thrown "
-			+ se.getRootCause().getMessage(), se.getRootCause());
-	    } else {
-		se.printStackTrace(System.err);
-		log.error(se);
-		throw new OBException("Exception thrown " + se.getMessage(), se);
-	    }
-	} catch (Throwable t) {
-	    t.printStackTrace(System.err);
-	    log.error(t);
-	    throw new OBException("Exception thrown " + t.getMessage(), t);
-	} finally {
-	    doFinal(err);
-	}
+        boolean err = true;
+        try {
+            log.debug("Thread started --> doBefore");
+            doBefore();
+            log.debug("Thread --> doAction");
+            doAction();
+            log.debug("Thread --> Action done");
+            err = false;
+            // TODO add exception logging/tracing/emailing
+            // } catch (Throwable t) {
+            // ExceptionHandler.reportThrowable(t, (HttpServletRequest)
+            // request);
+            // throw new ServletException(t);
+        } catch (ServletException se) {
+            if (se.getRootCause() != null) {
+                se.getRootCause().printStackTrace(System.err);
+                log.error(se);
+                throw new OBException("Exception thrown "
+                        + se.getRootCause().getMessage(), se.getRootCause());
+            } else {
+                se.printStackTrace(System.err);
+                log.error(se);
+                throw new OBException("Exception thrown " + se.getMessage(), se);
+            }
+        } catch (Throwable t) {
+            t.printStackTrace(System.err);
+            log.error(t);
+            throw new OBException("Exception thrown " + t.getMessage(), t);
+        } finally {
+            doFinal(err);
+        }
     }
 
     protected abstract void doBefore() throws Exception;

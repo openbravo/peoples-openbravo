@@ -40,37 +40,37 @@ public class AccessLevelChecker {
     public static final AccessLevelChecker ALL = new AccessLevelChecker();
 
     public static final AccessLevelChecker SYSTEM = new AccessLevelChecker() {
-	@Override
-	public void checkAccessLevel(String entity, String clientId,
-		String orgId) {
-	    failOnNonZeroClient(entity, clientId);
-	    failOnNonZeroOrg(entity, orgId);
-	}
+        @Override
+        public void checkAccessLevel(String entity, String clientId,
+                String orgId) {
+            failOnNonZeroClient(entity, clientId);
+            failOnNonZeroOrg(entity, orgId);
+        }
     };
 
     public static final AccessLevelChecker SYSTEM_CLIENT = new AccessLevelChecker() {
-	@Override
-	public void checkAccessLevel(String entity, String clientId,
-		String orgId) {
-	    failOnNonZeroOrg(entity, orgId);
-	}
+        @Override
+        public void checkAccessLevel(String entity, String clientId,
+                String orgId) {
+            failOnNonZeroOrg(entity, orgId);
+        }
     };
 
     public static final AccessLevelChecker ORGANIZATION = new AccessLevelChecker() {
-	@Override
-	public void checkAccessLevel(String entity, String clientId,
-		String orgId) {
-	    failOnZeroClient(entity, clientId);
-	    failOnZeroOrg(entity, orgId);
-	}
+        @Override
+        public void checkAccessLevel(String entity, String clientId,
+                String orgId) {
+            failOnZeroClient(entity, clientId);
+            failOnZeroOrg(entity, orgId);
+        }
     };
 
     public static final AccessLevelChecker CLIENT_ORGANIZATION = new AccessLevelChecker() {
-	@Override
-	public void checkAccessLevel(String entity, String clientId,
-		String orgId) {
-	    failOnZeroClient(entity, clientId);
-	}
+        @Override
+        public void checkAccessLevel(String entity, String clientId,
+                String orgId) {
+            failOnZeroClient(entity, clientId);
+        }
     };
 
     // default allways all
@@ -78,30 +78,30 @@ public class AccessLevelChecker {
     }
 
     protected void failOnZeroClient(String entity, String clientId) {
-	if (clientId.equals("0")) {
-	    throw new OBSecurityException("Entity " + entity
-		    + " may not have instances with client 0");
-	}
+        if (clientId.equals("0")) {
+            throw new OBSecurityException("Entity " + entity
+                    + " may not have instances with client 0");
+        }
     }
 
     protected void failOnNonZeroClient(String entity, String clientId) {
-	if (!clientId.equals("0")) {
-	    throw new OBSecurityException("Entity " + entity
-		    + " may only have instances with client 0");
-	}
+        if (!clientId.equals("0")) {
+            throw new OBSecurityException("Entity " + entity
+                    + " may only have instances with client 0");
+        }
     }
 
     protected void failOnZeroOrg(String entity, String orgId) {
-	if (orgId.equals("0")) {
-	    throw new OBSecurityException("Entity " + entity
-		    + " may not have instances with organisation *");
-	}
+        if (orgId.equals("0")) {
+            throw new OBSecurityException("Entity " + entity
+                    + " may not have instances with organisation *");
+        }
     }
 
     protected void failOnNonZeroOrg(String entity, String orgId) {
-	if (!orgId.equals("0")) {
-	    throw new OBSecurityException("Entity " + entity
-		    + " may only have instances with organisation *");
-	}
+        if (!orgId.equals("0")) {
+            throw new OBSecurityException("Entity " + entity
+                    + " may only have instances with organisation *");
+        }
     }
 }

@@ -12,18 +12,18 @@ public class CheckException extends OBException {
     private static final long serialVersionUID = 1L;
 
     public CheckException() {
-	super();
+        super();
     }
 
     public CheckException(String message, Throwable cause) {
-	super(message, cause);
+        super(message, cause);
     }
 
     public CheckException(String message) {
-	super(message);
+        super(message);
     }
 
     public CheckException(Throwable cause) {
-	super(cause);
+        super(cause);
     }
 }

@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.binary.Base64;
 import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
@@ -66,35 +67,35 @@ public class BaseWebServiceServlet extends HttpServlet {
 	try {
 	    super.service(request, response);
 	    response.setStatus(200);
-	} catch (InvalidRequestException e) {
+	} catch (final InvalidRequestException e) {
 	    SessionHandler.getInstance().setDoRollback(true);
 	    e.printStackTrace(System.err);
 	    response.setStatus(400);
 	    final Writer w = response.getWriter();
 	    w.write(WebServiceUtil.getInstance().createErrorXML(e));
 	    w.close();
-	} catch (InvalidContentException e) {
+	} catch (final InvalidContentException e) {
 	    SessionHandler.getInstance().setDoRollback(true);
 	    e.printStackTrace(System.err);
 	    response.setStatus(409);
 	    final Writer w = response.getWriter();
 	    w.write(WebServiceUtil.getInstance().createErrorXML(e));
 	    w.close();
-	} catch (ResourceNotFoundException e) {
+	} catch (final ResourceNotFoundException e) {
 	    SessionHandler.getInstance().setDoRollback(true);
 	    e.printStackTrace(System.err);
 	    response.setStatus(404);
 	    final Writer w = response.getWriter();
 	    w.write(WebServiceUtil.getInstance().createErrorXML(e));
 	    w.close();
-	} catch (OBSecurityException e) {
+	} catch (final OBSecurityException e) {
 	    SessionHandler.getInstance().setDoRollback(true);
 	    e.printStackTrace(System.err);
 	    response.setStatus(401);
 	    final Writer w = response.getWriter();
 	    w.write(WebServiceUtil.getInstance().createErrorXML(e));
 	    w.close();
-	} catch (Throwable t) {
+	} catch (final Throwable t) {
 	    SessionHandler.getInstance().setDoRollback(true);
 	    t.printStackTrace(System.err);
 	    response.setStatus(500);
@@ -106,8 +107,8 @@ public class BaseWebServiceServlet extends HttpServlet {
 
     private boolean isLoggedIn(HttpServletRequest request,
 	    HttpServletResponse response) {
-	String login = request.getParameter(LOGIN_PARAM);
-	String password = request.getParameter(PASSWORD_PARAM);
+	final String login = request.getParameter(LOGIN_PARAM);
+	final String password = request.getParameter(PASSWORD_PARAM);
 	String userId = null;
 	if (login != null && password != null) {
 	    userId = getValidUserId(login, password);
@@ -137,9 +138,7 @@ public class BaseWebServiceServlet extends HttpServlet {
 	    final String userpassEncoded = auth.substring(6);
 
 	    // Decode it, using any base 64 decoder
-	    sun.misc.BASE64Decoder dec = new sun.misc.BASE64Decoder();
-	    final String decodedUserPass = new String(dec
-		    .decodeBuffer(userpassEncoded));
+	    final String decodedUserPass = new String(Base64.decodeBase64(userpassEncoded.getBytes()));
 	    final int index = decodedUserPass.indexOf(":");
 	    if (index == -1) {
 		return null;
@@ -147,7 +146,7 @@ public class BaseWebServiceServlet extends HttpServlet {
 	    final String login = decodedUserPass.substring(0, index);
 	    final String password = decodedUserPass.substring(index + 1);
 	    return getValidUserId(login, password);
-	} catch (Exception e) {
+	} catch (final Exception e) {
 	    throw new OBException(e);
 	}
     }
@@ -169,7 +168,7 @@ public class BaseWebServiceServlet extends HttpServlet {
 		return null;
 	    }
 	    return (String) list.get(0);
-	} catch (Exception e) {
+	} catch (final Exception e) {
 	    throw new OBException(e);
 	}
     }

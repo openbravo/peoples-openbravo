@@ -35,41 +35,41 @@ public class XMLUtil implements OBSingleton {
     private static XMLUtil instance;
 
     public static XMLUtil getInstance() {
-	if (instance == null) {
-	    instance = OBProvider.getInstance().get(XMLUtil.class);
-	}
-	return instance;
+        if (instance == null) {
+            instance = OBProvider.getInstance().get(XMLUtil.class);
+        }
+        return instance;
     }
 
     public static void setInstance(XMLUtil instance) {
-	XMLUtil.instance = instance;
+        XMLUtil.instance = instance;
     }
 
     public Document createDomDocument() {
-	final Document document = DocumentHelper.createDocument();
-	return document;
+        final Document document = DocumentHelper.createDocument();
+        return document;
     }
 
     public Element addRootElement(Document doc, String elementName) {
-	final Namespace ns = new Namespace("ob", "http://www.openbravo.com");
-	final QName qName = new QName(elementName, ns);
-	final Element root = doc.addElement(qName);
-	root.addNamespace("ob", "http://www.openbravo.com");
-	return root;
+        final Namespace ns = new Namespace("ob", "http://www.openbravo.com");
+        final QName qName = new QName(elementName, ns);
+        final Element root = doc.addElement(qName);
+        root.addNamespace("ob", "http://www.openbravo.com");
+        return root;
     }
 
     public String toString(Document document) {
-	try {
-	    final OutputFormat format = OutputFormat.createPrettyPrint();
-	    format.setEncoding("UTF-8");
-	    final StringWriter out = new StringWriter();
-	    final XMLWriter writer = new XMLWriter(out, format);
-	    writer.write(document);
-	    writer.close();
-	    return out.toString();
-	} catch (final Exception e) {
-	    throw new OBException(e);
-	}
+        try {
+            final OutputFormat format = OutputFormat.createPrettyPrint();
+            format.setEncoding("UTF-8");
+            final StringWriter out = new StringWriter();
+            final XMLWriter writer = new XMLWriter(out, format);
+            writer.write(document);
+            writer.close();
+            return out.toString();
+        } catch (final Exception e) {
+            throw new OBException(e);
+        }
     }
 
 }

@@ -72,18 +72,22 @@ public class Evaluator implements OBSingleton {
             // but js seems to work fine
             final ScriptEngineManager manager = new ScriptEngineManager();
             final ScriptEngine engine = manager.getEngineByName("js");
-            Check.isNotNull(engine, "Scripting engine not found using name js, check for other scripting language names such as Mozilla Rhino");
-            
+            Check
+                    .isNotNull(
+                            engine,
+                            "Scripting engine not found using name js, check for other scripting language names such as Mozilla Rhino");
+
             final Entity e = contextBob.getEntity();
             for (final Property p : e.getProperties()) {
-                engine.put(p.getName(), contextBob.get(p.getName()));                
+                engine.put(p.getName(), contextBob.get(p.getName()));
             }
-            
+
             final Object result = engine.eval(script);
             Check.isInstanceOf(result, Boolean.class);
             return (Boolean) result;
         } catch (final ScriptException e) {
-            throw new OBException("Exception while executing " + script + " for business object " + contextBob, e);
+            throw new OBException("Exception while executing " + script
+                    + " for business object " + contextBob, e);
         }
     }
 }

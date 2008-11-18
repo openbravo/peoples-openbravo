@@ -28,11 +28,6 @@
 		<property name="view" type="yes_no" column="isview"/>
 		<property name="deletable" type="yes_no" column="isdeleteable"/>
 		<property name="accessLevel" column="accesslevel"/>
-		
-		<bag name="columns" cascade="all" lazy="false" order-by="position asc">
-			<key column="ad_table_id"/>
-            <one-to-many class="org.openbravo.base.model.Column"/>
-        </bag>
                 		
 		<many-to-one name="thePackage" not-null="true" class="org.openbravo.base.model.Package" column="ad_package_id"/>
 		       

@@ -31,48 +31,48 @@ public class EntityValidator {
     private Entity entity;
 
     public void validate(Object o) {
-	if (!validateRequired) {
-	    return;
-	}
-	final ValidationException ve = new ValidationException();
-	for (Property p : entity.getProperties()) {
-	    final PropertyValidator pv = p.getValidator();
-	    if (pv != null) {
-		final Object value = ((BaseOBObjectDef) o).get(p.getName());
-		final String msg = pv.validate(value);
-		if (msg != null) {
-		    ve.addMessage(p, msg);
-		}
-	    }
-	}
-	if (ve.hasMessages()) {
-	    throw ve;
-	}
+        if (!validateRequired) {
+            return;
+        }
+        final ValidationException ve = new ValidationException();
+        for (Property p : entity.getProperties()) {
+            final PropertyValidator pv = p.getValidator();
+            if (pv != null) {
+                final Object value = ((BaseOBObjectDef) o).get(p.getName());
+                final String msg = pv.validate(value);
+                if (msg != null) {
+                    ve.addMessage(p, msg);
+                }
+            }
+        }
+        if (ve.hasMessages()) {
+            throw ve;
+        }
     }
 
     public Entity getEntity() {
-	return entity;
+        return entity;
     }
 
     public void setEntity(Entity entity) {
-	this.entity = entity;
+        this.entity = entity;
     }
 
     public void initialize() {
-	for (Property p : entity.getProperties()) {
-	    if (StringPropertyValidator.isValidationRequired(p)) {
-		final StringPropertyValidator spv = new StringPropertyValidator();
-		spv.setProperty(p);
-		spv.initialize();
-		p.setValidator(spv);
-		validateRequired = true;
-	    } else if (NumericPropertyValidator.isValidationRequired(p)) {
-		final NumericPropertyValidator nv = new NumericPropertyValidator();
-		nv.setProperty(p);
-		nv.initialize();
-		p.setValidator(nv);
-		validateRequired = true;
-	    }
-	}
+        for (Property p : entity.getProperties()) {
+            if (StringPropertyValidator.isValidationRequired(p)) {
+                final StringPropertyValidator spv = new StringPropertyValidator();
+                spv.setProperty(p);
+                spv.initialize();
+                p.setValidator(spv);
+                validateRequired = true;
+            } else if (NumericPropertyValidator.isValidationRequired(p)) {
+                final NumericPropertyValidator nv = new NumericPropertyValidator();
+                nv.setProperty(p);
+                nv.initialize();
+                p.setValidator(nv);
+                validateRequired = true;
+            }
+        }
     }
 }

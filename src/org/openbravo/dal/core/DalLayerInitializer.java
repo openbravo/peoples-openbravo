@@ -30,15 +30,15 @@ import org.openbravo.base.session.SessionFactoryController;
 
 public class DalLayerInitializer implements OBSingleton {
     private static final Logger log = Logger
-	    .getLogger(DalLayerInitializer.class);
+            .getLogger(DalLayerInitializer.class);
 
     private static DalLayerInitializer instance;
 
     public static DalLayerInitializer getInstance() {
-	if (instance == null) {
-	    instance = OBProvider.getInstance().get(DalLayerInitializer.class);
-	}
-	return instance;
+        if (instance == null) {
+            instance = OBProvider.getInstance().get(DalLayerInitializer.class);
+        }
+        return instance;
     }
 
     private boolean initialized = false;
@@ -47,43 +47,43 @@ public class DalLayerInitializer implements OBSingleton {
         if (initialized) {
             return;
         }
-	log.info("Initializing in-memory model...");
-	try {
-	    ModelProvider.getInstance().getModel();
-	} catch (final Exception e) {
-	    e.printStackTrace(System.err);
-	    throw new OBException(e);
-	}
+        log.info("Initializing in-memory model...");
+        try {
+            ModelProvider.getInstance().getModel();
+        } catch (final Exception e) {
+            e.printStackTrace(System.err);
+            throw new OBException(e);
+        }
 
-	log.debug("Registering entity classes in the OBFactory");
-	for (final Entity e : ModelProvider.getInstance().getModel()) {
-	    OBProvider.getInstance().register(e.getMappingClass(),
-		    e.getMappingClass(), false);
-	    OBProvider.getInstance().register(e.getName(), e.getMappingClass(),
-		    false);
-	}
+        log.debug("Registering entity classes in the OBFactory");
+        for (final Entity e : ModelProvider.getInstance().getModel()) {
+            OBProvider.getInstance().register(e.getMappingClass(),
+                    e.getMappingClass(), false);
+            OBProvider.getInstance().register(e.getName(), e.getMappingClass(),
+                    false);
+        }
 
-	log.info("Model read in-memory, generating mapping...");
-	SessionFactoryController.setInstance(OBProvider.getInstance().get(
-		DalSessionFactoryController.class));
-	SessionFactoryController.getInstance().initialize();
+        log.info("Model read in-memory, generating mapping...");
+        SessionFactoryController.setInstance(OBProvider.getInstance().get(
+                DalSessionFactoryController.class));
+        SessionFactoryController.getInstance().initialize();
 
-	// reset the session
-	SessionHandler.deleteSessionHandler();
+        // reset the session
+        SessionHandler.deleteSessionHandler();
 
-	// set the configs
-	OBConfigFileProvider.getInstance().setConfigInProvider();
+        // set the configs
+        OBConfigFileProvider.getInstance().setConfigInProvider();
 
-	log.info("Dal layer initialized");
-	initialized = true;
+        log.info("Dal layer initialized");
+        initialized = true;
     }
 
     public boolean isInitialized() {
-	return initialized;
+        return initialized;
     }
 
     public void setInitialized(boolean initialized) {
-	this.initialized = initialized;
+        this.initialized = initialized;
     }
 
 }

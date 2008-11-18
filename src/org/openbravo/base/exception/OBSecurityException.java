@@ -21,18 +21,18 @@ public class OBSecurityException extends OBException {
     private static final long serialVersionUID = 1L;
 
     public OBSecurityException() {
-	super();
+        super();
     }
 
     public OBSecurityException(String message, Throwable cause) {
-	super(message, cause);
+        super(message, cause);
     }
 
     public OBSecurityException(String message) {
-	super(message);
+        super(message);
     }
 
     public OBSecurityException(Throwable cause) {
-	super(cause);
+        super(cause);
     }
 }

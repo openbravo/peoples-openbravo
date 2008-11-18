@@ -22,27 +22,27 @@ public class OBException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     public OBException() {
-	super();
-	getLogger().error(this);
+        super();
+        getLogger().error(this);
     }
 
     public OBException(String message, Throwable cause) {
-	super(message, cause);
-	getLogger().error(message, cause);
+        super(message, cause);
+        getLogger().error(message, cause);
     }
 
     public OBException(String message) {
-	super(message);
-	getLogger().error(message, this);
+        super(message);
+        getLogger().error(message, this);
     }
 
     public OBException(Throwable cause) {
-	super(cause);
-	getLogger().error(cause);
+        super(cause);
+        getLogger().error(cause);
     }
 
     // returns class specific logger
     protected Logger getLogger() {
-	return Logger.getLogger(this.getClass());
+        return Logger.getLogger(this.getClass());
     }
 }

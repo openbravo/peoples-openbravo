@@ -30,80 +30,80 @@ import org.openbravo.base.exception.OBException;
 @SuppressWarnings("unchecked")
 public class OBDynamicPropertyHandler implements PropertyAccessor {
     public Getter getGetter(Class theClass, String propertyName)
-	    throws PropertyNotFoundException {
-	return new Getter(getStaticPropertyName(theClass, propertyName));
+            throws PropertyNotFoundException {
+        return new Getter(getStaticPropertyName(theClass, propertyName));
     }
 
     public Setter getSetter(Class theClass, String propertyName)
-	    throws PropertyNotFoundException {
-	return new Setter(getStaticPropertyName(theClass, propertyName));
+            throws PropertyNotFoundException {
+        return new Setter(getStaticPropertyName(theClass, propertyName));
     }
 
     private String getStaticPropertyName(Class<?> clz, String propName) {
-	try {
-	    final Field fld = clz
-		    .getField("PROPERTY_" + propName.toUpperCase());
-	    return (String) fld.get(null);
-	} catch (Exception e) {
-	    throw new OBException(
-		    "Exception when getting static property name "
-			    + clz.getName() + "." + "PROPERTY_"
-			    + propName.toUpperCase(), e);
-	}
+        try {
+            final Field fld = clz
+                    .getField("PROPERTY_" + propName.toUpperCase());
+            return (String) fld.get(null);
+        } catch (Exception e) {
+            throw new OBException(
+                    "Exception when getting static property name "
+                            + clz.getName() + "." + "PROPERTY_"
+                            + propName.toUpperCase(), e);
+        }
     }
 
     public static class Getter implements org.hibernate.property.Getter {
-	private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
 
-	private String propertyName;
+        private String propertyName;
 
-	public Getter(String propertyName) {
-	    this.propertyName = propertyName;
-	}
+        public Getter(String propertyName) {
+            this.propertyName = propertyName;
+        }
 
-	public Method getMethod() {
-	    return null;
-	}
+        public Method getMethod() {
+            return null;
+        }
 
-	public String getMethodName() {
-	    return null;
-	}
+        public String getMethodName() {
+            return null;
+        }
 
-	public Object get(Object owner) throws HibernateException {
-	    return ((BaseOBObject) owner).getValue(propertyName);
-	}
+        public Object get(Object owner) throws HibernateException {
+            return ((BaseOBObject) owner).getValue(propertyName);
+        }
 
-	public Object getForInsert(Object owner, Map mergeMap,
-		SessionImplementor session) throws HibernateException {
-	    return get(owner);
-	}
+        public Object getForInsert(Object owner, Map mergeMap,
+                SessionImplementor session) throws HibernateException {
+            return get(owner);
+        }
 
-	public Class getReturnType() {
-	    return null;
-	}
+        public Class getReturnType() {
+            return null;
+        }
     }
 
     public static class Setter implements org.hibernate.property.Setter {
-	private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
 
-	private String propertyName;
+        private String propertyName;
 
-	public Setter(String propertyName) {
-	    this.propertyName = propertyName;
-	}
+        public Setter(String propertyName) {
+            this.propertyName = propertyName;
+        }
 
-	public Method getMethod() {
-	    return null;
-	}
+        public Method getMethod() {
+            return null;
+        }
 
-	public String getMethodName() {
-	    return null;
-	}
+        public String getMethodName() {
+            return null;
+        }
 
-	public void set(Object target, Object value,
-		SessionFactoryImplementor factory) throws HibernateException {
-	    ((BaseOBObject) target).setValue(propertyName, value);
-	}
+        public void set(Object target, Object value,
+                SessionFactoryImplementor factory) throws HibernateException {
+            ((BaseOBObject) target).setValue(propertyName, value);
+        }
 
     }
 }

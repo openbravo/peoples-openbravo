@@ -43,36 +43,36 @@ public class SessionHandler implements OBNotSingleton {
 
     // delete session handler from threadlocal
     public static void deleteSessionHandler() {
-	log.debug("Removing sessionhandler");
-	sessionHandler.set(null);
+        log.debug("Removing sessionhandler");
+        sessionHandler.set(null);
     }
 
     /** checks if a session handler is present for this thread */
     public static boolean isSessionHandlerPresent() {
-	return sessionHandler.get() != null;
+        return sessionHandler.get() != null;
     }
 
     /** Returns the sessionhandler for this thread */
     public static SessionHandler getInstance() {
-	SessionHandler sh = sessionHandler.get();
-	if (sh == null) {
-	    log.debug("Creating sessionHandler");
-	    sh = getCreateSessionHandler();
-	    sh.begin();
-	    sessionHandler.set(sh);
-	}
-	return sh;
+        SessionHandler sh = sessionHandler.get();
+        if (sh == null) {
+            log.debug("Creating sessionHandler");
+            sh = getCreateSessionHandler();
+            sh.begin();
+            sessionHandler.set(sh);
+        }
+        return sh;
     }
 
     private static boolean checkedSessionHandlerRegistration = false;
 
     private static SessionHandler getCreateSessionHandler() {
-	if (!checkedSessionHandlerRegistration
-		&& !OBProvider.getInstance().isRegistered(SessionHandler.class)) {
-	    OBProvider.getInstance().register(SessionHandler.class,
-		    SessionHandler.class, false);
-	}
-	return OBProvider.getInstance().get(SessionHandler.class);
+        if (!checkedSessionHandlerRegistration
+                && !OBProvider.getInstance().isRegistered(SessionHandler.class)) {
+            OBProvider.getInstance().register(SessionHandler.class,
+                    SessionHandler.class, false);
+        }
+        return OBProvider.getInstance().get(SessionHandler.class);
     }
 
     /** The session */
@@ -89,27 +89,27 @@ public class SessionHandler implements OBNotSingleton {
 
     /** Returns the session */
     public Session getSession() {
-	return session;
+        return session;
     }
 
     /** Saves the object in this session */
     public void save(Object obj) {
-	if (Identifiable.class.isAssignableFrom(obj.getClass())) {
-	    session.save(((Identifiable) obj).getEntityName(), obj);
-	} else {
-	    session.save(obj);
-	}
+        if (Identifiable.class.isAssignableFrom(obj.getClass())) {
+            session.save(((Identifiable) obj).getEntityName(), obj);
+        } else {
+            session.save(obj);
+        }
     }
 
     /** Delete the object */
     public void delete(Object obj) {
-	session.delete(obj);
+        session.delete(obj);
     }
 
     @SuppressWarnings("unchecked")
     public <T extends Object> List<T> list(Class<T> clazz) {
-	final Criteria c = session.createCriteria(clazz);
-	return c.list();
+        final Criteria c = session.createCriteria(clazz);
+        return c.list();
     }
 
     /**
@@ -121,72 +121,72 @@ public class SessionHandler implements OBNotSingleton {
      */
     @SuppressWarnings("unchecked")
     public <T extends Object> T find(Class<T> clazz, Object id) {
-	if (Identifiable.class.isAssignableFrom(clazz)) {
-	    return (T) find(DalUtil.getEntityName(clazz), id);
-	}
-	return (T) session.get(clazz, (Serializable) id);
+        if (Identifiable.class.isAssignableFrom(clazz)) {
+            return (T) find(DalUtil.getEntityName(clazz), id);
+        }
+        return (T) session.get(clazz, (Serializable) id);
     }
 
     public BaseOBObject find(String entityName, Object id) {
-	return (BaseOBObject) session.get(entityName, (Serializable) id);
+        return (BaseOBObject) session.get(entityName, (Serializable) id);
     }
 
     /** Create a query object */
     public Query createQuery(String qryStr) {
-	return session.createQuery(qryStr);
+        return session.createQuery(qryStr);
     }
 
     /** Starts a transaction */
     private void begin() {
-	Check.isTrue(session == null, "Session must be null before begin");
-	session = SessionFactoryController.getInstance().getSessionFactory()
-		.openSession();
-	session.setFlushMode(FlushMode.COMMIT);
-	Check.isTrue(tx == null, "tx must be null before begin");
-	tx = session.beginTransaction();
-	log.debug("Transaction started");
+        Check.isTrue(session == null, "Session must be null before begin");
+        session = SessionFactoryController.getInstance().getSessionFactory()
+                .openSession();
+        session.setFlushMode(FlushMode.COMMIT);
+        Check.isTrue(tx == null, "tx must be null before begin");
+        tx = session.beginTransaction();
+        log.debug("Transaction started");
     }
 
     /** Commits the transaction, should be called at the end of all the work */
     public void commitAndClose() {
-	try {
-	    checkInvariant();
-	    tx.commit();
-	    tx = null;
-	} finally {
-	    deleteSessionHandler();
-	    session.close();
-	}
-	session = null;
-	log.debug("Transaction closed, session closed");
+        try {
+            checkInvariant();
+            tx.commit();
+            tx = null;
+        } finally {
+            deleteSessionHandler();
+            session.close();
+        }
+        session = null;
+        log.debug("Transaction closed, session closed");
     }
 
     /** Commits the transaction, should be called at the end of all the work */
     public void commitAndStart() {
-	checkInvariant();
-	tx.commit();
-	tx = null;
-	tx = session.beginTransaction();
-	log.debug("Committed and started new transaction");
+        checkInvariant();
+        tx.commit();
+        tx = null;
+        tx = session.beginTransaction();
+        log.debug("Committed and started new transaction");
     }
 
     /** Rollback */
     public void rollback() {
-	log.debug("Rolling back transaction");
-	try {
-	    checkInvariant();
-	    tx.rollback();
-	    tx = null;
-	} finally {
-	    deleteSessionHandler();
-	    try {
-		log.debug("Closing session");
-		session.close();
-	    } finally {
-		// purposely ignoring it to not hide other errors
-	    }
-	}
-	session = null;
+        log.debug("Rolling back transaction");
+        try {
+            checkInvariant();
+            tx.rollback();
+            tx = null;
+        } finally {
+            deleteSessionHandler();
+            try {
+                log.debug("Closing session");
+                session.close();
+            } finally {
+                // purposely ignoring it to not hide other errors
+            }
+        }
+        session = null;
     }
 
     /**
@@ -194,21 +194,21 @@ public class SessionHandler implements OBNotSingleton {
      * alive
      */
     private void checkInvariant() {
-	Check.isNotNull(session, "Session is null");
-	Check.isNotNull(tx, "Tx is null");
-	Check.isTrue(tx.isActive(), "Tx is active");
+        Check.isNotNull(session, "Session is null");
+        Check.isNotNull(tx, "Tx is null");
+        Check.isTrue(tx.isActive(), "Tx is active");
     }
 
     /** Set rollback */
     public void setDoRollback(boolean setRollback) {
-	if (setRollback) {
-	    log.debug("Rollback is set to true");
-	}
-	this.doRollback = setRollback;
+        if (setRollback) {
+            log.debug("Rollback is set to true");
+        }
+        this.doRollback = setRollback;
     }
 
     /** Returns the doRollback value */
     public boolean getDoRollback() {
-	return doRollback;
+        return doRollback;
     }
 }

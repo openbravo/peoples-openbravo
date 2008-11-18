@@ -41,10 +41,10 @@ import org.openbravo.model.ad.system.SystemInformation;
 
 public class EntityXMLConverter implements OBNotSingleton {
     private static final Logger log = Logger
-	    .getLogger(EntityXMLConverter.class);
+            .getLogger(EntityXMLConverter.class);
 
     public static EntityXMLConverter newInstance() {
-	return OBProvider.getInstance().get(EntityXMLConverter.class);
+        return OBProvider.getInstance().get(EntityXMLConverter.class);
     }
 
     // controls if the many-to-one references objects are also included
@@ -79,314 +79,314 @@ public class EntityXMLConverter implements OBNotSingleton {
 
     // clear internal data to start with a fresh face
     public void clear() {
-	document = null;
-	referenced.clear();
-	toHandle.clear();
-	consideredForHandling.clear();
+        document = null;
+        referenced.clear();
+        toHandle.clear();
+        consideredForHandling.clear();
     }
 
     public String toXML(BaseOBObject obObject) {
-	final List<BaseOBObject> bobs = new ArrayList<BaseOBObject>();
-	bobs.add(obObject);
-	return toXML(bobs);
+        final List<BaseOBObject> bobs = new ArrayList<BaseOBObject>();
+        bobs.add(obObject);
+        return toXML(bobs);
     }
 
     public String toXML(Collection<BaseOBObject> bobs) {
-	clear();
-	process(bobs);
-	return XMLUtil.getInstance().toString(getDocument());
+        clear();
+        process(bobs);
+        return XMLUtil.getInstance().toString(getDocument());
     }
 
     protected void createDocument() {
-	if (getDocument() != null) {
-	    return;
-	}
-	setDocument(XMLUtil.getInstance().createDomDocument());
+        if (getDocument() != null) {
+            return;
+        }
+        setDocument(XMLUtil.getInstance().createDomDocument());
 
-	// because a list of objects is exported a root tag is placed
-	// around them
-	final Element rootElement = XMLUtil.getInstance().addRootElement(
-		getDocument(), XMLConstants.OB_ROOT_ELEMENT);
-	addSystemAttributes(rootElement);
+        // because a list of objects is exported a root tag is placed
+        // around them
+        final Element rootElement = XMLUtil.getInstance().addRootElement(
+                getDocument(), XMLConstants.OB_ROOT_ELEMENT);
+        addSystemAttributes(rootElement);
     }
 
     public void process(BaseOBObject bob) {
-	createDocument();
-	// set the export list
-	getToHandle().add(bob);
-	getConsideredForHandling().add(bob);
+        createDocument();
+        // set the export list
+        getToHandle().add(bob);
+        getConsideredForHandling().add(bob);
 
-	// and do it
-	export(getDocument().getRootElement());
+        // and do it
+        export(getDocument().getRootElement());
     }
 
     public void process(Collection<BaseOBObject> bobs) {
-	createDocument();
-	// set the export list
-	getToHandle().addAll(bobs);
-	getConsideredForHandling().addAll(bobs);
+        createDocument();
+        // set the export list
+        getToHandle().addAll(bobs);
+        getConsideredForHandling().addAll(bobs);
 
-	// and do it
-	export(getDocument().getRootElement());
+        // and do it
+        export(getDocument().getRootElement());
     }
 
     public String getProcessResult() {
-	return XMLUtil.getInstance().toString(getDocument());
+        return XMLUtil.getInstance().toString(getDocument());
     }
 
     protected void export(Element rootElement) {
-	while (getToHandle().size() > 0) {
-	    final BaseOBObject bob = getToHandle().iterator().next();
-	    export(bob, rootElement);
-	    exported(bob);
-	}
-	getConsideredForHandling().clear();
+        while (getToHandle().size() > 0) {
+            final BaseOBObject bob = getToHandle().iterator().next();
+            export(bob, rootElement);
+            exported(bob);
+        }
+        getConsideredForHandling().clear();
     }
 
     protected void export(BaseOBObject obObject, Element rootElement) {
-	final String entityName = DalUtil.getEntityName(obObject);
-	final Element currentElement = rootElement.addElement(entityName);
+        final String entityName = DalUtil.getEntityName(obObject);
+        final Element currentElement = rootElement.addElement(entityName);
 
-	// set the id and identifier attributes
-	final Object id = DalUtil.getId(obObject);
-	if (id != null) {
-	    currentElement.addAttribute(XMLConstants.ID_ATTRIBUTE, id
-		    .toString());
-	}
-	currentElement.addAttribute(XMLConstants.IDENTIFIER_ATTRIBUTE,
-		IdentifierProvider.getInstance().getIdentifier(obObject));
+        // set the id and identifier attributes
+        final Object id = DalUtil.getId(obObject);
+        if (id != null) {
+            currentElement.addAttribute(XMLConstants.ID_ATTRIBUTE, id
+                    .toString());
+        }
+        currentElement.addAttribute(XMLConstants.IDENTIFIER_ATTRIBUTE,
+                IdentifierProvider.getInstance().getIdentifier(obObject));
 
-	// if this object has been added as a referenced object
-	// set the reference attribute so that we at import can treat this
-	// one differently
-	boolean isCurrentEntityReferenced = getReferenced().contains(obObject);
-	if (isCurrentEntityReferenced) {
-	    currentElement.addAttribute(XMLConstants.REFERENCE_ATTRIBUTE,
-		    "true");
-	}
+        // if this object has been added as a referenced object
+        // set the reference attribute so that we at import can treat this
+        // one differently
+        boolean isCurrentEntityReferenced = getReferenced().contains(obObject);
+        if (isCurrentEntityReferenced) {
+            currentElement.addAttribute(XMLConstants.REFERENCE_ATTRIBUTE,
+                    "true");
+        }
 
-	// depending on the security only a limited set of
-	// properties is exported
-	final boolean onlyIdentifierProps = OBContext.getOBContext()
-		.getEntityAccessChecker().isDerivedReadable(
-			obObject.getEntity());
+        // depending on the security only a limited set of
+        // properties is exported
+        final boolean onlyIdentifierProps = OBContext.getOBContext()
+                .getEntityAccessChecker().isDerivedReadable(
+                        obObject.getEntity());
 
-	// export each property
-	for (Property p : obObject.getEntity().getProperties()) {
-	    if (onlyIdentifierProps && !p.isIdentifier()) {
-		continue;
-	    }
+        // export each property
+        for (Property p : obObject.getEntity().getProperties()) {
+            if (onlyIdentifierProps && !p.isIdentifier()) {
+                continue;
+            }
 
-	    if (p.isClientOrOrganization()
-		    && !isOptionExportClientOrganizationReferences()) {
-		continue;
-	    }
+            if (p.isClientOrOrganization()
+                    && !isOptionExportClientOrganizationReferences()) {
+                continue;
+            }
 
-	    // onetomany is always a child currently
-	    if (p.isOneToMany()
-		    && (!isOptionIncludeChildren() || isCurrentEntityReferenced)) {
-		continue;
-	    }
+            // onetomany is always a child currently
+            if (p.isOneToMany()
+                    && (!isOptionIncludeChildren() || isCurrentEntityReferenced)) {
+                continue;
+            }
 
-	    // set the tag
-	    final Element currentPropertyElement = currentElement.addElement(p
-		    .getName());
+            // set the tag
+            final Element currentPropertyElement = currentElement.addElement(p
+                    .getName());
 
-	    // add transient attribute
-	    if (p.isTransient(obObject)) {
-		currentPropertyElement.addAttribute(
-			XMLConstants.TRANSIENT_ATTRIBUTE, "true");
-	    }
-	    if (p.isAuditInfo()) {
-		currentPropertyElement.addAttribute(
-			XMLConstants.TRANSIENT_ATTRIBUTE, "true");
-	    }
-	    if (p.isInactive()) {
-		currentPropertyElement.addAttribute(
-			XMLConstants.INACTIVE_ATTRIBUTE, "true");
-	    }
+            // add transient attribute
+            if (p.isTransient(obObject)) {
+                currentPropertyElement.addAttribute(
+                        XMLConstants.TRANSIENT_ATTRIBUTE, "true");
+            }
+            if (p.isAuditInfo()) {
+                currentPropertyElement.addAttribute(
+                        XMLConstants.TRANSIENT_ATTRIBUTE, "true");
+            }
+            if (p.isInactive()) {
+                currentPropertyElement.addAttribute(
+                        XMLConstants.INACTIVE_ATTRIBUTE, "true");
+            }
 
-	    // get the value
-	    final Object value = obObject.get(p.getName());
+            // get the value
+            final Object value = obObject.get(p.getName());
 
-	    // will result in an empty tag if null
-	    if (value == null) {
-		continue;
-	    }
+            // will result in an empty tag if null
+            if (value == null) {
+                continue;
+            }
 
-	    if (p.isCompositeId()) {
-		log
-			.warn("Entity "
-				+ obObject.getEntity()
-				+ " has compositeid, this is not yet supported in the webservice");
-		continue;
-	    }
+            if (p.isCompositeId()) {
+                log
+                        .warn("Entity "
+                                + obObject.getEntity()
+                                + " has compositeid, this is not yet supported in the webservice");
+                continue;
+            }
 
-	    // make a difference between a primitive and a reference
-	    if (p.isPrimitive()) {
-		currentPropertyElement.addText(XMLTypeConverter.getInstance()
-			.toXML(value));
-	    } else if (p.isOneToMany()) {
-		// get all the children and export each child
-		final Collection<?> c = (Collection<?>) value;
-		for (Object o : c) {
-		    // embed in the parent
-		    if (isOptionEmbedChildren()) {
-			export((BaseOBObject) o, currentPropertyElement);
-		    } else {
-			// add the child as a tag, the child entityname is
-			// used as the tagname
-			final BaseOBObject child = (BaseOBObject) o;
-			final Element refElement = currentPropertyElement
-				.addElement(DalUtil.getEntityName(child));
-			refElement.addAttribute(XMLConstants.ID_ATTRIBUTE,
-				DalUtil.getId(child).toString());
-			refElement.addAttribute(
-				XMLConstants.IDENTIFIER_ATTRIBUTE,
-				IdentifierProvider.getInstance().getIdentifier(
-					child));
-			addToExportList((BaseOBObject) o);
-		    }
-		}
-	    } else if (!p.isOneToMany()) {
-		// add reference attributes
-		addReferenceAttributes(currentPropertyElement,
-			(BaseOBObject) value);
-		// and also export the object itself if required
-		// but do not add auditinfo references
-		if (isOptionIncludeReferenced() && !p.isAuditInfo()
-			&& !p.isClientOrOrganization()) {
-		    addToExportList((BaseOBObject) value);
-		}
-	    }
-	}
+            // make a difference between a primitive and a reference
+            if (p.isPrimitive()) {
+                currentPropertyElement.addText(XMLTypeConverter.getInstance()
+                        .toXML(value));
+            } else if (p.isOneToMany()) {
+                // get all the children and export each child
+                final Collection<?> c = (Collection<?>) value;
+                for (Object o : c) {
+                    // embed in the parent
+                    if (isOptionEmbedChildren()) {
+                        export((BaseOBObject) o, currentPropertyElement);
+                    } else {
+                        // add the child as a tag, the child entityname is
+                        // used as the tagname
+                        final BaseOBObject child = (BaseOBObject) o;
+                        final Element refElement = currentPropertyElement
+                                .addElement(DalUtil.getEntityName(child));
+                        refElement.addAttribute(XMLConstants.ID_ATTRIBUTE,
+                                DalUtil.getId(child).toString());
+                        refElement.addAttribute(
+                                XMLConstants.IDENTIFIER_ATTRIBUTE,
+                                IdentifierProvider.getInstance().getIdentifier(
+                                        child));
+                        addToExportList((BaseOBObject) o);
+                    }
+                }
+            } else if (!p.isOneToMany()) {
+                // add reference attributes
+                addReferenceAttributes(currentPropertyElement,
+                        (BaseOBObject) value);
+                // and also export the object itself if required
+                // but do not add auditinfo references
+                if (isOptionIncludeReferenced() && !p.isAuditInfo()
+                        && !p.isClientOrOrganization()) {
+                    addToExportList((BaseOBObject) value);
+                }
+            }
+        }
     }
 
     private void addReferenceAttributes(Element currentElement,
-	    BaseOBObject referedObject) {
-	if (referedObject == null) {
-	    return;
-	}
-	// final Element refElement =
-	// currentElement.addElement(REFERENCE_ELEMENT_NAME);
-	currentElement.addAttribute(XMLConstants.ID_ATTRIBUTE, DalUtil.getId(
-		referedObject).toString());
-	currentElement.addAttribute(XMLConstants.ENTITYNAME_ATTRIBUTE, DalUtil
-		.getEntityName(referedObject));
-	currentElement.addAttribute(XMLConstants.IDENTIFIER_ATTRIBUTE,
-		IdentifierProvider.getInstance().getIdentifier(referedObject));
+            BaseOBObject referedObject) {
+        if (referedObject == null) {
+            return;
+        }
+        // final Element refElement =
+        // currentElement.addElement(REFERENCE_ELEMENT_NAME);
+        currentElement.addAttribute(XMLConstants.ID_ATTRIBUTE, DalUtil.getId(
+                referedObject).toString());
+        currentElement.addAttribute(XMLConstants.ENTITYNAME_ATTRIBUTE, DalUtil
+                .getEntityName(referedObject));
+        currentElement.addAttribute(XMLConstants.IDENTIFIER_ATTRIBUTE,
+                IdentifierProvider.getInstance().getIdentifier(referedObject));
     }
 
     protected void addToExportList(BaseOBObject bob) {
-	// was already exported
-	if (getConsideredForHandling().contains(bob)) {
-	    return;
-	}
-	getToHandle().add(bob);
-	consideredForHandling.add(bob);
-	getReferenced().add(bob);
+        // was already exported
+        if (getConsideredForHandling().contains(bob)) {
+            return;
+        }
+        getToHandle().add(bob);
+        consideredForHandling.add(bob);
+        getReferenced().add(bob);
     }
 
     protected void exported(BaseOBObject bob) {
-	Check
-		.isTrue(
-			getToHandle().contains(bob),
-			"Exported business object not part of toExport list, it has not yet been removed from it!");
-	getToHandle().remove(bob);
+        Check
+                .isTrue(
+                        getToHandle().contains(bob),
+                        "Exported business object not part of toExport list, it has not yet been removed from it!");
+        getToHandle().remove(bob);
     }
 
     public boolean isOptionIncludeReferenced() {
-	return optionIncludeReferenced;
+        return optionIncludeReferenced;
     }
 
     public void setOptionIncludeReferenced(boolean optionIncludeReferenced) {
-	this.optionIncludeReferenced = optionIncludeReferenced;
+        this.optionIncludeReferenced = optionIncludeReferenced;
     }
 
     public boolean isOptionIncludeChildren() {
-	return optionIncludeChildren;
+        return optionIncludeChildren;
     }
 
     public void setOptionIncludeChildren(boolean optionIncludeChildren) {
-	this.optionIncludeChildren = optionIncludeChildren;
+        this.optionIncludeChildren = optionIncludeChildren;
     }
 
     public boolean isOptionEmbedChildren() {
-	return optionEmbedChildren;
+        return optionEmbedChildren;
     }
 
     public void setOptionEmbedChildren(boolean optionEmbedChildren) {
-	this.optionEmbedChildren = optionEmbedChildren;
+        this.optionEmbedChildren = optionEmbedChildren;
     }
 
     public List<BaseOBObject> getToHandle() {
-	return toHandle;
+        return toHandle;
     }
 
     public Set<BaseOBObject> getReferenced() {
-	return referenced;
+        return referenced;
     }
 
     public void setReferenced(Set<BaseOBObject> referenced) {
-	this.referenced = referenced;
+        this.referenced = referenced;
     }
 
     public Set<BaseOBObject> getConsideredForHandling() {
-	return consideredForHandling;
+        return consideredForHandling;
     }
 
     public void setConsideredForExport(Set<BaseOBObject> consideredForExport) {
-	this.consideredForHandling = consideredForExport;
+        this.consideredForHandling = consideredForExport;
     }
 
     protected void addSystemAttributes(Element element) {
-	if (!isAddSystemAttributes()) {
-	    return;
-	}
-	final boolean adminMode = OBContext.getOBContext()
-		.isInAdministratorMode();
-	try {
-	    OBContext.getOBContext().setInAdministratorMode(true);
-	    final List<SystemInformation> sis = OBDal.getInstance()
-		    .createCriteria(SystemInformation.class).list();
-	    Check.isTrue(sis.size() > 0,
-		    "There should be at least one SystemInfo record but there are "
-			    + sis.size());
-	    element.addAttribute(XMLConstants.DATE_TIME_ATTRIBUTE, ""
-		    + new Date());
-	    element.addAttribute(XMLConstants.OB_VERSION_ATTRIBUTE, sis.get(0)
-		    .getObVersion()
-		    + "");
-	    element.addAttribute(XMLConstants.OB_REVISION_ATTRIBUTE, sis.get(0)
-		    .getCodeRevision()
-		    + "");
-	} finally {
-	    OBContext.getOBContext().setInAdministratorMode(adminMode);
-	}
+        if (!isAddSystemAttributes()) {
+            return;
+        }
+        final boolean adminMode = OBContext.getOBContext()
+                .isInAdministratorMode();
+        try {
+            OBContext.getOBContext().setInAdministratorMode(true);
+            final List<SystemInformation> sis = OBDal.getInstance()
+                    .createCriteria(SystemInformation.class).list();
+            Check.isTrue(sis.size() > 0,
+                    "There should be at least one SystemInfo record but there are "
+                            + sis.size());
+            element.addAttribute(XMLConstants.DATE_TIME_ATTRIBUTE, ""
+                    + new Date());
+            element.addAttribute(XMLConstants.OB_VERSION_ATTRIBUTE, sis.get(0)
+                    .getObVersion()
+                    + "");
+            element.addAttribute(XMLConstants.OB_REVISION_ATTRIBUTE, sis.get(0)
+                    .getCodeRevision()
+                    + "");
+        } finally {
+            OBContext.getOBContext().setInAdministratorMode(adminMode);
+        }
     }
 
     public boolean isAddSystemAttributes() {
-	return addSystemAttributes;
+        return addSystemAttributes;
     }
 
     public void setAddSystemAttributes(boolean addSystemAttributes) {
-	this.addSystemAttributes = addSystemAttributes;
+        this.addSystemAttributes = addSystemAttributes;
     }
 
     public Document getDocument() {
-	return document;
+        return document;
     }
 
     public void setDocument(Document document) {
-	this.document = document;
+        this.document = document;
     }
 
     public boolean isOptionExportClientOrganizationReferences() {
-	return optionExportClientOrganizationReferences;
+        return optionExportClientOrganizationReferences;
     }
 
     public void setOptionExportClientOrganizationReferences(
-	    boolean optionExportClientOrganizationReferences) {
-	this.optionExportClientOrganizationReferences = optionExportClientOrganizationReferences;
+            boolean optionExportClientOrganizationReferences) {
+        this.optionExportClientOrganizationReferences = optionExportClientOrganizationReferences;
     }
 }

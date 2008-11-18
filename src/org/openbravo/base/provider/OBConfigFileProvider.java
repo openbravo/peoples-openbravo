@@ -31,19 +31,19 @@ public class OBConfigFileProvider implements OBSingleton {
     private final Logger log = Logger.getLogger(OBConfigFileProvider.class);
 
     private static final String CUSTOM_POSTFIX = "-"
-	    + OBProvider.CONFIG_FILE_NAME;
+            + OBProvider.CONFIG_FILE_NAME;
 
     private static OBConfigFileProvider instance;
 
     public static OBConfigFileProvider getInstance() {
-	if (instance == null) {
-	    instance = OBProvider.getInstance().get(OBConfigFileProvider.class);
-	}
-	return instance;
+        if (instance == null) {
+            instance = OBProvider.getInstance().get(OBConfigFileProvider.class);
+        }
+        return instance;
     }
 
     public static void setInstance(OBConfigFileProvider instance) {
-	OBConfigFileProvider.instance = instance;
+        OBConfigFileProvider.instance = instance;
     }
 
     // the location of the main file
@@ -52,30 +52,30 @@ public class OBConfigFileProvider implements OBSingleton {
     private ServletContext servletContext;
 
     public String getFileLocation() {
-	return fileLocation;
+        return fileLocation;
     }
 
     public void setFileLocation(String fileLocation) {
-	this.fileLocation = fileLocation;
+        this.fileLocation = fileLocation;
     }
 
     public String getClassPathLocation() {
-	return classPathLocation;
+        return classPathLocation;
     }
 
     public void setClassPathLocation(String classPathLocation) {
-	this.classPathLocation = classPathLocation;
+        this.classPathLocation = classPathLocation;
     }
 
     public void setConfigInProvider() {
-	log.debug("Reading config files for setting the provider");
-	if (classPathLocation != null) {
-	    readModuleConfigsFromClassPath();
-	}
-	if (fileLocation != null) {
-	    readModuleConfigsFromFile();
-	}
-	checkClassPathRoot();
+        log.debug("Reading config files for setting the provider");
+        if (classPathLocation != null) {
+            readModuleConfigsFromClassPath();
+        }
+        if (fileLocation != null) {
+            readModuleConfigsFromFile();
+        }
+        checkClassPathRoot();
 
     }
 
@@ -83,110 +83,110 @@ public class OBConfigFileProvider implements OBSingleton {
     // main config file
     // TODO: add searching at the root of the classpath
     protected void readModuleConfigsFromFile() {
-	log.debug("Reading from fileLocation " + fileLocation);
-	// find the parent
-	try {
-	    File providerDir = new File(fileLocation);
-	    if (providerDir.exists()) {
-		if (!providerDir.isDirectory()) {
-		    log
-			    .warn("File Location of config file should be a directory!");
-		    providerDir = providerDir.getParentFile();
-		}
-		File configFile = new File(providerDir,
-			OBProvider.CONFIG_FILE_NAME);
-		if (configFile.exists()) {
-		    final InputStream is = new FileInputStream(configFile);
-		    log.info("Found provider config file "
-			    + configFile.getAbsolutePath());
-		    OBProvider.getInstance().register("", is);
-		}
+        log.debug("Reading from fileLocation " + fileLocation);
+        // find the parent
+        try {
+            File providerDir = new File(fileLocation);
+            if (providerDir.exists()) {
+                if (!providerDir.isDirectory()) {
+                    log
+                            .warn("File Location of config file should be a directory!");
+                    providerDir = providerDir.getParentFile();
+                }
+                File configFile = new File(providerDir,
+                        OBProvider.CONFIG_FILE_NAME);
+                if (configFile.exists()) {
+                    final InputStream is = new FileInputStream(configFile);
+                    log.info("Found provider config file "
+                            + configFile.getAbsolutePath());
+                    OBProvider.getInstance().register("", is);
+                }
 
-		for (Module module : ModelProvider.getInstance().getModules()) {
-		    if (module.getJavaPackage() == null) {
-			continue;
-		    }
-		    final String fileName = module.getJavaPackage()
-			    + CUSTOM_POSTFIX;
-		    configFile = new File(providerDir, fileName);
-		    if (configFile.exists()) {
-			final InputStream is = new FileInputStream(configFile);
-			log.info("Found provider config file "
-				+ configFile.getAbsolutePath());
-			OBProvider.getInstance().register(
-				module.getJavaPackage(), is);
-		    }
-		}
-	    }
-	} catch (Throwable t) {
-	    t.printStackTrace(System.err);
-	    log.error(t);
-	}
+                for (Module module : ModelProvider.getInstance().getModules()) {
+                    if (module.getJavaPackage() == null) {
+                        continue;
+                    }
+                    final String fileName = module.getJavaPackage()
+                            + CUSTOM_POSTFIX;
+                    configFile = new File(providerDir, fileName);
+                    if (configFile.exists()) {
+                        final InputStream is = new FileInputStream(configFile);
+                        log.info("Found provider config file "
+                                + configFile.getAbsolutePath());
+                        OBProvider.getInstance().register(
+                                module.getJavaPackage(), is);
+                    }
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace(System.err);
+            log.error(t);
+        }
     }
 
     protected void readModuleConfigsFromClassPath() {
-	try {
-	    if (classPathLocation.endsWith("/")) {
-		log
-			.warn("Classpathlocation of config file should not end with /");
-		classPathLocation = classPathLocation.substring(0,
-			classPathLocation.length());
-	    }
+        try {
+            if (classPathLocation.endsWith("/")) {
+                log
+                        .warn("Classpathlocation of config file should not end with /");
+                classPathLocation = classPathLocation.substring(0,
+                        classPathLocation.length());
+            }
 
-	    final InputStream is = getResourceAsStream(classPathLocation + "/"
-		    + OBProvider.CONFIG_FILE_NAME);
-	    if (is != null) {
-		OBProvider.getInstance().register("", is);
-	    }
+            final InputStream is = getResourceAsStream(classPathLocation + "/"
+                    + OBProvider.CONFIG_FILE_NAME);
+            if (is != null) {
+                OBProvider.getInstance().register("", is);
+            }
 
-	    for (Module module : ModelProvider.getInstance().getModules()) {
-		if (module.getJavaPackage() == null) {
-		    continue;
-		}
-		final String configLoc = classPathLocation + "/"
-			+ module.getJavaPackage() + CUSTOM_POSTFIX;
-		final InputStream cis = getResourceAsStream(configLoc);
-		if (cis != null) {
-		    log.info("Found provider config file " + configLoc);
-		    OBProvider.getInstance().register(module.getJavaPackage(),
-			    cis);
-		}
-	    }
-	} catch (Throwable t) {
-	    t.printStackTrace(System.err);
-	    log.error(t);
-	}
+            for (Module module : ModelProvider.getInstance().getModules()) {
+                if (module.getJavaPackage() == null) {
+                    continue;
+                }
+                final String configLoc = classPathLocation + "/"
+                        + module.getJavaPackage() + CUSTOM_POSTFIX;
+                final InputStream cis = getResourceAsStream(configLoc);
+                if (cis != null) {
+                    log.info("Found provider config file " + configLoc);
+                    OBProvider.getInstance().register(module.getJavaPackage(),
+                            cis);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace(System.err);
+            log.error(t);
+        }
     }
 
     protected InputStream getResourceAsStream(String path) {
-	if (getServletContext() != null) {
-	    return getServletContext().getResourceAsStream(path);
-	}
-	return this.getClass().getResourceAsStream(path);
+        if (getServletContext() != null) {
+            return getServletContext().getResourceAsStream(path);
+        }
+        return this.getClass().getResourceAsStream(path);
     }
 
     private void checkClassPathRoot() {
-	// and look in the root of the classpath
-	for (Module module : ModelProvider.getInstance().getModules()) {
-	    if (module.getJavaPackage() == null) {
-		continue;
-	    }
-	    final String fileName = "/" + module.getJavaPackage()
-		    + CUSTOM_POSTFIX;
-	    // always use this class itself for getting the resource
-	    final InputStream is = getClass().getResourceAsStream(fileName);
-	    if (is != null) {
-		log.info("Found provider config file " + fileName);
-		OBProvider.getInstance().register(module.getJavaPackage(), is);
-	    }
-	}
+        // and look in the root of the classpath
+        for (Module module : ModelProvider.getInstance().getModules()) {
+            if (module.getJavaPackage() == null) {
+                continue;
+            }
+            final String fileName = "/" + module.getJavaPackage()
+                    + CUSTOM_POSTFIX;
+            // always use this class itself for getting the resource
+            final InputStream is = getClass().getResourceAsStream(fileName);
+            if (is != null) {
+                log.info("Found provider config file " + fileName);
+                OBProvider.getInstance().register(module.getJavaPackage(), is);
+            }
+        }
     }
 
     public ServletContext getServletContext() {
-	return servletContext;
+        return servletContext;
     }
 
     public void setServletContext(ServletContext servletContext) {
-	this.servletContext = servletContext;
+        this.servletContext = servletContext;
     }
 }

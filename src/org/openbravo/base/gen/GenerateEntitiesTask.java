@@ -28,60 +28,60 @@ import org.openbravo.base.util.OBClassLoader;
  */
 public class GenerateEntitiesTask extends WorkflowAntTask {
     private static final Logger log = Logger
-	    .getLogger(GenerateEntitiesTask.class);
+            .getLogger(GenerateEntitiesTask.class);
 
     private String propertiesFile;
     private String providerConfigDirectory;
     private boolean debug;
 
     public String getPropertiesFile() {
-	return propertiesFile;
+        return propertiesFile;
     }
 
     public void setPropertiesFile(String propertiesFile) {
-	this.propertiesFile = propertiesFile;
+        this.propertiesFile = propertiesFile;
     }
 
     @Override
     public final void execute() {
-	if (debug) {
-	    OBProvider.getInstance().register(OBClassLoader.class,
-		    OBClassLoader.ClassOBClassLoader.class, false);
+        if (debug) {
+            OBProvider.getInstance().register(OBClassLoader.class,
+                    OBClassLoader.ClassOBClassLoader.class, false);
 
-	    log.debug("initializating dal layer, getting properties from "
-		    + getPropertiesFile());
-	    OBPropertiesProvider.getInstance().setProperties(
-		    getPropertiesFile());
+            log.debug("initializating dal layer, getting properties from "
+                    + getPropertiesFile());
+            OBPropertiesProvider.getInstance().setProperties(
+                    getPropertiesFile());
 
-	    if (getProviderConfigDirectory() != null) {
-		OBConfigFileProvider.getInstance().setFileLocation(
-			getProviderConfigDirectory());
-	    }
+            if (getProviderConfigDirectory() != null) {
+                OBConfigFileProvider.getInstance().setFileLocation(
+                        getProviderConfigDirectory());
+            }
 
-	    log.info("Initializing in-memory model...");
-	    try {
-		ModelProvider.getInstance().getModel();
-	    } catch (final Exception e) {
-		e.printStackTrace(System.err);
-		throw new OBException(e);
-	    }
-	}
-	super.execute();
+            log.info("Initializing in-memory model...");
+            try {
+                ModelProvider.getInstance().getModel();
+            } catch (final Exception e) {
+                e.printStackTrace(System.err);
+                throw new OBException(e);
+            }
+        }
+        super.execute();
     }
 
     public String getProviderConfigDirectory() {
-	return providerConfigDirectory;
+        return providerConfigDirectory;
     }
 
     public void setProviderConfigDirectory(String providerConfigDirectory) {
-	this.providerConfigDirectory = providerConfigDirectory;
+        this.providerConfigDirectory = providerConfigDirectory;
     }
 
     public boolean isDebug() {
-	return debug;
+        return debug;
     }
 
     public void setDebug(boolean debug) {
-	this.debug = debug;
+        this.debug = debug;
     }
 }

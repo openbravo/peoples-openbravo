@@ -27,27 +27,27 @@ public class Module extends ModelObject {
 
     @Override
     public String getName() {
-	return name;
+        return name;
     }
 
     @Override
     public void setName(String name) {
-	this.name = name;
+        this.name = name;
     }
 
     public Integer getSeqno() {
-	return seqno;
+        return seqno;
     }
 
     public void setSeqno(Integer seqno) {
-	this.seqno = seqno;
+        this.seqno = seqno;
     }
 
     public String getJavaPackage() {
-	return javaPackage;
+        return javaPackage;
     }
 
     public void setJavaPackage(String javaPackage) {
-	this.javaPackage = javaPackage;
+        this.javaPackage = javaPackage;
     }
 }
