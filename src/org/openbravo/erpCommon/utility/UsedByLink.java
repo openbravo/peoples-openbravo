@@ -18,44 +18,50 @@
 */
 package org.openbravo.erpCommon.utility;
 
-import org.openbravo.base.secureApp.*;
-import org.openbravo.data.Sqlc;
-import org.openbravo.xmlEngine.XmlDocument;
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
-
-import org.openbravo.utils.FormatUtilities;
-
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Vector;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.data.Sqlc;
+import org.openbravo.utils.FormatUtilities;
+import org.openbravo.xmlEngine.XmlDocument;
 
 public class UsedByLink extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void init (ServletConfig config) {
+  @Override
+public void init (ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
   
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
+  @Override
+public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
+    final VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
-      String strWindow = vars.getStringParameter("inpwindowId");
-      String strTabId = vars.getRequiredStringParameter("inpTabId");
-      String strKeyColumn = vars.getRequiredStringParameter("inpkeyColumnId");
-      String strTableId = vars.getRequiredStringParameter("inpTableId");
-      String strKeyId = vars.getRequiredStringParameter("inp" + Sqlc.TransformaNombreColumna(strKeyColumn));
+      final String strWindow = vars.getStringParameter("inpwindowId");
+      final String strTabId = vars.getRequiredStringParameter("inpTabId");
+      final String strKeyColumn = vars.getRequiredStringParameter("inpkeyColumnId");
+      final String strTableId = vars.getRequiredStringParameter("inpTableId");
+      final String strKeyId = vars.getRequiredStringParameter("inp" + Sqlc.TransformaNombreColumna(strKeyColumn));
       printPage(response, vars, strWindow, strTabId, strKeyColumn, strKeyId, strTableId);
     } else if (vars.commandIn("LINKS")) {
-      String strWindow = vars.getStringParameter("inpwindowId");
-      String strTabId = vars.getRequiredStringParameter("inpTabId");
-      String strKeyColumn = vars.getRequiredStringParameter("inpkeyColumnId");
-      String strKeyId = vars.getRequiredStringParameter("inp" + Sqlc.TransformaNombreColumna(strKeyColumn));
-      String strAD_TAB_ID = vars.getRequiredStringParameter("inpadTabIdKey");
-      String strTABLENAME = vars.getRequiredStringParameter("inptablename");
-      String strCOLUMNNAME = vars.getRequiredStringParameter("inpcolumnname");
-      String strTableId = vars.getRequiredStringParameter("inpTableId");
+      final String strWindow = vars.getStringParameter("inpwindowId");
+      final String strTabId = vars.getRequiredStringParameter("inpTabId");
+      final String strKeyColumn = vars.getRequiredStringParameter("inpkeyColumnId");
+      final String strKeyId = vars.getRequiredStringParameter("inp" + Sqlc.TransformaNombreColumna(strKeyColumn));
+      final String strAD_TAB_ID = vars.getRequiredStringParameter("inpadTabIdKey");
+      final String strTABLENAME = vars.getRequiredStringParameter("inptablename");
+      final String strCOLUMNNAME = vars.getRequiredStringParameter("inpcolumnname");
+      final String strTableId = vars.getRequiredStringParameter("inpTableId");
       printPageDetail(response, vars, strWindow, strTabId, strKeyColumn, strKeyId, strAD_TAB_ID, strTABLENAME, strCOLUMNNAME, strTableId);
     } else throw new ServletException();
   }
@@ -63,7 +69,7 @@ public class UsedByLink extends HttpSecureAppServlet {
 
   void printPage(HttpServletResponse response, VariablesSecureApp vars, String strWindow, String TabId, String keyColumn, String keyId, String tableId) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: UsedBy links for tab: " + TabId);
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/UsedByLink").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/UsedByLink").createXmlDocument();
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
@@ -83,22 +89,22 @@ public class UsedByLink extends HttpSecureAppServlet {
     else data = UsedByLinkData.selectLanguage(this, vars.getClient(), vars.getLanguage(), keyColumn);
     
     if (data!=null && data.length>0) {
-      Vector<Object> vecTotal = new Vector<Object>();
+      final Vector<Object> vecTotal = new Vector<Object>();
       for (int i=0;i<data.length;i++) {
         if (log4j.isDebugEnabled()) log4j.debug("***Referenced tab: " + data[i].adTabId);
-        UsedByLinkData[] dataRef = UsedByLinkData.windowRef(this, data[i].adTabId);
+        final UsedByLinkData[] dataRef = UsedByLinkData.windowRef(this, data[i].adTabId);
         if (dataRef==null || dataRef.length==0) continue;
         String strWhereClause = getWhereClause(vars, strWindow, dataRef[0].whereclause);
         if (log4j.isDebugEnabled()) log4j.debug("***   Referenced where clause (1): " + strWhereClause);
         strWhereClause += getAditionalWhereClause(vars, strWindow, data[i].adTabId, data[i].tablename, keyColumn, data[i].columnname, UsedByLinkData.getTabTableName(this, tableId));
         if (log4j.isDebugEnabled()) log4j.debug("***   Referenced where clause (2): " + strWhereClause);
         if (!nonAccessible) {
-          String strNonAccessibleWhere = strWhereClause + " AND AD_ORG_ID NOT IN ("+ vars.getUserOrg()+")";
+          final String strNonAccessibleWhere = strWhereClause + " AND AD_ORG_ID NOT IN ("+ vars.getUserOrg()+")";
           if (!UsedByLinkData.countLinks(this, data[i].tablename, data[i].columnname, keyId, strNonAccessibleWhere).equals("0"))
             nonAccessible = true;
         }
         strWhereClause += " AND AD_ORG_ID IN (" + vars.getUserOrg() + ") AND AD_CLIENT_ID IN (" + vars.getUserClient() + ")";
-        int total = Integer.valueOf(UsedByLinkData.countLinks(this, data[i].tablename, data[i].columnname, keyId, strWhereClause)).intValue();
+        final int total = Integer.valueOf(UsedByLinkData.countLinks(this, data[i].tablename, data[i].columnname, keyId, strWhereClause)).intValue();
         if (log4j.isDebugEnabled()) log4j.debug("***   Count: " + total);
         data[i].total = Integer.toString(total);
         if (total>0) {
@@ -109,7 +115,7 @@ public class UsedByLink extends HttpSecureAppServlet {
       vecTotal.copyInto(data);
     }
     if (nonAccessible){
-      OBError myMessage = new OBError();
+      final OBError myMessage = new OBError();
       myMessage.setType("Warning");
       myMessage.setMessage(Utility.messageBD(this, "NonAccessibleRecords", vars.getLanguage()));
       myMessage.setTitle(Utility.messageBD(this, "Warning", vars.getLanguage()));
@@ -119,14 +125,14 @@ public class UsedByLink extends HttpSecureAppServlet {
     }
     xmlDocument.setData("structure1", data);
     response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
+    final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
   }
 
   void printPageDetail(HttpServletResponse response, VariablesSecureApp vars, String strWindow, String TabId, String keyColumn, String keyId, String strAD_TAB_ID, String strTABLENAME, String strCOLUMNNAME, String adTableId) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: UsedBy links for tab: " + TabId);
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/UsedByLink_Detail").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/UsedByLink_Detail").createXmlDocument();
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
@@ -146,14 +152,14 @@ public class UsedByLink extends HttpSecureAppServlet {
       xmlDocument.setParameter("paramName", UsedByLinkData.tabNameLanguage(this, vars.getLanguage(), strAD_TAB_ID));
     }
 
-    UsedByLinkData[] data = UsedByLinkData.keyColumns(this, strAD_TAB_ID);
+    final UsedByLinkData[] data = UsedByLinkData.keyColumns(this, strAD_TAB_ID);
     if (data==null || data.length==0) {
       bdError(response, "RecordError", vars.getLanguage());
       return;
     }
-    StringBuffer strScript = new StringBuffer();
-    StringBuffer strHiddens = new StringBuffer();
-    StringBuffer strSQL = new StringBuffer();
+    final StringBuffer strScript = new StringBuffer();
+    final StringBuffer strHiddens = new StringBuffer();
+    final StringBuffer strSQL = new StringBuffer();
     strScript.append("function windowSelect() {\n");
     strScript.append("var frm = document.forms[0];\n");
     for (int i=0;i<data.length;i++) {
@@ -164,12 +170,12 @@ public class UsedByLink extends HttpSecureAppServlet {
       strSQL.append("'''' || ").append(data[i].name).append(" || ''''");
       strHiddens.append("<input type=\"hidden\" name=\"inp").append(Sqlc.TransformaNombreColumna(data[i].name)).append("\">\n");
     }
-    UsedByLinkData[] dataRef = UsedByLinkData.windowRef(this, strAD_TAB_ID);
+    final UsedByLinkData[] dataRef = UsedByLinkData.windowRef(this, strAD_TAB_ID);
     if (dataRef==null || dataRef.length==0) {
       bdError(response, "RecordError", vars.getLanguage());
       return;
     }
-    String windowRef= FormatUtilities.replace(dataRef[0].windowname) + "/" + FormatUtilities.replace(dataRef[0].tabname) + "_Edition.html";
+    final String windowRef= FormatUtilities.replace(dataRef[0].windowname) + "/" + FormatUtilities.replace(dataRef[0].tabname) + "_Edition.html";
     strScript.append("top.opener.submitFormGetParams('DIRECT', '../").append(windowRef).append("', getParamsScript(document.forms[0]));\n");
     strScript.append("top.close();\n");
     strScript.append("return true;\n");
@@ -178,9 +184,13 @@ public class UsedByLink extends HttpSecureAppServlet {
     xmlDocument.setParameter("hiddens", strHiddens.toString());
     xmlDocument.setParameter("script", strScript.toString());
 
-    xmlDocument.setData("structure1", UsedByLinkData.selectLinks(this, strSQL.toString(), strTABLENAME, data[0].name, vars.getLanguage(), strCOLUMNNAME, keyId, (getWhereClause(vars, strWindow, dataRef[0].whereclause) + " AND AD_ORG_ID IN (" + vars.getUserOrg() + ") AND AD_CLIENT_ID IN (" + vars.getUserClient() + ")")));
+    String whereClause = getWhereClause(vars, strWindow, dataRef[0].whereclause);
+    whereClause += getAditionalWhereClause(vars, strWindow, strAD_TAB_ID, strTABLENAME, keyColumn, strCOLUMNNAME, UsedByLinkData.getTabTableName(this, strAD_TAB_ID));
+    whereClause += " AND AD_ORG_ID IN (" + vars.getUserOrg() + ") AND AD_CLIENT_ID IN (" + vars.getUserClient() + ")";
+    
+    xmlDocument.setData("structure1", UsedByLinkData.selectLinks(this, strSQL.toString(), strTABLENAME, data[0].name, vars.getLanguage(), strCOLUMNNAME, keyId, whereClause));
     response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
+    final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
   }
@@ -189,7 +199,7 @@ public class UsedByLink extends HttpSecureAppServlet {
     String strWhere = strWhereClause;
     if (strWhere.equals("") || strWhere.indexOf("@")==-1) return ((strWhere.equals("")?"":" AND ") + strWhere);
     if (log4j.isDebugEnabled()) log4j.debug("WHERE CLAUSE: " + strWhere);
-    StringBuffer where = new StringBuffer();
+    final StringBuffer where = new StringBuffer();
     String token="", fin="";
     int i=0;
     i = strWhere.indexOf("@");
@@ -211,7 +221,7 @@ public class UsedByLink extends HttpSecureAppServlet {
         token = strWhere.substring(0, i);
         strWhere = (i==strWhere.length())?"":strWhere.substring(i+1);
         if (log4j.isDebugEnabled()) log4j.debug("TOKEN: " + token);
-        String tokenResult = Utility.getContext(this, vars, token, window);
+        final String tokenResult = Utility.getContext(this, vars, token, window);
         if (log4j.isDebugEnabled()) log4j.debug("TOKEN PARSED: " + tokenResult);
         if (tokenResult.equalsIgnoreCase(token)) {
           log4j.error("Unable to parse the String " + strWhereClause + "\nNow parsing: " + where.toString());
@@ -228,7 +238,7 @@ public class UsedByLink extends HttpSecureAppServlet {
   public String getAditionalWhereClause(VariablesSecureApp vars, String strWindow, String adTabId, String tableName, String keyColumn, String columnName, String parentTableName) throws ServletException {
     String result = "";
     if (log4j.isDebugEnabled()) log4j.debug("getAditionalWhereClause - ad_Tab_ID: " + adTabId);
-    UsedByLinkData[] data = UsedByLinkData.parentTabTableName(this, adTabId);
+    final UsedByLinkData[] data = UsedByLinkData.parentTabTableName(this, adTabId);
     if (data!=null && data.length>0) {
       if (log4j.isDebugEnabled()) log4j.debug("getAditionalWhereClause - parent tab: " + data[0].adTabId);
       UsedByLinkData[] dataColumn = UsedByLinkData.parentsColumnName(this, adTabId, data[0].adTabId);
@@ -241,7 +251,7 @@ public class UsedByLink extends HttpSecureAppServlet {
         return result;
       }
       result += " AND EXISTS (SELECT 1 FROM " + data[0].tablename + " WHERE " + data[0].tablename + "." + ((!dataColumn[0].name.equals(""))?dataColumn[0].name:keyColumn) + " = " + tableName + "." + ((!dataColumn[0].name.equals(""))?dataColumn[0].name:columnName);
-      UsedByLinkData[] dataRef = UsedByLinkData.windowRef(this, data[0].adTabId);
+      final UsedByLinkData[] dataRef = UsedByLinkData.windowRef(this, data[0].adTabId);
       String strAux = "";
       if (dataRef!=null && dataRef.length>0) strAux = getWhereClause(vars, strWindow, dataRef[0].whereclause);
       result += strAux;
@@ -254,7 +264,8 @@ public class UsedByLink extends HttpSecureAppServlet {
     return result;
   }
 
-  public String getServletInfo() {
+  @Override
+public String getServletInfo() {
     return "Servlet that presents the usedBy links";
   } // end of getServletInfo() method
 }
