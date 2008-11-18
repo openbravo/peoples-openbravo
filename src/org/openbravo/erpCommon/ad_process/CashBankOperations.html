@@ -16,11 +16,11 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
-<HTML>
-<HEAD>
-<TITLE>Cash and bank transactions</TITLE>
+<html>
+<head>
+<title>Cash and bank transactions</title>
 
-<LINK rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon"/>
+<link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon"/>
 <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS"/>
 
 <script language="JavaScript" type="text/javascript" id="paramDirectory">
@@ -29,17 +29,17 @@ var baseDirectory = "../../../../../web/";
 <script language="JavaScript" type="text/javascript" id="paramLanguage">
   var defaultLang = "en_US";
 </script>
-<SCRIPT language="JavaScript" type="text/javascript" id="paramAlertMsg">ALERT_MSG = "Are you sure?";</SCRIPT>
+<script language="JavaScript" type="text/javascript" id="paramAlertMsg">ALERT_MSG = "Are you sure?";</script>
 <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
-<SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></SCRIPT>
+<script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
-<SCRIPT language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></SCRIPT>
+<script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
 <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
@@ -49,7 +49,7 @@ var baseDirectory = "../../../../../web/";
       </script>
       
 
-<SCRIPT language="JavaScript" type="text/javascript">
+<script language="JavaScript" type="text/javascript">
 function validate() {
 	var frm = document.frmMain;
 	if ((frm.inpCBankAccountFromID.value==null || frm.inpCBankAccountFromID.value=="") && (frm.inpCCashFromID.value==null || frm.inpCCashFromID.value=="")) {
@@ -114,8 +114,8 @@ function refreshCombos() {
   changeComboData(cmbCashTo, arrCash, cmbOrg.options[cmbOrg.selectedIndex].value, true);
   return true;
 }
-</SCRIPT>
-	<SCRIPT language="JavaScript" type="text/javascript">
+</script>
+	<script language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
 		  new windowTableId('client', 'buttonOK')
@@ -141,37 +141,37 @@ function refreshCombos() {
 	function onResizeDo(){
 		resizeArea();
 	}
-	</SCRIPT>
+	</script>
 <script language="JavaScript" type="text/javascript" id="paramArrayBank">
 var arrBank=null;
 </script>
 <script language="JavaScript" type="text/javascript" id="paramArrayCash">
 var arrCash=null;
 </script>
-</HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();"  id="body">
-<FORM id="form" method="POST" action="CashBankOperations.html" name="frmMain">
-  <INPUT type="hidden" name="Command">
-<INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>
+</head>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();"  id="body">
+<form id="form" method="post" action="CashBankOperations.html" name="frmMain">
+  <input type="hidden" name="Command">
+<input type="hidden" name="IsPopUpCall" value="1"></input>
 <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
     <tr>
       <td valign="top" id="tdleftTabs"></td>
       <td valign="top">
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Left">
-          <TR><TD class="Main_NavBar_bg_left" id="tdleftSeparator"></TD></TR>
-          <TR><TD class="Main_ToolBar_bg_left" valign="top"></TD></TR>
-          <TR><TD class="Main_Client_bg_left"></TD></TR>
-          <TR><TD class="Main_Bottom_bg_left"></TD></TR>
-        </TABLE>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Left">
+          <tr><td class="Main_NavBar_bg_left" id="tdleftSeparator"></td></tr>
+          <tr><td class="Main_ToolBar_bg_left" valign="top"></td></tr>
+          <tr><td class="Main_Client_bg_left"></td></tr>
+          <tr><td class="Main_Bottom_bg_left"></td></tr>
+        </table>
       </td>
       <td valign="top">
         <div class="Main_ContentPane_NavBar" id="tdtopButtons"></div>
         <div class="Main_ContentPane_ToolBar" id="paramToolBar"></div>
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_TabPane" id="tdtopTabs">
-          <TR id="paramParentTabContainer"></TR>
-          <TR id="paramMainTabContainer"></TR>
-          <TR id="paramChildTabContainer"></TR>
-        </TABLE>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_TabPane" id="tdtopTabs">
+          <tr id="paramParentTabContainer"></tr>
+          <tr id="paramMainTabContainer"></tr>
+          <tr id="paramChildTabContainer"></tr>
+        </table>
         <div class="Main_ContentPane_Client" style="overflow: auto;" id="client">
                 <table class="dojoTabContainer" border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
                   <tr>
@@ -182,7 +182,7 @@ var arrCash=null;
                             <!-- MessageBox -->
 
                             <table cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxyy">
-                              <TBODY>
+                              <tbody>
                               <tr class="MessageBox_TopMargin">
                                 <td class="MessageBox_LeftMargin"></td>
                                 <td></td>
@@ -193,7 +193,7 @@ var arrCash=null;
                                 <td>
 
                                   <table cellpadding="0" cellspacing="0" style="width: 100%;">
-                                    <TBODY>
+                                    <tbody>
                                     <tr>
                                       <td>
                                         <div class="MessageBox_TopLeft"></div>
@@ -202,12 +202,12 @@ var arrCash=null;
                                       <td class="MessageBox_bg">
 
                                         <table class="MessageBox_Top">
-                                        <TBODY>
+                                        <tbody>
                                           <tr>
                                             <td>
                                               <span>
                                               <table cellpadding="0" cellspacing="0" class="MessageBox_Body_ContentCell">
-                                                <TBODY>
+                                                <tbody>
                                                 <tr>
                                                   <td class="MessageBox_Icon_ContentCell">
                                                     <div class="MessageBox_Icon"></div>
@@ -224,12 +224,12 @@ var arrCash=null;
                                                     </span>
                                                   </td>
                                                 </tr>
-                                                </TBODY>
+                                                </tbody>
                                               </table>
                                               </span>
                                             </td>
                                           </tr>
-                                          </TBODY>
+                                          </tbody>
                                         </table>
 
                                       </td>
@@ -250,7 +250,7 @@ var arrCash=null;
                                       <td class="MessageBox_Bottom">
                                       </td>
                                     </tr>
-                                    </TBODY>
+                                    </tbody>
                                   </table>
 
                                 </td>
@@ -261,10 +261,10 @@ var arrCash=null;
                                 <td></td>
                                 <td class="MessageBox_RightMargin"></td>
                               </tr>
-                              </TBODY>
+                              </tbody>
                             </table>
         <!-- USER CONTROLS -->
-              <TABLE class="Main_Client_TableEdition">
+              <table class="Main_Client_TableEdition">
                 <tr>
                   <td class="TableEdition_OneCell_width"></td>
                   <td class="TableEdition_OneCell_width"></td>
@@ -277,11 +277,11 @@ var arrCash=null;
     <td colspan="6">
       <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_InfoBar">
         <tr>
-          <td class="Popup_InfoBar_Icon_cell"><IMG src="../../../../../web/images/blank.gif" border="0" class="Popup_InfoBar_Icon_info" /></td>
+          <td class="Popup_InfoBar_Icon_cell"><img src="../../../../../web/images/blank.gif" border="0" class="Popup_InfoBar_Icon_info" /></td>
           <td class="Popup_InfoBar_text_table">
             <table>
               <tr>
-                <td class="Popup_InfoBar_text" id="helpDiscard"><SPAN id="processHelp">&nbsp;</SPAN></td>
+                <td class="Popup_InfoBar_text" id="helpDiscard"><span id="processHelp">&nbsp;</span></td>
               </tr>
             </table>
           </td>
@@ -297,7 +297,7 @@ var arrCash=null;
 		<td class="Combo_ContentCell" colspan="2">
 			<select class="ComboKey Combo_TwoCells_width" name="inpadOrgId" id="inpadOrgId" onchange="refreshCombos();">
 				<option value=""></option>
-				<DIV id="reportAD_ORG"></DIV>
+				<div id="reportAD_ORG"></div>
 			</select>
 		</td>
 	</tr>
@@ -305,139 +305,139 @@ var arrCash=null;
 
 
 
-  <TR>
-          <TD colspan="6">
-            <TABLE class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
-              <TR class="FieldGroup_TopMargin"></TR>
-              <TR>
-                <TD class="FieldGroupTitle_Left"><IMG class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"></IMG></TD>
-                <TD class="FieldGroupTitle">From</TD>
-                <TD class="FieldGroupTitle_Right"><IMG class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"></IMG></TD>
-                <TD class="FieldGroupContent"></TD>
+  <tr>
+          <td colspan="6">
+            <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
+              <tr class="FieldGroup_TopMargin"></tr>
+              <tr>
+                <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"></img></td>
+                <td class="FieldGroupTitle">From</td>
+                <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"></img></td>
+                <td class="FieldGroupContent"></td>
 
-              </TR>
-              <TR class="FieldGroup_BottomMargin"></TR>
-            </TABLE>
-          </TD>
-   </TR>
+              </tr>
+              <tr class="FieldGroup_BottomMargin"></tr>
+            </table>
+          </td>
+   </tr>
    
    <tr>
-      <TD class="TitleCell"><SPAN class="LabelText">Bank account</SPAN>&nbsp;</TD>
-      <TD class="Combo_ContentCell" colspan="2"> 
-        <SELECT class="Combo Combo_TwoCells_width" name="inpCBankAccountFromID" id="inpCBankAccountFromID">
-          <OPTION value=""/><DIV id="reportC_BankAccountFrom_ID"></DIV>
-        </SELECT>
-     </TD>
-     <TD class="TitleCell"><SPAN class="LabelText">Cash</SPAN>&nbsp;</TD>
-      <TD class="Combo_ContentCell" colspan="2"> 
-        <SELECT class="Combo Combo_TwoCells_width" name="inpCCashFromID" id="inpCCashFromID">
-          <OPTION value=""></OPTION><DIV id="reportC_CashFrom_ID"></DIV>
-        </SELECT>
-      </TD>
+      <td class="TitleCell"><span class="LabelText">Bank account</span>&nbsp;</td>
+      <td class="Combo_ContentCell" colspan="2"> 
+        <select class="Combo Combo_TwoCells_width" name="inpCBankAccountFromID" id="inpCBankAccountFromID">
+          <option value=""/><div id="reportC_BankAccountFrom_ID"></div>
+        </select>
+     </td>
+     <td class="TitleCell"><span class="LabelText">Cash</span>&nbsp;</td>
+      <td class="Combo_ContentCell" colspan="2"> 
+        <select class="Combo Combo_TwoCells_width" name="inpCCashFromID" id="inpCCashFromID">
+          <option value=""></option><div id="reportC_CashFrom_ID"></div>
+        </select>
+      </td>
     </tr>
     <tr>
-      <TD class="TitleCell"><SPAN class="LabelText">Payment rule</SPAN>&nbsp;</TD>
-      <TD class="Combo_ContentCell"> 
-        <SELECT class="ComboKey Combo_OneCell_width" name="inppaymentruleFrom" id="inppaymentruleFrom">
-          <OPTION value=""></OPTION><DIV id="reportPaymentRuleFrom"></DIV>
-        </SELECT></TD>
+      <td class="TitleCell"><span class="LabelText">Payment rule</span>&nbsp;</td>
+      <td class="Combo_ContentCell"> 
+        <select class="ComboKey Combo_OneCell_width" name="inppaymentruleFrom" id="inppaymentruleFrom">
+          <option value=""></option><div id="reportPaymentRuleFrom"></div>
+        </select></td>
      <td/><td/>
      <td/><td/>
    </tr>
    
    
-   <TR>
-          <TD colspan="6">
-            <TABLE class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
-              <TR class="FieldGroup_TopMargin"></TR>
-              <TR>
-                <TD class="FieldGroupTitle_Left"><IMG class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"></IMG></TD>
-                <TD class="FieldGroupTitle">To</TD>
-                <TD class="FieldGroupTitle_Right"><IMG class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"></IMG></TD>
-                <TD class="FieldGroupContent"></TD>
+   <tr>
+          <td colspan="6">
+            <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
+              <tr class="FieldGroup_TopMargin"></tr>
+              <tr>
+                <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"></img></td>
+                <td class="FieldGroupTitle">To</td>
+                <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"></img></td>
+                <td class="FieldGroupContent"></td>
 
-              </TR>
-              <TR class="FieldGroup_BottomMargin"></TR>
-            </TABLE>
-          </TD>
-   </TR>
+              </tr>
+              <tr class="FieldGroup_BottomMargin"></tr>
+            </table>
+          </td>
+   </tr>
    
    <tr>
-      <TD class="TitleCell"><SPAN class="LabelText">Bank account</SPAN>&nbsp;</TD>
-      <TD class="Combo_ContentCell" colspan="2"> 
-        <SELECT class="Combo Combo_TwoCells_width" name="inpCBankAccountToID" id="inpCBankAccountToID">
-          <OPTION value=""/><DIV id="reportC_BankAccountFrom_ID"></DIV>
-        </SELECT>
-     </TD>
-     <TD class="TitleCell"><SPAN class="LabelText">Cash</SPAN>&nbsp;</TD>
-      <TD class="Combo_ContentCell" colspan="2"> <SELECT class="Combo Combo_TwoCells_width" name="inpCCashToID" id="inpCCashToID">
-          <OPTION value=""></OPTION><DIV id="reportC_CashTo_ID"></DIV>
-        </SELECT></TD>
+      <td class="TitleCell"><span class="LabelText">Bank account</span>&nbsp;</td>
+      <td class="Combo_ContentCell" colspan="2"> 
+        <select class="Combo Combo_TwoCells_width" name="inpCBankAccountToID" id="inpCBankAccountToID">
+          <option value=""/><div id="reportC_BankAccountFrom_ID"></div>
+        </select>
+     </td>
+     <td class="TitleCell"><span class="LabelText">Cash</span>&nbsp;</td>
+      <td class="Combo_ContentCell" colspan="2"> <select class="Combo Combo_TwoCells_width" name="inpCCashToID" id="inpCCashToID">
+          <option value=""></option><div id="reportC_CashTo_ID"></div>
+        </select></td>
    </tr>
    <tr>
-      <TD class="TitleCell"><SPAN class="LabelText">Payment rule</SPAN>&nbsp;</TD>
-      <TD class="Combo_ContentCell"> <SELECT class="ComboKey Combo_OneCell_width" name="inppaymentruleTo" id="inppaymentruleTo">
-          <OPTION value=""></OPTION><DIV id="reportPaymentRuleTo"></DIV>
-        </SELECT></TD>
+      <td class="TitleCell"><span class="LabelText">Payment rule</span>&nbsp;</td>
+      <td class="Combo_ContentCell"> <select class="ComboKey Combo_OneCell_width" name="inppaymentruleTo" id="inppaymentruleTo">
+          <option value=""></option><div id="reportPaymentRuleTo"></div>
+        </select></td>
         <td/><td/>
      <td/><td/>
    </tr>
    
    
    
-   <TR>
-          <TD colspan="6">
-            <TABLE class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
-              <TR class="FieldGroup_TopMargin"></TR>
-              <TR>
-                <TD class="FieldGroupTitle_Left"><IMG class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"></IMG></TD>
-                <TD class="FieldGroupTitle">Movement</TD>
-                <TD class="FieldGroupTitle_Right"><IMG class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"></IMG></TD>
-                <TD class="FieldGroupContent"></TD>
+   <tr>
+          <td colspan="6">
+            <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
+              <tr class="FieldGroup_TopMargin"></tr>
+              <tr>
+                <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"></img></td>
+                <td class="FieldGroupTitle">Movement</td>
+                <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"></img></td>
+                <td class="FieldGroupContent"></td>
 
-              </TR>
-              <TR class="FieldGroup_BottomMargin"></TR>
-            </TABLE>
-          </TD>
-   </TR>
+              </tr>
+              <tr class="FieldGroup_BottomMargin"></tr>
+            </table>
+          </td>
+   </tr>
 
     
-    <TR> 
-      <TD class="TitleCell"><SPAN class="LabelText">Amount</SPAN>&nbsp;</TD>
-      <TD class="TextBox_ContentCell"> <INPUT class="dojoValidateValid required TextBox_OneCell_width" type="text" name="inpAmount" value=""></INPUT>
-      </TD>
-      <TD class="TitleCell"><SPAN class="LabelText">Movement date</SPAN></TD>
-      <TD class="TextBox_btn_ContentCell">
+    <tr> 
+      <td class="TitleCell"><span class="LabelText">Amount</span>&nbsp;</td>
+      <td class="TextBox_ContentCell"> <input class="dojoValidateValid required TextBox_OneCell_width" type="text" name="inpAmount" value=""></input>
+      </td>
+      <td class="TitleCell"><span class="LabelText">Movement date</span></td>
+      <td class="TextBox_btn_ContentCell">
 
-              <TABLE border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
-                <TR>
-                  <TD class="TextBox_ContentCell">
-                    <INPUT dojotype="openbravo:DateTextbox" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width required"  type="text" name="inpmovementdate" id="inpmovementdate" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><SCRIPT>djConfig.searchIds.push("inpmovementdate");</SCRIPT>
-                  </TD>
-                  <TD class="FieldButton_ContentCell">
+              <table border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
+                <tr>
+                  <td class="TextBox_ContentCell">
+                    <input dojotype="openbravo:DateTextbox" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width required"  type="text" name="inpmovementdate" id="inpmovementdate" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("inpmovementdate");</script>
+                  </td>
+                  <td class="FieldButton_ContentCell">
                     <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpmovementdate', document.frmMain.inpmovementdate.value, false);return false;" >
                       <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
-                      <TR>
+                      <tr>
 
-                        <TD class="FieldButton_bg">
-                          <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></IMG>
-                        </TD>
-                      </TR>
-                    </TABLE>
+                        <td class="FieldButton_bg">
+                          <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></img>
+                        </td>
+                      </tr>
+                    </table>
                     </a>
-                  </TD>
-                </TR>
-              </TABLE>
-            </TD>
-     </TR>
-    <TR> 
-      <TD class="TitleCell"><SPAN class="LabelText">Description</SPAN>&nbsp;</TD>
-      <TD class="TextBox_ContentCell" colspan="4"> <TEXTAREA class="dojoValidateValid TextArea_FiveCells_width TextArea_Medium_height" rows="2" name="inpdescription"></TEXTAREA></TD>
+                  </td>
+                </tr>
+              </table>
+            </td>
+     </tr>
+    <tr> 
+      <td class="TitleCell"><span class="LabelText">Description</span>&nbsp;</td>
+      <td class="TextBox_ContentCell" colspan="4"> <textarea class="dojoValidateValid TextArea_FiveCells_width TextArea_Medium_height" rows="2" name="inpdescription"></textarea></td>
       <td/>
-    </TR>
+    </tr>
     <tr>
             <td class="TitleCell"></td>
-            <td class="ContentCell" colspan="2"><SPAN class="LabelText" id="question">&nbsp;</SPAN></td>
+            <td class="ContentCell" colspan="2"><span class="LabelText" id="question">&nbsp;</span></td>
             <td class="ContentCell"></td>
             <td class="TitleCell"></td>
             <td class="ContentCell"></td>
@@ -464,7 +464,7 @@ var arrCash=null;
             <td class="TitleCell"></td>
             <td class="ContentCell"></td>
           </tr>
-              </TABLE>
+              </table>
 
                       <!-- USER CONTROLS -->
                 </td>
@@ -474,22 +474,22 @@ var arrCash=null;
             </tr>
           </table>
         </div>
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Menu_ContentPane_Bottom" id="tdbottomSeparator">
-          <TR>
-            <TD class="Main_Bottom_bg"><IMG src="../../../../../web/images/blank.gif" border="0"></TD>
-          </TR>
-        </TABLE>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Menu_ContentPane_Bottom" id="tdbottomSeparator">
+          <tr>
+            <td class="Main_Bottom_bg"><img src="../../../../../web/images/blank.gif" border="0"></td>
+          </tr>
+        </table>
         </td>
       <td valign="top">
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Right" id="tdrightSeparator">
-          <TR><TD class="Main_NavBar_bg_right"></TD></TR>
-          <TR><TD class="Main_ToolBar_bg_right" valign="top"></TD></TR>
-          <TR><TD class="Main_Client_bg_right"></TD></TR>
-          <TR><TD class="Main_Bottom_bg_right"></TD></TR>
-        </TABLE>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Right" id="tdrightSeparator">
+          <tr><td class="Main_NavBar_bg_right"></td></tr>
+          <tr><td class="Main_ToolBar_bg_right" valign="top"></td></tr>
+          <tr><td class="Main_Client_bg_right"></td></tr>
+          <tr><td class="Main_Bottom_bg_right"></td></tr>
+        </table>
       </td>
     </tr>
   </table>
-</FORM>
-</BODY>
-</HTML>
+</form>
+</body>
+</html>

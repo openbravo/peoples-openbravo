@@ -408,13 +408,13 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       String strName = Utility.messageBD(this, "GuaranteeDate", vars.getLanguage());
       strHtml.append(strName.equals("")?"GuaranteeDate":strName);
       strHtml.append("</span></td>\n");
-      strHtml.append("<TD class=\"TextBox_btn_ContentCell\">");
-      strHtml.append("<TABLE border=\"0\" cellspacing=\"0\" cellpadding=\"0\" summary=\"\" style=\"padding-top: 0px;\">");
-      strHtml.append("<TR>");
-      strHtml.append("<TD class=\"TextBox_ContentCell\">");
-      strHtml.append("<INPUT dojoType=\"openbravo:DateTextbox\" displayFormat=\""+vars.getSessionValue("#AD_SqlDateFormat")+"\" saveFormat=\""+vars.getSessionValue("#AD_SqlDateFormat")+"\" class=\"TextBox_btn_OneCell_width\"  type=\"text\" name=\"inpDateFrom\" id=\"paramDateFrom\" size=\"10\" maxlength=\"10\" value=\""+strGuaranteeDate+"\" onkeyup=\"auto_complete_date(this.textbox, this.displayFormat);return true;\"></INPUT><SCRIPT>djConfig.searchIds.push(\"paramDateFrom\");</SCRIPT>");
-      strHtml.append("</TD>");
-      strHtml.append("<TD class=\"FieldButton_ContentCell\">");
+      strHtml.append("<td class=\"TextBox_btn_ContentCell\">");
+      strHtml.append("<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" summary=\"\" style=\"padding-top: 0px;\">");
+      strHtml.append("<tr>");
+      strHtml.append("<td class=\"TextBox_ContentCell\">");
+      strHtml.append("<input dojoType=\"openbravo:DateTextbox\" displayFormat=\""+vars.getSessionValue("#AD_SqlDateFormat")+"\" saveFormat=\""+vars.getSessionValue("#AD_SqlDateFormat")+"\" class=\"TextBox_btn_OneCell_width\"  type=\"text\" name=\"inpDateFrom\" id=\"paramDateFrom\" size=\"10\" maxlength=\"10\" value=\""+strGuaranteeDate+"\" onkeyup=\"auto_complete_date(this.textbox, this.displayFormat);return true;\"></input><script>djConfig.searchIds.push(\"paramDateFrom\");</script>");
+      strHtml.append("</td>");
+      strHtml.append("<td class=\"FieldButton_ContentCell\">");
       strHtml.append("<a class=\"FieldButtonLink\" href=\"#\"");
       strHtml.append("onfocus=\"this.className='FieldButtonLink_hover'; window.status='Show calendar'; return true;\"");
       strHtml.append("onblur=\"this.className='FieldButtonLink'; window.status=''; return true;\"");
@@ -435,11 +435,11 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       strHtml.append("</tr>");
       strHtml.append("</table>");
       strHtml.append("</a>");
-      strHtml.append("</TD>");
-      strHtml.append("</TR>");
-      strHtml.append("</TABLE>");
-      strHtml.append("</TD><td></td><td></td>");
-      strHtml.append("</TR>");
+      strHtml.append("</td>");
+      strHtml.append("</tr>");
+      strHtml.append("</table>");
+      strHtml.append("</td><td></td><td></td>");
+      strHtml.append("</tr>");
     }
     if (fields[0].islockable.equals("Y")) {
       strHtml.append("<tr><td class=\"TitleCell\"><span class=\"LabelText\">");

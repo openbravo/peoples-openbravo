@@ -16,27 +16,27 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
-<HTML>
-<HEAD>
+<html>
+<head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <TITLE>Request process</TITLE>
-  <LINK rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS"></LINK>
+  <title>Request process</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS"></link>
   <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
-  <SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
-  <SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">defaultLang = "en_US";</SCRIPT>
+  <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
+  <script language="JavaScript" type="text/javascript" id="paramLanguage">defaultLang = "en_US";</script>
   <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
-  <SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
+  <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
   <script type="text/javascript">
     dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
   </script>
-  <SCRIPT language="JavaScript" type="text/javascript" id="paramDirectory">
+  <script language="JavaScript" type="text/javascript" id="paramDirectory">
   var baseDirectory="../../../../../web/";
-  </SCRIPT>
-  <SCRIPT language="JavaScript" type="text/javascript" id="fieldWindowIDArray">
+  </script>
+  <script language="JavaScript" type="text/javascript" id="fieldWindowIDArray">
   function closeThisPage() {
     window.close();
     return true;
@@ -46,8 +46,8 @@
     submitCommandForm(strCommand, false, null, null, '_top');
     return true;
   }
-  </SCRIPT>
-	<SCRIPT language="JavaScript" type="text/javascript">
+  </script>
+	<script language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
 		  new windowTableId('client', 'buttonOK')
@@ -61,17 +61,17 @@
 
 	function onResizeDo(){
 	}
-	</SCRIPT>    
-</HEAD>
+	</script>    
+</head>
 
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
-<FORM id="form" method="POST" action="CopyFromPOOrder.html" name="frmMain">
-  <INPUT type="hidden" name="Command">
-<INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>
-  <INPUT type="hidden" name="inpLastFieldChanged"></INPUT>
-  <INPUT type="hidden" name="inpKey" value="" id="paramKey"></INPUT>
-  <INPUT type="hidden" name="inpwindowId" value="" id="window"></INPUT>
-  <INPUT type="hidden" name="inpTabId" value="" id="tab"></INPUT>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
+<form id="form" method="post" action="CopyFromPOOrder.html" name="frmMain">
+  <input type="hidden" name="Command">
+<input type="hidden" name="IsPopUpCall" value="1"></input>
+  <input type="hidden" name="inpLastFieldChanged"></input>
+  <input type="hidden" name="inpKey" value="" id="paramKey"></input>
+  <input type="hidden" name="inpwindowId" value="" id="window"></input>
+  <input type="hidden" name="inpTabId" value="" id="tab"></input>
 
   <div class="Popup_ContentPane_CircleLogo">
     <div class="Popup_WindowLogo">
@@ -87,7 +87,7 @@
           <tr class="Popup_NavBar_bg"><td></td>
             <td class="Popup_NavBar_separator_cell"></td>
             <td class="Popup_NavBar_bg_logo_left"></td>
-            <td class="Popup_NavBar_bg_logo" width="1" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;"><IMG src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
+            <td class="Popup_NavBar_bg_logo" width="1" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;"><img src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
             <td class="Popup_NavBar_bg_logo_right"></td>
             <td class="Popup_NavBar_Popup_title_cell"><span>Copy From Order</span></td>
             <td class="Popup_NavBar_separator_cell"></td>
@@ -110,11 +110,11 @@
       <td>
         <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_InfoBar">
           <tr>
-            <td class="Popup_InfoBar_Icon_cell"><IMG src="../../../../../web/images/blank.gif" border="0" class="Popup_InfoBar_Icon_info" /></td>
+            <td class="Popup_InfoBar_Icon_cell"><img src="../../../../../web/images/blank.gif" border="0" class="Popup_InfoBar_Icon_info" /></td>
             <td class="Popup_InfoBar_text_table">
               <table>
                 <tr>
-                  <td class="Popup_InfoBar_text" id="helpDiscard"> <div id="processHelp">&nbsp;</div></TD>
+                  <td class="Popup_InfoBar_text" id="helpDiscard"> <div id="processHelp">&nbsp;</div></td>
                 </tr>
               </table>
             </td>
@@ -137,32 +137,32 @@
 
             <tr>
               <td class="TitleCell">
-                <SPAN class="LabelText">Order</SPAN>
+                <span class="LabelText">Order</span>
               </td>
-              <TD class="TextBox_btn_ContentCell" colspan=2>
-                <TABLE border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
-                  <TR>
-                    <TD>
-                      <INPUT type="hidden" name="inpcOrderId" value="">
-                    </TD>
-                    <td class="TextBox_ContentCell">
-                      <INPUT type="text" dojoType="openbravo:ValidationTextBox" class="dojoValidateValid required TextBox_btn_TwoCells_width" maxlength="22" name="inpcOrderId_D" id="inpcOrderId_D" value="" required="true" onkeyup="validateTextBox(this.id);"></INPUT>
+              <td class="TextBox_btn_ContentCell" colspan=2>
+                <table border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
+                  <tr>
+                    <td>
+                      <input type="hidden" name="inpcOrderId" value="">
                     </td>
-                    <TD class="FieldButton_ContentCell">
-                      <TABLE class="FieldButton" onclick="openSearch(null, null, '../info/SalesOrder.html', null, false, 'frmMain', 'inpcOrderId', 'inpcOrderId_D', document.frmMain.inpcOrderId_D.value, 'WindowID', 'xx');return false;" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Sales Order ';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;" id="fieldWindowID">
-                        <TR>
-                          <TD class="FieldButton_bg">
-                            <IMG alt="Sales Order" class="FieldButton_Icon FieldButton_Icon_SalesOrder" title="Sales Order" src="../../../../../web/images/blank.gif" border="0" id="buttonSalesOrder"></IMG>
-                          </TD>
-                        </TR>
-                      </TABLE>
-                    </TD>
-                  </TR>
-                </TABLE>
-                <SPAN class="invalid" id="SalesOrder_RinvalidSpan" style="display: none;">* The value entered is not valid.</SPAN>
-                <SPAN class="missing" id="SalesOrder_RmissingSpan" style="display: none;">* This value is required.</SPAN>
-                <SPAN class="range" id="SalesOrder_RrangeSpan" style="display: none;">* This value is out of range.</SPAN>
-              </TD>
+                    <td class="TextBox_ContentCell">
+                      <input type="text" dojoType="openbravo:ValidationTextBox" class="dojoValidateValid required TextBox_btn_TwoCells_width" maxlength="22" name="inpcOrderId_D" id="inpcOrderId_D" value="" required="true" onkeyup="validateTextBox(this.id);"></input>
+                    </td>
+                    <td class="FieldButton_ContentCell">
+                      <table class="FieldButton" onclick="openSearch(null, null, '../info/SalesOrder.html', null, false, 'frmMain', 'inpcOrderId', 'inpcOrderId_D', document.frmMain.inpcOrderId_D.value, 'WindowID', 'xx');return false;" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Sales Order ';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;" id="fieldWindowID">
+                        <tr>
+                          <td class="FieldButton_bg">
+                            <img alt="Sales Order" class="FieldButton_Icon FieldButton_Icon_SalesOrder" title="Sales Order" src="../../../../../web/images/blank.gif" border="0" id="buttonSalesOrder"></img>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+                <span class="invalid" id="SalesOrder_RinvalidSpan" style="display: none;">* The value entered is not valid.</span>
+                <span class="missing" id="SalesOrder_RmissingSpan" style="display: none;">* This value is required.</span>
+                <span class="range" id="SalesOrder_RrangeSpan" style="display: none;">* This value is out of range.</span>
+              </td>
               <td></td>
               <td></td>
             </tr>
@@ -209,16 +209,16 @@
 </html>
 
 
-<!--<TABLE summary="" cellpadding="0" cellspacing="0" border="0" width="100%">
-    <TR> 
+<!--<table summary="" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr> 
       <td>&nbsp;</td>
-      <TD width="30px"> <A href="#" onclick="closeThisPage();return false;" onmouseover="window.status='Cancel';return true;" onmouseout="window.status='';return true;" > 
-        <img width="16" height="16" src="../../../../../web/images/Cancel.jpg"  alt="Cancel" title="Cancel" border="0" id="buttonCancel"></IMG></A></TD>
-      <TD width="30px"> <A href="#" onclick="submitThisPage('SAVE');return false;" onmouseover="window.status='Accept';return true;" onmouseout="window.status='';return true;" > 
-        <img width="16" height="16" src="../../../../../web/images/Ok.jpg"  alt="Accept" title="Accept" border="0" id="buttonOk"></IMG></A></TD>
+      <td width="30px"> <a href="#" onclick="closeThisPage();return false;" onmouseover="window.status='Cancel';return true;" onmouseout="window.status='';return true;" > 
+        <img width="16" height="16" src="../../../../../web/images/Cancel.jpg"  alt="Cancel" title="Cancel" border="0" id="buttonCancel"></img></a></td>
+      <td width="30px"> <a href="#" onclick="submitThisPage('SAVE');return false;" onmouseover="window.status='Accept';return true;" onmouseout="window.status='';return true;" > 
+        <img width="16" height="16" src="../../../../../web/images/Ok.jpg"  alt="Accept" title="Accept" border="0" id="buttonOk"></img></a></td>
       <td>&nbsp;</td>
-    </TR>
-  </TABLE>
-</FORM>
-</BODY>
-</HTML>-->
+    </tr>
+  </table>
+</form>
+</body>
+</html>-->

@@ -165,26 +165,26 @@ public class WorkflowControl extends HttpSecureAppServlet {
     if (data==null || data.length==0) return "";
     StringBuffer sb = new StringBuffer();
     if (data.length>1) {
-      sb.append("<TR><TD colspan=\"2\">\n");
-      sb.append("  <TABLE cellspacing=\"0\" cellpadding=\"0\" border=\"0\"><TR>");
+      sb.append("<tr><td colspan=\"2\">\n");
+      sb.append("  <table cellspacing=\"0\" cellpadding=\"0\" border=\"0\"><tr>");
     }
     for (int i=0;i<data.length;i++) {
       if (data.length>1) {
-        sb.append("<TD valign=\"top\"><TABLE cellspacing=\"0\" cellpadding=\"0\" class=\"Popup_Client_TableWorkflow\">\n");
-        sb.append("  <TR>\n");
+        sb.append("<td valign=\"top\"><table cellspacing=\"0\" cellpadding=\"0\" class=\"Popup_Client_TableWorkflow\">\n");
+        sb.append("  <tr>\n");
         for (int j=0;j<2;j++) sb.append("<td class=\"TableEdition_OneCell_width\"></td>\n");
-        sb.append("  </TR>\n");
+        sb.append("  </tr>\n");
       }
       sb.append(line());
       sb.append(buildButton(vars, data[i])).append("\n");
       sb.append(buildLevel(vars, data[i].adWfNodeId));
       if (data.length>1) {
-        sb.append("</TABLE></TD>\n");
+        sb.append("</table></td>\n");
       }
     }
     if (data.length>1) {
-      sb.append("</TR></TABLE>\n");
-      sb.append("</TD></TR>\n");
+      sb.append("</tr></table>\n");
+      sb.append("</td></tr>\n");
     }
     return sb.toString();
   }
@@ -202,21 +202,21 @@ public class WorkflowControl extends HttpSecureAppServlet {
   String buildButton(VariablesSecureApp vars, WorkflowControlData data) throws ServletException {
     StringBuffer html = new StringBuffer();
     String strClave = claveWindow(data);
-    html.append("<TR>\n");
-    html.append("  <TD class=\"Popup_Workflow_Button_ContentCell\">\n");
+    html.append("<tr>\n");
+    html.append("  <td class=\"Popup_Workflow_Button_ContentCell\">\n");
     html.append("    <a href=\"#\" class=\"Popup_Workflow_Button\" onmouseout=\"window.status='';return true;\" onmouseover=\"'");
     html.append(data.name).append("';return true;\" onblur=\"this.hideFocus=false\" ");
     html.append(" onClick=\"this.hideFocus=true;callServlet('").append(data.action).append("', '").append(strClave).append("');return false;\">\n");
     html.append("    <img src=\"").append(strReplaceWith).append("/images/blank.gif\" class=\"").append(windowIcon(data.action)).append("\" border=\"0\" title=\"");
     html.append(data.name).append("\"></img></a>\n");
-    html.append("</TD>\n");
-    html.append("<TD class=\"Popup_Workflow_text_ContentCell\">\n");
+    html.append("</td>\n");
+    html.append("<td class=\"Popup_Workflow_text_ContentCell\">\n");
     html.append("  <a href=\"#\" onclick=\"callServlet('").append(data.action).append("', '").append(strClave).append("');");
     html.append("return false;\" onmouseover=\"window.status='").append(data.name).append("';return true;\" ");
     html.append("onmouseout=\"window.status='';return true;\" class=\"Popup_Workflow_text\">");
     html.append(data.name).append("</a>\n");
-    html.append("</TD>\n");
-    html.append("</TR>\n");
+    html.append("</td>\n");
+    html.append("</tr>\n");
     return html.toString();
   }
 

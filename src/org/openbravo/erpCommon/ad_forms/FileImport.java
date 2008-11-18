@@ -81,18 +81,18 @@ public class FileImport extends HttpSecureAppServlet {
     FileImportData [] data = FileImportData.select(this, strAdImpformatId);
     if (data==null) return "";
     int constant = 0;
-    texto.append("<TABLE cellspacing=\"0\" cellpadding=\"0\" width=\"99%\" class=\"DataGrid_Header_Table DataGrid_Body_Table\" style=\"table-layout: auto;\">" +
-                 "<TR class=\"DataGrid_Body_Row\">  " + 
-                 "<TD>");
+    texto.append("<table cellspacing=\"0\" cellpadding=\"0\" width=\"99%\" class=\"DataGrid_Header_Table DataGrid_Body_Table\" style=\"table-layout: auto;\">" +
+                 "<tr class=\"DataGrid_Body_Row\">  " + 
+                 "<td>");
     if (log4j.isDebugEnabled()) log4j.debug("data2.length: "+data2.length);
     for (int i=0;i<data2.length;i++){
       if (log4j.isDebugEnabled()) log4j.debug("i:"+i+" - data.length"+data.length);      
-      texto.append("<TR class=\"DataGrid_Body_Row DataGrid_Body_Row_"+(i%2==0?"0":"1")+"\">");
+      texto.append("<tr class=\"DataGrid_Body_Row DataGrid_Body_Row_"+(i%2==0?"0":"1")+"\">");
       for (int j=0;j<data.length;j++){
         if(i==0 && strFirstLineHeader.equalsIgnoreCase("Y"))
-          texto.append("<TH class=\"DataGrid_Header_Cell\">");
+          texto.append("<th class=\"DataGrid_Header_Cell\">");
         else
-          texto.append("<TD class=\"DataGrid_Body_Cell\">");
+          texto.append("<td class=\"DataGrid_Body_Cell\">");
         if (!data[j].constantvalue.equals("")){
           texto.append(data[j].constantvalue);
           constant = constant + 1;
@@ -100,14 +100,14 @@ public class FileImport extends HttpSecureAppServlet {
         else
           texto.append(parseField(data2[i].getField(String.valueOf(j-constant)), data[j].fieldlength, data[j].datatype, data[j].dataformat, data[j].decimalpoint));
         if(i==0 && strFirstLineHeader.equalsIgnoreCase("Y"))
-          texto.append("</TH>");
+          texto.append("</th>");
         else
-          texto.append("</TD>");
+          texto.append("</td>");
       }
       constant = 0;
-      texto.append("</TR>");
+      texto.append("</tr>");
     }
-    texto.append("</TD></TABLE>");
+    texto.append("</td></table>");
     return texto.toString();
   }
 

@@ -260,10 +260,10 @@ public class Buscador extends HttpSecureAppServlet {
     Vector<Object> vecKeys = new Vector<Object>();
     for (int i=0;i<fields.length;i++) {
       if (Integer.valueOf(fields[i].displaylength).intValue()>MAX_TEXTBOX_DISPLAY) fields[i].displaylength=Integer.toString(MAX_TEXTBOX_DISPLAY);
-      strHtml.append("<tr><td class=\"TitleCell\"> <SPAN class=\"LabelText\">");
+      strHtml.append("<tr><td class=\"TitleCell\"> <span class=\"LabelText\">");
       if (Utility.isDecimalNumber(fields[i].reference) || Utility.isIntegerNumber(fields[i].reference) || Utility.isDateTime(fields[i].reference)) strHtml.append(fields[i].name).append(" ").append(Utility.messageBD(this, "From", vars.getLanguage()));
       else strHtml.append(fields[i].name);
-      strHtml.append("</SPAN></td>\n");
+      strHtml.append("</span></td>\n");
       if (fields[i].reference.equals("17") || fields[i].reference.equals("18") || fields[i].reference.equals("19")) {//List, Table, TableDir
         scriptSelect = true;
         strHtml.append("<td class=\"Combo_ContentCell\" colspan=\"3\">");
@@ -302,7 +302,7 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append("<td class=\"TextBox_btn_ContentCell\">\n");
         strHtml.append("<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" summary=\"\"  style=\"padding-top: 0px;\">\n");
         strHtml.append("<tr>\n");
-        strHtml.append("<TD class=\"TextBox_ContentCell\">\n");
+        strHtml.append("<td class=\"TextBox_ContentCell\">\n");
         strHtml.append("<input dojoType=\"openbravo:DateTextbox\" type=\"text\" class=\"TextBox_btn_OneCell_width required\" ");
         strHtml.append("required=\"true\" ");
         strHtml.append("displayFormat=\"").append(vars.getSessionValue("#AD_SqlDateFormat")).append("\" ");
@@ -321,7 +321,7 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append("<table class=\"FieldButton\" onmouseout=\"this.className='FieldButton';window.status='';return true;\" onmouseover=\"this.className='FieldButton_hover';window.status='Show calendar';return true;\" onmousedown=\"this.className='FieldButton_active';return true;\" onmouseup=\"this.className='FieldButton';return true;\">\n");
         strHtml.append("<tr>\n");
         strHtml.append("<td class=\"FieldButton_bg\">");
-        strHtml.append("<IMG alt=\"Calendar\" class=\"FieldButton_Icon FieldButton_Icon_Calendar\" title=\"Calendar\" src=\"").append(strReplaceWith).append("/images/blank.gif\" border=\"0\"></IMG>\n");
+        strHtml.append("<img alt=\"Calendar\" class=\"FieldButton_Icon FieldButton_Icon_Calendar\" title=\"Calendar\" src=\"").append(strReplaceWith).append("/images/blank.gif\" border=\"0\"></img>\n");
         strHtml.append("</td>\n");
         strHtml.append("</tr>\n");
         strHtml.append("</table>\n");
@@ -331,7 +331,7 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append("</table>\n");
         strHtml.append("</td>\n");
       } else if (fields[i].reference.equals("20")) { //YesNo
-        strHtml.append("<TD class=\"Radio_Check_ContentCell\">\n");
+        strHtml.append("<td class=\"Radio_Check_ContentCell\">\n");
         strHtml.append("<span class=\"Checkbox_container_NOT_Focused\"><input type=\"checkbox\" value=\"Y\"  name=\"inpParam").append(FormatUtilities.replace(fields[i].columnname)).append("\" ");
         if (fields[i].value.equals("Y")) strHtml.append("checked");
         strHtml.append("></input></span>\n");
@@ -339,11 +339,11 @@ public class Buscador extends HttpSecureAppServlet {
         strHtml.append("<td class=\"TextBox_btn_ContentCell\" colspan=\"3\">\n");
         strHtml.append("<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" summary=\"\">\n");
         scriptSearch = true;
-        strHtml.append("<TR>\n<TD>\n");
+        strHtml.append("<tr>\n<td>\n");
         strHtml.append("<input type=\"hidden\" name=\"inpParam").append(FormatUtilities.replace(fields[i].columnname)).append("\" ");
         strHtml.append("value=\"").append((!fields[i].value.equals("") && !fields[i].value.equals("%"))?fields[i].value:"").append("\">");
-        strHtml.append("</TD>\n");
-        strHtml.append("<TD class=\"TextBox_ContentCell\">\n");
+        strHtml.append("</td>\n");
+        strHtml.append("<td class=\"TextBox_ContentCell\">\n");
         if (Integer.valueOf(fields[i].fieldlength).intValue() < (MAX_TEXTBOX_LENGTH/4)) {
           strHtml.append("<input dojoType=\"openbravo:ValidationTextBox\" type=\"text\" class=\"TextBox_btn_OneCell_width\" ");
         } else if (Integer.valueOf(fields[i].fieldlength).intValue() < (MAX_TEXTBOX_LENGTH/2)) {
@@ -445,9 +445,9 @@ public class Buscador extends HttpSecureAppServlet {
 
       if (Utility.isDecimalNumber(fields[i].reference) || Utility.isIntegerNumber(fields[i].reference) || Utility.isDateTime(fields[i].reference)) {
         String value = vars.getSessionValue(strTab + "|param" + FormatUtilities.replace(fields[i].columnname) + "_f");
-        strHtml.append("<td class=\"TitleCell\"> <SPAN class=\"LabelText\">");
+        strHtml.append("<td class=\"TitleCell\"> <span class=\"LabelText\">");
         strHtml.append(Utility.messageBD(this, "To", vars.getLanguage()));
-        strHtml.append("</SPAN></td>\n");
+        strHtml.append("</span></td>\n");
 
         if (Utility.isDecimalNumber(fields[i].reference) || Utility.isIntegerNumber(fields[i].reference)) {
           strHtml.append("<td class=\"TextBox_btn_ContentCell\">\n");
@@ -463,22 +463,22 @@ public class Buscador extends HttpSecureAppServlet {
           else if (Utility.isIntegerNumber(fields[i].reference)) strHtml.append("onkeydown=\"validateNumberBox(this.id);auto_complete_number(this, false, false);return true;\" ");
           strHtml.append(">");
 
-          strHtml.append("<td class=\"FieldButton_ContentCell\">\n<TABLE class=\"FieldButton\" onclick=\"calculator('frmMain.");
+          strHtml.append("<td class=\"FieldButton_ContentCell\">\n<table class=\"FieldButton\" onclick=\"calculator('frmMain.");
           strHtml.append("inpParam").append(FormatUtilities.replace(fields[i].columnname)).append("_f', "); 
           strHtml.append("document.frmMain.inpParam").append(FormatUtilities.replace(fields[i].columnname)).append("_f.value, false);return false;\" ");
           strHtml.append("onmouseout=\"this.className='FieldButton';window.status='';return true;\" onmouseover=\"this.className='FieldButton_hover';window.status='Show calculator';return true;\" onmousedown=\"this.className='FieldButton_active';return true;\" onmouseup=\"this.className='FieldButton';return true;\">");
           strHtml.append("<tr>\n<td class=\"FieldButton_bg\">\n");
-          strHtml.append("<IMG alt=\"Calculator\" class=\"FieldButton_Icon FieldButton_Icon_Calc\" title=\"Calculator\" src=\"").append(strReplaceWith).append("/images/blank.gif\" border=\"0\"></IMG>\n");
+          strHtml.append("<img alt=\"Calculator\" class=\"FieldButton_Icon FieldButton_Icon_Calc\" title=\"Calculator\" src=\"").append(strReplaceWith).append("/images/blank.gif\" border=\"0\"></img>\n");
           strHtml.append("</td>\n</tr>\n</table>\n</td>\n</tr>\n</table>\n");
-          strHtml.append("<SPAN class=\"invalid\" style=\"display: none;\">* The value entered is not valid.</SPAN>");
-          strHtml.append("<SPAN class=\"missing\" style=\"display: none;\">* This value is required.</SPAN>");
-          strHtml.append("<SPAN class=\"range\" style=\"display: none;\">* This value is out of range.</SPAN>");
+          strHtml.append("<span class=\"invalid\" style=\"display: none;\">* The value entered is not valid.</span>");
+          strHtml.append("<span class=\"missing\" style=\"display: none;\">* This value is required.</span>");
+          strHtml.append("<span class=\"range\" style=\"display: none;\">* This value is out of range.</span>");
           strHtml.append("</td>");
         } else if (fields[i].reference.equals("15")||fields[i].reference.equals("16")) { //DATE
           strHtml.append("<td class=\"TextBox_btn_ContentCell\">\n");
           strHtml.append("<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" summary=\"\"  style=\"padding-top: 0px;\">\n");
           strHtml.append("<tr>\n");
-          strHtml.append("<TD class=\"TextBox_ContentCell\">\n");
+          strHtml.append("<td class=\"TextBox_ContentCell\">\n");
           strHtml.append("<input dojoType=\"openbravo:DateTextbox\" type=\"text\" class=\"TextBox_btn_OneCell_width\" ");
           strHtml.append("displayFormat=\"").append(vars.getSessionValue("#AD_SqlDateFormat")).append("\" ");
           strHtml.append("saveFormat=\"").append(vars.getSessionValue("#AD_SqlDateFormat")).append("\" ");
@@ -496,7 +496,7 @@ public class Buscador extends HttpSecureAppServlet {
           strHtml.append("<table class=\"FieldButton\" onmouseout=\"this.className='FieldButton';window.status='';return true;\" onmouseover=\"this.className='FieldButton_hover';window.status='Show calendar';return true;\" onmousedown=\"this.className='FieldButton_active';return true;\" onmouseup=\"this.className='FieldButton';return true;\">\n");
           strHtml.append("<tr>\n");
           strHtml.append("<td class=\"FieldButton_bg\">");
-          strHtml.append("<IMG alt=\"Calendar\" class=\"FieldButton_Icon FieldButton_Icon_Calendar\" title=\"Calendar\" src=\"").append(strReplaceWith).append("/images/blank.gif\" border=\"0\"></IMG>\n");
+          strHtml.append("<img alt=\"Calendar\" class=\"FieldButton_Icon FieldButton_Icon_Calendar\" title=\"Calendar\" src=\"").append(strReplaceWith).append("/images/blank.gif\" border=\"0\"></img>\n");
           strHtml.append("</td>\n");
           strHtml.append("</tr>\n");
           strHtml.append("</table>\n");
@@ -531,22 +531,22 @@ public class Buscador extends HttpSecureAppServlet {
     }
     StringBuffer scrScr = new StringBuffer();
     if (scriptKeyboard) {
-      scrScr.append("<SCRIPT language=\"JavaScript\" src=\"").append(strReplaceWith).append("/js/keyboard.js\" type=\"text/javascript\"></SCRIPT>");
-      scrScr.append("<SCRIPT language=\"JavaScript\" src=\"").append(strReplaceWith).append("/js/keys.js\" type=\"text/javascript\"></SCRIPT>");
+      scrScr.append("<script language=\"JavaScript\" src=\"").append(strReplaceWith).append("/js/keyboard.js\" type=\"text/javascript\"></script>");
+      scrScr.append("<script language=\"JavaScript\" src=\"").append(strReplaceWith).append("/js/keys.js\" type=\"text/javascript\"></script>");
     }
     if (scriptClock) {
-      scrScr.append("<SCRIPT language=\"JavaScript\" src=\"").append(strReplaceWith).append("/js/time.js\" type=\"text/javascript\"></SCRIPT>");
+      scrScr.append("<script language=\"JavaScript\" src=\"").append(strReplaceWith).append("/js/time.js\" type=\"text/javascript\"></script>");
     }
     if (scriptCalendar) {
-      scrScr.append("<SCRIPT language=\"JavaScript\" src=\"").append(strReplaceWith).append("/js/jscalendar/calendar.js\" type=\"text/javascript\"></SCRIPT>\n");
-      scrScr.append("<SCRIPT language=\"JavaScript\" src=\"").append(strReplaceWith).append("/js/jscalendar/lang/calendar-").append(vars.getLanguage().substring(0,2)).append(".js\" type=\"text/javascript\"></SCRIPT>\n");
-      scrScr.append("<SCRIPT language=\"JavaScript\" src=\"").append(strReplaceWith).append("/js/default/DateTextBox.js\" type=\"text/javascript\"></SCRIPT>");
+      scrScr.append("<script language=\"JavaScript\" src=\"").append(strReplaceWith).append("/js/jscalendar/calendar.js\" type=\"text/javascript\"></script>\n");
+      scrScr.append("<script language=\"JavaScript\" src=\"").append(strReplaceWith).append("/js/jscalendar/lang/calendar-").append(vars.getLanguage().substring(0,2)).append(".js\" type=\"text/javascript\"></script>\n");
+      scrScr.append("<script language=\"JavaScript\" src=\"").append(strReplaceWith).append("/js/default/DateTextBox.js\" type=\"text/javascript\"></script>");
     }
     if (scriptCalculator) {
-      scrScr.append("<SCRIPT language=\"JavaScript\" src=\"").append(strReplaceWith).append("/js/calculator.js\" type=\"text/javascript\"></SCRIPT>");
+      scrScr.append("<script language=\"JavaScript\" src=\"").append(strReplaceWith).append("/js/calculator.js\" type=\"text/javascript\"></script>");
     }
     if (scriptSearch) {
-      scrScr.append("<SCRIPT language=\"JavaScript\" src=\"").append(strReplaceWith).append("/js/searchs.js\" type=\"text/javascript\"></SCRIPT>");
+      scrScr.append("<script language=\"JavaScript\" src=\"").append(strReplaceWith).append("/js/searchs.js\" type=\"text/javascript\"></script>");
     }
     if (scriptSelect) {
     }

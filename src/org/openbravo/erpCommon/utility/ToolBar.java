@@ -672,11 +672,11 @@ public class ToolBar {
     if (vecLastType.size()>0) lastType = vecLastType.elementAt(0);
     if (lastType.equals("SPACE") && element.elementType().equals("SPACE")) return "";
     if (isReference) {
-      sbElement.append("<TD width=\"1\">");
-      sbElement.append("<IMG src=\"").append(base_direction).append("/images/blank.gif\" class=\"Main_ToolBar_textlabel_bg_left\" border=\"0\">");
-      sbElement.append("</TD>\n");
-      sbElement.append("<TD class=\"Main_ToolBar_textlabel_bg_body\">");
-      sbElement.append("<a class=\"Main_ToolBar_text_relatedinfo\" href=\"#\" onclick=\"openServletNewWindow('DEFAULT', true, '../utility/UsedByLink.html', 'LINKS', null, true, 500, 600, true);\">").append(Utility.messageBD(conn, "Linked Items", language)).append("</a></TD>\n");
+      sbElement.append("<td width=\"1\">");
+      sbElement.append("<img src=\"").append(base_direction).append("/images/blank.gif\" class=\"Main_ToolBar_textlabel_bg_left\" border=\"0\">");
+      sbElement.append("</td>\n");
+      sbElement.append("<td class=\"Main_ToolBar_textlabel_bg_body\">");
+      sbElement.append("<a class=\"Main_ToolBar_text_relatedinfo\" href=\"#\" onclick=\"openServletNewWindow('DEFAULT', true, '../utility/UsedByLink.html', 'LINKS', null, true, 500, 600, true);\">").append(Utility.messageBD(conn, "Linked Items", language)).append("</a></td>\n");
     }
     sbElement.append("<td ");
     if (isReference) sbElement.append("class=\"Main_ToolBar_textlabel_bg_right\" ");
@@ -737,16 +737,16 @@ public class ToolBar {
       toolbar.append(transformElementsToString(buttons.get("LAST"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("LAST_RELATION"), lastType, false));
       if (isRelation) {
-        toolbar.append("<TD width=\"1\"><IMG src=\"").append(base_direction).append("/images/blank.gif\" style=\"width: 7px;\" border=\"0\">");
-        toolbar.append("<TD width=\"1\"><IMG src=\"").append(base_direction).append("/images/blank.gif\" class=\"Main_ToolBar_textlabel_bg_left\" border=\"0\">");
-        toolbar.append("</TD>\n");
-        toolbar.append("<TD class=\"Main_ToolBar_textlabel_bg_body\">\n");
+        toolbar.append("<td width=\"1\"><img src=\"").append(base_direction).append("/images/blank.gif\" style=\"width: 7px;\" border=\"0\">");
+        toolbar.append("<td width=\"1\"><img src=\"").append(base_direction).append("/images/blank.gif\" class=\"Main_ToolBar_textlabel_bg_left\" border=\"0\">");
+        toolbar.append("</td>\n");
+        toolbar.append("<td class=\"Main_ToolBar_textlabel_bg_body\">\n");
         toolbar.append("<nobr id=\"bookmark\" class=\"Main_ToolBar_text_bookmark\">");
         toolbar.append("</nobr>");
-        toolbar.append("</TD>\n");
-        toolbar.append("<TD width=\"1\" class=\"Main_ToolBar_textlabel_bg_right\">");
-        toolbar.append("<DIV style=\"padding: 0; margin: 0; border: 0; width: 9px;\" />");
-        toolbar.append("</TD>\n");
+        toolbar.append("</td>\n");
+        toolbar.append("<td width=\"1\" class=\"Main_ToolBar_textlabel_bg_right\">");
+        toolbar.append("<div style=\"padding: 0; margin: 0; border: 0; width: 9px;\" />");
+        toolbar.append("</td>\n");
       }
       toolbar.append(transformElementsToString(buttons.get("SEPARATOR6"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("PREVIOUS_RELATION"), lastType, false));

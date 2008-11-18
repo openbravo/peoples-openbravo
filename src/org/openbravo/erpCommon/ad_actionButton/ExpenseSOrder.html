@@ -17,37 +17,37 @@
  ************************************************************************
 -->
 <html xmlns="http://www.w3.org/1999/xhtml">
-<HEAD>
+<head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <TITLE>Expense Sales Order Process</TITLE>
-  <LINK rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon"/>
+  <title>Expense Sales Order Process</title>
+  <link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon"/>
 <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS"/>
 <script language="JavaScript" type="text/javascript" id="paramDirectory">
 var baseDirectory = "../../../../../web/";
 </script>
-<SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></SCRIPT>
+<script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
+<script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
 <script language="JavaScript" type="text/javascript" id="paramLanguage">
   var defaultLang = "en_US";
 </script>
 <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
-<SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></SCRIPT>
+<script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
 <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
-<SCRIPT language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></SCRIPT>
+<script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
-<SCRIPT language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></SCRIPT>
+<script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
  <script type="text/javascript"> 
       //all dojo.require above this line
       dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
 </script> 
-  <SCRIPT language="JavaScript" type="text/javascript">
+  <script language="JavaScript" type="text/javascript">
   function closeThisPage() {
     window.close();
     return true;
@@ -57,8 +57,8 @@ var baseDirectory = "../../../../../web/";
     submitCommandForm(strCommand, false, null, null, '_self');
     return true;
   }
-  </SCRIPT>
-  <SCRIPT language="JavaScript" type="text/javascript">
+  </script>
+  <script language="JavaScript" type="text/javascript">
 function enableLocalShortcuts() {
 	keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_D', document.frmMain.inpcBpartnerId_D.value, 'Command', 'KEY', 'inpisSOTrxTab', 'Y');", "inpcBpartnerId_D", "null");
 }
@@ -89,8 +89,8 @@ function validate() {
 	return true;
 }
 
-</SCRIPT>
-	<SCRIPT language="JavaScript" type="text/javascript">
+</script>
+	<script language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
 		  new windowTableId('client', 'buttonProcess')
@@ -112,38 +112,38 @@ function validate() {
 	function onResizeDo(){
 		resizeArea();
 	}
-	</SCRIPT>
-</HEAD>
+	</script>
+</head>
 
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
-<FORM id="form" method="POST" action="ExpenseSOrder.html" name="frmMain">
-  <INPUT type="hidden" name="Command">
-<INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>
-  <INPUT type="hidden" name="inpLastFieldChanged"></INPUT>
-  <INPUT type="hidden" name="inpKey" value="" id="paramKey"></INPUT>
-  <INPUT type="hidden" name="inpwindowId" value="" id="window"></INPUT>
-  <INPUT type="hidden" name="inpTabId" value="" id="tab"></INPUT>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
+<form id="form" method="post" action="ExpenseSOrder.html" name="frmMain">
+  <input type="hidden" name="Command">
+<input type="hidden" name="IsPopUpCall" value="1"></input>
+  <input type="hidden" name="inpLastFieldChanged"></input>
+  <input type="hidden" name="inpKey" value="" id="paramKey"></input>
+  <input type="hidden" name="inpwindowId" value="" id="window"></input>
+  <input type="hidden" name="inpTabId" value="" id="tab"></input>
 
 <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
     <tr>
       <td valign="top" id="tdleftTabs"></td>
       <td valign="top">
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Left">
-          <TR><TD class="Main_NavBar_bg_left" id="tdleftSeparator"></TD></TR>
-          <TR><TD class="Main_ToolBar_bg_left" valign="top"></TD></TR>
-          <TR><TD class="Main_Client_bg_left"></TD></TR>
-          <TR><TD class="Main_Bottom_bg_left"></TD></TR>
-        </TABLE>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Left">
+          <tr><td class="Main_NavBar_bg_left" id="tdleftSeparator"></td></tr>
+          <tr><td class="Main_ToolBar_bg_left" valign="top"></td></tr>
+          <tr><td class="Main_Client_bg_left"></td></tr>
+          <tr><td class="Main_Bottom_bg_left"></td></tr>
+        </table>
       </td>
       <td valign="top">
         <div class="Main_ContentPane_NavBar" id="tdtopButtons"></div>
         <div class="Main_ContentPane_ToolBar" id="paramToolBar"></div>
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_TabPane" id="tdtopTabs">
-          <TR id="paramParentTabContainer"></TR>
-          <TR id="paramMainTabContainer"></TR>
-          <TR id="paramChildTabContainer"></TR>
-        </TABLE>
-        <DIV class="Main_ContentPane_Client" style="overflow: auto;" id="client">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_TabPane" id="tdtopTabs">
+          <tr id="paramParentTabContainer"></tr>
+          <tr id="paramMainTabContainer"></tr>
+          <tr id="paramChildTabContainer"></tr>
+        </table>
+        <div class="Main_ContentPane_Client" style="overflow: auto;" id="client">
                 <table class="dojoTabContainer" border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
                   <tr>
                     <td>
@@ -153,7 +153,7 @@ function validate() {
                             <!-- MessageBox -->
 
                             <table cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxyy">
-                              <TBODY>
+                              <tbody>
                               <tr class="MessageBox_TopMargin">
                                 <td class="MessageBox_LeftMargin"></td>
                                 <td></td>
@@ -164,7 +164,7 @@ function validate() {
                                 <td>
 
                                   <table cellpadding="0" cellspacing="0" style="width: 100%;">
-                                    <TBODY>
+                                    <tbody>
                                     <tr>
                                       <td>
                                         <div class="MessageBox_TopLeft"></div>
@@ -173,12 +173,12 @@ function validate() {
                                       <td class="MessageBox_bg">
 
                                         <table class="MessageBox_Top">
-                                        <TBODY>
+                                        <tbody>
                                           <tr>
                                             <td>
                                               <span>
                                               <table cellpadding="0" cellspacing="0" class="MessageBox_Body_ContentCell">
-                                                <TBODY>
+                                                <tbody>
                                                 <tr>
                                                   <td class="MessageBox_Icon_ContentCell">
                                                     <div class="MessageBox_Icon"></div>
@@ -195,12 +195,12 @@ function validate() {
                                                     </span>
                                                   </td>
                                                 </tr>
-                                                </TBODY>
+                                                </tbody>
                                               </table>
                                               </span>
                                             </td>
                                           </tr>
-                                          </TBODY>
+                                          </tbody>
                                         </table>
 
                                       </td>
@@ -221,7 +221,7 @@ function validate() {
                                       <td class="MessageBox_Bottom">
                                       </td>
                                     </tr>
-                                    </TBODY>
+                                    </tbody>
                                   </table>
 
                                 </td>
@@ -232,12 +232,12 @@ function validate() {
                                 <td></td>
                                 <td class="MessageBox_RightMargin"></td>
                               </tr>
-                              </TBODY>
+                              </tbody>
                             </table> 
                              <!-- End MessageBox -->
                                         
               <!-- USER CONTROLS -->
-              <TABLE class="Main_Client_TableEdition">
+              <table class="Main_Client_TableEdition">
                 <tr>
                   <td class="TableEdition_OneCell_width"></td>
                   <td class="TableEdition_OneCell_width"></td>
@@ -251,13 +251,13 @@ function validate() {
     			  <td colspan="6">
                     <table cellspacing="0" cellpadding="0" class="Popup_ContentPane_InfoBar">
                       <tr>
-                        <td class="Popup_InfoBar_Icon_cell"><IMG src="../../../../../web/images/blank.gif" border="0" class="Popup_InfoBar_Icon_info" /></td>
+                        <td class="Popup_InfoBar_Icon_cell"><img src="../../../../../web/images/blank.gif" border="0" class="Popup_InfoBar_Icon_info" /></td>
                         <td class="Popup_InfoBar_text_table">
                           <table>
                             <tr>
-                             <TD class="Popup_InfoBar_text" id="helpDiscard">
-                               	<SPAN id="processHelp">&nbsp;</SPAN>
-                             </TD>								
+                             <td class="Popup_InfoBar_text" id="helpDiscard">
+                               	<span id="processHelp">&nbsp;</span>
+                             </td>								
                             </tr>
                           </table>
                         </td>
@@ -269,109 +269,109 @@ function validate() {
                   <td colspan="6" height="15px"></td>
                 </tr>
                 
-                <TR>
-                  <TD class="TitleCell"><SPAN class="LabelText">Customer</SPAN></TD>
-                  <TD class="TextBox_btn_ContentCell" colspan="2">
-                    <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
-                      <TR>
-                        <TD class="TextBox_ContentCell">
-                          <INPUT type="hidden" name="inpcBpartnerId" value="" id="paramBpartnerId"></INPUT> 
-                          <INPUT class="dojoValidateValid TextBox_btn_TwoCells_width" type="text"  name="inpcBpartnerId_D" maxlength="20" value="" id="paramBPartnerdescription"></INPUT>
-                        </TD>
-                        <TD class="FieldButton_ContentCell">
+                <tr>
+                  <td class="TitleCell"><span class="LabelText">Customer</span></td>
+                  <td class="TextBox_btn_ContentCell" colspan="2">
+                    <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                      <tr>
+                        <td class="TextBox_ContentCell">
+                          <input type="hidden" name="inpcBpartnerId" value="" id="paramBpartnerId"></input> 
+                          <input class="dojoValidateValid TextBox_btn_TwoCells_width" type="text"  name="inpcBpartnerId_D" maxlength="20" value="" id="paramBPartnerdescription"></input>
+                        </td>
+                        <td class="FieldButton_ContentCell">
                           <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Business Partner'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="openSearch(null, null, '../info/BusinessPartner.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBpartnerId', 'inpcBpartnerId_D', document.frmMain.inpcBpartnerId_D.value, 'inpisSOTrxTab', 'Y');return false;">
                           <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Business Partner';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
-                            <TR>
-                              <TD class="FieldButton_bg">
-                                <IMG id="buttonBusinessPartner" alt="Business Partner" class="FieldButton_Icon FieldButton_Icon_BusinessPartner" title="Business Partner" src="../../../../../web/images/blank.gif" border="0"></IMG>
-                              </TD>
-                            </TR>
-                          </TABLE>
+                            <tr>
+                              <td class="FieldButton_bg">
+                                <img id="buttonBusinessPartner" alt="Business Partner" class="FieldButton_Icon FieldButton_Icon_BusinessPartner" title="Business Partner" src="../../../../../web/images/blank.gif" border="0"></img>
+                              </td>
+                            </tr>
+                          </table>
                           </a>
-                        </TD>
-                      </TR>
-                    </TABLE>
-                  </TD>
-                  <TD class="TitleCell"><SPAN class="LabelText">Organization</SPAN></TD>
-                  <TD class="Combo_ContentCell" colspan="2"> <select name="organization" id="organization" class="Combo Combo_TwoCells_width">
-                  <OPTION value=""></OPTION><DIV id="sectionOrganizacion">
-                  <OPTION value="es" id="fieldClaveOrganizacion">Organization1</OPTION></TD>
-                </TR>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td class="TitleCell"><span class="LabelText">Organization</span></td>
+                  <td class="Combo_ContentCell" colspan="2"> <select name="organization" id="organization" class="Combo Combo_TwoCells_width">
+                  <option value=""></option><div id="sectionOrganizacion">
+                  <option value="es" id="fieldClaveOrganizacion">Organization1</option></td>
+                </tr>
 
-                <TR>
-                  <TD class="TitleCell"><SPAN class="LabelText">From Date</SPAN></TD>
-                  <TD class="TextBox_btn_ContentCell">
-                    <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
-                      <TR>
-                        <TD class="TextBox_ContentCell">
-                          <INPUT dojoType="openbravo:DateTextbox" lowerthan="paramDateTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramDateFrom");</script>
-                        </TD>
-                        <TD class="FieldButton_ContentCell">
+                <tr>
+                  <td class="TitleCell"><span class="LabelText">From Date</span></td>
+                  <td class="TextBox_btn_ContentCell">
+                    <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                      <tr>
+                        <td class="TextBox_ContentCell">
+                          <input dojoType="openbravo:DateTextbox" lowerthan="paramDateTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateFrom");</script>
+                        </td>
+                        <td class="FieldButton_ContentCell">
                           <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpDateFrom', document.frmMain.inpDateFrom.value, false);return false;">
                           <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
-                            <TR>
-                              <TD class="FieldButton_bg">
-                                <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></IMG>
-                              </TD>
-                            </TR>
-                          </TABLE>
+                            <tr>
+                              <td class="FieldButton_bg">
+                                <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></img>
+                              </td>
+                            </tr>
+                          </table>
                           </a>
-                        </TD>
-                      </TR>
-                    </TABLE>
-                  </TD>
-                  <TD class="TitleCell"></TD>
-                  <TD class="TitleCell"><SPAN class="LabelText">To Date</SPAN></TD>
-                  <TD class="TextBox_btn_ContentCell">
-                    <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
-                      <TR>
-                        <TD class="TextBox_ContentCell">
-                          <INPUT dojoType="openbravo:DateTextbox" greaterthan="paramDateFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramDateTo");</script>
-                        </TD>
-                        <TD class="FieldButton_ContentCell">
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td class="TitleCell"></td>
+                  <td class="TitleCell"><span class="LabelText">To Date</span></td>
+                  <td class="TextBox_btn_ContentCell">
+                    <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                      <tr>
+                        <td class="TextBox_ContentCell">
+                          <input dojoType="openbravo:DateTextbox" greaterthan="paramDateFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateTo" id="paramDateTo" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateTo");</script>
+                        </td>
+                        <td class="FieldButton_ContentCell">
                           <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpDateTo', document.frmMain.inpDateTo.value, false);return false;">
                           <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
-                            <TR>
-                              <TD class="FieldButton_bg">
-                                <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></IMG>
-                              </TD>
-                            </TR>
-                          </TABLE>
+                            <tr>
+                              <td class="FieldButton_bg">
+                                <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></img>
+                              </td>
+                            </tr>
+                          </table>
                           </a>
-                        </TD>
-                      </TR>
-                    </TABLE>
-                  </TD>
-                  <TD class="ContentCell"></TD>
-                  <TD class="ContentCell"></TD>
-                </TR>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td class="ContentCell"></td>
+                  <td class="ContentCell"></td>
+                </tr>
                 
-                <TR>
-                  <TD class="TitleCell"><SPAN class="LabelText">Date Ordered</SPAN></TD>
-              	  <TD class="TextBox_btn_ContentCell">  
-                    <TABLE border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
-                      <TR>
-                        <TD class="TextBox_ContentCell">
-                          <INPUT dojotype="openbravo:DateTextbox" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width required" required="true"  type="text" name="inpDateordered" id="paramDateordered" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><SCRIPT>djConfig.searchIds.push("paramDateordered");</SCRIPT>
-                        </TD>
-                        <TD class="FieldButton_ContentCell">
+                <tr>
+                  <td class="TitleCell"><span class="LabelText">Date Ordered</span></td>
+              	  <td class="TextBox_btn_ContentCell">  
+                    <table border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
+                      <tr>
+                        <td class="TextBox_ContentCell">
+                          <input dojotype="openbravo:DateTextbox" displayformat="xx" saveformat="yy" class="TextBox_btn_OneCell_width required" required="true"  type="text" name="inpDateordered" id="paramDateordered" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateordered");</script>
+                        </td>
+                        <td class="FieldButton_ContentCell">
                           <a class="FieldButtonLink" href="#"  onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;"  onblur="window.status=''; return true;"  onkeypress="this.className='FieldButtonLink_active'; return true;"  onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpDateordered', document.frmMain.inpDateordered.value, false);return false;" >
                           <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
-                          <TR>  
-                           <TD class="FieldButton_bg">
-                             <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></IMG>
-                           </TD>
-                          </TR>
-                          </TABLE>
+                          <tr>  
+                           <td class="FieldButton_bg">
+                             <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></img>
+                           </td>
+                          </tr>
+                          </table>
                           </a>
-                        </TD>
-                      </TR>
-                    </TABLE>
-                  </TD>
-                  <TD class="TitleCell"></TD>
-                  <TD class="TitleCell" colspan="2"><span class="LabelText">Complete and Process Sales Orders automatically</span></TD>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td class="TitleCell"></td>
+                  <td class="TitleCell" colspan="2"><span class="LabelText">Complete and Process Sales Orders automatically</span></td>
                   <td class="Radio_Check_ContentCell"> <input type="checkbox" value="Y" checked="checked" id="paramShowNullComplete" name="inpShowNullComplete"></input></td>
-                </TR>
+                </tr>
                 
                  <tr>
             <td colspan="6" height="5px"></td>
@@ -379,7 +379,7 @@ function validate() {
           
           <tr>
             <td class="TitleCell"></td>
-            <td class="ContentCell" colspan="2"><SPAN class="LabelText" id="question">&nbsp;</SPAN></td>
+            <td class="ContentCell" colspan="2"><span class="LabelText" id="question">&nbsp;</span></td>
             <td class="ContentCell"></td>
             <td class="TitleCell"></td>
             <td class="ContentCell"></td>
@@ -410,31 +410,31 @@ function validate() {
             <td class="ContentCell"></td>
           </tr>
                  
-              </TABLE>              
+              </table>              
                <!-- End USER CONTROLS -->
                      
-                </TD>
-              </TR>
-              </TABLE>
-              </TD>
-            </TR>
-          </TABLE>     
+                </td>
+              </tr>
+              </table>
+              </td>
+            </tr>
+          </table>     
         
         </div>
             
 
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Menu_ContentPane_Bottom" id="tdbottomSeparator">
-          <TR>
-            <TD class="Main_Bottom_bg"><IMG src="../../../../../web/images/blank.gif" border="0"></TD>
-          </TR>
-        </TABLE></td>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Menu_ContentPane_Bottom" id="tdbottomSeparator">
+          <tr>
+            <td class="Main_Bottom_bg"><img src="../../../../../web/images/blank.gif" border="0"></td>
+          </tr>
+        </table></td>
       <td valign="top">
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Right" id="tdrightSeparator">
-          <TR><TD class="Main_NavBar_bg_right"></TD></TR>
-          <TR><TD class="Main_ToolBar_bg_right" valign="top"></TD></TR>
-          <TR><TD class="Main_Client_bg_right"></TD></TR>
-          <TR><TD class="Main_Bottom_bg_right"></TD></TR>
-        </TABLE>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Right" id="tdrightSeparator">
+          <tr><td class="Main_NavBar_bg_right"></td></tr>
+          <tr><td class="Main_ToolBar_bg_right" valign="top"></td></tr>
+          <tr><td class="Main_Client_bg_right"></td></tr>
+          <tr><td class="Main_Bottom_bg_right"></td></tr>
+        </table>
       </td>
     </tr>
   </table>

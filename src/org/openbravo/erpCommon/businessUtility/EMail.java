@@ -285,14 +285,14 @@ public class EMail {
 
   public void setMessageHTML (String subject, String message) {
     g_subject = subject;
-    StringBuffer sb = new StringBuffer("<HTML>\n").append("<HEAD>\n").append("<TITLE>\n").append(subject + "\n").append("</TITLE>\n");
-    sb.append("</HEAD>\n");
-    sb.append("<BODY>\n");
+    StringBuffer sb = new StringBuffer("<html>\n").append("<head>\n").append("<title>\n").append(subject + "\n").append("</title>\n");
+    sb.append("</head>\n");
+    sb.append("<body>\n");
     sb.append("<H2>").append(subject).append("</H2>\n");
     sb.append(message);
     sb.append("\n");
-    sb.append("</BODY>\n");
-    sb.append("</HTML>\n");
+    sb.append("</body>\n");
+    sb.append("</html>\n");
     g_messageHTML = sb.toString();
   }
 

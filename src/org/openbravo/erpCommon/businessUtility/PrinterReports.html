@@ -16,36 +16,36 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
-<HTML>
-<HEAD>
-<SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" type="text/javascript" id="paramDirectory">	var baseDirectory = "localhost";</SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	defaultLang = "en_US";</SCRIPT>
-<SCRIPT language="JavaScript" type="text/javascript" id="isPrintPreview">
+<html>
+<head>
+<script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
+<script language="JavaScript" type="text/javascript" id="paramDirectory">	var baseDirectory = "localhost";</script>
+<script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+<script language="JavaScript" type="text/javascript" id="paramLanguage">	defaultLang = "en_US";</script>
+<script language="JavaScript" type="text/javascript" id="isPrintPreview">
 function printReport(pagina) {
 	openPDF(pagina, 'PDF');
 	return true;
 }
-</SCRIPT>
-<TITLE>Report print</TITLE>
-<META http-equiv="Content-Type" content="text/html; charset=UTF-8"></META>
-</HEAD>
-<BODY bottommargin="0" leftmargin="0" marginheight="0" marginwidth="0" rightmargin="0" topmargin="0" onload="printReport('..xx');"  id="fieldPDFPath">
+</script>
+<title>Report print</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+</head>
+<body bottommargin="0" leftmargin="0" marginheight="0" marginwidth="0" rightmargin="0" topmargin="0" onload="printReport('..xx');"  id="fieldPDFPath">
 <H1>PRINTING...</H1>
-<DIV id="isDirectPrint"> <EMBED src="..xx" id="Pdf1" name="Pdf1" hidden=""> 
+<div id="isDirectPrint"> <EMBED src="..xx" id="Pdf1" name="Pdf1" hidden=""> 
   <OBJECT classid="clsid:CA8A9780-280D-11CF-A24D-444553540000" height="100%" id="objPdf" width="100%">
     <PARAM name="SRC" value="mainpage.pdf"></PARAM>
   </OBJECT></EMBED>
-</DIV>
-<SCRIPT language="javascript" type="text/javascript" id="isDirectPrint">
+</div>
+<script language="javascript" type="text/javascript" id="isDirectPrint">
 function printReport(pagina) {
     Pdf1.printWithDialog();
 }
-</SCRIPT>
-<FORM name="frmMain" method="post" action="">
-  <INPUT type="hidden" name="Command"></INPUT>
-  <INPUT type="hidden" name="inpdirectprint" value="xx" id="fieldIsDirectPrint"></INPUT>
-</FORM>
-</BODY>
-</HTML>
+</script>
+<form name="frmMain" method="post" action="">
+  <input type="hidden" name="Command"></input>
+  <input type="hidden" name="inpdirectprint" value="xx" id="fieldIsDirectPrint"></input>
+</form>
+</body>
+</html>

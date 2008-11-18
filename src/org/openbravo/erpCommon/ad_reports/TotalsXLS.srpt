@@ -20,11 +20,11 @@
 
 
 <div id="sectionDetailTotals">
-  <TR > 
-    <TD colspan="4" ><SPAN >SALDO</SPAN></TD>
-    <TD width="8%" ><SPAN  id="fieldDebit">xx100.00</SPAN></TD>
-    <TD width="10%" ><SPAN  id="fieldCredit">xx100.00</SPAN></TD>
-    <TD width="10%" ><SPAN  id="fieldTotal">xx1000.00</SPAN></TD>
-    <TD width="20%" > </TD>
-  </TR>
+  <tr > 
+    <td colspan="4" ><span >SALDO</span></td>
+    <td width="8%" ><span  id="fieldDebit">xx100.00</span></td>
+    <td width="10%" ><span  id="fieldCredit">xx100.00</span></td>
+    <td width="10%" ><span  id="fieldTotal">xx1000.00</span></td>
+    <td width="20%" > </td>
+  </tr>
 </div>

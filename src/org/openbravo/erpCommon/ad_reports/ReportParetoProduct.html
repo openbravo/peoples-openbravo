@@ -21,7 +21,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <TITLE>Pareto Report for Products</TITLE>
+    <title>Pareto Report for Products</title>
     <link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS" />
 
@@ -50,7 +50,7 @@
       <script type="text/javascript">
         dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
       </script>
-<SCRIPT language="JavaScript" type="text/javascript">
+<script language="JavaScript" type="text/javascript">
 function validate()
 {
 	var frm=document.frmMain;
@@ -63,22 +63,22 @@ function validate()
 }
 function onloadFunctions() {
 }
-</SCRIPT>	  
+</script>	  
 
-<SCRIPT language="JavaScript" type="text/javascript">
+<script language="JavaScript" type="text/javascript">
 function refreshWarehouses() {
   var cmbOrganization = document.frmMain.inpadOrgId;  
   var cmbWarehouse = document.frmMain.inpmWarehouseId;  
   changeComboData(cmbWarehouse, arrWarehouse, cmbOrganization.options[cmbOrganization.selectedIndex].value, true);  
   return true;
 }
-</SCRIPT>
+</script>
 
 <script language="JavaScript" type="text/javascript" id="paramWarehouseArray">
 var arrWarehouse=null;
 </script>
 
-    <SCRIPT language="JavaScript" type="text/javascript">
+    <script language="JavaScript" type="text/javascript">
     function onLoadDo(){
         this.windowTables = new Array(
           new windowTableId('client', 'buttonSearch'),
@@ -101,42 +101,42 @@ var arrWarehouse=null;
     function onResizeDo(){
         resizeArea();
     }
-    </SCRIPT>
+    </script>
 
-</HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
-<FORM method="POST" action="ReportParetoProduct.html" name="frmMain" id="form">
-  <INPUT type="hidden" name="Command"></INPUT>
-  <INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>
-  <INPUT type="hidden" name="inpLastFieldChanged" id="paramChanged" value=""></INPUT>
-  <INPUT type="hidden" name="inpKey" value="" id="paramKey"></INPUT>
-  <INPUT type="hidden" name="inpwindowId" value="" id="window"></INPUT>
-  <INPUT type="hidden" name="inpTabId" value="" id="tab"></INPUT>
+</head>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
+<form method="post" action="ReportParetoProduct.html" name="frmMain" id="form">
+  <input type="hidden" name="Command"></input>
+  <input type="hidden" name="IsPopUpCall" value="1"></input>
+  <input type="hidden" name="inpLastFieldChanged" id="paramChanged" value=""></input>
+  <input type="hidden" name="inpKey" value="" id="paramKey"></input>
+  <input type="hidden" name="inpwindowId" value="" id="window"></input>
+  <input type="hidden" name="inpTabId" value="" id="tab"></input>
     
   <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
     <tr>
       <td valign="top" id="tdleftTabs"></td>
       <td valign="top">
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Left">
-          <TR><TD class="Main_NavBar_bg_left" id="tdleftSeparator"></TD></TR>
-          <TR><TD class="Main_ToolBar_bg_left" valign="top"></TD></TR>
-          <TR><TD class="Main_Client_bg_left"></TD></TR>
-          <TR><TD class="Main_Bottom_bg_left"></TD></TR>
-        </TABLE>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Left">
+          <tr><td class="Main_NavBar_bg_left" id="tdleftSeparator"></td></tr>
+          <tr><td class="Main_ToolBar_bg_left" valign="top"></td></tr>
+          <tr><td class="Main_Client_bg_left"></td></tr>
+          <tr><td class="Main_Bottom_bg_left"></td></tr>
+        </table>
       </td>
       <td valign="top">
         <div class="Main_ContentPane_NavBar" id="tdtopButtons"></div>
         <div class="Main_ContentPane_ToolBar" id="paramToolBar"></div>
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_TabPane" id="tdtopTabs">
-          <TR id="paramParentTabContainer"></TR>
-          <TR id="paramMainTabContainer"></TR>
-          <TR id="paramChildTabContainer"></TR>
-        </TABLE>
-        <DIV class="Main_ContentPane_Client" style="overflow: auto; display: none; border-bottom: 0px none;" id="client">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_TabPane" id="tdtopTabs">
+          <tr id="paramParentTabContainer"></tr>
+          <tr id="paramMainTabContainer"></tr>
+          <tr id="paramChildTabContainer"></tr>
+        </table>
+        <div class="Main_ContentPane_Client" style="overflow: auto; display: none; border-bottom: 0px none;" id="client">
 
           <!-- MessageBox BEGIN -->
           <table cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxyy">
-            <TBODY>
+            <tbody>
             <tr class="MessageBox_TopMargin">
               <td class="MessageBox_LeftMargin"></td>
               <td></td>
@@ -147,7 +147,7 @@ var arrWarehouse=null;
               <td>
 
                 <table cellpadding="0" cellspacing="0" style="width: 100%;">
-                  <TBODY>
+                  <tbody>
                   <tr>
                     <td>
                       <div class="MessageBox_TopLeft"></div>
@@ -156,12 +156,12 @@ var arrWarehouse=null;
                     <td class="MessageBox_bg">
 
                       <table class="MessageBox_Top">
-                      <TBODY>
+                      <tbody>
                         <tr>
                           <td>
                             <span>
                             <table cellpadding="0" cellspacing="0" class="MessageBox_Body_ContentCell">
-                              <TBODY>
+                              <tbody>
                               <tr>
                                 <td class="MessageBox_Icon_ContentCell">
                                   <div class="MessageBox_Icon"></div>
@@ -178,12 +178,12 @@ var arrWarehouse=null;
                                   </span>
                                 </td>
                               </tr>
-                              </TBODY>
+                              </tbody>
                             </table>
                             </span>
                           </td>
                         </tr>
-                        </TBODY>
+                        </tbody>
                       </table>
 
                     </td>
@@ -204,7 +204,7 @@ var arrWarehouse=null;
                     <td class="MessageBox_Bottom">
                     </td>
                   </tr>
-                  </TBODY>
+                  </tbody>
                 </table>
 
               </td>
@@ -215,11 +215,11 @@ var arrWarehouse=null;
               <td></td>
               <td class="MessageBox_RightMargin"></td>
             </tr>
-            </TBODY>
+            </tbody>
           </table>
 		  <!-- MessageBox END -->
           <!-- USER CONTROLS BEGIN -->
-          <TABLE class="Main_Client_TableEdition">
+          <table class="Main_Client_TableEdition">
             <tr>
               <td class="TableEdition_OneCell_width"></td>
               <td class="TableEdition_OneCell_width"></td>
@@ -228,7 +228,7 @@ var arrWarehouse=null;
               <td class="TableEdition_OneCell_width"></td>
               <td class="TableEdition_OneCell_width"></td>
             </tr>
-            <TR>
+            <tr>
               <td colspan="6">
                 <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
                 <tbody>
@@ -243,30 +243,30 @@ var arrWarehouse=null;
                 </tbody>
                 </table>
               </td>
-            </TR>
-            <TR>
-            <TD class="TitleCell"><SPAN class="LabelText">Organization</SPAN></TD>		
-              <TD class="Combo_ContentCell" colspan="2"> 
-                <SELECT name="inpadOrgId"  id="inpadOrgId" class="Combo Combo_TwoCells_width" onchange="refreshWarehouses();logChanges(this);return true;">
-                  <OPTION value=""> <DIV id="reportAD_Org_ID"></DIV></OPTION>
-                </SELECT>
-              </TD>
-              <TD class="TitleCell"><SPAN class="LabelText">Currency</SPAN></TD>
-                  <TD class="Combo_ContentCell">
-  		     		<SELECT name="inpCurrencyId" id="inpCurrencyId" class="ComboKey Combo_OneCell_width" required="true">
-     		      	<OPTION value=""><DIV id="reportC_Currency_ID"></DIV></OPTION>
-   		     		</SELECT>
-	   		  </TD>
-            </TR>
-            <TR>            	   		  
-	      	<TD class="TitleCell"> <SPAN class="LabelText">Warehouse</SPAN></TD>
-             <TD class="Combo_ContentCell" colspan="2">
-                 <SELECT name="inpmWarehouseId" id="inpmWarehouseId" class="Combo Combo_TwoCells_width" onchange="logChanges(this);return true;">
-                  <OPTION value=""> <DIV id="reportM_Warehouse_ID"></DIV></OPTION>
-                </SELECT>
-            </TD>
-            </TR>
-			<TR>
+            </tr>
+            <tr>
+            <td class="TitleCell"><span class="LabelText">Organization</span></td>		
+              <td class="Combo_ContentCell" colspan="2"> 
+                <select name="inpadOrgId"  id="inpadOrgId" class="Combo Combo_TwoCells_width" onchange="refreshWarehouses();logChanges(this);return true;">
+                  <option value=""> <div id="reportAD_Org_ID"></div></option>
+                </select>
+              </td>
+              <td class="TitleCell"><span class="LabelText">Currency</span></td>
+                  <td class="Combo_ContentCell">
+  		     		<select name="inpCurrencyId" id="inpCurrencyId" class="ComboKey Combo_OneCell_width" required="true">
+     		      	<option value=""><div id="reportC_Currency_ID"></div></option>
+   		     		</select>
+	   		  </td>
+            </tr>
+            <tr>            	   		  
+	      	<td class="TitleCell"> <span class="LabelText">Warehouse</span></td>
+             <td class="Combo_ContentCell" colspan="2">
+                 <select name="inpmWarehouseId" id="inpmWarehouseId" class="Combo Combo_TwoCells_width" onchange="logChanges(this);return true;">
+                  <option value=""> <div id="reportM_Warehouse_ID"></div></option>
+                </select>
+            </td>
+            </tr>
+			<tr>
               <td colspan="6">
                 <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
                 <tbody>
@@ -281,11 +281,11 @@ var arrWarehouse=null;
                 </tbody>
                 </table>
               </td>
-            </TR>
+            </tr>
 
             <tr>
-              <TD class="TitleCell"></TD>
-              <TD class="Button_CenterAlign_ContentCell">
+              <td class="TitleCell"></td>
+              <td class="Button_CenterAlign_ContentCell">
                 <div>
                   <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='View Results'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;"onclick="submitCommandForm('FIND', false, null, 'ReportParetoProduct.html', '_self', null, false);return false;" id="buttonSearch">
                   <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Search';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
@@ -297,65 +297,65 @@ var arrWarehouse=null;
                   </table>
                   </a>
                 </div>
-              </TD>
-              <TD class="ContentCell"></TD>
-              <TD class="TitleCell"></TD>
-              <TD class="ContentCell"></TD>
-              <TD class="ContentCell"></TD>
-            </TR>
+              </td>
+              <td class="ContentCell"></td>
+              <td class="TitleCell"></td>
+              <td class="ContentCell"></td>
+              <td class="ContentCell"></td>
+            </tr>
 
-          </TABLE>
+          </table>
           <!-- OUTPUT -->
-		  <DIV id="sectionOrg">
-          <TABLE class="Main_Client_TableEdition">
-            <TR>
-              <TD colspan="6">
+		  <div id="sectionOrg">
+          <table class="Main_Client_TableEdition">
+            <tr>
+              <td colspan="6">
                 <div style="height:25px;" />
 				 
-                <TABLE cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;" id="selEliminar">
+                <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;" id="selEliminar">
 				
                     
-                    <TR class="DataGrid_Body_Row"> 
-                      <TH colspan="9" class="DataGrid_Header_Cell"><SPAN>Organization<span>: </span><SPAN id="fieldAdOrg">xxOrganization</SPAN></SPAN></TH>
-                    </TR>
-					  <DIV id="sectionPartner">
-                      <TR class="DataGrid_Body_Row"> 
-                        <TH class="DataGrid_Header_Cell">Search Key</TH>
-                        <TH class="DataGrid_Header_Cell">Name</TH>
-                        <TH class="DataGrid_Header_Cell">Quantity</TH>
-						<TH class="DataGrid_Header_Cell">Unit</TH>
-						<TH class="DataGrid_Header_Cell">Cost</TH>
-						<TH class="DataGrid_Header_Cell">Value</TH>
-						<TH class="DataGrid_Header_Cell">Percentage</TH>
-						<TH class="DataGrid_Header_Cell">Category</TH>
-                      </TR>                      					  
-	                  <DIV id="sectionDetail"> 
-	                    <TR class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx">
-	                      <TD width="10%" class="DataGrid_Body_Cell" id="fieldSearchKey">xxName</TD>
-	                      <TD width="40%"  class="DataGrid_Body_Cell" id="fieldName">xxY</TD>
-						  <TD width="10%"  class="DataGrid_Body_Cell" id="fieldQty">xxY</TD>
-	                      <TD width="10%"  class="DataGrid_Body_Cell" id="fieldUnit">xxY</TD>
-	                      <TD width="8%"  class="DataGrid_Body_Cell" id="fieldCost">xxY</TD>
-						  <TD width="8%"  class="DataGrid_Body_Cell" id="fieldValue">xxY</TD>
-	                      <TD width="7%"  class="DataGrid_Body_Cell" id="fieldPercentage">xxY</TD>
-                          <TD width="7%"  class="DataGrid_Body_Cell" id="fieldIsabc">xxY</TD>
-	                    </TR>
-	                  </DIV>
-                    </DIV>						
+                    <tr class="DataGrid_Body_Row"> 
+                      <th colspan="9" class="DataGrid_Header_Cell"><span>Organization<span>: </span><span id="fieldAdOrg">xxOrganization</span></span></th>
+                    </tr>
+					  <div id="sectionPartner">
+                      <tr class="DataGrid_Body_Row"> 
+                        <th class="DataGrid_Header_Cell">Search Key</th>
+                        <th class="DataGrid_Header_Cell">Name</th>
+                        <th class="DataGrid_Header_Cell">Quantity</th>
+						<th class="DataGrid_Header_Cell">Unit</th>
+						<th class="DataGrid_Header_Cell">Cost</th>
+						<th class="DataGrid_Header_Cell">Value</th>
+						<th class="DataGrid_Header_Cell">Percentage</th>
+						<th class="DataGrid_Header_Cell">Category</th>
+                      </tr>                      					  
+	                  <div id="sectionDetail"> 
+	                    <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx">
+	                      <td width="10%" class="DataGrid_Body_Cell" id="fieldSearchKey">xxName</td>
+	                      <td width="40%"  class="DataGrid_Body_Cell" id="fieldName">xxY</td>
+						  <td width="10%"  class="DataGrid_Body_Cell" id="fieldQty">xxY</td>
+	                      <td width="10%"  class="DataGrid_Body_Cell" id="fieldUnit">xxY</td>
+	                      <td width="8%"  class="DataGrid_Body_Cell" id="fieldCost">xxY</td>
+						  <td width="8%"  class="DataGrid_Body_Cell" id="fieldValue">xxY</td>
+	                      <td width="7%"  class="DataGrid_Body_Cell" id="fieldPercentage">xxY</td>
+                          <td width="7%"  class="DataGrid_Body_Cell" id="fieldIsabc">xxY</td>
+	                    </tr>
+	                  </div>
+                    </div>						
                   
-                </TABLE>
+                </table>
 			  				
                 <!-- OUTPUT END -->
               <!-- USER CONTROLS END -->
 			  
-              </TD>
-            </TR>
-          </TABLE>
-		  </DIV>
+              </td>
+            </tr>
+          </table>
+		  </div>
         </div>
 		    <div >
-            <DIV class="Main_ContentPane_Client" style="overflow: auto; border-top: 0px none;" id="tdbottomButtons">
-              <TABLE class="Main_Client_TableEdition" cellspacing="0" cellpadding="0" style="width: 435px">
+            <div class="Main_ContentPane_Client" style="overflow: auto; border-top: 0px none;" id="tdbottomButtons">
+              <table class="Main_Client_TableEdition" cellspacing="0" cellpadding="0" style="width: 435px">
                 <tr>
                   <td class="TableEdition_OneCell_width"></td>
                   <td class="TableEdition_OneCell_width"></td>
@@ -363,9 +363,9 @@ var arrWarehouse=null;
 
                 </tr>
 
-                <TR>
-                  <TD></TD>
-                  <TD class="Button_LeftAlign_ContentCell">
+                <tr>
+                  <td></td>
+                  <td class="Button_LeftAlign_ContentCell">
                     <div>
                         <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Updates ABC Org specific property'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('GENERATE', true, null, null, null, true, true);return false;" id="buttonUpdateABC">
                         <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Updates ABC Org specific property';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
@@ -377,27 +377,27 @@ var arrWarehouse=null;
                       </table>
                       </a>
                     </div>
-                  </TD>
-                  <TD class="TitleCell"></TD>
-                  <TD class="ContentCell"></TD>
-                  <TD class="TitleCell"></TD>
-                  <TD class="ContentCell"></TD>
-                </TR>
-              </TABLE>
+                  </td>
+                  <td class="TitleCell"></td>
+                  <td class="ContentCell"></td>
+                  <td class="TitleCell"></td>
+                  <td class="ContentCell"></td>
+                </tr>
+              </table>
             </div>
 
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Menu_ContentPane_Bottom" id="tdbottomSeparator">
-          <TR>
-            <TD class="Main_Bottom_bg"><IMG src="../../../../../web/images/blank.gif" border="0"></TD>
-          </TR>
-        </TABLE></td>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Menu_ContentPane_Bottom" id="tdbottomSeparator">
+          <tr>
+            <td class="Main_Bottom_bg"><img src="../../../../../web/images/blank.gif" border="0"></td>
+          </tr>
+        </table></td>
       <td valign="top">
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Right" id="tdrightSeparator">
-          <TR><TD class="Main_NavBar_bg_right"></TD></TR>
-          <TR><TD class="Main_ToolBar_bg_right" valign="top"></TD></TR>
-          <TR><TD class="Main_Client_bg_right"></TD></TR>
-          <TR><TD class="Main_Bottom_bg_right"></TD></TR>
-        </TABLE>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Right" id="tdrightSeparator">
+          <tr><td class="Main_NavBar_bg_right"></td></tr>
+          <tr><td class="Main_ToolBar_bg_right" valign="top"></td></tr>
+          <tr><td class="Main_Client_bg_right"></td></tr>
+          <tr><td class="Main_Bottom_bg_right"></td></tr>
+        </table>
       </td>
     </tr>
   </table>

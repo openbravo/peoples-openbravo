@@ -27,7 +27,7 @@ public class WadControlLabelBuilder {
   
   private String createStartSpan(String columName) {
     String labelClassId = labelControl.getColumnName() + "_lbl";
-    String result = "<SPAN class=\"LabelText\" id=\"" + labelClassId + "\">";
+    String result = "<span class=\"LabelText\" id=\"" + labelClassId + "\">";
     return result;
   }
   
@@ -35,7 +35,7 @@ public class WadControlLabelBuilder {
     StringBuffer result = new StringBuffer();
     createBasicLabelTag();
     if (labelControl.isLinkable()) {
-      result.append("<A class=\"LabelLink\" href=\"#\" onclick=\"sendDirectLink(document.frmMain, '");
+      result.append("<a class=\"LabelLink\" href=\"#\" onclick=\"sendDirectLink(document.frmMain, '");
       result.append(labelControl.getColumnName());
       result.append("', document.frmMain.");
       result.append(labelControl.getKeyColumnName());
@@ -45,7 +45,7 @@ public class WadControlLabelBuilder {
       result.append(labelControl.getTableId());
       result.append("', '_self', true);return false;\" onmouseover=\"return true;\" onmouseout=\"return true;\" id=\"fieldLink\">");
       result.append(getBasicLabelText());
-      result.append("</A>");
+      result.append("</a>");
     } else {
       result.append(getBasicLabelText());
     }
@@ -53,12 +53,12 @@ public class WadControlLabelBuilder {
   }
   
   private String closeLabelSpan() {
-     return "&nbsp;</SPAN>";
+     return "&nbsp;</span>";
   }
   
   private void createBasicLabelTag() {
     StringBuffer labelBuffer = new StringBuffer();
-    labelBuffer.append("<SPAN id=\"" + labelControl.getLabelId() + "\">" + labelControl.getLabelPlaceHolderText() + "</SPAN>");
+    labelBuffer.append("<span id=\"" + labelControl.getLabelId() + "\">" + labelControl.getLabelPlaceHolderText() + "</span>");
     
     basicLabel = labelBuffer.toString();
   }

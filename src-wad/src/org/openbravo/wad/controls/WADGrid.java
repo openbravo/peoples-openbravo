@@ -113,7 +113,7 @@ public class WADGrid extends WADControl {
 
   public String toString() {
     StringBuffer text = new StringBuffer();
-    text.append("<TABLE width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" class=\"Main_Client_TableRelation\" id=\"grid_table\"><TR><TD>");
+    text.append("<table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" class=\"Main_Client_TableRelation\" id=\"grid_table\"><tr><td>");
     text.append("<div id=\"").append(getData("id")).append("\" dojoType=\"openbravo.widget.DataGrid\"\n");
     text.append("      structureUrl=\"../utility/DataGrid.html?Command=STRUCTURE&inpadTabId=");
     text.append(getData("AD_Tab_ID")).append("&inpadWindowId=");
@@ -138,7 +138,7 @@ public class WADGrid extends WADControl {
     text.append("      percentageWidthRelativeToId=\"client\" \n");
     text.append("      preventCache=\"true\" useCache=\"true\" cacheContent=\"false\">\n");
     text.append("    </div>\n");
-    text.append("</TD></TR></TABLE>");
+    text.append("</td></tr></table>");
     return text.toString();
   }
 

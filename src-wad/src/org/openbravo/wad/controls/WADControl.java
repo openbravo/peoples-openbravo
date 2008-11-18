@@ -141,6 +141,12 @@ public class WADControl {
     text = text.replace("</BODY>", "");
     text = text.replace("</HTML>", "");
     text = text.replace("</HEAD>", "");
+    text = text.replace("<html>", "");
+    text = text.replace("<head>", "");
+    text = text.replace("<body>", "");
+    text = text.replace("</body>", "");
+    text = text.replace("</html>", "");
+    text = text.replace("</head>", "");
     return text;
   }
   

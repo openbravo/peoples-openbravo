@@ -22,7 +22,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-<TITLE>Generate Invoices manual</TITLE>
+<title>Generate Invoices manual</title>
     <link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS" />
      
@@ -52,11 +52,11 @@
         dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
       </script>
 
-<SCRIPT language="JavaScript" type="text/javascript">
+<script language="JavaScript" type="text/javascript">
 function onloadFunctions() {
 }
-</SCRIPT>
-	<SCRIPT language="JavaScript" type="text/javascript">
+</script>
+	<script language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
 		  new windowTableId('client')
@@ -78,34 +78,34 @@ function onloadFunctions() {
 	function onResizeDo(){
 		resizeArea();
 	}
-	</SCRIPT>
-</HEAD>
-    <BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
+	</script>
+</head>
+    <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
 
-<FORM method="POST" action="ABCproduct.html" name="frmMain" id="form">
-  <INPUT type="hidden" name="Command"></INPUT>
+<form method="post" action="ABCproduct.html" name="frmMain" id="form">
+  <input type="hidden" name="Command"></input>
        <input type="hidden" name="Command" /> <input type="hidden" name="inpLastFieldChanged" value="" />
 
   <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
     <tr>
       <td valign="top" id="tdleftTabs"></td>
       <td valign="top">
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Left">
-          <TR><TD class="Main_NavBar_bg_left" id="tdleftSeparator"></TD></TR>
-          <TR><TD class="Main_ToolBar_bg_left" valign="top"></TD></TR>
-          <TR><TD class="Main_Client_bg_left"></TD></TR>
-          <TR><TD class="Main_Bottom_bg_left"></TD></TR>
-        </TABLE>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Left">
+          <tr><td class="Main_NavBar_bg_left" id="tdleftSeparator"></td></tr>
+          <tr><td class="Main_ToolBar_bg_left" valign="top"></td></tr>
+          <tr><td class="Main_Client_bg_left"></td></tr>
+          <tr><td class="Main_Bottom_bg_left"></td></tr>
+        </table>
       </td>
       <td valign="top">
         <div class="Main_ContentPane_NavBar" id="tdtopButtons"></div>
         <div class="Main_ContentPane_ToolBar" id="paramToolBar"></div>
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_TabPane" id="tdtopTabs">
-          <TR id="paramParentTabContainer"></TR>
-          <TR id="paramMainTabContainer"></TR>
-          <TR id="paramChildTabContainer"></TR>
-        </TABLE>
-        <DIV class="Main_ContentPane_Client" style="overflow: auto; display: none;" id="client">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_TabPane" id="tdtopTabs">
+          <tr id="paramParentTabContainer"></tr>
+          <tr id="paramMainTabContainer"></tr>
+          <tr id="paramChildTabContainer"></tr>
+        </table>
+        <div class="Main_ContentPane_Client" style="overflow: auto; display: none;" id="client">
                 <table class="dojoTabContainer" border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
                   <tr>
                     <td>
@@ -115,7 +115,7 @@ function onloadFunctions() {
                             <!-- MessageBox -->
 
                             <table cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxyy">
-                              <TBODY>
+                              <tbody>
                               <tr class="MessageBox_TopMargin">
                                 <td class="MessageBox_LeftMargin"></td>
                                 <td></td>
@@ -126,7 +126,7 @@ function onloadFunctions() {
                                 <td>
 
                                   <table cellpadding="0" cellspacing="0" style="width: 100%;">
-                                    <TBODY>
+                                    <tbody>
                                     <tr>
                                       <td>
                                         <div class="MessageBox_TopLeft"></div>
@@ -135,12 +135,12 @@ function onloadFunctions() {
                                       <td class="MessageBox_bg">
 
                                         <table class="MessageBox_Top">
-                                        <TBODY>
+                                        <tbody>
                                           <tr>
                                             <td>
                                               <span>
                                               <table cellpadding="0" cellspacing="0" class="MessageBox_Body_ContentCell">
-                                                <TBODY>
+                                                <tbody>
                                                 <tr>
                                                   <td class="MessageBox_Icon_ContentCell">
                                                     <div class="MessageBox_Icon"></div>
@@ -157,12 +157,12 @@ function onloadFunctions() {
                                                     </span>
                                                   </td>
                                                 </tr>
-                                                </TBODY>
+                                                </tbody>
                                               </table>
                                               </span>
                                             </td>
                                           </tr>
-                                          </TBODY>
+                                          </tbody>
                                         </table>
 
                                       </td>
@@ -183,7 +183,7 @@ function onloadFunctions() {
                                       <td class="MessageBox_Bottom">
                                       </td>
                                     </tr>
-                                    </TBODY>
+                                    </tbody>
                                   </table>
 
                                 </td>
@@ -194,71 +194,71 @@ function onloadFunctions() {
                                 <td></td>
                                 <td class="MessageBox_RightMargin"></td>
                               </tr>
-                              </TBODY>
+                              </tbody>
                             </table>
                             <!-- USER CONTROLS -->
-  <TABLE width="90%" border="0">
-    <TR> 
-      <TD width="13%" > <SPAN >From</SPAN></TD>
-      <TD width="13%"> <INPUT type="text" name="inpFrom" id="paramFrom" size="10" maxlength="10" value=""  onkeyup="auto_complete_date(this);return true;"></INPUT> 
-        <A href="#" onclick="showCalendar('frmMain.inpFrom', document.frmMain.inpFrom.value, false);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Show calendar';return true;" > 
-        <img width="16" height="16" alt="Calendar" title="Calendar" border="0" src="../../../../../web/images/BtnCal.gif" id="buttonCalendar"></IMG></A></TD>
-      <TD width="9%" > <SPAN >To</SPAN></TD>
-      <TD width="15%" > <INPUT type="text" name="inpTo" id="paramTo" value="" size="10" maxlength="10"  onkeyup="auto_complete_date(this);return true;"></INPUT> 
-        <A href="#" onclick="showCalendar('frmMain.inpTo', document.frmMain.inpTo.value, false);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Show calendar';return true;" > 
-        <img width="16" height="16" alt="Calendar" title="Calendar" border="0" src="../../../../../web/images/BtnCal.gif" id="buttonCalendar"></IMG></A></TD>
-      <TD width="19%" > <SPAN >Product Category</SPAN>&nbsp;</TD>
-      <TD width="23%"> <SELECT name="inpCategory" id="inpCategory">
-          <OPTION value=""> <DIV id="reportCategory"></DIV></OPTION>
-        </SELECT></TD>
-      <TD width="8%"> <A href="#" onclick="submitCommandForm('FIND');return false;" onmouseover="window.status='Results';return true;" onmouseout="window.status='';return true;" > 
-        <img width="16" height="16" src="../../../../../web/images/Find.jpg" alt="Results" title="Results" border="0" id="buttonResults"></IMG></A></TD>
-    </TR>
-  </TABLE>
+  <table width="90%" border="0">
+    <tr> 
+      <td width="13%" > <span >From</span></td>
+      <td width="13%"> <input type="text" name="inpFrom" id="paramFrom" size="10" maxlength="10" value=""  onkeyup="auto_complete_date(this);return true;"></input> 
+        <a href="#" onclick="showCalendar('frmMain.inpFrom', document.frmMain.inpFrom.value, false);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Show calendar';return true;" > 
+        <img width="16" height="16" alt="Calendar" title="Calendar" border="0" src="../../../../../web/images/BtnCal.gif" id="buttonCalendar"></img></a></td>
+      <td width="9%" > <span >To</span></td>
+      <td width="15%" > <input type="text" name="inpTo" id="paramTo" value="" size="10" maxlength="10"  onkeyup="auto_complete_date(this);return true;"></input> 
+        <a href="#" onclick="showCalendar('frmMain.inpTo', document.frmMain.inpTo.value, false);return false;" onmouseout="window.status='';return true;" onmouseover="window.status='Show calendar';return true;" > 
+        <img width="16" height="16" alt="Calendar" title="Calendar" border="0" src="../../../../../web/images/BtnCal.gif" id="buttonCalendar"></img></a></td>
+      <td width="19%" > <span >Product Category</span>&nbsp;</td>
+      <td width="23%"> <select name="inpCategory" id="inpCategory">
+          <option value=""> <div id="reportCategory"></div></option>
+        </select></td>
+      <td width="8%"> <a href="#" onclick="submitCommandForm('FIND');return false;" onmouseover="window.status='Results';return true;" onmouseout="window.status='';return true;" > 
+        <img width="16" height="16" src="../../../../../web/images/Find.jpg" alt="Results" title="Results" border="0" id="buttonResults"></img></a></td>
+    </tr>
+  </table>
   <HR></HR>
-  <DIV id="selEliminar"> 
-    <TABLE width="70%">
-      <TR  border="1" cellspacing="0" cellpadding="0" width="100%"> 
-        <TD colspan="4">&nbsp;</TD>
-      </TR>
-      <TR class="Border TableDetailHeader" border="1" cellspacing="0" cellpadding="0" width="100%"> 
-        <TD width="41%" >PRODUCT</TD> 
-        <TD width="25%" >QUANTITY</TD> 
-        <TD width="15%" >MEDIUM PRICE</TD> 
-        <TD width="19%" >AMOUNT</TD> 
-      </TR>
-      <DIV id="sectionDetail"> 
-        <TR  class="Border TableDetailRowEven" border="1" cellspacing="0" cellpadding="0" width="100%"> 
-          <TD width="41%"  id="fieldProducto">xxFortrac</TD>
-          <TD width="25%"  id="fieldCantidad">xx10<SPAN>&nbsp;</SPAN> 
-            <SPAN id="fieldUnidad">xxm2</SPAN></TD>
-          <TD width="15%"  id="fieldPrecioMedio">xx77<SPAN>&nbsp;&euro;</SPAN></TD>
-          <TD width="19%"  id="fieldImporte">xx10002565<SPAN>&nbsp;&euro;</SPAN></TD>
-        </TR>
-      </DIV>
-    </TABLE>
-  </DIV>
+  <div id="selEliminar"> 
+    <table width="70%">
+      <tr  border="1" cellspacing="0" cellpadding="0" width="100%"> 
+        <td colspan="4">&nbsp;</td>
+      </tr>
+      <tr class="Border TableDetailHeader" border="1" cellspacing="0" cellpadding="0" width="100%"> 
+        <td width="41%" >PRODUCT</td> 
+        <td width="25%" >QUANTITY</td> 
+        <td width="15%" >MEDIUM PRICE</td> 
+        <td width="19%" >AMOUNT</td> 
+      </tr>
+      <div id="sectionDetail"> 
+        <tr  class="Border TableDetailRowEven" border="1" cellspacing="0" cellpadding="0" width="100%"> 
+          <td width="41%"  id="fieldProducto">xxFortrac</td>
+          <td width="25%"  id="fieldCantidad">xx10<span>&nbsp;</span> 
+            <span id="fieldUnidad">xxm2</span></td>
+          <td width="15%"  id="fieldPrecioMedio">xx77<span>&nbsp;&euro;</span></td>
+          <td width="19%"  id="fieldImporte">xx10002565<span>&nbsp;&euro;</span></td>
+        </tr>
+      </div>
+    </table>
+  </div>
 
                       <!-- USER CONTROLS -->
-                </TD>
-              </TR>
-              </TABLE>
-              </TD>
-            </TR>
-          </TABLE>
+                </td>
+              </tr>
+              </table>
+              </td>
+            </tr>
+          </table>
         </div>
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Menu_ContentPane_Bottom" id="tdbottomSeparator">
-          <TR>
-            <TD class="Main_Bottom_bg"><IMG src="../../../../../web/images/blank.gif" border="0"></TD>
-          </TR>
-        </TABLE></td>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Menu_ContentPane_Bottom" id="tdbottomSeparator">
+          <tr>
+            <td class="Main_Bottom_bg"><img src="../../../../../web/images/blank.gif" border="0"></td>
+          </tr>
+        </table></td>
       <td valign="top">
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Right" id="tdrightSeparator">
-          <TR><TD class="Main_NavBar_bg_right"></TD></TR>
-          <TR><TD class="Main_ToolBar_bg_right" valign="top"></TD></TR>
-          <TR><TD class="Main_Client_bg_right"></TD></TR>
-          <TR><TD class="Main_Bottom_bg_right"></TD></TR>
-        </TABLE>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Right" id="tdrightSeparator">
+          <tr><td class="Main_NavBar_bg_right"></td></tr>
+          <tr><td class="Main_ToolBar_bg_right" valign="top"></td></tr>
+          <tr><td class="Main_Client_bg_right"></td></tr>
+          <tr><td class="Main_Bottom_bg_right"></td></tr>
+        </table>
       </td>
     </tr>
   </table>

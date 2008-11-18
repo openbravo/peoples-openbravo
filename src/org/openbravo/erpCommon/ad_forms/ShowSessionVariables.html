@@ -19,29 +19,29 @@
  ************************************************************************
 -->
 <html xmlns="http://www.w3.org/1999/xhtml">
-<HEAD>
+<head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-<TITLE>Show Session</TITLE>
-<LINK rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon"/>
+<title>Show Session</title>
+<link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon"/>
 <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS"/>
 <script language="JavaScript" type="text/javascript" id="paramDirectory">
 var baseDirectory = "../../../../../web/";
 </script>
-<SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></SCRIPT>
+<script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
+<script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
 <script language="JavaScript" type="text/javascript" id="paramLanguage">
   var defaultLang = "en_US";
 </script>
 <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
-<SCRIPT language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></SCRIPT>
+<script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/jscalendar/lang/calendar-es.js" type="text/javascript" id="fieldCalendar"></script>
+<script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
-<SCRIPT language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></SCRIPT>
+<script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
 <script language="JavaScript" type="text/javascript" id="keyMap"></script>
@@ -49,7 +49,7 @@ var baseDirectory = "../../../../../web/";
       //all dojo.require above this line
       dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
 </script> 
-<SCRIPT language="JavaScript" type="text/javascript">
+<script language="JavaScript" type="text/javascript">
             
             function validate(action) {
                 var frm=document.frmMain;
@@ -65,8 +65,8 @@ var baseDirectory = "../../../../../web/";
 
 function onloadFunctions() {
 }
-</SCRIPT>
-	<SCRIPT language="JavaScript" type="text/javascript">
+</script>
+	<script language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
 		  new windowTableId('client', 'buttonSearch'),
@@ -89,29 +89,29 @@ function onloadFunctions() {
 	function onResizeDo(){
 		resizeArea();
 	}
-	</SCRIPT>
-</HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();" id="paramMessage">
-<FORM name="frmMain" method="post" action="ShowSessionVariables.html">
-              <INPUT type="hidden" name="Command"></INPUT>
-              <INPUT type="hidden" name="inpSessionValue"></INPUT>
+	</script>
+</head>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();" id="paramMessage">
+<form name="frmMain" method="post" action="ShowSessionVariables.html">
+              <input type="hidden" name="Command"></input>
+              <input type="hidden" name="inpSessionValue"></input>
   <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
     <tr>
       <td valign="top" id="tdleftTabs"></td>
       <td valign="top">
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Left">
-          <TR><TD class="Main_NavBar_bg_left" id="tdleftSeparator"></TD></TR>
-          <TR><TD class="Main_ToolBar_bg_left" valign="top"></TD></TR>
-          <TR><TD class="Main_Client_bg_left"></TD></TR>
-          <TR><TD class="Main_Bottom_bg_left"></TD></TR>
-        </TABLE>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Left">
+          <tr><td class="Main_NavBar_bg_left" id="tdleftSeparator"></td></tr>
+          <tr><td class="Main_ToolBar_bg_left" valign="top"></td></tr>
+          <tr><td class="Main_Client_bg_left"></td></tr>
+          <tr><td class="Main_Bottom_bg_left"></td></tr>
+        </table>
       </td>
       <td valign="top">
         <div class="Main_ContentPane_NavBar" id="tdtopButtons"></div>
         <div class="Main_ContentPane_ToolBar" id="paramToolBar"></div>
-       <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_TabPane" id="tdtopTabs">
-          <TR id="paramParentTabContainer"><td class="tabBackGroundInit"></td></TR>
-          <TR id="paramMainTabContainer"><td class="tabBackGroundInit">
+       <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_TabPane" id="tdtopTabs">
+          <tr id="paramParentTabContainer"><td class="tabBackGroundInit"></td></tr>
+          <tr id="paramMainTabContainer"><td class="tabBackGroundInit">
 
 		  <div>
 		  <span class="tabTitle">
@@ -129,11 +129,11 @@ function onloadFunctions() {
 		  <div class="marginLeft">
 		  </div>
 		</td>
-		</TR>
-          <TR id="paramChildTabContainer"><td class="tabTabbarBackGround"></td></TR>
-        </TABLE>
+		</tr>
+          <tr id="paramChildTabContainer"><td class="tabTabbarBackGround"></td></tr>
+        </table>
 
-        <DIV class="Main_ContentPane_Client" style="overflow: auto; display: none; border-bottom: 0px none;" id="client">
+        <div class="Main_ContentPane_Client" style="overflow: auto; display: none; border-bottom: 0px none;" id="client">
                 <table class="dojoTabContainer" border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
                   <tr>
                     <td>
@@ -143,7 +143,7 @@ function onloadFunctions() {
                             <!-- MessageBox -->
 
                             <table cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxyy">
-                              <TBODY>
+                              <tbody>
                               <tr class="MessageBox_TopMargin">
                                 <td class="MessageBox_LeftMargin"></td>
                                 <td></td>
@@ -154,7 +154,7 @@ function onloadFunctions() {
                                 <td>
 
                                   <table cellpadding="0" cellspacing="0" style="width: 100%;">
-                                    <TBODY>
+                                    <tbody>
                                     <tr>
                                       <td>
                                         <div class="MessageBox_TopLeft"></div>
@@ -163,12 +163,12 @@ function onloadFunctions() {
                                       <td class="MessageBox_bg">
 
                                         <table class="MessageBox_Top">
-                                        <TBODY>
+                                        <tbody>
                                           <tr>
                                             <td>
                                               <span>
                                               <table cellpadding="0" cellspacing="0" class="MessageBox_Body_ContentCell">
-                                                <TBODY>
+                                                <tbody>
                                                 <tr>
                                                   <td class="MessageBox_Icon_ContentCell">
                                                     <div class="MessageBox_Icon"></div>
@@ -185,12 +185,12 @@ function onloadFunctions() {
                                                     </span>
                                                   </td>
                                                 </tr>
-                                                </TBODY>
+                                                </tbody>
                                               </table>
                                               </span>
                                             </td>
                                           </tr>
-                                          </TBODY>
+                                          </tbody>
                                         </table>
 
                                       </td>
@@ -211,7 +211,7 @@ function onloadFunctions() {
                                       <td class="MessageBox_Bottom">
                                       </td>
                                     </tr>
-                                    </TBODY>
+                                    </tbody>
                                   </table>
 
                                 </td>
@@ -222,9 +222,9 @@ function onloadFunctions() {
                                 <td></td>
                                 <td class="MessageBox_RightMargin"></td>
                               </tr>
-                              </TBODY>
+                              </tbody>
                             </table>              <!-- USER CONTROLS -->
-              <TABLE class="Main_Client_TableEdition">
+              <table class="Main_Client_TableEdition">
                 <tr>
                   <td class="TableEdition_OneCell_width"></td>
                   <td class="TableEdition_OneCell_width"></td>
@@ -234,7 +234,7 @@ function onloadFunctions() {
                   <td class="TableEdition_OneCell_width"></td>
                 </tr>
 
-                <TR>
+                <tr>
                   <td colspan="6">
                     <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
                     <tbody>
@@ -249,41 +249,41 @@ function onloadFunctions() {
                     </tbody>
                     </table>
                   </td>
-                </TR>
+                </tr>
 
-                <TR>
-                  <TD class="TitleCell"> <SPAN class="LabelText">Window</SPAN></TD>
-                  <TD class="Combo_ContentCell" colspan="2"> <SELECT name="inpWindow" class="Combo Combo_TwoCelss_width" id="inpWindow">
-                      <OPTION value=""></OPTION><DIV id="sectionWindows_M">
-                      <OPTION value="" id="fieldWindow"></OPTION></DIV>
-                    </SELECT></TD>
-                  <TD class="TitleCell"></TD>
-                  <TD class="TitleCell"> <SPAN class="LabelText">is global window</SPAN></TD>
-                  <TD class="Radio_Check_ContentCell"> <INPUT type="checkbox" name="inpWindowGlobal" value="Y" id="fieldWindowGCheck"></INPUT></TD>
-                </TR>
+                <tr>
+                  <td class="TitleCell"> <span class="LabelText">Window</span></td>
+                  <td class="Combo_ContentCell" colspan="2"> <select name="inpWindow" class="Combo Combo_TwoCelss_width" id="inpWindow">
+                      <option value=""></option><div id="sectionWindows_M">
+                      <option value="" id="fieldWindow"></option></div>
+                    </select></td>
+                  <td class="TitleCell"></td>
+                  <td class="TitleCell"> <span class="LabelText">is global window</span></td>
+                  <td class="Radio_Check_ContentCell"> <input type="checkbox" name="inpWindowGlobal" value="Y" id="fieldWindowGCheck"></input></td>
+                </tr>
 
-                <TR>
-                  <TD class="TitleCell"> </TD>
-                  <TD class="Radio_Check_ContentCell"></TD>
-                  <TD class="TitleCell"> <SPAN class="LabelText"></SPAN></TD>
-                  <TD class="Radio_Check_ContentCell"></TD>                  
-                  <TD class="TitleCell"> <SPAN class="LabelText">is global</SPAN></TD>
-                  <TD class="Radio_Check_ContentCell"> <INPUT type="checkbox" name="inpGlobal" value="Y" id="fieldGlobalCheck"></INPUT></TD>
-                </TR>
+                <tr>
+                  <td class="TitleCell"> </td>
+                  <td class="Radio_Check_ContentCell"></td>
+                  <td class="TitleCell"> <span class="LabelText"></span></td>
+                  <td class="Radio_Check_ContentCell"></td>                  
+                  <td class="TitleCell"> <span class="LabelText">is global</span></td>
+                  <td class="Radio_Check_ContentCell"> <input type="checkbox" name="inpGlobal" value="Y" id="fieldGlobalCheck"></input></td>
+                </tr>
 
-                <TR>
-                  <TD class="TitleCell"> </TD>
-                  <TD class="Radio_Check_ContentCell"></TD>
-                  <TD class="TitleCell"> <SPAN class="LabelText"></SPAN></TD>
-                  <TD class="Radio_Check_ContentCell"></TD>
-                  <TD class="TitleCell"> <SPAN class="LabelText">is preference</SPAN></TD>
-                  <TD class="Radio_Check_ContentCell"><INPUT type="checkbox" name="inpPreference" value="Y" id="fieldPreferenceCheck"></INPUT></TD>
-                </TR>
+                <tr>
+                  <td class="TitleCell"> </td>
+                  <td class="Radio_Check_ContentCell"></td>
+                  <td class="TitleCell"> <span class="LabelText"></span></td>
+                  <td class="Radio_Check_ContentCell"></td>
+                  <td class="TitleCell"> <span class="LabelText">is preference</span></td>
+                  <td class="Radio_Check_ContentCell"><input type="checkbox" name="inpPreference" value="Y" id="fieldPreferenceCheck"></input></td>
+                </tr>
 
 
-                <TR>
-                  <TD class="TitleCell"></TD>
-                  <TD class="Button_LeftAlign_ContentCell">
+                <tr>
+                  <td class="TitleCell"></td>
+                  <td class="Button_LeftAlign_ContentCell">
                     <div>
                       <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='Search'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;"  onclick="submitCommandForm('FIND');return false;" id="buttonSearch">
                         <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Search';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
@@ -295,14 +295,14 @@ function onloadFunctions() {
                       </table>
                       </a>
                     </div>
-                  </TD>
-                  <TD class="TitleCell"> <SPAN class="LabelText"></SPAN></TD>
-                  <TD class="Radio_Check_ContentCell"></TD>
-                  <TD class="TitleCell"> <SPAN class="LabelText">is accounting</SPAN></TD>
-                  <TD class="Radio_Check_ContentCell"><INPUT type="checkbox" name="inpAccounting" value="Y" id="fieldAccountingCheck"></INPUT></TD>
-                </TR>
+                  </td>
+                  <td class="TitleCell"> <span class="LabelText"></span></td>
+                  <td class="Radio_Check_ContentCell"></td>
+                  <td class="TitleCell"> <span class="LabelText">is accounting</span></td>
+                  <td class="Radio_Check_ContentCell"><input type="checkbox" name="inpAccounting" value="Y" id="fieldAccountingCheck"></input></td>
+                </tr>
 
-                <TR>
+                <tr>
                   <td colspan="6">
                     <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
                     <tbody>
@@ -317,13 +317,13 @@ function onloadFunctions() {
                     </tbody>
                     </table>
                   </td>
-                </TR>
-              </TABLE>
-              <TABLE class="Main_Client_TableEdition">
-                <TR>
-                  <TD class="ContentCell" colspan="6">
-                    <TABLE cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
-                      <TR class="DataGrid_Body_Row"> 
+                </tr>
+              </table>
+              <table class="Main_Client_TableEdition">
+                <tr>
+                  <td class="ContentCell" colspan="6">
+                    <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
+                      <tr class="DataGrid_Body_Row"> 
                         <th width="3%" class="DataGrid_Header_LineNoCell">&nbsp;</th>
                         <th width="21%"class="DataGrid_Header_Cell">Name</th>
                         <th width="15%"class="DataGrid_Header_Cell">Value</th>
@@ -332,45 +332,45 @@ function onloadFunctions() {
                         <th width="7%"class="DataGrid_Header_Cell">Global</th>
                         <th width="10%"class="DataGrid_Header_Cell">Accounting</th>
                         <th width="23%"class="DataGrid_Header_Cell">Object</th>
-                      </TR>
-                      <DIV id="sectionDetail"> 
-                        <TR id="funcEvenOddRow" class="TableDetailRowxx"> 
-                          <TD class="DataGrid_Body_LineNoCell"> <A href="#" onclick="submitCommandFormParameter('REMOVE',frmMain.inpSessionValue,'xx');return false;" onmouseover="window.status='Delete';return true;" onmouseout="window.status='';return true;" id="fieldSessionValue"> 
-                            <img class="DataGrid_Header_icon_delete" border="0" src="../../../../../web/images/blank.gif" alt="Delete" title="Delete" id="buttonCancel"></IMG></A></TD>
-                          <TD class="DataGrid_Body_Cell" id="fieldName">&nbsp;</TD>
-                          <TD class="DataGrid_Body_Cell" id="fieldValue">&nbsp;</TD>
-                          <TD class="DataGrid_Body_Cell" id="fieldWindowName">&nbsp;</TD>
-                          <TD class="DataGrid_Body_Cell" id="fieldPreference">&nbsp;</TD>
-                          <TD class="DataGrid_Body_Cell" id="fieldGlobal">&nbsp;</TD>
-                          <TD class="DataGrid_Body_Cell" id="fieldAccounting">&nbsp;</TD>
-                          <TD class="DataGrid_Body_Cell" id="fieldCompleteName">&nbsp;</TD>
-                        </TR>
-                      </DIV>
-                    </TABLE>
-                  </TD>
-                </TR>
-              </TABLE>
+                      </tr>
+                      <div id="sectionDetail"> 
+                        <tr id="funcEvenOddRow" class="TableDetailRowxx"> 
+                          <td class="DataGrid_Body_LineNoCell"> <a href="#" onclick="submitCommandFormParameter('REMOVE',frmMain.inpSessionValue,'xx');return false;" onmouseover="window.status='Delete';return true;" onmouseout="window.status='';return true;" id="fieldSessionValue"> 
+                            <img class="DataGrid_Header_icon_delete" border="0" src="../../../../../web/images/blank.gif" alt="Delete" title="Delete" id="buttonCancel"></img></a></td>
+                          <td class="DataGrid_Body_Cell" id="fieldName">&nbsp;</td>
+                          <td class="DataGrid_Body_Cell" id="fieldValue">&nbsp;</td>
+                          <td class="DataGrid_Body_Cell" id="fieldWindowName">&nbsp;</td>
+                          <td class="DataGrid_Body_Cell" id="fieldPreference">&nbsp;</td>
+                          <td class="DataGrid_Body_Cell" id="fieldGlobal">&nbsp;</td>
+                          <td class="DataGrid_Body_Cell" id="fieldAccounting">&nbsp;</td>
+                          <td class="DataGrid_Body_Cell" id="fieldCompleteName">&nbsp;</td>
+                        </tr>
+                      </div>
+                    </table>
+                  </td>
+                </tr>
+              </table>
 
                       <!-- USER CONTROLS -->
-                </TD>
-              </TR>
-              </TABLE>
-              </TD>
-            </TR>
-          </TABLE>
+                </td>
+              </tr>
+              </table>
+              </td>
+            </tr>
+          </table>
         </div>
 			<div >
-              <DIV class="Main_ContentPane_Client" style="overflow: auto; border-top: 0px none;" id="tdbottomButtons">
+              <div class="Main_ContentPane_Client" style="overflow: auto; border-top: 0px none;" id="tdbottomButtons">
                 <table class="Main_Client_TableEdition" cellspacing="0" cellpadding="0" style="width: 435px">
                    <tr>
-                     <TD class="TitleCell"> <SPAN class="LabelText">Variable</SPAN></TD>
-                     <TD class="TextBox_ContentCell"><INPUT name="inpNombreVariable" type="text" id="inpNombreVariable2" class="dojoValidateValid TextBox_OneCell_width"></INPUT></TD>
-                     <TD class="TitleCell"> <SPAN class="LabelText">Value</SPAN></TD>
-                     <TD class="TextBox_ContentCell"><INPUT name="inpValorVariable" type="text" id="inpValorVariable2" class="dojoValidateValid TextBox_OneCell_width"></INPUT></TD>
+                     <td class="TitleCell"> <span class="LabelText">Variable</span></td>
+                     <td class="TextBox_ContentCell"><input name="inpNombreVariable" type="text" id="inpNombreVariable2" class="dojoValidateValid TextBox_OneCell_width"></input></td>
+                     <td class="TitleCell"> <span class="LabelText">Value</span></td>
+                     <td class="TextBox_ContentCell"><input name="inpValorVariable" type="text" id="inpValorVariable2" class="dojoValidateValid TextBox_OneCell_width"></input></td>
                     </tr>
-                    <TR>
-                    <TD></TD>
-                    <TD class="Button_LeftAlign_ContentCell">
+                    <tr>
+                    <td></td>
+                    <td class="Button_LeftAlign_ContentCell">
                         <div><a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='Process'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="submitCommandForm('SAVE_NEW', true, null, null, null, true);return false;" onmouseover="window.status='Save';return true;" id="buttonProcess">
                              <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Process';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                              <tr>
@@ -380,26 +380,26 @@ function onloadFunctions() {
                             </tr>
                             </table>
                        </a></div>
-                   </TD>
-                   </TR>
-                </TABLE>
+                   </td>
+                   </tr>
+                </table>
               </div>
 
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Menu_ContentPane_Bottom" id="tdbottomSeparator">
-          <TR>
-            <TD class="Main_Bottom_bg"><IMG src="../../../../../web/images/blank.gif" border="0"/></TD>
-          </TR>
-        </TABLE></td>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Menu_ContentPane_Bottom" id="tdbottomSeparator">
+          <tr>
+            <td class="Main_Bottom_bg"><img src="../../../../../web/images/blank.gif" border="0"/></td>
+          </tr>
+        </table></td>
       <td valign="top">
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Right" id="tdrightSeparator">
-          <TR><TD class="Main_NavBar_bg_right"></TD></TR>
-          <TR><TD class="Main_ToolBar_bg_right" valign="top"></TD></TR>
-          <TR><TD class="Main_Client_bg_right"></TD></TR>
-          <TR><TD class="Main_Bottom_bg_right"></TD></TR>
-        </TABLE>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Right" id="tdrightSeparator">
+          <tr><td class="Main_NavBar_bg_right"></td></tr>
+          <tr><td class="Main_ToolBar_bg_right" valign="top"></td></tr>
+          <tr><td class="Main_Client_bg_right"></td></tr>
+          <tr><td class="Main_Bottom_bg_right"></td></tr>
+        </table>
       </td>
     </tr>
   </table>
-</FORM>
-</BODY>
-</HTML>
+</form>
+</body>
+</html>

@@ -20,11 +20,11 @@
 
 
 <div id="sectionDetailTotals">
-  <TR class="DataGrid_Body_Row">
-    <TH width="10%" class="DataGrid_Header_Cell"><SPAN class="Bold">SALDO</SPAN></TH>
-    <TH width="10%" class="DataGrid_Header_Cell"><SPAN class="Bold" id="fieldDebit">xx100.00</SPAN></TH>
-    <TH width="10%" class="DataGrid_Header_Cell"><SPAN class="Bold" id="fieldCredit">xx100.00</SPAN></TH>
-    <TH width="15%" class="DataGrid_Header_Cell"><SPAN class="Bold" id="fieldTotal">xx1000.00</SPAN></TH>
-    <TH width="75%" class="DataGrid_Header_Cell"></TH>
-  </TR>
+  <tr class="DataGrid_Body_Row">
+    <th width="10%" class="DataGrid_Header_Cell"><span class="Bold">SALDO</span></th>
+    <th width="10%" class="DataGrid_Header_Cell"><span class="Bold" id="fieldDebit">xx100.00</span></th>
+    <th width="10%" class="DataGrid_Header_Cell"><span class="Bold" id="fieldCredit">xx100.00</span></th>
+    <th width="15%" class="DataGrid_Header_Cell"><span class="Bold" id="fieldTotal">xx1000.00</span></th>
+    <th width="75%" class="DataGrid_Header_Cell"></th>
+  </tr>
 </div>

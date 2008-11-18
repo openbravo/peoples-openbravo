@@ -17,11 +17,11 @@
  ************************************************************************
 -->
 
-<DIV id="sectionLine">
-  <TR>
-    <TD id="fieldLine" >xxShipment</TD>
-    <TD colspan="3" id="fieldProduct">xxOrigin</TD>
-    <TD id="fieldLineQty" >xx3</TD>
-    <TD> </TD>
-  </TR>
-</DIV>
+<div id="sectionLine">
+  <tr>
+    <td id="fieldLine" >xxShipment</td>
+    <td colspan="3" id="fieldProduct">xxOrigin</td>
+    <td id="fieldLineQty" >xx3</td>
+    <td> </td>
+  </tr>
+</div>

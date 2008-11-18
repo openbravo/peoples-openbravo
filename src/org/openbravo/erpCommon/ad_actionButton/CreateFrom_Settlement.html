@@ -138,7 +138,7 @@
   </script>
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
-<form id="form" method="POST" action="../ad_actionButton/CreateFrom.html" name="frmMain">
+<form id="form" method="post" action="../ad_actionButton/CreateFrom.html" name="frmMain">
 <input type="hidden" name="Command">
 <input type="hidden" name="IsPopUpCall" value="1"></input>
 <input type="hidden" name="inpKey" value="" id="paramKey"></input>
@@ -337,20 +337,20 @@
               <td></td>
               <td class="TitleCell"><span class="LabelText">Payment Rule</span></td>
               <td class="Combo_ContentCell">
-                <SELECT id="inppaymentrule" class="Combo Combo_OneCell_width" name="inppaymentrule">
+                <select id="inppaymentrule" class="Combo Combo_OneCell_width" name="inppaymentrule">
                   <option value=""></option><div id="reportPaymentRule"></div>
-                </SELECT>
+                </select>
               </td>
             </tr>
 
             <tr>
               <td class="TitleCell"><span class="LabelText">Receipt type</span></td>
               <td class="Combo_ContentCell">
-                <SELECT id="inpisreceipt" class="Combo Combo_OneCell_width" name="inpisreceipt">
+                <select id="inpisreceipt" class="Combo Combo_OneCell_width" name="inpisreceipt">
                   <option value="">All</option>
                   <option value="N" id="fieldIsReceiptPago">Payment</option>
                   <option value="Y" id="fieldIsReceiptCobro">Collection</option>
-                </SELECT>
+                </select>
               </td>
               <td class="TitleCell"><span class="LabelText">From Date planned</span></td>
               <td class="TextBox_btn_ContentCell">
@@ -470,10 +470,10 @@
             <tr>
               <td class="TitleCell"><span class="LabelText">Organization</span></td>
               <td class="Combo_ContentCell">
-                <SELECT name="inpadOrgId" class="Combo Combo_OneCell_width" id="inpadOrgId">
+                <select name="inpadOrgId" class="Combo Combo_OneCell_width" id="inpadOrgId">
                   <option value=""></option>
                   <div id="reportAD_Org_ID"></div>
-                </SELECT>
+                </select>
               </td>
               <td class="TitleCell"><span class="LabelText">Autocalculated</span></td>
               <td class="Radio_Check_ContentCell">

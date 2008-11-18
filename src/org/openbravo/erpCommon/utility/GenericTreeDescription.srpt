@@ -18,23 +18,23 @@
  ************************************************************************
 -->
 <FIELD_TMP>
-    <TD colspan="4">
-    <TABLE width="100%" border="0" cellspacing="0" cellpadding="0">
+    <td colspan="4">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr><td style="height: 5px;"></td></tr>
-    <TR>
-      <TD class="TitleCell" style="text-align: left;"><span class="PlainText_normal">Description</span></TD>
-      <TD></TD>
-      <TD></TD>
-      <TD></TD>
-      <TD></TD>
-    </TR>
+    <tr>
+      <td class="TitleCell" style="text-align: left;"><span class="PlainText_normal">Description</span></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
     <tr><td style="height: 5px;"></td></tr>
-    <TR>
-      <TD colspan="4">
+    <tr>
+      <td colspan="4">
         <div class="TextArea_FourCells_width" id="nodeDescription" style="height: xxpx; background-color: #FFFFFF; overflow: auto; border: #7F9DB9 1px solid;">
         </div>
-      </TD>
-    </TR>
-    </TABLE>
-  </TD>
+      </td>
+    </tr>
+    </table>
+  </td>
 </FIELD_TMP>

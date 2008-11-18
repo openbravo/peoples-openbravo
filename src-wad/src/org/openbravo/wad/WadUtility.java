@@ -486,7 +486,7 @@ public class WadUtility {
       html.append("<span id=\"" + efd.columnname + "_inp\">");
     }
     if (forcedAttribute) {
-      html.append("<INPUT type=\"hidden\"");
+      html.append("<input type=\"hidden\"");
       html.append(" name=\"inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp) + completeName);
       html.append("\" id=\"" + efd.columnname + completeID + "\" value=\"");
       if (!isdesigne) html.append("xxV");
@@ -494,7 +494,7 @@ public class WadUtility {
       else if (isIntegerNumber(efd.reference)) html.append("\" onkeydown=\"auto_complete_number(this, false, true);return true;");
       html.append("\"");
       html.append(classRequiredUpdateable(efd, isupdateable, tabIsReadOnly));
-      html.append(" ></INPUT>");
+      html.append(" ></input>");
     } else if ((efd.reference.equals("17") || efd.reference.equals("18") || efd.reference.equals("19")) && efd.isdisplayed.equals("Y")) { // List or Table or TableDir
       StringBuffer html1 = new StringBuffer();
       html.append("<select name=\"inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp) + completeName + "\"");
@@ -516,7 +516,7 @@ public class WadUtility {
       html.append("</select>");
       html.append(html1);
     } else if (efd.reference.equals("23")) {
-      html.append("<INPUT type=\"file\" ");
+      html.append("<input type=\"file\" ");
       html.append(" size=\"" + efd.displaysize + "\" ");
       html.append(classRequiredUpdateable(efd, isupdateable, tabIsReadOnly));
       html.append(" name=\"inp" + Sqlc.TransformaNombreColumna(efd.columnnameinp) + completeName);
@@ -530,7 +530,7 @@ public class WadUtility {
       if (!isupdateable || tabIsReadOnly) {
         html.append(" readonly=\"true\"");
       }
-      html.append("></INPUT>");
+      html.append("></input>");
     } else if (efd.reference.equals("32")) {
       if (!tabIsReadOnly && isupdateable) {
         html.append("<a href=\"#\" onclick=\"");
@@ -557,7 +557,7 @@ public class WadUtility {
       StringBuffer html1 = new StringBuffer();
       double rowLength = ((Integer.valueOf(efd.fieldlength).intValue() *20)/ 4000);
       if (rowLength<3.0) rowLength = 3.0;
-      html.append("<TEXTAREA cols=\"").append(textareaLength).append("\" rows=\"").append(Double.toString(rowLength)).append("\" name=\"inp").append(Sqlc.TransformaNombreColumna(efd.columnnameinp));
+      html.append("<textarea cols=\"").append(textareaLength).append("\" rows=\"").append(Double.toString(rowLength)).append("\" name=\"inp").append(Sqlc.TransformaNombreColumna(efd.columnnameinp));
       html.append(completeName).append("\" id=\"").append(efd.columnname).append(completeID).append("\" ");
       onChange =callouts(efd, vecCallOuts, maxTextboxLength) + onChange;
       html.append(" onclick=\"").append(logChanges).append(onChange).append("return true;\"");
@@ -568,7 +568,7 @@ public class WadUtility {
       html.append(" onkeypress=\"return handleFieldMaxLength(this, ").append(efd.fieldlength).append(");").append("\"");
       html.append(">");
       if (!isdesigne) html.append("xxV"); 
-      html.append("</TEXTAREA>");
+      html.append("</textarea>");
       html.append(html1);
     } else if (isLinkType(efd.reference)) {
       html.append("<input type=\"text\" name=\"inp").append(Sqlc.TransformaNombreColumna(efd.columnnameinp));
@@ -588,7 +588,7 @@ public class WadUtility {
       StringBuffer html1 = new StringBuffer();
       double rowLength = ((Integer.valueOf(efd.fieldlength).intValue() *20)/ 4000);
       if (rowLength<3.0) rowLength = 3.0;
-      html.append("<TEXTAREA cols=\"").append(textareaLength).append("\" rows=\"").append(Double.toString(rowLength)).append("\" name=\"inp").append(Sqlc.TransformaNombreColumna(efd.columnnameinp));
+      html.append("<textarea cols=\"").append(textareaLength).append("\" rows=\"").append(Double.toString(rowLength)).append("\" name=\"inp").append(Sqlc.TransformaNombreColumna(efd.columnnameinp));
       html.append(completeName).append("\" id=\"").append(efd.columnname).append(completeID).append("\" ");
       onChange =callouts(efd, vecCallOuts, maxTextboxLength) + onChange;
       html.append(" onclick=\"").append(logChanges).append(onChange).append("return true;\"");
@@ -599,22 +599,22 @@ public class WadUtility {
       html.append(" onkeypress=\"return handleFieldMaxLength(this, ").append(efd.fieldlength).append(");").append("\"");
       html.append(">");
       if (!isdesigne) html.append("xxV"); 
-      html.append("</TEXTAREA>");
+      html.append("</textarea>");
       html.append(html1);
     } else if (efd.reference.equals("28") && efd.isdisplayed.equals("Y")) {
-      html.append("<TABLE border=\"1\" cellpadding=\"0\" cellspacing=\"0\" summary=\"\" class=\"ActionButton\" onClick=\"");
+      html.append("<table border=\"1\" cellpadding=\"0\" cellspacing=\"0\" summary=\"\" class=\"ActionButton\" onClick=\"");
       html.append(buttonsCommand(efd, tabName + "_Edition.html") + "\">");
-      html.append("<TR class=\"ActionButton\"><TD>");
-      html.append("<img src=\"../../../../../web/images/ButtonProcess.gif\" border=\"0\" height=\"25\" width=\"25\" id=\"buttonProcess\"></TD>");
-      html.append("<TD class=\"Medio\">");
+      html.append("<tr class=\"ActionButton\"><td>");
+      html.append("<img src=\"../../../../../web/images/ButtonProcess.gif\" border=\"0\" height=\"25\" width=\"25\" id=\"buttonProcess\"></td>");
+      html.append("<td class=\"Medio\">");
       html.append(htmlFields(efd, completeName, completeID, isupdateable, maxTextboxLength, true, isdesigne, vecCallOuts, tabName, vecDisplayLogic, vecReloads, tabIsReadOnly, textareaLength));
       html.append("<span id=\"" + efd.columnname + completeID + "_BTN\">");
       html.append((efd.referencevalue.equals("") || efd.columnname.equals("ChangeProjectStatus"))? efd.name : "xx");
-      html.append("</span>&nbsp;</TD>");
-      html.append("</TR></TABLE>");
+      html.append("</span>&nbsp;</td>");
+      html.append("</tr></table>");
     } else {
       StringBuffer html1 = new StringBuffer();
-      html.append("<INPUT type=\"");
+      html.append("<input type=\"");
       if (efd.isdisplayed.equals("N")) {
         html.append("hidden\"");
       } else if (efd.reference.equals("20")) {  // YesNo
@@ -659,7 +659,7 @@ public class WadUtility {
       if (!isupdateable || tabIsReadOnly) {
         html.append(" readonly=\"true\"");
       }
-      html.append("></INPUT>");
+      html.append("></input>");
       html.append(html1);
     }
 

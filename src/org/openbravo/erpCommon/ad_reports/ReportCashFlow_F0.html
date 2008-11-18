@@ -16,13 +16,13 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
-<HTML>
-<HEAD>
-<TITLE></TITLE>
-<SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">	defaultLang = "en_US";</SCRIPT>
-<SCRIPT language="JavaScript" type="text/javascript">
+<html>
+<head>
+<title></title>
+<script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
+<script language="JavaScript" type="text/javascript" id="paramLanguage">	defaultLang = "en_US";</script>
+<script language="JavaScript" type="text/javascript">
 function responseReturn(bolData){
     if (bolData){
       submitCommandForm('DEFAULT', false, null, null, "frameButton");
@@ -31,15 +31,15 @@ function responseReturn(bolData){
             //submitCommandForm('DEFAULT', false);
     }
 }
-</SCRIPT>
-</HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="responseReturn(xx);" id="paramBol">
-<FORM id="form" method="POST" action="ReportCashFlow_FS.html" name="frameOcultoButton">
-  <INPUT type="hidden" name="Command" value="DEFAULT">
-  <INPUT type="hidden" name="inpadOrgId" value="" id="paramOrg">
-  <INPUT type="hidden" name="inpPeriodId" value="" id="paramPeriod">
-  <INPUT type="hidden" name="inpAccountingReportId" value="" id="paramReport">
-  <INPUT type="hidden" name="inpcAcctSchemaId" value="" id="paramAcctSchema">
-  </FORM>
-</BODY>
-</HTML>
+</script>
+</head>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="responseReturn(xx);" id="paramBol">
+<form id="form" method="post" action="ReportCashFlow_FS.html" name="frameOcultoButton">
+  <input type="hidden" name="Command" value="DEFAULT">
+  <input type="hidden" name="inpadOrgId" value="" id="paramOrg">
+  <input type="hidden" name="inpPeriodId" value="" id="paramPeriod">
+  <input type="hidden" name="inpAccountingReportId" value="" id="paramReport">
+  <input type="hidden" name="inpcAcctSchemaId" value="" id="paramAcctSchema">
+  </form>
+</body>
+</html>

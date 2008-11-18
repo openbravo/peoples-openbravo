@@ -24,24 +24,24 @@
 
 <div id="sectionDetailRM">
 <tr>
-<TD width="5%"> </TD>
-<TD width="15%" id="fieldProductRM">xxMateriaPrima</TD>
-<TD width="5%"> </TD>
-<TD width="5%"> </TD>
-<TD width="5%"> </TD>
-<TD width="5%"> </TD>
-<TD width="5%" id="fieldExpectedConsumeRM">xx7500</TD>
-<TD width="5%" id="fieldRealConsumeRM">xx10000</TD>
-<TD width="5%" id="fieldExpectedDecreaseRM">xx2000</TD>
-<TD width="5%"> </TD>
-<TD width="5%"> </TD>
-<TD width="5%"> </TD>
-<TD width="5%"> </TD>
-<TD width="5%"> </TD>
-<TD width="5%"> </TD>
-<TD width="5%"> </TD>
-<TD width="5%"> </TD>
-<TD width="5%"> </TD>
-<TD width="5%"> </TD>
+<td width="5%"> </td>
+<td width="15%" id="fieldProductRM">xxMateriaPrima</td>
+<td width="5%"> </td>
+<td width="5%"> </td>
+<td width="5%"> </td>
+<td width="5%"> </td>
+<td width="5%" id="fieldExpectedConsumeRM">xx7500</td>
+<td width="5%" id="fieldRealConsumeRM">xx10000</td>
+<td width="5%" id="fieldExpectedDecreaseRM">xx2000</td>
+<td width="5%"> </td>
+<td width="5%"> </td>
+<td width="5%"> </td>
+<td width="5%"> </td>
+<td width="5%"> </td>
+<td width="5%"> </td>
+<td width="5%"> </td>
+<td width="5%"> </td>
+<td width="5%"> </td>
+<td width="5%"> </td>
 </tr>
 </div>

@@ -39,7 +39,7 @@ import javax.servlet.http.*;
 
 public class UpdateReferenceData extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  static final String SALTO_LINEA = "<BR>\n";
+  static final String SALTO_LINEA = "<br>\n";
   String strError = "";
   static StringBuffer    m_info=  new StringBuffer();
 

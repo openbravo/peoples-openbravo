@@ -16,182 +16,182 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
-<HTML>
-<HEAD>
-<TITLE>Accounting account report</TITLE>
+<html>
+<head>
+<title>Accounting account report</title>
 <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS" />
-<SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
+<script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
-<SCRIPT language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" type="text/javascript" id="paramDirectory">var baseDirectory = "../../../../../web/";</SCRIPT>
-<SCRIPT language="JavaScript" type="text/javascript" id="paramLanguage">
+<script language="JavaScript" src="../../../../../web/js/jscalendar/calendar.js" type="text/javascript"></script>
+<script language="JavaScript" type="text/javascript" id="paramDirectory">var baseDirectory = "../../../../../web/";</script>
+<script language="JavaScript" type="text/javascript" id="paramLanguage">
 defaultLang="en_US";
 
-</SCRIPT>
-</HEAD>
-<BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
-<FORM method="POST" action="ReportAccuntingCountDimensionalAnalyzeEdition.html" name="frmMain" >
-  <DIV class="ReportTitle">Accounting account report<SPAN id="paramTitle">xxdesde hasta</SPAN></DIV>
-  <DIV id="selEliminarBody1"> 
-    <TABLE width="60%" align="center" class="Border" border="1" cellspacing="0" cellpadding="0">
-      <TR class="TableHeader"> 
-        <TD width="33%"> <FONT size="-1">Total balance<SPAN id="paramTotal"></SPAN></FONT></TD>
-        <TH width="33%"></TH>
-        <TH width="34%"></TH>
-      </TR>
-    </TABLE>
-    <BR></BR>
-    <TABLE width="100%" align="left" id="selEliminar1">
-      <TR> 
-        <TD width="5%" rowspan="2">&nbsp;</TD>
-        <TD width="5%" rowspan="2">&nbsp;</TD>
-        <TD width="5%" rowspan="2">&nbsp;</TD>
-        <TD width="5%" rowspan="2">&nbsp;</TD>
-        <TD width="5%" rowspan="2">&nbsp;</TD>
-        <TD width="39%" rowspan="2" ></TD>
-        <TD width="8%" nowrap="" rowspan="2">Initial balance</TD>
-        <DIV id="sectionPeriod"> 
-          <TD> <TABLE width="100%">
-              <TR> 
-                <TD colspan="3" nowrap="" id="fieldPeriod"></TD>
-              </TR>
-              <TR> 
-                <TD nowrap="">Debit</TD>
-                <TD nowrap="">Credit</TD>
-                <TD nowrap="">Incr.</TD>
-              </TR>
-            </TABLE></TD>
-        </DIV>
-        <TD width="7%" nowrap="" rowspan="2">Debit</TD>
-        <TD width="7%" nowrap="" rowspan="2">Credit</TD>
-        <TD width="7%" nowrap="" rowspan="2">Incr.</TD>
-        <TD width="7%" nowrap="" rowspan="2">Final</TD>
-      </TR>
-      <DIV id="sectionPeriodNivel"> 
-        <TR class="Border TableDetailHeader"> 
-          <TD colspan="1" id="fieldColspan">&nbsp;</TD>
-          <TD colspan="5" class="" id="fieldPeriodName"></TD>
-          <TD width="8%" class="" id="fieldPeriodInitialAmount"></TD>
-          <DIV id="sectionPeriodDetail"> 
-            <TD> <TABLE width="100%">
-                <TR> 
-                  <TD nowrap="" class="" id="fieldPeriodAmtacctdr"></TD>
-                  <TD nowrap="" class="" id="fieldPeriodAmtacctcr"></TD>
-                  <TD nowrap="" class="" id="fieldPeriodIncr"></TD>
-                </TR>
-              </TABLE></TD>
-          </DIV>
-          <TD width="7%" class="" id="fieldPeriodTotalAmtacctdr"></TD>
-          <TD width="7%" class="" id="fieldPeriodTotalAmtacctcr"></TD>
-          <TD width="7%" class="" id="fieldPeriodTotalIncr"></TD>
-          <TD width="7%" class="" id="fieldPeriodFinalAmount"></TD>
-        </TR>
-      </DIV>
-    </TABLE>
-  </DIV>
-  <BR></BR>
-  <BR></BR>
-  <DIV id="selEliminarBody2"> 
-    <TABLE width="70%" align="center"  border="1" cellspacing="0" cellpadding="0">
-      <TR class="TableHeader"> 
-        <TD width="25%"> <FONT size="-1">Initial balance<SPAN id="fieldTotalInitialAmount"></SPAN></FONT></TD>
-        <TD width="25%"> <FONT size="-1">Debit<SPAN id="fieldTotalAmtacctdr"></SPAN></FONT></TD>
-        <TD width="25%"> <FONT size="-1">Credit<SPAN id="fieldTotalAmtacctcr"></SPAN></FONT></TD>
-        <TD width="25%"> <FONT size="-1">Incr.<SPAN id="fieldTotalIncr"></SPAN></FONT></TD>
-        <TD width="25%"> <FONT size="-1">Final<SPAN id="fieldTotalFinal"></SPAN></FONT></TD>
-      </TR>
-    </TABLE>
-    <BR></BR>
-    <TABLE width="90%" align="center" id="selEliminar2">
-      <TR> 
-        <TD width="4%">&nbsp;</TD>
-        <TD width="4%">&nbsp;</TD>
-        <TD width="4%">&nbsp;</TD>
-        <TD width="4%">&nbsp;</TD>
-        <TD width="4%">&nbsp;</TD>
-        <TD width="34%" class="Bold"></TD>
-        <TD width="10%">Initial balance</TD>
-        <TD width="9%">Debit</TD>
-        <TD width="9%">Credit</TD>
-        <TD width="9%">Incr.</TD>
-        <TD width="9%">Final</TD>
-      </TR>
-      <TR> 
-        <TD colspan="11" class="Bold"></TD>
-      </TR>
-      <DIV id="sectionNivel1"> 
-        <TR> 
-          <TD width="4%"></TD>
-          <TD colspan="5"> <TABLE width="100%" align="center" border="1" cellspacing="0" cellpadding="0">
-              <TR> 
-                <TD width="50%" nowrap=""  id="fieldNivel1">xxTercero</TD>
-              </TR>
-            </TABLE></TD>
-          <TD width="10%" align="right" class="TableHeaderLevel1" id="fieldInitialAmount"></TD>
-          <TD width="9%" align="right" class="TableHeaderLevel1" id="fieldAmtacctdr"></TD>
-          <TD width="9%" align="right" class="TableHeaderLevel1" id="fieldAmtacctcr"></TD>
-          <TD width="9%" align="right" class="TableHeaderLevel1" id="fieldIncr"></TD>
-          <TD width="9%" align="right" class="TableHeaderLevel1" id="fieldFinal"></TD>
-        </TR>
-        <DIV id="sectionNivel2"> 
-          <TR id="paramEliminar2" style=""> 
-            <TD width="4%"></TD>
-            <TD width="4%"></TD>
-            <TD colspan="4"> <TABLE width="100%" align="center" border="1" cellspacing="0" cellpadding="0">
-                <TR > 
-                  <TD width="50%" nowrap=""  id="fieldNivel2">xxCategoria 
-                    tercero</TD>
-                </TR>
-              </TABLE></TD>
-            <TD width="10%" align="right" class="TableHeaderLevel2" id="fieldInitialAmount"></TD>
-            <TD width="9%" align="right" class="TableHeaderLevel2" id="fieldAmtacctdr"></TD>
-            <TD width="9%" align="right" class="TableHeaderLevel2" id="fieldAmtacctcr"></TD>
-            <TD width="9%" align="right" class="TableHeaderLevel2" id="fieldIncr"></TD>
-            <TD width="9%" align="right" class="TableHeaderLevel2" id="fieldFinal"></TD>
-          </TR>
-          <DIV id="sectionNivel3"> 
-            <TR id="paramEliminar3" style=""> 
-              <TD width="4%"></TD>
-              <TD width="4%"></TD>
-              <TD width="4%"></TD>
-              <TD colspan="3"> <TABLE width="100%" align="center" border="1" cellspacing="0" cellpadding="0">
-                  <TR > 
-                    <TD width="50%" nowrap=""  id="fieldNivel3">xxProducto</TD>
-                  </TR>
-                </TABLE></TD>
-              <TD width="10%" align="right" class="TableHeaderLevel3" id="fieldInitialAmount"></TD>
-              <TD width="9%" align="right" class="TableHeaderLevel3" id="fieldAmtacctdr"></TD>
-              <TD width="9%" align="right" class="TableHeaderLevel3" id="fieldAmtacctcr"></TD>
-              <TD width="9%" align="right" class="TableHeaderLevel3" id="fieldIncr"></TD>
-              <TD width="9%" align="right" class="TableHeaderLevel3" id="fieldFinal"></TD>
-            </TR>
-            <DIV id="sectionNivel4"> 
-              <TR id="paramEliminar4" style=""> 
-                <TD width="4%"></TD>
-                <TD width="4%"></TD>
-                <TD width="4%"></TD>
-                <TD width="4%"></TD>
-                <TD colspan="2"> <TABLE width="100%" align="center" border="1" cellspacing="0" cellpadding="0">
-                    <DIV id="sectionDetail"> 
-                      <TR > 
-                        <TD width="50%" nowrap="" class="TextoWhite" id="fieldNivel4">xxComercial</TD>
-                      </TR>
-                    </DIV>
-                  </TABLE></TD>
-                <TD width="10%" align="right" class="TableDetailRow1" id="fieldInitialAmount"></TD>
-                <TD width="9%" align="right" class="TableDetailRow1" id="fieldAmtacctdr"></TD>
-                <TD width="9%" align="right" class="TableDetailRow1" id="fieldAmtacctcr"></TD>
-                <TD width="9%" align="right" class="TableDetailRow1" id="fieldIncr"></TD>
-                <TD width="9%" align="right" class="TableDetailRow1" id="fieldFinal"></TD>
-              </TR>
-            </DIV>
-          </DIV>
-        </DIV>
-      </DIV>
-    </TABLE>
-  </DIV>
-</FORM>
-</BODY>
-</HTML>
+</script>
+</head>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<form method="post" action="ReportAccuntingCountDimensionalAnalyzeEdition.html" name="frmMain" >
+  <div class="ReportTitle">Accounting account report<span id="paramTitle">xxdesde hasta</span></div>
+  <div id="selEliminarBody1"> 
+    <table width="60%" align="center" class="Border" border="1" cellspacing="0" cellpadding="0">
+      <tr class="TableHeader"> 
+        <td width="33%"> <FONT size="-1">Total balance<span id="paramTotal"></span></FONT></td>
+        <th width="33%"></th>
+        <th width="34%"></th>
+      </tr>
+    </table>
+    <br></br>
+    <table width="100%" align="left" id="selEliminar1">
+      <tr> 
+        <td width="5%" rowspan="2">&nbsp;</td>
+        <td width="5%" rowspan="2">&nbsp;</td>
+        <td width="5%" rowspan="2">&nbsp;</td>
+        <td width="5%" rowspan="2">&nbsp;</td>
+        <td width="5%" rowspan="2">&nbsp;</td>
+        <td width="39%" rowspan="2" ></td>
+        <td width="8%" nowrap="" rowspan="2">Initial balance</td>
+        <div id="sectionPeriod"> 
+          <td> <table width="100%">
+              <tr> 
+                <td colspan="3" nowrap="" id="fieldPeriod"></td>
+              </tr>
+              <tr> 
+                <td nowrap="">Debit</td>
+                <td nowrap="">Credit</td>
+                <td nowrap="">Incr.</td>
+              </tr>
+            </table></td>
+        </div>
+        <td width="7%" nowrap="" rowspan="2">Debit</td>
+        <td width="7%" nowrap="" rowspan="2">Credit</td>
+        <td width="7%" nowrap="" rowspan="2">Incr.</td>
+        <td width="7%" nowrap="" rowspan="2">Final</td>
+      </tr>
+      <div id="sectionPeriodNivel"> 
+        <tr class="Border TableDetailHeader"> 
+          <td colspan="1" id="fieldColspan">&nbsp;</td>
+          <td colspan="5" class="" id="fieldPeriodName"></td>
+          <td width="8%" class="" id="fieldPeriodInitialAmount"></td>
+          <div id="sectionPeriodDetail"> 
+            <td> <table width="100%">
+                <tr> 
+                  <td nowrap="" class="" id="fieldPeriodAmtacctdr"></td>
+                  <td nowrap="" class="" id="fieldPeriodAmtacctcr"></td>
+                  <td nowrap="" class="" id="fieldPeriodIncr"></td>
+                </tr>
+              </table></td>
+          </div>
+          <td width="7%" class="" id="fieldPeriodTotalAmtacctdr"></td>
+          <td width="7%" class="" id="fieldPeriodTotalAmtacctcr"></td>
+          <td width="7%" class="" id="fieldPeriodTotalIncr"></td>
+          <td width="7%" class="" id="fieldPeriodFinalAmount"></td>
+        </tr>
+      </div>
+    </table>
+  </div>
+  <br></br>
+  <br></br>
+  <div id="selEliminarBody2"> 
+    <table width="70%" align="center"  border="1" cellspacing="0" cellpadding="0">
+      <tr class="TableHeader"> 
+        <td width="25%"> <FONT size="-1">Initial balance<span id="fieldTotalInitialAmount"></span></FONT></td>
+        <td width="25%"> <FONT size="-1">Debit<span id="fieldTotalAmtacctdr"></span></FONT></td>
+        <td width="25%"> <FONT size="-1">Credit<span id="fieldTotalAmtacctcr"></span></FONT></td>
+        <td width="25%"> <FONT size="-1">Incr.<span id="fieldTotalIncr"></span></FONT></td>
+        <td width="25%"> <FONT size="-1">Final<span id="fieldTotalFinal"></span></FONT></td>
+      </tr>
+    </table>
+    <br></br>
+    <table width="90%" align="center" id="selEliminar2">
+      <tr> 
+        <td width="4%">&nbsp;</td>
+        <td width="4%">&nbsp;</td>
+        <td width="4%">&nbsp;</td>
+        <td width="4%">&nbsp;</td>
+        <td width="4%">&nbsp;</td>
+        <td width="34%" class="Bold"></td>
+        <td width="10%">Initial balance</td>
+        <td width="9%">Debit</td>
+        <td width="9%">Credit</td>
+        <td width="9%">Incr.</td>
+        <td width="9%">Final</td>
+      </tr>
+      <tr> 
+        <td colspan="11" class="Bold"></td>
+      </tr>
+      <div id="sectionNivel1"> 
+        <tr> 
+          <td width="4%"></td>
+          <td colspan="5"> <table width="100%" align="center" border="1" cellspacing="0" cellpadding="0">
+              <tr> 
+                <td width="50%" nowrap=""  id="fieldNivel1">xxTercero</td>
+              </tr>
+            </table></td>
+          <td width="10%" align="right" class="TableHeaderLevel1" id="fieldInitialAmount"></td>
+          <td width="9%" align="right" class="TableHeaderLevel1" id="fieldAmtacctdr"></td>
+          <td width="9%" align="right" class="TableHeaderLevel1" id="fieldAmtacctcr"></td>
+          <td width="9%" align="right" class="TableHeaderLevel1" id="fieldIncr"></td>
+          <td width="9%" align="right" class="TableHeaderLevel1" id="fieldFinal"></td>
+        </tr>
+        <div id="sectionNivel2"> 
+          <tr id="paramEliminar2" style=""> 
+            <td width="4%"></td>
+            <td width="4%"></td>
+            <td colspan="4"> <table width="100%" align="center" border="1" cellspacing="0" cellpadding="0">
+                <tr > 
+                  <td width="50%" nowrap=""  id="fieldNivel2">xxCategoria 
+                    tercero</td>
+                </tr>
+              </table></td>
+            <td width="10%" align="right" class="TableHeaderLevel2" id="fieldInitialAmount"></td>
+            <td width="9%" align="right" class="TableHeaderLevel2" id="fieldAmtacctdr"></td>
+            <td width="9%" align="right" class="TableHeaderLevel2" id="fieldAmtacctcr"></td>
+            <td width="9%" align="right" class="TableHeaderLevel2" id="fieldIncr"></td>
+            <td width="9%" align="right" class="TableHeaderLevel2" id="fieldFinal"></td>
+          </tr>
+          <div id="sectionNivel3"> 
+            <tr id="paramEliminar3" style=""> 
+              <td width="4%"></td>
+              <td width="4%"></td>
+              <td width="4%"></td>
+              <td colspan="3"> <table width="100%" align="center" border="1" cellspacing="0" cellpadding="0">
+                  <tr > 
+                    <td width="50%" nowrap=""  id="fieldNivel3">xxProducto</td>
+                  </tr>
+                </table></td>
+              <td width="10%" align="right" class="TableHeaderLevel3" id="fieldInitialAmount"></td>
+              <td width="9%" align="right" class="TableHeaderLevel3" id="fieldAmtacctdr"></td>
+              <td width="9%" align="right" class="TableHeaderLevel3" id="fieldAmtacctcr"></td>
+              <td width="9%" align="right" class="TableHeaderLevel3" id="fieldIncr"></td>
+              <td width="9%" align="right" class="TableHeaderLevel3" id="fieldFinal"></td>
+            </tr>
+            <div id="sectionNivel4"> 
+              <tr id="paramEliminar4" style=""> 
+                <td width="4%"></td>
+                <td width="4%"></td>
+                <td width="4%"></td>
+                <td width="4%"></td>
+                <td colspan="2"> <table width="100%" align="center" border="1" cellspacing="0" cellpadding="0">
+                    <div id="sectionDetail"> 
+                      <tr > 
+                        <td width="50%" nowrap="" class="TextoWhite" id="fieldNivel4">xxComercial</td>
+                      </tr>
+                    </div>
+                  </table></td>
+                <td width="10%" align="right" class="TableDetailRow1" id="fieldInitialAmount"></td>
+                <td width="9%" align="right" class="TableDetailRow1" id="fieldAmtacctdr"></td>
+                <td width="9%" align="right" class="TableDetailRow1" id="fieldAmtacctcr"></td>
+                <td width="9%" align="right" class="TableDetailRow1" id="fieldIncr"></td>
+                <td width="9%" align="right" class="TableDetailRow1" id="fieldFinal"></td>
+              </tr>
+            </div>
+          </div>
+        </div>
+      </div>
+    </table>
+  </div>
+</form>
+</body>
+</html>

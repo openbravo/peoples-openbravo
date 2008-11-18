@@ -139,7 +139,7 @@
 
 </head>
 <body onload="onLoadDo();" onresize="onResizeDo();" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" id="paramMessage">
-  <form method="POST" action="RequisitionToOrder.html" name="frmMain">
+  <form method="post" action="RequisitionToOrder.html" name="frmMain">
     <input type="hidden" name="Command"></input>
     <input type="hidden" name="inpParamValue" value="" id="paramValue"></input> 
     <input type="hidden" name="inpissotrx" value="N"></input>
@@ -397,10 +397,10 @@
                                       <tr id="funcEvenOddRow" class="DataGrid_Body_Row DataGrid_Body_Row_xx"> 
                                         <td class="DataGrid_Body_LineNoCell"> <input type="checkbox" name="inpRequisitionLine" value="" id="fieldRequisitionLineId"></input></td>
                                         <td class="DataGrid_Body_Cell" id="fieldNeedByDate">xx29-02-2008</td>
-                                        <td class="DataGrid_Body_Cell"><SPAN id="fieldProduct">xxBeer</SPAN> - <SPAN id="fieldAttribute">xxAttribute</SPAN></td>
+                                        <td class="DataGrid_Body_Cell"><span id="fieldProduct">xxBeer</span> - <span id="fieldAttribute">xxAttribute</span></td>
                                         <td class="DataGrid_Body_Cell" id="fieldQuantity">xx1000000</td>
                                         <td class="DataGrid_Body_Cell" id="fieldRequester">xxOpenbravo</td>
-                                        <td class="DataGrid_Body_Cell"><SPAN id="fieldVendor">xxGuiness</SPAN> - <SPAN id="fieldPriceList">xxPricelist</SPAN></td>
+                                        <td class="DataGrid_Body_Cell"><span id="fieldVendor">xxGuiness</span> - <span id="fieldPriceList">xxPricelist</span></td>
                                         <td class="DataGrid_Body_Cell" id="fieldPrice">xx3</td>
                                       </tr>
                                     </div>
@@ -477,7 +477,7 @@
                                       <tr id="funcSelectedEvenOddRow" class="DataGrid_Body_Row DataGrid_Body_Row_xx"> 
                                         <td width="20" class="DataGrid_Body_Cell"> <input type="checkbox" name="inpSelectedReq" onclick="updateData(this.value, this.checked);return true;" value="" id="fieldSelectedReq"></input>
                                         </td>
-                                        <td class="DataGrid_Body_Cell"><SPAN id="fieldSelProduct">xxDonuts</SPAN> - <SPAN id="fieldSelAttribute">xxAttribute</SPAN></td>
+                                        <td class="DataGrid_Body_Cell"><span id="fieldSelProduct">xxDonuts</span> - <span id="fieldSelAttribute">xxAttribute</span></td>
                                         <td class="DataGrid_Body_Cell" id="fieldSelNeedByDate">xx02-02-2010</td>
                                         <td class="DataGrid_Body_Cell" id="fieldReqQty">xx30.00</td>
                                         <td class="DataGrid_Body_Cell" id="fieldMatchedQty">xx30.00</td>

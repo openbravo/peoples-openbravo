@@ -35,6 +35,6 @@ public class ToolBar_Space implements HTMLElement {
   }
 
   public String toString() {
-    return "<IMG src=\"" + base_direction + "/images/blank.gif\" class=\"Main_ToolBar_Separator\">";
+    return "<img src=\"" + base_direction + "/images/blank.gif\" class=\"Main_ToolBar_Separator\">";
   }
 }

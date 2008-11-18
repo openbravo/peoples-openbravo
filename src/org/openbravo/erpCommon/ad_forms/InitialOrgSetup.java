@@ -51,7 +51,7 @@ import java.sql.*;
 
 public class InitialOrgSetup extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  static final String SALTO_LINEA = "<BR>\n";
+  static final String SALTO_LINEA = "<br>\n";
   String C_Currency_ID = "";
   String AD_User_ID="";
   String AD_User_Name="";

@@ -16,10 +16,10 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************
 -->
-<HTML>
+<html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <TITLE>Set Project Type</TITLE>
+    <title>Set Project Type</title>
     <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS"></link>
     <script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
     <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
@@ -65,7 +65,7 @@
         return true;
       }
     </script>
-	<SCRIPT language="JavaScript" type="text/javascript">
+	<script language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
 		  new windowTableId('client', 'buttonOK')
@@ -79,18 +79,18 @@
 
 	function onResizeDo(){
 	}
-	</SCRIPT>    
+	</script>    
 
 </head>
 
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
-  <form id="form" method="POST" action="ProjectSetType.html" name="frmMain">
-  <INPUT type="hidden" name="Command">
-<INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>
-  <INPUT type="hidden" name="inpLastFieldChanged"></INPUT>
-  <INPUT type="hidden" name="inpcProjectId" value="" id="paramKey"></INPUT>
-  <INPUT type="hidden" name="inpwindowId" value="" id="window"></INPUT>
-  <INPUT type="hidden" name="inpTabId" value="" id="tab"></INPUT>
+  <form id="form" method="post" action="ProjectSetType.html" name="frmMain">
+  <input type="hidden" name="Command">
+<input type="hidden" name="IsPopUpCall" value="1"></input>
+  <input type="hidden" name="inpLastFieldChanged"></input>
+  <input type="hidden" name="inpcProjectId" value="" id="paramKey"></input>
+  <input type="hidden" name="inpwindowId" value="" id="window"></input>
+  <input type="hidden" name="inpTabId" value="" id="tab"></input>
 
     <div class="Popup_ContentPane_CircleLogo">
       <div class="Popup_WindowLogo">
@@ -106,7 +106,7 @@
             <tr class="Popup_NavBar_bg"><td></td>
               <td class="Popup_NavBar_separator_cell"></td>
               <td class="Popup_NavBar_bg_logo_left"></td>
-              <td class="Popup_NavBar_bg_logo" width="1" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;"><IMG src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
+              <td class="Popup_NavBar_bg_logo" width="1" onclick="openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;"><img src="../../../../../web/images/blank.gif" alt="Openbravo" title="Openbravo" border="0" id="openbravoLogo" class="Popup_NavBar_logo" /></td>
               <td class="Popup_NavBar_bg_logo_right"></td>
               <td class="Popup_NavBar_Popup_title_cell"><span>Set project type</span></td>
               <td class="Popup_NavBar_separator_cell"></td>
@@ -138,10 +138,10 @@
               </tr>
 
               <tr>
-                <td class="TitleCell"><SPAN class="LabelText">Project Type</SPAN></td>
+                <td class="TitleCell"><span class="LabelText">Project Type</span></td>
                 <td class="Combo_ContentCell" colspan="2">
                   <select name="inpcProjecttypeId" id="inpcProjecttypeId" class="Combo Combo_TwoCells_width">
-                    <OPTION value=""></OPTION><DIV id="reportcProjecttypeId"></DIV>
+                    <option value=""></option><div id="reportcProjecttypeId"></div>
 
                   </select>
                 </td>
@@ -149,26 +149,26 @@
               </tr>
               
               <tr>
-                <td class="TitleCell"><SPAN class="LabelText">Starting Date</SPAN></td>
+                <td class="TitleCell"><span class="LabelText">Starting Date</span></td>
                 <td class="TextBox_btn_ContentCell">
-                  <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
-                      <TR>
-                        <TD class="TextBox_ContentCell">
-                          <INPUT dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramDateFrom");</script>
-                        </TD>
-                        <TD class="FieldButton_bg">
+                  <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                      <tr>
+                        <td class="TextBox_ContentCell">
+                          <input dojoType="openbravo:DateTextbox" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateFrom" id="paramDateFrom" size="10" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateFrom");</script>
+                        </td>
+                        <td class="FieldButton_bg">
                           <a class="FieldButtonLink" href="#" onfocus="this.className='FieldButtonLink_hover'; window.status='Calendar'; return true;" onblur="this.className='FieldButtonLink'; window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_hover'; return true;" onclick="showCalendar('frmMain.paramDateFrom', document.frmMain.paramDateFrom.value, false);return false;" >
                           <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
-                            <TR>
-                              <TD class="FieldButton_bg">
-                                <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></IMG>
-                              </TD>
-                            </TR>
-                          </TABLE>
+                            <tr>
+                              <td class="FieldButton_bg">
+                                <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></img>
+                              </td>
+                            </tr>
+                          </table>
                           </a>
-                        </TD>
-                      </TR>
-                    </TABLE>
+                        </td>
+                      </tr>
+                    </table>
                 </td>
                 <td></td>
                 <td></td>

@@ -21,7 +21,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<TITLE>Aging  Balance</TITLE>
+<title>Aging  Balance</title>
     <link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS" />
      
@@ -47,7 +47,7 @@
       <script language="JavaScript" src="../../../../../web/js/default/DateTextBox.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
       <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
-<SCRIPT language="JavaScript" type="text/javascript">
+<script language="JavaScript" type="text/javascript">
 function columnChange() {
   var elemDiv;
   var elemInput;
@@ -66,8 +66,8 @@ function columnChange() {
   elemInput.innerHTML = elemDiv.value;
   return true;
 }
-</SCRIPT>
-<SCRIPT language="JavaScript" type="text/javascript">
+</script>
+<script language="JavaScript" type="text/javascript">
   function validate() {
 	markCheckedAllElements(document.frmMain.inpcBPartnerId_IN);
     if (!validateNumber(document.frmMain.paramColumn1.value,false,true) || document.frmMain.paramColumn1.value==""){
@@ -117,8 +117,8 @@ function columnChange() {
     }
     return true;
   }
-</SCRIPT>
-	<SCRIPT language="JavaScript" type="text/javascript">
+</script>
+	<script language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
 		  new windowTableId('client', 'buttonHTML')
@@ -141,35 +141,35 @@ function columnChange() {
 	function onResizeDo(){
 		resizeArea();
 	}
-	</SCRIPT>
-</HEAD>
+	</script>
+</head>
     <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
-	<FORM method="POST" action="ReportAgingBalance.html" name="frmMain" id="form">
-		<INPUT type="hidden" name="inpBpartnerId" id="paramBPartnerId" />
-		<INPUT type="hidden" name="inpDateFrom" id="paramDateFrom" />
-		<INPUT type="hidden" name="inpDateTo" id="paramDateTo" />
-        <INPUT type="hidden" name="inpFlagFromAging" id="paramFlagFromAging" value="Y" />
-		<INPUT type="hidden" name="inpPending" value="isPending" id="paramPending" checked="isPending" />
+	<form method="post" action="ReportAgingBalance.html" name="frmMain" id="form">
+		<input type="hidden" name="inpBpartnerId" id="paramBPartnerId" />
+		<input type="hidden" name="inpDateFrom" id="paramDateFrom" />
+		<input type="hidden" name="inpDateTo" id="paramDateTo" />
+        <input type="hidden" name="inpFlagFromAging" id="paramFlagFromAging" value="Y" />
+		<input type="hidden" name="inpPending" value="isPending" id="paramPending" checked="isPending" />
   <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
     <tr>
       <td valign="top" id="tdleftTabs"></td>
       <td valign="top">
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Left">
-          <TR><TD class="Main_NavBar_bg_left" id="tdleftSeparator"></TD></TR>
-          <TR><TD class="Main_ToolBar_bg_left" valign="top"></TD></TR>
-          <TR><TD class="Main_Client_bg_left"></TD></TR>
-          <TR><TD class="Main_Bottom_bg_left"></TD></TR>
-        </TABLE>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Left">
+          <tr><td class="Main_NavBar_bg_left" id="tdleftSeparator"></td></tr>
+          <tr><td class="Main_ToolBar_bg_left" valign="top"></td></tr>
+          <tr><td class="Main_Client_bg_left"></td></tr>
+          <tr><td class="Main_Bottom_bg_left"></td></tr>
+        </table>
       </td>
       <td valign="top">
         <div class="Main_ContentPane_NavBar" id="tdtopButtons"></div>
         <div class="Main_ContentPane_ToolBar" id="paramToolBar"></div>
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_TabPane" id="tdtopTabs">
-          <TR id="paramParentTabContainer"></TR>
-          <TR id="paramMainTabContainer"></TR>
-          <TR id="paramChildTabContainer"></TR>
-        </TABLE>
-        <DIV class="Main_ContentPane_Client" style="overflow: auto; display: none;" id="client">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_TabPane" id="tdtopTabs">
+          <tr id="paramParentTabContainer"></tr>
+          <tr id="paramMainTabContainer"></tr>
+          <tr id="paramChildTabContainer"></tr>
+        </table>
+        <div class="Main_ContentPane_Client" style="overflow: auto; display: none;" id="client">
                 <table class="dojoTabContainer" border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
                   <tr>
                     <td>
@@ -179,7 +179,7 @@ function columnChange() {
                             <!-- MessageBox -->
 
                             <table cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxyy">
-                              <TBODY>
+                              <tbody>
                               <tr class="MessageBox_TopMargin">
                                 <td class="MessageBox_LeftMargin"></td>
                                 <td></td>
@@ -190,7 +190,7 @@ function columnChange() {
                                 <td>
 
                                   <table cellpadding="0" cellspacing="0" style="width: 100%;">
-                                    <TBODY>
+                                    <tbody>
                                     <tr>
                                       <td>
                                         <div class="MessageBox_TopLeft"></div>
@@ -199,12 +199,12 @@ function columnChange() {
                                       <td class="MessageBox_bg">
 
                                         <table class="MessageBox_Top">
-                                        <TBODY>
+                                        <tbody>
                                           <tr>
                                             <td>
                                               <span>
                                               <table cellpadding="0" cellspacing="0" class="MessageBox_Body_ContentCell">
-                                                <TBODY>
+                                                <tbody>
                                                 <tr>
                                                   <td class="MessageBox_Icon_ContentCell">
                                                     <div class="MessageBox_Icon"></div>
@@ -221,12 +221,12 @@ function columnChange() {
                                                     </span>
                                                   </td>
                                                 </tr>
-                                                </TBODY>
+                                                </tbody>
                                               </table>
                                               </span>
                                             </td>
                                           </tr>
-                                          </TBODY>
+                                          </tbody>
                                         </table>
 
                                       </td>
@@ -247,7 +247,7 @@ function columnChange() {
                                       <td class="MessageBox_Bottom">
                                       </td>
                                     </tr>
-                                    </TBODY>
+                                    </tbody>
                                   </table>
 
                                 </td>
@@ -258,11 +258,11 @@ function columnChange() {
                                 <td></td>
                                 <td class="MessageBox_RightMargin"></td>
                               </tr>
-                              </TBODY>
+                              </tbody>
                             </table>
                             <!-- USER CONTROLS -->
-		          <INPUT type="hidden" name="Command"></INPUT>
-              <TABLE class="Main_Client_TableEdition">
+		          <input type="hidden" name="Command"></input>
+              <table class="Main_Client_TableEdition">
                 <!-- Number of columns definition -->
                 <tr>
                   <td class="TitleCell" width="17%"></td>
@@ -272,7 +272,7 @@ function columnChange() {
                   <td class="TitleCell" width="17%"></td>
                   <td class="TitleCell" width="17%"></td>
                 </tr>
-                <TR>
+                <tr>
                 <td colspan="6">
                 <!-- Title Primary Filters -->
                   <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
@@ -280,7 +280,7 @@ function columnChange() {
                     <tr class="FieldGroup_TopMargin"/>
                     <tr>
                       <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
-                      <TD class="FieldGroupTitle">Primary Filters</TD>
+                      <td class="FieldGroupTitle">Primary Filters</td>
                       <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
                       <td class="FieldGroupContent"/>
                     </tr>
@@ -288,46 +288,46 @@ function columnChange() {
                   </tbody>
                   </table>
                 </td>
-                </TR>
-                <tr>
-                  <TD class="TitleCell"> <SPAN class="LabelText">Organization</SPAN></TD>
-                  <TD class="Combo_ContentCell"> 
-                    <SELECT  name="inpOrg" id="inpOrg" class="ComboKey Combo_OneCell_width" required="true">
-                    <OPTION value=""> <DIV id="reportAD_ORGID"></DIV></OPTION>
-                  </SELECT></TD>
-							    <TD class="TitleCell"></TD>
-							    <TD class="TitleCell"></TD>
-                  <TD class="TitleCell" align="center"><SPAN class="LabelText">Date Ranges</SPAN></TD>
-                  <TD class="TitleCell"></TD>
                 </tr>
-                <TR>
-                  <TD class="TitleCell"> <SPAN class="LabelText">Receivable</SPAN></TD>
-                  <TD class="Radio_Check_ContentCell"> <INPUT type="radio" name="inpReceipt" value="Y" checked="" id="paramReceipt"></INPUT> </TD>
-                  <TD class="TitleCell"> <SPAN class="LabelText">Payable</SPAN></TD>
-                  <TD class="Radio_Check_ContentCell"> <INPUT type="radio" name="inpReceipt" value="N" checked="" id="paramPayable"></INPUT></TD>
-                  <TD class="TitleCell">
-                    <INPUT dojotype="openbravo:RealNumberTextbox" type="hidden" name="inpColumn0" id="paramColumn0" value="0" />
-							      <SCRIPT>djConfig.searchIds.push("paramColumn0");</SCRIPT>
-                    <SPAN class="LabelText">0</SPAN> - </TD>
-							    <TD class="TitleCell">
-							      <INPUT dojotype="openbravo:RealNumberTextbox" class="required TextBox_btn_OneCell_width" greaterThan="paramColumn0" type="text" name="inpColumn1" id="paramColumn1" maxlength="4" size=4 onchange="columnChange();" value="xxx7" width="4"/>
-							      <SCRIPT>djConfig.searchIds.push("paramColumn1");</SCRIPT></TD></TR>
+                <tr>
+                  <td class="TitleCell"> <span class="LabelText">Organization</span></td>
+                  <td class="Combo_ContentCell"> 
+                    <select  name="inpOrg" id="inpOrg" class="ComboKey Combo_OneCell_width" required="true">
+                    <option value=""> <div id="reportAD_ORGID"></div></option>
+                  </select></td>
+							    <td class="TitleCell"></td>
+							    <td class="TitleCell"></td>
+                  <td class="TitleCell" align="center"><span class="LabelText">Date Ranges</span></td>
+                  <td class="TitleCell"></td>
+                </tr>
+                <tr>
+                  <td class="TitleCell"> <span class="LabelText">Receivable</span></td>
+                  <td class="Radio_Check_ContentCell"> <input type="radio" name="inpReceipt" value="Y" checked="" id="paramReceipt"></input> </td>
+                  <td class="TitleCell"> <span class="LabelText">Payable</span></td>
+                  <td class="Radio_Check_ContentCell"> <input type="radio" name="inpReceipt" value="N" checked="" id="paramPayable"></input></td>
+                  <td class="TitleCell">
+                    <input dojotype="openbravo:RealNumberTextbox" type="hidden" name="inpColumn0" id="paramColumn0" value="0" />
+							      <script>djConfig.searchIds.push("paramColumn0");</script>
+                    <span class="LabelText">0</span> - </td>
+							    <td class="TitleCell">
+							      <input dojotype="openbravo:RealNumberTextbox" class="required TextBox_btn_OneCell_width" greaterThan="paramColumn0" type="text" name="inpColumn1" id="paramColumn1" maxlength="4" size=4 onchange="columnChange();" value="xxx7" width="4"/>
+							      <script>djConfig.searchIds.push("paramColumn1");</script></td></tr>
 
-						  	<TR>
-                  <TD class="TitleCell"><SPAN class="LabelText">
+						  	<tr>
+                  <td class="TitleCell"><span class="LabelText">
 								    Business Partners
-                  </SPAN></TD>
-							    <TD ROWSPAN="3" COLSPAN="2">
-                  <TABLE border="0" cellspacing="0" cellpadding="0">
-                    <TR>
-                      <TD rowspan="5">
-                        <SELECT class="List_width List_height" name="inpcBPartnerId_IN" multiple="" id="reportCBPartnerId_IN"></SELECT>
-                      </TD>
-                      <TD class="List_Button_ContentCell">
-                        <TABLE border="0" cellspacing="0" cellpadding="0">
-                          <TR>
-                            <TD>
-                              <A class="List_Button_TopLink" href="#"
+                  </span></td>
+							    <td ROWSPAN="3" COLSPAN="2">
+                  <table border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td rowspan="5">
+                        <select class="List_width List_height" name="inpcBPartnerId_IN" multiple="" id="reportCBPartnerId_IN"></select>
+                      </td>
+                      <td class="List_Button_ContentCell">
+                        <table border="0" cellspacing="0" cellpadding="0">
+                          <tr>
+                            <td>
+                              <a class="List_Button_TopLink" href="#"
                                 onclick="openMultiSearch(null, null, '../info/BusinessPartnerMultiple.html', 'SELECTOR_BUSINESS', false, 'frmMain', 'inpcBPartnerId_IN');return false;"
                                 onfocus="this.className='List_Button_TopLink_hover'; window.status='Add'; return true;"
                                 onblur="this.className='List_Button_TopLink'; window.status=''; return true;"
@@ -340,20 +340,20 @@ function columnChange() {
                                   onmouseout="this.className='List_Button_Top'; window.status=''; return true;">
                                   <tr>
                                     <td class="List_Button_Top_bg">
-                                      <IMG class="List_Button_Icon List_Button_Icon_Add" src="../../../../../web/images/blank.gif" alt="Add" title="Add"/>
+                                      <img class="List_Button_Icon List_Button_Icon_Add" src="../../../../../web/images/blank.gif" alt="Add" title="Add"/>
                                     </td>
                                   </tr>
                                 </table>
-                              </A>
-                            </TD>
-                          </TR>
-                          <TR>
-                            <TD class="List_Button_Separator">
-                            </TD>
-                          </TR>
-                          <TR>
-                            <TD>
-                              <A class="List_Button_MiddleLink" href="#"
+                              </a>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td class="List_Button_Separator">
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <a class="List_Button_MiddleLink" href="#"
                                 onclick="clearSelectedElements(document.frmMain.inpcBPartnerId_IN);return false;"
                                 onfocus="this.className='List_Button_MiddleLink_hover'; window.status='Delete selected elements'; return true;"
                                 onblur="this.className='List_Button_MiddleLink'; window.status=''; return true;"
@@ -366,20 +366,20 @@ function columnChange() {
                                   onmouseout="this.className='List_Button_Middle'; window.status=''; return true;">
                                   <tr>
                                     <td class="List_Button_Middle_bg">
-                                      <IMG class="List_Button_Icon List_Button_Icon_Delete" src="../../../../../web/images/blank.gif" alt="Delete selected elements" title="Delete selected elements"/>
+                                      <img class="List_Button_Icon List_Button_Icon_Delete" src="../../../../../web/images/blank.gif" alt="Delete selected elements" title="Delete selected elements"/>
                                     </td>
                                   </tr>
                                 </table>
-                              </A>
-                            </TD>
-                          </TR>
-                          <TR>
-                            <TD class="List_Button_Separator">
-                            </TD>
-                          </TR>
-                          <TR>
-                            <TD>
-                              <A class="List_Button_BottomLink" href="#"
+                              </a>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td class="List_Button_Separator">
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <a class="List_Button_BottomLink" href="#"
                                 onclick="clearList(document.frmMain.inpcBPartnerId_IN);return false;"
                                 onfocus="this.className='List_Button_BottomLink_hover'; window.status='Delete all elements'; return true;"
                                 onblur="this.className='List_Button_BottomLink'; window.status=''; return true;"
@@ -392,52 +392,52 @@ function columnChange() {
                                   onmouseout="this.className='List_Button_Bottom'; window.status=''; return true;">
                                   <tr>
                                     <td class="List_Button_Bottom_bg">
-                                      <IMG class="List_Button_Icon List_Button_Icon_DeleteAll" src="../../../../../web/images/blank.gif" alt="Delete all elements" title="Delete all elements"/>
+                                      <img class="List_Button_Icon List_Button_Icon_DeleteAll" src="../../../../../web/images/blank.gif" alt="Delete all elements" title="Delete all elements"/>
                                     </td>
                                   </tr>
                                 </table>
-                              </A>
-                            </TD>
-                          </TR>
-                        </TABLE>
-                      </TD>
-                    </TR>
-                  </TABLE>
-							  </TD>
-							  <TD class="TitleCell"></TD>
-						  	  <TD class="TitleCell">
-						  	  <SPAN id="spanCol2" class="LabelText" name="inpLabelColumn2">xx7</SPAN> - </TD>
-                              <TD class="TitleCell">
-                              <INPUT dojoType="openbravo:RealNumberTextbox" class="required TextBox_btn_OneCell_width" greaterThan="paramColumn1" lowerThan="paramColumn3" type="text" name="inpColumn2" id="paramColumn2" maxlength="4" size=4 onchange="columnChange();" value="xxx7"  width="4"/>
-							  <SCRIPT>djConfig.searchIds.push("paramColumn2");</SCRIPT></TD></TR>
+                              </a>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+							  </td>
+							  <td class="TitleCell"></td>
+						  	  <td class="TitleCell">
+						  	  <span id="spanCol2" class="LabelText" name="inpLabelColumn2">xx7</span> - </td>
+                              <td class="TitleCell">
+                              <input dojoType="openbravo:RealNumberTextbox" class="required TextBox_btn_OneCell_width" greaterThan="paramColumn1" lowerThan="paramColumn3" type="text" name="inpColumn2" id="paramColumn2" maxlength="4" size=4 onchange="columnChange();" value="xxx7"  width="4"/>
+							  <script>djConfig.searchIds.push("paramColumn2");</script></td></tr>
 
-						    <TR>
-							  <TD class="TitleCell"></TD>
-							  <TD class="TitleCell"></TD>
-						      <TD class="TitleCell">
-						  	  <SPAN class="LabelText" id="spanCol3" name="inpLabelColumn3">xx7</SPAN> - </TD>
-							 <TD class="TitleCell">
-							  <INPUT dojoType="openbravo:RealNumberTextbox" greaterThan="paramColumn2" lowerThan="paramColumn4" class="required TextBox_btn_OneCell_width" type="text" name="inpColumn3" id="paramColumn3" maxlength="4"  size=4 onchange="columnChange();" value="xxx7" width="4"/>
-							  <SCRIPT>djConfig.searchIds.push("paramColumn3");</SCRIPT></TD></TR>
+						    <tr>
+							  <td class="TitleCell"></td>
+							  <td class="TitleCell"></td>
+						      <td class="TitleCell">
+						  	  <span class="LabelText" id="spanCol3" name="inpLabelColumn3">xx7</span> - </td>
+							 <td class="TitleCell">
+							  <input dojoType="openbravo:RealNumberTextbox" greaterThan="paramColumn2" lowerThan="paramColumn4" class="required TextBox_btn_OneCell_width" type="text" name="inpColumn3" id="paramColumn3" maxlength="4"  size=4 onchange="columnChange();" value="xxx7" width="4"/>
+							  <script>djConfig.searchIds.push("paramColumn3");</script></td></tr>
 
-						    <TR>
-							  <TD class="TitleCell"></TD>
-							  <TD class="TitleCell"></TD>
-						      <TD class="TitleCell">
-						  	  <SPAN class="LabelText" id="spanCol4" name="inpLabelColumn4">xx7</SPAN> - </TD>
-							  <TD class="TitleCell">
-							  <INPUT dojoType="openbravo:RealNumberTextbox" greaterThan="paramColumn3" class="required TextBox_btn_OneCell_width" type="text" name="inpColumn4" id="paramColumn4" maxlength="4"  size=4 onchange="columnChange();" value="xxx7" width="4"/>
-							  <SCRIPT>djConfig.searchIds.push("paramColumn4");</SCRIPT></TD></TR>
+						    <tr>
+							  <td class="TitleCell"></td>
+							  <td class="TitleCell"></td>
+						      <td class="TitleCell">
+						  	  <span class="LabelText" id="spanCol4" name="inpLabelColumn4">xx7</span> - </td>
+							  <td class="TitleCell">
+							  <input dojoType="openbravo:RealNumberTextbox" greaterThan="paramColumn3" class="required TextBox_btn_OneCell_width" type="text" name="inpColumn4" id="paramColumn4" maxlength="4"  size=4 onchange="columnChange();" value="xxx7" width="4"/>
+							  <script>djConfig.searchIds.push("paramColumn4");</script></td></tr>
 
-						    <TR>
-							  <TD class="TitleCell"></TD>
-							  <TD class="TitleCell"></TD>
-							  <TD class="TitleCell"></TD>
-							  <TD class="TitleCell"></TD>
-						      <TD class="TitleCell">&gt; 
-						      <SPAN class="LabelText" id="spanCol5" name="inpLabelColumn5">xx7</SPAN></TD>
-							  <TD class="TitleCell"></TD></TR>
-                  <TR>
+						    <tr>
+							  <td class="TitleCell"></td>
+							  <td class="TitleCell"></td>
+							  <td class="TitleCell"></td>
+							  <td class="TitleCell"></td>
+						      <td class="TitleCell">&gt; 
+						      <span class="LabelText" id="spanCol5" name="inpLabelColumn5">xx7</span></td>
+							  <td class="TitleCell"></td></tr>
+                  <tr>
                     <td colspan="6">
                       <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
                       <tbody>
@@ -452,11 +452,11 @@ function columnChange() {
                       </tbody>
                       </table>
                     </td>
-                  </TR>
+                  </tr>
 
                   <tr>
-                    <TD class="TitleCell"></TD>
-                    <TD class="Button_CenterAlign_ContentCell">
+                    <td class="TitleCell"></td>
+                    <td class="Button_CenterAlign_ContentCell">
                       <div>
                         <a class="ButtonLink" href="#" onfocus="this.className='ButtonLink_hover'; window.status='View Results in a New Window'; return true;" onblur="this.className='ButtonLink'; window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_hover'; return true;" onclick="submitCommandForm('FIND', true);return false;" id="buttonHTML">
                         <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='HTML_Report';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
@@ -468,114 +468,114 @@ function columnChange() {
                         </table>
                         </a>
                       </div>
-                    </TD>
-                    <TD class="ContentCell">
-                    </TD>
-                    <TD class="TitleCell"></TD>
-                    <TD class="ContentCell"></TD>
-                    <TD class="ContentCell"></TD>
-                  </TR>
-    	          </TABLE>
+                    </td>
+                    <td class="ContentCell">
+                    </td>
+                    <td class="TitleCell"></td>
+                    <td class="ContentCell"></td>
+                    <td class="ContentCell"></td>
+                  </tr>
+    	          </table>
                 <br>
-                <DIV align="center" id="sectionDocType">
-					      <TABLE width="95%" border="1" class="DataGrid_Header_Table DataGrid_Body_Table">
-					        <TR class="DataGrid_Body_Row">
-					          <TH class="DataGrid_Header_Cell" width="35%">Business partner</TH>
-					          <TH class="DataGrid_Header_Cell" width="9%" id="paramTitleColumn0">Previous</TH>
-					          <TH class="DataGrid_Header_Cell" width="9%" id="paramTitleColumn1">xx0-10</TH>
-					          <TH class="DataGrid_Header_Cell" width="9%" id="paramTitleColumn2">xx11-20</TH>
-					          <TH class="DataGrid_Header_Cell" width="9%" id="paramTitleColumn3">xx21-30</TH>
-					          <TH class="DataGrid_Header_Cell" width="9%" id="paramTitleColumn4">xx31-60</TH>
-					          <TH class="DataGrid_Header_Cell" width="9%" id="paramTitleColumn5">xx60</TH>
-					          <TH class="DataGrid_Header_Cell" width="11%" >Total</TH>
-					        </TR>
+                <div align="center" id="sectionDocType">
+					      <table width="95%" border="1" class="DataGrid_Header_Table DataGrid_Body_Table">
+					        <tr class="DataGrid_Body_Row">
+					          <th class="DataGrid_Header_Cell" width="35%">Business partner</th>
+					          <th class="DataGrid_Header_Cell" width="9%" id="paramTitleColumn0">Previous</th>
+					          <th class="DataGrid_Header_Cell" width="9%" id="paramTitleColumn1">xx0-10</th>
+					          <th class="DataGrid_Header_Cell" width="9%" id="paramTitleColumn2">xx11-20</th>
+					          <th class="DataGrid_Header_Cell" width="9%" id="paramTitleColumn3">xx21-30</th>
+					          <th class="DataGrid_Header_Cell" width="9%" id="paramTitleColumn4">xx31-60</th>
+					          <th class="DataGrid_Header_Cell" width="9%" id="paramTitleColumn5">xx60</th>
+					          <th class="DataGrid_Header_Cell" width="11%" >Total</th>
+					        </tr>
 					        
-					        <DIV id="sectionDetail">
-					        <TR class="DataGrid_Body_Row">
-					        <TD class="DataGrid_Body_Cell" width="35%" id="fieldBpartner">xxGoofy</TD>
-									<TD class="DataGrid_Body_Cell" width="9%">
-									  <A href="#" onclick="document.frmMain.paramDateTo.value=document.frmMain.paramDateFromPrevious.value;submitCommandFormParameter('DIRECT', document.frmMain.inpBpartnerId, xx, false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idCellCol0">
-										<span title="xx" id="fieldZero">xx100</span></A></TD>
-							        <TD class="DataGrid_Body_Cell" width="9%">
-							          <A href="#" onclick="document.frmMain.inpDateFrom.value=document.frmMain.paramDateFromCol1.value;document.frmMain.inpDateTo.value=document.frmMain.paramDateToCol1.value;submitCommandFormParameter('DIRECT', document.frmMain.inpBpartnerId, xx, false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idCellCol1">
-							            <span title="xx" id="fieldOne">xx100</span></A></TD>
-							        <TD class="DataGrid_Body_Cell" width="9%">
-							          <A href="#" onclick="document.frmMain.inpDateFrom.value=document.frmMain.paramDateFromCol2.value;document.frmMain.inpDateTo.value=document.frmMain.paramDateToCol2.value;submitCommandFormParameter('DIRECT', document.frmMain.inpBpartnerId, xx, false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idCellCol2">
-							            <span title="xx" id="fieldTwo">xx100</span></A></TD>
-							        <TD class="DataGrid_Body_Cell" width="9%" >
-							          <A href="#" onclick="document.frmMain.inpDateFrom.value=document.frmMain.paramDateFromCol3.value;document.frmMain.inpDateTo.value=document.frmMain.paramDateToCol3.value;submitCommandFormParameter('DIRECT', document.frmMain.inpBpartnerId, xx, false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idCellCol3">
-							            <span title="xx" id="fieldThree">xx100</span></A></TD>
-							        <TD class="DataGrid_Body_Cell" width="9%" >
-							          <A href="#" onclick="document.frmMain.inpDateFrom.value=document.frmMain.paramDateFromCol4.value;document.frmMain.inpDateTo.value=document.frmMain.paramDateToCol4.value;submitCommandFormParameter('DIRECT', document.frmMain.inpBpartnerId, xx, false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idCellCol4">
-							            <span title="xx" id="fieldFour">xx100</span></A></TD>
+					        <div id="sectionDetail">
+					        <tr class="DataGrid_Body_Row">
+					        <td class="DataGrid_Body_Cell" width="35%" id="fieldBpartner">xxGoofy</td>
+									<td class="DataGrid_Body_Cell" width="9%">
+									  <a href="#" onclick="document.frmMain.paramDateTo.value=document.frmMain.paramDateFromPrevious.value;submitCommandFormParameter('DIRECT', document.frmMain.inpBpartnerId, xx, false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idCellCol0">
+										<span title="xx" id="fieldZero">xx100</span></a></td>
+							        <td class="DataGrid_Body_Cell" width="9%">
+							          <a href="#" onclick="document.frmMain.inpDateFrom.value=document.frmMain.paramDateFromCol1.value;document.frmMain.inpDateTo.value=document.frmMain.paramDateToCol1.value;submitCommandFormParameter('DIRECT', document.frmMain.inpBpartnerId, xx, false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idCellCol1">
+							            <span title="xx" id="fieldOne">xx100</span></a></td>
+							        <td class="DataGrid_Body_Cell" width="9%">
+							          <a href="#" onclick="document.frmMain.inpDateFrom.value=document.frmMain.paramDateFromCol2.value;document.frmMain.inpDateTo.value=document.frmMain.paramDateToCol2.value;submitCommandFormParameter('DIRECT', document.frmMain.inpBpartnerId, xx, false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idCellCol2">
+							            <span title="xx" id="fieldTwo">xx100</span></a></td>
+							        <td class="DataGrid_Body_Cell" width="9%" >
+							          <a href="#" onclick="document.frmMain.inpDateFrom.value=document.frmMain.paramDateFromCol3.value;document.frmMain.inpDateTo.value=document.frmMain.paramDateToCol3.value;submitCommandFormParameter('DIRECT', document.frmMain.inpBpartnerId, xx, false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idCellCol3">
+							            <span title="xx" id="fieldThree">xx100</span></a></td>
+							        <td class="DataGrid_Body_Cell" width="9%" >
+							          <a href="#" onclick="document.frmMain.inpDateFrom.value=document.frmMain.paramDateFromCol4.value;document.frmMain.inpDateTo.value=document.frmMain.paramDateToCol4.value;submitCommandFormParameter('DIRECT', document.frmMain.inpBpartnerId, xx, false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idCellCol4">
+							            <span title="xx" id="fieldFour">xx100</span></a></td>
 							
-									<TD class="DataGrid_Body_Cell" width="9%" ><A href="#" onclick="document.frmMain.paramDateFrom.value=document.frmMain.paramDateFromCol5.value;submitCommandFormParameter('DIRECT', document.frmMain.inpBpartnerId, xx, false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idCellCol5">
-									  <span id="fieldFive" title="xx">xx100</span></A></TD>
-									<TD class="DataGrid_Body_Cell" width="11%" >
-									  <A href="#" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpBpartnerId, xx, false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idCellColT">
-										<span id="fieldTotal" title="xx">xx100</span></A></TD>
-							  </TR>
+									<td class="DataGrid_Body_Cell" width="9%" ><a href="#" onclick="document.frmMain.paramDateFrom.value=document.frmMain.paramDateFromCol5.value;submitCommandFormParameter('DIRECT', document.frmMain.inpBpartnerId, xx, false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idCellCol5">
+									  <span id="fieldFive" title="xx">xx100</span></a></td>
+									<td class="DataGrid_Body_Cell" width="11%" >
+									  <a href="#" onclick="submitCommandFormParameter('DIRECT', document.frmMain.inpBpartnerId, xx, false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idCellColT">
+										<span id="fieldTotal" title="xx">xx100</span></a></td>
+							  </tr>
 							</div>
-			        <TR class="DataGrid_Body_Row">
-			          <TH class="DataGrid_Header_Cell" width="35%"  id="fieldSumBpartner">Total</TH>
-			          <TH class="DataGrid_Header_Cell" width="9%">
-			            <A href="#" onclick="document.frmMain.paramDateTo.value=document.frmMain.paramDateFromPrevious.value;document.frmMain.inpBpartnerId.value='';submitCommandForm('DIRECT', false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idTotalCol0">
-			              <span id="fieldSumZero" title="xx">xxTot100</SPAN></A></TH>
-			          <TH class="DataGrid_Header_Cell" width="9%" >
-			            <A href="#" onclick="document.frmMain.paramDateFrom.value=document.frmMain.paramDateFromCol2.value;document.frmMain.paramDateTo.value=document.frmMain.paramDateToCol2.value;document.frmMain.inpBpartnerId.value='';submitCommandForm('DIRECT', false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idTotalCol1">
-			              <span id="fieldSumOne" title="xx">xxTot100</SPAN></A></TH>
-			          <TH class="DataGrid_Header_Cell" width="9%" >
-			            <A href="#" onclick="document.frmMain.paramDateFrom.value=document.frmMain.paramDateFromCol2.value;document.frmMain.paramDateTo.value=document.frmMain.paramDateToCol2.value;document.frmMain.inpBpartnerId.value='';submitCommandForm('DIRECT', false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idTotalCol2">
-			              <span id="fieldSumTwo" title="xx">xxTot100</span></A></TH>
-			          <TH class="DataGrid_Header_Cell" width="9%" >
-			            <A href="#" onclick="document.frmMain.paramDateFrom.value=document.frmMain.paramDateFromCol3.value;document.frmMain.paramDateTo.value=document.frmMain.paramDateToCol3.value;document.frmMain.inpBpartnerId.value='';submitCommandForm('DIRECT', false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idTotalCol3">
-			              <span id="fieldSumThree" title="xx">xxTot100</span></A></TH>
-			          <TH class="DataGrid_Header_Cell" width="9%" >
-			            <A href="#" onclick="document.frmMain.paramDateFrom.value=document.frmMain.paramDateFromCol4.value;document.frmMain.paramDateTo.value=document.frmMain.paramDateToCol4.value;document.frmMain.inpBpartnerId.value='';submitCommandForm('DIRECT', false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idTotalCol4">
-			              <span id="fieldSumFour" title="xx">xxTot100</span></A></TH>
-			          <TH class="DataGrid_Header_Cell" width="9%" >
-			            <A href="#" onclick="document.frmMain.paramDateFrom.value=document.frmMain.paramDateFromCol5.value;document.frmMain.inpBpartnerId.value='';submitCommandForm('DIRECT', false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idTotalCol5">
-			              <span id="fieldSumFive" title="xx">xxTot100</span></A></TH>
-			          <TH class="DataGrid_Header_Cell" width="11%">
-			            <A href="#" onclick="document.frmMain.inpBpartnerId.value='';submitCommandForm('DIRECT', false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idTotalCol5">
-			              <span title="xx" id="fieldSumTotal">xxTot100</span></A></TH>
-			        </TR>
+			        <tr class="DataGrid_Body_Row">
+			          <th class="DataGrid_Header_Cell" width="35%"  id="fieldSumBpartner">Total</th>
+			          <th class="DataGrid_Header_Cell" width="9%">
+			            <a href="#" onclick="document.frmMain.paramDateTo.value=document.frmMain.paramDateFromPrevious.value;document.frmMain.inpBpartnerId.value='';submitCommandForm('DIRECT', false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idTotalCol0">
+			              <span id="fieldSumZero" title="xx">xxTot100</span></a></th>
+			          <th class="DataGrid_Header_Cell" width="9%" >
+			            <a href="#" onclick="document.frmMain.paramDateFrom.value=document.frmMain.paramDateFromCol2.value;document.frmMain.paramDateTo.value=document.frmMain.paramDateToCol2.value;document.frmMain.inpBpartnerId.value='';submitCommandForm('DIRECT', false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idTotalCol1">
+			              <span id="fieldSumOne" title="xx">xxTot100</span></a></th>
+			          <th class="DataGrid_Header_Cell" width="9%" >
+			            <a href="#" onclick="document.frmMain.paramDateFrom.value=document.frmMain.paramDateFromCol2.value;document.frmMain.paramDateTo.value=document.frmMain.paramDateToCol2.value;document.frmMain.inpBpartnerId.value='';submitCommandForm('DIRECT', false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idTotalCol2">
+			              <span id="fieldSumTwo" title="xx">xxTot100</span></a></th>
+			          <th class="DataGrid_Header_Cell" width="9%" >
+			            <a href="#" onclick="document.frmMain.paramDateFrom.value=document.frmMain.paramDateFromCol3.value;document.frmMain.paramDateTo.value=document.frmMain.paramDateToCol3.value;document.frmMain.inpBpartnerId.value='';submitCommandForm('DIRECT', false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idTotalCol3">
+			              <span id="fieldSumThree" title="xx">xxTot100</span></a></th>
+			          <th class="DataGrid_Header_Cell" width="9%" >
+			            <a href="#" onclick="document.frmMain.paramDateFrom.value=document.frmMain.paramDateFromCol4.value;document.frmMain.paramDateTo.value=document.frmMain.paramDateToCol4.value;document.frmMain.inpBpartnerId.value='';submitCommandForm('DIRECT', false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idTotalCol4">
+			              <span id="fieldSumFour" title="xx">xxTot100</span></a></th>
+			          <th class="DataGrid_Header_Cell" width="9%" >
+			            <a href="#" onclick="document.frmMain.paramDateFrom.value=document.frmMain.paramDateFromCol5.value;document.frmMain.inpBpartnerId.value='';submitCommandForm('DIRECT', false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idTotalCol5">
+			              <span id="fieldSumFive" title="xx">xxTot100</span></a></th>
+			          <th class="DataGrid_Header_Cell" width="11%">
+			            <a href="#" onclick="document.frmMain.inpBpartnerId.value='';submitCommandForm('DIRECT', false, document.frmMain, 'ReportDebtPayment.html', '_self', false, true);return false;" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idTotalCol5">
+			              <span title="xx" id="fieldSumTotal">xxTot100</span></a></th>
+			        </tr>
 			    </table>
 			  </div>
                       <!-- USER CONTROLS -->
-                </TD>
-              </TR>
-              </TABLE>
-              </TD>
-            </TR>
-          </TABLE>
+                </td>
+              </tr>
+              </table>
+              </td>
+            </tr>
+          </table>
         </div>
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Menu_ContentPane_Bottom" id="tdbottomSeparator">
-          <TR>
-            <TD class="Main_Bottom_bg"><IMG src="../../../../../web/images/blank.gif" border="0"></TD>
-          </TR>
-        </TABLE></td>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Menu_ContentPane_Bottom" id="tdbottomSeparator">
+          <tr>
+            <td class="Main_Bottom_bg"><img src="../../../../../web/images/blank.gif" border="0"></td>
+          </tr>
+        </table></td>
       <td valign="top">
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Right" id="tdrightSeparator">
-          <TR><TD class="Main_NavBar_bg_right"></TD></TR>
-          <TR><TD class="Main_ToolBar_bg_right" valign="top"></TD></TR>
-          <TR><TD class="Main_Client_bg_right"></TD></TR>
-          <TR><TD class="Main_Bottom_bg_right"></TD></TR>
-        </TABLE>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Right" id="tdrightSeparator">
+          <tr><td class="Main_NavBar_bg_right"></td></tr>
+          <tr><td class="Main_ToolBar_bg_right" valign="top"></td></tr>
+          <tr><td class="Main_Client_bg_right"></td></tr>
+          <tr><td class="Main_Bottom_bg_right"></td></tr>
+        </table>
       </td>
     </tr>
   </table>
-	<INPUT type="hidden" id="paramDateFromPrevious" name="dateFromPrevious" value=""></INPUT>
-	<INPUT type="hidden" id="paramDateFromCol1" name="dateFromCol1" value=""></INPUT>
-	<INPUT type="hidden" id="paramDateToCol1" name="dateToCol1" value=""></INPUT>
-	<INPUT type="hidden" id="paramDateFromCol2" name="dateFromCol2" value=""></INPUT>
-	<INPUT type="hidden" id="paramDateToCol2" name="dateToCol2" value=""></INPUT>
-	<INPUT type="hidden" id="paramDateFromCol3" name="dateFromCol3" value=""></INPUT>
-	<INPUT type="hidden" id="paramDateToCol3" name="dateToCol3" value=""></INPUT>
-	<INPUT type="hidden" id="paramDateFromCol4" name="dateFromCol4" value=""></INPUT>
-	<INPUT type="hidden" id="paramDateToCol4" name="dateToCol4" value=""></INPUT>
-	<INPUT type="hidden" id="paramDateFromCol5" name="dateFromCol5" value=""></INPUT>
-	<INPUT type="hidden" id="paramDateToCol5" name="dateToCol5" value=""></INPUT>
+	<input type="hidden" id="paramDateFromPrevious" name="dateFromPrevious" value=""></input>
+	<input type="hidden" id="paramDateFromCol1" name="dateFromCol1" value=""></input>
+	<input type="hidden" id="paramDateToCol1" name="dateToCol1" value=""></input>
+	<input type="hidden" id="paramDateFromCol2" name="dateFromCol2" value=""></input>
+	<input type="hidden" id="paramDateToCol2" name="dateToCol2" value=""></input>
+	<input type="hidden" id="paramDateFromCol3" name="dateFromCol3" value=""></input>
+	<input type="hidden" id="paramDateToCol3" name="dateToCol3" value=""></input>
+	<input type="hidden" id="paramDateFromCol4" name="dateFromCol4" value=""></input>
+	<input type="hidden" id="paramDateToCol4" name="dateToCol4" value=""></input>
+	<input type="hidden" id="paramDateFromCol5" name="dateFromCol5" value=""></input>
+	<input type="hidden" id="paramDateToCol5" name="dateToCol5" value=""></input>
   </form>
 </body>
 </html>

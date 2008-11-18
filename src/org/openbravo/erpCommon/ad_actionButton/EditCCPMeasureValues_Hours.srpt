@@ -17,9 +17,9 @@
  ************************************************************************
 -->
 
-<TR class="Popup_Client_Selector_DataGrid_HeaderRow">
-  <TH width="30%" class="datagridCell Popup_Client_Selector_HeaderRow_bg">HOUR:</TH>
-  <DIV id="sectionHours">
-    <TH width="7%" class="datagridCell Popup_Client_Selector_HeaderRow_bg"><SPAN id="fieldHour">xx02:00</SPAN></TH>
-  </DIV>
-</TR>
+<tr class="Popup_Client_Selector_DataGrid_HeaderRow">
+  <th width="30%" class="datagridCell Popup_Client_Selector_HeaderRow_bg">HOUR:</th>
+  <div id="sectionHours">
+    <th width="7%" class="datagridCell Popup_Client_Selector_HeaderRow_bg"><span id="fieldHour">xx02:00</span></th>
+  </div>
+</tr>

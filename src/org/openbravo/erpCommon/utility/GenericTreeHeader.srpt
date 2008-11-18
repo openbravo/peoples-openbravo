@@ -18,7 +18,7 @@
  ************************************************************************
 -->
 <FIELD_TMP>
-  <TD colspan="4">
+  <td colspan="4">
       <input type="hidden" name="inpTreeClass" id="inpTreeClass" value=""/>
       <input type="hidden" name="inpNodeId" value=""/>
       <input type="hidden" name="inpLevel" value=""/>
@@ -40,8 +40,8 @@
       </div> 
       <table width="100%" border="0" cellpadding="0" cellspacing="0">
       <tr><td style="height: 5px; _height: 0px;"></td></tr>
-     <TR>
-      <TD colspan="4">
+     <tr>
+      <td colspan="4">
         <div style="height: 0px; width: 0px;">
           <input type="text" class="DataGrid_Table_Dummy_Input" id="genericTree_dummy_input"></input>
         </div>
@@ -50,8 +50,8 @@
             <FIELD_TMP id="tree"></FIELD_TMP>
           </div>
         </div>
-      </TD>
-    </TR>
+      </td>
+    </tr>
     </table>
-  </TD>
+  </td>
  </FIELD_TMP>

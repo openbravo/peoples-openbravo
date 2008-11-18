@@ -21,7 +21,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <TITLE>General accounting plan statements</TITLE>
+    <title>General accounting plan statements</title>
     <link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS" />
     <script language="JavaScript" type="text/javascript" id="paramDirectory">
@@ -49,7 +49,7 @@
       <script type="text/javascript">
         dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
       </script>
-<SCRIPT language="JavaScript" type="text/javascript">
+<script language="JavaScript" type="text/javascript">
 
 function validate(command) {
 	var frm = document.frmMain;
@@ -106,7 +106,7 @@ function validateOrgCombo() {
 
   return true;
 }
-</SCRIPT>
+</script>
 
 <script language="JavaScript" type="text/javascript" id="paramArrayAccountingReports">
 var arrAccountingReports=null;
@@ -124,7 +124,7 @@ var arrAllOrg=null;
 var arrReportIsBalanced = null;
 </script>
 
-	<SCRIPT language="JavaScript" type="text/javascript">
+	<script language="JavaScript" type="text/javascript">
 	function onLoadDo(){
 		this.windowTables = new Array(
 		  new windowTableId('client', 'buttonPDF')
@@ -146,10 +146,10 @@ var arrReportIsBalanced = null;
 	function onResizeDo(){
 		resizeArea();
 	}
-	</SCRIPT>
-</HEAD>
-    <BODY leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
-      <FORM method="POST" action="GeneralAccountingReports.pdf" name="frmMain" target="_blank" id="form">
+	</script>
+</head>
+    <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
+      <form method="post" action="GeneralAccountingReports.pdf" name="frmMain" target="_blank" id="form">
         <input type="hidden" name="Command" />
         <input type="hidden" name="inpLastFieldChanged" value="" />
 
@@ -157,22 +157,22 @@ var arrReportIsBalanced = null;
     <tr>
       <td valign="top" id="tdleftTabs"></td>
       <td valign="top">
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Left">
-          <TR><TD class="Main_NavBar_bg_left" id="tdleftSeparator"></TD></TR>
-          <TR><TD class="Main_ToolBar_bg_left" valign="top"></TD></TR>
-          <TR><TD class="Main_Client_bg_left"></TD></TR>
-          <TR><TD class="Main_Bottom_bg_left"></TD></TR>
-        </TABLE>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Left">
+          <tr><td class="Main_NavBar_bg_left" id="tdleftSeparator"></td></tr>
+          <tr><td class="Main_ToolBar_bg_left" valign="top"></td></tr>
+          <tr><td class="Main_Client_bg_left"></td></tr>
+          <tr><td class="Main_Bottom_bg_left"></td></tr>
+        </table>
       </td>
       <td valign="top">
         <div class="Main_ContentPane_NavBar" id="tdtopButtons"></div>
         <div class="Main_ContentPane_ToolBar" id="paramToolBar"></div>
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_TabPane" id="tdtopTabs">
-          <TR id="paramParentTabContainer"></TR>
-          <TR id="paramMainTabContainer"></TR>
-          <TR id="paramChildTabContainer"></TR>
-        </TABLE>
-        <DIV class="Main_ContentPane_Client" style="overflow: auto; display: none;" id="client">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_TabPane" id="tdtopTabs">
+          <tr id="paramParentTabContainer"></tr>
+          <tr id="paramMainTabContainer"></tr>
+          <tr id="paramChildTabContainer"></tr>
+        </table>
+        <div class="Main_ContentPane_Client" style="overflow: auto; display: none;" id="client">
                 <table class="dojoTabContainer" border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
                   <tr>
                     <td>
@@ -182,7 +182,7 @@ var arrReportIsBalanced = null;
                             <!-- MessageBox -->
 
                             <table cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxyy">
-                              <TBODY>
+                              <tbody>
                               <tr class="MessageBox_TopMargin">
                                 <td class="MessageBox_LeftMargin"></td>
                                 <td></td>
@@ -193,7 +193,7 @@ var arrReportIsBalanced = null;
                                 <td>
 
                                   <table cellpadding="0" cellspacing="0" style="width: 100%;">
-                                    <TBODY>
+                                    <tbody>
                                     <tr>
                                       <td>
                                         <div class="MessageBox_TopLeft"></div>
@@ -202,12 +202,12 @@ var arrReportIsBalanced = null;
                                       <td class="MessageBox_bg">
 
                                         <table class="MessageBox_Top">
-                                        <TBODY>
+                                        <tbody>
                                           <tr>
                                             <td>
                                               <span>
                                               <table cellpadding="0" cellspacing="0" class="MessageBox_Body_ContentCell">
-                                                <TBODY>
+                                                <tbody>
                                                 <tr>
                                                   <td class="MessageBox_Icon_ContentCell">
                                                     <div class="MessageBox_Icon"></div>
@@ -224,12 +224,12 @@ var arrReportIsBalanced = null;
                                                     </span>
                                                   </td>
                                                 </tr>
-                                                </TBODY>
+                                                </tbody>
                                               </table>
                                               </span>
                                             </td>
                                           </tr>
-                                          </TBODY>
+                                          </tbody>
                                         </table>
 
                                       </td>
@@ -250,7 +250,7 @@ var arrReportIsBalanced = null;
                                       <td class="MessageBox_Bottom">
                                       </td>
                                     </tr>
-                                    </TBODY>
+                                    </tbody>
                                   </table>
 
                                 </td>
@@ -261,11 +261,11 @@ var arrReportIsBalanced = null;
                                 <td></td>
                                 <td class="MessageBox_RightMargin"></td>
                               </tr>
-                              </TBODY>
+                              </tbody>
                             </table>
                             <!-- USER CONTROLS -->
 
-              <TABLE class="Main_Client_TableEdition">
+              <table class="Main_Client_TableEdition">
                 <tr>
                   <td class="TableEdition_OneCell_width"></td>
                   <td class="TableEdition_OneCell_width"></td>
@@ -274,14 +274,14 @@ var arrReportIsBalanced = null;
                   <td class="TableEdition_OneCell_width"></td>
                   <td class="TableEdition_OneCell_width"></td>
                 </tr>
-                <TR>
+                <tr>
                 <td colspan="6">
                   <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
                   <tbody>
                     <tr class="FieldGroup_TopMargin"/>
                     <tr>
                       <td class="FieldGroupTitle_Left"><img class="FieldGroupTitle_Left_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
-                      <TD class="FieldGroupTitle">Primary Filters</TD>
+                      <td class="FieldGroupTitle">Primary Filters</td>
                       <td class="FieldGroupTitle_Right"><img class="FieldGroupTitle_Right_bg" border="0" src="../../../../../web/images/blank.gif"/></td>
                       <td class="FieldGroupContent"/>
                     </tr>
@@ -289,102 +289,102 @@ var arrReportIsBalanced = null;
                   </tbody>
                   </table>
                 </td>
-                </TR>
+                </tr>
                 <tr>
-                  <td class="TitleCell"><SPAN class="LabelText">Year</SPAN></td>
-                  <TD class="TextBox_ContentCell"><INPUT dojoType="openbravo:ValidationTextbox" name="inpAgno" type="text" maxlength="4" value="" id="paramAgno" class="required TextBox_OneCell_width" required="true" onchange="logChanges(this);return true;"></input><script>djConfig.searchIds.push("paramAgno");</script>
-                  <td class="TitleCell"><SPAN class="LabelText">From Date</SPAN></td>
-                  <TD class="TextBox_btn_ContentCell">
-                    <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
-                      <TR>
-                        <TD>
-                          <INPUT dojoType="openbravo:DateTextbox" lowerThan="paramDateTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateFrom" id="paramDateFrom" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramDateFrom");</script>
-                        </TD>
-                        <TD valign="top">
+                  <td class="TitleCell"><span class="LabelText">Year</span></td>
+                  <td class="TextBox_ContentCell"><input dojoType="openbravo:ValidationTextbox" name="inpAgno" type="text" maxlength="4" value="" id="paramAgno" class="required TextBox_OneCell_width" required="true" onchange="logChanges(this);return true;"></input><script>djConfig.searchIds.push("paramAgno");</script>
+                  <td class="TitleCell"><span class="LabelText">From Date</span></td>
+                  <td class="TextBox_btn_ContentCell">
+                    <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                      <tr>
+                        <td>
+                          <input dojoType="openbravo:DateTextbox" lowerThan="paramDateTo" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateFrom" id="paramDateFrom" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateFrom");</script>
+                        </td>
+                        <td valign="top">
                           <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpDateFrom', document.frmMain.inpDateFrom.value, false);return false;">
                           <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
-                            <TR>
-                              <TD class="FieldButton_bg">
-                                <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></IMG>
-                              </TD>
-                            </TR>
-                          </TABLE>
+                            <tr>
+                              <td class="FieldButton_bg">
+                                <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></img>
+                              </td>
+                            </tr>
+                          </table>
                           </a>
-                        </TD>
-                      </TR>
-                    </TABLE>
-                 </TD>
-                  <td class="TitleCell"><SPAN class="LabelText">To Date</SPAN></td>
-                  <TD class="TextBox_btn_ContentCell">
-                    <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
-                      <TR>
-                        <TD>
-                          <INPUT dojoType="openbravo:DateTextbox" greaterThan="paramDateFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateTo" id="paramDateTo" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramDateTo");</script>
-                        </TD>
-                        <TD valign="top">
+                        </td>
+                      </tr>
+                    </table>
+                 </td>
+                  <td class="TitleCell"><span class="LabelText">To Date</span></td>
+                  <td class="TextBox_btn_ContentCell">
+                    <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                      <tr>
+                        <td>
+                          <input dojoType="openbravo:DateTextbox" greaterThan="paramDateFrom" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateTo" id="paramDateTo" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateTo");</script>
+                        </td>
+                        <td valign="top">
                           <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;" onclick="showCalendar('frmMain.inpDateTo', document.frmMain.inpDateTo.value, false);return false;" >
                           <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
-                            <TR>
-                              <TD class="FieldButton_bg">
-                                <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></IMG>
-                              </TD>
-                            </TR>
-                          </TABLE>
+                            <tr>
+                              <td class="FieldButton_bg">
+                                <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></img>
+                              </td>
+                            </tr>
+                          </table>
                           </a>
-                        </TD>
-                      </TR>
-                    </TABLE>
-                  </TD>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
                 </tr>
 
                 <tr>
-                <td class="TitleCell"><SPAN class="LabelText">Reference Year</SPAN></td>
-                  <TD class="TextBox_ContentCell"><INPUT dojoType="openbravo:ValidationTextbox" name="inpAgnoRef" type="text" maxlength="4" value="" id="paramAgnoRef" class="required TextBox_OneCell_width" required="true" onchange="logChanges(this);return true;"></input><script>djConfig.searchIds.push("paramAgnoRef");</script>
-                  <td class="TitleCell"><SPAN class="LabelText">From Reference Date</SPAN></td>
-                  <TD class="TextBox_btn_ContentCell">
-                    <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
-                      <TR>
-                        <TD>
-                          <INPUT dojoType="openbravo:DateTextbox" lowerThan="paramDateToRef" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateFromRef" id="paramDateFromRef" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramDateFromRef");</script>
-                        </TD>
-                        <TD valign="top">
+                <td class="TitleCell"><span class="LabelText">Reference Year</span></td>
+                  <td class="TextBox_ContentCell"><input dojoType="openbravo:ValidationTextbox" name="inpAgnoRef" type="text" maxlength="4" value="" id="paramAgnoRef" class="required TextBox_OneCell_width" required="true" onchange="logChanges(this);return true;"></input><script>djConfig.searchIds.push("paramAgnoRef");</script>
+                  <td class="TitleCell"><span class="LabelText">From Reference Date</span></td>
+                  <td class="TextBox_btn_ContentCell">
+                    <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                      <tr>
+                        <td>
+                          <input dojoType="openbravo:DateTextbox" lowerThan="paramDateToRef" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateFromRef" id="paramDateFromRef" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateFromRef");</script>
+                        </td>
+                        <td valign="top">
                           <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpDateFromRef', document.frmMain.inpDateFromRef.value, false);return false;">
                           <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
-                            <TR>
-                              <TD class="FieldButton_bg">
-                                <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></IMG>
-                              </TD>
-                            </TR>
-                          </TABLE>
+                            <tr>
+                              <td class="FieldButton_bg">
+                                <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></img>
+                              </td>
+                            </tr>
+                          </table>
                           </a>
-                        </TD>
-                      </TR>
-                    </TABLE>
-                  </TD>
-                  <td class="TitleCell"><SPAN class="LabelText">To Reference Date</SPAN></td>
-                  <TD class="TextBox_btn_ContentCell">
-                    <TABLE border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
-                      <TR>
-                        <TD>
-                          <INPUT dojoType="openbravo:DateTextbox" greaterThan="paramDateFromRef" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateToRef" id="paramDateToRef" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></INPUT><script>djConfig.searchIds.push("paramDateToRef");</script>
-                        </TD>
-                        <TD valign="top">
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td class="TitleCell"><span class="LabelText">To Reference Date</span></td>
+                  <td class="TextBox_btn_ContentCell">
+                    <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                      <tr>
+                        <td>
+                          <input dojoType="openbravo:DateTextbox" greaterThan="paramDateFromRef" displayFormat="xx" saveFormat="yy"  class="TextBox_btn_OneCell_width" type="text" name="inpDateToRef" id="paramDateToRef" maxlength="10" value="" onkeyup="auto_complete_date(this.textbox, this.displayFormat);return true;"></input><script>djConfig.searchIds.push("paramDateToRef");</script>
+                        </td>
+                        <td valign="top">
                           <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Calendar'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="showCalendar('frmMain.inpDateToRef', document.frmMain.inpDateToRef.value, false);return false;">
                           <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Show calendar';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
-                            <TR>
-                              <TD class="FieldButton_bg">
-                                <IMG alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></IMG>
-                              </TD>
-                            </TR>
-                          </TABLE>
+                            <tr>
+                              <td class="FieldButton_bg">
+                                <img alt="Calendar" class="FieldButton_Icon FieldButton_Icon_Calendar" title="Calendar" src="../../../../../web/images/blank.gif" border="0"></img>
+                              </td>
+                            </tr>
+                          </table>
                           </a>
-                        </TD>
-                      </TR>
-                    </TABLE>
-                  </TD>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
                 </tr>
 
-                <TR>
+                <tr>
                 <td colspan="6">
                   <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
                   <tbody>
@@ -399,44 +399,44 @@ var arrReportIsBalanced = null;
                   </tbody>
                   </table>
                 </td>
-                </TR>
+                </tr>
 
-                <TR>
-                  <TD class="TitleCell"> <SPAN class="LabelText">Accounting schema</SPAN></TD>
-                  <TD class="Combo_ContentCell" colspan="2"> <SELECT name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width" onchange="refreshAccountingReports(); validateOrgCombo(); logChanges(this); return true;">
-                    <OPTION value=""></OPTION><DIV id="reportC_ACCTSCHEMA_ID"></DIV>
-                  </SELECT></TD>
-                  <TD class="ContentCell"></TD>
-                  <TD class="TitleCell"><SPAN class="LabelText">Show only accounts with value</SPAN></TD>
-                  <TD class="Radio_Check_ContentCell"><INPUT name="inpConImporte" type="checkbox" id="fieldConImporte" value="Y"></INPUT></TD>
-                </TR>
+                <tr>
+                  <td class="TitleCell"> <span class="LabelText">Accounting schema</span></td>
+                  <td class="Combo_ContentCell" colspan="2"> <select name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width" onchange="refreshAccountingReports(); validateOrgCombo(); logChanges(this); return true;">
+                    <option value=""></option><div id="reportC_ACCTSCHEMA_ID"></div>
+                  </select></td>
+                  <td class="ContentCell"></td>
+                  <td class="TitleCell"><span class="LabelText">Show only accounts with value</span></td>
+                  <td class="Radio_Check_ContentCell"><input name="inpConImporte" type="checkbox" id="fieldConImporte" value="Y"></input></td>
+                </tr>
 
-                <TR>
-                  <TD class="TitleCell"><SPAN class="LabelText">Accounting Report</SPAN></TD>
-                  <TD class="Combo_ContentCell" colspan="2"> <SELECT name="inpcElementvalueId" id="inpcElementvalueId" class="ComboKey Combo_TwoCells_width" onchange="validateOrgCombo(); logChanges(this); return true;">
-                    <OPTION value=""></OPTION><DIV id="reportC_ElementValue_ID"></DIV>
-                  </SELECT></TD>
-                  <TD class="ContentCell"></TD>
-                  <TD class="TitleCell"><SPAN class="LabelText">Show Account codes</SPAN></TD>
-                  <TD class="Radio_Check_ContentCell"><INPUT name="inpConCodigo" type="checkbox" id="fieldConCodigo" value="Y"></INPUT></TD>
-                </TR>
+                <tr>
+                  <td class="TitleCell"><span class="LabelText">Accounting Report</span></td>
+                  <td class="Combo_ContentCell" colspan="2"> <select name="inpcElementvalueId" id="inpcElementvalueId" class="ComboKey Combo_TwoCells_width" onchange="validateOrgCombo(); logChanges(this); return true;">
+                    <option value=""></option><div id="reportC_ElementValue_ID"></div>
+                  </select></td>
+                  <td class="ContentCell"></td>
+                  <td class="TitleCell"><span class="LabelText">Show Account codes</span></td>
+                  <td class="Radio_Check_ContentCell"><input name="inpConCodigo" type="checkbox" id="fieldConCodigo" value="Y"></input></td>
+                </tr>
 
-                <TR>
-				  <TD class="TitleCell"><SPAN class="LabelText">Organization</SPAN></TD>
-                  <TD class="Combo_ContentCell" colspan="2"> <SELECT name="inpOrganizacion" id="inpOrganizacion" class="ComboKey Combo_TwoCells_width">
-                      <OPTION value=""> <DIV id="reportAD_ORGID"></DIV></OPTION>
-                    </SELECT></TD>
-                </TR>
-                <TD class="TitleCell"><SPAN class="LabelText">Account Level</SPAN></TD>
-                  <TD class="Combo_ContentCell"> <SELECT name="inpLevel" id="inpLevel" class="ComboKey Combo_OneCell_width" onchange="logChanges(this);return true;">
-                    <OPTION value=""></OPTION><DIV id="reportLevel"></DIV>
-                  </SELECT></TD>
-                  <TD class="ContentCell"></TD>
-                <TR>
+                <tr>
+				  <td class="TitleCell"><span class="LabelText">Organization</span></td>
+                  <td class="Combo_ContentCell" colspan="2"> <select name="inpOrganizacion" id="inpOrganizacion" class="ComboKey Combo_TwoCells_width">
+                      <option value=""> <div id="reportAD_ORGID"></div></option>
+                    </select></td>
+                </tr>
+                <td class="TitleCell"><span class="LabelText">Account Level</span></td>
+                  <td class="Combo_ContentCell"> <select name="inpLevel" id="inpLevel" class="ComboKey Combo_OneCell_width" onchange="logChanges(this);return true;">
+                    <option value=""></option><div id="reportLevel"></div>
+                  </select></td>
+                  <td class="ContentCell"></td>
+                <tr>
                 
-                </TR>
+                </tr>
 
-                <TR>
+                <tr>
                 <td colspan="6">
                   <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
                   <tbody>
@@ -451,10 +451,10 @@ var arrReportIsBalanced = null;
                   </tbody>
                   </table>
                 </td>
-                </TR>
+                </tr>
                 <tr>
-                  <TD class="TitleCell"></TD>
-                  <TD class="Button_LeftAlign_ContentCell">
+                  <td class="TitleCell"></td>
+                  <td class="Button_LeftAlign_ContentCell">
                     <div>
                       <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Export Results to PDF Format'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('FIND', true, null, 'GeneralAccountingReports.pdf', '_blank');return false;" id="buttonPDF">
                         <table class="Button"  onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Results';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
@@ -466,35 +466,35 @@ var arrReportIsBalanced = null;
                       </table>
                       </a>
                     </div>
-                  </TD>
-                  <TD class="TitleCell"></TD>
-                  <TD class="TitleCell"></TD>
-                  <TD class="TitleCell"></TD>
-                  <TD class="TitleCell"></TD>
+                  </td>
+                  <td class="TitleCell"></td>
+                  <td class="TitleCell"></td>
+                  <td class="TitleCell"></td>
+                  <td class="TitleCell"></td>
                 </tr>
 </table>
 
 
                       <!-- USER CONTROLS -->
-                </TD>
-              </TR>
-              </TABLE>
-              </TD>
-            </TR>
-          </TABLE>
+                </td>
+              </tr>
+              </table>
+              </td>
+            </tr>
+          </table>
         </div>
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Menu_ContentPane_Bottom" id="tdbottomSeparator">
-          <TR>
-            <TD class="Main_Bottom_bg"><IMG src="../../../../../web/images/blank.gif" border="0"></TD>
-          </TR>
-        </TABLE></td>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Menu_ContentPane_Bottom" id="tdbottomSeparator">
+          <tr>
+            <td class="Main_Bottom_bg"><img src="../../../../../web/images/blank.gif" border="0"></td>
+          </tr>
+        </table></td>
       <td valign="top">
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Right" id="tdrightSeparator">
-          <TR><TD class="Main_NavBar_bg_right"></TD></TR>
-          <TR><TD class="Main_ToolBar_bg_right" valign="top"></TD></TR>
-          <TR><TD class="Main_Client_bg_right"></TD></TR>
-          <TR><TD class="Main_Bottom_bg_right"></TD></TR>
-        </TABLE>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Right" id="tdrightSeparator">
+          <tr><td class="Main_NavBar_bg_right"></td></tr>
+          <tr><td class="Main_ToolBar_bg_right" valign="top"></td></tr>
+          <tr><td class="Main_Client_bg_right"></td></tr>
+          <tr><td class="Main_Bottom_bg_right"></td></tr>
+        </table>
       </td>
     </tr>
   </table>

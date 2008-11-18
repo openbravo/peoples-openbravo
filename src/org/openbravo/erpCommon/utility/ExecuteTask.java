@@ -102,7 +102,7 @@ public class ExecuteTask extends HttpSecureAppServlet {
     out.println("        <tr class=\"Popup_NavBar_bg\"><td></td>");
     out.println("          <td class=\"Popup_NavBar_separator_cell\"></td>");
     out.println("          <td class=\"Popup_NavBar_bg_logo_left\"></td>");
-    out.println("          <td class=\"Popup_NavBar_bg_logo\" width=\"1\" onclick=\"openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;\"><IMG src=\"" + strDireccion + "/web/images/blank.gif\" alt=\"Openbravo\" title=\"Openbravo\" border=\"0\" id=\"openbravoLogo\" class=\"Popup_NavBar_logo\" /></td>");
+    out.println("          <td class=\"Popup_NavBar_bg_logo\" width=\"1\" onclick=\"openNewBrowser('http://www.openbravo.com', 'Openbravo');return false;\"><img src=\"" + strDireccion + "/web/images/blank.gif\" alt=\"Openbravo\" title=\"Openbravo\" border=\"0\" id=\"openbravoLogo\" class=\"Popup_NavBar_logo\" /></td>");
     out.println("          <td class=\"Popup_NavBar_bg_logo_right\"></td>");
     out.println("          <td class=\"Popup_NavBar_Popup_title_cell\"><span>" + Tittle + "</span></td>");
     out.println("          <td class=\"Popup_NavBar_separator_cell\"></td>");
@@ -125,7 +125,7 @@ public class ExecuteTask extends HttpSecureAppServlet {
     out.println("    <td>");
     out.println("      <table cellspacing=\"0\" cellpadding=\"0\" class=\"Popup_ContentPane_InfoBar\">");
     out.println("        <tr>");
-    out.println("          <td class=\"Popup_InfoBar_Icon_cell\"><IMG src=\"" + strDireccion + "/web/images/blank.gif\" border=\"0\" class=\"Popup_InfoBar_Icon_info\" /></td>");
+    out.println("          <td class=\"Popup_InfoBar_Icon_cell\"><img src=\"" + strDireccion + "/web/images/blank.gif\" border=\"0\" class=\"Popup_InfoBar_Icon_info\" /></td>");
     out.println("          <td class=\"Popup_InfoBar_text_table\">");
     out.println("            <table>");
     out.println("              <tr>");

@@ -19,32 +19,32 @@
  ************************************************************************
 -->
 <html xmlns="http://www.w3.org/1999/xhtml">
-<HEAD>
+<head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<TITLE>Module Management</TITLE>
+<title>Module Management</title>
 
 
-<LINK rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon"/>
+<link rel="SHORTCUT ICON" href="../../../../../web/images/favicon.ico" type="image/x-icon"/>
 <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS">
 <script language="JavaScript" type="text/javascript" id="paramDirectory">
 var baseDirectory = "../../../../../web/";
 </script> 
-<SCRIPT language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></SCRIPT>
+<script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
+<script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
 <script language="JavaScript" type="text/javascript" id="paramLanguage">
   var defaultLang = "en_US";
 </script>
 <script language="JavaScript" src="../../../../../web/js/shortcuts.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/utils.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
-<SCRIPT language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></SCRIPT>
+<script language="JavaScript" src="../../../../../web/js/ajax.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/default/MessageBox.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
-<SCRIPT language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></SCRIPT>
-<SCRIPT language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></SCRIPT>
+<script language="JavaScript" src="../utility/MessagesJS.js" type="text/javascript"></script>
+<script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
 
 
-<SCRIPT language="JavaScript" type="text/javascript">
+<script language="JavaScript" type="text/javascript">
   function viewDetails(id) {
     document.frmMain.inpcRecordId.value = id;
     openServletNewWindow('DETAIL', false, 'ModuleManagement.html', 'BUTTON', null, true, 600, 900);
@@ -73,8 +73,8 @@ var baseDirectory = "../../../../../web/";
   }
   
 
-</SCRIPT>
-  <SCRIPT language="JavaScript" type="text/javascript">
+</script>
+  <script language="JavaScript" type="text/javascript">
   function onLoadDo(){
     this.windowTables = new Array(
       new windowTableId('client', 'buttonSearch')
@@ -100,32 +100,32 @@ var baseDirectory = "../../../../../web/";
   function onResizeDo(){
     resizeArea();
   }
-  </SCRIPT>
-</HEAD>
-<BODY onload="onLoadDo();" onresize="onResizeDo();" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" id="paramMessage">
-<FORM method="POST" action="ModuleManagement.html" name="frmMain">
-  <INPUT type="hidden" name="Command">
-  <INPUT type="hidden" name="IsPopUpCall" value="1"></INPUT>
-  <INPUT type="hidden" name="inpcRecordId" id="inpcRecordId"></INPUT>
-  <INPUT type="hidden" name="inpAuxd" value="" id="functionSumAux1"></INPUT>
+  </script>
+</head>
+<body onload="onLoadDo();" onresize="onResizeDo();" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" id="paramMessage">
+<form method="post" action="ModuleManagement.html" name="frmMain">
+  <input type="hidden" name="Command">
+  <input type="hidden" name="IsPopUpCall" value="1"></input>
+  <input type="hidden" name="inpcRecordId" id="inpcRecordId"></input>
+  <input type="hidden" name="inpAuxd" value="" id="functionSumAux1"></input>
   
   <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
     <tr>
       <td valign="top" id="tdleftTabs"></td>
       <td valign="top">
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Left">
-          <TR><TD class="Main_NavBar_bg_left" id="tdleftSeparator"></TD></TR>
-          <TR><TD class="Main_ToolBar_bg_left" valign="top"></TD></TR>
-          <TR><TD class="Main_Client_bg_left"></TD></TR>
-          <TR><TD class="Main_Bottom_bg_left"></TD></TR>
-        </TABLE>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Left">
+          <tr><td class="Main_NavBar_bg_left" id="tdleftSeparator"></td></tr>
+          <tr><td class="Main_ToolBar_bg_left" valign="top"></td></tr>
+          <tr><td class="Main_Client_bg_left"></td></tr>
+          <tr><td class="Main_Bottom_bg_left"></td></tr>
+        </table>
       </td>
       <td valign="top">
         <div class="Main_ContentPane_NavBar" id="tdtopButtons"></div>
         <div class="Main_ContentPane_ToolBar" id="paramToolBar"></div>
         
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_TabPane" id="tdtopTabs">
-          <TR id="paramParentTabContainer"><td class="tabBackGroundInit">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_TabPane" id="tdtopTabs">
+          <tr id="paramParentTabContainer"><td class="tabBackGroundInit">
             <div>
               <span class="tabTitle">
                 <div class="tabTitle_background">
@@ -142,8 +142,8 @@ var baseDirectory = "../../../../../web/";
               </div>
               </div>
             </td>
-            </TR>
-            <TR id="paramMainTabContainer">
+            </tr>
+            <tr id="paramMainTabContainer">
               <td class="tabBackGround">
                 <table class="tabTable">
                   <tr>
@@ -159,9 +159,9 @@ var baseDirectory = "../../../../../web/";
                   </tr>
                 </table>
               </td>
-            </TR>
-        </TABLE>
-        <DIV class="Main_ContentPane_Client" style="overflow: auto; display: none;" id="client">
+            </tr>
+        </table>
+        <div class="Main_ContentPane_Client" style="overflow: auto; display: none;" id="client">
                 <table class="dojoTabContainer" border="0" cellpadding="0" cellspacing="0" width="100%" summary="">
                   <tr>
                     <td>
@@ -171,7 +171,7 @@ var baseDirectory = "../../../../../web/";
                             <!-- MessageBox -->
 
                             <table cellpadding="0" cellspacing="0" id="messageBoxID" class="MessageBoxyy">
-                              <TBODY>
+                              <tbody>
                               <tr class="MessageBox_TopMargin">
                                 <td class="MessageBox_LeftMargin"></td>
                                 <td></td>
@@ -182,7 +182,7 @@ var baseDirectory = "../../../../../web/";
                                 <td>
 
                                   <table cellpadding="0" cellspacing="0" style="width: 100%;">
-                                    <TBODY>
+                                    <tbody>
                                     <tr>
                                       <td>
                                         <div class="MessageBox_TopLeft"></div>
@@ -191,12 +191,12 @@ var baseDirectory = "../../../../../web/";
                                       <td class="MessageBox_bg">
 
                                         <table class="MessageBox_Top">
-                                        <TBODY>
+                                        <tbody>
                                           <tr>
                                             <td>
                                               <span>
                                               <table cellpadding="0" cellspacing="0" class="MessageBox_Body_ContentCell">
-                                                <TBODY>
+                                                <tbody>
                                                 <tr>
                                                   <td class="MessageBox_Icon_ContentCell">
                                                     <div class="MessageBox_Icon"></div>
@@ -213,12 +213,12 @@ var baseDirectory = "../../../../../web/";
                                                     </span>
                                                   </td>
                                                 </tr>
-                                                </TBODY>
+                                                </tbody>
                                               </table>
                                               </span>
                                             </td>
                                           </tr>
-                                          </TBODY>
+                                          </tbody>
                                         </table>
 
                                       </td>
@@ -239,7 +239,7 @@ var baseDirectory = "../../../../../web/";
                                       <td class="MessageBox_Bottom">
                                       </td>
                                     </tr>
-                                    </TBODY>
+                                    </tbody>
                                   </table>
 
                                 </td>
@@ -250,7 +250,7 @@ var baseDirectory = "../../../../../web/";
                                 <td></td>
                                 <td class="MessageBox_RightMargin"></td>
                               </tr>
-                              </TBODY>
+                              </tbody>
                             </table>              <!-- USER CONTROLS -->
               <table class="Main_Client_TableEdition">
                 <tr>
@@ -262,9 +262,9 @@ var baseDirectory = "../../../../../web/";
                   <td class="TableEdition_OneCell_width"></td>
                 </tr>
                 <tr> 
-                  <TD class="TextBox_ContentCell" style="vertical-align: middle;">
-                    <INPUT type="text" name="inpSearchText" id="inpSearchText" class="dojoValidateValid TextBox_OneCell_width" value=""></INPUT>
-                  </TD>
+                  <td class="TextBox_ContentCell" style="vertical-align: middle;">
+                    <input type="text" name="inpSearchText" id="inpSearchText" class="dojoValidateValid TextBox_OneCell_width" value=""></input>
+                  </td>
                   <td class="Button_LeftAlign_ContentCell">
                     <div>
                       <a class="ButtonLink" href="#"
@@ -288,46 +288,46 @@ var baseDirectory = "../../../../../web/";
                       </a>
                     </div>
                   </td>
-                  <TD class="Button_RightAlign_ContentCell" colspan="2">
-                    <DIV>
-                      <A class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Scan for updates'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="openServletNewWindow('LOCAL', false, 'ModuleManagement.html', 'BUTTON', null, true, 600, 900);return false;" id="buttonScan">
-                        <TABLE class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Search';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
-                        <TR>
-                          <TD class="Button_left"><IMG class="Button_Icon Button_Icon" alt="Browse File System" title="Browse File System" src="../web/images/blank.gif" border="0/"></IMG></TD>
+                  <td class="Button_RightAlign_ContentCell" colspan="2">
+                    <div>
+                      <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Scan for updates'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="openServletNewWindow('LOCAL', false, 'ModuleManagement.html', 'BUTTON', null, true, 600, 900);return false;" id="buttonScan">
+                        <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Search';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
+                        <tr>
+                          <td class="Button_left"><img class="Button_Icon Button_Icon" alt="Browse File System" title="Browse File System" src="../web/images/blank.gif" border="0/"></img></td>
 
-                          <TD class="Button_text">Browse File System</TD>
-                          <TD class="Button_right"></TD>
-                        </TR>
-                      </TABLE>
-                      </A>
-                    </DIV>
-                  </TD>
+                          <td class="Button_text">Browse File System</td>
+                          <td class="Button_right"></td>
+                        </tr>
+                      </table>
+                      </a>
+                    </div>
+                  </td>
                   <td/>
                 </tr>
                 <tr>
-                  <TD colspan="4">
-                    <TABLE width="100%" border="0" cellspacing="0" cellpadding="0">
-                      <TR>
-                        <TD class="TitleCell" style="text-align: left;">
+                  <td colspan="4">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td class="TitleCell" style="text-align: left;">
                           <span class="PlainText_normal">Search Results</span>
                           <span class="PlainText_normal" style="color: transparent; _color: #E8E8E8;">..</span>
                           <a class="PlainText_normal LabelLink_noicon" href="#" onclick="viewAll();">View All</a>                        
-                        </TD>
-                        <TD></TD>
-                        <TD></TD>
-                        <TD></TD>
-                        <TD></TD>
-                      </TR>
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
                       <tr><td style="height: 5px;"/></tr>
-                      <TR>
-                        <TD>
+                      <tr>
+                        <td>
                           <div class="TextArea_FourCells_width AddModule_Container" id="searchResults">
                         
                           </div>
-                        </TD>
-                      </TR>
-                    </TABLE>
-                  </TD>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
                   <td/>
                   <td/>
                 </tr>
@@ -337,34 +337,34 @@ var baseDirectory = "../../../../../web/";
                
               </table>
                       <!-- USER CONTROLS -->
-                </TD>
-              </TR>
-              </TABLE>
-              </TD>
-            </TR>
-          </TABLE>
+                </td>
+              </tr>
+              </table>
+              </td>
+            </tr>
+          </table>
         </div>
 
             
 
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Menu_ContentPane_Bottom" id="tdbottomSeparator">
-          <TR>
-            <TD class="Main_Bottom_bg"><IMG src="../../../../../web/images/blank.gif" border="0"></TD>
-          </TR>
-        </TABLE></td>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Menu_ContentPane_Bottom" id="tdbottomSeparator">
+          <tr>
+            <td class="Main_Bottom_bg"><img src="../../../../../web/images/blank.gif" border="0"></td>
+          </tr>
+        </table></td>
       <td valign="top">
-        <TABLE width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Right" id="tdrightSeparator">
-          <TR><TD class="Main_NavBar_bg_right"></TD></TR>
-          <TR><TD class="Main_ToolBar_bg_right" valign="top"></TD></TR>
-          <TR><TD class="Main_Client_bg_right"></TD></TR>
-          <TR><TD class="Main_Bottom_bg_right"></TD></TR>
-        </TABLE>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="Main_ContentPane_Right" id="tdrightSeparator">
+          <tr><td class="Main_NavBar_bg_right"></td></tr>
+          <tr><td class="Main_ToolBar_bg_right" valign="top"></td></tr>
+          <tr><td class="Main_Client_bg_right"></td></tr>
+          <tr><td class="Main_Bottom_bg_right"></td></tr>
+        </table>
       </td>
     </tr>
   </table>
-</FORM>
+</form>
 
   
   
-</BODY>
-</HTML>
+</body>
+</html>

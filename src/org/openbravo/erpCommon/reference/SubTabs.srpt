@@ -19,8 +19,8 @@
 -->
 
 
-<DIV id="sectionDetail">
-<TD >
-<A href="#" onclick="submitCommandFormParameter('TAB', document.frmMain.inpyy, 'xx', true, document.frmMain, 'Subtab_Relation_Relation.html');return false;" onmouseover="window.status='Edit subtab';return true;" onmouseout="window.status='';return true;" id="subtabKey">Edit subtab</A>
-</TD>
-</DIV>
+<div id="sectionDetail">
+<td >
+<a href="#" onclick="submitCommandFormParameter('TAB', document.frmMain.inpyy, 'xx', true, document.frmMain, 'Subtab_Relation_Relation.html');return false;" onmouseover="window.status='Edit subtab';return true;" onmouseout="window.status='';return true;" id="subtabKey">Edit subtab</a>
+</td>
+</div>
