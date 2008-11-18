@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -50,17 +50,23 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
       String strWindowId = vars.getStringParameter("inpwindowId");
       String strProjectId = vars.getStringParameter("inpcProjectId");
       String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
-      String strTabId = vars.getStringParameter("inpTabId");
+      String strTabId = vars.getStringParameter("inpTabId");      
+      String strDeliveryRule = vars.getStringParameter("inpdeliveryrule");
+      String strUserRep = vars.getStringParameter("inpsalesrepId");
+      String strPaymentrule = vars.getStringParameter("inppaymentrule");
+      String strPaymentterm = vars.getStringParameter("inpcPaymenttermId");
+      String strInvoiceRule = vars.getStringParameter("inpinvoicerule");
+      String strPriceList = vars.getStringParameter("inpmPricelistId");
       
       try {
-        printPage(response, vars, strBPartner, strOrderType, strIsSOTrx, strWindowId, strLocation, strContact, strProjectId, strTabId);
+        printPage(response, vars, strBPartner, strOrderType, strIsSOTrx, strWindowId, strLocation, strContact, strProjectId, strTabId, strDeliveryRule, strUserRep, strPaymentrule, strPaymentterm, strInvoiceRule, strPriceList);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
     } else pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner, String strOrderType, String strIsSOTrx, String strWindowId, String strLocation, String strContact, String strProjectId, String strTabId) throws IOException, ServletException {
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner, String strOrderType, String strIsSOTrx, String strWindowId, String strLocation, String strContact, String strProjectId, String strTabId, String strDeliveryRule0, String strUserRep0, String strPaymentrule0, String strPaymentterm0, String strInvoiceRule0, String strPriceList0) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     
     if (strBPartner.equals(""))
@@ -72,12 +78,16 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
     strDeliveryRule = strPaymentrule = strPaymentterm = strMwarehouse = strInvoiceRule = strPriceList = strUserRep = "";
     SEOrderBPartnerData[] data = SEOrderBPartnerData.select(this, strBPartner);
     if (data!=null && data.length>0) {
-      strDeliveryRule = data[0].deliveryrule;
+      strDeliveryRule = data[0].deliveryrule.equals("")?strDeliveryRule0:data[0].deliveryrule;
       strUserRep = SEOrderBPartnerData.userIdSalesRep(this, data[0].salesrepId);
+      strUserRep = strUserRep.equals("")?strUserRep0:strUserRep;
       strPaymentrule = (strIsSOTrx.equals("Y")?data[0].paymentrule: data[0].paymentrulepo);
+      strPaymentrule = strPaymentrule.equals("")?strPaymentrule0:strPaymentrule;
       strPaymentterm = (strIsSOTrx.equals("Y")?data[0].cPaymenttermId: data[0].poPaymenttermId);
-      strInvoiceRule = data[0].invoicerule;
+      strPaymentterm = strPaymentterm.equals("")?strPaymentterm0:strPaymentterm;
+      strInvoiceRule = data[0].invoicerule.equals("")?strInvoiceRule0:data[0].invoicerule;
       strPriceList = (strIsSOTrx.equals("Y")?data[0].mPricelistId: data[0].poPricelistId);
+      strPriceList = strPriceList.equals("")?strPriceList0:strPriceList;
     }
     strMwarehouse = SEOrderBPartnerData.mWarehouse(this, strBPartner);
 
