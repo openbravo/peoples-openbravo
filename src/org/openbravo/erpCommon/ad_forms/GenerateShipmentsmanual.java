@@ -19,27 +19,29 @@
 
 package org.openbravo.erpCommon.ad_forms;
 
-import org.openbravo.erpCommon.utility.OBError;
-import org.openbravo.erpCommon.utility.ToolBar;
-import org.openbravo.erpCommon.utility.Utility;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.regex.Pattern;
 
-import org.openbravo.erpCommon.utility.SequenceIdData;
-import org.openbravo.erpCommon.reference.*;
-import org.openbravo.erpCommon.utility.*;
-import org.openbravo.erpCommon.businessUtility.WindowTabs;
-import org.openbravo.erpCommon.businessUtility.Tree;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.xmlEngine.XmlDocument;
+import org.openbravo.erpCommon.businessUtility.Tree;
+import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.reference.ActionButtonData;
+import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.ComboTableData;
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
-
-
-// imports for transactions
-
 import org.openbravo.erpCommon.utility.DateTimeData;
+import org.openbravo.erpCommon.utility.LeftTabsBar;
+import org.openbravo.erpCommon.utility.NavigationBar;
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.erpCommon.utility.ToolBar;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.xmlEngine.XmlDocument;
 
 
 public class GenerateShipmentsmanual extends HttpSecureAppServlet {
@@ -80,9 +82,22 @@ public class GenerateShipmentsmanual extends HttpSecureAppServlet {
       PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);
       if (pinstanceData!=null && pinstanceData.length>0) {
         if (!pinstanceData[0].errormsg.equals("")) {
-          String message = pinstanceData[0].errormsg;
           myMessage.setType("Success");
           myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
+          String message = pinstanceData[0].errormsg;
+          String[] errMessages = message.split("<br>");
+          int errCount = 0;
+          for (String errMessage : errMessages) {
+            errCount += Pattern.matches("@+[A-z]+@.\\d*+\\s.\\s+@+[A-z]+@.\\d*", errMessage) ? 0 : 1;
+          }
+          if (errCount > 0 && errCount < errMessages.length){
+            myMessage.setType("Warning");
+            myMessage.setTitle(Utility.messageBD(this, "ShipmentWarning", vars.getLanguage()));
+          }else if(errCount > 0 && errCount == errMessages.length){
+            myMessage.setType("Error");
+            myMessage.setTitle(Utility.messageBD(this, "ShipmentError", vars.getLanguage()));
+          }
+          
           if (message.startsWith("@") && message.endsWith("@")) {
             message = message.substring(1, message.length()-1);
             if (message.indexOf("@")==-1){        
@@ -94,14 +109,6 @@ public class GenerateShipmentsmanual extends HttpSecureAppServlet {
           } else {        
              myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), message));              
           }
-        } else if (pinstanceData[0].result.equals("1")) {
-        	myMessage.setType("Success");
-        	myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
-            myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));	
-        } else {
-          myMessage.setType("Error");    
-          myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-          myMessage.setMessage(Utility.messageBD(this, "Error", vars.getLanguage()));		
         }
       }
       GenerateShipmentsmanualData.updateReset(this, strSalesOrder);

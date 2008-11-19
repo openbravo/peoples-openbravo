@@ -70,6 +70,7 @@
     v_Delivered_Total NUMBER;
     v_Record_ID VARCHAR2(32):=NULL;
     v_Selection VARCHAR2(1):='N';
+    v_Product_Name VARCHAR(60);
     -- Orders to process  - one per warehouse
     Cur_Order RECORD;
     -- Order Lines per Warehouse
@@ -578,20 +579,22 @@
             FROM C_ORDERLINE
             WHERE C_ORDER_ID = Cur_Order.C_Order_ID
             GROUP BY C_ORDER_ID;
+          SELECT p.NAME  INTO v_Product_Name
+            FROM M_PRODUCT p, C_ORDERLINE c
+            WHERE c.C_ORDER_ID = Cur_Order.C_Order_ID AND p.M_Product_ID = c.M_Product_ID;
+          result_String:='@OrderDocumentno@ ' || Cur_Order.DocumentNo || ' - ';
           IF (v_DocumentNo='') OR (v_DocumentNo IS NULL) THEN
             IF(Cur_Order.DeliveryRule='O' AND (v_Delivered_Total<v_Ordered_Total)) THEN 
-              result_String:='NO SHIPMENT CREATED: NOT ENOUGH STOCK & DELIVERY RULE = ''Complete Order''';
+              result_String:=result_String || 'NO SHIPMENT CREATED: NOT ENOUGH STOCK & DELIVERY RULE = ''Complete Order''';
             ELSE
-              result_String:='NO SHIPMENT CREATED';
+              result_String:=result_String || 'No enough stock for product ' ||  v_Product_Name || '<br>'; 
             END IF;
-          ELSIF (v_Delivered_Total=0) THEN
-            result_String:='NO SHIPMENT CREATED';
-          ELSIF (v_Delivered_Total<v_Ordered_Total) THEN
-            result_String:='PARTIAL SHIPMENT CREATED';
+          ELSIF (v_Delivered_Total<v_Ordered_Total OR v_Delivered_Total=0) THEN
+              result_String:=result_String || 'No enough stock for product ' ||  v_Product_Name || '<br>'; 
           ELSE 
-            result_String:='COMPLETE SHIPMENT CREATED';
+            result_String:=result_String || '@InoutDocumentno@ ' || v_DocumentNo || '<br>';
           END IF;
-          v_Message:=v_Message|| result_String  || ' - ' || ' @InoutDocumentno@ ' || v_DocumentNo || ' <-> @OrderDocumentno@ ' || Cur_Order.DocumentNo || '; <br>';    
+          v_Message:=v_Message || result_String;          
         END LOOP; -- Order Header Loop
         FINISH_PROCESS:=true;
       END IF;--CREATE_FROM_INVOICE
