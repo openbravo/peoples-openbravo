@@ -158,6 +158,15 @@
 	      </taskdef>
 	      <checkTomcatAnt/>
 	 </target>
+	
+  <target name="check.tomcat.x">
+        <taskdef name="CheckX"
+                 classname="org.openbravo.task.CheckX">
+          <classpath refid="diagnostic.class.path"/>
+        </taskdef>
+        <CheckX/>
+   </target>
+	
   
 	<target name="deploy.context" unless="context.running">
 		<ant antfile="build-create.xml" target="war"/>
