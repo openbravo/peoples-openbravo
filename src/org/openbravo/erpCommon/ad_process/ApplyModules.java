@@ -18,10 +18,10 @@
 */
 package org.openbravo.erpCommon.ad_process;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
@@ -36,7 +36,6 @@ import org.openbravo.erpCommon.utility.AntExecutor;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBPrintStream;
 import org.openbravo.erpCommon.utility.Utility;
-
 import org.openbravo.xmlEngine.XmlDocument;
 
 /**
@@ -49,8 +48,9 @@ public class ApplyModules extends HttpSecureAppServlet {
   /**
    * 
    */
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
+  @Override
+public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
+    final VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
       printPage(response, vars);
@@ -74,20 +74,20 @@ public class ApplyModules extends HttpSecureAppServlet {
    */
   private void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
     //Check for permissions to apply modules from application server.
-    File f = new File(vars.getSessionValue("#sourcePath"));
+    final File f = new File(vars.getSessionValue("#sourcePath"));
     if (!f.canWrite()) {
       bdErrorGeneralPopUp(response, Utility.messageBD(this, "Error", vars.getLanguage()), 
                                     Utility.messageBD(this, "NoApplicableModules", vars.getLanguage()));
       return;
     }
     
-    XmlDocument xmlDocument=xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_process/ApplyModules").createXmlDocument();
+    final XmlDocument xmlDocument=xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_process/ApplyModules").createXmlDocument();
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("help", ApplyModulesData.getHelp(this, vars.getLanguage()));
     {
-      OBError myMessage = vars.getMessage("ApplyModules");
+      final OBError myMessage = vars.getMessage("ApplyModules");
       vars.removeMessage("ApplyModules");
       if (myMessage!=null) {
         xmlDocument.setParameter("messageType", myMessage.getType());
@@ -95,7 +95,7 @@ public class ApplyModules extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
     }
-    PrintWriter out = response.getWriter();
+    final PrintWriter out = response.getWriter();
     response.setContentType("text/html; charset=UTF-8");
     out.println(xmlDocument.print());
     out.close();
@@ -109,11 +109,11 @@ public class ApplyModules extends HttpSecureAppServlet {
    * @throws ServletException
    */
   private void startApply(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    PrintStream oldOut=System.out;
+    final PrintStream oldOut=System.out;
     try {
-      AntExecutor ant=new AntExecutor(vars.getSessionValue("#sourcePath"));
+      final AntExecutor ant=new AntExecutor(vars.getSessionValue("#sourcePath"));
       String fileName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())+"-apply.log";
-      OBPrintStream obps=new OBPrintStream(new PrintStream(response.getOutputStream()));
+      final OBPrintStream obps=new OBPrintStream(new PrintStream(response.getOutputStream()));
       System.setOut(obps);
       
       //ant.setOBPrintStreamLog(response.getWriter());
@@ -123,28 +123,34 @@ public class ApplyModules extends HttpSecureAppServlet {
       ant.setLogFileInOBPrintStream(new File(fileName));
       vars.setSessionObject("ApplyModules|Log", ant);
       
-      Vector<String> tasks = new Vector<String>();
+      final Vector<String> tasks = new Vector<String>();
+      
+      final String unnappliedModules = getUnnapliedModules();
       
       if (ApplyModulesData.selectUninstalledModules(this)) { //there're uninstalled modules
         tasks.add("update.database");
         tasks.add("generate.entities");
-        tasks.add("compile");
+        tasks.add("compile.deploy");
         tasks.add("war");
-        ant.setProperty("module", getUnnapliedModules());
+        if (!unnappliedModules.equals("")) { //There are also installed modules, let's compile them
+            ant.setProperty("module", unnappliedModules);
+        } else {
+            ant.setProperty("tab", "xx"); //Only uninstall, compile no window to re-generate web.xml
+        }
         ant.setProperty("apply.on.create", "true");
       } else {
         tasks.add("apply.modules");
-        ant.setProperty("module", getUnnapliedModules());
+        ant.setProperty("module", unnappliedModules);
       }
       
       ant.runTask(tasks);
       ant.setFinished(true);
       
-      PrintStream out = new PrintStream(response.getOutputStream());
+      final PrintStream out = new PrintStream(response.getOutputStream());
       response.setContentType("text/plain; charset=UTF-8");
       out.println("finished");
       out.close();
-    } catch (Exception e) {e.printStackTrace();}  
+    } catch (final Exception e) {e.printStackTrace();}  
     finally{
       System.setOut(oldOut);
     }
@@ -160,9 +166,9 @@ public class ApplyModules extends HttpSecureAppServlet {
    */
   private void updateLog(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
     try {
-      AntExecutor ant = (AntExecutor) vars.getSessionObject("ApplyModules|Log");
+      final AntExecutor ant = (AntExecutor) vars.getSessionObject("ApplyModules|Log");
       if (ant!=null) ant.setPrintWriter(response.getWriter());
-    } catch (Exception e) {
+    } catch (final Exception e) {
       e.printStackTrace();
     }
   }
@@ -177,14 +183,14 @@ public class ApplyModules extends HttpSecureAppServlet {
    */
   private void getError(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: print page errors");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/businessUtility/MessageJS").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/businessUtility/MessageJS").createXmlDocument();
     String type = "Hidden";
     String title = "";
     String description = "";
-    String strLanguage = vars.getLanguage();
+    final String strLanguage = vars.getLanguage();
     
     try {
-      AntExecutor ant = (AntExecutor) vars.getSessionObject("ApplyModules|Log");
+      final AntExecutor ant = (AntExecutor) vars.getSessionObject("ApplyModules|Log");
       if (ant!=null) description = ant.getErr();
       if (description.equals("Success")) {
         type="Success";
@@ -200,10 +206,10 @@ public class ApplyModules extends HttpSecureAppServlet {
       xmlDocument.setParameter("description", description);
       response.setContentType("text/xml; charset=UTF-8");
       response.setHeader("Cache-Control", "no-cache");
-      PrintWriter out = response.getWriter();
+      final PrintWriter out = response.getWriter();
       out.println(xmlDocument.print());
       out.close();
-    } catch (Exception e) {
+    } catch (final Exception e) {
       description = "";
     }
   }
@@ -217,7 +223,7 @@ public class ApplyModules extends HttpSecureAppServlet {
    */
   private String getUnnapliedModules() throws IOException, ServletException{
     String rt = "";
-    ApplyModulesData[] data=ApplyModulesData.selectUnappliedModules(this);
+    final ApplyModulesData[] data=ApplyModulesData.selectUnappliedModules(this);
     if (data!=null) {
       for (int i=0; i<data.length; i++) {
         if (!rt.equals("")) rt += ", ";
