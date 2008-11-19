@@ -61,6 +61,7 @@ public class Check extends HttpServlet {
   
    private String checkAnt(String file, String task) {
        final Project project = new Project();
+       System.out.println("task: "+task);
        try { 
          project.init(); 
          ProjectHelper.getProjectHelper().parse(project, new File(file)); 
