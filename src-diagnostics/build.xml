@@ -182,7 +182,7 @@
 
 	</target>
 	
-	<target name="check.tomcat.permissions">
+	<target name="check.tomcat.permissions" if="isCheckPerms">
 		<taskdef name="checkTomcatPermissions"
              classname="org.openbravo.task.CheckTomcatFilePermissions">
 		  <classpath refid="diagnostic.class.path"/>
