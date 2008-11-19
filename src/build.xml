@@ -236,7 +236,7 @@ build.war: build a war file in the lib directory.
         <include name="*/src/**/*.jrxml"/>
         <include name="*/src/**/*.jasper"/>
       </fileset>
-    <mapper type="regexp" from="(.*/src)(.*)" to="\2"/>
+      <mapper type="regexp" from="(.*\${file.separator}src)(.*)" to="\2"/>
     </copy>
   </target>
 
