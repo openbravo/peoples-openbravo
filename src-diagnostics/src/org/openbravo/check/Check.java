@@ -19,6 +19,7 @@
 
 package org.openbravo.check;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -26,6 +27,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.ProjectHelper;
 
 public class Check extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -46,13 +50,28 @@ public class Check extends HttpServlet {
           out.println(System.getProperty("java.runtime.version"));
         } else if (command.equals("server")) {
             out.println(req.getSession().getServletContext().getServerInfo());
+        } else if (command.equals("ant")) {
+            final String result = checkAnt(req.getParameter("file"), req.getParameter("task"));
+            out.println(result);
         } else {
             out.println("Non-recognized command: "+command);
         }
         out.close();
     }
   
-   @Override
+   private String checkAnt(String file, String task) {
+       final Project project = new Project();
+       try { 
+         project.init(); 
+         ProjectHelper.getProjectHelper().parse(project, new File(file)); 
+         project.executeTarget(task);
+       } catch (final Exception e) {
+          return e.getMessage();
+       }
+       return "OK";
+    }
+
+@Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
      doPost(req, resp);

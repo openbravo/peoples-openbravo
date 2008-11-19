@@ -65,6 +65,7 @@
 		<antcall target="check.tomcat.version"/>
 		<antcall target="check.tomcat.jvm.size"/>
 		<antcall target="check.tomcat.jvm.version"/>	
+		<antcall target="check.tomcat.ant"/>  
 	</target>
 	
 	<target name="check.db">
@@ -124,6 +125,14 @@
 	    </taskdef>
 	    <checkJVMversion/>
 	  </target>
+	
+	 <target name="check.tomcat.ant">
+	      <taskdef name="checkTomcatAnt"
+	               classname="org.openbravo.task.CheckTomcatAntExecution">
+	        <classpath refid="diagnostic.class.path"/>
+	      </taskdef>
+	      <checkTomcatAnt/>
+	 </target>
   
 	<target name="deploy.context" unless="context.running">
 		<ant antfile="build-create.xml" target="war"/>
@@ -146,5 +155,13 @@
 		            path="/OpenbravoDiagnostics"/>
 		
 
+	</target>
+	
+	<target name="test1" description="simple ant task to be called from tomcat">
+		<echo message="testing..."/>
+	</target>
+	
+	<target name="test2" description="simple compilation task">
+		<javac srcdir="src" destdir="build/classes" includes="**/Test*" encoding="UTF-8" debug="true" debuglevel="lines,vars,source" deprecation="on"/>
 	</target>
 </project>
