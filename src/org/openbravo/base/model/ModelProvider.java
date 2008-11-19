@@ -301,6 +301,9 @@ public class ModelProvider implements OBSingleton {
             if (uniqueConstraint == null
                     || !uniqueConstraint.getName().equalsIgnoreCase(
                             uniqueConstraintColumn.getUniqueConstraintName())) {
+                // note uniqueconstraint should be set to null, because the
+                // for loop my not find another one
+                uniqueConstraint = null;
                 // get a new one, walk through all of them of the entity
                 for (final UniqueConstraint uc : entity.getUniqueConstraints()) {
                     if (uc.getName().equalsIgnoreCase(
@@ -309,17 +312,21 @@ public class ModelProvider implements OBSingleton {
                         break;
                     }
                 }
-                if (uniqueConstraint == null) {
-                    uniqueConstraint = new UniqueConstraint();
-                    uniqueConstraint.setEntity(entity);
-                    uniqueConstraint.setName(uniqueConstraintColumn
-                            .getUniqueConstraintName());
-                    entity.getUniqueConstraints().add(uniqueConstraint);
-                }
+            }
+            if (uniqueConstraint == null) {
+                uniqueConstraint = new UniqueConstraint();
+                uniqueConstraint.setEntity(entity);
+                uniqueConstraint.setName(uniqueConstraintColumn
+                        .getUniqueConstraintName());
+                entity.getUniqueConstraints().add(uniqueConstraint);
             }
             uniqueConstraint.addPropertyForColumn(uniqueConstraintColumn
                     .getColumnName());
         }
+
+        // remove the invalid ones, which have column names that do not
+        // exist in the column definition
+
         // dumpUniqueConstraints();
     }
 
