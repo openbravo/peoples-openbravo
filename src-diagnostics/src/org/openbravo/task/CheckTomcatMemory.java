@@ -37,7 +37,9 @@ public class CheckTomcatMemory extends Task{
       final String msg = "Current max memory in server:"+maxCurrentMemory+"M, minimun required:"+MaxMemory+"M";
         
      //check max memory +- 5%, because it is not accurate
-      if (MaxMemory>maxCurrentMemory*1.05) throw new BuildException(msg);
+      if (MaxMemory>maxCurrentMemory*1.05) 
+          throw new BuildException(msg
+                                  +"Tip: check http://wiki.openbravo.com/wiki/Development_Stack_Setup#Apache_Tomcat");
       else {
           log4j.info(msg);
           log4j.info("Tomcat's memory OK ");

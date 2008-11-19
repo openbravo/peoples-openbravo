@@ -107,7 +107,7 @@ public class CheckDB extends Task{
                 final String minVersion = new PropertiesManager().getProperty("db.ora.version");
                 String msg = "Minimum required version: "+minVersion+", current version "+version;
                 if (Version.compareVersion(version, minVersion)<0)
-                    throw new BuildException(msg);
+                    throw new BuildException(msg+"\nTip: check http://wiki.openbravo.com/wiki/Development_Stack_Setup#Oracle");
                 else {
                     log4j.info(msg);
                     log4j.info("Oracle version OK");
@@ -130,7 +130,7 @@ public class CheckDB extends Task{
                 final long minOpenCursors = new Long(new PropertiesManager().getProperty("db.ora.opencursors"));
                 msg = "Minimum open cursors required: "+minOpenCursors+", current open cursors "+openCursors;
                 if (openCursors<minOpenCursors) 
-                    throw new BuildException(msg);
+                    throw new BuildException(msg+"\nTip: check http://wiki.openbravo.com/wiki/Development_Stack_Setup#Oracle");
                 else {
                     log4j.info(msg);
                     log4j.info("Open cursors OK");
@@ -163,7 +163,8 @@ public class CheckDB extends Task{
                 if (Version.compareVersion(version, minVersion)<0)
                     throw new BuildException(msg);
                 else {
-                    log4j.info(msg);
+                    log4j.info(msg
+                            +"\nTip: check http://wiki.openbravo.com/wiki/Development_Stack_Setup#PostgreSQL");
                     log4j.info("PostgreSQL version OK");
                 }
                 
@@ -175,7 +176,8 @@ public class CheckDB extends Task{
                     result.close();
                     st.close();
                 } catch (final Exception e) { 
-                    throw new BuildException("PostgreSQL contrib package seems not to be installed"); 
+                    throw new BuildException("PostgreSQL contrib package seems not to be installed"
+                                            +"\nTip: check http://wiki.openbravo.com/wiki/Development_Stack_Setup#PostgreSQL"); 
                 }
                 log4j.info("Contrib package OK");
                 

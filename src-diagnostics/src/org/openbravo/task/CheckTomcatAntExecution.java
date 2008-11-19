@@ -46,7 +46,8 @@ public class CheckTomcatAntExecution extends Task{
         if (result.equals("OK")) 
             log4j.info("Possible to execute ant javac task. OK");
         else 
-            throw new BuildException("Tomcat cannot execute ant javac task: "+result);
+            throw new BuildException("Tomcat cannot execute ant javac task: "+result
+                                    +"Tip: check http://wiki.openbravo.com/wiki/Development_Stack_Setup#Apache_Tomcat");
     }
     
     

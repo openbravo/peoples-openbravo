@@ -39,7 +39,8 @@ public class CheckMemory extends Task {
         //check max memory +- 5%, because it is not accurate
         if (maxMemory>maxCurrentMemory*1.05) throw new BuildException(msg);
         else {
-            log4j.info(msg);
+            log4j.info(msg
+                      +"\nTip: check http://wiki.openbravo.com/wiki/Development_Stack_Setup#Apache_Ant");
             log4j.info("Ant's memory OK ");
         }
     }
