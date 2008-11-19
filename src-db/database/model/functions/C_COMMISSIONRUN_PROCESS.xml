@@ -87,10 +87,10 @@ BEGIN
         FOR Cur_Data IN (SELECT com.C_Currency_ID, com.C_BPartner_ID, pl.C_BPartner_Location_ID,
             PaymentRulePO, PO_PaymentTerm_ID, PO_PriceList_ID,
           POReference, IsDiscountPrinted, p.SalesRep_ID, com.M_Product_ID, C_UOM_ID, p.name as bpartnername
-         FROM M_Product prd, C_BPARTNER p, C_COMMISSION com LEFT JOIN C_BPARTNER_LOCATION pl ON com.C_BPartner_ID = pl.C_BPartner_ID
+         FROM  C_BPARTNER p, C_COMMISSION com LEFT JOIN C_BPARTNER_LOCATION pl ON com.C_BPartner_ID = pl.C_BPartner_ID
+							    LEFT JOIN M_Product prd ON com.M_Product_ID = prd.M_Product_ID
          WHERE com.C_Commission_ID = CUR_ComRun.C_Commission_ID
-           AND com.C_BPartner_ID = p.C_BPartner_ID
-            AND   com.M_Product_ID = prd.M_Product_ID) LOOP
+           AND com.C_BPartner_ID = p.C_BPartner_ID) LOOP
           v_C_Currency_ID:=Cur_Data.C_Currency_ID;
           v_C_BPartner_ID:=Cur_Data.C_BPartner_ID;
           v_C_BPartner_Location_ID:=Cur_Data.C_BPartner_Location_ID;
