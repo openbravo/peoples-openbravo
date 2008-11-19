@@ -18,7 +18,6 @@
 # ************************************************************************
 
 
-
 # Check a user's permissions in a directory
 
 if [ $# -lt 1 ]; then
@@ -37,7 +36,7 @@ fi
 
 USERID=$(id -u $USER)
 USERGROUPS="$(id -G $USER)"
-DIRFILES=$(find "$1")
+DIRFILES=$(find "$1" -printf "%U-%G+%m_%p\n")
 
 # If find fails, there is no read permission or the file does not exist
 if [ $? -eq 1 ]; then
@@ -48,11 +47,17 @@ fi
 IFS='
 '
 
-for FILE in $DIRFILES; do
-
-  OWNER=$(stat -t --format=%u "$FILE")
-  PERM=$(stat -t --format=%a "$FILE")
-  GROUP="$(stat -t --format=%g "$FILE")"
+for FILEDATA in $DIRFILES; do
+  # get part until first -
+  OWNER=${FILEDATA%%-*}
+  # get part until first +, but after -
+  mytemp=${FILEDATA%%+*}
+  GROUP=${mytemp#*-}
+  # get part until first -, but after +
+  mytemp=${FILEDATA%%_*}
+  PERM=${mytemp#*+}
+  # get part after first _
+  FILE=${FILEDATA#*_}
 
   if [ $USERID -ne $OWNER ]; then
     
