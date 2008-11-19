@@ -27,8 +27,11 @@
     <http url="${tomcat.manager.url}/../OpenbravoDiagnostics/Check.html"/>
   </condition>
 
-	<condition property="isUnix">
-	  <os family="unix"/>
+	<condition property="isCheckPerms">
+		<and>
+	    <os family="unix"/>
+			<equals arg1="${chekPerms}" arg2="true"/>
+	  </and>
   </condition>
 
 
@@ -50,7 +53,6 @@
 	 </taskdef>
 
 	<target name="check.all">
-		<ant antfile="build-create.xml" target="build"/>
 		<antcall target="check.permissions"/>
 		<antcall target="check.log4j"/>
 		<antcall target="check.db"/>
@@ -66,7 +68,7 @@
 		<echo message="log4j.lcf file OK"/>
 	</target>
 	
-	<target name="check.permissions" if="isUnix">
+	<target name="check.permissions" if="isCheckPerms">
 		<echo message="Checking file permissions for current user, (this will take a while)..."/>
 		<exec executable="./check-ob-perms.sh" failonerror="true">
 			<arg value=".."/>

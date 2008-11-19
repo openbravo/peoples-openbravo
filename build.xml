@@ -99,6 +99,7 @@ compare.database.structure: refer to compare.database.structure target of databa
 	<property name="obx.export.RD" value="false"/>
 	<property name="obx.export.DB" value="false"/>
 	<property name="obx.export.CS" value="false"/>
+	<property name="chekPerms" value="false"/>
 	
 	<condition property="mode.war">
 	  <equals arg1="war" arg2="${deploy.mode}"/>
@@ -519,6 +520,7 @@ compare.database.structure: refer to compare.database.structure target of databa
 	</target>
 
 	 <target name="diagnostic">
+	 	  <ant dir="src-diagnostics" antfile="build-create.xml" target="build"/>
 	    <ant dir="src-diagnostics" target="check.all"/>
 	  </target>
 </project>
