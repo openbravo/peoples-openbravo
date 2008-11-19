@@ -925,31 +925,30 @@
     DBMS_OUTPUT.PUT_LINE('Synchronizing Menu with Window') ;
     UPDATE AD_MENU
       SET NAME=
-      (SELECT COALESCE(T.NAME, W.NAME) 
-         FROM AD_MODULE M,
+      (SELECT CASE COALESCE(M.AD_LANGUAGE, 'no_language')
+              WHEN M1.AD_LANGUAGE THEN w.name
+              WHEN T.AD_LANGUAGE THEN T.NAME
+              ELSE W.NAME END
+         FROM AD_MODULE M, AD_MODULE M1,
               AD_WINDOW w LEFT JOIN AD_WINDOW_TRL T
                            ON w.AD_Window_ID = T.ad_Window_ID
         WHERE AD_MENU.AD_Window_ID=w.AD_Window_ID
           AND AD_MENU.AD_Module_ID = M.AD_MODULE_ID
-          AND  (COALESCE(T.AD_LANGUAGE, M.AD_LANGUAGE) = M.AD_LANGUAGE OR M.AD_LANGUAGE IS NULL))
+          AND M1.AD_MODULE_ID = W.AD_MODULE_ID
+          AND  (M1.AD_LANGUAGE = M.AD_LANGUAGE OR COALESCE(T.AD_LANGUAGE, M.AD_LANGUAGE) = M.AD_LANGUAGE OR M.AD_LANGUAGE IS NULL))
       , Description=
-      (SELECT COALESCE(T.Description, W.Description) 
-         FROM AD_MODULE M,
+      (SELECT CASE COALESCE(M.AD_LANGUAGE, 'no_language')
+              WHEN M1.AD_LANGUAGE THEN w.description
+              WHEN T.AD_LANGUAGE THEN T.description
+              ELSE W.NAME END
+         FROM AD_MODULE M, AD_MODULE M1,
               AD_WINDOW w LEFT JOIN AD_WINDOW_TRL T
                            ON w.AD_Window_ID = T.ad_Window_ID
         WHERE AD_MENU.AD_Window_ID=w.AD_Window_ID
           AND AD_MENU.AD_Module_ID = M.AD_MODULE_ID
-          AND (COALESCE(T.AD_LANGUAGE, M.AD_LANGUAGE) = M.AD_LANGUAGE OR M.AD_LANGUAGE IS NULL))
-    WHERE AD_Window_ID IS NOT NULL  
-      AND Action='W'
-      AND EXISTS
-        (SELECT 1 FROM AD_MODULE M,
-         AD_WINDOW W LEFT JOIN AD_WINDOW_TRL T
-           ON W.AD_WINDOW_ID = T.AD_WINDOW_ID
-         WHERE AD_MENU.AD_Window_ID=W.AD_Window_ID  
-          AND AD_MENU.AD_Module_ID = M.AD_Module_ID
-          AND (COALESCE(T.AD_LANGUAGE, M.AD_LANGUAGE) = M.AD_LANGUAGE OR M.AD_LANGUAGE IS NULL)
-        );
+          AND M1.AD_MODULE_ID = W.AD_MODULE_ID
+          AND  (M1.AD_LANGUAGE = M.AD_LANGUAGE OR COALESCE(T.AD_LANGUAGE, M.AD_LANGUAGE) = M.AD_LANGUAGE OR M.AD_LANGUAGE IS NULL))
+    WHERE AD_Window_ID IS NOT NULL AND Action='W';
     v_rowcount:=SQL%ROWCOUNT;
     DBMS_OUTPUT.PUT_LINE('  rows updated: ' || v_rowcount) ;
     UPDATE AD_MENU_TRL
@@ -1010,32 +1009,30 @@
     DBMS_OUTPUT.PUT_LINE('Synchronizing Menu with Processes') ;
     UPDATE AD_MENU
       SET NAME=
-      (SELECT COALESCE(T.NAME, W.NAME) 
-         FROM AD_MODULE M,
+      (SELECT CASE COALESCE(M.AD_LANGUAGE, 'no_language')
+              WHEN M1.AD_LANGUAGE THEN w.name
+              WHEN T.AD_LANGUAGE THEN T.NAME
+              ELSE W.NAME END
+         FROM AD_MODULE M, AD_MODULE M1,
               AD_PROCESS w LEFT JOIN AD_PROCESS_TRL T
                            ON w.AD_PROCESS_ID = T.AD_PROCESS_ID
         WHERE AD_MENU.AD_PROCESS_ID=w.AD_PROCESS_ID
           AND AD_MENU.AD_Module_ID = M.AD_MODULE_ID
-          AND (COALESCE(T.AD_LANGUAGE, M.AD_LANGUAGE) = M.AD_LANGUAGE OR M.AD_LANGUAGE IS NULL))
+          AND M1.AD_MODULE_ID = W.AD_MODULE_ID
+          AND  (M1.AD_LANGUAGE = M.AD_LANGUAGE OR COALESCE(T.AD_LANGUAGE, M.AD_LANGUAGE) = M.AD_LANGUAGE OR M.AD_LANGUAGE IS NULL))
       , Description=
-      (SELECT COALESCE(T.Description, W.Description) 
-         FROM AD_MODULE M,
+      (SELECT CASE COALESCE(M.AD_LANGUAGE, 'no_language')
+              WHEN M1.AD_LANGUAGE THEN w.description
+              WHEN T.AD_LANGUAGE THEN T.description
+              ELSE W.NAME END
+         FROM AD_MODULE M, AD_MODULE M1,
               AD_PROCESS w LEFT JOIN AD_PROCESS_TRL T
                            ON w.AD_PROCESS_ID = T.AD_PROCESS_ID
         WHERE AD_MENU.AD_PROCESS_ID=w.AD_PROCESS_ID
           AND AD_MENU.AD_Module_ID = M.AD_MODULE_ID
-          AND (COALESCE(T.AD_LANGUAGE, M.AD_LANGUAGE) = M.AD_LANGUAGE OR M.AD_LANGUAGE IS NULL))
-    WHERE AD_MENU.AD_Process_ID IS NOT NULL  
-    AND AD_MENU.Action IN('R', 'P')
-      AND EXISTS(
-        SELECT 1 
-          FROM AD_MODULE M,
-               AD_PROCESS w LEFT JOIN AD_PROCESS_TRL T
-                           ON w.AD_PROCESS_ID = T.AD_PROCESS_ID
-         WHERE AD_MENU.AD_PROCESS_ID=w.AD_PROCESS_ID
-           AND AD_MENU.AD_Module_ID = M.AD_MODULE_ID
-           AND (COALESCE(T.AD_LANGUAGE, M.AD_LANGUAGE) = M.AD_LANGUAGE OR M.AD_LANGUAGE IS NULL)
-      );
+          AND M1.AD_MODULE_ID = W.AD_MODULE_ID
+          AND  (M1.AD_LANGUAGE = M.AD_LANGUAGE OR COALESCE(T.AD_LANGUAGE, M.AD_LANGUAGE) = M.AD_LANGUAGE OR M.AD_LANGUAGE IS NULL))
+    WHERE AD_MENU.AD_Process_ID IS NOT NULL AND AD_MENU.Action IN('R', 'P');
     v_rowcount:=SQL%ROWCOUNT;
     DBMS_OUTPUT.PUT_LINE('  rows updated: ' || v_rowcount) ;
     UPDATE AD_MENU_TRL
@@ -1093,31 +1090,30 @@
     DBMS_OUTPUT.PUT_LINE('Synchronizing Menu with Forms') ;
     UPDATE AD_MENU
       SET NAME=
-      (SELECT COALESCE(T.NAME, W.NAME) 
-         FROM AD_MODULE M,
+      (SELECT CASE COALESCE(M.AD_LANGUAGE, 'no_language')
+              WHEN M1.AD_LANGUAGE THEN w.name
+              WHEN T.AD_LANGUAGE THEN T.NAME
+              ELSE W.NAME END
+         FROM AD_MODULE M, AD_MODULE M1,
               AD_FORM w LEFT JOIN AD_FORM_TRL T
                            ON w.AD_FORM_ID = T.AD_FORM_ID
         WHERE AD_MENU.AD_FORM_ID=w.AD_FORM_ID
           AND AD_MENU.AD_Module_ID = M.AD_MODULE_ID
-          AND (COALESCE(T.AD_LANGUAGE, M.AD_LANGUAGE) = M.AD_LANGUAGE OR M.AD_LANGUAGE IS NULL))
+          AND M1.AD_MODULE_ID = W.AD_MODULE_ID
+          AND  (M1.AD_LANGUAGE = M.AD_LANGUAGE OR COALESCE(T.AD_LANGUAGE, M.AD_LANGUAGE) = M.AD_LANGUAGE OR M.AD_LANGUAGE IS NULL))
       , Description=
-      (SELECT COALESCE(T.Description, W.Description) 
-         FROM AD_MODULE M,
+      (SELECT CASE COALESCE(M.AD_LANGUAGE, 'no_language')
+              WHEN M1.AD_LANGUAGE THEN w.description
+              WHEN T.AD_LANGUAGE THEN T.Description
+              ELSE W.NAME END
+         FROM AD_MODULE M, AD_MODULE M1,
               AD_FORM w LEFT JOIN AD_FORM_TRL T
                            ON w.AD_FORM_ID = T.AD_FORM_ID
         WHERE AD_MENU.AD_FORM_ID=w.AD_FORM_ID
           AND AD_MENU.AD_Module_ID = M.AD_MODULE_ID
-          AND (COALESCE(T.AD_LANGUAGE, M.AD_LANGUAGE) = M.AD_LANGUAGE OR M.AD_LANGUAGE IS NULL))
-    WHERE AD_Form_ID IS NOT NULL  AND Action='X'
-      AND EXISTS(
-        SELECT 1 
-          FROM AD_MODULE M,
-               AD_FORM w LEFT JOIN AD_FORM_TRL T
-                           ON w.AD_FORM_ID = T.AD_FORM_ID
-         WHERE AD_MENU.AD_FORM_ID=w.AD_FORM_ID
-           AND AD_MENU.AD_Module_ID = M.AD_MODULE_ID
-           AND (COALESCE(T.AD_LANGUAGE, M.AD_LANGUAGE) = M.AD_LANGUAGE OR M.AD_LANGUAGE IS NULL)
-       );
+          AND M1.AD_MODULE_ID = W.AD_MODULE_ID
+          AND  (M1.AD_LANGUAGE = M.AD_LANGUAGE OR COALESCE(T.AD_LANGUAGE, M.AD_LANGUAGE) = M.AD_LANGUAGE OR M.AD_LANGUAGE IS NULL))
+    WHERE AD_Form_ID IS NOT NULL  AND Action='X';
     v_rowcount:=SQL%ROWCOUNT;
     DBMS_OUTPUT.PUT_LINE('  rows updated: ' || v_rowcount) ;
     UPDATE AD_MENU_TRL
