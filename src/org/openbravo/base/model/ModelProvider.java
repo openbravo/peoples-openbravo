@@ -324,9 +324,6 @@ public class ModelProvider implements OBSingleton {
                     .getColumnName());
         }
 
-        // remove the invalid ones, which have column names that do not
-        // exist in the column definition
-
         // dumpUniqueConstraints();
     }
 
