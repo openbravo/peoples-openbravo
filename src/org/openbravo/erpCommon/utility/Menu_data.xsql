@@ -62,8 +62,7 @@
                     AND wa.AD_Workflow_ID=m.AD_Workflow_ID 
                     AND w.isActive = 'Y'
                     AND wa.AD_Role_ID=?)
-        )) menuData left join AD_WINDOW W on menuData.AD_Window_ID = W.AD_Window_ID
-                    left join AD_TAB T on W.AD_Window_ID = T.AD_WINDOW_ID
+        )) menuData left join AD_TAB T on menuData.AD_Window_ID = T.AD_WINDOW_ID
                     left join AD_PROCESS P on P.AD_Process_ID = menuData.AD_Process_ID 
                     left join AD_MODEL_OBJECT MOW on T.AD_TAB_ID = MOW.AD_TAB_ID
                                                   AND MOW.ACTION    = 'W' 
@@ -102,10 +101,9 @@
                                                   AND MOMP.ISDEFAULT = 'Y'
         WHERE tn.node_id = menuData.ad_menu_id
         AND (EXISTS(SELECT 1 FROM AD_TAB 
-        WHERE AD_TAB.isactive ='Y'
+        WHERE AD_TAB.isactive ='Y'AND AD_TAB.ad_window_id=T.ad_window_id 
         GROUP BY AD_TAB.ad_window_id
-        HAVING AD_TAB.ad_window_id=T.ad_window_id 
-        AND MIN(AD_TAB.seqno)=T.seqno)
+        HAVING MIN(AD_TAB.seqno)=T.seqno)
         OR T.ad_tab_id is null)
         AND tn.ad_tree_id = ?
         AND tn.IsActive='Y'

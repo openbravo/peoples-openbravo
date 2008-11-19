@@ -26,6 +26,7 @@ import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -331,8 +332,15 @@ public class VerticalMenu extends HttpSecureAppServlet {
   public String generateMenuSearchEntries(VariablesSecureApp vars, String direccion, boolean open, MenuData[] data) throws ServletException {
     StringBuffer result = new StringBuffer();
     if (data==null || data.length==0) return "";
+
+    AccessData[] accessData = AccessData.selectAccessSearchMultiple(this, vars.getRole());
+    HashMap<String,String> accessMap = new HashMap<String,String>();
+    for (AccessData a : accessData) {
+    	accessMap.put(a.adReferenceValueId, a.total);
+    }
     for (int i=0;i<data.length;i++) {
-      if (!AccessData.selectAccessSearch(this, vars.getRole(), data[i].nodeId).equals("0")) {
+    	String res = accessMap.get(data[i].nodeId);
+      if ((res != null) && (!res.equals("0"))) {
         result.append("<tr>\n");
         result.append("  <td>\n");
         result.append("    <table cellspacing=\"0\" cellpadding=\"0\" onmouseover=\"window.status='");

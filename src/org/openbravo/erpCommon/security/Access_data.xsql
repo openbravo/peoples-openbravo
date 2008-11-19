@@ -21,6 +21,14 @@
 
 
 <SqlClass name="AccessData" package="org.openbravo.erpCommon.security">
+
+   <SqlMethod name="dummy" type="preparedStatement" return="multiple">
+      <SqlMethodComment>dummy method to tell sqlc which fields to include in the generated java class</SqlMethodComment>
+      <Sql><![CDATA[
+        SELECT '' as ACCESSLEVEL, '' as TOTAL, '' as ad_reference_value_id FROM DUAL
+      ]]></Sql>
+   </SqlMethod>
+
    <SqlMethod name="selectAccessLevel" type="preparedStatement" return="string">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
@@ -218,6 +226,44 @@
      <Parameter name="id"/>
    </SqlMethod>
    
+   <SqlMethod name="selectAccessSearchMultiple" type="preparedStatement" return="multiple">
+     <Sql><![CDATA[
+          select count(*) AS TOTAL, ad_reference_value_id
+            from ad_column c,
+                 ad_field f,
+                 ad_tab tb,
+                 ad_table t,
+                 ad_window_access wa,
+                 ad_window w,
+                 ad_role r
+           where r.ad_role_id = ?
+             and ad_reference_id = '30'
+             and f.ad_column_id = c.ad_column_id
+             and tb.ad_tab_id  = f.ad_tab_id
+             and tb.ad_window_id = wa.ad_window_id
+             and tb.ad_window_id = w.ad_window_id
+             and wa.ad_role_id = r.ad_role_id
+             and wa.isactive = 'Y'
+             and w.isactive='Y'
+             and t.isActive='Y'
+             and tb.isActive='Y'
+             and tb.ad_table_id = t.ad_table_id
+             and ( (TO_NUMBER(t.accessLevel)=4 and instr(r.userLevel,'S')!=0)
+                or (TO_NUMBER(t.accessLevel)=1 and instr(r.userLevel,'O')!=0)
+                or (TO_NUMBER(t.accessLevel)=3 and not (instr(r.userLevel,'C')=0 or instr(r.userLevel,'O')=0))
+                or (TO_NUMBER(t.accessLevel)=6 and not (instr(r.userLevel,'S')=0 or instr(r.userLevel,'C')=0))
+                )
+             and not exists (select 1
+                              from ad_table_access ta
+                             where t.ad_table_id = ta.ad_table_id
+                               and ta.ad_role_id = r.ad_role_id
+                               and ta.isActive='Y'
+                               and ta.isExclude = 'N')
+           group by ad_reference_value_id
+     ]]></Sql>
+     <Parameter name="role"/>
+   </SqlMethod>
+
     <SqlMethod name="isReadOnly" type="preparedStatement" return="string">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
