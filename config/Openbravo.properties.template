@@ -105,6 +105,6 @@ pentahoServer=
 # Tomcat manager #
 ##################
 #
-tomcat.manager.url=
-tomcat.manager.user=
-tomcat.manager.password=
+tomcat.manager.url=http://localhost:8080/manager/html
+tomcat.manager.user=admin
+tomcat.manager.password=admin
