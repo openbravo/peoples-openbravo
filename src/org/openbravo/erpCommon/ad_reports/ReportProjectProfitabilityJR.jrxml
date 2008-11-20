@@ -302,7 +302,7 @@
 	<variable name="PLANCROSSMARGINNETTOAL" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$V{PlanGrossMarginNet}]]></variableExpression>
 	</variable>
-	<variable name="PLANTOTALREVENUETOTAL" class="java.math.BigDecimal" resetType="None" calculation="Sum">
+	<variable name="PLANTOTALREVENUETOTAL" class="java.math.BigDecimal" resetType="None" calculation="Nothing">
 		<variableExpression><![CDATA[$V{PLANREVENUETOTAL}.add( $V{PLANREINVOINCINGTOTAL} )]]></variableExpression>
 	</variable>
 	<variable name="REALREVENUETOTAL" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
@@ -326,7 +326,7 @@
 	<variable name="REALGROSSMARGINNETTOTAL" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$V{RealGrossMarginNet}]]></variableExpression>
 	</variable>
-	<variable name="REALTOTALREVENUETOTAL" class="java.math.BigDecimal" resetType="None" calculation="Sum">
+	<variable name="REALTOTALREVENUETOTAL" class="java.math.BigDecimal" resetType="None" calculation="Nothing">
 		<variableExpression><![CDATA[$V{REALREVENUETOTAL}.add( $V{REALREINVOINCINGTOTAL} )]]></variableExpression>
 	</variable>
 	<variable name="COLLECTEDTOTAL" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
@@ -1017,7 +1017,7 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$V{PlanTotalRevenue}.intValue()==0?
 	$P{NUMBERFORMAT}.format(new BigDecimal("0.00")):
-	$P{NUMBERFORMAT}.format($V{PlanGrossMarginNet}.divide($V{PlanTotalRevenue},4).multiply(new BigDecimal("100.00")))]]></textFieldExpression>
+	$P{NUMBERFORMAT}.format($V{PlanGrossMarginNet}.divide($V{PlanTotalRevenue},200,$V{PlanTotalRevenue}.ROUND_HALF_UP).multiply(new BigDecimal(100.0)))]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -1131,7 +1131,7 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($V{RealTotalRevenue}.intValue()==0)?
 $P{NUMBERFORMAT}.format(new BigDecimal("0.00")):
-$P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},4).multiply(new BigDecimal("100.00")))]]></textFieldExpression>
+$P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$V{RealGrossMarginNet}.ROUND_HALF_UP).multiply(new BigDecimal(100.0)))]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -1311,7 +1311,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},4).mu
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($V{PLANREVENUETOTAL}.intValue()==0)?
    $P{NUMBERFORMAT}.format(new BigDecimal("0.00")):
-   $P{NUMBERFORMAT}.format($V{PLANSERNETMARGINTOTAL}.divide($V{PLANREVENUETOTAL},4).multiply(new BigDecimal("100.00")))]]></textFieldExpression>
+   $P{NUMBERFORMAT}.format($V{PLANSERNETMARGINTOTAL}.divide($V{PLANREVENUETOTAL},200,$V{PLANSERNETMARGINTOTAL}.ROUND_HALF_UP).multiply(new BigDecimal(100.0)))]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -1352,7 +1352,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},4).mu
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($V{PLANREINVOINCINGTOTAL}.intValue()==0)?
    $P{NUMBERFORMAT}.format(new BigDecimal("0.00")):
-   $P{NUMBERFORMAT}.format($V{PLANSERNETREINVOINCINGTOTAL}.divide($V{PLANREINVOINCINGTOTAL},4).multiply(new BigDecimal("100.00")))]]></textFieldExpression>
+   $P{NUMBERFORMAT}.format($V{PLANSERNETREINVOINCINGTOTAL}.divide($V{PLANREINVOINCINGTOTAL},200,$V{PLANSERNETREINVOINCINGTOTAL}.ROUND_HALF_UP).multiply(new BigDecimal(100.0)))]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -1400,7 +1400,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},4).mu
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($V{PLANTOTALREVENUETOTAL}.intValue()==0)?
   $P{NUMBERFORMAT}.format(new BigDecimal("0.00")):
-  $P{NUMBERFORMAT}.format($V{PLANCROSSMARGINNETTOAL}.divide($V{PLANTOTALREVENUETOTAL},4).multiply(new BigDecimal("100.00")))]]></textFieldExpression>
+  $P{NUMBERFORMAT}.format($V{PLANCROSSMARGINNETTOAL}.divide($V{PLANTOTALREVENUETOTAL},200,$V{PLANCROSSMARGINNETTOAL}.ROUND_HALF_UP).multiply(new BigDecimal(100.0)))]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -1444,7 +1444,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},4).mu
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($V{REALREVENUETOTAL}.intValue()==0)?
   $P{NUMBERFORMAT}.format(new BigDecimal("0.00")):
-  $P{NUMBERFORMAT}.format($V{REALSERNETMARGINTOTAL}.divide($V{REALREVENUETOTAL},4).multiply(new BigDecimal("100.00")))]]></textFieldExpression>
+  $P{NUMBERFORMAT}.format($V{REALSERNETMARGINTOTAL}.divide($V{REALREVENUETOTAL},200,$V{REALSERNETMARGINTOTAL}.ROUND_HALF_UP).multiply(new BigDecimal(100.0)))]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -1488,7 +1488,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},4).mu
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($V{REALREINVOINCINGTOTAL}.intValue()==0)?
    $P{NUMBERFORMAT}.format(new BigDecimal("0.00")):
-   $P{NUMBERFORMAT}.format($V{REALSERNETREINVOINCINGTOTAL}.divide($V{REALREINVOINCINGTOTAL},4).multiply(new BigDecimal("100.00")))]]></textFieldExpression>
+   $P{NUMBERFORMAT}.format($V{REALSERNETREINVOINCINGTOTAL}.divide($V{REALREINVOINCINGTOTAL},200,$V{REALSERNETREINVOINCINGTOTAL}.ROUND_HALF_UP).multiply(new BigDecimal(100.0)))]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -1518,7 +1518,7 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},4).mu
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($V{REALTOTALREVENUETOTAL}.intValue()==0)?
   	$P{NUMBERFORMAT}.format(new BigDecimal(0.0)):
-	$P{NUMBERFORMAT}.format($V{REALGROSSMARGINNETTOTAL}.divide($V{REALTOTALREVENUETOTAL},4).multiply(new BigDecimal("100.00")))]]></textFieldExpression>
+	$P{NUMBERFORMAT}.format($V{REALGROSSMARGINNETTOTAL}.divide($V{REALTOTALREVENUETOTAL},200,$V{REALGROSSMARGINNETTOTAL}.ROUND_HALF_UP).multiply(new BigDecimal(100.0)))]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
