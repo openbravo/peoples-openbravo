@@ -28,7 +28,6 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-import org.openbravo.data.UtilSql;
 import org.openbravo.utils.PropertiesManager;
 import org.openbravo.utils.Version;
 
@@ -95,7 +94,7 @@ public class CheckDB extends Task{
                     st = connSystem.prepareStatement("select * from v$version where banner like '%Oracle%'");
                     result = st.executeQuery();
                     while (result.next()){
-                        versionString = UtilSql.getValue(result, 1);
+                        versionString = result.getString(1);
                     }
                     result.close();
                     st.close();
@@ -119,7 +118,7 @@ public class CheckDB extends Task{
                     st = connSystem.prepareStatement("SELECT value FROM v$parameter WHERE name ='open_cursors'");
                     result = st.executeQuery();
                     while (result.next()){
-                        openCursors = new Long(UtilSql.getValue(result, 1));
+                        openCursors = new Long(result.getString(1));
                     }
                     result.close();
                     st.close();
@@ -142,7 +141,7 @@ public class CheckDB extends Task{
                     st = connSystem.prepareStatement("SELECT value FROM v$parameter WHERE name ='processes'");
                     result = st.executeQuery();
                     while (result.next()){
-                        processes = new Long(UtilSql.getValue(result, 1));
+                        processes = new Long(result.getString(1));
                     }
                     result.close();
                     st.close();
@@ -168,7 +167,7 @@ public class CheckDB extends Task{
                     result = st.executeQuery();
                     
                     while (result.next()){
-                        version = UtilSql.getValue(result, 1);
+                        version = result.getString(1);
                     }
                     result.close();
                     st.close();
