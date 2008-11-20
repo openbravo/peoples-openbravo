@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
-package org.openbravo.task;
+
 
 /**
  * This is a dummy class, used to check whether tomcat is able to call ant
