@@ -55,6 +55,7 @@
 		<antcall target="check.db"/>
 		<antcall target="check.ant"/>
 		<antcall target="check.tomcat"/>
+		<antcall target="undeploy.context"/>
 	</target>
 	
 	<target name="check.properties.configuration">
@@ -219,6 +220,17 @@
     </taskdef>
     <checkTomcatPermissions/>
   </target>
+	
+	<target name="undeploy.context">
+    <taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask">
+      <classpath refid="diagnostic.class.path"/>
+    </taskdef>
+		<undeploy  url="${tomcat.manager.url}" 
+		                username="${tomcat.manager.username}" 
+		                password="${tomcat.manager.password}"
+		                path="/OpenbravoDiagnostics" 
+		                failonerror="false"/>
+	</target>
 	
 	<target name="test1" description="simple ant task to be called from tomcat">
 		<echo message="testing..."/>
