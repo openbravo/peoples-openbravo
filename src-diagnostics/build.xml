@@ -43,9 +43,6 @@
     </fileset>
 	</path>
 	
-	 <path id="tomcat.classpath">
-	    <fileset file="${env.CATALINA_HOME}/server/lib/catalina-ant.jar"/>
-	 </path>
 	
 	 <taskdef name="compareVersion"
 	          classname="org.openbravo.task.CompareVersion">
@@ -171,17 +168,17 @@
 	<target name="deploy.context" unless="context.running">
 		<ant antfile="build-create.xml" target="war"/>
 		<taskdef name="deploy.war" classname="org.apache.catalina.ant.DeployTask">
-		  <classpath refid="tomcat.classpath"/>
+		  <classpath refid="diagnostic.class.path"/>
 		</taskdef>
 		<taskdef name="start"    classname="org.apache.catalina.ant.StartTask">
-		      <classpath refid="tomcat.classpath"/>
+		      <classpath refid="diagnostic.class.path"/>
 		</taskdef>
 	
 		<deploy.war url="${tomcat.manager.url}" 
 			          username="${tomcat.manager.username}" 
 			          password="${tomcat.manager.password}"
 		            path="/OpenbravoDiagnostics" 
-			          war="file:src-diagnostics/OpenbravoDiagnostics.war"/>
+			          war="file:src-diagnostics${file.separator}OpenbravoDiagnostics.war"/>
 		
 		<start      url="${tomcat.manager.url}" 
 		            username="${tomcat.manager.username}" 
