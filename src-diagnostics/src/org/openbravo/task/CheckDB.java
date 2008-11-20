@@ -102,7 +102,6 @@ public class CheckDB extends Task{
                 } catch (final Exception e) { 
                     throw new BuildException(e.getMessage()); 
                 }  
-                if (versionString.contains("Express Edition")) throw new BuildException("Express Edition not suported");
                 final String version = Version.getVersion(versionString);
                 final String minVersion = new PropertiesManager().getProperty("db.ora.version");
                 String msg = "Minimum required version: "+minVersion+", current version "+version;
@@ -130,6 +129,29 @@ public class CheckDB extends Task{
                 final long minOpenCursors = new Long(new PropertiesManager().getProperty("db.ora.opencursors"));
                 msg = "Minimum open cursors required: "+minOpenCursors+", current open cursors "+openCursors;
                 if (openCursors<minOpenCursors) 
+                    throw new BuildException(msg+"\nTip: check http://wiki.openbravo.com/wiki/Development_Stack_Setup#Oracle");
+                else {
+                    log4j.info(msg);
+                    log4j.info("Open cursors OK");
+                }
+                
+                //check processes
+                log4j.info("Checking Oracle open cursors...");
+                long processes=0;
+                try {
+                    st = connSystem.prepareStatement("SELECT value FROM v$parameter WHERE name ='processes'");
+                    result = st.executeQuery();
+                    while (result.next()){
+                        processes = new Long(UtilSql.getValue(result, 1));
+                    }
+                    result.close();
+                    st.close();
+                } catch (final Exception e) { 
+                    throw new BuildException(e.getMessage()); 
+                }
+                final long minProcesses = new Long(new PropertiesManager().getProperty("db.ora.processes"));
+                msg = "Minimum open processes required: "+minProcesses+", current processes "+processes;
+                if (processes<minProcesses) 
                     throw new BuildException(msg+"\nTip: check http://wiki.openbravo.com/wiki/Development_Stack_Setup#Oracle");
                 else {
                     log4j.info(msg);
