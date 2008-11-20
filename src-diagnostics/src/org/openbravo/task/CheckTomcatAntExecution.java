@@ -33,7 +33,7 @@ public class CheckTomcatAntExecution extends Task{
     @Override
     public void execute() throws BuildException {
         final File f = new File("src-diagnostics/build.xml");
-        final String fileName = f.getAbsolutePath();
+        final String fileName = f.getAbsolutePath().replace("\\", "/");
         System.out.println(fileName);
         log4j.info("Checking tomcat executing ant tasks...");
         String result = new ServerConnection().getCheck("ant", "&file="+fileName+"&task=test1");
