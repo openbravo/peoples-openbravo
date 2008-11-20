@@ -70,7 +70,7 @@ public class CheckDB extends Task{
                 final Connection connUser = DriverManager.getConnection(dbServer, user, userPassword);
                 connUser.close();
             } catch (final Exception e) { 
-                throw new BuildException(e.getMessage()); 
+                log4j.warn("Couldn't connect to standard user ("+user+") tip, database might require to be created. Error:"+e.getMessage()); 
             }  
             log4j.info("Connection OK");
             
