@@ -1,6 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <data>
 <!--1000000**************--><C_ACCTSCHEMA_GL>
+<!--1000000 C_ACCTSCHEMA_GL_ID-->
+<!--1000000-->              <C_ACCTSCHEMA_GL_ID><![CDATA[1000000]]></C_ACCTSCHEMA_GL_ID>
 <!--1000000 C_ACCTSCHEMA_ID-->
 <!--1000000-->              <C_ACCTSCHEMA_ID><![CDATA[1000000]]></C_ACCTSCHEMA_ID>
 <!--1000000 AD_CLIENT_ID-->
@@ -42,6 +44,8 @@
 <!--1000000**************--></C_ACCTSCHEMA_GL>
 
 <!--1000001**************--><C_ACCTSCHEMA_GL>
+<!--1000001 C_ACCTSCHEMA_GL_ID-->
+<!--1000001-->              <C_ACCTSCHEMA_GL_ID><![CDATA[1000001]]></C_ACCTSCHEMA_GL_ID>
 <!--1000001 C_ACCTSCHEMA_ID-->
 <!--1000001-->              <C_ACCTSCHEMA_ID><![CDATA[1000001]]></C_ACCTSCHEMA_ID>
 <!--1000001 AD_CLIENT_ID-->

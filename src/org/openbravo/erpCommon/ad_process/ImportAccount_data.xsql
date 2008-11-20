@@ -92,7 +92,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE I_ElementValue 
+        UPDATE I_ElementValue
         SET C_Element_ID = (
           SELECT C_Element_ID FROM C_Element e
           WHERE I_ElementValue.ElementName=e.Name
@@ -124,7 +124,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE I_ElementValue 
+        UPDATE I_ElementValue
         SET AD_Column_ID = (
           SELECT AD_Column_ID
           FROM AD_Column c
@@ -268,7 +268,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE I_ElementValue 
+        UPDATE I_ElementValue
         SET C_ElementValue_ID = (
           SELECT C_ElementValue_ID
           FROM C_ElementValue ev
@@ -288,7 +288,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE I_ElementValue 
+        UPDATE I_ElementValue
         SET C_ElementValue_ID = (
           SELECT C_ElementValue_ID
           FROM C_ElementValue ev
@@ -410,14 +410,14 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        INSERT INTO C_ACCTSCHEMA_GL (C_ACCTSCHEMA_ID, AD_CLIENT_ID, AD_ORG_ID,ISACTIVE, CREATED, CREATEDBY, 
-           UPDATED, UPDATEDBY, USESUSPENSEBALANCING, SUSPENSEBALANCING_ACCT, USESUSPENSEERROR, SUSPENSEERROR_ACCT, 
-           USECURRENCYBALANCING, CURRENCYBALANCING_ACCT, RETAINEDEARNING_ACCT,INCOMESUMMARY_ACCT, INTERCOMPANYDUETO_ACCT, 
-           INTERCOMPANYDUEFROM_ACCT,PPVOFFSET_ACCT, CFS_ORDER_ACCT) 
-        VALUES ( ?, ?, ?, 'Y', now(), ?, 
-            now(), ?, 'N', ?, 'N', ?, 
+        INSERT INTO C_ACCTSCHEMA_GL (C_ACCTSCHEMA_ID, C_ACCTSCHEMA_GL_ID, AD_CLIENT_ID, AD_ORG_ID,ISACTIVE, CREATED, CREATEDBY,
+           UPDATED, UPDATEDBY, USESUSPENSEBALANCING, SUSPENSEBALANCING_ACCT, USESUSPENSEERROR, SUSPENSEERROR_ACCT,
+           USECURRENCYBALANCING, CURRENCYBALANCING_ACCT, RETAINEDEARNING_ACCT,INCOMESUMMARY_ACCT, INTERCOMPANYDUETO_ACCT,
+           INTERCOMPANYDUEFROM_ACCT,PPVOFFSET_ACCT, CFS_ORDER_ACCT)
+        VALUES (GET_UUID(),  ?, ?, ?, 'Y', now(), ?,
+            now(), ?, 'N', ?, 'N', ?,
             'N', ?, ?, ?, ?,
-            ?, ?, ?)    
+            ?, ?, ?)
       ]]>
     </Sql>
     <Parameter name="cAcctschemaId"/>
@@ -443,20 +443,20 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-           INSERT INTO C_ACCTSCHEMA_DEFAULT (C_ACCTSCHEMA_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, 
-           W_INVENTORY_ACCT, W_INVACTUALADJUST_ACCT, W_DIFFERENCES_ACCT, W_REVALUATION_ACCT, 
-           P_REVENUE_ACCT, P_EXPENSE_ACCT, P_ASSET_ACCT,P_PURCHASEPRICEVARIANCE_ACCT, P_INVOICEPRICEVARIANCE_ACCT, P_TRADEDISCOUNTREC_ACCT, 
-           P_TRADEDISCOUNTGRANT_ACCT, P_COGS_ACCT, C_RECEIVABLE_ACCT,C_PREPAYMENT_ACCT, V_LIABILITY_ACCT, V_LIABILITY_SERVICES_ACCT, 
+           INSERT INTO C_ACCTSCHEMA_DEFAULT (C_ACCTSCHEMA_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY,
+           W_INVENTORY_ACCT, W_INVACTUALADJUST_ACCT, W_DIFFERENCES_ACCT, W_REVALUATION_ACCT,
+           P_REVENUE_ACCT, P_EXPENSE_ACCT, P_ASSET_ACCT,P_PURCHASEPRICEVARIANCE_ACCT, P_INVOICEPRICEVARIANCE_ACCT, P_TRADEDISCOUNTREC_ACCT,
+           P_TRADEDISCOUNTGRANT_ACCT, P_COGS_ACCT, C_RECEIVABLE_ACCT,C_PREPAYMENT_ACCT, V_LIABILITY_ACCT, V_LIABILITY_SERVICES_ACCT,
            V_PREPAYMENT_ACCT, PAYDISCOUNT_EXP_ACCT, WRITEOFF_ACCT
-           , PAYDISCOUNT_REV_ACCT, UNREALIZEDGAIN_ACCT, UNREALIZEDLOSS_ACCT, 
+           , PAYDISCOUNT_REV_ACCT, UNREALIZEDGAIN_ACCT, UNREALIZEDLOSS_ACCT,
            REALIZEDGAIN_ACCT, REALIZEDLOSS_ACCT, WITHHOLDING_ACCT, E_PREPAYMENT_ACCT
-           , E_EXPENSE_ACCT, PJ_ASSET_ACCT, 
-           PJ_WIP_ACCT, T_EXPENSE_ACCT, T_LIABILITY_ACCT, T_RECEIVABLES_ACCT, T_DUE_ACCT, T_CREDIT_ACCT, 
-           B_INTRANSIT_ACCT, B_ASSET_ACCT, B_EXPENSE_ACCT,B_INTERESTREV_ACCT, B_INTERESTEXP_ACCT, B_UNIDENTIFIED_ACCT, 
-           B_UNALLOCATEDCASH_ACCT, B_PAYMENTSELECT_ACCT, B_SETTLEMENTGAIN_ACCT, B_SETTLEMENTLOSS_ACCT, B_REVALUATIONGAIN_ACCT, B_REVALUATIONLOSS_ACCT, 
-           CH_EXPENSE_ACCT, CH_REVENUE_ACCT, UNEARNEDREVENUE_ACCT, NOTINVOICEDRECEIVABLES_ACCT, NOTINVOICEDREVENUE_ACCT, NOTINVOICEDRECEIPTS_ACCT, 
-           CB_ASSET_ACCT, CB_CASHTRANSFER_ACCT, CB_DIFFERENCES_ACCT,CB_EXPENSE_ACCT, CB_RECEIPT_ACCT, PROCESSING, 
-           A_ACCUMDEPRECIATION_ACCT, A_DEPRECIATION_ACCT, A_DISPOSAL_GAIN,A_DISPOSAL_LOSS, C_ACCTSCHEMA_DEFAULT_ID, STATUS) 
+           , E_EXPENSE_ACCT, PJ_ASSET_ACCT,
+           PJ_WIP_ACCT, T_EXPENSE_ACCT, T_LIABILITY_ACCT, T_RECEIVABLES_ACCT, T_DUE_ACCT, T_CREDIT_ACCT,
+           B_INTRANSIT_ACCT, B_ASSET_ACCT, B_EXPENSE_ACCT,B_INTERESTREV_ACCT, B_INTERESTEXP_ACCT, B_UNIDENTIFIED_ACCT,
+           B_UNALLOCATEDCASH_ACCT, B_PAYMENTSELECT_ACCT, B_SETTLEMENTGAIN_ACCT, B_SETTLEMENTLOSS_ACCT, B_REVALUATIONGAIN_ACCT, B_REVALUATIONLOSS_ACCT,
+           CH_EXPENSE_ACCT, CH_REVENUE_ACCT, UNEARNEDREVENUE_ACCT, NOTINVOICEDRECEIVABLES_ACCT, NOTINVOICEDREVENUE_ACCT, NOTINVOICEDRECEIPTS_ACCT,
+           CB_ASSET_ACCT, CB_CASHTRANSFER_ACCT, CB_DIFFERENCES_ACCT,CB_EXPENSE_ACCT, CB_RECEIPT_ACCT, PROCESSING,
+           A_ACCUMDEPRECIATION_ACCT, A_DEPRECIATION_ACCT, A_DISPOSAL_GAIN,A_DISPOSAL_LOSS, C_ACCTSCHEMA_DEFAULT_ID, STATUS)
           VALUES (?, ?, ?, 'Y',now() ,?,now() ,? ,
         ? ,? ,? ,? ,
         ? ,? ,? ,? ,? ,? ,
@@ -470,7 +470,7 @@
         ? ,? ,? ,? ,? ,? ,
         ? ,? ,? ,? ,? ,? ,
         ? ,? ,? ,? ,? ,'N' ,
-        ? ,? ,? ,? ,?, 'DE' )   
+        ? ,? ,? ,? ,?, 'DE' )
       ]]>
     </Sql>
     <Parameter name="cAcctschemaId"/>
@@ -560,12 +560,12 @@
     <Sql>
       <![CDATA[
       INSERT INTO C_ELEMENTVALUE_OPERAND (
-         C_ELEMENTVALUE_OPERAND_ID, SIGN, C_ELEMENTVALUE_ID, 
-         ACCOUNT_ID, SEQNO, AD_CLIENT_ID, 
-         AD_ORG_ID, ISACTIVE, CREATED, 
-         CREATEDBY, UPDATED, UPDATEDBY) 
+         C_ELEMENTVALUE_OPERAND_ID, SIGN, C_ELEMENTVALUE_ID,
+         ACCOUNT_ID, SEQNO, AD_CLIENT_ID,
+         AD_ORG_ID, ISACTIVE, CREATED,
+         CREATEDBY, UPDATED, UPDATEDBY)
       VALUES ( ?, TO_NUMBER(?), ?,
-               ?, TO_NUMBER(?), ?, 
+               ?, TO_NUMBER(?), ?,
                '0', 'Y', NOW(),
                 ?, NOW(), ?)
       ]]>
@@ -673,7 +673,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE I_ElementValue 
+        UPDATE I_ElementValue
         SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||' Insert ElementValue: '||?
         WHERE I_ElementValue_ID=?
       ]]>
@@ -686,7 +686,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE I_ElementValue 
+        UPDATE I_ElementValue
         SET I_IsImported='E', I_ErrorMsg=COALESCE(TO_CHAR(I_ErrorMsg),'')||' Update ElementValue: '||?
         WHERE I_ElementValue_ID=?
       ]]>
@@ -712,7 +712,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE I_ElementValue 
+        UPDATE I_ElementValue
         SET ParentElementValue_ID = (
           SELECT C_ElementValue_ID
           FROM C_ElementValue ev
@@ -826,7 +826,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        UPDATE C_AcctSchema_Element 
+        UPDATE C_AcctSchema_Element
         SET C_ElementValue_ID = (
           SELECT C_ElementValue_ID
           FROM I_ElementValue i
