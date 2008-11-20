@@ -230,9 +230,11 @@
   <SqlMethod name="selectC_ElementValue_ID" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT C_ElementValue.C_ElementValue_ID as id, ((CASE C_ElementValue.isActive WHEN 'N' THEN '**' ELSE '' END) || C_ElementValue.Value || ' - ' || C_ElementValue.Name) as name FROM C_ElementValue
+      SELECT C_ElementValue.C_ElementValue_ID as id, ((CASE C_ElementValue.isActive WHEN 'N' THEN '**' ELSE '' END) || C_ElementValue.Value || ' - ' || C_ElementValue.Name) as name FROM C_ElementValue, C_ELEMENT
       WHERE C_ElementValue.AD_Org_ID IN('1') AND C_ElementValue.AD_Client_ID IN('1')  AND (C_ElementValue.isActive = 'Y' OR C_ElementValue.C_ElementValue_ID = ? )
       and c_elementvalue.ELEMENTLEVEL='S'
+      AND C_ELEMENTVALUE.C_ELEMENT_ID = C_ELEMENT.C_ELEMENT_ID
+      AND C_ELEMENT.ISACTIVE = 'Y'
       AND 1=1
       ORDER BY name
     ]]></Sql>
@@ -247,10 +249,12 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
       SELECT c_acctschema_element.c_acctschema_id AS PADRE, C_ElementValue.C_ElementValue_ID as id, ((CASE C_ElementValue.isActive WHEN 'N' THEN '**' ELSE '' END) || C_ElementValue.Value || ' - ' || C_ElementValue.Name) as name 
-      FROM C_ElementValue, c_acctschema_element
+      FROM C_ElementValue, c_acctschema_element, C_ELEMENT
       WHERE C_ElementValue.AD_Org_ID IN('1') AND C_ElementValue.AD_Client_ID IN('1')
       AND (C_ElementValue.isActive = 'Y' OR C_ElementValue.C_ElementValue_ID = ? )
       and c_elementvalue.ELEMENTLEVEL='S'
+      AND C_ELEMENTVALUE.C_ELEMENT_ID = C_ELEMENT.C_ELEMENT_ID
+      AND C_ELEMENT.ISACTIVE = 'Y'
       AND 1=1
       AND c_acctschema_element.ELEMENTTYPE = 'AC'
       AND c_acctschema_element.c_element_id = C_ElementValue.c_element_id
