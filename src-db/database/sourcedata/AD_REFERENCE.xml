@@ -6841,11 +6841,11 @@ For example, if you want to create different invoices for each ship location for
 <!--800062 CREATEDBY-->
 <!--800062-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800062 UPDATED-->
-<!--800062-->              <UPDATED><![CDATA[2006-05-10 17:56:03.0]]></UPDATED>
+<!--800062-->              <UPDATED><![CDATA[2008-11-20 17:57:36.0]]></UPDATED>
 <!--800062 UPDATEDBY-->
-<!--800062-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--800062-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800062 NAME-->
-<!--800062-->              <NAME><![CDATA[Sales Order]]></NAME>
+<!--800062-->              <NAME><![CDATA[Order]]></NAME>
 <!--800062 VALIDATIONTYPE-->
 <!--800062-->              <VALIDATIONTYPE><![CDATA[S]]></VALIDATIONTYPE>
 <!--800062 VFORMAT-->
@@ -6868,11 +6868,11 @@ For example, if you want to create different invoices for each ship location for
 <!--800063 CREATEDBY-->
 <!--800063-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800063 UPDATED-->
-<!--800063-->              <UPDATED><![CDATA[2006-05-10 17:56:03.0]]></UPDATED>
+<!--800063-->              <UPDATED><![CDATA[2008-11-20 17:57:49.0]]></UPDATED>
 <!--800063 UPDATEDBY-->
-<!--800063-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--800063-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800063 NAME-->
-<!--800063-->              <NAME><![CDATA[Sales Order Line]]></NAME>
+<!--800063-->              <NAME><![CDATA[Order Line]]></NAME>
 <!--800063 VALIDATIONTYPE-->
 <!--800063-->              <VALIDATIONTYPE><![CDATA[S]]></VALIDATIONTYPE>
 <!--800063 VFORMAT-->
