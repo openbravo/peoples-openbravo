@@ -389,13 +389,13 @@
 <!--800008 AD_ORG_ID-->
 <!--800008-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800008 ISACTIVE-->
-<!--800008-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800008-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800008 CREATED-->
 <!--800008-->              <CREATED><![CDATA[2005-04-28 18:53:33.0]]></CREATED>
 <!--800008 CREATEDBY-->
 <!--800008-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800008 UPDATED-->
-<!--800008-->              <UPDATED><![CDATA[2005-04-28 18:53:33.0]]></UPDATED>
+<!--800008-->              <UPDATED><![CDATA[2008-11-20 17:01:25.0]]></UPDATED>
 <!--800008 UPDATEDBY-->
 <!--800008-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800008 NAME-->

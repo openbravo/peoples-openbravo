@@ -9258,7 +9258,7 @@
 <!--803639 AD_ORG_ID-->
 <!--803639-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--803639 ISACTIVE-->
-<!--803639-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--803639-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--803639 CREATED-->
 <!--803639-->              <CREATED><![CDATA[2007-07-11 18:50:54.0]]></CREATED>
 <!--803639 CREATEDBY-->
@@ -9458,7 +9458,7 @@
 <!--803650 AD_ORG_ID-->
 <!--803650-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--803650 ISACTIVE-->
-<!--803650-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--803650-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--803650 CREATED-->
 <!--803650-->              <CREATED><![CDATA[2007-07-13 13:18:31.0]]></CREATED>
 <!--803650 CREATEDBY-->
