@@ -77,8 +77,8 @@
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[ AND M_REQUISITIONLINE.NEEDBYDATE < TO_DATE(?)]]></Parameter>
     <Parameter name="parProduct" optional="true" after="AND 1=1"><![CDATA[ AND M_REQUISITIONLINE.M_PRODUCT_ID = TO_CHAR(?)]]></Parameter>
     <Parameter name="parRequester" optional="true" after="AND 1=1"><![CDATA[ AND M_REQUISITION.AD_USER_ID = TO_CHAR(?)]]></Parameter>
-    <Parameter name="parVendorInc" optional="true" after="AND 1=1"><![CDATA[ AND (COALESCE(M_REQUISITIONLINE.C_BPARTNER_ID, M_REQUISITION.C_BPARTNER_ID,-1) = TO_CHAR(?) OR (M_REQUISITIONLINE.C_BPARTNER_ID IS NULL AND M_REQUISITION.C_BPARTNER_ID IS NULL))]]></Parameter>
-    <Parameter name="parVendor" optional="true" after="AND 1=1"><![CDATA[ AND COALESCE(M_REQUISITIONLINE.C_BPARTNER_ID, M_REQUISITION.C_BPARTNER_ID,-1) = TO_CHAR(?)]]></Parameter>
+    <Parameter name="parVendorInc" optional="true" after="AND 1=1"><![CDATA[ AND (COALESCE(M_REQUISITIONLINE.C_BPARTNER_ID, M_REQUISITION.C_BPARTNER_ID,'-1') = TO_CHAR(?) OR (M_REQUISITIONLINE.C_BPARTNER_ID IS NULL AND M_REQUISITION.C_BPARTNER_ID IS NULL))]]></Parameter>
+    <Parameter name="parVendor" optional="true" after="AND 1=1"><![CDATA[ AND COALESCE(M_REQUISITIONLINE.C_BPARTNER_ID, M_REQUISITION.C_BPARTNER_ID,'-1') = TO_CHAR(?)]]></Parameter>
   </SqlMethod>
   <SqlMethod name="selectSelected" type="preparedStatement" return="Multiple">
     <SqlMethodComment></SqlMethodComment>
