@@ -127,6 +127,7 @@ public void doPost (HttpServletRequest request, HttpServletResponse response) th
       
       final String unnappliedModules = getUnnapliedModules();
       
+      /*
       if (ApplyModulesData.selectUninstalledModules(this)) { //there're uninstalled modules
         tasks.add("update.database");
         tasks.add("generate.entities");
@@ -144,6 +145,8 @@ public void doPost (HttpServletRequest request, HttpServletResponse response) th
       }
       
       ant.runTask(tasks);
+      */
+      ant.runTask("test");
       ant.setFinished(true);
       
       final PrintStream out = new PrintStream(response.getOutputStream());
@@ -192,10 +195,10 @@ public void doPost (HttpServletRequest request, HttpServletResponse response) th
     try {
       final AntExecutor ant = (AntExecutor) vars.getSessionObject("ApplyModules|Log");
       if (ant!=null) description = ant.getErr();
-      if (description.equals("Success")) {
+      if (description.startsWith("SuccessRebuild")) {
         type="Success";
         title= Utility.messageBD(this, type, strLanguage);
-        description =  "<![CDATA[" +Utility.messageBD(this, type, strLanguage)+ "]]>";
+        description =  "<![CDATA[" +Utility.messageBD(this, description, strLanguage)+ "]]>";
       } else {
         type="Error";
         title= Utility.messageBD(this, type, strLanguage);

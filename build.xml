@@ -149,8 +149,6 @@ compare.database.structure: refer to compare.database.structure target of databa
     </not>
   </condition>
 	
-	<available file=".svn/entries" property="is.svn"/>
-			
 
   <path id="project.class.path">
     <pathelement path="${build}"/>
@@ -531,4 +529,8 @@ compare.database.structure: refer to compare.database.structure target of databa
 	 	  <ant dir="src-diagnostics" antfile="build-create.xml" target="build"/>
 	    <ant dir="src-diagnostics" target="check.all"/>
 	  </target>
+	
+	<target name="test">
+		  <echo message="testing..."/>
+  </target>
 </project>
