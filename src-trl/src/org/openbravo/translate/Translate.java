@@ -18,23 +18,26 @@
 */
 package org.openbravo.translate;
 
-import org.openbravo.database.CPStandAlone;
-import org.openbravo.utils.DirFilter;
-
-import java.io.*;
-import org.apache.xerces.parsers.*;
-import org.xml.sax.XMLReader;
-import org.xml.sax.Attributes;
-import org.xml.sax.ext.LexicalHandler;
-import org.xml.sax.helpers.DefaultHandler;
-import java.util.Vector;
-import java.util.StringTokenizer;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
-import org.xml.sax.InputSource;
-import javax.servlet.*;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.xerces.parsers.SAXParser;
+import org.openbravo.database.CPStandAlone;
+import org.openbravo.utils.DirFilter;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+import org.xml.sax.ext.LexicalHandler;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * @author Fernando Iriazabal
@@ -121,7 +124,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
 
     if ((argv.length == 2) && argv[0].equals("clean")) {
       log4j.debug("clean AD_TEXTINTERFACES");
-      Translate translate=new Translate(argv[1]);
+      final Translate translate=new Translate(argv[1]);
       translate.clean();
       return;
     }
@@ -132,10 +135,10 @@ public class Translate extends DefaultHandler implements LexicalHandler {
       return;
     }
 
-    Translate translate = new Translate(argv[0], argv[1]);
+    final Translate translate = new Translate(argv[0], argv[1]);
 
-    dirIni = argv[2];
-    dirFin = argv[3];
+    dirIni = argv[2].replace("\\", "/");
+    dirFin = argv[3].replace("\\", "/");
     if (argv.length > 4) relativePath = argv[4];
     
     if (argv.length > 5) {
@@ -148,13 +151,13 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     log4j.info("directory destiny: " + dirFin);
     log4j.info("file termination: " + fileTermination);
 
-    File path = new File(dirIni, relativePath);
+    final File path = new File(dirIni, relativePath);
     if (!path.exists()) {
       log4j.error("Can´t find directory: " + dirIni);      
       translate.destroy();
       return;
     }
-    File fileFin = new File(dirFin);
+    final File fileFin = new File(dirFin);
     if (!fileFin.exists()) {
       log4j.error("Can´t find directory: " + dirFin);
       translate.destroy();
@@ -179,7 +182,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
   private void clean() {
     try {
       TranslateData.clean(pool);
-    } catch (Exception e) {
+    } catch (final Exception e) {
       log4j.error(e.toString());
     }
   }
@@ -190,8 +193,8 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    * @return
    */
   private static ArrayList<String> getDirectories(String s) {
-    ArrayList <String> l = new ArrayList<String>();
-    StringTokenizer tok = new StringTokenizer(s,"/");
+    final ArrayList <String> l = new ArrayList<String>();
+    final StringTokenizer tok = new StringTokenizer(s,"/");
     while (tok.hasMoreTokens()) 
       l.add(tok.nextToken()); 
     return l;
@@ -211,10 +214,10 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     if(boolFilter) list = file.listFiles(dirFilter);
     else list = file.listFiles();
     for(int i = 0; i < list.length; i++) {
-      File fileItem = list[i];
+      final File fileItem = list[i];
       if (fileItem.isDirectory()) {
         // if it is a subdirectory then list recursively
-        String prevRelativePath = new String(relativePath);
+        final String prevRelativePath = new String(relativePath);
         relativePath += "/" + fileItem.getName();
         
         if (log4j.isDebugEnabled()) log4j.debug("dir: "+fileItem.getName()+" - parse:"+parse+" - parent:"+parent+" - level:"+level+" - include:"+(moduleDirectories!=null && moduleDirectories.size()>level?moduleDirectories.get(level):"--"));
@@ -227,7 +230,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
               listDir(fileItem, boolFilter, dirFilter, fileFin, relativePath, true, parent+"/"+fileItem.getName(), level+1, parent.replace("/", ""));
             else
               log4j.info("Module is not in development: skipping it");
-            } catch (Exception e) {e.printStackTrace();}
+            } catch (final Exception e) {e.printStackTrace();}
           }
           else if (moduleDirectories.size()>level && (moduleDirectories.get(level).equals("*")||moduleDirectories.get(level).equals(fileItem.getName())))
             listDir(fileItem, boolFilter, dirFilter, fileFin, relativePath, false, parent+"/"+fileItem.getName(), level+1, module);
@@ -249,7 +252,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
               parseFile(list[i], fileFin, relativePath, parent, module);
             }
           }
-        } catch (IOException e) {
+        } catch (final IOException e) {
           log4j.error("IOException: " + e);
         }
       }
@@ -264,14 +267,14 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    * @param relativePath The relative path.
    */
   private static void parseFile(File fileParsing, File fileFin, String relativePath, String parent, String module) {
-    String strFileName = fileParsing.getName();
+    final String strFileName = fileParsing.getName();
     if (log4j.isDebugEnabled()) log4j.debug("Parsing of " + strFileName);
-    int pos = strFileName.indexOf(fileTermination);
+    final int pos = strFileName.indexOf(fileTermination);
     if (pos == -1) {
       log4j.error("File " + strFileName + " don't have termination " + fileTermination);
       return;
     }
-    String strFileWithoutTermination = strFileName.substring(0, pos);
+    final String strFileWithoutTermination = strFileName.substring(0, pos);
     if (log4j.isDebugEnabled()) log4j.debug("File without termination: " + strFileWithoutTermination);
     
     //In case moduleDirectories has value remove parent from path to keep clean the package
@@ -284,7 +287,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
       moduleID="0";
     }
     moduleLang = TranslateData.getModuleLang(pool, moduleID);
-    } catch (ServletException e) {e.printStackTrace();}
+    } catch (final ServletException e) {e.printStackTrace();}
     
     if (log4j.isDebugEnabled()) log4j.debug("Module name: "+module+" - oldRelativePath:"+relativePath+" - parent:"+parent);
     if (moduleDirectories!=null && relativePath.startsWith(parent)) {
@@ -302,10 +305,10 @@ public class Translate extends DefaultHandler implements LexicalHandler {
       error = false;
       try {
         parser.parse(new InputSource(new FileReader(fileParsing)));
-      } catch (IOException e) {
+      } catch (final IOException e) {
         log4j.error("file: " + actualFile);
         e.printStackTrace();
-      } catch (Exception e) {
+      } catch (final Exception e) {
         log4j.error("file: " + actualFile);
         e.printStackTrace();
       }
@@ -319,7 +322,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    * @return String with the list of attributes translated.
    */
   public String parseAttributes(Attributes amap) {
-    StringBuffer data = new StringBuffer();
+    final StringBuffer data = new StringBuffer();
     String type = "";
     String value = "";
     boolean hasvalue = false;
@@ -337,7 +340,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
           while ((j!=-1) && (aux=strAux.lastIndexOf("';", j-1))!=-1) {
             j=aux;
           }
-          String strToken = translate(strAux.substring(15, j));
+          final String strToken = translate(strAux.substring(15, j));
           strAux = strAux.substring(0, 15) + strToken + strAux.substring(j);
         }
       } else if (amap.getQName(i).equalsIgnoreCase("alt")) {
@@ -359,13 +362,15 @@ public class Translate extends DefaultHandler implements LexicalHandler {
   /**
    * The start of the document to translate.
    */
-  public void startDocument() {
+  @Override
+public void startDocument() {
   }
 
   /**
    * The prefix mapping for the file.
    */
-  public void startPrefixMapping(String prefix, String uri) {
+  @Override
+public void startPrefixMapping(String prefix, String uri) {
     actualPrefix = " xmlns:" + prefix + "=\"" + uri + "\"";
   }
 
@@ -387,7 +392,8 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    * Start of an element of the file. When the parser finds a new element 
    * in the file, it calls to this method.
    */
-  public void startElement(String uri, String name, String qName, Attributes amap) {//(String name, AttributeList amap) throws SAXException {
+  @Override
+public void startElement(String uri, String name, String qName, Attributes amap) {//(String name, AttributeList amap) throws SAXException {
     if (log4j.isDebugEnabled()) log4j.info("Configuration: startElement is called: element name=" + qName);
     if (actualTag!=null && isParseable(actualTag) && translationText != null) {
       translate(translationText.toString());
@@ -424,7 +430,8 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    * End of an element of the file. When the parser finds the end of an element 
    * in the file, it calls to this method.
    */
-  public void endElement(String uri, String name, String qName) {//(String name) throws SAXException {
+  @Override
+public void endElement(String uri, String name, String qName) {//(String name) throws SAXException {
     if (log4j.isDebugEnabled()) log4j.debug("Configuration: endElement is called: " + qName);
 
     translationText = null;
@@ -435,8 +442,9 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    * This method is called by the parser when it finds any content between 
    * the start and end element's tags.
    */
-  public void characters(char[] ch, int start, int length) {//throws SAXException {
-    String chars = new String(ch, start, length);
+  @Override
+public void characters(char[] ch, int start, int length) {//throws SAXException {
+    final String chars = new String(ch, start, length);
     if (log4j.isDebugEnabled()) log4j.debug("Configuration(characters) is called: " + chars);
     if (translationText==null) translationText = new StringBuffer();
     translationText.append(chars);
@@ -465,7 +473,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     ini = ini.trim();
     ini = delSp(ini);
     if (!isPartial && actualTag.equalsIgnoreCase("textFieldExpression")) {
-      StringBuffer text = new StringBuffer();
+      final StringBuffer text = new StringBuffer();
       int pos = ini.indexOf("\"");
       while (pos!=-1) {
         text.append(ini.substring(0, pos+1));
@@ -480,7 +488,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
       text.append(ini);
       return text.toString();
     }
-    Vector<String> translated = new Vector<String>(0);
+    final Vector<String> translated = new Vector<String>(0);
     boolean aux=true;
     translated.addElement("Y");
     String resultado = ini;
@@ -497,7 +505,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
           TranslateData.insert(pool,  ini, actualFile, moduleID);
           log4j.warn("Couldn't translate: " + ini + ".Result translated: " + resultado + ".Actual file: " + actualFile);
         }
-      } catch (ServletException e) {
+      } catch (final ServletException e) {
         e.printStackTrace();
       }
     }
@@ -532,7 +540,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
   public String replace(String strInicial, String strReplaceWhat, String strReplaceWith) {
     int index = 0;
     int pos;
-    StringBuffer strFinal = new StringBuffer("");
+    final StringBuffer strFinal = new StringBuffer("");
     do {
       pos = strInicial.indexOf(strReplaceWhat, index);
       if (pos != - 1) {
@@ -571,7 +579,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
    * @return String translated.
    */
   public String tokenize(String ini, int indice, Vector<String> isTranslated) {
-    StringBuffer fin = new StringBuffer();
+    final StringBuffer fin = new StringBuffer();
     try {
       boolean first = true;
       String translated = null;
@@ -585,7 +593,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
         fin.append(translated);
         return fin.toString();
       }
-      StringTokenizer st = new StringTokenizer(ini, tokens[indice], false);
+      final StringTokenizer st = new StringTokenizer(ini, tokens[indice], false);
       while (st.hasMoreTokens()) {
         if (first) {
           first = false;
@@ -608,7 +616,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
           isTranslated.set(0, "N");
         } else fin.append(translated);
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       e.printStackTrace();
     }
     return fin.toString();
