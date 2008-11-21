@@ -48,7 +48,7 @@ uninstallWebService: refer to uninstallWebService target of src.
 preinstall: deprecated.
 preinstall.complete: deprecated.
 install: deprecated.
-deploy: copy war to the jakarta context.
+deploy.context: deploy the context into Tomcat using the manager
 install.source: install the ERP from sources (from subversion).
 eclipse.install.source: install the ERP from sources for eclipse (from subversion).
 create.database: refer to create.database target of database.
@@ -346,10 +346,6 @@ compare.database.structure: refer to compare.database.structure target of databa
 
   <target name="uninstallWebService" depends="init">
     <ant dir="${base.src}" target="uninstallWebService" inheritAll="true" inheritRefs="true"/>
-  </target>
-
-  <target name="deploy" depends="init">
-    <copy file="${base.lib}/${context.name}.war" todir="${jakarta.base}/webapps"/>
   </target>
 
   <target name="install.source" depends="init,code.rev">
