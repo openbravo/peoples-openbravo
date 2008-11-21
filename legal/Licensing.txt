@@ -1,4 +1,4 @@
-A) Openbravo Public License
+﻿A) Openbravo Public License
 
 This license file applies to the Openbravo ERP software (the "Openbravo
 Software"), except as described below.
@@ -50,7 +50,7 @@ In accordance with provision "3.2. Availability of Source Code" of the Compiere
 Public License 1.1, the source and modified source for the Compiere ERP &
 CRM files included in Openbravo ERP in this distribution are available
 under the Compiere Public license 1.1 and are located in the /database/
-folder. For more information, see CompiereAddendum.txt in the legal/ folder
+folder. For more information, see CompiereAddendum.txt in the /legal/ folder
 
 # calculator.js (at web/js)
 Under Tigra Calculator license (license available at http://www.softcomplex.com/)
@@ -75,46 +75,50 @@ http://www.eclipse.org/legal/epl-v10.html
 Under the CyberNeko Software License, Version 1.0 (license available at
 http://people.apache.org/~andyc/neko/doc/html/
 
-# Axis-ant.jar
-# Axis.jar
-# Avalon.jar
-# Barcode4j-fop-ext-0.20.5-complete.jar 
+# commons-discovery-0.2.jar
+Under Apache Software License 1.1, available at
+http://www.apache.org/licenses/LICENSE-1.1
+
+
+# ant-1.6.5.jar
+# ant-launcher.jar
+# ant-nodeps.jar
+# avalon-framework-4.1.5.jar
+# axis-ant.jar
+# axis.jar
+# barcode4j-fop-ext-0.20.5-complete.jar 
 # batik.jar
+# catalina-ant.jar
+# cglib-2.1.3.jar
 # commons-beanutils-1.7.0.jar
-# commons-betwixt-0.8.jar
 # commons-codec-1.3.jar
 # commons-collections-3.1.jar
 # commons-dbcp-1.2.1.jar
 # commons-digester-1.7.jar
+# commons-fileupload.jar
 # commons-io-1.4.jar
-# commons-lang-2.1.jar
 # commons-lang-2.4.jar
-# commons-logging-1.0.4.jar
+# commons-logging-1.1.jar
 # commons-math-1.2.jar
 # commons-pool-1.2.jar
+# ehcache-1.2.3.jar
 # fop.jar
 # google-collections.jar
-# Jakarta-oro-2.0.8.jar, 
+# hybridlabs-beautifier-1.1.9.jar
+# jettison-1.0.1.jar
+# org.apache.commons.cli_1.0.0.jar
 # log4j-1.2.8.jar, 
-# logkit.jar
+# quartz-1.6.2.jar
 # saaj.jar
-# wstx-asl-3.0.2.jar
-# Xerceslmpl.jar
+# xercesImpl.jar
 # xml-apis.jar
 # xmlrpc-client-3.0.jar 
 # xmlrpc-common-3.0.jar 
-# hybridlabs-beautifier-1.1.9.jar
-# org.apache.commons.cli_1.0.0.jar
-# commons-logging-1.1.jar
-# cglib-2.1.3.jar
-# ehcache-1.2.3.jar
-# quartz-1.6.2.jar
-# jettison-1.0.1.jar
-
+# ws-commons-util-1.0.1.jar
 All files under Apache Software License 2.0, available at
 http://www.apache.org/licenses/LICENSE-2.0
 
-# JDBC3_PostgreSQL.jar 
+# postgresql-jdbc3.8.2.jar 
 Under the BSD license, also available at http://jdbc.postgresql.org/license.html  
 
 # smartsprites-0.2.1-alpha.jar
@@ -133,13 +137,15 @@ http://opensource.org/licenses/afl-2.1.php)
 
 # Dynarch DHTML/Javascript calendar at web/js/jscalendar (Copyright Mihai
   Bazon, 2002, 2003 - http://dynarch.com/mishoo/)
-# hibernate3.jar
 # itext-1.3.1.jar  
-# jasperreports-1.3.3.jar 
-# jcommon-1.0.0.jar 
-# jfreechart-1.0.1.jar
+# jasperreports-3.0.1.jar 
+# jcommon-1.0.13.jar 
+# jfreechart-1.0.10.jar
 # jxl_2.6.jar
-All files under the LGPL 2.1 (available at www.gnu.org/licenses/lgpl.html)
+All files under the LGPL 2.1 (available at http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html)
+
+# hibernate3.jar
+All files under the LGPL 3 (available at www.gnu.org/licenses/lgpl.html)
 
 # jalopy-1.5-rc3p1.jar
 # asm.jar
@@ -160,26 +166,26 @@ In addition, the distribution includes
   License Agreement (in /legal folder and available at
   http://www.oracle.com/technology/software/popup-license/distribution-license.html)
 - xml-apis.jar (see xml-apis license folder for licensing information)
-- jta.jar. This software is subject to the Sun License Agreement and terms
-  set out in [XXXX] and also available at
-  https://cds.sun.com/is-bin/INTERSHOP.enfinity/WFS/CDS-CDS_Developer-Site/en_US/-/USD/ViewLicense-Start?LicenseUUID=aanACUFBI3YAAAEY1Z45AXiO&ProductUUID=gp_ACUFBpawAAAEYhHY5AXub
-
-Note: the software marked Java, JAVAX or Sun may not be modified in any
-way.
 
 
-# Mail.jar 
 # activation.jar 
 # comm.jar 
 # jaxrpc.jar 
-# jcommon.jar 
+# mail.jar 
 # servlet-api.jar 
-# stax-api-1.0.1 
 All files under the corresponding Sun Binary Code License. This is not free
 software, but provided under license from Sun Microsystems.
+
+# jta.jar. This software is subject to the Sun License Agreement and terms
+  set out in /legal/jta/ directory and also available at
+  https://cds.sun.com/is-bin/INTERSHOP.enfinity/WFS/CDS-CDS_Developer-Site/en_US/-/USD/ViewLicense-Start?LicenseUUID=aanACUFBI3YAAAEY1Z45AXiO&ProductUUID=gp_ACUFBpawAAAEYhHY5AXub
+Note: the software marked Java, JAVAX or Sun may not be modified in any
+way.
+
 
 The license files for this third party software are available in the legal
 folder of this distribution.
 
 If you have questions about the licensing terms for the Openbravo Software,
 please contact us at: legal@openbravo.com
+
