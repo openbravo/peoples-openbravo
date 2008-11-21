@@ -349,14 +349,13 @@ compare.database.structure: refer to compare.database.structure target of databa
   </target>
 
   <target name="install.source" depends="init,code.rev">
-  	<echo message="${code.revision}"/>
-    <!--antcall target="database.lib"/>
+    <antcall target="database.lib"/>
     <ant dir="${base.db}" antfile="build-create.xml" target="create.database" inheritAll="true" inheritRefs="true"/>
     <antcall target="core.lib"/>
     <antcall target="wad.lib"/>
     <antcall target="trl.lib"/>
     <antcall target="compile.complete"/>
-    <antcall target="war"/-->
+    <antcall target="war"/>
   </target>
 
   <target name="eclipse.install.source" depends="init,code.rev">
