@@ -256,7 +256,7 @@ build.war: build a war file in the lib directory.
  <target name="postsrcmod">
    <copy todir="${base.design}/design" >
      <fileset dir="${base.modules}" includes="*/src/**/*.html"/>
-     <mapper type="regexp" from="(.*/src)(.*)" to="\2"/>
+     <mapper type="regexp" from="(.*\${file.separator}src)(.*)" to="\2"/>
    </copy>
  </target>
 
@@ -278,7 +278,7 @@ build.war: build a war file in the lib directory.
   		  <include name="*/config/**"/>
   			<exclude name="*.template"/>
   		</fileset>
-  		<mapper type="regexp" from="(.*/config)(.*)" to="\2"/>
+  		<mapper type="regexp" from="(.*\${file.separator}config)(.*)" to="\2"/>
   	</copy>
   	<copy todir="${base.context}/WEB-INF/lib"  encoding="UTF-8">
       <fileset dir="${base.lib}/runtime">
@@ -296,7 +296,7 @@ build.war: build a war file in the lib directory.
 	  <fileset dir="${base.modules}">
 	    <include name="*/lib/runtime/**"/>
 	  </fileset>
-  	  <mapper type="regexp" from="(.*/lib/runtime)(.*)" to="\2"/>
+  	  <mapper type="regexp" from="(.*\${file.separator}lib\${file.separator}runtime)(.*)" to="\2"/>
   	</copy>
     <antcall target="build.web.folder" inheritAll="true" inheritrefs="true" />
   </target>
@@ -327,21 +327,21 @@ build.war: build a war file in the lib directory.
        <include name="*/web/**"/>
      	 <exclude name="*/web/**/skins/**"/>
      </fileset>
-     <mapper type="regexp" from="(.*)(/web)(.*)" to="\1\3"/>
+     <mapper type="regexp" from="(.*)(\${file.separator}web)(.*)" to="\1\3"/>
     </copy>
   	
     <copy todir="${base.context}/web/skins/ltr"  encoding="UTF-8">
      <fileset dir="${base.modules}">
        <include name="*/web/**/skins/**"/>
      </fileset>
-     <mapper type="regexp" from="(.*)(/web)(.*)" to="\1\3"/>
+     <mapper type="regexp" from="(.*)(\${file.separator}web)(.*)" to="\1\3"/>
     </copy>
   	
     <copy todir="${base.context}/web/skins/rtl"  encoding="UTF-8">
      <fileset dir="${base.modules}">
        <include name="*/web/**/skins/**"/>
      </fileset>
-     <mapper type="regexp" from="(.*)(/web)(.*)" to="\1\3"/>
+     <mapper type="regexp" from="(.*)(\${file.separator}web)(.*)" to="\1\3"/>
     </copy>
   	
     <java classname="org.openbravo.translate.RTLSkin" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
