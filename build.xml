@@ -176,10 +176,6 @@ compare.database.structure: refer to compare.database.structure target of databa
     </fileset>
   </path>
 	
-	<path id="tomcat.classpath">
-    <fileset file="${env.CATALINA_HOME}/server/lib/catalina-ant.jar"/>
-	</path>
-	
 	<taskdef resource="axis-tasks.properties" classpathref="project.class.path"/>
 
   <target name="init">
@@ -468,20 +464,20 @@ compare.database.structure: refer to compare.database.structure target of databa
 	
 	<target name="tomcat.list">
 		<taskdef name="list"  classname="org.apache.catalina.ant.ListTask">
-		  <classpath refid="tomcat.classpath"/>
+		  <classpath refid="project.class.path"/>
 		</taskdef>
 		<list url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}"/>
 	</target>
 	
 	<target name="deploy.context">
 		<taskdef name="undeploy"  classname="org.apache.catalina.ant.UndeployTask">
-		  <classpath refid="tomcat.classpath"/>
+		  <classpath refid="project.class.path"/>
 	  </taskdef>
 		<taskdef name="deploy.tomcat" classname="org.apache.catalina.ant.DeployTask">
-		  <classpath refid="tomcat.classpath"/>
+		  <classpath refid="project.class.path"/>
 		</taskdef>
 		<taskdef name="start"    classname="org.apache.catalina.ant.StartTask">
-		  <classpath refid="tomcat.classpath"/>
+		  <classpath refid="project.class.path"/>
 		</taskdef>
 		
 		<undeploy url="${tomcat.manager.url}" username="${tomcat.manager.username}" password="${tomcat.manager.password}"
