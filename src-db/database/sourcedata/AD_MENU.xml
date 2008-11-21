@@ -8365,13 +8365,13 @@
 <!--800092 AD_ORG_ID-->
 <!--800092-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800092 ISACTIVE-->
-<!--800092-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800092-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800092 CREATED-->
 <!--800092-->              <CREATED><![CDATA[2005-04-28 18:54:20.0]]></CREATED>
 <!--800092 CREATEDBY-->
 <!--800092-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800092 UPDATED-->
-<!--800092-->              <UPDATED><![CDATA[2005-04-28 18:55:19.0]]></UPDATED>
+<!--800092-->              <UPDATED><![CDATA[2008-11-21 13:13:23.0]]></UPDATED>
 <!--800092 NAME-->
 <!--800092-->              <NAME><![CDATA[Change Payment Status]]></NAME>
 <!--800092 UPDATEDBY-->
