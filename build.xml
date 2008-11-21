@@ -145,6 +145,9 @@ compare.database.structure: refer to compare.database.structure target of databa
       <isset property="env.JAVA_HOME"/>
     </not>
   </condition>
+	
+	<available file=".svn/entries" property="is.svn"/>
+			
 
   <path id="project.class.path">
     <pathelement path="${build}"/>
@@ -183,6 +186,13 @@ compare.database.structure: refer to compare.database.structure target of databa
   </target>
 
   <target name="code.rev">
+  	<antcall target="set.code.rev"/>
+  	<condition property="code.revision" value="${svn.entries}" else ="0">
+  	  <isset property="svn.entries" />
+  	</condition>
+  </target>
+
+	<target name="set.code.rev" if="is.svn">
     <loadfile property="svn.entries" srcFile=".svn/entries" failonerror="false">
       <filterchain>
         <filterreader classname="org.apache.tools.ant.filters.HeadFilter">
@@ -194,12 +204,8 @@ compare.database.structure: refer to compare.database.structure target of databa
         <filterreader classname="org.apache.tools.ant.filters.StripLineBreaks" />
       </filterchain>
     </loadfile>
-    <condition property="code.revision" value="${svn.entries}" else ="0">
-      <and>
-        <isset property="svn.entries" />
-      </and>
-    </condition>
-  </target>
+		
+	</target>
 
   <target name="compile.complete" depends="init">
     <ant dir="${base.src}" target="compile.complete" inheritAll="true" inheritRefs="true"/>
