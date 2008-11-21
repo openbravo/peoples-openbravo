@@ -6,15 +6,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2008 Openbravo SL
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
@@ -48,10 +48,10 @@ var baseDirectory = "../../../../../web/";
 <script language="JavaScript" type="text/javascript" id="paramArrayRegion">
 var arrRegion=null;
 </script>
-<script type="text/javascript"> 
+<script type="text/javascript">
       //all dojo.require above this line
       dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
-</script> 
+</script>
 <script language="JavaScript" type="text/javascript">
 function validate(action) {
   var frm = document.frmMain;
@@ -67,7 +67,7 @@ function onloadFunctions() {
 }
 
 function myReadOnlyLogic() {
-    var frm = document.frmMain; 
+    var frm = document.frmMain;
     if (frm.inpCreateAccounting.checked==true){
       readOnlyLogicElement('inpCurrency', false);
       frm.inpBPartner.readOnly=false;
@@ -81,7 +81,7 @@ function myReadOnlyLogic() {
       frm.inpCampaign.disabled=false;
       frm.inpSalesRegion.disabled=false;
       frm.inpFile.disabled=false;
-                                           
+
     } else {
       readOnlyLogicElement('inpCurrency', true);
       frm.inpCurrency.value="";
@@ -118,7 +118,7 @@ function myReadOnlyLogic() {
     setTabTableParentElement();
     enableShortcuts('edition');
     setBrowserAutoComplete(false);
-    
+
     try {
       onloadFunctions();
     } catch (e) {}
@@ -135,7 +135,7 @@ function myReadOnlyLogic() {
   </script>
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
-  <form name="frmMain" method="post" action="InitialOrgSetup.html" enctype="multipart/form-data" id="form"> 
+  <form name="frmMain" method="post" action="InitialOrgSetup.html" enctype="multipart/form-data" id="form">
   <input type="hidden" name="Command"></input>
   <input type="hidden" name="inpLastFieldChanged" value="">
   <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
@@ -274,7 +274,7 @@ function myReadOnlyLogic() {
                     </table>
                   </td>
                 </tr>
-                
+
                 <tr>
                   <td class="TitleCell"><span class="LabelText">Organization</span></td>
                   <td class="TextBox_ContentCell" colspan="2">
@@ -289,13 +289,13 @@ function myReadOnlyLogic() {
                   <td class="TitleCell"><span class="LabelText">Organization type</span></td>
                   <td class="Combo_ContentCell" colspan="2">
                     <select name="inpOrgType" id="inpOrgType" class="ComboKey Combo_TwoCells_width" required="true" onchange="return true;">
-                      <option value=""></option><div id="reportOrgType_M"></div>
+                      <div id="reportOrgType_M"></div>
                     </select>
                   </td>
                   <td class="TitleCell"><span class="LabelText">Parent organization</span></td>
                   <td class="Combo_ContentCell" colspan="2">
                     <select name="inpParentOrg" id="inpParentOrg" class="ComboKey Combo_TwoCells_width" required="true" onchange="return true;">
-                      <option value=""></option><div id="reportParentOrg_M"></div>
+                      <div id="reportParentOrg_M"></div>
                     </select>
                   </td>
                 </tr>
@@ -318,14 +318,14 @@ function myReadOnlyLogic() {
                 <tr>
                   <td class="TitleCell"><span class="LabelText">Include accounting</span></td>
                   <td class="Radio_Check_ContentCell"><span class="Checkbox_container_NOT_Focused"><input type="checkbox" checked name="inpCreateAccounting" id="fieldCreateAccounting" value="-1" onchange="myReadOnlyLogic();return true;"></input></span></td>
-                </tr>                
+                </tr>
                 <tr id="Accounting_tr">
                   <td class="TitleCell"><span class="LabelText">Accounting File</span></td>
                   <td class="TextBox_ContentCell" colspan="2">
                     <input type="text" style="font-size: 0pt; margin: 0; padding: 0; border:0; width:0px; height:0px;" onfocus="isInputFile=true;" onblur="isInputFile=false;"></input>
                     <input type="file" class="dojoValidateValid TextBox_TwoCells_width" name="inpFile"></input>
                     <input type="text" style="font-size: 0pt; margin: 0; padding: 0; border:0; width:0px; height:0px;" onfocus="isInputFile=true;" onblur="isInputFile=false;"></input>
-                  </td>                
+                  </td>
                   <td class="TitleCell"><span class="LabelText">Currency</span></td>
                   <td class="Combo_ContentCell" colspan="2">
                     <select name="inpCurrency" id="inpCurrency" class="ComboKey Combo_TwoCells_width" required="true" onchange="displayLogic();return true;">
@@ -350,7 +350,7 @@ function myReadOnlyLogic() {
                     </table>
                   </td>
                 </tr>
-                
+
 								<tr id="selEliminar">
 								  <td></td>
 								  <td colspan="4">
@@ -359,7 +359,7 @@ function myReadOnlyLogic() {
 								          <span class="PlainText_normal" style="color: transparent; _color: #E8E8E8;">....</span>
 								          <span class="LabelText">
 								            <a class="LabelLink_noicon" href="#" onclick="return false;">All</a>
-								
+
 								          </span>
 								          <span class="PlainText_normal" style="color: transparent; _color: #E8E8E8;">....</span>
 								          <span class="LabelText">
@@ -367,17 +367,17 @@ function myReadOnlyLogic() {
 								          </span>
 								      </div>
 								      <div style="float: right; margin: 0 20 0 0; white-space: nowrap;">
-								          
-								      </div> 
+
+								      </div>
 								    <table width="100%" border="0" cellpadding="0" cellspacing="0">
-								
+
 								        <tr><td style="height: 5px; _height: 0px;"></td></tr>
 								       <tr>
 								        <td colspan="4">
 								          <div style="height: 0px; width: 0px;">
 								            <input type="text" class="DataGrid_Table_Dummy_Input"></input>
 								          </div>
-								          <div class="TextArea_FourCells_width Tree_Container_Small" onclick="return false;"> 
+								          <div class="TextArea_FourCells_width Tree_Container_Small" onclick="return false;">
 								            <div style="padding: 5 5 5 5;">
 								            </div>
 								          </div>
@@ -386,7 +386,7 @@ function myReadOnlyLogic() {
 								    </table>
 								  </td>
 								</tr>
-								
+
                 <tr>
                   <td></td>
                   <PARAMETER_TMP id="moduleTree"/>
@@ -395,7 +395,7 @@ function myReadOnlyLogic() {
                   <td></td>
                   <PARAMETER_TMP id="moduleTreeDescription"/>
                 <tr/>
-                                
+
                 <tr id="Accounting_Dimensions_tr">
                   <td colspan="6">
                     <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
