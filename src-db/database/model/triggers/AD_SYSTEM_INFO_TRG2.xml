@@ -20,7 +20,7 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 
-exist NUMBER := 0;
+exist NUMBER:= 0;
 indTempName NVARCHAR2(50) := 'System Customization';
 indTempPackage NVARCHAR2(50) := 'mySystem.CustomizationTemplate';
 
