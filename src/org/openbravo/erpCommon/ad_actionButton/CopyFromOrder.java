@@ -107,11 +107,28 @@ public class CopyFromOrder extends HttpSecureAppServlet {
             orderlineprice = CopyFromOrderData.set();
             orderlineprice[0].pricelist ="0";
             orderlineprice[0].pricelimit = "0";
+            orderlineprice[0].stdprecision = "0";
           }
+
+          String strPrecision = orderlineprice[0].stdprecision.equals("")?"0":orderlineprice[0].stdprecision;
+          
+          BigDecimal discount, priceActual, priceList;          
+          int StdPrecision = Integer.valueOf(strPrecision).intValue();
+          priceList = (orderlineprice[0].pricelist.equals("")?ZERO:new BigDecimal(orderlineprice[0].pricelist));
+          priceActual = (strLastpriceso.equals("")?ZERO:new BigDecimal(strLastpriceso));
+          
+          if (priceList.doubleValue() == 0.0) discount = ZERO;
+          else {
+            if (log4j.isDebugEnabled()) log4j.debug("pricelist:" + Double.toString(priceList.doubleValue()));
+            if (log4j.isDebugEnabled()) log4j.debug("priceActual:" + Double.toString(priceActual.doubleValue()));
+            discount = new BigDecimal ((priceList.doubleValue() - priceActual.doubleValue()) / priceList.doubleValue() * 100.0);
+          }
+          if (log4j.isDebugEnabled()) log4j.debug("Discount: " + discount.toString());
+          if (discount.scale() > StdPrecision) discount = discount.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
           try {
             CopyFromOrderData.insertCOrderline(conn, this, strCOrderlineID, order[0].adClientId, order[0].adOrgId, vars.getUser(),
             strKey, order[0].cBpartnerId, order[0].cBpartnerLocationId, order[0].dateordered, order[0].dateordered, 
-            strmProductId, order[0].mWarehouseId.equals("")?vars.getWarehouse():order[0].mWarehouseId, strcUOMId, strQty, order[0].cCurrencyId, orderlineprice[0].pricelist, strLastpriceso, orderlineprice[0].pricelimit, strcTaxId, strmAttributesetinstanceId);
+            strmProductId, order[0].mWarehouseId.equals("")?vars.getWarehouse():order[0].mWarehouseId, strcUOMId, strQty, order[0].cCurrencyId, orderlineprice[0].pricelist, strLastpriceso, orderlineprice[0].pricelimit, discount.toString(), strcTaxId, strmAttributesetinstanceId);
           } catch(ServletException ex) {
             myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);

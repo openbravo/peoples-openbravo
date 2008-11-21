@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,7 @@
     <Sql>
       <![CDATA[
         SELECT M_PRODUCT_ID, PRODUCTNAME, M_ATTRIBUTESETINSTANCE_ID, DESCRIPTION, CLASS_OFFER,
-        OFFER_NAME, PRICESTD, LASTPRICESO, C_TAX_ID, NAMETAX, C_UOM_ID, UOMSYMBOL, '0' AS QTY, '' AS PRICELIMIT, '' AS PRICELIST FROM (
+        OFFER_NAME, PRICESTD, LASTPRICESO, C_TAX_ID, NAMETAX, C_UOM_ID, UOMSYMBOL, '0' AS QTY, '' AS PRICELIMIT, '' AS PRICELIST, '' AS STDPRECISION FROM (
         SELECT CL.M_PRODUCT_ID AS M_PRODUCT_ID, M.NAME AS PRODUCTNAME,
         MA.M_ATTRIBUTESETINSTANCE_ID AS M_ATTRIBUTESETINSTANCE_ID, MA.DESCRIPTION AS DESCRIPTION,
         (CASE coalesce(M_GET_OFFER(TO_DATE(NOW()), ?, CL.M_PRODUCT_ID),'-1') WHEN '-1' THEN '' ELSE '' END) AS CLASS_OFFER,
@@ -96,11 +96,12 @@
     <Sql>
       <![CDATA[
         SELECT M_BOM_PRICELIST(P.M_PRODUCT_ID,PV.M_PRICELIST_VERSION_ID) AS PRICELIST,
-        M_BOM_PRICELIMIT(P.M_PRODUCT_ID,PV.M_PRICELIST_VERSION_ID) AS PRICELIMIT
-        FROM M_PRODUCT P, M_PRODUCTPRICE PP, M_PRICELIST PL, M_PRICELIST_VERSION PV 
+        M_BOM_PRICELIMIT(P.M_PRODUCT_ID,PV.M_PRICELIST_VERSION_ID) AS PRICELIMIT, CUR.STDPRECISION AS STDPRECISION
+        FROM M_PRODUCT P, M_PRODUCTPRICE PP, M_PRICELIST PL, M_PRICELIST_VERSION PV, C_CURRENCY CUR  
         WHERE P.M_PRODUCT_ID=PP.M_PRODUCT_ID
         AND PP.M_PRICELIST_VERSION_ID=PV.M_PRICELIST_VERSION_ID
         AND PV.M_PRICELIST_ID=PL.M_PRICELIST_ID
+        AND PL.C_CURRENCY_ID = CUR.C_CURRENCY_ID
         AND PV.ISACTIVE='Y'
         AND PV.VALIDFROM <= TO_DATE(?)
         AND P.M_PRODUCT_ID = ?
@@ -118,10 +119,10 @@
       <![CDATA[
         INSERT INTO C_ORDERLINE (C_ORDERLINE_ID, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY,
         C_ORDER_ID, LINE, C_BPARTNER_ID, C_BPARTNER_LOCATION_ID, DATEORDERED, DATEPROMISED, M_PRODUCT_ID, M_WAREHOUSE_ID, C_UOM_ID,
-        QTYORDERED, C_CURRENCY_ID, PRICELIST, PRICEACTUAL, PRICELIMIT, C_TAX_ID, M_ATTRIBUTESETINSTANCE_ID) 
+        QTYORDERED, C_CURRENCY_ID, PRICELIST, PRICEACTUAL, PRICELIMIT, DISCOUNT, C_TAX_ID, M_ATTRIBUTESETINSTANCE_ID) 
         VALUES (?,?,?,NOW(),?,NOW(),?,
                 ?,(SELECT (coalesce(Max(Line),0))+10 FROM C_OrderLine WHERE C_Order_id = ?),?,?,TO_DATE(?),TO_DATE(?),?,?,?,
-                TO_NUMBER(?),?,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),?, ?)
+                TO_NUMBER(?),?,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?), TO_NUMBER(?), ?, ?)
       ]]>
     </Sql>
     <Parameter name="cOrderlineId"/>
@@ -143,6 +144,7 @@
     <Parameter name="pricelist"/>
     <Parameter name="priceactual"/>
     <Parameter name="pricelimit"/>
+    <Parameter name="discount"/>
     <Parameter name="cTaxId"/>
     <Parameter name="mAttributesetinstanceId"/>
   </SqlMethod>
