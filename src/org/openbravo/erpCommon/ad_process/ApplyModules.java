@@ -127,7 +127,7 @@ public void doPost (HttpServletRequest request, HttpServletResponse response) th
       
       final String unnappliedModules = getUnnapliedModules();
       
-      /*
+      
       if (ApplyModulesData.selectUninstalledModules(this)) { //there're uninstalled modules
         tasks.add("update.database");
         tasks.add("generate.entities");
@@ -145,8 +145,7 @@ public void doPost (HttpServletRequest request, HttpServletResponse response) th
       }
       
       ant.runTask(tasks);
-      */
-      ant.runTask("test");
+     
       ant.setFinished(true);
       
       final PrintStream out = new PrintStream(response.getOutputStream());
