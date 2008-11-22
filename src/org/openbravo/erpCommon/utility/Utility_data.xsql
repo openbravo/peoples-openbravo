@@ -100,6 +100,18 @@
       </Sql>
       <Parameter name="adTabId"/>
    </SqlMethod>
+   <SqlMethod name="selectObjectMapping" type="preparedStatement" return="String" default="">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT m.mappingname
+		  FROM ad_model_object o, ad_model_object_mapping m
+		 WHERE o.ad_model_object_id = m.ad_model_object_id
+		   AND o.ad_tab_id = ?
+		   AND o.isdefault = 'Y'
+		   AND m.isdefault = 'Y'
+      </Sql>
+      <Parameter name="adTabId"/>
+   </SqlMethod>
    <SqlMethod name="isTreeTab" type="preparedStatement" return="boolean" default="false">
       <SqlMethodComment></SqlMethodComment>
       <Sql>

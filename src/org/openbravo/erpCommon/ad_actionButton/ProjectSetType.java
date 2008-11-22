@@ -46,13 +46,13 @@ public class ProjectSetType extends HttpSecureAppServlet {
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-
+    
     if (vars.commandIn("DEFAULT")) {
       String strProcessId = vars.getStringParameter("inpProcessId");
       String strWindow = vars.getStringParameter("inpwindowId");
       String strTab = vars.getStringParameter("inpTabId");
       String strProjectType = vars.getStringParameter("inpcProjecttypeId", "");
-      String strKey = vars.getRequiredGlobalVariable("inpcProjectId", strWindow + "|C_Project_ID");
+      String strKey = vars.getGlobalVariable("inpcProjectId", strWindow + "|C_Project_ID");
       if (!ProjectSetTypeData.hasProjectType(this, strKey)) printPage(response, vars, strKey, strProjectType, strWindow, strTab, strProcessId);
       else bdError(response, "ProjectSetTypeError", vars.getLanguage());
     } else if (vars.commandIn("SAVE")) {

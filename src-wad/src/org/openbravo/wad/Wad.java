@@ -1751,7 +1751,7 @@ public class Wad extends DefaultHandler {
         } else if (sfd[i].accesslevel.equals("6") && sfd[i].columnname.equalsIgnoreCase("AD_ORG_ID")) {
           sfd[i].defaultvalue = "\"0\"";
         } else if (!sfd[i].referencevalue.equals("13")){
-          sfd[i].defaultvalue = "Utility.getDefault(this, vars, \"" + sfd[i].columnname + "\", \"" + WadUtility.toJavaString(sfd[i].defaultvalue) + "\", \"" + strWindow + "\", \"" + WadUtility.getWadDefaultValue(sfd[i]) + "\")";
+          sfd[i].defaultvalue = "Utility.getDefault(this, vars, \"" + sfd[i].columnname + "\", \"" + WadUtility.toJavaString(sfd[i].defaultvalue) + "\", \"" + strWindow + "\", \"" + WadUtility.getWadDefaultValue(sfd[i]) + "\", dataField)";
         } else {
           sfd[i].defaultvalue = "\"\"";
         }

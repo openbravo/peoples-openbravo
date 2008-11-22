@@ -27,7 +27,7 @@
   <PARAMETER id="xx" name="callout" attribute="onclick" replace="xx();" default=""/>
   <PARAMETER id="xx" name="required" attribute="required"/>
   <PARAMETER id="xx" name="disabled" boolean=" onclick='return false;' readonly=true" withId="paramChecked"/>
-  <PARAMETER id="xx" name="logChanges" attribute="onclick" replace="logChanges(this.inputNode);" default="logChanges(this.inputNode);"/>
+  <PARAMETER id="xx" name="logChanges" attribute="onclick" replace="logChanges(this);" default="logChanges(this);"/>
   <PARAMETER id="xx" name="disabledFalse" attribute="onclick" replace="return true;" default="return true;"/>
 
   <DISCARD id="discard"/>

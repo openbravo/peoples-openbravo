@@ -25,6 +25,7 @@
   <PARAMETER id="xx" name="callout" attribute="onchange" replace="xx();"/>
   <PARAMETER id="xx_BTNname" name="columnName" attribute="id" replace="xx"/>
   <PARAMETER id="xx_BTNname" name="nameHTML"/>
+  <PARAMETER id="xx_linkBTN" name="inputId" attribute="onclick" replace="yy"/>
   <PARAMETER id="xx_linkBTN" name="action" attribute="onclick" replace="xx();"/>
   <PARAMETER id="xx_linkBTN" name="name" attribute="onfocus" replace="xx"/>
   <PARAMETER id="xx_linkBTN" name="columnName" attribute="id" replace="xx"/>

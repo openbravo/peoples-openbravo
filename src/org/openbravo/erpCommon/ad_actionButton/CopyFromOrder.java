@@ -46,11 +46,11 @@ public class CopyFromOrder extends HttpSecureAppServlet {
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-
+    
     if (vars.commandIn("DEFAULT")) {
       String strWindowId = vars.getStringParameter("inpwindowId");
       String strSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
-      String strKey = vars.getRequiredStringParameter("inpcOrderId");
+      String strKey = vars.getGlobalVariable("inpcOrderId", strWindowId + "|C_Order_ID");
       String strTabId = vars.getStringParameter("inpTabId");
       String strBpartner = vars.getStringParameter("inpcBpartnerId");
       String strmPricelistId = vars.getStringParameter("inpmPricelistId" );

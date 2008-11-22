@@ -48,7 +48,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
       String strProcessId = vars.getStringParameter("inpProcessId");
       String strWindow = vars.getStringParameter("inpwindowId");
       String strTab = vars.getStringParameter("inpTabId");
-      String strKey = vars.getStringParameter("inpcInvoiceId");
+      String strKey = vars.getGlobalVariable("inpcInvoiceId", strWindow + "|C_Invoice_ID");
       printPage(response, vars, strKey, strWindow, strTab, strProcessId);
     } else if (vars.commandIn("SAVE")) {
       String strKey = vars.getStringParameter("inpcInvoiceId");

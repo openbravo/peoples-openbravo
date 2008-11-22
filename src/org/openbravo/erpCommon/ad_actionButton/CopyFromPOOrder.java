@@ -47,12 +47,12 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-
+    
     if (vars.commandIn("DEFAULT")) {
       String strProcessId = vars.getStringParameter("inpProcessId");
       String strWindow = vars.getStringParameter("inpwindowId");
       String strTab = vars.getStringParameter("inpTabId");
-      String strKey = vars.getRequiredGlobalVariable("inpcOrderId", strWindow + "|C_Order_ID");
+      String strKey = vars.getGlobalVariable("inpcOrderId", strWindow + "|C_Order_ID");
       printPage(response, vars, strKey, strWindow, strTab, strProcessId);
     } else if (vars.commandIn("SAVE")) {
       String strWindow = vars.getStringParameter("inpwindowId");

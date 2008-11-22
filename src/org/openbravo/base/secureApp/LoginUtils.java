@@ -118,6 +118,8 @@ public class LoginUtils {
           vars.setSessionValue("#ShowTrl", Utility.getPreference(vars, "ShowTrl", ""));
           vars.setSessionValue("#ShowAcct", Utility.getPreference(vars, "ShowAcct", ""));
           vars.setSessionValue("#ShowAudit", Utility.getPreference(vars, "ShowAuditDefault", ""));
+          vars.setSessionValue("#ShowConfirmation", Utility.getPreference(vars, "ShowConfirmationDefault", ""));
+          vars.setSessionValue("#Autosave", Utility.getPreference(vars, "Autosave", ""));
           SystemPreferencesData[] dataSystem = SystemPreferencesData.select(conn);
           if (dataSystem!=null && dataSystem.length>0) {
             vars.setSessionValue("#RecordRange", dataSystem[0].tadRecordrange);

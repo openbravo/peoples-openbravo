@@ -95,7 +95,8 @@ public class VerticalMenu extends HttpSecureAppServlet {
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     dataMenu = MenuData.select(this, vars.getLanguage(), vars.getRole(), data[0].parentId);
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";");
+    xmlDocument.setParameter("autosave", "var autosave = " + (vars.getSessionValue("#Autosave").equals("") || vars.getSessionValue("#Autosave").equalsIgnoreCase("N") ? "false" : "true") + ";");
     StringBuffer menu = new StringBuffer();
     menu.append(generarMenuVertical(dataMenu, strDireccion, "0", open));
     menu.append(generateMenuSearchs(vars, open));
@@ -179,7 +180,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
           strText.append("\"");
           if (menuData[i].issummary.equals("N")) {
             strText.append(" id=\"child").append(strID).append("\"");
-            strText.append(" onclick=\"checkSelected('child").append(strID).append("');openLink('");
+            strText.append(" onclick=\"checkSelected('child").append(strID).append("');submitCommandForm('DEFAULT', " + (menuData[i].action.equals("F") ? "false" : "true") + ", getForm(),'");
             if (menuData[i].action.equals("L") || menuData[i].action.equals("I")) strText.append(menuData[i].url);
             else {
               strText.append(getUrlString(strDireccion, menuData[i].name, menuData[i].action, menuData[i].classname, menuData[i].mappingname, menuData[i].adWorkflowId, menuData[i].adTaskId, menuData[i].adProcessId, menuData[i].isexternalservice, menuData[i].serviceType));
@@ -190,7 +191,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
             else strText.append(target);
             strText.append("'");
             if (menuData[i].action.equals("F")) strText.append(", 600, 600");
-            strText.append(");return false;\"");
+            strText.append(", false, "+ (menuData[i].action.equals("F") ? "false" : "true")+");return false;\"");
           } else {
             strText.append(" id=\"child").append(menuData[i].nodeId).append("\"");
           }

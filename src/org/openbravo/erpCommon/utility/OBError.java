@@ -58,6 +58,17 @@ public class OBError {
     this.connectionAvailable = _data;
   }
 
+  public boolean isEmpty() {
+	  return (getTitle().equals("") && getMessage().equals("") && getType().equals(""));
+  }
+  
+  public void setError(OBError e) {
+	  setTitle(e.getTitle());
+	  setMessage(e.getMessage());
+	  setType(e.getType());
+	  setConnectionAvailable(e.isConnectionAvailable());
+  }
+  
   public boolean isConnectionAvailable() {
     return this.connectionAvailable;
   }

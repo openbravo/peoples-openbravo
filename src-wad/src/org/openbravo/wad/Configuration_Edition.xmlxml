@@ -29,6 +29,7 @@
   <PARAMETER id="paramWindowId" name = "windowId" attribute="value" default=""/>
   <PARAMETER id="paramTabId" name = "tabId" attribute="value" default=""/>
   <PARAMETER id="paramMessageAlert" name="buscador" attribute="onload" replace="zz" default=""/>
+  <PARAMETER id="paramMessageAlert" name="failedAutosave" attribute="onload" replace="yy" default=""/>
   <PARAMETER id="paramDirectory" name="directory" default=""/>
   <PARAMETER id="paramSessionDate" name="paramSessionDate" attribute="value" default=""/>
   <PARAMETER id="paramChanged" name = "changed" attribute="value" default=""/>
@@ -47,6 +48,8 @@
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
   <PARAMETER id="scriptOnLoad" name = "scriptOnLoad" default=" "/>
+  <PARAMETER id="mapping" name="mappingName" attribute="value" replace="xxx"></PARAMETER>
+  <PARAMETER id="confirmOnChanges" name="confirmOnChanges" default=""></PARAMETER>
   <PARAMETER_TMP id="hasOrgKey"><PARAMETER id="paramCurrentOrgId" name = "paramCurrentOrgId" attribute="value" default=""/></PARAMETER_TMP>
   
   <PARAMETER_TMP id="hasParent"><PARAMETER id="parentOrg" name="parentOrg" default="" attribute="value"/> </PARAMETER_TMP>

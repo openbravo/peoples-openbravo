@@ -32,7 +32,6 @@ import org.openbravo.erpCommon.ad_combos.ModuleComboData;
 
 public class InsertAcces extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  
 
   public void init (ServletConfig config) {
     super.init(config);
@@ -41,12 +40,12 @@ public class InsertAcces extends HttpSecureAppServlet {
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-
+    
     if (vars.commandIn("DEFAULT")) {
       String strProcessId = vars.getStringParameter("inpProcessId");
       String strWindow = vars.getStringParameter("inpwindowId");
       String strTab = vars.getStringParameter("inpTabId");
-      String strKey = vars.getStringParameter("inpadRoleId");
+      String strKey = vars.getGlobalVariable("inpadRoleId", strWindow + "|AD_Role_ID");
       String strMessage="";
       printPage(response, vars, strKey, strWindow, strProcessId, strMessage, strTab);
     } else if(vars.commandIn("GENERATE")){
@@ -63,9 +62,9 @@ public class InsertAcces extends HttpSecureAppServlet {
         strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName + "_Relation.html";
       } else strWindowPath = strDefaultServlet;
       OBError myMessage = getPrintPage(response, vars, strKey, strModule,strType);
-      vars.setMessage("InsertAcces",myMessage );
+      vars.setMessage(strTab, myMessage);
       //vars.setSessionValue(strWindow + "|" + strTabName + ".message", messageResult);
-      printPageClosePopUp(response, vars, strWindowPath);
+      printPageClosePopUp(response, vars, strWindowPath);      
     } else pageErrorPopUp(response);
     
 

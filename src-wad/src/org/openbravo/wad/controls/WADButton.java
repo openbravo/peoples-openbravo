@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2008 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -57,12 +57,12 @@ public class WADButton extends WADControl {
     } else {
       if (getData("MappingName").equals("")) {
         text.append("openServletNewWindow('BUTTON").append(FormatUtilities.replace(getData("ColumnName"))).append(getData("AD_Process_ID"));
-        text.append("', false, '").append(getData("TabName")).append("_Edition.html', 'BUTTON', null, true");
+        text.append("', true, '").append(getData("TabName")).append("_Edition.html', 'BUTTON', null, true");
         if (getData("ColumnName").equalsIgnoreCase("CreateFrom")) text.append(",600, 900");
         else text.append(", 600, 900");
         text.append(");");
       } else {
-        text.append("openServletNewWindow('DEFAULT', false, '..");
+        text.append("openServletNewWindow('DEFAULT', true, '..");
         if (!getData("MappingName").startsWith("/")) text.append('/');
         text.append(getData("MappingName")).append("', 'BUTTON', '").append(getData("AD_Process_ID")).append("', true");
         text.append(",600, 900);");
@@ -80,7 +80,7 @@ public class WADButton extends WADControl {
     xmlDocument.setParameter("name", getData("Name"));
 
     xmlDocument.setParameter("callout", getOnChangeCode());
-    
+    xmlDocument.setParameter("inputId", getData("ColumnName"));
     xmlDocument.setParameter("action", getAction().toString());
     
     boolean isDisabled = (getData("IsReadOnly").equals("Y") || (getData("IsReadOnlyTab").equals("Y") && getData("isReadOnlyDefinedTab").equals("N"))|| getData("IsUpdateable").equals("N"));
@@ -107,7 +107,9 @@ public class WADButton extends WADControl {
 
     xmlDocument.setParameter("callout", getOnChangeCode());
     
+    xmlDocument.setParameter("inputId", getData("ColumnName"));
     xmlDocument.setParameter("action", getAction().toString());
+    
     boolean isDisabled = (getData("IsReadOnly").equals("Y") || (getData("IsReadOnlyTab").equals("Y") && getData("isReadOnlyDefinedTab").equals("N"))|| getData("IsUpdateable").equals("N"));
     
     if (isDisabled) {

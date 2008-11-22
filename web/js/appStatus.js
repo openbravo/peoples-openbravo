@@ -183,10 +183,12 @@ function setWindowEditing(value) {
 
   if (value==true) {
     for (var i = 0; i < Buttons.length; i++) {
+      isUserChanges = true;
       enableToolBarButton(Buttons[i]);
     }
   } else if (value==false) {
     for (var i = 0; i < Buttons.length; i++) {
+      isUserChanges = false;
       disableToolBarButton(Buttons[i]);
     }
   }

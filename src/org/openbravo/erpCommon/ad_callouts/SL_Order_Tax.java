@@ -78,7 +78,7 @@ public class SL_Order_Tax extends HttpSecureAppServlet {
 	      strCTaxID = Tax.get(this, strMProductID, data[0].dateordered, strADOrgID, strMWarehouseID, (data[0].billtoId.equals("")?strCBPartnerLocationID:data[0].billtoId), strCBPartnerLocationID, data[0].cProjectId, strIsSOTrx.equals("Y"));
 	    }
     }
-    if(!strCTaxID.equals("")) resultado.append("new Array(\"inpcTaxId\", \"" + strCTaxID + "\")\n");
+    if(strCTaxID != null && !strCTaxID.equals("")) resultado.append("new Array(\"inpcTaxId\", \"" + strCTaxID + "\")\n");
 
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());

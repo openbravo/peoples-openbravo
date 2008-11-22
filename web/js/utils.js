@@ -52,11 +52,15 @@ var isTabBlocked = false;
 var pressedKeyCode = null;
 var isInputFile = false;
 
+var isPageLoading = true;
+var isUserChanges = false;
+
+
 /**
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '10173';
+  var number = '10423';
   return number;
 }
 
@@ -235,11 +239,23 @@ function setChangedField(field, form) {
   if (form==null || !form) form = document.forms[0];
   if (form.inpLastFieldChanged==null) return false;
   if (field.type.toUpperCase().indexOf("SELECT")!=-1) {
-    if(field.selectedIndex==-1 || field.options[field.selectedIndex].defaultSelected || field.options[field.selectedIndex].value == "")
+    if(field.selectedIndex==-1 || field.options[field.selectedIndex].defaultSelected)
       return false;
   }
   form.inpLastFieldChanged.value = field.name;
   return true;
+}
+
+/**
+ * Logs a User click to flag the document as changed
+ * @param hiddenInput HTML input part of the button UI
+ * @return
+ */
+function logClick(hiddenInput) {
+	isUserChanges = true;
+	if(hiddenInput != null) {
+		logChanges(hiddenInput);
+	}
 }
 
 /**
@@ -249,13 +265,51 @@ function setChangedField(field, form) {
 * @type Boolean
 */
 function checkForChanges(form) {
-  if (form==null) form = document.forms[0];
-  if (inputValue(form.inpLastFieldChanged)!="") {
-    if (!showJSMessage(10)) return false;
-  }
-  return true;
+	if (form==null) form = top.appFrame.document.forms[0];
+	// backward compatibility
+	if(typeof(top.frameMenu.autosave) == 'undefined' || !top.frameMenu.autosave) {		
+		if (inputValue(form.inpLastFieldChanged)!="") {
+			if (!showJSMessage(26))
+				return false;
+		}
+		if(form.autosave) {
+			form.autosave.value = 'N';
+		}
+		return true;
+	}
+	else {
+		var promptConfirmation = typeof(top.appFrame.confirmOnChanges) == 'undefined' ? true : top.appFrame.confirmOnChanges;
+		var hasUserChanges = typeof(top.appFrame.isUserChanges) == 'undefined' ? false: top.appFrame.isUserChanges;
+		if (hasUserChanges) {
+			var autoSave = true;		
+			if (promptConfirmation)
+				autoSave = showJSMessage(25);
+			if (autoSave) {
+				if(form.autosave) {
+					form.autosave.value = 'Y';
+				}
+			}
+		}	
+		return true;
+	}	
 }
 
+/**
+ * Prompt a confirmation when an autosave process has failed. If the wants to
+ * stay in the page or navigate to the requested URL
+ * @param refererURL String URL to navigate to
+ * @return 
+ */
+function continueUserAction(requestURL) {
+	if(typeof(requestURL) == 'undefined') { 
+		return false;
+	}	
+	var continueAction = showJSMessage(26);
+	if(continueAction) {
+		submitCommandForm('DEFAULT', false, null, requestURL, 'appFrame', false, true);
+	}
+	return true;
+}
 
 /**
 * Function Description
@@ -2889,6 +2943,17 @@ function auto_complete_number(obj, isFloatAllowed, isNegativeAllowed, evt) {
 }
 
 /**
+* Sets the global variable 'isPageLoading' to true or false
+*/
+function setPageLoading(status) {
+  if (status==false) {
+    isPageLoading = false;
+  } else {
+    isPageLoading = true;
+  }
+}
+
+/**
 * Used on the onChange event for field changes logging. Requires a field named inpLastFieldChanged in the form.
 * @param {Object} field Reference to the field that will be logged. 
 * @returns True if everything goes right, false if the field does not exist or an error occurred. 
@@ -2896,6 +2961,7 @@ function auto_complete_number(obj, isFloatAllowed, isNegativeAllowed, evt) {
 * @see #setChangedField
 */
 function logChanges(field) {
+  if(!isUserChanges) return;
   changeToEditingMode();
   if (field==null || !field) return false;
   return setChangedField(field, field.form);

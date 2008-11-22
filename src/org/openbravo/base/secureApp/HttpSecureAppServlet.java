@@ -35,6 +35,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -63,6 +64,7 @@ import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.authentication.basic.DefaultAuthenticationManager;
 import org.openbravo.base.HttpBaseServlet;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.security.AccessData;
 import org.openbravo.erpCommon.security.SessionLogin;
@@ -261,8 +263,58 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
 
       super.initialize(request,response);
       VariablesSecureApp vars1 = new VariablesSecureApp(request, false);
-      if (vars1.getRole().equals("") || hasAccess(vars1))
+      if (vars1.getRole().equals("") || hasAccess(vars1)) {
+
+          final Boolean saveRequest = (Boolean) request.getAttribute("autosave");
+          final String strTabId = vars1.getStringParameter("inpTabId");
+            
+          if(saveRequest == null && strTabId != null) {    	
+        	
+        	  String autoSave = request.getParameter("autosave");
+        	  Boolean failedAutosave = (Boolean) vars1.getSessionObject(strTabId + "|failedAutosave");
+        	  
+        	  if(failedAutosave == null) {
+        		failedAutosave = false;  
+        	  }
+        	  
+        	  if(autoSave != null && autoSave.equalsIgnoreCase("Y") && !failedAutosave) {    			
+    			
+    			if(log4j.isDebugEnabled()){
+	    			log4j.debug("service: saveRequest - "
+	    					+ this.getClass().getCanonicalName() + " - autosave: " 
+	    					+ autoSave);
+    			}
+    			
+    			if(log4j.isDebugEnabled()) { 
+    				log4j.debug(this.getClass().getCanonicalName() + " - hash: " 
+    						+ vars1.getPostDataHash());
+    			}
+    			
+    			String servletMappingName = request.getParameter("mappingName");
+    			
+    			if(servletMappingName != null && 
+    					!Utility.isExcludedFromAutoSave(this.getClass().getCanonicalName()) ) {
+    				
+	    			String hash = vars1.getSessionValue(servletMappingName + "|hash");
+	    			
+	    			if(log4j.isDebugEnabled()) {
+	    				log4j.debug("hash in session: " + hash);
+	    			}
+	    				// Check if the form was previously saved
+	    			if(!hash.equals(vars1.getPostDataHash())) {
+	    				// forward request
+	    				request.setAttribute("autosave", true);
+	    				if(vars1.getCommand().indexOf("BUTTON") != -1)
+	    					request.setAttribute("popupWindow", true);
+	    				if(!forwardRequest(request, response)) {
+	    					   return;
+	    				}
+	    			}
+    			}
+    		}
+          }
         super.serviceInitialized(request,response);
+      }
       else  {
        if ((strPopUp!=null && !strPopUp.equals(""))||(classInfo.type.equals("S")))  
          bdErrorGeneralPopUp(response, Utility.messageBD(this, "Error", variables.getLanguage()), Utility.messageBD(this, "AccessTableNoView", variables.getLanguage()));
@@ -277,6 +329,18 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
       else if (!myError.isConnectionAvailable()) bdErrorConnection(response);
       else if (strPopUp!=null && !strPopUp.equals("")) bdErrorGeneralPopUp(response, myError.getTitle(), myError.getMessage());
       else bdErrorGeneral(response, myError.getTitle(), myError.getMessage());
+    } catch(OBException e) {
+    	Boolean isAutosaving = (Boolean) request.getAttribute("autosave");
+    	if(isAutosaving) {    		
+    		request.removeAttribute("autosave");
+    		request.removeAttribute("popupWindow");
+    		throw e;
+    	}
+    	else {
+    		log4j.error("Error captured: " + e);
+    		e.printStackTrace();
+    		bdErrorGeneral(response, "Error", e.toString());
+    	}
     } catch (Exception e) {
       log4j.error("Error captured: " + e);
       e.printStackTrace();
@@ -572,6 +636,16 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
     out.println(xmlDocument.print());
     out.close();
   }
+  
+  public void printPageClosePopUpAndRefresh(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
+	if (log4j.isDebugEnabled()) log4j.debug("Output: PopUp Response");
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/base/secureApp/PopUp_Close_Refresh").createXmlDocument();
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    out.println(xmlDocument.print());
+    out.close(); 
+  }
 
   public void pageErrorCallOut(HttpServletResponse response) throws IOException {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/base/secureApp/HtmlErrorCallOut").createXmlDocument();
@@ -773,6 +847,58 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
         os.close();
       } catch (Exception e) { }
     }
+  }
+
+  /**
+   * Forwards request to the referrer servlet to perform operations like "auto-save"
+   * Note: The referrer servlet should have a hidden input field with mappingName (e.g. /PurchaOrder/Header_Edition.html)
+   * to be able to get a RequestDispatcher
+   * @param request
+   * @param response
+   * @throws IOException
+   * @throws ServletException
+   */
+  public boolean forwardRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+	  String forwardTo = request.getParameter("mappingName");
+	  String autoSave = request.getParameter("autosave");
+	  String commandType = request.getParameter("inpCommandType");
+	  Boolean popupWindow = request.getAttribute("popupWindow") != null ? (Boolean) request.getAttribute("popupWindow") : false;
+	  
+	  // Forwarding request to save the modified record
+	  if(autoSave != null && autoSave.equalsIgnoreCase("Y")) {
+		  if(forwardTo != null && !forwardTo.equals("")) {
+			  RequestDispatcher rd = getServletContext().getRequestDispatcher(forwardTo);
+			  if (rd != null) {
+				  long time = System.currentTimeMillis();
+				  try {
+					  if(log4j.isDebugEnabled()) log4j.debug("forward request to: " + forwardTo);
+					  rd.include(request, response);
+					  if(log4j.isDebugEnabled()) log4j.debug("Request forward took: " + String.valueOf(System.currentTimeMillis() - time) + " ms");
+				  }
+				  catch(OBException e) {
+					  
+					  request.removeAttribute("autosave");
+					  request.removeAttribute("popupWindow");
+					  
+					  VariablesSecureApp vars = new VariablesSecureApp(request);
+					  final String strTabId = vars.getStringParameter("inpTabId");
+					  vars.setSessionObject(strTabId + "|failedAutosave", true);
+					  
+					  if(!popupWindow) {
+						  vars.setSessionValue(strTabId +"|requestURL", request.getRequestURL().toString());
+						  response.sendRedirect(strDireccion + forwardTo + "?Command=" + (commandType != null ? commandType : "NEW"));
+					  }
+					  else { // close pop-up						  
+						  printPageClosePopUpAndRefresh(response, vars);
+					  }					  
+					  return false;
+				  }
+			  }
+		  }
+	  }
+	  request.removeAttribute("autosave");
+	  request.removeAttribute("popupWindow");
+	  return true;
   }
 
   public String getServletInfo() {

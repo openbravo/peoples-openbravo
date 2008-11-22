@@ -28,6 +28,7 @@ import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.utils.Replace;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -41,7 +42,6 @@ import java.text.DateFormat;
 import java.sql.Connection;
 import javax.servlet.ServletException;
 import java.io.*;
-
 import org.apache.log4j.Logger ;
 
 /**
@@ -51,7 +51,31 @@ import org.apache.log4j.Logger ;
  */
 public class Utility {
   static Logger log4j = Logger.getLogger(Utility.class);
-
+  
+  private static List<String> autosaveExcludedPackages = null;
+  private static List<String> autosaveExcludedClasses = null;
+  
+  // List of excludes packages and classes from Autosave
+  // TODO: Define the autosave behavior at object level
+  static {
+	  autosaveExcludedPackages = new ArrayList<String>();
+      autosaveExcludedClasses = new ArrayList<String>();      
+      autosaveExcludedPackages.add("org.openbravo.erpCommon.info");
+      autosaveExcludedPackages.add("org.openbravo.erpCommon.ad_callouts");
+  }
+  
+  /**
+   * Checks if a class is excluded from the autosave process
+   * @param canonicalName
+   * @return True is the class is excluded or false if not.
+   */
+  public static boolean isExcludedFromAutoSave(String canonicalName){
+	  final int lastPos = canonicalName.lastIndexOf(".");
+	  final String packageName = canonicalName.substring(0, lastPos);
+	  return autosaveExcludedPackages.contains(packageName) ||
+	         autosaveExcludedClasses.contains(canonicalName);
+  }
+  
   /**
    * Checks if the references is a decimal number type.
    * 
@@ -385,16 +409,25 @@ public class Utility {
   /**
    * Gets a default value.
    * 
-   * @param conn: Handler for the database connection.
-   * @param vars: Handler for the session info.
-   * @param columnname: String with the column name.
-   * @param context: String with the parameter.
-   * @param window: String with the window id.
-   * @param defaultValue: String with the default value.
+   * @param conn Handler for the database connection.
+   * @param vars  Handler for the session info.
+   * @param columnname  String with the column name.
+   * @param context String with the parameter.
+   * @param window String with the window id.
+   * @param defaultValueString with the default value.
+   * @param sessionData FieldProvider with the data stored in session
    * @return String with the value.
    */
-  public static String getDefault(ConnectionProvider conn, VariablesSecureApp vars, String columnname, String context, String window, String defaultValue) {
+  public static String getDefault(ConnectionProvider conn, VariablesSecureApp vars, String columnname, String context, String window, String defaultValue, FieldProvider sessionData) {
     if (columnname == null || columnname.equals("")) return "";
+    
+    if(sessionData != null) {
+    	final String sessionValue = (String) sessionData.getField(columnname);
+    	if(sessionValue != null) {
+    		return sessionValue;
+    	}    		
+    }
+    
     String defStr = getPreference(vars, columnname, window);
     if (!defStr.equals("")) return defStr;
 
@@ -416,6 +449,13 @@ public class Utility {
     return defStr;
   }
 
+  /**
+   * Overloaded method for backwards compatibility
+   */
+  public static String getDefault(ConnectionProvider conn, VariablesSecureApp vars, String columnname, String context, String window, String defaultValue) { 
+	  return Utility.getDefault(conn, vars, columnname, context, window, defaultValue, null);
+  }
+  
   /**
    * Returns a Vector<String> composed by the comma separated elements in String s 
    * @param s
@@ -1328,6 +1368,23 @@ public class Utility {
     String strBaseCurrencyId = UtilityData.getBaseCurrencyId(conn, strClientId);
     return strBaseCurrencyId;
   }
+
+  /**
+   * Build a JavaScript variable used for prompting a confirmation on changes
+   * @param vars Helper to access the user context
+   * @param windowId Identifier of the window
+   * @return A string containing a JavaScript variable to be used by the checkForChanges function (utils.js) 
+   */  
+  public static String getJSConfirmOnChanges(VariablesSecureApp vars, String windowId) {
+	  String jsString = "var confirmOnChanges = ";	  
+	  String showConfirmation = getPreference(vars, "ShowConfirmation", windowId);
+	
+	  if(showConfirmation == null || showConfirmation.equals(""))
+		  showConfirmation = vars.getSessionValue("#ShowConfirmation");
+	  jsString = jsString + (showConfirmation.equalsIgnoreCase("Y")?"true":"false") + ";";
+	  return jsString;
+  }
+
   
   /**
    * Trasnforms an ArrayList to a String comma separated

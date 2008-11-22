@@ -36,6 +36,7 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessRunner;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
@@ -66,7 +67,28 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-
+    Boolean saveRequest = (Boolean) request.getAttribute("autosave");
+    
+    if(saveRequest != null &amp;&amp; saveRequest){
+        OBError myError = new OBError();
+        String commandType = request.getParameter("inpCommandType");
+        String str<KEY_TMP id="keyData">Almacen</KEY_TMP> = request.getParameter("inp<KEY_TMP id="keyData">Almacen</KEY_TMP>");
+        <PARAMETER_TMP id="parent"> String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");</PARAMETER_TMP>
+        int total = 0;
+        
+        if(commandType.equalsIgnoreCase("EDIT") &amp;&amp; !str<KEY_TMP id="keyData">Almacen</KEY_TMP>.equals(""))
+            total = saveRecord(vars, myError, 'U'<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
+        else
+            total = saveRecord(vars, myError, 'I'<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
+        
+        if (!myError.isEmpty() &amp;&amp; total == 0)     
+          throw new OBException(myError.getMessage());
+        
+        vars.setSessionValue(request.getParameter("mappingName") +"|hash", vars.getPostDataHash());
+        
+        return;
+    }
+    
     try {
       tableSQL = new TableSQLData(vars, this, tabId, Utility.getContext(this, vars, "#AccessibleOrgTree", windowId, accesslevel), Utility.getContext(this, vars, "#User_Client", windowId), Utility.getContext(this, vars, "ShowAudit", windowId).equals("Y"));
     } catch (Exception ex) {
@@ -132,7 +154,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         response.sendRedirect(strDireccion + "<PARAMETER_TMP id="paramEditReference">xx</PARAMETER_TMP>");
 </PARAMETERS_TMP>
     } else if (vars.commandIn("TAB")) {
-<PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getRequiredGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
+<PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>", false, false, true, "");
       vars.removeSessionValue(windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>");
       <PARAMETER_TMP id="refreshTabParentSession">refreshParentSession(vars, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>);</PARAMETER_TMP>
 </PARAMETER_TMP>
@@ -274,49 +296,17 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       printPageEdit(response, request, vars, false, strLast<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
     } else if (vars.commandIn("SAVE_NEW_RELATION", "SAVE_NEW_NEW", "SAVE_NEW_EDIT")) {
 <PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");</PARAMETER_TMP>
-      OBError myError = null;
-      <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data data = null;
-      int total = 0;
-      if (org.openbravo.erpCommon.utility.WindowAccessData.hasReadOnlyAccess(this, vars.getRole(), tabId)) {
-        myError = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()));
-        vars.setMessage(tabId, myError);
-      } else {
-        try {
-          data = getEditVariables(vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
-  <PARAMETER_TMP id="keySequence">        String strSequence = SequenceIdData.getUUID();
-          log4j.info("Sequence: " + strSequence);
-          data.<KEY_TMP id="keyData">Almacen</KEY_TMP> = strSequence;</PARAMETER_TMP>
-          <PARAMETER_TMP id="client">if (Utility.isElementInList(Utility.getContext(this, vars, "#User_Client", windowId, accesslevel),data.adClientId) <FIELDS_TMP id="sectionOrganizationCheck"> &amp;&amp; Utility.isElementInList(Utility.getContext(this, vars, "#User_Org", windowId, accesslevel),data.adOrgId)</FIELDS_TMP>)</PARAMETER_TMP>
-            total = data.insert(this);
-          <PARAMETER_TMP id="client">else {
-            myError = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()));
-            vars.setMessage(tabId, myError);
-          }</PARAMETER_TMP>
-        } catch(ServletException ex) {
-          myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-          if (!myError.isConnectionAvailable()) {
-            bdErrorConnection(response);
-            return;
-          } else vars.setMessage(tabId, myError);
-        }
-      }
-      if (myError==null &amp;&amp; total==0) {
-        myError = Utility.translateError(this, vars, vars.getLanguage(), "@CODE=DBExecuteError");
-        vars.setMessage(tabId, myError);
-      }
-      if (myError!=null) {
-        if (data!=null) {
-          data.<KEY_TMP id="keyData">Almacen</KEY_TMP> = "";
-          vars.setEditionData(tabId, data);
-        }
+      OBError myError = new OBError();      
+      int total = saveRecord(vars, myError, 'I'<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);      
+      if (!myError.isEmpty()) {        
         response.sendRedirect(strDireccion + request.getServletPath() + "?Command=NEW");
-      } else {
-        if (myError==null) {
-          myError = Utility.translateError(this, vars, vars.getLanguage(), "@CODE=RowsInserted");
-          myError.setMessage(total + " " + myError.getMessage());
-          vars.setMessage(tabId, myError);
-        }
-        vars.setSessionValue(windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", data.<KEY_TMP id="keyData">Almacen</KEY_TMP>);
+      } 
+      else {
+		if (myError.isEmpty()) {
+		  myError = Utility.translateError(this, vars, vars.getLanguage(), "@CODE=RowsInserted");
+		  myError.setMessage(total + " " + myError.getMessage());
+		  vars.setMessage(tabId, myError);
+		}        
         if (vars.commandIn("SAVE_NEW_NEW")) response.sendRedirect(strDireccion + request.getServletPath() + "?Command=NEW");
         else if (vars.commandIn("SAVE_NEW_EDIT")) response.sendRedirect(strDireccion + request.getServletPath() + "?Command=EDIT");
         else response.sendRedirect(strDireccion + request.getServletPath() + "?Command=RELATION");
@@ -324,44 +314,13 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     } else if (vars.commandIn("SAVE_EDIT_RELATION", "SAVE_EDIT_NEW", "SAVE_EDIT_EDIT", "SAVE_EDIT_NEXT")) {
 <PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");</PARAMETER_TMP>
       String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getRequiredGlobalVariable("inp<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>", windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>");
-      int total = 0;
-      <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data data = null;
-      OBError myError = null;
-      if (org.openbravo.erpCommon.utility.WindowAccessData.hasReadOnlyAccess(this, vars.getRole(), tabId)) {
-        myError = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()));
-        vars.setMessage(tabId, myError);
-      } else {
-        try {
-          data = getEditVariables(vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
-          <PARAMETER_TMP id="client">if (Utility.isElementInList(Utility.getContext(this, vars, "#User_Client", windowId, accesslevel),data.adClientId) <FIELDS_TMP id="sectionOrganizationCheck"> &amp;&amp; Utility.isElementInList(Utility.getContext(this, vars, "#User_Org", windowId, accesslevel),data.adOrgId)</FIELDS_TMP>)</PARAMETER_TMP>
-            total = data.update(this);
-          <PARAMETER_TMP id="client">else {
-            myError = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()));
-            vars.setMessage(tabId, myError);
-          }</PARAMETER_TMP>
-        } catch(ServletException ex) {
-          myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-          if (!myError.isConnectionAvailable()) {
-            bdErrorConnection(response);
-            return;
-          } else vars.setMessage(tabId, myError);
-        }
-      }
-      if (myError==null &amp;&amp; total==0) {
-        myError = Utility.translateError(this, vars, vars.getLanguage(), "@CODE=DBExecuteError");
-        vars.setMessage(tabId, myError);
-      }
-      if (myError!=null) {
-        if (data!=null) {
-          <PARAMETERS_TMP id="sectionButtonText">{
-            //BUTTON TEXT FILLING
-            data.<FIELD_TMP id="fieldButtonText"/> = ActionButtonDefaultData.getText(this, vars.getLanguage(), "<FIELD_TMP id="fieldButtonListID"/>", data.getField("<FIELD_TMP id="fieldButtonID"/>"));
-          }</PARAMETERS_TMP>
-          vars.setEditionData(tabId, data);
-        }
+      OBError myError = new OBError();
+      int total = saveRecord(vars, myError, 'U'<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);      
+      if (!myError.isEmpty()) {
         response.sendRedirect(strDireccion + request.getServletPath() + "?Command=EDIT");
-      } else {
-        if (myError==null) {
+      } 
+      else {
+        if (myError.isEmpty()) {
           myError = Utility.translateError(this, vars, vars.getLanguage(), "@CODE=RowsUpdated");
           myError.setMessage(total + " " + myError.getMessage());
           vars.setMessage(tabId, myError);
@@ -593,6 +552,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
 */
   <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data getEditVariables(VariablesSecureApp vars<PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>) throws IOException,ServletException {
     <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data data = new <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data();
+    try {
 <FIELDS_TMP id="sectionDetailgetEditVariables">    data.<FIELD_TMP id="fieldName">claveAlmacen</FIELD_TMP> = <FIELD_TMP id="fieldEncryption">FormatUtilities.encryptDecrypt(</FIELD_TMP>vars.get<FIELD_TMP id="fieldType">StringParameter</FIELD_TMP>("inp<FIELD_TMP id="fieldName1">claveAlmacen</FIELD_TMP>"<FIELD_TMP id="fieldDefault">, "D"</FIELD_TMP>)<FIELD_TMP id="fieldEndEncryption">, true)</FIELD_TMP>;</FIELDS_TMP>
       data.createdby = vars.getUser();
       data.updatedby = vars.getUser();
@@ -607,7 +567,11 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     <LISTS_TMP id="sectionDetailDocumentsNew">     if (data.<LIST_TMP id="fieldNameDocNew">dd</LIST_TMP>.startsWith("&#60;")) data.<LIST_TMP id="fieldNameDocNew">dd</LIST_TMP> = <LIST_TMP id="fieldValueDocNew">dd</LIST_TMP>;</LISTS_TMP>
 
     <LISTS_TMP id="sectionIdentifyValues">      if (data.<LIST_TMP id="fieldIdentifyColumn">dd</LIST_TMP>.equals("")) data.<LIST_TMP id="fieldIdentifyColumn">dd</LIST_TMP> = <LIST_TMP id="fieldIdentifyValue">dd</LIST_TMP>;</LISTS_TMP>
-
+	}
+    catch(ServletException e) {
+    	vars.setEditionData(tabId, data);
+    	throw e;
+    }
     return data;
   }
 
@@ -904,7 +868,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         discard[0] = new String ("newDiscard");
       }
     } else {
-      if (dataField.getField("<KEY_TMP id="keyData">Almacen</KEY_TMP>").equals("")) {
+      if (dataField.getField("<KEY_TMP id="keyData">Almacen</KEY_TMP>") == null || dataField.getField("<KEY_TMP id="keyData">Almacen</KEY_TMP>").equals("")) {
         discard[0] = new String ("editDiscard");
         strCommand = "NEW";
         boolNew = true;
@@ -918,13 +882,12 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     vars.setSessionValue(windowId + "|<LIST_TMP id="fieldNameParamPrevious">Almacen</LIST_TMP>", str<LIST_TMP id="paramNamePrevious">dd</LIST_TMP>);
     </LISTS_TMP>
    
-    if (dataField==null) {
       if (boolNew || data==null || data.length==0) {
         refreshSessionNew(vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
         data = <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.set(<PARAMETER_TMP id="parent">strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP><PARAMETER_DEFAULT_TMP id="defaultValues">defaults</PARAMETER_DEFAULT_TMP>);
         <LISTS_TMP id="sectionDetailDocuments">     data[0].<LIST_TMP id="fieldNameDoc">dd</LIST_TMP> = "&#60;" + <LIST_TMP id="fieldValueDoc">dd</LIST_TMP> + "&#62;";</LISTS_TMP>
       }
-    }
+      
     <PARAMETER_TMP id="parent">String currentPOrg=<PARENT_TMP id="parentClass">Almacen</PARENT_TMP>Data.selectOrg(this, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>);</PARAMETER_TMP>
     String currentOrg = (boolNew?"":(dataField!=null?dataField.getField("adOrgId"):data[0].getField("adOrgId")));
     if (!currentOrg.equals("") &amp;&amp; !currentOrg.startsWith("'")) currentOrg = "'"+currentOrg+"'";
@@ -946,8 +909,9 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       WindowTabs tabs = new WindowTabs(this, vars, tabId, windowId);
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
-      if (!str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) xmlDocument.setParameter("childTabContainer", tabs.childTabs(false));
-	  else xmlDocument.setParameter("childTabContainer", tabs.childTabs(true));
+      // if (!str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) xmlDocument.setParameter("childTabContainer", tabs.childTabs(false));
+	  // else xmlDocument.setParameter("childTabContainer", tabs.childTabs(true));
+	  xmlDocument.setParameter("childTabContainer", tabs.childTabs(false));
       NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Relation.html", "<PARAMETER_TMP id="windowName">Window</PARAMETER_TMP>", "W", strReplaceWith, tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
       LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>_Relation.html", strReplaceWith);
@@ -969,9 +933,11 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     xmlDocument.setParameter("commandType", strCommand);
     xmlDocument.setParameter("buscador",buscador);
     xmlDocument.setParameter("windowId", windowId);
-    xmlDocument.setParameter("changed", (strCommand.equals("NEW")?"1":""));
+    xmlDocument.setParameter("changed", "");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
+    xmlDocument.setParameter("mappingName", UtilityData.selectObjectMapping(this, tabId));
+    xmlDocument.setParameter("confirmOnChanges", Utility.getJSConfirmOnChanges(vars, windowId));
     //xmlDocument.setParameter("buttonReference", Utility.messageBD(this, "Reference", vars.getLanguage()));
 
 <PARAMETER_TMP id="sectionIsHighVolume4">    xmlDocument.setParameter("paramSessionDate", strParamSessionDate);</PARAMETER_TMP>
@@ -991,27 +957,23 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       <FIELDS_TMP id="sectionEncryption">data[0].<FIELD_TMP id="fieldEncryptionName">campo</FIELD_TMP>="";</FIELDS_TMP>
     }
     </FIELDS_TMP>
-    if (dataField==null) {
+    
       xmlDocument.setData("structure1",data);
       <PARAMETER_TMP id="hasOrgKey">xmlDocument.setParameter("paramCurrentOrgId",data[0].getField("adOrgId"));</PARAMETER_TMP>
-    } else {
-      <PARAMETER_TMP id="hasOrgKey">
-      try{
-      </PARAMETER_TMP>
-        FieldProvider[] dataAux = new FieldProvider[1];
-        dataAux[0] = dataField;
-        <PARAMETER_TMP id="hasOrgKey">xmlDocument.setParameter("paramCurrentOrgId",data[0].getField("adOrgId"));</PARAMETER_TMP>
-        xmlDocument.setData("structure1",dataAux);
-      <PARAMETER_TMP id="hasOrgKey">
-      }catch (Exception e){
-        if (myMessage!=null) {
-          bdErrorGeneral(response, myMessage.getTitle(), myMessage.getMessage());
-        } else throw new ServletException(e);
-      }
-      </PARAMETER_TMP>
-    }
+   
 <PARAMATER_TMP id="fieldControlsJavaCode"></PARAMATER_TMP>
     xmlDocument.setParameter("scriptOnLoad", getShortcutScript());
+    
+    final String refererURL = vars.getSessionValue(tabId + "|requestURL");
+    vars.removeSessionValue(tabId + "|requestURL");
+    if(!refererURL.equals("")) {
+    	final Boolean failedAutosave = (Boolean) vars.getSessionObject(tabId + "|failedAutosave");
+		vars.removeSessionValue(tabId + "|failedAutosave");
+    	if(failedAutosave != null &amp;&amp; failedAutosave) {
+    		final String jsFunction = "continueUserAction('"+refererURL+"');";
+    		xmlDocument.setParameter("failedAutosave", jsFunction);
+    	}
+    }
     
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -1111,6 +1073,66 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     }
     shortcuts.append(" return true;\n}");
     return shortcuts.toString();
+  }
+  
+  private int saveRecord(VariablesSecureApp vars, OBError myError, char type<PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>) throws IOException, ServletException {
+    <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data data = null;
+    int total = 0;
+    if (org.openbravo.erpCommon.utility.WindowAccessData.hasReadOnlyAccess(this, vars.getRole(), tabId)) {
+        OBError newError = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()));
+        myError.setError(newError);
+        vars.setMessage(tabId, myError);
+    }
+    else {
+        try {
+            data = getEditVariables(vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);            
+            String strSequence = "";
+            if(type == 'I') {                
+<PARAMETER_TMP id="keySequence">        strSequence = SequenceIdData.getUUID();
+                if(log4j.isDebugEnabled()) log4j.debug("Sequence: " + strSequence);
+                data.<KEY_TMP id="keyData">Almacen</KEY_TMP> = strSequence;</PARAMETER_TMP>  
+            }
+            <PARAMETER_TMP id="client">if (Utility.isElementInList(Utility.getContext(this, vars, "#User_Client", windowId, accesslevel),data.adClientId) <FIELDS_TMP id="sectionOrganizationCheck"> &amp;&amp; Utility.isElementInList(Utility.getContext(this, vars, "#User_Org", windowId, accesslevel),data.adOrgId)</FIELDS_TMP>){</PARAMETER_TMP>
+		            if(type == 'I')
+		                    total = data.insert(this);
+		                else
+		                    total = data.update(this);		            
+          <PARAMETER_TMP id="client">
+            }
+                else {
+            OBError newError = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()));
+            myError.setError(newError);            
+          }</PARAMETER_TMP>
+        } catch(ServletException ex) {
+            OBError newError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+            myError.setError(newError);              
+        }
+            
+        if (myError.isEmpty() &amp;&amp; total == 0) {
+            OBError newError = Utility.translateError(this, vars, vars.getLanguage(), "@CODE=DBExecuteError");
+            myError.setError(newError);
+        }
+        vars.setMessage(tabId, myError);
+            
+        if(!myError.isEmpty()){
+            if(data != null ) {
+                if(type == 'I') {            			
+                    data.<KEY_TMP id="keyData">Almacen</KEY_TMP> = "";
+                }
+                else {                    
+                    <PARAMETERS_TMP id="sectionButtonText">
+                        //BUTTON TEXT FILLING
+                    data.<FIELD_TMP id="fieldButtonText"/> = ActionButtonDefaultData.getText(this, vars.getLanguage(), "<FIELD_TMP id="fieldButtonListID"/>", data.getField("<FIELD_TMP id="fieldButtonID"/>"));
+                    </PARAMETERS_TMP>
+                }
+                vars.setEditionData(tabId, data);
+            }            	
+        }
+        else {
+            vars.setSessionValue(windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", data.<KEY_TMP id="keyData">Almacen</KEY_TMP>);
+        }
+    }
+    return total;
   }
 
   public String getServletInfo() {

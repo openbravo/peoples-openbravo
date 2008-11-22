@@ -11,6 +11,8 @@
 */
 package org.openbravo.base;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -22,7 +24,9 @@ import org.apache.log4j.Logger ;
 import org.apache.commons.fileupload.*;
 import org.apache.commons.fileupload.disk.*;
 import org.apache.commons.fileupload.servlet.*;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.openbravo.utils.FormatUtilities;
+
 
 /**
  * This class is used to manage parameters passed to the servlets either 
@@ -34,6 +38,8 @@ import org.openbravo.utils.FormatUtilities;
 public class VariablesBase {
   HttpSession session;
   HttpServletRequest httpRequest;
+  private String postDataHash = null;
+  private List<String> sortedParameters = null;
   public boolean isMultipart = false;
   List<FileItem> items;
 
@@ -54,7 +60,7 @@ public class VariablesBase {
   @SuppressWarnings("unchecked")
   public VariablesBase(HttpServletRequest request) {
     this.session = request.getSession(true);
-    this.httpRequest = request;    
+    this.httpRequest = request;
     this.isMultipart = ServletFileUpload.isMultipartContent(new ServletRequestContext(request));
     if (isMultipart) {
       DiskFileItemFactory factory = new DiskFileItemFactory();
@@ -81,7 +87,63 @@ public class VariablesBase {
     this.session = request.getSession(true);
     this.httpRequest = request;
   }
-
+  
+  /**
+   * Returns the MD5 string hash based on the post data
+   * @return
+   */
+  private String computeHash() {
+	  
+	  long t = 0;
+	  if(log4j.isDebugEnabled()) t = System.currentTimeMillis();
+	  StringBuffer postString = new StringBuffer();
+	  
+	  for(String parameter : sortedParameters()) {			
+		String value = httpRequest.getParameter(parameter);
+		postString.append(parameter + "=" + value + ",");
+	  }
+	  
+	  String s = DigestUtils.md5Hex(postString.toString());
+	  
+	  if(log4j.isDebugEnabled()) {
+		  log4j.debug("calculated hash: " + s);
+		  log4j.debug("post data hash computation took: " + 
+				  String.valueOf(System.currentTimeMillis() - t) + " ms");
+	  }
+	  
+	  return s;
+  }
+  
+  /**
+   * Getter for the postDataHas member
+   * @return The MD5 hash of the post data
+   */
+  public String getPostDataHash() {
+	  if(postDataHash ==  null) {
+		  postDataHash = computeHash();
+	  }
+	  return postDataHash;
+  }
+  
+  /**
+   * Sorts the list of parameters in the request
+   * @return A sorted list of parameters
+   */
+  @SuppressWarnings("unchecked")
+  private List<String> sortedParameters() {
+	  if(sortedParameters == null) {
+		  sortedParameters = new ArrayList<String>();
+		  for(Enumeration e = httpRequest.getParameterNames(); e.hasMoreElements();) {
+			  String parameter = (String) e.nextElement();
+			  if(!parameter.equalsIgnoreCase("Command") && !parameter.contains("ProcessId")) {
+				  sortedParameters.add(parameter);
+			  }
+		  }
+		  Collections.sort(sortedParameters);
+	  }
+	  return sortedParameters;
+  }
+  
   /**
    * Returns the value of the requestParameter passed to the servlet by the  
    * HTTP GET/POST method. If this parameter is not found among the ones 
