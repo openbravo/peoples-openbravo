@@ -45,7 +45,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="LOG" primaryKey="false" required="false" type="VARCHAR" size="4000" autoIncrement="false">
+      <column name="LOG" primaryKey="false" required="false" type="VARCHAR" size="0" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -65,5 +65,8 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <foreign-key foreignTable="AD_PROCESS_REQUEST" name="PROCESSREQUEST_PROCESSRUN_FK" onDelete="cascade">
+        <reference local="AD_PROCESS_REQUEST_ID" foreign="AD_PROCESS_REQUEST_ID"/>
+      </foreign-key>
     </table>
   </database>

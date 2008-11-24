@@ -18,6 +18,8 @@
  */
 package org.openbravo.scheduling;
 
+import org.openbravo.base.ConfigParameters;
+import org.openbravo.database.ConnectionProvider;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -32,6 +34,9 @@ public class DefaultJob implements Job {
                 .get(ProcessBundle.KEY);
         try {
             final Process process = bundle.getProcessClass().newInstance();
+            bundle.setConnection((ConnectionProvider) jec.get(ProcessBundle.CONNECTION));
+            bundle.setConfig((ConfigParameters) jec.get(ProcessBundle.CONFIG_PARAMS));
+            bundle.setLog(new ProcessLogger(bundle.getConnection()));
             process.execute(bundle);
 
         } catch (final Exception e) {

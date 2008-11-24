@@ -29,8 +29,6 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_process.JasperProcess;
 import org.openbravo.erpCommon.ad_process.PinstanceProcedure;
 import org.openbravo.erpCommon.ad_process.ProcedureProcess;
-import org.openbravo.scheduling.PinstanceData;
-import org.openbravo.scheduling.ProcessRequestData;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
@@ -44,6 +42,10 @@ public class ProcessBundle {
   public static final String KEY = "org.openbravo.scheduling.ProcessBundle.KEY";
   
   public static final String PINSTANCE = "process.param.pinstance";
+  
+  public static final String CONNECTION = "process.param.connection";
+  
+  public static final String CONFIG_PARAMS = "process.param.configParams";
   
   private String processId;
   
@@ -106,7 +108,7 @@ public class ProcessBundle {
    * @return
    */
   public String getParamsDefalated() {
-    XStream xstream = new XStream(new JettisonMappedXmlDriver());
+    final XStream xstream = new XStream(new JettisonMappedXmlDriver());
     return xstream.toXML(getParams());
   }
 
@@ -183,11 +185,11 @@ public class ProcessBundle {
     if (processId == null) {
       throw new ServletException("Process Id cannot be null");
     }
-    ProcessData data = ProcessData.select(conn, processId);
+    final ProcessData data = ProcessData.select(conn, processId);
     if (data.isbackground != null && data.isbackground.equals("Y")) {
       try {
         setProcessClass(Class.forName(data.classname).asSubclass(Process.class));
-      } catch (ClassNotFoundException e) {
+      } catch (final ClassNotFoundException e) {
         e.printStackTrace();
         throw new ServletException(e.getMessage(), e);
       }
@@ -220,9 +222,9 @@ public class ProcessBundle {
    */
   public static final ProcessBundle pinstance(String pinstanceId, 
       VariablesSecureApp vars, ConnectionProvider conn) throws ServletException {
-    String processId = PinstanceData.select(conn, pinstanceId).adProcessId;
+    final String processId = PinstanceData.select(conn, pinstanceId).adProcessId;
     
-    ProcessBundle bundle = new ProcessBundle(processId, vars).init(conn);
+    final ProcessBundle bundle = new ProcessBundle(processId, vars).init(conn);
     bundle.setProcessClass(PinstanceProcedure.class);
     bundle.getParams().put(PINSTANCE, pinstanceId);
     
@@ -238,17 +240,17 @@ public class ProcessBundle {
    */
   public static final ProcessBundle request(String requestId, 
       VariablesSecureApp vars, ConnectionProvider conn) throws ServletException {
-    ProcessRequestData data = ProcessRequestData.select(conn, requestId);
+    final ProcessRequestData data = ProcessRequestData.select(conn, requestId);
     
-    String processId = data.processId;
-    ProcessBundle bundle = new ProcessBundle(processId, vars, Channel.SCHEDULED).init(conn);
+    final String processId = data.processId;
+    final ProcessBundle bundle = new ProcessBundle(processId, vars, Channel.SCHEDULED).init(conn);
     bundle.setContext(new ProcessContext(vars));
     
-    String paramString = data.params;
+    final String paramString = data.params;
     if (paramString == null || paramString.trim().equals("")) {
       bundle.setParams(new HashMap<String, Object>());
     } else {
-      XStream xstream = new XStream(new JettisonMappedXmlDriver());
+      final XStream xstream = new XStream(new JettisonMappedXmlDriver());
       bundle.setParams((HashMap<String, Object>) xstream.fromXML(paramString));
     }
     
@@ -261,22 +263,26 @@ public class ProcessBundle {
    */
   public enum Channel {
     DIRECT {
-      public String toString() {
+      @Override
+    public String toString() {
         return "Direct";
       }
     },
     BACKGROUND {
-      public String toString() {
+      @Override
+    public String toString() {
         return "Background";
       }
     },
     SCHEDULED {
-      public String toString() {
+      @Override
+    public String toString() {
         return "Process Scheduler";
       }
     },
     WEBSERVICE {
-      public String toString() {
+      @Override
+    public String toString() {
         return "Webservice";
       }
     },
