@@ -1,3 +1,15 @@
+Begin  
+  execute immediate 'Drop table C_TEMP_SELECTION';
+  Exception when others then null;
+End;
+/-- END
+
+Begin  
+  execute immediate 'Drop table C_TEMP_SELECTION2';
+  Exception when others then null;
+End;
+/-- END
+
  -- create temporary tables
  CREATE GLOBAL TEMPORARY TABLE C_TEMP_SELECTION
  (
