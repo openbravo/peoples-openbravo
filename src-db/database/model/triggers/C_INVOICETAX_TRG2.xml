@@ -79,7 +79,6 @@ BEGIN
      select iswithholdingtax into v_IsWithTax from c_tax where c_tax_id=v_taxid;
 
      -- Read data from Withholding
-         v_ADEnabledTriggers NUMBER;
     BEGIN
 
        select bpwh.is_percent_wh, bpwh.wh_percent, bpwh.include_tax, bpwh.c_tax_id , wh.rate

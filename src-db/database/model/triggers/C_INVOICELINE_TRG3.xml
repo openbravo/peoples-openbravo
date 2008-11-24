@@ -87,7 +87,6 @@ BEGIN
       end if;
   END IF;
   IF (NOT finish_process) THEN
-        v_ADEnabledTriggers NUMBER;
     BEGIN
       select bpwh.is_percent_wh, bpwh.wh_percent, bpwh.include_tax, bpwh.c_tax_id,wh.rate
       into isbaseamountpercent, baseamountpercent,  includetaxinps, taxinps_id,withpercent
