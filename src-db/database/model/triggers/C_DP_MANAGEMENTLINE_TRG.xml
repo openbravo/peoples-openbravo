@@ -31,12 +31,7 @@ BEGIN
 
   IF (INSERTING) THEN
     IF (:NEW.status_from IS NULL) THEN
-          v_ADEnabledTriggers NUMBER;
-BEGIN
-    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
-    IF v_ADEnabledTriggers!=0 THEN RETURN;
-    END IF;
-
+    BEGIN
 
         SELECT status
           INTO :NEW.status_from

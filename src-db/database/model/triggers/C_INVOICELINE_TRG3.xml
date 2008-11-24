@@ -88,12 +88,7 @@ BEGIN
   END IF;
   IF (NOT finish_process) THEN
         v_ADEnabledTriggers NUMBER;
-BEGIN
-    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
-    IF v_ADEnabledTriggers!=0 THEN RETURN;
-    END IF;
-
-
+    BEGIN
       select bpwh.is_percent_wh, bpwh.wh_percent, bpwh.include_tax, bpwh.c_tax_id,wh.rate
       into isbaseamountpercent, baseamountpercent,  includetaxinps, taxinps_id,withpercent
         from c_bp_withholding bpwh, c_withholding wh
