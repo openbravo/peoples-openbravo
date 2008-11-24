@@ -40,7 +40,7 @@
 
   function viewModule(id) {
     document.frmMain.inpcRecordId.value = id;
-    submitCommandForm('DETAIL', false, null, 'ModuleManagement.html', '_self', null, true);return false;
+    submitCommandForm('DETAIL', false, null, 'ModuleManagement.html', '_self', null, false);return false;
   }
   </script>
   <script language="JavaScript" type="text/javascript">
@@ -304,7 +304,7 @@ function onLoadDo(){
               <td></td>
               <td class="Button_RightAlign_ContentCell">
                 <div>
-                  <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Continue'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('INSTALL3', false, null, 'ModuleManagement.html', '_self', null, true);return false;" id="buttonContinue">
+                  <a class="ButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Continue'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onkeyup="this.className='ButtonLink_focus'; return true;" onclick="submitCommandForm('INSTALL3', false, null, 'ModuleManagement.html', '_self', null, false);return false;" id="buttonContinue">
                   <table class="Button" onmouseout="this.className='Button';window.status='';return true;" onmouseover="this.className='Button_hover';window.status='Continue';return true;" onmousedown="this.className='Button_active';return true;" onmouseup="this.className='Button';return true;">
                     <tbody><tr>
                       <td class="Button_left"><img class="Button_Icon Button_Icon_ok" alt="Continue" title="Continue" src="../../../../../web/images/blank.gif" border="0"></td>
