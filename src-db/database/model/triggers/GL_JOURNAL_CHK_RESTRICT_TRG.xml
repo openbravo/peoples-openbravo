@@ -24,7 +24,13 @@
     * Contributor(s):  ______________________________________.
     ************************************************************************/
     v_DateNull DATE := TO_DATE('01-01-1900', 'DD-MM-YYYY');
-    BEGIN
+        v_ADEnabledTriggers NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
     IF UPDATING
     THEN  IF(:old.Processed='Y'
     AND ((COALESCE(:old.DATEDOC, v_DateNull) <> COALESCE(:new.DATEDOC, v_DateNull))

@@ -41,7 +41,13 @@ baseamount  NUMBER;
 whamountnew NUMBER;
 vwithid varchar2(32);
 finish_process BOOLEAN := FALSE;
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   IF(inserting) THEN
     v_invoiceid := :NEW.c_invoice_id;
     v_taxid := :NEW.c_tax_id;
@@ -73,7 +79,13 @@ BEGIN
      select iswithholdingtax into v_IsWithTax from c_tax where c_tax_id=v_taxid;
 
      -- Read data from Withholding
-     BEGIN
+         v_ADEnabledTriggers NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
        select bpwh.is_percent_wh, bpwh.wh_percent, bpwh.include_tax, bpwh.c_tax_id , wh.rate
        into isbaseamountpercent, baseamountpercent,  includetaxinps, taxinps_id, withpercent
        from c_bp_withholding bpwh ,c_withholding wh

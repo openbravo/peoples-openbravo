@@ -31,7 +31,13 @@
     v_PriceLimit NUMBER:=NULL;
   v_PriceStd NUMBER:=NULL;
   v_PlannedMargin NUMBER:=NULL;
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   -- Calculate PlannedAmt
   IF(:new.PlannedQty <> 0 AND :new.PlannedPrice <> 0) THEN
     :new.PlannedAmt:=:new.PlannedQty * :new.PlannedPrice;

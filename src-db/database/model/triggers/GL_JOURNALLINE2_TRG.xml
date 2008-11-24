@@ -28,7 +28,13 @@
   v_rate              NUMBER;
   v_CurrencyRate      NUMBER;
   v_CurrencyRateType  CHAR(1) ;
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   IF(UPDATING) THEN
     IF NOT((COALESCE(:old.AMTSOURCEDR, 0) <> COALESCE(:NEW.AMTSOURCEDR, 0) OR COALESCE(:old.AMTSOURCECR, 0) <> COALESCE(:NEW.AMTSOURCECR, 0) OR COALESCE(:old.C_CURRENCY_ID, '0') <> COALESCE(:NEW.C_CURRENCY_ID, '0'))) THEN
       RETURN;

@@ -22,7 +22,13 @@
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
-    BEGIN
+        v_ADEnabledTriggers NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   DELETE FROM A_Asset_Group_Acct  WHERE A_Asset_Group_ID=:old.A_Asset_Group_ID;
 END A_ASSET_GROUP_TRG2
 ]]></body>

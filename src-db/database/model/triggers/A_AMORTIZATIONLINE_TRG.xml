@@ -25,7 +25,13 @@
   v_Processed CHAR(1) ;
   v_Posted CHAR(1) ;
   v_AmortizationID varchar2(32);
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   -- ReadOnly Check
   IF (UPDATING OR INSERTING) THEN
     v_AmortizationID := :NEW.A_Amortization_ID;

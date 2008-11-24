@@ -26,7 +26,13 @@
   v_UOM_ID VARCHAR2(32) ;
   v_ATTRIBUTESET_ID VARCHAR2(32);
   v_Name NVARCHAR2(60);
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   IF INSERTING OR UPDATING THEN
     SELECT C_UOM_ID, M_ATTRIBUTESET_ID, name
     INTO v_UOM_ID, v_attributeset_id, v_name

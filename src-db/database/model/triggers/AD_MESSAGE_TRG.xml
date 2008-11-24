@@ -28,7 +28,13 @@
 * Description:
 ************************************************************************/
  v_aux NUMBER;
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   IF :new.AD_Module_ID != '0' THEN
     SELECT COUNT(*)
       INTO v_Aux

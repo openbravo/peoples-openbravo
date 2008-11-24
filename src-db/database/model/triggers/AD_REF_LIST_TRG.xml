@@ -27,7 +27,13 @@
     * Title: Ref List Translation
     * Description:
     ************************************************************************/
-    BEGIN
+        v_ADEnabledTriggers NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
     -- Insert AD_Ref_List Trigger
     --  for Translation
     IF INSERTING

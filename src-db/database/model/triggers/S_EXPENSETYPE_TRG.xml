@@ -29,7 +29,13 @@
     *   Syncronize Resource with Product
     ************************************************************************/
     NextNo M_Product.M_Product_ID%TYPE;
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   IF(INSERTING) THEN
     AD_Sequence_Next('M_Product', :new.AD_Client_ID, NextNo) ;
     INSERT

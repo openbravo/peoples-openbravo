@@ -10,7 +10,20 @@ Begin
 End;
 /-- END
 
+Begin  
+  execute immediate 'Drop table AD_ENABLE_TRIGGERS';
+  Exception when others then null;
+End;
+/-- END
+
  -- create temporary tables
+
+ CREATE GLOBAL TEMPORARY TABLE AD_ENABLE_TRIGGERS
+ (
+   ISENABLED CHAR(1)             NOT NULL
+ )
+  ON COMMIT PRESERVE ROWS
+/-- END 
  CREATE GLOBAL TEMPORARY TABLE C_TEMP_SELECTION
  (
    C_TEMP_SELECTION_ID  VARCHAR2(32 BYTE)             NOT NULL,

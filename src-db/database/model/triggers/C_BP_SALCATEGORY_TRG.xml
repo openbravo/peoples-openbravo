@@ -23,7 +23,13 @@
 v_isCostApplied CHAR(1);
 v_count NUMBER;
 
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
 
 
   IF (UPDATING OR INSERTING)  THEN

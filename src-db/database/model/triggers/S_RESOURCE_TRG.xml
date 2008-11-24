@@ -32,7 +32,13 @@
   v_C_UOM_ID              M_Product.C_UOM_ID%TYPE;
   v_M_Product_Category_ID M_Product.M_Product_Category_ID%TYPE;
   v_C_TaxCategory_ID      M_Product.C_TaxCategory_ID%TYPE;
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   IF(INSERTING) THEN
     -- Get ResourceType Info
     SELECT C_UOM_ID,

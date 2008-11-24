@@ -19,7 +19,13 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 
- BEGIN
+     v_ADEnabledTriggers NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   DELETE FROM c_invoicetax WHERE c_invoice_id=:old.c_invoice_id;
   DELETE FROM c_invoiceline  WHERE c_invoice_id=:old.c_invoice_id;
   DELETE FROM c_invoice WHERE c_invoice_id=:old.c_invoice_id;

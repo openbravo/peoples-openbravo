@@ -27,7 +27,13 @@
     ************************************************************************/
   v_docType_ID VARCHAR2(32) ;
   v_movementType CHAR(2) ;
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   v_docType_ID:=:NEW.C_DocType_ID;
   SELECT(
     CASE isSOTrx

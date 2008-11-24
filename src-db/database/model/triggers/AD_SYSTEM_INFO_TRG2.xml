@@ -24,7 +24,13 @@ exist NUMBER:= 0;
 indTempName NVARCHAR2(50) := 'System Customization';
 indTempPackage NVARCHAR2(50) := 'mySystem.CustomizationTemplate';
 
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   If :old.customization_Allowed='N' and :new.customization_Allowed='Y' then
   
     select count(*) into exist

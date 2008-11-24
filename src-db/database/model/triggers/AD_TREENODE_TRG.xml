@@ -27,7 +27,13 @@
   v_EqualAcctSchema NUMBER;
   v_TreeType VARCHAR2(2);
   v_IsReady AD_ORG.ISREADY%TYPE;
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   --  Verify correct Account Schema for Accounting Reports
   IF (INSERTING OR UPDATING) THEN
 

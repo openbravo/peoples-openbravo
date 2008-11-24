@@ -23,7 +23,13 @@
   v_TableName VARCHAR2(40);
   v_NextNo VARCHAR2(32);
   v_Aux NUMBER;
-  BEGIN
+      v_ADEnabledTriggers NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   SELECT count(*)
     INTO v_Aux
     FROM AD_TABLE T, 

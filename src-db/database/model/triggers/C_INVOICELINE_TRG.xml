@@ -38,7 +38,13 @@
  v_LineNetAmt  NUMBER;
  v_CinvoiceTaxID varchar2(32);
 
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
 IF (UPDATING) THEN
  IF NOT(COALESCE(:old.QtyInvoiced,0) <> COALESCE(:NEW.QtyInvoiced,0)
   OR COALESCE(:old.LineNetAmt,0) <> COALESCE(:NEW.LineNetAmt,0)

@@ -29,7 +29,13 @@
     *  Update potentially existing Invoices with Payment Info
     *  Sync Header Changes to Lines
     ************************************************************************/
-    BEGIN  IF(UPDATING)
+        v_ADEnabledTriggers NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+  IF(UPDATING)
     THEN  IF((COALESCE(:old.Description, '.') <> COALESCE(:NEW.Description, '.')
     OR COALESCE(:old.POReference, '.') <> COALESCE(:NEW.POReference, '.')
     OR COALESCE(:old.C_BPartner_ID, '0') <> COALESCE(:NEW.C_BPartner_ID, '0')

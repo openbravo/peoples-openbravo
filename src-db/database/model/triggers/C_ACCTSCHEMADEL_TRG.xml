@@ -22,7 +22,13 @@
     * Contributor(s):  ______________________________________.
     ************************************************************************/
 
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   DELETE FROM C_ACCTSCHEMA_TABLE WHERE C_ACCTSCHEMA_ID=:old.C_ACCTSCHEMA_ID;
 END C_ACCTSCHEMADEL_TRG
 ]]></body>

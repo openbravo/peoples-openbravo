@@ -21,7 +21,13 @@
   V_Char char;
   v_isregistered char(1);
   v_old_name varchar(60);
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
    SELECT IsRegistered
    INTO v_IsRegistered
     FROM AD_MODULE

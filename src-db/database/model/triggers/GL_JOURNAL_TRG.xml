@@ -25,7 +25,13 @@
     *  Journal
     * - Update Journal Batch Totals if exists (insert is always 0)
     */
-    BEGIN
+        v_ADEnabledTriggers NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
     -- Subtract Old Amount
     IF(UPDATING) THEN
       IF(:old.TotalDr <> :NEW.TotalDr OR :OLD.TotalCr <> :NEW.TotalCr) THEN  

@@ -25,7 +25,13 @@
   v_xTree_ID VARCHAR2(32);
   v_xParent_ID VARCHAR2(32);
   v_NextNo     VARCHAR2(32);
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   -- Insert C_ElementValue Trigger
   --  for Translation
   --  and TreeNode

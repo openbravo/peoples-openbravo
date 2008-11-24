@@ -23,7 +23,13 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
  
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
  IF :new.AD_Module_ID != '0' AND :new.ValidationType NOT IN ('L', 'T') THEN
     RAISE_APPLICATION_ERROR(-20535, 'Only Table and List references are allowed in modules') ;
  END IF;

@@ -34,7 +34,13 @@
   v_ClientList VARCHAR2(2000):='';
   v_OrgList    VARCHAR2(2000):='';
   v_Client_ID VARCHAR2(32):=-1;
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   -- For each Role
   FOR CUR_Role IN
     (SELECT *  FROM AD_Role  FOR UPDATE)

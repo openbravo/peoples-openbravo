@@ -23,7 +23,13 @@
     * Contributor(s):  ______________________________________.
     ************************************************************************/
       n NUMBER;
-    BEGIN
+        v_ADEnabledTriggers NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
 
    IF INSERTING or UPDATING THEN
      select count(*)

@@ -27,7 +27,13 @@
   v_Posted        CHAR(1) ;
   v_GL_JOURNAL_ID VARCHAR2(32) ;
   v_DateNull DATE :=TO_DATE('01-01-1900','DD-MM-YYYY');
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   IF INSERTING THEN
     v_GL_JOURNAL_ID:=:new.GL_JOURNAL_ID;
   ELSE

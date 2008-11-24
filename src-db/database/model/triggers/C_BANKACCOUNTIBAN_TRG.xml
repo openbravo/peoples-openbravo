@@ -27,7 +27,13 @@
   v_CountryId NVARCHAR2(2);
   v_BankName NVARCHAR2(60);
   v_Length NUMBER;
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   --  Default Accounts for all AcctSchema
   IF(INSERTING OR UPDATING) THEN
     SELECT NAME

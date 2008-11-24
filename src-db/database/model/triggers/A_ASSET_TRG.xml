@@ -22,7 +22,13 @@
   TYPE RECORD IS REF CURSOR;
   v_Acct_ID VARCHAR2(32);
   Cur_Defaults RECORD;
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   --  Default Accounts for all AcctSchema
   IF(INSERTING) THEN
      FOR Cur_Defaults IN (SELECT *

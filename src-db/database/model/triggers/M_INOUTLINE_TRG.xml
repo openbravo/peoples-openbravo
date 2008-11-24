@@ -29,7 +29,13 @@
  * Contributor(s): Openbravo SL
  * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
  ******************************************************************************/
- BEGIN
+     v_ADEnabledTriggers NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
  IF (INSERTING) THEN
   IF (:NEW.M_PRODUCT_ID IS NOT NULL) THEN
      SELECT C_UOM_ID INTO v_UOM_ID FROM M_PRODUCT WHERE M_PRODUCT_ID=:NEW.M_PRODUCT_ID;

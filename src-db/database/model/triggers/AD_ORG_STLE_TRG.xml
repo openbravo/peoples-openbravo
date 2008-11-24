@@ -19,7 +19,13 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   v_num NUMBER; 
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   SELECT AD_ORG_CHK_CALENDAR() INTO v_num FROM DUAL;
   IF (v_num = -3) THEN
     RAISE_APPLICATION_ERROR(-20537, 'Every legal entity must have itself or an ancestor at least a calendar attached to it');

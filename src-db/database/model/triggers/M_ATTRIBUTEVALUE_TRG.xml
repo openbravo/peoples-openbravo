@@ -28,7 +28,13 @@
   pos        NUMBER;
   TYPE RECORD IS REF CURSOR;
   CurSetInstance RECORD;
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   IF COALESCE(:New.Name,'.')!=COALESCE(:Old.Name,'.') THEN
     UPDATE M_AttributeInstance
        SET Value = :New.Name

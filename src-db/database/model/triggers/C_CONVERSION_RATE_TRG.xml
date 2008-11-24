@@ -29,7 +29,13 @@
     * If there is no valid ToDate set it to arbitrary end date
     ************************************************************************/
       v_Count NUMBER;
-  BEGIN
+      v_ADEnabledTriggers NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   --RAISE_APPLICATION_ERROR (-20506, 'Cannot modify used rate');
   IF(:new.ValidTo IS NULL) THEN
     -- If there is no end date, set it to X

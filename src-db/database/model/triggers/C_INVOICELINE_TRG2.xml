@@ -37,7 +37,13 @@
   v_DateInvoiced DATE;
   v_Precision NUMBER;
   v_PriceList_ID VARCHAR2(32);
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
 -- This trigger is used for calculate the applied offers f0r the invoice
 
 

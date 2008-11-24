@@ -24,7 +24,13 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************/
 v_DateNull DATE := TO_DATE('01-01-1900', 'DD-MM-YYYY');
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
  -- If invoice is processed, is not allowed to change C_BPartner
  IF UPDATING THEN
  IF (:OLD.Processed = 'Y' AND

@@ -22,7 +22,13 @@
   v_ReqStatus CHAR(1);
   v_OrderedQty NUMBER;
 
-  BEGIN
+      v_ADEnabledTriggers NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   IF INSERTING THEN
     SELECT DocStatus, :new.ReqStatus, 0 INTO v_DocStatus, v_ReqStatus, v_OrderedQty
     FROM M_Requisition

@@ -25,7 +25,13 @@
    TYPE RECORD IS REF CURSOR;
   Cur_Discounts RECORD;
   v_Key VARCHAR2(32) ;
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   FOR Cur_Discounts IN
     (
     SELECT C_DISCOUNT_ID,

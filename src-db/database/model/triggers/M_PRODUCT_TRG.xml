@@ -31,7 +31,13 @@
     v_NextNo      VARCHAR2(32);
     v_ControlNo NUMBER;
 
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
 
  IF (UPDATING) THEN
   UPDATE M_PRODUCT_ACCT SET AD_ORG_ID = :new.AD_ORG_ID

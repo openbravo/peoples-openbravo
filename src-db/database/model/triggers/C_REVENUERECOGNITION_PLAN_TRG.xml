@@ -32,7 +32,13 @@
   v_NextNo       VARCHAR2(32);
   v_Qty          NUMBER;
   v_M_Product_ID VARCHAR2(32);
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   -- Is RevenueRecognition Time Based
   SELECT IsTimeBased
   INTO v_IsTimeBased

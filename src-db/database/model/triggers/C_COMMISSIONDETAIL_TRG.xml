@@ -27,7 +27,13 @@
     */
   v_C_Currency_ID VARCHAR2(32);
   v_ConvDate DATE;
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   IF(UPDATING OR DELETING) THEN
     -- DBMS_OUTPUT.PUT_LINE('C_CommissionDetail_Trg - Subtract');
     -- Subtract old Amount/Qty from Amount

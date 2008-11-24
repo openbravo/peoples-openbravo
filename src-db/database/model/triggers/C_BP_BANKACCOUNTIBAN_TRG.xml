@@ -35,7 +35,13 @@
   v_DigitBank NVARCHAR2(1);
   v_CountryId NVARCHAR2(2);
   v_Length NUMBER;
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   --  Default Accounts for all AcctSchema
   IF(INSERTING OR UPDATING) THEN
     IF (:NEW.IBAN IS NOT NULL) THEN

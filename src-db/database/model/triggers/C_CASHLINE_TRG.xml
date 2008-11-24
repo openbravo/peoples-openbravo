@@ -51,7 +51,13 @@
  v_RO     NUMBER;
  --
  v_Trace     VARCHAR2(2000) := 'CashLine: ';
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
  /** Cannot change generated invoice data  */
  /* Correction by I. Ciordia: deleting and updating generated cashlines is allowed. Control is transfered to cashPost
  IF (DELETING) THEN

@@ -2,7 +2,13 @@
   <database name="TRIGGER C_PROJECTLINE_TRG2">
     <trigger name="C_PROJECTLINE_TRG2" table="C_PROJECTLINE" fires="after" insert="true" update="true" delete="false" foreach="statement">
       <body><![CDATA[
- BEGIN
+     v_ADEnabledTriggers NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
     /*************************************************************************
     * The contents of this file are subject to the Compiere Public
     * License 1.1 ("License"); You may not use this file except in

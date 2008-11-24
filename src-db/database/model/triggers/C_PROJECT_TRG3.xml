@@ -25,7 +25,13 @@
   v_Count NUMBER;
   v_Tree_ID   varchar2(32);
   v_Parent_ID VARCHAR2(32);
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   SELECT c.AD_Tree_Project_ID,
     n.Node_ID
   INTO v_Tree_ID,

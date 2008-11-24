@@ -20,7 +20,13 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
 IF (:OLD.STATUS = 'Scheduled') THEN
   RAISE_APPLICATION_ERROR(-20630,'Unable to delete Process Request whilst still scheduled.');
 END IF;

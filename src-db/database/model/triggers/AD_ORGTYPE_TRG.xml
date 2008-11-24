@@ -19,7 +19,13 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   v_num NUMBER; 
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   SELECT COUNT(AD_Org.AD_Org_ID)
   INTO v_num
   FROM AD_Org

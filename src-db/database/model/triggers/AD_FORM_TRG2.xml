@@ -26,7 +26,13 @@
   v_ID_MAP     VARCHAR2(32) ;
   v_WindowName VARCHAR2(60):='ad_forms';
   v_ClassName  VARCHAR2(60) ;
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   IF(UPDATING) THEN
     IF NOT(COALESCE(:old.NAME, '.') <> COALESCE(:NEW.NAME, '.')
    OR COALESCE(:old.IsActive, '.') <> COALESCE(:NEW.IsActive, '.')

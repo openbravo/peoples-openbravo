@@ -27,7 +27,13 @@
   * Contributor(s): Openbravo SL
   * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
   ******************************************************************************/
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   IF(UPDATING OR DELETING) THEN
     IF :OLD.M_INOUTLINE_ID IS NOT NULL THEN
       v_QtyOrdered:=:old.qty;

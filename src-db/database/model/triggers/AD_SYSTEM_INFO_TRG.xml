@@ -20,7 +20,13 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   v_Count NUMBER:= 0;
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
 
   SELECT COUNT(*) INTO v_Count FROM AD_SYSTEM_INFO;
   IF (v_Count <> 0) THEN

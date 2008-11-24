@@ -25,7 +25,13 @@
   v_Qty NUMBER:=0;
   v_Processed         CHAR(1) ;
   v_C_DEBT_PAYMENT_ID VARCHAR2(32) ;
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   IF(DELETING) THEN
     v_C_DEBT_PAYMENT_ID:=:old.C_DEBT_PAYMENT_ID;
   ELSE

@@ -27,7 +27,13 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   IF INSERTING OR UPDATING THEN
     v_ID:=:new.M_Internal_Consumption_ID;
   ELSIF DELETING THEN

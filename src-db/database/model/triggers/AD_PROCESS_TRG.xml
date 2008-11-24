@@ -29,7 +29,13 @@
 *   Synchronize Names and Translation
 *   Sync IsActive with Menu / Field
 ************************************************************************/
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   -- Insert AD_Process Trigger
   --  for Translation
   --  add Access

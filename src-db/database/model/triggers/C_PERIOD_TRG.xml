@@ -27,7 +27,13 @@
     v_NextNo VARCHAR2(32);
   TYPE RECORD IS REF CURSOR;
     CUR_DocType RECORD;
-  BEGIN
+      v_ADEnabledTriggers NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
     FOR CUR_DocType IN
       (SELECT Value , a.AD_Org_ID AS Organization
        FROM AD_Ref_List , (SELECT AD_Org_ID 

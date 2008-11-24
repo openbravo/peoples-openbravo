@@ -25,7 +25,13 @@
   TYPE RECORD IS REF CURSOR;
   cur_tables RECORD;
   v_AcctSchema_Table_ID VARCHAR2(32);
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   FOR cur_tables IN
     (
     SELECT AD_Table.AD_Table_ID as id,

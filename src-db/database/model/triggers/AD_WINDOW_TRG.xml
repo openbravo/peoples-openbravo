@@ -30,7 +30,13 @@
     *   - Sync Name (Workflow, Menu)
     *   - Active State (Menu)
     ************************************************************************/
-    BEGIN
+        v_ADEnabledTriggers NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
     -- Insert AD_Window Trigger
     --  for Translation
     --  Access

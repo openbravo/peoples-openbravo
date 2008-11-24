@@ -27,7 +27,13 @@
     * Title: RO check
     * Description:
     ************************************************************************/
-    BEGIN  IF(:old.Processed='Y')
+        v_ADEnabledTriggers NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+  IF(:old.Processed='Y')
     THEN  RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;
     END IF;
 END C_BANKSTATEMENT_TRG

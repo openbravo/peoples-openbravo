@@ -37,7 +37,13 @@
  v_Oldmultiplier NUMBER:=1;
  v_Processed CHAR(1);
  v_Aux NUMBER;
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   /* Checking constraints */
   IF (DELETING) THEN
     IF (:old.isValid = 'Y') THEN

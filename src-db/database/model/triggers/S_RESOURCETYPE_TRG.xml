@@ -28,7 +28,13 @@
     * Description:
     *   Syncronize Resource Type with Product
     ************************************************************************/
-    BEGIN
+        v_ADEnabledTriggers NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   UPDATE M_Product
     SET C_UOM_ID=:new.C_UOM_ID,
     M_Product_Category_ID=:new.M_Product_Category_ID,

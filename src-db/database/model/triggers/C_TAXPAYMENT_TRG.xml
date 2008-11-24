@@ -25,7 +25,13 @@
     * Insert Translation
     */
 
-    BEGIN
+        v_ADEnabledTriggers NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
     IF UPDATING
     THEN  IF (:OLD.PROCESSED)='Y' AND (:OLD.processing) = 'N' and (:OLD.processing)=(:new.processing)
     THEN  RAISE_APPLICATION_ERROR(-20501, 'Document processed/posted') ;

@@ -22,7 +22,13 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-    BEGIN IF(UPDATING)
+        v_ADEnabledTriggers NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+ IF(UPDATING)
     THEN  IF NOT((COALESCE(:OLD.M_Product_Uom_ID, '0') <> COALESCE(:NEW.M_Product_Uom_ID, '0')
     OR COALESCE(:OLD.QuantityOrderBook, 0) <> COALESCE(:NEW.QuantityOrderBook, 0)))
     THEN  RETURN;

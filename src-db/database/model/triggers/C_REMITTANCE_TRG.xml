@@ -27,7 +27,13 @@
 * Title: Check in deleting, invoice not processed
 ************************************************************************/
 v_DateNull DATE := TO_DATE('31-12-9999','DD-MM-YYYY');
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   -- If remittance is processed, is not allowed to change
   IF (UPDATING) THEN
     IF (:OLD.processed = 'Y' AND ((COALESCE (:OLD.documentno, '')!= COALESCE (:NEW.documentno, ''))

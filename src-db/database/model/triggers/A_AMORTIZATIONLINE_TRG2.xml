@@ -6,7 +6,13 @@
 
 
 
-  BEGIN null;
+      v_ADEnabledTriggers NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+ null;
 /* mutating table
   update a_asset
   set DepreciatedPlan=(select sum(AmortizationAmt)

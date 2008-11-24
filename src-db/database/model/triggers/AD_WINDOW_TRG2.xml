@@ -25,7 +25,13 @@
     TYPE RECORD IS REF CURSOR;
   CUR_DATA RECORD;
   v_JavaPackage VARCHAR2(60);
+    v_ADEnabledTriggers NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
+    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    END IF;
+
+
   IF((COALESCE(:old.Name, '.') <> COALESCE(:NEW.Name, '.')
   OR COALESCE(:old.IsActive, '.') <> COALESCE(:NEW.IsActive, '.')
   OR COALESCE(:old.AD_Module_ID,'.') <> COALESCE(:new.AD_Module_ID,'.')))
