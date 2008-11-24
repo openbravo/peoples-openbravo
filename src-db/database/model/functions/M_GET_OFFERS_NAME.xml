@@ -29,7 +29,7 @@
   v_Offer_ID VARCHAR2(32);
   TYPE RECORD IS REF CURSOR;
     Cur_Offer RECORD;
-    v_Names varchar2(10000) := NULL;
+    v_Names varchar2(10000) := '';
   BEGIN
     FOR Cur_Offer IN
       (SELECT NAME
@@ -104,7 +104,7 @@
         M_OFFER_ID DESC
       )
     LOOP
-      IF v_Names IS NOT NULL THEN
+      IF v_Names <> '' THEN
         v_Names := v_Names||'<br/>&nbsp;';
       END IF;
       v_Names := v_Names||Cur_Offer.name;
