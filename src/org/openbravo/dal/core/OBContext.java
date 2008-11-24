@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -287,8 +288,15 @@ public class OBContext implements OBNotSingleton {
         if (userId == null) {
             return false; // not yet set
         }
-        return initialize(userId, getSessionValue(request, ROLE),
-                getSessionValue(request, CLIENT), getSessionValue(request, ORG));
+        try {
+            return initialize(userId, getSessionValue(request, ROLE),
+                    getSessionValue(request, CLIENT), getSessionValue(request,
+                            ORG));
+        } catch (final OBSecurityException e) {
+            // remove the authenticated user
+            request.getSession().setAttribute(AUTHENTICATED_USER, null);
+            throw e;
+        }
     }
 
     // sets the context by reading all user information
@@ -339,9 +347,11 @@ public class OBContext implements OBNotSingleton {
                         + Role.PROPERTY_ISACTIVE + "='Y' order by ur."
                         + UserRoles.PROPERTY_ROLE + "." + Role.PROPERTY_ID
                         + " asc", false);
-                Check.isNotNull(ur,
-                        "There are no valid and active user roles for user with id: "
-                                + u.getId());
+                if (ur == null) {
+                    throw new OBSecurityException(
+                            "There are no valid and active user roles "
+                                    + " for user with id: " + u.getId());
+                }
                 Hibernate.initialize(ur.getRole());
                 setRole(ur.getRole());
             }

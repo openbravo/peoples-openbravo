@@ -8,81 +8,112 @@
  * CONDITIONS OF ANY KIND, either  express  or  implied.  See  the  License  for  the
  * specific language governing permissions and limitations under the License.
  ************************************************************************************
-*/
+ */
 package org.openbravo.base.secureApp;
 
-import org.openbravo.xmlEngine.XmlDocument;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.openbravo.base.HttpBaseServlet;
+import org.openbravo.base.exception.OBSecurityException;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.utils.FormatUtilities;
-import org.openbravo.base.*;
+import org.openbravo.xmlEngine.XmlDocument;
 
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
+public class LoginHandler extends HttpBaseServlet {
+    private static final long serialVersionUID = 1L;
+    String strServletPorDefecto;
 
+    @Override
+    public void init(ServletConfig config) {
+        super.init(config);
+        strServletPorDefecto = config.getServletContext().getInitParameter(
+                "DefaultServlet");
+    }
 
+    @Override
+    public void doPost(HttpServletRequest req, HttpServletResponse res)
+            throws IOException, ServletException {
 
-public class LoginHandler extends HttpBaseServlet{
-  private static final long serialVersionUID = 1L;
-  String strServletPorDefecto;
-
-
-  public void init (ServletConfig config) {
-    super.init(config);
-    strServletPorDefecto = config.getServletContext().getInitParameter("DefaultServlet");
-  }
-
-  public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-
-   log4j.info("start doPost");
-    VariablesSecureApp vars = new VariablesSecureApp(req);
+        log4j.info("start doPost");
+        final VariablesSecureApp vars = new VariablesSecureApp(req);
 
         // Empty session
         req.getSession(true).setAttribute("#Authenticated_user", null);
 
-      if (vars.getStringParameter("user").equals("")) {
-        res.sendRedirect(res.encodeRedirectURL(strDireccion + "/security/Login_F1.html"));
-      } else {
-            String strUser = vars.getRequiredStringParameter("user");
-            String strPass = FormatUtilities.sha1Base64(vars.getStringParameter("password"));
-            String strUserAuth = SeguridadData.valido(this, strUser, strPass);
+        if (vars.getStringParameter("user").equals("")) {
+            res.sendRedirect(res.encodeRedirectURL(strDireccion
+                    + "/security/Login_F1.html"));
+        } else {
+            final String strUser = vars.getRequiredStringParameter("user");
+            final String strPass = FormatUtilities.sha1Base64(vars
+                    .getStringParameter("password"));
+            final String strUserAuth = SeguridadData.valido(this, strUser,
+                    strPass);
 
             if (!strUserAuth.equals("-1")) {
-                req.getSession(true).setAttribute("#Authenticated_user", strUserAuth);
+                req.getSession(true).setAttribute("#Authenticated_user",
+                        strUserAuth);
+                try {
+                    OBContext.setOBContext(req);
+                } catch (final OBSecurityException e) {
+                    // login failed, no roles specified
+                    // remove authenticated user
+                    req.getSession(true).setAttribute("#Authenticated_user",
+                            null);
+                    goToRetry(res, vars);
+                    return;
+                }
+
                 goToTarget(res, vars);
 
             } else {
                 goToRetry(res, vars);
-      }
+            }
+        }
     }
-  }
 
-    private void goToTarget(HttpServletResponse response, VariablesSecureApp vars) throws IOException {
+    private void goToTarget(HttpServletResponse response,
+            VariablesSecureApp vars) throws IOException {
 
-        String target = vars.getSessionValue("target");
+        final String target = vars.getSessionValue("target");
         if (target.equals("")) {
             response.sendRedirect(strDireccion + "/security/Menu.html");
         } else {
             response.sendRedirect(target);
         }
-  }
+    }
 
-  private void goToRetry(HttpServletResponse response, VariablesSecureApp vars) throws IOException {
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/base/secureApp/HtmlErrorLogin").createXmlDocument();
+    private void goToRetry(HttpServletResponse response, VariablesSecureApp vars)
+            throws IOException {
+        final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/base/secureApp/HtmlErrorLogin")
+                .createXmlDocument();
 
-    //pass relevant mesasge to show inside the error page
-    xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setParameter("messageType", "Error");
-    xmlDocument.setParameter("messageTitle", "Identification failure. Try again.");
-    xmlDocument.setParameter("messageMessage", "Please enter your username and password. " +
-    		"<br>You must also ensure that your browser accepts cookies.<br>Press back to return.");
-    
-    response.setContentType("text/html");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
+        // pass relevant mesasge to show inside the error page
+        xmlDocument.setParameter("theme", vars.getTheme());
+        xmlDocument.setParameter("messageType", "Error");
+        xmlDocument.setParameter("messageTitle",
+                "Identification failure. Try again.");
+        xmlDocument
+                .setParameter(
+                        "messageMessage",
+                        "Please enter your username and password. "
+                                + "<br>You must also ensure that your browser accepts cookies.<br>Press back to return.");
 
-  public String getServletInfo() {
-    return "User-login control Servlet";
-  } // end of getServletInfo() method
+        response.setContentType("text/html");
+        final PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
+    }
+
+    @Override
+    public String getServletInfo() {
+        return "User-login control Servlet";
+    } // end of getServletInfo() method
 }
