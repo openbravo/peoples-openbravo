@@ -28,7 +28,8 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
         SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo,tb.IsActive, m.AD_Menu_ID AS ID, m.Name,m.Description,m.IsSummary,
-        m.Action, m.AD_Window_ID, m.AD_Process_ID, m.AD_Form_ID, m.AD_Workflow_ID, m.AD_Task_ID, Mo.ISINDEVELOPMENT
+        m.Action, m.AD_Window_ID, m.AD_Process_ID, m.AD_Form_ID, m.AD_Workflow_ID, m.AD_Task_ID, Mo.ISINDEVELOPMENT, 
+        '' as IsReady, '' as AD_OrgType_ID
         FROM AD_TreeNode tn left join AD_TreeBar tb on tn.AD_Tree_ID=tb.AD_Tree_ID 
                                                   AND tn.Node_ID=tb.Node_ID 
                                                   AND tb.AD_User_ID  = ?,          
@@ -73,7 +74,7 @@
    <SqlMethod name="selectOrg" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
-        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo,tb.IsActive, m.AD_Org_ID AS ID, m.Name,m.Description,m.IsSummary 
+        SELECT tn.Node_ID,tn.Parent_ID,tn.SeqNo,tb.IsActive, m.AD_Org_ID AS ID, m.Name,m.Description,m.IsSummary,m.IsReady, m.AD_OrgType_ID
         FROM AD_TreeNode tn left join AD_TreeBar tb on tn.AD_Tree_ID=tb.AD_Tree_ID 
                                             AND tn.Node_ID=tb.Node_ID 
                                             AND tb.AD_User_ID  = ? ,

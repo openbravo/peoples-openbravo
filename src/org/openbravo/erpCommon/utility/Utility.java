@@ -18,6 +18,7 @@
 */
 package org.openbravo.erpCommon.utility;
 
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.reference.*;
 import org.openbravo.data.FieldProvider;
@@ -42,6 +43,7 @@ import java.text.DateFormat;
 import java.sql.Connection;
 import javax.servlet.ServletException;
 import java.io.*;
+import org.openbravo.model.ad.ui.Window;
 import org.apache.log4j.Logger ;
 
 /**
@@ -294,13 +296,13 @@ public class Utility {
    * @param accessLevel
    * @return String with the value.
    */
-  public static String getContext(ConnectionProvider conn, VariablesSecureApp vars, String context, String window, int accessLevel) {
+  public static String getContext(ConnectionProvider conn, VariablesSecureApp vars, String context, String strWindow, int accessLevel) {
     if (context==null || context.equals("")) throw new IllegalArgumentException("getContext - require context");
     String retValue="";
 
     if (!context.startsWith("#") && !context.startsWith("$")) {
-      retValue = getPreference(vars, context, window);
-      if (!window.equals("") && retValue.equals("")) retValue = vars.getSessionValue(window + "|" + context);
+      retValue = getPreference(vars, context, strWindow);
+      if (!strWindow.equals("") && retValue.equals("")) retValue = vars.getSessionValue(strWindow + "|" + context);
       if (retValue.equals("")) retValue = vars.getSessionValue("#" + context);
       if (retValue.equals("")) retValue = vars.getSessionValue("$" + context);
     } else {
@@ -318,18 +320,29 @@ public class Utility {
       }
       if (context.equalsIgnoreCase("#User_Org") ) {
         if (accessLevel==4||accessLevel==6) return "'0'"; //force to be org *
-      
-        if ((accessLevel==1) || (userLevel.equals("  O"))) { //No *: remove 0 from current list
-          if (retValue.equals("'0'")) 
-            retValue="";
-          else if (retValue.startsWith("'0',"))
-            retValue = retValue.substring(4);
-          else
-            retValue = retValue.replace(",'0'","");
-        } else {// Any: add 0 to current list 
-          if (!retValue.equals("'0'") && !retValue.startsWith("'0',") && retValue.indexOf(",'0'")==-1) {// Any: current list and *
-            retValue = "'0'" + (retValue.equals("")?"":",") + retValue;
-          } 
+        
+        Window window;
+        OBContext.getOBContext().setInAdministratorMode(true);
+        try {
+			window = (Window) org.openbravo.dal.service.OBDal.getInstance().get(Window.class, strWindow);
+			if (window.getWindowType().equals("T")) {
+	        	return OrgTree.getTransactionAllowedOrgs(retValue);
+	        } else {
+		        if ((accessLevel==1) || (userLevel.equals("  O"))) { //No *: remove 0 from current list
+		          if (retValue.equals("'0'")) 
+		            retValue="";
+		          else if (retValue.startsWith("'0',"))
+		            retValue = retValue.substring(4);
+		          else
+		            retValue = retValue.replace(",'0'","");
+		        } else {// Any: add 0 to current list 
+		          if (!retValue.equals("'0'") && !retValue.startsWith("'0',") && retValue.indexOf(",'0'")==-1) {// Any: current list and *
+		            retValue = "'0'" + (retValue.equals("")?"":",") + retValue;
+		          } 
+		        }
+	        }
+        } finally {
+        	OBContext.getOBContext().restorePreviousAdminMode();
         }
       }
       

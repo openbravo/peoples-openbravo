@@ -15,13 +15,18 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.WindowTreeData;
+import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.core.AD_OrgType;
 
 public class OrgTreeNode implements Serializable {
   private static final long serialVersionUID=1L;
   private String id;
   private String parentId;
-  private String value; 
+  private String value;
+  private String isReady;
+  private AD_OrgType orgType;
   
   /**
    * Creates a node from data related to it
@@ -31,6 +36,20 @@ public class OrgTreeNode implements Serializable {
     id = nodeData.id;
     parentId = nodeData.parentId;
     value = nodeData.name;
+    isReady = nodeData.isready;
+    orgType = (AD_OrgType) OBDal.getInstance().get(AD_OrgType.class ,nodeData.adOrgtypeId);
+  } 
+  /**
+   * Creates a node from the DAL object using 
+   * the organization's identifier
+   * @param AD_Org_ID Organization's identifier
+   */
+  public OrgTreeNode (String AD_Org_ID) {
+	  Organization org = (Organization) OBDal.getInstance().get(Organization.class, AD_Org_ID);
+	  id = AD_Org_ID;
+	  value = org.getName();
+	  isReady = org.isReady().toString();
+	  orgType = org.getOrgType();
   }
   /**
    * Creates a tree from data and returns the root node
@@ -61,6 +80,22 @@ public class OrgTreeNode implements Serializable {
     return value;
   }
   
+  public String getIsReady() {
+	return isReady;
+  }
+  
+  public void setIsReady(String isReady) {
+	this.isReady = isReady;
+  }
+  
+  public AD_OrgType getOrgType() {
+	return orgType;
+  }
+
+  public void setOrgType(AD_OrgType orgType) {
+    this.orgType = orgType;
+  }
+
   public boolean equals(String s) {
     return id.equals(s);
   }

@@ -56,6 +56,57 @@ public class OrgTree implements Serializable{
 	}
 	
 	/**
+	 * Creates a tree with a colon-separated AD_Org_ID in strOrgs
+	 * @param strOrgs colon-separated AD_Org_ID. Example: "'0','1000000'"
+	 */
+	public OrgTree(String strOrgs) {
+		OrgTreeNode orgTreeNode;
+		List<OrgTreeNode> nodeList = new ArrayList<OrgTreeNode>();
+		
+		int i=0;
+		int charAt_Old=0;
+		while (i < strOrgs.length()) {
+			char c = strOrgs.charAt(i++);
+			if (c==',') {
+				String AD_Org_ID = strOrgs.substring(charAt_Old+1, i-2);
+				charAt_Old=i;
+				orgTreeNode = new OrgTreeNode(AD_Org_ID);
+				nodeList.add(orgTreeNode);
+			}
+			// Get the last org of the string
+			if (i==strOrgs.length()-1) {
+				String AD_Org_ID = strOrgs.substring(charAt_Old+1, i);
+				orgTreeNode = new OrgTreeNode(AD_Org_ID);
+				nodeList.add(orgTreeNode);
+			}
+		}
+		
+		nodes = nodeList;
+	}
+	
+	/**
+	 * Returns a String with the Ready Organizations which are able 
+	 * to manage transactions (like for example Invoices)
+	 * @param strOrgs colon-separated AD_Org_ID. Example: "'0','1000000'"
+	 * @return colon-separated AD_Org_ID of Ready Organizations 
+	 * which are able to manage transactions. Example: "'0','1000000'"
+	 */
+	public static String getTransactionAllowedOrgs(String strOrgs){
+		StringBuffer sb = new StringBuffer();		
+		OrgTree orgTree = new OrgTree(strOrgs);		
+		Iterator<OrgTreeNode> iterator = orgTree.iterator();
+	    while (iterator.hasNext()) {
+	        OrgTreeNode n = iterator.next();
+	        if (n.getIsReady()=="true" && n.getOrgType().isTransactionsAllowed()) {
+	        	sb.append("'"+n.getId()+"',");
+	        }     
+	    }
+	    // Remove the last ','
+	    sb.deleteCharAt(sb.length()-1);		
+		return sb.toString();
+	}
+	
+	/**
 	 * Returns a sub-tree of the original tree with those organizations accessible by the role
 	 * @param conn
 	 * @param strRole
