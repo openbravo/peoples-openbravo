@@ -134,8 +134,16 @@ public class CreateFile extends HttpSecureAppServlet {
     int comprobacion2 = new Integer(CreateFileData.selectComprobacion2(this, strKey)).intValue();
     int comprobacion3 = new Integer(CreateFileData.selectComprobacion3(this, strKey)).intValue();
     int comprobacion4 = new Integer(CreateFileData.selectComprobacion4(this, strKey)).intValue();
-    if (log4j.isDebugEnabled()) log4j.debug(" c1:"+comprobacion1+" c2:"+comprobacion2+" c3:"+comprobacion3+" c4:"+comprobacion4);
+    CreateFileData[]comprobacion5=CreateFileData.selectComprobacion5(this, strKey);
+    if (log4j.isDebugEnabled()) log4j.debug(" c1:"+comprobacion1+" c2:"+comprobacion2+" c3:"+comprobacion3+" c4:"+comprobacion4+" c5:"+comprobacion5.length);
 
+    for (int i=0;i<comprobacion5.length;i++){ 
+    	strMessage=strMessage+comprobacion5[i].bpname+ " "+Utility.messageBD(this,"CodeBankBPErrorMultiple",vars.getLanguage())+"<br />";
+    }   
+    if (!strMessage.equals("")){
+          printPage(response, vars, strKey, "", "", strMessage, false);
+    }
+    
     if(comprobacion1 != 0 || comprobacion2 == 0 || comprobacion3 !=1 || comprobacion4 == 0){
     strMessage = Utility.messageBD(this, "CreateFileError", vars.getLanguage());
     printPage(response, vars, strKey, "", "", strMessage, false);
@@ -237,8 +245,17 @@ public class CreateFile extends HttpSecureAppServlet {
     int comprobacion1 = new Integer(CreateFileData.selectComprobacion1(this, strKey)).intValue();
 	int comprobacion2 = new Integer(CreateFileData.selectComprobacion2(this, strKey)).intValue();
 	int comprobacion3 = new Integer(CreateFileData.selectComprobacion3(this, strKey)).intValue();
-    int comprobacion4 = new Integer(CreateFileData.selectComprobacion4(this, strKey)).intValue();
+	int comprobacion4 = new Integer(CreateFileData.selectComprobacion4(this, strKey)).intValue();
+	CreateFileData[]comprobacion5=CreateFileData.selectComprobacion5(this, strKey);
+    if (log4j.isDebugEnabled()) log4j.debug(" c1:"+comprobacion1+" c2:"+comprobacion2+" c3:"+comprobacion3+" c4:"+comprobacion4+" c5:"+comprobacion5.length);
 
+    for (int i=0;i<comprobacion5.length;i++){ 
+    	strMessage=strMessage+comprobacion5[i].bpname+ " "+Utility.messageBD(this,"CodeBankBPErrorMultiple",vars.getLanguage())+"<br />";
+    }   
+    if (!strMessage.equals("")){
+          printPage(response, vars, strKey, "", "", strMessage, false);
+    }
+    
     if(comprobacion1 != 0 || comprobacion2 == 0 || comprobacion3 !=1 || comprobacion4 == 0){
       if (log4j.isDebugEnabled()) log4j.debug("Error: c1:"+comprobacion1+" c2:"+comprobacion2+" c3:"+comprobacion3+" c4:"+comprobacion4);
       strMessage = Utility.messageBD(this, "CreateFileError", vars.getLanguage());
@@ -396,7 +413,16 @@ public class CreateFile extends HttpSecureAppServlet {
     int comprobacion1 = new Integer(CreateFileData.selectComprobacion1(this, strKey)).intValue();
 	int comprobacion2 = new Integer(CreateFileData.selectComprobacion2(this, strKey)).intValue();
 	int comprobacion3 = new Integer(CreateFileData.selectComprobacion3(this, strKey)).intValue();
-    int comprobacion4 = new Integer(CreateFileData.selectComprobacion4(this, strKey)).intValue();
+	int comprobacion4 = new Integer(CreateFileData.selectComprobacion4(this, strKey)).intValue();
+    CreateFileData[]comprobacion5=CreateFileData.selectComprobacion5(this, strKey);
+    if (log4j.isDebugEnabled()) log4j.debug(" c1:"+comprobacion1+" c2:"+comprobacion2+" c3:"+comprobacion3+" c4:"+comprobacion4+" c5:"+comprobacion5.length);
+
+    for (int i=0;i<comprobacion5.length;i++){ 
+    	strMessage=strMessage+comprobacion5[i].bpname+ " "+Utility.messageBD(this,"CodeBankBPErrorMultiple",vars.getLanguage())+"<br />";
+    }   
+    if (!strMessage.equals("")){
+          printPage(response, vars, strKey, "", "", strMessage, false);
+    }
 
     if(comprobacion1 != 0 || comprobacion2 == 0 || comprobacion3 !=1 || comprobacion4 == 0){
       if (log4j.isDebugEnabled()) log4j.debug("Error: c1:"+comprobacion1+" c2:"+comprobacion2+" c3:"+comprobacion3+" c4:"+comprobacion4);

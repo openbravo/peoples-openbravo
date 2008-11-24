@@ -35,7 +35,7 @@
 			LPAD(RPAD(LPAD(B.CODEBANK,4,'0')||LPAD(B.CODEBRANCH,4,'0'),74,' '),94,' ') AS ENTOFI, LPAD(B.INE_NUMBER,61,' ') AS INE, 
 			'' AS TERCERO,
       '' AS FECHA_FACTURA, '' AS FECHA_VENCIMIENTO, '' AS PAYAMT, '' AS CREDITCARDNUMBER, '' AS N_FACTURA, '' AS N_FACTURA19, '' AS CIUDAD, '' AS DIRECCION,
-      '' AS CONCEPTO, '' AS PLAZA, '' AS LOCALIDAD, '' AS POSTAL, '' AS CODIGO_PROVINCIA, '' AS LINEAS, '' AS ORDENANTES, '' AS HUECO, '' AS CONTENT
+      '' AS CONCEPTO, '' AS PLAZA, '' AS LOCALIDAD, '' AS POSTAL, '' AS CODIGO_PROVINCIA, '' AS LINEAS, '' AS ORDENANTES, '' AS HUECO, '' AS CONTENT, '' AS bpname
       from c_remittance r, ad_client c, 
 					 c_bankAccount		ba,
 					 c_Bank						b,
@@ -163,6 +163,22 @@
     ]]>
     </Sql>
     <Parameter name="cRemittanceId"/>
-    </SqlMethod>
+   </SqlMethod>
+   <SqlMethod name="selectComprobacion5" type="preparedStatement" return="multiple" audit="false">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    <![CDATA[
+        SELECT c_bpartner.name as bpname
+        FROM c_remittanceline
+        INNER JOIN c_debt_payment ON (c_debt_payment.c_debt_payment_id= c_remittanceline.c_debt_payment_id)
+        INNER JOIN c_bp_bankaccount ON (c_bp_bankaccount.c_bpartner_id= c_debt_payment.c_bpartner_id and c_bp_bankaccount.isactive='Y')
+        INNER JOIN c_bpartner ON (c_bp_bankaccount.c_bpartner_id= c_bpartner.c_bpartner_id)
+        WHERE c_remittanceline.C_Remittance_ID = ?
+        GROUP BY c_debt_payment.c_bpartner_id,c_bpartner.name, c_remittanceline.c_debt_payment_id
+        HAVING count(*)>1
+    ]]>
+    </Sql>
+    <Parameter name="cRemittanceId"/>
+   </SqlMethod>
 </SqlClass>
 
