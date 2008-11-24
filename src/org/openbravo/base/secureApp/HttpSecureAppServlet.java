@@ -339,12 +339,14 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
     	else {
     		log4j.error("Error captured: " + e);
     		e.printStackTrace();
-    		bdErrorGeneral(response, "Error", e.toString());
+        if (strPopUp!=null && !strPopUp.equals("")) bdErrorGeneralPopUp(response, "Error", e.toString());
+        else bdErrorGeneral(response, "Error", e.toString());
     	}
     } catch (Exception e) {
       log4j.error("Error captured: " + e);
       e.printStackTrace();
-      bdErrorGeneral(response, "Error", e.toString());
+      if (strPopUp!=null && !strPopUp.equals("")) bdErrorGeneralPopUp(response, "Error", e.toString());
+      else bdErrorGeneral(response, "Error", e.toString());
     }
   }
 
@@ -527,6 +529,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet{
   public void bdErrorGeneral(HttpServletResponse response, String strTitle, String strText) throws IOException {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/base/secureApp/Error").createXmlDocument();
 
+    xmlDocument.setParameter("theme", myTheme);
     xmlDocument.setParameter("ParamTitulo", strTitle);
     xmlDocument.setParameter("ParamTexto", strText);
 
