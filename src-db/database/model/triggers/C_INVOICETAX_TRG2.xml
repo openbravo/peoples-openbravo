@@ -41,10 +41,10 @@ baseamount  NUMBER;
 whamountnew NUMBER;
 vwithid varchar2(32);
 finish_process BOOLEAN := FALSE;
-    v_ADEnabledTriggers NUMBER;
+    
 BEGIN
-    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
-    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    
+    IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
 

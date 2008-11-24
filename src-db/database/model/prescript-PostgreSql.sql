@@ -1287,12 +1287,16 @@ CREATE OR REPLACE FUNCTION c_create_temporary_tables()
 $BODY$ 
 BEGIN
  -- create temporary tables
- drop table if exists AD_ENABLE_TRIIGERS;
- CREATE GLOBAL TEMPORARY TABLE AD_ENABLE_TRIGGERS
+
+DROP TABLE IF EXISTS AD_ENABLE_TRIGGERS;
+
+ CREATE TABLE AD_ENABLE_TRIGGERS
  (
-   ISENABLED CHARACTER(1)             NOT NULL
- )
-  ON COMMIT PRESERVE ROWS;
+  SESSION_ID NUMERIC, 
+  ISENABLED CHARACTER(1)             NOT NULL
+);
+
+
 
  drop table if exists C_TEMP_SELECTION;
  CREATE GLOBAL TEMPORARY TABLE C_TEMP_SELECTION
@@ -1314,4 +1318,52 @@ RETURN null;
 END;
 $BODY$
   LANGUAGE 'plpgsql' VOLATILE
+/-- END
+
+SELECT * FROM c_create_temporary_tables()
+/-- END
+
+DROP FUNCTION c_create_temporary_tables()
+/-- END
+
+
+
+
+CREATE OR REPLACE FUNCTION AD_isTriggerEnabled()
+  RETURNS varchar AS
+$BODY$ DECLARE 
+/*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SL
+* All portions are Copyright (C) 2008 Openbravo SL
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************/
+  -- Logistice
+v_aux numeric;
+v_session numeric; 
+BEGIN
+  v_session = pg_backend_pid();
+  select count(*)
+    into v_aux
+    from ad_enable_triggers
+   where session_id = v_session
+     and isEnabled ='N';
+
+    if v_Aux>0 then 
+      return 'N';
+    else
+      return 'Y';
+    end if;
+END ; $BODY$
+  LANGUAGE 'plpgsql' VOLATILE;
 /-- END

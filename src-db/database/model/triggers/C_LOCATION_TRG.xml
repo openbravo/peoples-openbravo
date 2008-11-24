@@ -22,10 +22,10 @@
   cur_Bank RECORD;
   cur_BankAccount RECORD;
   v_IBANCount NUMBER;
-    v_ADEnabledTriggers NUMBER;
+    
 BEGIN
-    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
-    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    
+    IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
 

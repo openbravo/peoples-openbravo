@@ -29,10 +29,10 @@
  v_IsActive      CHAR(1) := 'Y';
  v_Count       NUMBER(10);
  v_JavaPackage VARCHAR2(315);
-    v_ADEnabledTriggers NUMBER;
+    
 BEGIN
-    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
-    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    
+    IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
 

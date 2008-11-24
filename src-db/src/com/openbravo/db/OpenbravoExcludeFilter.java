@@ -26,7 +26,8 @@ public class OpenbravoExcludeFilter extends ExcludeFilter {
             "PLAN_TABLE", 
             "AD_SYSTEM_MODEL", 
             "C_TEMP_SELECTION",
-            "C_TEMP_SELECTION2"};
+            "C_TEMP_SELECTION2",
+            "AD_ENABLE_TRIGGERS"};
     }
     
     public String[] getExcludedViews() {
@@ -92,7 +93,8 @@ public class OpenbravoExcludeFilter extends ExcludeFilter {
             "UUID_GENERATE_V1",
             "AD_ORG_CHK_DOCUMENTS",
             "AD_ORG_CHK_DOC_PAYMENTS",
-            "C_CREATE_TEMPORARY_TABLES"
+            "C_CREATE_TEMPORARY_TABLES",
+            "AD_ISTRIGGERENABLED"
             };
     }
 

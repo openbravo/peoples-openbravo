@@ -78,10 +78,10 @@
   FROM C_ElementValue WHERE C_ElementValue_ID=:new.User2_ID AND IsActive = 'Y';
  --
  v_change    BOOLEAN;
-    v_ADEnabledTriggers NUMBER;
+    
 BEGIN
-    SELECT COUNT(*) INTO v_ADEnabledTriggers FROM AD_ENABLE_TRIGGERS WHERE ISENABLED='N';
-    IF v_ADEnabledTriggers!=0 THEN RETURN;
+    
+    IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
 
 
