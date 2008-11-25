@@ -1,7 +1,7 @@
 
 SmartSprites License
 
-Copyright (C) 2008, Stanis³aw Osiñski.
+Copyright (C) 2008, StanisÂ³aw OsiÃ±ski.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
