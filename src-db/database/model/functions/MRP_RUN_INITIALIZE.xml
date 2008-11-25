@@ -89,6 +89,7 @@ BEGIN
                           AND (p_Product_Category_ID IS NULL OR p.M_PRODUCT_CATEGORY_ID = p_Product_Category_ID)
                           AND (p_Planner_ID IS NULL OR COALESCE(po.MRP_PLANNER_ID, p.MRP_Planner_ID) = p_Planner_ID)
                           AND Ad_Isorgincluded(p_Org_ID, p.AD_ORG_ID, p_Client_ID) > -1
+                          AND p.AD_Client_ID = p_Client_ID
                           AND ((p_Production = 'Y' AND p.ISPURCHASED = 'N') OR (p_Production = 'N' AND p.ISPURCHASED = 'Y'))
                           AND (p_Production = 'Y' OR
                                (p_Vendor_ID IS NULL
