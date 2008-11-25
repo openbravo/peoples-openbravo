@@ -130,19 +130,27 @@ public class ProcessMonitor implements SchedulerListener, JobListener,
         final ProcessContext ctx = bundle.getContext();
         try {
             final String executionId = (String) jec.get(EXECUTION_ID);
+            final String log = bundle.getLog().length() >= 4000 ? 
+                    bundle.getLog().substring(0, 3999) : bundle.getLog();
             if (jee == null) {
                 ProcessRunData.update(getConnection(), ctx.getUser(), SUCCESS,
                         format(new Date()), getDuration(jec.getJobRunTime()),
-                        bundle.getLog().toString(), executionId);
+                        log, executionId);
             } else {
                 ProcessRunData.update(getConnection(), ctx.getUser(), ERROR,
                         format(new Date()), getDuration(jec.getJobRunTime()),
-                        bundle.getLog().toString(), executionId);
+                        log, executionId);
             }
 
         } catch (final ServletException e) {
             log.error(e.getMessage(), e);
         }
+    }
+    
+    public static void main(String... args) {
+        final StringBuilder sb = new StringBuilder(10);
+        sb.append("12345678901");
+        System.out.println(sb.toString());
     }
     
     public void triggerFinalized(Trigger trigger) {
