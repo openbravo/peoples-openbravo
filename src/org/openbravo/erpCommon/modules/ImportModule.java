@@ -18,30 +18,18 @@
 */
 package org.openbravo.erpCommon.modules;
 
-import org.apache.commons.beanutils.DynaBean;
-import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.ddlutils.Platform;
-import org.apache.ddlutils.PlatformFactory;
-import org.apache.ddlutils.io.DataReader;
-import org.apache.ddlutils.io.DataToArraySink;
-import org.apache.ddlutils.io.DatabaseDataIO;
-import org.apache.ddlutils.model.Database;
-
-import org.apache.log4j.Logger;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.database.CPStandAlone;
-import org.openbravo.database.ConnectionProvider;
-import org.openbravo.ddlutils.task.DatabaseUtils;
-import org.openbravo.services.webservice.*;
-import org.openbravo.erpCommon.utility.OBError;
-import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.erpCommon.utility.Zip;
-
-import org.w3c.dom.*;
-
-import java.io.*;
-import java.util.*;
-import java.util.zip.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Properties;
+import java.util.Vector;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.servlet.ServletException;
 import javax.xml.parsers.DocumentBuilder;
@@ -51,6 +39,33 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
+import org.apache.commons.beanutils.DynaBean;
+import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.ddlutils.Platform;
+import org.apache.ddlutils.PlatformFactory;
+import org.apache.ddlutils.io.DataReader;
+import org.apache.ddlutils.io.DataToArraySink;
+import org.apache.ddlutils.io.DatabaseDataIO;
+import org.apache.ddlutils.model.Database;
+import org.apache.log4j.Logger;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.database.CPStandAlone;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.ddlutils.task.DatabaseUtils;
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.erpCommon.utility.Zip;
+import org.openbravo.services.webservice.Module;
+import org.openbravo.services.webservice.ModuleDependency;
+import org.openbravo.services.webservice.ModuleInstallDetail;
+import org.openbravo.services.webservice.SimpleModule;
+import org.openbravo.services.webservice.WebServiceImpl;
+import org.openbravo.services.webservice.WebServiceImplServiceLocator;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 
 /**
@@ -106,7 +121,7 @@ public class ImportModule {
     vars = _vars;
     obDir = obdir;
     pool = conn;
-    File [] f= new File[3];
+    final File [] f= new File[3];
     f[0] = new File(obDir+"/src-db/database/model/tables/AD_MODULE.xml");
     f[1] = new File(obDir+"/src-db/database/model/tables/AD_MODULE_DEPENDENCY.xml");
     f[2] = new File(obDir+"/src-db/database/model/tables/AD_MODULE_DBPREFIX.xml");
@@ -118,7 +133,7 @@ public class ImportModule {
    * Check the dependencies for a file name. See {@link checkDependenciesId}
    */ 
   public boolean checkDependenciesFileName(String fileName) throws Exception{
-    File file = new File(fileName);
+    final File file = new File(fileName);
     if (!file.exists()) throw new Exception("File "+fileName+" do not exist!");
     return checkDependenciesFile(new FileInputStream(file));
   }
@@ -138,7 +153,7 @@ public class ImportModule {
       //pull the rest of them
       
       getModulesFromObx(dynModulesToInstall, dependencies, new Vector<DynaBean>(), file);
-      String[] installableModules = new String[1];
+      final String[] installableModules = new String[1];
       installableModules[0] = (String)dynModulesToInstall.get(0).get("AD_MODULE_ID");
       checkDependenciesId(installableModules, new String[0]);
     }
@@ -148,7 +163,7 @@ public class ImportModule {
     if (!checked) {
       try {
         ImportModuleData.insertLog(pool, (vars==null?"0":vars.getUser()), "", "", "",  "Cannot perform installation correctly: "+errors.getMessage()+(force?". Forced anyway":""), "E");
-      } catch(ServletException ex) {ex.printStackTrace();}
+      } catch(final ServletException ex) {ex.printStackTrace();}
     }
     return checked;
   }
@@ -164,7 +179,7 @@ public class ImportModule {
     //just for remote usage
     errors = new OBError();
     VersionUtility.setPool(pool);
-    ModuleInstallDetail mid = VersionUtility.checkRemote(vars, installableModules, updateableModules, errors);
+    final ModuleInstallDetail mid = VersionUtility.checkRemote(vars, installableModules, updateableModules, errors);
     modulesToInstall = mid.getModulesToInstall();
     modulesToUpdate = mid.getModulesToUpdate();
     checked = mid.isValidConfiguration();
@@ -179,7 +194,7 @@ public class ImportModule {
    * 
    */
   public void execute(String fileName) throws Exception{
-    File file = new File(fileName);
+    final File file = new File(fileName);
     if (!file.exists()) throw new Exception("File "+fileName+" do not exist!");
     execute(new FileInputStream(fileName), new FileInputStream(fileName));
   }
@@ -198,8 +213,8 @@ public class ImportModule {
           initInstallation();
           
           //Obtain the first ID for the module to be installed (this is done for core)
-          Vector<DynaBean> obxModule = new Vector<DynaBean>();
-          Vector<DynaBean> dbprefix = new Vector<DynaBean>();     // not used       
+          final Vector<DynaBean> obxModule = new Vector<DynaBean>();
+          final Vector<DynaBean> dbprefix = new Vector<DynaBean>();     // not used       
           
           getModulesFromObx(obxModule, new Vector<DynaBean>(), dbprefix, file2);
           
@@ -212,12 +227,12 @@ public class ImportModule {
           execute();
         }
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       e.printStackTrace();
       addLog(e.toString(), MSG_ERROR);
       try {
         ImportModuleData.insertLog(pool, (vars==null?"0":vars.getUser()), "", "", "",  e.toString(), "E");
-      } catch(ServletException ex) {ex.printStackTrace();}
+      } catch(final ServletException ex) {ex.printStackTrace();}
       rollback();
     }
   }
@@ -233,13 +248,13 @@ public class ImportModule {
     WebServiceImpl ws=null;
     try {
       loc = new WebServiceImplServiceLocator();
-      ws = (WebServiceImpl) loc.getWebService();
-    } catch (Exception e) {
+      ws = loc.getWebService();
+    } catch (final Exception e) {
       e.printStackTrace();
       addLog("@CouldntConnectToWS@", MSG_ERROR);
       try {
         ImportModuleData.insertLog(pool, (vars==null?"0":vars.getUser()), "", "", "",  "Couldn't contact with webservice server", "E");
-      } catch(ServletException ex) {ex.printStackTrace();}
+      } catch(final ServletException ex) {ex.printStackTrace();}
       return;
     }
     if (checked || force) {
@@ -252,26 +267,26 @@ public class ImportModule {
       if (modulesToInstall != null) {
         for (int i=0; i<modulesToInstall.length;i++){
           try {
-            byte[] getMod = ws.getModule(modulesToInstall[i].getModuleVersionID());
+            final byte[] getMod = ws.getModule(modulesToInstall[i].getModuleVersionID());
             ByteArrayInputStream obx= new ByteArrayInputStream(getMod);
             
             installModule(obx, modulesToInstall[i].getModuleID());
             //Add entries in .classpath for eclipse users
-            Vector<DynaBean> dynMod = new Vector<DynaBean>();
-            Vector<DynaBean> dynDep = new Vector<DynaBean>();
-            Vector<DynaBean> dynDbPrefix = new Vector<DynaBean>();
+            final Vector<DynaBean> dynMod = new Vector<DynaBean>();
+            final Vector<DynaBean> dynDep = new Vector<DynaBean>();
+            final Vector<DynaBean> dynDbPrefix = new Vector<DynaBean>();
             obx= new ByteArrayInputStream(getMod);
             getModulesFromObx(dynMod, dynDep, dynDbPrefix, obx);
             insertDynaModulesInDB(dynMod, dynDep, dynDbPrefix);
             addDynaClasspathEntries(dynMod);
-          } catch (Exception e) {
+          } catch (final Exception e) {
             e.printStackTrace();
             addLog("@ErrorGettingModule@", MSG_ERROR);
             rollback();
             try {
               ImportModuleData.insertLog(pool, (vars==null?"0":vars.getUser()), "", 
                   "", "",  "Error getting module "+modulesToInstall[i].getName()+" - "+modulesToInstall[i].getVersionNo(), "E");
-            } catch(ServletException ex) {ex.printStackTrace();}
+            } catch(final ServletException ex) {ex.printStackTrace();}
             return;
           }
         }
@@ -280,25 +295,25 @@ public class ImportModule {
       if (modulesToUpdate!=null) {
         for (int i=0; i<modulesToUpdate.length; i++){
           try {
-            byte[] getMod = ws.getModule(modulesToUpdate[i].getModuleVersionID());
+            final byte[] getMod = ws.getModule(modulesToUpdate[i].getModuleVersionID());
             installModule(new ByteArrayInputStream(getMod), modulesToUpdate[i].getModuleID());
             
-            Vector<DynaBean> dynMod = new Vector<DynaBean>();
-            Vector<DynaBean> dynDep = new Vector<DynaBean>();
-            Vector<DynaBean> dynDBPrefix = new Vector<DynaBean>();
+            final Vector<DynaBean> dynMod = new Vector<DynaBean>();
+            final Vector<DynaBean> dynDep = new Vector<DynaBean>();
+            final Vector<DynaBean> dynDBPrefix = new Vector<DynaBean>();
             
             getModulesFromObx(dynMod, dynDep, dynDBPrefix, new ByteArrayInputStream(getMod));
             insertDynaModulesInDB(dynMod, dynDep, dynDBPrefix);
             
             //Entries for .classpath should be there, do not try to insert them
-          } catch (Exception e) {
+          } catch (final Exception e) {
             e.printStackTrace();
             addLog("@ErrorGettingModule@", MSG_ERROR);
             rollback();
             try {
               ImportModuleData.insertLog(pool, (vars==null?"0":vars.getUser()), "", 
                   "", "",  "Error getting module "+modulesToUpdate[i].getName()+" - "+modulesToUpdate[i].getVersionNo(), "E");
-            } catch(ServletException ex) {ex.printStackTrace();}
+            } catch(final ServletException ex) {ex.printStackTrace();}
             return;
           }
         }
@@ -315,18 +330,18 @@ public class ImportModule {
   private void initInstallation() {
     
     if (modulesToUpdate==null || modulesToUpdate.length==0) return;
-    File dir = new File(obDir+"/backup_install");
+    final File dir = new File(obDir+"/backup_install");
     if (!dir.exists()) dir.mkdirs();
     for (int i=0; i<modulesToUpdate.length; i++){
       //Prepare backup for updates
       if (modulesToUpdate[i].getModuleID().equals("0")){ //Updating core
         //set directories to zip
-        File core[]=getCore();
+        final File core[]=getCore();
         
         log4j.info("Zipping core...");
         try {
           Zip.zip(core, obDir+"/backup_install/"+modulesToUpdate[i].getPackageName()+"-"+modulesToUpdate[i].getVersionNo()+".zip", obDir);
-        } catch (Exception e) {
+        } catch (final Exception e) {
           e.printStackTrace();
         }
         Utility.deleteDir(core);
@@ -334,7 +349,7 @@ public class ImportModule {
         try {
           Zip.zip(obDir+"/modules/"+modulesToUpdate[i].getPackageName(), 
               obDir+"/backup_install/"+modulesToUpdate[i].getPackageName()+"-"+modulesToUpdate[i].getVersionNo()+".zip");
-        } catch (Exception e) {
+        } catch (final Exception e) {
           e.printStackTrace();
         }
         //Delete directory to be updated
@@ -386,8 +401,8 @@ public class ImportModule {
    */
   public OBError getOBError(ConnectionProvider conn){
     if (log.length()!=0) {
-      String lang = vars.getLanguage();
-      OBError rt = new OBError();
+      final String lang = vars.getLanguage();
+      final OBError rt = new OBError();
       switch (logLevel) {
       case MSG_ERROR:
         rt.setType("Error");
@@ -416,7 +431,7 @@ public class ImportModule {
     addLog("@RollbackInstallation@",MSG_ERROR);
     try {
       ImportModuleData.insertLog(pool, (vars==null?"0":vars.getUser()), "", "", "",  "Rollback installation", "E");
-    } catch(ServletException ex) {ex.printStackTrace();}
+    } catch(final ServletException ex) {ex.printStackTrace();}
     if (modulesToInstall != null && modulesToInstall.length>0){
       for (int i=0; i<modulesToInstall.length; i++) {
         try {
@@ -425,12 +440,12 @@ public class ImportModule {
           ImportModuleData.deleteDependencies(pool, modulesToInstall[i].getModuleID());
           ImportModuleData.deleteDBPrefix(pool, modulesToInstall[i].getModuleID());
           ImportModuleData.deleteModule(pool, modulesToInstall[i].getModuleID());
-        } catch (Exception e) {
+        } catch (final Exception e) {
           e.printStackTrace();
           addLog("Error deleting module "+modulesToInstall[i].getName()+" from db. "+e.getMessage() ,MSG_ERROR);
         }
         
-        File f = new File(obDir+"/modules/"+modulesToInstall[i].getPackageName());
+        final File f = new File(obDir+"/modules/"+modulesToInstall[i].getPackageName());
         if (f.exists()) {
           if (Utility.deleteDir(f)) addLog("@DeletedDirectory@ "+f.getAbsolutePath(),MSG_ERROR);
           else addLog("@CouldntDeleteDirectory@ "+f.getAbsolutePath(),MSG_ERROR);
@@ -441,17 +456,17 @@ public class ImportModule {
     if (modulesToUpdate != null && modulesToUpdate.length>0) {
       for (int i=0; i<modulesToUpdate.length; i++) {
         if (modulesToUpdate[i].getModuleID().equals("0")) { //restore core
-          File core[]=getCore();
+          final File core[]=getCore();
           Utility.deleteDir(core);
           try {
             Zip.unzip(obDir+"/backup_install/"+modulesToUpdate[i].getPackageName()+"-"+modulesToUpdate[i].getVersionNo()+".zip", obDir);
-          } catch(Exception e) {e.printStackTrace();}
+          } catch(final Exception e) {e.printStackTrace();}
         } else { //restore regular modules
           try {
             Utility.deleteDir(new File(obDir+"/modules/"+modulesToUpdate[i].getPackageName()));
             Zip.unzip(obDir+"/backup_install/"+modulesToUpdate[i].getPackageName()+"-"+modulesToUpdate[i].getVersionNo()+".zip", 
                       obDir+"/modules/"+modulesToUpdate[i].getPackageName());
-          } catch(Exception e) {e.printStackTrace();}
+          } catch(final Exception e) {e.printStackTrace();}
         }
       }
     }
@@ -498,9 +513,9 @@ public class ImportModule {
    * Receives a  Vector<DynaBean> and tranforms it to a Module[]
    */  
   private Module[] dyanaBeanToModules(Vector<DynaBean> dynModulesToInstall, Vector<DynaBean> dynDependencies) {
-    Module[] rt = new Module[dynModulesToInstall.size()];
+    final Module[] rt = new Module[dynModulesToInstall.size()];
     int i = 0;
-    for (DynaBean dynModule : dynModulesToInstall) {
+    for (final DynaBean dynModule : dynModulesToInstall) {
       rt[i] = new Module();
       rt[i].setModuleID((String)dynModule.get("AD_MODULE_ID"));
       rt[i].setVersionNo((String)dynModule.get("VERSION"));
@@ -524,17 +539,17 @@ public class ImportModule {
    *  
    */
   private ModuleDependency[] dyanaBeanToDependencies(Vector<DynaBean> dynDependencies, String ad_module_id) {
-    ArrayList<ModuleDependency> dep =new ArrayList<ModuleDependency>();
-    for (DynaBean dynModule : dynDependencies) {
+    final ArrayList<ModuleDependency> dep =new ArrayList<ModuleDependency>();
+    for (final DynaBean dynModule : dynDependencies) {
       if (((String)dynModule.get("AD_MODULE_ID")).equals(ad_module_id)){
-        ModuleDependency md = new ModuleDependency();
+        final ModuleDependency md = new ModuleDependency();
         md.setModuleID((String)dynModule.get("AD_DEPENDENT_MODULE_ID"));
         md.setVersionStart((String)dynModule.get("STARTVERSION"));
         md.setVersionEnd((String)dynModule.get("ENDVERSION"));
         dep.add(md);
       }
     }
-    ModuleDependency rt[] = new ModuleDependency[dep.size()];
+    final ModuleDependency rt[] = new ModuleDependency[dep.size()];
     for (int i=0;i<rt.length;i++){
       rt[i]=dep.get(i);
     }
@@ -551,11 +566,11 @@ public class ImportModule {
       return;
     }
     log4j.info("Adding .claspath entries");
-    DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-    Document doc = docBuilder.parse(obDir+"/.classpath");
-    for (DynaBean module : modulesToInstall) {
-       String dir = obDir+"/modules/"+(String)module.get("JAVAPACKAGE")+"/src";
+    final DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+    final DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+    final Document doc = docBuilder.parse(obDir+"/.classpath");
+    for (final DynaBean module : modulesToInstall) {
+       final String dir = obDir+"/modules/"+(String)module.get("JAVAPACKAGE")+"/src";
        if (new File(dir).exists()) {
          addClassPathEntry(doc, dir);
        } else {
@@ -564,11 +579,11 @@ public class ImportModule {
     }
 
     //Save the modified xml file to .classpath file
-    Transformer transformer = TransformerFactory.newInstance().newTransformer();
+    final Transformer transformer = TransformerFactory.newInstance().newTransformer();
     transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-    FileOutputStream fout = new FileOutputStream(obDir+"/.classpath");
-    StreamResult result = new StreamResult(fout);
-    DOMSource source = new DOMSource(doc);
+    final FileOutputStream fout = new FileOutputStream(obDir+"/.classpath");
+    final StreamResult result = new StreamResult(fout);
+    final DOMSource source = new DOMSource(doc);
     transformer.transform(source, result);
     fout.close();
   }
@@ -578,9 +593,9 @@ public class ImportModule {
    */
   private void addClassPathEntry(Document doc, String dir) throws Exception {
     log4j.info("adding entry for directory"+dir);
-    Node root = doc.getFirstChild();
-    Node classpath = doc.createElement("classpathentry");
-    NamedNodeMap cpAttributes = classpath.getAttributes();
+    final Node root = doc.getFirstChild();
+    final Node classpath = doc.createElement("classpathentry");
+    final NamedNodeMap cpAttributes = classpath.getAttributes();
     
     Attr attr = doc.createAttribute("kind");
     attr.setValue("src");
@@ -604,12 +619,12 @@ public class ImportModule {
    * @throws Exception
    */
   private ByteArrayInputStream getCurrentEntryStream(ZipInputStream obxInputStream) throws Exception {
-    ByteArrayOutputStream fout=new ByteArrayOutputStream();
+    final ByteArrayOutputStream fout=new ByteArrayOutputStream();
     for (int c = obxInputStream.read(); c != -1; c = obxInputStream.read()) {
       fout.write(c);
     }
     fout.close();
-    ByteArrayInputStream ba = new ByteArrayInputStream(fout.toByteArray());
+    final ByteArrayInputStream ba = new ByteArrayInputStream(fout.toByteArray());
     return ba;
   }
   
@@ -621,22 +636,22 @@ public class ImportModule {
    * @throws Exception
    */
   private void insertDynaModulesInDB(Vector<DynaBean> modulesToInstall, Vector<DynaBean> dependencies, Vector<DynaBean> dbPrefix) throws Exception {
-    Properties obProperties = new Properties();
+    final Properties obProperties = new Properties();
     obProperties.load(new FileInputStream(obDir+"/config/Openbravo.properties"));
 
-    String url = obProperties.getProperty("bbdd.url")+(obProperties.getProperty("bbdd.rdbms").equals("POSTGRE")?"/"+obProperties.getProperty("bbdd.sid"):"");
+    final String url = obProperties.getProperty("bbdd.url")+(obProperties.getProperty("bbdd.rdbms").equals("POSTGRE")?"/"+obProperties.getProperty("bbdd.sid"):"");
    
-    BasicDataSource ds = new BasicDataSource();
+    final BasicDataSource ds = new BasicDataSource();
     ds.setDriverClassName(obProperties.getProperty("bbdd.driver"));
     ds.setUrl(url);
     ds.setUsername(obProperties.getProperty("bbdd.user"));
     ds.setPassword(obProperties.getProperty("bbdd.password"));    
     
-    Platform platform = PlatformFactory.createNewPlatformInstance(ds);
+    final Platform platform = PlatformFactory.createNewPlatformInstance(ds);
     
     Integer seqNo = new Integer(ImportModuleData.selectSeqNo(pool));
     
-    for (DynaBean module : modulesToInstall) {
+    for (final DynaBean module : modulesToInstall) {
       seqNo += 10;
       module.set("ISINDEVELOPMENT","Y");
       module.set("ISDEFAULT","N");
@@ -647,10 +662,10 @@ public class ImportModule {
       platform.updateinsert(ds.getConnection(), db, module);
       addLog("@ModuleInstalled@ "+module.get("NAME")+" - "+module.get("VERSION"), MSG_SUCCESS);
     }
-    for (DynaBean module : dependencies) {
+    for (final DynaBean module : dependencies) {
       platform.updateinsert(ds.getConnection(), db, module);
     }
-    for (DynaBean module : dbPrefix) {
+    for (final DynaBean module : dbPrefix) {
       platform.updateinsert(ds.getConnection(), db, module);
     }
   }
@@ -663,12 +678,12 @@ public class ImportModule {
    * @throws Exception
    */
   private void getModulesFromObx(Vector<DynaBean> dynModulesToInstall, Vector<DynaBean> dependencies, Vector<DynaBean> dbprefix,InputStream obx) throws Exception {
-    ZipInputStream obxInputStream = new ZipInputStream(obx);
+    final ZipInputStream obxInputStream = new ZipInputStream(obx);
     ZipEntry entry = null;
     while (((entry = obxInputStream.getNextEntry()) != null)) {
      
       if (entry.getName().endsWith(".obx")) { //If it is a new module install it
-        ByteArrayInputStream ba = getCurrentEntryStream(obxInputStream);
+        final ByteArrayInputStream ba = getCurrentEntryStream(obxInputStream);
         obxInputStream.closeEntry();
         getModulesFromObx(dynModulesToInstall, dependencies, dbprefix, ba);
       } else if (entry.getName().replace("\\", "/").endsWith("src-db/database/sourcedata/AD_MODULE.xml")) {
@@ -695,17 +710,17 @@ public class ImportModule {
    * @throws Exception
    */
   private void getModulesFromObxLocal(InputStream obx) throws Exception {
-    ZipInputStream obxInputStream = new ZipInputStream(obx);
+    final ZipInputStream obxInputStream = new ZipInputStream(obx);
     ZipEntry entry = null;
     while (((entry = obxInputStream.getNextEntry()) != null)) {
      
       if (entry.getName().endsWith(".obx")) { //If it is a new module install it
-        ByteArrayInputStream ba = getCurrentEntryStream(obxInputStream);
+        final ByteArrayInputStream ba = getCurrentEntryStream(obxInputStream);
         obxInputStream.closeEntry();
         getModulesFromObxLocal(ba);
       } else if (entry.getName().replace("\\", "/").endsWith("src-db/database/sourcedata/AD_MODULE.xml")) {
-        Vector<DynaBean> v = getEntryDynaBeans(obxInputStream);
-        for (DynaBean module : v) {
+        final Vector<DynaBean> v = getEntryDynaBeans(obxInputStream);
+        for (final DynaBean module : v) {
           if (ImportModuleData.moduleInstalled(pool, (String)module.get("AD_MODULE_ID"))) {
             //TODO: Check higher version
             dynModulesToUpdate.add(module);
@@ -724,16 +739,16 @@ public class ImportModule {
   }
   
   /**
-   * Reads a ZipInputStream and returs a Vector<DynaBean> with its modules
+   * Reads a ZipInputStream and returns a Vector<DynaBean> with its modules
    * 
    * @param obxInputStream
    * @return
    * @throws Exception
    */
   private Vector<DynaBean> getEntryDynaBeans(ZipInputStream obxInputStream) throws Exception{
-    ByteArrayInputStream ba = getCurrentEntryStream(obxInputStream);
-    DatabaseDataIO io = new DatabaseDataIO();
-    DataReader dr = io.getConfiguredCompareDataReader(db);
+    final ByteArrayInputStream ba = getCurrentEntryStream(obxInputStream);
+    final DatabaseDataIO io = new DatabaseDataIO();
+    final DataReader dr = io.getConfiguredCompareDataReader(db);
     dr.getSink().start();
     dr.parse(ba);
     return ((DataToArraySink)dr.getSink()).getVector();
@@ -752,21 +767,21 @@ public class ImportModule {
         throw new Exception("Cannot write on directory: "+obDir+"/modules");
       }
       
-      ZipInputStream obxInputStream = new ZipInputStream(obx);
+      final ZipInputStream obxInputStream = new ZipInputStream(obx);
       ZipEntry entry = null;
       while ((entry = obxInputStream.getNextEntry()) != null) {
         if (entry.getName().endsWith(".obx")) { //If it is a new module install it
           if (installLocally) {
-            ByteArrayOutputStream fout=new ByteArrayOutputStream();
+            final ByteArrayOutputStream fout=new ByteArrayOutputStream();
             for (int c = obxInputStream.read(); c != -1; c = obxInputStream.read()) {
               fout.write(c);
             }
             fout.close();
-            ByteArrayInputStream ba = new ByteArrayInputStream(fout.toByteArray());
-            ByteArrayInputStream ba1 = new ByteArrayInputStream(fout.toByteArray());
+            final ByteArrayInputStream ba = new ByteArrayInputStream(fout.toByteArray());
+            final ByteArrayInputStream ba1 = new ByteArrayInputStream(fout.toByteArray());
             
             //Obtain the ID for the module to be installed (this is done for core)
-            Vector<DynaBean> obxModule = new Vector<DynaBean>();
+            final Vector<DynaBean> obxModule = new Vector<DynaBean>();
             getModulesFromObx(obxModule, new Vector<DynaBean>(), new Vector<DynaBean>(), ba1);
             
             installModule(ba, (String) obxModule.get(0).get("AD_MODULE_ID"));
@@ -774,22 +789,26 @@ public class ImportModule {
           obxInputStream.closeEntry();
         } else { 
           
-          String fileName = obDir+"/modules/"+entry.getName().replace("\\","/");
-          File entryFile = new File(fileName);
+          final String fileName = obDir+(moduleID.equals("0")?"/":"/modules/")+entry.getName().replace("\\","/");
+          final File entryFile = new File(fileName);
           //Check whether the directory exists, if not create
           if (entryFile.getParent() != null) { 
-            File dir = new File(entryFile.getParent()); 
-            if (!dir.exists()) {
-              log4j.info("Created dir: "+dir.getAbsolutePath());
-              dir.mkdirs();
-            }
+              final File dir = new File(entryFile.getParent()); 
+              if (!dir.exists()) {
+                  log4j.info("Created dir: "+dir.getAbsolutePath());
+                  dir.mkdirs();
+              }
           }
           //Unzip the file
           log4j.info("Installing " + fileName);
-          FileOutputStream fout = new FileOutputStream(entryFile);
-          for (int c = obxInputStream.read(); c != -1; c = obxInputStream.read()) {
-            fout.write(c);
+          final FileOutputStream fout = new FileOutputStream(entryFile);
+          final byte[] buf = new byte[1024];
+          
+          int len;
+          while ((len = obxInputStream.read(buf)) > 0) {
+              fout.write(buf, 0, len);
           }
+
           fout.close();
           obxInputStream.closeEntry();
         }
@@ -807,7 +826,7 @@ public class ImportModule {
    */
   private void insertDBLog(){
     try {
-      String user = vars==null?"0":vars.getUser();
+      final String user = vars==null?"0":vars.getUser();
       if (modulesToInstall!=null && modulesToInstall.length>0) {
         for (int i=0; i<modulesToInstall.length; i++){
           ImportModuleData.insertLog(pool, user, modulesToInstall[i].getModuleID(), 
@@ -822,7 +841,7 @@ public class ImportModule {
                                              "Updated module "+modulesToUpdate[i].getName()+" to version "+modulesToUpdate[i].getVersionNo(), "U");
           }
       } 
-    } catch (ServletException e) {e.printStackTrace();}
+    } catch (final ServletException e) {e.printStackTrace();}
   }
  
   /**
@@ -835,23 +854,23 @@ public class ImportModule {
    */
   public static HashMap<String, String> scanForUpdates(ConnectionProvider conn, VariablesSecureApp vars){
     try {
-      HashMap<String, String> updateModules=new HashMap<String ,String>();
-      String user = vars==null?"0":vars.getUser();
+      final HashMap<String, String> updateModules=new HashMap<String ,String>();
+      final String user = vars==null?"0":vars.getUser();
       ImportModuleData.insertLog(conn, user, "", "", "", "Scanning For Updates", "S");
       WebServiceImplServiceLocator loc;
       WebServiceImpl ws=null;
       SimpleModule[] updates;
       try {
         loc = new WebServiceImplServiceLocator();
-        ws = (WebServiceImpl) loc.getWebService();
-        HashMap<String, String> currentlyInstalledModules = getInstalledModules(conn);
+        ws = loc.getWebService();
+        final HashMap<String, String> currentlyInstalledModules = getInstalledModules(conn);
         updates =  ws.moduleScanForUpdates(currentlyInstalledModules); 
-      } catch (Exception e) {
+      } catch (final Exception e) {
         //do nothing just log the error
         e.printStackTrace();
         try {
           ImportModuleData.insertLog(conn, user, "", "", "",  "Scan for updates: Couldn't contact with webservice server", "E");
-        } catch(ServletException ex) {ex.printStackTrace();}
+        } catch(final ServletException ex) {ex.printStackTrace();}
         return updateModules; //return empty hashmap
       }
       
@@ -868,20 +887,20 @@ public class ImportModule {
       }
       try {
         ImportModuleData.insertLog(conn, (vars==null?"0":vars.getUser()), "", "", "",  "Total: found "+updateModules.size()+" updates", "S");
-      } catch(ServletException ex) {ex.printStackTrace();}
+      } catch(final ServletException ex) {ex.printStackTrace();}
       return updateModules;
-    } catch (Exception e) {
+    } catch (final Exception e) {
       e.printStackTrace();
       try {
         ImportModuleData.insertLog(conn, (vars==null?"0":vars.getUser()), "", "", "",  "Scan for updates: Error: "+e.toString(), "E");
-      } catch(ServletException ex) {ex.printStackTrace();}
+      } catch(final ServletException ex) {ex.printStackTrace();}
       return new HashMap<String,String>();
     }
   }
   
   private static void addParentUpdates(HashMap<String, String> updates, ConnectionProvider conn) {
     final HashMap<String, String> iniUpdates = (HashMap<String, String>) updates.clone(); 
-    for (String node: iniUpdates.keySet()) {
+    for (final String node: iniUpdates.keySet()) {
       addParentNode(node, updates, iniUpdates, conn);
     }
   }
@@ -890,7 +909,7 @@ public class ImportModule {
     String parentId;
     try {
       parentId = ImportModuleData.getParentNode(conn, node);
-    } catch (ServletException e) {
+    } catch (final ServletException e) {
       //do nothing just stop adding elements
       e.printStackTrace();
       return;
@@ -907,11 +926,11 @@ public class ImportModule {
    * @return HashMap<String,String> -> <ModuleId, VersionNo>
    */
   public static HashMap<String, String> getInstalledModules(ConnectionProvider conn) {
-    HashMap<String, String> rt = new HashMap<String, String>();
+    final HashMap<String, String> rt = new HashMap<String, String>();
     ImportModuleData data[]=null;
     try {
       data = ImportModuleData.selectInstalled(conn);
-    } catch (Exception e) {e.printStackTrace();}
+    } catch (final Exception e) {e.printStackTrace();}
     if (data!=null) {
       for (int i=0; i<data.length; i++) {
         rt.put(data[i].adModuleId, data[i].version);
@@ -925,7 +944,7 @@ public class ImportModule {
    * @return
    */
   private File[] getCore() {
-    File[] file = new File[10];
+    final File[] file = new File[12];
     file[0]= new File(obDir+"/legal");
     file[1]= new File(obDir+"/lib");
     file[2]= new File(obDir+"/WebContent");
@@ -936,6 +955,8 @@ public class ImportModule {
     file[7]= new File(obDir+"/src-wad");
     file[8]= new File(obDir+"/src");
     file[9]= new File(obDir+"/web");
+    file[10]= new File(obDir+"/src-test");
+    file[11]= new File(obDir+"/src-diagnostics");
     return file;
   }
   
@@ -961,7 +982,7 @@ public class ImportModule {
    */
   
   private static SimpleModule[] getModuleTest(){
-    SimpleModule[] rt = new SimpleModule[2];
+    final SimpleModule[] rt = new SimpleModule[2];
 
     rt[0] = new SimpleModule();
     rt[0].setModuleID("E5FEF9F515D24E1FA3E8CC6A99DD82CE");
@@ -980,10 +1001,10 @@ public class ImportModule {
   }
   public static void main(String[] args) {
     try {
-      ImportModule im = new ImportModule(new CPStandAlone ("/ws/modularity/openbravo/config/Openbravo.properties"), "/ws/modularity/openbravo", null);
+      final ImportModule im = new ImportModule(new CPStandAlone ("/ws/modularity/openbravo/config/Openbravo.properties"), "/ws/modularity/openbravo", null);
       im.checkDependenciesFileName("/ws/modularity/openbravo/test1-1.obx");
       im.execute("/ws/modularity/openbravo/test1-1.obx");
       log4j.info("END");
-    } catch (Exception e) {e.printStackTrace();}
+    } catch (final Exception e) {e.printStackTrace();}
   }
 }
