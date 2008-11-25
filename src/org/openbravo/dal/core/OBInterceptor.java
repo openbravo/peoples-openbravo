@@ -176,7 +176,7 @@ public class OBInterceptor extends EmptyInterceptor {
             }
 
             final Traceable t = (Traceable) o;
-            if (t.getCreated() == null) { // new
+            if (t.getCreatedBy() == null) { // new
                 onNew(t, propertyNames, currentState);
             } else {
                 onUpdate(t, propertyNames, currentState);

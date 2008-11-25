@@ -25,6 +25,7 @@ import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.xml.XMLEntityConverter;
 import org.openbravo.model.ad.datamodel.Table;
@@ -102,6 +103,10 @@ public class DataImportService implements OBSingleton {
                 return ir;
             }
 
+            // disable the triggers to prevent unexpected extra db actions
+            // during import
+            TriggerHandler.getInstance().disable();
+
             // now save and update
             // do inserts and updates in opposite order, this is important
             // so that the objects on which other depend are inserted first
@@ -164,7 +169,11 @@ public class DataImportService implements OBSingleton {
                     }
                     OBDal.getInstance().save(rdl);
                 }
+                OBDal.getInstance().flush();
             } finally {
+                if (TriggerHandler.getInstance().isDisabled()) {
+                    TriggerHandler.getInstance().enable();
+                }
                 OBContext.getOBContext().restorePreviousAdminMode();
             }
 

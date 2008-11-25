@@ -32,11 +32,17 @@ import org.openbravo.base.util.Check;
 
 public class DalUtil {
 
-    // Copies a BaseOBObject and all its children
+    // Copies a BaseOBObject and all its children, note will
+    // nullify the id of the copied object.
     public static List<BaseOBObject> copyAll(List<BaseOBObject> source) {
+        return copyAll(source, true);
+    }
+
+    public static List<BaseOBObject> copyAll(List<BaseOBObject> source,
+            boolean resetId) {
         final List<BaseOBObject> result = new ArrayList<BaseOBObject>();
         for (final BaseOBObject bob : source) {
-            result.add(copy(bob));
+            result.add(copy(bob, true, resetId));
         }
         return result;
     }
@@ -46,6 +52,11 @@ public class DalUtil {
     }
 
     public static BaseOBObject copy(BaseOBObject source, boolean copyOneToMany) {
+        return copy(source, copyOneToMany, true);
+    }
+
+    public static BaseOBObject copy(BaseOBObject source, boolean copyOneToMany,
+            boolean resetId) {
         final BaseOBObject target = (BaseOBObject) OBProvider.getInstance()
                 .get(source.getEntityName());
         for (final Property p : source.getEntity().getProperties()) {
@@ -57,14 +68,17 @@ public class DalUtil {
                     @SuppressWarnings("unchecked")
                     final List<BaseOBObject> sourceChildren = (List<BaseOBObject>) value;
                     for (final BaseOBObject sourceChild : sourceChildren) {
-                        targetChildren.add(copy(sourceChild));
+                        targetChildren.add(copy(sourceChild, copyOneToMany,
+                                resetId));
                     }
                 }
             } else {
                 target.setValue(p.getName(), value);
             }
         }
-        target.setId(null);
+        if (resetId) {
+            target.setId(null);
+        }
         return target;
     }
 
