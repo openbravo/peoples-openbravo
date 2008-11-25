@@ -15,9 +15,18 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 
 package org.openbravo.erpCommon.ad_forms;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -25,53 +34,73 @@ import org.openbravo.erpCommon.ad_process.RegisterData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
-import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
-import javax.servlet.*;
-import javax.servlet.http.*;
-
 public class Registration extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        final VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (vars.commandIn("DEFAULT")) {
-      printPageDataSheet(response, vars);
-    } else if (vars.commandIn("REGISTER")) {
-      RegisterData.updateIsRegistrationActive(myPool, "Y");
-    } else if (vars.commandIn("DISABLE")) {
-      RegisterData.updateIsRegistrationActive(myPool, "N");
-    } else if (vars.commandIn("POSTPONE")) {
-      Calendar cal = Calendar.getInstance();
-      cal.add(Calendar.DATE, 3);
-      String date = new SimpleDateFormat(vars.getJavaDateFormat()).format(cal.getTime());
-      RegisterData.postpone(myPool, date);
-    } else pageError(response);
-  }
+        removeFromPageHistory(request);
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
-    throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    
-    XmlDocument xmlDocument = null;
-    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/Registration").createXmlDocument();
-    
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setParameter("welcome", Utility.messageBD(this, "REG_WELCOME", vars.getLanguage()));
+        if (vars.commandIn("DEFAULT")) {
+            printPageDataSheet(response, vars);
+        } else if (vars.commandIn("REGISTER")) {
+            RegisterData.updateIsRegistrationActive(myPool, "Y");
+        } else if (vars.commandIn("DISABLE")) {
+            RegisterData.updateIsRegistrationActive(myPool, "N");
+        } else if (vars.commandIn("POSTPONE")) {
+            final Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, 3);
+            final String date = new SimpleDateFormat(vars.getJavaDateFormat())
+                    .format(cal.getTime());
+            RegisterData.postpone(myPool, date);
+        } else
+            pageError(response);
+    }
 
-    out.println(xmlDocument.print());
-    out.close();
-  }
+    /**
+     * Removes the Registration pop-up from the page history so when Openbravo 
+     * back arrow is pressed, Registration window has no chance of being shown.
+     * 
+     * @param request the HttpServletRequest object
+     */
+    public void removeFromPageHistory(HttpServletRequest request) {
+        final Variables variables = new Variables(request);
+        final String sufix = variables.getCurrentHistoryIndex();
+        variables.removeSessionValue("reqHistory.servlet" + sufix);
+        variables.removeSessionValue("reqHistory.path" + sufix);
+        variables.removeSessionValue("reqHistory.command" + sufix);
+        variables.downCurrentHistoryIndex();
+    }
 
-  public String getServletInfo() {
-    return "Registration form servlet.";
-  } // end of getServletInfo() method
+    void printPageDataSheet(HttpServletResponse response,
+            VariablesSecureApp vars) throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        response.setContentType("text/html; charset=UTF-8");
+        final PrintWriter out = response.getWriter();
+
+        XmlDocument xmlDocument = null;
+        xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/ad_forms/Registration")
+                .createXmlDocument();
+
+        xmlDocument.setParameter("directory", "var baseDirectory = \""
+                + strReplaceWith + "/\";\n");
+        xmlDocument.setParameter("language", "defaultLang=\""
+                + vars.getLanguage() + "\";");
+        xmlDocument.setParameter("theme", vars.getTheme());
+        xmlDocument.setParameter("welcome", Utility.messageBD(this,
+                "REG_WELCOME", vars.getLanguage()));
+
+        out.println(xmlDocument.print());
+        out.close();
+    }
+
+    @Override
+    public String getServletInfo() {
+        return "Registration form servlet.";
+    } // end of getServletInfo() method
 }
-
