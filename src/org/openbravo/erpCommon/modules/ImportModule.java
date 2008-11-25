@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
@@ -50,7 +51,6 @@ import org.apache.ddlutils.io.DatabaseDataIO;
 import org.apache.ddlutils.model.Database;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.database.CPStandAlone;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.ddlutils.task.DatabaseUtils;
 import org.openbravo.erpCommon.utility.OBError;
@@ -106,6 +106,7 @@ public class ImportModule {
   Vector<DynaBean> dynModulesToInstall = new Vector<DynaBean>();
   Vector<DynaBean> dynModulesToUpdate = new Vector<DynaBean>();
   Vector<DynaBean> dependencies = new Vector<DynaBean>();
+  Vector<DynaBean> dbprefix = new Vector<DynaBean>();
   
   boolean checked;
  
@@ -143,7 +144,18 @@ public class ImportModule {
    */
   public boolean checkDependenciesFile(InputStream file) throws Exception{
     if (installLocally){
-      getModulesFromObxLocal(file); 
+        final Vector<DynaBean> modulesInObx = new Vector<DynaBean>();
+        getModulesFromObx(modulesInObx, dependencies, dbprefix, file);
+      
+        for (final DynaBean module : modulesInObx) {
+            if (ImportModuleData.moduleInstalled(pool, (String)module.get("AD_MODULE_ID"))) {
+              //TODO: Check higher version
+              dynModulesToUpdate.add(module);
+            } else {
+              dynModulesToInstall.add(module);
+            }
+        }
+        
       modulesToInstall = dyanaBeanToModules(dynModulesToInstall, dependencies);
       modulesToUpdate = dyanaBeanToModules(dynModulesToUpdate, dependencies);
       errors = new OBError();
@@ -212,15 +224,14 @@ public class ImportModule {
         if (installLocally) {
           initInstallation();
           
-          //Obtain the first ID for the module to be installed (this is done for core)
-          final Vector<DynaBean> obxModule = new Vector<DynaBean>();
-          final Vector<DynaBean> dbprefix = new Vector<DynaBean>();     // not used       
+          final String moduleToInstallID = (modulesToInstall!=null&&modulesToInstall.length>0)?modulesToInstall[0].getModuleID():modulesToUpdate[0].getModuleID();
           
-          getModulesFromObx(obxModule, new Vector<DynaBean>(), dbprefix, file2);
+          installModule(file, moduleToInstallID);
           
-          
-          installModule(file, (String) obxModule.get(0).get("AD_MODULE_ID"));
-          insertDynaModulesInDB(dynModulesToInstall, dependencies, dbprefix);
+          final Vector<DynaBean> allModules = new Vector<DynaBean>(); //all modules include install and update
+          allModules.addAll(dynModulesToInstall);
+          allModules.addAll(dynModulesToUpdate);
+          insertDynaModulesInDB(allModules, dependencies, dbprefix);
           insertDBLog();
           addDynaClasspathEntries(dynModulesToInstall);
         }else{ //install remotely
@@ -512,10 +523,10 @@ public class ImportModule {
   /**
    * Receives a  Vector<DynaBean> and tranforms it to a Module[]
    */  
-  private Module[] dyanaBeanToModules(Vector<DynaBean> dynModulesToInstall, Vector<DynaBean> dynDependencies) {
-    final Module[] rt = new Module[dynModulesToInstall.size()];
+  private Module[] dyanaBeanToModules(Vector<DynaBean> dModulesToInstall, Vector<DynaBean> dynDependencies) {
+    final Module[] rt = new Module[dModulesToInstall.size()];
     int i = 0;
-    for (final DynaBean dynModule : dynModulesToInstall) {
+    for (final DynaBean dynModule : dModulesToInstall) {
       rt[i] = new Module();
       rt[i].setModuleID((String)dynModule.get("AD_MODULE_ID"));
       rt[i].setVersionNo((String)dynModule.get("VERSION"));
@@ -560,7 +571,7 @@ public class ImportModule {
    * Adds the classpath entries to .classpath file from the modules in the Vector<DynaBean>
    * 
    */
-  private void addDynaClasspathEntries(Vector<DynaBean> modulesToInstall) throws Exception{
+  private void addDynaClasspathEntries(Vector<DynaBean> dModulesToInstall) throws Exception{
     if (!(new File(obDir+"/.classpath").exists())) {
       log4j.info("No "+obDir+"/.classpath file");
       return;
@@ -569,7 +580,7 @@ public class ImportModule {
     final DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
     final DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
     final Document doc = docBuilder.parse(obDir+"/.classpath");
-    for (final DynaBean module : modulesToInstall) {
+    for (final DynaBean module : dModulesToInstall) {
        final String dir = obDir+"/modules/"+(String)module.get("JAVAPACKAGE")+"/src";
        if (new File(dir).exists()) {
          addClassPathEntry(doc, dir);
@@ -631,11 +642,11 @@ public class ImportModule {
   /**
    * Inserts in database the Vector<DynaBean> with its dependencies
    * 
-   * @param modulesToInstall
-   * @param dependencies
+   * @param dModulesToInstall
+   * @param dependencies1
    * @throws Exception
    */
-  private void insertDynaModulesInDB(Vector<DynaBean> modulesToInstall, Vector<DynaBean> dependencies, Vector<DynaBean> dbPrefix) throws Exception {
+  private void insertDynaModulesInDB(Vector<DynaBean> dModulesToInstall, Vector<DynaBean> dependencies1, Vector<DynaBean> dbPrefix) throws Exception {
     final Properties obProperties = new Properties();
     obProperties.load(new FileInputStream(obDir+"/config/Openbravo.properties"));
 
@@ -645,13 +656,15 @@ public class ImportModule {
     ds.setDriverClassName(obProperties.getProperty("bbdd.driver"));
     ds.setUrl(url);
     ds.setUsername(obProperties.getProperty("bbdd.user"));
-    ds.setPassword(obProperties.getProperty("bbdd.password"));    
+    ds.setPassword(obProperties.getProperty("bbdd.password"));  
+
+    final Connection conn = ds.getConnection();
     
     final Platform platform = PlatformFactory.createNewPlatformInstance(ds);
     
     Integer seqNo = new Integer(ImportModuleData.selectSeqNo(pool));
     
-    for (final DynaBean module : modulesToInstall) {
+    for (final DynaBean module : dModulesToInstall) {
       seqNo += 10;
       module.set("ISINDEVELOPMENT","Y");
       module.set("ISDEFAULT","N");
@@ -659,81 +672,57 @@ public class ImportModule {
       module.set("SEQNO", seqNo);
       module.set("UPDATE_AVAILABLE", null);
       log4j.info("Inserting in DB info for module: "+module.get("NAME"));
-      platform.updateinsert(ds.getConnection(), db, module);
+      platform.updateinsert(conn, db, module);
       addLog("@ModuleInstalled@ "+module.get("NAME")+" - "+module.get("VERSION"), MSG_SUCCESS);
     }
-    for (final DynaBean module : dependencies) {
-      platform.updateinsert(ds.getConnection(), db, module);
+    for (final DynaBean module : dependencies1) {
+      platform.updateinsert(conn, db, module);
     }
     for (final DynaBean module : dbPrefix) {
-      platform.updateinsert(ds.getConnection(), db, module);
+      platform.updateinsert(conn, db, module);
     }
+    conn.close();
   }
   
   /**
    * Returns all the modules and dependencies described within the obx file (as InputStream)
-   * @param dynModulesToInstall
-   * @param dependencies
+   * @param dModulesToInstall
+   * @param dDependencies
    * @param obx
    * @throws Exception
    */
-  private void getModulesFromObx(Vector<DynaBean> dynModulesToInstall, Vector<DynaBean> dependencies, Vector<DynaBean> dbprefix,InputStream obx) throws Exception {
+  private void getModulesFromObx(Vector<DynaBean> dModulesToInstall, Vector<DynaBean> dDependencies, Vector<DynaBean> dDBprefix,InputStream obx) throws Exception {
     final ZipInputStream obxInputStream = new ZipInputStream(obx);
     ZipEntry entry = null;
-    while (((entry = obxInputStream.getNextEntry()) != null)) {
+    boolean foundAll = false;
+    boolean foundModule = false;
+    boolean foundDependency = false;
+    boolean foundPrefix = false;
+    while (((entry = obxInputStream.getNextEntry()) != null) && !foundAll) {
      
       if (entry.getName().endsWith(".obx")) { //If it is a new module install it
         final ByteArrayInputStream ba = getCurrentEntryStream(obxInputStream);
         obxInputStream.closeEntry();
-        getModulesFromObx(dynModulesToInstall, dependencies, dbprefix, ba);
+        getModulesFromObx(dModulesToInstall, dDependencies, dDBprefix, ba);
       } else if (entry.getName().replace("\\", "/").endsWith("src-db/database/sourcedata/AD_MODULE.xml")) {
-        dynModulesToInstall.addAll(getEntryDynaBeans(obxInputStream));
-        obxInputStream.closeEntry();
-      } else if (entry.getName().replace("\\", "/").endsWith("src-db/database/sourcedata/AD_MODULE_DEPENDENCY.xml")) {
-        dependencies.addAll(getEntryDynaBeans(obxInputStream));
-        obxInputStream.closeEntry();
-      } else if (entry.getName().replace("\\", "/").endsWith("src-db/database/sourcedata/AD_MODULE_DBPREFIX.xml")) {
-        dbprefix.addAll(getEntryDynaBeans(obxInputStream));
-        obxInputStream.closeEntry();
-      }
-    }
-    obxInputStream.close();
-  }
-  
-  /**
-   * Returns all the modules and dependencies described within the obx file (as InputStream), it takes
-   * into account whether the module is already installed to set it as a module to update
-   * 
-   * @param dynModulesToInstall
-   * @param dependencies
-   * @param obx
-   * @throws Exception
-   */
-  private void getModulesFromObxLocal(InputStream obx) throws Exception {
-    final ZipInputStream obxInputStream = new ZipInputStream(obx);
-    ZipEntry entry = null;
-    while (((entry = obxInputStream.getNextEntry()) != null)) {
-     
-      if (entry.getName().endsWith(".obx")) { //If it is a new module install it
-        final ByteArrayInputStream ba = getCurrentEntryStream(obxInputStream);
-        obxInputStream.closeEntry();
-        getModulesFromObxLocal(ba);
-      } else if (entry.getName().replace("\\", "/").endsWith("src-db/database/sourcedata/AD_MODULE.xml")) {
-        final Vector<DynaBean> v = getEntryDynaBeans(obxInputStream);
-        for (final DynaBean module : v) {
-          if (ImportModuleData.moduleInstalled(pool, (String)module.get("AD_MODULE_ID"))) {
-            //TODO: Check higher version
-            dynModulesToUpdate.add(module);
-          } else {
-            dynModulesToInstall.add(module);
+          final Vector<DynaBean> module = getEntryDynaBeans(obxInputStream);
+          boolean isPackage = false;
+          if (module!=null && module.size()>0) {
+              isPackage = !((String)module.get(0).get("TYPE")).equals("M");
           }
-        }
-          
-        obxInputStream.closeEntry();
+          dModulesToInstall.addAll(module);
+          obxInputStream.closeEntry();
+          foundModule = true && !isPackage;
       } else if (entry.getName().replace("\\", "/").endsWith("src-db/database/sourcedata/AD_MODULE_DEPENDENCY.xml")) {
-        dependencies.addAll(getEntryDynaBeans(obxInputStream));
+        dDependencies.addAll(getEntryDynaBeans(obxInputStream));
         obxInputStream.closeEntry();
-      }
+        foundDependency = true;
+      } else if (entry.getName().replace("\\", "/").endsWith("src-db/database/sourcedata/AD_MODULE_DBPREFIX.xml")) {
+        dDBprefix.addAll(getEntryDynaBeans(obxInputStream));
+        obxInputStream.closeEntry();
+        foundPrefix = true;
+      } else obxInputStream.closeEntry();
+      foundAll = foundModule && foundDependency && foundPrefix;
     }
     obxInputStream.close();
   }
@@ -792,6 +781,7 @@ public class ImportModule {
           final String fileName = obDir+(moduleID.equals("0")?"/":"/modules/")+entry.getName().replace("\\","/");
           final File entryFile = new File(fileName);
           //Check whether the directory exists, if not create
+         
           if (entryFile.getParent() != null) { 
               final File dir = new File(entryFile.getParent()); 
               if (!dir.exists()) {
@@ -808,8 +798,10 @@ public class ImportModule {
           while ((len = obxInputStream.read(buf)) > 0) {
               fout.write(buf, 0, len);
           }
+          
 
           fout.close();
+         
           obxInputStream.closeEntry();
         }
       }
@@ -975,36 +967,5 @@ public class ImportModule {
     }
     return null;
   }
-  
-  /**
-   * Just for testing purposes
-   * 
-   */
-  
-  private static SimpleModule[] getModuleTest(){
-    final SimpleModule[] rt = new SimpleModule[2];
-
-    rt[0] = new SimpleModule();
-    rt[0].setModuleID("E5FEF9F515D24E1FA3E8CC6A99DD82CE");
-    rt[0].setName("test");
-    rt[0].setModuleVersionID("45");
-    rt[0].setVersionNo("1.5");
-    rt[0].setUpdateDescription("The new testing version");
-    
-    rt[1] = new SimpleModule();
-    rt[1].setModuleID("0");
-    rt[1].setName("core");
-    rt[1].setModuleVersionID("44");
-    rt[1].setVersionNo("2.6");
-    rt[1].setUpdateDescription("The new core version");
-    return rt;
-  }
-  public static void main(String[] args) {
-    try {
-      final ImportModule im = new ImportModule(new CPStandAlone ("/ws/modularity/openbravo/config/Openbravo.properties"), "/ws/modularity/openbravo", null);
-      im.checkDependenciesFileName("/ws/modularity/openbravo/test1-1.obx");
-      im.execute("/ws/modularity/openbravo/test1-1.obx");
-      log4j.info("END");
-    } catch (final Exception e) {e.printStackTrace();}
-  }
 }
+
