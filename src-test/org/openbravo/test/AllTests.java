@@ -1,3 +1,22 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2008 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+ */
+
 package org.openbravo.test;
 
 import junit.framework.Test;
@@ -26,41 +45,41 @@ import org.openbravo.test.xml.EntityXMLImportTestWarning;
 public class AllTests {
 
     public static Test suite() {
-	TestSuite suite = new TestSuite("Test for org.openbravo.test.dal");
-	// $JUnit-BEGIN$
-	// suite.addTestSuite(CompositeIdTest.class);
+        final TestSuite suite = new TestSuite("Test for org.openbravo.test.dal");
+        // $JUnit-BEGIN$
+        // suite.addTestSuite(CompositeIdTest.class);
 
-	// security
-	suite.addTestSuite(EntityAccessTest.class);
-	suite.addTestSuite(AccessLevelTest.class);
-	suite.addTestSuite(AllowedOrganisationsTest.class);
-	suite.addTestSuite(WritableReadableOrganisationTest.class);
+        // security
+        suite.addTestSuite(EntityAccessTest.class);
+        suite.addTestSuite(AccessLevelTest.class);
+        suite.addTestSuite(AllowedOrganisationsTest.class);
+        suite.addTestSuite(WritableReadableOrganisationTest.class);
 
-	// dal
-	suite.addTestSuite(HiddenUpdateTest.class);
-	suite.addTestSuite(MappingGenerationTest.class);
-	suite.addTestSuite(ValidationTest.class);
-	suite.addTestSuite(DynamicEntityTest.class);
-	suite.addTestSuite(DalTest.class);
-	suite.addTestSuite(DalQueryTest.class);
-	suite.addTestSuite(HqlTest.class);
+        // dal
+        suite.addTestSuite(HiddenUpdateTest.class);
+        suite.addTestSuite(MappingGenerationTest.class);
+        suite.addTestSuite(ValidationTest.class);
+        suite.addTestSuite(DynamicEntityTest.class);
+        suite.addTestSuite(DalTest.class);
+        suite.addTestSuite(DalQueryTest.class);
+        suite.addTestSuite(HqlTest.class);
 
-	// model
-	suite.addTestSuite(RuntimeModelTest.class);
-	suite.addTestSuite(OneToManyTest.class);
+        // model
+        suite.addTestSuite(RuntimeModelTest.class);
+        suite.addTestSuite(OneToManyTest.class);
 
-	// expression
-	suite.addTestSuite(EvaluationTest.class);
+        // expression
+        suite.addTestSuite(EvaluationTest.class);
 
-	// xml
-	suite.addTestSuite(EntityXMLExportTest.class);
-	suite.addTestSuite(EntityXMLImportTestBusinessObject.class);
-	suite.addTestSuite(EntityXMLImportTestSingle.class);
-	suite.addTestSuite(EntityXMLImportTestReference.class);
-	suite.addTestSuite(EntityXMLImportTestWarning.class);
+        // xml
+        suite.addTestSuite(EntityXMLExportTest.class);
+        suite.addTestSuite(EntityXMLImportTestBusinessObject.class);
+        suite.addTestSuite(EntityXMLImportTestSingle.class);
+        suite.addTestSuite(EntityXMLImportTestReference.class);
+        suite.addTestSuite(EntityXMLImportTestWarning.class);
 
-	// $JUnit-END$
-	return suite;
+        // $JUnit-END$
+        return suite;
     }
 
 }

@@ -1,12 +1,20 @@
 /*
- * 
- * Copyright (C) 2001-2008 Openbravo S.L. Licensed under the Apache Software
- * License version 2.0 You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
- * or agreed to in writing, software distributed under the License is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2008 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
  */
 
 package org.openbravo.dal.security;
@@ -64,7 +72,7 @@ public class OrganisationStructureProvider implements OBNotSingleton {
         @SuppressWarnings("unchecked")
         final List<Tree> ts = qry.list();
         final List<TreeNode> treeNodes = new ArrayList<TreeNode>();
-        for (Tree t : ts) {
+        for (final Tree t : ts) {
             final String nodeQryStr = "select tn from "
                     + TreeNode.class.getName() + " tn where tn.tree.id='"
                     + t.getId() + "'";
@@ -76,17 +84,17 @@ public class OrganisationStructureProvider implements OBNotSingleton {
         }
 
         final List<OrgNode> orgNodes = new ArrayList<OrgNode>(treeNodes.size());
-        for (TreeNode tn : treeNodes) {
+        for (final TreeNode tn : treeNodes) {
             final OrgNode on = new OrgNode();
             on.setTreeNode(tn);
             orgNodes.add(on);
         }
 
-        for (OrgNode on : orgNodes) {
+        for (final OrgNode on : orgNodes) {
             on.resolve(orgNodes);
         }
 
-        for (OrgNode on : orgNodes) {
+        for (final OrgNode on : orgNodes) {
             naturalTreesByOrgID.put(on.getTreeNode().getNode(), on
                     .getNaturalTree());
         }
@@ -135,7 +143,7 @@ public class OrganisationStructureProvider implements OBNotSingleton {
             if (treeNode.getParent() == null) {
                 return;
             }
-            for (OrgNode on : nodes) {
+            for (final OrgNode on : nodes) {
                 if (on.getTreeNode().getNode().equals(treeNode.getParent())) {
                     on.addChild(this);
                     setParent(on);
@@ -151,7 +159,7 @@ public class OrganisationStructureProvider implements OBNotSingleton {
                 if (getParent() != null) {
                     getParent().getParentPath(naturalTree);
                 }
-                for (OrgNode child : getChildren()) {
+                for (final OrgNode child : getChildren()) {
                     child.getChildPath(naturalTree);
                 }
             }
@@ -173,7 +181,7 @@ public class OrganisationStructureProvider implements OBNotSingleton {
             if (naturalTreeChildren == null) {
                 naturalTreeChildren = new HashSet<String>();
                 naturalTreeChildren.add(getTreeNode().getNode());
-                for (OrgNode child : getChildren()) {
+                for (final OrgNode child : getChildren()) {
                     child.getChildPath(naturalTreeChildren);
                 }
             }

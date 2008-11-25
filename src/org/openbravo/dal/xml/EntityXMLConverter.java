@@ -1,12 +1,20 @@
 /*
- * 
- * Copyright (C) 2001-2008 Openbravo S.L. Licensed under the Apache Software
- * License version 2.0 You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
- * or agreed to in writing, software distributed under the License is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2008 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
  */
 
 package org.openbravo.dal.xml;
@@ -159,7 +167,8 @@ public class EntityXMLConverter implements OBNotSingleton {
         // if this object has been added as a referenced object
         // set the reference attribute so that we at import can treat this
         // one differently
-        boolean isCurrentEntityReferenced = getReferenced().contains(obObject);
+        final boolean isCurrentEntityReferenced = getReferenced().contains(
+                obObject);
         if (isCurrentEntityReferenced) {
             currentElement.addAttribute(XMLConstants.REFERENCE_ATTRIBUTE,
                     "true");
@@ -172,7 +181,7 @@ public class EntityXMLConverter implements OBNotSingleton {
                         obObject.getEntity());
 
         // export each property
-        for (Property p : obObject.getEntity().getProperties()) {
+        for (final Property p : obObject.getEntity().getProperties()) {
             if (onlyIdentifierProps && !p.isIdentifier()) {
                 continue;
             }
@@ -229,7 +238,7 @@ public class EntityXMLConverter implements OBNotSingleton {
             } else if (p.isOneToMany()) {
                 // get all the children and export each child
                 final Collection<?> c = (Collection<?>) value;
-                for (Object o : c) {
+                for (final Object o : c) {
                     // embed in the parent
                     if (isOptionEmbedChildren()) {
                         export((BaseOBObject) o, currentPropertyElement);

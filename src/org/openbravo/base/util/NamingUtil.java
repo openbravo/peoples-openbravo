@@ -1,3 +1,22 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2008 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+ */
+
 package org.openbravo.base.util;
 
 import java.util.HashMap;
@@ -21,12 +40,12 @@ public class NamingUtil {
             final Properties props = new Properties();
             props.load(NamingUtil.class
                     .getResourceAsStream("column_property_mapping.properties"));
-            for (Object keyObj : props.keySet()) {
+            for (final Object keyObj : props.keySet()) {
                 final String key = (String) keyObj;
                 specialPropertyMappings.put(key.toLowerCase(), props
                         .getProperty(key));
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new OBException(e);
         }
 
@@ -155,7 +174,7 @@ public class NamingUtil {
             localMappingName = mappingName.substring(0,
                     mappingName.length() - 3);
         }
-        int index = localMappingName.indexOf("_");
+        final int index = localMappingName.indexOf("_");
         if (index == 1) {
             return localMappingName.substring(2);
         } else if (index == 2) {
@@ -169,10 +188,10 @@ public class NamingUtil {
         // "CamelCasing"
         int pos = localMappingName.indexOf("_");
         while (pos != -1) {
-            String leftPart = localMappingName.substring(0, pos);
-            String camelLetter = String.valueOf(
+            final String leftPart = localMappingName.substring(0, pos);
+            final String camelLetter = String.valueOf(
                     localMappingName.charAt(pos + 1)).toUpperCase();
-            String rightPart = localMappingName.substring(pos + 2);
+            final String rightPart = localMappingName.substring(pos + 2);
             localMappingName = leftPart + camelLetter + rightPart;
             pos = localMappingName.indexOf("_");
         }
@@ -181,8 +200,8 @@ public class NamingUtil {
 
     private static String correctAbbreviations(String value) {
         String localValue = value;
-        for (String abbreviation : abbreviations.keySet()) {
-            int index = value.toLowerCase().indexOf(abbreviation);
+        for (final String abbreviation : abbreviations.keySet()) {
+            final int index = value.toLowerCase().indexOf(abbreviation);
             if (index == 0) {
                 localValue = abbreviations.get(abbreviation)
                         + value.substring(index + abbreviation.length());

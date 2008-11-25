@@ -1,12 +1,20 @@
 /*
- * 
- * Copyright (C) 2001-2008 Openbravo S.L. Licensed under the Apache Software
- * License version 2.0 You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
- * or agreed to in writing, software distributed under the License is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SL 
+ * All portions are Copyright (C) 2008 Openbravo SL 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
  */
 
 package org.openbravo.dal.core;
@@ -76,11 +84,11 @@ public class OBTuplizer extends PojoEntityTuplizer {
         // (if
         // any)
         // determine all interfaces needed by the resulting proxy
-        HashSet proxyInterfaces = new HashSet();
+        final HashSet proxyInterfaces = new HashSet();
         proxyInterfaces.add(HibernateProxy.class);
 
-        Class mappedClass = thePersistentClass.getMappedClass();
-        Class proxyInterface = thePersistentClass.getProxyInterface();
+        final Class mappedClass = thePersistentClass.getMappedClass();
+        final Class proxyInterface = thePersistentClass.getProxyInterface();
 
         if (proxyInterface != null && !mappedClass.equals(proxyInterface)) {
             if (!proxyInterface.isInterface()) {
@@ -95,11 +103,11 @@ public class OBTuplizer extends PojoEntityTuplizer {
             proxyInterfaces.add(mappedClass);
         }
 
-        Iterator iter = thePersistentClass.getSubclassIterator();
+        final Iterator iter = thePersistentClass.getSubclassIterator();
         while (iter.hasNext()) {
-            Subclass subclass = (Subclass) iter.next();
-            Class subclassProxy = subclass.getProxyInterface();
-            Class subclassClass = subclass.getMappedClass();
+            final Subclass subclass = (Subclass) iter.next();
+            final Class subclassProxy = subclass.getProxyInterface();
+            final Class subclassClass = subclass.getMappedClass();
             if (subclassProxy != null && !subclassClass.equals(subclassProxy)) {
                 if (proxyInterface == null || !proxyInterface.isInterface()) {
                     throw new MappingException(
@@ -110,13 +118,15 @@ public class OBTuplizer extends PojoEntityTuplizer {
             }
         }
 
-        Method idGetterMethod = idGetter == null ? null : idGetter.getMethod();
-        Method idSetterMethod = idSetter == null ? null : idSetter.getMethod();
+        final Method idGetterMethod = idGetter == null ? null : idGetter
+                .getMethod();
+        final Method idSetterMethod = idSetter == null ? null : idSetter
+                .getMethod();
 
-        Method proxyGetIdentifierMethod = idGetterMethod == null
+        final Method proxyGetIdentifierMethod = idGetterMethod == null
                 || proxyInterface == null ? null : ReflectHelper.getMethod(
                 proxyInterface, idGetterMethod);
-        Method proxySetIdentifierMethod = idSetterMethod == null
+        final Method proxySetIdentifierMethod = idSetterMethod == null
                 || proxyInterface == null ? null : ReflectHelper.getMethod(
                 proxyInterface, idSetterMethod);
 
@@ -133,7 +143,7 @@ public class OBTuplizer extends PojoEntityTuplizer {
                             thePersistentClass.hasEmbeddedIdentifier() ? (AbstractComponentType) thePersistentClass
                                     .getIdentifier().getType()
                                     : null);
-        } catch (HibernateException he) {
+        } catch (final HibernateException he) {
             log.warn("could not create proxy factory for:" + getEntityName(),
                     he);
             pf = null;
