@@ -373,6 +373,24 @@
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- AD_Window ' || v_rowcount) ;
     
+    
+    --No module
+    INSERT
+    INTO AD_Month_Trl
+      (
+        AD_Month_Trl_ID, AD_Month_ID, AD_Language, Name,
+        IsTranslated, Createdby, UpdatedBy, AD_Client_ID,
+        AD_Org_ID
+      )
+    SELECT get_uuid(), AD_Month_ID, AD_Language.AD_Language, AD_Month.Name, 'N', '0', '0', AD_Month.AD_Client_ID, AD_Month.AD_Org_ID
+    FROM AD_Month, AD_Language
+    WHERE AD_Language.IsActive='Y'  AND AD_Language.IsSystemLanguage='Y'  AND(AD_Month_ID, AD_Language.AD_Language) NOT IN
+      (SELECT AD_Month_ID, AD_Language FROM AD_Month_Trl)
+      ;
+    v_rowcount:=SQL%ROWCOUNT;
+    v_Created:=v_Created + v_rowcount;
+    DBMS_OUTPUT.PUT_LINE('- AD_Month ' || v_rowcount) ;
+    
     --no module
     INSERT
     INTO C_Country_Trl
