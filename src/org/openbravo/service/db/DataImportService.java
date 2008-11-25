@@ -85,7 +85,12 @@ public class DataImportService implements OBSingleton {
                 + (organisation != null ? "/" + organisation.getId() : ""));
 
         final ImportResult ir = new ImportResult();
+
         try {
+            // disable the triggers to prevent unexpected extra db actions
+            // during import
+            TriggerHandler.getInstance().disable();
+
             final XMLEntityConverter xec = XMLEntityConverter.newInstance();
             xec.setClient(client);
             xec.setOrganization(organisation);
@@ -102,10 +107,6 @@ public class DataImportService implements OBSingleton {
                 SessionHandler.getInstance().setDoRollback(true);
                 return ir;
             }
-
-            // disable the triggers to prevent unexpected extra db actions
-            // during import
-            TriggerHandler.getInstance().disable();
 
             // now save and update
             // do inserts and updates in opposite order, this is important
