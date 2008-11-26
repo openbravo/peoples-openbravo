@@ -333,7 +333,7 @@ public class ImportOrder extends ImportProcess {
   //      if (!C_BPartner_ID.equals(data[i].cBpartnerId) || !BillTo_ID.equals(data[i].billtoId) || !C_BPartner_Location_ID.equals(data[i].cBpartnerLocationId)) {
           order_documentno = data[i].documentno;
           //Looking for same order yet inserted
-          ImportOrderData[] orderInserted = ImportOrderData.selectOrderInserted(conn, getAD_Client_ID(), data[i].documentno, data[i].dateordered);
+          ImportOrderData[] orderInserted = ImportOrderData.selectOrderInserted(conn, getAD_Client_ID(), data[i].adOrgId, data[i].cDoctypeId, data[i].documentno, data[i].dateordered.equals("")?DateTimeData.today(conn):data[i].dateordered);
           if (orderInserted!=null && orderInserted.length==0) {
             corder = new COrderData();
             corder.cOrderId = SequenceIdData.getUUID();
@@ -471,6 +471,8 @@ public class ImportOrder extends ImportProcess {
             lineNo = 10;
           }
           else{
+            // Order with same Org, Doctype, DocumentNo, DateOrdered already exists.
+            
             corder_corderid = orderInserted[0].cOrderId;
             order_documentno=orderInserted[0].documentno;
             corder_corderid=orderInserted[0].cOrderId;

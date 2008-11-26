@@ -1286,7 +1286,7 @@
         FROM I_Order
 				WHERE I_IsImported='N'
 				AND AD_Client_ID = ?
-				ORDER BY C_BPartner_ID, BillTo_ID, C_BPartner_Location_ID, I_Order_ID
+				ORDER BY AD_Org_ID, DocTypeName, DocumentNo, DateOrdered, C_BPartner_ID, BillTo_ID, C_BPartner_Location_ID, I_Order_ID
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
@@ -1299,13 +1299,17 @@
         MAX(C_ORDERLINE.LINE) AS LineDescription
         FROM C_ORDER, C_ORDERLINE
         WHERE C_ORDER.AD_CLIENT_ID = ?
+        AND C_ORDER.AD_ORG_ID = ?
+        AND C_ORDER.C_DOCTYPETARGET_ID = ?
         AND C_ORDER.DOCUMENTNO = ?
-        AND TO_DATE(C_ORDER.DATEORDERED) = TO_DATE(?)
+        AND TO_CHAR(C_ORDER.DATEORDERED, 'DD-MM-YYYY') = TO_CHAR(TO_DATE(?, 'DD-MM-YYYY HH24:MI:SS'), 'DD-MM-YYYY')
         AND C_ORDERLINE.C_ORDER_ID = C_ORDER.C_ORDER_ID
         GROUP BY C_ORDER.C_ORDER_ID, C_ORDER.C_BPARTNER_ID, C_ORDER.BILLTO_ID, C_ORDER.C_BPARTNER_LOCATION_ID, C_ORDER.DOCUMENTNO, C_ORDER.M_PRICELIST_ID, C_ORDER.C_CURRENCY_ID
 			]]>
 		</Sql>
 		<Parameter name="ad_client_id"/>
+		<Parameter name="ad_org_id"/>
+		<Parameter name="c_doctype_id"/>
 		<Parameter name="documentno"/>
 		<Parameter name="dateordered"/>
 	</SqlMethod>
