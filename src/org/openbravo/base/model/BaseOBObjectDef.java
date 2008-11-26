@@ -35,4 +35,6 @@ public interface BaseOBObjectDef {
     public void set(String propertyName, Object value);
 
     public Entity getEntity();
+
+    public Object getId();
 }
