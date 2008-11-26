@@ -247,7 +247,8 @@ public class DalMappingGenerator implements OBSingleton {
                     + p.getIdBasedOnProperty().getName() + "</param>" + NL);
             sb.append(TAB3 + "</generator>" + NL);
         } else if (p.isUuid()) {
-            sb.append(TAB3 + "<generator class=\"uuid.hex\"/>" + NL);
+            sb.append(TAB3 + "<generator class=\""
+                    + DalUUIDHexGenerator.class.getName() + "\"/>" + NL);
         }
         sb.append(TAB2 + "</id>" + NL);
         return sb.toString();
