@@ -5,15 +5,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
@@ -27,7 +27,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-		select ad_org.ad_org_id as id, ad_org.name as name, 
+		select ad_org.ad_org_id as id, ad_org.name as name,
         '' AS TOTALAMTDR, '' AS TOTALAMTCR, '' AS ACCOUNT_ID, '' as org, '' as acctvalue, '' as acctdescription, '' as value,
         '' as c_bpartner_id, '' as record_id2, '' as m_product_id, '' as a_asset_id
 		from ad_org
@@ -43,14 +43,14 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT (CASE SIGN(SUM(AMTACCTDR)-SUM(AMTACCTCR)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTDR)-SUM(AMTACCTCR)) END) AS TOTALAMTCR, 
+        SELECT (CASE SIGN(SUM(AMTACCTDR)-SUM(AMTACCTCR)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTDR)-SUM(AMTACCTCR)) END) AS TOTALAMTCR,
         (CASE SIGN(SUM(AMTACCTCR)-SUM(AMTACCTDR)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTCR)-SUM(AMTACCTDR)) END) AS TOTALAMTDR, ACCOUNT_ID, ACCTDESCRIPTION, ACCTVALUE,
         RECORD_ID2, C_BPARTNER_ID, M_PRODUCT_ID, A_ASSET_ID
         FROM FACT_ACCT
         WHERE EXISTS (SELECT 1 FROM C_PERIOD P
                       WHERE P.C_YEAR_ID = ?
                       AND P.C_PERIOD_ID = FACT_ACCT.C_PERIOD_ID)
-        AND ACCOUNT_ID IN (SELECT ACCOUNT_ID 
+        AND ACCOUNT_ID IN (SELECT ACCOUNT_ID
                 FROM C_ELEMENTVALUE, C_VALIDCOMBINATION
                 WHERE C_VALIDCOMBINATION.ACCOUNT_ID = C_ELEMENTVALUE.C_ELEMENTVALUE_ID
                 AND C_ELEMENTVALUE.ACCOUNTTYPE = ?)
@@ -68,14 +68,14 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        SELECT (CASE sign(SUM(AMTACCTDR)-sum(amtacctcr)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTDR)-sum(amtacctcr)) END) AS TOTALAMTCR, 
-        (CASE sign(SUM(AMTACCTCR)-sum(amtacctdr)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTCR)-sum(amtacctdr)) END) AS TOTALAMTDR, ACCOUNT_ID, 
+        SELECT (CASE sign(SUM(AMTACCTDR)-sum(amtacctcr)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTDR)-sum(amtacctcr)) END) AS TOTALAMTCR,
+        (CASE sign(SUM(AMTACCTCR)-sum(amtacctdr)) WHEN -1 THEN 0 ELSE (SUM(AMTACCTCR)-sum(amtacctdr)) END) AS TOTALAMTDR, ACCOUNT_ID,
         ACCTDESCRIPTION, ACCTVALUE, RECORD_ID2, C_BPARTNER_ID, M_PRODUCT_ID, A_ASSET_ID
         FROM FACT_ACCT
         WHERE EXISTS (SELECT 1 FROM C_PERIOD P
                       WHERE P.C_YEAR_ID = ?
                       AND P.C_PERIOD_ID = FACT_ACCT.C_PERIOD_ID)
-        AND ACCOUNT_ID IN (SELECT ACCOUNT_ID 
+        AND ACCOUNT_ID IN (SELECT ACCOUNT_ID
                 FROM C_ELEMENTVALUE, C_VALIDCOMBINATION
                 WHERE C_VALIDCOMBINATION.ACCOUNT_ID = C_ELEMENTVALUE.C_ELEMENTVALUE_ID
                 AND C_ELEMENTVALUE.ACCOUNTTYPE IN ('1'))
@@ -93,25 +93,25 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        INSERT INTO FACT_ACCT 
+        INSERT INTO FACT_ACCT
           (FACT_ACCT_ID, AD_CLIENT_ID, AD_ORG_ID,
-           ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, 
+           ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY,
            C_ACCTSCHEMA_ID,ACCOUNT_ID, DATETRX, DATEACCT,
-           C_PERIOD_ID, AD_TABLE_ID, RECORD_ID, 
-           POSTINGTYPE,C_CURRENCY_ID, AMTSOURCEDR, 
-           AMTSOURCECR,AMTACCTDR, AMTACCTCR, 
-           FACT_ACCT_GROUP_ID,SEQNO, FACTACCTTYPE, 
-           ACCTDESCRIPTION, ACCTVALUE, C_BPARTNER_ID, 
-           RECORD_ID2, M_PRODUCT_ID, A_ASSET_ID) 
-        VALUES 
+           C_PERIOD_ID, AD_TABLE_ID, RECORD_ID,
+           POSTINGTYPE,C_CURRENCY_ID, AMTSOURCEDR,
+           AMTSOURCECR,AMTACCTDR, AMTACCTCR,
+           FACT_ACCT_GROUP_ID,SEQNO, FACTACCTTYPE,
+           ACCTDESCRIPTION, ACCTVALUE, C_BPARTNER_ID,
+           RECORD_ID2, M_PRODUCT_ID, A_ASSET_ID)
+        VALUES
           ( ?,?,?,
            'Y',now(),?,now(),?,
            ?,?,TO_DATE(?),TO_DATE(?),
            ?,?,?,
            ?,?,TO_NUMBER(?),
            TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),
-           ?,TO_NUMBER(?), 'R', 
-           ?, ?, ?, 
+           ?,TO_NUMBER(?), 'R',
+           ?, ?, ?,
            ?, ?, ?)
       ]]>
     </Sql>
@@ -198,10 +198,10 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-		select ad_org_acctschema_id 
+		select ad_org_acctschema_id
 		from ad_org_acctschema
 		where ad_org_id = ?
-		and c_acctschema_id = ?	
+		and c_acctschema_id = ?
       ]]>
     </Sql>
     <Parameter name="adOrgId"/>
@@ -214,8 +214,8 @@
 		INSERT INTO AD_ORG_CLOSING (AD_ORG_CLOSING_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY,
 					   C_YEAR_ID, AD_ORG_ACCTSCHEMA_ID, REG_FACT_ACCT_GROUP_ID, CLOSE_FACT_ACCT_GROUP_ID,
 					   DIVIDEUP_FACT_ACCT_GROUP_ID, OPEN_FACT_ACCT_GROUP_ID)
-		VALUES (GET_UUID(), ?, ?, 'Y', NOW(), ?, NOW(), ?, 
-		?, ?, ?, ?, 
+		VALUES (GET_UUID(), ?, ?, 'Y', NOW(), ?, NOW(), ?,
+		?, ?, ?, ?,
 		?, ?)
       ]]>
     </Sql>
@@ -235,7 +235,7 @@
     <Sql>
       <![CDATA[
         SELECT C_PERIOD_ID
-        FROM C_PERIOD 
+        FROM C_PERIOD
         WHERE STARTDATE = (SELECT ENDDATE + 1 FROM C_PERIOD WHERE C_PERIOD_ID = ?)
       ]]>
     </Sql>
@@ -258,17 +258,17 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-        INSERT INTO FACT_ACCT 
+        INSERT INTO FACT_ACCT
           (FACT_ACCT_ID, AD_CLIENT_ID, AD_ORG_ID,
-           ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, 
+           ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY,
            C_ACCTSCHEMA_ID,ACCOUNT_ID, DATETRX, DATEACCT,
-           C_PERIOD_ID, AD_TABLE_ID, RECORD_ID, 
-        POSTINGTYPE,C_CURRENCY_ID, AMTSOURCEDR, 
-        AMTSOURCECR,AMTACCTDR, AMTACCTCR, 
-        FACT_ACCT_GROUP_ID,SEQNO, FACTACCTTYPE, 
-        ACCTDESCRIPTION, ACCTVALUE, C_BPARTNER_ID, 
-        RECORD_ID2, M_PRODUCT_ID, A_ASSET_ID) 
-        VALUES 
+           C_PERIOD_ID, AD_TABLE_ID, RECORD_ID,
+        POSTINGTYPE,C_CURRENCY_ID, AMTSOURCEDR,
+        AMTSOURCECR,AMTACCTDR, AMTACCTCR,
+        FACT_ACCT_GROUP_ID,SEQNO, FACTACCTTYPE,
+        ACCTDESCRIPTION, ACCTVALUE, C_BPARTNER_ID,
+        RECORD_ID2, M_PRODUCT_ID, A_ASSET_ID)
+        VALUES
           (?,?,?,
            'Y',now(),?,now(),?,
            ?,?,TO_DATE(?),TO_DATE(?),
@@ -324,24 +324,26 @@
         UPDATE C_PeriodControl
         SET PeriodStatus = 'C', UPDATED = now(), UPDATEDBY = ?
         WHERE PeriodStatus <> 'P'
-        AND C_PERIOD_ID IN (SELECT C_PERIOD_ID 
-                FROM C_PERIOD 
-                WHERE CLOSE_FACT_ACCT_GROUP_ID = ?)
+        AND C_PERIOD_ID IN (SELECT C_PERIOD_ID
+                FROM C_PERIOD
+                WHERE C_YEAR_ID = ?)
+        AND AD_ORG_ID = ?
       ]]>
     </Sql>
     <Parameter name="user"/>
-    <Parameter name="close_fact_acct_group_id"/>
+    <Parameter name="cYearId"/>
+    <Parameter name="adOrgId"/>
   </SqlMethod>
    <SqlMethod name="selectOrg" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        SELECT A_O.AD_ORG_ID AS ID, A_O.NAME 
-        FROM AD_ORG A_O, AD_ROLE_ORGACCESS A_R_O, AD_ROLE R 
-        WHERE A_R_O.AD_ORG_ID = A_O.AD_ORG_ID 
-        AND A_R_O.ISACTIVE = 'Y' 
-        AND A_R_O.AD_ROLE_ID = R.AD_ROLE_ID 
-        AND R.ISACTIVE = 'Y' 
-        AND A_R_O.AD_ROLE_ID = ? 
+        SELECT A_O.AD_ORG_ID AS ID, A_O.NAME
+        FROM AD_ORG A_O, AD_ROLE_ORGACCESS A_R_O, AD_ROLE R
+        WHERE A_R_O.AD_ORG_ID = A_O.AD_ORG_ID
+        AND A_R_O.ISACTIVE = 'Y'
+        AND A_R_O.AD_ROLE_ID = R.AD_ROLE_ID
+        AND R.ISACTIVE = 'Y'
+        AND A_R_O.AD_ROLE_ID = ?
         ORDER BY A_O.NAME
       ]]></Sql>
         <Parameter name="rol"/>

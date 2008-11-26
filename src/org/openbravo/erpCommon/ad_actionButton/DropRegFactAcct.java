@@ -112,7 +112,7 @@ public class DropRegFactAcct extends HttpSecureAppServlet {
   }
 
   String processButtonClose(Connection conn, VariablesSecureApp vars, String strKey, String stradOrgId, String strRegFactAcctGroupId, String strCloseFactAcctGroupId, String strDivideUpFactAcctGroupId, String strOpenUpFactAcctGroupId, String strOrgSchemaId) throws ServletException{
-    DropRegFactAcctData.updatePeriodsOpen(conn, this, vars.getUser(), strKey, strCloseFactAcctGroupId);
+    DropRegFactAcctData.updatePeriodsOpen(conn, this, vars.getUser(), strKey, stradOrgId);
     DropRegFactAcctData.deleteOrgClosing(conn, this, strOrgSchemaId);
     DropRegFactAcctData.deleteFactAcctClose(conn, this, strRegFactAcctGroupId, strCloseFactAcctGroupId, strDivideUpFactAcctGroupId, strOpenUpFactAcctGroupId, stradOrgId);
     return "ProcessOK";

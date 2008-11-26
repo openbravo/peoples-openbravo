@@ -4,15 +4,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2008 Openbravo SL
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
@@ -66,14 +66,14 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
         if (tab[0].help.equals("Y")) strWindowPath="../utility/WindowTree_FS.html?inpTabId=" + strTab;
         else strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName + "_Relation.html";
       } else strWindowPath = strDefaultServlet;
-        OBError myError = processButton(vars, strKey, strOrgId, strWindow);        
-        vars.setMessage(strTab, myError);      
+        OBError myError = processButton(vars, strKey, strOrgId, strWindow);
+        vars.setMessage(strTab, myError);
         printPageClosePopUp(response, vars, strWindowPath);
     } else pageErrorPopUp(response);
   }
 
   OBError processButton(VariablesSecureApp vars, String strKey, String strOrgId, String windowId){
-    
+
     Connection conn = null;
     OBError myError = null;
     try {
@@ -99,8 +99,9 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
           RevenueAmtDr = new BigDecimal("0");
           RevenueAmtCr = new BigDecimal("0");
           String strOrgSchemaId = CreateRegFactAcctData.orgAcctschema(this, data[i].org, acctSchema[j].id);
-          if (strOrgSchemaId!=null && !strOrgSchemaId.equals("") && CreateRegFactAcctData.insertOrgClosing(conn, this, vars.getClient(), data[i].org, vars.getUser(), strKey, strOrgSchemaId, strRegId, strCloseId, strDivideUpId, strOpenId)==0){
-            return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
+          if (strOrgSchemaId!=null && !strOrgSchemaId.equals("")){
+        	if (CreateRegFactAcctData.insertOrgClosing(conn, this, vars.getClient(), data[i].org, vars.getUser(), strKey, strOrgSchemaId, strRegId, strCloseId, strDivideUpId, strOpenId)==0 || CreateRegFactAcctData.updateClose(conn, this, vars.getUser(), strKey, data[i].org)==0)
+              return Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
           }
         }
       }
@@ -120,7 +121,7 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
   }
 
   String processButtonReg(Connection conn, VariablesSecureApp vars, String strKey, String windowId, String stradOrgId, String strID, String strAcctSchema) throws ServletException {
-  
+
       CreateRegFactAcctData[] expense = CreateRegFactAcctData.getAmounts(this, strKey, "E", stradOrgId, strAcctSchema);
       CreateRegFactAcctData[] revenue = CreateRegFactAcctData.getAmounts(this, strKey, "R", stradOrgId, strAcctSchema);
       String Fact_Acct_ID = "";
@@ -151,7 +152,7 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
       return "Success";
   }
 
-  String processButtonClose(Connection conn, VariablesSecureApp vars, String strKey, String windowId, String stradOrgId, String strCloseID, String strOpenID, String strDivideUpId, String strAcctSchema) throws ServletException {    
+  String processButtonClose(Connection conn, VariablesSecureApp vars, String strKey, String windowId, String stradOrgId, String strCloseID, String strOpenID, String strDivideUpId, String strAcctSchema) throws ServletException {
       BigDecimal assetAmtDr = new BigDecimal("0");
       BigDecimal assetAmtCr = new BigDecimal("0");
       BigDecimal liabilityAmtDr = new BigDecimal("0");
