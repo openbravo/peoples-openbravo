@@ -247,9 +247,18 @@ public class ModelSQLGeneration {
    * Overloaded method with sorted columns by default
    */
   public static String generateSQL(ConnectionProvider conn, VariablesSecureApp vars, TableSQLData tableSQL, String selectFields, Vector<String> filter, Vector<String> filterParams, int offset, int pageSize) throws Exception {
-    return generateSQL(conn, vars, tableSQL, selectFields, filter, filterParams, offset, pageSize, true);
+    return generateSQL(conn, vars, tableSQL, selectFields, filter, filterParams, offset, pageSize, true, false);
   }
-  
+
+  /**
+   * Special case of the method which specifies that only the id column of the
+   * base table should be returned. No extra left joins (besides possible sort columns)
+   * are needed.
+   */
+  public static String generateSQLonlyId(ConnectionProvider conn, VariablesSecureApp vars, TableSQLData tableSQL, String selectFields, Vector<String> filter, Vector<String> filterParams, int offset, int pageSize) throws Exception {
+    return generateSQL(conn, vars, tableSQL, selectFields, filter, filterParams, offset, pageSize, true, true);
+  }
+
   /**
    * Generates the query for this tab. 
    * This method adds to the standard query defined in the TableSQLData (from dictionary)
@@ -263,10 +272,11 @@ public class ModelSQLGeneration {
    * @param filterParams: Vector with the parameters for the specific filter fields.
    * @param offset: int, offset of rows to be displayed
    * @param pageSize: int, number of rows to be displayed
+   * @param onlyId only the id of the base table should be returned
    * @return String with the sql.
    * @throws Exception
    */
-  public static String generateSQL(ConnectionProvider conn, VariablesSecureApp vars, TableSQLData tableSQL, String selectFields, Vector<String> filter, Vector<String> filterParams, int offset, int pageSize, boolean sorted) throws Exception {
+  public static String generateSQL(ConnectionProvider conn, VariablesSecureApp vars, TableSQLData tableSQL, String selectFields, Vector<String> filter, Vector<String> filterParams, int offset, int pageSize, boolean sorted, boolean onlyId) throws Exception {
     Vector<String> orderBy = new Vector<String>();       //Maintains orderby clause with SQL clause
     Vector<String> orderBySimple = new Vector<String>(); //Maintains orderby clause just with column names
     String loadSessionOrder = vars.getSessionValue(tableSQL.getTabID() + "|newOrder");
@@ -291,7 +301,7 @@ public class ModelSQLGeneration {
         parametersData.setData("PARENT", aux);
       }
     }
-    String strSQL = tableSQL.getSQL(filter, filterParams, orderBy, null, selectFields, orderBySimple, offset, pageSize, sorted);
+    String strSQL = tableSQL.getSQL(filter, filterParams, orderBy, null, selectFields, orderBySimple, offset, pageSize, sorted, onlyId);
     setSessionOrderBy(vars, tableSQL);
     Utility.fillTableSQLParameters(conn, vars, parametersData, tableSQL, tableSQL.getWindowID());
    return strSQL;

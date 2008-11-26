@@ -264,6 +264,54 @@ public class TableSQLData {
   }
 
   /**
+   * Gets the parameter's values defined, which are needed
+   * for onlyId queries. These correspond to the sql generated
+   * by the getSql-function with onlyId=true
+   * 
+   * @return Vector with the values.
+   */
+  public Vector<String> getParameterValuesOnlyId() {
+    Vector<String> result = new Vector<String>();
+    Vector<QueryParameterStructure> vAux;
+    // skip the following parameter types for onlyId queries: select, from, subquery
+    vAux = getWhereParameters();
+    if (vAux!=null) {
+      for (int i=0;i<vAux.size();i++) {
+        QueryParameterStructure aux = vAux.elementAt(i);
+        result.addElement(getParameter(aux.getName()));
+      }
+    }
+    if (log4j.isDebugEnabled()) log4j.debug("Where parameters obtained");
+
+    vAux = getFilterParameters();
+    if (vAux!=null) {
+      for (int i=0;i<vAux.size();i++) {
+        QueryParameterStructure aux = vAux.elementAt(i);
+        result.addElement(getParameter(aux.getName()));
+      }
+    }
+    if (log4j.isDebugEnabled()) log4j.debug("Filter parameters obtained");
+
+    vAux = getWrapperParameters();
+    if (vAux!=null) {
+      for (int i=0;i<vAux.size();i++) {
+        QueryParameterStructure aux = vAux.elementAt(i);
+        result.addElement(getParameter(aux.getName()));
+      }
+    }
+    vAux = getOrderByParameters();
+    if (vAux!=null) {
+      for (int i=0;i<vAux.size();i++) {
+        QueryParameterStructure aux = vAux.elementAt(i);
+        result.addElement(getParameter(aux.getName()));
+      }
+    }
+    if (log4j.isDebugEnabled()) log4j.debug("Order by parameters obtained");
+
+    return result;
+  }
+
+  /**
    * Gets all the parameter's value for the total query.
    * 
    * @return Vector with the values.
@@ -1593,7 +1641,13 @@ public class TableSQLData {
       addInternalFilterField(strFilterClause, "FILTER");
     }
     if (getWindowType().equalsIgnoreCase("T") && getTabLevel().equals("0")) {
-      addInternalFilterField("(COALESCE(" + getTableName() + ".Processed, 'N')='N' OR " + getTableName() + ".Updated > now()-TO_NUMBER(?))", "FILTER");
+      /* using now() as a function on oracle so that it is evaluated many times in a query
+         is very inefficient. Special case it for oracle/postgres */
+      if (getPool().getRDBMS().equalsIgnoreCase("ORACLE")) {
+        addInternalFilterField("(COALESCE(" + getTableName() + ".Processed, 'N')='N' OR " + getTableName() + ".Updated > sysdate-TO_NUMBER(?))", "FILTER");
+      } else {
+        addInternalFilterField("(COALESCE(" + getTableName() + ".Processed, 'N')='N' OR " + getTableName() + ".Updated > now()-TO_NUMBER(?))", "FILTER");
+      }
       addInternalFilterParameter("#Transactional$Range", "FILTER", "FILTER");
     }
   }
@@ -1884,7 +1938,7 @@ public class TableSQLData {
    * @return String with the sql.
    */
   public String getSQL() {
-    return getSQL(null, null, null, null, null, null, 0, 0, false);
+    return getSQL(null, null, null, null, null, null, 0, 0, false, false);
   }
   
   /**
@@ -1892,7 +1946,7 @@ public class TableSQLData {
    * @return String with the sql
    */  
   public String getSQL(Vector<String> _FilterFields, Vector<String> _FilterParams, Vector<String> _OrderFields, Vector<String> _OrderParams, String selectFields, Vector<String>_OrderSimple, int startPosition, int rangeLength) {
-    return getSQL(_FilterFields, _FilterParams, _OrderFields, _OrderParams, selectFields, _OrderSimple, startPosition, rangeLength, true);
+    return getSQL(_FilterFields, _FilterParams, _OrderFields, _OrderParams, selectFields, _OrderSimple, startPosition, rangeLength, true, false);
   }
 
   /**
@@ -1901,14 +1955,15 @@ public class TableSQLData {
    * @param _FilterFields: Vector with specific filter fields.
    * @param _FilterParams: Vector with parameters for the specific filter fields.
    * @param _OrderFields: Vector with specific order by fields. It can contain tablename.field or SQL clause
-   * @param _OrderParams: Vector with parameters for the specific orfer by fields.
+   * @param _OrderParams: Vector with parameters for the specific order by fields.
    * @param selectFields: String with the fields for the select clause.
    * @param _OrderSimple: Vector with specific order by fields. It always contains tablename.field, never SQL clause
-   * @param startPosition: int with the firs row to be shown
+   * @param startPosition: int with the first row to be shown
    * @param rangeLength: int with the number of rows to be shown
    * @return String with the generated sql.
    */
-  public String getSQL(Vector<String> _FilterFields, Vector<String> _FilterParams, Vector<String> _OrderFields, Vector<String> _OrderParams, String selectFields, Vector<String>_OrderSimple, int startPosition, int rangeLength, boolean sorted) {
+  
+  public String getSQL(Vector<String> _FilterFields, Vector<String> _FilterParams, Vector<String> _OrderFields, Vector<String> _OrderParams, String selectFields, Vector<String>_OrderSimple, int startPosition, int rangeLength, boolean sorted, boolean onlyId) {
     StringBuffer text = new StringBuffer();
     boolean hasWhere = false;
     Vector<QueryFieldStructure> aux = null;
@@ -2039,7 +2094,8 @@ public class TableSQLData {
       }
     }
     if (hasWhere) {
-      if (hasRange) txtAuxWhere.append(txtAuxOrderBy.toString()); //Internal order by only for ranges
+      // for onlyId include the inner order by always, not only when having and limit part
+      if (hasRange || onlyId) txtAuxWhere.append(txtAuxOrderBy.toString()); //Internal order by only for ranges, or onlyId case
       if ((!hasRange)||(getPool().getRDBMS().equalsIgnoreCase("ORACLE"))) txtAuxWhere.append(")\n");
       if (hasRange) {
         //wrap end SQL
@@ -2072,12 +2128,30 @@ public class TableSQLData {
           }
         } catch(Exception e) {e.printStackTrace();}
       } 
+
+      /*
+       * When only interested in ordered sequence of id values we need only
+       * the inner subselect of the previously assembled query. This block
+       * massages the inner select into an complete executable sql statement
+       * and uses this instead of the bigger one.
+       */
+      if (onlyId) {
+    	  txtAuxWhere.deleteCharAt(txtAuxWhere.length()-1);
+    	  txtAuxWhere.deleteCharAt(txtAuxWhere.length()-1);
+    	  int pos = txtAuxWhere.indexOf("SELECT");
+    	  txtAuxWhere.delete(0, pos);
+    	  // replace the previously built sql-text with our version completely
+    	  text = txtAuxWhere;
+      } else {
+      // old behavior for !onlyId case
       text.append("WHERE ").append(txtAuxWhere.toString());
+      }
     }
     
-  
-    
-    text.append(txtAuxOrderBy.toString());
+    // don't append second (outer) order in onlyId case 
+    if (!onlyId) {
+    	text.append(txtAuxOrderBy.toString());
+    }
     return text.toString();
   }
 
