@@ -41,7 +41,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="DOCUMENTNO" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+	  <column name="DOCUMENTNO" primaryKey="false" required="false" type="NVARCHAR" size="30" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
