@@ -762,9 +762,12 @@ public class ImportModule {
         if (entry.getName().endsWith(".obx")) { //If it is a new module install it
           if (installLocally) {
             final ByteArrayOutputStream fout=new ByteArrayOutputStream();
-            for (int c = obxInputStream.read(); c != -1; c = obxInputStream.read()) {
-              fout.write(c);
+            final byte[] buf = new byte[1024];
+            int len;
+            while ((len = obxInputStream.read(buf)) > 0) {
+                fout.write(buf, 0, len);
             }
+
             fout.close();
             final ByteArrayInputStream ba = new ByteArrayInputStream(fout.toByteArray());
             final ByteArrayInputStream ba1 = new ByteArrayInputStream(fout.toByteArray());
@@ -782,26 +785,29 @@ public class ImportModule {
           final File entryFile = new File(fileName);
           //Check whether the directory exists, if not create
          
-          if (entryFile.getParent() != null) { 
-              final File dir = new File(entryFile.getParent()); 
+          File dir = null;
+          if (entryFile.getParent() != null) dir = new File(entryFile.getParent()); 
+          if (entry.isDirectory()) dir = entryFile;
+          
+          if (entry.isDirectory() || entryFile.getParent() != null) { 
               if (!dir.exists()) {
                   log4j.info("Created dir: "+dir.getAbsolutePath());
                   dir.mkdirs();
               }
           }
-          //Unzip the file
-          log4j.info("Installing " + fileName);
-          final FileOutputStream fout = new FileOutputStream(entryFile);
-          final byte[] buf = new byte[1024];
           
-          int len;
-          while ((len = obxInputStream.read(buf)) > 0) {
-              fout.write(buf, 0, len);
+          if (!entry.isDirectory()){
+              //Unzip the file
+              log4j.info("Installing " + fileName);
+              final FileOutputStream fout = new FileOutputStream(entryFile);
+              final byte[] buf = new byte[1024];
+              
+              int len;
+              while ((len = obxInputStream.read(buf)) > 0) {
+                  fout.write(buf, 0, len);
+              }
+              fout.close();
           }
-          
-
-          fout.close();
-         
           obxInputStream.closeEntry();
         }
       }

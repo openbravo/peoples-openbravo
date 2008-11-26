@@ -31,6 +31,17 @@
       </Sql>
   </SqlMethod>
   
+  <SqlMethod name="isUpdatingCore" type="preparedStatement" return="boolean">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+         SELECT count(*) as NAME
+           FROM AD_MODULE
+          WHERE STATUS='I'      
+            AND AD_MODULE_ID = '0'
+          ]]>
+      </Sql>
+  </SqlMethod>
+  
   <SqlMethod name="selectUninstalledModules" type="preparedStatement" return="boolean">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[

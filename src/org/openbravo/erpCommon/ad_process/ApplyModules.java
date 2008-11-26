@@ -127,12 +127,17 @@ public void doPost (HttpServletRequest request, HttpServletResponse response) th
       
       final String unnappliedModules = getUnnapliedModules();
       
-      
-      if (ApplyModulesData.selectUninstalledModules(this)) { //there're uninstalled modules
+      if (ApplyModulesData.isUpdatingCore(this)) {
+          tasks.add("update.database");
+          tasks.add("core.lib");
+          tasks.add("wad.lib");
+          tasks.add("trl.lib");
+          tasks.add("compile.complete.deploy");
+          ant.setProperty("apply.on.create", "true");
+      } else if (ApplyModulesData.selectUninstalledModules(this)) { //there're uninstalled modules
         tasks.add("update.database");
         tasks.add("generate.entities");
         tasks.add("compile.deploy");
-        tasks.add("war");
         if (!unnappliedModules.equals("")) { //There are also installed modules, let's compile them
             ant.setProperty("module", unnappliedModules);
         } else {
