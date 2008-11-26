@@ -70,6 +70,7 @@ public class XMLUtil implements OBSingleton {
         try {
             final OutputFormat format = OutputFormat.createPrettyPrint();
             format.setEncoding("UTF-8");
+            format.setTrimText(false);
             final StringWriter out = new StringWriter();
             final XMLWriter writer = new XMLWriter(out, format);
             writer.write(document);
