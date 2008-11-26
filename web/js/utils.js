@@ -267,7 +267,14 @@ function logClick(hiddenInput) {
 function checkForChanges(form) {
 	if (form==null) form = top.appFrame.document.forms[0];
 	// backward compatibility
-	if(typeof(top.frameMenu.autosave) == 'undefined' || !top.frameMenu.autosave) {		
+	var autosave = null;
+	if(top.opener != null) {
+	  autosave = top.opener.top.frameMenu.autosave;
+	}
+	else {
+	  autosave = top.frameMenu.autosave;
+	}
+	if(typeof autosave == 'undefined' || !autosave) {		
 		if (inputValue(form.inpLastFieldChanged)!="") {
 			if (!showJSMessage(26))
 				return false;
