@@ -268,7 +268,7 @@ public class ModelProvider implements OBSingleton {
             }
 
             if (t.getPrimaryKeyColumns().size() == 0) {
-                log.warn("Ignoring table " + t.getName()
+                log.debug("Ignoring table " + t.getName()
                         + " because it has no primary key columns");
                 toRemove.add(t);
                 continue;
