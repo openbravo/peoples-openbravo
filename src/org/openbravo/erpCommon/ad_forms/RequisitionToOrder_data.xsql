@@ -496,7 +496,7 @@
   <SqlMethod name="requisitionStatus" connection="true" type="callableStatement" return="object" object="RequisitionToOrderData">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        CALL M_RequisitionLine_Status(null, TO_NUMBER(?), ?)
+        CALL M_RequisitionLine_Status(null, ?, ?)
       ]]></Sql>
       <Parameter name="requisitionLineId"></Parameter>
       <Parameter name="userId"></Parameter>
