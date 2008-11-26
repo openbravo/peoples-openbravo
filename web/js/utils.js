@@ -2627,7 +2627,11 @@ function formElementEvent(form, ElementName, calloutName) {
           eval(onchange_text);
           obj.setAttribute("onChange", "selectCombo(this, '"+obj.value+"');"+onchange_text2);
         } else obj.onchange();
-      } else obj.onchange();
+      } else {
+        if (obj.getAttribute('onchange') != '' && obj.getAttribute('onchange') != null && obj.getAttribute('onchange') != 'null') {
+          obj.onchange();
+        }
+      }
 
         if (bolReadOnly) obj.readOnly = true;
       }
