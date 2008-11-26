@@ -21,6 +21,7 @@ import org.openbravo.service.db.ImportResult;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.erpCommon.utility.*;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.base.secureApp.*;
@@ -93,7 +94,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     if(tree.getData()==null || tree.getData().length==0)
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/InitialClientSetup").createXmlDocument();
     else xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/InitialClientSetup", discard).createXmlDocument();
-    
+
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "InitialClientSetup", false, "", "", "", false, "ad_forms",  strReplaceWith, false, true);
@@ -122,7 +123,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       }
       xmlDocument.setParameter("moduleTree", tree.toHtml());
       xmlDocument.setParameter("moduleTreeDescription", tree.descriptionToHtml());
-    
+
       xmlDocument.setData("reportCurrency","liststructure", MonedaComboData.select(this));
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
@@ -133,9 +134,9 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 
   private void printPageResultado(HttpServletResponse response, VariablesSecureApp vars, String strResultado) throws IOException, ServletException{
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/Resultado").createXmlDocument();
-    
+
     xmlDocument.setParameter("resultado",strResultado);
-   
+
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "InitialClientSetup", false, "", "", "",false, "ad_forms",  strReplaceWith, false,  true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
@@ -237,14 +238,14 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       } catch (Exception ignored) {}
     }
     m_info.append(SALTO_LINEA).append("*****************************************************").append(SALTO_LINEA);
-    if(bCreateAccounting==false) {    	
-	    m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "SkippingAccounting", vars.getLanguage())).append(SALTO_LINEA);	    
+    if(bCreateAccounting==false) {
+	    m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "SkippingAccounting", vars.getLanguage())).append(SALTO_LINEA);
     }
     else {
       AccountingValueData av = new AccountingValueData(vars, "inpFile", true, "C");
       FieldProvider[] avData = (av!=null)?av.getFieldProvider():null;
-      if(avData!=null && avData.length != 0){ 
-  	    try {	      
+      if(avData!=null && avData.length != 0){
+  	    try {
   	      m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "StartingAccounting", vars.getLanguage())).append(SALTO_LINEA);
   	      if (!createAccounting(vars, strCurrency, InitialClientSetupData.currency(this, strCurrency), bProduct, bBPartner, bProject, bCampaign, bSalesRegion, avData)){
   	        releaseRollbackConnection(conn);
@@ -289,8 +290,8 @@ public class InitialClientSetup extends HttpSecureAppServlet {
         releaseRollbackConnection(conn);
       } catch (Exception ignored) {}
     }
-    
-    
+
+
 //==========================================================================================================================================
     if(!strModules.equals("")){
       try {
@@ -320,8 +321,8 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       }
     }
 
-//==========================================================================================================================================    
-    
+//==========================================================================================================================================
+
 
     log4j.debug("InitialClientSetup - after createEntities");
     if(isOK)strError = Utility.messageBD(this, "Success", vars.getLanguage());
@@ -329,7 +330,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     strSummary.append(m_info.toString());
     m_info = strSummary;
     return m_info.toString();
-  } 
+  }
 
   public boolean isTrue(String s){
     if (s==null || s.equals("")) return false;
@@ -462,7 +463,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 //     *  - Admin
 //     *  - User
 
-    
+
       name = clientName + " Admin";
       String AD_Role_ID = SequenceIdData.getUUID();
       if (InitialClientSetupData.insertRole(conn ,this, AD_Client_ID, AD_Role_ID, name, "0") != 1) {
@@ -538,7 +539,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     strSummary.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateClientSuccess", vars.getLanguage())).append(SALTO_LINEA);
     if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createClient - m_info last: " + m_info.toString());
     return true;
-  } 
+  }
 
 
 
@@ -613,10 +614,10 @@ public class InitialClientSetup extends HttpSecureAppServlet {
               OK = false;
           }
       }
-    } 
+    }
     return OK;
   }
-  
+
   private String [][] operandProcess (String strOperand) {
      if(strOperand==null || strOperand.equals("")) return null;
      StringTokenizer st = new StringTokenizer(strOperand,"+-",true);
@@ -702,13 +703,13 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 
   public String getC_ElementValue_ID (AccountingValueData[] data, String key) {
     if (data==null || data.length==0) return "";
-    for (int i=0;i<data.length;i++){ 
+    for (int i=0;i<data.length;i++){
       if (data[i].defaultAccount.equalsIgnoreCase("INCOMESUMMARY_ACCT") && log4j.isDebugEnabled())  log4j.debug("InitialClientSetup - getC_ElementValue_ID: " + data[i].defaultAccount + " - KEY: " + key);
       if (data[i].defaultAccount.equalsIgnoreCase(key) && !data[i].defaultAccount.equals("")) return data[i].cElementValueId;
     }
     return "";
   }   //  getC_ElementValue_ID
- 
+
   public boolean createAccounting(VariablesSecureApp vars, String newC_Currency_ID, String curName, boolean hasProduct, boolean hasBPartner, boolean hasProject,
     boolean hasMCampaign, boolean hasSRegion,FieldProvider[] avData) throws ServletException{
     //
@@ -730,10 +731,10 @@ public class InitialClientSetup extends HttpSecureAppServlet {
 
       //  Standard variables
       m_info.append(SALTO_LINEA);
-  
-  
+
+
   //     *  Create Calendar
-  
+
       C_Calendar_ID = SequenceIdData.getUUID();
       name = clientName + " " + Utility.messageBD(this, "C_Calendar_ID", vars.getLanguage());
       if (InitialClientSetupData.insertCalendar(conn ,this, AD_Client_ID, C_Calendar_ID, name) != 1) {
@@ -746,12 +747,12 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createAccounting - CALENDAR INSERTED");
       //  Info
       m_info.append(Utility.messageBD(this, "C_Calendar_ID", vars.getLanguage())).append("=").append(name).append(SALTO_LINEA);
-  
+
       //  Year
       C_Year_ID = SequenceIdData.getUUID();
       if (InitialClientSetupData.insertYear(conn ,this, C_Year_ID, AD_Client_ID, C_Calendar_ID) != 1)
         log4j.warn("InitialClientSetup - createAccounting - Year NOT inserted");
-      // @todo Create Periods 
+      // @todo Create Periods
       if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createAccounting - YEAR INSERTED");
       releaseCommitConnection(conn);
       conn = this.getTransactionConnection();
@@ -769,7 +770,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createAccounting - ELEMENT INSERTED :" + C_Element_ID);
       m_info.append(Utility.messageBD(this, "C_Element_ID", vars.getLanguage())).append("=").append(name).append(SALTO_LINEA);
       if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createAccounting - m_info last: " + m_info.toString());
-  
+
       //  Create Account Values
       data = parseData(avData);
       boolean errMsg = save(conn, vars, AD_Client_ID, C_Element_ID, data);
@@ -782,7 +783,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       }
       else m_info.append(Utility.messageBD(this, "C_ElementValue_ID", vars.getLanguage())).append(" # ").append(SALTO_LINEA);
       if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - createAccounting - m_info last: " + m_info.toString());
-  
+
   //     *  Create AccountingSchema
       C_ElementValue_ID = getC_ElementValue_ID(data, "DEFAULT_ACCT");
       C_AcctSchema_ID = SequenceIdData.getUUID();
@@ -871,7 +872,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
             m_info.append(Utility.messageBD(this, "C_AcctSchema_Element_ID", vars.getLanguage())).append("=").append(name).append(SALTO_LINEA);
           else m_info.append(Utility.messageBD(this, "C_AcctSchema_Element_ID", vars.getLanguage())).append("=").append(name).append(" NOT inserted").append(SALTO_LINEA);
 
-          // Default value for mandatory elements: OO and AC 
+          // Default value for mandatory elements: OO and AC
           if (ElementType.equals("OO")){
             if (InitialClientSetupData.updateAcctSchemaElement(conn, this, "0", C_AcctSchema_Element_ID) != 1){
               log4j.warn("InitialClientSetup - createAccounting - Default Org in AcctSchamaElement NOT updated");
@@ -903,9 +904,9 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       String strAccount = getAcct(conn, data, "INCOMESUMMARY_ACCT");
       log4j.debug("InitialClientSetup - getC_ElementValue_ID - strAccount: " + strAccount);
 
-      if(InitialClientSetupData.insertAcctSchemaGL(conn, this, AD_Client_ID, C_AcctSchema_ID, getAcct(conn, data, 
-"SUSPENSEBALANCING_ACCT"), getAcct(conn, data, "SUSPENSEERROR_ACCT"), getAcct(conn, data, "CURRENCYBALANCING_ACCT"), getAcct(conn, data, 
-"RETAINEDEARNING_ACCT"), strAccount, getAcct(conn, data, "INTERCOMPANYDUETO_ACCT"), getAcct(conn, data, 
+      if(InitialClientSetupData.insertAcctSchemaGL(conn, this, AD_Client_ID, C_AcctSchema_ID, getAcct(conn, data,
+"SUSPENSEBALANCING_ACCT"), getAcct(conn, data, "SUSPENSEERROR_ACCT"), getAcct(conn, data, "CURRENCYBALANCING_ACCT"), getAcct(conn, data,
+"RETAINEDEARNING_ACCT"), strAccount, getAcct(conn, data, "INTERCOMPANYDUETO_ACCT"), getAcct(conn, data,
 "INTERCOMPANYDUEFROM_ACCT"), getAcct(conn, data, "PPVOFFSET_ACCT")) != 1) {
           String err = "InitialClientSetup - createAccounting - GL Accounts NOT inserted";
           log4j.warn(err);
@@ -914,25 +915,25 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       }
 
       String C_AcctSchema_Default_ID = SequenceIdData.getUUID();
-      if(InitialClientSetupData.insertAcctSchemaDEFAULT(conn, this, AD_Client_ID, C_AcctSchema_ID, getAcct(conn, data, 
-"W_INVENTORY_ACCT"), getAcct(conn, data, "W_DIFFERENCES_ACCT"), getAcct(conn, data, "W_REVALUATION_ACCT"), getAcct(conn, data, 
-"W_INVACTUALADJUST_ACCT"), getAcct(conn, data, "P_REVENUE_ACCT"), getAcct(conn, data, "P_EXPENSE_ACCT"), getAcct(conn, data, 
-"P_ASSET_ACCT"), getAcct(conn, data, "P_COGS_ACCT"), getAcct(conn, data, "P_PURCHASEPRICEVARIANCE_ACCT"), getAcct(conn, data, 
-"P_INVOICEPRICEVARIANCE_ACCT"), getAcct(conn, data, "P_TRADEDISCOUNTREC_ACCT"), getAcct(conn, data, "P_TRADEDISCOUNTGRANT_ACCT"), 
-getAcct(conn, data, "C_RECEIVABLE_ACCT"), getAcct(conn, data, "C_PREPAYMENT_ACCT"), getAcct(conn, data, "V_LIABILITY_ACCT"), 
-getAcct(conn, data, "V_LIABILITY_SERVICES_ACCT"), getAcct(conn, data, "V_PREPAYMENT_ACCT"), getAcct(conn, data, "PAYDISCOUNT_EXP_ACCT"), 
-getAcct(conn, data, "PAYDISCOUNT_REV_ACCT"), getAcct(conn, data, "WRITEOFF_ACCT"), getAcct(conn, data, "UNREALIZEDGAIN_ACCT"), 
-getAcct(conn, data, "UNREALIZEDLOSS_ACCT"), getAcct(conn, data, "REALIZEDGAIN_ACCT"), getAcct(conn, data, "REALIZEDLOSS_ACCT"), 
-getAcct(conn, data, "WITHHOLDING_ACCT"), getAcct(conn, data, "E_PREPAYMENT_ACCT"), getAcct(conn, data, "E_EXPENSE_ACCT"), getAcct(conn, 
-data, "PJ_ASSET_ACCT"), getAcct(conn, data, "PJ_WIP_ACCT"), getAcct(conn, data, "T_EXPENSE_ACCT"), getAcct(conn, data, 
-"T_LIABILITY_ACCT"), getAcct(conn, data, "T_RECEIVABLES_ACCT"), getAcct(conn, data, "T_DUE_ACCT"), getAcct(conn, data, "T_CREDIT_ACCT"), 
-getAcct(conn, data, "B_INTRANSIT_ACCT"), getAcct(conn, data, "B_ASSET_ACCT"), getAcct(conn, data, "B_EXPENSE_ACCT"), getAcct(conn, data, 
-"B_INTERESTREV_ACCT"), getAcct(conn, data, "B_INTERESTEXP_ACCT"), getAcct(conn, data, "B_UNIDENTIFIED_ACCT"), getAcct(conn, data, 
-"B_SETTLEMENTGAIN_ACCT"), getAcct(conn, data, "B_SETTLEMENTLOSS_ACCT"), getAcct(conn, data, "B_REVALUATIONGAIN_ACCT"), getAcct(conn, 
-data, "B_REVALUATIONLOSS_ACCT"), getAcct(conn, data, "B_PAYMENTSELECT_ACCT"), getAcct(conn, data, "B_UNALLOCATEDCASH_ACCT"), 
-getAcct(conn, data, "CH_EXPENSE_ACCT"), getAcct(conn, data, "CH_REVENUE_ACCT"), getAcct(conn, data, "UNEARNEDREVENUE_ACCT"), 
-getAcct(conn, data, "NOTINVOICEDRECEIVABLES_ACCT"), getAcct(conn, data, "NOTINVOICEDREVENUE_ACCT"), getAcct(conn, data, 
-"NOTINVOICEDRECEIPTS_ACCT"), getAcct(conn, data, "CB_ASSET_ACCT"), getAcct(conn, data, "CB_CASHTRANSFER_ACCT"), getAcct(conn, data, 
+      if(InitialClientSetupData.insertAcctSchemaDEFAULT(conn, this, AD_Client_ID, C_AcctSchema_ID, getAcct(conn, data,
+"W_INVENTORY_ACCT"), getAcct(conn, data, "W_DIFFERENCES_ACCT"), getAcct(conn, data, "W_REVALUATION_ACCT"), getAcct(conn, data,
+"W_INVACTUALADJUST_ACCT"), getAcct(conn, data, "P_REVENUE_ACCT"), getAcct(conn, data, "P_EXPENSE_ACCT"), getAcct(conn, data,
+"P_ASSET_ACCT"), getAcct(conn, data, "P_COGS_ACCT"), getAcct(conn, data, "P_PURCHASEPRICEVARIANCE_ACCT"), getAcct(conn, data,
+"P_INVOICEPRICEVARIANCE_ACCT"), getAcct(conn, data, "P_TRADEDISCOUNTREC_ACCT"), getAcct(conn, data, "P_TRADEDISCOUNTGRANT_ACCT"),
+getAcct(conn, data, "C_RECEIVABLE_ACCT"), getAcct(conn, data, "C_PREPAYMENT_ACCT"), getAcct(conn, data, "V_LIABILITY_ACCT"),
+getAcct(conn, data, "V_LIABILITY_SERVICES_ACCT"), getAcct(conn, data, "V_PREPAYMENT_ACCT"), getAcct(conn, data, "PAYDISCOUNT_EXP_ACCT"),
+getAcct(conn, data, "PAYDISCOUNT_REV_ACCT"), getAcct(conn, data, "WRITEOFF_ACCT"), getAcct(conn, data, "UNREALIZEDGAIN_ACCT"),
+getAcct(conn, data, "UNREALIZEDLOSS_ACCT"), getAcct(conn, data, "REALIZEDGAIN_ACCT"), getAcct(conn, data, "REALIZEDLOSS_ACCT"),
+getAcct(conn, data, "WITHHOLDING_ACCT"), getAcct(conn, data, "E_PREPAYMENT_ACCT"), getAcct(conn, data, "E_EXPENSE_ACCT"), getAcct(conn,
+data, "PJ_ASSET_ACCT"), getAcct(conn, data, "PJ_WIP_ACCT"), getAcct(conn, data, "T_EXPENSE_ACCT"), getAcct(conn, data,
+"T_LIABILITY_ACCT"), getAcct(conn, data, "T_RECEIVABLES_ACCT"), getAcct(conn, data, "T_DUE_ACCT"), getAcct(conn, data, "T_CREDIT_ACCT"),
+getAcct(conn, data, "B_INTRANSIT_ACCT"), getAcct(conn, data, "B_ASSET_ACCT"), getAcct(conn, data, "B_EXPENSE_ACCT"), getAcct(conn, data,
+"B_INTERESTREV_ACCT"), getAcct(conn, data, "B_INTERESTEXP_ACCT"), getAcct(conn, data, "B_UNIDENTIFIED_ACCT"), getAcct(conn, data,
+"B_SETTLEMENTGAIN_ACCT"), getAcct(conn, data, "B_SETTLEMENTLOSS_ACCT"), getAcct(conn, data, "B_REVALUATIONGAIN_ACCT"), getAcct(conn,
+data, "B_REVALUATIONLOSS_ACCT"), getAcct(conn, data, "B_PAYMENTSELECT_ACCT"), getAcct(conn, data, "B_UNALLOCATEDCASH_ACCT"),
+getAcct(conn, data, "CH_EXPENSE_ACCT"), getAcct(conn, data, "CH_REVENUE_ACCT"), getAcct(conn, data, "UNEARNEDREVENUE_ACCT"),
+getAcct(conn, data, "NOTINVOICEDRECEIVABLES_ACCT"), getAcct(conn, data, "NOTINVOICEDREVENUE_ACCT"), getAcct(conn, data,
+"NOTINVOICEDRECEIPTS_ACCT"), getAcct(conn, data, "CB_ASSET_ACCT"), getAcct(conn, data, "CB_CASHTRANSFER_ACCT"), getAcct(conn, data,
 "CB_DIFFERENCES_ACCT"), getAcct(conn, data, "CB_EXPENSE_ACCT"), getAcct(conn, data, "CB_RECEIPT_ACCT"),C_AcctSchema_Default_ID,
 getAcct(conn, data, "A_DEPRECIATION_ACCT"),getAcct(conn, data, "A_ACCUMDEPRECIATION_ACCT"),getAcct(conn, data, "A_DISPOSAL_LOSS"),getAcct(conn, data, "A_DISPOSAL_GAIN"))  != 1) {
         String err = "InitialClientSetup - createAccounting - Default Accounts NOT inserted";
@@ -950,7 +951,7 @@ getAcct(conn, data, "A_DEPRECIATION_ACCT"),getAcct(conn, data, "A_ACCUMDEPRECIAT
     m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateAccountingSuccess", vars.getLanguage())).append(SALTO_LINEA);
     strSummary.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateAccountingSuccess", vars.getLanguage())).append(SALTO_LINEA);
     return true;
-  }   //  createAccounting  
+  }   //  createAccounting
 
   public boolean createDocumentTypes(VariablesSecureApp vars) throws ServletException{
     //  GL Categories
@@ -1082,7 +1083,7 @@ getAcct(conn, data, "A_DEPRECIATION_ACCT"),getAcct(conn, data, "A_ACCUMDEPRECIAT
         if (InitialClientSetupData.insertSequence(conn ,this,AD_Sequence_ID, AD_Client_ID, Name, StartNo) != 1)
         log4j.warn("InitialClientSetup - createDocType - Sequence NOT created - " + Name);
       }
-  
+
       //  Get Document Type
       C_DocType_ID = SequenceIdData.getUUID();
       String IsDocNoControlled = "";
@@ -1128,7 +1129,7 @@ getAcct(conn, data, "A_DEPRECIATION_ACCT"),getAcct(conn, data, "A_ACCUMDEPRECIAT
       if(data!=null && data.length!=0) {
         DataImportService myData = DataImportService.getInstance();
         for(int i=0;i<data.length;i++){
-          if(data[i].haschartofaccounts.equals("Y") && bCreateAccounting){ 
+          if(data[i].haschartofaccounts.equals("Y") && bCreateAccounting){
             String strPath = vars.getSessionValue("#SOURCEPATH") + "/modules" + data[i].path;
             FileInputStream in = new FileInputStream(strPath);
             AccountingValueData av = new AccountingValueData(vars, in, true, "C");
@@ -1145,7 +1146,7 @@ getAcct(conn, data, "A_DEPRECIATION_ACCT"),getAcct(conn, data, "A_ACCUMDEPRECIAT
           StringBuffer strError = new StringBuffer("");
           for(int j=0;j<myFiles.length;j++){
             String strXml = Utility.fileToString(myFiles[j].getPath());
-            ImportResult myResult = myData.importDataFromXML((Client)OBDal.getInstance().get(Client.class, strClient), (Organization)OBDal.getInstance().get(Organization.class, "'0'"), strXml);
+            ImportResult myResult = myData.importDataFromXML((Client)OBDal.getInstance().get(Client.class, strClient), (Organization)OBDal.getInstance().get(Organization.class, "'0'"), strXml, (Module)OBDal.getInstance().get(Module.class, data[i].adModuleId));
             if(myResult.getErrorMessages()!=null && !myResult.getErrorMessages().equals("")) strError = strError.append(myResult.getErrorMessages());
           }
           if (!strError.toString().equals("")) return strError.toString();
@@ -1154,16 +1155,16 @@ getAcct(conn, data, "A_DEPRECIATION_ACCT"),getAcct(conn, data, "A_ACCUMDEPRECIAT
             m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateReferenceDataSuccess", vars.getLanguage())).append(SALTO_LINEA);
             strSummary.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateReferenceDataSuccess", vars.getLanguage())).append(SALTO_LINEA);
           }
-          return "";          
-        } 
+          return "";
+        }
       }else return "WrongModules";
     }else return "NoModules";
     return strError;
   }
-  
+
   /**
    * Returns the modules {@link FieldProvider} ordered taking into account dependencies
-   * 
+   *
    * @param modules
    * @return
    */
@@ -1199,5 +1200,5 @@ getAcct(conn, data, "A_DEPRECIATION_ACCT"),getAcct(conn, data, "A_ACCUMDEPRECIAT
           if (log4j.isDebugEnabled()) log4j.debug("InitialClientSetup - getAcct - "+ key + "-- valid combination:" + C_ValidCombination_ID);
           return C_ValidCombination_ID;
       }
-  
+
    }

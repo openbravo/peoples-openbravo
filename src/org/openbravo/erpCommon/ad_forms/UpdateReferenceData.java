@@ -4,15 +4,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2008 Openbravo SL
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
@@ -24,6 +24,7 @@ import org.openbravo.erpCommon.modules.ModuleReferenceDataOrgTree;
 import org.openbravo.erpCommon.modules.ModuleUtiltiy;
 import org.openbravo.erpCommon.utility.*;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.base.secureApp.*;
@@ -65,7 +66,7 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
     if(tree.getData()==null || tree.getData().length==0)
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/UpdateReferenceData").createXmlDocument();
     else xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/UpdateReferenceData", discard).createXmlDocument();
-    
+
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "UpdateReferenceData", false, "", "", "", false, "ad_forms",  strReplaceWith, false, true);
@@ -92,7 +93,7 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageTitle", myMessage.getTitle());
         xmlDocument.setParameter("messageMessage", myMessage.getMessage());
       }
- 
+
     xmlDocument.setParameter("moduleTree", tree.toHtml());
     xmlDocument.setParameter("moduleTreeDescription", tree.descriptionToHtml());
     xmlDocument.setParameter("organization", strOrganization);
@@ -106,9 +107,9 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
 
   private void printPageResult(HttpServletResponse response, VariablesSecureApp vars, String strResultado) throws IOException, ServletException{
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/Resultado").createXmlDocument();
-    
+
     xmlDocument.setParameter("resultado",m_info.toString());
-   
+
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "UpdateReferenceData", false, "", "", "",false, "ad_forms",  strReplaceWith, false,  true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
@@ -157,7 +158,7 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
     String strModules = vars.getInStringParameter("inpNodes");
     String strModule = vars.getStringParameter("inpNodeId");
     if(strModules==null || strModules.equals("")) strModules = "('" + strModule + "')";
-    
+
     if(strModules!=null && !strModules.equals("")){
       UpdateReferenceDataData [] data = UpdateReferenceDataData.selectModules(this, strModules, strOrganization);
       data = orderModuleByDependency(data);
@@ -176,7 +177,7 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
           StringBuffer strError = new StringBuffer("");
           for(int j=0;j<myFiles.length;j++){
             String strXml = Utility.fileToString(myFiles[j].getPath());
-            ImportResult myResult = myData.importDataFromXML((Client)OBDal.getInstance().get(Client.class, vars.getClient()), (Organization)OBDal.getInstance().get(Organization.class, strOrganization), strXml);
+            ImportResult myResult = myData.importDataFromXML((Client)OBDal.getInstance().get(Client.class, vars.getClient()), (Organization)OBDal.getInstance().get(Organization.class, strOrganization), strXml, (Module)OBDal.getInstance().get(Module.class, data[i].adModuleId));
             m_info.append(SALTO_LINEA).append("File: ").append(myFiles[j].getName()).append(":").append(SALTO_LINEA);
             if (myResult.getLogMessages()!=null && !myResult.getLogMessages().equals("") && !myResult.getLogMessages().equals("null")){
               m_info.append(SALTO_LINEA).append("LOG:").append(SALTO_LINEA);
@@ -199,15 +200,15 @@ public class UpdateReferenceData extends HttpSecureAppServlet {
             m_info.append(SALTO_LINEA).append(Utility.messageBD(this, "CreateReferenceDataSuccess", vars.getLanguage())).append(SALTO_LINEA);
           }
           return "";
-        } 
+        }
       }else return "WrongModules";
     }else return "NoModules";
     return "";
-  } 
+  }
 
   /**
    * Returns the modules {@link FieldProvider} ordered taking into account dependencies
-   * 
+   *
    * @param modules
    * @return
    */
