@@ -5,14 +5,14 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2006 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,179 +28,145 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-     SELECT AA.*, 0 AS TOTALDR, 0 AS TOTALCR, '' AS PADRE FROM (
-      SELECT VALUE, PARTNER, dateacct, NAME, 
-      (CASE WHEN ABS(SUM(AMTACCTDR))>ABS(SUM(AMTACCTCR)) THEN SUM(AMTACCTDR)-SUM(AMTACCTCR) END) AS AMTACCTDR,
-      (CASE WHEN ABS(SUM(AMTACCTDR))<=ABS(SUM(AMTACCTCR)) THEN SUM(AMTACCTCR)-SUM(AMTACCTDR) END) AS AMTACCTCR,
-      (SUM(amtacctdr-amtacctcr)) AS TOTAL, fact_acct_group_id, ID, 0 AS SALDO, MAX(FACT_ACCT_ID) AS FACT_ACCT_ID,
-      DESCRIPTION, C_BPARTNER_ID
-      FROM (
-      SELECT FACT_ACCT.ACCTVALUE AS VALUE, C_BPARTNER.NAME AS PARTNER, dateacct, FACT_ACCT.ACCTDESCRIPTION AS NAME, 
-      amtacctdr,  amtacctcr AS amtacctcr, fact_acct_group_id, FACT_ACCT.ACCOUNT_ID AS ID, FACT_ACCT.FACT_ACCT_ID, 
-      fact_acct.record_id, fact_acct.ad_table_id, FACT_ACCT.DESCRIPTION, FACT_ACCT.C_BPARTNER_ID
-      FROM fact_acct left join c_bpartner on FACT_ACCT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
-      WHERE fact_acct.AD_Client_ID IN ('1')
-      AND fact_acct.AD_ORG_ID IN ('1')
-      AND 1=1
-      AND FACT_ACCT.AD_ORG_ID IN ('2')
-      AND 2=2 ) AAA
-      GROUP BY ad_table_id, record_id, VALUE, DATEACCT, NAME, FACT_ACCT_GROUP_ID, ID, DESCRIPTION, PARTNER, C_BPARTNER_ID) AA
-      WHERE 3=3
+      SELECT FACT_ACCT.ACCTVALUE AS VALUE, C_BPARTNER.NAME AS PARTNER, DATEACCT, FACT_ACCT.ACCTDESCRIPTION AS NAME,
+        AMTACCTDR,  AMTACCTCR AS AMTACCTCR, FACT_ACCT_GROUP_ID, FACT_ACCT.ACCOUNT_ID AS ID, FACT_ACCT.FACT_ACCT_ID,
+        FACT_ACCT.RECORD_ID, FACT_ACCT.AD_TABLE_ID, FACT_ACCT.DESCRIPTION, FACT_ACCT.C_BPARTNER_ID, 0 AS TOTALDR,
+        0 AS TOTALCR, 0 AS TOTALACCTDR, 0 AS TOTALACCTCR, 0 AS TOTALACCTSUB, (AMTACCTDR-AMTACCTCR) AS TOTAL, 0 AS SALDO,
+        '' AS PADRE
+      FROM FACT_ACCT LEFT JOIN C_BPARTNER ON FACT_ACCT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
+      WHERE FACT_ACCT.AD_ORG_ID IN ('1')
+        AND FACT_ACCT.AD_CLIENT_ID IN ('1')
+        AND 1=1
+        AND FACT_ACCT.AD_ORG_ID IN ('2')
+        AND 2=2
+        AND 3=3
         AND 4=4
-      ORDER BY PARTNER, VALUE, dateacct, fact_acct_id
+      ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID
       ]]></Sql>
     <Field name="rownum" value="count"/>
-    <Parameter name="adUserClient" type="replace" optional="true" after="WHERE fact_acct.AD_Client_ID IN (" text="'1'"/>
-    <Parameter name="adUserOrg" type="replace" optional="true" after="AND fact_acct.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[and fact_acct.C_ACCTSCHEMA_ID = ?]]></Parameter>
-    <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[AND dateacct >= to_date(?) ]]></Parameter>
-    <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND dateacct < to_date(?) ]]></Parameter>
+    <Parameter name="adUserOrg" type="replace" optional="true" after="WHERE FACT_ACCT.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND FACT_ACCT.AD_CLIENT_ID IN (" text="'1'"/>
+    <Parameter name="acctschema" optional="true" after="AND 1=1"><![CDATA[AND FACT_ACCT.C_ACCTSCHEMA_ID = ?]]></Parameter>
+    <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[AND DATEACCT >= TO_DATE(?) ]]></Parameter>
+    <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND DATEACCT < TO_DATE(?) ]]></Parameter>
     <Parameter name="org" type="replace" optional="true" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'2'"/>
     <Parameter name="account" type="argument" optional="true" after="AND 2=2"><![CDATA[ AND FACT_ACCT.ACCOUNT_ID IN ]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[ AND FACT_ACCT.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ and coalesce(amtacctdr,amtacctcr)>=? ]]></Parameter>   
-    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ and coalesce(amtacctdr,amtacctcr)<=? ]]></Parameter>
+    <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)>=? ]]></Parameter>
+    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)<=? ]]></Parameter>
     <Parameter name="orden" type="replace" optional="true" after="ORDER BY " text="PARTNER"/>
   </SqlMethod>
-  
+
   <SqlMethod name="selectHiding" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-     SELECT AA.*, 0 AS TOTALDR, 0 AS TOTALCR FROM (
-      SELECT VALUE, PARTNER, dateacct, NAME, 
-      (CASE WHEN ABS(SUM(AMTACCTDR))>ABS(SUM(AMTACCTCR)) THEN SUM(AMTACCTDR)-SUM(AMTACCTCR) END) AS AMTACCTDR,
-      (CASE WHEN ABS(SUM(AMTACCTDR))<=ABS(SUM(AMTACCTCR)) THEN SUM(AMTACCTCR)-SUM(AMTACCTDR) END) AS AMTACCTCR,
-      (SUM(amtacctdr-amtacctcr)) AS TOTAL, fact_acct_group_id, ID, 0 AS SALDO, MAX(FACT_ACCT_ID) AS FACT_ACCT_ID,
-      DESCRIPTION, C_BPARTNER_ID
-      FROM (
-      SELECT FACT_ACCT.ACCTVALUE AS VALUE, C_BPARTNER.NAME AS PARTNER, dateacct, FACT_ACCT.ACCTDESCRIPTION AS NAME, 
-      amtacctdr,  amtacctcr AS amtacctcr, fact_acct_group_id, FACT_ACCT.ACCOUNT_ID AS ID, FACT_ACCT.FACT_ACCT_ID, 
-      fact_acct.record_id, fact_acct.ad_table_id, FACT_ACCT.DESCRIPTION, FACT_ACCT.C_BPARTNER_ID
-      FROM fact_acct left join c_bpartner on FACT_ACCT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
-      WHERE fact_acct.AD_Client_ID IN ('1')
-      AND fact_acct.AD_ORG_ID IN ('1')
-      AND 1=1
-      AND FACT_ACCT.AD_ORG_ID IN ('2')
-      AND 2=2
-      AND ((record_id2 is null) or (0 != (select sum(amtacctdr-amtacctcr)
-                          from fact_acct f1
-                        where f1.record_id2 = fact_acct.record_id2
-                         and f1.account_id = fact_acct.account_id
-                         AND 5=5
-                         )))) AAA
-      GROUP BY ad_table_id, record_id, VALUE, DATEACCT, NAME, FACT_ACCT_GROUP_ID, ID, DESCRIPTION, PARTNER, C_BPARTNER_ID) AA
-      WHERE 3=3
-        AND 4=4
-      ORDER BY PARTNER, VALUE, dateacct, fact_acct_id
+        SELECT FACT_ACCT.ACCTVALUE AS VALUE, C_BPARTNER.NAME AS PARTNER, DATEACCT, FACT_ACCT.ACCTDESCRIPTION AS NAME,
+          AMTACCTDR,  AMTACCTCR AS AMTACCTCR, FACT_ACCT_GROUP_ID, FACT_ACCT.ACCOUNT_ID AS ID, FACT_ACCT.FACT_ACCT_ID,
+          FACT_ACCT.RECORD_ID, FACT_ACCT.AD_TABLE_ID, FACT_ACCT.DESCRIPTION, FACT_ACCT.C_BPARTNER_ID, 0 AS TOTALDR,
+          0 AS TOTALCR, 0 AS TOTALACCTDR, 0 AS TOTALACCTCR, 0 AS TOTALACCTSUB, (AMTACCTDR-AMTACCTCR) AS TOTAL, 0 AS SALDO
+        FROM FACT_ACCT LEFT JOIN C_BPARTNER ON FACT_ACCT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
+        WHERE FACT_ACCT.AD_ORG_ID IN ('1')
+          AND FACT_ACCT.AD_CLIENT_ID IN ('1')
+          AND 1=1
+          AND FACT_ACCT.AD_ORG_ID IN ('2')
+          AND 2=2
+          AND ((RECORD_ID2 IS NULL) OR (0 != (
+                          SELECT SUM(AMTACCTDR-AMTACCTCR)
+                          FROM FACT_ACCT F1
+                          WHERE F1.RECORD_ID2 = FACT_ACCT.RECORD_ID2
+                            AND F1.ACCOUNT_ID = FACT_ACCT.ACCOUNT_ID
+                            AND 5=5
+                          )))
+          AND 3=3
+          AND 4=4
+        ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID
       ]]></Sql>
     <Field name="rownum" value="count"/>
-    <Parameter name="adUserClient" type="replace" optional="true" after="WHERE fact_acct.AD_Client_ID IN (" text="'1'"/>
-    <Parameter name="adUserOrg" type="replace" optional="true" after="AND fact_acct.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="acctSchema" optional="true" after="AND 1=1"><![CDATA[and fact_acct.C_ACCTSCHEMA_ID = ? ]]></Parameter>
-    <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[AND dateacct >= to_date(?) ]]></Parameter>
-    <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND dateacct < to_date(?) ]]></Parameter>
+    <Parameter name="adUserOrg" type="replace" optional="true" after="WHERE FACT_ACCT.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND FACT_ACCT.AD_CLIENT_ID IN (" text="'1'"/>
+    <Parameter name="acctSchema" optional="true" after="AND 1=1"><![CDATA[AND FACT_ACCT.C_ACCTSCHEMA_ID = ? ]]></Parameter>
+    <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[AND DATEACCT >= TO_DATE(?) ]]></Parameter>
+    <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND DATEACCT < TO_DATE(?) ]]></Parameter>
     <Parameter name="org" type="replace" optional="true" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'2'"/>
     <Parameter name="account" type="argument" optional="true" after="AND 2=2"><![CDATA[ AND FACT_ACCT.ACCOUNT_ID IN ]]></Parameter>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[ AND FACT_ACCT.C_BPARTNER_ID IN]]></Parameter>
-
-    <Parameter name="parDateTo" optional="true" after="AND 5=5"><![CDATA[AND dateacct < to_date(?) ]]></Parameter>
-    
-    <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ and coalesce(amtacctdr,amtacctcr)>=to_number(?) ]]></Parameter>   
-    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ and coalesce(amtacctdr,amtacctcr)<=to_number(?) ]]></Parameter>
+    <Parameter name="parDateTo" optional="true" after="AND 5=5"><![CDATA[AND DATEACCT < TO_DATE(?) ]]></Parameter>
+    <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)>=? ]]></Parameter>
+    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)<=? ]]></Parameter>
     <Parameter name="orden" type="replace" optional="true" after="ORDER BY " text="PARTNER"/>
-  </SqlMethod>
-  
+   </SqlMethod>
+
   <SqlMethod name="selectAll" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      select * from (
-      SELECT VALUE, PARTNER, dateacct, NAME, 
-      (CASE WHEN ABS(SUM(AMTACCTDR))>ABS(SUM(AMTACCTCR)) THEN SUM(AMTACCTDR)-SUM(AMTACCTCR) END) AS AMTACCTDR,
-      (CASE WHEN ABS(SUM(AMTACCTDR))<=ABS(SUM(AMTACCTCR)) THEN SUM(AMTACCTCR)-SUM(AMTACCTDR) END) AS AMTACCTCR,
-      (SUM(amtacctdr-amtacctcr)) AS TOTAL, fact_acct_group_id, ID, 0 AS SALDO, MAX(FACT_ACCT_ID) AS FACT_ACCT_ID,
-      DESCRIPTION, C_BPARTNER_ID
-      FROM (
-      SELECT FACT_ACCT.ACCTVALUE AS VALUE, C_BPARTNER.NAME AS PARTNER, dateacct, FACT_ACCT.ACCTDESCRIPTION AS NAME, 
-      amtacctdr,  amtacctcr AS amtacctcr, fact_acct_group_id, FACT_ACCT.ACCOUNT_ID AS ID, FACT_ACCT.FACT_ACCT_ID, 
-      fact_acct.record_id, fact_acct.ad_table_id, FACT_ACCT.DESCRIPTION, FACT_ACCT.C_BPARTNER_ID
-      FROM fact_acct left join C_BPARTNER on FACT_ACCT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
-      WHERE fact_acct.AD_Client_ID IN ('1')
-      AND fact_acct.AD_ORG_ID IN ('1')
+      SELECT FACT_ACCT.ACCTVALUE AS VALUE, C_BPARTNER.NAME AS PARTNER, DATEACCT, FACT_ACCT.ACCTDESCRIPTION AS NAME,
+      AMTACCTDR,  AMTACCTCR AS AMTACCTCR, FACT_ACCT_GROUP_ID, FACT_ACCT.ACCOUNT_ID AS ID, FACT_ACCT.FACT_ACCT_ID,
+      FACT_ACCT.RECORD_ID, FACT_ACCT.AD_TABLE_ID, FACT_ACCT.DESCRIPTION, FACT_ACCT.C_BPARTNER_ID, 0 AS TOTALDR,
+      0 AS TOTALCR, 0 AS TOTALACCTDR, 0 AS TOTALACCTCR, 0 AS TOTALACCTSUB, (AMTACCTDR-AMTACCTCR) AS TOTAL, 0 AS SALDO
+      FROM FACT_ACCT LEFT JOIN C_BPARTNER ON FACT_ACCT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
+      WHERE FACT_ACCT.AD_ORG_ID IN ('1')
+      AND FACT_ACCT.AD_CLIENT_ID IN ('1')
       AND 1=1
       AND FACT_ACCT.AD_ORG_ID IN ('2')
-      AND 2=2 ) AAA
-      GROUP BY ad_table_id, record_id, VALUE, DATEACCT, NAME, FACT_ACCT_GROUP_ID, ID,DESCRIPTION, PARTNER, C_BPARTNER_ID
-      ) AA
-      WHERE 3=3
-        AND 4=4
-        ORDER BY PARTNER, VALUE, dateacct, fact_acct_id
+      AND 2=2
+      AND 3=3
+      AND 4=4
+      ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID
       ]]></Sql>
     <Field name="rownum" value="count"/>
-    <Parameter name="adUserClient" type="replace" optional="true" after="WHERE fact_acct.AD_Client_ID IN (" text="'1'"/>
-    <Parameter name="adUserOrg" type="replace" optional="true" after="AND fact_acct.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="acctSchema" optional="true" after="AND 1=1"><![CDATA[and fact_acct.C_ACCTSCHEMA_ID = ? ]]></Parameter>
-    <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[AND dateacct >= to_date(?) ]]></Parameter>
-    <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND dateacct < to_date(?) ]]></Parameter>
+    <Parameter name="adUserOrg" type="replace" optional="true" after="WHERE FACT_ACCT.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND FACT_ACCT.AD_CLIENT_ID IN (" text="'1'"/>
+    <Parameter name="acctSchema" optional="true" after="AND 1=1"><![CDATA[AND FACT_ACCT.C_ACCTSCHEMA_ID = ? ]]></Parameter>
+    <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[AND DATEACCT >= TO_DATE(?) ]]></Parameter>
+    <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND DATEACCT < TO_DATE(?) ]]></Parameter>
     <Parameter name="org" type="replace" optional="true" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'2'"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2 "><![CDATA[ AND FACT_ACCT.C_BPARTNER_ID IN]]></Parameter>
-
-    <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ and coalesce(amtacctdr,amtacctcr)>=to_number(?) ]]></Parameter>
-    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ and coalesce(amtacctdr,amtacctcr)<=to_number(?) ]]></Parameter>
-    
+    <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)>=? ]]></Parameter>
+    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)<=? ]]></Parameter>
     <Parameter name="orden" type="replace" optional="true" after="ORDER BY " text="PARTNER"/>
-  </SqlMethod>
-  
+   </SqlMethod>
+
   <SqlMethod name="selectAllHiding" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      select * from (
-      SELECT VALUE, PARTNER, dateacct, NAME, 
-      (CASE WHEN ABS(SUM(AMTACCTDR))>ABS(SUM(AMTACCTCR)) THEN SUM(AMTACCTDR)-SUM(AMTACCTCR) END) AS AMTACCTDR,
-      (CASE WHEN ABS(SUM(AMTACCTDR))<=ABS(SUM(AMTACCTCR)) THEN SUM(AMTACCTCR)-SUM(AMTACCTDR) END) AS AMTACCTCR,
-      (SUM(amtacctdr-amtacctcr)) AS TOTAL, fact_acct_group_id, ID, 0 AS SALDO, MAX(FACT_ACCT_ID) AS FACT_ACCT_ID,
-      DESCRIPTION, C_BPARTNER_ID
-      FROM (
-      SELECT FACT_ACCT.ACCTVALUE AS VALUE, C_BPARTNER.NAME AS PARTNER, dateacct, FACT_ACCT.ACCTDESCRIPTION AS NAME, 
-      amtacctdr,  amtacctcr AS amtacctcr, fact_acct_group_id, FACT_ACCT.ACCOUNT_ID AS ID, FACT_ACCT.FACT_ACCT_ID, 
-      fact_acct.record_id, fact_acct.ad_table_id, FACT_ACCT.DESCRIPTION, FACT_ACCT.C_BPARTNER_ID
-      FROM fact_acct left join C_BPARTNER on FACT_ACCT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
-      WHERE fact_acct.AD_Client_ID IN ('1')
-      AND fact_acct.AD_ORG_ID IN ('1')
+      SELECT FACT_ACCT.ACCTVALUE AS VALUE, C_BPARTNER.NAME AS PARTNER, DATEACCT, FACT_ACCT.ACCTDESCRIPTION AS NAME,
+      AMTACCTDR,  AMTACCTCR AS AMTACCTCR, FACT_ACCT_GROUP_ID, FACT_ACCT.ACCOUNT_ID AS ID, FACT_ACCT.FACT_ACCT_ID,
+      FACT_ACCT.RECORD_ID, FACT_ACCT.AD_TABLE_ID, FACT_ACCT.DESCRIPTION, FACT_ACCT.C_BPARTNER_ID, 0 AS TOTALACCTDR,
+      0 AS TOTALACCTCR, 0 AS TOTALACCTSUB, (AMTACCTDR-AMTACCTCR) AS TOTAL, 0 AS SALDO
+      FROM FACT_ACCT LEFT JOIN C_BPARTNER ON FACT_ACCT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
+      WHERE FACT_ACCT.AD_ORG_ID IN ('1')
+      AND FACT_ACCT.AD_CLIENT_ID IN ('1')
       AND 1=1
       AND FACT_ACCT.AD_ORG_ID IN ('2')
       AND 2=2
-      AND ((record_id2 is null) or (0 != (select sum(amtacctdr-amtacctcr)
-                          from fact_acct f1
-                        where f1.record_id2 = fact_acct.record_id2
-                         and f1.account_id = fact_acct.account_id
-                         AND 5=5)))) AAA
-      GROUP BY ad_table_id, record_id, VALUE, DATEACCT, NAME, FACT_ACCT_GROUP_ID, ID,DESCRIPTION, PARTNER, C_BPARTNER_ID
-      ) AA
-      WHERE 3=3
-        AND 4=4
-        ORDER BY PARTNER, VALUE, dateacct, fact_acct_id
+      AND ((RECORD_ID2 IS NULL) OR (0 != (
+                        SELECT SUM(AMTACCTDR-AMTACCTCR)
+                          FROM FACT_ACCT F1
+                        WHERE F1.RECORD_ID2 = FACT_ACCT.RECORD_ID2
+                         AND F1.ACCOUNT_ID = FACT_ACCT.ACCOUNT_ID
+                         AND 5=5)))
+      AND 3=3
+      AND 4=4
+      ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID
       ]]></Sql>
     <Field name="rownum" value="count"/>
-    <Parameter name="adUserClient" type="replace" optional="true" after="WHERE fact_acct.AD_Client_ID IN (" text="'1'"/>
-    <Parameter name="adUserOrg" type="replace" optional="true" after="AND fact_acct.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="acctSchema" optional="true" after="AND 1=1"><![CDATA[and fact_acct.C_ACCTSCHEMA_ID = ? ]]></Parameter>
-    <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[AND dateacct >= to_date(?) ]]></Parameter>
-    <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND dateacct < to_date(?) ]]></Parameter>
+    <Parameter name="adUserOrg" type="replace" optional="true" after="WHERE FACT_ACCT.AD_ORG_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND FACT_ACCT.AD_CLIENT_ID IN (" text="'1'"/>
+    <Parameter name="acctSchema" optional="true" after="AND 1=1"><![CDATA[AND FACT_ACCT.C_ACCTSCHEMA_ID = ? ]]></Parameter>
+    <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[AND DATEACCT >= TO_DATE(?) ]]></Parameter>
+    <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND DATEACCT < TO_DATE(?) ]]></Parameter>
     <Parameter name="org" type="replace" optional="true" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'2'"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2 "><![CDATA[ AND FACT_ACCT.C_BPARTNER_ID IN]]></Parameter>
-
-    <Parameter name="parDateTo" optional="true" after="AND 5=5"><![CDATA[AND dateacct < to_date(?) ]]></Parameter>
-    
-    <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ and coalesce(amtacctdr,amtacctcr)>=to_number(?) ]]></Parameter>
-    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ and coalesce(amtacctdr,amtacctcr)<=to_number(?) ]]></Parameter>
-    
+    <Parameter name="parDateTo" optional="true" after="AND 5=5"><![CDATA[AND DATEACCT < TO_DATE(?) ]]></Parameter>
+    <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)>=? ]]></Parameter>
+    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)<=? ]]></Parameter>
     <Parameter name="orden" type="replace" optional="true" after="ORDER BY " text="PARTNER"/>
   </SqlMethod>
-  
-  
+
+
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql></Sql>
@@ -222,7 +188,7 @@
         SELECT AD_TREE_ID FROM AD_TREE
         WHERE AD_CLIENT_ID = ?
         AND TREETYPE = 'EV'
-        
+
     </Sql>
     <Parameter name="client"/>
   </SqlMethod>
@@ -238,7 +204,7 @@
       AND 1=1
       ORDER BY name
     ]]></Sql>
-    
+
 <Parameter name="adOrgClient" type="replace" optional="true" after="C_ElementValue.AD_Org_ID IN(" text="'1'"/>
 <Parameter name="adUserClient" type="replace" optional="true" after="C_ElementValue.AD_Client_ID IN(" text="'1'"/>
 <Parameter name="cElementvalueId"/>
@@ -248,7 +214,7 @@
   <SqlMethod name="selectC_ElementValue_ID_Double" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      SELECT c_acctschema_element.c_acctschema_id AS PADRE, C_ElementValue.C_ElementValue_ID as id, ((CASE C_ElementValue.isActive WHEN 'N' THEN '**' ELSE '' END) || C_ElementValue.Value || ' - ' || C_ElementValue.Name) as name 
+      SELECT c_acctschema_element.c_acctschema_id AS PADRE, C_ElementValue.C_ElementValue_ID as id, ((CASE C_ElementValue.isActive WHEN 'N' THEN '**' ELSE '' END) || C_ElementValue.Value || ' - ' || C_ElementValue.Name) as name
       FROM C_ElementValue, c_acctschema_element, C_ELEMENT
       WHERE C_ElementValue.AD_Org_ID IN('1') AND C_ElementValue.AD_Client_ID IN('1')
       AND (C_ElementValue.isActive = 'Y' OR C_ElementValue.C_ElementValue_ID = ? )
@@ -258,13 +224,13 @@
       AND 1=1
       AND c_acctschema_element.ELEMENTTYPE = 'AC'
       AND c_acctschema_element.c_element_id = C_ElementValue.c_element_id
-      ORDER BY PADRE ASC, name ASC 
-    ]]></Sql>    
+      ORDER BY PADRE ASC, name ASC
+    ]]></Sql>
     <Parameter name="adOrgClient" type="replace" optional="true" after="C_ElementValue.AD_Org_ID IN(" text="'1'"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="C_ElementValue.AD_Client_ID IN(" text="'1'"/>
     <Parameter name="cElementvalueId"/>
   </SqlMethod>
-  
+
   <SqlMethod name="selectC_ACCTSCHEMA_ID" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
@@ -272,7 +238,7 @@
       WHERE C_ACCTSCHEMA.AD_Org_ID IN('1') AND C_ACCTSCHEMA.AD_Client_ID IN('1')  AND (C_ACCTSCHEMA.isActive = 'Y' OR C_ACCTSCHEMA.C_ACCTSCHEMA_ID = ? )
       ORDER BY name
     ]]></Sql>
-    
+
 <Parameter name="adOrgClient" type="replace" optional="true" after="C_ACCTSCHEMA.AD_Org_ID IN(" text="'1'"/>
 <Parameter name="adUserClient" type="replace" optional="true" after="C_ACCTSCHEMA.AD_Client_ID IN(" text="'1'"/>
 <Parameter name="cAcctschemaId"/>
@@ -293,8 +259,8 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
 	   SELECT c_elementvalue_id as name
-       FROM C_ELEMENTVALUE 
-       WHERE value between (select value from c_elementvalue where c_elementvalue_id = ?) 
+       FROM C_ELEMENTVALUE
+       WHERE value between (select value from c_elementvalue where c_elementvalue_id = ?)
        and  (select value from c_elementvalue where c_elementvalue_id = ?)
 	   and c_elementvalue.ELEMENTLEVEL = 'S'
        ORDER BY value asc
@@ -306,7 +272,7 @@
   <SqlMethod name="selectPrevious" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-      SELECT COALESCE(SUM(AMTACCTDR),0) AS TOTALDR, COALESCE(SUM(AMTACCTCR),0) AS TOTALCR, 
+      SELECT COALESCE(SUM(AMTACCTDR),0) AS TOTALDR, COALESCE(SUM(AMTACCTCR),0) AS TOTALCR,
       COALESCE(SUM(AMTACCTDR-AMTACCTCR),0) AS TOTAL
       FROM FACT_ACCT
       WHERE 1=1
@@ -315,7 +281,7 @@
       AND FACT_ACCT.AD_ORG_ID IN ('1')
       ]]></Sql>
       <Parameter name="bpartner" optional="true" after="1=1"><![CDATA[ AND FACT_ACCT.C_BPARTNER_ID = ? ]]></Parameter>
-      <Parameter name="acctschema" optional="true" after="1=1"><![CDATA[ and fact_acct.C_ACCTSCHEMA_ID = ? ]]></Parameter>
+      <Parameter name="acctschema" optional="true" after="1=1"><![CDATA[ AND FACT_ACCT.C_ACCTSCHEMA_ID = ? ]]></Parameter>
       <Parameter name="account"/>
       <Parameter name="date"/>
       <Parameter name="date"/>
@@ -326,7 +292,7 @@
   <SqlMethod name="selectTotal" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-      SELECT COALESCE(SUM(AMTACCTDR),0) AS TOTALDR, COALESCE(SUM(AMTACCTCR),0) AS TOTALCR, 
+      SELECT COALESCE(SUM(AMTACCTDR),0) AS TOTALDR, COALESCE(SUM(AMTACCTCR),0) AS TOTALCR,
       COALESCE(SUM(AMTACCTDR-AMTACCTCR),0) AS TOTAL
       FROM FACT_ACCT
       WHERE 1=1
