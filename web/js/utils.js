@@ -3416,8 +3416,12 @@ function resizeArea(isOnResize) {
   var h = body[0].clientHeight;
   var w = body[0].clientWidth;
   var name = window.navigator.appName;
-  mnu.style.width = w - ((mleft?mleft.clientWidth:0) + (mleftSeparator?mleftSeparator.clientWidth:0) + (mright?mright.clientWidth:0)) - ((name.indexOf("Microsoft")==-1)?2:0);
-  mnu.style.height = h -((mtop?mtop.clientHeight:0) + (mtopToolbar?mtopToolbar.clientHeight:0) + (mtopTabs?mtopTabs.clientHeight:0) + (mbottom?mbottom.clientHeight:0) + (mbottombut?mbottombut.clientHeight:0)) - ((name.indexOf("Microsoft")==-1)?1:0);
+  var mnuWidth = w - ((mleft?mleft.clientWidth:0) + (mleftSeparator?mleftSeparator.clientWidth:0) + (mright?mright.clientWidth:0)) - ((name.indexOf("Microsoft")==-1)?2:0);
+  var mnuHeight = h -((mtop?mtop.clientHeight:0) + (mtopToolbar?mtopToolbar.clientHeight:0) + (mtopTabs?mtopTabs.clientHeight:0) + (mbottom?mbottom.clientHeight:0) + (mbottombut?mbottombut.clientHeight:0)) - ((name.indexOf("Microsoft")==-1)?1:0);
+  if (mnuWidth < 0) { mnuWidth = 0; }
+  if (mnuHeight < 0) { mnuHeight = 0; }
+  mnu.style.width = mnuWidth;
+  mnu.style.height = mnuHeight;
   var mbottomButtons = document.getElementById("tdbottomButtons");
   if (mbottomButtons) mbottomButtons.style.width = w - ((mleft?mleft.clientWidth:0) + (mleftSeparator?mleftSeparator.clientWidth:0) + (mright?mright.clientWidth:0)) - ((name.indexOf("Microsoft")==-1)?2:0);
 
@@ -3442,8 +3446,12 @@ function resizeAreaHelp() {
   var h = body[0].clientHeight;
   var w = body[0].clientWidth;
   var name = window.navigator.appName;
-//  mnu.style.width = w - 18 - ((name.indexOf("Microsoft")==-1)?2:0);
-  mnu.style.height = h -(mTopSeparator.clientHeight + mTopNavigation.clientHeight) - 2;
+//  var mnuWidth = w - 18 - ((name.indexOf("Microsoft")==-1)?2:0);
+  var mnuHeight =  h -(mTopSeparator.clientHeight + mTopNavigation.clientHeight) - 2;
+//  if (mnuWidth < 0) { mnuWidth = 0; }
+  if (mnuHeight < 0) { mnuHeight = 0; }
+//  mnu.style.width = mnuWidth;
+  mnu.style.height = mnuHeight;
   mnuIndex.style.height = mnu.style.height;
 
   mnu.style.display = "";
@@ -3508,8 +3516,12 @@ function resizeAreaCreateFrom(isOnResize) {
   var h = body[0].clientHeight;
   var w = body[0].clientWidth;
   var name = window.navigator.appName;
-  client_middle.style.height = h -((table_header?table_header.clientHeight:0) + (client_messagebox?client_messagebox.clientHeight:0) + (client_top?client_top.clientHeight:0) + (client_bottom?client_bottom.clientHeight:0)) - ((name.indexOf("Microsoft")==-1)?1:0);
-  client_middle.style.width = w - 0;
+  var client_middleWidth = w - 0;
+  var client_middleHeight = h -((table_header?table_header.clientHeight:0) + (client_messagebox?client_messagebox.clientHeight:0) + (client_top?client_top.clientHeight:0) + (client_bottom?client_bottom.clientHeight:0)) - ((name.indexOf("Microsoft")==-1)?1:0);
+  if (client_middleWidth < 0) { client_middleWidth = 0; }
+  if (client_middleHeight < 0) { client_middleHeight = 0; }
+  client_middle.style.height = client_middleHeight;
+  client_middle.style.width = client_middleWidth;
   client_middle.style.display = "";
 
   try {
@@ -3546,8 +3558,12 @@ function resizePopup() {
   var h = body[0].clientHeight;
   var w = body[0].clientWidth;
   var name = window.navigator.appName;
-  mnu.style.height = h -(table_header?table_header.clientHeight:0);
-  mnu.style.width = w;
+  var mnuHeight = h -(table_header?table_header.clientHeight:0);
+  var mnuWidth = w;
+  if (mnuWidth < 0) { mnuWidth = 0; }
+  if (mnuHeight < 0) { mnuHeight = 0; }
+  mnu.style.height = mnuHeight;
+  mnu.style.width = mnuWidth;
   mnu.style.display = "";
 }
 
