@@ -526,19 +526,29 @@ var arrAccountTo=null;
                           <a href="#" onclick="submitCommandFormParameter('DIRECT2', document.frmMain.inpFactAcctGroupId, 'xx', false, document.frmMain, 'ReportGeneralLedgerJournal.html', '_self', false, true);return false;" onmouseover="window.status='General Ledger';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId"><span id="fieldDateacct">xx22/04/2010</span>
                           </a>
                         </td>
-                        <td width="10%" id="fieldAmtacctdr" class="DataGrid_Body_Cell">xx14500.34</td>
-                        <td width="10%" id="fieldAmtacctcr" class="DataGrid_Body_Cell">xx14500.34</td>
-                        <td width="15%"  id="functionSumLine2" class="DataGrid_Body_Cell">
+                        <input type="hidden" id="fieldTotalacctdr" value=""/>
+						<input type="hidden" id="fieldTotalacctcr" value=""/>
+						<input type="hidden" id="fieldTotalacctsub" value=""/>
+						<TD width="10%" id="fieldAmtacctdr" class="DataGrid_Body_Cell_Amount">xx14500.34</TD>
+						<TD width="10%" id="fieldAmtacctcr" class="DataGrid_Body_Cell_Amount">xx14500.34</TD>
+						<TD width="15%" id="functionSumLine2" class="DataGrid_Body_Cell_Amount">
                           <input type="hidden" id="functionSumLine" value=""></input>xx14500.34
                         </td>
                         <td width="75%" id="fieldDescription" class="DataGrid_Body_Cell">xxArrasate</td>
                       </tr>
                     </div>
                     <tr class="DataGrid_Body_Row"> 
-                        <th width="10%" class="DataGrid_Header_Cell"><span >TOTAL</span></th>
-                        <th width="10%" class="DataGrid_Header_Cell"><span  id="fieldTotalDebit">xx100.00</span></th>
-                        <th width="10%" class="DataGrid_Header_Cell"><span  id="fieldTotalCredit">xx100.00</span></th>
-                        <th width="15%" class="DataGrid_Header_Cell"><span  id="fieldTotalBalance">xx1000.00</span>
+                        <TH width="10%" class="DataGrid_Header_Cell"><SPAN >TOTAL</SPAN>
+						<input type="hidden" id="fieldTotalDebit" value=""/>
+						<input type="hidden" id="fieldTotalCredit" value=""/>
+						<input type="hidden" id="fieldTotalBalance" value=""/>
+						<input type="hidden" id="fieldTotalacctdrSum" value=""/>
+						<input type="hidden" id="fieldTotalacctcrSum" value=""/>
+						<input type="hidden" id="fieldTotalacctsubSum" value=""/>
+						<INPUT type="hidden" id="fieldSubTotalBalance" value=""/></TH>
+						<TH width="10%" class="DataGrid_Header_Cell_Amount"><SPAN id="fieldTotalDrAdded">xx100.00</SPAN></TH>
+						<TH width="10%" class="DataGrid_Header_Cell_Amount"><SPAN id="fieldTotalCrAdded">xx100.00</SPAN></TH>
+						<TH width="15%" class="DataGrid_Header_Cell_Amount"><SPAN id="fieldTotalSubAdded">xx1000.00</SPAN>
                           <input type="hidden" id="fieldSubTotalBalance" value=""></input>
                         </th>
                         <th width="75%" class="DataGrid_Header_Cell">&nbsp;</td>
@@ -576,9 +586,12 @@ var arrAccountTo=null;
                             <a href="#" onclick="submitCommandFormParameter('DIRECT2', document.frmMain.inpFactAcctGroupId, 'xx', false, document.frmMain, 'ReportGeneralLedgerJournal.html', '_self', false, true);return false;" onmouseover="window.status='General Ledger';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldId2"><span id="fieldDateacct2">xx22/04/2010</span>
                             </a>
                           </td>
-                          <td width="10%" id="fieldAmtacctdr2" class="DataGrid_Body_Cell">xx14500.34</td>
-                          <td width="10%" id="fieldAmtacctcr2" class="DataGrid_Body_Cell">xx14500.34</td>
-                          <td width="15%"  id="functionSumLine22" class="DataGrid_Body_Cell">xx14500.34
+                          <input type="hidden" id="fieldTotalacctdr2" value=""/>
+						  <input type="hidden" id="fieldTotalacctcr2" value=""/>
+						  <input type="hidden" id="fieldTotalacctsub2" value=""/>
+						  <TD width="10%" id="fieldAmtacctdr2" class="DataGrid_Body_Cell_Amount">xx14500.34</TD>
+						  <TD width="10%" id="fieldAmtacctcr2" class="DataGrid_Body_Cell_Amount">xx14500.34</TD>
+						  <TD width="15%" id="functionSumLine22" class="DataGrid_Body_Cell_Amount">xx14500.34
                             <input type="hidden" id="functionSumLine21" value=""></input>
                           </td>
                           <td width="75%" id="fieldDescription2" class="DataGrid_Body_Cell">xxArrasate</td>
@@ -586,10 +599,16 @@ var arrAccountTo=null;
                       </div>
                       <tr class="DataGrid_Body_Row">
                         <th width="10%" class="DataGrid_Header_Cell"><span >TOTAL</span></th>
-                        <th width="10%" class="DataGrid_Header_Cell"><span  id="fieldTotalDebit2">xx100.00</span></th>
-                        <th width="10%" class="DataGrid_Header_Cell"><span  id="fieldTotalCredit2">xx100.00</span></th>
-                        <th width="15%" class="DataGrid_Header_Cell"><span  id="fieldTotalBalance2">xx1000.00</span></th>
-                        <th width="75%" class="DataGrid_Header_Cell">&nbsp;</td>
+						<input type="hidden" id="fieldTotalDebit2" value=""/>
+						<input type="hidden" id="fieldTotalCredit2" value=""/>
+						<input type="hidden" id="fieldTotalBalance2" value=""/>
+						<input type="hidden" id="fieldTotalacctdrSum2" value=""/>
+						<input type="hidden" id="fieldTotalacctcrSum2" value=""/>
+						<input type="hidden" id="fieldTotalacctsubSum2" value=""/>
+						<TH width="10%" class="DataGrid_Header_Cell_Amount"><SPAN id="fieldTotalDrAdded2">xx100.00</SPAN></TH>
+						<TH width="10%" class="DataGrid_Header_Cell_Amount"><SPAN id="fieldTotalCrAdded2">xx100.00</SPAN></TH>
+						<TH width="15%" class="DataGrid_Header_Cell_Amount"><SPAN id="fieldTotalSubAdded2">xx1000.00</SPAN></TH>
+						<TH width="75%" class="DataGrid_Header_Cell_Amount">&nbsp;</TD>
                       </tr>
                       <div id="reportAll2"></div>
                     </div>

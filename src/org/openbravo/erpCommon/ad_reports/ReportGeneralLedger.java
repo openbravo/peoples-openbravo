@@ -4,14 +4,14 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2006 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -135,7 +135,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportGeneralLedger", true, "", "", "imprimir();return false;",false, "ad_reports",  strReplaceWith, false,  true);
     String strcBpartnerIdAux = strcBpartnerId;
-    if (!strAll.equals("")) strcBpartnerId = ""; 
+    if (!strAll.equals("")) strcBpartnerId = "";
 
 
     if (strDateFrom.equals("") && strDateTo.equals("")) {
@@ -158,15 +158,15 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         if (log4j.isDebugEnabled()) log4j.debug("##################### strcelementvaluefrom= " + strcelementvaluefrom);
         if (log4j.isDebugEnabled()) log4j.debug("##################### strcelementvalueto= " + strcelementvalueto);
         //String strAcctFamily = getFamily(strTreeAccount, strcelementvaluefrom);
-        if (strHide.equals("")) 
-          data = ReportGeneralLedgerData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strOrgFamily, strRange.equals("")?"":"("+ strRange + ")", strcBpartnerId,strAmtFrom, strAmtTo, (strcBpartnerId.equals("")&&(strAll.equals("")))?"value":"partner",  initRecordNumber, intRecordRange);
+        if (strHide.equals(""))
+          data = ReportGeneralLedgerData.select(this, Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strOrgFamily, strRange.equals("")?"":"("+ strRange + ")", strcBpartnerId,strAmtFrom, strAmtTo, (strcBpartnerId.equals("")&&(strAll.equals("")))?"value":"partner",  initRecordNumber, intRecordRange);
         else
-          data = ReportGeneralLedgerData.selectHiding(this, Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strOrgFamily, strRange.equals("")?"":"("+ strRange + ")", strcBpartnerId,strAmtFrom, strAmtTo, (strcBpartnerId.equals("")&&(strAll.equals("")))?"value":"partner",  initRecordNumber, intRecordRange);
+          data = ReportGeneralLedgerData.selectHiding(this, Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strOrgFamily, strRange.equals("")?"":"("+ strRange + ")", strcBpartnerId,strAmtFrom, strAmtTo, (strcBpartnerId.equals("")&&(strAll.equals("")))?"value":"partner",  initRecordNumber, intRecordRange);
       } else {
         if (strHide.equals(""))
-          data = ReportGeneralLedgerData.selectAll(this, Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strOrgFamily, strcBpartnerId, strAmtFrom, strAmtTo, (strcBpartnerId.equals("")&&strAll.equals(""))?"value":"partner", initRecordNumber, intRecordRange);
+          data = ReportGeneralLedgerData.selectAll(this, Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strOrgFamily, strcBpartnerId, strAmtFrom, strAmtTo, (strcBpartnerId.equals("")&&strAll.equals(""))?"value":"partner", initRecordNumber, intRecordRange);
         else
-          data = ReportGeneralLedgerData.selectAllHiding(this, Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strOrgFamily, strcBpartnerId, strAmtFrom, strAmtTo, (strcBpartnerId.equals("")&&strAll.equals(""))?"value":"partner", initRecordNumber, intRecordRange);
+          data = ReportGeneralLedgerData.selectAllHiding(this, Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strOrgFamily, strcBpartnerId, strAmtFrom, strAmtTo, (strcBpartnerId.equals("")&&strAll.equals(""))?"value":"partner", initRecordNumber, intRecordRange);
       }
       if (log4j.isDebugEnabled()) log4j.debug("RecordNo: "+initRecordNumber);
       if (initRecordNumber>1){
@@ -174,9 +174,9 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         //strAcctFamily = data[0].id;
         ReportGeneralLedgerData [] data2=null;
         if (strHide.equals(""))
-          data2 = ReportGeneralLedgerData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strOrgFamily, strAcctFamily.equals("")?"":"("+ strAcctFamily + ")", strcBpartnerId, strAmtFrom, strAmtTo, (strcBpartnerId.equals("")&&(strAll.equals(""))?"value":"partner"));
+          data2 = ReportGeneralLedgerData.select(this, Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strOrgFamily, strAcctFamily.equals("")?"":"("+ strAcctFamily + ")", strcBpartnerId, strAmtFrom, strAmtTo, (strcBpartnerId.equals("")&&(strAll.equals(""))?"value":"partner"));
         else
-          data2 = ReportGeneralLedgerData.selectHiding(this, Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strOrgFamily, strAcctFamily.equals("")?"":"("+ strAcctFamily + ")", strcBpartnerId, strAmtFrom, strAmtTo, (strcBpartnerId.equals("")&&(strAll.equals(""))?"value":"partner"));
+          data2 = ReportGeneralLedgerData.selectHiding(this, Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strOrgFamily, strAcctFamily.equals("")?"":"("+ strAcctFamily + ")", strcBpartnerId, strAmtFrom, strAmtTo, (strcBpartnerId.equals("")&&(strAll.equals(""))?"value":"partner"));
 
         if (log4j.isDebugEnabled()) log4j.debug("acctFamily:"+strAcctFamily+" data2.length"+data2.length);
         double amount = 0.0;
@@ -186,7 +186,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
             break;
           };
           //  if (data2[i].id.equals(data[0].id))
-          if ((data2[i].partner.equals(data[0].partner) && (!(strcBpartnerId.equals("")&&(strAll.equals("")))))||(strcBpartnerId.equals("")&&(strAll.equals(""))))  
+          if ((data2[i].partner.equals(data[0].partner) && (!(strcBpartnerId.equals("")&&(strAll.equals("")))))||(strcBpartnerId.equals("")&&(strAll.equals(""))))
             amount += Double.valueOf(data2[i].total).doubleValue();
         }
         for (int i=0;data2!=null && i<data.length;i++){
@@ -201,6 +201,9 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       for (int i=0;data!=null && i<data.length;i++){
         if(!strOld.equals(((strcBpartnerId.equals("")&&strAll.equals(""))?"":data[i].cBpartnerId) + data[i].id)){
           subreport[j] = ReportGeneralLedgerData.selectPrevious(this,(strcBpartnerId.equals("")&&strAll.equals(""))?"":data[i].cBpartnerId, strcAcctSchemaId, data[i].id, data[i].dateacct, data[i].factAcctId, strOrgFamily);
+          if (data[i].totalacctdr.equals("0")) data[i].totalacctdr = subreport[j][0].totaldr;
+          if (data[i].totalacctcr.equals("0")) data[i].totalacctcr = subreport[j][0].totalcr;
+          if (data[i].totalacctsub.equals("0"))data[i].totalacctsub = subreport[j][0].total;
           j++;
         }
         strOld = (((strcBpartnerId.equals("")&&strAll.equals(""))?"":data[i].cBpartnerId) + data[i].id);
@@ -270,11 +273,11 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     xmlDocument.setData("reportC_ACCTSCHEMA_ID","liststructure",ReportGeneralLedgerData.selectC_ACCTSCHEMA_ID(this, Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId));
 
     xmlDocument.setParameter("accounFromArray", arrayDobleEntrada("arrAccountFrom", ReportGeneralLedgerData.selectC_ElementValue_ID_Double(this, Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcelementvaluefrom)));
-    xmlDocument.setParameter("accounToArray", arrayDobleEntrada("arrAccountTo", ReportGeneralLedgerData.selectC_ElementValue_ID_Double(this, Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcelementvaluefrom)));    
- 
-    
+    xmlDocument.setParameter("accounToArray", arrayDobleEntrada("arrAccountTo", ReportGeneralLedgerData.selectC_ElementValue_ID_Double(this, Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcelementvaluefrom)));
+
+
     if (log4j.isDebugEnabled()) log4j.debug("data.length: "+data.length);
-    
+
     if (strcBpartnerId.equals("")&&strAll.equals("")) xmlDocument.setData("structure1", data);
     else xmlDocument.setData("structure2", data);
     if (strcBpartnerId.equals("")&&strAll.equals("")) xmlDocument.setDataArray("reportTotals", "structure", subreport);
@@ -294,7 +297,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     String strTreeOrg = ReportTrialBalanceData.treeOrg(this, vars.getClient());
     String strOrgFamily = "";
 
-    if (!strAll.equals("")) strcBpartnerId = ""; 
+    if (!strAll.equals("")) strcBpartnerId = "";
     if (strDateFrom.equals("") && strDateTo.equals("")) {
       data = ReportGeneralLedgerData.set();
     } else {
@@ -306,14 +309,14 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         String strRange = Utility.stringList(getRange(strcelementvaluefrom, strcelementvalueto));
         //String strAcctFamily = getFamily(strTreeAccount, strcelementvaluefrom);
         if (strHide.equals(""))
-          data = ReportGeneralLedgerData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strOrgFamily, strRange.equals("")?"":"("+ strRange + ")", strcBpartnerId,strAmtFrom, strAmtTo, (strcBpartnerId.equals("")&&strAll.equals(""))?"value":"partner");
+          data = ReportGeneralLedgerData.select(this, Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strOrgFamily, strRange.equals("")?"":"("+ strRange + ")", strcBpartnerId,strAmtFrom, strAmtTo, (strcBpartnerId.equals("")&&strAll.equals(""))?"value":"partner");
         else
-          data = ReportGeneralLedgerData.selectHiding(this, Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strOrgFamily, strRange.equals("")?"":"("+ strRange + ")", strcBpartnerId,strAmtFrom, strAmtTo, (strcBpartnerId.equals("")&&strAll.equals(""))?"value":"partner");
-      } else {    
+          data = ReportGeneralLedgerData.selectHiding(this, Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strOrgFamily, strRange.equals("")?"":"("+ strRange + ")", strcBpartnerId,strAmtFrom, strAmtTo, (strcBpartnerId.equals("")&&strAll.equals(""))?"value":"partner");
+      } else {
         if (strHide.equals(""))
-          data = ReportGeneralLedgerData.selectAll(this, Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strOrgFamily, strcBpartnerId, strAmtFrom, strAmtTo, (strcBpartnerId.equals("")&&strAll.equals(""))?"value":"partner");
+          data = ReportGeneralLedgerData.selectAll(this, Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strOrgFamily, strcBpartnerId, strAmtFrom, strAmtTo, (strcBpartnerId.equals("")&&strAll.equals(""))?"value":"partner");
         else
-          data = ReportGeneralLedgerData.selectAllHiding(this, Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strOrgFamily, strcBpartnerId, strAmtFrom, strAmtTo, (strcBpartnerId.equals("")&&strAll.equals(""))?"value":"partner");
+          data = ReportGeneralLedgerData.selectAllHiding(this, Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedger"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"), strcAcctSchemaId, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strOrgFamily, strcBpartnerId, strAmtFrom, strAmtTo, (strcBpartnerId.equals("")&&strAll.equals(""))?"value":"partner");
       }
     }
     subreport = new ReportGeneralLedgerData[data.length][];
@@ -338,12 +341,12 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     }
     String strOutput = vars.commandIn("PDF")?"pdf":"xls";
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportGeneralLedger.jrxml";
-    
+
     HashMap<String, Object> parameters = new HashMap<String, Object>();
-    
+
     String strLanguage = vars.getLanguage();
     String strBaseDesign = getBaseDesignPath(strLanguage);
-    
+
     JasperReport jasperReportLines;
     try {
       JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign + "/org/openbravo/erpCommon/ad_reports/ReportGeneralLedger_Previous.jrxml");
@@ -353,13 +356,13 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       throw new ServletException(e.getMessage());
     }
     parameters.put("SR_LINES", jasperReportLines);
- 
-    
+
+
     parameters.put("Title", classInfo.name);
     parameters.put("ShowPartner",new Boolean(!(strcBpartnerId.equals("")&&strAll.equals(""))));
     parameters.put("Subtitle", Utility.messageBD(this, "GL_Previous", strLanguage));
     parameters.put("Final", Utility.messageBD(this, "Final", strLanguage));
-    
+
     renderJR(vars, response, strReportName, strOutput, parameters, data, null );
  }
 

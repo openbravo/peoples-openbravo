@@ -23,7 +23,7 @@
 <!--<!DOCTYPE FormatClass SYSTEM "FormatClass.dtd">-->
 <Formats>
    <Number name="euroInform"
-       decimal="," grouping="." formatOutput="#,##0.##" formatInternal="#0.00" />
+       decimal="," grouping="." formatOutput="#,##0.00" formatInternal="#0.00" />
    <Number name="euroRelation"
        decimal="." grouping="," formatOutput="#,##0.##" formatInternal="#0.00" />
    <Number name="euroEdition"

@@ -1317,6 +1317,32 @@ th.DataGrid_Header_Cell {
   font-weight: bold;
 }
 
+th.DataGrid_Header_Cell_Amount {
+  font-weight: normal;
+  height: 23px;
+  _height: 20px;
+  vertical-align: middle !important;
+  overflow: hidden;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  padding: 1px 2px 1px 0px;
+  text-indent: 2px;
+  text-align: right;
+  border-top: 1px solid #000000;
+  border-bottom: 1px solid #000000;
+  border-right: 1px solid #000000;
+  border-left : 1px solid #000000;
+  background: none;
+  background-repeat: repeat-x;
+  background-position: top left;
+  background-image: url(Common/DataGrid/backgroundHeader.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; sprite-margin-bottom: 30px; */
+  background-color: #A6A6A6;
+  _background-color: #9D9D9D;
+  color: #000000;
+  white-space: nowrap;
+  font-weight: bold;
+}
+
 th.DataGrid_Header_Cell_Inverse {
   text-align: right !important;
   padding: 1px 4px 1px 0px !important;
@@ -1366,6 +1392,22 @@ td.DataGrid_Body_Cell {
   padding: 1px 0px 1px 2px; /*~RTL  padding: 1px 2px 1px 0px; */ 
   text-indent: 2px;
   text-align: left; /*~RTL  text-align: right; */
+  border-top: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  border-right: 1px solid #808080;
+  border-left: 1px solid #808080;
+  overflow: hidden;
+  white-space: nowrap !important;
+  vertical-align: middle !important;
+  cursor: default;
+}
+
+td.DataGrid_Body_Cell_Amount {
+  font-family: tahoma, arial, helvetica, sans-serif !important;
+  font-size: 8pt !important;
+  padding: 1px 2px 1px 0px;
+  text-indent: 2px;
+  text-align: right;
   border-top: 1px solid #808080;
   border-bottom: 1px solid #808080;
   border-right: 1px solid #808080;
