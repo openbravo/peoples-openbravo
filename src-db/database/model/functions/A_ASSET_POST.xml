@@ -369,7 +369,7 @@
         END IF;
       END IF;
     END IF; --FINISH_PROCESS
-    IF(NOT FINISH_PROCESS) THEN
+    IF(FINISH_PROCESS) THEN
       UPDATE A_ASSET SET PROCESSED='Y', PROCESSING='N'  WHERE A_ASSET_ID=v_Record_ID;
       --Updating DepreciatedPlan
       UPDATE a_asset
