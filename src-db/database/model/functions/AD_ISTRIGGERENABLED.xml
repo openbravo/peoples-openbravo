@@ -17,7 +17,7 @@
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
- v_aux number;
+ v_aux NUMBER;
 BEGIN
  SELECT COUNT(*) 
    INTO v_aux
@@ -34,7 +34,7 @@ BEGIN
 EXCEPTION
 WHEN OTHERS THEN
   RETURN 'Y';
-END AD_isTriggerEnabled
+END AD_ISTRIGGERENABLED
 ]]></body>
     </function>
   </database>
