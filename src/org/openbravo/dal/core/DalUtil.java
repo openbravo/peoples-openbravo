@@ -203,25 +203,39 @@ public class DalUtil {
         }
     }
 
-    // returns the referenced value, handles primary key as
-    // well as non-primary key properties. The referencingProperty
-    // is the property from the owner object.
+    /**
+     * Is used when the value of the foreign-key column should be retrieved. In
+     * java the value of a reference is an entity. This method is usefull to get
+     * to the actual database foreign key value (often the primary key of the
+     * referenced object). This method has a special implementation to prevent
+     * unwanted loading of Hibernate Proxies. This loading is not required if
+     * only the id of the referenced object needs to be returned.
+     * 
+     * @param referencingProperty
+     *            the property which models the association, it is a property of
+     *            the refering object (the owner)
+     * @param referedObject
+     *            the entity to which is being refered
+     * @return the id of the referedObject (most of the time) or if the foreign
+     *         key is to another property then the value of that property is
+     *         returned
+     */
     public static Serializable getReferencedPropertyValue(
-            Property referencingProperty, Object o) {
+            Property referencingProperty, Object referedObject) {
         Check.isTrue(referencingProperty.getReferencedProperty() != null,
                 "This property " + referencingProperty
                         + " does not have a referenced Property");
         final Property referencedProperty = referencingProperty
                 .getReferencedProperty();
         if (referencedProperty.isId()) {
-            if (o instanceof HibernateProxy)
-                return ((HibernateProxy) o).getHibernateLazyInitializer()
-                        .getIdentifier();
-            if (o instanceof BaseOBObject)
-                return (Serializable) ((BaseOBObject) o).getId();
-        } else if (o instanceof BaseOBObject) {
-            return (Serializable) ((BaseOBObject) o).get(referencedProperty
-                    .getName());
+            if (referedObject instanceof HibernateProxy)
+                return ((HibernateProxy) referedObject)
+                        .getHibernateLazyInitializer().getIdentifier();
+            if (referedObject instanceof BaseOBObject)
+                return (Serializable) ((BaseOBObject) referedObject).getId();
+        } else if (referedObject instanceof BaseOBObject) {
+            return (Serializable) ((BaseOBObject) referedObject)
+                    .get(referencedProperty.getName());
         }
 
         throw new ArgumentException(

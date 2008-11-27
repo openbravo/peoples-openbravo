@@ -28,7 +28,6 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.dialect.PostgreSQLDialect;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.dal.core.DalContextListener;
 
 /**
  * Initializes and provides the session factory to the rest of the application.
@@ -61,9 +60,9 @@ public abstract class SessionFactoryController {
     }
 
     /**
-     * Is set from the {@link DalContextListener DalContextListener}, keeps
-     * track if the Dal layer runs within Tomcat or within for example an Ant
-     * task.
+     * Is set from the {@link org.openbravo.dal.core.DalContextListener
+     * DalContextListener}, keeps track if the Dal layer runs within Tomcat or
+     * within for example an Ant task.
      * 
      * @param runningInWebContainer
      *            true if running in a webcontainer such as Tomcat
