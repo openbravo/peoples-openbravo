@@ -19,34 +19,37 @@
 
 package org.openbravo.erpCommon.ad_forms;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.util.HashMap;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.fileupload.FileItem;
+import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.modules.ImportModule;
+import org.openbravo.erpCommon.modules.ModuleTree;
+import org.openbravo.erpCommon.modules.UninstallModule;
+import org.openbravo.erpCommon.modules.VersionUtility;
 import org.openbravo.erpCommon.utility.ComboTableData;
+import org.openbravo.erpCommon.utility.FieldProviderFactory;
+import org.openbravo.erpCommon.utility.LeftTabsBar;
+import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.erpCommon.utility.FieldProviderFactory;
-import org.openbravo.data.FieldProvider;
-
-import org.openbravo.erpCommon.businessUtility.WindowTabs;
-import org.openbravo.erpCommon.modules.*;
-
-import org.openbravo.erpCommon.utility.*;
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.xmlEngine.XmlDocument;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-
+import org.openbravo.services.webservice.Module;
 import org.openbravo.services.webservice.ModuleDependency;
+import org.openbravo.services.webservice.SimpleModule;
 import org.openbravo.services.webservice.WebServiceImpl;
 import org.openbravo.services.webservice.WebServiceImplServiceLocator;
-import org.openbravo.services.webservice.Module;
-import org.openbravo.services.webservice.SimpleModule;
-
-
-import javax.servlet.*;
-import javax.servlet.http.*;
+import org.openbravo.xmlEngine.XmlDocument;
 
 
 /**
@@ -64,56 +67,57 @@ public class ModuleManagement extends HttpSecureAppServlet {
   /**
    * Main method that controls the sent command
    */
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
+  @Override
+public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
+    final VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
       printPageInstalled(response, vars);
-    } if (vars.commandIn("APPLY")) {
+    } else if (vars.commandIn("APPLY")) {
       printPageApply(response, vars);
-    } if (vars.commandIn("ADD") ) {
-      String searchText = vars.getRequestGlobalVariable("inpSearchText", "ModuleManagemetAdd.text");
+    } else if (vars.commandIn("ADD") ) {
+      final String searchText = vars.getRequestGlobalVariable("inpSearchText", "ModuleManagemetAdd.text");
       printPageAdd(request, response, vars, searchText, false);
-    } if (vars.commandIn("HISTORY") ) {
-      String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ModuleManagement|DateFrom", "");
-      String strDateTo = vars.getGlobalVariable("inpDateTo", "ModuleManagement|DateTo", "");
-      String strUser = vars.getGlobalVariable("inpUser", "ModuleManagement|inpUser", "");
+    } else if (vars.commandIn("HISTORY") ) {
+      final String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ModuleManagement|DateFrom", "");
+      final String strDateTo = vars.getGlobalVariable("inpDateTo", "ModuleManagement|DateTo", "");
+      final String strUser = vars.getGlobalVariable("inpUser", "ModuleManagement|inpUser", "");
       printPageHistory(response, vars, strDateFrom, strDateTo, strUser);
-    } if (vars.commandIn("ADD_SEARCH")) {
-      String searchText = vars.getRequestGlobalVariable("inpSearchText", "ModuleManagemetAdd.text");
+    } else if (vars.commandIn("ADD_SEARCH")) {
+      final String searchText = vars.getRequestGlobalVariable("inpSearchText", "ModuleManagemetAdd.text");
       printPageAdd(request, response, vars, searchText, true);
-    } if (vars.commandIn("DETAIL")) {
-      String record = vars.getStringParameter("inpcRecordId");
-      boolean local = vars.getStringParameter("inpLocalInstall").equals("Y");
+    } else if (vars.commandIn("DETAIL")) {
+      final String record = vars.getStringParameter("inpcRecordId");
+      final boolean local = vars.getStringParameter("inpLocalInstall").equals("Y");
       printPageDetail(response, vars, record, local);
-    } if (vars.commandIn("INSTALL")) {
-      String record = vars.getStringParameter("inpcRecordId");
+    } else if (vars.commandIn("INSTALL")) {
+      final String record = vars.getStringParameter("inpcRecordId");
       printPageInstall1(response, vars, record, false, null, new String[0]);
-    } if (vars.commandIn("INSTALL2")) {
+    } else if (vars.commandIn("INSTALL2")) {
       printPageInstall2(response, vars);
-    } if (vars.commandIn("INSTALL3")) {
+    } else if (vars.commandIn("INSTALL3")) {
       printPageInstall3(response, vars);
-    } if (vars.commandIn("LICENSE")){
-      String record = vars.getStringParameter("inpcRecordId");
+    } else if (vars.commandIn("LICENSE")){
+      final String record = vars.getStringParameter("inpcRecordId");
       printLicenseAgreement(response,vars, record);
-    } if (vars.commandIn("LOCAL")){
+    } else if (vars.commandIn("LOCAL")){
       printSearchFile(response,vars);
     } if (vars.commandIn("INSTALLFILE")){
-      FileItem fi = vars.getMultiFile("inpFile");
+      final FileItem fi = vars.getMultiFile("inpFile");
       vars.setSessionObject("ModuleManagementInstall|File", vars.getMultiFile("inpFile"));
       printPageInstall1(response, vars, null, true, fi.getInputStream(), new String[0]);
-    } if (vars.commandIn("UNINSTALL")){
-      String modules = vars.getInStringParameter("inpNodes");
-      UninstallModule um = new UninstallModule(this, vars.getSessionValue("#sourcePath"), vars);
+    } else if (vars.commandIn("UNINSTALL")){
+      final String modules = vars.getInStringParameter("inpNodes");
+      final UninstallModule um = new UninstallModule(this, vars.getSessionValue("#sourcePath"), vars);
       um.execute(modules);
-      OBError msg = um.getOBError();
+      final OBError msg = um.getOBError();
       vars.setMessage("ModuleManagement|message", msg);
       response.sendRedirect(strDireccion + request.getServletPath() + "?Command=DEFAULT");
       System.out.println(modules);
-    } if (vars.commandIn("SCAN")){
+    } else if (vars.commandIn("SCAN")){
       printScan(response,vars);
-    } if (vars.commandIn("UPDATE")){
-      String updateModule = vars.getStringParameter("inpcUpdate");
+    } else  if (vars.commandIn("UPDATE")){
+      final String updateModule = vars.getStringParameter("inpcUpdate");
       String[] modulesToUpdate;
       if (updateModule.equals("all")) {
         modulesToUpdate = getUpdateableModules();
@@ -122,7 +126,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         modulesToUpdate[0] = updateModule;
       }
       printPageInstall1(response, vars, null, false, null, modulesToUpdate);
-    }else pageError(response);
+    } else pageError(response);
   }
 
   /**
@@ -136,28 +140,28 @@ public class ModuleManagement extends HttpSecureAppServlet {
   void printPageInstalled(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: Installed");
     response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    XmlDocument xmlDocument=xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/ModuleManagementInstalled").createXmlDocument();
+    final PrintWriter out = response.getWriter();
+    final XmlDocument xmlDocument=xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/ModuleManagementInstalled").createXmlDocument();
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     
     // Interface parameters
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ModuleManagement", false, "", "", "",false, "ad_forms",  strReplaceWith, false,  true);
+    final ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ModuleManagement", false, "", "", "",false, "ad_forms",  strReplaceWith, false,  true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
     
     try {
-      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_forms.ModuleManagement");
+      final WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_forms.ModuleManagement");
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ModuleManagement.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      final NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ModuleManagement.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ModuleManagement.html", strReplaceWith);
+      final LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ModuleManagement.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-    } catch (Exception ex) {
+    } catch (final Exception ex) {
       throw new ServletException(ex);
     }
     {
-      OBError myMessage = vars.getMessage("ModuleManagement|message");
+      final OBError myMessage = vars.getMessage("ModuleManagement|message");
       vars.removeMessage("ModuleManagement|message");
       if (myMessage!=null) {
         xmlDocument.setParameter("messageType", myMessage.getType());
@@ -166,7 +170,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       }
     }      
     ////----
-    ModuleTree tree = new ModuleTree(this);
+    final ModuleTree tree = new ModuleTree(this);
     tree.setLanguage(vars.getLanguage());
     tree.showNotifications(true);
     tree.setNotifications(getNotificationsHTML(vars.getLanguage()));
@@ -191,12 +195,12 @@ public class ModuleManagement extends HttpSecureAppServlet {
    */
   void printPageApply(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
     try {
-      XmlDocument xmlDocument=xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/ApplyModule").createXmlDocument();
-      PrintWriter out = response.getWriter();
+      final XmlDocument xmlDocument=xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/ApplyModule").createXmlDocument();
+      final PrintWriter out = response.getWriter();
       response.setContentType("text/html; charset=UTF-8");
       out.println(xmlDocument.print());
       out.close();
-    } catch (Exception e) {
+    } catch (final Exception e) {
       e.printStackTrace();
     }  
   }
@@ -226,7 +230,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
              + "&nbsp;" + "<a class=\"LabelLink_noicon\" href=\"#\" onclick=\"installUpdate('all'); return false;\">"
              + Utility.messageBD(this, "InstallUpdatesNow", lang)+"</a>";
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       e.printStackTrace();
    }
    return rt;
@@ -246,27 +250,27 @@ public class ModuleManagement extends HttpSecureAppServlet {
   void printPageAdd(HttpServletRequest request, HttpServletResponse response, VariablesSecureApp vars, String searchText, boolean displaySearch) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: Installed");
     response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    XmlDocument xmlDocument=xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/ModuleManagementAdd").createXmlDocument();
+    final PrintWriter out = response.getWriter();
+    final XmlDocument xmlDocument=xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/ModuleManagementAdd").createXmlDocument();
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     // Interface parameters
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ModuleManagement", false, "", "", "",false, "ad_forms",  strReplaceWith, false,  true);
+    final ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ModuleManagement", false, "", "", "",false, "ad_forms",  strReplaceWith, false,  true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
     
     try {
-      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_forms.ModuleManagement");
+      final WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_forms.ModuleManagement");
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ModuleManagement.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      final NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ModuleManagement.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ModuleManagement.html", strReplaceWith);
+      final LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ModuleManagement.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-    } catch (Exception ex) {
+    } catch (final Exception ex) {
       throw new ServletException(ex);
     }
     {
-      OBError myMessage = vars.getMessage("ModuleManagement");
+      final OBError myMessage = vars.getMessage("ModuleManagement");
       vars.removeMessage("ModuleManagement");
       if (myMessage!=null) {
         xmlDocument.setParameter("messageType", myMessage.getType());
@@ -302,23 +306,23 @@ public class ModuleManagement extends HttpSecureAppServlet {
   void printPageHistory(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strUser) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: Installed");
     response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    XmlDocument xmlDocument=xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/ModuleManagementHistory").createXmlDocument();
+    final PrintWriter out = response.getWriter();
+    final XmlDocument xmlDocument=xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/ModuleManagementHistory").createXmlDocument();
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     // Interface parameters
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ModuleManagement", false, "", "", "",false, "ad_forms",  strReplaceWith, false,  true);
+    final ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ModuleManagement", false, "", "", "",false, "ad_forms",  strReplaceWith, false,  true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
     
     try {
-      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_forms.ModuleManagement");
+      final WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_forms.ModuleManagement");
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ModuleManagement.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      final NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ModuleManagement.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ModuleManagement.html", strReplaceWith);
+      final LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ModuleManagement.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-    } catch (Exception ex) {
+    } catch (final Exception ex) {
       throw new ServletException(ex);
     }
    
@@ -335,11 +339,11 @@ public class ModuleManagement extends HttpSecureAppServlet {
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ModuleManagement", strUser);
       xmlDocument.setData("reportUser","liststructure", comboTableData.select(false));
       comboTableData = null;
-    } catch (Exception ex) {
+    } catch (final Exception ex) {
       throw new ServletException(ex);
     }
     
-    ModuleManagementData data[] = ModuleManagementData.selectLog(this, vars.getLanguage(), strUser, strDateFrom, strDateTo);
+    final ModuleManagementData data[] = ModuleManagementData.selectLog(this, vars.getLanguage(), strUser, strDateFrom, strDateTo);
     xmlDocument.setData("detail", data);
     
     out.println(xmlDocument.print());
@@ -360,25 +364,25 @@ public class ModuleManagement extends HttpSecureAppServlet {
     if (!local) {
       try {
         //retrieve the module details from the webservice
-        WebServiceImplServiceLocator loc = new WebServiceImplServiceLocator();
-        WebServiceImpl ws = (WebServiceImpl) loc.getWebService();
+        final WebServiceImplServiceLocator loc = new WebServiceImplServiceLocator();
+        final WebServiceImpl ws = loc.getWebService();
         module = ws.moduleDetail(recordId);
-      } catch (Exception e) {
+      } catch (final Exception e) {
         e.printStackTrace();
       }
     } else {
-      ImportModule im = (ImportModule)vars.getSessionObject("InstallModule|ImportModule");
+      final ImportModule im = (ImportModule)vars.getSessionObject("InstallModule|ImportModule");
       module = im.getModule(recordId);
     }
     
-    ModuleDependency[] dependencies = module.getDependencies();
-    ModuleDependency[] includes = module.getIncludes();
+    final ModuleDependency[] dependencies = module.getDependencies();
+    final ModuleDependency[] includes = module.getIncludes();
     
-    String discard[] = {"",""};
+    final String discard[] = {"",""};
     if (includes == null || includes.length==0) discard[0]="includeDiscard";
     if (dependencies == null || dependencies.length==0) discard[1]="dependDiscard";
     
-    XmlDocument xmlDocument=xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/ModuleManagementDetails", discard).createXmlDocument();
+    final XmlDocument xmlDocument=xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/ModuleManagementDetails", discard).createXmlDocument();
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("key", recordId);
@@ -398,7 +402,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
    
     
     response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
+    final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
   }
@@ -417,15 +421,15 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @throws ServletException
    */
   void printPageInstall1(HttpServletResponse response, VariablesSecureApp vars, String recordId, boolean islocal, InputStream obx, String[] updateModules) throws IOException, ServletException {
-    String discard[]={"","", "", "", "", ""};
+    final String discard[]={"","", "", "", "", ""};
      Module module = null;
      if (!islocal && (updateModules==null || updateModules.length==0)) {
        //if it is a remote installation get the module from webservice, other case the obx file is passed as an InputStream
        try {
-         WebServiceImplServiceLocator loc = new WebServiceImplServiceLocator();
-         WebServiceImpl ws = (WebServiceImpl) loc.getWebService();
+         final WebServiceImplServiceLocator loc = new WebServiceImplServiceLocator();
+         final WebServiceImpl ws = loc.getWebService();
          module = ws.moduleDetail(recordId);
-       } catch (Exception e) {
+       } catch (final Exception e) {
          e.printStackTrace();
        }
       } else {
@@ -442,19 +446,19 @@ public class ModuleManagement extends HttpSecureAppServlet {
      VersionUtility.setPool(this);
 
      //Craete a new ImportModule instance which will be used to check depencecies and to process the installation
-     ImportModule im = new ImportModule(this, vars.getSessionValue("#sourcePath"), vars);
+     final ImportModule im = new ImportModule(this, vars.getSessionValue("#sourcePath"), vars);
      im.setInstallLocal(islocal);
      try {
        //check the dependenies and obtain the modules to install/update
        if (!islocal) {
-         String[] installableModules = {module!=null?module.getModuleVersionID():""};
+         final String[] installableModules = {module!=null?module.getModuleVersionID():""};
          check = im.checkDependenciesId(installableModules, updateModules);
        }else{
          check = im.checkDependenciesFile(obx);
        }
        
        if (check) { //dependencies are statisfied, show modules to install
-         Module[] installOrig= im.getModulesToInstall(); //This includes the also the module to install
+         final Module[] installOrig= im.getModulesToInstall(); //This includes the also the module to install
          if (installOrig==null || installOrig.length==0) discard[0] = "modulesToinstall";
          else {
            if (!islocal && module!=null) {
@@ -495,7 +499,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
          discard[3] = "discardAdditional"; 
          discard[5] = "discardContinue";
        }
-     } catch (Exception e){
+     } catch (final Exception e){
        e.printStackTrace();
        message = new OBError();
        message.setType("Error");
@@ -504,7 +508,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
      }
     
      
-     XmlDocument xmlDocument=xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/ModuleManagement_InstallP1", discard).createXmlDocument();
+     final XmlDocument xmlDocument=xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/ModuleManagement_InstallP1", discard).createXmlDocument();
      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
      xmlDocument.setParameter("theme", vars.getTheme());
@@ -532,7 +536,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
        }
      }  
      response.setContentType("text/html; charset=UTF-8");
-     PrintWriter out = response.getWriter();
+     final PrintWriter out = response.getWriter();
      out.println(xmlDocument.print());
      out.close();
    }
@@ -550,12 +554,12 @@ public class ModuleManagement extends HttpSecureAppServlet {
     Module[] selected;
     
     //Obtain the session object with the modules to install/update
-    ImportModule im = (ImportModule)vars.getSessionObject("InstallModule|ImportModule");
-    Module[] installOrig= im.getModulesToInstall(); 
-    Module[] upd=im.getModulesToUpdate();
+    final ImportModule im = (ImportModule)vars.getSessionObject("InstallModule|ImportModule");
+    final Module[] installOrig= im.getModulesToInstall(); 
+    final Module[] upd=im.getModulesToUpdate();
      
-     String adModuleId=vars.getStringParameter("inpModuleID"); //selected module to install
-     boolean islocal = im.getIsLocal();
+     final String adModuleId=vars.getStringParameter("inpModuleID"); //selected module to install
+     final boolean islocal = im.getIsLocal();
      
      if (!islocal) {
        selected = new Module[1];
@@ -563,7 +567,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
        //check if the version for the selected module is the selected one
        int j =0;
        for (int i=0; i<installOrig.length; i++){
-         boolean found = installOrig[i].getModuleID().equals(adModuleId);
+         final boolean found = installOrig[i].getModuleID().equals(adModuleId);
          if (found) {
            selected[0] = installOrig[i];
          } else {
@@ -576,7 +580,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
        selected = installOrig;
      }
      
-     String discard[] = {"","",""};
+     final String discard[] = {"","",""};
      
                
      if (inst==null || inst.length==0) 
@@ -589,26 +593,26 @@ public class ModuleManagement extends HttpSecureAppServlet {
      if (selected==null || selected.length==0)
        discard[2] = "moduleSelected";
      
-     XmlDocument xmlDocument=xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/ModuleManagement_InstallP2", discard).createXmlDocument();
+     final XmlDocument xmlDocument=xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/ModuleManagement_InstallP2", discard).createXmlDocument();
      
      //Set positions to names in order to be able to use keyboard for navigation in the box
      int position = 1;
      if (selected!=null && selected.length>0) {
-       FieldProvider[] fp = FieldProviderFactory.getFieldProviderArray(selected);
+       final FieldProvider[] fp = FieldProviderFactory.getFieldProviderArray(selected);
        for (int i=0; i<fp.length; i++)
          FieldProviderFactory.setField(fp[i], "position", new Integer(position++).toString());
        xmlDocument.setData("selected",fp);
      }
      
      if (inst!=null && inst.length>0) {
-       FieldProvider[] fp = FieldProviderFactory.getFieldProviderArray(inst);
+       final FieldProvider[] fp = FieldProviderFactory.getFieldProviderArray(inst);
        for (int i=0; i<fp.length; i++)
          FieldProviderFactory.setField(fp[i], "position", new Integer(position++).toString());
        xmlDocument.setData("installs", fp);
      }
      
      if (upd!=null && upd.length>0) {
-       FieldProvider[] fp = FieldProviderFactory.getFieldProviderArray(upd);
+       final FieldProvider[] fp = FieldProviderFactory.getFieldProviderArray(upd);
        for (int i=0; i<fp.length; i++)
          FieldProviderFactory.setField(fp[i], "position", new Integer(position++).toString());
        xmlDocument.setData("updates",fp);
@@ -618,7 +622,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
      xmlDocument.setParameter("theme", vars.getTheme());
      response.setContentType("text/html; charset=UTF-8");
-     PrintWriter out = response.getWriter();
+     final PrintWriter out = response.getWriter();
      out.println(xmlDocument.print());
      out.close();
    }
@@ -634,8 +638,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @throws ServletException
    */
   void printPageInstall3(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    ImportModule im = (ImportModule)vars.getSessionObject("InstallModule|ImportModule");
-    XmlDocument xmlDocument=xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/ModuleManagement_InstallP4").createXmlDocument();
+    final ImportModule im = (ImportModule)vars.getSessionObject("InstallModule|ImportModule");
+    final XmlDocument xmlDocument=xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/ModuleManagement_InstallP4").createXmlDocument();
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
@@ -658,7 +662,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
     vars.removeSessionValue("InstallModule|ImportModule");
     
     response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
+    final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
    }
@@ -676,12 +680,12 @@ public class ModuleManagement extends HttpSecureAppServlet {
   private String getSearchResults(HttpServletRequest request, HttpServletResponse response, VariablesSecureApp vars, String text) {
     SimpleModule[] modules=null;
     try {
-      WebServiceImplServiceLocator loc = new WebServiceImplServiceLocator();
-      WebServiceImpl ws = (WebServiceImpl) loc.getWebService();
+      final WebServiceImplServiceLocator loc = new WebServiceImplServiceLocator();
+      final WebServiceImpl ws = loc.getWebService();
       modules = ws.moduleSearch(text, getInstalledModules());
       
-    } catch (Exception e) {
-      OBError message = new OBError();
+    } catch (final Exception e) {
+      final OBError message = new OBError();
       message.setType("Error");
       message.setTitle(Utility.messageBD(this,"Error",vars.getLanguage()));
       message.setMessage(Utility.messageBD(this,"WSError",vars.getLanguage()));
@@ -689,7 +693,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       e.printStackTrace();
       try {
         response.sendRedirect(strDireccion + request.getServletPath() + "?Command=ADD");
-      } catch (Exception ex) {
+      } catch (final Exception ex) {
         ex.printStackTrace();
       }
     }
@@ -701,7 +705,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
         modules[i].setType(icon);
       }
     }
-    XmlDocument xmlDocument=xmlEngine.readXmlTemplate("org/openbravo/erpCommon/modules/ModuleBox").createXmlDocument();
+    final XmlDocument xmlDocument=xmlEngine.readXmlTemplate("org/openbravo/erpCommon/modules/ModuleBox").createXmlDocument();
     xmlDocument.setData("structureBox", FieldProviderFactory.getFieldProviderArray(modules));
     return xmlDocument.print();
     
@@ -715,14 +719,14 @@ public class ModuleManagement extends HttpSecureAppServlet {
    */
   private String[] getInstalledModules() {
     try{
-      ModuleManagementData data[] = ModuleManagementData.selectInstalled(this);
+      final ModuleManagementData data[] = ModuleManagementData.selectInstalled(this);
       if (data!=null && data.length!=0) {
-        String[] rt = new String[data.length];
+        final String[] rt = new String[data.length];
         for (int i=0; i<data.length; i++)
           rt[i] = data[i].adModuleId;
         return rt;
       } else return new String[0];
-    } catch (Exception e) {
+    } catch (final Exception e) {
       e.printStackTrace();
       return (new String[0]);
     }
@@ -730,14 +734,14 @@ public class ModuleManagement extends HttpSecureAppServlet {
   
   private String[] getUpdateableModules() {
     try{
-      ModuleManagementData data[] = ModuleManagementData.selectUpdateable(this);
+      final ModuleManagementData data[] = ModuleManagementData.selectUpdateable(this);
       if (data!=null && data.length!=0) {
-        String[] rt = new String[data.length];
+        final String[] rt = new String[data.length];
         for (int i=0; i<data.length; i++)
           rt[i] = data[i].adModuleVersionId;
         return rt;
       } else return new String[0];
-    } catch (Exception e) {
+    } catch (final Exception e) {
       e.printStackTrace();
       return (new String[0]);
     }
@@ -758,10 +762,10 @@ public class ModuleManagement extends HttpSecureAppServlet {
     
     response.setContentType("text/plain; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
-    PrintWriter out = response.getWriter();
-    ImportModule im = (ImportModule)vars.getSessionObject("InstallModule|ImportModule");
-    Module[] inst= im.getModulesToInstall(); 
-    Module[] upd= im.getModulesToUpdate();
+    final PrintWriter out = response.getWriter();
+    final ImportModule im = (ImportModule)vars.getSessionObject("InstallModule|ImportModule");
+    final Module[] inst= im.getModulesToInstall(); 
+    final Module[] upd= im.getModulesToUpdate();
     
        
     int i =0;
@@ -792,12 +796,12 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * @throws ServletException
    */
   void printSearchFile(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-     XmlDocument xmlDocument=xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/ModuleManagement_InstallLocal").createXmlDocument();
+     final XmlDocument xmlDocument=xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/ModuleManagement_InstallLocal").createXmlDocument();
      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
      xmlDocument.setParameter("theme", vars.getTheme());
      response.setContentType("text/html; charset=UTF-8");
-     PrintWriter out = response.getWriter();
+     final PrintWriter out = response.getWriter();
      out.println(xmlDocument.print());
      out.close();
   }
@@ -805,9 +809,9 @@ public class ModuleManagement extends HttpSecureAppServlet {
   void printScan(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: ajaxreponse");
     
-    HashMap<String, String> updates= ImportModule.scanForUpdates(this, vars);
+    final HashMap<String, String> updates= ImportModule.scanForUpdates(this, vars);
     String up = "";
-    for (String node: updates.keySet()) 
+    for (final String node: updates.keySet()) 
       up += node+","+updates.get(node)+"|";
     
     String notifications = getNotificationsHTML(vars.getLanguage());
@@ -815,7 +819,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
     up = notifications+"|"+up+"|";
     response.setContentType("text/plain; charset=UTF-8");
     response.setHeader("Cache-Control", "no-cache");
-    PrintWriter out = response.getWriter();
+    final PrintWriter out = response.getWriter();
     out.println(up);
     out.close();
   }
