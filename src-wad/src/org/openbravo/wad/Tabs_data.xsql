@@ -92,7 +92,7 @@
         )
         AND AD_TAB.ad_window_id = AD_WINDOW.ad_window_id)
         AND M1.AD_MODULE_ID = AD_WINDOW.AD_Module_ID
-        AND M.NAME IN ('1')
+        AND M.JAVAPACKAGE IN ('1')
         AND EXISTS (SELECT 1
                       FROM AD_WINDOW W
                      WHERE AD_WINDOW.AD_WINDOW_ID = W.AD_WINDOW_ID
@@ -134,7 +134,7 @@
       ]]>
       </Sql>
       <Parameter name="name"/>
-      <Parameter name="ModuleName" type="replace" optional="true" after="AND M.NAME IN (" text="'1'"/>
+      <Parameter name="ModuleName" type="replace" optional="true" after="AND M.JAVAPACKAGE IN (" text="'1'"/>
   </SqlMethod>
 
 

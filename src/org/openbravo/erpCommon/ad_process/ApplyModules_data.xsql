@@ -23,7 +23,7 @@
   <SqlMethod name="selectUnappliedModules" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-         SELECT NAME
+         SELECT JAVAPACKAGE AS NAME
            FROM AD_MODULE
           WHERE ISACTIVE='Y'
             AND STATUS='I'           
