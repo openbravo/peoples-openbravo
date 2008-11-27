@@ -70,17 +70,17 @@ public class ExtractModule {
 	 */
 	public void extract(String moduleID) {
 		try {
-			ExtractModuleData module = ExtractModuleData.selectDirectory(pool, moduleID);
+			final ExtractModuleData module = ExtractModuleData.selectDirectory(pool, moduleID);
 
 			log4j.info("Extracting module: " + module.javapackage);
-			String moduleDirectory = modulesBaseDir + "/modules/"
+			final String moduleDirectory = modulesBaseDir + "/modules/"
 					+ module.javapackage;
 
 			relativeDir = modulesBaseDir + File.separator + "modules"
 					+ File.separator;
-			FileOutputStream file = new FileOutputStream(destDir + "/"
+			final FileOutputStream file = new FileOutputStream(destDir + "/"
 					+ module.javapackage + "-" + module.version + ".obx");
-			ZipOutputStream obx = new ZipOutputStream(file);
+			final ZipOutputStream obx = new ZipOutputStream(file);
 			extractModule(moduleID, moduleDirectory, obx);
 			if (module.type.equals("P") || module.type.equals("T")) {
 				log4j.info(module.javapackage
@@ -90,7 +90,7 @@ public class ExtractModule {
 			obx.close();
 			log4j.info("Completed file: " + destDir + "/" + module.javapackage
 					+ "-" + module.version + ".obx");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 
@@ -117,7 +117,7 @@ public class ExtractModule {
 			stdDir.mkdir();
 		}
 
-		for (DataSet ds : dss) {
+		for (final DataSet ds : dss) {
 			try {
 				final String xml = DataExportService.getInstance()
 						.exportDataSetToXML(ds, moduleId);
@@ -128,7 +128,7 @@ public class ExtractModule {
 					fw.write(xml);
 					fw.close();
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				throw new OBException(
 						"Exception while extracting referencedata for module: "
 								+ moduleId + " and dataset " + ds.getName(), e);
@@ -139,7 +139,7 @@ public class ExtractModule {
 	public void extractName(String name) throws Exception {
 		log4j.info("Looking for ID for module with package: " + name);
 		log4j.info("Extract reference data: "+exportReferenceData);
-		String id = ExtractModuleData.selectID(pool, name);
+		final String id = ExtractModuleData.selectID(pool, name);
 		if (id == null || id.equals(""))
 			throw new Exception("Module ID not fond");
 		extract(id);
@@ -169,13 +169,13 @@ public class ExtractModule {
 	 */
 	private void extractPackage(String moduleID, ZipOutputStream obx)
 			throws Exception {
-		ExtractModuleData modules[] = ExtractModuleData.selectContainedModules(pool, moduleID);
+		final ExtractModuleData modules[] = ExtractModuleData.selectContainedModules(pool, moduleID);
 		for (int i = 0; i < modules.length; i++) {
 			obx.putNextEntry(new ZipEntry(modules[i].javapackage + "-"
 					+ modules[i].version + ".obx"));
-			ByteArrayOutputStream ba = new ByteArrayOutputStream();
-			ZipOutputStream moduleObx = new ZipOutputStream(ba);
-			String moduleDirectory = modulesBaseDir + "/modules/"
+			final ByteArrayOutputStream ba = new ByteArrayOutputStream();
+			final ZipOutputStream moduleObx = new ZipOutputStream(ba);
+			final String moduleDirectory = modulesBaseDir + "/modules/"
 					+ modules[i].javapackage;
 			relativeDir = modulesBaseDir + File.separator + "modules"
 					+ File.separator;
@@ -204,24 +204,28 @@ public class ExtractModule {
 	 * @throws Exception
 	 */
 	private void createOBX(File file, ZipOutputStream obx) throws Exception {
-		File[] list = file.listFiles(new FilenameFilter() {
+		final File[] list = file.listFiles(new FilenameFilter() {
 			public boolean accept(File f, String s) {
 				return !s.equals(".svn");
 			}
 		});
 		for (int i = 0; i < list.length; i++) {
 			if (list[i].isDirectory()) {
-				createOBX(list[i], obx);
+			    //add entry for directory
+			    obx.putNextEntry(new ZipEntry(new ZipEntry(list[i].toString().replace(relativeDir, ""))+"/"));
+			    obx.closeEntry();
+			    createOBX(list[i], obx);
 			} else {
-				byte[] buf = new byte[1024];
-				obx.putNextEntry(new ZipEntry(list[i].toString().replace(relativeDir, "")));
-				FileInputStream in = new FileInputStream(list[i].toString());
-				int len;
-				while ((len = in.read(buf)) > 0) {
-					obx.write(buf, 0, len);
-				}
-				obx.closeEntry();
-				in.close();
+			    //add entry for file (and compress it)
+    			    final byte[] buf = new byte[1024];
+    			    obx.putNextEntry(new ZipEntry(list[i].toString().replace(relativeDir, "")));
+    			    final FileInputStream in = new FileInputStream(list[i].toString());
+    			    int len;
+    			    while ((len = in.read(buf)) > 0) {
+    				obx.write(buf, 0, len);
+    			    }
+    			    obx.closeEntry();
+    			    in.close();
 			}
 		}
 	}
