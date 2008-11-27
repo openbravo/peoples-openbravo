@@ -24,8 +24,13 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 
 /**
- * The OBClassLoader which can be from the outside. Two classloaders are
- * supported: the context (the default) and the class classloader.
+ * The OBClassLoader is used to support different classloading scenarios. As a
+ * default two classloaders are present: the context (the default, used in
+ * Tomcat) and the class classloader. The class classloader is used in Ant
+ * tasks.
+ * <p/>
+ * Use the {@link OBProvider OBProvider} to define which classloader in a
+ * specific environment.
  * 
  * @author mtaal
  */
@@ -41,6 +46,9 @@ public class OBClassLoader implements OBSingleton {
         return instance;
     }
 
+    /**
+     * Load a class using the classloader.
+     */
     public Class<?> loadClass(String className) {
         try {
             return Thread.currentThread().getContextClassLoader().loadClass(
@@ -51,6 +59,13 @@ public class OBClassLoader implements OBSingleton {
         }
     }
 
+    /**
+     * A class loader which uses the classloader of the Class class.
+     * 
+     * To use this classloader do the following:
+     * OBProvider.getInstance().register(OBClassLoader.class,
+     * OBClassLoader.ClassOBClassLoader.class, false);
+     */
     public static class ClassOBClassLoader extends OBClassLoader {
 
         @Override

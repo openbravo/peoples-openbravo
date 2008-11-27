@@ -22,7 +22,8 @@ package org.openbravo.base.exception;
 import org.apache.log4j.Logger;
 
 /**
- * Unchecked exception which also logs itself.
+ * This is the base exception for all exceptions in Openbravo. It is an
+ * unchecked exception which also logs itself.
  * 
  * @author mtaal
  */
@@ -50,7 +51,12 @@ public class OBException extends RuntimeException {
         getLogger().error(cause);
     }
 
-    // returns class specific logger
+    /**
+     * This method returns a logger which can be used by a subclass. The logger
+     * is specific for the instance of the Exception (the subclass).
+     * 
+     * @return the class-specific Logger
+     */
     protected Logger getLogger() {
         return Logger.getLogger(this.getClass());
     }

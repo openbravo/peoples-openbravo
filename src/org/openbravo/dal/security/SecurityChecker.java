@@ -32,7 +32,10 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 
 /**
- * Centralizes checking of security for data objects.
+ * This class combines all security checks which are performed on entity level:
+ * <ul>
+ * <li>Delete: is the entity deletable (@see {@link Entity#isDeletable()) and does the user have write access to the entity.</li>
+ * <li>Write: is done in case of create and update actions. The following checks are performed: is the organization writable, is the client of the object the same as  is the entity writable (@see EntityAccessChecker#isWritable(Entity)) 
  * 
  * @author mtaal
  */
@@ -62,10 +65,28 @@ public class SecurityChecker implements OBSingleton {
         checkWriteAccess(o);
     }
 
+    /**
+     * Performs several write access checks when an object is created or
+     * updated:
+     * <ul>
+     * <li>is the organization writable (@see
+     * OBContext#getWritableOrganizations())</li>
+     * <li>is the client of the object the same as the client of the user (@see
+     * OBContext#getCurrentClient())</li>
+     * <li>is the Entity writable for this user (@see
+     * EntityAccessChecker#isWritable(Entity))
+     * <li>are the client and organization correct from an access level
+     * perspective (@see AccessLevelChecker).</lo>
+     * 
+     * @param obj
+     *            the object to check
+     * @return true if writable, false otherwise
+     * @see Entity
+     */
     // NOTE: this method needs to be kept insync with the checkWritable method
-    public boolean isWritable(Object o) {
+    public boolean isWritable(Object obj) {
 
-        // check that the client id and organisation id are resp. in the list of
+        // check that the client id and organization id are resp. in the list of
         // user_client and user_org
         // TODO: throw specific and translated exception, for more info:
         // Utility.translateError(this, vars, vars.getLanguage(),
@@ -74,34 +95,35 @@ public class SecurityChecker implements OBSingleton {
         final OBContext obContext = OBContext.getOBContext();
 
         String clientId = "";
-        if (o instanceof ClientEnabled
-                && ((ClientEnabled) o).getClient() != null) {
-            clientId = (String) DalUtil.getId(((ClientEnabled) o).getClient());
+        if (obj instanceof ClientEnabled
+                && ((ClientEnabled) obj).getClient() != null) {
+            clientId = (String) DalUtil
+                    .getId(((ClientEnabled) obj).getClient());
         }
         String orgId = "";
-        if (o instanceof OrganizationEnabled
-                && ((OrganizationEnabled) o).getOrganization() != null) {
-            orgId = (String) DalUtil.getId(((OrganizationEnabled) o)
+        if (obj instanceof OrganizationEnabled
+                && ((OrganizationEnabled) obj).getOrganization() != null) {
+            orgId = (String) DalUtil.getId(((OrganizationEnabled) obj)
                     .getOrganization());
         }
 
-        final Entity entity = ((BaseOBObject) o).getEntity();
+        final Entity entity = ((BaseOBObject) obj).getEntity();
         if (!obContext.isInAdministratorMode() && clientId.length() > 0) {
-            if (o instanceof ClientEnabled) {
+            if (obj instanceof ClientEnabled) {
                 if (!obContext.getCurrentClient().getId().equals(clientId)) {
                     return false;
                 }
             }
 
             // todo can be improved by only checking if the client or
-            // organisation
+            // organization
             // actually changed...
             if (!obContext.getEntityAccessChecker().isWritable(entity)) {
                 return false;
             }
 
-            if (o instanceof OrganizationEnabled && orgId.length() > 0) {
-                if (!obContext.getWritableOrganisations().contains(orgId)) {
+            if (obj instanceof OrganizationEnabled && orgId.length() > 0) {
+                if (!obContext.getWritableOrganizations().contains(orgId)) {
                     return false;
                 }
             }
@@ -116,10 +138,19 @@ public class SecurityChecker implements OBSingleton {
         return true;
     }
 
+    /**
+     * Performs the same checks as {@link #isWritable(Object)}. Does not return
+     * true/false but throws a OBSecurityException if the object is not
+     * writable.
+     * 
+     * @param obj
+     *            the object to check
+     * @throws OBSecurityException
+     */
     // NOTE: this method needs to be kept insync with the isWritable method
-    public void checkWriteAccess(Object o) {
+    public void checkWriteAccess(Object obj) {
 
-        // check that the client id and organisation id are resp. in the list of
+        // check that the client id and organization id are resp. in the list of
         // user_client and user_org
         // TODO: throw specific and translated exception, for more info:
         // Utility.translateError(this, vars, vars.getLanguage(),
@@ -127,47 +158,48 @@ public class SecurityChecker implements OBSingleton {
         final OBContext obContext = OBContext.getOBContext();
 
         String clientId = "";
-        if (o instanceof ClientEnabled
-                && ((ClientEnabled) o).getClient() != null) {
-            clientId = (String) DalUtil.getId(((ClientEnabled) o).getClient());
+        if (obj instanceof ClientEnabled
+                && ((ClientEnabled) obj).getClient() != null) {
+            clientId = (String) DalUtil
+                    .getId(((ClientEnabled) obj).getClient());
         }
         String orgId = "";
-        if (o instanceof OrganizationEnabled
-                && ((OrganizationEnabled) o).getOrganization() != null) {
-            orgId = (String) DalUtil.getId(((OrganizationEnabled) o)
+        if (obj instanceof OrganizationEnabled
+                && ((OrganizationEnabled) obj).getOrganization() != null) {
+            orgId = (String) DalUtil.getId(((OrganizationEnabled) obj)
                     .getOrganization());
         }
 
-        final Entity entity = ((BaseOBObject) o).getEntity();
+        final Entity entity = ((BaseOBObject) obj).getEntity();
         if (!obContext.isInAdministratorMode() && clientId.length() > 0) {
-            if (o instanceof ClientEnabled) {
+            if (obj instanceof ClientEnabled) {
                 if (!obContext.getCurrentClient().getId().equals(clientId)) {
                     // TODO: maybe move rollback to exception throwing
                     SessionHandler.getInstance().setDoRollback(true);
                     throw new OBSecurityException("Client (" + clientId
-                            + ") of object (" + o
+                            + ") of object (" + obj
                             + ") is not present  in ClientList "
                             + obContext.getCurrentClient().getId());
                 }
             }
 
             // todo can be improved by only checking if the client or
-            // organisation
+            // organization
             // actually changed...
             obContext.getEntityAccessChecker().checkWritable(entity);
 
-            if (o instanceof OrganizationEnabled && orgId.length() > 0) {
+            if (obj instanceof OrganizationEnabled && orgId.length() > 0) {
                 // todo as only the id is required this can be made much more
                 // efficient
                 // by
                 // not loading the hibernate proxy
-                if (!obContext.getWritableOrganisations().contains(orgId)) {
+                if (!obContext.getWritableOrganizations().contains(orgId)) {
                     // TODO: maybe move rollback to exception throwing
                     SessionHandler.getInstance().setDoRollback(true);
-                    throw new OBSecurityException("Organisation " + orgId
-                            + " of object (" + o
-                            + ") is not present  in OrganisationList "
-                            + obContext.getWritableOrganisations());
+                    throw new OBSecurityException("Organization " + orgId
+                            + " of object (" + obj
+                            + ") is not present  in OrganizationList "
+                            + obContext.getWritableOrganizations());
                 }
             }
         }

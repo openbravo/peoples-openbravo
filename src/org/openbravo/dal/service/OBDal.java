@@ -41,22 +41,27 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 
 /**
- * The OBDal class offers the external access to the Dal layer.
+ * The OBDal class offers the main external access to the Data Access Layer. The
+ * variety of data access methods are provided such as save, get, query, remove,
+ * etc.
  * 
- * TODO: add methods to return a sorted list based on the identifier of an
- * object
- * 
- * TODO: re-check singleton pattern when a new factory/dependency injection
- * approach is implemented.
+ * @see OBCriteria
+ * @see OBQuery
  * 
  * @author mtaal
  */
-
+// TODO: add methods to return a sorted list based on the identifier of an
+// object
+// TODO: re-check singleton pattern when a new factory/dependency injection
+// approach is implemented.
 public class OBDal implements OBSingleton {
     private static final Logger log = Logger.getLogger(OBDal.class);
 
     private static OBDal instance;
 
+    /**
+     * @return the singleton instance of the OBDal service
+     */
     public static OBDal getInstance() {
         if (instance == null) {
             instance = OBProvider.getInstance().get(OBDal.class);
@@ -64,71 +69,133 @@ public class OBDal implements OBSingleton {
         return instance;
     }
 
-    // commits the transaction and closes the session
+    /**
+     * Commits the transaction and closes session.
+     */
     public void commitAndClose() {
         SessionHandler.getInstance().commitAndClose();
     }
 
-    // rolls back the transaction and closes the session
+    /**
+     * Rolls back the transaction and closes the session.
+     */
     public void rollbackAndClose() {
         SessionHandler.getInstance().rollback();
     }
 
-    // flush the current state to the db
+    /**
+     * Flushes the current state to the database.
+     */
     public void flush() {
         SessionHandler.getInstance().getSession().flush();
     }
 
-    public void save(Object o) {
-        // set client organisation has to be done here before checking write
+    /**
+     * Sets the client and organization of the object (if not set) and persists
+     * the object in the database.
+     * 
+     * @param obj
+     *            the object to persist
+     */
+    public void save(Object obj) {
+        // set client organization has to be done here before checking write
         // access
         // not the most nice to do
-        // TODO: add checking if setClientOrganisation is really necessary
+        // TODO: add checking if setClientOrganization is really necessary
         // TODO: log using entityName
-        log.debug("Saving object " + o.getClass().getName());
-        setClientOrganisation(o);
-        if (o instanceof BaseOBObject) {
+        log.debug("Saving object " + obj.getClass().getName());
+        setClientOrganization(obj);
+        if (obj instanceof BaseOBObject) {
             OBContext.getOBContext().getEntityAccessChecker().checkWritable(
-                    ((BaseOBObject) o).getEntity());
+                    ((BaseOBObject) obj).getEntity());
         }
-        SecurityChecker.getInstance().checkWriteAccess(o);
-        SessionHandler.getInstance().save(o);
+        SecurityChecker.getInstance().checkWriteAccess(obj);
+        SessionHandler.getInstance().save(obj);
     }
 
-    public void remove(Object o) {
-        // TODO: add checking if setClientOrganisation is really necessary
+    /**
+     * Removes the object from the database.
+     * 
+     * @param obj
+     *            the object to be removed
+     */
+    public void remove(Object obj) {
+        // TODO: add checking if setClientOrganization is really necessary
         // TODO: log using entityName
-        log.debug("Removing object " + o.getClass().getName());
-
-        if (o instanceof BaseOBObject) {
-            final Entity entity = ((BaseOBObject) o).getEntity();
-            SecurityChecker.getInstance().checkDeleteAllowed(o);
-            OBContext.getOBContext().getEntityAccessChecker().checkWritable(
-                    entity);
-        }
-        SecurityChecker.getInstance().checkWriteAccess(o);
-        SessionHandler.getInstance().delete(o);
+        log.debug("Removing object " + obj.getClass().getName());
+        SecurityChecker.getInstance().checkDeleteAllowed(obj);
+        SessionHandler.getInstance().delete(obj);
     }
 
+    /**
+     * Retrieves an object from the database using the class and id.
+     * 
+     * @param clazz
+     *            the type of object to search for
+     * @param id
+     *            the id of the object
+     * @return the object, or null if none found
+     */
     public <T extends Object> T get(Class<T> clazz, Object id) {
         checkReadAccess(clazz);
         return SessionHandler.getInstance().find(clazz, id);
     }
 
+    /**
+     * Returns true if an object (identified by the entityName and id) exists,
+     * false otherwise.
+     * 
+     * @param entityName
+     *            the name of the entity
+     * @param id
+     *            the id used to find the instance
+     * @return true if exists, false otherwise
+     */
     public boolean exists(String entityName, Object id) {
         return null != SessionHandler.getInstance().find(entityName, id);
     }
 
+    /**
+     * Retrieves an object from the database using the entity name and id.
+     * 
+     * @param entityName
+     *            the type of object to search for
+     * @param id
+     *            the id of the object
+     * @return the object, or null if none found
+     */
     public BaseOBObject get(String entityName, Object id) {
         checkReadAccess(entityName);
         return SessionHandler.getInstance().find(entityName, id);
     }
 
+    /**
+     * Create a OBQuery object using a class and a specific where and order by
+     * clause.
+     * 
+     * @param fromClz
+     *            the class to create the query for
+     * @param whereOrderByClause
+     *            the HQL where and orderby clause
+     * @return the query object
+     */
     public <T extends BaseOBObject> OBQuery<T> createQuery(Class<T> fromClz,
             String whereOrderByClause) {
         return createQuery(fromClz, whereOrderByClause, new ArrayList<Object>());
     }
 
+    /**
+     * Create a OBQuery object using a class and a specific where and order by
+     * clause and a set of parameters which are used in the query.
+     * 
+     * @param fromClz
+     *            the class to create the query for
+     * @param whereOrderByClause
+     *            the HQL where and orderby clause
+     * @param parameters
+     *            the parameters to use in the query
+     * @return the query object
+     */
     public <T extends BaseOBObject> OBQuery<T> createQuery(Class<T> fromClz,
             String whereOrderByClause, List<Object> parameters) {
         checkReadAccess(fromClz);
@@ -139,12 +206,34 @@ public class OBDal implements OBSingleton {
         return obQuery;
     }
 
+    /**
+     * Create a OBQuery object using an entity name and a specific where and
+     * order by clause.
+     * 
+     * @param entityName
+     *            the type to create the query for
+     * @param whereOrderByClause
+     *            the HQL where and orderby clause
+     * @return the new query object
+     */
     public OBQuery<BaseOBObject> createQuery(String entityName,
             String whereOrderByClause) {
         return createQuery(entityName, whereOrderByClause,
                 new ArrayList<Object>());
     }
 
+    /**
+     * Create a OBQuery object using an entity name and a specific where and
+     * order by clause and a set of parameters which are used in the query.
+     * 
+     * @param entityName
+     *            the type to create the query for
+     * @param whereOrderByClause
+     *            the HQL where and orderby clause
+     * @param parameters
+     *            the parameters to use in the query
+     * @return
+     */
     public OBQuery<BaseOBObject> createQuery(String entityName,
             String whereOrderByClause, List<Object> parameters) {
         checkReadAccess(entityName);
@@ -155,6 +244,13 @@ public class OBDal implements OBSingleton {
         return obQuery;
     }
 
+    /**
+     * Creates an OBCriteria object for the specified class.
+     * 
+     * @param clz
+     *            the class used to create the OBCriteria
+     * @return a new OBCriteria object
+     */
     public <T extends BaseOBObject> OBCriteria<T> createCriteria(Class<T> clz) {
         checkReadAccess(clz);
         final OBCriteria<T> obCriteria = new OBCriteria<T>();
@@ -164,6 +260,13 @@ public class OBDal implements OBSingleton {
         return obCriteria;
     }
 
+    /**
+     * Creates an OBCriteria object for the specified entity.
+     * 
+     * @param entityName
+     *            the type used to create the OBCriteria
+     * @return a new OBCriteria object
+     */
     public <T extends BaseOBObject> OBCriteria<T> createCriteria(
             String entityName) {
         checkReadAccess(entityName);
@@ -175,9 +278,20 @@ public class OBDal implements OBSingleton {
     }
 
     /**
-     * Retrieves a list of baseOBObjects using the uniqueconstraints defined for
-     * the entity. The passed BaseOBObject and the uniqueconstraints are used to
-     * construct a query searching for matching objects in the db.
+     * Retrieves a list of baseOBObjects using the unique-constraints defined
+     * for the entity. The passed BaseOBObject and the unique-constraints are
+     * used to construct a query searching for matching objects in the database.
+     * <p/>
+     * Note that multiple unique constraints are used, so therefore the result
+     * can be more than one object.
+     * 
+     * @param obObject
+     *            this property values of this obObject is used to find other
+     *            objects in the database with the same property values for the
+     *            unique constraint properties
+     * @return a list of objects which match the passed obObject on the unique
+     *         constraint properties
+     * @see Entity#getUniqueConstraints()
      */
     public List<BaseOBObject> findUniqueConstrainedObjects(BaseOBObject obObject) {
         final Entity entity = obObject.getEntity();
@@ -208,7 +322,7 @@ public class OBDal implements OBSingleton {
     }
 
     // TODO: this is maybe not the best location for this functionality??
-    protected void setClientOrganisation(Object o) {
+    protected void setClientOrganization(Object o) {
         final OBContext obContext = OBContext.getOBContext();
         if (o instanceof ClientEnabled) {
             final ClientEnabled ce = (ClientEnabled) o;
@@ -221,11 +335,11 @@ public class OBDal implements OBSingleton {
         }
         if (o instanceof OrganizationEnabled) {
             final OrganizationEnabled oe = (OrganizationEnabled) o;
-            // reread the client and organisation
+            // reread the client and organization
             if (oe.getOrganization() == null) {
                 final Organization org = SessionHandler.getInstance().find(
                         Organization.class,
-                        obContext.getCurrentOrganisation().getId());
+                        obContext.getCurrentOrganization().getId());
                 oe.setOrganization(org);
             }
         }

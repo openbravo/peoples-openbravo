@@ -28,14 +28,11 @@ import org.apache.log4j.Logger;
 /**
  * The OBProvider provides the runtime instances of model entities as well as
  * service instances. Classes are registered by their class type and it is
- * stored if the class should be considered to be a singleton or not.
- * 
+ * identified if the class should be considered to be a singleton or not.
+ * <p/>
  * The OBProvider is an implementation of the servicelocator pattern discussed
  * in Martin Fowler's article here:
  * http://martinfowler.com/articles/injection.html
- * 
- * TODO: check that a replacing registration does override the class in a
- * current registration!
  * 
  * @author mtaal
  */
@@ -57,29 +54,70 @@ public class OBProvider {
 
     private Map<String, Registration> registrations = new HashMap<String, Registration>();
 
+    /**
+     * Returns true if the clz is registered.
+     * 
+     * @param clz
+     *            the name of this class is used to check if it is already
+     *            registered
+     * @return true if the clz is registered
+     */
     public boolean isRegistered(Class<?> clz) {
         return isRegistered(clz.getName());
     }
 
+    /**
+     * Checks if a service is registered under the name passed as a parameter.
+     * 
+     * @param name
+     *            is used to search the registry
+     * @return true if a registration exists
+     */
     public boolean isRegistered(String name) {
         return registrations.get(name) != null;
     }
 
-    public void register(String prefix, InputStream is) {
+    // Used by OBConfigFileProvider
+    protected void register(String prefix, InputStream is) {
         final OBProviderConfigReader reader = new OBProviderConfigReader();
         reader.read(prefix, is);
     }
 
-    public void register(String prefix, String configFile) {
+    // Used by OBConfigFileProvider
+    protected void register(String prefix, String configFile) {
         final OBProviderConfigReader reader = new OBProviderConfigReader();
         reader.read(prefix, configFile);
     }
 
+    /**
+     * Register an instance for an internal Openbravo class (the
+     * registrationClass).
+     * 
+     * @param registrationClass
+     *            the original Openbravo class
+     * @param instanceClass
+     *            the implementation class
+     * @param overwrite
+     *            true overwrite a current registration, false a current
+     *            registration is not overwritten
+     */
     public void register(Class<?> registrationClass, Class<?> instanceClass,
             boolean overwrite) {
         register(registrationClass.getName(), instanceClass, overwrite);
     }
 
+    /**
+     * Register an instance for an internal Openbravo class or service (the
+     * name).
+     * 
+     * @param name
+     *            the name of the Openbravo class or service
+     * @param instanceClass
+     *            the implementation class
+     * @param overwrite
+     *            true overwrite a current registration, false a current
+     *            registration is not overwritten
+     */
     public void register(String name, Class<?> instanceClass, boolean overwrite) {
         final Registration reg = new Registration();
         reg.setSingleton(OBSingleton.class.isAssignableFrom(instanceClass));
@@ -105,6 +143,15 @@ public class OBProvider {
         registrations.put(name, reg);
     }
 
+    /**
+     * Checks the registry for which class should be used for the passed clz. If
+     * no registration is found a new registration is created using the passed
+     * clz.
+     * 
+     * @param clz
+     *            the class for which an instance is requested
+     * @return an instance of the clz
+     */
     @SuppressWarnings("unchecked")
     public <T extends Object> T get(Class<T> clz) {
         Registration reg = registrations.get(clz.getName());
@@ -120,6 +167,15 @@ public class OBProvider {
         return (T) reg.getInstance();
     }
 
+    /**
+     * Returns an instance of the requested service. If no registration is found
+     * an OBProviderException is thrown
+     * 
+     * @param name
+     *            the name of the service
+     * @return an instance of the service
+     * @throws OBProviderException
+     */
     public Object get(String name) {
         final Registration reg = registrations.get(name);
         if (reg == null) {

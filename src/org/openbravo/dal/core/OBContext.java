@@ -37,7 +37,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.security.EntityAccessChecker;
-import org.openbravo.dal.security.OrganisationStructureProvider;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleOrganization;
@@ -48,21 +48,20 @@ import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.common.enterprise.Organization;
 
 /**
- * Models the context in which dal actions are executed. Contains the user, the
- * client and the allowed organisations.
+ * Models the context in which Data Access Layer actions are executed. Contains
+ * the user, the client and the allowed organizations.
  * 
- * It uses the same computation logic as in the Utility.getContext methods to
- * compute the accessible organisations, user organisations and user client.
+ * This class contains specific logic to compute the allowed organizations and
+ * clients for both read and write access.
  * 
  * The OBContext instance is made available to other threads through the static
- * ThreadLocal and the getInstance methods.
- * 
- * Note the getInstance/setInstance and ThreadLocal pattern should be reviewed
- * when using a factory/dependency injection approach.
+ * ThreadLocal and the getInstance method.
  * 
  * @author mtaal
  */
 
+// Note the getInstance/setInstance and ThreadLocal pattern should be reviewed
+// when using a factory/dependency injection approach.
 public class OBContext implements OBNotSingleton {
     private static final Logger log = Logger.getLogger(OBContext.class);
 
@@ -77,8 +76,12 @@ public class OBContext implements OBNotSingleton {
 
     private static String CONTEXT_PARAM = "#OBContext";
 
-    // sets the obcontext using the request object, this means that
-    // also test cases require the servlet-api.jar
+    /**
+     * Sets the OBContext through the information stored in the http session of
+     * the request (mainly the authenticated user).
+     * 
+     * @param request
+     */
     public static synchronized void setOBContext(HttpServletRequest request) {
 
         OBContext context = null;
@@ -101,6 +104,14 @@ public class OBContext implements OBNotSingleton {
         }
     }
 
+    /**
+     * Creates the context using the userId and sets it in the thread (as a
+     * ThreadLocal). The user denoted by the userId will be automatically logged
+     * in.
+     * 
+     * @param userId
+     *            the id of the user (as present in the database)
+     */
     public static void setOBContext(String userId) {
         final OBContext context = OBProvider.getInstance().get(OBContext.class);
         setOBContext((OBContext) null);
@@ -108,34 +119,53 @@ public class OBContext implements OBNotSingleton {
         setOBContext(context);
     }
 
+    /**
+     * Creates the context without setting the context in the thread.
+     * 
+     * @param userId
+     *            the user used for creating the context
+     * @return the created context
+     */
     public static OBContext createOBContext(String userId) {
         final OBContext context = new OBContext();
-        setOBContext((OBContext) null);
         context.initialize(userId);
         return context;
     }
 
+    /**
+     * Set the context in the thread, this context will then be used by the Data
+     * Access Layer internals.
+     * 
+     * @param obContext
+     *            the context to set in the thread
+     */
     public static void setOBContext(OBContext obContext) {
         // if (obContext != null && instance.get() != null)
         // throw new ArgumentException("OBContext already set");
         instance.set(obContext);
     }
 
+    /**
+     * Returns the OBContext currently set in the thread. Will return null if no
+     * context was set.
+     * 
+     * @return the context in the thread, null if none present
+     */
     public static OBContext getOBContext() {
         return instance.get();
     }
 
     private Client currentClient;
-    private Organization currentOrganisation;
+    private Organization currentOrganization;
     private Role role;
     private User user;
     private Language language;
-    private List<Organization> organisationList;
-    private String[] readableOrganisations;
+    private List<Organization> organizationList;
+    private String[] readableOrganizations;
     private String[] readableClients;
-    private Set<String> writableOrganisations;
+    private Set<String> writableOrganizations;
     private String userLevel;
-    private Map<String, OrganisationStructureProvider> organisationStructureProviderByClient;
+    private Map<String, OrganizationStructureProvider> organizationStructureProviderByClient;
     private EntityAccessChecker entityAccessChecker;
 
     // disables security checks
@@ -145,7 +175,7 @@ public class OBContext implements OBNotSingleton {
     private boolean isAdministrator;
     private boolean isInitialized = false;
 
-    private Set<String> additionalWritableOrganisations = new HashSet<String>();
+    private Set<String> additionalWritableOrganizations = new HashSet<String>();
 
     public String getUserLevel() {
         return userLevel;
@@ -155,6 +185,13 @@ public class OBContext implements OBNotSingleton {
         this.userLevel = userLevel.trim();
     }
 
+    /**
+     * Computes the clients allowed for read access using the user level and the
+     * client of the role.
+     * 
+     * @param role
+     *            the role used to initialize the readable clients
+     */
     public void setReadableClients(Role role) {
         if (getUserLevel().equals("S")) {
             readableClients = new String[] { "0" };
@@ -165,34 +202,34 @@ public class OBContext implements OBNotSingleton {
         }
     }
 
-    // writable organisation is determined as follows
-    // 1) if the user has level S or C then they can only write in organisation
+    // writable organization is determined as follows
+    // 1) if the user has level S or C then they can only write in organization
     // 0
-    // 2) in other cases read the organisations from the role
-    // only: if user has userlevel O then he/she can not read organisation 0
+    // 2) in other cases read the organizations from the role
+    // only: if user has userlevel O then he/she can not read organization 0
     // Utility.getContext and LoginUtils for current working
-    private void setWritableOrganisations(Role role) {
-        writableOrganisations = new HashSet<String>();
+    private void setWritableOrganizations(Role role) {
+        writableOrganizations = new HashSet<String>();
         final String localUserLevel = getUserLevel();
         if (localUserLevel.contains("S") || localUserLevel.equals("C")) {
-            writableOrganisations.add("0"); // force org *
+            writableOrganizations.add("0"); // force org *
         }
 
-        final List<Organization> os = getOrganisationList(role);
+        final List<Organization> os = getOrganizationList(role);
         for (final Organization o : os) {
-            writableOrganisations.add(o.getId());
+            writableOrganizations.add(o.getId());
         }
 
         if (localUserLevel.equals("O")) { // remove *
-            writableOrganisations.remove("0");
+            writableOrganizations.remove("0");
         }
-        writableOrganisations.addAll(additionalWritableOrganisations);
+        writableOrganizations.addAll(additionalWritableOrganizations);
     }
 
     @SuppressWarnings("unchecked")
-    private List<Organization> getOrganisationList(Role thisRole) {
-        if (organisationList != null) {
-            return organisationList;
+    private List<Organization> getOrganizationList(Role thisRole) {
+        if (organizationList != null) {
+            return organizationList;
         }
         final Query qry = SessionHandler.getInstance().createQuery(
                 "select o from " + Organization.class.getName() + " o, "
@@ -205,46 +242,46 @@ public class OBContext implements OBNotSingleton {
                         + "' and roa." + RoleOrganization.PROPERTY_ISACTIVE
                         + "='Y' and o." + Organization.PROPERTY_ISACTIVE
                         + "='Y'");
-        organisationList = qry.list();
-        for (final String orgId : additionalWritableOrganisations) {
+        organizationList = qry.list();
+        for (final String orgId : additionalWritableOrganizations) {
             final Organization org = OBDal.getInstance().get(
                     Organization.class, orgId);
-            if (!organisationList.contains(org)) {
-                organisationList.add(org);
+            if (!organizationList.contains(org)) {
+                organizationList.add(org);
             }
         }
-        return organisationList;
+        return organizationList;
     }
 
     @SuppressWarnings("unchecked")
-    private List<Organization> getOrganisations(Client client) {
+    private List<Organization> getOrganizations(Client client) {
         final Query qry = SessionHandler.getInstance().createQuery(
                 "select o from " + Organization.class.getName() + " o where "
                         + "o." + Organization.PROPERTY_CLIENT + "=? and o."
                         + Organization.PROPERTY_ISACTIVE + "='Y'");
         qry.setParameter(0, client);
-        organisationList = qry.list();
-        return organisationList;
+        organizationList = qry.list();
+        return organizationList;
     }
 
-    private void setReadableOrganisations(Role role) {
-        final List<Organization> os = getOrganisationList(role);
+    private void setReadableOrganizations(Role role) {
+        final List<Organization> os = getOrganizationList(role);
         final Set<String> readableOrgs = new HashSet<String>();
         for (final Organization o : os) {
-            readableOrgs.addAll(getOrganisationStructureProvider()
+            readableOrgs.addAll(getOrganizationStructureProvider()
                     .getNaturalTree(o.getId()));
-            // if zero is an organisation then add them all!
+            // if zero is an organization then add them all!
             if (o.getId().equals("0")) {
-                for (final Organization org : getOrganisations(getCurrentClient())) {
+                for (final Organization org : getOrganizations(getCurrentClient())) {
                     readableOrgs.add(org.getId());
                 }
             }
         }
         readableOrgs.add("0");
-        readableOrganisations = new String[readableOrgs.size()];
+        readableOrganizations = new String[readableOrgs.size()];
         int i = 0;
         for (final String s : readableOrgs) {
-            readableOrganisations[i++] = s;
+            readableOrganizations[i++] = s;
         }
     }
 
@@ -256,8 +293,8 @@ public class OBContext implements OBNotSingleton {
         this.currentClient = currentClient;
     }
 
-    public void setCurrentOrganisation(Organization currentOrganisation) {
-        this.currentOrganisation = currentOrganisation;
+    public void setCurrentOrganization(Organization currentOrganization) {
+        this.currentOrganization = currentOrganization;
     }
 
     public Language getLanguage() {
@@ -268,20 +305,26 @@ public class OBContext implements OBNotSingleton {
         this.language = language;
     }
 
-    public Organization getCurrentOrganisation() {
-        return currentOrganisation;
+    public Organization getCurrentOrganization() {
+        return currentOrganization;
     }
 
-    public void removeWritableOrganisation(String orgId) {
-        additionalWritableOrganisations.remove(orgId);
+    public void removeWritableOrganization(String orgId) {
+        additionalWritableOrganizations.remove(orgId);
     }
 
-    public void addWritableOrganisation(String orgId) {
-        additionalWritableOrganisations.add(orgId);
+    /**
+     * Adds a new organization for which write access is allowed.
+     * 
+     * @param orgId
+     *            the id of the additional writable organization
+     */
+    public void addWritableOrganization(String orgId) {
+        additionalWritableOrganizations.add(orgId);
         // nullify will be recomputed at first occasion
-        organisationList = null;
-        readableOrganisations = null;
-        writableOrganisations = null;
+        organizationList = null;
+        readableOrganizations = null;
+        writableOrganizations = null;
     }
 
     public boolean setFromRequest(HttpServletRequest request) {
@@ -332,7 +375,7 @@ public class OBContext implements OBNotSingleton {
             Hibernate.initialize(getUser().getDefaultAdRole());
             Hibernate.initialize(getUser().getDefaultAdLanguage());
 
-            organisationStructureProviderByClient = new HashMap<String, OrganisationStructureProvider>();
+            organizationStructureProviderByClient = new HashMap<String, OrganizationStructureProvider>();
 
             // first take the passed role, if any
             // now check if the default role is active, if not another one needs
@@ -374,10 +417,10 @@ public class OBContext implements OBNotSingleton {
                         "select r from " + Organization.class.getName()
                                 + " r where " + " r."
                                 + Organization.PROPERTY_ID + "='" + orgId + "'");
-                setCurrentOrganisation(o);
+                setCurrentOrganization(o);
             } else if (getUser().getDefaultAdOrg() != null
                     && getUser().getDefaultAdOrg().isActive()) {
-                setCurrentOrganisation(getUser().getDefaultAdOrg());
+                setCurrentOrganization(getUser().getDefaultAdOrg());
             } else {
                 final RoleOrganization roa = getOne(RoleOrganization.class,
                         "select roa from " + RoleOrganization.class.getName()
@@ -393,7 +436,7 @@ public class OBContext implements OBNotSingleton {
                                 + RoleOrganization.PROPERTY_ORGANIZATION + "."
                                 + Organization.PROPERTY_ID + " desc", false);
                 Hibernate.initialize(roa.getOrganization());
-                setCurrentOrganisation(roa.getOrganization());
+                setCurrentOrganization(roa.getOrganization());
 
                 // if no client id then use the client of the role
                 if (localClientId == null) {
@@ -401,24 +444,24 @@ public class OBContext implements OBNotSingleton {
                 }
             }
 
-            Check.isNotNull(getCurrentOrganisation(),
-                    "Organisation may not be null");
+            Check.isNotNull(getCurrentOrganization(),
+                    "Organization may not be null");
 
-            // check that the current organisation is actually writable!
-            final Set<String> writableOrgs = getWritableOrganisations();
-            if (!writableOrgs.contains(getCurrentOrganisation().getId())) {
+            // check that the current organization is actually writable!
+            final Set<String> writableOrgs = getWritableOrganizations();
+            if (!writableOrgs.contains(getCurrentOrganization().getId())) {
                 log
                         .warn("The user "
                                 + userId
-                                + " does not have write acces to its current organisation repairing that");
-                // take the first writableOrganisation
+                                + " does not have write acces to its current organization repairing that");
+                // take the first writableOrganization
                 if (writableOrgs.isEmpty()) {
                     log
                             .warn("The user "
                                     + userId
-                                    + " does not have any write acces to any organisation");
+                                    + " does not have any write acces to any organization");
                 } else {
-                    setCurrentOrganisation(SessionHandler.getInstance().find(
+                    setCurrentOrganization(SessionHandler.getInstance().find(
                             Organization.class, writableOrgs.iterator().next()));
                 }
             }
@@ -433,14 +476,14 @@ public class OBContext implements OBNotSingleton {
                 setCurrentClient(getUser().getDefaultAdClient());
             } else {
                 // The HttpSecureAppServlet reads the client after the
-                // organisation
+                // organization
                 // which
                 // theoretically can
-                // result in a current organisation which does not belong to the
+                // result in a current organization which does not belong to the
                 // client
-                // other comment, use the client of the organisation
-                Hibernate.initialize(getCurrentOrganisation().getClient());
-                setCurrentClient(getCurrentOrganisation().getClient());
+                // other comment, use the client of the organization
+                Hibernate.initialize(getCurrentOrganization().getClient());
+                setCurrentClient(getCurrentOrganization().getClient());
             }
 
             Check.isNotNull(getCurrentClient(), "Client may not be null");
@@ -464,7 +507,7 @@ public class OBContext implements OBNotSingleton {
             setReadableClients(role);
 
             // initialize some proxys
-            Hibernate.initialize(getCurrentOrganisation().getClient());
+            Hibernate.initialize(getCurrentOrganization().getClient());
             Hibernate.initialize(getCurrentClient().getOrganization());
             Hibernate.initialize(getRole().getClient());
             Hibernate.initialize(getRole().getOrganization());
@@ -517,37 +560,37 @@ public class OBContext implements OBNotSingleton {
         this.role = role;
     }
 
-    public OrganisationStructureProvider getOrganisationStructureProvider() {
-        return getOrganisationStructureProvider(getCurrentClient().getId());
+    public OrganizationStructureProvider getOrganizationStructureProvider() {
+        return getOrganizationStructureProvider(getCurrentClient().getId());
     }
 
-    public OrganisationStructureProvider getOrganisationStructureProvider(
+    public OrganizationStructureProvider getOrganizationStructureProvider(
             String clientId) {
-        OrganisationStructureProvider orgProvider = organisationStructureProviderByClient
+        OrganizationStructureProvider orgProvider = organizationStructureProviderByClient
                 .get(clientId);
 
         // create one
         if (orgProvider == null) {
             orgProvider = OBProvider.getInstance().get(
-                    OrganisationStructureProvider.class);
+                    OrganizationStructureProvider.class);
             orgProvider.setClientId(clientId);
-            organisationStructureProviderByClient.put(clientId, orgProvider);
+            organizationStructureProviderByClient.put(clientId, orgProvider);
         }
         return orgProvider;
     }
 
-    public String[] getReadableOrganisations() {
-        if (readableOrganisations == null) {
-            setReadableOrganisations(getRole());
+    public String[] getReadableOrganizations() {
+        if (readableOrganizations == null) {
+            setReadableOrganizations(getRole());
         }
-        return readableOrganisations;
+        return readableOrganizations;
     }
 
-    public Set<String> getWritableOrganisations() {
-        if (writableOrganisations == null) {
-            setWritableOrganisations(getRole());
+    public Set<String> getWritableOrganizations() {
+        if (writableOrganizations == null) {
+            setWritableOrganizations(getRole());
         }
-        return writableOrganisations;
+        return writableOrganizations;
     }
 
     public String[] getReadableClients() {
@@ -600,7 +643,7 @@ public class OBContext implements OBNotSingleton {
         if (unequal(request, CLIENT, getCurrentClient())) {
             return false;
         }
-        if (unequal(request, ORG, getCurrentOrganisation())) {
+        if (unequal(request, ORG, getCurrentOrganization())) {
             return false;
         }
         return true;
@@ -621,5 +664,4 @@ public class OBContext implements OBNotSingleton {
     private String getSessionValue(HttpServletRequest request, String param) {
         return (String) request.getSession().getAttribute(param.toUpperCase());
     }
-
 }

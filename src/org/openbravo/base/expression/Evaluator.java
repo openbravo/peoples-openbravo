@@ -28,8 +28,8 @@ import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.util.Check;
 
 /**
- * Evaluates expressions, the expression language supported by this class is
- * javascript rhino.
+ * Evaluates expressions in the context of a business object, the expression
+ * language supported by this class is javascript rhino.
  * 
  * @author mtaal
  */
@@ -59,7 +59,7 @@ public class Evaluator implements OBSingleton {
      *            the script is executed in the context of this business object
      * @param script
      *            the javascript which much evaluate to a boolean
-     * @return
+     * @return the result of the script evaluation
      */
     public Boolean evaluateBoolean(BaseOBObjectDef contextBob, String script) {
         // TODO: check if the compiled javascript can be cached

@@ -25,17 +25,22 @@ import java.util.List;
 import java.util.Map;
 
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.util.Check;
+import org.openbravo.base.util.CheckException;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.validation.AccessLevelChecker;
 import org.openbravo.base.validation.EntityValidator;
+import org.openbravo.base.validation.PropertyValidator;
 
 /**
- * Models the business object type. The Entity is the main part of the in-memory
- * model. An entity corresponds mostly to a table in the database. An Entity has
- * properties which are primitive typed, references or lists of children.
+ * Models the business object type. The Entity is the main concept in the
+ * in-memory model. An entity corresponds mostly to a table in the database. An
+ * Entity has properties which are primitive typed, references or lists of
+ * children.
  * 
  * @author iperdomo
+ * @author mtaal
  */
 
 public class Entity {
@@ -57,7 +62,7 @@ public class Entity {
     private String className;
     private boolean isTraceable;
     private boolean isActiveEnabled;
-    private boolean isOrganisationEnabled;
+    private boolean isOrganizationEnabled;
     private boolean isClientEnabled;
     private boolean isMutable;
     private boolean isDeletable;
@@ -66,15 +71,21 @@ public class Entity {
     private AccessLevelChecker accessLevelChecker;
     private AccessLevel accessLevel;
 
-    // translates the columns of the table to a set of attributes
-    public void initialize(Table t) {
-        t.setEntity(this);
-        setTableName(t.getTableName());
-        setTableId(t.getId());
-        setClassName(t.getPackageName() + "." + t.getNotNullClassName());
-        setName(t.getName());
-        setDeletable(t.isDeletable());
-        setMutable(!t.isView());
+    /**
+     * Initializes the entity from a table, also creates the properties from the
+     * list of Columns of the table.
+     * 
+     * @param table
+     *            the table used to initialize the Entity
+     */
+    public void initialize(Table table) {
+        table.setEntity(this);
+        setTableName(table.getTableName());
+        setTableId(table.getId());
+        setClassName(table.getPackageName() + "." + table.getNotNullClassName());
+        setName(table.getName());
+        setDeletable(table.isDeletable());
+        setMutable(!table.isView());
 
         properties = new ArrayList<Property>();
         idProperties = new ArrayList<Property>();
@@ -84,7 +95,7 @@ public class Entity {
         propertiesByName = new HashMap<String, Property>();
         propertiesByColumnName = new HashMap<String, Property>();
 
-        for (final Column c : t.getColumns()) {
+        for (final Column c : table.getColumns()) {
             // non active columns are not mapped!
             // if (!c.isActive()) {
             // continue;
@@ -115,37 +126,44 @@ public class Entity {
         entityValidator.setEntity(this);
         entityValidator.initialize();
 
-        if (t.getAccessLevel().equals("1")) {
+        if (table.getAccessLevel().equals("1")) {
             accessLevelChecker = AccessLevelChecker.ORGANIZATION;
             setAccessLevel(AccessLevel.ORGANIZATION);
-        } else if (t.getAccessLevel().equals("3")) {
+        } else if (table.getAccessLevel().equals("3")) {
             accessLevelChecker = AccessLevelChecker.CLIENT_ORGANIZATION;
             setAccessLevel(AccessLevel.CLIENT_ORGANIZATION);
-        } else if (t.getAccessLevel().equals("4")) {
+        } else if (table.getAccessLevel().equals("4")) {
             setAccessLevel(AccessLevel.SYSTEM);
             accessLevelChecker = AccessLevelChecker.SYSTEM;
-        } else if (t.getAccessLevel().equals("6")) {
+        } else if (table.getAccessLevel().equals("6")) {
             accessLevelChecker = AccessLevelChecker.SYSTEM_CLIENT;
             setAccessLevel(AccessLevel.SYSTEM_CLIENT);
-        } else if (t.getAccessLevel().equals("7")) {
+        } else if (table.getAccessLevel().equals("7")) {
             accessLevelChecker = AccessLevelChecker.ALL;
             setAccessLevel(AccessLevel.ALL);
         } else {
-            Check.fail("Access level " + t.getAccessLevel() + " for table "
-                    + t.getName() + " is not supported");
+            Check.fail("Access level " + table.getAccessLevel() + " for table "
+                    + table.getName() + " is not supported");
         }
     }
 
-    public void addProperty(Property p) {
-        getProperties().add(p);
-        if (p.getColumnName() != null) {
-            propertiesByColumnName.put(p.getColumnName(), p);
+    /**
+     * Add a property to the internal arrays of properties (common, identifier,
+     * etc.)
+     * 
+     * @param property
+     *            the Property to add
+     */
+    public void addProperty(Property property) {
+        getProperties().add(property);
+        if (property.getColumnName() != null) {
+            propertiesByColumnName.put(property.getColumnName(), property);
         }
-        if (p.isIdentifier()) {
-            getIdentifierProperties().add(p);
+        if (property.isIdentifier()) {
+            getIdentifierProperties().add(property);
         }
-        if (p.isId()) {
-            getIdProperties().add(p);
+        if (property.isId()) {
+            getIdProperties().add(property);
         }
     }
 
@@ -153,10 +171,29 @@ public class Entity {
         return uniqueConstraints;
     }
 
+    /**
+     * Checks if the {@link #getAccessLevel() accessLevel} of the entity is
+     * valid for the clientId and orgId passed as parameters. Throws an
+     * OBSecurityException if the clientId and/or orgId are not valid.
+     * 
+     * @param clientId
+     *            the clientId which is checked against the accessLevel
+     * @param orgId
+     * @throws OBSecurityException
+     * @see AccessLevelChecker
+     */
     public void checkAccessLevel(String clientId, String orgId) {
         accessLevelChecker.checkAccessLevel(getName(), clientId, orgId);
     }
 
+    /**
+     * Validates the passed object using the property validators of this Entity.
+     * 
+     * @param o
+     *            the object to validate
+     * @see EntityValidator
+     * @see PropertyValidator
+     */
     public void validate(Object o) {
         entityValidator.validate(o);
     }
@@ -198,14 +235,21 @@ public class Entity {
         this.isActiveEnabled = isActiveEnabled;
     }
 
-    public void setOrganisationEnabled(boolean isOrganisationEnabled) {
-        this.isOrganisationEnabled = isOrganisationEnabled;
+    public void setOrganizationEnabled(boolean isOrganizationEnabled) {
+        this.isOrganizationEnabled = isOrganizationEnabled;
     }
 
     public void setClientEnabled(boolean isClientEnabled) {
         this.isClientEnabled = isClientEnabled;
     }
 
+    /**
+     * Returns the list of interfaces implemented by instances of this Entity.
+     * It is used by the entity code generation to determine which interfaces to
+     * add to the class definition.
+     * 
+     * @return comma delimited list of interfaces
+     */
     public String getImplementsStatement() {
 
         // NOTE not using the direct reference to the class for the interface
@@ -221,7 +265,7 @@ public class Entity {
             }
             sb.append("org.openbravo.base.structure.ClientEnabled");
         }
-        if (isOrganisationEnabled()) {
+        if (isOrganizationEnabled()) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
@@ -239,24 +283,43 @@ public class Entity {
         return "implements " + sb.toString();
     }
 
-    // checks for a certain attribute
-    // todo: it is saver to also check for the type!
-    public boolean hasProperty(String checkMappingName) {
-        for (final Property p : getProperties()) {
-            if (p.getName().compareTo(checkMappingName) == 0) {
-                return true;
-            }
-        }
-        return false;
+    /**
+     * Checks if the class has a certain property by name.
+     * 
+     * @param propertyName
+     *            the name used to search for the property
+     * @return returns true if there is a property with this name, false
+     *         otherwise
+     */
+    // TODO: it is saver to also check for the type!
+    public boolean hasProperty(String propertyName) {
+        return propertiesByName.get(propertyName) != null;
     }
 
-    public void checkIsValidProperty(String propName) {
-        if (propertiesByName.get(propName) == null) {
-            throw new OBException("Property " + propName
-                    + " not defined for entity " + this);
-        }
+    /**
+     * Check if there is a property with the name propertyName. If not then a
+     * CheckException is thrown.
+     * 
+     * @param propertyName
+     *            the name used to search for a property
+     * @throws CheckException
+     */
+    public void checkIsValidProperty(String propertyName) {
+        Check.isNotNull(propertiesByName.get(propertyName), "Property "
+                + propertyName + " not defined for entity " + this);
     }
 
+    /**
+     * Checks if there is a property with the name propName and if so checks
+     * that the value is of the correct type and is valid.
+     * 
+     * @param propName
+     *            the name used to search for the property
+     * @param value
+     *            the value is checked against the constraints for the property
+     *            (for example length, nullable, etc.)
+     * @throws CheckException
+     */
     public void checkValidPropertyAndValue(String propName, Object value) {
         Property p;
         if ((p = propertiesByName.get(propName)) == null) {
@@ -270,13 +333,31 @@ public class Entity {
         propertiesByName.put(p.getName(), p);
     }
 
-    public Property getProperty(String propName) {
-        final Property prop = propertiesByName.get(propName);
-        Check.isNotNull(prop, "Property " + propName
+    /**
+     * Retrieves the property using the propertyName. Throws a CheckException if
+     * no property exists with that name.
+     * 
+     * @param propertyName
+     *            the name used to search for the property.
+     * @return the found property
+     * @throws CheckException
+     */
+    public Property getProperty(String propertyName) {
+        final Property prop = propertiesByName.get(propertyName);
+        Check.isNotNull(prop, "Property " + propertyName
                 + " does not exist for entity " + this);
         return prop;
     }
 
+    /**
+     * Retrieves the property using the columnName. Throws a CheckException if
+     * no property exists with that columnName.
+     * 
+     * @param columnName
+     *            the name used to search for the property.
+     * @return the found property
+     * @throws CheckException
+     */
     public Property getPropertyByColumnName(String columnName) {
         final Property prop = propertiesByColumnName.get(columnName);
         Check.isNotNull(prop, "Property with " + columnName
@@ -289,23 +370,44 @@ public class Entity {
         return getClassName().substring(0, lastIndexOf);
     }
 
+    /**
+     * Returns the last part of the Class name of the class of this Entity. The
+     * last part is the part after the last dot.
+     * 
+     * @return the last segment of the fully qualified Class name
+     */
     public String getSimpleClassName() {
         final int lastIndexOf = getClassName().lastIndexOf('.');
         return getClassName().substring(1 + lastIndexOf);
     }
 
+    /**
+     * An Entity is traceable if it has auditInfo fields such as created,
+     * createdBy etc.
+     * 
+     * @return true if this Entity has created, createdBy etc. properties.
+     */
     public boolean isTraceable() {
         return isTraceable;
     }
 
+    /**
+     * @return true if this Entity has an isActive property.
+     */
     public boolean isActiveEnabled() {
         return isActiveEnabled;
     }
 
-    public boolean isOrganisationEnabled() {
-        return isOrganisationEnabled;
+    /**
+     * @return true if this Entity has an organization property.
+     */
+    public boolean isOrganizationEnabled() {
+        return isOrganizationEnabled;
     }
 
+    /**
+     * @return true if this Entity has a client property.
+     */
     public boolean isClientEnabled() {
         return isClientEnabled;
     }
@@ -318,6 +420,10 @@ public class Entity {
         this.properties = properties;
     }
 
+    /**
+     * @return the properties which make up the identifying string of this
+     *         Entity
+     */
     public List<Property> getIdentifierProperties() {
         return identifierProperties;
     }
@@ -326,6 +432,13 @@ public class Entity {
         this.identifierProperties = identifierProperties;
     }
 
+    /**
+     * Only applies if this Entity is a child of another Entity, for example
+     * this is the OrderLine of an Order.
+     * 
+     * @return the list of properties pointing to the parent, an emptylist if
+     *         there is no such association to a parent
+     */
     public List<Property> getParentProperties() {
         return parentProperties;
     }
@@ -334,6 +447,15 @@ public class Entity {
         this.parentProperties = parentProperties;
     }
 
+    /**
+     * The orderBy properties are used when this Entity is a child of another
+     * Entity. For example if this Entity is the OrderLine with a lineNo
+     * property which determines the order of the lines. Then the lineNo
+     * property will be returned as element in the list of this method.
+     * 
+     * @return the properties which can be used to order instances of this
+     *         Entity
+     */
     public List<Property> getOrderByProperties() {
         return this.orderByProperties;
     }
@@ -342,6 +464,11 @@ public class Entity {
         this.orderByProperties = orderByProperties;
     }
 
+    /**
+     * Returns the properties which make up the primary key of this Entity.
+     * 
+     * @return the list of primary key properties
+     */
     public List<Property> getIdProperties() {
         return idProperties;
     }

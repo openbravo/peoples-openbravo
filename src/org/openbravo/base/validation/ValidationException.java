@@ -26,8 +26,9 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Property;
 
 /**
- * Is thrown when an entity is invalid. Prevents that it is logged as this one
- * does not need to be logged.
+ * Is thrown when an entity or property value is invalid. This Exception is not
+ * logged. Instead it allows messages to be added and stored by {@link Property
+ * Property}.
  * 
  * @author mtaal
  */

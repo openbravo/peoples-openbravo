@@ -17,44 +17,34 @@
  ************************************************************************
  */
 
-package org.openbravo.base.model;
+package org.openbravo.service.db;
+
+import java.util.List;
+
+import org.openbravo.base.structure.BaseOBObject;
 
 /**
- * Models a simple version of the module present in the database. It is a simple
- * version because only the properties required for the module related
- * functionality are modeled here.
+ * The import processor is called by the DataImportService to process imported
+ * imported objects before they are persisted into the database.
  * 
  * @author mtaal
  */
 
-public class Module extends ModelObject {
-    private String name;
-    private Integer seqno;
-    private String javaPackage;
+public interface ImportProcessor {
 
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getSeqno() {
-        return seqno;
-    }
-
-    public void setSeqno(Integer seqno) {
-        this.seqno = seqno;
-    }
-
-    public String getJavaPackage() {
-        return javaPackage;
-    }
-
-    public void setJavaPackage(String javaPackage) {
-        this.javaPackage = javaPackage;
-    }
+    /**
+     * This method is called after the import process has parsed the xml and
+     * created the in-memory object graph of objects which are inserted and
+     * updated in the database.
+     * 
+     * This method can access the database using the Data Access Layer. It will
+     * operate in the same transaction as the import process itself.
+     * 
+     * @param newObjects
+     *            the list of objects which will be inserted into the database
+     * @param updatedObjects
+     *            the list of objects which will be updated in the database
+     */
+    public void process(List<BaseOBObject> newObjects,
+            List<BaseOBObject> updatedObjects);
 }

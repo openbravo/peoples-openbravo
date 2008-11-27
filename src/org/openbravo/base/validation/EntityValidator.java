@@ -24,8 +24,8 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
 
 /**
- * Validates an entity, keeps list of property validators which are called one
- * by one for a passed entity.
+ * Validates an entity, a list of property validators is kept which are called
+ * one by one for a passed entity instance and its property values.
  * 
  * @author mtaal
  */
@@ -35,7 +35,15 @@ public class EntityValidator {
     private boolean validateRequired = false;
     private Entity entity;
 
-    public void validate(Object o) {
+    /**
+     * Validates the values of the properties of the entityObject. The
+     * validation messages are collected into one ValidationException.
+     * 
+     * @param entityObject
+     *            the entity instance
+     * @throws ValidationException
+     */
+    public void validate(Object entityObject) {
         if (!validateRequired) {
             return;
         }
@@ -43,7 +51,8 @@ public class EntityValidator {
         for (final Property p : entity.getProperties()) {
             final PropertyValidator pv = p.getValidator();
             if (pv != null) {
-                final Object value = ((BaseOBObjectDef) o).get(p.getName());
+                final Object value = ((BaseOBObjectDef) entityObject).get(p
+                        .getName());
                 final String msg = pv.validate(value);
                 if (msg != null) {
                     ve.addMessage(p, msg);
@@ -63,6 +72,10 @@ public class EntityValidator {
         this.entity = entity;
     }
 
+    /**
+     * Initializes this EntityValidator by creating a validator for each
+     * {@link Property Property}.
+     */
     public void initialize() {
         for (final Property p : entity.getProperties()) {
             if (StringPropertyValidator.isValidationRequired(p)) {

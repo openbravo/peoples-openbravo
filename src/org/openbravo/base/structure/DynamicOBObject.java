@@ -133,7 +133,7 @@ public class DynamicOBObject extends BaseOBObject implements Traceable,
         return (Organization) get(PROPERTY_ORGANIZATION);
     }
 
-    public void setOrganization(Organization organisation) {
-        set(PROPERTY_ORGANIZATION, organisation);
+    public void setOrganization(Organization organization) {
+        set(PROPERTY_ORGANIZATION, organization);
     }
 }

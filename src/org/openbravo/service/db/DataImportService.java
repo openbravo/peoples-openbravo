@@ -64,33 +64,62 @@ public class DataImportService implements OBSingleton {
     }
 
     public ImportResult importDataFromXML(Client client,
-            Organization organisation, String xml) {
-        return importDataFromXML(client, organisation, xml, null);
+            Organization organization, String xml) {
+        return importDataFromXML(client, organization, xml, null);
     }
 
     public ImportResult importDataFromXML(Client client,
-            Organization organisation, String xml, Module module) {
+            Organization organization, String xml, Module module) {
         try {
             final Document doc = DocumentHelper.parseText(xml);
-            return importDataFromXML(client, organisation, doc, true);
+            return importDataFromXML(client, organization, doc, true);
         } catch (final Exception e) {
             throw new OBException(e);
         }
     }
 
     public ImportResult importDataFromXML(Client client,
-            Organization organisation, Document doc,
+            Organization organization, Document doc,
             boolean createReferencesIfNotFound) {
-        return importDataFromXML(client, organisation, doc,
-                createReferencesIfNotFound, null);
+        return importDataFromXML(client, organization, doc,
+                createReferencesIfNotFound, null, null, false);
+    }
+
+    /**
+     * Imports a complete client. This import method behaves slightly
+     * differently because it does not use the client/organization of the
+     * current user but uses the client and organization of the data in the
+     * import file itself. In addition no uniqueconstraint checking is done.
+     * 
+     * @param xml
+     *            the xml string containing the objects to import
+     * @param importProcessor
+     *            the importProcessor is called after the xml has been parsed
+     *            and before the new/updated objects are persisted in the
+     *            database, is allowed to be null
+     * 
+     * @return ImportResult which contains the updated/inserted objects and log
+     *         and error messages
+     */
+    public ImportResult importClientData(String xml,
+            ImportProcessor importProcessor, Module module) {
+        try {
+            final Document doc = DocumentHelper.parseText(xml);
+            return importDataFromXML(null, null, doc, true, module,
+                    importProcessor, true);
+        } catch (final Exception e) {
+            throw new OBException(e);
+        }
+
     }
 
     public ImportResult importDataFromXML(Client client,
-            Organization organisation, Document doc,
-            boolean createReferencesIfNotFound, Module module) {
+            Organization organization, Document doc,
+            boolean createReferencesIfNotFound, Module module,
+            ImportProcessor importProcessor, boolean isClientImport) {
 
         log.debug("Importing data for client " + client.getId()
-                + (organisation != null ? "/" + organisation.getId() : ""));
+                + (organization != null ? "/" + organization.getId() : ""));
 
         final ImportResult ir = new ImportResult();
 
@@ -101,7 +130,8 @@ public class DataImportService implements OBSingleton {
 
             final XMLEntityConverter xec = XMLEntityConverter.newInstance();
             xec.setClient(client);
-            xec.setOrganization(organisation);
+            xec.setOrganization(organization);
+            xec.setOptionClientImport(isClientImport);
             xec.getEntityResolver().setOptionCreateReferencedIfNotFound(
                     createReferencesIfNotFound);
             xec.process(doc);
@@ -111,9 +141,20 @@ public class DataImportService implements OBSingleton {
             ir.setWarningMessages(xec.getWarningMessages());
 
             if (ir.hasErrorOccured()) {
-                // TODO: provide this method in the dal
-                SessionHandler.getInstance().setDoRollback(true);
+                OBDal.getInstance().rollbackAndClose();
                 return ir;
+            }
+
+            if (importProcessor != null) {
+                try {
+                    importProcessor.process(xec.getToInsert(), xec
+                            .getToUpdate());
+                } catch (final Exception e) {
+                    // note on purpose caught and set in ImportResult
+                    ir.setErrorMessages(e.getMessage());
+                    OBDal.getInstance().rollbackAndClose();
+                    return ir;
+                }
             }
 
             // now save and update

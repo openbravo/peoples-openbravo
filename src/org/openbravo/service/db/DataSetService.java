@@ -153,7 +153,7 @@ public class DataSetService implements OBSingleton {
         if (OBContext.getOBContext().getRole().getId().equals("0")
                 && OBContext.getOBContext().getCurrentClient().getId().equals(
                         "0")) {
-            oq.setFilterOnAccessibleOrganisation(false);
+            oq.setFilterOnAccessibleOrganization(false);
             oq.setFilterOnAccessibleClients(false);
         }
 

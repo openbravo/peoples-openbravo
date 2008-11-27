@@ -21,12 +21,15 @@ package org.openbravo.dal.core;
 
 import org.apache.log4j.Logger;
 import org.hibernate.cfg.Configuration;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.session.SessionFactoryController;
 
 /**
  * Initializes and provides the session factory for the runtime dal layer. This
  * SessionFactoryController is initialized after the model has been read
- * in-memory. This sfc generates a hibernate mapping.
+ * in-memory. The {@link DalMappingGenerator DalMappingGenerator} is used to
+ * generated the Hibernate mapping for the runtime model (see
+ * {@link ModelProvider ModelProvider}.
  * 
  * @author mtaal
  */

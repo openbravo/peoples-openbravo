@@ -60,7 +60,7 @@ public class XMLEntityConverter implements OBNotSingleton {
         return OBProvider.getInstance().get(XMLEntityConverter.class);
     }
 
-    private EntityResolver entityResolver = EntityResolver.getInstance();
+    private EntityResolver entityResolver;
 
     // keeps track which instances are part of the xml because they were
     // referenced
@@ -83,6 +83,13 @@ public class XMLEntityConverter implements OBNotSingleton {
     private StringBuilder errorMessages = new StringBuilder();
     private StringBuilder logMessages = new StringBuilder();
     private StringBuilder warningMessages = new StringBuilder();
+
+    // signals that this is an overall client data import
+    // in this case the client/organization property is updated through the
+    // xml, note that this assumes that the client/organization of the object
+    // are present in xml! Also if this option is set then the client and
+    // organization in this object are null
+    private boolean optionClientImport = false;
 
     // process stops at 20 errors
     private int noOfErrors = 0;
@@ -112,9 +119,8 @@ public class XMLEntityConverter implements OBNotSingleton {
 
     public List<BaseOBObject> process(Document doc) {
         clear();
-
-        entityResolver.setClient(getClient());
-        entityResolver.setOrganization(getOrganization());
+        getEntityResolver().setClient(getClient());
+        getEntityResolver().setOrganization(getOrganization());
 
         // check that the rootelement is the openbravo one
         final Element rootElement = doc.getRootElement();
@@ -142,7 +148,7 @@ public class XMLEntityConverter implements OBNotSingleton {
             Element obElement, boolean theReferenced) {
         // note: referenced is true for both childs and many-to-one references
         // it is passed to the entityresolver to allow searches in other
-        // organisation
+        // organization
 
         // note id maybe null for new objects
         final String id = obElement.attributeValue(XMLConstants.ID_ATTRIBUTE);
@@ -220,7 +226,6 @@ public class XMLEntityConverter implements OBNotSingleton {
                     final BaseOBObject matchingObject = entityResolver
                             .findUniqueConstrainedObject(bob);
                     if (matchingObject != null) {
-
                         checkedUniqueConstraint = true;
                     }
                 }
@@ -251,7 +256,8 @@ public class XMLEntityConverter implements OBNotSingleton {
                             && p.getName().equals(PROPERTY_CLIENT);
                     final boolean orgUpdate = bob instanceof OrganizationEnabled
                             && p.getName().equals(PROPERTY_ORGANIZATION);
-                    if (currentValue != null && (clientUpdate || orgUpdate)) {
+                    if (!isOptionClientImport() && currentValue != null
+                            && (clientUpdate || orgUpdate)) {
                         continue;
                     }
 
@@ -394,7 +400,7 @@ public class XMLEntityConverter implements OBNotSingleton {
                 Check.isFalse(hasReferenceAttribute,
                         "Referenced objects may not be updated");
 
-                // warn in case of different organisation/client
+                // warn in case of different organization/client
                 warnDifferentClientOrg(bob, "Updating");
 
                 log("Updated entity " + bob.getIdentifier() + originalIdStr);
@@ -402,6 +408,13 @@ public class XMLEntityConverter implements OBNotSingleton {
                 toUpdate.add(bob);
                 checkUpdate.add(bob);
             }
+
+            // do a check that in case of a client/organization import that the
+            // client and organization are indeed set
+            if (isOptionClientImport()) {
+                checkClientOrganizationSet(bob);
+            }
+
             return bob;
         } catch (final Exception e) {
             e.printStackTrace(System.err);
@@ -411,7 +424,32 @@ public class XMLEntityConverter implements OBNotSingleton {
         }
     }
 
+    protected void checkClientOrganizationSet(BaseOBObject bob) {
+        if (bob.getEntity().isClientEnabled()) {
+            final ClientEnabled ce = (ClientEnabled) bob;
+            if (ce.getClient() == null) {
+                error("The client of entity "
+                        + bob.getIdentifier()
+                        + " is not set. For a client data import the client needs"
+                        + " to be set. Check that the xml was created "
+                        + "with client/organization property export to true");
+            }
+        }
+        if (bob.getEntity().isOrganizationEnabled()) {
+            error("The organization of entity "
+                    + bob.getIdentifier()
+                    + " is not set. For a client data import the organization needs"
+                    + " to be set. Check that the xml was created "
+                    + "with client/organization property export to true");
+        }
+    }
+
     protected void warnDifferentClientOrg(BaseOBObject bob, String prefix) {
+
+        // don't need to check as the object retains his client/organization
+        if (isOptionClientImport()) {
+            return;
+        }
 
         if (bob.getEntity().isClientEnabled()) {
             final ClientEnabled ce = (ClientEnabled) bob;
@@ -424,7 +462,7 @@ public class XMLEntityConverter implements OBNotSingleton {
                         + ce.getClient().getIdentifier());
             }
         }
-        if (bob.getEntity().isOrganisationEnabled()) {
+        if (bob.getEntity().isOrganizationEnabled()) {
             final OrganizationEnabled oe = (OrganizationEnabled) bob;
             if (!oe.getOrganization().getId().equals(getOrganization().getId())) {
                 warn(prefix
@@ -485,14 +523,31 @@ public class XMLEntityConverter implements OBNotSingleton {
         this.organization = organization;
     }
 
+    /**
+     * Returns the objects which exist in the database and will be updated.
+     * 
+     * @return list of objects which will be updated in the database.
+     */
     public List<BaseOBObject> getToUpdate() {
         return toUpdate;
     }
 
+    /**
+     * Returns the list of objects which will be inserted in the database
+     * 
+     * @return the list of new BaseOBObjects which will be inserted in the
+     *         database
+     */
     public List<BaseOBObject> getToInsert() {
         return toInsert;
     }
 
+    /**
+     * The error messages logged during the import process. If no error message
+     * exist then null is returned.
+     * 
+     * @return the logged error messages, null if no error messages are present
+     */
     public String getErrorMessages() {
         if (errorMessages.length() == 0) {
             return null;
@@ -515,6 +570,22 @@ public class XMLEntityConverter implements OBNotSingleton {
     }
 
     public EntityResolver getEntityResolver() {
+
+        if (entityResolver == null) {
+            if (isOptionClientImport()) {
+                entityResolver = ClientImportEntityResolver.getInstance();
+            } else {
+                entityResolver = EntityResolver.getInstance();
+            }
+        }
         return entityResolver;
+    }
+
+    public boolean isOptionClientImport() {
+        return optionClientImport;
+    }
+
+    public void setOptionClientImport(boolean optionClientImport) {
+        this.optionClientImport = optionClientImport;
     }
 }

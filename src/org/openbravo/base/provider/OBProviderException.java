@@ -22,7 +22,8 @@ package org.openbravo.base.provider;
 import org.openbravo.base.exception.OBException;
 
 /**
- * Is thrown when instantiating a class fails in the factory.
+ * Is thrown when instantiating a class fails in the {@link OBProvider
+ * OBProvider}.
  * 
  * @author mtaal
  */

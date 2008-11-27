@@ -20,15 +20,15 @@
 package org.openbravo.dal.security;
 
 /**
- * Maintains constants for security checking
+ * Maintains several constants for security checking.
  * 
  * @author mtaal
  */
 
 public class SecurityConstants {
-    public final static String USER_ORGANISATION = "O";
+    public final static String USER_Organization = "O";
     public final static String USER_SYSTEM = "S";
-    public final static String USER_CLIENTORGANISATION = "CO";
+    public final static String USER_CLIENTOrganization = "CO";
     public final static String USER_CLIENT = "C";
 
     public final static String DATA_ONE = "1";

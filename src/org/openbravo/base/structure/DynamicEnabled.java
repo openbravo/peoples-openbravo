@@ -21,7 +21,7 @@ package org.openbravo.base.structure;
 
 /**
  * Classes implementing this interface have a get and set method allowing access
- * to all properties..
+ * to all properties.
  * 
  * @author mtaal
  */

@@ -43,6 +43,11 @@ import org.openbravo.base.util.CheckException;
  * table, column, reference, etc). Makes the runtime model (Entity and Property)
  * available to the rest of the system.
  * 
+ * @see Entity
+ * @see Property
+ * @see Table
+ * @see Column
+ * 
  * @author iperdomo
  * @author mtaal
  */
@@ -65,6 +70,11 @@ public class ModelProvider implements OBSingleton {
     private HashMap<String, Entity> entitiesByTableId = null;
     private List<Module> modules;
 
+    /**
+     * Returns the singleton instance providing the ModelProvider functionality.
+     * 
+     * @return the ModelProvider instance
+     */
     public static ModelProvider getInstance() {
         // set in a localInstance to prevent threading issues when
         // reseting it in setInstance()
@@ -76,15 +86,32 @@ public class ModelProvider implements OBSingleton {
         return localInstance;
     }
 
+    /**
+     * Makes it possible to override the default ModelProvider with a custom
+     * implementation.
+     * 
+     * @param instance
+     *            the custom ModelProvider
+     */
     public static void setInstance(ModelProvider instance) {
         ModelProvider.instance = instance;
     }
 
+    /**
+     * @return the list of Tables read from the Application Dictionary.
+     */
     public List<Table> getTables() {
         getModel();
         return tables;
     }
 
+    /**
+     * The list of Entities created on the basis of the Application Dictionary.
+     * The main entry point for retrieving the in-memory model. This method will
+     * initialize the in-memory model when it is called for the first time.
+     * 
+     * @return the list Entities
+     */
     public List<Entity> getModel() {
         if (model == null) {
             log.info("Building runtime model");
@@ -332,9 +359,8 @@ public class ModelProvider implements OBSingleton {
     }
 
     // returns a list of uniqueconstraint columns containing all
-    // uniqueconstraints
-    // from the database
-    public List<UniqueConstraintColumn> getUniqueConstraintColumns(
+    // uniqueconstraints from the database
+    private List<UniqueConstraintColumn> getUniqueConstraintColumns(
             Session session, SessionFactoryController sessionFactoryController) {
         final List<UniqueConstraintColumn> result = new ArrayList<UniqueConstraintColumn>();
         final SQLQuery sqlQuery = session
@@ -476,6 +502,14 @@ public class ModelProvider implements OBSingleton {
         return c.list();
     }
 
+    /**
+     * Return the table using the tableName. If not found then a CheckException
+     * is thrown.
+     * 
+     * @param tableName
+     * @return the Table object
+     * @throws CheckException
+     */
     public Table getTable(String tableName) throws CheckException {
         if (tablesByTableName == null)
             getModel();
@@ -487,6 +521,15 @@ public class ModelProvider implements OBSingleton {
         return table;
     }
 
+    /**
+     * Retrieves an Entity using the entityName. If not found then a
+     * CheckException is thrown.
+     * 
+     * @param entityName
+     *            the name used for searching the Entity.
+     * @return the Entity object
+     * @throws CheckException
+     */
     public Entity getEntity(String entityName) throws CheckException {
         if (model == null)
             getModel();
@@ -497,6 +540,15 @@ public class ModelProvider implements OBSingleton {
         return entity;
     }
 
+    /**
+     * Returns an Entity using the table name of the table belonging to the
+     * Entity. If no Entity is found then null is returned, no Exception is
+     * thrown.
+     * 
+     * @param tableName
+     *            the name used to search for the Entity
+     * @return the Entity or null if not found
+     */
     public Entity getEntityByTableName(String tableName) {
         if (model == null)
             getModel();
@@ -509,6 +561,16 @@ public class ModelProvider implements OBSingleton {
         return entity;
     }
 
+    /**
+     * Searches for an Entity using the business object class implementing the
+     * Entity in the business code. Throws a CheckException if the Entity can
+     * not be found.
+     * 
+     * @param clz
+     *            the java class used for the Entity
+     * @return the Entity
+     * @throws CheckException
+     */
     public Entity getEntity(Class<?> clz) throws CheckException {
         if (model == null)
             getModel();
@@ -520,8 +582,9 @@ public class ModelProvider implements OBSingleton {
         return entity;
     }
 
-    public Column getColumnByReference(String reference, String referenceValue,
-            char validationType, String columnName) throws CheckException {
+    protected Column getColumnByReference(String reference,
+            String referenceValue, char validationType, String columnName)
+            throws CheckException {
         Column c = null;
 
         if (tablesByTableName == null)

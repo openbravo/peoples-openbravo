@@ -24,7 +24,8 @@ import java.util.Date;
 import org.openbravo.model.ad.access.User;
 
 /**
- * An interface modeling traced open bravo objects.
+ * An interface modeling open bravo objects which have audit info fields such as
+ * created, createdBy, etc.
  * 
  * @author mtaal
  */

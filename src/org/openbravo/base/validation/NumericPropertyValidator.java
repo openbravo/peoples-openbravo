@@ -32,7 +32,7 @@ import org.openbravo.base.util.Check;
 
 public class NumericPropertyValidator extends BasePropertyValidator {
 
-    public static boolean isValidationRequired(Property p) {
+    static boolean isValidationRequired(Property p) {
         if (p.isPrimitive()
                 && (p.getPrimitiveType() == Float.class
                         || p.getPrimitiveType() == BigDecimal.class || p

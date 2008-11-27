@@ -27,7 +27,8 @@ import org.hibernate.dialect.Oracle10gDialect;
 
 /**
  * Extends the Oracle10Dialect to replace some java-oracle type mappings to
- * support the current rdb schema of OpenBravo.
+ * support the current rdb schema of OpenBravo. Is used in the
+ * {@link SessionFactoryController SessionFactoryController}.
  * 
  * @author mtaal
  */

@@ -39,8 +39,10 @@ import org.hibernate.type.AbstractComponentType;
 import org.hibernate.util.ReflectHelper;
 
 /**
- * The tuplizer for OBObjects objects. Sets the accessors and instantiator.
+ * The tuplizer for OBObjects objects. This is class used by Hibernate. It sets
+ * the object instantiator (the factory) used by Hibernate.
  * 
+ * @see OBInstantiator
  * @author mtaal
  */
 @SuppressWarnings("unchecked")

@@ -32,7 +32,7 @@ public class StringPropertyValidator extends BasePropertyValidator {
 
     private int fieldLength = -1;
 
-    public static boolean isValidationRequired(Property p) {
+    static boolean isValidationRequired(Property p) {
         if (p.isPrimitive() && p.getPrimitiveType() == String.class) {
             if (p.getFieldLength() > 0 || p.doCheckAllowedValue()) {
                 return true;

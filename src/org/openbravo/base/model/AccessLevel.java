@@ -20,7 +20,7 @@
 package org.openbravo.base.model;
 
 /**
- * Is used to keep track of the correct accesslevel of the entity
+ * Defines the available accesslevels used for an entity.
  * 
  * @author Martin Taal
  */

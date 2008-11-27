@@ -28,10 +28,11 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.dialect.PostgreSQLDialect;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.dal.core.DalContextListener;
 
 /**
- * Initializes and provides the session factory. Is subclassed for the bootstrap
- * process and the runtime process.
+ * Initializes and provides the session factory to the rest of the application.
+ * There are subclasses for for the bootstrap process and the runtime process.
  * 
  * @author mtaal
  */
@@ -49,10 +50,24 @@ public abstract class SessionFactoryController {
 
     private static boolean runningInWebContainer = false;
 
+    /**
+     * Keeps track if the Dal layer runs within Tomcat or within for example an
+     * Ant task.
+     * 
+     * @return true if the current Dal layer runs within Tomcat, false otherwise
+     */
     public static boolean isRunningInWebContainer() {
         return runningInWebContainer;
     }
 
+    /**
+     * Is set from the {@link DalContextListener DalContextListener}, keeps
+     * track if the Dal layer runs within Tomcat or within for example an Ant
+     * task.
+     * 
+     * @param runningInWebContainer
+     *            true if running in a webcontainer such as Tomcat
+     */
     public static void setRunningInWebContainer(boolean runningInWebContainer) {
         SessionFactoryController.runningInWebContainer = runningInWebContainer;
     }
@@ -81,6 +96,10 @@ public abstract class SessionFactoryController {
         return configuration;
     }
 
+    /**
+     * Resets and initializes the SessionFactory. If there is a SessionFactory
+     * then this one is first closed before a new one is created.
+     */
     public void reInitialize() {
         if (sessionFactory != null) {
             sessionFactory.close();
@@ -89,6 +108,10 @@ public abstract class SessionFactoryController {
         initialize();
     }
 
+    /**
+     * Creates a new Hibernate Configuration, generates a mapping and
+     * initializes the SessionFactory.
+     */
     public void initialize() {
         if (sessionFactory != null)
             return;
@@ -202,6 +225,12 @@ public abstract class SessionFactoryController {
     protected void setInterceptor(Configuration configuration) {
     }
 
+    /**
+     * Returns a query which is specific for Postgres or Oracle.
+     * 
+     * @return depending on the Openbravo.properties a Postgres or Oracle
+     *         specific query is returned
+     */
     public String getUniqueConstraintQuery() {
         if (isPostgresDatabase) {
             return UNIQUE_CONSTRAINT_QUERY_POSTGRES;

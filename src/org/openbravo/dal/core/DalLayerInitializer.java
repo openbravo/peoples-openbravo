@@ -51,6 +51,11 @@ public class DalLayerInitializer implements OBSingleton {
 
     private boolean initialized = false;
 
+    /**
+     * Initializes the in-memory model, registers the entity classes with the
+     * {@link OBProvider OBProvider}, initializes the SessionFactory and reads
+     * the service config files.
+     */
     public void initialize() {
         if (initialized) {
             return;
@@ -90,6 +95,13 @@ public class DalLayerInitializer implements OBSingleton {
         return initialized;
     }
 
+    /**
+     * Can be used to set the internal initialized member to false and then call
+     * initialize again to re-initialize the Dal layer.
+     * 
+     * @param initialized
+     *            the value of the initialized member
+     */
     public void setInitialized(boolean initialized) {
         this.initialized = initialized;
     }

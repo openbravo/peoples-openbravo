@@ -20,7 +20,9 @@
 package org.openbravo.base.session;
 
 /**
- * Helper class which contains a table, columnname and uniqueconstraintname.
+ * Helper class which combines the relevant information of a column used within
+ * an UniqueConstraint. It contains a table, columnname and
+ * uniqueconstraintname.
  * 
  * @author mtaal
  */

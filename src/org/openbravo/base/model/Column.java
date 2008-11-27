@@ -291,7 +291,13 @@ public class Column extends ModelObject {
         return typeName.substring(1 + typeName.lastIndexOf("."));
     }
 
-    // returns the typename as an object variant
+    /**
+     * Returns the classname of the object which maps to the type of this
+     * column. For example if this column is an int then this method will return
+     * java.lang.Integer (the object version of the int).
+     * 
+     * @return the name of the class of the type of this column
+     */
     public String getObjectTypeName() {
         if (isPrimitiveType()) {
             final String typeName = getTypeName();
@@ -323,14 +329,6 @@ public class Column extends ModelObject {
         }
     }
 
-    // method added for oaw template
-    public boolean allowNullValues() {
-        if (!isPrimitiveType()) {
-            return true;
-        }
-        return (getPrimitiveType().getName().indexOf('.') != -1);
-    }
-
     public Property getProperty() {
         return property;
     }
@@ -339,11 +337,20 @@ public class Column extends ModelObject {
         this.property = property;
     }
 
+    /**
+     * Returns the concatenation of the table and column name.
+     */
     @Override
     public String toString() {
         return getTable() + "." + getColumnName();
     }
 
+    /**
+     * Is used when this column denotes an enum. This method returns all allowed
+     * String values.
+     * 
+     * @return the set of allowed values for this Column.
+     */
     public Set<String> getAllowedValues() {
         if (getReferenceValue() != null) {
             return getReferenceValue().getAllowedValues();

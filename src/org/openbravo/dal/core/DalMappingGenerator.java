@@ -36,8 +36,9 @@ import org.openbravo.base.structure.OBDynamicPropertyHandler;
 import org.openbravo.base.util.Check;
 
 /**
- * This class is responsible for generating the hibernate mapping for the tables
- * and entities within OpenBravo.
+ * This class is responsible for generating the Hibernate mapping for the tables
+ * and entities within OpenBravo. It uses the runtime model provided by
+ * {@link ModelProvider ModelProvider}.
  * 
  * @author mtaal
  */
@@ -68,6 +69,13 @@ public class DalMappingGenerator implements OBSingleton {
 
     private String templateContents;
 
+    /**
+     * Generates the Hibernate mapping for {@link Entity Entities} in the
+     * system. The generated Hibernate mapping is returned as a String.
+     * 
+     * @return the generated Hibernate mapping (corresponds to what is found in
+     *         a hbm.xml file)
+     */
     public String generateMapping() {
         final ModelProvider mp = ModelProvider.getInstance();
         final StringBuilder sb = new StringBuilder();
@@ -101,7 +109,7 @@ public class DalMappingGenerator implements OBSingleton {
         return result;
     }
 
-    public String generateMapping(Entity entity) {
+    private String generateMapping(Entity entity) {
         String hbm = getClassTemplateContents();
         hbm = hbm.replaceAll("mappingName", entity.getName());
         hbm = hbm.replaceAll("tableName", entity.getTableName());

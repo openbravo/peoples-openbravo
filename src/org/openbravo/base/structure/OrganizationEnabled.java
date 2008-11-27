@@ -22,7 +22,7 @@ package org.openbravo.base.structure;
 import org.openbravo.model.common.enterprise.Organization;
 
 /**
- * An interface modeling open bravo objects which have an organisation.
+ * An interface modeling open bravo objects which have an organization.
  * 
  * @author mtaal
  */

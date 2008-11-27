@@ -28,19 +28,17 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.openbravo.base.expression.Evaluator;
 import org.openbravo.base.util.Check;
-import org.openbravo.base.util.NamingUtil;
 import org.openbravo.base.validation.PropertyValidator;
 import org.openbravo.base.validation.ValidationException;
 
 /**
- * Together with Entity, the Property is the main part of the in-memory model. A
- * property can be a primitive type, a reference or a list property.
- * 
- * TODO: consider subclasses for different types of properties
+ * Together with {@link Entity Entity}, the Property is the main part of the
+ * in-memory model. A property can be a primitive type, a reference or a list
+ * (one-to-many) property.
  * 
  * @author mtaal
  */
-
+// TODO: consider subclasses for different types of properties
 public class Property {
     private static final Logger log = Logger.getLogger(Property.class);
 
@@ -85,38 +83,50 @@ public class Property {
 
     private String transientCondition;
 
-    public void initializeFromColumn(Column c) {
-        setColumn(c);
-        c.setProperty(this);
-        setId(c.isKey());
-        setPrimitive(c.isPrimitiveType());
-        setPrimitiveType(c.getPrimitiveType());
-        setIdentifier(c.isIdentifier());
-        setParent(c.isParent());
-        setColumnName(c.getColumnName());
-        setDefaultValue(c.getDefaultValue());
-        setMandatory(c.isMandatory());
-        setMinValue(c.getValueMin());
-        setMaxValue(c.getValueMax());
-        setUuid(c.getReference().getName().equals("ID")
-                && c.getReference().getId().equals("13"));
-        setUpdatable(c.isUpdatable());
-        setFieldLength(c.getFieldLength());
-        setAllowedValues(c.getAllowedValues());
-        final String columnname = c.getColumnName().toLowerCase();
+    /**
+     * Initializes this Property using the information from the Column.
+     * 
+     * @param fromColumn
+     *            the column used to initialize this Property.
+     */
+    public void initializeFromColumn(Column fromColumn) {
+        setColumn(fromColumn);
+        fromColumn.setProperty(this);
+        setId(fromColumn.isKey());
+        setPrimitive(fromColumn.isPrimitiveType());
+        setPrimitiveType(fromColumn.getPrimitiveType());
+        setIdentifier(fromColumn.isIdentifier());
+        setParent(fromColumn.isParent());
+        setColumnName(fromColumn.getColumnName());
+        setDefaultValue(fromColumn.getDefaultValue());
+        setMandatory(fromColumn.isMandatory());
+        setMinValue(fromColumn.getValueMin());
+        setMaxValue(fromColumn.getValueMax());
+        setUuid(fromColumn.getReference().getName().equals("ID")
+                && fromColumn.getReference().getId().equals("13"));
+        setUpdatable(fromColumn.isUpdatable());
+        setFieldLength(fromColumn.getFieldLength());
+        setAllowedValues(fromColumn.getAllowedValues());
+        final String columnname = fromColumn.getColumnName().toLowerCase();
         if (columnname.equals("line") || columnname.equals("seqno")
                 || columnname.equals("lineno"))
             setOrderByProperty(true);
         else
             setOrderByProperty(false);
 
-        setTransient(c.isTransient());
-        setTransientCondition(c.getIsTransientCondition());
+        setTransient(fromColumn.isTransient());
+        setTransientCondition(fromColumn.getIsTransientCondition());
 
-        setInactive(!c.isActive());
+        setInactive(!fromColumn.isActive());
     }
 
-    public void initializeName() {
+    /**
+     * Initializes the name of the property. This is done separately from the
+     * {@link #initializeFromColumn(Column) initializeFromColumn} method because
+     * to initialize the name also information from other properties is
+     * required.
+     */
+    protected void initializeName() {
 
         if (getName() == null) {
             setName(NamingUtil.getPropertyMappingName(this));
@@ -144,7 +154,7 @@ public class Property {
         }
         if (getName().equals("organization")) {
             setClientOrOrganization(true);
-            getEntity().setOrganisationEnabled(true);
+            getEntity().setOrganizationEnabled(true);
         }
         if (getName().equalsIgnoreCase("isactive") && isPrimitive()) {
             getEntity().setActiveEnabled(true);
@@ -180,13 +190,26 @@ public class Property {
         this.primitive = primitive;
     }
 
-    // returns null if there is no referenced property
-    // this occurs in case of a reference to the primary key
-    // of the referenced type
+    /**
+     * In case of an association, returns the property in the associated
+     * {@link Entity Entity} to which this property refers. Returns null if
+     * there is no referenced property this occurs in case of a reference to the
+     * primary key of the referenced Entity.
+     * 
+     * @return
+     */
+    // 
     public Property getReferencedProperty() {
         return referencedProperty;
     }
 
+    /**
+     * Sets the referenced property and also the
+     * {@link Property#setTargetEntity(Entity) targetEntity}.
+     * 
+     * @param referencedProperty
+     *            the property referenced by this property
+     */
     public void setReferencedProperty(Property referencedProperty) {
         this.referencedProperty = referencedProperty;
         setTargetEntity(referencedProperty.getEntity());
@@ -216,6 +239,14 @@ public class Property {
         this.columnName = columnName;
     }
 
+    /**
+     * Is used by the code generation of entities. It will return a String which
+     * can be used to set in the generated source code to initialize a property.
+     * For example if this is a boolean and the default value in the database
+     * for the column is 'Y' then this method will return "true".
+     * 
+     * @return the java-valid default
+     */
     public String getFormattedDefaultValue() {
         Check
                 .isTrue(
@@ -291,6 +322,13 @@ public class Property {
         return defaultValue;
     }
 
+    /**
+     * Returns the Object value of the default, for example a Date property with
+     * default value of today will return a new Date() object.
+     * 
+     * @return the java object which can be used to initialize the java member
+     *         corresponding to this property.
+     */
     public Object getActualDefaultValue() {
         if (defaultValue == null && isBoolean()) {
             if (getName().equalsIgnoreCase("isactive")) {
@@ -337,6 +375,12 @@ public class Property {
         return null;
     }
 
+    /**
+     * Identifier and Id properties are derived readable, all other properties
+     * are not derived readable.
+     * 
+     * @return true if derived readable for the current user, false otherwise.
+     */
     public boolean allowDerivedRead() {
         if (allowDerivedRead == null) {
             allowDerivedRead = isId() || isIdentifier()
@@ -383,8 +427,12 @@ public class Property {
         this.parent = parent;
     }
 
-    // returns the primitive type name or the class of the
-    // referenced type
+    /**
+     * Returns the primitive type name or the class name of the referenced type.
+     * Used by the entity code generation.
+     * 
+     * @return a String denoting the class name of values of this property
+     */
     public String getTypeName() {
         final String typeName;
         if (isCompositeId) {
@@ -401,7 +449,10 @@ public class Property {
         return typeName;
     }
 
-    // the last part of the class name
+    /**
+     * The last part of the class name of the type of the property. Used by the
+     * entity code generation.
+     */
     public String getSimpleTypeName() {
         final String typeName = getTypeName();
         if (typeName.indexOf(".") == -1) {
@@ -410,7 +461,13 @@ public class Property {
         return typeName.substring(1 + typeName.lastIndexOf("."));
     }
 
-    // returns the typename as an object variant
+    /**
+     * Returns the typename of the object type of this property. So a property
+     * with type int will return "java.lang.Integer". Used by the entity code
+     * generation.
+     * 
+     * @return the class name of the object type of this property.
+     */
     public String getObjectTypeName() {
         if (isPrimitive()) {
             final String typeName = getTypeName();
@@ -423,6 +480,13 @@ public class Property {
         }
     }
 
+    /**
+     * Returns the class of the type of this property, will translate primitive
+     * type classes (int) to their object type (java.lang.Integer). Used by the
+     * entity code generation.
+     * 
+     * @return the Object class for the primitive type
+     */
     public Class<?> getPrimitiveObjectType() {
         Check.isTrue(isPrimitive(), "Only primitive types supported here");
         final String typeName = getTypeName();
@@ -452,7 +516,10 @@ public class Property {
         return null;
     }
 
-    // method added for oaw template
+    /**
+     * @return true if the property potentially allows null values because it is
+     *         an object type. Used by code generation of entities.
+     */
     public boolean allowNullValues() {
         if (!isPrimitive()) {
             return true;
@@ -464,7 +531,9 @@ public class Property {
         return name;
     }
 
-    // name stripped of is in case of boolean
+    /**
+     * @return the name used for creating a getter/setter in generated code.
+     */
     public String getGetterSetterName() {
         if (isBoolean() && getName().startsWith("is")) {
             return getName().substring(2);
@@ -472,6 +541,12 @@ public class Property {
         return getName();
     }
 
+    /**
+     * Checks if for an instance of the Entity a value can be written in this
+     * property. If not then a ValidationException is thrown.
+     * 
+     * @throws ValidationException
+     */
     public void checkIsWritable() {
         if (isInactive()) {
             final ValidationException ve = new ValidationException();
@@ -481,7 +556,15 @@ public class Property {
         }
     }
 
-    // checks if the value of the object is of the correct type and it is not
+    /**
+     * Checks if the value of the object is of the correct type and it is not
+     * null if the property is mandatory. Throws a ValidationException if the
+     * value does not fit the definition of the property.
+     * 
+     * @param value
+     *            the value to check
+     * @throws ValidationException
+     */
     // null
     public void checkIsValidValue(Object value) {
         // note id's maybe set to null to force the creation of a new one
@@ -642,6 +725,9 @@ public class Property {
         return allowedValues.contains(value);
     }
 
+    /**
+     * @return a comma delimited list of allowed values, is used for enums.
+     */
     public String concatenatedAllowedValues() {
         final StringBuffer sb = new StringBuffer();
         for (final String s : allowedValues) {
@@ -653,6 +739,17 @@ public class Property {
         return sb.toString();
     }
 
+    /**
+     * Checks if the property is transient. It uses the business object and the
+     * {@link #getTransientCondition() transientCondition} to compute if the
+     * property is transient (won't be exported to xml).
+     * 
+     * @param bob
+     *            the business object used to compute if the property is
+     *            transient
+     * @return true if the property is transient and does not need to be
+     *         exported
+     */
     public boolean isTransient(BaseOBObjectDef bob) {
         if (isTransient()) {
             return true;

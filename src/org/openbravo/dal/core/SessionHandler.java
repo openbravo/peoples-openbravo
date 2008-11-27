@@ -20,14 +20,13 @@
 package org.openbravo.dal.core;
 
 import java.io.Serializable;
-import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.openbravo.base.model.Entity;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.SessionFactoryController;
@@ -36,32 +35,42 @@ import org.openbravo.base.structure.Identifiable;
 import org.openbravo.base.util.Check;
 
 /**
- * Convenience holder of a session and transaction in a threadlocal.
- * 
- * TODO: revisit when looking at factory pattern and dependency injection
- * framework
+ * Keeps the Hibernate Session and Transaction in a ThreadLocal so that it is
+ * available throughout the application. This class provides convenience methods
+ * to get a Session and to create/commit/rollback a transaction.
  * 
  * @author mtaal
  */
-
+// TODO: revisit when looking at factory pattern and dependency injection
+// framework
 public class SessionHandler implements OBNotSingleton {
     private static final Logger log = Logger.getLogger(SessionHandler.class);
 
     // The threadlocal which handles the session
     private static ThreadLocal<SessionHandler> sessionHandler = new ThreadLocal<SessionHandler>();
 
-    // delete session handler from threadlocal
+    /**
+     * Removes the current SessionHandler from the ThreadLocal. A call to
+     * getSessionHandler will create a new SessionHandler, session and
+     * transaction.
+     */
     public static void deleteSessionHandler() {
         log.debug("Removing sessionhandler");
         sessionHandler.set(null);
     }
 
-    /** checks if a session handler is present for this thread */
+    /** @return true if a session handler is present for this thread, false */
     public static boolean isSessionHandlerPresent() {
         return sessionHandler.get() != null;
     }
 
-    /** Returns the sessionhandler for this thread */
+    /**
+     * Returns the SessionHandler of this thread. If there is none then a new
+     * one is created and a Hibernate Session is created and a transaction is
+     * started.
+     * 
+     * @return the sessionhandler for this thread
+     */
     public static SessionHandler getInstance() {
         SessionHandler sh = sessionHandler.get();
         if (sh == null) {
@@ -84,24 +93,24 @@ public class SessionHandler implements OBNotSingleton {
         return OBProvider.getInstance().get(SessionHandler.class);
     }
 
-    /** The session */
     private Session session;
-
-    /** The transaction */
     private Transaction tx;
 
-    /**
-     * Sets the session handler at rollback so that the controller can rollback
-     * at the end
-     */
+    // Sets the session handler at rollback so that the controller can rollback
+    // at the end
     private boolean doRollback = false;
 
-    /** Returns the session */
+    /** @returns the session */
     public Session getSession() {
         return session;
     }
 
-    /** Saves the object in this session */
+    /**
+     * Saves the object in this session.
+     * 
+     * @param obj
+     *            the object to persist
+     */
     public void save(Object obj) {
         if (Identifiable.class.isAssignableFrom(obj.getClass())) {
             session.save(((Identifiable) obj).getEntityName(), obj);
@@ -110,42 +119,67 @@ public class SessionHandler implements OBNotSingleton {
         }
     }
 
-    /** Delete the object */
+    /**
+     * Delete the object from the db.
+     * 
+     * @param obj
+     *            the object to remove
+     */
     public void delete(Object obj) {
         session.delete(obj);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends Object> List<T> list(Class<T> clazz) {
-        final Criteria c = session.createCriteria(clazz);
-        return c.list();
-    }
-
     /**
-     * Queries for a certain type and returns that using the id.
+     * Queries for a certain object using the class and id. If not found then
+     * null is returned.
      * 
-     * Internally translates a class to an entityname because the hibernate
-     * Session.get method can not handle class names if the entity was mapped
-     * with entitynames.
+     * @param clazz
+     *            the class to query
+     * @param id
+     *            the id to use for querying
+     * @return the retrieved object, can be null
      */
     @SuppressWarnings("unchecked")
     public <T extends Object> T find(Class<T> clazz, Object id) {
+        // translates a class to an entityname because the hibernate
+        // Session.get method can not handle class names if the entity was
+        // mapped with entitynames.
         if (Identifiable.class.isAssignableFrom(clazz)) {
             return (T) find(DalUtil.getEntityName(clazz), id);
         }
         return (T) session.get(clazz, (Serializable) id);
     }
 
+    /**
+     * Queries for a certain object using the entity name and id. If not found
+     * then null is returned.
+     * 
+     * @param entityName
+     *            the name of the entity to query
+     * @param id
+     *            the id to use for querying
+     * @return the retrieved object, can be null
+     * 
+     * @see Entity
+     */
     public BaseOBObject find(String entityName, Object id) {
         return (BaseOBObject) session.get(entityName, (Serializable) id);
     }
 
-    /** Create a query object */
+    /**
+     * Create a query object from the current session.
+     * 
+     * @param qryStr
+     *            the HQL query
+     * @return a new Query object
+     */
     public Query createQuery(String qryStr) {
         return session.createQuery(qryStr);
     }
 
-    /** Starts a transaction */
+    /**
+     * Starts a transaction.
+     */
     private void begin() {
         Check.isTrue(session == null, "Session must be null before begin");
         session = SessionFactoryController.getInstance().getSessionFactory()
@@ -156,7 +190,10 @@ public class SessionHandler implements OBNotSingleton {
         log.debug("Transaction started");
     }
 
-    /** Commits the transaction, should be called at the end of all the work */
+    /**
+     * Commits the transaction and closes the session, should normally be called
+     * at the end of all the work.
+     */
     public void commitAndClose() {
         try {
             checkInvariant();
@@ -170,7 +207,9 @@ public class SessionHandler implements OBNotSingleton {
         log.debug("Transaction closed, session closed");
     }
 
-    /** Commits the transaction, should be called at the end of all the work */
+    /**
+     * Commits the transaction and starts a new transaction.
+     */
     public void commitAndStart() {
         checkInvariant();
         tx.commit();
@@ -179,7 +218,9 @@ public class SessionHandler implements OBNotSingleton {
         log.debug("Committed and started new transaction");
     }
 
-    /** Rollback */
+    /**
+     * Rolls back the transaction and closes the session.
+     */
     public void rollback() {
         log.debug("Rolling back transaction");
         try {
@@ -208,7 +249,14 @@ public class SessionHandler implements OBNotSingleton {
         Check.isTrue(tx.isActive(), "Tx is active");
     }
 
-    /** Set rollback */
+    /**
+     * Registers that the transaction should be rolled back. Is used by the
+     * {@link DalThreadHandler}.
+     * 
+     * @param setRollback
+     *            if true then the transaction will be rolled back at the end of
+     *            the thread.
+     */
     public void setDoRollback(boolean setRollback) {
         if (setRollback) {
             log.debug("Rollback is set to true");
@@ -216,7 +264,7 @@ public class SessionHandler implements OBNotSingleton {
         this.doRollback = setRollback;
     }
 
-    /** Returns the doRollback value */
+    /** @return the doRollback value */
     public boolean getDoRollback() {
         return doRollback;
     }

@@ -29,8 +29,8 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.util.OBClassLoader;
 
 /**
- * Task which initializes the model layer. All other work is done by the
- * superclass.
+ * Task generates the entities using OpenArchitectureWare. It initializes the
+ * dal/model layer, the rest of the work is done by the superclass.
  * 
  * @author Martin Taal
  */

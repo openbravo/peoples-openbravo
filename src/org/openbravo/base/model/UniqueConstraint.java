@@ -26,7 +26,7 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.util.Check;
 
 /**
- * A UniqueConstraint defines for an entity a set of properties which combined
+ * A UniqueConstraint defines for an entity a set of properties, which combined
  * are unique for that entity.
  * 
  * @author mtaal
@@ -40,7 +40,7 @@ public class UniqueConstraint {
     private Entity entity;
     private boolean invalid = false;
 
-    public void addPropertyForColumn(String columnName) {
+    protected void addPropertyForColumn(String columnName) {
         if (isInvalid()) {
             return;
         }

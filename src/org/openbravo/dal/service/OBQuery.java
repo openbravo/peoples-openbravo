@@ -48,7 +48,7 @@ public class OBQuery<E extends BaseOBObject> {
     private String whereAndOrderBy;
     private Entity entity;
     private List<Object> parameters;
-    private boolean filterOnAccessibleOrganisation = true;
+    private boolean filterOnAccessibleOrganization = true;
     private boolean filterOnAccessibleClients = true;
     private boolean filterOnActive = true;
 
@@ -176,11 +176,11 @@ public class OBQuery<E extends BaseOBObject> {
         }
         OBContext.getOBContext().getEntityAccessChecker().checkReadable(e);
 
-        if (isFilterOnAccessibleOrganisation() && e.isOrganisationEnabled()) {
+        if (isFilterOnAccessibleOrganization() && e.isOrganizationEnabled()) {
             whereClause = (addWhereClause ? " where " : "")
                     + addAnd(whereClause) + prefix + PROPERTY_ORGANIZATION
                     + ".id "
-                    + createInClause(obContext.getReadableOrganisations());
+                    + createInClause(obContext.getReadableOrganizations());
             if (addWhereClause) {
                 addWhereClause = false;
             }
@@ -280,13 +280,13 @@ public class OBQuery<E extends BaseOBObject> {
         }
     }
 
-    public boolean isFilterOnAccessibleOrganisation() {
-        return filterOnAccessibleOrganisation;
+    public boolean isFilterOnAccessibleOrganization() {
+        return filterOnAccessibleOrganization;
     }
 
-    public void setFilterOnAccessibleOrganisation(
-            boolean filterOnAccessibleOrganisation) {
-        this.filterOnAccessibleOrganisation = filterOnAccessibleOrganisation;
+    public void setFilterOnAccessibleOrganization(
+            boolean filterOnAccessibleOrganization) {
+        this.filterOnAccessibleOrganization = filterOnAccessibleOrganization;
     }
 
     public boolean isFilterOnActive() {

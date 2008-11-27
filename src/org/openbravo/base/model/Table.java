@@ -26,7 +26,8 @@ import org.apache.log4j.Logger;
 
 /**
  * Used by the {@link ModelProvider ModelProvider}, maps the AD_Table table in
- * the application dictionary.
+ * the application dictionary. The {@link Entity Entity} is initialized from a
+ * Table.
  * 
  * @author iperdomo
  */

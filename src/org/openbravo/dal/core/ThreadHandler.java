@@ -25,15 +25,20 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 
 /**
- * Can be used to run a thread in a certain context: for example setting and
- * cleaning up certain threadlocals.
+ * A convenience class which can be used as a base class for when specific
+ * actions need to be done before or after a thread has run. cleaning up certain
+ * threadlocals.
  * 
- * @author martintaal
+ * @author mtaal
  */
 
 public abstract class ThreadHandler {
     private static final Logger log = Logger.getLogger(ThreadHandler.class);
 
+    /**
+     * Run the thread, this method will call the protected methods doBefore,
+     * doAction and doFinal.
+     */
     public void run() {
         boolean err = true;
         try {

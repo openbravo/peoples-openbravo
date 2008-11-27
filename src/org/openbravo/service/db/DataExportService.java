@@ -39,6 +39,11 @@ public class DataExportService implements OBSingleton {
 
     private static DataExportService instance;
 
+    /**
+     * Returns the current singleton instance of the DataExportService.
+     * 
+     * @return the DataExportService instance
+     */
     public static DataExportService getInstance() {
         if (instance == null) {
             instance = OBProvider.getInstance().get(DataExportService.class);
@@ -46,6 +51,13 @@ public class DataExportService implements OBSingleton {
         return instance;
     }
 
+    /**
+     * Makes it possible to set a specific DataExportService instance which will
+     * be used by the rest of the Openbravo system.
+     * 
+     * @param instance
+     *            the DataExportService instance used by the
+     */
     public static void setInstance(DataExportService instance) {
         DataExportService.instance = instance;
     }
@@ -56,10 +68,33 @@ public class DataExportService implements OBSingleton {
 
     // note returns null if nothing has been generated
     public String exportDataSetToXML(DataSet dataSet, String moduleId) {
+        return exportDataSetToXML(dataSet, moduleId, false);
+    }
+
+    /**
+     * Exports data of a client. The main difference with the standard export is
+     * that also references to client and organizations are exported.
+     * 
+     * @param dataSet
+     *            the DataSetTables of this dataSet will be exported
+     * @param moduleId
+     *            the moduleId is used in selecting which objects to export
+     * @return the xml string, the resulting xml from the export, can be null if
+     *         nothing is exported
+     */
+    public String exportClientToXML(DataSet dataSet, String moduleId) {
+        return exportDataSetToXML(dataSet, moduleId, true);
+    }
+
+    // note returns null if nothing has been generated
+    private String exportDataSetToXML(DataSet dataSet, String moduleId,
+            boolean exportClientOrganizationReferences) {
         log.debug("Exporting dataset " + dataSet.getName());
 
         final EntityXMLConverter exc = EntityXMLConverter.newInstance();
         exc.setOptionIncludeReferenced(true);
+        exc
+                .setOptionExportClientOrganizationReferences(exportClientOrganizationReferences);
         final List<DataSetTable> dts = dataSet.getDataSetTableList();
         boolean generatedXML = false;
         for (final DataSetTable dt : dts) {

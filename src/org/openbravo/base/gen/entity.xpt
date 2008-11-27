@@ -29,7 +29,7 @@ package «packageName»;
  * Entity class for entity «name» (stored in table «tableName»).
  *
  * NOTE: This class should not be instantiated directly. To instantiate this
- * class the OBFactory should be used. 
+ * class the {@link org.openbravo.base.provider.OBProvider} should be used. 
  */
 public class «simpleClassName» extends org.openbravo.base.structure.BaseOBObject «implementsStatement» {
 

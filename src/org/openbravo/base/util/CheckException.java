@@ -22,7 +22,8 @@ package org.openbravo.base.util;
 import org.openbravo.base.exception.OBException;
 
 /**
- * Unchecked state exception which also logs itself.
+ * Is thrown by the {@link Check Check} invariant check methods. Unchecked state
+ * exception which also logs itself.
  * 
  * @author mtaal
  */

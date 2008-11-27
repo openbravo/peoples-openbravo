@@ -28,10 +28,12 @@ import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.dal.service.OBDal;
 
 /**
- * A task which initializes the dal and then calls a doExecute method which can
- * be subclassed.
+ * This class can be sub-classed by java ant tasks which need to make use of the
+ * Data Access Layer. This class reads the Openbravo.properties and initializes
+ * the Dal. The user context is set using the userid. Then the doExecute method
+ * is called. This method should be implemented by the subclass.
  * 
- * @author Martin Taal
+ * @author mtaal
  */
 public class DalInitializingTask extends Task {
     private static final Logger log = Logger
@@ -45,18 +47,38 @@ public class DalInitializingTask extends Task {
         return propertiesFile;
     }
 
+    /**
+     * Sets the path to the Openbravo.properties file.
+     * 
+     * @param propertiesFile
+     *            the full filesystem path to the Openbravo.properties file
+     */
     public void setPropertiesFile(String propertiesFile) {
         this.propertiesFile = propertiesFile;
     }
 
+    /**
+     * The user used to run the task.
+     * 
+     * @return the id of the user
+     */
     public String getUserId() {
         return userId;
     }
 
+    /**
+     * Sets the user which will be used to run the task.
+     * 
+     * @param userId
+     *            the id of the user which will be used to run the task
+     */
     public void setUserId(String userId) {
         this.userId = userId;
     }
 
+    /**
+     * Performs Dal layer initialization and then calls the doExecute method.
+     */
     @Override
     public void execute() {
         OBProvider.getInstance().register(OBClassLoader.class,
@@ -92,6 +114,7 @@ public class DalInitializingTask extends Task {
         }
     }
 
+    /** The method which should be implemented by the subclass */
     protected void doExecute() {
     }
 

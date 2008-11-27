@@ -33,7 +33,9 @@ import org.openbravo.base.session.SessionFactoryController;
 /**
  * Initializes the dal layer when the servlet container starts.
  * 
- * @author Martin Taal
+ * @see DalLayerInitializer
+ * 
+ * @author mtaal
  */
 public class DalContextListener implements ServletContextListener {
     private static Properties obProperties = null;
@@ -51,6 +53,13 @@ public class DalContextListener implements ServletContextListener {
         return obProperties;
     }
 
+    /**
+     * Reads the Openbravo.properties file, initializes the Dal layer and flags
+     * that the Dal layer is running in a web container.
+     * 
+     * @see DalLayerInitializer
+     * @see OBPropertiesProvider
+     */
     public void contextInitialized(ServletContextEvent event) {
         // this allows the sessionfactory controller to use jndi
         SessionFactoryController.setRunningInWebContainer(true);

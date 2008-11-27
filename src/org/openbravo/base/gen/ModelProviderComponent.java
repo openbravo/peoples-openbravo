@@ -29,8 +29,8 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 
 /**
- * Sets the model in the work flow context, so that the generator can pick it
- * up.
+ * Sets the model in the work flow context, so that the generator can pick it up
+ * from there.
  * 
  * @author mtaal
  */

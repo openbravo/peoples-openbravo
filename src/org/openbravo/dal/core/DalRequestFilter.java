@@ -31,9 +31,15 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * The DalRequestFilter ensures that the request thread is handled inside of a
- * DalThreadHandler. In addition it initializes the sessionfactory. Although
- * this is not required (session factory initialization is done automatically
- * also), it is better for test/debug purposes.
+ * {@link DalThreadHandler DalThreadHandler} this ensures that all requests are
+ * handled within a transaction which is committed or rolled back at the end of
+ * the request.
+ * <p/>
+ * This request filter also initializes the Dal layer (see the
+ * {@link DalLayerInitializer DalLayerInitializer}). Although this is not
+ * required (session factory initialization is done automatically at first
+ * database access), it is better for test/debug purposes to do the
+ * initialization here.
  * 
  * The DalRequestFilter is enabled by setting it in the web.xml file:
  * 

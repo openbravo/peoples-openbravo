@@ -256,7 +256,7 @@ public class DalWebService implements WebService {
 
         final XMLEntityConverter xec = XMLEntityConverter.newInstance();
         xec.setClient(OBContext.getOBContext().getCurrentClient());
-        xec.setOrganization(OBContext.getOBContext().getCurrentOrganisation());
+        xec.setOrganization(OBContext.getOBContext().getCurrentOrganization());
 
         // for a webservice referenced entities should not be created at all!
         xec.getEntityResolver().setOptionCreateReferencedIfNotFound(false);

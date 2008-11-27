@@ -39,9 +39,26 @@ import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 
 /**
- * Uses window/tab access information to determine which entities are writable
- * and readable by a user.
+ * This class is responsible for determining the allowed read/write access for a
+ * combination of user and Entity. It uses the window-role access information
+ * and the window-table relation to determine which tables are readable and
+ * writable for a user. If the user has readWrite access to a Window then also
+ * the related Table/Entity is writable.
+ * <p/>
+ * In addition this class implements the concept of derived readable. Any entity
+ * refered to from a readable/writable entity is a derived readable. A user may
+ * read (but not write) the following properties from a deriver readable entity:
+ * id and identifier properties. Access to any other property or changing a
+ * property on a derived readable entity results in a OBSecurityException.
+ * Derived readable checks are done when a value is retrieved of an object (@see
+ * BaseOBObject#get(String)).
+ * <p/>
+ * This class is used from the {@link SecurityChecker} which combines all entity
+ * security checks.
  * 
+ * @see Entity
+ * @see Property
+ * @see SecurityChecker
  * @author mtaal
  */
 
@@ -61,6 +78,14 @@ public class EntityAccessChecker implements OBNotSingleton {
 
     private OBContext obContext;
 
+    /**
+     * Reads the windows from the database using the current role of the user.
+     * Then it iterates through the windows and tabs to determine which entities
+     * are readable/writable for that user. In addition non-readable and
+     * derived-readable entities are computed.
+     * 
+     * @see ModelProvider
+     */
     public void initialize() {
 
         final ModelProvider mp = ModelProvider.getInstance();
@@ -128,6 +153,10 @@ public class EntityAccessChecker implements OBNotSingleton {
         isInitialized = true;
     }
 
+    /**
+     * Dumps the readable, writable, derived readable entities to the System.err
+     * outputstream. For debugging purposes.
+     */
     public void dump() {
         System.err.println("");
         System.err.println(">>> Readabled entities: ");
@@ -170,7 +199,13 @@ public class EntityAccessChecker implements OBNotSingleton {
         }
     }
 
-    public boolean isDerivedReadable(Entity e) {
+    /**
+     * @param entity
+     *            the entity to check
+     * @return true if the entity is derived readable for this user, otherwise
+     *         false is returned.
+     */
+    public boolean isDerivedReadable(Entity entity) {
         // prevent infinite looping
         if (!isInitialized) {
             return false;
@@ -180,9 +215,15 @@ public class EntityAccessChecker implements OBNotSingleton {
         if (obContext.isInAdministratorMode()) {
             return false;
         }
-        return derivedReadableEntities.contains(e);
+        return derivedReadableEntities.contains(entity);
     }
 
+    /**
+     * @param entity
+     *            the entity to check
+     * @return true if the entity is writable for this user, otherwise false is
+     *         returned.
+     */
     public boolean isWritable(Entity entity) {
         // prevent infinite looping
         if (!isInitialized) {
@@ -199,6 +240,14 @@ public class EntityAccessChecker implements OBNotSingleton {
         return true;
     }
 
+    /**
+     * Checks if an entity is writable for this user. If not then a
+     * OBSecurityException is thrown.
+     * 
+     * @param entity
+     *            the entity to check
+     * @throws OBSecurityException
+     */
     public void checkWritable(Entity entity) {
         if (!isWritable(entity)) {
             throw new OBSecurityException("Entity " + entity
@@ -206,6 +255,14 @@ public class EntityAccessChecker implements OBNotSingleton {
         }
     }
 
+    /**
+     * Checks if an entity is readable for this user. If not then a
+     * OBSecurityException is thrown.
+     * 
+     * @param entity
+     *            the entity to check
+     * @throws OBSecurityException
+     */
     public void checkReadable(Entity entity) {
         // prevent infinite looping
         if (!isInitialized) {

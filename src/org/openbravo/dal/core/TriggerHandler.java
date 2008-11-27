@@ -30,8 +30,8 @@ import org.openbravo.model.core.ADSessionStatus;
 /**
  * Supports disabling and again enabling of database triggers.
  * 
- * The user of this class should call disable() at the beginning of the
- * transaction and enable at the end, before committing.
+ * The user of this class should call disable() after beginning the transaction
+ * and enable at the end, before committing.
  * 
  * @author martintaal
  */
@@ -51,8 +51,9 @@ public class TriggerHandler {
     private ThreadLocal<ADSessionStatus> sessionStatus = new ThreadLocal<ADSessionStatus>();
 
     /**
-     * Creates a ADSessionStatus and stores it in the AD_SESSION_STATUS table.
-     * This method will also call flush.
+     * Disabled all triggers in the database. This is done by creating an
+     * ADSessionStatus object and storing it in the AD_SESSION_STATUS table.
+     * Note: this method will also call {@link OBDal#flush() OBDal.flush()}.
      */
     public void disable() {
         log.debug("Disabling triggers");
@@ -78,12 +79,17 @@ public class TriggerHandler {
         }
     }
 
-    /** Returns true if the SessionStatus is present */
+    /**
+     * @return true if the database triggers are disabled, false in other cases.
+     */
     public boolean isDisabled() {
         return sessionStatus.get() != null;
     }
 
-    /** Removes the ADSessionStatus from the database. This enables triggers. */
+    /**
+     * Enables triggers in the database. It does this by removing the
+     * ADSessionStatus from the database.
+     */
     public void enable() {
         log.debug("Enabling triggers");
         Check.isNotNull(sessionStatus.get(),

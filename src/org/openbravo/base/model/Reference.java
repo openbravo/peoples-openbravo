@@ -28,7 +28,7 @@ import java.util.Set;
 
 /**
  * Used by the {@link ModelProvider ModelProvider}, maps the AD_Reference table
- * in the application dictionary
+ * in the in-memory model.
  * 
  * @author iperdomo
  */

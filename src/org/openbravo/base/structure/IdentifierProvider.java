@@ -21,13 +21,16 @@ package org.openbravo.base.structure;
 
 import java.util.List;
 
+import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 
 /**
- * Provides the identifier/title of an object using the application dictionary.
+ * Provides the identifier/title of an object using the
+ * {@link Entity#getIdentifierProperties() identifierProperties} of the
+ * {@link Entity Entity}.
  * 
  * Note: the getIdentifier can also be generated in the java entity but the
  * current approach makes it possible to change the identifier definition at
@@ -51,14 +54,21 @@ public class IdentifierProvider implements OBSingleton {
         IdentifierProvider.instance = instance;
     }
 
-    // also use refered to identifiables to create the identifier
+    /**
+     * Returns the identifier of the object. The identifier is computed using
+     * the identifier properties of the Entity of the object.
+     * 
+     * @param o
+     *            the object for which the identifier is generated
+     * @return the identifier
+     */
     public String getIdentifier(Object o) {
         return getIdentifier(o, true);
     }
 
     // identifyDeep determines if refered to objects are used
     // to identify the object
-    public String getIdentifier(Object o, boolean identifyDeep) {
+    private String getIdentifier(Object o, boolean identifyDeep) {
         // TODO: add support for null fields
         final StringBuilder sb = new StringBuilder();
         final DynamicEnabled dob = (DynamicEnabled) o;

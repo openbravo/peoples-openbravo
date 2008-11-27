@@ -32,12 +32,12 @@ import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.OBContext;
 
 /**
- * Base business object, the root of the inheritance tree. The class model here
- * combines an inheritance structure with interface definitions. The inheritance
- * structure is used to enable some re-use of code. The interfaces are used to
- * tag a certain implementation with the functionality it provides. The outside
- * world should use the interfaces to determine if an object supports specific
- * functionality.
+ * Base business object, the root of the inheritance tree for all business
+ * objects. The class model here combines an inheritance structure with
+ * interface definitions. The inheritance structure is used to enable some
+ * re-use of code. The interfaces are used to tag a certain implementation with
+ * the functionality it provides. The outside world should use the interfaces to
+ * determine if an object supports specific functionality.
  * 
  * @author mtaal
  */
@@ -81,6 +81,16 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable,
         return IdentifierProvider.getInstance().getIdentifier(this);
     }
 
+    /**
+     * Returns the value of the {@link Property Property} identified by the
+     * propName. This method does security checking. If a security violation
+     * occurs then a OBSecurityException is thrown.
+     * 
+     * @param propName
+     *            the name of the {@link Property Property} for which the value
+     *            is requested
+     * @throws OBSecurityException
+     */
     public Object get(String propName) {
         if (propName.equals("entityName")) {
             return getEntityName();
@@ -98,6 +108,18 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable,
         return data.get(propName);
     }
 
+    /**
+     * Set a value for the {@link Property Property} identified by the propName.
+     * This method checks the correctness of the value and performs security
+     * checks.
+     * 
+     * @param propName
+     *            the name of the {@link Property Property} being set
+     * @param value
+     *            the value being set
+     * @throws OBSecurityException
+     *             , OBValidationException
+     */
     public void set(String propName, Object value) {
         final Property p = getEntity().getProperty(propName);
         p.checkIsValidValue(value);
@@ -126,9 +148,14 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable,
         }
     }
 
-    // called by generated subclasses and hibernate,
-    // is assumed to be safe and because no checking
-    // is done it is faster
+    /**
+     * Sets a value in the object without any security or validation checking.
+     * Should be used with care. Is used by the subclasses and system classes.
+     * 
+     * @param propName
+     *            the name of the {@link Property Property} being set
+     * @param value
+     */
     public void setValue(String propName, Object value) {
         if (value == null) {
             data.remove(propName);
@@ -136,12 +163,24 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable,
         data.put(propName, value);
     }
 
-    // method call which does not any security checking
-    // can be called by hibernate
+    /**
+     * Returns the value of {@link Property Property} identified by the
+     * propName. This method does not do security checking.
+     * 
+     * @param propName
+     *            the name of the property for which the value is requested.
+     * @return the value
+     */
     public Object getValue(String propName) {
         return data.get(propName);
     }
 
+    /**
+     * Return the entity of this object. The {@link Entity Entity} again gives
+     * access to the {@link Property Properties} of this object.
+     * 
+     * @return the Entity of this object
+     */
     public Entity getEntity() {
         if (model == null) {
             model = ModelProvider.getInstance().getEntity(getEntityName());
@@ -149,6 +188,11 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable,
         return model;
     }
 
+    /**
+     * Validates the content of this object using the property validators.
+     * 
+     * @throws OBValidationException
+     */
     public void validate() {
         getEntity().validate(this);
     }
@@ -178,6 +222,12 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable,
         return getEntityName() + "(" + getId() + ") " + sb.toString();
     }
 
+    /**
+     * Returns true if the id is null or the object is set to new explicitly.
+     * 
+     * @return false if the id is set and this is not a new object, true
+     *         otherwise
+     */
     public boolean isNewOBObject() {
         return getId() == null || newOBObject;
     }

@@ -39,7 +39,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.security.OrganisationStructureProvider;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Table;
@@ -76,7 +76,7 @@ public class EntityResolver implements OBNotSingleton {
     private String[] orgIdTree;
     private ResolvingMode resolvingMode = ResolvingMode.ALLOW_NOT_EXIST;
 
-    private OrganisationStructureProvider organisationStructureProvider;
+    private OrganizationStructureProvider organizationStructureProvider;
 
     private boolean optionCreateReferencedIfNotFound = true;
 
@@ -140,7 +140,7 @@ public class EntityResolver implements OBNotSingleton {
             }
 
             // TODO: add warning if the entity is created in a different
-            // client/organisation than the inputted ones
+            // client/organization than the inputted ones
             // Set the client and organization on the most detailed level
             // looking at the accesslevel of the entity
             Client setClient;
@@ -172,7 +172,7 @@ public class EntityResolver implements OBNotSingleton {
             if (entity.isClientEnabled()) {
                 result.setValue(PROPERTY_CLIENT, setClient);
             }
-            if (entity.isOrganisationEnabled()) {
+            if (entity.isOrganizationEnabled()) {
                 result.setValue(PROPERTY_ORGANIZATION, setOrg);
             }
         }
@@ -217,7 +217,6 @@ public class EntityResolver implements OBNotSingleton {
     }
 
     protected BaseOBObject searchSystem(String id, Entity entity) {
-        // this works because it assumes that only the
         return doSearch(id, entity, "0", "0");
     }
 
@@ -252,12 +251,12 @@ public class EntityResolver implements OBNotSingleton {
                 entity.getName());
         obc.setFilterOnActive(false);
         obc.setFilterOnReadableClients(false);
-        obc.setFilterOnReadableOrganisation(false);
+        obc.setFilterOnReadableOrganization(false);
         if (entity.isClientEnabled()) {
             obc.add(Expression.eq(PROPERTY_CLIENT + "."
                     + Organization.PROPERTY_ID, clientId));
         }
-        if (entity.isOrganisationEnabled()) {
+        if (entity.isOrganizationEnabled()) {
             // Note the query is for other types than client but the client
             // property names
             // are good standard ones to use
@@ -285,7 +284,7 @@ public class EntityResolver implements OBNotSingleton {
             final OBCriteria<ReferenceDataStore> rdlCriteria = OBDal
                     .getInstance().createCriteria(ReferenceDataStore.class);
             rdlCriteria.setFilterOnActive(false);
-            rdlCriteria.setFilterOnReadableOrganisation(false);
+            rdlCriteria.setFilterOnReadableOrganization(false);
             rdlCriteria.setFilterOnReadableClients(false);
             rdlCriteria.add(Expression.eq(ReferenceDataStore.PROPERTY_GENERIC,
                     id));
@@ -325,7 +324,7 @@ public class EntityResolver implements OBNotSingleton {
         return searchOrgIds;
     }
 
-    protected void setClientOrganisationZero() {
+    protected void setClientOrganizationZero() {
         if (clientZero != null) {
             return;
         }
@@ -338,10 +337,10 @@ public class EntityResolver implements OBNotSingleton {
     }
 
     public void setClient(Client client) {
-        setClientOrganisationZero();
-        organisationStructureProvider = OBProvider.getInstance().get(
-                OrganisationStructureProvider.class);
-        organisationStructureProvider.setClientId(client.getId());
+        setClientOrganizationZero();
+        organizationStructureProvider = OBProvider.getInstance().get(
+                OrganizationStructureProvider.class);
+        organizationStructureProvider.setClientId(client.getId());
         this.client = client;
     }
 
@@ -351,10 +350,14 @@ public class EntityResolver implements OBNotSingleton {
 
     public void setOrganization(Organization organization) {
         orgIdTree = new String[] { organization.getId() };
-        final Set<String> orgs = organisationStructureProvider
+        final Set<String> orgs = organizationStructureProvider
                 .getNaturalTree(organization.getId());
         orgNaturalTree = orgs.toArray(new String[orgs.size()]);
         this.organization = organization;
+    }
+
+    protected Map<Object, BaseOBObject> getData() {
+        return data;
     }
 
     public boolean isOptionCreateReferencedIfNotFound() {
@@ -417,7 +420,7 @@ public class EntityResolver implements OBNotSingleton {
             }
 
             criteria.setFilterOnActive(false);
-            criteria.setFilterOnReadableOrganisation(false);
+            criteria.setFilterOnReadableOrganization(false);
             criteria.setFilterOnReadableClients(false);
             criteria.setMaxResults(1);
 
@@ -427,7 +430,7 @@ public class EntityResolver implements OBNotSingleton {
                 // check if the found unique match is a valid
                 // object to use
                 // TODO: this can be made faster by
-                // adding client/organisation filtering above in
+                // adding client/organization filtering above in
                 // the criteria
                 final BaseOBObject searchResult = searchInstance(entity,
                         (String) queryResult.get(0).getId());

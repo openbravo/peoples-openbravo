@@ -20,7 +20,7 @@
 package org.openbravo.base.provider;
 
 /**
- * Tags a class as being handled through the OBProvider.
+ * Tags a class as being handled through the {@link OBProvider OBProvider}.
  * 
  * @author mtaal
  */

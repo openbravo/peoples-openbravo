@@ -20,25 +20,27 @@
 package org.openbravo.base.validation;
 
 import org.openbravo.base.exception.OBSecurityException;
+import org.openbravo.base.model.Table;
 
 /**
- * Enforces that certain tables in the system only contain records with the
- * correct client and organisation. The accesslevel of the table is used for
- * this.
- * 
- * System tables may only contain objects with Client id '0' and organisation id
- * '0' (=* organisation)
- * 
+ * Provides checking logic that enforces that certain tables (== Entities) in
+ * the system only contain records (== Objects) with the correct client and
+ * organization. The {@link Table#getAccessLevel() accessLevel} of the table is
+ * used for this.
+ * <p/>
+ * System tables may only contain objects with Client id '0' and organization id
+ * '0' (=* organization)
+ * <p/>
  * System/Client tables may contain objects from any client but only
- * organisations with id '0'
- * 
- * Organisation may not contain objects with client '0' or organisation '0'
+ * organizations with id '0'
+ * <p/>
+ * Organization may not contain objects with client '0' or organization '0'
  * (client != '0' and org != '0')
- * 
- * Client/Organisation may not contain objects with client '0', any organisation
+ * <p/>
+ * Client/Organization may not contain objects with client '0', any organization
  * is allowed
- * 
- * All this allows all client/organisations.
+ * <p/>
+ * All this allows all client/organizations.
  * 
  * @author mtaal
  */
@@ -47,6 +49,10 @@ public class AccessLevelChecker {
 
     public static final AccessLevelChecker ALL = new AccessLevelChecker();
 
+    /**
+     * SYSTEM access level, only allows client with id '0' and organization with
+     * id '0'.
+     */
     public static final AccessLevelChecker SYSTEM = new AccessLevelChecker() {
         @Override
         public void checkAccessLevel(String entity, String clientId,
@@ -56,6 +62,10 @@ public class AccessLevelChecker {
         }
     };
 
+    /**
+     * SYSTEM_CLIENT access level, allows any client but only allows an
+     * organization with id '0'.
+     */
     public static final AccessLevelChecker SYSTEM_CLIENT = new AccessLevelChecker() {
         @Override
         public void checkAccessLevel(String entity, String clientId,
@@ -64,6 +74,10 @@ public class AccessLevelChecker {
         }
     };
 
+    /**
+     * ORGANIZATION access level, only allows client and organization with id
+     * both unequal to id '0'.
+     */
     public static final AccessLevelChecker ORGANIZATION = new AccessLevelChecker() {
         @Override
         public void checkAccessLevel(String entity, String clientId,
@@ -73,6 +87,10 @@ public class AccessLevelChecker {
         }
     };
 
+    /**
+     * CLIENT_ORGANIZATION access level, only allows client with id unequal to
+     * id '0' and any organization.
+     */
     public static final AccessLevelChecker CLIENT_ORGANIZATION = new AccessLevelChecker() {
         @Override
         public void checkAccessLevel(String entity, String clientId,
@@ -102,14 +120,14 @@ public class AccessLevelChecker {
     protected void failOnZeroOrg(String entity, String orgId) {
         if (orgId.equals("0")) {
             throw new OBSecurityException("Entity " + entity
-                    + " may not have instances with organisation *");
+                    + " may not have instances with organization *");
         }
     }
 
     protected void failOnNonZeroOrg(String entity, String orgId) {
         if (!orgId.equals("0")) {
             throw new OBSecurityException("Entity " + entity
-                    + " may only have instances with organisation *");
+                    + " may only have instances with organization *");
         }
     }
 }

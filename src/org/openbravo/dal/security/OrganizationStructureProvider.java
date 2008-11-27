@@ -37,19 +37,26 @@ import org.openbravo.model.ad.utility.TreeNode;
 import org.openbravo.model.common.enterprise.Organization;
 
 /**
- * Caches the accessible organisations for each organisation. Is used to
- * determine if an organisation of a refered object is in the natural tree of
- * the organisation of the referee.
+ * Builds a tree of organizations to compute the accessible organizations for
+ * the current organizations of a user. Is used to check if references from one
+ * object to another are correct from an organization structure perspective.
+ * <p/>
+ * For example a city refers to a country then: an organization of the country
+ * (the refered object) must be in the natural tree of the organization of the
+ * city (the referee).
  * 
  * @author mtaal
  */
 
-public class OrganisationStructureProvider implements OBNotSingleton {
+public class OrganizationStructureProvider implements OBNotSingleton {
 
     private boolean isInitialized = false;
     private Map<String, Set<String>> naturalTreesByOrgID = new HashMap<String, Set<String>>();
     private String clientId;
 
+    /**
+     * Set initialized to false and recompute the organization structures
+     */
     public void reInitialize() {
         isInitialized = false;
         initialize();
@@ -101,6 +108,14 @@ public class OrganisationStructureProvider implements OBNotSingleton {
         isInitialized = true;
     }
 
+    /**
+     * Returns the natural tree of an organization.
+     * 
+     * @param orgId
+     *            the id of the organization for which the natural tree is
+     *            determined.
+     * @return the natural tree of the organization.
+     */
     public Set<String> getNaturalTree(String orgId) {
         initialize();
         Set<String> result = naturalTreesByOrgID.get(orgId);
@@ -111,6 +126,17 @@ public class OrganisationStructureProvider implements OBNotSingleton {
         return result;
     }
 
+    /**
+     * Checks if an organization (org2) is in the natural tree of another
+     * organization (org1).
+     * 
+     * @param org1
+     *            the natural tree of this organization is used to check if org2
+     *            is present
+     * @param org2
+     *            the organization checked in the natural tree of org1
+     * @return true if org2 is in the natural tree of org1, false otherwise
+     */
     public boolean isInNaturalTree(Organization org1, Organization org2) {
         initialize();
         final String id1 = (String) DalUtil.getId(org1);
@@ -119,9 +145,9 @@ public class OrganisationStructureProvider implements OBNotSingleton {
         Check
                 .isNotNull(
                         ids,
-                        "Organisation with id "
+                        "Organization with id "
                                 + id1
-                                + " does not have a computed natural tree, does this organisation exist?");
+                                + " does not have a computed natural tree, does this organization exist?");
         return ids.contains(id2);
     }
 

@@ -35,11 +35,11 @@ import org.openbravo.base.util.OBClassLoader;
  * 
  * @author mtaal
  */
-public class OBProviderConfigReader {
+class OBProviderConfigReader {
 
     private static final long serialVersionUID = 1L;
 
-    public void read(String prefix, InputStream is) {
+    void read(String prefix, InputStream is) {
         try {
             final SAXReader reader = new SAXReader();
             final Document doc = reader.read(is);
@@ -49,7 +49,7 @@ public class OBProviderConfigReader {
         }
     }
 
-    public void read(String prefix, String fileLocation) {
+    void read(String prefix, String fileLocation) {
         try {
             final SAXReader reader = new SAXReader();
             final Document doc = reader.read(new FileInputStream(fileLocation));
@@ -59,7 +59,7 @@ public class OBProviderConfigReader {
         }
     }
 
-    public void process(String prefix, Document doc) {
+    void process(String prefix, Document doc) {
         checkName(doc.getRootElement(), "provider");
         for (final Object o : doc.getRootElement().elements()) {
             final Element elem = (Element) o;

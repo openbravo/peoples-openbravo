@@ -20,9 +20,9 @@
 package org.openbravo.dal.core;
 
 /**
- * Ensures that the session/transaction are closed/committed/rolledback at the
- * end of the thread. It also ensures that the OBContext is removed from the
- * thread.
+ * Encapsulates a thread so that when the thread returns the session/transaction
+ * is closed/committed/rolledback. It also ensures that the OBContext is removed
+ * from the thread.
  * 
  * Note that cleaning up the thread is particularly important in webcontainer
  * environments because webcontainers (tomcat) re-use thread instances for new
@@ -33,10 +33,12 @@ package org.openbravo.dal.core;
 
 public abstract class DalThreadHandler extends ThreadHandler {
 
+    /** @see ThreadHandler#doBefore */
     @Override
     public void doBefore() {
     }
 
+    /** @see ThreadHandler#doFinal */
     @Override
     public void doFinal(boolean errorOccured) {
         try {

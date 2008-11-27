@@ -20,8 +20,8 @@
 package org.openbravo.base.exception;
 
 /**
- * Unchecked exception which also logs itself. Is used in case of Security
- * violation. For example updating an object of another client.
+ * This exception is used in case of Security violation. For example updating an
+ * object of another client.
  * 
  * @author mtaal
  */

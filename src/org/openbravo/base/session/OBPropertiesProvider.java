@@ -28,11 +28,10 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.Check;
 
 /**
- * Is used to read and provide the Openbravo.properties
+ * This class implements a central location where the Openbravo.properties are
+ * read and made available for the rest of the application.
  * 
- * TODO: change to single ton pattern, check if ant can work with this
- * 
- * @author Martin Taal
+ * @author mtaal
  */
 public class OBPropertiesProvider {
     private final Logger log = Logger.getLogger(OBPropertiesProvider.class);

@@ -17,17 +17,23 @@
  ************************************************************************
  */
 
-package org.openbravo.base.util;
+package org.openbravo.base.model;
 
 import java.util.HashMap;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.model.Entity;
-import org.openbravo.base.model.Property;
 
-public class NamingUtil {
+/**
+ * The NamingUtil class is used to create names for the {@link Property
+ * properties} of the {@link Entity entities}.
+ * 
+ * @author iperdomo
+ * @author mtaal
+ */
+
+class NamingUtil {
     private static final Logger log = Logger.getLogger(NamingUtil.class);
     private static HashMap<String, String> specialPropertyMappings = null;
     private static HashMap<String, String> reservedNames = null;
@@ -63,14 +69,14 @@ public class NamingUtil {
         reservedNames.put("char", "chr");
     }
 
-    public static String getSafeJavaName(String name) {
+    static String getSafeJavaName(String name) {
         if (reservedNames.get(name) != null) {
             return reservedNames.get(name);
         }
         return name;
     }
 
-    public static String getPropertyMappingName(Property property) {
+    static String getPropertyMappingName(Property property) {
         if (property.getColumnName() != null
                 && !(property.isId() && property.getEntity().getIdProperties()
                         .size() == 1)) {

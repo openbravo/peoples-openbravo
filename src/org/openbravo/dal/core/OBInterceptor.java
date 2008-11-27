@@ -36,6 +36,7 @@ import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.type.Type;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
+import org.openbravo.base.model.Entity;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
@@ -46,9 +47,10 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 
 /**
- * This event listener catches save or update events to set the client and
- * organisation and the updated/created fields. In addition security checks are
- * done.
+ * This interceptor is used by Hibernate as a kind of save, update and delete
+ * event listener. This event listener catches save or update events to set the
+ * client and organization and the updated/created fields. In addition security
+ * checks are performed.
  * 
  * @author mtaal
  */
@@ -58,6 +60,16 @@ public class OBInterceptor extends EmptyInterceptor {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Determines if the object is transient (==new and not yet persisted in
+     * Hibernate).
+     * 
+     * @param entity
+     *            the object for which it is determined if it is new
+     * @return true if the object has a null id or has been explicitly set to
+     *         being new (@see BaseOBObject#isNewOBObject()}, returns false
+     *         otherwise.
+     */
     @Override
     public Boolean isTransient(Object entity) {
         // special case, if the id is set but it was explicitly
@@ -72,12 +84,55 @@ public class OBInterceptor extends EmptyInterceptor {
         return null;
     }
 
+    /**
+     * Performs security checks, is the user present in the {@link OBContext}
+     * allowed to delete this entity and is the entity deletable (@see
+     * {@link Entity#isDeletable()}.
+     * 
+     * @param entity
+     *            the business object which is deleted
+     * @param id
+     *            the id of the entity
+     * @param state
+     *            the value of the properties
+     * @param propertyNames
+     *            the name of the properties of the entity
+     * @param types
+     *            the hibernate type definition of the properties
+     * 
+     * @see BaseOBObject
+     * @see Entity
+     * @see Property
+     */
     @Override
     public void onDelete(Object entity, Serializable id, Object[] state,
             String[] propertyNames, Type[] types) {
         SecurityChecker.getInstance().checkDeleteAllowed(entity);
     }
 
+    /**
+     * Is called when the entity object is dirty (a value of a property has
+     * changed) and the state of the object is about to be flushed to the
+     * database using sql update statements. This method updates the audit info
+     * fields (updated, updatedBy) and performs security checks.
+     * 
+     * @param entity
+     *            the business object which is deleted
+     * @param id
+     *            the id of the entity
+     * @param currentState
+     *            the current value of the properties
+     * @param previousState
+     *            the previous value of the properties, i.e. the values when the
+     *            entity was loaded from the database
+     * @param propertyNames
+     *            the name of the properties of the entity
+     * @param types
+     *            the hibernate type definition of the properties
+     * @return true if the state of the object has changed, this is the case
+     *         when the entity has audit info because the updated/updatedBy
+     *         properties are updated here, false is returned in other cases
+     */
     @Override
     public boolean onFlushDirty(Object entity, Serializable id,
             Object[] currentState, Object[] previousState,
@@ -90,7 +145,7 @@ public class OBInterceptor extends EmptyInterceptor {
 
         doEvent(entity, currentState, propertyNames);
 
-        checkReferencedOrganisations(entity, currentState, previousState,
+        checkReferencedOrganizations(entity, currentState, previousState,
                 propertyNames);
 
         if (entity instanceof Traceable) {
@@ -99,6 +154,25 @@ public class OBInterceptor extends EmptyInterceptor {
         return false;
     }
 
+    /**
+     * Is called when a new entity object is persisted in the database. This
+     * method sets the audit info fields (created/createdBy/updated/updatedBy)
+     * and performs several security checks.
+     * 
+     * @param entity
+     *            the business object which is deleted
+     * @param id
+     *            the id of the entity
+     * @param currentState
+     *            the current value of the properties
+     * @param propertyNames
+     *            the name of the properties of the entity
+     * @param types
+     *            the hibernate type definition of the properties
+     * @return true if the state of the object has changed, this is the case
+     *         when the entity has audit info because the updated/updatedBy
+     *         properties are updated here, false is returned in other cases
+     */
     @Override
     public boolean onSave(Object entity, Serializable id,
             Object[] currentState, String[] propertyNames, Type[] types) {
@@ -109,6 +183,7 @@ public class OBInterceptor extends EmptyInterceptor {
 
         doEvent(entity, currentState, propertyNames);
 
+        // audit info fields
         if (entity instanceof Traceable || entity instanceof ClientEnabled
                 || entity instanceof OrganizationEnabled) {
             return true;
@@ -116,7 +191,7 @@ public class OBInterceptor extends EmptyInterceptor {
         return false;
     }
 
-    private void checkReferencedOrganisations(Object entity,
+    private void checkReferencedOrganizations(Object entity,
             Object[] currentState, Object[] previousState,
             String[] propertyNames) {
         if (!(entity instanceof OrganizationEnabled)) {
@@ -128,7 +203,7 @@ public class OBInterceptor extends EmptyInterceptor {
         final BaseOBObject bob = (BaseOBObject) entity;
         boolean isNew = bob.getId() == null || bob.isNewOBObject();
 
-        // check if the organisation of the current object has changed, if so
+        // check if the organization of the current object has changed, if so
         // then
         // check all references
         if (!isNew) {
@@ -148,19 +223,19 @@ public class OBInterceptor extends EmptyInterceptor {
                     && !(currentState[i] instanceof Organization)
                     && (currentState[i] instanceof BaseOBObject || currentState[i] instanceof HibernateProxy)
                     && currentState[i] instanceof OrganizationEnabled) {
-                // get the organisation from the current state
+                // get the organization from the current state
                 final OrganizationEnabled oe = (OrganizationEnabled) currentState[i];
                 final Organization o2 = oe.getOrganization();
-                if (!obContext.getOrganisationStructureProvider(
+                if (!obContext.getOrganizationStructureProvider(
                         o1.getClient().getId()).isInNaturalTree(o1, o2)) {
                     throw new OBSecurityException("Entity "
                             + bob.getIdentifier() + " (" + bob.getEntityName()
-                            + ") with organisation " + o1.getIdentifier()
+                            + ") with organization " + o1.getIdentifier()
                             + " references an entity "
                             + ((BaseOBObject) currentState[i]).getIdentifier()
                             + " through its property " + propertyNames[i]
                             + " but this referenced entity"
-                            + " belongs to an organisation "
+                            + " belongs to an organization "
                             + o2.getIdentifier()
                             + " which is not part of the natural tree of "
                             + o1.getIdentifier());
@@ -205,7 +280,7 @@ public class OBInterceptor extends EmptyInterceptor {
         SecurityChecker.getInstance().checkWriteAccess(o);
     }
 
-    // set created/createdby and the client and organisation
+    // set created/createdby and the client and organization
     private void onNew(Traceable t, String[] propertyNames,
             Object[] currentState) {
         final OBContext obContext = OBContext.getOBContext();
@@ -216,11 +291,11 @@ public class OBInterceptor extends EmptyInterceptor {
         Client client = null;
         Organization org = null;
         if (t instanceof ClientEnabled || t instanceof OrganizationEnabled) {
-            // reread the client and organisation
+            // reread the client and organization
             client = SessionHandler.getInstance().find(Client.class,
                     obContext.getCurrentClient().getId());
             org = SessionHandler.getInstance().find(Organization.class,
-                    obContext.getCurrentOrganisation().getId());
+                    obContext.getCurrentOrganization().getId());
         }
         for (int i = 0; i < propertyNames.length; i++) {
             if ("".equals(propertyNames[i])) {
@@ -250,7 +325,7 @@ public class OBInterceptor extends EmptyInterceptor {
     }
 
     // Sets the updated/updatedby
-    // TODO: can the client/organisation change?
+    // TODO: can the client/organization change?
     protected void onUpdate(Traceable t, String[] propertyNames,
             Object[] currentState) {
         final User currentUser = OBContext.getOBContext().getUser();

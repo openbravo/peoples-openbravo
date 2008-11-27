@@ -26,26 +26,47 @@ import java.util.List;
 
 import org.hibernate.proxy.HibernateProxy;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.ArgumentException;
-import org.openbravo.base.util.Check;
 
 /**
- * Utility class used by the dal layer
+ * Utility class used by the dal layer. It contains several copy methods and
+ * methods to retrieve the EntityName and id of an object without forcing a load
+ * by Hibernate.
  * 
  * @author mtaal
  */
 
 public class DalUtil {
 
-    // Copies a BaseOBObject and all its children, note will
-    // nullify the id of the copied object.
+    /**
+     * Copies a BaseOBObject and all its children (see
+     * {@link Entity#getParentProperties() parent}). Referenced objects are not
+     * copied. The id of the copied objects are all set to null.
+     * 
+     * @param source
+     *            the list of BaseOBObject which will be copied
+     * @return the copied BaseOBObject, child objects are also copied
+     */
     public static List<BaseOBObject> copyAll(List<BaseOBObject> source) {
         return copyAll(source, true);
     }
 
+    /**
+     * Copies a BaseOBObject and all its children (see
+     * {@link Entity#getParentProperties() parent}) are copied recursively.
+     * Referenced objects are not copied. The resetId parameter controls if the
+     * id of the copied objects is nullified.
+     * 
+     * @param source
+     *            the list of BaseOBObject which will be copied
+     * @param resetId
+     *            if true then the id's of the copied objects will be nullified
+     * @return the copied BaseOBObject, child objects are also copied
+     */
     public static List<BaseOBObject> copyAll(List<BaseOBObject> source,
             boolean resetId) {
         final List<BaseOBObject> result = new ArrayList<BaseOBObject>();
@@ -55,28 +76,62 @@ public class DalUtil {
         return result;
     }
 
+    /**
+     * Copies one object and its children. The id of the copied object (and its
+     * children) is set to null.
+     * 
+     * @param source
+     *            the object to be copied
+     * @return the copied object
+     */
     public static BaseOBObject copy(BaseOBObject source) {
         return copy(source, true);
     }
 
-    public static BaseOBObject copy(BaseOBObject source, boolean copyOneToMany) {
-        return copy(source, copyOneToMany, true);
+    /**
+     * Copies one object. The copyChildren parameter controls if the children of
+     * the object are also copied. The id of the copied object (and its
+     * children) is set to null.
+     * 
+     * @param source
+     *            the object to be copied
+     * @param copyChildren
+     *            this parameter controls if the children of the source are also
+     *            copied (recursively)
+     * @return the copied object
+     */
+    public static BaseOBObject copy(BaseOBObject source, boolean copyChildren) {
+        return copy(source, copyChildren, true);
     }
 
-    public static BaseOBObject copy(BaseOBObject source, boolean copyOneToMany,
+    /**
+     * Copies one object. The copyChildren parameter controls if the children of
+     * the object are also copied. The resetId parameter controls if the id of
+     * the copied object (and its children) is set to null.
+     * 
+     * @param source
+     *            the object to be copied
+     * @param copyChildren
+     *            this parameter controls if the children of the source are also
+     *            copied (recursively)
+     * @param resetId
+     *            if true then the id's of the copied objects will be nullified
+     * @return the copied object
+     */
+    public static BaseOBObject copy(BaseOBObject source, boolean copyChildren,
             boolean resetId) {
         final BaseOBObject target = (BaseOBObject) OBProvider.getInstance()
                 .get(source.getEntityName());
         for (final Property p : source.getEntity().getProperties()) {
             final Object value = source.getValue(p.getName());
             if (p.isOneToMany()) {
-                if (copyOneToMany) {
+                if (copyChildren) {
                     final List<BaseOBObject> targetChildren = new ArrayList<BaseOBObject>();
                     target.setValue(p.getName(), targetChildren);
                     @SuppressWarnings("unchecked")
                     final List<BaseOBObject> sourceChildren = (List<BaseOBObject>) value;
                     for (final BaseOBObject sourceChild : sourceChildren) {
-                        targetChildren.add(copy(sourceChild, copyOneToMany,
+                        targetChildren.add(copy(sourceChild, copyChildren,
                                 resetId));
                     }
                 }
@@ -90,32 +145,17 @@ public class DalUtil {
         return target;
     }
 
-    // returns the referenced value, handles primary key as
-    // well as non-primary key properties. The referencingProperty
-    // is the property from the owner object.
-    public static Serializable getReferencedPropertyValue(
-            Property referencingProperty, Object o) {
-        Check.isTrue(referencingProperty.getReferencedProperty() != null,
-                "This property " + referencingProperty
-                        + " does not have a referenced Property");
-        final Property referencedProperty = referencingProperty
-                .getReferencedProperty();
-        if (referencedProperty.isId()) {
-            if (o instanceof HibernateProxy)
-                return ((HibernateProxy) o).getHibernateLazyInitializer()
-                        .getIdentifier();
-            if (o instanceof BaseOBObject)
-                return (Serializable) ((BaseOBObject) o).getId();
-        } else if (o instanceof BaseOBObject) {
-            return (Serializable) ((BaseOBObject) o).get(referencedProperty
-                    .getName());
-        }
-
-        throw new ArgumentException(
-                "Argument is not a BaseOBObject and not a HibernateProxy");
-    }
-
-    // returns the id, takes care of not resolving proxies
+    /**
+     * This method returns the id of the object without loading/resolving it in
+     * Hibernate (if possible). If the object is a HibernateProxy then the id is
+     * retrieved from the proxy object instead of calling the method on the
+     * 'real' object. This prevents loading of the object through Hibernate.
+     * 
+     * @param o
+     *            the object (either a {@link BaseOBObject BaseOBObject} or a
+     *            Hibernate Proxy object
+     * @return the id, most of the time a String
+     */
     public static Serializable getId(Object o) {
         if (o instanceof HibernateProxy)
             return ((HibernateProxy) o).getHibernateLazyInitializer()
@@ -127,6 +167,17 @@ public class DalUtil {
                         + (o != null ? o.getClass().getName() : "NULL"));
     }
 
+    /**
+     * Returns the entity name (see {@link Entity@getName()} without
+     * loading/resolving the object. If the object is a Hibernate proxy then the
+     * entity name is retrieved through the proxy and not directly from the
+     * object. This prevent unwanted loading of the object.
+     * 
+     * @param o
+     *            the object to get the entity name for, can be a Hibernate
+     *            proxy or a {@link BaseOBObject}
+     * @return the entity name
+     */
     // returns the static member containing the entityname
     // handles hibernate proxies
     // TODO: create a cache!
