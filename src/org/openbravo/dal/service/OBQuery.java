@@ -148,8 +148,8 @@ public class OBQuery<E extends BaseOBObject> {
             prefix = alias + ".";
         }
 
-        // is used because the clauses which are added should all be and-ed
-        // special cases which need to be handled:
+        // The following if is there because the clauses which are added should
+        // all be and-ed. Special cases which need to be handled:
         // left join a left join b where a.id is not null or b.id is not null
         // id='0' and exists (from ADModelObject as mo where mo.id=id)
         // id='0'

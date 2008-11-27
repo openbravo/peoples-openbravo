@@ -35,9 +35,12 @@ import org.openbravo.base.validation.PropertyValidator;
 
 /**
  * Models the business object type. The Entity is the main concept in the
- * in-memory model. An entity corresponds mostly to a table in the database. An
- * Entity has properties which are primitive typed, references or lists of
- * children.
+ * in-memory model. An entity corresponds to a {@link Table} in the database. An
+ * Entity has properties which are primitive typed, references or lists of child
+ * entities.
+ * 
+ * @see Property
+ * @see ModelProvider
  * 
  * @author iperdomo
  * @author mtaal
@@ -194,8 +197,8 @@ public class Entity {
      * @see EntityValidator
      * @see PropertyValidator
      */
-    public void validate(Object o) {
-        entityValidator.validate(o);
+    public void validate(Object obj) {
+        entityValidator.validate(obj);
     }
 
     public String getName() {

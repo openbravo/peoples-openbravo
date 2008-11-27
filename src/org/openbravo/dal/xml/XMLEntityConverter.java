@@ -202,7 +202,7 @@ public class XMLEntityConverter implements OBNotSingleton {
             // resolve will create a new object if none is found
             BaseOBObject bob = resolve(entityName, id, false);
 
-            // should never be null at this point!
+            // should never be null at this point
             Check.isNotNull(bob, "The business object " + entityName + " ("
                     + id + ") can not be resolved");
 
@@ -221,8 +221,6 @@ public class XMLEntityConverter implements OBNotSingleton {
             final Entity entity = ModelProvider.getInstance().getEntity(
                     obElement.getName());
             boolean updated = false;
-
-            boolean checkedUniqueConstraint = false;
 
             // the onetomany properties are done in a second pass
             final List<Element> oneToManyElements = new ArrayList<Element>();
@@ -243,7 +241,8 @@ public class XMLEntityConverter implements OBNotSingleton {
                     continue;
                 }
 
-                // ignore these as they are already set, or should not be set
+                // ignore the id properties as they are already set, or should
+                // not be set
                 if (p.isId()) {
                     continue;
                 }
@@ -251,19 +250,6 @@ public class XMLEntityConverter implements OBNotSingleton {
                 if (p.isOneToMany()) {
                     oneToManyElements.add(childElement);
                     continue;
-                }
-
-                // the onetomany properties are the last one in the property
-                // list
-                // they are not used for uniqueconstraint checking
-                // so do the logic for finding a matching object right now
-                if (checkedUniqueConstraint && p.isOneToMany()) {
-
-                    final BaseOBObject matchingObject = entityResolver
-                            .findUniqueConstrainedObject(bob);
-                    if (matchingObject != null) {
-                        checkedUniqueConstraint = true;
-                    }
                 }
 
                 final Object currentValue = bob.get(p.getName());
@@ -312,10 +298,10 @@ public class XMLEntityConverter implements OBNotSingleton {
                         newValue = resolve(refEntityName, refId, true);
                     }
 
-                    // only update if changed
-                    if ((currentValue == null && newValue != null)
+                    final boolean hasChanged = (currentValue == null && newValue != null)
                             || (currentValue != null && newValue != null && !currentValue
-                                    .equals(newValue))) {
+                                    .equals(newValue));
+                    if (hasChanged) {
                         log.debug("Setting value " + newValue);
                         if (!preventRealUpdate) {
                             bob.set(p.getName(), newValue);
@@ -328,9 +314,8 @@ public class XMLEntityConverter implements OBNotSingleton {
 
             // do the unique constraint matching here
             // if there is a matching object in the db then that one should be
-            // used from now on
-            // this check can not be done earlier because earlier no properties
-            // are set for a new object
+            // used from now on this check can not be done earlier because
+            // earlier no properties are set for a new object
             if (bob.isNewOBObject() && entity.getUniqueConstraints().size() > 0) {
                 final BaseOBObject otherUniqueObject = entityResolver
                         .findUniqueConstrainedObject(bob);
