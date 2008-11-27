@@ -73,7 +73,7 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="C_CURRENCY_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="C_CURRENCY_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault><![CDATA[CASE WHEN AD_CLIENT_ID = '0' THEN '102' ELSE (SELECT C_ACCTSCHEMA.C_CURRENCY_ID FROM C_ACCTSCHEMA, AD_CLIENTINFO WHERE AD_CLIENTINFO.C_ACCTSCHEMA1_ID = C_ACCTSCHEMA.C_ACCTSCHEMA_ID AND AD_CLIENT.AD_CLIENT_ID = AD_CLIENTINFO.AD_CLIENT_ID) END]]></onCreateDefault>
       </column>

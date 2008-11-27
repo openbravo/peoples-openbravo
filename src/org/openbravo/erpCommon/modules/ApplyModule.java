@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import net.sf.cglib.transform.impl.FieldProvider;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.CPStandAlone;
@@ -43,42 +44,45 @@ import org.openbravo.service.db.DataImportService;
 import org.openbravo.service.db.ImportResult;
 
 /**
- * ApplyModule processes all modules that are in status (I)Installed but not
- * (A)Applied yet. This process is done by the execute method.
+ * ApplyModule processes all modules that are in status (I)Installed or (P)Pending
+ * but not (A)Applied yet. This process is done by the execute method.
  * 
  * 
  */
 public class ApplyModule {
-	private static ConnectionProvider pool;
-	static Logger log4j = Logger.getLogger(ExtractModule.class);
-	private String obDir;
+    private static ConnectionProvider pool;
+    static Logger log4j = Logger.getLogger(ApplyModule.class);
+    private String obDir;
 
-	public ApplyModule(ConnectionProvider cp, String dir) {
-		pool = cp;
-		obDir = dir;
-	}
+    public ApplyModule(ConnectionProvider cp, String dir) {
+        pool = cp;
+        obDir = dir;
+        PropertyConfigurator.configure(obDir+"/src/log4j.lcf");
+        log4j = Logger.getLogger(ApplyModule.class);
+    }
 
-	/**
-	 * Process the Installed but not applied modules, the treatement for these
-	 * modules is: *Translation modules In case the module contains translations
-	 * the process will: -Sets the module language as system -Populates the trl
-	 * tables calling the verify language process (this is done just once for
-	 * all the modules with translations. -Imports the xml files with
-	 * translations into trl tables.
-	 * 
-	 * *Reference data modules for client system Loads the reference data in
-	 * client system (TODO: implement it)
-	 * 
-	 * *All modules Sets them as installed
-	 * 
-	 * *Uninstalled modules Deletes them
-	 */
-	public void execute() {
+    /**
+     * Process the Installed but not applied modules, the treatement for these
+     * modules is: *Translation modules In case the module contains translations
+     * the process will: -Sets the module language as system -Populates the trl
+     * tables calling the verify language process (this is done just once for
+     * all the modules with translations. -Imports the xml files with
+     * translations into trl tables.
+     * 
+     * *Reference data modules for client system Loads the reference data in
+     * client system (TODO: implement it)
+     * 
+     * *All modules Sets them as installed
+     * 
+     * *Uninstalled modules Deletes them
+     */
+    public void execute() {
+        PropertyConfigurator.configure(obDir+"/src/log4j.lcf");
 		try {
 			// **************** Translation modules ************************
 			// Check whether modules to install are translations
 			log4j.info("Looking for tranlation modules");
-			ApplyModuleData[] data = ApplyModuleData
+			final ApplyModuleData[] data = ApplyModuleData
 					.selectTranslationModules(pool);
 
 			if (data != null && data.length > 0) {
@@ -94,24 +98,24 @@ public class ApplyModule {
 				// Populate trl tables (execute verify languages)
 				try {
 					log4j.info("Executing verify language process");
-					String pinstance = SequenceIdData.getUUID();
+					final String pinstance = SequenceIdData.getUUID();
 					PInstanceProcessData.insertPInstance(pool, pinstance,
 							"179", "0", "N", "0", "0", "0");
 
-					VariablesSecureApp vars = new VariablesSecureApp("0", "0",
+					final VariablesSecureApp vars = new VariablesSecureApp("0", "0",
 							"0");
 
 					ActionButtonData.process179(pool, pinstance);
 
-					PInstanceProcessData[] pinstanceData = PInstanceProcessData
+					final PInstanceProcessData[] pinstanceData = PInstanceProcessData
 							.select(pool, pinstance);
-					OBError myMessage = Utility.getProcessInstanceMessage(pool,
+					final OBError myMessage = Utility.getProcessInstanceMessage(pool,
 							vars, pinstanceData);
 					if (myMessage.getType().equals("Error"))
 						log4j.error(myMessage.getMessage());
 					else
 						log4j.info(myMessage.getMessage());
-				} catch (ServletException ex) {
+				} catch (final ServletException ex) {
 					ex.printStackTrace();
 				}
 
@@ -132,36 +136,43 @@ public class ApplyModule {
 
 			// **************** Reference data for system client modules
 			// ************************
-			log4j.info("Looking for tranlation modules");
-			ApplyModuleData[] ds = orderModuleByDependency(ApplyModuleData
-					.selectClientReferenceModules(pool));
+			log4j.info("Looking for reference data modules");
+			final ApplyModuleData[] ds = orderModuleByDependency(
+			                        ApplyModuleData.selectClientReferenceModules(pool));
 
 			if (ds != null && ds.length > 0) {
 				log4j.info(ds.length + " System reference data modules found");
 				for (int i = 0; i < ds.length; i++) {
 					log4j.info("Importing data from module " + ds[i].name);
-					String strPath = obDir + "/modules/" + ds[i].javapackage
-							+ "/referencedata/standard";
-					File myDir = new File(strPath);
-					File[] myFiles = myDir.listFiles();
-					ArrayList<File> myTargetFiles = new ArrayList<File>();
+					String strPath;
+					if (ds[i].adModuleId.equals("0")) strPath = obDir+"/referencedata/standard";
+					else strPath = obDir + "/modules/" + ds[i].javapackage+"/referencedata/standard";
+					
+					final File myDir = new File(strPath);
+					final File[] myFiles = myDir.listFiles();
+					final ArrayList<File> myTargetFiles = new ArrayList<File>();
 					for (int j = 0; j < myFiles.length; j++) {
 						if (myFiles[j].getName().endsWith(".xml"))
 							myTargetFiles.add(myFiles[j]);
 					}
-					myFiles = myTargetFiles.toArray(myFiles);
-					for (int j = 0; j < myFiles.length; j++) {
-						String strXml = Utility.fileToString(myFiles[j]
-								.getPath());
-						DataImportService importService = DataImportService
+					
+					for (final File myF: myTargetFiles) {
+					  
+						final String strXml = Utility.fileToString(myF.getPath());
+						final DataImportService importService = DataImportService
 								.getInstance();
-						ImportResult result = importService.importDataFromXML(
+						final ImportResult result = importService.importDataFromXML(
 								OBDal.getInstance().get(Client.class, "0"),
 								OBDal.getInstance()
 										.get(Organization.class, "0"), strXml);
-						log4j.error(result.getErrorMessages());
-						log4j.warn(result.getWarningMessages());
-						log4j.debug(result.getLogMessages());
+						String msg = result.getErrorMessages();
+						if (msg!=null && msg.length()>0) log4j.error(result.getErrorMessages());
+						
+						msg = result.getWarningMessages();
+						if (msg!=null && msg.length()>0) log4j.warn(msg);
+						
+						msg = result.getLogMessages();
+						if (msg!=null && msg.length()>0) log4j.debug(msg);
 					}
 
 				}
@@ -172,42 +183,42 @@ public class ApplyModule {
 			log4j.info("Set modules as installed");
 			ApplyModuleData.setInstalled(pool);
 			ApplyModuleData.deleteUninstalled(pool);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	/**
-	 * Returns the modules {@link FieldProvider} ordered taking into account
-	 * dependencies
-	 * 
-	 * @param modules
-	 * @return
-	 */
-	private ApplyModuleData[] orderModuleByDependency(ApplyModuleData[] modules) {
-		if (modules == null || modules.length == 0)
-			return null;
-		ArrayList<String> list = new ArrayList<String>();
-		for (int i = 0; i < modules.length; i++) {
-			list.add(modules[i].adModuleId);
-		}
-		ArrayList<String> orderList = ModuleUtiltiy.orderByDependency(pool,
-				list);
-		ApplyModuleData[] rt = new ApplyModuleData[orderList.size()];
-		for (int i = 0; i < orderList.size(); i++) {
-			int j = 0;
-			while (j < modules.length
-					&& !modules[j].adModuleId.equals(orderList.get(i)))
-				j++;
-			rt[i] = modules[j];
-		}
-		return rt;
-	}
+    /**
+     * Returns the modules {@link FieldProvider} ordered taking into account
+     * dependencies
+     * 
+     * @param modules
+     * @return
+     */
+    private ApplyModuleData[] orderModuleByDependency(ApplyModuleData[] modules) {
+        if (modules == null || modules.length == 0)
+            return null;
+        final ArrayList<String> list = new ArrayList<String>();
+        for (int i = 0; i < modules.length; i++) {
+            list.add(modules[i].adModuleId);
+        }
+        final ArrayList<String> orderList = ModuleUtiltiy.orderByDependency(
+                pool, list);
+        final ApplyModuleData[] rt = new ApplyModuleData[orderList.size()];
+        for (int i = 0; i < orderList.size(); i++) {
+            int j = 0;
+            while (j < modules.length
+                    && !modules[j].adModuleId.equals(orderList.get(i)))
+                j++;
+            rt[i] = modules[j];
+        }
+        return rt;
+    }
 
-	public static void main(String[] args) {
-		ApplyModule am = new ApplyModule(new CPStandAlone(
-				"/ws/modularity/openbravo/config/Openbravo.properties"),
-				"/ws/modularity/openbravo");
-		am.execute();
-	}
+    public static void main(String[] args) {
+        final ApplyModule am = new ApplyModule(new CPStandAlone(
+                "/ws/modularity/openbravo/config/Openbravo.properties"),
+                "/ws/modularity/openbravo");
+        am.execute();
+    }
 }

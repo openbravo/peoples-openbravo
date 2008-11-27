@@ -95,7 +95,7 @@ public class AccessLevelChecker {
         @Override
         public void checkAccessLevel(String entity, String clientId,
                 String orgId) {
-            failOnZeroClient(entity, clientId);
+           // failOnZeroClient(entity, clientId);
         }
     };
 

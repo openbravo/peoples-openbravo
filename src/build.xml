@@ -168,12 +168,15 @@ build.war: build a war file in the lib directory.
           <path refid="project.class.path" />
        </classpath>
    </workflow>
+    <javac srcdir="${base.src.gen}:${base.src}/org/openbravo/dal:${base.src}/org/openbravo/base/structure" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}"  debug="true" debuglevel="lines,vars,source" deprecation="on">
+      <classpath refid="project.class.path"/>
+    </javac>
  </target>
 
 
 
   <target name="compileSqlc" depends="sqlc">
-    <javac srcdir="${build.sqlc}/src:${basedir}:${build.sqlc}/srcAD/org/openbravo/erpCommon/reference:${base.src.gen}:${base.modules}" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}"  debug="true" debuglevel="lines,vars,source" deprecation="on">
+    <javac srcdir="${build.sqlc}/src:${basedir}:${build.sqlc}/srcAD/org/openbravo/erpCommon/reference:${base.modules}" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}"  debug="true" debuglevel="lines,vars,source" deprecation="on">
       <classpath refid="project.class.path"/>
     </javac>
     <javac srcdir="${build.sqlc}/srcAD" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">

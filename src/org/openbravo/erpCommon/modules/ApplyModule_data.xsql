@@ -38,7 +38,7 @@
     <![CDATA[
       SELECT M.JAVAPACKAGE, M.NAME, M.AD_MODULE_ID
         FROM AD_MODULE M
-       WHERE (M.STATUS = 'I' OR STATUS IS NULL)
+       WHERE (M.STATUS = 'I' OR STATUS = 'P')
          AND M.HASREFERENCEDATA = 'Y'
     ]]></Sql>
   </SqlMethod>
@@ -59,7 +59,7 @@
     <![CDATA[
        UPDATE AD_MODULE
           SET STATUS = 'A', ISINDEVELOPMENT='N'
-        WHERE (STATUS = 'I' OR STATUS IS NULL)
+        WHERE (STATUS = 'I' OR STATUS ='P')
     ]]></Sql>
   </SqlMethod>
   

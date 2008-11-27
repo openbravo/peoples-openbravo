@@ -65,11 +65,12 @@ create.database: creates the database from scratch.
                 password="${bbdd.password}"
                 excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"
 		basedir="${base.db}/../.."
-                input="src-db/database/sourcedata,src-db/database/masterdata,src-db/database/sampledata,modules/*/src-db/database/sourcedata"
+                input="src-db/database/sourcedata,modules/*/src-db/database/sourcedata"
                 verbosity="${bbdd.verbosity}" />
     <antcall target="database.postimport.${bbdd.rdbms}" />
     <antcall target="database.postcreate.${bbdd.rdbms}" />
   </target>
+
 
 
 

@@ -95,7 +95,7 @@ compare.database.structure: refer to compare.database.structure target of databa
   <property name="build.docs" location="docs/api"/>
   <property name="jakarta.home" location="${env.CATALINA_HOME}"/>
   <property name="module" value="%"/>
-	<property name="apply.on.create" value="no"/>
+	<property name="apply.on.create" value="false"/>
 	<property name="obx.export.RD" value="false"/>
 	<property name="obx.export.DB" value="false"/>
 	<property name="obx.export.CS" value="false"/>
@@ -350,8 +350,15 @@ compare.database.structure: refer to compare.database.structure target of databa
     <antcall target="core.lib"/>
     <antcall target="wad.lib"/>
     <antcall target="trl.lib"/>
-    <antcall target="compile.complete"/>
-    <antcall target="war"/>
+    <antcall target="compile.complete.deploy"/>
+    <echo message="applying modules"/>
+    <taskdef name="applyModule"
+             classname="org.openbravo.erpCommon.modules.ApplyModuleTask">
+      <classpath refid="project.class.path"/>
+    </taskdef>
+    <applyModule userId="0"
+                 propertiesFile="${base.config}/Openbravo.properties"/>
+    <antcall target="import.database.sampledata"/>
   </target>
 
   <target name="eclipse.install.source" depends="init,code.rev">
@@ -361,12 +368,20 @@ compare.database.structure: refer to compare.database.structure target of databa
     <antcall target="eclipse.wad.lib"/>
     <antcall target="eclipse.trl.lib"/>
     <antcall target="eclipse.compile.complete"/>
+    <echo message="applying modules"/>
+    <taskdef name="applyModule"
+             classname="org.openbravo.erpCommon.modules.ApplyModuleTask">
+      <classpath refid="project.class.path"/>
+    </taskdef>
+    <applyModule userId="0"
+                 propertiesFile="${base.config}/Openbravo.properties"/>
+    <antcall target="import.database.sampledata"/>
   </target>
 
   <target name="create.database" depends="init,code.rev">
     <antcall target="database.lib"/>
     <ant dir="${base.db}" antfile="build-create.xml" target="create.database" inheritAll="true" inheritRefs="true"/>
-  	<antcall target="db.apply.modules"/>
+    <antcall target="db.apply.modules.sampledata"/>
   </target>
 
   <target name="update.database" depends="init,code.rev">
@@ -439,14 +454,27 @@ compare.database.structure: refer to compare.database.structure target of databa
   <target name="import.database.masterdata" depends="init,code.rev">
     <ant dir="${base.db}" target="import.database.masterdata" inheritAll="true" inheritRefs="true"/>
   </target>
-	
-	<target name="db.apply.modules" if="apply.modules.on.create">
+  
+  <target name="db.apply.modules" if="apply.modules.on.create">
+    <echo message="applying modules"/>
     <taskdef name="applyModule"
              classname="org.openbravo.erpCommon.modules.ApplyModuleTask">
       <classpath refid="project.class.path"/>
     </taskdef>
-    <applyModule/>
-	</target>
+    <applyModule userId="0"
+                 propertiesFile="${base.config}/Openbravo.properties"/>
+  </target>
+  
+  <target name="db.apply.modules.sampledata" if="apply.modules.on.create">
+    <echo message="applying modules"/>
+    <taskdef name="applyModule"
+             classname="org.openbravo.erpCommon.modules.ApplyModuleTask">
+      <classpath refid="project.class.path"/>
+    </taskdef>
+    <applyModule userId="0"
+                 propertiesFile="${base.config}/Openbravo.properties"/>
+    <antcall target="import.database.sampledata"/>
+  </target>
 		
 	<target name="apply.modules">
 	  <echo>Applying ${module} modules...</echo>
@@ -456,7 +484,8 @@ compare.database.structure: refer to compare.database.structure target of databa
     </taskdef>
     <antcall target="update.database.mod"/>
     <antcall target="generate.entities"/>
-    <applyModule/>
+    <applyModule userId="0"
+                 propertiesFile="${base.config}/Openbravo.properties"/>
 		<antcall target="compile.deploy"/>
 		<!--antcall target="deploy.context"/-->
 	</target>

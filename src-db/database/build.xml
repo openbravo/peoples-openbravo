@@ -133,7 +133,7 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
                 password="${bbdd.password}"
                 excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"
 				basedir="${base.db}/../.."
-                input="src-db/database/sourcedata,src-db/database/masterdata,src-db/database/sampledata,modules/*/src-db/database/sourcedata"
+                input="src-db/database/sourcedata,modules/*/src-db/database/sourcedata"
                 verbosity="${bbdd.verbosity}" />
     <antcall target="database.postimport.${bbdd.rdbms}" />
     <antcall target="database.postcreate.${bbdd.rdbms}" />
@@ -499,14 +499,14 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
 
 	  <target name="import.database.sampledata">
 	      <antcall target="database.preimport.${bbdd.rdbms}" />
-	      <importdata driver="${bbdd.driver}"
-	                  url="${bbdd.owner.url}"
-	                  user="${bbdd.user}"
-	                  password="${bbdd.password}"
-	                  excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"
-			  basedir="${base.db}/../.."
-                	  input="src-db/database/sampledata"
-	                  verbosity="${bbdd.verbosity}" />
+	    <importdata driver="${bbdd.driver}"
+	                url="${bbdd.owner.url}"
+	                user="${bbdd.user}"
+	                password="${bbdd.password}"
+	                excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"
+	        basedir="${base.db}/../.."
+	                input="src-db/database/sampledata"
+	                verbosity="${bbdd.verbosity}" />
 	      <antcall target="database.postimport.${bbdd.rdbms}" />
 	      <antcall target="database.postupdate.${bbdd.rdbms}" />
 	  </target>
