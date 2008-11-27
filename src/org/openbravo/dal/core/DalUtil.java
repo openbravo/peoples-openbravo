@@ -31,6 +31,7 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.ArgumentException;
+import org.openbravo.base.util.Check;
 
 /**
  * Utility class used by the dal layer. It contains several copy methods and
@@ -200,5 +201,30 @@ public class DalUtil {
         } catch (final Exception e) {
             throw new OBException(e);
         }
+    }
+
+    // returns the referenced value, handles primary key as
+    // well as non-primary key properties. The referencingProperty
+    // is the property from the owner object.
+    public static Serializable getReferencedPropertyValue(
+            Property referencingProperty, Object o) {
+        Check.isTrue(referencingProperty.getReferencedProperty() != null,
+                "This property " + referencingProperty
+                        + " does not have a referenced Property");
+        final Property referencedProperty = referencingProperty
+                .getReferencedProperty();
+        if (referencedProperty.isId()) {
+            if (o instanceof HibernateProxy)
+                return ((HibernateProxy) o).getHibernateLazyInitializer()
+                        .getIdentifier();
+            if (o instanceof BaseOBObject)
+                return (Serializable) ((BaseOBObject) o).getId();
+        } else if (o instanceof BaseOBObject) {
+            return (Serializable) ((BaseOBObject) o).get(referencedProperty
+                    .getName());
+        }
+
+        throw new ArgumentException(
+                "Argument is not a BaseOBObject and not a HibernateProxy");
     }
 }
