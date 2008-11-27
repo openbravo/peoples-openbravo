@@ -30,8 +30,8 @@ BEGIN
     END IF;
 
 
- IF :new.AD_Module_ID != '0' AND :new.ValidationType NOT IN ('L', 'T') THEN
-    RAISE_APPLICATION_ERROR(-20535, 'Only Table and List references are allowed in modules') ;
+ IF :new.AD_Module_ID != '0' AND :new.ValidationType = 'D' THEN
+    RAISE_APPLICATION_ERROR(-20535, 'New datatype references are not allowed in modules.');
  END IF;
 END AD_REFERENCE_TRG3
 ]]></body>
