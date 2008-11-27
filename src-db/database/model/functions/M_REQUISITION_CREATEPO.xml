@@ -136,7 +136,7 @@ BEGIN
                          AND COALESCE(M_REQUISITIONLINE.LOCKDATE, TO_DATE('01-01-1900', 'DD-MM-YYYY')) >= (now()-3))
               ) A, C_BPARTNER
        WHERE A.VENDOR_ID = C_BPARTNER.C_BPARTNER_ID
-       ORDER BY A.VENDOR_ID, COALESCE(A.A_PRICELIST_ID, C_BPARTNER.PO_PRICELIST_ID)) LOOP
+       ORDER BY A.VENDOR_ID, COALESCE(A.A_PRICELIST_ID, C_BPARTNER.PO_PRICELIST_ID), A.NEEDBYDATE) LOOP
       v_ResultStr:='Line start';
 
       IF (Cur_Lines.PRICELIST_ID IS NULL ) THEN
@@ -205,7 +205,7 @@ BEGIN
             COALESCE(Cur_Lines.Deliveryrule, 'A'), 'I', 'D', '5',
             0, 0, p_WAREHOUSE_ID, Cur_Lines.PRICELIST_ID,
              'N', 'N', 'N', v_BillTo_ID,
-            NULL, 'N', p_OrderDate
+            NULL, 'N', Cur_Lines.NEEDBYDATE
         );
       END IF;
 
@@ -248,7 +248,7 @@ BEGIN
           v_COrderLine_ID,v_Client_ID, p_Org_ID,'Y',
           now(), v_User_ID, now(), v_User_ID,
           v_C_Order_ID, v_Line, Cur_Lines.Vendor_ID, v_BPartner_Location_ID,
-          p_OrderDate, p_OrderDate, Cur_Lines.SUPPLIERNOTES, Cur_Lines.M_Product_ID,
+          p_OrderDate, Cur_Lines.NEEDBYDATE, Cur_Lines.SUPPLIERNOTES, Cur_Lines.M_Product_ID,
           Cur_Lines.M_AttributeSetInstance_ID,
           p_Warehouse_ID, Cur_Lines.C_UOM_ID, Cur_Lines.QTY - Cur_Lines.ORDEREDQTY, v_Currency_ID,
           v_PriceList, v_PriceActual, v_PriceLimit,
