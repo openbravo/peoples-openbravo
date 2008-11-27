@@ -22,8 +22,7 @@ package org.openbravo.service;
 import org.openbravo.base.exception.OBException;
 
 /**
- * Unchecked exception which also logs itself. Thrown inside of the webservice
- * package.
+ * Exception thrown when something fails in a webservice.
  * 
  * @author mtaal
  */

@@ -52,8 +52,12 @@ import org.openbravo.service.web.WebService;
 import org.openbravo.service.web.WebServiceUtil;
 
 /**
- * The main dal rest web service implementation.
+ * The main Data Access Layer REST web service implementation. It covers the
+ * four REST HTTP methods: DELETE, GET, POST and PUT. This service makes heavily
+ * use of the XML converters which translate Entity instances from and to XML.
  * 
+ * @see EntityXMLConverter
+ * @see XMLEntityConverter
  * @author mtaal
  */
 
@@ -61,6 +65,21 @@ public class DalWebService implements WebService {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Performs the GET REST operation. This service handles multiple types of
+     * request: the request for the XML Schema of the REST webservices, a single
+     * Business Object and a list of Business Objects is handled. The
+     * HttpRequest parameter 'template' makes it possible to process the XML
+     * result through a XSLT stylesheet.
+     * 
+     * @param path
+     *            the HttpRequest.getPathInfo(), the part of the url after the
+     *            context path
+     * @param request
+     *            the HttpServletRequest
+     * @param response
+     *            the HttpServletResponse
+     */
     public void doGet(String path, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         final String segment = WebServiceUtil.getInstance().getFirstSegment(
@@ -70,7 +89,7 @@ public class DalWebService implements WebService {
 
         Document doc;
         if (segment == null || segment.length() == 0) {
-            doc = ModelXMLConverter.getInstance().getTypesAsXML();
+            doc = ModelXMLConverter.getInstance().getEntitiesAsXML();
         } else if (segment.equals("schema")) {
             doc = ModelXMLConverter.getInstance().getSchema();
         } else {
@@ -167,11 +186,37 @@ public class DalWebService implements WebService {
         w.close();
     }
 
+    /**
+     * The POSt action corresponds to an import (of XML) of new Business
+     * Objects.
+     * 
+     * @param path
+     *            the HttpRequest.getPathInfo(), the part of the url after the
+     *            context path
+     * @param request
+     *            the HttpServletRequest
+     * @param response
+     *            the HttpServletResponse
+     */
     public void doPost(String path, HttpServletRequest request,
             HttpServletResponse response) {
         doChangeAction(path, request, response, ChangeAction.CREATE);
     }
 
+    /**
+     * The DELETE action can work in two modes: 1) if the URL points to a single
+     * Business Object then that one is deleted, 2) if not then the posted
+     * information is assumed to be a XML String identifying the Business
+     * Objects to delete.
+     * 
+     * @param path
+     *            the HttpRequest.getPathInfo(), the part of the url after the
+     *            context path
+     * @param request
+     *            the HttpServletRequest
+     * @param response
+     *            the HttpServletResponse
+     */
     public void doDelete(String path, HttpServletRequest request,
             HttpServletResponse response) {
 
@@ -204,13 +249,25 @@ public class DalWebService implements WebService {
         doChangeAction(path, request, response, ChangeAction.DELETE);
     }
 
+    /**
+     * The PUT action will update existing business objects using the posted xml
+     * string.
+     * 
+     * @param path
+     *            the HttpRequest.getPathInfo(), the part of the url after the
+     *            context path
+     * @param request
+     *            the HttpServletRequest
+     * @param response
+     *            the HttpServletResponse
+     */
     public void doPut(String path, HttpServletRequest request,
             HttpServletResponse response) {
         // update a resource
         doChangeAction(path, request, response, ChangeAction.UPDATE);
     }
 
-    public void doChangeAction(String path, HttpServletRequest request,
+    protected void doChangeAction(String path, HttpServletRequest request,
             HttpServletResponse response, ChangeAction changeAction) {
         response.setContentType("text/xml");
         response.setCharacterEncoding("utf-8");
@@ -226,7 +283,7 @@ public class DalWebService implements WebService {
         return;
     }
 
-    public String doChangeActionXML(String path, HttpServletRequest request,
+    protected String doChangeActionXML(String path, HttpServletRequest request,
             HttpServletResponse response, ChangeAction changeAction) {
         // get the resource
         final String segment = WebServiceUtil.getInstance().getFirstSegment(
@@ -252,7 +309,7 @@ public class DalWebService implements WebService {
         }
     }
 
-    public String importDataFromXML(Document doc, ChangeAction changeAction) {
+    protected String importDataFromXML(Document doc, ChangeAction changeAction) {
 
         final XMLEntityConverter xec = XMLEntityConverter.newInstance();
         xec.setClient(OBContext.getOBContext().getCurrentClient());
@@ -267,7 +324,7 @@ public class DalWebService implements WebService {
         // entities
         // so only update does not allow non-existing entities
         if (changeAction == ChangeAction.UPDATE) {
-            xec.getEntityResolver().setResolvingMode(ResolvingMode.MUSTEXIST);
+            xec.getEntityResolver().setResolvingMode(ResolvingMode.MUST_EXIST);
         }
         final List<BaseOBObject> processedObjects = xec.process(doc);
 

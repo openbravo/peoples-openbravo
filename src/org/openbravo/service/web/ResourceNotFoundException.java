@@ -22,7 +22,8 @@ package org.openbravo.service.web;
 import org.openbravo.base.exception.OBException;
 
 /**
- * Thrown when the resource which is being retrieved does not exist.
+ * This exception is thrown when the resource which is being retrieved does not
+ * exist.
  * 
  * @author mtaal
  */

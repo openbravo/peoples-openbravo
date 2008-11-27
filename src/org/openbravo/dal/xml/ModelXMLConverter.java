@@ -32,13 +32,16 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 
 /**
- * Converts one or more business objects to a XML presentation.
+ * Generates the XML Schema which represents the REST Webservice in and output.
+ * The XML Schema is generated on the basis of the in-memory model provided by
+ * the {@link ModelProvider}.
  * 
- * TODO: Support id's with multiple values
+ * @see Entity
+ * @see Property
  * 
  * @author mtaal
  */
-
+// TODO: Support id's with multiple values
 public class ModelXMLConverter implements OBSingleton {
     // private static final Logger log =
     // Logger.getLogger(DalToXMLConverter.class);
@@ -52,7 +55,12 @@ public class ModelXMLConverter implements OBSingleton {
         return instance;
     }
 
-    public Document getTypesAsXML() {
+    /**
+     * Returns the list of Entities as XML representations.
+     * 
+     * @return the Dom4j document containing the list of Entities
+     */
+    public Document getEntitiesAsXML() {
         final Document doc = XMLUtil.getInstance().createDomDocument();
         final Element root = doc.addElement("Types");
         final List<String> entityNames = new ArrayList<String>();
@@ -68,7 +76,12 @@ public class ModelXMLConverter implements OBSingleton {
         return doc;
     }
 
-    // Generates the schema, if the
+    /**
+     * Generates the XML Schema representation of the in-memory model. This XML
+     * Schema represents the in- and output of the REST web-services.
+     * 
+     * @return the Dom4j document containing the XML Schema.
+     */
     public Document getSchema() {
         final Document doc = XMLUtil.getInstance().createDomDocument();
         final Element root = doc.addElement("schema");

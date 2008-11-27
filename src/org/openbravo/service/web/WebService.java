@@ -37,15 +37,59 @@ public interface WebService extends OBModulePrefixRequired {
         CREATE, UPDATE, DELETE
     }
 
+    /**
+     * Is called for the Http GET method.
+     * 
+     * @param path
+     *            the HttpRequest.getPathInfo(), the part of the url after the
+     *            context path
+     * @param request
+     *            the HttpServletRequest
+     * @param response
+     *            the HttpServletResponse
+     */
     public void doGet(String path, HttpServletRequest request,
             HttpServletResponse response) throws Exception;
 
+    /**
+     * Is called for the Http POST method.
+     * 
+     * @param path
+     *            the HttpRequest.getPathInfo(), the part of the url after the
+     *            context path
+     * @param request
+     *            the HttpServletRequest
+     * @param response
+     *            the HttpServletResponse
+     */
     public void doPost(String path, HttpServletRequest request,
             HttpServletResponse response) throws Exception;
 
+    /**
+     * Is called for the Http DELETE method.
+     * 
+     * @param path
+     *            the HttpRequest.getPathInfo(), the part of the url after the
+     *            context path
+     * @param request
+     *            the HttpServletRequest
+     * @param response
+     *            the HttpServletResponse
+     */
     public void doDelete(String path, HttpServletRequest request,
             HttpServletResponse response) throws Exception;
 
+    /**
+     * Is called for the Http PUT method.
+     * 
+     * @param path
+     *            the HttpRequest.getPathInfo(), the part of the url after the
+     *            context path
+     * @param request
+     *            the HttpServletRequest
+     * @param response
+     *            the HttpServletResponse
+     */
     public void doPut(String path, HttpServletRequest request,
             HttpServletResponse response) throws Exception;
 }

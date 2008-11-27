@@ -46,7 +46,9 @@ import org.openbravo.model.ad.utility.DataSetColumn;
 import org.openbravo.model.ad.utility.DataSetTable;
 
 /**
- * Offers services around datasets including retrieving business objects etc.
+ * Offers services around datasets. The main function is to retrieve DataSets
+ * and to determine which Properties of an Entity can be exported and which
+ * objects can be exported.
  * 
  * @author Martin Taal
  */
@@ -66,6 +68,15 @@ public class DataSetService implements OBSingleton {
         DataSetService.instance = instance;
     }
 
+    /**
+     * Retrieves a dataset using the value and module of the dataset
+     * 
+     * @param value
+     *            the value used to find the dataset in the database
+     * @param moduleId
+     *            the id of the module used to find the dataset in the database
+     * @return the found DataSet
+     */
     public DataSet getDataSetByValueModule(String value, String moduleId) {
         final Module module = OBDal.getInstance().get(Module.class, moduleId);
         final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(
@@ -82,7 +93,13 @@ public class DataSetService implements OBSingleton {
         return (DataSet) list.get(0);
     }
 
-    // return a list of datasets on the basis of the moduleId
+    /**
+     * Finds datasets belonging to the Module with a specific moduleId.
+     * 
+     * @param moduleId
+     *            the moduleId of the module to use for searching datasets
+     * @return the list of found datasets
+     */
     public List<DataSet> getDataSetsByModuleID(String moduleId) {
         final Module module = OBDal.getInstance().get(Module.class, moduleId);
         final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(
@@ -91,7 +108,13 @@ public class DataSetService implements OBSingleton {
         return obc.list();
     }
 
-    // get a DataSet using its name
+    /**
+     * Finds a dataset solely on the basis of its value
+     * 
+     * @param value
+     *            the value to search for
+     * @return the found DataSet
+     */
     public DataSet getDataSetByValue(String value) {
         final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(
                 DataSet.class);
@@ -108,37 +131,66 @@ public class DataSetService implements OBSingleton {
         return ds.get(0);
     }
 
-    // return a list of DataSet tables instances on the basis of the
-    // DataSet
-    public List<DataSetTable> getDataSetTables(DataSet DataSet) {
-        final OBCriteria<DataSetTable> obc = OBDal.getInstance()
-                .createCriteria(DataSetTable.class);
-        obc.add(Expression.eq(DataSetTable.PROPERTY_DATASET, DataSet));
-        return obc.list();
+    /**
+     * Returns a list of DataSet tables instances on the basis of the DataSet
+     * 
+     * @param DataSet
+     *            the DataSet for which the list of tables is required
+     * @return the DataSetTables of the DataSet
+     * @deprecated use dataSet.getDataSetTableList()
+     */
+    @Deprecated
+    public List<DataSetTable> getDataSetTables(DataSet dataSet) {
+        return dataSet.getDataSetTableList();
     }
 
-    // return the list of DataSet columns for a table
-    public List<DataSetColumn> getDataSetColumns(DataSetTable DataSetTable) {
-        final OBCriteria<DataSetColumn> obc = OBDal.getInstance()
-                .createCriteria(DataSetColumn.class);
-        obc.add(Expression
-                .eq(DataSetColumn.PROPERTY_DATASETTABLE, DataSetTable));
-        return obc.list();
+    /**
+     * Return the list of DataSet columns for a table
+     * 
+     * @param dataSetTable
+     *            the dataSetTable for which the columns need to be found
+     * @return the list of DataSetColumns of the dataSetTable
+     * @deprecated use dataSetTable.getDataSetColumnList()
+     */
+    @Deprecated
+    public List<DataSetColumn> getDataSetColumns(DataSetTable dataSetTable) {
+        return dataSetTable.getDataSetColumnList();
     }
 
+    /**
+     * Determines which objects are exportable using the DataSetTable
+     * whereClause.
+     * 
+     * @param DataSetTable
+     *            the dataSetTable defines the Entity and the whereClause to use
+     * @param moduleId
+     *            the moduleId is a parameter in the whereClause
+     * @return the list of exportable business objects
+     */
     public List<BaseOBObject> getExportableObjects(DataSetTable DataSetTable,
             String moduleId) {
         return getExportableObjects(DataSetTable, moduleId,
                 new HashMap<String, Object>());
     }
 
-    // get the list of exportable objects, this assumes that the clause in
-    // the DataSetTable can be used directly in hql.
+    /**
+     * Determines which objects are exportable using the DataSetTable
+     * whereClause.
+     * 
+     * @param dataSetTable
+     *            the dataSetTable defines the Entity and the whereClause to use
+     * @param moduleId
+     *            the moduleId is a parameter in the whereClause
+     * @param parameters
+     *            a collection of named parameters which are used in the
+     *            whereClause of the dataSetTable
+     * @return the list of exportable business objects
+     */
     @SuppressWarnings("unchecked")
-    public List<BaseOBObject> getExportableObjects(DataSetTable DataSetTable,
+    public List<BaseOBObject> getExportableObjects(DataSetTable dataSetTable,
             String moduleId, Map<String, Object> parameters) {
 
-        final String entityName = DataSetTable.getTable().getName();
+        final String entityName = dataSetTable.getTable().getName();
         final Entity entity = ModelProvider.getInstance().getEntity(entityName);
 
         if (entity == null) {
@@ -146,7 +198,7 @@ public class DataSetService implements OBSingleton {
             return new ArrayList<BaseOBObject>();
         }
 
-        String whereClause = DataSetTable.getWhereClause();
+        String whereClause = dataSetTable.getWhereClause();
         if (moduleId != null && whereClause != null) {
             while (whereClause.indexOf("@moduleid@") != -1) {
                 whereClause = whereClause.replace("@moduleid@", "'" + moduleId
@@ -171,35 +223,68 @@ public class DataSetService implements OBSingleton {
         return (List<BaseOBObject>) list;
     }
 
-    // this method will return all properties as defined by the DataSetcolumns
-    // definition. It will return transient properties but not the auditinfo
-    // if so excluded by the DataSet definition.
+    /**
+     * This method will return the properties as defined by the DataSetcolumns
+     * definition. It will return transient properties but not the audit-info
+     * properties if so excluded by the DataSet definition.
+     * 
+     * @param bob
+     *            the business object to export
+     * @param dataSetTable
+     *            the dataSetTable to export
+     * @param dataSetColumns
+     *            the list of potential columns to export
+     * @return the list of properties which are exportable
+     */
     public List<Property> getEntityProperties(BaseOBObject bob,
-            DataSetTable DataSetTable, List<DataSetColumn> DataSetColumns) {
-        return getExportableProperties(bob, DataSetTable, DataSetColumns, true);
+            DataSetTable dataSetTable, List<DataSetColumn> dataSetColumns) {
+        return getExportableProperties(bob, dataSetTable, dataSetColumns, true);
     }
 
-    // this method will return the properties defined by the DataSetcolumns
-    // definition
-    // it will not export transients and it will not export the auditinfo if so
-    // defined by the DataSet
+    /**
+     * This method will return the properties as defined by the DataSetcolumns
+     * definition. It will <b>not</b> return transient properties and neither
+     * the audit-info properties if so excluded by the DataSet definition.
+     * 
+     * @param bob
+     *            the business object to export
+     * @param dataSetTable
+     *            the dataSetTable to export
+     * @param dataSetColumns
+     *            the list of potential columns to export
+     * @return the list of properties which are exportable
+     */
     public List<Property> getExportableProperties(BaseOBObject bob,
-            DataSetTable DataSetTable, List<DataSetColumn> DataSetColumns) {
-        return getExportableProperties(bob, DataSetTable, DataSetColumns, false);
+            DataSetTable dataSetTable, List<DataSetColumn> dataSetColumns) {
+        return getExportableProperties(bob, dataSetTable, dataSetColumns, false);
     }
 
-    // for the instance return the set of properties which need to be exported
+    /**
+     * This method will return the properties which are exportable as defined by
+     * the DataSetcolumns definition. It will include transient properties
+     * depending on the parameter. Audit-info properties are never exported
+     * 
+     * @param bob
+     *            the business object to export
+     * @param dataSetTable
+     *            the dataSetTable to export
+     * @param dataSetColumns
+     *            the list of potential columns to export
+     * @param exportTransients
+     *            if true then transient properties are also exportable
+     * @return the list of properties which are exportable
+     */
     public List<Property> getExportableProperties(BaseOBObject bob,
-            DataSetTable DataSetTable, List<DataSetColumn> DataSetColumns,
+            DataSetTable dataSetTable, List<DataSetColumn> dataSetColumns,
             boolean exportTransients) {
 
         final Entity entity = bob.getEntity();
         final List<Property> exportables;
         // check if all are included, except the excluded
-        if (DataSetTable.isIncludeAllColumns()) {
+        if (dataSetTable.isIncludeAllColumns()) {
             exportables = new ArrayList<Property>(entity.getProperties());
             // now remove the excluded
-            for (final DataSetColumn dsc : DataSetColumns) {
+            for (final DataSetColumn dsc : dataSetColumns) {
                 if (dsc.isExcluded()) {
                     exportables.remove(entity.getPropertyByColumnName(dsc
                             .getColumn().getColumnName()));
@@ -209,7 +294,7 @@ public class DataSetService implements OBSingleton {
             // not all included, go through the DataSetcolumns
             // and add the not excluded
             exportables = new ArrayList<Property>();
-            for (final DataSetColumn dsc : DataSetColumns) {
+            for (final DataSetColumn dsc : dataSetColumns) {
                 if (!dsc.isExcluded()) {
                     exportables.add(entity.getPropertyByColumnName(dsc
                             .getColumn().getColumnName()));
@@ -228,7 +313,7 @@ public class DataSetService implements OBSingleton {
         }
 
         // Remove the auditinfo
-        if (DataSetTable.isExcludeAuditInfo()) {
+        if (dataSetTable.isExcludeAuditInfo()) {
             final List<Property> toRemove = new ArrayList<Property>();
             for (final Property p : exportables) {
                 if (p.isAuditInfo()) {

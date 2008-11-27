@@ -22,7 +22,7 @@ package org.openbravo.service.web;
 import org.openbravo.base.exception.OBException;
 
 /**
- * Thrown when the posted content is not valid.
+ * This exception is thrown when the posted content is not valid.
  * 
  * @author mtaal
  */

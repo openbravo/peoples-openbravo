@@ -22,7 +22,8 @@ package org.openbravo.dal.xml;
 import org.openbravo.base.exception.OBException;
 
 /**
- * Thrown when a reference in xml does not exist.
+ * This Exception is thrown when a reference in xml does not exist as an object
+ * in the database.
  * 
  * @author mtaal
  */

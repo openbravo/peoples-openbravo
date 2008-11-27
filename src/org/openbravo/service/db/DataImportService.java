@@ -43,7 +43,8 @@ import org.openbravo.model.ad.utility.ReferenceDataStore;
 import org.openbravo.model.common.enterprise.Organization;
 
 /**
- * Imports business objects using datasets, makes use of the dataSetService.
+ * Imports business objects from XML. The business objects can be imported in a
+ * specific Client and Organization or as a complete Client import.
  * 
  * @author Martin Taal
  */
@@ -63,11 +64,46 @@ public class DataImportService implements OBSingleton {
         DataImportService.instance = instance;
     }
 
+    /**
+     * Imports the business objects using the client/organization. If there are
+     * no error messages and no Exception occurred then the import method will
+     * persist the imported business objects. However, the import method does
+     * not do a commit. It is the callers responsibility to call commit (if the
+     * ImportResult does not contain error messages).
+     * 
+     * @param client
+     *            the client in which the import takes place
+     * @param organization
+     *            the organization in which the business objects are created
+     * @param xml
+     *            the xml containing the data
+     * @return the result of the import (error, log and warning messages,
+     *         to-be-inserted and to-be-updated business objects
+     */
     public ImportResult importDataFromXML(Client client,
             Organization organization, String xml) {
         return importDataFromXML(client, organization, xml, null);
     }
 
+    /**
+     * Imports the business objects using the client/organization. If there are
+     * no error messages and no Exception occurred then the import method will
+     * persist the imported business objects. However, the import method does
+     * not do a commit. It is the callers responsibility to call commit (if the
+     * ImportResult does not contain error messages).
+     * 
+     * @param client
+     *            the client in which the import takes place
+     * @param organization
+     *            the organization in which the business objects are created
+     * @param xml
+     *            the xml containing the data
+     * @param module
+     *            the module is used to update the AD_REF_DATA_LOADED table
+     *            during the import action
+     * @return the result of the import (error, log and warning messages,
+     *         to-be-inserted and to-be-updated business objects
+     */
     public ImportResult importDataFromXML(Client client,
             Organization organization, String xml, Module module) {
         try {
@@ -78,7 +114,7 @@ public class DataImportService implements OBSingleton {
         }
     }
 
-    public ImportResult importDataFromXML(Client client,
+    private ImportResult importDataFromXML(Client client,
             Organization organization, Document doc,
             boolean createReferencesIfNotFound) {
         return importDataFromXML(client, organization, doc,
@@ -87,9 +123,10 @@ public class DataImportService implements OBSingleton {
 
     /**
      * Imports a complete client. This import method behaves slightly
-     * differently because it does not use the client/organization of the
-     * current user but uses the client and organization of the data in the
-     * import file itself. In addition no uniqueconstraint checking is done.
+     * differently than the other import methods because it does not use the
+     * client/organization of the current user but uses the client and
+     * organization of the data in the import file itself. In addition no
+     * unique-constraint checking is done.
      * 
      * @param xml
      *            the xml string containing the objects to import
@@ -100,6 +137,8 @@ public class DataImportService implements OBSingleton {
      * 
      * @return ImportResult which contains the updated/inserted objects and log
      *         and error messages
+     * 
+     * @see #importDataFromXML(Client, Organization, String)
      */
     public ImportResult importClientData(String xml,
             ImportProcessor importProcessor, Module module) {
@@ -113,7 +152,7 @@ public class DataImportService implements OBSingleton {
 
     }
 
-    public ImportResult importDataFromXML(Client client,
+    private ImportResult importDataFromXML(Client client,
             Organization organization, Document doc,
             boolean createReferencesIfNotFound, Module module,
             ImportProcessor importProcessor, boolean isClientImport) {

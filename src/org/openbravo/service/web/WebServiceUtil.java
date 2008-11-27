@@ -38,7 +38,8 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.xml.XMLUtil;
 
 /**
- * Utility class.
+ * Utility class for webservices, contains convenience methods for creating
+ * result xml messages.
  * 
  * @author mtaal
  */
@@ -58,6 +59,15 @@ public class WebServiceUtil implements OBSingleton {
         WebServiceUtil.instance = instance;
     }
 
+    /**
+     * Creates an error xml result String using the information from the passed
+     * in Throwable.
+     * 
+     * @param t
+     *            the Throwable used to set the error message
+     * @return the xml error String, e.g. <error><message>An error
+     *         occurred</message></error>
+     */
     public String createErrorXML(Throwable t) {
         Throwable x = t;
         final StringBuilder sb = new StringBuilder(t.getMessage());
@@ -71,10 +81,29 @@ public class WebServiceUtil implements OBSingleton {
         return "<error><message>" + sb + "</message></error>";
     }
 
+    /**
+     * Creates a standard result xml: <result>My Result</result>
+     * 
+     * @param content
+     *            the content of the result message
+     * @return a xml result string
+     */
     public String createResultXML(String content) {
         return "<result>" + content + "</result>";
     }
 
+    /**
+     * Creates a standard result xml with log and warning: <result><msg>My
+     * Result</msg><log>My Log</log><warning>My Warning</warning></result>
+     * 
+     * @param msg
+     *            the content of the result
+     * @param log
+     *            the log message
+     * @param warning
+     *            the warning message
+     * @return a xml result string
+     */
     public String createResultXMLWithLogWarning(String msg, String log,
             String warning) {
         final Document doc = DocumentHelper.createDocument();
@@ -91,6 +120,16 @@ public class WebServiceUtil implements OBSingleton {
         return XMLUtil.getInstance().toString(doc);
     }
 
+    /**
+     * Creates a full result xml with message, log, warning and the id and
+     * identifiers of the inserted, updated and deleted objects. Especially id's
+     * are required because the caller of the webservice (which inserts objects)
+     * needs to be able to retrieve the id's of the inserted objects to retrieve
+     * these objects later again.
+     * 
+     * @return the xml message containing the message, log, warning and id and
+     *         identifiers of inserted, updated and deleted messages
+     */
     public String createResultXMLWithObjectsAndWarning(String msg, String log,
             String warning, List<BaseOBObject> inserted,
             List<BaseOBObject> updated, List<BaseOBObject> deleted) {
@@ -126,6 +165,15 @@ public class WebServiceUtil implements OBSingleton {
         }
     }
 
+    /**
+     * Returns the first segment of a path, for example: /openbravo/webservice
+     * will return openbravo here. This method is used to find the name of the
+     * webservice which is requested.
+     * 
+     * @param path
+     *            the request.getPath()
+     * @return the first part of the path
+     */
     public String getFirstSegment(String path) {
         String localPath = path;
         if (path.startsWith("/")) {
@@ -141,6 +189,13 @@ public class WebServiceUtil implements OBSingleton {
         return localPath;
     }
 
+    /**
+     * Splits the path into segments by splitting on the / character
+     * 
+     * @param path
+     *            the request.getPath()
+     * @return the segments of the path
+     */
     public String[] getSegments(String path) {
         String localPath = path;
         if (path.startsWith("/")) {
@@ -152,6 +207,16 @@ public class WebServiceUtil implements OBSingleton {
         return localPath.split("/");
     }
 
+    /**
+     * Applies an XSLT template on the XML in the sourceDocument. The resulting
+     * Dom4j Document is returned.
+     * 
+     * @param sourceDocument
+     *            the source xml
+     * @param template
+     *            the XSLT template
+     * @return the resulting XML
+     */
     public Document applyTemplate(Document sourceDocument, InputStream template) {
         try {
             final TransformerFactory factory = TransformerFactory.newInstance();

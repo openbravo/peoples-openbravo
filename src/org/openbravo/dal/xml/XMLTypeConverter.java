@@ -29,7 +29,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 
 /**
- * Converts primitive types from xml and back.
+ * Converts primitive types to a XML representation and back.
  * 
  * @author mtaal
  */
@@ -52,22 +52,42 @@ public class XMLTypeConverter implements OBSingleton {
     private final SimpleDateFormat xmlDateFormat = new SimpleDateFormat(
             "yyyy-MM-dd'T'HH:mm:ss.S'Z'");
 
+    /**
+     * @return the String format of a {@link Date}, the standard xml format is
+     *         used: yyyy-MM-dd'T'HH:mm:ss.S'Z'
+     * @param dt
+     *            the Date to format
+     * @return the String representation of the Date in xml format
+     */
     public String toXML(Date dt) {
         return xmlDateFormat.format(dt);
     }
 
+    /**
+     * @return numbers are converted using the Number.toString method
+     */
     public String toXML(Number number) {
         return number.toString();
     }
 
+    /** @return the parameter str is returned without changing it */
     public String toXML(String str) {
         return str;
     }
 
+    /** @return the result of the b.toString() method is returned */
     public String toXML(Boolean b) {
         return b.toString();
     }
 
+    /**
+     * Returns an empty string if the object is null. In other cases the call is
+     * forwarded to one of the other toXML methods in this class.
+     * 
+     * @param o
+     *            the value to convert to a String XML representation
+     * @return the String XML representation
+     */
     public String toXML(Object o) {
         if (o == null) {
             return "";
@@ -89,6 +109,17 @@ public class XMLTypeConverter implements OBSingleton {
         // " not supported");
     }
 
+    /**
+     * Converts an xml String back to a primitive type java Object. If the xml
+     * string has lenght zero then null is returned.
+     * 
+     * @param targetClass
+     *            the class of the primitive type (e.g. String.class,
+     *            Float.class)
+     * @param xml
+     *            the xml string to convert
+     * @return the converted object
+     */
     @SuppressWarnings("unchecked")
     public <T extends Object> T fromXML(Class<T> targetClass, String xml) {
         if (xml.length() == 0) {
@@ -132,6 +163,9 @@ public class XMLTypeConverter implements OBSingleton {
                 + targetClass.getName());
     }
 
+    /**
+     * @return the XML Schema type which matches the targetClass parameter
+     */
     public String toXMLSchemaType(Class<?> targetClass) {
         if (Date.class == targetClass) {
             return "dateTime";

@@ -42,7 +42,13 @@ import org.openbravo.model.ad.system.SystemInformation;
 
 /**
  * Converts one or more business objects to a XML presentation. There are
- * several options which control the behavior.
+ * several options which control the behavior. One option is to include
+ * referenced objects (or not). For example Currency references Country, if a
+ * Currency instance is exported should then also the Country instance be
+ * exported. Another option controls if the children of a business object (e.g.
+ * the order lines of an order) are exported within the part as a subnode in the
+ * xml result. Or that children are not exported or exported in the root of the
+ * xml document.
  * 
  * @author mtaal
  */
@@ -85,7 +91,11 @@ public class EntityXMLConverter implements OBNotSingleton {
 
     private Document document = null;
 
-    // clear internal data to start with a fresh face
+    /**
+     * Clear internal data structures, after this call this converter can be
+     * used for a new set of objects which need to be exported to a xml
+     * representation.
+     */
     public void clear() {
         document = null;
         referenced.clear();
@@ -93,12 +103,26 @@ public class EntityXMLConverter implements OBNotSingleton {
         consideredForHandling.clear();
     }
 
+    /**
+     * Converts one business object to xml and returns the resulting xml string.
+     * 
+     * @param obObject
+     *            the object to convert to xml
+     * @return the xml representation of obObject
+     */
     public String toXML(BaseOBObject obObject) {
         final List<BaseOBObject> bobs = new ArrayList<BaseOBObject>();
         bobs.add(obObject);
         return toXML(bobs);
     }
 
+    /**
+     * Converts a collection of business objects to xml.
+     * 
+     * @param bobs
+     *            the collection to convert
+     * @return the resulting xml string
+     */
     public String toXML(Collection<BaseOBObject> bobs) {
         clear();
         process(bobs);
@@ -118,6 +142,15 @@ public class EntityXMLConverter implements OBNotSingleton {
         addSystemAttributes(rootElement);
     }
 
+    /**
+     * Processes one business object and adds it to the dom4j document which is
+     * present in the EntityXMLConverter. After this call the xml can be
+     * retrieved by calling the {@link #getDocument()} or the
+     * {@link #getProcessResult()} method.
+     * 
+     * @param bob
+     *            the business object to convert to xml (dom4j)
+     */
     public void process(BaseOBObject bob) {
         createDocument();
         // set the export list
@@ -128,6 +161,15 @@ public class EntityXMLConverter implements OBNotSingleton {
         export(getDocument().getRootElement());
     }
 
+    /**
+     * Processes a collection of business objects and adds their xml to the
+     * dom4j document which is present in the EntityXMLConverter. After this
+     * call the xml can be retrieved by calling the {@link #getDocument()} or
+     * the {@link #getProcessResult()} method.
+     * 
+     * @param bob
+     *            the business object to convert to xml (dom4j)
+     */
     public void process(Collection<BaseOBObject> bobs) {
         createDocument();
         // set the export list
@@ -138,6 +180,9 @@ public class EntityXMLConverter implements OBNotSingleton {
         export(getDocument().getRootElement());
     }
 
+    /**
+     * @return the xml String created by formatting the internal dom4j Document
+     */
     public String getProcessResult() {
         return XMLUtil.getInstance().toString(getDocument());
     }
@@ -304,48 +349,88 @@ public class EntityXMLConverter implements OBNotSingleton {
         getToHandle().remove(bob);
     }
 
+    /**
+     * Controls if referenced objects (through many-to-one associations) should
+     * also be exported (in the root of the xml).
+     * 
+     * @return true the referenced objects are exported, false (the default)
+     *         referenced objects are not exported
+     */
     public boolean isOptionIncludeReferenced() {
         return optionIncludeReferenced;
     }
 
+    /**
+     * Controls if referenced objects (through many-to-one associations) should
+     * also be exported (in the root of the xml).
+     * 
+     * @param optionIncludeReferenced
+     *            set to true the referenced objects are exported, set to false
+     *            (the default) referenced objects are not exported
+     */
     public void setOptionIncludeReferenced(boolean optionIncludeReferenced) {
         this.optionIncludeReferenced = optionIncludeReferenced;
     }
 
+    /**
+     * Controls if children (the one-to-many associations) are exported. If true
+     * then the children can be exported embedded in the parent or in the root
+     * of the xml. This is controlled by the {@link #isOptionEmbedChildren()}
+     * option.
+     * 
+     * @return true children are exported as well, false (the default) children
+     *         are not exported
+     */
     public boolean isOptionIncludeChildren() {
         return optionIncludeChildren;
     }
 
+    /**
+     * Controls if children (the one-to-many associations) are exported. If true
+     * then the children can be exported embedded in the parent or in the root
+     * of the xml. This is controlled by the {@link #isOptionEmbedChildren()}
+     * option.
+     * 
+     * @param optionIncludeChildren
+     *            set to true children are exported as well, set to false (the
+     *            default) children are not exported
+     */
     public void setOptionIncludeChildren(boolean optionIncludeChildren) {
         this.optionIncludeChildren = optionIncludeChildren;
     }
 
+    /**
+     * This option controls if children are exported within the parent or in the
+     * root of the xml. The default is embedded (default value is true).
+     * 
+     * @return true (default) children are embedded in the parent, false
+     *         children are exported in the root of the xml
+     */
     public boolean isOptionEmbedChildren() {
         return optionEmbedChildren;
     }
 
+    /**
+     * This option controls if children are exported within the parent or in the
+     * root of the xml. The default is embedded (default value is true).
+     * 
+     * @return true (default) children are embedded in the parent, false
+     *         children are exported in the root of the xml
+     */
     public void setOptionEmbedChildren(boolean optionEmbedChildren) {
         this.optionEmbedChildren = optionEmbedChildren;
     }
 
-    public List<BaseOBObject> getToHandle() {
+    private List<BaseOBObject> getToHandle() {
         return toHandle;
     }
 
-    public Set<BaseOBObject> getReferenced() {
+    private Set<BaseOBObject> getReferenced() {
         return referenced;
     }
 
-    public void setReferenced(Set<BaseOBObject> referenced) {
-        this.referenced = referenced;
-    }
-
-    public Set<BaseOBObject> getConsideredForHandling() {
+    private Set<BaseOBObject> getConsideredForHandling() {
         return consideredForHandling;
-    }
-
-    public void setConsideredForExport(Set<BaseOBObject> consideredForExport) {
-        this.consideredForHandling = consideredForExport;
     }
 
     protected void addSystemAttributes(Element element) {
@@ -374,26 +459,67 @@ public class EntityXMLConverter implements OBNotSingleton {
         }
     }
 
-    public boolean isAddSystemAttributes() {
+    private boolean isAddSystemAttributes() {
         return addSystemAttributes;
     }
 
+    /**
+     * If set to true then the system version and revision are exported as
+     * attributes of the root tag.
+     * 
+     * @param addSystemAttributes
+     *            if true (the default) then the Openbravo version and revision
+     *            are exported in the root tag.
+     */
     public void setAddSystemAttributes(boolean addSystemAttributes) {
         this.addSystemAttributes = addSystemAttributes;
     }
 
+    /**
+     * Returns the Dom4j Document which contains the xml. Subsequence calls to
+     * {@link #process(BaseOBObject)} or {@link #process(Collection)} will add
+     * content to this document.
+     * 
+     * @return the Dom4j Document containing the xml
+     */
     public Document getDocument() {
         return document;
     }
 
+    /**
+     * Makes it possible to add exported business objects to an existing Dom4j
+     * document.
+     * 
+     * @param document
+     *            the Dom4j document to which the business objects are added
+     */
     public void setDocument(Document document) {
         this.document = document;
     }
 
+    /**
+     * Controls if the client and organization properties are also exported. The
+     * default is false. If this is set to true then the import program should
+     * take into account that the client/organization are present in the import
+     * xml.
+     * 
+     * @return if true then the client/organization properties are exported, if
+     *         false then not
+     */
     public boolean isOptionExportClientOrganizationReferences() {
         return optionExportClientOrganizationReferences;
     }
 
+    /**
+     * Controls if the client and organization properties are also exported. The
+     * default is false. If this is set to true then the import program should
+     * take into account that the client/organization are present in the import
+     * xml.
+     * 
+     * @param optionExportClientOrganizationReferences
+     *            if set to true then the client/organization properties are
+     *            exported, if false then not
+     */
     public void setOptionExportClientOrganizationReferences(
             boolean optionExportClientOrganizationReferences) {
         this.optionExportClientOrganizationReferences = optionExportClientOrganizationReferences;

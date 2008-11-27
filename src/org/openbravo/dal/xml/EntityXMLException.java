@@ -22,8 +22,12 @@ package org.openbravo.dal.xml;
 import org.openbravo.base.exception.OBException;
 
 /**
- * Unchecked state exception which also logs itself.
+ * Is thrown when an Exception situation occurs in the XML to Entity or the
+ * Entity to XML code.
  * 
+ * @see EntityXMLConverter
+ * @see XMLEntityConverter
+ * @see XMLTypeConverter
  * @author mtaal
  */
 public class EntityXMLException extends OBException {

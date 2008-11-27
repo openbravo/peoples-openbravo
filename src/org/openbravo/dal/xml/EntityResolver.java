@@ -48,16 +48,29 @@ import org.openbravo.model.ad.utility.ReferenceDataStore;
 import org.openbravo.model.common.enterprise.Organization;
 
 /**
- * The entity resolver will get an identifier and entityname and check if this
- * instance exists in the database using the mapping table (ref_data_loaded).
+ * The entity resolver will resolve an entity name and id to a business object.
+ * The resolver will first try to find the business object in the database in
+ * the accessible clients and organizations using the id and the content of the
+ * mapping table (AD_REF_DATA_LOADED table). If not found then unique
+ * constraints are used to find matching objects in the database. If then still
+ * no existing object is found then a new object is created and based on the
+ * accesslevel of the Entity the client and organization are set.
  * 
  * @author mtaal
  */
 
 public class EntityResolver implements OBNotSingleton {
 
+    /**
+     * The resolving mode determines how the EntityResolver should response if
+     * no existing object can be found for a certain entity name and id.
+     * <p/>
+     * ALLOW_NOT_EXIST (the default) will allow a not-yet existing object and
+     * will create a new one. MUST_EXIST will result in an
+     * EntityNotFoundException if the object can not be found in the database.
+     */
     public enum ResolvingMode {
-        ALLOW_NOT_EXIST, MUSTEXIST
+        ALLOW_NOT_EXIST, MUST_EXIST
     }
 
     public static EntityResolver getInstance() {
@@ -80,7 +93,7 @@ public class EntityResolver implements OBNotSingleton {
 
     private boolean optionCreateReferencedIfNotFound = true;
 
-    public void clear() {
+    void clear() {
         data.clear();
         objectOriginalIdMapping.clear();
     }
@@ -88,7 +101,7 @@ public class EntityResolver implements OBNotSingleton {
     // searches for a previous entity with the same id or an id retrieved from
     // the ad_ref_data_loaded table. The resolving takes into account different
     // access levels and
-    public BaseOBObject resolve(String entityName, String id, boolean referenced) {
+    BaseOBObject resolve(String entityName, String id, boolean referenced) {
 
         Check.isNotNull(client, "Client should not be null");
         Check.isNotNull(organization, "Org should not be null");
@@ -115,7 +128,7 @@ public class EntityResolver implements OBNotSingleton {
                 throw new EntityNotFoundException("Entity " + entityName
                         + " with id " + id + " not found");
             }
-            if (resolvingMode == ResolvingMode.MUSTEXIST) {
+            if (resolvingMode == ResolvingMode.MUST_EXIST) {
                 throw new EntityNotFoundException("Entity " + entityName
                         + " with id " + id + " not found");
             }
@@ -180,7 +193,7 @@ public class EntityResolver implements OBNotSingleton {
     }
 
     // search on the basis of the access level of the entity
-    public BaseOBObject searchInstance(Entity entity, String id) {
+    protected BaseOBObject searchInstance(Entity entity, String id) {
         final AccessLevel al = entity.getAccessLevel();
         BaseOBObject result = null;
         if (al == AccessLevel.SYSTEM) {
@@ -332,11 +345,11 @@ public class EntityResolver implements OBNotSingleton {
         organizationZero = OBDal.getInstance().get(Organization.class, "0");
     }
 
-    public Client getClient() {
+    protected Client getClient() {
         return client;
     }
 
-    public void setClient(Client client) {
+    protected void setClient(Client client) {
         setClientOrganizationZero();
         organizationStructureProvider = OBProvider.getInstance().get(
                 OrganizationStructureProvider.class);
@@ -344,11 +357,11 @@ public class EntityResolver implements OBNotSingleton {
         this.client = client;
     }
 
-    public Organization getOrganization() {
+    protected Organization getOrganization() {
         return organization;
     }
 
-    public void setOrganization(Organization organization) {
+    protected void setOrganization(Organization organization) {
         orgIdTree = new String[] { organization.getId() };
         final Set<String> orgs = organizationStructureProvider
                 .getNaturalTree(organization.getId());
@@ -360,19 +373,31 @@ public class EntityResolver implements OBNotSingleton {
         return data;
     }
 
-    public boolean isOptionCreateReferencedIfNotFound() {
+    protected boolean isOptionCreateReferencedIfNotFound() {
         return optionCreateReferencedIfNotFound;
     }
 
+    /**
+     * This option controls if referenced objects (through an association) must
+     * exist in the database.
+     * 
+     * @param optionCreateReferencedIfNotFound
+     *            if true then referenced objects are allowed to not exist in
+     *            the database, meaning that they a new object is created for a
+     *            reference
+     */
     public void setOptionCreateReferencedIfNotFound(
             boolean optionCreateReferencedIfNotFound) {
         this.optionCreateReferencedIfNotFound = optionCreateReferencedIfNotFound;
     }
 
-    public ResolvingMode getResolvingMode() {
+    protected ResolvingMode getResolvingMode() {
         return resolvingMode;
     }
 
+    /**
+     * @see ResolvingMode
+     */
     public void setResolvingMode(ResolvingMode resolvingMode) {
         this.resolvingMode = resolvingMode;
     }
@@ -381,7 +406,7 @@ public class EntityResolver implements OBNotSingleton {
     // for properties which are part of a uniqueconstraint
     // if found a check is done if the object is part of the current
     // installed
-    public BaseOBObject findUniqueConstrainedObject(BaseOBObject obObject) {
+    protected BaseOBObject findUniqueConstrainedObject(BaseOBObject obObject) {
         // an existing object should not be able to violate his/her
         // own constraints
         if (!obObject.isNewOBObject()) {

@@ -22,7 +22,7 @@ package org.openbravo.service.web;
 import org.openbravo.base.exception.OBException;
 
 /**
- * Thrown when the url can not be parsed.
+ * This exception is thrown when the url can not be parsed.
  * 
  * @author mtaal
  */

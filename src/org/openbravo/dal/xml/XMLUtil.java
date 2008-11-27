@@ -31,9 +31,14 @@ import org.dom4j.io.XMLWriter;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
+import org.openbravo.service.rest.DalWebService;
 
 /**
- * Utility class for xml processing
+ * Utility class for XML processing.
+ * 
+ * @see XMLEntityConverter
+ * @see EntityXMLConverter
+ * @see DalWebService
  * 
  * @author mtaal
  */
@@ -53,11 +58,22 @@ public class XMLUtil implements OBSingleton {
         XMLUtil.instance = instance;
     }
 
+    /** @return a new Dom4j Document */
     public Document createDomDocument() {
         final Document document = DocumentHelper.createDocument();
         return document;
     }
 
+    /**
+     * Creates a standard Openbravo root element for a xml document and set ths
+     * namespace. Ads the new root element to the Dom4j document.
+     * 
+     * @param doc
+     *            the Dom4j document to set the root element
+     * @param elementName
+     *            the name of the root element
+     * @return the new root element
+     */
     public Element addRootElement(Document doc, String elementName) {
         final Namespace ns = new Namespace("ob", "http://www.openbravo.com");
         final QName qName = new QName(elementName, ns);
@@ -66,6 +82,14 @@ public class XMLUtil implements OBSingleton {
         return root;
     }
 
+    /**
+     * Converts a Dom4j document to a string. A number of specific settings: 1)
+     * output encoding is UTF-8, 2) text nodes are not trimmed
+     * 
+     * @param document
+     *            the Dom4j to convert to a XML string
+     * @return the XML representation
+     */
     public String toString(Document document) {
         try {
             final OutputFormat format = OutputFormat.createPrettyPrint();

@@ -30,7 +30,10 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.service.OBServiceException;
 
 /**
- * Catches all webservice servlets and dispatches the call to a real webservice.
+ * The default servlet which catches all requests for a webservice. This servlet
+ * finds the WebService instance implementing the requested service by calling
+ * the {@link OBProvider} with the top segment in the path. When the WebService
+ * implementation is found the request is forwarded to that service.
  * 
  * @author mtaal
  */

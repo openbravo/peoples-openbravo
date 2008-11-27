@@ -317,27 +317,66 @@ public class OBQuery<E extends BaseOBObject> {
         }
     }
 
-    boolean isFilterOnReadableOrganization() {
+    /**
+     * Controls if the readable organizations should be used as a filter in the
+     * query. The default is true.
+     * 
+     * @return if false then readable organizations are not added as a filter to
+     *         the query
+     */
+    public boolean isFilterOnReadableOrganization() {
         return filterOnReadableOrganizations;
     }
 
+    /**
+     * Controls if the readable organizations should be used as a filter in the
+     * query. The default is true.
+     * 
+     * @param filterOnReadableOrganizations
+     *            if set to false then readable organizations are not added as a
+     *            filter to the query
+     */
     public void setFilterOnReadableOrganization(
             boolean filterOnReadableOrganizations) {
         this.filterOnReadableOrganizations = filterOnReadableOrganizations;
     }
 
+    /**
+     * Controls if the isActive column is used as a filter (isActive == 'Y').
+     * The default is true.
+     * 
+     * @return if false then isActive is not used as a filter for the query
+     */
     public boolean isFilterOnActive() {
         return filterOnActive;
     }
 
+    /**
+     * Controls if the isActive column is used as a filter (isActive == 'Y').
+     * The default is true.
+     * 
+     * @param filterOnActive
+     *            if false then isActive is not used as a filter for the query,
+     *            if true (the default) then isActive='Y' is added as a filter
+     *            to the query
+     */
     public void setFilterOnActive(boolean filterOnActive) {
         this.filterOnActive = filterOnActive;
     }
 
+    /**
+     * @return the where and order by clause used in the query
+     */
     public String getWhereAndOrderBy() {
         return whereAndOrderBy;
     }
 
+    /**
+     * Sets the where and order by clause in the query.
+     * 
+     * @param queryString
+     *            the where and order by parts of the query
+     */
     public void setWhereAndOrderBy(String queryString) {
         if (queryString == null) {
             this.whereAndOrderBy = "";
@@ -350,10 +389,21 @@ public class OBQuery<E extends BaseOBObject> {
         return SessionHandler.getInstance().getSession();
     }
 
+    /**
+     * @return the parameters used in the query, this is the list of non-named
+     *         parameters in the query
+     */
     public List<Object> getParameters() {
         return parameters;
     }
 
+    /**
+     * Set the parameters in this query. These are the non-named parameters.
+     * 
+     * @param parameters
+     *            the parameters which are set in the query without a name (e.g.
+     *            as :?)
+     */
     public void setParameters(List<Object> parameters) {
         if (parameters == null) {
             this.parameters = new ArrayList<Object>();
@@ -369,19 +419,38 @@ public class OBQuery<E extends BaseOBObject> {
      * @return if true then only objects from readable clients are returned, if
      *         false then objects from all clients are returned
      */
-
     public boolean isFilterOnReadableClients() {
         return filterOnReadableClients;
     }
 
+    /**
+     * Filter the results on readable clients (@see
+     * OBContext#getReadableClients()). The default is true.
+     * 
+     * @param filterOnReadableClients
+     *            if true then only objects from readable clients are returned
+     *            by this Query, if false then objects from all clients are
+     *            returned
+     */
     public void setFilterOnReadableClients(boolean filterOnReadableClients) {
         this.filterOnReadableClients = filterOnReadableClients;
     }
 
+    /**
+     * The named parameters used in the query.
+     * 
+     * @return the map of named parameters which are being used in the query
+     */
     public Map<String, Object> getNamedParameters() {
         return namedParameters;
     }
 
+    /**
+     * Set the named parameters used in the query.
+     * 
+     * @param namedParameters
+     *            the list of named parameters (string, value pair)
+     */
     public void setNamedParameters(Map<String, Object> namedParameters) {
         this.namedParameters = namedParameters;
     }

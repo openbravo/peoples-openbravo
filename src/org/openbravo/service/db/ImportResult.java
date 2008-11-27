@@ -23,10 +23,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.dal.service.OBDal;
 
 /**
  * Contains the result of an import action, i.e. warning, error, inserted
- * objects etc.
+ * objects and other import result related information.
  * 
  * @author mtaal
  */
@@ -40,60 +41,86 @@ public class ImportResult {
     private String warningMessages;
     private Throwable exception;
 
+    /**
+     * @return true if an Exception is present in the ImportResult or the
+     *         errormessages are set
+     */
     public boolean hasErrorOccured() {
         return exception != null
                 || (errorMessages != null && errorMessages.trim().length() > 0);
     }
 
+    /**
+     * The list of objects which have been updated. Note that for these objects
+     * the {@link OBDal#save(Object)} method has been called, but the commit is
+     * the responsibility of the caller of the import service.
+     * <p/>
+     * This list is empty if an error has occurred during the import (@see
+     * {@link #hasErrorOccured()}.
+     * 
+     * @return the list of objects which have been updated.
+     */
     public List<BaseOBObject> getUpdatedObjects() {
         return updatedObjects;
     }
 
-    public void setUpdatedObjects(List<BaseOBObject> updatedObjects) {
-        this.updatedObjects = updatedObjects;
-    }
-
+    /**
+     * The list of objects which have been inserted. Note that for these objects
+     * the {@link OBDal#save(Object)} method has been called, but the commit is
+     * the responsibility of the caller of the import service.
+     * <p/>
+     * This list is empty if an error has occurred during the import (@see
+     * {@link #hasErrorOccured()}.
+     * 
+     * @return the list of objects which have been inserted.
+     */
     public List<BaseOBObject> getInsertedObjects() {
         return insertedObjects;
     }
 
-    public void setInsertedObjects(List<BaseOBObject> insertedObjects) {
-        this.insertedObjects = insertedObjects;
-    }
-
-    // NOTE: returns empty string if no error messages, does not return null
+    /**
+     * @return the error messages, if no error messages then null is returned.
+     */
     public String getErrorMessages() {
         return errorMessages;
     }
 
-    public void setErrorMessages(String errorMessages) {
+    void setErrorMessages(String errorMessages) {
         this.errorMessages = errorMessages;
     }
 
-    // NOTE: returns empty string if no error messages, does not return null
+    /**
+     * @return the log messages, if no log messages then null is returned.
+     */
     public String getLogMessages() {
         return logMessages;
     }
 
-    public void setLogMessages(String logMessages) {
+    void setLogMessages(String logMessages) {
         this.logMessages = logMessages;
     }
 
+    /**
+     * @return if an Exception occurred during import then this Exception can be
+     *         retrieved through this method
+     */
     public Throwable getException() {
         return exception;
     }
 
-    public void setException(Throwable exception) {
+    void setException(Throwable exception) {
         this.exception = exception;
     }
 
-    // NOTE: returns empty string if no error messages, does not return null
+    /**
+     * @return the warning messages, if no warning messages then null is
+     *         returned.
+     */
     public String getWarningMessages() {
         return warningMessages;
     }
 
-    public void setWarningMessages(String warningMessages) {
+    void setWarningMessages(String warningMessages) {
         this.warningMessages = warningMessages;
     }
-
 }

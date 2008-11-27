@@ -26,9 +26,14 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 
 /**
- * This entity resolver will only search for existing objects at system level.
- * New objects are assumed to have the client/organization set through the xml.
- * 
+ * This entity resolver is used in complete Client imports. With complete Client
+ * imports all the data on Client/Organization level is present in the xml
+ * String. This means that the EntityResolver only needs to search for existing
+ * objects on System level. This class overrides some methods from the
+ * {@link EntityResolver} to accomplish this. So, this entity resolver will only
+ * search for existing objects at system level. New objects are assumed to have
+ * the client/organization set through the xml.
+ * <p/>
  * This resolver does not query the AD_REF_DATA_LOADED table.
  * 
  * @author mtaal
@@ -44,7 +49,7 @@ public class ClientImportEntityResolver extends EntityResolver {
     // the ad_ref_data_loaded table. The resolving takes into account different
     // access levels and
     @Override
-    public BaseOBObject resolve(String entityName, String id, boolean referenced) {
+    BaseOBObject resolve(String entityName, String id, boolean referenced) {
 
         final Entity entity = ModelProvider.getInstance().getEntity(entityName);
 

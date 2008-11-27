@@ -45,7 +45,19 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 
 /**
- * Is responsible for converting an xml string to a tree of business objects.
+ * Converts a XML string to an objectgraph with objects. During the XML parse
+ * phase this converter will match XML tags with new or existing (in the
+ * database) business objects. The matching logic is implemented in the
+ * {@link EntityResolver}.
+ * <p/>
+ * The XMLEntityConverter keeps track of which objects are new, which exist but
+ * do not need to be updated or which objects exist but need to be updated.
+ * <p/>
+ * This converter does not update the database directly. However, it changes the
+ * properties of existing objects. This means that a commit after calling the
+ * process method on the converter can result in database updates by Hibernate.
+ * 
+ * @see Entity
  * 
  * @author mtaal
  */
@@ -106,8 +118,16 @@ public class XMLEntityConverter implements OBNotSingleton {
         entityResolver.clear();
     }
 
-    // is the main procedure, parses the root and walks
-    // through the entity elements
+    /**
+     * The main entry point. This method creates a Dom4j Document and then calls
+     * {@link #process(Document)}.
+     * 
+     * @param xml
+     *            the xml string
+     * @return the list of BaseOBObject present in the root of the xml. This
+     *         list contains the to-be-updated, to-be-inserted as well as the
+     *         unchanged business objects
+     */
     public List<BaseOBObject> process(String xml) {
         try {
             final Document doc = DocumentHelper.parseText(xml);
@@ -117,6 +137,22 @@ public class XMLEntityConverter implements OBNotSingleton {
         }
     }
 
+    /**
+     * The main entry point. This method walks through the elements in the root
+     * and parses them. The children of a business object (in the xml) are also
+     * parsed. Referenced objects are resolved through the
+     * {@link EntityResolver}.
+     * <p/>
+     * After a call to this method the to-be-inserted objects can be retrieved
+     * through the {@link #getToInsert()} method and the to-be-updated objects
+     * through the {@link #getToUpdate()} method.
+     * 
+     * @param xml
+     *            the xml string
+     * @return the list of BaseOBObject present in the root of the xml. This
+     *         list contains the to-be-updated, to-be-inserted as well as the
+     *         unchanged business objects
+     */
     public List<BaseOBObject> process(Document doc) {
         clear();
         getEntityResolver().setClient(getClient());
@@ -533,9 +569,9 @@ public class XMLEntityConverter implements OBNotSingleton {
     }
 
     /**
-     * Returns the list of objects which will be inserted in the database
+     * Returns the list of objects which should be inserted in the database
      * 
-     * @return the list of new BaseOBObjects which will be inserted in the
+     * @return the list of new BaseOBObjects which should be inserted in the
      *         database
      */
     public List<BaseOBObject> getToInsert() {
@@ -544,7 +580,8 @@ public class XMLEntityConverter implements OBNotSingleton {
 
     /**
      * The error messages logged during the import process. If no error message
-     * exist then null is returned.
+     * exist then null is returned. If error messages exist then the user of
+     * this class should not update the database and do a rollback.
      * 
      * @return the logged error messages, null if no error messages are present
      */
@@ -555,6 +592,14 @@ public class XMLEntityConverter implements OBNotSingleton {
         return errorMessages.toString();
     }
 
+    /**
+     * The warning messages logged during the import process. Warning messages
+     * are non-failing messages. The database can be updated if there are
+     * warning messages. If no warning message exist then null is returned.
+     * 
+     * @return the logged warning messages, null if no warning messages are
+     *         present
+     */
     public String getWarningMessages() {
         if (warningMessages.length() == 0) {
             return null;
@@ -562,6 +607,12 @@ public class XMLEntityConverter implements OBNotSingleton {
         return warningMessages.toString();
     }
 
+    /**
+     * The standard log messages logged during the import process. If no log
+     * message exist then null is returned.
+     * 
+     * @return the logged messages, null if no messages are present
+     */
     public String getLogMessages() {
         if (logMessages.length() == 0) {
             return null;
@@ -569,6 +620,13 @@ public class XMLEntityConverter implements OBNotSingleton {
         return logMessages.toString();
     }
 
+    /**
+     * If the {@link #isOptionClientImport()} is set then this method as a
+     * default will return a {@link ClientImportEntityResolver}, otherwise an
+     * {@link EntityResolver} is returned.
+     * 
+     * @return the EntityResolver used by this Converter.
+     */
     public EntityResolver getEntityResolver() {
 
         if (entityResolver == null) {
@@ -581,10 +639,27 @@ public class XMLEntityConverter implements OBNotSingleton {
         return entityResolver;
     }
 
+    /**
+     * Determines if this a client import. A client import differs from a
+     * standard import because it is assumed that all Client/Organization level
+     * information is present in the xml and only System objects should be
+     * retrieved from the database.
+     * 
+     * @return the value of the client import option (default is false)
+     */
     public boolean isOptionClientImport() {
         return optionClientImport;
     }
 
+    /**
+     * Determines if this a client import. A client import differs from a
+     * standard import because it is assumed that all Client/Organization level
+     * information is present in the xml and only System objects should be
+     * retrieved from the database.
+     * 
+     * @param optionClientImport
+     *            sets the value of the client import option (default is false)
+     */
     public void setOptionClientImport(boolean optionClientImport) {
         this.optionClientImport = optionClientImport;
     }

@@ -32,7 +32,11 @@ import org.openbravo.model.ad.utility.DataSet;
 import org.openbravo.model.ad.utility.DataSetTable;
 
 /**
- * Exports business objects using datasets, makes use of the dataSetService.
+ * Exports business objects to XML on the basis of Datasets, DataSetTables and
+ * DataSetColumns.
+ * 
+ * @see DataSetService
+ * @see EntityXMLConverter
  * 
  * @author Martin Taal
  */
@@ -64,24 +68,43 @@ public class DataExportService implements OBSingleton {
         DataExportService.instance = instance;
     }
 
+    /**
+     * Export the data of a specific dataSet to XML. If the dataset is empty
+     * then a null value is returned.
+     * 
+     * @param dataSet
+     *            the dataset to export
+     * @return the XML string containing the data of the dataset
+     */
     public String exportDataSetToXML(DataSet dataSet) {
         return exportDataSetToXML(dataSet, null);
     }
 
-    // note returns null if nothing has been generated
+    /**
+     * Export the data of a specific dataSet to XML. If the dataset is empty
+     * then a null value is returned.
+     * 
+     * @param dataSet
+     *            the dataset to export
+     * @param the
+     *            moduleId is used as a parameter in where clauses of the
+     *            DataSetTable and is used to set the module id in the
+     *            AD_REF_DATA_LOADED table
+     * @return the XML string containing the data of the dataset
+     */
     public String exportDataSetToXML(DataSet dataSet, String moduleId) {
         return exportDataSetToXML(dataSet, moduleId, false,
                 new HashMap<String, Object>());
     }
 
     /**
-     * Exports data of a client. The main difference with the standard export is
-     * that also references to client and organizations are exported.
+     * Exports data of a client. The main difference with the standard dataset
+     * export is that also references to client and organizations are exported.
      * 
      * @param dataSet
      *            the DataSetTables of this dataSet will be exported
      * @param moduleId
-     *            the moduleId is used in selecting which objects to export
+     *            the moduleId is used in the where clause of dataset tables
      * @return the xml string, the resulting xml from the export, can be null if
      *         nothing is exported
      */

@@ -39,10 +39,12 @@ import org.openbravo.model.ad.access.User;
 import org.openbravo.utils.CryptoSHA1BASE64;
 
 /**
- * This servlet takes care of authenticating and it ensures that the correct
- * user context is set for the rest of the servlet to operate. It supports
- * basicauthentication as well as url parameter based authentication. It also
- * ensures that the correct http response code is returned.
+ * This servlet has two main responsibilities: 1) authenticate, 2) set the
+ * correct {@link OBContext}, and 3) translate Exceptions into the correct Http
+ * response code.
+ * <p/>
+ * In regard to authentication: there is support for basic-authentication as
+ * well as url parameter based authentication.
  * 
  * @author mtaal
  */

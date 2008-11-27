@@ -29,9 +29,17 @@ import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.dal.core.OBContext;
 
 /**
- * The user context cache takes care of storing a cache of user contexts which
- * are re-used when a webservice call is done. Note that the OBContext which is
- * cached can be re-used by multiple threads at the same time.
+ * The main purpose of the user context cache is to support session-less http
+ * requests without a large performance hit. With a session-less http request
+ * every request needs to log in. This can be comparatively heavy as for each
+ * request a new {@link OBContext} is created.
+ * <p/>
+ * The user context cache takes care of storing a cache of user contexts (on
+ * user id) which are re-used when a web-service call is done. Note that the
+ * OBContext which is cached can be re-used by multiple threads at the same
+ * time.
+ * 
+ * @see OBContext
  * 
  * @author mtaal
  */
@@ -55,6 +63,17 @@ public class UserContextCache implements OBSingleton {
 
     private Map<String, CacheEntry> cache = new ConcurrentHashMap<String, CacheEntry>();
 
+    /**
+     * Searches the ContextCache for an OBContext. If none is found a new one is
+     * created and placed in the cache.
+     * 
+     * 
+     * @param userId
+     *            the user for which an OBContext is required
+     * @return the OBContext object
+     * 
+     * @see OBContext
+     */
     public OBContext getCreateOBContext(String userId) {
         CacheEntry ce = cache.get(userId);
         purgeCache();

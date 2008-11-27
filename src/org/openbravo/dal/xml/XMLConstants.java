@@ -20,7 +20,11 @@
 package org.openbravo.dal.xml;
 
 /**
- * Contains constants used for standard element/attribute names.
+ * Contains constants used for standard element/attribute names used in the XML
+ * Schema generation and entity XML export.
+ * 
+ * @see ModelXMLConverter
+ * @see EntityXMLConverter
  * 
  * @author mtaal
  */
