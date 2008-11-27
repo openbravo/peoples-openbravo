@@ -23,6 +23,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -123,6 +124,12 @@ public class DataSetService implements OBSingleton {
         obc.add(Expression
                 .eq(DataSetColumn.PROPERTY_DATASETTABLE, DataSetTable));
         return obc.list();
+    }
+
+    public List<BaseOBObject> getExportableObjects(DataSetTable DataSetTable,
+            String moduleId) {
+        return getExportableObjects(DataSetTable, moduleId,
+                new HashMap<String, Object>());
     }
 
     // get the list of exportable objects, this assumes that the clause in
