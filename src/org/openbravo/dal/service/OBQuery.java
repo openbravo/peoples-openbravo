@@ -25,9 +25,9 @@ import static org.openbravo.model.common.enterprise.Organization.PROPERTY_ISACTI
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.openbravo.base.model.Entity;
@@ -37,8 +37,12 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 
 /**
- * Dal entry point which allows free-format where clauses to do queries.
+ * The OBQuery supports querying in the Data Access Layer with free-format (HQL)
+ * where and order by clauses. The OBQuery automatically adds applicable client
+ * and organization filters and handles joining of entities for orderby clauses.
  * 
+ * @see OBCriteria
+ * @see OBDal
  * @author mtaal
  */
 
@@ -48,19 +52,34 @@ public class OBQuery<E extends BaseOBObject> {
     private String whereAndOrderBy;
     private Entity entity;
     private List<Object> parameters;
-    private boolean filterOnAccessibleOrganization = true;
-    private boolean filterOnAccessibleClients = true;
+    private Map<String, Object> namedParameters;
+    private boolean filterOnReadableOrganizations = true;
+    private boolean filterOnReadableClients = true;
     private boolean filterOnActive = true;
 
     // package visible
     OBQuery() {
     }
 
+    /**
+     * Queries the database using the where clauses and addition active, client
+     * and organization filters. The order in the list is determined by order by
+     * clause.
+     * 
+     * @return list of objects retrieved from the database
+     */
     @SuppressWarnings("unchecked")
-    public List<E> list() throws HibernateException {
+    public List<E> list() {
         return createQuery().list();
     }
 
+    /**
+     * Counts the number of objects in the database on the basis of the
+     * whereclause of the query.
+     * 
+     * @return the number of objects in the database taking into account the
+     *         where and orderby clause
+     */
     public int count() {
         final Query qry = getSession().createQuery(
                 "select count(*) " + stripOrderBy(createQueryString()));
@@ -76,6 +95,12 @@ public class OBQuery<E extends BaseOBObject> {
         return qryStr;
     }
 
+    /**
+     * Creates a Hibernate Query object using the whereclause and extra filters
+     * (for readable organizations etc.).
+     * 
+     * @return a new Hibernate Query object
+     */
     public Query createQuery() {
         final Query qry = getSession().createQuery(createQueryString());
         setParameters(qry);
@@ -176,7 +201,7 @@ public class OBQuery<E extends BaseOBObject> {
         }
         OBContext.getOBContext().getEntityAccessChecker().checkReadable(e);
 
-        if (isFilterOnAccessibleOrganization() && e.isOrganizationEnabled()) {
+        if (isFilterOnReadableOrganization() && e.isOrganizationEnabled()) {
             whereClause = (addWhereClause ? " where " : "")
                     + addAnd(whereClause) + prefix + PROPERTY_ORGANIZATION
                     + ".id "
@@ -186,7 +211,7 @@ public class OBQuery<E extends BaseOBObject> {
             }
         }
 
-        if (isFilterOnAccessibleClients() && getEntity().isClientEnabled()) {
+        if (isFilterOnReadableClients() && getEntity().isClientEnabled()) {
             whereClause = (addWhereClause ? " where " : "")
                     + addAnd(whereClause) + prefix + PROPERTY_CLIENT + ".id "
                     + createInClause(obContext.getReadableClients());
@@ -261,6 +286,9 @@ public class OBQuery<E extends BaseOBObject> {
         return " in (" + sb.toString() + ")";
     }
 
+    /**
+     * @return the Entity queried by the Query object
+     */
     public Entity getEntity() {
         return entity;
     }
@@ -278,15 +306,24 @@ public class OBQuery<E extends BaseOBObject> {
                 qry.setParameter(pos++, param);
             }
         }
+        final Map<String, Object> localNamedParameters = getNamedParameters();
+        for (final String name : localNamedParameters.keySet()) {
+            final Object value = localNamedParameters.get(name);
+            if (value instanceof BaseOBObject) {
+                qry.setEntity(pos++, value);
+            } else {
+                qry.setParameter(pos++, value);
+            }
+        }
     }
 
-    public boolean isFilterOnAccessibleOrganization() {
-        return filterOnAccessibleOrganization;
+    boolean isFilterOnReadableOrganization() {
+        return filterOnReadableOrganizations;
     }
 
-    public void setFilterOnAccessibleOrganization(
-            boolean filterOnAccessibleOrganization) {
-        this.filterOnAccessibleOrganization = filterOnAccessibleOrganization;
+    public void setFilterOnReadableOrganization(
+            boolean filterOnReadableOrganizations) {
+        this.filterOnReadableOrganizations = filterOnReadableOrganizations;
     }
 
     public boolean isFilterOnActive() {
@@ -325,11 +362,27 @@ public class OBQuery<E extends BaseOBObject> {
         }
     }
 
-    public boolean isFilterOnAccessibleClients() {
-        return filterOnAccessibleClients;
+    /**
+     * Filter the results on readable clients (@see
+     * OBContext#getReadableClients()). The default is true.
+     * 
+     * @return if true then only objects from readable clients are returned, if
+     *         false then objects from all clients are returned
+     */
+
+    public boolean isFilterOnReadableClients() {
+        return filterOnReadableClients;
     }
 
-    public void setFilterOnAccessibleClients(boolean filterOnAccessibleClients) {
-        this.filterOnAccessibleClients = filterOnAccessibleClients;
+    public void setFilterOnReadableClients(boolean filterOnReadableClients) {
+        this.filterOnReadableClients = filterOnReadableClients;
+    }
+
+    public Map<String, Object> getNamedParameters() {
+        return namedParameters;
+    }
+
+    public void setNamedParameters(Map<String, Object> namedParameters) {
+        this.namedParameters = namedParameters;
     }
 }

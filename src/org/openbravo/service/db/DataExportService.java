@@ -19,7 +19,9 @@
 
 package org.openbravo.service.db;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.provider.OBProvider;
@@ -68,7 +70,8 @@ public class DataExportService implements OBSingleton {
 
     // note returns null if nothing has been generated
     public String exportDataSetToXML(DataSet dataSet, String moduleId) {
-        return exportDataSetToXML(dataSet, moduleId, false);
+        return exportDataSetToXML(dataSet, moduleId, false,
+                new HashMap<String, Object>());
     }
 
     /**
@@ -82,13 +85,15 @@ public class DataExportService implements OBSingleton {
      * @return the xml string, the resulting xml from the export, can be null if
      *         nothing is exported
      */
-    public String exportClientToXML(DataSet dataSet, String moduleId) {
-        return exportDataSetToXML(dataSet, moduleId, true);
+    public String exportClientToXML(DataSet dataSet, String moduleId,
+            Map<String, Object> parameters) {
+        return exportDataSetToXML(dataSet, moduleId, true, parameters);
     }
 
     // note returns null if nothing has been generated
     private String exportDataSetToXML(DataSet dataSet, String moduleId,
-            boolean exportClientOrganizationReferences) {
+            boolean exportClientOrganizationReferences,
+            Map<String, Object> parameters) {
         log.debug("Exporting dataset " + dataSet.getName());
 
         final EntityXMLConverter exc = EntityXMLConverter.newInstance();
@@ -101,7 +106,7 @@ public class DataExportService implements OBSingleton {
             final Boolean isbo = dt.isBusinessObject();
             exc.setOptionIncludeChildren(isbo != null && isbo.booleanValue());
             final List<BaseOBObject> list = DataSetService.getInstance()
-                    .getExportableObjects(dt, moduleId);
+                    .getExportableObjects(dt, moduleId, parameters);
             if (list.size() > 0) {
                 exc.process(list);
                 generatedXML = true;

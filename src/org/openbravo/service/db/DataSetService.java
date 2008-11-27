@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
@@ -128,7 +129,7 @@ public class DataSetService implements OBSingleton {
     // the DataSetTable can be used directly in hql.
     @SuppressWarnings("unchecked")
     public List<BaseOBObject> getExportableObjects(DataSetTable DataSetTable,
-            String moduleId) {
+            String moduleId, Map<String, Object> parameters) {
 
         final String entityName = DataSetTable.getTable().getName();
         final Entity entity = ModelProvider.getInstance().getEntity(entityName);
@@ -149,12 +150,13 @@ public class DataSetService implements OBSingleton {
         final OBQuery<BaseOBObject> oq = OBDal.getInstance().createQuery(
                 entity.getName(), whereClause);
         oq.setFilterOnActive(false);
+        oq.setNamedParameters(parameters);
 
         if (OBContext.getOBContext().getRole().getId().equals("0")
                 && OBContext.getOBContext().getCurrentClient().getId().equals(
                         "0")) {
-            oq.setFilterOnAccessibleOrganization(false);
-            oq.setFilterOnAccessibleClients(false);
+            oq.setFilterOnReadableOrganization(false);
+            oq.setFilterOnReadableClients(false);
         }
 
         final List<?> list = oq.list();
