@@ -321,7 +321,7 @@ public class EntityXMLImportTestBusinessObject extends XMLBaseTest {
             final PaymentTerm pt = (PaymentTerm) DalUtil.copy(source);
             pt.setName(pt.getName() + i);
             pt.setOrganization(OBContext.getOBContext()
-                    .getCurrentOrganisation());
+                    .getCurrentOrganization());
 
             // force new
             // now add a payment termline

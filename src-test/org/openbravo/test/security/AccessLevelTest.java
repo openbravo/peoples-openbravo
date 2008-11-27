@@ -74,13 +74,13 @@ public class AccessLevelTest extends BaseTest {
             assertTrue(
                     "Invalid exception: " + e.getMessage(),
                     e.getMessage().indexOf(
-                            " may only have instances with organisation *") != -1);
+                            " may only have instances with organization *") != -1);
             SessionHandler.getInstance().rollback();
         }
         setErrorOccured(false);
     }
 
-    public void testAccessLevelOrganisation() {
+    public void testAccessLevelOrganization() {
         setErrorOccured(true);
         setUserContext("0");
         final Organization o = OBDal.getInstance().get(Organization.class, "0");
@@ -96,7 +96,7 @@ public class AccessLevelTest extends BaseTest {
             assertTrue(
                     "Invalid exception " + e.getMessage(),
                     e.getMessage().indexOf(
-                            " may not have instances with organisation *") != -1);
+                            " may not have instances with organization *") != -1);
             SessionHandler.getInstance().rollback();
         }
         setErrorOccured(false);
@@ -118,7 +118,7 @@ public class AccessLevelTest extends BaseTest {
             assertTrue(
                     "Invalid exception " + e.getMessage(),
                     e.getMessage().indexOf(
-                            "may only have instances with organisation *") != -1);
+                            "may only have instances with organization *") != -1);
             SessionHandler.getInstance().rollback();
         }
         setErrorOccured(false);

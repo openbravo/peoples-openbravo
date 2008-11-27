@@ -149,7 +149,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
         final OBCriteria<Greeting> obc = OBDal.getInstance().createCriteria(
                 Greeting.class);
         obc.setFilterOnReadableClients(false);
-        obc.setFilterOnReadableOrganisation(false);
+        obc.setFilterOnReadableOrganization(false);
         obc.add(Expression.eq(PROPERTY_ORGANIZATION, org));
         assertEquals(7, obc.list().size());
         for (final Greeting g : obc.list()) {
@@ -185,7 +185,7 @@ public class EntityXMLImportTestSingle extends XMLBaseTest {
         final String xml = getXML(clz);
         final ImportResult ir = DataImportService.getInstance()
                 .importDataFromXML(OBContext.getOBContext().getCurrentClient(),
-                        OBContext.getOBContext().getCurrentOrganisation(), xml);
+                        OBContext.getOBContext().getCurrentOrganization(), xml);
         assertTrue(ir.getInsertedObjects().size() == 0);
         assertTrue(ir.getUpdatedObjects().size() == 0);
         setErrorOccured(false);

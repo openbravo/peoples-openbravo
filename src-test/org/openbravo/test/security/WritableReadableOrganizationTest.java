@@ -38,7 +38,7 @@ import org.openbravo.test.base.BaseTest;
  * @author mtaal
  */
 
-public class WritableReadableOrganisationTest extends BaseTest {
+public class WritableReadableOrganizationTest extends BaseTest {
 
     public void testAccessLevelCO() {
         setErrorOccured(true);
@@ -51,8 +51,8 @@ public class WritableReadableOrganisationTest extends BaseTest {
 
     private void doCheckUser() {
         final OBContext obContext = OBContext.getOBContext();
-        final Set<String> writOrgs = obContext.getWritableOrganisations();
-        final String[] readOrgs = obContext.getReadableOrganisations();
+        final Set<String> writOrgs = obContext.getWritableOrganizations();
+        final String[] readOrgs = obContext.getReadableOrganizations();
         final StringBuilder sb = new StringBuilder();
         for (final String s : readOrgs) {
             sb.append("," + s);
@@ -107,7 +107,7 @@ public class WritableReadableOrganisationTest extends BaseTest {
         setUserContext("1000002");
         try {
             SessionHandler.getInstance().commitAndClose();
-            fail("Writable organisations not checked");
+            fail("Writable organizations not checked");
         } catch (final OBSecurityException e) {
             e.printStackTrace(System.err);
             assertTrue("Invalid exception " + e.getMessage(), e.getMessage()
@@ -130,7 +130,7 @@ public class WritableReadableOrganisationTest extends BaseTest {
             SessionHandler.getInstance().commitAndClose();
         } catch (final OBSecurityException e) {
             assertTrue("Invalid exception " + e.getMessage(), e.getMessage()
-                    .indexOf("is not present  in OrganisationList") != -1);
+                    .indexOf("is not present  in OrganizationList") != -1);
         }
 
         setErrorOccured(false);

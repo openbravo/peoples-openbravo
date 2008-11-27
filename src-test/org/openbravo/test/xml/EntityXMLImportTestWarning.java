@@ -161,7 +161,7 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
         setErrorOccured(true);
     }
 
-    public void testUpdatingOtherOrganisationWarning() {
+    public void testUpdatingOtherOrganizationWarning() {
         cleanRefDataLoaded();
         setErrorOccured(true);
         setUserContext("1000001");
@@ -226,7 +226,7 @@ public class EntityXMLImportTestWarning extends XMLBaseTest {
         setErrorOccured(true);
     }
 
-    public void testInsertOtherOrganisationWarning() {
+    public void testInsertOtherOrganizationWarning() {
         cleanRefDataLoaded();
         setErrorOccured(true);
         setUserContext("100");

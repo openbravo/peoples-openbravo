@@ -47,7 +47,7 @@ public class DalPerformanceProductTest extends BaseTest {
         for (int i = 0; i < pageCount; i++) {
             final OBCriteria<Product> obc = OBDal.getInstance().createCriteria(
                     Product.class);
-            obc.setFilterOnReadableOrganisation(false);
+            obc.setFilterOnReadableOrganization(false);
             obc.addOrderBy(Product.PROPERTY_NAME, true);
             obc.setMaxResults(pageSize);
             obc.setFirstResult(i * pageSize);
@@ -85,7 +85,7 @@ public class DalPerformanceProductTest extends BaseTest {
         for (int i = 0; i < pageCount; i++) {
             final OBCriteria<Product> obc = OBDal.getInstance().createCriteria(
                     Product.class);
-            obc.setFilterOnReadableOrganisation(false);
+            obc.setFilterOnReadableOrganization(false);
             obc.addOrderBy(Product.PROPERTY_NAME, true);
             obc.setMaxResults(pageSize);
             obc.setFirstResult(i * pageSize);
@@ -121,7 +121,7 @@ public class DalPerformanceProductTest extends BaseTest {
         setUserContext("1000019");
         final OBCriteria<Product> obc = OBDal.getInstance().createCriteria(
                 Product.class);
-        obc.setFilterOnReadableOrganisation(false);
+        obc.setFilterOnReadableOrganization(false);
         obc.addOrderBy(Product.PROPERTY_NAME, true);
 
         final long time = System.currentTimeMillis();
@@ -153,7 +153,7 @@ public class DalPerformanceProductTest extends BaseTest {
         final long time = System.currentTimeMillis();
         final OBCriteria<Product> obc = OBDal.getInstance().createCriteria(
                 Product.class);
-        obc.setFilterOnReadableOrganisation(false);
+        obc.setFilterOnReadableOrganization(false);
         obc.addOrderBy(Product.PROPERTY_NAME, true);
 
         OBContext.getOBContext().setInAdministratorMode(true);
@@ -183,7 +183,7 @@ public class DalPerformanceProductTest extends BaseTest {
         for (int i = 0; i < pageCount; i++) {
             final OBCriteria<Product> obc = OBDal.getInstance().createCriteria(
                     Product.class);
-            obc.setFilterOnReadableOrganisation(false);
+            obc.setFilterOnReadableOrganization(false);
             obc.addOrderBy(Product.PROPERTY_NAME, true);
             obc.setMaxResults(pageSize);
             obc.setFirstResult(i * pageSize);

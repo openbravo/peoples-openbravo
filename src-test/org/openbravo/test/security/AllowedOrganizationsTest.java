@@ -24,24 +24,24 @@ import java.util.Set;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
-import org.openbravo.dal.security.OrganisationStructureProvider;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.project.Project;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Tests computation of natural tree of an organisation.
+ * Tests computation of natural tree of an organization.
  * 
  * @author mtaal
  */
 
-public class AllowedOrganisationsTest extends BaseTest {
+public class AllowedOrganizationsTest extends BaseTest {
 
-    public void testOrganisationTree() {
+    public void testOrganizationTree() {
         setErrorOccured(true);
         setBigBazaarAdminContext();
-        final OrganisationStructureProvider osp = new OrganisationStructureProvider();
+        final OrganizationStructureProvider osp = new OrganizationStructureProvider();
         osp.setClientId("1000000");
 
         checkResult("1000001", osp, new String[] { "1000001" });
@@ -64,7 +64,7 @@ public class AllowedOrganisationsTest extends BaseTest {
         setErrorOccured(false);
     }
 
-    private void checkResult(String id, OrganisationStructureProvider osp,
+    private void checkResult(String id, OrganizationStructureProvider osp,
             String[] values) {
         final Set<String> result = osp.getNaturalTree(id);
         assertEquals(values.length, result.size());
@@ -81,10 +81,10 @@ public class AllowedOrganisationsTest extends BaseTest {
         setErrorOccured(false);
     }
 
-    public void testOrganisationCheck() {
+    public void testOrganizationCheck() {
         setErrorOccured(true);
         setUserContext("0");
-        OBContext.getOBContext().getOrganisationStructureProvider()
+        OBContext.getOBContext().getOrganizationStructureProvider()
                 .reInitialize();
 
         final Project p = OBDal.getInstance().get(Project.class, "1000001");

@@ -226,9 +226,9 @@ public class DalTest extends BaseTest {
             for (final MaterialTransaction t : obc.list()) {
                 log.debug(t.getIdentifier());
                 // System.err.println(t.getIdentifier() +
-                // " client/organisation " +
+                // " client/organization " +
                 // t.getClient().getName() + "/" +
-                // t.getOrganisation().getName());
+                // t.getOrganization().getName());
             }
             if (avg == 0) {
                 avg = System.currentTimeMillis() - time;

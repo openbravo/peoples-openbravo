@@ -63,7 +63,7 @@ public class EntityXMLExportTest extends XMLBaseTest {
 
         obc.setFilterOnActive(false);
         obc.setFilterOnReadableClients(false);
-        obc.setFilterOnReadableOrganisation(false);
+        obc.setFilterOnReadableOrganization(false);
 
         final EntityXMLConverter exc = EntityXMLConverter.newInstance();
         exc.setOptionIncludeChildren(true);

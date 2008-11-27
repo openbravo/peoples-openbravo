@@ -86,7 +86,7 @@ public class XMLBaseTest extends BaseTest {
                 .createCriteria(ReferenceDataStore.class);
         obc.setFilterOnActive(false);
         obc.setFilterOnReadableClients(false);
-        obc.setFilterOnReadableOrganisation(false);
+        obc.setFilterOnReadableOrganization(false);
         for (final ReferenceDataStore rdl : obc.list()) {
             OBDal.getInstance().remove(rdl);
         }
