@@ -86,6 +86,9 @@ bbdd.verbosity=INFO
 # CSS Sprites Generator
 generateSprites=no
 
+# use js/css minimization (in local-context and war-file)
+minimizeJSandCSS=yes
+
 ##################
 # Authentication #
 ##################

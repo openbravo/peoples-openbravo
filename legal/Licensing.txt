@@ -79,6 +79,10 @@ http://people.apache.org/~andyc/neko/doc/html/
 Under Apache Software License 1.1, available at
 http://www.apache.org/licenses/LICENSE-1.1
 
+# YUI compressor (tool used at build-time to optionally minimize js/css files)
+# yuicompressor-2.4.2.jar
+# YUIAnt.jar
+Copyright (c) 2007, Yahoo! Inc. All rights reserved. Code licensed under the BSD License: (http://developer.yahoo.net/yui/license.txt)
 
 # ant-1.6.5.jar
 # ant-launcher.jar
