@@ -61,10 +61,9 @@
     <![CDATA[
       SELECT AD_MODULE_ID
         FROM AD_MODULE M
-       WHERE (JAVAPACKAGE = ? OR NAME=?)
+       WHERE JAVAPACKAGE = ?
          AND ISACTIVE = 'Y' 
     ]]></Sql>
-    <Parameter name="name"/>
     <Parameter name="name"/>
   </SqlMethod>
 </SqlClass>
