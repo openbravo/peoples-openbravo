@@ -451,10 +451,10 @@ public class CreateFrom extends HttpSecureAppServlet {
         }
       } else {
         if (vars.getLanguage().equals("en_US")) {
-          if (isSOTrx.equals("Y")) data = new CreateFromShipmentData[0];
+          if (isSOTrx.equals("Y")) data = CreateFromShipmentData.selectFromInvoiceTrx(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org", strWindowId), strInvoice);
           else data=CreateFromShipmentData.selectFromInvoice(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org", strWindowId), strInvoice);
         } else {
-          if (isSOTrx.equals("Y")) data = new CreateFromShipmentData[0];
+          if (isSOTrx.equals("Y")) data = CreateFromShipmentData.selectFromInvoiceTrx(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org", strWindowId), strInvoice);
           else data=CreateFromShipmentData.selectFromInvoiceTrl(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org", strWindowId), strInvoice);
         }
       }
@@ -483,7 +483,7 @@ public class CreateFrom extends HttpSecureAppServlet {
       xmlDocument.setData("reportPurchaseOrder", "liststructure", new CreateFromShipmentData[0]);
     } else {
       if (isSOTrx.equals("Y")) {
-        xmlDocument.setData("reportInvoice", "liststructure", new CreateFromShipmentData[0]);
+        xmlDocument.setData("reportInvoice", "liststructure", CreateFromShipmentData.selectFromInvoiceTrxCombo(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner));
         xmlDocument.setData("reportPurchaseOrder", "liststructure", CreateFromShipmentData.selectFromPOSOTrxCombo(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner));
       } else {
         xmlDocument.setData("reportInvoice", "liststructure", CreateFromShipmentData.selectFromInvoiceCombo(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", strWindowId), Utility.getContext(this, vars, "#User_Org", strWindowId), strBPartner));
@@ -1357,7 +1357,8 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
       conn = this.getTransactionConnection();
       if (strType.equals("INVOICE")) {
         strInvoice = vars.getStringParameter("inpInvoice");
-        if (!isSOTrx.equals("Y")) data = CreateFromShipmentData.selectFromInvoiceUpdate(conn, this, strClaves);
+        if (isSOTrx.equals("Y")) data = CreateFromShipmentData.selectFromInvoiceTrxUpdate(conn, this, strClaves); 
+        else data = CreateFromShipmentData.selectFromInvoiceUpdate(conn, this, strClaves); 
       } else {
         strPO = vars.getStringParameter("inpPurchaseOrder");
         if (isSOTrx.equals("Y")) data = CreateFromShipmentData.selectFromPOUpdateSOTrx(conn, this, strClaves);
