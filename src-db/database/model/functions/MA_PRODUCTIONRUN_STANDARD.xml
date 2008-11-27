@@ -50,8 +50,10 @@
     v_Product_old VARCHAR2(32);
     v_UOM_old VARCHAR2(32);
     v_Product_UOM_old VARCHAR2(32);
+    v_Production_ID VARCHAR2(32);
     v_QtyStorage NUMBER:=0;
     v_Line NUMBER;
+    v_PlanLine NUMBER;
     v_CostCenterCost NUMBER;
     v_CostCenterUse NUMBER;
     v_Calculated CHAR(1);
@@ -63,10 +65,10 @@
     --  WRPhase products useed
     Cur_WRPUsed RECORD;
     --  Stocked Products
-    CURSOR Cur_Stock (v_Product_old VARCHAR, v_UOM_old VARCHAR, v_Product_UOM_old VARCHAR, v_Org_old VARCHAR) IS
+    CURSOR Cur_Stock (v_Product_old VARCHAR, v_UOM_old VARCHAR, v_Product_UOM_old VARCHAR, v_Org_old VARCHAR, v_Production_Id VARCHAR, v_Line NUMBER) IS
       SELECT T.M_PRODUCT_ID, T.C_UOM_ID, T.M_LOCATOR_ID, T.M_ATTRIBUTESETINSTANCE_ID,
         T.M_PRODUCT_UOM_ID, COALESCE(T.QtyOnHand, 0) AS Qty, T.QtyOrderOnHand AS QtyOrder,
-        U.STDPRECISION
+        U.STDPRECISION, L.PRIORITYNO, T.UPDATED AS lastupdated
       FROM M_LOCATOR L, M_WAREHOUSE W, M_STORAGE_DETAIL T LEFT JOIN M_PRODUCT_UOM PU ON T.M_PRODUCT_UOM_ID = PU.M_PRODUCT_UOM_ID
                          LEFT JOIN C_UOM U ON PU.C_UOM_ID = U.C_UOM_ID
       WHERE T.M_PRODUCT_ID=v_Product_old
@@ -76,7 +78,19 @@
         AND L.M_WAREHOUSE_ID = W.M_WAREHOUSE_ID
         AND AD_ISORGINCLUDED(v_Org_old,W.AD_ORG_ID,W.AD_CLIENT_ID)<>-1
         AND COALESCE(T.QtyOnHand, 0)>0
-      ORDER BY L.PRIORITYNO, T.M_ATTRIBUTESETINSTANCE_ID, T.M_PRODUCT_UOM_ID;
+      UNION
+      SELECT M_PRODUCTIONLINE.M_PRODUCT_ID, m_productionline.c_uom_id, m_productionline.m_locator_id, m_productionline.m_attributesetinstance_id,
+        m_productionline.m_product_uom_id, m_productionline.movementqty as qty, m_productionline.quantityorder as qtyorder,
+        c_uom.stdprecision, -1 as priorityno, m_productionline.updated as lastupdated
+      FROM M_PRODUCTIONLINE, M_PRODUCTIONPLAN, c_uom
+      WHERE M_PRODUCTIONLINE.M_PRODUCTIONPLAN_ID = M_PRODUCTIONPLAN.M_PRODUCTIONPLAN_ID
+        AND M_PRODUCTIONLINE.C_UOM_ID = C_UOM.C_UOM_ID
+        AND M_PRODUCTION_ID = v_Production_Id     
+        AND M_PRODUCTIONPLAN.line < v_Line
+        AND M_PRODUCTIONLINE.M_PRODUCT_ID = v_product_old
+        AND M_PRODUCTIONLINE.C_UOM_ID = v_UOM_Old
+        AND (v_Product_UOM_old IS NULL OR M_PRODUCTIONLINE.M_Product_UOM_id = v_Product_UOM_old)
+      ORDER BY PRIORITYNO, LASTUPDATED;
       v_storage CUR_STOCK%ROWTYPE;
       NEXT_PRODUCT BOOLEAN:=false;
       Cur_Stock_ISOPEN BOOLEAN:=false;
@@ -108,9 +122,10 @@
       v_ResultStr:='Getting DoneQuantity and process_ID';
       SELECT M_ProductionPlan.AD_Org_ID, M_ProductionPlan.MA_WRPhase_ID,
              M_ProductionPlan.ProductionQty, M_ProductionPlan.Processed,
-             COALESCE(MA_CostCenter.CALCULATED, 'N') AS CALCULATED, COALESCE(MA_CostCenter.BYDEFAULT, 'N') AS BYDEFAULT
+             COALESCE(MA_CostCenter.CALCULATED, 'N') AS CALCULATED, COALESCE(MA_CostCenter.BYDEFAULT, 'N') AS BYDEFAULT,
+             M_ProductionPlan.line, M_ProductionPlan.M_Production_ID
       INTO v_PlanOrg_ID, v_WRPhase_ID, v_DoneQuantity, v_Processed,
-           v_Calculated, v_ByDefault
+           v_Calculated, v_ByDefault, v_PlanLine, v_Production_ID
       FROM M_ProductionPlan LEFT JOIN MA_CostCenter_Version ON M_ProductionPlan.MA_CostCenter_Version_ID = MA_CostCenter_Version.MA_CostCenter_Version_ID
                             LEFT JOIN MA_CostCenter ON MA_CostCenter_version.MA_CostCenter_ID = MA_CostCenter.MA_CostCenter_ID
       WHERE M_ProductionPlan_ID=v_Record_ID;
@@ -225,7 +240,7 @@
                 CLOSE Cur_Stock;
                 Cur_Stock_ISOPEN:=false;
               END IF;
-              OPEN CUR_STOCK(v_Product_old, v_UOM_old, v_Product_UOM_old, v_PlanOrg_ID) ;
+              OPEN CUR_STOCK(v_Product_old, v_UOM_old, v_Product_UOM_old, v_PlanOrg_ID, v_Production_ID, v_PlanLine) ;
               Cur_Stock_ISOPEN:=true;
               FETCH CUR_STOCK INTO v_storage;
               IF CUR_STOCK%NOTFOUND THEN
