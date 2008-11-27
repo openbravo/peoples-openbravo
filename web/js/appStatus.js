@@ -236,15 +236,15 @@ function setMenuLoading(value) {
   try {
     if (value == true) {
       if (top.isRTL == true) {
-        frameset.cols = "*,0%,25%";
+        frameset.cols = "*,0%," + top.menuWidth;
       } else {
-        frameset.cols = "25%,0%,*";
+        frameset.cols = top.menuWidth + ",0%,*";
       }
     } else if (value == false) {
       if (top.isRTL == true) {
-        frameset.cols = "*,25%,0%";
+        frameset.cols = "*," + top.menuWidth + ",0%";
       } else {
-        frameset.cols = "0%,25%,*";
+        frameset.cols = "0%," + top.menuWidth + ",*";
       }
     }
   }

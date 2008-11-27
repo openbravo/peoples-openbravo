@@ -60,7 +60,7 @@ var isUserChanges = false;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '10423';
+  var number = '10655';
   return number;
 }
 
@@ -1967,9 +1967,9 @@ function menuShowHide(id) {
    } catch (e) {*/
     if (top.isMenuHide == true) {
       if (top.isRTL == true) {
-        frameset.cols = "*,25%,0";
+        frameset.cols = "*," + top.menuWidth + ",0%";
       } else {
-        frameset.cols = "0%,25%,*";
+        frameset.cols = "0%," + top.menuWidth + ",*";
       }
       top.isMenuHide = false;
       try {
