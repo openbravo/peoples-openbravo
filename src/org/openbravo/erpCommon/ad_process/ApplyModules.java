@@ -34,7 +34,6 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.AntExecutor;
 import org.openbravo.erpCommon.utility.OBError;
-import org.openbravo.erpCommon.utility.OBPrintStream;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -109,17 +108,18 @@ public void doPost (HttpServletRequest request, HttpServletResponse response) th
    * @throws ServletException
    */
   private void startApply(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    final PrintStream oldOut=System.out;
+    //final PrintStream oldOut=System.out;
     try {
       final AntExecutor ant=new AntExecutor(vars.getSessionValue("#sourcePath"));
       String fileName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())+"-apply.log";
-      final OBPrintStream obps=new OBPrintStream(new PrintStream(response.getOutputStream()));
-      System.setOut(obps);
+      //final OBPrintStream obps=new OBPrintStream(new PrintStream(response.getOutputStream()));
+      //System.setOut(obps);
       
       //ant.setOBPrintStreamLog(response.getWriter());
-      ant.setOBPrintStreamLog(new PrintStream(response.getOutputStream()));
+      final PrintStream out = new PrintStream(response.getOutputStream());
+      ant.setOBPrintStreamLog(new PrintStream(out));
       fileName = ant.setLogFile(fileName);
-      obps.setLogFile(new File(fileName+".db"));
+      //obps.setLogFile(new File(fileName+".db"));
       ant.setLogFileInOBPrintStream(new File(fileName));
       vars.setSessionObject("ApplyModules|Log", ant);
       
@@ -153,13 +153,13 @@ public void doPost (HttpServletRequest request, HttpServletResponse response) th
      
       ant.setFinished(true);
       
-      final PrintStream out = new PrintStream(response.getOutputStream());
+      
       response.setContentType("text/plain; charset=UTF-8");
       out.println("finished");
       out.close();
     } catch (final Exception e) {e.printStackTrace();}  
     finally{
-      System.setOut(oldOut);
+     // System.setOut(oldOut);
     }
   }
   
