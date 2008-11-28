@@ -152,30 +152,37 @@
         v_IsUpdateable:='N';
         v_IsSessionAttr:='Y';
         IF(UPPER(Cur_Column.Column_Name)='AD_CLIENT_ID') THEN
-          v_AD_Val_Rule_ID:=103;
+          v_AD_Val_Rule_ID:='103';
         ELSE
-          v_AD_Val_Rule_ID:=104;
+          v_AD_Val_Rule_ID:='104';
         END IF;
       ELSIF(UPPER(Cur_Column.Column_Name) IN('UPDATED', 'CREATED')) THEN
-        v_AD_Reference_ID:=16;
+        v_AD_Reference_ID:='16';
         v_IsUpdateable:='N';
       ELSIF(UPPER(Cur_Column.Column_Name) IN('UPDATEDBY', 'CREATEDBY')) THEN
-        v_AD_Reference_ID:=30;
+        v_AD_Reference_ID:='30';
         v_IsUpdateable:='N';
       ELSIF(UPPER(Cur_Column.Column_Name) IN('NAME')) THEN
         v_IsIdentifier:='Y';
-      ELSIF(UPPER(Cur_Column.Column_Name) IN('M_PRODUCT_ID', 'C_BPARTNER_ID')) THEN
-        v_AD_Reference_ID:=30;
+      ELSIF(UPPER(Cur_Column.Column_Name) IN('M_PRODUCT_ID')) THEN
+        v_AD_Reference_ID:='30';
+        v_AD_Reference_Value_ID:='800060';
+      ELSIF(UPPER(Cur_Column.Column_Name) IN ('C_BPARTNER_ID')) THEN 
+        v_AD_Reference_ID:='30';
+        v_AD_Reference_Value_ID:='800057';
       ELSIF(UPPER(Cur_Column.Column_Name) IN('M_ATTRIBUTESETINSTANCE_ID')) THEN
-        v_AD_Reference_ID:=35;
+        v_AD_Reference_ID:='35';
       ELSIF(UPPER(Cur_Column.Column_Name) LIKE '%_LOCATION_ID') THEN
-        v_AD_Reference_ID:=21;
+        v_AD_Reference_ID:='30';
+        v_AD_Reference_Value_ID:='21';
       ELSIF(UPPER(Cur_Column.Column_Name) LIKE '%_LOCATOR%_ID') THEN
-        v_AD_Reference_ID:=31;
+        v_AD_Reference_ID:='30';
+        v_AD_Reference_Value_ID:='31';
       ELSIF(UPPER(Cur_Column.Column_Name) LIKE '%_ACCT') THEN
-        v_AD_Reference_ID:=25;
+        v_AD_Reference_ID:='30';
+        v_AD_Reference_Value_ID:='25';
       ELSIF(UPPER(Cur_Column.Column_Name) LIKE '%_ID') THEN
-        v_AD_Reference_ID:=19;
+        v_AD_Reference_ID:='19';
       ELSIF(UPPER(Cur_Column.Column_Name) IN('LINE', 'SEQNO')) THEN
         v_DefaultValue:='@SQL=SELECT COALESCE(MAX('||Cur_Column.Column_Name||'),0)+10 AS DefaultValue FROM '||Cur_Column.Table_Name||' WHERE xxParentColumn=@xxParentColumn@';
       END IF;
@@ -274,7 +281,8 @@
         v_columnName, v_columnName, Cur_Column.AD_Table_ID,
         v_AD_Reference_ID, v_FieldLength, v_IsKey, v_IsParent,
        (CASE Cur_Column.Nullable WHEN 'Y' THEN 'N' ELSE 'Y' END),
-        v_IsIdentifier, v_SeqNo, 'N', 'N', v_IsUpdateable, v_AD_Reference_Value_ID, v_AD_Val_Rule_ID, v_DefaultValue, v_IsSessionAttr,
+        v_IsIdentifier, v_SeqNo, 'N', 'N', v_IsUpdateable, v_AD_Reference_Value_ID, 
+        v_AD_Val_Rule_ID, v_DefaultValue, v_IsSessionAttr,
         Cur_Column.COLUMN_ID, v_module_id) ;
       --
       v_count:=v_count + 1;
