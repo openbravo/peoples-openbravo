@@ -99,7 +99,7 @@
     )
   LOOP
     -- Stocked Items "leaf node"
-    IF(CUR_BOM.ProductType='I' AND CUR_BOM.ProductType='I') THEN
+    IF(CUR_BOM.ProductType='I' AND CUR_BOM.IsBOM='N' AND CUR_BOM.IsStocked = 'Y') THEN
       -- Get v_ProductQty
       SELECT COALESCE(SUM(QtyOnHand), 0)
       INTO v_ProductQty
