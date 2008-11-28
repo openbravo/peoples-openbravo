@@ -252,10 +252,14 @@ function setChangedField(field, form) {
  * @return
  */
 function logClick(hiddenInput) {
-	isUserChanges = true;
-	if(hiddenInput != null) {
-		logChanges(hiddenInput);
-	}
+  var autosave = top.frameMenu.autosave;
+  if(typeof autosave == "undefined" || !autosave) {
+    return;
+  }
+  isUserChanges = true;
+  if(hiddenInput != null) {
+    logChanges(hiddenInput);
+  }
 }
 
 /**
