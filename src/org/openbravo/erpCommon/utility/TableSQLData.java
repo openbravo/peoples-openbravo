@@ -273,7 +273,15 @@ public class TableSQLData {
   public Vector<String> getParameterValuesOnlyId() {
     Vector<String> result = new Vector<String>();
     Vector<QueryParameterStructure> vAux;
-    // skip the following parameter types for onlyId queries: select, from, subquery
+    // skip the following parameter types for onlyId queries: select, from
+    vAux = getSubqueryParameters();
+    if (vAux!=null) {
+      for (int i=0;i<vAux.size();i++) {
+        QueryParameterStructure aux = vAux.elementAt(i);
+        result.addElement(getParameter(aux.getName()));
+      }
+    }
+    if (log4j.isDebugEnabled()) log4j.debug("Subquery parameters obtained");
     vAux = getWhereParameters();
     if (vAux!=null) {
       for (int i=0;i<vAux.size();i++) {
