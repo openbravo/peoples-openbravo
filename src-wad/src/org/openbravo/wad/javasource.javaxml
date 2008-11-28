@@ -618,7 +618,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       try{
         String strSQL = ModelSQLGeneration.generateSQLonlyId(this, vars, tableSQL, (tableSQL.getTableName() + "." + tableSQL.getKeyColumn() + " AS ID"), new Vector&#60;String&#62;(), new Vector&#60;String&#62;(), 0, 0);
         ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValuesOnlyId());
-        data = execquery.selectAndSearch(ExecuteQuery.SearchType.NEXT, strSelected);
+        data = execquery.selectAndSearch(ExecuteQuery.SearchType.NEXT, strSelected, tableSQL.getKeyColumn());
       } catch (Exception e) { 
         if (log4j.isDebugEnabled()) log4j.debug("Error getting next element");
         e.printStackTrace();
@@ -637,7 +637,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       try{
         String strSQL = ModelSQLGeneration.generateSQLonlyId(this, vars, tableSQL, (tableSQL.getTableName() + "." + tableSQL.getKeyColumn() + " AS ID"), new Vector&#60;String&#62;(), new Vector&#60;String&#62;(),0,0);
         ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValuesOnlyId());
-        data = execquery.selectAndSearch(ExecuteQuery.SearchType.GETPOSITION, strSelected);
+        data = execquery.selectAndSearch(ExecuteQuery.SearchType.GETPOSITION, strSelected, tableSQL.getKeyColumn());
       } catch (Exception e) { 
         if (log4j.isDebugEnabled()) log4j.debug("Error getting key position");
         e.printStackTrace();
@@ -656,7 +656,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       try{
         String strSQL = ModelSQLGeneration.generateSQLonlyId(this, vars, tableSQL, (tableSQL.getTableName() + "." + tableSQL.getKeyColumn() + " AS ID"), new Vector&#60;String&#62;(), new Vector&#60;String&#62;(),0,0);
         ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValuesOnlyId());
-        data = execquery.selectAndSearch(ExecuteQuery.SearchType.PREVIOUS, strSelected);
+        data = execquery.selectAndSearch(ExecuteQuery.SearchType.PREVIOUS, strSelected, tableSQL.getKeyColumn());
       } catch (Exception e) { 
         if (log4j.isDebugEnabled()) log4j.debug("Error getting previous element");
         e.printStackTrace();
@@ -674,7 +674,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       try{
         String strSQL = ModelSQLGeneration.generateSQLonlyId(this, vars, tableSQL, (tableSQL.getTableName() + "." + tableSQL.getKeyColumn() + " AS ID"), new Vector&#60;String&#62;(), new Vector&#60;String&#62;(),0,1);
         ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValuesOnlyId());
-        data = execquery.selectAndSearch(ExecuteQuery.SearchType.FIRST, "");
+        data = execquery.selectAndSearch(ExecuteQuery.SearchType.FIRST, "", tableSQL.getKeyColumn());
 
       } catch (Exception e) { 
         if (log4j.isDebugEnabled()) log4j.debug("Error getting first element");
@@ -691,7 +691,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       try{
         String strSQL = ModelSQLGeneration.generateSQLonlyId(this, vars, tableSQL, (tableSQL.getTableName() + "." + tableSQL.getKeyColumn() + " AS ID"), new Vector&#60;String&#62;(), new Vector&#60;String&#62;(),0,0);
         ExecuteQuery execquery = new ExecuteQuery(this, strSQL, tableSQL.getParameterValuesOnlyId());
-        data = execquery.selectAndSearch(ExecuteQuery.SearchType.LAST, "");
+        data = execquery.selectAndSearch(ExecuteQuery.SearchType.LAST, "", tableSQL.getKeyColumn());
       } catch (Exception e) { 
         if (log4j.isDebugEnabled()) log4j.debug("Error getting last element");
         e.printStackTrace();

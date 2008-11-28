@@ -148,10 +148,11 @@ public class ExecuteQuery {
    * on the position inside the result list.
    * @param searchType specifies for which value to look in the sql result
    * @param oldValue specifies the related value
+   * @param idFieldName specifies the name of the field with the id
    * @return one value of the result corresponding to searchType and oldValue
    * @throws ServletException
    */
-  public String selectAndSearch(SearchType searchType, String oldValue) throws ServletException {
+  public String selectAndSearch(SearchType searchType, String oldValue, String idFieldName) throws ServletException {
     PreparedStatement st = null ;
     ResultSet result;
 
@@ -172,19 +173,19 @@ public class ExecuteQuery {
       switch (searchType) {
       case FIRST :
         if (result.first()) {
-          return result.getString(1);
+          return result.getString(idFieldName);
         }
         break;
       case LAST :
         if (result.last()) {
-          return result.getString(1);
+          return result.getString(idFieldName);
         }
         break;
       // linear search in list and return the previous when found
       case PREVIOUS : 
         String previous = oldValue;
         while(result.next()) {
-          String value = result.getString(1);
+          String value = result.getString(idFieldName);
           if (value.equals(oldValue)) return previous;
           previous = value;
         }
@@ -193,7 +194,7 @@ public class ExecuteQuery {
       case NEXT :
         boolean found = false;
         while(result.next()) {
-          String value = result.getString(1);
+          String value = result.getString(idFieldName);
           if (!found && value.equals(oldValue)) 
             found=true;
           else 
@@ -206,7 +207,7 @@ public class ExecuteQuery {
       case GETPOSITION :
         int rowIndex = 0;
         while(result.next()) {
-          String value = result.getString(1);
+          String value = result.getString(idFieldName);
           if (value.equals(oldValue)) {
             return String.valueOf(rowIndex);
           }
