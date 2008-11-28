@@ -38,10 +38,13 @@ import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.DataImportService;
 import org.openbravo.service.db.ImportResult;
+
+
 
 /**
  * ApplyModule processes all modules that are in status (I)Installed or (P)Pending
@@ -163,8 +166,8 @@ public class ApplyModule {
 								.getInstance();
 						final ImportResult result = importService.importDataFromXML(
 								OBDal.getInstance().get(Client.class, "0"),
-								OBDal.getInstance()
-										.get(Organization.class, "0"), strXml);
+								OBDal.getInstance().get(Organization.class, "0"), strXml, 
+								OBDal.getInstance().get(Module.class, ds[i].adModuleId));
 						String msg = result.getErrorMessages();
 						if (msg!=null && msg.length()>0) log4j.error(result.getErrorMessages());
 						
