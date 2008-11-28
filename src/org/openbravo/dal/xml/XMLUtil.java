@@ -31,14 +31,12 @@ import org.dom4j.io.XMLWriter;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
-import org.openbravo.service.rest.DalWebService;
 
 /**
  * Utility class for XML processing.
  * 
  * @see XMLEntityConverter
  * @see EntityXMLConverter
- * @see DalWebService
  * 
  * @author mtaal
  */
