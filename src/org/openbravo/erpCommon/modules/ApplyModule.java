@@ -184,6 +184,7 @@ public class ApplyModule {
 			// **************** Set applied as installed and delete
 			// uninstalled************************
 			log4j.info("Set modules as installed");
+      OBDal.getInstance().commitAndClose();
 			ApplyModuleData.setInstalled(pool);
 			ApplyModuleData.deleteUninstalled(pool);
 		} catch (final Exception e) {
