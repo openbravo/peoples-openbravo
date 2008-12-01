@@ -30,7 +30,6 @@ import org.openbravo.erpCommon.ad_actionButton.*;
 </PARAMETER_TMP>
 
 
-
 import org.openbravo.erpCommon.utility.*;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.utils.FormatUtilities;
@@ -47,6 +46,7 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.util.*;
+import java.sql.Connection;
 import org.apache.log4j.Logger;
 
 public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecureAppServlet {
@@ -550,7 +550,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     return "";
   }
 */
-  <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data getEditVariables(VariablesSecureApp vars<PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>) throws IOException,ServletException {
+  <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data getEditVariables(Connection con, VariablesSecureApp vars<PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>) throws IOException,ServletException {
     <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data data = new <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data();
     try {
 <FIELDS_TMP id="sectionDetailgetEditVariables">    data.<FIELD_TMP id="fieldName">claveAlmacen</FIELD_TMP> = <FIELD_TMP id="fieldEncryption">FormatUtilities.encryptDecrypt(</FIELD_TMP>vars.get<FIELD_TMP id="fieldType">StringParameter</FIELD_TMP>("inp<FIELD_TMP id="fieldName1">claveAlmacen</FIELD_TMP>"<FIELD_TMP id="fieldDefault">, "D"</FIELD_TMP>)<FIELD_TMP id="fieldEndEncryption">, true)</FIELD_TMP>;</FIELDS_TMP>
@@ -1084,8 +1084,10 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         vars.setMessage(tabId, myError);
     }
     else {
+        Connection con = null;
         try {
-            data = getEditVariables(vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);            
+            con = this.getTransactionConnection();
+            data = getEditVariables(con, vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);            
             String strSequence = "";
             if(type == 'I') {                
 <PARAMETER_TMP id="keySequence">        strSequence = SequenceIdData.getUUID();
@@ -1094,18 +1096,23 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
             }
             <PARAMETER_TMP id="client">if (Utility.isElementInList(Utility.getContext(this, vars, "#User_Client", windowId, accesslevel),data.adClientId) <FIELDS_TMP id="sectionOrganizationCheck"> &amp;&amp; Utility.isElementInList(Utility.getContext(this, vars, "#User_Org", windowId, accesslevel),data.adOrgId)</FIELDS_TMP>){</PARAMETER_TMP>
 		            if(type == 'I')
-		                    total = data.insert(this);
+		                    total = data.insert(con, this);
 		                else
-		                    total = data.update(this);		            
+		                    total = data.update(con, this);		            
           <PARAMETER_TMP id="client">
             }
                 else {
             OBError newError = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()));
             myError.setError(newError);            
           }</PARAMETER_TMP>
-        } catch(ServletException ex) {
+          releaseCommitConnection(con);
+        } catch(Exception ex) {
             OBError newError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-            myError.setError(newError);              
+            myError.setError(newError);   
+            try {
+              releaseRollbackConnection(con);
+            } catch (final Exception e) { //do nothing 
+            }           
         }
             
         if (myError.isEmpty() &amp;&amp; total == 0) {

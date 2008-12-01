@@ -201,7 +201,7 @@ package="org.openbravo.wad.Window">
   &#60;/SqlMethod&#62;
 </FIELDS_TMP>
 
-  <SqlMethod name="update" type="preparedStatement" return="rowCount" static="false">
+  <SqlMethod name="update" type="preparedStatement" return="rowCount" static="false" connection="true">
     <Sql>&#60;&#33;[CDATA[
         UPDATE <PARAMETER_TMP id="table">table</PARAMETER_TMP>
         SET <FIELDS_TMP id="sectionDetailColumns3"><FIELD_TMP id="fieldName3">column_a</FIELD_TMP> = <FIELD_TMP id="fieldFormat3">?</FIELD_TMP> </FIELDS_TMP>, updated = now(), updatedby = ? 
@@ -219,7 +219,7 @@ package="org.openbravo.wad.Window">
     <PARAMETER_TMP id="org">    &#60;Parameter name="adOrgClient" type="replace" optional="true" after="<PARAMETER_TMP id="table">table</PARAMETER_TMP>.AD_Org_ID IN (" text="'1'"/&#62;</PARAMETER_TMP>
   </SqlMethod>
 
-  <SqlMethod name="insert" type="preparedStatement" return="rowCount" static="false">
+  <SqlMethod name="insert" type="preparedStatement" return="rowCount" static="false" connection="true">
     <Sql>&#60;&#33;[CDATA[
         INSERT INTO <PARAMETER_TMP id="table">table</PARAMETER_TMP> 
         (<FIELDS_TMP id="sectionDetailColumns5"><FIELD_TMP id="fieldName5">column</FIELD_TMP></FIELDS_TMP>, created, createdby, updated, updatedBy)

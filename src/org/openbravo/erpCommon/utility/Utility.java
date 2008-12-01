@@ -18,33 +18,42 @@
 */
 package org.openbravo.erpCommon.utility;
 
-import org.openbravo.dal.core.OBContext;
-import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.reference.*;
-import org.openbravo.data.FieldProvider;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import javax.servlet.ServletException;
+
+import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.data.FieldProvider;
 import org.openbravo.data.Sqlc;
-import org.openbravo.erpCommon.utility.DateTimeData;
-import org.openbravo.utils.Replace;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.HashMap;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.StringTokenizer;
-import java.util.Hashtable;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.Calendar;
-import java.text.ParseException;
-import java.text.DateFormat;
-import java.sql.Connection;
-import javax.servlet.ServletException;
-import java.io.*;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.model.ad.ui.Window;
-import org.apache.log4j.Logger ;
+import org.openbravo.utils.Replace;
 
 /**
  * @author Fernando Iriazabal
@@ -136,7 +145,7 @@ public class Utility {
    */  
   public static String formatDate( Date date, String pattern )
   {
-    SimpleDateFormat dateFormatter = new SimpleDateFormat( pattern );
+    final SimpleDateFormat dateFormatter = new SimpleDateFormat( pattern );
     return dateFormatter.format( date );
   }  
 
@@ -170,13 +179,13 @@ public class Utility {
       log4j.debug("Utility.messageBD - Message Code: " + strCode);
       if (strLanguage.equals("en_US")) strMessage = MessageBDData.message(conn, strCode);
       else strMessage = MessageBDData.messageLanguage(conn, strCode, strLanguage);
-    } catch(Exception ignore){}
+    } catch(final Exception ignore){}
     log4j.debug("Utility.messageBD - Message description: " + strMessage);
     if (strMessage==null || strMessage.equals("")) {
       try {
         if (strLanguage.equals("en_US")) strMessage = MessageBDData.columnname(conn, strCode);
         else strMessage = MessageBDData.columnnameLanguage(conn, strCode, strLanguage);
-      } catch(Exception e) {
+      } catch(final Exception e) {
         strMessage = strCode;
       }
     }
@@ -215,7 +224,7 @@ public class Utility {
 
     try {
       retValue = getContext(conn, vars, "Transactional$Range", window);
-    } catch (IllegalArgumentException ignored) {}
+    } catch (final IllegalArgumentException ignored) {}
 
     if (retValue.equals("")) return "1";
     return retValue;
@@ -243,10 +252,10 @@ public class Utility {
     } else {
       try {
         if (context.equalsIgnoreCase("#Date")) return DateTimeData.today(conn);
-      } catch (ServletException e) {}
+      } catch (final ServletException e) {}
       retValue = vars.getSessionValue(context);
       
-      String userLevel = vars.getSessionValue("#User_Level");
+      final String userLevel = vars.getSessionValue("#User_Level");
       
       if (context.equalsIgnoreCase("#AccessibleOrgTree")) {
         if (!retValue.equals("'0'") && !retValue.startsWith("'0',") && retValue.indexOf(",'0'")==-1) {// add *
@@ -308,11 +317,11 @@ public class Utility {
     } else {
       try {
         if (context.equalsIgnoreCase("#Date")) return DateTimeData.today(conn);
-      } catch (ServletException e) {}
+      } catch (final ServletException e) {}
       
       retValue = vars.getSessionValue(context);
       
-      String userLevel = vars.getSessionValue("#User_Level");
+      final String userLevel = vars.getSessionValue("#User_Level");
       if (context.equalsIgnoreCase("#AccessibleOrgTree")) {
         if (!retValue.equals("0") && !retValue.startsWith("'0',") && retValue.indexOf(",'0'")==-1) {// add *
           retValue = "'0'" + (retValue.equals("")?"":",") + retValue;
@@ -324,7 +333,7 @@ public class Utility {
         Window window;
         OBContext.getOBContext().setInAdministratorMode(true);
         try {
-			window = (Window) org.openbravo.dal.service.OBDal.getInstance().get(Window.class, strWindow);
+			window = org.openbravo.dal.service.OBDal.getInstance().get(Window.class, strWindow);
 			if (window.getWindowType().equals("T")) {
 	        	return OrgTree.getTransactionAllowedOrgs(retValue);
 	        } else {
@@ -379,7 +388,7 @@ public class Utility {
    * @return
    */
   public static String getReferenceableOrg(VariablesSecureApp vars, String currentOrg) {
-    OrgTree tree = (OrgTree) vars.getSessionObject("#CompleteOrgTree");
+    final OrgTree tree = (OrgTree) vars.getSessionObject("#CompleteOrgTree");
     return tree.getLogicPath(currentOrg).toString();
   }
   
@@ -396,8 +405,8 @@ public class Utility {
    */
   public static String getReferenceableOrg(ConnectionProvider conn, VariablesSecureApp vars, String currentOrg,  String window, int accessLevel) {
     if (accessLevel==4||accessLevel==6) return "'0'"; //force to be org *
-    Vector<String> vComplete = getStringVector(getReferenceableOrg(vars, currentOrg));
-    Vector<String> vAccessible = getStringVector(getContext(conn, vars, "#User_Org", window, accessLevel));
+    final Vector<String> vComplete = getStringVector(getReferenceableOrg(vars, currentOrg));
+    final Vector<String> vAccessible = getStringVector(getContext(conn, vars, "#User_Org", window, accessLevel));
     return getVectorToString(getIntersectionVector(vComplete, vAccessible));
   }
   
@@ -435,7 +444,7 @@ public class Utility {
     if (columnname == null || columnname.equals("")) return "";
     
     if(sessionData != null) {
-    	final String sessionValue = (String) sessionData.getField(columnname);
+    	final String sessionValue = sessionData.getField(columnname);
     	if(sessionValue != null) {
     		return sessionValue;
     	}    		
@@ -447,9 +456,9 @@ public class Utility {
     if (context.indexOf("@")==-1) //Tokenize just when contains @ 
       defStr = context;
     else {
-      StringTokenizer st = new StringTokenizer(context, ",;", false);
+      final StringTokenizer st = new StringTokenizer(context, ",;", false);
       while (st.hasMoreTokens()) {
-        String token = st.nextToken().trim();
+        final String token = st.nextToken().trim();
         if (token.indexOf("@")==-1) defStr = token;
         else defStr = parseContext(conn, vars, token, window);
         if (!defStr.equals("")) return defStr;
@@ -475,10 +484,10 @@ public class Utility {
    * @return
    */
   public static Vector<String> getStringVector(String s){
-    Vector<String> v = new Vector<String>();
-    StringTokenizer st = new StringTokenizer(s, ",", false);
+    final Vector<String> v = new Vector<String>();
+    final StringTokenizer st = new StringTokenizer(s, ",", false);
     while (st.hasMoreTokens()) {
-      String token = st.nextToken().trim();
+      final String token = st.nextToken().trim();
       if (!v.contains(token)) v.add(token);
     }
     return v;    
@@ -491,7 +500,7 @@ public class Utility {
    * @return
    */
   public static Vector<String> getIntersectionVector(Vector<String> v1,  Vector<String> v2){
-    Vector<String> v = new Vector<String>();
+    final Vector<String> v = new Vector<String>();
     for (int i=0; i<v1.size(); i++){
       if (v2.contains(v1.elementAt(i)) && !v.contains(v1.elementAt(i))) v.add(v1.elementAt(i));
     }
@@ -504,7 +513,7 @@ public class Utility {
    * @return
    */
   public static String getVectorToString(Vector<String> v){
-    StringBuffer s = new StringBuffer();
+    final StringBuffer s = new StringBuffer();
     for (int i=0; i<v.size(); i++) {
       if (s.length()!=0) s.append(", ");
       s.append(v.elementAt(i));
@@ -523,14 +532,14 @@ public class Utility {
    */
   public static String parseContext(ConnectionProvider conn, VariablesSecureApp vars, String context, String window) {
     if (context==null || context.equals("")) return "";
-    StringBuffer strOut = new StringBuffer();
+    final StringBuffer strOut = new StringBuffer();
     String value = new String(context);
     String token, defStr;
     int i = value.indexOf("@");
     while (i!=-1) {
       strOut.append(value.substring(0,i));
       value = value.substring(i+1);
-      int j=value.indexOf("@");
+      final int j=value.indexOf("@");
       if (j==-1) {
         strOut.append(value);
         return strOut.toString();
@@ -560,9 +569,9 @@ public class Utility {
    */
   public static String getDocumentNo (ConnectionProvider conn, VariablesSecureApp vars, String WindowNo, String TableName, String C_DocTypeTarget_ID, String C_DocType_ID, boolean onlyDocType, boolean updateNext) {
     if (TableName == null || TableName.length() == 0) throw new IllegalArgumentException("Utility.getDocumentNo - required parameter missing");
-    String AD_Client_ID = getContext(conn, vars, "AD_Client_ID", WindowNo);
+    final String AD_Client_ID = getContext(conn, vars, "AD_Client_ID", WindowNo);
 
-    String cDocTypeID = (C_DocTypeTarget_ID.equals("")?C_DocType_ID:C_DocTypeTarget_ID);
+    final String cDocTypeID = (C_DocTypeTarget_ID.equals("")?C_DocType_ID:C_DocTypeTarget_ID);
     if (cDocTypeID.equals("")) return getDocumentNo (conn, AD_Client_ID, TableName, updateNext);
 
     if (AD_Client_ID.equals("0")) throw new UnsupportedOperationException("Utility.getDocumentNo - Cannot add System records");
@@ -570,13 +579,35 @@ public class Utility {
     CSResponse cs=null;
     try {
       cs = DocumentNoData.nextDocType(conn, cDocTypeID, AD_Client_ID, (updateNext?"Y":"N"));
-    } catch (ServletException e) {}
+    } catch (final ServletException e) {}
 
     if (cs==null || cs.razon==null || cs.razon.equals("")) {
         if (!onlyDocType) return getDocumentNo (conn, AD_Client_ID, TableName, updateNext);
         else return "0";
     } else return cs.razon;
   }
+  
+  
+  public static String getDocumentNo (Connection conn, ConnectionProvider con, VariablesSecureApp vars, String WindowNo, String TableName, String C_DocTypeTarget_ID, String C_DocType_ID, boolean onlyDocType, boolean updateNext) {
+      if (TableName == null || TableName.length() == 0) throw new IllegalArgumentException("Utility.getDocumentNo - required parameter missing");
+      final String AD_Client_ID = getContext(con, vars, "AD_Client_ID", WindowNo);
+
+      final String cDocTypeID = (C_DocTypeTarget_ID.equals("")?C_DocType_ID:C_DocTypeTarget_ID);
+      if (cDocTypeID.equals("")) return getDocumentNo (con, AD_Client_ID, TableName, updateNext);
+
+      if (AD_Client_ID.equals("0")) throw new UnsupportedOperationException("Utility.getDocumentNo - Cannot add System records");
+
+      CSResponse cs=null;
+      try {
+     
+        cs = DocumentNoData.nextDocTypeConnection(conn, con, cDocTypeID, AD_Client_ID, (updateNext?"Y":"N"));
+      } catch (final ServletException e) {}
+
+      if (cs==null || cs.razon==null || cs.razon.equals("")) {
+          if (!onlyDocType) return getDocumentNoConnection (conn, con, AD_Client_ID, TableName, updateNext);
+          else return "0";
+      } else return cs.razon;
+    }
 
   /**
    * Gets the document number from database.
@@ -593,7 +624,7 @@ public class Utility {
     CSResponse cs=null;
     try {
       cs = DocumentNoData.nextDoc(conn, "DocumentNo_" + TableName, AD_Client_ID, (updateNext?"Y":"N"));
-    } catch (ServletException e) {}
+    } catch (final ServletException e) {}
 
 
     if (cs==null || cs.razon==null) return "";
@@ -615,7 +646,7 @@ public class Utility {
     CSResponse cs=null;
     try {
       cs = DocumentNoData.nextDocConnection(conn, con, "DocumentNo_" + TableName, AD_Client_ID, (updateNext?"Y":"N"));
-    } catch (ServletException e) {}
+    } catch (final ServletException e) {}
 
 
     if (cs==null || cs.razon==null) return "";
@@ -630,13 +661,13 @@ public class Utility {
   public static String addSystem (String list) {
     String retValue = "";
 
-    Hashtable<String, String> ht = new Hashtable<String, String>();
+    final Hashtable<String, String> ht = new Hashtable<String, String>();
     ht.put("0", "0");
 
-    StringTokenizer st = new StringTokenizer(list, ",", false);
+    final StringTokenizer st = new StringTokenizer(list, ",", false);
     while (st.hasMoreTokens()) ht.put(st.nextToken(), "x");
 
-    Enumeration<String> e = ht.keys();
+    final Enumeration<String> e = ht.keys();
     while (e.hasMoreElements()) retValue += e.nextElement() + ",";
 
     retValue = retValue.substring(0, retValue.length()-1);
@@ -656,7 +687,7 @@ public class Utility {
    * @throws ServletException
    */
   public static boolean canUpdate (ConnectionProvider conn, VariablesSecureApp vars, String AD_Client_ID, String AD_Org_ID, String window) throws ServletException {
-    String User_Level = getContext(conn, vars, "#User_Level", window);
+    final String User_Level = getContext(conn, vars, "#User_Level", window);
 
     if (User_Level.indexOf("S") != -1) return true;
 
@@ -694,14 +725,14 @@ public class Utility {
 
     String inStr = text;
     String token;
-    StringBuffer outStr = new StringBuffer();
+    final StringBuffer outStr = new StringBuffer();
 
     int i = inStr.indexOf("@");
     while (i != -1) {
       outStr.append(inStr.substring(0, i));
       inStr = inStr.substring(i+1, inStr.length());
 
-      int j = inStr.indexOf("@");
+      final int j = inStr.indexOf("@");
       if (j < 0) {
         inStr = "@" + inStr;
         break;
@@ -753,7 +784,7 @@ public class Utility {
     for (int i=0;i<data.length;i++) {
       try {
         f = data[i].getField(fieldName);
-      } catch (Exception e) {
+      } catch (final Exception e) {
         log4j.error("Utility.isInFieldProvider - " + e);
         return false;
       }
@@ -769,10 +800,11 @@ public class Utility {
    * @param fields
    * @return
    */
-  public static String getOrderByFromSELECT(String[] SQL, Vector<String> fields) {
+  @Deprecated
+public static String getOrderByFromSELECT(String[] SQL, Vector<String> fields) {
     if (SQL==null || SQL.length==0) return "";
     else if (fields==null || fields.size()==0) return "";
-    StringBuffer script = new StringBuffer();
+    final StringBuffer script = new StringBuffer();
     for (int i=0;i<fields.size();i++) {
       String token = fields.elementAt(i);
       token = token.trim();
@@ -785,7 +817,7 @@ public class Utility {
       if (!script.toString().equals("")) script.append(", ");
       String strAux = SQL[Integer.valueOf(token).intValue() - 1];
       strAux = strAux.toUpperCase().trim();
-      int pos = strAux.indexOf(" AS ");
+      final int pos = strAux.indexOf(" AS ");
       if (pos!=-1) strAux = strAux.substring(0, pos);
       strAux = strAux.trim();
       script.append(strAux);
@@ -831,12 +863,12 @@ public class Utility {
    */
   public static boolean generateFile(String strPath, String strFile, String data) {
     try {
-      File fileData = new File(strPath, strFile);
-      FileWriter fileWriterData = new FileWriter(fileData);
-      PrintWriter printWriterData = new PrintWriter(fileWriterData);
+      final File fileData = new File(strPath, strFile);
+      final FileWriter fileWriterData = new FileWriter(fileData);
+      final PrintWriter printWriterData = new PrintWriter(fileWriterData);
       printWriterData.print(data);
       fileWriterData.close();
-    } catch (IOException e) {
+    } catch (final IOException e) {
       e.printStackTrace();
       log4j.error("Problem of IOExceptio in file: " + strPath + " - " + strFile);
       return false;
@@ -884,16 +916,16 @@ public class Utility {
    * @throws ServletException
    */
   public static void fillSQLParameters(ConnectionProvider conn, VariablesSecureApp vars, FieldProvider data, ComboTableData cmb, String window, String actual_value) throws ServletException {
-    Vector<String> vAux = cmb.getParameters();
+    final Vector<String> vAux = cmb.getParameters();
     if (vAux!=null && vAux.size()>0) {
       if (log4j.isDebugEnabled()) log4j.debug("Combo Parameters: " + vAux.size());
       for (int i=0;i<vAux.size();i++) {
-        String strAux = vAux.elementAt(i);
+        final String strAux = vAux.elementAt(i);
         try {
-          String value = parseParameterValue(conn, vars, data, strAux, window, actual_value);
+          final String value = parseParameterValue(conn, vars, data, strAux, window, actual_value);
           if (log4j.isDebugEnabled()) log4j.debug("Combo Parameter: " + strAux + " - Value: " + value);
           cmb.setParameter(strAux, value);
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
           throw new ServletException(ex);
         }
       }
@@ -912,16 +944,16 @@ public class Utility {
    * @throws ServletException
    */
   public static void fillTableSQLParameters(ConnectionProvider conn, VariablesSecureApp vars, FieldProvider data, TableSQLData cmb, String window) throws ServletException {
-    Vector<String> vAux = cmb.getParameters();
+    final Vector<String> vAux = cmb.getParameters();
     if (vAux!=null && vAux.size()>0) {
       if (log4j.isDebugEnabled()) log4j.debug("Combo Parameters: " + vAux.size());
       for (int i=0;i<vAux.size();i++) {
-        String strAux = vAux.elementAt(i);
+        final String strAux = vAux.elementAt(i);
         try {
-          String value = parseParameterValue(conn, vars, data, strAux, window, "");
+          final String value = parseParameterValue(conn, vars, data, strAux, window, "");
           if (log4j.isDebugEnabled()) log4j.debug("Combo Parameter: " + strAux + " - Value: " + value);
           cmb.setParameter(strAux, value);
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
           throw new ServletException(ex);
         }
       }
@@ -985,7 +1017,7 @@ public class Utility {
         title = Utility.messageBD(conn, "Warning", vars.getLanguage());
       }
 
-      int errorPos = message.indexOf("@ERROR=");
+      final int errorPos = message.indexOf("@ERROR=");
       if (errorPos!=-1) {
         myMessage = Utility.translateError(conn, vars, vars.getLanguage(), "@CODE=@" + message.substring(errorPos+7));
         if (log4j.isDebugEnabled()) log4j.debug("Error Message returned: " + myMessage.getMessage());
@@ -1014,7 +1046,7 @@ public class Utility {
    * @return Object with the message.
    */
   public static OBError translateError(ConnectionProvider conn, VariablesSecureApp vars, String strLanguage, String message) {
-    OBError myError = new OBError();
+    final OBError myError = new OBError();
     myError.setType("Error");
     myError.setMessage(message);
     if (message!=null && !message.equals("")) {
@@ -1023,7 +1055,7 @@ public class Utility {
       if (message.startsWith("@CODE=@")) message = message.substring(7);
       else if (message.startsWith("@CODE=")) {
         message = message.substring(6);
-        int pos = message.indexOf("@");
+        final int pos = message.indexOf("@");
         if (pos==-1) {
           code = message;
           message = "";
@@ -1047,15 +1079,15 @@ public class Utility {
 
       //BEGIN Parsing message text
       if (message!=null && !message.equals("")) {
-        String rdbms = conn.getRDBMS();
+        final String rdbms = conn.getRDBMS();
         ErrorTextParser myParser = null;
         try {
-          Class<?> c = Class.forName("org.openbravo.erpCommon.utility.ErrorTextParser" + rdbms.toUpperCase());
+          final Class<?> c = Class.forName("org.openbravo.erpCommon.utility.ErrorTextParser" + rdbms.toUpperCase());
           myParser = (ErrorTextParser) c.newInstance();
-        } catch (ClassNotFoundException ex) {
+        } catch (final ClassNotFoundException ex) {
           log4j.warn("Couldn´t find class: org.openbravo.erpCommon.utility.ErrorTextParser" + rdbms.toUpperCase());
           myParser = null;
-        } catch (Exception ex1) {
+        } catch (final Exception ex1) {
           log4j.warn("Couldn´t initialize class: org.openbravo.erpCommon.utility.ErrorTextParser" + rdbms.toUpperCase());
           myParser = null;
         }
@@ -1065,9 +1097,9 @@ public class Utility {
           myParser.setMessage(message);
           myParser.setVars(vars);
           try {
-            OBError myErrorAux = myParser.parse();
+            final OBError myErrorAux = myParser.parse();
             if (myErrorAux!=null && !myErrorAux.getMessage().equals("") && (code==null || code.equals("") || code.equals("0") || !myErrorAux.getMessage().equalsIgnoreCase(message))) return myErrorAux;
-          } catch (Exception ex) {
+          } catch (final Exception ex) {
             log4j.error("Error while parsing text: " + ex);
           }
         }
@@ -1076,7 +1108,7 @@ public class Utility {
 
       //BEGIN Looking for error code in AD_Message
       if (code!=null && !code.equals("")) {
-        FieldProvider fldMessage = locateMessage(conn, code, strLanguage);
+        final FieldProvider fldMessage = locateMessage(conn, code, strLanguage);
         if (fldMessage!=null) {
           myError.setType((fldMessage.getField("msgtype").equals("E")?"Error":(fldMessage.getField("msgtype").equals("I")?"Info":(fldMessage.getField("msgtype").equals("S")?"Success":"Warning"))));
           myError.setMessage(fldMessage.getField("msgtext"));
@@ -1102,7 +1134,7 @@ public class Utility {
     try{
       if (log4j.isDebugEnabled()) log4j.debug("Utility.messageBD - Message Code: " + strCode);
       fldMessage = MessageBDData.messageInfo(conn, strLanguage, strCode);
-    } catch(Exception ignore){}
+    } catch(final Exception ignore){}
     if (fldMessage!=null && fldMessage.length>0) return fldMessage[0];
     else return null;
   }
@@ -1122,11 +1154,11 @@ public class Utility {
    */
   public static boolean isElementInList(String strList, String strElement){
     strList = strList.replace("(", "").replace(")", "");
-    StringTokenizer st = new StringTokenizer(strList, ",", false);
+    final StringTokenizer st = new StringTokenizer(strList, ",", false);
     strElement = strElement.replaceAll("'", "");
     
     while (st.hasMoreTokens()) {
-      String token = st.nextToken().trim().replaceAll("'", "");
+      final String token = st.nextToken().trim().replaceAll("'", "");
       if (token.equals(strElement)) return true;
     }
     return false;
@@ -1139,7 +1171,7 @@ public class Utility {
    * @return a String JavaScript function
    */
   public static String focusFieldJS(String id) {
-    String r = "\n function focusOnField() { \n" + 
+    final String r = "\n function focusOnField() { \n" + 
                " setWindowElementFocus('" + id + "', 'id'); \n" +
                " return true; \n" +
                "} \n";
@@ -1154,16 +1186,16 @@ public class Utility {
    */  
   public static void dumpFile(String fileLocation, OutputStream outputstream)
   {
-    byte dataPart[] = new byte[4096];
+    final byte dataPart[] = new byte[4096];
     try
     {
-      BufferedInputStream bufferedinputstream = new BufferedInputStream( new FileInputStream( new File( fileLocation ) ) );
+      final BufferedInputStream bufferedinputstream = new BufferedInputStream( new FileInputStream( new File( fileLocation ) ) );
       int i;
       while( (i = bufferedinputstream.read(dataPart, 0, 4096) ) != -1) 
         outputstream.write(dataPart, 0, i);
       bufferedinputstream.close();
     }
-    catch(Exception exception) { }
+    catch(final Exception exception) { }
   }  
   
   /**
@@ -1173,9 +1205,9 @@ public class Utility {
    */
   public static String stringList(String list) {
 	  String ret="";
-	  boolean hasBrackets = list.startsWith("(") && list.endsWith(")");
+	  final boolean hasBrackets = list.startsWith("(") && list.endsWith(")");
 	  if (hasBrackets) list = list.substring(1, list.length()-1);
-	  StringTokenizer st = new StringTokenizer(list, ",", false);
+	  final StringTokenizer st = new StringTokenizer(list, ",", false);
 	  while (st.hasMoreTokens()) {
 	    String token = st.nextToken().trim();
 	    if (!ret.equals("")) ret += ", ";
@@ -1234,7 +1266,7 @@ public class Utility {
    */
   public static boolean deleteDir(File f){
     if (f.isDirectory()) {
-      File elements[] = f.listFiles();
+      final File elements[] = f.listFiles();
       for (int i=0; i<elements.length; i++) {
         if (!deleteDir(elements[i])) return false;
       }
@@ -1249,9 +1281,9 @@ public class Utility {
    * @return file to a String
    */
   public static String fileToString(String strPath) throws FileNotFoundException {
-    FileReader myFileReader = new FileReader(strPath);
-    BufferedReader mybr = new BufferedReader(myFileReader);
-    StringBuffer strMyFile = new StringBuffer("");
+    final FileReader myFileReader = new FileReader(strPath);
+    final BufferedReader mybr = new BufferedReader(myFileReader);
+    final StringBuffer strMyFile = new StringBuffer("");
     try{
       String strTemp = mybr.readLine();
       strMyFile.append(strTemp);
@@ -1263,7 +1295,7 @@ public class Utility {
           myFileReader.close();
         }
       }
-    } catch (IOException e){
+    } catch (final IOException e){
       e.printStackTrace();
     }
     return strMyFile.toString();
@@ -1279,7 +1311,7 @@ public class Utility {
     if(strSource==null || strSource.equals("")) return strSource;
     strSource = strSource.trim();
     if(strSource.equals("")) return strSource;
-    StringTokenizer source = new StringTokenizer(strSource, " ", false);
+    final StringTokenizer source = new StringTokenizer(strSource, " ", false);
     String strTarget = "";
     String strTemp = "";
     int i=0;
@@ -1287,7 +1319,7 @@ public class Utility {
       strTemp = source.nextToken();
       if(i!=0) strTarget = strTarget + "_" + strTemp;
       else {
-        String strFirstChar = strTemp.substring(0, 1);
+        final String strFirstChar = strTemp.substring(0, 1);
         strTemp = strFirstChar.toUpperCase() + strTemp.substring(1, strTemp.length());   
         strTarget = strTarget + strTemp;
       }
@@ -1299,13 +1331,13 @@ public class Utility {
   
   public static String getButtonName(ConnectionProvider conn, VariablesSecureApp vars, String reference, String currentValue, String buttonId, HashMap<String, String> usedButtonShortCuts, HashMap<String, String> reservedButtonShortCuts) {
     try {
-      UtilityData[] data= UtilityData.selectReference(conn, vars.getLanguage(), reference);
+      final UtilityData[] data= UtilityData.selectReference(conn, vars.getLanguage(), reference);
       String retVal="";
       if (currentValue.equals("--")) currentValue="CL";
       if (data==null) return retVal;
       for (int j=0; j<data.length; j++) {
         int i = 0;
-        String name = data[j].name;
+        final String name = data[j].name;
         while ((i<name.length()) &&(name.substring(i,i+1).equals(" ") || reservedButtonShortCuts.containsKey(name.substring(i, i+1).toUpperCase()))) { 
           if (data[j].value.equals(currentValue)) retVal += name.substring(i, i+1);
           i++;
@@ -1331,7 +1363,7 @@ public class Utility {
       }
       
       return retVal;
-    } catch(Exception e) {
+    } catch(final Exception e) {
       log4j.error(e.toString());
       return currentValue;
     }
@@ -1339,10 +1371,10 @@ public class Utility {
   
   public static String getButtonName(ConnectionProvider conn, VariablesSecureApp vars, String fieldId, String buttonId,  HashMap<String, String> usedButtonShortCuts, HashMap<String, String> reservedButtonShortCuts) {
     try {
-      UtilityData data= UtilityData.selectFieldName(conn, vars.getLanguage(), fieldId);
+      final UtilityData data= UtilityData.selectFieldName(conn, vars.getLanguage(), fieldId);
       String retVal="";
       if (data==null) return retVal;
-      String name = data.name;
+      final String name = data.name;
       int i = 0;
       while ((i<name.length()) &&(name.substring(i,i+1).equals(" ") || reservedButtonShortCuts.containsKey(name.substring(i, i+1).toUpperCase()))) { 
         retVal += name.substring(i, i+1);
@@ -1364,7 +1396,7 @@ public class Utility {
       }
       
       return retVal;
-    } catch(Exception e) {
+    } catch(final Exception e) {
       log4j.error(e.toString());
       return "";
     }
@@ -1378,7 +1410,7 @@ public class Utility {
    * @throws ServletException 
    */
   public static String stringBaseCurrencyId(ConnectionProvider conn, String strClientId) throws ServletException {
-    String strBaseCurrencyId = UtilityData.getBaseCurrencyId(conn, strClientId);
+    final String strBaseCurrencyId = UtilityData.getBaseCurrencyId(conn, strClientId);
     return strBaseCurrencyId;
   }
 
@@ -1420,10 +1452,10 @@ public class Utility {
    * @return
    */
   public static ArrayList<String> stringToArrayList(String list) {
-    ArrayList<String> rt = new ArrayList<String>();
-    StringTokenizer st = new StringTokenizer(list, ",");
+    final ArrayList<String> rt = new ArrayList<String>();
+    final StringTokenizer st = new StringTokenizer(list, ",");
     while (st.hasMoreTokens()) {
-      String token = st.nextToken().trim();
+      final String token = st.nextToken().trim();
       rt.add(token);
     }
     return rt;
@@ -1436,7 +1468,7 @@ public class Utility {
    * @return
    */
   public static ArrayList<String> stringToArrayList(String[] list) {
-    ArrayList<String> rt = new ArrayList<String>();
+    final ArrayList<String> rt = new ArrayList<String>();
     if (list == null) return rt;
     for (int i=0; i<list.length; i++) rt.add(list[i]);
     return rt;
@@ -1451,7 +1483,7 @@ public class Utility {
    * @throws ServletException 
    */
   public static String stringISOSymbol(ConnectionProvider conn, String strCurrencyID) throws ServletException {
-    String strISOSymbol = UtilityData.getISOSymbol(conn, strCurrencyID);
+    final String strISOSymbol = UtilityData.getISOSymbol(conn, strCurrencyID);
     return strISOSymbol;
   }
   
@@ -1470,7 +1502,7 @@ public class Utility {
   		} else {
   			if (!WindowAccessData.hasFormAccessName(conn, vars.getRole(), processName)) return false;
   		}
-  	} catch (ServletException e) {
+  	} catch (final ServletException e) {
   		return false;
 	  }
 	  	return true;
@@ -1490,7 +1522,7 @@ public class Utility {
   		} else {
   			if (!WindowAccessData.hasProcessAccessName(conn, vars.getRole(), processName)) return false;
   		}
-  	} catch (ServletException e) {
+  	} catch (final ServletException e) {
   		return false;
 	  }
 	  return true;
@@ -1508,7 +1540,7 @@ public class Utility {
 	  	else if (!task.equals("")) {
 	  		if (!WindowAccessData.hasTaskAccess(conn, vars.getRole(), task)) return false;
 	  	} else if (!WindowAccessData.hasTaskAccessName(conn, vars.getRole(), taskName)) return false;
-	  } catch (ServletException e) {
+	  } catch (final ServletException e) {
 	  	return false;
 	  }
 	  return true;
@@ -1521,7 +1553,7 @@ public class Utility {
 	  	else {
 	  		if (!WindowAccessData.hasWorkflowAccess(conn, vars.getRole(), workflow)) return false;
 	  	}
-	  } catch (ServletException e) {
+	  } catch (final ServletException e) {
 	  	return false;
 	  }
 	  return true;
@@ -1529,7 +1561,7 @@ public class Utility {
 	   
   @Deprecated
 	public static boolean hasAccess (ConnectionProvider conn, VariablesSecureApp vars, String TableLevel, String AD_Client_ID, String AD_Org_ID, String window, String tab) {
-	  String command = vars.getCommand();
+	  final String command = vars.getCommand();
 	  try {
 	  	if (!canViewInsert(conn, vars, TableLevel, window)) return false;
 	  	else if (!WindowAccessData.hasWindowAccess(conn, vars.getRole(), window)) return false;
@@ -1539,7 +1571,7 @@ public class Utility {
 	  	} else if (command.toUpperCase().startsWith("DELETE")) {
 	  		if (!canUpdate (conn, vars, AD_Client_ID, AD_Org_ID, window)) return false;
 	  	}
-	  } catch (ServletException e) {
+	  } catch (final ServletException e) {
 	  	return false;
 	  }
 	  return true;
@@ -1547,7 +1579,7 @@ public class Utility {
 	  
   @Deprecated
 	public static boolean canViewInsert(ConnectionProvider conn, VariablesSecureApp vars, String TableLevel, String window) {
-		String User_Level = getContext(conn, vars, "#User_Level", window);
+		final String User_Level = getContext(conn, vars, "#User_Level", window);
 		   
 		boolean retValue = true;
 		   
@@ -1607,8 +1639,8 @@ public class Utility {
   public static String addDaysToDate(String strDate, String strDays, DateFormat DateFormatter) throws ParseException {
     String strFinalDate = "";
     if (strDate != null && strDate != "" && strDays != null && strDays != "") {      
-      Calendar FinalDate = Calendar.getInstance();
-      FinalDate.setTime((Date)DateFormatter.parse(strDate)); //FinalDate equals to strDate
+      final Calendar FinalDate = Calendar.getInstance();
+      FinalDate.setTime(DateFormatter.parse(strDate)); //FinalDate equals to strDate
       FinalDate.add(Calendar.DATE, Integer.parseInt(strDays)); //FinalDate equals to strDate plus one day
       strFinalDate = DateFormatter.format(FinalDate.getTime());
     }
@@ -1625,7 +1657,7 @@ public class Utility {
   String strFormat = vars.getSessionValue("#AD_SqlDateFormat").toString();
   strFormat = strFormat.replace('Y', 'y'); //Java accepts 'yy' for the year
   strFormat = strFormat.replace('D', 'd'); //Java accepts 'dd' for the day of the date
-  DateFormat DateFormatter = new SimpleDateFormat(strFormat);
+  final DateFormat DateFormatter = new SimpleDateFormat(strFormat);
   return DateFormatter;
   }
   
@@ -1637,9 +1669,9 @@ public class Utility {
    * @return true if the date is a Sunday or a Saturday.
    */
   public static boolean isWeekendDay(String strDay, DateFormat DateFormatter) throws ParseException{   
-    Calendar Day = Calendar.getInstance();
-    Day.setTime((Date)DateFormatter.parse(strDay));
-    int weekday = Day.get(Calendar.DAY_OF_WEEK); //Gets the number of the day of the week: 1-Sunday, 2-Monday, 3-Tuesday, 4-Wednesday, 5-Thursday, 6-Friday, 7-Saturday
+    final Calendar Day = Calendar.getInstance();
+    Day.setTime(DateFormatter.parse(strDay));
+    final int weekday = Day.get(Calendar.DAY_OF_WEEK); //Gets the number of the day of the week: 1-Sunday, 2-Monday, 3-Tuesday, 4-Wednesday, 5-Thursday, 6-Friday, 7-Saturday
     if (weekday == 1 || weekday == 7) return true; //1-Sunday, 7-Saturday
     return false;
   }
@@ -1653,12 +1685,12 @@ public class Utility {
    * @return true if strDate1 is bigger than strDate2.
    */
   public static boolean isBiggerDate(String strDate1, String strDate2, DateFormat DateFormatter) throws ParseException{   
-    Calendar Date1 = Calendar.getInstance();
-    Date1.setTime((Date)DateFormatter.parse(strDate1));
-    long MillisDate1 = Date1.getTimeInMillis();
-    Calendar Date2 = Calendar.getInstance();    
-    Date2.setTime((Date)DateFormatter.parse(strDate2));
-    long MillisDate2 = Date2.getTimeInMillis();
+    final Calendar Date1 = Calendar.getInstance();
+    Date1.setTime(DateFormatter.parse(strDate1));
+    final long MillisDate1 = Date1.getTimeInMillis();
+    final Calendar Date2 = Calendar.getInstance();    
+    Date2.setTime(DateFormatter.parse(strDate2));
+    final long MillisDate2 = Date2.getTimeInMillis();
     if (MillisDate1 > MillisDate2) return true; //Date 1 is bigger than Date 2
     return false;
   }

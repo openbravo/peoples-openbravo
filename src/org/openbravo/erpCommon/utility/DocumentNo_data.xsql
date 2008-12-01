@@ -59,4 +59,14 @@
       <Parameter name="updateNext"/>
       <Parameter name="razon" type="out"/>
    </SqlMethod>   
+    <SqlMethod name="nextDocTypeConnection" type="callableStatement" return="object" object="CSResponse" connection="true">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        CALL AD_Sequence_DocType(?,?,?,?)
+      ]]></Sql>
+      <Parameter name="cDocTypeId"/>
+      <Parameter name="adClientId"/>
+      <Parameter name="updateNext"/>
+      <Parameter name="razon" type="out"/>
+   </SqlMethod>
 </SqlClass>
