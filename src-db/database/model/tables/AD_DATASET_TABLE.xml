@@ -57,8 +57,15 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="AD_MODULE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default><![CDATA[0]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_DATASET" name="ADDATASET_ADDSTABLE">
         <reference local="AD_DATASET_ID" foreign="AD_DATASET_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_MODULE" name="ADMODULE_ADDSTABLE">
+        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_TABLE" name="ADTABLE_ADDSTABLE">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
