@@ -25,7 +25,6 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.Utility;
 import java.io.*;
-import java.util.Enumeration;
 import java.util.Vector;
 
 import javax.servlet.*;

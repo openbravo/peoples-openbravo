@@ -11,22 +11,12 @@
 */
 package org.openbravo.base.secureApp;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import org.openbravo.base.HttpBaseServlet;
-import org.openbravo.xmlEngine.XmlDocument;
-import org.openbravo.erpCommon.utility.*;
-import org.openbravo.scheduling.OBScheduler;
-import org.openbravo.utils.Replace;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -59,7 +49,6 @@ import net.sf.jasperreports.engine.export.JRHtmlExporter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
-import org.apache.commons.beanutils.converters.FileConverter;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.authentication.basic.DefaultAuthenticationManager;

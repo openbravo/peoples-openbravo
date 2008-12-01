@@ -36,7 +36,6 @@ import org.openbravo.database.ConnectionProvider;
 
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.erpCommon.ws.services.WebService;
 import org.openbravo.services.webservice.Module;
 import org.openbravo.services.webservice.ModuleDependency;
 import org.openbravo.services.webservice.WebServiceImpl;

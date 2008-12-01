@@ -19,8 +19,6 @@
 package org.openbravo.wad;
 
 import org.openbravo.data.Sqlc;
-import org.openbravo.utils.FileUtility;
-import org.openbravo.utils.DirFilter;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.data.FieldProvider;
 

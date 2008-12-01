@@ -16,10 +16,7 @@ import java.util.Vector;
 import java.util.Enumeration;
 
 import org.apache.log4j.Logger ;
-import org.openbravo.uiTranslation.FieldLabelsData;
 import org.openbravo.uiTranslation.TranslationHandler;
-import org.openbravo.uiTranslation.TranslationUtils;
-import org.openbravo.uiTranslation.WindowLabel;
 
 public class XmlVectorValue extends Vector<Object> {
 

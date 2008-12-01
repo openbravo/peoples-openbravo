@@ -20,7 +20,6 @@ package org.openbravo.erpCommon.ad_process;
 
 
 import org.openbravo.erpCommon.ad_actionButton.*;
-import org.openbravo.erpCommon.ad_reports.GeneralAccountingReportsData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.*;
 

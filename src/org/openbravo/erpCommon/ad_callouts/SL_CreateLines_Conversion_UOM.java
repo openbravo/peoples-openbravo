@@ -28,8 +28,6 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.math.BigDecimal;
 
-import org.openbravo.erpCommon.businessUtility.Tax;
-
 public class SL_CreateLines_Conversion_UOM extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
