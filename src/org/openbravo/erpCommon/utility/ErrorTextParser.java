@@ -43,7 +43,7 @@ public abstract class ErrorTextParser {
   /**
    * Constructor
    * 
-   * @param _data: Object with the database connection handler.
+   * @param _data Object with the database connection handler.
    */
   public void setConnection(ConnectionProvider _data) {
     this.conn = _data;
@@ -61,7 +61,7 @@ public abstract class ErrorTextParser {
   /**
    * Setter for the language.
    * 
-   * @param _data: String with the language.
+   * @param _data String with the language.
    */
   public void setLanguage(String _data) {
     if (_data==null) _data = "";
@@ -80,7 +80,7 @@ public abstract class ErrorTextParser {
   /**
    * Setter for the message text.
    * 
-   * @param _data: String with the new message text.
+   * @param _data String with the new message text.
    */
   public void setMessage(String _data) {
     if (_data==null) _data = "";
@@ -99,7 +99,7 @@ public abstract class ErrorTextParser {
   /**
    * Setter for the session info handler.
    * 
-   * @param _data: Object with the session info handler.
+   * @param _data Object with the session info handler.
    */
   public void setVars(VariablesSecureApp _data) {
     this.vars = _data;

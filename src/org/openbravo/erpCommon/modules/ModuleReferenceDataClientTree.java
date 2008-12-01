@@ -32,7 +32,7 @@ public class ModuleReferenceDataClientTree extends ModuleTree {
   /**
    * Constructor to generate a root tree 
    * @param base
-   * @param small: Normal size or small size (true)
+   * @param small Normal size or small size (true)
    */
   public ModuleReferenceDataClientTree(HttpBaseServlet base, boolean bSmall) {
     super(base, bSmall);

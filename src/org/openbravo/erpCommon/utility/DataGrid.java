@@ -103,7 +103,7 @@ public class DataGrid extends HttpSecureAppServlet {
   /**
    * Returns the column headers.
    * 
-   * @param tableSQL: Object hanler of tab's query
+   * @param tableSQL Object hanler of tab's query
    * @return Array with the column's headers.
    * @throws ServletException
    */
@@ -114,7 +114,7 @@ public class DataGrid extends HttpSecureAppServlet {
   /**
    * Gets the total for the selected rows.
    * 
-   * @param tableSQL: Object hanler of tab's query
+   * @param tableSQL Object hanler of tab's query
    * @return String with the total.
    */
   private String getTotalRows(TableSQLData tableSQL) {
@@ -133,9 +133,9 @@ public class DataGrid extends HttpSecureAppServlet {
   /**
    * Prints the response for the structure command.
    * 
-   * @param response: Handler for the response Object.
-   * @param vars: Handler for the session info.
-   * @param tableSQL: Object hanler of tab's query.
+   * @param response Handler for the response Object.
+   * @param vars Handler for the session info.
+   * @param tableSQL Object hanler of tab's query.
    * @throws IOException
    * @throws ServletException
    */
@@ -169,9 +169,9 @@ public class DataGrid extends HttpSecureAppServlet {
   /**
    * Prints the response for the data rows command.
    * 
-   * @param response: Handler for the response Object.
-   * @param vars: Handler for the session info.
-   * @param tableSQL: Object handler of tab's query.
+   * @param response Handler for the response Object.
+   * @param vars Handler for the session info.
+   * @param tableSQL Object handler of tab's query.
    * @throws IOException
    * @throws ServletException
    */
@@ -292,9 +292,9 @@ public class DataGrid extends HttpSecureAppServlet {
   /**
    * Prints the response for the getRowsIds command.
    * 
-   * @param response: Handler for the response Object.
-   * @param vars: Handler for the session info.
-   * @param tableSQL: Object hanler of tab's query.
+   * @param response Handler for the response Object.
+   * @param vars Handler for the session info.
+   * @param tableSQL Object hanler of tab's query.
    * @throws IOException
    * @throws ServletException
    */
@@ -336,9 +336,9 @@ public class DataGrid extends HttpSecureAppServlet {
   /**
    * Prints the response for the getColumnsTotal command.
    * 
-   * @param response: Handler for the response Object.
-   * @param vars: Handler for the session info.
-   * @param tableSQL: Object hanler of tab's query.
+   * @param response Handler for the response Object.
+   * @param vars Handler for the session info.
+   * @param tableSQL Object hanler of tab's query.
    * @throws ServletException
    * @throws IOException
    */
@@ -374,9 +374,9 @@ public class DataGrid extends HttpSecureAppServlet {
   /**
    * Prints the response for the delete command.
    * 
-   * @param response: Handler for the response Object.
-   * @param vars: Handler for the session info.
-   * @param tableSQL: Object hanler of tab's query.
+   * @param response Handler for the response Object.
+   * @param vars Handler for the session info.
+   * @param tableSQL Object hanler of tab's query.
    * @throws IOException
    * @throws ServletException
    */
@@ -470,9 +470,9 @@ public class DataGrid extends HttpSecureAppServlet {
   /**
    * Prints the response for the getComboContent command.
    * 
-   * @param response: Handler for the response Object.
-   * @param vars: Handler for the session info.
-   * @param TabId: Id of the tab
+   * @param response Handler for the response Object.
+   * @param vars Handler for the session info.
+   * @param TabId Id of the tab
    * @throws ServletException
    * @throws IOException
    */
@@ -584,8 +584,8 @@ public class DataGrid extends HttpSecureAppServlet {
   /**
    * Prints the response for the getDefaultValues command.
    * 
-   * @param response: Handler for the response Object.
-   * @param vars: Handler for the session info.
+   * @param response Handler for the response Object.
+   * @param vars Handler for the session info.
    * @throws ServletException
    * @throws IOException
    */
@@ -595,8 +595,8 @@ public class DataGrid extends HttpSecureAppServlet {
   /**
    * Prints the response for the Insert or Update commands.
    * 
-   * @param response: Handler for the response Object.
-   * @param vars: Handler for the session info.
+   * @param response Handler for the response Object.
+   * @param vars Handler for the session info.
    * @throws ServletException
    * @throws IOException
    */

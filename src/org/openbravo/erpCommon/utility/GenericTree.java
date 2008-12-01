@@ -89,7 +89,7 @@ public abstract class GenericTree {
   
   /**
    * This method returns a String with the description for the node
-   * @param node: Node ID to retrieve description
+   * @param node Node ID to retrieve description
    * @return: The String with the HTML for the description
    */
   public abstract String getHTMLDescription(String node);
@@ -113,7 +113,7 @@ public abstract class GenericTree {
   /**
    * This constructor receives a HttpBaseServlet object to set the infrastructure parameters
    * @param base
-   * @param bSmall: Normal size or small size (true)
+   * @param bSmall Normal size or small size (true)
    */
   public GenericTree(HttpBaseServlet base, boolean bSmall) {
     setParameters(base);

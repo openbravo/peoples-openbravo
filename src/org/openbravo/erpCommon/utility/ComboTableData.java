@@ -61,14 +61,14 @@ public class ComboTableData {
   /**
    * Constructor
    * 
-   * @param _conn: Object with the database connection methods.
-   * @param _referenceType: String with the type of reference.
-   * @param _name: String with the Object name.
-   * @param _objectReference: String with id to the reference value.
-   * @param _validation: String with the id to the validation.
-   * @param _orgList: String with the list of granted organizations.
-   * @param _clientList: String with the list of granted clients.
-   * @param _index: String with the id of the default value for the combo.
+   * @param _conn Object with the database connection methods.
+   * @param _referenceType String with the type of reference.
+   * @param _name String with the Object name.
+   * @param _objectReference String with id to the reference value.
+   * @param _validation String with the id to the validation.
+   * @param _orgList String with the list of granted organizations.
+   * @param _clientList String with the list of granted clients.
+   * @param _index String with the id of the default value for the combo.
    * @throws Exception
    */
   public ComboTableData(ConnectionProvider _conn, String _referenceType, String _name, String _objectReference, String _validation, String _orgList, String _clientList, int _index) throws Exception {
@@ -78,15 +78,15 @@ public class ComboTableData {
   /**
    * Constructor
    * 
-   * @param _vars: Object with the session methods.
-   * @param _conn: Object with the database connection methods.
-   * @param _referenceType: String with the type of reference.
-   * @param _name: String with the Object name.
-   * @param _objectReference: String with id to the reference value.
-   * @param _validation: String with the id to the validation.
-   * @param _orgList: String with the list of granted organizations.
-   * @param _clientList: String with the list of granted clients.
-   * @param _index: String with the id of the default value for the combo.
+   * @param _vars Object with the session methods.
+   * @param _conn Object with the database connection methods.
+   * @param _referenceType String with the type of reference.
+   * @param _name String with the Object name.
+   * @param _objectReference String with id to the reference value.
+   * @param _validation String with the id to the validation.
+   * @param _orgList String with the list of granted organizations.
+   * @param _clientList String with the list of granted clients.
+   * @param _index String with the id of the default value for the combo.
    * @throws Exception
    */
   public ComboTableData(VariablesSecureApp _vars, ConnectionProvider _conn, String _referenceType, String _name, String _objectReference, String _validation, String _orgList, String _clientList, int _index) throws Exception {
@@ -106,7 +106,7 @@ public class ComboTableData {
   /**
    * Setter for the session object.
    * 
-   * @param _vars: New session object.
+   * @param _vars New session object.
    * @throws Exception
    */
   public void setVars(VariablesSecureApp _vars) throws Exception {
@@ -126,7 +126,7 @@ public class ComboTableData {
   /**
    * Setter for the database handler object.
    * 
-   * @param _conn: New database handler object.
+   * @param _conn New database handler object.
    * @throws Exception
    */
   public void setPool(ConnectionProvider _conn) throws Exception {
@@ -146,7 +146,7 @@ public class ComboTableData {
   /**
    * Setter for the reference type id.
    * 
-   * @param _reference: String with the new reference
+   * @param _reference String with the new reference
    * @throws Exception
    */
   public void setReferenceType(String _reference) throws Exception {
@@ -172,7 +172,7 @@ public class ComboTableData {
   /**
    * Setter for the object name.
    * 
-   * @param _name: String with the new object name.
+   * @param _name String with the new object name.
    * @throws Exception
    */
   public void setObjectName(String _name) throws Exception {
@@ -191,7 +191,7 @@ public class ComboTableData {
   /**
    * Setter for the object reference id.
    * 
-   * @param _reference: String with the new object reference id.
+   * @param _reference String with the new object reference id.
    * @throws Exception
    */
   public void setObjectReference(String _reference) throws Exception {
@@ -217,7 +217,7 @@ public class ComboTableData {
   /**
    * Setter for the validation id.
    * 
-   * @param _reference: String for the new validation id.
+   * @param _reference String for the new validation id.
    * @throws Exception
    */
   public void setValidation(String _reference) throws Exception {
@@ -243,7 +243,7 @@ public class ComboTableData {
   /**
    * Setter for the granted organizations list.
    * 
-   * @param _orgList: String with the new granted organizations list.
+   * @param _orgList String with the new granted organizations list.
    * @throws Exception
    */
   public void setOrgList(String _orgList) throws Exception {
@@ -262,7 +262,7 @@ public class ComboTableData {
   /**
    * Setter for the granted clients list.
    * 
-   * @param _clientList: String with the new granted clients list.
+   * @param _clientList String with the new granted clients list.
    * @throws Exception
    */
   public void setClientList(String _clientList) throws Exception {
@@ -281,8 +281,8 @@ public class ComboTableData {
   /**
    * Adds new field to the select section of the query.
    * 
-   * @param _field: String with the field.
-   * @param _alias: String with the alias for this field.
+   * @param _field String with the field.
+   * @param _alias String with the alias for this field.
    */
   public void addSelectField(String _field, String _alias) {
     QueryFieldStructure p = new QueryFieldStructure(_field, " AS ", _alias, "SELECT");
@@ -302,8 +302,8 @@ public class ComboTableData {
   /**
    * Adds new field to the from section of the query.
    * 
-   * @param _field: String with the field.
-   * @param _alias: String with the alias for the field.
+   * @param _field String with the field.
+   * @param _alias String with the alias for the field.
    */
   public void addFromField(String _field, String _alias) {
     QueryFieldStructure p = new QueryFieldStructure(_field, " ", _alias, "FROM");
@@ -323,8 +323,8 @@ public class ComboTableData {
   /**
    * Adds new field to the where section of the query.
    * 
-   * @param _field: String with the field.
-   * @param _type: String for group fields.
+   * @param _field String with the field.
+   * @param _type String for group fields.
    */
   public void addWhereField(String _field, String _type) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", _type);
@@ -344,7 +344,7 @@ public class ComboTableData {
   /**
    * Adds new field to the order by section of the query.
    * 
-   * @param _field: String with the field.
+   * @param _field String with the field.
    */
   public void addOrderByField(String _field) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", "ORDERBY");
@@ -364,8 +364,8 @@ public class ComboTableData {
   /**
    * Adds a new parameter to the select section of the query.
    * 
-   * @param _parameter: String with the parameter.
-   * @param _fieldName: String with the name of the field.
+   * @param _parameter String with the parameter.
+   * @param _fieldName String with the name of the field.
    */
   public void addSelectParameter(String _parameter, String _fieldName) {
     if (this.paramSelect == null) this.paramSelect = new Vector<QueryParameterStructure>();
@@ -384,8 +384,8 @@ public class ComboTableData {
   /**
    * Adds a new parameter to the from section of the query.
    * 
-   * @param _parameter: String with the parameter.
-   * @param _fieldName: String with the name od the field.
+   * @param _parameter String with the parameter.
+   * @param _fieldName String with the name od the field.
    */
   public void addFromParameter(String _parameter, String _fieldName) {
     if (this.paramFrom == null) this.paramFrom = new Vector<QueryParameterStructure>();
@@ -405,9 +405,9 @@ public class ComboTableData {
   /**
    * Adds a new parameter to the where section of the query.
    * 
-   * @param _parameter: String with the parameter.
-   * @param _fieldName: String with the name of the field.
-   * @param _type: String with a group name.
+   * @param _parameter String with the parameter.
+   * @param _fieldName String with the name of the field.
+   * @param _type String with a group name.
    */
   public void addWhereParameter(String _parameter, String _fieldName, String _type) {
     if (this.paramWhere == null) this.paramWhere = new Vector<QueryParameterStructure>();
@@ -427,8 +427,8 @@ public class ComboTableData {
   /**
    * Adds a new parameter to the order by section of the query.
    * 
-   * @param _parameter: String with the parameter.
-   * @param _fieldName: String with the name of the field.
+   * @param _parameter String with the parameter.
+   * @param _fieldName String with the name of the field.
    */
   public void addOrderByParameter(String _parameter, String _fieldName) {
     if (this.paramOrderBy == null) this.paramOrderBy = new Vector<QueryParameterStructure>();
@@ -448,8 +448,8 @@ public class ComboTableData {
   /**
    * Setter for the parameters value.
    * 
-   * @param name: The name of the field defined for the parameter.
-   * @param value: The value for this parameter.
+   * @param name The name of the field defined for the parameter.
+   * @param value The value for this parameter.
    * @throws Exception
    */
   public void setParameter(String name, String value) throws Exception {
@@ -462,7 +462,7 @@ public class ComboTableData {
   /**
    * Getter for the parameters value.
    * 
-   * @param name: The name of the field defined for the parameter.
+   * @param name The name of the field defined for the parameter.
    * @return String with the value.
    */
   public String getParameter(String name) {
@@ -522,7 +522,7 @@ public class ComboTableData {
   /**
    * Setter for the table alias index.
    * 
-   * @param _index: Integer with the new index.
+   * @param _index Integer with the new index.
    */
   public void setIndex(int _index) {
     this.index = _index;
@@ -552,9 +552,9 @@ public class ComboTableData {
   /**
    * Auxiliar method to build the query for list types.
    * 
-   * @param tableName: Name of the table
-   * @param fieldName: Name of the field.
-   * @param referenceValue: Id of the reference value.
+   * @param tableName Name of the table
+   * @param fieldName Name of the field.
+   * @param referenceValue Id of the reference value.
    * @throws Exception
    */
   private void setListQuery(String tableName, String fieldName, String referenceValue) throws Exception {
@@ -586,9 +586,9 @@ public class ComboTableData {
   /**
    * Auxiliar method to build the query for the Table type
    * 
-   * @param tableName: Name of the table
-   * @param fieldName: Name of the field.
-   * @param referenceValue: Id of the reference value.
+   * @param tableName Name of the table
+   * @param fieldName Name of the field.
+   * @param referenceValue Id of the reference value.
    * @throws Exception
    */
   private void setTableQuery(String tableName, String fieldName, String referenceValue) throws Exception {
@@ -634,9 +634,9 @@ public class ComboTableData {
   /**
    * Auxiliar method to build the query for the TableDir type.
    * 
-   * @param tableName: Name of the table.
-   * @param fieldName: Name of the field.
-   * @param parentFieldName: Real name of the parent column.
+   * @param tableName Name of the table.
+   * @param fieldName Name of the field.
+   * @param parentFieldName Real name of the parent column.
    * @throws Exception
    */
   private void setTableDirQuery(String tableName, String fieldName, String parentFieldName) throws Exception {
@@ -717,9 +717,9 @@ public class ComboTableData {
   /**
    * Auxiliar method to make a replace ignoring the case.
    * 
-   * @param data: String with the text.
-   * @param replaceWhat: The string to search.
-   * @param replaceWith: The new string to replace with.
+   * @param data String with the text.
+   * @param replaceWhat The string to search.
+   * @param replaceWith The new string to replace with.
    * @return String with the text replaced.
    */
   private String replaceIgnoreCase(String data, String replaceWhat, String replaceWith) {
@@ -756,8 +756,8 @@ public class ComboTableData {
   /**
    * Auxiliar method to replace the variable sections of the clauses.
    * 
-   * @param context: String with the variable.
-   * @param type: String with the type of the clause (WHERE, ORDER...)
+   * @param context String with the variable.
+   * @param type String with the type of the clause (WHERE, ORDER...)
    * @return String with the text replaced.
    */
   public String parseContext(String context, String type) {
@@ -794,8 +794,8 @@ public class ComboTableData {
   /**
    * Support method for the generateSQL method, to build the query.
    * 
-   * @param tableName: String with the name of the table.
-   * @param field: String with the name of the field.
+   * @param tableName String with the name of the table.
+   * @param field String with the name of the field.
    * @throws Exception
    */
   public void identifier(String tableName, FieldProvider field) throws Exception {
@@ -838,9 +838,9 @@ public class ComboTableData {
   /**
    * Checks if the table has a translated table, making the joins to the translated one.
    * 
-   * @param tableName: Name of the table.
-   * @param field: Name of the field.
-   * @param reference: Id of the reference.
+   * @param tableName Name of the table.
+   * @param field Name of the field.
+   * @param reference Id of the reference.
    * @return Boolean to indicate if the translated table has been found.
    * @throws Exception
    */
@@ -859,8 +859,8 @@ public class ComboTableData {
    * Formating method to add the correct functions to the fields for the presentation.
    * It depends on the type of field (DATE, NUMBER...).
    * 
-   * @param field: Name of the field.
-   * @param reference: Id of the reference type.
+   * @param field Name of the field.
+   * @param reference Id of the reference type.
    * @return String with the format applied.
    */
   private String formatField(String field, String reference) {
@@ -898,9 +898,9 @@ public class ComboTableData {
   /**
    * Returns the generated query.
    * 
-   * @param onlyId: Boolean to indicate if the select clause must
+   * @param onlyId Boolean to indicate if the select clause must
    *                have only the key field.
-   * @param discard: Array of field groups to remove from the query.
+   * @param discard Array of field groups to remove from the query.
    * @return String with the query.
    */
   public String getQuery(boolean onlyId, String[] discard) {
@@ -990,8 +990,8 @@ public class ComboTableData {
   /**
    * Auxiliar method to search a value in an array.
    * 
-   * @param data: Array with the data.
-   * @param element: String to search in the array.
+   * @param data Array with the data.
+   * @param element String to search in the array.
    * @return Boolean to indicate if the element was found in the array.
    */
   private boolean isInArray(String[] data, String element) {
@@ -1005,9 +1005,9 @@ public class ComboTableData {
   /**
    * Fills the query parameter's values.
    * 
-   * @param st: PreparedStatement object.
-   * @param iParameter: Index of the parameter.
-   * @param discard: Array with the groups to discard.
+   * @param st PreparedStatement object.
+   * @param iParameter Index of the parameter.
+   * @param discard Array with the groups to discard.
    * @return Integer with the next parameter's index.
    */
   private int setSQLParameters(PreparedStatement st, int iParameter, String[] discard) {
@@ -1061,7 +1061,7 @@ public class ComboTableData {
   /**
    * Executes the query in the database and returns the data.
    * 
-   * @param includeActual: Boolean that indicates if the actual selected 
+   * @param includeActual Boolean that indicates if the actual selected 
    *                       value must be included in the result, even if it 
    *                       doesn´t exists in the new query.
    * @return Array of FieldProvider with the data.

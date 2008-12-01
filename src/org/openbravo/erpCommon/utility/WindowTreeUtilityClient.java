@@ -36,7 +36,7 @@ public class WindowTreeUtilityClient {
   /**
    * Gets the tree type.
    * 
-   * @param keyColumnName: Name of the column key.
+   * @param keyColumnName Name of the column key.
    * @return String with the tree type.
    */
   public static String getTreeType(String keyColumnName) {
@@ -50,14 +50,14 @@ public class WindowTreeUtilityClient {
   /**
    * Gets the array with the tree elements.
    * 
-   * @param conn: Handler for the database connection.
-   * @param vars: Handler for the session info.
-   * @param TreeType: The type of tree.
-   * @param TreeID: The id of the tree.
-   * @param editable: is editable?
-   * @param strParentID: Parent id node (optional).
-   * @param strNodeId: The node to search (optional).
-   * @param strTabID: Id of the tab.
+   * @param conn Handler for the database connection.
+   * @param vars Handler for the session info.
+   * @param TreeType The type of tree.
+   * @param TreeID The id of the tree.
+   * @param editable is editable?
+   * @param strParentID Parent id node (optional).
+   * @param strNodeId The node to search (optional).
+   * @param strTabID Id of the tab.
    * @return Array with the tree elements.
    * @throws ServletException
    */
@@ -74,7 +74,7 @@ public class WindowTreeUtilityClient {
   /**
    * Type for the class of the html element.
    * 
-   * @param type: Database type.
+   * @param type Database type.
    * @return String with the css type.
    */
   public static String windowType(String type) {
@@ -86,7 +86,7 @@ public class WindowTreeUtilityClient {
   /**
    * Type for the id of the html element. Used in the test application.
    * 
-   * @param tipo: Database type.
+   * @param tipo Database type.
    * @return String with the id type.
    */
   public static String windowTypeNico(String tipo) {

@@ -37,7 +37,7 @@ public class WindowTreeUtility {
   /**
    * Gets the tree type.
    * 
-   * @param keyColumnName: Name of the column key.
+   * @param keyColumnName Name of the column key.
    * @return String with the tree type.
    */
   public static String getTreeType(String keyColumnName) {
@@ -65,14 +65,14 @@ public class WindowTreeUtility {
   /**
    * Gets the array with the tree elements.
    * 
-   * @param conn: Handler for the database connection.
-   * @param vars: Handler for the session info.
-   * @param TreeType: The type of tree.
-   * @param TreeID: The id of the tree.
-   * @param editable: is editable?
-   * @param strParentID: Parent id node (optional).
-   * @param strNodeId: The node to search (optional).
-   * @param strTabID: Id of the tab.
+   * @param conn Handler for the database connection.
+   * @param vars Handler for the session info.
+   * @param TreeType The type of tree.
+   * @param TreeID The id of the tree.
+   * @param editable is editable?
+   * @param strParentID Parent id node (optional).
+   * @param strNodeId The node to search (optional).
+   * @param strTabID Id of the tab.
    * @return Array with the tree elements.
    * @throws ServletException
    */
@@ -114,7 +114,7 @@ public class WindowTreeUtility {
   /**
    * Auxiliar method to transform a FieldProvider into a WindowTreeData object.
    * 
-   * @param data: FieldProvider to transform.
+   * @param data FieldProvider to transform.
    * @return WindowTreeData object.
    * @throws ServletException
    */
@@ -140,17 +140,17 @@ public class WindowTreeUtility {
   /**
    * Adds an html node structure. Used by the WindowTree java to build the html tree.
    * 
-   * @param name: Text to display.
-   * @param description: Description.
-   * @param target: Target to open link (deprecated).
-   * @param isSummary: If is a folder.
-   * @param windowType: Type of window.
-   * @param strDirection: Base path for the urls.
-   * @param strOnClick: Command for the onclick event.
-   * @param strOnDblClick: Command for the onDblClick event.
-   * @param hasChilds: Boolean to know if has any child.
-   * @param nodeId: Id of the node.
-   * @param action: Type of element.
+   * @param name Text to display.
+   * @param description Description.
+   * @param target Target to open link (deprecated).
+   * @param isSummary If is a folder.
+   * @param windowType Type of window.
+   * @param strDirection Base path for the urls.
+   * @param strOnClick Command for the onclick event.
+   * @param strOnDblClick Command for the onDblClick event.
+   * @param hasChilds Boolean to know if has any child.
+   * @param nodeId Id of the node.
+   * @param action Type of element.
    * @return String html with the node.
    */
   public static String addNodeElement(String name, String description, String target, boolean isSummary, String windowType, String strDirection, String strOnClick, String strOnDblClick, boolean hasChilds, String nodeId, String action) {
@@ -182,7 +182,7 @@ public class WindowTreeUtility {
   /**
    * Type for the class of the html element.
    * 
-   * @param type: Database type.
+   * @param type Database type.
    * @return String with the css type.
    */
   public static String windowType(String type) {
@@ -201,7 +201,7 @@ public class WindowTreeUtility {
   /**
    * Type for the id of the html element. Used in the test application.
    * 
-   * @param tipo: Database type.
+   * @param tipo Database type.
    * @return String with the id type.
    */
   public static String windowTypeNico(String tipo) {
@@ -220,13 +220,13 @@ public class WindowTreeUtility {
   /**
    * Sets the node in the specified position.
    * 
-   * @param conn: Handler for the database connection.
-   * @param vars: Handler for the session info.
-   * @param TreeType: Type of tree.
-   * @param TreeID: Id of the tree.
-   * @param strParentID: Parent node id.
-   * @param strLink: Actual node id.
-   * @param strSeqNo: Sequence number.
+   * @param conn Handler for the database connection.
+   * @param vars Handler for the session info.
+   * @param TreeType Type of tree.
+   * @param TreeID Id of the tree.
+   * @param strParentID Parent node id.
+   * @param strLink Actual node id.
+   * @param strSeqNo Sequence number.
    * @throws ServletException
    */
   public static void setNode(ConnectionProvider conn, VariablesSecureApp vars, String TreeType, String TreeID, String strParentID, String strLink, String strSeqNo) throws ServletException {

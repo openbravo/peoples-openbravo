@@ -113,10 +113,10 @@ public class RTLSkin {
   /**
    * Runs through all the files of the specified path reads and, if appropriate, modifies the file.
    * 
-   * @param srcDir:            Path where are the files to modify (rtl folder of the skin).
-   *        strSkinFolderName: Path to the folder that contains the original skin -where no change will be performed-.
-   *        relativePath:      Relative Path.
-   *        folderContentType: whether skin or javascript folder is passed in srcDir
+   * @param srcDir            Path where are the files to modify (rtl folder of the skin).
+   * @param strSkinFolderName Path to the folder that contains the original skin -where no change will be performed-.
+   * @param relativePath      Relative Path.
+   * @param folderContentType whether skin or javascript folder is passed in srcDir
    */
   public static void runFolders(File srcDir, String strSkinFolderName, String relativePath, String folderContentType) {
 
@@ -153,9 +153,9 @@ public class RTLSkin {
   /**
    * Modifies text of sprite tags
    * 
-   * @param file: File to be modified
-   *        skinName: Name of the skin
-   *        textDirection: RTL or LTR
+   * @param file File to be modified
+   * @param skinName Name of the skin
+   * @param textDirection RTL or LTR
    */
   public static void applySpriteTags(File file, String skinName, String textDirection) throws Exception {
     BufferedReader in = new BufferedReader(new FileReader(file));
@@ -208,7 +208,7 @@ public class RTLSkin {
   /**
    * Perform the necessary changes to a skin file
    * 
-   * @param file: File to be modified
+   * @param file File to be modified
    */
   public static void modifySkin(File file) {
     if (file.toString().toLowerCase().endsWith("png") || file.toString().toLowerCase().endsWith("gif")) {
@@ -244,7 +244,7 @@ public class RTLSkin {
   /**
    * Performs the required changes to a css file.
    * 
-   * @param file: CSS file to be modified
+   * @param file CSS file to be modified
    */
   public static void processCSS (File file) throws Exception {
     BufferedReader in = new BufferedReader(new FileReader(file));
@@ -274,8 +274,8 @@ public class RTLSkin {
   /**
    * Adds a line at the end of a text file.
    * 
-   * @param file:      File where line will be added at the end.
-   *        lineToAdd: Line to be added to the file.
+   * @param file      File where line will be added at the end.
+   * @param lineToAdd Line to be added to the file.
    */
  public static void addLine(File file, String lineToAdd) throws Exception {
     BufferedReader in = new BufferedReader(new FileReader(file));

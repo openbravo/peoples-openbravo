@@ -40,11 +40,11 @@ public class AccountTree {
   /**
    * Constructor
    * 
-   * @param _vars: VariablesSecureApp object with the session methods.
-   * @param _conn: ConnectionProvider object with the connection methods.
-   * @param _elements: Array of account's elements.
-   * @param _accounts: Array of accounts.
-   * @param _elementValueParent: String with the value of the parent element to evaluate.
+   * @param _vars VariablesSecureApp object with the session methods.
+   * @param _conn ConnectionProvider object with the connection methods.
+   * @param _elements Array of account's elements.
+   * @param _accounts Array of accounts.
+   * @param _elementValueParent String with the value of the parent element to evaluate.
    * @var forms: Array of accounts with its operands.
    * @throws ServletException
    */
@@ -67,11 +67,11 @@ public class AccountTree {
   /**
    * Constructor
    * 
-   * @param _vars: VariablesSecureApp object with the session methods.
-   * @param _conn: ConnectionProvider object with the connection methods.
-   * @param _elements: Array of account's elements (elementValues).
-   * @param _accounts: Array of all the fact accts.
-   * @param _elementValueParent: Array with the value of the parent elements to evaluate (For example, first expenses then revenues) Objective tree.
+   * @param _vars VariablesSecureApp object with the session methods.
+   * @param _conn ConnectionProvider object with the connection methods.
+   * @param _elements Array of account's elements (elementValues).
+   * @param _accounts Array of all the fact accts.
+   * @param _elementValueParent Array with the value of the parent elements to evaluate (For example, first expenses then revenues) Objective tree.
    * @var forms: Array of accounts with its operands.
    * @throws ServletException
    */
@@ -115,9 +115,9 @@ public class AccountTree {
   /**
    * Applies the sign to the quantity, according to the showValueCond field
    * 
-   * @param qty: Double value with the quantity to evaluate.
-   * @param sign: String with the showValueCond field value.
-   * @param isSummary: Boolean that indicates if this is a summary record.
+   * @param qty Double value with the quantity to evaluate.
+   * @param sign String with the showValueCond field value.
+   * @param isSummary Boolean that indicates if this is a summary record.
    * @return Double with the correct sign applied.
    */
   private double applySign(double qty, String sign, boolean isSummary) {
@@ -135,8 +135,8 @@ public class AccountTree {
    * Update the quantity and the operation quantity fields of the element, 
    * depending on the isDebitCredit field.
    * 
-   * @param element: AccoutnTreeData object with the element information.
-   * @param isDebitCredit: String with the parameter to evaluate if is 
+   * @param element AccoutnTreeData object with the element information.
+   * @param isDebitCredit String with the parameter to evaluate if is 
    *                       a Debit or Credit element.
    * @return AccountTreeData object with the new element's information.
    */
@@ -164,9 +164,9 @@ public class AccountTree {
    * This method updates al the Quantitie's signs of the tree. Is used by the 
    * constructor to initializa the element's quantities. Also initializes the level of each account
    * 
-   * @param indice: String with the index from which to start updating.
-   * @param level: Integer with the level of the elements.
-   * @param isDebitCredit: String with the is debit or credit value of the trunk.
+   * @param indice String with the index from which to start updating.
+   * @param level Integer with the level of the elements.
+   * @param isDebitCredit String with the is debit or credit value of the trunk.
    * @return Array of AccountTreeData with the updated tree.
    */
   private AccountTreeData[] updateTreeQuantitiesSign(String indice, int level, String isDebitCredit) {
@@ -195,8 +195,8 @@ public class AccountTree {
   /**
    * Method to know if an element has form or not.
    * 
-   * @param indice: String with the index of the element.
-   * @param forms: Array with the existing forms.
+   * @param indice String with the index of the element.
+   * @param forms Array with the existing forms.
    * @return Boolean indicating if has or not form.
    */
   private boolean hasForm(String indice, AccountTreeData[] forms) {
@@ -213,10 +213,10 @@ public class AccountTree {
   /**
    * Method to calculate the values with the form's conditions.
    * 
-   * @param vecAll: Vector with the evaluated tree.
-   * @param forms: Array with the forms.
-   * @param indice: String with the index of the element to evaluate.
-   * @param vecTotal: Vector with the totals of the operation.
+   * @param vecAll Vector with the evaluated tree.
+   * @param forms Array with the forms.
+   * @param indice String with the index of the element to evaluate.
+   * @param vecTotal Vector with the totals of the operation.
    */
   private void formsCalculate(Vector<Object> vecAll, AccountTreeData[] forms, String indice, Vector<Object> vecTotal) {
     if (log4j.isDebugEnabled()) log4j.debug("AccountTree.formsCalculate");
@@ -283,9 +283,9 @@ public class AccountTree {
   /**
    * Main method, which is called by the constructor to evaluate the tree.
    * 
-   * @param forms: Array with the forms.
-   * @param indice: Array with the start indexes.
-   * @param vecTotal: Vector with the accumulated totals.
+   * @param forms Array with the forms.
+   * @param indice Array with the start indexes.
+   * @param vecTotal Vector with the accumulated totals.
    * @return Array with the new calculated tree.
    */
   private AccountTreeData[] calculateTree(AccountTreeData[] forms, String[] indice, Vector<Object> vecTotal) {
@@ -295,9 +295,9 @@ public class AccountTree {
   /**
    * Main method, which is called by the constructor to evaluate the tree.
    * 
-   * @param forms: Array with the forms.
-   * @param indice: String with the index of the start element.
-   * @param vecTotal: Vector with the accumulated totals.
+   * @param forms Array with the forms.
+   * @param indice String with the index of the start element.
+   * @param vecTotal Vector with the accumulated totals.
    * @return Array with the new calculated tree.
    */
   private AccountTreeData[] calculateTree(AccountTreeData[] forms, String indice, Vector<Object> vecTotal) {
@@ -314,11 +314,11 @@ public class AccountTree {
   /**
    * Main method, which is called by the constructor to evaluate the tree.
    * 
-   * @param forms: Array with the forms.
-   * @param indice: String with the index of the start element.
-   * @param vecTotal: Vector with the accumulated totals.
-   * @param applysign: Boolean to know if the sign must be applied or not.
-   * @param isExactValue: Boolean auxiliar to use only for the calls from the 
+   * @param forms Array with the forms.
+   * @param indice String with the index of the start element.
+   * @param vecTotal Vector with the accumulated totals.
+   * @param applysign Boolean to know if the sign must be applied or not.
+   * @param isExactValue Boolean auxiliar to use only for the calls from the 
    *                      forms calculating.
    * @return Array with the new calculated tree.
    */
@@ -332,11 +332,11 @@ public class AccountTree {
   /**
    * Main method, which is called by the constructor to evaluate the tree.
    * 
-   * @param forms: Array with the forms.
-   * @param indice: Array with the start indexes.
-   * @param vecTotal: Vector with the accumulated totals.
-   * @param applysign: Boolean to know if the sign must be applied or not.
-   * @param isExactValue: Boolean auxiliar to use only for the calls from the 
+   * @param forms Array with the forms.
+   * @param indice Array with the start indexes.
+   * @param vecTotal Vector with the accumulated totals.
+   * @param applysign Boolean to know if the sign must be applied or not.
+   * @param isExactValue Boolean auxiliar to use only for the calls from the 
    *                      forms calculating.
    * @return Array with the new calculated tree.
    */
@@ -410,9 +410,9 @@ public class AccountTree {
    * Method to make the level filter of the tree, to eliminate the 
    * levels that shouldn't be shown in the report.
    * 
-   * @param indice: Array of indexes to evaluate.
-   * @param found: Boolean to know if the index has been found
-   * @param strLevel: String with the level.
+   * @param indice Array of indexes to evaluate.
+   * @param found Boolean to know if the index has been found
+   * @param strLevel String with the level.
    * @return New Array with the filter applied.
    */
   private AccountTreeData[] levelFilter(String[] indice, boolean found, String strLevel) {
@@ -441,9 +441,9 @@ public class AccountTree {
    * Method to make the level filter of the tree, to eliminate the 
    * levels that shouldn't be shown in the report.
    * 
-   * @param indice: String with the index to evaluate.
-   * @param found: Boolean to know if the index has been found
-   * @param strLevel: String with the level.
+   * @param indice String with the index to evaluate.
+   * @param found Boolean to know if the index has been found
+   * @param strLevel String with the level.
    * @return New Array with the filter applied.
    */
   private AccountTreeData[] levelFilter(String indice, boolean found, String strLevel) {
@@ -456,10 +456,10 @@ public class AccountTree {
   /**
    * Method to filter the complete tree to show only the desired levels.
    * 
-   * @param indice: Array of start indexes.
-   * @param notEmptyLines: Boolean to indicate if the empty lines must been removed.
-   * @param strLevel: String with the level.
-   * @param isLevel: Boolean not used.
+   * @param indice Array of start indexes.
+   * @param notEmptyLines Boolean to indicate if the empty lines must been removed.
+   * @param strLevel String with the level.
+   * @param isLevel Boolean not used.
    * @return New Array with the filtered tree.
    */
   public AccountTreeData[] filterStructure(String[] indice, boolean notEmptyLines, String strLevel, boolean isLevel) {

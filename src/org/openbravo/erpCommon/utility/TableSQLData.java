@@ -74,11 +74,11 @@ public class TableSQLData {
   /**
    * Constructor
    * 
-   * @param _vars: Handler for the session info.
-   * @param _conn: Handler for the database connection.
-   * @param _adTabId: Id of the tab.
-   * @param _orgList: List of granted organizations.
-   * @param _clientList: List of granted clients.
+   * @param _vars Handler for the session info.
+   * @param _conn Handler for the database connection.
+   * @param _adTabId Id of the tab.
+   * @param _orgList List of granted organizations.
+   * @param _clientList List of granted clients.
    * @throws Exception
    */
   public TableSQLData(VariablesSecureApp _vars, ConnectionProvider _conn, String _adTabId, String _orgList, String _clientList, boolean showAudit) throws Exception {
@@ -99,8 +99,8 @@ public class TableSQLData {
   /**
    * Setter for the parameters.
    * 
-   * @param name: String with the name.
-   * @param value: String with the value.
+   * @param name String with the name.
+   * @param value String with the value.
    * @throws Exception
    */
   public void setParameter(String name, String value) throws Exception {
@@ -113,7 +113,7 @@ public class TableSQLData {
   /**
    * Getter for the parameters.
    * 
-   * @param name: String with the name of the parameter to get.
+   * @param name String with the name of the parameter to get.
    * @return String with the value of the parameter.
    */
   public String getParameter(String name) {
@@ -357,7 +357,7 @@ public class TableSQLData {
   /**
    * Setter for the handler of session info.
    * 
-   * @param _vars: Handler of session info.
+   * @param _vars Handler of session info.
    * @throws Exception
    */
   public void setVars(VariablesSecureApp _vars) throws Exception {
@@ -377,7 +377,7 @@ public class TableSQLData {
   /**
    * Setter for the handler of database connection.
    * 
-   * @param _conn: Handler of database connection.
+   * @param _conn Handler of database connection.
    * @throws Exception
    */
   public void setPool(ConnectionProvider _conn) throws Exception {
@@ -397,7 +397,7 @@ public class TableSQLData {
   /**
    * Setter for the tab id.
    * 
-   * @param _data: String with the tab id.
+   * @param _data String with the tab id.
    * @throws Exception
    */
   public void setTabID(String _data) throws Exception {
@@ -487,7 +487,7 @@ public class TableSQLData {
   
   /**
    * Gets all the key columns including the secondary key ones
-   * @param tableName: tableName
+   * @param tableName tableName
    * @return a comma separated string with the list of key columns
    */
   public String getKeyColumns(String tableName){
@@ -580,7 +580,7 @@ public class TableSQLData {
   /**
    * Setter for the list of granted organizations.
    * 
-   * @param _orgList: Granted organizations.
+   * @param _orgList Granted organizations.
    * @throws Exception
    */
   public void setOrgList(String _orgList) throws Exception {
@@ -599,7 +599,7 @@ public class TableSQLData {
   /**
    * Setter for the list of granted clients.
    * 
-   * @param _clientList: List of granted clients.
+   * @param _clientList List of granted clients.
    * @throws Exception
    */
   public void setClientList(String _clientList) throws Exception {
@@ -618,7 +618,7 @@ public class TableSQLData {
   /**
    * Adds new structure of window information.
    * 
-   * @param _prop: Properties with the window information.
+   * @param _prop Properties with the window information.
    */
   public void addStructure(Properties _prop) {
     if (_prop==null) return;
@@ -638,7 +638,7 @@ public class TableSQLData {
   /**
    * Adds new order by field by position.
    * 
-   * @param _data: String with the order by.
+   * @param _data String with the order by.
    */
   public void addOrderByPosition(String _data) {
     if (_data==null) return;
@@ -657,7 +657,7 @@ public class TableSQLData {
   /**
    * Adds new order by direction (Asc, Desc)
    * 
-   * @param _data: String with the order by direction.
+   * @param _data String with the order by direction.
    */
   public void addOrderByDirection(String _data) {
     if (_data==null) return;
@@ -677,8 +677,8 @@ public class TableSQLData {
   /**
    * Gets the window information filtered.
    * 
-   * @param propertyName: Name of the property to filter.
-   * @param propertyValue: Vaule of the property to filter.
+   * @param propertyName Name of the property to filter.
+   * @param propertyValue Vaule of the property to filter.
    * @return Vector with the filtered information.
    */
   public Vector<Properties> getFilteredStructure(String propertyName, String propertyValue) {
@@ -706,7 +706,7 @@ public class TableSQLData {
   /**
    * Setter for the table alias index.
    * 
-   * @param _index: Integer with the new index.
+   * @param _index Integer with the new index.
    */
   public void setIndex(int _index) {
     this.index = _index;
@@ -724,8 +724,8 @@ public class TableSQLData {
   /**
    * Adds new field to the select clause.
    * 
-   * @param _field: String with the field.
-   * @param _alias: String with the alias.
+   * @param _field String with the field.
+   * @param _alias String with the alias.
    */
   public void addSelectField(String _field, String _alias) {
     addSelectField(_field, _alias, false);
@@ -734,9 +734,9 @@ public class TableSQLData {
   /**
    * Adds new field to the select clause.
    * 
-   * @param _field: String with the field.
-   * @param _alias: String with the alias.
-   * @param _new: Boolean to know if the field is new (not used).
+   * @param _field String with the field.
+   * @param _alias String with the alias.
+   * @param _new Boolean to know if the field is new (not used).
    */
   public void addSelectField(String _field, String _alias, boolean _new) {
     QueryFieldStructure p = new QueryFieldStructure(_field, " AS ", _alias, "SELECT");
@@ -754,7 +754,7 @@ public class TableSQLData {
   /**
    * Gets a field of the select clause by the alias name.
    * 
-   * @param _alias: String with the alias.
+   * @param _alias String with the alias.
    * @return Object with the field.
    */
   public QueryFieldStructure getSelectFieldElement(String _alias) {
@@ -769,7 +769,7 @@ public class TableSQLData {
   /**
    * Gets field of the select clause by the alias name.
    * 
-   * @param _alias: String with the alias.
+   * @param _alias String with the alias.
    * @return String with the field.
    */
   public String getSelectField(String _alias) {
@@ -793,8 +793,8 @@ public class TableSQLData {
   /**
    * Adds new field to the from clause.
    * 
-   * @param _field: String with the field.
-   * @param _alias: String with the alias.
+   * @param _field String with the field.
+   * @param _alias String with the alias.
    */
   public void addFromField(String _field, String _alias, String _realName) {
     QueryFieldStructure p = new QueryFieldStructure(_field, " ", _alias, "FROM", _realName);
@@ -814,8 +814,8 @@ public class TableSQLData {
   /**
    * Adds new field to the where clause.
    * 
-   * @param _field: String with the field.
-   * @param _type: String with the type of field.
+   * @param _field String with the field.
+   * @param _type String with the type of field.
    */
   public void addWhereField(String _field, String _type) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", _type);
@@ -835,8 +835,8 @@ public class TableSQLData {
   /**
    * Adds new field to the filter clause.
    * 
-   * @param _field: Strin with the field.
-   * @param _type: String with the type of field.
+   * @param _field Strin with the field.
+   * @param _type String with the type of field.
    */
   public void addFilterField(String _field, String _type) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", _type);
@@ -857,8 +857,8 @@ public class TableSQLData {
    * Adds fields to the internal filter clause. The internal filter clause is the
    * one defined by the tab in the dictionary.
    * 
-   * @param _field: String with the field.
-   * @param _type: String with the type.
+   * @param _field String with the field.
+   * @param _type String with the type.
    */
   public void addInternalFilterField(String _field, String _type) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", _type);
@@ -878,7 +878,7 @@ public class TableSQLData {
   /**
    * Adds a field to the order by clause.
    * 
-   * @param _field: String with the field.
+   * @param _field String with the field.
    */
   public void addOrderByField(String _field) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", "ORDERBY");
@@ -889,7 +889,7 @@ public class TableSQLData {
   /**
    * Adds a field to the order by clause.
    * 
-   * @param _field: String with the field.
+   * @param _field String with the field.
    */
   public void addOrderByFieldSimple(String _field) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", "ORDERBY");
@@ -956,7 +956,7 @@ public class TableSQLData {
    * Adds new field to the internal order by clause. The internal order by clause is
    * the one defined in the application dictionary for the tab.
    * 
-   * @param _field: String with the field.
+   * @param _field String with the field.
    */
   public void addInternalOrderByField(String _field) {
     QueryFieldStructure p = new QueryFieldStructure(_field, "", "", "ORDERBY");
@@ -976,8 +976,8 @@ public class TableSQLData {
   /**
    * Adds a new parameter to the select clause.
    * 
-   * @param _parameter: String with the parameter.
-   * @param _fieldName: String with the name of the field for this parameter.
+   * @param _parameter String with the parameter.
+   * @param _fieldName String with the name of the field for this parameter.
    */
   public void addSelectParameter(String _parameter, String _fieldName) {
     if (this.paramSelect == null) this.paramSelect = new Vector<QueryParameterStructure>();
@@ -997,8 +997,8 @@ public class TableSQLData {
   /**
    * Adds new parameter to the from clause.
    * 
-   * @param _parameter: String with the parameter.
-   * @param _fieldName: String with the field of this parameter.
+   * @param _parameter String with the parameter.
+   * @param _fieldName String with the field of this parameter.
    */
   public void addFromParameter(String _parameter, String _fieldName, String _realName) {
     if (this.paramFrom == null) this.paramFrom = new Vector<QueryParameterStructure>();
@@ -1008,8 +1008,8 @@ public class TableSQLData {
   /**
    * Adds new parameter to the subquery clause.
    * 
-   * @param _parameter: String with the parameter.
-   * @param _fieldName: String with the field of this parameter.
+   * @param _parameter String with the parameter.
+   * @param _fieldName String with the field of this parameter.
    */
   public void addSubQueryParameter(String _parameter, String _fieldName, String _realName) {
     if (this.paramSubquery == null) this.paramSubquery = new Vector<QueryParameterStructure>();
@@ -1037,9 +1037,9 @@ public class TableSQLData {
   /**
    * Adds new parameter to the where clause.
    * 
-   * @param _parameter: String with the parameter.
-   * @param _fieldName: String with the field of this parameter.
-   * @param _type: String with the type of parameter.
+   * @param _parameter String with the parameter.
+   * @param _fieldName String with the field of this parameter.
+   * @param _type String with the type of parameter.
    */
   public void addWhereParameter(String _parameter, String _fieldName, String _type) {
     if (this.paramWhere == null) this.paramWhere = new Vector<QueryParameterStructure>();
@@ -1059,9 +1059,9 @@ public class TableSQLData {
   /**
    * Adds new parameter to the filter clause.
    * 
-   * @param _parameter: String with the parameter.
-   * @param _fieldName: String with the field for the parameter.
-   * @param _type: String with the type of parameter.
+   * @param _parameter String with the parameter.
+   * @param _fieldName String with the field for the parameter.
+   * @param _type String with the type of parameter.
    */
   public void addFilterParameter(String _parameter, String _fieldName, String _type) {
     if (this.paramFilter == null) this.paramFilter = new Vector<QueryParameterStructure>();
@@ -1072,9 +1072,9 @@ public class TableSQLData {
   /**
    * Adds new parameter to the wrapper clause.
    * 
-   * @param _parameter: String with the parameter.
-   * @param _fieldName: String with the field for the parameter.
-   * @param _type: String with the type of parameter.
+   * @param _parameter String with the parameter.
+   * @param _fieldName String with the field for the parameter.
+   * @param _type String with the type of parameter.
    */
   public void addWrapperParameter(String _parameter, String _fieldName, String _type) {
     if (this.paramWrapper == null) this.paramWrapper = new Vector<QueryParameterStructure>();
@@ -1094,9 +1094,9 @@ public class TableSQLData {
   /**
    * Adds new parameter to the internal filter clause (the one defined in the dictionary).
    * 
-   * @param _parameter: String with the parameter.
-   * @param _fieldName: String with the field for the parameter.
-   * @param _type: String with the type of parameter.
+   * @param _parameter String with the parameter.
+   * @param _fieldName String with the field for the parameter.
+   * @param _type String with the type of parameter.
    */
   public void addInternalFilterParameter(String _parameter, String _fieldName, String _type) {
     if (this.paramInternalFilter == null) this.paramInternalFilter = new Vector<QueryParameterStructure>();
@@ -1116,8 +1116,8 @@ public class TableSQLData {
   /**
    * Adds new parameter to the order by clause.
    * 
-   * @param _parameter: String with the parameter.
-   * @param _fieldName: String with the field for the parameter.
+   * @param _parameter String with the parameter.
+   * @param _fieldName String with the field for the parameter.
    */
   public void addOrderByParameter(String _parameter, String _fieldName) {
     if (this.paramOrderBy == null) this.paramOrderBy = new Vector<QueryParameterStructure>();
@@ -1146,8 +1146,8 @@ public class TableSQLData {
   /**
    * Adds new parameter to the internal order by clause (the one defined in the dictionary).
    * 
-   * @param _parameter: String with the parameter.
-   * @param _fieldName: String with the field for the parameter.
+   * @param _parameter String with the parameter.
+   * @param _fieldName String with the field for the parameter.
    */
   public void addInternalOrderByParameter(String _parameter, String _fieldName) {
     if (this.paramInternalOrderBy == null) this.paramInternalOrderBy = new Vector<QueryParameterStructure>();
@@ -1167,8 +1167,8 @@ public class TableSQLData {
   /**
    * Method to parse the text of the clauses, searching the @ parameters.
    * 
-   * @param context: Text to parse.
-   * @param type: Type of the text (the clause).
+   * @param context Text to parse.
+   * @param type Type of the text (the clause).
    * @return String parsed.
    */
   public String parseContext(String context, String type) {
@@ -1325,10 +1325,10 @@ public class TableSQLData {
    *
    * This method is called from TableSQLData.generateSQL()
    * 
-   * @param parentTableName: String with the name of the parent table.
-   * @param field: String with the list of properties of the field to prepare identifier.
-   * @param identifierName: String with the identifier name.
-   * @param realName: String identifying tableName.fieldName, this is maintained through recursivity
+   * @param parentTableName String with the name of the parent table.
+   * @param field String with the list of properties of the field to prepare identifier.
+   * @param identifierName String with the identifier name.
+   * @param realName String identifying tableName.fieldName, this is maintained through recursivity
    * @throws Exception
    */
   public void identifier(String parentTableName, Properties field, String identifierName, String realName) throws Exception {
@@ -1368,10 +1368,10 @@ public class TableSQLData {
   /**
    * Checks if the table has any translated table and makes the joins.
    * 
-   * @param tableName: String with the name of the table.
-   * @param field: String with the name of the field.
-   * @param reference: String with the id of the reference.
-   * @param identifierName: String with the identifier name.
+   * @param tableName String with the name of the table.
+   * @param field String with the name of the field.
+   * @param reference String with the id of the reference.
+   * @param identifierName String with the identifier name.
    * @return Boolean to know if the translation were found.
    * @throws Exception
    */
@@ -1389,8 +1389,8 @@ public class TableSQLData {
   /**
    * Formats the fields to get a correct output.
    * 
-   * @param field: String with the field.
-   * @param reference: String with the reference id.
+   * @param field String with the field.
+   * @param reference String with the reference id.
    * @return String with the formated field.
    */
   private String formatField(String field, String reference) {
@@ -1434,7 +1434,7 @@ public class TableSQLData {
   /**
    * Transform a fieldprovider into a Properties object.
    * 
-   * @param field: FieldProvider object.
+   * @param field FieldProvider object.
    * @return Properties with the FieldProvider information.
    * @throws Exception
    */
@@ -1454,9 +1454,9 @@ public class TableSQLData {
   /**
    * Sets the image type field in he query.
    * 
-   * @param tableName: String with the table name.
-   * @param fieldName: String with the field name.
-   * @param identifierName: String with the identifier name.
+   * @param tableName String with the table name.
+   * @param fieldName String with the field name.
+   * @param identifierName String with the identifier name.
    * @throws Exception
    */
   private void setImageQuery(String tableName, String fieldName, String identifierName, String realName) throws Exception {
@@ -1471,10 +1471,10 @@ public class TableSQLData {
   /**
    * Sets the list reference type in the query.
    * 
-   * @param tableName: String with the table name.
-   * @param fieldName: String with the field name.
-   * @param referenceValue: String with the reference value.
-   * @param identifierName: String with the identifier name.
+   * @param tableName String with the table name.
+   * @param fieldName String with the field name.
+   * @param referenceValue String with the reference value.
+   * @param identifierName String with the identifier name.
    * @throws Exception
    */
   private void setListQuery(String tableName, String fieldName, String referenceValue, String identifierName, String realName) throws Exception {
@@ -1495,11 +1495,11 @@ public class TableSQLData {
   /**
    * Sets the table reference type in the query.
    * 
-   * @param tableName: String with the table name.
-   * @param fieldName: String with the field name.
-   * @param referenceValue: String with the reference value.
-   * @param identifierName: String with the identifier name.
-   * @param realName: String identifying field, used for recursive call 
+   * @param tableName String with the table name.
+   * @param fieldName String with the field name.
+   * @param referenceValue String with the reference value.
+   * @param identifierName String with the identifier name.
+   * @param realName String identifying field, used for recursive call 
    * @throws Exception
    */
   private void setTableQuery(String tableName, String fieldName, String referenceValue, String identifierName, String realName) throws Exception {
@@ -1522,11 +1522,11 @@ public class TableSQLData {
   /**
    * Sets the table dir reference type in the query.
    * 
-   * @param tableName: String with the table name.
-   * @param fieldName: String with the field name.
-   * @param parentFieldName: String with the parent field name.
-   * @param referenceValue: String with the reference value.
-   * @param identifierName: String with the identifier name.
+   * @param tableName String with the table name.
+   * @param fieldName String with the field name.
+   * @param parentFieldName String with the parent field name.
+   * @param referenceValue String with the reference value.
+   * @param identifierName String with the identifier name.
    * @throws Exception
    */
   private void setTableDirQuery(String tableName, String fieldName, String parentFieldName, String referenceValue, String identifierName, String realName) throws Exception {
@@ -1559,10 +1559,10 @@ public class TableSQLData {
    * Search for the close char inside a text. This method bear in mind that
    * in the string can be another open chars with their own close char.
    * 
-   * @param text: String where is the close char to search.
-   * @param pos: Integer with the start position.
-   * @param openChar: The open char.
-   * @param closeChar: The close char.
+   * @param text String where is the close char to search.
+   * @param pos Integer with the start position.
+   * @param openChar The open char.
+   * @param closeChar The close char.
    * @return Integer with the position of the close char or -1 if isn't.
    */
   private int findCloseTarget(String text, int pos, String openChar, String closeChar) {
@@ -1583,7 +1583,7 @@ public class TableSQLData {
   /**
    * Return the given order by clause into a structured field Vector.
    * 
-   * @param text: order by clause.
+   * @param text order by clause.
    * @return Vector with the fields.
    */
   private Vector<String> getOrdeByIntoFields(String text) {
@@ -1678,7 +1678,7 @@ public class TableSQLData {
    * Returns the actual order by columns. 
    * The columns names inside the handler.
    * 
-   * @param data: String with the order by clause.
+   * @param data String with the order by clause.
    * @return String with the correct columns names.
    */
   private String getRealOrderByColumn(String data) {
@@ -1815,7 +1815,7 @@ public class TableSQLData {
    * Auxiliar method to clone the column object. It's used to add 
    * key column when the key column must be a reference one.
    * 
-   * @param data: Column object to clone.
+   * @param data Column object to clone.
    * @return New cloned column object.
    */
   public SQLReturnObject getClone(SQLReturnObject data) {
@@ -1836,7 +1836,7 @@ public class TableSQLData {
   /**
    * Gets the position of a column.
    * 
-   * @param _name: String with the column name.
+   * @param _name String with the column name.
    * @return Properties with the position and other information.
    */
   public Properties getColumnPosition(String _name) {
@@ -1855,7 +1855,7 @@ public class TableSQLData {
   /**
    * Gets the alias of the selected field.
    * 
-   * @param _data: String with the field.
+   * @param _data String with the field.
    * @return String with the alias.
    */
   public String getSelectFieldAlias(String _data) {
@@ -1872,8 +1872,8 @@ public class TableSQLData {
   /**
    * Sets the order by clause.
    * 
-   * @param _fields: Vector with the order by fields.
-   * @param _params: Vector with the order by parameters.
+   * @param _fields Vector with the order by fields.
+   * @param _params Vector with the order by parameters.
    */
   public void setOrderBy(Vector<String> _fields, Vector<String> _params) {
     this.orderBy = new Vector<QueryFieldStructure>();
@@ -1914,8 +1914,8 @@ public class TableSQLData {
   /**
    * Sets the filter clause.
    * 
-   * @param _fields: Vector with the fields for the filter clause.
-   * @param _params: Vector with the paramters.
+   * @param _fields Vector with the fields for the filter clause.
+   * @param _params Vector with the paramters.
    */
   public void setFilter(Vector<String> _fields, Vector<String> _params) {
     this.filter = new Vector<QueryFieldStructure>();
@@ -1960,14 +1960,14 @@ public class TableSQLData {
   /**
    * Gets the sql generated adding the filters
    * 
-   * @param _FilterFields: Vector with specific filter fields.
-   * @param _FilterParams: Vector with parameters for the specific filter fields.
-   * @param _OrderFields: Vector with specific order by fields. It can contain tablename.field or SQL clause
-   * @param _OrderParams: Vector with parameters for the specific order by fields.
-   * @param selectFields: String with the fields for the select clause.
-   * @param _OrderSimple: Vector with specific order by fields. It always contains tablename.field, never SQL clause
-   * @param startPosition: int with the first row to be shown
-   * @param rangeLength: int with the number of rows to be shown
+   * @param _FilterFields Vector with specific filter fields.
+   * @param _FilterParams Vector with parameters for the specific filter fields.
+   * @param _OrderFields Vector with specific order by fields. It can contain tablename.field or SQL clause
+   * @param _OrderParams Vector with parameters for the specific order by fields.
+   * @param selectFields String with the fields for the select clause.
+   * @param _OrderSimple Vector with specific order by fields. It always contains tablename.field, never SQL clause
+   * @param startPosition int with the first row to be shown
+   * @param rangeLength int with the number of rows to be shown
    * @return String with the generated sql.
    */
   

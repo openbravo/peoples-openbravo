@@ -33,8 +33,8 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
   /**
    * Constructor to generate a root tree 
    * @param base
-   * @param bSmall: Normal size or small size (true)
-   * @param strClient: Client ID
+   * @param bSmall Normal size or small size (true)
+   * @param strClient Client ID
    */
   public ModuleReferenceDataOrgTree(HttpBaseServlet base, String strClient, boolean bAddLinks, boolean bSmall) {
     super(base, bSmall);
@@ -50,9 +50,9 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
   /**
    * Constructor to generate a root tree 
    * @param base
-   * @param bSmall: Normal size or small size (true)
-   * @param strClient: Client ID
-   * @param strOrg: Org ID
+   * @param bSmall Normal size or small size (true)
+   * @param strClient Client ID
+   * @param strOrg Org ID
    */
   public ModuleReferenceDataOrgTree(HttpBaseServlet base, String strClient, String strOrg, boolean bAddLinks) {
     super(base);

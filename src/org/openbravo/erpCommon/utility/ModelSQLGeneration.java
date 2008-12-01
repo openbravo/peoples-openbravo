@@ -43,8 +43,8 @@ public class ModelSQLGeneration {
   /**
    * Gets the order by clause.
    * 
-   * @param vars: Handler for the session info.
-   * @param tableSQL: Handler for the query builder.
+   * @param vars Handler for the session info.
+   * @param tableSQL Handler for the query builder.
    * @return Vector with the list of fields in the order by clause.
    * @throws Exception
    */
@@ -85,10 +85,10 @@ public class ModelSQLGeneration {
   /**
    * Returns the filter clause to apply to the query.
    * 
-   * @param vars: Handler for the session info.
-   * @param tableSQL: Handler for the query builder.
-   * @param filter: Vector with specific filters.
-   * @param filterParams: Vector with the parameters for the specific filters.
+   * @param vars Handler for the session info.
+   * @param tableSQL Handler for the query builder.
+   * @param filter Vector with specific filters.
+   * @param filterParams Vector with the parameters for the specific filters.
    * @return Object with the filters defined.
    * @throws Exception
    */
@@ -154,10 +154,10 @@ public class ModelSQLGeneration {
   /**
    * Formats the filter to get the correct output (adds TO_DATE, TO_NUMBER...).
    * 
-   * @param tablename: String with the table name.
-   * @param columnname: String with the column name.
-   * @param reference: String with the reference id.
-   * @param first: Boolean to know if is the first or not. 
+   * @param tablename String with the table name.
+   * @param columnname String with the column name.
+   * @param reference String with the reference id.
+   * @param first Boolean to know if is the first or not. 
    * @return String with the formated field.
    */
   private static String formatFilter(String tablename, String columnname, String reference, boolean first) {
@@ -192,8 +192,8 @@ public class ModelSQLGeneration {
   /**
    * Sets the order by in the session.
    * 
-   * @param vars: Handler for the session info.
-   * @param tableSQL: Handler for the query builder.
+   * @param vars Handler for the session info.
+   * @param tableSQL Handler for the query builder.
    * @throws Exception
    */
   private static void setSessionOrderBy(VariablesSecureApp vars, TableSQLData tableSQL) throws Exception {
@@ -264,14 +264,14 @@ public class ModelSQLGeneration {
    * This method adds to the standard query defined in the TableSQLData (from dictionary)
    * the user filter parameters and order by defined by UI 
    * 
-   * @param conn: Handler for the database connection.
-   * @param vars: Handler for the session info.
-   * @param tableSQL: Handler for the query builder.
-   * @param selectFields: String with the fields of the select clause.
-   * @param filter: Vector with the specific filter fields.
-   * @param filterParams: Vector with the parameters for the specific filter fields.
-   * @param offset: int, offset of rows to be displayed
-   * @param pageSize: int, number of rows to be displayed
+   * @param conn Handler for the database connection.
+   * @param vars Handler for the session info.
+   * @param tableSQL Handler for the query builder.
+   * @param selectFields String with the fields of the select clause.
+   * @param filter Vector with the specific filter fields.
+   * @param filterParams Vector with the parameters for the specific filter fields.
+   * @param offset int, offset of rows to be displayed
+   * @param pageSize int, number of rows to be displayed
    * @param onlyId only the id of the base table should be returned
    * @return String with the sql.
    * @throws Exception

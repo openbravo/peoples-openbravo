@@ -36,12 +36,12 @@ public class WindowTreeChecks {
   /**
    * Checks the common options to decide if the change can be made.
    * 
-   * @param conn: Handler for the database connection.
-   * @param vars: Handler for the session info.
-   * @param tabId: Tab id.
-   * @param topNodeId: Parent node id.
-   * @param nodeId: Id of the node to change.
-   * @param isChild: Is gonna be child of the parent node?
+   * @param conn Handler for the database connection.
+   * @param vars Handler for the session info.
+   * @param tabId Tab id.
+   * @param topNodeId Parent node id.
+   * @param nodeId Id of the node to change.
+   * @param isChild Is gonna be child of the parent node?
    * @return empty string if it's ok or the message of the error.
    * @throws ServletException
    */
@@ -72,14 +72,14 @@ public class WindowTreeChecks {
   /**
    * Checks the specific options of each tree type.
    * 
-   * @param conn: Handler for the database connection.
-   * @param vars: Handler for the session info.
-   * @param tabId: Tab id.
+   * @param conn Handler for the database connection.
+   * @param vars Handler for the session info.
+   * @param tabId Tab id.
    * @param topNodeId Parent node id.
-   * @param nodeId: Id of the node to change.
-   * @param isChild: Is gonna be child of the parent node?
-   * @param TreeType: Type of tree.
-   * @param key: Key column name.
+   * @param nodeId Id of the node to change.
+   * @param isChild Is gonna be child of the parent node?
+   * @param TreeType Type of tree.
+   * @param key Key column name.
    * @return empty string if it's ok or the message of the error.
    * @throws ServletException
    */

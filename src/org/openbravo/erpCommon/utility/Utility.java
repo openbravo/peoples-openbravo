@@ -81,7 +81,7 @@ public class Utility {
   /**
    * Checks if the references is a decimal number type.
    * 
-   * @param reference: String with the reference.
+   * @param reference String with the reference.
    * @return True if is a decimal or false if not.
    */
   public static boolean isDecimalNumber (String reference) {
@@ -98,7 +98,7 @@ public class Utility {
   /**
    * Checks if the references is an integer number type.
    * 
-   * @param reference: String with the reference.
+   * @param reference String with the reference.
    * @return True if is an integer or false if not.
    */
   public static boolean isIntegerNumber (String reference) {
@@ -114,7 +114,7 @@ public class Utility {
   /**
    * Checks if the references is a datetime type.
    * 
-   * @param reference: String with the reference.
+   * @param reference String with the reference.
    * @return True if is a datetime or false if not.
    */
   public static boolean isDateTime (String reference) {
@@ -130,8 +130,8 @@ public class Utility {
   /**
    * Returns an String with the date in the specified format
    * 
-   * @param date: Date to be formatted.
-   * @param pattern: Format expected for the output.
+   * @param date Date to be formatted.
+   * @param pattern Format expected for the output.
    * @return String formatted.
    */  
   public static String formatDate( Date date, String pattern )
@@ -143,10 +143,10 @@ public class Utility {
   /**
    * Checks if the record has attachments associated.
    * 
-   * @param conn: Handler for the database connection.
-   * @param vars: Handler for the session info.
-   * @param strTab: String with the tab id.
-   * @param recordId: String with the record id.
+   * @param conn Handler for the database connection.
+   * @param vars Handler for the session info.
+   * @param strTab String with the tab id.
+   * @param recordId String with the record id.
    * @return True if the record has attachments or false if not.
    * @throws ServletException
    */
@@ -157,9 +157,9 @@ public class Utility {
   /**
    * Translate the given code into some message from the application dictionary.
    * 
-   * @param conn: Handler for the database connection.
-   * @param strCode: String with the code to search.
-   * @param strLanguage: String with the translation language.
+   * @param conn Handler for the database connection.
+   * @param strCode String with the code to search.
+   * @param strLanguage String with the translation language.
    * @return String with the translated message.
    */
   public static String messageBD(ConnectionProvider conn, String strCode, String strLanguage) {
@@ -187,9 +187,9 @@ public class Utility {
   /**
    * Gets the value of the given preference.
    * 
-   * @param vars: Handler for the session info.
-   * @param context: String with the preference.
-   * @param window: String with the window id.
+   * @param vars Handler for the session info.
+   * @param context String with the preference.
+   * @param window String with the window id.
    * @return String with the value.
    */
   public static String getPreference(VariablesSecureApp vars, String context, String window) {
@@ -205,9 +205,9 @@ public class Utility {
   /**
    * Gets the transactional range defined.
    * 
-   * @param conn: Handler for the database connection.
-   * @param vars: Handler for the session info.
-   * @param window: String with the window id.
+   * @param conn Handler for the database connection.
+   * @param vars Handler for the session info.
+   * @param window String with the window id.
    * @return String with the value.
    */
   public static String getTransactionalDate(ConnectionProvider conn, VariablesSecureApp vars, String window) {
@@ -225,10 +225,10 @@ public class Utility {
    * Gets a value from the context. For client 0 is always added (used for references), to check if it must by added
    * or not use the getContext with accesslevel method.
    * 
-   * @param conn: Handler for the database connection.
-   * @param vars: Handler for the session info.
-   * @param context: String with the parameter to search.
-   * @param window: String with the window id.
+   * @param conn Handler for the database connection.
+   * @param vars Handler for the session info.
+   * @param context String with the parameter to search.
+   * @param window String with the window id.
    * @return String with the value.
    */
   public static String getContext(ConnectionProvider conn, VariablesSecureApp vars, String context, String window) {
@@ -289,10 +289,10 @@ public class Utility {
    * 4  System only
    * 6  System/Client
    * 7  All
-   * @param conn: Handler for the database connection.
-   * @param vars: Handler for the session info.
-   * @param context: String with the parameter to search.
-   * @param window: String with the window id.
+   * @param conn Handler for the database connection.
+   * @param vars Handler for the session info.
+   * @param context String with the parameter to search.
+   * @param window String with the window id.
    * @param accessLevel
    * @return String with the value.
    */
@@ -408,7 +408,7 @@ public class Utility {
    *   <li>Organization is not empty: referenceable from current organization list of organizations will be returned.
    *   This is the way it is called from wad windows. 
    *   
-   * @param conn: Handler for the database connection
+   * @param conn Handler for the database connection
    * @param vars
    * @param currentOrg
    * @return
@@ -515,10 +515,10 @@ public class Utility {
   /**
    * Parse the given string searching the @ elements to translate with the correct values.
    * 
-   * @param conn: Handler for the database connection.
-   * @param vars: Handler for the session info.
-   * @param context: String to parse.
-   * @param window: String with the window id.
+   * @param conn Handler for the database connection.
+   * @param vars Handler for the session info.
+   * @param context String to parse.
+   * @param window String with the window id.
    * @return String parsed.
    */
   public static String parseContext(ConnectionProvider conn, VariablesSecureApp vars, String context, String window) {
@@ -548,14 +548,14 @@ public class Utility {
   /**
    * Gets the document number from the database.
    * 
-   * @param conn: Handler for the database connection.
-   * @param vars: Handler for the session info.
-   * @param WindowNo: Window id.
-   * @param TableName: Table name.
-   * @param C_DocTypeTarget_ID: Id of the doctype target.
-   * @param C_DocType_ID: id of the doctype.
-   * @param onlyDocType: Search only for doctype.
-   * @param updateNext: Save the new sequence in database.
+   * @param conn Handler for the database connection.
+   * @param vars Handler for the session info.
+   * @param WindowNo Window id.
+   * @param TableName Table name.
+   * @param C_DocTypeTarget_ID Id of the doctype target.
+   * @param C_DocType_ID id of the doctype.
+   * @param onlyDocType Search only for doctype.
+   * @param updateNext Save the new sequence in database.
    * @return String with the new document number.
    */
   public static String getDocumentNo (ConnectionProvider conn, VariablesSecureApp vars, String WindowNo, String TableName, String C_DocTypeTarget_ID, String C_DocType_ID, boolean onlyDocType, boolean updateNext) {
@@ -581,10 +581,10 @@ public class Utility {
   /**
    * Gets the document number from database.
    * 
-   * @param conn: Handler for the database connection.
-   * @param AD_Client_ID: String with the client id.
-   * @param TableName: Table name.
-   * @param updateNext: Save the new sequence in database.
+   * @param conn Handler for the database connection.
+   * @param AD_Client_ID String with the client id.
+   * @param TableName Table name.
+   * @param updateNext Save the new sequence in database.
    * @return String with the new document number.
    */
   public static String getDocumentNo (ConnectionProvider conn, String AD_Client_ID, String TableName, boolean updateNext) {
@@ -603,10 +603,10 @@ public class Utility {
   /**
    * Gets the document number from database.
    * 
-   * @param conn: Handler for the database connection.
-   * @param AD_Client_ID: String with the client id.
-   * @param TableName: Table name.
-   * @param updateNext: Save the new sequence in database.
+   * @param conn Handler for the database connection.
+   * @param AD_Client_ID String with the client id.
+   * @param TableName Table name.
+   * @param updateNext Save the new sequence in database.
    * @return String with the new document number.
    */
   public static String getDocumentNoConnection (Connection conn, ConnectionProvider con, String AD_Client_ID, String TableName, boolean updateNext) {
@@ -624,7 +624,7 @@ public class Utility {
   /**
    * Adds the system element to the given list.
    * 
-   * @param list: String with the list.
+   * @param list String with the list.
    * @return String with the modified list.
    */
   public static String addSystem (String list) {
@@ -647,11 +647,11 @@ public class Utility {
   /**
    * Checks if the user can make modifications in the window.
    * 
-   * @param conn: Handler for the database connection.
-   * @param vars: Handler for the session info.
-   * @param AD_Client_ID: Id of the client.
-   * @param AD_Org_ID: Id of the organization.
-   * @param window: Window id.
+   * @param conn Handler for the database connection.
+   * @param vars Handler for the session info.
+   * @param AD_Client_ID Id of the client.
+   * @param AD_Org_ID Id of the organization.
+   * @param window Window id.
    * @return True if has permission, false if not.
    * @throws ServletException
    */
@@ -683,10 +683,10 @@ public class Utility {
   /**
    * Parse the text searching @ parameters to translate.
    * 
-   * @param conn: Handler for the database connection.
-   * @param vars: Handler for the session info.
-   * @param language: String with the language to translate.
-   * @param text: String with the text to translate.
+   * @param conn Handler for the database connection.
+   * @param vars Handler for the session info.
+   * @param language String with the language to translate.
+   * @param text String with the text to translate.
    * @return String translated.
    */
   public static String parseTranslation(ConnectionProvider conn, VariablesSecureApp vars, String language, String text) {
@@ -722,10 +722,10 @@ public class Utility {
    * For each token found in the parseTranslation method, this method is called
    * to find the correct translation.
    * 
-   * @param conn: Handler for the database connection.
-   * @param vars: Handler for the session info.
-   * @param token: String with the token to translate.
-   * @param language: String with the language to translate.
+   * @param conn Handler for the database connection.
+   * @param vars Handler for the session info.
+   * @param token String with the token to translate.
+   * @param language String with the language to translate.
    * @return String with the token translated.
    */
   public static String translate(ConnectionProvider conn, VariablesSecureApp vars, String token, String language) {
@@ -740,9 +740,9 @@ public class Utility {
   /**
    * Checks if the value exists in the given array of FieldProviders.
    * 
-   * @param data: Array of FieldProviders.
-   * @param fieldName: Name of the field to search.
-   * @param key: The value to search.
+   * @param data Array of FieldProviders.
+   * @param fieldName Name of the field to search.
+   * @param key The value to search.
    * @return True if exists or false if not.
    */
   public static boolean isInFieldProvider(FieldProvider[] data, String fieldName, String key) {
@@ -797,8 +797,8 @@ public class Utility {
   /**
    * Gets the window id for a tab.
    * 
-   * @param conn: Handler for the database connection.
-   * @param strTabID: Id of the tab.
+   * @param conn Handler for the database connection.
+   * @param strTabID Id of the tab.
    * @return String with the id of the window.
    * @throws ServletException
    */
@@ -824,9 +824,9 @@ public class Utility {
   /**
    * Saves the content into a fisical file.
    * 
-   * @param strPath: path for the file.
-   * @param strFile: name of the file.
-   * @param data: content of the file.
+   * @param strPath path for the file.
+   * @param strFile name of the file.
+   * @param data content of the file.
    * @return true if everything is ok or false if not.
    */
   public static boolean generateFile(String strPath, String strFile, String data) {
@@ -862,8 +862,8 @@ public class Utility {
   /**
    * Checks if the tab is declared as a tree tab.
    * 
-   * @param conn: Handler for the database connection.
-   * @param stradTabId: Id of the tab.
+   * @param conn Handler for the database connection.
+   * @param stradTabId Id of the tab.
    * @return True if is a tree tab or false if isn't.
    * @throws ServletException
    */
@@ -875,12 +875,12 @@ public class Utility {
    * Fill the parameters of the sql with the session values or FieldProvider values.
    * Used in the combo fields.
    * 
-   * @param conn: Handler for the database connection.
-   * @param vars: Handler for the session info.
-   * @param data: FieldProvider with the columns values.
-   * @param cmb: ComboTableData object.
-   * @param window: Window id.
-   * @param actual_value: actual value for the combo.
+   * @param conn Handler for the database connection.
+   * @param vars Handler for the session info.
+   * @param data FieldProvider with the columns values.
+   * @param cmb ComboTableData object.
+   * @param window Window id.
+   * @param actual_value actual value for the combo.
    * @throws ServletException
    */
   public static void fillSQLParameters(ConnectionProvider conn, VariablesSecureApp vars, FieldProvider data, ComboTableData cmb, String window, String actual_value) throws ServletException {
@@ -904,11 +904,11 @@ public class Utility {
    * Fill the parameters of the sql with the session values or FieldProvider values.
    * Used in the combo relation's grids.
    * 
-   * @param conn: Handler for the database connection.
-   * @param vars: Handler for the session info.
-   * @param data: FieldProvider with the columns values.
-   * @param cmb: TableSQLData object.
-   * @param window: Window id.
+   * @param conn Handler for the database connection.
+   * @param vars Handler for the session info.
+   * @param data FieldProvider with the columns values.
+   * @param cmb TableSQLData object.
+   * @param window Window id.
    * @throws ServletException
    */
   public static void fillTableSQLParameters(ConnectionProvider conn, VariablesSecureApp vars, FieldProvider data, TableSQLData cmb, String window) throws ServletException {
@@ -932,12 +932,12 @@ public class Utility {
    * Auxiliar method, used by fillSQLParameters and fillTableSQLParameters to get the
    * values for each parameter.
    * 
-   * @param conn: Handler for the database connection.
-   * @param vars: Handler for the session info.
-   * @param data: FieldProvider with the columns values.
-   * @param name: Name of the parameter.
-   * @param window: Window id.
-   * @param actual_value: Actual value.
+   * @param conn Handler for the database connection.
+   * @param vars Handler for the session info.
+   * @param data FieldProvider with the columns values.
+   * @param name Name of the parameter.
+   * @param window Window id.
+   * @param actual_value Actual value.
    * @return String with the parsed parameter.
    * @throws Exception
    */
@@ -956,9 +956,9 @@ public class Utility {
   /**
    * Gets the Message for the instance of the processes.
    * 
-   * @param conn: Handler for the database connection.
-   * @param vars: Handler for the session info.
-   * @param pinstanceData: Array with the instance information.
+   * @param conn Handler for the database connection.
+   * @param vars Handler for the session info.
+   * @param pinstanceData Array with the instance information.
    * @return Object with the message.
    * @throws ServletException
    */
@@ -1007,10 +1007,10 @@ public class Utility {
    * Translate the message, searching the @ parameters, and making use of the
    * ErrorTextParser class to get the appropiated message.
    * 
-   * @param conn: Handler for the database connection.
-   * @param vars: Handler for the session info.
-   * @param strLanguage: Language to translate.
-   * @param message: Strin with the message to translate.
+   * @param conn Handler for the database connection.
+   * @param vars Handler for the session info.
+   * @param strLanguage Language to translate.
+   * @param message Strin with the message to translate.
    * @return Object with the message.
    */
   public static OBError translateError(ConnectionProvider conn, VariablesSecureApp vars, String strLanguage, String message) {
@@ -1091,9 +1091,9 @@ public class Utility {
   /**
    * Search a message in the database.
    * 
-   * @param conn: Handler for the database connection.
-   * @param strCode: Message to search.
-   * @param strLanguage: Language to translate.
+   * @param conn Handler for the database connection.
+   * @param strCode Message to search.
+   * @param strLanguage Language to translate.
    * @return FieldProvider with the message info.
    */
   public static FieldProvider locateMessage(ConnectionProvider conn, String strCode, String strLanguage) {
@@ -1116,8 +1116,8 @@ public class Utility {
    * Checks if an element is in a list. List is an string like "(e1, e2, e3,...)" where en are elements. 
    * It is inteeded to be used for checking user client and organizations.
    * 
-   * @param strList: List to check in
-   * @param strClient: Element to check in the list
+   * @param strList List to check in
+   * @param strClient Element to check in the list
    * @return true in case the element is in the list
    */
   public static boolean isElementInList(String strList, String strElement){
@@ -1148,8 +1148,8 @@ public class Utility {
 
   /**
    * Write the output to a file
-   * @param fileLocation: the file where you are going to write
-   * @param outputstream: the data source
+   * @param fileLocation the file where you are going to write
+   * @param outputstream the data source
    * @return nothing. It creates a file in the file location writing the content of the outputstream
    */  
   public static void dumpFile(String fileLocation, OutputStream outputstream)
@@ -1190,7 +1190,7 @@ public class Utility {
    * Determines if a string of characters is an Openbravo UUID (Universal Unique Identifier),
    * i.e., if it is a 32 length hexadecimal string.
    *  
-   * @param CharacterString: A string of characters.
+   * @param CharacterString A string of characters.
    * @return Returns true if this string of characters is an UUID.
    */
   public static boolean isUUIDString(String CharacterString) {
@@ -1206,7 +1206,7 @@ public class Utility {
    * Returns true if the input argument character is
    * A-F, a-f or 0-9.
    * 
-   * @param c: A single character.
+   * @param c A single character.
    * @return Returns true if this character is hexadecimal.
    */
   public static final boolean isHexStringChar(char c) {
@@ -1373,7 +1373,7 @@ public class Utility {
   /**
    * Returns the ID of the base currency of the given client
    * 
-   * @param strClientId: ID of client.
+   * @param strClientId ID of client.
    * @return Returns String strBaseCurrencyId with the ID of the base currency.
    * @throws ServletException 
    */
@@ -1446,7 +1446,7 @@ public class Utility {
    * Returns the ISO code plus the symbol of the given currency
    * in the form (ISO-SYM), e.g., (USD-$)
    * 
-   * @param strCurrencyID: ID of the currency.
+   * @param strCurrencyID ID of the currency.
    * @return Returns String strISOSymbol with the ISO code plus the symbol of the currency.
    * @throws ServletException 
    */
@@ -1570,9 +1570,9 @@ public class Utility {
   /**
    * Determines the labor days between two dates
    * 
-   * @param strDate1: Date 1.
-   * @param strDate2: Date 2.
-   * @param DateFormatter: Format of the dates.
+   * @param strDate1 Date 1.
+   * @param strDate2 Date 2.
+   * @param DateFormatter Format of the dates.
    * @return strLaborDays as the number of days between strDate1 and strDate2.
    */
   public static String calculateLaborDays(String strDate1, String strDate2, DateFormat DateFormatter) throws ParseException {
@@ -1599,9 +1599,9 @@ public class Utility {
   /**
    * Adds an integer number of days to a given date 
    * 
-   * @param strDate: Start date.
-   * @param strDays: Number of days to add.
-   * @param DateFormatter: Format of the date.
+   * @param strDate Start date.
+   * @param strDays Number of days to add.
+   * @param DateFormatter Format of the date.
    * @return strFinalDate as the sum of strDate plus strDays.
    */
   public static String addDaysToDate(String strDate, String strDays, DateFormat DateFormatter) throws ParseException {
@@ -1618,7 +1618,7 @@ public class Utility {
   /**
    * Determines the format of the date
    * 
-   * @param vars: Global variables.
+   * @param vars Global variables.
    * @return DateFormatter as the format of the date.
    */
   public static DateFormat getDateFormatter (VariablesSecureApp vars) {
@@ -1632,8 +1632,8 @@ public class Utility {
   /**
    * Determines if a day is a day of the weekend, i.e., Saturday or Sunday
    * 
-   * @param strDay: Given Date.
-   * @param DateFormatter: Format of the date.
+   * @param strDay Given Date.
+   * @param DateFormatter Format of the date.
    * @return true if the date is a Sunday or a Saturday.
    */
   public static boolean isWeekendDay(String strDay, DateFormat DateFormatter) throws ParseException{   
@@ -1647,9 +1647,9 @@ public class Utility {
   /**
    * Determines if a date 1 is bigger than a date 2 
    * 
-   * @param strDate1: Date 1.
-   * @param strDate2: Date 2.
-   * @param DateFormatter: Format of the dates.
+   * @param strDate1 Date 1.
+   * @param strDate2 Date 2.
+   * @param DateFormatter Format of the dates.
    * @return true if strDate1 is bigger than strDate2.
    */
   public static boolean isBiggerDate(String strDate1, String strDate2, DateFormat DateFormatter) throws ParseException{   

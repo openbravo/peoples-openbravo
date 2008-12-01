@@ -57,7 +57,7 @@ public class OrgTree implements Serializable{
 	
 	/**
 	 * Creates a tree with a colon-separated AD_Org_ID in strOrgs
-	 * @param strOrgs colon-separated AD_Org_ID. Example: "'0','1000000'"
+	 * @param strOrgs colon-separated AD_Org_ID. Example "'0','1000000'"
 	 */
 	public OrgTree(String strOrgs) {
 		OrgTreeNode orgTreeNode;
@@ -87,7 +87,7 @@ public class OrgTree implements Serializable{
 	/**
 	 * Returns a String with the Ready Organizations which are able 
 	 * to manage transactions (like for example Invoices)
-	 * @param strOrgs colon-separated AD_Org_ID. Example: "'0','1000000'"
+	 * @param strOrgs colon-separated AD_Org_ID. Example "'0','1000000'"
 	 * @return colon-separated AD_Org_ID of Ready Organizations 
 	 * which are able to manage transactions. Example: "'0','1000000'"
 	 */
@@ -132,7 +132,7 @@ public class OrgTree implements Serializable{
 	
 	/**
 	 * Obtains a tree with all the nodes that can be referenced from the original one.
-	 * @param original tree: contains all the nodes to reference from 
+	 * @param original tree contains all the nodes to reference from 
 	 * @return new tree with referenceable nodes.
 	 */
 	public OrgTree getReferenceableTree(OrgTree tree){

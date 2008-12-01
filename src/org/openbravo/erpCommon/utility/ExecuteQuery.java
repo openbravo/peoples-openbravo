@@ -49,9 +49,9 @@ public class ExecuteQuery {
   /**
    * Constructor
    * 
-   * @param _conn: Handler for the database connection.
-   * @param _sql: String with the query.
-   * @param _parameters: Vector with the query's parameters.
+   * @param _conn Handler for the database connection.
+   * @param _sql String with the query.
+   * @param _parameters Vector with the query's parameters.
    * @throws Exception
    */
   public ExecuteQuery(ConnectionProvider _conn, String _sql, Vector<String> _parameters) throws Exception {
@@ -63,7 +63,7 @@ public class ExecuteQuery {
   /**
    * Setter for the database connection handler.
    * 
-   * @param _conn: Object handler for the database connection.
+   * @param _conn Object handler for the database connection.
    * @throws Exception
    */
   public void setPool(ConnectionProvider _conn) throws Exception {
@@ -83,7 +83,7 @@ public class ExecuteQuery {
   /**
    * Setter for the query.
    * 
-   * @param _sql: String with the query.
+   * @param _sql String with the query.
    * @throws Exception
    */
   public void setSQL(String _sql) throws Exception {
@@ -102,7 +102,7 @@ public class ExecuteQuery {
   /**
    * Setter for the query parameters.
    * 
-   * @param _parameters: Vector with the parameters.
+   * @param _parameters Vector with the parameters.
    * @throws Exception
    */
   public void setParameters(Vector<String> _parameters) throws Exception {
@@ -121,7 +121,7 @@ public class ExecuteQuery {
   /**
    * Adds new parameter to the list of query parameters.
    * 
-   * @param _value: String with the parameter.
+   * @param _value String with the parameter.
    */
   public void addParameter(String _value) {
     if (this.parameters==null) this.parameters = new Vector<String>();
@@ -132,7 +132,7 @@ public class ExecuteQuery {
   /**
    * Returns the selected parameter.
    * 
-   * @param position: Position of the selected parameter.
+   * @param position Position of the selected parameter.
    * @return String with the parameter.
    */
   public String getParameter(int position) {

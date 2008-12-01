@@ -77,10 +77,10 @@ public class WindowTree extends HttpSecureAppServlet {
   /**
    * Main method to build the html for the tree.
    * 
-   * @param vars: Handler for the session info.
-   * @param key: key column name.
-   * @param editable: is editable?
-   * @param strTabId: id of the tab.
+   * @param vars Handler for the session info.
+   * @param key key column name.
+   * @param editable is editable?
+   * @param strTabId id of the tab.
    * @return String html with the tree.
    * @throws ServletException
    */
@@ -111,12 +111,12 @@ public class WindowTree extends HttpSecureAppServlet {
   /**
    * Auxiliar method to build the child nodes.
    * 
-   * @param vars: Handler for the session info.
-   * @param key: key column name.
-   * @param strTreeID: Id for the tree.
-   * @param strParentID: Parent node id.
-   * @param editable: is editable?
-   * @param strTabId: tab id.
+   * @param vars Handler for the session info.
+   * @param key key column name.
+   * @param strTreeID Id for the tree.
+   * @param strParentID Parent node id.
+   * @param editable is editable?
+   * @param strTabId tab id.
    * @return String html with the tree.
    * @throws ServletException
    */
@@ -148,10 +148,10 @@ public class WindowTree extends HttpSecureAppServlet {
   /**
    * Generates the tree for the html.
    * 
-   * @param data: Array with the tree elements.
-   * @param strDireccion: String with the path for the urls.
-   * @param indice: String with the index.
-   * @param isFirst: Indicates if is the first or not.
+   * @param data Array with the tree elements.
+   * @param strDireccion String with the path for the urls.
+   * @param indice String with the index.
+   * @param isFirst Indicates if is the first or not.
    * @return String html with the tree.
    */
   public String generateTree(WindowTreeData[] data, String strDireccion, String indice, boolean isFirst) {
@@ -178,9 +178,9 @@ public class WindowTree extends HttpSecureAppServlet {
   /**
    * Prints the tree page.
    * 
-   * @param response: Handler to the response.
-   * @param vars: Handler for the session info.
-   * @param TabId: Tab id.
+   * @param response Handler to the response.
+   * @param vars Handler for the session info.
+   * @param TabId Tab id.
    * @throws IOException
    * @throws ServletException
    */
@@ -245,11 +245,11 @@ public class WindowTree extends HttpSecureAppServlet {
    * current one (regardless it is in development or not) and the ones bellow
    * it that are in development.
    * 
-   * @param vars: Handler for the session info.
-   * @param strTabId: Tab id.
-   * @param strTop: Parent node id.
-   * @param strLink: Id of the node to change.
-   * @param strChild: String indicating if is a child or not of the parent node (Y|N).
+   * @param vars Handler for the session info.
+   * @param strTabId Tab id.
+   * @param strTop Parent node id.
+   * @param strLink Id of the node to change.
+   * @param strChild String indicating if is a child or not of the parent node (Y|N).
    * @throws ServletException
    */
   void changeNode(VariablesSecureApp vars, String strTabId, String strTop, String strLink, String strChild) throws ServletException {
