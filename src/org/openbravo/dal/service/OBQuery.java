@@ -19,10 +19,6 @@
 
 package org.openbravo.dal.service;
 
-import static org.openbravo.model.ad.system.Client.PROPERTY_ORGANIZATION;
-import static org.openbravo.model.common.enterprise.Organization.PROPERTY_CLIENT;
-import static org.openbravo.model.common.enterprise.Organization.PROPERTY_ISACTIVE;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -203,8 +199,7 @@ public class OBQuery<E extends BaseOBObject> {
 
         if (isFilterOnReadableOrganization() && e.isOrganizationEnabled()) {
             whereClause = (addWhereClause ? " where " : "")
-                    + addAnd(whereClause) + prefix + PROPERTY_ORGANIZATION
-                    + ".id "
+                    + addAnd(whereClause) + prefix + "organization.id "
                     + createInClause(obContext.getReadableOrganizations());
             if (addWhereClause) {
                 addWhereClause = false;
@@ -213,7 +208,7 @@ public class OBQuery<E extends BaseOBObject> {
 
         if (isFilterOnReadableClients() && getEntity().isClientEnabled()) {
             whereClause = (addWhereClause ? " where " : "")
-                    + addAnd(whereClause) + prefix + PROPERTY_CLIENT + ".id "
+                    + addAnd(whereClause) + prefix + "client.id "
                     + createInClause(obContext.getReadableClients());
             if (addWhereClause) {
                 addWhereClause = false;
@@ -222,8 +217,7 @@ public class OBQuery<E extends BaseOBObject> {
 
         if (isFilterOnActive() && e.isActiveEnabled()) {
             whereClause = (addWhereClause ? " where " : "")
-                    + addAnd(whereClause) + prefix + PROPERTY_ISACTIVE
-                    + "='Y' ";
+                    + addAnd(whereClause) + prefix + "isActive='Y' ";
             if (addWhereClause) {
                 addWhereClause = false;
             }
@@ -310,9 +304,9 @@ public class OBQuery<E extends BaseOBObject> {
         for (final String name : localNamedParameters.keySet()) {
             final Object value = localNamedParameters.get(name);
             if (value instanceof BaseOBObject) {
-                qry.setEntity(pos++, value);
+                qry.setEntity(name, value);
             } else {
-                qry.setParameter(pos++, value);
+                qry.setParameter(name, value);
             }
         }
     }
