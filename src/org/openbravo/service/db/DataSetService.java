@@ -199,6 +199,12 @@ public class DataSetService implements OBSingleton {
         }
 
         String whereClause = dataSetTable.getWhereClause();
+        final Map<String, Object> existingParams = new HashMap<String, Object>();
+        for (final String name : parameters.keySet()) {
+            if (whereClause.indexOf(":" + name) != -1) {
+                existingParams.put(name, parameters.get(name));
+            }
+        }
         if (moduleId != null && whereClause != null) {
             while (whereClause.indexOf("@moduleid@") != -1) {
                 whereClause = whereClause.replace("@moduleid@", "'" + moduleId
@@ -206,14 +212,14 @@ public class DataSetService implements OBSingleton {
             }
             if (whereClause.indexOf(":moduleid") != -1
                     && parameters.get("moduleid") == null) {
-                parameters.put("moduleid", moduleId);
+                existingParams.put("moduleid", moduleId);
             }
         }
 
         final OBQuery<BaseOBObject> oq = OBDal.getInstance().createQuery(
                 entity.getName(), whereClause);
         oq.setFilterOnActive(false);
-        oq.setNamedParameters(parameters);
+        oq.setNamedParameters(existingParams);
 
         if (OBContext.getOBContext().getRole().getId().equals("0")
                 && OBContext.getOBContext().getCurrentClient().getId().equals(
