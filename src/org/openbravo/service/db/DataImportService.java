@@ -72,13 +72,14 @@ public class DataImportService implements OBSingleton {
      * ImportResult does not contain error messages).
      * 
      * @param client
-     *            the client in which the import takes place
+     *            the client in which the business objects are created/updated
      * @param organization
-     *            the organization in which the business objects are created
+     *            the organization in which the business objects are
+     *            created/updated
      * @param xml
      *            the xml containing the data
-     * @return the result of the import (error, log and warning messages,
-     *         to-be-inserted and to-be-updated business objects
+     * @return the ImportResult object contains error, log and warning messages
+     *         and lists with the inserted and updated business objects
      */
     public ImportResult importDataFromXML(Client client,
             Organization organization, String xml) {
@@ -108,17 +109,11 @@ public class DataImportService implements OBSingleton {
             Organization organization, String xml, Module module) {
         try {
             final Document doc = DocumentHelper.parseText(xml);
-            return importDataFromXML(client, organization, doc, true);
+            return importDataFromXML(client, organization, doc, true, module,
+                    null, false);
         } catch (final Exception e) {
             throw new OBException(e);
         }
-    }
-
-    private ImportResult importDataFromXML(Client client,
-            Organization organization, Document doc,
-            boolean createReferencesIfNotFound) {
-        return importDataFromXML(client, organization, doc,
-                createReferencesIfNotFound, null, null, false);
     }
 
     /**
