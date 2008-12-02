@@ -36,13 +36,12 @@
 	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
 	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
 	<queryString><![CDATA[SELECT AD_COLUMN_IDENTIFIER(to_char('C_BPartner'), to_char(C_BPARTNER_ID), to_char($P{LANGUAGE})) AS PARTNER, C_BPARTNER_ID, sum(GRANDTOTAL) AS GRANDTOTAL, count(C_BPARTNER_ID) AS ORDERNO
-FROM C_ORDER
-WHERE ISSOTRX = 'Y'
-  AND DOCSTATUS IN ('CO', 'CL')
-  AND C_ORDER.AD_CLIENT_ID IN ($P!{USER_CLIENT})
-GROUP BY C_BPARTNER_ID
-ORDER BY ORDERNO DESC]]></queryString>
-
+		FROM C_ORDER
+		WHERE ISSOTRX = 'Y'
+  			AND DOCSTATUS IN ('CO', 'CL')
+  			AND C_ORDER.AD_CLIENT_ID IN ($P!{USER_CLIENT})
+		GROUP BY C_BPARTNER_ID
+		ORDER BY ORDERNO DESC]]></queryString>
 	<field name="PARTNER" class="java.lang.String"/>
 	<field name="C_BPARTNER_ID" class="java.lang.String"/>
 	<field name="GRANDTOTAL" class="java.math.BigDecimal"/>
