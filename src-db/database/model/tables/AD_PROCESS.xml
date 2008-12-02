@@ -103,7 +103,7 @@
       </column>
       <column name="UIPATTERN" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[S]]></default>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA[CASE WHEN PROCEDURENAME IS NOT NULL THEN 'S' WHEN ISJASPER='Y' THEN 'S' ELSE 'M' END]]></onCreateDefault>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADPROCESS">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
