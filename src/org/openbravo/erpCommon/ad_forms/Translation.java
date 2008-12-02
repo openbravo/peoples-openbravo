@@ -14,29 +14,42 @@
   ******************************************************************************/
 package org.openbravo.erpCommon.ad_forms;
 
-import java.io.*;
-import java.sql.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
-import org.w3c.dom.*;
-import javax.xml.parsers.*;
-import javax.xml.transform.*;
-import javax.xml.transform.stream.*;
-import javax.xml.transform.dom.*;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.log4j.Logger;
-import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.utility.*;
-import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.xmlEngine.XmlDocument;
-import javax.servlet.*;
-import javax.servlet.http.*;
-//import org.apache.log4j.Category;
-
-import org.openbravo.erpCommon.utility.ToolBar;
-import org.openbravo.erpCommon.ad_combos.LanguageComboData;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_combos.ClientComboData;
+import org.openbravo.erpCommon.ad_combos.LanguageComboData;
+import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.utility.LeftTabsBar;
+import org.openbravo.erpCommon.utility.NavigationBar;
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.ToolBar;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.xmlEngine.XmlDocument;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 
 
@@ -97,8 +110,9 @@ public class Translation extends HttpSecureAppServlet
   static ConnectionProvider cp;
 
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
+  @Override
+public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
+    final VariablesSecureApp vars = new VariablesSecureApp(request);
     System.setProperty("javax.xml.transform.TransformerFactory", "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl"); //added for JDK1.5
     setLog4j(log4j);
     setConnectionProvicer(this);
@@ -108,12 +122,12 @@ public class Translation extends HttpSecureAppServlet
     }
     else if (vars.commandIn("EXPORT"))  {
       
-      String strLang = vars.getRequestGlobalVariable("language", "translation.lang");
-      String strClient = vars.getRequestGlobalVariable("client", "translation.client");
+      final String strLang = vars.getRequestGlobalVariable("language", "translation.lang");
+      final String strClient = vars.getRequestGlobalVariable("client", "translation.client");
       if (log4j.isDebugEnabled()) log4j.debug("Lang "+strLang+" Client "+strClient);
      
       //New message system
-      OBError myMessage = exportTrl(strLang,strClient, vars);
+      final OBError myMessage = exportTrl(strLang,strClient, vars);
       
       if (log4j.isDebugEnabled()) log4j.debug("message:"+myMessage.getMessage());
         vars.setMessage("Translation", myMessage);
@@ -121,12 +135,12 @@ public class Translation extends HttpSecureAppServlet
       
      }
      else  {
-       String strLang = vars.getRequestGlobalVariable("language", "translation.lang");
-       String strClient = vars.getRequestGlobalVariable("client", "translation.client");
+       final String strLang = vars.getRequestGlobalVariable("language", "translation.lang");
+       final String strClient = vars.getRequestGlobalVariable("client", "translation.client");
       if (log4j.isDebugEnabled()) log4j.debug("Lang "+strLang+" Client "+strClient);
 
-      String directory = globalParameters.strFTPDirectory+"/lang/"+strLang+"/";
-      OBError myMessage = importTrlDirectory(directory, strLang, strClient, vars);
+      final String directory = globalParameters.strFTPDirectory+"/lang/"+strLang+"/";
+      final OBError myMessage = importTrlDirectory(directory, strLang, strClient, vars);
       if (log4j.isDebugEnabled()) log4j.debug("message:"+myMessage.getMessage());
       vars.setMessage("Translation", myMessage);
       response.sendRedirect(strDireccion + request.getServletPath());
@@ -158,14 +172,14 @@ public class Translation extends HttpSecureAppServlet
    * @return Message with the error or with the success
    */
   private OBError exportTrl(String strLang, String strClient, VariablesSecureApp vars) {
-    String AD_Language = strLang;
+    final String AD_Language = strLang;
     OBError myMessage = null;    
     
     myMessage = new OBError();
     myMessage.setTitle("");
-     int AD_Client_ID = Integer.valueOf(strClient);
+     final int AD_Client_ID = Integer.valueOf(strClient);
 
-      String strFTPDirectory = globalParameters.strFTPDirectory;
+      final String strFTPDirectory = globalParameters.strFTPDirectory;
 
      if (new File(strFTPDirectory).canWrite()) {
        if (log4j.isDebugEnabled()) log4j.debug("can write...");
@@ -177,19 +191,23 @@ public class Translation extends HttpSecureAppServlet
      }
      
     (new File(strFTPDirectory+"/lang")).mkdir();
-    String rootDirectory = strFTPDirectory+"/lang/";
-    String directory = strFTPDirectory+"/lang/"+AD_Language+"/";    
+    final String rootDirectory = strFTPDirectory+"/lang/";
+    final String directory = strFTPDirectory+"/lang/"+AD_Language+"/";    
     (new File(directory)).mkdir();
 
     if (log4j.isDebugEnabled()) log4j.debug("directory "+directory);
    
     try{
-      TranslationData[] modulesTables = TranslationData.trlModulesTables(this);
+      final TranslationData[] modulesTables = TranslationData.trlModulesTables(this);
+     
       for (int i=0; i<modulesTables.length; i++ ){        
         exportModulesTrl(rootDirectory, AD_Client_ID, AD_Language, modulesTables[i].c);
       }
+     
+      exportReferenceData(rootDirectory, AD_Language);
+      
       exportContibutors(directory, AD_Language);
-    }catch (Exception e)
+    }catch (final Exception e)
     {
       log4j.error(e.toString());
       myMessage.setType("Error");        
@@ -216,13 +234,13 @@ public class Translation extends HttpSecureAppServlet
    * @return Message with the error or with the success
    */
   public static OBError importTrlDirectory(String directory, String strLang, String strClient, VariablesSecureApp vars) {
-    String AD_Language = strLang;
+    final String AD_Language = strLang;
 
     OBError myMessage = null;    
     myMessage = new OBError();
     myMessage.setTitle("");
     
-    String UILanguage = vars==null?"en_US":vars.getLanguage();
+    final String UILanguage = vars==null?"en_US":vars.getLanguage();
        
     if ((new File(directory).exists())&&(new File(directory).canRead())) {
       if (translationlog4j.isDebugEnabled()) translationlog4j.debug("can read "+directory);
@@ -233,13 +251,13 @@ public class Translation extends HttpSecureAppServlet
       return myMessage;
     }
     
-    int AD_Client_ID = Integer.valueOf(strClient);
+    final int AD_Client_ID = Integer.valueOf(strClient);
     try{
-      TranslationData[] tables = TranslationData.trlTables(cp);
+      final TranslationData[] tables = TranslationData.trlTables(cp);
       for (int i=0; i<tables.length; i++ )
         importTrlFile( directory, AD_Client_ID, AD_Language, tables[i].c);
       importContributors(directory,AD_Language);
-    }catch (Exception e)
+    }catch (final Exception e)
     {
       translationlog4j.error(e.toString());
       myMessage.setType("Error");        
@@ -247,11 +265,11 @@ public class Translation extends HttpSecureAppServlet
       return myMessage;
     }
     
-    File file = new File(directory);
-    File [] list = file.listFiles();
+    final File file = new File(directory);
+    final File [] list = file.listFiles();
     for(int f=0; f<list.length; f++){
       if(list[f].isDirectory()){
-        OBError subDirError = importTrlDirectory(list[f].toString()+"/", strLang, strClient, vars) ;
+        final OBError subDirError = importTrlDirectory(list[f].toString()+"/", strLang, strClient, vars) ;
         if( !"Success".equals(subDirError.getType()) )
           return subDirError; 
       }
@@ -263,199 +281,267 @@ public class Translation extends HttpSecureAppServlet
   }
  
   private void exportContibutors(String directory, String AD_Language) {
-    File out = new File(directory, CONTRIBUTORS_FILENAME+"_" + AD_Language + ".xml");
+    final File out = new File(directory, CONTRIBUTORS_FILENAME+"_" + AD_Language + ".xml");
     try {
-      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-      DocumentBuilder builder = factory.newDocumentBuilder();
-      Document document = builder.newDocument();
-      Element root = document.createElement(XML_CONTRIB);
+      final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      final DocumentBuilder builder = factory.newDocumentBuilder();
+      final Document document = builder.newDocument();
+      final Element root = document.createElement(XML_CONTRIB);
       root.setAttribute(XML_ATTRIBUTE_LANGUAGE, AD_Language);
       document.appendChild(root);
       root.appendChild(document.createTextNode(TranslationData.selectContributors(this, AD_Language)));
-      DOMSource source = new DOMSource(document);
-      TransformerFactory tFactory = TransformerFactory.newInstance();
-      Transformer transformer = tFactory.newTransformer();
+      final DOMSource source = new DOMSource(document);
+      final TransformerFactory tFactory = TransformerFactory.newInstance();
+      final Transformer transformer = tFactory.newTransformer();
       //  Output
       out.createNewFile();
-      StreamResult result = new StreamResult(out);
+      final StreamResult result = new StreamResult(out);
       //  Transform
       transformer.transform (source, result);
-    } catch (Exception e)  {
+    } catch (final Exception e)  {
       log4j.error("exportTrl", e);
     }
   }
 
+  private void exportReferenceData(String rootDirectory, String AD_Language){
+      try {
+          //Export translations for reference data (do not take into account client data, only system)
+          final TranslationData[] referenceTrlData = TranslationData.referenceDataTrl(this);
+          for (final TranslationData refTrl: referenceTrlData) {
+            exportTable(AD_Language, true, refTrl.isindevelopment.equals("Y"), refTrl.tablename.toUpperCase(), 
+                        refTrl.adTableId, rootDirectory, refTrl.adModuleId, refTrl.adLanguage, refTrl.value);
+          }
+      } catch (final Exception e) {
+          e.printStackTrace();
+    }
+  }
+  
   private String exportModulesTrl(String rootDirectory, int AD_Client_ID, String AD_Language, String Trl_Table) {
-    String directory = "";
     try {
-      TranslationData[] modules = TranslationData.modules(this);
+      final TranslationData[] modules = TranslationData.modules(this);
       for (int mod=0; mod<modules.length; mod++ ){
-        Statement st = null;
-        try {
-          String moduleLanguage = TranslationData.selectModuleLang(this, modules[mod].adModuleId);
+          final String moduleLanguage = TranslationData.selectModuleLang(this, modules[mod].adModuleId);
           if (moduleLanguage != null && !moduleLanguage.equals("") && !moduleLanguage.equals(AD_Language)) { //Translate only languages different than the modules's one
-            String ad_module_id = modules[mod].adModuleId;
-            String ad_module_value = modules[mod].value;
             
-            String strParentTable = null;
-            TranslationData[] parentTable = TranslationData.parentTable(this, Trl_Table);
-            if(parentTable.length > 0){
-              strParentTable = parentTable[0].tablename;
-            }
-            
-            /**
-             *  core    ->  /lang/en_GB/
-             *  modules ->  /lang/en_GB/modValue/ 
-             */
-            if (ad_module_id.equals("0")) directory = rootDirectory + AD_Language + "/";
-            else directory = rootDirectory + AD_Language + "/" + ad_module_value + "/";    
-            (new File(directory)).mkdir();
-      
-            String fileName = directory + Trl_Table + "_" + AD_Language + ".xml";
-            log4j.info("exportTrl - " + fileName);
-            File out = new File(fileName);
-            
-            String tableName = Trl_Table;
-            int pos = tableName.indexOf("_TRL");
-            String Base_Table = Trl_Table.substring(0, pos);
-            log4j.info("table - " + tableName);
-            String keyColumn = Base_Table + "_ID";
-            TranslationData[] trlColumns = getTrlColumns (Base_Table);
-            //
-            StringBuffer sql = null;
-          
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.newDocument();
-  
-            //  Root
-            Element root = document.createElement(XML_TAG);
-            root.setAttribute(XML_ATTRIBUTE_LANGUAGE, AD_Language);
-            root.setAttribute(XML_ATTRIBUTE_TABLE, Base_Table);
-            root.setAttribute(XML_ATTRIBUTE_BASE_LANGUAGE, moduleLanguage);
-            root.setAttribute(XML_ATTRIBUTE_VERSION, TranslationData.version (this));
-            document.appendChild(root);
-            log4j.info("exportTrl - kk ");
-            //
-            sql = new StringBuffer ("SELECT ");
-            
-            sql.append("t.IsTranslated,");
-            
-            sql.append("t.").append(keyColumn);       //  2
-            //
-            for (int i = 0; i < trlColumns.length; i++)
-              sql.append(", t.").append(trlColumns[i].c)
-                .append(",o.").append(trlColumns[i].c).append(" AS ").append(trlColumns[i].c).append("O");
-            //
-            sql.append(" FROM ").append(tableName).append(" t")
-              .append(" INNER JOIN ").append(Base_Table)
-              .append(" o ON (t.").append(keyColumn).append("=o.").append(keyColumn).append(")");
-            boolean haveWhere = false;
-            
-            sql.append(" WHERE t.AD_Language='"+AD_Language+"'");
-            haveWhere = true;
-            
-            if (m_IsCentrallyMaintained)
-            {
-              sql.append (haveWhere ? " AND " : " WHERE ").append ("o.IsCentrallyMaintained='N'");
-              haveWhere = true;
-            }
-            if (AD_Client_ID >= 0){
-              sql.append(haveWhere ? " AND " : " WHERE ").append("o.AD_Client_ID='").append(AD_Client_ID).append("'");
-              haveWhere = true;
-            }
-            
-            if(strParentTable == null){
-              sql.append(haveWhere ? " AND " : " WHERE ").append(" o.ad_module_id='").append(ad_module_id).append("'");
-            } else {
-              /** Search for ad_module_id in the parent table  */
-              sql.append(haveWhere ? " AND " : " WHERE ");
-              sql.append(" exists ( select 1 from ").append(strParentTable).append(" p ");
-              sql.append("   where p.").append(strParentTable+"_ID").append("=").append("o."+strParentTable+"_ID");
-              sql.append("   and p.ad_module_id='").append(ad_module_id).append("')");
-            }
-            sql.append(" ORDER BY t.").append(keyColumn);
-            //
-  
-            if (log4j.isDebugEnabled()) log4j.debug("SQL:"+sql.toString());
-            st = this.getStatement();
-            if (log4j.isDebugEnabled()) log4j.debug("st");
-  
-            ResultSet rs = st.executeQuery(sql.toString());
-            if (log4j.isDebugEnabled()) log4j.debug("rs");
-            int rows = 0;
-            while (rs.next())
-            {
-              Element row = document.createElement (XML_ROW_TAG);
-              row.setAttribute(XML_ROW_ATTRIBUTE_ID, String.valueOf(rs.getString(2)));  //  KeyColumn
-              row.setAttribute(XML_ROW_ATTRIBUTE_TRANSLATED, rs.getString(1));    //  IsTranslated
-              for (int i = 0; i < trlColumns.length; i++)
-              {
-                Element value = document.createElement (XML_VALUE_TAG);
-                value.setAttribute(XML_VALUE_ATTRIBUTE_COLUMN, trlColumns[i].c);
-                String origString = rs.getString(trlColumns[i].c + "O");      //  Original Value
-                if (origString == null)
-                  origString = "";
-                String valueString = rs.getString(trlColumns[i].c);       //  Value
-                if (valueString == null)
-                  valueString = "";
-                value.setAttribute(XML_VALUE_ATTRIBUTE_ORIGINAL, origString);
-                value.appendChild(document.createTextNode(valueString));
-                row.appendChild(value);
-              }
-              root.appendChild(row);
-              rows++;
-            }
-            rs.close();
-            releaseStatement(st);
-      
-            log4j.info("exportTrl - Records=" + rows + ", DTD=" + document.getDoctype());
-  
-            DOMSource source = new DOMSource(document);
-            TransformerFactory tFactory = TransformerFactory.newInstance();
-                tFactory.setAttribute("indent-number", new Integer(2));
-            Transformer transformer = tFactory.newTransformer();
-            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            //  Output
-            out.createNewFile();
-            //  Transform
-            OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream (out));//, "ISO-8859-1");
-            transformer.transform (source, new StreamResult(osw));
-            // FIXME: We should be closing the file (out and its related classes) here to make sure that is closed
-            // and that is does not really get closed when the GC claims the object (indeterministic)
-            
+              final String tableName = Trl_Table;
+              final int pos = tableName.indexOf("_TRL");
+              final String Base_Table = Trl_Table.substring(0, pos);
+              
+              exportTable(AD_Language, false, false, Base_Table, 
+                      "0", rootDirectory, modules[mod].adModuleId, moduleLanguage, modules[mod].value);
+           
           } // translate or not (if)
-        } catch (Exception e) {
-          log4j.error("exportTrl", e);
-        } finally {
-              try {
-                if (st != null) releaseStatement(st);
-              } catch (Exception ignored) {}
-        }
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       log4j.error("exportTrl", e);
     }
     return "";
   } //  exportModulesTrl
 
   
+  
+  /**
+   * Exports a single trl table in a xml file
+   * 
+   * @param AD_Language         Language to export
+   * @param exportReferenceData Defines whether exporting reference data   
+   * @param exportAll           In case it is reference data if it should be exported all data or just imported
+   * @param table               Base table 
+   * @param tableID             Base table id
+   * @param rootDirectory       Root directory to the the exportation
+   * @param moduleId            Id for the module to export to
+   * @param moduleLanguage      Base language for the module
+   * @param javaPackage         Java package for the module
+   */
+  private void exportTable(String AD_Language, boolean exportReferenceData, boolean exportAll, String table, 
+                           String tableID, String rootDirectory, String moduleId, String moduleLanguage, String javaPackage) {
+      
+      Statement st = null;
+      try {
+          final String trlTable = table+"_TRL";
+          final TranslationData[] trlColumns = getTrlColumns(table);
+          final String keyColumn = table+"_ID";
+
+          //Prepare query to retrieve translated rows
+          final StringBuffer sql =  new StringBuffer ("SELECT ");
+          sql.append("t.IsTranslated,");
+          sql.append("t.").append(keyColumn);       
+
+          for (int i = 0; i < trlColumns.length; i++) {
+            sql.append(", t.").append(trlColumns[i].c)
+              .append(",o.").append(trlColumns[i].c).append(" AS ").append(trlColumns[i].c).append("O");
+          }
+            
+            sql.append(" FROM ").append(trlTable).append(" t").append(", ").append(table).append(" o");
+          
+            if (exportReferenceData && !exportAll) {
+                sql.append(", AD_REF_DATA_LOADED DL");
+            }
+          
+            sql.append(" WHERE t.AD_Language='"+AD_Language+"'")
+               .append(" AND o.").append(keyColumn).append("= t.").append(keyColumn);
+            
+            if (m_IsCentrallyMaintained)
+            {
+              sql.append(" AND ").append ("o.IsCentrallyMaintained='N'");
+            }
+            /* AdClient !=0 not supported
+            if (AD_Client_ID >= 0){
+              sql.append(" AND ").append("o.AD_Client_ID='").append(AD_Client_ID).append("'");
+            }
+            */
+            
+            if (!exportReferenceData){
+                String strParentTable = null;
+                final TranslationData[] parentTable = TranslationData.parentTable(this, trlTable);
+                if(parentTable.length > 0){
+                  strParentTable = parentTable[0].tablename;
+                }
+                if(strParentTable == null){
+                    sql.append(" AND ").append(" o.ad_module_id='").append(moduleId).append("'");
+                  } else {
+                    /** Search for ad_module_id in the parent table  */
+                    sql.append(" AND ");
+                    sql.append(" exists ( select 1 from ").append(strParentTable).append(" p ");
+                    sql.append("   where p.").append(strParentTable+"_ID").append("=").append("o."+strParentTable+"_ID");
+                    sql.append("   and p.ad_module_id='").append(moduleId).append("')");
+                  }
+            }
+            if (exportReferenceData && !exportAll) {
+                sql.append(" AND DL.GENERIC_ID = o.").append(keyColumn)
+                   .append(" AND DL.AD_TABLE_ID = '").append(tableID).append("'")
+                   .append(" AND DL.AD_MODULE_ID = '").append(moduleId).append("'");
+            }
+          
+          sql.append(" ORDER BY t.").append(keyColumn);
+          //
+    
+          if (log4j.isDebugEnabled()) log4j.debug("SQL:"+sql.toString());
+          st = this.getStatement();
+          if (log4j.isDebugEnabled()) log4j.debug("st");
+    
+          final ResultSet rs = st.executeQuery(sql.toString());
+          if (log4j.isDebugEnabled()) log4j.debug("rs");
+          int rows = 0;
+          boolean hasRows = false;
+          
+          DocumentBuilderFactory factory = null;
+          DocumentBuilder builder = null;
+          Document document = null;
+          Element root = null;
+          File out = null;
+          
+          
+         // Create xml file
+          
+          if (!exportReferenceData) { //when not exporting rd create always the xml file
+              factory = DocumentBuilderFactory.newInstance();
+              builder = factory.newDocumentBuilder();
+              document = builder.newDocument();
+              //  Root
+              root = document.createElement(XML_TAG);
+              root.setAttribute(XML_ATTRIBUTE_LANGUAGE, AD_Language);
+              root.setAttribute(XML_ATTRIBUTE_TABLE, table);
+              root.setAttribute(XML_ATTRIBUTE_BASE_LANGUAGE, moduleLanguage);
+              root.setAttribute(XML_ATTRIBUTE_VERSION, TranslationData.version (this));
+              document.appendChild(root);
+              String directory = "";
+              
+              if (moduleId.equals("0")) directory = rootDirectory + AD_Language + "/";
+              else directory = rootDirectory + AD_Language + "/" + javaPackage + "/";    
+              (new File(directory)).mkdir();
+        
+              final String fileName = directory + trlTable + "_" + AD_Language + ".xml";
+              log4j.info("exportTrl - " + fileName);
+              out = new File(fileName);
+          }
+          
+          
+          while (rs.next()) {
+              if (!hasRows && !exportReferenceData) { //Create file only in case it has contents or it is not rd
+                  hasRows=true;
+                  
+                  factory = DocumentBuilderFactory.newInstance();
+                  builder = factory.newDocumentBuilder();
+                  document = builder.newDocument();
+                  //  Root
+                  root = document.createElement(XML_TAG);
+                  root.setAttribute(XML_ATTRIBUTE_LANGUAGE, AD_Language);
+                  root.setAttribute(XML_ATTRIBUTE_TABLE, table);
+                  root.setAttribute(XML_ATTRIBUTE_BASE_LANGUAGE, moduleLanguage);
+                  root.setAttribute(XML_ATTRIBUTE_VERSION, TranslationData.version (this));
+                  document.appendChild(root);
+                  String directory = "";
+                  
+                  if (moduleId.equals("0")) directory = rootDirectory + AD_Language + "/";
+                  else directory = rootDirectory + AD_Language + "/" + javaPackage + "/";    
+                  (new File(directory)).mkdir();
+            
+                  final String fileName = directory + trlTable + "_" + AD_Language + ".xml";
+                  log4j.info("exportTrl - " + fileName);
+                  out = new File(fileName);
+              }
+              
+            final Element row = document.createElement (XML_ROW_TAG);
+            row.setAttribute(XML_ROW_ATTRIBUTE_ID, String.valueOf(rs.getString(2)));  //  KeyColumn
+            row.setAttribute(XML_ROW_ATTRIBUTE_TRANSLATED, rs.getString(1));    //  IsTranslated
+            for (int i = 0; i < trlColumns.length; i++)
+            {
+              final Element value = document.createElement (XML_VALUE_TAG);
+              value.setAttribute(XML_VALUE_ATTRIBUTE_COLUMN, trlColumns[i].c);
+              String origString = rs.getString(trlColumns[i].c + "O");      //  Original Value
+              if (origString == null)
+                origString = "";
+              String valueString = rs.getString(trlColumns[i].c);       //  Value
+              if (valueString == null)
+                valueString = "";
+              value.setAttribute(XML_VALUE_ATTRIBUTE_ORIGINAL, origString);
+              value.appendChild(document.createTextNode(valueString));
+              row.appendChild(value);
+            }
+            root.appendChild(row);
+            rows++;
+          }
+          rs.close();
+          releaseStatement(st);
+    
+          log4j.info("exportTrl - Records=" + rows + ", DTD=" + document.getDoctype());
+    
+          final DOMSource source = new DOMSource(document);
+          final TransformerFactory tFactory = TransformerFactory.newInstance();
+              tFactory.setAttribute("indent-number", new Integer(2));
+          final Transformer transformer = tFactory.newTransformer();
+          transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+          transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+          //  Output
+          out.createNewFile();
+          //  Transform
+          final OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream (out));//, "ISO-8859-1");
+          transformer.transform (source, new StreamResult(osw));
+      } catch (final Exception e) {
+          log4j.error("exportTrl", e);
+      } finally {
+          try {
+              if (st != null) releaseStatement(st);
+            } catch (final Exception ignored) {}
+      }
+      
+  }
   private static String importContributors(String directory, String AD_Language){
-    String fileName = directory + File.separator + CONTRIBUTORS_FILENAME+"_" + AD_Language + ".xml";
-    File in = new File (fileName);
+    final String fileName = directory + File.separator + CONTRIBUTORS_FILENAME+"_" + AD_Language + ".xml";
+    final File in = new File (fileName);
     if (!in.exists()){
-      String msg = "File does not exist: " + fileName;
+      final String msg = "File does not exist: " + fileName;
       translationlog4j.debug(msg);
       return msg;
     }
     try {
-      TranslationHandler handler = new TranslationHandler(cp);
-      SAXParserFactory factory = SAXParserFactory.newInstance();
-      SAXParser parser = factory.newSAXParser();
+      final TranslationHandler handler = new TranslationHandler(cp);
+      final SAXParserFactory factory = SAXParserFactory.newInstance();
+      final SAXParser parser = factory.newSAXParser();
       parser.parse(in, handler);
       return "";
-    } catch (Exception e){
+    } catch (final Exception e){
       translationlog4j.error("importContrib", e);
       return e.toString();
     }
@@ -463,28 +549,28 @@ public class Translation extends HttpSecureAppServlet
   
   private static String importTrlFile(String directory, int AD_Client_ID, String AD_Language, String Trl_Table)
   {
-    String fileName = directory + File.separator + Trl_Table + "_" + AD_Language + ".xml";
+    final String fileName = directory + File.separator + Trl_Table + "_" + AD_Language + ".xml";
     translationlog4j.debug("importTrl - " + fileName);
-    File in = new File (fileName);
+    final File in = new File (fileName);
     if (!in.exists())
     {
-      String msg = "File does not exist: " + fileName;
+      final String msg = "File does not exist: " + fileName;
       translationlog4j.debug("importTrl - " + msg);
       return msg;
     }
 
     try
     {
-      TranslationHandler handler = new TranslationHandler(AD_Client_ID, cp);
-      SAXParserFactory factory = SAXParserFactory.newInstance();
+      final TranslationHandler handler = new TranslationHandler(AD_Client_ID, cp);
+      final SAXParserFactory factory = SAXParserFactory.newInstance();
     //  factory.setValidating(true);
-      SAXParser parser = factory.newSAXParser();
+      final SAXParser parser = factory.newSAXParser();
       parser.parse(in, handler);
       translationlog4j.info("importTrl - Updated=" + handler.getUpdateCount()+" - from file "+fileName);
       //return Msg.getMsg(Env.getCtx(), "Updated") + "=" + handler.getUpdateCount();
       return "";
     }
-    catch (Exception e)
+    catch (final Exception e)
     {
       translationlog4j.error("importTrl", e);
       return e.toString();
@@ -498,7 +584,7 @@ private  TranslationData[] getTrlColumns (String Base_Table)
       m_IsCentrallyMaintained = (TranslationData.centrallyMaintained(cp,Base_Table) != "0");
       m_IsCentrallyMaintained = false;  //???
     }
-    catch (Exception e)
+    catch (final Exception e)
     {
       translationlog4j.error("getTrlColumns (IsCentrallyMaintained)", e);
     }
@@ -510,7 +596,7 @@ private  TranslationData[] getTrlColumns (String Base_Table)
     {
       list = TranslationData.trlColumns(cp, Base_Table + "_TRL");
     }
-    catch (Exception e)
+    catch (final Exception e)
     {
       translationlog4j.error("getTrlColumns", e);
     }
@@ -522,28 +608,28 @@ private  TranslationData[] getTrlColumns (String Base_Table)
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
+    final PrintWriter out = response.getWriter();
     XmlDocument xmlDocument=null;
     
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/Translation").createXmlDocument();
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "Translation", false, "", "", "",false, "ad_forms",  strReplaceWith, false,  true);
+    final ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "Translation", false, "", "", "",false, "ad_forms",  strReplaceWith, false,  true);
     toolbar.prepareSimpleToolBarTemplate();
     xmlDocument.setParameter("toolbar", toolbar.toString());
   try {
-      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_forms.Translation");
+      final WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_forms.Translation");
       xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
       xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
       xmlDocument.setParameter("childTabContainer", tabs.childTabs());
       xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "Translation.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
+      final NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "Translation.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
       xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "Translation.html", strReplaceWith);
+      final LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "Translation.html", strReplaceWith);
       xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-    } catch (Exception ex) {
+    } catch (final Exception ex) {
       throw new ServletException(ex);
     }
     {
-      OBError myMessage = vars.getMessage("Translation");
+      final OBError myMessage = vars.getMessage("Translation");
       vars.removeMessage("Translation");
       if (myMessage!=null) {
         xmlDocument.setParameter("messageType", myMessage.getType());

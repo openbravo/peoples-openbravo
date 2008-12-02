@@ -26,7 +26,9 @@
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
-      select '1' AS C, '' AS AD_MODULE_ID, '' AS VALUE, '' AS TABLENAME from dual 
+      select '1' AS C, '' AS AD_MODULE_ID, '' AS VALUE, '' AS TABLENAME,
+             '' AS ISINDEVELOPMENT, '' AS AD_Table_ID, '' as AD_Language
+      from dual 
     </Sql>
   </SqlMethod>
 
@@ -135,6 +137,24 @@
         and lower(t.tablename) = lower(?)
       </Sql>
       <Parameter name="tablename"/>
+  </SqlMethod> 
+  
+  <SqlMethod name="referenceDataTrl" type="preparedStatement" return="multiple">     
+      <Sql>
+      SELECT D.AD_MODULE_ID, M.ISINDEVELOPMENT, t.tablename, 
+             t.AD_Table_ID,  M.AD_Language, M.JavaPackage as Value
+        FROM AD_DATASET D,
+             AD_DATASET_TABLE DT,
+             AD_TABLE T,
+             AD_MODULE M
+       WHERE EXPORTALLOWED='Y'
+         AND DT.AD_DATASET_ID = D.AD_DATASET_ID
+         AND T.AD_TABLE_ID = DT.AD_TABLE_ID
+         AND M.AD_MODULE_ID = D.AD_MODULE_ID
+         AND EXISTS (SELECT 1 
+                       FROM AD_TABLE T1
+                      WHERE UPPER(T1.TABLENAME) = UPPER(T.TABLENAME)||'_TRL')
+      </Sql>
   </SqlMethod> 
   
   <SqlMethod name="insertContrib" type="preparedStatement" return="rowCount">
