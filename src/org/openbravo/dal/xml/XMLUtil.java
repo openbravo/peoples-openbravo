@@ -37,6 +37,7 @@ import org.openbravo.base.provider.OBSingleton;
  * 
  * @see XMLEntityConverter
  * @see EntityXMLConverter
+ * @see org.openbravo.service.rest.DalWebService
  * 
  * @author mtaal
  */
