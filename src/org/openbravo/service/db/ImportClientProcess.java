@@ -19,6 +19,7 @@
 
 package org.openbravo.service.db;
 
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.scheduling.ProcessBundle;
 
 /**
@@ -36,8 +37,13 @@ public class ImportClientProcess implements org.openbravo.scheduling.Process {
      * clientId (denoting the client) and fileLocation giving the full path
      * location of the file with the data to import.
      */
-    @Override
     public void execute(ProcessBundle bundle) throws Exception {
-        // TODO Auto-generated method stub
+       final OBError e = new OBError();
+       e.setType("Success");
+       e.setMessage("Name:"+bundle.getParams().get("name"));
+       e.setTitle("Done");
+       
+       bundle.setResult(e);
+       
     }
 }

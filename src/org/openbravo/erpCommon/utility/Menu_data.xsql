@@ -242,4 +242,19 @@
       </Sql>
         <Parameter name="adUserId"/>
    </SqlMethod>
+   
+   <SqlMethod name="isGenericJavaProcess" type="preparedStatement" return="boolean">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT COUNT(*)
+          FROM AD_PROCESS
+          WHERE Ad_PROCESS_ID = ?
+          AND UIPATTERN = 'S'
+          AND ISJASPER = 'N' 
+          AND PROCEDURENAME IS NULL
+      </Sql>
+      <Parameter name="processId"/>
+   </SqlMethod>
+   
+   
 </SqlClass>

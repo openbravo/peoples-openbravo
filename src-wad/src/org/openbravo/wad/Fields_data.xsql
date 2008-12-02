@@ -504,8 +504,7 @@
         description AS tablename, help AS xmltext, isjasper 
         FROM AD_PROCESS
         WHERE isactive='Y'
-        AND (procedurename IS NOT NULL
-        OR isjasper='Y')
+        AND UIPattern='S'
         and ad_process_id in (select ad_process_id from ad_menu)
         ORDER BY ad_process_id
       ]]>

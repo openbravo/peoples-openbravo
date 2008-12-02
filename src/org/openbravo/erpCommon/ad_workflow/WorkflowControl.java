@@ -19,13 +19,20 @@
 
 package org.openbravo.erpCommon.ad_workflow;
 
-import org.openbravo.erpCommon.utility.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.utility.MenuData;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.erpCommon.utility.VerticalMenu;
 import org.openbravo.xmlEngine.XmlDocument;
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
 
 
 
@@ -33,15 +40,17 @@ public class WorkflowControl extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   static final int increment = 30;
 
-  public void init (ServletConfig config) {
+  @Override
+public void init (ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
+  @Override
+public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
+    final VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    String strAD_Workflow_ID = vars.getGlobalVariable("inpadWorkflowId", "WorkflowControl|adWorkflowId");
+    final String strAD_Workflow_ID = vars.getGlobalVariable("inpadWorkflowId", "WorkflowControl|adWorkflowId");
 
     if (!vars.commandIn("DEFAULT") && !hasGeneralAccess(vars, "F", strAD_Workflow_ID)) {
       bdError(response, "AccessTableNoView",vars.getLanguage());
@@ -53,9 +62,9 @@ public class WorkflowControl extends HttpSecureAppServlet {
     } else if (vars.commandIn("WORKFLOW")) {
       printPageDataSheet(response, vars, strAD_Workflow_ID);
     } else if (vars.commandIn("WORKFLOW_ACTION")) {
-      String strAction = vars.getRequiredStringParameter("inpAction");
-      String strClave = vars.getRequiredStringParameter("inpClave");
-      String strPath = getUrlPath(vars.getLanguage(), strAction, strClave);
+      final String strAction = vars.getRequiredStringParameter("inpAction");
+      final String strClave = vars.getRequiredStringParameter("inpClave");
+      final String strPath = getUrlPath(vars.getLanguage(), strAction, strClave);
       
       printPageRedirect(response, vars, strPath);
     } else pageError(response);
@@ -63,12 +72,12 @@ public class WorkflowControl extends HttpSecureAppServlet {
 
   void printPageRedirect(HttpServletResponse response, VariablesSecureApp vars, String strPath) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: print page redirect");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_workflow/WorkflowControl_Redirect").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_workflow/WorkflowControl_Redirect").createXmlDocument();
 
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("href", strPath);
     response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
+    final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
   }
@@ -95,22 +104,22 @@ public class WorkflowControl extends HttpSecureAppServlet {
     else if (action.equals("F")) strWorkflow = clave;
     else return "";
 
-    MenuData[] menuData = MenuData.selectData(this, language, strWindow, strProcess, strForm, strTask, strWorkflow);
+    final MenuData[] menuData = MenuData.selectData(this, language, strWindow, strProcess, strForm, strTask, strWorkflow);
     if (menuData==null || menuData.length==0) throw new ServletException("WorkflowControl.getUrlPath() - Error while getting data");
 
-    return VerticalMenu.getUrlString(strDireccion, menuData[0].name, menuData[0].action, menuData[0].classname, menuData[0].mappingname, menuData[0].adWorkflowId, menuData[0].adTaskId, menuData[0].adProcessId, "N", "");
+    return VerticalMenu.getUrlStringStatic(strDireccion, menuData[0].name, menuData[0].action, menuData[0].classname, menuData[0].mappingname, menuData[0].adWorkflowId, menuData[0].adTaskId, menuData[0].adProcessId, "N", "");
   }
 
   void printPage(HttpServletResponse response, VariablesSecureApp vars, String strAD_Workflow_ID) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: print page");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_workflow/WorkflowControl_Response").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_workflow/WorkflowControl_Response").createXmlDocument();
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
 
     xmlDocument.setParameter("workflow", strAD_Workflow_ID);
     response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
+    final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
   }
@@ -123,9 +132,9 @@ public class WorkflowControl extends HttpSecureAppServlet {
     } else {
       workflowName = WorkflowControlData.selectWorkflowNameTrl(this, vars.getLanguage(), strAD_Workflow_ID);
     }
-    String[] discard = {""};
+    final String[] discard = {""};
     if (workflowName==null || workflowName.length==0 || workflowName[0].help.equals("")) discard[0] = new String("fieldWorkflowHelp");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_workflow/WorkflowControl", discard).createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_workflow/WorkflowControl", discard).createXmlDocument();
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -137,18 +146,18 @@ public class WorkflowControl extends HttpSecureAppServlet {
     xmlDocument.setParameter("detail", buildHtml(vars, strAD_Workflow_ID));
 
     response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
+    final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
   }
 
   String buildHtml(VariablesSecureApp vars, String strAD_Workflow_ID) throws ServletException {
-    String firstNode = WorkflowControlData.selectFirstNode(this, strAD_Workflow_ID);
+    final String firstNode = WorkflowControlData.selectFirstNode(this, strAD_Workflow_ID);
     if (firstNode.equals("")) {
       log4j.warn("WorkflowControl.buildHtml() - There're no first node defined for workflow: " + strAD_Workflow_ID);
       return "";
     }
-    StringBuffer sb = new StringBuffer();
+    final StringBuffer sb = new StringBuffer();
     WorkflowControlData[] name = null;
     if (vars.getLanguage().equals("en_US")) name = WorkflowControlData.selectFirstNodeData(this, firstNode);
     else name = WorkflowControlData.selectFirstNodeDataTrl(this, vars.getLanguage(), firstNode);
@@ -163,7 +172,7 @@ public class WorkflowControl extends HttpSecureAppServlet {
     if (vars.getLanguage().equals("en_US")) data = WorkflowControlData.select(this, Utility.getContext(this, vars, "#User_Client", "WorkflowControl"), Utility.getContext(this, vars, "#User_Org", "WorkflowControl"), node);
     else data = WorkflowControlData.selectTrl(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "WorkflowControl"), Utility.getContext(this, vars, "#User_Org", "WorkflowControl"), node);
     if (data==null || data.length==0) return "";
-    StringBuffer sb = new StringBuffer();
+    final StringBuffer sb = new StringBuffer();
     if (data.length>1) {
       sb.append("<tr><td colspan=\"2\">\n");
       sb.append("  <table cellspacing=\"0\" cellpadding=\"0\" border=\"0\"><tr>");
@@ -200,8 +209,8 @@ public class WorkflowControl extends HttpSecureAppServlet {
   }
 
   String buildButton(VariablesSecureApp vars, WorkflowControlData data) throws ServletException {
-    StringBuffer html = new StringBuffer();
-    String strClave = claveWindow(data);
+    final StringBuffer html = new StringBuffer();
+    final String strClave = claveWindow(data);
     html.append("<tr>\n");
     html.append("  <td class=\"Popup_Workflow_Button_ContentCell\">\n");
     html.append("    <a href=\"#\" class=\"Popup_Workflow_Button\" onmouseout=\"window.status='';return true;\" onmouseover=\"'");
@@ -221,14 +230,15 @@ public class WorkflowControl extends HttpSecureAppServlet {
   }
 
   String line() {
-    StringBuffer html = new StringBuffer();
+    final StringBuffer html = new StringBuffer();
     html.append("<tr>");
     html.append("<td class=\"Popup_Workflow_arrow_ContentCell\"><img class=\"Popup_Workflow_arrow\" src=\"").append(strReplaceWith).append("/images/blank.gif\" border=\"0\"></img></td>");
     html.append("<td></td></tr>");
     return html.toString();
   }
 
-  public String getServletInfo() {
+  @Override
+public String getServletInfo() {
     return "Servlet WorkflowControl";
   } // end of getServletInfo() method
 }

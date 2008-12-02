@@ -20,5 +20,6 @@
 <REPORT>
 	<template id="class" file="ActionButtonDefault.html"/>
 	<PARAMETER id="fieldProcessId" name="processId" attribute="onload" replace="xx" default=""/>
+	<PARAMETER id="form" name="type" attribute="action" default="ActionButton_Responser.html"/>
 	<DISCARD id="discard"/>
 </REPORT>

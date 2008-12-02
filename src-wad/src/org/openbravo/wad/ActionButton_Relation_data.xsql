@@ -80,6 +80,27 @@
       ]]>
     </Sql>
   </SqlMethod>
+  
+  <SqlMethod name="selectGenericsJava" type="preparedStatement" return="multiple">
+    <SqlMethodComment>The table references in dictionary</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT '' AS realname, '' AS columnname, ad_process.AD_PROCESS_ID, 
+        '' AS htmlfields, '' AS htmltext, '' AS htmlfields_Header, '' AS AD_TABLE_ID, '' AS javacode, 
+        '' AS ad_reference_value_id, '' AS process_Params, '' AS process_code, '' AS additional_code, 
+        '' AS process_Params_Code, ad_process.AD_PROCESS_ID AS xmlid, mo.classname
+        FROM AD_PROCESS
+            left join ad_model_object mo on ad_process.ad_process_id = mo.ad_process_id 
+                          and mo.isactive = 'Y' 
+                          and mo.action = 'P' 
+                          and mo.isdefault = 'Y' 
+        WHERE ad_process.isactive='Y' 
+        AND AD_PROCESS.UIPattern = 'S'
+        AND (ad_process.IsJasper = 'N' AND ad_process.PROCEDURENAME IS NULL) 
+      ]]>
+    </Sql>
+  </SqlMethod>
+  
   <SqlMethod name="selectDocAction" type="preparedStatement" return="multiple">
     <SqlMethodComment>The table references in dictionary</SqlMethodComment>
     <Sql>

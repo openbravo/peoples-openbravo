@@ -426,15 +426,28 @@ public class Wad extends DefaultHandler {
    */
   private void processActionButtonGenerics(File fileReference) {
     try {
+      //Generic action button for jasper and PL
       log4j.info("Processing ActionButton_Responser.xml");
-      final XmlDocument xmlDocumentData = xmlEngine.readXmlTemplate("org/openbravo/wad/ActionButton_Responser").createXmlDocument();
+      XmlDocument xmlDocumentData = xmlEngine.readXmlTemplate("org/openbravo/wad/ActionButton_Responser").createXmlDocument();
 
-      final ActionButtonRelationData[] abrd = WadActionButton.buildActionButtonCallGenerics(pool);
+      ActionButtonRelationData[] abrd = WadActionButton.buildActionButtonCallGenerics(pool);
       xmlDocumentData.setData("structure1", abrd);
       xmlDocumentData.setData("structure2", abrd);
       xmlDocumentData.setData("structure3", abrd);
 
       WadUtility.writeFile(fileReference, "ActionButton_Responser.java", xmlDocumentData.print());
+      
+      //Generic action button for java
+      log4j.info("Processing ActionButton_ResponserJava.xml");
+      xmlDocumentData = xmlEngine.readXmlTemplate("org/openbravo/wad/ActionButtonJava_Responser").createXmlDocument();
+      abrd = WadActionButton.buildActionButtonCallGenericsJava(pool);
+      
+      xmlDocumentData.setData("structure1", abrd);
+      xmlDocumentData.setData("structure2", abrd);
+      xmlDocumentData.setData("structure3", abrd);
+      
+      WadUtility.writeFile(fileReference, "ActionButtonJava_Responser.java", xmlDocumentData.print());
+      
     } catch (final IOException e) {
       e.printStackTrace();
       log4j.error("Problem of IOExceptio in process of ActionButton_Responser");

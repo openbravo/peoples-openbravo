@@ -18,20 +18,25 @@
 */
 package org.openbravo.erpCommon.utility;
 
-import org.openbravo.base.secureApp.*;
-import org.openbravo.erpCommon.ad_process.HeartbeatProcessData;
-import org.openbravo.erpCommon.ad_process.RegisterData;
-import org.openbravo.xmlEngine.XmlDocument;
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import org.openbravo.utils.FormatUtilities;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.ad_process.HeartbeatProcessData;
+import org.openbravo.erpCommon.ad_process.RegisterData;
 import org.openbravo.erpCommon.security.AccessData;
+import org.openbravo.utils.FormatUtilities;
+import org.openbravo.xmlEngine.XmlDocument;
 
 
 
@@ -40,13 +45,15 @@ public class VerticalMenu extends HttpSecureAppServlet {
 
   String target = "appFrame";
   
-  public void init (ServletConfig config) {
+  @Override
+public void init (ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
+  @Override
+public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
+    final VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
       printPageDataSheet(response, vars, "0", false);
@@ -63,41 +70,41 @@ public class VerticalMenu extends HttpSecureAppServlet {
     
     Integer alertCount = 0;
     
-    VerticalMenuData[] data = VerticalMenuData.selectAlertRules(this, vars.getUser(), vars.getRole());
+    final VerticalMenuData[] data = VerticalMenuData.selectAlertRules(this, vars.getUser(), vars.getRole());
     if (data!=null && data.length!=0) {
       for (int i=0; i<data.length; i++) {
-        String strWhere = new UsedByLink().getWhereClause(vars,"",data[i].filterclause);
+        final String strWhere = new UsedByLink().getWhereClause(vars,"",data[i].filterclause);
         try {
-          Integer count = new Integer(VerticalMenuData.selectCountActiveAlerts(this, Utility.getContext(this, vars, "#User_Client", ""), Utility.getContext(this, vars, "#User_Org", ""),data[i].adAlertruleId,strWhere)).intValue();
+          final Integer count = new Integer(VerticalMenuData.selectCountActiveAlerts(this, Utility.getContext(this, vars, "#User_Client", ""), Utility.getContext(this, vars, "#User_Org", ""),data[i].adAlertruleId,strWhere)).intValue();
           alertCount += count;
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
           log4j.error("Error in Alert Query, alertRule="+data[i].adAlertruleId+" error:"+ex.toString());
         }       
       }
     }
   
     response.setContentType("text/plain; charset=UTF-8");
-    PrintWriter out = response.getWriter();
+    final PrintWriter out = response.getWriter();
     out.println(alertCount.toString());
     out.close();
   }
   
   void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strCliente, boolean open) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: Vertical Menu's screen");
-    String[] discard = new String[1];
+    final String[] discard = new String[1];
     if (open) discard[0] = new String("buttonExpand");
     else discard[0] = new String("buttonCollapse");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/VerticalMenu", discard).createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/VerticalMenu", discard).createXmlDocument();
     
     
-    MenuData[] data = MenuData.selectIdentificacion(this, strCliente);
+    final MenuData[] data = MenuData.selectIdentificacion(this, strCliente);
     MenuData[] dataMenu;
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
     dataMenu = MenuData.select(this, vars.getLanguage(), vars.getRole(), data[0].parentId);
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";");
     xmlDocument.setParameter("autosave", "var autosave = " + (vars.getSessionValue("#Autosave").equals("") || vars.getSessionValue("#Autosave").equalsIgnoreCase("N") ? "false" : "true") + ";");
-    StringBuffer menu = new StringBuffer();
+    final StringBuffer menu = new StringBuffer();
     menu.append(generarMenuVertical(dataMenu, strDireccion, "0", open));
     menu.append(generateMenuSearchs(vars, open));
     
@@ -109,17 +116,17 @@ public class VerticalMenu extends HttpSecureAppServlet {
     decidePopups(xmlDocument, vars);
     
     response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
+    final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
   }
 
   public void printPageLoadingMenu(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/VerticalMenuLoading").createXmlDocument();
+    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/VerticalMenuLoading").createXmlDocument();
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
-    PrintWriter out = response.getWriter();
+    final PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
     out.close();
   }
@@ -154,11 +161,11 @@ public class VerticalMenu extends HttpSecureAppServlet {
     if (menuData==null || menuData.length==0) return "";
     if (indice == null) indice="0";
 //    boolean haveData=false;
-    StringBuffer strText = new StringBuffer();
+    final StringBuffer strText = new StringBuffer();
     for (int i=0;i<menuData.length;i++) {
       if (menuData[i].parentId.equals(indice)) {
 //        haveData=true;
-        String strHijos = generarMenuVertical(menuData, strDireccion, menuData[i].nodeId, open);
+        final String strHijos = generarMenuVertical(menuData, strDireccion, menuData[i].nodeId, open);
         String strID = "";
         if (!strHijos.equals("") || menuData[i].issummary.equals("N")) {
           strText.append("<tr>\n");
@@ -247,8 +254,12 @@ public class VerticalMenu extends HttpSecureAppServlet {
     return (strText.toString());
   }
 
-  public static String getUrlString(String strDireccionBase, String name, String action, String classname, String mappingname, String adWorkflowId, String adTaskId, String adProcessId, String isExternalService, String externalType) {
-    StringBuffer strResultado = new StringBuffer();
+  public static String getUrlStringStatic(String strDireccionBase, String name, String action, String classname, String mappingname, String adWorkflowId, String adTaskId, String adProcessId, String isExternalService, String externalType) {
+    return new VerticalMenu().getUrlString(strDireccionBase, name, action, classname, mappingname, adWorkflowId, adTaskId, adProcessId, isExternalService, externalType);
+  }
+  
+  public String getUrlString(String strDireccionBase, String name, String action, String classname, String mappingname, String adWorkflowId, String adTaskId, String adProcessId, String isExternalService, String externalType) {
+    final StringBuffer strResultado = new StringBuffer();
     strResultado.append(strDireccionBase);
     if (mappingname.equals("")) {
       if (action.equals("F")) {
@@ -258,8 +269,17 @@ public class VerticalMenu extends HttpSecureAppServlet {
       } else if (action.equals("P")) {
         if (isExternalService.equals("Y") && externalType.equals("PS")) 
         	strResultado.append("/utility/OpenPentaho.html?inpadProcessId=").append(adProcessId);
-        else
-    	  strResultado.append("/ad_actionButton/ActionButton_Responser.html?inpadProcessId=").append(adProcessId);
+        else {
+            try {
+                if (MenuData.isGenericJavaProcess(this, adProcessId))
+                    strResultado.append("/ad_actionButton/ActionButtonJava_Responser.html?inpadProcessId=").append(adProcessId);
+                else
+                    strResultado.append("/ad_actionButton/ActionButton_Responser.html?inpadProcessId=").append(adProcessId);
+            } catch (final Exception e) {
+                e.printStackTrace();
+                strResultado.append("/ad_actionButton/ActionButton_Responser.html?inpadProcessId=").append(adProcessId);
+            }
+        }
       } else if (action.equals("X")) {
         strResultado.append("/ad_forms/").append(FormatUtilities.replace(name)).append(".html");
       } else if (action.equals("R")) {
@@ -281,10 +301,10 @@ public class VerticalMenu extends HttpSecureAppServlet {
    * @throws ServletException
    */
   public String generateMenuSearchs(VariablesSecureApp vars, boolean open) throws ServletException {
-    StringBuffer menu=new StringBuffer();
-    MenuData[] data = MenuData.selectSearchs(this, vars.getLanguage());
+    final StringBuffer menu=new StringBuffer();
+    final MenuData[] data = MenuData.selectSearchs(this, vars.getLanguage());
     if (data!=null && data.length>0) {
-      String entries = generateMenuSearchEntries(vars, strDireccion, open, data);
+      final String entries = generateMenuSearchEntries(vars, strDireccion, open, data);
       if (entries.length()>0) {
         menu.append("<tr>\n");
         menu.append("  <td>\n");
@@ -331,16 +351,16 @@ public class VerticalMenu extends HttpSecureAppServlet {
    * @throws ServletException
    */
   public String generateMenuSearchEntries(VariablesSecureApp vars, String direccion, boolean open, MenuData[] data) throws ServletException {
-    StringBuffer result = new StringBuffer();
+    final StringBuffer result = new StringBuffer();
     if (data==null || data.length==0) return "";
 
-    AccessData[] accessData = AccessData.selectAccessSearchMultiple(this, vars.getRole());
-    HashMap<String,String> accessMap = new HashMap<String,String>();
-    for (AccessData a : accessData) {
+    final AccessData[] accessData = AccessData.selectAccessSearchMultiple(this, vars.getRole());
+    final HashMap<String,String> accessMap = new HashMap<String,String>();
+    for (final AccessData a : accessData) {
     	accessMap.put(a.adReferenceValueId, a.total);
     }
     for (int i=0;i<data.length;i++) {
-    	String res = accessMap.get(data[i].nodeId);
+    	final String res = accessMap.get(data[i].nodeId);
       if ((res != null) && (!res.equals("0"))) {
         result.append("<tr>\n");
         result.append("  <td>\n");
@@ -354,7 +374,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
         result.append(" class=\"Normal NOT_Opened NOT_Hover NOT_Selected NOT_Pressed NOT_Focused\"");
         result.append(" id=\"childinfo").append(FormatUtilities.replace(data[i].name)).append("\"");
         result.append(" onclick=\"checkSelected('childinfo").append(FormatUtilities.replace(data[i].name)).append("');openSearch(null, null, '");
-        String javaClassName = data[i].classname.trim();        
+        final String javaClassName = data[i].classname.trim();        
         result.append(direccion).append(javaClassName);
         result.append("', null, false);return false;\" onmouseover=\"setMouseOver(this);return true;\" onmouseout=\"setMouseOut(this); return true;\"");
         result.append(" onmousedown=\"setMouseDown(this);return true;\" onmouseup=\"setMouseUp(this);return true;\">\n");
@@ -375,10 +395,10 @@ void decidePopups(XmlDocument xmlDocument, VariablesSecureApp vars) throws Servl
     
 	if (vars.getRole() != null && vars.getRole().equals("0")) {
 		// Check if the heartbeat popup needs to be displayed
-	  HeartbeatProcessData[] hbData = HeartbeatProcessData.selectSystemProperties(myPool);
+	  final HeartbeatProcessData[] hbData = HeartbeatProcessData.selectSystemProperties(myPool);
 	    if (hbData.length > 0) {
-	      String isheartbeatactive = hbData[0].isheartbeatactive;
-	      String postponeDate = hbData[0].postponeDate;
+	      final String isheartbeatactive = hbData[0].isheartbeatactive;
+	      final String postponeDate = hbData[0].postponeDate;
 	      if (isheartbeatactive == null || isheartbeatactive.equals("")) {
 	        if (postponeDate == null || postponeDate.equals("")) {
 	          xmlDocument.setParameter("popup", "openHeartbeat();");
@@ -391,7 +411,7 @@ void decidePopups(XmlDocument xmlDocument, VariablesSecureApp vars) throws Servl
 	              xmlDocument.setParameter("popup", "openHeartbeat();");
 	              return;
 	            }
-	          } catch (ParseException e) {
+	          } catch (final ParseException e) {
 	            e.printStackTrace();
 	          }
 	        }
@@ -399,10 +419,10 @@ void decidePopups(XmlDocument xmlDocument, VariablesSecureApp vars) throws Servl
 	    }
 	    
 	    // If the heartbeat doesn't need to be displayed, check the registration popup
-	    RegisterData[] rData = RegisterData.select(myPool);
+	    final RegisterData[] rData = RegisterData.select(myPool);
 	    if (rData.length > 0) {
-	      String isregistrationactive = rData[0].isregistrationactive;
-	      String rPostponeDate = rData[0].postponeDate;
+	      final String isregistrationactive = rData[0].isregistrationactive;
+	      final String rPostponeDate = rData[0].postponeDate;
 	      if (isregistrationactive == null || isregistrationactive.equals("")) {
 	        if (rPostponeDate == null || rPostponeDate.equals("")) {
 	          xmlDocument.setParameter("popup", "openRegistration();");
@@ -415,7 +435,7 @@ void decidePopups(XmlDocument xmlDocument, VariablesSecureApp vars) throws Servl
 	              xmlDocument.setParameter("popup", "openRegistration();");
 	              return;
 	            }
-	          } catch (ParseException e) {
+	          } catch (final ParseException e) {
 	            e.printStackTrace();
 	          }
 	        }
@@ -427,7 +447,8 @@ void decidePopups(XmlDocument xmlDocument, VariablesSecureApp vars) throws Servl
     
   }
   
-  public String getServletInfo() {
+  @Override
+public String getServletInfo() {
     return "Servlet that presents application's vertical menu";
   } // end of getServletInfo() method
 }
