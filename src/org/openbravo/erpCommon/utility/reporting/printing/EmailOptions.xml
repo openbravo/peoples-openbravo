@@ -25,41 +25,18 @@
   <PARAMETER id="paramLanguage" name="paramLanguage" default=""/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
 	<PARAMETER id="emailSubject" name="emailSubject" attribute="value" default=""/>
+	<PARAMETER id="contactEmail" name="contactEmail" attribute="value" default=""/>
+	<PARAMETER id="contactName" name="contactName" default=""/>
 	<PARAMETER id="emailBody" name="emailBody" default=""/>
-
-	<structure name="structure1">
-		<FIELD id="bpartnerName">bpartner_name</FIELD>
-		<FIELD id="reportLocation" attribute="href">report_location</FIELD>
-		<FIELD id="docStatus-xx" attribute="href">docstatus</FIELD>
-		<FIELD id="ourReference" replace="xx">ourreference</FIELD>
-		<FIELD id="ourReference-xx" attribute="value">ourreference</FIELD>
-		
-		<FIELD id="cusReference" replace="xx">yourreference</FIELD>
-		<FIELD id="cusReference-xx" attribute="value">yourreference</FIELD>
-
-		<FIELD id="contactName-yy" attribute="name" replace="yy">contact_name</FIELD>
-		<FIELD id="salesrepName-yy" attribute="name" replace="yy">salesrep_name</FIELD>
-		<FIELD id="contactName-yy">contact_name</FIELD>
-		<FIELD id="salesrepName-yy">salesrep_name</FIELD>
-				
-		<FIELD id="contactName-xx" attribute="value">contact_name</FIELD>
-		<FIELD id="contactEmail-xx" attribute="value">contact_email</FIELD>		
-		<FIELD id="salesrepName-xx" attribute="value">salesrep_name</FIELD>
-		<FIELD id="salesrepEmail-xx" attribute="value">salesrep_email</FIELD>		
-
-		<FIELD id="docStatus-xx" attribute="name" replace="xx">document_id</FIELD>		
-		<FIELD id="contactName-xx" attribute="name" replace="xx">document_id</FIELD>		
-		<FIELD id="contactEmail-xx" attribute="name" replace="xx">document_id</FIELD>		
-		<FIELD id="salesrepName-xx" attribute="name" replace="xx">document_id</FIELD>		
-		<FIELD id="salesrepEmail-xx" attribute="name" replace="xx">document_id</FIELD>		
-		<FIELD id="ourReference-xx" attribute="name" replace="xx">document_id</FIELD>		
-		<FIELD id="cusReference-xx" attribute="name" replace="xx">document_id</FIELD>		
-		<FIELD id="contactName-xx" attribute="id" replace="xx">document_id</FIELD>		
-		<FIELD id="contactEmail-xx" attribute="id" replace="xx">document_id</FIELD>		
-		<FIELD id="salesrepName-xx" attribute="id" replace="xx">document_id</FIELD>		
-		<FIELD id="salesrepEmail-xx" attribute="id" replace="xx">document_id</FIELD>		
-		
-		<SECTION id="sectionDocuments" />
+	<PARAMETER id="discardTable" name="discardTable"/>
+	<PARAMETER id="discardSelect" name="discardSelect"/>
+	<PARAMETER id="customer" name="customer"/>
+	<PARAMETER id="salesRep" name="salesRep"/>
+	<PARAMETER id="closed" name="closed" attribute="value" default=""/>
+	<PARAMETER id="salesrepEmail" name="salesrepEmail" attribute="value" default=""/>
+	<PARAMETER id="salesrepName" name="salesrepName" default=""/>
+	<structure name="structure2">
+		<FIELD id="fieldDocumentno">fileName</FIELD>
+		<SECTION id="sectionDetail"/>
 	</structure>
-
 </REPORT>
