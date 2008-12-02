@@ -1674,7 +1674,6 @@ public class Wad extends DefaultHandler {
           docNoNoConnFileds[i].realname = docsNoFields[i].realname;
           
           docNoNoConnFileds[i].defaultvalue = docsNoFields[i].defaultvalue.replace("(con,", "(");
-          System.out.println(docNoNoConnFileds[i].realname );
       }
           
       xmlDocument.setData("structure12", docNoNoConnFileds);
