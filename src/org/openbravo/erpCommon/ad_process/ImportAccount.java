@@ -268,8 +268,8 @@ public class ImportAccount extends ImportProcess {
           String strSeqNo = "10";
           for(int j=0;strOperand!=null && j<strOperand.length;j++){
               String C_ElementValue_Operand_ID = SequenceIdData.getUUID();
-              String strAccount = ImportAccountData.selectAccount(con, conn, strOperand[j][0], vars.getClient());
-              String strElementValue = ImportAccountData.selectAccount(con, conn, elementValue, vars.getClient());
+              String strAccount = ImportAccountData.selectAccount(con, conn, strOperand[j][0], vars.getClient(), m_C_Element_ID);
+              String strElementValue = ImportAccountData.selectAccount(con, conn, elementValue, vars.getClient(), m_C_Element_ID);
               if(strAccount!=null && !strAccount.equals("")){
                 ImportAccountData.insertOperands(con, conn, C_ElementValue_Operand_ID, (strOperand[j][1].equals("+")?"1":"-1"), strElementValue, strAccount, strSeqNo, vars.getClient(), vars.getUser());
                 strSeqNo = nextSeqNo(strSeqNo);

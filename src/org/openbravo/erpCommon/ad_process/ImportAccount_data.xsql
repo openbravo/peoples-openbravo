@@ -356,10 +356,12 @@
         FROM c_ElementValue
         WHERE value = ?
         and ad_client_id = ?
+        AND C_ELEMENT_ID = ?
       ]]>
     </Sql>
     <Parameter name="value"/>
     <Parameter name="client"/>
+    <Parameter name="element"/>
   </SqlMethod>
 
   <SqlMethod name="selectDefaultsRecord" type="preparedStatement" connection="true" return="String">
