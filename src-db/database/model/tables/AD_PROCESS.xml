@@ -101,6 +101,10 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
+      <column name="UIPATTERN" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[S]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADPROCESS">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -116,5 +120,6 @@
       <check name="ADPROCESS_ISDIRECTPRINT_CHECK"><![CDATA[ISDIRECTPRINT IN ('Y', 'N')]]></check>
       <check name="ADPROCESS_ISREPORT_CHECK"><![CDATA[ISREPORT IN ('Y', 'N')]]></check>
       <check name="ADPROCESS_ISUSE_TARTABLE_CHECK"><![CDATA[ISUSERSTARTABLE IN ('Y', 'N')]]></check>
+      <check name="ADPROCESS_UIPATTERN_CHECK"><![CDATA[UIPATTERN IN ('S', 'M')]]></check>
     </table>
   </database>
