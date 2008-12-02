@@ -36,7 +36,10 @@
 			'' as c_poc_doctype_template_id,			
 			'' as template_location,
 			'' as template_filename,
-			'' as report_filename
+			'' as report_filename,
+			'' as id,
+			'' as name
+			
 		from
 			dual
         ]]>
@@ -50,9 +53,11 @@
 		select
 		    '1' as position,		
 			documenttemplate.ad_org_id as ad_org_id,
-			documenttemplate.c_poc_doctype_template_id as c_poc_doctype_template_id,			
+			documenttemplate.c_poc_doctype_template_id as c_poc_doctype_template_id,
+			documenttemplate.c_poc_doctype_template_id as id,			
 			documenttemplate.templatelocation as template_location,
 			documenttemplate.templatefilename as template_filename,
+			documenttemplate.templatefilename as name,
 			documenttemplate.reportfilename as report_filename
 		from
 			C_poc_doctype_template documenttemplate
@@ -63,9 +68,11 @@
 		select
 		    '2' as position,
 			documenttemplate.ad_org_id as ad_org_id,
-			documenttemplate.c_poc_doctype_template_id as c_poc_doctype_template_id,			
+			documenttemplate.c_poc_doctype_template_id as c_poc_doctype_template_id,		
+			documenttemplate.c_poc_doctype_template_id as id,			
 			documenttemplate.templatelocation as template_location,
 			documenttemplate.templatefilename as template_filename,
+			documenttemplate.templatefilename as name,
 			documenttemplate.reportfilename as report_filename
 		from
 			C_poc_doctype_template documenttemplate
@@ -79,6 +86,43 @@
         <Parameter name="adOrgId"/>
         <Parameter name="docTypeId"/>        
    </SqlMethod>
+   
+   <!-- SqlMethod name="getDocumentTemplatesComboData" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+      <![CDATA[
+		select
+		    '1' as position,
+			documenttemplate.ad_org_id as ad_org_id,
+			documenttemplate.c_poc_doctype_template_id as id,			
+			documenttemplate.templatelocation as template_location,
+			documenttemplate.templatefilename as name,
+			documenttemplate.reportfilename as report_filename
+		from
+			C_poc_doctype_template documenttemplate
+		where
+			documenttemplate.c_doctype_id = ? and
+			documenttemplate.ad_org_id = ?
+	    union 
+		select
+		    '2' as position,
+			documenttemplate.ad_org_id as ad_org_id,
+			documenttemplate.c_poc_doctype_template_id as id,			
+			documenttemplate.templatelocation as template_location,
+			documenttemplate.templatefilename as name,
+			documenttemplate.reportfilename as report_filename
+		from
+			C_poc_doctype_template documenttemplate
+		where
+			documenttemplate.c_doctype_id = ? and
+			documenttemplate.ad_org_id = '0' 	    
+		order by position asc, ad_org_id desc
+        ]]>
+        </Sql>
+        <Parameter name="docTypeId"/>
+        <Parameter name="adOrgId"/>
+        <Parameter name="docTypeId"/>        
+   <SqlMethod-->
  
 </SqlClass>
 
