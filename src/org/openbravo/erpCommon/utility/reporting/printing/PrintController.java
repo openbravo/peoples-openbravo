@@ -360,23 +360,17 @@ public class PrintController extends HttpSecureAppServlet {
         final String documentId = report.getDocumentId();
         final String attachmentFileLocation = report.getTargetLocation();
 
-        final String ourReference = vars.getStringParameter("ourReference-"
-                + documentId);
-        final String cusReference = vars.getStringParameter("cusReference-"
-                + documentId);
+        final String ourReference = vars.getStringParameter("ourReference");
+        final String cusReference = vars.getStringParameter("cusReference");
         if (log4j.isDebugEnabled())
             log4j.debug("our document ref: " + ourReference);
         if (log4j.isDebugEnabled())
             log4j.debug("cus document ref: " + cusReference);
 
-        final String salesrepName = vars.getStringParameter("salesrepName-"
-                + documentId);
-        final String salesrepEmail = vars.getStringParameter("salesrepEmail-"
-                + documentId);
-        final String contactName = vars.getStringParameter("contactName-"
-                + documentId);
-        final String contactEmail = vars.getStringParameter("contactEmail-"
-                + documentId);
+        final String salesrepName = vars.getStringParameter("salesrepName");
+        final String salesrepEmail = vars.getStringParameter("salesrepEmail");
+        final String contactName = vars.getStringParameter("contactName");
+        final String contactEmail = vars.getStringParameter("contactEmail");
         String emailSubject = vars.getStringParameter("emailSubject");
         String emailBody = vars.getStringParameter("emailBody");
 
