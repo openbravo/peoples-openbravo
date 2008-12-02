@@ -204,6 +204,10 @@ public class DataSetService implements OBSingleton {
                 whereClause = whereClause.replace("@moduleid@", "'" + moduleId
                         + "'");
             }
+            if (whereClause.indexOf(":moduleid") != -1
+                    && parameters.get("moduleid") == null) {
+                parameters.put("moduleid", moduleId);
+            }
         }
 
         final OBQuery<BaseOBObject> oq = OBDal.getInstance().createQuery(
