@@ -517,7 +517,7 @@
 					</textElement>
 				<text><![CDATA[DATE]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="false" pattern="dd-MM-yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="GroupHeader_DarkGray"
 						x="686"

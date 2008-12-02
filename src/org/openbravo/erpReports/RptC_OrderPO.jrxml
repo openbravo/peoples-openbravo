@@ -530,7 +530,7 @@ AND C_ORDER.C_ORDER_ID IN $P!{ORDER_ID}]]></queryString>
 					</textElement>
 				<text><![CDATA[printed on]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="false" pattern="dd-MM-yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
 						x="205"

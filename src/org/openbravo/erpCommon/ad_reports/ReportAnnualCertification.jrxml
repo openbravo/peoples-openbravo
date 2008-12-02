@@ -43,6 +43,10 @@
 		<parameterDescription><![CDATA[Address Organization]]></parameterDescription>
 		<defaultValueExpression ><![CDATA[""]]></defaultValueExpression>
 	</parameter>
+	<parameter name="DATEFORMATTER" isForPrompting="false" class="java.text.DateFormat">
+		<defaultValueExpression ><![CDATA[$P{REPORT_FORMAT_FACTORY}.createDateFormat("", $P{REPORT_LOCALE}, $P{REPORT_TIME_ZONE})]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
 	<queryString><![CDATA[SELECT buspar.name as BusinessPartner,buspar.taxid,buspar.fiscalcode,Loc.ADDRESS1,Loc.POSTAL,City.NAME as City,City.LOCODE,
  debpaycancel.DATEPLANNED,bank.Name,bank.Codebank,bank.Codebranch,bank.Digitcontrol as DigitcontrolBank,bankaccount.Digitcontrol as DigitcontrolBankAccount,bankaccount.Codeaccount,
  coalesce ( sum(invoic.TOTALLINES),0) as SummedLineAmount,
@@ -136,7 +140,7 @@
 		</columnHeader>
 		<detail>
 			<band height="600"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
 						y="545"
@@ -149,7 +153,7 @@
 					<textElement>
 						<font fontName="Courier New" size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{AddressOrganization} + new SimpleDateFormat ("dd/mm/yyyy").format(new Date()).toString()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{AddressOrganization}+ " " + $P{DATEFORMATTER}.format(new Date())]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -411,7 +415,7 @@
 					<textElement>
 						<font fontName="Courier New"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["On : "+ new SimpleDateFormat ("dd/mm/yyyy").format($F{DATEPLANNED}).toString()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["On : "+ $P{DATEFORMATTER}.format($F{DATEPLANNED})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
