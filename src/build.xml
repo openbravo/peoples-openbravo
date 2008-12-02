@@ -168,7 +168,7 @@ build.war: build a war file in the lib directory.
           <path refid="project.class.path" />
        </classpath>
    </workflow>
-    <javac srcdir="${base.src.gen}:${base.src}/org/openbravo/dal:${base.src}/org/openbravo/base/structure:${base.src}/org/openbravo/service:${base.src}/org/openbravo/scheduling" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}"  debug="true" debuglevel="lines,vars,source" deprecation="on">
+    <javac srcdir="${base.src.gen}:${base.src}/org/openbravo/dal:${base.src}/org/openbravo/base/structure" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}"  debug="true" debuglevel="lines,vars,source" deprecation="on">
       <classpath refid="project.class.path"/>
     </javac>
  </target>
