@@ -54,27 +54,27 @@ deploy.mode=class
 # Database #
 ############
 
-# PostgreSQL example:
+# Oracle example:
 #
-# bbdd.sid=openbravo
-# bbdd.systemUser=system
-# bbdd.systemPassword=syspass
-# bbdd.user=tad
-# bbdd.password=tad
-# bbdd.driver=org.postgresql.Driver
-# bbdd.url=jdbc:postgresql://localhost:5432
-# bbdd.rdbms=POSTGRE
-# bbdd.sessionConfig=select update_dateFormat('DD-MM-YYYY')
+# bbdd.sid=xe
+# bbdd.systemUser=SYSTEM
+# bbdd.systemPassword=SYSTEM
+# bbdd.user=TAD
+# bbdd.password=TAD
+# bbdd.driver=oracle.jdbc.driver.OracleDriver
+# bbdd.url=jdbc:oracle:thin:@localhost:1521:xe
+# bbdd.rdbms=ORACLE
+# bbdd.sessionConfig=ALTER SESSION SET NLS_DATE_FORMAT='DD-MM-YYYY' NLS_NUMERIC_CHARACTERS='.,'
 
-bbdd.sid=xe
-bbdd.systemUser=SYSTEM
-bbdd.systemPassword=SYSTEM
-bbdd.user=TAD
-bbdd.password=TAD
-bbdd.driver=oracle.jdbc.driver.OracleDriver
-bbdd.url=jdbc:oracle:thin:@localhost:1521:xe
-bbdd.rdbms=ORACLE
-bbdd.sessionConfig=ALTER SESSION SET NLS_DATE_FORMAT='DD-MM-YYYY' NLS_NUMERIC_CHARACTERS='.,'
+bbdd.sid=openbravo
+bbdd.systemUser=system
+bbdd.systemPassword=syspass
+bbdd.user=tad
+bbdd.password=tad
+bbdd.driver=org.postgresql.Driver
+bbdd.url=jdbc:postgresql://localhost:5432
+bbdd.rdbms=POSTGRE
+bbdd.sessionConfig=select update_dateFormat('DD-MM-YYYY')
 
 ##########################
 # Development parameters #
