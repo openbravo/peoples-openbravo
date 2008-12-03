@@ -54,17 +54,13 @@ public class ApplyModules extends HttpSecureAppServlet {
 
         if (vars.commandIn("DEFAULT")) {
             printPage(response, vars);
-        }
-        if (vars.commandIn("STARTAPPLY")) {
+        } else if (vars.commandIn("STARTAPPLY")) {
             startApply(response, vars);
-        }
-        if (vars.commandIn("UPDATELOG")) {
+        } else if (vars.commandIn("UPDATELOG")) {
             updateLog(response, vars);
-        }
-        if (vars.commandIn("GETERR")) {
+        } else if (vars.commandIn("GETERR")) {
             getError(response, vars);
         } else {
-            System.err.println(vars.getCommand());
             pageError(response);
         }
     }
