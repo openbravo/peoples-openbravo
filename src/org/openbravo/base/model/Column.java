@@ -19,7 +19,7 @@
 
 package org.openbravo.base.model;
 
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -351,11 +351,12 @@ public class Column extends ModelObject {
      * 
      * @return the set of allowed values for this Column.
      */
+    @SuppressWarnings("unchecked")
     public Set<String> getAllowedValues() {
         if (getReferenceValue() != null) {
             return getReferenceValue().getAllowedValues();
         }
-        return new HashSet<String>();
+        return Collections.EMPTY_SET;
     }
 
     public Boolean isTransient() {
