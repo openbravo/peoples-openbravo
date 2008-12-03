@@ -67,7 +67,7 @@ deploy.mode=class
 # bbdd.sessionConfig=ALTER SESSION SET NLS_DATE_FORMAT='DD-MM-YYYY' NLS_NUMERIC_CHARACTERS='.,'
 
 bbdd.sid=openbravo
-bbdd.systemUser=system
+bbdd.systemUser=postgres
 bbdd.systemPassword=syspass
 bbdd.user=tad
 bbdd.password=tad
