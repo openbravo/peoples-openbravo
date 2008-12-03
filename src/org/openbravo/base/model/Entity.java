@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.util.Check;
@@ -47,6 +48,7 @@ import org.openbravo.base.validation.PropertyValidator;
  */
 
 public class Entity {
+    private static final Logger log = Logger.getLogger(Entity.class);
 
     private List<UniqueConstraint> uniqueConstraints = new ArrayList<UniqueConstraint>();
 
@@ -62,6 +64,7 @@ public class Entity {
     private String tableName;
     private String tableId;
     private Class<?> mappingClass = null;
+    private boolean mappingClassComputed = false;
     private String className;
     private boolean isTraceable;
     private boolean isActiveEnabled;
@@ -110,7 +113,7 @@ public class Entity {
             properties.add(p);
             propertiesByName.put(p.getName(), p);
             if (p.getColumnName() != null) {
-                propertiesByColumnName.put(p.getColumnName(), p);
+                propertiesByColumnName.put(p.getColumnName().toLowerCase(), p);
             }
             if (p.isId()) {
                 idProperties.add(p);
@@ -160,7 +163,8 @@ public class Entity {
     public void addProperty(Property property) {
         getProperties().add(property);
         if (property.getColumnName() != null) {
-            propertiesByColumnName.put(property.getColumnName(), property);
+            propertiesByColumnName.put(property.getColumnName().toLowerCase(),
+                    property);
         }
         if (property.isIdentifier()) {
             getIdentifierProperties().add(property);
@@ -217,15 +221,26 @@ public class Entity {
         this.className = className;
     }
 
+    /**
+     * Loads the class using the {@link #getClassName()} . If this fails then
+     * the null is returned and the system will use a DynamicOBObject as the
+     * runtime class.
+     * 
+     * @return the java class implementing this Entity, or null if the class is
+     *         not available (not found)
+     */
     public Class<?> getMappingClass() {
-        if (mappingClass == null) {
+        if (mappingClass == null && !mappingClassComputed) {
             try {
                 // the context class loader is the safest one
                 mappingClass = OBClassLoader.getInstance().loadClass(
                         getClassName());
             } catch (final Exception e) {
-                throw new OBException(e);
+                log.warn("No class present for entity " + getName()
+                        + " using dynamic object");
+                mappingClass = null;
             }
+            mappingClassComputed = true;
         }
         return mappingClass;
     }
@@ -362,7 +377,8 @@ public class Entity {
      * @throws CheckException
      */
     public Property getPropertyByColumnName(String columnName) {
-        final Property prop = propertiesByColumnName.get(columnName);
+        final Property prop = propertiesByColumnName.get(columnName
+                .toLowerCase());
         Check.isNotNull(prop, "Property with " + columnName
                 + " does not exist for entity " + this);
         return prop;

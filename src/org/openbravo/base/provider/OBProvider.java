@@ -129,13 +129,13 @@ public class OBProvider {
         if (currentReg != null) {
             if (!overwrite || !currentReg.isOverwritable()) {
                 log
-                        .warn("A different registration: "
+                        .debug("A different registration: "
                                 + currentReg
                                 + " already exists under this name, NOT overwriting it by "
                                 + reg);
                 return;
             } else {
-                log.warn(currentReg + " will be replaced by " + reg);
+                log.debug(currentReg + " will be replaced by " + reg);
             }
         } else {
             log.debug("Registering " + reg);
@@ -165,6 +165,24 @@ public class OBProvider {
             return (T) reg.getInstance();
         }
         return (T) reg.getInstance();
+    }
+
+    /**
+     * Removes the singleton instance of the clz (if any) from the internal
+     * registry. It will be recreated at next request.
+     * 
+     * @param clz
+     *            the instance of this class is removed.
+     */
+    public void removeInstance(Class<?> clz) {
+        log.debug("Removing instance " + clz.getName());
+        final Registration reg = registrations.get(clz.getName());
+        if (reg == null) {
+            log.debug("Removing instance " + clz.getName()
+                    + " but it was not registered, doing nothing");
+            return;
+        }
+        reg.setInstance(null);
     }
 
     /**

@@ -78,6 +78,10 @@ public abstract class SessionFactoryController {
     public static void setInstance(SessionFactoryController sfc) {
         log.debug("Setting instance of " + sfc.getClass().getName()
                 + " as session factory controller");
+        if (instance != null) {
+            // TODO: we should ensure that there are no open sessions....
+            instance.getSessionFactory().close();
+        }
         instance = sfc;
     }
 

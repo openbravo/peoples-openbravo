@@ -268,7 +268,7 @@ compare.database.structure: refer to compare.database.structure target of databa
     <ant dir="${base.src}" target="compile.src.gen" inheritAll="true" inheritRefs="true"/>
   </target>
 
-  <target name="generate.entities" depends="compile.src.gen">
+  <target name="generate.entities">
     <ant dir="${base.src}" target="generate.entities" inheritAll="true" inheritRefs="true"/>
   </target>
 
@@ -483,9 +483,9 @@ compare.database.structure: refer to compare.database.structure target of databa
       <classpath refid="project.class.path"/>
     </taskdef>
     <antcall target="update.database.mod"/>
-    <antcall target="generate.entities"/>
     <applyModule userId="0"
-                 propertiesFile="${base.config}/Openbravo.properties"/>
+                 propertiesFile="${base.config}/Openbravo.properties"
+    			reinitializemodel="true"/>
 		<antcall target="compile.deploy"/>
 		<!--antcall target="deploy.context"/-->
 	</target>

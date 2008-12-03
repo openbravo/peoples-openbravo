@@ -66,7 +66,6 @@ public class GenerateEntitiesTask extends WorkflowAntTask {
                         getProviderConfigDirectory());
             }
 
-            log.info("Initializing in-memory model...");
             try {
                 ModelProvider.getInstance().getModel();
             } catch (final Exception e) {

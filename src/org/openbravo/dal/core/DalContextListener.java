@@ -77,7 +77,7 @@ public class DalContextListener implements ServletContextListener {
         OBConfigFileProvider.getInstance().setClassPathLocation("/WEB-INF");
 
         // initialize the dal layer
-        DalLayerInitializer.getInstance().initialize();
+        DalLayerInitializer.getInstance().initialize(true);
     }
 
     public void contextDestroyed(ServletContextEvent event) {

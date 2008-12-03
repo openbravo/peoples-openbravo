@@ -49,10 +49,14 @@ public class OBDynamicPropertyHandler implements PropertyAccessor {
 
     private String getStaticPropertyName(Class<?> clz, String propName) {
         try {
+            if (clz == null) {
+                return propName;
+            }
             final Field fld = clz
                     .getField("PROPERTY_" + propName.toUpperCase());
             return (String) fld.get(null);
         } catch (final Exception e) {
+            e.printStackTrace(System.err);
             throw new OBException(
                     "Exception when getting static property name "
                             + clz.getName() + "." + "PROPERTY_"

@@ -64,21 +64,28 @@ public class NumericPropertyValidator extends BasePropertyValidator {
             // mandatory is checked in Hibernate and in the property itself
             return null;
         }
-        Check.isInstanceOf(value, Number.class);
-        final Number num = (Number) value;
-        final double thatValue = num.doubleValue();
+        final BigDecimal localValue;
+        if (float.class.isAssignableFrom(value.getClass())
+                || Float.class.isAssignableFrom(value.getClass())) {
+            localValue = new BigDecimal((Float) value);
+        } else if (int.class.isAssignableFrom(value.getClass())
+                || Integer.class.isAssignableFrom(value.getClass())) {
+            localValue = new BigDecimal((Integer) value);
+        } else {
+            Check.isInstanceOf(value, BigDecimal.class);
+            localValue = (BigDecimal) value;
+        }
+
         if (minValue != null) {
-            if (minValue.doubleValue() > thatValue) {
-                return "Value (" + thatValue
-                        + ") is smaller than the min value: "
-                        + minValue.doubleValue();
+            if (minValue.compareTo(localValue) > 0) {
+                return "Value (" + value + ") is smaller than the min value: "
+                        + minValue;
             }
         }
         if (maxValue != null) {
-            if (maxValue.doubleValue() < thatValue) {
-                return "Value (" + thatValue
-                        + ") is larger than the max value: "
-                        + maxValue.doubleValue();
+            if (maxValue.compareTo(localValue) < 0) {
+                return "Value (" + localValue
+                        + ") is larger than the max value: " + maxValue;
             }
         }
         return null;

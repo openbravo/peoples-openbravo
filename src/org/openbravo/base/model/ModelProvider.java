@@ -31,6 +31,7 @@ import org.hibernate.Transaction;
 import org.hibernate.classic.Session;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.session.SessionFactoryController;
@@ -95,6 +96,24 @@ public class ModelProvider implements OBSingleton {
      */
     public static void setInstance(ModelProvider instance) {
         ModelProvider.instance = instance;
+    }
+
+    /**
+     * Creates a new ModelProvider, initializes it and sets it in the instance
+     * here.
+     */
+    public static void refresh() {
+        try {
+            OBProvider.getInstance().removeInstance(ModelProvider.class);
+            final ModelProvider localProvider = OBProvider.getInstance().get(
+                    ModelProvider.class);
+            setInstance(localProvider);
+            // initialize it
+            localProvider.getModel();
+        } catch (final Exception e) {
+            e.printStackTrace(System.err);
+            throw new OBException(e);
+        }
     }
 
     /**
@@ -202,12 +221,12 @@ public class ModelProvider implements OBSingleton {
                 session.close();
                 sessionFactoryController.getSessionFactory().close();
             }
-        }
 
-        // now initialize the names of the properties
-        for (final Entity e : model) {
-            for (final Property p : e.getProperties()) {
-                p.initializeName();
+            // now initialize the names of the properties
+            for (final Entity e : model) {
+                for (final Property p : e.getProperties()) {
+                    p.initializeName();
+                }
             }
         }
 

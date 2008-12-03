@@ -37,6 +37,7 @@ import org.hibernate.tuple.entity.EntityMetamodel;
 import org.hibernate.tuple.entity.PojoEntityTuplizer;
 import org.hibernate.type.AbstractComponentType;
 import org.hibernate.util.ReflectHelper;
+import org.openbravo.base.util.Check;
 
 /**
  * The tuplizer for OBObjects objects. This is class used by Hibernate. It sets
@@ -82,6 +83,10 @@ public class OBTuplizer extends PojoEntityTuplizer {
     @Override
     protected ProxyFactory buildProxyFactory(
             PersistentClass thePersistentClass, Getter idGetter, Setter idSetter) {
+        final Class mappedClass = thePersistentClass.getMappedClass();
+        Check.isNotNull(mappedClass, "Mapped class of entity "
+                + thePersistentClass.getEntityName() + " is null");
+
         // determine the id getter and setter methods from the proxy interface
         // (if
         // any)
@@ -89,7 +94,6 @@ public class OBTuplizer extends PojoEntityTuplizer {
         final HashSet proxyInterfaces = new HashSet();
         proxyInterfaces.add(HibernateProxy.class);
 
-        final Class mappedClass = thePersistentClass.getMappedClass();
         final Class proxyInterface = thePersistentClass.getProxyInterface();
 
         if (proxyInterface != null && !mappedClass.equals(proxyInterface)) {

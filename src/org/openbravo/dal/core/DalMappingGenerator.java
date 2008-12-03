@@ -113,11 +113,25 @@ public class DalMappingGenerator implements OBSingleton {
         String hbm = getClassTemplateContents();
         hbm = hbm.replaceAll("mappingName", entity.getName());
         hbm = hbm.replaceAll("tableName", entity.getTableName());
-        hbm = hbm.replaceAll("className", entity.getClassName());
         hbm = hbm.replaceAll("ismutable", entity.isMutable() + "");
 
+        if (entity.getMappingClass() != null) {
+            hbm = hbm.replaceAll("<class", "<class name=\""
+                    + entity.getClassName() + "\" ");
+        }
+
         // create the content by first getting the id
-        final StringBuffer content = new StringBuffer();
+        final StringBuilder content = new StringBuilder();
+
+        if (entity.getMappingClass() == null) {
+            content
+                    .append("<tuplizer entity-mode=\"dynamic-map\" "
+                            + "class=\"org.openbravo.dal.core.OBDynamicTuplizer\"/>\n\n");
+        } else {
+            content.append("<tuplizer entity-mode=\"pojo\" "
+                    + "class=\"org.openbravo.dal.core.OBTuplizer\"/>\n\n");
+        }
+
         if (entity.hasCompositeId()) {
             content.append(generateCompositeID(entity));
         } else {

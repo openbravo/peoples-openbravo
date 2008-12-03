@@ -22,9 +22,11 @@ package org.openbravo.base.provider;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.util.OBClassLoader;
 
@@ -36,6 +38,8 @@ import org.openbravo.base.util.OBClassLoader;
  * @author mtaal
  */
 class OBProviderConfigReader {
+    private static final Logger log = Logger
+            .getLogger(OBProviderConfigReader.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -67,7 +71,18 @@ class OBProviderConfigReader {
             // now check for three children:
             final String name = getValue(elem, "name", true);
             final String clzName = getValue(elem, "class", true);
-            final Class<?> clz = OBClassLoader.getInstance().loadClass(clzName);
+            Class<?> clz = null;
+            try {
+                clz = OBClassLoader.getInstance().loadClass(clzName);
+            } catch (final OBException e) {
+                // catch ClassNotFoundException
+                log.warn("Class " + clzName
+                        + " can not be loaded. This can happen "
+                        + "when rebuilding after installing new modules. "
+                        + "The system needs to be restarted to find "
+                        + "new services");
+                continue;
+            }
             if (OBModulePrefixRequired.class.isAssignableFrom(clz)
                     && prefix != null && prefix.trim().length() > 0) {
                 OBProvider.getInstance().register(prefix + "." + name, clz,

@@ -42,6 +42,7 @@ public class DalInitializingTask extends Task {
     protected String propertiesFile;
     protected String userId;
     private String providerConfigDirectory;
+    private boolean reInitializeModel;
 
     public String getPropertiesFile() {
         return propertiesFile;
@@ -84,6 +85,14 @@ public class DalInitializingTask extends Task {
         OBProvider.getInstance().register(OBClassLoader.class,
                 OBClassLoader.ClassOBClassLoader.class, false);
 
+        final boolean rereadConfigs = !DalLayerInitializer.getInstance()
+                .isInitialized();
+
+        // after install modules the model should be forcefully reinitialized
+        if (reInitializeModel) {
+            DalLayerInitializer.getInstance().setInitialized(false);
+        }
+
         if (!DalLayerInitializer.getInstance().isInitialized()) {
             log.debug("initializating dal layer, getting properties from "
                     + getPropertiesFile());
@@ -95,7 +104,7 @@ public class DalInitializingTask extends Task {
                         getProviderConfigDirectory());
             }
 
-            DalLayerInitializer.getInstance().initialize();
+            DalLayerInitializer.getInstance().initialize(rereadConfigs);
         } else {
             log.debug("Dal Layer already initialized");
         }
@@ -124,5 +133,13 @@ public class DalInitializingTask extends Task {
 
     public void setProviderConfigDirectory(String providerConfigDirectory) {
         this.providerConfigDirectory = providerConfigDirectory;
+    }
+
+    public boolean isReInitializeModel() {
+        return reInitializeModel;
+    }
+
+    public void setReInitializeModel(boolean reInitializeModel) {
+        this.reInitializeModel = reInitializeModel;
     }
 }

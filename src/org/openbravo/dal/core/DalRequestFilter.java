@@ -62,7 +62,7 @@ import javax.servlet.http.HttpServletRequest;
 public class DalRequestFilter implements Filter {
 
     public void init(FilterConfig fConfig) throws ServletException {
-        DalLayerInitializer.getInstance().initialize();
+        DalLayerInitializer.getInstance().initialize(true);
     }
 
     public void destroy() {

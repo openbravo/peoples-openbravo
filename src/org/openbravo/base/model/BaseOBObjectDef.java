@@ -37,4 +37,6 @@ public interface BaseOBObjectDef {
     public Entity getEntity();
 
     public Object getId();
+
+    public String getIdentifier();
 }

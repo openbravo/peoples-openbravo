@@ -20,7 +20,6 @@
 package org.openbravo.dal.core;
 
 import org.apache.log4j.Logger;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBConfigFileProvider;
@@ -55,25 +54,27 @@ public class DalLayerInitializer implements OBSingleton {
      * Initializes the in-memory model, registers the entity classes with the
      * {@link OBProvider OBProvider}, initializes the SessionFactory and reads
      * the service config files.
+     * 
+     * @param rereadConfigFiles
+     *            there are cases where it does not make sense to reread the
+     *            config files with services, for example after installing a
+     *            module. The system needs to be restarted for those cases.
      */
-    public void initialize() {
+    public void initialize(boolean rereadConfigFiles) {
         if (initialized) {
             return;
         }
         log.info("Initializing in-memory model...");
-        try {
-            ModelProvider.getInstance().getModel();
-        } catch (final Exception e) {
-            e.printStackTrace(System.err);
-            throw new OBException(e);
-        }
+        ModelProvider.refresh();
 
         log.debug("Registering entity classes in the OBFactory");
         for (final Entity e : ModelProvider.getInstance().getModel()) {
-            OBProvider.getInstance().register(e.getMappingClass(),
-                    e.getMappingClass(), false);
-            OBProvider.getInstance().register(e.getName(), e.getMappingClass(),
-                    false);
+            if (e.getMappingClass() != null) {
+                OBProvider.getInstance().register(e.getMappingClass(),
+                        e.getMappingClass(), false);
+                OBProvider.getInstance().register(e.getName(),
+                        e.getMappingClass(), false);
+            }
         }
 
         log.info("Model read in-memory, generating mapping...");
@@ -85,7 +86,9 @@ public class DalLayerInitializer implements OBSingleton {
         SessionHandler.deleteSessionHandler();
 
         // set the configs
-        OBConfigFileProvider.getInstance().setConfigInProvider();
+        if (rereadConfigFiles) {
+            OBConfigFileProvider.getInstance().setConfigInProvider();
+        }
 
         log.info("Dal layer initialized");
         initialized = true;

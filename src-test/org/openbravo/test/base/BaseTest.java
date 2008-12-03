@@ -53,7 +53,7 @@ public class BaseTest extends TestCase {
     protected void initializeDalLayer() throws Exception {
         if (!DalLayerInitializer.getInstance().isInitialized()) {
             setConfigPropertyFiles();
-            DalLayerInitializer.getInstance().initialize();
+            DalLayerInitializer.getInstance().initialize(true);
         }
     }
 
