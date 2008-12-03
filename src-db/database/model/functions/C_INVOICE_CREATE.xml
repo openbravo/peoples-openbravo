@@ -10,7 +10,6 @@
       <parameter name="p_order_id" type="VARCHAR" mode="in">
         <default><![CDATA[NULL]]></default>
       </parameter>
-      
       <body><![CDATA[/*************************************************************************
   * The contents of this file are subject to the Compiere Public
   * License 1.1 ("License"); You may not use this file except in
