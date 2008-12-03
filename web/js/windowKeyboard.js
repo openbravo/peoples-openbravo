@@ -280,7 +280,7 @@ function isInsideWindowTable(obj) {
           focusedWindowTable = i;
           setWindowTableParentElement();
           return true;
-        } 
+        }
       }
     }
   } catch(e) {
@@ -380,7 +380,7 @@ function drawWindowElementFocus(obj) {
       }
       isFirstTime = false;
     } else if (obj.tagName == 'SELECT') {
-      if (navigator.appName.toUpperCase().indexOf('MICROSOFT') == -1) { 
+      if (navigator.appName.toUpperCase().indexOf('MICROSOFT') == -1) {
         if (obj.className.indexOf(' Combo_focus') == -1) {
           obj.className = obj.className + ' Combo_focus';
         }
@@ -569,8 +569,8 @@ function mustBeIgnored(obj) {
   if (obj.getAttribute('disabled') == 'true') return true;
   if (obj.disabled) return true;
   if (obj.className.indexOf('LabelLink')!=-1 && obj.className.indexOf('_LabelLink')==-1 && obj.className.indexOf('LabelLink_')==-1) return true;
-  if (obj.className.indexOf('FieldButtonLink')!=-1) return true;  
-  if (obj.className.indexOf('ButtonLink_disabled')!=-1) return true;  
+  if (obj.className.indexOf('FieldButtonLink')!=-1) return true;
+  if (obj.className.indexOf('ButtonLink_disabled')!=-1) return true;
   return false;
 }
 
@@ -598,11 +598,11 @@ function couldHaveFocus(obj) {
   if (obj.tagName == 'INPUT') {
     currentWindowElementType='input';
     return true;
-  } 
+  }
   if (obj.tagName == 'A') {
     currentWindowElementType='a';
     return true;
-  } 
+  }
   if (obj.tagName == 'SELECT') {
     currentWindowElementType = 'select';
     return true;
@@ -615,28 +615,6 @@ function couldHaveFocus(obj) {
 }
 
 function getNextWindowElement() {
-  //for
-    //Mirar si tiene hijo
-    //if
-      //yes
-        //Mirar si es destino
-          //if
-            //yes
-              //Devolver
-          //endif
-      //no
-        //for
-          //Mirar si tiene hermano
-            //if
-              //yes
-                //break
-              //no
-                //Subir al padre
-                  //Mirar si el padre es origen
-                    //Si
-                      //Devolver primer elemento
-                    //No
-
   if (isReadOnlyWindow) {
     try {
       setTimeout("setSelectedArea('window'); swichSelectedArea();",50);
@@ -675,10 +653,8 @@ function getNextWindowElement() {
         nextElement=nextElementTmp;
       }
       if(success) {
-        //alert('con hijo - id del hijo: ' + nextElement.getAttribute('id'));
         if(canHaveFocus(nextElement)) return nextElement;
       } else {
-        //alert('sin hijo, vamos a mirar si hay o no hermano');
         for(;;) {
           nextElementTmp = nextElement;
           try {
@@ -698,18 +674,13 @@ function getNextWindowElement() {
           } catch (e) {
             success=false;
             nextElement=nextElementTmp;
-            
           }
           if (success) {
-            //alert('con hermano - id del hermano: ' + nextElement.getAttribute('id'));
             if(canHaveFocus(nextElement)) return nextElement;
             break;
           } else {
-            //alert('sin hermano, vamos a un nivel superior')
             nextElement = nextElement.parentNode
-            //alert('id del hermano: ' + nextElement.getAttribute('id'));
             if (nextElement==document.getElementById(windowTableParentElement) || nextElement==document.getElementsByTagName('BODY')[0]) {
-              //alert('hemos llegado al padre!')
               goToNextWindowTable();
               if (!isFirstTime) return getCurrentWindowTableFirstElement();
               else {
@@ -727,28 +698,6 @@ function getNextWindowElement() {
 }
 
 function getPreviousWindowElement() {
-  //for
-    //Mirar si tiene hijo
-    //if
-      //yes
-        //Mirar si es destino
-          //if
-            //yes
-              //Devolver
-          //endif
-      //no
-        //for
-          //Mirar si tiene hermano previo
-            //if
-              //yes
-                //break
-              //no
-                //Subir al padre
-                  //Mirar si el padre es origen
-                    //Si
-                      //Devolver ultimo elemento
-                    //No
-
   var success = null;
   var previousElementTmp = null;
   var previousElement = focusedWindowElement;
@@ -780,10 +729,8 @@ function getPreviousWindowElement() {
         previousElement=previousElementTmp;
       }
       if(success) {
-        //alert('con hijo - id del hijo: ' + previousElement.getAttribute('id'));
         if(canHaveFocus(previousElement)) return previousElement;
       } else {
-        //alert('sin hijo, vamos a mirar si hay o no hermano');
         for(;;) {
           previousElementTmp = previousElement;
           try {
@@ -803,18 +750,13 @@ function getPreviousWindowElement() {
           } catch (e) {
             success=false;
             previousElement=previousElementTmp;
-            
           }
           if (success) {
-            //alert('con hermano - id del hermano: ' + previousElement.getAttribute('id'));
-            if(canHaveFocus(previousElement)) return previousElement;            
+            if(canHaveFocus(previousElement)) return previousElement;
             break;
           } else {
-            //alert('sin hermano, vamos a un nivel superior')
             previousElement = previousElement.parentNode
-            //alert('id del hermano: ' + previousElement.getAttribute('id'));            
             if (previousElement==document.getElementById(windowTableParentElement)) {
-              //alert('hemos llegado al padre!')
               goToPreviousWindowTable();
               return getCurrentWindowTableLastElement();
             }
@@ -882,7 +824,7 @@ function getFirstWindowElement() {
 
 function getLastWindowElement() {
   focusedWindowElement = document.getElementById(windowTables[windowTables.length-1].tableId);
-  focusedWindowTable = windowTables.length-1;  
+  focusedWindowTable = windowTables.length-1;
   var obj = getPreviousWindowElement();
   return obj;
 }
@@ -972,7 +914,7 @@ function setLastWindowElementFocus() {
 
 function setCurrentWindowTableFirstElementFocus() {
   var obj = getCurrentWindowTableFirstElement();
-  setWindowElementFocus(obj); 
+  setWindowElementFocus(obj);
 }
 
 function setCurrentWindowTableLastElementFocus() {
@@ -1010,7 +952,7 @@ function getAssociatedLink() {
     } catch (e) {
       success = false;
     }
-  } 
+  }
   if (success == true) {
     try {
       for (;;) {
@@ -1065,7 +1007,7 @@ function getAssociatedLink() {
     return link;
   } else {
     return false;
-  } 
+  }
 }
 
 function executeAssociatedLink() {
@@ -1146,7 +1088,7 @@ function getAssociatedFieldButton(type) {
     return fieldButton;
   } else {
     return false;
-  } 
+  }
 }
 
 function executeAssociatedFieldButton() {
@@ -1205,7 +1147,6 @@ function drawTabFocus(obj) {
           obj = obj_tmp;
           obj.className = 'dojoTabLink_focus';
         }
-        
       }
     } else {
     }
@@ -1256,34 +1197,12 @@ function getFirstTab() {
 
 function getLastTab() {
   focusedTab = document.getElementById(tabsTables[tabsTables.length-1].tabTableId);
-  focusedTabTable = tabsTables.length-1;  
+  focusedTabTable = tabsTables.length-1;
   var obj = getPreviousTab();
   return obj;
 }
 
 function getNextTab() {
-  //for
-    //Mirar si tiene hijo
-    //if
-      //yes
-        //Mirar si es destino
-          //if
-            //yes
-              //Devolver
-          //endif
-      //no
-        //for
-          //Mirar si tiene hermano
-            //if
-              //yes
-                //break
-              //no
-                //Subir al padre
-                  //Mirar si el padre es origen
-                    //Si
-                      //Devolver primer elemento
-                    //No
-
   var success = null;
   var nextElementTmp = null;
   var nextElement = focusedTab;
@@ -1315,10 +1234,8 @@ function getNextTab() {
         nextElement=nextElementTmp;
       }
       if(success) {
-        //alert('con hijo - id del hijo: ' + nextElement.getAttribute('id'));
         if(canHaveFocus(nextElement)) return nextElement;
       } else {
-        //alert('sin hijo, vamos a mirar si hay o no hermano');
         for(;;) {
           nextElementTmp = nextElement;
           try {
@@ -1338,18 +1255,13 @@ function getNextTab() {
           } catch (e) {
             success=false;
             nextElement=nextElementTmp;
-            
           }
           if (success) {
-            //alert('con hermano - id del hermano: ' + nextElement.getAttribute('id'));
-            if(canHaveFocus(nextElement)) return nextElement;            
+            if(canHaveFocus(nextElement)) return nextElement;
             break;
           } else {
-            //alert('sin hermano, vamos a un nivel superior')
             nextElement = nextElement.parentNode
-            //alert('id del hermano: ' + nextElement.getAttribute('id'));            
             if (nextElement==document.getElementById(tabTableParentElement) || nextElement==document.getElementsByTagName('BODY')[0]) {
-              //alert('hemos llegado al padre!')
               goToNextTabs();
               return getFirstTab();
             }
@@ -1361,28 +1273,6 @@ function getNextTab() {
 }
 
 function getPreviousTab() {
-  //for
-    //Mirar si tiene hijo
-    //if
-      //yes
-        //Mirar si es destino
-          //if
-            //yes
-              //Devolver
-          //endif
-      //no
-        //for
-          //Mirar si tiene hermano previo
-            //if
-              //yes
-                //break
-              //no
-                //Subir al padre
-                  //Mirar si el padre es origen
-                    //Si
-                      //Devolver ultimo elemento
-                    //No
-
   var success = null;
   var previousElementTmp = null;
   var previousElement = focusedTab;
@@ -1414,10 +1304,8 @@ function getPreviousTab() {
         previousElement=previousElementTmp;
       }
       if(success) {
-        //alert('con hijo - id del hijo: ' + previousElement.getAttribute('id'));
         if(canHaveFocus(previousElement)) return previousElement;
       } else {
-        //alert('sin hijo, vamos a mirar si hay o no hermano');
         for(;;) {
           previousElementTmp = previousElement;
           try {
@@ -1437,18 +1325,13 @@ function getPreviousTab() {
           } catch (e) {
             success=false;
             previousElement=previousElementTmp;
-            
           }
           if (success) {
-            //alert('con hermano - id del hermano: ' + previousElement.getAttribute('id'));
-            if(canHaveFocus(previousElement)) return previousElement;            
+            if(canHaveFocus(previousElement)) return previousElement;
             break;
           } else {
-            //alert('sin hermano, vamos a un nivel superior')
             previousElement = previousElement.parentNode
-            //alert('id del hermano: ' + previousElement.getAttribute('id'));            
             if (previousElement==document.getElementById(tabTableParentElement)) {
-              //alert('hemos llegado al padre!')
               goToPreviousTabs();
               return getLastTab();
             }
@@ -1530,29 +1413,6 @@ function getActiveTab() {
 }
 
 function getActiveTabContainer() {
-  //for
-    //Mirar si tiene hijo
-    //if
-      //yes
-        //Mirar si es activa
-          //if
-            //yes
-              //Devolver
-          //endif
-      //no
-        //for
-          //Mirar si tiene hermano
-            //if
-              //yes
-                //break
-              //no
-                //Subir al padre
-                  //Mirar si el padre es origen
-                    //Si
-                      //Devolver primer elemento
-                    //No
-
-
   var success = null;
   var nextElementTmp = null;
   var nextElement = document.getElementById(tabsTables[0].tabTableId);
@@ -1583,10 +1443,8 @@ function getActiveTabContainer() {
         nextElement=nextElementTmp;
       }
       if(success) {
-        //alert('con hijo - id del hijo: ' + nextElement.getAttribute('id'));
         if(isTabActive(nextElement)) return nextElement;
       } else {
-        //alert('sin hijo, vamos a mirar si hay o no hermano');
         for(;;) {
           nextElementTmp = nextElement;
           try {
@@ -1606,18 +1464,13 @@ function getActiveTabContainer() {
           } catch (e) {
             success=false;
             nextElement=nextElementTmp;
-            
           }
           if (success) {
-            //alert('con hermano - id del hermano: ' + nextElement.getAttribute('id'));
-            if(isTabActive(nextElement)) return nextElement;            
+            if(isTabActive(nextElement)) return nextElement;
             break;
           } else {
-            //alert('sin hermano, vamos a un nivel superior')
             nextElement = nextElement.parentNode
-            //alert('id del hermano: ' + nextElement.getAttribute('id'));            
             if (nextElement==document.getElementById(windowTableParentElement) || nextElement==document.getElementsByTagName('BODY')[0]) {
-              //alert('hemos llegado al padre!')
               goToNextTabs();
               return false;
             }
