@@ -27,6 +27,14 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo.EmailDefinition;
 
 public class Report {
+    public String getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
+    }
+
     private static Logger log4j = Logger.getLogger(Report.class);
 
     private DocumentType _DocumentType;
@@ -40,6 +48,7 @@ public class Report {
     private File _targetDirectory;
     private boolean _isAttached;
     private String docTypeId;
+    private String orgId;
 
     public String getDocTypeId() {
         return docTypeId;
@@ -49,7 +58,7 @@ public class Report {
         this.docTypeId = docTypeId;
     }
 
-    private TemplateInfo _TemplateInfo;
+    private TemplateInfo templateInfo;
 
     public Report(ConnectionProvider connectionProvider,
             DocumentType documentType, String documentId, String strLanguage,
@@ -85,7 +94,7 @@ public class Report {
         }
 
         if (reportData.length == 1) {
-            final String orgId = reportData[0].getField("ad_Org_Id");
+            orgId = reportData[0].getField("ad_Org_Id");
             docTypeId = reportData[0].getField("docTypeTargetId");
 
             _OurReference = reportData[0].getField("ourreference");
@@ -93,7 +102,7 @@ public class Report {
             _BPartnerId = reportData[0].getField("bpartner_id");
             _BPartnerLanguage = reportData[0].getField("bpartner_language");
             _DocumentStatus = reportData[0].getField("docstatus");
-            _TemplateInfo = new TemplateInfo(connectionProvider, docTypeId,
+            templateInfo = new TemplateInfo(connectionProvider, docTypeId,
                     orgId, strLanguage, templateId);
 
             _Filename = generateReportFileName();
@@ -105,12 +114,16 @@ public class Report {
 
     }
 
+    public void setTemplateInfo(TemplateInfo templateInfo) {
+        this.templateInfo = templateInfo;
+    }
+
     private String generateReportFileName() {
         // Generate the target report filename
         final String dateStamp = Utility.formatDate(new Date(),
                 "yyyyMMdd-HHmmss");
 
-        String reportFilename = _TemplateInfo.getReportFilename();
+        String reportFilename = templateInfo.getReportFilename();
         reportFilename = reportFilename.replaceAll("@our_ref@", _OurReference);
         reportFilename = reportFilename.replaceAll("@cus_ref@", _CusReference);
         reportFilename = reportFilename + "." + dateStamp + ".pdf";
@@ -133,11 +146,11 @@ public class Report {
     }
 
     public TemplateInfo getTemplateInfo() {
-        return _TemplateInfo;
+        return templateInfo;
     }
 
     public EmailDefinition getEmailDefinition() throws ReportingException {
-        return _TemplateInfo.getEmailDefinition(_BPartnerLanguage);
+        return templateInfo.getEmailDefinition(_BPartnerLanguage);
     }
 
     public String getOurReference() {
@@ -190,8 +203,8 @@ public class Report {
     }
 
     public TemplateData[] getTemplate() {
-        if (_TemplateInfo.getTemplates() != null) {
-            return _TemplateInfo.getTemplates();
+        if (templateInfo.getTemplates() != null) {
+            return templateInfo.getTemplates();
         }
         return null;
     }
