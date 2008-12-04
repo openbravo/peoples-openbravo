@@ -75,7 +75,7 @@
 	
 	function resizeWindow()
 	{
-		window.resizeTo(600,600);
+		window.resizeTo(600,570);
 	}
 	
 	function onLoadDo(){
@@ -195,7 +195,7 @@
 						</td>
 					</tr>
 
-					
+
 					<tr id="customer">
 						<td style="width: 1%; text-align: right;">
 							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">Customer Email</span>
@@ -221,7 +221,7 @@
 									<span class="LabelText">)</span>
 						</td>
 					</tr>
-					
+
 					<tr id="emailField03">
 						<td style="width: 1%; text-align: right;">
 							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">Subject</span>
@@ -285,13 +285,13 @@
     						<tr class="DataGrid_Body_Row"> 
       							<th width="5" colspan="1" class="DataGrid_Header_Cell" id="fieldPartnerName"/>
         						<th class="DataGrid_Header_Cell"><span>File</span></th>
-     				 		<tr>
+     				 		</tr>
      				 		<div id="sectionDetail">
       						<tr id="funcEvenOddRow" class="DataGrid_Body_Row DataGrid_Body_Row_xx">
 								<td width="20" class="DataGrid_Body_Cell">  <span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpOrder" onclick="updateData(this.value, this.checked);return true;" value="" id="fieldCOrderlineId"/></span></td>
          						<td width="409" class="DataGrid_Body_Cell" id="fieldDocumentno">xx</td>
     						</tr>
-    	
+    					</div>
     					</tbody>
     					</table>
 					</td>
@@ -311,21 +311,20 @@
                     	<input type="text" onblur="isInputFile=false;" onfocus="isInputFile=true;" style="border: 0pt none ; margin: 0pt; padding: 0pt; font-size: 0pt; width: 0px; height: 0px;"/>
    	 				</td>
 				</tr>	
-				<tr>
-					<td colspan="1" id="CopyFrom_inp_td" class="Button_CenterAlign_ContentCell"><div id="editDiscard"><div id="CopyFrom_inp">
-  						<input type="hidden" id="CopyFrom" onchange="logChanges(this.inputNode);return true;" value="N" name="inpcopyfrom"/>
-  						<a id="CopyFrom_linkBTN" onclick="addFile();return false;" onkeyup="this.className='ButtonLink_focus'; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onblur="window.status=''; return true;" onfocus="setWindowElementFocus(this); window.status='Copy Lines'; return true;" href="#" class="ButtonLink"/>
-   						 <table onmouseout="this.className='Button'; window.status=''; return true;" onmouseover="this.className='Button_hover'; window.status='Copy Lines'; return true;" onmouseup="this.className='Button'; return true;" onmousedown="this.className='Button_active'; return true;" class="Button">
-      					<tbody>
-      					<tr>
-        					<td class="Button_left"><img border="0" src="../web/images/blank.gif" title="Copy Lines" alt="Copy Lines" class="Button_Icon Button_Icon_process"/></td>
-      						<td id="CopyFrom_BTNname" class="Button_text">Add</td>
-        					<td class="Button_right"/>
-      					</tr>
-      					</tbody>
-      					</table>	
-						</td>	
-						</tr>	
+				<tr><td colspan="1" id="CopyFrom_inp_td" class="Button_CenterAlign_ContentCell"><div id="editDiscard"><div id="CopyFrom_inp">
+  <input type="hidden" id="CopyFrom" onchange="logChanges(this.inputNode);return true;" value="N" name="inpcopyfrom"/>
+  <a id="CopyFrom_linkBTN" onclick="addFile();return false;" onkeyup="this.className='ButtonLink_focus'; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onblur="window.status=''; return true;" onfocus="setWindowElementFocus(this); window.status='Copy Lines'; return true;" href="#" class="ButtonLink">
+    <table onmouseout="this.className='Button'; window.status=''; return true;" onmouseover="this.className='Button_hover'; window.status='Copy Lines'; return true;" onmouseup="this.className='Button'; return true;" onmousedown="this.className='Button_active'; return true;" class="Button">
+      <tbody><tr>
+        <td class="Button_left"><img border="0" src="../web/images/blank.gif" title="Copy Lines" alt="Copy Lines" class="Button_Icon Button_Icon_process"/></td>
+      <td id="CopyFrom_BTNname" class="Button_text">Add</td>
+        <td class="Button_right"/>
+      </tr>
+    </tbody></table>
+  </a>
+</div></div></div></td></td></tr></div>
+</div></td>
+</tr>
 
 					<tr id="emailField03">						
 						<td style="width: 1%; text-align: right; white-space: nowrap; padding-right: 10px;"> <input type="checkbox" id="paramArchive" name="inpArchive" value="Y" checked/></td>

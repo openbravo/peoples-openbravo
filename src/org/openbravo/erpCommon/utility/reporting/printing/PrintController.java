@@ -271,7 +271,6 @@ public class PrintController extends HttpSecureAppServlet {
                         throw new ServletException(exception);
                     }
                 }
-                vars.getMultiFile("structure2");
                 vars.setSessionObject(sessionValuePrefix + ".Documents",
                         reports);
                 if (request.getServletPath().toLowerCase()
@@ -615,13 +614,13 @@ public class PrintController extends HttpSecureAppServlet {
         String draftDocumentIds = "";
         final AttachContent attachedContent = new AttachContent();
         final boolean onlyOneAttachedDoc = onlyOneAttachedDocs(reports);
-        final Map<String, PocData> costumerMap = new HashMap<String, PocData>();
+        final Map<String, PocData> custumerMap = new HashMap<String, PocData>();
         for (final PocData documentData : pocData) {
             // Map used to count the different users
 
             final String costumer = documentData.contactName;
-            if (!costumerMap.containsKey(costumer)) {
-                costumerMap.put(costumer, documentData);
+            if (!custumerMap.containsKey(costumer)) {
+                custumerMap.put(costumer, documentData);
             }
 
             final Report report = reports.get(documentData.documentId);
@@ -648,7 +647,7 @@ public class PrintController extends HttpSecureAppServlet {
         }
 
         if (!onlyOneAttachedDoc && isTheFirstEntry) {
-            final int numberOfCostumers = costumerMap.size();
+            final int numberOfCostumers = custumerMap.size();
             if (numberOfCostumers > 1) {
                 attachedContent.setFileName(String.valueOf(reports.size()
                         + " Documents to " + String.valueOf(numberOfCostumers)
@@ -712,7 +711,7 @@ public class PrintController extends HttpSecureAppServlet {
         // 2.- n customers 1 sales rep (hide only first input)
         // 3.- Otherwise show both
         if (moreThanOneCustomer && moreThanOnesalesRep) {
-            discard = new String[] { "costumer", "salesRep" };
+            discard = new String[] { "custumer", "salesRep" };
         } else if (moreThanOneCustomer) {
             discard = new String[] { "customer" };
         } else {
