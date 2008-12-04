@@ -35,6 +35,8 @@
 	<PARAMETER id="closed" name="closed" attribute="value" default=""/>
 	<PARAMETER id="salesrepEmail" name="salesrepEmail" attribute="value" default=""/>
 	<PARAMETER id="salesrepName" name="salesrepName" default=""/>
+	<PARAMETER id="multCusCount" name="multCusCount" default=""/>
+	<PARAMETER id="multSalesRepCount" name="multSalesRepCount" default=""/>	
 	<structure name="structure2">
 		<FIELD id="fieldDocumentno">fileName</FIELD>
 		<SECTION id="sectionDetail"/>

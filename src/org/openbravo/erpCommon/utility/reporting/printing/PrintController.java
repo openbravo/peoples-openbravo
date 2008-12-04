@@ -614,13 +614,18 @@ public class PrintController extends HttpSecureAppServlet {
         String draftDocumentIds = "";
         final AttachContent attachedContent = new AttachContent();
         final boolean onlyOneAttachedDoc = onlyOneAttachedDocs(reports);
-        final Map<String, PocData> custumerMap = new HashMap<String, PocData>();
+        final Map<String, PocData> customerMap = new HashMap<String, PocData>();
+        final Map<String, PocData> salesRepMap = new HashMap<String, PocData>();
         for (final PocData documentData : pocData) {
             // Map used to count the different users
 
-            final String costumer = documentData.contactName;
-            if (!custumerMap.containsKey(costumer)) {
-                custumerMap.put(costumer, documentData);
+            final String customer = documentData.contactName;
+            final String salesRep = documentData.salesrepName;
+            if (!customerMap.containsKey(customer)) {
+                customerMap.put(customer, documentData);
+            }
+            if (!salesRepMap.containsKey(salesRep)) {
+                salesRepMap.put(salesRep, documentData);
             }
 
             final Report report = reports.get(documentData.documentId);
@@ -646,12 +651,14 @@ public class PrintController extends HttpSecureAppServlet {
 
         }
 
+        final int numberOfCustomers = customerMap.size();
+        final int numberOfSalesReps = salesRepMap.size();
+
         if (!onlyOneAttachedDoc && isTheFirstEntry) {
-            final int numberOfCostumers = custumerMap.size();
-            if (numberOfCostumers > 1) {
+            if (numberOfCustomers > 1) {
                 attachedContent.setFileName(String.valueOf(reports.size()
-                        + " Documents to " + String.valueOf(numberOfCostumers)
-                        + " Costumers"));
+                        + " Documents to " + String.valueOf(numberOfCustomers)
+                        + " Customers"));
             } else {
                 attachedContent.setFileName(String.valueOf(reports.size()
                         + " Documents"));
@@ -675,6 +682,10 @@ public class PrintController extends HttpSecureAppServlet {
         xmlDocument.setParameter("contactEmail", pocData[0].contactEmail);
         xmlDocument.setParameter("salesrepEmail", pocData[0].salesrepEmail);
         xmlDocument.setParameter("salesrepName", pocData[0].salesrepName);
+        xmlDocument.setParameter("multCusCount", String
+                .valueOf(numberOfCustomers));
+        xmlDocument.setParameter("multSalesRepCount", String
+                .valueOf(numberOfSalesReps));
         response.setContentType("text/html; charset=UTF-8");
         final PrintWriter out = response.getWriter();
         out.println(xmlDocument.print());
@@ -688,21 +699,21 @@ public class PrintController extends HttpSecureAppServlet {
      */
     private String[] getHiddenTags(PocData[] pocData) {
         String[] discard;
-        final Map<String, PocData> costumerMap = new HashMap<String, PocData>();
+        final Map<String, PocData> customerMap = new HashMap<String, PocData>();
         final Map<String, PocData> salesRepMap = new HashMap<String, PocData>();
         for (final PocData documentData : pocData) {
             // Map used to count the different users
 
-            final String costumer = documentData.contactName;
+            final String customer = documentData.contactName;
             final String salesRep = documentData.salesrepName;
-            if (!costumerMap.containsKey(costumer)) {
-                costumerMap.put(costumer, documentData);
+            if (!customerMap.containsKey(customer)) {
+                customerMap.put(customer, documentData);
             }
             if (!salesRepMap.containsKey(salesRep)) {
                 salesRepMap.put(salesRep, documentData);
             }
         }
-        final boolean moreThanOneCustomer = (costumerMap.size() > 1);
+        final boolean moreThanOneCustomer = (customerMap.size() > 1);
         final boolean moreThanOnesalesRep = (salesRepMap.size() > 1);
 
         // check the number of customer and the number of
@@ -711,11 +722,12 @@ public class PrintController extends HttpSecureAppServlet {
         // 2.- n customers 1 sales rep (hide only first input)
         // 3.- Otherwise show both
         if (moreThanOneCustomer && moreThanOnesalesRep) {
-            discard = new String[] { "custumer", "salesRep" };
+            discard = new String[] { "customer", "salesRep" };
         } else if (moreThanOneCustomer) {
-            discard = new String[] { "customer" };
+            discard = new String[] { "customer", "multSalesRep",
+                    "multSalesRepCount" };
         } else {
-            return null;
+            discard = new String[] { "multipleCustomer" };
         }
         return discard;
     }
