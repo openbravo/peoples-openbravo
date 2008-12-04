@@ -58,6 +58,7 @@ import org.openbravo.erpCommon.utility.reporting.DocumentType;
 import org.openbravo.erpCommon.utility.reporting.Report;
 import org.openbravo.erpCommon.utility.reporting.ReportManager;
 import org.openbravo.erpCommon.utility.reporting.ReportingException;
+import org.openbravo.erpCommon.utility.reporting.TemplateData;
 import org.openbravo.erpCommon.utility.reporting.ToolsData;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo.EmailDefinition;
 import org.openbravo.exception.NoConnectionAvailableException;
@@ -66,6 +67,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 @SuppressWarnings("serial")
 public class PrintController extends HttpSecureAppServlet {
     static Logger log4j = Logger.getLogger(PrintController.class);
+    final Map differentDocTypes = new HashMap<String, TemplateData[]>();
 
     // TODO: When an email is in draft status add the notification that the
     // document can not be emailed
@@ -217,6 +219,7 @@ public class PrintController extends HttpSecureAppServlet {
             response.flushBuffer();
         } else {
             if (vars.commandIn("DEFAULT")) {
+
                 reports = new HashMap<String, Report>();
                 for (int index = 0; index < documentIds.length; index++) {
                     final String documentId = documentIds[index];
@@ -233,11 +236,21 @@ public class PrintController extends HttpSecureAppServlet {
                         // until the actual report is viewed or emailed. This
                         // saves time when creating the window
                         reportManager.processReport(report, vars);
+
+                        // check the different doc typeId's if all the selected
+                        // doc's
+                        // has the same doc typeId the template selector should
+                        // appear
+                        if (!differentDocTypes.containsKey(report
+                                .getDocTypeId())) {
+                            differentDocTypes.put(report.getDocTypeId(), report
+                                    .getDocTypeId());
+                        }
                     } catch (final ReportingException exception) {
                         throw new ServletException(exception);
                     }
-                }
 
+                }
                 vars.setSessionObject(sessionValuePrefix + ".Documents",
                         reports);
                 if (request.getServletPath().toLowerCase()
@@ -250,29 +263,6 @@ public class PrintController extends HttpSecureAppServlet {
                             documentType, getComaSeparatedString(documentIds),
                             reports);
             } else if (vars.commandIn("ADD")) {
-
-                reports = new HashMap<String, Report>();
-                for (int index = 0; index < documentIds.length; index++) {
-                    final String documentId = documentIds[index];
-                    if (log4j.isDebugEnabled())
-                        log4j.debug("Processing document with id: "
-                                + documentId);
-
-                    try {
-                        final Report report = new Report(this, documentType,
-                                documentId, vars.getLanguage(), "default");
-                        reports.put(documentId, report);
-
-                        // TODO: The creation of the reports can be delayed
-                        // until the actual report is viewed or emailed. This
-                        // saves time when creating the window
-                        reportManager.processReport(report, vars);
-                    } catch (final ReportingException exception) {
-                        throw new ServletException(exception);
-                    }
-                }
-                vars.setSessionObject(sessionValuePrefix + ".Documents",
-                        reports);
                 if (request.getServletPath().toLowerCase()
                         .indexOf("print.html") != -1)
                     createPrintOptionsPage(request, response, vars,
@@ -298,7 +288,7 @@ public class PrintController extends HttpSecureAppServlet {
                         throw new ServletException(Utility.messageBD(this,
                                 "NoDataReport", vars.getLanguage())
                                 + documentId);
-
+                    setSelectedTemplate(report, reports);
                     // Check if the document is not in status 'draft'
                     if (!report.isDraft()) {
                         // Check if the report is already attached
@@ -335,6 +325,10 @@ public class PrintController extends HttpSecureAppServlet {
 
             pageError(response);
         }
+    }
+
+    private void setSelectedTemplate(Report report, Map<String, Report> reports) {
+
     }
 
     protected PocData[] getContactDetails(DocumentType documentType,
@@ -671,6 +665,11 @@ public class PrintController extends HttpSecureAppServlet {
             vector.copyInto(data);
             xmlDocument.setData("structure2", data);
         }
+        if (pocData.length >= 1) {
+            xmlDocument.setData("reportEmail", "liststructure", reports.get(
+                    (pocData[0].documentId)).getTemplate());
+        }
+
         if (log4j.isDebugEnabled())
             log4j.debug("Documents still in draft: " + draftDocumentIds);
         xmlDocument.setParameter("draftDocumentIds", draftDocumentIds);
