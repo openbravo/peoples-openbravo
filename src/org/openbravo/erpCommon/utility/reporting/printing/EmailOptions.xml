@@ -37,6 +37,10 @@
 	<PARAMETER id="salesrepName" name="salesrepName" default=""/>
 	<PARAMETER id="multCusCount" name="multCusCount" default=""/>
 	<PARAMETER id="multSalesRepCount" name="multSalesRepCount" default=""/>	
+	<PARAMETER id="c_poc_doctype_template_id" name="templateId"/>
+	<SUBREPORT id="reportEmail" name="reportEmail" report="org/openbravo/erpCommon/reference/List">
+    	<ARGUMENT name="template_filename" withId="c_poc_doctype_template_id"/>
+  	</SUBREPORT>
 	<structure name="structure2">
 		<FIELD id="fieldDocumentno">fileName</FIELD>
 		<SECTION id="sectionDetail"/>
