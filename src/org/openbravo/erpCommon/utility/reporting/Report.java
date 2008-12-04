@@ -39,6 +39,16 @@ public class Report {
     private String _Filename;
     private File _targetDirectory;
     private boolean _isAttached;
+    private String docTypeId;
+
+    public String getDocTypeId() {
+        return docTypeId;
+    }
+
+    public void setDocTypeId(String docTypeId) {
+        this.docTypeId = docTypeId;
+    }
+
     private TemplateInfo _TemplateInfo;
 
     public Report(ConnectionProvider connectionProvider,
@@ -76,7 +86,7 @@ public class Report {
 
         if (reportData.length == 1) {
             final String orgId = reportData[0].getField("ad_Org_Id");
-            final String docTypeId = reportData[0].getField("docTypeTargetId");
+            docTypeId = reportData[0].getField("docTypeTargetId");
 
             _OurReference = reportData[0].getField("ourreference");
             _CusReference = reportData[0].getField("cusreference");
