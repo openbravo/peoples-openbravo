@@ -182,6 +182,7 @@
 	<parameter name="USER_ORG" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["0, 1000000, 1000001"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
 	<parameter name="REPORT_TITLE" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["REPORT TITLE"]]></defaultValueExpression>
 	</parameter>
@@ -212,8 +213,8 @@
        MA_PROCESSPLAN_VERSION.MA_PROCESSPLAN_VERSION_ID,
        MA_PROCESSPLAN_VERSION.DOCUMENTNO AS VERSION, MA_PROCESSPLAN_VERSION.DATEFROM, MA_PROCESSPLAN_VERSION.DATETO,
        MA_SEQUENCE.MA_SEQUENCE_ID,
-       AD_COLUMN_IDENTIFIER(to_char('MA_SEQUENCE'), to_char(MA_SEQUENCE.MA_SEQUENCE_ID), to_char($P{LANGUAGE})) AS SEQUENCE
-FROM MA_PROCESSPLAN, MA_PROCESSPLAN_VERSION, MA_SEQUENCE
+       AD_COLUMN_IDENTIFIER(to_char('MA_SEQUENCE'), to_char(MA_SEQUENCE.MA_SEQUENCE_ID), to_char($P{LANGUAGE})) AS SEQUENCE 
+FROM MA_PROCESSPLAN, MA_PROCESSPLAN_VERSION, MA_SEQUENCE 
 WHERE MA_PROCESSPLAN.MA_PROCESSPLAN_ID = MA_PROCESSPLAN_VERSION.MA_PROCESSPLAN_ID
   AND MA_PROCESSPLAN_VERSION.MA_PROCESSPLAN_VERSION_ID = MA_SEQUENCE.MA_PROCESSPLAN_VERSION_ID
   AND MA_PROCESSPLAN.AD_ORG_ID IN ( $P!{USER_ORG} )
@@ -221,7 +222,7 @@ WHERE MA_PROCESSPLAN.MA_PROCESSPLAN_ID = MA_PROCESSPLAN_VERSION.MA_PROCESSPLAN_I
   AND 1=1 $P!{AUX_VERSION}
   AND MA_PROCESSPLAN_VERSION.DATEFROM <= $P{DATEFROM}
   AND MA_PROCESSPLAN_VERSION.DATETO > $P{DATETO}
-  AND MA_PROCESSPLAN.AD_CLIENT_ID IN ( $P!{USER_CLIENT} )
+  AND MA_PROCESSPLAN.AD_CLIENT_ID IN ( $P!{USER_CLIENT} ) 
 ORDER BY MA_PROCESSPLAN.MA_PROCESSPLAN_ID, MA_PROCESSPLAN_VERSION.DATEFROM, MA_SEQUENCE.SEQNO]]></queryString>
 
 	<field name="MA_PROCESSPLAN_ID" class="java.lang.String"/>
@@ -747,6 +748,9 @@ ORDER BY MA_PROCESSPLAN.MA_PROCESSPLAN_ID, MA_PROCESSPLAN_VERSION.DATEFROM, MA_S
 					<subreportParameter  name="USER_ORG">
 						<subreportParameterExpression><![CDATA[$P{USER_ORG}]]></subreportParameterExpression>
 					</subreportParameter>
+					<subreportParameter  name="NUMBERFORMAT">
+						<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
+					</subreportParameter>
 					<subreportParameter  name="REPORT_TITLE">
 						<subreportParameterExpression><![CDATA[$P{REPORT_TITLE}]]></subreportParameterExpression>
 					</subreportParameter>
@@ -788,6 +792,9 @@ ORDER BY MA_PROCESSPLAN.MA_PROCESSPLAN_ID, MA_PROCESSPLAN_VERSION.DATEFROM, MA_S
 					</subreportParameter>
 					<subreportParameter  name="USER_ORG">
 						<subreportParameterExpression><![CDATA[$P{USER_ORG}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="NUMBERFORMAT">
+						<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter  name="SUBREPORT_DIR">
 						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
