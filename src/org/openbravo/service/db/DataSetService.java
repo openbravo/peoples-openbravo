@@ -30,6 +30,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Expression;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -278,9 +279,23 @@ public class DataSetService implements OBSingleton {
             }
         }
 
+        // set the order by, first detect if there is an alias
+        String alias = "";
+        // this is a space on purpose
+        if (whereClause.toLowerCase().trim().startsWith("as")) {
+            // strip the as
+            final String strippedWhereClause = whereClause.toLowerCase().trim()
+                    .substring(2).trim();
+            // get the next space
+            final int index = strippedWhereClause.indexOf(" ");
+            alias = strippedWhereClause.substring(0, index);
+            alias += ".";
+        }
+
         final OBQuery<BaseOBObject> oq = OBDal.getInstance().createQuery(
                 entity.getName(),
-                (whereClause != null ? whereClause : "") + " order by id");
+                (whereClause != null ? whereClause : "") + " order by " + alias
+                        + "id");
         oq.setFilterOnActive(false);
         oq.setNamedParameters(existingParams);
 
@@ -290,8 +305,11 @@ public class DataSetService implements OBSingleton {
             oq.setFilterOnReadableOrganization(false);
             oq.setFilterOnReadableClients(false);
         }
-
-        return oq.iterate();
+        try {
+            return oq.iterate();
+        } catch (final Exception e) {
+            throw new OBException(e);
+        }
     }
 
     /**
