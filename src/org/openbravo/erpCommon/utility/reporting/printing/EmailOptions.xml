@@ -28,10 +28,10 @@
 	<PARAMETER id="contactEmail" name="contactEmail" attribute="value" default=""/>
 	<PARAMETER id="contactName" name="contactName" default=""/>
 	<PARAMETER id="emailBody" name="emailBody" default=""/>
-	<PARAMETER id="discardTable" name="discardTable"/>
-	<PARAMETER id="discardSelect" name="discardSelect"/>
-	<PARAMETER id="customer" name="customer"/>
-	<PARAMETER id="salesRep" name="salesRep"/>
+	<PARAMETER id="discardTable" name="discardTable" default=""/>
+	<PARAMETER id="discardSelect" name="discardSelect" default=""/>
+	<PARAMETER id="customer" name="customer" default=""/>
+	<PARAMETER id="salesRep" name="salesRep" default=""/>
 	<PARAMETER id="closed" name="closed" attribute="value" default=""/>
 	<PARAMETER id="salesrepEmail" name="salesrepEmail" attribute="value" default=""/>
 	<PARAMETER id="salesrepName" name="salesrepName" default=""/>

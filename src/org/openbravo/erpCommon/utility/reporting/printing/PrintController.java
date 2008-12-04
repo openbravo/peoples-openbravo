@@ -614,10 +614,22 @@ public class PrintController extends HttpSecureAppServlet {
             // Map used to count the different users
 
             final String customer = documentData.contactName;
-            final String salesRep = documentData.salesrepName;
+            if (customer == null || customer.length() == 0)
+                throw new ServletException(Utility.messageBD(this,
+                        "There is at least one document with no contact", vars
+                                .getLanguage()));
             if (!customerMap.containsKey(customer)) {
                 customerMap.put(customer, documentData);
             }
+
+            final String salesRep = documentData.salesrepName;
+            if (salesRep == null || salesRep.length() == 0)
+                throw new ServletException(
+                        Utility
+                                .messageBD(
+                                        this,
+                                        "There is at least one document with no sales representive",
+                                        vars.getLanguage()));
             if (!salesRepMap.containsKey(salesRep)) {
                 salesRepMap.put(salesRep, documentData);
             }
