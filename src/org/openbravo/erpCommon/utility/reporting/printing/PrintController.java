@@ -15,7 +15,11 @@
  */
 package org.openbravo.erpCommon.utility.reporting.printing;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -59,6 +63,7 @@ import org.openbravo.erpCommon.utility.reporting.Report;
 import org.openbravo.erpCommon.utility.reporting.ReportManager;
 import org.openbravo.erpCommon.utility.reporting.ReportingException;
 import org.openbravo.erpCommon.utility.reporting.TemplateData;
+import org.openbravo.erpCommon.utility.reporting.TemplateInfo;
 import org.openbravo.erpCommon.utility.reporting.ToolsData;
 import org.openbravo.erpCommon.utility.reporting.TemplateInfo.EmailDefinition;
 import org.openbravo.exception.NoConnectionAvailableException;
@@ -244,7 +249,7 @@ public class PrintController extends HttpSecureAppServlet {
                         if (!differentDocTypes.containsKey(report
                                 .getDocTypeId())) {
                             differentDocTypes.put(report.getDocTypeId(), report
-                                    .getDocTypeId());
+                                    .getTemplate());
                         }
                     } catch (final ReportingException exception) {
                         throw new ServletException(exception);
@@ -284,6 +289,25 @@ public class PrintController extends HttpSecureAppServlet {
                                 + documentId);
 
                     final Report report = reports.get(documentId);
+
+                    // if there is only one document type id the user should be
+                    // able to choose between different templates
+                    if (differentDocTypes.size() == 1) {
+                        final String templateId = vars
+                                .getRequestGlobalVariable("templates",
+                                        "templates");
+                        try {
+                            final TemplateInfo usedTemplateInfo = new TemplateInfo(
+                                    this, report.getDocTypeId(), report
+                                            .getOrgId(), vars.getLanguage(),
+                                    templateId);
+                            report.setTemplateInfo(usedTemplateInfo);
+                        } catch (final ReportingException e) {
+                            throw new ServletException(
+                                    "Error trying to get template information",
+                                    e);
+                        }
+                    }
                     if (report == null)
                         throw new ServletException(Utility.messageBD(this,
                                 "NoDataReport", vars.getLanguage())
@@ -315,7 +339,8 @@ public class PrintController extends HttpSecureAppServlet {
                                 log4j.debug("Document is not attached.");
                         }
 
-                        sendDocumentEmail(report, vars);
+                        sendDocumentEmail(report, vars, request.getSession()
+                                .getAttribute("files"));
                         nrOfEmailsSend++;
                     }
                 }
@@ -348,8 +373,8 @@ public class PrintController extends HttpSecureAppServlet {
         return null;
     }
 
-    protected void sendDocumentEmail(Report report, VariablesSecureApp vars)
-            throws IOException, ServletException {
+    protected void sendDocumentEmail(Report report, VariablesSecureApp vars,
+            Object object) throws IOException, ServletException {
         final String documentId = report.getDocumentId();
         final String attachmentFileLocation = report.getTargetLocation();
 
@@ -441,6 +466,18 @@ public class PrintController extends HttpSecureAppServlet {
             messageBodyPart.setFileName(attachmentFileLocation
                     .substring(attachmentFileLocation.lastIndexOf("/") + 1));
             multipart.addBodyPart(messageBodyPart);
+
+            // Add aditional attached documents
+            if (object != null) {
+                final Vector<java.lang.Object> vector = (Vector<java.lang.Object>) object;
+                for (int i = 0; i < vector.size(); i++) {
+                    final AttachContent content = (AttachContent) vector.get(i);
+                    final File file = prepareFile(content);
+                    messageBodyPart = new MimeBodyPart();
+                    messageBodyPart.attachFile(file);
+                    multipart.addBodyPart(messageBodyPart);
+                }
+            }
 
             message.setContent(multipart);
 
@@ -610,6 +647,7 @@ public class PrintController extends HttpSecureAppServlet {
         final boolean onlyOneAttachedDoc = onlyOneAttachedDocs(reports);
         final Map<String, PocData> customerMap = new HashMap<String, PocData>();
         final Map<String, PocData> salesRepMap = new HashMap<String, PocData>();
+        final Vector<Object> cloneVector = (Vector<Object>) vector.clone();
         for (final PocData documentData : pocData) {
             // Map used to count the different users
 
@@ -650,9 +688,11 @@ public class PrintController extends HttpSecureAppServlet {
             if (log4j.isDebugEnabled())
                 log4j.debug(" Filling report location with: "
                         + documentData.reportLocation);
+
             if (onlyOneAttachedDoc && isTheFirstEntry) {
                 attachedContent.setFileName(report.getFilename());
-                vector.add(attachedContent);
+
+                cloneVector.add(attachedContent);
             }
 
         }
@@ -669,12 +709,12 @@ public class PrintController extends HttpSecureAppServlet {
                 attachedContent.setFileName(String.valueOf(reports.size()
                         + " Documents"));
             }
-            vector.add(attachedContent);
+            cloneVector.add(attachedContent);
         }
 
-        final AttachContent[] data = new AttachContent[vector.size()];
-        if (vector.size() >= 1) { // Has more than 1 element
-            vector.copyInto(data);
+        final AttachContent[] data = new AttachContent[cloneVector.size()];
+        if (cloneVector.size() >= 1) { // Has more than 1 element
+            cloneVector.copyInto(data);
             xmlDocument.setData("structure2", data);
         }
         if (pocData.length >= 1) {
@@ -791,6 +831,32 @@ public class PrintController extends HttpSecureAppServlet {
 
         }
         return result;
+    }
+
+    /**
+     * @author gmauleon
+     * @param content
+     * @return
+     * @throws ServletException
+     */
+    private File prepareFile(AttachContent content) throws ServletException {
+        try {
+            final File f = new File(content.getFileName());
+            final InputStream inputStream = content.getFileItem()
+                    .getInputStream();
+            final OutputStream out = new FileOutputStream(f);
+            final byte buf[] = new byte[1024];
+            int len;
+            while ((len = inputStream.read(buf)) > 0)
+                out.write(buf, 0, len);
+            out.close();
+            inputStream.close();
+            return f;
+        } catch (final Exception e) {
+            throw new ServletException("Error trying to get the attached file",
+                    e);
+        }
+
     }
 
     @Override
