@@ -32,7 +32,6 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
-import org.openbravo.base.structure.OBDynamicPropertyHandler;
 import org.openbravo.base.util.Check;
 
 /**

@@ -42,8 +42,6 @@ import org.openbravo.base.validation.ValidationException;
 public class Property {
     private static final Logger log = Logger.getLogger(Property.class);
 
-    private Column column;
-
     private boolean oneToOne;
     private boolean oneToMany;
     private Entity entity;
@@ -90,7 +88,6 @@ public class Property {
      *            the column used to initialize this Property.
      */
     public void initializeFromColumn(Column fromColumn) {
-        setColumn(fromColumn);
         fromColumn.setProperty(this);
         setId(fromColumn.isKey());
         setPrimitive(fromColumn.isPrimitiveType());
@@ -128,9 +125,16 @@ public class Property {
      */
     protected void initializeName() {
 
+        // if not set compute a sensible name
         if (getName() == null) {
             setName(NamingUtil.getPropertyMappingName(this));
         }
+
+        // correct the name with the static constant in the generated entity
+        // class
+        setName(NamingUtil.getStaticPropertyName(getEntity().getMappingClass(),
+                getName()));
+
         getEntity().addPropertyByName(this);
 
         if (getName().equals("created") && isPrimitive()
@@ -644,7 +648,7 @@ public class Property {
     @Override
     public String toString() {
         if (getName() == null) {
-            return getEntity() + "." + column;
+            return getEntity() + "." + getColumnName();
         }
         return getEntity() + "." + getName();
     }
@@ -832,13 +836,5 @@ public class Property {
 
     public void setInactive(boolean isInactive) {
         this.isInactive = isInactive;
-    }
-
-    public Column getColumn() {
-        return column;
-    }
-
-    public void setColumn(Column column) {
-        this.column = column;
     }
 }

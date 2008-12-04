@@ -26,7 +26,6 @@ import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.util.OBClassLoader;
 
@@ -74,7 +73,7 @@ class OBProviderConfigReader {
             Class<?> clz = null;
             try {
                 clz = OBClassLoader.getInstance().loadClass(clzName);
-            } catch (final OBException e) {
+            } catch (final ClassNotFoundException e) {
                 // catch ClassNotFoundException
                 log.warn("Class " + clzName
                         + " can not be loaded. This can happen "

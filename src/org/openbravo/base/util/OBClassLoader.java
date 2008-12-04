@@ -19,7 +19,6 @@
 
 package org.openbravo.base.util;
 
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 
@@ -47,16 +46,16 @@ public class OBClassLoader implements OBSingleton {
     }
 
     /**
-     * Load a class using the classloader.
+     * Load a class using the classloader. This method will throw an OBException
+     * if the class is not found. This exception is logged.
+     * 
+     * @param className
+     *            the name of the class to load
+     * @throws ClassNotFoundException
      */
-    public Class<?> loadClass(String className) {
-        try {
-            return Thread.currentThread().getContextClassLoader().loadClass(
-                    className);
-        } catch (final Exception e) {
-            throw new OBException("Exception while loading class " + className
-                    + ", " + e.getMessage(), e);
-        }
+    public Class<?> loadClass(String className) throws ClassNotFoundException {
+        return Thread.currentThread().getContextClassLoader().loadClass(
+                className);
     }
 
     /**
@@ -69,13 +68,9 @@ public class OBClassLoader implements OBSingleton {
     public static class ClassOBClassLoader extends OBClassLoader {
 
         @Override
-        public Class<?> loadClass(String className) {
-            try {
-                return Class.forName(className);
-            } catch (final Exception e) {
-                throw new OBException("Exception while loading class "
-                        + className + ", " + e.getMessage(), e);
-            }
+        public Class<?> loadClass(String className)
+                throws ClassNotFoundException {
+            return Class.forName(className);
         }
     }
 }

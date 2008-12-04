@@ -17,9 +17,8 @@
  ************************************************************************
  */
 
-package org.openbravo.base.structure;
+package org.openbravo.dal.core;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Map;
 
@@ -28,7 +27,8 @@ import org.hibernate.PropertyNotFoundException;
 import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.engine.SessionImplementor;
 import org.hibernate.property.PropertyAccessor;
-import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.NamingUtil;
+import org.openbravo.base.structure.BaseOBObject;
 
 /**
  * The hibernate getter/setter for a dynamic property.
@@ -39,29 +39,14 @@ import org.openbravo.base.exception.OBException;
 public class OBDynamicPropertyHandler implements PropertyAccessor {
     public Getter getGetter(Class theClass, String propertyName)
             throws PropertyNotFoundException {
-        return new Getter(getStaticPropertyName(theClass, propertyName));
+        return new Getter(NamingUtil.getStaticPropertyName(theClass,
+                propertyName));
     }
 
     public Setter getSetter(Class theClass, String propertyName)
             throws PropertyNotFoundException {
-        return new Setter(getStaticPropertyName(theClass, propertyName));
-    }
-
-    private String getStaticPropertyName(Class<?> clz, String propName) {
-        try {
-            if (clz == null) {
-                return propName;
-            }
-            final Field fld = clz
-                    .getField("PROPERTY_" + propName.toUpperCase());
-            return (String) fld.get(null);
-        } catch (final Exception e) {
-            e.printStackTrace(System.err);
-            throw new OBException(
-                    "Exception when getting static property name "
-                            + clz.getName() + "." + "PROPERTY_"
-                            + propName.toUpperCase(), e);
-        }
+        return new Setter(NamingUtil.getStaticPropertyName(theClass,
+                propertyName));
     }
 
     public static class Getter implements org.hibernate.property.Getter {

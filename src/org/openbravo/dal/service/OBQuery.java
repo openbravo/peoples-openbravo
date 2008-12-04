@@ -20,6 +20,7 @@
 package org.openbravo.dal.service;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -67,6 +68,18 @@ public class OBQuery<E extends BaseOBObject> {
     @SuppressWarnings("unchecked")
     public List<E> list() {
         return createQuery().list();
+    }
+
+    /**
+     * Queries the database using the where clauses and addition active, client
+     * and organization filters. The order in the list is determined by order by
+     * clause. Returns an iterator over the data.
+     * 
+     * @return iterator which walks over the list of objects in the db
+     */
+    @SuppressWarnings("unchecked")
+    public Iterator<E> iterate() {
+        return createQuery().iterate();
     }
 
     /**

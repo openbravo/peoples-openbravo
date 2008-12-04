@@ -92,17 +92,6 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable,
      * @throws OBSecurityException
      */
     public Object get(String propName) {
-        if (propName.equals("entityName")) {
-            return getEntityName();
-        }
-
-        // don't do anything special for id, this is required to let hibernate
-        // work
-        // correctly
-        // if (propName.equals("id")) {
-        // return data.get("id");
-        // }
-
         final Property p = getEntity().getProperty(propName);
         checkDerivedReadable(p);
         return data.get(propName);

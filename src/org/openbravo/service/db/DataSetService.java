@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -231,6 +232,65 @@ public class DataSetService implements OBSingleton {
         final List<?> list = oq.list();
         Collections.sort(list, new BaseOBIDHexComparator());
         return (List<BaseOBObject>) list;
+    }
+
+    /**
+     * Determines which objects are exportable using the DataSetTable
+     * whereClause. Returns an iterator over these objects. The returned objects
+     * are sorted by id.
+     * 
+     * @param dataSetTable
+     *            the dataSetTable defines the Entity and the whereClause to use
+     * @param moduleId
+     *            the moduleId is a parameter in the whereClause
+     * @param parameters
+     *            a collection of named parameters which are used in the
+     *            whereClause of the dataSetTable
+     * @return iterator over the exportable objects
+     */
+    public Iterator<BaseOBObject> getExportableObjectsIterator(
+            DataSetTable dataSetTable, String moduleId,
+            Map<String, Object> parameters) {
+
+        final String entityName = dataSetTable.getTable().getName();
+        final Entity entity = ModelProvider.getInstance().getEntity(entityName);
+
+        if (entity == null) {
+            log.error("Entity not found using table name " + entityName);
+            return new ArrayList<BaseOBObject>().iterator();
+        }
+
+        String whereClause = dataSetTable.getWhereClause();
+        final Map<String, Object> existingParams = new HashMap<String, Object>();
+        for (final String name : parameters.keySet()) {
+            if (whereClause.indexOf(":" + name) != -1) {
+                existingParams.put(name, parameters.get(name));
+            }
+        }
+        if (moduleId != null && whereClause != null) {
+            while (whereClause.indexOf("@moduleid@") != -1) {
+                whereClause = whereClause.replace("@moduleid@", "'" + moduleId
+                        + "'");
+            }
+            if (whereClause.indexOf(":moduleid") != -1
+                    && parameters.get("moduleid") == null) {
+                existingParams.put("moduleid", moduleId);
+            }
+        }
+
+        final OBQuery<BaseOBObject> oq = OBDal.getInstance().createQuery(
+                entity.getName(), whereClause + " order by id");
+        oq.setFilterOnActive(false);
+        oq.setNamedParameters(existingParams);
+
+        if (OBContext.getOBContext().getRole().getId().equals("0")
+                && OBContext.getOBContext().getCurrentClient().getId().equals(
+                        "0")) {
+            oq.setFilterOnReadableOrganization(false);
+            oq.setFilterOnReadableClients(false);
+        }
+
+        return oq.iterate();
     }
 
     /**

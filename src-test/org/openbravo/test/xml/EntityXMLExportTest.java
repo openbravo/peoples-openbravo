@@ -32,7 +32,7 @@ import org.openbravo.model.financialmgmt.tax.TaxCategory;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 
 /**
- * Allows testing of hql
+ * Tests export of entities to xml
  * 
  * @author mtaal
  */

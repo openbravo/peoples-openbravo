@@ -89,7 +89,11 @@ public class Entity {
         setTableName(table.getTableName());
         setTableId(table.getId());
         setClassName(table.getPackageName() + "." + table.getNotNullClassName());
-        setName(table.getName());
+        if (getMappingClass() != null) {
+            setName(NamingUtil.getEntityName(getMappingClass()));
+        } else {
+            setName(table.getName());
+        }
         setDeletable(table.isDeletable());
         setMutable(!table.isView());
 
@@ -235,9 +239,7 @@ public class Entity {
                 // the context class loader is the safest one
                 mappingClass = OBClassLoader.getInstance().loadClass(
                         getClassName());
-            } catch (final Exception e) {
-                log.warn("No class present for entity " + getName()
-                        + " using dynamic object");
+            } catch (final ClassNotFoundException e) {
                 mappingClass = null;
             }
             mappingClassComputed = true;

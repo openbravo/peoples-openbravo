@@ -117,14 +117,6 @@ public class ModelProvider implements OBSingleton {
     }
 
     /**
-     * @return the list of Tables read from the Application Dictionary.
-     */
-    public List<Table> getTables() {
-        getModel();
-        return tables;
-    }
-
-    /**
      * The list of Entities created on the basis of the Application Dictionary.
      * The main entry point for retrieving the in-memory model. This method will
      * initialize the in-memory model when it is called for the first time.
@@ -133,104 +125,144 @@ public class ModelProvider implements OBSingleton {
      */
     public List<Entity> getModel() {
         if (model == null) {
-            log.info("Building runtime model");
-
-            // Caching model (tables, table-references, search-references,
-            // list-references)
-            // Changed to use the SessionHandler directly because the dal
-            // layer uses the ModelProvider, so otherwise there will be a
-            // cyclic relation.
-            final SessionFactoryController sessionFactoryController = new ModelSessionFactoryController();
-            final Session session = sessionFactoryController
-                    .getSessionFactory().openSession();
-            final Transaction tx = session.beginTransaction();
-            try {
-                log.debug("Read model from db");
-                tables = list(session, Table.class);
-                // read the columns in one query and assign them to the table
-                final List<Column> cols = readColumns(session);
-                assignColumnsToTable(cols);
-
-                refTable = list(session, RefTable.class);
-                refSearch = list(session, RefSearch.class);
-                refList = list(session, RefList.class);
-                modules = retrieveModules(session);
-
-                tables = removeInactiveInvalidTables(tables);
-
-                for (final RefTable rt : refTable) {
-                    refTableMap.put(rt.getId(), rt);
-                }
-                for (final RefSearch rs : refSearch) {
-                    // note mapped by reference id
-                    refSearchMap.put(rs.getReference(), rs);
-                }
-
-                // this map stores the mapped tables
-                tablesByTableName = new HashMap<String, Table>();
-                for (final Table t : tables) {
-                    // tables are stored case insensitive!
-                    tablesByTableName.put(t.getTableName().toLowerCase(), t);
-                }
-
-                log.debug("Setting referencetypes for columns");
-                for (final Table t : tablesByTableName.values()) {
-                    t.setReferenceTypes(ModelProvider.instance);
-                }
-
-                log.debug("Setting List Values for columns");
-                for (final RefList rl : refList) {
-                    rl.setAllowedValue();
-                }
-
-                model = new ArrayList<Entity>();
-                entitiesByName = new HashMap<String, Entity>();
-                entitiesByClassName = new HashMap<String, Entity>();
-                entitiesByTableName = new HashMap<String, Entity>();
-                entitiesByTableId = new HashMap<String, Entity>();
-                for (final Table t : tablesByTableName.values()) {
-                    log.debug("Building model for table " + t.getTableName());
-                    final Entity e = new Entity();
-                    e.initialize(t);
-                    model.add(e);
-                    entitiesByClassName.put(e.getClassName(), e);
-                    entitiesByName.put(e.getName(), e);
-                    entitiesByTableName.put(t.getTableName().toUpperCase(), e);
-                    entitiesByTableId.put(t.getId(), e);
-                }
-
-                // in the second pass set all the referenceProperties
-                // and targetEntities
-                // uses global member tablesByTableName
-                setReferenceProperties();
-
-                // add virtual property for the case that the
-                // id property is also a reference (a foreign key)
-                // In this case hibernate requires two mappings
-                // one for the id (a string) and for the reference
-                // in addition the id generation strategy should be set
-                // to foreign.
-                log.debug("Setting virtual property for many-to-one id's");
-                setVirtualPropertiesForReferenceId();
-
-                buildUniqueConstraints(session, sessionFactoryController);
-            } finally {
-                log
-                        .debug("Closing session and sessionfactory used during model read");
-                tx.commit();
-                session.close();
-                sessionFactoryController.getSessionFactory().close();
-            }
-
-            // now initialize the names of the properties
-            for (final Entity e : model) {
-                for (final Property p : e.getProperties()) {
-                    p.initializeName();
-                }
-            }
+            initialize();
         }
 
         return model;
+    }
+
+    private void initialize() {
+        log.info("Building runtime model");
+
+        // Caching model (tables, table-references, search-references,
+        // list-references)
+        // Changed to use the SessionHandler directly because the dal
+        // layer uses the ModelProvider, so otherwise there will be a
+        // cyclic relation.
+        final SessionFactoryController sessionFactoryController = new ModelSessionFactoryController();
+        final Session session = sessionFactoryController.getSessionFactory()
+                .openSession();
+        final Transaction tx = session.beginTransaction();
+        try {
+            log.debug("Read model from db");
+            tables = list(session, Table.class);
+            // read the columns in one query and assign them to the table
+            final List<Column> cols = readColumns(session);
+            assignColumnsToTable(cols);
+
+            refTable = list(session, RefTable.class);
+            refSearch = list(session, RefSearch.class);
+            refList = list(session, RefList.class);
+            modules = retrieveModules(session);
+            tables = removeInactiveInvalidTables(tables);
+
+            for (final RefTable rt : refTable) {
+                refTableMap.put(rt.getId(), rt);
+            }
+            for (final RefSearch rs : refSearch) {
+                // note mapped by reference id
+                refSearchMap.put(rs.getReference(), rs);
+            }
+
+            // this map stores the mapped tables
+            tablesByTableName = new HashMap<String, Table>();
+            for (final Table t : tables) {
+                // tables are stored case insensitive!
+                tablesByTableName.put(t.getTableName().toLowerCase(), t);
+            }
+
+            log.debug("Setting referencetypes for columns");
+            for (final Table t : tablesByTableName.values()) {
+                t.setReferenceTypes(ModelProvider.instance);
+            }
+
+            log.debug("Setting List Values for columns");
+            for (final RefList rl : refList) {
+                rl.setAllowedValue();
+            }
+
+            model = new ArrayList<Entity>();
+            entitiesByName = new HashMap<String, Entity>();
+            entitiesByClassName = new HashMap<String, Entity>();
+            entitiesByTableName = new HashMap<String, Entity>();
+            entitiesByTableId = new HashMap<String, Entity>();
+            for (final Table t : tablesByTableName.values()) {
+                log.debug("Building model for table " + t.getTableName());
+                final Entity e = new Entity();
+                e.initialize(t);
+                model.add(e);
+                entitiesByClassName.put(e.getClassName(), e);
+                entitiesByName.put(e.getName(), e);
+                entitiesByTableName.put(t.getTableName().toUpperCase(), e);
+                entitiesByTableId.put(t.getId(), e);
+            }
+
+            // in the second pass set all the referenceProperties
+            // and targetEntities
+            // uses global member tablesByTableName
+            setReferenceProperties();
+
+            // add virtual property for the case that the
+            // id property is also a reference (a foreign key)
+            // In this case hibernate requires two mappings
+            // one for the id (a string) and for the reference
+            // in addition the id generation strategy should be set
+            // to foreign.
+            log.debug("Setting virtual property for many-to-one id's");
+            setVirtualPropertiesForReferenceId();
+
+            buildUniqueConstraints(session, sessionFactoryController);
+        } finally {
+            log
+                    .debug("Closing session and sessionfactory used during model read");
+            tx.commit();
+            session.close();
+            sessionFactoryController.getSessionFactory().close();
+        }
+
+        // now initialize the names of the properties
+        for (final Entity e : model) {
+            for (final Property p : e.getProperties()) {
+                p.initializeName();
+            }
+        }
+        clearLists();
+    }
+
+    /**
+     * Returns the tables in the database, is usefull for debugging purposes.
+     * 
+     * @return list of tables in the database
+     */
+    public List<Table> getTables() {
+        final SessionFactoryController sessionFactoryController = new ModelSessionFactoryController();
+        final Session session = sessionFactoryController.getSessionFactory()
+                .openSession();
+        final Transaction tx = session.beginTransaction();
+        try {
+            tables = list(session, Table.class);
+            // read the columns in one query and assign them to the table
+            final List<Column> cols = readColumns(session);
+            assignColumnsToTable(cols);
+            return tables;
+        } finally {
+            log
+                    .debug("Closing session and sessionfactory used during model read");
+            tx.commit();
+            session.close();
+            sessionFactoryController.getSessionFactory().close();
+        }
+    }
+
+    // clears some in-memory lists to save memory
+    private void clearLists() {
+        tables = null;
+        tablesByTableName = null;
+        refTable = null;
+        refSearch = null;
+        refTableMap = new HashMap<String, RefTable>();
+        refSearchMap = new HashMap<String, RefSearch>();
+        refList = null;
     }
 
     @SuppressWarnings("unchecked")
@@ -529,7 +561,7 @@ public class ModelProvider implements OBSingleton {
      * @return the Table object
      * @throws CheckException
      */
-    public Table getTable(String tableName) throws CheckException {
+    private Table getTable(String tableName) throws CheckException {
         if (tablesByTableName == null)
             getModel();
         // search case insensitive!

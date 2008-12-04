@@ -19,6 +19,7 @@
 
 package org.openbravo.base.model;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -33,8 +34,12 @@ import org.openbravo.base.exception.OBException;
  * @author mtaal
  */
 
-class NamingUtil {
+public class NamingUtil {
     private static final Logger log = Logger.getLogger(NamingUtil.class);
+
+    public static String ENTITY_NAME_CONSTANT = "ENTITY_NAME";
+    public static String PROPERTY_CONSTANT_PREFIX = "PROPERTY_";
+
     private static HashMap<String, String> specialPropertyMappings = null;
     private static HashMap<String, String> reservedNames = null;
     private static HashMap<String, String> abbreviations = null;
@@ -67,6 +72,60 @@ class NamingUtil {
         reservedNames.put("transient", "trnsnt");
         reservedNames.put("case", "cse");
         reservedNames.put("char", "chr");
+    }
+
+    /**
+     * Returns the value of the ENTITY_NAME constant in the passed class.
+     * 
+     * @param clz
+     *            the entity class
+     * @return the ENTITY_NAME constant
+     */
+    public static String getEntityName(Class<?> clz) {
+        try {
+            if (clz == null) {
+                return null;
+            }
+            final Field fld = clz.getField(ENTITY_NAME_CONSTANT);
+            return (String) fld.get(null);
+        } catch (final Exception e) {
+            e.printStackTrace(System.err);
+            throw new OBException(
+                    "Exception when getting ENTITY_NAME constant from  "
+                            + clz.getName(), e);
+        }
+    }
+
+    /**
+     * Generated entity classes have String constants to denote their property
+     * name. It has a performance benefit if the String constant is used because
+     * then HashMap get operations are faster (as equals also tests on object
+     * equality). This method tries to retrieve the String constant from the
+     * passed class. The clz parameter maybe null (happens for dynamic
+     * entities). In this case the passed propertyName is returned.
+     * 
+     * @param clz
+     *            the entity class, maybe null, in which case propertyName is
+     *            returned
+     * @param propertyName
+     *            the propertyName to search for in the class
+     * @return the String constant or the passed propertyName
+     */
+    public static String getStaticPropertyName(Class<?> clz, String propertyName) {
+        try {
+            if (clz == null) {
+                return propertyName;
+            }
+            final Field fld = clz.getField(PROPERTY_CONSTANT_PREFIX
+                    + propertyName.toUpperCase());
+            return (String) fld.get(null);
+        } catch (final Exception e) {
+            e.printStackTrace(System.err);
+            throw new OBException(
+                    "Exception when getting static property name "
+                            + clz.getName() + "." + "PROPERTY_"
+                            + propertyName.toUpperCase(), e);
+        }
     }
 
     static String getSafeJavaName(String name) {
