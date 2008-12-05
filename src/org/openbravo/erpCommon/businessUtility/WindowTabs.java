@@ -673,7 +673,7 @@ public class WindowTabs {
     private String getUrlCommand(String _tabId, String _tabName, int _level) {
         final StringBuffer text = new StringBuffer();
         if (!_tabId.equals(this.TabID) && this.level + 1 >= _level) {
-            text.append("submitCommandForm('").append(
+            text.append("logClick(null);submitCommandForm('").append(
                     ((this.level > _level) ? "DEFAULT" : "TAB")).append("', ");
             text.append((editView) ? "isUserChanges" : "false").append(
                     ", null, '");
