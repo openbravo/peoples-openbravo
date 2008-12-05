@@ -88,12 +88,10 @@ public class OBDynamicTuplizer extends AbstractEntityTuplizer {
         return pf;
     }
 
-    @Override
     public Class getMappedClass() {
         return persistentClass.getMappedClass();
     }
 
-    @Override
     public Class getConcreteProxyClass() {
         return persistentClass.getMappedClass();
     }
