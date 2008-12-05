@@ -202,9 +202,11 @@ public class DataSetService implements OBSingleton {
 
         String whereClause = dataSetTable.getWhereClause();
         final Map<String, Object> existingParams = new HashMap<String, Object>();
-        for (final String name : parameters.keySet()) {
-            if (whereClause.indexOf(":" + name) != -1) {
-                existingParams.put(name, parameters.get(name));
+        if (parameters != null) {
+            for (final String name : parameters.keySet()) {
+                if (whereClause.indexOf(":" + name) != -1) {
+                    existingParams.put(name, parameters.get(name));
+                }
             }
         }
         if (moduleId != null && whereClause != null) {
@@ -282,7 +284,8 @@ public class DataSetService implements OBSingleton {
         // set the order by, first detect if there is an alias
         String alias = "";
         // this is a space on purpose
-        if (whereClause.toLowerCase().trim().startsWith("as")) {
+        if (whereClause != null
+                && whereClause.toLowerCase().trim().startsWith("as")) {
             // strip the as
             final String strippedWhereClause = whereClause.toLowerCase().trim()
                     .substring(2).trim();
