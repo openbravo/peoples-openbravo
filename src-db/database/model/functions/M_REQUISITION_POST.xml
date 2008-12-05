@@ -28,6 +28,7 @@
   v_User_ID VARCHAR2(32):='0';
   v_DocAction CHAR(2);
   v_DocStatus CHAR(2);
+  v_Aux NUMBER;
 
   --  Parameter
   TYPE RECORD IS REF CURSOR;
@@ -58,6 +59,21 @@ BEGIN
     WHERE M_REquisition_ID = v_Record_ID;
 
     v_ResultStr := 'M_Requisition ' || v_Record_ID || ', DocAction=' || v_DocAction || ', DocStatus=' || v_DocStatus;
+
+    /**
+    * Check if requisition has lines
+    */
+    IF (v_DocAction = 'CO') THEN
+      SELECT COUNT(*)
+        INTO v_Aux
+      FROM M_RequisitionLine
+      WHERE M_REQUISITION_ID = v_Record_ID;
+      IF v_Aux=0 THEN
+      /*cambiar este mensajillo!!!!*/
+        RAISE_APPLICATION_ERROR(-20000, '@RequisitionWithoutLines@');
+      END IF;
+    END IF;
+
     /**
     * Order Closed, Voided or Reversed - No action possible
     */
