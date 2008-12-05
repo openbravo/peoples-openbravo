@@ -209,7 +209,7 @@
 							<input type="text" dojoType="openbravo:ValidationTextBox"
 									class="dojoValidateValid required TextBox_btn_TwoCells_width"
 									maxlength="200" name="contactEmail" id="contactEmail" value=""
-									required="true" onkeyup="validateTextBox(this.id);"><span>(</span><span class="LabelText" name="contactName" id="contactName"></span>
+									required="true" onkeyup="validateTextBox(this.id);"><span>(</span><span class="LabelText" name="contactName" id="contactName" value=""></span>
 									<span class="LabelText">)</span>
 						</td>
 					</tr>
@@ -222,7 +222,7 @@
 							<input type="text" dojoType="openbravo:ValidationTextBox"
 									class="dojoValidateValid required TextBox_btn_TwoCells_width"
 									maxlength="200" name="salesrepEmail" id="salesrepEmail" value=""
-									required="true" onkeyup="validateTextBox(this.id);"><span>(</span><span class="LabelText" name="salesrepName" id="salesrepName"></span>
+									required="true" onkeyup="validateTextBox(this.id);"><span>(</span><span class="LabelText" name="salesrepName" id="salesrepName" value=""></span>
 									<span class="LabelText">)</span>
 						</td>
 					</tr>
@@ -269,7 +269,7 @@
 							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">Our reference</span>
 						</td>
 						<td style="width: 99%" id="ourReference" class="LabelText">
-							<input type="hidden" name="ourReference-xx" id="ourReference-xx" value="xxxx">
+							<input type="hidden" name="ourReference" id="ourReference" value="xxxx">
 							xx
 						</td>
 					</tr>					
@@ -279,36 +279,40 @@
 							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">Customer reference</span>
 						</td>
 						<td style="width: 99%" id="cusReference" class="LabelText">
-							<input type="hidden" name="cusReference-xx" id="cusReference-xx" value="xxxx">
+							<input type="hidden" name="cusReference" id="cusReference" value="xxxx">
 							xx
 						</td>						
-					</tr>		
-					<tr id="discardTable">
-   						 <td width="5%" colspan="2">
-    						<table cellspacing="0" cellpadding="0" width="50%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
-    						<tbody>
-    						<tr class="DataGrid_Body_Row"> 
-      							<th width="5" colspan="1" class="DataGrid_Header_Cell" id="fieldPartnerName"/>
-        						<th class="DataGrid_Header_Cell"><span>File</span></th>
-     				 		</tr>
-     				 		<div id="sectionDetail">
-      						<tr id="funcEvenOddRow" class="DataGrid_Body_Row DataGrid_Body_Row_xx">
-								<td width="20" class="DataGrid_Body_Cell">  <span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpOrder" onclick="updateData(this.value, this.checked);return true;" value="" id="fieldCOrderlineId"/></span></td>
-         						<td width="409" class="DataGrid_Body_Cell" id="fieldDocumentno">xx</td>
-    						</tr>
-    					</div>
-    					</tbody>
-    					</table>
-					</td>
-				</tr>
-				<tr id="discardSelect">
- 					<td class="TitleCell"><span class="LabelText">Templates</span></td>
+					</tr>
+					<tr id="discardSelect">
+ 					<td class="TitleCell"><span class="LabelText">Template to use</span></td>
 					<td class="Combo_ContentCell" colspan="2">
 	    				<select name="templates" id="templates" class="ComboKey Combo_TwoCells_width" required="true" onchange="displayLogic();return true;">
 	                    <div id="reportEmail"></div>
 	        			</select>
 					</td>
+				</tr>		
+					<tr id="discardTable">
+						<td style="width: 1%; text-align: right;">
+							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">Attached Documents</span>
+						</td>	
+   						 <td width="7%" colspan="2">
+    						<table cellspacing="0" cellpadding="0" width="50%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
+    						<tbody>
+    						<tr class="DataGrid_Body_Row"> 
+    							<th class="DataGrid_Header_Cell"><span>File name</span></th>
+      							<th width="5" colspan="1" class="DataGrid_Header_Cell" id="fieldPartnerName"><span>Archive</span></th>
+        					</tr>
+    						<div id="sectionDetail">
+      						<tr id="funcEvenOddRow" class="DataGrid_Body_Row DataGrid_Body_Row_xx">
+      							<td width="600" class="DataGrid_Body_Cell" id="fieldDocumentno">xx</td>
+								<td width="20" class="DataGrid_Body_Cell">  <span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpOrder" onclick="updateData(this.value, this.checked);return true;" value="" id="fieldCOrderlineId"/></span></td>
+         					</tr>
+    					</div>
+    					</tbody>
+    					</table>
+					</td>
 				</tr>
+				
 				<tr id="emailField03">
 					<td colspan="2" class="TextBox_ContentCell">
                     	<input type="text" onblur="isInputFile=false;" onfocus="isInputFile=true;" style="border: 0pt none ; margin: 0pt; padding: 0pt; font-size: 0pt; width: 0px; height: 0px;"/>
@@ -316,13 +320,13 @@
                     	<input type="text" onblur="isInputFile=false;" onfocus="isInputFile=true;" style="border: 0pt none ; margin: 0pt; padding: 0pt; font-size: 0pt; width: 0px; height: 0px;"/>
    	 				</td>
 				</tr>	
-				<tr><td colspan="1" id="CopyFrom_inp_td" class="Button_CenterAlign_ContentCell"><div id="editDiscard"><div id="CopyFrom_inp">
+				<tr><td colspan="2" id="CopyFrom_inp_td" class=""><div id="editDiscard"><div id="CopyFrom_inp">
   <input type="hidden" id="CopyFrom" onchange="logChanges(this.inputNode);return true;" value="N" name="inpcopyfrom"/>
   <a id="CopyFrom_linkBTN" onclick="addFile();return false;" onkeyup="this.className='ButtonLink_focus'; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onblur="window.status=''; return true;" onfocus="setWindowElementFocus(this); window.status='Copy Lines'; return true;" href="#" class="ButtonLink">
-    <table onmouseout="this.className='Button'; window.status=''; return true;" onmouseover="this.className='Button_hover'; window.status='Copy Lines'; return true;" onmouseup="this.className='Button'; return true;" onmousedown="this.className='Button_active'; return true;" class="Button">
+    <table width="175" onmouseout="this.className='Button'; window.status=''; return true;" onmouseover="this.className='Button_hover'; window.status='Copy Lines'; return true;" onmouseup="this.className='Button'; return true;" onmousedown="this.className='Button_active'; return true;" class="Button">
       <tbody><tr>
         <td class="Button_left"><img border="0" src="../web/images/blank.gif" title="Copy Lines" alt="Copy Lines" class="Button_Icon Button_Icon_process"/></td>
-      <td id="CopyFrom_BTNname" class="Button_text">Add</td>
+     	 <td id="CopyFrom_BTNname"  class="Button_text">Add file to the List</td>
         <td class="Button_right"/>
       </tr>
     </tbody></table>

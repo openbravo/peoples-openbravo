@@ -73,6 +73,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class PrintController extends HttpSecureAppServlet {
     static Logger log4j = Logger.getLogger(PrintController.class);
     final Map differentDocTypes = new HashMap<String, TemplateData[]>();
+    private PocData[] pocData;
 
     // TODO: When an email is in draft status add the notification that the
     // document can not be emailed
@@ -282,8 +283,9 @@ public class PrintController extends HttpSecureAppServlet {
 
             } else if (vars.commandIn("EMAIL")) {
                 int nrOfEmailsSend = 0;
-                for (int index = 0; index < documentIds.length; index++) {
-                    final String documentId = documentIds[index];
+
+                for (final PocData documentData : pocData) {
+                    final String documentId = documentData.documentId;
                     if (log4j.isDebugEnabled())
                         log4j.debug("Processing document with id: "
                                 + documentId);
@@ -340,7 +342,7 @@ public class PrintController extends HttpSecureAppServlet {
                         }
 
                         sendDocumentEmail(report, vars, request.getSession()
-                                .getAttribute("files"));
+                                .getAttribute("files"), documentData);
                         nrOfEmailsSend++;
                     }
                 }
@@ -374,21 +376,30 @@ public class PrintController extends HttpSecureAppServlet {
     }
 
     protected void sendDocumentEmail(Report report, VariablesSecureApp vars,
-            Object object) throws IOException, ServletException {
+            Object object, PocData documentData) throws IOException,
+            ServletException {
         final String documentId = report.getDocumentId();
         final String attachmentFileLocation = report.getTargetLocation();
 
-        final String ourReference = vars.getStringParameter("ourReference");
-        final String cusReference = vars.getStringParameter("cusReference");
+        final String ourReference = report.getOurReference();
+        final String cusReference = report.getCusReference();
         if (log4j.isDebugEnabled())
             log4j.debug("our document ref: " + ourReference);
         if (log4j.isDebugEnabled())
             log4j.debug("cus document ref: " + cusReference);
-
-        final String salesrepName = vars.getStringParameter("salesrepName");
-        final String salesrepEmail = vars.getStringParameter("salesrepEmail");
-        final String contactName = vars.getStringParameter("contactName");
-        final String contactEmail = vars.getStringParameter("contactEmail");
+        // Also send it to the current user
+        final PocData[] currentUserInfo = PocData.getContactDetailsForUser(
+                this, vars.getUser());
+        final String userName = currentUserInfo[0].userName;
+        final String userEmail = currentUserInfo[0].userEmail;
+        if (log4j.isDebugEnabled())
+            log4j.debug("user name: " + userName);
+        if (log4j.isDebugEnabled())
+            log4j.debug("user email: " + userEmail);
+        final String salesrepName = documentData.salesrepName;
+        final String salesrepEmail = documentData.salesrepEmail;
+        final String contactName = documentData.contactName;
+        final String contactEmail = documentData.contactEmail;
         String emailSubject = vars.getStringParameter("emailSubject");
         String emailBody = vars.getStringParameter("emailBody");
 
@@ -400,16 +411,6 @@ public class PrintController extends HttpSecureAppServlet {
             log4j.debug("recipient name: " + contactName);
         if (log4j.isDebugEnabled())
             log4j.debug("recipient email: " + contactEmail);
-
-        // Also send it to the current user
-        final PocData[] currentUserInfo = PocData.getContactDetailsForUser(
-                this, vars.getUser());
-        final String userName = currentUserInfo[0].userName;
-        final String userEmail = currentUserInfo[0].userEmail;
-        if (log4j.isDebugEnabled())
-            log4j.debug("user name: " + userName);
-        if (log4j.isDebugEnabled())
-            log4j.debug("user email: " + userEmail);
 
         // TODO: Move this to the beginning of the print handling and do nothing
         // if these conditions fail!!!)
@@ -425,11 +426,16 @@ public class PrintController extends HttpSecureAppServlet {
         }
 
         // Replace special tags
+
         emailSubject = emailSubject.replaceAll("@cus_ref@", cusReference);
         emailSubject = emailSubject.replaceAll("@our_ref@", ourReference);
+        emailSubject = emailSubject.replaceAll("@cus_nam@", contactName);
+        emailSubject = emailSubject.replaceAll("@sal_nam@", salesrepName);
 
         emailBody = emailBody.replaceAll("@cus_ref@", cusReference);
         emailBody = emailBody.replaceAll("@our_ref@", ourReference);
+        emailBody = emailBody.replaceAll("@cus_nam@", contactName);
+        emailBody = emailBody.replaceAll("@sal_nam@", salesrepName);
 
         try {
             final Session session = EmailManager.newMailSession(this, vars
@@ -570,7 +576,7 @@ public class PrintController extends HttpSecureAppServlet {
             DocumentType documentType, String strDocumentId,
             Map<String, Report> reports) throws IOException, ServletException {
         XmlDocument xmlDocument = null;
-        final PocData[] pocData = getContactDetails(documentType, strDocumentId);
+        pocData = getContactDetails(documentType, strDocumentId);
         final String[] hiddenTags = getHiddenTags(pocData);
         if (hiddenTags != null) {
             xmlDocument = xmlEngine
@@ -726,8 +732,16 @@ public class PrintController extends HttpSecureAppServlet {
             log4j.debug("Documents still in draft: " + draftDocumentIds);
         xmlDocument.setParameter("draftDocumentIds", draftDocumentIds);
 
-        xmlDocument.setParameter("emailSubject", emailDefinition.getSubject());
-        xmlDocument.setParameter("emailBody", emailDefinition.getBody());
+        if (vars.commandIn("ADD")) {
+            final String emailSubject = vars.getStringParameter("emailSubject");
+            final String emailBody = vars.getStringParameter("emailBody");
+            xmlDocument.setParameter("emailSubject", emailSubject);
+            xmlDocument.setParameter("emailBody", emailBody);
+        } else {
+            xmlDocument.setParameter("emailSubject", emailDefinition
+                    .getSubject());
+            xmlDocument.setParameter("emailBody", emailDefinition.getBody());
+        }
 
         xmlDocument.setParameter("contactName", pocData[0].contactName);
         xmlDocument.setParameter("contactEmail", pocData[0].contactEmail);
