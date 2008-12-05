@@ -91,7 +91,7 @@ public class DalMappingGenerator implements OBSingleton {
             log.debug(result);
         }
 
-        if (false) {
+        if (true) {
             try {
                 final File f = new File("/tmp/hibernate.hbm.xml");
                 if (f.exists()) {
@@ -213,6 +213,8 @@ public class DalMappingGenerator implements OBSingleton {
                 sb.append(" not-null=\"true\"");
             }
         }
+        // sb.append(" cascade=\"save-update\"");
+
         sb.append(" entity-name=\"" + p.getTargetEntity().getName() + "\"");
 
         sb.append(getAccessorAttribute());

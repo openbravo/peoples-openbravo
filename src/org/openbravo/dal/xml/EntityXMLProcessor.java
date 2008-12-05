@@ -17,20 +17,21 @@
  ************************************************************************
  */
 
-package org.openbravo.service.db;
+package org.openbravo.dal.xml;
 
 import java.util.List;
 
+import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
 
 /**
- * The import processor is called by the DataImportService to process imported
- * imported objects before they are persisted into the database.
+ * The entity xml processor is used to intercept specific actions during import
+ * and xml conversion of business objects.
  * 
  * @author mtaal
  */
 
-public interface ImportProcessor {
+public interface EntityXMLProcessor {
 
     /**
      * This method is called after the import process has parsed the xml and
@@ -47,4 +48,25 @@ public interface ImportProcessor {
      */
     public void process(List<BaseOBObject> newObjects,
             List<BaseOBObject> updatedObjects);
+
+    /**
+     * This method allows you to correct a value just before it is being set in
+     * an object which is being imported.
+     * 
+     * This method is called just before a new primitive or refernence value is
+     * set in an imported object. This is called during an import of an object
+     * so the object maybe in an invalid state.
+     * 
+     * This method is not called for one-to-many properties.
+     * 
+     * @param owner
+     *            the owner object of the property
+     * @param property
+     *            the property being set
+     * @param importedValue
+     *            the value converted from the import xml
+     * @return a new value which is used by the import process
+     */
+    public Object replaceValue(BaseOBObject owner, Property property,
+            Object importedValue);
 }

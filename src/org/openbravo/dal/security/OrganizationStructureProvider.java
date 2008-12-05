@@ -141,6 +141,11 @@ public class OrganizationStructureProvider implements OBNotSingleton {
         initialize();
         final String id1 = (String) DalUtil.getId(org1);
         final String id2 = (String) DalUtil.getId(org2);
+
+        if (id2 != null && id2.equals("0")) {
+            return true;
+        }
+
         final Set<String> ids = getNaturalTree(id1);
         Check
                 .isNotNull(

@@ -98,10 +98,26 @@ public class EntityResolver implements OBNotSingleton {
         objectOriginalIdMapping.clear();
     }
 
+    /**
+     * Searches for an entity using the entityname and the id, first the
+     * internal cache is searched and then the database. Depending if the entity
+     * is searched for as a reference or as a main object (in the root of the
+     * xml) the search is differs. If no existing object can be found then new
+     * one is created..
+     * 
+     * @param entityName
+     *            the name of the entity searched for
+     * @param id
+     *            the id, can be null
+     * @param referenced
+     *            if the entity is searched because it is refered to or if it is
+     *            in the root of the xml
+     * @return an existing or a new entity
+     */
     // searches for a previous entity with the same id or an id retrieved from
     // the ad_ref_data_loaded table. The resolving takes into account different
     // access levels and
-    BaseOBObject resolve(String entityName, String id, boolean referenced) {
+    public BaseOBObject resolve(String entityName, String id, boolean referenced) {
 
         Check.isNotNull(client, "Client should not be null");
         Check.isNotNull(organization, "Org should not be null");
@@ -468,6 +484,20 @@ public class EntityResolver implements OBNotSingleton {
         }
 
         return null;
+    }
+
+    protected Client getClientZero() {
+        if (clientZero == null) {
+            setClientOrganizationZero();
+        }
+        return clientZero;
+    }
+
+    protected Organization getOrganizationZero() {
+        if (organizationZero == null) {
+            setClientOrganizationZero();
+        }
+        return organizationZero;
     }
 
 }

@@ -95,7 +95,7 @@ public class AccessLevelChecker {
         @Override
         public void checkAccessLevel(String entity, String clientId,
                 String orgId) {
-           // failOnZeroClient(entity, clientId);
+            // failOnZeroClient(entity, clientId);
         }
     };
 
@@ -104,28 +104,33 @@ public class AccessLevelChecker {
     }
 
     protected void failOnZeroClient(String entity, String clientId) {
-        if (clientId.equals("0")) {
+        // cliendId == null is by definition unequal to 0
+        if (clientId != null && clientId.equals("0")) {
             throw new OBSecurityException("Entity " + entity
                     + " may not have instances with client 0");
         }
     }
 
     protected void failOnNonZeroClient(String entity, String clientId) {
-        if (!clientId.equals("0")) {
+        if (clientId == null || !clientId.equals("0")) {
             throw new OBSecurityException("Entity " + entity
                     + " may only have instances with client 0");
         }
     }
 
     protected void failOnZeroOrg(String entity, String orgId) {
-        if (orgId.equals("0")) {
+        // orgId can be null for a new Organization which by default is not
+        // the zero organization
+        if (orgId != null && orgId.equals("0")) {
             throw new OBSecurityException("Entity " + entity
                     + " may not have instances with organization *");
         }
     }
 
     protected void failOnNonZeroOrg(String entity, String orgId) {
-        if (!orgId.equals("0")) {
+        // orgId can be null for a new Organization which by default is not
+        // the zero organization
+        if (orgId == null || !orgId.equals("0")) {
             throw new OBSecurityException("Entity " + entity
                     + " may only have instances with organization *");
         }

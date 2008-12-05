@@ -84,6 +84,10 @@ public class EntityXMLConverter implements OBNotSingleton {
     private List<BaseOBObject> toHandle = new ArrayList<BaseOBObject>();
     private Set<BaseOBObject> consideredForHandling = new HashSet<BaseOBObject>();
 
+    // the to-be-exported objects passed in explicitly, these will never get a
+    // referenced attribute
+    private Set<BaseOBObject> originalExportContent = new HashSet<BaseOBObject>();
+
     // keeps track which of the objects was added to the export list
     // because it was referenced. In this case an attribute is added
     // to the root element
@@ -101,6 +105,7 @@ public class EntityXMLConverter implements OBNotSingleton {
         referenced.clear();
         toHandle.clear();
         consideredForHandling.clear();
+        originalExportContent.clear();
     }
 
     /**
@@ -156,6 +161,7 @@ public class EntityXMLConverter implements OBNotSingleton {
         // set the export list
         getToHandle().add(bob);
         getConsideredForHandling().add(bob);
+        originalExportContent.add(bob);
 
         // and do it
         export(getDocument().getRootElement());
@@ -175,6 +181,7 @@ public class EntityXMLConverter implements OBNotSingleton {
         // set the export list
         getToHandle().addAll(bobs);
         getConsideredForHandling().addAll(bobs);
+        originalExportContent.addAll(bobs);
 
         // and do it
         export(getDocument().getRootElement());
@@ -213,7 +220,8 @@ public class EntityXMLConverter implements OBNotSingleton {
         // set the reference attribute so that we at import can treat this
         // one differently
         final boolean isCurrentEntityReferenced = getReferenced().contains(
-                obObject);
+                obObject)
+                && !originalExportContent.contains(obObject);
         if (isCurrentEntityReferenced) {
             currentElement.addAttribute(XMLConstants.REFERENCE_ATTRIBUTE,
                     "true");

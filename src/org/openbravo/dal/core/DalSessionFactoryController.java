@@ -38,11 +38,10 @@ public class DalSessionFactoryController extends SessionFactoryController {
     private static final Logger log = Logger
             .getLogger(DalSessionFactoryController.class);
 
-    private String mapping;
-
     @Override
     protected void mapModel(Configuration configuration) {
-        mapping = DalMappingGenerator.getInstance().generateMapping();
+        final String mapping = DalMappingGenerator.getInstance()
+                .generateMapping();
         // System.err.println(mapping);
         log.debug("Generated mapping: ");
         log.debug(mapping);
@@ -52,9 +51,5 @@ public class DalSessionFactoryController extends SessionFactoryController {
     @Override
     protected void setInterceptor(Configuration configuration) {
         configuration.setInterceptor(new OBInterceptor());
-    }
-
-    public String getMapping() {
-        return mapping;
     }
 }

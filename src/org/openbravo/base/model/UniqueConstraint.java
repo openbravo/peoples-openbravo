@@ -48,9 +48,6 @@ public class UniqueConstraint {
             // one-to-many properties have a null columnname
             if (property.getColumnName() != null
                     && property.getColumnName().equalsIgnoreCase(columnName)) {
-                if (properties.contains(property)) {
-                    System.err.println("no");
-                }
                 Check.isFalse(properties.contains(property), "Column "
                         + columnName + " occurs twice in uniqueconstraint "
                         + name + " in entity " + entity + " table "

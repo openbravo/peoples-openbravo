@@ -444,8 +444,8 @@ public class Property {
         } else if (isPrimitive()) {
             typeName = getPrimitiveType().getName();
         } else if (getTargetEntity() == null) {
-            System.err.println("ERROR NO REFERENCETYPE "
-                    + getEntity().getName() + "." + getColumnName());
+            log.warn("ERROR NO REFERENCETYPE " + getEntity().getName() + "."
+                    + getColumnName());
             return "java.lang.Object";
         } else {
             typeName = getTargetEntity().getClassName();

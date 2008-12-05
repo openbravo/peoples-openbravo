@@ -40,6 +40,7 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.base.util.Check;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.SecurityChecker;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
@@ -73,6 +74,8 @@ public class XMLEntityConverter implements OBNotSingleton {
     }
 
     private EntityResolver entityResolver;
+
+    private EntityXMLProcessor importProcessor;
 
     // keeps track which instances are part of the xml because they were
     // referenced
@@ -208,8 +211,9 @@ public class XMLEntityConverter implements OBNotSingleton {
 
             // warn/error is logged below if the entity is updated
             // update is prevented below
-            final boolean writable = SecurityChecker.getInstance().isWritable(
-                    bob);
+            final boolean writable = OBContext.getOBContext()
+                    .isInAdministratorMode()
+                    || SecurityChecker.getInstance().isWritable(bob);
 
             // do some checks to determine if this one should be updated
             // a referenced instance should not be updated if it is not new
@@ -256,10 +260,13 @@ public class XMLEntityConverter implements OBNotSingleton {
 
                 // do the primitive values
                 if (p.isPrimitive()) {
-                    final Object newValue = XMLTypeConverter.getInstance()
-                            .fromXML(p.getPrimitiveType(),
-                                    childElement.getText());
+                    Object newValue = XMLTypeConverter.getInstance().fromXML(
+                            p.getPrimitiveType(), childElement.getText());
+                    // correct the value
+                    newValue = replaceValue(bob, p, newValue);
+
                     log.debug("Primitive property with value " + newValue);
+
                     // only update if changed
                     if ((currentValue == null && newValue != null)
                             || (currentValue != null && newValue != null && !currentValue
@@ -267,8 +274,8 @@ public class XMLEntityConverter implements OBNotSingleton {
                         log.debug("Value changed setting it");
                         if (!preventRealUpdate) {
                             bob.set(p.getName(), newValue);
+                            updated = true;
                         }
-                        updated = true;
                     }
                 } else {
                     Check.isTrue(!p.isOneToMany(),
@@ -284,7 +291,7 @@ public class XMLEntityConverter implements OBNotSingleton {
                     }
 
                     // determine the referenced entity
-                    final Object newValue;
+                    Object newValue;
 
                     // handle null value
                     if (childElement.attribute(XMLConstants.ID_ATTRIBUTE) == null) {
@@ -297,6 +304,7 @@ public class XMLEntityConverter implements OBNotSingleton {
                                 .getName();
                         newValue = resolve(refEntityName, refId, true);
                     }
+                    newValue = replaceValue(bob, p, newValue);
 
                     final boolean hasChanged = (currentValue == null && newValue != null)
                             || (currentValue != null && newValue != null && !currentValue
@@ -305,8 +313,8 @@ public class XMLEntityConverter implements OBNotSingleton {
                         log.debug("Setting value " + newValue);
                         if (!preventRealUpdate) {
                             bob.set(p.getName(), newValue);
+                            updated = true;
                         }
-                        updated = true;
                     }
 
                 }
@@ -371,12 +379,11 @@ public class XMLEntityConverter implements OBNotSingleton {
                 if (!newValues.equals(currentValues)) {
                     if (!preventRealUpdate) {
                         // TODO: is this efficient? Or will it even work
-                        // with
-                        // hibernate first removing all?
+                        // with hibernate first removing all?
                         currentValues.clear();
                         currentValues.addAll(newValues);
+                        updated = true;
                     }
-                    updated = true;
                 }
 
             }
@@ -397,15 +404,21 @@ public class XMLEntityConverter implements OBNotSingleton {
                             + " because it is not writable");
                     return bob;
                 }
-            } else if (updated && preventRealUpdate) {
+            } else if (preventRealUpdate) {
                 Check
-                        .isTrue(hasReferenceAttribute && !bob.isNewOBObject(),
+                        .isTrue(!writable || hasReferenceAttribute
+                                && !bob.isNewOBObject(),
                                 "This case may only occur for referenced objects which are not new");
                 // if the object is referenced then it can not be updated
-                warn("Entity "
-                        + bob.getIdentifier()
-                        + " has not been updated because it already exists and "
-                        + "it is imported as a reference from another object");
+                if (hasReferenceAttribute && !bob.isNewOBObject()) {
+                    warn("Entity "
+                            + bob
+                            + " ("
+                            + bob.getEntity().getTableName()
+                            + ") "
+                            + " has not been updated because it already exists and "
+                            + "it is imported as a reference from another object");
+                }
             } else if (bob.isNewOBObject()) {
                 if (!checkInsert.contains(bob)) {
                     warnDifferentClientOrg(bob, "Creating");
@@ -445,6 +458,15 @@ public class XMLEntityConverter implements OBNotSingleton {
         }
     }
 
+    private Object replaceValue(BaseOBObject owner, Property property,
+            Object newValue) {
+        if (importProcessor == null) {
+            return newValue;
+        } else {
+            return importProcessor.replaceValue(owner, property, newValue);
+        }
+    }
+
     protected void checkClientOrganizationSet(BaseOBObject bob) {
         if (bob.getEntity().isClientEnabled()) {
             final ClientEnabled ce = (ClientEnabled) bob;
@@ -457,11 +479,14 @@ public class XMLEntityConverter implements OBNotSingleton {
             }
         }
         if (bob.getEntity().isOrganizationEnabled()) {
-            error("The organization of entity "
-                    + bob.getIdentifier()
-                    + " is not set. For a client data import the organization needs"
-                    + " to be set. Check that the xml was created "
-                    + "with client/organization property export to true");
+            final OrganizationEnabled oe = (OrganizationEnabled) bob;
+            if (oe.getOrganization() == null) {
+                error("The organization of entity "
+                        + bob.getIdentifier()
+                        + " is not set. For a client data import the organization needs"
+                        + " to be set. Check that the xml was created "
+                        + "with client/organization property export to true");
+            }
         }
     }
 
@@ -606,20 +631,12 @@ public class XMLEntityConverter implements OBNotSingleton {
     }
 
     /**
-     * If the {@link #isOptionClientImport()} is set then this method as a
-     * default will return a {@link ClientImportEntityResolver}, otherwise an
-     * {@link EntityResolver} is returned.
-     * 
      * @return the EntityResolver used by this Converter.
      */
     public EntityResolver getEntityResolver() {
 
         if (entityResolver == null) {
-            if (isOptionClientImport()) {
-                entityResolver = ClientImportEntityResolver.getInstance();
-            } else {
-                entityResolver = EntityResolver.getInstance();
-            }
+            entityResolver = EntityResolver.getInstance();
         }
         return entityResolver;
     }
@@ -647,5 +664,17 @@ public class XMLEntityConverter implements OBNotSingleton {
      */
     public void setOptionClientImport(boolean optionClientImport) {
         this.optionClientImport = optionClientImport;
+    }
+
+    public EntityXMLProcessor getImportProcessor() {
+        return importProcessor;
+    }
+
+    public void setImportProcessor(EntityXMLProcessor importProcessor) {
+        this.importProcessor = importProcessor;
+    }
+
+    public void setEntityResolver(EntityResolver entityResolver) {
+        this.entityResolver = entityResolver;
     }
 }

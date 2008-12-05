@@ -226,6 +226,7 @@ public class OBInterceptor extends EmptyInterceptor {
                 // get the organization from the current state
                 final OrganizationEnabled oe = (OrganizationEnabled) currentState[i];
                 final Organization o2 = oe.getOrganization();
+
                 if (!obContext.getOrganizationStructureProvider(
                         o1.getClient().getId()).isInNaturalTree(o1, o2)) {
                     throw new OBSecurityException("Entity "

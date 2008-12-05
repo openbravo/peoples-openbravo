@@ -20,8 +20,10 @@
 package org.openbravo.service.db;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.provider.OBProvider;
@@ -124,20 +126,20 @@ public class DataExportService implements OBSingleton {
         exc
                 .setOptionExportClientOrganizationReferences(exportClientOrganizationReferences);
         final List<DataSetTable> dts = dataSet.getDataSetTableList();
-        boolean generatedXML = false;
+        final Set<BaseOBObject> toExport = new HashSet<BaseOBObject>();
         for (final DataSetTable dt : dts) {
             final Boolean isbo = dt.isBusinessObject();
             exc.setOptionIncludeChildren(isbo != null && isbo.booleanValue());
             final List<BaseOBObject> list = DataSetService.getInstance()
                     .getExportableObjects(dt, moduleId, parameters);
-            if (list.size() > 0) {
-                exc.process(list);
-                generatedXML = true;
-            }
+            toExport.addAll(list);
         }
-        if (!generatedXML) {
+
+        if (toExport.size() > 0) {
+            exc.process(toExport);
+            return exc.getProcessResult();
+        } else {
             return null;
         }
-        return exc.getProcessResult();
     }
 }

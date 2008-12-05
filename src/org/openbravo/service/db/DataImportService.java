@@ -19,12 +19,16 @@
 
 package org.openbravo.service.db;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.structure.BaseOBObject;
@@ -35,6 +39,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.xml.EntityXMLProcessor;
 import org.openbravo.dal.xml.XMLEntityConverter;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.module.Module;
@@ -136,7 +141,7 @@ public class DataImportService implements OBSingleton {
      * @see #importDataFromXML(Client, Organization, String)
      */
     public ImportResult importClientData(String xml,
-            ImportProcessor importProcessor, Module module) {
+            EntityXMLProcessor importProcessor, Module module) {
         try {
             final Document doc = DocumentHelper.parseText(xml);
             return importDataFromXML(null, null, doc, true, module,
@@ -150,10 +155,12 @@ public class DataImportService implements OBSingleton {
     private ImportResult importDataFromXML(Client client,
             Organization organization, Document doc,
             boolean createReferencesIfNotFound, Module module,
-            ImportProcessor importProcessor, boolean isClientImport) {
+            EntityXMLProcessor importProcessor, boolean isClientImport) {
 
-        log.debug("Importing data for client " + client.getId()
-                + (organization != null ? "/" + organization.getId() : ""));
+        if (!isClientImport) {
+            log.debug("Importing data for client " + client.getId()
+                    + (organization != null ? "/" + organization.getId() : ""));
+        }
 
         final ImportResult ir = new ImportResult();
 
@@ -168,6 +175,10 @@ public class DataImportService implements OBSingleton {
             xec.setOptionClientImport(isClientImport);
             xec.getEntityResolver().setOptionCreateReferencedIfNotFound(
                     createReferencesIfNotFound);
+            if (isClientImport) {
+                xec.setEntityResolver(ClientImportEntityResolver.getInstance());
+            }
+            xec.setImportProcessor(importProcessor);
             xec.process(doc);
 
             ir.setLogMessages(xec.getLogMessages());
@@ -196,9 +207,11 @@ public class DataImportService implements OBSingleton {
             // so that the objects on which other depend are inserted first
             final List<BaseOBObject> toInsert = xec.getToInsert();
             int done = 0;
+            final Set<BaseOBObject> inserted = new HashSet<BaseOBObject>();
             for (int i = toInsert.size() - 1; i > -1; i--) {
                 final BaseOBObject ins = toInsert.get(i);
-                OBDal.getInstance().save(ins);
+                // for (final BaseOBObject ins : toInsert) {
+                insertObjectGraph(ins, inserted);
                 ir.getInsertedObjects().add(ins);
                 done++;
             }
@@ -226,44 +239,46 @@ public class DataImportService implements OBSingleton {
             OBDal.getInstance().flush();
 
             // store the ad_ref_data_loaded
-            try {
+            if (!isClientImport) {
                 OBContext.getOBContext().setInAdministratorMode(true);
-                for (final BaseOBObject ins : xec.getToInsert()) {
-                    final String originalId = xec.getEntityResolver()
-                            .getOriginalId(ins);
-                    // completely new object, manually added to the xml
-                    if (originalId == null) {
-                        continue;
+                try {
+                    for (final BaseOBObject ins : xec.getToInsert()) {
+                        final String originalId = xec.getEntityResolver()
+                                .getOriginalId(ins);
+                        // completely new object, manually added to the xml
+                        if (originalId == null) {
+                            continue;
+                        }
+                        final ReferenceDataStore rdl = OBProvider.getInstance()
+                                .get(ReferenceDataStore.class);
+                        if (ins instanceof ClientEnabled) {
+                            rdl.setClient(((ClientEnabled) ins).getClient());
+                        }
+                        if (ins instanceof OrganizationEnabled) {
+                            rdl.setOrganization(((OrganizationEnabled) ins)
+                                    .getOrganization());
+                        }
+                        rdl.setGeneric(originalId);
+                        rdl.setSpecific((String) ins.getId());
+                        rdl.setTable(OBDal.getInstance().get(Table.class,
+                                ins.getEntity().getTableId()));
+                        if (module != null) {
+                            rdl.setModule(module);
+                        }
+                        OBDal.getInstance().save(rdl);
                     }
-                    final ReferenceDataStore rdl = OBProvider.getInstance()
-                            .get(ReferenceDataStore.class);
-                    if (ins instanceof ClientEnabled) {
-                        rdl.setClient(((ClientEnabled) ins).getClient());
-                    }
-                    if (ins instanceof OrganizationEnabled) {
-                        rdl.setOrganization(((OrganizationEnabled) ins)
-                                .getOrganization());
-                    }
-                    rdl.setGeneric(originalId);
-                    rdl.setSpecific((String) ins.getId());
-                    rdl.setTable(OBDal.getInstance().get(Table.class,
-                            ins.getEntity().getTableId()));
-                    if (module != null) {
-                        rdl.setModule(module);
-                    }
-                    OBDal.getInstance().save(rdl);
+                    OBDal.getInstance().flush();
+                } finally {
+                    OBContext.getOBContext().restorePreviousAdminMode();
                 }
-                OBDal.getInstance().flush();
-            } finally {
-                if (TriggerHandler.getInstance().isDisabled()) {
-                    TriggerHandler.getInstance().enable();
-                }
-                OBContext.getOBContext().restorePreviousAdminMode();
             }
-
         } catch (final Throwable t) {
             t.printStackTrace(System.err);
             ir.setException(t);
+        } finally {
+            if (TriggerHandler.getInstance().isDisabled()) {
+                TriggerHandler.getInstance().enable();
+            }
         }
 
         if (ir.hasErrorOccured()) {
@@ -271,5 +286,34 @@ public class DataImportService implements OBSingleton {
         }
 
         return ir;
+    }
+
+    // insert an object and all its many-to-one dependencies
+    // which have not been inserted yet
+    // this works fine as long the graph has no cycles
+    // if there are cycles then Hibernate needs to resolve those
+    private void insertObjectGraph(BaseOBObject toInsert,
+            Set<BaseOBObject> inserted) {
+        // prevent infinite looping and don't do the ones we already inserted
+        // in a previous objectgraph
+        if (inserted.contains(toInsert)) {
+            return;
+        }
+        inserted.add(toInsert);
+        final Entity entity = toInsert.getEntity();
+        for (final Property property : entity.getProperties()) {
+            if (!property.isPrimitive() && !property.isOneToMany()) {
+                final Object value = toInsert.get(property.getName());
+                if (value instanceof BaseOBObject
+                        && ((BaseOBObject) value).isNewOBObject()) {
+                    insertObjectGraph((BaseOBObject) value, inserted);
+                }
+            }
+        }
+        try {
+            OBDal.getInstance().save(toInsert);
+        } catch (final Exception e) {
+            throw new OBException(e);
+        }
     }
 }

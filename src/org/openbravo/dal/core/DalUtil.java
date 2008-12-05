@@ -158,14 +158,16 @@ public class DalUtil {
      * @return the id, most of the time a String
      */
     public static Serializable getId(Object o) {
-        if (o instanceof HibernateProxy)
+        if (o instanceof HibernateProxy) {
             return ((HibernateProxy) o).getHibernateLazyInitializer()
                     .getIdentifier();
-        if (o instanceof BaseOBObject)
+        }
+        if (o instanceof BaseOBObject) {
             return (Serializable) ((BaseOBObject) o).getId();
+        }
         throw new ArgumentException(
                 "Argument is not a BaseOBObject and not a HibernateProxy "
-                        + (o != null ? o.getClass().getName() : "NULL"));
+                        + (o != null ? o.getClass().getName() : "it is NULL"));
     }
 
     /**

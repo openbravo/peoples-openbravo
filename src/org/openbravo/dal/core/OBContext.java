@@ -453,13 +453,13 @@ public class OBContext implements OBNotSingleton {
                 log
                         .warn("The user "
                                 + userId
-                                + " does not have write acces to its current organization repairing that");
+                                + " does not have write access to its current organization repairing that");
                 // take the first writableOrganization
                 if (writableOrgs.isEmpty()) {
                     log
                             .warn("The user "
                                     + userId
-                                    + " does not have any write acces to any organization");
+                                    + " does not have any write access to any organization");
                 } else {
                     setCurrentOrganization(SessionHandler.getInstance().find(
                             Organization.class, writableOrgs.iterator().next()));

@@ -23,7 +23,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
-import org.hibernate.cache.HashtableCacheProvider;
+import org.hibernate.cache.EhCacheProvider;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.dialect.PostgreSQLDialect;
@@ -136,7 +136,9 @@ public abstract class SessionFactoryController {
             if (configuration.getProperties().get(Environment.CACHE_PROVIDER) == null) {
                 configuration.getProperties().setProperty(
                         Environment.CACHE_PROVIDER,
-                        HashtableCacheProvider.class.getName());
+                        EhCacheProvider.class.getName());
+                configuration.getProperties().setProperty(
+                        Environment.USE_QUERY_CACHE, "true");
             }
 
             sessionFactory = configuration.buildSessionFactory();

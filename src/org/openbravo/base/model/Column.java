@@ -229,11 +229,6 @@ public class Column extends ModelObject {
                                 + this
                                 + " refers to a non active table or column or to a view"
                                 + thatColumn);
-                System.err
-                        .println("Column "
-                                + this
-                                + " refers to a non active table or column or to a view"
-                                + thatColumn);
                 return false;
             }
         }
@@ -273,8 +268,8 @@ public class Column extends ModelObject {
         if (isPrimitiveType()) {
             typeName = getPrimitiveType().getName();
         } else if (getReferenceType() == null) {
-            System.err.println("ERROR NO REFERENCETYPE " + getTable().getName()
-                    + "." + getColumnName());
+            log.warn("ERROR NO REFERENCETYPE " + getTable().getName() + "."
+                    + getColumnName());
             return "java.lang.Object";
         } else {
             typeName = getReferenceType().getTable().getNotNullClassName();
