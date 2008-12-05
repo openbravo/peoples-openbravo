@@ -30,7 +30,7 @@
 		from
 			ad_table
 		where
-			LOWER(ad_table.name) = LOWER(?)
+			LOWER(ad_table.tablename) = LOWER(?)
         ]]>
         </Sql>
         <Parameter name="tableName"/>
