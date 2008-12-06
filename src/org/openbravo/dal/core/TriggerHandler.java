@@ -87,6 +87,14 @@ public class TriggerHandler {
     }
 
     /**
+     * Clears the SessionStatus from the threadlocal, must be done in case of
+     * rollback
+     */
+    public void clear() {
+        sessionStatus.set(null);
+    }
+
+    /**
      * Enables triggers in the database. It does this by removing the
      * ADSessionStatus from the database.
      */

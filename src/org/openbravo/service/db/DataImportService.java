@@ -164,6 +164,7 @@ public class DataImportService implements OBSingleton {
 
         final ImportResult ir = new ImportResult();
 
+        boolean rolledBack = false;
         try {
             // disable the triggers to prevent unexpected extra db actions
             // during import
@@ -187,6 +188,7 @@ public class DataImportService implements OBSingleton {
 
             if (ir.hasErrorOccured()) {
                 OBDal.getInstance().rollbackAndClose();
+                rolledBack = true;
                 return ir;
             }
 
@@ -198,6 +200,7 @@ public class DataImportService implements OBSingleton {
                     // note on purpose caught and set in ImportResult
                     ir.setErrorMessages(e.getMessage());
                     OBDal.getInstance().rollbackAndClose();
+                    rolledBack = true;
                     return ir;
                 }
             }
@@ -276,7 +279,9 @@ public class DataImportService implements OBSingleton {
             t.printStackTrace(System.err);
             ir.setException(t);
         } finally {
-            if (TriggerHandler.getInstance().isDisabled()) {
+            if (rolledBack) {
+                TriggerHandler.getInstance().clear();
+            } else if (TriggerHandler.getInstance().isDisabled()) {
                 TriggerHandler.getInstance().enable();
             }
         }

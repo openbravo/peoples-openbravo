@@ -126,7 +126,11 @@ public class SessionHandler implements OBNotSingleton {
      *            the object to remove
      */
     public void delete(Object obj) {
-        session.delete(obj);
+        if (Identifiable.class.isAssignableFrom(obj.getClass())) {
+            session.delete(((Identifiable) obj).getEntityName(), obj);
+        } else {
+            session.delete(obj);
+        }
     }
 
     /**
