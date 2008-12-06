@@ -23,6 +23,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
@@ -194,6 +195,13 @@ public class CheckDB extends Task{
                 try {
                     st = connSystem.prepareStatement("SELECT uuid_generate_v1()");
                     result = st.executeQuery();
+                    ResultSetMetaData md = result.getMetaData();
+                    int count = md.getColumnCount();
+                    while (result.next()) {
+                      for (int i=1; i<=count; i++) {
+                        System.out.println(result.getString(i));
+                      }
+                    }
                     result.close();
                     st.close();
                 } catch (final Exception e) { 

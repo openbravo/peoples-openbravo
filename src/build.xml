@@ -104,16 +104,20 @@ build.war: build a war file in the lib directory.
 		</java>
 	</target>
 
-	<target name="clean" depends="trl.clean">
-		<property name="complete" value="true" />
-		<delete includeEmptyDirs="true" failonerror="false">
-			<fileset dir="${base.design}" />
-			<fileset dir="${build}" />
-			<fileset dir="${build.docs}" />
-			<fileset dir="${build.AD}" />
-			<fileset dir="${build.sqlc}" />
-		</delete>
-	</target>
+  <target name="clean" depends="trl.clean">
+    <property name="complete" value="true" />
+    <delete includeEmptyDirs="true" failonerror="false">
+      <fileset dir="${base.design}" />
+      <fileset dir="${build}" />
+      <fileset dir="${build.docs}" />
+      <fileset dir="${build.AD}" />
+      <fileset dir="${build.sqlc}" />
+      <fileset dir="${base.context}">
+        <exclude name=".svn" />
+        <exclude name="META-INF/MANIFEST.MF" />
+      </fileset>
+    </delete>
+  </target>
 
   <target name="sqlc" depends="copy.srcClient">
     <java classname="org.openbravo.data.Sqlc" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}">
