@@ -553,29 +553,4 @@ compare.database.structure: refer to compare.database.structure target of databa
 	<target name="test">
 		  <echo message="testing..."/>
   </target>
-
-  <condition property="shell.extension" value="bin" else="exe">
-    <and>
-      <os family="unix"/>
-    </and>
-  </condition>
-
-  <target name="setup">
-  <echo message="Operating system: ${os.name}"/>
-    <echo message="Architecture: ${os.arch}"/>
-    <echo message="Downloading setup tool..."/>
-  <!--  <get src="http://dev.openbravo.com/svn/packaging/setup/trunk/output/setup-properties-linux.bin" dest="help/index.html"/>-->
-  <echo message="Go to config and run the setup tool"/>
-
-  </target>
-
-  <target name="setup.noos"  description="Setup properties">
-    <input message="Operating system? (linux, freebsd6, hpux, openbsd3, osx, solaris, windows)"
-      addproperty="OS"
-      defaultvalue="linux"/>
-    <echo message="Operating system: ${OS}"/>
-  </target>
-
-
-
 </project>
