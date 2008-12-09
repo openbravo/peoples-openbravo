@@ -742,6 +742,8 @@ public class PrintController extends HttpSecureAppServlet {
         xmlDocument.setParameter("contactEmail", pocData[0].contactEmail);
         xmlDocument.setParameter("salesrepEmail", pocData[0].salesrepEmail);
         xmlDocument.setParameter("salesrepName", pocData[0].salesrepName);
+        xmlDocument.setParameter("inpArchive", vars
+                .getStringParameter("inpArchive"));
         xmlDocument.setParameter("multCusCount", String
                 .valueOf(numberOfCustomers));
         xmlDocument.setParameter("multSalesRepCount", String
@@ -788,6 +790,21 @@ public class PrintController extends HttpSecureAppServlet {
                     "multSalesRepCount" };
         } else {
             discard = new String[] { "multipleCustomer" };
+        }
+
+        // check the templates
+        if (differentDocTypes.size() > 1) { // the templates selector shouldn't
+            // appear
+            if (discard == null) { // Its the only think to hide
+                discard = new String[] { "discardSelect" };
+            } else {
+                final String[] discardAux = new String[discard.length + 1];
+                for (int i = 0; i < discard.length; i++) {
+                    discardAux[0] = discard[0];
+                }
+                discardAux[discard.length] = "discardSelect";
+                return discardAux;
+            }
         }
         return discard;
     }
