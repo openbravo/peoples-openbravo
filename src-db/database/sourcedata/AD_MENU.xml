@@ -4539,7 +4539,7 @@
 <!--315 UPDATEDBY-->
 <!--315-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--315 DESCRIPTION-->
-<!--315-->              <DESCRIPTION><![CDATA[Edit and process purchase orders by assigning them to a corresponding shipment/receipt, invoice, or both.]]></DESCRIPTION>
+<!--315-->              <DESCRIPTION><![CDATA[Track matching between purchase invoice lines and the corresponding shipment/receipt lines.]]></DESCRIPTION>
 <!--315 ISSUMMARY-->
 <!--315-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--315 ACTION-->
@@ -4570,7 +4570,7 @@
 <!--316 UPDATEDBY-->
 <!--316-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--316 DESCRIPTION-->
-<!--316-->              <DESCRIPTION><![CDATA[Edit and process invoices by assigning them to a corresponding shipment/receipt, invoice, or both.]]></DESCRIPTION>
+<!--316-->              <DESCRIPTION><![CDATA[Track matching between purchase order lines and the corresponding shipment/receipt or invoice lines. ]]></DESCRIPTION>
 <!--316 ISSUMMARY-->
 <!--316-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--316 ACTION-->

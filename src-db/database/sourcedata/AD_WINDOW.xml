@@ -259,15 +259,15 @@
 <!--107 CREATEDBY-->
 <!--107-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--107 UPDATED-->
-<!--107-->              <UPDATED><![CDATA[2003-06-15 01:34:44.0]]></UPDATED>
+<!--107-->              <UPDATED><![CDATA[2008-12-09 17:02:49.0]]></UPDATED>
 <!--107 UPDATEDBY-->
-<!--107-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--107-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--107 NAME-->
 <!--107-->              <NAME><![CDATA[Matched Invoices]]></NAME>
 <!--107 DESCRIPTION-->
-<!--107-->              <DESCRIPTION><![CDATA[Edit and process purchase orders by assigning them to a corresponding shipment/receipt, invoice, or both.]]></DESCRIPTION>
+<!--107-->              <DESCRIPTION><![CDATA[Track matching between purchase invoice lines and the corresponding shipment/receipt lines.]]></DESCRIPTION>
 <!--107 HELP-->
-<!--107-->              <HELP><![CDATA[Edit and process purchase orders by assigning them to a corresponding shipment/receipt, invoice, or both.]]></HELP>
+<!--107-->              <HELP><![CDATA[Track matching between purchase invoice lines and the corresponding shipment/receipt lines.]]></HELP>
 <!--107 WINDOWTYPE-->
 <!--107-->              <WINDOWTYPE><![CDATA[Q]]></WINDOWTYPE>
 <!--107 ISSOTRX-->
@@ -2880,15 +2880,15 @@
 <!--228 CREATEDBY-->
 <!--228-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--228 UPDATED-->
-<!--228-->              <UPDATED><![CDATA[2003-06-15 01:28:48.0]]></UPDATED>
+<!--228-->              <UPDATED><![CDATA[2008-12-09 17:03:03.0]]></UPDATED>
 <!--228 UPDATEDBY-->
-<!--228-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--228-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--228 NAME-->
 <!--228-->              <NAME><![CDATA[Matched Purchase Orders]]></NAME>
 <!--228 DESCRIPTION-->
-<!--228-->              <DESCRIPTION><![CDATA[Edit and process invoices by assigning them to a corresponding shipment/receipt, invoice, or both.]]></DESCRIPTION>
+<!--228-->              <DESCRIPTION><![CDATA[Track matching between purchase order lines and the corresponding shipment/receipt or invoice lines. ]]></DESCRIPTION>
 <!--228 HELP-->
-<!--228-->              <HELP><![CDATA[Edit and process invoices by assigning them to a corresponding shipment/receipt, invoice, or both.]]></HELP>
+<!--228-->              <HELP><![CDATA[Track matching between purchase order lines and the corresponding shipment/receipt or invoice lines. ]]></HELP>
 <!--228 WINDOWTYPE-->
 <!--228-->              <WINDOWTYPE><![CDATA[Q]]></WINDOWTYPE>
 <!--228 ISSOTRX-->
