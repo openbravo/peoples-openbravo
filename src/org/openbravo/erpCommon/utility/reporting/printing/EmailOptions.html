@@ -75,7 +75,7 @@
 	
 	function resizeWindow()
 	{
-		window.resizeTo(600,570);
+		window.resizeTo(600,620);
 	}
 	
 	function onLoadDo(){
@@ -190,6 +190,12 @@
 								<tr>
 									<td class="LabelText">@our_ref@:</td><td class="LabelText">The reference of the document</td>
 								</tr>
+								<tr>
+									<td class="LabelText">@cus_nam@:</td><td class="LabelText">The name of the customer</td>
+								</tr>
+								<tr>
+									<td class="LabelText">@sal_nam@:</td><td class="LabelText">The name of the sales rep.</td>
+								</tr>
 								</table>								 
 							</div>
 						</td>
@@ -296,16 +302,16 @@
 							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">Attached Documents</span>
 						</td>	
    						 <td width="7%" colspan="2">
-    						<table cellspacing="0" cellpadding="0" width="50%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
+    						<table cellspacing="0" cellpadding="0" width="60%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
     						<tbody>
     						<tr class="DataGrid_Body_Row"> 
     							<th class="DataGrid_Header_Cell"><span>File name</span></th>
-      							<th width="5" colspan="1" class="DataGrid_Header_Cell" id="fieldPartnerName"><span>Archive</span></th>
+      							<!--th width="5" colspan="1" class="DataGrid_Header_Cell" id="fieldPartnerName"><span>Archive</span><th-->
         					</tr>
     						<div id="sectionDetail">
       						<tr id="funcEvenOddRow" class="DataGrid_Body_Row DataGrid_Body_Row_xx">
-      							<td width="600" class="DataGrid_Body_Cell" id="fieldDocumentno">xx</td>
-								<td width="20" class="DataGrid_Body_Cell">  <span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpOrder" onclick="updateData(this.value, this.checked);return true;" value="" id="fieldCOrderlineId"/></span></td>
+      							<td width="630" class="DataGrid_Body_Cell" id="fieldDocumentno">xx</td>
+								<!--td width="20" class="DataGrid_Body_Cell">  <span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpOrder" onclick="updateData(this.value, this.checked);return true;" value="" id="fieldCOrderlineId"/></span></td -->
          					</tr>
     					</div>
     					</tbody>
