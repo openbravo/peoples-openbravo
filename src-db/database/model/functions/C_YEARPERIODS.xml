@@ -117,8 +117,8 @@
             v_NextNo, v_Client_ID, v_Org_ID, 'Y',
             now(), v_User_ID, now(), v_User_ID,
             v_Year_ID, v_MonthNo, TO_DATE(ADD_MONTHS(v_StartDate, v_MonthNo-1)), 'S',
-            INITCAP(TO_CHAR(TO_DATE(ADD_MONTHS(v_StartDate, v_MonthNo-1)), TO_CHAR('MON'))) ||  '-'||TO_CHAR(TO_DATE(ADD_MONTHS(v_StartDate, v_MonthNo-1)), TO_CHAR('YY'))
-          )
+            (select name from AD_MONTH where TO_NUMBER(value)=v_MonthNo)
+            )
           ;
         DBMS_OUTPUT.PUT_LINE('Month Added') ;
       END IF;
