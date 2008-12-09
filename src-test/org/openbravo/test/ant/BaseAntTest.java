@@ -56,11 +56,12 @@ public class BaseAntTest extends TestCase {
         try {
             final AntExecutor ant = new AntExecutor(getProperty("source.path")
                     + (additionalPath != null ? "/" + additionalPath : ""));
+            ant.setOBPrintStreamLog(System.err);
             // ant.setLogLevel(Project.MSG_INFO);
             // ant.setOBPrintStreamLog(null);// outputLogWriter);
             ant.runTask(task);
             final String result = ant.getErr();
-            if (result.equalsIgnoreCase("Success")) {
+            if (result.indexOf("Success") != -1) {
                 return;
             } else {
                 System.err.println(result);
