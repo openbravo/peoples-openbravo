@@ -20,11 +20,16 @@
 package org.openbravo.service.db;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URL;
+import java.io.FileWriter;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.dal.core.DalContextListener;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.scheduling.ProcessBundle;
 
 /**
@@ -37,28 +42,85 @@ import org.openbravo.scheduling.ProcessBundle;
 
 public class ExportClientProcess implements org.openbravo.scheduling.Process {
 
+    /** The filename of the export file with client data. */
+    public static final String CLIENT_DATA_FILE_NAME = "client_data.xml";
+
+    /** The directory within WEB-INF in which the export file is placed. */
+    public static final String EXPORT_DIR_NAME = "referencedata";
+
+    /**
+     * Returns the export file into which the xml is written or from the export
+     * can be read.
+     */
+    public static File getExportFile() {
+
+        // determine the location where to place the file
+        final String homeDirPath = DalContextListener.getServletContext()
+                .getRealPath("");
+        final File webInfDir = new File(homeDirPath, "WEB-INF");
+        final File exportDir = new File(webInfDir, EXPORT_DIR_NAME);
+        if (!exportDir.exists()) {
+            log.debug("Exportdir " + exportDir.getAbsolutePath()
+                    + " does not exist, creating it");
+            exportDir.mkdirs();
+        }
+
+        return new File(exportDir, CLIENT_DATA_FILE_NAME);
+    }
+
+    private static final Logger log = Logger
+            .getLogger(ExportClientProcess.class);
+
     /**
      * Executes the export process. The expected parameters in the bundle are
      * clientId (denoting the client) and fileLocation giving the full path
      * location of the file in which the data for the export should go.
      */
     public void execute(ProcessBundle bundle) throws Exception {
-
         try {
-            final URL url = org.openbravo.dal.core.DalContextListener
-                    .getServletContext().getResource("/WEB-INF/referencedata");
-            final File file = new File(new URI(url.toString()));
-        } catch (final Exception e) {
-            throw new OBException(e);
-        }
-        for (final String key : bundle.getParams().keySet()) {
-            System.err.println(key + ": " + bundle.getParams().get(key));
-        }
-        final OBError e = new OBError();
-        e.setType("Success");
-        e.setMessage("ClientID:" + bundle.getParams().get("adClientId"));
-        e.setTitle("Done");
+            final String clientId = (String) bundle.getParams().get(
+                    "adClientId");
+            if (clientId == null) {
+                throw new OBException(
+                        "Parameter adClientId not present, is the Client combo displayed in the window?");
+            }
 
-        bundle.setResult(e);
+            log.debug("Exporting client " + clientId);
+
+            // setting parameter for querying
+            final Map<String, Object> params = new HashMap<String, Object>();
+            params.put(DataExportService.CLIENT_ID_PARAMETER_NAME, clientId);
+            log.debug("Reading data from database into in-mem xml string");
+            final String xml = DataExportService.getInstance()
+                    .exportClientToXML(params);
+            log.debug("Done reading data into in-mem xml string");
+
+            final Client client = OBDal.getInstance().get(Client.class,
+                    clientId);
+
+            final File exportFile = getExportFile();
+
+            // write the xml to a file in WEB-INF
+            log.debug("Writing export file " + exportFile.getAbsolutePath());
+            final FileWriter fw = new FileWriter(exportFile);
+            fw.write(xml);
+            fw.close();
+
+            final OBError msg = new OBError();
+            msg.setType("Success");
+            msg.setMessage("Client " + client.getName()
+                    + " has been exported to " + exportFile.getAbsolutePath());
+            msg.setTitle("Done");
+            bundle.setResult(msg);
+
+        } catch (final Exception e) {
+            log.error(e);
+            e.printStackTrace(System.err);
+            final OBError msg = new OBError();
+            msg.setType("Error");
+            msg.setMessage(e.getMessage());
+            msg.setTitle("Done with Errors");
+            bundle.setResult(e);
+        }
     }
 }
