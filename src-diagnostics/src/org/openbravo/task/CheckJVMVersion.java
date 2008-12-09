@@ -25,6 +25,7 @@ import org.apache.tools.ant.Task;
 
 import org.openbravo.utils.PropertiesManager;
 import org.openbravo.utils.ServerConnection;
+import org.openbravo.utils.Version;
 
 public class CheckJVMVersion extends Task {
     static Logger log4j = Logger.getLogger(CheckJVMVersion.class);
