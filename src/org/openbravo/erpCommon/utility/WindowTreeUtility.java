@@ -160,16 +160,18 @@ public class WindowTreeUtility {
     strOnDblClick = Replace.replace(strOnDblClick, "\"", "&quot;");
 
     if (isSummary) {
-      element.append("<li id=\"folder").append((hasChilds?"":"NoChilds")).append(nodeId).append("\"").append((nodeId.equals("0")?" noDrag=\"true\" noSiblings=\"true\" noDelete=\"true\" noRename=\"true\" ":"")).append(">\n");
-      element.append("<a href=\"#\" id=\"folderHref").append((hasChilds?"":"NoChilds")).append(nodeId).append("\"");
+      element.append("<li id=\"folder").append((hasChilds?"":"NoChilds")).append("__").append(nodeId).append("\"").append((nodeId.equals("0")?" noDrag=\"true\" noSiblings=\"true\" noDelete=\"true\" noRename=\"true\" ":"")).append(">\n");
+      element.append("<a href=\"#\" id=\"folderHref").append((hasChilds?"":"NoChilds")).append("__").append(nodeId).append("\"");
+
       if (strOnDblClick!=null && !strOnDblClick.equals("")) {
         element.append(" onclick=\"").append(strOnDblClick).append("return true;\"");
       }
       element.append(">").append(name).append("</a>\n");
       //element.append("</li>\n");
     } else {
-      element.append("<li id=\"").append(windowTypeNico(action)).append(nodeId).append("\" isElement=\"true\"").append(" noChildren=\"true\"").append(">\n");
-      element.append("<a href=\"#\" id=\"child").append(windowTypeNico(action)).append(nodeId).append("\"");
+      element.append("<li id=\"").append(windowTypeNico(action)).append("__").append(nodeId).append("\" isElement=\"true\"").append(" noChildren=\"true\"").append(">\n");
+      element.append("<a href=\"#\" id=\"child").append(windowTypeNico(action)).append("__").append(nodeId).append("\"");
+
       if (strOnDblClick!=null && !strOnDblClick.equals("")) {
         element.append(" onclick=\"").append(strOnDblClick).append("return true;\"");
       }

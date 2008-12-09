@@ -167,7 +167,7 @@ public class WindowTree extends HttpSecureAppServlet {
       if (data[i].parentId.equals(indice)) {
         hayDatos=true;
         String strHijos = generateTree(data, strDireccion, data[i].nodeId, isFirst);
-        strResultado.append(WindowTreeUtility.addNodeElement(data[i].name, data[i].description, CHILD_SHEETS, data[i].issummary.equals("Y"), WindowTreeUtility.windowType(data[i].action), strDireccion, "clickItem(" + data[i].nodeId + ", '" + Replace.replace(data[i].name, "'", "\\'") + "', '" + data[i].issummary + "');", "dblClickItem(" + data[i].nodeId + ");", !strHijos.equals(""), data[i].nodeId, data[i].action));
+        strResultado.append(WindowTreeUtility.addNodeElement(data[i].name, data[i].description, CHILD_SHEETS, data[i].issummary.equals("Y"), WindowTreeUtility.windowType(data[i].action), strDireccion, "clickItem('" + data[i].nodeId + "', '" + Replace.replace(data[i].name, "'", "\\'") + "', '" + data[i].issummary + "');", "dblClickItem('" + data[i].nodeId + "');", !strHijos.equals(""), data[i].nodeId, data[i].action));
         //strResultado.append(WindowTreeUtility.addNodeElement(data[i].name, data[i].description, CHILD_SHEETS, data[i].issummary.equals("Y"), WindowTreeUtility.windowType(data[i].action), strDireccion, "clickItem(" + data[i].nodeId + ", '" + Replace.replace(data[i].name, "'", "\\'") + "', '" + data[i].issummary + "');", "", !strHijos.equals(""), data[i].nodeId, data[i].action));
         strResultado.append(strHijos);
       }

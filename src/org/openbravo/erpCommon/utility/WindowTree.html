@@ -50,16 +50,7 @@ function getKeyField() {
   </script>
   <script language="JavaScript" type="text/javascript">
     function idReplace(id) {
-      var output = id.replace('window','');
-      output = output.replace('folder','');
-      output = output.replace('form','');
-      output = output.replace('parent','');
-      output = output.replace('report','');
-      output = output.replace('NoChilds','');
-      output = output.replace('Href','');
-      output = output.replace('process','');
-      output = output.replace('wf','');
-      output = output.replace('task','');
+      var output = id.substring(id.lastIndexOf("__")+2);
       return output;
     }
 
