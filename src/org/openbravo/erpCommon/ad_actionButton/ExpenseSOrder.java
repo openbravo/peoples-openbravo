@@ -213,11 +213,11 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
             int StdPrecision = Integer.valueOf(strPrecision).intValue();
             int PricePrecision = Integer.valueOf(strPricePrecision).intValue();
             priceActual = (priceactual.equals("")?ZERO:(new BigDecimal(priceactual)));
-            priceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+            priceActual = priceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
             priceList = (pricelist.equals("")?ZERO:(new BigDecimal(pricelist)));
-            priceList.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+            priceList = priceList.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
             priceLimit = (pricelimit.equals("")?ZERO:(new BigDecimal(pricelimit)));
-            priceLimit.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP); 
+            priceLimit = priceLimit.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP); 
             
             //Calculating discount
             if (priceList.doubleValue() == 0.0) discount = ZERO;

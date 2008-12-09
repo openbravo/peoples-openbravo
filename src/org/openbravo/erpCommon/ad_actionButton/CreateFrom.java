@@ -1115,7 +1115,7 @@ void printPageDPManagement(HttpServletResponse response, VariablesSecureApp vars
             price=null;
           }
           BigDecimal LineNetAmt = (new BigDecimal(priceActual)).multiply(new BigDecimal(data[i].id));
-          LineNetAmt.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
+          LineNetAmt = LineNetAmt.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
           try {
             CreateFromInvoiceData.insert(conn, this, strSequence, strKey, vars.getClient(), data[i].adOrgId, vars.getUser(), data[i].cOrderlineId, data[i].mInoutlineId, data[i].description, data[i].mProductId, data[i].cUomId, data[i].id, priceList, priceActual, priceLimit, LineNetAmt.toString(), C_Tax_ID, data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId, priceStd);
           } catch(ServletException ex) {

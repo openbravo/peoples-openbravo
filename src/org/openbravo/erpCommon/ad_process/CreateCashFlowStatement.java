@@ -254,8 +254,8 @@ void printPage(HttpServletResponse response, VariablesSecureApp vars, String str
       if (log4j.isDebugEnabled()) log4j.debug("CreateCashFlowStatement - multiply - strOP1 - " + strOP1 + " - strOP2 - " + strOP2);
       BigDecimal op1 = new BigDecimal(strOP1);
       BigDecimal op2 = new BigDecimal(strOP2);
-      op1.setScale(200);
-      op2.setScale(200);
+      op1 = op1.setScale(200);
+      op2 = op2.setScale(200);
       String strResult = "";
       try{
         strResult = op1.multiply(op2).toString();

@@ -213,11 +213,11 @@ String strProductRMailTextID = "";
        }
        int PricePrecision = Integer.valueOf(strPricePrecision).intValue();
        priceActual = (strPricestd.equals("")?ZERO:(new BigDecimal(strPricestd)));
-       priceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+       priceActual = priceActual.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
        priceList = (strPricelist.equals("")?ZERO:(new BigDecimal(strPricelist)));
-       priceList.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+       priceList = priceList.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
        priceLimit = (strPricelimit.equals("")?ZERO:(new BigDecimal(strPricelimit)));
-       priceLimit.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
+       priceLimit = priceLimit.setScale(PricePrecision, BigDecimal.ROUND_HALF_UP);
        
        strPricestd = priceActual.toString();
        strPricelist = priceList.toString();
