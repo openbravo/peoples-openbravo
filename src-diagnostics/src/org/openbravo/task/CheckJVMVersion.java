@@ -22,9 +22,9 @@ package org.openbravo.task;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-import org.openbravo.utils.PropertiesManager;
-import org.openbravo.utils.ServerConnection;
-import org.openbravo.utils.Version;
+
+import src-diagnostics.src.org.openbravo.utils.PropertiesManager;
+import src-diagnostics.src.org.openbravo.utils.ServerConnection;
 
 public class CheckJVMVersion extends Task {
     static Logger log4j = Logger.getLogger(CheckJVMVersion.class);
@@ -36,7 +36,7 @@ public class CheckJVMVersion extends Task {
         final String jvmVersion = new ServerConnection().getCheck("jvm-version");
         final String minJvmVersion = new PropertiesManager().getProperty("jvm-version");
         
-        final String msg = "Current Tomcat's JVM version: "+jvmVersion+" minimun required version: "+minJvmVersion;
+        final String msg = "Current Tomcat's JVM version: "+jvmVersion+" minimum required version: "+minJvmVersion;
         
         if (Version.compareVersion(jvmVersion, minJvmVersion)<0)
             throw new BuildException(msg);
