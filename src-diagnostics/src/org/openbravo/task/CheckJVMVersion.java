@@ -23,8 +23,8 @@ import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
-import src-diagnostics.src.org.openbravo.utils.PropertiesManager;
-import src-diagnostics.src.org.openbravo.utils.ServerConnection;
+import org.openbravo.utils.PropertiesManager;
+import org.openbravo.utils.ServerConnection;
 
 public class CheckJVMVersion extends Task {
     static Logger log4j = Logger.getLogger(CheckJVMVersion.class);
