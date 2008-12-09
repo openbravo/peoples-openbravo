@@ -19,16 +19,26 @@ dojox.xml.parser.parse = function(/*String*/ str){
 	//		returns a new native XML document from the string provided as the
 	//		single argument to parse(). Parsing errors throw exceptions.
 	if(dojo.isIE){
-		var nativeDoc = new ActiveXObject("Microsoft.XMLDOM");
-		nativeDoc.async = "false";
-		nativeDoc.loadXML(str);
-		var pe = nativeDoc.parseError;
-		if(pe.errorCode !== 0){
-			throw new Error("Line: " + pe.line + "\n" +
-			 	"Col: " + pe.linepos + "\n" +
-				"Reason: " + pe.reason + "\n" + 
-				"Error Code: " + pe.errorCode + "\n" +
-				"Source: " + pe.srcText);
+		var sf = [".DOMDocument", ".XMLDOM"];
+		var dp = ["Microsoft"+sf[1], "MSXML6"+sf[0], "MSXML4"+sf[0], "MSXML3"+sf[0], "MSXML2"+sf[0]];
+		var nativeDoc;
+		dojo.some(dp, function(p){
+			try{
+				nativeDoc = new ActiveXObject(p);
+			}catch(e){ return false; }
+			return true;
+		});
+		if(nativeDoc){
+			nativeDoc.async = "false";
+			nativeDoc.loadXML(str);
+			var pe = nativeDoc.parseError;
+			if(pe.errorCode !== 0){
+				throw new Error("Line: " + pe.line + "\n" +
+					"Col: " + pe.linepos + "\n" +
+					"Reason: " + pe.reason + "\n" + 
+					"Error Code: " + pe.errorCode + "\n" +
+					"Source: " + pe.srcText);
+			}
 		}
 		return nativeDoc; // DomDocument
 	}else{

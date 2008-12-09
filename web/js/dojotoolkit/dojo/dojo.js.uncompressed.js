@@ -163,14 +163,10 @@ djConfig = {
 	// firebug stubs
 
 	if(typeof this["loadFirebugConsole"] == "function"){
-		// Firebug 1.2 is a PITA
+		// for Firebug 1.2
 		this["loadFirebugConsole"]();
 	}else{
-		if(!this["console"]){
-			this.console = {
-				fromDojo: true
-			};
-		}
+		this.console = this.console || {};
 
 		//	Be careful to leave 'log' always at the end
 		var cn = [
@@ -243,12 +239,6 @@ dojo.global = {
 		}
 	}
 
-	var _platforms = ["Browser", "Rhino", "Spidermonkey", "Mobile"];
-	var t;
-	while((t=_platforms.shift())){
-		d["is"+t] = false;
-	}
-
 /*=====
 	// Override locale setting, if specified
 	dojo.locale = {
@@ -257,7 +247,7 @@ dojo.global = {
 =====*/
 	dojo.locale = d.config.locale;
 	
-	var rev = "$Rev: 15719 $".match(/\d+/);
+	var rev = "$Rev: 15812 $".match(/\d+/);
 
 	dojo.version = {
 		// summary: 
@@ -302,7 +292,7 @@ dojo.global = {
 			}
 		}
 		// IE doesn't recognize custom toStrings in for..in
-		if(d["isIE"] && props){
+		if(d.isIE && props){
 			var p = props.toString;
 			if(typeof p == "function" && p != obj.toString && p != tobj.toString &&
 				p != "\nfunction toString() {\n    [native code]\n}\n"){
@@ -3478,7 +3468,7 @@ dojo.provide("dojo._base.event");
 					// which causes isDecendant to return false which causes
 					// spurious, and more importantly, incorrect mouse events to fire.
 					// TODO: remove tagName check when Firefox 2 is no longer supported
-					try{ e.relatedTarget.tagName; } catch(e2){ return; }
+					try{ e.relatedTarget.tagName; }catch(e2){ return; }
 					if(!dojo.isDescendant(e.relatedTarget, node)){
 						// e.type = oname; // FIXME: doesn't take? SJM: event.type is generally immutable.
 						return ofp.call(this, e); 
@@ -3497,7 +3487,7 @@ dojo.provide("dojo._base.event");
 			//		the name of the handler to remove the function from
 			// handle:
 			//		the handle returned from add
-			if (node){
+			if(node){
 				event = del._normalizeEventName(event);
 				if(!dojo.isIE && (event == "mouseenter" || event == "mouseleave")){
 					event = (event == "mouseenter") ? "mouseover" : "mouseout";
@@ -3588,7 +3578,7 @@ dojo.provide("dojo._base.event");
 		var isNode = obj && (obj.nodeType||obj.attachEvent||obj.addEventListener);
 		// choose one of three listener options: raw (connect.js), DOM event on a Node, custom event on a Node
 		// we need the third option to provide leak prevention on broken browsers (IE)
-		var lid = !isNode ? 0 : (!dontFix ? 1 : 2), l = [dojo._listener, del, node_listener][lid];
+		var lid = isNode ? (dontFix ? 2 : 1) : 0, l = [dojo._listener, del, node_listener][lid];
 		// create a listener
 		var h = l.add(obj, event, dojo.hitch(context, method));
 		// formerly, the disconnect package contained "l" directly, but if client code
@@ -3684,7 +3674,7 @@ dojo.provide("dojo._base.event");
 
 		// by default, use the standard listener
 		var iel = dojo._listener;
-		var listenersName = dojo._ieListenersName = "_" + dojo._scopeName + "_listeners";
+		var listenersName = (dojo._ieListenersName = "_" + dojo._scopeName + "_listeners");
 		// dispatcher tracking property
 		if(!dojo.config._allow_leaks){
 			// custom listener that handles leak protection for DOM events
@@ -3824,7 +3814,7 @@ dojo.provide("dojo._base.event");
 				var k=evt.keyCode;
 				// These are Windows Virtual Key Codes
 				// http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/WinUI/WindowsUserInterface/UserInput/VirtualKeyCodes.asp
-				var unprintable = (k!=13)&&(k!=32)&&(k!=27)&&(k<48||k>90)&&(k<96||k>111)&&(k<186||k>192)&&(k<219||k>222);
+				var unprintable = k!=13 && k!=32 && k!=27 && (k<48||k>90) && (k<96||k>111) && (k<186||k>192) && (k<219||k>222);
 				// synthesize keypress for most unprintables and CTRL-keys
 				if(unprintable||evt.ctrlKey){
 					var c = unprintable ? 0 : k;
@@ -3895,8 +3885,8 @@ dojo.provide("dojo._base.event");
 						}
 						// can't trap some keys at all, like INSERT and DELETE
 						// there is no differentiating info between DELETE and ".", or INSERT and "-"
-						c = ((c<41)&&(!evt.shiftKey) ? 0 : c);
-						if((evt.ctrlKey)&&(!evt.shiftKey)&&(c>=65)&&(c<=90)){
+						c = c<41 && !evt.shiftKey ? 0 : c;
+						if(evt.ctrlKey && !evt.shiftKey && c>=65 && c<=90){
 							// lowercase CTRL-[A-Z] keys
 							c += 32;
 						}
@@ -3907,8 +3897,8 @@ dojo.provide("dojo._base.event");
 		});
 	}
 
-	// Safari event normalization
-	if(dojo.isSafari){
+	// Webkit event normalization
+	if(dojo.isWebKit){
 		del._add = del.add;
 		del._remove = del.remove;
 
@@ -3926,16 +3916,16 @@ dojo.provide("dojo._base.event");
 						var k=evt.keyCode;
 						// These are Windows Virtual Key Codes
 						// http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/WinUI/WindowsUserInterface/UserInput/VirtualKeyCodes.asp
-						var unprintable = (k!=13)&&(k!=32)&&(k!=27)&&(k<48||k>90)&&(k<96||k>111)&&(k<186||k>192)&&(k<219||k>222);
+						var unprintable = k!=13 && k!=32 && k!=27 && (k<48 || k>90) && (k<96 || k>111) && (k<186 || k>192) && (k<219 || k>222);
 						// synthesize keypress for most unprintables and CTRL-keys
-						if(unprintable||evt.ctrlKey){
+						if(unprintable || evt.ctrlKey){
 							var c = unprintable ? 0 : k;
 							if(evt.ctrlKey){
 								if(k==3 || k==13){
 									return; // IE will post CTRL-BREAK, CTRL-ENTER as keypress natively 
 								}else if(c>95 && c<106){ 
 									c -= 48; // map CTRL-[numpad 0-9] to ASCII
-								}else if((!evt.shiftKey)&&(c>=65&&c<=90)){ 
+								}else if(!evt.shiftKey && c>=65 && c<=90){ 
 									c += 32; // map CTRL-[A-Z] to lowercase
 								}else{ 
 									c = del._punctMap[c] || c; // map other problematic CTRL combinations to ASCII
@@ -3963,7 +3953,7 @@ dojo.provide("dojo._base.event");
 					case "keypress":
 						if(evt.faux){ return evt; }
 						var c = evt.charCode;
-						c = c>=32? c : 0;
+						c = c>=32 ? c : 0;
 						return del._synthesizeEvent(evt, {charCode: c, faux: true});
 				}
 				return evt;
@@ -4070,7 +4060,7 @@ if(dojo.isIE || dojo.isOpera){
 	var d = dojo;
 
 	var _destroyContainer = null;
-	dojo.addOnWindowUnload(function(){
+	d.addOnWindowUnload(function(){
 		_destroyContainer=null; //prevent IE leak
 	});
 
@@ -4385,7 +4375,7 @@ if(dojo.isIE || dojo.isOpera){
 
 		// on IE7 Alpha(Filter opacity=100) makes text look fuzzy so disable it altogether (bug #2661),
 		//but still update the opacity value so we can get a correct reading if it is read later.
-		af(node, 1).Enabled = (opacity == 1 ? false : true);
+		af(node, 1).Enabled = !(opacity == 1);
 
 		if(!af(node)){
 			node.style.filter += " progid:"+astr+"(Opacity="+ov+")";
@@ -4773,7 +4763,7 @@ if(dojo.isIE || dojo.isOpera){
 		// box functions will break.
 		
 		var n = node.tagName;
-		return d.boxModel=="border-box" || n=="TABLE" || dojo._isButtonTag(node); // boolean
+		return d.boxModel=="border-box" || n=="TABLE" || d._isButtonTag(node); // boolean
 	}
 
 	dojo._setContentSize = function(/*DomNode*/node, /*Number*/widthPx, /*Number*/heightPx, /*Object*/computedStyle){
@@ -4803,11 +4793,11 @@ if(dojo.isIE || dojo.isOpera){
 		// Controlling box-model is harder, in a pinch you might set dojo.boxModel.
 		var bb=d._usesBorderBox(node),
 				pb=bb ? _nilExtents : d._getPadBorderExtents(node, s);
-		if (dojo.isSafari) {
+		if(d.isSafari){
 			// on Safari (3.1.2), button nodes with no explicit size have a default margin
 			// setting an explicit size eliminates the margin.
 			// We have to swizzle the width to get correct margin reading.
-			if (dojo._isButtonTag(node)){
+			if(d._isButtonTag(node)){
 				var ns = node.style;
 				if (widthPx>=0 && !ns.width) { ns.width = "4px"; }
 				if (heightPx>=0 && !ns.height) { ns.height = "4px"; }
@@ -4901,9 +4891,8 @@ if(dojo.isIE || dojo.isOpera){
 	
 	dojo._isBodyLtr = function(){
 		//FIXME: could check html and body tags directly instead of computed style?  need to ignore case, accept empty values
-		return !("_bodyLtr" in d) ? 
-			d._bodyLtr = gcs(d.body()).direction == "ltr" :
-			d._bodyLtr; // Boolean 
+		return ("_bodyLtr" in d) ? d._bodyLtr :
+			d._bodyLtr = gcs(d.body()).direction == "ltr"; // Boolean 
 	}
 	
 	dojo._getIeDocumentElementOffset = function(){
@@ -4924,13 +4913,19 @@ if(dojo.isIE || dojo.isOpera){
 		var de = d.doc.documentElement;
 		//FIXME: use this instead?			var de = d.compatMode == "BackCompat" ? d.body : d.documentElement;
 
-		return (d.isIE >= 7) ?
-			{x: de.getBoundingClientRect().left, y: de.getBoundingClientRect().top}
-		:
-			// IE 6.0
-			{x: d._isBodyLtr() || window.parent == window ?
+		if(d.isIE == 6){
+			return {x: d._isBodyLtr() || _getIeDocumentElementOffsetwindow.parent == window ?
 				de.clientLeft : de.offsetWidth - de.clientWidth - de.clientLeft, 
 				y: de.clientTop}; // Object
+		}else if(d.isIE == 7){
+			return {x: de.getBoundingClientRect().left, y: de.getBoundingClientRect().top};
+		}else{
+			return {
+				x: de.getBoundingClientRect().left - de.offsetLeft + de.scrollLeft,
+				y: de.getBoundingClientRect().top - de.offsetTop + de.scrollTop
+			};
+		}
+
 	};
 	
 	dojo._fixIeBiDiScrollLeft = function(/*Integer*/ scrollLeft){
@@ -4939,7 +4934,7 @@ if(dojo.isIE || dojo.isOpera){
 		// must call this function to fix this error, otherwise the position
 		// will offset to right when there is a horizontal scrollbar.
 		var dd = d.doc;
-		if(d.isIE && !dojo._isBodyLtr()){
+		if(d.isIE && !d._isBodyLtr()){
 			var de = dd.compatMode == "BackCompat" ? dd.body : dd.documentElement;
 			return scrollLeft + de.clientWidth - de.scrollWidth; // Integer
 		}
@@ -4961,26 +4956,36 @@ if(dojo.isIE || dojo.isOpera){
 		// FIXME: need to decide in the brave-new-world if we're going to be
 		// margin-box or border-box.
 		var ownerDocument = node.ownerDocument;
-		var ret = {
-			x: 0,
-			y: 0
-		};
+		var ret;
 
 		// targetBoxType == "border-box"
-		var db = d.body();
-		if(d.isIE || (d.isFF >= 3)){
+		var db = d.body(), dh = d.body().parentNode;
+		if(node["getBoundingClientRect"]){
+			// IE6+, FF3+, and Opera 9.6+ all take this branch
 			var client = node.getBoundingClientRect();
-			var cs;
-			if(d.isFF){
-				// in FF3 you have to subract the document element margins
-				var dv = node.ownerDocument.defaultView;
-				cs=dv.getComputedStyle(db.parentNode, null);
+			ret = { x: client.left, y: client.top };
+			if(d.isFF >= 3){
+				// in FF3 you have to subtract the document element margins
+				var cs = gcs(dh);
+				ret.x -= px(dh, cs.marginLeft);
+				ret.y -= px(dh, cs.marginTop);
 			}
-			var offset = (d.isIE) ? d._getIeDocumentElementOffset() : { x: px(db.parentNode,cs.marginLeft), y: px(db.parentNode,cs.marginTop)};
-			ret.x = client.left - offset.x;
-			ret.y = client.top - offset.y;
+			if(d.isIE){
+				// On IE there's a 2px offset that we need to adjust for, see _getIeDocumentElementOffset()
+				var offset = d._getIeDocumentElementOffset();
+				ret.x -= offset.x;
+				ret.y -= offset.y;
+			}
 		}else{
+			// FF2 and Safari
+			ret = {
+				x: 0,
+				y: 0
+			};
 			if(node["offsetParent"]){
+				ret.x -= _sumAncestorProperties(node, "scrollLeft");
+				ret.y -= _sumAncestorProperties(node, "scrollTop");
+
 				var endNode;
 				// in Safari, if the node is an absolutely positioned child of
 				// the body and the body has a margin the offset of the child
@@ -4993,43 +4998,31 @@ if(dojo.isIE || dojo.isOpera){
 					(node.parentNode == db)){
 					endNode = db;
 				}else{
-					endNode = db.parentNode;
+					endNode = dh;
 				}
-				// Opera seems to be double counting for some elements
-				var cs=gcs(node);
-				var n=node;
-				if(d.isOpera&&cs.position!="absolute"){
-					n=n.offsetParent;
-				}
-				ret.x -= _sumAncestorProperties(n, "scrollLeft");
-				ret.y -= _sumAncestorProperties(n, "scrollTop");
 
 				var curnode = node;
 				do{
-					var n = curnode.offsetLeft;
-					//FIXME: ugly hack to workaround the submenu in 
-					//popupmenu2 does not shown up correctly in opera. 
-					//Someone have a better workaround?
-					if(!d.isOpera || n > 0){
-						ret.x += isNaN(n) ? 0 : n;
-					}
-					var t = curnode.offsetTop;
+					var n = curnode.offsetLeft,
+						t = curnode.offsetTop;
+					ret.x += isNaN(n) ? 0 : n;
 					ret.y += isNaN(t) ? 0 : t;
+
 					var cs = gcs(curnode);
 					if(curnode != node){
-						if(d.isSafari){
-							ret.x += px(curnode, cs.borderLeftWidth);
-							ret.y += px(curnode, cs.borderTopWidth);
-						}else if(d.isFF){
+						if(d.isFF){
 							// tried left+right with differently sized left/right borders
 							// it really is 2xleft border in FF, not left+right, even in RTL!
 							ret.x += 2*px(curnode,cs.borderLeftWidth);
 							ret.y += 2*px(curnode,cs.borderTopWidth);
+						}else{
+							ret.x += px(curnode, cs.borderLeftWidth);
+							ret.y += px(curnode, cs.borderTopWidth);
 						}
 					}
 					// static children in a static div in FF2 are affected by the div's border as well
 					// but offsetParent will skip this div!
-					if(d.isFF&&cs.position=="static"){
+					if(d.isFF && cs.position=="static"){
 						var parent=curnode.parentNode;
 						while(parent!=curnode.offsetParent){
 							var pcs=gcs(parent);
@@ -5052,8 +5045,8 @@ if(dojo.isIE || dojo.isOpera){
 		// so we may have to actually remove that value if !includeScroll
 		if(includeScroll){
 			var scroll = d._docScroll();
-			ret.y += scroll.y;
 			ret.x += scroll.x;
+			ret.y += scroll.y;
 		}
 
 		return ret; // object
@@ -5245,11 +5238,11 @@ if(dojo.isIE || dojo.isOpera){
 				_evtHdlrMap[attrId][name] = d.connect(node, name, value);
 
 			}else if(
-				(typeof value == "boolean")|| // e.g. onsubmit, disabled
-				(name == "innerHTML")
+				typeof value == "boolean" || // e.g. onsubmit, disabled
+				name == "innerHTML"
 			){
 				node[name] = value;
-			}else if((name == "style")&&(!d.isString(value))){
+			}else if(name == "style" && !d.isString(value)){
 				d.style(node, value);
 			}else{
 				node.setAttribute(name, value);
@@ -6026,7 +6019,7 @@ if(dojo){
 
 		// iterate over the query, charachter by charachter, building up a 
 		// list of query part objects
-		for(; lc=cc, cc=query.charAt(x),x<ql; x++){
+		for(; lc = cc, cc = query.charAt(x), x < ql; x++){
 			//		cc: the current character in the match
 			//		lc: the last charachter (if any)
 
@@ -6341,7 +6334,7 @@ if(dojo){
 			}
 			return ret;
 		}
-		return _xpathFuncCache[path] = tf;
+		return (_xpathFuncCache[path] = tf);
 	};
 
 	/*
@@ -6386,7 +6379,7 @@ if(dojo){
 	var _nextSiblings = function(root, single){
 		var ret = [];
 		var te = root;
-		while(te = te.nextSibling){
+		while((te = te.nextSibling)){
 			if(te.nodeType == 1){
 				ret.push(te);
 				if(single){ break; }
@@ -6843,26 +6836,14 @@ if(dojo){
 		if(query.tag && query.id && !query.hasLoops){
 			// we got a filtered ID search (e.g., "h4#thinger")
 			retFunc = function(root){
-				var te = d.byId(query.id, (root.ownerDocument||root)); //root itself may be a document
+				var te = d.byId(query.id, root.ownerDocument || root); //root itself may be a document
 				if(filterFunc(te)){
 					return [ te ];
 				}
 			}
 		}else{
-			var tret;
-
-			if(!query.hasLoops){
-				// it's just a plain-ol elements-by-tag-name query from the root
-				retFunc = function(root){
-					var ret = [];
-					var te, x=0, tret = root.getElementsByTagName(query[ caseSensitive ? "otag" : "tag"]);
-					while((te = tret[x++])){
-						ret.push(te);
-					}
-					return ret;
-				}
-			}else{
-				retFunc = function(root){
+			retFunc = query.hasLoops ?
+				function(root){
 					var ret = [];
 					var te, x = 0, tret = root.getElementsByTagName(query[ caseSensitive ? "otag" : "tag"]);
 					while((te = tret[x++])){
@@ -6872,7 +6853,16 @@ if(dojo){
 					}
 					return ret;
 				}
-			}
+			:
+				// it's just a plain-ol elements-by-tag-name query from the root
+				function(root){
+					var ret = [];
+					var te, x=0, tret = root.getElementsByTagName(query[ caseSensitive ? "otag" : "tag"]);
+					while((te = tret[x++])){
+						ret.push(te);
+					}
+					return ret;
+				};
 		}
 		return _getElementsFuncCache[query.query] = retFunc;
 	}
@@ -6935,7 +6925,7 @@ if(dojo){
 		//		function to determine on the fly if we should stick w/ the
 		//		potentially optimized variant or if we should try something
 		//		new.
-		(document["evaluate"] && !d.isSafari) ? 
+		(document["evaluate"] && !d.isWebKit) ? 
 		function(query, root){
 			// has xpath support that's faster than DOM
 			var qparts = query.split(" ");
@@ -6981,19 +6971,6 @@ if(dojo){
 	// future
 	var getQueryFunc = function(query){
 		// return a cached version if one is available
-		var qcz = query.charAt(0);
-		if(getDoc()["querySelectorAll"] && 
-			( (!d.isSafari) || (d.isSafari > 3.1) ) && // see #5832
-			// as per CSS 3, we can't currently start w/ combinator:
-			//		http://www.w3.org/TR/css3-selectors/#w3cselgrammar
-			(">+~".indexOf(qcz) == -1)
-		){
-			return function(root){
-				var r = root.querySelectorAll(query);
-				r.nozip = true; // skip expensive duplication checks and just wrap in a NodeList
-				return r;
-			};
-		}
 		if(_queryFuncCache[query]){ return _queryFuncCache[query]; }
 		if(0 > query.indexOf(",")){
 			// if it's not a compound query (e.g., ".foo, .bar"), cache and return a dispatcher
@@ -7457,8 +7434,8 @@ dojo.provide("dojo._base.xhr");
 	dojo._blockAsync = false;
 
 	dojo._contentHandlers = {
-		"text": function(xhr){ return xhr.responseText; },
-		"json": function(xhr){
+		text: function(xhr){ return xhr.responseText; },
+		json: function(xhr){
 			return _d.fromJson(xhr.responseText || null);
 		},
 		"json-comment-filtered": function(xhr){ 
@@ -7481,16 +7458,18 @@ dojo.provide("dojo._base.xhr");
 			}
 			return _d.fromJson(value.substring(cStartIdx+2, cEndIdx));
 		},
-		"javascript": function(xhr){ 
+		javascript: function(xhr){ 
 			// FIXME: try Moz and IE specific eval variants?
 			return _d.eval(xhr.responseText);
 		},
-		"xml": function(xhr){
+		xml: function(xhr){
 			var result = xhr.responseXML;
 			if(_d.isIE && (!result || !result.documentElement)){
-				_d.some(["MSXML2", "Microsoft", "MSXML", "MSXML3"], function(prefix){
+				var ms = function(n){ return "MSXML" + n + ".DOMDocument"; }
+				var dp = ["Microsoft.XMLDOM", ms(6), ms(4), ms(3), ms(2)];
+				_d.some(dp, function(p){
 					try{
-						var dom = new ActiveXObject(prefix + ".XMLDOM");
+						var dom = new ActiveXObject(p);
 						dom.async = false;
 						dom.loadXML(xhr.responseText);
 						result = dom;
@@ -8001,7 +7980,7 @@ dojo.provide("dojo._base.fx");
 */
 (function(){ 
 
-	var d = dojo;
+	var d = dojo, _mixin = d.mixin;
 	
 	dojo._Line = function(/*int*/ start, /*int*/ end){
 		//	summary:
@@ -8013,11 +7992,11 @@ dojo.provide("dojo._base.fx");
 		//		Ending value for range
 		this.start = start;
 		this.end = end;
-		this.getValue = function(/*float*/ n){
-			//	summary: returns the point on the line
-			//	n: a floating point number greater than 0 and less than 1
-			return ((this.end - this.start) * n) + this.start; // Decimal
-		}
+	}
+	dojo._Line.prototype.getValue = function(/*float*/ n){
+		//	summary: Returns the point on the line
+		//	n: a floating point number greater than 0 and less than 1
+		return ((this.end - this.start) * n) + this.start; // Decimal
 	}
 	
 	d.declare("dojo._Animation", null, {
@@ -8029,7 +8008,7 @@ dojo.provide("dojo._base.fx");
 		//		call .play() on instances of dojo._Animation when one is
 		//		returned.
 		constructor: function(/*Object*/ args){
-			d.mixin(this, args);
+			_mixin(this, args);
 			if(d.isArray(this.curve)){
 				/* curve: Array
 					pId: a */
@@ -8139,6 +8118,7 @@ dojo.provide("dojo._base.fx");
 			//		If true, starts the animation from the beginning; otherwise,
 			//		starts it from its current position.
 			var _t = this;
+			if(_t._delayTimer){ _t._clearTimer(); }
 			if(gotoStart){
 				_t._stopTimer();
 				_t._active = _t._paused = false;
@@ -8149,10 +8129,11 @@ dojo.provide("dojo._base.fx");
 	
 			_t._fire("beforeBegin");
 	
-			var de = delay||_t.delay;
-			var _p = dojo.hitch(_t, "_play", gotoStart);
+			var de = delay || _t.delay,
+				_p = dojo.hitch(_t, "_play", gotoStart);
+				
 			if(de > 0){
-				setTimeout(_p, de);
+				_t._delayTimer = setTimeout(_p, de);
 				return _t; // dojo._Animation
 			}
 			_p();
@@ -8161,6 +8142,7 @@ dojo.provide("dojo._base.fx");
 	
 		_play: function(gotoStart){
 			var _t = this;
+			if(_t._delayTimer){ _t._clearTimer(); }
 			_t._startTime = new Date().valueOf();
 			if(_t._paused){
 				_t._startTime -= _t.duration * _t._percent;
@@ -8186,11 +8168,13 @@ dojo.provide("dojo._base.fx");
 	
 		pause: function(){
 			// summary: Pauses a running animation.
-			this._stopTimer();
-			if(!this._active){ return this; /*dojo._Animation*/ }
-			this._paused = true;
-			this._fire("onPause", [this.curve.getValue(this._percent)]);
-			return this; // dojo._Animation
+			var _t = this;
+			if(_t._delayTimer){ _t._clearTimer(); }
+			_t._stopTimer();
+			if(!_t._active){ return _t; /*dojo._Animation*/ }
+			_t._paused = true;
+			_t._fire("onPause", [_t.curve.getValue(_t._percent)]);
+			return _t; // dojo._Animation
 		},
 	
 		gotoPercent: function(/*Decimal*/ percent, /*Boolean?*/ andPlay){
@@ -8200,24 +8184,27 @@ dojo.provide("dojo._base.fx");
 			//		A percentage in decimal notation (between and including 0.0 and 1.0).
 			//	andPlay:
 			//		If true, play the animation after setting the progress.
-			this._stopTimer();
-			this._active = this._paused = true;
-			this._percent = percent;
-			if(andPlay){ this.play(); }
-			return this; // dojo._Animation
+			var _t = this;
+			_t._stopTimer();
+			_t._active = _t._paused = true;
+			_t._percent = percent;
+			if(andPlay){ _t.play(); }
+			return _t; // dojo._Animation
 		},
 	
 		stop: function(/*boolean?*/ gotoEnd){
 			// summary: Stops a running animation.
 			// gotoEnd: If true, the animation will end.
-			if(!this._timer){ return this; /* dojo._Animation */ }
-			this._stopTimer();
+			var _t = this;
+			if(_t._delayTimer){ _t._clearTimer(); }
+			if(!_t._timer){ return _t; /* dojo._Animation */ }
+			_t._stopTimer();
 			if(gotoEnd){
-				this._percent = 1;
+				_t._percent = 1;
 			}
-			this._fire("onStop", [this.curve.getValue(this._percent)]);
-			this._active = this._paused = false;
-			return this; // dojo._Animation
+			_t._fire("onStop", [_t.curve.getValue(_t._percent)]);
+			_t._active = _t._paused = false;
+			return _t; // dojo._Animation
 		},
 	
 		status: function(){
@@ -8269,15 +8256,23 @@ dojo.provide("dojo._base.fx");
 				}
 			}
 			return _t; // dojo._Animation
+		},
+		
+		_clearTimer: function(){
+			// summary: Clear the play delay timer
+			clearTimeout(this._delayTimer);
+			delete this._delayTimer;
 		}
+		
 	});
 
-	var ctr = 0;
-	var _globalTimerList = [];
-	var runner = {
-		run: function(){ }
-	};
-	var timer = null;
+	var ctr = 0,
+		_globalTimerList = [],
+		timer = null,
+		runner = {
+			run: function(){ }
+		};
+
 	dojo._Animation.prototype._startTimer = function(){
 		// this._timer = setTimeout(dojo.hitch(this, "_cycle"), this.rate);
 		if(!this._timer){
@@ -8320,8 +8315,9 @@ dojo.provide("dojo._base.fx");
 		//		args.end) (end is mandatory, start is optional)
 
 		args.node = d.byId(args.node);
-		var fArgs = d.mixin({ properties: {} }, args);
-		var props = (fArgs.properties.opacity = {});
+		var fArgs = _mixin({ properties: {} }, args),
+		 	props = (fArgs.properties.opacity = {});
+		
 		props.start = !("start" in fArgs) ?
 			function(){ 
 				return Number(d.style(fArgs.node, "opacity")||0); 
@@ -8352,14 +8348,14 @@ dojo.provide("dojo._base.fx");
 		// summary: 
 		//		Returns an animation that will fade node defined in 'args' from
 		//		its current opacity to fully opaque.
-		return d._fade(d.mixin({ end: 1 }, args)); // dojo._Animation
+		return d._fade(_mixin({ end: 1 }, args)); // dojo._Animation
 	}
 
 	dojo.fadeOut = function(/*dojo.__FadeArgs*/  args){
 		// summary: 
 		//		Returns an animation that will fade node defined in 'args'
 		//		from its current opacity to fully transparent.
-		return d._fade(d.mixin({ end: 0 }, args)); // dojo._Animation
+		return d._fade(_mixin({ end: 0 }, args)); // dojo._Animation
 	}
 
 	dojo._defaultEasing = function(/*Decimal?*/ n){
@@ -8380,19 +8376,20 @@ dojo.provide("dojo._base.fx");
 				prop.tempColor = new d.Color();
 			}
 		}
-		this.getValue = function(r){
-			var ret = {};
-			for(var p in this._properties){
-				var prop = this._properties[p];
-				var start = prop.start;
-				if(start instanceof d.Color){
-					ret[p] = d.blendColors(start, prop.end, r, prop.tempColor).toCss();
-				}else if(!d.isArray(start)){
-					ret[p] = ((prop.end - start) * r) + start + (p != "opacity" ? prop.units||"px" : 0);
-				}
+	}
+
+	PropLine.prototype.getValue = function(r){
+		var ret = {};
+		for(var p in this._properties){
+			var prop = this._properties[p],
+				start = prop.start;
+			if(start instanceof d.Color){
+				ret[p] = d.blendColors(start, prop.end, r, prop.tempColor).toCss();
+			}else if(!d.isArray(start)){
+				ret[p] = ((prop.end - start) * r) + start + (p != "opacity" ? prop.units || "px" : 0);
 			}
-			return ret;
 		}
+		return ret;
 	}
 
 	/*=====
@@ -8490,7 +8487,7 @@ dojo.provide("dojo._base.fx");
 					this.node.display = "block";
 				}
 				var prop = this.properties[p];
-				prop = pm[p] = d.mixin({}, (d.isObject(prop) ? prop: { end: prop }));
+				prop = pm[p] = _mixin({}, (d.isObject(prop) ? prop: { end: prop }));
 
 				if(d.isFunction(prop.start)){
 					prop.start = prop.start();
@@ -8504,7 +8501,7 @@ dojo.provide("dojo._base.fx");
 					var v = ({height: node.offsetHeight, width: node.offsetWidth})[p];
 					if(v !== undefined){ return v; }
 					v = d.style(node, p);
-					return (p=="opacity") ? Number(v) : (isColor ? v : parseFloat(v));
+					return (p == "opacity") ? Number(v) : (isColor ? v : parseFloat(v));
 				}
 				if(!("end" in prop)){
 					prop.end = getStyle(this.node, p);
@@ -9753,17 +9750,14 @@ dijit.getViewport = function(){
 		}
 		w = (maxw > _window.innerWidth) ? minw : maxw;
 		h = (maxh > _window.innerHeight) ? minh : maxh;
-	}else if(!dojo.isOpera &&  _window.innerWidth){
-		//in opera9, dojo.body().clientWidth should be used, instead
-		//of window.innerWidth/document.documentElement.clientWidth
-		//so we have to check whether it is opera
+	}else if(_window.innerWidth){
 		w = _window.innerWidth;
 		h = _window.innerHeight;
 	}else if(dojo.isIE && de && deh){
 		w = dew;
 		h = deh;
 	}else if(dojo.body().clientWidth){
-		// IE5, Opera
+		// IE6?  If this isn't here then viewport.html fails
 		w = dojo.body().clientWidth;
 		h = dojo.body().clientHeight;
 	}
@@ -9938,7 +9932,7 @@ dijit.placeOnScreenAroundNode = function(
 	var oldDisplay = aroundNode.style.display;
 	aroundNode.style.display="";
 	// #3172: use the slightly tighter border box instead of marginBox
-	var aroundNodeW = aroundNode.offsetWidth; //mb.w;
+	var aroundNodeW = (dojo.isIE == 8 && aroundNode.tagName == "TR") ? aroundNode.parentNode.parentNode.offsetWidth : aroundNode.offsetWidth; // IE8 bug see #8095
 	var aroundNodeH = aroundNode.offsetHeight; //mb.h;
 	var aroundNodePos = dojo.coords(aroundNode, true);
 	aroundNode.style.display=oldDisplay;
@@ -10085,7 +10079,6 @@ dojo.provide("dijit._base.popup");
 dijit.popup = new function(){
 	// summary:
 	//		This class is used to show/hide widgets as popups.
-	//
 
 	var stack = [],
 		beginZIndex=1000,
@@ -10112,36 +10105,47 @@ dijit.popup = new function(){
 		s.top = "-9999px";
 	};
 
-	this.open = function(/*Object*/ args){
+/*=====
+dijit.popup.__OpenArgs = function(){
+	//		popup: Widget
+	//			widget to display
+	//		parent: Widget
+	//			the button etc. that is displaying this popup
+	//		around: DomNode
+	//			DOM node (typically a button); place popup relative to this node
+	//		orient: Object
+	//			structure specifying possible positions of popup relative to "around" node
+	//		onCancel: Function
+	//			callback when user has canceled the popup by
+	//				1. hitting ESC or
+	//				2. by using the popup widget's proprietary cancel mechanism (like a cancel button in a dialog);
+	//				   ie: whenever popupWidget.onCancel() is called, args.onCancel is called
+	//		onClose: Function
+	//			callback whenever this popup is closed
+	//		onExecute: Function
+	//			callback when user "executed" on the popup/sub-popup by selecting a menu choice, etc. (top menu only)
+	this.popup = popup;
+	this.parent = parent;
+	this.around = around;
+	this.orient = orient;
+	this.onCancel = onCancel;
+	this.onClose = onClose;
+	this.onExecute = onExecute;
+}
+=====*/
+	this.open = function(/*dijit.popup.__OpenArgs*/ args){
 		// summary:
 		//		Popup the widget at the specified position
 		//
-		// args: Object
-		//		popup: Widget
-		//			widget to display,
-		//		parent: Widget
-		//			the button etc. that is displaying this popup
-		//		around: DomNode
-		//			DOM node (typically a button); place popup relative to this node
-		//		orient: Object
-		//			structure specifying possible positions of popup relative to "around" node
-		//		onCancel: Function
-		//			callback when user has canceled the popup by
-		//				1. hitting ESC or
-		//				2. by using the popup widget's proprietary cancel mechanism (like a cancel button in a dialog);
-		//				   ie: whenever popupWidget.onCancel() is called, args.onCancel is called
-		//		onClose: Function
-		//			callback whenever this popup is closed
-		//		onExecute: Function
-		//			callback when user "executed" on the popup/sub-popup by selecting a menu choice, etc. (top menu only)
+		// example:
+		//	opening at the mouse position
+		//	|		dijit.popup.open({popup: menuWidget, x: evt.pageX, y: evt.pageY});
 		//
-		// examples:
-		//		1. opening at the mouse position
-		//			dijit.popup.open({popup: menuWidget, x: evt.pageX, y: evt.pageY});
-		//		2. opening the widget as a dropdown
-		//			dijit.popup.open({parent: this, popup: menuWidget, around: this.domNode, onClose: function(){...}  });
+		// example:
+		//	opening the widget as a dropdown
+		//	|		dijit.popup.open({parent: this, popup: menuWidget, around: this.domNode, onClose: function(){...}  });
 		//
-		//	Note that whatever widget called dijit.popup.open() should also listen to it's own _onBlur callback
+		//	Note that whatever widget called dijit.popup.open() should also listen to its own _onBlur callback
 		//	(fired from _base/focus.js) to know that focus has moved somewhere else and thus the popup should be closed.
 
 		var widget = args.popup,
@@ -10523,6 +10527,7 @@ dojo.provide("dijit._base.sniff");
 		dj_opera8: maj(opera) == 8,
 		dj_opera9: maj(opera) == 9,
 		dj_khtml: d.isKhtml,
+		dj_webkit: d.isWebKit,
 		dj_safari: d.isSafari,
 		dj_gecko: d.isMozilla,
 		dj_ff2: maj(ff) == 2,
@@ -12055,25 +12060,28 @@ dojox.data.dom.createDocument = function(/*string?*/ str, /*string?*/ mimetype){
 		var parser = new DOMParser();
 		return parser.parseFromString(str, mimetype);	//	DOMDocument
 	}else if((typeof dojo.global["ActiveXObject"]) !== "undefined"){
-		var prefixes = [ "MSXML2", "Microsoft", "MSXML", "MSXML3" ];
-		for(var i = 0; i<prefixes.length; i++){
+		var sf = [".DOMDocument", ".XMLDOM"];
+		var dp = ["Microsoft"+sf[1], "MSXML6"+sf[0], "MSXML4"+sf[0], "MSXML3"+sf[0], "MSXML2"+sf[0]];
+		var doc;
+		dojo.some(dp, function(p){
 			try{
-				var doc = new ActiveXObject(prefixes[i]+".XMLDOM");
-				if(str){
-					if(doc){
-						doc.async = false;
-						doc.loadXML(str);
-						return doc;	//	DOMDocument
-					}else{
-						console.log("loadXML didn't work?");
-					}
-				}else{
-					if(doc){ 
-						return doc; //DOMDocument
-					}
+				doc = new ActiveXObject(p);
+			}catch(e){ return false; }
+			return true;
+		});
+		try{
+			if(str){
+				if(doc){
+					doc.async = false;
+					doc.loadXML(str);
+					return doc;	//	DOMDocument
 				}
-			}catch(e){ /* squelch */ };
-		}
+			}else{
+				if(doc){
+					return doc; //DOMDocument
+				}
+			}
+		}catch(e){ /* squelch */};
 	}else if((_document.implementation)&&
 		(_document.implementation.createDocument)){
 		if(str && dojo.trim(str) !== ""){
@@ -12149,22 +12157,23 @@ dojox.data.dom.replaceChildren = function(/*Element*/node, /*Node || array*/ new
 	//		The children to add to the node.  It can either be a single Node or an
 	//		array of Nodes.
 	var nodes = [];
+	var i;
 	
 	if(dojo.isIE){
-		for(var i=0;i<node.childNodes.length;i++){
+		for(i=0;i<node.childNodes.length;i++){
 			nodes.push(node.childNodes[i]);
 		}
 	}
 
 	dojox.data.dom.removeChildren(node);
-	for(var i=0;i<nodes.length;i++){
+	for(i=0;i<nodes.length;i++){
 		dojo._destroyElement(nodes[i]);
 	}
 
 	if(!dojo.isArray(newChildren)){
 		node.appendChild(newChildren);
 	}else{
-		for(var i=0;i<newChildren.length;i++){
+		for(i=0;i<newChildren.length;i++){
 			node.appendChild(newChildren[i]);
 		}
 	}
@@ -12197,6 +12206,7 @@ dojox.data.dom.innerXML = function(/*Node*/node){
 	}else if(typeof XMLSerializer != "undefined"){
 		return (new XMLSerializer()).serializeToString(node);	//	string
 	}
+	return null;
 }
 
 
@@ -12219,7 +12229,7 @@ dojo.regexp.escapeString = function(/*String*/str, /*String?*/except){
 	//		a String with special characters to be left unescaped
 
 //	return str.replace(/([\f\b\n\t\r[\^$|?*+(){}])/gm, "\\$1"); // string
-	return str.replace(/([\.$?*!=:|{}\(\)\[\]\\\/^])/g, function(ch){
+	return str.replace(/([\.$?*|{}\(\)\[\]\\\/^])/g, function(ch){
 		if(except && except.indexOf(ch) != -1){
 			return ch;
 		}
@@ -14842,9 +14852,6 @@ dojo.declare("dijit._Templated",
 		//	summary:
 		//		Mixin for widgets that are instantiated from a template
 		// 
-		// templateNode: DomNode
-		//		a node that represents the widget template. Pre-empts both templateString and templatePath.
-		templateNode: null,
 
 		// templateString: String
 		//		a string that represents the widget template. Pre-empts the
@@ -15199,7 +15206,7 @@ dojo.declare(
 	//	example:
 	//	|	<div dojoType="dijit._Calendar"></div>
 	//	
-		templateString:"<table cellspacing=\"0\" cellpadding=\"0\" class=\"dijitCalendarContainer\">\n\t<thead>\n\t\t<tr class=\"dijitReset dijitCalendarMonthContainer\" valign=\"top\">\n\t\t\t<th class='dijitReset' dojoAttachPoint=\"decrementMonth\">\n\t\t\t\t<div class=\"dijitInline dijitCalendarIncrementControl dijitCalendarDecrease\"><span dojoAttachPoint=\"decreaseArrowNode\" class=\"dijitA11ySideArrow dijitCalendarIncrementControl dijitCalendarDecreaseInner\">-</span></div>\n\t\t\t</th>\n\t\t\t<th class='dijitReset' colspan=\"5\">\n\t\t\t\t<div dojoAttachPoint=\"monthLabelSpacer\" class=\"dijitCalendarMonthLabelSpacer\"></div>\n\t\t\t\t<div dojoAttachPoint=\"monthLabelNode\" class=\"dijitCalendarMonthLabel\"></div>\n\t\t\t</th>\n\t\t\t<th class='dijitReset' dojoAttachPoint=\"incrementMonth\">\n\t\t\t\t<div class=\"dijitInline dijitCalendarIncrementControl dijitCalendarIncrease\"><span dojoAttachPoint=\"increaseArrowNode\" class=\"dijitA11ySideArrow dijitCalendarIncrementControl dijitCalendarIncreaseInner\">+</span></div>\n\t\t\t</th>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<th class=\"dijitReset dijitCalendarDayLabelTemplate\"><span class=\"dijitCalendarDayLabel\"></span></th>\n\t\t</tr>\n\t</thead>\n\t<tbody dojoAttachEvent=\"onclick: _onDayClick, onmouseover: _onDayMouseOver, onmouseout: _onDayMouseOut\" class=\"dijitReset dijitCalendarBodyContainer\">\n\t\t<tr class=\"dijitReset dijitCalendarWeekTemplate\">\n\t\t\t<td class=\"dijitReset dijitCalendarDateTemplate\"><span class=\"dijitCalendarDateLabel\"></span></td>\n\t\t</tr>\n\t</tbody>\n\t<tfoot class=\"dijitReset dijitCalendarYearContainer\">\n\t\t<tr>\n\t\t\t<td class='dijitReset' valign=\"top\" colspan=\"7\">\n\t\t\t\t<h3 class=\"dijitCalendarYearLabel\">\n\t\t\t\t\t<span dojoAttachPoint=\"previousYearLabelNode\" class=\"dijitInline dijitCalendarPreviousYear\"></span>\n\t\t\t\t\t<span dojoAttachPoint=\"currentYearLabelNode\" class=\"dijitInline dijitCalendarSelectedYear\"></span>\n\t\t\t\t\t<span dojoAttachPoint=\"nextYearLabelNode\" class=\"dijitInline dijitCalendarNextYear\"></span>\n\t\t\t\t</h3>\n\t\t\t</td>\n\t\t</tr>\n\t</tfoot>\n</table>\t\n",
+		templateString:"<table cellspacing=\"0\" cellpadding=\"0\" class=\"dijitCalendarContainer\">\n\t<thead>\n\t\t<tr class=\"dijitReset dijitCalendarMonthContainer\" valign=\"top\">\n\t\t\t<th class='dijitReset' dojoAttachPoint=\"decrementMonth\">\n\t\t\t\t<img src=\"${_blankGif}\" alt=\"\" class=\"dijitCalendarIncrementControl dijitCalendarDecrease\" waiRole=\"presentation\">\n\t\t\t\t<span dojoAttachPoint=\"decreaseArrowNode\" class=\"dijitA11ySideArrow\">-</span>\n\t\t\t</th>\n\t\t\t<th class='dijitReset' colspan=\"5\">\n\t\t\t\t<div dojoAttachPoint=\"monthLabelSpacer\" class=\"dijitCalendarMonthLabelSpacer\"></div>\n\t\t\t\t<div dojoAttachPoint=\"monthLabelNode\" class=\"dijitCalendarMonthLabel\"></div>\n\t\t\t</th>\n\t\t\t<th class='dijitReset' dojoAttachPoint=\"incrementMonth\">\n\t\t\t\t<img src=\"${_blankGif}\" alt=\"\" class=\"dijitCalendarIncrementControl dijitCalendarIncrease\" waiRole=\"presentation\">\n\t\t\t\t<span dojoAttachPoint=\"increaseArrowNode\" class=\"dijitA11ySideArrow\">+</span>\n\t\t\t</th>\n\t\t</tr>\n\t\t<tr>\n\t\t\t<th class=\"dijitReset dijitCalendarDayLabelTemplate\"><span class=\"dijitCalendarDayLabel\"></span></th>\n\t\t</tr>\n\t</thead>\n\t<tbody dojoAttachEvent=\"onclick: _onDayClick, onmouseover: _onDayMouseOver, onmouseout: _onDayMouseOut\" class=\"dijitReset dijitCalendarBodyContainer\">\n\t\t<tr class=\"dijitReset dijitCalendarWeekTemplate\">\n\t\t\t<td class=\"dijitReset dijitCalendarDateTemplate\"><span class=\"dijitCalendarDateLabel\"></span></td>\n\t\t</tr>\n\t</tbody>\n\t<tfoot class=\"dijitReset dijitCalendarYearContainer\">\n\t\t<tr>\n\t\t\t<td class='dijitReset' valign=\"top\" colspan=\"7\">\n\t\t\t\t<h3 class=\"dijitCalendarYearLabel\">\n\t\t\t\t\t<span dojoAttachPoint=\"previousYearLabelNode\" class=\"dijitInline dijitCalendarPreviousYear\"></span>\n\t\t\t\t\t<span dojoAttachPoint=\"currentYearLabelNode\" class=\"dijitInline dijitCalendarSelectedYear\"></span>\n\t\t\t\t\t<span dojoAttachPoint=\"nextYearLabelNode\" class=\"dijitInline dijitCalendarNextYear\"></span>\n\t\t\t\t</h3>\n\t\t\t</td>\n\t\t</tr>\n\t</tfoot>\n</table>\t\n",
 
 		// value: Date
 		// 	the currently selected Date
@@ -15331,7 +15338,8 @@ dojo.declare(
 
 		postCreate: function(){
 			this.inherited(arguments);
-			
+			dojo.setSelectable(this.domNode, false);
+
 			var cloneClass = dojo.hitch(this, function(clazz, n){
 				var template = dojo.query(clazz, this.domNode)[0];
 	 			for(var i=0; i<n; i++){
@@ -15371,12 +15379,9 @@ dojo.declare(
 		},
 
 		_onDayClick: function(/*Event*/evt){
-			var node = evt.target;
 			dojo.stopEvent(evt);
-			while(!node.dijitDateValue){
-				node = node.parentNode;
-			}
-			if(!dojo.hasClass(node, "dijitCalendarDisabledDate")){
+			for(var node = evt.target; node && !node.dijitDateValue; node = node.parentNode);
+			if(node && !dojo.hasClass(node, "dijitCalendarDisabledDate")){
 				this.attr('value', node.dijitDateValue);
 				this.onValueSelected(this.value);
 			}
@@ -15768,7 +15773,7 @@ dojo.declare("dijit.form._FormValueWidget", dijit.form._FormWidget,
 	attributeMap: dojo.delegate(dijit.form._FormWidget.prototype.attributeMap, { value: "" }),
 
 	postCreate: function(){
-		if(dojo.isIE || dojo.isSafari){ // IE won't stop the event with keypress and Safari won't send an ESCAPE to keypress at all
+		if(dojo.isIE || dojo.isWebKit){ // IE won't stop the event with keypress and Safari won't send an ESCAPE to keypress at all
 			this.connect(this.focusNode || this.domNode, "onkeydown", this._onKeyDown);
 		}
 		// Update our reset value if it hasn't yet been set (because this.attr
@@ -15823,7 +15828,7 @@ dojo.declare("dijit.form._FormValueWidget", dijit.form._FormWidget,
 				te.keyCode = dojo.keys.ESCAPE;
 				te.shiftKey = e.shiftKey;
 				e.srcElement.fireEvent('onkeypress', te);
-			}else if(dojo.isSafari){ // ESCAPE needs help making it into keypress
+			}else if(dojo.isWebKit){ // ESCAPE needs help making it into keypress
 				te = document.createEvent('Events');
 				te.initEvent('keypress', true, true);
 				te.keyCode = dojo.keys.ESCAPE;
@@ -15980,7 +15985,7 @@ dojo.declare(
 			//		The widget value is also set to a corresponding,
 			//		but not necessarily the same, value.
 
-			this.textbox.value = value = this.filter(value);
+			this.textbox.value = value;
 			this._setValueAttr(this.attr('value'), undefined, value);
 		},
 
@@ -21690,6 +21695,7 @@ dojo.declare("openbravo.widget.ValidationTextBox.IntegerNumber", [openbravo.widg
 });
 
 }
+
 
 
 	if(dojo.config.afterOnLoad && dojo.isBrowser){

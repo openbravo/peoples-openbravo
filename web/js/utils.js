@@ -60,7 +60,7 @@ var isUserChanges = false;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '10655';
+  var number = '11074';
   return number;
 }
 

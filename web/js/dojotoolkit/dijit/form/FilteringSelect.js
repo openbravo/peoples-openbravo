@@ -43,6 +43,8 @@ dojo.declare(
 		//
 		_isvalid:true,
 
+		// required: Boolean
+		//              Can be true or false, default is true.
 		required:true,
 
 		_lastDisplayedValue: "",

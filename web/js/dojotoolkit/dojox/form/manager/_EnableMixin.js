@@ -19,11 +19,11 @@ dojo.require("dojox.form.manager._Mixin");
 	dojo.declare("dojox.form.manager._EnableMixin", null, {
 		// summary:
 		//		Form manager's mixin for controlling enable/disable state of
-		//		form elements. 
+		//		form elements.
 		// description:
 		//		This mixin provides unified enable/disable functionality for
 		//		form widgets and form elements. It should be used together
-		//		with dojox.form.manager.Mixin. 
+		//		with dojox.form.manager.Mixin.
 
 		gatherEnableState: function(/* Object? */ names){
 			// summary:
@@ -37,7 +37,7 @@ dojo.require("dojox.form.manager._Mixin");
 				return !widget.attr("disabled");
 			}), names);
 
-			dojo.mixin(result, this.inspectFormElements(ia(function(name, node){
+			dojo.mixin(result, this.inspectFormNodes(ia(function(name, node){
 				return !dojo.attr(node, "disabled");
 			}), names));
 
@@ -63,13 +63,13 @@ dojo.require("dojox.form.manager._Mixin");
 				widget.attr("disabled", !value);
 			}), state, defaultState);
 
-			this.inspectFormElements(aa(function(name, node, value){
+			this.inspectFormNodes(aa(function(name, node, value){
 				dojo.attr(node, "disabled", !value);
 			}), state, defaultState);
 
 			return this;	// self
 		},
-		
+
 		disable: function(/* Object? */ state){
 			// summary:
 			//		Disable form controls according to the supplied state object

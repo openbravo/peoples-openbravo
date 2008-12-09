@@ -211,8 +211,8 @@ dojo.require("dojo._base.query");
 	dojo._blockAsync = false;
 
 	dojo._contentHandlers = {
-		"text": function(xhr){ return xhr.responseText; },
-		"json": function(xhr){
+		text: function(xhr){ return xhr.responseText; },
+		json: function(xhr){
 			return _d.fromJson(xhr.responseText || null);
 		},
 		"json-comment-filtered": function(xhr){ 
@@ -235,16 +235,18 @@ dojo.require("dojo._base.query");
 			}
 			return _d.fromJson(value.substring(cStartIdx+2, cEndIdx));
 		},
-		"javascript": function(xhr){ 
+		javascript: function(xhr){ 
 			// FIXME: try Moz and IE specific eval variants?
 			return _d.eval(xhr.responseText);
 		},
-		"xml": function(xhr){
+		xml: function(xhr){
 			var result = xhr.responseXML;
 			if(_d.isIE && (!result || !result.documentElement)){
-				_d.some(["MSXML2", "Microsoft", "MSXML", "MSXML3"], function(prefix){
+				var ms = function(n){ return "MSXML" + n + ".DOMDocument"; }
+				var dp = ["Microsoft.XMLDOM", ms(6), ms(4), ms(3), ms(2)];
+				_d.some(dp, function(p){
 					try{
-						var dom = new ActiveXObject(prefix + ".XMLDOM");
+						var dom = new ActiveXObject(p);
 						dom.async = false;
 						dom.loadXML(xhr.responseText);
 						result = dom;

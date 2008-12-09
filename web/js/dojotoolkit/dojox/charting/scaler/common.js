@@ -24,6 +24,14 @@ dojo.provide("dojox.charting.scaler.common");
 			return false;
 		},
 		getNumericLabel: function(/*Number*/ number, /*Number*/ precision, /*Object*/ kwArgs){
+			var def = kwArgs.fixed ? 
+						number.toFixed(precision < 0 ? -precision : 0) : 
+						number.toString();
+			if(kwArgs.labelFunc){
+				var r = kwArgs.labelFunc(def, number, precision);
+				if(r){ return r; }
+				// else fall through to the regular labels search
+			}
 			if(kwArgs.labels){
 				// classic binary search
 				var l = kwArgs.labels, lo = 0, hi = l.length;
@@ -49,7 +57,7 @@ dojo.provide("dojox.charting.scaler.common");
 				}
 				// otherwise we will produce a number
 			}
-			return kwArgs.fixed ? number.toFixed(precision < 0 ? -precision : 0) : number.toString();
+			return def;
 		}
 	});
 })();

@@ -72,7 +72,7 @@ if(dojo.isIE || dojo.isOpera){
 	var d = dojo;
 
 	var _destroyContainer = null;
-	dojo.addOnWindowUnload(function(){
+	d.addOnWindowUnload(function(){
 		_destroyContainer=null; //prevent IE leak
 	});
 
@@ -387,7 +387,7 @@ if(dojo.isIE || dojo.isOpera){
 
 		// on IE7 Alpha(Filter opacity=100) makes text look fuzzy so disable it altogether (bug #2661),
 		//but still update the opacity value so we can get a correct reading if it is read later.
-		af(node, 1).Enabled = (opacity == 1 ? false : true);
+		af(node, 1).Enabled = !(opacity == 1);
 
 		if(!af(node)){
 			node.style.filter += " progid:"+astr+"(Opacity="+ov+")";
@@ -775,7 +775,7 @@ if(dojo.isIE || dojo.isOpera){
 		// box functions will break.
 		
 		var n = node.tagName;
-		return d.boxModel=="border-box" || n=="TABLE" || dojo._isButtonTag(node); // boolean
+		return d.boxModel=="border-box" || n=="TABLE" || d._isButtonTag(node); // boolean
 	}
 
 	dojo._setContentSize = function(/*DomNode*/node, /*Number*/widthPx, /*Number*/heightPx, /*Object*/computedStyle){
@@ -805,11 +805,11 @@ if(dojo.isIE || dojo.isOpera){
 		// Controlling box-model is harder, in a pinch you might set dojo.boxModel.
 		var bb=d._usesBorderBox(node),
 				pb=bb ? _nilExtents : d._getPadBorderExtents(node, s);
-		if (dojo.isSafari) {
+		if(d.isSafari){
 			// on Safari (3.1.2), button nodes with no explicit size have a default margin
 			// setting an explicit size eliminates the margin.
 			// We have to swizzle the width to get correct margin reading.
-			if (dojo._isButtonTag(node)){
+			if(d._isButtonTag(node)){
 				var ns = node.style;
 				if (widthPx>=0 && !ns.width) { ns.width = "4px"; }
 				if (heightPx>=0 && !ns.height) { ns.height = "4px"; }
@@ -903,9 +903,8 @@ if(dojo.isIE || dojo.isOpera){
 	
 	dojo._isBodyLtr = function(){
 		//FIXME: could check html and body tags directly instead of computed style?  need to ignore case, accept empty values
-		return !("_bodyLtr" in d) ? 
-			d._bodyLtr = gcs(d.body()).direction == "ltr" :
-			d._bodyLtr; // Boolean 
+		return ("_bodyLtr" in d) ? d._bodyLtr :
+			d._bodyLtr = gcs(d.body()).direction == "ltr"; // Boolean 
 	}
 	
 	dojo._getIeDocumentElementOffset = function(){
@@ -926,13 +925,19 @@ if(dojo.isIE || dojo.isOpera){
 		var de = d.doc.documentElement;
 		//FIXME: use this instead?			var de = d.compatMode == "BackCompat" ? d.body : d.documentElement;
 
-		return (d.isIE >= 7) ?
-			{x: de.getBoundingClientRect().left, y: de.getBoundingClientRect().top}
-		:
-			// IE 6.0
-			{x: d._isBodyLtr() || window.parent == window ?
+		if(d.isIE == 6){
+			return {x: d._isBodyLtr() || _getIeDocumentElementOffsetwindow.parent == window ?
 				de.clientLeft : de.offsetWidth - de.clientWidth - de.clientLeft, 
 				y: de.clientTop}; // Object
+		}else if(d.isIE == 7){
+			return {x: de.getBoundingClientRect().left, y: de.getBoundingClientRect().top};
+		}else{
+			return {
+				x: de.getBoundingClientRect().left - de.offsetLeft + de.scrollLeft,
+				y: de.getBoundingClientRect().top - de.offsetTop + de.scrollTop
+			};
+		}
+
 	};
 	
 	dojo._fixIeBiDiScrollLeft = function(/*Integer*/ scrollLeft){
@@ -941,7 +946,7 @@ if(dojo.isIE || dojo.isOpera){
 		// must call this function to fix this error, otherwise the position
 		// will offset to right when there is a horizontal scrollbar.
 		var dd = d.doc;
-		if(d.isIE && !dojo._isBodyLtr()){
+		if(d.isIE && !d._isBodyLtr()){
 			var de = dd.compatMode == "BackCompat" ? dd.body : dd.documentElement;
 			return scrollLeft + de.clientWidth - de.scrollWidth; // Integer
 		}
@@ -963,26 +968,36 @@ if(dojo.isIE || dojo.isOpera){
 		// FIXME: need to decide in the brave-new-world if we're going to be
 		// margin-box or border-box.
 		var ownerDocument = node.ownerDocument;
-		var ret = {
-			x: 0,
-			y: 0
-		};
+		var ret;
 
 		// targetBoxType == "border-box"
-		var db = d.body();
-		if(d.isIE || (d.isFF >= 3)){
+		var db = d.body(), dh = d.body().parentNode;
+		if(node["getBoundingClientRect"]){
+			// IE6+, FF3+, and Opera 9.6+ all take this branch
 			var client = node.getBoundingClientRect();
-			var cs;
-			if(d.isFF){
-				// in FF3 you have to subract the document element margins
-				var dv = node.ownerDocument.defaultView;
-				cs=dv.getComputedStyle(db.parentNode, null);
+			ret = { x: client.left, y: client.top };
+			if(d.isFF >= 3){
+				// in FF3 you have to subtract the document element margins
+				var cs = gcs(dh);
+				ret.x -= px(dh, cs.marginLeft);
+				ret.y -= px(dh, cs.marginTop);
 			}
-			var offset = (d.isIE) ? d._getIeDocumentElementOffset() : { x: px(db.parentNode,cs.marginLeft), y: px(db.parentNode,cs.marginTop)};
-			ret.x = client.left - offset.x;
-			ret.y = client.top - offset.y;
+			if(d.isIE){
+				// On IE there's a 2px offset that we need to adjust for, see _getIeDocumentElementOffset()
+				var offset = d._getIeDocumentElementOffset();
+				ret.x -= offset.x;
+				ret.y -= offset.y;
+			}
 		}else{
+			// FF2 and Safari
+			ret = {
+				x: 0,
+				y: 0
+			};
 			if(node["offsetParent"]){
+				ret.x -= _sumAncestorProperties(node, "scrollLeft");
+				ret.y -= _sumAncestorProperties(node, "scrollTop");
+
 				var endNode;
 				// in Safari, if the node is an absolutely positioned child of
 				// the body and the body has a margin the offset of the child
@@ -995,43 +1010,31 @@ if(dojo.isIE || dojo.isOpera){
 					(node.parentNode == db)){
 					endNode = db;
 				}else{
-					endNode = db.parentNode;
+					endNode = dh;
 				}
-				// Opera seems to be double counting for some elements
-				var cs=gcs(node);
-				var n=node;
-				if(d.isOpera&&cs.position!="absolute"){
-					n=n.offsetParent;
-				}
-				ret.x -= _sumAncestorProperties(n, "scrollLeft");
-				ret.y -= _sumAncestorProperties(n, "scrollTop");
 
 				var curnode = node;
 				do{
-					var n = curnode.offsetLeft;
-					//FIXME: ugly hack to workaround the submenu in 
-					//popupmenu2 does not shown up correctly in opera. 
-					//Someone have a better workaround?
-					if(!d.isOpera || n > 0){
-						ret.x += isNaN(n) ? 0 : n;
-					}
-					var t = curnode.offsetTop;
+					var n = curnode.offsetLeft,
+						t = curnode.offsetTop;
+					ret.x += isNaN(n) ? 0 : n;
 					ret.y += isNaN(t) ? 0 : t;
+
 					var cs = gcs(curnode);
 					if(curnode != node){
-						if(d.isSafari){
-							ret.x += px(curnode, cs.borderLeftWidth);
-							ret.y += px(curnode, cs.borderTopWidth);
-						}else if(d.isFF){
+						if(d.isFF){
 							// tried left+right with differently sized left/right borders
 							// it really is 2xleft border in FF, not left+right, even in RTL!
 							ret.x += 2*px(curnode,cs.borderLeftWidth);
 							ret.y += 2*px(curnode,cs.borderTopWidth);
+						}else{
+							ret.x += px(curnode, cs.borderLeftWidth);
+							ret.y += px(curnode, cs.borderTopWidth);
 						}
 					}
 					// static children in a static div in FF2 are affected by the div's border as well
 					// but offsetParent will skip this div!
-					if(d.isFF&&cs.position=="static"){
+					if(d.isFF && cs.position=="static"){
 						var parent=curnode.parentNode;
 						while(parent!=curnode.offsetParent){
 							var pcs=gcs(parent);
@@ -1054,8 +1057,8 @@ if(dojo.isIE || dojo.isOpera){
 		// so we may have to actually remove that value if !includeScroll
 		if(includeScroll){
 			var scroll = d._docScroll();
-			ret.y += scroll.y;
 			ret.x += scroll.x;
+			ret.y += scroll.y;
 		}
 
 		return ret; // object
@@ -1247,11 +1250,11 @@ if(dojo.isIE || dojo.isOpera){
 				_evtHdlrMap[attrId][name] = d.connect(node, name, value);
 
 			}else if(
-				(typeof value == "boolean")|| // e.g. onsubmit, disabled
-				(name == "innerHTML")
+				typeof value == "boolean" || // e.g. onsubmit, disabled
+				name == "innerHTML"
 			){
 				node[name] = value;
-			}else if((name == "style")&&(!d.isString(value))){
+			}else if(name == "style" && !d.isString(value)){
 				d.style(node, value);
 			}else{
 				node.setAttribute(name, value);

@@ -12,6 +12,7 @@ dojo.provide("dijit.form.ComboBox");
 dojo.require("dijit.form.ValidationTextBox");
 dojo.require("dojo.data.util.simpleFetch");
 dojo.require("dojo.data.util.filter");
+dojo.require("dojo.regexp");
 
 dojo.requireLocalization("dijit.form", "ComboBox", null, "th,es,sv,it,nl,el,zh-tw,ko,da,pt-pt,cs,pt,ar,fi,ROOT,sk,sl,ca,he,tr,hu,fr,zh,ja,pl,ru,de,nb");
 
@@ -680,12 +681,9 @@ dojo.declare(
 			// Add greedy when this.highlightMatch=="all"
 			var modifiers = "i"+(this.highlightMatch=="all"?"g":"");
 			var escapedLabel = this._escapeHtml(label);
-			var ret = escapedLabel.replace(new RegExp("^("+ find +")", modifiers),
-					'<span class="dijitComboBoxHighlightMatch">$1</span>');
-			if (escapedLabel==ret){ // Nothing replaced, try to replace at word boundaries.
-				ret = escapedLabel.replace(new RegExp(" ("+ find +")", modifiers),
-					' <span class="dijitComboBoxHighlightMatch">$1</span>');
-			}
+			find = dojo.regexp.escapeString(find); // escape regexp special chars
+			var ret = escapedLabel.replace(new RegExp("(^|\\s)("+ find +")", modifiers),
+					'$1<span class="dijitComboBoxHighlightMatch">$2</span>');
 			return ret;// returns String, (almost) valid HTML (entities encoded)
 		},
 		
@@ -820,7 +818,7 @@ dojo.declare(
 		},
 
 		clearResultList: function(){
-			// keep the previous and next buttons of course
+			// summary: keep the previous and next buttons of course
 			while(this.domNode.childNodes.length>2){
 				this.domNode.removeChild(this.domNode.childNodes[this.domNode.childNodes.length-2]);
 			}

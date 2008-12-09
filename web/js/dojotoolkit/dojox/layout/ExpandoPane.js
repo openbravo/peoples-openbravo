@@ -30,8 +30,6 @@ dojo.declare("dojox.layout.ExpandoPane",
 
 	templateString:"<div class=\"dojoxExpandoPane\" dojoAttachEvent=\"ondblclick:toggle\" >\n\t<div dojoAttachPoint=\"titleWrapper\" class=\"dojoxExpandoTitle\">\n\t\t<div class=\"dojoxExpandoIcon\" dojoAttachPoint=\"iconNode\" dojoAttachEvent=\"onclick:toggle\"><span class=\"a11yNode\">X</span></div>\t\t\t\n\t\t<span class=\"dojoxExpandoTitleNode\" dojoAttachPoint=\"titleNode\">${title}</span>\n\t</div>\n\t<div class=\"dojoxExpandoWrapper\" dojoAttachPoint=\"cwrapper\" dojoAttachEvent=\"ondblclick:_trap\">\n\t\t<div class=\"dojoxExpandoContent\" dojoAttachPoint=\"containerNode\"></div>\n\t</div>\n</div>\n",
 
-	_showing: true,
-
 	// easeOut: String|Function
 	//		easing function used to hide pane
 	easeOut: "dojo._DefaultEasing",
@@ -61,15 +59,17 @@ dojo.declare("dojox.layout.ExpandoPane",
 			this.easeIn = dojo.getObject(this.easeIn); 
 		}
 	
-		var thisClass = "";
+		var thisClass = "", ltr = this.isLeftToRight();
 		if(this.region){
 			// FIXME: add suport for alternate region types?
 			switch(this.region){
+				case "trailing" : 
 				case "right" :
-					thisClass = "Right";
+					thisClass = ltr ? "Left" : "Right";
 					break;
+				case "leading" : 
 				case "left" :
-					thisClass = "Left";
+					thisClass = ltr ? "Right" : "Left";
 					break;
 				case "top" :
 					thisClass = "Top";
@@ -110,6 +110,7 @@ dojo.declare("dojox.layout.ExpandoPane",
 		if(this.startExpanded){
 			this._showing = true;
 		}else{
+			this._showing = false;
 			this._hideWrapper();
 			this._hideAnim.gotoPercent(99,true);
 		}
@@ -140,15 +141,15 @@ dojo.declare("dojox.layout.ExpandoPane",
 		dojo.forEach(this._animConnects, dojo.disconnect);
 		
 		var _common = {
-			node:this.domNode,
-			duration:this.duration
-		};
+				node:this.domNode,
+				duration:this.duration
+			},
+			isHorizontal = this._isHorizontal,
+			showProps = {},
+			hideProps = {},
+			dimension = isHorizontal ? "height" : "width"
+		;
 
-		var isHorizontal = this._isHorizontal;
-		var showProps = {};
-		var hideProps = {};
-
-		var dimension = isHorizontal ? "height" : "width";
 		showProps[dimension] = { 
 			end: this._showSize, 
 			unit:"px" 
@@ -198,7 +199,7 @@ dojo.declare("dojox.layout.ExpandoPane",
 	
 	_showEnd: function(){
 		// summary: Common animation onEnd code - "unclose"
-		dojo.style(this.cwrapper, { opacity: 0, visibility:"visible" });		
+		dojo.style(this.cwrapper, { opacity: 0, visibility:"visible" });
 		dojo.fadeIn({ node:this.cwrapper, duration:227 }).play(1);
 		dojo.removeClass(this.domNode, "dojoxExpandoClosed");
 		setTimeout(dojo.hitch(this._container, "layout"), 15);
@@ -210,11 +211,17 @@ dojo.declare("dojox.layout.ExpandoPane",
 	
 	resize: function(){
 		// summary: we aren't a layout widget, but need to act like one:
+		
+		// FIXME: this feels like I'm mis-interpreting what resize() is 
+		// possibly going to send to us, if anything at all. might be able
+		// to omit this check as we're always in a bordercontainer. 
 		var size = dojo.marginBox(this.domNode),
 			h = size.h - this._titleHeight;
 			
 		dojo.style(this.containerNode, "height", h + "px");
-		this.inherited(arguments);
+		if(this._singleChild && this._singleChild.resize){
+			this._singleChild.resize({ w: size.w, h: h });
+		}
 	},
 	
 	_trap: function(e){

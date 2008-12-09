@@ -164,7 +164,7 @@ if(dojo){
 
 		// iterate over the query, charachter by charachter, building up a 
 		// list of query part objects
-		for(; lc=cc, cc=query.charAt(x),x<ql; x++){
+		for(; lc = cc, cc = query.charAt(x), x < ql; x++){
 			//		cc: the current character in the match
 			//		lc: the last charachter (if any)
 
@@ -479,7 +479,7 @@ if(dojo){
 			}
 			return ret;
 		}
-		return _xpathFuncCache[path] = tf;
+		return (_xpathFuncCache[path] = tf);
 	};
 
 	/*
@@ -524,7 +524,7 @@ if(dojo){
 	var _nextSiblings = function(root, single){
 		var ret = [];
 		var te = root;
-		while(te = te.nextSibling){
+		while((te = te.nextSibling)){
 			if(te.nodeType == 1){
 				ret.push(te);
 				if(single){ break; }
@@ -981,26 +981,14 @@ if(dojo){
 		if(query.tag && query.id && !query.hasLoops){
 			// we got a filtered ID search (e.g., "h4#thinger")
 			retFunc = function(root){
-				var te = d.byId(query.id, (root.ownerDocument||root)); //root itself may be a document
+				var te = d.byId(query.id, root.ownerDocument || root); //root itself may be a document
 				if(filterFunc(te)){
 					return [ te ];
 				}
 			}
 		}else{
-			var tret;
-
-			if(!query.hasLoops){
-				// it's just a plain-ol elements-by-tag-name query from the root
-				retFunc = function(root){
-					var ret = [];
-					var te, x=0, tret = root.getElementsByTagName(query[ caseSensitive ? "otag" : "tag"]);
-					while((te = tret[x++])){
-						ret.push(te);
-					}
-					return ret;
-				}
-			}else{
-				retFunc = function(root){
+			retFunc = query.hasLoops ?
+				function(root){
 					var ret = [];
 					var te, x = 0, tret = root.getElementsByTagName(query[ caseSensitive ? "otag" : "tag"]);
 					while((te = tret[x++])){
@@ -1010,7 +998,16 @@ if(dojo){
 					}
 					return ret;
 				}
-			}
+			:
+				// it's just a plain-ol elements-by-tag-name query from the root
+				function(root){
+					var ret = [];
+					var te, x=0, tret = root.getElementsByTagName(query[ caseSensitive ? "otag" : "tag"]);
+					while((te = tret[x++])){
+						ret.push(te);
+					}
+					return ret;
+				};
 		}
 		return _getElementsFuncCache[query.query] = retFunc;
 	}
@@ -1073,7 +1070,7 @@ if(dojo){
 		//		function to determine on the fly if we should stick w/ the
 		//		potentially optimized variant or if we should try something
 		//		new.
-		(document["evaluate"] && !d.isSafari) ? 
+		(document["evaluate"] && !d.isWebKit) ? 
 		function(query, root){
 			// has xpath support that's faster than DOM
 			var qparts = query.split(" ");
@@ -1119,19 +1116,6 @@ if(dojo){
 	// future
 	var getQueryFunc = function(query){
 		// return a cached version if one is available
-		var qcz = query.charAt(0);
-		if(getDoc()["querySelectorAll"] && 
-			( (!d.isSafari) || (d.isSafari > 3.1) ) && // see #5832
-			// as per CSS 3, we can't currently start w/ combinator:
-			//		http://www.w3.org/TR/css3-selectors/#w3cselgrammar
-			(">+~".indexOf(qcz) == -1)
-		){
-			return function(root){
-				var r = root.querySelectorAll(query);
-				r.nozip = true; // skip expensive duplication checks and just wrap in a NodeList
-				return r;
-			};
-		}
 		if(_queryFuncCache[query]){ return _queryFuncCache[query]; }
 		if(0 > query.indexOf(",")){
 			// if it's not a compound query (e.g., ".foo, .bar"), cache and return a dispatcher

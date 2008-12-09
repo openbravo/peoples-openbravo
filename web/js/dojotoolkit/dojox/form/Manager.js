@@ -33,7 +33,7 @@ dojo.declare("dojox.form.Manager", [
 	// description:
 	//		This widget hosts dojox.form.manager mixins.
 	//		See dojox.form.manager._Mixin for more info.
-	
+
 	widgetsInTemplate: true,
 
 	buildRendering: function(){
@@ -44,7 +44,7 @@ dojo.declare("dojox.form.Manager", [
 		}
 		this._attachTemplateNodes(node);
 	},
-	
+
 	startup: function(){
 		if(this._started){ return; }
 		this._attachTemplateNodes(this.getDescendants(), function(n,p){ return n[p]; });

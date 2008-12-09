@@ -83,7 +83,7 @@ dojo.require("dojox.dtl.Context");
 				}
 			}
 
-			var re = /\b([a-zA-Z]+)=['"]/g;
+			var re = /\b([a-zA-Z_:][a-zA-Z0-9_\-\.:]*)=['"]/g;
 			while(match = re.exec(text)){
 				this._attributes[match[1].toLowerCase()] = true;
 			}
@@ -135,7 +135,7 @@ dojo.require("dojox.dtl.Context");
 				var text = node.getAttribute(tag[0]);
 				if(text){
 					var swallowed = false;
-					var custom = (tag[2])({ swallowNode: function(){ swallowed = true; return node; }}, text);
+					var custom = (tag[2])({ swallowNode: function(){ swallowed = true; return node; }}, new dd.Token(dd.TOKEN_ATTR, text));
 					if(swallowed){
 						if(node.parentNode && node.parentNode.removeChild){
 							node.parentNode.removeChild(node);

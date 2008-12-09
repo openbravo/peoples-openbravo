@@ -22,10 +22,14 @@ dojo.provide("dojox.embed.Flash");
 	var fMarkup, fVersion;
 	var keyBase="dojox-embed-flash-", keyCount=0;
 	function prep(kwArgs){
+		console.warn("KWARGS:", kwArgs)
 		kwArgs=dojo.mixin({
 			expressInstall: false,
 			width: 320,
 			height: 240,
+			swLiveConnect: "true",
+			allowScriptAccess: "sameDomain",
+			allowNetworking:"all",
 			style: null,
 			redirect: null
 		}, kwArgs||{});
@@ -45,11 +49,12 @@ dojo.provide("dojox.embed.Flash");
 		fMarkup=function(kwArgs){
 			kwArgs=prep(kwArgs);
 			if(!kwArgs){ return null; }
-
+			
+			var p;
 			var path=kwArgs.path;
 			if(kwArgs.vars){
 				var a=[];
-				for(var p in kwArgs.vars){
+				for(p in kwArgs.vars){
 					a.push(p+'='+kwArgs.vars[p]);
 				}
 				path += ((path.indexOf("?")==-1) ? "?":"&") + a.join("&");
@@ -62,7 +67,7 @@ dojo.provide("dojox.embed.Flash");
 				+ '>'
 				+ '<param name="movie" value="' + path + '" />';
 			if(kwArgs.params){
-				for(var p in kwArgs.params){
+				for(p in kwArgs.params){
 					s += '<param name="' + p + '" value="' + kwArgs.params[p] + '" />';
 				}
 			}
@@ -95,7 +100,11 @@ dojo.provide("dojox.embed.Flash");
 				objs[i].style.display="none";
 				for(var p in objs[i]){
 					if(p!="FlashVars" && dojo.isFunction(objs[i][p])){
-						objs[i][p]=function(){ };
+						try {
+							if(p!="FlashVars" && dojo.isFunction(objs[i][p])){
+								objs[i][p] = function(){};		
+							}
+						}catch(e){}
 					}
 				}
 			}
@@ -116,10 +125,12 @@ dojo.provide("dojox.embed.Flash");
 		fMarkup=function(kwArgs){
 			kwArgs=prep(kwArgs);
 			if(!kwArgs){ return null; }
+			
+			var p;
 			var path=kwArgs.path;
 			if(kwArgs.vars){
 				var a=[];
-				for(var p in kwArgs.vars){
+				for(p in kwArgs.vars){
 					a.push(p+'='+kwArgs.vars[p]);
 				}
 				path += ((path.indexOf("?")==-1) ? "?":"&") + a.join("&");
@@ -131,11 +142,13 @@ dojo.provide("dojox.embed.Flash");
 				+ 'width="' + kwArgs.width + '" '
 				+ 'height="' + kwArgs.height + '"'
 				+ ((kwArgs.style)?' style="' + kwArgs.style + '" ':'')
-				+ 'swLiveConnect="true" '
-				+ 'allowScriptAccess="sameDomain" '
+				+ 'swLiveConnect="'+kwArgs.swLiveConnect+'" '
+				+ 'allowScriptAccess="' +kwArgs.allowScriptAccess+  '" '
+				+ 'allowNetworking="' +kwArgs.allowNetworking+  '" '
+				
 				+ 'pluginspage="' + window.location.protocol + '//www.adobe.com/go/getflashplayer" ';
 			if(kwArgs.params){
-				for(var p in kwArgs.params){
+				for(p in kwArgs.params){
 					s += ' ' + p + '="' + kwArgs.params[p] + '"';
 				}
 			}
@@ -278,7 +291,9 @@ dojo.provide("dojox.embed.Flash");
 		_destroy: function(){
 			//	summary
 			//		Kill the movie and reset all the properties of this object.
+			try{
 			this.domNode.removeChild(this.movie);
+			}catch(e){}
 			this.id = this.movie = this.domNode = null;
 		},
 		destroy: function(){
