@@ -76,7 +76,7 @@ public class SL_Assets extends HttpSecureAppServlet {
     //Float fAmortizationvalue = Float.valueOf(strAmortizationvalue);
     
     if (strLastChanged.equals("inpassetvalueamt")) {
-      if (!fAmortizationvalue.equals(0)) fResidualvalue = fAssetvalue.subtract(fAmortizationvalue);
+      if (!fAmortizationvalue.equals(BigDecimal.ZERO)) fResidualvalue = fAssetvalue.subtract(fAmortizationvalue);
       fAmortizationvalue = fAssetvalue.subtract(fResidualvalue);
     }
 
