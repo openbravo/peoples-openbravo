@@ -291,8 +291,10 @@ public class ImportModule {
             insertDynaModulesInDB(dynMod, dynDep, dynDbPrefix);
             addDynaClasspathEntries(dynMod);
           } catch (final Exception e) {
-            e.printStackTrace();
-            addLog("@ErrorGettingModule@", MSG_ERROR);
+            log4j.error(e.getMessage(), e);
+            if (!(e instanceof PermissionException))  {
+                addLog("@ErrorGettingModule@", MSG_ERROR);
+            }
             rollback();
             try {
               ImportModuleData.insertLog(pool, (vars==null?"0":vars.getUser()), "", 
@@ -752,8 +754,8 @@ public class ImportModule {
    */
   private void installModule(InputStream obx, String moduleID) throws Exception {
       if (!(new File(obDir+"/modules").canWrite())) {
-        addLog("@CannotWriteDirectory@ "+obDir+"/modules", MSG_ERROR);
-        throw new Exception("Cannot write on directory: "+obDir+"/modules");
+        addLog("@CannotWriteDirectory@ "+obDir+"/modules. ", MSG_ERROR);
+        throw new PermissionException("Cannot write on directory: "+obDir+"/modules");
       }
       
       final ZipInputStream obxInputStream = new ZipInputStream(obx);
@@ -972,6 +974,11 @@ public class ImportModule {
       if (modulesToUpdate[i].getModuleID().equals(moduleID)) return modulesToUpdate[i];
     }
     return null;
+  }
+  
+  private class PermissionException extends Exception {
+      public PermissionException() { super(); }
+      public PermissionException(String msg) { super(msg); }
   }
 }
 
