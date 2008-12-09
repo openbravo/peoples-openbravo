@@ -40,10 +40,9 @@ public class CheckJVMVersion extends Task {
         final String msg = "Current Tomcat's JVM version: "+jvmVersion+" minimum required version: "+minJvmVersion;
         
         if (Version.compareVersion(jvmVersion, minJvmVersion)<0)
-            throw new BuildException(msg);
+            throw new BuildException(msg +"\nTip: check http://wiki.openbravo.com/wiki/Development_Stack_Setup#Apache_Tomcat");
         else {
-            log4j.info(msg
-                       +"\nTip: check http://wiki.openbravo.com/wiki/Development_Stack_Setup#Apache_Tomcat");
+            log4j.info(msg);
             log4j.info("Tomcat's JVM version OK");
         }
     }

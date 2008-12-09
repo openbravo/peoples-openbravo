@@ -182,10 +182,9 @@ public class CheckDB extends Task{
                 
                 final String msg = "Minimum required version: "+minVersion+", current version "+version;
                 if (Version.compareVersion(version, minVersion)<0)
-                    throw new BuildException(msg);
+                    throw new BuildException(msg + "\nTip: check http://wiki.openbravo.com/wiki/Development_Stack_Setup#PostgreSQL");
                 else {
-                    log4j.info(msg
-                            +"\nTip: check http://wiki.openbravo.com/wiki/Development_Stack_Setup#PostgreSQL");
+                    log4j.info(msg);
                     log4j.info("PostgreSQL version OK");
                 }
                 

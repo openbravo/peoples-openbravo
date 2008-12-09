@@ -30,7 +30,7 @@ public class CompareVersion extends Task {
     
     @Override
     public void execute() throws BuildException {
-      final String msg = "Minimun version "+v2+" current version "+v1;
+      final String msg = "Minimum version "+v2+" current version "+v1;
       if (Version.compareVersion(v1, v2)<0) 
           throw new BuildException(msg);
       log4j.info(msg);

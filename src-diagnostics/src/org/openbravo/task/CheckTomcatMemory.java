@@ -34,7 +34,7 @@ public class CheckTomcatMemory extends Task{
       log4j.info("Checking tomcat's memory...");
       final long maxCurrentMemory = new Long(new ServerConnection().getCheck("memory"));
       final long MaxMemory = new Long(new PropertiesManager().getProperty("max.memory"));
-      final String msg = "Current max memory in server:"+maxCurrentMemory+"M, minimun required:"+MaxMemory+"M";
+      final String msg = "Current max memory in server:"+maxCurrentMemory+"M, minimum required:"+MaxMemory+"M";
         
      //check max memory +- 5%, because it is not accurate
       if (MaxMemory>maxCurrentMemory*1.05) 

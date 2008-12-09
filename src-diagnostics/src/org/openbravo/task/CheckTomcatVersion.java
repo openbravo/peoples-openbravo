@@ -37,7 +37,7 @@ public class CheckTomcatVersion extends Task{
         if (!versionString.contains("Tomcat")) throw new BuildException("Server seems not to be Tomcat");
         final String version = Version.getVersion(versionString);
         final String minVersion = new PropertiesManager().getProperty("tomcat.version");
-        final String msg = "Minimun Tomcat version: "+minVersion+", current version: "+version;
+        final String msg = "Minimum Tomcat version: "+minVersion+", current version: "+version;
         if (Version.compareVersion(version, minVersion)<0)
             throw new BuildException(msg
                                     +"Tip: check http://wiki.openbravo.com/wiki/Development_Stack_Setup#Apache_Tomcat");
