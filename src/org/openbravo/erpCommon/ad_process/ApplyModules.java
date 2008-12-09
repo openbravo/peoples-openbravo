@@ -154,7 +154,7 @@ public class ApplyModules extends HttpSecureAppServlet {
                 tasks.add("trl.lib");
                 tasks.add("compile.complete.deploy");
                 ant.setProperty("apply.on.create", "true");
-            } else if (ApplyModulesData.selectUninstalledModules(this)) { // there're
+            } else if (false) { //ApplyModulesData.selectUninstalledModules(this)) { // there're
                 // uninstalled
                 // modules
                 tasks.add("update.database");
