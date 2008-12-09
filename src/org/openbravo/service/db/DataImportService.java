@@ -141,10 +141,10 @@ public class DataImportService implements OBSingleton {
      * @see #importDataFromXML(Client, Organization, String)
      */
     public ImportResult importClientData(String xml,
-            EntityXMLProcessor importProcessor, Module module) {
+            EntityXMLProcessor importProcessor) {
         try {
             final Document doc = DocumentHelper.parseText(xml);
-            return importDataFromXML(null, null, doc, true, module,
+            return importDataFromXML(null, null, doc, true, null,
                     importProcessor, true);
         } catch (final Exception e) {
             throw new OBException(e);

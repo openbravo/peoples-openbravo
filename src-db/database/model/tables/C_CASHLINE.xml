@@ -119,7 +119,6 @@
       <unique name="C_CASHLINE_DEBT_PAYMENT">
         <unique-column name="C_DEBT_PAYMENT_ID"/>
       </unique>
-      <check name="CASHTYPE_CH_PAYMENT"><![CDATA[(CASHTYPE <> 'P') OR (C_DEBT_PAYMENT_ID IS NOT NULL)]]></check>
       <check name="CCASHLINE_CHARGE_CHECK"><![CDATA[(CASHTYPE <> 'C') OR (C_CHARGE_ID IS NOT NULL)]]></check>
       <check name="CCASHLINE_GLITEM_CHECK"><![CDATA[(CASHTYPE <> 'G') OR (C_GLITEM_ID IS NOT NULL)]]></check>
       <check name="CCASHLINE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

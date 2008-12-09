@@ -27,10 +27,8 @@ import org.openbravo.dal.xml.EntityXMLProcessor;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.system.Client;
-import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
-import org.openbravo.model.financialmgmt.gl.GLCategory;
 
 /**
  * This ImportProcessor is used during client import. It repairs the names of
@@ -85,6 +83,9 @@ public class ClientImportProcessor implements EntityXMLProcessor {
     }
 
     private void replaceName(String originalName, BaseOBObject bob) {
+        if (newName == null || newName.trim().length() == 0) {
+            return;
+        }
         if (bob instanceof Client) {
             final Client client = (Client) bob;
             client.setName(newName);
@@ -101,12 +102,12 @@ public class ClientImportProcessor implements EntityXMLProcessor {
         } else if (bob instanceof Warehouse) {
             final Warehouse wh = (Warehouse) bob;
             wh.setName(replace(wh.getName(), originalName));
-        } else if (bob instanceof GLCategory) {
-            final GLCategory glCategory = (GLCategory) bob;
-            glCategory.setName(replace(glCategory.getName(), originalName));
-        } else if (bob instanceof DocumentType) {
-            final DocumentType docType = (DocumentType) bob;
-            docType.setName(replace(docType.getName(), originalName));
+            // } else if (bob instanceof GLCategory) {
+            // final GLCategory glCategory = (GLCategory) bob;
+            // glCategory.setName(replace(glCategory.getName(), originalName));
+            // } else if (bob instanceof DocumentType) {
+            // final DocumentType docType = (DocumentType) bob;
+            // docType.setName(replace(docType.getName(), originalName));
         }
     }
 

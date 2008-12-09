@@ -26,9 +26,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.hibernate.criterion.Expression;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.xml.EntityXMLConverter;
 import org.openbravo.model.ad.utility.DataSet;
 import org.openbravo.model.ad.utility.DataSetTable;
@@ -44,6 +48,16 @@ import org.openbravo.model.ad.utility.DataSetTable;
  */
 public class DataExportService implements OBSingleton {
     private static final Logger log = Logger.getLogger(DataExportService.class);
+
+    /**
+     * Name of the dataset used for client export.
+     */
+    public static final String CLIENT_DATA_SET_NAME = "Client Definition";
+
+    /**
+     * The name of the client id parameter used in the datasets
+     */
+    public static final String CLIENT_ID_PARAMETER_NAME = "ClientID";
 
     private static DataExportService instance;
 
@@ -102,17 +116,27 @@ public class DataExportService implements OBSingleton {
     /**
      * Exports data of a client. The main difference with the standard dataset
      * export is that also references to client and organizations are exported.
+     * The dataset with the name Client Definition is used for the export.
      * 
-     * @param dataSet
-     *            the DataSetTables of this dataSet will be exported
-     * @param moduleId
-     *            the moduleId is used in the where clause of dataset tables
+     * @param parameters
+     *            the parameters used in the queries, the client id should be
+     *            passed in this map with the parameter name ClientID (note is
+     *            case sensitive)
      * @return the xml string, the resulting xml from the export, can be null if
      *         nothing is exported
+     * @see CLIENT_DATA_SET_NAME
+     * @see CLIENT_ID_PARAMETER_NAME
      */
-    public String exportClientToXML(DataSet dataSet, String moduleId,
-            Map<String, Object> parameters) {
-        return exportDataSetToXML(dataSet, moduleId, true, parameters);
+    public String exportClientToXML(Map<String, Object> parameters) {
+        final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(
+                DataSet.class);
+        obc.add(Expression.eq("name", CLIENT_DATA_SET_NAME));
+        if (obc.list().size() == 0) {
+            throw new OBException("No dataset found with name "
+                    + CLIENT_DATA_SET_NAME);
+        }
+        final DataSet dataSet = obc.list().get(0);
+        return exportDataSetToXML(dataSet, null, true, parameters);
     }
 
     // note returns null if nothing has been generated

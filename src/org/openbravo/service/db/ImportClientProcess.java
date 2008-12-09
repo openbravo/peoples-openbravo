@@ -38,12 +38,14 @@ public class ImportClientProcess implements org.openbravo.scheduling.Process {
      * location of the file with the data to import.
      */
     public void execute(ProcessBundle bundle) throws Exception {
-       final OBError e = new OBError();
-       e.setType("Success");
-       e.setMessage("Name:"+bundle.getParams().get("name"));
-       e.setTitle("Done");
-       
-       bundle.setResult(e);
-       
+        // DataImportService.getInstance().i
+
+        final OBError e = new OBError();
+        e.setType("Success");
+        e.setMessage("Name:" + bundle.getParams().get("name"));
+        e.setTitle("Done");
+
+        bundle.setResult(e);
+
     }
 }

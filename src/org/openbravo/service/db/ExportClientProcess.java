@@ -19,6 +19,12 @@
 
 package org.openbravo.service.db;
 
+import java.io.File;
+import java.net.URI;
+import java.net.URL;
+
+import org.openbravo.base.exception.OBException;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.scheduling.ProcessBundle;
 
 /**
@@ -37,6 +43,22 @@ public class ExportClientProcess implements org.openbravo.scheduling.Process {
      * location of the file in which the data for the export should go.
      */
     public void execute(ProcessBundle bundle) throws Exception {
-        // TODO Auto-generated method stub
+
+        try {
+            final URL url = org.openbravo.dal.core.DalContextListener
+                    .getServletContext().getResource("/WEB-INF/referencedata");
+            final File file = new File(new URI(url.toString()));
+        } catch (final Exception e) {
+            throw new OBException(e);
+        }
+        for (final String key : bundle.getParams().keySet()) {
+            System.err.println(key + ": " + bundle.getParams().get(key));
+        }
+        final OBError e = new OBError();
+        e.setType("Success");
+        e.setMessage("ClientID:" + bundle.getParams().get("adClientId"));
+        e.setTitle("Done");
+
+        bundle.setResult(e);
     }
 }

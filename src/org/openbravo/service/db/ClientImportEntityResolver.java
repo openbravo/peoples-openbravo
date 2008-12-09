@@ -110,10 +110,7 @@ public class ClientImportEntityResolver extends EntityResolver {
     @Override
     public BaseOBObject searchInstance(Entity entity, String id) {
         final AccessLevel al = entity.getAccessLevel();
-        if (al == AccessLevel.SYSTEM || al == AccessLevel.SYSTEM_CLIENT) {
-            return searchSystem(id, entity);
-        }
-        return null;
+        return searchSystem(id, entity);
     }
 
     @Override

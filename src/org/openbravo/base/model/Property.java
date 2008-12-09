@@ -96,7 +96,7 @@ public class Property {
         setParent(fromColumn.isParent());
         setColumnName(fromColumn.getColumnName());
         setDefaultValue(fromColumn.getDefaultValue());
-        setMandatory(fromColumn.isMandatory());
+        setMandatory(overrideMandatoryCustom(fromColumn));
         setMinValue(fromColumn.getValueMin());
         setMaxValue(fromColumn.getValueMax());
         setUuid(fromColumn.getReference().getName().equals("ID")
@@ -115,6 +115,32 @@ public class Property {
         setTransientCondition(fromColumn.getIsTransientCondition());
 
         setInactive(!fromColumn.isActive());
+    }
+
+    // TODO: remove this hack when possible
+    // there are four columns in the Application Dictionary which have been set
+    // to mandatory, while on database level the columns are not-mandatory.
+    // This because it is not possible to define in a field if a field should
+    // be mandatory. So these columns are hidden on windows/tabs where they
+    // should not be entered.
+    private boolean overrideMandatoryCustom(Column c) {
+        final boolean columnMandatory = c.isMandatory();
+        if (!c.getTable().getTableName().equalsIgnoreCase("M_Production")) {
+            return columnMandatory;
+        }
+        if (c.getColumnName().equalsIgnoreCase("endtime")) {
+            return false;
+        } else if (c.getColumnName().equalsIgnoreCase("ma_costcenteruser")) {
+            return false;
+        } else if (c.getColumnName().equalsIgnoreCase("MA_Wrphase_ID")) {
+            return false;
+        } else if (c.getColumnName().equalsIgnoreCase("neededquantity")) {
+            return false;
+        } else if (c.getColumnName().equalsIgnoreCase("rejectedquantity")) {
+            return false;
+        } else {
+            return columnMandatory;
+        }
     }
 
     /**
