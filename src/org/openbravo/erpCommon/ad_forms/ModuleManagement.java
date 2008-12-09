@@ -102,7 +102,7 @@ public void doPost (HttpServletRequest request, HttpServletResponse response) th
       printLicenseAgreement(response,vars, record);
     } else if (vars.commandIn("LOCAL")){
       printSearchFile(response,vars);
-    } if (vars.commandIn("INSTALLFILE")){
+    } else if (vars.commandIn("INSTALLFILE")){
       final FileItem fi = vars.getMultiFile("inpFile");
       vars.setSessionObject("ModuleManagementInstall|File", vars.getMultiFile("inpFile"));
       printPageInstall1(response, vars, null, true, fi.getInputStream(), new String[0]);
