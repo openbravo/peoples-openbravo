@@ -40,7 +40,7 @@ import org.openbravo.erpCommon.utility.Utility;
  */
 public class UninstallModule {
   private static ConnectionProvider pool;
-  static Logger log4j = Logger.getLogger(ExtractModule.class);
+  static Logger log4j = Logger.getLogger(UninstallModule.class);
   private String modulesBaseDir;
   
   private StringBuffer log = new StringBuffer();
@@ -95,28 +95,28 @@ public class UninstallModule {
         addLog("@CannotUninstallCore@", MSG_ERROR);
         return;
       }
-      UninstallModuleData[] dependencies = UninstallModuleData.selectDependencies(pool, moduleIdList);
+      final UninstallModuleData[] dependencies = UninstallModuleData.selectDependencies(pool, moduleIdList);
       if (dependencies != null && dependencies.length>0) {
         for (int i=0; i<dependencies.length; i++) {
           log4j.error(dependencies[i].name + " cannot uninstall module because it is part of a dependency");
           addLog(dependencies[i].name + " @CannotUninstallDependency@", MSG_ERROR);
           try {
             ImportModuleData.insertLog(pool, (vars==null?"0":vars.getUser()), "", "", "",  "cannot uninstall module because it is part of a dependency "+dependencies[i].name, "E");
-          } catch(ServletException ex) {ex.printStackTrace();}
+          } catch(final ServletException ex) {ex.printStackTrace();}
         }
         return;
       }
       
       //loop all the modules to be uninstalled
-      StringTokenizer st = new StringTokenizer(moduleIdList, ",", false);
+      final StringTokenizer st = new StringTokenizer(moduleIdList, ",", false);
       while (st.hasMoreTokens()) {
-        String module = st.nextToken().trim();
-        String contents = getContentList(module.replace("'",""));
+        final String module = st.nextToken().trim();
+        final String contents = getContentList(module.replace("'",""));
         UninstallModuleData.updateUninstall(pool, contents); //set as uninstalled in DB
-        UninstallModuleData data[] = UninstallModuleData.selectDirectories(pool, contents); //delete directories
+        final UninstallModuleData data[] = UninstallModuleData.selectDirectories(pool, contents); //delete directories
         if (data!=null && data.length>0) {
           for (int i=0; i<data.length;i++){
-            File f = new File(modulesBaseDir+"/"+data[i].javapackage);
+            final File f = new File(modulesBaseDir+"/"+data[i].javapackage);
             if (f.exists()) {
               if (!Utility.deleteDir(f)) {
                 addLog("@CannotRemoveModule@ "+data[i].name, MSG_ERROR);
@@ -134,7 +134,7 @@ public class UninstallModule {
           }
         }
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       addLog(e.toString(), MSG_ERROR);
       e.printStackTrace();
     }
@@ -151,7 +151,7 @@ public class UninstallModule {
    */
   private String getContentList(String module) throws Exception{
     String rt = "'"+module+"'";
-    UninstallModuleData data[] = UninstallModuleData.selectContent(pool, module);
+    final UninstallModuleData data[] = UninstallModuleData.selectContent(pool, module);
     if (data!=null && data.length>0) {
       for (int i=0; i<data.length; i++) {
         rt += ", "+getContentList(data[i].adModuleId);
@@ -182,8 +182,8 @@ public class UninstallModule {
    */
   public OBError getOBError(){
     if (log.length()!=0) {
-      String lang = vars.getLanguage();
-      OBError rt = new OBError();
+      final String lang = vars.getLanguage();
+      final OBError rt = new OBError();
       switch (logLevel) {
       case MSG_ERROR:
         rt.setType("Error");

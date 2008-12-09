@@ -86,7 +86,7 @@ import org.w3c.dom.Node;
  */ 
 public class ImportModule {
   private static ConnectionProvider pool;
-  static Logger log4j = Logger.getLogger(ExtractModule.class);
+  static Logger log4j = Logger.getLogger(ImportModule.class);
   private String obDir;
   private Database db;
   private boolean installLocally = true;
