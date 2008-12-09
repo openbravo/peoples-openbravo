@@ -1787,9 +1787,9 @@ OR AD_User.C_BPartner_ID IS NULL)]]></FILTERCLAUSE>
 <!--143 CREATEDBY-->
 <!--143-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--143 UPDATED-->
-<!--143-->              <UPDATED><![CDATA[2003-07-05 00:30:18.0]]></UPDATED>
+<!--143-->              <UPDATED><![CDATA[2008-12-09 18:54:51.0]]></UPDATED>
 <!--143 UPDATEDBY-->
-<!--143-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--143-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--143 NAME-->
 <!--143-->              <NAME><![CDATA[Organization]]></NAME>
 <!--143 DESCRIPTION-->
