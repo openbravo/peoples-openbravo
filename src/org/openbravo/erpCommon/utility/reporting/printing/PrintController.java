@@ -314,7 +314,6 @@ public class PrintController extends HttpSecureAppServlet {
                         throw new ServletException(Utility.messageBD(this,
                                 "NoDataReport", vars.getLanguage())
                                 + documentId);
-                    setSelectedTemplate(report, reports);
                     // Check if the document is not in status 'draft'
                     if (!report.isDraft()) {
                         // Check if the report is already attached
@@ -352,10 +351,6 @@ public class PrintController extends HttpSecureAppServlet {
 
             pageError(response);
         }
-    }
-
-    private void setSelectedTemplate(Report report, Map<String, Report> reports) {
-
     }
 
     protected PocData[] getContactDetails(DocumentType documentType,
@@ -415,12 +410,12 @@ public class PrintController extends HttpSecureAppServlet {
         // TODO: Move this to the beginning of the print handling and do nothing
         // if these conditions fail!!!)
 
-        if ((salesrepEmail == null && salesrepEmail.length() == 0)) {
+        if ((salesrepEmail == null || salesrepEmail.length() == 0)) {
             throw new ServletException(Utility.messageBD(this,
                     "NoSalesRepEmail", vars.getLanguage()));
         }
 
-        if ((contactEmail == null && contactEmail.length() == 0)) {
+        if ((contactEmail == null || contactEmail.length() == 0)) {
             throw new ServletException(Utility.messageBD(this,
                     "NoCustomerEmail", vars.getLanguage()));
         }
@@ -695,7 +690,7 @@ public class PrintController extends HttpSecureAppServlet {
                 log4j.debug(" Filling report location with: "
                         + documentData.reportLocation);
 
-            if (onlyOneAttachedDoc && isTheFirstEntry) {
+            if (onlyOneAttachedDoc) {
                 attachedContent.setFileName(report.getFilename());
 
                 cloneVector.add(attachedContent);
