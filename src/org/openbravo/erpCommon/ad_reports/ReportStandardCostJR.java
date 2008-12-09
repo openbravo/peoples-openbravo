@@ -43,21 +43,22 @@ public class ReportStandardCostJR extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
-
     if (vars.commandIn("DEFAULT")){
       String strdate = vars.getGlobalVariable("inpDateFrom", "ReportStandardCostJR|date", "");
       String strProcessPlan = vars.getGlobalVariable("inpmaProcessPlanId", "ReportStandardCostJR|ProcessPlanID", "");
       String strVersion = vars.getGlobalVariable("inpmaProcessPlanVersionId", "ReportStandardCostJR|versionID", "");
-      printPageDataSheet(response, vars, strdate, strProcessPlan, strVersion);
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportStandardCostJR|currency", Utility.stringBaseCurrencyId(this, vars.getClient()));
+      printPageDataSheet(response, vars, strdate, strProcessPlan, strVersion, strCurrencyId);
     }else if (vars.commandIn("FIND")) {
       String strdate = vars.getRequestGlobalVariable("inpDateFrom", "ReportStandardCostJR|date");
       String strProcessPlan = vars.getRequestGlobalVariable("inpmaProcessPlanId", "ReportStandardCostJR|ProcessPlanID");
       String strVersion = vars.getRequestGlobalVariable("inpmaProcessPlanVersionId", "ReportStandardCostJR|versionID");
-      printPageHtml(response, vars, strdate, strProcessPlan, strVersion);
+      String strCurrencyId = vars.getRequiredGlobalVariable("inpCurrencyId", "ReportStandardCostJR|currency");
+      printPageHtml(response, vars, strdate, strProcessPlan, strVersion, strCurrencyId);
     }  else pageError(response);
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strdate, String strProcessPlan, String strVersion) throws IOException, ServletException {
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strdate, String strProcessPlan, String strVersion, String strCurrencyId) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument=null;
     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportStandardCostJRFilter").createXmlDocument();
@@ -79,7 +80,18 @@ public class ReportStandardCostJR extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-    {
+
+    xmlDocument.setParameter("ccurrencyid", strCurrencyId);
+    try {
+        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportSalesDimensionalAnalyzeJR"), Utility.getContext(this, vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"), 0);
+     Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportSalesDimensionalAnalyzeJR", strCurrencyId);
+        xmlDocument.setData("reportC_Currency_ID","liststructure", comboTableData.select(false));
+        comboTableData = null;
+     } catch (Exception ex) {
+        throw new ServletException(ex);
+     }
+     
+     {
       OBError myMessage = vars.getMessage("ReportStandardCostJR");
       vars.removeMessage("ReportStandardCostJR");
       if (myMessage!=null) {
@@ -103,7 +115,7 @@ public class ReportStandardCostJR extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageHtml(HttpServletResponse response, VariablesSecureApp vars, String strdate, String strProcessPlan, String strVersion) throws IOException, ServletException{
+  void printPageHtml(HttpServletResponse response, VariablesSecureApp vars, String strdate, String strProcessPlan, String strVersion, String strCurrencyId) throws IOException, ServletException{
     if (log4j.isDebugEnabled()) log4j.debug("Output: print html");
     String strLanguage = vars.getLanguage();
     String strBaseDesign = getBaseDesignPath(strLanguage);
@@ -111,6 +123,8 @@ public class ReportStandardCostJR extends HttpSecureAppServlet {
     parameters.put("MA_PROCESSPLAN_ID", strProcessPlan);
     parameters.put("MA_PROCESSPLAN_VERSION_ID", strVersion);
     parameters.put("REPORT_TITLE", classInfo.name);
+    parameters.put("CURRENCY_ID", strCurrencyId);
+    parameters.put("BASE_CURRENCY_ID", Utility.stringBaseCurrencyId(this, vars.getClient()));
     JasperReport jasperReportCost;
     JasperReport jasperReportProduced;
     try {

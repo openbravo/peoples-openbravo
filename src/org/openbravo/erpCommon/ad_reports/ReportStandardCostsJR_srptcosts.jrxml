@@ -185,25 +185,33 @@
 	</parameter>
 	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
 	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
+	<parameter name="CURRENCY_ID" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="BASE_CURRENCY_ID" isForPrompting="false" class="java.lang.String"/>
 	<queryString><![CDATA[SELECT 1 AS LINEORDER, 
        AD_COLUMN_IDENTIFIER(to_char('M_PRODUCT'), to_char(M_PRODUCT_ID), $P{LANGUAGE}) AS CONCEPT,
        quantity*COALESCE(decrease,1)*COALESCE(rejected,1) AS QUANTITY,
-       COALESCE(COST, 0) AS UNIT_COST,
-       COALESCE(COST*quantity*COALESCE(decrease,1)*COALESCE(rejected,1),0) AS COST
+       C_CURRENCY_CONVERT(COALESCE(COST, 0), $P{BASE_CURRENCY_ID}, $P{CURRENCY_ID}, TO_DATE(COALESCE(CREATED,NOW())), NULL, AD_CLIENT_ID, AD_ORG_ID) AS UNIT_COST,
+       C_CURRENCY_CONVERT(COALESCE(COST*quantity*COALESCE(decrease,1)*COALESCE(rejected,1),0), $P{BASE_CURRENCY_ID}, $P{CURRENCY_ID}, TO_DATE(COALESCE(CREATED,NOW())), NULL, AD_CLIENT_ID, AD_ORG_ID) AS COST,
+       C_CURRENCY_SYMBOL($P{CURRENCY_ID}, 0, 'Y') AS CONVSYM,
+       C_CURRENCY_ISOSYM($P{CURRENCY_ID}) AS CONVISOSYM
 FROM MA_SEQUENCEPRODUCT
 WHERE MA_SEQUENCEPRODUCT.MA_SEQUENCE_ID = $P{SEQUENCE_ID}
   AND MA_SEQUENCEPRODUCT.PRODUCTIONTYPE = '-'
 UNION ALL
 SELECT 2 AS LINEORDER, 
        AD_COLUMN_IDENTIFIER(to_char('MA_SEQUENCE'), to_char(MA_SEQUENCE_ID), $P{LANGUAGE}) AS CONCEPT,
-       1 AS QUANTITY, COALESCE(OUTSOURCINGCOST,0) AS UNIT_COST, COALESCE(OUTSOURCINGCOST,0) AS COST
+       1 AS QUANTITY, COALESCE(OUTSOURCINGCOST,0) AS UNIT_COST, COALESCE(OUTSOURCINGCOST,0) AS COST,
+       C_CURRENCY_SYMBOL($P{CURRENCY_ID}, 0, 'Y') AS CONVSYM,
+       C_CURRENCY_ISOSYM($P{CURRENCY_ID}) AS CONVISOSYM
 FROM MA_SEQUENCE
 WHERE MA_SEQUENCE_ID = $P{SEQUENCE_ID}
   AND OUTSOURCED = 'Y'
 UNION ALL
 SELECT 3 AS LINEORDER,
        AD_COLUMN_IDENTIFIER(to_char('MA_COSTCENTER'), to_char(MA_PROCESS.MA_COSTCENTER_ID), $P{LANGUAGE}) AS CONCEPT,
-       1 AS QUANTITY, COALESCE(MA_SEQUENCE.COSTCENTERCOST,0) AS UNIT_COST, COALESCE(MA_SEQUENCE.COSTCENTERCOST,0) AS COST
+       1 AS QUANTITY, COALESCE(MA_SEQUENCE.COSTCENTERCOST,0) AS UNIT_COST, COALESCE(MA_SEQUENCE.COSTCENTERCOST,0) AS COST,
+       C_CURRENCY_SYMBOL($P{CURRENCY_ID}, 0, 'Y') AS CONVSYM,
+       C_CURRENCY_ISOSYM($P{CURRENCY_ID}) AS CONVISOSYM
 FROM MA_SEQUENCE, MA_PROCESS
 WHERE MA_SEQUENCE.MA_SEQUENCE_ID = $P{SEQUENCE_ID}
   AND MA_SEQUENCE.OUTSOURCED = 'N'
@@ -211,7 +219,9 @@ WHERE MA_SEQUENCE.MA_SEQUENCE_ID = $P{SEQUENCE_ID}
 UNION ALL
 SELECT 4 AS LINEORDER,
        AD_COLUMN_IDENTIFIER(to_char('C_SALARY_CATEGORY'), to_char(MA_SEQUENCE_EMPLOYEE.C_SALARY_CATEGORY_ID), $P{LANGUAGE}) AS CONCEPT,
-       1 AS QUANTITY, MA_SEQUENCE_EMPLOYEE.CALCCOST AS UNIT_COST, MA_SEQUENCE_EMPLOYEE.CALCCOST AS COST
+       1 AS QUANTITY, MA_SEQUENCE_EMPLOYEE.CALCCOST AS UNIT_COST, MA_SEQUENCE_EMPLOYEE.CALCCOST AS COST,
+       C_CURRENCY_SYMBOL($P{CURRENCY_ID}, 0, 'Y') AS CONVSYM,
+       C_CURRENCY_ISOSYM($P{CURRENCY_ID}) AS CONVISOSYM
 FROM MA_SEQUENCE, MA_SEQUENCE_EMPLOYEE
 WHERE MA_SEQUENCE.MA_SEQUENCE_ID = MA_SEQUENCE_EMPLOYEE.MA_SEQUENCE_ID
   AND MA_SEQUENCE.MA_SEQUENCE_ID = $P{SEQUENCE_ID}
@@ -219,7 +229,9 @@ WHERE MA_SEQUENCE.MA_SEQUENCE_ID = MA_SEQUENCE_EMPLOYEE.MA_SEQUENCE_ID
 UNION ALL
 SELECT 5 AS LINEORDER,
        AD_COLUMN_IDENTIFIER(to_char('MA_MACHINE'), to_char(MA_SEQUENCE_MACHINE.MA_MACHINE_ID), $P{LANGUAGE}) AS CONCEPT,
-       1 AS QUANTITY, MA_SEQUENCE_MACHINE.CALCCOST AS UNIT_COST, MA_SEQUENCE_MACHINE.CALCCOST AS COST
+       1 AS QUANTITY, MA_SEQUENCE_MACHINE.CALCCOST AS UNIT_COST, MA_SEQUENCE_MACHINE.CALCCOST AS COST,
+       C_CURRENCY_SYMBOL($P{CURRENCY_ID}, 0, 'Y') AS CONVSYM,
+       C_CURRENCY_ISOSYM($P{CURRENCY_ID}) AS CONVISOSYM
 FROM MA_SEQUENCE, MA_SEQUENCE_MACHINE
 WHERE MA_SEQUENCE.MA_SEQUENCE_ID = MA_SEQUENCE_MACHINE.MA_SEQUENCE_ID
   AND MA_SEQUENCE.MA_SEQUENCE_ID = $P{SEQUENCE_ID}
@@ -227,7 +239,9 @@ WHERE MA_SEQUENCE.MA_SEQUENCE_ID = MA_SEQUENCE_MACHINE.MA_SEQUENCE_ID
 UNION ALL
 SELECT 6 AS LINEORDER,
        AD_COLUMN_IDENTIFIER(to_char('MA_INDIRECT_COST'), to_char(MA_SEQUENCE_IC.MA_INDIRECT_COST_ID), $P{LANGUAGE}) AS CONCEPT,
-       1 AS QUANTITY, MA_SEQUENCE_IC.CALCCOST AS UNIT_COST, MA_SEQUENCE_IC.CALCCOST AS COST
+       1 AS QUANTITY, MA_SEQUENCE_IC.CALCCOST AS UNIT_COST, MA_SEQUENCE_IC.CALCCOST AS COST,
+       C_CURRENCY_SYMBOL($P{CURRENCY_ID}, 0, 'Y') AS CONVSYM,
+       C_CURRENCY_ISOSYM($P{CURRENCY_ID}) AS CONVISOSYM
 FROM MA_SEQUENCE, MA_SEQUENCE_IC
 WHERE MA_SEQUENCE.MA_SEQUENCE_ID = MA_SEQUENCE_IC.MA_SEQUENCE_ID
   AND MA_SEQUENCE.MA_SEQUENCE_ID = $P{SEQUENCE_ID}
@@ -239,6 +253,8 @@ ORDER BY LINEORDER, QUANTITY DESC, COST DESC]]></queryString>
 	<field name="QUANTITY" class="java.math.BigDecimal"/>
 	<field name="UNIT_COST" class="java.math.BigDecimal"/>
 	<field name="COST" class="java.math.BigDecimal"/>
+	<field name="CONVSYM" class="java.lang.String"/>
+	<field name="CONVISOSYM" class="java.lang.String"/>
 
 	<variable name="DetailFieldTotal" class="java.lang.String" resetType="Report" calculation="Nothing">
 	</variable>
@@ -331,24 +347,25 @@ ORDER BY LINEORDER, QUANTITY DESC, COST DESC]]></queryString>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
+						mode="Transparent"
 						x="422"
 						y="0"
-						width="83"
+						width="65"
 						height="14"
-						key="textField-1"
-						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#666666" leftPadding="5" rightBorder="1Point" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+						key="textField-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="1Point" leftBorderColor="#666666" leftPadding="5" rightBorder="None" rightBorderColor="#666666" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($F{COST}!=null)?$P{NUMBERFORMAT}.format($F{COST}):new String(" ")]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
+						mode="Transparent"
 						x="347"
 						y="0"
-						width="75"
+						width="58"
 						height="14"
 						key="textField-2"
 						stretchType="RelativeToBandHeight"/>
@@ -358,7 +375,7 @@ ORDER BY LINEORDER, QUANTITY DESC, COST DESC]]></queryString>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($F{UNIT_COST}!=null)?$P{NUMBERFORMAT}.format($F{UNIT_COST}):new String(" ")]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
 						x="272"
@@ -373,7 +390,7 @@ ORDER BY LINEORDER, QUANTITY DESC, COST DESC]]></queryString>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($F{QUANTITY}!=null)?$P{NUMBERFORMAT}.format($F{QUANTITY}):new String(" ")]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="default"
 						x="0"
@@ -388,16 +405,44 @@ ORDER BY LINEORDER, QUANTITY DESC, COST DESC]]></queryString>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CONCEPT}]]></textFieldExpression>
 				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Report_Footer"
+						x="406"
+						y="0"
+						width="16"
+						height="14"
+						key="textField-5"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="10" isUnderline="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CONVSYM}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Report_Footer"
+						x="488"
+						y="0"
+						width="16"
+						height="14"
+						key="textField-6"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="10" isUnderline="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CONVSYM}]]></textFieldExpression>
+				</textField>
 				</frame>			</band>
 		</detail>
 		<columnFooter>
 			<band height="16"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Total_Field"
 						x="422"
 						y="1"
-						width="83"
+						width="59"
 						height="15"
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -431,6 +476,21 @@ ORDER BY LINEORDER, QUANTITY DESC, COST DESC]]></queryString>
 						key="line-1"/>
 					<graphicElement stretchType="NoStretch"/>
 				</line>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						style="Total_Field"
+						mode="Opaque"
+						x="481"
+						y="1"
+						width="24"
+						height="15"
+						key="textField-7"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" isUnderline="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{CONVSYM}]]></textFieldExpression>
+				</textField>
 			</band>
 		</columnFooter>
 		<pageFooter>
