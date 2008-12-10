@@ -22,7 +22,6 @@
   devTemplate NUMBER;
   devModule   CHAR(1);
   cuerrentID  VARCHAR2(32);
-  cuerrentModuleID  VARCHAR2(32);
     
 BEGIN
     
@@ -37,20 +36,18 @@ BEGIN
      AND Type = 'T';
      
   IF (UPDATING OR INSERTING) THEN
-    cuerrentID := :new.AD_Process_Para_ID;
-    cuerrentModuleID := :new.AD_Process_ID;
+    cuerrentID := :new.AD_Process_ID;
   ELSE
-    cuerrentID := :old.AD_Process_Para_ID;
-    cuerrentModuleID := :new.AD_Process_ID;
+    cuerrentID := :old.AD_Process_ID;
   END IF;
 
   SELECT M.IsInDevelopment
     INTO devModule
     FROM AD_MODULE M, AD_PROCESS T
    WHERE M.AD_MODULE_ID = T.AD_MODULE_ID
-     AND T.AD_PROCESS_ID = cuerrentModuleID;
+     AND T.AD_PROCESS_ID = cuerrentID;
      
-  IF (UPDATING AND devTemplate=0 AND devModule='N') THEN
+  IF (UPDATING AND devTemplate='0' AND devModule='N') THEN
     IF (
         COALESCE(:NEW.AD_Client_ID , '.') != COALESCE(:OLD.AD_Client_ID , '.') OR
         COALESCE(:NEW.AD_Org_ID , '.') != COALESCE(:OLD.AD_Org_ID , '.') OR
