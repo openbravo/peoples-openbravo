@@ -66,14 +66,14 @@ public class SL_Payment_No_Verify extends HttpSecureAppServlet {
     resultado.append("var respuesta = new Array(");
 
     if (strChanged.equals("inpcreditcardnumber")){
-      if (strcCreditCard.equals(null) || strcCreditCard.length() == 0){}
+      if (strcCreditCard == null || strcCreditCard.length() == 0){}
       else{
         String strcvalidateCc = Tax.validateCreditCardNumber(strcCreditCard, strcCreditCardType);
         resultado.append("new Array('MESSAGE', \"" + FormatUtilities.replaceJS(Utility.messageBD(this, strcvalidateCc, vars.getLanguage())) + "\")");
       }
     }
     else if (strChanged.equals("inproutingno")){
-      if (strcRoutingNo.equals(null) || strcRoutingNo.length() == 0){
+      if (strcRoutingNo == null || strcRoutingNo.length() == 0){
       }
       else {
         String strcvalidateRo = Tax.validateRoutingNo(strcRoutingNo);

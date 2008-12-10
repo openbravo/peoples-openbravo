@@ -283,17 +283,17 @@ public class ImportBPartner extends ImportProcess {
     String result = ".";
     
     String locationNameA = "";
-    if (!addressData.city.equals("") && !addressData.city.equals(null)) {
+    if (!addressData.city.equals("") && addressData.city != null) {
       locationNameA = addressData.city;
-    } else if (!addressData.regionname.equals("") && !addressData.regionname.equals(null)) {
+    } else if (!addressData.regionname.equals("") && addressData.regionname != null) {
       locationNameA = addressData.regionname;
-    } else if (!addressData.postal.equals("") && !addressData.postal.equals(null)) {
+    } else if (!addressData.postal.equals("") && addressData.postal != null) {
       locationNameA = addressData.postal;
     }
 
     String locationNameB = "";
-    if (!addressData.address1.equals("") && !addressData.address1.equals(null)) locationNameB = addressData.address1;
-    else if (!addressData.address2.equals("") && !addressData.address2.equals(null)) locationNameB = addressData.address2;
+    if (!addressData.address1.equals("") && addressData.address1 != null) locationNameB = addressData.address1;
+    else if (!addressData.address2.equals("") && addressData.address2 != null) locationNameB = addressData.address2;
     
     StringBuffer locationName = new StringBuffer();
     if (!locationNameA.equals("")) {
