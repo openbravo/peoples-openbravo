@@ -33814,15 +33814,15 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--800117 CREATEDBY-->
 <!--800117-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800117 UPDATED-->
-<!--800117-->              <UPDATED><![CDATA[2004-08-12 12:31:47.0]]></UPDATED>
+<!--800117-->              <UPDATED><![CDATA[2008-12-09 17:29:26.0]]></UPDATED>
 <!--800117 UPDATEDBY-->
-<!--800117-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--800117-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800117 COLUMNNAME-->
 <!--800117-->              <COLUMNNAME><![CDATA[M_LocatorFrom]]></COLUMNNAME>
 <!--800117 NAME-->
 <!--800117-->              <NAME><![CDATA[Locator from]]></NAME>
 <!--800117 PRINTNAME-->
-<!--800117-->              <PRINTNAME><![CDATA[Locator from]]></PRINTNAME>
+<!--800117-->              <PRINTNAME><![CDATA[Storage Bin from]]></PRINTNAME>
 <!--800117 AD_MODULE_ID-->
 <!--800117-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800117**************--></AD_ELEMENT>
@@ -33841,15 +33841,15 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--800118 CREATEDBY-->
 <!--800118-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800118 UPDATED-->
-<!--800118-->              <UPDATED><![CDATA[2004-08-12 12:31:47.0]]></UPDATED>
+<!--800118-->              <UPDATED><![CDATA[2008-12-09 17:30:10.0]]></UPDATED>
 <!--800118 UPDATEDBY-->
-<!--800118-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--800118-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800118 COLUMNNAME-->
 <!--800118-->              <COLUMNNAME><![CDATA[M_LocatorTo]]></COLUMNNAME>
 <!--800118 NAME-->
 <!--800118-->              <NAME><![CDATA[Locator to]]></NAME>
 <!--800118 PRINTNAME-->
-<!--800118-->              <PRINTNAME><![CDATA[Locator to]]></PRINTNAME>
+<!--800118-->              <PRINTNAME><![CDATA[Storage Bin to]]></PRINTNAME>
 <!--800118 AD_MODULE_ID-->
 <!--800118-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800118**************--></AD_ELEMENT>
