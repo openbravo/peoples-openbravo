@@ -10666,37 +10666,6 @@
 <!--800210-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800210**************--></AD_MENU>
 
-<!--800211**************--><AD_MENU>
-<!--800211 AD_MENU_ID-->
-<!--800211-->              <AD_MENU_ID><![CDATA[800211]]></AD_MENU_ID>
-<!--800211 AD_CLIENT_ID-->
-<!--800211-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800211 AD_ORG_ID-->
-<!--800211-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800211 ISACTIVE-->
-<!--800211-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800211 CREATED-->
-<!--800211-->              <CREATED><![CDATA[2006-12-21 16:16:25.0]]></CREATED>
-<!--800211 CREATEDBY-->
-<!--800211-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--800211 UPDATED-->
-<!--800211-->              <UPDATED><![CDATA[2006-12-21 16:16:50.0]]></UPDATED>
-<!--800211 NAME-->
-<!--800211-->              <NAME><![CDATA[Copy Client]]></NAME>
-<!--800211 UPDATEDBY-->
-<!--800211-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--800211 DESCRIPTION-->
-<!--800211-->              <DESCRIPTION><![CDATA[Copy Client]]></DESCRIPTION>
-<!--800211 ISSUMMARY-->
-<!--800211-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--800211 ACTION-->
-<!--800211-->              <ACTION><![CDATA[P]]></ACTION>
-<!--800211 AD_PROCESS_ID-->
-<!--800211-->              <AD_PROCESS_ID><![CDATA[800158]]></AD_PROCESS_ID>
-<!--800211 AD_MODULE_ID-->
-<!--800211-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800211**************--></AD_MENU>
-
 <!--800212**************--><AD_MENU>
 <!--800212 AD_MENU_ID-->
 <!--800212-->              <AD_MENU_ID><![CDATA[800212]]></AD_MENU_ID>
