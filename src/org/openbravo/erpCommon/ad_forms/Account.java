@@ -86,7 +86,7 @@ public final class Account implements Serializable {
         m_IsValid = null;
         m_OldAccount_ID = "";
         m_changed = "Y";
-        if(newC_ValidCombination_ID == "") {
+        if(newC_ValidCombination_ID != null && newC_ValidCombination_ID.equals("")) {
             return;
         } else {
             load(null, conn, newC_ValidCombination_ID);

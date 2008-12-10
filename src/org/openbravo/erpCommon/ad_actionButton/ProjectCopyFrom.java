@@ -73,7 +73,7 @@ public class ProjectCopyFrom extends HttpSecureAppServlet {
   OBError processButton(VariablesSecureApp vars, String strKey, String strProject, String windowId) {
     Connection conn = null;
     OBError myMessage = null;
-    if (strProject == null || strProject == ""){
+    if (strProject == null || strProject.equals("")){
       extracted(myMessage).setType("Error");
       extracted(myMessage).setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
       extracted(myMessage).setMessage(Utility.messageBD(this, "NoProjectSelected", vars.getLanguage()));
@@ -121,7 +121,7 @@ public class ProjectCopyFrom extends HttpSecureAppServlet {
 	      }
 	      String strProjectType = ProjectCopyFromData.selectProjectType(this, strProject);
 	      String strProjectCategory = "";
-	      if (strProjectType == null || strProjectType == ""){
+	      if (strProjectType == null || strProjectType.equals("")){
 	    	  strProjectCategory = ProjectCopyFromData.selectProjCategory(this, strProject);
 	      }else {
 	    	  strProjectCategory = ProjectSetTypeData.selectProjectCategory(this, strProjectType);

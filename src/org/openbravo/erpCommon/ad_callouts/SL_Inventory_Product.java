@@ -72,10 +72,10 @@ public class SL_Inventory_Product extends HttpSecureAppServlet {
     resultado.append("new Array(\"inpmAttributesetinstanceId_R\", \"" + FormatUtilities.replaceJS(SLInOutLineProductData.attribute(this, strAttribute)) + "\"),");
     String strHasSecondaryUOM = SLOrderProductData.hasSecondaryUOM(this, strProduct);
     resultado.append("new Array(\"inphasseconduom\", " + strHasSecondaryUOM + "),\n");
-    resultado.append("new Array(\"inpquantityorder\", " + ((strQtyOrder==null || strQtyOrder=="")?"\"\"":strQtyOrder) + "), \n");
-    resultado.append("new Array(\"inpquantityorderbook\", " + ((strQtyOrder==null || strQtyOrder=="")?"\"\"":strQtyOrder) + "), \n");
-    resultado.append("new Array(\"inpqtycount\", " + ((strQty==null || strQty=="")?"\"\"":strQty) + "), \n");
-    resultado.append("new Array(\"inpqtybook\", " + ((strQty==null || strQty=="")?"\"\"":strQty) + "), \n");
+    resultado.append("new Array(\"inpquantityorder\", " + ((strQtyOrder==null || strQtyOrder.equals(""))?"\"\"":strQtyOrder) + "), \n");
+    resultado.append("new Array(\"inpquantityorderbook\", " + ((strQtyOrder==null || strQtyOrder.equals(""))?"\"\"":strQtyOrder) + "), \n");
+    resultado.append("new Array(\"inpqtycount\", " + ((strQty==null || strQty.equals(""))?"\"\"":strQty) + "), \n");
+    resultado.append("new Array(\"inpqtybook\", " + ((strQty==null || strQty.equals(""))?"\"\"":strQty) + "), \n");
     resultado.append("new Array(\"inpmProductUomId\", ");
     if (strPUOM.startsWith("\"")) strPUOM=strPUOM.substring(1,strPUOM.length()-1);
     if (vars.getLanguage().equals("en_US")) {

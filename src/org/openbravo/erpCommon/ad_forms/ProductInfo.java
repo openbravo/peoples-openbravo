@@ -53,7 +53,7 @@ public class ProductInfo{
    */
   private void init (String M_Product_ID, ConnectionProvider conn){
     m_M_Product_ID = M_Product_ID;
-    if (m_M_Product_ID == "")
+    if (m_M_Product_ID != null && m_M_Product_ID.equals(""))
       return;
 
     ProductInfoData[] data = null;

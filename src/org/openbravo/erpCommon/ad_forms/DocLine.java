@@ -132,16 +132,16 @@ public class DocLine {
         p_productInfo = new ProductInfo(m_M_Product_ID, vo.getConnectionProvider());
 
         //  Document Consistency
-        if (m_AD_Org_ID == "")
+        if (m_AD_Org_ID != null && m_AD_Org_ID.equals(""))
             m_AD_Org_ID = vo.AD_Org_ID;
-        if (m_C_Currency_ID == "")
+        if (m_C_Currency_ID != null && m_C_Currency_ID.equals(""))
             m_C_Currency_ID = vo.C_Currency_ID;
     }   //  loadAttributes
 
 
     public void setAmount (String amtSourceDr, String amtSourceCr){
-        m_AmtSourceDr = amtSourceDr == "" ? "0" : amtSourceDr;
-        m_AmtSourceCr = amtSourceCr == "" ? "0" : amtSourceCr;
+        m_AmtSourceDr = amtSourceDr.equals("") ? "0" : amtSourceDr;
+        m_AmtSourceCr = amtSourceCr.equals("") ? "0" : amtSourceCr;
     }   //  setAmounts
 
     /**
@@ -261,7 +261,7 @@ public class DocLine {
      *  @param sourceAmt source amt
      */
     public void setAmount (String sourceAmt){
-        m_AmtSourceDr = sourceAmt == "" ? ZERO.toString() : sourceAmt;
+        m_AmtSourceDr = sourceAmt.equals("") ? ZERO.toString() : sourceAmt;
         m_AmtSourceCr = ZERO.toString();
     }   //  setAmounts
 

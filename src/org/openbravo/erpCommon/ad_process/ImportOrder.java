@@ -214,7 +214,7 @@ public class ImportOrder extends ImportProcess {
         con = conn.getTransactionConnection();
         String I_Order_ID = data[i].iOrderId;
         
-        if (data[i].bpartnervalue==null || data[i].bpartnervalue=="") {
+        if (data[i].bpartnervalue==null || data[i].bpartnervalue.equals("")) {
           if (data[i].email != null && !data[i].email.equals(""))
             data[i].bpartnervalue = data[i].email;
           else if (data[i].name != null && !data[i].name.equals(""))

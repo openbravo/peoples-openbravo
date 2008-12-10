@@ -139,7 +139,7 @@ public class ImportBPartner extends ImportProcess {
 			for(int i=0;i<data.length;i++){
 				String I_BPartner_ID = data[i].iBpartnerId;
 				String C_BPartner_ID = data[i].cBpartnerId;
-				boolean newBPartner = C_BPartner_ID == "";
+				boolean newBPartner = C_BPartner_ID.equals("");
 				String C_BPartner_Location_ID = data[i].cBpartnerLocationId;
 				boolean newLocation = data[i].addr != null;
 				String AD_User_ID = data[i].adUserId;

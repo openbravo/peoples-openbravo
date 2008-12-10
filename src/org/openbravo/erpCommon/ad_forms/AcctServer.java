@@ -614,32 +614,32 @@ public abstract class AcctServer  {
         Posted = data[0].getField("Posted");
         if (!loadDocumentDetails(data, conn)) loadDocumentType();
         //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - loadDocument - DocumentDetails Loaded");
-        if ((DateAcct == null || DateAcct == "") && (DateDoc != null && DateDoc != ""))
+        if ((DateAcct == null || DateAcct.equals("")) && (DateDoc != null && DateDoc != ""))
             DateAcct = DateDoc;
-        else if ((DateDoc == null || DateDoc == "") && (DateAcct != null && DateAcct != ""))
+        else if ((DateDoc == null || DateDoc.equals("")) && (DateAcct != null && DateAcct != ""))
             DateDoc = DateAcct;
         //  DocumentNo (or Name)
         if (DocumentNo == null || DocumentNo.length() == 0)
             DocumentNo = Name;
-//      if (DocumentNo == null || DocumentNo.length() == 0)(DateDoc == "" && DateAcct != "")
+//      if (DocumentNo == null || DocumentNo.length() == 0)(DateDoc.equals("") && !DateAcct.equals(""))
 //          DocumentNo = "";
 
         //  Check Mandatory Info
         //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - loadDocument - C_Currency_ID : " + C_Currency_ID);
         String error = "";
-        if (AD_Table_ID == null || AD_Table_ID == "")
+        if (AD_Table_ID == null || AD_Table_ID.equals(""))
             error += " AD_Table_ID";
-        if (Record_ID == null || Record_ID == "")
+        if (Record_ID == null || Record_ID.equals(""))
             error += " Record_ID";
-        if (AD_Client_ID == null || AD_Client_ID == "")
+        if (AD_Client_ID == null || AD_Client_ID.equals(""))
             error += " AD_Client_ID";
-        if (AD_Org_ID == null || AD_Org_ID == "")
+        if (AD_Org_ID == null || AD_Org_ID.equals(""))
             error += " AD_Org_ID";
-        if (C_Currency_ID == null || C_Currency_ID == "")
+        if (C_Currency_ID == null || C_Currency_ID.equals(""))
             error += " C_Currency_ID";
-        if (DateAcct == null || DateAcct == "")
+        if (DateAcct == null || DateAcct.equals(""))
             error += " DateAcct";
-        if (DateDoc == null || DateDoc == "")
+        if (DateDoc == null || DateDoc.equals(""))
             error += " DateDoc";
         if (error.length() > 0){
             log4j.warn("AcctServer - loadDocument - " + DocumentNo + " - Mandatory info missing: " + error);
@@ -672,31 +672,31 @@ public abstract class AcctServer  {
     public void loadDocumentType(){
       //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - loadDocumentType - DocumentType: " + DocumentType + " - C_DocType_ID : " + C_DocType_ID);
         try{
-            if (/*DocumentType=="" && */C_DocType_ID != null && C_DocType_ID !=""){
+            if (/*DocumentType.equals("") && */C_DocType_ID != null && C_DocType_ID !=""){
                 AcctServerData[] data = AcctServerData.selectDocType(connectionProvider,C_DocType_ID);
                 DocumentType = data[0].docbasetype;
                 GL_Category_ID = data[0].glCategoryId;
             }
                     //  We have a document Type, but no GL info - search for DocType
-            if (GL_Category_ID == ""){
+            if (GL_Category_ID != null && GL_Category_ID.equals("")){
                 AcctServerData[] data = AcctServerData.selectGLCategory(connectionProvider,AD_Client_ID,DocumentType);
                 if (data!=null && data.length != 0)GL_Category_ID = data[0].glCategoryId;
             }
-            if (DocumentType == "")log4j.warn("AcctServer - loadDocumentType - No DocType for GL Info");
-            if (GL_Category_ID == ""){
+            if (DocumentType != null && DocumentType.equals(""))log4j.warn("AcctServer - loadDocumentType - No DocType for GL Info");
+            if (GL_Category_ID != null && GL_Category_ID.equals("")){
                 AcctServerData[] data = AcctServerData.selectDefaultGLCategory(connectionProvider,AD_Client_ID);
                 GL_Category_ID = data[0].glCategoryId;
             }
         }catch(ServletException e){
             log4j.warn(e);
         }
-        if (GL_Category_ID == "")log4j.warn("AcctServer - loadDocumentType - No GL Info");
+        if (GL_Category_ID != null && GL_Category_ID.equals(""))log4j.warn("AcctServer - loadDocumentType - No GL Info");
         //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - loadDocumentType -" + tableName + "_ID : " + Record_ID + " - C_DocType_ID: " + C_DocType_ID + " - DocumentType: " + DocumentType);
     }
 
     public  boolean insertNote (String AD_Client_ID, String AD_Org_ID, String AD_User_ID,String AD_Table_ID, String Record_ID,String AD_MessageValue, String Text, String Reference,VariablesSecureApp vars,ConnectionProvider conn,Connection con){
 
-        if (AD_MessageValue == "" || AD_MessageValue.length() == 0)
+        if (AD_MessageValue.equals("") || AD_MessageValue.length() == 0)
             throw new IllegalArgumentException("AcctServer - insertNote - required parameter missing - AD_Message");
 
         //  Database limits
@@ -889,7 +889,7 @@ public abstract class AcctServer  {
             return Amt;
         AcctServerData[] data = null;
         try{
-            if (ConvDate == "")ConvDate = DateTimeData.today(conn);
+            if (ConvDate != null && ConvDate.equals(""))ConvDate = DateTimeData.today(conn);
             //  ConvDate    IN      DATE
             if (RateType == null || RateType.equals("")) RateType = "S";
             data = AcctServerData.currencyConvert(conn,Amt,CurFrom_ID,CurTo_ID,ConvDate,RateType, client, org);

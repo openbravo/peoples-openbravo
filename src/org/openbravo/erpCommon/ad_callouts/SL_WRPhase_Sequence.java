@@ -64,7 +64,7 @@ public class SL_WRPhase_Sequence extends HttpSecureAppServlet {
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_Sequence_Process';\n\n");
     resultado.append("var respuesta = new Array(");
-    if (!(strMASequenceID == null || strMASequenceID == "")) {
+    if (!(strMASequenceID == null || strMASequenceID.equals(""))) {
       SLWRPhaseSequenceData[] data = SLWRPhaseSequenceData.select(this, strMASequenceID);
       String strQuantity = SLWRPhaseSequenceData.selectQuantity(this, strMASequenceID, strMAWReqID);
       resultado.append("new Array(\"inpmaProcessId\", \"" + FormatUtilities.replaceJS((data[0].process.equals("")?"\"\"":data[0].process)) + "\"),\n");

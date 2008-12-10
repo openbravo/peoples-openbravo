@@ -67,7 +67,7 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
       data[i].prodproduct = product[0].name;
       String strqty = ReportWorkRequirementDailyData.inprocess(this, data[i].wrid, data[i].productid);
       data[i].inprocess = strqty;
-      if (strqty == "") {
+      if (strqty != null && strqty.equals("")) {
         strqty = "0";
       }
     }
@@ -152,7 +152,7 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
       data[i].prodproduct = product[0].name;
       String strqty = ReportWorkRequirementDailyData.inprocess(this, data[i].wrid, data[i].productid);
       data[i].inprocess = strqty;
-      if (strqty == "") {
+      if (strqty != null && strqty.equals("")) {
         strqty = "0";
       }
     }

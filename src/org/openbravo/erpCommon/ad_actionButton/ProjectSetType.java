@@ -77,7 +77,7 @@ public class ProjectSetType extends HttpSecureAppServlet {
   OBError processButton(VariablesSecureApp vars, String strKey, String strProjectType, String strDateFrom, String windowId) {
     Connection conn = null;
     OBError myMessage = new OBError();
-    if (strProjectType == null || strProjectType == ""){
+    if (strProjectType == null || strProjectType.equals("")){
     	try {
 	        releaseRollbackConnection(conn);
 	      } catch (Exception ignored) {}

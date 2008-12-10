@@ -95,7 +95,7 @@ public final class AcctSchemaElement implements Serializable {
                 if(segmentType.equals("U2"))
                     defaultValue = data[i].cElementvalueId;
                 log4jAcctSchemaElement.debug(seqNo + " " + name + " " + segmentType + "=" + defaultValue);
-                if(mandatory.equals("Y") && defaultValue == "")
+                if(mandatory.equals("Y") && defaultValue.equals(""))
                     log4jAcctSchemaElement.warn("AcctSchameElement.getAcctSchemaElementList - No default value for " + name);
                 e = new AcctSchemaElement(id, seqNo, name, segmentType, C_Element_ID, defaultValue, mandatory, balanced);
                 list.add(e);

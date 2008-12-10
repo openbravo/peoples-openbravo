@@ -29,7 +29,7 @@ public class JRFormatFactory extends DefaultFormatFactory {
 
   public DateFormat createDateFormat(String pattern, Locale locale, TimeZone timeZone){
     DateFormat dateFormat = null;
-    if (pattern==null || pattern==""){
+    if (pattern==null || pattern.equals("")){
       dateFormat = new SimpleDateFormat(datePattern);
       return dateFormat;
     } else {
