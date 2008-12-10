@@ -1336,9 +1336,9 @@
 				</textField>
 				<staticText>
 					<reportElement
-						x="299"
+						x="284"
 						y="2"
-						width="62"
+						width="78"
 						height="15"
 						forecolor="#000000"
 						key="staticText-4"/>
@@ -1346,7 +1346,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Bottom">
 						<font fontName="Bitstream Vera Sans" size="8"/>
 					</textElement>
-				<text><![CDATA[Printed on]]></text>
+				<text><![CDATA[Generated on]]></text>
 				</staticText>
 			</band>
 		</pageFooter>

@@ -473,16 +473,16 @@
 				</textField>
 				<staticText>
 					<reportElement
-						x="186"
+						x="160"
 						y="10"
-						width="55"
+						width="78"
 						height="14"
 						key="staticText-9"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="4" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<text><![CDATA[printed on]]></text>
+				<text><![CDATA[Generated on]]></text>
 				</staticText>
 				<line direction="TopDown">
 					<reportElement

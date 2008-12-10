@@ -1211,16 +1211,16 @@ $P{NUMBERFORMAT}.format($V{RealGrossMarginNet}.divide($V{RealTotalRevenue},200,$
 				</textField>
 				<staticText>
 					<reportElement
-						x="200"
+						x="183"
 						y="5"
-						width="60"
+						width="78"
 						height="19"
 						key="staticText-40"/>
 					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
-				<text><![CDATA[Printed on]]></text>
+				<text><![CDATA[Generated on]]></text>
 				</staticText>
 			</band>
 		</pageFooter>

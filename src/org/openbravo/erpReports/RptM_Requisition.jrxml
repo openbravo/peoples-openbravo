@@ -393,16 +393,16 @@ WHERE M_REQUISITION.M_REQUISITION_ID IN $P!{REQUISITION_ID}]]></queryString>
 				<staticText>
 					<reportElement
 						style="default"
-						x="134"
+						x="124"
 						y="11"
-						width="69"
+						width="78"
 						height="18"
 						key="staticText-28"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
-				<text><![CDATA[printed on]]></text>
+				<text><![CDATA[Generated on]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

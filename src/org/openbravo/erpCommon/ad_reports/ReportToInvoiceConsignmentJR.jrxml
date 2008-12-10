@@ -947,16 +947,16 @@
 				</textField>
 				<staticText>
 					<reportElement
-						x="319"
+						x="300"
 						y="4"
-						width="60"
+						width="78"
 						height="19"
 						key="staticText-1"/>
 					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right" verticalAlignment="Bottom">
 						<font/>
 					</textElement>
-				<text><![CDATA[Printed on]]></text>
+				<text><![CDATA[Generated on]]></text>
 				</staticText>
 			</band>
 		</pageFooter>

@@ -3414,14 +3414,14 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 2, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						style="Report_Footer"
 						x="161"
 						y="3"
-						width="76"
+						width="78"
 						height="16"
 						key="staticText-7"/>
 					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
-				<text><![CDATA[Printed on ]]></text>
+				<text><![CDATA[Generated on ]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

@@ -940,16 +940,16 @@
 				<staticText>
 					<reportElement
 						style="Report_Footer"
-						x="198"
+						x="195"
 						y="4"
-						width="76"
+						width="78"
 						height="16"
 						key="staticText-1"/>
 					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
-				<text><![CDATA[Printed on]]></text>
+				<text><![CDATA[Generated on]]></text>
 				</staticText>
 			</band>
 		</pageFooter>

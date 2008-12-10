@@ -453,16 +453,16 @@ table7.C_BPARTNER_ID, TO_CHAR(table8.address1) AS address1, to_char(table8.addre
 				</textField>
 				<staticText>
 					<reportElement
-						x="215"
+						x="200"
 						y="11"
-						width="60"
+						width="78"
 						height="19"
 						key="staticText-5"/>
 					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
-				<text><![CDATA[Printed on]]></text>
+				<text><![CDATA[Generated on]]></text>
 				</staticText>
 			</band>
 		</pageFooter>
