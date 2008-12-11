@@ -19,6 +19,7 @@
 
 package org.openbravo.service.db;
 
+import org.apache.log4j.Logger;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.scheduling.ProcessBundle;
 
@@ -32,6 +33,9 @@ import org.openbravo.scheduling.ProcessBundle;
 
 public class ImportClientProcess implements org.openbravo.scheduling.Process {
 
+    private static final Logger log = Logger
+            .getLogger(ExportClientProcess.class);
+
     /**
      * Executes the import process. The expected parameters in the bundle are
      * clientId (denoting the client) and fileLocation giving the full path
@@ -39,14 +43,51 @@ public class ImportClientProcess implements org.openbravo.scheduling.Process {
      */
     public void execute(ProcessBundle bundle) throws Exception {
 
-        // DataImportService.getInstance().i
+        final String newName = (String) bundle.getParams().get("name");
+        log.debug("Importing file using name " + newName);
 
-        final OBError e = new OBError();
-        e.setType("Success");
-        e.setMessage("Name:" + bundle.getParams().get("name"));
-        e.setTitle("Done");
+        final String xml = DbUtility.readFile(ExportClientProcess
+                .getExportFile());
+        final ClientImportProcessor importProcessor = new ClientImportProcessor();
+        importProcessor
+                .setNewName((newName != null ? newName.trim() : newName));
+        final ImportResult ir = DataImportService.getInstance()
+                .importClientData(xml, importProcessor);
+        if (ir.hasErrorOccured()) {
+            final StringBuilder sb = new StringBuilder();
+            if (ir.getException() != null) {
+                ir.getException().printStackTrace(System.err);
+                log.error(ir.getException());
+                sb.append(ir.getException().getMessage());
+            }
+            if (ir.getErrorMessages() != null) {
+                log.debug(ir.getErrorMessages());
+                if (sb.length() > 0) {
+                    sb.append("\n");
+                }
+                sb.append(ir.getErrorMessages());
+                final OBError msg = new OBError();
+                msg.setType("Error");
+                msg.setMessage(sb.toString());
+                msg.setTitle("Errors occured");
+                bundle.setResult(msg);
+                return;
+            }
+        }
+        final OBError msg = new OBError();
+        msg.setType("Success");
 
-        bundle.setResult(e);
-
+        if (ir.getWarningMessages() != null) {
+            msg.setTitle("Done with messages");
+            log.debug(ir.getWarningMessages());
+            msg
+                    .setMessage("Imported client data with the following messages:<br/><ul><li>"
+                            + ir.getWarningMessages().replaceAll("\n",
+                                    "</li><li>") + "</li></ul>");
+        } else {
+            msg.setTitle("Done");
+            msg.setMessage("Imported client data");
+        }
+        bundle.setResult(msg);
     }
 }

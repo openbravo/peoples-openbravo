@@ -148,23 +148,23 @@ build.war: build a war file in the lib directory.
 		</delete>
 	</target>
 
-	<target name="export.reference.data" description="Exports Sample Data">
-		<taskdef name="exportreferencedata" classname="org.openbravo.service.db.ExportReferenceDataTask">
+	<target name="export.sample.data" description="Exports Sample Data">
+		<taskdef name="exportsampledata" classname="org.openbravo.service.db.ExportReferenceDataTask">
 			<classpath refid="project.class.path"/>
 	    </taskdef>
 	    <echo message="Exporting sample reference data"/>
-	      <exportreferencedata 
+	      <exportsampledata 
 	      		userId="0"
 	      		propertiesFile="${base.config}/Openbravo.properties"
 	      		clients="BigBazaar,Accounting Test"/>
 	  </target>
 	
-	<target name="import.reference.data" description="Import Sample Data">
-		<taskdef name="importreferencedata" classname="org.openbravo.service.db.ImportReferenceDataTask">
+	<target name="import.sample.data" description="Import Sample Data">
+		<taskdef name="importsampledata" classname="org.openbravo.service.db.ImportReferenceDataTask">
 			<classpath refid="project.class.path"/>
 	    </taskdef>
 	    <echo message="Importing sample reference data"/>
-	      <importreferencedata 
+	      <importsampledata 
 	      		userId="0"
 	      		propertiesFile="${base.config}/Openbravo.properties"
 	      		clients="BigBazaar,Accounting Test"/>

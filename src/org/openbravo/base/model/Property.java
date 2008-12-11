@@ -125,12 +125,18 @@ public class Property {
     // should not be entered.
     private boolean overrideMandatoryCustom(Column c) {
         final boolean columnMandatory = c.isMandatory();
-        if (!c.getTable().getTableName().equalsIgnoreCase("M_Production")) {
+        if (c.getTable().getTableName().equalsIgnoreCase("AD_User")
+                && c.getColumnName().equalsIgnoreCase("username")) {
+            return false;
+        }
+        if (!c.getTable().getTableName().equalsIgnoreCase("M_ProductionPlan")
+                && !c.getTable().getTableName()
+                        .equalsIgnoreCase("M_Production")) {
             return columnMandatory;
         }
         if (c.getColumnName().equalsIgnoreCase("endtime")) {
             return false;
-        } else if (c.getColumnName().equalsIgnoreCase("ma_costcenteruser")) {
+        } else if (c.getColumnName().equalsIgnoreCase("ma_costcenteruse")) {
             return false;
         } else if (c.getColumnName().equalsIgnoreCase("MA_Wrphase_ID")) {
             return false;

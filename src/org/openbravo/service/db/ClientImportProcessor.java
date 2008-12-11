@@ -95,7 +95,14 @@ public class ClientImportProcessor implements EntityXMLProcessor {
             role.setName(replace(role.getName(), originalName));
         } else if (bob instanceof User) {
             final User user = (User) bob;
-            user.setUserName(replace(user.getUserName(), originalName));
+            if (user.getUserName() == null) {
+                return;
+            }
+            if (user.getUserName().indexOf(originalName) == -1) {
+                user.setUserName(user.getUserName() + " " + getNewName());
+            } else {
+                user.setUserName(replace(user.getUserName(), originalName));
+            }
         } else if (bob instanceof Organization) {
             final Organization org = (Organization) bob;
             org.setName(replace(org.getName(), originalName));
@@ -112,6 +119,9 @@ public class ClientImportProcessor implements EntityXMLProcessor {
     }
 
     protected String replace(String currentValue, String orginalName) {
+        if (currentValue == null) {
+            return null;
+        }
         return currentValue.replace(orginalName, newName);
     }
 

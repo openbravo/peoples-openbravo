@@ -144,8 +144,20 @@ public class DataImportService implements OBSingleton {
             EntityXMLProcessor importProcessor) {
         try {
             final Document doc = DocumentHelper.parseText(xml);
-            return importDataFromXML(null, null, doc, true, null,
-                    importProcessor, true);
+            final ImportResult ir = importDataFromXML(null, null, doc, true,
+                    null, importProcessor, true);
+
+            // do a special thing to update the clientlist and orglist columns
+            // in the ad_role table with the newly created id's
+            // this is done through a stored procedure
+            SessionHandler
+                    .getInstance()
+                    .getSession()
+                    .createSQLQuery(
+                            "UPDATE AD_ROLE_ORGACCESS SET AD_ROLE_ID='0' where AD_ROLE_ID='0'")
+                    .executeUpdate();
+
+            return ir;
         } catch (final Exception e) {
             throw new OBException(e);
         }
@@ -198,6 +210,8 @@ public class DataImportService implements OBSingleton {
                             .getToUpdate());
                 } catch (final Exception e) {
                     // note on purpose caught and set in ImportResult
+                    e.printStackTrace(System.err);
+                    ir.setException(e);
                     ir.setErrorMessages(e.getMessage());
                     OBDal.getInstance().rollbackAndClose();
                     rolledBack = true;

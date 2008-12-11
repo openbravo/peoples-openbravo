@@ -24,6 +24,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.xml.EntityResolver;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
@@ -98,6 +99,11 @@ public class ClientImportEntityResolver extends EntityResolver {
 
                 // force new
                 result.setNewOBObject(true);
+
+                // check if we can keep the id for this one
+                if (!OBDal.getInstance().exists(entityName, id)) {
+                    result.setId(id);
+                }
 
                 // keep it here so it can be found later
                 getData().put(entityName + id, result);

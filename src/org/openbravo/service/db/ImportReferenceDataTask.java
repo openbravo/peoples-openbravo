@@ -19,13 +19,11 @@
 
 package org.openbravo.service.db;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.dal.service.OBDal;
 
 /**
  * Imports client data for the clients defined in the clients parameter from the
@@ -47,32 +45,23 @@ public class ImportReferenceDataTask extends ReferenceDataTask {
                         + importFile.getAbsolutePath());
             }
             log.info("Importing from file " + importFile.getAbsolutePath());
-            final String xml = readFile(importFile);
+
+            String xml = DbUtility.readFile(importFile);
             final ClientImportProcessor importProcessor = new ClientImportProcessor();
             importProcessor.setNewName(null);
-            DataImportService.getInstance().importClientData(xml,
-                    importProcessor);
-        }
-    }
-
-    private String readFile(File file) {
-        final StringBuilder contents = new StringBuilder();
-
-        try {
-            final BufferedReader input = new BufferedReader(
-                    new FileReader(file));
-            try {
-                String line = null;
-                while ((line = input.readLine()) != null) {
-                    contents.append(line);
-                    contents.append(System.getProperty("line.separator"));
+            final ImportResult ir = DataImportService.getInstance()
+                    .importClientData(xml, importProcessor);
+            xml = null; // set to null to make debugging faster
+            if (ir.hasErrorOccured()) {
+                if (ir.getException() != null) {
+                    throw new OBException(ir.getException());
                 }
-            } finally {
-                input.close();
+                if (ir.getErrorMessages() != null) {
+                    throw new OBException(ir.getErrorMessages());
+                }
             }
-        } catch (final IOException e) {
-            throw new OBException(e);
         }
-        return contents.toString();
+        OBDal.getInstance().commitAndClose();
     }
+
 }

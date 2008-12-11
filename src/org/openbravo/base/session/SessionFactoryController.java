@@ -23,7 +23,6 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
-import org.hibernate.cache.EhCacheProvider;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.dialect.PostgreSQLDialect;
@@ -132,14 +131,12 @@ public abstract class SessionFactoryController {
 
             configuration.addProperties(getOpenbravoProperties());
 
-            // add a default second level cache
-            if (configuration.getProperties().get(Environment.CACHE_PROVIDER) == null) {
-                configuration.getProperties().setProperty(
-                        Environment.CACHE_PROVIDER,
-                        EhCacheProvider.class.getName());
-                configuration.getProperties().setProperty(
-                        Environment.USE_QUERY_CACHE, "true");
-            }
+            // second-level caching is disabled for now because not all data
+            // access and updates go through hibernate.
+            configuration.getProperties().setProperty(
+                    Environment.USE_SECOND_LEVEL_CACHE, "false");
+            configuration.getProperties().setProperty(
+                    Environment.USE_QUERY_CACHE, "false");
 
             sessionFactory = configuration.buildSessionFactory();
 

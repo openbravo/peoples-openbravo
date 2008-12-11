@@ -272,9 +272,13 @@ compare.database.structure: refer to compare.database.structure target of databa
     <ant dir="${base.src}" target="generate.entities" inheritAll="true" inheritRefs="true"/>
   </target>
 
-  <target name="export.reference.data">
-  	<ant dir="${base.src}" target="export.reference.data" inheritAll="true" inheritRefs="true"/>
+  <target name="export.sample.data">
+  	<ant dir="${base.src}" target="export.sample.data" inheritAll="true" inheritRefs="true"/>
   </target>
+
+	  <target name="import.sample.data">
+	  	<ant dir="${base.src}" target="import.sample.data" inheritAll="true" inheritRefs="true"/>
+	  </target>
 
   <target name="compile.src" depends="init">
     <ant dir="${base.src}" target="compile.src" inheritAll="true" inheritRefs="true"/>
@@ -362,7 +366,12 @@ compare.database.structure: refer to compare.database.structure target of databa
     </taskdef>
     <applyModule userId="0"
                  propertiesFile="${base.config}/Openbravo.properties"/>
-    <antcall target="import.database.sampledata"/>
+    <!-- 
+    	this antcall implements the previous method of importing data 
+    	use that if the new method does not work for you: 
+    	<antcall target="import.database.sampledata"/>
+    -->
+    <antcall target="import.sample.data"/>
   </target>
 
   <target name="eclipse.install.source" depends="init,code.rev">
@@ -448,7 +457,8 @@ compare.database.structure: refer to compare.database.structure target of databa
   </target>
 
   <target name="import.database.sampledata" depends="init,code.rev">
-    <ant dir="${base.db}" target="import.database.sampledata" inheritAll="true" inheritRefs="true"/>
+  	<!--<ant dir="${base.src}" target="import.reference.data" inheritAll="true" inheritRefs="true"/>-->
+    <ant dir="${base.db}" target="import.database.sampledata" inheritAll="true" inheritRefs="true"/> 
   </target>
 
   <target name="export.database.masterdata" depends="init,code.rev">

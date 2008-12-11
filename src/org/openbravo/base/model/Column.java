@@ -348,6 +348,10 @@ public class Column extends ModelObject {
      */
     @SuppressWarnings("unchecked")
     public Set<String> getAllowedValues() {
+        // TODO: discrepancy with the application dictionary, solve this later
+        if (getColumnName().equalsIgnoreCase("changeprojectstatus")) {
+            return Collections.EMPTY_SET;
+        }
         if (getReferenceValue() != null) {
             return getReferenceValue().getAllowedValues();
         }
