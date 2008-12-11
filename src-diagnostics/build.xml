@@ -52,6 +52,7 @@
 	<target name="check.all">
 		<antcall target="check.permissions"/>
 		<antcall target="check.properties.configuration"/>
+		<antcall target="check.environment.variables"/>
 		<antcall target="check.db"/>
 		<antcall target="check.ant"/>
 		<antcall target="check.tomcat"/>
@@ -61,6 +62,14 @@
 	<target name="check.properties.configuration">
 		<antcall target="check.properties"/>
 		<antcall target="check.log4j"/>
+	</target>
+	
+	<target name="check.environment.variables">
+		<taskdef name="checkEnv"
+			classname="org.openbravo.task.CheckEnvironmentVariables">
+			<classpath refid="diagnostic.class.path"/>
+		</taskdef>
+		<checkEnv/>
 	</target>
 	
 	<target name="check.properties">
