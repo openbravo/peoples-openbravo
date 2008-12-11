@@ -139,8 +139,13 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
     String C_Currency_To_ID = Utility.getContext(this, vars, "$C_Currency_ID", "");
     if (!CCurrencyID.equals("")) {
       String convertedAmount = Amount.toString();
-      if (!CCurrencyID.equals(C_Currency_To_ID)){        
-        convertedAmount = SEExpenseProductData.selectConvertedAmt(this, Amount.toString(), CCurrencyID, C_Currency_To_ID, strDateexpense, vars.getClient(), vars.getOrg());
+      if (!CCurrencyID.equals(C_Currency_To_ID)){
+        try{
+          convertedAmount = SEExpenseProductData.selectConvertedAmt(this, Amount.toString(), CCurrencyID, C_Currency_To_ID, strDateexpense, vars.getClient(), vars.getOrg());
+        }catch(ServletException e){
+          convertedAmount = "";
+          log4j.warn("Currency does not exist. Exception:"+e);
+        }
       }
       String strPrecisionConv = "0";    
       if (!C_Currency_To_ID.equals("")){
@@ -155,7 +160,7 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
       }
       if (ConvAmount.scale() > StdPrecisionConv)
         ConvAmount = ConvAmount.setScale(StdPrecisionConv, BigDecimal.ROUND_HALF_UP);
-      resultado.append(", new Array(\"inpconvertedamt\", \"" + ConvAmount.toString() + "\")");
+      resultado.append(", new Array(\"inpconvertedamt\", \"" + (ConvAmount.equals(new BigDecimal(0.0))?"":ConvAmount.toString()) + "\")");
     }
     if (strChanged.equals("inpmProductId") && !CCurrencyID.equals("")){
       resultado.append(",new Array(\"inpcCurrencyId\", \"" + CCurrencyID + "\")");

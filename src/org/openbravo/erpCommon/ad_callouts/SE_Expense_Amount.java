@@ -90,7 +90,12 @@ public class SE_Expense_Amount extends HttpSecureAppServlet {
         strPrecisionConv = SEExpenseAmountData.selectPrecision(this, C_Currency_To_ID);
       }      
       int StdPrecisionConv = Integer.valueOf(strPrecisionConv).intValue();
-      convertedAmount = SEExpenseAmountData.selectConvertedAmt(this, strExpenseAmt, strcCurrencyId, C_Currency_To_ID, strDateexpense, vars.getClient(), vars.getOrg());      
+      try{
+        convertedAmount = SEExpenseAmountData.selectConvertedAmt(this, strExpenseAmt, strcCurrencyId, C_Currency_To_ID, strDateexpense, vars.getClient(), vars.getOrg());
+      }catch (ServletException e) {
+        convertedAmount = "";
+        log4j.warn("Currency does not exist. Exception:"+e);
+      }
       if (!convertedAmount.equals("")) {
         ConvAmount = new BigDecimal(convertedAmount);
       } else {
@@ -103,7 +108,7 @@ public class SE_Expense_Amount extends HttpSecureAppServlet {
     resultado.append("var calloutName='SE_Expense_Amount';\n\n");
     resultado.append("var respuesta = new Array(");
     resultado.append("new Array(\"inpexpenseamt\", \"" + Amount.toString() + "\")");
-    resultado.append(", new Array(\"inpconvertedamt\", \"" + ConvAmount.toString() + "\")");
+    resultado.append(", new Array(\"inpconvertedamt\", \"" +(ConvAmount.equals(new BigDecimal(0.0))?"":ConvAmount.toString())+ "\")");
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());
     xmlDocument.setParameter("frameName", "appFrame");
