@@ -93,7 +93,7 @@ Copyright (c) 2007, Yahoo! Inc. All rights reserved. Code licensed under the BSD
 # barcode4j-fop-ext-0.20.5-complete.jar 
 # batik.jar
 # catalina-ant.jar
-# cglib-2.1.3.jar
+# cglib-nodep-2.1_3.jar
 # commons-beanutils-1.7.0.jar
 # commons-codec-1.3.jar
 # commons-collections-3.1.jar
@@ -152,7 +152,6 @@ All files under the LGPL 2.1 (available at http://www.gnu.org/licenses/old-licen
 All files under the LGPL 3 (available at www.gnu.org/licenses/lgpl.html)
 
 # jalopy-1.5-rc3p1.jar
-# asm.jar
 # dom4j-1.6.1.jar
 Under a BSD style license  (available at http://www.dom4j.org/license.html) 
 
