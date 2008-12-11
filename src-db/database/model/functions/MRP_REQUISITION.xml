@@ -95,9 +95,10 @@
     );
 
     FOR Cur_workproposal IN (
-      SELECT *
-      FROM MRP_RUN_PRODUCTIONLINE
+      SELECT MRP_RUN_PRODUCTIONLINE.*, M_PRODUCT.C_UOM_ID
+      FROM MRP_RUN_PRODUCTIONLINE, M_PRODUCT
       WHERE MRP_RUN_PRODUCTION_ID = v_Record_ID
+        AND MRP_RUN_PRODUCTIONLINE.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
         AND INOUTTRXTYPE = 'MP'
         AND M_REQUISITIONLINE_ID IS NULL
       ORDER BY PLANNEDDATE
@@ -110,12 +111,12 @@
         M_REQUISITIONLINE_ID,  AD_CLIENT_ID, AD_ORG_ID,
         ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY,
         M_REQUISITION_ID,  NEEDBYDATE, M_PRODUCT_ID,
-        QTY, LINE
+        QTY, LINE, C_UOM_ID
       ) VALUES (
         v_MRequisitionLine_ID, v_Client_ID, v_Org_ID,
         'Y', now(), v_User_ID, now(), v_User_ID,
         v_MRequisition_ID, Cur_workproposal.PLANNEDDATE, Cur_workproposal.M_PRODUCT_ID,
-        Cur_workproposal.QTY, v_Line
+        Cur_workproposal.QTY, v_Line, Cur_workproposal.C_UOM_ID
       );
 
       UPDATE MRP_RUN_PRODUCTIONLINE
