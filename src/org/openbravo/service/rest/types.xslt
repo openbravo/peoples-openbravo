@@ -38,7 +38,7 @@
      	<xsl:value-of select="$href"/>
      </xsl:element>
      </td><td style="padding-left:20px">
-      <a href="dalws/{$href}">xml</a>
+      <a href="{$href}">xml</a>
      </td></tr>
 </xsl:template>
 </xsl:stylesheet> 

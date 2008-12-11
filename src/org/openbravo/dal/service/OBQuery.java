@@ -314,12 +314,14 @@ public class OBQuery<E extends BaseOBObject> {
             }
         }
         final Map<String, Object> localNamedParameters = getNamedParameters();
-        for (final String name : localNamedParameters.keySet()) {
-            final Object value = localNamedParameters.get(name);
-            if (value instanceof BaseOBObject) {
-                qry.setEntity(name, value);
-            } else {
-                qry.setParameter(name, value);
+        if (localNamedParameters != null) {
+            for (final String name : localNamedParameters.keySet()) {
+                final Object value = localNamedParameters.get(name);
+                if (value instanceof BaseOBObject) {
+                    qry.setEntity(name, value);
+                } else {
+                    qry.setParameter(name, value);
+                }
             }
         }
     }
