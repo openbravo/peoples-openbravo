@@ -50,6 +50,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.poc.EmailData;
@@ -257,17 +258,30 @@ public class PrintController extends HttpSecureAppServlet {
                     }
 
                 }
+
                 vars.setSessionObject(sessionValuePrefix + ".Documents",
                         reports);
-                if (request.getServletPath().toLowerCase()
-                        .indexOf("print.html") != -1)
-                    createPrintOptionsPage(request, response, vars,
-                            documentType, getComaSeparatedString(documentIds),
-                            reports);
-                else
-                    createEmailOptionsPage(request, response, vars,
-                            documentType, getComaSeparatedString(documentIds),
-                            reports);
+                try {
+                    if (request.getServletPath().toLowerCase().indexOf(
+                            "print.html") != -1)
+                        createPrintOptionsPage(request, response, vars,
+                                documentType,
+                                getComaSeparatedString(documentIds), reports);
+                    else
+                        createEmailOptionsPage(request, response, vars,
+                                documentType,
+                                getComaSeparatedString(documentIds), reports);
+                } catch (final ServletException e) {
+                    vars.getRequestGlobalVariable("inpTabId", "inpTabId");
+                    final OBError on = new OBError();
+                    on.setMessage("sdasdasdasdadasd");
+                    on.setTitle("dsadasd");
+                    on.setType("Error");
+                    vars.setMessage("290", on);
+                    vars.getRequestGlobalVariable("inpTabId",
+                            "AttributeSetInstance.tabId");
+                    printPageClosePopUpAndRefresh(response, vars);
+                }
             } else if (vars.commandIn("ADD")) {
                 if (request.getServletPath().toLowerCase()
                         .indexOf("print.html") != -1)
