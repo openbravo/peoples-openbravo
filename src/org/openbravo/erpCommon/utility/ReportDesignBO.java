@@ -20,6 +20,7 @@ package org.openbravo.erpCommon.utility;
 
 import java.util.Iterator;
 
+import net.sf.jasperreports.engine.JRElement;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.design.JRDesignBand;
 import net.sf.jasperreports.engine.design.JRDesignExpression;
@@ -99,7 +100,9 @@ public class ReportDesignBO {
     textField.setForecolor(gridReportVO.getDetailBandStyle().getForeColor());
     textField.setBold(gridReportVO.getDetailBandStyle().isBold());
     textField.setItalic(gridReportVO.getDetailBandStyle().isItalic());
-    textField.setUnderline(gridReportVO.getDetailBandStyle().isUnderline());    
+    textField.setUnderline(gridReportVO.getDetailBandStyle().isUnderline());
+    textField.setStretchWithOverflow(true);
+    textField.setStretchType(JRElement.STRETCH_TYPE_RELATIVE_TO_TALLEST_OBJECT);
 
     bDetalle.addElement(textField);
   }
