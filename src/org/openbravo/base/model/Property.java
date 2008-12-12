@@ -191,6 +191,9 @@ public class Property {
         if (getName().equals("organization")) {
             setClientOrOrganization(true);
             getEntity().setOrganizationEnabled(true);
+            if (isId() || isPartOfCompositeId()) {
+                getEntity().setOrganizationPartOfKey(true);
+            }
         }
         if (getName().equalsIgnoreCase("isactive") && isPrimitive()) {
             getEntity().setActiveEnabled(true);

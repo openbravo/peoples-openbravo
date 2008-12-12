@@ -210,7 +210,15 @@ public class OBQuery<E extends BaseOBObject> {
         }
         OBContext.getOBContext().getEntityAccessChecker().checkReadable(e);
 
-        if (isFilterOnReadableOrganization() && e.isOrganizationEnabled()) {
+        if (isFilterOnReadableOrganization() && e.isOrganizationPartOfKey()) {
+            whereClause = (addWhereClause ? " where " : "")
+                    + addAnd(whereClause) + prefix + "id.organization.id "
+                    + createInClause(obContext.getReadableOrganizations());
+            if (addWhereClause) {
+                addWhereClause = false;
+            }
+        } else if (isFilterOnReadableOrganization()
+                && e.isOrganizationEnabled()) {
             whereClause = (addWhereClause ? " where " : "")
                     + addAnd(whereClause) + prefix + "organization.id "
                     + createInClause(obContext.getReadableOrganizations());

@@ -69,6 +69,8 @@ public class Entity {
     private boolean isTraceable;
     private boolean isActiveEnabled;
     private boolean isOrganizationEnabled;
+    // some views have this:
+    private boolean isOrganizationPartOfKey;
     private boolean isClientEnabled;
     private boolean isMutable;
     private boolean isDeletable;
@@ -102,14 +104,14 @@ public class Entity {
         identifierProperties = new ArrayList<Property>();
         parentProperties = new ArrayList<Property>();
         orderByProperties = new ArrayList<Property>();
-        propertiesByName = new HashMap<String, Property>();
-        propertiesByColumnName = new HashMap<String, Property>();
+        // + 5 to take into account some additional properties for onetomany
+        // and such
+        propertiesByName = new HashMap<String, Property>(table.getColumns()
+                .size() + 5);
+        propertiesByColumnName = new HashMap<String, Property>(table
+                .getColumns().size() + 5);
 
         for (final Column c : table.getColumns()) {
-            // non active columns are not mapped!
-            // if (!c.isActive()) {
-            // continue;
-            // }
 
             final Property p = new Property();
             p.setEntity(this);
@@ -546,5 +548,13 @@ public class Entity {
 
     public void setTableId(String tableId) {
         this.tableId = tableId;
+    }
+
+    public boolean isOrganizationPartOfKey() {
+        return isOrganizationPartOfKey;
+    }
+
+    public void setOrganizationPartOfKey(boolean isOrganizationPartOfKey) {
+        this.isOrganizationPartOfKey = isOrganizationPartOfKey;
     }
 }

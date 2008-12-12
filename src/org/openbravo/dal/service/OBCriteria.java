@@ -132,7 +132,13 @@ public class OBCriteria<E extends BaseOBObject> implements Criteria {
 
         OBContext.getOBContext().getEntityAccessChecker().checkReadable(e);
 
-        if (isFilterOnReadableOrganization() && e.isOrganizationEnabled()) {
+        if (isFilterOnReadableOrganization() && e.isOrganizationPartOfKey()) {
+            getCriteria().add(
+                    Restrictions.in("id." + PROPERTY_ORGANIZATION + ".id",
+                            obContext.getReadableOrganizations()));
+
+        } else if (isFilterOnReadableOrganization()
+                && e.isOrganizationEnabled()) {
             getCriteria().add(
                     Restrictions.in(PROPERTY_ORGANIZATION + ".id", obContext
                             .getReadableOrganizations()));

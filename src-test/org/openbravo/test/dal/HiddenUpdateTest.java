@@ -27,6 +27,8 @@ import org.hibernate.EmptyInterceptor;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.type.Type;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalSessionFactoryController;
@@ -74,6 +76,12 @@ public class HiddenUpdateTest extends BaseTest {
                 final PersistentClass pc = (PersistentClass) it.next();
                 final String entityName = pc.getEntityName();
 
+                final Entity e = ModelProvider.getInstance().getEntity(
+                        entityName);
+
+                if (entityName.startsWith("C_Selection")) {
+                    continue;
+                }
                 System.err.println("++++++++ Reading entity " + entityName
                         + " +++++++++++");
                 for (final Object o : OBDal.getInstance().createCriteria(

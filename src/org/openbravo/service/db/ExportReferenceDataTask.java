@@ -49,11 +49,13 @@ public class ExportReferenceDataTask extends ReferenceDataTask {
             final Map<String, Object> parameters = new HashMap<String, Object>();
             parameters.put(DataExportService.CLIENT_ID_PARAMETER_NAME, client
                     .getId());
+
             log.info("Exporting client " + client.getName());
             final String xml = DataExportService.getInstance()
                     .exportClientToXML(parameters);
-            final File exportFile = new File(exportDir, client.getValue()
-                    + ".xml");
+
+            final File exportFile = new File(exportDir,
+                    getExportFileName(client.getName()));
             if (exportFile.exists()) {
                 exportFile.delete();
             }
@@ -99,5 +101,20 @@ public class ExportReferenceDataTask extends ReferenceDataTask {
                     + clientValue + " as the value in the query");
         }
         return result.get(0);
+    }
+
+    // replace everything except alphabetical characters
+    private String getExportFileName(String clientName) {
+        final char[] nameChars = clientName.toCharArray();
+        for (int i = 0; i < nameChars.length; i++) {
+            final char c = nameChars[i];
+            // Only allow valid characters
+            final boolean allowedChar = (c >= 'A' && c <= 'Z')
+                    || (c >= 'a' && c <= 'z');
+            if (!allowedChar) {
+                nameChars[i] = '_';
+            }
+        }
+        return new String(nameChars) + ".xml";
     }
 }

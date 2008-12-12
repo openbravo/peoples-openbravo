@@ -19,6 +19,7 @@
 
 package org.openbravo.base.structure;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,7 +44,10 @@ import org.openbravo.dal.core.OBContext;
  */
 
 public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable,
-        DynamicEnabled, OBNotSingleton {
+        DynamicEnabled, OBNotSingleton, Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     private Entity model = null;
 
     // is used to force an insert of this object. This is usefull if the id of

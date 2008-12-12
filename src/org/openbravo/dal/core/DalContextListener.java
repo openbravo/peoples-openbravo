@@ -26,6 +26,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.session.SessionFactoryController;
@@ -81,5 +82,8 @@ public class DalContextListener implements ServletContextListener {
     }
 
     public void contextDestroyed(ServletContextEvent event) {
+        System.err.println("Removing sessionfactory");
+        ModelProvider.setInstance(null);
+        SessionFactoryController.setInstance(null);
     }
 }

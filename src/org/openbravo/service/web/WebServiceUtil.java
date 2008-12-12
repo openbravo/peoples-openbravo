@@ -175,6 +175,9 @@ public class WebServiceUtil implements OBSingleton {
      * @return the first part of the path
      */
     public String getFirstSegment(String path) {
+        if (path == null) {
+            return null;
+        }
         String localPath = path;
         if (path.startsWith("/")) {
             localPath = localPath.substring(1);

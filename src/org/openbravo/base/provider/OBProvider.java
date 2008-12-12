@@ -157,7 +157,7 @@ public class OBProvider {
         Registration reg = registrations.get(clz.getName());
         if (reg == null) {
             // register it
-            log.info("Registration for class " + clz.getName()
+            log.debug("Registration for class " + clz.getName()
                     + " not found, creating a registration automatically");
             register(clz, clz, false);
 

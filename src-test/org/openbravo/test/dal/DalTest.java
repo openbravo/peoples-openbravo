@@ -29,6 +29,8 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.access.Role;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.businesspartner.Category;
 import org.openbravo.model.common.businesspartner.CategoryAccounts;
 import org.openbravo.model.common.currency.Currency;
@@ -55,10 +57,20 @@ public class DalTest extends BaseTest {
         System.err.println(a * 100);
     }
 
+    // set correct default role
+    private void setDefaultRole() {
+        setUserContext("0");
+        final Role r = OBDal.getInstance().get(Role.class, "1000004");
+        final User u = OBDal.getInstance().get(User.class, "1000000");
+        u.setDefaultAdRole(r);
+        OBDal.getInstance().commitAndClose();
+    }
+
     // creates a new BPGroup, test simple save, BPGroup is removed in next test
     public void testCreateBPGroup() {
+        setDefaultRole();
         setErrorOccured(true);
-        setUserContext("1000001");
+        setUserContext("1000000");
         final Category bpg = OBProvider.getInstance().get(Category.class);
         bpg.setDefault(true);
         bpg.setDescription("testdescription");
@@ -71,7 +83,7 @@ public class DalTest extends BaseTest {
     // query for the BPGroup again and remove it
     public void testRemoveBPGroup() {
         setErrorOccured(true);
-        setUserContext("1000001");
+        setUserContext("1000000");
         final OBCriteria<Category> obCriteria = OBDal.getInstance()
                 .createCriteria(Category.class);
         obCriteria.add(Expression.eq(Category.PROPERTY_NAME, "testname"));
@@ -111,7 +123,7 @@ public class DalTest extends BaseTest {
     // check if the BPGroup was removed
     public void testCheckBPGroupRemoved() {
         setErrorOccured(true);
-        setUserContext("1000001");
+        setUserContext("1000000");
         final OBCriteria<Category> obc = OBDal.getInstance().createCriteria(
                 Category.class);
         obc.add(Expression.eq(Category.PROPERTY_NAME, "testname"));
@@ -174,7 +186,7 @@ public class DalTest extends BaseTest {
     // test sorting on product.name
     public void testTransaction25PageRead() {
         setErrorOccured(true);
-        setUserContext("1000001");
+        setUserContext("1000000");
         final OBCriteria<MaterialTransaction> countObc = OBDal.getInstance()
                 .createCriteria(MaterialTransaction.class);
         final int count = countObc.count();

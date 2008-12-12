@@ -36,13 +36,15 @@ public class ImportReferenceDataTask extends ReferenceDataTask {
     @Override
     protected void doExecute() {
         final File importDir = getReferenceDataDir();
-        for (final String clientStr : getClients().split(",")) {
-            final File importFile = new File(importDir, clientStr.trim()
-                    + ".xml");
-            if (!importFile.exists()) {
-                throw new OBException("No import file present for client "
-                        + clientStr + " complete path: "
-                        + importFile.getAbsolutePath());
+        if (importDir.listFiles().length == 0) {
+            throw new OBException(
+                    "No import files present in the import directory: "
+                            + importDir.getAbsolutePath());
+        }
+
+        for (final File importFile : importDir.listFiles()) {
+            if (importFile.isDirectory()) {
+                continue;
             }
             log.info("Importing from file " + importFile.getAbsolutePath());
 

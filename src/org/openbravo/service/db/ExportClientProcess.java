@@ -26,7 +26,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.dal.core.DalContextListener;
+import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.util.Check;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.model.ad.system.Client;
@@ -52,20 +53,25 @@ public class ExportClientProcess implements org.openbravo.scheduling.Process {
      * Returns the export file into which the xml is written or from the export
      * can be read.
      */
-    public static File getExportFile() {
+    public static File getExportDir() {
 
         // determine the location where to place the file
-        final String homeDirPath = DalContextListener.getServletContext()
-                .getRealPath("");
-        final File webInfDir = new File(homeDirPath, "WEB-INF");
-        final File exportDir = new File(webInfDir, EXPORT_DIR_NAME);
+        final String sourcePath = OBPropertiesProvider.getInstance()
+                .getOpenbravoProperties().getProperty("source.path");
+        Check
+                .isNotNull(
+                        sourcePath,
+                        "The source.path property is not defined in the "
+                                + "Openbravo.properties file or the Openbravo.properties "
+                                + "file can not be found.");
+        final File exportDir = new File(sourcePath, EXPORT_DIR_NAME);
         if (!exportDir.exists()) {
             log.debug("Exportdir " + exportDir.getAbsolutePath()
                     + " does not exist, creating it");
             exportDir.mkdirs();
         }
 
-        return new File(exportDir, CLIENT_DATA_FILE_NAME);
+        return exportDir;
     }
 
     private static final Logger log = Logger
@@ -98,7 +104,8 @@ public class ExportClientProcess implements org.openbravo.scheduling.Process {
             final Client client = OBDal.getInstance().get(Client.class,
                     clientId);
 
-            final File exportFile = getExportFile();
+            final File exportFile = new File(getExportDir(),
+                    CLIENT_DATA_FILE_NAME);
 
             // write the xml to a file in WEB-INF
             log.debug("Writing export file " + exportFile.getAbsolutePath());
@@ -120,7 +127,7 @@ public class ExportClientProcess implements org.openbravo.scheduling.Process {
             msg.setType("Error");
             msg.setMessage(e.getMessage());
             msg.setTitle("Done with Errors");
-            bundle.setResult(e);
+            bundle.setResult(msg);
         }
     }
 }

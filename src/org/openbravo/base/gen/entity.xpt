@@ -33,6 +33,8 @@ package «packageName»;
  */
 public class «simpleClassName» extends org.openbravo.base.structure.BaseOBObject «implementsStatement» {
 
+    private static final long serialVersionUID = 1L;
+
 	public final static String TABLE_NAME = "«tableName»";
 	public final static String ENTITY_NAME = "«name»";
 	«FOREACH properties AS p-»
