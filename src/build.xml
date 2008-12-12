@@ -166,8 +166,7 @@ build.war: build a war file in the lib directory.
 	    <echo message="Importing sample reference data"/>
 	      <importsampledata 
 	      		userId="0"
-	      		propertiesFile="${base.config}/Openbravo.properties"
-	      		clients="BigBazaar,Accounting Test"/>
+	      		propertiesFile="${base.config}/Openbravo.properties"/>
 	  </target>
 
  <target name="generate.entities" depends="compile.src.gen,clean.src.gen">

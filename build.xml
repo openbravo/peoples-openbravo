@@ -369,9 +369,9 @@ compare.database.structure: refer to compare.database.structure target of databa
     <!-- 
     	this antcall implements the previous method of importing data 
     	use that if the new method does not work for you: 
-    	<antcall target="import.database.sampledata"/>
     -->
-    <antcall target="import.sample.data"/>
+    	<!--<antcall target="import.database.sampledata"/>-->
+   <antcall target="import.sample.data"/>
   </target>
 
   <target name="eclipse.install.source" depends="init,code.rev">
