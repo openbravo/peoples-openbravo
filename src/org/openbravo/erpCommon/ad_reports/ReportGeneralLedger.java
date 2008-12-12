@@ -200,7 +200,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       int j = 0;
       for (int i=0;data!=null && i<data.length;i++){
         if(!strOld.equals(((strcBpartnerId.equals("")&&strAll.equals(""))?"":data[i].cBpartnerId) + data[i].id)){
-          subreport[j] = ReportGeneralLedgerData.selectPrevious(this,(strcBpartnerId.equals("")&&strAll.equals(""))?"":data[i].cBpartnerId, strcAcctSchemaId, data[i].id, strDateFrom, data[i].dateacct, data[i].factAcctId, strOrgFamily);
+          subreport[j] = ReportGeneralLedgerData.selectPrevious(this,(strcBpartnerId.equals("")&&strAll.equals(""))?"":data[i].cBpartnerId, strcAcctSchemaId, data[i].id, data[i].dateacct, data[i].factAcctId, strOrgFamily);
           if (data[i].totalacctdr.equals("0")) data[i].totalacctdr = subreport[j][0].totaldr;
           if (data[i].totalacctcr.equals("0")) data[i].totalacctcr = subreport[j][0].totalcr;
           if (data[i].totalacctsub.equals("0"))data[i].totalacctsub = subreport[j][0].total;
@@ -324,7 +324,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     int j = 0;
     for (int i=0;data!=null && i<data.length;i++){
       if(!strOld.equals(((strcBpartnerId.equals("")&&strAll.equals(""))?"":data[i].cBpartnerId) + data[i].id)){
-        subreport[j] = ReportGeneralLedgerData.selectPrevious(this,(strcBpartnerId.equals("")&&strAll.equals(""))?"":data[i].cBpartnerId, strcAcctSchemaId, data[i].id, strDateFrom, data[i].dateacct, data[i].factAcctId, strOrgFamily);
+        subreport[j] = ReportGeneralLedgerData.selectPrevious(this,(strcBpartnerId.equals("")&&strAll.equals(""))?"":data[i].cBpartnerId, strcAcctSchemaId, data[i].id, data[i].dateacct, data[i].factAcctId, strOrgFamily);
         j++;
       }
       strOld = (((strcBpartnerId.equals("")&&strAll.equals(""))?"":data[i].cBpartnerId) + data[i].id);
