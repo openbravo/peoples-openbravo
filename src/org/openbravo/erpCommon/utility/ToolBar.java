@@ -18,10 +18,11 @@
 */
 package org.openbravo.erpCommon.utility;
 
-import org.openbravo.database.ConnectionProvider;
 import java.util.Hashtable;
 import java.util.Vector;
-import org.apache.log4j.Logger ;
+
+import org.apache.log4j.Logger;
+import org.openbravo.database.ConnectionProvider;
 
 public class ToolBar {
   static Logger log4j = Logger.getLogger(ToolBar.class);
@@ -83,7 +84,7 @@ public class ToolBar {
     this.debug = _debug;
     this.isFrame = _isFrame;
     this.isEditable = _isEditable;
-    int i=this.keyfield.lastIndexOf(".");
+    final int i=this.keyfield.lastIndexOf(".");
     if (i!=-1) this.form = this.keyfield.substring(0, i);
     this.isSrcWindow = _isSrcWindow;
     this.hasAttachments = _hasAttachments;
@@ -95,7 +96,7 @@ public class ToolBar {
   public void removeElement(String name) {
     try {
       if (buttons!=null && !buttons.isEmpty()) buttons.remove(name);
-    } catch (NullPointerException ignored) {
+    } catch (final NullPointerException ignored) {
     }
   }
 
@@ -275,8 +276,14 @@ public class ToolBar {
     
     removeElement("AUDIT_SHOW_RELATION_ENABLED");
     removeElement("AUDIT_SHOW_RELATION_DISABLED");
-    if (isAuditEnabled) removeElement("AUDIT_SHOW_EDITION_DISABLED");
-    else removeElement("AUDIT_SHOW_EDITION_ENABLED");
+    
+    if (isNew) {
+        removeElement("AUDIT_SHOW_EDITION_DISABLED");
+        removeElement("AUDIT_SHOW_EDITION_ENABLED");
+    } else {
+        if (isAuditEnabled) removeElement("AUDIT_SHOW_EDITION_DISABLED");
+        else removeElement("AUDIT_SHOW_EDITION_ENABLED");
+    }
     removeElement("PREVIOUS_RELATION");
     removeElement("PREVIOUS_RELATION_DISABLED");
     removeElement("NEXT_RELATION");
@@ -667,7 +674,7 @@ public class ToolBar {
   private String transformElementsToString(HTMLElement element, Vector<String> vecLastType, boolean isReference) {
     if (element==null) return "";
     if (vecLastType==null) vecLastType = new Vector<String>(0);
-    StringBuffer sbElement = new StringBuffer();
+    final StringBuffer sbElement = new StringBuffer();
     String lastType = "";
     if (vecLastType.size()>0) lastType = vecLastType.elementAt(0);
     if (lastType.equals("SPACE") && element.elementType().equals("SPACE")) return "";
@@ -691,12 +698,13 @@ public class ToolBar {
     return sbElement.toString();
   }
 
-  public String toString() {
-    StringBuffer toolbar = new StringBuffer();
+  @Override
+public String toString() {
+    final StringBuffer toolbar = new StringBuffer();
     toolbar.append("<table class=\"Main_ContentPane_ToolBar Main_ToolBar_bg\" id=\"tdToolBar\">\n");
     toolbar.append("<tr>\n");
     if (buttons!=null) {
-      Vector<String> lastType = new Vector<String>(0);
+      final Vector<String> lastType = new Vector<String>(0);
       toolbar.append(transformElementsToString(buttons.get("NEW"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("EDIT"), lastType, false));
       toolbar.append(transformElementsToString(buttons.get("RELATION"), lastType, false));
