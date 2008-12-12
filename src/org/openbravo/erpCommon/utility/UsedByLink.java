@@ -221,7 +221,7 @@ public void doPost (HttpServletRequest request, HttpServletResponse response) th
         token = strWhere.substring(0, i);
         strWhere = (i==strWhere.length())?"":strWhere.substring(i+1);
         if (log4j.isDebugEnabled()) log4j.debug("TOKEN: " + token);
-        final String tokenResult = Utility.getContext(this, vars, token, window);
+        final String tokenResult = "'"+Utility.getContext(this, vars, token, window)+"'";
         if (log4j.isDebugEnabled()) log4j.debug("TOKEN PARSED: " + tokenResult);
         if (tokenResult.equalsIgnoreCase(token)) {
           log4j.error("Unable to parse the String " + strWhereClause + "\nNow parsing: " + where.toString());
