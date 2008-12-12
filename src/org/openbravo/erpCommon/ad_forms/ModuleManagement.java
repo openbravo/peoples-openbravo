@@ -77,7 +77,7 @@ public void doPost (HttpServletRequest request, HttpServletResponse response) th
       printPageApply(response, vars);
     } else if (vars.commandIn("ADD") ) {
       final String searchText = vars.getRequestGlobalVariable("inpSearchText", "ModuleManagemetAdd.text");
-      printPageAdd(request, response, vars, searchText, false);
+      printPageAdd(request, response, vars, searchText, true);
     } else if (vars.commandIn("HISTORY") ) {
       final String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ModuleManagement|DateFrom", "");
       final String strDateTo = vars.getGlobalVariable("inpDateTo", "ModuleManagement|DateTo", "");
