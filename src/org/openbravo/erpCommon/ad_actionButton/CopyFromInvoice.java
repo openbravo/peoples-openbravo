@@ -70,7 +70,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
 
   OBError processButton(VariablesSecureApp vars, String strKey, String strInvoice, String windowId) {
     int i = 0;
-    OBError myError = null;
+    OBError myError = new OBError();
     Connection conn = null;
     try {
       conn = getTransactionConnection();    
@@ -98,7 +98,6 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
       myError.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
       return myError;
     }
-    myError = new OBError();
     myError.setType("Success");
     myError.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
     myError.setMessage(Utility.messageBD(this, "RecordsCopied", vars.getLanguage()) + " " + i);
