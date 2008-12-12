@@ -186,7 +186,7 @@ public class ImportBudget extends ImportProcess {
       for(int i=0;i<data.length;i++){
         String I_BudgetLine_ID = data[i].iBudgetlineId;
         String C_BudgetLine_ID = data[i].cBudgetlineId;
-        boolean newBudgetLine = C_BudgetLine_ID.equals("");
+        boolean newBudgetLine = (C_BudgetLine_ID == null || C_BudgetLine_ID.equals(""));
 
 
         con = conn.getTransactionConnection();

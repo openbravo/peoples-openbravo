@@ -148,15 +148,15 @@ public class ImportTax extends ImportProcess {
         String C_BPTaxCategory_ID = data[i].cBpTaxcategoryId;
         String C_Tax_ID = data[i].cTaxId;
         String ParentTax_ID = data[i].parentTaxId;
-				boolean newTaxCategory = C_TaxCategory_ID.equals("");
-        boolean newBPTaxCategory = C_BPTaxCategory_ID.equals("");
-        boolean newTax = C_Tax_ID.equals(""); 
+				boolean newTaxCategory = (C_TaxCategory_ID == null || C_TaxCategory_ID.equals(""));
+        boolean newBPTaxCategory = (C_BPTaxCategory_ID == null || C_BPTaxCategory_ID.equals(""));
+        boolean newTax = (C_Tax_ID == null || C_Tax_ID.equals("")); 
 				con = conn.getTransactionConnection();
 
 				//	create/update TaxCategory
 				if (!data[i].tcName.equals("") || !newTaxCategory){  //Inserting taxes this shouldn't be null, but it can be if inserting only BP Tax Cat
           if (newTaxCategory) C_TaxCategory_ID = ImportTaxData.selectTaxCategoryId(conn,data[i].tcName,getAD_Client_ID()); 
-          newTaxCategory = ((C_TaxCategory_ID.equals("")) || (C_TaxCategory_ID==null));
+          newTaxCategory = (C_TaxCategory_ID == null || C_TaxCategory_ID.equals(""));
           if (log4j.isDebugEnabled()) log4j.debug("TCId: "+C_TaxCategory_ID);
           if (newTaxCategory) {	//	Insert new TaxCategory
             C_TaxCategory_ID = SequenceIdData.getUUID();
@@ -193,7 +193,7 @@ public class ImportTax extends ImportProcess {
         //	create/update BPTaxCategory
         if (!data[i].bptcName.equals("") || !newBPTaxCategory){
           if (newBPTaxCategory) C_BPTaxCategory_ID = ImportTaxData.selectBPTaxCategoryId(conn, data[i].bptcName, getAD_Client_ID());
-          newBPTaxCategory = ((C_BPTaxCategory_ID.equals("")) || (C_BPTaxCategory_ID==null));
+          newBPTaxCategory = (C_BPTaxCategory_ID == null || C_BPTaxCategory_ID.equals(""));
           if (newBPTaxCategory) {	//	Insert new BPTaxCategory
             C_BPTaxCategory_ID = SequenceIdData.getUUID();
             try {
@@ -231,7 +231,7 @@ public class ImportTax extends ImportProcess {
            
            if (!data[i].parentName.equals("")) { //Parent tax
              ParentTax_ID = ImportTaxData.selectTaxId(conn, "", data[i].parentName, getAD_Client_ID()); //Check if parent tax is created, if not create with default values
-             if ((ParentTax_ID.equals("")) || (ParentTax_ID==null)) {  //Insert parent tax
+             if (ParentTax_ID == null || ParentTax_ID.equals("")) {  //Insert parent tax
                try {
                  ParentTax_ID = SequenceIdData.getUUID();
                  if (log4j.isDebugEnabled()) log4j.debug("Insert Parent Tax = " + no);
@@ -250,7 +250,7 @@ public class ImportTax extends ImportProcess {
            }
            
            if (newTax) C_Tax_ID = ImportTaxData.selectTaxId(conn, data[i].parentName, data[i].tName, getAD_Client_ID()); //look for existing taxes (a tax is unique by name and parent) 
-           newTax = ((C_Tax_ID.equals(""))||(C_Tax_ID==null));
+           newTax = (C_Tax_ID == null || C_Tax_ID.equals(""));
            if (log4j.isDebugEnabled()) log4j.debug("Tax:"+data[i].tName+" - new:"+newTax);
            if (newTax) {	//	Insert new Tax
             C_Tax_ID = SequenceIdData.getUUID();

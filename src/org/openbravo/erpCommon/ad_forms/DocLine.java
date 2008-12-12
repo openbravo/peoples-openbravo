@@ -140,8 +140,8 @@ public class DocLine {
 
 
     public void setAmount (String amtSourceDr, String amtSourceCr){
-        m_AmtSourceDr = amtSourceDr.equals("") ? "0" : amtSourceDr;
-        m_AmtSourceCr = amtSourceCr.equals("") ? "0" : amtSourceCr;
+        m_AmtSourceDr = (amtSourceDr == null || amtSourceDr.equals("")) ? "0" : amtSourceDr;
+        m_AmtSourceCr = (amtSourceCr == null || amtSourceCr.equals("")) ? "0" : amtSourceCr;
     }   //  setAmounts
 
     /**
@@ -261,7 +261,7 @@ public class DocLine {
      *  @param sourceAmt source amt
      */
     public void setAmount (String sourceAmt){
-        m_AmtSourceDr = sourceAmt.equals("") ? ZERO.toString() : sourceAmt;
+        m_AmtSourceDr = (sourceAmt == null || sourceAmt.equals("")) ? ZERO.toString() : sourceAmt;
         m_AmtSourceCr = ZERO.toString();
     }   //  setAmounts
 
