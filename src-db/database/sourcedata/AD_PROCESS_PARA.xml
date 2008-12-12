@@ -8901,11 +8901,11 @@ The values of the actual Product Attributes]]></HELP>
 <!--800007 CREATEDBY-->
 <!--800007-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800007 UPDATED-->
-<!--800007-->              <UPDATED><![CDATA[2008-12-11 16:14:15.0]]></UPDATED>
+<!--800007-->              <UPDATED><![CDATA[2008-12-12 16:01:22.0]]></UPDATED>
 <!--800007 UPDATEDBY-->
 <!--800007-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800007 NAME-->
-<!--800007-->              <NAME><![CDATA[Locator from]]></NAME>
+<!--800007-->              <NAME><![CDATA[Storage Bin from]]></NAME>
 <!--800007 AD_PROCESS_ID-->
 <!--800007-->              <AD_PROCESS_ID><![CDATA[800048]]></AD_PROCESS_ID>
 <!--800007 SEQNO-->
@@ -8917,7 +8917,7 @@ The values of the actual Product Attributes]]></HELP>
 <!--800007 COLUMNNAME-->
 <!--800007-->              <COLUMNNAME><![CDATA[M_LocatorFrom]]></COLUMNNAME>
 <!--800007 ISCENTRALLYMAINTAINED-->
-<!--800007-->              <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
+<!--800007-->              <ISCENTRALLYMAINTAINED><![CDATA[N]]></ISCENTRALLYMAINTAINED>
 <!--800007 FIELDLENGTH-->
 <!--800007-->              <FIELDLENGTH><![CDATA[40]]></FIELDLENGTH>
 <!--800007 ISMANDATORY-->
@@ -8942,11 +8942,11 @@ The values of the actual Product Attributes]]></HELP>
 <!--800008 CREATEDBY-->
 <!--800008-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800008 UPDATED-->
-<!--800008-->              <UPDATED><![CDATA[2008-12-11 16:14:15.0]]></UPDATED>
+<!--800008-->              <UPDATED><![CDATA[2008-12-12 16:03:58.0]]></UPDATED>
 <!--800008 UPDATEDBY-->
 <!--800008-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800008 NAME-->
-<!--800008-->              <NAME><![CDATA[Locator to]]></NAME>
+<!--800008-->              <NAME><![CDATA[Storage Bin to]]></NAME>
 <!--800008 AD_PROCESS_ID-->
 <!--800008-->              <AD_PROCESS_ID><![CDATA[800048]]></AD_PROCESS_ID>
 <!--800008 SEQNO-->
@@ -8958,7 +8958,7 @@ The values of the actual Product Attributes]]></HELP>
 <!--800008 COLUMNNAME-->
 <!--800008-->              <COLUMNNAME><![CDATA[M_LocatorTo]]></COLUMNNAME>
 <!--800008 ISCENTRALLYMAINTAINED-->
-<!--800008-->              <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
+<!--800008-->              <ISCENTRALLYMAINTAINED><![CDATA[N]]></ISCENTRALLYMAINTAINED>
 <!--800008 FIELDLENGTH-->
 <!--800008-->              <FIELDLENGTH><![CDATA[40]]></FIELDLENGTH>
 <!--800008 ISMANDATORY-->
