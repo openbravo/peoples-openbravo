@@ -70,7 +70,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
 
   OBError processButton(VariablesSecureApp vars, String strKey, String strInvoice, String windowId) {
     int i = 0;
-    OBError myError = new OBError();
+    OBError myError = null;
     Connection conn = null;
     try {
       conn = getTransactionConnection();    
@@ -91,14 +91,14 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
       try {
         releaseRollbackConnection(conn);
       } catch (Exception ignored) {}
-      e.printStackTrace();
-      log4j.warn("Rollback in transaction");
+      log4j.warn("Rollback in transaction",e);
+      myError = new OBError();
       myError.setType("Error");
       myError.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
       myError.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
       return myError;
     }
-	
+    myError = new OBError();
     myError.setType("Success");
     myError.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
     myError.setMessage(Utility.messageBD(this, "RecordsCopied", vars.getLanguage()) + " " + i);
