@@ -40,10 +40,10 @@ public class WADGrid extends WADControl {
   private void generateJSCode() {
     addJSCode("DataGrid", "dojo.require(\"openbravo.widget.DataGrid\");");
     String str = 
-    	"function updateHeader(liveGrid, offset) {\n" +
-    	"  dojo.byId('bookmark').innerHTML = (offset+1) + \" - \"" +
-    	"+ (offset+liveGrid.visibleRows) + \" / \" + liveGrid.metaData.getTotalRows();\n" +
-    	'}';
+      "function updateHeader(liveGrid, offset) {\n" +
+      "  dojo.byId('bookmark').innerHTML = ((liveGrid.visibleRows>0)?(offset+1):0) + \" - \"" +
+      "+ (offset+liveGrid.visibleRows) + \" / \" + liveGrid.metaData.getTotalRows();\n" +
+      '}';
       addJSCode("updateHeader", str);
 
       StringBuffer text = new StringBuffer();
