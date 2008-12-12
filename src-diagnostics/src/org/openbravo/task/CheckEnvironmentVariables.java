@@ -48,7 +48,7 @@ public class CheckEnvironmentVariables extends Task {
         varsToCheck = new HashMap<String, String>();
         varsToCheck
                 .put(
-                        "CATALINA_HOMEY",
+                        "CATALINA_HOME",
                         "CATALINA_HOME environment variable is required. "
                                 + "Tip: Set a CATALINA_HOME environment variable to the"
                                 + " directory where Tomcat is installed.");
