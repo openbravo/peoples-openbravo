@@ -167,10 +167,16 @@ public class DalWebService implements WebService {
             }
         }
         if (request.getParameter("template") != null) {
+            final String url = request.getRequestURL().toString();
+            // add the correct ending
+            if (url.endsWith("dal")) {
+                throw new OBException(
+                        "The templates expect an url to end with dal/, the current url ends with just dal (without the /)");
+            }
             final Document newDoc = WebServiceUtil.getInstance().applyTemplate(
                     doc,
                     this.getClass().getResourceAsStream(
-                            request.getParameter("template")));
+                            request.getParameter("template")), url);
             response.setContentType("text/html");
             response.setCharacterEncoding("utf-8");
             final String xml = XMLUtil.getInstance().toString(newDoc);

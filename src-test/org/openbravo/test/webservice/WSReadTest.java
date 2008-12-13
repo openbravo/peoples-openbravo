@@ -36,7 +36,7 @@ import org.openbravo.base.session.SessionFactoryController;
 public class WSReadTest extends BaseWSTest {
 
     public void testSchemaWebService() throws Exception {
-        doTestGetRequest("/ws/dal/schema", "<element name=\"OpenBravo\">", 200);
+        doTestGetRequest("/ws/dal/schema", "<element name=\"Openbravo\">", 200);
     }
 
     public void testTypesWebService() throws Exception {
@@ -66,7 +66,7 @@ public class WSReadTest extends BaseWSTest {
         for (final Iterator<?> it = cfg.getClassMappings(); it.hasNext();) {
             final PersistentClass pc = (PersistentClass) it.next();
             final String entityName = pc.getEntityName();
-            doTestGetRequest("/ws/dal/" + entityName, "<ob:OpenBravo", 200);
+            doTestGetRequest("/ws/dal/" + entityName, "<ob:Openbravo", 200);
         }
         setErrorOccured(false);
     }

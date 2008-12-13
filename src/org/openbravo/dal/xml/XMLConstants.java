@@ -34,7 +34,7 @@ public class XMLConstants {
     /**
      * The root element in every Openbravo XML document
      */
-    public static final String OB_ROOT_ELEMENT = "OpenBravo";
+    public static final String OB_ROOT_ELEMENT = "Openbravo";
 
     /**
      * The name of the attribute which holds the id of a object (in XML). Is

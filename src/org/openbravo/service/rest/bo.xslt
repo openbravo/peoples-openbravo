@@ -23,12 +23,12 @@
 		Note if the namespace of openbravo changes then the namespace
 		declaration above has to be changed
 	--> 
-	<xsl:template match="ob:OpenBravo">
+	<xsl:template match="ob:Openbravo">
 		<xsl:for-each select="*">
 			<xsl:call-template name="handleEntity" />
 		</xsl:for-each>
 	</xsl:template>
-	<xsl:template match="OpenBravo">
+	<xsl:template match="Openbravo">
 		<xsl:for-each select="*">
 			<xsl:call-template name="handleEntity" />
 		</xsl:for-each>

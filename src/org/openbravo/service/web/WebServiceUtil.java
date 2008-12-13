@@ -220,13 +220,15 @@ public class WebServiceUtil implements OBSingleton {
      *            the XSLT template
      * @return the resulting XML
      */
-    public Document applyTemplate(Document sourceDocument, InputStream template) {
+    public Document applyTemplate(Document sourceDocument,
+            InputStream template, String url) {
         try {
             final TransformerFactory factory = TransformerFactory.newInstance();
             final Transformer transformer = factory
                     .newTransformer(new StreamSource(template));
             final DocumentSource source = new DocumentSource(sourceDocument);
             final DocumentResult result = new DocumentResult();
+            transformer.setParameter("url", url);
             transformer.transform(source, result);
 
             return result.getDocument();
