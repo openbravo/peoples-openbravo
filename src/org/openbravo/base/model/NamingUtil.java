@@ -37,8 +37,8 @@ import org.openbravo.base.exception.OBException;
 public class NamingUtil {
     private static final Logger log = Logger.getLogger(NamingUtil.class);
 
-    public static String ENTITY_NAME_CONSTANT = "ENTITY_NAME";
-    public static String PROPERTY_CONSTANT_PREFIX = "PROPERTY_";
+    public static final String ENTITY_NAME_CONSTANT = "ENTITY_NAME";
+    public static final String PROPERTY_CONSTANT_PREFIX = "PROPERTY_";
 
     private static HashMap<String, String> specialPropertyMappings = null;
     private static HashMap<String, String> reservedNames = null;
