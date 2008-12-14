@@ -21,6 +21,13 @@ package org.openbravo.test.webservice;
 
 import java.io.FileNotFoundException;
 
+import org.openbravo.base.provider.OBProvider;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.common.geography.City;
+import org.openbravo.model.common.geography.Country;
+import org.openbravo.model.common.geography.Region;
+
 /**
  * Test webservice for reading, updating and posting. The test cases here
  * require a running Openbravo at http://localhost:8080/openbravo
@@ -30,8 +37,34 @@ import java.io.FileNotFoundException;
 
 public class WSUpdateTest extends BaseWSTest {
 
+    private static String cityId = null;
+
+    public void testACreateCity() {
+        setUserContext("100");
+
+        // first delete the current cities, as we should start fresh
+        final OBCriteria<City> obc = OBDal.getInstance().createCriteria(
+                City.class);
+        for (final City c : obc.list()) {
+            OBDal.getInstance().remove(c);
+        }
+
+        final City city = OBProvider.getInstance().get(City.class);
+        city.setAreaCode("3941");
+        city.setCoordinates("00");
+        city.setLocode("lo");
+        city.setPostal("postal");
+        city.setName("name");
+        city.setCountry(getOneInstance(Country.class));
+        city.setRegion(getOneInstance(Region.class));
+        OBDal.getInstance().save(city);
+        OBDal.getInstance().commitAndClose();
+        cityId = city.getId();
+    }
+
     public void testReadUpdateCity() throws Exception {
-        final String city = doTestGetRequest("/ws/dal/City/100", null, 200);
+        final String city = doTestGetRequest("/ws/dal/City/" + cityId, null,
+                200);
         System.err.println(System.currentTimeMillis());
         String newCity;
         if (city.indexOf("<locode>") != -1) { // test already run
@@ -45,22 +78,26 @@ public class WSUpdateTest extends BaseWSTest {
                     + ("" + System.currentTimeMillis()).substring(5)
                     + "</locode>");
         }
-        final String content = doContentRequest("/ws/dal/City/100", newCity,
-                200, "<updated>", "POST");
-        assertTrue(content.indexOf("City id=\"100") != -1);
+        final String content = doContentRequest("/ws/dal/City/" + cityId,
+                newCity, 200, "<updated>", "POST");
+        assertTrue(content.indexOf("City id=\"" + cityId + "") != -1);
     }
 
     public void testReadAddDeleteCity() throws Exception {
-        final String city = doTestGetRequest("/ws/dal/City/100", null, 200);
+        final String city = doTestGetRequest("/ws/dal/City/" + cityId, null,
+                200);
         String newCity = city.replaceAll("</name>",
                 (System.currentTimeMillis() + "").substring(6) + "</name>");
         final String newName = getTagValue(newCity, "name");
 
-        newCity = newCity.replaceAll("City id=\"", "City id=\"test");
-        // and replace the first <id>100</id> with <id>test100</id>
-        final int index = newCity.indexOf("<id>");
+        // newCity = newCity.replaceAll("City id=\"", "City id=\"test");
+        // and replace the first <id>cityId</id> with <id>test...</id>
+        int index = newCity.indexOf("<id>");
         newCity = newCity.substring(0, index) + "<id>test"
-                + newCity.substring(index + "<id>".length());
+                + newCity.substring(index + "<id>test".length());
+        index = newCity.indexOf("City id=\"");
+        newCity = newCity.substring(0, index) + "City id=\"test"
+                + newCity.substring(index + "City id=\"test".length());
         final String content = doContentRequest("/ws/dal/City", newCity, 200,
                 "<inserted>", "POST");
         // System.err.println(content);
@@ -110,7 +147,8 @@ public class WSUpdateTest extends BaseWSTest {
     }
 
     public void testReadAddCityWrongMethodError() throws Exception {
-        final String city = doTestGetRequest("/ws/dal/City/100", null, 200);
+        final String city = doTestGetRequest("/ws/dal/City/" + cityId, null,
+                200);
         String newCity = city.replaceAll("</name>",
                 (System.currentTimeMillis() + "").substring(6) + "</name>");
         newCity = newCity.replaceAll("id=\"", "id=\"test");
@@ -124,4 +162,5 @@ public class WSUpdateTest extends BaseWSTest {
             assertTrue(e.getMessage().indexOf("500") != -1);
         }
     }
+
 }

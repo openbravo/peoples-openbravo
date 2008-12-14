@@ -40,7 +40,7 @@ import org.openbravo.service.db.ImportResult;
 
 public class ClientExportImportTest extends XMLBaseTest {
     public void testExportImportClient1000000() {
-        exportImport("FF8081811E20384C011E2038E0730003"); // 1000000");
+        exportImport("1000000");
     }
 
     public void _testExportImportClient1000001() {
