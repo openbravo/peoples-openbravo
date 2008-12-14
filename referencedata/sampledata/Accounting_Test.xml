@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<ob:OpenBravo xmlns:ob="http://www.openbravo.com" created="Fri Dec 12 17:24:45 CET 2008" ob-version="2.50" ob-revision="10804">
+<ob:Openbravo xmlns:ob="http://www.openbravo.com" created="Fri Dec 12 17:24:45 CET 2008" ob-version="2.50" ob-revision="10804">
   <FinancialMgmtPeriod id="1000055" identifier="Ago-07">
     <id>1000055</id>
     <client id="1000001" entity-name="ADClient" identifier="Accounting Test"/>
@@ -47596,4 +47596,4 @@ When it has been correctly executed all DB constraints and triggers should be in
     <xposition>7</xposition>
     <yposition>10</yposition>
   </ADWFNode>
-</ob:OpenBravo>
+</ob:Openbravo>
