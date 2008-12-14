@@ -23,6 +23,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.erpCommon.utility.OBError;
 import java.io.*;
 import java.math.BigDecimal;
 
@@ -61,6 +62,10 @@ public class SE_Expense_Amount extends HttpSecureAppServlet {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
     
     String C_Currency_To_ID = Utility.getContext(this, vars, "$C_Currency_ID", "");
+    //Checks if there is a conversion rate for each of the transactions of the report
+    String strConvRateErrorMsg = "";
+    OBError myMessage = null;
+    myMessage = new OBError();
     
     if (strDateexpense.equals("")){
       strDateexpense = SEExpenseAmountData.selectReportDate(this, strTimeExpenseId).equals("")?DateTimeData.today(this):SEExpenseAmountData.selectReportDate(this, strTimeExpenseId);
@@ -92,8 +97,10 @@ public class SE_Expense_Amount extends HttpSecureAppServlet {
       int StdPrecisionConv = Integer.valueOf(strPrecisionConv).intValue();
       try{
         convertedAmount = SEExpenseAmountData.selectConvertedAmt(this, strExpenseAmt, strcCurrencyId, C_Currency_To_ID, strDateexpense, vars.getClient(), vars.getOrg());
-      }catch (ServletException e) {
+      } catch (ServletException e) {
         convertedAmount = "";
+        myMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
+        strConvRateErrorMsg = myMessage.getMessage();
         log4j.warn("Currency does not exist. Exception:"+e);
       }
       if (!convertedAmount.equals("")) {
@@ -107,6 +114,9 @@ public class SE_Expense_Amount extends HttpSecureAppServlet {
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SE_Expense_Amount';\n\n");
     resultado.append("var respuesta = new Array(");
+    if(!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
+      resultado.append("new Array('MESSAGE', \"" + strConvRateErrorMsg +  "\"), ");
+    }
     resultado.append("new Array(\"inpexpenseamt\", \"" + Amount.toString() + "\")");
     resultado.append(", new Array(\"inpconvertedamt\", \"" +(ConvAmount.equals(new BigDecimal(0.0))?"":ConvAmount.toString())+ "\")");
     resultado.append(");");

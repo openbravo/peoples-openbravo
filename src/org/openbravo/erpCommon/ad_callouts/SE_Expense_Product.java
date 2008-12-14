@@ -26,6 +26,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.openbravo.erpCommon.utility.DateTimeData;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 
 import java.math.BigDecimal;
@@ -137,6 +138,10 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
     	Amount = Amount.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
     resultado.append(", new Array(\"inpexpenseamt\", \"" + Amount.toString() + "\")");
     String C_Currency_To_ID = Utility.getContext(this, vars, "$C_Currency_ID", "");
+    //Checks if there is a conversion rate for each of the transactions of the report
+    String strConvRateErrorMsg = "";
+    OBError myMessage = null;
+    myMessage = new OBError();
     if (!CCurrencyID.equals("")) {
       String convertedAmount = Amount.toString();
       if (!CCurrencyID.equals(C_Currency_To_ID)){
@@ -144,6 +149,8 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
           convertedAmount = SEExpenseProductData.selectConvertedAmt(this, Amount.toString(), CCurrencyID, C_Currency_To_ID, strDateexpense, vars.getClient(), vars.getOrg());
         }catch(ServletException e){
           convertedAmount = "";
+          myMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
+          strConvRateErrorMsg = myMessage.getMessage();
           log4j.warn("Currency does not exist. Exception:"+e);
         }
       }
@@ -163,7 +170,10 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
       resultado.append(", new Array(\"inpconvertedamt\", \"" + (ConvAmount.equals(new BigDecimal(0.0))?"":ConvAmount.toString()) + "\")");
     }
     if (strChanged.equals("inpmProductId") && !CCurrencyID.equals("")){
-      resultado.append(",new Array(\"inpcCurrencyId\", \"" + CCurrencyID + "\")");
+      resultado.append(", new Array(\"inpcCurrencyId\", \"" + CCurrencyID + "\")");
+    }
+    if(!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
+      resultado.append(", new Array('MESSAGE', \"" + strConvRateErrorMsg +  "\")");
     }
     
     resultado.append(");");
