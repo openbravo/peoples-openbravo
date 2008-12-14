@@ -28,9 +28,12 @@ import junit.framework.TestCase;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBConfigFileProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalLayerInitializer;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
 
 /**
  * Testcase.
@@ -134,5 +137,14 @@ public class BaseTest extends TestCase {
 
     public void setErrorOccured(boolean errorOccured) {
         this.errorOccured = errorOccured;
+    }
+
+    protected <T extends BaseOBObject> T getOneInstance(Class<T> clz) {
+        final OBCriteria<T> obc = OBDal.getInstance().createCriteria(clz);
+        if (obc.list().size() == 0) {
+            throw new OBException("There are zero instances for class "
+                    + clz.getName());
+        }
+        return obc.list().get(0);
     }
 }
