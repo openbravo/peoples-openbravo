@@ -25,7 +25,7 @@
       <SqlMethodComment></SqlMethodComment>
       <Sql>
         <![CDATA[
-         SELECT Type, AD_Module_ID as Node_ID, AD_Column_Identifier('AD_Module',AD_Module_ID, ?) as Name, 
+         SELECT M.Type, M.AD_Module_ID as Node_ID, AD_Column_Identifier('AD_Module',M.AD_Module_ID, ?) as Name, 
                  (SELECT CASE WHEN COUNT(*)>0 THEN 'block' ELSE 'none' END
                     FROM AD_Module_Dependency
                    WHERE AD_Module_ID = M.AD_Module_ID
@@ -49,21 +49,23 @@
                      '' as updatedescription,
                      '' as position,
                      '' as seqno
-           FROM AD_Module M
+           FROM AD_Module M, AD_DATASET
           WHERE NOT EXISTS (SELECT 1 
                               FROM AD_Module_Dependency
                              WHERE AD_Dependent_Module_ID = M.AD_Module_ID
-                               AND IsIncluded = 'Y') 
-            AND ISACTIVE = 'Y'
+                               AND IsIncluded = 'Y')
+            AND M.ISACTIVE = 'Y'
             AND 1=1
-            AND HASREFERENCEDATA = 'Y'
+            AND M.HASREFERENCEDATA = 'Y'
             AND NOT EXISTS (SELECT 1 FROM AD_CLIENTMODULE CM
                             WHERE CM.ad_module_id = M.ad_module_id
                             AND AD_CLIENT_ID = ?)
             AND EXISTS (SELECT 1 FROM AD_DATASET
                         WHERE AD_DATASET.AD_MODULE_ID = M.AD_MODULE_ID
                         AND EXPORTALLOWED = 'Y')
-          ORDER BY SeqNo
+            AND M.ad_module_id = AD_DATASET.ad_module_id
+            AND AD_DATASET.ACCESSLEVEL IN ('3','1')
+          ORDER BY M.SeqNo
           ]]>
       </Sql>
       <Parameter name="lang"/>
