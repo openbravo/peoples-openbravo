@@ -101,11 +101,19 @@ public void doPost (HttpServletRequest request, HttpServletResponse response) th
       final String record = vars.getStringParameter("inpcRecordId");
       printLicenseAgreement(response,vars, record);
     } else if (vars.commandIn("LOCAL")){
-      printSearchFile(response,vars);
+      printSearchFile(response,vars,null);
     } else if (vars.commandIn("INSTALLFILE")){
       final FileItem fi = vars.getMultiFile("inpFile");
-      vars.setSessionObject("ModuleManagementInstall|File", vars.getMultiFile("inpFile"));
-      printPageInstall1(response, vars, null, true, fi.getInputStream(), new String[0]);
+      if (!fi.getName().toUpperCase().endsWith(".OBX")) {
+          final OBError message = new OBError();
+          message.setType("Error");
+          message.setTitle(Utility.messageBD(this,message.getType(),vars.getLanguage()));
+          message.setMessage(Utility.messageBD(this, "MOD_OBX", vars.getLanguage()));
+          printSearchFile(response,vars,message);
+      } else {
+          vars.setSessionObject("ModuleManagementInstall|File", vars.getMultiFile("inpFile"));
+          printPageInstall1(response, vars, null, true, fi.getInputStream(), new String[0]);
+      }
     } else if (vars.commandIn("UNINSTALL")){
       final String modules = vars.getInStringParameter("inpNodes");
       final UninstallModule um = new UninstallModule(this, vars.getSessionValue("#sourcePath"), vars);
@@ -795,11 +803,18 @@ public void doPost (HttpServletRequest request, HttpServletResponse response) th
    * @throws IOException
    * @throws ServletException
    */
-  void printSearchFile(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
+  void printSearchFile(HttpServletResponse response, VariablesSecureApp vars, OBError message) throws IOException, ServletException {
      final XmlDocument xmlDocument=xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/ModuleManagement_InstallLocal").createXmlDocument();
      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
      xmlDocument.setParameter("theme", vars.getTheme());
+     
+     if (message!=null) {
+         xmlDocument.setParameter("messageType", message.getType());
+         xmlDocument.setParameter("messageTitle", message.getTitle());
+         xmlDocument.setParameter("messageMessage", message.getMessage());
+     }
+     
      response.setContentType("text/html; charset=UTF-8");
      final PrintWriter out = response.getWriter();
      out.println(xmlDocument.print());
