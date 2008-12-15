@@ -19913,8 +19913,7 @@ dojo.declare("openbravo.widget.DataGrid.MetaData", null, {
 * @param {Array} options - Array of options
 */
   constructor: function( pageSize, totalRows, columnCount, options ) {
-    this.originalPageSize = pageSize; // Number of rows shown in the window
-    this.pageSize  = pageSize; // Number of rows shown in the window - gets restricted to the number of available rows
+    this.pageSize  = pageSize;
     this.totalRows = totalRows;
     this.setOptions(options);
     this.ArrowHeight = 16;
@@ -19934,29 +19933,12 @@ dojo.declare("openbravo.widget.DataGrid.MetaData", null, {
   },
 
 /**
- * Returns the original page size as specified during grid initialisation.
- * @return original page size
- * @type Number
- */
-  getOriginalPageSize: function() {
-    return this.originalPageSize;
-  },
-
-/**
 * Returns the page size.
 * @return page size
 * @type Number
 */
   getPageSize: function() {
     return this.pageSize;
-  },
-
-/**
-* Sets the new page size value.
-* @param {Number} n - page size
-*/
-  setPageSize: function(n) {
-    this.pageSize = n;
   },
 
 /**
@@ -20257,14 +20239,6 @@ dojo.declare("openbravo.widget.DataGrid.Buffer", null, {
       this.liveGrid.setTotalRows(numRows);
       this.isFilter=false;
     }// else if (!this.isFilter && numRows==0) return;
-    // limit pageSize to <= available number of rows 
-    if(this.metaData.getPageSize() >= numRows) {
-  	  this.metaData.setPageSize(numRows);
-    } else {
-      // adjust pageSize back to original value
-      this.metaData.setPageSize(this.metaData.getOriginalPageSize());
-    }
-
     if (this.metaData.totalRows == 0) {
       this.liveGrid.setTotalRows(numRows);
       this.liveGrid.fetchBuffer(0);
@@ -20363,12 +20337,7 @@ dojo.declare("openbravo.widget.DataGrid.Buffer", null, {
 * @type Boolean
 */
   isInRange: function(position) {
-    // Always request new rows when previous number of (shown) rows was 0
-    if(this.liveGrid.isFirstLoad && this.metaData.getPageSize() == 0) {
-        return false;
-    }	
-    res = (position >= this.startPos) && (position + this.metaData.getPageSize() <= this.endPos());
-    return res
+    return (position >= this.startPos) && (position + this.metaData.getPageSize() <= this.endPos()); 
   },
 
 /**
@@ -21695,7 +21664,6 @@ dojo.declare("openbravo.widget.ValidationTextBox.IntegerNumber", [openbravo.widg
 });
 
 }
-
 
 
 	if(dojo.config.afterOnLoad && dojo.isBrowser){
