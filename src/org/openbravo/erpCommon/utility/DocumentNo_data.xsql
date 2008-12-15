@@ -52,7 +52,7 @@
    <SqlMethod name="nextDocConnection" connection="true" type="callableStatement" return="object" object="CSResponse">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        CALL AD_Sequence_Doc(?,TO_NUMBER(?),?,?)
+        CALL AD_Sequence_Doc(?,?,?,?)
       ]]></Sql>
       <Parameter name="cDocTypeTableName"/>
       <Parameter name="adClientId"/>
