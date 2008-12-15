@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<ob:OpenBravo xmlns:ob="http://www.openbravo.com" created="Thu Nov 27 10:26:52 CET 2008" ob-version="2.50" ob-revision="10656">
+<ob:Openbravo xmlns:ob="http://www.openbravo.com" created="Thu Nov 27 10:26:52 CET 2008" ob-version="2.50" ob-revision="10656">
   <DocumentType id="0" identifier="** New **">
     <id>0</id>
     <isActive>true</isActive>
@@ -15138,4 +15138,4 @@
     <isDefault>false</isDefault>
     <docBaseType inactive="true"/>
   </FinancialMgmtGLCategory>
-</ob:OpenBravo>
+</ob:Openbravo>
