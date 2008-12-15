@@ -116,6 +116,7 @@ public class UninstallModule {
         final UninstallModuleData data[] = UninstallModuleData.selectDirectories(pool, contents); //delete directories
         if (data!=null && data.length>0) {
           for (int i=0; i<data.length;i++){
+            UninstallModuleData.insertLog(pool, (vars==null?"0":vars.getUser()), data[i].adModuleId, data[i].version, data[i].name,  "Uninstalled module "+data[i].name+" - "+data[i].version, "D");
             final File f = new File(modulesBaseDir+"/"+data[i].javapackage);
             if (f.exists()) {
               if (!Utility.deleteDir(f)) {
