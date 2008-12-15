@@ -119,12 +119,16 @@ public class NamingUtil {
             final Field fld = clz.getField(PROPERTY_CONSTANT_PREFIX
                     + propertyName.toUpperCase());
             return (String) fld.get(null);
+        } catch (final NoSuchFieldException e) {
+            // ignoring on purpose, exception can occur when a new column is
+            // added and its business object class has not yet been generated
+            return propertyName;
+        } catch (final IllegalAccessException e) {
+            // ignoring on purpose, exception can occur when a new column is
+            // added and its business object class has not yet been generated
+            return propertyName;
         } catch (final Exception e) {
-            e.printStackTrace(System.err);
-            throw new OBException(
-                    "Exception when getting static property name "
-                            + clz.getName() + "." + "PROPERTY_"
-                            + propertyName.toUpperCase(), e);
+            throw new OBException(e);
         }
     }
 
