@@ -120,6 +120,10 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
           if (pricelimit.equals("")) pricelimit="0";
           int line = 0;
           String strCTaxID = Tax.get(this, data[i].mProductId, DateTimeData.today(this), order[0].adOrgId, order[0].mWarehouseId.equals("")?vars.getWarehouse():order[0].mWarehouseId, CopyFromPOOrderData.cBPartnerLocationId(this, order[0].cBpartnerId), CopyFromPOOrderData.cBPartnerLocationId(this, order[0].cBpartnerId), order[0].cProjectId, true);
+          if (strCTaxID.equals("")){
+            myError = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this, "TaxNotFound", vars.getLanguage()));
+            return myError;
+          }
           line = Integer.valueOf(order[0].line.equals("")?"0":order[0].line).intValue() + ((i+1) * 10);
           String strCOrderlineID = SequenceIdData.getUUID();
           try {
