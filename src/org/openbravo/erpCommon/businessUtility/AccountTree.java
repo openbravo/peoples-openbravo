@@ -36,6 +36,10 @@ public class AccountTree {
   private AccountTreeData[] elements;
   private AccountTreeData[] resultantAccounts;
   private String[] elementValueParent;
+  //Used to inform if the applySign function has reset to zero the qty values or not
+  private boolean resetFlag;
+  //True when formsCalculate() calls calculateTree(), and the calculateTree() calls again formsCalculte()
+  private boolean recursiveForms=false;
 
   /**
    * Constructor
@@ -121,13 +125,28 @@ public class AccountTree {
    * @return Double with the correct sign applied.
    */
   private double applySign(double qty, String sign, boolean isSummary) {
+    //resetFlag will store whether the value has been truncated because of showvaluecond or not
+    resetFlag = false;
     double total=0.0;
     if (isSummary && !sign.equalsIgnoreCase("A")) {
-      if (sign.equalsIgnoreCase("P")) total=((qty>total)?qty:0.0);
-      else if (sign.equalsIgnoreCase("N")) total=((qty<total)?qty:0.0);
+      if (sign.equalsIgnoreCase("P")){
+        if ( qty>total ) {
+          total=qty;
+        } else {
+          total=0.0;
+          resetFlag=true;
+        }
+      }
+      else if (sign.equalsIgnoreCase("N")){
+        if (qty<total) {
+          total=qty;
+        } else {
+          total=0.0;
+          resetFlag=true;
+        }
+      }
       else total=qty;
     } else total=qty;
-
     return total;
   }
 
@@ -218,7 +237,12 @@ public class AccountTree {
    * @param indice String with the index of the element to evaluate.
    * @param vecTotal Vector with the totals of the operation.
    */
-  private void formsCalculate(Vector<Object> vecAll, AccountTreeData[] forms, String indice, Vector<Object> vecTotal) {
+  private void formsCalculate(Vector<Object> vecAll, AccountTreeData[] forms, String indice, Vector<Object> vecTotal, boolean isExactValue) {
+    if (isExactValue) {
+      recursiveForms = true;
+    } else {
+      recursiveForms = false;
+    }
     if (log4j.isDebugEnabled()) log4j.debug("AccountTree.formsCalculate");
     if (resultantAccounts==null || resultantAccounts.length==0) return;
     if (indice == null) {
@@ -236,7 +260,8 @@ public class AccountTree {
     for (int i=0;i<forms.length;i++) {
       if (forms[i].id.equals(indice)) {
         encontrado=false;
-        for (int j=0;j<vecAll.size();j++) {
+        //There exists two options to calculate operands: run through the already processed elements of the report (a) or call calculateTree to obtain amount (b)
+ /*(a)*/for (int j=0;j<vecAll.size();j++) {
           AccountTreeData actual = (AccountTreeData) vecAll.elementAt(j);
           log4j.debug("AccountTree.formsCalculate - actual.nodeId: " + actual.nodeId + " - forms[i].nodeId: " + forms[i].nodeId);
           if (actual.nodeId.equals(forms[i].nodeId)) {
@@ -259,7 +284,7 @@ public class AccountTree {
             break;
           }
         }
-        if (!encontrado) {
+ /*(b)*/if (!encontrado) {
           if (log4j.isDebugEnabled()) log4j.debug("AccountTree.formsCalculate - C_ElementValue_ID: " + forms[i].nodeId + " not found");
           Vector<Object> vecParcial = new Vector<Object>();
           vecParcial.addElement("0");
@@ -374,16 +399,23 @@ public class AccountTree {
           } else {
             vecParcial.set(0, "0");
             vecParcial.set(1, "0");
-            formsCalculate(vecAux, forms, resultantAccounts[i].nodeId, vecParcial);
+            formsCalculate(vecAux, forms, resultantAccounts[i].nodeId, vecParcial, isExactValue);
             double parcial = Double.valueOf((String) vecParcial.elementAt(0)).doubleValue();
             double parcialRef = Double.valueOf((String) vecParcial.elementAt(1)).doubleValue();
             resultantAccounts[i].qtyOperation = Double.toString(Double.valueOf(resultantAccounts[i].qtyOperation).doubleValue() + parcial);
             resultantAccounts[i].qtyOperationRef = Double.toString(Double.valueOf(resultantAccounts[i].qtyOperationRef).doubleValue() + parcialRef);
             log4j.debug("calculateTree - HasForm - parcial:" + parcial + " - resultantAccounts[i].qtyOperation:" + resultantAccounts[i].qtyOperation + " - resultantAccounts[i].nodeId:"+ resultantAccounts[i].nodeId);
           }
-
-          resultantAccounts[i].qty = Double.toString(applySign(Double.valueOf(resultantAccounts[i].qtyOperation).doubleValue(), resultantAccounts[i].showvaluecond, resultantAccounts[i].issummary.equals("Y")));
-          resultantAccounts[i].qtyRef = Double.toString(applySign(Double.valueOf(resultantAccounts[i].qtyOperationRef).doubleValue(), resultantAccounts[i].showvaluecond, resultantAccounts[i].issummary.equals("Y")));
+				String SVC="";
+          if (isExactValue && !recursiveForms) {
+            SVC="A";
+          } else {
+       	    SVC=resultantAccounts[i].showvaluecond;
+          }
+          resultantAccounts[i].qty = Double.toString(applySign(Double.valueOf(resultantAccounts[i].qtyOperation).doubleValue(), SVC, resultantAccounts[i].issummary.equals("Y")));
+          if (resetFlag) resultantAccounts[i].svcreset = "Y";
+          resultantAccounts[i].qtyRef = Double.toString(applySign(Double.valueOf(resultantAccounts[i].qtyOperationRef).doubleValue(), SVC, resultantAccounts[i].issummary.equals("Y")));
+          if (resetFlag) resultantAccounts[i].svcresetref = "Y";
           resultantAccounts[i].calculated = "Y";
       }
           vec.addElement(resultantAccounts[i]);
@@ -499,5 +531,41 @@ public class AccountTree {
     if (log4j.isDebugEnabled()) log4j.debug("filter");
     if (resultantAccounts==null) log4j.warn("No resultant Acct");
     resultantAccounts = filterStructure(elementValueParent, notEmptyLines, strLevel, isLevel);
+  }
+
+  /**
+   * Resets amounts of subaccounts which parents have been reset because of show value condition
+   * 
+   * @return
+   */
+  public void filterSVC() {
+    if (log4j.isDebugEnabled()) log4j.debug("AccountTree.filterShowValueCond() - accounts: " + resultantAccounts.length);
+    if (resultantAccounts==null || resultantAccounts.length==0) return;
+
+    int[] levels = new int[2];
+    levels[0] = Integer.MAX_VALUE;  //Value of the min level flaged as SVCReset
+    levels[1] = Integer.MAX_VALUE;  //Value of the min level flaged as SVCResetRef
+    
+    for (int i=0; i<resultantAccounts.length; i++) {
+      int level = Integer.parseInt(resultantAccounts[i].elementLevel);
+      if (resultantAccounts[i].svcreset.equals("Y")) {
+        levels[0] = Math.min(level, levels[0]);
+      }
+      if (resultantAccounts[i].svcresetref.equals("Y")) {
+        levels[1] = Math.min(level, levels[1]);
+      }
+      if (level > levels[0]) {
+        resultantAccounts[i].qty = "0.0";
+      }
+      if (level == levels[0] && resultantAccounts[i].svcreset.equals("N")){
+        levels[0] = Integer.MAX_VALUE;
+      }
+      if (level > levels[1]) {
+        resultantAccounts[i].qtyRef = "0.0";
+      }
+      if (level == levels[1] && resultantAccounts[i].svcresetref.equals("N")){
+        levels[1] = Integer.MAX_VALUE;
+      }
+    }
   }
 }

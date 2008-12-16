@@ -118,6 +118,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       }
       acct[i] = new AccountTree(vars, this, elements[i], accounts, strElementValueDes[i]);
       if (acct[i]!=null) {
+        acct[i].filterSVC();
         acct[i].filter(strConImporte.equals("Y"), strLevel, false);
       } else if (log4j.isDebugEnabled()) log4j.debug("acct null!!!");
     }
