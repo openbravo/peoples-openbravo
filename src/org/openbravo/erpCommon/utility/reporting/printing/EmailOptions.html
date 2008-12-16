@@ -75,7 +75,7 @@
 	
 	function resizeWindow()
 	{
-		window.resizeTo(600,620);
+		window.resizeTo(750,500);
 	}
 	
 	function onLoadDo(){
@@ -166,41 +166,6 @@
 
 		<table cellspacing="0" cellpadding="0 style="height: 150px; overflow: auto;" class="form_table">
 
-					<tr id="emailInfo01">
-						<td>
-						</td>
-						<td>
-							<div class="LabelText">
-								Write a template email below. 
-							</div>
-							<div class="LabelText">
-								The following tags will be replaced by the values for each specific document when the mails are send.
-							</div>							
-						</td>
-					</tr>
-					<tr id="emailInfo02">
-						<td>
-						</td>
-						<td>
-							<div class="LabelText">
-								<table border="0" cellspacing="0" cellpadding="0" summary="" class="">
-								<tr>
-									<td class="LabelText">@cus_ref@:</td><td class="LabelText">The document reference of the customer</td>
-								</tr>
-								<tr>
-									<td class="LabelText">@our_ref@:</td><td class="LabelText">The reference of the document</td>
-								</tr>
-								<tr>
-									<td class="LabelText">@cus_nam@:</td><td class="LabelText">The name of the customer</td>
-								</tr>
-								<tr>
-									<td class="LabelText">@sal_nam@:</td><td class="LabelText">The name of the sales rep.</td>
-								</tr>
-								</table>								 
-							</div>
-						</td>
-					</tr>
-					
 					<tr id="multipleCustomer">
 						<td>
 						</td>
@@ -211,8 +176,8 @@
 						<td style="width: 1%; text-align: right;">
 							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">Customer Email</span>
 						</td>
-						<td id="contactEmailArea" style="width: 99%;">
-							<input type="text" dojoType="openbravo:ValidationTextBox"
+						<td id="contactEmailArea"colspan="2">
+							<input style="width: 55%;" type="text" dojoType="openbravo:ValidationTextBox"
 									class="dojoValidateValid required TextBox_btn_TwoCells_width" disabled="disabled"
 									maxlength="200" name="contactEmail" id="contactEmail" value=""
 									required="true" onkeyup="validateTextBox(this.id);"><span>(</span><span class="LabelText" name="contactName" id="contactName" value=""></span>
@@ -224,8 +189,8 @@
 						<td style="width: 1%; text-align: right;">
 							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">SalesRep Email</span>
 						</td>						
-						<td id="salesrepEmailArea" style="width: 99%;">
-							<input type="text" dojoType="openbravo:ValidationTextBox"
+						<td id="salesrepEmailArea" colspan="2">
+							<input style="width: 55%;" type="text" dojoType="openbravo:ValidationTextBox"
 									class="dojoValidateValid required TextBox_btn_TwoCells_width" disabled="disabled"
 									maxlength="200" name="salesrepEmail" id="salesrepEmail" value=""
 									required="true" onkeyup="validateTextBox(this.id);"><span>(</span><span class="LabelText" name="salesrepName" id="salesrepName" value=""></span>
@@ -237,52 +202,46 @@
 						<td style="width: 1%; text-align: right;">
 							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">Subject</span>
 						</td>
-						<td style="width: 99%;">
-							<table border="0" cellspacing="0" cellpadding="0" summary="" class="">
-							<tr>
-								<td>
-									<input type="text" dojoType="openbravo:ValidationTextBox"
+						<td colspan="2">
+							<input style="width: 55%;" type="text" dojoType="openbravo:ValidationTextBox"
 										class="dojoValidateValid required TextBox_btn_TwoCells_width"
 										maxlength="200" name="emailSubject" id="emailSubject" value=""
 										required="true" onkeyup="validateTextBox(this.id);">
-								</td>
-								<td class="FieldButton_ContentCell">
-								</td>
-							<tr>
-							</table>
 						</td>
+						
 					</tr>
 
-					<tr id="emailField03">
-						<td style="width: 1%; text-align: right;">
+					<tr id="emailField03" nowrap="nowrap">
+						<td style="width: 1%; text-align: right;" >
 							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">Message body</span>
 						</td>
-						<td style="width: 99%">
-							<table style="width: 100%;" border="0" cellspacing="0" cellpadding="0" summary="" class="">
-							<tr>
-								<td>
-						            <textarea id="emailBody" style="width: 400px; height: 100px" class="dojoValidateValid" maxlength="2000" name="emailBody" onkeyup="" onchange=""></textarea>
-								</td>
-								<td class="FieldButton_ContentCell">
-								</td>
-							<tr>
-							</table>
+						<td nowrap="nowrap" style="width: 55%;">
+							<textarea id="emailBody" style="height: 100px; width: 99%;" class="dojoValidateValid" maxlength="2000" name="emailBody" onkeyup="" onchange=""></textarea>
+						</td>
+						<td>
+							<spam class="LabelText">
+								<li>References will be replaced by values:</li>
+								<li>@cus_ref@: The document reference of the customer</li>
+								<li>@our_ref@: The reference of the document</li>
+								<li>@cus_nam@: The name of the customer</li>
+								<li>@sal_nam@: The name of the sales rep.</li>
+							</spam>
 						</td>
 					</tr>
 					<tr id="discardSelect">
- 					<td class="TitleCell"><span class="LabelText">Template to use</span></td>
-					<td class="Combo_ContentCell" colspan="2">
-	    				<select name="templates" id="templates" class="ComboKey Combo_TwoCells_width" required="true" onchange="displayLogic();return true;">
-	                    <div id="reportEmail"></div>
+ 						<td class="TitleCell"><span class="LabelText">Template to use</span></td>
+						<td class="Combo_ContentCell" colspan="2">
+	    					<select style="width: 55%;" name="templates" id="templates" class="ComboKey Combo_TwoCells_width" required="true" onchange="displayLogic();return true;">
+	                    	<div id="reportEmail"></div>
 	        			</select>
-					</td>
+						</td>
 				</tr>		
 					<tr id="discardTable">
 						<td style="width: 1%; text-align: right;">
 							<span style="white-space: nowrap; padding-right: 10px;" class="LabelText">Attached Documents</span>
 						</td>	
-   						 <td width="7%" colspan="2">
-    						<table cellspacing="0" cellpadding="0" width="60%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
+   						 <td colspan="2">
+    						<table cellspacing="0" cellpadding="0" width="55%"  style="table-layout: auto;">
     						<tbody>
     						<tr class="DataGrid_Body_Row"> 
     							<th class="DataGrid_Header_Cell"><span>File name</span></th>
@@ -290,7 +249,7 @@
         					</tr>
     						<div id="sectionDetail">
       						<tr id="funcEvenOddRow" class="DataGrid_Body_Row DataGrid_Body_Row_xx">
-      							<td width="630" class="DataGrid_Body_Cell" id="fieldDocumentno">xx</td>
+      							<td class="DataGrid_Body_Cell" id="fieldDocumentno">xx</td>
 								<!--td width="20" class="DataGrid_Body_Cell">  <span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpOrder" onclick="updateData(this.value, this.checked);return true;" value="" id="fieldCOrderlineId"/></span></td -->
          					</tr>
     					</div>
@@ -300,13 +259,13 @@
 				</tr>
 				
 				<tr id="emailField03">
-					<td colspan="2" class="TextBox_ContentCell">
+					<td colspan="3" class="TextBox_ContentCell">
                     	<input type="text" onblur="isInputFile=false;" onfocus="isInputFile=true;" style="border: 0pt none ; margin: 0pt; padding: 0pt; font-size: 0pt; width: 0px; height: 0px;"/>
                     	<input type="file" name="inpFile" class="dojoValidateValid TextBox_TwoCells_width"/>
                     	<input type="text" onblur="isInputFile=false;" onfocus="isInputFile=true;" style="border: 0pt none ; margin: 0pt; padding: 0pt; font-size: 0pt; width: 0px; height: 0px;"/>
    	 				</td>
 				</tr>	
-				<tr><td colspan="2" id="CopyFrom_inp_td" class=""><div id="editDiscard"><div id="CopyFrom_inp">
+				<tr><td colspan="3" id="CopyFrom_inp_td" class=""><div id="editDiscard"><div id="CopyFrom_inp">
   <input type="hidden" id="CopyFrom" onchange="logChanges(this.inputNode);return true;" value="N" name="inpcopyfrom"/>
   <a id="CopyFrom_linkBTN" onclick="addFile();return false;" onkeyup="this.className='ButtonLink_focus'; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onblur="window.status=''; return true;" onfocus="setWindowElementFocus(this); window.status='Copy Lines'; return true;" href="#" class="ButtonLink">
     <table width="175" onmouseout="this.className='Button'; window.status=''; return true;" onmouseover="this.className='Button_hover'; window.status='Copy Lines'; return true;" onmouseup="this.className='Button'; return true;" onmousedown="this.className='Button_active'; return true;" class="Button">
@@ -323,7 +282,7 @@
 
 					<tr id="emailField03">						
 						<td style="width: 1%; text-align: right; white-space: nowrap; padding-right: 10px;"> <input type="checkbox" id="paramArchive" name="inpArchive" value="Y" checked/></td>
-						<td style="width: 99%"><span class="LabelText">Archive this document (This will attach the document to the record)</span></td>			
+						<td  colspan="2" style="width: 99%"><span class="LabelText">Archive this document (This will attach the document to the record)</span></td>			
 					</tr>	
 					</table>
 				
