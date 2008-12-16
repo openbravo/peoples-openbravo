@@ -1493,7 +1493,9 @@ cWithHoldId varchar2(32);
                   INTO v_cashBook
                   FROM C_CASHBOOK
                   WHERE AD_Client_ID=v_Client_ID
-                    AND isDefault='Y';
+                    AND isActive='Y'
+                    AND isDefault='Y'
+                    AND AD_Org_ID=v_ad_org_id;
                   IF v_cashBook IS NULL THEN
                       RAISE_APPLICATION_ERROR(-20000, '@NoDefaultCashBook@');
                   END IF;
