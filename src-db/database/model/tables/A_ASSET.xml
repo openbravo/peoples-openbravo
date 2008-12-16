@@ -159,7 +159,7 @@
       </column>
       <column name="ANNUALAMORTIZATIONPERCENTAGE" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA[SELECT ANNUALAMORTIZATIONPORCENTAGE FROM A_ASSET_ WHERE A_ASSET.A_ASSET_ID=A_ASSET_.A_ASSET_ID]]></onCreateDefault>
       </column>
       <column name="ASSETVALUEAMT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>

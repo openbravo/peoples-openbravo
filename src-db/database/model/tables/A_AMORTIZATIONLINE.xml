@@ -47,7 +47,7 @@
       </column>
       <column name="AMORTIZATION_PERCENTAGE" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA[SELECT AMORTIZATION_PORCENTAGE FROM A_AMORTIZATIONLINE_ WHERE A_AMORTIZATIONLINE.A_AMORTIZATIONLINE_ID=A_AMORTIZATIONLINE_.A_AMORTIZATIONLINE_ID]]></onCreateDefault>
       </column>
       <column name="AMORTIZATIONAMT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default/>
