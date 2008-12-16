@@ -255,9 +255,8 @@ public void doPost (HttpServletRequest request, HttpServletResponse response) th
       String strAux = "";
       if (dataRef!=null && dataRef.length>0) strAux = getWhereClause(vars, strWindow, dataRef[0].whereclause);
       result += strAux;
-      if (!data[0].tablename.equalsIgnoreCase(parentTableName)) {
-        result += getAditionalWhereClause(vars, strWindow, data[0].adTabId, data[0].tablename, "", "", parentTableName);
-      }
+      //Check where clause for parent tabs
+      result += getAditionalWhereClause(vars, strWindow, data[0].adTabId, data[0].tablename, "", "", parentTableName);
       result += ")";
     }
     if (log4j.isDebugEnabled()) log4j.debug("getAditionalWhereClause - result: " + result);
