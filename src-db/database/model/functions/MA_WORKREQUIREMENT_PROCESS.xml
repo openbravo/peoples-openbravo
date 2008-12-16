@@ -75,7 +75,6 @@
       LOOP
         v_Record_ID:=Cur_Parameter.Record_ID;
         v_User_ID:=Cur_Parameter.AD_User_ID;
-        v_Org_ID:=Cur_Parameter.AD_Org_ID;
         v_Client_ID:=Cur_Parameter.AD_Client_ID;
       END LOOP; --  Get Parameter
     ELSE
@@ -88,12 +87,14 @@
       Quantity,
       Processed,
       ExplodePhases,
-      LaunchDate
+      LaunchDate,
+      AD_Org_ID
     INTO v_ProcessPlan_ID,
       v_Quantity,
       v_Processed,
       v_ExplodePhases,
-      v_LaunchDate
+      v_LaunchDate,
+      v_Org_ID
     FROM MA_WorkRequirement
     WHERE MA_WorkRequirement_ID=v_Record_ID;
     --Check if it hasn't already been processed
