@@ -18844,7 +18844,8 @@ dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
       handleAs: "xml"
     };
     openbravo.widget.DataGrid.io.asyncCall(serviceUrl, content);
-    this.timeoutHandler = setTimeout(dojo.hitch(this, "handleTimedOut"), this.options.bufferTimeout);
+    if(this.timeoutHandler == null) {this.timeoutHandler = new Array()};
+    this.timeoutHandler[this.timeoutHandler.length] = setTimeout(dojo.hitch(this, "handleTimedOut"), this.options.bufferTimeout);
   },
 
 /**
@@ -18863,7 +18864,9 @@ dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
 */
   ajaxUpdate: function(data, evt) {
     try {
-      clearTimeout( this.timeoutHandler );
+      if(this.timeoutHandler != null && this.timeoutHandler.length > 0){
+        clearTimeout( this.timeoutHandler.shift() ); //shift returns and removes the first element of an array
+      }
       this.buffer.update(data,this.processingRequest.bufferOffset);
       this.viewPort.bufferChanged();
     }
