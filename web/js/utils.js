@@ -60,7 +60,7 @@ var isUserChanges = false;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '11074';
+  var number = '11281';
   return number;
 }
 
@@ -2503,8 +2503,11 @@ function formElementValue(form, ElementName, Value) {
     if (obj==null || !obj || !obj.type) return false;
     if (obj.getAttribute("readonly")=="true" || obj.readOnly || obj.getAttribute("readonly")=="") bolReadOnly=true;
     if (bolReadOnly) {
-      onChangeFunction = obj.onchange;
-      obj.onchange = "";
+      onChangeFunction = obj.getAttribute("onChange").toString();
+      onChangeFunction = onChangeFunction.replace("function anonymous()\n","");
+      onChangeFunction = onChangeFunction.replace("{\n","");
+      onChangeFunction = onChangeFunction.replace("\n}","");
+      obj.setAttribute("onChange", "");
       obj.readOnly = false;
     }
     if (obj.type.toUpperCase().indexOf("SELECT")!=-1) {
@@ -2551,10 +2554,9 @@ function formElementValue(form, ElementName, Value) {
             onChangeFunction = onChangeFunction.toString().replace("function anonymous()", "");
           }
         }
-        obj.onchange = onChangeFunction;
+        obj.setAttribute("onChange", onChangeFunction);
       } else {
-        if (onChangeFunction.toString().indexOf("function")==-1) obj.onchange = new Function("", onChangeFunction.toString());
-        else obj.onchange = onChangeFunction;
+        obj.setAttribute("onChange", onChangeFunction);
         //obj.onchange = function anonymous() {selectCombo(this, Value);return true;};
       }
       obj.readOnly = true;
@@ -2618,18 +2620,21 @@ function formElementEvent(form, ElementName, calloutName) {
         }
 
       if (obj.className.indexOf("Combo")!=-1) {
-        var onchange_text = obj.getAttribute("onChange").toString();
-        if (onchange_text.indexOf("selectCombo")!=-1) {
-          onchange_text = onchange_text.substring(0,onchange_text.indexOf("selectCombo"))+onchange_text.substring(onchange_text.indexOf(";",onchange_text.indexOf("selectCombo"))+1, onchange_text.length);
-          var onchange_text2 = onchange_text;
-          onchange_text = onchange_text.substring(0,onchange_text.indexOf("return"))+onchange_text.substring(onchange_text.indexOf(";",onchange_text.indexOf("return"))+1, onchange_text.length);
-          onchange_text = onchange_text.replace("(this)","(obj)");
-          onchange_text = onchange_text.replace("(this,","(obj,");
-          onchange_text = onchange_text.replace("(this ","(obj ");
-          onchange_text = onchange_text.replace(",this)",",obj)");
-          onchange_text = onchange_text.replace(" this)"," obj)");
-          eval(onchange_text);
-          obj.setAttribute("onChange", "selectCombo(this, '"+obj.value+"');"+onchange_text2);
+        var onchange_combo = obj.getAttribute("onChange").toString();
+        onchange_combo = onchange_combo.replace("function anonymous()\n","");
+        onchange_combo = onchange_combo.replace("{\n","");
+        onchange_combo = onchange_combo.replace("\n}","");
+        if (onchange_combo.indexOf("selectCombo")!=-1) {
+          onchange_combo = onchange_combo.substring(0,onchange_combo.indexOf("selectCombo"))+onchange_combo.substring(onchange_combo.indexOf(";",onchange_combo.indexOf("selectCombo"))+1, onchange_combo.length);
+          var onchange_combo2 = onchange_combo;
+          onchange_combo = onchange_combo.substring(0,onchange_combo.indexOf("return"))+onchange_combo.substring(onchange_combo.indexOf(";",onchange_combo.indexOf("return"))+1, onchange_combo.length);
+          onchange_combo = onchange_combo.replace("(this)","(obj)");
+          onchange_combo = onchange_combo.replace("(this,","(obj,");
+          onchange_combo = onchange_combo.replace("(this ","(obj ");
+          onchange_combo = onchange_combo.replace(",this)",",obj)");
+          onchange_combo = onchange_combo.replace(" this)"," obj)");
+          eval(onchange_combo);
+          obj.setAttribute("onChange", "selectCombo(this, '"+obj.value+"');"+onchange_combo2);
         } else obj.onchange();
       } else {
         if (obj.getAttribute('onchange') != '' && obj.getAttribute('onchange') != null && obj.getAttribute('onchange') != 'null') {
@@ -2876,18 +2881,27 @@ function readOnlyLogicElement(id, readonly) {
 
   obj = getReference(id);
   className = obj.className;
+  var onchange_combo = null;
  
   if (readonly) {
     obj.className = className.replace("ReadOnly","");
     obj.readOnly = true;
       
     if (className.indexOf("Combo ")!=-1) {
-       obj.className = className.replace("Combo","ComboReadOnly");
-       obj.setAttribute("onChange", "selectCombo(this, '"+obj.value+"');"+obj.getAttribute("onChange"));
+      obj.className = className.replace("Combo","ComboReadOnly");
+      onchange_combo = obj.getAttribute("onChange").toString();
+      onchange_combo = onchange_combo.replace("function anonymous()\n","");
+      onchange_combo = onchange_combo.replace("{\n","");
+      onchange_combo = onchange_combo.replace("\n}","");
+      obj.setAttribute("onChange", "selectCombo(this, '"+obj.value+"');"+onchange_combo);
      }
     if (className.indexOf("ComboKey ")!=-1) {
       obj.className = className.replace("ComboKey","ComboKeyReadOnly");
-      obj.setAttribute("onChange", "selectCombo(this, '"+obj.value+"');"+obj.getAttribute("onChange"));
+      onchange_combo = obj.getAttribute("onChange").toString();
+      onchange_combo = onchange_combo.replace("function anonymous()\n","");
+      onchange_combo = onchange_combo.replace("{\n","");
+      onchange_combo = onchange_combo.replace("\n}","");
+      obj.setAttribute("onChange", "selectCombo(this, '"+obj.value+"');"+onchange_combo);
     }
     if (className.indexOf("LabelText ")!=-1)
       obj.className = className.replace("LabelText","LabelTextReadOnly");
@@ -2898,10 +2912,15 @@ function readOnlyLogicElement(id, readonly) {
     obj.className = obj.className.replace("ReadOnly","");
     obj.className = obj.className.replace("readonly","");
     obj.readOnly = false;
-    if (className.indexOf("Combo")!=-1) {
-      onchange = obj.getAttribute("onChange");
-      if (onchange.indexOf("selectCombo")!=-1) 
-        obj.setAttribute("onChange", onchange.substring(0,onchange.indexOf("selectCombo"))+onchange.substring(onchange.indexOf(";",onchange.indexOf("selectCombo"))+1, onchange.length));
+    if (obj.className.indexOf("Combo")!=-1) {
+      onchange_combo = obj.getAttribute("onChange").toString();
+      onchange_combo = onchange_combo.replace("function anonymous()\n","");
+      onchange_combo = onchange_combo.replace("{\n","");
+      onchange_combo = onchange_combo.replace("\n}","");
+      if (onchange_combo.indexOf("selectCombo")!=-1) {
+        var newOnChange_combo = onchange_combo.substring(0,onchange_combo.indexOf("selectCombo"))+onchange_combo.substring(onchange_combo.indexOf(";",onchange_combo.indexOf("selectCombo"))+1, onchange_combo.length);
+        obj.setAttribute("onChange",newOnChange_combo); 
+      }
     }
   }
   return true;
