@@ -384,7 +384,7 @@ compare.database.structure: refer to compare.database.structure target of databa
 			<classpath refid="project.class.path" />
 		</taskdef>
 		<applyModule userId="0" propertiesFile="${base.config}/Openbravo.properties" />
-		<antcall target="import.database.sampledata" />
+		<antcall target="import.sample.data" />
 	</target>
 
 	<target name="create.database" depends="init,code.rev">
@@ -479,7 +479,7 @@ compare.database.structure: refer to compare.database.structure target of databa
 			<classpath refid="project.class.path" />
 		</taskdef>
 		<applyModule userId="0" propertiesFile="${base.config}/Openbravo.properties" />
-		<antcall target="import.database.sampledata" />
+		<antcall target="import.sample.data" />
 	</target>
 
 	<target name="apply.modules">
