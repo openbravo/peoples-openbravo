@@ -242,7 +242,7 @@ public class ProjectSetType extends HttpSecureAppServlet {
   //Determines the Starting Date of a Phase or a Task
   public String calculateStartDate (String strLastContractDate, DateFormat DateFormatter) throws ParseException {
     String strStartDate = "";
-    if (strLastContractDate != null && strLastContractDate != "") {
+    if (strLastContractDate != null && !strLastContractDate.equals("")) {
       strStartDate = strLastContractDate; //Start Date equals to Last Contract Date
       do { 
         strStartDate = Utility.addDaysToDate(strStartDate, "1", DateFormatter); //Start Date equals to Last Contract Date plus one day
@@ -254,7 +254,7 @@ public class ProjectSetType extends HttpSecureAppServlet {
   //Determines the Contract Date of a Phase or a Task, based on the Standard Duration in Days of the Standard Phase or the Standard Task
   public String calculateContractDate(String strStartDate, String strStdDuration, DateFormat DateFormatter) throws ParseException {
     String strContractDate = "";
-    if (strStartDate != null && strStartDate != "" && strStdDuration != null && strStdDuration != "") { 
+    if (strStartDate != null && !strStartDate.equals("") && strStdDuration != null && !strStdDuration.equals("")) { 
       strContractDate = strStartDate; //Contract Date equals to Starting Date
       Integer StdDuration = Integer.parseInt(strStdDuration)-1;
       int DaysLeft = StdDuration;

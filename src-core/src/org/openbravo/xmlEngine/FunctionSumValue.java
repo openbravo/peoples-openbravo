@@ -40,7 +40,7 @@ class FunctionSumValue extends FunctionValue {
 
   public void acumulate() {
     log4jFunctionSumValue.debug("Accumulate: " + fieldValue.print());
-    if (fieldValue.print() != "") {
+    if (!fieldValue.print().equals("")) {
       sum += Double.valueOf(fieldValue.printSimple()).doubleValue();
     }
   }

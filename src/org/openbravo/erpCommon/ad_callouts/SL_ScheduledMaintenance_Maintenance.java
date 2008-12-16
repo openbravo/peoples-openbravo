@@ -60,7 +60,7 @@ public class SL_ScheduledMaintenance_Maintenance extends HttpSecureAppServlet {
 
     resultado.append("var calloutName='SL_ScheduledMaintenance_Maintenance';\n\n");
     resultado.append("var respuesta = new Array(\n");
-    if (strMaintenance != null && strMaintenance != "") {
+    if (strMaintenance != null && !strMaintenance.equals("")) {
       SLScheduledMaintenanceMaintenanceData[] data = SLScheduledMaintenanceMaintenanceData.select(this, strMaintenance);
       resultado.append("new Array(\"inpmaMaintOperationId\", \"" + data[0].maMaintOperationId + "\"),\n");
       resultado.append("new Array(\"inpMaintenanceType\", \"" + FormatUtilities.replaceJS(data[0].maintenanceType) + "\"),\n");

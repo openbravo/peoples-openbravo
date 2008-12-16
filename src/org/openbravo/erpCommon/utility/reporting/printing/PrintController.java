@@ -610,7 +610,7 @@ public class PrintController extends HttpSecureAppServlet {
 
         final AttachContent file = new AttachContent();
         if (vars.getMultiFile("inpFile") != null
-                && vars.getMultiFile("inpFile").getName() != "") {
+                && !vars.getMultiFile("inpFile").getName().equals("")) {
             final AttachContent content = new AttachContent();
             final FileItem file1 = vars.getMultiFile("inpFile");
             content.setFileName(file1.getName());

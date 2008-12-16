@@ -203,60 +203,60 @@ public class ReportBudgetGenerateExcel extends HttpSecureAppServlet {
     StringBuffer columns= new StringBuffer();
     StringBuffer tables= new StringBuffer();
 
-    if (strBPartner != null && strBPartner != "") {
+    if (strBPartner != null && !strBPartner.equals("")) {
       columns.append("PARTNER, ");
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('C_BPARTNER', TO_CHAR(C_BPARTNER_ID), '" ).append( vars.getLanguage()).append("') AS PARTNER, C_BPARTNER_ID FROM C_BPARTNER WHERE C_BPARTNER_ID IN" ).append( strBPartner ).append(")");
     } else columns.append("' ' AS PARTNER, ");
-    if (strBPGroup != null && strBPGroup != "") {
+    if (strBPGroup != null && !strBPGroup.equals("")) {
       columns.append("PARTNERGROUP, ");
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('C_BP_GROUP', TO_CHAR(C_BP_GROUP_ID), '" ).append( vars.getLanguage() ).append( "') AS PARTNERGROUP FROM C_BP_GROUP WHERE C_BP_GROUP_ID IN" ).append( strBPGroup ).append( ")");
     } else columns.append("' ' AS PARTNERGROUP, ");
-    if (strProduct != null && strProduct != "") {
+    if (strProduct != null && !strProduct.equals("")) {
       columns.append("PRODUCT, ");
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('M_PRODUCT', TO_CHAR(M_PRODUCT_ID), '" ).append( vars.getLanguage() ).append( "') AS PRODUCT, M_PRODUCT_ID FROM M_PRODUCT WHERE M_PRODUCT_ID IN" ).append( strProduct ).append( ")");
     } else columns.append("' ' AS PRODUCT, ");
-    if (strProdCategory != null && strProdCategory != "") {
+    if (strProdCategory != null && !strProdCategory.equals("")) {
       columns.append("PRODCATEGORY, ");
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('M_PRODUCT_CATEGORY', TO_CHAR(M_PRODUCT_CATEGORY_ID), '" ).append( vars.getLanguage() ).append( "') AS PRODCATEGORY FROM M_PRODUCT_CATEGORY WHERE M_PRODUCT_CATEGORY_ID IN" ).append( strProdCategory ).append( ")");
     } else columns.append("' ' AS PRODCATEGORY, ");
-    /*if (strUser1 != null && strUser1 != "") {
+    /*if (strUser1 != null && !strUser1.equals("")) {
       columns.append("USER1, ");
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('C_ELEMENTVALUE', TO_CHAR(C_ELEMENTVALUE_ID), '" ).append( vars.getLanguage() ).append( "') AS USER1 FROM C_ELEMENTVALUE WHERE C_ELEMENTVALUE_ID IN" ).append( strUser1 ).append( ")");
       } else columns.append("' ' AS USER1, ");
-      if (strUser2 != null && strUser2 != "") {
+      if (strUser2 != null && !strUser2.equals("")) {
       columns.append("USER2, ");
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('C_ELEMENTVALUE', TO_CHAR(C_ELEMENTVALUE_ID), '" ).append( vars.getLanguage() ).append( "') AS USER2 FROM C_ELEMENTVALUE WHERE C_ELEMENTVALUE_ID IN" ).append( strUser2 ).append( ")");
       } else columns.append("' ' AS USER2, ");*/
-    if (strSalesRegion != null && strSalesRegion != "") {
+    if (strSalesRegion != null && !strSalesRegion.equals("")) {
       columns.append("SALESREGION, ");
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('C_SALESREGION', TO_CHAR(C_SALESREGION_ID), '" ).append( vars.getLanguage() ).append( "') AS SALESREGION FROM C_SALESREGION WHERE C_SALESREGION_ID IN" ).append( strSalesRegion ).append( ")");
     } else columns.append("' ' AS SALESREGION, ");
-    if (strCampaign != null && strCampaign != "") {
+    if (strCampaign != null && !strCampaign.equals("")) {
       columns.append("CAMPAIGN, ");
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('C_CAMPAIGN', TO_CHAR(C_CAMPAIGN_ID), '" ).append( vars.getLanguage() ).append( "') AS CAMPAIGN FROM C_CAMPAIGN WHERE C_CAMPAIGN_ID IN" ).append( strCampaign ).append( ")");
     } else columns.append("' ' AS CAMPAIGN, ");
-    if (strActivity != null && strActivity != "") {
+    if (strActivity != null && !strActivity.equals("")) {
       columns.append("ACTIVITY, ");
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('C_ACTIVITY', TO_CHAR(C_ACTIVITY_ID), '" ).append( vars.getLanguage() ).append( "') AS ACTIVITY FROM C_ACTIVITY WHERE C_ACTIVITY_ID IN" ).append( strActivity ).append( ")");
     } else columns.append("' ' AS ACTIVITY, ");
-    if (strProject != null && strProject != "") {
+    if (strProject != null && !strProject.equals("")) {
       columns.append("PROJECT, ");
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('C_PROJECT', TO_CHAR(C_PROJECT_ID), '" ).append( vars.getLanguage() ).append( "') AS PROJECT FROM C_PROJECT WHERE C_PROJECT_ID IN" ).append( strProject ).append( ")");
     } else columns.append("' ' AS PROJECT, ");
-    if (strTrxOrg != null && strTrxOrg != "") {
+    if (strTrxOrg != null && !strTrxOrg.equals("")) {
       columns.append("TRXORG, ");
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('AD_ORG', TO_CHAR(AD_ORG_ID), '" ).append( vars.getLanguage() ).append( "') AS TRXORG FROM AD_ORG WHERE AD_ORG_ID IN").append( strTrxOrg ).append( ")");
     } else columns.append("' ' AS TRXORG, ");
-    if (strMonth != null && strMonth != "") {
+    if (strMonth != null && !strMonth.equals("")) {
       columns.append("MONTH, ");
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('AD_MONTH', TO_CHAR(AD_MONTH_ID), '" ).append( vars.getLanguage() ).append( "') AS MONTH FROM AD_MONTH WHERE  AD_MONTH_ID IN").append( strMonth ).append( ")");
     } else columns.append("' ' AS MONTH, ");
     // Although is called Valid Combination, it refers to accounts (c_elementvalue)
-    if (strAccount != null && strAccount != "") {
+    if (strAccount != null && !strAccount.equals("")) {
       columns.append("VALIDCOMBINATION, ");
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('C_ELEMENTVALUE', TO_CHAR(C_ELEMENTVALUE_ID), '" ).append( vars.getLanguage() ).append( "' ) AS VALIDCOMBINATION FROM C_ELEMENTVALUE WHERE C_ELEMENTVALUE_ID = ").append( strAccount ).append( ")");
     } else columns.append("' ' AS VALIDCOMBINATION, ");
-    if (strcAcctSchemaId != null && strcAcctSchemaId != "") {
+    if (strcAcctSchemaId != null && !strcAcctSchemaId.equals("")) {
       columns.append("ACCOUNTSCHEMA, CURRENCY ");
       tables.append(", (SELECT AD_COLUMN_IDENTIFIER('C_ACCTSCHEMA', TO_CHAR(C_ACCTSCHEMA_ID), '" ).append( vars.getLanguage() ).append( "' ) AS ACCOUNTSCHEMA, ISO_CODE AS CURRENCY FROM C_ACCTSCHEMA, C_CURRENCY WHERE C_ACCTSCHEMA.C_CURRENCY_ID=C_CURRENCY.C_CURRENCY_ID AND C_ACCTSCHEMA_ID = ").append( strcAcctSchemaId ).append( ")");
     } else {

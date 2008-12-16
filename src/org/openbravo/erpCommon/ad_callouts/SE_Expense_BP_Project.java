@@ -63,10 +63,10 @@ public class SE_Expense_BP_Project extends HttpSecureAppServlet {
       resultado.append("new Array(\"inpcProjectphaseId\", \"\"),\n");
       resultado.append("new Array(\"inpcProjecttaskId\", \"\")\n");
     	// If project changed, select project's business partner (if any).
-      if (strProjectId != null && strProjectId != ""){
+      if (strProjectId != null && !strProjectId.equals("")){
         String strBPartnerName = "";
         String strBPartner = SEExpenseBPProjectData.selectBPId(this, strProjectId) ;
-        if (strBPartner != null && strBPartner != "") {
+        if (strBPartner != null && !strBPartner.equals("")) {
           strBPartnerId = strBPartner;
           strBPartnerName = SEExpenseBPProjectData.selectBPName(this, strProjectId) ;
         }
@@ -76,16 +76,16 @@ public class SE_Expense_BP_Project extends HttpSecureAppServlet {
     } else if (strChanged.equals("inpcBpartnerId")) {
     	// If business partner changed...
       String strReset = "0";
-      if (strBPartnerId != null && strBPartnerId != ""){
+      if (strBPartnerId != null && !strBPartnerId.equals("")){
         String strProject = "";        
-      	if (strProjectId != null && strProjectId != "") {
+      	if (strProjectId != null && !strProjectId.equals("")) {
       	  // ...if project is not null, check if it corresponds with the business partner
           String strBPartnerProject = SEExpenseBPProjectData.selectBPProject(this, strBPartnerId, strProjectId);
           // ...if there is no relationship between project and business partner, take the last project of that business partner (if any).
           if (strBPartnerProject == null || strBPartnerProject.equals("")) {
             strReset = "1";
             strProject = SEExpenseBPProjectData.selectProjectId(this, strBPartnerId) ;
-            if (strProject != null && strProject != "") {
+            if (strProject != null && !strProject.equals("")) {
                 strProjectId = strProject;
             } else {
                 strProjectId = "";
@@ -95,7 +95,7 @@ public class SE_Expense_BP_Project extends HttpSecureAppServlet {
       	  // ...if project is null, take the last project of that business partner (if any).
       	  strReset = "1";
           strProject = SEExpenseBPProjectData.selectProjectId(this, strBPartnerId) ;
-          if (strProject != null && strProject != "") {
+          if (strProject != null && !strProject.equals("")) {
             strProjectId = strProject;
           }
       	}

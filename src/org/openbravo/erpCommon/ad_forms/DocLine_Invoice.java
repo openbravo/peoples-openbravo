@@ -45,7 +45,7 @@ public class DocLine_Invoice extends DocLine {
     m_LineNetAmt = (LineNetAmt == "0")? ZERO.toString() : LineNetAmt;
     BigDecimal b_Qty = new BigDecimal(Qty);
     BigDecimal b_PriceList = new BigDecimal(PriceList);
-    if (PriceList != "" && Qty != "")
+    if (!PriceList.equals("") && !Qty.equals(""))
       m_ListAmt = b_PriceList.multiply(b_Qty).toString();
     if (m_ListAmt.equals(ZERO.toString()))
       m_ListAmt = m_LineNetAmt;

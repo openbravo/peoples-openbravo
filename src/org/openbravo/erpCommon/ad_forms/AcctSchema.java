@@ -74,30 +74,30 @@ public final class AcctSchema implements Serializable {
             if(data.length==1) {
                 m_UseSuspenseBalancing = data[0].usesuspensebalancing;
                 String ID = data[0].suspensebalancingAcct;
-                if(m_UseSuspenseBalancing.equals("Y") && ID != "")// antes era "0"
+                if(m_UseSuspenseBalancing.equals("Y") && !ID.equals(""))// antes era "0"
                     m_SuspenseBalancing_Acct = Account.getAccount(conn, ID);
                 else
                     m_UseSuspenseBalancing = "N";
                 log4jAcctSchema.debug("SuspenseBalancing=" + m_UseSuspenseBalancing + " " + m_SuspenseBalancing_Acct);
                 m_UseSuspenseError = data[0].usesuspenseerror;
                 ID = data[0].suspenseerrorAcct;
-                if(m_UseSuspenseError.equals("Y") && ID != "")// antes era "0"
+                if(m_UseSuspenseError.equals("Y") && !ID.equals(""))// antes era "0"
                     m_SuspenseError_Acct = Account.getAccount(conn, ID);
                 else
                     m_UseSuspenseError = "N";
                 log4jAcctSchema.debug("SuspenseError=" + m_UseSuspenseError + " " + m_SuspenseError_Acct);
                 m_UseCurrencyBalancing = data[0].usecurrencybalancing;
                 ID = data[0].currencybalancingAcct;
-                if(m_UseCurrencyBalancing.equals("Y") && ID != "")// antes era "0"
+                if(m_UseCurrencyBalancing.equals("Y") && !ID.equals(""))// antes era "0"
                     m_CurrencyBalancing_Acct = Account.getAccount(conn, ID);
                 else
                     m_UseCurrencyBalancing = "N";
                 log4jAcctSchema.debug("CurrencyBalancing=" + m_UseCurrencyBalancing + " " + m_CurrencyBalancing_Acct);
                 ID = data[0].intercompanyduetoAcct;
-                if(ID != "")// antes era "0"
+                if(!ID.equals(""))// antes era "0"
                     m_DueTo_Acct = Account.getAccount(conn, ID);
                 ID = data[0].intercompanyduefromAcct;
-                if(ID != "")// antes era "0"
+                if(!ID.equals(""))// antes era "0"
                     m_DueFrom_Acct = Account.getAccount(conn, ID);
             }
             m_elementList = AcctSchemaElement.getAcctSchemaElementList(conn, m_C_AcctSchema_ID);

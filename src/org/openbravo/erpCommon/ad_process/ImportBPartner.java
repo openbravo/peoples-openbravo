@@ -174,7 +174,7 @@ public class ImportBPartner extends ImportProcess {
 				}
 
 				//	create/update BPartner Location
-				if (C_BPartner_Location_ID != "")	{	//	Update Location
+				if (!C_BPartner_Location_ID.equals(""))	{	//	Update Location
 				}	else if (newLocation)	{				//	New Location
 					String C_Location_ID = SequenceIdData.getUUID();
 					try {
@@ -203,7 +203,7 @@ public class ImportBPartner extends ImportProcess {
 				}
 
 				//	Create/Update Contact
-				if (AD_User_ID != "") {
+				if (!AD_User_ID.equals("")) {
 					try	{
 						//Update existing contact
 						no = ImportBPartnerData.updateBPContact(con, conn, I_BPartner_ID, AD_User_ID);
@@ -219,7 +219,7 @@ public class ImportBPartner extends ImportProcess {
 					AD_User_ID = SequenceIdData.getUUID();
 					try
 					{
-						if (data[i].contactname != null && data[i].contactname != "") {
+						if (data[i].contactname != null && !data[i].contactname.equals("")) {
 							no = ImportBPartnerData.insertBPContact(con, conn, AD_User_ID, C_BPartner_ID, (C_BPartner_Location_ID.equals("0"))?"NULL":C_BPartner_Location_ID, I_BPartner_ID);
 							if (log4j.isDebugEnabled()) log4j.debug("Insert BP Contact = " + no);
 						} else {

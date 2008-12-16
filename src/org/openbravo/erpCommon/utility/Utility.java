@@ -1609,7 +1609,7 @@ public static String getOrderByFromSELECT(String[] SQL, Vector<String> fields) {
    */
   public static String calculateLaborDays(String strDate1, String strDate2, DateFormat DateFormatter) throws ParseException {
     String strLaborDays = "";
-    if (strDate1 != null && strDate1 != "" && strDate2 != null && strDate2 != "") { 
+    if (strDate1 != null && !strDate1.equals("") && strDate2 != null && !strDate2.equals("")) { 
       Integer LaborDays = 0;
       if(Utility.isBiggerDate(strDate1, strDate2, DateFormatter)) {
         do {
@@ -1638,7 +1638,7 @@ public static String getOrderByFromSELECT(String[] SQL, Vector<String> fields) {
    */
   public static String addDaysToDate(String strDate, String strDays, DateFormat DateFormatter) throws ParseException {
     String strFinalDate = "";
-    if (strDate != null && strDate != "" && strDays != null && strDays != "") {      
+    if (strDate != null && !strDate.equals("") && strDays != null && !strDays.equals("")) {      
       final Calendar FinalDate = Calendar.getInstance();
       FinalDate.setTime(DateFormatter.parse(strDate)); //FinalDate equals to strDate
       FinalDate.add(Calendar.DATE, Integer.parseInt(strDays)); //FinalDate equals to strDate plus one day

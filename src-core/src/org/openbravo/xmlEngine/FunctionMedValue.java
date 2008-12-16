@@ -41,7 +41,7 @@ class FunctionMedValue extends FunctionValue {
 
   public void acumulate() {
     count ++;
-    if (fieldValue.print() != "") {
+    if (!fieldValue.print().equals("")) {
       sum += Double.valueOf(fieldValue.printSimple()).doubleValue();
     }
   }

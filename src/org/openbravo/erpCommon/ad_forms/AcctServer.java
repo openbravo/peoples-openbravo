@@ -614,9 +614,9 @@ public abstract class AcctServer  {
         Posted = data[0].getField("Posted");
         if (!loadDocumentDetails(data, conn)) loadDocumentType();
         //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - loadDocument - DocumentDetails Loaded");
-        if ((DateAcct == null || DateAcct.equals("")) && (DateDoc != null && DateDoc != ""))
+        if ((DateAcct == null || DateAcct.equals("")) && (DateDoc != null && !DateDoc.equals("")))
             DateAcct = DateDoc;
-        else if ((DateDoc == null || DateDoc.equals("")) && (DateAcct != null && DateAcct != ""))
+        else if ((DateDoc == null || DateDoc.equals("")) && (DateAcct != null && !DateAcct.equals("")))
             DateDoc = DateAcct;
         //  DocumentNo (or Name)
         if (DocumentNo == null || DocumentNo.length() == 0)
