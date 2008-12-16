@@ -161,7 +161,8 @@ build.war: build a war file in the lib directory.
 			<classpath refid="project.class.path" />
 		</taskdef>
 		<echo message="Importing sample reference data" />
-		<importsampledata userId="0" propertiesFile="${base.config}/Openbravo.properties" />
+    <importsampledata userId="0" propertiesFile="${base.config}/Openbravo.properties" />
+    <ant dir="${base.db}" target="database.postupdate.${bbdd.rdbms}" inheritAll="true" inheritRefs="true"/>
 	</target>
 
 	<target name="generate.entities" depends="compile.src.gen,clean.src.gen">

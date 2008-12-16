@@ -272,7 +272,7 @@ compare.database.structure: refer to compare.database.structure target of databa
 		<ant dir="${base.src}" target="generate.entities" inheritAll="true" inheritRefs="true" />
 	</target>
 
-	<target name="export.sample.data">
+	<target name="export.sample.data" depends="code.rev">
 		<ant dir="${base.src}" target="export.sample.data" inheritAll="true" inheritRefs="true" />
 	</target>
 
