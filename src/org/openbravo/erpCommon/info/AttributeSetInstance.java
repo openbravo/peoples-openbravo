@@ -97,7 +97,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
     } else pageErrorPopUp(response);
   }
 
-  String getDescription(VariablesSecureApp vars, AttributeSetInstanceData[] data, String strIsSOTrx) {
+  String getDescription(VariablesSecureApp vars, AttributeSetInstanceData[] data, String strIsSOTrx, String strWindowId) {
     if (data==null || data.length==0) return "";
     String description="";
     try {
@@ -105,7 +105,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       String serno = "", lot="", guaranteedate="", lockDescription="", description_first="";
       if (data[0].islot.equals("Y")) {
         lot = vars.getStringParameter("inplot");
-        if (!data[0].mLotctlId.equals("") && strIsSOTrx.equals("N")) {
+        if (!data[0].mLotctlId.equals("") && (strIsSOTrx.equals("N") || strWindowId.equals("191"))) {
           description_first += (description_first.equals("")?"":"_") + lot;//esto
         }
 		else
@@ -113,10 +113,10 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       } 
       if (data[0].isserno.equals("Y")) {
         serno = vars.getStringParameter("inpserno");
-        if (!data[0].mSernoctlId.equals("") && strIsSOTrx.equals("N")) {
-          return "";
-        }
-        description_first += (description_first.equals("")?"":"_") + "#" + serno;
+        if (!data[0].mSernoctlId.equals("") && (strIsSOTrx.equals("N") || strWindowId.equals("191"))) {
+          description_first += (description_first.equals("")?"":"_") + serno;
+        } else
+          description_first += (description_first.equals("")?"":"_") + "#" + serno;
       }
       if (data[0].isguaranteedate.equals("Y")) {
         guaranteedate = vars.getStringParameter("inpDateFrom");
@@ -160,14 +160,14 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
     }
 
     boolean isinstance = !AttributeSetInstanceData.isInstanceAttribute(this, strAttributeSet).equals("0");
-    String strDescription = getDescription(vars, data, strIsSOTrx);
+    String strDescription = getDescription(vars, data, strIsSOTrx, strWindow);
     Connection conn = null;
     try {
       conn = cp.getTransactionConnection();
       String serno = "", lot="", guaranteedate="", locked="", lockDescription="", description="", description_first="";
       if (data[0].islot.equals("Y")) {
         lot = vars.getStringParameter("inplot");
-        if (!data[0].mLotctlId.equals("") && strIsSOTrx.equals("N")) {
+        if (!data[0].mLotctlId.equals("") && (strIsSOTrx.equals("N") || strWindow.equals("191"))) {
           lot = AttributeSetInstanceData.selectNextLot(this, data[0].mLotctlId);
           AttributeSetInstanceData.updateLotSequence(conn, this, vars.getUser(), data[0].mLotctlId);
 		          description_first += (description_first.equals("")?"":"_") + lot;//esto
@@ -177,7 +177,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       }
       if (data[0].isserno.equals("Y")) {
         serno = vars.getStringParameter("inpserno");
-        if (!data[0].mSernoctlId.equals("") && strIsSOTrx.equals("N")) {
+        if (!data[0].mSernoctlId.equals("") && (strIsSOTrx.equals("N") || strWindow.equals("191"))) {
           serno = AttributeSetInstanceData.selectNextSerNo(conn, this, data[0].mSernoctlId);
           AttributeSetInstanceData.updateSerNoSequence(conn, this, vars.getUser(), data[0].mSernoctlId);
         }
@@ -198,13 +198,13 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       boolean hasToUpdate = false;
       if ((!strInstance.equals("")) && (isinstance)) {//Si if it's existant and requestable, it edits it
         hasToUpdate = true;
-        if (AttributeSetInstanceData.updateHeader(conn, this, vars.getUser(), data[0].mAttributesetId, serno, lot, guaranteedate, data[0].mLotctlId, locked, lockDescription, strInstance) == 0) {
-          AttributeSetInstanceData.insertHeader(conn, this, strInstance, vars.getClient(), vars.getOrg(), vars.getUser(), data[0].mAttributesetId, serno, lot, guaranteedate, data[0].mLotctlId, locked, lockDescription);
+        if (AttributeSetInstanceData.updateHeader(conn, this, vars.getUser(), data[0].mAttributesetId, serno, lot, guaranteedate, "", locked, lockDescription, strInstance) == 0) {
+          AttributeSetInstanceData.insertHeader(conn, this, strInstance, vars.getClient(), vars.getOrg(), vars.getUser(), data[0].mAttributesetId, serno, lot, guaranteedate, "", locked, lockDescription);
         }
       } else if ((isinstance) || (strNewInstance.equals(""))) { //New or editable,if it's requestable or doesn't exist the identic, then it inserts a new one
         hasToUpdate = true;
         strNewInstance = SequenceIdData.getUUID();
-        AttributeSetInstanceData.insertHeader(conn, this, strNewInstance, vars.getClient(), vars.getOrg(), vars.getUser(), data[0].mAttributesetId, serno, lot, guaranteedate, data[0].mLotctlId, locked, lockDescription);
+        AttributeSetInstanceData.insertHeader(conn, this, strNewInstance, vars.getClient(), vars.getOrg(), vars.getUser(), data[0].mAttributesetId, serno, lot, guaranteedate, "", locked, lockDescription);
       }
       if (hasToUpdate) {
         if (!data[0].elementname.equals("")) {
@@ -284,7 +284,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
     xmlDocument.setParameter("nameDescription", strName.equals("")?"Description":strName);
     xmlDocument.setParameter("description", AttributeSetInstanceData.selectDescription(this, (strInstance.equals("")?strProductInstance:strInstance)));
     AttributeSetInstanceData[] data = AttributeSetInstanceData.select(this, strAttributeSet);
-    xmlDocument.setParameter("data", generateHtml(vars, data, AttributeSetInstanceData.selectInstance(this, (strInstance.equals("")?strProductInstance:strInstance)), strInstance, strIsSOTrx));
+    xmlDocument.setParameter("data", generateHtml(vars, data, AttributeSetInstanceData.selectInstance(this, (strInstance.equals("")?strProductInstance:strInstance)), strInstance, strIsSOTrx, strWindowId));
     xmlDocument.setParameter("script", generateScript(vars, data));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
@@ -312,7 +312,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
     return strHtml.toString();
   }
 
-  String generateHtml(VariablesSecureApp vars, AttributeSetInstanceData[] fields, AttributeSetInstanceData[] instanceData, String strAttributeInstance, String strIsSOTrx) throws IOException, ServletException {
+  String generateHtml(VariablesSecureApp vars, AttributeSetInstanceData[] fields, AttributeSetInstanceData[] instanceData, String strAttributeInstance, String strIsSOTrx, String strWindowId) throws IOException, ServletException {
     if (fields==null || fields.length==0) return "";
     StringBuffer strHtml = new StringBuffer();
     if (!fields[0].elementname.equals("")) {
@@ -367,12 +367,12 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       strHtml.append("maxlength=\"20\" ");
       strHtml.append("class=\"dojoValidateValid TextBox_OneCell_width");
       //strHtml.append("onkeydown=\"auto_complete_number(this, true, true);return true;\" ");
-      if (!fields[0].mLotctlId.equals("") && strIsSOTrx.equals("N")) {
+      if (!fields[0].mLotctlId.equals("") && (strIsSOTrx.equals("N") || strWindowId.equals("191"))) {
         strHtml.append(" readonly\" readonly=true ");
       } else {
         strHtml.append("\" ");
       }
-      if (strAttributeInstance.equals("") && strIsSOTrx.equals("N")) strHtml.append("value=\"" + AttributeSetInstanceData.selectNextLot(this, fields[0].mLotctlId) + "\" ");
+      if (strAttributeInstance.equals("") && (strIsSOTrx.equals("N") || strWindowId.equals("191"))) strHtml.append("value=\"" + AttributeSetInstanceData.selectNextLot(this, fields[0].mLotctlId) + "\" ");
       else strHtml.append("value=\"" + ((instanceData!=null && instanceData.length>0)?instanceData[0].lot:"") + "\" ");
       strHtml.append("></td><td></td><td></td></tr>\n");
     }
@@ -386,12 +386,12 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       strHtml.append("maxlength=\"20\" ");
       strHtml.append("class=\"dojoValidateValid TextBox_OneCell_width");
       //strHtml.append("onkeydown=\"auto_complete_number(this, true, true);return true;\" ");
-      if (!fields[0].mSernoctlId.equals("") && strIsSOTrx.equals("N")) {
+      if (!fields[0].mSernoctlId.equals("") && (strIsSOTrx.equals("N") || strWindowId.equals("191"))) {
         strHtml.append(" readonly\" readonly=true ");
       } else {
         strHtml.append("\" ");
       }
-      if (strAttributeInstance.equals("") && strIsSOTrx.equals("N")) strHtml.append("value=\"" + AttributeSetInstanceData.selectNextSerNo(this, fields[0].mSernoctlId) + "\" ");
+      if (strAttributeInstance.equals("") && (strIsSOTrx.equals("N") || strWindowId.equals("191"))) strHtml.append("value=\"" + AttributeSetInstanceData.selectNextSerNo(this, fields[0].mSernoctlId) + "\" ");
       else strHtml.append("value=\"" + ((instanceData!=null && instanceData.length>0)?instanceData[0].serno:"") + "\" ");
       strHtml.append("></td><td></td><td></td></tr>\n");
     }
@@ -399,7 +399,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled()) log4j.debug("GuaranteeDate:"+((instanceData!=null && instanceData.length > 0)?instanceData[0].guaranteedate:""));
       String strGuaranteeDate = null;
       
-      if (strAttributeInstance.equals("") && strIsSOTrx.equals("N"))
+      if (strAttributeInstance.equals("") && (strIsSOTrx.equals("N") || strWindowId.equals("191")))
       strGuaranteeDate = DateTimeData.nDaysAfter(this, DateTimeData.today(this), fields[0].guaranteedays);
       else
       strGuaranteeDate = (instanceData!=null && instanceData.length > 0)?instanceData[0].guaranteedate:"";
