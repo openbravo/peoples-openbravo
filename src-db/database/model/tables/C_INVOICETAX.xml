@@ -69,6 +69,9 @@
       <foreign-key foreignTable="C_TAX" name="CTAX_CINVOICETAX">
         <reference local="C_TAX_ID" foreign="C_TAX_ID"/>
       </foreign-key>
+      <index name="C_INVOICETAX_INVOICEID" unique="false">
+        <index-column name="C_INVOICE_ID"/>
+      </index>
       <check name="C_INVOICETAX_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
