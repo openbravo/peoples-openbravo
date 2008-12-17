@@ -233,7 +233,7 @@ public class DataSetService implements OBSingleton {
         }
 
         final List<?> list = oq.list();
-        Collections.sort(list, new BaseStringComparator());
+        Collections.sort(list, new BaseOBIDHexComparator());
         return (List<BaseOBObject>) list;
     }
 
