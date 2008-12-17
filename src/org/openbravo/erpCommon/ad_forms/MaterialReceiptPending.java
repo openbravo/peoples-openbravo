@@ -34,6 +34,8 @@ import org.openbravo.xmlEngine.XmlDocument;
 import java.io.*;
 import javax.servlet.*;
 import java.util.*;
+import java.util.regex.Pattern;
+
 import javax.servlet.http.*;
 
 import org.openbravo.utils.Replace;
@@ -268,6 +270,13 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     MaterialReceiptPendingData.mInoutPost0(conn, this, pinstance);
 
     PInstanceProcessData[] pinstanceData = PInstanceProcessData.selectConnection(conn, this, pinstance);
+    Pattern patern = Pattern.compile("^@ERROR=@Inline@\\s+[0-9]+\\s+@productWithoutAttributeSet@");
+    for(PInstanceProcessData  pinstanceD :pinstanceData){
+        if (patern.matcher(pinstanceD.errormsg).matches()) { 
+            pinstanceD.errormsg = "@productWithoutSomeAttributeSet@";
+            pinstanceD.result = "2";
+        }
+    }
     myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
     return myMessage;
   }
