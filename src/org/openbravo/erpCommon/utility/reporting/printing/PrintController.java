@@ -168,6 +168,7 @@ public class PrintController extends HttpSecureAppServlet {
                     vars.getLanguage()));
 
         documentIds = strDocumentId.split(",");
+
         if (log4j.isDebugEnabled())
             log4j.debug("Number of documents selected: " + documentIds.length);
 
@@ -297,7 +298,8 @@ public class PrintController extends HttpSecureAppServlet {
 
             } else if (vars.commandIn("EMAIL")) {
                 int nrOfEmailsSend = 0;
-
+                final String strClaves = Utility.stringList(vars
+                        .getRequiredInParameter("inpId"));
                 for (final PocData documentData : pocData) {
                     final String documentId = documentData.documentId;
                     if (log4j.isDebugEnabled())
@@ -615,6 +617,7 @@ public class PrintController extends HttpSecureAppServlet {
             final FileItem file1 = vars.getMultiFile("inpFile");
             content.setFileName(file1.getName());
             content.setFileItem(file1);
+            content.setId(file1.toString());
             vector.addElement(content);
             request.getSession().setAttribute("files", vector);
 
@@ -706,7 +709,7 @@ public class PrintController extends HttpSecureAppServlet {
 
             if (onlyOneAttachedDoc) {
                 attachedContent.setFileName(report.getFilename());
-
+                attachedContent.setId("document");
                 cloneVector.add(attachedContent);
             }
 
@@ -720,9 +723,11 @@ public class PrintController extends HttpSecureAppServlet {
                 attachedContent.setFileName(String.valueOf(reports.size()
                         + " Documents to " + String.valueOf(numberOfCustomers)
                         + " Customers"));
+                attachedContent.setId("document");
             } else {
                 attachedContent.setFileName(String.valueOf(reports.size()
                         + " Documents"));
+                attachedContent.setId("document");
             }
             cloneVector.add(attachedContent);
         }

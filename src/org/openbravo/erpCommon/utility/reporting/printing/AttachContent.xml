@@ -21,6 +21,7 @@
   <template file="EmailOptions.html"/>
 	<structure name="structure1">
    	<FIELD id="fieldDocumentno">fileName</FIELD>
+   	<FIELD id="fieldID" attribute="value">id</FIELD>
    	<SECTION id="sectionDetail"/>
   </structure>
 </REPORT>

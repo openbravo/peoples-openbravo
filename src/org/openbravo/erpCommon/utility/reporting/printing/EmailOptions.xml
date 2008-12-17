@@ -42,6 +42,7 @@
     	<ARGUMENT name="template_filename" withId="c_poc_doctype_template_id"/>
   	</SUBREPORT>
 	<structure name="structure2">
+		<FIELD id="fieldID" attribute="value">id</FIELD>
 		<FIELD id="fieldDocumentno">fileName</FIELD>
 		<SECTION id="sectionDetail"/>
 	</structure>

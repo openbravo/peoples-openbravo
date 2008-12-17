@@ -77,7 +77,11 @@
 	{
 		window.resizeTo(750,500);
 	}
-	
+
+	function doSubmit(myId)
+	{
+		alert(myID.value);
+	}
 	function onLoadDo(){
 		var isClosed = document.getElementById("closed").value;
 		if( isClosed == "yes")
@@ -245,12 +249,12 @@
     						<tbody>
     						<tr class="DataGrid_Body_Row"> 
     							<th class="DataGrid_Header_Cell"><span>File name</span></th>
-      							<!--th width="5" colspan="1" class="DataGrid_Header_Cell" id="fieldPartnerName"><span>Archive</span><th-->
+      							<th width="5" colspan="1" class="DataGrid_Header_Cell" id="fieldPartnerName"><span>Archive</span><th>
         					</tr>
     						<div id="sectionDetail">
-      						<tr id="funcEvenOddRow" class="DataGrid_Body_Row DataGrid_Body_Row_xx">
-      							<td class="DataGrid_Body_Cell" id="fieldDocumentno">xx</td>
-								<!--td width="20" class="DataGrid_Body_Cell">  <span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpOrder" onclick="updateData(this.value, this.checked);return true;" value="" id="fieldCOrderlineId"/></span></td -->
+      						<tr id="funcEvenOddRowxx" class="DataGrid_Body_Row DataGrid_Body_Row_xx">
+      							<td class="DataGrid_Body_Cell" id="fieldDocumentno">xx<a href="#" onclick="javascript:doSubmit(getElementById('fieldID'))"> remove</a> </td>
+								<td width="20" class="DataGrid_Body_Cell">  <span class="Checkbox_container_NOT_Focused"><input type="checkbox" id="fieldID" name="inpId" value=""/></span></td>
          					</tr>
     					</div>
     					</tbody>
@@ -259,13 +263,18 @@
 				</tr>
 				
 				<tr id="emailField03">
-					<td colspan="3" class="TextBox_ContentCell">
+					<td>
+					</td>
+					<td colspan="2" class="TextBox_ContentCell">
                     	<input type="text" onblur="isInputFile=false;" onfocus="isInputFile=true;" style="border: 0pt none ; margin: 0pt; padding: 0pt; font-size: 0pt; width: 0px; height: 0px;"/>
                     	<input type="file" name="inpFile" class="dojoValidateValid TextBox_TwoCells_width"/>
                     	<input type="text" onblur="isInputFile=false;" onfocus="isInputFile=true;" style="border: 0pt none ; margin: 0pt; padding: 0pt; font-size: 0pt; width: 0px; height: 0px;"/>
    	 				</td>
 				</tr>	
-				<tr><td colspan="3" id="CopyFrom_inp_td" class=""><div id="editDiscard"><div id="CopyFrom_inp">
+				<tr>
+					<td>
+					</td>
+					<td colspan="2" id="CopyFrom_inp_td" class=""><div id="editDiscard"><div id="CopyFrom_inp">
   <input type="hidden" id="CopyFrom" onchange="logChanges(this.inputNode);return true;" value="N" name="inpcopyfrom"/>
   <a id="CopyFrom_linkBTN" onclick="addFile();return false;" onkeyup="this.className='ButtonLink_focus'; return true;" onkeypress="this.className='ButtonLink_active'; return true;" onblur="window.status=''; return true;" onfocus="setWindowElementFocus(this); window.status='Copy Lines'; return true;" href="#" class="ButtonLink">
     <table width="175" onmouseout="this.className='Button'; window.status=''; return true;" onmouseover="this.className='Button_hover'; window.status='Copy Lines'; return true;" onmouseup="this.className='Button'; return true;" onmousedown="this.className='Button_active'; return true;" class="Button">

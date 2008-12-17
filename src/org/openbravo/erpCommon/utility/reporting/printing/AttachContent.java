@@ -25,6 +25,15 @@ public class AttachContent implements FieldProvider {
     static Logger log4j = Logger.getLogger(AttachContent.class);
     public String fileName;
     public FileItem fileItem;
+    public String id;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public FileItem getFileItem() {
         return fileItem;
@@ -45,7 +54,9 @@ public class AttachContent implements FieldProvider {
     public String getField(String fieldName) {
         if (fieldName.equalsIgnoreCase("FILENAME"))
             return fileName;
-        else {
+        else if (fieldName.equalsIgnoreCase("ID")) {
+            return id;
+        } else {
             log4j.debug("Field does not exist: " + fieldName);
             return null;
         }
