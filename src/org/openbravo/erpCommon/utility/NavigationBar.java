@@ -51,7 +51,7 @@ public class NavigationBar {
         toolbar.append("  <TR class=\"Main_NavBar_bg\"><TD></TD>\n");
         toolbar.append("  <TD class=\"Main_NavBar_LeftButton_cell\">\n");
         toolbar
-                .append("    <a class=\"Main_NavBar_LeftButton\" href=\"#\" onclick=\"openLink('../secureApp/GoBack.html', 'appFrame')\" border=\"0\" onmouseover=\"window.status='");
+                .append("    <a class=\"Main_NavBar_LeftButton\" href=\"#\" onclick=\"goToPreviousPage(); return false;\" border=\"0\" onmouseover=\"window.status='");
         String auxText = Utility.messageBD(conn, "GoBack", language);
         toolbar.append(auxText);
         toolbar
