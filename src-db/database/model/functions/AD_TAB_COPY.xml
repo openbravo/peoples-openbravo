@@ -33,6 +33,7 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Record_ID VARCHAR2(32);
+  v_AD_Module_ID VARCHAR2(32);
   -- Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;
@@ -73,6 +74,13 @@
     
     -- Record_ID is the Tab_ID to copy to
     v_ResultStr:='Copying';
+    
+    --Insert fields in the same module as the tab
+    SELECT AD_Module_ID
+      INTO v_AD_Module_ID
+      FROM AD_Tab
+     WHERE AD_Tab_ID = v_Record_ID;
+     
     FOR Cur_Fields IN
       (SELECT *  FROM AD_Field  WHERE AD_Tab_ID=v_AD_Tab_ID)
     LOOP
@@ -88,7 +96,7 @@
           IsCentrallyMaintained, AD_Column_ID, AD_FieldGroup_ID, ISDISPLAYED,
           DISPLAYLOGIC, DISPLAYLENGTH, ISREADONLY,
           SEQNO, SORTNO, ISSAMELINE,
-          ISFIELDONLY, ISENCRYPTED
+          ISFIELDONLY, ISENCRYPTED, AD_MODULE_ID
         )
         VALUES
         (v_NextNo, v_Record_ID, Cur_Fields.AD_Client_ID, Cur_Fields.AD_Org_ID,
@@ -97,7 +105,7 @@
         Cur_Fields.IsCentrallyMaintained, Cur_Fields.AD_Column_ID, Cur_Fields.AD_FieldGroup_ID, Cur_Fields.ISDISPLAYED,
         Cur_Fields.DISPLAYLOGIC, Cur_Fields.DISPLAYLENGTH, Cur_Fields.ISREADONLY,
         Cur_Fields.SEQNO, Cur_Fields.SORTNO, Cur_Fields.ISSAMELINE, 
-        Cur_Fields.ISFIELDONLY, Cur_Fields.ISENCRYPTED) ;
+        Cur_Fields.ISFIELDONLY, Cur_Fields.ISENCRYPTED, v_AD_Module_ID) ;
       -- update translation
       UPDATE AD_Field_Trl
         SET Name=
