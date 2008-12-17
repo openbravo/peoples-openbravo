@@ -68,7 +68,7 @@
     <Parameter name="adUserClient" type="replace" optional="true" after="CH.AD_Client_ID IN (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="CH.AD_ORG_ID IN (" text="'1'"/>
     <Parameter name="parDateFrom" optional="false" after="AND 1=1"><![CDATA[AND CH.STATEMENTDATE < TO_DATE(?)]]></Parameter>
-    <Parameter name="cashBook" optional="true" after="AND 1=1"><![CDATA[AND C.C_CASHBOOK_ID = TO_NUMBER(?)]]></Parameter>
+    <Parameter name="cashBook" optional="true" after="AND 1=1"><![CDATA[AND C.C_CASHBOOK_ID = ?]]></Parameter>
     <Parameter name="adLanguage"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="AND C_CASH.AD_Client_ID IN (" text="'2'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND C_CASH.AD_ORG_ID IN (" text="'2'"/>
