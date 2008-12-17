@@ -81,7 +81,7 @@ public class ModelSessionFactoryController extends SessionFactoryController {
                 final Object previous = previousState[i];
                 boolean changed = false;
                 if (current instanceof Boolean || previous instanceof Boolean) {
-                    changed = getBoolValue(current) == getBoolValue(previous);
+                    changed = getBoolValue(current) != getBoolValue(previous);
                 } else if (current != null && previous == null) {
                     changed = true;
                 } else if (current == null && previous != null) {
