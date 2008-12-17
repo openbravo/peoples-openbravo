@@ -80,7 +80,9 @@ public class ModelSessionFactoryController extends SessionFactoryController {
                 final Object current = currentState[i];
                 final Object previous = previousState[i];
                 boolean changed = false;
-                if (current != null && previous == null) {
+                if (current instanceof Boolean || previous instanceof Boolean) {
+                    changed = getBoolValue(current) == getBoolValue(previous);
+                } else if (current != null && previous == null) {
                     changed = true;
                 } else if (current == null && previous != null) {
                     changed = true;
@@ -101,6 +103,13 @@ public class ModelSessionFactoryController extends SessionFactoryController {
                     + " The instance " + entity.getClass().getName()
                     + " with id " + id + " was changed");
             return false;
+        }
+
+        private boolean getBoolValue(Object value) {
+            if (value == null) {
+                return false;
+            }
+            return ((Boolean) value).booleanValue();
         }
 
         @Override
