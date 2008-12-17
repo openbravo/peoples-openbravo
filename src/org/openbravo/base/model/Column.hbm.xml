@@ -26,18 +26,18 @@
 			<generator class="uuid" />
 		</id>
 
-		<property name="active" type="yes_no" not-null="true" column="isactive"/>				
+		<property name="active" type="org.openbravo.base.session.OBYesNoType" not-null="true" column="isactive"/>				
 		<property name="name" not-null="true"/>
 		
 		<property name="columnName"/>
 		<property name="fieldLength"/>
 		<property name="defaultValue"/>
-		<property name="key" type="yes_no" column="iskey"/>
-		<property name="secondaryKey" type="yes_no" column="issecondarykey"/>
-		<property name="parent" type="yes_no" column="isparent"/>
-		<property name="updatable" type="yes_no" column="isupdateable"/>
-		<property name="identifier" type="yes_no" column="isidentifier"/>
-		<property name="mandatory" type="yes_no" column="ismandatory"/>
+		<property name="key" type="org.openbravo.base.session.OBYesNoType" column="iskey"/>
+		<property name="secondaryKey" type="org.openbravo.base.session.OBYesNoType" column="issecondarykey"/>
+		<property name="parent" type="org.openbravo.base.session.OBYesNoType" column="isparent"/>
+		<property name="updatable" type="org.openbravo.base.session.OBYesNoType" column="isupdateable"/>
+		<property name="identifier" type="org.openbravo.base.session.OBYesNoType" column="isidentifier"/>
+		<property name="mandatory" type="org.openbravo.base.session.OBYesNoType" column="ismandatory"/>
 		<property name="valueMin"/>
 		<property name="valueMax"/>
 		<property name="developmentStatus"/>
@@ -49,7 +49,7 @@
 		
 		<many-to-one name="referenceValue" class="org.openbravo.base.model.Reference" column="ad_reference_value_id" />
 
-		<property name="transient" type="yes_no" column="istransient"/>
+		<property name="transient" type="org.openbravo.base.session.OBYesNoType" column="istransient"/>
 		<property name="isTransientCondition" column="istransientcondition"/>
 		
 	</class>

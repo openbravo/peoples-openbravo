@@ -26,7 +26,7 @@
 			<generator class="uuid" /> 
 		</id>
 		
-		<property name="active" type="yes_no" not-null="true" column="isactive"/>
+		<property name="active" type="org.openbravo.base.session.OBYesNoType" not-null="true" column="isactive"/>
 		<property name="reference" type="string" column="ad_reference_id" />		
 		<many-to-one name="column" not-null="true" class="org.openbravo.base.model.Column" column="ad_column_id"/>
 	</class>

@@ -17,7 +17,7 @@
  ************************************************************************
  */
 
-package org.openbravo.dal.core;
+package org.openbravo.base.session;
 
 import org.hibernate.type.YesNoType;
 import org.hibernate.util.EqualsHelper;

@@ -32,6 +32,7 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
+import org.openbravo.base.session.OBYesNoType;
 import org.openbravo.base.util.Check;
 
 /**
