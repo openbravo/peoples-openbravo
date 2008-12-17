@@ -95,7 +95,7 @@
         <Parameter name="key" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND UPPER(i.DocumentNo) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="description" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND UPPER(i.Description) LIKE UPPER(?) ]]></Parameter>
         <Parameter name="businesPartner" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.C_BPartner_ID = ? ]]></Parameter>
-        <Parameter name="order" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.POReference = TO_NUMBER(?) ]]></Parameter>
+        <Parameter name="order" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.POReference = ? ]]></Parameter>
         <Parameter name="dateFrom" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.DateInvoiced >= TO_DATE(?) ]]></Parameter>
         <Parameter name="dateTo" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.DateInvoiced < TO_DATE(?) ]]></Parameter>
         <Parameter name="grandTotalFrom" optional="true" after="AND i.IsActive='Y'"><![CDATA[ AND i.GrandTotal >= TO_NUMBER(?) ]]></Parameter>
