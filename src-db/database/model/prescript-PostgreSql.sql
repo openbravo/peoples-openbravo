@@ -1286,10 +1286,8 @@ CREATE OR REPLACE FUNCTION c_create_temporary_tables()
   RETURNS varchar AS
 $BODY$ 
 BEGIN
- -- create temporary tables
-
-
-
+ -- create temporary tables. This function is used in  M_PRICELIST_CREATE() and M_PRODUCT_BOM_CHECK() functions.
+ -- This function has been created as a result of fix for bug 0005229: Temporary tables T_Selection and T_Selection2 have been ported from v2.22 to 2.35 improperly 
  drop table if exists C_TEMP_SELECTION;
  CREATE GLOBAL TEMPORARY TABLE C_TEMP_SELECTION
  (
@@ -1311,13 +1309,6 @@ END;
 $BODY$
   LANGUAGE 'plpgsql' VOLATILE
 /-- END
-
-SELECT * FROM c_create_temporary_tables()
-/-- END
-
-DROP FUNCTION c_create_temporary_tables()
-/-- END
-
 
 
 
