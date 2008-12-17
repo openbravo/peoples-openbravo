@@ -233,7 +233,7 @@ public class DataSetService implements OBSingleton {
         }
 
         final List<?> list = oq.list();
-        Collections.sort(list, new BaseOBIDHexComparator());
+        Collections.sort(list, new BaseStringComparator());
         return (List<BaseOBObject>) list;
     }
 
@@ -421,27 +421,40 @@ public class DataSetService implements OBSingleton {
     // compares the content of a list by converting the id to a hex
     public static class BaseOBIDHexComparator implements Comparator<Object> {
 
-        public int compare(Object o1, Object o2) {
-            if (!(o1 instanceof BaseOBObject) || !(o2 instanceof BaseOBObject)) {
-                return 0;
-            }
-            final BaseOBObject bob1 = (BaseOBObject) o1;
-            final BaseOBObject bob2 = (BaseOBObject) o2;
-            if (!(bob1.getId() instanceof String)
-                    || !(bob2.getId() instanceof String)) {
-                return 0;
-            }
-            try {
-                final BigInteger bd1 = new BigInteger(bob1.getId().toString(),
-                        32);
-                final BigInteger bd2 = new BigInteger(bob2.getId().toString(),
-                        32);
-                return bd1.compareTo(bd2);
-            } catch (final NumberFormatException n) {
-                System.out.println("problem: " + n.getMessage());
-                return 0;
-            }
-        }
-    }
+      public int compare(Object o1, Object o2) {
+          if (!(o1 instanceof BaseOBObject) || !(o2 instanceof BaseOBObject)) {
+              return 0;
+          }
+          final BaseOBObject bob1 = (BaseOBObject) o1;
+          final BaseOBObject bob2 = (BaseOBObject) o2;
+          if (!(bob1.getId() instanceof String)
+                  || !(bob2.getId() instanceof String)) {
+              return 0;
+          }
+          try {
+              final BigInteger bd1 = new BigInteger(bob1.getId().toString(),
+                      32);
+              final BigInteger bd2 = new BigInteger(bob2.getId().toString(),
+                      32);
+              return bd1.compareTo(bd2);
+          } catch (final NumberFormatException n) {
+              System.out.println("problem: " + n.getMessage());
+              return 0;
+          }
+      }
+  }
+    public static class BaseStringComparator implements Comparator<Object> {
+
+      public int compare(Object o1, Object o2) {
+          if (!(o1 instanceof BaseOBObject) || !(o2 instanceof BaseOBObject)) {
+              return 0;
+          }
+          final BaseOBObject bob1 = (BaseOBObject) o1;
+          final BaseOBObject bob2 = (BaseOBObject) o2;
+          final String bd1 = bob1.getId().toString();
+          final String bd2 = bob2.getId().toString();
+          return bd1.compareTo(bd2);
+      }
+  }
 
 }
