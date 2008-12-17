@@ -341,6 +341,10 @@ compare.database.structure: refer to compare.database.structure target of databa
 	<target name="translate" depends="init">
 		<ant dir="${base.src}" target="translate" inheritAll="true" inheritRefs="true" />
 	</target>
+	
+	 <target name="translate.modules" depends="init">
+	    <ant dir="${base.src}" target="translate.modules" inheritAll="true" inheritRefs="true" />
+	  </target>
 
 	<target name="installWebService" depends="init">
 		<ant dir="${base.src}" target="installWebService" inheritAll="true" inheritRefs="true">

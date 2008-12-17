@@ -394,7 +394,7 @@ public void startPrefixMapping(String prefix, String uri) {
    */
   @Override
 public void startElement(String uri, String name, String qName, Attributes amap) {//(String name, AttributeList amap) throws SAXException {
-    if (log4j.isDebugEnabled()) log4j.info("Configuration: startElement is called: element name=" + qName);
+    if (log4j.isDebugEnabled()) log4j.info("Configuration: startElement is called: element name=" + qName+" actualtag"+actualTag+" trlTxt"+translationText);
     if (actualTag!=null && isParseable(actualTag) && translationText != null) {
       translate(translationText.toString());
     } 
@@ -434,6 +434,9 @@ public void startElement(String uri, String name, String qName, Attributes amap)
 public void endElement(String uri, String name, String qName) {//(String name) throws SAXException {
     if (log4j.isDebugEnabled()) log4j.debug("Configuration: endElement is called: " + qName);
 
+    if (isParseable(actualTag) && translationText != null) {
+        translate(translationText.toString());
+    }
     translationText = null;
     actualTag="";
   }
@@ -493,6 +496,7 @@ public void characters(char[] ch, int start, int length) {//throws SAXException 
     translated.addElement("Y");
     String resultado = ini;
     if (!ini.equals("") && !ini.toLowerCase().startsWith("xx") && !isNumeric(ini)) {
+      log4j.debug("Translating "+ini+" for file"+actualFile+" moduleLang:"+moduleLang); 
       resultado = tokenize(ini, 0, translated);
       try {
         aux = translated.elementAt(0).equals("Y");
