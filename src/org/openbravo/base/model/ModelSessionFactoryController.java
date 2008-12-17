@@ -19,8 +19,14 @@
 
 package org.openbravo.base.model;
 
+import java.io.Serializable;
+
+import org.hibernate.CallbackException;
+import org.hibernate.EmptyInterceptor;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.type.Type;
 import org.openbravo.base.session.SessionFactoryController;
+import org.openbravo.base.util.Check;
 
 /**
  * Initializes and provides the session factory for the model layer. It uses
@@ -41,5 +47,89 @@ public class ModelSessionFactoryController extends SessionFactoryController {
         cfg.addClass(RefTable.class);
         cfg.addClass(RefList.class);
         cfg.addClass(Module.class);
+    }
+
+    @Override
+    protected void setInterceptor(Configuration configuration) {
+        configuration.setInterceptor(new LocalInterceptor());
+    }
+
+    // an interceptor which fails on all updates
+    private class LocalInterceptor extends EmptyInterceptor {
+
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public boolean onLoad(Object entity, Serializable id, Object[] state,
+                String[] propertyNames, Type[] types) {
+            return false;
+        }
+
+        @Override
+        public void onDelete(Object entity, Serializable id, Object[] state,
+                String[] propertyNames, Type[] types) {
+            Check.fail("The model session factory is not allowed to "
+                    + "remove model data.");
+        }
+
+        @Override
+        public boolean onFlushDirty(Object entity, Serializable id,
+                Object[] currentState, Object[] previousState,
+                String[] propertyNames, Type[] types) {
+            for (int i = 0; i < currentState.length; i++) {
+                final Object current = currentState[i];
+                final Object previous = previousState[i];
+                boolean changed = false;
+                if (current != null && previous == null) {
+                    changed = true;
+                } else if (current == null && previous != null) {
+                    changed = true;
+                } else if (current != null && previous != null
+                        && !current.equals(previous)) {
+                    changed = true;
+                }
+                if (changed) {
+                    Check.fail("Model session is not allowed to update info. "
+                            + " The instance " + entity.getClass().getName()
+                            + " with id " + id + " was changed on property "
+                            + propertyNames[i] + ", previous value "
+                            + previousState[i] + " new value "
+                            + currentState[i]);
+                }
+            }
+            Check.fail("Model session is not allowed to update info. "
+                    + " The instance " + entity.getClass().getName()
+                    + " with id " + id + " was changed");
+            return false;
+        }
+
+        @Override
+        public boolean onSave(Object entity, Serializable id, Object[] state,
+                String[] propertyNames, Type[] types) {
+            Check.fail("The model session factory is not allowed to "
+                    + "create model data.");
+            return false;
+        }
+
+        @Override
+        public void onCollectionRemove(Object collection, Serializable key)
+                throws CallbackException {
+            Check.fail("The model session factory is not allowed to "
+                    + "update model data.");
+        }
+
+        @Override
+        public void onCollectionRecreate(Object collection, Serializable key)
+                throws CallbackException {
+            Check.fail("The model session factory is not allowed to "
+                    + "update model data.");
+        }
+
+        @Override
+        public void onCollectionUpdate(Object collection, Serializable key)
+                throws CallbackException {
+            Check.fail("The model session factory is not allowed to "
+                    + "update model data.");
+        }
     }
 }
