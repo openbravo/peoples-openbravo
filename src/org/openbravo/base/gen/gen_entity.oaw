@@ -30,8 +30,10 @@
 	
 		 <!--  output configuration -->
 		 <outlet path="${base.src.gen}"/>
-		 <beautifier class="org.hybridlabs.source.formatter.JavaImportBeautifier"
+		 <beautifier class="org.openbravo.base.gen.OBJavaBeautifier"
 			organizeImports="true" format="true"/>
+<!--		 <beautifier class="org.hybridlabs.source.formatter.JavaImportBeautifier"
+			organizeImports="true" format="true"/>-->
 
 		 <!--<beautifier class="oaw.xpand2.output.JavaBeautifier"/>-->
 	 
