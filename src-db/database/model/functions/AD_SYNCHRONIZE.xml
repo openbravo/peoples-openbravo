@@ -141,9 +141,15 @@
         Help, IsTranslated
       )
     SELECT get_uuid(), m.AD_Element_ID, l.AD_LANGUAGE, m.AD_Client_ID, m.AD_Org_ID, m.IsActive, m.Created, m.CreatedBy, m.Updated, m.UpdatedBy, m.NAME, m.PrintName, m.Description, m.Help, 'N'
-    FROM AD_ELEMENT m, AD_LANGUAGE l
-    WHERE l.IsActive='Y' AND l.IsSystemLanguage='Y'  AND AD_Element_ID || AD_LANGUAGE NOT IN
-      (SELECT AD_Element_ID || AD_LANGUAGE FROM AD_ELEMENT_TRL)
+    FROM AD_ELEMENT m, AD_LANGUAGE l, AD_MODULE
+    WHERE l.IsActive='Y' 
+    AND l.IsSystemLanguage='Y'  
+    AND AD_MODULE.AD_MODULE_ID = M.AD_MODULE_ID
+    AND L.AD_LANGUAGE != AD_MODULE.AD_LANGUAGE
+    AND NOT EXISTS (SELECT 1 
+                      FROM AD_ELEMENT_TRL 
+                     WHERE AD_ELEMENT_ID = M.AD_ELEMENT_ID
+                      AND AD_LANGUAGE = L.AD_LANGUAGE)
       ;
     v_rowcount:=SQL%ROWCOUNT;
     DBMS_OUTPUT.PUT_LINE('  rows added: ' || v_rowcount) ;
