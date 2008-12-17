@@ -27,7 +27,7 @@
    <SqlMethod name="select" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
-      		SELECT * FROM ( SELECT '0' AS RN1, A.* FROM (
+      		SELECT * FROM ( SELECT '0' AS RN1, '' AS ID, '' AS NAME, A.* FROM (
 	            SELECT C.C_VALIDCOMBINATION_ID, C.ALIAS, C.COMBINATION, C.DESCRIPTION, 
 	            C.AD_ORG_ID, (O.VALUE || ' - ' || O.NAME) AS AD_ORG_ID_D, 
 	            C.ACCOUNT_ID, (E.VALUE || ' - ' || E.NAME) AS ACCOUNT_ID_D, 
@@ -158,4 +158,26 @@
       <Parameter name="cProjectId"/>
       <Parameter name="cCampaignId"/>
    </SqlMethod>
+  <SqlMethod name="selectElementValues" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+    SELECT EV.C_ElementValue_ID AS ID, (EV.VALUE || ' - ' || (CASE WHEN td_trl1.Name IS NULL THEN TO_CHAR(EV.Name) ELSE TO_CHAR(td_trl1.Name) END)) AS NAME, '' AS DESCRIPTION
+    FROM C_ELEMENTVALUE EV
+      LEFT JOIN C_ElementValue_Trl td_trl1 on EV.C_ElementValue_ID = td_trl1.C_ElementValue_ID AND td_trl1.AD_Language = ?,
+      C_ELEMENT E, C_ACCTSCHEMA S, C_ACCTSCHEMA_ELEMENT SE
+    WHERE EV.AD_Client_ID IN ('1')
+      AND EV.AD_Org_ID IN ('1')
+      AND EV.IsSummary='N'
+      AND EV.ISACTIVE = 'Y'
+      AND SE.C_ACCTSCHEMA_ID = S.C_ACCTSCHEMA_ID
+      AND SE.C_ELEMENT_ID = E.C_ELEMENT_ID
+      AND SE.ELEMENTTYPE = 'AC'
+      AND EV.C_ELEMENT_ID = E.C_ELEMENT_ID
+    ORDER BY EV.Value
+  </Sql>
+    <Parameter name="ADLenguage"/>
+    <Parameter name="acctschema" optional="true" after="WHERE "><![CDATA[ S.C_ACCTSCHEMA_ID = ? AND ]]></Parameter>
+    <Parameter name="adUserClient" type="replace" optional="true" after="EV.AD_Client_ID IN (" text="'1'"/>
+    <Parameter name="adUserOrg" type="replace" optional="true" after="EV.AD_Org_ID IN (" text="'1'"/>
+  </SqlMethod>
 </SqlClass>

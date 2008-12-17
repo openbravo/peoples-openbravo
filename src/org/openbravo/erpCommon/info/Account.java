@@ -47,8 +47,12 @@ public class Account extends HttpSecureAppServlet {
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {	
     VariablesSecureApp vars = new VariablesSecureApp(request);    
     if (vars.commandIn("DEFAULT")) {
+      String strWindowId = vars.getStringParameter("WindowID");
       String strNameValue = vars.getRequestGlobalVariable("inpNameValue", "Account.combination");
-      String strAcctSchema = vars.getRequestGlobalVariable("inpAcctSchema", "Account.cAcctschemaId");
+      String strAcctSchema = vars.getSessionValue(strWindowId + "|C_AcctSchema_ID");
+      if (strAcctSchema.equals("")) {
+        strAcctSchema = vars.getRequestGlobalVariable("inpAcctSchema", "Account.cAcctschemaId");
+      }
       if (strAcctSchema.equals("")) {
         strAcctSchema = Utility.getContext(this, vars, "$C_AcctSchema_ID", "Account");
         vars.setSessionValue("Account.cAcctschemaId", strAcctSchema);
@@ -61,7 +65,7 @@ public class Account extends HttpSecureAppServlet {
       
       String strAlias = vars.getGlobalVariable("inpAlias", "Account.alias", "");
       String strCombination = vars.getGlobalVariable("inpCombination", "Account.combination", "");      
-      printPage(response, vars, strAlias, strCombination, "", true);      
+      printPage(response, vars, strAlias, strCombination, "", strAcctSchema, true);      
     } else if(vars.commandIn("STRUCTURE")) {
     	printGridStructure(response, vars);
     } else if(vars.commandIn("DATA")) {
@@ -93,7 +97,7 @@ public class Account extends HttpSecureAppServlet {
       AccountData[] data = AccountData.selectKey(this, strAcctSchema, Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this, vars, "#User_Org", "Account"), strKeyValue + "%");
       if (data!=null && data.length==1) {
         printPageKey(response, vars, data);
-      } else printPage(response, vars, strKeyValue + "%", "", "", true);
+      } else printPage(response, vars, strKeyValue + "%", "", "", strAcctSchema, true);
     } else if (vars.commandIn("SAVE")) {
       String strAcctSchema = vars.getSessionValue("Account.cAcctschemaId");
       String strClave = vars.getStringParameter("inpValidCombination");
@@ -142,7 +146,7 @@ public class Account extends HttpSecureAppServlet {
     return html.toString();
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strAlias, String strCombination, String strValidCombination, boolean isDefault) throws IOException, ServletException {
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strAlias, String strCombination, String strValidCombination, String strAcctSchema, boolean isDefault) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 1 of the accounts seeker");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Account").createXmlDocument();
     AccountData[] data = null;    
@@ -190,7 +194,7 @@ public class Account extends HttpSecureAppServlet {
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "Account_ID", "C_ElementValue (Accounts)", "C_Accounts", Utility.getContext(this, vars, "#User_Org", "Account"), Utility.getContext(this, vars, "#User_Client", "Account"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "Account", "");
-      xmlDocument.setData("reportAccount_ID","liststructure", comboTableData.select(false));
+      xmlDocument.setData("reportAccount_ID","liststructure", AccountData.selectElementValues(this, vars.getLanguage(), strAcctSchema, Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this, vars, "#User_Org", "Account")));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);
