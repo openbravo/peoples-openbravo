@@ -47,6 +47,13 @@ public class Login extends HttpBaseServlet {
 
     } else if (vars.commandIn("BLANK")) {
       printPageBlank(response, vars);
+    } else if (vars.commandIn("CHECK")) {
+      String checkString = "success";
+      response.setContentType("text/plain; charset=UTF-8");
+      response.setHeader("Cache-Control", "no-cache");
+      PrintWriter out = response.getWriter();
+      out.print(checkString);
+      out.close();
     } else if (vars.commandIn("WELCOME")) {
       String strTheme = "ltr/Default"; 
       if(!vars.getTheme().equals("")) strTheme=vars.getTheme();
