@@ -94,6 +94,7 @@ cWithHoldId varchar2(32);
     v_TotalLines NUMBER:=0;
     v_Currency_ID VARCHAR2(32);
     v_Multiplier NUMBER:=1;
+	v_Amount NUMBER:=0;--CashLine amount
     --
     v_RInvoice_ID VARCHAR2(32);
     v_RDocumentNo C_INVOICE.DocumentNo%TYPE;
@@ -1657,24 +1658,32 @@ cWithHoldId varchar2(32);
 
 
 
-                  INSERT
-                  INTO C_CASHLINE
-                    (
-                      C_CashLine_ID, AD_Client_ID, AD_Org_ID, IsActive,
-                      Created, CreatedBy, Updated, UpdatedBy,
-                      C_Cash_ID, C_Debt_Payment_ID, Line, Description,
-                      Amount, CashType, C_Currency_ID, DiscountAmt,
-                      WriteOffAmt, IsGenerated
-                    )
-                    VALUES
-                    (
-                      v_CashLine, v_Client_ID, v_Org_ID, 'Y',
-                      now(), v_UpdatedBy, now(), v_UpdatedBy,
-                      v_Cash, v_debtPaymentID, v_line, v_BPartnerName,
-                      C_Currency_Convert((CASE v_IsSOTrx WHEN 'Y' THEN v_paymentAmount ELSE -v_paymentAmount END), v_Currency_ID, v_CB_Curr,v_DateAcct,NULL,v_Client_ID, v_Org_ID), 'P', v_Currency_ID, 0,
-                      0, 'Y'
-                    )
-                    ;
+
+
+				SELECT SUM(AMOUNT) INTO v_Amount
+				FROM C_DEBT_PAYMENT_V
+				WHERE C_INVOICE_ID = v_Record_ID;
+
+				INSERT
+				INTO C_CASHLINE
+				(
+				C_CashLine_ID, AD_Client_ID, AD_Org_ID, IsActive,
+				Created, CreatedBy, Updated, UpdatedBy,
+				C_Cash_ID, C_Debt_Payment_ID, Line, Description,
+				Amount, CashType, C_Currency_ID, DiscountAmt,
+				WriteOffAmt, IsGenerated
+				)
+				VALUES
+				(
+				v_CashLine, v_Client_ID, v_Org_ID, 'Y',
+				TO_DATE(NOW()), v_UpdatedBy, TO_DATE(NOW()), v_UpdatedBy,
+				v_Cash, v_debtPaymentID, v_line, v_BPartnerName,
+				--C_Currency_Convert((CASE v_IsSOTrx WHEN 'Y' THEN v_paymentAmount ELSE v_paymentAmount END), v_Currency_ID, v_CB_Curr,v_DateAcct,NULL,v_Client_ID, v_Org_ID),
+				v_Amount, 'P', v_Currency_ID, 0,
+				0, 'Y'
+				)
+				;
+
                 END IF; -- v_cashBook IS NOT NULL
               END LOOP;
             END;
