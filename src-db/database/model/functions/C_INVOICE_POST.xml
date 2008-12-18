@@ -1620,7 +1620,7 @@ cWithHoldId varchar2(32);
                   INTO v_Cash
                   FROM C_CASH C
                   WHERE C.C_CASHBOOK_ID=v_cashBook
-                    AND TRUNK(C.DATEACCT)=TRUNK(v_DateAcct)
+                    AND TRUNC(C.DATEACCT)=TRUNC(v_DateAcct)
                     AND C.PROCESSED='N';
 
          SELECT C_CURRENCY_ID
