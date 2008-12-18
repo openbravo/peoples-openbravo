@@ -406,28 +406,28 @@ public class ImportOrder extends ImportProcess {
               corder.paymentrule = data1[0].paymentrule;
             } else {
               String defaultPaymentRule = ImportOrderData.defaultValue(con, conn, "C_Order", "PaymentRule");
-              corder.paymentrule = (defaultPaymentRule.equals(""))?"P":defaultPaymentRule; // P = on credit
+              corder.paymentrule = (defaultPaymentRule == null || defaultPaymentRule.equals(""))?"P":defaultPaymentRule; // P = on credit
             }
             if (log4j.isDebugEnabled()) log4j.debug("corder.paymentrule = " + corder.paymentrule);
             if (data1[0].invoicerule != null && !data1[0].invoicerule.equals("")) {
               corder.invoicerule = data1[0].invoicerule;
             } else {
               String defaultInvoiceRule = ImportOrderData.defaultValue(con, conn, "C_Order", "InvoiceRule");
-              corder.invoicerule = (defaultInvoiceRule.equals(""))?"I":defaultInvoiceRule; // I = immediate
+              corder.invoicerule = (defaultInvoiceRule == null || defaultInvoiceRule.equals(""))?"I":defaultInvoiceRule; // I = immediate
             }
             if (log4j.isDebugEnabled()) log4j.debug("corder.invoicerule = " + corder.invoicerule);
             if (data1[0].deliveryrule != null && !data1[0].deliveryrule.equals("")) {
               corder.deliveryrule = data1[0].deliveryrule;
             } else {
               String defaultDeliveryRule = ImportOrderData.defaultValue(con, conn, "C_Order", "DeliveryRule");
-              corder.deliveryrule = (defaultDeliveryRule.equals(""))?"A":defaultDeliveryRule; // A = availability
+              corder.deliveryrule = (defaultDeliveryRule == null || defaultDeliveryRule.equals(""))?"A":defaultDeliveryRule; // A = availability
             }
             if (log4j.isDebugEnabled()) log4j.debug("corder.deliveryrule = " + corder.deliveryrule);
             if (data1[0].deliveryviarule != null && !data1[0].deliveryviarule.equals("")) {
               corder.deliveryviarule = data1[0].deliveryviarule;
             } else {
               String defaultDeliveryViaRule = ImportOrderData.defaultValue(con, conn, "C_Order", "DeliveryViaRule");
-              corder.deliveryviarule = (defaultDeliveryViaRule.equals(""))?"S":defaultDeliveryViaRule; // S = shipper
+              corder.deliveryviarule = (defaultDeliveryViaRule == null || defaultDeliveryViaRule.equals(""))?"S":defaultDeliveryViaRule; // S = shipper
             }
             if (log4j.isDebugEnabled()) log4j.debug("corder.deliveryviarule = " + corder.deliveryviarule);
             corder.freightcostrule = "I"; // I = included
@@ -440,7 +440,7 @@ public class ImportOrder extends ImportProcess {
               corder.paymentrule = data1[0].paymentrule;
             } else {
               String defaultPaymentRule = ImportOrderData.defaultValue(con, conn, "C_Order", "PaymentRule");
-              corder.paymentrule = (defaultPaymentRule.equals(""))?"P":defaultPaymentRule; // P = on credit
+              corder.paymentrule = (defaultPaymentRule == null || defaultPaymentRule.equals(""))?"P":defaultPaymentRule; // P = on credit
             }
             if (log4j.isDebugEnabled()) log4j.debug("corder.paymentrule = " + corder.paymentrule);
             if (data1[0].salesrepId != null && !data1[0].salesrepId.equals("")) {
