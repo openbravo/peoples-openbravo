@@ -286,8 +286,8 @@
     <Parameter name="adUserOrg" type="replace" optional="true" after="DP.AD_ORg_id in (" text="'17'"/>
     <Parameter name="dateFrom"/>
     <Parameter name="dateTo" optional="true" after="AND 9=9"><![CDATA[ and A.datetrx < TO_DATE(?)]]></Parameter>
-    <Parameter name="moreThan" optional="true" after="AND 9=9"><![CDATA[ and A.amount > ?]]></Parameter>
-    <Parameter name="lessThan" optional="true" after="AND 9=9"><![CDATA[ and A.amount < ?]]></Parameter>
+    <Parameter name="moreThan" optional="true" after="AND 9=9"><![CDATA[ and A.amount > TO_NUMBER(?)]]></Parameter>
+    <Parameter name="lessThan" optional="true" after="AND 9=9"><![CDATA[ and A.amount < TO_NUMBER(?)]]></Parameter>
     <Parameter name="docTypes" optional="true" type="replace" after="AND A.DocType in (" text="'1'"/>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
