@@ -33,6 +33,7 @@
 	<PARAMETER id="customer" name="customer" default=""/>
 	<PARAMETER id="salesRep" name="salesRep" default=""/>
 	<PARAMETER id="closed" name="closed" attribute="value" default=""/>
+	<PARAMETER id="idToDelete" name="idToDelete" attribute="value" default=""/>
 	<PARAMETER id="salesrepEmail" name="salesrepEmail" attribute="value" default=""/>
 	<PARAMETER id="salesrepName" name="salesrepName" default=""/>
 	<PARAMETER id="multCusCount" name="multCusCount" default=""/>
@@ -42,8 +43,10 @@
     	<ARGUMENT name="template_filename" withId="c_poc_doctype_template_id"/>
   	</SUBREPORT>
 	<structure name="structure2">
-		<FIELD id="fieldID" attribute="value">id</FIELD>
-		<FIELD id="fieldDocumentno">fileName</FIELD>
+		<FIELD id="paramId" attribute="name" replace="xx">id</FIELD>
+		<FIELD id="paramId" attribute="type" replace="zz">visible</FIELD>
+		<FIELD id="linkLocator" attribute="onclick" replace="yy">id</FIELD>
+		<FIELD id="paramName">fileName</FIELD>
 		<SECTION id="sectionDetail"/>
 	</structure>
 </REPORT>

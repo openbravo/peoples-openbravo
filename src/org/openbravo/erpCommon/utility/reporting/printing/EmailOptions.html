@@ -78,9 +78,11 @@
 		window.resizeTo(750,500);
 	}
 
-	function doSubmit(myId)
+	function doDelete(myId)
 	{
-		alert(myID.value);
+		document.getElementById("idToDelete").value=myId;
+		submitThisPage('DEL');
+		
 	}
 	function onLoadDo(){
 		var isClosed = document.getElementById("closed").value;
@@ -111,6 +113,16 @@
 	function onResizeDo(){
 		resizeArea();
 	}
+	function storeDoc(){
+		if (document.getElementById("paramId").checked==true) {
+			document.getElementById("paramArchive").value='Y';
+		} else {
+			document.getElementById("paramArchive").value='N';
+			}
+	}
+	
+
+	
   </script>
 
 </head>
@@ -127,6 +139,7 @@
 	<input type="hidden" name="inpDocumentId" id="strDocumentId" value=""></input>
 	<input type="hidden" name="draftDocumentIds" id="draftDocumentIds" value=""></input>
 	<input type="hidden" name="closed" id="closed" value=""></input>
+	<input type="hidden" name="idToDelete" id="idToDelete" value=""></input>
 	
 	
 
@@ -253,8 +266,8 @@
         					</tr>
     						<div id="sectionDetail">
       						<tr id="funcEvenOddRowxx" class="DataGrid_Body_Row DataGrid_Body_Row_xx">
-      							<td class="DataGrid_Body_Cell" id="fieldDocumentno">xx<a href="#" onclick="javascript:doSubmit(getElementById('fieldID'))"> remove</a> </td>
-								<td width="20" class="DataGrid_Body_Cell">  <span class="Checkbox_container_NOT_Focused"><input type="checkbox" id="fieldID" name="inpId" value=""/></span></td>
+      							<td class="DataGrid_Body_Cell" id="paramName">xx<a id="linkLocator" href="#" onclick="javascript:doDelete('yy');return true;"> remove</a> </td>
+								<td width="20" class="DataGrid_Body_Cell">  <span class="Checkbox_container_NOT_Focused"><input type="zz" id="paramId" name="field-xx" value="Y" onclick="javascript:storeDoc();"/></span></td>
          					</tr>
     					</div>
     					</tbody>
@@ -290,8 +303,8 @@
 </tr>
 
 					<tr id="emailField03">						
-						<td style="width: 1%; text-align: right; white-space: nowrap; padding-right: 10px;"> <input type="checkbox" id="paramArchive" name="inpArchive" value="Y" checked/></td>
-						<td  colspan="2" style="width: 99%"><span class="LabelText">Archive this document (This will attach the document to the record)</span></td>			
+						<td style="width: 1%; text-align: right; white-space: nowrap; padding-right: 10px;"> <input type="hidden" id="paramArchive" name="inpArchive" value="""/></td>
+						<td  colspan="2" style="width: 99%"></td>			
 					</tr>	
 					</table>
 				

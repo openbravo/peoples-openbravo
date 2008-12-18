@@ -26,6 +26,15 @@ public class AttachContent implements FieldProvider {
     public String fileName;
     public FileItem fileItem;
     public String id;
+    public String visible;
+
+    public String getVisible() {
+        return visible;
+    }
+
+    public void setVisible(String visible) {
+        this.visible = visible;
+    }
 
     public String getId() {
         return id;
@@ -56,6 +65,8 @@ public class AttachContent implements FieldProvider {
             return fileName;
         else if (fieldName.equalsIgnoreCase("ID")) {
             return id;
+        } else if (fieldName.equalsIgnoreCase("VISIBLE")) {
+            return visible;
         } else {
             log4j.debug("Field does not exist: " + fieldName);
             return null;

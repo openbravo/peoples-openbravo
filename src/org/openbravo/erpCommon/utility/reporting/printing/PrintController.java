@@ -296,10 +296,19 @@ public class PrintController extends HttpSecureAppServlet {
                             reports);
                 }
 
+            } else if (vars.commandIn("DEL")) {
+                final String documentToDelete = vars
+                        .getStringParameter("idToDelete");
+                final Vector<java.lang.Object> vector = (Vector<java.lang.Object>) request
+                        .getSession().getAttribute("files");
+                request.getSession().setAttribute("files", vector);
+
+                seekAndDestroy(vector, documentToDelete);
+                createEmailOptionsPage(request, response, vars, documentType,
+                        getComaSeparatedString(documentIds), reports);
+
             } else if (vars.commandIn("EMAIL")) {
                 int nrOfEmailsSend = 0;
-                final String strClaves = Utility.stringList(vars
-                        .getRequiredInParameter("inpId"));
                 for (final PocData documentData : pocData) {
                     final String documentId = documentData.documentId;
                     if (log4j.isDebugEnabled())
@@ -367,6 +376,22 @@ public class PrintController extends HttpSecureAppServlet {
 
             pageError(response);
         }
+    }
+
+    /**
+     * 
+     * @param vector
+     * @param documentToDelete
+     */
+    private void seekAndDestroy(Vector<Object> vector, String documentToDelete) {
+        for (int i = 0; i < vector.size(); i++) {
+            final AttachContent content = (AttachContent) vector.get(i);
+            if (content.id.equals(documentToDelete)) {
+                vector.remove(i);
+                break;
+            }
+        }
+
     }
 
     protected PocData[] getContactDetails(DocumentType documentType,
@@ -617,7 +642,8 @@ public class PrintController extends HttpSecureAppServlet {
             final FileItem file1 = vars.getMultiFile("inpFile");
             content.setFileName(file1.getName());
             content.setFileItem(file1);
-            content.setId(file1.toString());
+            content.setId(file1.getName());
+            content.visible = "hidden";
             vector.addElement(content);
             request.getSession().setAttribute("files", vector);
 
@@ -710,6 +736,7 @@ public class PrintController extends HttpSecureAppServlet {
             if (onlyOneAttachedDoc) {
                 attachedContent.setFileName(report.getFilename());
                 attachedContent.setId("document");
+                attachedContent.setVisible("checkbox");
                 cloneVector.add(attachedContent);
             }
 
@@ -724,10 +751,12 @@ public class PrintController extends HttpSecureAppServlet {
                         + " Documents to " + String.valueOf(numberOfCustomers)
                         + " Customers"));
                 attachedContent.setId("document");
+                attachedContent.setVisible("checkbox");
             } else {
                 attachedContent.setFileName(String.valueOf(reports.size()
                         + " Documents"));
                 attachedContent.setId("document");
+                attachedContent.setVisible("checkbox");
             }
             cloneVector.add(attachedContent);
         }
