@@ -391,7 +391,7 @@
           , TO_NUMBER(?), (?),  TO_NUMBER(?), TO_NUMBER(?)
           , (?), (?), TO_NUMBER(?), (?)
           , TO_NUMBER(?), (?), (?) , (?)
-          , (?), now(), to_number(?), now(), 
+          , (?), now(), ?, now(), 
           (?))
 ]]></Sql>
 <Parameter name="adClientId"></Parameter>
