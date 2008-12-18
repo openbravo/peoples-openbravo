@@ -75,8 +75,8 @@
       <!-- <Parameter name="businesPartner" optional="true" after="AND DP.IsValid='Y'"><![CDATA[ AND b.C_BPartner_ID = ? ]]></Parameter>  -->
       <Parameter name="dateFrom" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.Dateplanned >= to_date(?) ]]></Parameter>
       <Parameter name="dateTo" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.Dateplanned < to_date(?) ]]></Parameter>
-      <Parameter name="AmountFrom" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.amount >= ? ]]></Parameter>
-      <Parameter name="AmountTo" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.amount <= ? ]]></Parameter>
+      <Parameter name="AmountFrom" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.amount >= TO_NUMBER(?) ]]></Parameter>
+      <Parameter name="AmountTo" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.amount <= TO_NUMBER(?) ]]></Parameter>
       <Parameter name="paymentRule" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.paymentrule = ? ]]></Parameter>
       <Parameter name="isReceipt" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.isreceipt=? ]]></Parameter>
       <Parameter name="status" optional="true" after="DP.IsValid='Y'"><![CDATA[ AND dp.status=? ]]></Parameter>
