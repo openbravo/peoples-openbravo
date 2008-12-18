@@ -1951,48 +1951,83 @@ function updateMenuIcon(id) {
 * @see #changeClass
 */
 function menuShowHide(id) {
-  if (!top.frameMenu)
+  if (!top.frameMenu) {
     window.open(baseFrameServlet, "_blank");
-  else {
-    if (id==null) id = 'buttonMenu';
+  } else {
+    if (top.isMenuHide == true) {
+      menuShow(id);
+    } else {
+      menuHide(id);
+    }
+    return true;
+  }
+}
+
+/**
+* Function Description
+* Shows the menu in the application
+* @param {String} id The ID of the element
+* @returns True if the operation was made correctly, false if not.
+* @see #changeClass
+*/
+function menuShow(id) {
+  if (!top.frameMenu) {
+    window.open(baseFrameServlet, "_blank");
+  } else {
+    if (id==null) {
+      id = 'buttonMenu';
+    }
     var frame = top.document;
     var frameset = frame.getElementById("framesetMenu");
-    if (!frameset) 
+    if (!frameset) {
       return false;
-    /*try {
-   var frm2 = frame.getElementById("frameMenu");
-   var obj = document.onresize;
-   var obj2 = frm2.onresize;
-   document.onresize = null;
-   frm2.document.onresize = null;
-   progressiveHideMenu("framesetMenu", 30);
-   document.onresize = obj;
-   frm2.document.onresize = obj2;
-   } catch (e) {*/
-    if (top.isMenuHide == true) {
-      if (top.isRTL == true) {
-        frameset.cols = "*," + top.menuWidth + ",0%";
-      } else {
-        frameset.cols = "0%," + top.menuWidth + ",*";
-      }
-      top.isMenuHide = false;
-      try {
-        putFocusOnMenu();
-      } catch(e) {
-      }
-    } else {
-      if (top.isRTL == true) {
-        frameset.cols = "*,0%,0%";
-      } else {
-        frameset.cols = "0%,0%,*";
-      }
-      top.isMenuHide = true;
-      try {
-        putFocusOnWindow();
-      } catch(e) {
-      }
     }
-      //}
+    if (top.isRTL == true) {
+      frameset.cols = "*," + top.menuWidth + ",0%";
+    } else {
+      frameset.cols = "0%," + top.menuWidth + ",*";
+    }
+    top.isMenuHide = false;
+    try {
+      putFocusOnMenu();
+    } catch(e) {
+    }
+    try {
+      updateMenuIcon(id);
+    } catch (e) {}
+    return true;
+  }
+}
+
+/**
+* Function Description
+* Hides the menu in the application
+* @param {String} id The ID of the element
+* @returns True if the operation was made correctly, false if not.
+* @see #changeClass
+*/
+function menuHide(id) {
+  if (!top.frameMenu) {
+    window.open(baseFrameServlet, "_blank");
+  } else {
+    if (id==null) {
+      id = 'buttonMenu';
+    }
+    var frame = top.document;
+    var frameset = frame.getElementById("framesetMenu");
+    if (!frameset) {
+      return false;
+    }
+    if (top.isRTL == true) {
+      frameset.cols = "*,0%,0%";
+    } else {
+      frameset.cols = "0%,0%,*";
+    }
+    top.isMenuHide = true;
+    try {
+      putFocusOnWindow();
+    } catch(e) {
+    }
     try {
       updateMenuIcon(id);
     } catch (e) {}
