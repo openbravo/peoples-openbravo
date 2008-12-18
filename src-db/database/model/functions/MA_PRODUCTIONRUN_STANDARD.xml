@@ -180,7 +180,7 @@
         v_Line:=-10;
         v_ResultStr:='ProdRunProduct P+ Processing';
         FOR Cur_WRPProduct IN
-          (SELECT wrpp.*, COALESCE(po.M_Locator_ID, p.M_Locator_ID) AS M_Locator_ID
+          (SELECT wrpp.*, COALESCE(po.M_Locator_ID, p.M_Locator_ID) AS M_Locator_ID, p.name as pname
           FROM M_Product p, MA_WRPhaseProduct wrpp
             left join M_Product_Org po on wrpp.M_Product_ID = po.M_Product_ID
                                     AND po.AD_Org_ID = v_PlanOrg_ID
@@ -189,6 +189,11 @@
             AND wrpp.M_PRODUCT_ID=p.M_Product_ID
           )
         LOOP
+	  IF Cur_WRPProduct.M_Locator_ID IS NULL THEN
+	    v_ResultStr:='There are produts without Locator';
+            v_Message:='@ILS_PRODUCT_NAME@ ' ||  Cur_WRPProduct.pname || ' @ProductLocatorNeeded@';
+            RAISE_APPLICATION_ERROR(-20000, v_Message);
+          END IF;
           Ad_Sequence_Next('M_ProductionLine', v_Client_ID, v_ProductionLine_ID) ;
           v_Line:=v_Line + 10;
           INSERT
@@ -254,10 +259,6 @@
                 v_QtyStorage:=v_QtyStorage - v_Qty;
                 v_QtyAcumulated:=v_QtyAcumulated + v_Qty;
                 v_QtyOrder:=ROUND(v_storage.QtyOrder*(v_Qty/v_storage.Qty),v_storage.stdprecision) ;
-                IF v_storage.M_Locator_ID IS NULL THEN
-                  v_Message:='El producto ' || Cur_WRPUsed.pname || ' no tiene almacen definido.';
-                RAISE_APPLICATION_ERROR(-20000, v_Message);
-                END IF;
                   IF(v_GlobalUse='Y') THEN
                     SELECT count(*)
                     INTO v_Count
