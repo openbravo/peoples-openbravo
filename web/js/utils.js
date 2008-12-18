@@ -3427,11 +3427,11 @@ function about() {
 * Returns to previous web
 */
 function goToPreviousPage() {
-  if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
-    history.back();
-  } else {
+  //if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1) {
+  //  history.back();
+  //} else {
     openLink('../secureApp/GoBack.html', 'appFrame');
-  }
+  //}
 }
 
 /**
