@@ -52,6 +52,8 @@
   <PARAMETER id="parameterShowOpening" name="constantShowOpening" default="1"/>
   <PARAMETER id="paramShowOpening" name="showOpening" boolean="checked" withId="parameterShowOpening" default="0"/>
 
+  <PARAMETER id="jsDisablePreviousNext" name="jsDisablePreviousNext" default=""/>
+
   <SUBREPORT id="reportDocument" name="reportDocument" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramDocument"/>
   </SUBREPORT>

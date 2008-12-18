@@ -177,8 +177,16 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           */
       boolean hasPrevious = !(data==null || data.length==0 || initRecordNumber<=1);
       boolean hasNext     = !(data==null || data.length==0 || data.length<intRecordRange);
-      toolbar.prepareRelationBarTemplate(hasPrevious, hasNext,"submitCommandForm('XLS', false, null, 'ReportGeneralLedgerJournal.xls', 'EXCEL');return false;");
+      toolbar.prepareRelationBarTemplate(true, true,"submitCommandForm('XLS', false, null, 'ReportGeneralLedgerJournal.xls', 'EXCEL');return false;");
       xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportGeneralLedgerJournal").createXmlDocument();
+      
+      String jsDisablePreviousNext = "function checkPreviousNextButtons(){";
+      if(!hasPrevious)
+        jsDisablePreviousNext += "disableToolBarButton('linkButtonPrevious');";
+      if(!hasNext)
+        jsDisablePreviousNext += "disableToolBarButton('linkButtonNext');";
+      jsDisablePreviousNext += "}";
+      xmlDocument.setParameter("jsDisablePreviousNext", jsDisablePreviousNext);
     }
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "", "C_DocType DocBaseType", "", Utility.getContext(this, vars, "#User_Org", "ReportGeneralLedgerJournal"), Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedgerJournal"), 0);
