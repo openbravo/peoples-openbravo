@@ -38,6 +38,16 @@ public class GenerateEntitiesTask extends WorkflowAntTask {
     private static final Logger log = Logger
             .getLogger(GenerateEntitiesTask.class);
 
+    private static String basePath;
+
+    public static String getBasePath() {
+        return basePath;
+    }
+
+    public static void setBasePath(String basePath) {
+        GenerateEntitiesTask.basePath = basePath;
+    }
+
     private String propertiesFile;
     private String providerConfigDirectory;
     private boolean debug;
@@ -52,10 +62,16 @@ public class GenerateEntitiesTask extends WorkflowAntTask {
 
     @Override
     public final void execute() {
+
+        if (getBasePath() == null) {
+            setBasePath(super.getProject().getBaseDir().getAbsolutePath());
+        }
+
         if (debug) {
             OBProvider.getInstance().register(OBClassLoader.class,
                     OBClassLoader.ClassOBClassLoader.class, false);
 
+            // the beautifier uses the source.path if it is not set
             log.debug("initializating dal layer, getting properties from "
                     + getPropertiesFile());
             OBPropertiesProvider.getInstance().setProperties(

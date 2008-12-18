@@ -23,8 +23,6 @@ import java.io.File;
 
 import org.hybridlabs.source.beautifier.CharacterSequence;
 import org.hybridlabs.source.formatter.JavaImportBeautifier;
-import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.base.util.Check;
 
 /**
  * Sets the user.home system variable to the source.path/temp directory. This so
@@ -39,10 +37,12 @@ public class OBJavaBeautifier extends JavaImportBeautifier {
     @Override
     public void beautify(CharacterSequence characterSequence) {
         final String userHome = System.getProperty("user.home");
-        final String sourcePath = OBPropertiesProvider.getInstance()
-                .getOpenbravoProperties().getProperty("source.path");
-        Check.isNotNull(sourcePath, "The source.path parameter is not defined "
-                + "in Openbravo.properties");
+        // final String sourcePath = OBPropertiesProvider.getInstance()
+        // .getOpenbravoProperties().getProperty("source.path");
+        // Check.isNotNull(sourcePath,
+        // "The source.path parameter is not defined "
+        // + "in Openbravo.properties");
+        final String sourcePath = GenerateEntitiesTask.getBasePath();
         final File tempDir = new File(sourcePath, "temp");
         if (!tempDir.exists()) {
             tempDir.mkdirs();
