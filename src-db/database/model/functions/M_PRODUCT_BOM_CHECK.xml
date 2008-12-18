@@ -92,24 +92,30 @@
         -- Nothing to do
         EXIT WHEN(v_CountNo=0) ;
         -- Insert BOM Nodes into "All" table
-        INSERT
-        INTO C_TEMP_Selection2
-          (
-            Query_ID,
-            C_TEMP_Selection_ID
-          )
-        SELECT '0',
-          p.M_Product_ID
-        FROM M_Product p
-        WHERE v_IsBOM='Y'
-          AND EXISTS
-          (SELECT *
-          FROM M_Product_BOM b
-          WHERE p.M_Product_ID=b.M_ProductBOM_ID
-            AND b.M_Product_ID IN
-            (SELECT C_TEMP_Selection_ID FROM C_TEMP_Selection)
-          )
-          ;
+        BEGIN
+          INSERT
+          INTO C_TEMP_Selection2
+            (
+              Query_ID,
+              C_TEMP_Selection_ID
+            )
+          SELECT '0',
+            p.M_Product_ID
+          FROM M_Product p
+          WHERE v_IsBOM='Y'
+            AND EXISTS
+            (SELECT *
+            FROM M_Product_BOM b
+            WHERE p.M_Product_ID=b.M_ProductBOM_ID
+              AND b.M_Product_ID IN
+              (SELECT C_TEMP_Selection_ID FROM C_TEMP_Selection)
+            )
+            ;
+        EXCEPTION 
+	  WHEN others THEN
+            RAISE '@C_TEMP_SELECTION2_KEY@ ';
+        END;
+
         -- Insert BOM Nodes into temporary table
         DELETE FROM C_TEMP_Selection2 WHERE Query_ID='1';
         INSERT
