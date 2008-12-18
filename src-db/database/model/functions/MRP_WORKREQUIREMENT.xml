@@ -65,7 +65,8 @@
 
 
     FOR Cur_workproposal IN (
-      SELECT MRP_RUN_PRODUCTIONLINE.* , MA_PROCESSPLAN.EXPLODEPHASES
+      SELECT MRP_RUN_PRODUCTIONLINE.* , MA_PROCESSPLAN.EXPLODEPHASES, 
+      MA_PROCESSPLAN.CONVERSIONRATE, MA_PROCESSPLAN.SECONDARYUNIT
       FROM MRP_RUN_PRODUCTIONLINE, MA_PROCESSPLAN
       WHERE MRP_RUN_PRODUCTIONLINE.MA_PROCESSPLAN_ID = MA_PROCESSPLAN.MA_PROCESSPLAN_ID
         AND MRP_RUN_PRODUCTION_ID = v_Record_ID
@@ -90,7 +91,8 @@
         Cur_workproposal.MA_PROCESSPLAN_ID, Cur_workproposal.qty,
         now(), Cur_workproposal.plannedorderdate, Cur_workproposal.planneddate,
         'N', 'N', 'N', v_DocumentNo, Cur_workproposal.explodephases,
-        null, null, null
+        (CASE WHEN Cur_workproposal.conversionrate IS NOT NULL THEN (Cur_workproposal.conversionrate*Cur_workproposal.qty) ELSE null END), 
+        Cur_workproposal.secondaryunit, Cur_workproposal.conversionrate
       );
       UPDATE MRP_RUN_PRODUCTIONLINE
          SET MA_WORKREQUIREMENT_ID=v_WR_ID
