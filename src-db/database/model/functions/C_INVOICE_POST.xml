@@ -1678,7 +1678,6 @@ cWithHoldId varchar2(32);
 				v_CashLine, v_Client_ID, v_Org_ID, 'Y',
 				TO_DATE(NOW()), v_UpdatedBy, TO_DATE(NOW()), v_UpdatedBy,
 				v_Cash, v_debtPaymentID, v_line, v_BPartnerName,
-				--C_Currency_Convert((CASE v_IsSOTrx WHEN 'Y' THEN v_paymentAmount ELSE v_paymentAmount END), v_Currency_ID, v_CB_Curr,v_DateAcct,NULL,v_Client_ID, v_Org_ID),
 				v_Amount, 'P', v_Currency_ID, 0,
 				0, 'Y'
 				)
