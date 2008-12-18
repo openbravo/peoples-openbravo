@@ -102,7 +102,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
   }
 
   public void logout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    if (request.getSession().getAttribute("#Authenticated_user") != null || !request.getSession().getAttribute("#Authenticated_user").equals("")) {
+    if (request.getSession().getAttribute("#Authenticated_user") != null && !request.getSession().getAttribute("#Authenticated_user").equals("")) {
       request.getSession(true).removeAttribute("#Authenticated_user");
     }
     if(!response.isCommitted())
