@@ -19,9 +19,6 @@
 
 package org.openbravo.dal.xml;
 
-import static org.openbravo.model.ad.system.Client.PROPERTY_ORGANIZATION;
-import static org.openbravo.model.common.enterprise.Organization.PROPERTY_CLIENT;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -282,9 +279,9 @@ public class XMLEntityConverter implements OBNotSingleton {
                             "One to many property not allowed here");
                     // never update the org or client through xml!
                     final boolean clientUpdate = bob instanceof ClientEnabled
-                            && p.getName().equals(PROPERTY_CLIENT);
+                            && p.getName().equals(Organization.PROPERTY_CLIENT);
                     final boolean orgUpdate = bob instanceof OrganizationEnabled
-                            && p.getName().equals(PROPERTY_ORGANIZATION);
+                            && p.getName().equals(Client.PROPERTY_ORGANIZATION);
                     if (!isOptionClientImport() && currentValue != null
                             && (clientUpdate || orgUpdate)) {
                         continue;
@@ -411,13 +408,14 @@ public class XMLEntityConverter implements OBNotSingleton {
                                 "This case may only occur for referenced objects which are not new");
                 // if the object is referenced then it can not be updated
                 if (hasReferenceAttribute && !bob.isNewOBObject()) {
-                    warn("Entity "
-                            + bob
-                            + " ("
-                            + bob.getEntity().getTableName()
-                            + ") "
-                            + " has not been updated because it already exists and "
-                            + "it is imported as a reference from another object");
+                    log
+                            .debug("Entity "
+                                    + bob
+                                    + " ("
+                                    + bob.getEntity().getTableName()
+                                    + ") "
+                                    + " has not been updated because it already exists and "
+                                    + "it is imported as a reference from another object");
                 }
             } else if (bob.isNewOBObject()) {
                 if (!checkInsert.contains(bob)) {
