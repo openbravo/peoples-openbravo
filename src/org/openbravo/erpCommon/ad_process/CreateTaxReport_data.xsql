@@ -52,8 +52,8 @@
     <Parameter name="level"/>
     <Parameter name="adClientId" optional="true" type="replace" after="C_INVOICETAX.AD_CLIENT_ID IN (" text="'1'"/>
     <Parameter name="adOrgId" optional="true" type="replace" after="C_INVOICETAX.AD_ORG_ID IN (" text="'1'"/>
-    <Parameter name="periodFrom" optional="true" after="AND 1=1"><![CDATA[ AND C_INVOICE.DATEACCT >= ?]]></Parameter>
-    <Parameter name="periodTo" optional="true" after="AND 1=1"><![CDATA[ AND C_INVOICE.DATEACCT < ?]]></Parameter>
+    <Parameter name="periodFrom" optional="true" after="AND 1=1"><![CDATA[ AND C_INVOICE.DATEACCT >= TO_DATE(?)]]></Parameter>
+    <Parameter name="periodTo" optional="true" after="AND 1=1"><![CDATA[ AND C_INVOICE.DATEACCT < TO_DATE(?)]]></Parameter>
     <Parameter name="cTaxReportId"/>
   </SqlMethod>
 
