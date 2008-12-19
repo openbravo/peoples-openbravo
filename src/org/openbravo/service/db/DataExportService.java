@@ -31,6 +31,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.xml.EntityXMLConverter;
@@ -128,15 +129,23 @@ public class DataExportService implements OBSingleton {
      * @see CLIENT_ID_PARAMETER_NAME
      */
     public String exportClientToXML(Map<String, Object> parameters) {
-        final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(
-                DataSet.class);
-        obc.add(Expression.eq("name", CLIENT_DATA_SET_NAME));
-        if (obc.list().size() == 0) {
-            throw new OBException("No dataset found with name "
-                    + CLIENT_DATA_SET_NAME);
+        DataSet dataSet = null;
+        try {
+            OBContext.getOBContext().setInAdministratorMode(true);
+            final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(
+                    DataSet.class);
+            obc.add(Expression.eq("name", CLIENT_DATA_SET_NAME));
+            if (obc.list().size() == 0) {
+                throw new OBException("No dataset found with name "
+                        + CLIENT_DATA_SET_NAME);
+            }
+            dataSet = obc.list().get(0);
+
+            // the export part may not be run as superuser
+            return exportDataSetToXML(dataSet, null, true, parameters);
+        } finally {
+            OBContext.getOBContext().restorePreviousAdminMode();
         }
-        final DataSet dataSet = obc.list().get(0);
-        return exportDataSetToXML(dataSet, null, true, parameters);
     }
 
     // note returns null if nothing has been generated

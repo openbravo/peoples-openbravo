@@ -192,6 +192,10 @@ public class DataSetService implements OBSingleton {
     public List<BaseOBObject> getExportableObjects(DataSetTable dataSetTable,
             String moduleId, Map<String, Object> parameters) {
 
+        // do the part which can be done as super user separately from the
+        // actual read of the db
+
+        OBContext.getOBContext().setInAdministratorMode(true);
         final String entityName = dataSetTable.getTable().getName();
         final Entity entity = ModelProvider.getInstance().getEntity(entityName);
 
@@ -201,6 +205,7 @@ public class DataSetService implements OBSingleton {
         }
 
         String whereClause = dataSetTable.getWhereClause();
+
         final Map<String, Object> existingParams = new HashMap<String, Object>();
         if (parameters != null) {
             for (final String name : parameters.keySet()) {
@@ -209,6 +214,7 @@ public class DataSetService implements OBSingleton {
                 }
             }
         }
+
         if (moduleId != null && whereClause != null) {
             while (whereClause.indexOf("@moduleid@") != -1) {
                 whereClause = whereClause.replace("@moduleid@", "'" + moduleId
@@ -421,40 +427,41 @@ public class DataSetService implements OBSingleton {
     // compares the content of a list by converting the id to a hex
     public static class BaseOBIDHexComparator implements Comparator<Object> {
 
-      public int compare(Object o1, Object o2) {
-          if (!(o1 instanceof BaseOBObject) || !(o2 instanceof BaseOBObject)) {
-              return 0;
-          }
-          final BaseOBObject bob1 = (BaseOBObject) o1;
-          final BaseOBObject bob2 = (BaseOBObject) o2;
-          if (!(bob1.getId() instanceof String)
-                  || !(bob2.getId() instanceof String)) {
-              return 0;
-          }
-          try {
-              final BigInteger bd1 = new BigInteger(bob1.getId().toString(),
-                      32);
-              final BigInteger bd2 = new BigInteger(bob2.getId().toString(),
-                      32);
-              return bd1.compareTo(bd2);
-          } catch (final NumberFormatException n) {
-              System.out.println("problem: " + n.getMessage());
-              return 0;
-          }
-      }
-  }
+        public int compare(Object o1, Object o2) {
+            if (!(o1 instanceof BaseOBObject) || !(o2 instanceof BaseOBObject)) {
+                return 0;
+            }
+            final BaseOBObject bob1 = (BaseOBObject) o1;
+            final BaseOBObject bob2 = (BaseOBObject) o2;
+            if (!(bob1.getId() instanceof String)
+                    || !(bob2.getId() instanceof String)) {
+                return 0;
+            }
+            try {
+                final BigInteger bd1 = new BigInteger(bob1.getId().toString(),
+                        32);
+                final BigInteger bd2 = new BigInteger(bob2.getId().toString(),
+                        32);
+                return bd1.compareTo(bd2);
+            } catch (final NumberFormatException n) {
+                System.out.println("problem: " + n.getMessage());
+                return 0;
+            }
+        }
+    }
+
     public static class BaseStringComparator implements Comparator<Object> {
 
-      public int compare(Object o1, Object o2) {
-          if (!(o1 instanceof BaseOBObject) || !(o2 instanceof BaseOBObject)) {
-              return 0;
-          }
-          final BaseOBObject bob1 = (BaseOBObject) o1;
-          final BaseOBObject bob2 = (BaseOBObject) o2;
-          final String bd1 = bob1.getId().toString();
-          final String bd2 = bob2.getId().toString();
-          return bd1.compareTo(bd2);
-      }
-  }
+        public int compare(Object o1, Object o2) {
+            if (!(o1 instanceof BaseOBObject) || !(o2 instanceof BaseOBObject)) {
+                return 0;
+            }
+            final BaseOBObject bob1 = (BaseOBObject) o1;
+            final BaseOBObject bob2 = (BaseOBObject) o2;
+            final String bd1 = bob1.getId().toString();
+            final String bd2 = bob2.getId().toString();
+            return bd1.compareTo(bd2);
+        }
+    }
 
 }
