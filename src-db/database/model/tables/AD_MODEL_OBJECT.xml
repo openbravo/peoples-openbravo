@@ -79,7 +79,7 @@
       </column>
       <column name="OBJECT_TYPE" primaryKey="false" required="false" type="VARCHAR" size="1" autoIncrement="false">
         <default><![CDATA[S]]></default>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA['S']]></onCreateDefault>
       </column>
       <column name="LOADONSTARTUP" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
         <default/>
