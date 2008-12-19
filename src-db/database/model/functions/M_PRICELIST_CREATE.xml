@@ -50,7 +50,6 @@
     v_PriceList_Version_Base_ID VARCHAR2(32);
     v_temp VARCHAR2(32);
     --
-    v_NextNo VARCHAR2(32):=0;
     -- Get PL Parameter
     Cur_DiscountLine RECORD;
     rowcount NUMBER;
@@ -307,14 +306,14 @@
           INSERT
           INTO M_ProductPrice
             (
-              M_PriceList_Version_ID, M_Product_ID, AD_Client_ID, AD_Org_ID,
+              M_ProductPrice_ID, M_PriceList_Version_ID, M_Product_ID, AD_Client_ID, AD_Org_ID,
               IsActive, Created, CreatedBy, Updated,
               UpdatedBy,
               PriceList,
               PriceStd,
               PriceLimit
             )
-          SELECT  v_PriceList_Version_ID,
+          SELECT  get_uuid(), v_PriceList_Version_ID,
             po.M_Product_ID, v_Client_ID, v_Org_ID, 'Y',
             now(), v_UpdatedBy, now(), v_UpdatedBy,
             -- Price List
@@ -334,14 +333,14 @@
           INSERT
           INTO M_ProductPrice
             (
-              M_PriceList_Version_ID, M_Product_ID, AD_Client_ID, AD_Org_ID,
+              M_ProductPrice_ID, M_PriceList_Version_ID, M_Product_ID, AD_Client_ID, AD_Org_ID,
               IsActive, Created, CreatedBy, Updated,
               UpdatedBy,
               PriceList,
               PriceStd,
               PriceLimit
             )
-          SELECT  v_PriceList_Version_ID,
+          SELECT  get_uuid(), v_PriceList_Version_ID,
             pp.M_Product_ID, v_Client_ID, v_Org_ID, 'Y',
             now(), v_UpdatedBy, now(), v_UpdatedBy,
             -- Price List
@@ -460,7 +459,6 @@
           )
           ;
         --
-        v_NextNo:=v_NextNo + 1;
         v_Message:='';
       END LOOP; -- For all DiscountLines
       -- Delete Temporary Selection
