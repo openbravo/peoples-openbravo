@@ -35,6 +35,8 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.AntExecutor;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.service.system.ReloadContext;
+import org.openbravo.service.system.RestartTomcat;
 import org.openbravo.xmlEngine.XmlDocument;
 
 /**
@@ -60,6 +62,12 @@ public class ApplyModules extends HttpSecureAppServlet {
             updateLog(response, vars);
         } else if (vars.commandIn("GETERR")) {
             getError(response, vars);
+        } else if (vars.commandIn("RESTART")) {
+            restartApplicationServer(response, vars);
+        } else if (vars.commandIn("RELOAD")) {
+            reloadContext(response, vars);
+        } else if (vars.commandIn("DONOTHING")) {
+            // Won't be called.
         } else {
             pageError(response);
         }
@@ -110,6 +118,58 @@ public class ApplyModules extends HttpSecureAppServlet {
         response.setContentType("text/html; charset=UTF-8");
         out.println(xmlDocument.print());
         out.close();
+    }
+    
+    /**
+     * Reloads the application context to after building the application to apply modules.
+     * 
+     * @param response the HttpServletResponse to write to
+     * @param vars the application variables
+     * @throws IOException
+     * @throws ServletException
+     */
+    private void reloadContext(HttpServletResponse response, 
+            VariablesSecureApp vars) throws IOException, ServletException {
+        
+        final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/ad_process/RestartingContext").createXmlDocument();
+        xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+        xmlDocument.setParameter("theme", vars.getTheme());
+        final String message = Utility.messageBD(this, "CONTEXT_RELOAD", vars.getLanguage());
+        xmlDocument.setParameter("message", message);
+        
+        response.setContentType("text/html; charset=UTF-8");
+        final PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        response.flushBuffer();
+        
+        ReloadContext.reload();
+    }
+    
+    /**
+     * Restarts the application server after building the application to apply modules.
+     * 
+     * @param response the HttpServletResponse to write to
+     * @param vars the application variables
+     * @throws IOException 
+     * @throws ServletException 
+     */
+    private void restartApplicationServer(HttpServletResponse response, 
+            VariablesSecureApp vars) throws IOException, ServletException {
+        
+        final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/ad_process/RestartingContext").createXmlDocument();
+        xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+        xmlDocument.setParameter("theme", vars.getTheme());
+        final String message = Utility.messageBD(this, "TOMCAT_RESTART", vars.getLanguage());
+        xmlDocument.setParameter("message", message);
+        
+        response.setContentType("text/html; charset=UTF-8");
+        final PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        response.flushBuffer();
+        
+        RestartTomcat.restart();
     }
 
     /**
