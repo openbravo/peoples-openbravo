@@ -3569,6 +3569,7 @@ function resizeAreaInfo(isOnResize) {
   var h = body[0].clientHeight;
   var w = body[0].clientWidth;
   var name = window.navigator.appName;
+  client_middle.style.width = w;
   client_middle.style.height = h -((table_header?table_header.clientHeight:0) + (client_top?client_top.clientHeight:0) + (client_bottom?client_bottom.clientHeight:0)) - ((name.indexOf("Microsoft")==-1)?1:0);
 
   try {
