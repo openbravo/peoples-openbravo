@@ -39,8 +39,9 @@ public class RuntimeModelTest extends BaseTest {
 
     // don't initialize dal layer for model tests
     @Override
-    protected void setUp() {
+    protected void setUp() throws Exception {
         setConfigPropertyFiles();
+        super.setUp();
     }
 
     public void testModelProvider() {

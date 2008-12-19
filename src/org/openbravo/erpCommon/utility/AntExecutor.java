@@ -20,14 +20,20 @@ package org.openbravo.erpCommon.utility;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Vector;
 
+import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
+import org.omg.CORBA_2_3.portable.OutputStream;
+import org.openbravo.base.exception.OBException;
+import org.openbravo.utils.OBLogAppender;
 
 /**
  * The AntExecutor class allows to execute ant tasks in a given build.xml file.
@@ -159,6 +165,10 @@ public class AntExecutor {
         project.addBuildListener(logger1);
         err = ps2;
         log = ps1;
+
+        // force log4j to also print to this response
+        OBLogAppender.setOutputStream(ps1);
+
     }
 
     /**
@@ -246,9 +256,69 @@ public class AntExecutor {
         String rt = err.getLog(OBPrintStream.TEXT_PLAIN);
         if (rt == null || rt.equals("")) {
             final String mode = project.getProperty("deploy.mode");
-            rt = "SuccessRebuild."+mode;
+            rt = "SuccessRebuild." + mode;
         }
         return rt;
+    }
+
+    private class LocalListener implements BuildListener {
+
+        private final OutputStream os;
+
+        private LocalListener(OutputStream os) {
+            this.os = os;
+        }
+
+        @Override
+        public void buildFinished(BuildEvent arg0) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void buildStarted(BuildEvent arg0) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void messageLogged(BuildEvent arg0) {
+            try {
+                if (arg0.getMessage() != null) {
+                    os.write(arg0.getMessage().getBytes());
+                }
+                if (arg0.getException() != null) {
+                    os.write(arg0.getException().getMessage().getBytes());
+                }
+            } catch (final IOException e) {
+                throw new OBException(e);
+            }
+        }
+
+        @Override
+        public void targetFinished(BuildEvent arg0) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void targetStarted(BuildEvent arg0) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void taskFinished(BuildEvent arg0) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void taskStarted(BuildEvent arg0) {
+            // TODO Auto-generated method stub
+
+        }
+
     }
 
 }
