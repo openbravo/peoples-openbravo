@@ -43,7 +43,7 @@ public class OBJavaBeautifier extends JavaImportBeautifier {
         // "The source.path parameter is not defined "
         // + "in Openbravo.properties");
         final String sourcePath = GenerateEntitiesTask.getBasePath();
-        final File tempDir = new File(sourcePath, "temp");
+        final File tempDir = new File(sourcePath, "../temp");
         if (!tempDir.exists()) {
             tempDir.mkdirs();
         }
