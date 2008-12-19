@@ -19,6 +19,8 @@
 
 package org.openbravo.dal.core;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -56,6 +58,9 @@ import org.openbravo.model.common.enterprise.Organization;
  * 
  * The OBContext instance is made available to other threads through the static
  * ThreadLocal and the getInstance method.
+ * 
+ * The OBContext can be serialized as part of the Tomcat persistent session
+ * mechanism.
  * 
  * @author mtaal
  */
@@ -152,7 +157,11 @@ public class OBContext implements OBNotSingleton {
      * @return the context in the thread, null if none present
      */
     public static OBContext getOBContext() {
-        return instance.get();
+        final OBContext localContext = instance.get();
+        if (localContext != null && localContext.isSerialized()) {
+            localContext.initializeFromSerializedState();
+        }
+        return localContext;
     }
 
     private Client currentClient;
@@ -176,6 +185,10 @@ public class OBContext implements OBNotSingleton {
     private boolean isInitialized = false;
 
     private Set<String> additionalWritableOrganizations = new HashSet<String>();
+
+    // support storing the context in a persistent tomcat session
+    private String serializedUserId;
+    private boolean serialized = false;
 
     public String getUserLevel() {
         return userLevel;
@@ -349,6 +362,42 @@ public class OBContext implements OBNotSingleton {
             request.getSession().setAttribute(AUTHENTICATED_USER, null);
             throw e;
         }
+    }
+
+    // the obcontext is located in the session, in tomcat sessions are
+    // persisted and its content is serialized. The OBContext contains non-
+    // serializable objects (like non-initialized cglib proxies). Therefore
+    // before really serializing the obcontext is cleaned out.
+    // only the serializedUserId is maintained so that the context can be
+    // refreshed after being de-serialized and at the first request
+    private void writeObject(ObjectOutputStream out) throws IOException {
+
+        currentClient = null;
+        currentOrganization = null;
+        role = null;
+        user = null;
+        language = null;
+        organizationList = null;
+        readableOrganizations = null;
+        readableClients = null;
+        writableOrganizations = null;
+        userLevel = null;
+        organizationStructureProviderByClient = null;
+        entityAccessChecker = null;
+
+        inAdministratorMode = false;
+        prevAdminMode = false;
+        isAdministrator = false;
+        isInitialized = false;
+
+        serializedUserId = getUser().getId();
+        serialized = true;
+        out.defaultWriteObject();
+    }
+
+    protected void initializeFromSerializedState() {
+        initialize(serializedUserId);
+        serialized = false;
     }
 
     // sets the context by reading all user information
@@ -663,5 +712,9 @@ public class OBContext implements OBNotSingleton {
 
     private String getSessionValue(HttpServletRequest request, String param) {
         return (String) request.getSession().getAttribute(param.toUpperCase());
+    }
+
+    public boolean isSerialized() {
+        return serialized;
     }
 }
