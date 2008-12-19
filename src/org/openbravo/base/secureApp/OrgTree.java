@@ -102,7 +102,9 @@ public class OrgTree implements Serializable{
 	        }     
 	    }
 	    // Remove the last ','
-	    sb.deleteCharAt(sb.length()-1);		
+	    if (sb.length()>0 && sb.charAt(sb.length()-1)==',') {
+	    	sb.deleteCharAt(sb.length()-1);	
+	    }
 		return sb.toString();
 	}
 	
