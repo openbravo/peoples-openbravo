@@ -1676,7 +1676,7 @@ cWithHoldId varchar2(32);
 				VALUES
 				(
 				v_CashLine, v_Client_ID, v_Org_ID, 'Y',
-				TO_DATE(NOW()), v_UpdatedBy, TO_DATE(NOW()), v_UpdatedBy,
+				TO_DATE(now()), v_UpdatedBy, TO_DATE(now()), v_UpdatedBy,
 				v_Cash, v_debtPaymentID, v_line, v_BPartnerName,
 				v_Amount, 'P', v_Currency_ID, 0,
 				0, 'Y'
