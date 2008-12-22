@@ -47,15 +47,16 @@ public class SE_ProjectLine_Value extends HttpSecureAppServlet {
       String strProjectId = vars.getStringParameter("inpcProjectId");
       String strPhaseId = vars.getStringParameter("inpcProjectphaseId");
       String strADOrgID = vars.getStringParameter("inpadOrgId");
+      String strPriceListVersion = vars.getGlobalVariable("inpPriceListVersion", "Product.priceListVersion", "");
       try {
-        printPage(response, vars, strmProductId, strTabId, strProjectId, strPhaseId, strADOrgID);
+        printPage(response, vars, strmProductId, strPriceListVersion, strTabId, strProjectId, strPhaseId, strADOrgID);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
     } else pageError(response);
   }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strmProductId, String strTabId, String strProjectId, String strPhaseId, String strADOrgID) throws IOException, ServletException {
+  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strmProductId, String strPriceListId, String strTabId, String strProjectId, String strPhaseId, String strADOrgID) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
     
@@ -76,7 +77,6 @@ public class SE_ProjectLine_Value extends HttpSecureAppServlet {
     	   }
        }
        data1 = SEProjectLineValueData.selectProject(this, strProjectId);
-       String strPriceListId = data1[0].pricelist;
        String strCBPartnerLocationID = data1[0].bplocation;
        String strMWarehouseID = data1[0].warehouse;
        String strProjCat = data1[0].projcat;
