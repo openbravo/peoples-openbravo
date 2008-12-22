@@ -20,19 +20,15 @@ package org.openbravo.erpCommon.utility;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Vector;
 
-import org.apache.tools.ant.BuildEvent;
+import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
-import org.omg.CORBA_2_3.portable.OutputStream;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.utils.OBLogAppender;
 
 /**
@@ -41,10 +37,13 @@ import org.openbravo.utils.OBLogAppender;
  * 
  */
 public class AntExecutor {
+    private static final Logger logger = Logger.getLogger(AntExecutor.class);
+
     private Project project;
     private String baseDir;
     private OBPrintStream log;
     private OBPrintStream err;
+    private String returnMessage;
     private PrintWriter out;
 
     /**
@@ -200,6 +199,7 @@ public class AntExecutor {
             project.executeTarget(task);
         } catch (final BuildException e) {
             e.printStackTrace();
+            logger.error(e.getMessage(), e);
             err.print(e.toString());
         }
     }
@@ -219,6 +219,7 @@ public class AntExecutor {
             project.executeTargets(tasks);
         } catch (final BuildException e) {
             e.printStackTrace();
+            logger.error(e.getMessage(), e);
             err.print(e.toString());
         }
     }
@@ -253,72 +254,21 @@ public class AntExecutor {
      * @return - error String
      */
     public String getErr() {
-        String rt = err.getLog(OBPrintStream.TEXT_PLAIN);
-        if (rt == null || rt.equals("")) {
+        // note returnMessage has to be stored in a member because calling
+        // err.getLog(...) twice will always result in an empty string
+        // in the second call
+        if (returnMessage != null) {
+            return returnMessage;
+        }
+        returnMessage = err.getLog(OBPrintStream.TEXT_PLAIN);
+        if (returnMessage == null || returnMessage.equals("")) {
             final String mode = project.getProperty("deploy.mode");
-            rt = "SuccessRebuild." + mode;
+            returnMessage = "SuccessRebuild." + mode;
         }
-        return rt;
+        return returnMessage;
     }
 
-    private class LocalListener implements BuildListener {
-
-        private final OutputStream os;
-
-        private LocalListener(OutputStream os) {
-            this.os = os;
-        }
-
-        @Override
-        public void buildFinished(BuildEvent arg0) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void buildStarted(BuildEvent arg0) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void messageLogged(BuildEvent arg0) {
-            try {
-                if (arg0.getMessage() != null) {
-                    os.write(arg0.getMessage().getBytes());
-                }
-                if (arg0.getException() != null) {
-                    os.write(arg0.getException().getMessage().getBytes());
-                }
-            } catch (final IOException e) {
-                throw new OBException(e);
-            }
-        }
-
-        @Override
-        public void targetFinished(BuildEvent arg0) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void targetStarted(BuildEvent arg0) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void taskFinished(BuildEvent arg0) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void taskStarted(BuildEvent arg0) {
-            // TODO Auto-generated method stub
-
-        }
-
+    public boolean hasErrorOccured() {
+        return !getErr().startsWith("SuccessRebuild");
     }
-
 }
