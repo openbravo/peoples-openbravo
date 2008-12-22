@@ -33,6 +33,7 @@
 	<PARAMETER id="customer" name="customer" default=""/>
 	<PARAMETER id="salesRep" name="salesRep" default=""/>
 	<PARAMETER id="closed" name="closed" attribute="value" default=""/>
+	<PARAMETER id="paramArchive" name="inpArchive" attribute="value" default=""/>
 	<PARAMETER id="idToDelete" name="idToDelete" attribute="value" default=""/>
 	<PARAMETER id="salesrepEmail" name="salesrepEmail" attribute="value" default=""/>
 	<PARAMETER id="salesrepName" name="salesrepName" default=""/>
@@ -42,11 +43,19 @@
 	<SUBREPORT id="reportEmail" name="reportEmail" report="org/openbravo/erpCommon/reference/List">
     	<ARGUMENT name="template_filename" withId="c_poc_doctype_template_id"/>
   	</SUBREPORT>
-	<structure name="structure2">
+  	<structure name="structure2">
+  		<FIELD id="fileDocName" attribute="value" replace="tt">docName</FIELD>
+  		<FIELD id="fileDocName">docName</FIELD>
+  		<SECTION id="sectionDetail2"/>
+  	</structure>
+  	
+	<structure name="structure1">
 		<FIELD id="paramId" attribute="name" replace="xx">id</FIELD>
+		<FIELD id="paramId" attribute="checked" replace="pp">selected</FIELD>
 		<FIELD id="paramId" attribute="type" replace="zz">visible</FIELD>
 		<FIELD id="linkLocator" attribute="onclick" replace="yy">id</FIELD>
 		<FIELD id="paramName">fileName</FIELD>
+		
 		<SECTION id="sectionDetail"/>
 	</structure>
 </REPORT>

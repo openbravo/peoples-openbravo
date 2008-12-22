@@ -17,10 +17,4 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
-<REPORT>
-  <template file="EmailOptions.html"/>
-	<structure name="structure1">
-   	<FIELD id="paramName">fileName</FIELD>
-   	<SECTION id="sectionDetail"/>
-  </structure>
-</REPORT>
+

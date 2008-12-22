@@ -23,10 +23,20 @@ import org.openbravo.data.FieldProvider;
 public class AttachContent implements FieldProvider {
 
     static Logger log4j = Logger.getLogger(AttachContent.class);
+    public String docName;
     public String fileName;
     public FileItem fileItem;
     public String id;
     public String visible;
+    public String selected;
+
+    public String getSelected() {
+        return selected;
+    }
+
+    public void setSelected(String selected) {
+        this.selected = selected;
+    }
 
     public String getVisible() {
         return visible;
@@ -60,6 +70,14 @@ public class AttachContent implements FieldProvider {
         this.fileName = fileName;
     }
 
+    public String getDocName() {
+        return docName;
+    }
+
+    public void setDocName(String docName) {
+        this.docName = docName;
+    }
+
     public String getField(String fieldName) {
         if (fieldName.equalsIgnoreCase("FILENAME"))
             return fileName;
@@ -67,6 +85,10 @@ public class AttachContent implements FieldProvider {
             return id;
         } else if (fieldName.equalsIgnoreCase("VISIBLE")) {
             return visible;
+        } else if (fieldName.equalsIgnoreCase("SELECTED")) {
+            return selected;
+        } else if (fieldName.equalsIgnoreCase("DOCNAME")) {
+            return docName;
         } else {
             log4j.debug("Field does not exist: " + fieldName);
             return null;

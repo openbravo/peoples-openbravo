@@ -85,6 +85,9 @@
 		
 	}
 	function onLoadDo(){
+		if (document.getElementById("paramArchive").value == "Y"){
+			document.getElementById("paramcheck").checked=true
+		}
 		var isClosed = document.getElementById("closed").value;
 		if( isClosed == "yes")
 		{
@@ -114,7 +117,7 @@
 		resizeArea();
 	}
 	function storeDoc(){
-		if (document.getElementById("paramId").checked==true) {
+		if (document.getElementById("paramArchive").value=='' || document.getElementById("paramArchive").value=='N') {
 			document.getElementById("paramArchive").value='Y';
 		} else {
 			document.getElementById("paramArchive").value='N';
@@ -264,10 +267,15 @@
     							<th class="DataGrid_Header_Cell"><span>File name</span></th>
       							<th width="5" colspan="1" class="DataGrid_Header_Cell" id="fieldPartnerName"><span>Archive</span><th>
         					</tr>
+        					<div id="sectionDetail2">
+        					<tr id="funcEvenOddRowxx" class="DataGrid_Body_Row DataGrid_Body_Row_xx">
+      							<td class="DataGrid_Body_Cell" id="fileDocName" value="tt">xx</td>
+								<td width="20" class="DataGrid_Body_Cell">  <span class="Checkbox_container_NOT_Focused"><input type="checkbox" id="paramcheck" name="paramcheck" onclick="javascript:storeDoc();"/></span></td>
+         					</tr>
     						<div id="sectionDetail">
-      						<tr id="funcEvenOddRowxx" class="DataGrid_Body_Row DataGrid_Body_Row_xx">
-      							<td class="DataGrid_Body_Cell" id="paramName">xx<a id="linkLocator" href="#" onclick="javascript:doDelete('yy');return true;"> remove</a> </td>
-								<td width="20" class="DataGrid_Body_Cell">  <span class="Checkbox_container_NOT_Focused"><input type="zz" id="paramId" name="field-xx" value="Y" onclick="javascript:storeDoc();"/></span></td>
+      						<tr id="view" class="DataGrid_Body_Row DataGrid_Body_Row_xx">
+      							<td class="DataGrid_Body_Cell" id="paramName">xx<a type="hidden" id="linkLocator" href="#" onclick="javascript:doDelete('yy');return true;"> remove</a> </td>
+								<td width="20" class="DataGrid_Body_Cell"><span class="Checkbox_container_NOT_Focused"><input type="hidden" id="paramId" name="field-xx"/></span></td>
          					</tr>
     					</div>
     					</tbody>

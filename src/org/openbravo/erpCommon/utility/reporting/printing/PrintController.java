@@ -370,7 +370,7 @@ public class PrintController extends HttpSecureAppServlet {
                         nrOfEmailsSend++;
                     }
                 }
-
+                request.getSession().removeAttribute("files");
                 createPrintStatusPage(response, vars, nrOfEmailsSend);
             }
 
@@ -613,7 +613,10 @@ public class PrintController extends HttpSecureAppServlet {
             Map<String, Report> reports) throws IOException, ServletException {
         XmlDocument xmlDocument = null;
         pocData = getContactDetails(documentType, strDocumentId);
-        final String[] hiddenTags = getHiddenTags(pocData);
+        Vector<java.lang.Object> vector = (Vector<java.lang.Object>) request
+                .getSession().getAttribute("files");
+
+        final String[] hiddenTags = getHiddenTags(pocData, vector, vars);
         if (hiddenTags != null) {
             xmlDocument = xmlEngine
                     .readXmlTemplate(
@@ -627,8 +630,7 @@ public class PrintController extends HttpSecureAppServlet {
         }
 
         xmlDocument.setParameter("strDocumentId", strDocumentId);
-        Vector<java.lang.Object> vector = (Vector<java.lang.Object>) request
-                .getSession().getAttribute("files");
+
         boolean isTheFirstEntry = false;
         if (vector == null) {
             vector = new Vector<java.lang.Object>(0);
@@ -644,6 +646,9 @@ public class PrintController extends HttpSecureAppServlet {
             content.setFileItem(file1);
             content.setId(file1.getName());
             content.visible = "hidden";
+            if (vars.getStringParameter("inpArchive") == "Y") {
+                content.setSelected("true");
+            }
             vector.addElement(content);
             request.getSession().setAttribute("files", vector);
 
@@ -691,7 +696,7 @@ public class PrintController extends HttpSecureAppServlet {
         final boolean onlyOneAttachedDoc = onlyOneAttachedDocs(reports);
         final Map<String, PocData> customerMap = new HashMap<String, PocData>();
         final Map<String, PocData> salesRepMap = new HashMap<String, PocData>();
-        final Vector<Object> cloneVector = (Vector<Object>) vector.clone();
+        final Vector<Object> cloneVector = new Vector<Object>();
         for (final PocData documentData : pocData) {
             // Map used to count the different users
 
@@ -734,8 +739,7 @@ public class PrintController extends HttpSecureAppServlet {
                         + documentData.reportLocation);
 
             if (onlyOneAttachedDoc) {
-                attachedContent.setFileName(report.getFilename());
-                attachedContent.setId("document");
+                attachedContent.setDocName(report.getFilename());
                 attachedContent.setVisible("checkbox");
                 cloneVector.add(attachedContent);
             }
@@ -747,24 +751,27 @@ public class PrintController extends HttpSecureAppServlet {
 
         if (!onlyOneAttachedDoc && isTheFirstEntry) {
             if (numberOfCustomers > 1) {
-                attachedContent.setFileName(String.valueOf(reports.size()
+                attachedContent.setDocName(String.valueOf(reports.size()
                         + " Documents to " + String.valueOf(numberOfCustomers)
                         + " Customers"));
-                attachedContent.setId("document");
                 attachedContent.setVisible("checkbox");
+
             } else {
-                attachedContent.setFileName(String.valueOf(reports.size()
+                attachedContent.setDocName(String.valueOf(reports.size()
                         + " Documents"));
-                attachedContent.setId("document");
                 attachedContent.setVisible("checkbox");
+
             }
             cloneVector.add(attachedContent);
         }
 
-        final AttachContent[] data = new AttachContent[cloneVector.size()];
+        final AttachContent[] data = new AttachContent[vector.size()];
+        final AttachContent[] data2 = new AttachContent[cloneVector.size()];
         if (cloneVector.size() >= 1) { // Has more than 1 element
-            cloneVector.copyInto(data);
-            xmlDocument.setData("structure2", data);
+            vector.copyInto(data);
+            cloneVector.copyInto(data2);
+            xmlDocument.setData("structure2", data2);
+            xmlDocument.setData("structure1", data);
         }
         if (pocData.length >= 1) {
             xmlDocument.setData("reportEmail", "liststructure", reports.get(
@@ -786,6 +793,8 @@ public class PrintController extends HttpSecureAppServlet {
             xmlDocument.setParameter("emailBody", emailDefinition.getBody());
         }
 
+        xmlDocument.setParameter("inpArchive", vars
+                .getStringParameter("inpArchive"));
         xmlDocument.setParameter("contactName", pocData[0].contactName);
         xmlDocument.setParameter("contactEmail", pocData[0].contactEmail);
         xmlDocument.setParameter("salesrepEmail", pocData[0].salesrepEmail);
@@ -805,9 +814,12 @@ public class PrintController extends HttpSecureAppServlet {
     /**
      * @author gmauleon
      * @param pocData
+     * @param vars
+     * @param vector
      * @return
      */
-    private String[] getHiddenTags(PocData[] pocData) {
+    private String[] getHiddenTags(PocData[] pocData, Vector<Object> vector,
+            VariablesSecureApp vars) {
         String[] discard;
         final Map<String, PocData> customerMap = new HashMap<String, PocData>();
         final Map<String, PocData> salesRepMap = new HashMap<String, PocData>();
@@ -851,6 +863,18 @@ public class PrintController extends HttpSecureAppServlet {
                     discardAux[0] = discard[0];
                 }
                 discardAux[discard.length] = "discardSelect";
+                return discardAux;
+            }
+        }
+        if (vector == null && vars.getMultiFile("inpFile") == null) {
+            if (discard == null) {
+                discard = new String[] { "view" };
+            } else {
+                final String[] discardAux = new String[discard.length + 1];
+                for (int i = 0; i < discard.length; i++) {
+                    discardAux[0] = discard[0];
+                }
+                discardAux[discard.length] = "view";
                 return discardAux;
             }
         }
