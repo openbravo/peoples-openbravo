@@ -30,11 +30,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.AntExecutor;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.module.ModuleLog;
 import org.openbravo.service.system.ReloadContext;
 import org.openbravo.service.system.RestartTomcat;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -119,56 +122,68 @@ public class ApplyModules extends HttpSecureAppServlet {
         out.println(xmlDocument.print());
         out.close();
     }
-    
+
     /**
-     * Reloads the application context to after building the application to apply modules.
+     * Reloads the application context to after building the application to
+     * apply modules.
      * 
-     * @param response the HttpServletResponse to write to
-     * @param vars the application variables
+     * @param response
+     *            the HttpServletResponse to write to
+     * @param vars
+     *            the application variables
      * @throws IOException
      * @throws ServletException
      */
-    private void reloadContext(HttpServletResponse response, 
+    private void reloadContext(HttpServletResponse response,
             VariablesSecureApp vars) throws IOException, ServletException {
-        
+
         final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_process/RestartingContext").createXmlDocument();
-        xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+                "org/openbravo/erpCommon/ad_process/RestartingContext")
+                .createXmlDocument();
+        xmlDocument.setParameter("language", "defaultLang=\""
+                + vars.getLanguage() + "\";");
         xmlDocument.setParameter("theme", vars.getTheme());
-        final String message = Utility.messageBD(this, "CONTEXT_RELOAD", vars.getLanguage());
+        final String message = Utility.messageBD(this, "CONTEXT_RELOAD", vars
+                .getLanguage());
         xmlDocument.setParameter("message", message);
-        
+
         response.setContentType("text/html; charset=UTF-8");
         final PrintWriter out = response.getWriter();
         out.println(xmlDocument.print());
         response.flushBuffer();
-        
+
         ReloadContext.reload();
     }
-    
+
     /**
-     * Restarts the application server after building the application to apply modules.
+     * Restarts the application server after building the application to apply
+     * modules.
      * 
-     * @param response the HttpServletResponse to write to
-     * @param vars the application variables
-     * @throws IOException 
-     * @throws ServletException 
+     * @param response
+     *            the HttpServletResponse to write to
+     * @param vars
+     *            the application variables
+     * @throws IOException
+     * @throws ServletException
      */
-    private void restartApplicationServer(HttpServletResponse response, 
+    private void restartApplicationServer(HttpServletResponse response,
             VariablesSecureApp vars) throws IOException, ServletException {
-        
+
         final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/erpCommon/ad_process/RestartingContext").createXmlDocument();
-        xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+                "org/openbravo/erpCommon/ad_process/RestartingContext")
+                .createXmlDocument();
+        xmlDocument.setParameter("language", "defaultLang=\""
+                + vars.getLanguage() + "\";");
         xmlDocument.setParameter("theme", vars.getTheme());
-        final String message = Utility.messageBD(this, "TOMCAT_RESTART", vars.getLanguage());
+        final String message = Utility.messageBD(this, "TOMCAT_RESTART", vars
+                .getLanguage());
         xmlDocument.setParameter("message", message);
-        
+
         response.setContentType("text/html; charset=UTF-8");
         final PrintWriter out = response.getWriter();
         out.println(xmlDocument.print());
         response.flushBuffer();
-        
+
         RestartTomcat.restart();
     }
 
@@ -214,7 +229,8 @@ public class ApplyModules extends HttpSecureAppServlet {
                 tasks.add("trl.lib");
                 tasks.add("compile.complete.deploy");
                 ant.setProperty("apply.on.create", "true");
-            } else if (false) { //ApplyModulesData.selectUninstalledModules(this)) { // there're
+            } else if (false) { // ApplyModulesData.selectUninstalledModules(this))
+                // { // there're
                 // uninstalled
                 // modules
                 tasks.add("update.database");
@@ -238,14 +254,55 @@ public class ApplyModules extends HttpSecureAppServlet {
 
             ant.setFinished(true);
 
+            if (ant.hasErrorOccured()) {
+                createModuleLog(false, ant.getErr());
+            } else {
+                createModuleLog(true, null);
+            }
+
             response.setContentType("text/plain; charset=UTF-8");
             out.println("finished");
             out.close();
         } catch (final Exception e) {
             e.printStackTrace();
+            // rolback the old transaction and start a new one
+            // to store the build log
+            OBDal.getInstance().rollbackAndClose();
+            createModuleLog(false, e.getMessage());
+            OBDal.getInstance().commitAndClose();
         } finally {
             // System.setOut(oldOut);
         }
+    }
+
+    /**
+     * Creates a new module log entry for a build with the action set to B and
+     * no module information set.
+     * 
+     * @param success
+     *            if true then the build was successfull, false if not
+     *            successfull
+     * @param msg
+     *            optional additional message
+     */
+    public static void createModuleLog(boolean success, String msg) {
+        final ModuleLog ml = OBProvider.getInstance().get(ModuleLog.class);
+        ml.setAction("B");
+        if (success) {
+            ml.setLog("Build successfull");
+        } else {
+            final int prefixLength = "Build failed, message: ".length();
+            final int maxMsgLength = 2000 - prefixLength;
+            if (msg == null) {
+                ml.setLog("Build failed");
+            } else if (msg.length() > maxMsgLength) {
+                ml.setLog("Build failed, message: "
+                        + msg.substring(0, maxMsgLength));
+            } else {
+                ml.setLog("Build failed, message: " + msg);
+            }
+        }
+        OBDal.getInstance().save(ml);
     }
 
     /**

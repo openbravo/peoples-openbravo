@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -198,10 +199,18 @@ public class AntExecutor {
         try {
             project.executeTarget(task);
         } catch (final BuildException e) {
-            e.printStackTrace();
             logger.error(e.getMessage(), e);
+            logger.error(throwableToString(e));
             err.print(e.toString());
         }
+    }
+
+    // log stack trace
+    private String throwableToString(Throwable t) {
+        final StringWriter sw = new StringWriter();
+        final PrintWriter pw = new PrintWriter(sw);
+        t.printStackTrace(pw);
+        return sw.toString();
     }
 
     /**
@@ -218,9 +227,9 @@ public class AntExecutor {
         try {
             project.executeTargets(tasks);
         } catch (final BuildException e) {
-            e.printStackTrace();
             logger.error(e.getMessage(), e);
             err.print(e.toString());
+            logger.error(throwableToString(e));
         }
     }
 

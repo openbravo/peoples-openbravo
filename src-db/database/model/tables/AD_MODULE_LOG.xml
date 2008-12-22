@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TABLE AD_MODULE_LOG">
-    <table name="AD_MODULE_LOG">
-      <column name="AD_MODULE_LOG_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+    <table name="AD_MODULE_LOG" primaryKey="AD_MODULE_LOG_PK">
+      <column name="AD_MODULE_LOG_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
