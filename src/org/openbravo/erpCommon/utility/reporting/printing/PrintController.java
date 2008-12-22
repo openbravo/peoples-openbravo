@@ -782,22 +782,26 @@ public class PrintController extends HttpSecureAppServlet {
             log4j.debug("Documents still in draft: " + draftDocumentIds);
         xmlDocument.setParameter("draftDocumentIds", draftDocumentIds);
 
-        if (vars.commandIn("ADD")) {
+        if (vars.commandIn("ADD") || vars.commandIn("DEL")) {
             final String emailSubject = vars.getStringParameter("emailSubject");
             final String emailBody = vars.getStringParameter("emailBody");
             xmlDocument.setParameter("emailSubject", emailSubject);
             xmlDocument.setParameter("emailBody", emailBody);
+            xmlDocument.setParameter("contactEmail", vars
+                    .getStringParameter("contactEmail"));
+            xmlDocument.setParameter("salesrepEmail", vars
+                    .getStringParameter("salesrepEmail"));
         } else {
             xmlDocument.setParameter("emailSubject", emailDefinition
                     .getSubject());
+            xmlDocument.setParameter("contactEmail", pocData[0].contactEmail);
+            xmlDocument.setParameter("salesrepEmail", pocData[0].salesrepEmail);
             xmlDocument.setParameter("emailBody", emailDefinition.getBody());
         }
 
         xmlDocument.setParameter("inpArchive", vars
                 .getStringParameter("inpArchive"));
         xmlDocument.setParameter("contactName", pocData[0].contactName);
-        xmlDocument.setParameter("contactEmail", pocData[0].contactEmail);
-        xmlDocument.setParameter("salesrepEmail", pocData[0].salesrepEmail);
         xmlDocument.setParameter("salesrepName", pocData[0].salesrepName);
         xmlDocument.setParameter("inpArchive", vars
                 .getStringParameter("inpArchive"));
