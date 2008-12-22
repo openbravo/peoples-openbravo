@@ -10,7 +10,7 @@
       <parameter name="p_client_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_run" type="NUMERIC" mode="in">
+      <parameter name="p_run" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_planner_id" type="VARCHAR" mode="in">
