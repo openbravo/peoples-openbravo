@@ -79,15 +79,14 @@
       v_Record_ID:=Cur_Parameter.Record_ID;
       v_User_ID:=Cur_Parameter.AD_User_ID;
       v_Client_ID := Cur_Parameter.AD_Client_ID;
-      v_Org_ID := Cur_Parameter.AD_Org_ID;
       IF(Cur_Parameter.ParameterName='M_Warehouse_ID') THEN
         v_M_Warehouse_ID:=Cur_Parameter.P_String;
         DBMS_OUTPUT.PUT_LINE('  M_Warehouse_ID=' || v_M_Warehouse_ID);
       END IF;
     END LOOP; -- Get Parameter
 
-    SELECT COALESCE(TO_CHAR(DESCRIPTION), ' '), DateDoc
-      INTO v_Description, v_DateDoc
+    SELECT COALESCE(TO_CHAR(DESCRIPTION), ' '), DateDoc, AD_Org_ID
+      INTO v_Description, v_DateDoc, v_Org_ID
      FROM MRP_RUN_PURCHASE
      WHERE MRP_RUN_PURCHASE_ID = v_Record_ID;
 
