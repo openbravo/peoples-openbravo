@@ -4,15 +4,15 @@
  * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SL
+ * All portions are Copyright (C) 2001-2008 Openbravo SL
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
@@ -37,15 +37,15 @@ import org.openbravo.utils.Replace;
 
 
 public class Account extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;  
+  private static final long serialVersionUID = 1L;
 
   public void init (ServletConfig config) {
     super.init(config);
     boolHist = false;
   }
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {	
-    VariablesSecureApp vars = new VariablesSecureApp(request);    
+  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
+    VariablesSecureApp vars = new VariablesSecureApp(request);
     if (vars.commandIn("DEFAULT")) {
       String strWindowId = vars.getStringParameter("WindowID");
       String strNameValue = vars.getRequestGlobalVariable("inpNameValue", "Account.combination");
@@ -59,18 +59,29 @@ public class Account extends HttpSecureAppServlet {
       }
       else
          vars.setSessionValue("$C_AcctSchema_ID", strAcctSchema);
-      
+
       vars.removeSessionValue("Account.alias");
       if (!strNameValue.equals("")) vars.setSessionValue("Account.combination", strNameValue + "%");
-      
+
       String strAlias = vars.getGlobalVariable("inpAlias", "Account.alias", "");
-      String strCombination = vars.getGlobalVariable("inpCombination", "Account.combination", "");      
-      printPage(response, vars, strAlias, strCombination, "", strAcctSchema, true);      
+      String strCombination = vars.getGlobalVariable("inpCombination", "Account.combination", "");
+      printPage(response, vars, strAlias, strCombination, "", strAcctSchema, true);
     } else if(vars.commandIn("STRUCTURE")) {
     	printGridStructure(response, vars);
     } else if(vars.commandIn("DATA")) {
         if(vars.getStringParameter("newFilter").equals("1"))
         clearSessionValues(vars);
+        String strWindowId = vars.getStringParameter("WindowID");
+        String strAcctSchema = vars.getSessionValue(strWindowId + "|C_AcctSchema_ID");
+        if (strAcctSchema.equals("")) {
+          strAcctSchema = vars.getRequestGlobalVariable("inpAcctSchema", "Account.cAcctschemaId");
+        }
+        if (strAcctSchema.equals("")) {
+          strAcctSchema = Utility.getContext(this, vars, "$C_AcctSchema_ID", "Account");
+          vars.setSessionValue("Account.cAcctschemaId", strAcctSchema);
+        }
+        else
+          vars.setSessionValue("$C_AcctSchema_ID", strAcctSchema);
     	String strAlias = vars.getGlobalVariable("inpAlias", "Account.alias", "");
         String strCombination = vars.getGlobalVariable("inpCombination", "Account.combination", "");
         String strOrganization = vars.getStringParameter("inpOrganization");
@@ -84,7 +95,7 @@ public class Account extends HttpSecureAppServlet {
         String strPageSize = vars.getStringParameter("page_size");
         String strSortCols = vars.getStringParameter("sort_cols").toUpperCase();
         String strSortDirs = vars.getStringParameter("sort_dirs").toUpperCase();
-        printGridData(response, vars, strAlias, strCombination, strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, strSortCols + " " + strSortDirs, strOffset, strPageSize, strNewFilter);
+        printGridData(response, vars, strAlias, strCombination, strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, strSortCols + " " + strSortDirs, strOffset, strPageSize, strNewFilter, strAcctSchema);
     } else if (vars.commandIn("KEY")) {
       String strKeyValue = vars.getRequestGlobalVariable("inpNameValue", "Account.alias");
       String strAcctSchema = vars.getRequestGlobalVariable("inpAcctSchema", "Account.cAcctschemaId");
@@ -149,7 +160,7 @@ public class Account extends HttpSecureAppServlet {
   void printPage(HttpServletResponse response, VariablesSecureApp vars, String strAlias, String strCombination, String strValidCombination, String strAcctSchema, boolean isDefault) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: Frame 1 of the accounts seeker");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/info/Account").createXmlDocument();
-    AccountData[] data = null;    
+    AccountData[] data = null;
     if (isDefault) {
       if (strAlias.equals("") && strCombination.equals("")) strAlias = "%";
       data = AccountData.set(strAlias, strCombination);
@@ -201,7 +212,7 @@ public class Account extends HttpSecureAppServlet {
     }
 
     xmlDocument.setParameter("orgs", vars.getStringParameter("inpAD_Org_ID"));
-    
+
     xmlDocument.setParameter("grid", "20");
     xmlDocument.setParameter("grid_Offset", "");
     xmlDocument.setParameter("grid_SortCols", "1");
@@ -213,16 +224,16 @@ public class Account extends HttpSecureAppServlet {
     out.println(xmlDocument.print());
     out.close();
   }
-  
+
   void printGridStructure(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
 	  if (log4j.isDebugEnabled()) log4j.debug("Output: print page structure");
 	    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/DataGridStructure").createXmlDocument();
-	    
+
 	    SQLReturnObject[] data = getHeaders(vars);
 	    String type = "Hidden";
 	    String title = "";
 	    String description = "";
-	   	    
+
 	    xmlDocument.setParameter("type", type);
 	    xmlDocument.setParameter("title", title);
 	    xmlDocument.setParameter("description", description);
@@ -234,10 +245,10 @@ public class Account extends HttpSecureAppServlet {
 	    out.println(xmlDocument.print());
 	    out.close();
   }
-  
+
   private SQLReturnObject[] getHeaders(VariablesSecureApp vars) {
 	  SQLReturnObject[] data = null;
-	  Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();	  
+	  Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();
 	  String[] colNames = {"ALIAS","COMBINATION","DESCRIPTION", "AD_ORG_ID_D", "ACCOUNT_ID_D", "M_PRODUCT_ID_D", "C_BPARTNER_ID_D", "C_PROJECT_ID_D", "C_CAMPAIGN_ID_D", "C_VALIDCOMBINATION_ID", "ROWKEY"};
 	  String[] colWidths = {"43", "193", "151", "105", "123", "71", "101", "43", "59", "0", "0"};
 	  for(int i=0; i < colNames.length; i++) {
@@ -245,7 +256,7 @@ public class Account extends HttpSecureAppServlet {
 		  dataAux.setData("columnname", colNames[i]);
 	      dataAux.setData("gridcolumnname", colNames[i]);
 	      dataAux.setData("adReferenceId", "AD_Reference_ID");
-	      dataAux.setData("adReferenceValueId", "AD_ReferenceValue_ID");	      
+	      dataAux.setData("adReferenceValueId", "AD_ReferenceValue_ID");
 	      dataAux.setData("isidentifier", (colNames[i].equals("ROWKEY")?"true":"false"));
 	      dataAux.setData("iskey", (colNames[i].equals("ROWKEY")?"true":"false"));
 	      dataAux.setData("isvisible", (colNames[i].endsWith("_ID")?"false":"true"));
@@ -259,18 +270,17 @@ public class Account extends HttpSecureAppServlet {
 	  vAux.copyInto(data);
 	  return data;
   }
-  
-  void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strAlias, String strCombination, String strOrganization, String strAccount, String strProduct, String strBPartner, String strProject, String strCampaign, String strOrderBy, String strOffset, String strPageSize, String strNewFilter ) throws IOException, ServletException {
+
+  void printGridData(HttpServletResponse response, VariablesSecureApp vars, String strAlias, String strCombination, String strOrganization, String strAccount, String strProduct, String strBPartner, String strProject, String strCampaign, String strOrderBy, String strOffset, String strPageSize, String strNewFilter, String strAcctSchema) throws IOException, ServletException {
 	    if (log4j.isDebugEnabled()) log4j.debug("Output: print page rows");
-	    
+
 	    SQLReturnObject[] headers = getHeaders(vars);
 	    FieldProvider[] data = null;
 	    String type = "Hidden";
 	    String title = "";
 	    String description = "";
 	    String strNumRows = "0";
-	    String strAcctSchema = vars.getSessionValue("Account.cAcctschemaId");
-	    
+
 	    if (headers!=null) {
 	      try{
 	    	strAcctSchema = (strAcctSchema.equals("%")?"":strAcctSchema);
@@ -283,7 +293,7 @@ public class Account extends HttpSecureAppServlet {
 	  		else {
 	  			strNumRows = vars.getSessionValue("AccountInfo.numrows");
 	  		}
-		  			
+
 	  		// Filtering result
 	    	if(this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
 	    		String oraLimit = strOffset + " AND " + String.valueOf(Integer.valueOf(strOffset).intValue() + Integer.valueOf(strPageSize));
@@ -292,7 +302,7 @@ public class Account extends HttpSecureAppServlet {
 	    	else {
 	    		String pgLimit = strPageSize + " OFFSET " + strOffset;
 	    		data = AccountData.select(this, "1", strAcctSchema, strAlias, strCombination, strOrganization, strAccount, strProduct, strBPartner, strProject, strCampaign, "", Utility.getContext(this, vars, "#User_Client", "Account"), Utility.getContext(this, vars, "#User_Org", "Account"), strOrderBy, "", pgLimit);
-	    	}    	
+	    	}
 	      } catch (ServletException e) {
 	        log4j.error("Error in print page data: " + e);
 	        e.printStackTrace();
@@ -306,7 +316,7 @@ public class Account extends HttpSecureAppServlet {
 	          if (!myError.getMessage().startsWith("<![CDATA[")) description = "<![CDATA[" + myError.getMessage() + "]]>";
 	          else description = myError.getMessage();
 	        }
-	      } catch (Exception e) { 
+	      } catch (Exception e) {
 	        if (log4j.isDebugEnabled()) log4j.debug("Error obtaining rows data");
 	        type = "Error";
 	        title = "Error";
@@ -315,7 +325,7 @@ public class Account extends HttpSecureAppServlet {
 	        e.printStackTrace();
 	      }
 	    }
-	    
+
 	    if (!type.startsWith("<![CDATA[")) type = "<![CDATA[" + type + "]]>";
 	    if (!title.startsWith("<![CDATA[")) title = "<![CDATA[" + title + "]]>";
 	    if (!description.startsWith("<![CDATA[")) description = "<![CDATA[" + description + "]]>";
@@ -333,7 +343,7 @@ public class Account extends HttpSecureAppServlet {
 	        for (int k=0;k<headers.length;k++) {
 	          strRowsData.append("      <td><![CDATA[");
 	          String columnname = headers[k].getField("columnname");
-	          
+
 	          if ((data[j].getField(columnname)) != null) {
 	            if (headers[k].getField("adReferenceId").equals("32")) strRowsData.append(strReplaceWith).append("/images/");
 	            strRowsData.append(data[j].getField(columnname).replaceAll("<b>","").replaceAll("<B>","").replaceAll("</b>","").replaceAll("</B>","").replaceAll("<i>","").replaceAll("<I>","").replaceAll("</i>","").replaceAll("</I>","").replaceAll("<p>","&nbsp;").replaceAll("<P>","&nbsp;").replaceAll("<br>","&nbsp;").replaceAll("<BR>","&nbsp;"));
@@ -349,19 +359,19 @@ public class Account extends HttpSecureAppServlet {
 	    }
 	    strRowsData.append("  </rows>\n");
 	    strRowsData.append("</xml-data>\n");
-	        
+
 	    response.setContentType("text/xml; charset=UTF-8");
 	    response.setHeader("Cache-Control", "no-cache");
 	    PrintWriter out = response.getWriter();
-	    if (log4j.isDebugEnabled()) log4j.debug(strRowsData.toString());  
+	    if (log4j.isDebugEnabled()) log4j.debug(strRowsData.toString());
 	    out.print(strRowsData.toString());
 	    out.close();
 	  }
-  
+
   private void clearSessionValues(VariablesSecureApp vars) {
     vars.removeSessionValue("");
   }
-  
+
   public String getServletInfo() {
     return "Servlet that presents que accounts seeker";
   } // end of getServletInfo() method
