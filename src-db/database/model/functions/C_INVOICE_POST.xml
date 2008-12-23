@@ -451,7 +451,7 @@ cWithHoldId varchar2(32);
           END LOOP; -- Create Reversal Invoice Lines
           -- Close Invoice
           UPDATE C_INVOICE
-            SET DocStatus='RE', -- it IS reversed
+            SET DocStatus='VO', -- it IS reversed
             Description=COALESCE(TO_CHAR(Description), '') || ' (*R* -> ' || v_RDocumentNo || ')',
             DocAction='--',
             Processed='Y',

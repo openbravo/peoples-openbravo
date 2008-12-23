@@ -513,7 +513,7 @@
           UPDATE M_INOUT
             SET Description=COALESCE(TO_CHAR(Description), '') || ' (*R*=' || v_RDocumentNo || ')',
             Processed='Y',
-            DocStatus='RE', -- it IS reversed
+            DocStatus='VO', -- it IS reversed
             DocAction='--',
             Updated=now(),
             UpdatedBy=v_User
@@ -527,7 +527,7 @@
           UPDATE M_INOUT
             SET Updated=now(),
             UpdatedBy=v_User,
-            DocStatus='RE' -- the reversal transaction
+            DocStatus='VO' -- the reversal transaction
           WHERE M_InOut_ID=v_RInOut_ID;
         END IF; -- ReverseCorrection
       END LOOP; -- InOut Header
