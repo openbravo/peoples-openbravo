@@ -14,7 +14,6 @@ import java.util.HashMap;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
-import org.openbravo.database.CPStandAlone;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -25,8 +24,7 @@ public class TranslationHandler {
   
   private static final Logger log4j = Logger.getLogger(TranslationHandler.class);
   private XmlDocument xmlDocument;
-  private ConnectionProvider conn;
-  private String propertiesFileString;
+  private ConnectionProvider conn;  
   private String moduleLang = "";
   private String language = "";
   private String tabId = "";
@@ -37,30 +35,15 @@ public class TranslationHandler {
   private HashMap<String, String> formLabels;
   private boolean continueTranslationProcess = true; 
   
-  public TranslationHandler(XmlDocument xmlDoc) {
-    xmlDocument = xmlDoc;
-  }
+  public TranslationHandler(ConnectionProvider connProvider, XmlDocument xmlDoc) {
+	    this.conn = connProvider;
+	    xmlDocument = xmlDoc;
+	  }
   
   public TranslationHandler(ConnectionProvider con) {
     conn = con;
   }
-  
-  /* set the properties file which will be used to generate the connection provider
-   * this is only required if a ConnectionProvider is not passed in the constructor
-   */
-  public void setPropertiesFile(String propertiesFileString) {
-    if (propertiesFileString.endsWith("Openbravo.properties")) {
-      File propertiesFile = new File(propertiesFileString);
-      if (propertiesFile.exists()) {
-        this.propertiesFileString = propertiesFileString;
-        createConnectionProvider();
-      }
-    } else {
-      continueTranslationProcess = false;
-      log4j.debug("Invalid properties file string.");
-    }
-  }
-  
+    
   // set the language from the current users profile
   public String getLanguage() { return language; }
   public void setLanguage(String lang) {
@@ -195,12 +178,6 @@ public class TranslationHandler {
     }
     
     reportString = buffer.toString();
-  }
-  
-  private void createConnectionProvider() {
-    if (conn == null && propertiesFileString != null && !propertiesFileString.equals("")) {
-      conn = new CPStandAlone(propertiesFileString);
-    }
   }
   
   private void processTranslations() { 

@@ -141,7 +141,19 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
       
       globalParameters = ConfigParameters.retrieveFrom(config.getServletContext());
       strDefaultServlet = globalParameters.strDefaultServlet;
-      xmlEngine = new XmlEngine();
+      
+      if (myPool == null) {
+        try {
+          PoolFileName = config.getServletContext().getInitParameter("PoolFile");
+          String strPoolFile = prefix + "/" + strBaseConfigPath + "/" + PoolFileName;
+          isJNDIModeOn=isJndiModeOn(strPoolFile);
+          makeConnection(config);
+        } catch (Exception ex) {
+          ex.printStackTrace();
+        }
+      }
+
+      xmlEngine = new XmlEngine(this.myPool);
       xmlEngine.fileBaseLocation = new File(globalParameters.getBaseDesignPath());
       xmlEngine.strReplaceWhat = globalParameters.strReplaceWhat;
       xmlEngine.strReplaceWith = globalParameters.strLocalReplaceWith;
@@ -151,20 +163,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
       xmlEngine.initialize();
 
       log4j.debug("Text of divided by zero: " + XmlEngine.strTextDividedByZero);
-     
 
-      
-      if (myPool == null) {
-        try {
-          PoolFileName = config.getServletContext().getInitParameter("PoolFile");
-          String strPoolFile = prefix + "/" + strBaseConfigPath + "/" + PoolFileName;
-          isJNDIModeOn=isJndiModeOn(strPoolFile);
-          makeConnection();
-        } catch (Exception ex) {
-          ex.printStackTrace();
-        }
-      }
-     
     } catch (ServletException e) {
       e.printStackTrace();
     }
@@ -185,7 +184,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
   public void initialize(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
     strDireccion = HttpBaseUtils.getLocalAddress(request);
     String strActualUrl = HttpBaseUtils.getLocalHostAddress(request);
-    if(log4j.isDebugEnabled()) log4j.debug("Server name: " + strActualUrl);
+    if(log4j.isDebugEnabled()) log4j.debug("Server name: " + strActualUrl);    
     HttpSession session = request.getSession(true);
     String strLanguage = "";
     try {
@@ -707,7 +706,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
   }
 
   
-  public void makeConnection() throws PoolNotFoundException {
+  public void makeConnection(ServletConfig config) throws PoolNotFoundException {
     if (myPool != null) {
       try {
         myPool.destroy();
@@ -724,7 +723,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider
       if (isJNDIModeOn) {
         myPool = new JNDIConnectionProvider(strPoolFile, (!strPoolFile.startsWith("/") && !strPoolFile.substring(1, 1).equals(":")));
       } else {
-        myPool = new ConnectionProviderImpl(strPoolFile,(!strPoolFile.startsWith("/") && !strPoolFile.substring(1,1).equals(":")), strContext);
+        myPool = ConnectionProviderContextListener.getPool(config.getServletContext());
       }
     } catch (Exception e) {
        e.printStackTrace();	

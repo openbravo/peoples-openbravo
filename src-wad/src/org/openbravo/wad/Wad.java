@@ -142,8 +142,8 @@ public class Wad extends DefaultHandler {
     final String strFileConnection = argv[0];
     final Wad wad = new Wad();
     wad.strSystemSeparator = System.getProperty("file.separator");
-    wad.createXmlEngine(strFileConnection);
     wad.createPool(strFileConnection + "/Openbravo.properties");
+    wad.createXmlEngine(strFileConnection);
     wad.readProperties(strFileConnection + "/Openbravo.properties");
     try {
       // the second parameter is the tab to be generated
@@ -3389,7 +3389,7 @@ public class Wad extends DefaultHandler {
    * @param fileConnection The path to the connection file.
    */
   public void createXmlEngine(String fileConnection) {
-    xmlEngine = new XmlEngine();
+    xmlEngine = new XmlEngine(this.pool);
     xmlEngine.isResource = true;
     xmlEngine.fileBaseLocation = new File(".");
     xmlEngine.strReplaceWhat = null;

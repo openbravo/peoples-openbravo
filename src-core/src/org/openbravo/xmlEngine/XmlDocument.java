@@ -257,7 +257,8 @@ public class XmlDocument implements XmlComponentValue {
             if (log4jXmlDocument.isDebugEnabled())
                 log4jXmlDocument.debug("Start of print of: "
                         + xmlTemplate.strName);
-            final TranslationHandler handler = new TranslationHandler(this);
+            
+            final TranslationHandler handler = new TranslationHandler(this.xmlTemplate.xmlEngine.connProvider, this);
             handler.setFileName(xmlTemplate.strName.replace("designorg/",
                     "/org/")
                     + ".html");
@@ -265,8 +266,6 @@ public class XmlDocument implements XmlComponentValue {
             log4jXmlDocument
                     .debug("print() - xmlTemplate.xmlEngine.fileBaseLocation: "
                             + xmlTemplate.xmlEngine.fileBaseLocation);
-            handler.setPropertiesFile(xmlTemplate.xmlEngine.fileBaseLocation
-                    + "/../../WEB-INF/Openbravo.properties");
 
             if (hasParameterValue != null && !hasParameterValue.isEmpty()) {
                 if (hasParameterValue.get("tabId") != null
@@ -340,6 +339,7 @@ public class XmlDocument implements XmlComponentValue {
          * log4jXmlDocument.debug("XmlDocument: String length:" +
          * strStringPrint.length());
          */
+        
         return strPrint.toString();
     }
 

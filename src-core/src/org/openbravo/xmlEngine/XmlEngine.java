@@ -25,6 +25,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.apache.xerces.parsers.*;
+import org.openbravo.database.ConnectionProvider;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.apache.log4j.Logger;
@@ -55,6 +56,12 @@ public class XmlEngine extends HttpServlet {
   static Logger log4jXmlEngine = Logger.getLogger(XmlEngine.class);
   static Logger log4jReloadXml = Logger.getLogger("reloadXml");
 
+  ConnectionProvider connProvider;
+  
+  public XmlEngine(ConnectionProvider connProvider) {
+	  this.connProvider = connProvider;
+  }
+  
   public XmlEngine() {
     //    init();
   }
