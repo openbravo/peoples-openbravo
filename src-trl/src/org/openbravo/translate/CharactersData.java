@@ -15,30 +15,32 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.translate;
 
-
 public class CharactersData {
-  String id;
-  StringBuffer text;
+    String id;
+    StringBuffer text;
 
-  public CharactersData(String _id) {
-    this.id = _id;
-    this.text = new StringBuffer();
-  }
+    public CharactersData(String _id) {
+        this.id = _id;
+        this.text = new StringBuffer();
+    }
 
-  public String key() {
-    return this.id;
-  }
+    public String key() {
+        return this.id;
+    }
 
-  public void add(String _text) {
-    if (this.text==null) this.text = new StringBuffer();
-    this.text.append(_text);
-  }
+    public void add(String _text) {
+        if (this.text == null)
+            this.text = new StringBuffer();
+        this.text.append(_text);
+    }
 
-  public String toString() {
-    if (this.text==null) return "";
-    else return this.text.toString();
-  }
+    public String toString() {
+        if (this.text == null)
+            return "";
+        else
+            return this.text.toString();
+    }
 }

@@ -34,19 +34,19 @@ import org.xml.sax.SAXException;
  */
 public class LocalEntityResolver implements EntityResolver {
 
-	public InputSource resolveEntity(String publicId, String systemId)
-			throws SAXException, IOException {
+    public InputSource resolveEntity(String publicId, String systemId)
+            throws SAXException, IOException {
 
-		if (systemId
-				.equals("http://jasperreports.sourceforge.net/dtds/jasperreport.dtd")) {
-			// return a special input source using the system classloader.
-			return new InputSource(
-					System.class
-							.getResourceAsStream("/net/sf/jasperreports/engine/dtds/jasperreport.dtd"));
-		} else {
-			// Use default behavior.
-			return null;
-		}
-	}
+        if (systemId
+                .equals("http://jasperreports.sourceforge.net/dtds/jasperreport.dtd")) {
+            // return a special input source using the system classloader.
+            return new InputSource(
+                    System.class
+                            .getResourceAsStream("/net/sf/jasperreports/engine/dtds/jasperreport.dtd"));
+        } else {
+            // Use default behavior.
+            return null;
+        }
+    }
 
 }

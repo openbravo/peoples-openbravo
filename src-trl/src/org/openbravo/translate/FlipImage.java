@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 
 package org.openbravo.translate;
 
@@ -26,37 +26,37 @@ import javax.imageio.ImageIO;
 
 public class FlipImage {
 
-  public static BufferedImage getImage(String filePath) throws Exception 
-  {
-    BufferedImage bImage = ImageIO.read(new File (filePath));
-    return bImage;
-  }
+    public static BufferedImage getImage(String filePath) throws Exception {
+        BufferedImage bImage = ImageIO.read(new File(filePath));
+        return bImage;
+    }
 
-  public static BufferedImage flip(BufferedImage img) {  
-    int w = img.getWidth();  
-    int h = img.getHeight();
-    BufferedImage dimg = new BufferedImage(w, h, BufferedImage.TRANSLUCENT);  
-    Graphics2D g = dimg.createGraphics();  
-    g.drawImage(img, 0, 0, w, h, w, 0, 0, h, null);  
-    g.dispose();  
-    return dimg;  
-  }
+    public static BufferedImage flip(BufferedImage img) {
+        int w = img.getWidth();
+        int h = img.getHeight();
+        BufferedImage dimg = new BufferedImage(w, h, BufferedImage.TRANSLUCENT);
+        Graphics2D g = dimg.createGraphics();
+        g.drawImage(img, 0, 0, w, h, w, 0, 0, h, null);
+        g.dispose();
+        return dimg;
+    }
 
-  public static void saveImage(String path, BufferedImage image) throws Exception {
-    File imageFile = new File(path);
-    String threeLetterFormat = path.substring(path.length()-3);
-    ImageIO.write(image, threeLetterFormat, imageFile);
-  }
-  
-  public static void proceed (String path) throws Exception {
-    BufferedImage im = getImage(path);
-    im = flip (im);
-    saveImage(path, im);
-  }
-  
-  /**
+    public static void saveImage(String path, BufferedImage image)
+            throws Exception {
+        File imageFile = new File(path);
+        String threeLetterFormat = path.substring(path.length() - 3);
+        ImageIO.write(image, threeLetterFormat, imageFile);
+    }
+
+    public static void proceed(String path) throws Exception {
+        BufferedImage im = getImage(path);
+        im = flip(im);
+        saveImage(path, im);
+    }
+
+    /**
    * 
    */
-  private static final long serialVersionUID = 1L;
-  
+    private static final long serialVersionUID = 1L;
+
 }
