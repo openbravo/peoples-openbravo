@@ -73,7 +73,9 @@ public class OBDal implements OBSingleton {
      * Commits the transaction and closes session.
      */
     public void commitAndClose() {
-        SessionHandler.getInstance().commitAndClose();
+        if (SessionHandler.isSessionHandlerPresent()) {
+            SessionHandler.getInstance().commitAndClose();
+        }
     }
 
     /**
