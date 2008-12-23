@@ -8,14 +8,14 @@
  * CONDITIONS OF ANY KIND, either  express  or  implied.  See  the  License  for  the
  * specific language governing permissions and limitations under the License.
  ************************************************************************************
-*/
+ */
 package org.openbravo.data;
 
 class FieldAdded {
-  String strName;
-  String strValue;
+    String strName;
+    String strValue;
 
-  public FieldAdded(String strName) {
-    this.strName = strName;
-  }
+    public FieldAdded(String strName) {
+        this.strName = strName;
+    }
 }

@@ -24,7 +24,7 @@ public class PoolNotFoundException extends Exception {
      * Constructs a new PoolNotFoundException with no detail message.
      */
     public PoolNotFoundException() {
-	super();
+        super();
     }
 
     /**
@@ -34,7 +34,7 @@ public class PoolNotFoundException extends Exception {
      *            the detail message
      */
     public PoolNotFoundException(String s) {
-	super(s);
+        super(s);
     }
 
     /**
@@ -46,6 +46,6 @@ public class PoolNotFoundException extends Exception {
      *            the exception cause
      */
     public PoolNotFoundException(String s, Throwable t) {
-	super(s, t);
+        super(s, t);
     }
 }

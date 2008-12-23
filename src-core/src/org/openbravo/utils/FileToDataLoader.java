@@ -8,7 +8,7 @@
  * CONDITIONS OF ANY KIND, either  express  or  implied.  See  the  License  for  the
  * specific language governing permissions and limitations under the License.
  ************************************************************************************
-*/
+ */
 package org.openbravo.utils;
 
 import org.openbravo.data.*;
@@ -17,35 +17,38 @@ import java.io.*;
 import org.apache.log4j.Logger;
 import java.util.Vector;
 
-public class FileToDataLoader extends StandAloneConnection{
+public class FileToDataLoader extends StandAloneConnection {
 
-  static Logger log4j = Logger.getLogger(FileToDataLoader.class);
+    static Logger log4j = Logger.getLogger(FileToDataLoader.class);
 
-  public static FieldProvider[] getFileIntoData(File path, String FileName, SetFieldProvider data) {
-    if (log4j.isDebugEnabled()) log4j.debug("processing replace file: " + FileName);
-    Vector<FieldProvider> vector = new Vector<FieldProvider>();
-    FieldProvider[] newData = null;
-    try {
-      File file = new File(path, FileName);
-      if (!file.exists()) {
-        log4j.error("Unknown file: " + path + "\\" + FileName);
-        return null;
-      }
-      BufferedReader fileBuffer = new BufferedReader(new FileReader(file));
+    public static FieldProvider[] getFileIntoData(File path, String FileName,
+            SetFieldProvider data) {
+        if (log4j.isDebugEnabled())
+            log4j.debug("processing replace file: " + FileName);
+        Vector<FieldProvider> vector = new Vector<FieldProvider>();
+        FieldProvider[] newData = null;
+        try {
+            File file = new File(path, FileName);
+            if (!file.exists()) {
+                log4j.error("Unknown file: " + path + "\\" + FileName);
+                return null;
+            }
+            BufferedReader fileBuffer = new BufferedReader(new FileReader(file));
 
-      String nextLine = fileBuffer.readLine();
-      while (nextLine != null) {
-        FieldProvider fieldProvider = data.setFieldProvider(nextLine);
-        if (fieldProvider != null) vector.addElement(fieldProvider);
-        nextLine = fileBuffer.readLine();
-      }
-      fileBuffer.close();
-      newData = new FieldProvider[vector.size()];
-      vector.copyInto(newData);
-    } catch (Exception e) {
-      e.printStackTrace();
-      return null;
+            String nextLine = fileBuffer.readLine();
+            while (nextLine != null) {
+                FieldProvider fieldProvider = data.setFieldProvider(nextLine);
+                if (fieldProvider != null)
+                    vector.addElement(fieldProvider);
+                nextLine = fileBuffer.readLine();
+            }
+            fileBuffer.close();
+            newData = new FieldProvider[vector.size()];
+            vector.copyInto(newData);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return newData;
     }
-    return newData;
-  }
 }

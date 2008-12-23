@@ -8,29 +8,32 @@
  * CONDITIONS OF ANY KIND, either  express  or  implied.  See  the  License  for  the
  * specific language governing permissions and limitations under the License.
  ************************************************************************************
-*/
+ */
 package org.openbravo.xmlEngine;
 
 import java.text.DecimalFormat;
 
-import org.apache.log4j.Logger ;
+import org.apache.log4j.Logger;
 
 class FunctionEqualTemplate extends FunctionTemplate {
 
-  static Logger log4jFunctionEqualTemplate = Logger.getLogger(FunctionEqualTemplate.class);
+    static Logger log4jFunctionEqualTemplate = Logger
+            .getLogger(FunctionEqualTemplate.class);
 
-  public FunctionEqualTemplate(String fieldName, DecimalFormat formatOutput, DecimalFormat formatSimple,
-      DataTemplate dataTemplate, XmlComponentTemplate arg1) {
-    super(fieldName, formatOutput, formatSimple, dataTemplate, arg1, null);
-  }
-
-  public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
-    FunctionValue functionValue = searchFunction(xmlDocument);
-    if (functionValue == null) {
-      if(log4jFunctionEqualTemplate.isDebugEnabled()) log4jFunctionEqualTemplate.debug("New FunctionEqualValue");
-      functionValue = new FunctionEqualValue(this, xmlDocument);
+    public FunctionEqualTemplate(String fieldName, DecimalFormat formatOutput,
+            DecimalFormat formatSimple, DataTemplate dataTemplate,
+            XmlComponentTemplate arg1) {
+        super(fieldName, formatOutput, formatSimple, dataTemplate, arg1, null);
     }
-    return functionValue;
-  }
+
+    public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
+        FunctionValue functionValue = searchFunction(xmlDocument);
+        if (functionValue == null) {
+            if (log4jFunctionEqualTemplate.isDebugEnabled())
+                log4jFunctionEqualTemplate.debug("New FunctionEqualValue");
+            functionValue = new FunctionEqualValue(this, xmlDocument);
+        }
+        return functionValue;
+    }
 
 }

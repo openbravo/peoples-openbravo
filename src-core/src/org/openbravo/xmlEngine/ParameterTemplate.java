@@ -8,31 +8,33 @@
  * CONDITIONS OF ANY KIND, either  express  or  implied.  See  the  License  for  the
  * specific language governing permissions and limitations under the License.
  ************************************************************************************
-*/
+ */
 package org.openbravo.xmlEngine;
 
 import java.util.Vector;
 
 class ParameterTemplate implements XmlComponentTemplate, IDComponent {
-  String strName = null;
-  int type;
-  String strDefault = null;
-  String section = null;
-  XmlComponentTemplate xmlComponentTemplate = null;
-  Vector<ReplaceElement> vecReplace = null;
+    String strName = null;
+    int type;
+    String strDefault = null;
+    String section = null;
+    XmlComponentTemplate xmlComponentTemplate = null;
+    Vector<ReplaceElement> vecReplace = null;
 
-  public int type() {
-    return PARAMETER;
-  }
+    public int type() {
+        return PARAMETER;
+    }
 
+    public ParameterValue createParameterValue(XmlDocument xmlDocument) {
+        ParameterValue parameterValue = xmlDocument.hasParameterValue
+                .get(strName);
+        if (parameterValue == null)
+            parameterValue = new ParameterValue(this, xmlDocument);
+        return parameterValue;
+    }
 
-  public ParameterValue createParameterValue(XmlDocument xmlDocument) {
-    ParameterValue parameterValue = xmlDocument.hasParameterValue.get(strName);
-    if (parameterValue == null) parameterValue = new ParameterValue(this, xmlDocument);
-    return parameterValue;
-  }
-  public XmlComponentValue createXmlComponentValue(XmlDocument xmlDocument) {
-    return createParameterValue(xmlDocument);
-  }
+    public XmlComponentValue createXmlComponentValue(XmlDocument xmlDocument) {
+        return createParameterValue(xmlDocument);
+    }
 
 }

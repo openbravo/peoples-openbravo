@@ -8,33 +8,43 @@
  * CONDITIONS OF ANY KIND, either  express  or  implied.  See  the  License  for  the
  * specific language governing permissions and limitations under the License.
  ************************************************************************************
-*/
+ */
 package org.openbravo.xmlEngine;
 
-import org.apache.log4j.Logger ;
+import org.apache.log4j.Logger;
 
 class FunctionAddValue extends FunctionEvaluationValue {
 
-  static Logger log4jFunctionAddValue = Logger.getLogger(FunctionAddValue.class);
+    static Logger log4jFunctionAddValue = Logger
+            .getLogger(FunctionAddValue.class);
 
-  public FunctionAddValue(FunctionTemplate functionTemplate, XmlDocument xmlDocument) {
-    super(functionTemplate, xmlDocument);
-  }
-
-  public String print() {
-    if (arg1Value.printSimple().equals(XmlEngine.strTextDividedByZero) || arg2Value.printSimple().equals(XmlEngine.strTextDividedByZero)) {
-      return XmlEngine.strTextDividedByZero;
-    } else {
-      return functionTemplate.printFormatOutput(Double.valueOf(arg1Value.printSimple()).doubleValue() + Double.valueOf(arg2Value.printSimple()).doubleValue());
+    public FunctionAddValue(FunctionTemplate functionTemplate,
+            XmlDocument xmlDocument) {
+        super(functionTemplate, xmlDocument);
     }
-  }
 
-  public String printSimple() {
-    if (arg1Value.printSimple().equals(XmlEngine.strTextDividedByZero) || arg2Value.printSimple().equals(XmlEngine.strTextDividedByZero)) {
-      return XmlEngine.strTextDividedByZero;
-    } else {
-      return functionTemplate.printFormatSimple(Double.valueOf(arg1Value.printSimple()).doubleValue() + Double.valueOf(arg2Value.printSimple()).doubleValue());
+    public String print() {
+        if (arg1Value.printSimple().equals(XmlEngine.strTextDividedByZero)
+                || arg2Value.printSimple().equals(
+                        XmlEngine.strTextDividedByZero)) {
+            return XmlEngine.strTextDividedByZero;
+        } else {
+            return functionTemplate.printFormatOutput(Double.valueOf(
+                    arg1Value.printSimple()).doubleValue()
+                    + Double.valueOf(arg2Value.printSimple()).doubleValue());
+        }
     }
-  }
+
+    public String printSimple() {
+        if (arg1Value.printSimple().equals(XmlEngine.strTextDividedByZero)
+                || arg2Value.printSimple().equals(
+                        XmlEngine.strTextDividedByZero)) {
+            return XmlEngine.strTextDividedByZero;
+        } else {
+            return functionTemplate.printFormatSimple(Double.valueOf(
+                    arg1Value.printSimple()).doubleValue()
+                    + Double.valueOf(arg2Value.printSimple()).doubleValue());
+        }
+    }
 
 }

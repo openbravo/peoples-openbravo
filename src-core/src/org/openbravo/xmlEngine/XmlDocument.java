@@ -22,23 +22,23 @@ public class XmlDocument implements XmlComponentValue {
     XmlTemplate xmlTemplate;
     XmlDocument parentXmlDocument;
     Hashtable<String, XmlDocument> hasSubXmlDocuments; // hashtable of
-                                                       // SubXmlDocuments
-                                                       // corresponding to
-                                                       // SubXmlTemplates
+    // SubXmlDocuments
+    // corresponding to
+    // SubXmlTemplates
     Hashtable<String, DataValue> hasDataValue; // hashtable of DataValue
     Hashtable<String, ParameterValue> hasParameterValue; // contains the
-                                                         // ParameterValue that
-                                                         // not are for the SQL
-                                                         // query
+    // ParameterValue that
+    // not are for the SQL
+    // query
     Hashtable<String, LabelValue> hasLabelValue; // contains the label values in
-                                                 // the template
+    // the template
     XmlVectorValue xmlVectorValue; // contains Xml Components before, after and
-                                   // between DataValues and the DataValues
+    // between DataValues and the DataValues
     Hashtable<Object, Object> hasXmlComponentValue; // contains the
-                                                    // XmlComponentValues of the
-                                                    // document CHX (Change to
-                                                    // Hashtable of
-                                                    // XmlComponentValue
+    // XmlComponentValues of the
+    // document CHX (Change to
+    // Hashtable of
+    // XmlComponentValue
     public boolean ignoreTranslation = false;
     // it store pairs of XmlComponentTemplate (key), XmlComponentValue (value)
 
@@ -257,8 +257,9 @@ public class XmlDocument implements XmlComponentValue {
             if (log4jXmlDocument.isDebugEnabled())
                 log4jXmlDocument.debug("Start of print of: "
                         + xmlTemplate.strName);
-            
-            final TranslationHandler handler = new TranslationHandler(this.xmlTemplate.xmlEngine.connProvider, this);
+
+            final TranslationHandler handler = new TranslationHandler(
+                    this.xmlTemplate.xmlEngine.connProvider, this);
             handler.setFileName(xmlTemplate.strName.replace("designorg/",
                     "/org/")
                     + ".html");
@@ -339,7 +340,7 @@ public class XmlDocument implements XmlComponentValue {
          * log4jXmlDocument.debug("XmlDocument: String length:" +
          * strStringPrint.length());
          */
-        
+
         return strPrint.toString();
     }
 

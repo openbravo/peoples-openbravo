@@ -8,45 +8,47 @@
  * CONDITIONS OF ANY KIND, either  express  or  implied.  See  the  License  for  the
  * specific language governing permissions and limitations under the License.
  ************************************************************************************
-*/
+ */
 package org.openbravo.xmlEngine;
 
-import org.apache.log4j.Logger ;
+import org.apache.log4j.Logger;
 
 class FunctionSumValue extends FunctionValue {
-  double sum;
+    double sum;
 
-  static Logger log4jFunctionSumValue = Logger.getLogger(FunctionSumValue.class);
+    static Logger log4jFunctionSumValue = Logger
+            .getLogger(FunctionSumValue.class);
 
-  public FunctionSumValue(FunctionTemplate functionTemplate, XmlDocument xmlDocument) {
-    super(functionTemplate, xmlDocument);
-  }
-
-  public String print() {
-    if (functionTemplate.formatOutput != null) {
-      return functionTemplate.formatOutput.format(sum);
-    } else {
-      return Double.toString(sum);
+    public FunctionSumValue(FunctionTemplate functionTemplate,
+            XmlDocument xmlDocument) {
+        super(functionTemplate, xmlDocument);
     }
-  }
 
-  public String printSimple() {
-    if (functionTemplate.formatSimple != null) {
-      return functionTemplate.formatSimple.format(sum);
-    } else {
-      return Double.toString(sum);
+    public String print() {
+        if (functionTemplate.formatOutput != null) {
+            return functionTemplate.formatOutput.format(sum);
+        } else {
+            return Double.toString(sum);
+        }
     }
-  }
 
-  public void acumulate() {
-    log4jFunctionSumValue.debug("Accumulate: " + fieldValue.print());
-    if (!fieldValue.print().equals("")) {
-      sum += Double.valueOf(fieldValue.printSimple()).doubleValue();
+    public String printSimple() {
+        if (functionTemplate.formatSimple != null) {
+            return functionTemplate.formatSimple.format(sum);
+        } else {
+            return Double.toString(sum);
+        }
     }
-  }
 
-  public void init() {
-    sum = 0;
-  }
+    public void acumulate() {
+        log4jFunctionSumValue.debug("Accumulate: " + fieldValue.print());
+        if (!fieldValue.print().equals("")) {
+            sum += Double.valueOf(fieldValue.printSimple()).doubleValue();
+        }
+    }
+
+    public void init() {
+        sum = 0;
+    }
 
 }

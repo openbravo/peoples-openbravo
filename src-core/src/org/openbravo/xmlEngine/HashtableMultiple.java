@@ -8,34 +8,36 @@
  * CONDITIONS OF ANY KIND, either  express  or  implied.  See  the  License  for  the
  * specific language governing permissions and limitations under the License.
  ************************************************************************************
-*/
+ */
 package org.openbravo.xmlEngine;
 
 import java.util.Vector;
 
-public class HashtableMultiple { // class to simulate a Hashtable but with various keys of the same value
-  // get returns the first key find but you can iterate to find all.
-  Vector<String> vecKeys;
-  Vector<Object> vecObjects;
-  public HashtableMultiple() {
-    vecKeys = new Vector<String>();
-    vecObjects = new Vector<Object>();
-  }
+public class HashtableMultiple { // class to simulate a Hashtable but with
+                                 // various keys of the same value
+    // get returns the first key find but you can iterate to find all.
+    Vector<String> vecKeys;
+    Vector<Object> vecObjects;
 
-  public void put(String id, Object ob) {
-    vecKeys.add(id);
-    vecObjects.add(ob);
-  }
-
-  public Object get(String id) {
-    Object ob = null;
-    int i = 0;
-    for (String strKey : vecKeys) {
-      if (strKey.equals(id)) {
-        return vecObjects.elementAt(i);
-      }
-      i++;
+    public HashtableMultiple() {
+        vecKeys = new Vector<String>();
+        vecObjects = new Vector<Object>();
     }
-    return ob;
-  }
+
+    public void put(String id, Object ob) {
+        vecKeys.add(id);
+        vecObjects.add(ob);
+    }
+
+    public Object get(String id) {
+        Object ob = null;
+        int i = 0;
+        for (String strKey : vecKeys) {
+            if (strKey.equals(id)) {
+                return vecObjects.elementAt(i);
+            }
+            i++;
+        }
+        return ob;
+    }
 }

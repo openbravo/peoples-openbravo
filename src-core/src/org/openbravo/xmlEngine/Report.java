@@ -8,39 +8,42 @@
  * CONDITIONS OF ANY KIND, either  express  or  implied.  See  the  License  for  the
  * specific language governing permissions and limitations under the License.
  ************************************************************************************
-*/
+ */
 package org.openbravo.xmlEngine;
 
 import org.openbravo.data.FieldProvider;
 
 public class Report {
-  XmlDocument xmlDocument;
+    XmlDocument xmlDocument;
 
-  public Report(String strReportFile, String[] discard, XmlEngine xmlEngine) {
-    xmlDocument = xmlEngine.readXmlTemplate(strReportFile, discard).createXmlDocument(null);
-  }
+    public Report(String strReportFile, String[] discard, XmlEngine xmlEngine) {
+        xmlDocument = xmlEngine.readXmlTemplate(strReportFile, discard)
+                .createXmlDocument(null);
+    }
 
-  public void setParameter(String strName, String strValue) {
-    xmlDocument.setParameter(strName, strValue);
-  }
+    public void setParameter(String strName, String strValue) {
+        xmlDocument.setParameter(strName, strValue);
+    }
 
-  public void setData(String structureName, FieldProvider[] data) {
-    xmlDocument.setData(structureName, data);
-  }
+    public void setData(String structureName, FieldProvider[] data) {
+        xmlDocument.setData(structureName, data);
+    }
 
-  public void setData(String xmlDocumentName, String structureName, FieldProvider[] data) {
-    xmlDocument.setData(xmlDocumentName, structureName, data);
-  }
+    public void setData(String xmlDocumentName, String structureName,
+            FieldProvider[] data) {
+        xmlDocument.setData(xmlDocumentName, structureName, data);
+    }
 
-  public void setDataArray(String xmlDocumentName, String structureName, FieldProvider[][] data) {
-    xmlDocument.setDataArray(xmlDocumentName, structureName, data);
-  }
+    public void setDataArray(String xmlDocumentName, String structureName,
+            FieldProvider[][] data) {
+        xmlDocument.setDataArray(xmlDocumentName, structureName, data);
+    }
 
-  public String print() {
-    return xmlDocument.print();
-  }
+    public String print() {
+        return xmlDocument.print();
+    }
 
-  public String print(String strText) {
-    return xmlDocument.print(strText);
-  }
+    public String print(String strText) {
+        return xmlDocument.print(strText);
+    }
 }

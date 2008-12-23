@@ -8,15 +8,16 @@
  * CONDITIONS OF ANY KIND, either  express  or  implied.  See  the  License  for  the
  * specific language governing permissions and limitations under the License.
  ************************************************************************************
-*/
+ */
 package org.openbravo.xmlEngine;
 
 class Discard implements IDComponent {
-  int type = DISCARD;
+    int type = DISCARD;
 
-  public Discard() {}
+    public Discard() {
+    }
 
-  public int type() {
-    return type;
-  }
+    public int type() {
+        return type;
+    }
 }

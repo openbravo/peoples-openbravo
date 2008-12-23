@@ -8,28 +8,32 @@
  * CONDITIONS OF ANY KIND, either  express  or  implied.  See  the  License  for  the
  * specific language governing permissions and limitations under the License.
  ************************************************************************************
-*/
+ */
 package org.openbravo.xmlEngine;
 
 import java.text.DecimalFormat;
 
-import org.apache.log4j.Logger ;
+import org.apache.log4j.Logger;
 
 class FunctionOrderTemplate extends FunctionTemplate {
 
-  static Logger log4jFunctionOrderTemplate = Logger.getLogger(FunctionOrderTemplate.class);
+    static Logger log4jFunctionOrderTemplate = Logger
+            .getLogger(FunctionOrderTemplate.class);
 
-  public FunctionOrderTemplate(String fieldName, FieldTemplate field, DecimalFormat format, DataTemplate dataTemplate) {
-    super(fieldName, field, format, format, dataTemplate);
-  }
-
-  public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
-    FunctionValue functionValue = searchFunction(xmlDocument);
-    if (functionValue == null) {
-      if(log4jFunctionOrderTemplate.isDebugEnabled()) log4jFunctionOrderTemplate.debug("New FunctionOrderValue: " + fieldName);
-      functionValue = new FunctionOrderValue(this, xmlDocument);
+    public FunctionOrderTemplate(String fieldName, FieldTemplate field,
+            DecimalFormat format, DataTemplate dataTemplate) {
+        super(fieldName, field, format, format, dataTemplate);
     }
-    return functionValue;
-  }
+
+    public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
+        FunctionValue functionValue = searchFunction(xmlDocument);
+        if (functionValue == null) {
+            if (log4jFunctionOrderTemplate.isDebugEnabled())
+                log4jFunctionOrderTemplate.debug("New FunctionOrderValue: "
+                        + fieldName);
+            functionValue = new FunctionOrderValue(this, xmlDocument);
+        }
+        return functionValue;
+    }
 
 }

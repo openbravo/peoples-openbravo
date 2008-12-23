@@ -8,7 +8,7 @@
  * CONDITIONS OF ANY KIND, either  express  or  implied.  See  the  License  for  the
  * specific language governing permissions and limitations under the License.
  ************************************************************************************
-*/
+ */
 package org.openbravo.base;
 
 import java.util.*;
@@ -19,49 +19,53 @@ import org.apache.log4j.LogManager;
 
 public class CategoryData implements FieldProvider {
 
-  static Logger log4j = Logger.getLogger(CategoryData.class);
-  public String category;
-  public String priority;
+    static Logger log4j = Logger.getLogger(CategoryData.class);
+    public String category;
+    public String priority;
 
-  public String getField(String fieldName) {
-    if (fieldName.equals("category"))
-      return category;
-    else if (fieldName.equals("priority"))
-      return priority;
-    else {
-      if (log4j.isDebugEnabled()) log4j.debug("Field does not exist: " + fieldName);
-      return null;
-    }
-  }
-
-  public static CategoryData[] getCategories() {
-    Vector<CategoryData> vector = new Vector<CategoryData>(0);
-
-    for (Enumeration<?> e = LogManager.getCurrentLoggers(); e.hasMoreElements() ;) {
-      Logger categoryItem = (Logger)e.nextElement();
-      CategoryData categoryData = new CategoryData();
-      categoryData.category = categoryItem.getName();
-      if (categoryItem.getLevel() != null) {
-        categoryData.priority = categoryItem.getLevel().toString();
-      }
-      if (vector.isEmpty()) vector.addElement(categoryData);
-      else{
-        int index = 0;
-        while (index<vector.size()) {
-          CategoryData cd = vector.get(index);
-          if (categoryData.category.compareTo(cd.category)<0) {
-            vector.add(index, categoryData);
-            break;
-          }
-          index++;
+    public String getField(String fieldName) {
+        if (fieldName.equals("category"))
+            return category;
+        else if (fieldName.equals("priority"))
+            return priority;
+        else {
+            if (log4j.isDebugEnabled())
+                log4j.debug("Field does not exist: " + fieldName);
+            return null;
         }
-        if (index==vector.size()) vector.addElement(categoryData);
-      }
-      
     }
 
-    CategoryData categoryData[] = new CategoryData[vector.size()];
-    vector.copyInto(categoryData);
-    return(categoryData);
-  }
+    public static CategoryData[] getCategories() {
+        Vector<CategoryData> vector = new Vector<CategoryData>(0);
+
+        for (Enumeration<?> e = LogManager.getCurrentLoggers(); e
+                .hasMoreElements();) {
+            Logger categoryItem = (Logger) e.nextElement();
+            CategoryData categoryData = new CategoryData();
+            categoryData.category = categoryItem.getName();
+            if (categoryItem.getLevel() != null) {
+                categoryData.priority = categoryItem.getLevel().toString();
+            }
+            if (vector.isEmpty())
+                vector.addElement(categoryData);
+            else {
+                int index = 0;
+                while (index < vector.size()) {
+                    CategoryData cd = vector.get(index);
+                    if (categoryData.category.compareTo(cd.category) < 0) {
+                        vector.add(index, categoryData);
+                        break;
+                    }
+                    index++;
+                }
+                if (index == vector.size())
+                    vector.addElement(categoryData);
+            }
+
+        }
+
+        CategoryData categoryData[] = new CategoryData[vector.size()];
+        vector.copyInto(categoryData);
+        return (categoryData);
+    }
 }

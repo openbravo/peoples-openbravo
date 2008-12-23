@@ -8,30 +8,32 @@
  * CONDITIONS OF ANY KIND, either  express  or  implied.  See  the  License  for  the
  * specific language governing permissions and limitations under the License.
  ************************************************************************************
-*/
+ */
 package org.openbravo.xmlEngine;
 
-import org.apache.log4j.Logger ;
+import org.apache.log4j.Logger;
 
 class FunctionCountValue extends FunctionValue {
-  int count;
+    int count;
 
-  static Logger log4jFunctionCountValue = Logger.getLogger(FunctionCountValue.class);
+    static Logger log4jFunctionCountValue = Logger
+            .getLogger(FunctionCountValue.class);
 
-  public FunctionCountValue(FunctionTemplate functionTemplate, XmlDocument xmlDocument) {
-    super(functionTemplate, xmlDocument);
-  }
+    public FunctionCountValue(FunctionTemplate functionTemplate,
+            XmlDocument xmlDocument) {
+        super(functionTemplate, xmlDocument);
+    }
 
-  public String print() {
-    return Integer.toString(count);
-  }
+    public String print() {
+        return Integer.toString(count);
+    }
 
-  public void acumulate() {
-    count++;
-  }
+    public void acumulate() {
+        count++;
+    }
 
-  public void init() {
-    count = 0;
-  }
+    public void init() {
+        count = 0;
+    }
 
 }

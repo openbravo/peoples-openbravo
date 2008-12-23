@@ -8,30 +8,32 @@
  * CONDITIONS OF ANY KIND, either  express  or  implied.  See  the  License  for  the
  * specific language governing permissions and limitations under the License.
  ************************************************************************************
-*/
+ */
 package org.openbravo.xmlEngine;
 
 import java.text.DecimalFormat;
 
-import org.apache.log4j.Logger ;
+import org.apache.log4j.Logger;
 
 class FunctionGtTemplate extends FunctionTemplate {
 
-  static Logger log4jFunctionGtTemplate = Logger.getLogger(FunctionGtTemplate.class);
+    static Logger log4jFunctionGtTemplate = Logger
+            .getLogger(FunctionGtTemplate.class);
 
-  public FunctionGtTemplate(String fieldName, DecimalFormat formatOutput, DecimalFormat formatSimple,
-      DataTemplate dataTemplate,
-      XmlComponentTemplate arg1, XmlComponentTemplate arg2) {
-    super(fieldName, formatOutput, formatSimple, dataTemplate, arg1, arg2);
-  }
-
-  public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
-    FunctionValue functionValue = searchFunction(xmlDocument);
-    if (functionValue == null) {
-      if(log4jFunctionGtTemplate.isDebugEnabled()) log4jFunctionGtTemplate.debug("New FunctionGtValue");
-      functionValue = new FunctionGtValue(this, xmlDocument);
+    public FunctionGtTemplate(String fieldName, DecimalFormat formatOutput,
+            DecimalFormat formatSimple, DataTemplate dataTemplate,
+            XmlComponentTemplate arg1, XmlComponentTemplate arg2) {
+        super(fieldName, formatOutput, formatSimple, dataTemplate, arg1, arg2);
     }
-    return functionValue;
-  }
+
+    public FunctionValue createFunctionValue(XmlDocument xmlDocument) {
+        FunctionValue functionValue = searchFunction(xmlDocument);
+        if (functionValue == null) {
+            if (log4jFunctionGtTemplate.isDebugEnabled())
+                log4jFunctionGtTemplate.debug("New FunctionGtValue");
+            functionValue = new FunctionGtValue(this, xmlDocument);
+        }
+        return functionValue;
+    }
 
 }

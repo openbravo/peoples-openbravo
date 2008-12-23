@@ -8,7 +8,7 @@
  * CONDITIONS OF ANY KIND, either  express  or  implied.  See  the  License  for  the
  * specific language governing permissions and limitations under the License.
  ************************************************************************************
-*/
+ */
 
 package org.openbravo.base;
 
@@ -27,7 +27,7 @@ import java.util.Properties;
 
 /**
  * Application parameters stored in web.xml as init parameters.
- *
+ * 
  * @author Ben Sommerville
  */
 public class ConfigParameters {
@@ -64,9 +64,9 @@ public class ConfigParameters {
 
     private final Properties propFileProperties;
 
-
     public static ConfigParameters retrieveFrom(ServletContext context) {
-        ConfigParameters params = (ConfigParameters) context.getAttribute(CONFIG_ATTRIBUTE);
+        ConfigParameters params = (ConfigParameters) context
+                .getAttribute(CONFIG_ATTRIBUTE);
         if (params == null) {
             params = new ConfigParameters(context);
             params.storeIn(context);
@@ -85,16 +85,19 @@ public class ConfigParameters {
         log4j.debug("context: " + strContext);
         log4j.debug("************************prefix: " + prefix);
 
-        stcFileProperties = prefix + "/" + strBaseConfigPath + "/" + "Openbravo.properties";
+        stcFileProperties = prefix + "/" + strBaseConfigPath + "/"
+                + "Openbravo.properties";
         propFileProperties = loadOBProperties();
 
         String s = "FormatFile";
         strFileFormat = getResolvedParameter(context, s);
 
         strFopConfig = getResolvedParameter(context, "FOPConfig");
-        strBaseDesignPath = trimTrailing(getResolvedParameter(context, "BaseDesignPath"), "/");
+        strBaseDesignPath = trimTrailing(getResolvedParameter(context,
+                "BaseDesignPath"), "/");
         isFullPathBaseDesignPath = determineIsFullDesignPath();
-        strDefaultDesignPath = getResolvedParameter(context, "DefaultDesignPath");
+        strDefaultDesignPath = getResolvedParameter(context,
+                "DefaultDesignPath");
         strDefaultServlet = getResolvedParameter(context, "DefaultServlet");
         strReplaceWhat = getResolvedParameter(context, "ReplaceWhat");
 
@@ -107,20 +110,25 @@ public class ConfigParameters {
         strSystemLanguage = getSystemLanguage();
         strLocalReplaceWith = getResolvedParameter(context, "ReplaceWith");
         strServidorRenderFo = getResolvedParameter(context, "ServidorRenderFo");
-        strTextDividedByZero = getResolvedParameter(context, "TextDividedByZero");
+        strTextDividedByZero = getResolvedParameter(context,
+                "TextDividedByZero");
 
         poolFileName = getResolvedParameter(context, "PoolFile");
 
-        strServletSinIdentificar = getResolvedParameter(context, "ServletSinIdentificar");
+        strServletSinIdentificar = getResolvedParameter(context,
+                "ServletSinIdentificar");
         strServletGoBack = getResolvedParameter(context, "ServletGoBack");
         log4j.debug("strServletGoBack: " + strServletGoBack);
-        periodicBackgroundTime = asLong(getResolvedParameter(context, "PeriodicBackgroundTime"));
-        strLogFileAcctServer = prefix + "/" + strBaseConfigPath + "/" + getResolvedParameter(context, "LogFileAcctServer");
+        periodicBackgroundTime = asLong(getResolvedParameter(context,
+                "PeriodicBackgroundTime"));
+        strLogFileAcctServer = prefix + "/" + strBaseConfigPath + "/"
+                + getResolvedParameter(context, "LogFileAcctServer");
 
         strFTPDirectory = getResolvedParameter(context, "AttachmentDirectory");
         try {
             File f = new File(strFTPDirectory);
-            if (!f.exists()) f.mkdir();
+            if (!f.exists())
+                f.mkdir();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -130,8 +138,9 @@ public class ConfigParameters {
     private String getResolvedParameter(ServletContext context, String name) {
         String value = context.getInitParameter(name);
         if (value != null) {
-            return value.replace("@actual_path_context@", getActualPathContext())
-                    .replace("@application_context@", getApplicationContext());
+            return value.replace("@actual_path_context@",
+                    getActualPathContext()).replace("@application_context@",
+                    getApplicationContext());
         } else {
             return value;
         }
@@ -152,7 +161,8 @@ public class ConfigParameters {
 
     private String getSystemLanguage() {
         try {
-            return System.getProperty("user.language") + "_" + System.getProperty("user.country");
+            return System.getProperty("user.language") + "_"
+                    + System.getProperty("user.country");
         } catch (java.security.AccessControlException err) {
             log4j.warn(err.getMessage());
             return "en_US";
@@ -171,21 +181,26 @@ public class ConfigParameters {
         // if the log4j-init-file is not set, then no point in trying
         if (file != null) {
             try {
-                // Configure using resource url.. That way we don't need to worry about
+                // Configure using resource url.. That way we don't need to
+                // worry about
                 // the real path
-                InputStream resource = context.getResourceAsStream("/" + strBaseConfigPath + "/" + file);
+                InputStream resource = context.getResourceAsStream("/"
+                        + strBaseConfigPath + "/" + file);
                 if (resource != null) {
-                  Properties config = new Properties();
-                  config.load(resource);
-                  resource.close();
-                  config.setProperty("application_context", getApplicationContext());
-                  config.setProperty("actual_path_context", getActualPathContext());
-                  PropertyConfigurator.configure(config);
+                    Properties config = new Properties();
+                    config.load(resource);
+                    resource.close();
+                    config.setProperty("application_context",
+                            getApplicationContext());
+                    config.setProperty("actual_path_context",
+                            getActualPathContext());
+                    PropertyConfigurator.configure(config);
                 }
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                e.printStackTrace(); // To change body of catch statement use
+                                     // File | Settings | File Templates.
             }
         }
     }
@@ -237,7 +252,6 @@ public class ConfigParameters {
         }
     }
 
-
     public boolean haveFopConfig() {
         return strBaseDesignPath != null && strFopConfig != null;
     }
@@ -251,7 +265,8 @@ public class ConfigParameters {
     }
 
     public String getBaseDesignPath() {
-        return isFullPathBaseDesignPath ? strBaseDesignPath : (prefix + "/" + strBaseDesignPath);
+        return isFullPathBaseDesignPath ? strBaseDesignPath
+                : (prefix + "/" + strBaseDesignPath);
     }
 
     public String getXmlEngineFileFormatPath() {
@@ -291,9 +306,9 @@ public class ConfigParameters {
 
         return propFileProperties.getProperty(skey);
     }
-    
+
     public Properties getOBProperties() {
-      return propFileProperties;
+        return propFileProperties;
     }
 
     public Properties loadOBProperties() {
@@ -312,4 +327,3 @@ public class ConfigParameters {
         return getOBProperty("dateTimeFormat.java", "dd-MM-yyyy HH:mm:ss");
     }
 }
-

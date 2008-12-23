@@ -8,33 +8,41 @@
  * CONDITIONS OF ANY KIND, either  express  or  implied.  See  the  License  for  the
  * specific language governing permissions and limitations under the License.
  ************************************************************************************
-*/
+ */
 package org.openbravo.xmlEngine;
 
-import org.apache.log4j.Logger ;
+import org.apache.log4j.Logger;
 
 class FunctionMinValue extends FunctionEvaluationValue {
 
-  static Logger log4jFunctionMinValue = Logger.getLogger(FunctionMinValue.class);
+    static Logger log4jFunctionMinValue = Logger
+            .getLogger(FunctionMinValue.class);
 
-  public FunctionMinValue(FunctionTemplate functionTemplate, XmlDocument xmlDocument) {
-    super(functionTemplate, xmlDocument);
-  }
-
-  public String print() {
-    if (arg1Value.print().equals(XmlEngine.strTextDividedByZero) || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
-      return XmlEngine.strTextDividedByZero;
-    } else {
-      return functionTemplate.printFormatOutput(Math.min(Double.valueOf(arg1Value.printSimple()).doubleValue(), Double.valueOf(arg2Value.printSimple()).doubleValue()));
+    public FunctionMinValue(FunctionTemplate functionTemplate,
+            XmlDocument xmlDocument) {
+        super(functionTemplate, xmlDocument);
     }
-  }
 
-  public String printSimple() {
-    if (arg1Value.print().equals(XmlEngine.strTextDividedByZero) || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
-      return XmlEngine.strTextDividedByZero;
-    } else {
-      return functionTemplate.printFormatSimple(Math.min(Double.valueOf(arg1Value.printSimple()).doubleValue(), Double.valueOf(arg2Value.printSimple()).doubleValue()));
+    public String print() {
+        if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
+                || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
+            return XmlEngine.strTextDividedByZero;
+        } else {
+            return functionTemplate.printFormatOutput(Math.min(Double.valueOf(
+                    arg1Value.printSimple()).doubleValue(), Double.valueOf(
+                    arg2Value.printSimple()).doubleValue()));
+        }
     }
-  }
+
+    public String printSimple() {
+        if (arg1Value.print().equals(XmlEngine.strTextDividedByZero)
+                || arg2Value.print().equals(XmlEngine.strTextDividedByZero)) {
+            return XmlEngine.strTextDividedByZero;
+        } else {
+            return functionTemplate.printFormatSimple(Math.min(Double.valueOf(
+                    arg1Value.printSimple()).doubleValue(), Double.valueOf(
+                    arg2Value.printSimple()).doubleValue()));
+        }
+    }
 
 }
