@@ -49,7 +49,6 @@ function getMessage(index, _language) {
 			_language = LNG_POR_DEFECTO;
 		}
 	}
-	var arrMessages = top.appFrame.arrMessages;
     var total = arrMessages.length;
 	for (var i=0;i<total;i++) {
 		if (arrMessages[i].language == _language)
@@ -68,7 +67,6 @@ function getDefaultText(index, _language) {
       _language = LNG_POR_DEFECTO;
     }
   }
-  var arrMessages = top.appFrame.arrMessages;
   var total = arrMessages.length;
 	for (var i=0;i<total;i++) {
 		if (arrMessages[i].language == _language)
@@ -79,7 +77,6 @@ function getDefaultText(index, _language) {
 }
 
 function getType(index) {
-  var arrTypes = top.appFrame.arrTypes;
   var total = arrTypes.length;
 	for (var i=0;i<total;i++) {
 		if (arrTypes[i].id == index)
