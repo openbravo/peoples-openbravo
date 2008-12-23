@@ -3052,6 +3052,11 @@ function changeToEditingMode(force) {
       setWindowEditing(true);
     } else if (isCtrlPressed && pressedKeyCode=='86' && isKeyboardLocked==false) {
       setWindowEditing(true);
+    } else if (isCtrlPressed && isAltPressed && isKeyboardLocked==false) {
+      var beforeShortcutValue = null;
+      var afterShortcutValue = null;
+      try { beforeShortcutValue = focusedWindowElement.value; } catch (e) { }
+      setTimeout(function() {try { afterShortcutValue = focusedWindowElement.value; } catch (e) { } if (afterShortcutValue != beforeShortcutValue) { setWindowEditing(true); } },50);
     }
   } catch (e) {}
 }
