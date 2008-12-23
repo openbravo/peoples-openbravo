@@ -15,18 +15,18 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.wad.controls;
 
 import java.util.*;
 
 public class WADPrice extends WADNumber {
 
-  public WADPrice() {
-  }
+    public WADPrice() {
+    }
 
-  public WADPrice(Properties prop) {
-    setInfo(prop);
-    initialize();
-  }
+    public WADPrice(Properties prop) {
+        setInfo(prop);
+        initialize();
+    }
 }

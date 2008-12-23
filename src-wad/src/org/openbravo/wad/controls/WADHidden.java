@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.wad.controls;
 
 import java.util.*;
@@ -23,49 +23,54 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class WADHidden extends WADControl {
 
-  public WADHidden() {
-  }
+    public WADHidden() {
+    }
 
-  public WADHidden(String _columnname, String _columnnameInp, String _dataName, boolean isParameter) {
-    setData("ColumnName", _columnname);
-    setData("ColumnNameInp", _columnnameInp);
-    setData("DataName", _dataName);
-    setData("IsInData", (isParameter?"N":"Y"));
-    initialize();
-  }
+    public WADHidden(String _columnname, String _columnnameInp,
+            String _dataName, boolean isParameter) {
+        setData("ColumnName", _columnname);
+        setData("ColumnNameInp", _columnnameInp);
+        setData("DataName", _dataName);
+        setData("IsInData", (isParameter ? "N" : "Y"));
+        initialize();
+    }
 
-  public WADHidden(Properties prop) {
-    setInfo(prop);
-    initialize();
-  }
+    public WADHidden(Properties prop) {
+        setInfo(prop);
+        initialize();
+    }
 
-  public void initialize() {
-    return;
-  }
+    public void initialize() {
+        return;
+    }
 
-  public String toString() {
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADHidden").createXmlDocument();
+    public String toString() {
+        XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
+                "org/openbravo/wad/controls/WADHidden").createXmlDocument();
 
-    xmlDocument.setParameter("columnName", getData("ColumnName"));
-    xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
-    
-    return replaceHTML(xmlDocument.print());
-  }
+        xmlDocument.setParameter("columnName", getData("ColumnName"));
+        xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
 
-  public String toLabel() {
-    return "";
-  }
+        return replaceHTML(xmlDocument.print());
+    }
 
-  public String toXml() {
-    String[] discard = {"sectionField"};
-    if (getData("IsInData").equals("Y")) discard[0] = "sectionParameter";
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADHiddenXML", discard).createXmlDocument();
+    public String toLabel() {
+        return "";
+    }
 
-    xmlDocument.setParameter("columnName", getData("ColumnName"));
-    return replaceHTML(xmlDocument.print());
-  }
+    public String toXml() {
+        String[] discard = { "sectionField" };
+        if (getData("IsInData").equals("Y"))
+            discard[0] = "sectionParameter";
+        XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
+                "org/openbravo/wad/controls/WADHiddenXML", discard)
+                .createXmlDocument();
 
-  public String toJava() {
-    return "";
-  }
+        xmlDocument.setParameter("columnName", getData("ColumnName"));
+        return replaceHTML(xmlDocument.print());
+    }
+
+    public String toJava() {
+        return "";
+    }
 }

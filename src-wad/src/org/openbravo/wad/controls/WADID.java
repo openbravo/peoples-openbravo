@@ -15,18 +15,18 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.wad.controls;
 
 import java.util.*;
 
 public class WADID extends WADControl {
 
-  public WADID() {
-  }
+    public WADID() {
+    }
 
-  public WADID(Properties prop) {
-    setInfo(prop);
-    initialize();
-  }
+    public WADID(Properties prop) {
+        setInfo(prop);
+        initialize();
+    }
 }

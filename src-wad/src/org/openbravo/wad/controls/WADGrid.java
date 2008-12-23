@@ -15,150 +15,192 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.wad.controls;
 
 import java.util.*;
 
 public class WADGrid extends WADControl {
 
-  public WADGrid() {
-  }
+    public WADGrid() {
+    }
 
-  public WADGrid(Properties prop) {
-    setInfo(prop);
-    initialize();
-  }
+    public WADGrid(Properties prop) {
+        setInfo(prop);
+        initialize();
+    }
 
-  public void initialize() {
-    //addCSSImport("DataGrid", "");
-    //addImport("dojo", "../../../../../web/js/dojo/dojo.js");
-    generateJSCode();
-    setValidation("");
-  }
+    public void initialize() {
+        // addCSSImport("DataGrid", "");
+        // addImport("dojo", "../../../../../web/js/dojo/dojo.js");
+        generateJSCode();
+        setValidation("");
+    }
 
-  private void generateJSCode() {
-    addJSCode("DataGrid", "dojo.require(\"openbravo.widget.DataGrid\");");
-    String str = 
-      "function updateHeader(liveGrid, offset) {\n" +
-      "  dojo.byId('bookmark').innerHTML = ((liveGrid.visibleRows>0)?(offset+1):0) + \" - \"" +
-      "+ (offset+liveGrid.visibleRows) + \" / \" + liveGrid.metaData.getTotalRows();\n" +
-      '}';
-      addJSCode("updateHeader", str);
+    private void generateJSCode() {
+        addJSCode("DataGrid", "dojo.require(\"openbravo.widget.DataGrid\");");
+        String str = "function updateHeader(liveGrid, offset) {\n"
+                + "  dojo.byId('bookmark').innerHTML = ((liveGrid.visibleRows>0)?(offset+1):0) + \" - \""
+                + "+ (offset+liveGrid.visibleRows) + \" / \" + liveGrid.metaData.getTotalRows();\n"
+                + '}';
+        addJSCode("updateHeader", str);
 
-      StringBuffer text = new StringBuffer();
-      text.append("function onRowDblClick(cell) {\n");
-      text.append("  var value = dijit.byId('").append(getData("id")).append("').getSelectedRows();\n");
-      text.append("  if (value==null || value==\"\" || value.length>1) return false;\n");
-      text.append("  setInputValue('").append(getData("inpKeyName")).append("', value);\n");
-      text.append("  return submitCommandForm('EDIT', true, null, document.frmMain.urlwin.value, '_self');\n");
-      text.append('}');
-      addJSCode("onRowDblClick", text.toString());
+        StringBuffer text = new StringBuffer();
+        text.append("function onRowDblClick(cell) {\n");
+        text.append("  var value = dijit.byId('").append(getData("id")).append(
+                "').getSelectedRows();\n");
+        text
+                .append("  if (value==null || value==\"\" || value.length>1) return false;\n");
+        text.append("  setInputValue('").append(getData("inpKeyName")).append(
+                "', value);\n");
+        text
+                .append("  return submitCommandForm('EDIT', true, null, document.frmMain.urlwin.value, '_self');\n");
+        text.append('}');
+        addJSCode("onRowDblClick", text.toString());
 
-      text = new StringBuffer();
-      text.append("function getSelectedValues() {\n");
-      text.append("  var value = dijit.byId('").append(getData("id")).append("').getSelectedRows();\n");
-      text.append("  if (value==null || value.length==0) return \"\";\n");
-      text.append("  return value[0];\n"); 
-      text.append('}');
-      addJSCode("getSelectedValues", text.toString());
+        text = new StringBuffer();
+        text.append("function getSelectedValues() {\n");
+        text.append("  var value = dijit.byId('").append(getData("id")).append(
+                "').getSelectedRows();\n");
+        text.append("  if (value==null || value.length==0) return \"\";\n");
+        text.append("  return value[0];\n");
+        text.append('}');
+        addJSCode("getSelectedValues", text.toString());
 
-      text = new StringBuffer();
-      text.append("function isMultipleSelected() {\n");
-      text.append("  var value = dijit.byId('").append(getData("id")).append("').getSelectedRows();\n");
-      text.append("  if (value==null || value==\"\") return false;\n");
-      text.append("  return (value.length>1);\n");
-      text.append('}');
-      addJSCode("isMultipleSelected", text.toString());
+        text = new StringBuffer();
+        text.append("function isMultipleSelected() {\n");
+        text.append("  var value = dijit.byId('").append(getData("id")).append(
+                "').getSelectedRows();\n");
+        text.append("  if (value==null || value==\"\") return false;\n");
+        text.append("  return (value.length>1);\n");
+        text.append('}');
+        addJSCode("isMultipleSelected", text.toString());
 
-      text = new StringBuffer();
-      text.append("function onGridLoadDo() {\n");
-      text.append("  if (selectedRow==null) return true;\n");
-      text.append("  if (selectedRow<=0) dijit.byId('").append(getData("id")).append("').goToFirstRow();\n");
-      text.append("  else dijit.byId('").append(getData("id")).append("').goToRow(selectedRow);\n");
-      
-      text.append("  return true;\n");
-      text.append('}');
-      addJSCode("onGridLoadDo", text.toString());
+        text = new StringBuffer();
+        text.append("function onGridLoadDo() {\n");
+        text.append("  if (selectedRow==null) return true;\n");
+        text.append("  if (selectedRow<=0) dijit.byId('").append(getData("id"))
+                .append("').goToFirstRow();\n");
+        text.append("  else dijit.byId('").append(getData("id")).append(
+                "').goToRow(selectedRow);\n");
 
-      text = new StringBuffer();
-      text.append("function setGridFilters(newparams) {\n" +
-    		      "  var params = [];\n" +
-    		      "  params[\"newFilter\"] = \"1\";\n" +
-    		      "  if (newparams!=null && newparams.length>0) {\n" +
-    		      "    var total = newparams.length;\n" +
-    		      "    for (var i=0;i<total;i++) {\n" +
-    		      "      params[newparams[i][0]] = newparams[i][1];\n" +
-                  "    }\n" +
-                  "  }\n");
-      text.append("  dijit.byId('").append(getData("id")).append("').setRequestParams(params);\n");
-      text.append("  return true;\n");
-      text.append('}');
-      addJSCode("setGridFilters", text.toString());
+        text.append("  return true;\n");
+        text.append('}');
+        addJSCode("onGridLoadDo", text.toString());
 
-      text = new StringBuffer();
-      text.append("function updateGridData() {\n");
-      text.append("  dijit.byId('").append(getData("id")).append("').refreshGridData();\n");
-      text.append("  return true;\n");
-      text.append('}');
-      addJSCode("updateGridData", text.toString());
+        text = new StringBuffer();
+        text.append("function setGridFilters(newparams) {\n"
+                + "  var params = [];\n" + "  params[\"newFilter\"] = \"1\";\n"
+                + "  if (newparams!=null && newparams.length>0) {\n"
+                + "    var total = newparams.length;\n"
+                + "    for (var i=0;i<total;i++) {\n"
+                + "      params[newparams[i][0]] = newparams[i][1];\n"
+                + "    }\n" + "  }\n");
+        text.append("  dijit.byId('").append(getData("id")).append(
+                "').setRequestParams(params);\n");
+        text.append("  return true;\n");
+        text.append('}');
+        addJSCode("setGridFilters", text.toString());
 
-      text = new StringBuffer();
-      text.append("function updateGridDataAfterFilter() {\n");
-      text.append("  dijit.byId('").append(getData("id")).append("').refreshGridDataAfterFilter();\n");
-      text.append("  return true;\n");
-      text.append('}');
-      addJSCode("updateGridDataAfterFilter", text.toString());
-  }
+        text = new StringBuffer();
+        text.append("function updateGridData() {\n");
+        text.append("  dijit.byId('").append(getData("id")).append(
+                "').refreshGridData();\n");
+        text.append("  return true;\n");
+        text.append('}');
+        addJSCode("updateGridData", text.toString());
 
-  public String toString() {
-    StringBuffer text = new StringBuffer();
-    text.append("<table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" class=\"Main_Client_TableRelation\" id=\"grid_table\"><tr><td>");
-    text.append("<div id=\"").append(getData("id")).append("\" dojoType=\"openbravo.widget.DataGrid\"\n");
-    text.append("      structureUrl=\"../utility/DataGrid.html?Command=STRUCTURE&inpadTabId=");
-    text.append(getData("AD_Tab_ID")).append("&inpadWindowId=");
-    text.append(getData("AD_Window_ID")).append("&inpAccessLevel=").append(getData("accessLevel")).append("\" \n");
-    text.append("      dataUrl=\"../utility/DataGrid.html?Command=DATA&inpadTabId=");
-    text.append(getData("AD_Tab_ID")).append("&inpadWindowId=");
-    text.append(getData("AD_Window_ID")).append("&inpAccessLevel=").append(getData("accessLevel")).append("\" \n");
-    text.append("      updatesUrl=\"../utility/DataGrid.html?Command=UPDATE&inpadTabId=");
-    text.append(getData("AD_Tab_ID")).append("&inpadWindowId=");
-    text.append(getData("AD_Window_ID")).append("&inpAccessLevel=").append(getData("accessLevel")).append("\" \n");
-    //text.append("      numRows=\"").append(getData("NumRows")).append("\" \n");
-    text.append("      calculateNumRows=\"true\" \n");
-    text.append("      editable=\"").append(getData("editable")).append("\" sortable=\"").append(getData("sortable")).append("\" \n");
-    text.append("      deleteable=\"").append(getData("deleteable")).append("\" \n");
-    text.append("      onInvalidValue=\"alert\" \n");
-    text.append("      onScroll=\"").append(getData("onScrollFunction")).append("\" \n");
-    text.append("      onGridLoad=\"").append(getData("onLoadFunction")).append("\"\n");
-    text.append("      bufferSize=\"3.0\"\n");
-    text.append("      showLineNumbers=\"").append(getData("ShowLineNumbers")).append("\" \n");
-    text.append("      offset=\"xx\" sortcols=\"xx\" sortdirs=\"xx\" defaultrow=\"xx\" \n");
-    text.append("      maxWidth=\"").append(getData("width")).append("\" \n");
-    text.append("      percentageWidthRelativeToId=\"client\" \n");
-    text.append("      preventCache=\"true\" useCache=\"true\" cacheContent=\"false\">\n");
-    text.append("    </div>\n");
-    text.append("</td></tr></table>");
-    return text.toString();
-  }
+        text = new StringBuffer();
+        text.append("function updateGridDataAfterFilter() {\n");
+        text.append("  dijit.byId('").append(getData("id")).append(
+                "').refreshGridDataAfterFilter();\n");
+        text.append("  return true;\n");
+        text.append('}');
+        addJSCode("updateGridDataAfterFilter", text.toString());
+    }
 
-  public String toXml() {
-    StringBuffer text = new StringBuffer();
-    text.append("<PARAMETER id=\"").append(getData("id")).append("\" name=\"").append(getData("id")).append("\" attribute=\"numrows\"/>");
-    text.append("<PARAMETER id=\"").append(getData("id")).append("\" name=\"").append(getData("id")).append("_Offset\" attribute=\"offset\"/>");
-    text.append("<PARAMETER id=\"").append(getData("id")).append("\" name=\"").append(getData("id")).append("_SortCols\" attribute=\"sortcols\"/>");
-    text.append("<PARAMETER id=\"").append(getData("id")).append("\" name=\"").append(getData("id")).append("_SortDirs\" attribute=\"sortdirs\"/>");
-    text.append("<PARAMETER id=\"").append(getData("id")).append("\" name=\"").append(getData("id")).append("_Default\" attribute=\"defaultrow\"/>");
-    return text.toString();
-  }
+    public String toString() {
+        StringBuffer text = new StringBuffer();
+        text
+                .append("<table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\" class=\"Main_Client_TableRelation\" id=\"grid_table\"><tr><td>");
+        text.append("<div id=\"").append(getData("id")).append(
+                "\" dojoType=\"openbravo.widget.DataGrid\"\n");
+        text
+                .append("      structureUrl=\"../utility/DataGrid.html?Command=STRUCTURE&inpadTabId=");
+        text.append(getData("AD_Tab_ID")).append("&inpadWindowId=");
+        text.append(getData("AD_Window_ID")).append("&inpAccessLevel=").append(
+                getData("accessLevel")).append("\" \n");
+        text
+                .append("      dataUrl=\"../utility/DataGrid.html?Command=DATA&inpadTabId=");
+        text.append(getData("AD_Tab_ID")).append("&inpadWindowId=");
+        text.append(getData("AD_Window_ID")).append("&inpAccessLevel=").append(
+                getData("accessLevel")).append("\" \n");
+        text
+                .append("      updatesUrl=\"../utility/DataGrid.html?Command=UPDATE&inpadTabId=");
+        text.append(getData("AD_Tab_ID")).append("&inpadWindowId=");
+        text.append(getData("AD_Window_ID")).append("&inpAccessLevel=").append(
+                getData("accessLevel")).append("\" \n");
+        // text.append("      numRows=\"").append(getData("NumRows")).append("\" \n");
+        text.append("      calculateNumRows=\"true\" \n");
+        text.append("      editable=\"").append(getData("editable")).append(
+                "\" sortable=\"").append(getData("sortable")).append("\" \n");
+        text.append("      deleteable=\"").append(getData("deleteable"))
+                .append("\" \n");
+        text.append("      onInvalidValue=\"alert\" \n");
+        text.append("      onScroll=\"").append(getData("onScrollFunction"))
+                .append("\" \n");
+        text.append("      onGridLoad=\"").append(getData("onLoadFunction"))
+                .append("\"\n");
+        text.append("      bufferSize=\"3.0\"\n");
+        text.append("      showLineNumbers=\"").append(
+                getData("ShowLineNumbers")).append("\" \n");
+        text
+                .append("      offset=\"xx\" sortcols=\"xx\" sortdirs=\"xx\" defaultrow=\"xx\" \n");
+        text.append("      maxWidth=\"").append(getData("width")).append(
+                "\" \n");
+        text.append("      percentageWidthRelativeToId=\"client\" \n");
+        text
+                .append("      preventCache=\"true\" useCache=\"true\" cacheContent=\"false\">\n");
+        text.append("    </div>\n");
+        text.append("</td></tr></table>");
+        return text.toString();
+    }
 
-  public String toJava() {
-    StringBuffer text = new StringBuffer();
-    text.append("xmlDocument.setParameter(\"").append(getData("id")).append("\", Utility.getContext(this, vars, \"#RecordRange\", windowId));\n");
-    text.append("xmlDocument.setParameter(\"").append(getData("id")).append("_Offset\", strOffset);\n");
-    text.append("xmlDocument.setParameter(\"").append(getData("id")).append("_SortCols\", positions);\n");
-    text.append("xmlDocument.setParameter(\"").append(getData("id")).append("_SortDirs\", directions);\n");
-    text.append("xmlDocument.setParameter(\"").append(getData("id")).append("_Default\", selectedRow);\n");
-    return text.toString();
-  }
+    public String toXml() {
+        StringBuffer text = new StringBuffer();
+        text.append("<PARAMETER id=\"").append(getData("id")).append(
+                "\" name=\"").append(getData("id")).append(
+                "\" attribute=\"numrows\"/>");
+        text.append("<PARAMETER id=\"").append(getData("id")).append(
+                "\" name=\"").append(getData("id")).append(
+                "_Offset\" attribute=\"offset\"/>");
+        text.append("<PARAMETER id=\"").append(getData("id")).append(
+                "\" name=\"").append(getData("id")).append(
+                "_SortCols\" attribute=\"sortcols\"/>");
+        text.append("<PARAMETER id=\"").append(getData("id")).append(
+                "\" name=\"").append(getData("id")).append(
+                "_SortDirs\" attribute=\"sortdirs\"/>");
+        text.append("<PARAMETER id=\"").append(getData("id")).append(
+                "\" name=\"").append(getData("id")).append(
+                "_Default\" attribute=\"defaultrow\"/>");
+        return text.toString();
+    }
+
+    public String toJava() {
+        StringBuffer text = new StringBuffer();
+        text
+                .append("xmlDocument.setParameter(\"")
+                .append(getData("id"))
+                .append(
+                        "\", Utility.getContext(this, vars, \"#RecordRange\", windowId));\n");
+        text.append("xmlDocument.setParameter(\"").append(getData("id"))
+                .append("_Offset\", strOffset);\n");
+        text.append("xmlDocument.setParameter(\"").append(getData("id"))
+                .append("_SortCols\", positions);\n");
+        text.append("xmlDocument.setParameter(\"").append(getData("id"))
+                .append("_SortDirs\", directions);\n");
+        text.append("xmlDocument.setParameter(\"").append(getData("id"))
+                .append("_Default\", selectedRow);\n");
+        return text.toString();
+    }
 }

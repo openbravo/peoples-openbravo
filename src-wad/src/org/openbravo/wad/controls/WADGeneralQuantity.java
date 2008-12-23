@@ -15,18 +15,18 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.wad.controls;
 
 import java.util.*;
 
 public class WADGeneralQuantity extends WADNumber {
 
-  public WADGeneralQuantity() {
-  }
+    public WADGeneralQuantity() {
+    }
 
-  public WADGeneralQuantity(Properties prop) {
-    setInfo(prop);
-    initialize();
-  }
+    public WADGeneralQuantity(Properties prop) {
+        setInfo(prop);
+        initialize();
+    }
 }

@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.wad.controls;
 
 import java.util.*;
@@ -23,84 +23,103 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class WADImage extends WADControl {
 
-  public WADImage() {
-  }
-
-  public WADImage(Properties prop) {
-    setInfo(prop);
-    initialize();
-  }
-
-  public void initialize() {
-    addImport("searchs", "../../../../../web/js/searchs.js");
-    generateJSCode();
-  }
-
-  private void generateJSCode() {
-    if (getData("IsMandatory").equals("Y")) {
-      XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADImageJSValidation").createXmlDocument();
-
-      xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
-      setValidation(replaceHTML(xmlDocument.print()));
+    public WADImage() {
     }
-    setCalloutJS();
-  }
 
-  public String getType() {
-    return "Image";
-  }
-
-  public String editMode() {
-    String[] discard = {"buttonxx"};
-    if (!getData("IsReadOnly").equals("Y") && !getData("IsReadOnlyTab").equals("Y") && !getData("IsUpdateable").equals("N")) discard[0] = "paramInactive";
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADImage", discard).createXmlDocument();
-
-    xmlDocument.setParameter("columnName", getData("ColumnName"));
-    xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
-    xmlDocument.setParameter("name", getData("Name"));
-
-    xmlDocument.setParameter("callout", getOnChangeCode());
-
-    return replaceHTML(xmlDocument.print());
-  }
-
-  public String newMode() {
-    String[] discard = {"buttonxx"};
-    if (!getData("IsReadOnly").equals("Y") && !getData("IsReadOnlyTab").equals("Y")) discard[0] = "paramInactive";
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADImage", discard).createXmlDocument();
-
-    xmlDocument.setParameter("columnName", getData("ColumnName"));
-    xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
-    xmlDocument.setParameter("name", getData("Name"));
-
-    xmlDocument.setParameter("callout", getOnChangeCode());
-
-    return replaceHTML(xmlDocument.print());
-  }
-
-  public String toXml() {
-    String[] discard = {"xx_PARAM", "xx_PARAM_R"};
-    if (getData("IsParameter").equals("Y")) {
-      discard[0] = "xx";
-      discard[1] = "xx_R";
+    public WADImage(Properties prop) {
+        setInfo(prop);
+        initialize();
     }
-    XmlDocument xmlDocument = getReportEngine().readXmlTemplate("org/openbravo/wad/controls/WADImageXML", discard).createXmlDocument();
 
-    xmlDocument.setParameter("columnName", getData("ColumnName"));
-    return replaceHTML(xmlDocument.print());
-  }
-  
-  public String toJava() {
-    StringBuffer text = new StringBuffer();
-    if (getData("IsDisplayed").equals("Y")) {
-      text.append("String strCurrentImageURL = (dataField==null?data[0].getField(\"");
-      text.append(getData("ColumnNameInp")).append("\"):dataField.getField(\"");
-      text.append(getData("ColumnNameInp")).append("\"));\n");
-      text.append("if (strCurrentImageURL==null || strCurrentImageURL.equals(\"\")){\n");
-      text.append("  xmlDocument.setParameter(\"").append(getData("ColumnName")).append("Class\", \"Image_NotAvailable_medium\");\n");
-      text.append("  if (dataField==null) data[0].adImageIdr=\"blank.gif\";\n");
-      text.append("}\n");
+    public void initialize() {
+        addImport("searchs", "../../../../../web/js/searchs.js");
+        generateJSCode();
     }
-    return text.toString();		
-  }
+
+    private void generateJSCode() {
+        if (getData("IsMandatory").equals("Y")) {
+            XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
+                    "org/openbravo/wad/controls/WADImageJSValidation")
+                    .createXmlDocument();
+
+            xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
+            setValidation(replaceHTML(xmlDocument.print()));
+        }
+        setCalloutJS();
+    }
+
+    public String getType() {
+        return "Image";
+    }
+
+    public String editMode() {
+        String[] discard = { "buttonxx" };
+        if (!getData("IsReadOnly").equals("Y")
+                && !getData("IsReadOnlyTab").equals("Y")
+                && !getData("IsUpdateable").equals("N"))
+            discard[0] = "paramInactive";
+        XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
+                "org/openbravo/wad/controls/WADImage", discard)
+                .createXmlDocument();
+
+        xmlDocument.setParameter("columnName", getData("ColumnName"));
+        xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
+        xmlDocument.setParameter("name", getData("Name"));
+
+        xmlDocument.setParameter("callout", getOnChangeCode());
+
+        return replaceHTML(xmlDocument.print());
+    }
+
+    public String newMode() {
+        String[] discard = { "buttonxx" };
+        if (!getData("IsReadOnly").equals("Y")
+                && !getData("IsReadOnlyTab").equals("Y"))
+            discard[0] = "paramInactive";
+        XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
+                "org/openbravo/wad/controls/WADImage", discard)
+                .createXmlDocument();
+
+        xmlDocument.setParameter("columnName", getData("ColumnName"));
+        xmlDocument.setParameter("columnNameInp", getData("ColumnNameInp"));
+        xmlDocument.setParameter("name", getData("Name"));
+
+        xmlDocument.setParameter("callout", getOnChangeCode());
+
+        return replaceHTML(xmlDocument.print());
+    }
+
+    public String toXml() {
+        String[] discard = { "xx_PARAM", "xx_PARAM_R" };
+        if (getData("IsParameter").equals("Y")) {
+            discard[0] = "xx";
+            discard[1] = "xx_R";
+        }
+        XmlDocument xmlDocument = getReportEngine().readXmlTemplate(
+                "org/openbravo/wad/controls/WADImageXML", discard)
+                .createXmlDocument();
+
+        xmlDocument.setParameter("columnName", getData("ColumnName"));
+        return replaceHTML(xmlDocument.print());
+    }
+
+    public String toJava() {
+        StringBuffer text = new StringBuffer();
+        if (getData("IsDisplayed").equals("Y")) {
+            text
+                    .append("String strCurrentImageURL = (dataField==null?data[0].getField(\"");
+            text.append(getData("ColumnNameInp")).append(
+                    "\"):dataField.getField(\"");
+            text.append(getData("ColumnNameInp")).append("\"));\n");
+            text
+                    .append("if (strCurrentImageURL==null || strCurrentImageURL.equals(\"\")){\n");
+            text.append("  xmlDocument.setParameter(\"").append(
+                    getData("ColumnName")).append(
+                    "Class\", \"Image_NotAvailable_medium\");\n");
+            text
+                    .append("  if (dataField==null) data[0].adImageIdr=\"blank.gif\";\n");
+            text.append("}\n");
+        }
+        return text.toString();
+    }
 }

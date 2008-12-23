@@ -15,18 +15,18 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.wad.controls;
 
 import java.util.*;
 
 public class WADText extends WADMemo {
 
-  public WADText() {
-  }
+    public WADText() {
+    }
 
-  public WADText(Properties prop) {
-    setInfo(prop);
-    initialize();
-  }
+    public WADText(Properties prop) {
+        setInfo(prop);
+        initialize();
+    }
 }

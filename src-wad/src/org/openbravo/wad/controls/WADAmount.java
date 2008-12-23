@@ -15,18 +15,18 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.wad.controls;
 
 import java.util.*;
 
 public class WADAmount extends WADNumber {
 
-  public WADAmount() {
-  }
+    public WADAmount() {
+    }
 
-  public WADAmount(Properties prop) {
-    setInfo(prop);
-    initialize();
-  }
+    public WADAmount(Properties prop) {
+        setInfo(prop);
+        initialize();
+    }
 }

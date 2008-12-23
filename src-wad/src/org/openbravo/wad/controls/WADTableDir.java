@@ -15,17 +15,17 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.wad.controls;
 
 import java.util.*;
 
 public class WADTableDir extends WADList {
 
-  public WADTableDir() {
-  }
+    public WADTableDir() {
+    }
 
-  public WADTableDir(Properties prop) {
-    super(prop);
-  }
+    public WADTableDir(Properties prop) {
+        super(prop);
+    }
 }

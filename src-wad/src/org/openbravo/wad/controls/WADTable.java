@@ -15,17 +15,17 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.wad.controls;
 
 import java.util.*;
 
 public class WADTable extends WADList {
 
-  public WADTable() {
-  }
+    public WADTable() {
+    }
 
-  public WADTable(Properties prop) {
-    super(prop);
-  }
+    public WADTable(Properties prop) {
+        super(prop);
+    }
 }

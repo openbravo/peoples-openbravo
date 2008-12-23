@@ -15,19 +15,19 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.wad.controls;
 
 import java.util.*;
 
 public class WADAssignment extends WADControl {
 
-  public WADAssignment() {
-	  //Not implemented yet
-  }
+    public WADAssignment() {
+        // Not implemented yet
+    }
 
-  public WADAssignment(Properties prop) {
-    setInfo(prop);
-    initialize();
-  }
+    public WADAssignment(Properties prop) {
+        setInfo(prop);
+        initialize();
+    }
 }
