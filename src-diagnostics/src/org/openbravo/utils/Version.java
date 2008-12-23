@@ -24,13 +24,16 @@ import java.util.regex.Pattern;
 
 public class Version {
     public static int compareVersion(String v1, String v2) {
-        if (v1.equals(v2)) return 0;
+        if (v1.equals(v2))
+            return 0;
         final String[] version1 = v1.split("\\.");
         final String[] version2 = v2.split("\\.");
-        final int minorVers = version1.length>version2.length?version2.length:version1.length;
-        for (int i=0;i<minorVers;i++){
-           if (version1[i].equals(version2[i])) continue;
-           return new Integer(version1[i]).compareTo(new Integer(version2[i]));  
+        final int minorVers = version1.length > version2.length ? version2.length
+                : version1.length;
+        for (int i = 0; i < minorVers; i++) {
+            if (version1[i].equals(version2[i]))
+                continue;
+            return new Integer(version1[i]).compareTo(new Integer(version2[i]));
         }
         return 0;
     }
@@ -38,12 +41,12 @@ public class Version {
     public static String getVersion(String str) {
         String version = "";
         if (str == null)
-          return "";
+            return "";
         final Pattern pattern = Pattern.compile("((\\d+\\.)+)\\d+");
         final Matcher matcher = pattern.matcher(str);
         if (matcher.find()) {
-          version = matcher.group();
+            version = matcher.group();
         }
         return version;
-      }
+    }
 }

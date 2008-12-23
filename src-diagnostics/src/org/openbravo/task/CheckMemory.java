@@ -26,21 +26,26 @@ import org.openbravo.utils.PropertiesManager;
 
 public class CheckMemory extends Task {
     static Logger log4j = Logger.getLogger(CheckMemory.class);
-    
+
     @Override
     public void execute() throws BuildException {
         log4j.info("Checking ant's memory...");
         final Runtime runtime = Runtime.getRuntime();
-        final long maxCurrentMemory = runtime.maxMemory()/(1024*1024); //Memory in MB
-        
-        
-        final long maxMemory = new Long(new PropertiesManager().getProperty("max.memory"));
-        final String msg = "Current max ant's memory:"+maxCurrentMemory+"M, minimum required:"+maxMemory+"M";
-        //check max memory +- 5%, because it is not accurate
-        if (maxMemory>maxCurrentMemory*1.05) 
-            throw new BuildException(msg +"\nTip: check http://wiki.openbravo.com/wiki/Development_Stack_Setup#Apache_Ant");
+        final long maxCurrentMemory = runtime.maxMemory() / (1024 * 1024); // Memory
+                                                                           // in
+                                                                           // MB
+
+        final long maxMemory = new Long(new PropertiesManager()
+                .getProperty("max.memory"));
+        final String msg = "Current max ant's memory:" + maxCurrentMemory
+                + "M, minimum required:" + maxMemory + "M";
+        // check max memory +- 5%, because it is not accurate
+        if (maxMemory > maxCurrentMemory * 1.05)
+            throw new BuildException(
+                    msg
+                            + "\nTip: check http://wiki.openbravo.com/wiki/Development_Stack_Setup#Apache_Ant");
         else {
-            log4j.info(msg);         
+            log4j.info(msg);
             log4j.info("Ant's memory OK ");
         }
     }

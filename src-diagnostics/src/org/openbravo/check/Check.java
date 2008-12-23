@@ -37,44 +37,47 @@ public class Check extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        final String command = req.getParameter("Command")==null?"":req.getParameter("Command");
-       
+        final String command = req.getParameter("Command") == null ? "" : req
+                .getParameter("Command");
+
         final PrintWriter out = resp.getWriter();
-        
-        if (command.equals("memory")){
-          final Runtime runtime = Runtime.getRuntime();
-          final long maxMemory = runtime.maxMemory()/(1024*1024); //Memory in MB
-          
-          out.println(maxMemory);
+
+        if (command.equals("memory")) {
+            final Runtime runtime = Runtime.getRuntime();
+            final long maxMemory = runtime.maxMemory() / (1024 * 1024); // Memory
+                                                                        // in MB
+
+            out.println(maxMemory);
         } else if (command.equals("jvm-version")) {
-          out.println(System.getProperty("java.runtime.version"));
+            out.println(System.getProperty("java.runtime.version"));
         } else if (command.equals("server")) {
             out.println(req.getSession().getServletContext().getServerInfo());
         } else if (command.equals("ant")) {
-            final String result = checkAnt(req.getParameter("file"), req.getParameter("task"));
+            final String result = checkAnt(req.getParameter("file"), req
+                    .getParameter("task"));
             out.println(result);
         } else {
-            out.println("Non-recognized command: "+command);
+            out.println("Non-recognized command: " + command);
         }
         out.close();
     }
-  
-   private String checkAnt(String file, String task) {
-       final Project project = new Project();
-       System.out.println("task: "+task);
-       try { 
-         project.init(); 
-         ProjectHelper.getProjectHelper().parse(project, new File(file)); 
-         project.executeTarget(task);
-       } catch (final Exception e) {
-          return e.getMessage();
-       }
-       return "OK";
+
+    private String checkAnt(String file, String task) {
+        final Project project = new Project();
+        System.out.println("task: " + task);
+        try {
+            project.init();
+            ProjectHelper.getProjectHelper().parse(project, new File(file));
+            project.executeTarget(task);
+        } catch (final Exception e) {
+            return e.getMessage();
+        }
+        return "OK";
     }
 
-@Override
+    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-     doPost(req, resp);
+        doPost(req, resp);
     }
 }

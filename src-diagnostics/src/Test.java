@@ -15,16 +15,15 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
-
+ */
 
 /**
- * This is a dummy class, used to check whether tomcat is able to call ant
- * tasks which involve compilation
- *
+ * This is a dummy class, used to check whether tomcat is able to call ant tasks
+ * which involve compilation
+ * 
  */
 public class Test {
-  public static void main(String[] args) {
-      System.out.println("test");
-  }
+    public static void main(String[] args) {
+        System.out.println("test");
+    }
 }

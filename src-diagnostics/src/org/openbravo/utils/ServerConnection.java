@@ -29,39 +29,47 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class ServerConnection {
-  
 
-  private URL getUrl(String action, String additionalParameters) throws MalformedURLException {
-      return new URL(new PropertiesManager("config/Openbravo.properties").getProperty("tomcat.manager.url").replace("/manager","")+"/OpenbravoDiagnostics/Check.html?Command="+action+additionalParameters);
-  }
-  
-  public String getCheck(String action, String additionalParameters){
-      BufferedReader br = null;
-      BufferedWriter bw = null;
-      try {
-        final HttpURLConnection conn = (HttpURLConnection) getUrl(action, additionalParameters).openConnection();
-        
-        conn.setDoOutput(true);
-        
-        bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
-        bw.flush();
-        bw.close();
-        
-        String s = null;
-        final StringBuilder sb = new StringBuilder();
-        br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        while ((s = br.readLine()) != null) {
-          sb.append(s);
+    private URL getUrl(String action, String additionalParameters)
+            throws MalformedURLException {
+        return new URL(new PropertiesManager("config/Openbravo.properties")
+                .getProperty("tomcat.manager.url").replace("/manager", "")
+                + "/OpenbravoDiagnostics/Check.html?Command="
+                + action
+                + additionalParameters);
+    }
+
+    public String getCheck(String action, String additionalParameters) {
+        BufferedReader br = null;
+        BufferedWriter bw = null;
+        try {
+            final HttpURLConnection conn = (HttpURLConnection) getUrl(action,
+                    additionalParameters).openConnection();
+
+            conn.setDoOutput(true);
+
+            bw = new BufferedWriter(new OutputStreamWriter(conn
+                    .getOutputStream()));
+            bw.flush();
+            bw.close();
+
+            String s = null;
+            final StringBuilder sb = new StringBuilder();
+            br = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream()));
+            while ((s = br.readLine()) != null) {
+                sb.append(s);
+            }
+            br.close();
+            return sb.toString();
+        } catch (final IOException e) {
+            // log4j.error(e.getMessage(), e);
+            // throw e;
         }
-        br.close();
-        return sb.toString();
-      } catch (final IOException e) {
-        //log4j.error(e.getMessage(), e);
-        //throw e;
-      }
-      return "";
-  }
-  public String getCheck(String action){
-      return getCheck(action, "");
-  }
+        return "";
+    }
+
+    public String getCheck(String action) {
+        return getCheck(action, "");
+    }
 }

@@ -23,25 +23,23 @@ import java.io.FileInputStream;
 import java.util.Properties;
 
 public class PropertiesManager {
-    
-    
+
     Properties obProperties;
-    
-    public PropertiesManager(String propertiesFile){
-        try{
+
+    public PropertiesManager(String propertiesFile) {
+        try {
             obProperties = new Properties();
             obProperties.load(new FileInputStream(propertiesFile));
         } catch (final Exception e) {
-            //do nothing
+            // do nothing
         }
     }
-    
+
     public PropertiesManager() {
         this("src-diagnostics/config/diagnostics.properties");
     }
-        
-    
-    public String getProperty(String name){
+
+    public String getProperty(String name) {
         return obProperties.getProperty(name);
     }
 }

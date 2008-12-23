@@ -27,13 +27,13 @@ public class CompareVersion extends Task {
     private String v1;
     private String v2;
     static Logger log4j = Logger.getLogger(CompareVersion.class);
-    
+
     @Override
     public void execute() throws BuildException {
-      final String msg = "Minimum version "+v2+" current version "+v1;
-      if (Version.compareVersion(v1, v2)<0) 
-          throw new BuildException(msg);
-      log4j.info(msg);
+        final String msg = "Minimum version " + v2 + " current version " + v1;
+        if (Version.compareVersion(v1, v2) < 0)
+            throw new BuildException(msg);
+        log4j.info(msg);
     }
 
     public void setV1(String v1) {
