@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_help;
 
 import org.openbravo.base.secureApp.*;
@@ -26,68 +26,87 @@ import javax.servlet.*;
 import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
-
 public class HelpWindow {
-  static Logger log4j = Logger.getLogger(HelpWindow.class);
+    static Logger log4j = Logger.getLogger(HelpWindow.class);
 
-
-  public static String generateWindow(ConnectionProvider conn, XmlEngine xmlEngine, VariablesSecureApp vars, boolean discardEdit, String strKeyId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Help Window");
-    Boolean window = true;
-    String[] discard = {"","","",""};
-    String strType = "";
-    String strWindowName = "";
-    String strWindowHelp = "";
-    String strCommand = "";
-    if (discardEdit) discard[0] = new String("discardEdit");
-    else if (strKeyId.equals("")){
-      strType = vars.getRequiredStringParameter("inpwindowType");
-      window = false;
-      if (strType.equals("X")){
-        strCommand = "FORM";
-        strKeyId = vars.getRequiredStringParameter("inpwindowName");
-        DisplayHelpData[] dataForm = (vars.getLanguage().equals("en_US")?DisplayHelpData.selectForm(conn, strKeyId):DisplayHelpData.selectFormTrl(conn, vars.getLanguage(), strKeyId));
-        if (dataForm != null && dataForm.length > 0){
-          strWindowName = dataForm[0].name;
-          strWindowHelp = dataForm[0].help;
-        } else {
-          discard[3] = new String("discardEdit");
+    public static String generateWindow(ConnectionProvider conn,
+            XmlEngine xmlEngine, VariablesSecureApp vars, boolean discardEdit,
+            String strKeyId) throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: Help Window");
+        Boolean window = true;
+        String[] discard = { "", "", "", "" };
+        String strType = "";
+        String strWindowName = "";
+        String strWindowHelp = "";
+        String strCommand = "";
+        if (discardEdit)
+            discard[0] = new String("discardEdit");
+        else if (strKeyId.equals("")) {
+            strType = vars.getRequiredStringParameter("inpwindowType");
+            window = false;
+            if (strType.equals("X")) {
+                strCommand = "FORM";
+                strKeyId = vars.getRequiredStringParameter("inpwindowName");
+                DisplayHelpData[] dataForm = (vars.getLanguage()
+                        .equals("en_US") ? DisplayHelpData.selectForm(conn,
+                        strKeyId) : DisplayHelpData.selectFormTrl(conn, vars
+                        .getLanguage(), strKeyId));
+                if (dataForm != null && dataForm.length > 0) {
+                    strWindowName = dataForm[0].name;
+                    strWindowHelp = dataForm[0].help;
+                } else {
+                    discard[3] = new String("discardEdit");
+                }
+            } else if (strType.equals("P") || strType.equals("R")) {
+                strCommand = "PROCESS";
+                strKeyId = vars.getRequiredStringParameter("inpwindowName");
+                DisplayHelpData[] dataProcess = (vars.getLanguage().equals(
+                        "en_US") ? DisplayHelpData
+                        .selectProcess(conn, strKeyId) : DisplayHelpData
+                        .selectProcessTrl(conn, vars.getLanguage(), strKeyId));
+                if (dataProcess != null && dataProcess.length > 0) {
+                    strWindowName = dataProcess[0].name;
+                    strWindowHelp = dataProcess[0].help;
+                } else {
+                    discard[3] = new String("discardEdit");
+                }
+            }
+            discard[0] = new String("sectionTabsRelation");
+            discard[1] = new String("sectionTabsDescription");
+            discard[2] = new String("sectionCabeceraFields");
         }
-      } else if (strType.equals("P") || strType.equals("R")){
-        strCommand = "PROCESS";
-        strKeyId = vars.getRequiredStringParameter("inpwindowName");
-        DisplayHelpData[] dataProcess = (vars.getLanguage().equals("en_US")?DisplayHelpData.selectProcess(conn, strKeyId):DisplayHelpData.selectProcessTrl(conn, vars.getLanguage(), strKeyId));
-        if (dataProcess != null && dataProcess.length > 0){
-          strWindowName = dataProcess[0].name;
-          strWindowHelp = dataProcess[0].help;
-        } else {
-          discard[3] = new String("discardEdit");
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/ad_help/DisplayHelp", discard)
+                .createXmlDocument();
+
+        DisplayHelpData[] data = DisplayHelpData.set();
+        if (window) {
+            data = (vars.getLanguage().equals("en_US") ? DisplayHelpData
+                    .select(conn, strKeyId) : DisplayHelpData.selectTrl(conn,
+                    vars.getLanguage(), strKeyId));
+            strWindowName = vars.getLanguage().equals("en_US") ? DisplayHelpData
+                    .windowName(conn, strKeyId)
+                    : DisplayHelpData.windowNameTrl(conn, vars.getLanguage(),
+                            strKeyId);
+            strWindowHelp = vars.getLanguage().equals("en_US") ? DisplayHelpData
+                    .windowHelp(conn, strKeyId)
+                    : DisplayHelpData.windowHelpTrl(conn, vars.getLanguage(),
+                            strKeyId);
+            strCommand = "WINDOW";
         }
-      }
-      discard[0] = new String("sectionTabsRelation");
-      discard[1] = new String("sectionTabsDescription");
-      discard[2] = new String("sectionCabeceraFields");
+        xmlDocument.setParameter("language", "defaultLang=\""
+                + vars.getLanguage() + "\";");
+        xmlDocument.setParameter("directory", "var baseDirectory = \""
+                + xmlEngine.strReplaceWith + "/\";\n");
+        xmlDocument.setParameter("theme", vars.getTheme());
+        xmlDocument.setParameter("windowId", strKeyId);
+        xmlDocument.setParameter("windowName", strWindowName);
+        xmlDocument.setParameter("windowHelp", strWindowHelp);
+        xmlDocument.setParameter("command", strCommand);
+        xmlDocument.setData("structure1", data);
+        xmlDocument.setData("structure2", data);
+        xmlDocument.setData("structure3", data);
+        return (xmlDocument.print());
     }
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_help/DisplayHelp", discard).createXmlDocument();
-
-
-    DisplayHelpData[] data = DisplayHelpData.set();
-    if (window) {
-      data = (vars.getLanguage().equals("en_US")?DisplayHelpData.select(conn, strKeyId):DisplayHelpData.selectTrl(conn, vars.getLanguage(), strKeyId));
-      strWindowName = vars.getLanguage().equals("en_US")?DisplayHelpData.windowName(conn, strKeyId):DisplayHelpData.windowNameTrl(conn, vars.getLanguage(), strKeyId );
-      strWindowHelp = vars.getLanguage().equals("en_US")?DisplayHelpData.windowHelp(conn, strKeyId):DisplayHelpData.windowHelpTrl(conn, vars.getLanguage(), strKeyId );
-      strCommand = "WINDOW";
-    }
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + xmlEngine.strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setParameter("windowId", strKeyId);
-    xmlDocument.setParameter("windowName", strWindowName);
-    xmlDocument.setParameter("windowHelp", strWindowHelp);
-    xmlDocument.setParameter("command", strCommand);
-    xmlDocument.setData("structure1", data);
-    xmlDocument.setData("structure2", data);
-    xmlDocument.setData("structure3", data);
-    return(xmlDocument.print());
-  }
 }

@@ -15,59 +15,63 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.modules;
 
 import javax.servlet.ServletException;
 import org.openbravo.base.*;
 
-
 /**
- * Manages the tree of installed modules. 
- *
+ * Manages the tree of installed modules.
+ * 
  * It implements GenericTree, detailed description is in that API doc.
  */
 public class ModuleReferenceDataClientTree extends ModuleTree {
- 
-  /**
-   * Constructor to generate a root tree 
-   * @param base
-   * @param small Normal size or small size (true)
-   */
-  public ModuleReferenceDataClientTree(HttpBaseServlet base, boolean bSmall) {
-    super(base, bSmall);
-    setRootTree();
-  }
 
-  /**
-   * sets to data the root tree
-   */
-  public void setRootTree() {
-    try {
-      data = ModuleReferenceDataClientTreeData.select(conn, (lang.equals("")?"en_US":lang));
-      //addLinks();
-      setLevel(0);
-      setIcons();
-    } catch (ServletException ex) {
-      ex.printStackTrace();
-      data = null;
+    /**
+     * Constructor to generate a root tree
+     * 
+     * @param base
+     * @param small
+     *            Normal size or small size (true)
+     */
+    public ModuleReferenceDataClientTree(HttpBaseServlet base, boolean bSmall) {
+        super(base, bSmall);
+        setRootTree();
     }
-  }
-  
-  /**
-   * Generates a subtree with nodeId as root node
-   * @param nodeId
-   */
-  public void setSubTree(String nodeId, String level) {
-    setIsSubTree(true);
-    try {
-      data = ModuleReferenceDataClientTreeData.selectSubTree(conn, (lang.equals("")?"en_US":lang), nodeId); 
-      //addLinks();
-      setLevel(new Integer(level).intValue());
-      setIcons();
-    } catch (ServletException ex) {
-      ex.printStackTrace();
-      data = null;
+
+    /**
+     * sets to data the root tree
+     */
+    public void setRootTree() {
+        try {
+            data = ModuleReferenceDataClientTreeData.select(conn, (lang
+                    .equals("") ? "en_US" : lang));
+            // addLinks();
+            setLevel(0);
+            setIcons();
+        } catch (ServletException ex) {
+            ex.printStackTrace();
+            data = null;
+        }
     }
-  }
+
+    /**
+     * Generates a subtree with nodeId as root node
+     * 
+     * @param nodeId
+     */
+    public void setSubTree(String nodeId, String level) {
+        setIsSubTree(true);
+        try {
+            data = ModuleReferenceDataClientTreeData.selectSubTree(conn, (lang
+                    .equals("") ? "en_US" : lang), nodeId);
+            // addLinks();
+            setLevel(new Integer(level).intValue());
+            setIcons();
+        } catch (ServletException ex) {
+            ex.printStackTrace();
+            data = null;
+        }
+    }
 }

@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.utility;
 
 import net.sf.jasperreports.engine.util.DefaultFormatFactory;
@@ -25,19 +25,20 @@ import java.util.TimeZone;
 import java.text.SimpleDateFormat;
 
 public class JRFormatFactory extends DefaultFormatFactory {
-  String datePattern;
+    String datePattern;
 
-  public DateFormat createDateFormat(String pattern, Locale locale, TimeZone timeZone){
-    DateFormat dateFormat = null;
-    if (pattern==null || pattern.equals("")){
-      dateFormat = new SimpleDateFormat(datePattern);
-      return dateFormat;
-    } else {
-      return super.createDateFormat(pattern, locale, timeZone);
+    public DateFormat createDateFormat(String pattern, Locale locale,
+            TimeZone timeZone) {
+        DateFormat dateFormat = null;
+        if (pattern == null || pattern.equals("")) {
+            dateFormat = new SimpleDateFormat(datePattern);
+            return dateFormat;
+        } else {
+            return super.createDateFormat(pattern, locale, timeZone);
+        }
     }
-  }
 
-  public void setDatePattern(String datePattern){
-    this.datePattern = datePattern;
-  }
+    public void setDatePattern(String datePattern) {
+        this.datePattern = datePattern;
+    }
 }

@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpReports;
 
 import org.openbravo.base.secureApp.*;
@@ -25,147 +25,210 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import org.openbravo.erpCommon.utility.Utility;
 
-
 public class RptPromissoryNote extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+    private static final long serialVersionUID = 1L;
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-
-    if (vars.commandIn("DEFAULT")) {
-      String strcDebtPaymentId = vars.getSessionValue("RptPromissoryNote.inpcDebtPaymentId_R");
-      if (strcDebtPaymentId.equals("")) strcDebtPaymentId = vars.getSessionValue("RptPromissoryNote.inpcDebtPaymentId");
-      printPagePDF(response, vars, strcDebtPaymentId);
-    } else {
-      pageError(response);
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
     }
 
-  }
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
 
-
-  void printPagePDF(HttpServletResponse response, VariablesSecureApp vars, String strcDebtPaymentId) throws IOException,ServletException{
-    if(log4j.isDebugEnabled()) log4j.debug("Output: pdf");
-    if (!strcDebtPaymentId.equals("")){
-      RptPromissoryNoteData[] data = RptPromissoryNoteData.select(this, Utility.getContext(this, vars, "#User_Org", "RptPromissoryNote"), Utility.getContext(this, vars, "#User_Client", "RptPromissoryNote"), strcDebtPaymentId); 
-      RptPromissoryNoteHeaderData[][] pdfPromissoryNoteHeaderData = null;
-      RptPromissoryNoteAfterData[][] pdfPromissoryNoteAfterData = null;
-      RptPromissoryNoteErrorData[][] pdfPromissoryNoteErrorData = null;
-
-
-      if (data == null || data.length == 0){
-        data = RptPromissoryNoteData.selectDebtPayment(this, Utility.getContext(this, vars, "#User_Org", "RptPromissoryNote"), Utility.getContext(this, vars, "#User_Client", "RptPromissoryNote"), strcDebtPaymentId);
-        pdfPromissoryNoteHeaderData = new RptPromissoryNoteHeaderData[data.length][];
-        pdfPromissoryNoteAfterData = new RptPromissoryNoteAfterData[data.length][];
-        pdfPromissoryNoteErrorData = new RptPromissoryNoteErrorData[data.length][];
-        for (int i = 0; i<data.length; i++){
-          String strcBankaccountId = RptPromissoryNoteAfterData.selectDebtPaymentBank(this, data[i].cDebtPaymentId);
-          if (!strcBankaccountId.equals("")){
-            String strcPromissoryFormatId = RptPromissoryNoteAfterData.selectPromissoryformat(this, strcBankaccountId); 
-
-            if (strcPromissoryFormatId != null && !strcPromissoryFormatId.equals("")){
-              pdfPromissoryNoteHeaderData[i] = RptPromissoryNoteHeaderData.selectDebtPayment(this, data[i].cDebtPaymentId);
-
-              if (pdfPromissoryNoteHeaderData[i] == null || pdfPromissoryNoteHeaderData[i].length == 0) pdfPromissoryNoteHeaderData[i] = RptPromissoryNoteHeaderData.set();
-
-              pdfPromissoryNoteAfterData[i] = RptPromissoryNoteAfterData.selectDebtPayment(this, data[i].cDebtPaymentId);
-              if (pdfPromissoryNoteAfterData[i] == null || pdfPromissoryNoteAfterData[i].length == 0) pdfPromissoryNoteAfterData[i] = RptPromissoryNoteAfterData.set();
-
-              pdfPromissoryNoteErrorData[i] = new RptPromissoryNoteErrorData[0];
-              String printbank = RptPromissoryNoteAfterData.selectBanklocation(this, strcBankaccountId);
-              if (!printbank.equals("Y")) pdfPromissoryNoteAfterData[i][0].banklocation = "";
-            } else{
-              pdfPromissoryNoteErrorData[i] = RptPromissoryNoteErrorData.select(this, "PromissoryNoteFormat");
-              pdfPromissoryNoteHeaderData[i] = new RptPromissoryNoteHeaderData[0];
-              pdfPromissoryNoteAfterData[i] = new RptPromissoryNoteAfterData[0];
-            }
-          } else {
-            pdfPromissoryNoteErrorData[i] = RptPromissoryNoteErrorData.select(this, "PromissoryNoteBank");
-            pdfPromissoryNoteHeaderData[i] = new RptPromissoryNoteHeaderData[0];
-            pdfPromissoryNoteAfterData[i] = new RptPromissoryNoteAfterData[0];
-          }
-
+        if (vars.commandIn("DEFAULT")) {
+            String strcDebtPaymentId = vars
+                    .getSessionValue("RptPromissoryNote.inpcDebtPaymentId_R");
+            if (strcDebtPaymentId.equals(""))
+                strcDebtPaymentId = vars
+                        .getSessionValue("RptPromissoryNote.inpcDebtPaymentId");
+            printPagePDF(response, vars, strcDebtPaymentId);
+        } else {
+            pageError(response);
         }
-      } else {
-        pdfPromissoryNoteHeaderData = new RptPromissoryNoteHeaderData[data.length][];
-        pdfPromissoryNoteAfterData = new RptPromissoryNoteAfterData[data.length][];
-        pdfPromissoryNoteErrorData = new RptPromissoryNoteErrorData[data.length][];
-        for (int i = 0; i<data.length; i++){
-          String strcBankaccountId = RptPromissoryNoteAfterData.selectDebtPaymentBank(this, data[i].cDebtPaymentId);
-          if (!strcBankaccountId.equals("")){
-            String strcPromissoryFormatId = RptPromissoryNoteAfterData.selectPromissoryformat(this, strcBankaccountId); 
 
-            if (strcPromissoryFormatId != null && !strcPromissoryFormatId.equals("")){
-              pdfPromissoryNoteHeaderData[i] = RptPromissoryNoteHeaderData.select(this, data[i].cDebtPaymentId);
+    }
 
-              if (pdfPromissoryNoteHeaderData[i] == null || pdfPromissoryNoteHeaderData[i].length == 0) {pdfPromissoryNoteHeaderData[i] = RptPromissoryNoteHeaderData.set();}
-              else {
-                // we have to cover the whole debt-payments tree until we find the cancelled invoices
-                pdfPromissoryNoteHeaderData[i][0].documentno = debtPaymentTree(data[i].cDebtPaymentId);
-              }
+    void printPagePDF(HttpServletResponse response, VariablesSecureApp vars,
+            String strcDebtPaymentId) throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: pdf");
+        if (!strcDebtPaymentId.equals("")) {
+            RptPromissoryNoteData[] data = RptPromissoryNoteData.select(this,
+                    Utility.getContext(this, vars, "#User_Org",
+                            "RptPromissoryNote"), Utility.getContext(this,
+                            vars, "#User_Client", "RptPromissoryNote"),
+                    strcDebtPaymentId);
+            RptPromissoryNoteHeaderData[][] pdfPromissoryNoteHeaderData = null;
+            RptPromissoryNoteAfterData[][] pdfPromissoryNoteAfterData = null;
+            RptPromissoryNoteErrorData[][] pdfPromissoryNoteErrorData = null;
 
-              pdfPromissoryNoteAfterData[i] = RptPromissoryNoteAfterData.select(this, data[i].cDebtPaymentId);
+            if (data == null || data.length == 0) {
+                data = RptPromissoryNoteData.selectDebtPayment(this, Utility
+                        .getContext(this, vars, "#User_Org",
+                                "RptPromissoryNote"), Utility.getContext(this,
+                        vars, "#User_Client", "RptPromissoryNote"),
+                        strcDebtPaymentId);
+                pdfPromissoryNoteHeaderData = new RptPromissoryNoteHeaderData[data.length][];
+                pdfPromissoryNoteAfterData = new RptPromissoryNoteAfterData[data.length][];
+                pdfPromissoryNoteErrorData = new RptPromissoryNoteErrorData[data.length][];
+                for (int i = 0; i < data.length; i++) {
+                    String strcBankaccountId = RptPromissoryNoteAfterData
+                            .selectDebtPaymentBank(this, data[i].cDebtPaymentId);
+                    if (!strcBankaccountId.equals("")) {
+                        String strcPromissoryFormatId = RptPromissoryNoteAfterData
+                                .selectPromissoryformat(this, strcBankaccountId);
 
-              if (pdfPromissoryNoteAfterData[i] == null || pdfPromissoryNoteAfterData[i].length == 0) pdfPromissoryNoteAfterData[i] = RptPromissoryNoteAfterData.set();
+                        if (strcPromissoryFormatId != null
+                                && !strcPromissoryFormatId.equals("")) {
+                            pdfPromissoryNoteHeaderData[i] = RptPromissoryNoteHeaderData
+                                    .selectDebtPayment(this,
+                                            data[i].cDebtPaymentId);
 
-              pdfPromissoryNoteErrorData[i] = new RptPromissoryNoteErrorData[0];
-              String printbank = RptPromissoryNoteAfterData.selectBanklocation(this, strcBankaccountId);
-              if (!printbank.equals("Y")) pdfPromissoryNoteAfterData[i][0].banklocation = "";
-            } else{
+                            if (pdfPromissoryNoteHeaderData[i] == null
+                                    || pdfPromissoryNoteHeaderData[i].length == 0)
+                                pdfPromissoryNoteHeaderData[i] = RptPromissoryNoteHeaderData
+                                        .set();
 
-              pdfPromissoryNoteErrorData[i] = RptPromissoryNoteErrorData.select(this, Utility.messageBD(this, "PromissoryNoteFormat", vars.getLanguage()));
-              pdfPromissoryNoteHeaderData[i] = new RptPromissoryNoteHeaderData[0];
-              pdfPromissoryNoteAfterData[i] = new RptPromissoryNoteAfterData[0];
+                            pdfPromissoryNoteAfterData[i] = RptPromissoryNoteAfterData
+                                    .selectDebtPayment(this,
+                                            data[i].cDebtPaymentId);
+                            if (pdfPromissoryNoteAfterData[i] == null
+                                    || pdfPromissoryNoteAfterData[i].length == 0)
+                                pdfPromissoryNoteAfterData[i] = RptPromissoryNoteAfterData
+                                        .set();
+
+                            pdfPromissoryNoteErrorData[i] = new RptPromissoryNoteErrorData[0];
+                            String printbank = RptPromissoryNoteAfterData
+                                    .selectBanklocation(this, strcBankaccountId);
+                            if (!printbank.equals("Y"))
+                                pdfPromissoryNoteAfterData[i][0].banklocation = "";
+                        } else {
+                            pdfPromissoryNoteErrorData[i] = RptPromissoryNoteErrorData
+                                    .select(this, "PromissoryNoteFormat");
+                            pdfPromissoryNoteHeaderData[i] = new RptPromissoryNoteHeaderData[0];
+                            pdfPromissoryNoteAfterData[i] = new RptPromissoryNoteAfterData[0];
+                        }
+                    } else {
+                        pdfPromissoryNoteErrorData[i] = RptPromissoryNoteErrorData
+                                .select(this, "PromissoryNoteBank");
+                        pdfPromissoryNoteHeaderData[i] = new RptPromissoryNoteHeaderData[0];
+                        pdfPromissoryNoteAfterData[i] = new RptPromissoryNoteAfterData[0];
+                    }
+
+                }
+            } else {
+                pdfPromissoryNoteHeaderData = new RptPromissoryNoteHeaderData[data.length][];
+                pdfPromissoryNoteAfterData = new RptPromissoryNoteAfterData[data.length][];
+                pdfPromissoryNoteErrorData = new RptPromissoryNoteErrorData[data.length][];
+                for (int i = 0; i < data.length; i++) {
+                    String strcBankaccountId = RptPromissoryNoteAfterData
+                            .selectDebtPaymentBank(this, data[i].cDebtPaymentId);
+                    if (!strcBankaccountId.equals("")) {
+                        String strcPromissoryFormatId = RptPromissoryNoteAfterData
+                                .selectPromissoryformat(this, strcBankaccountId);
+
+                        if (strcPromissoryFormatId != null
+                                && !strcPromissoryFormatId.equals("")) {
+                            pdfPromissoryNoteHeaderData[i] = RptPromissoryNoteHeaderData
+                                    .select(this, data[i].cDebtPaymentId);
+
+                            if (pdfPromissoryNoteHeaderData[i] == null
+                                    || pdfPromissoryNoteHeaderData[i].length == 0) {
+                                pdfPromissoryNoteHeaderData[i] = RptPromissoryNoteHeaderData
+                                        .set();
+                            } else {
+                                // we have to cover the whole debt-payments tree
+                                // until we find the cancelled invoices
+                                pdfPromissoryNoteHeaderData[i][0].documentno = debtPaymentTree(data[i].cDebtPaymentId);
+                            }
+
+                            pdfPromissoryNoteAfterData[i] = RptPromissoryNoteAfterData
+                                    .select(this, data[i].cDebtPaymentId);
+
+                            if (pdfPromissoryNoteAfterData[i] == null
+                                    || pdfPromissoryNoteAfterData[i].length == 0)
+                                pdfPromissoryNoteAfterData[i] = RptPromissoryNoteAfterData
+                                        .set();
+
+                            pdfPromissoryNoteErrorData[i] = new RptPromissoryNoteErrorData[0];
+                            String printbank = RptPromissoryNoteAfterData
+                                    .selectBanklocation(this, strcBankaccountId);
+                            if (!printbank.equals("Y"))
+                                pdfPromissoryNoteAfterData[i][0].banklocation = "";
+                        } else {
+
+                            pdfPromissoryNoteErrorData[i] = RptPromissoryNoteErrorData
+                                    .select(this, Utility.messageBD(this,
+                                            "PromissoryNoteFormat", vars
+                                                    .getLanguage()));
+                            pdfPromissoryNoteHeaderData[i] = new RptPromissoryNoteHeaderData[0];
+                            pdfPromissoryNoteAfterData[i] = new RptPromissoryNoteAfterData[0];
+                        }
+                    } else {
+                        pdfPromissoryNoteErrorData[i] = RptPromissoryNoteErrorData
+                                .select(this, Utility.messageBD(this,
+                                        "PromissoryNoteBank", vars
+                                                .getLanguage()));
+                        pdfPromissoryNoteHeaderData[i] = new RptPromissoryNoteHeaderData[0];
+                        pdfPromissoryNoteAfterData[i] = new RptPromissoryNoteAfterData[0];
+                    }
+
+                }
             }
-          } else {
-            pdfPromissoryNoteErrorData[i] = RptPromissoryNoteErrorData.select(this, Utility.messageBD(this, "PromissoryNoteBank", vars.getLanguage()));
-            pdfPromissoryNoteHeaderData[i] = new RptPromissoryNoteHeaderData[0];
-            pdfPromissoryNoteAfterData[i] = new RptPromissoryNoteAfterData[0];
-          }
 
+            XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                    "org/openbravo/erpReports/RptPromissoryNote")
+                    .createXmlDocument();
+
+            xmlDocument.setData("structure1", data);
+            xmlDocument.setDataArray("reportPromissoryNoteHeader",
+                    "structureHeader", pdfPromissoryNoteHeaderData);
+            xmlDocument.setDataArray("reportPromissoryNoteAfter",
+                    "structureAfter", pdfPromissoryNoteAfterData);
+            xmlDocument.setDataArray("reportPromissoryNoteError",
+                    "structureError", pdfPromissoryNoteErrorData);
+
+            String strResult = xmlDocument.print();
+            renderFO(strResult, response);
         }
-      }
-   
-    
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpReports/RptPromissoryNote").createXmlDocument();
-
-    xmlDocument.setData("structure1", data);
-    xmlDocument.setDataArray("reportPromissoryNoteHeader","structureHeader",pdfPromissoryNoteHeaderData);
-    xmlDocument.setDataArray("reportPromissoryNoteAfter","structureAfter",pdfPromissoryNoteAfterData);
-    xmlDocument.setDataArray("reportPromissoryNoteError","structureError",pdfPromissoryNoteErrorData);
-
-    String strResult = xmlDocument.print();
-    renderFO(strResult, response);
     }
-  }
 
-  String  debtPaymentTree(String strcDebtPaymentId) throws IOException,ServletException{
-    String strDocumentno = "";
-    //strMark=(sale, buy);
-    //boolean[] strMark = {true, true};
-    strcDebtPaymentId = "(" + strcDebtPaymentId + ")";
-    while (true) {
-      RptPromissoryNoteTreeData[] data = RptPromissoryNoteTreeData.select(this, strcDebtPaymentId);
-      strcDebtPaymentId = "(";
-    	if (data == null || data.length == 0) break;
-    	for (int i = 0;i<data.length;i++){
-    		if (!data[i].cInvoiceId.equals("")){
-    			if (data[i].issotrx.equals("Y")) strDocumentno += "Nuestra factura nº: " + data[i].documentno + "   * " + data[i].grandtotal + " *";
-    			else strDocumentno += "Pago su fra. nº: " + data[i].poreference + "   * " + data[i].grandtotal + " *";
-          strDocumentno += "\n";
-    		}
-        strcDebtPaymentId += data[i].cDebtPaymentId;
-    		if (i != data.length -1) strcDebtPaymentId += ",";
-    	}
-    	strcDebtPaymentId += ")";
+    String debtPaymentTree(String strcDebtPaymentId) throws IOException,
+            ServletException {
+        String strDocumentno = "";
+        // strMark=(sale, buy);
+        // boolean[] strMark = {true, true};
+        strcDebtPaymentId = "(" + strcDebtPaymentId + ")";
+        while (true) {
+            RptPromissoryNoteTreeData[] data = RptPromissoryNoteTreeData
+                    .select(this, strcDebtPaymentId);
+            strcDebtPaymentId = "(";
+            if (data == null || data.length == 0)
+                break;
+            for (int i = 0; i < data.length; i++) {
+                if (!data[i].cInvoiceId.equals("")) {
+                    if (data[i].issotrx.equals("Y"))
+                        strDocumentno += "Nuestra factura nº: "
+                                + data[i].documentno + "   * "
+                                + data[i].grandtotal + " *";
+                    else
+                        strDocumentno += "Pago su fra. nº: "
+                                + data[i].poreference + "   * "
+                                + data[i].grandtotal + " *";
+                    strDocumentno += "\n";
+                }
+                strcDebtPaymentId += data[i].cDebtPaymentId;
+                if (i != data.length - 1)
+                    strcDebtPaymentId += ",";
+            }
+            strcDebtPaymentId += ")";
+        }
+        return strDocumentno;
     }
-    return strDocumentno;
-  }
 
-  public String getServletInfo() {
-    return "Servlet ReportMInout. This Servlet was made by Jon Alegría";
-  } // end of getServletInfo() method
+    public String getServletInfo() {
+        return "Servlet ReportMInout. This Servlet was made by Jon Alegría";
+    } // end of getServletInfo() method
 }

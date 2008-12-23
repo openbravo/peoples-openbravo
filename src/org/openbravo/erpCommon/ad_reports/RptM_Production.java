@@ -24,33 +24,38 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 public class RptM_Production extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
+    }
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (vars.commandIn("DEFAULT")) {
-      String strId = vars.getStringParameter("inpmProductionlineId");
-      RptMProductionData[] data = RptMProductionData.select(this, strId);
-      vars.removeSessionValue("Rpt_Etiquetas|cBpartnerId");
-      vars.removeSessionValue("Rpt_Etiquetas|mProductId");
-      vars.removeSessionValue("Rpt_Etiquetas|mAttributesetinstanceId");
-      vars.removeSessionValue("Rpt_Etiquetas|qty");
-      if (data!=null && data.length>0) {
-        vars.setSessionValue("Rpt_Etiquetas|mProductId", data[0].mProductId);
-        vars.setSessionValue("Rpt_Etiquetas|mAttributesetinstanceId", data[0].mAttributesetinstanceId);
-        vars.setSessionValue("Rpt_Etiquetas|qty", data[0].qty);
-      }
-      response.sendRedirect(strDireccion + "/ad_reports/Rpt_Etiquetas.html");
-    } else pageError(response);
-  }
+        if (vars.commandIn("DEFAULT")) {
+            String strId = vars.getStringParameter("inpmProductionlineId");
+            RptMProductionData[] data = RptMProductionData.select(this, strId);
+            vars.removeSessionValue("Rpt_Etiquetas|cBpartnerId");
+            vars.removeSessionValue("Rpt_Etiquetas|mProductId");
+            vars.removeSessionValue("Rpt_Etiquetas|mAttributesetinstanceId");
+            vars.removeSessionValue("Rpt_Etiquetas|qty");
+            if (data != null && data.length > 0) {
+                vars.setSessionValue("Rpt_Etiquetas|mProductId",
+                        data[0].mProductId);
+                vars.setSessionValue("Rpt_Etiquetas|mAttributesetinstanceId",
+                        data[0].mAttributesetinstanceId);
+                vars.setSessionValue("Rpt_Etiquetas|qty", data[0].qty);
+            }
+            response.sendRedirect(strDireccion
+                    + "/ad_reports/Rpt_Etiquetas.html");
+        } else
+            pageError(response);
+    }
 
-  public String getServletInfo() {
-    return "Servlet configuration";
-  } // end of the getServletInfo() method
+    public String getServletInfo() {
+        return "Servlet configuration";
+    } // end of the getServletInfo() method
 }

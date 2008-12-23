@@ -15,41 +15,46 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.utility;
 
-
 public class ToolBar_Image implements HTMLElement {
-  String name = "";
-  String description = "";
-  String base_direction;
-  String imageClass = "";
+    String name = "";
+    String description = "";
+    String base_direction;
+    String imageClass = "";
 
-  public ToolBar_Image(String _base_direction, String _name, String _description) {
-    this (_base_direction, _name, _description, _name);
-  }
-  
-  public ToolBar_Image(String _base_direction, String _name, String _description, String _imageClass) {
-    this.name = _name;
-    this.base_direction = _base_direction;
-    this.description = _description;
-    this.imageClass = _imageClass;
-  }
+    public ToolBar_Image(String _base_direction, String _name,
+            String _description) {
+        this(_base_direction, _name, _description, _name);
+    }
 
-  public String getWidth() {
-    return "16";
-  }
+    public ToolBar_Image(String _base_direction, String _name,
+            String _description, String _imageClass) {
+        this.name = _name;
+        this.base_direction = _base_direction;
+        this.description = _description;
+        this.imageClass = _imageClass;
+    }
 
-  public String elementType() {
-    return "IMAGE";
-  }
+    public String getWidth() {
+        return "16";
+    }
 
-  public String toString() {
-    StringBuffer toolbar = new StringBuffer();
-    toolbar.append("<img class=\"Main_ToolBar_Button_Icon Main_ToolBar_Button_Icon_").append(imageClass).append("\" src=\"").append(base_direction).append("/images/blank.gif\" ");
-    toolbar.append("title=\"").append(description);
-    toolbar.append("\" border=\"0\" id=\"button").append(name).append("\"");
-    toolbar.append(">");
-    return toolbar.toString();
-  }
+    public String elementType() {
+        return "IMAGE";
+    }
+
+    public String toString() {
+        StringBuffer toolbar = new StringBuffer();
+        toolbar
+                .append(
+                        "<img class=\"Main_ToolBar_Button_Icon Main_ToolBar_Button_Icon_")
+                .append(imageClass).append("\" src=\"").append(base_direction)
+                .append("/images/blank.gif\" ");
+        toolbar.append("title=\"").append(description);
+        toolbar.append("\" border=\"0\" id=\"button").append(name).append("\"");
+        toolbar.append(">");
+        return toolbar.toString();
+    }
 }

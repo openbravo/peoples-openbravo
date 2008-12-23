@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_callouts;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -26,50 +26,59 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-
 public class SE_Request_CopyText extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
-
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strRMailTextId = vars.getStringParameter("inprMailtextId");
-      String strTabId = vars.getStringParameter("inpTabId");
-      
-      try {
-        printPage(response, vars, strRMailTextId, strTabId);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else pageError(response);
-  }
-
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strRMailTextId, String strTabId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SE_Request_CopyText';\n\n");
-    resultado.append("var respuesta = new Array(");
-
-    SERequestCopyTextData [] data = SERequestCopyTextData.select(this, strRMailTextId);
-
-    if (data!=null && data.length!=0){
-      resultado.append("new Array(\"inpmailsubject\", \"" + FormatUtilities.replaceJS(data[0].mailheader) + "\"),");
-      resultado.append("new Array(\"inpmailtext\", \"" + FormatUtilities.replaceJS(data[0].mailtext) + "\")");
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
     }
 
-    resultado.append(");");
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+        if (vars.commandIn("DEFAULT")) {
+            String strRMailTextId = vars.getStringParameter("inprMailtextId");
+            String strTabId = vars.getStringParameter("inpTabId");
+
+            try {
+                printPage(response, vars, strRMailTextId, strTabId);
+            } catch (ServletException ex) {
+                pageErrorCallOut(response);
+            }
+        } else
+            pageError(response);
+    }
+
+    void printPage(HttpServletResponse response, VariablesSecureApp vars,
+            String strRMailTextId, String strTabId) throws IOException,
+            ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/ad_callouts/CallOut")
+                .createXmlDocument();
+
+        StringBuffer resultado = new StringBuffer();
+        resultado.append("var calloutName='SE_Request_CopyText';\n\n");
+        resultado.append("var respuesta = new Array(");
+
+        SERequestCopyTextData[] data = SERequestCopyTextData.select(this,
+                strRMailTextId);
+
+        if (data != null && data.length != 0) {
+            resultado.append("new Array(\"inpmailsubject\", \""
+                    + FormatUtilities.replaceJS(data[0].mailheader) + "\"),");
+            resultado.append("new Array(\"inpmailtext\", \""
+                    + FormatUtilities.replaceJS(data[0].mailtext) + "\")");
+        }
+
+        resultado.append(");");
+        xmlDocument.setParameter("array", resultado.toString());
+        xmlDocument.setParameter("frameName", "appFrame");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
+    }
 }

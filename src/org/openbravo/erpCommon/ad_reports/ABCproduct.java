@@ -28,90 +28,118 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 public class ABCproduct extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (vars.commandIn("DEFAULT")) {
-      String strFrom = vars.getGlobalVariable("inpFrom", "ABCproduct|From", "");
-      String strTo = vars.getGlobalVariable("inpTo", "ABCproduct|To", "");
-      String strCategory = vars.getGlobalVariable("inpCategory", "ABCproduct|Category", "");
-      printPageDataSheet(response, vars, strFrom, strTo, strCategory);
-    } else if (vars.commandIn("FIND")) {
-      String strFrom = vars.getRequestGlobalVariable("inpFrom", "ABCproduct|From");
-      String strTo = vars.getRequestGlobalVariable("inpTo", "ABCproduct|To");
-      String strCategory = vars.getGlobalVariable("inpCategory", "ABCproduct|Category", "");
-      printPageDataSheet(response, vars, strFrom, strTo, strCategory);
-    } else pageError(response);
-  }
-
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strFrom, String strTo, String strCategory)
-    throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    XmlDocument xmlDocument=null;
-    ABCproductData[] data=null;
-    if (strFrom.equals("") || strTo.equals("")){
-      String discard[]= {"selEliminar"};
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ABCproduct", discard).createXmlDocument();
-      data = ABCproductData.set("0","0");
-    } else {
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ABCproduct").createXmlDocument();
-      data = ABCproductData.select(this,strFrom, strTo, strCategory);
+        if (vars.commandIn("DEFAULT")) {
+            String strFrom = vars.getGlobalVariable("inpFrom",
+                    "ABCproduct|From", "");
+            String strTo = vars.getGlobalVariable("inpTo", "ABCproduct|To", "");
+            String strCategory = vars.getGlobalVariable("inpCategory",
+                    "ABCproduct|Category", "");
+            printPageDataSheet(response, vars, strFrom, strTo, strCategory);
+        } else if (vars.commandIn("FIND")) {
+            String strFrom = vars.getRequestGlobalVariable("inpFrom",
+                    "ABCproduct|From");
+            String strTo = vars.getRequestGlobalVariable("inpTo",
+                    "ABCproduct|To");
+            String strCategory = vars.getGlobalVariable("inpCategory",
+                    "ABCproduct|Category", "");
+            printPageDataSheet(response, vars, strFrom, strTo, strCategory);
+        } else
+            pageError(response);
     }
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ABCproduct", false, "", "", "",false, "ad_reports",  strReplaceWith, false,  true);
-    toolbar.prepareSimpleToolBarTemplate();
-    xmlDocument.setParameter("toolbar", toolbar.toString()); 
-    try {
-      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.ABCbproduct");
-      xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
-      xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
-      xmlDocument.setParameter("childTabContainer", tabs.childTabs());
-      xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ABCproduct.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
-      xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ABCproduct.html", strReplaceWith);
-      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
+    void printPageDataSheet(HttpServletResponse response,
+            VariablesSecureApp vars, String strFrom, String strTo,
+            String strCategory) throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        XmlDocument xmlDocument = null;
+        ABCproductData[] data = null;
+        if (strFrom.equals("") || strTo.equals("")) {
+            String discard[] = { "selEliminar" };
+            xmlDocument = xmlEngine.readXmlTemplate(
+                    "org/openbravo/erpCommon/ad_reports/ABCproduct", discard)
+                    .createXmlDocument();
+            data = ABCproductData.set("0", "0");
+        } else {
+            xmlDocument = xmlEngine.readXmlTemplate(
+                    "org/openbravo/erpCommon/ad_reports/ABCproduct")
+                    .createXmlDocument();
+            data = ABCproductData.select(this, strFrom, strTo, strCategory);
+        }
+
+        ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ABCproduct",
+                false, "", "", "", false, "ad_reports", strReplaceWith, false,
+                true);
+        toolbar.prepareSimpleToolBarTemplate();
+        xmlDocument.setParameter("toolbar", toolbar.toString());
+        try {
+            WindowTabs tabs = new WindowTabs(this, vars,
+                    "org.openbravo.erpCommon.ad_reports.ABCbproduct");
+            xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
+            xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
+            xmlDocument.setParameter("childTabContainer", tabs.childTabs());
+            xmlDocument.setParameter("theme", vars.getTheme());
+            NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+                    "ABCproduct.html", classInfo.id, classInfo.type,
+                    strReplaceWith, tabs.breadcrumb());
+            xmlDocument.setParameter("navigationBar", nav.toString());
+            LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
+                    "ABCproduct.html", strReplaceWith);
+            xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+        } catch (Exception ex) {
+            throw new ServletException(ex);
+        }
+        {
+            OBError myMessage = vars.getMessage("ABCproduct");
+            vars.removeMessage("ABCproduct");
+            if (myMessage != null) {
+                xmlDocument.setParameter("messageType", myMessage.getType());
+                xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+                xmlDocument.setParameter("messageMessage", myMessage
+                        .getMessage());
+            }
+        }
+
+        xmlDocument
+                .setParameter("calendar", vars.getLanguage().substring(0, 2));
+        xmlDocument.setParameter("directory", "var baseDirectory = \""
+                + strReplaceWith + "/\";\n");
+        xmlDocument.setParameter("paramLanguage", "defaultLang=\""
+                + vars.getLanguage() + "\";");
+        xmlDocument.setParameter("from", strFrom);
+        xmlDocument.setParameter("to", strTo);
+        xmlDocument.setParameter("category", strCategory);
+
+        try {
+            ComboTableData comboTableData = new ComboTableData(vars, this,
+                    "TABLEDIR", "M_Product_Category_ID", "", "", Utility
+                            .getContext(this, vars, "#User_Org", "ABCproduct"),
+                    Utility
+                            .getContext(this, vars, "#User_Client",
+                                    "ABCproduct"), 0);
+            Utility.fillSQLParameters(this, vars, null, comboTableData,
+                    "ABCproduct", "");
+            xmlDocument.setData("reportCategory", "liststructure",
+                    comboTableData.select(false));
+            comboTableData = null;
+        } catch (Exception ex) {
+            throw new ServletException(ex);
+        }
+
+        xmlDocument.setData("structure", data);
+        out.println(xmlDocument.print());
+        out.close();
     }
-    {
-      OBError myMessage = vars.getMessage("ABCproduct");
-      vars.removeMessage("ABCproduct");
-      if (myMessage!=null) {
-        xmlDocument.setParameter("messageType", myMessage.getType());
-        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-      }
-    }
 
-
-    xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("from", strFrom);
-    xmlDocument.setParameter("to", strTo);
-    xmlDocument.setParameter("category", strCategory);
-
-    try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ABCproduct"), Utility.getContext(this, vars, "#User_Client", "ABCproduct"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ABCproduct", "");
-      xmlDocument.setData("reportCategory","liststructure", comboTableData.select(false));
-      comboTableData = null;
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-
-    xmlDocument.setData("structure", data);
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-  public String getServletInfo() {
-    return "Servlet ABCproduct. This Servlet was made by Eduardo Argal";
-  } // end of getServletInfo() method
+    public String getServletInfo() {
+        return "Servlet ABCproduct. This Servlet was made by Eduardo Argal";
+    } // end of getServletInfo() method
 }
-

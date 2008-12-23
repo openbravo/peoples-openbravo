@@ -913,8 +913,8 @@ public class CreateFrom extends HttpSecureAppServlet {
                     new CreateFromShipmentData[0]);
         } else {
             if (vars.commandIn("REFRESH_INVOICES")) { // Loading the combos in
-                                                      // the delivery note's
-                                                      // CreateFrom
+                // the delivery note's
+                // CreateFrom
                 if (isSOTrx.equals("Y")) {
                     strArray = arrayEntradaSimple("arrDatos",
                             new CreateFromShipmentData[0]);

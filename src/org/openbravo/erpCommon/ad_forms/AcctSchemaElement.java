@@ -13,20 +13,23 @@
  * Contributor(s): Openbravo SL
  * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
  ******************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_forms;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import org.openbravo.database.ConnectionProvider;
-import org.apache.log4j.Logger ;
+import org.apache.log4j.Logger;
 import javax.servlet.*;
 
 public final class AcctSchemaElement implements Serializable {
-  private static final long serialVersionUID = 1L;
-  static Logger log4jAcctSchemaElement = Logger.getLogger(AcctSchemaElement.class);
+    private static final long serialVersionUID = 1L;
+    static Logger log4jAcctSchemaElement = Logger
+            .getLogger(AcctSchemaElement.class);
 
-    public AcctSchemaElement(String id, String seqNo, String name, String segmentType, String C_Element_ID, String defaultValue, String mandatory, String balanced) {
+    public AcctSchemaElement(String id, String seqNo, String name,
+            String segmentType, String C_Element_ID, String defaultValue,
+            String mandatory, String balanced) {
         m_ID = id;
         m_seqNo = seqNo;
         m_name = name;
@@ -37,14 +40,17 @@ public final class AcctSchemaElement implements Serializable {
         m_balanced = balanced;
     }
 
-    public static ArrayList<Object> getAcctSchemaElementList(ConnectionProvider conn, String C_AcctSchema_ID) {
-        log4jAcctSchemaElement.debug( "AcctSchamaElement.getAcctSchemaElementList - " + C_AcctSchema_ID);
+    public static ArrayList<Object> getAcctSchemaElementList(
+            ConnectionProvider conn, String C_AcctSchema_ID) {
+        log4jAcctSchemaElement
+                .debug("AcctSchamaElement.getAcctSchemaElementList - "
+                        + C_AcctSchema_ID);
         ArrayList<Object> list = new ArrayList<Object>();
-        AcctSchemaElementData [] data;
+        AcctSchemaElementData[] data;
         try {
             data = AcctSchemaElementData.select(conn, C_AcctSchema_ID);
             AcctSchemaElement e;
-            for(int i=0;i< data.length;i++) {
+            for (int i = 0; i < data.length; i++) {
                 String id = data[i].cAcctschemaElementId;
                 String seqNo = data[i].seqno;
                 String name = data[i].name;
@@ -53,56 +59,49 @@ public final class AcctSchemaElement implements Serializable {
                 String mandatory = data[i].ismandatory;
                 String balanced = data[i].isbalanced;
                 String defaultValue = "";
-								// FIXME: For the sake of clarity we should be SEGMENT_Org
-								// and String SEGMENT_Account for the next, etc. What's the point
-								// defining constants that we do not use
-                if(segmentType.equals("OO"))
+                // FIXME: For the sake of clarity we should be SEGMENT_Org
+                // and String SEGMENT_Account for the next, etc. What's the
+                // point
+                // defining constants that we do not use
+                if (segmentType.equals("OO"))
                     defaultValue = data[i].orgId;
-                else
-                if(segmentType.equals("AC"))
+                else if (segmentType.equals("AC"))
                     defaultValue = data[i].cElementvalueId;
-                else
-                if(segmentType.equals("BP"))
+                else if (segmentType.equals("BP"))
                     defaultValue = data[i].cBpartnerId;
-                else
-                if(segmentType.equals("PR"))
+                else if (segmentType.equals("PR"))
                     defaultValue = data[i].mProductId;
-                else
-                if(segmentType.equals("AY"))
+                else if (segmentType.equals("AY"))
                     defaultValue = data[i].cActivityId;
-                else
-                if(segmentType.equals("LF"))
+                else if (segmentType.equals("LF"))
                     defaultValue = data[i].cLocationId;
-                else
-                if(segmentType.equals("LT"))
+                else if (segmentType.equals("LT"))
                     defaultValue = data[i].cLocationId;
-                else
-                if(segmentType.equals("MC"))
+                else if (segmentType.equals("MC"))
                     defaultValue = data[i].cCampaignId;
-                else
-                if(segmentType.equals("OT"))
+                else if (segmentType.equals("OT"))
                     defaultValue = data[i].orgId;
-                else
-                if(segmentType.equals("PJ"))
+                else if (segmentType.equals("PJ"))
                     defaultValue = data[i].cProjectId;
-                else
-                if(segmentType.equals("SR"))
+                else if (segmentType.equals("SR"))
                     defaultValue = data[i].cSalesregionId;
-                else
-                if(segmentType.equals("U1"))
+                else if (segmentType.equals("U1"))
                     defaultValue = data[i].cElementvalueId;
-                else
-                if(segmentType.equals("U2"))
+                else if (segmentType.equals("U2"))
                     defaultValue = data[i].cElementvalueId;
-                log4jAcctSchemaElement.debug(seqNo + " " + name + " " + segmentType + "=" + defaultValue);
-                if(mandatory.equals("Y") && defaultValue.equals(""))
-                    log4jAcctSchemaElement.warn("AcctSchameElement.getAcctSchemaElementList - No default value for " + name);
-                e = new AcctSchemaElement(id, seqNo, name, segmentType, C_Element_ID, defaultValue, mandatory, balanced);
+                log4jAcctSchemaElement.debug(seqNo + " " + name + " "
+                        + segmentType + "=" + defaultValue);
+                if (mandatory.equals("Y") && defaultValue.equals(""))
+                    log4jAcctSchemaElement
+                            .warn("AcctSchameElement.getAcctSchemaElementList - No default value for "
+                                    + name);
+                e = new AcctSchemaElement(id, seqNo, name, segmentType,
+                        C_Element_ID, defaultValue, mandatory, balanced);
                 list.add(e);
             }
-        }
-        catch(ServletException e) {
-            log4jAcctSchemaElement.warn("AcctSchemaElement.getAcctSchemaElementList", e);
+        } catch (ServletException e) {
+            log4jAcctSchemaElement.warn(
+                    "AcctSchemaElement.getAcctSchemaElementList", e);
         }
         return list;
     }

@@ -27,48 +27,61 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 public class ReportBudgetExportExcel extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
 
-
-    if (vars.commandIn("DEFAULT")){
-      String strKey = vars.getRequiredGlobalVariable("inpcBudgetId", "ReportBudgetGenerateExcel|inpcBudgetId");
-      printPageDataExportExcel(response, vars, strKey);
-    } else pageErrorPopUp(response);
-  }
-
-  void printPageDataExportExcel(HttpServletResponse response, VariablesSecureApp vars, String strBudgetId) throws IOException, ServletException {
-
-    if (log4j.isDebugEnabled()) log4j.debug("Output: EXCEL");
-
-    vars.removeSessionValue("ReportBudgetGenerateExcel|inpTabId");
-
-    response.setContentType("application/xls");
-    PrintWriter out = response.getWriter();
-
-    XmlDocument xmlDocument=null;
-    ReportBudgetGenerateExcelData[] data=null;
-    data = ReportBudgetGenerateExcelData.selectLines(this, vars.getLanguage(), strBudgetId);
-
-    if (data[0].exportactual.equals("Y")) 
-    {    
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportBudgetGenerateExcelXLS").createXmlDocument();
-    } else{
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportBudgetGenerateExcelExportXLS").createXmlDocument();
+        if (vars.commandIn("DEFAULT")) {
+            String strKey = vars.getRequiredGlobalVariable("inpcBudgetId",
+                    "ReportBudgetGenerateExcel|inpcBudgetId");
+            printPageDataExportExcel(response, vars, strKey);
+        } else
+            pageErrorPopUp(response);
     }
 
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
+    void printPageDataExportExcel(HttpServletResponse response,
+            VariablesSecureApp vars, String strBudgetId) throws IOException,
+            ServletException {
 
-    xmlDocument.setData("structure1", data);
-    out.println(xmlDocument.print());
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: EXCEL");
 
-  }
+        vars.removeSessionValue("ReportBudgetGenerateExcel|inpTabId");
 
-  public String getServletInfo() {
-    return "Servlet ReportBudgetGenerateExcel.";
-  } // end of getServletInfo() method
+        response.setContentType("application/xls");
+        PrintWriter out = response.getWriter();
+
+        XmlDocument xmlDocument = null;
+        ReportBudgetGenerateExcelData[] data = null;
+        data = ReportBudgetGenerateExcelData.selectLines(this, vars
+                .getLanguage(), strBudgetId);
+
+        if (data[0].exportactual.equals("Y")) {
+            xmlDocument = xmlEngine
+                    .readXmlTemplate(
+                            "org/openbravo/erpCommon/ad_reports/ReportBudgetGenerateExcelXLS")
+                    .createXmlDocument();
+        } else {
+            xmlDocument = xmlEngine
+                    .readXmlTemplate(
+                            "org/openbravo/erpCommon/ad_reports/ReportBudgetGenerateExcelExportXLS")
+                    .createXmlDocument();
+        }
+
+        xmlDocument.setParameter("directory", "var baseDirectory = \""
+                + strReplaceWith + "/\";\n");
+        xmlDocument.setParameter("language", "defaultLang=\""
+                + vars.getLanguage() + "\";");
+        xmlDocument.setParameter("theme", vars.getTheme());
+
+        xmlDocument.setData("structure1", data);
+        out.println(xmlDocument.print());
+
+    }
+
+    public String getServletInfo() {
+        return "Servlet ReportBudgetGenerateExcel.";
+    } // end of getServletInfo() method
 }

@@ -15,10 +15,10 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.utility;
 
 class CSResponse {
-  String razon;
-  String exito;
+    String razon;
+    String exito;
 }

@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 
 package org.openbravo.erpCommon.ad_forms;
 
@@ -32,108 +32,132 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-
 public class DebtPaymentUnapply extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
 
-
-    if (vars.commandIn("DEFAULT")) {
-      String strWindow = vars.getStringParameter("inpwindowId");
-      printPageDataSheet(response, vars, strWindow);
-    } else if (vars.commandIn("PROCESS")) {
-      String strCDebtPaymentId = vars.getInStringParameter("inpDebtPayment");      
-      OBError myMessage = updateSelection(vars, strCDebtPaymentId);
-      vars.setMessage("DebtPaymentUnapply", myMessage);
-      response.sendRedirect(strDireccion + request.getServletPath());
-     } else pageError(response);
-  }
-
-  OBError updateSelection(VariablesSecureApp vars, String strCDebtPaymentId){
-    OBError myMessage = new OBError();
-        
-    if (strCDebtPaymentId.equals("")) {
-      myMessage.setType("Info");
-      myMessage.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
-      myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), "No records selected"));
-      return myMessage;
+        if (vars.commandIn("DEFAULT")) {
+            String strWindow = vars.getStringParameter("inpwindowId");
+            printPageDataSheet(response, vars, strWindow);
+        } else if (vars.commandIn("PROCESS")) {
+            String strCDebtPaymentId = vars
+                    .getInStringParameter("inpDebtPayment");
+            OBError myMessage = updateSelection(vars, strCDebtPaymentId);
+            vars.setMessage("DebtPaymentUnapply", myMessage);
+            response.sendRedirect(strDireccion + request.getServletPath());
+        } else
+            pageError(response);
     }
-    
-      try {
-      DebtPaymentUnapplyData [] data = DebtPaymentUnapplyData.selectRecord(this, strCDebtPaymentId);
-      int i=0;
-      for (i=0;i<data.length;i++) {
-        if (data[i].iscancel.equals("N")){
-          DebtPaymentUnapplyData.updateGenerate(this, data[i].cDebtPaymentId);
-        }else{
-          DebtPaymentUnapplyData.updateCancel(this, data[i].cDebtPaymentId);
+
+    OBError updateSelection(VariablesSecureApp vars, String strCDebtPaymentId) {
+        OBError myMessage = new OBError();
+
+        if (strCDebtPaymentId.equals("")) {
+            myMessage.setType("Info");
+            myMessage.setTitle(Utility.messageBD(this, "Info", vars
+                    .getLanguage()));
+            myMessage.setMessage(Utility.parseTranslation(this, vars, vars
+                    .getLanguage(), "No records selected"));
+            return myMessage;
         }
-      }
-      
-      myMessage.setType("Success");
-      myMessage.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
-      myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), "Updated = " + Integer.toString(i)));
-      } catch(ServletException ex) {
-        myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());        
-      }    
-    return myMessage;
-  }
 
+        try {
+            DebtPaymentUnapplyData[] data = DebtPaymentUnapplyData
+                    .selectRecord(this, strCDebtPaymentId);
+            int i = 0;
+            for (i = 0; i < data.length; i++) {
+                if (data[i].iscancel.equals("N")) {
+                    DebtPaymentUnapplyData.updateGenerate(this,
+                            data[i].cDebtPaymentId);
+                } else {
+                    DebtPaymentUnapplyData.updateCancel(this,
+                            data[i].cDebtPaymentId);
+                }
+            }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strWindow)
-    throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    String discard[]={"sectionDetail"};
-    XmlDocument xmlDocument=null;
-    DebtPaymentUnapplyData[] data=null;
-    data = DebtPaymentUnapplyData.select(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Org", strWindow), Utility.getContext(this, vars, "#User_Client", strWindow));
-    if (data==null || data.length == 0) {
-     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/DebtPaymentUnapply", discard).createXmlDocument();
-     data = DebtPaymentUnapplyData.set();
-    } else {
-     xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_forms/DebtPaymentUnapply").createXmlDocument();
+            myMessage.setType("Success");
+            myMessage.setTitle(Utility.messageBD(this, "Success", vars
+                    .getLanguage()));
+            myMessage.setMessage(Utility.parseTranslation(this, vars, vars
+                    .getLanguage(), "Updated = " + Integer.toString(i)));
+        } catch (ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(),
+                    ex.getMessage());
+        }
+        return myMessage;
     }
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "DebtPaymentUnapply", false, "", "", "",false, "ad_forms",  strReplaceWith, false,  true);
-    toolbar.prepareSimpleToolBarTemplate();
-    xmlDocument.setParameter("toolbar", toolbar.toString());
+    void printPageDataSheet(HttpServletResponse response,
+            VariablesSecureApp vars, String strWindow) throws IOException,
+            ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        String discard[] = { "sectionDetail" };
+        XmlDocument xmlDocument = null;
+        DebtPaymentUnapplyData[] data = null;
+        data = DebtPaymentUnapplyData.select(this, vars.getLanguage(), Utility
+                .getContext(this, vars, "#User_Org", strWindow), Utility
+                .getContext(this, vars, "#User_Client", strWindow));
+        if (data == null || data.length == 0) {
+            xmlDocument = xmlEngine.readXmlTemplate(
+                    "org/openbravo/erpCommon/ad_forms/DebtPaymentUnapply",
+                    discard).createXmlDocument();
+            data = DebtPaymentUnapplyData.set();
+        } else {
+            xmlDocument = xmlEngine.readXmlTemplate(
+                    "org/openbravo/erpCommon/ad_forms/DebtPaymentUnapply")
+                    .createXmlDocument();
+        }
 
-	try {
-      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_forms.DebtPaymentUnapply");
-      xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
-      xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
-      xmlDocument.setParameter("childTabContainer", tabs.childTabs());
-      xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "DebtPaymentUnapply.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
-      xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "DebtPaymentUnapply.html", strReplaceWith);
-      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
+        ToolBar toolbar = new ToolBar(this, vars.getLanguage(),
+                "DebtPaymentUnapply", false, "", "", "", false, "ad_forms",
+                strReplaceWith, false, true);
+        toolbar.prepareSimpleToolBarTemplate();
+        xmlDocument.setParameter("toolbar", toolbar.toString());
+
+        try {
+            WindowTabs tabs = new WindowTabs(this, vars,
+                    "org.openbravo.erpCommon.ad_forms.DebtPaymentUnapply");
+            xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
+            xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
+            xmlDocument.setParameter("childTabContainer", tabs.childTabs());
+            xmlDocument.setParameter("theme", vars.getTheme());
+            NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+                    "DebtPaymentUnapply.html", classInfo.id, classInfo.type,
+                    strReplaceWith, tabs.breadcrumb());
+            xmlDocument.setParameter("navigationBar", nav.toString());
+            LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
+                    "DebtPaymentUnapply.html", strReplaceWith);
+            xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+        } catch (Exception ex) {
+            throw new ServletException(ex);
+        }
+        {
+            OBError myMessage = vars.getMessage("DebtPaymentUnapply");
+            vars.removeMessage("DebtPaymentUnapply");
+            if (myMessage != null) {
+                xmlDocument.setParameter("messageType", myMessage.getType());
+                xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+                xmlDocument.setParameter("messageMessage", myMessage
+                        .getMessage());
+            }
+        }
+
+        xmlDocument.setParameter("directory", "var baseDirectory = \""
+                + strReplaceWith + "/\";\n");
+        xmlDocument.setParameter("paramLanguage", "defaultLang=\""
+                + vars.getLanguage() + "\";");
+        xmlDocument.setData("structure1", data);
+        out.println(xmlDocument.print());
+        out.close();
     }
-    {
-    	OBError myMessage = vars.getMessage("DebtPaymentUnapply");
-      vars.removeMessage("DebtPaymentUnapply");
-      if (myMessage!=null) {
-        xmlDocument.setParameter("messageType", myMessage.getType());
-        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-      }
-    }
 
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setData("structure1", data);
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-  public String getServletInfo() {
-    return "Servlet DebtPaymentUnapply. This Servlet was made by Eduardo Argal";
-  } // end of getServletInfo() method
+    public String getServletInfo() {
+        return "Servlet DebtPaymentUnapply. This Servlet was made by Eduardo Argal";
+    } // end of getServletInfo() method
 }
-

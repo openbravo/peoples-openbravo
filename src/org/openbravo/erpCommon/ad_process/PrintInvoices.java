@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 
 package org.openbravo.erpCommon.ad_process;
 
@@ -33,81 +33,102 @@ import javax.servlet.http.*;
 
 import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
 
-
 public class PrintInvoices extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (vars.commandIn("DEFAULT")) {
-      printPageDataSheet(response, vars);
-    } else pageError(response);
-  }
-
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
-    throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    XmlDocument xmlDocument=null;
-    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_process/PrintInvoices").createXmlDocument();
-    
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "PrintInvoices", false, "", "", "",false, "ad_process",  strReplaceWith, false,  true);
-    toolbar.prepareSimpleToolBarTemplate();
-    xmlDocument.setParameter("toolbar", toolbar.toString());
-
-    ActionButtonDefaultData[] data = null;
-    String strHelp="";
-    if (vars.getLanguage().equals("en_US")) data = ActionButtonDefaultData.select(this, classInfo.id);
-    else data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), classInfo.id);
-
-    if (data!=null && data.length!=0) {
-      strHelp = data[0].help;
+        if (vars.commandIn("DEFAULT")) {
+            printPageDataSheet(response, vars);
+        } else
+            pageError(response);
     }
-    xmlDocument.setParameter("help", strHelp);
-    xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setData("reportAD_ORGID", "liststructure", OrganizationComboData.selectCombo(this, vars.getRole()));
-    
-    xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    
-    // New interface paramenters
-      try {
-        WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_process.PrintInvoices");
-        xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
-        xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
-        xmlDocument.setParameter("childTabContainer", tabs.childTabs());
-        xmlDocument.setParameter("theme", vars.getTheme());
-        NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "PrintInvoices.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
-        xmlDocument.setParameter("navigationBar", nav.toString());
-        LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "PrintInvoices.html", strReplaceWith);
-        xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-      } catch (Exception ex) {
-        throw new ServletException(ex);
-      }
-      {
-        OBError myMessage = vars.getMessage("PrintInvoices");
-        vars.removeMessage("PrintInvoices");
-        if (myMessage!=null) {
-          xmlDocument.setParameter("messageType", myMessage.getType());
-          xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-          xmlDocument.setParameter("messageMessage", myMessage.getMessage());
+
+    void printPageDataSheet(HttpServletResponse response,
+            VariablesSecureApp vars) throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        XmlDocument xmlDocument = null;
+        xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/ad_process/PrintInvoices")
+                .createXmlDocument();
+
+        ToolBar toolbar = new ToolBar(this, vars.getLanguage(),
+                "PrintInvoices", false, "", "", "", false, "ad_process",
+                strReplaceWith, false, true);
+        toolbar.prepareSimpleToolBarTemplate();
+        xmlDocument.setParameter("toolbar", toolbar.toString());
+
+        ActionButtonDefaultData[] data = null;
+        String strHelp = "";
+        if (vars.getLanguage().equals("en_US"))
+            data = ActionButtonDefaultData.select(this, classInfo.id);
+        else
+            data = ActionButtonDefaultData.selectLanguage(this, vars
+                    .getLanguage(), classInfo.id);
+
+        if (data != null && data.length != 0) {
+            strHelp = data[0].help;
         }
-      }
-      
-     ////----
-    
-    out.println(xmlDocument.print());
-    out.close();
-  }
+        xmlDocument.setParameter("help", strHelp);
+        xmlDocument
+                .setParameter("calendar", vars.getLanguage().substring(0, 2));
+        xmlDocument.setParameter("directory", "var baseDirectory = \""
+                + strReplaceWith + "/\";\n");
+        xmlDocument.setParameter("paramLanguage", "defaultLang=\""
+                + vars.getLanguage() + "\";");
+        xmlDocument.setData("reportAD_ORGID", "liststructure",
+                OrganizationComboData.selectCombo(this, vars.getRole()));
 
-  public String getServletInfo() {
-    return "Servlet ReportInvoices. This Servlet was made by Pablo Sarobe";
-  } // end of getServletInfo() method
+        xmlDocument.setParameter("dateFromdisplayFormat", vars
+                .getSessionValue("#AD_SqlDateFormat"));
+        xmlDocument.setParameter("dateFromsaveFormat", vars
+                .getSessionValue("#AD_SqlDateFormat"));
+        xmlDocument.setParameter("dateTodisplayFormat", vars
+                .getSessionValue("#AD_SqlDateFormat"));
+        xmlDocument.setParameter("dateTosaveFormat", vars
+                .getSessionValue("#AD_SqlDateFormat"));
+
+        // New interface paramenters
+        try {
+            WindowTabs tabs = new WindowTabs(this, vars,
+                    "org.openbravo.erpCommon.ad_process.PrintInvoices");
+            xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
+            xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
+            xmlDocument.setParameter("childTabContainer", tabs.childTabs());
+            xmlDocument.setParameter("theme", vars.getTheme());
+            NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+                    "PrintInvoices.html", classInfo.id, classInfo.type,
+                    strReplaceWith, tabs.breadcrumb());
+            xmlDocument.setParameter("navigationBar", nav.toString());
+            LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
+                    "PrintInvoices.html", strReplaceWith);
+            xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+        } catch (Exception ex) {
+            throw new ServletException(ex);
+        }
+        {
+            OBError myMessage = vars.getMessage("PrintInvoices");
+            vars.removeMessage("PrintInvoices");
+            if (myMessage != null) {
+                xmlDocument.setParameter("messageType", myMessage.getType());
+                xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+                xmlDocument.setParameter("messageMessage", myMessage
+                        .getMessage());
+            }
+        }
+
+        // //----
+
+        out.println(xmlDocument.print());
+        out.close();
+    }
+
+    public String getServletInfo() {
+        return "Servlet ReportInvoices. This Servlet was made by Pablo Sarobe";
+    } // end of getServletInfo() method
 }
-

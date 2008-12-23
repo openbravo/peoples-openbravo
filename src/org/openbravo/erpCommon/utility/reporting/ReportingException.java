@@ -16,26 +16,21 @@
 package org.openbravo.erpCommon.utility.reporting;
 
 @SuppressWarnings("serial")
-public class ReportingException extends Exception
-{
+public class ReportingException extends Exception {
 
-	public ReportingException()
-	{
-	}
+    public ReportingException() {
+    }
 
-	public ReportingException( String message )
-	{
-		super(message);
-	}
+    public ReportingException(String message) {
+        super(message);
+    }
 
-	public ReportingException( Throwable cause )
-	{
-		super(cause);
-	}
+    public ReportingException(Throwable cause) {
+        super(cause);
+    }
 
-	public ReportingException( String message, Throwable cause )
-	{
-		super(message, cause);
-	}
+    public ReportingException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 }

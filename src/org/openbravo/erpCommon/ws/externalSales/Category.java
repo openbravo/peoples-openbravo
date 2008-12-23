@@ -15,13 +15,13 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 
 package org.openbravo.erpCommon.ws.externalSales;
 
 import java.io.Serializable;
 
-public class Category extends Object implements Serializable{
+public class Category extends Object implements Serializable {
     private static final long serialVersionUID = 1L;
     private String id;
     private String name;
@@ -30,7 +30,6 @@ public class Category extends Object implements Serializable{
     /** Creates a new instance of Category */
     public Category() {
     }
-
 
     public String getId() {
         return id;
@@ -55,5 +54,5 @@ public class Category extends Object implements Serializable{
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
 }

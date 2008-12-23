@@ -7,17 +7,21 @@
 
 package org.openbravo.services.webservice;
 
-public class WebServiceImplServiceLocator extends org.apache.axis.client.Service implements org.openbravo.services.webservice.WebServiceImplService {
+public class WebServiceImplServiceLocator extends
+        org.apache.axis.client.Service implements
+        org.openbravo.services.webservice.WebServiceImplService {
 
     public WebServiceImplServiceLocator() {
     }
 
-
-    public WebServiceImplServiceLocator(org.apache.axis.EngineConfiguration config) {
+    public WebServiceImplServiceLocator(
+            org.apache.axis.EngineConfiguration config) {
         super(config);
     }
 
-    public WebServiceImplServiceLocator(java.lang.String wsdlLoc, javax.xml.namespace.QName sName) throws javax.xml.rpc.ServiceException {
+    public WebServiceImplServiceLocator(java.lang.String wsdlLoc,
+            javax.xml.namespace.QName sName)
+            throws javax.xml.rpc.ServiceException {
         super(wsdlLoc, sName);
     }
 
@@ -39,24 +43,25 @@ public class WebServiceImplServiceLocator extends org.apache.axis.client.Service
         WebServiceWSDDServiceName = name;
     }
 
-    public org.openbravo.services.webservice.WebServiceImpl getWebService() throws javax.xml.rpc.ServiceException {
-       java.net.URL endpoint;
+    public org.openbravo.services.webservice.WebServiceImpl getWebService()
+            throws javax.xml.rpc.ServiceException {
+        java.net.URL endpoint;
         try {
             endpoint = new java.net.URL(WebService_address);
-        }
-        catch (java.net.MalformedURLException e) {
+        } catch (java.net.MalformedURLException e) {
             throw new javax.xml.rpc.ServiceException(e);
         }
         return getWebService(endpoint);
     }
 
-    public org.openbravo.services.webservice.WebServiceImpl getWebService(java.net.URL portAddress) throws javax.xml.rpc.ServiceException {
+    public org.openbravo.services.webservice.WebServiceImpl getWebService(
+            java.net.URL portAddress) throws javax.xml.rpc.ServiceException {
         try {
-            org.openbravo.services.webservice.WebServiceSoapBindingStub _stub = new org.openbravo.services.webservice.WebServiceSoapBindingStub(portAddress, this);
+            org.openbravo.services.webservice.WebServiceSoapBindingStub _stub = new org.openbravo.services.webservice.WebServiceSoapBindingStub(
+                    portAddress, this);
             _stub.setPortName(getWebServiceWSDDServiceName());
             return _stub;
-        }
-        catch (org.apache.axis.AxisFault e) {
+        } catch (org.apache.axis.AxisFault e) {
             return null;
         }
     }
@@ -66,38 +71,42 @@ public class WebServiceImplServiceLocator extends org.apache.axis.client.Service
     }
 
     /**
-     * For the given interface, get the stub implementation.
-     * If this service has no port for the given interface,
-     * then ServiceException is thrown.
+     * For the given interface, get the stub implementation. If this service has
+     * no port for the given interface, then ServiceException is thrown.
      */
-    public java.rmi.Remote getPort(Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
+    public java.rmi.Remote getPort(Class serviceEndpointInterface)
+            throws javax.xml.rpc.ServiceException {
         try {
-            if (org.openbravo.services.webservice.WebServiceImpl.class.isAssignableFrom(serviceEndpointInterface)) {
-                org.openbravo.services.webservice.WebServiceSoapBindingStub _stub = new org.openbravo.services.webservice.WebServiceSoapBindingStub(new java.net.URL(WebService_address), this);
+            if (org.openbravo.services.webservice.WebServiceImpl.class
+                    .isAssignableFrom(serviceEndpointInterface)) {
+                org.openbravo.services.webservice.WebServiceSoapBindingStub _stub = new org.openbravo.services.webservice.WebServiceSoapBindingStub(
+                        new java.net.URL(WebService_address), this);
                 _stub.setPortName(getWebServiceWSDDServiceName());
                 return _stub;
             }
-        }
-        catch (java.lang.Throwable t) {
+        } catch (java.lang.Throwable t) {
             throw new javax.xml.rpc.ServiceException(t);
         }
-        throw new javax.xml.rpc.ServiceException("There is no stub implementation for the interface:  " + (serviceEndpointInterface == null ? "null" : serviceEndpointInterface.getName()));
+        throw new javax.xml.rpc.ServiceException(
+                "There is no stub implementation for the interface:  "
+                        + (serviceEndpointInterface == null ? "null"
+                                : serviceEndpointInterface.getName()));
     }
 
     /**
-     * For the given interface, get the stub implementation.
-     * If this service has no port for the given interface,
-     * then ServiceException is thrown.
+     * For the given interface, get the stub implementation. If this service has
+     * no port for the given interface, then ServiceException is thrown.
      */
-    public java.rmi.Remote getPort(javax.xml.namespace.QName portName, Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
+    public java.rmi.Remote getPort(javax.xml.namespace.QName portName,
+            Class serviceEndpointInterface)
+            throws javax.xml.rpc.ServiceException {
         if (portName == null) {
             return getPort(serviceEndpointInterface);
         }
         java.lang.String inputPortName = portName.getLocalPart();
         if ("WebService".equals(inputPortName)) {
             return getWebService();
-        }
-        else  {
+        } else {
             java.rmi.Remote _stub = getPort(serviceEndpointInterface);
             ((org.apache.axis.client.Stub) _stub).setPortName(portName);
             return _stub;
@@ -105,7 +114,9 @@ public class WebServiceImplServiceLocator extends org.apache.axis.client.Service
     }
 
     public javax.xml.namespace.QName getServiceName() {
-        return new javax.xml.namespace.QName("http://67.202.45.105/openbravo/services/WebService", "WebServiceImplService");
+        return new javax.xml.namespace.QName(
+                "http://67.202.45.105/openbravo/services/WebService",
+                "WebServiceImplService");
     }
 
     private java.util.HashSet ports = null;
@@ -113,29 +124,32 @@ public class WebServiceImplServiceLocator extends org.apache.axis.client.Service
     public java.util.Iterator getPorts() {
         if (ports == null) {
             ports = new java.util.HashSet();
-            ports.add(new javax.xml.namespace.QName("http://67.202.45.105/openbravo/services/WebService", "WebService"));
+            ports.add(new javax.xml.namespace.QName(
+                    "http://67.202.45.105/openbravo/services/WebService",
+                    "WebService"));
         }
         return ports.iterator();
     }
 
     /**
-    * Set the endpoint address for the specified port name.
-    */
-    public void setEndpointAddress(java.lang.String portName, java.lang.String address) throws javax.xml.rpc.ServiceException {
-        
-if ("WebService".equals(portName)) {
+     * Set the endpoint address for the specified port name.
+     */
+    public void setEndpointAddress(java.lang.String portName,
+            java.lang.String address) throws javax.xml.rpc.ServiceException {
+
+        if ("WebService".equals(portName)) {
             setWebServiceEndpointAddress(address);
-        }
-        else 
-{ // Unknown Port Name
-            throw new javax.xml.rpc.ServiceException(" Cannot set Endpoint Address for Unknown Port" + portName);
+        } else { // Unknown Port Name
+            throw new javax.xml.rpc.ServiceException(
+                    " Cannot set Endpoint Address for Unknown Port" + portName);
         }
     }
 
     /**
-    * Set the endpoint address for the specified port name.
-    */
-    public void setEndpointAddress(javax.xml.namespace.QName portName, java.lang.String address) throws javax.xml.rpc.ServiceException {
+     * Set the endpoint address for the specified port name.
+     */
+    public void setEndpointAddress(javax.xml.namespace.QName portName,
+            java.lang.String address) throws javax.xml.rpc.ServiceException {
         setEndpointAddress(portName.getLocalPart(), address);
     }
 

@@ -34,8 +34,10 @@ public class DefaultJob implements Job {
                 .get(ProcessBundle.KEY);
         try {
             final Process process = bundle.getProcessClass().newInstance();
-            bundle.setConnection((ConnectionProvider) jec.get(ProcessBundle.CONNECTION));
-            bundle.setConfig((ConfigParameters) jec.get(ProcessBundle.CONFIG_PARAMS));
+            bundle.setConnection((ConnectionProvider) jec
+                    .get(ProcessBundle.CONNECTION));
+            bundle.setConfig((ConfigParameters) jec
+                    .get(ProcessBundle.CONFIG_PARAMS));
             bundle.setLog(new ProcessLogger(bundle.getConnection()));
             process.execute(bundle);
 

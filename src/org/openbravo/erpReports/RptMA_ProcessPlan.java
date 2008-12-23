@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpReports;
 
 import org.openbravo.base.secureApp.*;
@@ -25,40 +25,50 @@ import javax.servlet.http.*;
 import java.util.HashMap;
 
 public class RptMA_ProcessPlan extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
-  
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+    private static final long serialVersionUID = 1L;
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
+    }
 
-    if (vars.commandIn("DEFAULT")) {
-      String strmaProcessPlan = vars.getSessionValue("RptMA_ProcessPlan.inpmaProcessplan_R");
-      if (strmaProcessPlan.equals("")) strmaProcessPlan = vars.getSessionValue("RptMA_ProcessPlan.inpmaProcessplanId");
-      printPagePartePDF(response, vars, strmaProcessPlan);
-    } else pageError(response);
-  }
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
 
+        if (vars.commandIn("DEFAULT")) {
+            String strmaProcessPlan = vars
+                    .getSessionValue("RptMA_ProcessPlan.inpmaProcessplan_R");
+            if (strmaProcessPlan.equals(""))
+                strmaProcessPlan = vars
+                        .getSessionValue("RptMA_ProcessPlan.inpmaProcessplanId");
+            printPagePartePDF(response, vars, strmaProcessPlan);
+        } else
+            pageError(response);
+    }
 
-  void printPagePartePDF(HttpServletResponse response, VariablesSecureApp vars, String strmaProcessPlan) throws IOException,ServletException{
-    if (log4j.isDebugEnabled()) log4j.debug("Output: pdf");
-    // here we pass the familiy-ID with report.setData
-    RptMAProcessPlanData[] data = RptMAProcessPlanData.select(this, vars.getLanguage(), strmaProcessPlan);
-    if (data == null || data.length == 0) data = RptMAProcessPlanData.set();
+    void printPagePartePDF(HttpServletResponse response,
+            VariablesSecureApp vars, String strmaProcessPlan)
+            throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: pdf");
+        // here we pass the familiy-ID with report.setData
+        RptMAProcessPlanData[] data = RptMAProcessPlanData.select(this, vars
+                .getLanguage(), strmaProcessPlan);
+        if (data == null || data.length == 0)
+            data = RptMAProcessPlanData.set();
 
-    String strReportName = "@basedesign@/org/openbravo/erpReports/RptMA_ProcessPlan.jrxml";
-    String strOutput ="pdf";
-    String strTitle =classInfo.name;
+        String strReportName = "@basedesign@/org/openbravo/erpReports/RptMA_ProcessPlan.jrxml";
+        String strOutput = "pdf";
+        String strTitle = classInfo.name;
 
-    HashMap<String, Object> parameters = new HashMap<String, Object>();
-    parameters.put("REPORT_TITLE", strTitle);
-    renderJR(vars, response, strReportName, strOutput, parameters, data, null );
-  }
+        HashMap<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("REPORT_TITLE", strTitle);
+        renderJR(vars, response, strReportName, strOutput, parameters, data,
+                null);
+    }
 
-  public String getServletInfo() {
-    return "Servlet that presents the RptMAProcessPlan seeker";
-  } // End of getServletInfo() method
+    public String getServletInfo() {
+        return "Servlet that presents the RptMAProcessPlan seeker";
+    } // End of getServletInfo() method
 }

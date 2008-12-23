@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 
 package org.openbravo.erpCommon.ad_process;
 
@@ -33,24 +33,27 @@ import org.openbravo.scheduling.ProcessRunner;
 
 public class TestHeartbeat extends HttpSecureAppServlet {
 
-  private static final long serialVersionUID = 1L;
-  
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) 
-      throws ServletException, IOException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    
-    try {
-      ProcessBundle bundle = new ProcessBundle("1005800000", vars).init(this);
-      new ProcessRunner(bundle).execute(this);
-      
-      String msg = Utility.messageBD(this, "HB_SUCCESS", vars.getLanguage());
-      advisePopUp(response, "SUCCESS", "Heartbeat Configuration", msg);
-   
-    } catch (Exception e) {
-      e.printStackTrace();
-      advisePopUp(response, "ERROR", "Heartbeat Configuration", e.getMessage());
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+
+        try {
+            ProcessBundle bundle = new ProcessBundle("1005800000", vars)
+                    .init(this);
+            new ProcessRunner(bundle).execute(this);
+
+            String msg = Utility.messageBD(this, "HB_SUCCESS", vars
+                    .getLanguage());
+            advisePopUp(response, "SUCCESS", "Heartbeat Configuration", msg);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            advisePopUp(response, "ERROR", "Heartbeat Configuration", e
+                    .getMessage());
+        }
     }
-  }
 
 }

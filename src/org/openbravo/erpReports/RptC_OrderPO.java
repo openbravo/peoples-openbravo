@@ -15,7 +15,7 @@
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpReports;
 
 import org.openbravo.base.secureApp.*;
@@ -29,45 +29,54 @@ import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 public class RptC_OrderPO extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
-
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-
-    if (vars.commandIn("DEFAULT")) {
-      String strcOrderId = vars.getSessionValue("RptC_OrderPO.inpcOrderId_R");
-      if (strcOrderId.equals("")) strcOrderId = vars.getSessionValue("RptC_OrderPO.inpcOrderId");
-      if (log4j.isDebugEnabled()) log4j.debug("strcOrderId" + strcOrderId);
-      printPagePartePDF(response, vars, strcOrderId);
-    } else pageError(response);
-  }
-
-
-   void printPagePartePDF(HttpServletResponse response, VariablesSecureApp vars, String strcOrderId) throws IOException,ServletException{
-    if (log4j.isDebugEnabled()) log4j.debug("Output: pdf");
-    String strLanguage = vars.getLanguage();
-    String strBaseDesign = getBaseDesignPath(strLanguage);
-
-    HashMap<String, Object> parameters = new HashMap<String, Object>();
-    JasperReport jasperReportLines;
-    try {
-      JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign+"/org/openbravo/erpReports/RptC_OrderPO_Lines.jrxml");
-      jasperReportLines = JasperCompileManager.compileReport(jasperDesignLines);
-    } catch (JRException e){
-      e.printStackTrace();
-      throw new ServletException(e.getMessage());
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
     }
-    parameters.put("SR_LINES", jasperReportLines);
-    parameters.put("ORDER_ID", strcOrderId);
-    renderJR(vars, response, null, "pdf", parameters, null, null);
-  }
 
-  public String getServletInfo() {
-    return "Servlet that presents the RptCOrders seeker";
-  } // End of getServletInfo() method
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+
+        if (vars.commandIn("DEFAULT")) {
+            String strcOrderId = vars
+                    .getSessionValue("RptC_OrderPO.inpcOrderId_R");
+            if (strcOrderId.equals(""))
+                strcOrderId = vars.getSessionValue("RptC_OrderPO.inpcOrderId");
+            if (log4j.isDebugEnabled())
+                log4j.debug("strcOrderId" + strcOrderId);
+            printPagePartePDF(response, vars, strcOrderId);
+        } else
+            pageError(response);
+    }
+
+    void printPagePartePDF(HttpServletResponse response,
+            VariablesSecureApp vars, String strcOrderId) throws IOException,
+            ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: pdf");
+        String strLanguage = vars.getLanguage();
+        String strBaseDesign = getBaseDesignPath(strLanguage);
+
+        HashMap<String, Object> parameters = new HashMap<String, Object>();
+        JasperReport jasperReportLines;
+        try {
+            JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign
+                    + "/org/openbravo/erpReports/RptC_OrderPO_Lines.jrxml");
+            jasperReportLines = JasperCompileManager
+                    .compileReport(jasperDesignLines);
+        } catch (JRException e) {
+            e.printStackTrace();
+            throw new ServletException(e.getMessage());
+        }
+        parameters.put("SR_LINES", jasperReportLines);
+        parameters.put("ORDER_ID", strcOrderId);
+        renderJR(vars, response, null, "pdf", parameters, null, null);
+    }
+
+    public String getServletInfo() {
+        return "Servlet that presents the RptCOrders seeker";
+    } // End of getServletInfo() method
 }

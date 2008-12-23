@@ -15,85 +15,85 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.utility;
 
 import java.awt.Color;
 
 public class BandStyleVO {
-  private String fontName;
+    private String fontName;
 
-  private int fontSize;
+    private int fontSize;
 
-  private Color foreColor;
+    private Color foreColor;
 
-  private boolean bold;
+    private boolean bold;
 
-  private boolean italic;
+    private boolean italic;
 
-  private boolean underline;
+    private boolean underline;
 
-  public BandStyleVO() {
-    this(null, new Color(0, 0, 0), 9, false, false, false);
-  }
+    public BandStyleVO() {
+        this(null, new Color(0, 0, 0), 9, false, false, false);
+    }
 
-  public BandStyleVO(String fontName, Color foreColor, int fontSize,
-      boolean bold, boolean italic, boolean underline) {
-    super();
-    this.fontName = fontName;
-    this.foreColor = foreColor;
-    this.bold = bold;
-    this.italic = italic;
-    this.underline = underline;
-    this.fontSize = fontSize;
-  }
+    public BandStyleVO(String fontName, Color foreColor, int fontSize,
+            boolean bold, boolean italic, boolean underline) {
+        super();
+        this.fontName = fontName;
+        this.foreColor = foreColor;
+        this.bold = bold;
+        this.italic = italic;
+        this.underline = underline;
+        this.fontSize = fontSize;
+    }
 
-  public String getFontName() {
-    return fontName;
-  }
+    public String getFontName() {
+        return fontName;
+    }
 
-  public int getFontSize() {
-    return fontSize;
-  }
+    public int getFontSize() {
+        return fontSize;
+    }
 
-  public Color getForeColor() {
-    return foreColor;
-  }
+    public Color getForeColor() {
+        return foreColor;
+    }
 
-  public boolean isBold() {
-    return bold;
-  }
+    public boolean isBold() {
+        return bold;
+    }
 
-  public boolean isItalic() {
-    return italic;
-  }
+    public boolean isItalic() {
+        return italic;
+    }
 
-  public boolean isUnderline() {
-    return underline;
-  }
+    public boolean isUnderline() {
+        return underline;
+    }
 
-  public void setBold(boolean bold) {
-    this.bold = bold;
-  }
+    public void setBold(boolean bold) {
+        this.bold = bold;
+    }
 
-  public void setFontName(String fontName) {
-    this.fontName = fontName;
-  }
+    public void setFontName(String fontName) {
+        this.fontName = fontName;
+    }
 
-  public void setFontSize(int size) {
-    this.fontSize = size;
-  }
+    public void setFontSize(int size) {
+        this.fontSize = size;
+    }
 
-  public void setForeColor(Color foreColor) {
-    this.foreColor = foreColor;
-  }
+    public void setForeColor(Color foreColor) {
+        this.foreColor = foreColor;
+    }
 
-  public void setItalic(boolean italic) {
-    this.italic = italic;
-  }
+    public void setItalic(boolean italic) {
+        this.italic = italic;
+    }
 
-  public void setUnderline(boolean underline) {
-    this.underline = underline;
-  }
+    public void setUnderline(boolean underline) {
+        this.underline = underline;
+    }
 
 }

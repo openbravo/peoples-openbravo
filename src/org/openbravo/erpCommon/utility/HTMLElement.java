@@ -15,11 +15,13 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.utility;
 
 public interface HTMLElement {
-  public String getWidth();
-  public String elementType();
-  public String toString();
+    public String getWidth();
+
+    public String elementType();
+
+    public String toString();
 }

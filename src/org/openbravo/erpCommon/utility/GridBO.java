@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.utility;
 
 import java.io.IOException;
@@ -41,92 +41,93 @@ import net.sf.jasperreports.engine.export.JExcelApiExporterParameter;
 
 public class GridBO {
 
-  public void createHTMLReport(InputStream reportFile,
-      GridReportVO gridReportVO, OutputStream os) throws JRException,
-      IOException {
-    gridReportVO.setPagination(false);
-    JasperPrint jasperPrint = createJasperPrint(reportFile, gridReportVO);
-    JRHtmlExporter exporter = new JRHtmlExporter();
-    Map<JRExporterParameter, Object> p = new HashMap<JRExporterParameter, Object>();
-    p.put(JRHtmlExporterParameter.JASPER_PRINT, jasperPrint);
-    p.put(JRHtmlExporterParameter.IS_USING_IMAGES_TO_ALIGN, Boolean.FALSE);
-    p.put(JRHtmlExporterParameter.OUTPUT_STREAM, os);
-    exporter.setParameters(p);
-    exporter.exportReport();
-   
-  
-  }
+    public void createHTMLReport(InputStream reportFile,
+            GridReportVO gridReportVO, OutputStream os) throws JRException,
+            IOException {
+        gridReportVO.setPagination(false);
+        JasperPrint jasperPrint = createJasperPrint(reportFile, gridReportVO);
+        JRHtmlExporter exporter = new JRHtmlExporter();
+        Map<JRExporterParameter, Object> p = new HashMap<JRExporterParameter, Object>();
+        p.put(JRHtmlExporterParameter.JASPER_PRINT, jasperPrint);
+        p.put(JRHtmlExporterParameter.IS_USING_IMAGES_TO_ALIGN, Boolean.FALSE);
+        p.put(JRHtmlExporterParameter.OUTPUT_STREAM, os);
+        exporter.setParameters(p);
+        exporter.exportReport();
 
-  private JasperDesign createJasperDesign(InputStream reportFile,
-      GridReportVO gridReportVO) throws JRException {
-    JasperDesign jasperDesign = JRXmlLoader.load(reportFile);
-    ReportDesignBO designBO = new ReportDesignBO(jasperDesign, gridReportVO);
-    designBO.define();
-    return jasperDesign;
-  }
+    }
 
-  private JasperPrint createJasperPrint(InputStream reportFile,
-      GridReportVO gridReportVO) throws JRException, IOException {
-    JasperDesign jasperDesign = createJasperDesign(reportFile, gridReportVO);
-    JasperReport jasperReport = JasperCompileManager
-        .compileReport(jasperDesign);
-    Map<String, Object> parameters = new HashMap<String, Object>();
-    parameters.put("BaseDir", gridReportVO.getContext());
-    parameters.put("IS_IGNORE_PAGINATION",  gridReportVO.getPagination());
+    private JasperDesign createJasperDesign(InputStream reportFile,
+            GridReportVO gridReportVO) throws JRException {
+        JasperDesign jasperDesign = JRXmlLoader.load(reportFile);
+        ReportDesignBO designBO = new ReportDesignBO(jasperDesign, gridReportVO);
+        designBO.define();
+        return jasperDesign;
+    }
 
-    JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,
-        parameters, new JRFieldProviderDataSource(gridReportVO.getFieldProvider(),gridReportVO.getDateFormat()));
-    return jasperPrint;
-  }
+    private JasperPrint createJasperPrint(InputStream reportFile,
+            GridReportVO gridReportVO) throws JRException, IOException {
+        JasperDesign jasperDesign = createJasperDesign(reportFile, gridReportVO);
+        JasperReport jasperReport = JasperCompileManager
+                .compileReport(jasperDesign);
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("BaseDir", gridReportVO.getContext());
+        parameters.put("IS_IGNORE_PAGINATION", gridReportVO.getPagination());
 
-  public void createPDFReport(InputStream reportFile,
-      GridReportVO gridReportVO, OutputStream os) throws JRException,
-      IOException {
-    gridReportVO.setPagination(false);
-    JasperPrint jasperPrint = createJasperPrint(reportFile, gridReportVO);
-    JasperExportManager.exportReportToPdfStream(jasperPrint, os);
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,
+                parameters, new JRFieldProviderDataSource(gridReportVO
+                        .getFieldProvider(), gridReportVO.getDateFormat()));
+        return jasperPrint;
+    }
 
-  }
+    public void createPDFReport(InputStream reportFile,
+            GridReportVO gridReportVO, OutputStream os) throws JRException,
+            IOException {
+        gridReportVO.setPagination(false);
+        JasperPrint jasperPrint = createJasperPrint(reportFile, gridReportVO);
+        JasperExportManager.exportReportToPdfStream(jasperPrint, os);
 
-  public void createXLSReport(InputStream reportFile,
-      GridReportVO gridReportVO, OutputStream os) throws JRException,
-      IOException {
-    gridReportVO.setPagination(true);
-    JasperPrint jasperPrint = createJasperPrint(reportFile, gridReportVO);
-    JExcelApiExporter exporter = new JExcelApiExporter();
-    Map<JRExporterParameter, Object> p = new HashMap<JRExporterParameter, Object>();
+    }
 
-    p.put(JRExporterParameter.JASPER_PRINT, jasperPrint);
-    p.put(JRExporterParameter.OUTPUT_STREAM, os);
-    p.put(JExcelApiExporterParameter.IS_DETECT_CELL_TYPE, Boolean.TRUE);
-    p.put(JExcelApiExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);
-    p.put(JExcelApiExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE);
+    public void createXLSReport(InputStream reportFile,
+            GridReportVO gridReportVO, OutputStream os) throws JRException,
+            IOException {
+        gridReportVO.setPagination(true);
+        JasperPrint jasperPrint = createJasperPrint(reportFile, gridReportVO);
+        JExcelApiExporter exporter = new JExcelApiExporter();
+        Map<JRExporterParameter, Object> p = new HashMap<JRExporterParameter, Object>();
 
-    exporter.setParameters(p);
-    exporter.exportReport();
-  }
+        p.put(JRExporterParameter.JASPER_PRINT, jasperPrint);
+        p.put(JRExporterParameter.OUTPUT_STREAM, os);
+        p.put(JExcelApiExporterParameter.IS_DETECT_CELL_TYPE, Boolean.TRUE);
+        p.put(JExcelApiExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);
+        p.put(JExcelApiExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS,
+                Boolean.TRUE);
 
-  public void createCSVReport(InputStream reportFile,
-      GridReportVO gridReportVO, OutputStream os) throws JRException,
-      IOException {
-    gridReportVO.setPagination(true);
-    JasperPrint jasperPrint = createJasperPrint(reportFile, gridReportVO);
-    JRCsvExporter exporter = new JRCsvExporter();
-    Map<JRExporterParameter, Object> p = new HashMap<JRExporterParameter, Object>();
+        exporter.setParameters(p);
+        exporter.exportReport();
+    }
 
-    p.put(JRExporterParameter.JASPER_PRINT, jasperPrint);
-    p.put(JRExporterParameter.OUTPUT_STREAM, os);
+    public void createCSVReport(InputStream reportFile,
+            GridReportVO gridReportVO, OutputStream os) throws JRException,
+            IOException {
+        gridReportVO.setPagination(true);
+        JasperPrint jasperPrint = createJasperPrint(reportFile, gridReportVO);
+        JRCsvExporter exporter = new JRCsvExporter();
+        Map<JRExporterParameter, Object> p = new HashMap<JRExporterParameter, Object>();
 
-    exporter.setParameters(p);
-    exporter.exportReport();
-  }
+        p.put(JRExporterParameter.JASPER_PRINT, jasperPrint);
+        p.put(JRExporterParameter.OUTPUT_STREAM, os);
 
-  public void createXMLReport(InputStream reportFile,
-      GridReportVO gridReportVO, OutputStream os) throws JRException,
-      IOException {
-    gridReportVO.setPagination(true);
-    JasperPrint jasperPrint = createJasperPrint(reportFile, gridReportVO);
-    JasperExportManager.exportReportToXmlStream(jasperPrint, os);
-  }
+        exporter.setParameters(p);
+        exporter.exportReport();
+    }
+
+    public void createXMLReport(InputStream reportFile,
+            GridReportVO gridReportVO, OutputStream os) throws JRException,
+            IOException {
+        gridReportVO.setPagination(true);
+        JasperPrint jasperPrint = createJasperPrint(reportFile, gridReportVO);
+        JasperExportManager.exportReportToXmlStream(jasperPrint, os);
+    }
 
 }

@@ -15,9 +15,9 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_forms;
 
-public class RespuestaCS_AcctServer{
-String validCombination;
+public class RespuestaCS_AcctServer {
+    String validCombination;
 }

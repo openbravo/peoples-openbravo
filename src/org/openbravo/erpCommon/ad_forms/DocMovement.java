@@ -13,7 +13,7 @@
  * Contributor(s): Openbravo SL
  * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
  ******************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_forms;
 
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -21,144 +21,166 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import java.math.*;
 import java.util.*;
 import javax.servlet.*;
-import org.apache.log4j.Logger ;
-// imports for transactions
+import org.apache.log4j.Logger; // imports for transactions
 import org.openbravo.database.ConnectionProvider;
 import java.sql.Connection;
 import org.openbravo.data.FieldProvider;
 
-
 public class DocMovement extends AcctServer {
-  private static final long serialVersionUID = 1L;	
-  static Logger log4jDocMovement = Logger.getLogger(DocMovement.class);
+    private static final long serialVersionUID = 1L;
+    static Logger log4jDocMovement = Logger.getLogger(DocMovement.class);
 
-  private String        SeqNo = "0";
+    private String SeqNo = "0";
 
-/**
- *  Constructor
- *  @param AD_Client_ID client
- */
-public DocMovement(String AD_Client_ID, String AD_Org_ID, ConnectionProvider connectionProvider){
-  super(AD_Client_ID, AD_Org_ID, connectionProvider);
-}
-
-public void loadObjectFieldProvider(ConnectionProvider conn, String AD_Client_ID, String Id) throws ServletException{
-    setObjectFieldProvider(DocMovementData.select(conn, AD_Client_ID, Id));
-}
-
-/**
- *  Load Document Details
- *  @param rs result set
- *  @return true if loadDocumentType was set
- */
-public boolean loadDocumentDetails(FieldProvider [] data,ConnectionProvider conn){
-  DocumentType = AcctServer.DOCTYPE_MatMovement;
-  C_Currency_ID = NO_CURRENCY;
-  DateDoc = data[0].getField("MovementDate");
-
-  loadDocumentType();     //  lines require doc type
-  //  Contained Objects
-  p_lines = loadLines(conn);
-  log4jDocMovement.debug("Lines=" + p_lines.length);
-  return true;
-}   //  loadDocumentDetails
-
-/**
- *  Load Invoice Line
- *  @return document lines (DocLine_Material)
- */
-public DocLine[] loadLines(ConnectionProvider conn){
-  ArrayList<Object> list = new ArrayList<Object>();
-  DocLineMovementData [] data = null;
-  try{
-    data = DocLineMovementData.select(conn, Record_ID);
-  }
-  catch (ServletException e){
-    log4jDocMovement.warn(e);
-  }
-    //
-  for(int i=0; i<data.length;i++){
-    String Line_ID = data[i].getField("mMovementlineId");
-    DocLine_Material docLine = new DocLine_Material (DocumentType, Record_ID, Line_ID);
-    docLine.loadAttributes(data[i], this);
-    docLine.setQty(data[i].getField("MovementQty"),conn);
-    docLine.m_M_Locator_ID = data[i].getField("M_Locator_ID");
-    docLine.m_M_LocatorTo_ID = data[i].getField("M_LocatorTo_ID");
-    //
-    log4jDocMovement.debug("Movement line: " + Line_ID + " loaded.");
-    list.add (docLine);
-  }
-
-  //  Return Array
-  DocLine[] dl = new DocLine[list.size()];
-  list.toArray(dl);
-  return dl;
-} //  loadLines
-
-/**
- *  Get Balance
- *  @return balance (ZERO) - always balanced
- */
-public BigDecimal getBalance(){
-  BigDecimal retValue = ZERO;
-  return retValue;
-}   //  getBalance
-
-/**
- *  Create Facts (the accounting logic) for
- *  MMM.
- *  <pre>
- *  Movement
- *      Inventory       DR      CR
- *      InventoryTo     DR      CR
- *  </pre>
- *  @param as account schema
- *  @return Fact
- */
-public Fact createFact(AcctSchema as,ConnectionProvider conn,Connection con,VariablesSecureApp vars) throws ServletException{
-  C_Currency_ID = as.getC_Currency_ID();
-  //  create Fact Header
-  Fact fact = new Fact(this, as, Fact.POST_Actual);
-  String Fact_Acct_Group_ID = SequenceIdData.getUUID();
-
-  //  Line pointers
-  FactLine dr = null;
-  FactLine cr = null;
-  log4jDocMovement.debug("DocMovement - Before the loop");
-  for (int i=0; i < p_lines.length; i++){
-    DocLine_Material line = (DocLine_Material)p_lines[i];
-    log4jDocMovement.debug("DocMovement - Before calculating the costs for line i = " + i);
-    String costs = line.getProductCosts(DateAcct, as, conn, con);
-    BigDecimal b_Costs = new BigDecimal(costs);
-    //  Inventory       DR      CR
-    dr = fact.createLine(line,line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),as.getC_Currency_ID(), (b_Costs.negate()).toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);   //  from (-) CR
-    dr.setM_Locator_ID(line.m_M_Locator_ID);
-    //  InventoryTo     DR      CR
-    cr = fact.createLine(line,line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn),as.getC_Currency_ID(), costs, Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);      //  to (+) DR
-    cr.setM_Locator_ID(line.m_M_LocatorTo_ID);
-  }
-  log4jDocMovement.debug("DocMovement - After the loop");
-  SeqNo = "0";
-  return fact;
-}   //  createFact
-
-    public String nextSeqNo(String oldSeqNo){
-      log4jDocMovement.debug("DocMovement - oldSeqNo = " + oldSeqNo);
-      BigDecimal seqNo = new BigDecimal(oldSeqNo);
-      SeqNo = (seqNo.add(new BigDecimal("10"))).toString();
-      log4jDocMovement.debug("DocMovement - nextSeqNo = " + SeqNo);
-      return SeqNo;
+    /**
+     * Constructor
+     * 
+     * @param AD_Client_ID
+     *            client
+     */
+    public DocMovement(String AD_Client_ID, String AD_Org_ID,
+            ConnectionProvider connectionProvider) {
+        super(AD_Client_ID, AD_Org_ID, connectionProvider);
     }
 
-  /**
-   *  Get Document Confirmation
-   *  @not used
-   */
-  public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
-    return true;
-  }
+    public void loadObjectFieldProvider(ConnectionProvider conn,
+            String AD_Client_ID, String Id) throws ServletException {
+        setObjectFieldProvider(DocMovementData.select(conn, AD_Client_ID, Id));
+    }
 
-  public String getServletInfo() {
-    return "Servlet for accounting";
-  } // end of getServletInfo() method
+    /**
+     * Load Document Details
+     * 
+     * @param rs
+     *            result set
+     * @return true if loadDocumentType was set
+     */
+    public boolean loadDocumentDetails(FieldProvider[] data,
+            ConnectionProvider conn) {
+        DocumentType = AcctServer.DOCTYPE_MatMovement;
+        C_Currency_ID = NO_CURRENCY;
+        DateDoc = data[0].getField("MovementDate");
+
+        loadDocumentType(); // lines require doc type
+        // Contained Objects
+        p_lines = loadLines(conn);
+        log4jDocMovement.debug("Lines=" + p_lines.length);
+        return true;
+    } // loadDocumentDetails
+
+    /**
+     * Load Invoice Line
+     * 
+     * @return document lines (DocLine_Material)
+     */
+    public DocLine[] loadLines(ConnectionProvider conn) {
+        ArrayList<Object> list = new ArrayList<Object>();
+        DocLineMovementData[] data = null;
+        try {
+            data = DocLineMovementData.select(conn, Record_ID);
+        } catch (ServletException e) {
+            log4jDocMovement.warn(e);
+        }
+        //
+        for (int i = 0; i < data.length; i++) {
+            String Line_ID = data[i].getField("mMovementlineId");
+            DocLine_Material docLine = new DocLine_Material(DocumentType,
+                    Record_ID, Line_ID);
+            docLine.loadAttributes(data[i], this);
+            docLine.setQty(data[i].getField("MovementQty"), conn);
+            docLine.m_M_Locator_ID = data[i].getField("M_Locator_ID");
+            docLine.m_M_LocatorTo_ID = data[i].getField("M_LocatorTo_ID");
+            //
+            log4jDocMovement.debug("Movement line: " + Line_ID + " loaded.");
+            list.add(docLine);
+        }
+
+        // Return Array
+        DocLine[] dl = new DocLine[list.size()];
+        list.toArray(dl);
+        return dl;
+    } // loadLines
+
+    /**
+     * Get Balance
+     * 
+     * @return balance (ZERO) - always balanced
+     */
+    public BigDecimal getBalance() {
+        BigDecimal retValue = ZERO;
+        return retValue;
+    } // getBalance
+
+    /**
+     * Create Facts (the accounting logic) for MMM.
+     * 
+     * <pre>
+     *  Movement
+     *      Inventory       DR      CR
+     *      InventoryTo     DR      CR
+     * </pre>
+     * 
+     * @param as
+     *            account schema
+     * @return Fact
+     */
+    public Fact createFact(AcctSchema as, ConnectionProvider conn,
+            Connection con, VariablesSecureApp vars) throws ServletException {
+        C_Currency_ID = as.getC_Currency_ID();
+        // create Fact Header
+        Fact fact = new Fact(this, as, Fact.POST_Actual);
+        String Fact_Acct_Group_ID = SequenceIdData.getUUID();
+
+        // Line pointers
+        FactLine dr = null;
+        FactLine cr = null;
+        log4jDocMovement.debug("DocMovement - Before the loop");
+        for (int i = 0; i < p_lines.length; i++) {
+            DocLine_Material line = (DocLine_Material) p_lines[i];
+            log4jDocMovement
+                    .debug("DocMovement - Before calculating the costs for line i = "
+                            + i);
+            String costs = line.getProductCosts(DateAcct, as, conn, con);
+            BigDecimal b_Costs = new BigDecimal(costs);
+            // Inventory DR CR
+            dr = fact.createLine(line, line.getAccount(
+                    ProductInfo.ACCTTYPE_P_Asset, as, conn), as
+                    .getC_Currency_ID(), (b_Costs.negate()).toString(),
+                    Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn); // from
+                                                                               // (-)
+                                                                               // CR
+            dr.setM_Locator_ID(line.m_M_Locator_ID);
+            // InventoryTo DR CR
+            cr = fact.createLine(line, line.getAccount(
+                    ProductInfo.ACCTTYPE_P_Asset, as, conn), as
+                    .getC_Currency_ID(), costs, Fact_Acct_Group_ID,
+                    nextSeqNo(SeqNo), DocumentType, conn); // to (+) DR
+            cr.setM_Locator_ID(line.m_M_LocatorTo_ID);
+        }
+        log4jDocMovement.debug("DocMovement - After the loop");
+        SeqNo = "0";
+        return fact;
+    } // createFact
+
+    public String nextSeqNo(String oldSeqNo) {
+        log4jDocMovement.debug("DocMovement - oldSeqNo = " + oldSeqNo);
+        BigDecimal seqNo = new BigDecimal(oldSeqNo);
+        SeqNo = (seqNo.add(new BigDecimal("10"))).toString();
+        log4jDocMovement.debug("DocMovement - nextSeqNo = " + SeqNo);
+        return SeqNo;
+    }
+
+    /**
+     * Get Document Confirmation
+     * 
+     * @not used
+     */
+    public boolean getDocumentConfirmation(ConnectionProvider conn,
+            String strRecordId) {
+        return true;
+    }
+
+    public String getServletInfo() {
+        return "Servlet for accounting";
+    } // end of getServletInfo() method
 }

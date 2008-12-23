@@ -28,59 +28,67 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 public class RptC_Order extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
-  
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
-  
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    
-    if (vars.commandIn("DEFAULT")) {
-      String strcOrderId = vars.getSessionValue("RptC_Order.inpcOrderId_R");
-      
-      if (strcOrderId.equals(""))
-        strcOrderId = vars.getSessionValue("RptC_Order.inpcOrderId");
-      if (log4j.isDebugEnabled())
-        log4j.debug("strcOrderId: " + strcOrderId);
-      printPagePartePDF(response, vars, strcOrderId);
-    } else
-      pageError(response);
-  }
-  
-  void printPagePartePDF(HttpServletResponse response, VariablesSecureApp vars, String strcOrderId) throws IOException, ServletException {
-    
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: RptC_Order - pdf");
-    RptCOrderHeaderData[] data = RptCOrderHeaderData.select(this, strcOrderId);
-    if (log4j.isDebugEnabled())
-      log4j.debug("data: " + (data == null ? "null" : "not null"));
-    if (data == null || data.length == 0)
-      data = RptCOrderHeaderData.set();
-    
-    String strLanguage = vars.getLanguage();
-    String strBaseDesign = getBaseDesignPath(strLanguage);
-       
-    JasperReport jasperReportLines;
-    try {
-      JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign + "/org/openbravo/erpReports/C_OrderLinesJR.jrxml");
-      jasperReportLines = JasperCompileManager.compileReport(jasperDesignLines);
-    } catch (JRException e) {
-      e.printStackTrace();
-      throw new ServletException(e.getMessage());
+    private static final long serialVersionUID = 1L;
+
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
     }
-    
-    HashMap<String, Object> parameters = new HashMap<String, Object>();
-    parameters.put("SR_LINES", jasperReportLines);
-    
-    response.setHeader("Content-disposition", "inline; filename=SalesOrderJR.pdf");
-    String strReportName = "@basedesign@/org/openbravo/erpReports/C_OrderJR.jrxml";
-    renderJR(vars, response, strReportName, "pdf", parameters, data, null);   
-  }
-  
-  public String getServletInfo() {
-    return "Servlet that presents the RptCOrders seeker";
-  } // End of getServletInfo() method
+
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+
+        if (vars.commandIn("DEFAULT")) {
+            String strcOrderId = vars
+                    .getSessionValue("RptC_Order.inpcOrderId_R");
+
+            if (strcOrderId.equals(""))
+                strcOrderId = vars.getSessionValue("RptC_Order.inpcOrderId");
+            if (log4j.isDebugEnabled())
+                log4j.debug("strcOrderId: " + strcOrderId);
+            printPagePartePDF(response, vars, strcOrderId);
+        } else
+            pageError(response);
+    }
+
+    void printPagePartePDF(HttpServletResponse response,
+            VariablesSecureApp vars, String strcOrderId) throws IOException,
+            ServletException {
+
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: RptC_Order - pdf");
+        RptCOrderHeaderData[] data = RptCOrderHeaderData.select(this,
+                strcOrderId);
+        if (log4j.isDebugEnabled())
+            log4j.debug("data: " + (data == null ? "null" : "not null"));
+        if (data == null || data.length == 0)
+            data = RptCOrderHeaderData.set();
+
+        String strLanguage = vars.getLanguage();
+        String strBaseDesign = getBaseDesignPath(strLanguage);
+
+        JasperReport jasperReportLines;
+        try {
+            JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign
+                    + "/org/openbravo/erpReports/C_OrderLinesJR.jrxml");
+            jasperReportLines = JasperCompileManager
+                    .compileReport(jasperDesignLines);
+        } catch (JRException e) {
+            e.printStackTrace();
+            throw new ServletException(e.getMessage());
+        }
+
+        HashMap<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("SR_LINES", jasperReportLines);
+
+        response.setHeader("Content-disposition",
+                "inline; filename=SalesOrderJR.pdf");
+        String strReportName = "@basedesign@/org/openbravo/erpReports/C_OrderJR.jrxml";
+        renderJR(vars, response, strReportName, "pdf", parameters, data, null);
+    }
+
+    public String getServletInfo() {
+        return "Servlet that presents the RptCOrders seeker";
+    } // End of getServletInfo() method
 }

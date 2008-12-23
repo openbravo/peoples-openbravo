@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_callouts;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -30,101 +30,123 @@ import java.math.BigDecimal;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-
 public class SE_Expense_Amount extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
-  
+    private static final long serialVersionUID = 1L;
 
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
+    }
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strExpenseAmt = vars.getStringParameter("inpexpenseamt");
-      String strDateexpense = vars.getStringParameter("inpdateexpense");
-      String strcCurrencyId = vars.getStringParameter("inpcCurrencyId");
-      String strTimeExpenseId = vars.getStringParameter("inpsTimeexpenseId");
-      String strTabId = vars.getStringParameter("inpTabId");
-      
-      try {
-        printPage(response, vars, strExpenseAmt, strDateexpense, strcCurrencyId, strTimeExpenseId, strTabId);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else pageError(response);
-  }
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+        if (vars.commandIn("DEFAULT")) {
+            String strExpenseAmt = vars.getStringParameter("inpexpenseamt");
+            String strDateexpense = vars.getStringParameter("inpdateexpense");
+            String strcCurrencyId = vars.getStringParameter("inpcCurrencyId");
+            String strTimeExpenseId = vars
+                    .getStringParameter("inpsTimeexpenseId");
+            String strTabId = vars.getStringParameter("inpTabId");
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strExpenseAmt, String strDateexpense, String strcCurrencyId, String strTimeExpenseId, String strTabId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-    
-    String C_Currency_To_ID = Utility.getContext(this, vars, "$C_Currency_ID", "");
-    //Checks if there is a conversion rate for each of the transactions of the report
-    String strConvRateErrorMsg = "";
-    OBError myMessage = null;
-    myMessage = new OBError();
-    
-    if (strDateexpense.equals("")){
-      strDateexpense = SEExpenseAmountData.selectReportDate(this, strTimeExpenseId).equals("")?DateTimeData.today(this):SEExpenseAmountData.selectReportDate(this, strTimeExpenseId);
+            try {
+                printPage(response, vars, strExpenseAmt, strDateexpense,
+                        strcCurrencyId, strTimeExpenseId, strTabId);
+            } catch (ServletException ex) {
+                pageErrorCallOut(response);
+            }
+        } else
+            pageError(response);
     }
-    
-    BigDecimal Amount = null;
-    if (!strExpenseAmt.equals("")) {
-      Amount = new BigDecimal(strExpenseAmt);    
+
+    void printPage(HttpServletResponse response, VariablesSecureApp vars,
+            String strExpenseAmt, String strDateexpense, String strcCurrencyId,
+            String strTimeExpenseId, String strTabId) throws IOException,
+            ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/ad_callouts/CallOut")
+                .createXmlDocument();
+
+        String C_Currency_To_ID = Utility.getContext(this, vars,
+                "$C_Currency_ID", "");
+        // Checks if there is a conversion rate for each of the transactions of
+        // the report
+        String strConvRateErrorMsg = "";
+        OBError myMessage = null;
+        myMessage = new OBError();
+
+        if (strDateexpense.equals("")) {
+            strDateexpense = SEExpenseAmountData.selectReportDate(this,
+                    strTimeExpenseId).equals("") ? DateTimeData.today(this)
+                    : SEExpenseAmountData.selectReportDate(this,
+                            strTimeExpenseId);
+        }
+
+        BigDecimal Amount = null;
+        if (!strExpenseAmt.equals("")) {
+            Amount = new BigDecimal(strExpenseAmt);
+        } else {
+            Amount = new BigDecimal(0.0);
+        }
+        String strPrecision = "0";
+        if (!strcCurrencyId.equals("")) {
+            strPrecision = SEExpenseAmountData.selectPrecision(this,
+                    strcCurrencyId);
+        }
+        int StdPrecision = Integer.valueOf(strPrecision).intValue();
+        if (Amount.scale() > StdPrecision)
+            Amount = Amount.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
+
+        String convertedAmount = strExpenseAmt;
+        BigDecimal ConvAmount = Amount;
+
+        if (!strcCurrencyId.equals(C_Currency_To_ID)) {
+            String strPrecisionConv = "0";
+            if (!C_Currency_To_ID.equals("")) {
+                strPrecisionConv = SEExpenseAmountData.selectPrecision(this,
+                        C_Currency_To_ID);
+            }
+            int StdPrecisionConv = Integer.valueOf(strPrecisionConv).intValue();
+            try {
+                convertedAmount = SEExpenseAmountData.selectConvertedAmt(this,
+                        strExpenseAmt, strcCurrencyId, C_Currency_To_ID,
+                        strDateexpense, vars.getClient(), vars.getOrg());
+            } catch (ServletException e) {
+                convertedAmount = "";
+                myMessage = Utility.translateError(this, vars, vars
+                        .getLanguage(), e.getMessage());
+                strConvRateErrorMsg = myMessage.getMessage();
+                log4j.warn("Currency does not exist. Exception:" + e);
+            }
+            if (!convertedAmount.equals("")) {
+                ConvAmount = new BigDecimal(convertedAmount);
+            } else {
+                ConvAmount = new BigDecimal(0.0);
+            }
+            if (ConvAmount.scale() > StdPrecisionConv)
+                ConvAmount = ConvAmount.setScale(StdPrecisionConv,
+                        BigDecimal.ROUND_HALF_UP);
+        }
+        StringBuffer resultado = new StringBuffer();
+        resultado.append("var calloutName='SE_Expense_Amount';\n\n");
+        resultado.append("var respuesta = new Array(");
+        if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
+            resultado.append("new Array('MESSAGE', \"" + strConvRateErrorMsg
+                    + "\"), ");
+        }
+        resultado.append("new Array(\"inpexpenseamt\", \"" + Amount.toString()
+                + "\")");
+        resultado.append(", new Array(\"inpconvertedamt\", \""
+                + (ConvAmount.equals(new BigDecimal(0.0)) ? "" : ConvAmount
+                        .toString()) + "\")");
+        resultado.append(");");
+        xmlDocument.setParameter("array", resultado.toString());
+        xmlDocument.setParameter("frameName", "appFrame");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
     }
-    else {
-      Amount = new BigDecimal(0.0);
-    }
-    String strPrecision = "0";    
-    if (!strcCurrencyId.equals("")){
-      strPrecision = SEExpenseAmountData.selectPrecision(this, strcCurrencyId);
-    }
-    int StdPrecision = Integer.valueOf(strPrecision).intValue();
-    if (Amount.scale() > StdPrecision)
-      Amount = Amount.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
-    
-    String convertedAmount = strExpenseAmt;    
-    BigDecimal ConvAmount = Amount;    
-    
-    if (!strcCurrencyId.equals(C_Currency_To_ID)){
-      String strPrecisionConv = "0";    
-      if (!C_Currency_To_ID.equals("")){
-        strPrecisionConv = SEExpenseAmountData.selectPrecision(this, C_Currency_To_ID);
-      }      
-      int StdPrecisionConv = Integer.valueOf(strPrecisionConv).intValue();
-      try{
-        convertedAmount = SEExpenseAmountData.selectConvertedAmt(this, strExpenseAmt, strcCurrencyId, C_Currency_To_ID, strDateexpense, vars.getClient(), vars.getOrg());
-      } catch (ServletException e) {
-        convertedAmount = "";
-        myMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
-        strConvRateErrorMsg = myMessage.getMessage();
-        log4j.warn("Currency does not exist. Exception:"+e);
-      }
-      if (!convertedAmount.equals("")) {
-        ConvAmount = new BigDecimal(convertedAmount);
-      } else {
-        ConvAmount = new BigDecimal(0.0);
-      }
-      if (ConvAmount.scale() > StdPrecisionConv)
-        ConvAmount = ConvAmount.setScale(StdPrecisionConv, BigDecimal.ROUND_HALF_UP);      
-    }
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SE_Expense_Amount';\n\n");
-    resultado.append("var respuesta = new Array(");
-    if(!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-      resultado.append("new Array('MESSAGE', \"" + strConvRateErrorMsg +  "\"), ");
-    }
-    resultado.append("new Array(\"inpexpenseamt\", \"" + Amount.toString() + "\")");
-    resultado.append(", new Array(\"inpconvertedamt\", \"" +(ConvAmount.equals(new BigDecimal(0.0))?"":ConvAmount.toString())+ "\")");
-    resultado.append(");");
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
 }

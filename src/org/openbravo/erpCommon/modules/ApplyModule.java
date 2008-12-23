@@ -44,11 +44,10 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.DataImportService;
 import org.openbravo.service.db.ImportResult;
 
-
-
 /**
- * ApplyModule processes all modules that are in status (I)Installed or (P)Pending
- * but not (A)Applied yet. This process is done by the execute method.
+ * ApplyModule processes all modules that are in status (I)Installed or
+ * (P)Pending but not (A)Applied yet. This process is done by the execute
+ * method.
  * 
  * 
  */
@@ -60,7 +59,7 @@ public class ApplyModule {
     public ApplyModule(ConnectionProvider cp, String dir) {
         pool = cp;
         obDir = dir;
-        PropertyConfigurator.configure(obDir+"/src/log4j.lcf");
+        PropertyConfigurator.configure(obDir + "/src/log4j.lcf");
         log4j = Logger.getLogger(ApplyModule.class);
     }
 
@@ -80,117 +79,127 @@ public class ApplyModule {
      * *Uninstalled modules Deletes them
      */
     public void execute() {
-        PropertyConfigurator.configure(obDir+"/src/log4j.lcf");
-		try {
-			// **************** Translation modules ************************
-			// Check whether modules to install are translations
-			log4j.info("Looking for tranlation modules");
-			final ApplyModuleData[] data = ApplyModuleData
-					.selectTranslationModules(pool);
+        PropertyConfigurator.configure(obDir + "/src/log4j.lcf");
+        try {
+            // **************** Translation modules ************************
+            // Check whether modules to install are translations
+            log4j.info("Looking for tranlation modules");
+            final ApplyModuleData[] data = ApplyModuleData
+                    .selectTranslationModules(pool);
 
-			if (data != null && data.length > 0) {
-				log4j.info(data.length + " tranlation modules found");
-				// Set language as system in case it is not already
-				for (int i = 0; i < data.length; i++) {
-					if (data[i].issystemlanguage.equals("N")) {
-						ApplyModuleData.setSystemLanguage(pool,
-								data[i].adLanguage);
-					}
-				}
+            if (data != null && data.length > 0) {
+                log4j.info(data.length + " tranlation modules found");
+                // Set language as system in case it is not already
+                for (int i = 0; i < data.length; i++) {
+                    if (data[i].issystemlanguage.equals("N")) {
+                        ApplyModuleData.setSystemLanguage(pool,
+                                data[i].adLanguage);
+                    }
+                }
 
-				// Populate trl tables (execute verify languages)
-				try {
-					log4j.info("Executing verify language process");
-					final String pinstance = SequenceIdData.getUUID();
-					PInstanceProcessData.insertPInstance(pool, pinstance,
-							"179", "0", "N", "0", "0", "0");
+                // Populate trl tables (execute verify languages)
+                try {
+                    log4j.info("Executing verify language process");
+                    final String pinstance = SequenceIdData.getUUID();
+                    PInstanceProcessData.insertPInstance(pool, pinstance,
+                            "179", "0", "N", "0", "0", "0");
 
-					final VariablesSecureApp vars = new VariablesSecureApp("0", "0",
-							"0");
+                    final VariablesSecureApp vars = new VariablesSecureApp("0",
+                            "0", "0");
 
-					ActionButtonData.process179(pool, pinstance);
+                    ActionButtonData.process179(pool, pinstance);
 
-					final PInstanceProcessData[] pinstanceData = PInstanceProcessData
-							.select(pool, pinstance);
-					final OBError myMessage = Utility.getProcessInstanceMessage(pool,
-							vars, pinstanceData);
-					if (myMessage.getType().equals("Error"))
-						log4j.error(myMessage.getMessage());
-					else
-						log4j.info(myMessage.getMessage());
-				} catch (final ServletException ex) {
-					ex.printStackTrace();
-				}
+                    final PInstanceProcessData[] pinstanceData = PInstanceProcessData
+                            .select(pool, pinstance);
+                    final OBError myMessage = Utility
+                            .getProcessInstanceMessage(pool, vars,
+                                    pinstanceData);
+                    if (myMessage.getType().equals("Error"))
+                        log4j.error(myMessage.getMessage());
+                    else
+                        log4j.info(myMessage.getMessage());
+                } catch (final ServletException ex) {
+                    ex.printStackTrace();
+                }
 
-				// Import language modules
-				Translation.setLog4j(log4j);
-				Translation.setConnectionProvicer(pool);
+                // Import language modules
+                Translation.setLog4j(log4j);
+                Translation.setConnectionProvicer(pool);
 
-				for (int i = 0; i < data.length; i++) {
-					log4j.info("Importing language " + data[i].adLanguage
-							+ " from module " + data[i].name);
-					Translation.importTrlDirectory(obDir + "/modules/"
-							+ data[i].javapackage
-							+ "/referencedata/translation", data[i].adLanguage,
-							"0", null);
-				}
+                for (int i = 0; i < data.length; i++) {
+                    log4j.info("Importing language " + data[i].adLanguage
+                            + " from module " + data[i].name);
+                    Translation.importTrlDirectory(obDir + "/modules/"
+                            + data[i].javapackage
+                            + "/referencedata/translation", data[i].adLanguage,
+                            "0", null);
+                }
 
-			}
+            }
 
-			// **************** Reference data for system client modules
-			// ************************
-			log4j.info("Looking for reference data modules");
-			final ApplyModuleData[] ds = orderModuleByDependency(
-			                        ApplyModuleData.selectClientReferenceModules(pool));
+            // **************** Reference data for system client modules
+            // ************************
+            log4j.info("Looking for reference data modules");
+            final ApplyModuleData[] ds = orderModuleByDependency(ApplyModuleData
+                    .selectClientReferenceModules(pool));
 
-			if (ds != null && ds.length > 0) {
-				log4j.info(ds.length + " System reference data modules found");
-				for (int i = 0; i < ds.length; i++) {
-					log4j.info("Importing data from module " + ds[i].name);
-					String strPath;
-					if (ds[i].adModuleId.equals("0")) strPath = obDir+"/referencedata/standard";
-					else strPath = obDir + "/modules/" + ds[i].javapackage+"/referencedata/standard";
-					
-					final File myDir = new File(strPath);
-					final File[] myFiles = myDir.listFiles();
-					final ArrayList<File> myTargetFiles = new ArrayList<File>();
-					for (int j = 0; j < myFiles.length; j++) {
-						if (myFiles[j].getName().endsWith(".xml"))
-							myTargetFiles.add(myFiles[j]);
-					}
-					
-					for (final File myF: myTargetFiles) {
-					  
-						final String strXml = Utility.fileToString(myF.getPath());
-						final DataImportService importService = DataImportService
-								.getInstance();
-						final ImportResult result = importService.importDataFromXML(
-								OBDal.getInstance().get(Client.class, "0"),
-								OBDal.getInstance().get(Organization.class, "0"), strXml, 
-								OBDal.getInstance().get(Module.class, ds[i].adModuleId));
-						String msg = result.getErrorMessages();
-						if (msg!=null && msg.length()>0) log4j.error(result.getErrorMessages());
-						
-						msg = result.getWarningMessages();
-						if (msg!=null && msg.length()>0) log4j.warn(msg);
-						
-						msg = result.getLogMessages();
-						if (msg!=null && msg.length()>0) log4j.debug(msg);
-					}
+            if (ds != null && ds.length > 0) {
+                log4j.info(ds.length + " System reference data modules found");
+                for (int i = 0; i < ds.length; i++) {
+                    log4j.info("Importing data from module " + ds[i].name);
+                    String strPath;
+                    if (ds[i].adModuleId.equals("0"))
+                        strPath = obDir + "/referencedata/standard";
+                    else
+                        strPath = obDir + "/modules/" + ds[i].javapackage
+                                + "/referencedata/standard";
 
-				}
-			}
+                    final File myDir = new File(strPath);
+                    final File[] myFiles = myDir.listFiles();
+                    final ArrayList<File> myTargetFiles = new ArrayList<File>();
+                    for (int j = 0; j < myFiles.length; j++) {
+                        if (myFiles[j].getName().endsWith(".xml"))
+                            myTargetFiles.add(myFiles[j]);
+                    }
 
-			// **************** Set applied as installed and delete
-			// uninstalled************************
-			log4j.info("Set modules as installed");
-      OBDal.getInstance().commitAndClose();
-			ApplyModuleData.setInstalled(pool);
-			ApplyModuleData.deleteUninstalled(pool);
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-	}
+                    for (final File myF : myTargetFiles) {
+
+                        final String strXml = Utility.fileToString(myF
+                                .getPath());
+                        final DataImportService importService = DataImportService
+                                .getInstance();
+                        final ImportResult result = importService
+                                .importDataFromXML(OBDal.getInstance().get(
+                                        Client.class, "0"), OBDal.getInstance()
+                                        .get(Organization.class, "0"), strXml,
+                                        OBDal.getInstance().get(Module.class,
+                                                ds[i].adModuleId));
+                        String msg = result.getErrorMessages();
+                        if (msg != null && msg.length() > 0)
+                            log4j.error(result.getErrorMessages());
+
+                        msg = result.getWarningMessages();
+                        if (msg != null && msg.length() > 0)
+                            log4j.warn(msg);
+
+                        msg = result.getLogMessages();
+                        if (msg != null && msg.length() > 0)
+                            log4j.debug(msg);
+                    }
+
+                }
+            }
+
+            // **************** Set applied as installed and delete
+            // uninstalled************************
+            log4j.info("Set modules as installed");
+            OBDal.getInstance().commitAndClose();
+            ApplyModuleData.setInstalled(pool);
+            ApplyModuleData.deleteUninstalled(pool);
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Returns the modules {@link FieldProvider} ordered taking into account

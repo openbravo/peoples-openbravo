@@ -8,7 +8,7 @@
  * CONDITIONS OF ANY KIND, either  express  or  implied.  See  the  License  for  the
  * specific language governing permissions and limitations under the License.
  ************************************************************************************
-*/
+ */
 
 package org.openbravo.authentication.lam;
 
@@ -28,40 +28,44 @@ import org.openbravo.base.secureApp.SeguridadData;
 import org.openbravo.database.ConnectionProvider;
 
 /**
- *
+ * 
  * @author adrian
  */
 public class LamAuthenticationManager implements AuthenticationManager {
-    
+
     private ConnectionProvider conn = null;
-    
+
     /** Creates a new instance of LamAuthenticationManager */
     public LamAuthenticationManager() {
     }
-    
+
     public void init(HttpServlet s) throws AuthenticationException {
-        
+
         // TODO: Read LAM configuration.
         if (s instanceof ConnectionProvider) {
             conn = (ConnectionProvider) s;
         } else {
-            throw new AuthenticationException("Connection provider required for LAM authentication");
-        }         
+            throw new AuthenticationException(
+                    "Connection provider required for LAM authentication");
+        }
     }
-    
-    public String authenticate(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, ServletException, IOException {     
-        
+
+    public String authenticate(HttpServletRequest request,
+            HttpServletResponse response) throws AuthenticationException,
+            ServletException, IOException {
+
         try {
             LamClient LC = new LamClient(); // TODO: configure LamClient
-            
-            
-            String sUserName =  LC.force_authenticate(request, response);
+
+            String sUserName = LC.force_authenticate(request, response);
             if (sUserName == null || sUserName.equals("")) {
                 return null;
             } else {
                 String sUserId = SeguridadData.getUserId(conn, sUserName);
-                if ("-1".equals(sUserId)) {   
-                    throw new AuthenticationException("Authenticated user is not an Openbravo ERP user: " + sUserName);                    
+                if ("-1".equals(sUserId)) {
+                    throw new AuthenticationException(
+                            "Authenticated user is not an Openbravo ERP user: "
+                                    + sUserName);
                 } else {
                     return sUserId;
                 }
@@ -72,16 +76,18 @@ public class LamAuthenticationManager implements AuthenticationManager {
             throw new ServletException("Cannot authenticate user.", e);
         } catch (KeyManagementException e) {
             throw new ServletException("Cannot authenticate user.", e);
-        }        
-    }  
-    
-    public void logout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        
+        }
+    }
+
+    public void logout(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
         try {
             LamClient LC = new LamClient(); // TODO: configure LamClient
-            LC.logout(request, response, HttpBaseUtils.getLocalAddress(request) + "/security/Menu.html");      
+            LC.logout(request, response, HttpBaseUtils.getLocalAddress(request)
+                    + "/security/Menu.html");
         } catch (XmlRpcException e) {
             throw new ServletException("Cannot close user session.", e);
-        }        
-    }     
+        }
+    }
 }

@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 
 package org.openbravo.erpCommon.ws.externalSales;
 
@@ -28,7 +28,7 @@ public class BPartner {
     private java.lang.String postal;
     private java.lang.String address1;
     private java.lang.String address2;
-    
+
     /** Creates a new instance of BPartner */
     public BPartner() {
     }
@@ -73,7 +73,6 @@ public class BPartner {
         this.city = city;
     }
 
-
     public java.lang.String getPostal() {
         return postal;
     }
@@ -81,7 +80,6 @@ public class BPartner {
     public void setPostal(java.lang.String postal) {
         this.postal = postal;
     }
-
 
     public java.lang.String getAddress1() {
         return address1;

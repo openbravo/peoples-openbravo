@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.utility;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -25,28 +25,35 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-
 public class Home extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      printPage(response, vars);
-    } else pageError(response);
-  }
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+        if (vars.commandIn("DEFAULT")) {
+            printPage(response, vars);
+        } else
+            pageError(response);
+    }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/Home").createXmlDocument();
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "Home.html", strReplaceWith);
-    xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
+    void printPage(HttpServletResponse response, VariablesSecureApp vars)
+            throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/utility/Home").createXmlDocument();
+        xmlDocument.setParameter("directory", "var baseDirectory = \""
+                + strReplaceWith + "/\";\n");
+        xmlDocument.setParameter("language", "defaultLang=\""
+                + vars.getLanguage() + "\";");
+        xmlDocument.setParameter("theme", vars.getTheme());
+        LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
+                "Home.html", strReplaceWith);
+        xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
+    }
 }

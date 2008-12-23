@@ -54,7 +54,7 @@ public class ProcessMonitor implements SchedulerListener, JobListener,
         TriggerListener {
 
     static final Logger log = Logger.getLogger(ProcessMonitor.class);
-    
+
     public static final String KEY = "org.openbravo.scheduling.ProcessMonitor.KEY";
 
     private String name;
@@ -79,7 +79,7 @@ public class ProcessMonitor implements SchedulerListener, JobListener,
             log.error(e.getMessage(), e);
         }
     }
-    
+
     public void triggerFired(Trigger trigger, JobExecutionContext jec) {
         final ProcessBundle bundle = (ProcessBundle) jec.getMergedJobDataMap()
                 .get(ProcessBundle.KEY);
@@ -130,8 +130,8 @@ public class ProcessMonitor implements SchedulerListener, JobListener,
         final ProcessContext ctx = bundle.getContext();
         try {
             final String executionId = (String) jec.get(EXECUTION_ID);
-            final String log = bundle.getLog().length() >= 4000 ? 
-                    bundle.getLog().substring(0, 3999) : bundle.getLog();
+            final String log = bundle.getLog().length() >= 4000 ? bundle
+                    .getLog().substring(0, 3999) : bundle.getLog();
             if (jee == null) {
                 ProcessRunData.update(getConnection(), ctx.getUser(), SUCCESS,
                         format(new Date()), getDuration(jec.getJobRunTime()),
@@ -146,13 +146,13 @@ public class ProcessMonitor implements SchedulerListener, JobListener,
             log.error(e.getMessage(), e);
         }
     }
-    
+
     public static void main(String... args) {
         final StringBuilder sb = new StringBuilder(10);
         sb.append("12345678901");
         System.out.println(sb.toString());
     }
-    
+
     public void triggerFinalized(Trigger trigger) {
         try {
             ProcessRequestData.update(getConnection(), COMPLETE, trigger
@@ -172,7 +172,7 @@ public class ProcessMonitor implements SchedulerListener, JobListener,
             log.error(e.getMessage(), e);
         }
     }
-    
+
     public void triggerMisfired(Trigger trigger) {
         try {
             ProcessRequestData.update(getConnection(), MISFIRED, trigger

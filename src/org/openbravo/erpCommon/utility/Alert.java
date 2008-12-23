@@ -15,79 +15,82 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.utility;
 
 import org.openbravo.database.ConnectionProvider;
 import org.apache.log4j.Logger;
 
 public class Alert {
-    
-  private int alertRuleId;
-  private String recordId;
-  private String description;
-  private String referencekeyId = "0";
-  
-  static Logger log4j = Logger.getLogger(Alert.class);
-  public static final char DATA_DRIVEN = 'D';
-  public static final char EXTERNAL = 'E';
-  
-  public Alert() {
-    this(0);
-  }
-  
-  public Alert(int ruleId) {
-    this (ruleId, null);
-  }
-  
-  public Alert(int ruleId, String recordId) {
-    this.alertRuleId = ruleId;
-    this.recordId = recordId;
-  }
-  
-  public int getAlertRuleId() {
-    return alertRuleId;
-  }
-  
-  public void setAlertRuleId(int value) {
-    alertRuleId = value;
-  }
-  
-  public String getRecordId() {
-    return recordId;
-  }
 
-  public void setRecordId(String recordId) {
-    this.recordId = recordId;
-  }
-  
-  public String getDescription() {
-    return description;
-  }
-  
-  public void setDescription(String value) {
-    this.description = value;
-  }
-  
-  public boolean save(ConnectionProvider conn) {
-    if(alertRuleId == 0 || description == null || description.equals(""))
-      return false;
-    
-    try {
-      AlertData[] data = null;
-      if (recordId != null) {
-        data = AlertData.select(conn, String.valueOf(alertRuleId), recordId);
-      } else {
-        data = AlertData.selectByDescription(conn, String.valueOf(alertRuleId), description);
-      }
-      if (data.length <= 0) {
-        AlertData.insert(conn, description, String.valueOf(alertRuleId), recordId, referencekeyId);
-      } 
-    } catch(Exception e) {
-      log4j.error("Error saving an alert instance: " + e.getMessage());
-      return false;
+    private int alertRuleId;
+    private String recordId;
+    private String description;
+    private String referencekeyId = "0";
+
+    static Logger log4j = Logger.getLogger(Alert.class);
+    public static final char DATA_DRIVEN = 'D';
+    public static final char EXTERNAL = 'E';
+
+    public Alert() {
+        this(0);
     }
-    return true;
-  }
+
+    public Alert(int ruleId) {
+        this(ruleId, null);
+    }
+
+    public Alert(int ruleId, String recordId) {
+        this.alertRuleId = ruleId;
+        this.recordId = recordId;
+    }
+
+    public int getAlertRuleId() {
+        return alertRuleId;
+    }
+
+    public void setAlertRuleId(int value) {
+        alertRuleId = value;
+    }
+
+    public String getRecordId() {
+        return recordId;
+    }
+
+    public void setRecordId(String recordId) {
+        this.recordId = recordId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String value) {
+        this.description = value;
+    }
+
+    public boolean save(ConnectionProvider conn) {
+        if (alertRuleId == 0 || description == null || description.equals(""))
+            return false;
+
+        try {
+            AlertData[] data = null;
+            if (recordId != null) {
+                data = AlertData.select(conn, String.valueOf(alertRuleId),
+                        recordId);
+            } else {
+                data = AlertData.selectByDescription(conn, String
+                        .valueOf(alertRuleId), description);
+            }
+            if (data.length <= 0) {
+                AlertData.insert(conn, description,
+                        String.valueOf(alertRuleId), recordId, referencekeyId);
+            }
+        } catch (Exception e) {
+            log4j.error("Error saving an alert instance: " + e.getMessage());
+            return false;
+        }
+        return true;
+    }
 
 }

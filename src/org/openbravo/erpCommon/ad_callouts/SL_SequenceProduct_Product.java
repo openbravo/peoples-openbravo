@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_callouts;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -29,95 +29,139 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 public class SL_SequenceProduct_Product extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
-
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled()) log4j.debug("CHANGED: " + strChanged);
-      String strTabId = vars.getStringParameter("inpTabId");
-
-      String strMProductID = vars.getStringParameter("inpmProductId");
-      try {
-        printPage(response, vars, strTabId, strMProductID);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else pageError(response);
-  }
-
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTabId, String strMProductID) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-
-    String strProductUom = SLSequenceProductProductData.selectProductUom(this, strMProductID);
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_SequenceProduct_Product';\n\n");
-    resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpcUomId\", \"" + FormatUtilities.replaceJS(strProductUom) + "\"),\n");
-    String strHasSecondaryUOM = SLSequenceProductProductData.hasSecondaryUOM(this, strMProductID);
-    resultado.append("new Array(\"inphasseconduom\", " + strHasSecondaryUOM + "),\n");
-
-    resultado.append("new Array(\"inpmProductUomId\", ");
-    String strmProductUOMId = SLSequenceProductProductData.strMProductUOMID(this,strMProductID,strProductUom);
-    if (vars.getLanguage().equals("en_US")) {
-	FieldProvider [] tld = null;
-	try {
-		ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "", "M_Product_UOM", "", Utility.getContext(this, vars, "#User_Org", "SLOrderProduct"), Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), 0);
-		Utility.fillSQLParameters(this, vars, null, comboTableData, "SLOrderProduct", "");
-		tld = comboTableData.select(false);
-		comboTableData = null;
-	} catch (Exception ex) {
-		throw new ServletException(ex);
-	}
-
-      if (tld!=null && tld.length>0) {
-        resultado.append("new Array(");
-        for (int i=0;i<tld.length;i++) {
-          resultado.append("new Array(" + tld[i].getField("id") + ", \"" + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \"" + (tld[i].getField("id").equalsIgnoreCase(strmProductUOMId)?"true":"false") + "\")");
-          if (i<tld.length-1) resultado.append(",\n");
-        }
-        resultado.append("\n)");
-      } else resultado.append("null");
-      resultado.append("\n),");
-    } else {
-	FieldProvider [] tld = null;
-	try {
-		ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "", "M_Product_UOM", "", Utility.getContext(this, vars, "#User_Org", "SLOrderProduct"), Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), 0);
-		Utility.fillSQLParameters(this, vars, null, comboTableData, "SLOrderProduct", "");
-		tld = comboTableData.select(false);
-		comboTableData = null;
-	} catch (Exception ex) {
-		throw new ServletException(ex);
-	}
-
-      if (tld!=null && tld.length>0) {
-        resultado.append("new Array(");
-        for (int i=0;i<tld.length;i++) {
-          resultado.append("new Array(" + tld[i].getField("id") + ", \"" + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \"" + (tld[i].getField("id").equalsIgnoreCase(strmProductUOMId)?"true":"false") + "\")");
-          if (i<tld.length-1) resultado.append(",\n");
-        }
-        resultado.append("\n)");
-      } else resultado.append("null");
-      resultado.append("\n),");
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
     }
-    resultado.append("new Array(\"EXECUTE\", \"displayLogic();\")\n");
-    //To set the cursor focus in the amount field
-//    resultado.append("new Array(\"CURSOR_FIELD\", \"inpqtyorder\")\n");
-//    if (!strHasSecondaryUOM.equals("0")) resultado.append(", new Array(\"CURSOR_FIELD\", \"inpquantityorder\")\n");
 
-    resultado.append(");\n");
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+        if (vars.commandIn("DEFAULT")) {
+            String strChanged = vars.getStringParameter("inpLastFieldChanged");
+            if (log4j.isDebugEnabled())
+                log4j.debug("CHANGED: " + strChanged);
+            String strTabId = vars.getStringParameter("inpTabId");
+
+            String strMProductID = vars.getStringParameter("inpmProductId");
+            try {
+                printPage(response, vars, strTabId, strMProductID);
+            } catch (ServletException ex) {
+                pageErrorCallOut(response);
+            }
+        } else
+            pageError(response);
+    }
+
+    void printPage(HttpServletResponse response, VariablesSecureApp vars,
+            String strTabId, String strMProductID) throws IOException,
+            ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/ad_callouts/CallOut")
+                .createXmlDocument();
+
+        String strProductUom = SLSequenceProductProductData.selectProductUom(
+                this, strMProductID);
+        StringBuffer resultado = new StringBuffer();
+        resultado.append("var calloutName='SL_SequenceProduct_Product';\n\n");
+        resultado.append("var respuesta = new Array(");
+        resultado.append("new Array(\"inpcUomId\", \""
+                + FormatUtilities.replaceJS(strProductUom) + "\"),\n");
+        String strHasSecondaryUOM = SLSequenceProductProductData
+                .hasSecondaryUOM(this, strMProductID);
+        resultado.append("new Array(\"inphasseconduom\", " + strHasSecondaryUOM
+                + "),\n");
+
+        resultado.append("new Array(\"inpmProductUomId\", ");
+        String strmProductUOMId = SLSequenceProductProductData
+                .strMProductUOMID(this, strMProductID, strProductUom);
+        if (vars.getLanguage().equals("en_US")) {
+            FieldProvider[] tld = null;
+            try {
+                ComboTableData comboTableData = new ComboTableData(vars, this,
+                        "TABLE", "", "M_Product_UOM", "", Utility.getContext(
+                                this, vars, "#User_Org", "SLOrderProduct"),
+                        Utility.getContext(this, vars, "#User_Client",
+                                "SLOrderProduct"), 0);
+                Utility.fillSQLParameters(this, vars, null, comboTableData,
+                        "SLOrderProduct", "");
+                tld = comboTableData.select(false);
+                comboTableData = null;
+            } catch (Exception ex) {
+                throw new ServletException(ex);
+            }
+
+            if (tld != null && tld.length > 0) {
+                resultado.append("new Array(");
+                for (int i = 0; i < tld.length; i++) {
+                    resultado.append("new Array("
+                            + tld[i].getField("id")
+                            + ", \""
+                            + FormatUtilities
+                                    .replaceJS(tld[i].getField("name"))
+                            + "\", \""
+                            + (tld[i].getField("id").equalsIgnoreCase(
+                                    strmProductUOMId) ? "true" : "false")
+                            + "\")");
+                    if (i < tld.length - 1)
+                        resultado.append(",\n");
+                }
+                resultado.append("\n)");
+            } else
+                resultado.append("null");
+            resultado.append("\n),");
+        } else {
+            FieldProvider[] tld = null;
+            try {
+                ComboTableData comboTableData = new ComboTableData(vars, this,
+                        "TABLE", "", "M_Product_UOM", "", Utility.getContext(
+                                this, vars, "#User_Org", "SLOrderProduct"),
+                        Utility.getContext(this, vars, "#User_Client",
+                                "SLOrderProduct"), 0);
+                Utility.fillSQLParameters(this, vars, null, comboTableData,
+                        "SLOrderProduct", "");
+                tld = comboTableData.select(false);
+                comboTableData = null;
+            } catch (Exception ex) {
+                throw new ServletException(ex);
+            }
+
+            if (tld != null && tld.length > 0) {
+                resultado.append("new Array(");
+                for (int i = 0; i < tld.length; i++) {
+                    resultado.append("new Array("
+                            + tld[i].getField("id")
+                            + ", \""
+                            + FormatUtilities
+                                    .replaceJS(tld[i].getField("name"))
+                            + "\", \""
+                            + (tld[i].getField("id").equalsIgnoreCase(
+                                    strmProductUOMId) ? "true" : "false")
+                            + "\")");
+                    if (i < tld.length - 1)
+                        resultado.append(",\n");
+                }
+                resultado.append("\n)");
+            } else
+                resultado.append("null");
+            resultado.append("\n),");
+        }
+        resultado.append("new Array(\"EXECUTE\", \"displayLogic();\")\n");
+        // To set the cursor focus in the amount field
+        // resultado.append("new Array(\"CURSOR_FIELD\", \"inpqtyorder\")\n");
+        // if (!strHasSecondaryUOM.equals("0"))
+        // resultado.append(", new Array(\"CURSOR_FIELD\", \"inpquantityorder\")\n");
+
+        resultado.append(");\n");
+        xmlDocument.setParameter("array", resultado.toString());
+        xmlDocument.setParameter("frameName", "appFrame");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
+    }
 }

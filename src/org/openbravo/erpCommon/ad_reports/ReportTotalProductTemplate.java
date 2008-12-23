@@ -28,130 +28,154 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 public class ReportTotalProductTemplate extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("FIND"))
-      printPageDataHtml(response, vars);
-    else
-      printPageDataSheet(response, vars);
-  }
-
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars)
-    throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-
-    XmlDocument xmlDocument=null;
-    ReportTotalProductTemplateData[] data=null;
-    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportTotalProductTemplateEdit").createXmlDocument();
-
-        
-
-    data = ReportTotalProductTemplateData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportTotalProductTemplate"), Utility.getContext(this, vars, "#User_Org", "ReportTotalProductTemplate"));
-    vars.removeSessionValue("Default.value");
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setData("structure1", data);
-    out.println(xmlDocument.print());
-    out.close();
-  }
-  
- /* void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
-    throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    
-    XmlDocument xmlDocument=null;
-    
-    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportTotalProductTemplateEdit").createXmlDocument();
-
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportTotalProductTemplate", false, "", "", "",false, "ad_reports",  strReplaceWith, false,  true);
-    toolbar.prepareSimpleToolBarTemplate();
-    xmlDocument.setParameter("toolbar", toolbar.toString());
-
-    try {
-      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.ReportTotalProductTemplate");
-      xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
-      xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
-      xmlDocument.setParameter("childTabContainer", tabs.childTabs());
-      xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportTotalProductTemplate.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
-      xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportTotalProductTemplate.html", strReplaceWith);
-      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-    {
-      OBError myMessage = vars.getMessage("ReportTotalProductTemplate");
-      vars.removeMessage("ReportTotalProductTemplate");
-      if (myMessage!=null) {
-        xmlDocument.setParameter("messageType", myMessage.getType());
-        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-      }
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+        if (vars.commandIn("FIND"))
+            printPageDataHtml(response, vars);
+        else
+            printPageDataSheet(response, vars);
     }
 
-     
-    vars.removeSessionValue("Default.value");
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
-    
-    out.println(xmlDocument.print());
-    out.close();
-  }*/
-  
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars)
-    throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    XmlDocument xmlDocument=null;
-    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportTotalProductTemplate").createXmlDocument();
+    void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars)
+            throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportTotalProductTemplate", false, "", "", "",false, "ad_reports",  strReplaceWith, false,  true);
-    toolbar.prepareSimpleToolBarTemplate();
-    xmlDocument.setParameter("toolbar", toolbar.toString());
+        XmlDocument xmlDocument = null;
+        ReportTotalProductTemplateData[] data = null;
+        xmlDocument = xmlEngine
+                .readXmlTemplate(
+                        "org/openbravo/erpCommon/ad_reports/ReportTotalProductTemplateEdit")
+                .createXmlDocument();
 
-    try {
-      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.ReportTotalProductTemplate");
-      xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
-      xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
-      xmlDocument.setParameter("childTabContainer", tabs.childTabs());
-      xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportTotalProductTemplate.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
-      xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportTotalProductTemplate.html", strReplaceWith);
-      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-    {
-      OBError myMessage = vars.getMessage("ReportTotalProductTemplate");
-      vars.removeMessage("ReportTotalProductTemplate");
-      if (myMessage!=null) {
-        xmlDocument.setParameter("messageType", myMessage.getType());
-        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-      }
+        data = ReportTotalProductTemplateData.select(this, Utility.getContext(
+                this, vars, "#User_Client", "ReportTotalProductTemplate"),
+                Utility.getContext(this, vars, "#User_Org",
+                        "ReportTotalProductTemplate"));
+        vars.removeSessionValue("Default.value");
+        xmlDocument.setParameter("directory", "var baseDirectory = \""
+                + strReplaceWith + "/\";\n");
+        xmlDocument.setParameter("paramLanguage", "defaultLang=\""
+                + vars.getLanguage() + "\";");
+        xmlDocument.setParameter("theme", vars.getTheme());
+        xmlDocument.setData("structure1", data);
+        out.println(xmlDocument.print());
+        out.close();
     }
 
-    //data = ReportTotalProductTemplateData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportTotalProductTemplate"), Utility.getContext(this, vars, "#User_Org", "ReportTotalProductTemplate"));
-    vars.removeSessionValue("Default.value");
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
-    //xmlDocument.setData("structure1", data);
-    out.println(xmlDocument.print());
-    out.close();
-  }
+    /*
+     * void printPageDataSheet(HttpServletResponse response, VariablesSecureApp
+     * vars) throws IOException, ServletException { if (log4j.isDebugEnabled())
+     * log4j.debug("Output: dataSheet");
+     * response.setContentType("text/html; charset=UTF-8"); PrintWriter out =
+     * response.getWriter();
+     * 
+     * XmlDocument xmlDocument=null;
+     * 
+     * xmlDocument =xmlEngine.readXmlTemplate(
+     * "org/openbravo/erpCommon/ad_reports/ReportTotalProductTemplateEdit"
+     * ).createXmlDocument();
+     * 
+     * ToolBar toolbar = new ToolBar(this, vars.getLanguage(),
+     * "ReportTotalProductTemplate", false, "", "", "",false, "ad_reports",
+     * strReplaceWith, false, true); toolbar.prepareSimpleToolBarTemplate();
+     * xmlDocument.setParameter("toolbar", toolbar.toString());
+     * 
+     * try { WindowTabs tabs = new WindowTabs(this, vars,
+     * "org.openbravo.erpCommon.ad_reports.ReportTotalProductTemplate");
+     * xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
+     * xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
+     * xmlDocument.setParameter("childTabContainer", tabs.childTabs());
+     * xmlDocument.setParameter("theme", vars.getTheme()); NavigationBar nav =
+     * new NavigationBar(this, vars.getLanguage(),
+     * "ReportTotalProductTemplate.html", classInfo.id, classInfo.type,
+     * strReplaceWith, tabs.breadcrumb());
+     * xmlDocument.setParameter("navigationBar", nav.toString()); LeftTabsBar
+     * lBar = new LeftTabsBar(this, vars.getLanguage(),
+     * "ReportTotalProductTemplate.html", strReplaceWith);
+     * xmlDocument.setParameter("leftTabs", lBar.manualTemplate()); } catch
+     * (Exception ex) { throw new ServletException(ex); } { OBError myMessage =
+     * vars.getMessage("ReportTotalProductTemplate");
+     * vars.removeMessage("ReportTotalProductTemplate"); if (myMessage!=null) {
+     * xmlDocument.setParameter("messageType", myMessage.getType());
+     * xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+     * xmlDocument.setParameter("messageMessage", myMessage.getMessage()); } }
+     * 
+     * 
+     * vars.removeSessionValue("Default.value");
+     * xmlDocument.setParameter("directory", "var baseDirectory = \"" +
+     * strReplaceWith + "/\";\n"); xmlDocument.setParameter("paramLanguage",
+     * "defaultLang=\"" + vars.getLanguage() + "\";");
+     * 
+     * out.println(xmlDocument.print()); out.close(); }
+     */
 
-  public String getServletInfo() {
-    return "Servlet ReportSalesOrderOpenItem. This Servlet was made by Jon Alegría";
-  } // end of getServletInfo() method
+    void printPageDataSheet(HttpServletResponse response,
+            VariablesSecureApp vars) throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        XmlDocument xmlDocument = null;
+        xmlDocument = xmlEngine
+                .readXmlTemplate(
+                        "org/openbravo/erpCommon/ad_reports/ReportTotalProductTemplate")
+                .createXmlDocument();
+
+        ToolBar toolbar = new ToolBar(this, vars.getLanguage(),
+                "ReportTotalProductTemplate", false, "", "", "", false,
+                "ad_reports", strReplaceWith, false, true);
+        toolbar.prepareSimpleToolBarTemplate();
+        xmlDocument.setParameter("toolbar", toolbar.toString());
+
+        try {
+            WindowTabs tabs = new WindowTabs(this, vars,
+                    "org.openbravo.erpCommon.ad_reports.ReportTotalProductTemplate");
+            xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
+            xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
+            xmlDocument.setParameter("childTabContainer", tabs.childTabs());
+            xmlDocument.setParameter("theme", vars.getTheme());
+            NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+                    "ReportTotalProductTemplate.html", classInfo.id,
+                    classInfo.type, strReplaceWith, tabs.breadcrumb());
+            xmlDocument.setParameter("navigationBar", nav.toString());
+            LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
+                    "ReportTotalProductTemplate.html", strReplaceWith);
+            xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+        } catch (Exception ex) {
+            throw new ServletException(ex);
+        }
+        {
+            OBError myMessage = vars.getMessage("ReportTotalProductTemplate");
+            vars.removeMessage("ReportTotalProductTemplate");
+            if (myMessage != null) {
+                xmlDocument.setParameter("messageType", myMessage.getType());
+                xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+                xmlDocument.setParameter("messageMessage", myMessage
+                        .getMessage());
+            }
+        }
+
+        // data = ReportTotalProductTemplateData.select(this,
+        // Utility.getContext(this, vars, "#User_Client",
+        // "ReportTotalProductTemplate"), Utility.getContext(this, vars,
+        // "#User_Org", "ReportTotalProductTemplate"));
+        vars.removeSessionValue("Default.value");
+        xmlDocument.setParameter("directory", "var baseDirectory = \""
+                + strReplaceWith + "/\";\n");
+        xmlDocument.setParameter("paramLanguage", "defaultLang=\""
+                + vars.getLanguage() + "\";");
+        // xmlDocument.setData("structure1", data);
+        out.println(xmlDocument.print());
+        out.close();
+    }
+
+    public String getServletInfo() {
+        return "Servlet ReportSalesOrderOpenItem. This Servlet was made by Jon Alegría";
+    } // end of getServletInfo() method
 }
-

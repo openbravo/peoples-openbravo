@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpReports;
 
 import org.openbravo.base.secureApp.*;
@@ -24,46 +24,58 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-
 public class RptM_Movement extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
-  
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+    private static final long serialVersionUID = 1L;
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-
-    if (vars.commandIn("DEFAULT")) {
-      String strmMovementId = vars.getSessionValue("RptM_Movement.inpmMovementId_R");
-      if (strmMovementId.equals("")) strmMovementId = vars.getSessionValue("RptM_Movement.inpmMovementId");
-      printPagePartePDF(response, vars, strmMovementId);
-    } else pageError(response);
-  }
-
-
-   void printPagePartePDF(HttpServletResponse response, VariablesSecureApp vars, String strmMovementId) throws IOException,ServletException{
-    if (log4j.isDebugEnabled()) log4j.debug("Output: pdf");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpReports/RptM_Movement").createXmlDocument();
-    // here we pass the familiy-ID with report.setData
-    RptMMovementData[] data = RptMMovementData.select(this, strmMovementId);
-    if (data == null || data.length == 0) data = RptMMovementData.set();
-    RptMMovementData[][] dataLines = new RptMMovementData[data.length][];
-
-    for ( int i=0; i<data.length; i++){
-      dataLines[i] = RptMMovementData.selectMovement(this, data[i].mMovementId);
-      if (dataLines[i] == null || dataLines[i].length == 0) dataLines[i] = RptMMovementData.set();
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
     }
-    xmlDocument.setData("structure", data);
-    xmlDocument.setDataArray("reportMovementLines", "structure1", dataLines);
-    String strResult = xmlDocument.print();
-    if (log4j.isDebugEnabled()) log4j.debug(strResult);
-    renderFO(strResult, response);
-  }
 
-  public String getServletInfo() {
-    return "Servlet that presents the RptMMovement document";
-  } // End of getServletInfo() method
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+
+        if (vars.commandIn("DEFAULT")) {
+            String strmMovementId = vars
+                    .getSessionValue("RptM_Movement.inpmMovementId_R");
+            if (strmMovementId.equals(""))
+                strmMovementId = vars
+                        .getSessionValue("RptM_Movement.inpmMovementId");
+            printPagePartePDF(response, vars, strmMovementId);
+        } else
+            pageError(response);
+    }
+
+    void printPagePartePDF(HttpServletResponse response,
+            VariablesSecureApp vars, String strmMovementId) throws IOException,
+            ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: pdf");
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpReports/RptM_Movement").createXmlDocument();
+        // here we pass the familiy-ID with report.setData
+        RptMMovementData[] data = RptMMovementData.select(this, strmMovementId);
+        if (data == null || data.length == 0)
+            data = RptMMovementData.set();
+        RptMMovementData[][] dataLines = new RptMMovementData[data.length][];
+
+        for (int i = 0; i < data.length; i++) {
+            dataLines[i] = RptMMovementData.selectMovement(this,
+                    data[i].mMovementId);
+            if (dataLines[i] == null || dataLines[i].length == 0)
+                dataLines[i] = RptMMovementData.set();
+        }
+        xmlDocument.setData("structure", data);
+        xmlDocument
+                .setDataArray("reportMovementLines", "structure1", dataLines);
+        String strResult = xmlDocument.print();
+        if (log4j.isDebugEnabled())
+            log4j.debug(strResult);
+        renderFO(strResult, response);
+    }
+
+    public String getServletInfo() {
+        return "Servlet that presents the RptMMovement document";
+    } // End of getServletInfo() method
 }

@@ -15,57 +15,63 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.utility;
 
 import java.util.Hashtable;
 
 public class QueryParameterStructure {
-  private Hashtable<String, String> data = new Hashtable<String, String>();
+    private Hashtable<String, String> data = new Hashtable<String, String>();
 
-  public QueryParameterStructure() {
-  }
+    public QueryParameterStructure() {
+    }
 
-  public QueryParameterStructure(String _name, String _fieldName, String _type) {
-    this(_name,  _fieldName, _type,  "");
-  }
-  public QueryParameterStructure(String _name, String _fieldName, String _type, String _realName) {
-    setData("name", _name);
-    setData("fieldName", _fieldName);
-    setData("type", _type);
-    setData("realName", _realName);
-  }
+    public QueryParameterStructure(String _name, String _fieldName, String _type) {
+        this(_name, _fieldName, _type, "");
+    }
 
-  public void setData(String name, String value) {
-    if (name==null) return;
-    if (this.data==null) this.data = new Hashtable<String, String>();
-    if (value==null || value.equals("")) this.data.remove(name);
-    else this.data.put(name, value);
-  }
+    public QueryParameterStructure(String _name, String _fieldName,
+            String _type, String _realName) {
+        setData("name", _name);
+        setData("fieldName", _fieldName);
+        setData("type", _type);
+        setData("realName", _realName);
+    }
 
-  public String getData(String name) {
-    return data.get(name);
-  }
+    public void setData(String name, String value) {
+        if (name == null)
+            return;
+        if (this.data == null)
+            this.data = new Hashtable<String, String>();
+        if (value == null || value.equals(""))
+            this.data.remove(name);
+        else
+            this.data.put(name, value);
+    }
 
-  public String getType() {
-    return getData("type");
-  }
+    public String getData(String name) {
+        return data.get(name);
+    }
 
-  public String getField() {
-    return getData("fieldName");
-  }
+    public String getType() {
+        return getData("type");
+    }
 
-  public String getName() {
-    return getData("name");
-  }
-  
-  public String getRealName() {
-    return getData("realName");
-  }
+    public String getField() {
+        return getData("fieldName");
+    }
 
-  public String toString() {
-    StringBuffer text = new StringBuffer();
-    text.append(getData("name"));
-    return text.toString();
-  }
+    public String getName() {
+        return getData("name");
+    }
+
+    public String getRealName() {
+        return getData("realName");
+    }
+
+    public String toString() {
+        StringBuffer text = new StringBuffer();
+        text.append(getData("name"));
+        return text.toString();
+    }
 }

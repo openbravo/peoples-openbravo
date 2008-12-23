@@ -15,25 +15,23 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 
 package org.openbravo.erpCommon.ws.externalSales;
 
 import java.io.Serializable;
 
 public class ProductPlus extends Product implements Serializable {
-	
+
     private static final long serialVersionUID = 12L;
 
     private double qtyonhand;
-  
-    public double getQtyonhand(){
+
+    public double getQtyonhand() {
         return qtyonhand;
     }
-    
+
     public void setQtyonhand(double qtyonhand) {
         this.qtyonhand = qtyonhand;
     }
 }
-
-

@@ -27,39 +27,40 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.reporting.DocumentType;
 
 @SuppressWarnings("serial")
-public class PrintInvoices extends PrintController
-{
-    static Logger log4j = Logger.getLogger( PrintInvoices.class );
+public class PrintInvoices extends PrintController {
+    static Logger log4j = Logger.getLogger(PrintInvoices.class);
 
-    // TODO: Als een email in draft staat de velden voor de email adressen weghalen en melden dat het document
-	// 			niet ge-emailed kan worden
-	
-	public void init( ServletConfig config )
-	{
-		super.init(config);
-		boolHist = false;
-	}
+    // TODO: Als een email in draft staat de velden voor de email adressen
+    // weghalen en melden dat het document
+    // niet ge-emailed kan worden
 
-	@SuppressWarnings("unchecked")
-	public void doPost( HttpServletRequest request, HttpServletResponse response )
-			throws IOException, ServletException
-	{
-		VariablesSecureApp vars = new VariablesSecureApp(request);
-		
-		DocumentType	documentType = DocumentType.SALESINVOICE;
-	  // The prefix PRINTINVOICES is a fixed name based on the KEY of the AD_PROCESS
-		String	sessionValuePrefix = "PRINTINVOICES";
-		String	strDocumentId = null;
-		
-		strDocumentId = vars.getSessionValue( sessionValuePrefix + ".inpcInvoiceId_R");
-    if (strDocumentId.equals(""))
-      strDocumentId = vars.getSessionValue( sessionValuePrefix + ".inpcInvoiceId");
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
+    }
 
-    post(request,response,vars,documentType,sessionValuePrefix, strDocumentId);
-  }
+    @SuppressWarnings("unchecked")
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
 
-  public String getServletInfo()
-  {
-    return "Servlet that processes the print action";
-  } // End of getServletInfo() method
+        DocumentType documentType = DocumentType.SALESINVOICE;
+        // The prefix PRINTINVOICES is a fixed name based on the KEY of the
+        // AD_PROCESS
+        String sessionValuePrefix = "PRINTINVOICES";
+        String strDocumentId = null;
+
+        strDocumentId = vars.getSessionValue(sessionValuePrefix
+                + ".inpcInvoiceId_R");
+        if (strDocumentId.equals(""))
+            strDocumentId = vars.getSessionValue(sessionValuePrefix
+                    + ".inpcInvoiceId");
+
+        post(request, response, vars, documentType, sessionValuePrefix,
+                strDocumentId);
+    }
+
+    public String getServletInfo() {
+        return "Servlet that processes the print action";
+    } // End of getServletInfo() method
 }

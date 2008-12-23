@@ -61,10 +61,11 @@ public class Registration extends HttpSecureAppServlet {
     }
 
     /**
-     * Removes the Registration pop-up from the page history so when Openbravo 
+     * Removes the Registration pop-up from the page history so when Openbravo
      * back arrow is pressed, Registration window has no chance of being shown.
      * 
-     * @param request the HttpServletRequest object
+     * @param request
+     *            the HttpServletRequest object
      */
     public void removeFromPageHistory(HttpServletRequest request) {
         final Variables variables = new Variables(request);

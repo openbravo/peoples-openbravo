@@ -28,10 +28,10 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 
 /**
  * @author awolski
- *
+ * 
  */
 public class RestartingContext extends HttpSecureAppServlet {
-    
+
     /**
      * 
      */
@@ -40,7 +40,7 @@ public class RestartingContext extends HttpSecureAppServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        
+
     }
 
 }

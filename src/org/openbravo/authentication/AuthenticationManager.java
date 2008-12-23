@@ -19,12 +19,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
+ * 
  * @author adrianromero
  */
 public interface AuthenticationManager {
 
-  public void init(HttpServlet s) throws AuthenticationException;
-  public String authenticate(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, ServletException, IOException;
-  public void logout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
+    public void init(HttpServlet s) throws AuthenticationException;
+
+    public String authenticate(HttpServletRequest request,
+            HttpServletResponse response) throws AuthenticationException,
+            ServletException, IOException;
+
+    public void logout(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException;
 }

@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_callouts;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -26,56 +26,72 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-
 public class SL_ScheduledMaintenance_Maintenance extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
-
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled()) log4j.debug("CHANGED: " + strChanged);
-      String strMaintenance = vars.getStringParameter("inpmaMaintenanceId");
-      String strTabId = vars.getStringParameter("inpTabId");
-
-      try {
-        printPage(response, vars, strMaintenance, strTabId);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else pageError(response);
-  }
-
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strMaintenance, String strTabId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-
-    StringBuffer resultado = new StringBuffer();
-    //if (strIsSOTrx.equals("Y")) strLocator = "";
-
-    resultado.append("var calloutName='SL_ScheduledMaintenance_Maintenance';\n\n");
-    resultado.append("var respuesta = new Array(\n");
-    if (strMaintenance != null && !strMaintenance.equals("")) {
-      SLScheduledMaintenanceMaintenanceData[] data = SLScheduledMaintenanceMaintenanceData.select(this, strMaintenance);
-      resultado.append("new Array(\"inpmaMaintOperationId\", \"" + data[0].maMaintOperationId + "\"),\n");
-      resultado.append("new Array(\"inpMaintenanceType\", \"" + FormatUtilities.replaceJS(data[0].maintenanceType) + "\"),\n");
-      resultado.append("new Array(\"inpmaMachineTypeId\", \"" + data[0].maMachineTypeId + "\"),\n");
-      resultado.append("new Array(\"inpmaMachineId\", \"" + data[0].maMachineId + "\"),\n");
-      resultado.append("new Array(\"EXECUTE\", \"displayLogic();\")");
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
     }
-    resultado.append(");");
 
-    if (log4j.isDebugEnabled()) log4j.debug("Array: " + resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    xmlDocument.setParameter("array", resultado.toString());
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+        if (vars.commandIn("DEFAULT")) {
+            String strChanged = vars.getStringParameter("inpLastFieldChanged");
+            if (log4j.isDebugEnabled())
+                log4j.debug("CHANGED: " + strChanged);
+            String strMaintenance = vars
+                    .getStringParameter("inpmaMaintenanceId");
+            String strTabId = vars.getStringParameter("inpTabId");
+
+            try {
+                printPage(response, vars, strMaintenance, strTabId);
+            } catch (ServletException ex) {
+                pageErrorCallOut(response);
+            }
+        } else
+            pageError(response);
+    }
+
+    void printPage(HttpServletResponse response, VariablesSecureApp vars,
+            String strMaintenance, String strTabId) throws IOException,
+            ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/ad_callouts/CallOut")
+                .createXmlDocument();
+
+        StringBuffer resultado = new StringBuffer();
+        // if (strIsSOTrx.equals("Y")) strLocator = "";
+
+        resultado
+                .append("var calloutName='SL_ScheduledMaintenance_Maintenance';\n\n");
+        resultado.append("var respuesta = new Array(\n");
+        if (strMaintenance != null && !strMaintenance.equals("")) {
+            SLScheduledMaintenanceMaintenanceData[] data = SLScheduledMaintenanceMaintenanceData
+                    .select(this, strMaintenance);
+            resultado.append("new Array(\"inpmaMaintOperationId\", \""
+                    + data[0].maMaintOperationId + "\"),\n");
+            resultado.append("new Array(\"inpMaintenanceType\", \""
+                    + FormatUtilities.replaceJS(data[0].maintenanceType)
+                    + "\"),\n");
+            resultado.append("new Array(\"inpmaMachineTypeId\", \""
+                    + data[0].maMachineTypeId + "\"),\n");
+            resultado.append("new Array(\"inpmaMachineId\", \""
+                    + data[0].maMachineId + "\"),\n");
+            resultado.append("new Array(\"EXECUTE\", \"displayLogic();\")");
+        }
+        resultado.append(");");
+
+        if (log4j.isDebugEnabled())
+            log4j.debug("Array: " + resultado.toString());
+        xmlDocument.setParameter("frameName", "appFrame");
+        xmlDocument.setParameter("array", resultado.toString());
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
+    }
 }

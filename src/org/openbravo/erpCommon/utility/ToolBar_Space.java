@@ -15,26 +15,26 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.utility;
 
-
 public class ToolBar_Space implements HTMLElement {
-  private String base_direction = "";
-  
-  public ToolBar_Space(String _base_direction) {
-    this.base_direction = _base_direction;
-  }
+    private String base_direction = "";
 
-  public String getWidth() {
-    return "1";
-  }
+    public ToolBar_Space(String _base_direction) {
+        this.base_direction = _base_direction;
+    }
 
-  public String elementType() {
-    return "SPACE";
-  }
+    public String getWidth() {
+        return "1";
+    }
 
-  public String toString() {
-    return "<img src=\"" + base_direction + "/images/blank.gif\" class=\"Main_ToolBar_Separator\">";
-  }
+    public String elementType() {
+        return "SPACE";
+    }
+
+    public String toString() {
+        return "<img src=\"" + base_direction
+                + "/images/blank.gif\" class=\"Main_ToolBar_Separator\">";
+    }
 }

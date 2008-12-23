@@ -15,13 +15,13 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 
 package org.openbravo.erpCommon.ws.externalSales;
 
 public class Payment {
 
-    private double amount; 
+    private double amount;
     private String paymentType;
 
     /** Creates a new instance of Payment */

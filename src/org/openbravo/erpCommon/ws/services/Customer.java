@@ -15,13 +15,13 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 
 package org.openbravo.erpCommon.ws.services;
 
 public class Customer extends BusinessPartner {
 
-	public Customer() {
-		setCustomer(true);
-	}
+    public Customer() {
+        setCustomer(true);
+    }
 }

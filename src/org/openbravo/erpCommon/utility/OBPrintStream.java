@@ -49,7 +49,7 @@ public class OBPrintStream extends PrintStream {
     public OBPrintStream(PrintWriter p) {
 
         super(System.out); // It is needed to call a super constructor, though
-                           // it is not going to be used
+        // it is not going to be used
         setPrintWritter(p);
         log = new StringBuffer();
         finished = false;
@@ -58,7 +58,7 @@ public class OBPrintStream extends PrintStream {
     public OBPrintStream(PrintStream p) {
 
         super(System.out); // It is needed to call a super constructor, though
-                           // it is not going to be used
+        // it is not going to be used
         psout = p;
         log = new StringBuffer();
         finished = false;

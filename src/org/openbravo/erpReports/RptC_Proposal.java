@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpReports;
 
 import org.openbravo.base.secureApp.*;
@@ -26,56 +26,78 @@ import javax.servlet.http.*;
 
 import org.openbravo.erpCommon.utility.Utility;
 
-
 public class RptC_Proposal extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
-  
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+    private static final long serialVersionUID = 1L;
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-
-    if (vars.commandIn("DEFAULT")) {
-      String strClave = vars.getSessionValue("RptC_Proposal.inpcProjectproposalId_R");
-      if (strClave.equals("")) strClave = vars.getSessionValue("RptC_Proposal.inpcProjectproposalId");
-      printPagePartePDF(response, vars, strClave);
-    } else pageError(response);
-  }
-
-
-   void printPagePartePDF(HttpServletResponse response, VariablesSecureApp vars, String strClave) throws IOException,ServletException{
-    if (log4j.isDebugEnabled()) log4j.debug("Output: pdf");
-    RptCProposalData[] data = RptCProposalData.select(this, Utility.getContext(this, vars, "#User_Client", "RptC_Proposal"), Utility.getContext(this, vars, "#User_Org", "RptC_Proposal"), strClave);
-    String discard[] = {""};
-    if (data==null || data.length==0) discard[0] = new String("sectionDetailHeader");
-    RptCProposalData[][] dataHeader = new RptCProposalData[data.length][];
-    RptCProposalData[][] dataLines = new RptCProposalData[data.length][];
-    RptCProposalData[][] dataFootnote = new RptCProposalData[data.length][];
-
-    for ( int i=0; i<data.length; i++){
-      dataHeader[i] = RptCProposalData.selectHeader(this, data[i].cBpartnerId, data[i].cProjectproposalId);
-      if (dataHeader[i] == null || dataHeader[i].length == 0) dataHeader[i] = RptCProposalData.set();
-      dataLines[i] = RptCProposalData.selectLines(this, data[i].cProjectproposalId);
-      if (dataLines[i] == null || dataLines[i].length == 0) dataLines[i] = RptCProposalData.set();
-      dataFootnote[i] = RptCProposalData.selectFootnote(this, data[i].cProjectproposalId);
-      if (dataFootnote[i] == null || dataFootnote[i].length == 0) dataFootnote[i] = RptCProposalData.set();
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
     }
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpReports/RptC_Proposal", discard).createXmlDocument();
-    // here we pass the familiy-ID with report.setData
-    xmlDocument.setData("structure", data);
-    xmlDocument.setDataArray("reportProposalHeader", "structure1", dataHeader);
-    xmlDocument.setDataArray("reportProposalLines", "structure2", dataLines);
-    xmlDocument.setDataArray("reportProposalFootnote", "structure3", dataFootnote);
-    
-    String strResult = xmlDocument.print();
-    if (log4j.isDebugEnabled()) log4j.debug(strResult);
-    renderFO(strResult, response);
-  }
 
-  public String getServletInfo() {
-    return "Servlet that presents the RptCOrders seeker";
-  } // End of getServletInfo() method
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+
+        if (vars.commandIn("DEFAULT")) {
+            String strClave = vars
+                    .getSessionValue("RptC_Proposal.inpcProjectproposalId_R");
+            if (strClave.equals(""))
+                strClave = vars
+                        .getSessionValue("RptC_Proposal.inpcProjectproposalId");
+            printPagePartePDF(response, vars, strClave);
+        } else
+            pageError(response);
+    }
+
+    void printPagePartePDF(HttpServletResponse response,
+            VariablesSecureApp vars, String strClave) throws IOException,
+            ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: pdf");
+        RptCProposalData[] data = RptCProposalData.select(this, Utility
+                .getContext(this, vars, "#User_Client", "RptC_Proposal"),
+                Utility.getContext(this, vars, "#User_Org", "RptC_Proposal"),
+                strClave);
+        String discard[] = { "" };
+        if (data == null || data.length == 0)
+            discard[0] = new String("sectionDetailHeader");
+        RptCProposalData[][] dataHeader = new RptCProposalData[data.length][];
+        RptCProposalData[][] dataLines = new RptCProposalData[data.length][];
+        RptCProposalData[][] dataFootnote = new RptCProposalData[data.length][];
+
+        for (int i = 0; i < data.length; i++) {
+            dataHeader[i] = RptCProposalData.selectHeader(this,
+                    data[i].cBpartnerId, data[i].cProjectproposalId);
+            if (dataHeader[i] == null || dataHeader[i].length == 0)
+                dataHeader[i] = RptCProposalData.set();
+            dataLines[i] = RptCProposalData.selectLines(this,
+                    data[i].cProjectproposalId);
+            if (dataLines[i] == null || dataLines[i].length == 0)
+                dataLines[i] = RptCProposalData.set();
+            dataFootnote[i] = RptCProposalData.selectFootnote(this,
+                    data[i].cProjectproposalId);
+            if (dataFootnote[i] == null || dataFootnote[i].length == 0)
+                dataFootnote[i] = RptCProposalData.set();
+        }
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpReports/RptC_Proposal", discard)
+                .createXmlDocument();
+        // here we pass the familiy-ID with report.setData
+        xmlDocument.setData("structure", data);
+        xmlDocument.setDataArray("reportProposalHeader", "structure1",
+                dataHeader);
+        xmlDocument
+                .setDataArray("reportProposalLines", "structure2", dataLines);
+        xmlDocument.setDataArray("reportProposalFootnote", "structure3",
+                dataFootnote);
+
+        String strResult = xmlDocument.print();
+        if (log4j.isDebugEnabled())
+            log4j.debug(strResult);
+        renderFO(strResult, response);
+    }
+
+    public String getServletInfo() {
+        return "Servlet that presents the RptCOrders seeker";
+    } // End of getServletInfo() method
 }

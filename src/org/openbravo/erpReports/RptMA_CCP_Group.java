@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpReports;
 
 import org.openbravo.base.secureApp.*;
@@ -24,54 +24,65 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-
 public class RptMA_CCP_Group extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
-  
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+    private static final long serialVersionUID = 1L;
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-
-    if (vars.commandIn("DEFAULT")) {
-      String strmaCcpGroup = vars.getSessionValue("RptMA_CCP_Group.inpmaCcpGroup_R");
-      if (strmaCcpGroup.equals("")) strmaCcpGroup = vars.getSessionValue("RptMA_CCP_Group.inpmaCcpGroupId");
-      printPagePartePDF(response, vars, strmaCcpGroup);
-    } else pageError(response);
-  }
-
-
-   void printPagePartePDF(HttpServletResponse response, VariablesSecureApp vars, String strmaCcpGroup) throws IOException,ServletException{
-    if (log4j.isDebugEnabled()) log4j.debug("Output: pdf");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpReports/RptMA_CCP_Group").createXmlDocument();
-    // here we pass the familiy-ID with report.setData
-    RptMACCPGroupData[] data1 = RptMACCPGroupData.select(this, strmaCcpGroup);
-    if (data1 == null || data1.length == 0) data1 = RptMACCPGroupData.set();
-
-    int length = 0;
-    for ( int i=0; i<data1.length; i++){
-      length += Integer.valueOf(data1[i].valuenumber).intValue();
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
     }
 
-    RptMACCPGroupData[] data2 = new RptMACCPGroupData[length];
-    int k = 0;
-    for (int i=0; i<data1.length; i++){
-      for (int j=0; j<Integer.valueOf(data1[i].valuenumber).intValue(); j++) {
-        data2[k] = data1[i];
-        k++;
-      }
-    }
-    
-    xmlDocument.setData("structure1",data2);
-    String strResult = xmlDocument.print();
-    if (log4j.isDebugEnabled()) log4j.debug(strResult);
-    renderFO(strResult, response);
-  }
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
 
-  public String getServletInfo() {
-    return "Servlet that presents the RptMACcp seeker";
-  } // End of getServletInfo() method
+        if (vars.commandIn("DEFAULT")) {
+            String strmaCcpGroup = vars
+                    .getSessionValue("RptMA_CCP_Group.inpmaCcpGroup_R");
+            if (strmaCcpGroup.equals(""))
+                strmaCcpGroup = vars
+                        .getSessionValue("RptMA_CCP_Group.inpmaCcpGroupId");
+            printPagePartePDF(response, vars, strmaCcpGroup);
+        } else
+            pageError(response);
+    }
+
+    void printPagePartePDF(HttpServletResponse response,
+            VariablesSecureApp vars, String strmaCcpGroup) throws IOException,
+            ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: pdf");
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpReports/RptMA_CCP_Group").createXmlDocument();
+        // here we pass the familiy-ID with report.setData
+        RptMACCPGroupData[] data1 = RptMACCPGroupData.select(this,
+                strmaCcpGroup);
+        if (data1 == null || data1.length == 0)
+            data1 = RptMACCPGroupData.set();
+
+        int length = 0;
+        for (int i = 0; i < data1.length; i++) {
+            length += Integer.valueOf(data1[i].valuenumber).intValue();
+        }
+
+        RptMACCPGroupData[] data2 = new RptMACCPGroupData[length];
+        int k = 0;
+        for (int i = 0; i < data1.length; i++) {
+            for (int j = 0; j < Integer.valueOf(data1[i].valuenumber)
+                    .intValue(); j++) {
+                data2[k] = data1[i];
+                k++;
+            }
+        }
+
+        xmlDocument.setData("structure1", data2);
+        String strResult = xmlDocument.print();
+        if (log4j.isDebugEnabled())
+            log4j.debug(strResult);
+        renderFO(strResult, response);
+    }
+
+    public String getServletInfo() {
+        return "Servlet that presents the RptMACcp seeker";
+    } // End of getServletInfo() method
 }

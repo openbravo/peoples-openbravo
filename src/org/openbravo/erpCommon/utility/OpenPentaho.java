@@ -15,7 +15,7 @@
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.utility;
 
 import java.io.*;
@@ -28,49 +28,64 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.xmlEngine.XmlDocument;
 
-
-
 public class OpenPentaho extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    String adProcessId = vars.getStringParameter("inpadProcessId");
-    String pentahoServer = vars.getSessionValue("#pentahoServer");
-    String userRole = vars.getSessionValue("#AD_ROLE_ID");
-    if (!hasGeneralAccess(vars, "P", adProcessId)) bdError(response, "AccessTableNoView", vars.getLanguage());
-    else if (pentahoServer.equals("")) bdError (response, "NoPentahoServerDefined", vars.getLanguage());
-    else {
-      String source = OpenPentahoData.selectSource(this, adProcessId);
-      if (source.equals("")) bdError (response, "NoSourceDefined", vars.getLanguage());
-      else printPageDataSheet(response, vars, pentahoServer, source, adProcessId, userRole);
-    }
-  } 
-  
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String pentahoServer, String source, String adProcessId, String userRole) throws IOException, ServletException {    
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/utility/OpenPentaho").createXmlDocument();
-    if (!source.startsWith("/")) source="/"+source;
-    source = source+((source.indexOf("?")!=-1)?"&":"?")+"ob_role='"+userRole+"'";
-    xmlDocument.setParameter("paramURL", pentahoServer+source);
-    
-    try {
-      WindowTabs tabs = new WindowTabs(this, vars,  new Integer(adProcessId).intValue());
-      xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
-      xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
-      xmlDocument.setParameter("childTabContainer", tabs.childTabs());
-      xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "OpenPentaho.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
-      xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "OpenPentaho.html", strReplaceWith);
-      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-    
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
+    private static final long serialVersionUID = 1L;
 
- 
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+        String adProcessId = vars.getStringParameter("inpadProcessId");
+        String pentahoServer = vars.getSessionValue("#pentahoServer");
+        String userRole = vars.getSessionValue("#AD_ROLE_ID");
+        if (!hasGeneralAccess(vars, "P", adProcessId))
+            bdError(response, "AccessTableNoView", vars.getLanguage());
+        else if (pentahoServer.equals(""))
+            bdError(response, "NoPentahoServerDefined", vars.getLanguage());
+        else {
+            String source = OpenPentahoData.selectSource(this, adProcessId);
+            if (source.equals(""))
+                bdError(response, "NoSourceDefined", vars.getLanguage());
+            else
+                printPageDataSheet(response, vars, pentahoServer, source,
+                        adProcessId, userRole);
+        }
+    }
+
+    void printPageDataSheet(HttpServletResponse response,
+            VariablesSecureApp vars, String pentahoServer, String source,
+            String adProcessId, String userRole) throws IOException,
+            ServletException {
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/utility/OpenPentaho")
+                .createXmlDocument();
+        if (!source.startsWith("/"))
+            source = "/" + source;
+        source = source + ((source.indexOf("?") != -1) ? "&" : "?")
+                + "ob_role='" + userRole + "'";
+        xmlDocument.setParameter("paramURL", pentahoServer + source);
+
+        try {
+            WindowTabs tabs = new WindowTabs(this, vars, new Integer(
+                    adProcessId).intValue());
+            xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
+            xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
+            xmlDocument.setParameter("childTabContainer", tabs.childTabs());
+            xmlDocument.setParameter("theme", vars.getTheme());
+            NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+                    "OpenPentaho.html", classInfo.id, classInfo.type,
+                    strReplaceWith, tabs.breadcrumb());
+            xmlDocument.setParameter("navigationBar", nav.toString());
+            LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
+                    "OpenPentaho.html", strReplaceWith);
+            xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+        } catch (Exception ex) {
+            throw new ServletException(ex);
+        }
+
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
+    }
+
 }

@@ -15,39 +15,49 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.utility;
 
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.base.secureApp.*;
 import javax.servlet.*;
-import org.apache.log4j.Logger ;
-
+import org.apache.log4j.Logger;
 
 /**
  * @author Fernando Iriazabal
  * 
- * Class defined to implement the specific checks of each client.
+ *         Class defined to implement the specific checks of each client.
  */
 public class WindowTreeChecksClient {
-  static Logger log4j = Logger.getLogger(WindowTreeChecksClient.class);
-  
-  /**
-   * Checks the specific options of each tree type in the client.
-   * 
-   * @param conn Handler for the database connection.
-   * @param vars Handler for the session info.
-   * @param tabId Tab id.
-   * @param topNodeId Parent node id.
-   * @param nodeId Id of the node to change.
-   * @param isChild Is gonna be child of the parent node?
-   * @param TreeType Type of tree.
-   * @param key Key column name.
-   * @return empty string if it's ok or the message of the error.
-   * @throws ServletException
-   */
-  public static String checkChanges(ConnectionProvider conn, VariablesSecureApp vars, String tabId, String topNodeId, String nodeId, boolean isChild, String TreeType, String key) throws ServletException {
-    String result = "";
-    return result;
-  }
+    static Logger log4j = Logger.getLogger(WindowTreeChecksClient.class);
+
+    /**
+     * Checks the specific options of each tree type in the client.
+     * 
+     * @param conn
+     *            Handler for the database connection.
+     * @param vars
+     *            Handler for the session info.
+     * @param tabId
+     *            Tab id.
+     * @param topNodeId
+     *            Parent node id.
+     * @param nodeId
+     *            Id of the node to change.
+     * @param isChild
+     *            Is gonna be child of the parent node?
+     * @param TreeType
+     *            Type of tree.
+     * @param key
+     *            Key column name.
+     * @return empty string if it's ok or the message of the error.
+     * @throws ServletException
+     */
+    public static String checkChanges(ConnectionProvider conn,
+            VariablesSecureApp vars, String tabId, String topNodeId,
+            String nodeId, boolean isChild, String TreeType, String key)
+            throws ServletException {
+        String result = "";
+        return result;
+    }
 }

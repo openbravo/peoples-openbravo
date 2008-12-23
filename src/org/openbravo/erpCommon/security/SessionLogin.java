@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.security;
 
 import javax.servlet.*;
@@ -24,135 +24,160 @@ import java.net.*;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 
-import org.apache.log4j.Logger ;
+import org.apache.log4j.Logger;
 
 public class SessionLogin {
-  static Logger log4j = Logger.getLogger(SessionLogin.class);
-  protected String sessionID;
-  protected String client;
-  protected String org;
-  protected String isactive = "Y";
-  protected String user;
-  protected String websession;
-  protected String remoteAddr;
-  protected String remoteHost;
-  protected String processed = "N";
+    static Logger log4j = Logger.getLogger(SessionLogin.class);
+    protected String sessionID;
+    protected String client;
+    protected String org;
+    protected String isactive = "Y";
+    protected String user;
+    protected String websession;
+    protected String remoteAddr;
+    protected String remoteHost;
+    protected String processed = "N";
 
-  public SessionLogin(String ad_client_id, String ad_org_id, String ad_user_id) throws ServletException {
-    if (ad_client_id==null || ad_client_id.equals("")) throw new ServletException("SessionLogin load - client is null");
-    else if (ad_org_id==null || ad_org_id.equals("")) throw new ServletException("SessionLogin load - organization is null");
-    else if (ad_user_id==null || ad_user_id.equals("")) throw new ServletException("SessionLogin load - user is null");
-    setClient(ad_client_id);
-    setOrg(ad_org_id);
-    setUser(ad_user_id);
-    defaultParameters();
-  }
-
-  public SessionLogin(HttpServletRequest request, String ad_client_id, String ad_org_id, String ad_user_id) throws ServletException {
-    if (ad_client_id==null || ad_client_id.equals("")) throw new ServletException("SessionLogin load - client is null");
-    else if (ad_org_id==null || ad_org_id.equals("")) throw new ServletException("SessionLogin load - organization is null");
-    else if (ad_user_id==null || ad_user_id.equals("")) throw new ServletException("SessionLogin load - user is null");
-    setClient(ad_client_id);
-    setOrg(ad_org_id);
-    setUser(ad_user_id);
-    defaultParameters(request);
-  }
-
-  public void defaultParameters() {
-    try {
-      InetAddress lh = InetAddress.getLocalHost();
-      setRemoteAddr(lh.getHostAddress());
-      setRemoteHost(lh.getHostName());
-    } catch (UnknownHostException e) {
-      log4j.error("SessionLogin.defaultParameters() - No local host. " + e);
+    public SessionLogin(String ad_client_id, String ad_org_id, String ad_user_id)
+            throws ServletException {
+        if (ad_client_id == null || ad_client_id.equals(""))
+            throw new ServletException("SessionLogin load - client is null");
+        else if (ad_org_id == null || ad_org_id.equals(""))
+            throw new ServletException(
+                    "SessionLogin load - organization is null");
+        else if (ad_user_id == null || ad_user_id.equals(""))
+            throw new ServletException("SessionLogin load - user is null");
+        setClient(ad_client_id);
+        setOrg(ad_org_id);
+        setUser(ad_user_id);
+        defaultParameters();
     }
-    if (log4j.isDebugEnabled()) log4j.debug("SessionLogin.defaultParameters() - Remote Address: " + getRemoteAddr() + " - Remote Host: " + getRemoteHost());
-  }
 
-  public void defaultParameters(HttpServletRequest request) {
-    setRemoteAddr(request.getRemoteAddr());
-    setRemoteHost(request.getRemoteHost());
-    if (log4j.isDebugEnabled()) log4j.debug("SessionLogin.defaultParameters(request) - Remote Address: " + getRemoteAddr() + " - Remote Host: " + getRemoteHost());
-  }
+    public SessionLogin(HttpServletRequest request, String ad_client_id,
+            String ad_org_id, String ad_user_id) throws ServletException {
+        if (ad_client_id == null || ad_client_id.equals(""))
+            throw new ServletException("SessionLogin load - client is null");
+        else if (ad_org_id == null || ad_org_id.equals(""))
+            throw new ServletException(
+                    "SessionLogin load - organization is null");
+        else if (ad_user_id == null || ad_user_id.equals(""))
+            throw new ServletException("SessionLogin load - user is null");
+        setClient(ad_client_id);
+        setOrg(ad_org_id);
+        setUser(ad_user_id);
+        defaultParameters(request);
+    }
 
-  public int save(ConnectionProvider conn) throws ServletException {
-    if (getSessionID().equals("")) {
-      String key = SequenceIdData.getUUID();
-      if (key==null || key.equals("")) throw new ServletException("SessionLogin.save() - key creation failed");
-      setSessionID(key);
-      return SessionLoginData.insert(conn, getSessionID(), getClient(), getOrg(), getIsActive(), getUser(), getWebSession(), getRemoteAddr(), getRemoteHost(), getProcessed());
-    } else return SessionLoginData.update(conn, getIsActive(), getUser(), getWebSession(), getRemoteAddr(), getRemoteHost(), getProcessed(), getSessionID());
-  }
+    public void defaultParameters() {
+        try {
+            InetAddress lh = InetAddress.getLocalHost();
+            setRemoteAddr(lh.getHostAddress());
+            setRemoteHost(lh.getHostName());
+        } catch (UnknownHostException e) {
+            log4j.error("SessionLogin.defaultParameters() - No local host. "
+                    + e);
+        }
+        if (log4j.isDebugEnabled())
+            log4j.debug("SessionLogin.defaultParameters() - Remote Address: "
+                    + getRemoteAddr() + " - Remote Host: " + getRemoteHost());
+    }
 
-  public void setSessionID(String newValue) {
-    this.sessionID = (newValue==null)?"":newValue;
-  }
+    public void defaultParameters(HttpServletRequest request) {
+        setRemoteAddr(request.getRemoteAddr());
+        setRemoteHost(request.getRemoteHost());
+        if (log4j.isDebugEnabled())
+            log4j
+                    .debug("SessionLogin.defaultParameters(request) - Remote Address: "
+                            + getRemoteAddr()
+                            + " - Remote Host: "
+                            + getRemoteHost());
+    }
 
-  public String getSessionID() {
-    return ((this.sessionID==null)?"":this.sessionID);
-  }
+    public int save(ConnectionProvider conn) throws ServletException {
+        if (getSessionID().equals("")) {
+            String key = SequenceIdData.getUUID();
+            if (key == null || key.equals(""))
+                throw new ServletException(
+                        "SessionLogin.save() - key creation failed");
+            setSessionID(key);
+            return SessionLoginData.insert(conn, getSessionID(), getClient(),
+                    getOrg(), getIsActive(), getUser(), getWebSession(),
+                    getRemoteAddr(), getRemoteHost(), getProcessed());
+        } else
+            return SessionLoginData.update(conn, getIsActive(), getUser(),
+                    getWebSession(), getRemoteAddr(), getRemoteHost(),
+                    getProcessed(), getSessionID());
+    }
 
-  public void setClient(String newValue) {
-    this.client = (newValue==null)?"":newValue;
-  }
+    public void setSessionID(String newValue) {
+        this.sessionID = (newValue == null) ? "" : newValue;
+    }
 
-  public String getClient() {
-    return ((this.client==null)?"":this.client);
-  }
+    public String getSessionID() {
+        return ((this.sessionID == null) ? "" : this.sessionID);
+    }
 
-  public void setOrg(String newValue) {
-    this.org = (newValue==null)?"":newValue;
-  }
+    public void setClient(String newValue) {
+        this.client = (newValue == null) ? "" : newValue;
+    }
 
-  public String getOrg() {
-    return ((this.org==null)?"":this.org);
-  }
+    public String getClient() {
+        return ((this.client == null) ? "" : this.client);
+    }
 
-  public void setIsActive(String newValue) {
-    this.isactive = (newValue==null)?"Y":newValue;
-  }
+    public void setOrg(String newValue) {
+        this.org = (newValue == null) ? "" : newValue;
+    }
 
-  public String getIsActive() {
-    return (this.isactive);
-  }
+    public String getOrg() {
+        return ((this.org == null) ? "" : this.org);
+    }
 
-  public void setUser(String newValue) {
-    this.user = (newValue==null)?"":newValue;
-  }
+    public void setIsActive(String newValue) {
+        this.isactive = (newValue == null) ? "Y" : newValue;
+    }
 
-  public String getUser() {
-    return ((this.user==null)?"":this.user);
-  }
+    public String getIsActive() {
+        return (this.isactive);
+    }
 
-  public void setWebSession(String newValue) {
-    this.websession = (newValue==null)?"":newValue;
-  }
+    public void setUser(String newValue) {
+        this.user = (newValue == null) ? "" : newValue;
+    }
 
-  public String getWebSession() {
-    return ((this.websession==null)?"":this.websession);
-  }
+    public String getUser() {
+        return ((this.user == null) ? "" : this.user);
+    }
 
-  public void setRemoteAddr(String newValue) {
-    this.remoteAddr = (newValue==null)?"":newValue;
-  }
+    public void setWebSession(String newValue) {
+        this.websession = (newValue == null) ? "" : newValue;
+    }
 
-  public String getRemoteAddr() {
-    return ((this.remoteAddr==null)?"":this.remoteAddr);
-  }
+    public String getWebSession() {
+        return ((this.websession == null) ? "" : this.websession);
+    }
 
-  public void setRemoteHost(String newValue) {
-    this.remoteHost = (newValue==null)?"":newValue;
-  }
+    public void setRemoteAddr(String newValue) {
+        this.remoteAddr = (newValue == null) ? "" : newValue;
+    }
 
-  public String getRemoteHost() {
-    return ((this.remoteHost==null)?"":this.remoteHost);
-  }
+    public String getRemoteAddr() {
+        return ((this.remoteAddr == null) ? "" : this.remoteAddr);
+    }
 
-  public void setProcessed(String newValue) {
-    this.processed = (newValue==null)?"":newValue;
-  }
+    public void setRemoteHost(String newValue) {
+        this.remoteHost = (newValue == null) ? "" : newValue;
+    }
 
-  public String getProcessed() {
-    return ((this.processed==null)?"":this.processed);
-  }
+    public String getRemoteHost() {
+        return ((this.remoteHost == null) ? "" : this.remoteHost);
+    }
+
+    public void setProcessed(String newValue) {
+        this.processed = (newValue == null) ? "" : newValue;
+    }
+
+    public String getProcessed() {
+        return ((this.processed == null) ? "" : this.processed);
+    }
 }

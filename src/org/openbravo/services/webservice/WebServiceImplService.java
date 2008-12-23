@@ -10,7 +10,9 @@ package org.openbravo.services.webservice;
 public interface WebServiceImplService extends javax.xml.rpc.Service {
     public java.lang.String getWebServiceAddress();
 
-    public org.openbravo.services.webservice.WebServiceImpl getWebService() throws javax.xml.rpc.ServiceException;
+    public org.openbravo.services.webservice.WebServiceImpl getWebService()
+            throws javax.xml.rpc.ServiceException;
 
-    public org.openbravo.services.webservice.WebServiceImpl getWebService(java.net.URL portAddress) throws javax.xml.rpc.ServiceException;
+    public org.openbravo.services.webservice.WebServiceImpl getWebService(
+            java.net.URL portAddress) throws javax.xml.rpc.ServiceException;
 }

@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 
 package org.openbravo.erpCommon.ws.externalSales;
 
@@ -33,87 +33,84 @@ public class Product extends Object implements Serializable {
     private String imageUrl;
     private String ean;
     private Category category;
-    
-    
-    public String getId(){
+
+    public String getId() {
         return id;
     }
-    
+
     public void setId(String id) {
         this.id = id;
     }
-    
+
     public String getName() {
         return name;
     }
-    
-    public void setName( String name ) {
+
+    public void setName(String name) {
         this.name = name;
     }
-    
+
     public String getNumber() {
         return number;
     }
-    
+
     public void setNumber(String number) {
         this.number = number;
     }
-    
+
     public String getDescription() {
         return description;
     }
-    
+
     public void setDescription(String description) {
         this.description = description;
     }
-    
-    public double getListPrice(){
+
+    public double getListPrice() {
         return listPrice;
     }
-    
+
     public void setListPrice(double listPrice) {
         this.listPrice = listPrice;
     }
-    
-    public double getPurchasePrice(){
+
+    public double getPurchasePrice() {
         return purchasePrice;
     }
-    
+
     public void setPurchasePrice(double purchasePrice) {
         this.purchasePrice = purchasePrice;
     }
-    
+
     public Tax getTax() {
         return tax;
     }
-    
-    public void setTax( Tax tax ) {
+
+    public void setTax(Tax tax) {
         this.tax = tax;
     }
-    
+
     public String getImageUrl() {
         return imageUrl;
     }
-    
-    public void setImageUrl( String imageUrl) {
+
+    public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
-    
+
     public String getEan() {
         return ean;
     }
-    
-    public void setEan( String ean ) {
+
+    public void setEan(String ean) {
         this.ean = ean;
     }
-    
+
     public Category getCategory() {
         return category;
     }
-    
-    public void setCategory( Category category ) {
+
+    public void setCategory(Category category) {
         this.category = category;
     }
 }
-
-

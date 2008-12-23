@@ -15,22 +15,22 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 
 package org.openbravo.erpCommon.ws.externalSales;
 
 public class OrderLine {
-    
-   private String orderLineId;
-   private String productId;
-   private double units;
-   private double price;
-   private String taxId;
-    
+
+    private String orderLineId;
+    private String productId;
+    private double units;
+    private double price;
+    private String taxId;
+
     /** Creates a new instance of OrderLine */
     public OrderLine() {
     }
-    
+
     public String getOrderLineId() {
         return orderLineId;
     }

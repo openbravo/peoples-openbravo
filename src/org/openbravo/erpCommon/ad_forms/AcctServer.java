@@ -13,9 +13,8 @@
  * Contributor(s): Openbravo SL
  * Contributions are Copyright (C) 2001-2008 Openbravo S.L.
  ******************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_forms;
-
 
 import org.openbravo.erpCommon.utility.*;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -26,581 +25,644 @@ import java.io.*;
 import java.util.*;
 import javax.servlet.*;
 import org.apache.log4j.Logger;
-import org.openbravo.erpCommon.utility.DateTimeData;
-// imports for transactions
+import org.openbravo.erpCommon.utility.DateTimeData; // imports for transactions
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.data.FieldProvider;
 
-
-
-public abstract class AcctServer  {
+public abstract class AcctServer {
     static Logger log4j = Logger.getLogger(AcctServer.class);
 
     protected ConnectionProvider connectionProvider;
 
-    public String              batchSize = "100";
+    public String batchSize = "100";
 
     public BigDecimal ZERO = new BigDecimal("0");
 
-    public String           groupLines = "";
-    public String           Qty = null;
-    public String           tableName = "";
-    public String           strDateColumn = "";
-    public String           AD_Table_ID = "";
-    public String           AD_Client_ID = "";
-    public String           AD_Org_ID = "";
-    public String           Status = "";
-    public String           C_BPartner_ID = "";
-    public String           C_BPartner_Location_ID = "";
-    public String           M_Product_ID = "";
-    public String           AD_OrgTrx_ID = "";
-    public String           C_SalesRegion_ID = "";
-    public String           C_Project_ID = "";
-    public String           C_Campaign_ID = "";
-    public String           C_Activity_ID = "";
-    public String           C_LocFrom_ID = "";
-    public String           C_LocTo_ID = "";
-    public String           User1_ID = "";
-    public String           User2_ID = "";
-    public String           Name = "";
-    public String           DocumentNo = "";
-    public String           DateAcct = "";
-    public String           DateDoc = "";
-    public String           C_Period_ID = "";
-    public String           C_Currency_ID = "";
-    public String           C_DocType_ID = "";
-    public String           C_Charge_ID = "";
-    public String           ChargeAmt = "";
-    public String           C_BankAccount_ID = "";
-    public String           C_CashBook_ID = "";
-    public String           M_Warehouse_ID = "";
-    public String           Posted = "";
-    public String           DocumentType = "";
-    public String           TaxIncluded = "";
-    public String           GL_Category_ID = "";
-    public String           Record_ID = "";
-    /** No Currency in Document Indicator       */
-    protected static final String      NO_CURRENCY = "-1";
+    public String groupLines = "";
+    public String Qty = null;
+    public String tableName = "";
+    public String strDateColumn = "";
+    public String AD_Table_ID = "";
+    public String AD_Client_ID = "";
+    public String AD_Org_ID = "";
+    public String Status = "";
+    public String C_BPartner_ID = "";
+    public String C_BPartner_Location_ID = "";
+    public String M_Product_ID = "";
+    public String AD_OrgTrx_ID = "";
+    public String C_SalesRegion_ID = "";
+    public String C_Project_ID = "";
+    public String C_Campaign_ID = "";
+    public String C_Activity_ID = "";
+    public String C_LocFrom_ID = "";
+    public String C_LocTo_ID = "";
+    public String User1_ID = "";
+    public String User2_ID = "";
+    public String Name = "";
+    public String DocumentNo = "";
+    public String DateAcct = "";
+    public String DateDoc = "";
+    public String C_Period_ID = "";
+    public String C_Currency_ID = "";
+    public String C_DocType_ID = "";
+    public String C_Charge_ID = "";
+    public String ChargeAmt = "";
+    public String C_BankAccount_ID = "";
+    public String C_CashBook_ID = "";
+    public String M_Warehouse_ID = "";
+    public String Posted = "";
+    public String DocumentType = "";
+    public String TaxIncluded = "";
+    public String GL_Category_ID = "";
+    public String Record_ID = "";
+    /** No Currency in Document Indicator */
+    protected static final String NO_CURRENCY = "-1";
     // This is just for the initialitation of the accounting
-    public String           m_IsOpening = "N";
+    public String m_IsOpening = "N";
 
-    public Fact[]          m_fact = null;
-    public AcctSchema[]    m_as = null;
+    public Fact[] m_fact = null;
+    public AcctSchema[] m_as = null;
 
-    private FieldProvider objectFieldProvider [];
+    private FieldProvider objectFieldProvider[];
 
-    public String[]         Amounts = new String[4];
+    public String[] Amounts = new String[4];
 
-    public DocLine[]        p_lines = new DocLine[0];
-    public DocLine_Payment[]        m_debt_payments = new DocLine_Payment[0];
+    public DocLine[] p_lines = new DocLine[0];
+    public DocLine_Payment[] m_debt_payments = new DocLine_Payment[0];
 
-    /** Is (Source) Multi-Currency Document - i.e. the document has different currencies
-     *  (if true, the document will not be source balanced)     */
-    public boolean          MultiCurrency = false;
+    /**
+     * Is (Source) Multi-Currency Document - i.e. the document has different
+     * currencies (if true, the document will not be source balanced)
+     */
+    public boolean MultiCurrency = false;
 
-    /** Amount Type - Invoice   */
-    public static final int     AMTTYPE_Gross   = 0;
-    public static final int     AMTTYPE_Net     = 1;
-    public static final int     AMTTYPE_Charge  = 2;
-    /** Amount Type - Allocation    */
-    public static final int     AMTTYPE_Invoice = 0;
-    public static final int     AMTTYPE_Allocation = 1;
-    public static final int     AMTTYPE_Discount = 2;
-    public static final int     AMTTYPE_WriteOff = 3;
+    /** Amount Type - Invoice */
+    public static final int AMTTYPE_Gross = 0;
+    public static final int AMTTYPE_Net = 1;
+    public static final int AMTTYPE_Charge = 2;
+    /** Amount Type - Allocation */
+    public static final int AMTTYPE_Invoice = 0;
+    public static final int AMTTYPE_Allocation = 1;
+    public static final int AMTTYPE_Discount = 2;
+    public static final int AMTTYPE_WriteOff = 3;
 
-        /** Document Status         */
-    public static final String  STATUS_NotPosted        = "N";
-    /** Document Status         */
-    public static final String  STATUS_NotBalanced      = "b";
-    /** Document Status         */
-    public static final String  STATUS_NotConvertible   = "c";
-    /** Document Status         */
-    public static final String  STATUS_PeriodClosed     = "p";
-    /** Document Status         */
-    public static final String  STATUS_InvalidAccount   = "i";
-    /** Document Status         */
-    public static final String  STATUS_PostPrepared     = "y";
-    /** Document Status         */
-    public static final String  STATUS_Posted           = "Y";
-    /** Document Status         */
-    public static final String  STATUS_Error            = "E";
+    /** Document Status */
+    public static final String STATUS_NotPosted = "N";
+    /** Document Status */
+    public static final String STATUS_NotBalanced = "b";
+    /** Document Status */
+    public static final String STATUS_NotConvertible = "c";
+    /** Document Status */
+    public static final String STATUS_PeriodClosed = "p";
+    /** Document Status */
+    public static final String STATUS_InvalidAccount = "i";
+    /** Document Status */
+    public static final String STATUS_PostPrepared = "y";
+    /** Document Status */
+    public static final String STATUS_Posted = "Y";
+    /** Document Status */
+    public static final String STATUS_Error = "E";
 
-    /** AR Invoices             */
-    public static final String  DOCTYPE_ARInvoice       = "ARI";
-    /** AR Credit Memo          */
-    public static final String  DOCTYPE_ARCredit        = "ARC";
-    /** AR Receipt              */
-    public static final String  DOCTYPE_ARReceipt       = "STT";//antes ARR
-    /** AR ProForma             */
-    public static final String  DOCTYPE_ARProForma      = "ARF";
+    /** AR Invoices */
+    public static final String DOCTYPE_ARInvoice = "ARI";
+    /** AR Credit Memo */
+    public static final String DOCTYPE_ARCredit = "ARC";
+    /** AR Receipt */
+    public static final String DOCTYPE_ARReceipt = "STT";// antes ARR
+    /** AR ProForma */
+    public static final String DOCTYPE_ARProForma = "ARF";
 
-    /** AP Invoices             */
-    public static final String  DOCTYPE_APInvoice       = "API";
-    /** AP Credit Memo          */
-    public static final String  DOCTYPE_APCredit        = "APC";
-    /** AP Payment              */
-    public static final String  DOCTYPE_APPayment       = "APP";
+    /** AP Invoices */
+    public static final String DOCTYPE_APInvoice = "API";
+    /** AP Credit Memo */
+    public static final String DOCTYPE_APCredit = "APC";
+    /** AP Payment */
+    public static final String DOCTYPE_APPayment = "APP";
 
-    /** CashManagement Bank Statement   */
-    public static final String  DOCTYPE_BankStatement   = "CMB";
-    /** CashManagement Cash Journals    */
-    public static final String  DOCTYPE_CashJournal     = "CMC";
-    /** CashManagement Allocations      */
-    public static final String  DOCTYPE_Allocation      = "CMA";
+    /** CashManagement Bank Statement */
+    public static final String DOCTYPE_BankStatement = "CMB";
+    /** CashManagement Cash Journals */
+    public static final String DOCTYPE_CashJournal = "CMC";
+    /** CashManagement Allocations */
+    public static final String DOCTYPE_Allocation = "CMA";
 
-    /** Amortization   */
-    public static final String  DOCTYPE_Amortization   = "AMZ";
+    /** Amortization */
+    public static final String DOCTYPE_Amortization = "AMZ";
 
-    /** Material Shipment       */
-    public static final String  DOCTYPE_MatShipment     = "MMS";
-    /** Material Receipt        */
-    public static final String  DOCTYPE_MatReceipt      = "MMR";
-    /** Material Inventory      */
-    public static final String  DOCTYPE_MatInventory    = "MMI";
-    /** Material Movement       */
-    public static final String  DOCTYPE_MatMovement     = "MMM";
-    /** Material Production     */
-    public static final String  DOCTYPE_MatProduction   = "MMP";
+    /** Material Shipment */
+    public static final String DOCTYPE_MatShipment = "MMS";
+    /** Material Receipt */
+    public static final String DOCTYPE_MatReceipt = "MMR";
+    /** Material Inventory */
+    public static final String DOCTYPE_MatInventory = "MMI";
+    /** Material Movement */
+    public static final String DOCTYPE_MatMovement = "MMM";
+    /** Material Production */
+    public static final String DOCTYPE_MatProduction = "MMP";
 
-    /** Match Invoice           */
-    public static final String  DOCTYPE_MatMatchInv     = "MXI";
-    /** Match PO                */
-    public static final String  DOCTYPE_MatMatchPO      = "MXP";
+    /** Match Invoice */
+    public static final String DOCTYPE_MatMatchInv = "MXI";
+    /** Match PO */
+    public static final String DOCTYPE_MatMatchPO = "MXP";
 
-    /** GL Journal              */
-    public static final String  DOCTYPE_GLJournal       = "GLJ";
+    /** GL Journal */
+    public static final String DOCTYPE_GLJournal = "GLJ";
 
-    /** Purchase Order          */
-    public static final String  DOCTYPE_POrder          = "POO";
-    /** Sales Order             */
-    public static final String  DOCTYPE_SOrder          = "SOO";
+    /** Purchase Order */
+    public static final String DOCTYPE_POrder = "POO";
+    /** Sales Order */
+    public static final String DOCTYPE_SOrder = "SOO";
 
-    //DPManagement
-    public static final String DOCTYPE_DPManagement     = "DPM"; 
+    // DPManagement
+    public static final String DOCTYPE_DPManagement = "DPM";
 
     /*************************************************************************/
 
-    /** Account Type - Invoice  */
-    public static final String  ACCTTYPE_Charge                 = "0";
-    public static final String  ACCTTYPE_C_Receivable           = "1";
-    public static final String  ACCTTYPE_V_Liability            = "2";
-    public static final String  ACCTTYPE_V_Liability_Services   = "3";
+    /** Account Type - Invoice */
+    public static final String ACCTTYPE_Charge = "0";
+    public static final String ACCTTYPE_C_Receivable = "1";
+    public static final String ACCTTYPE_V_Liability = "2";
+    public static final String ACCTTYPE_V_Liability_Services = "3";
 
-    /** Account Type - Payment  */
-    public static final String      ACCTTYPE_UnallocatedCash    = "10";
-    public static final String      ACCTTYPE_BankInTransit      = "11";
-    public static final String      ACCTTYPE_PaymentSelect      = "12";
-    public static final String      ACCTTYPE_WriteOffDefault    = "13";
-    public static final String      ACCTTYPE_BankInTransitDefault   = "14";
-    public static final String      ACCTTYPE_ConvertChargeDefaultAmt= "15";
-    public static final String      ACCTTYPE_ConvertGainDefaultAmt   = "16";
+    /** Account Type - Payment */
+    public static final String ACCTTYPE_UnallocatedCash = "10";
+    public static final String ACCTTYPE_BankInTransit = "11";
+    public static final String ACCTTYPE_PaymentSelect = "12";
+    public static final String ACCTTYPE_WriteOffDefault = "13";
+    public static final String ACCTTYPE_BankInTransitDefault = "14";
+    public static final String ACCTTYPE_ConvertChargeDefaultAmt = "15";
+    public static final String ACCTTYPE_ConvertGainDefaultAmt = "16";
 
+    /** Account Type - Cash */
+    public static final String ACCTTYPE_CashAsset = "20";
+    public static final String ACCTTYPE_CashTransfer = "21";
+    public static final String ACCTTYPE_CashExpense = "22";
+    public static final String ACCTTYPE_CashReceipt = "23";
+    public static final String ACCTTYPE_CashDifference = "24";
 
-    /** Account Type - Cash     */
-    public static final String     ACCTTYPE_CashAsset           = "20";
-    public static final String     ACCTTYPE_CashTransfer        = "21";
-    public static final String     ACCTTYPE_CashExpense         = "22";
-    public static final String     ACCTTYPE_CashReceipt         = "23";
-    public static final String     ACCTTYPE_CashDifference      = "24";
+    /** Account Type - Allocation */
+    public static final String ACCTTYPE_DiscountExp = "30";
+    public static final String ACCTTYPE_DiscountRev = "31";
+    public static final String ACCTTYPE_WriteOff = "32";
 
-    /** Account Type - Allocation   */
-    public static final String  ACCTTYPE_DiscountExp            = "30";
-    public static final String  ACCTTYPE_DiscountRev            = "31";
-    public static final String  ACCTTYPE_WriteOff               = "32";
+    /** Account Type - Bank Statement */
+    public static final String ACCTTYPE_BankAsset = "40";
+    public static final String ACCTTYPE_InterestRev = "41";
+    public static final String ACCTTYPE_InterestExp = "42";
+    public static final String ACCTTYPE_ConvertChargeLossAmt = "43";
+    public static final String ACCTTYPE_ConvertChargeGainAmt = "44";
 
-    /** Account Type - Bank Statement   */
-    public static final String     ACCTTYPE_BankAsset           = "40";
-    public static final String     ACCTTYPE_InterestRev         = "41";
-    public static final String     ACCTTYPE_InterestExp         = "42";
-    public static final String     ACCTTYPE_ConvertChargeLossAmt= "43";
-    public static final String     ACCTTYPE_ConvertChargeGainAmt= "44";
-    
+    /** Inventory Accounts */
+    public static final String ACCTTYPE_InvDifferences = "50";
+    public static final String ACCTTYPE_NotInvoicedReceipts = "51";
 
-    /** Inventory Accounts          */
-    public static final String     ACCTTYPE_InvDifferences      = "50";
-    public static final String     ACCTTYPE_NotInvoicedReceipts = "51";
+    /** Project Accounts */
+    public static final String ACCTTYPE_ProjectAsset = "61";
+    public static final String ACCTTYPE_ProjectWIP = "62";
 
-    /** Project Accounts            */
-    public static final String     ACCTTYPE_ProjectAsset        = "61";
-    public static final String     ACCTTYPE_ProjectWIP          = "62";
+    /** GL Accounts */
+    public static final String ACCTTYPE_PPVOffset = "60";
 
-    /** GL Accounts                 */
-    public static final String     ACCTTYPE_PPVOffset           = "60";
+    // Reference (to find SalesRegion from BPartner)
+    public String BP_C_SalesRegion_ID = ""; // set in FactLine
 
-    //  Reference (to find SalesRegion from BPartner)
-    public String               BP_C_SalesRegion_ID = "";   //  set in FactLine
-
-
-
-
-    public int errors=0;
-    int success=0;
+    public int errors = 0;
+    int success = 0;
 
     /**
-     *  Cosntructor
-     *  @param  m_AD_Client_ID    Client ID of these Documents
-     *  @param  connectionProvider  Provider for db connections.
+     * Cosntructor
+     * 
+     * @param m_AD_Client_ID
+     *            Client ID of these Documents
+     * @param connectionProvider
+     *            Provider for db connections.
      */
-    public AcctServer (String m_AD_Client_ID, String m_AD_Org_ID, ConnectionProvider connectionProvider){
+    public AcctServer(String m_AD_Client_ID, String m_AD_Org_ID,
+            ConnectionProvider connectionProvider) {
         AD_Client_ID = m_AD_Client_ID;
         AD_Org_ID = m_AD_Org_ID;
         this.connectionProvider = connectionProvider;
-        if (log4j.isDebugEnabled()) log4j.debug("AcctServer - LOADING ARRAY: " + m_AD_Client_ID);
-        m_as = AcctSchema.getAcctSchemaArray (connectionProvider, m_AD_Client_ID, m_AD_Org_ID);
-    }   //  
+        if (log4j.isDebugEnabled())
+            log4j.debug("AcctServer - LOADING ARRAY: " + m_AD_Client_ID);
+        m_as = AcctSchema.getAcctSchemaArray(connectionProvider,
+                m_AD_Client_ID, m_AD_Org_ID);
+    } //  
 
     public void setBatchSize(String newbatchSize) {
-      batchSize = newbatchSize;
+        batchSize = newbatchSize;
     }
 
-    public void run(VariablesSecureApp vars) throws IOException, ServletException{
-      AD_Client_ID = vars.getClient();
-      try {
-        Connection con = connectionProvider.getTransactionConnection();
-        String strIDs = "";
-        if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Run - TableName = " + tableName);
-        AcctServerData [] data = AcctServerData.select(connectionProvider,tableName, AD_Client_ID, AD_Org_ID, strDateColumn, 0, Integer.valueOf(batchSize).intValue());
-        if(data!=null)if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Run -Select inicial realizada N = " + data.length + " - Key: " + data[0].id);
-        for (int i=0;data != null && i<data.length;i++){
-            strIDs += data[i].getField("ID") + ", ";
-            if (!post(data[i].getField("ID"),false, vars,connectionProvider,con)) {
-                connectionProvider.releaseRollbackConnection(con);
-                return;
+    public void run(VariablesSecureApp vars) throws IOException,
+            ServletException {
+        AD_Client_ID = vars.getClient();
+        try {
+            Connection con = connectionProvider.getTransactionConnection();
+            String strIDs = "";
+            if (log4j.isDebugEnabled())
+                log4j.debug("AcctServer - Run - TableName = " + tableName);
+            AcctServerData[] data = AcctServerData.select(connectionProvider,
+                    tableName, AD_Client_ID, AD_Org_ID, strDateColumn, 0,
+                    Integer.valueOf(batchSize).intValue());
+            if (data != null)
+                if (log4j.isDebugEnabled())
+                    log4j
+                            .debug("AcctServer - Run -Select inicial realizada N = "
+                                    + data.length + " - Key: " + data[0].id);
+            for (int i = 0; data != null && i < data.length; i++) {
+                strIDs += data[i].getField("ID") + ", ";
+                if (!post(data[i].getField("ID"), false, vars,
+                        connectionProvider, con)) {
+                    connectionProvider.releaseRollbackConnection(con);
+                    return;
+                }
             }
+            if (log4j.isDebugEnabled())
+                log4j.debug("AcctServer - Run -" + data.length + " IDs ["
+                        + strIDs + "]");
+            // Create Automatic Matching
+            // match (vars, this,con);
+            connectionProvider.releaseCommitConnection(con);
+        } catch (NoConnectionAvailableException ex) {
+            throw new ServletException("@CODE=NoConnectionAvailable");
+        } catch (SQLException ex2) {
+            throw new ServletException("@CODE="
+                    + Integer.toString(ex2.getErrorCode()) + "@"
+                    + ex2.getMessage());
         }
-        if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Run -" + data.length + " IDs [" + strIDs + "]");
-        //  Create Automatic Matching
-        //match (vars, this,con);
-        connectionProvider.releaseCommitConnection(con);
-      } catch (NoConnectionAvailableException ex) {
-        throw new ServletException("@CODE=NoConnectionAvailable");
-      } catch (SQLException ex2) {
-        throw new ServletException("@CODE=" + Integer.toString(ex2.getErrorCode()) + "@" + ex2.getMessage());
-      }
     }
 
     /**
-     *  Factory - Create Posting document
-     *
-     *  @param  AD_Table_ID     Table ID of Documents
-     *  @param  AD_Client_ID    Client ID of Documents
-     *  @param  connectionProvider Database connection provider
-     *  @return Document
+     * Factory - Create Posting document
+     * 
+     * @param AD_Table_ID
+     *            Table ID of Documents
+     * @param AD_Client_ID
+     *            Client ID of Documents
+     * @param connectionProvider
+     *            Database connection provider
+     * @return Document
      */
-    public static AcctServer get (String AD_Table_ID, String AD_Client_ID, String AD_Org_ID, ConnectionProvider connectionProvider) throws ServletException{
+    public static AcctServer get(String AD_Table_ID, String AD_Client_ID,
+            String AD_Org_ID, ConnectionProvider connectionProvider)
+            throws ServletException {
         AcctServer acct = null;
-        if (log4j.isDebugEnabled()) log4j.debug("get - table: "+AD_Table_ID);
-        switch (Integer.parseInt(AD_Table_ID)){
-            case    318:
-                acct = new DocInvoice (AD_Client_ID, AD_Org_ID, connectionProvider);
-                acct.tableName = "C_Invoice";
-                acct.AD_Table_ID = "318";
-                acct.strDateColumn = "DateAcct";
-                acct.reloadAcctSchemaArray();
-                acct.groupLines = AcctServerData.selectGroupLines(acct.connectionProvider, AD_Client_ID);
-                break;
-/*          case    390:
-                acct = new DocAllocation (AD_Client_ID);
-                acct.strDateColumn = "";
-                acct.AD_Table_ID = "390";
-                acct.reloadAcctSchemaArray();
-                acct.break;*/
-            case    800060:
-                acct = new DocAmortization (AD_Client_ID, AD_Org_ID, connectionProvider);
-                acct.tableName = "A_Amortization";
-                acct.AD_Table_ID = "800060";
-                acct.strDateColumn = "DateAcct";
-                acct.reloadAcctSchemaArray();
-                break;
-                
-            case    800176:
-                if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Get DPM");
-                acct = new DocDPManagement (AD_Client_ID, AD_Org_ID, connectionProvider);
-                acct.tableName = "C_DP_Management";
-                acct.AD_Table_ID = "800176";
-                acct.strDateColumn = "DateAcct";
-                acct.reloadAcctSchemaArray();
-                break;
-            case    407:
-                acct = new DocCash (AD_Client_ID, AD_Org_ID, connectionProvider);
-                acct.tableName = "C_Cash";
-                acct.strDateColumn = "DateAcct";
-                acct.AD_Table_ID = "407";
-                acct.reloadAcctSchemaArray();
-                break;
-            case    392:
-                acct = new DocBank (AD_Client_ID, AD_Org_ID, connectionProvider);
-                acct.tableName = "C_Bankstatement";
-                acct.strDateColumn = "StatementDate";
-                acct.AD_Table_ID = "392";
-                acct.reloadAcctSchemaArray();
-                break;
-            case    259:
-                acct = new DocOrder (AD_Client_ID, AD_Org_ID, connectionProvider);
-                acct.tableName = "C_Order";
-                acct.strDateColumn = "DateAcct";
-                acct.AD_Table_ID = "259";
-                acct.reloadAcctSchemaArray();
-                break;
-            case    800019:
-                acct = new DocPayment (AD_Client_ID, AD_Org_ID, connectionProvider);
-                acct.tableName = "C_Settlement";
-                acct.strDateColumn = "Dateacct";
-                acct.AD_Table_ID = "800019";
-                acct.reloadAcctSchemaArray();
-                break;
-            case    319:
-                acct = new DocInOut (AD_Client_ID, AD_Org_ID, connectionProvider);
-                acct.tableName = "M_InOut";
-                acct.strDateColumn = "DateAcct";
-                acct.AD_Table_ID = "319";
-                acct.reloadAcctSchemaArray();
-                break;
-            case    321:
-                acct = new DocInventory (AD_Client_ID, AD_Org_ID, connectionProvider);
-                acct.tableName = "M_Inventory";
-                acct.strDateColumn = "MovementDate";
-                acct.AD_Table_ID = "321";
-                acct.reloadAcctSchemaArray();
-                break;
-            case    323:
-                acct = new DocMovement (AD_Client_ID, AD_Org_ID, connectionProvider);
-                acct.tableName = "M_Movement";
-                acct.strDateColumn = "MovementDate";
-                acct.AD_Table_ID = "323";
-                acct.reloadAcctSchemaArray();
-                break;
-            case    325:
-                acct = new DocProduction (AD_Client_ID, AD_Org_ID, connectionProvider);
-                acct.tableName = "M_Production";
-                acct.strDateColumn = "MovementDate";
-                acct.AD_Table_ID = "325";
-                acct.reloadAcctSchemaArray();
-                break;
-            case    224:
-                if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Before OBJECT CREATION");
-                acct = new DocGLJournal (AD_Client_ID, AD_Org_ID, connectionProvider);
-                acct.tableName = "GL_Journal";
-                acct.strDateColumn = "DateAcct";
-                acct.AD_Table_ID = "224";
-                acct.reloadAcctSchemaArray();
-                break;/*
-            case    472:
-                acct = new DocMatchInv (AD_Client_ID);
-                acct.strDateColumn = "MovementDate";
-                acct.reloadAcctSchemaArray();
-                break;
-            case    473:
-                acct = new DocMatchPO (AD_Client_ID);
-                acct.strDateColumn = "MovementDate";
-                acct.reloadAcctSchemaArray();
-                break;
-            case    DocProjectIssue.AD_TABLE_ID:
-                acct = new DocProjectIssue (AD_Client_ID);
-                acct.strDateColumn = "MovementDate";
-                acct.reloadAcctSchemaArray();
-                break;*/
+        if (log4j.isDebugEnabled())
+            log4j.debug("get - table: " + AD_Table_ID);
+        switch (Integer.parseInt(AD_Table_ID)) {
+        case 318:
+            acct = new DocInvoice(AD_Client_ID, AD_Org_ID, connectionProvider);
+            acct.tableName = "C_Invoice";
+            acct.AD_Table_ID = "318";
+            acct.strDateColumn = "DateAcct";
+            acct.reloadAcctSchemaArray();
+            acct.groupLines = AcctServerData.selectGroupLines(
+                    acct.connectionProvider, AD_Client_ID);
+            break;
+        /*
+         * case 390: acct = new DocAllocation (AD_Client_ID); acct.strDateColumn
+         * = ""; acct.AD_Table_ID = "390"; acct.reloadAcctSchemaArray();
+         * acct.break;
+         */
+        case 800060:
+            acct = new DocAmortization(AD_Client_ID, AD_Org_ID,
+                    connectionProvider);
+            acct.tableName = "A_Amortization";
+            acct.AD_Table_ID = "800060";
+            acct.strDateColumn = "DateAcct";
+            acct.reloadAcctSchemaArray();
+            break;
+
+        case 800176:
+            if (log4j.isDebugEnabled())
+                log4j.debug("AcctServer - Get DPM");
+            acct = new DocDPManagement(AD_Client_ID, AD_Org_ID,
+                    connectionProvider);
+            acct.tableName = "C_DP_Management";
+            acct.AD_Table_ID = "800176";
+            acct.strDateColumn = "DateAcct";
+            acct.reloadAcctSchemaArray();
+            break;
+        case 407:
+            acct = new DocCash(AD_Client_ID, AD_Org_ID, connectionProvider);
+            acct.tableName = "C_Cash";
+            acct.strDateColumn = "DateAcct";
+            acct.AD_Table_ID = "407";
+            acct.reloadAcctSchemaArray();
+            break;
+        case 392:
+            acct = new DocBank(AD_Client_ID, AD_Org_ID, connectionProvider);
+            acct.tableName = "C_Bankstatement";
+            acct.strDateColumn = "StatementDate";
+            acct.AD_Table_ID = "392";
+            acct.reloadAcctSchemaArray();
+            break;
+        case 259:
+            acct = new DocOrder(AD_Client_ID, AD_Org_ID, connectionProvider);
+            acct.tableName = "C_Order";
+            acct.strDateColumn = "DateAcct";
+            acct.AD_Table_ID = "259";
+            acct.reloadAcctSchemaArray();
+            break;
+        case 800019:
+            acct = new DocPayment(AD_Client_ID, AD_Org_ID, connectionProvider);
+            acct.tableName = "C_Settlement";
+            acct.strDateColumn = "Dateacct";
+            acct.AD_Table_ID = "800019";
+            acct.reloadAcctSchemaArray();
+            break;
+        case 319:
+            acct = new DocInOut(AD_Client_ID, AD_Org_ID, connectionProvider);
+            acct.tableName = "M_InOut";
+            acct.strDateColumn = "DateAcct";
+            acct.AD_Table_ID = "319";
+            acct.reloadAcctSchemaArray();
+            break;
+        case 321:
+            acct = new DocInventory(AD_Client_ID, AD_Org_ID, connectionProvider);
+            acct.tableName = "M_Inventory";
+            acct.strDateColumn = "MovementDate";
+            acct.AD_Table_ID = "321";
+            acct.reloadAcctSchemaArray();
+            break;
+        case 323:
+            acct = new DocMovement(AD_Client_ID, AD_Org_ID, connectionProvider);
+            acct.tableName = "M_Movement";
+            acct.strDateColumn = "MovementDate";
+            acct.AD_Table_ID = "323";
+            acct.reloadAcctSchemaArray();
+            break;
+        case 325:
+            acct = new DocProduction(AD_Client_ID, AD_Org_ID,
+                    connectionProvider);
+            acct.tableName = "M_Production";
+            acct.strDateColumn = "MovementDate";
+            acct.AD_Table_ID = "325";
+            acct.reloadAcctSchemaArray();
+            break;
+        case 224:
+            if (log4j.isDebugEnabled())
+                log4j.debug("AcctServer - Before OBJECT CREATION");
+            acct = new DocGLJournal(AD_Client_ID, AD_Org_ID, connectionProvider);
+            acct.tableName = "GL_Journal";
+            acct.strDateColumn = "DateAcct";
+            acct.AD_Table_ID = "224";
+            acct.reloadAcctSchemaArray();
+            break;/*
+                   * case 472: acct = new DocMatchInv (AD_Client_ID);
+                   * acct.strDateColumn = "MovementDate";
+                   * acct.reloadAcctSchemaArray(); break; case 473: acct = new
+                   * DocMatchPO (AD_Client_ID); acct.strDateColumn =
+                   * "MovementDate"; acct.reloadAcctSchemaArray(); break; case
+                   * DocProjectIssue.AD_TABLE_ID: acct = new DocProjectIssue
+                   * (AD_Client_ID); acct.strDateColumn = "MovementDate";
+                   * acct.reloadAcctSchemaArray(); break;
+                   */
         }
-        if (acct == null) log4j.warn("AcctServer - get - Unknown AD_Table_ID=" + AD_Table_ID);
-        else if (log4j.isDebugEnabled()) log4j.debug("AcctServer - get - AcctSchemaArray length=" + (acct.m_as).length);
-        if (log4j.isDebugEnabled()) log4j.debug("AcctServer - get - AD_Table_ID=" + AD_Table_ID);
+        if (acct == null)
+            log4j.warn("AcctServer - get - Unknown AD_Table_ID=" + AD_Table_ID);
+        else if (log4j.isDebugEnabled())
+            log4j.debug("AcctServer - get - AcctSchemaArray length="
+                    + (acct.m_as).length);
+        if (log4j.isDebugEnabled())
+            log4j.debug("AcctServer - get - AD_Table_ID=" + AD_Table_ID);
         return acct;
-    }   //  get
+    } // get
 
-  public void reloadAcctSchemaArray() throws ServletException{
-    if (log4j.isDebugEnabled()) log4j.debug("AcctServer - reloadAcctSchemaArray - " + AD_Table_ID);
-    AcctSchema acct = null;
-    ArrayList<Object> new_as = new ArrayList<Object>();
-    for (int i=0;i<(this.m_as).length;i++){
-      acct = m_as[i];
-      if(AcctSchemaData.selectAcctSchemaTable(connectionProvider, acct.m_C_AcctSchema_ID, AD_Table_ID)){
-        new_as.add(new AcctSchema(connectionProvider,acct.m_C_AcctSchema_ID));
-      }
-    }
-    AcctSchema[] retValue = new AcctSchema [new_as.size()];
-    new_as.toArray(retValue);
-    if (log4j.isDebugEnabled()) log4j.debug("AcctServer - RELOADING ARRAY: " + retValue.length);
-    this.m_as = retValue;    
-  }
-
-
-  public boolean post(String strClave, boolean force,VariablesSecureApp vars,ConnectionProvider conn,Connection con)throws ServletException{
-    Record_ID = strClave;
-    if (log4j.isDebugEnabled()) log4j.debug("post " + strClave+" tablename: "+tableName);    
-    try{
-        if (AcctServerData.update(con,conn,tableName,strClave)!=1){
-              log4j.warn("AcctServer - Post -Cannot lock Document - ignored: " + tableName + "_ID=" + strClave);
-              return false;
+    public void reloadAcctSchemaArray() throws ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("AcctServer - reloadAcctSchemaArray - " + AD_Table_ID);
+        AcctSchema acct = null;
+        ArrayList<Object> new_as = new ArrayList<Object>();
+        for (int i = 0; i < (this.m_as).length; i++) {
+            acct = m_as[i];
+            if (AcctSchemaData.selectAcctSchemaTable(connectionProvider,
+                    acct.m_C_AcctSchema_ID, AD_Table_ID)) {
+                new_as.add(new AcctSchema(connectionProvider,
+                        acct.m_C_AcctSchema_ID));
+            }
         }
-        if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Post -TableName -" + tableName + "- ad_client_id -" + AD_Client_ID + "- " + tableName + "_id -" + strClave);
-        try{
-            loadObjectFieldProvider(connectionProvider,AD_Client_ID,strClave);
-        }catch(ServletException e){
+        AcctSchema[] retValue = new AcctSchema[new_as.size()];
+        new_as.toArray(retValue);
+        if (log4j.isDebugEnabled())
+            log4j.debug("AcctServer - RELOADING ARRAY: " + retValue.length);
+        this.m_as = retValue;
+    }
+
+    public boolean post(String strClave, boolean force,
+            VariablesSecureApp vars, ConnectionProvider conn, Connection con)
+            throws ServletException {
+        Record_ID = strClave;
+        if (log4j.isDebugEnabled())
+            log4j.debug("post " + strClave + " tablename: " + tableName);
+        try {
+            if (AcctServerData.update(con, conn, tableName, strClave) != 1) {
+                log4j
+                        .warn("AcctServer - Post -Cannot lock Document - ignored: "
+                                + tableName + "_ID=" + strClave);
+                return false;
+            }
+            if (log4j.isDebugEnabled())
+                log4j.debug("AcctServer - Post -TableName -" + tableName
+                        + "- ad_client_id -" + AD_Client_ID + "- " + tableName
+                        + "_id -" + strClave);
+            try {
+                loadObjectFieldProvider(connectionProvider, AD_Client_ID,
+                        strClave);
+            } catch (ServletException e) {
+                log4j.warn(e);
+            }
+            FieldProvider data[] = getObjectFieldProvider();
+            if (getDocumentConfirmation(conn, Record_ID)
+                    && post(data, force, vars, conn, con)) {
+                success++;
+            } else
+                errors++;
+        } catch (ServletException e) {
             log4j.warn(e);
-        }
-        FieldProvider data [] = getObjectFieldProvider();       
-        if (getDocumentConfirmation(conn, Record_ID) && post(data,force,vars,conn,con)){
-         success++;
-        }else errors++;        
-    }
-    catch (ServletException e){
-        log4j.warn(e);
-        return false;
-    }
-    return true;
-  }
-
-    private boolean post(FieldProvider [] data, boolean force,VariablesSecureApp vars,ConnectionProvider conn,Connection con)throws ServletException{
-       if (log4j.isDebugEnabled()) log4j.debug("post data" + C_Currency_ID);
-        if (!loadDocument(data,force,conn)){
-        log4j.warn("AcctServer - post - Error loading document");
             return false;
         }
-        if(data==null || data.length==0) return false;
-        //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Post - Antes de getAcctSchemaArray - C_CURRENCY_ID = " + C_Currency_ID);
-        //  Create Fact per AcctSchema
-        //if (log4j.isDebugEnabled()) log4j.debug("POSTLOADING ARRAY: " + AD_Client_ID);
-        m_as = AcctSchema.getAcctSchemaArray (conn,AD_Client_ID, AD_Org_ID);
-        //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Post - Antes de new Fact - C_CURRENCY_ID = " + C_Currency_ID);
-        m_fact = new Fact [m_as.length];
+        return true;
+    }
 
-        //  for all Accounting Schema
+    private boolean post(FieldProvider[] data, boolean force,
+            VariablesSecureApp vars, ConnectionProvider conn, Connection con)
+            throws ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("post data" + C_Currency_ID);
+        if (!loadDocument(data, force, conn)) {
+            log4j.warn("AcctServer - post - Error loading document");
+            return false;
+        }
+        if (data == null || data.length == 0)
+            return false;
+        // if (log4j.isDebugEnabled())
+        // log4j.debug("AcctServer - Post - Antes de getAcctSchemaArray - C_CURRENCY_ID = "
+        // + C_Currency_ID);
+        // Create Fact per AcctSchema
+        // if (log4j.isDebugEnabled()) log4j.debug("POSTLOADING ARRAY: " +
+        // AD_Client_ID);
+        m_as = AcctSchema.getAcctSchemaArray(conn, AD_Client_ID, AD_Org_ID);
+        // if (log4j.isDebugEnabled())
+        // log4j.debug("AcctServer - Post - Antes de new Fact - C_CURRENCY_ID = "
+        // + C_Currency_ID);
+        m_fact = new Fact[m_as.length];
+
+        // for all Accounting Schema
         boolean OK = true;
-        if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Post -Beforde the loop - C_CURRENCY_ID = " + C_Currency_ID);
-        for (int i = 0; OK && i < m_as.length; i++){
-            if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Post - Before the postLogic - C_CURRENCY_ID = " + C_Currency_ID);
-            Status = postLogic (i, conn,con, vars);
-            if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Post - After postLogic");
+        if (log4j.isDebugEnabled())
+            log4j
+                    .debug("AcctServer - Post -Beforde the loop - C_CURRENCY_ID = "
+                            + C_Currency_ID);
+        for (int i = 0; OK && i < m_as.length; i++) {
+            if (log4j.isDebugEnabled())
+                log4j
+                        .debug("AcctServer - Post - Before the postLogic - C_CURRENCY_ID = "
+                                + C_Currency_ID);
+            Status = postLogic(i, conn, con, vars);
+            if (log4j.isDebugEnabled())
+                log4j.debug("AcctServer - Post - After postLogic");
             if (!Status.equals(STATUS_Posted))
-              return false;
+                return false;
         }
-        if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Post - Before the postCommit - C_CURRENCY_ID = " + C_Currency_ID);
+        if (log4j.isDebugEnabled())
+            log4j
+                    .debug("AcctServer - Post - Before the postCommit - C_CURRENCY_ID = "
+                            + C_Currency_ID);
         for (int i = 0; i < m_fact.length; i++)
-          if (m_fact[i] != null && (m_fact[i].getLines()==null || m_fact[i].getLines().length==0)) return false;
-        //  commitFact
-        Status = postCommit (Status, conn, vars,con);
+            if (m_fact[i] != null
+                    && (m_fact[i].getLines() == null || m_fact[i].getLines().length == 0))
+                return false;
+        // commitFact
+        Status = postCommit(Status, conn, vars, con);
 
-        //  Create Note
-        if (!Status.equals(STATUS_Posted)){
-            //  Insert Note
+        // Create Note
+        if (!Status.equals(STATUS_Posted)) {
+            // Insert Note
             String AD_Message = "PostingError-" + Status;
-            //  Text - Only Status
+            // Text - Only Status
             String Text = Status;
-            //  API - DocNo - 2000-01-31
-            String Reference = DocumentType
-                + " - " + DocumentNo
-                + " - " + DateDoc;
-            String AD_User_ID = "0"; 
-            insertNote(AD_Client_ID, AD_Org_ID, AD_User_ID,
-                AD_Table_ID, Record_ID, AD_Message, Text, Reference,vars, conn,con);
+            // API - DocNo - 2000-01-31
+            String Reference = DocumentType + " - " + DocumentNo + " - "
+                    + DateDoc;
+            String AD_User_ID = "0";
+            insertNote(AD_Client_ID, AD_Org_ID, AD_User_ID, AD_Table_ID,
+                    Record_ID, AD_Message, Text, Reference, vars, conn, con);
         }
 
-        //  dispose facts
+        // dispose facts
         for (int i = 0; i < m_fact.length; i++)
-            if (m_fact[i] != null)  m_fact[i].dispose();
+            if (m_fact[i] != null)
+                m_fact[i].dispose();
         p_lines = null;
 
         return Status.equals(STATUS_Posted);
-    }   //  post
+    } // post
 
     /**
-     *  Post Commit.
-     *  Save Facts & Document
-     *  @param status status
-     *  @return Posting Status
+     * Post Commit. Save Facts & Document
+     * 
+     * @param status
+     *            status
+     * @return Posting Status
      */
-    private final String postCommit (String status,ConnectionProvider conn,VariablesSecureApp vars,Connection con)throws ServletException{
-        log4j.debug("AcctServer - postCommit Sta=" + status + " DT=" + DocumentType + " ID=" + Record_ID);
+    private final String postCommit(String status, ConnectionProvider conn,
+            VariablesSecureApp vars, Connection con) throws ServletException {
+        log4j.debug("AcctServer - postCommit Sta=" + status + " DT="
+                + DocumentType + " ID=" + Record_ID);
         Status = status;
-        try{
-        //  *** Transaction Start       ***
-            //  Commit Facts
-            if (status.equals(AcctServer.STATUS_Posted)){
-                if (m_fact!=null && m_fact.length!=0) {
-                    log4j.debug("AcctServer - postCommit - m_fact.length = " + m_fact.length);
-                    for (int i = 0; i < m_fact.length; i++){
-                        if (m_fact[i] != null && m_fact[i].save(con,conn, vars));
-                        else{
-                            //conn.releaseRollbackConnection(con);
-                            unlock(conn,con);
+        try {
+            // *** Transaction Start ***
+            // Commit Facts
+            if (status.equals(AcctServer.STATUS_Posted)) {
+                if (m_fact != null && m_fact.length != 0) {
+                    log4j.debug("AcctServer - postCommit - m_fact.length = "
+                            + m_fact.length);
+                    for (int i = 0; i < m_fact.length; i++) {
+                        if (m_fact[i] != null
+                                && m_fact[i].save(con, conn, vars))
+                            ;
+                        else {
+                            // conn.releaseRollbackConnection(con);
+                            unlock(conn, con);
                             return AcctServer.STATUS_Error;
                         }
                     }
                 }
             }
-            //  Commit Doc
-            if (!save(conn,con)){     //  contains unlock
-                //conn.releaseRollbackConnection(con);
-                unlock(conn,con);
+            // Commit Doc
+            if (!save(conn, con)) { // contains unlock
+                // conn.releaseRollbackConnection(con);
+                unlock(conn, con);
                 return AcctServer.STATUS_Error;
             }
-            //conn.releaseCommitConnection(con);
-        //  *** Transaction End         ***
-        }
-        catch (Exception e){
+            // conn.releaseCommitConnection(con);
+            // *** Transaction End ***
+        } catch (Exception e) {
             log4j.warn("AcctServer - postCommit" + e);
             status = AcctServer.STATUS_Error;
-            //conn.releaseRollbackConnection(con);
-            unlock(conn,con);
+            // conn.releaseRollbackConnection(con);
+            unlock(conn, con);
         }
         return status;
-    }   //  postCommit
+    } // postCommit
 
     /**
-     *  Save to Disk - set posted flag
-     *  @param con connection
-     *  @return true if saved
+     * Save to Disk - set posted flag
+     * 
+     * @param con
+     *            connection
+     * @return true if saved
      */
-    private final boolean save (ConnectionProvider conn, Connection con){
-        //if (log4j.isDebugEnabled()) log4j.debug ("AcctServer - save - ->" + Status);
+    private final boolean save(ConnectionProvider conn, Connection con) {
+        // if (log4j.isDebugEnabled()) log4j.debug ("AcctServer - save - ->" +
+        // Status);
         int no = 0;
-        try{
-            no = AcctServerData.updateSave(con,conn,tableName,Status,Record_ID);
-        }catch(ServletException e){
+        try {
+            no = AcctServerData.updateSave(con, conn, tableName, Status,
+                    Record_ID);
+        } catch (ServletException e) {
             log4j.warn(e);
         }
-        return no==1;
-    }   //  save
-
+        return no == 1;
+    } // save
 
     /**
-     *  Unlock Document
+     * Unlock Document
      */
-    private void unlock(ConnectionProvider conn,Connection con){
-        try{
-        AcctServerData.updateUnlock(con,conn,tableName,Record_ID);
-        }catch(ServletException e){
+    private void unlock(ConnectionProvider conn, Connection con) {
+        try {
+            AcctServerData.updateUnlock(con, conn, tableName, Record_ID);
+        } catch (ServletException e) {
             log4j.warn("AcctServer - Document locked: -" + e);
         }
-        /*if (i>0){
-            releaseCommitConnection(con);
-        }else{
-            releaseRollbackConnection(con);
-        }*/
-    }   //  unlock
+        /*
+         * if (i>0){ releaseCommitConnection(con); }else{
+         * releaseRollbackConnection(con); }
+         */
+    } // unlock
 
-
-
-    public boolean loadDocument(FieldProvider[] data, boolean force,ConnectionProvider conn){
-        if (log4j.isDebugEnabled()) log4j.debug("loadDocument " + data.length);
+    public boolean loadDocument(FieldProvider[] data, boolean force,
+            ConnectionProvider conn) {
+        if (log4j.isDebugEnabled())
+            log4j.debug("loadDocument " + data.length);
 
         Status = STATUS_Error;
         String Name = "";
-        AD_Client_ID=data[0].getField("AD_Client_ID");
-        AD_Org_ID=data[0].getField("AD_Org_ID");
-        C_BPartner_ID=data[0].getField("C_BPartner_ID");
-        M_Product_ID=data[0].getField("M_Product_ID");
-        AD_OrgTrx_ID=data[0].getField("AD_OrgTrx_ID");
-        C_SalesRegion_ID=data[0].getField("C_SalesRegion_ID");
-        C_Project_ID=data[0].getField("C_Project_ID");
-        C_Campaign_ID=data[0].getField("C_Campaign_ID");
-        C_Activity_ID=data[0].getField("C_Activity_ID");
-        C_LocFrom_ID=data[0].getField("C_LocFrom_ID");
-        C_LocTo_ID=data[0].getField("C_LocTo_ID");
-        User1_ID=data[0].getField("User1_ID");
-        User2_ID=data[0].getField("User2_ID");
+        AD_Client_ID = data[0].getField("AD_Client_ID");
+        AD_Org_ID = data[0].getField("AD_Org_ID");
+        C_BPartner_ID = data[0].getField("C_BPartner_ID");
+        M_Product_ID = data[0].getField("M_Product_ID");
+        AD_OrgTrx_ID = data[0].getField("AD_OrgTrx_ID");
+        C_SalesRegion_ID = data[0].getField("C_SalesRegion_ID");
+        C_Project_ID = data[0].getField("C_Project_ID");
+        C_Campaign_ID = data[0].getField("C_Campaign_ID");
+        C_Activity_ID = data[0].getField("C_Activity_ID");
+        C_LocFrom_ID = data[0].getField("C_LocFrom_ID");
+        C_LocTo_ID = data[0].getField("C_LocTo_ID");
+        User1_ID = data[0].getField("User1_ID");
+        User2_ID = data[0].getField("User2_ID");
 
-        Name=data[0].getField("Name");
+        Name = data[0].getField("Name");
         DocumentNo = data[0].getField("DocumentNo");
         DateAcct = data[0].getField("DateAcct");
         DateDoc = data[0].getField("DateDoc");
@@ -610,22 +672,31 @@ public abstract class AcctServer  {
         C_Charge_ID = data[0].getField("C_Charge_ID");
         ChargeAmt = data[0].getField("ChargeAmt");
         C_BankAccount_ID = data[0].getField("C_BankAccount_ID");
-        if (log4j.isDebugEnabled()) log4j.debug("AcctServer - loadDocument - C_BankAccount_ID : " + C_BankAccount_ID);
+        if (log4j.isDebugEnabled())
+            log4j.debug("AcctServer - loadDocument - C_BankAccount_ID : "
+                    + C_BankAccount_ID);
         Posted = data[0].getField("Posted");
-        if (!loadDocumentDetails(data, conn)) loadDocumentType();
-        //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - loadDocument - DocumentDetails Loaded");
-        if ((DateAcct == null || DateAcct.equals("")) && (DateDoc != null && !DateDoc.equals("")))
+        if (!loadDocumentDetails(data, conn))
+            loadDocumentType();
+        // if (log4j.isDebugEnabled())
+        // log4j.debug("AcctServer - loadDocument - DocumentDetails Loaded");
+        if ((DateAcct == null || DateAcct.equals(""))
+                && (DateDoc != null && !DateDoc.equals("")))
             DateAcct = DateDoc;
-        else if ((DateDoc == null || DateDoc.equals("")) && (DateAcct != null && !DateAcct.equals("")))
+        else if ((DateDoc == null || DateDoc.equals(""))
+                && (DateAcct != null && !DateAcct.equals("")))
             DateDoc = DateAcct;
-        //  DocumentNo (or Name)
+        // DocumentNo (or Name)
         if (DocumentNo == null || DocumentNo.length() == 0)
             DocumentNo = Name;
-//      if (DocumentNo == null || DocumentNo.length() == 0)(DateDoc.equals("") && !DateAcct.equals(""))
-//          DocumentNo = "";
+        // if (DocumentNo == null || DocumentNo.length() ==
+        // 0)(DateDoc.equals("") && !DateAcct.equals(""))
+        // DocumentNo = "";
 
-        //  Check Mandatory Info
-        //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - loadDocument - C_Currency_ID : " + C_Currency_ID);
+        // Check Mandatory Info
+        // if (log4j.isDebugEnabled())
+        // log4j.debug("AcctServer - loadDocument - C_Currency_ID : " +
+        // C_Currency_ID);
         String error = "";
         if (AD_Table_ID == null || AD_Table_ID.equals(""))
             error += " AD_Table_ID";
@@ -641,438 +712,565 @@ public abstract class AcctServer  {
             error += " DateAcct";
         if (DateDoc == null || DateDoc.equals(""))
             error += " DateDoc";
-        if (error.length() > 0){
-            log4j.warn("AcctServer - loadDocument - " + DocumentNo + " - Mandatory info missing: " + error);
+        if (error.length() > 0) {
+            log4j.warn("AcctServer - loadDocument - " + DocumentNo
+                    + " - Mandatory info missing: " + error);
             return false;
         }
 
-        //  Delete existing Accounting
-        if (force){
-            if (Posted.equals("Y") && !isPeriodOpen()){ //  already posted - don't delete if period closed
-                log4j.warn("AcctServer - loadDocument - " + DocumentNo + " - Period Closed for already posted document");
+        // Delete existing Accounting
+        if (force) {
+            if (Posted.equals("Y") && !isPeriodOpen()) { // already posted -
+                                                         // don't delete if
+                                                         // period closed
+                log4j.warn("AcctServer - loadDocument - " + DocumentNo
+                        + " - Period Closed for already posted document");
                 return false;
             }
-            //  delete it
-            try{
-            AcctServerData.delete(connectionProvider,tableName,Record_ID);
-            }catch(ServletException e){
+            // delete it
+            try {
+                AcctServerData.delete(connectionProvider, tableName, Record_ID);
+            } catch (ServletException e) {
                 log4j.warn(e);
             }
-            //if (log4j.isDebugEnabled()) log4j.debug("post - deleted=" + no);
-        }
-        else if (Posted.equals("Y")){
-            log4j.warn("AcctServer - loadDocument - " + DocumentNo + " - Document already posted");
+            // if (log4j.isDebugEnabled()) log4j.debug("post - deleted=" + no);
+        } else if (Posted.equals("Y")) {
+            log4j.warn("AcctServer - loadDocument - " + DocumentNo
+                    + " - Document already posted");
             return false;
         }
-        //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - loadDocument -finished");
+        // if (log4j.isDebugEnabled())
+        // log4j.debug("AcctServer - loadDocument -finished");
         return true;
-    }   //  loadDocument
+    } // loadDocument
 
-
-    public void loadDocumentType(){
-      //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - loadDocumentType - DocumentType: " + DocumentType + " - C_DocType_ID : " + C_DocType_ID);
-        try{
-            if (/*DocumentType.equals("") && */C_DocType_ID != null && C_DocType_ID !=""){
-                AcctServerData[] data = AcctServerData.selectDocType(connectionProvider,C_DocType_ID);
+    public void loadDocumentType() {
+        // if (log4j.isDebugEnabled())
+        // log4j.debug("AcctServer - loadDocumentType - DocumentType: " +
+        // DocumentType + " - C_DocType_ID : " + C_DocType_ID);
+        try {
+            if (/* DocumentType.equals("") && */C_DocType_ID != null
+                    && C_DocType_ID != "") {
+                AcctServerData[] data = AcctServerData.selectDocType(
+                        connectionProvider, C_DocType_ID);
                 DocumentType = data[0].docbasetype;
                 GL_Category_ID = data[0].glCategoryId;
             }
-                    //  We have a document Type, but no GL info - search for DocType
-            if (GL_Category_ID != null && GL_Category_ID.equals("")){
-                AcctServerData[] data = AcctServerData.selectGLCategory(connectionProvider,AD_Client_ID,DocumentType);
-                if (data!=null && data.length != 0)GL_Category_ID = data[0].glCategoryId;
+            // We have a document Type, but no GL info - search for DocType
+            if (GL_Category_ID != null && GL_Category_ID.equals("")) {
+                AcctServerData[] data = AcctServerData.selectGLCategory(
+                        connectionProvider, AD_Client_ID, DocumentType);
+                if (data != null && data.length != 0)
+                    GL_Category_ID = data[0].glCategoryId;
             }
-            if (DocumentType != null && DocumentType.equals(""))log4j.warn("AcctServer - loadDocumentType - No DocType for GL Info");
-            if (GL_Category_ID != null && GL_Category_ID.equals("")){
-                AcctServerData[] data = AcctServerData.selectDefaultGLCategory(connectionProvider,AD_Client_ID);
+            if (DocumentType != null && DocumentType.equals(""))
+                log4j
+                        .warn("AcctServer - loadDocumentType - No DocType for GL Info");
+            if (GL_Category_ID != null && GL_Category_ID.equals("")) {
+                AcctServerData[] data = AcctServerData.selectDefaultGLCategory(
+                        connectionProvider, AD_Client_ID);
                 GL_Category_ID = data[0].glCategoryId;
             }
-        }catch(ServletException e){
+        } catch (ServletException e) {
             log4j.warn(e);
         }
-        if (GL_Category_ID != null && GL_Category_ID.equals(""))log4j.warn("AcctServer - loadDocumentType - No GL Info");
-        //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - loadDocumentType -" + tableName + "_ID : " + Record_ID + " - C_DocType_ID: " + C_DocType_ID + " - DocumentType: " + DocumentType);
+        if (GL_Category_ID != null && GL_Category_ID.equals(""))
+            log4j.warn("AcctServer - loadDocumentType - No GL Info");
+        // if (log4j.isDebugEnabled())
+        // log4j.debug("AcctServer - loadDocumentType -" + tableName + "_ID : "
+        // + Record_ID + " - C_DocType_ID: " + C_DocType_ID +
+        // " - DocumentType: " + DocumentType);
     }
 
-    public  boolean insertNote (String AD_Client_ID, String AD_Org_ID, String AD_User_ID,String AD_Table_ID, String Record_ID,String AD_MessageValue, String Text, String Reference,VariablesSecureApp vars,ConnectionProvider conn,Connection con){
+    public boolean insertNote(String AD_Client_ID, String AD_Org_ID,
+            String AD_User_ID, String AD_Table_ID, String Record_ID,
+            String AD_MessageValue, String Text, String Reference,
+            VariablesSecureApp vars, ConnectionProvider conn, Connection con) {
 
         if (AD_MessageValue.equals("") || AD_MessageValue.length() == 0)
-            throw new IllegalArgumentException("AcctServer - insertNote - required parameter missing - AD_Message");
+            throw new IllegalArgumentException(
+                    "AcctServer - insertNote - required parameter missing - AD_Message");
 
-        //  Database limits
+        // Database limits
         if (Text == null)
             Text = "";
         if (Text.length() > 2000)
-            Text = Text.substring(0,1999);
+            Text = Text.substring(0, 1999);
         if (Reference == null)
             Reference = "";
         if (Reference.length() > 60)
-            Reference = Reference.substring(0,59);
+            Reference = Reference.substring(0, 59);
         //
-        //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - insertNote - " + AD_MessageValue + " - " + Reference);
+        // if (log4j.isDebugEnabled()) log4j.debug("AcctServer - insertNote - "
+        // + AD_MessageValue + " - " + Reference);
         //
-        int no=0;
-        try{
+        int no = 0;
+        try {
             String AD_Note_ID = SequenceIdData.getUUID();
-            
 
-            //  Create Entry
-            no = AcctServerData.insertNote(con,conn, AD_Note_ID, AD_Client_ID, AD_Org_ID, AD_User_ID, Text, Reference, AD_Table_ID, Record_ID, AD_MessageValue);
+            // Create Entry
+            no = AcctServerData.insertNote(con, conn, AD_Note_ID, AD_Client_ID,
+                    AD_Org_ID, AD_User_ID, Text, Reference, AD_Table_ID,
+                    Record_ID, AD_MessageValue);
 
-            //  AD_Message must exist, so if not created, it is probably
-            //  due to non-existing AD_Message
-            if (no == 0){
-                //  Try again
-                no =  AcctServerData.insertNote(con,conn, AD_Note_ID, AD_Client_ID, AD_Org_ID, AD_User_ID, Text, Reference, AD_Table_ID, Record_ID,"NoMessageFound");
+            // AD_Message must exist, so if not created, it is probably
+            // due to non-existing AD_Message
+            if (no == 0) {
+                // Try again
+                no = AcctServerData.insertNote(con, conn, AD_Note_ID,
+                        AD_Client_ID, AD_Org_ID, AD_User_ID, Text, Reference,
+                        AD_Table_ID, Record_ID, "NoMessageFound");
             }
-        }catch(ServletException e){
+        } catch (ServletException e) {
             log4j.warn(e);
         }
 
         return no == 1;
-    }   //  insertNote
+    } // insertNote
 
     /**
-     *  Posting logic for Accounting Schema index
-     *  @param  index   Accounting Schema index
-     *  @return posting status/error code
+     * Posting logic for Accounting Schema index
+     * 
+     * @param index
+     *            Accounting Schema index
+     * @return posting status/error code
      */
-    private final String postLogic (int index,ConnectionProvider conn,Connection con,VariablesSecureApp vars) throws ServletException{
-        //  rejectUnbalanced
+    private final String postLogic(int index, ConnectionProvider conn,
+            Connection con, VariablesSecureApp vars) throws ServletException {
+        // rejectUnbalanced
         if (!m_as[index].isSuspenseBalancing() && !isBalanced())
             return STATUS_NotBalanced;
 
-        //  rejectUnconvertible
+        // rejectUnconvertible
         if (!isConvertible(m_as[index], conn))
             return STATUS_NotConvertible;
 
-        //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Before isPeriodOpen");
-        //  rejectPeriodClosed
+        // if (log4j.isDebugEnabled())
+        // log4j.debug("AcctServer - Before isPeriodOpen");
+        // rejectPeriodClosed
         if (!isPeriodOpen())
             return STATUS_PeriodClosed;
-        //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - After isPeriodOpen");
+        // if (log4j.isDebugEnabled())
+        // log4j.debug("AcctServer - After isPeriodOpen");
 
-        //  createFacts
-        try{
-          m_fact[index] = createFact (m_as[index], conn,con, vars);
-        }catch (Exception e){
-          log4j.warn(e);
+        // createFacts
+        try {
+            m_fact[index] = createFact(m_as[index], conn, con, vars);
+        } catch (Exception e) {
+            log4j.warn(e);
         }
         if (m_fact[index] == null)
             return STATUS_Error;
         Status = STATUS_PostPrepared;
 
-        //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Before balanceSource");
-        //  balanceSource
+        // if (log4j.isDebugEnabled())
+        // log4j.debug("AcctServer - Before balanceSource");
+        // balanceSource
         if (!m_fact[index].isSourceBalanced())
             m_fact[index].balanceSource(conn);
-        //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - After balanceSource");
+        // if (log4j.isDebugEnabled())
+        // log4j.debug("AcctServer - After balanceSource");
 
-        //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Before isSegmentBalanced");
-        //  balanceSegments
+        // if (log4j.isDebugEnabled())
+        // log4j.debug("AcctServer - Before isSegmentBalanced");
+        // balanceSegments
         if (!m_fact[index].isSegmentBalanced(conn))
             m_fact[index].balanceSegments(conn);
-        //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - After isSegmentBalanced");
+        // if (log4j.isDebugEnabled())
+        // log4j.debug("AcctServer - After isSegmentBalanced");
 
-        //  balanceAccounting
+        // balanceAccounting
         if (!m_fact[index].isAcctBalanced())
             m_fact[index].balanceAccounting(conn);
 
         return STATUS_Posted;
-    }   //  postLogic
+    } // postLogic
 
     /**
-     *  Is the Source Document Balanced
-     *  @return true if (source) baanced
+     * Is the Source Document Balanced
+     * 
+     * @return true if (source) baanced
      */
-    public boolean isBalanced(){
-        //  Multi-Currency documents are source balanced by definition
+    public boolean isBalanced() {
+        // Multi-Currency documents are source balanced by definition
         if (MultiCurrency)
             return true;
         //
-        boolean retValue = (getBalance().compareTo(new BigDecimal("0.00"))==0);
-        if (retValue)   if (log4j.isDebugEnabled()) log4j.debug("AcctServer - isBalanced - " + DocumentNo);
-        else log4j.warn("AcctServer - is not Balanced - " + DocumentNo);
+        boolean retValue = (getBalance().compareTo(new BigDecimal("0.00")) == 0);
+        if (retValue)
+            if (log4j.isDebugEnabled())
+                log4j.debug("AcctServer - isBalanced - " + DocumentNo);
+            else
+                log4j.warn("AcctServer - is not Balanced - " + DocumentNo);
         return retValue;
-    }   //  isBalanced
+    } // isBalanced
 
     /**
-     *  Is Document convertible to currency and Conversion Type
-     *  @param acctSchema accounting schema
-     *  @return true, if vonvertable to accounting currency
+     * Is Document convertible to currency and Conversion Type
+     * 
+     * @param acctSchema
+     *            accounting schema
+     * @return true, if vonvertable to accounting currency
      */
-    public boolean isConvertible (AcctSchema acctSchema, ConnectionProvider conn) throws ServletException{
-        //  No Currency in document
-        if (C_Currency_ID.equals("-1")){
-            //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - isConvertible (none) - " + DocumentNo);
+    public boolean isConvertible(AcctSchema acctSchema, ConnectionProvider conn)
+            throws ServletException {
+        // No Currency in document
+        if (C_Currency_ID.equals("-1")) {
+            // if (log4j.isDebugEnabled())
+            // log4j.debug("AcctServer - isConvertible (none) - " + DocumentNo);
             return true;
         }
-        //  Get All Currencies
+        // Get All Currencies
         Vector<Object> set = new Vector<Object>();
         set.addElement(C_Currency_ID);
-        for (int i = 0; p_lines != null && i < p_lines.length; i++){
+        for (int i = 0; p_lines != null && i < p_lines.length; i++) {
             String currency = p_lines[i].m_C_Currency_ID;
-            if(currency!=null && !currency.equals("")) 
-              set.addElement(currency);
+            if (currency != null && !currency.equals(""))
+                set.addElement(currency);
         }
 
-        //  just one and the same
-        if (set.size() == 1 && acctSchema.m_C_Currency_ID.equals(C_Currency_ID)){
-            //if (log4j.isDebugEnabled()) log4j.debug ("AcctServer - isConvertible (same) Cur=" + C_Currency_ID + " - " + DocumentNo);
+        // just one and the same
+        if (set.size() == 1 && acctSchema.m_C_Currency_ID.equals(C_Currency_ID)) {
+            // if (log4j.isDebugEnabled()) log4j.debug
+            // ("AcctServer - isConvertible (same) Cur=" + C_Currency_ID + " - "
+            // + DocumentNo);
             return true;
         }
         boolean convertible = true;
-        for (int i=0;i<set.size() && convertible==true;i++){
-            //if (log4j.isDebugEnabled()) log4j.debug ("AcctServer - get currency");
-            String currency = (String)set.elementAt(i);
-            if (currency==null) currency="";
-            //if (log4j.isDebugEnabled()) log4j.debug ("AcctServer - currency = " + currency);
-            if (!currency.equals(acctSchema.m_C_Currency_ID)){
-                //if (log4j.isDebugEnabled()) log4j.debug ("AcctServer - get converted amount (init)");
-                String amt = getConvertedAmt("1", currency, acctSchema.m_C_Currency_ID,
-                    DateAcct, acctSchema.m_CurrencyRateType, AD_Client_ID, AD_Org_ID, conn);
-                //if (log4j.isDebugEnabled()) log4j.debug ("get converted amount (end)");
-                if (amt == null){
+        for (int i = 0; i < set.size() && convertible == true; i++) {
+            // if (log4j.isDebugEnabled()) log4j.debug
+            // ("AcctServer - get currency");
+            String currency = (String) set.elementAt(i);
+            if (currency == null)
+                currency = "";
+            // if (log4j.isDebugEnabled()) log4j.debug
+            // ("AcctServer - currency = " + currency);
+            if (!currency.equals(acctSchema.m_C_Currency_ID)) {
+                // if (log4j.isDebugEnabled()) log4j.debug
+                // ("AcctServer - get converted amount (init)");
+                String amt = getConvertedAmt("1", currency,
+                        acctSchema.m_C_Currency_ID, DateAcct,
+                        acctSchema.m_CurrencyRateType, AD_Client_ID, AD_Org_ID,
+                        conn);
+                // if (log4j.isDebugEnabled()) log4j.debug
+                // ("get converted amount (end)");
+                if (amt == null) {
                     convertible = false;
-                    log4j.warn ("AcctServer - isConvertible NOT from " + currency +  " - " + DocumentNo);
-                }else if (log4j.isDebugEnabled()) log4j.debug ("AcctServer - isConvertible from " + currency);
+                    log4j.warn("AcctServer - isConvertible NOT from "
+                            + currency + " - " + DocumentNo);
+                } else if (log4j.isDebugEnabled())
+                    log4j.debug("AcctServer - isConvertible from " + currency);
             }
         }
-        //if (log4j.isDebugEnabled()) log4j.debug ("AcctServer - isConvertible=" + convertible + ", AcctSchemaCur=" + acctSchema.m_C_Currency_ID + " - " + DocumentNo);
+        // if (log4j.isDebugEnabled()) log4j.debug
+        // ("AcctServer - isConvertible=" + convertible + ", AcctSchemaCur=" +
+        // acctSchema.m_C_Currency_ID + " - " + DocumentNo);
         return convertible;
-    }   //  isConvertible
-
+    } // isConvertible
 
     /**
-     *  Get the Amount
-     *  (loaded in loadDocumentDetails)
-     *
-     *  @param AmtType see AMTTYPE_*
-     *  @return Amount
+     * Get the Amount (loaded in loadDocumentDetails)
+     * 
+     * @param AmtType
+     *            see AMTTYPE_*
+     * @return Amount
      */
-    public String getAmount(int AmtType){
+    public String getAmount(int AmtType) {
         if (AmtType < 0 || Amounts == null || AmtType >= Amounts.length)
             return null;
-        return (Amounts[AmtType].equals(""))?"0":Amounts[AmtType];
-    }   //  getAmount
+        return (Amounts[AmtType].equals("")) ? "0" : Amounts[AmtType];
+    } // getAmount
 
     /**
-     *  Get Amount with index 0
-     *  @return Amount (primary document amount)
+     * Get Amount with index 0
+     * 
+     * @return Amount (primary document amount)
      */
-    public String getAmount(){
+    public String getAmount() {
         return Amounts[0];
-    }   //  getAmount
+    } // getAmount
 
-        /**
-     *  Convert an amount
-     *  @param  CurFrom_ID  The C_Currency_ID FROM
-     *  @param  CurTo_ID    The C_Currency_ID TO
-     *  @param  ConvDate    The Conversion date - if null - use current date
-     *  @param  RateType    The Conversion rate type - if null/empty - use Spot
-     *  @param  Amt         The amount to be converted
-     *  @return converted amount
+    /**
+     * Convert an amount
+     * 
+     * @param CurFrom_ID
+     *            The C_Currency_ID FROM
+     * @param CurTo_ID
+     *            The C_Currency_ID TO
+     * @param ConvDate
+     *            The Conversion date - if null - use current date
+     * @param RateType
+     *            The Conversion rate type - if null/empty - use Spot
+     * @param Amt
+     *            The amount to be converted
+     * @return converted amount
      */
-    public static String getConvertedAmt (String Amt, String CurFrom_ID, String CurTo_ID,
-        String ConvDate, String RateType, ConnectionProvider conn){
-      if (log4j.isDebugEnabled()) log4j.debug("AcctServer - getConvertedAmount no client nor org");
-      return getConvertedAmt (Amt, CurFrom_ID, CurTo_ID, ConvDate, RateType, "","", conn);
+    public static String getConvertedAmt(String Amt, String CurFrom_ID,
+            String CurTo_ID, String ConvDate, String RateType,
+            ConnectionProvider conn) {
+        if (log4j.isDebugEnabled())
+            log4j.debug("AcctServer - getConvertedAmount no client nor org");
+        return getConvertedAmt(Amt, CurFrom_ID, CurTo_ID, ConvDate, RateType,
+                "", "", conn);
     }
-   
-    public static String getConvertedAmt (String Amt, String CurFrom_ID, String CurTo_ID,
-        String ConvDate, String RateType, String client, String org, ConnectionProvider conn){
-        if (log4j.isDebugEnabled()) log4j.debug("AcctServer - getConvertedAmount - starting method - Amt : " + Amt + " - CurFrom_ID : " + CurFrom_ID + " - CurTo_ID : " + CurTo_ID + "- ConvDate: "+ConvDate+" - RateType:"+RateType+" - client:"+client+"- org:"+org);
-        
+
+    public static String getConvertedAmt(String Amt, String CurFrom_ID,
+            String CurTo_ID, String ConvDate, String RateType, String client,
+            String org, ConnectionProvider conn) {
+        if (log4j.isDebugEnabled())
+            log4j
+                    .debug("AcctServer - getConvertedAmount - starting method - Amt : "
+                            + Amt
+                            + " - CurFrom_ID : "
+                            + CurFrom_ID
+                            + " - CurTo_ID : "
+                            + CurTo_ID
+                            + "- ConvDate: "
+                            + ConvDate
+                            + " - RateType:"
+                            + RateType
+                            + " - client:" + client + "- org:" + org);
+
         if (Amt.equals(""))
-            throw new IllegalArgumentException("AcctServer - getConvertedAmt - required parameter missing - Amt");
+            throw new IllegalArgumentException(
+                    "AcctServer - getConvertedAmt - required parameter missing - Amt");
         if (CurFrom_ID.equals(CurTo_ID) || Amt.equals("0"))
             return Amt;
         AcctServerData[] data = null;
-        try{
-            if (ConvDate != null && ConvDate.equals(""))ConvDate = DateTimeData.today(conn);
-            //  ConvDate    IN      DATE
-            if (RateType == null || RateType.equals("")) RateType = "S";
-            data = AcctServerData.currencyConvert(conn,Amt,CurFrom_ID,CurTo_ID,ConvDate,RateType, client, org);
-        }catch(ServletException e){
-            log4j.warn (e);
+        try {
+            if (ConvDate != null && ConvDate.equals(""))
+                ConvDate = DateTimeData.today(conn);
+            // ConvDate IN DATE
+            if (RateType == null || RateType.equals(""))
+                RateType = "S";
+            data = AcctServerData.currencyConvert(conn, Amt, CurFrom_ID,
+                    CurTo_ID, ConvDate, RateType, client, org);
+        } catch (ServletException e) {
+            log4j.warn(e);
         }
-        if (data==null || data.length == 0){
-            /*log4j.error("No conversion ratio");
-            throw new ServletException("No conversion ratio defined!");*/
+        if (data == null || data.length == 0) {
+            /*
+             * log4j.error("No conversion ratio"); throw new
+             * ServletException("No conversion ratio defined!");
+             */
             return "";
-        }else {
-            if (log4j.isDebugEnabled()) log4j.debug("getConvertedAmount - converted:"+data[0].converted);
-              return data[0].converted;          
+        } else {
+            if (log4j.isDebugEnabled())
+                log4j.debug("getConvertedAmount - converted:"
+                        + data[0].converted);
+            return data[0].converted;
         }
-    }   //  getConvertedAmt
+    } // getConvertedAmt
 
-  
     /**
-     *  Is Period Open
-     *  @return true if period is open
+     * Is Period Open
+     * 
+     * @return true if period is open
      */
-    public boolean isPeriodOpen(){
-        //if (log4j.isDebugEnabled()) log4j.debug(" ***************************** AD_Client_ID - " + AD_Client_ID + " -- DateAcct - " + DateAcct + " -- DocumentType - " + DocumentType);
+    public boolean isPeriodOpen() {
+        // if (log4j.isDebugEnabled())
+        // log4j.debug(" ***************************** AD_Client_ID - " +
+        // AD_Client_ID + " -- DateAcct - " + DateAcct + " -- DocumentType - " +
+        // DocumentType);
         setC_Period_ID();
         boolean open = (!C_Period_ID.equals(""));
         if (open) {
-            if (log4j.isDebugEnabled()) 
-            	log4j.debug("AcctServer - isPeriodOpen - " + DocumentNo);
+            if (log4j.isDebugEnabled())
+                log4j.debug("AcctServer - isPeriodOpen - " + DocumentNo);
         } else {
             log4j.warn("AcctServer - isPeriodOpen NO - " + DocumentNo);
         }
         return open;
-    }   //  isPeriodOpen
+    } // isPeriodOpen
 
     /**
-     *  Calculate Period ID.
-     *  Set to -1 if no period open, 0 if no period control
+     * Calculate Period ID. Set to -1 if no period open, 0 if no period control
      */
-    public void setC_Period_ID(){
-        if (C_Period_ID != null)    return;
-        if (log4j.isDebugEnabled()) log4j.debug("AcctServer - setC_Period_ID - AD_Client_ID - " + AD_Client_ID + "--DateAcct - " + DateAcct + "--DocumentType -" + DocumentType);
-        AcctServerData [] data=null;
-        try{
-          if (log4j.isDebugEnabled()) log4j.debug("setC_Period_ID - inside try - AD_Client_ID - " + AD_Client_ID + " -- DateAcct - " + DateAcct + " -- DocumentType - " + DocumentType);
-          data = AcctServerData.periodOpen(connectionProvider,AD_Client_ID,DocumentType, AD_Org_ID,DateAcct);
-        }catch (ServletException e){
+    public void setC_Period_ID() {
+        if (C_Period_ID != null)
+            return;
+        if (log4j.isDebugEnabled())
+            log4j.debug("AcctServer - setC_Period_ID - AD_Client_ID - "
+                    + AD_Client_ID + "--DateAcct - " + DateAcct
+                    + "--DocumentType -" + DocumentType);
+        AcctServerData[] data = null;
+        try {
+            if (log4j.isDebugEnabled())
+                log4j.debug("setC_Period_ID - inside try - AD_Client_ID - "
+                        + AD_Client_ID + " -- DateAcct - " + DateAcct
+                        + " -- DocumentType - " + DocumentType);
+            data = AcctServerData.periodOpen(connectionProvider, AD_Client_ID,
+                    DocumentType, AD_Org_ID, DateAcct);
+        } catch (ServletException e) {
             log4j.warn(e);
         }
         C_Period_ID = data[0].period;
-        if (log4j.isDebugEnabled()) log4j.debug ("AcctServer - setC_Period_ID - "+ AD_Client_ID + "/" + DateAcct + "/" + DocumentType + " => " + C_Period_ID);
-    }   //  setC_Period_ID
-
+        if (log4j.isDebugEnabled())
+            log4j.debug("AcctServer - setC_Period_ID - " + AD_Client_ID + "/"
+                    + DateAcct + "/" + DocumentType + " => " + C_Period_ID);
+    } // setC_Period_ID
 
     /**
-     *  Get fully qualified Account Combination
-     *
-     *  @param AD_Client_ID client
-     *  @param AD_Org_ID org
-     *  @param C_AcctSchema_ID acct schema
-     *  @param Account_ID natural account
-     *  @param  base_ValidCombination_ID optional base combination to be specified
-     *  @param Alias aloas
-     *  @param AD_User_ID user
-     *  @param M_Product_ID product
-     *  @param C_BPartner_ID partner
-     *  @param AD_OrgTrx_ID trx org
-     *  @param C_LocFrom_ID loc from
-     *  @param C_LocTo_ID loc to
-     *  @param C_SRegion_ID sales region
-     *  @param C_Project_ID project
-     *  @param C_Campaign_ID campaign
-     *  @param C_Activity_ID activity
-     *  @param User1_ID user1
-     *  @param User2_ID user2
-     *  @return C_ValidCombination_ID of existing or new Combination
+     * Get fully qualified Account Combination
+     * 
+     * @param AD_Client_ID
+     *            client
+     * @param AD_Org_ID
+     *            org
+     * @param C_AcctSchema_ID
+     *            acct schema
+     * @param Account_ID
+     *            natural account
+     * @param base_ValidCombination_ID
+     *            optional base combination to be specified
+     * @param Alias
+     *            aloas
+     * @param AD_User_ID
+     *            user
+     * @param M_Product_ID
+     *            product
+     * @param C_BPartner_ID
+     *            partner
+     * @param AD_OrgTrx_ID
+     *            trx org
+     * @param C_LocFrom_ID
+     *            loc from
+     * @param C_LocTo_ID
+     *            loc to
+     * @param C_SRegion_ID
+     *            sales region
+     * @param C_Project_ID
+     *            project
+     * @param C_Campaign_ID
+     *            campaign
+     * @param C_Activity_ID
+     *            activity
+     * @param User1_ID
+     *            user1
+     * @param User2_ID
+     *            user2
+     * @return C_ValidCombination_ID of existing or new Combination
      */
-    public static String getValidCombination (String AD_Client_ID, String AD_Org_ID,
-        String C_AcctSchema_ID, String Account_ID, String base_ValidCombination_ID, String Alias, String AD_User_ID,
-        String M_Product_ID, String C_BPartner_ID, String AD_OrgTrx_ID,
-        String C_LocFrom_ID, String C_LocTo_ID, String C_SRegion_ID, String C_Project_ID,
-        String C_Campaign_ID, String C_Activity_ID, String User1_ID, String User2_ID,ConnectionProvider conn){
+    public static String getValidCombination(String AD_Client_ID,
+            String AD_Org_ID, String C_AcctSchema_ID, String Account_ID,
+            String base_ValidCombination_ID, String Alias, String AD_User_ID,
+            String M_Product_ID, String C_BPartner_ID, String AD_OrgTrx_ID,
+            String C_LocFrom_ID, String C_LocTo_ID, String C_SRegion_ID,
+            String C_Project_ID, String C_Campaign_ID, String C_Activity_ID,
+            String User1_ID, String User2_ID, ConnectionProvider conn) {
         String retValue = "";
-        StringBuffer sb = new StringBuffer ("C_ValidCombination_Get[");
+        StringBuffer sb = new StringBuffer("C_ValidCombination_Get[");
         sb.append("v,");
-        //  --  Mandatory Accounting fields
-        //  2 - AD_Client_ID
+        // -- Mandatory Accounting fields
+        // 2 - AD_Client_ID
         sb.append("AD_Client_ID=").append(AD_Client_ID).append(",");
-        //  3 - AD_Org_ID
+        // 3 - AD_Org_ID
         sb.append("AD_Org_ID=").append(AD_Org_ID).append(",");
-        //  4- C_AcctSchema_ID
+        // 4- C_AcctSchema_ID
         sb.append("C_AcctSchema_ID=").append(C_AcctSchema_ID).append(",");
-        //  5 - Account_ID
+        // 5 - Account_ID
         sb.append("Account_ID=").append(Account_ID).append(", ");
-        //  --  Optional
-        //  6 - Base C_ValidCombination_ID
-        sb.append("BaseValidCombination_ID=").append(base_ValidCombination_ID).append(",");
-        //  7 - MustBeFullyQualified
+        // -- Optional
+        // 6 - Base C_ValidCombination_ID
+        sb.append("BaseValidCombination_ID=").append(base_ValidCombination_ID)
+                .append(",");
+        // 7 - MustBeFullyQualified
         sb.append("MustBeFullyQualified='Y',");
-        //  8 - Alias
+        // 8 - Alias
         sb.append("Alias='").append(Alias).append("',");
-        //  9 - CreatedBy
+        // 9 - CreatedBy
         sb.append("AD_User_ID=").append(AD_User_ID).append(", ");
-        //  --  Optional Accounting fields
-        //  10 - M_Product_ID
+        // -- Optional Accounting fields
+        // 10 - M_Product_ID
         sb.append("M_Product_ID=").append(M_Product_ID).append(",");
-        //  11 - C_BPartner_ID
+        // 11 - C_BPartner_ID
         sb.append("C_BPartner_ID=").append(C_BPartner_ID).append(",");
-        //  12 - AD_OrgTrx_ID
+        // 12 - AD_OrgTrx_ID
         sb.append("AD_OrgTrx_ID=").append(AD_OrgTrx_ID).append(",");
-        //  13 - C_LocFrom_ID
+        // 13 - C_LocFrom_ID
         sb.append("C_LocFrom_ID=").append(C_LocFrom_ID).append(",");
-        //  14 - C_LocTo_ID
+        // 14 - C_LocTo_ID
         sb.append("C_LocTo_ID=").append(C_LocTo_ID).append(", ");
-        //  15 - C_SalesRegion_ID
+        // 15 - C_SalesRegion_ID
         sb.append("C_SalesRegion_ID=").append(C_SRegion_ID).append(",");
-        //  16 - C_Project_ID
+        // 16 - C_Project_ID
         sb.append("C_Project_ID=").append(C_Project_ID).append(",");
-        //  17 - C_Campaign_ID
+        // 17 - C_Campaign_ID
         sb.append("C_Campaign_ID=").append(C_Campaign_ID).append(",");
-        //  18 - C_Activity_ID
+        // 18 - C_Activity_ID
         sb.append("C_Activity_ID=").append(C_Activity_ID).append(",");
-        //  19 - User1_ID
+        // 19 - User1_ID
         sb.append("User1_ID=").append(User1_ID).append(",");
-        //  20 - User2_ID
+        // 20 - User2_ID
         sb.append("User2_ID=").append(User2_ID).append(")");
 
         RespuestaCS_AcctServer data = null;
-        try{
-            data = AcctServerData.callGetValidCombination(conn, AD_Client_ID, AD_Org_ID, C_AcctSchema_ID, Account_ID, base_ValidCombination_ID, "Y", Alias, AD_User_ID, M_Product_ID, C_BPartner_ID, AD_OrgTrx_ID, C_LocFrom_ID, C_LocTo_ID, C_SRegion_ID, C_Project_ID, C_Campaign_ID, C_Activity_ID, User1_ID, User2_ID);
-        }catch(ServletException e){
+        try {
+            data = AcctServerData.callGetValidCombination(conn, AD_Client_ID,
+                    AD_Org_ID, C_AcctSchema_ID, Account_ID,
+                    base_ValidCombination_ID, "Y", Alias, AD_User_ID,
+                    M_Product_ID, C_BPartner_ID, AD_OrgTrx_ID, C_LocFrom_ID,
+                    C_LocTo_ID, C_SRegion_ID, C_Project_ID, C_Campaign_ID,
+                    C_Activity_ID, User1_ID, User2_ID);
+        } catch (ServletException e) {
             log4j.warn(e);
         }
         //
-            retValue = data.validCombination;
-        //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - getValidCombination: " + sb.toString());
+        retValue = data.validCombination;
+        // if (log4j.isDebugEnabled())
+        // log4j.debug("AcctServer - getValidCombination: " + sb.toString());
         return retValue;
-    }   //  getValidCombination
+    } // getValidCombination
 
     /**
-     *  Matching
-     *  <pre>
+     * Matching
+     * 
+     * <pre>
      *  Derive Invoice-Receipt Match from PO-Invoice and PO-Receipt
      *  Purchase Order (20)
      *  - Invoice1 (10)
      *  - Invoice2 (10)
      *  - Receipt1 (5)
      *  - Receipt2 (15)
-     *
      *  (a) Creates Directs
      *      - Invoice1 - Receipt1 (5)
      *      - Invoice2 - Receipt2 (10)
-     *
      *  (b) Creates Indirects
      *      - Invoice1 - Receipt2 (5)
      *  (Not imlemented)
-     *
-     *
-     *  </pre>
-     *  @return number of records created
+     * 
+     * 
+     * </pre>
+     * 
+     * @return number of records created
      */
-    public int match(VariablesSecureApp vars,ConnectionProvider conn, Connection con){
-        //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Match--Starting");
+    public int match(VariablesSecureApp vars, ConnectionProvider conn,
+            Connection con) {
+        // if (log4j.isDebugEnabled())
+        // log4j.debug("AcctServer - Match--Starting");
         int counter = 0;
-        //  (a) Direct Matches
-        AcctServerData [] data=null;
-        try{
-            data= AcctServerData.selectMatch(conn,AD_Client_ID);
-        }catch(ServletException e){
+        // (a) Direct Matches
+        AcctServerData[] data = null;
+        try {
+            data = AcctServerData.selectMatch(conn, AD_Client_ID);
+        } catch (ServletException e) {
             log4j.warn(e);
         }
-        for (int i = 0;i<data.length;i++){
+        for (int i = 0; i < data.length; i++) {
             BigDecimal qty1 = new BigDecimal(data[i].qty1);
             BigDecimal qty2 = new BigDecimal(data[i].qty2);
             BigDecimal Qty = qty1.min(qty2);
-            if  (Qty.toString().equals("0"))
+            if (Qty.toString().equals("0"))
                 continue;
-            //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Match--dateTrx1 :->" + data[i].datetrx1 + "Match--dateTrx2: ->" + data[i].datetrx2);
+            // if (log4j.isDebugEnabled())
+            // log4j.debug("AcctServer - Match--dateTrx1 :->" + data[i].datetrx1
+            // + "Match--dateTrx2: ->" + data[i].datetrx2);
             String dateTrx1 = data[i].datetrx1;
             String dateTrx2 = data[i].datetrx2;
             String compare = "";
-            try{
+            try {
                 compare = DateTimeData.compare(conn, dateTrx1, dateTrx2);
-            }catch(ServletException e){
+            } catch (ServletException e) {
                 log4j.warn(e);
             }
             String DateTrx = dateTrx1;
@@ -1087,179 +1285,268 @@ public abstract class AcctServer  {
             String M_InOutLine_ID = data[i].mInoutlineId;
             String M_Product_ID = data[i].mProductId;
             //
-            if (createMatchInv(AD_Client_ID, AD_Org_ID,M_InOutLine_ID, C_InvoiceLine_ID,M_Product_ID, strDateTrx, strQty, vars, conn,con)==1)
+            if (createMatchInv(AD_Client_ID, AD_Org_ID, M_InOutLine_ID,
+                    C_InvoiceLine_ID, M_Product_ID, strDateTrx, strQty, vars,
+                    conn, con) == 1)
                 counter++;
         }
-        //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - Matcher.match - Client_ID=" + AD_Client_ID + ", Records created=" + counter);
+        // if (log4j.isDebugEnabled())
+        // log4j.debug("AcctServer - Matcher.match - Client_ID=" + AD_Client_ID
+        // + ", Records created=" + counter);
         return counter;
-    }   //  match
+    } // match
 
     /**
-     *  Create MatchInv record
-     *  @param AD_Client_ID Client
-     *  @param AD_Org_ID Org
-     *  @param M_InOutLine_ID Receipt
-     *  @param C_InvoiceLine_ID Invoice
-     *  @param M_Product_ID Product
-     *  @param DateTrx Date
-     *  @param Qty Qty
-     *  @return true if record created
+     * Create MatchInv record
+     * 
+     * @param AD_Client_ID
+     *            Client
+     * @param AD_Org_ID
+     *            Org
+     * @param M_InOutLine_ID
+     *            Receipt
+     * @param C_InvoiceLine_ID
+     *            Invoice
+     * @param M_Product_ID
+     *            Product
+     * @param DateTrx
+     *            Date
+     * @param Qty
+     *            Qty
+     * @return true if record created
      */
-    private int createMatchInv (String AD_Client_ID, String AD_Org_ID,String M_InOutLine_ID, String C_InvoiceLine_ID,String 
-    M_Product_ID, String DateTrx, String Qty,VariablesSecureApp vars,ConnectionProvider conn, Connection con){
-        //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - createMatchInv - InvLine=" + C_InvoiceLine_ID + ",Rec=" + M_InOutLine_ID + ", Qty=" + Qty + ", " + DateTrx);
+    private int createMatchInv(String AD_Client_ID, String AD_Org_ID,
+            String M_InOutLine_ID, String C_InvoiceLine_ID,
+            String M_Product_ID, String DateTrx, String Qty,
+            VariablesSecureApp vars, ConnectionProvider conn, Connection con) {
+        // if (log4j.isDebugEnabled())
+        // log4j.debug("AcctServer - createMatchInv - InvLine=" +
+        // C_InvoiceLine_ID + ",Rec=" + M_InOutLine_ID + ", Qty=" + Qty + ", " +
+        // DateTrx);
         int no = 0;
-        try{
+        try {
             String M_MatchInv_ID = SequenceIdData.getUUID();
             //
-            no = AcctServerData.insertMatchInv(con,conn,  M_MatchInv_ID, AD_Client_ID, AD_Org_ID, M_InOutLine_ID, C_InvoiceLine_ID, M_Product_ID, DateTrx, Qty);
-        }catch(ServletException e){
+            no = AcctServerData.insertMatchInv(con, conn, M_MatchInv_ID,
+                    AD_Client_ID, AD_Org_ID, M_InOutLine_ID, C_InvoiceLine_ID,
+                    M_Product_ID, DateTrx, Qty);
+        } catch (ServletException e) {
             log4j.warn(e);
         }
         return no;
-    }   //  createMatchInv
+    } // createMatchInv
 
     /**
-     *  Get the account for Accounting Schema
-     *  @param AcctType see ACCTTYPE_*
-     *  @param as accounting schema
-     *  @return Account
+     * Get the account for Accounting Schema
+     * 
+     * @param AcctType
+     *            see ACCTTYPE_*
+     * @param as
+     *            accounting schema
+     * @return Account
      */
-    public final Account getAccount (String AcctType, AcctSchema as,ConnectionProvider conn){
+    public final Account getAccount(String AcctType, AcctSchema as,
+            ConnectionProvider conn) {
         BigDecimal AMT = null;
         BigDecimal ZERO = new BigDecimal("0");
-        AcctServerData [] data=null;
-        //if (log4j.isDebugEnabled()) log4j.debug("*******************************getAccount 1: AcctType:-->" + AcctType);
-        try{
+        AcctServerData[] data = null;
+        // if (log4j.isDebugEnabled())
+        // log4j.debug("*******************************getAccount 1: AcctType:-->"
+        // + AcctType);
+        try {
             /** Account Type - Invoice */
-            if (AcctType.equals(ACCTTYPE_Charge)){  //  see getChargeAccount in DocLine
-                //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - *******************amount(AMT);-->" + getAmount(AMTTYPE_Charge));
+            if (AcctType.equals(ACCTTYPE_Charge)) { // see getChargeAccount in
+                                                    // DocLine
+                // if (log4j.isDebugEnabled())
+                // log4j.debug("AcctServer - *******************amount(AMT);-->"
+                // + getAmount(AMTTYPE_Charge));
                 AMT = new BigDecimal(getAmount(AMTTYPE_Charge));
-                //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - *******************AMT;-->" + AMT);
+                // if (log4j.isDebugEnabled())
+                // log4j.debug("AcctServer - *******************AMT;-->" + AMT);
                 int cmp = AMT.compareTo(ZERO);
-                //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - ******************* CMP: " + cmp);
+                // if (log4j.isDebugEnabled())
+                // log4j.debug("AcctServer - ******************* CMP: " + cmp);
                 if (cmp == 0)
                     return null;
                 else if (cmp < 0)
-                    data = AcctServerData.selectExpenseAcct(conn, C_Charge_ID, as.getC_AcctSchema_ID());
+                    data = AcctServerData.selectExpenseAcct(conn, C_Charge_ID,
+                            as.getC_AcctSchema_ID());
                 else
-                    data = AcctServerData.selectRevenueAcct(conn, C_Charge_ID, as.getC_AcctSchema_ID());
-                //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - *******************************getAccount 2");
-            }else if (AcctType.equals(ACCTTYPE_V_Liability)){
-                data = AcctServerData.selectLiabilityAcct(conn, C_BPartner_ID, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_V_Liability_Services)){
-                data = AcctServerData.selectLiabilityServicesAcct(conn, C_BPartner_ID, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_C_Receivable)){
-                data = AcctServerData.selectReceivableAcct(conn, C_BPartner_ID, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_UnallocatedCash)){/** Account Type - Payment  */
-                data = AcctServerData.selectUnallocatedCashAcct(conn, C_BankAccount_ID, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_BankInTransit)){
-                data = AcctServerData.selectInTransitAcct(conn, C_BankAccount_ID, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_BankInTransitDefault)){
-                data = AcctServerData.selectInTransitDefaultAcct(conn, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_ConvertChargeDefaultAmt)){
-                data = AcctServerData.selectConvertChargeDefaultAmtAcct(conn, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_ConvertGainDefaultAmt)){
-                data = AcctServerData.selectConvertGainDefaultAmtAcct(conn, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_PaymentSelect)){
-                data = AcctServerData.selectPaymentSelectAcct(conn, C_BankAccount_ID, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_WriteOffDefault)){
-                data = AcctServerData.selectWriteOffDefault(conn, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_DiscountExp)){/** Account Type - Allocation   */
-                data = AcctServerData.selectDiscountExpAcct(conn, C_BPartner_ID, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_DiscountRev)){
-                data = AcctServerData.selectDiscountRevAcct(conn, C_BPartner_ID, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_WriteOff)){
-                data = AcctServerData.selectWriteOffAcct(conn, C_BPartner_ID, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_ConvertChargeLossAmt)){/** Account Type - Bank Statement   */
-                data = AcctServerData.selectConvertChargeLossAmt(conn, C_BankAccount_ID, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_ConvertChargeGainAmt)){
-                data = AcctServerData.selectConvertChargeGainAmt(conn, C_BankAccount_ID, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_BankAsset)){
-                data = AcctServerData.selectAssetAcct(conn, C_BankAccount_ID, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_InterestRev)){
-                data = AcctServerData.selectInterestRevAcct(conn, C_BankAccount_ID, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_InterestExp)){
-                data = AcctServerData.selectInterestExpAcct(conn, C_BankAccount_ID, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_CashAsset)){/** Account Type - Cash     */
-                data = AcctServerData.selectCBAssetAcct(conn, C_CashBook_ID, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_CashTransfer)){
-                data = AcctServerData.selectCashTransferAcct(conn, C_CashBook_ID, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_CashExpense)){
-                data = AcctServerData.selectCBExpenseAcct(conn, C_CashBook_ID, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_CashReceipt)){
-                data = AcctServerData.selectCBReceiptAcct(conn, C_CashBook_ID, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_CashDifference)){
-                data = AcctServerData.selectCBDifferencesAcct(conn, C_CashBook_ID, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_InvDifferences)){/** Inventory Accounts          */
-                data = AcctServerData.selectWDifferencesAcct(conn, M_Warehouse_ID, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_NotInvoicedReceipts)){
-                if (log4j.isDebugEnabled()) log4j.debug("AcctServer - getAccount - ACCTYPE_NotInvoicedReceipts - C_BPartner_ID - " + C_BPartner_ID);
-                data = AcctServerData.selectNotInvoicedReceiptsAcct(conn, C_BPartner_ID, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_ProjectAsset)){/** Project Accounts              */
-                data = AcctServerData.selectPJAssetAcct(conn, C_Project_ID, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_ProjectWIP)){
-                data = AcctServerData.selectPJWIPAcct(conn, C_Project_ID, as.getC_AcctSchema_ID());
-            }else if (AcctType.equals(ACCTTYPE_PPVOffset)){/** GL Accounts                 */
-                data = AcctServerData.selectPPVOffsetAcct(conn, as.getC_AcctSchema_ID());
-            }else{
-                log4j.warn("AcctServer - getAccount - Not found AcctType=" + AcctType);
+                    data = AcctServerData.selectRevenueAcct(conn, C_Charge_ID,
+                            as.getC_AcctSchema_ID());
+                // if (log4j.isDebugEnabled())
+                // log4j.debug("AcctServer - *******************************getAccount 2");
+            } else if (AcctType.equals(ACCTTYPE_V_Liability)) {
+                data = AcctServerData.selectLiabilityAcct(conn, C_BPartner_ID,
+                        as.getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_V_Liability_Services)) {
+                data = AcctServerData.selectLiabilityServicesAcct(conn,
+                        C_BPartner_ID, as.getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_C_Receivable)) {
+                data = AcctServerData.selectReceivableAcct(conn, C_BPartner_ID,
+                        as.getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_UnallocatedCash)) {
+                /** Account Type - Payment */
+                data = AcctServerData.selectUnallocatedCashAcct(conn,
+                        C_BankAccount_ID, as.getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_BankInTransit)) {
+                data = AcctServerData.selectInTransitAcct(conn,
+                        C_BankAccount_ID, as.getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_BankInTransitDefault)) {
+                data = AcctServerData.selectInTransitDefaultAcct(conn, as
+                        .getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_ConvertChargeDefaultAmt)) {
+                data = AcctServerData.selectConvertChargeDefaultAmtAcct(conn,
+                        as.getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_ConvertGainDefaultAmt)) {
+                data = AcctServerData.selectConvertGainDefaultAmtAcct(conn, as
+                        .getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_PaymentSelect)) {
+                data = AcctServerData.selectPaymentSelectAcct(conn,
+                        C_BankAccount_ID, as.getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_WriteOffDefault)) {
+                data = AcctServerData.selectWriteOffDefault(conn, as
+                        .getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_DiscountExp)) {
+                /** Account Type - Allocation */
+                data = AcctServerData.selectDiscountExpAcct(conn,
+                        C_BPartner_ID, as.getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_DiscountRev)) {
+                data = AcctServerData.selectDiscountRevAcct(conn,
+                        C_BPartner_ID, as.getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_WriteOff)) {
+                data = AcctServerData.selectWriteOffAcct(conn, C_BPartner_ID,
+                        as.getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_ConvertChargeLossAmt)) {
+                /** Account Type - Bank Statement */
+                data = AcctServerData.selectConvertChargeLossAmt(conn,
+                        C_BankAccount_ID, as.getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_ConvertChargeGainAmt)) {
+                data = AcctServerData.selectConvertChargeGainAmt(conn,
+                        C_BankAccount_ID, as.getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_BankAsset)) {
+                data = AcctServerData.selectAssetAcct(conn, C_BankAccount_ID,
+                        as.getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_InterestRev)) {
+                data = AcctServerData.selectInterestRevAcct(conn,
+                        C_BankAccount_ID, as.getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_InterestExp)) {
+                data = AcctServerData.selectInterestExpAcct(conn,
+                        C_BankAccount_ID, as.getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_CashAsset)) {
+                /** Account Type - Cash */
+                data = AcctServerData.selectCBAssetAcct(conn, C_CashBook_ID, as
+                        .getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_CashTransfer)) {
+                data = AcctServerData.selectCashTransferAcct(conn,
+                        C_CashBook_ID, as.getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_CashExpense)) {
+                data = AcctServerData.selectCBExpenseAcct(conn, C_CashBook_ID,
+                        as.getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_CashReceipt)) {
+                data = AcctServerData.selectCBReceiptAcct(conn, C_CashBook_ID,
+                        as.getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_CashDifference)) {
+                data = AcctServerData.selectCBDifferencesAcct(conn,
+                        C_CashBook_ID, as.getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_InvDifferences)) {
+                /** Inventory Accounts */
+                data = AcctServerData.selectWDifferencesAcct(conn,
+                        M_Warehouse_ID, as.getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_NotInvoicedReceipts)) {
+                if (log4j.isDebugEnabled())
+                    log4j
+                            .debug("AcctServer - getAccount - ACCTYPE_NotInvoicedReceipts - C_BPartner_ID - "
+                                    + C_BPartner_ID);
+                data = AcctServerData.selectNotInvoicedReceiptsAcct(conn,
+                        C_BPartner_ID, as.getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_ProjectAsset)) {
+                /** Project Accounts */
+                data = AcctServerData.selectPJAssetAcct(conn, C_Project_ID, as
+                        .getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_ProjectWIP)) {
+                data = AcctServerData.selectPJWIPAcct(conn, C_Project_ID, as
+                        .getC_AcctSchema_ID());
+            } else if (AcctType.equals(ACCTTYPE_PPVOffset)) {
+                /** GL Accounts */
+                data = AcctServerData.selectPPVOffsetAcct(conn, as
+                        .getC_AcctSchema_ID());
+            } else {
+                log4j.warn("AcctServer - getAccount - Not found AcctType="
+                        + AcctType);
                 return null;
             }
-        //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - *******************************getAccount 3");
-        }catch(ServletException e){
+            // if (log4j.isDebugEnabled())
+            // log4j.debug("AcctServer - *******************************getAccount 3");
+        } catch (ServletException e) {
             log4j.warn(e);
         }
-        //  Get Acct
+        // Get Acct
         String Account_ID = "";
-        if (data != null && data.length!=0){
+        if (data != null && data.length != 0) {
             Account_ID = data[0].accountId;
-        }else   return null;
-        //  No account
-        if (Account_ID.equals("")){
-            log4j.warn("AcctServer - getAccount - NO account Type="
-                + AcctType + ", Record=" + Record_ID);
+        } else
+            return null;
+        // No account
+        if (Account_ID.equals("")) {
+            log4j.warn("AcctServer - getAccount - NO account Type=" + AcctType
+                    + ", Record=" + Record_ID);
             return null;
         }
-        //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - *******************************getAccount 4");
-        //  Return Account
+        // if (log4j.isDebugEnabled())
+        // log4j.debug("AcctServer - *******************************getAccount 4");
+        // Return Account
         Account acct = null;
-        try{
+        try {
             acct = Account.getAccount(conn, Account_ID);
-        }catch(ServletException e){
+        } catch (ServletException e) {
             log4j.warn(e);
         }
         return acct;
-    }   //  getAccount
+    } // getAccount
 
-    public FieldProvider [] getObjectFieldProvider(){
+    public FieldProvider[] getObjectFieldProvider() {
         return objectFieldProvider;
     }
 
-    public void setObjectFieldProvider(FieldProvider [] fieldProvider){
+    public void setObjectFieldProvider(FieldProvider[] fieldProvider) {
         objectFieldProvider = fieldProvider;
     }
 
-    public abstract void loadObjectFieldProvider(ConnectionProvider conn, String AD_Client_ID, String Id) throws ServletException;
+    public abstract void loadObjectFieldProvider(ConnectionProvider conn,
+            String AD_Client_ID, String Id) throws ServletException;
 
-    public abstract boolean loadDocumentDetails(FieldProvider[] data,ConnectionProvider conn);
+    public abstract boolean loadDocumentDetails(FieldProvider[] data,
+            ConnectionProvider conn);
+
     /**
-     *  Get Source Currency Balance - subtracts line (and tax) amounts from total - no rounding
-     *  @return positive amount, if total header is bigger than lines
+     * Get Source Currency Balance - subtracts line (and tax) amounts from total
+     * - no rounding
+     * 
+     * @return positive amount, if total header is bigger than lines
      */
     public abstract BigDecimal getBalance();
 
     /**
-     *  Create Facts (the accounting logic)
-     *  @param as accounting schema
-     *  @return Fact
+     * Create Facts (the accounting logic)
+     * 
+     * @param as
+     *            accounting schema
+     * @return Fact
      */
-    public abstract Fact createFact (AcctSchema as,ConnectionProvider conn,Connection con,VariablesSecureApp vars) throws ServletException;
+    public abstract Fact createFact(AcctSchema as, ConnectionProvider conn,
+            Connection con, VariablesSecureApp vars) throws ServletException;
 
-    public abstract boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId);
+    public abstract boolean getDocumentConfirmation(ConnectionProvider conn,
+            String strRecordId);
 
     public String getInfo(VariablesSecureApp vars) {
-      return(Utility.messageBD(connectionProvider, "Created", vars.getLanguage()) + "=" + success /*+ ", " + Utility.messageBD(this, "Errors", vars.getLanguage()) + "=" + errors*/);
+        return (Utility.messageBD(connectionProvider, "Created", vars
+                .getLanguage())
+                + "=" + success /*
+                                 * + ", " + Utility.messageBD(this, "Errors",
+                                 * vars.getLanguage()) + "=" + errors
+                                 */);
     } // end of getInfo() method
 
     /**
@@ -1267,26 +1554,35 @@ public abstract class AcctServer  {
      * @return
      */
     public String getInfo(String language) {
-      return(Utility.messageBD(connectionProvider, "Created", language) + "=" + success);
+        return (Utility.messageBD(connectionProvider, "Created", language)
+                + "=" + success);
     }
-    
-    public boolean checkDocuments() throws ServletException{
-      if(m_as.length==0) return false;
-      AcctServerData [] docTypes = AcctServerData.selectDocTypes(connectionProvider, AD_Table_ID, AD_Client_ID);
-      //if (log4j.isDebugEnabled()) log4j.debug("AcctServer - AcctSchema length-" + (this.m_as).length);
-      for (int i=0;i<docTypes.length;i++){
-          AcctServerData [] data = AcctServerData.selectDocuments(connectionProvider, tableName, AD_Org_ID, docTypes[i].name, strDateColumn);
-          if (log4j.isDebugEnabled()) log4j.debug("AcctServer - not posted "+docTypes[i].name+" documets length-" + data.length);
-           if(data!=null && data.length>0) {
-            if (!data[0].id.equals("")) return true;
-          }
-      }
-      return false;
+
+    public boolean checkDocuments() throws ServletException {
+        if (m_as.length == 0)
+            return false;
+        AcctServerData[] docTypes = AcctServerData.selectDocTypes(
+                connectionProvider, AD_Table_ID, AD_Client_ID);
+        // if (log4j.isDebugEnabled())
+        // log4j.debug("AcctServer - AcctSchema length-" + (this.m_as).length);
+        for (int i = 0; i < docTypes.length; i++) {
+            AcctServerData[] data = AcctServerData.selectDocuments(
+                    connectionProvider, tableName, AD_Org_ID, docTypes[i].name,
+                    strDateColumn);
+            if (log4j.isDebugEnabled())
+                log4j.debug("AcctServer - not posted " + docTypes[i].name
+                        + " documets length-" + data.length);
+            if (data != null && data.length > 0) {
+                if (!data[0].id.equals(""))
+                    return true;
+            }
+        }
+        return false;
     } // end of checkDocuments() method
 
     public String getServletInfo() {
-    return "Servlet for the accounting";
-  } // end of getServletInfo() method
+        return "Servlet for the accounting";
+    } // end of getServletInfo() method
 
     public ConnectionProvider getConnectionProvider() {
         return connectionProvider;

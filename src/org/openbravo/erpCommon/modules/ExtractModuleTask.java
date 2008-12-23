@@ -26,72 +26,74 @@ import org.openbravo.dal.core.DalInitializingTask;
  * 
  */
 public class ExtractModuleTask extends DalInitializingTask {
-	private String moduleName;
-	private String moduleID;
+    private String moduleName;
+    private String moduleID;
 
-	private String propertiesFile;
-	private String destDir;
-	private String obDir;
-	private boolean exportRD=false;
+    private String propertiesFile;
+    private String destDir;
+    private String obDir;
+    private boolean exportRD = false;
 
-	/**
-	 * Initialize DAL only in case RD exportation is active
-	 */
-	public void execute(){
-	  if (exportRD) super.execute();
-	  else doExecute();
-	}
-	
-	@Override
-	public void doExecute() {
-		try {
-			if (destDir == null || destDir.equals(""))
-				destDir = getProject().getBaseDir().toString();
-			if (obDir == null || obDir.equals(""))
-				obDir = getProject().getBaseDir().toString();
-			if (propertiesFile == null || propertiesFile.equals(""))
-				propertiesFile = obDir + "/config/Openbravo.properties";
+    /**
+     * Initialize DAL only in case RD exportation is active
+     */
+    public void execute() {
+        if (exportRD)
+            super.execute();
+        else
+            doExecute();
+    }
 
-			ExtractModule em = new ExtractModule(propertiesFile, obDir);
-			em.setDestDir(destDir);
-			em.setExportReferenceData(exportRD);
-			
-			if (moduleID != null && !moduleID.equals(""))
-				em.extract(moduleID);
-			else
-				em.extractName(moduleName);
-		} catch (Exception e) {
-			throw new BuildException(e);
-		}
-	}
+    @Override
+    public void doExecute() {
+        try {
+            if (destDir == null || destDir.equals(""))
+                destDir = getProject().getBaseDir().toString();
+            if (obDir == null || obDir.equals(""))
+                obDir = getProject().getBaseDir().toString();
+            if (propertiesFile == null || propertiesFile.equals(""))
+                propertiesFile = obDir + "/config/Openbravo.properties";
 
-	@Override
-	public String getPropertiesFile() {
-		return propertiesFile;
-	}
+            ExtractModule em = new ExtractModule(propertiesFile, obDir);
+            em.setDestDir(destDir);
+            em.setExportReferenceData(exportRD);
 
-	@Override
-	public void setPropertiesFile(String propertiesFile) {
-		this.propertiesFile = propertiesFile;
-	}
+            if (moduleID != null && !moduleID.equals(""))
+                em.extract(moduleID);
+            else
+                em.extractName(moduleName);
+        } catch (Exception e) {
+            throw new BuildException(e);
+        }
+    }
 
-	public void setDestDir(String destFile) {
-		this.destDir = destFile;
-	}
+    @Override
+    public String getPropertiesFile() {
+        return propertiesFile;
+    }
 
-	public void setModuleName(String moduleName) {
-		this.moduleName = moduleName;
-	}
+    @Override
+    public void setPropertiesFile(String propertiesFile) {
+        this.propertiesFile = propertiesFile;
+    }
 
-	public void setModuleID(String moduleID) {
-		this.moduleID = moduleID;
-	}
+    public void setDestDir(String destFile) {
+        this.destDir = destFile;
+    }
 
-	public void setObDir(String obDir) {
-		this.obDir = obDir;
-	}
-	
-	 public void setExportRD(boolean exportRD) {
-	    this.exportRD = exportRD;
-	  }
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
+    }
+
+    public void setModuleID(String moduleID) {
+        this.moduleID = moduleID;
+    }
+
+    public void setObDir(String obDir) {
+        this.obDir = obDir;
+    }
+
+    public void setExportRD(boolean exportRD) {
+        this.exportRD = exportRD;
+    }
 }

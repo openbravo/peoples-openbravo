@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_callouts;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -29,60 +29,79 @@ import javax.servlet.http.*;
 import org.openbravo.erpCommon.businessUtility.Tax;
 
 public class SL_Invoice_Charge_Tax extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
+    }
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled()) log4j.debug("CHANGED: " + strChanged);
-      String strMProductID = vars.getStringParameter("inpmProductId");
-      String strADOrgID = vars.getStringParameter("inpadOrgId");
-      String strCInvoiceID = vars.getStringParameter("inpcInvoiceId");
-      String strWindowId = vars.getStringParameter("inpwindowId");
-      String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
-      String strWharehouse = Utility.getContext(this, vars, "#M_Warehouse_ID", strWindowId);
-      String strCChargeID = vars.getStringParameter("inpcChargeId");
-      String strTabId = vars.getStringParameter("inpTabId");
-      
-      try {
-        printPage(response, vars, strMProductID, strADOrgID, strCInvoiceID, strIsSOTrx, strWharehouse, strCChargeID, strTabId);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else pageError(response);
-  }
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+        if (vars.commandIn("DEFAULT")) {
+            String strChanged = vars.getStringParameter("inpLastFieldChanged");
+            if (log4j.isDebugEnabled())
+                log4j.debug("CHANGED: " + strChanged);
+            String strMProductID = vars.getStringParameter("inpmProductId");
+            String strADOrgID = vars.getStringParameter("inpadOrgId");
+            String strCInvoiceID = vars.getStringParameter("inpcInvoiceId");
+            String strWindowId = vars.getStringParameter("inpwindowId");
+            String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx",
+                    strWindowId);
+            String strWharehouse = Utility.getContext(this, vars,
+                    "#M_Warehouse_ID", strWindowId);
+            String strCChargeID = vars.getStringParameter("inpcChargeId");
+            String strTabId = vars.getStringParameter("inpTabId");
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strMProductID, String strADOrgID, String strCInvoiceID, String strIsSOTrx, String strWharehouse, String strCChargeID, String strTabId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+            try {
+                printPage(response, vars, strMProductID, strADOrgID,
+                        strCInvoiceID, strIsSOTrx, strWharehouse, strCChargeID,
+                        strTabId);
+            } catch (ServletException ex) {
+                pageErrorCallOut(response);
+            }
+        } else
+            pageError(response);
+    }
 
-    String chargeAmt;
-    if (strCChargeID.equals("")) chargeAmt = "0";
-    else chargeAmt = SLChargeData.chargeAmt(this, strCChargeID);
+    void printPage(HttpServletResponse response, VariablesSecureApp vars,
+            String strMProductID, String strADOrgID, String strCInvoiceID,
+            String strIsSOTrx, String strWharehouse, String strCChargeID,
+            String strTabId) throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/ad_callouts/CallOut")
+                .createXmlDocument();
 
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_Invoice_Charge_Tax';\n\n");
-    resultado.append("var respuesta = new Array(");
+        String chargeAmt;
+        if (strCChargeID.equals(""))
+            chargeAmt = "0";
+        else
+            chargeAmt = SLChargeData.chargeAmt(this, strCChargeID);
 
-    SLInvoiceTaxData [] data = SLInvoiceTaxData.select(this, strCInvoiceID);
+        StringBuffer resultado = new StringBuffer();
+        resultado.append("var calloutName='SL_Invoice_Charge_Tax';\n\n");
+        resultado.append("var respuesta = new Array(");
 
-    String strCTaxID = Tax.get(this, strMProductID, data[0].dateinvoiced, strADOrgID, strWharehouse, data[0].cBpartnerLocationId, data[0].cBpartnerLocationId, data[0].cProjectId, strIsSOTrx.equals("Y"));
-      
-      resultado.append("new Array(\"inpcTaxId\", \"" + strCTaxID + "\"),");
-       resultado.append("new Array(\"inpchargeamt\", \"" + chargeAmt + "\")\n");
+        SLInvoiceTaxData[] data = SLInvoiceTaxData.select(this, strCInvoiceID);
 
-    resultado.append(");");
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
+        String strCTaxID = Tax.get(this, strMProductID, data[0].dateinvoiced,
+                strADOrgID, strWharehouse, data[0].cBpartnerLocationId,
+                data[0].cBpartnerLocationId, data[0].cProjectId, strIsSOTrx
+                        .equals("Y"));
+
+        resultado.append("new Array(\"inpcTaxId\", \"" + strCTaxID + "\"),");
+        resultado
+                .append("new Array(\"inpchargeamt\", \"" + chargeAmt + "\")\n");
+
+        resultado.append(");");
+        xmlDocument.setParameter("array", resultado.toString());
+        xmlDocument.setParameter("frameName", "appFrame");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
+    }
 }

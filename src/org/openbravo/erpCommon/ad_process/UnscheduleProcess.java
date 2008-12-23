@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_process;
 
 import java.io.IOException;
@@ -32,28 +32,33 @@ import org.openbravo.scheduling.ProcessContext;
 import org.quartz.SchedulerException;
 
 public class UnscheduleProcess extends HttpSecureAppServlet {
-  
-  private static final long serialVersionUID = 1L;
-  
-  public static final String PROCESS_REQUEST_ID = "AD_Process_Request_ID";
-  
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) 
-      throws ServletException, IOException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    
-    String windowId = request.getParameter("inpwindowId");
-    String requestId = vars.getSessionValue(windowId + "|" + PROCESS_REQUEST_ID);
-    
-    String message;
-    try {
-      OBScheduler.getInstance().unschedule(requestId, new ProcessContext(vars));
-    
-    } catch (SchedulerException e) {
-      message = Utility.messageBD(this, "UNSCHED_ERROR", vars.getLanguage());
-      advisePopUp(response, "ERROR", "Process Request", message + " " + e.getMessage());
+
+    private static final long serialVersionUID = 1L;
+
+    public static final String PROCESS_REQUEST_ID = "AD_Process_Request_ID";
+
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+
+        String windowId = request.getParameter("inpwindowId");
+        String requestId = vars.getSessionValue(windowId + "|"
+                + PROCESS_REQUEST_ID);
+
+        String message;
+        try {
+            OBScheduler.getInstance().unschedule(requestId,
+                    new ProcessContext(vars));
+
+        } catch (SchedulerException e) {
+            message = Utility.messageBD(this, "UNSCHED_ERROR", vars
+                    .getLanguage());
+            advisePopUp(response, "ERROR", "Process Request", message + " "
+                    + e.getMessage());
+        }
+        message = Utility
+                .messageBD(this, "UNSCHED_SUCCESS", vars.getLanguage());
+        advisePopUp(response, "SUCCESS", "Process Request", message);
     }
-    message = Utility.messageBD(this, "UNSCHED_SUCCESS", vars.getLanguage());
-    advisePopUp(response, "SUCCESS", "Process Request", message);
-  }
 }

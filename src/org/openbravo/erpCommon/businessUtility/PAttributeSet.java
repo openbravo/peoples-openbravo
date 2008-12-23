@@ -15,37 +15,42 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.businessUtility;
 
 import org.openbravo.database.ConnectionProvider;
 import javax.servlet.*;
-import org.apache.log4j.Logger ;
+import org.apache.log4j.Logger;
 
 public class PAttributeSet {
-  static Logger log4j = Logger.getLogger(PAttributeSet.class);
-  PAttributeSetData[] pAttributesData;
-  boolean isInstance=false;
+    static Logger log4j = Logger.getLogger(PAttributeSet.class);
+    PAttributeSetData[] pAttributesData;
+    boolean isInstance = false;
 
-  public PAttributeSet(ConnectionProvider conn, String strAttributeSet) {
-    try {
-      pAttributesData = PAttributeSetData.select(conn, strAttributeSet);
-      isInstance = isInstanceAttributeSet(pAttributesData);
-    } catch (ServletException e) {
-      log4j.error(e);
+    public PAttributeSet(ConnectionProvider conn, String strAttributeSet) {
+        try {
+            pAttributesData = PAttributeSetData.select(conn, strAttributeSet);
+            isInstance = isInstanceAttributeSet(pAttributesData);
+        } catch (ServletException e) {
+            log4j.error(e);
+        }
     }
-  }
 
-  public static boolean isInstanceAttributeSet (PAttributeSetData[] data) {
-    if (data==null || data.length<1) return false;
-    if (data[0].islot.equals("Y")) return true;
-    if (data[0].isserno.equals("Y")) return true;
-    if (data[0].isguaranteedate.equals("Y")) return true;
-    if (!data[0].elementname.equals("")) {
-      for (int i=0;i<data.length;i++) {
-        if (data[i].isinstanceattribute.equals("Y")) return true;
-      }
+    public static boolean isInstanceAttributeSet(PAttributeSetData[] data) {
+        if (data == null || data.length < 1)
+            return false;
+        if (data[0].islot.equals("Y"))
+            return true;
+        if (data[0].isserno.equals("Y"))
+            return true;
+        if (data[0].isguaranteedate.equals("Y"))
+            return true;
+        if (!data[0].elementname.equals("")) {
+            for (int i = 0; i < data.length; i++) {
+                if (data[i].isinstanceattribute.equals("Y"))
+                    return true;
+            }
+        }
+        return false;
     }
-    return false;
-  }
 }

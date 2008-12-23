@@ -30,93 +30,137 @@ import javax.servlet.http.*;
 import org.openbravo.erpCommon.utility.DateTimeData;
 
 public class ReportWarehouseControl extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (vars.commandIn("DEFAULT")) {
-      String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportWarehouseControl|DateFrom", "");
-      String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportWarehouseControl|DateTo", "");
-      String strReferential = vars.getGlobalVariable("inpReferential", "ReportWarehouseControl|Referential", "");
-      printPageDataSheet(response, vars, strDateFrom, strDateTo, strReferential);
-    } else if (vars.commandIn("FIND")) {
-      String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom", "ReportWarehouseControl|DateFrom");
-      String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportWarehouseControl|DateTo");
-      String strReferential = vars.getRequestGlobalVariable("inpReferential", "ReportWarehouseControl|Referential");
-      printPageDataSheet(response, vars, strDateFrom, strDateTo, strReferential);
-    } else pageError(response);
-  }
-
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strReferential)
-    throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    XmlDocument xmlDocument=null;
-
-    String strRef;
-    if (strReferential.equals("")){strRef = strReferential;}
-    else {strRef = "#" + strReferential;}
-
-    ReportWarehouseControlData[] data = ReportWarehouseControlData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportWarehouseControl"), Utility.getContext(this, vars, "#User_Org", "ReportWarehouseControl"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strRef);
-
-    if (data == null || data.length == 0 || vars.commandIn("DEFAULT")){
-      String discard[] = {"sectionDescription"};
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportWarehouseControl", discard).createXmlDocument();
-      data = ReportWarehouseControlData.set();
-      if (log4j.isDebugEnabled()) log4j.debug("DEFAULT INPUT");
-    }
-    else{
-      String discard[] = {"discard"};
-      xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportWarehouseControl", discard).createXmlDocument();
-      //data = ReportWarehouseControlData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportWarehouseControl"), Utility.getContext(this, vars, "#User_Org", "ReportWarehouseControl"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strRef);
-
+        if (vars.commandIn("DEFAULT")) {
+            String strDateFrom = vars.getGlobalVariable("inpDateFrom",
+                    "ReportWarehouseControl|DateFrom", "");
+            String strDateTo = vars.getGlobalVariable("inpDateTo",
+                    "ReportWarehouseControl|DateTo", "");
+            String strReferential = vars.getGlobalVariable("inpReferential",
+                    "ReportWarehouseControl|Referential", "");
+            printPageDataSheet(response, vars, strDateFrom, strDateTo,
+                    strReferential);
+        } else if (vars.commandIn("FIND")) {
+            String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
+                    "ReportWarehouseControl|DateFrom");
+            String strDateTo = vars.getRequestGlobalVariable("inpDateTo",
+                    "ReportWarehouseControl|DateTo");
+            String strReferential = vars.getRequestGlobalVariable(
+                    "inpReferential", "ReportWarehouseControl|Referential");
+            printPageDataSheet(response, vars, strDateFrom, strDateTo,
+                    strReferential);
+        } else
+            pageError(response);
     }
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportWarehouseControl", false, "", "", "",false, "ad_reports",  strReplaceWith, false,  true);
-    toolbar.prepareSimpleToolBarTemplate();
-    xmlDocument.setParameter("toolbar", toolbar.toString());
+    void printPageDataSheet(HttpServletResponse response,
+            VariablesSecureApp vars, String strDateFrom, String strDateTo,
+            String strReferential) throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        XmlDocument xmlDocument = null;
 
-    try {
-      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.ReportWarehouseControl");
-      xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
-      xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
-      xmlDocument.setParameter("childTabContainer", tabs.childTabs());
-      xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportWarehouseControl.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
-      xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportWarehouseControl.html", strReplaceWith);
-      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
+        String strRef;
+        if (strReferential.equals("")) {
+            strRef = strReferential;
+        } else {
+            strRef = "#" + strReferential;
+        }
+
+        ReportWarehouseControlData[] data = ReportWarehouseControlData.select(
+                this, Utility.getContext(this, vars, "#User_Client",
+                        "ReportWarehouseControl"), Utility.getContext(this,
+                        vars, "#User_Org", "ReportWarehouseControl"),
+                strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
+                strRef);
+
+        if (data == null || data.length == 0 || vars.commandIn("DEFAULT")) {
+            String discard[] = { "sectionDescription" };
+            xmlDocument = xmlEngine
+                    .readXmlTemplate(
+                            "org/openbravo/erpCommon/ad_reports/ReportWarehouseControl",
+                            discard).createXmlDocument();
+            data = ReportWarehouseControlData.set();
+            if (log4j.isDebugEnabled())
+                log4j.debug("DEFAULT INPUT");
+        } else {
+            String discard[] = { "discard" };
+            xmlDocument = xmlEngine
+                    .readXmlTemplate(
+                            "org/openbravo/erpCommon/ad_reports/ReportWarehouseControl",
+                            discard).createXmlDocument();
+            // data = ReportWarehouseControlData.select(this,
+            // Utility.getContext(this, vars, "#User_Client",
+            // "ReportWarehouseControl"), Utility.getContext(this, vars,
+            // "#User_Org", "ReportWarehouseControl"), strDateFrom,
+            // DateTimeData.nDaysAfter(this, strDateTo,"1"), strRef);
+
+        }
+
+        ToolBar toolbar = new ToolBar(this, vars.getLanguage(),
+                "ReportWarehouseControl", false, "", "", "", false,
+                "ad_reports", strReplaceWith, false, true);
+        toolbar.prepareSimpleToolBarTemplate();
+        xmlDocument.setParameter("toolbar", toolbar.toString());
+
+        try {
+            WindowTabs tabs = new WindowTabs(this, vars,
+                    "org.openbravo.erpCommon.ad_reports.ReportWarehouseControl");
+            xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
+            xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
+            xmlDocument.setParameter("childTabContainer", tabs.childTabs());
+            xmlDocument.setParameter("theme", vars.getTheme());
+            NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+                    "ReportWarehouseControl.html", classInfo.id,
+                    classInfo.type, strReplaceWith, tabs.breadcrumb());
+            xmlDocument.setParameter("navigationBar", nav.toString());
+            LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
+                    "ReportWarehouseControl.html", strReplaceWith);
+            xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+        } catch (Exception ex) {
+            throw new ServletException(ex);
+        }
+        {
+            OBError myMessage = vars.getMessage("ReportWarehouseControl");
+            vars.removeMessage("ReportWarehouseControl");
+            if (myMessage != null) {
+                xmlDocument.setParameter("messageType", myMessage.getType());
+                xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+                xmlDocument.setParameter("messageMessage", myMessage
+                        .getMessage());
+            }
+        }
+
+        xmlDocument
+                .setParameter("calendar", vars.getLanguage().substring(0, 2));
+        xmlDocument.setParameter("directory", "var baseDirectory = \""
+                + strReplaceWith + "/\";\n");
+        xmlDocument.setParameter("paramLanguage", "defaultLang=\""
+                + vars.getLanguage() + "\";");
+        xmlDocument.setParameter("dateFrom", strDateFrom);
+        xmlDocument.setParameter("dateFromdisplayFormat", vars
+                .getSessionValue("#AD_SqlDateFormat"));
+        xmlDocument.setParameter("dateFromsaveFormat", vars
+                .getSessionValue("#AD_SqlDateFormat"));
+        xmlDocument.setParameter("dateTo", strDateTo);
+        xmlDocument.setParameter("dateTodisplayFormat", vars
+                .getSessionValue("#AD_SqlDateFormat"));
+        xmlDocument.setParameter("dateTosaveFormat", vars
+                .getSessionValue("#AD_SqlDateFormat"));
+        xmlDocument.setParameter("referential", strReferential);
+        xmlDocument.setData("structure1", data);
+        out.println(xmlDocument.print());
+        out.close();
     }
-    {
-      OBError myMessage = vars.getMessage("ReportWarehouseControl");
-      vars.removeMessage("ReportWarehouseControl");
-      if (myMessage!=null) {
-        xmlDocument.setParameter("messageType", myMessage.getType());
-        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-      }
-    } 
 
-    xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("dateFrom", strDateFrom);
-    xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateTo", strDateTo);
-    xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("referential", strReferential);
-    xmlDocument.setData("structure1", data);
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-  public String getServletInfo() {
-    return "Servlet ReportWarehouseControl. This Servlet was made by Jon Alegria";
-  } // end of getServletInfo() method
+    public String getServletInfo() {
+        return "Servlet ReportWarehouseControl. This Servlet was made by Jon Alegria";
+    } // end of getServletInfo() method
 }

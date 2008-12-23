@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_callouts;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -26,49 +26,59 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-
 public class SL_CCPMeasure_Group extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
+    }
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled()) log4j.debug("CHANGED: " + strChanged);
-      String strTabId = vars.getStringParameter("inpTabId");
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+        if (vars.commandIn("DEFAULT")) {
+            String strChanged = vars.getStringParameter("inpLastFieldChanged");
+            if (log4j.isDebugEnabled())
+                log4j.debug("CHANGED: " + strChanged);
+            String strTabId = vars.getStringParameter("inpTabId");
 
-      String strMACCPGroupID = vars.getStringParameter("inpmaCcpGroupId");
+            String strMACCPGroupID = vars.getStringParameter("inpmaCcpGroupId");
 
-      try {
-        printPage(response, vars, strTabId, strMACCPGroupID);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else pageError(response);
-  }
+            try {
+                printPage(response, vars, strTabId, strMACCPGroupID);
+            } catch (ServletException ex) {
+                pageErrorCallOut(response);
+            }
+        } else
+            pageError(response);
+    }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTabId, String strMACCPGroupID) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-    SLCCPMeasureGroupData[] data = SLCCPMeasureGroupData.select(this, strMACCPGroupID);
+    void printPage(HttpServletResponse response, VariablesSecureApp vars,
+            String strTabId, String strMACCPGroupID) throws IOException,
+            ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/ad_callouts/CallOut")
+                .createXmlDocument();
+        SLCCPMeasureGroupData[] data = SLCCPMeasureGroupData.select(this,
+                strMACCPGroupID);
 
-    String strSeqNo = data[0].seqno;
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_CCPMeasure_Group';\n\n");
-    resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpseqno\", \"" + FormatUtilities.replaceJS((strSeqNo.equals("")?"\"\"":strSeqNo)) + "\")");
-    resultado.append(");\n");
+        String strSeqNo = data[0].seqno;
+        StringBuffer resultado = new StringBuffer();
+        resultado.append("var calloutName='SL_CCPMeasure_Group';\n\n");
+        resultado.append("var respuesta = new Array(");
+        resultado.append("new Array(\"inpseqno\", \""
+                + FormatUtilities.replaceJS((strSeqNo.equals("") ? "\"\""
+                        : strSeqNo)) + "\")");
+        resultado.append(");\n");
 
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
+        xmlDocument.setParameter("array", resultado.toString());
+        xmlDocument.setParameter("frameName", "appFrame");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
+    }
 }

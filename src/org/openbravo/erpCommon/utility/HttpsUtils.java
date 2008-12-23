@@ -65,313 +65,331 @@ import javax.net.ssl.X509TrustManager;
 import org.apache.log4j.Logger;
 
 public class HttpsUtils {
-  
-  static Logger log4j = Logger.getLogger(HttpsUtils.class);
-  
-  static KeyStore loadKeyStore(String passphrase) throws KeyStoreException {
-    KeyStore ks = null;
-    InputStream is = null;
-    try {
-      try {
-        File file = new File("jssecacerts");
-        if (file.isFile() == false) {
-          char SEP = File.separatorChar;
-          File dir = new File(System.getProperty("java.home") + SEP + "lib" + SEP + "security");
-          file = new File(dir, "jssecacerts");
-          if (file.isFile() == false) {
-            file = new File(dir, "cacerts");
-          }
-        }
-        log4j.info("Loading KeyStore " + file + "...");
-        is = new FileInputStream(file);
-        ks = KeyStore.getInstance(KeyStore.getDefaultType());
-        if (passphrase == null)
-          throw new KeyStoreException("Invalid passphrase: null");
-        ks.load(is, passphrase.toCharArray());
-      } catch (NoSuchAlgorithmException e) {
-        log4j.error(e.getMessage(), e);
-        throw new KeyStoreException(e.getMessage(), e);
-      } catch (CertificateException e) {
-        log4j.error(e.getMessage(), e);
-        throw new KeyStoreException(e.getMessage(), e);
-      } catch (IOException e) {
-        log4j.error(e.getMessage(), e);
-        throw new KeyStoreException(e.getMessage(), e);
-      } finally {
-        if (is != null)
-          is.close();
-      }
-    } catch (IOException e) {
-      log4j.error(e.getMessage(), e); // Error closing InputStream
-    }
-    
-    return ks;
-  }
-  
-  static void installCert(URL url, String alias, String passphrase) throws GeneralSecurityException {
-    
-    KeyStore ks = null;
-    SSLContext context = null;
-    SavingTrustManager tm = null;
- 
-    String host = url.getHost();
-    int port = url.getPort();
-    if (port == -1) port = 443; // Default SSL port
-    
-    ks = loadKeyStore(passphrase);
-    
-    log4j.info("Setting up secure connection to " + host + ":" + port + "...");
-    context = SSLContext.getInstance("TLS");
-    TrustManagerFactory tmf =
 
-    TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-    tmf.init(ks);
-    X509TrustManager defaultTrustManager = (X509TrustManager) tmf.getTrustManagers()[0];
-    tm = new SavingTrustManager(defaultTrustManager);
-    context.init(null, new TrustManager[] { tm }, null);
-    
-    SSLSocket socket = null;
-    SSLSocketFactory factory = null;
-    try {
-      factory = context.getSocketFactory();
-      log4j.info("Opening connection to " + host + ":" + port + "...");
-      socket = (SSLSocket) factory.createSocket(host, port);
-      socket.setSoTimeout(10000);
-      log4j.info("Starting SSL handshake...");
-      socket.startHandshake();
-      socket.close();
-      log4j.info("No errors, certificate is already trusted");
-      return;
-    } catch (SSLException e) {
-      log4j.info("Certificate not yet installed"); // OK
-    } catch (IOException e) {
-      log4j.error(e.getMessage(), e);
-      throw new GeneralSecurityException(e.getMessage(), e);
-    } finally {
-      if (socket != null) {
+    static Logger log4j = Logger.getLogger(HttpsUtils.class);
+
+    static KeyStore loadKeyStore(String passphrase) throws KeyStoreException {
+        KeyStore ks = null;
+        InputStream is = null;
         try {
-          socket.close();
-        } catch (IOException e) {  
-          log4j.error(e.getMessage(), e);
-        }
-      }
-    }
-    
-    X509Certificate[] chain = tm.chain;
-    if (chain == null) {
-      throw new GeneralSecurityException("No certificates found at " + url.toString());
-    }
-    log4j.info("Server sent " + chain.length + " certificate(s):");
-    for (int i = 0; i < chain.length; i++) {
-      X509Certificate cert = chain[i];
-      String subjectDNName = cert.getSubjectDN().getName();
-      if (subjectDNName.contains("Openbravo Heartbeat")) {
-        log4j.info("Found certificate matching \'Openbravo Heartbeat\'");
-        OutputStream out = null;
-        try {
-          ks.setCertificateEntry(alias, cert);
-          out = new FileOutputStream("jssecacerts");
-          ks.store(out, passphrase.toCharArray());
-          out.close();
-          log4j.info(cert);
-          log4j.info("Added certificate to keystore 'jssecacerts' using alias '" + alias + "'");
-          return;
+            try {
+                File file = new File("jssecacerts");
+                if (file.isFile() == false) {
+                    char SEP = File.separatorChar;
+                    File dir = new File(System.getProperty("java.home") + SEP
+                            + "lib" + SEP + "security");
+                    file = new File(dir, "jssecacerts");
+                    if (file.isFile() == false) {
+                        file = new File(dir, "cacerts");
+                    }
+                }
+                log4j.info("Loading KeyStore " + file + "...");
+                is = new FileInputStream(file);
+                ks = KeyStore.getInstance(KeyStore.getDefaultType());
+                if (passphrase == null)
+                    throw new KeyStoreException("Invalid passphrase: null");
+                ks.load(is, passphrase.toCharArray());
+            } catch (NoSuchAlgorithmException e) {
+                log4j.error(e.getMessage(), e);
+                throw new KeyStoreException(e.getMessage(), e);
+            } catch (CertificateException e) {
+                log4j.error(e.getMessage(), e);
+                throw new KeyStoreException(e.getMessage(), e);
+            } catch (IOException e) {
+                log4j.error(e.getMessage(), e);
+                throw new KeyStoreException(e.getMessage(), e);
+            } finally {
+                if (is != null)
+                    is.close();
+            }
         } catch (IOException e) {
-          log4j.error(e.getMessage(), e);
-          throw new GeneralSecurityException(e.getMessage(), e);
-        } finally {
-          try {
-            out.close();
-          } catch (IOException e) {
-            // We tried.
-          }
+            log4j.error(e.getMessage(), e); // Error closing InputStream
         }
-      }
-    }
-  }
-  
-  static HttpsURLConnection getSecureConnection(URL url, KeyStore ks) 
-      throws GeneralSecurityException, SSLHandshakeException {
-    
-    String host = url.getHost();
-    int port = url.getPort();
-    log4j.info("Setting up secure connection to " + host + ":" + port + "...");
-    SSLContext context = SSLContext.getInstance("TLS");
-    TrustManagerFactory tmf =
 
-    TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-    tmf.init(ks);
-    X509TrustManager defaultTrustManager = (X509TrustManager) tmf.getTrustManagers()[0];
-    SavingTrustManager tm = new SavingTrustManager(defaultTrustManager);
-    context.init(null, new TrustManager[] { tm }, null);
-    SSLSocketFactory factory = context.getSocketFactory();
-    HttpsURLConnection.setDefaultSSLSocketFactory(factory);
-    HttpsURLConnection.setDefaultHostnameVerifier(hv);
-    
-    HttpsURLConnection conn = null;
-    log4j.info("Opening connection to " + host + ":" + port + "...");
-    try {
-      conn = (HttpsURLConnection) url.openConnection();
-      conn.setDoOutput(true);
-    } catch (MalformedURLException e) {  // Shouldn't happen
-      log4j.error(e.getMessage(), e);
-    } catch (IOException e) {
-      if (e instanceof SSLHandshakeException) {
-        log4j.info("Could not complete SSL handshake. Server certificate is not installed.");
-        log4j.error(e.getMessage(), e);
-        throw (SSLHandshakeException) e;
-      }
-      log4j.error(e.getMessage(), e);
-      throw new GeneralSecurityException(e.getMessage(), e);
+        return ks;
     }
-    return conn;
-  }
-  
-  static String sendSecure(HttpsURLConnection conn, String data) throws IOException {
-    String result = null;
-    BufferedReader br = null;
-    BufferedWriter bw = null;
-    try {
-      conn.setDoOutput(true);
-      
-      bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
-      bw.write(data);
-      bw.flush();
-      bw.close();
-      
-      String s = null;
-      StringBuilder sb = new StringBuilder();
-      br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-      while ((s = br.readLine()) != null) {
-        sb.append(s);
-      }
-      br.close();
-      result = sb.toString();
-    } catch (IOException e) {
-      log4j.error(e.getMessage(), e);
-      throw e;
+
+    static void installCert(URL url, String alias, String passphrase)
+            throws GeneralSecurityException {
+
+        KeyStore ks = null;
+        SSLContext context = null;
+        SavingTrustManager tm = null;
+
+        String host = url.getHost();
+        int port = url.getPort();
+        if (port == -1)
+            port = 443; // Default SSL port
+
+        ks = loadKeyStore(passphrase);
+
+        log4j.info("Setting up secure connection to " + host + ":" + port
+                + "...");
+        context = SSLContext.getInstance("TLS");
+        TrustManagerFactory tmf =
+
+        TrustManagerFactory.getInstance(TrustManagerFactory
+                .getDefaultAlgorithm());
+        tmf.init(ks);
+        X509TrustManager defaultTrustManager = (X509TrustManager) tmf
+                .getTrustManagers()[0];
+        tm = new SavingTrustManager(defaultTrustManager);
+        context.init(null, new TrustManager[] { tm }, null);
+
+        SSLSocket socket = null;
+        SSLSocketFactory factory = null;
+        try {
+            factory = context.getSocketFactory();
+            log4j.info("Opening connection to " + host + ":" + port + "...");
+            socket = (SSLSocket) factory.createSocket(host, port);
+            socket.setSoTimeout(10000);
+            log4j.info("Starting SSL handshake...");
+            socket.startHandshake();
+            socket.close();
+            log4j.info("No errors, certificate is already trusted");
+            return;
+        } catch (SSLException e) {
+            log4j.info("Certificate not yet installed"); // OK
+        } catch (IOException e) {
+            log4j.error(e.getMessage(), e);
+            throw new GeneralSecurityException(e.getMessage(), e);
+        } finally {
+            if (socket != null) {
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    log4j.error(e.getMessage(), e);
+                }
+            }
+        }
+
+        X509Certificate[] chain = tm.chain;
+        if (chain == null) {
+            throw new GeneralSecurityException("No certificates found at "
+                    + url.toString());
+        }
+        log4j.info("Server sent " + chain.length + " certificate(s):");
+        for (int i = 0; i < chain.length; i++) {
+            X509Certificate cert = chain[i];
+            String subjectDNName = cert.getSubjectDN().getName();
+            if (subjectDNName.contains("Openbravo Heartbeat")) {
+                log4j
+                        .info("Found certificate matching \'Openbravo Heartbeat\'");
+                OutputStream out = null;
+                try {
+                    ks.setCertificateEntry(alias, cert);
+                    out = new FileOutputStream("jssecacerts");
+                    ks.store(out, passphrase.toCharArray());
+                    out.close();
+                    log4j.info(cert);
+                    log4j
+                            .info("Added certificate to keystore 'jssecacerts' using alias '"
+                                    + alias + "'");
+                    return;
+                } catch (IOException e) {
+                    log4j.error(e.getMessage(), e);
+                    throw new GeneralSecurityException(e.getMessage(), e);
+                } finally {
+                    try {
+                        out.close();
+                    } catch (IOException e) {
+                        // We tried.
+                    }
+                }
+            }
+        }
     }
-    return result;
-  }
-  
-  public static String sendSecure(URL url, String data, String alias, String passphrase) throws GeneralSecurityException, IOException {
-    KeyStore ks = null;
-    HttpsURLConnection conn = null;
-    
-    try {
-      ks = loadKeyStore(passphrase);
-    } catch (KeyStoreException e) { // Problem loading keystore
-      log4j.error(e.getMessage(), e);
+
+    static HttpsURLConnection getSecureConnection(URL url, KeyStore ks)
+            throws GeneralSecurityException, SSLHandshakeException {
+
+        String host = url.getHost();
+        int port = url.getPort();
+        log4j.info("Setting up secure connection to " + host + ":" + port
+                + "...");
+        SSLContext context = SSLContext.getInstance("TLS");
+        TrustManagerFactory tmf =
+
+        TrustManagerFactory.getInstance(TrustManagerFactory
+                .getDefaultAlgorithm());
+        tmf.init(ks);
+        X509TrustManager defaultTrustManager = (X509TrustManager) tmf
+                .getTrustManagers()[0];
+        SavingTrustManager tm = new SavingTrustManager(defaultTrustManager);
+        context.init(null, new TrustManager[] { tm }, null);
+        SSLSocketFactory factory = context.getSocketFactory();
+        HttpsURLConnection.setDefaultSSLSocketFactory(factory);
+        HttpsURLConnection.setDefaultHostnameVerifier(hv);
+
+        HttpsURLConnection conn = null;
+        log4j.info("Opening connection to " + host + ":" + port + "...");
+        try {
+            conn = (HttpsURLConnection) url.openConnection();
+            conn.setDoOutput(true);
+        } catch (MalformedURLException e) { // Shouldn't happen
+            log4j.error(e.getMessage(), e);
+        } catch (IOException e) {
+            if (e instanceof SSLHandshakeException) {
+                log4j
+                        .info("Could not complete SSL handshake. Server certificate is not installed.");
+                log4j.error(e.getMessage(), e);
+                throw (SSLHandshakeException) e;
+            }
+            log4j.error(e.getMessage(), e);
+            throw new GeneralSecurityException(e.getMessage(), e);
+        }
+        return conn;
     }
-    // check if the Certificate for alias is installed. If not, install it.
-    if (ks != null && !ks.containsAlias(alias)) {
-      installCert(url, alias, passphrase);
-      ks = loadKeyStore(passphrase);
+
+    static String sendSecure(HttpsURLConnection conn, String data)
+            throws IOException {
+        String result = null;
+        BufferedReader br = null;
+        BufferedWriter bw = null;
+        try {
+            conn.setDoOutput(true);
+
+            bw = new BufferedWriter(new OutputStreamWriter(conn
+                    .getOutputStream()));
+            bw.write(data);
+            bw.flush();
+            bw.close();
+
+            String s = null;
+            StringBuilder sb = new StringBuilder();
+            br = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream()));
+            while ((s = br.readLine()) != null) {
+                sb.append(s);
+            }
+            br.close();
+            result = sb.toString();
+        } catch (IOException e) {
+            log4j.error(e.getMessage(), e);
+            throw e;
+        }
+        return result;
     }
-    // Now try and establish the secure connection
-    try {
-      conn = getSecureConnection(url, ks);
-    } catch (GeneralSecurityException e) {
-      log4j.error(e.getMessage(), e);
-      throw new SSLHandshakeException(e.getMessage());
+
+    public static String sendSecure(URL url, String data, String alias,
+            String passphrase) throws GeneralSecurityException, IOException {
+        KeyStore ks = null;
+        HttpsURLConnection conn = null;
+
+        try {
+            ks = loadKeyStore(passphrase);
+        } catch (KeyStoreException e) { // Problem loading keystore
+            log4j.error(e.getMessage(), e);
+        }
+        // check if the Certificate for alias is installed. If not, install it.
+        if (ks != null && !ks.containsAlias(alias)) {
+            installCert(url, alias, passphrase);
+            ks = loadKeyStore(passphrase);
+        }
+        // Now try and establish the secure connection
+        try {
+            conn = getSecureConnection(url, ks);
+        } catch (GeneralSecurityException e) {
+            log4j.error(e.getMessage(), e);
+            throw new SSLHandshakeException(e.getMessage());
+        }
+        // If we get to here it's time to send.
+        return sendSecure(conn, data);
     }
-    // If we get to here it's time to send.
-    return sendSecure(conn, data);
-  }
-  
-  
-  public static String encode(String queryStr, String encoding) {
-    StringBuilder sb = new StringBuilder();
-    String[] ss = queryStr.split("&");
-    for (String s : ss) {
-      String key = s.split("=")[0];
-      String value = "";
-      try {
-        value = s.split("=")[1];
-      } catch (IndexOutOfBoundsException e) {
-        // Do nothing - value is an empty string
-      }
-      try {
-        value = URLEncoder.encode(value, encoding);
-      } catch (UnsupportedEncodingException e) {
-        log4j.error(e.getMessage(), e);
-        // Shouldn't happen. Openbravo only using UTF-8
-      }
-      sb.append(key + "=" + value + "&");
+
+    public static String encode(String queryStr, String encoding) {
+        StringBuilder sb = new StringBuilder();
+        String[] ss = queryStr.split("&");
+        for (String s : ss) {
+            String key = s.split("=")[0];
+            String value = "";
+            try {
+                value = s.split("=")[1];
+            } catch (IndexOutOfBoundsException e) {
+                // Do nothing - value is an empty string
+            }
+            try {
+                value = URLEncoder.encode(value, encoding);
+            } catch (UnsupportedEncodingException e) {
+                log4j.error(e.getMessage(), e);
+                // Shouldn't happen. Openbravo only using UTF-8
+            }
+            sb.append(key + "=" + value + "&");
+        }
+        return sb.toString();
     }
-    return sb.toString();
-  }
-  
-  private static class SavingTrustManager implements X509TrustManager {
-    
-    private final X509TrustManager tm;
-    private X509Certificate[] chain;
-    
-    SavingTrustManager(X509TrustManager tm) {
-      this.tm = tm;
+
+    private static class SavingTrustManager implements X509TrustManager {
+
+        private final X509TrustManager tm;
+        private X509Certificate[] chain;
+
+        SavingTrustManager(X509TrustManager tm) {
+            this.tm = tm;
+        }
+
+        public X509Certificate[] getAcceptedIssuers() {
+            throw new UnsupportedOperationException();
+        }
+
+        public void checkClientTrusted(X509Certificate[] chain, String authType)
+                throws CertificateException {
+            throw new UnsupportedOperationException();
+        }
+
+        public void checkServerTrusted(X509Certificate[] chain, String authType)
+                throws CertificateException {
+            this.chain = chain;
+            tm.checkServerTrusted(chain, authType);
+        }
     }
-    
-    public X509Certificate[] getAcceptedIssuers() {
-      throw new UnsupportedOperationException();
+
+    private static HostnameVerifier hv = new HostnameVerifier() {
+
+        public boolean verify(String urlHostName, SSLSession session) {
+            log4j.info("Warning: URL Host: " + urlHostName + " vs. "
+                    + session.getPeerHost());
+            return true;
+        }
+    };
+
+    public static boolean isInternetAvailable() {
+        return isInternetAvailable(null, 0);
     }
-    
-    public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-      throw new UnsupportedOperationException();
+
+    public static boolean isInternetAvailable(String proxyHost, int proxyPort) {
+        if (proxyHost != null && !proxyHost.equals("")) {
+            System.getProperties().put("proxySet", true);
+            System.getProperties().put("proxyPort", proxyPort);
+            System.getProperties().put("proxyHost", proxyHost);
+            System.setProperty("java.net.useSystemProxies", "true");
+        } else {
+            System.getProperties().put("proxySet", false);
+            System.getProperties().remove("proxyPort");
+            System.getProperties().remove("proxyHost");
+            System.setProperty("java.net.useSystemProxies", "false");
+        }
+        try {
+            InetAddress address = InetAddress.getByName("openbravo.com");
+            log4j.info("Name: " + address.getHostName());
+            log4j.info("Addr: " + address.getHostAddress());
+            log4j.info("Reach: " + address.isReachable(3000));
+            // Double check.
+            URL url = new URL("http://openbravo.com");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setConnectTimeout(3000);
+            conn.connect();
+            if (conn.getResponseCode() != 200) {
+                return false;
+            }
+        } catch (UnknownHostException e) {
+            log4j.error("Unable to lookup openbravo.com", e);
+            return false;
+        } catch (IOException e) {
+            log4j.error("Unable to reach openbravo.com", e);
+            return false;
+        }
+        return true;
     }
-    
-    public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-      this.chain = chain;
-      tm.checkServerTrusted(chain, authType);
-    }
-  }
-  
-  private static HostnameVerifier hv = new HostnameVerifier() {
-    
-    public boolean verify(String urlHostName, SSLSession session) {
-      log4j.info("Warning: URL Host: " + urlHostName + " vs. " + session.getPeerHost());
-      return true;
-    }
-  };
-  
-  public static boolean isInternetAvailable() {
-    return isInternetAvailable(null, 0);
-  }
-  
-  public static boolean isInternetAvailable(String proxyHost, int proxyPort) {
-    if (proxyHost != null && !proxyHost.equals("")) {
-      System.getProperties().put("proxySet", true);
-      System.getProperties().put("proxyPort", proxyPort);
-      System.getProperties().put("proxyHost", proxyHost);
-      System.setProperty("java.net.useSystemProxies","true");
-    } else {
-      System.getProperties().put("proxySet", false);
-      System.getProperties().remove("proxyPort");
-      System.getProperties().remove("proxyHost");
-      System.setProperty("java.net.useSystemProxies","false");
-    }
-    try {
-      InetAddress address = InetAddress.getByName("openbravo.com");
-      log4j.info("Name: " + address.getHostName());
-      log4j.info("Addr: " + address.getHostAddress());
-      log4j.info("Reach: " + address.isReachable(3000));
-      // Double check.
-      URL url = new URL("http://openbravo.com");
-      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-      conn.setConnectTimeout(3000);
-      conn.connect();
-      if (conn.getResponseCode() != 200) {
-        return false;
-      }
-    }
-    catch (UnknownHostException e) {
-      log4j.error("Unable to lookup openbravo.com", e);
-      return false;
-    }
-    catch (IOException e) {
-      log4j.error("Unable to reach openbravo.com", e);
-      return false;
-    }
-    return true;
-  }
-  
+
 }

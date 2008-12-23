@@ -13,223 +13,239 @@
  * Contributor(s): Openbravo SL
  * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
  ******************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_forms;
 
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import java.math.*;
 import java.util.*;
 import javax.servlet.*;
-import org.apache.log4j.Logger ;
-// imports for transactions
+import org.apache.log4j.Logger; // imports for transactions
 import org.openbravo.database.ConnectionProvider;
 import java.sql.Connection;
 import org.openbravo.data.FieldProvider;
 
-
-
 public class DocOrder extends AcctServer {
     private static final long serialVersionUID = 1L;
-	static Logger log4jDocOrder = Logger.getLogger(DocOrder.class);
+    static Logger log4jDocOrder = Logger.getLogger(DocOrder.class);
 
-/** Contained Optional Tax Lines    */
-public DocTax[]        m_taxes = null;
+    /** Contained Optional Tax Lines */
+    public DocTax[] m_taxes = null;
 
+    /**
+     * Constructor
+     * 
+     * @param AD_Client_ID
+     *            client
+     */
+    public DocOrder(String AD_Client_ID, String AD_Org_ID,
+            ConnectionProvider connectionProvider) {
+        super(AD_Client_ID, AD_Org_ID, connectionProvider);
+    }
 
-/**
- *  Constructor
- *  @param AD_Client_ID client
- */
-public DocOrder(String AD_Client_ID, String AD_Org_ID, ConnectionProvider connectionProvider){
-	super(AD_Client_ID, AD_Org_ID, connectionProvider);
-}
+    public void loadObjectFieldProvider(ConnectionProvider conn,
+            String AD_Client_ID, String Id) throws ServletException {
+        setObjectFieldProvider(DocOrderData.selectRegistro(conn, AD_Client_ID,
+                Id));
+    }
 
+    /**
+     * Load Specific Document Details
+     * 
+     * @param rs
+     *            result set
+     * @return true if loadDocumentType was set
+     */
+    public boolean loadDocumentDetails(FieldProvider[] data,
+            ConnectionProvider conn) {
+        DateDoc = data[0].getField("DateOrdered");
+        TaxIncluded = data[0].getField("IsTaxIncluded");
 
-public void loadObjectFieldProvider(ConnectionProvider conn, String AD_Client_ID, String Id) throws ServletException{
-    setObjectFieldProvider(DocOrderData.selectRegistro(conn, AD_Client_ID, Id));
-}
+        // Amounts
+        Amounts[AcctServer.AMTTYPE_Gross] = data[0].getField("GrandTotal");
+        if (Amounts[AcctServer.AMTTYPE_Gross] == null)
+            Amounts[AcctServer.AMTTYPE_Gross] = ZERO.toString();
+        Amounts[AcctServer.AMTTYPE_Net] = data[0].getField("TotalLines");
+        if (Amounts[AcctServer.AMTTYPE_Net] == null)
+            Amounts[AcctServer.AMTTYPE_Net] = ZERO.toString();
+        Amounts[AcctServer.AMTTYPE_Charge] = data[0].getField("ChargeAmt");
+        if (Amounts[AcctServer.AMTTYPE_Charge] == null)
+            Amounts[AcctServer.AMTTYPE_Charge] = ZERO.toString();
+        loadDocumentType(); // lines require doc type
+        // Contained Objects
+        p_lines = loadLines(conn);
+        m_taxes = loadTaxes(conn);
+        // Log.trace(Log.l5_DData, "Lines=" + p_lines.length + ", Taxes=" +
+        // m_taxes.length);
+        return true;
+    } // loadDocumentDetails
 
-/**
- *  Load Specific Document Details
- *  @param rs result set
- *  @return true if loadDocumentType was set
- */
-public boolean loadDocumentDetails (FieldProvider [] data,ConnectionProvider conn){
-	DateDoc = data[0].getField("DateOrdered");
-	TaxIncluded = data[0].getField("IsTaxIncluded");
+    /**
+     * Load Invoice Line
+     * 
+     * @return DocLine Array
+     */
+    public DocLine[] loadLines(ConnectionProvider conn) {
+        ArrayList<Object> list = new ArrayList<Object>();
+        DocLineOrderData[] data = null;
+        try {
+            data = DocLineOrderData.select(conn, Record_ID);
+        } catch (ServletException e) {
+            log4jDocOrder.warn(e);
+        }
+        //
+        for (int i = 0; i < data.length; i++) {
+            String Line_ID = data[i].getField("cOrderlineId");
+            DocLine docLine = new DocLine(DocumentType, Record_ID, Line_ID);
+            docLine.loadAttributes(data[i], this);
+            String Qty = data[i].getField("qtyordered");
+            docLine.setQty(Qty);
+            String LineNetAmt = data[i].getField("linenetamt");
+            // BigDecimal PriceList = rs.getBigDecimal("PriceList");
+            docLine.setAmount(LineNetAmt);
+            list.add(docLine);
+        }
+        //
 
-	//	Amounts
-	Amounts[AcctServer.AMTTYPE_Gross] = data[0].getField("GrandTotal");
-	if (Amounts[AcctServer.AMTTYPE_Gross] == null)
-		Amounts[AcctServer.AMTTYPE_Gross] = ZERO.toString();
-	Amounts[AcctServer.AMTTYPE_Net] = data[0].getField("TotalLines");
-	if (Amounts[AcctServer.AMTTYPE_Net] == null)
-		Amounts[AcctServer.AMTTYPE_Net] = ZERO.toString();
-	Amounts[AcctServer.AMTTYPE_Charge] = data[0].getField("ChargeAmt");
-	if (Amounts[AcctServer.AMTTYPE_Charge] == null)
-		Amounts[AcctServer.AMTTYPE_Charge] = ZERO.toString();
-	loadDocumentType();     //  lines require doc type
-	//	Contained Objects
-	p_lines = loadLines(conn);
-	m_taxes = loadTaxes(conn);
-//	Log.trace(Log.l5_DData, "Lines=" + p_lines.length + ", Taxes=" + m_taxes.length);
-	return true;
-}   //  loadDocumentDetails
+        // Return Array
+        DocLine[] dl = new DocLine[list.size()];
+        list.toArray(dl);
+        return dl;
+    } // loadLines
 
+    /**
+     * Load Invoice Taxes
+     * 
+     * @return DocTax Array
+     */
+    public DocTax[] loadTaxes(ConnectionProvider conn) {
+        ArrayList<Object> list = new ArrayList<Object>();
 
-/**
- *	Load Invoice Line
- *  @return DocLine Array
- */
-public DocLine[] loadLines(ConnectionProvider conn){
-	ArrayList<Object> list = new ArrayList<Object>();
-	DocLineOrderData [] data = null;
-	try{
-		data = DocLineOrderData.select(conn, Record_ID);
-	}
-	catch (ServletException e){
-		log4jDocOrder.warn(e);
-	}
-	//
-	for(int i=0;i<data.length;i++){
-		String Line_ID = data[i].getField("cOrderlineId");
-		DocLine docLine = new DocLine (DocumentType, Record_ID, Line_ID);
-		docLine.loadAttributes(data[i], this);
-		String Qty = data[i].getField("qtyordered");
-		docLine.setQty(Qty);
-		String LineNetAmt = data[i].getField("linenetamt");
-	//	BigDecimal PriceList = rs.getBigDecimal("PriceList");
-		docLine.setAmount (LineNetAmt);
-		list.add(docLine);
-	}
-	//
+        DocOrderData[] data = null;
+        try {
+            data = DocOrderData.select(conn, Record_ID);
+        } catch (ServletException e) {
+            log4jDocOrder.warn(e);
+        }
 
-	//	Return Array
-	DocLine[] dl = new DocLine[list.size()];
-	list.toArray(dl);
-	return dl;
-}	//	loadLines
+        //
+        for (int i = 0; i < data.length; i++) {
+            String C_Tax_ID = data[i].getField("cTaxId");
+            String name = data[i].getField("name");
+            String rate = data[i].getField("rate");
+            String taxBaseAmt = data[i].getField("taxbaseamt");
+            String amount = data[i].getField("taxamt");
+            //
+            DocTax taxLine = new DocTax(C_Tax_ID, name, rate, taxBaseAmt,
+                    amount);
+            list.add(taxLine);
+        }
 
-/**
- *	Load Invoice Taxes
- *  @return DocTax Array
- */
-public DocTax[] loadTaxes(ConnectionProvider conn){
-	ArrayList<Object> list = new ArrayList<Object>();
+        // Return Array
+        DocTax[] tl = new DocTax[list.size()];
+        list.toArray(tl);
+        return tl;
+    } // loadTaxes
 
-	DocOrderData [] data = null;
-	try{
-		data = DocOrderData.select(conn, Record_ID);
-	}
-	catch (ServletException e){
-		log4jDocOrder.warn(e);
-	}
+    /**
+     * Get Source Currency Balance - subtracts line and tax amounts from total -
+     * no rounding
+     * 
+     * @return positive amount, if total invoice is bigger than lines
+     */
+    public BigDecimal getBalance() {
+        BigDecimal retValue = new BigDecimal("0");
+        StringBuffer sb = new StringBuffer(" [");
+        // Total
+        retValue = retValue.add(new BigDecimal(
+                getAmount(AcctServer.AMTTYPE_Gross)));
+        sb.append(getAmount(AcctServer.AMTTYPE_Gross));
+        // - Charge
+        retValue = retValue.subtract(new BigDecimal(
+                getAmount(AcctServer.AMTTYPE_Charge)));
+        sb.append("-").append(getAmount(AcctServer.AMTTYPE_Charge));
+        // - Tax
+        if (m_taxes != null) {
+            for (int i = 0; i < m_taxes.length; i++) {
+                retValue = retValue.subtract(new BigDecimal(m_taxes[i]
+                        .getAmount()));
+                sb.append("-").append(m_taxes[i].getAmount());
+            }
+        }
+        // - Lines
+        if (p_lines != null) {
+            for (int i = 0; i < p_lines.length; i++) {
+                retValue = retValue.subtract(new BigDecimal(p_lines[i]
+                        .getAmount()));
+                sb.append("-").append(p_lines[i].getAmount());
+            }
+            sb.append("]");
+        }
+        //
+        log4jDocOrder.debug(" Balance=" + retValue + sb.toString());
+        return retValue;
+    } // getBalance
 
-	//
-	for(int i=0; i<data.length; i++){
-		String C_Tax_ID = data[i].getField("cTaxId");
-		String name = data[i].getField("name");
-		String rate = data[i].getField("rate");
-		String taxBaseAmt = data[i].getField("taxbaseamt");
-		String amount = data[i].getField("taxamt");
-		//
-		DocTax taxLine = new DocTax(C_Tax_ID, name, rate, taxBaseAmt, amount);
-		list.add(taxLine);
-	}
+    /**
+     * Create Facts (the accounting logic) for SOO, POO, POR.
+     * 
+     * <pre>
+     * </pre>
+     * 
+     * @param as
+     *            accounting schema
+     * @return Fact
+     */
+    public Fact createFact(AcctSchema as, ConnectionProvider conn,
+            Connection con, VariablesSecureApp vars) throws ServletException {
+        // Purchase Order
+        if (DocumentType.equals(AcctServer.DOCTYPE_POrder))
+            updateProductInfo(as.getC_AcctSchema_ID(), conn, con);
 
-	//	Return Array
-	DocTax[] tl = new DocTax[list.size()];
-	list.toArray(tl);
-	return tl;
-}	//	loadTaxes
+        // create Fact Header
+        Fact fact = new Fact(this, as, Fact.POST_Actual);
+        return fact;
+    } // createFact
 
-/**
- *  Get Source Currency Balance - subtracts line and tax amounts from total - no rounding
- *  @return positive amount, if total invoice is bigger than lines
- */
-public BigDecimal getBalance(){
-	BigDecimal retValue = new BigDecimal("0");
-	StringBuffer sb = new StringBuffer (" [");
-	//  Total
-	retValue = retValue.add(new BigDecimal(getAmount(AcctServer.AMTTYPE_Gross)));
-	sb.append(getAmount(AcctServer.AMTTYPE_Gross));
-	//  - Charge
-	retValue = retValue.subtract(new BigDecimal(getAmount(AcctServer.AMTTYPE_Charge)));
-	sb.append("-").append(getAmount(AcctServer.AMTTYPE_Charge));
-	//  - Tax
-	if (m_taxes != null){
-		for (int i = 0; i < m_taxes.length; i++){
-			retValue = retValue.subtract(new BigDecimal(m_taxes[i].getAmount()));
-			sb.append("-").append(m_taxes[i].getAmount());
-		}
-	}
-	//  - Lines
-	if (p_lines != null){
-		for (int i = 0; i < p_lines.length; i++){
-			retValue = retValue.subtract(new BigDecimal(p_lines[i].getAmount()));
-			sb.append("-").append(p_lines[i].getAmount());
-		}
-		sb.append("]");
-	}
-	//
-	log4jDocOrder.debug(" Balance=" + retValue + sb.toString());
-	return retValue;
-}   //  getBalance
+    /**
+     * Update Product Info. - Costing (PriceLastPO) - PO (PriceLastPO)
+     * 
+     * @param C_AcctSchema_ID
+     *            accounting schema
+     */
+    private void updateProductInfo(String C_AcctSchema_ID,
+            ConnectionProvider conn, Connection con) {
+        log4jDocOrder.debug("updateProductInfo - C_Order_ID=" + Record_ID);
 
-/**
- *  Create Facts (the accounting logic) for
- *  SOO, POO, POR.
- *  <pre>
- *  </pre>
- *  @param as accounting schema
- *  @return Fact
- */
-public Fact createFact (AcctSchema as,ConnectionProvider conn,Connection con,VariablesSecureApp vars) throws ServletException{
-	//  Purchase Order
-	if (DocumentType.equals(AcctServer.DOCTYPE_POrder))
-		updateProductInfo(as.getC_AcctSchema_ID(), conn, con);
+        /**
+         * @todo Last.. would need to compare document/last updated date would
+         *       need to maintain LastPriceUpdateDate on _PO and _Costing
+         */
 
-	//  create Fact Header
-	Fact fact = new Fact(this, as, Fact.POST_Actual);
-	return fact;
-}   //  createFact
+        try {
+            // update Product PO info
+            // should only be once, but here for every AcctSchema
+            // ignores multiple lines with same product - just uses first
+            int no = DocOrderData.updateProductPO(con, conn, Record_ID);
+            log4jDocOrder.debug("M_Product_PO - Updated=" + no);
 
-	/**
-	 *  Update Product Info.
-	 *  - Costing (PriceLastPO)
-	 *  - PO (PriceLastPO)
-	 *  @param C_AcctSchema_ID accounting schema
-	 */
-	private void updateProductInfo (String C_AcctSchema_ID,ConnectionProvider conn,Connection con){
-		log4jDocOrder.debug("updateProductInfo - C_Order_ID=" + Record_ID);
+        } catch (ServletException e) {
+            log4jDocOrder.warn(e);
+        }
 
-		/** @todo Last.. would need to compare document/last updated date
-		 *  would need to maintain LastPriceUpdateDate on _PO and _Costing */
+    } // updateProductInfo
 
+    /**
+     * Get Document Confirmation
+     * 
+     * @not used
+     */
+    public boolean getDocumentConfirmation(ConnectionProvider conn,
+            String strRecordId) {
+        return true;
+    }
 
-		try{
-			//  update Product PO info
-			//  should only be once, but here for every AcctSchema
-			//  ignores multiple lines with same product - just uses first
-			int no = DocOrderData.updateProductPO(con, conn, Record_ID);
-			log4jDocOrder.debug("M_Product_PO - Updated=" + no);
-
-		}
-		catch (ServletException e){
-			log4jDocOrder.warn(e);
-		}
-
-	}   //  updateProductInfo
-
-  /**
-   *  Get Document Confirmation
-   *  @not used
-   */
-  public boolean getDocumentConfirmation(ConnectionProvider conn, String strRecordId) {
-    return true;
-  }
-
-	public String getServletInfo() {
-    return "Servlet for the accounting";
-  } // end of getServletInfo() method
+    public String getServletInfo() {
+        return "Servlet for the accounting";
+    } // end of getServletInfo() method
 }

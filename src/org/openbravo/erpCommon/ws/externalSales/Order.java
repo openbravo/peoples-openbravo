@@ -15,13 +15,13 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ws.externalSales;
 
 public class Order {
 
-    private OrderIdentifier orderId; 
-    private OrderLine [] lines;
+    private OrderIdentifier orderId;
+    private OrderLine[] lines;
     private int state;
     private BPartner businessPartner;
     private Payment[] payments;
@@ -69,5 +69,5 @@ public class Order {
     public void setPayment(Payment[] payments) {
         this.payments = payments;
     }
-    
+
 }

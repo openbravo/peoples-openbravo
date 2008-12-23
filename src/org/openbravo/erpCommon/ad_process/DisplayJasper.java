@@ -9,14 +9,15 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 
 public class DisplayJasper extends HttpSecureAppServlet {
-  
-  private static final long serialVersionUID = 1L;
 
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) 
-      throws ServletException, IOException {
-    
-    advisePopUp(response, "SUCCESS", "Jasper Report", "Displaying Jasper Report");
-  }
-  
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        advisePopUp(response, "SUCCESS", "Jasper Report",
+                "Displaying Jasper Report");
+    }
+
 }

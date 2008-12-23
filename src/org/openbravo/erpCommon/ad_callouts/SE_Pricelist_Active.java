@@ -32,51 +32,58 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class SE_Pricelist_Active extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
-  
-  public void init(ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
-  
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strIsActive = vars.getStringParameter("inpisactive");
-      String strPricelistId = vars.getStringParameter("inpmPricelistId");
-      try {
-        printPage(response, vars, strIsActive, strPricelistId);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else
-      pageError(response);
-  }
-  
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strIsActive, String strPricelistId) throws IOException, ServletException {
-    
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-    
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SE_Pricelist_Active';\n\n");
-    resultado.append("var respuesta = new Array(");
-    
-    String msg = "";
-    if (strIsActive.equals("")) {
-      SEPricelistActiveData[] pricelistVersion = SEPricelistActiveData.getActivePricelistVersion(this, strPricelistId);
-      if (pricelistVersion.length > 0) {
-        msg = Utility.messageBD(this, "PricelistVersionActive", vars.getLanguage());
-      }
+    private static final long serialVersionUID = 1L;
+
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
     }
-    
-    resultado.append("new Array(\"MESSAGE\", \"" + msg + "\")");
-    resultado.append(");");
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-  
+
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+        if (vars.commandIn("DEFAULT")) {
+            String strIsActive = vars.getStringParameter("inpisactive");
+            String strPricelistId = vars.getStringParameter("inpmPricelistId");
+            try {
+                printPage(response, vars, strIsActive, strPricelistId);
+            } catch (ServletException ex) {
+                pageErrorCallOut(response);
+            }
+        } else
+            pageError(response);
+    }
+
+    void printPage(HttpServletResponse response, VariablesSecureApp vars,
+            String strIsActive, String strPricelistId) throws IOException,
+            ServletException {
+
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/ad_callouts/CallOut")
+                .createXmlDocument();
+
+        StringBuffer resultado = new StringBuffer();
+        resultado.append("var calloutName='SE_Pricelist_Active';\n\n");
+        resultado.append("var respuesta = new Array(");
+
+        String msg = "";
+        if (strIsActive.equals("")) {
+            SEPricelistActiveData[] pricelistVersion = SEPricelistActiveData
+                    .getActivePricelistVersion(this, strPricelistId);
+            if (pricelistVersion.length > 0) {
+                msg = Utility.messageBD(this, "PricelistVersionActive", vars
+                        .getLanguage());
+            }
+        }
+
+        resultado.append("new Array(\"MESSAGE\", \"" + msg + "\")");
+        resultado.append(");");
+        xmlDocument.setParameter("array", resultado.toString());
+        xmlDocument.setParameter("frameName", "appFrame");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
+    }
+
 }

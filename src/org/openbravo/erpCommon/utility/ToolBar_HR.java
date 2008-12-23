@@ -15,24 +15,23 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.utility;
 
-
 public class ToolBar_HR implements HTMLElement {
-  
-  public ToolBar_HR() {
-  }
 
-  public String getWidth() {
-    return "";
-  }
+    public ToolBar_HR() {
+    }
 
-  public String elementType() {
-    return "HR";
-  }
+    public String getWidth() {
+        return "";
+    }
 
-  public String toString() {
-    return "<hr>";
-  }
+    public String elementType() {
+        return "HR";
+    }
+
+    public String toString() {
+        return "<hr>";
+    }
 }

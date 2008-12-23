@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_callouts;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -26,57 +26,80 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-
 public class SL_MInOutTraceReports extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
+    }
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled()) log4j.debug("CHANGED: " + strChanged);
-      String strMProductID = vars.getStringParameter("inpmProductId");
-      //String strMAttributeSetInstanceID = vars.getStringParameter("inpmAttributeSetInstanceId");
-      String strMAttributeSetInstanceID = vars.getRequestGlobalVariable("inpmAttributeSetInstanceId", "MInOutTraceReports|M_AttributeSetInstance_Id");
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+        if (vars.commandIn("DEFAULT")) {
+            String strChanged = vars.getStringParameter("inpLastFieldChanged");
+            if (log4j.isDebugEnabled())
+                log4j.debug("CHANGED: " + strChanged);
+            String strMProductID = vars.getStringParameter("inpmProductId");
+            // String strMAttributeSetInstanceID =
+            // vars.getStringParameter("inpmAttributeSetInstanceId");
+            String strMAttributeSetInstanceID = vars.getRequestGlobalVariable(
+                    "inpmAttributeSetInstanceId",
+                    "MInOutTraceReports|M_AttributeSetInstance_Id");
 
-      try {
-        printPage(response, vars, strMProductID, strMAttributeSetInstanceID);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else pageError(response);
-  }
+            try {
+                printPage(response, vars, strMProductID,
+                        strMAttributeSetInstanceID);
+            } catch (ServletException ex) {
+                pageErrorCallOut(response);
+            }
+        } else
+            pageError(response);
+    }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strMProductID, String strMAttributeSetInstanceID) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+    void printPage(HttpServletResponse response, VariablesSecureApp vars,
+            String strMProductID, String strMAttributeSetInstanceID)
+            throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/ad_callouts/CallOut")
+                .createXmlDocument();
 
-    SLMInOutTraceReportsData[] dataAttribute = SLMInOutTraceReportsData.select(this, vars.getLanguage(), strMProductID);
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_MInOutTraceReports';\n\n");
-    resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpmAttributeSetInstanceId\", ");
-    if (dataAttribute!=null && dataAttribute.length>0) {
-      resultado.append("new Array(");
-      for (int i=0;i<dataAttribute.length;i++) {
-        resultado.append("new Array(\"" + dataAttribute[i].id + "\", \"" + FormatUtilities.replaceJS(dataAttribute[i].name) + "\", \"" + (dataAttribute[i].id.equalsIgnoreCase(strMAttributeSetInstanceID)?"true":"false") + "\")");
-        if (i<dataAttribute.length-1) resultado.append(",\n");
-      }
-      resultado.append("\n)");
-    } else resultado.append("null");
-    resultado.append("\n)");
-    resultado.append(");\n");
+        SLMInOutTraceReportsData[] dataAttribute = SLMInOutTraceReportsData
+                .select(this, vars.getLanguage(), strMProductID);
+        StringBuffer resultado = new StringBuffer();
+        resultado.append("var calloutName='SL_MInOutTraceReports';\n\n");
+        resultado.append("var respuesta = new Array(");
+        resultado.append("new Array(\"inpmAttributeSetInstanceId\", ");
+        if (dataAttribute != null && dataAttribute.length > 0) {
+            resultado.append("new Array(");
+            for (int i = 0; i < dataAttribute.length; i++) {
+                resultado
+                        .append("new Array(\""
+                                + dataAttribute[i].id
+                                + "\", \""
+                                + FormatUtilities
+                                        .replaceJS(dataAttribute[i].name)
+                                + "\", \""
+                                + (dataAttribute[i].id
+                                        .equalsIgnoreCase(strMAttributeSetInstanceID) ? "true"
+                                        : "false") + "\")");
+                if (i < dataAttribute.length - 1)
+                    resultado.append(",\n");
+            }
+            resultado.append("\n)");
+        } else
+            resultado.append("null");
+        resultado.append("\n)");
+        resultado.append(");\n");
 
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
+        xmlDocument.setParameter("array", resultado.toString());
+        xmlDocument.setParameter("frameName", "appFrame");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
+    }
 }

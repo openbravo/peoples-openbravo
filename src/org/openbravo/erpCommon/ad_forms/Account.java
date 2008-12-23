@@ -13,22 +13,21 @@
  * Contributor(s): Openbravo SL
  * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
  ******************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_forms;
 
 import java.io.Serializable;
 import org.openbravo.database.ConnectionProvider;
-import org.apache.log4j.Logger ;
+import org.apache.log4j.Logger;
 import javax.servlet.*;
 import java.sql.Connection;
 import java.util.ArrayList;
 
-
 public final class Account implements Serializable {
-  private static final long serialVersionUID = 1L;
-  static Logger log4jAccount = Logger.getLogger(Account.class);
+    private static final long serialVersionUID = 1L;
+    static Logger log4jAccount = Logger.getLogger(Account.class);
 
- public Account() {
+    public Account() {
         C_ValidCombination_ID = "";
         C_AcctSchema_ID = "";
         AD_Client_ID = "";
@@ -58,7 +57,8 @@ public final class Account implements Serializable {
         m_changed = "Y";
     }
 
-    public Account(ConnectionProvider conn, String newC_ValidCombination_ID) throws ServletException {
+    public Account(ConnectionProvider conn, String newC_ValidCombination_ID)
+            throws ServletException {
         C_ValidCombination_ID = "";
         C_AcctSchema_ID = "";
         AD_Client_ID = "";
@@ -86,7 +86,8 @@ public final class Account implements Serializable {
         m_IsValid = null;
         m_OldAccount_ID = "";
         m_changed = "Y";
-        if(newC_ValidCombination_ID != null && newC_ValidCombination_ID.equals("")) {
+        if (newC_ValidCombination_ID != null
+                && newC_ValidCombination_ID.equals("")) {
             return;
         } else {
             load(null, conn, newC_ValidCombination_ID);
@@ -94,19 +95,22 @@ public final class Account implements Serializable {
         }
     }
 
-    public void load(Connection conn1, ConnectionProvider conn, String newC_ValidCombination_ID) throws ServletException {
-        AccountData [] data = null;
+    public void load(Connection conn1, ConnectionProvider conn,
+            String newC_ValidCombination_ID) throws ServletException {
+        AccountData[] data = null;
         try {
-            log4jAccount.debug("C_ValidCombination_ID: " + C_ValidCombination_ID);
+            log4jAccount.debug("C_ValidCombination_ID: "
+                    + C_ValidCombination_ID);
             if (conn1 == null)
-            data = AccountData.select(conn, newC_ValidCombination_ID);
+                data = AccountData.select(conn, newC_ValidCombination_ID);
             else
-              data = AccountData.selectConnection(conn1, conn, newC_ValidCombination_ID);
-            if(data.length > 0) {
+                data = AccountData.selectConnection(conn1, conn,
+                        newC_ValidCombination_ID);
+            if (data.length > 0) {
                 AD_Client_ID = data[0].adClientId;
                 AD_Org_ID = data[0].adOrgId;
                 active = data[0].isactive;
-                updatedBy =data[0].updatedby;
+                updatedBy = data[0].updatedby;
                 alias = data[0].alias;
                 combination = data[0].combination;
                 description = data[0].description;
@@ -127,17 +131,20 @@ public final class Account implements Serializable {
                 C_ValidCombination_ID = newC_ValidCombination_ID;
                 m_changed = "N";
             } else {
-                log4jAccount.warn("Account.getAccount - " + newC_ValidCombination_ID + " not found");
+                log4jAccount.warn("Account.getAccount - "
+                        + newC_ValidCombination_ID + " not found");
             }
-        } catch(ServletException e) {
+        } catch (ServletException e) {
             C_ValidCombination_ID = "";
             log4jAccount.warn("Account.load: " + e);
             throw new ServletException(e);
         }
-        log4jAccount.debug("C_ValidCombination_ID(fin): " + C_ValidCombination_ID);
+        log4jAccount.debug("C_ValidCombination_ID(fin): "
+                + C_ValidCombination_ID);
     }
 
-    public static Account getDefault(ConnectionProvider conn, String C_AcctSchema_ID, boolean optionalNull) {
+    public static Account getDefault(ConnectionProvider conn,
+            String C_AcctSchema_ID, boolean optionalNull) {
         AcctSchema acctSchema = new AcctSchema(conn, C_AcctSchema_ID);
         return getDefault(acctSchema, optionalNull);
     }
@@ -146,53 +153,90 @@ public final class Account implements Serializable {
         Account vc = new Account();
         vc.C_AcctSchema_ID = acctSchema.m_C_AcctSchema_ID;
         ArrayList<?> list = acctSchema.m_elementList;
-        for(int i = 0; i < list.size(); i++) {
-            AcctSchemaElement ase = (AcctSchemaElement)list.get(i);
+        for (int i = 0; i < list.size(); i++) {
+            AcctSchemaElement ase = (AcctSchemaElement) list.get(i);
             String segmentType = ase.m_segmentType;
             String defaultValue = ase.m_defaultValue;
-            boolean setValue = ase.m_mandatory.equals("Y") || !ase.m_mandatory.equals("Y") && !optionalNull;
-            if(segmentType.equals("OO")) vc.AD_Org_ID = defaultValue;
-            else if(segmentType.equals("AC")) vc.Account_ID = defaultValue;
-            else if(segmentType.equals("BP") && setValue) vc.C_BPartner_ID = defaultValue;
-            else if(segmentType.equals("PR") && setValue) vc.M_Product_ID = defaultValue;
-            else if(segmentType.equals("AY") && setValue) vc.C_Activity_ID = defaultValue;
-            else if(segmentType.equals("LF") && setValue) vc.C_LocFrom_ID = defaultValue;
-            else if(segmentType.equals("LT") && setValue) vc.C_LocTo_ID = defaultValue;
-            else if(segmentType.equals("MC") && setValue) vc.C_Campaign_ID = defaultValue;
-            else if(segmentType.equals("OT") && setValue) vc.AD_OrgTrx_ID = defaultValue;
-            else if(segmentType.equals("PJ") && setValue) vc.C_Project_ID = defaultValue;
-            else if(segmentType.equals("SR") && setValue) vc.C_SalesRegion_ID = defaultValue;
-            else if(segmentType.equals("U1") && setValue) vc.User1_ID = defaultValue;
-            else if(segmentType.equals("U2") && setValue) vc.User2_ID = defaultValue;
+            boolean setValue = ase.m_mandatory.equals("Y")
+                    || !ase.m_mandatory.equals("Y") && !optionalNull;
+            if (segmentType.equals("OO"))
+                vc.AD_Org_ID = defaultValue;
+            else if (segmentType.equals("AC"))
+                vc.Account_ID = defaultValue;
+            else if (segmentType.equals("BP") && setValue)
+                vc.C_BPartner_ID = defaultValue;
+            else if (segmentType.equals("PR") && setValue)
+                vc.M_Product_ID = defaultValue;
+            else if (segmentType.equals("AY") && setValue)
+                vc.C_Activity_ID = defaultValue;
+            else if (segmentType.equals("LF") && setValue)
+                vc.C_LocFrom_ID = defaultValue;
+            else if (segmentType.equals("LT") && setValue)
+                vc.C_LocTo_ID = defaultValue;
+            else if (segmentType.equals("MC") && setValue)
+                vc.C_Campaign_ID = defaultValue;
+            else if (segmentType.equals("OT") && setValue)
+                vc.AD_OrgTrx_ID = defaultValue;
+            else if (segmentType.equals("PJ") && setValue)
+                vc.C_Project_ID = defaultValue;
+            else if (segmentType.equals("SR") && setValue)
+                vc.C_SalesRegion_ID = defaultValue;
+            else if (segmentType.equals("U1") && setValue)
+                vc.User1_ID = defaultValue;
+            else if (segmentType.equals("U2") && setValue)
+                vc.User2_ID = defaultValue;
         }
 
-        log4jAccount.debug("Account.getDefault - Client_ID=" + vc.AD_Client_ID + ", Org_ID=" + vc.AD_Org_ID + "AcctSchema_ID=" + vc.C_AcctSchema_ID + ", Account_ID=" + vc.Account_ID);
+        log4jAccount.debug("Account.getDefault - Client_ID=" + vc.AD_Client_ID
+                + ", Org_ID=" + vc.AD_Org_ID + "AcctSchema_ID="
+                + vc.C_AcctSchema_ID + ", Account_ID=" + vc.Account_ID);
         return vc;
     }
 
-    public static Account getAccount(ConnectionProvider conn, String C_ValidCombination_ID) throws ServletException {
+    public static Account getAccount(ConnectionProvider conn,
+            String C_ValidCombination_ID) throws ServletException {
         return new Account(conn, C_ValidCombination_ID);
     }
 
-    public boolean save(Connection conn1, ConnectionProvider conn, String newAD_Client_ID, String newUpdatedBy) throws ServletException {
+    public boolean save(Connection conn1, ConnectionProvider conn,
+            String newAD_Client_ID, String newUpdatedBy)
+            throws ServletException {
         AD_Client_ID = newAD_Client_ID;
         updatedBy = newUpdatedBy;
         return save(conn1, conn);
     }
 
-    public boolean save(Connection conn1, ConnectionProvider conn) throws ServletException {
-        log4jAccount.debug("Account.save - Client_ID=" + AD_Client_ID + ", Org_ID=" + AD_Org_ID + "AcctSchema_ID=" + C_AcctSchema_ID + ", Account_ID=" + Account_ID);
+    public boolean save(Connection conn1, ConnectionProvider conn)
+            throws ServletException {
+        log4jAccount.debug("Account.save - Client_ID=" + AD_Client_ID
+                + ", Org_ID=" + AD_Org_ID + "AcctSchema_ID=" + C_AcctSchema_ID
+                + ", Account_ID=" + Account_ID);
         String C_ValidCombination_ID = "";
         boolean saved = false;
         RespuestaCS respuestaCS;
         try {
-            log4jAccount.debug("Account.save - Client_ID=" + AD_Client_ID + ", Org_ID=" + AD_Org_ID + "AcctSchema_ID=" + C_AcctSchema_ID + ", Account_ID=" + Account_ID + "alias : " + alias + ", updatedBy: " + updatedBy + ", M_Product_ID: " + M_Product_ID + ", C_BPartner_ID: " + C_BPartner_ID + ", AD_OrgTrx_ID: "  + AD_OrgTrx_ID + ", C_LocFrom_ID : " + C_LocFrom_ID + ", C_SalesRegion_ID : " + C_SalesRegion_ID + ", C_Project_ID : " + C_Project_ID + ", C_Project_ID: " + C_Project_ID + ", C_Campaign_ID: " + C_Campaign_ID + ", C_Activity_ID: " + C_Activity_ID + ", User1_ID: " + User1_ID + ", User1_ID: " + User1_ID);
-            respuestaCS = AccountData.GetValidAccountCombination(conn1, conn, AD_Client_ID, AD_Org_ID, C_AcctSchema_ID, Account_ID, "", "Y", alias, updatedBy, M_Product_ID, C_BPartner_ID, AD_OrgTrx_ID, C_LocFrom_ID, C_LocTo_ID, C_SalesRegion_ID, C_Project_ID, C_Campaign_ID, C_Activity_ID, User1_ID, User2_ID);
+            log4jAccount.debug("Account.save - Client_ID=" + AD_Client_ID
+                    + ", Org_ID=" + AD_Org_ID + "AcctSchema_ID="
+                    + C_AcctSchema_ID + ", Account_ID=" + Account_ID
+                    + "alias : " + alias + ", updatedBy: " + updatedBy
+                    + ", M_Product_ID: " + M_Product_ID + ", C_BPartner_ID: "
+                    + C_BPartner_ID + ", AD_OrgTrx_ID: " + AD_OrgTrx_ID
+                    + ", C_LocFrom_ID : " + C_LocFrom_ID
+                    + ", C_SalesRegion_ID : " + C_SalesRegion_ID
+                    + ", C_Project_ID : " + C_Project_ID + ", C_Project_ID: "
+                    + C_Project_ID + ", C_Campaign_ID: " + C_Campaign_ID
+                    + ", C_Activity_ID: " + C_Activity_ID + ", User1_ID: "
+                    + User1_ID + ", User1_ID: " + User1_ID);
+            respuestaCS = AccountData.GetValidAccountCombination(conn1, conn,
+                    AD_Client_ID, AD_Org_ID, C_AcctSchema_ID, Account_ID, "",
+                    "Y", alias, updatedBy, M_Product_ID, C_BPartner_ID,
+                    AD_OrgTrx_ID, C_LocFrom_ID, C_LocTo_ID, C_SalesRegion_ID,
+                    C_Project_ID, C_Campaign_ID, C_Activity_ID, User1_ID,
+                    User2_ID);
             C_ValidCombination_ID = respuestaCS.CValidCombinationId;
             m_changed = "Y";
             saved = true;
-        }
-        catch(ServletException e) {
+        } catch (ServletException e) {
             log4jAccount.warn("Account.save: " + e);
             m_changed = "N";
         }
@@ -202,21 +246,20 @@ public final class Account implements Serializable {
 
     /**
      * Is this a Balance Sheet Account
+     * 
      * @return boolean
      */
-    public boolean isBalanceSheet(){
+    public boolean isBalanceSheet() {
         return (m_AcctType == 'A' || m_AcctType == 'L' || m_AcctType == 'O');
-    }   //  isBalanceSheet
+    } // isBalanceSheet
 
-    public String getAD_Org_ID(){
+    public String getAD_Org_ID() {
         return AD_Org_ID;
     }
 
-    public String getAccount_ID(){
+    public String getAccount_ID() {
         return Account_ID;
     }
-
-
 
     public String C_ValidCombination_ID;
     public String C_AcctSchema_ID;

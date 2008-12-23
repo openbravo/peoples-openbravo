@@ -26,40 +26,40 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.reporting.DocumentType;
 
 @SuppressWarnings("serial")
-public class PrintQuotations extends PrintController
-{
-    static Logger log4j = Logger.getLogger( PrintQuotations.class );
+public class PrintQuotations extends PrintController {
+    static Logger log4j = Logger.getLogger(PrintQuotations.class);
 
-    // TODO: Als een email in draft staat de velden voor de email adressen weghalen en melden dat het document
-	// 			niet ge-emailed kan worden
-	
-	public void init( ServletConfig config )
-	{
-		super.init(config);
-		boolHist = false;
-	}
+    // TODO: Als een email in draft staat de velden voor de email adressen
+    // weghalen en melden dat het document
+    // niet ge-emailed kan worden
 
-	@SuppressWarnings("unchecked")
-	public void doPost( HttpServletRequest request, HttpServletResponse response )
-			throws IOException, ServletException
-	{
-		VariablesSecureApp vars = new VariablesSecureApp(request);
-		
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
+    }
 
-		DocumentType	documentType = DocumentType.QUOTATION;
-	  // The prefix PRINTQUOTATIONS is a fixed name based on the KEY of the AD_PROCESS
-		String	sessionValuePrefix = "PRINTQUOTATIONS";
-		String	strDocumentId = null;
-		
-    strDocumentId = vars.getSessionValue( sessionValuePrefix + ".inpcOrderId_R");
-    if (strDocumentId.equals(""))
-      strDocumentId = vars.getSessionValue( sessionValuePrefix + ".inpcOrderId");
+    @SuppressWarnings("unchecked")
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    post(request,response,vars,documentType,sessionValuePrefix, strDocumentId);
-	}
+        DocumentType documentType = DocumentType.QUOTATION;
+        // The prefix PRINTQUOTATIONS is a fixed name based on the KEY of the
+        // AD_PROCESS
+        String sessionValuePrefix = "PRINTQUOTATIONS";
+        String strDocumentId = null;
 
-	public String getServletInfo()
-	{
-		return "Servlet that processes the print action";
-	} // End of getServletInfo() method
+        strDocumentId = vars.getSessionValue(sessionValuePrefix
+                + ".inpcOrderId_R");
+        if (strDocumentId.equals(""))
+            strDocumentId = vars.getSessionValue(sessionValuePrefix
+                    + ".inpcOrderId");
+
+        post(request, response, vars, documentType, sessionValuePrefix,
+                strDocumentId);
+    }
+
+    public String getServletInfo() {
+        return "Servlet that processes the print action";
+    } // End of getServletInfo() method
 }

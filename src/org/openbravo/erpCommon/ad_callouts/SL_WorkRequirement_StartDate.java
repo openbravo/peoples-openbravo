@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_callouts;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -26,46 +26,51 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-
-
 public class SL_WorkRequirement_StartDate extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
+    }
 
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+        if (vars.commandIn("DEFAULT")) {
+            String strChanged = vars.getStringParameter("inpLastFieldChanged");
+            if (log4j.isDebugEnabled())
+                log4j.debug("CHANGED: " + strChanged);
+            String strStartDate = vars.getStringParameter("inpstartdate");
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled()) log4j.debug("CHANGED: " + strChanged);
-      String strStartDate = vars.getStringParameter("inpstartdate");
-      
-      try {
-        printPage(response, vars, strStartDate);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else pageError(response);
-  }
+            try {
+                printPage(response, vars, strStartDate);
+            } catch (ServletException ex) {
+                pageErrorCallOut(response);
+            }
+        } else
+            pageError(response);
+    }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strStartDate) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-    
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_WorkRequirement_StartDate';\n\n");
-    resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpenddate\", \"" + FormatUtilities.replaceJS(strStartDate) + "\")");
-    resultado.append(");");
-    
-    xmlDocument.setParameter("array", resultado.toString());
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
+    void printPage(HttpServletResponse response, VariablesSecureApp vars,
+            String strStartDate) throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/ad_callouts/CallOut")
+                .createXmlDocument();
+
+        StringBuffer resultado = new StringBuffer();
+        resultado.append("var calloutName='SL_WorkRequirement_StartDate';\n\n");
+        resultado.append("var respuesta = new Array(");
+        resultado.append("new Array(\"inpenddate\", \""
+                + FormatUtilities.replaceJS(strStartDate) + "\")");
+        resultado.append(");");
+
+        xmlDocument.setParameter("array", resultado.toString());
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
+    }
 }

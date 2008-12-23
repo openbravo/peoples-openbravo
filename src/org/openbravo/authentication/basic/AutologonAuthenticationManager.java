@@ -25,49 +25,59 @@ import org.openbravo.base.secureApp.SeguridadData;
 import org.openbravo.database.ConnectionProvider;
 
 /**
- *
+ * 
  * @author adrianromero
  */
 public class AutologonAuthenticationManager implements AuthenticationManager {
-    
+
     private String m_sAutologonUsername;
     private String m_sUserId = null;
-  
+
     /** Creates a new instance of FixedAuthenticationManager */
     public AutologonAuthenticationManager() {
     }
-    
+
     public void init(HttpServlet s) throws AuthenticationException {
-                
+
         if (s instanceof ConnectionProvider) {
             ConnectionProvider conn = (ConnectionProvider) s;
-            m_sAutologonUsername = ConfigParameters.retrieveFrom(s.getServletContext()).getOBProperty("authentication.autologon.username");
+            m_sAutologonUsername = ConfigParameters.retrieveFrom(
+                    s.getServletContext()).getOBProperty(
+                    "authentication.autologon.username");
             try {
                 m_sUserId = SeguridadData.getUserId(conn, m_sAutologonUsername);
             } catch (ServletException e) {
-                throw new AuthenticationException("Cannot authenticate user: " + m_sAutologonUsername, e);
+                throw new AuthenticationException("Cannot authenticate user: "
+                        + m_sAutologonUsername, e);
             }
-            
-        } else {
-            throw new AuthenticationException("Connection provider required for Autologon authentication");
-        }         
-    }   
 
-    public String authenticate(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, ServletException, IOException {
-        
-        if (m_sUserId == null || m_sUserId.equals("") || m_sUserId.equals("-1")) {   
+        } else {
+            throw new AuthenticationException(
+                    "Connection provider required for Autologon authentication");
+        }
+    }
+
+    public String authenticate(HttpServletRequest request,
+            HttpServletResponse response) throws AuthenticationException,
+            ServletException, IOException {
+
+        if (m_sUserId == null || m_sUserId.equals("") || m_sUserId.equals("-1")) {
             if (m_sAutologonUsername == null || m_sAutologonUsername.equals("")) {
-                throw new AuthenticationException("Autologon user emtpy.");                    
+                throw new AuthenticationException("Autologon user emtpy.");
             } else {
-                throw new AuthenticationException("Autologon user is not an Openbravo ERP user: " + m_sAutologonUsername);                    
+                throw new AuthenticationException(
+                        "Autologon user is not an Openbravo ERP user: "
+                                + m_sAutologonUsername);
             }
         } else {
             return m_sUserId;
         }
     }
 
-    public void logout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void logout(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         // Never logs out this manager, just go to menu.
-        response.sendRedirect(HttpBaseUtils.getLocalAddress(request) + "/security/Menu.html");
-    }    
+        response.sendRedirect(HttpBaseUtils.getLocalAddress(request)
+                + "/security/Menu.html");
+    }
 }

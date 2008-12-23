@@ -13,19 +13,18 @@
  * Contributor(s): Openbravo SL
  * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
  ******************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_forms;
 
 import java.io.Serializable;
 import org.openbravo.database.ConnectionProvider;
-import org.apache.log4j.Logger ;
+import org.apache.log4j.Logger;
 import javax.servlet.*;
 import java.util.ArrayList;
 
-
 public final class AcctSchema implements Serializable {
-  private static final long serialVersionUID = 1L;
-  static Logger log4jAcctSchema = Logger.getLogger(AcctSchema.class);
+    private static final long serialVersionUID = 1L;
+    static Logger log4jAcctSchema = Logger.getLogger(AcctSchema.class);
 
     public AcctSchema(ConnectionProvider conn, String C_AcctSchema_ID) {
         m_C_AcctSchema_ID = "";
@@ -52,14 +51,13 @@ public final class AcctSchema implements Serializable {
         load(conn, C_AcctSchema_ID);
     }
 
-
     public void load(ConnectionProvider conn, String newC_AcctSchema_ID) {
         log4jAcctSchema.debug("AcctSchema.load - " + newC_AcctSchema_ID);
         m_C_AcctSchema_ID = newC_AcctSchema_ID;
-        AcctSchemaData [] data ;
+        AcctSchemaData[] data;
         try {
             data = AcctSchemaData.select(conn, m_C_AcctSchema_ID);
-            if(data.length==1) {
+            if (data.length == 1) {
                 m_Name = data[0].name;
                 m_GAAP = data[0].gaap;
                 m_IsAccrual = data[0].isaccrual;
@@ -71,164 +69,194 @@ public final class AcctSchema implements Serializable {
                 m_AD_Client_ID = data[0].adClientId;
             }
             data = AcctSchemaData.selectAcctSchemaGL(conn, m_C_AcctSchema_ID);
-            if(data.length==1) {
+            if (data.length == 1) {
                 m_UseSuspenseBalancing = data[0].usesuspensebalancing;
                 String ID = data[0].suspensebalancingAcct;
-                if(m_UseSuspenseBalancing.equals("Y") && !ID.equals(""))// antes era "0"
+                if (m_UseSuspenseBalancing.equals("Y") && !ID.equals(""))// antes
+                                                                         // era
+                                                                         // "0"
                     m_SuspenseBalancing_Acct = Account.getAccount(conn, ID);
                 else
                     m_UseSuspenseBalancing = "N";
-                log4jAcctSchema.debug("SuspenseBalancing=" + m_UseSuspenseBalancing + " " + m_SuspenseBalancing_Acct);
+                log4jAcctSchema.debug("SuspenseBalancing="
+                        + m_UseSuspenseBalancing + " "
+                        + m_SuspenseBalancing_Acct);
                 m_UseSuspenseError = data[0].usesuspenseerror;
                 ID = data[0].suspenseerrorAcct;
-                if(m_UseSuspenseError.equals("Y") && !ID.equals(""))// antes era "0"
+                if (m_UseSuspenseError.equals("Y") && !ID.equals(""))// antes
+                                                                     // era "0"
                     m_SuspenseError_Acct = Account.getAccount(conn, ID);
                 else
                     m_UseSuspenseError = "N";
-                log4jAcctSchema.debug("SuspenseError=" + m_UseSuspenseError + " " + m_SuspenseError_Acct);
+                log4jAcctSchema.debug("SuspenseError=" + m_UseSuspenseError
+                        + " " + m_SuspenseError_Acct);
                 m_UseCurrencyBalancing = data[0].usecurrencybalancing;
                 ID = data[0].currencybalancingAcct;
-                if(m_UseCurrencyBalancing.equals("Y") && !ID.equals(""))// antes era "0"
+                if (m_UseCurrencyBalancing.equals("Y") && !ID.equals(""))// antes
+                                                                         // era
+                                                                         // "0"
                     m_CurrencyBalancing_Acct = Account.getAccount(conn, ID);
                 else
                     m_UseCurrencyBalancing = "N";
-                log4jAcctSchema.debug("CurrencyBalancing=" + m_UseCurrencyBalancing + " " + m_CurrencyBalancing_Acct);
+                log4jAcctSchema.debug("CurrencyBalancing="
+                        + m_UseCurrencyBalancing + " "
+                        + m_CurrencyBalancing_Acct);
                 ID = data[0].intercompanyduetoAcct;
-                if(!ID.equals(""))// antes era "0"
+                if (!ID.equals(""))// antes era "0"
                     m_DueTo_Acct = Account.getAccount(conn, ID);
                 ID = data[0].intercompanyduefromAcct;
-                if(!ID.equals(""))// antes era "0"
+                if (!ID.equals(""))// antes era "0"
                     m_DueFrom_Acct = Account.getAccount(conn, ID);
             }
-            m_elementList = AcctSchemaElement.getAcctSchemaElementList(conn, m_C_AcctSchema_ID);
-        }
-        catch(ServletException e) {
+            m_elementList = AcctSchemaElement.getAcctSchemaElementList(conn,
+                    m_C_AcctSchema_ID);
+        } catch (ServletException e) {
             log4jAcctSchema.warn("AcctSchema : " + e);
             m_C_AcctSchema_ID = "";
         }
     }
 
-	/**
-	 *	Use Currency Balancing
-	 *  @return true if currency balancing
-	 */
-	public boolean isCurrencyBalancing(){
-		return m_UseCurrencyBalancing.equals("Y");
-	}	//	useCurrencyBalancing
+    /**
+     * Use Currency Balancing
+     * 
+     * @return true if currency balancing
+     */
+    public boolean isCurrencyBalancing() {
+        return m_UseCurrencyBalancing.equals("Y");
+    } // useCurrencyBalancing
 
-	/**
-	 *	Get Currency Balancing Account
-	 *  @return currency balancing account
-	 */
-	public Account getCurrencyBalancing_Acct(){
-		return m_CurrencyBalancing_Acct;
-	}	//	getCurrencyBalancing_Acct
+    /**
+     * Get Currency Balancing Account
+     * 
+     * @return currency balancing account
+     */
+    public Account getCurrencyBalancing_Acct() {
+        return m_CurrencyBalancing_Acct;
+    } // getCurrencyBalancing_Acct
 
-	/**
-	 *  Get AcctSchema Element
-	 *  @param segmentType segment type - AcctSchemaElement.SEGMENT_
-	 *  @return AcctSchemaElement
-	 */
-	public AcctSchemaElement getAcctSchemaElement (String segmentType){
-		int size = m_elementList.size();
-		for (int i = 0; i < size; i++){
-			AcctSchemaElement ase = (AcctSchemaElement)m_elementList.get(i);
-			if (ase.m_segmentType.equals(segmentType))
-				return ase;
-		}
-		return null;
-	}   //  getAcctSchemaElement
+    /**
+     * Get AcctSchema Element
+     * 
+     * @param segmentType
+     *            segment type - AcctSchemaElement.SEGMENT_
+     * @return AcctSchemaElement
+     */
+    public AcctSchemaElement getAcctSchemaElement(String segmentType) {
+        int size = m_elementList.size();
+        for (int i = 0; i < size; i++) {
+            AcctSchemaElement ase = (AcctSchemaElement) m_elementList.get(i);
+            if (ase.m_segmentType.equals(segmentType))
+                return ase;
+        }
+        return null;
+    } // getAcctSchemaElement
 
-	/**
-	 *  Get Acct_Schema
-	 *  @return C_AcctSchema_ID
-	 */
-	public String getC_AcctSchema_ID(){
-		return m_C_AcctSchema_ID;
-	}   //  getC_AcctSchema_ID
+    /**
+     * Get Acct_Schema
+     * 
+     * @return C_AcctSchema_ID
+     */
+    public String getC_AcctSchema_ID() {
+        return m_C_AcctSchema_ID;
+    } // getC_AcctSchema_ID
 
-	/**
-	 *	Get C_Currency_ID
-	 *  @return C_Currency_ID
-	 */
-	public String getC_Currency_ID(){
-		return m_C_Currency_ID;
-	}	//	getC_Currency_ID
+    /**
+     * Get C_Currency_ID
+     * 
+     * @return C_Currency_ID
+     */
+    public String getC_Currency_ID() {
+        return m_C_Currency_ID;
+    } // getC_Currency_ID
 
-	/**
-	 *	Get Currency Rate Type
-	 *  @return Currency Rate Type
-	 */
-	public String getCurrencyRateType(){
-		return m_CurrencyRateType;
-	}	//	getCurrencyRateType
+    /**
+     * Get Currency Rate Type
+     * 
+     * @return Currency Rate Type
+     */
+    public String getCurrencyRateType() {
+        return m_CurrencyRateType;
+    } // getCurrencyRateType
 
-	/**
-	 *	Use Suspense Balancing
-	 *  @return true if suspense balancing
-	 */
-	public boolean isSuspenseBalancing(){
-		return m_UseSuspenseBalancing.equals("Y");
-	}	//	useSuspenseBalancing
+    /**
+     * Use Suspense Balancing
+     * 
+     * @return true if suspense balancing
+     */
+    public boolean isSuspenseBalancing() {
+        return m_UseSuspenseBalancing.equals("Y");
+    } // useSuspenseBalancing
 
-	/**
-	 *	Is Accrual
-	 *  @return true if accrual
-	 */
-	public boolean isAccrual(){
-		return m_IsAccrual.equals("Y");
-	}	//	isAccrual
+    /**
+     * Is Accrual
+     * 
+     * @return true if accrual
+     */
+    public boolean isAccrual() {
+        return m_IsAccrual.equals("Y");
+    } // isAccrual
 
-	/**
-	 *  Has AcctSchema Element
-	 *  @param segmentType segment type - AcctSchemaElement.SEGMENT_
-	 *  @return true if schema has segment type
-	 */
-	public boolean isAcctSchemaElement (String segmentType){
-		return getAcctSchemaElement(segmentType) != null;
-	}   //  isAcctSchemaElement
+    /**
+     * Has AcctSchema Element
+     * 
+     * @param segmentType
+     *            segment type - AcctSchemaElement.SEGMENT_
+     * @return true if schema has segment type
+     */
+    public boolean isAcctSchemaElement(String segmentType) {
+        return getAcctSchemaElement(segmentType) != null;
+    } // isAcctSchemaElement
 
-	/**
-	 *	Get Suspense Balancing Account
-	 *  @return suspense balancing account
-	 */
-	public Account getSuspenseBalancing_Acct(){
-		return m_SuspenseBalancing_Acct;
-	}	//	getSuspenseBalancing_Acct
+    /**
+     * Get Suspense Balancing Account
+     * 
+     * @return suspense balancing account
+     */
+    public Account getSuspenseBalancing_Acct() {
+        return m_SuspenseBalancing_Acct;
+    } // getSuspenseBalancing_Acct
 
-	/**
-	 *  AcctSchema Element Array
-	 *  @param AD_Client_ID client
-	 *  @return AcctSchema Array of Client
-	 */
-	public static AcctSchema[] getAcctSchemaArray(ConnectionProvider conn, String AD_Client_ID, String AD_Org_ID){
-		ArrayList<Object> list = getAcctSchemaList (conn, AD_Client_ID, AD_Org_ID);
-		AcctSchema[] retValue = new AcctSchema [list.size()];
-		list.toArray(retValue);
-		return retValue;
-	}   //  getAcctSchemaArray
+    /**
+     * AcctSchema Element Array
+     * 
+     * @param AD_Client_ID
+     *            client
+     * @return AcctSchema Array of Client
+     */
+    public static AcctSchema[] getAcctSchemaArray(ConnectionProvider conn,
+            String AD_Client_ID, String AD_Org_ID) {
+        ArrayList<Object> list = getAcctSchemaList(conn, AD_Client_ID,
+                AD_Org_ID);
+        AcctSchema[] retValue = new AcctSchema[list.size()];
+        list.toArray(retValue);
+        return retValue;
+    } // getAcctSchemaArray
 
-	/**
-	 *  Factory: Get AccountSchema List
-	 *  @param AD_Client_ID client
-	 *  @return ArrayList of AcctSchema of Client
-	 */
-	public static synchronized ArrayList<Object> getAcctSchemaList (ConnectionProvider conn, String AD_Client_ID, String AD_Org_ID){
-		//  Create New
-		ArrayList<Object> list = new ArrayList<Object>();
-		AcctSchemaData [] data = null;
-		try{
-			data = AcctSchemaData.selectAcctSchemas(conn, AD_Client_ID, AD_Org_ID);
-		}catch(ServletException e){
-			log4jAcctSchema.warn(e);
-		}
-		for (int i=0;data.length>i;i++){
-			String as = data[i].cAcctschemaId;
-			list.add(new AcctSchema(conn, as));
-		}
-		//  Save
-		return list;
-	}   //  getAcctSchemaList
+    /**
+     * Factory: Get AccountSchema List
+     * 
+     * @param AD_Client_ID
+     *            client
+     * @return ArrayList of AcctSchema of Client
+     */
+    public static synchronized ArrayList<Object> getAcctSchemaList(
+            ConnectionProvider conn, String AD_Client_ID, String AD_Org_ID) {
+        // Create New
+        ArrayList<Object> list = new ArrayList<Object>();
+        AcctSchemaData[] data = null;
+        try {
+            data = AcctSchemaData.selectAcctSchemas(conn, AD_Client_ID,
+                    AD_Org_ID);
+        } catch (ServletException e) {
+            log4jAcctSchema.warn(e);
+        }
+        for (int i = 0; data.length > i; i++) {
+            String as = data[i].cAcctschemaId;
+            list.add(new AcctSchema(conn, as));
+        }
+        // Save
+        return list;
+    } // getAcctSchemaList
 
     public String m_C_AcctSchema_ID;
     public String m_Name;
@@ -251,13 +279,11 @@ public final class AcctSchema implements Serializable {
     public Account m_DueFrom_Acct;
     ArrayList<Object> m_elementList;
 
-	//  Costing Methods
-	public static final String  COSTING_AVERAGE = "A";
-	public static final String  COSTING_STANDARD = "S";
-//	public static final String  COSTING_FIFO = "F";
-//	public static final String  COSTING_LIFO = "L";
-	public static final String  COSTING_LASTPO = "P";
-
-
+    // Costing Methods
+    public static final String COSTING_AVERAGE = "A";
+    public static final String COSTING_STANDARD = "S";
+    // public static final String COSTING_FIFO = "F";
+    // public static final String COSTING_LIFO = "L";
+    public static final String COSTING_LASTPO = "P";
 
 }

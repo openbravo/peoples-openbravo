@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_actionButton;
 
 import org.openbravo.erpCommon.utility.*;
@@ -27,120 +27,146 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-
-
 // imports for transactions
 import java.sql.Connection;
 
-
 public class CopyFromInvoice extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
+    }
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (vars.commandIn("DEFAULT")) {
-      String strProcessId = vars.getStringParameter("inpProcessId");
-      String strWindow = vars.getStringParameter("inpwindowId");
-      String strTab = vars.getStringParameter("inpTabId");
-      String strKey = vars.getGlobalVariable("inpcInvoiceId", strWindow + "|C_Invoice_ID");
-      printPage(response, vars, strKey, strWindow, strTab, strProcessId);
-    } else if (vars.commandIn("SAVE")) {
-      String strKey = vars.getStringParameter("inpcInvoiceId");
-      String strInvoice = vars.getStringParameter("inpNewcInvoiceId");
-      String strWindow = vars.getStringParameter("inpwindowId");
-      String strTab = vars.getStringParameter("inpTabId");
-      ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(this, strTab);
-      String strWindowPath="", strTabName="";
-      if (tab!=null && tab.length!=0) {
-        strTabName = FormatUtilities.replace(tab[0].name);
-        strWindowPath = "../" + FormatUtilities.replace(tab[0].description) + "/" + strTabName + "_Relation.html";
-      } else strWindowPath = strDefaultServlet;
+        if (vars.commandIn("DEFAULT")) {
+            String strProcessId = vars.getStringParameter("inpProcessId");
+            String strWindow = vars.getStringParameter("inpwindowId");
+            String strTab = vars.getStringParameter("inpTabId");
+            String strKey = vars.getGlobalVariable("inpcInvoiceId", strWindow
+                    + "|C_Invoice_ID");
+            printPage(response, vars, strKey, strWindow, strTab, strProcessId);
+        } else if (vars.commandIn("SAVE")) {
+            String strKey = vars.getStringParameter("inpcInvoiceId");
+            String strInvoice = vars.getStringParameter("inpNewcInvoiceId");
+            String strWindow = vars.getStringParameter("inpwindowId");
+            String strTab = vars.getStringParameter("inpTabId");
+            ActionButtonDefaultData[] tab = ActionButtonDefaultData.windowName(
+                    this, strTab);
+            String strWindowPath = "", strTabName = "";
+            if (tab != null && tab.length != 0) {
+                strTabName = FormatUtilities.replace(tab[0].name);
+                strWindowPath = "../"
+                        + FormatUtilities.replace(tab[0].description) + "/"
+                        + strTabName + "_Relation.html";
+            } else
+                strWindowPath = strDefaultServlet;
 
-        OBError myError = processButton(vars, strKey, strInvoice, strWindow);
-        vars.setMessage(strTab, myError);        
-        printPageClosePopUp(response, vars, strWindowPath);
-    } else pageErrorPopUp(response);
-  }
+            OBError myError = processButton(vars, strKey, strInvoice, strWindow);
+            vars.setMessage(strTab, myError);
+            printPageClosePopUp(response, vars, strWindowPath);
+        } else
+            pageErrorPopUp(response);
+    }
 
-  OBError processButton(VariablesSecureApp vars, String strKey, String strInvoice, String windowId) {
-    int i = 0;
-    OBError myError = null;
-    Connection conn = null;
-    try {
-      conn = getTransactionConnection();    
-      CopyFromInvoiceData[] data = CopyFromInvoiceData.select(conn, this, strInvoice, Utility.getContext(this, vars, "#User_Client", windowId), Utility.getContext(this, vars, "#User_Org", windowId));
-      if (data!=null && data.length!=0) {
-        for (i=0;i<data.length;i++) {
-          String strSequence = SequenceIdData.getUUID();
-          try {
-            CopyFromInvoiceData.insert(conn, this, strSequence, strKey, vars.getClient(), vars.getOrg(), vars.getUser(), data[i].cInvoicelineId);
-          } catch(ServletException ex) {
-            myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-            releaseRollbackConnection(conn);
-          }          
+    OBError processButton(VariablesSecureApp vars, String strKey,
+            String strInvoice, String windowId) {
+        int i = 0;
+        OBError myError = null;
+        Connection conn = null;
+        try {
+            conn = getTransactionConnection();
+            CopyFromInvoiceData[] data = CopyFromInvoiceData.select(conn, this,
+                    strInvoice, Utility.getContext(this, vars, "#User_Client",
+                            windowId), Utility.getContext(this, vars,
+                            "#User_Org", windowId));
+            if (data != null && data.length != 0) {
+                for (i = 0; i < data.length; i++) {
+                    String strSequence = SequenceIdData.getUUID();
+                    try {
+                        CopyFromInvoiceData.insert(conn, this, strSequence,
+                                strKey, vars.getClient(), vars.getOrg(), vars
+                                        .getUser(), data[i].cInvoicelineId);
+                    } catch (ServletException ex) {
+                        myError = Utility.translateError(this, vars, vars
+                                .getLanguage(), ex.getMessage());
+                        releaseRollbackConnection(conn);
+                    }
+                }
+            }
+            releaseCommitConnection(conn);
+        } catch (Exception e) {
+            try {
+                releaseRollbackConnection(conn);
+            } catch (Exception ignored) {
+            }
+            log4j.warn("Rollback in transaction", e);
+            myError = new OBError();
+            myError.setType("Error");
+            myError.setTitle(Utility.messageBD(this, "Error", vars
+                    .getLanguage()));
+            myError.setMessage(Utility.messageBD(this, "ProcessRunError", vars
+                    .getLanguage()));
+            return myError;
         }
-      }
-      releaseCommitConnection(conn);
-    } catch (Exception e) {
-      try {
-        releaseRollbackConnection(conn);
-      } catch (Exception ignored) {}
-      log4j.warn("Rollback in transaction",e);
-      myError = new OBError();
-      myError.setType("Error");
-      myError.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-      myError.setMessage(Utility.messageBD(this, "ProcessRunError", vars.getLanguage()));
-      return myError;
-    }
-    myError = new OBError();
-    myError.setType("Success");
-    myError.setTitle(Utility.messageBD(this, "Success", vars.getLanguage()));
-    myError.setMessage(Utility.messageBD(this, "RecordsCopied", vars.getLanguage()) + " " + i);
-    return myError;
-  }
-
-
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strKey, String windowId, String strTab, String strProcessId)
-    throws IOException, ServletException {
-      if (log4j.isDebugEnabled()) log4j.debug("Output: Button process Copy from Invoice");
-
-      ActionButtonDefaultData[] data = null;
-      String strHelp="", strDescription="";
-      if (vars.getLanguage().equals("en_US")) data = ActionButtonDefaultData.select(this, strProcessId);
-      else data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
-
-      if (data!=null && data.length!=0) {
-        strDescription = data[0].description;
-        strHelp = data[0].help;
-      }
-      String[] discard = {""};
-      if (strHelp.equals("")) discard[0] = new String("helpDiscard");
-      XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/CopyFromInvoice", discard).createXmlDocument();
-      xmlDocument.setParameter("key", strKey);
-      xmlDocument.setParameter("window", windowId);
-      xmlDocument.setParameter("tab", strTab);
-      xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-      xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars.getLanguage()));
-      xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-      xmlDocument.setParameter("theme", vars.getTheme());
-      xmlDocument.setParameter("description", strDescription);
-      xmlDocument.setParameter("help", strHelp);
-
-      
-      response.setContentType("text/html; charset=UTF-8");
-      PrintWriter out = response.getWriter();
-      out.println(xmlDocument.print());
-      out.close();
+        myError = new OBError();
+        myError.setType("Success");
+        myError
+                .setTitle(Utility
+                        .messageBD(this, "Success", vars.getLanguage()));
+        myError.setMessage(Utility.messageBD(this, "RecordsCopied", vars
+                .getLanguage())
+                + " " + i);
+        return myError;
     }
 
-  public String getServletInfo() {
-    return "Servlet Copy from invoice";
-  } // end of getServletInfo() method
+    void printPage(HttpServletResponse response, VariablesSecureApp vars,
+            String strKey, String windowId, String strTab, String strProcessId)
+            throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: Button process Copy from Invoice");
+
+        ActionButtonDefaultData[] data = null;
+        String strHelp = "", strDescription = "";
+        if (vars.getLanguage().equals("en_US"))
+            data = ActionButtonDefaultData.select(this, strProcessId);
+        else
+            data = ActionButtonDefaultData.selectLanguage(this, vars
+                    .getLanguage(), strProcessId);
+
+        if (data != null && data.length != 0) {
+            strDescription = data[0].description;
+            strHelp = data[0].help;
+        }
+        String[] discard = { "" };
+        if (strHelp.equals(""))
+            discard[0] = new String("helpDiscard");
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/ad_actionButton/CopyFromInvoice",
+                discard).createXmlDocument();
+        xmlDocument.setParameter("key", strKey);
+        xmlDocument.setParameter("window", windowId);
+        xmlDocument.setParameter("tab", strTab);
+        xmlDocument.setParameter("language", "defaultLang=\""
+                + vars.getLanguage() + "\";");
+        xmlDocument.setParameter("question", Utility.messageBD(this,
+                "StartProcess?", vars.getLanguage()));
+        xmlDocument.setParameter("directory", "var baseDirectory = \""
+                + strReplaceWith + "/\";\n");
+        xmlDocument.setParameter("theme", vars.getTheme());
+        xmlDocument.setParameter("description", strDescription);
+        xmlDocument.setParameter("help", strHelp);
+
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
+    }
+
+    public String getServletInfo() {
+        return "Servlet Copy from invoice";
+    } // end of getServletInfo() method
 }
-

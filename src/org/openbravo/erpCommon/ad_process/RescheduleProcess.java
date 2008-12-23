@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_process;
 
 import java.io.IOException;
@@ -32,33 +32,37 @@ import org.openbravo.scheduling.ProcessBundle;
 
 /**
  * @author awolski
- *
+ * 
  */
 public class RescheduleProcess extends HttpSecureAppServlet {
-  
-  private static final long serialVersionUID = 1L;
-  
-  public static final String PROCESS_REQUEST_ID = "AD_Process_Request_ID";
-  
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) 
-      throws ServletException, IOException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    
-    String windowId = request.getParameter("inpwindowId");
-    String requestId = vars.getSessionValue(windowId + "|" + PROCESS_REQUEST_ID);
 
-    String message;
-    try {
-      ProcessBundle bundle = ProcessBundle.request(requestId, vars, this);
-      OBScheduler.getInstance().schedule(requestId, bundle);
-      
-    } catch (Exception e) {
-      message = Utility.messageBD(this, "RESCHED_ERROR", vars.getLanguage());
-      advisePopUp(response, "ERROR", "Process Request", message + " " + e.getMessage());
-    
-    } 
-    message = Utility.messageBD(this, "RESCHED_SUCCESS", vars.getLanguage());
-    advisePopUp(response, "SUCCESS", "Process Request", message);
-  }
+    private static final long serialVersionUID = 1L;
+
+    public static final String PROCESS_REQUEST_ID = "AD_Process_Request_ID";
+
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+
+        String windowId = request.getParameter("inpwindowId");
+        String requestId = vars.getSessionValue(windowId + "|"
+                + PROCESS_REQUEST_ID);
+
+        String message;
+        try {
+            ProcessBundle bundle = ProcessBundle.request(requestId, vars, this);
+            OBScheduler.getInstance().schedule(requestId, bundle);
+
+        } catch (Exception e) {
+            message = Utility.messageBD(this, "RESCHED_ERROR", vars
+                    .getLanguage());
+            advisePopUp(response, "ERROR", "Process Request", message + " "
+                    + e.getMessage());
+
+        }
+        message = Utility
+                .messageBD(this, "RESCHED_SUCCESS", vars.getLanguage());
+        advisePopUp(response, "SUCCESS", "Process Request", message);
+    }
 }

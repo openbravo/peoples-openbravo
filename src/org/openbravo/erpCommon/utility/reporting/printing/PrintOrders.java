@@ -22,46 +22,46 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 
 import org.openbravo.erpCommon.utility.reporting.DocumentType;
 
 @SuppressWarnings("serial")
-public class PrintOrders extends PrintController
-{
-    static Logger log4j = Logger.getLogger( PrintOrders.class );
+public class PrintOrders extends PrintController {
+    static Logger log4j = Logger.getLogger(PrintOrders.class);
 
-    // TODO: Als een email in draft staat de velden voor de email adressen weghalen en melden dat het document
-	// 			niet ge-emailed kan worden
-	
-	public void init( ServletConfig config )
-	{
-		super.init(config);
-		boolHist = false;
-	}
+    // TODO: Als een email in draft staat de velden voor de email adressen
+    // weghalen en melden dat het document
+    // niet ge-emailed kan worden
 
-	@SuppressWarnings("unchecked")
-	public void doPost( HttpServletRequest request, HttpServletResponse response )
-			throws IOException, ServletException
-	{
-		VariablesSecureApp vars = new VariablesSecureApp(request);
-		
-		DocumentType	documentType = DocumentType.SALESORDER;
-	  // The prefix PRINTORDERS is a fixed name based on the KEY of the AD_PROCESS
-		String	sessionValuePrefix = "PRINTORDERS";
-		String	strDocumentId = null;
-		
-	  strDocumentId = vars.getSessionValue( sessionValuePrefix + ".inpcOrderId_R");
-		if (strDocumentId.equals(""))
-			strDocumentId = vars.getSessionValue( sessionValuePrefix + ".inpcOrderId");
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
+    }
 
-    post(request,response,vars,documentType,sessionValuePrefix, strDocumentId);
-  }
+    @SuppressWarnings("unchecked")
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
 
-  public String getServletInfo()
-  {
-    return "Servlet that processes the print action";
-  } // End of getServletInfo() method
+        DocumentType documentType = DocumentType.SALESORDER;
+        // The prefix PRINTORDERS is a fixed name based on the KEY of the
+        // AD_PROCESS
+        String sessionValuePrefix = "PRINTORDERS";
+        String strDocumentId = null;
+
+        strDocumentId = vars.getSessionValue(sessionValuePrefix
+                + ".inpcOrderId_R");
+        if (strDocumentId.equals(""))
+            strDocumentId = vars.getSessionValue(sessionValuePrefix
+                    + ".inpcOrderId");
+
+        post(request, response, vars, documentType, sessionValuePrefix,
+                strDocumentId);
+    }
+
+    public String getServletInfo() {
+        return "Servlet that processes the print action";
+    } // End of getServletInfo() method
 }

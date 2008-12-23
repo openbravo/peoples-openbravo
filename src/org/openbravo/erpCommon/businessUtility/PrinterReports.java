@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.businessUtility;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -26,57 +26,77 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-
-
 public class PrinterReports extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
+    }
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strDirectPrint = vars.getStringParameter("inpdirectprint", "N");
-      String strPDFPath = vars.getStringParameter("inppdfpath");
-      String strHiddenKey = vars.getStringParameter("inphiddenkey");
-      String strHiddenValue = vars.getStringParameter("inphiddenvalue");
-      printPage(response, vars, strDirectPrint, strPDFPath, strHiddenKey, strHiddenValue);
-    } else pageError(response);
-  }
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+        if (vars.commandIn("DEFAULT")) {
+            String strDirectPrint = vars.getStringParameter("inpdirectprint",
+                    "N");
+            String strPDFPath = vars.getStringParameter("inppdfpath");
+            String strHiddenKey = vars.getStringParameter("inphiddenkey");
+            String strHiddenValue = vars.getStringParameter("inphiddenvalue");
+            printPage(response, vars, strDirectPrint, strPDFPath, strHiddenKey,
+                    strHiddenValue);
+        } else
+            pageError(response);
+    }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strDirectPrint, String strPDFPath, String strHiddenKey, String strHiddenValue) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    String[] discard = {"isPrintPreview"};
-    if (strDirectPrint.equals("N")) discard[0] = new String("isDirectPrint");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/businessUtility/PrinterReports", discard).createXmlDocument();
-    String mapping = "";
-    if (strPDFPath.startsWith("..")) {
-      strPDFPath = strPDFPath.substring(2);
-      mapping = strPDFPath;
-      strPDFPath = FormatUtilities.replace(PrinterReportsData.select(this, strPDFPath));
-    } else mapping = PrinterReportsData.selectMapping(this, strPDFPath);
+    void printPage(HttpServletResponse response, VariablesSecureApp vars,
+            String strDirectPrint, String strPDFPath, String strHiddenKey,
+            String strHiddenValue) throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        String[] discard = { "isPrintPreview" };
+        if (strDirectPrint.equals("N"))
+            discard[0] = new String("isDirectPrint");
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/businessUtility/PrinterReports",
+                discard).createXmlDocument();
+        String mapping = "";
+        if (strPDFPath.startsWith("..")) {
+            strPDFPath = strPDFPath.substring(2);
+            mapping = strPDFPath;
+            strPDFPath = FormatUtilities.replace(PrinterReportsData.select(
+                    this, strPDFPath));
+        } else
+            mapping = PrinterReportsData.selectMapping(this, strPDFPath);
 
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("pdfPath", mapping);
-    xmlDocument.setParameter("directPrint", strDirectPrint);
-    //if (strPDFPath.startsWith("..")) strPDFPath = strPDFPath.substring(2);
+        xmlDocument.setParameter("directory", "var baseDirectory = \""
+                + strReplaceWith + "/\";\n");
+        xmlDocument.setParameter("language", "defaultLang=\""
+                + vars.getLanguage() + "\";");
+        xmlDocument.setParameter("pdfPath", mapping);
+        xmlDocument.setParameter("directPrint", strDirectPrint);
+        // if (strPDFPath.startsWith("..")) strPDFPath =
+        // strPDFPath.substring(2);
 
-    //String mapping = FormatUtilities.replace(PrinterReportsData.select(this, strPDFPath));
-    strPDFPath = FormatUtilities.replace(strPDFPath);
+        // String mapping =
+        // FormatUtilities.replace(PrinterReportsData.select(this, strPDFPath));
+        strPDFPath = FormatUtilities.replace(strPDFPath);
 
-    vars.setSessionValue(strPDFPath + "." + strHiddenKey, "('" + strHiddenValue + "')");
-    if (!strHiddenValue.equals("")) vars.setSessionValue(strPDFPath + "." + strHiddenKey, "('" + strHiddenValue + "')");
-    else vars.getRequestInGlobalVariable(strHiddenKey, strPDFPath + "." + strHiddenKey);
+        vars.setSessionValue(strPDFPath + "." + strHiddenKey, "('"
+                + strHiddenValue + "')");
+        if (!strHiddenValue.equals(""))
+            vars.setSessionValue(strPDFPath + "." + strHiddenKey, "('"
+                    + strHiddenValue + "')");
+        else
+            vars.getRequestInGlobalVariable(strHiddenKey, strPDFPath + "."
+                    + strHiddenKey);
 
-    //vars.getRequestInGlobalVariable(strHiddenKey + "_R", mapping + "." + strHiddenKey + "_R");
+        // vars.getRequestInGlobalVariable(strHiddenKey + "_R", mapping + "." +
+        // strHiddenKey + "_R");
 
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
+    }
 }

@@ -30,135 +30,184 @@ import javax.servlet.http.*;
 import java.util.*;
 
 public class ReportInvoiceVendorJR extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    //Get user Client's base currency
-    String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
-    if (vars.commandIn("DEFAULT")){
-      String strDateFrom = vars.getStringParameter("inpDateFrom", "");
-      String strDateTo = vars.getStringParameter("inpDateTo", "");
-      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportInvoiceVendorJR|currency", strUserCurrencyId);
-      printPageDataSheet(response, vars, strDateFrom, strDateTo, strCurrencyId);
-    }else if (vars.commandIn("EDIT_HTML","EDIT_PDF")) {
-      String strDateFrom = vars.getStringParameter("inpDateFrom");
-      String strDateTo = vars.getStringParameter("inpDateTo");
-      String strcBpartnetId = vars.getStringParameter("inpcBPartnerId");
-      String strcProjectId = vars.getStringParameter("inpcProjectId");
-      String strissotrx = "N";
-      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "ReportInvoiceVendorJR|currency", strUserCurrencyId);
-      printPageHtml(response, vars, strDateFrom, strDateTo, strcBpartnetId, strcProjectId, strissotrx, strCurrencyId);
-    } else pageErrorPopUp(response);
-  }
-
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strCurrencyId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument=null;
-    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportInvoiceVendorFilterJR").createXmlDocument();
-
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportInvoiceVendorFilter", false, "", "", "",false, "ad_reports",  strReplaceWith, false,  true);
-    toolbar.prepareSimpleToolBarTemplate();
-    xmlDocument.setParameter("toolbar", toolbar.toString());
-
-    try {
-      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.ReportInvoiceVendorJR");
-      xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
-      xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
-      xmlDocument.setParameter("childTabContainer", tabs.childTabs());
-      xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportInvoiceVendorFilterJR.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
-      xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportInvoiceVendorFilterJR.html", strReplaceWith);
-      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-    {
-      OBError myMessage = vars.getMessage("ReportInvoiceVendorJR");
-      vars.removeMessage("ReportInvoiceVendorJR");
-      if (myMessage!=null) {
-        xmlDocument.setParameter("messageType", myMessage.getType());
-        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-      }
+        // Get user Client's base currency
+        String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars
+                .getClient());
+        if (vars.commandIn("DEFAULT")) {
+            String strDateFrom = vars.getStringParameter("inpDateFrom", "");
+            String strDateTo = vars.getStringParameter("inpDateTo", "");
+            String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
+                    "ReportInvoiceVendorJR|currency", strUserCurrencyId);
+            printPageDataSheet(response, vars, strDateFrom, strDateTo,
+                    strCurrencyId);
+        } else if (vars.commandIn("EDIT_HTML", "EDIT_PDF")) {
+            String strDateFrom = vars.getStringParameter("inpDateFrom");
+            String strDateTo = vars.getStringParameter("inpDateTo");
+            String strcBpartnetId = vars.getStringParameter("inpcBPartnerId");
+            String strcProjectId = vars.getStringParameter("inpcProjectId");
+            String strissotrx = "N";
+            String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
+                    "ReportInvoiceVendorJR|currency", strUserCurrencyId);
+            printPageHtml(response, vars, strDateFrom, strDateTo,
+                    strcBpartnetId, strcProjectId, strissotrx, strCurrencyId);
+        } else
+            pageErrorPopUp(response);
     }
 
+    void printPageDataSheet(HttpServletResponse response,
+            VariablesSecureApp vars, String strDateFrom, String strDateTo,
+            String strCurrencyId) throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        XmlDocument xmlDocument = null;
+        xmlDocument = xmlEngine
+                .readXmlTemplate(
+                        "org/openbravo/erpCommon/ad_reports/ReportInvoiceVendorFilterJR")
+                .createXmlDocument();
 
-    xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("dateFrom", strDateFrom);
-    xmlDocument.setParameter("dateTo", strDateTo);
-    xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("paramBPartnerId", "");
-    xmlDocument.setParameter("mWarehouseId", "");
-    xmlDocument.setParameter("cProjectId", "");
-    xmlDocument.setParameter("projectName", "");
-    try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID", "", "", Utility.getContext(this, vars, "#User_Org", "InvoiceVendorJR"), Utility.getContext(this, vars, "#User_Client", "InvoiceVendorJR"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "InvoiceVendorFilter", "");
-      xmlDocument.setData("reportM_WAREHOUSEID","liststructure", comboTableData.select(false));
-      comboTableData = null;
-    } catch (Exception ex) {
-      throw new ServletException(ex);
+        ToolBar toolbar = new ToolBar(this, vars.getLanguage(),
+                "ReportInvoiceVendorFilter", false, "", "", "", false,
+                "ad_reports", strReplaceWith, false, true);
+        toolbar.prepareSimpleToolBarTemplate();
+        xmlDocument.setParameter("toolbar", toolbar.toString());
+
+        try {
+            WindowTabs tabs = new WindowTabs(this, vars,
+                    "org.openbravo.erpCommon.ad_reports.ReportInvoiceVendorJR");
+            xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
+            xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
+            xmlDocument.setParameter("childTabContainer", tabs.childTabs());
+            xmlDocument.setParameter("theme", vars.getTheme());
+            NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+                    "ReportInvoiceVendorFilterJR.html", classInfo.id,
+                    classInfo.type, strReplaceWith, tabs.breadcrumb());
+            xmlDocument.setParameter("navigationBar", nav.toString());
+            LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
+                    "ReportInvoiceVendorFilterJR.html", strReplaceWith);
+            xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+        } catch (Exception ex) {
+            throw new ServletException(ex);
+        }
+        {
+            OBError myMessage = vars.getMessage("ReportInvoiceVendorJR");
+            vars.removeMessage("ReportInvoiceVendorJR");
+            if (myMessage != null) {
+                xmlDocument.setParameter("messageType", myMessage.getType());
+                xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+                xmlDocument.setParameter("messageMessage", myMessage
+                        .getMessage());
+            }
+        }
+
+        xmlDocument
+                .setParameter("calendar", vars.getLanguage().substring(0, 2));
+        xmlDocument.setParameter("language", "defaultLang=\""
+                + vars.getLanguage() + "\";");
+        xmlDocument.setParameter("directory", "var baseDirectory = \""
+                + strReplaceWith + "/\";\n");
+        xmlDocument.setParameter("dateFrom", strDateFrom);
+        xmlDocument.setParameter("dateTo", strDateTo);
+        xmlDocument.setParameter("dateFromdisplayFormat", vars
+                .getSessionValue("#AD_SqlDateFormat"));
+        xmlDocument.setParameter("dateFromsaveFormat", vars
+                .getSessionValue("#AD_SqlDateFormat"));
+        xmlDocument.setParameter("dateTodisplayFormat", vars
+                .getSessionValue("#AD_SqlDateFormat"));
+        xmlDocument.setParameter("dateTosaveFormat", vars
+                .getSessionValue("#AD_SqlDateFormat"));
+        xmlDocument.setParameter("paramBPartnerId", "");
+        xmlDocument.setParameter("mWarehouseId", "");
+        xmlDocument.setParameter("cProjectId", "");
+        xmlDocument.setParameter("projectName", "");
+        try {
+            ComboTableData comboTableData = new ComboTableData(vars, this,
+                    "TABLEDIR", "M_Warehouse_ID", "", "", Utility.getContext(
+                            this, vars, "#User_Org", "InvoiceVendorJR"),
+                    Utility.getContext(this, vars, "#User_Client",
+                            "InvoiceVendorJR"), 0);
+            Utility.fillSQLParameters(this, vars, null, comboTableData,
+                    "InvoiceVendorFilter", "");
+            xmlDocument.setData("reportM_WAREHOUSEID", "liststructure",
+                    comboTableData.select(false));
+            comboTableData = null;
+        } catch (Exception ex) {
+            throw new ServletException(ex);
+        }
+
+        xmlDocument.setParameter("ccurrencyid", strCurrencyId);
+        try {
+            ComboTableData comboTableData = new ComboTableData(vars, this,
+                    "TABLEDIR", "C_Currency_ID", "", "", Utility.getContext(
+                            this, vars, "#User_Org", "ReportInvoiceVendorJR"),
+                    Utility.getContext(this, vars, "#User_Client",
+                            "ReportInvoiceVendorJR"), 0);
+            Utility.fillSQLParameters(this, vars, null, comboTableData,
+                    "ReportInvoiceVendorJR", strCurrencyId);
+            xmlDocument.setData("reportC_Currency_ID", "liststructure",
+                    comboTableData.select(false));
+            comboTableData = null;
+        } catch (Exception ex) {
+            throw new ServletException(ex);
+        }
+
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
     }
-    
-    xmlDocument.setParameter("ccurrencyid", strCurrencyId);
-    try {
-       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_Currency_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportInvoiceVendorJR"), Utility.getContext(this, vars, "#User_Client", "ReportInvoiceVendorJR"), 0);
-       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoiceVendorJR", strCurrencyId);
-       xmlDocument.setData("reportC_Currency_ID","liststructure", comboTableData.select(false));
-       comboTableData = null;
-    } catch (Exception ex) {
-       throw new ServletException(ex);
+
+    void printPageHtml(HttpServletResponse response, VariablesSecureApp vars,
+            String strDateFrom, String strDateTo, String strcBpartnetId,
+            String strcProjectId, String strissotrx, String strCurrencyId)
+            throws IOException, ServletException {
+
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: print html");
+
+        InvoiceEditionData[] data = null;
+
+        // Checks if there is a conversion rate for each of the transactions of
+        // the report
+        String strConvRateErrorMsg = "";
+        OBError myMessage = null;
+        myMessage = new OBError();
+        try {
+            data = InvoiceEditionData.select(this, strCurrencyId, Utility
+                    .getContext(this, vars, "#User_Org", "InvoiceVendorJR"),
+                    Utility.getContext(this, vars, "#User_Client",
+                            "InvoiceVendorJR"), strDateFrom, DateTimeData
+                            .nDaysAfter(this, strDateTo, "1"), strcBpartnetId,
+                    strcProjectId, strissotrx);
+        } catch (ServletException ex) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(),
+                    ex.getMessage());
+        }
+        strConvRateErrorMsg = myMessage.getMessage();
+        // If a conversion rate is missing for a certain transaction, an error
+        // message window pops-up.
+        if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
+            advisePopUp(response, "ERROR", Utility.messageBD(this,
+                    "NoConversionRateHeader", vars.getLanguage()),
+                    strConvRateErrorMsg);
+        } else { // Launch the report as usual, calling the JRXML file
+            String strOutput = vars.commandIn("EDIT_HTML") ? "html" : "pdf";
+            String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportInvoiceVendorJR.jrxml";
+
+            HashMap<String, Object> parameters = new HashMap<String, Object>();
+            parameters.put("Title", classInfo.name);
+            // parameters.put("Subtitle",strSubtitle);
+            renderJR(vars, response, strReportName, strOutput, parameters,
+                    data, null);
+        }
     }
 
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-  void printPageHtml(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strcBpartnetId, String strcProjectId, String strissotrx, String strCurrencyId) throws IOException, ServletException{
-
-    if (log4j.isDebugEnabled()) log4j.debug("Output: print html");
-    
-    InvoiceEditionData[] data = null;
-
-    //Checks if there is a conversion rate for each of the transactions of the report
-    String strConvRateErrorMsg = "";
-    OBError myMessage = null;
-    myMessage = new OBError();
-    try {
-      data = InvoiceEditionData.select(this, strCurrencyId, Utility.getContext(this, vars, "#User_Org", "InvoiceVendorJR"), Utility.getContext(this, vars, "#User_Client", "InvoiceVendorJR"), strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"), strcBpartnetId, strcProjectId, strissotrx);
-    } catch(ServletException ex) {
-      myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-    }
-    strConvRateErrorMsg = myMessage.getMessage();
-    //If a conversion rate is missing for a certain transaction, an error message window pops-up.
-    if(!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-      advisePopUp(response, "ERROR", Utility.messageBD(this, "NoConversionRateHeader", vars.getLanguage()), strConvRateErrorMsg);      
-    } else { //Launch the report as usual, calling the JRXML file
-      String strOutput = vars.commandIn("EDIT_HTML")?"html":"pdf";
-      String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportInvoiceVendorJR.jrxml";
-      
-      HashMap<String, Object> parameters = new HashMap<String, Object>();
-      parameters.put("Title", classInfo.name);
-      //parameters.put("Subtitle",strSubtitle);
-      renderJR(vars, response, strReportName, strOutput, parameters, data, null );
-    } 
-  }
-
- 
-
-
-  public String getServletInfo() {
-    return "Servlet PurchaseOrderFilter. This Servlet was made by Jon Alegría";
-  } // end of getServletInfo() method
+    public String getServletInfo() {
+        return "Servlet PurchaseOrderFilter. This Servlet was made by Jon Alegría";
+    } // end of getServletInfo() method
 }
-

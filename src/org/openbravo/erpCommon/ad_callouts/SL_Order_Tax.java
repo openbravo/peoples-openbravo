@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_callouts;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -30,62 +30,94 @@ import javax.servlet.http.*;
 import org.openbravo.erpCommon.businessUtility.Tax;
 
 public class SL_Order_Tax extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
-
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled()) log4j.debug("CHANGED: " + strChanged);
-      String strMProductID = vars.getStringParameter("inpmProductId");
-      String strCBPartnerLocationID = vars.getStringParameter("inpcBpartnerLocationId");
-      String strDateOrdered = vars.getStringParameter("inpdateordered");
-      String strADOrgID = vars.getStringParameter("inpadOrgId");
-      String strMWarehouseID = vars.getStringParameter("inpmWarehouseId");
-      String strCOrderId = vars.getStringParameter("inpcOrderId");
-      String strWindowId = vars.getStringParameter("inpwindowId");
-      String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
-      String strTabId = vars.getStringParameter("inpTabId");
-      
-      try {
-        printPage(response, vars, strChanged, strMProductID, strCBPartnerLocationID, strDateOrdered, strADOrgID, strMWarehouseID, strCOrderId, strIsSOTrx, strTabId);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else pageError(response);
-  }
-
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged, String strMProductID, String strCBPartnerLocationID, String strDateOrdered, String strADOrgID, String strMWarehouseID, String strCOrderId, String strIsSOTrx, String strTabId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_Order_Tax';\n\n");
-    resultado.append("var respuesta = new Array(");
-
-    String strCTaxID = null; 
-    String orgLocationID = SLOrderProductData.getOrgLocationId(this, Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), "'"+strADOrgID+"'");
-    if(orgLocationID.equals("")){
-      resultado.append("new Array('MESSAGE', \"" + FormatUtilities.replaceJS(Utility.messageBD(this, "Tax can not be calculated, because the organization has not a location defined", vars.getLanguage())) + "\"),\n");
-    }else{
-      SLOrderTaxData [] data = SLOrderTaxData.select(this, strCOrderId);
-      if (data!=null && data.length>0){
-	      strCTaxID = Tax.get(this, strMProductID, data[0].dateordered, strADOrgID, strMWarehouseID, (data[0].billtoId.equals("")?strCBPartnerLocationID:data[0].billtoId), strCBPartnerLocationID, data[0].cProjectId, strIsSOTrx.equals("Y"));
-	    }
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
     }
-    if(strCTaxID != null && !strCTaxID.equals("")) resultado.append("new Array(\"inpcTaxId\", \"" + strCTaxID + "\")\n");
 
-    resultado.append(");");
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+        if (vars.commandIn("DEFAULT")) {
+            String strChanged = vars.getStringParameter("inpLastFieldChanged");
+            if (log4j.isDebugEnabled())
+                log4j.debug("CHANGED: " + strChanged);
+            String strMProductID = vars.getStringParameter("inpmProductId");
+            String strCBPartnerLocationID = vars
+                    .getStringParameter("inpcBpartnerLocationId");
+            String strDateOrdered = vars.getStringParameter("inpdateordered");
+            String strADOrgID = vars.getStringParameter("inpadOrgId");
+            String strMWarehouseID = vars.getStringParameter("inpmWarehouseId");
+            String strCOrderId = vars.getStringParameter("inpcOrderId");
+            String strWindowId = vars.getStringParameter("inpwindowId");
+            String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx",
+                    strWindowId);
+            String strTabId = vars.getStringParameter("inpTabId");
+
+            try {
+                printPage(response, vars, strChanged, strMProductID,
+                        strCBPartnerLocationID, strDateOrdered, strADOrgID,
+                        strMWarehouseID, strCOrderId, strIsSOTrx, strTabId);
+            } catch (ServletException ex) {
+                pageErrorCallOut(response);
+            }
+        } else
+            pageError(response);
+    }
+
+    void printPage(HttpServletResponse response, VariablesSecureApp vars,
+            String strChanged, String strMProductID,
+            String strCBPartnerLocationID, String strDateOrdered,
+            String strADOrgID, String strMWarehouseID, String strCOrderId,
+            String strIsSOTrx, String strTabId) throws IOException,
+            ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/ad_callouts/CallOut")
+                .createXmlDocument();
+
+        StringBuffer resultado = new StringBuffer();
+        resultado.append("var calloutName='SL_Order_Tax';\n\n");
+        resultado.append("var respuesta = new Array(");
+
+        String strCTaxID = null;
+        String orgLocationID = SLOrderProductData.getOrgLocationId(this,
+                Utility
+                        .getContext(this, vars, "#User_Client",
+                                "SLOrderProduct"), "'" + strADOrgID + "'");
+        if (orgLocationID.equals("")) {
+            resultado
+                    .append("new Array('MESSAGE', \""
+                            + FormatUtilities
+                                    .replaceJS(Utility
+                                            .messageBD(
+                                                    this,
+                                                    "Tax can not be calculated, because the organization has not a location defined",
+                                                    vars.getLanguage()))
+                            + "\"),\n");
+        } else {
+            SLOrderTaxData[] data = SLOrderTaxData.select(this, strCOrderId);
+            if (data != null && data.length > 0) {
+                strCTaxID = Tax.get(this, strMProductID, data[0].dateordered,
+                        strADOrgID, strMWarehouseID, (data[0].billtoId
+                                .equals("") ? strCBPartnerLocationID
+                                : data[0].billtoId), strCBPartnerLocationID,
+                        data[0].cProjectId, strIsSOTrx.equals("Y"));
+            }
+        }
+        if (strCTaxID != null && !strCTaxID.equals(""))
+            resultado.append("new Array(\"inpcTaxId\", \"" + strCTaxID
+                    + "\")\n");
+
+        resultado.append(");");
+        xmlDocument.setParameter("array", resultado.toString());
+        xmlDocument.setParameter("frameName", "appFrame");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
+    }
 }

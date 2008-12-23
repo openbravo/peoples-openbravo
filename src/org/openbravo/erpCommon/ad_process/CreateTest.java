@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_process;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -25,11 +25,13 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 public class CreateTest extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    bdError(response, "OpenbravoDevelopment", vars.getLanguage());
+    private static final long serialVersionUID = 1L;
 
-  }
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+        bdError(response, "OpenbravoDevelopment", vars.getLanguage());
+
+    }
 
 }

@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_callouts;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -31,62 +31,77 @@ import javax.servlet.http.*;
 import org.openbravo.erpCommon.businessUtility.Tax;
 
 public class SL_Payment_No_Verify extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  static final BigDecimal ZERO = new BigDecimal(0.0);
+    static final BigDecimal ZERO = new BigDecimal(0.0);
 
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
-
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled()) log4j.debug("CHANGED: " + strChanged);
-      String strcCreditCard = vars.getStringParameter("inpcreditcardnumber");
-      String strcCreditCardType = vars.getStringParameter("inpcreditcardtype");
-      String strcRoutingNo = vars.getStringParameter("inproutingno");
-      String strTabId = vars.getStringParameter("inpTabId");
-      
-      try {
-        printPage(response, vars, strChanged, strcCreditCard, strcCreditCardType, strcRoutingNo, strTabId);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else pageError(response);
-  }
-
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged, String strcCreditCard, String strcCreditCardType, String strcRoutingNo, String strTabId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_Payment_DocType';\n\n");
-    resultado.append("var respuesta = new Array(");
-
-    if (strChanged.equals("inpcreditcardnumber")){
-      if (strcCreditCard == null || strcCreditCard.length() == 0){}
-      else{
-        String strcvalidateCc = Tax.validateCreditCardNumber(strcCreditCard, strcCreditCardType);
-        resultado.append("new Array('MESSAGE', \"" + FormatUtilities.replaceJS(Utility.messageBD(this, strcvalidateCc, vars.getLanguage())) + "\")");
-      }
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
     }
-    else if (strChanged.equals("inproutingno")){
-      if (strcRoutingNo == null || strcRoutingNo.length() == 0){
-      }
-      else {
-        String strcvalidateRo = Tax.validateRoutingNo(strcRoutingNo);
-        resultado.append("new Array('MESSAGE', \"" + FormatUtilities.replaceJS(Utility.messageBD(this, strcvalidateRo, vars.getLanguage())) + "\")");
-      }
-    }
-    resultado.append(");");
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
 
-  }
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+        if (vars.commandIn("DEFAULT")) {
+            String strChanged = vars.getStringParameter("inpLastFieldChanged");
+            if (log4j.isDebugEnabled())
+                log4j.debug("CHANGED: " + strChanged);
+            String strcCreditCard = vars
+                    .getStringParameter("inpcreditcardnumber");
+            String strcCreditCardType = vars
+                    .getStringParameter("inpcreditcardtype");
+            String strcRoutingNo = vars.getStringParameter("inproutingno");
+            String strTabId = vars.getStringParameter("inpTabId");
+
+            try {
+                printPage(response, vars, strChanged, strcCreditCard,
+                        strcCreditCardType, strcRoutingNo, strTabId);
+            } catch (ServletException ex) {
+                pageErrorCallOut(response);
+            }
+        } else
+            pageError(response);
+    }
+
+    void printPage(HttpServletResponse response, VariablesSecureApp vars,
+            String strChanged, String strcCreditCard,
+            String strcCreditCardType, String strcRoutingNo, String strTabId)
+            throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/ad_callouts/CallOut")
+                .createXmlDocument();
+        StringBuffer resultado = new StringBuffer();
+        resultado.append("var calloutName='SL_Payment_DocType';\n\n");
+        resultado.append("var respuesta = new Array(");
+
+        if (strChanged.equals("inpcreditcardnumber")) {
+            if (strcCreditCard == null || strcCreditCard.length() == 0) {
+            } else {
+                String strcvalidateCc = Tax.validateCreditCardNumber(
+                        strcCreditCard, strcCreditCardType);
+                resultado.append("new Array('MESSAGE', \""
+                        + FormatUtilities.replaceJS(Utility.messageBD(this,
+                                strcvalidateCc, vars.getLanguage())) + "\")");
+            }
+        } else if (strChanged.equals("inproutingno")) {
+            if (strcRoutingNo == null || strcRoutingNo.length() == 0) {
+            } else {
+                String strcvalidateRo = Tax.validateRoutingNo(strcRoutingNo);
+                resultado.append("new Array('MESSAGE', \""
+                        + FormatUtilities.replaceJS(Utility.messageBD(this,
+                                strcvalidateRo, vars.getLanguage())) + "\")");
+            }
+        }
+        resultado.append(");");
+        xmlDocument.setParameter("array", resultado.toString());
+        xmlDocument.setParameter("frameName", "appFrame");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
+
+    }
 }

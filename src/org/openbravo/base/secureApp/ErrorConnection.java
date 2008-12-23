@@ -15,7 +15,7 @@
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.base.secureApp;
 
 import org.openbravo.base.ConnectionProviderContextListener;
@@ -28,41 +28,48 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-
 public class ErrorConnection extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
+    }
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    if (vars.commandIn("RECONNECT")) {
-      try {
-        ConnectionProviderContextListener.reloadPool(this.getServletContext());
-      } catch (Exception ex) {
-        log4j.error("Error captured: " + ex);
-        printPage(response, vars);
-        return;
-      }
-      response.sendRedirect(strDireccion + globalParameters.strServletSinIdentificar);
-    } else printPage(response, vars);
-  }
+        if (vars.commandIn("RECONNECT")) {
+            try {
+                ConnectionProviderContextListener.reloadPool(this
+                        .getServletContext());
+            } catch (Exception ex) {
+                log4j.error("Error captured: " + ex);
+                printPage(response, vars);
+                return;
+            }
+            response.sendRedirect(strDireccion
+                    + globalParameters.strServletSinIdentificar);
+        } else
+            printPage(response, vars);
+    }
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Error connection");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/base/secureApp/ErrorConnection").createXmlDocument();
+    void printPage(HttpServletResponse response, VariablesSecureApp vars)
+            throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: Error connection");
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/base/secureApp/ErrorConnection")
+                .createXmlDocument();
 
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
+    }
 
-  public String getServletInfo() {
-    return "Servlet that presents the connection error window";
-  } // end of getServletInfo() method
+    public String getServletInfo() {
+        return "Servlet that presents the connection error window";
+    } // end of getServletInfo() method
 }

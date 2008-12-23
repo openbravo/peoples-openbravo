@@ -13,27 +13,31 @@
 package org.openbravo.authentication;
 
 /**
- *
+ * 
  * @author adrianromero
  */
 public class AuthenticationException extends java.lang.Exception {
-  private static final long serialVersionUID = 1L;
-  /**
-   * Creates a new instance of <code>AuthenticationException</code> without detail message.
-   */
-  public AuthenticationException() {
-  }
+    private static final long serialVersionUID = 1L;
 
+    /**
+     * Creates a new instance of <code>AuthenticationException</code> without
+     * detail message.
+     */
+    public AuthenticationException() {
+    }
 
-  /**
-   * Constructs an instance of <code>AuthenticationException</code> with the specified detail message.
-   * @param msg the detail message.
-   */
-  public AuthenticationException(String msg) {
-    super(msg);
-  }
+    /**
+     * Constructs an instance of <code>AuthenticationException</code> with the
+     * specified detail message.
+     * 
+     * @param msg
+     *            the detail message.
+     */
+    public AuthenticationException(String msg) {
+        super(msg);
+    }
 
-  public AuthenticationException(String msg, Throwable t) {
-    super(msg, t);
-  }
+    public AuthenticationException(String msg, Throwable t) {
+        super(msg, t);
+    }
 }

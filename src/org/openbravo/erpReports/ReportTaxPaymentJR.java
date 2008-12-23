@@ -35,154 +35,185 @@ import org.openbravo.erpCommon.ad_combos.AccountNumberComboData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 
 public class ReportTaxPaymentJR extends HttpSecureAppServlet {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws IOException, ServletException {
-		VariablesSecureApp vars = new VariablesSecureApp(request);
-		
-		if (vars.commandIn("DEFAULT")) {
-			String strTaxPayId = vars.getSessionValue("JR_ReportTaxPayment.inpcTaxpaymentId");
-			String strTaxPayId_Clear=strTaxPayId.replace("(", "").replace(")", "").replace("'", "");
-			TaxPaymentData[] taxpaym = TaxPaymentData.select(this, strTaxPayId_Clear );
-			String strDateFrom = taxpaym[0].datefrom;
-			String strDateTo = taxpaym[0].dateto;
-			printPageDataSheet(response, vars, strDateFrom, strDateTo);
-		} else if (vars.commandIn("EDIT_HTML","EDIT_PDF")) {
-			//String strTaxPayId = vars.getRequestGlobalVariable("inpcTaxpaymentId","ReportVatRegisterJR|C_TaxpaymentId");
-			String strTaxPayId = vars.getSessionValue("JR_ReportTaxPayment.inpcTaxpaymentId");
-			String strTaxPayId_Clear=strTaxPayId.replace("(", "").replace(")", "").replace("'", "");
-			TaxPaymentData[] taxpaym = TaxPaymentData.select(this, strTaxPayId_Clear );
-			String strDateFrom = taxpaym[0].datefrom;
-			String strDateTo = taxpaym[0].dateto;
-			String strcTypeVatReport = vars.getRequestGlobalVariable("inpTypeVatReport", "JR_ReportTaxPayment|TypeVatReport");
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
 
-			if (strcTypeVatReport.equals("01")) {
-				// ReportTransactions
-				printReportJRRegisterByVat(response, vars, strDateFrom,strDateTo, strcTypeVatReport);
-			} else {
-				// Standard Report
-				bdError(response, "TypeReportCantBeNull", vars.getLanguage());
-				 return; 
-			}
-			
-		} else
-			pageError(response);
-	}
+        if (vars.commandIn("DEFAULT")) {
+            String strTaxPayId = vars
+                    .getSessionValue("JR_ReportTaxPayment.inpcTaxpaymentId");
+            String strTaxPayId_Clear = strTaxPayId.replace("(", "").replace(
+                    ")", "").replace("'", "");
+            TaxPaymentData[] taxpaym = TaxPaymentData.select(this,
+                    strTaxPayId_Clear);
+            String strDateFrom = taxpaym[0].datefrom;
+            String strDateTo = taxpaym[0].dateto;
+            printPageDataSheet(response, vars, strDateFrom, strDateTo);
+        } else if (vars.commandIn("EDIT_HTML", "EDIT_PDF")) {
+            // String strTaxPayId =
+            // vars.getRequestGlobalVariable("inpcTaxpaymentId","ReportVatRegisterJR|C_TaxpaymentId");
+            String strTaxPayId = vars
+                    .getSessionValue("JR_ReportTaxPayment.inpcTaxpaymentId");
+            String strTaxPayId_Clear = strTaxPayId.replace("(", "").replace(
+                    ")", "").replace("'", "");
+            TaxPaymentData[] taxpaym = TaxPaymentData.select(this,
+                    strTaxPayId_Clear);
+            String strDateFrom = taxpaym[0].datefrom;
+            String strDateTo = taxpaym[0].dateto;
+            String strcTypeVatReport = vars.getRequestGlobalVariable(
+                    "inpTypeVatReport", "JR_ReportTaxPayment|TypeVatReport");
 
-	void printPageDataSheet(HttpServletResponse response,
-			VariablesSecureApp vars, String strDateFrom, String strDateTo)
-			throws IOException, ServletException {
-		if (log4j.isDebugEnabled())
-			log4j.debug("Output: dataSheet");
-		response.setContentType("text/html; charset=UTF-8");
-		PrintWriter out = response.getWriter();
-		//String strMessage = "";
+            if (strcTypeVatReport.equals("01")) {
+                // ReportTransactions
+                printReportJRRegisterByVat(response, vars, strDateFrom,
+                        strDateTo, strcTypeVatReport);
+            } else {
+                // Standard Report
+                bdError(response, "TypeReportCantBeNull", vars.getLanguage());
+                return;
+            }
 
-		XmlDocument xmlDocument = null;
-		xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpReports/ReportPaymentFilter").createXmlDocument();
+        } else
+            pageError(response);
+    }
 
-		ToolBar toolbar = new ToolBar(this, vars.getLanguage(),"ReportRegisterFilter", false, "", "", "", false, "ad_reports",strReplaceWith, false, true);
-		toolbar.prepareSimpleToolBarTemplate();
-		xmlDocument.setParameter("toolbar", toolbar.toString());
+    void printPageDataSheet(HttpServletResponse response,
+            VariablesSecureApp vars, String strDateFrom, String strDateTo)
+            throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        // String strMessage = "";
 
-		try {
-			KeyMap key = new KeyMap(this, "ReportRegisterPayment.html");
-			xmlDocument.setParameter("keyMap", key.getReportKeyMaps());
-		} catch (Exception ex) {
-			throw new ServletException(ex);
-		}
-		try {
-			WindowTabs tabs = new WindowTabs(this, vars,"org.openbravo.erpReports.TaxPayment");//ReportVatRegisterJR
-			xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
-			xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
-			xmlDocument.setParameter("childTabContainer", tabs.childTabs());
-			xmlDocument.setParameter("theme", vars.getTheme());
-			NavigationBar nav = new NavigationBar(this, vars.getLanguage(),"ReportPaymentFilter.html", classInfo.id, classInfo.type,strReplaceWith, tabs.breadcrumb());
-			xmlDocument.setParameter("navigationBar", nav.toString());
-			LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),"ReportPaymentFilter.html", strReplaceWith);
-			xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-		} catch (Exception ex) {
-			throw new ServletException(ex);
-		}
-		{
-			OBError myMessage = vars.getMessage("ReportPaymentFilter");
-			vars.removeMessage("ReportPaymentFilter");
-			if (myMessage != null) {
-				xmlDocument.setParameter("messageType", myMessage.getType());
-				xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-				xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-			}
-		}
-		xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
-		xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-		xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
+        XmlDocument xmlDocument = null;
+        xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpReports/ReportPaymentFilter")
+                .createXmlDocument();
 
+        ToolBar toolbar = new ToolBar(this, vars.getLanguage(),
+                "ReportRegisterFilter", false, "", "", "", false, "ad_reports",
+                strReplaceWith, false, true);
+        toolbar.prepareSimpleToolBarTemplate();
+        xmlDocument.setParameter("toolbar", toolbar.toString());
 
-		xmlDocument.setParameter("dateFrom", strDateFrom);
-		xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_JavaDateTimeFormat"));
-		xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_JavaDateTimeFormat"));
-		xmlDocument.setParameter("dateTo", strDateTo);
-		xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_JavaDateTimeFormat"));
-		xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_JavaDateTimeFormat"));
-		//xmlDocument.setParameter("paramMessage", (strMessage.equals("") ? ""
-		//		: "alert('" + strMessage + "');"));
+        try {
+            KeyMap key = new KeyMap(this, "ReportRegisterPayment.html");
+            xmlDocument.setParameter("keyMap", key.getReportKeyMaps());
+        } catch (Exception ex) {
+            throw new ServletException(ex);
+        }
+        try {
+            WindowTabs tabs = new WindowTabs(this, vars,
+                    "org.openbravo.erpReports.TaxPayment");// ReportVatRegisterJR
+            xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
+            xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
+            xmlDocument.setParameter("childTabContainer", tabs.childTabs());
+            xmlDocument.setParameter("theme", vars.getTheme());
+            NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+                    "ReportPaymentFilter.html", classInfo.id, classInfo.type,
+                    strReplaceWith, tabs.breadcrumb());
+            xmlDocument.setParameter("navigationBar", nav.toString());
+            LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
+                    "ReportPaymentFilter.html", strReplaceWith);
+            xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+        } catch (Exception ex) {
+            throw new ServletException(ex);
+        }
+        {
+            OBError myMessage = vars.getMessage("ReportPaymentFilter");
+            vars.removeMessage("ReportPaymentFilter");
+            if (myMessage != null) {
+                xmlDocument.setParameter("messageType", myMessage.getType());
+                xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+                xmlDocument.setParameter("messageMessage", myMessage
+                        .getMessage());
+            }
+        }
+        xmlDocument
+                .setParameter("calendar", vars.getLanguage().substring(0, 2));
+        xmlDocument.setParameter("directory", "var baseDirectory = \""
+                + strReplaceWith + "/\";\n");
+        xmlDocument.setParameter("paramLanguage", "defaultLang=\""
+                + vars.getLanguage() + "\";");
 
-		TypeReportPayment[] aTypeVatReport = TypeReportPayment.set();
-		xmlDocument.setData("reportTypeVatReport", "liststructure",	aTypeVatReport);
-		xmlDocument.setParameter("TypeVatReport", "01");
-		out.println(xmlDocument.print());
-		out.close();
-	}
+        xmlDocument.setParameter("dateFrom", strDateFrom);
+        xmlDocument.setParameter("dateFromdisplayFormat", vars
+                .getSessionValue("#AD_JavaDateTimeFormat"));
+        xmlDocument.setParameter("dateFromsaveFormat", vars
+                .getSessionValue("#AD_JavaDateTimeFormat"));
+        xmlDocument.setParameter("dateTo", strDateTo);
+        xmlDocument.setParameter("dateTodisplayFormat", vars
+                .getSessionValue("#AD_JavaDateTimeFormat"));
+        xmlDocument.setParameter("dateTosaveFormat", vars
+                .getSessionValue("#AD_JavaDateTimeFormat"));
+        // xmlDocument.setParameter("paramMessage", (strMessage.equals("") ? ""
+        // : "alert('" + strMessage + "');"));
 
-	void printReportJRRegisterByVat(HttpServletResponse response, VariablesSecureApp vars, String strDateFrom, String strDateTo, String strTypeReport) throws IOException, ServletException {
-	    if (log4j.isDebugEnabled()) log4j.debug("Output: print html");
-	    
-	    ReportRegisterByVatJRData[] data = null;
-		data = ReportRegisterByVatJRData.select(this, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"));
-	  
-	    String strOutput = vars.commandIn("EDIT_HTML")?"html":"pdf";
-	    String strReportName = "@basedesign@/org/openbravo/erpReports/ReportRegisterByVatJR.jrxml";
-	    
-	    HashMap<String, Object> parameters = new HashMap<String, Object>();
-	    parameters.put("REPORT_TITLE", classInfo.name);
-	    parameters.put("REPORT_SUBTITLE", "From " + strDateFrom + " to "+ strDateTo);
-	    parameters.put("invoicedateDA", strDateFrom);
-		  parameters.put("invoicedateA", strDateTo);
-	    renderJR(vars, response, strReportName, strOutput, parameters, data, null );
-	}
+        TypeReportPayment[] aTypeVatReport = TypeReportPayment.set();
+        xmlDocument.setData("reportTypeVatReport", "liststructure",
+                aTypeVatReport);
+        xmlDocument.setParameter("TypeVatReport", "01");
+        out.println(xmlDocument.print());
+        out.close();
+    }
 
-	public String getServletInfo() {
-		return "Servlet ReportVatRegisterJR.";
-	} // end of getServletInfo() method
+    void printReportJRRegisterByVat(HttpServletResponse response,
+            VariablesSecureApp vars, String strDateFrom, String strDateTo,
+            String strTypeReport) throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: print html");
+
+        ReportRegisterByVatJRData[] data = null;
+        data = ReportRegisterByVatJRData.select(this, strDateFrom, DateTimeData
+                .nDaysAfter(this, strDateTo, "1"));
+
+        String strOutput = vars.commandIn("EDIT_HTML") ? "html" : "pdf";
+        String strReportName = "@basedesign@/org/openbravo/erpReports/ReportRegisterByVatJR.jrxml";
+
+        HashMap<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("REPORT_TITLE", classInfo.name);
+        parameters.put("REPORT_SUBTITLE", "From " + strDateFrom + " to "
+                + strDateTo);
+        parameters.put("invoicedateDA", strDateFrom);
+        parameters.put("invoicedateA", strDateTo);
+        renderJR(vars, response, strReportName, strOutput, parameters, data,
+                null);
+    }
+
+    public String getServletInfo() {
+        return "Servlet ReportVatRegisterJR.";
+    } // end of getServletInfo() method
 
 }
 
 class TypeReportPayment implements FieldProvider {
-	static Logger log4j = Logger.getLogger(AccountNumberComboData.class);
-	//private String InitRecordNumber = "0";
-	public String id;
-	public String name;
+    static Logger log4j = Logger.getLogger(AccountNumberComboData.class);
+    // private String InitRecordNumber = "0";
+    public String id;
+    public String name;
 
-	public String getField(String fieldName) {
-		if (fieldName.equalsIgnoreCase("ID"))
-			return id;
-		else if (fieldName.equalsIgnoreCase("NAME"))
-			return name;
-		else {
-			log4j.debug("Field does not exist: " + fieldName);
-			return null;
-		}
-	}
+    public String getField(String fieldName) {
+        if (fieldName.equalsIgnoreCase("ID"))
+            return id;
+        else if (fieldName.equalsIgnoreCase("NAME"))
+            return name;
+        else {
+            log4j.debug("Field does not exist: " + fieldName);
+            return null;
+        }
+    }
 
-	public static TypeReportPayment[] set() throws ServletException {
-		TypeReportPayment objectTypeReport[] = new TypeReportPayment[1];
-		// first
-		objectTypeReport[0] = new TypeReportPayment();
-		objectTypeReport[0].id = "01";
-		objectTypeReport[0].name = "Report Tax Payment By VAT";
+    public static TypeReportPayment[] set() throws ServletException {
+        TypeReportPayment objectTypeReport[] = new TypeReportPayment[1];
+        // first
+        objectTypeReport[0] = new TypeReportPayment();
+        objectTypeReport[0].id = "01";
+        objectTypeReport[0].name = "Report Tax Payment By VAT";
 
-		return objectTypeReport;
-	}
+        return objectTypeReport;
+    }
 
 }

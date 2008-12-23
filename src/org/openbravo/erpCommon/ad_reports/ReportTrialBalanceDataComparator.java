@@ -21,9 +21,9 @@ package org.openbravo.erpCommon.ad_reports;
 import java.util.Comparator;
 
 public class ReportTrialBalanceDataComparator implements Comparator<Object> {
-  public int compare(Object obj1, Object obj2) {
-    String code1 = ((ReportTrialBalanceData) obj1).accountId.toUpperCase();
-    String code2 = ((ReportTrialBalanceData) obj2).accountId.toUpperCase();
-    return code1.compareTo(code2);
-  }
+    public int compare(Object obj1, Object obj2) {
+        String code1 = ((ReportTrialBalanceData) obj1).accountId.toUpperCase();
+        String code2 = ((ReportTrialBalanceData) obj2).accountId.toUpperCase();
+        return code1.compareTo(code2);
+    }
 }

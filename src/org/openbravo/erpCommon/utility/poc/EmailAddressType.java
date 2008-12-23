@@ -15,27 +15,20 @@
  */
 package org.openbravo.erpCommon.utility.poc;
 
-public enum EmailAddressType
-{
-    UNDEFINED ( 0 ), 
-    FROM ( 1 ), 
-    TO ( 2 ),
-    CC ( 3 ),
-    BCC ( 4 );
-    
+public enum EmailAddressType {
+    UNDEFINED(0), FROM(1), TO(2), CC(3), BCC(4);
+
     private int _value;
-    
-    private EmailAddressType( int value )
-    {
-    	_value = value;
+
+    private EmailAddressType(int value) {
+        _value = value;
     }
-    
-    public int getValue()
-    {
-    	return _value;
+
+    public int getValue() {
+        return _value;
     }
-    public String getStringValue()
-    {
-    	return "" + _value;
+
+    public String getStringValue() {
+        return "" + _value;
     }
 }

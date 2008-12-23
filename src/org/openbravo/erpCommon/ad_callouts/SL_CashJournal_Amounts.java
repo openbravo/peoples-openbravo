@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_callouts;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -27,62 +27,82 @@ import java.math.BigDecimal;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-
 public class SL_CashJournal_Amounts extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
-  static final BigDecimal ZERO = new BigDecimal(0.0);
+    private static final long serialVersionUID = 1L;
+    static final BigDecimal ZERO = new BigDecimal(0.0);
 
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
+    }
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled()) log4j.debug("CHANGED: " + strChanged);
-      String strOrder = vars.getStringParameter("inpcOrderId");
-      String strDebtPayment = vars.getStringParameter("inpcDebtPaymentId");
-      String strAmount = vars.getStringParameter("inpamount");
-      String strDiscount = vars.getStringParameter("inpdiscountamt");
-      String strwriteoff = vars.getStringParameter("inpwriteoffamt");
-      String strTabId = vars.getStringParameter("inpTabId");
-      String strCashId = vars.getStringParameter("inpcCashId");
-      
-      try {
-        printPage(response, vars, strChanged, strOrder, strDebtPayment, strAmount, strDiscount, strwriteoff, strTabId, strCashId);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else pageError(response);
-  }
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+        if (vars.commandIn("DEFAULT")) {
+            String strChanged = vars.getStringParameter("inpLastFieldChanged");
+            if (log4j.isDebugEnabled())
+                log4j.debug("CHANGED: " + strChanged);
+            String strOrder = vars.getStringParameter("inpcOrderId");
+            String strDebtPayment = vars
+                    .getStringParameter("inpcDebtPaymentId");
+            String strAmount = vars.getStringParameter("inpamount");
+            String strDiscount = vars.getStringParameter("inpdiscountamt");
+            String strwriteoff = vars.getStringParameter("inpwriteoffamt");
+            String strTabId = vars.getStringParameter("inpTabId");
+            String strCashId = vars.getStringParameter("inpcCashId");
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged, String strOrder, String strDebtPayment, String strAmount, String strDiscount, String strwriteoff, String strTabId, String strCashId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-    String Amount = null;
-    String strDescription = null;
+            try {
+                printPage(response, vars, strChanged, strOrder, strDebtPayment,
+                        strAmount, strDiscount, strwriteoff, strTabId,
+                        strCashId);
+            } catch (ServletException ex) {
+                pageErrorCallOut(response);
+            }
+        } else
+            pageError(response);
+    }
 
-    if (strChanged.equals("inpcOrderId")) Amount = SLCashJournalAmountsData.amountOrder(this, strOrder);
-    else if (strChanged.equals("inpcDebtPaymentId")) Amount = SLCashJournalAmountsData.amountDebtPayment(this, strCashId, strDebtPayment);
-    else Amount = strAmount;
+    void printPage(HttpServletResponse response, VariablesSecureApp vars,
+            String strChanged, String strOrder, String strDebtPayment,
+            String strAmount, String strDiscount, String strwriteoff,
+            String strTabId, String strCashId) throws IOException,
+            ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/ad_callouts/CallOut")
+                .createXmlDocument();
+        String Amount = null;
+        String strDescription = null;
 
-    if (!strDebtPayment.equals("")) strDescription = SLCashJournalAmountsData.debtPaymentDescription(this, strDebtPayment);
-    else strDescription="";
+        if (strChanged.equals("inpcOrderId"))
+            Amount = SLCashJournalAmountsData.amountOrder(this, strOrder);
+        else if (strChanged.equals("inpcDebtPaymentId"))
+            Amount = SLCashJournalAmountsData.amountDebtPayment(this,
+                    strCashId, strDebtPayment);
+        else
+            Amount = strAmount;
 
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_CashJournal_Amounts';\n\n");
-    resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpdescription\", \"" + FormatUtilities.replaceJS(strDescription) + "\"),");
-    resultado.append("new Array(\"inpamount\", \"" + Amount + "\")");
+        if (!strDebtPayment.equals(""))
+            strDescription = SLCashJournalAmountsData.debtPaymentDescription(
+                    this, strDebtPayment);
+        else
+            strDescription = "";
 
-    resultado.append(");");
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
+        StringBuffer resultado = new StringBuffer();
+        resultado.append("var calloutName='SL_CashJournal_Amounts';\n\n");
+        resultado.append("var respuesta = new Array(");
+        resultado.append("new Array(\"inpdescription\", \""
+                + FormatUtilities.replaceJS(strDescription) + "\"),");
+        resultado.append("new Array(\"inpamount\", \"" + Amount + "\")");
+
+        resultado.append(");");
+        xmlDocument.setParameter("array", resultado.toString());
+        xmlDocument.setParameter("frameName", "appFrame");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
+    }
 }

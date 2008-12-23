@@ -15,7 +15,7 @@
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpReports;
 
 import org.openbravo.base.secureApp.*;
@@ -30,56 +30,72 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.openbravo.erpCommon.utility.Utility;
 
-
 public class RptC_Remittance extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
-
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-
-    if (vars.commandIn("DEFAULT")) {
-      String strcRemittanceId = vars.getSessionValue("RptC_Remittance.inpcRemittanceId_R");
-      if (strcRemittanceId.equals("")) strcRemittanceId = vars.getSessionValue("RptC_Remittance.inpcRemittanceId");
-      printPagePDF(response, vars, strcRemittanceId, vars.getLanguage());
-    } else pageError(response);
-  }
-
-  void printPagePDF(HttpServletResponse response, VariablesSecureApp vars, String strcRemittanceId, String language) throws IOException,ServletException{
-    if (log4j.isDebugEnabled()) log4j.debug("Output: pdf");
-
-    String strBaseDesign = getBaseDesignPath(language);
-
-    String strOutput=new String("pdf");
-
-    String strReportName = "@basedesign@/org/openbravo/erpReports/RptC_Remittance.jrxml";
-
-    if (strOutput.equals("pdf")) response.setHeader("Content-disposition", "inline; filename=RptC_Remittance.pdf");
-
-    RptCRemittanceData[] data = RptCRemittanceData.select(this, Utility.getContext(this, vars, "#User_Client", "RptC_RemittanceJR"), Utility.getContext(this, vars, "#User_Org", "RptC_RemittanceJR"), strcRemittanceId);
-
-    JasperReport jasperReportLines;
-    try {
-      JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign+"/org/openbravo/erpReports/RptC_Remittance_Lines.jrxml");
-      jasperReportLines = JasperCompileManager.compileReport(jasperDesignLines);
-    } catch (JRException e){
-      e.printStackTrace();
-      throw new ServletException(e.getMessage());
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
     }
 
-    HashMap<String, Object> parameters = new HashMap<String, Object>();
-    parameters.put("REPORT_TITLE", classInfo.name);
-    parameters.put("LANGUAGE", language);
-    parameters.put("SR_LINES", jasperReportLines);
-    
-    renderJR(vars, response, strReportName, strOutput, parameters, data, null );
-  }
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
 
-  public String getServletInfo() {
-    return "Servlet that presents the RptCOrders seeker";
-  } // End of getServletInfo() method
+        if (vars.commandIn("DEFAULT")) {
+            String strcRemittanceId = vars
+                    .getSessionValue("RptC_Remittance.inpcRemittanceId_R");
+            if (strcRemittanceId.equals(""))
+                strcRemittanceId = vars
+                        .getSessionValue("RptC_Remittance.inpcRemittanceId");
+            printPagePDF(response, vars, strcRemittanceId, vars.getLanguage());
+        } else
+            pageError(response);
+    }
+
+    void printPagePDF(HttpServletResponse response, VariablesSecureApp vars,
+            String strcRemittanceId, String language) throws IOException,
+            ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: pdf");
+
+        String strBaseDesign = getBaseDesignPath(language);
+
+        String strOutput = new String("pdf");
+
+        String strReportName = "@basedesign@/org/openbravo/erpReports/RptC_Remittance.jrxml";
+
+        if (strOutput.equals("pdf"))
+            response.setHeader("Content-disposition",
+                    "inline; filename=RptC_Remittance.pdf");
+
+        RptCRemittanceData[] data = RptCRemittanceData.select(this, Utility
+                .getContext(this, vars, "#User_Client", "RptC_RemittanceJR"),
+                Utility
+                        .getContext(this, vars, "#User_Org",
+                                "RptC_RemittanceJR"), strcRemittanceId);
+
+        JasperReport jasperReportLines;
+        try {
+            JasperDesign jasperDesignLines = JRXmlLoader.load(strBaseDesign
+                    + "/org/openbravo/erpReports/RptC_Remittance_Lines.jrxml");
+            jasperReportLines = JasperCompileManager
+                    .compileReport(jasperDesignLines);
+        } catch (JRException e) {
+            e.printStackTrace();
+            throw new ServletException(e.getMessage());
+        }
+
+        HashMap<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("REPORT_TITLE", classInfo.name);
+        parameters.put("LANGUAGE", language);
+        parameters.put("SR_LINES", jasperReportLines);
+
+        renderJR(vars, response, strReportName, strOutput, parameters, data,
+                null);
+    }
+
+    public String getServletInfo() {
+        return "Servlet that presents the RptCOrders seeker";
+    } // End of getServletInfo() method
 }

@@ -15,10 +15,9 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_process;
 
-
 public class RespuestaCS {
-  String CValidCombinationId;
+    String CValidCombinationId;
 }

@@ -15,52 +15,53 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.utility;
 
 public class GridColumnVO {
-  private String title;
-  private String dbName;
-  private int width;
-  private Class<?> fieldClass;
+    private String title;
+    private String dbName;
+    private int width;
+    private Class<?> fieldClass;
 
-  public GridColumnVO(String title, String dbName, int width, Class<?> fieldClass) {
-    super();
-    this.title = title;
-    this.dbName = dbName;
-    this.width = width;
-    this.fieldClass = fieldClass;
-  }
+    public GridColumnVO(String title, String dbName, int width,
+            Class<?> fieldClass) {
+        super();
+        this.title = title;
+        this.dbName = dbName;
+        this.width = width;
+        this.fieldClass = fieldClass;
+    }
 
-  public String getDbName() {
-    return dbName;
-  }
+    public String getDbName() {
+        return dbName;
+    }
 
-  public String getTitle() {
-    return title;
-  }
+    public String getTitle() {
+        return title;
+    }
 
-  public int getWidth() {
-    return width;
-  }
+    public int getWidth() {
+        return width;
+    }
 
-  public Class<?> getFieldClass() {
-    return fieldClass;
-  }
+    public Class<?> getFieldClass() {
+        return fieldClass;
+    }
 
-  public void setDbName(String dbName) {
-    this.dbName = dbName;
-  }
+    public void setDbName(String dbName) {
+        this.dbName = dbName;
+    }
 
-  public void setTitle(String title) {
-    this.title = title;
-  }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-  public void setWidth(int width) {
-    this.width = width;
-  }
+    public void setWidth(int width) {
+        this.width = width;
+    }
 
-  public void setFieldClass(Class<?> fieldClass) {
-    this.fieldClass = fieldClass;
-  }
+    public void setFieldClass(Class<?> fieldClass) {
+        this.fieldClass = fieldClass;
+    }
 }

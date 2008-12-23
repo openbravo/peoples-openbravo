@@ -7,7 +7,7 @@
 
 package org.openbravo.services.webservice;
 
-public class SimpleModule  implements java.io.Serializable {
+public class SimpleModule implements java.io.Serializable {
     private java.lang.String author;
 
     private java.lang.String description;
@@ -35,33 +35,25 @@ public class SimpleModule  implements java.io.Serializable {
     public SimpleModule() {
     }
 
-    public SimpleModule(
-           java.lang.String author,
-           java.lang.String description,
-           java.lang.String help,
-           java.lang.String licenseAgreement,
-           java.lang.String licenseType,
-           java.lang.String moduleID,
-           java.lang.String moduleVersionID,
-           java.lang.String name,
-           java.lang.String type,
-           java.lang.String updateDescription,
-           java.lang.String url,
-           java.lang.String versionNo) {
-           this.author = author;
-           this.description = description;
-           this.help = help;
-           this.licenseAgreement = licenseAgreement;
-           this.licenseType = licenseType;
-           this.moduleID = moduleID;
-           this.moduleVersionID = moduleVersionID;
-           this.name = name;
-           this.type = type;
-           this.updateDescription = updateDescription;
-           this.url = url;
-           this.versionNo = versionNo;
+    public SimpleModule(java.lang.String author, java.lang.String description,
+            java.lang.String help, java.lang.String licenseAgreement,
+            java.lang.String licenseType, java.lang.String moduleID,
+            java.lang.String moduleVersionID, java.lang.String name,
+            java.lang.String type, java.lang.String updateDescription,
+            java.lang.String url, java.lang.String versionNo) {
+        this.author = author;
+        this.description = description;
+        this.help = help;
+        this.licenseAgreement = licenseAgreement;
+        this.licenseType = licenseType;
+        this.moduleID = moduleID;
+        this.moduleVersionID = moduleVersionID;
+        this.name = name;
+        this.type = type;
+        this.updateDescription = updateDescription;
+        this.url = url;
+        this.versionNo = versionNo;
     }
-
 
     /**
      * Gets the author value for this SimpleModule.
@@ -72,7 +64,6 @@ public class SimpleModule  implements java.io.Serializable {
         return author;
     }
 
-
     /**
      * Sets the author value for this SimpleModule.
      * 
@@ -81,7 +72,6 @@ public class SimpleModule  implements java.io.Serializable {
     public void setAuthor(java.lang.String author) {
         this.author = author;
     }
-
 
     /**
      * Gets the description value for this SimpleModule.
@@ -92,7 +82,6 @@ public class SimpleModule  implements java.io.Serializable {
         return description;
     }
 
-
     /**
      * Sets the description value for this SimpleModule.
      * 
@@ -101,7 +90,6 @@ public class SimpleModule  implements java.io.Serializable {
     public void setDescription(java.lang.String description) {
         this.description = description;
     }
-
 
     /**
      * Gets the help value for this SimpleModule.
@@ -112,7 +100,6 @@ public class SimpleModule  implements java.io.Serializable {
         return help;
     }
 
-
     /**
      * Sets the help value for this SimpleModule.
      * 
@@ -121,7 +108,6 @@ public class SimpleModule  implements java.io.Serializable {
     public void setHelp(java.lang.String help) {
         this.help = help;
     }
-
 
     /**
      * Gets the licenseAgreement value for this SimpleModule.
@@ -132,7 +118,6 @@ public class SimpleModule  implements java.io.Serializable {
         return licenseAgreement;
     }
 
-
     /**
      * Sets the licenseAgreement value for this SimpleModule.
      * 
@@ -141,7 +126,6 @@ public class SimpleModule  implements java.io.Serializable {
     public void setLicenseAgreement(java.lang.String licenseAgreement) {
         this.licenseAgreement = licenseAgreement;
     }
-
 
     /**
      * Gets the licenseType value for this SimpleModule.
@@ -152,7 +136,6 @@ public class SimpleModule  implements java.io.Serializable {
         return licenseType;
     }
 
-
     /**
      * Sets the licenseType value for this SimpleModule.
      * 
@@ -161,7 +144,6 @@ public class SimpleModule  implements java.io.Serializable {
     public void setLicenseType(java.lang.String licenseType) {
         this.licenseType = licenseType;
     }
-
 
     /**
      * Gets the moduleID value for this SimpleModule.
@@ -172,7 +154,6 @@ public class SimpleModule  implements java.io.Serializable {
         return moduleID;
     }
 
-
     /**
      * Sets the moduleID value for this SimpleModule.
      * 
@@ -181,7 +162,6 @@ public class SimpleModule  implements java.io.Serializable {
     public void setModuleID(java.lang.String moduleID) {
         this.moduleID = moduleID;
     }
-
 
     /**
      * Gets the moduleVersionID value for this SimpleModule.
@@ -192,7 +172,6 @@ public class SimpleModule  implements java.io.Serializable {
         return moduleVersionID;
     }
 
-
     /**
      * Sets the moduleVersionID value for this SimpleModule.
      * 
@@ -201,7 +180,6 @@ public class SimpleModule  implements java.io.Serializable {
     public void setModuleVersionID(java.lang.String moduleVersionID) {
         this.moduleVersionID = moduleVersionID;
     }
-
 
     /**
      * Gets the name value for this SimpleModule.
@@ -212,7 +190,6 @@ public class SimpleModule  implements java.io.Serializable {
         return name;
     }
 
-
     /**
      * Sets the name value for this SimpleModule.
      * 
@@ -221,7 +198,6 @@ public class SimpleModule  implements java.io.Serializable {
     public void setName(java.lang.String name) {
         this.name = name;
     }
-
 
     /**
      * Gets the type value for this SimpleModule.
@@ -232,7 +208,6 @@ public class SimpleModule  implements java.io.Serializable {
         return type;
     }
 
-
     /**
      * Sets the type value for this SimpleModule.
      * 
@@ -241,7 +216,6 @@ public class SimpleModule  implements java.io.Serializable {
     public void setType(java.lang.String type) {
         this.type = type;
     }
-
 
     /**
      * Gets the updateDescription value for this SimpleModule.
@@ -252,7 +226,6 @@ public class SimpleModule  implements java.io.Serializable {
         return updateDescription;
     }
 
-
     /**
      * Sets the updateDescription value for this SimpleModule.
      * 
@@ -261,7 +234,6 @@ public class SimpleModule  implements java.io.Serializable {
     public void setUpdateDescription(java.lang.String updateDescription) {
         this.updateDescription = updateDescription;
     }
-
 
     /**
      * Gets the url value for this SimpleModule.
@@ -272,7 +244,6 @@ public class SimpleModule  implements java.io.Serializable {
         return url;
     }
 
-
     /**
      * Sets the url value for this SimpleModule.
      * 
@@ -282,7 +253,6 @@ public class SimpleModule  implements java.io.Serializable {
         this.url = url;
     }
 
-
     /**
      * Gets the versionNo value for this SimpleModule.
      * 
@@ -291,7 +261,6 @@ public class SimpleModule  implements java.io.Serializable {
     public java.lang.String getVersionNo() {
         return versionNo;
     }
-
 
     /**
      * Sets the versionNo value for this SimpleModule.
@@ -303,58 +272,53 @@ public class SimpleModule  implements java.io.Serializable {
     }
 
     private java.lang.Object __equalsCalc = null;
+
     public synchronized boolean equals(java.lang.Object obj) {
-        if (!(obj instanceof SimpleModule)) return false;
+        if (!(obj instanceof SimpleModule))
+            return false;
         SimpleModule other = (SimpleModule) obj;
-        if (obj == null) return false;
-        if (this == obj) return true;
+        if (obj == null)
+            return false;
+        if (this == obj)
+            return true;
         if (__equalsCalc != null) {
             return (__equalsCalc == obj);
         }
         __equalsCalc = obj;
         boolean _equals;
-        _equals = true && 
-            ((this.author==null && other.getAuthor()==null) || 
-             (this.author!=null &&
-              this.author.equals(other.getAuthor()))) &&
-            ((this.description==null && other.getDescription()==null) || 
-             (this.description!=null &&
-              this.description.equals(other.getDescription()))) &&
-            ((this.help==null && other.getHelp()==null) || 
-             (this.help!=null &&
-              this.help.equals(other.getHelp()))) &&
-            ((this.licenseAgreement==null && other.getLicenseAgreement()==null) || 
-             (this.licenseAgreement!=null &&
-              this.licenseAgreement.equals(other.getLicenseAgreement()))) &&
-            ((this.licenseType==null && other.getLicenseType()==null) || 
-             (this.licenseType!=null &&
-              this.licenseType.equals(other.getLicenseType()))) &&
-            ((this.moduleID==null && other.getModuleID()==null) || 
-             (this.moduleID!=null &&
-              this.moduleID.equals(other.getModuleID()))) &&
-            ((this.moduleVersionID==null && other.getModuleVersionID()==null) || 
-             (this.moduleVersionID!=null &&
-              this.moduleVersionID.equals(other.getModuleVersionID()))) &&
-            ((this.name==null && other.getName()==null) || 
-             (this.name!=null &&
-              this.name.equals(other.getName()))) &&
-            ((this.type==null && other.getType()==null) || 
-             (this.type!=null &&
-              this.type.equals(other.getType()))) &&
-            ((this.updateDescription==null && other.getUpdateDescription()==null) || 
-             (this.updateDescription!=null &&
-              this.updateDescription.equals(other.getUpdateDescription()))) &&
-            ((this.url==null && other.getUrl()==null) || 
-             (this.url!=null &&
-              this.url.equals(other.getUrl()))) &&
-            ((this.versionNo==null && other.getVersionNo()==null) || 
-             (this.versionNo!=null &&
-              this.versionNo.equals(other.getVersionNo())));
+        _equals = true
+                && ((this.author == null && other.getAuthor() == null) || (this.author != null && this.author
+                        .equals(other.getAuthor())))
+                && ((this.description == null && other.getDescription() == null) || (this.description != null && this.description
+                        .equals(other.getDescription())))
+                && ((this.help == null && other.getHelp() == null) || (this.help != null && this.help
+                        .equals(other.getHelp())))
+                && ((this.licenseAgreement == null && other
+                        .getLicenseAgreement() == null) || (this.licenseAgreement != null && this.licenseAgreement
+                        .equals(other.getLicenseAgreement())))
+                && ((this.licenseType == null && other.getLicenseType() == null) || (this.licenseType != null && this.licenseType
+                        .equals(other.getLicenseType())))
+                && ((this.moduleID == null && other.getModuleID() == null) || (this.moduleID != null && this.moduleID
+                        .equals(other.getModuleID())))
+                && ((this.moduleVersionID == null && other.getModuleVersionID() == null) || (this.moduleVersionID != null && this.moduleVersionID
+                        .equals(other.getModuleVersionID())))
+                && ((this.name == null && other.getName() == null) || (this.name != null && this.name
+                        .equals(other.getName())))
+                && ((this.type == null && other.getType() == null) || (this.type != null && this.type
+                        .equals(other.getType())))
+                && ((this.updateDescription == null && other
+                        .getUpdateDescription() == null) || (this.updateDescription != null && this.updateDescription
+                        .equals(other.getUpdateDescription())))
+                && ((this.url == null && other.getUrl() == null) || (this.url != null && this.url
+                        .equals(other.getUrl())))
+                && ((this.versionNo == null && other.getVersionNo() == null) || (this.versionNo != null && this.versionNo
+                        .equals(other.getVersionNo())));
         __equalsCalc = null;
         return _equals;
     }
 
     private boolean __hashCodeCalc = false;
+
     public synchronized int hashCode() {
         if (__hashCodeCalc) {
             return 0;
@@ -402,81 +366,97 @@ public class SimpleModule  implements java.io.Serializable {
     }
 
     // Type metadata
-    private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc(SimpleModule.class, true);
+    private static org.apache.axis.description.TypeDesc typeDesc = new org.apache.axis.description.TypeDesc(
+            SimpleModule.class, true);
 
     static {
-        typeDesc.setXmlType(new javax.xml.namespace.QName("/services/WebService", "SimpleModule"));
+        typeDesc.setXmlType(new javax.xml.namespace.QName(
+                "/services/WebService", "SimpleModule"));
         org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("author");
         elemField.setXmlName(new javax.xml.namespace.QName("", "author"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setXmlType(new javax.xml.namespace.QName(
+                "http://www.w3.org/2001/XMLSchema", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("description");
         elemField.setXmlName(new javax.xml.namespace.QName("", "description"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setXmlType(new javax.xml.namespace.QName(
+                "http://www.w3.org/2001/XMLSchema", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("help");
         elemField.setXmlName(new javax.xml.namespace.QName("", "help"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setXmlType(new javax.xml.namespace.QName(
+                "http://www.w3.org/2001/XMLSchema", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("licenseAgreement");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "licenseAgreement"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setXmlName(new javax.xml.namespace.QName("",
+                "licenseAgreement"));
+        elemField.setXmlType(new javax.xml.namespace.QName(
+                "http://www.w3.org/2001/XMLSchema", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("licenseType");
         elemField.setXmlName(new javax.xml.namespace.QName("", "licenseType"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setXmlType(new javax.xml.namespace.QName(
+                "http://www.w3.org/2001/XMLSchema", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("moduleID");
         elemField.setXmlName(new javax.xml.namespace.QName("", "moduleID"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setXmlType(new javax.xml.namespace.QName(
+                "http://www.w3.org/2001/XMLSchema", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("moduleVersionID");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "moduleVersionID"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setXmlName(new javax.xml.namespace.QName("",
+                "moduleVersionID"));
+        elemField.setXmlType(new javax.xml.namespace.QName(
+                "http://www.w3.org/2001/XMLSchema", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("name");
         elemField.setXmlName(new javax.xml.namespace.QName("", "name"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setXmlType(new javax.xml.namespace.QName(
+                "http://www.w3.org/2001/XMLSchema", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("type");
         elemField.setXmlName(new javax.xml.namespace.QName("", "type"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setXmlType(new javax.xml.namespace.QName(
+                "http://www.w3.org/2001/XMLSchema", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("updateDescription");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "updateDescription"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setXmlName(new javax.xml.namespace.QName("",
+                "updateDescription"));
+        elemField.setXmlType(new javax.xml.namespace.QName(
+                "http://www.w3.org/2001/XMLSchema", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("url");
         elemField.setXmlName(new javax.xml.namespace.QName("", "url"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setXmlType(new javax.xml.namespace.QName(
+                "http://www.w3.org/2001/XMLSchema", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("versionNo");
         elemField.setXmlName(new javax.xml.namespace.QName("", "versionNo"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setXmlType(new javax.xml.namespace.QName(
+                "http://www.w3.org/2001/XMLSchema", "string"));
         elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
     }
@@ -492,24 +472,20 @@ public class SimpleModule  implements java.io.Serializable {
      * Get Custom Serializer
      */
     public static org.apache.axis.encoding.Serializer getSerializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanSerializer(
-            _javaType, _xmlType, typeDesc);
+            java.lang.String mechType, java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
+        return new org.apache.axis.encoding.ser.BeanSerializer(_javaType,
+                _xmlType, typeDesc);
     }
 
     /**
      * Get Custom Deserializer
      */
     public static org.apache.axis.encoding.Deserializer getDeserializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanDeserializer(
-            _javaType, _xmlType, typeDesc);
+            java.lang.String mechType, java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
+        return new org.apache.axis.encoding.ser.BeanDeserializer(_javaType,
+                _xmlType, typeDesc);
     }
 
 }

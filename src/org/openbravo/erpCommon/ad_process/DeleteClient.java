@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_process;
 
 import org.openbravo.erpCommon.utility.ToolBar;
@@ -35,122 +35,153 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-
 public class DeleteClient extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
-
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-
-    if (vars.commandIn("DEFAULT")) {
-      String strClient = vars.getRequestGlobalVariable("inpClientId", "DeleteClient|inpClientId");
-    //  String strClient = vars.getStringParameter("inpClientId", "");
-      printPage(response, vars, strClient);
-    } else if (vars.commandIn("SAVE")) {
-	  String strClient = vars.getRequestGlobalVariable("inpClientId", "DeleteClient|inpClientId");
-	  processButton(vars, strClient);
-      response.sendRedirect(strDireccion + request.getServletPath()); 
-    } else pageErrorPopUp(response);
-  }
-
-  void processButton(VariablesSecureApp vars, String strClient) throws ServletException {
-    String pinstance = SequenceIdData.getUUID();
-    OBError myMessage= null;
-    try {
-      if(strClient.equals("")){
-        myMessage=new OBError();
-        myMessage.setType("Error");
-        myMessage.setTitle(Utility.parseTranslation(this, vars, vars.getLanguage(), "@DeleteClient_NoClientSelected@"));
-        myMessage.setMessage(Utility.parseTranslation(this, vars, vars.getLanguage(), "@DeleteClient_SelectClient@")); 
-      }else{
-        PInstanceProcessData.insertPInstance(this, pinstance, "800147", strClient, "N", vars.getUser(), vars.getClient(), vars.getOrg());
-        PInstanceProcessData.insertPInstanceParam(this, pinstance, "10", "AD_Client_ID", strClient, vars.getClient(), vars.getOrg(), vars.getUser());
-
-		    DeleteClientData.adDeleteClient(this, pinstance);
-		    
-		    PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this, pinstance);
-		    myMessage = Utility.getProcessInstanceMessage(this, vars, pinstanceData);
-    	}
-    } catch (Exception e) {
-      myMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
-      e.printStackTrace();
-      log4j.warn("Error");
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
     }
-    if (myMessage==null) {
-      myMessage = new OBError();
-      myMessage.setType("Success");
-      myMessage.setTitle("");
-      myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+
+        if (vars.commandIn("DEFAULT")) {
+            String strClient = vars.getRequestGlobalVariable("inpClientId",
+                    "DeleteClient|inpClientId");
+            // String strClient = vars.getStringParameter("inpClientId", "");
+            printPage(response, vars, strClient);
+        } else if (vars.commandIn("SAVE")) {
+            String strClient = vars.getRequestGlobalVariable("inpClientId",
+                    "DeleteClient|inpClientId");
+            processButton(vars, strClient);
+            response.sendRedirect(strDireccion + request.getServletPath());
+        } else
+            pageErrorPopUp(response);
     }
-    
-    vars.setMessage("DeleteClient", myMessage);
-    
-   
-  }
 
+    void processButton(VariablesSecureApp vars, String strClient)
+            throws ServletException {
+        String pinstance = SequenceIdData.getUUID();
+        OBError myMessage = null;
+        try {
+            if (strClient.equals("")) {
+                myMessage = new OBError();
+                myMessage.setType("Error");
+                myMessage.setTitle(Utility.parseTranslation(this, vars, vars
+                        .getLanguage(), "@DeleteClient_NoClientSelected@"));
+                myMessage.setMessage(Utility.parseTranslation(this, vars, vars
+                        .getLanguage(), "@DeleteClient_SelectClient@"));
+            } else {
+                PInstanceProcessData.insertPInstance(this, pinstance, "800147",
+                        strClient, "N", vars.getUser(), vars.getClient(), vars
+                                .getOrg());
+                PInstanceProcessData.insertPInstanceParam(this, pinstance,
+                        "10", "AD_Client_ID", strClient, vars.getClient(), vars
+                                .getOrg(), vars.getUser());
 
+                DeleteClientData.adDeleteClient(this, pinstance);
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strClient) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: Delete Client");
+                PInstanceProcessData[] pinstanceData = PInstanceProcessData
+                        .select(this, pinstance);
+                myMessage = Utility.getProcessInstanceMessage(this, vars,
+                        pinstanceData);
+            }
+        } catch (Exception e) {
+            myMessage = Utility.translateError(this, vars, vars.getLanguage(),
+                    e.getMessage());
+            e.printStackTrace();
+            log4j.warn("Error");
+        }
+        if (myMessage == null) {
+            myMessage = new OBError();
+            myMessage.setType("Success");
+            myMessage.setTitle("");
+            myMessage.setMessage(Utility.messageBD(this, "Success", vars
+                    .getLanguage()));
+        }
 
-    ActionButtonDefaultData[] data = null;
-    String strHelp="", strDescription="", strProcessId="800147";
-    if (vars.getLanguage().equals("en_US")) data = ActionButtonDefaultData.select(this, strProcessId);
-    else data = ActionButtonDefaultData.selectLanguage(this, vars.getLanguage(), strProcessId);
+        vars.setMessage("DeleteClient", myMessage);
 
-    if (data!=null && data.length!=0) {
-      strDescription = data[0].description;
-      strHelp = data[0].help;
     }
-    String[] discard = {""};
-    if (strHelp.equals("")) discard[0] = new String("helpDiscard");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_process/DeleteClient", discard).createXmlDocument();
-    
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "DeleteClient", false, "", "", "",false, "ad_process",  strReplaceWith, false,  true);
-    toolbar.prepareSimpleToolBarTemplate();
-    xmlDocument.setParameter("toolbar", toolbar.toString());
-    
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("alertMsg", "ALERT_MSG=\"" + Utility.messageBD(this, "GoingToDeleteClient", vars.getLanguage()) + "\";");
-    xmlDocument.setParameter("question", Utility.messageBD(this, "StartProcess?", vars.getLanguage()));
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("description", strDescription);
-    xmlDocument.setParameter("help", strHelp);
-    xmlDocument.setParameter("Client", strClient);
-    try {
-      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_process.DeleteClient");
-      xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
-      xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
-      xmlDocument.setParameter("childTabContainer", tabs.childTabs());
-      xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "DeleteClient.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
-      xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "DeleteClient.html", strReplaceWith);
-      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-    {
-      OBError myMessage = vars.getMessage("DeleteClient");
-      vars.removeMessage("DeleteClient");
-      if (myMessage!=null) {
-        xmlDocument.setParameter("messageType", myMessage.getType());
-        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-      }
-    }
-    xmlDocument.setData("reportClientId","liststructure",ClientComboData.selectAllClientsNoSystem1(this));
 
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
+    void printPage(HttpServletResponse response, VariablesSecureApp vars,
+            String strClient) throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: Delete Client");
 
+        ActionButtonDefaultData[] data = null;
+        String strHelp = "", strDescription = "", strProcessId = "800147";
+        if (vars.getLanguage().equals("en_US"))
+            data = ActionButtonDefaultData.select(this, strProcessId);
+        else
+            data = ActionButtonDefaultData.selectLanguage(this, vars
+                    .getLanguage(), strProcessId);
+
+        if (data != null && data.length != 0) {
+            strDescription = data[0].description;
+            strHelp = data[0].help;
+        }
+        String[] discard = { "" };
+        if (strHelp.equals(""))
+            discard[0] = new String("helpDiscard");
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/ad_process/DeleteClient", discard)
+                .createXmlDocument();
+
+        ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "DeleteClient",
+                false, "", "", "", false, "ad_process", strReplaceWith, false,
+                true);
+        toolbar.prepareSimpleToolBarTemplate();
+        xmlDocument.setParameter("toolbar", toolbar.toString());
+
+        xmlDocument.setParameter("language", "defaultLang=\""
+                + vars.getLanguage() + "\";");
+        xmlDocument.setParameter("alertMsg", "ALERT_MSG=\""
+                + Utility.messageBD(this, "GoingToDeleteClient", vars
+                        .getLanguage()) + "\";");
+        xmlDocument.setParameter("question", Utility.messageBD(this,
+                "StartProcess?", vars.getLanguage()));
+        xmlDocument.setParameter("directory", "var baseDirectory = \""
+                + strReplaceWith + "/\";\n");
+        xmlDocument.setParameter("description", strDescription);
+        xmlDocument.setParameter("help", strHelp);
+        xmlDocument.setParameter("Client", strClient);
+        try {
+            WindowTabs tabs = new WindowTabs(this, vars,
+                    "org.openbravo.erpCommon.ad_process.DeleteClient");
+            xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
+            xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
+            xmlDocument.setParameter("childTabContainer", tabs.childTabs());
+            xmlDocument.setParameter("theme", vars.getTheme());
+            NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+                    "DeleteClient.html", classInfo.id, classInfo.type,
+                    strReplaceWith, tabs.breadcrumb());
+            xmlDocument.setParameter("navigationBar", nav.toString());
+            LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
+                    "DeleteClient.html", strReplaceWith);
+            xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+        } catch (Exception ex) {
+            throw new ServletException(ex);
+        }
+        {
+            OBError myMessage = vars.getMessage("DeleteClient");
+            vars.removeMessage("DeleteClient");
+            if (myMessage != null) {
+                xmlDocument.setParameter("messageType", myMessage.getType());
+                xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+                xmlDocument.setParameter("messageMessage", myMessage
+                        .getMessage());
+            }
+        }
+        xmlDocument.setData("reportClientId", "liststructure", ClientComboData
+                .selectAllClientsNoSystem1(this));
+
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
+    }
 
 }

@@ -32,145 +32,202 @@ import org.openbravo.erpCommon.ad_combos.ProcessPlanComboData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 
 public class ReportWorkRequirementDailyEnv extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
 
-
-    if (vars.commandIn("DEFAULT")) {
-      String strStartDateFrom = vars.getGlobalVariable("inpStartDateFrom", "ReportWorkRequirementDailyEnv|StartDateFrom", "");
-      String strStartDateTo = vars.getGlobalVariable("inpStartDateTo", "ReportWorkRequirementDailyEnv|StartDateTo", "");
-      String strmaProcessPlan = vars.getGlobalVariable("inpmaProcessPlanId", "ReportWorkRequirementDailyEnv|MA_ProcessPlan_ID", "");
-      strStartDateTo = DateTimeData.today(this);
-      strStartDateFrom = DateTimeData.today(this);
-      printPageDataSheet(response, vars, strStartDateFrom, strStartDateTo, strmaProcessPlan);
-    } else if (vars.commandIn("FIND")) {
-      String strStartDateFrom = vars.getRequestGlobalVariable("inpStartDateFrom", "ReportWorkRequirementDailyEnv|StartDateFrom");
-      String strStartDateTo = vars.getRequestGlobalVariable("inpStartDateTo", "ReportWorkRequirementDailyEnv|StartDateTo");
-      String strmaProcessPlan = vars.getRequestGlobalVariable("inpmaProcessPlanId", "ReportWorkRequirementDailyEnv|MA_ProcessPlan_ID");
-      printPageDataHtml(response, vars, strStartDateFrom, strStartDateTo, strmaProcessPlan);
-    } else pageError(response);
-  }
-
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strStartDateFrom, String strStartDateTo, String strmaProcessPlan)
-    throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    XmlDocument xmlDocument=null;
-    ReportWorkRequirementDailyEnvData[] data=null;
-    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportWorkRequirementDailyEnvEdit").createXmlDocument();
-    data = ReportWorkRequirementDailyEnvData.select(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "ReportWorkRequirementDailyEnv"), Utility.getContext(this, vars, "#User_Org", "ReportWorkRequirementDailyEnv"), strStartDateFrom, strStartDateTo, strmaProcessPlan);
-
-    
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setData("structure1", data);
-    out.println(xmlDocument.print());
-    out.close();
-  }
-  
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strStartDateFrom, String strStartDateTo, String strmaProcessPlan)
-    throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    XmlDocument xmlDocument=null;
-    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportWorkRequirementDailyEnv").createXmlDocument();
-    
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportWorkRequirementDailyEnv", false, "", "", "",false, "ad_reports",  strReplaceWith, false,  true);
-    toolbar.prepareSimpleToolBarTemplate();
-    xmlDocument.setParameter("toolbar", toolbar.toString());
-
-    try {
-      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.ReportWorkRequirementDailyEnv");
-      xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
-      xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
-      xmlDocument.setParameter("childTabContainer", tabs.childTabs());
-      xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportWorkRequirementDailyEnv.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
-      xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportWorkRequirementDailyEnv.html", strReplaceWith);
-      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
+        if (vars.commandIn("DEFAULT")) {
+            String strStartDateFrom = vars.getGlobalVariable(
+                    "inpStartDateFrom",
+                    "ReportWorkRequirementDailyEnv|StartDateFrom", "");
+            String strStartDateTo = vars.getGlobalVariable("inpStartDateTo",
+                    "ReportWorkRequirementDailyEnv|StartDateTo", "");
+            String strmaProcessPlan = vars.getGlobalVariable(
+                    "inpmaProcessPlanId",
+                    "ReportWorkRequirementDailyEnv|MA_ProcessPlan_ID", "");
+            strStartDateTo = DateTimeData.today(this);
+            strStartDateFrom = DateTimeData.today(this);
+            printPageDataSheet(response, vars, strStartDateFrom,
+                    strStartDateTo, strmaProcessPlan);
+        } else if (vars.commandIn("FIND")) {
+            String strStartDateFrom = vars.getRequestGlobalVariable(
+                    "inpStartDateFrom",
+                    "ReportWorkRequirementDailyEnv|StartDateFrom");
+            String strStartDateTo = vars.getRequestGlobalVariable(
+                    "inpStartDateTo",
+                    "ReportWorkRequirementDailyEnv|StartDateTo");
+            String strmaProcessPlan = vars.getRequestGlobalVariable(
+                    "inpmaProcessPlanId",
+                    "ReportWorkRequirementDailyEnv|MA_ProcessPlan_ID");
+            printPageDataHtml(response, vars, strStartDateFrom, strStartDateTo,
+                    strmaProcessPlan);
+        } else
+            pageError(response);
     }
-    {
-      OBError myMessage = vars.getMessage("ReportWorkRequirementDailyEnv");
-      vars.removeMessage("ReportWorkRequirementDailyEnv");
-      if (myMessage!=null) {
-        xmlDocument.setParameter("messageType", myMessage.getType());
-        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-      }
-    }  
 
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("maProcessPlan", strmaProcessPlan);
-    xmlDocument.setParameter("dateFrom", strStartDateFrom);
-    xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateTo", strStartDateTo);
-    xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setData("reportMA_PROCESSPLAN", "liststructure", ProcessPlanComboData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportWorkRequirementDailyEnv"), Utility.getContext(this, vars, "#User_Org", "ReportWorkRequirementDailyEnv")));
-    
-    out.println(xmlDocument.print());
-    out.close();
-  }
-  
- /*void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strStartDateFrom, String strStartDateTo, String strmaProcessPlan)
-    throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    XmlDocument xmlDocument=null;
-    ReportWorkRequirementDailyEnvData[] data=null;
-    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportWorkRequirementDailyEnv").createXmlDocument();
-    data = ReportWorkRequirementDailyEnvData.select(this, vars.getLanguage(), Utility.getContext(this, vars, "#User_Client", "ReportWorkRequirementDailyEnv"), Utility.getContext(this, vars, "#User_Org", "ReportWorkRequirementDailyEnv"), strStartDateFrom, strStartDateTo, strmaProcessPlan);
+    void printPageDataHtml(HttpServletResponse response,
+            VariablesSecureApp vars, String strStartDateFrom,
+            String strStartDateTo, String strmaProcessPlan) throws IOException,
+            ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        XmlDocument xmlDocument = null;
+        ReportWorkRequirementDailyEnvData[] data = null;
+        xmlDocument = xmlEngine
+                .readXmlTemplate(
+                        "org/openbravo/erpCommon/ad_reports/ReportWorkRequirementDailyEnvEdit")
+                .createXmlDocument();
+        data = ReportWorkRequirementDailyEnvData.select(this, vars
+                .getLanguage(), Utility.getContext(this, vars, "#User_Client",
+                "ReportWorkRequirementDailyEnv"), Utility.getContext(this,
+                vars, "#User_Org", "ReportWorkRequirementDailyEnv"),
+                strStartDateFrom, strStartDateTo, strmaProcessPlan);
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportWorkRequirementDailyEnv", false, "", "", "",false, "ad_reports",  strReplaceWith, false,  true);
-    toolbar.prepareSimpleToolBarTemplate();
-    xmlDocument.setParameter("toolbar", toolbar.toString());
-
-    try {
-      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.ReportWorkRequirementDailyEnv");
-      xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
-      xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
-      xmlDocument.setParameter("childTabContainer", tabs.childTabs());
-      xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportWorkRequirementDailyEnv.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
-      xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportWorkRequirementDailyEnv.html", strReplaceWith);
-      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
+        xmlDocument.setParameter("directory", "var baseDirectory = \""
+                + strReplaceWith + "/\";\n");
+        xmlDocument.setParameter("paramLanguage", "defaultLang=\""
+                + vars.getLanguage() + "\";");
+        xmlDocument.setParameter("theme", vars.getTheme());
+        xmlDocument.setData("structure1", data);
+        out.println(xmlDocument.print());
+        out.close();
     }
-    {
-      OBError myMessage = vars.getMessage("ReportWorkRequirementDailyEnv");
-      vars.removeMessage("ReportWorkRequirementDailyEnv");
-      if (myMessage!=null) {
-        xmlDocument.setParameter("messageType", myMessage.getType());
-        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-      }
-    }  
 
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("maProcessPlan", strmaProcessPlan);
-    xmlDocument.setParameter("startDateFrom", strStartDateFrom);
-    xmlDocument.setParameter("startDateTo", strStartDateTo);
-    xmlDocument.setData("reportMA_PROCESSPLAN", "liststructure", ProcessPlanComboData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportWorkRequirementDailyEnv"), Utility.getContext(this, vars, "#User_Org", "ReportWorkRequirementDailyEnv")));
-    xmlDocument.setData("structure1", data);
-    out.println(xmlDocument.print());
-    out.close();
-  } */
+    void printPageDataSheet(HttpServletResponse response,
+            VariablesSecureApp vars, String strStartDateFrom,
+            String strStartDateTo, String strmaProcessPlan) throws IOException,
+            ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        XmlDocument xmlDocument = null;
+        xmlDocument = xmlEngine
+                .readXmlTemplate(
+                        "org/openbravo/erpCommon/ad_reports/ReportWorkRequirementDailyEnv")
+                .createXmlDocument();
 
-  public String getServletInfo() {
-    return "Servlet ReportWorkRequirementDailyEnv.";
-  } // end of getServletInfo() method
+        ToolBar toolbar = new ToolBar(this, vars.getLanguage(),
+                "ReportWorkRequirementDailyEnv", false, "", "", "", false,
+                "ad_reports", strReplaceWith, false, true);
+        toolbar.prepareSimpleToolBarTemplate();
+        xmlDocument.setParameter("toolbar", toolbar.toString());
+
+        try {
+            WindowTabs tabs = new WindowTabs(this, vars,
+                    "org.openbravo.erpCommon.ad_reports.ReportWorkRequirementDailyEnv");
+            xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
+            xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
+            xmlDocument.setParameter("childTabContainer", tabs.childTabs());
+            xmlDocument.setParameter("theme", vars.getTheme());
+            NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+                    "ReportWorkRequirementDailyEnv.html", classInfo.id,
+                    classInfo.type, strReplaceWith, tabs.breadcrumb());
+            xmlDocument.setParameter("navigationBar", nav.toString());
+            LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
+                    "ReportWorkRequirementDailyEnv.html", strReplaceWith);
+            xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+        } catch (Exception ex) {
+            throw new ServletException(ex);
+        }
+        {
+            OBError myMessage = vars
+                    .getMessage("ReportWorkRequirementDailyEnv");
+            vars.removeMessage("ReportWorkRequirementDailyEnv");
+            if (myMessage != null) {
+                xmlDocument.setParameter("messageType", myMessage.getType());
+                xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+                xmlDocument.setParameter("messageMessage", myMessage
+                        .getMessage());
+            }
+        }
+
+        xmlDocument.setParameter("directory", "var baseDirectory = \""
+                + strReplaceWith + "/\";\n");
+        xmlDocument.setParameter("paramLanguage", "defaultLang=\""
+                + vars.getLanguage() + "\";");
+        xmlDocument.setParameter("maProcessPlan", strmaProcessPlan);
+        xmlDocument.setParameter("dateFrom", strStartDateFrom);
+        xmlDocument.setParameter("dateFromdisplayFormat", vars
+                .getSessionValue("#AD_SqlDateFormat"));
+        xmlDocument.setParameter("dateFromsaveFormat", vars
+                .getSessionValue("#AD_SqlDateFormat"));
+        xmlDocument.setParameter("dateTo", strStartDateTo);
+        xmlDocument.setParameter("dateTodisplayFormat", vars
+                .getSessionValue("#AD_SqlDateFormat"));
+        xmlDocument.setParameter("dateTosaveFormat", vars
+                .getSessionValue("#AD_SqlDateFormat"));
+        xmlDocument.setData("reportMA_PROCESSPLAN", "liststructure",
+                ProcessPlanComboData.select(this, Utility.getContext(this,
+                        vars, "#User_Client", "ReportWorkRequirementDailyEnv"),
+                        Utility.getContext(this, vars, "#User_Org",
+                                "ReportWorkRequirementDailyEnv")));
+
+        out.println(xmlDocument.print());
+        out.close();
+    }
+
+    /*
+     * void printPageDataSheet(HttpServletResponse response, VariablesSecureApp
+     * vars, String strStartDateFrom, String strStartDateTo, String
+     * strmaProcessPlan) throws IOException, ServletException { if
+     * (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
+     * response.setContentType("text/html; charset=UTF-8"); PrintWriter out =
+     * response.getWriter(); XmlDocument xmlDocument=null;
+     * ReportWorkRequirementDailyEnvData[] data=null; xmlDocument =
+     * xmlEngine.readXmlTemplate
+     * ("org/openbravo/erpCommon/ad_reports/ReportWorkRequirementDailyEnv"
+     * ).createXmlDocument(); data =
+     * ReportWorkRequirementDailyEnvData.select(this, vars.getLanguage(),
+     * Utility.getContext(this, vars, "#User_Client",
+     * "ReportWorkRequirementDailyEnv"), Utility.getContext(this, vars,
+     * "#User_Org", "ReportWorkRequirementDailyEnv"), strStartDateFrom,
+     * strStartDateTo, strmaProcessPlan);
+     * 
+     * ToolBar toolbar = new ToolBar(this, vars.getLanguage(),
+     * "ReportWorkRequirementDailyEnv", false, "", "", "",false, "ad_reports",
+     * strReplaceWith, false, true); toolbar.prepareSimpleToolBarTemplate();
+     * xmlDocument.setParameter("toolbar", toolbar.toString());
+     * 
+     * try { WindowTabs tabs = new WindowTabs(this, vars,
+     * "org.openbravo.erpCommon.ad_reports.ReportWorkRequirementDailyEnv");
+     * xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
+     * xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
+     * xmlDocument.setParameter("childTabContainer", tabs.childTabs());
+     * xmlDocument.setParameter("theme", vars.getTheme()); NavigationBar nav =
+     * new NavigationBar(this, vars.getLanguage(),
+     * "ReportWorkRequirementDailyEnv.html", classInfo.id, classInfo.type,
+     * strReplaceWith, tabs.breadcrumb());
+     * xmlDocument.setParameter("navigationBar", nav.toString()); LeftTabsBar
+     * lBar = new LeftTabsBar(this, vars.getLanguage(),
+     * "ReportWorkRequirementDailyEnv.html", strReplaceWith);
+     * xmlDocument.setParameter("leftTabs", lBar.manualTemplate()); } catch
+     * (Exception ex) { throw new ServletException(ex); } { OBError myMessage =
+     * vars.getMessage("ReportWorkRequirementDailyEnv");
+     * vars.removeMessage("ReportWorkRequirementDailyEnv"); if (myMessage!=null)
+     * { xmlDocument.setParameter("messageType", myMessage.getType());
+     * xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+     * xmlDocument.setParameter("messageMessage", myMessage.getMessage()); } }
+     * 
+     * xmlDocument.setParameter("directory", "var baseDirectory = \"" +
+     * strReplaceWith + "/\";\n"); xmlDocument.setParameter("paramLanguage",
+     * "defaultLang=\"" + vars.getLanguage() + "\";");
+     * xmlDocument.setParameter("maProcessPlan", strmaProcessPlan);
+     * xmlDocument.setParameter("startDateFrom", strStartDateFrom);
+     * xmlDocument.setParameter("startDateTo", strStartDateTo);
+     * xmlDocument.setData("reportMA_PROCESSPLAN", "liststructure",
+     * ProcessPlanComboData.select(this, Utility.getContext(this, vars,
+     * "#User_Client", "ReportWorkRequirementDailyEnv"),
+     * Utility.getContext(this, vars, "#User_Org",
+     * "ReportWorkRequirementDailyEnv"))); xmlDocument.setData("structure1",
+     * data); out.println(xmlDocument.print()); out.close(); }
+     */
+
+    public String getServletInfo() {
+        return "Servlet ReportWorkRequirementDailyEnv.";
+    } // end of getServletInfo() method
 }

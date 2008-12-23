@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_callouts;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -25,51 +25,61 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-
 public class SL_Order_PriceList extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
-
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled()) log4j.debug("CHANGED: " + strChanged);
-      String strMPriceListID = vars.getStringParameter("inpmPricelistId");
-      String strTabId = vars.getStringParameter("inpTabId");
-      
-      try {
-        printPage(response, vars, strMPriceListID, strTabId);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else pageError(response);
-  }
-
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strMPriceListID, String strTabId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-    
-    SLOrderPriceListData[] data = SLOrderPriceListData.select(this, strMPriceListID);
-    StringBuffer resultado = new StringBuffer();
-    
-    resultado.append("var calloutName='SL_Order_PriceList';\n\n");
-    resultado.append("var respuesta = new Array(");
-    if (data!=null && data.length>0) {
-      resultado.append("new Array(\"inpistaxincluded\", \"" + data[0].istaxincluded + "\"),\n");
-      resultado.append("new Array(\"inpcCurrencyId\", \"" + data[0].cCurrencyId + "\")\n");
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
     }
-    resultado.append(");\n");
 
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+        if (vars.commandIn("DEFAULT")) {
+            String strChanged = vars.getStringParameter("inpLastFieldChanged");
+            if (log4j.isDebugEnabled())
+                log4j.debug("CHANGED: " + strChanged);
+            String strMPriceListID = vars.getStringParameter("inpmPricelistId");
+            String strTabId = vars.getStringParameter("inpTabId");
+
+            try {
+                printPage(response, vars, strMPriceListID, strTabId);
+            } catch (ServletException ex) {
+                pageErrorCallOut(response);
+            }
+        } else
+            pageError(response);
+    }
+
+    void printPage(HttpServletResponse response, VariablesSecureApp vars,
+            String strMPriceListID, String strTabId) throws IOException,
+            ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/ad_callouts/CallOut")
+                .createXmlDocument();
+
+        SLOrderPriceListData[] data = SLOrderPriceListData.select(this,
+                strMPriceListID);
+        StringBuffer resultado = new StringBuffer();
+
+        resultado.append("var calloutName='SL_Order_PriceList';\n\n");
+        resultado.append("var respuesta = new Array(");
+        if (data != null && data.length > 0) {
+            resultado.append("new Array(\"inpistaxincluded\", \""
+                    + data[0].istaxincluded + "\"),\n");
+            resultado.append("new Array(\"inpcCurrencyId\", \""
+                    + data[0].cCurrencyId + "\")\n");
+        }
+        resultado.append(");\n");
+
+        xmlDocument.setParameter("array", resultado.toString());
+        xmlDocument.setParameter("frameName", "appFrame");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
+    }
 }

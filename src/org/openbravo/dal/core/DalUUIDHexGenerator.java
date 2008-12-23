@@ -39,8 +39,8 @@ public class DalUUIDHexGenerator extends UUIDHexGenerator {
     public Serializable generate(SessionImplementor session, Object obj) {
         final BaseOBObjectDef bob = (BaseOBObjectDef) obj;
         if (bob.getId() != null) {
-            return ((String)bob.getId()).toUpperCase();
+            return ((String) bob.getId()).toUpperCase();
         }
-        return ((String)super.generate(session, obj)).toUpperCase();
+        return ((String) super.generate(session, obj)).toUpperCase();
     }
 }

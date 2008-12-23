@@ -17,27 +17,22 @@ package org.openbravo.erpCommon.utility.poc;
 
 /**
  * @author morten
- *
+ * 
  */
-public enum EmailType
-{
-    UNDEFINED ( 0 ), 
-    INCOMMING ( 1 ), 
-    OUTGOING ( 2 );
-    
+public enum EmailType {
+    UNDEFINED(0), INCOMMING(1), OUTGOING(2);
+
     private int _value;
-    
-    private EmailType( int value )
-    {
-    	_value = value;
+
+    private EmailType(int value) {
+        _value = value;
     }
-    
-    public int getValue()
-    {
-    	return _value;
+
+    public int getValue() {
+        return _value;
     }
-    public String getStringValue()
-    {
-    	return "" + _value;
+
+    public String getStringValue() {
+        return "" + _value;
     }
 }

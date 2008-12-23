@@ -15,13 +15,13 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 
 package org.openbravo.erpCommon.ws.externalSales;
 
 public class OrderIdentifier {
 
-    private String documentNo; 
+    private String documentNo;
     private java.util.Date dateNew;
 
     /** Creates a new instance of Order */

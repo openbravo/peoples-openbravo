@@ -15,72 +15,71 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.businessUtility;
 
 import org.openbravo.database.ConnectionProvider;
 import java.io.*;
 import javax.servlet.*;
-import org.apache.log4j.Logger ;
-
+import org.apache.log4j.Logger;
 
 public class Tree {
-  static Logger log4jTree = Logger.getLogger(Tree.class);
+    static Logger log4jTree = Logger.getLogger(Tree.class);
 
-  public static String getMembers (ConnectionProvider conn, String treeId, String parentNodeId) throws IOException,ServletException {
-    log4jTree.debug("Tree.getMembers");
-    TreeData[] data = TreeData.select(conn, treeId, parentNodeId);
+    public static String getMembers(ConnectionProvider conn, String treeId,
+            String parentNodeId) throws IOException, ServletException {
+        log4jTree.debug("Tree.getMembers");
+        TreeData[] data = TreeData.select(conn, treeId, parentNodeId);
 
-    boolean bolFirstLine = true;
-    String strText = "";
-    for (int i = 0; i < data.length; i++) {
-      data[i].id = "'"+data[i].id+"'";
-      if (bolFirstLine){
-        bolFirstLine = false;
-        strText = data[i].id;
-      }
-      else{
-        strText = data[i].id + "," + strText ;
-      }
+        boolean bolFirstLine = true;
+        String strText = "";
+        for (int i = 0; i < data.length; i++) {
+            data[i].id = "'" + data[i].id + "'";
+            if (bolFirstLine) {
+                bolFirstLine = false;
+                strText = data[i].id;
+            } else {
+                strText = data[i].id + "," + strText;
+            }
+        }
+        return strText;
     }
-    return strText;
-  }
 
-    public static String getTreeOrgs (ConnectionProvider conn, String client) throws IOException,ServletException {
-    log4jTree.debug("Tree.getTreeOrg");
-    TreeData[] data = TreeData.getTreeOrgs(conn, client);
+    public static String getTreeOrgs(ConnectionProvider conn, String client)
+            throws IOException, ServletException {
+        log4jTree.debug("Tree.getTreeOrg");
+        TreeData[] data = TreeData.getTreeOrgs(conn, client);
 
-    boolean bolFirstLine = true;
-    String strText = "";
-    for (int i = 0; i < data.length; i++) {
-			// FIXME: Get this comparation out of the loop. It is only done once 
-      if (bolFirstLine){
-        bolFirstLine = false;
-        strText = data[i].id;
-      }
-      else{
-        strText = data[i].id + "," + strText ;
-      }
+        boolean bolFirstLine = true;
+        String strText = "";
+        for (int i = 0; i < data.length; i++) {
+            // FIXME: Get this comparation out of the loop. It is only done once
+            if (bolFirstLine) {
+                bolFirstLine = false;
+                strText = data[i].id;
+            } else {
+                strText = data[i].id + "," + strText;
+            }
+        }
+        return strText;
     }
-    return strText;
-  }
 
-    public static String getTreeAccounts (ConnectionProvider conn, String client) throws IOException,ServletException {
-    log4jTree.debug("Tree.getTreeOrg");
-    TreeData[] data = TreeData.getTreeAccounts(conn, client);
+    public static String getTreeAccounts(ConnectionProvider conn, String client)
+            throws IOException, ServletException {
+        log4jTree.debug("Tree.getTreeOrg");
+        TreeData[] data = TreeData.getTreeAccounts(conn, client);
 
-    boolean bolFirstLine = true;
-    String strText = "";
-    for (int i = 0; i < data.length; i++) {
-			// FIXME: Get this comparation out of the loop. It is only done once 
-      if (bolFirstLine){
-        bolFirstLine = false;
-        strText = data[i].id;
-      }
-      else{
-        strText = data[i].id + "," + strText ;
-      }
+        boolean bolFirstLine = true;
+        String strText = "";
+        for (int i = 0; i < data.length; i++) {
+            // FIXME: Get this comparation out of the loop. It is only done once
+            if (bolFirstLine) {
+                bolFirstLine = false;
+                strText = data[i].id;
+            } else {
+                strText = data[i].id + "," + strText;
+            }
+        }
+        return strText;
     }
-    return strText;
-  }
 }

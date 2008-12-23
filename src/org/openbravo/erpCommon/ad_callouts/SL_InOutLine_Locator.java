@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_callouts;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -27,54 +27,67 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-
 public class SL_InOutLine_Locator extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
+    }
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled()) log4j.debug("CHANGED: " + strChanged);
-      String strLocator = vars.getStringParameter("inpmLocatorId");
-      String strWindowId = vars.getStringParameter("inpwindowId");
-      String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
-      String strTabId = vars.getStringParameter("inpTabId");
-      
-      try {
-        printPage(response, vars, strLocator, strIsSOTrx, strTabId);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else pageError(response);
-  }
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+        if (vars.commandIn("DEFAULT")) {
+            String strChanged = vars.getStringParameter("inpLastFieldChanged");
+            if (log4j.isDebugEnabled())
+                log4j.debug("CHANGED: " + strChanged);
+            String strLocator = vars.getStringParameter("inpmLocatorId");
+            String strWindowId = vars.getStringParameter("inpwindowId");
+            String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx",
+                    strWindowId);
+            String strTabId = vars.getStringParameter("inpTabId");
 
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strLocator, String strIsSOTrx, String strTabId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
+            try {
+                printPage(response, vars, strLocator, strIsSOTrx, strTabId);
+            } catch (ServletException ex) {
+                pageErrorCallOut(response);
+            }
+        } else
+            pageError(response);
+    }
 
-    String Locator = "0";
+    void printPage(HttpServletResponse response, VariablesSecureApp vars,
+            String strLocator, String strIsSOTrx, String strTabId)
+            throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/ad_callouts/CallOut")
+                .createXmlDocument();
 
-    Locator = SLInOutLineLocatorData.locator(this, strLocator);
+        String Locator = "0";
 
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_InOutLine_Locator';\n\n");
-    if (strIsSOTrx.equals("N") && !Locator.equals("0")) {
-    resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"MESSAGE\", \"" + FormatUtilities.replaceJS(Utility.messageBD(this, "FilledWarehouseLocator", vars.getLanguage())) + "\")");
-    resultado.append(");");
-    } else resultado.append("var respuesta = null;\n");
-    if (log4j.isDebugEnabled()) log4j.debug("Array: " + resultado.toString());
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
+        Locator = SLInOutLineLocatorData.locator(this, strLocator);
+
+        StringBuffer resultado = new StringBuffer();
+        resultado.append("var calloutName='SL_InOutLine_Locator';\n\n");
+        if (strIsSOTrx.equals("N") && !Locator.equals("0")) {
+            resultado.append("var respuesta = new Array(");
+            resultado.append("new Array(\"MESSAGE\", \""
+                    + FormatUtilities.replaceJS(Utility.messageBD(this,
+                            "FilledWarehouseLocator", vars.getLanguage()))
+                    + "\")");
+            resultado.append(");");
+        } else
+            resultado.append("var respuesta = null;\n");
+        if (log4j.isDebugEnabled())
+            log4j.debug("Array: " + resultado.toString());
+        xmlDocument.setParameter("array", resultado.toString());
+        xmlDocument.setParameter("frameName", "appFrame");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
+    }
 }

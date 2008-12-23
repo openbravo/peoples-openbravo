@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpReports;
 
 import org.openbravo.base.secureApp.*;
@@ -26,53 +26,72 @@ import javax.servlet.http.*;
 
 import org.openbravo.erpCommon.utility.Utility;
 
-
 public class RptC_Settlement extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
-  
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
+    private static final long serialVersionUID = 1L;
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-
-    if (vars.commandIn("DEFAULT")) {
-      String strcSettlementId = vars.getSessionValue("RptC_Settlement.inpcSettlementId_R");
-      if (strcSettlementId.equals("")) strcSettlementId = vars.getSessionValue("RptC_Settlement.inpcSettlementId");
-      printPagePDF(response, vars, strcSettlementId);
-    } else pageError(response);
-  }
-
-  void printPagePDF(HttpServletResponse response, VariablesSecureApp vars, String strcSettlementId) throws IOException,ServletException{
-    if (log4j.isDebugEnabled()) log4j.debug("Output: pdf");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpReports/RptC_Settlement").createXmlDocument();
-
-    RptCSettlementData[] pdfSettlementData = RptCSettlementData.select(this, Utility.getContext(this, vars, "#User_Client", "RptC_Settlement"), Utility.getContext(this, vars, "#User_Org", "RptC_Settlement"), strcSettlementId);
-
-    if (pdfSettlementData == null || pdfSettlementData.length == 0) pdfSettlementData = RptCSettlementData.set();
-
-    RptCSettlementHeaderData[][] pdfSettlementHeaderData = new RptCSettlementHeaderData[pdfSettlementData.length][];
-
-    RptCSettlementLinesData[][] pdfSettlementLinesData = new RptCSettlementLinesData[pdfSettlementData.length][];
-
-    for (int i=0;i<pdfSettlementData.length;i++) {
-      pdfSettlementHeaderData[i] = RptCSettlementHeaderData.select(this, pdfSettlementData[i].cSettlementId);
-      if (pdfSettlementHeaderData[i] == null || pdfSettlementHeaderData[i].length == 0) RptCSettlementHeaderData.set();
-      pdfSettlementLinesData[i] = RptCSettlementLinesData.select(this, pdfSettlementData[i].cSettlementId);
-      if (pdfSettlementLinesData[i] == null || pdfSettlementLinesData[i].length == 0) pdfSettlementLinesData[i] = RptCSettlementLinesData.set();
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
     }
 
-    xmlDocument.setData("structure1",pdfSettlementData);
-    xmlDocument.setDataArray("reportSettlementHeader","structureSettlementHeader",pdfSettlementHeaderData);
-    xmlDocument.setDataArray("reportSettlementLines","structureSettlementLines",pdfSettlementLinesData);
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    String strResult = xmlDocument.print();
-    renderFO(strResult, response);
-  }
+        if (vars.commandIn("DEFAULT")) {
+            String strcSettlementId = vars
+                    .getSessionValue("RptC_Settlement.inpcSettlementId_R");
+            if (strcSettlementId.equals(""))
+                strcSettlementId = vars
+                        .getSessionValue("RptC_Settlement.inpcSettlementId");
+            printPagePDF(response, vars, strcSettlementId);
+        } else
+            pageError(response);
+    }
 
-  public String getServletInfo() {
-    return "Servlet that presents the RptCOrders seeker";
-  } // End of getServletInfo() method
+    void printPagePDF(HttpServletResponse response, VariablesSecureApp vars,
+            String strcSettlementId) throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: pdf");
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpReports/RptC_Settlement").createXmlDocument();
+
+        RptCSettlementData[] pdfSettlementData = RptCSettlementData.select(
+                this, Utility.getContext(this, vars, "#User_Client",
+                        "RptC_Settlement"), Utility.getContext(this, vars,
+                        "#User_Org", "RptC_Settlement"), strcSettlementId);
+
+        if (pdfSettlementData == null || pdfSettlementData.length == 0)
+            pdfSettlementData = RptCSettlementData.set();
+
+        RptCSettlementHeaderData[][] pdfSettlementHeaderData = new RptCSettlementHeaderData[pdfSettlementData.length][];
+
+        RptCSettlementLinesData[][] pdfSettlementLinesData = new RptCSettlementLinesData[pdfSettlementData.length][];
+
+        for (int i = 0; i < pdfSettlementData.length; i++) {
+            pdfSettlementHeaderData[i] = RptCSettlementHeaderData.select(this,
+                    pdfSettlementData[i].cSettlementId);
+            if (pdfSettlementHeaderData[i] == null
+                    || pdfSettlementHeaderData[i].length == 0)
+                RptCSettlementHeaderData.set();
+            pdfSettlementLinesData[i] = RptCSettlementLinesData.select(this,
+                    pdfSettlementData[i].cSettlementId);
+            if (pdfSettlementLinesData[i] == null
+                    || pdfSettlementLinesData[i].length == 0)
+                pdfSettlementLinesData[i] = RptCSettlementLinesData.set();
+        }
+
+        xmlDocument.setData("structure1", pdfSettlementData);
+        xmlDocument.setDataArray("reportSettlementHeader",
+                "structureSettlementHeader", pdfSettlementHeaderData);
+        xmlDocument.setDataArray("reportSettlementLines",
+                "structureSettlementLines", pdfSettlementLinesData);
+
+        String strResult = xmlDocument.print();
+        renderFO(strResult, response);
+    }
+
+    public String getServletInfo() {
+        return "Servlet that presents the RptCOrders seeker";
+    } // End of getServletInfo() method
 }

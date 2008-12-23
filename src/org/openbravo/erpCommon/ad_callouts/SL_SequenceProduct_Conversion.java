@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_callouts;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -28,76 +28,99 @@ import java.math.BigDecimal;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-
-
 public class SL_SequenceProduct_Conversion extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
-  static final BigDecimal ZERO = new BigDecimal(0.0);
+    private static final long serialVersionUID = 1L;
+    static final BigDecimal ZERO = new BigDecimal(0.0);
 
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
-
-
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled()) log4j.debug("CHANGED: " + strChanged);
-      String strUOM = vars.getStringParameter("inpcUomId");
-      String strMProductUOMID = vars.getStringParameter("inpmProductUomId");
-      String strQuantityOrder = vars.getStringParameter("inpquantityorder");
-      String strTabId = vars.getStringParameter("inpTabId");
-      try {
-        printPage(response, vars, strUOM, strMProductUOMID, strQuantityOrder, strTabId);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else pageError(response);
-  }
-
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strUOM, String strMProductUOMID,String strQuantityOrder, String strTabId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-    if (strUOM.startsWith("\"")) strUOM=strUOM.substring(1,strUOM.length()-1);
-    int stdPrecision = Integer.valueOf(SLInvoiceConversionData.stdPrecision(this, strUOM)).intValue();
-    String strInitUOM = SLInvoiceConversionData.initUOMId (this, strMProductUOMID);
-    String strMultiplyRate;
-    boolean check = false;
-
-    strMultiplyRate = SLInvoiceConversionData.multiplyRate (this, strInitUOM, strUOM);
-    if (strInitUOM.equals(strUOM)) strMultiplyRate = "1";
-    if (strMultiplyRate.equals("")) strMultiplyRate = SLInvoiceConversionData.divideRate (this, strUOM, strInitUOM);
-    if (strMultiplyRate.equals("")) {
-      strMultiplyRate = "1";
-      if (!strMProductUOMID.equals("")) check = true;
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
     }
-    
 
-    BigDecimal quantityOrder, qtyOrdered, multiplyRate;
-
-    multiplyRate = new BigDecimal(strMultiplyRate);
-
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_SequenceProduct_Conversion';\n\n");
-    resultado.append("var respuesta = new Array(");
-    if (!strQuantityOrder.equals("")) {
-    quantityOrder = new BigDecimal(strQuantityOrder);
-    qtyOrdered = new BigDecimal (quantityOrder.doubleValue()*multiplyRate.doubleValue());
-       if (qtyOrdered.scale() > stdPrecision) qtyOrdered = qtyOrdered.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
-    resultado.append("new Array(\"inpquantity\", " + qtyOrdered.toString() + ")");
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+        if (vars.commandIn("DEFAULT")) {
+            String strChanged = vars.getStringParameter("inpLastFieldChanged");
+            if (log4j.isDebugEnabled())
+                log4j.debug("CHANGED: " + strChanged);
+            String strUOM = vars.getStringParameter("inpcUomId");
+            String strMProductUOMID = vars
+                    .getStringParameter("inpmProductUomId");
+            String strQuantityOrder = vars
+                    .getStringParameter("inpquantityorder");
+            String strTabId = vars.getStringParameter("inpTabId");
+            try {
+                printPage(response, vars, strUOM, strMProductUOMID,
+                        strQuantityOrder, strTabId);
+            } catch (ServletException ex) {
+                pageErrorCallOut(response);
+            }
+        } else
+            pageError(response);
     }
-    if (check) {
-      if (!strQuantityOrder.equals("")) resultado.append(",");
-      resultado.append("new Array('MESSAGE', \"" + FormatUtilities.replaceJS(Utility.messageBD(this, "NoUOMConversion", vars.getLanguage())) + "\")");
+
+    void printPage(HttpServletResponse response, VariablesSecureApp vars,
+            String strUOM, String strMProductUOMID, String strQuantityOrder,
+            String strTabId) throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/ad_callouts/CallOut")
+                .createXmlDocument();
+        if (strUOM.startsWith("\""))
+            strUOM = strUOM.substring(1, strUOM.length() - 1);
+        int stdPrecision = Integer.valueOf(
+                SLInvoiceConversionData.stdPrecision(this, strUOM)).intValue();
+        String strInitUOM = SLInvoiceConversionData.initUOMId(this,
+                strMProductUOMID);
+        String strMultiplyRate;
+        boolean check = false;
+
+        strMultiplyRate = SLInvoiceConversionData.multiplyRate(this,
+                strInitUOM, strUOM);
+        if (strInitUOM.equals(strUOM))
+            strMultiplyRate = "1";
+        if (strMultiplyRate.equals(""))
+            strMultiplyRate = SLInvoiceConversionData.divideRate(this, strUOM,
+                    strInitUOM);
+        if (strMultiplyRate.equals("")) {
+            strMultiplyRate = "1";
+            if (!strMProductUOMID.equals(""))
+                check = true;
+        }
+
+        BigDecimal quantityOrder, qtyOrdered, multiplyRate;
+
+        multiplyRate = new BigDecimal(strMultiplyRate);
+
+        StringBuffer resultado = new StringBuffer();
+        resultado
+                .append("var calloutName='SL_SequenceProduct_Conversion';\n\n");
+        resultado.append("var respuesta = new Array(");
+        if (!strQuantityOrder.equals("")) {
+            quantityOrder = new BigDecimal(strQuantityOrder);
+            qtyOrdered = new BigDecimal(quantityOrder.doubleValue()
+                    * multiplyRate.doubleValue());
+            if (qtyOrdered.scale() > stdPrecision)
+                qtyOrdered = qtyOrdered.setScale(stdPrecision,
+                        BigDecimal.ROUND_HALF_UP);
+            resultado.append("new Array(\"inpquantity\", "
+                    + qtyOrdered.toString() + ")");
+        }
+        if (check) {
+            if (!strQuantityOrder.equals(""))
+                resultado.append(",");
+            resultado.append("new Array('MESSAGE', \""
+                    + FormatUtilities.replaceJS(Utility.messageBD(this,
+                            "NoUOMConversion", vars.getLanguage())) + "\")");
+        }
+        resultado.append(");");
+        xmlDocument.setParameter("array", resultado.toString());
+        xmlDocument.setParameter("frameName", "appFrame");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
     }
-    resultado.append(");");
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
 }

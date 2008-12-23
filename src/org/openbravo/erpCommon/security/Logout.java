@@ -8,7 +8,7 @@
  * CONDITIONS OF ANY KIND, either  express  or  implied.  See  the  License  for  the
  * specific language governing permissions and limitations under the License.
  ************************************************************************************
-*/
+ */
 
 package org.openbravo.erpCommon.security;
 
@@ -19,17 +19,19 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.*;
 
 /**
- *
+ * 
  * @author adrianromero
  */
 public class Logout extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;
+
     /** Creates a new instance of Logout */
     public Logout() {
     }
-    
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        
+
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+
         logout(request, response);
-    }   
+    }
 }

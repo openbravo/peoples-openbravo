@@ -15,7 +15,7 @@
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
-*/
+ */
 package org.openbravo.erpCommon.ad_callouts;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -26,57 +26,63 @@ import java.math.BigDecimal;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-
-
 public class SL_ProductionPlan_Conversion extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  static final BigDecimal ZERO = new BigDecimal(0.0);
+    static final BigDecimal ZERO = new BigDecimal(0.0);
 
-  public void init (ServletConfig config) {
-    super.init(config);
-    boolHist = false;
-  }
-
-
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    if (vars.commandIn("DEFAULT")) {
-      String strChanged = vars.getStringParameter("inpLastFieldChanged");
-      if (log4j.isDebugEnabled()) log4j.debug("CHANGED: " + strChanged);
-      String strSecQty = vars.getStringParameter("inpsecondaryqty");
-      String strConvRate = vars.getStringParameter("inpconversionrate");
-      String strTabId = vars.getStringParameter("inpTabId");
-      try {
-        printPage(response, vars, strSecQty, strConvRate, strTabId);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else pageError(response);
-  }
-
-  void printPage(HttpServletResponse response, VariablesSecureApp vars, String strSecQty, String strConvRate, String strTabId) throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-
-    BigDecimal secondaryQty, quantity, convRate;
-
-
-    StringBuffer resultado = new StringBuffer();
-    resultado.append("var calloutName='SL_ProductionPlan_Conversion';\n\n");
-    resultado.append("var respuesta = new Array(");
-    if (!strSecQty.equals("")&&!strConvRate.equals("")) {
-      convRate = new BigDecimal(strConvRate);
-      secondaryQty = new BigDecimal(strSecQty);
-      quantity = secondaryQty.divide(convRate, 0, BigDecimal.ROUND_HALF_UP);
-      resultado.append("new Array(\"inpproductionqty\", " + quantity.toString() + ")");
+    public void init(ServletConfig config) {
+        super.init(config);
+        boolHist = false;
     }
-    resultado.append(");");
-    xmlDocument.setParameter("array", resultado.toString());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
+
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
+        if (vars.commandIn("DEFAULT")) {
+            String strChanged = vars.getStringParameter("inpLastFieldChanged");
+            if (log4j.isDebugEnabled())
+                log4j.debug("CHANGED: " + strChanged);
+            String strSecQty = vars.getStringParameter("inpsecondaryqty");
+            String strConvRate = vars.getStringParameter("inpconversionrate");
+            String strTabId = vars.getStringParameter("inpTabId");
+            try {
+                printPage(response, vars, strSecQty, strConvRate, strTabId);
+            } catch (ServletException ex) {
+                pageErrorCallOut(response);
+            }
+        } else
+            pageError(response);
+    }
+
+    void printPage(HttpServletResponse response, VariablesSecureApp vars,
+            String strSecQty, String strConvRate, String strTabId)
+            throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/ad_callouts/CallOut")
+                .createXmlDocument();
+
+        BigDecimal secondaryQty, quantity, convRate;
+
+        StringBuffer resultado = new StringBuffer();
+        resultado.append("var calloutName='SL_ProductionPlan_Conversion';\n\n");
+        resultado.append("var respuesta = new Array(");
+        if (!strSecQty.equals("") && !strConvRate.equals("")) {
+            convRate = new BigDecimal(strConvRate);
+            secondaryQty = new BigDecimal(strSecQty);
+            quantity = secondaryQty.divide(convRate, 0,
+                    BigDecimal.ROUND_HALF_UP);
+            resultado.append("new Array(\"inpproductionqty\", "
+                    + quantity.toString() + ")");
+        }
+        resultado.append(");");
+        xmlDocument.setParameter("array", resultado.toString());
+        xmlDocument.setParameter("frameName", "appFrame");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
+    }
 }

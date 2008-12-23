@@ -31,120 +31,152 @@ import org.openbravo.erpCommon.utility.DateTimeData;
 
 import java.util.HashMap;
 
-
 public class ReportGuaranteeDateJR extends HttpSecureAppServlet {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
-    VariablesSecureApp vars = new VariablesSecureApp(request);
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        VariablesSecureApp vars = new VariablesSecureApp(request);
 
-
-    if (vars.commandIn("DEFAULT")) {
-      String strDate = vars.getGlobalVariable("inpDate", "ReportGuaranteeDateJR|date", "");
-      String strcBpartnerId = vars.getGlobalVariable("inpcBPartnerId", "ReportGuaranteeDateJR|cBpartnerId", "");
-      String strmWarehouseId = vars.getStringParameter("inpmWarehouseId","");
-      printPageDataSheet(response, vars, strDate, strcBpartnerId, strmWarehouseId);
-    } else if (vars.commandIn("FIND")) {
-      String strDate = vars.getRequestGlobalVariable("inpDate", "ReportGuaranteeDateJR|date");
-      String strcBpartnerId = vars.getRequestGlobalVariable("inpcBPartnerId", "ReportGuaranteeDateJR|cBpartnerId");
-      String strmWarehouseId = vars.getStringParameter("inpmWarehouseId");
-      setHistoryCommand(request, "FIND");
-      printPageDataHtml(response, vars, strDate, strcBpartnerId, strmWarehouseId);
-    } else pageError(response);
-  }
-
-  void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars, String strDate, String strcBpartnerId, String strmWarehouseId)
-    throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    response.setContentType("text/html; charset=UTF-8");
-
-    //XmlDocument xmlDocument=null;
-    ReportGuaranteeDateData[] data = null;
-	String discard[] = {"discard"};
-      data = ReportGuaranteeDateData.select(this, Utility.getContext(this, vars, "#User_Client", "ReportGuaranteeDateJR"), Utility.getContext(this, vars, "#User_Org", "ReportGuaranteeDateJR"), DateTimeData.nDaysAfter(this, strDate,"1"), strcBpartnerId, strmWarehouseId);
-
-  if (data == null || data.length == 0){
-        discard[0] = "selEliminar";
-        data = ReportGuaranteeDateData.set();
-      }
-
-      String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportGuaranteeDateJR.jrxml";
-      String strOutput="html";
-      if (strOutput.equals("pdf")) response.setHeader("Content-disposition", "inline; filename=ReportGuaranteeDateJR.pdf");
-
-       
-		HashMap<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("REPORT_TITLE", classInfo.name);
-		parameters.put("ReportData", strDate);
-	
-	renderJR(vars, response, strReportName, strOutput, parameters, data, null );
-
-  }
-
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars, String strDate, String strcBpartnerId, String strmWarehouseId)
-    throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    XmlDocument xmlDocument=null;
-    
-   
-    
-    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_reports/ReportGuaranteeDateJR").createXmlDocument();
-
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportGuaranteeDateJR", false, "", "", "",false, "ad_reports",  strReplaceWith, false,  true);
-    toolbar.prepareSimpleToolBarTemplate();
-    xmlDocument.setParameter("toolbar", toolbar.toString());
-    try {
-      WindowTabs tabs = new WindowTabs(this, vars, "org.openbravo.erpCommon.ad_reports.ReportGuaranteeDateJR");
-      xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
-      xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
-      xmlDocument.setParameter("childTabContainer", tabs.childTabs());
-      xmlDocument.setParameter("theme", vars.getTheme());
-      NavigationBar nav = new NavigationBar(this, vars.getLanguage(), "ReportGuaranteeDateJR.html", classInfo.id, classInfo.type, strReplaceWith, tabs.breadcrumb());
-      xmlDocument.setParameter("navigationBar", nav.toString());
-      LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(), "ReportGuaranteeDateJR.html", strReplaceWith);
-      xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-    {
-      OBError myMessage = vars.getMessage("ReportGuaranteeDateJR");
-      vars.removeMessage("ReportGuaranteeDateJR");
-      if (myMessage!=null) {
-        xmlDocument.setParameter("messageType", myMessage.getType());
-        xmlDocument.setParameter("messageTitle", myMessage.getTitle());
-        xmlDocument.setParameter("messageMessage", myMessage.getMessage());
-      }
+        if (vars.commandIn("DEFAULT")) {
+            String strDate = vars.getGlobalVariable("inpDate",
+                    "ReportGuaranteeDateJR|date", "");
+            String strcBpartnerId = vars.getGlobalVariable("inpcBPartnerId",
+                    "ReportGuaranteeDateJR|cBpartnerId", "");
+            String strmWarehouseId = vars.getStringParameter("inpmWarehouseId",
+                    "");
+            printPageDataSheet(response, vars, strDate, strcBpartnerId,
+                    strmWarehouseId);
+        } else if (vars.commandIn("FIND")) {
+            String strDate = vars.getRequestGlobalVariable("inpDate",
+                    "ReportGuaranteeDateJR|date");
+            String strcBpartnerId = vars.getRequestGlobalVariable(
+                    "inpcBPartnerId", "ReportGuaranteeDateJR|cBpartnerId");
+            String strmWarehouseId = vars.getStringParameter("inpmWarehouseId");
+            setHistoryCommand(request, "FIND");
+            printPageDataHtml(response, vars, strDate, strcBpartnerId,
+                    strmWarehouseId);
+        } else
+            pageError(response);
     }
 
+    void printPageDataHtml(HttpServletResponse response,
+            VariablesSecureApp vars, String strDate, String strcBpartnerId,
+            String strmWarehouseId) throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        response.setContentType("text/html; charset=UTF-8");
 
-    xmlDocument.setParameter("calendar", vars.getLanguage().substring(0,2));
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("date", strDate);
-    xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("paramBPartnerId", strcBpartnerId);
-    xmlDocument.setParameter("mWarehouseId", strmWarehouseId);
-    xmlDocument.setParameter("bPartnerDescription", ReportGuaranteeDateData.selectBpartner(this, strcBpartnerId));
-    try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "M_Warehouse_ID", "", "", Utility.getContext(this, vars, "#User_Org", "ReportGuaranteeDateJR"), Utility.getContext(this, vars, "#User_Client", "ReportGuaranteeDateJR"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportGuaranteeDateJR", strmWarehouseId);
-      xmlDocument.setData("reportM_WAREHOUSEID","liststructure", comboTableData.select(false));
-      comboTableData = null;
-    } catch (Exception ex) {
-      throw new ServletException(ex);
+        // XmlDocument xmlDocument=null;
+        ReportGuaranteeDateData[] data = null;
+        String discard[] = { "discard" };
+        data = ReportGuaranteeDateData.select(this, Utility.getContext(this,
+                vars, "#User_Client", "ReportGuaranteeDateJR"), Utility
+                .getContext(this, vars, "#User_Org", "ReportGuaranteeDateJR"),
+                DateTimeData.nDaysAfter(this, strDate, "1"), strcBpartnerId,
+                strmWarehouseId);
+
+        if (data == null || data.length == 0) {
+            discard[0] = "selEliminar";
+            data = ReportGuaranteeDateData.set();
+        }
+
+        String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportGuaranteeDateJR.jrxml";
+        String strOutput = "html";
+        if (strOutput.equals("pdf"))
+            response.setHeader("Content-disposition",
+                    "inline; filename=ReportGuaranteeDateJR.pdf");
+
+        HashMap<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("REPORT_TITLE", classInfo.name);
+        parameters.put("ReportData", strDate);
+
+        renderJR(vars, response, strReportName, strOutput, parameters, data,
+                null);
+
     }
-   
 
-    out.println(xmlDocument.print());
-    out.close();
-  }
-  
+    void printPageDataSheet(HttpServletResponse response,
+            VariablesSecureApp vars, String strDate, String strcBpartnerId,
+            String strmWarehouseId) throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: dataSheet");
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        XmlDocument xmlDocument = null;
 
+        xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/erpCommon/ad_reports/ReportGuaranteeDateJR")
+                .createXmlDocument();
 
-  public String getServletInfo() {
-    return "Servlet ReportGuaranteeDateJR. This Servlet was made by Jon Alegria";
-  } // end of getServletInfo() method
+        ToolBar toolbar = new ToolBar(this, vars.getLanguage(),
+                "ReportGuaranteeDateJR", false, "", "", "", false,
+                "ad_reports", strReplaceWith, false, true);
+        toolbar.prepareSimpleToolBarTemplate();
+        xmlDocument.setParameter("toolbar", toolbar.toString());
+        try {
+            WindowTabs tabs = new WindowTabs(this, vars,
+                    "org.openbravo.erpCommon.ad_reports.ReportGuaranteeDateJR");
+            xmlDocument.setParameter("parentTabContainer", tabs.parentTabs());
+            xmlDocument.setParameter("mainTabContainer", tabs.mainTabs());
+            xmlDocument.setParameter("childTabContainer", tabs.childTabs());
+            xmlDocument.setParameter("theme", vars.getTheme());
+            NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
+                    "ReportGuaranteeDateJR.html", classInfo.id, classInfo.type,
+                    strReplaceWith, tabs.breadcrumb());
+            xmlDocument.setParameter("navigationBar", nav.toString());
+            LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
+                    "ReportGuaranteeDateJR.html", strReplaceWith);
+            xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
+        } catch (Exception ex) {
+            throw new ServletException(ex);
+        }
+        {
+            OBError myMessage = vars.getMessage("ReportGuaranteeDateJR");
+            vars.removeMessage("ReportGuaranteeDateJR");
+            if (myMessage != null) {
+                xmlDocument.setParameter("messageType", myMessage.getType());
+                xmlDocument.setParameter("messageTitle", myMessage.getTitle());
+                xmlDocument.setParameter("messageMessage", myMessage
+                        .getMessage());
+            }
+        }
+
+        xmlDocument
+                .setParameter("calendar", vars.getLanguage().substring(0, 2));
+        xmlDocument.setParameter("directory", "var baseDirectory = \""
+                + strReplaceWith + "/\";\n");
+        xmlDocument.setParameter("paramLanguage", "defaultLang=\""
+                + vars.getLanguage() + "\";");
+        xmlDocument.setParameter("date", strDate);
+        xmlDocument.setParameter("dateTodisplayFormat", vars
+                .getSessionValue("#AD_SqlDateFormat"));
+        xmlDocument.setParameter("dateTosaveFormat", vars
+                .getSessionValue("#AD_SqlDateFormat"));
+        xmlDocument.setParameter("paramBPartnerId", strcBpartnerId);
+        xmlDocument.setParameter("mWarehouseId", strmWarehouseId);
+        xmlDocument.setParameter("bPartnerDescription", ReportGuaranteeDateData
+                .selectBpartner(this, strcBpartnerId));
+        try {
+            ComboTableData comboTableData = new ComboTableData(vars, this,
+                    "TABLEDIR", "M_Warehouse_ID", "", "", Utility.getContext(
+                            this, vars, "#User_Org", "ReportGuaranteeDateJR"),
+                    Utility.getContext(this, vars, "#User_Client",
+                            "ReportGuaranteeDateJR"), 0);
+            Utility.fillSQLParameters(this, vars, null, comboTableData,
+                    "ReportGuaranteeDateJR", strmWarehouseId);
+            xmlDocument.setData("reportM_WAREHOUSEID", "liststructure",
+                    comboTableData.select(false));
+            comboTableData = null;
+        } catch (Exception ex) {
+            throw new ServletException(ex);
+        }
+
+        out.println(xmlDocument.print());
+        out.close();
+    }
+
+    public String getServletInfo() {
+        return "Servlet ReportGuaranteeDateJR. This Servlet was made by Jon Alegria";
+    } // end of getServletInfo() method
 }
