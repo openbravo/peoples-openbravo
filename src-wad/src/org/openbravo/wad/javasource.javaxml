@@ -190,7 +190,12 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
 <PARAMETERS_TMP id="NothasReference">
       if (strView.equals("EDIT")) {
         str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = firstElement(vars);
-        if (str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) strView = "RELATION";
+        if (str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) {
+          // filter returns empty set
+          strView = "RELATION";
+          // switch to grid permanently until the user changes the view again
+          vars.setSessionValue(tabId + "|<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>.view", strView);
+        }
       }
 </PARAMETERS_TMP>
       if (strView.equals("EDIT")) 
