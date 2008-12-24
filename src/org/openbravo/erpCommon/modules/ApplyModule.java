@@ -28,6 +28,7 @@ import net.sf.cglib.transform.impl.FieldProvider;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.CPStandAlone;
@@ -174,11 +175,16 @@ public class ApplyModule {
                                         .get(Organization.class, "0"), strXml,
                                         OBDal.getInstance().get(Module.class,
                                                 ds[i].adModuleId));
-                        String msg = result.getErrorMessages();
-                        if (msg != null && msg.length() > 0)
+                        if (result.hasErrorOccured()) {
                             log4j.error(result.getErrorMessages());
+                            if (result.getException() != null) {
+                                throw new OBException(result.getException());
+                            } else {
+                                throw new OBException(result.getErrorMessages());
+                            }
+                        }
 
-                        msg = result.getWarningMessages();
+                        String msg = result.getWarningMessages();
                         if (msg != null && msg.length() > 0)
                             log4j.warn(msg);
 
@@ -188,16 +194,19 @@ public class ApplyModule {
                     }
 
                 }
+                OBDal.getInstance().commitAndClose();
             }
 
             // **************** Set applied as installed and delete
             // uninstalled************************
             log4j.info("Set modules as installed");
-            OBDal.getInstance().commitAndClose();
             ApplyModuleData.setInstalled(pool);
             ApplyModuleData.deleteUninstalled(pool);
+        } catch (final OBException e) {
+            throw e;
         } catch (final Exception e) {
             e.printStackTrace();
+            throw new OBException(e);
         }
     }
 
