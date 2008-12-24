@@ -4996,7 +4996,8 @@ public class Wad extends DefaultHandler {
      *            The path to the connection file.
      */
     public void createXmlEngine(String fileConnection) {
-        xmlEngine = new XmlEngine(this.pool);
+        // pass null as connection to running the translation at compile time
+        xmlEngine = new XmlEngine(null);
         xmlEngine.isResource = true;
         xmlEngine.fileBaseLocation = new File(".");
         xmlEngine.strReplaceWhat = null;
