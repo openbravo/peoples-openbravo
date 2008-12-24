@@ -222,7 +222,7 @@
        Cur_workproposal.PLANNEDORDERDATE, Cur_workproposal.PLANNEDDATE, v_Description, Cur_workproposal.M_Product_ID,
        v_M_Warehouse_ID, Cur_workproposal.C_UOM_ID, Cur_workproposal.QTY, Cur_workproposal.C_Currency_ID,
        v_PriceList, v_PriceActual, v_PriceLimit,
-       v_PriceStd, v_PriceActual*Cur_workproposal.QTY,((v_PriceList-v_PriceStd) / (v_PriceList * 100)),
+       v_PriceStd, v_PriceActual*Cur_workproposal.QTY,(((v_PriceList-v_PriceStd) / v_PriceList) * 100),
        v_TaxID
       );
 
