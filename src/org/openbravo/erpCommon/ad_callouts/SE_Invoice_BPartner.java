@@ -253,10 +253,6 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
             } else
                 resultado.append("null");
             resultado.append("\n),");
-            resultado
-                    .append("new Array(\"inpdescription\", \""
-                            + FormatUtilities.replaceJS(data[0].soDescription)
-                            + "\"),");
             String strWithHolding = SEInvoiceBPartnerData.WithHolding(this,
                     strBPartner);
             resultado.append("new Array(\"inpcWithholdingId\", \""
