@@ -608,4 +608,25 @@
       </Sql>
       <Parameter name="org"/>
    </SqlMethod>
+   <SqlMethod name="selectNegate" type="preparedStatement" return="string" default="">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+		SELECT ALLOWNEGATIVE
+		FROM C_ACCTSCHEMA_TABLE, C_ACCTSCHEMA_TABLE_DOCTYPE
+		WHERE C_ACCTSCHEMA_TABLE.C_ACCTSCHEMA_TABLE_ID = C_ACCTSCHEMA_TABLE_DOCTYPE.C_ACCTSCHEMA_TABLE_ID
+		AND C_ACCTSCHEMA_ID = ?
+		AND C_ACCTSCHEMA_TABLE_DOCTYPE.DOCBASETYPE = ?
+      </Sql>
+      <Parameter name="cAcctschemaId"/>
+      <Parameter name="docbasetype"/>
+   </SqlMethod>
+   <SqlMethod name="selectDefaultNegate" type="preparedStatement" return="string" default="">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+		SELECT ALLOWNEGATIVE
+		FROM C_ACCTSCHEMA
+		WHERE C_ACCTSCHEMA_ID = ?
+      </Sql>
+      <Parameter name="cAcctschemaId"/>
+   </SqlMethod>
   </SqlClass>

@@ -33390,15 +33390,15 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--800096 CREATEDBY-->
 <!--800096-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--800096 UPDATED-->
-<!--800096-->              <UPDATED><![CDATA[2007-05-08 11:30:51.0]]></UPDATED>
+<!--800096-->              <UPDATED><![CDATA[2008-12-23 20:59:48.0]]></UPDATED>
 <!--800096 UPDATEDBY-->
 <!--800096-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800096 COLUMNNAME-->
 <!--800096-->              <COLUMNNAME><![CDATA[C_Acctschema_Table_ID]]></COLUMNNAME>
 <!--800096 NAME-->
-<!--800096-->              <NAME><![CDATA[C_Acctschema_Table_ID]]></NAME>
+<!--800096-->              <NAME><![CDATA[Acctschema table]]></NAME>
 <!--800096 PRINTNAME-->
-<!--800096-->              <PRINTNAME><![CDATA[C_Acctschema_Table_ID]]></PRINTNAME>
+<!--800096-->              <PRINTNAME><![CDATA[Acctschema table]]></PRINTNAME>
 <!--800096 DESCRIPTION-->
 <!--800096-->              <DESCRIPTION><![CDATA[Acctschema table]]></DESCRIPTION>
 <!--800096 HELP-->
@@ -52834,6 +52834,64 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1006100000 AD_MODULE_ID-->
 <!--1006100000-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1006100000**************--></AD_ELEMENT>
+
+<!--1007400000**************--><AD_ELEMENT>
+<!--1007400000 AD_ELEMENT_ID-->
+<!--1007400000-->              <AD_ELEMENT_ID><![CDATA[1007400000]]></AD_ELEMENT_ID>
+<!--1007400000 AD_CLIENT_ID-->
+<!--1007400000-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1007400000 AD_ORG_ID-->
+<!--1007400000-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1007400000 ISACTIVE-->
+<!--1007400000-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1007400000 CREATED-->
+<!--1007400000-->              <CREATED><![CDATA[2008-12-23 20:59:48.0]]></CREATED>
+<!--1007400000 CREATEDBY-->
+<!--1007400000-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1007400000 UPDATED-->
+<!--1007400000-->              <UPDATED><![CDATA[2008-12-23 20:59:48.0]]></UPDATED>
+<!--1007400000 UPDATEDBY-->
+<!--1007400000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1007400000 COLUMNNAME-->
+<!--1007400000-->              <COLUMNNAME><![CDATA[AllowNegative]]></COLUMNNAME>
+<!--1007400000 NAME-->
+<!--1007400000-->              <NAME><![CDATA[Allow negative]]></NAME>
+<!--1007400000 PRINTNAME-->
+<!--1007400000-->              <PRINTNAME><![CDATA[Allow negative]]></PRINTNAME>
+<!--1007400000 DESCRIPTION-->
+<!--1007400000-->              <DESCRIPTION><![CDATA[Allow negative entries in credit and debit]]></DESCRIPTION>
+<!--1007400000 HELP-->
+<!--1007400000-->              <HELP><![CDATA[Allow negative entries in credit and debit]]></HELP>
+<!--1007400000 AD_MODULE_ID-->
+<!--1007400000-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1007400000**************--></AD_ELEMENT>
+
+<!--1007400001**************--><AD_ELEMENT>
+<!--1007400001 AD_ELEMENT_ID-->
+<!--1007400001-->              <AD_ELEMENT_ID><![CDATA[1007400001]]></AD_ELEMENT_ID>
+<!--1007400001 AD_CLIENT_ID-->
+<!--1007400001-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--1007400001 AD_ORG_ID-->
+<!--1007400001-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--1007400001 ISACTIVE-->
+<!--1007400001-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--1007400001 CREATED-->
+<!--1007400001-->              <CREATED><![CDATA[2008-12-23 20:59:48.0]]></CREATED>
+<!--1007400001 CREATEDBY-->
+<!--1007400001-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
+<!--1007400001 UPDATED-->
+<!--1007400001-->              <UPDATED><![CDATA[2008-12-23 20:59:48.0]]></UPDATED>
+<!--1007400001 UPDATEDBY-->
+<!--1007400001-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
+<!--1007400001 COLUMNNAME-->
+<!--1007400001-->              <COLUMNNAME><![CDATA[C_AcctSchema_Table_DocType_ID]]></COLUMNNAME>
+<!--1007400001 NAME-->
+<!--1007400001-->              <NAME><![CDATA[C_AcctSchema_Table_DocType_ID]]></NAME>
+<!--1007400001 PRINTNAME-->
+<!--1007400001-->              <PRINTNAME><![CDATA[C_AcctSchema_Table_DocType_ID]]></PRINTNAME>
+<!--1007400001 AD_MODULE_ID-->
+<!--1007400001-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--1007400001**************--></AD_ELEMENT>
 
 <!--35C50FAEA42311DDA55D001B388C05F0**************--><AD_ELEMENT>
 <!--35C50FAEA42311DDA55D001B388C05F0 AD_ELEMENT_ID-->

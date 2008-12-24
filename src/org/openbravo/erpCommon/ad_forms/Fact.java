@@ -98,6 +98,29 @@ public class Fact {
             String C_Currency_ID, String debitAmt, String creditAmt,
             String Fact_Acct_Group_ID, String SeqNo, String DocBaseType,
             ConnectionProvider conn) {
+	
+	String strNegate = "";
+	try {
+	    strNegate = AcctServerData.selectNegate(conn,
+		    m_acctSchema.m_C_AcctSchema_ID, DocBaseType);
+	    if (strNegate.equals(""))
+		strNegate = AcctServerData.selectDefaultNegate(conn,
+			m_acctSchema.m_C_AcctSchema_ID);
+	} catch (ServletException e) {
+	}
+	if (strNegate.equals(""))
+	    strNegate = "Y";
+	BigDecimal DebitAmt = new BigDecimal(debitAmt.equals("") ? "0.00"
+		: debitAmt);
+	BigDecimal CreditAmt = new BigDecimal(creditAmt.equals("") ? "0.00"
+		: creditAmt);
+	if (strNegate.equals("N")
+		&& (DebitAmt.compareTo(ZERO) < 0 || CreditAmt.compareTo(ZERO) < 0)) {
+	    return createLine(docLine, account, C_Currency_ID, CreditAmt.abs()
+		    .toString(), DebitAmt.abs().toString(), Fact_Acct_Group_ID,
+		    SeqNo, DocBaseType, conn);
+	}
+	
         log4jFact.debug("createLine - " + account + " - Dr=" + debitAmt
                 + ", Cr=" + creditAmt);
         log4jFact.debug("Starting createline");
