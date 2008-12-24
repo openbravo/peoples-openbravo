@@ -509,8 +509,7 @@ compare.database.structure: refer to compare.database.structure target of databa
 		calls the restart.tomcat.do task as a spawned task.
 	-->
 	<target name="tomcat.restart" description="Restart the tomcat server process">
-		<echo message="${env.CATALINA_OPTS}"/>
-		<java classname="org.openbravo.service.system.RestartTomcat" jvm="${env.JAVA_HOME}/bin/java" spawn="true" fork="true" maxmemory="${build.maxmemory}">
+		<java classname="org.openbravo.service.system.RestartTomcat" spawn="true" fork="true" maxmemory="${build.maxmemory}">
 			<arg line="${base.src}" />
 			<classpath refid="project.class.path" />
 		</java>
@@ -521,20 +520,23 @@ compare.database.structure: refer to compare.database.structure target of databa
 	-->
 	<target name="tomcat.restart.do" description="Restart the tomcat server process">
 		<echo message="Restarting Tomcat at ${env.CATALINA_HOME}" />
-		<java jar="${env.CATALINA_HOME}/bin/bootstrap.jar" fork="true">
+		<java classname="org.apache.catalina.startup.Bootstrap" fork="true">
+			<classpath path=":${env.CATALINA_HOME}/bin/bootstrap.jar:${env.CATALINA_HOME}/bin/commons-logging-api.jar" />
 			<jvmarg value="-Dcatalina.home=${env.CATALINA_HOME}" />
 			<arg line="stop" />
 		</java>
-		<sleep description="Wait to give tomcat time to stop" seconds="10" />
-		<java jar="${env.CATALINA_HOME}/bin/bootstrap.jar" fork="true">
-			<classpath path="${env.CATALINA_HOME}/bin/bootstrap.jar:${env.CATALINA_HOME}/bin/commons-logging-api.jar" />
-			<jvmarg value="${env.CATALINA_OPTS}" />
+		<sleep description="Wait to give tomcat time to stop" seconds="10"/>
+		<java classname="org.apache.catalina.startup.Bootstrap" failonerror="true" fork="true">
+			<classpath path=":${env.CATALINA_HOME}/bin/bootstrap.jar:${env.CATALINA_HOME}/bin/commons-logging-api.jar" />
+			<!-- note because CATALINA_OPTS can be multi argument the line attribute has to be used! -->
+			<jvmarg line="${env.CATALINA_OPTS}"/>
 			<jvmarg value="-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager" />
 			<jvmarg value="-Djava.util.logging.config.file=${env.CATALINA_HOME}/conf/logging.properties" />
 			<jvmarg value="-Djava.endorsed.dirs=${env.CATALINA_HOME}/endorsed" />
 			<jvmarg value="-Dcatalina.base=${env.CATALINA_HOME}" />
 			<jvmarg value="-Dcatalina.home=${env.CATALINA_HOME}" />
 			<jvmarg value="-Djava.io.tmpdir=${env.CATALINA_HOME}/temp" />
+			<arg line="start" />
 		</java>
 	</target>
 
