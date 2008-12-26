@@ -450,7 +450,8 @@
           PriceLimit=(
           CASE Cur_DiscountLine.Limit_Base WHEN 'F' THEN Cur_DiscountLine.Limit_Fixed ELSE PriceLimit
           END
-          )
+          ),
+	      updated=now()
         WHERE M_PriceList_Version_ID=v_PriceList_Version_ID
           AND EXISTS
           (SELECT *
