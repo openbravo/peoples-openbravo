@@ -53,6 +53,8 @@ var isSelectedComboOpened = null;
 
 var hasCloseWindowSearch = null;
 
+var propagateEnter = true;
+
 
 windowKeyboardCaptureEvents();
 function windowKeyboardCaptureEvents() {
@@ -874,25 +876,22 @@ function windowShiftTabKey(state) {
   return false;
 }
 
-function isEnterCatched() {
-  if (isGridFocused || isGenericTreeFocused || defaultActionType == 'button' || defaultActionType == 'combo') {
-    return true;
-  } else {
-    return false;
-  }
-}
-
 function windowEnterKey() {
   if (isGridFocused) {
+    propagateEnter = false;
     onRowDblClick();
   } else if (isGenericTreeFocused) {
+    propagateEnter = false;
     gt_showNodeDescription(gt_focusedNode);
   } else if (defaultActionType == 'button') {
+    propagateEnter = false;
     executeWindowButton(defaultActionElement.getAttribute('id'));
   } else if (defaultActionType == 'combo') {
+    propagateEnter = true;
     isSelectedComboOpened=false;
     activateDefaultAction();
   } else {
+    propagateEnter = true;
     return true;
   }
 }

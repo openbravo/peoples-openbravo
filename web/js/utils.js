@@ -60,7 +60,7 @@ var isUserChanges = false;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '11515';
+  var number = '11597';
   return number;
 }
 
@@ -1118,7 +1118,8 @@ function keyControl(pushedKey) {
                 try {
                   eval(evalfuncTrl);
                   thereIsShortcut = true;
-                  if (isEnterCatched() && keyArray[i].key == 'ENTER') { // Special ENTER case logic to not propagate if there is default action
+                  if (propagateEnter == false && keyArray[i].key == 'ENTER') { // Special ENTER case logic to not propagate if there is default action
+                    propagateEnter = true;
                     return false;
                   }
                   if (!keyArray[i].propagateKey || isGridFocused) {
