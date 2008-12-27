@@ -179,6 +179,13 @@ function mouseDownLogic(evt, obj) {
       selectedCombo = obj;
       isSelectedComboOpened = true;
       comboDefaultAction();
+      if (navigator.appName.toUpperCase().indexOf('MICROSOFT') == -1) {
+        eraseWindowElementFocus(focusedWindowElement);
+        focusedWindowElement = obj;
+        if (obj.className.indexOf(' Combo_focus') == -1) {
+          obj.className = obj.className + ' Combo_focus';
+        }
+      }
     } else if (focusedWindowElement.tagName == 'SELECT') {
       selectedCombo = obj;
       isSelectedComboOpened = false;
