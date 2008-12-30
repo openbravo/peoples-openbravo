@@ -7754,7 +7754,7 @@
 <!--800089 CREATEDBY-->
 <!--800089-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800089 UPDATED-->
-<!--800089-->              <UPDATED><![CDATA[2005-09-22 17:30:49.0]]></UPDATED>
+<!--800089-->              <UPDATED><![CDATA[2008-12-30 16:54:38.0]]></UPDATED>
 <!--800089 UPDATEDBY-->
 <!--800089-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800089 VALUE-->
@@ -7762,9 +7762,9 @@
 <!--800089 NAME-->
 <!--800089-->              <NAME><![CDATA[Grant Access]]></NAME>
 <!--800089 DESCRIPTION-->
-<!--800089-->              <DESCRIPTION><![CDATA[Inserts acces to module and window, process, task, workflow and forms.]]></DESCRIPTION>
+<!--800089-->              <DESCRIPTION><![CDATA[Inserts access to module and window, process, task, workflow and forms.]]></DESCRIPTION>
 <!--800089 HELP-->
-<!--800089-->              <HELP><![CDATA[Inserts acces to module and window, process, task, workflow and forms.]]></HELP>
+<!--800089-->              <HELP><![CDATA[Inserts access to module and window, process, task, workflow and forms.]]></HELP>
 <!--800089 ACCESSLEVEL-->
 <!--800089-->              <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--800089 ISUSERSTARTABLE-->
