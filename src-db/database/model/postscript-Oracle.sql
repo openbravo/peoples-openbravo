@@ -583,6 +583,7 @@ CREATE OR REPLACE FUNCTION AD_ORG_CHK_DOCUMENTS(p_header_table IN VARCHAR2, p_li
    'SELECT DISTINCT('||p_lines_table||'.ad_org_id) AS v_line_org
     FROM '||p_header_table||', '||p_lines_table||'
     WHERE '||p_header_table||'.'||p_header_column_id||' = '||p_lines_table||'.'||p_lines_column_id||'
+    AND '||p_lines_table||'.ad_org_id<>'||''''||v_org_header_id||'''
     AND '||p_lines_table||'.'||p_lines_column_id||'='''||p_document_id||'''';    
     LOOP
       FETCH cur_doc_lines INTO v_line_org;
@@ -603,7 +604,7 @@ CREATE OR REPLACE FUNCTION AD_ORG_CHK_DOCUMENTS(p_header_table IN VARCHAR2, p_li
         WHERE pp.node_id = hh.parent_id
         AND hh.ad_tree_id = pp.ad_tree_id
         AND pp.node_id=ad_org.ad_org_id
-        AND hh.node_id=v_line_org
+        AND hh.node_id=v_org_line_id
         AND ad_org.ad_orgtype_id=ad_orgtype.ad_orgtype_id
         AND ad_org.isready='Y'
         AND  EXISTS (SELECT 1 FROM ad_tree WHERE ad_tree.treetype='OO' AND hh.ad_tree_id=ad_tree.ad_tree_id AND hh.ad_client_id=ad_tree.ad_client_id);     
@@ -684,6 +685,7 @@ CREATE OR REPLACE FUNCTION AD_ORG_CHK_DOC_PAYMENTS(p_header_table IN VARCHAR2, p
     FROM '||p_header_table||', '||p_lines_table||', C_DEBT_PAYMENT
     WHERE '||p_header_table||'.'||p_header_column_id||' = '||p_lines_table||'.'||p_lines_column_id||'
     AND C_DEBT_PAYMENT.C_DEBT_PAYMENT_ID='||p_lines_table||'.'||p_lines_column_payment_id||'
+    AND '||p_lines_table||'.ad_org_id<>'||''''||v_org_header_id||'''
     AND '||p_lines_table||'.'||p_lines_column_id||'='''||p_document_id||'''';
  
  
@@ -707,7 +709,7 @@ CREATE OR REPLACE FUNCTION AD_ORG_CHK_DOC_PAYMENTS(p_header_table IN VARCHAR2, p
       WHERE pp.node_id = hh.parent_id
       AND hh.ad_tree_id = pp.ad_tree_id
       AND pp.node_id=ad_org.ad_org_id
-      AND hh.node_id=v_line_org_payment
+      AND hh.node_id=v_org_payment_line_id
       AND ad_org.ad_orgtype_id=ad_orgtype.ad_orgtype_id
       AND ad_org.isready='Y'
       AND  EXISTS (SELECT 1 FROM ad_tree WHERE ad_tree.treetype='OO' AND hh.ad_tree_id=ad_tree.ad_tree_id AND hh.ad_client_id=ad_tree.ad_client_id);     
