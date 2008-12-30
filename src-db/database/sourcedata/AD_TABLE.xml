@@ -3502,9 +3502,9 @@ The Product Details allows you to display and maintain all products for a select
 <!--224 CREATEDBY-->
 <!--224-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--224 UPDATED-->
-<!--224-->              <UPDATED><![CDATA[0099-09-23 00:00:00.0]]></UPDATED>
+<!--224-->              <UPDATED><![CDATA[2008-12-30 18:47:02.0]]></UPDATED>
 <!--224 UPDATEDBY-->
-<!--224-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--224-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--224 NAME-->
 <!--224-->              <NAME><![CDATA[FinancialMgmtGLJournal]]></NAME>
 <!--224 DESCRIPTION-->
@@ -3553,9 +3553,9 @@ The Product Details allows you to display and maintain all products for a select
 <!--225 CREATEDBY-->
 <!--225-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--225 UPDATED-->
-<!--225-->              <UPDATED><![CDATA[0099-09-23 00:00:00.0]]></UPDATED>
+<!--225-->              <UPDATED><![CDATA[2008-12-30 18:23:23.0]]></UPDATED>
 <!--225 UPDATEDBY-->
-<!--225-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--225-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--225 NAME-->
 <!--225-->              <NAME><![CDATA[FinancialMgmtGLBatch]]></NAME>
 <!--225 DESCRIPTION-->
@@ -3604,9 +3604,9 @@ The Product Details allows you to display and maintain all products for a select
 <!--226 CREATEDBY-->
 <!--226-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--226 UPDATED-->
-<!--226-->              <UPDATED><![CDATA[2003-05-04 00:00:38.0]]></UPDATED>
+<!--226-->              <UPDATED><![CDATA[2008-12-30 18:25:10.0]]></UPDATED>
 <!--226 UPDATEDBY-->
-<!--226-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--226-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--226 NAME-->
 <!--226-->              <NAME><![CDATA[FinancialMgmtGLJournalLine]]></NAME>
 <!--226 DESCRIPTION-->
@@ -6423,7 +6423,7 @@ Maintain Acitivity Accounting Dimension Tree]]></DESCRIPTION>
 <!--325 CREATEDBY-->
 <!--325-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--325 UPDATED-->
-<!--325-->              <UPDATED><![CDATA[2007-05-10 18:43:57.0]]></UPDATED>
+<!--325-->              <UPDATED><![CDATA[2008-12-30 20:56:15.0]]></UPDATED>
 <!--325 UPDATEDBY-->
 <!--325-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--325 NAME-->
@@ -6476,7 +6476,7 @@ Maintain Acitivity Accounting Dimension Tree]]></DESCRIPTION>
 <!--326 CREATEDBY-->
 <!--326-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--326 UPDATED-->
-<!--326-->              <UPDATED><![CDATA[2007-05-10 18:45:19.0]]></UPDATED>
+<!--326-->              <UPDATED><![CDATA[2008-12-30 20:55:46.0]]></UPDATED>
 <!--326 UPDATEDBY-->
 <!--326-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--326 NAME-->
@@ -7747,7 +7747,7 @@ Available Quantity:
 <!--385 CREATEDBY-->
 <!--385-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--385 UPDATED-->
-<!--385-->              <UPDATED><![CDATA[2007-05-10 18:44:42.0]]></UPDATED>
+<!--385-->              <UPDATED><![CDATA[2008-12-30 20:57:09.0]]></UPDATED>
 <!--385 UPDATEDBY-->
 <!--385-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--385 NAME-->
@@ -15948,7 +15948,7 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800061 CREATEDBY-->
 <!--800061-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800061 UPDATED-->
-<!--800061-->              <UPDATED><![CDATA[2007-05-11 19:47:04.0]]></UPDATED>
+<!--800061-->              <UPDATED><![CDATA[2008-12-30 16:52:12.0]]></UPDATED>
 <!--800061 UPDATEDBY-->
 <!--800061-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800061 NAME-->
