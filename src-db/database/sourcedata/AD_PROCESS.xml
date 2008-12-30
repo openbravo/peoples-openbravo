@@ -9852,7 +9852,7 @@ Depending on the configuration of the Cost Center the process will also calculat
 <!--800147 CREATEDBY-->
 <!--800147-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--800147 UPDATED-->
-<!--800147-->              <UPDATED><![CDATA[2008-12-09 00:35:04.0]]></UPDATED>
+<!--800147-->              <UPDATED><![CDATA[2008-12-30 14:37:28.0]]></UPDATED>
 <!--800147 UPDATEDBY-->
 <!--800147-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800147 VALUE-->
@@ -9868,7 +9868,7 @@ The execution of this process can take a long time.
 In case it fails a message indicating which SQL statements have made it crash will be shown.
 When it has been correctly executed all DB constraints and triggers should be in "ENABLED" status, in case they are not a message will be shown.]]></HELP>
 <!--800147 ACCESSLEVEL-->
-<!--800147-->              <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
+<!--800147-->              <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
 <!--800147 ISUSERSTARTABLE-->
 <!--800147-->              <ISUSERSTARTABLE><![CDATA[Y]]></ISUSERSTARTABLE>
 <!--800147 ISREPORT-->
