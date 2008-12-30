@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SL
- * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
+ * Contributions are Copyright (C) 2001-2008 Openbravo S.L.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -130,6 +130,7 @@ public class DocBank extends AcctServer {
             docLine.m_C_GLItem_ID = data[i].getField("C_GLITEM_ID");
             docLine.chargeAmt = data[i].getField("CHARGEAMT");
             docLine.isManual = data[i].getField("ISMANUAL");
+            docLine.m_C_Project_ID = data[i].getField("C_Project_ID");
             docLine.setAmount(data[i].getField("STMTAMT")/*
                                                           * ,data[i].getField(
                                                           * "INTERESTAMT")
