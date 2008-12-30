@@ -61,7 +61,7 @@
     <Parameter name="org" type="replace" optional="true" after="AND  FACT_ACCT.AD_ORG_ID IN (" text="'2'"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[ AND FACT_ACCT.C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)>=TO_NUMBER(?) ]]></Parameter>
-    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)<=? ]]></Parameter>
+    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)<=TO_NUMBER(?) ]]></Parameter>
     <Parameter name="orden" type="replace" optional="true" after="ORDER BY " text="PARTNER"/>
   </SqlMethod>
 
@@ -109,7 +109,7 @@
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[ AND FACT_ACCT.C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 5=5"><![CDATA[AND DATEACCT < TO_DATE(?) ]]></Parameter>
     <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)>=TO_NUMBER(?) ]]></Parameter>
-    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)<=? ]]></Parameter>
+    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)<=TO_NUMBER(?) ]]></Parameter>
     <Parameter name="orden" type="replace" optional="true" after="ORDER BY " text="PARTNER"/>
    </SqlMethod>
 
@@ -148,8 +148,8 @@
     <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[AND DATEACCT < TO_DATE(?) ]]></Parameter>
     <Parameter name="org" type="replace" optional="true" after="AND  FACT_ACCT.AD_ORG_ID IN (" text="'2'"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[ AND FACT_ACCT.C_BPARTNER_ID IN]]></Parameter>
-    <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)>=? ]]></Parameter>
-    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)<=? ]]></Parameter>
+    <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)>=TO_NUMBER(?) ]]></Parameter>
+    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)<=TO_NUMBER(?) ]]></Parameter>
     <Parameter name="orden" type="replace" optional="true" after="ORDER BY " text="PARTNER"/>
   </SqlMethod>
 
@@ -195,8 +195,8 @@
     <Parameter name="org" type="replace" optional="true" after="AND  FACT_ACCT.AD_ORG_ID IN (" text="'2'"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[ AND FACT_ACCT.C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 5=5"><![CDATA[AND DATEACCT < TO_DATE(?) ]]></Parameter>
-    <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)>=? ]]></Parameter>
-    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)<=? ]]></Parameter>
+    <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)>=TO_NUMBER(?) ]]></Parameter>
+    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)<=TO_NUMBER(?) ]]></Parameter>
     <Parameter name="orden" type="replace" optional="true" after="ORDER BY " text="PARTNER"/>
   </SqlMethod>
 
@@ -227,7 +227,7 @@
     <Parameter name="org" type="replace" optional="true" after="AND FACT_ACCT.AD_ORG_ID IN (" text="'2'"/>
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2 "><![CDATA[ AND FACT_ACCT.C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)>=TO_NUMBER(?) ]]></Parameter>
-    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)<=? ]]></Parameter>
+    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)<=TO_NUMBER(?) ]]></Parameter>
     <Parameter name="orden" type="replace" optional="true" after="ORDER BY " text="PARTNER"/>
    </SqlMethod>
 
@@ -265,7 +265,7 @@
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2 "><![CDATA[ AND FACT_ACCT.C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="parDateTo" optional="true" after="AND 5=5"><![CDATA[AND DATEACCT < TO_DATE(?) ]]></Parameter>
     <Parameter name="paramAmtFrom" optional="true" after="3=3"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)>=TO_NUMBER(?) ]]></Parameter>
-    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)<=? ]]></Parameter>
+    <Parameter name="paramAmtTo" optional="true" after="4=4"><![CDATA[ AND COALESCE(AMTACCTDR,AMTACCTCR)<=TO_NUMBER(?) ]]></Parameter>
     <Parameter name="orden" type="replace" optional="true" after="ORDER BY " text="PARTNER"/>
   </SqlMethod>
 
