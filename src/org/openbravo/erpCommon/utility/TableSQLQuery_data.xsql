@@ -109,7 +109,7 @@
         c.FieldLength, c.DefaultValue, c.IsKey, c.IsParent, c.IsMandatory, c.IsUpdateable,
         c.ReadOnlyLogic, c.IsIdentifier, c.SeqNo, c.IsTranslated, c.IsEncrypted, c.VFormat,
         c.ValueMin, c.ValueMax, c.IsSelectionColumn, c.AD_Process_ID, c.IsSessionAttr,
-        c.IsSecondaryKey, c.IsDesencryptable, c.AD_CallOut_ID, COALESCE(f_trl.Name, f.Name) AS Name,
+        c.IsSecondaryKey, c.IsDesencryptable, c.AD_CallOut_ID, COALESCE(f_trl.Name, f.Name, c.Name) AS Name,
         f.AD_FieldGroup_ID, 'Y' as IsDisplayed, f.DisplayLogic, 22 as DisplayLength, f.IsReadOnly,
         f.SortNo, f.IsSameLine, f.IsFieldOnly, 'Y' as ShowInRelation,
         c.AD_Table_ID, t.TabLevel, t.HasTree, t.WhereClause, t.OrderByClause,
