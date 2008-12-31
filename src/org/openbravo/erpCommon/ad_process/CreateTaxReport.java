@@ -29,6 +29,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
 import java.io.*;
+import java.math.BigDecimal;
 import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -315,7 +316,7 @@ public class CreateTaxReport extends HttpSecureAppServlet {
     CreateTaxReportData[] convertVector(Vector<Object> vectorArray)
             throws ServletException {
         CreateTaxReportData[] data = new CreateTaxReportData[vectorArray.size()];
-        double count = 0;
+        BigDecimal count = new BigDecimal("0");
         for (int i = 0; i < vectorArray.size(); i++) {
             data[i] = (CreateTaxReportData) vectorArray.elementAt(i);
         }
@@ -344,7 +345,7 @@ public class CreateTaxReport extends HttpSecureAppServlet {
                                             + data[j].issummary);
                         // if (!data[j].issummary.equals("Y")){
                         String total = data[j].total;
-                        count += Double.valueOf(total).doubleValue();
+                        count = count.add(new BigDecimal(total));
                         // }
                     }
                     /*
@@ -357,7 +358,7 @@ public class CreateTaxReport extends HttpSecureAppServlet {
                      */
                 }
                 data[i].total = String.valueOf(count);
-                count = 0;
+                count = new BigDecimal("0");
             }
         }
         return data;

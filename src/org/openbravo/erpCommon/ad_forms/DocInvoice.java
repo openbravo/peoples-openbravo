@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SL
- * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
+ * Contributions are Copyright (C) 2001-2008 Openbravo S.L.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -281,8 +281,8 @@ public class DocInvoice extends AcctServer {
             // Receivables CR
             for (int i = 0; m_debt_payments != null
                     && i < m_debt_payments.length; i++) {
-                Double amount = new Double(m_debt_payments[i].Amount);
-                Double ZERO = new Double("0.00");
+        	BigDecimal amount = new BigDecimal(m_debt_payments[i].Amount);
+        	BigDecimal ZERO = new BigDecimal("0.00");
                 if ((amount.compareTo(ZERO) > 0 && m_debt_payments[i].isReceipt
                         .equals("Y"))
                         || (amount.compareTo(ZERO) < 0 && m_debt_payments[i].isReceipt
@@ -290,8 +290,8 @@ public class DocInvoice extends AcctServer {
                     fact.createLine(m_debt_payments[i], getAccountBPartner(
                             C_BPartner_ID, as, true,
                             m_debt_payments[i].dpStatus, conn),
-                            this.C_Currency_ID, getConvertedAmt(
-                                    ((Double) (amount * -1)).toString(),
+                            this.C_Currency_ID, getConvertedAmt(    
+                                    ((amount.negate())).toPlainString(),
                                     m_debt_payments[i].C_Currency_ID_From,
                                     this.C_Currency_ID, DateAcct, "", conn),
                             "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
@@ -301,7 +301,7 @@ public class DocInvoice extends AcctServer {
                             C_BPartner_ID, as, true,
                             m_debt_payments[i].dpStatus, conn),
                             this.C_Currency_ID, "", getConvertedAmt(
-                                    ((Double) (amount * -1)).toString(),
+                        	    ((amount.negate())).toPlainString(),
                                     m_debt_payments[i].C_Currency_ID_From,
                                     this.C_Currency_ID, DateAcct, "", conn),
                             Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
@@ -411,8 +411,8 @@ public class DocInvoice extends AcctServer {
             // Liability DR
             for (int i = 0; m_debt_payments != null
                     && i < m_debt_payments.length; i++) {
-                Double amount = new Double(m_debt_payments[i].Amount);
-                Double ZERO = new Double("0.00");
+                BigDecimal amount = new BigDecimal(m_debt_payments[i].Amount);
+                BigDecimal ZERO = new BigDecimal("0.00");
                 if ((amount.compareTo(ZERO) < 0 && m_debt_payments[i].isReceipt
                         .equals("Y"))
                         || (amount.compareTo(ZERO) > 0 && m_debt_payments[i].isReceipt
@@ -421,7 +421,7 @@ public class DocInvoice extends AcctServer {
                             C_BPartner_ID, as, false,
                             m_debt_payments[i].dpStatus, conn),
                             this.C_Currency_ID, "", getConvertedAmt(
-                                    ((Double) (amount * -1)).toString(),
+                        	    ((amount.negate())).toPlainString(),
                                     m_debt_payments[i].C_Currency_ID_From,
                                     this.C_Currency_ID, DateAcct, "", conn),
                             Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType,
@@ -431,7 +431,7 @@ public class DocInvoice extends AcctServer {
                             C_BPartner_ID, as, false,
                             m_debt_payments[i].dpStatus, conn),
                             this.C_Currency_ID, getConvertedAmt(
-                                    ((Double) (amount * -1)).toString(),
+                        	    ((amount.negate())).toPlainString(),
                                     m_debt_payments[i].C_Currency_ID_From,
                                     this.C_Currency_ID, DateAcct, "", conn),
                             "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),

@@ -188,8 +188,8 @@ public class DocPayment extends AcctServer {
                     line.isReceipt.equals("Y"), DateAcct, line.conversionDate,
                     line.C_Currency_ID_From, C_Currency_ID, line, as, fact,
                     Fact_Acct_Group_ID, conn);
-            Double convertTotal = new Double(convertedAmt)
-                    + new Double(convertWithHold);
+            BigDecimal convertTotal = new BigDecimal(convertedAmt)
+		    .add(new BigDecimal(convertWithHold));
 
             if (line.isManual.equals("N")) { // 2* Normal debt-payments
                 if (!line.C_Settlement_Generate_ID.equals(Record_ID)) { // 2.1*

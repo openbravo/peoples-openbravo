@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2006 Openbravo SL
+ * All portions are Copyright (C) 2001-2008 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,6 +31,8 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
 import java.io.*;
+import java.math.BigDecimal;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
 
@@ -368,7 +370,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
                                             && (strAll.equals("")) ? "value"
                                             : "partner"));
 
-                double amount = 0.0;
+                BigDecimal amount = new BigDecimal("0.0");
                 for (int i = 0; data2 != null && i < data2.length; i++) {
                     if (data2[i].factAcctId.equals(data[0].factAcctId)) {
                         if (log4j.isDebugEnabled())
@@ -380,11 +382,11 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
                     if ((data2[i].partner.equals(data[0].partner) && (!(strcBpartnerId
                             .equals("") && (strAll.equals("")))))
                             || (strcBpartnerId.equals("") && (strAll.equals(""))))
-                        amount += Double.valueOf(data2[i].total).doubleValue();
+                	amount = amount.add(new BigDecimal(data2[i].total));
                 }
                 for (int i = 0; data2 != null && i < data.length; i++) {
                     if (data[i].id.equals(data[0].id))
-                        data[i].saldo = Double.toString(amount);
+                        data[i].saldo = amount.toPlainString();
                     else
                         break;
                 }

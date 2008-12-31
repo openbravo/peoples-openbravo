@@ -27,6 +27,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
 import java.io.*;
+import java.math.BigDecimal;
 import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -420,7 +421,7 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
             throws ServletException {
         CreateAccountingReportData[] data = new CreateAccountingReportData[vectorArray
                 .size()];
-        double count = 0;
+        BigDecimal count = new BigDecimal("0");
         for (int i = 0; i < vectorArray.size(); i++) {
             data[i] = (CreateAccountingReportData) vectorArray.elementAt(i);
         }
@@ -431,11 +432,11 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
                             .valueOf(data[i].levelAccount).intValue()
                             && data[j].parent.equals(data[i].id)) {
                         String total = data[j].total;
-                        count += Double.valueOf(total).doubleValue();
+                        count.add(new BigDecimal(total));
                     }
                 }
                 data[i].total = String.valueOf(count);
-                count = 0;
+                count = new BigDecimal("0");
             }
         }
         return data;
