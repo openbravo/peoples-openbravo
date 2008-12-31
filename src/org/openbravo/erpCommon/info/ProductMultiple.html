@@ -75,7 +75,7 @@ function onloadFunctions() {
   	var pos; var keys;  var key; var text; var parameter; var data;
   	if(action == "SAVE") {
   		data = new Array();
-  		rows = dojit.byId('grid').getSelectedRows();
+  		rows = dijit.byId('grid').getSelectedRows();
   		for(var i=0; i < rows.length; i++) {
   			var rowkey = rows[i].split("#");
   			var rval = new Array(rowkey[0], rowkey[1]);
