@@ -523,19 +523,20 @@ compare.database.structure: refer to compare.database.structure target of databa
 		<java classname="org.apache.catalina.startup.Bootstrap" fork="true">
 			<classpath path=":${env.CATALINA_HOME}/bin/bootstrap.jar:${env.CATALINA_HOME}/bin/commons-logging-api.jar" />
 			<jvmarg value="-Dcatalina.home=${env.CATALINA_HOME}" />
+			<jvmarg value="-Dcatalina.base=${env.CATALINA_BASE}" />
 			<arg line="stop" />
 		</java>
-		<sleep description="Wait to give tomcat time to stop" seconds="10"/>
+		<sleep description="Wait to give tomcat time to stop" seconds="20"/>
 		<java classname="org.apache.catalina.startup.Bootstrap" failonerror="true" fork="true">
 			<classpath path=":${env.CATALINA_HOME}/bin/bootstrap.jar:${env.CATALINA_HOME}/bin/commons-logging-api.jar" />
 			<!-- note because CATALINA_OPTS can be multi argument the line attribute has to be used! -->
 			<jvmarg line="${env.CATALINA_OPTS}"/>
 			<jvmarg value="-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager" />
-			<jvmarg value="-Djava.util.logging.config.file=${env.CATALINA_HOME}/conf/logging.properties" />
+			<jvmarg value="-Djava.util.logging.config.file=${env.CATALINA_BASE}/conf/logging.properties" />
 			<jvmarg value="-Djava.endorsed.dirs=${env.CATALINA_HOME}/endorsed" />
-			<jvmarg value="-Dcatalina.base=${env.CATALINA_HOME}" />
+			<jvmarg value="-Dcatalina.base=${env.CATALINA_BASE}" />
 			<jvmarg value="-Dcatalina.home=${env.CATALINA_HOME}" />
-			<jvmarg value="-Djava.io.tmpdir=${env.CATALINA_HOME}/temp" />
+			<jvmarg value="-Djava.io.tmpdir=${env.CATALINA_BASE}/temp" />
 			<arg line="start" />
 		</java>
 	</target>
