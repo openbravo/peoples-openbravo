@@ -45,15 +45,14 @@ BEGIN
   --  Default Accounts for all AcctSchema
   IF(INSERTING OR UPDATING) THEN
     IF (:NEW.IBAN IS NOT NULL) THEN
-        SELECT MOD(CONCAT(
-                 CONCAT(
-                   CONCAT(
-                     SUBSTR(:NEW.IBAN, 5, LENGTH(:NEW.IBAN)-4),
-                     ASCII(SUBSTR(:NEW.IBAN,1,1))-55
-                   ),
-                   ASCII(SUBSTR(:NEW.IBAN,2,1))-55),
-                 SUBSTR(:NEW.IBAN,3,2)),97) AS DC
-                 INTO v_IBAN_check
+        SELECT MOD(TO_NUMBER(
+                      SUBSTR(:NEW.IBAN, 5, LENGTH(:NEW.IBAN)-4) || 
+                      ASCII(SUBSTR(:NEW.IBAN,1,1))-55 || 
+                      ASCII(SUBSTR(:NEW.IBAN,2,1))-55 || 
+                      SUBSTR(:NEW.IBAN,3,2)
+                      ,'99999999999999999999999999999999999999999')
+                   , 97) AS DC
+        INTO v_IBAN_check
         FROM DUAL;
         IF (v_IBAN_check <> 1) THEN
           RAISE_APPLICATION_ERROR(-20257, 'Incorrect IBAN Code.');
