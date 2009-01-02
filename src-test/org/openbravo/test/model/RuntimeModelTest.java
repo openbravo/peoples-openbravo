@@ -44,6 +44,22 @@ public class RuntimeModelTest extends BaseTest {
         super.setUp();
     }
 
+    public void testPK() {
+    	final ArrayList<Table> tablesWithoutPK = new ArrayList<Table>();
+    	for(final Table t: ModelProvider.getInstance().getTables()) {
+    		if(t.getPrimaryKeyColumns().size() == 0) {
+    			tablesWithoutPK.add(t);
+    		}
+    	}
+    	if(tablesWithoutPK.size() != 0) {
+    		System.err.println("Tables without primary keys defined:");
+    		for(final Table t2: tablesWithoutPK){
+    			System.err.println(t2);
+    		}
+    	}
+    	assertEquals(0, tablesWithoutPK.size());
+    }
+    
     public void testModelProvider() {
         for (final Entity e : ModelProvider.getInstance().getModel()) {
             System.out.println("tablename: " + e.getTableName()
