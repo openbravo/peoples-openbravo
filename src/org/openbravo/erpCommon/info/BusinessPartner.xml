@@ -19,7 +19,7 @@
 -->
 <REPORT>
 	<template file="BusinessPartner.html"/>
-	<PARAMETER id="paramCheckClient" name="checkClient" default="costumer"/>
+	<PARAMETER id="paramCheckClient" name="checkClient" default="customer"/>
 	<PARAMETER id="paramCheckVendor" name="checkVendor" default="vendor"/>
 	<PARAMETER id="paramCheckAll" name="checkAll" default="all"/>
 	<PARAMETER id="paramDirectory" name="directory" default=""/>
