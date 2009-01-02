@@ -59,16 +59,14 @@ var propagateEnter = true;
 windowKeyboardCaptureEvents();
 function windowKeyboardCaptureEvents() {
   document.onmousedown=mouseDownLogic;
-  document.onclick=cursorFocus;
-  //document.onfocus=activeElementFocus;
+  document.onclick=mouseClickLogic;
+
 
   if (document.layers) {
     window.captureEvents(Event.ONMOUSEDOWN);
     window.onmousedown=mouseDownLogic;
     window.captureEvents(Event.ONCLICK);
-    window.onclick=cursorFocus;
-    //window.captureEvents(Event.FOCUS);
-    //window.onfocus=activeElementFocus;
+    window.onclick=mouseClickLogic;
   }
 }
 
@@ -169,114 +167,109 @@ function mouseDownLogic(evt, obj) {
   if(obj == null) {
     obj = (!document.all) ? evt.target : event.srcElement;
   }
-  isOnMouseDown = true;
-  if (focusedWindowElement == null) focusedWindowElement = '';
-  if(obj.tagName == 'SELECT' && isSelectedComboOpened == true && selectedCombo == obj) {
-    selectedCombo = obj;
-    isSelectedComboOpened = false;
-    activateDefaultAction();
-  } else {
-    if(obj.tagName == 'SELECT') {
-      isUserChanges = true;
-      selectedCombo = obj;
-      isSelectedComboOpened = true;
-      comboDefaultAction();
-      if (navigator.appName.toUpperCase().indexOf('MICROSOFT') == -1) {
-        eraseWindowElementFocus(focusedWindowElement);
-        focusedWindowElement = obj;
-        if (obj.className.indexOf(' Combo_focus') == -1) {
-          obj.className = obj.className + ' Combo_focus';
-        }
-      }
-    } else if (focusedWindowElement.tagName == 'SELECT') {
-      selectedCombo = obj;
-      isSelectedComboOpened = false;
-      activateDefaultAction();
-    }
+  if (obj.tagName == 'OPTION') {
+    while(obj.tagName != 'SELECT') obj = obj.parentNode;
   }
+
+  if (checkGenericTree(obj)) {
+    return true;
+  }
+
+  cursorFocus(obj);
+
+  if (obj.tagName == 'SELECT') {
+    comboKeyBehaviour(obj,'onmousedown');
+  }
+
   if (hasCloseWindowSearch) {
     closeWindowSearch();
     hasCloseWindowSearch = false;
   }
 }
 
-function cursorFocus(evt, obj) {
+function mouseClickLogic(evt, obj) {
   if(obj == null) {
     obj = (!document.all) ? evt.target : event.srcElement;
   }
   if (obj.tagName == 'OPTION') {
     while(obj.tagName != 'SELECT') obj = obj.parentNode;
   }
-  var obj_tmp = obj;
-  if(!isClickOnGenericTree==true) blurGenericTree();
-  isClickOnGenericTree=false;
-  if (isGenericTreeFocused) {
-    while(obj_tmp.tagName != 'BODY') {
-      obj_tmp = obj_tmp.parentNode;
-      if (obj_tmp.getAttribute('id') != null) {
-        if (obj_tmp.getAttribute('id').indexOf('genericTree') != -1) {
-          return true;
-        }
-      }
-    }
+
+  if (obj.tagName == 'SELECT') {
+    comboKeyBehaviour(obj,'onclick');
   }
-  if (obj.tagName == 'SELECT' && isOnMouseDown!=true) {
-    selectedCombo = obj;
-    isSelectedComboOpened = false;
-    activateDefaultAction();
-  }
-  isOnMouseDown = false;
+}
+
+function cursorFocus(obj) {
+  if (obj == null || obj == 'null' || obj == '') { return false; }
   if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1 && obj.getAttribute('type') == 'checkbox' && (obj.getAttribute('readonly') == 'true' || obj.readOnly)) {
     return false;
   }
   if (obj == drawnWindowElement) return true;
-  /*if (navigator.userAgent.indexOf("NT") == -1 && (navigator.userAgent.toUpperCase().indexOf("FIREFOX/2") != -1 || navigator.userAgent.toUpperCase().indexOf("ICEWEASEL/2") != -1) && (obj.className.indexOf('Radio_Check_ContentCell') != -1 || obj.className.indexOf('DataGrid_Body_LineNoCell') != -1)) {
-    //Go to the SPAN element
-    for (;;) {
-      obj = obj.firstChild;
-      for (;;) {
-        if (obj.nodeType != '1') {
-          obj = obj.nextSibling;
-        } else {
-          break;
-        }
-      }
-      if (obj.tagName != 'DIV') break;
-    }
-
-    //Go to the INPUT element
-    obj = obj.firstChild;
-    for (;;) {
-      if (obj.nodeType != '1') {
-        obj = obj.nextSibling;
-      } else {
-        break;
-      }
-    }
-    if (!mustBeIgnored(obj)) {
-      obj.checked = !obj.checked;
-      if (obj.getAttribute('onclick')) obj.onclick();
-      if (obj.getAttribute('onchange')) obj.onchange();
-    }
-  }*/
   if(!isClickOnGrid==true) blurGrid();
   isClickOnGrid=false;
-  //setSelectedArea('window');
   if (isInsideWindowTable(obj) && couldHaveFocus(obj)) {
     removeTabFocus(focusedTab);
     frameLocked = false;
-    //removeWindowElementFocus(focusedWindowElement);
     selectedArea = 'window';
     focusedWindowElement = obj;
     setWindowElementFocus(focusedWindowElement);
   } else {
     if (selectedArea == 'window') setWindowElementFocus(focusedWindowElement);
     if (selectedArea == 'tabs') setTabFocus(focusedTab);
-    //focusedWindowElement = document.getElementById(windowTables[0].tableId);
-    //focusedWindowTable = 0;
-    //setWindowTableParentElement();
   }
-  //alert(obj.getAttribute('id'));
+  return true;
+}
+
+function checkGenericTree(obj) {
+  if (obj == null || obj == 'null' || obj == '') { return false; }
+  if(!isClickOnGenericTree==true) blurGenericTree();
+  isClickOnGenericTree=false;
+  if (isGenericTreeFocused) {
+    while(obj.tagName != 'BODY') {
+      obj = obj.parentNode;
+      if (obj.getAttribute('id') != null) {
+        if (obj.getAttribute('id').indexOf('genericTree') != -1) {
+          return true;
+        }
+      }
+    }
+  }
+  return false
+}
+
+function comboKeyBehaviour(obj, event) {
+  if (obj == null || obj == 'null' || obj == '') { return false; }
+  if (event == 'onmousedown') {
+    isOnMouseDown = true;
+    if (focusedWindowElement == null) focusedWindowElement = '';
+    if(obj.tagName == 'SELECT' && isSelectedComboOpened == true && selectedCombo == obj) {
+      selectedCombo = obj;
+      isSelectedComboOpened = false;
+      activateDefaultAction();
+    } else {
+      if(obj.tagName == 'SELECT') {
+        isUserChanges = true;
+        selectedCombo = obj;
+        isSelectedComboOpened = true;
+        comboDefaultAction();
+      } else if (focusedWindowElement.tagName == 'SELECT') {
+        selectedCombo = obj;
+        isSelectedComboOpened = false;
+        activateDefaultAction();
+      }
+    }
+    return true;
+  } else if (event == 'onclick') {
+    if (obj.tagName == 'SELECT' && isOnMouseDown!=true) {
+      selectedCombo = obj;
+      isSelectedComboOpened = false;
+      activateDefaultAction();
+    }
+    isOnMouseDown = false;
+    return true;
+  }
+  return false;
 }
 
 function isInsideWindowTable(obj) {
