@@ -126,6 +126,10 @@ public class UninstallModule {
             while (st.hasMoreTokens()) {
                 final String module = st.nextToken().trim();
                 final String contents = getContentList(module.replace("'", ""));
+                final String status = UninstallModuleData.selectStatus(pool, module);
+                if (status != null && "U".equals(status)) {
+                    continue;
+                }
                 UninstallModuleData.updateUninstall(pool, contents); // set as
                                                                      // uninstalled
                                                                      // in DB

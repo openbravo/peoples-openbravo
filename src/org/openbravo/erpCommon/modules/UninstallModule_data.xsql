@@ -34,7 +34,15 @@
       </Sql>
       <Parameter name="modules" type="replace" optional="true" after="AD_DEPENDENT_MODULE_ID IN (" text="'1'"/>
    </SqlMethod>
-   
+   <SqlMethod name="selectStatus" type="preparedStatement" return="string">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT STATUS
+          FROM AD_MODULE M
+         WHERE AD_MODULE_ID IN ('1')
+      </Sql>
+      <Parameter name="module" type="replace" optional="true" after="AD_MODULE_ID IN (" text="'1'"/>
+   </SqlMethod>
    <SqlMethod name="selectDirectories" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>
       <Sql>
