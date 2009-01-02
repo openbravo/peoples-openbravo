@@ -49,7 +49,7 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_MODULE" name="ADMODULE_ADFIELD">
+      <foreign-key foreignTable="AD_MODULE" name="ADMODULE_ADEXCEPTIONS">
         <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
     </table>
