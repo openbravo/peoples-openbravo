@@ -73,8 +73,11 @@ var baseDirectory = "../../../../../web/";
       onloadFunctions();
     } catch (e) {}
 
+    if (document.getElementById('notifications').innerHTML == "") {
+      changeClass('notifications', 'Tree_Actions_Invisible', 'Tree_Actions');
+    } 
+    
     resizeArea();
-
 
   }
 
@@ -113,7 +116,7 @@ var baseDirectory = "../../../../../web/";
   }
   
   function scanForUpdates(){
-    changeClass('notifications', 'Tree_Actions', 'Tree_Actions_Processing');
+    changeClass('notifications', 'Tree_Actions_Invisible', 'Tree_Actions_Processing');
     return submitXmlHttpRequest(scan_callback, document.frmMain, "SCAN", "ModuleManagement.html", false);
   }
   

@@ -4195,6 +4195,14 @@ td.TextBox_MsgContainerVt_td {
   -moz-border-radius-bottomleft: 8px;
 }
 
+.Tree_Actions_Invisible {
+	background-color: rgb(255, 168, 102);
+	-moz-border-radius-topleft: 8px;
+    -moz-border-radius-topright: 8px;
+    -moz-border-radius-bottomright: 8px;
+    -moz-border-radius-bottomleft: 8px;
+}
+
 .Tree_UniqueNode_Spots {
   width: 19px;
   height: 19px;
