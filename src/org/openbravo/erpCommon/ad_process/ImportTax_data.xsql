@@ -611,7 +611,7 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-				UPDATE I_BPartner
+				UPDATE I_Tax
         SET I_IsImported='N', Updated=now()
 			  WHERE I_IsImported<>'Y'
         AND AD_CLIENT_ID=?
