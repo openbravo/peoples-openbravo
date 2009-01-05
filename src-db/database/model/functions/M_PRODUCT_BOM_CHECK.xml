@@ -113,7 +113,7 @@
             ;
         EXCEPTION 
 	  WHEN others THEN
-            RAISE '@C_TEMP_SELECTION2_KEY@ ';
+            RAISE_APPLICATION_ERROR(-20000,'@LOOP_IN_BOM@');
         END;
 
         -- Insert BOM Nodes into temporary table
