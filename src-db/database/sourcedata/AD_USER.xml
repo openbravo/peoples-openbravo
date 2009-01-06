@@ -54,8 +54,6 @@
 <!--100-->              <FIRSTNAME><![CDATA[Openbravo]]></FIRSTNAME>
 <!--100 USERNAME-->
 <!--100-->              <USERNAME><![CDATA[Openbravo]]></USERNAME>
-<!--100 DEFAULT_AD_LANGUAGE-->
-<!--100-->              <DEFAULT_AD_LANGUAGE><![CDATA[en_US]]></DEFAULT_AD_LANGUAGE>
 <!--100**************--></AD_USER>
 
 </data>
