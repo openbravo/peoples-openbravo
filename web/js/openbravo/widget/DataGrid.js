@@ -637,7 +637,7 @@ dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
 /**
 * It is the method that manages the response of the backend call when the out of range ids are requested. This method is called from other methods.
 */
-  idsReceived: function(minOffset, type, data, evt) {
+  idsReceived: function(minOffset, data, evt) {
     var xmlrangeid = data.getElementsByTagName('xml-rangeid');
     var status = xmlrangeid[0].getElementsByTagName('status');
     if (status.length>0){
