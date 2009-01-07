@@ -167,8 +167,8 @@ public class AntExecutor {
         log = ps1;
 
         // force log4j to also print to this response
-        OBLogAppender.setOutputStream(ps1);
-
+        // OBLogAppender.setOutputStream(ps1);
+        OBLogAppender.setProject(project);
     }
 
     /**
