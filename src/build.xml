@@ -397,7 +397,7 @@ build.war: build a war file in the lib directory.
 	</target>
 
 	<target name="minimizeJSandCSS" description="minimize JS and CSS files" if="minimizeJSandCSSbool">
-		<yuicompress linebreak="300" warn="false" munge="yes" preserveallsemicolons="true" outputfolder="${base.context}/web">
+		<yuicompress linebreak="300" warn="false" munge="yes" preserveallsemicolons="true" outputfolder="${base.context}/web" charset="UTF-8">
 			<fileset dir="${base.web}">
 				<include name="**/*.js" />
 				<include name="**/*.css" />
