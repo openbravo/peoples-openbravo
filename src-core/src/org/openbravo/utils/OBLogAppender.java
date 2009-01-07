@@ -23,7 +23,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.Priority;
 import org.apache.log4j.spi.LoggingEvent;
+import org.apache.tools.ant.Project;
 
 /**
  * This appender can be used to send log4j to a programmatically set
@@ -35,6 +37,27 @@ import org.apache.log4j.spi.LoggingEvent;
 public class OBLogAppender extends AppenderSkeleton {
 
     private static final ThreadLocal<OutputStream> outputStreamHolder = new ThreadLocal<OutputStream>();
+    private static final ThreadLocal<Project> projectHolder = new ThreadLocal<Project>();
+
+    /**
+     * Returns the ant project held in the threadlocal.
+     * 
+     * @return
+     */
+    public static Project getProject() {
+        return projectHolder.get();
+    }
+
+    /**
+     * Sets an ant project in the project threadlocal. Logging events are send
+     * to the logger of the project to.
+     * 
+     * @param project
+     *            the ant project
+     */
+    public static void setProject(Project project) {
+        projectHolder.set(project);
+    }
 
     /**
      * Sets the passed OutputStream in a ThreadLocal, this OutputStream is then
@@ -57,7 +80,18 @@ public class OBLogAppender extends AppenderSkeleton {
 
     @Override
     protected void append(LoggingEvent event) {
+
         try {
+            if (projectHolder.get() != null) {
+                final String msg;
+                if (getLayout() != null) {
+                    msg = getLayout().format(event);
+                } else {
+                    msg = event.getMessage().toString() + "\n";
+                }
+                logToProject(event.getLevel(), msg);
+            }
+
             if (outputStreamHolder.get() != null) {
                 if (getLayout() != null) {
                     outputStreamHolder.get().write(
@@ -74,6 +108,37 @@ public class OBLogAppender extends AppenderSkeleton {
             // lib
             throw new RuntimeException(e);
         }
+    }
+
+    private void logToProject(Priority prio, String msg) {
+        if (projectHolder.get() == null) {
+            return;
+        }
+        int projectLogLevel = -1;
+        switch (prio.toInt()) {
+        case Priority.DEBUG_INT:
+            projectLogLevel = Project.MSG_DEBUG;
+            break;
+        case Priority.ERROR_INT:
+            projectLogLevel = Project.MSG_ERR;
+            break;
+        case Priority.FATAL_INT:
+            projectLogLevel = Project.MSG_ERR;
+            break;
+        case Priority.INFO_INT:
+            projectLogLevel = Project.MSG_INFO;
+            break;
+        case Priority.OFF_INT:
+            projectLogLevel = Project.MSG_VERBOSE;
+            break;
+        case Priority.WARN_INT:
+            projectLogLevel = Project.MSG_WARN;
+            break;
+        default:
+            throw new IllegalArgumentException("Priority " + prio.toInt()
+                    + " unknown");
+        }
+        projectHolder.get().log(msg, projectLogLevel);
     }
 
     /**
