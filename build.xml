@@ -364,8 +364,8 @@ compare.database.structure: refer to compare.database.structure target of databa
 
 	<target name="install.source" depends="init,code.rev">
 		<antcall target="database.lib" />
-		<ant dir="${base.db}" antfile="build-create.xml" target="create.database" inheritAll="true" inheritRefs="true" />
 		<antcall target="core.lib" />
+		<ant dir="${base.db}" antfile="build-create.xml" target="create.database" inheritAll="true" inheritRefs="true" />
 		<antcall target="wad.lib" />
 		<antcall target="trl.lib" />
 		<antcall target="compile.complete.deploy" />
@@ -384,8 +384,8 @@ compare.database.structure: refer to compare.database.structure target of databa
 
 	<target name="eclipse.install.source" depends="init,code.rev">
 		<antcall target="database.lib" />
-		<ant dir="${base.db}" antfile="build-create.xml" target="create.database" inheritAll="true" inheritRefs="true" />
 		<eclipse.incrementalBuild project="OpenbravoCore" kind="full" />
+		<ant dir="${base.db}" antfile="build-create.xml" target="create.database" inheritAll="true" inheritRefs="true" />
 		<antcall target="eclipse.wad.lib" />
 		<antcall target="eclipse.trl.lib" />
 		<antcall target="eclipse.compile.complete" />
