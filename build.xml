@@ -104,6 +104,11 @@ compare.database.structure: refer to compare.database.structure target of databa
 
 	<available file=".svn/entries" property="is.svn" />
 
+  <condition property="deploy.mode" value="class">
+    <not>
+      <isset property="${deploy.mode}" />
+    </not>
+  </condition>
 
 	<condition property="mode.war">
 		<equals arg1="war" arg2="${deploy.mode}" />
