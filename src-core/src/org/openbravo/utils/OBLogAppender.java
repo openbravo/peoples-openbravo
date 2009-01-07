@@ -40,9 +40,7 @@ public class OBLogAppender extends AppenderSkeleton {
     private static final ThreadLocal<Project> projectHolder = new ThreadLocal<Project>();
 
     /**
-     * Returns the ant project held in the threadlocal.
-     * 
-     * @return
+     * @return the ant project held in the threadlocal.
      */
     public static Project getProject() {
         return projectHolder.get();
