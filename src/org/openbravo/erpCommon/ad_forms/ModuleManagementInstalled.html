@@ -116,7 +116,11 @@ var baseDirectory = "../../../../../web/";
   }
   
   function scanForUpdates(){
-    changeClass('notifications', 'Tree_Actions_Invisible', 'Tree_Actions_Processing');
+	if (document.getElementById('notifications').className.indexOf('Tree_Actions_Invisible') != -1) {
+      changeClass('notifications', 'Tree_Actions_Invisible', 'Tree_Actions_Processing', true);
+	} else {
+	  changeClass('notifications', 'Tree_Actions', 'Tree_Actions_Processing', true);
+	}
     return submitXmlHttpRequest(scan_callback, document.frmMain, "SCAN", "ModuleManagement.html", false);
   }
   
