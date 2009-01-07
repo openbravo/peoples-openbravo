@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2008 Openbravo SL
+ * All portions are Copyright (C) 2001-2009 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -316,7 +316,7 @@ public class CreateTaxReport extends HttpSecureAppServlet {
     CreateTaxReportData[] convertVector(Vector<Object> vectorArray)
             throws ServletException {
         CreateTaxReportData[] data = new CreateTaxReportData[vectorArray.size()];
-        BigDecimal count = new BigDecimal("0");
+        BigDecimal count = BigDecimal.ZERO;
         for (int i = 0; i < vectorArray.size(); i++) {
             data[i] = (CreateTaxReportData) vectorArray.elementAt(i);
         }
@@ -358,7 +358,7 @@ public class CreateTaxReport extends HttpSecureAppServlet {
                      */
                 }
                 data[i].total = String.valueOf(count);
-                count = new BigDecimal("0");
+                count = BigDecimal.ZERO;
             }
         }
         return data;

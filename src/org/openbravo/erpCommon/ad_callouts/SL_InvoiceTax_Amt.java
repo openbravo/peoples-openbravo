@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -92,13 +92,14 @@ public class SL_InvoiceTax_Amt extends HttpSecureAppServlet {
 
         if (strChanged.equals("inptaxamt")) {
             if (!taxRate.equals(new BigDecimal(0)))
-                taxBaseAmt = new BigDecimal(taxAmt.doubleValue()
-                        / taxRate.doubleValue() * 100).setScale(taxScale,
+                taxBaseAmt = ((taxAmt.divide(taxRate, 12,
+			BigDecimal.ROUND_HALF_EVEN)).multiply(new BigDecimal(
+			"100"))).setScale(taxScale,
                         BigDecimal.ROUND_HALF_UP);
         } else {
-            taxAmt = new BigDecimal(taxBaseAmt.doubleValue()
-                    * taxRate.doubleValue() / 100).setScale(taxScale,
-                    BigDecimal.ROUND_HALF_UP);
+            taxAmt = ((taxBaseAmt.multiply(taxRate)).divide(new BigDecimal(
+		    "100"), 12, BigDecimal.ROUND_HALF_EVEN)).setScale(taxScale,
+		    BigDecimal.ROUND_HALF_UP);
         }
 
         resultado.append("var calloutName='SL_InvoiceTax_Amt';\n\n");

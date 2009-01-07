@@ -169,7 +169,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         // calculating discount
         if (strChanged.equals("inppricelist")
                 || strChanged.equals("inppriceactual")) {
-            if (priceList.doubleValue() == 0.0)
+            if (priceList.compareTo(BigDecimal.ZERO) == 0)
                 discount = ZERO;
             else {
                 if (log4j.isDebugEnabled())
@@ -178,9 +178,9 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
                 if (log4j.isDebugEnabled())
                     log4j.debug("priceActual:"
                             + Double.toString(priceActual.doubleValue()));
-                discount = new BigDecimal((priceList.doubleValue() - priceStd
-                        .doubleValue())
-                        / priceList.doubleValue() * 100.0);
+                discount = ((priceList.subtract(priceStd)).divide(priceList,
+			12, BigDecimal.ROUND_HALF_EVEN))
+			.multiply(new BigDecimal("100"));
             }
             if (log4j.isDebugEnabled())
                 log4j.debug("Discount: " + discount.toString());
@@ -204,22 +204,21 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         } else if (strChanged.equals("inpdiscount")) { // calculate std and
                                                        // actual
             BigDecimal discount1 = null;
-            if (priceList.doubleValue() != 0)
-                discount1 = new BigDecimal((priceList.doubleValue() - priceStd
-                        .doubleValue())
-                        / priceList.doubleValue() * 100.0).setScale(
-                        StdPrecision, BigDecimal.ROUND_HALF_UP);
+            if (priceList.compareTo(BigDecimal.ZERO) != 0)
+            	discount1 = (((priceList.subtract(priceStd)).divide(priceList,
+			12, BigDecimal.ROUND_HALF_EVEN))
+			.multiply(new BigDecimal("100"))).setScale(
+			StdPrecision, BigDecimal.ROUND_HALF_UP);
             else
-                discount1 = new BigDecimal(0);
+                discount1 = BigDecimal.ZERO;
             BigDecimal discount2 = discount.setScale(StdPrecision,
                     BigDecimal.ROUND_HALF_UP);
             if (discount1.compareTo(discount2) != 0) // checks if rounded
                                                      // discount has changed
             {
-                priceStd = new BigDecimal(
-                        priceList.doubleValue()
-                                - (priceList.doubleValue()
-                                        * discount.doubleValue() / 100));
+                priceStd = priceList.subtract(priceList.multiply(discount)
+			.divide(new BigDecimal("100"), 12,
+				BigDecimal.ROUND_HALF_EVEN));
                 priceActual = new BigDecimal(SLOrderProductData.getOffersPrice(
                         this, dataOrder[0].dateordered,
                         dataOrder[0].cBpartnerId, strProduct, priceStd
@@ -240,16 +239,13 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
 
         if (Issotrx.equals("Y")) {
             if (!strStockSecurity.equals("0")) {
-                if (qtyOrdered.doubleValue() != 0.0) {
+                if (qtyOrdered.compareTo(BigDecimal.ZERO) != 0) {
                     if (strEnforceAttribute.equals("N")) {
                         strStockNoAttribute = SLOrderStockData
                                 .totalStockNoAttribute(this, strProduct, strUOM);
                         stockNoAttribute = new BigDecimal(strStockNoAttribute);
-                        resultStock = new BigDecimal(stockNoAttribute
-                                .doubleValue()
-                                - qtyOrdered.doubleValue());
-                        if (stockSecurity.doubleValue() > resultStock
-                                .doubleValue()) {
+                        resultStock = stockNoAttribute.subtract(qtyOrdered);
+                        if (stockSecurity.compareTo(resultStock) > 0) {
                             resultado.append("new Array('MESSAGE', \""
                                     + FormatUtilities.replaceJS(Utility
                                             .messageBD(this, "StockLimit", vars
@@ -261,11 +257,8 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
                                     .totalStockAttribute(this, strProduct,
                                             strUOM, strAttribute);
                             stockAttribute = new BigDecimal(strStockAttribute);
-                            resultStock = new BigDecimal(stockAttribute
-                                    .doubleValue()
-                                    - qtyOrdered.doubleValue());
-                            if (stockSecurity.doubleValue() > resultStock
-                                    .doubleValue()) {
+                            resultStock = stockAttribute.subtract(qtyOrdered);
+                            if (stockSecurity.compareTo(resultStock) > 0) {
                                 resultado.append("new Array('MESSAGE', \""
                                         + FormatUtilities.replaceJS(Utility
                                                 .messageBD(this, "StockLimit",
@@ -282,7 +275,7 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         if (!strChanged.equals("inpqtyordered")) { // Check PriceLimit
             boolean enforced = SLOrderAmtData.listPriceType(this, strPriceList);
             // Check Price Limit?
-            if (enforced && priceLimit.doubleValue() != 0.0
+	    if (enforced && priceLimit.compareTo(BigDecimal.ZERO) != 0
                     && priceActual.compareTo(priceLimit) < 0)
                 resultado.append("new Array('MESSAGE', \""
                         + Utility.messageBD(this, "UnderLimitPrice", vars

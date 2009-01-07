@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2008 Openbravo SL
+ * All portions are Copyright (C) 2001-2009 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -370,7 +370,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
                                             && (strAll.equals("")) ? "value"
                                             : "partner"));
 
-                BigDecimal amount = new BigDecimal("0.0");
+                BigDecimal amount = BigDecimal.ZERO;
                 for (int i = 0; data2 != null && i < data2.length; i++) {
                     if (data2[i].factAcctId.equals(data[0].factAcctId)) {
                         if (log4j.isDebugEnabled())

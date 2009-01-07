@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,7 +29,6 @@ import javax.servlet.http.*;
 
 public class SL_Project_Planned extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;
-    static final BigDecimal ZERO = new BigDecimal(0.0);
 
     public void init(ServletConfig config) {
         super.init(config);
@@ -91,7 +90,7 @@ public class SL_Project_Planned extends HttpSecureAppServlet {
         plannedPrice = (new BigDecimal(strPlannedPrice)); // PP
         plannedPurchasePrice = new BigDecimal(strPlannedPurchasePrice); // PPP
         plannedMargin = (new BigDecimal(strPlannedMargin)); // PM
-        plannedAmt = new BigDecimal(0.0); // PA
+        plannedAmt = BigDecimal.ZERO; // PA
 
         StringBuffer resultado = new StringBuffer();
         resultado.append("var calloutName='SL_Project_Planned';\n\n");
@@ -111,14 +110,13 @@ public class SL_Project_Planned extends HttpSecureAppServlet {
         if (strChanged.equals("inpplannedprice")
                 || strChanged.equals("inpplannedpoprice")) {
             // PM = (PP - PPP)*100/PP
-            if (plannedPrice.doubleValue() != 0.0) {
-                plannedMargin = new BigDecimal(
-                        (plannedPrice.doubleValue() - plannedPurchasePrice
-                                .doubleValue())
-                                / plannedPrice.doubleValue() * 100.0).setScale(
-                        2, BigDecimal.ROUND_HALF_UP);
+	    if (plannedPrice.compareTo(BigDecimal.ZERO) != 0) {
+                plannedMargin = (((plannedPrice.subtract(plannedPurchasePrice))
+			.multiply(new BigDecimal("100"))).divide(plannedPrice,
+			12, BigDecimal.ROUND_HALF_EVEN)).setScale(2,
+			BigDecimal.ROUND_HALF_UP);
             } else {
-                plannedMargin = new BigDecimal(0.0);
+                plannedMargin = BigDecimal.ZERO;
             }
             if (strChanged.equals("inpplannedprice")) {
                 resultado.append(",");
@@ -129,8 +127,9 @@ public class SL_Project_Planned extends HttpSecureAppServlet {
 
         if (strChanged.equals("inpplannedmarginamt")) {
             // PPP = PP*(1-PM/100)
-            plannedPurchasePrice = new BigDecimal((plannedPrice.doubleValue())
-                    * (1 - (plannedMargin.doubleValue() / 100.0)));
+            plannedPurchasePrice = plannedPrice.multiply((BigDecimal.ONE)
+		    .subtract(plannedMargin.divide(new BigDecimal("100"), 12,
+			    BigDecimal.ROUND_HALF_EVEN)));
             if (plannedPurchasePrice.scale() > StdPrecision)
                 plannedPurchasePrice = plannedPurchasePrice.setScale(
                         StdPrecision, BigDecimal.ROUND_HALF_UP);

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -219,7 +219,8 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
             String mAttributesetinstanceId, String mProductId,
             String mLocatorId, String strIn, boolean colorbg2)
             throws ServletException {
-        Double total = 0.0, totalPedido = 0.0;
+        BigDecimal total = BigDecimal.ZERO;
+	BigDecimal totalPedido = BigDecimal.ZERO;
         StringBuffer strHtml = new StringBuffer();
         count += 1;
         String strCalculated = mProductId + "&" + mAttributesetinstanceId + "&"
@@ -246,11 +247,14 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
             strHtml.append("<td >\n");
             strHtml.append(getData(dataChild[i], ""));
             strHtml.append("</td>");
-            total += Double.valueOf(dataChild[i].movementqty).doubleValue();
-            totalPedido += (!dataChild[i].quantityorder.equals("") ? Double
-                    .valueOf(dataChild[i].quantityorder).doubleValue() : 0.0);
-            strHtml.append(insertTotal(Double.toString(total),
-                    dataChild[i].uomName, Double.toString(totalPedido),
+            total = total.add(new BigDecimal(dataChild[i].movementqty));           
+            if (!dataChild[i].quantityorder.equals(""))
+		totalPedido = totalPedido.add(new BigDecimal(
+			dataChild[i].quantityorder));
+            
+            
+            strHtml.append(insertTotal(total.toPlainString(),
+		    dataChild[i].uomName, totalPedido.toPlainString(),
                     dataChild[i].productUomName));
             strHtml.append("  </tr>\n");
             if (log4j.isDebugEnabled())
@@ -267,17 +271,17 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
             MInOutTraceReportsData dataChild, String strIn, boolean colorbg)
             throws ServletException {
         StringBuffer strHtml = new StringBuffer();
-        Double movementQty = Double.valueOf(dataChild.movementqty)
-                .doubleValue();
+        BigDecimal movementQty = new BigDecimal(dataChild.movementqty);
         // if (log4j.isDebugEnabled()) log4j.debug("****PROCESSING EXTERNAL 1: "
         // + movementQty.toString() + " and strIn: " + strIn);
         if (strIn.equals("Y"))
-            movementQty = movementQty * (-1);
+            movementQty = movementQty.negate();
         if (log4j.isDebugEnabled())
             log4j.debug("****PROCESSING EXTERNAL 2: " + movementQty.toString()
                     + " and movementType:" + dataChild.movementtype);
 
-        if (dataChild.movementtype.startsWith("P") && movementQty > 0) {
+        if (dataChild.movementtype.startsWith("P")
+		&& (movementQty.compareTo(BigDecimal.ZERO) > 0)) {
             String strNewId = dataChild.mProductionlineId;
             MInOutTraceReportsData[] dataProduction;
             if (log4j.isDebugEnabled())
@@ -392,7 +396,8 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
             }
         }
 
-        if (dataChild.movementtype.startsWith("M") && movementQty > 0) {
+        if (dataChild.movementtype.startsWith("M")
+		&& (movementQty.compareTo(BigDecimal.ZERO) > 0)) {
             String strNewId = dataChild.mMovementlineId;
             MInOutTraceReportsData[] dataMovement;
             if (log4j.isDebugEnabled())

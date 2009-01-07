@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,7 +29,7 @@ import javax.servlet.http.*;
 public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;
 
-    static final BigDecimal ZERO = new BigDecimal(0.0);
+    static final BigDecimal ZERO = new BigDecimal("0");
 
     public void init(ServletConfig config) {
         super.init(config);
@@ -82,7 +82,7 @@ public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
                 strPrecision = data[0].stdprecision;
                 strPricePrecision = data[0].priceprecision;
             }
-            int StdPrecision = Integer.valueOf(strPrecision).intValue();
+            int stdPrecision = Integer.valueOf(strPrecision).intValue();
             int PricePrecision = Integer.valueOf(strPricePrecision).intValue();
 
             priceActual = (strPriceActual.equals("") ? ZERO : (new BigDecimal(
@@ -97,7 +97,7 @@ public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
             // calculating discount
             if (strChanged.equals("inppricelist")
                     || strChanged.equals("inppriceactual")) {
-                if (priceList.doubleValue() == 0.0)
+                if (priceList.compareTo(ZERO) == 0)
                     discount = ZERO;
                 else {
                     if (log4j.isDebugEnabled())
@@ -106,15 +106,14 @@ public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
                     if (log4j.isDebugEnabled())
                         log4j.debug("priceActual:"
                                 + Double.toString(priceActual.doubleValue()));
-                    discount = new BigDecimal(
-                            (priceList.doubleValue() - priceActual
-                                    .doubleValue())
-                                    / priceList.doubleValue() * 100.0);
+                    discount = ((priceList.subtract(priceActual)).divide(
+			    priceList, 12, BigDecimal.ROUND_HALF_EVEN))
+			    .multiply(new BigDecimal("100"));
                 }
                 if (log4j.isDebugEnabled())
                     log4j.debug("Discount: " + discount.toString());
-                if (discount.scale() > StdPrecision)
-                    discount = discount.setScale(StdPrecision,
+                if (discount.scale() > stdPrecision)
+                    discount = discount.setScale(stdPrecision,
                             BigDecimal.ROUND_HALF_UP);
                 if (log4j.isDebugEnabled())
                     log4j.debug("Discount rounded: " + discount.toString());
@@ -124,23 +123,21 @@ public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
             } else if (strChanged.equals("inpdiscount")) { // calculate std and
                                                            // actual
                 BigDecimal discount1 = null;
-                if (priceList.doubleValue() != 0)
-                    discount1 = new BigDecimal(
-                            (priceList.doubleValue() - priceActual
-                                    .doubleValue())
-                                    / priceList.doubleValue() * 100.0)
-                            .setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
+                if (priceList.compareTo(ZERO) != 0)
+                    discount1 = (((priceList.subtract(priceActual)).divide(
+			    priceList, 12, BigDecimal.ROUND_HALF_EVEN))
+			    .multiply(new BigDecimal("100"))).setScale(
+			    stdPrecision, BigDecimal.ROUND_HALF_UP);
                 else
                     discount1 = new BigDecimal(0);
-                BigDecimal discount2 = discount.setScale(StdPrecision,
+                BigDecimal discount2 = discount.setScale(stdPrecision,
                         BigDecimal.ROUND_HALF_UP);
                 if (discount1.compareTo(discount2) != 0) // checks if rounded
                                                          // discount has changed
                 {
-                    priceActual = new BigDecimal(
-                            priceList.doubleValue()
-                                    - (priceList.doubleValue()
-                                            * discount.doubleValue() / 100));
+                    priceActual = priceList.subtract(priceList.multiply(
+			    discount).divide(new BigDecimal("100"), 12,
+			    BigDecimal.ROUND_HALF_EVEN));
                     if (priceActual.scale() > PricePrecision)
                         priceActual = priceActual.setScale(PricePrecision,
                                 BigDecimal.ROUND_HALF_UP);
@@ -150,8 +147,8 @@ public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
             }
             LineNetAmt = qty.multiply(priceActual);
 
-            if (LineNetAmt.scale() > StdPrecision)
-                LineNetAmt = LineNetAmt.setScale(StdPrecision,
+            if (LineNetAmt.scale() > stdPrecision)
+                LineNetAmt = LineNetAmt.setScale(stdPrecision,
                         BigDecimal.ROUND_HALF_UP);
             strLineNetAmt = LineNetAmt.toString();
         }

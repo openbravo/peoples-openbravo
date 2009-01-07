@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -258,20 +258,16 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
         for (int i = 0; i < data.length; i++) {
             if (data[i].id.equals(strIncomeSummary)) {
                 found = true;
-                double isYear = Double.valueOf(strISyear).doubleValue();
-                double isYearRef = Double.valueOf(strISyearRef).doubleValue();
-                data[i].qty = Double.toString(Double.valueOf(data[i].qty)
-                        .doubleValue()
-                        + isYear);
-                data[i].qtycredit = Double.toString(Double.valueOf(
-                        data[i].qtycredit).doubleValue()
-                        + isYear);
-                data[i].qtyRef = Double.toString(Double.valueOf(data[i].qtyRef)
-                        .doubleValue()
-                        + isYearRef);
-                data[i].qtycreditRef = Double.toString(Double.valueOf(
-                        data[i].qtycreditRef).doubleValue()
-                        + isYearRef);
+                BigDecimal isYear = new BigDecimal(strISyear);
+                BigDecimal isYearRef = new BigDecimal(strISyearRef);
+                data[i].qty = (new BigDecimal(data[i].qty).add(isYear))
+			.toPlainString();
+                data[i].qtycredit = (new BigDecimal(data[i].qtycredit)
+			.add(isYear)).toPlainString();
+                data[i].qtyRef = (new BigDecimal(data[i].qtyRef).add(isYearRef))
+			.toPlainString();
+                data[i].qtycreditRef = (new BigDecimal(data[i].qtycreditRef)
+			.add(isYearRef)).toPlainString();
             }
             data2[i] = data[i];
         }

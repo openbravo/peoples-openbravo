@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -135,11 +135,11 @@ public class SL_Order_Product extends HttpSecureAppServlet {
         BigDecimal priceStd = (strPriceStd.equals("") ? new BigDecimal(0.0)
                 : new BigDecimal(strPriceStd));
         BigDecimal discount = new BigDecimal(0.0);
-        if (priceList.doubleValue() != discount.doubleValue()) {
-            discount = new BigDecimal((priceList.doubleValue() - priceStd
-                    .doubleValue())
-                    / priceList.doubleValue() * 100.0).setScale(2,
-                    BigDecimal.ROUND_HALF_UP);
+        if (priceList.compareTo(discount) != 0) {
+            discount = (((priceList.subtract(priceStd)).divide(priceList, 12,
+		    BigDecimal.ROUND_HALF_EVEN))
+		    .multiply(new BigDecimal("100"))).setScale(2,
+		    BigDecimal.ROUND_HALF_UP);
         }
 
         resultado.append("var calloutName='SL_Order_Product';\n\n");

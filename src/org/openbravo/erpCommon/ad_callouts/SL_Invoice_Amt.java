@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -154,7 +154,7 @@ public class SL_Invoice_Amt extends HttpSecureAppServlet {
 
         // Check price limit
         if (enforcedLimit) {
-            if (priceLimit.doubleValue() != 0.0
+            if (priceLimit.compareTo(BigDecimal.ZERO) != 0
                     && priceActual.compareTo(priceLimit) < 0)
                 resultado.append("new Array('MESSAGE', \""
                         + FormatUtilities.replaceJS(Utility.messageBD(this,

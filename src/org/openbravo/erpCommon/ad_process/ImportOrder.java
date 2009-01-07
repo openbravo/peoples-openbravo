@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SL
- * Contributions are Copyright (C) 2001-2008 Openbravo S.L.
+ * Contributions are Copyright (C) 2001-2009 Openbravo S.L.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_process;
@@ -730,16 +730,16 @@ public class ImportOrder extends ImportProcess {
                                 .equals("")) ? "0" : pprice[0].pricelist;
                         line.pricelimit = (pprice[0].pricelimit == null && pprice[0].pricelimit
                                 .equals("")) ? "0" : pprice[0].pricelimit;
-                        line.discount = ((Double
-                                .parseDouble(pprice[0].pricelist) == Double
-                                .parseDouble("0")) ? "0"
-                                : (new BigDecimal(
-                                        (Double
-                                                .parseDouble(pprice[0].pricelist) - Double
-                                                .parseDouble(line.priceactual))
-                                                / Double
-                                                        .parseDouble(pprice[0].pricelist)
-                                                * 100.0)).toString());
+                        line.discount = ((new BigDecimal(pprice[0].pricelist)
+				.compareTo(BigDecimal.ZERO) == 0) ? "0"
+                                 : (((new BigDecimal(pprice[0].pricelist)
+					.subtract(new BigDecimal(
+						line.priceactual)))
+                                	 .divide(
+					new BigDecimal(pprice[0].pricelist),
+					12, BigDecimal.ROUND_HALF_EVEN))
+					.multiply(new BigDecimal("100")))
+					.toPlainString()); // ((PL-PA)/PL)*100
                         line.cUomId = pprice[0].cUomId;
                     } else {
                         if (log4j.isDebugEnabled())
@@ -748,8 +748,8 @@ public class ImportOrder extends ImportProcess {
                 } // set price
                 if (data[i].priceactual != null
                         && !data[i].priceactual.equals("")
-                        && Double.parseDouble(data[i].priceactual) != Double
-                                .parseDouble("0"))
+                        && new BigDecimal(data[i].priceactual)
+				.compareTo(BigDecimal.ZERO) != 0)
                     line.priceactual = data[i].priceactual;
                 if (data[i].cTaxId != null && !data[i].cTaxId.equals("")
                         && Integer.parseInt(data[i].cTaxId) != 0)

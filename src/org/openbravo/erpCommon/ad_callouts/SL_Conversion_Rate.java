@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -78,13 +78,13 @@ public class SL_Conversion_Rate extends HttpSecureAppServlet {
         resultado.append("var respuesta = new Array(");
 
         if (strChanged.equals("inpmultiplyrate")) {
-            if (multiplyRate.doubleValue() != 0.00)
+            if (multiplyRate.compareTo(BigDecimal.ZERO) != 0)
                 rate = one.divide(multiplyRate, 12, 4);
             resultado.append("new Array(\"inpdividerate\", \""
                     + rate.toString() + "\")");
 
         } else {
-            if (divideRate.doubleValue() != 0.00)
+            if (divideRate.compareTo(BigDecimal.ZERO) != 0)
                 rate = one.divide(divideRate, 12, 4);
             resultado.append("new Array(\"inpmultiplyrate\", \""
                     + rate.toString() + "\")");

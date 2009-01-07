@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -343,7 +343,7 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
                         BigDecimal.ROUND_HALF_UP);
 
                 // Calculating discount
-                if (priceList.doubleValue() == 0.0)
+		if (priceList.compareTo(BigDecimal.ZERO) == 0)
                     discount = ZERO;
                 else {
                     if (log4j.isDebugEnabled())
@@ -352,10 +352,9 @@ public class ExpenseSOrder extends HttpSecureAppServlet {
                     if (log4j.isDebugEnabled())
                         log4j.debug("priceActual:"
                                 + Double.toString(priceActual.doubleValue()));
-                    discount = new BigDecimal(
-                            (priceList.doubleValue() - priceActual
-                                    .doubleValue())
-                                    / priceList.doubleValue() * 100.0);
+                    discount = ((priceList.subtract(priceActual)).divide(
+			    priceList, 12, BigDecimal.ROUND_HALF_EVEN))
+			    .multiply(new BigDecimal("100"));
                 }
                 if (log4j.isDebugEnabled())
                     log4j.debug("Discount: " + discount.toString());

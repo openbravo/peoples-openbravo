@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,6 @@ import javax.servlet.http.*;
 
 public class SL_Project_Margin extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;
-    static final BigDecimal ZERO = new BigDecimal(0.0);
 
     public void init(ServletConfig config) {
         super.init(config);
@@ -86,15 +85,15 @@ public class SL_Project_Margin extends HttpSecureAppServlet {
         }
         int StdPrecision = Integer.valueOf(strPrecision).intValue();
 
-        BigDecimal ServiceRevenue, PlannedExpenses, ServiceCost, ReinvoicedExpenses, ServiceMargin, ExpensesMargin;
+        BigDecimal serviceRevenue, plannedExpenses, serviceCost, reinvoicedExpenses, serviceMargin, expensesMargin;
         // Services
-        ServiceRevenue = new BigDecimal(strServiceRevenue); // SR
-        ServiceCost = new BigDecimal(strServiceCost); // SC
-        ServiceMargin = new BigDecimal(strServiceMargin); // SM
+        serviceRevenue = new BigDecimal(strServiceRevenue); // SR
+        serviceCost = new BigDecimal(strServiceCost); // SC
+        serviceMargin = new BigDecimal(strServiceMargin); // SM
         // Expenses
-        PlannedExpenses = new BigDecimal(strPlannedExpenses); // PE
-        ReinvoicedExpenses = new BigDecimal(strReinvoicedExpenses); // RE
-        ExpensesMargin = new BigDecimal(strPlannedMargin); // EM
+        plannedExpenses = new BigDecimal(strPlannedExpenses); // PE
+        reinvoicedExpenses = new BigDecimal(strReinvoicedExpenses); // RE
+        expensesMargin = new BigDecimal(strPlannedMargin); // EM
 
         StringBuffer resultado = new StringBuffer();
         resultado.append("var calloutName='SL_Project_Margin';\n\n");
@@ -104,65 +103,66 @@ public class SL_Project_Margin extends HttpSecureAppServlet {
         if (strChanged.equals("inpservrevenue")
                 || strChanged.equals("inpservcost")) {
             // SM = (SR-SC)*100/SR
-            if (ServiceRevenue.doubleValue() != 0.0) {
-                ServiceMargin = new BigDecimal(
-                        (ServiceRevenue.doubleValue() - ServiceCost
-                                .doubleValue())
-                                / ServiceRevenue.doubleValue() * 100.0)
-                        .setScale(2, BigDecimal.ROUND_HALF_UP);
+	    if (serviceRevenue.compareTo(BigDecimal.ZERO) != 0) {
+                serviceMargin = (((serviceRevenue.subtract(serviceCost))
+			.divide(serviceRevenue, 12, BigDecimal.ROUND_HALF_EVEN))
+			.multiply(new BigDecimal("100"))).setScale(2,
+			BigDecimal.ROUND_HALF_UP);
             } else {
-                ServiceMargin = new BigDecimal(0.0);
+                serviceMargin = BigDecimal.ZERO;
             }
             resultado.append("\n new Array(\"inpservmargin\", "
-                    + ServiceMargin.toString() + ")");
+                    + serviceMargin.toString() + ")");
         }
 
         if (strChanged.equals("inpservmargin")) {
             // SC = SR*(1-SM/100)
-            ServiceCost = new BigDecimal((ServiceRevenue.doubleValue())
-                    * (1 - (ServiceMargin.doubleValue() / 100.0)));
-            if (ServiceCost.scale() > StdPrecision)
-                ServiceCost = ServiceCost.setScale(StdPrecision,
+            serviceCost = serviceRevenue.multiply((BigDecimal.ONE)
+		    .subtract(serviceMargin.divide(new BigDecimal("100"))));
+            if (serviceCost.scale() > StdPrecision)
+                serviceCost = serviceCost.setScale(StdPrecision,
                         BigDecimal.ROUND_HALF_UP);
             resultado.append("\n new Array(\"inpservcost\", "
-                    + ServiceCost.toString() + ")\n");
+                    + serviceCost.toString() + ")\n");
         }
 
         // Expenses
         if (strChanged.equals("inpexpexpenses")
                 || strChanged.equals("inpexpreinvoicing")) {
             // EM = (RE-PE)*100/RE
-            if (ReinvoicedExpenses.doubleValue() != 0.0) {
-                ExpensesMargin = new BigDecimal((ReinvoicedExpenses
-                        .doubleValue() - PlannedExpenses.doubleValue())
-                        / ReinvoicedExpenses.doubleValue() * 100.0).setScale(2,
-                        BigDecimal.ROUND_HALF_UP);
+	    if (reinvoicedExpenses.compareTo(BigDecimal.ZERO) != 0) {                
+                expensesMargin = (((reinvoicedExpenses
+			.subtract(plannedExpenses)).multiply(new BigDecimal(
+			"100"))).divide(
+				reinvoicedExpenses, 12,
+				BigDecimal.ROUND_HALF_EVEN)).setScale(2,
+				BigDecimal.ROUND_HALF_UP);
             } else {
-                ExpensesMargin = new BigDecimal(0.0);
+                expensesMargin = BigDecimal.ZERO;
             }
             resultado.append("\n new Array(\"inpexpmargin\", "
-                    + ExpensesMargin.toString() + ")");
+                    + expensesMargin.toString() + ")");
         }
 
         if (strChanged.equals("inpexpmargin")) {
-            if (ExpensesMargin.doubleValue() == 100.0) {
+            if (expensesMargin.compareTo(new BigDecimal("100")) == 0) {
                 // PE = 0 (because EM = 100 %)
-                PlannedExpenses = new BigDecimal(0.0);
-                if (PlannedExpenses.scale() > StdPrecision)
-                    PlannedExpenses = PlannedExpenses.setScale(StdPrecision,
+		plannedExpenses = BigDecimal.ZERO;
+                if (plannedExpenses.scale() > StdPrecision)
+                    plannedExpenses = plannedExpenses.setScale(StdPrecision,
                             BigDecimal.ROUND_HALF_UP);
                 resultado.append("\n new Array(\"inpexpexpenses\", "
-                        + PlannedExpenses.toString() + ")\n");
+                        + plannedExpenses.toString() + ")\n");
             } else {
                 // RE = PE/(1-EM/100)
-                ReinvoicedExpenses = new BigDecimal((PlannedExpenses
-                        .doubleValue())
-                        / (1 - (ExpensesMargin.doubleValue() / 100.0)));
-                if (ReinvoicedExpenses.scale() > StdPrecision)
-                    ReinvoicedExpenses = ReinvoicedExpenses.setScale(
+                reinvoicedExpenses = plannedExpenses.divide((BigDecimal.ONE)
+			.subtract(expensesMargin.divide(new BigDecimal("100"),
+				12, BigDecimal.ROUND_HALF_EVEN)));
+                if (reinvoicedExpenses.scale() > StdPrecision)
+                    reinvoicedExpenses = reinvoicedExpenses.setScale(
                             StdPrecision, BigDecimal.ROUND_HALF_UP);
                 resultado.append("\n new Array(\"inpexpreinvoicing\", "
-                        + ReinvoicedExpenses.toString() + ")\n");
+                        + reinvoicedExpenses.toString() + ")\n");
             }
         }
 

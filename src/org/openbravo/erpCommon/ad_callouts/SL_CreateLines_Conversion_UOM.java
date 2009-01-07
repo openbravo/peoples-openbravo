@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -102,8 +102,7 @@ public class SL_CreateLines_Conversion_UOM extends HttpSecureAppServlet {
             resultado.append("var respuesta = new Array(");
             if (!strQuantityOrder.equals("")) {
                 quantityOrder = new BigDecimal(strQuantityOrder);
-                movementQty = new BigDecimal(quantityOrder.doubleValue()
-                        * multiplyRate.doubleValue());
+                movementQty = quantityOrder.multiply(multiplyRate);
                 if (movementQty.scale() > stdPrecision)
                     movementQty = movementQty.setScale(stdPrecision,
                             BigDecimal.ROUND_HALF_UP);
