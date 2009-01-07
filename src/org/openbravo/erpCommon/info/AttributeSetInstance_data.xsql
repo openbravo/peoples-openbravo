@@ -101,7 +101,7 @@
    <SqlMethod name="selectNextLot" type="preparedStatement" return="String" default="0">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
-        SELECT PREFIX||CURRENTNEXT||SUFFIX AS TOTAL
+        SELECT COALESCE(TO_CHAR(PREFIX),'') || CURRENTNEXT || COALESCE(TO_CHAR(SUFFIX),'') AS TOTAL
         FROM M_LOTCTL 
         WHERE M_LOTCTL_ID = ?
       ]]></Sql>
@@ -110,7 +110,7 @@
    <SqlMethod name="selectNextSerNo" type="preparedStatement" return="String" default="0">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
-        SELECT CURRENTNEXT AS TOTAL
+        SELECT COALESCE(TO_CHAR(PREFIX),'') || CURRENTNEXT || COALESCE(TO_CHAR(SUFFIX),'') AS TOTAL
         FROM M_SERNOCTL 
         WHERE M_SERNOCTL_ID = ?
       ]]></Sql>
@@ -120,7 +120,7 @@
    <SqlMethod name="selectNextSerNo" type="preparedStatement" return="String" connection="true" default="0">
       <SqlMethodComment></SqlMethodComment>
       <Sql> <![CDATA[
-        SELECT CURRENTNEXT AS TOTAL
+        SELECT COALESCE(TO_CHAR(PREFIX),'') || CURRENTNEXT || COALESCE(TO_CHAR(SUFFIX),'') AS TOTAL
         FROM M_SERNOCTL 
         WHERE M_SERNOCTL_ID = ?
       ]]></Sql>
