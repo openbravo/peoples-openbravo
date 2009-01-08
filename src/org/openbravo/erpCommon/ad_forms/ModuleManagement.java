@@ -76,6 +76,10 @@ public class ModuleManagement extends HttpSecureAppServlet {
             final String searchText = vars.getRequestGlobalVariable(
                     "inpSearchText", "ModuleManagemetAdd.text");
             printPageAdd(request, response, vars, searchText, true);
+        } else if (vars.commandIn("ADD_SEARCH")) {
+            final String searchText = vars.getRequestGlobalVariable(
+                    "inpSearchText", "ModuleManagemetAdd.text");
+            printPageAdd(request, response, vars, searchText, true);
         } else if (vars.commandIn("HISTORY")) {
             final String strDateFrom = vars.getGlobalVariable("inpDateFrom",
                     "ModuleManagement|DateFrom", "");
@@ -84,10 +88,14 @@ public class ModuleManagement extends HttpSecureAppServlet {
             final String strUser = vars.getGlobalVariable("inpUser",
                     "ModuleManagement|inpUser", "");
             printPageHistory(response, vars, strDateFrom, strDateTo, strUser);
-        } else if (vars.commandIn("ADD_SEARCH")) {
-            final String searchText = vars.getRequestGlobalVariable(
-                    "inpSearchText", "ModuleManagemetAdd.text");
-            printPageAdd(request, response, vars, searchText, true);
+        } else if (vars.commandIn("HISTORY_SEARCH")) {
+            final String strDateFrom = vars.getRequestGlobalVariable(
+                    "inpDateFrom", "ModuleManagement|DateFrom");
+            final String strDateTo = vars.getRequestGlobalVariable("inpDateTo",
+                    "ModuleManagement|DateTo");
+            final String strUser = vars.getRequestGlobalVariable("inpUser",
+                    "ModuleManagement|inpUser");
+            printPageHistory(response, vars, strDateFrom, strDateTo, strUser);
         } else if (vars.commandIn("DETAIL")) {
             final String record = vars.getStringParameter("inpcRecordId");
             final boolean local = vars.getStringParameter("inpLocalInstall")
@@ -564,20 +572,20 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
             if (check) { // dependencies are statisfied, show modules to install
                 final Module[] installOrig = im.getModulesToInstall(); // This
-                                                                       // includes
-                                                                       // the
-                                                                       // also
-                                                                       // the
-                                                                       // module
-                                                                       // to
-                                                                       // install
+                // includes
+                // the
+                // also
+                // the
+                // module
+                // to
+                // install
                 if (installOrig == null || installOrig.length == 0)
                     discard[0] = "modulesToinstall";
                 else {
                     if (!islocal && module != null) {
                         inst = new Module[installOrig.length - 1]; // to remove
-                                                                   // the module
-                                                                   // itself
+                        // the module
+                        // itself
                         // check if the version for the selected module is the
                         // selected one
                         int j = 0;
@@ -707,19 +715,19 @@ public class ModuleManagement extends HttpSecureAppServlet {
         final Module[] upd = im.getModulesToUpdate();
 
         final String adModuleId = vars.getStringParameter("inpModuleID"); // selected
-                                                                          // module
-                                                                          // to
-                                                                          // install
+        // module
+        // to
+        // install
         final boolean islocal = im.getIsLocal();
 
         if (!islocal) {
             selected = new Module[1];
             inst = new Module[installOrig.length == 0 ? 0 : adModuleId
                     .equals("") ? installOrig.length : installOrig.length - 1]; // to
-                                                                                // remove
-                                                                                // the
-                                                                                // module
-                                                                                // itself
+            // remove
+            // the
+            // module
+            // itself
             // check if the version for the selected module is the selected one
             int j = 0;
             for (int i = 0; i < installOrig.length; i++) {
