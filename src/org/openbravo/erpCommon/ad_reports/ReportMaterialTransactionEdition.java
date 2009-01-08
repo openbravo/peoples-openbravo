@@ -172,11 +172,12 @@ public class ReportMaterialTransactionEdition extends HttpSecureAppServlet {
                         "org/openbravo/erpCommon/ad_reports/ReportMaterialTransactionEdition")
                 .createXmlDocument();
         InoutEditionData[] data = null;
-        data = InoutEditionData.select(this, Utility.getContext(this, vars,
-                "#User_Org", "MaterialReceiptFilter"), Utility.getContext(this,
-                vars, "#User_Client", "MaterialReceiptFilter"), strdateFrom,
-                strdateTo, strcBpartnetId, strmWarehouseId, strcProjectId,
-                strissotrx);
+        data = InoutEditionData.select(this, vars.getLanguage(), Utility
+            .getContext(this, vars, "#User_Org",
+            "MaterialReceiptFilter"), Utility
+            .getContext(this, vars, "#User_Client",
+            "MaterialReceiptFilter"), strdateFrom,
+            strdateTo, strcBpartnetId, strmWarehouseId, strcProjectId);
         xmlDocument.setParameter("directory", "var baseDirectory = \""
                 + strReplaceWith + "/\";\n");
         xmlDocument.setParameter("language", "defaultLang=\""
@@ -201,11 +202,12 @@ public class ReportMaterialTransactionEdition extends HttpSecureAppServlet {
                         "org/openbravo/erpCommon/ad_reports/ReportMaterialTransactionEdition_Pdf")
                 .createXmlDocument();
         InoutEditionData[] data = null;
-        data = InoutEditionData.select(this, Utility.getContext(this, vars,
-                "#User_Org", "MaterialReceiptFilter"), Utility.getContext(this,
-                vars, "#User_Client", "MaterialReceiptFilter"), strdateFrom,
-                strdateTo, strcBpartnetId, strmWarehouseId, strcProjectId,
-                strissotrx);
+        data = InoutEditionData.select(this, vars.getLanguage(), Utility
+            .getContext(this, vars, "#User_Org",
+            "MaterialReceiptFilter"), Utility
+            .getContext(this, vars, "#User_Client",
+            "MaterialReceiptFilter"), strdateFrom,
+            strdateTo, strcBpartnetId, strmWarehouseId, strcProjectId);
         xmlDocument.setData("structure1", data);
         String strResult = xmlDocument.print();
         if (log4j.isDebugEnabled())
