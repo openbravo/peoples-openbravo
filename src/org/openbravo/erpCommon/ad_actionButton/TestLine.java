@@ -453,14 +453,14 @@ public class TestLine extends MultipartRequest implements FieldProvider {
         if (element.equals("window")) {
             try {
                 comprobar = TestLineData.selectWindow(conn, generatedId);
+                if (comprobar.length == 1) {
+                    return true;
+                }
+                if (comprobar.length == 0) {
+                  return false;
+                }
             } catch (ServletException ex) {
                 ex.printStackTrace();
-            }
-            if (comprobar.length == 1) {
-                return true;
-            }
-            if (comprobar.length == 0) {
-                return false;
             }
         }
 
@@ -468,14 +468,14 @@ public class TestLine extends MultipartRequest implements FieldProvider {
         if (element.equals("process")) {
             try {
                 comprobar = TestLineData.selectProcess(conn, generatedId);
+                if (comprobar.length == 1) {
+                    return true;
+                }
+                if (comprobar.length == 0) {
+                    return false;
+                }
             } catch (ServletException ex) {
                 ex.printStackTrace();
-            }
-            if (comprobar.length == 1) {
-                return true;
-            }
-            if (comprobar.length == 0) {
-                return false;
             }
         }
 
@@ -483,14 +483,14 @@ public class TestLine extends MultipartRequest implements FieldProvider {
         if (element.equals("windowtab")) {
             try {
                 comprobar = TestLineData.selectWindowTab(conn, generatedId);
+                if (comprobar.length == 1) {
+                    return true;
+                }
+                if (comprobar.length == 0) {
+                    return false;
+                }
             } catch (ServletException ex) {
                 ex.printStackTrace();
-            }
-            if (comprobar.length == 1) {
-                return true;
-            }
-            if (comprobar.length == 0) {
-                return false;
             }
         }
         return false;

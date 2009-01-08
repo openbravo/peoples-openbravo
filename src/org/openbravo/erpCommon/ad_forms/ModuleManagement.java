@@ -463,7 +463,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
                 final WebServiceImpl ws = loc.getWebService();
                 module = ws.moduleDetail(recordId);
             } catch (final Exception e) {
-                e.printStackTrace();
+              log4j.error(e);
+              throw new ServletException(e);
             }
         } else {
             final ImportModule im = (ImportModule) vars

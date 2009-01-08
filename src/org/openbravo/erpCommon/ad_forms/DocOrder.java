@@ -90,22 +90,23 @@ public class DocOrder extends AcctServer {
         DocLineOrderData[] data = null;
         try {
             data = DocLineOrderData.select(conn, Record_ID);
+
+            //
+            for (int i = 0; i < data.length; i++) {
+                String Line_ID = data[i].getField("cOrderlineId");
+                DocLine docLine = new DocLine(DocumentType, Record_ID, Line_ID);
+                docLine.loadAttributes(data[i], this);
+                String Qty = data[i].getField("qtyordered");
+                docLine.setQty(Qty);
+                String LineNetAmt = data[i].getField("linenetamt");
+                // BigDecimal PriceList = rs.getBigDecimal("PriceList");
+                docLine.setAmount(LineNetAmt);
+                list.add(docLine);
+            }
+            //
         } catch (ServletException e) {
             log4jDocOrder.warn(e);
         }
-        //
-        for (int i = 0; i < data.length; i++) {
-            String Line_ID = data[i].getField("cOrderlineId");
-            DocLine docLine = new DocLine(DocumentType, Record_ID, Line_ID);
-            docLine.loadAttributes(data[i], this);
-            String Qty = data[i].getField("qtyordered");
-            docLine.setQty(Qty);
-            String LineNetAmt = data[i].getField("linenetamt");
-            // BigDecimal PriceList = rs.getBigDecimal("PriceList");
-            docLine.setAmount(LineNetAmt);
-            list.add(docLine);
-        }
-        //
 
         // Return Array
         DocLine[] dl = new DocLine[list.size()];
@@ -124,21 +125,20 @@ public class DocOrder extends AcctServer {
         DocOrderData[] data = null;
         try {
             data = DocOrderData.select(conn, Record_ID);
+            //
+            for (int i = 0; i < data.length; i++) {
+                String C_Tax_ID = data[i].getField("cTaxId");
+                String name = data[i].getField("name");
+                String rate = data[i].getField("rate");
+                String taxBaseAmt = data[i].getField("taxbaseamt");
+                String amount = data[i].getField("taxamt");
+                //
+                DocTax taxLine = new DocTax(C_Tax_ID, name, rate, taxBaseAmt,
+                        amount);
+                list.add(taxLine);
+            }
         } catch (ServletException e) {
             log4jDocOrder.warn(e);
-        }
-
-        //
-        for (int i = 0; i < data.length; i++) {
-            String C_Tax_ID = data[i].getField("cTaxId");
-            String name = data[i].getField("name");
-            String rate = data[i].getField("rate");
-            String taxBaseAmt = data[i].getField("taxbaseamt");
-            String amount = data[i].getField("taxamt");
-            //
-            DocTax taxLine = new DocTax(C_Tax_ID, name, rate, taxBaseAmt,
-                    amount);
-            list.add(taxLine);
         }
 
         // Return Array

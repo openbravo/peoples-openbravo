@@ -77,34 +77,34 @@ public class DocInventory extends AcctServer {
         DocLineInventoryData[] data = null;
         try {
             data = DocLineInventoryData.select(conn, Record_ID);
+            for (int i = 0; i < data.length; i++) {
+              String Line_ID = data[i].getField("mInventorylineId");
+              DocLine_Material docLine = new DocLine_Material(DocumentType,
+                      Record_ID, Line_ID);
+              docLine.loadAttributes(data[i], this);
+              log4jDocInventory.debug("QtyBook = " + data[i].getField("qtybook")
+                      + " - QtyCount = " + data[i].getField("qtycount"));
+              BigDecimal QtyBook = new BigDecimal(data[i].getField("qtybook"));
+              BigDecimal QtyCount = new BigDecimal(data[i].getField("qtycount"));
+              docLine.setQty((QtyCount.subtract(QtyBook)).toString(), conn);
+              docLine.m_M_Locator_ID = data[i].getField("mLocatorId");
+              DocInventoryData[] data1 = null;
+              try {
+                  data1 = DocInventoryData.selectWarehouse(conn,
+                          docLine.m_M_Locator_ID);
+              } catch (ServletException e) {
+                  log4jDocInventory.warn(e);
+              }
+              if (data1 != null && data1.length > 0)
+                  this.M_Warehouse_ID = data1[0].mWarehouseId;
+              // Set Charge ID only when Inventory Type = Charge
+              if (!"C".equals(data[i].getField("inventorytype")))
+                  docLine.m_C_Charge_ID = "";
+              //
+              list.add(docLine);
+          }
         } catch (ServletException e) {
             log4jDocInventory.warn(e);
-        }
-        for (int i = 0; i < data.length; i++) {
-            String Line_ID = data[i].getField("mInventorylineId");
-            DocLine_Material docLine = new DocLine_Material(DocumentType,
-                    Record_ID, Line_ID);
-            docLine.loadAttributes(data[i], this);
-            log4jDocInventory.debug("QtyBook = " + data[i].getField("qtybook")
-                    + " - QtyCount = " + data[i].getField("qtycount"));
-            BigDecimal QtyBook = new BigDecimal(data[i].getField("qtybook"));
-            BigDecimal QtyCount = new BigDecimal(data[i].getField("qtycount"));
-            docLine.setQty((QtyCount.subtract(QtyBook)).toString(), conn);
-            docLine.m_M_Locator_ID = data[i].getField("mLocatorId");
-            DocInventoryData[] data1 = null;
-            try {
-                data1 = DocInventoryData.selectWarehouse(conn,
-                        docLine.m_M_Locator_ID);
-            } catch (ServletException e) {
-                log4jDocInventory.warn(e);
-            }
-            if (data1 != null && data1.length > 0)
-                this.M_Warehouse_ID = data1[0].mWarehouseId;
-            // Set Charge ID only when Inventory Type = Charge
-            if (!"C".equals(data[i].getField("inventorytype")))
-                docLine.m_C_Charge_ID = "";
-            //
-            list.add(docLine);
         }
         // Return Array
         DocLine[] dl = new DocLine[list.size()];

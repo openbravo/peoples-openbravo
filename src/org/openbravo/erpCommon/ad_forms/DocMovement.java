@@ -78,23 +78,21 @@ public class DocMovement extends AcctServer {
         DocLineMovementData[] data = null;
         try {
             data = DocLineMovementData.select(conn, Record_ID);
+            for (int i = 0; i < data.length; i++) {
+              String Line_ID = data[i].getField("mMovementlineId");
+              DocLine_Material docLine = new DocLine_Material(DocumentType,
+                      Record_ID, Line_ID);
+              docLine.loadAttributes(data[i], this);
+              docLine.setQty(data[i].getField("MovementQty"), conn);
+              docLine.m_M_Locator_ID = data[i].getField("M_Locator_ID");
+              docLine.m_M_LocatorTo_ID = data[i].getField("M_LocatorTo_ID");
+              //
+              log4jDocMovement.debug("Movement line: " + Line_ID + " loaded.");
+              list.add(docLine);
+            }
         } catch (ServletException e) {
             log4jDocMovement.warn(e);
         }
-        //
-        for (int i = 0; i < data.length; i++) {
-            String Line_ID = data[i].getField("mMovementlineId");
-            DocLine_Material docLine = new DocLine_Material(DocumentType,
-                    Record_ID, Line_ID);
-            docLine.loadAttributes(data[i], this);
-            docLine.setQty(data[i].getField("MovementQty"), conn);
-            docLine.m_M_Locator_ID = data[i].getField("M_Locator_ID");
-            docLine.m_M_LocatorTo_ID = data[i].getField("M_LocatorTo_ID");
-            //
-            log4jDocMovement.debug("Movement line: " + Line_ID + " loaded.");
-            list.add(docLine);
-        }
-
         // Return Array
         DocLine[] dl = new DocLine[list.size()];
         list.toArray(dl);

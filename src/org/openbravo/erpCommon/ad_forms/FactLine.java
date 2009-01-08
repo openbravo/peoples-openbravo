@@ -402,11 +402,11 @@ public class FactLine {
         FactLineData[] data = null;
         try {
             data = FactLineData.selectLocation(conn, C_BPartner_Location_ID);
+            if (data.length > 0) {
+              C_Location_ID = data[0].location;
+          }
         } catch (ServletException e) {
             log4jFactLine.warn(e);
-        }
-        if (data.length > 0) {
-            C_Location_ID = data[0].location;
         }
         if (!C_Location_ID.equals(""))
             setLocation(C_Location_ID, isFrom);
@@ -428,12 +428,12 @@ public class FactLine {
         FactLineData[] data = null;
         try {
             data = FactLineData.selectLocationFromLocator(conn, M_Locator_ID);
+            C_Location_ID = data[0].location;
+            if (!C_Location_ID.equals(""))
+                setLocation(C_Location_ID, isFrom);
         } catch (ServletException e) {
             log4jFactLine.debug(e);
         }
-        C_Location_ID = data[0].location;
-        if (!C_Location_ID.equals(""))
-            setLocation(C_Location_ID, isFrom);
     } // setLocationFromLocator
 
     /**
@@ -785,12 +785,13 @@ public class FactLine {
             try {
                 data = FactLineData.selectSalesRegion(conn,
                         m_docVO.C_BPartner_Location_ID);
+                if (data.length > 0) {
+                    C_SalesRegion_ID = data[0].salesregion;
+                }
             } catch (ServletException e) {
                 log4jFactLine.warn(e);
             }
-            if (data.length > 0) {
-                C_SalesRegion_ID = data[0].salesregion;
-            }
+
             if (C_SalesRegion_ID != null && !C_SalesRegion_ID.equals(""))
                 m_docVO.BP_C_SalesRegion_ID = C_SalesRegion_ID;// save
             else
@@ -868,10 +869,11 @@ public class FactLine {
         try {
             data = AcctServerData.periodOpen(conn, m_docVO.AD_Client_ID,
                     m_docVO.DocumentType, m_docVO.AD_Org_ID, strDateAcct);
+            return data[0].period;
         } catch (ServletException e) {
             log4jFactLine.warn(e);
         }
-        return data[0].period;
+        return null; // if exception occurred, as caller handles this
     } // setC_Period_ID
 
     public StringBuffer getDescription(ConnectionProvider connectionProvider,

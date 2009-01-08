@@ -80,12 +80,12 @@ public class DocDPManagement extends AcctServer {
 
         try {
             data = DocLineDPManagementData.select(conn, Record_ID);
+            log4j.debug("LoadLines: data.len" + data.length + " record_ID "
+                + Record_ID);
         } catch (ServletException e) {
             log4j.warn(e);
         }
 
-        log4j.debug("LoadLines: data.len" + data.length + " record_ID "
-                + Record_ID);
         //
         for (int i = 0; data != null && i < data.length; i++) {
             String Line_ID = data[i].getField("C_DP_MANAGEMENTLINE_ID");
@@ -226,10 +226,10 @@ public class DocDPManagement extends AcctServer {
             if (validCombination_ID.equals(""))
                 return null;
             acc = Account.getAccount(conn, validCombination_ID);
+            log4j.debug("DocAmortization - getAccount - " + acc.Account_ID);
         } catch (ServletException e) {
             log4j.warn(e);
         }
-        log4j.debug("DocAmortization - getAccount - " + acc.Account_ID);
         return acc;
     } // getAccount
 

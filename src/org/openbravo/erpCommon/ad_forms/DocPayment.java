@@ -81,48 +81,48 @@ public class DocPayment extends AcctServer {
         DocLinePaymentData[] data = null;
         try {
             data = DocLinePaymentData.select(connectionProvider, Record_ID);
+            for (int i = 0; i < data.length; i++) {
+              String Line_ID = data[i].cDebtPaymentId;
+              DocLine_Payment docLine = new DocLine_Payment(DocumentType,
+                      Record_ID, Line_ID);
+              docLine.Amount = data[i].getField("amount");
+              docLine.WriteOffAmt = data[i].getField("writeoffamt");
+              docLine.isReceipt = data[i].getField("isreceipt");
+              docLine.isManual = data[i].getField("ismanual");
+              docLine.isPaid = data[i].getField("ispaid");
+              docLine.loadAttributes(data[i], this);
+              docLine.m_Record_Id2 = data[i].cDebtPaymentId;
+              docLine.C_Settlement_Generate_ID = data[i]
+                      .getField("cSettlementGenerateId");
+              docLine.C_Settlement_Cancel_ID = data[i]
+                      .getField("cSettlementCancelId");
+              docLine.C_GLItem_ID = data[i].getField("cGlitemId");
+              docLine.IsDirectPosting = data[i].getField("isdirectposting");
+              docLine.C_Currency_ID_From = data[i].getField("cCurrencyId");
+              docLine.conversionDate = data[i].getField("conversiondate");
+              docLine.C_INVOICE_ID = data[i].getField("C_INVOICE_ID");
+              docLine.C_BPARTNER_ID = data[i].getField("C_BPARTNER_ID");
+              docLine.C_WITHHOLDING_ID = data[i].getField("C_WITHHOLDING_ID");
+              docLine.WithHoldAmt = data[i].getField("withholdingamount");
+              docLine.C_BANKSTATEMENTLINE_ID = data[i]
+                      .getField("C_BANKSTATEMENTLINE_ID");
+              docLine.C_CASHLINE_ID = data[i].getField("C_CASHLINE_ID");
+              try {
+                  docLine.dpStatus = DocLinePaymentData.getDPStatus(
+                          connectionProvider, Record_ID, data[i]
+                                  .getField("cDebtPaymentId"));
+              } catch (ServletException e) {
+                  log4j.error(e);
+                  docLine.dpStatus = "";
+              }
+              if (log4j.isDebugEnabled())
+                  log4j
+                          .debug("DocPayment - loadLines - docLine.IsDirectPosting - "
+                                  + docLine.IsDirectPosting);
+              list.add(docLine);
+            }
         } catch (ServletException e) {
             log4j.warn(e);
-        }
-        for (int i = 0; i < data.length; i++) {
-            String Line_ID = data[i].cDebtPaymentId;
-            DocLine_Payment docLine = new DocLine_Payment(DocumentType,
-                    Record_ID, Line_ID);
-            docLine.Amount = data[i].getField("amount");
-            docLine.WriteOffAmt = data[i].getField("writeoffamt");
-            docLine.isReceipt = data[i].getField("isreceipt");
-            docLine.isManual = data[i].getField("ismanual");
-            docLine.isPaid = data[i].getField("ispaid");
-            docLine.loadAttributes(data[i], this);
-            docLine.m_Record_Id2 = data[i].cDebtPaymentId;
-            docLine.C_Settlement_Generate_ID = data[i]
-                    .getField("cSettlementGenerateId");
-            docLine.C_Settlement_Cancel_ID = data[i]
-                    .getField("cSettlementCancelId");
-            docLine.C_GLItem_ID = data[i].getField("cGlitemId");
-            docLine.IsDirectPosting = data[i].getField("isdirectposting");
-            docLine.C_Currency_ID_From = data[i].getField("cCurrencyId");
-            docLine.conversionDate = data[i].getField("conversiondate");
-            docLine.C_INVOICE_ID = data[i].getField("C_INVOICE_ID");
-            docLine.C_BPARTNER_ID = data[i].getField("C_BPARTNER_ID");
-            docLine.C_WITHHOLDING_ID = data[i].getField("C_WITHHOLDING_ID");
-            docLine.WithHoldAmt = data[i].getField("withholdingamount");
-            docLine.C_BANKSTATEMENTLINE_ID = data[i]
-                    .getField("C_BANKSTATEMENTLINE_ID");
-            docLine.C_CASHLINE_ID = data[i].getField("C_CASHLINE_ID");
-            try {
-                docLine.dpStatus = DocLinePaymentData.getDPStatus(
-                        connectionProvider, Record_ID, data[i]
-                                .getField("cDebtPaymentId"));
-            } catch (ServletException e) {
-                log4j.error(e);
-                docLine.dpStatus = "";
-            }
-            if (log4j.isDebugEnabled())
-                log4j
-                        .debug("DocPayment - loadLines - docLine.IsDirectPosting - "
-                                + docLine.IsDirectPosting);
-            list.add(docLine);
         }
         // Return Array
         DocLine[] dl = new DocLine[list.size()];

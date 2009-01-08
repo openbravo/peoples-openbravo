@@ -1101,13 +1101,13 @@ public abstract class AcctServer {
                         + " -- DocumentType - " + DocumentType);
             data = AcctServerData.periodOpen(connectionProvider, AD_Client_ID,
                     DocumentType, AD_Org_ID, DateAcct);
+            C_Period_ID = data[0].period;
+            if (log4j.isDebugEnabled())
+                log4j.debug("AcctServer - setC_Period_ID - " + AD_Client_ID + "/"
+                        + DateAcct + "/" + DocumentType + " => " + C_Period_ID);
         } catch (ServletException e) {
             log4j.warn(e);
         }
-        C_Period_ID = data[0].period;
-        if (log4j.isDebugEnabled())
-            log4j.debug("AcctServer - setC_Period_ID - " + AD_Client_ID + "/"
-                    + DateAcct + "/" + DocumentType + " => " + C_Period_ID);
     } // setC_Period_ID
 
     /**
@@ -1212,11 +1212,11 @@ public abstract class AcctServer {
                     M_Product_ID, C_BPartner_ID, AD_OrgTrx_ID, C_LocFrom_ID,
                     C_LocTo_ID, C_SRegion_ID, C_Project_ID, C_Campaign_ID,
                     C_Activity_ID, User1_ID, User2_ID);
+            retValue = data.validCombination;
         } catch (ServletException e) {
             log4j.warn(e);
         }
         //
-        retValue = data.validCombination;
         // if (log4j.isDebugEnabled())
         // log4j.debug("AcctServer - getValidCombination: " + sb.toString());
         return retValue;
@@ -1253,42 +1253,42 @@ public abstract class AcctServer {
         AcctServerData[] data = null;
         try {
             data = AcctServerData.selectMatch(conn, AD_Client_ID);
+            for (int i = 0; i < data.length; i++) {
+              BigDecimal qty1 = new BigDecimal(data[i].qty1);
+              BigDecimal qty2 = new BigDecimal(data[i].qty2);
+              BigDecimal Qty = qty1.min(qty2);
+              if (Qty.toString().equals("0"))
+                  continue;
+              // if (log4j.isDebugEnabled())
+              // log4j.debug("AcctServer - Match--dateTrx1 :->" + data[i].datetrx1
+              // + "Match--dateTrx2: ->" + data[i].datetrx2);
+              String dateTrx1 = data[i].datetrx1;
+              String dateTrx2 = data[i].datetrx2;
+              String compare = "";
+              try {
+                  compare = DateTimeData.compare(conn, dateTrx1, dateTrx2);
+              } catch (ServletException e) {
+                  log4j.warn(e);
+              }
+              String DateTrx = dateTrx1;
+              if (compare.equals("-1"))
+                  DateTrx = dateTrx2;
+              //
+              String strQty = Qty.toString();
+              String strDateTrx = DateTrx;
+              String AD_Client_ID = data[i].adClientId;
+              String AD_Org_ID = data[i].adOrgId;
+              String C_InvoiceLine_ID = data[i].cInvoicelineId;
+              String M_InOutLine_ID = data[i].mInoutlineId;
+              String M_Product_ID = data[i].mProductId;
+              //
+              if (createMatchInv(AD_Client_ID, AD_Org_ID, M_InOutLine_ID,
+                      C_InvoiceLine_ID, M_Product_ID, strDateTrx, strQty, vars,
+                      conn, con) == 1)
+                  counter++;
+          }
         } catch (ServletException e) {
             log4j.warn(e);
-        }
-        for (int i = 0; i < data.length; i++) {
-            BigDecimal qty1 = new BigDecimal(data[i].qty1);
-            BigDecimal qty2 = new BigDecimal(data[i].qty2);
-            BigDecimal Qty = qty1.min(qty2);
-            if (Qty.toString().equals("0"))
-                continue;
-            // if (log4j.isDebugEnabled())
-            // log4j.debug("AcctServer - Match--dateTrx1 :->" + data[i].datetrx1
-            // + "Match--dateTrx2: ->" + data[i].datetrx2);
-            String dateTrx1 = data[i].datetrx1;
-            String dateTrx2 = data[i].datetrx2;
-            String compare = "";
-            try {
-                compare = DateTimeData.compare(conn, dateTrx1, dateTrx2);
-            } catch (ServletException e) {
-                log4j.warn(e);
-            }
-            String DateTrx = dateTrx1;
-            if (compare.equals("-1"))
-                DateTrx = dateTrx2;
-            //
-            String strQty = Qty.toString();
-            String strDateTrx = DateTrx;
-            String AD_Client_ID = data[i].adClientId;
-            String AD_Org_ID = data[i].adOrgId;
-            String C_InvoiceLine_ID = data[i].cInvoicelineId;
-            String M_InOutLine_ID = data[i].mInoutlineId;
-            String M_Product_ID = data[i].mProductId;
-            //
-            if (createMatchInv(AD_Client_ID, AD_Org_ID, M_InOutLine_ID,
-                    C_InvoiceLine_ID, M_Product_ID, strDateTrx, strQty, vars,
-                    conn, con) == 1)
-                counter++;
         }
         // if (log4j.isDebugEnabled())
         // log4j.debug("AcctServer - Matcher.match - Client_ID=" + AD_Client_ID

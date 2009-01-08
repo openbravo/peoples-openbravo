@@ -142,29 +142,29 @@ public class DocInvoice extends AcctServer {
         try {
             data = DocInvoiceData.selectDebtPayments(connectionProvider,
                     Record_ID);
+            log4jDocInvoice.debug("############### DebtPayments.length = "
+                + data.length);
+            for (int i = 0; i < data.length; i++) {
+              //
+              String Line_ID = data[i].cDebtPaymentId;
+              DocLine_Payment dpLine = new DocLine_Payment(DocumentType,
+                      Record_ID, Line_ID);
+              log4jDocInvoice.debug(" dpLine.m_Record_Id2 = "
+                      + data[i].cDebtPaymentId);
+              dpLine.m_Record_Id2 = data[i].cDebtPaymentId;
+              dpLine.C_Currency_ID_From = data[i].cCurrencyId;
+              dpLine.dpStatus = data[i].status;
+              dpLine.isReceipt = data[i].isreceipt;
+              dpLine.isPaid = data[i].ispaid;
+              dpLine.isManual = data[i].ismanual;
+              dpLine.WriteOffAmt = data[i].writeoffamt;
+              dpLine.Amount = data[i].amount;
+              list.add(dpLine);
+          }
         } catch (ServletException e) {
             log4jDocInvoice.warn(e);
         }
-        log4jDocInvoice.debug("############### DebtPayments.length = "
-                + data.length);
-        //
-        for (int i = 0; i < data.length; i++) {
-            //
-            String Line_ID = data[i].cDebtPaymentId;
-            DocLine_Payment dpLine = new DocLine_Payment(DocumentType,
-                    Record_ID, Line_ID);
-            log4jDocInvoice.debug(" dpLine.m_Record_Id2 = "
-                    + data[i].cDebtPaymentId);
-            dpLine.m_Record_Id2 = data[i].cDebtPaymentId;
-            dpLine.C_Currency_ID_From = data[i].cCurrencyId;
-            dpLine.dpStatus = data[i].status;
-            dpLine.isReceipt = data[i].isreceipt;
-            dpLine.isPaid = data[i].ispaid;
-            dpLine.isManual = data[i].ismanual;
-            dpLine.WriteOffAmt = data[i].writeoffamt;
-            dpLine.Amount = data[i].amount;
-            list.add(dpLine);
-        }
+
         // Return Array
         DocLine_Payment[] tl = new DocLine_Payment[list.size()];
         list.toArray(tl);

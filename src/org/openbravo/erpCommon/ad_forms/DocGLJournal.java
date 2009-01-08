@@ -83,38 +83,37 @@ public class DocGLJournal extends AcctServer {
         DocLineGLJournalData[] data = null;
         try {
             data = DocLineGLJournalData.select(conn, Record_ID);
+            for (int i = 0; i < data.length; i++) {
+              String Line_ID = data[i].glJournallineId;
+              DocLine docLine = new DocLine(DocumentType, Record_ID, Line_ID);
+              docLine.loadAttributes(data[i], this);
+              docLine.m_Record_Id2 = data[i].cDebtPaymentId;
+              // -- Source Amounts
+              String AmtSourceDr = data[i].amtsourcedr;
+              String AmtSourceCr = data[i].amtsourcecr;
+              docLine.setAmount(AmtSourceDr, AmtSourceCr);
+              // -- Converted Amounts
+              String C_AcctSchema_ID = data[i].cAcctschemaId;
+              String AmtAcctDr = data[i].amtacctdr;
+              String AmtAcctCr = data[i].amtacctcr;
+              docLine.setConvertedAmt(C_AcctSchema_ID, AmtAcctDr, AmtAcctCr);
+              docLine.m_DateAcct = this.DateAcct;
+              // -- Account
+              String C_ValidCombination_ID = data[i].cValidcombinationId;
+              Account acct = null;
+              try {
+                  acct = new Account(conn, C_ValidCombination_ID);
+              } catch (ServletException e) {
+                  log4jDocGLJournal.warn(e);
+              }
+              docLine.setAccount(acct);
+              // -- Set Org from account (x-org)
+              docLine.setAD_Org_ID(acct.getAD_Org_ID());
+              //
+              list.add(docLine);
+            }
         } catch (ServletException e) {
             log4jDocGLJournal.warn(e);
-        }
-        //
-        for (int i = 0; i < data.length; i++) {
-            String Line_ID = data[i].glJournallineId;
-            DocLine docLine = new DocLine(DocumentType, Record_ID, Line_ID);
-            docLine.loadAttributes(data[i], this);
-            docLine.m_Record_Id2 = data[i].cDebtPaymentId;
-            // -- Source Amounts
-            String AmtSourceDr = data[i].amtsourcedr;
-            String AmtSourceCr = data[i].amtsourcecr;
-            docLine.setAmount(AmtSourceDr, AmtSourceCr);
-            // -- Converted Amounts
-            String C_AcctSchema_ID = data[i].cAcctschemaId;
-            String AmtAcctDr = data[i].amtacctdr;
-            String AmtAcctCr = data[i].amtacctcr;
-            docLine.setConvertedAmt(C_AcctSchema_ID, AmtAcctDr, AmtAcctCr);
-            docLine.m_DateAcct = this.DateAcct;
-            // -- Account
-            String C_ValidCombination_ID = data[i].cValidcombinationId;
-            Account acct = null;
-            try {
-                acct = new Account(conn, C_ValidCombination_ID);
-            } catch (ServletException e) {
-                log4jDocGLJournal.warn(e);
-            }
-            docLine.setAccount(acct);
-            // -- Set Org from account (x-org)
-            docLine.setAD_Org_ID(acct.getAD_Org_ID());
-            //
-            list.add(docLine);
         }
         // Return Array
         DocLine[] dl = new DocLine[list.size()];

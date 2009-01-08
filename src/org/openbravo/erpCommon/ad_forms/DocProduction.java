@@ -83,12 +83,12 @@ public class DocProduction extends AcctServer {
 
         try {
             data = DocLineProductionData.select(conn, Record_ID);
+            log4j.debug("LoadLines: data.len" + data.length + " record_ID "
+                + Record_ID);
         } catch (ServletException e) {
             log4j.warn(e);
         }
 
-        log4j.debug("LoadLines: data.len" + data.length + " record_ID "
-                + Record_ID);
         //
         for (int i = 0; data != null && i < data.length; i++) {
             String Line_ID = data[i].getField("M_PRODUCTIONLINE_ID");

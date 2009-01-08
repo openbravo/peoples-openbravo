@@ -247,12 +247,12 @@ public final class AcctSchema implements Serializable {
         try {
             data = AcctSchemaData.selectAcctSchemas(conn, AD_Client_ID,
                     AD_Org_ID);
+            for (int i = 0; data.length > i; i++) {
+              String as = data[i].cAcctschemaId;
+              list.add(new AcctSchema(conn, as));
+            }
         } catch (ServletException e) {
             log4jAcctSchema.warn(e);
-        }
-        for (int i = 0; data.length > i; i++) {
-            String as = data[i].cAcctschemaId;
-            list.add(new AcctSchema(conn, as));
         }
         // Save
         return list;

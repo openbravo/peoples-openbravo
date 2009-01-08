@@ -262,27 +262,27 @@ public class OBScheduler {
             data = ProcessRequestData
                     .selectByStatus(getConnection(), SCHEDULED);
 
+            for (final ProcessRequestData request : data) {
+              final String requestId = request.id;
+              final VariablesSecureApp vars = ProcessContext.newInstance(
+                      request.obContext).toVars();
+              try {
+                  final ProcessBundle bundle = ProcessBundle.request(requestId, vars,
+                          getConnection());
+                  schedule(requestId, bundle);
+
+              } catch (final ServletException e) {
+                  // TODO Auto-generated catch block
+                  e.printStackTrace();
+
+              } catch (final SchedulerException e) {
+                  // TODO Auto-generated catch block
+                  e.printStackTrace();
+              }
+            }
         } catch (final ServletException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }
-        for (final ProcessRequestData request : data) {
-            final String requestId = request.id;
-            final VariablesSecureApp vars = ProcessContext.newInstance(
-                    request.obContext).toVars();
-            try {
-                final ProcessBundle bundle = ProcessBundle.request(requestId, vars,
-                        getConnection());
-                schedule(requestId, bundle);
-
-            } catch (final ServletException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-
-            } catch (final SchedulerException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
         }
     }
 

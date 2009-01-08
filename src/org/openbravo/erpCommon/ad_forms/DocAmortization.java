@@ -209,11 +209,11 @@ public class DocAmortization extends AcctServer {
             if (validCombination_ID.equals(""))
                 return null;
             acc = Account.getAccount(conn, validCombination_ID);
+            log4jDocAmortization.debug("DocAmortization - getAccount - "
+                + acc.Account_ID);
         } catch (ServletException e) {
             log4jDocAmortization.warn(e);
         }
-        log4jDocAmortization.debug("DocAmortization - getAccount - "
-                + acc.Account_ID);
         return acc;
     } // getAccount
 

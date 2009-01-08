@@ -60,16 +60,16 @@ public class ProductInfo {
         ProductInfoData[] data = null;
         try {
             data = ProductInfoData.select(conn, m_M_Product_ID);
+            if (data.length == 1) {
+              m_productType = data[0].producttype;
+              m_ProductCategory = data[0].value;
+              m_C_UOM_ID = data[0].cUomId;
+              // reference
+              m_AD_Client_ID = data[0].adClientId;
+              m_AD_Org_ID = data[0].adOrgId;
+            }
         } catch (ServletException e) {
             log4jProductInfo.warn(e);
-        }
-        if (data.length == 1) {
-            m_productType = data[0].producttype;
-            m_ProductCategory = data[0].value;
-            m_C_UOM_ID = data[0].cUomId;
-            // reference
-            m_AD_Client_ID = data[0].adClientId;
-            m_AD_Org_ID = data[0].adOrgId;
         }
     } // init
 
