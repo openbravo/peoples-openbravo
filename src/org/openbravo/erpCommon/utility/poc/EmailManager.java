@@ -47,7 +47,7 @@ public class EmailManager {
 	 * 
 	 */
     public static Session newMailSession(ConnectionProvider connectionProvider,
-            String clientId) throws PocException {
+            String clientId) throws PocException, ServletException {
         PocConfigurationData configurations[];
         try {
             configurations = PocConfigurationData.getSmtpDetails(
@@ -72,10 +72,8 @@ public class EmailManager {
                 log4j.debug("Crm configuration, smtp server password: "
                         + configuration.smtpserverpassword);
         } else {
-            // throw new ServletException(
-            // "No CRM configuration found for this client." );
-            if (log4j.isDebugEnabled())
-                log4j.debug("No CRM configuration found for this client.");
+             throw new ServletException(
+             "No Poc configuration found for this client." );
         }
 
         Properties props = new Properties();
