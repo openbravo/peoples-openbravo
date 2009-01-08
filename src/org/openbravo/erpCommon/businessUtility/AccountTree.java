@@ -11,11 +11,12 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SL
- * Contributions are Copyright (C) 2001-2006 Openbravo S.L.
+ * Contributions are Copyright (C) 2001-2009 Openbravo S.L.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.businessUtility;
 
+import java.math.BigDecimal;
 import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
@@ -148,31 +149,31 @@ public class AccountTree {
      * Applies the sign to the quantity, according to the showValueCond field
      * 
      * @param qty
-     *            Double value with the quantity to evaluate.
+     *            BigDecimal value with the quantity to evaluate.
      * @param sign
      *            String with the showValueCond field value.
      * @param isSummary
      *            Boolean that indicates if this is a summary record.
-     * @return Double with the correct sign applied.
+     * @return BigDecimal with the correct sign applied.
      */
-    private double applySign(double qty, String sign, boolean isSummary) {
+    private BigDecimal applySign(BigDecimal qty, String sign, boolean isSummary) {
         // resetFlag will store whether the value has been truncated because of
         // showvaluecond or not
         resetFlag = false;
-        double total = 0.0;
+        BigDecimal total = BigDecimal.ZERO;
         if (isSummary && !sign.equalsIgnoreCase("A")) {
             if (sign.equalsIgnoreCase("P")) {
-                if (qty > total) {
+                if (qty.compareTo(total) > 0) {
                     total = qty;
                 } else {
-                    total = 0.0;
+                    total = BigDecimal.ZERO;
                     resetFlag = true;
                 }
             } else if (sign.equalsIgnoreCase("N")) {
-                if (qty < total) {
+                if (qty.compareTo(total) < 0) {
                     total = qty;
                 } else {
-                    total = 0.0;
+                    total = BigDecimal.ZERO;
                     resetFlag = true;
                 }
             } else
@@ -205,14 +206,12 @@ public class AccountTree {
                 }
                 element.qtyOperation = accounts[i].qty;
                 element.qtyOperationRef = accounts[i].qtyRef;
-                double dblQty = Double.valueOf(element.qtyOperation)
-                        .doubleValue();
-                double dblQtyRef = Double.valueOf(element.qtyOperationRef)
-                        .doubleValue();
-                element.qty = Double.toString(applySign(dblQty,
-                        element.showvaluecond, element.issummary.equals("Y")));
-                element.qtyRef = Double.toString(applySign(dblQtyRef,
-                        element.showvaluecond, element.issummary.equals("Y")));
+                BigDecimal bdQty = new BigDecimal(element.qtyOperation);
+                BigDecimal bdQtyRef = new BigDecimal(element.qtyOperationRef);
+                element.qty = (applySign(bdQty, element.showvaluecond,
+			element.issummary.equals("Y"))).toPlainString();
+                element.qtyRef = (applySign(bdQtyRef, element.showvaluecond,
+			element.issummary.equals("Y"))).toPlainString();
                 break;
             }
         }
@@ -316,10 +315,8 @@ public class AccountTree {
             vecTotal.addElement("0");
             vecTotal.addElement("0");
         }
-        double total = Double.valueOf((String) vecTotal.elementAt(0))
-                .doubleValue();
-        double totalRef = Double.valueOf((String) vecTotal.elementAt(1))
-                .doubleValue();
+        BigDecimal total = new BigDecimal((String) vecTotal.elementAt(0));
+        BigDecimal totalRef = new BigDecimal((String) vecTotal.elementAt(1));
         boolean encontrado = false;
         for (int i = 0; i < forms.length; i++) {
             if (forms[i].id.equals(indice)) {
@@ -339,19 +336,23 @@ public class AccountTree {
              * 
              * 
              */
-                        actual.qty = Double.toString(applySign(Double.valueOf(
-                                actual.qtyOperation).doubleValue(),
+                        actual.qty = (applySign(new BigDecimal(
+				actual.qtyOperation),
                                 actual.showvaluecond, actual.issummary
-                                        .equals("Y")));
-                        actual.qtyRef = Double.toString(applySign(Double
-                                .valueOf(actual.qtyOperationRef).doubleValue(),
+                                        .equals("Y"))).toPlainString();
+                        actual.qtyRef = (applySign(new BigDecimal(
+				actual.qtyOperationRef),
                                 actual.showvaluecond, actual.issummary
-                                        .equals("Y")));
-                        total += (Double.valueOf(actual.qty).doubleValue() * Double
-                                .valueOf(forms[i].accountsign).doubleValue());
-                        totalRef += (Double.valueOf(actual.qtyRef)
-                                .doubleValue() * Double.valueOf(
-                                forms[i].accountsign).doubleValue());
+                                        .equals("Y"))).toPlainString();                        
+                        total = total
+				.add(new BigDecimal(actual.qty)
+					.multiply(new BigDecimal(
+						forms[i].accountsign)));
+                        
+                        totalRef = totalRef
+				.add(new BigDecimal(actual.qtyRef)
+					.multiply(new BigDecimal(
+						forms[i].accountsign)));
                         /*
                          * total +=
                          * (Double.valueOf(actual.qtyOperation).doubleValue()
@@ -388,17 +389,17 @@ public class AccountTree {
                     vecParcial.addElement("0");
                     calculateTree(forms, forms[i].nodeId, vecParcial, true,
                             true);
-                    double parcial = Double.valueOf(
-                            (String) vecParcial.elementAt(0)).doubleValue();
-                    double parcialRef = Double.valueOf(
-                            (String) vecParcial.elementAt(1)).doubleValue();
+                    BigDecimal parcial = new BigDecimal(
+                            (String) vecParcial.elementAt(0));
+                    BigDecimal parcialRef = new BigDecimal((String) vecParcial
+			    .elementAt(1));
                     if (log4j.isDebugEnabled())
                         log4j.debug("AccountTree.formsCalculate - parcial: "
-                                + Double.toString(parcial));
-                    parcial = (parcial * Double.valueOf(forms[i].accountsign)
-                            .doubleValue());
-                    parcialRef = (parcialRef * Double.valueOf(
-                            forms[i].accountsign).doubleValue());
+                                + parcial.toPlainString());
+                    parcial = parcial.multiply(new BigDecimal(
+			    forms[i].accountsign));
+                    parcialRef = parcialRef.multiply(new BigDecimal(
+                            forms[i].accountsign));
                     if (log4j.isDebugEnabled())
                         log4j
                                 .debug("AccountTree.formsCalculate - C_ElementValue_ID: "
@@ -407,13 +408,13 @@ public class AccountTree {
                                         + parcial
                                         + " account sign: "
                                         + forms[i].accountsign);
-                    total += parcial;
-                    totalRef += parcialRef;
+                    total = total.add(parcial);
+                    totalRef = totalRef.add(parcialRef);
                 }
             }
         }
-        vecTotal.set(0, Double.toString(total));
-        vecTotal.set(1, Double.toString(totalRef));
+        vecTotal.set(0, total.toPlainString());
+	vecTotal.set(1, totalRef.toPlainString());
     }
 
     /**
@@ -518,10 +519,8 @@ public class AccountTree {
             vecTotal.addElement("0");
             vecTotal.addElement("0");
         }
-        double total = Double.valueOf((String) vecTotal.elementAt(0))
-                .doubleValue();
-        double totalRef = Double.valueOf((String) vecTotal.elementAt(1))
-                .doubleValue();
+        BigDecimal total = new BigDecimal((String) vecTotal.elementAt(0));
+        BigDecimal totalRef = new BigDecimal((String) vecTotal.elementAt(1));
 
         for (int i = 0; i < resultantAccounts.length; i++) {
             if ((isExactValue && nodeIn(resultantAccounts[i].nodeId, indice))
@@ -548,20 +547,17 @@ public class AccountTree {
                         for (int h = 0; h < dataChilds.length; h++)
                             vecAux.addElement(dataChilds[h]);
                     if (!hasForm(resultantAccounts[i].nodeId, forms)) {
-                        double parcial = Double.valueOf(
-                                (String) vecParcial.elementAt(0)).doubleValue();
-                        double parcialRef = Double.valueOf(
-                                (String) vecParcial.elementAt(1)).doubleValue();
-                        resultantAccounts[i].qtyOperation = Double
-                                .toString(Double.valueOf(
+                        BigDecimal parcial = new BigDecimal((String) vecParcial
+				.elementAt(0));
+			BigDecimal parcialRef = new BigDecimal(
+				(String) vecParcial.elementAt(1));
+                        resultantAccounts[i].qtyOperation = (new BigDecimal(
                                         resultantAccounts[i].qtyOperation)
-                                        .doubleValue()
-                                        + parcial);
-                        resultantAccounts[i].qtyOperationRef = Double
-                                .toString(Double.valueOf(
+                                        .add(parcial))
+				.toPlainString();
+                        resultantAccounts[i].qtyOperationRef = (new BigDecimal(
                                         resultantAccounts[i].qtyOperationRef)
-                                        .doubleValue()
-                                        + parcialRef);
+                                        .add(parcialRef)).toPlainString();
                         log4j.debug("calculateTree - NothasForm - parcial:"
                                 + parcial
                                 + " - resultantAccounts[i].qtyOperation:"
@@ -574,20 +570,17 @@ public class AccountTree {
                         formsCalculate(vecAux, forms,
                                 resultantAccounts[i].nodeId, vecParcial,
                                 isExactValue);
-                        double parcial = Double.valueOf(
-                                (String) vecParcial.elementAt(0)).doubleValue();
-                        double parcialRef = Double.valueOf(
-                                (String) vecParcial.elementAt(1)).doubleValue();
-                        resultantAccounts[i].qtyOperation = Double
-                                .toString(Double.valueOf(
+                        BigDecimal parcial = new BigDecimal((String) vecParcial
+				.elementAt(0));
+			BigDecimal parcialRef = new BigDecimal(
+				(String) vecParcial.elementAt(1));
+                        resultantAccounts[i].qtyOperation = (new BigDecimal(
                                         resultantAccounts[i].qtyOperation)
-                                        .doubleValue()
-                                        + parcial);
-                        resultantAccounts[i].qtyOperationRef = Double
-                                .toString(Double.valueOf(
+                                        .add(parcial))
+				.toPlainString();
+                        resultantAccounts[i].qtyOperationRef = (new BigDecimal(
                                         resultantAccounts[i].qtyOperationRef)
-                                        .doubleValue()
-                                        + parcialRef);
+                                        .add(parcialRef)).toPlainString();
                         log4j.debug("calculateTree - HasForm - parcial:"
                                 + parcial
                                 + " - resultantAccounts[i].qtyOperation:"
@@ -601,17 +594,16 @@ public class AccountTree {
                     } else {
                         SVC = resultantAccounts[i].showvaluecond;
                     }
-                    resultantAccounts[i].qty = Double.toString(applySign(Double
-                            .valueOf(resultantAccounts[i].qtyOperation)
-                            .doubleValue(), SVC, resultantAccounts[i].issummary
-                            .equals("Y")));
+                    resultantAccounts[i].qty = (applySign(new BigDecimal(
+			    resultantAccounts[i].qtyOperation), SVC,
+			    resultantAccounts[i].issummary.equals("Y")))
+			    .toPlainString();
                     if (resetFlag)
                         resultantAccounts[i].svcreset = "Y";
-                    resultantAccounts[i].qtyRef = Double
-                            .toString(applySign(Double.valueOf(
-                                    resultantAccounts[i].qtyOperationRef)
-                                    .doubleValue(), SVC,
-                                    resultantAccounts[i].issummary.equals("Y")));
+                    resultantAccounts[i].qtyRef = (applySign(new BigDecimal(
+			    resultantAccounts[i].qtyOperationRef), SVC,
+			    resultantAccounts[i].issummary.equals("Y")))
+			    .toPlainString();
                     if (resetFlag)
                         resultantAccounts[i].svcresetref = "Y";
                     resultantAccounts[i].calculated = "Y";
@@ -622,20 +614,19 @@ public class AccountTree {
                         vec.addElement(dataChilds[j]);
                 }
                 if (applysign) {
-                    total += Double.valueOf(resultantAccounts[i].qty)
-                            .doubleValue();
-                    totalRef += Double.valueOf(resultantAccounts[i].qtyRef)
-                            .doubleValue();
+                    total = total.add(new BigDecimal(resultantAccounts[i].qty));
+                    totalRef = totalRef.add(new BigDecimal(
+			    resultantAccounts[i].qtyRef));
                 } else {
-                    total += Double.valueOf(resultantAccounts[i].qtyOperation)
-                            .doubleValue();
-                    totalRef += Double.valueOf(
-                            resultantAccounts[i].qtyOperationRef).doubleValue();
+                    total = total.add(new BigDecimal(
+			    resultantAccounts[i].qtyOperation));
+                    totalRef = totalRef.add(new BigDecimal(
+			    resultantAccounts[i].qtyOperationRef));
                 }
             }
         }
-        vecTotal.set(0, Double.toString(total));
-        vecTotal.set(1, Double.toString(totalRef));
+        vecTotal.set(0, total.toPlainString());
+	vecTotal.set(1, totalRef.toPlainString());
         result = new AccountTreeData[vec.size()];
         vec.copyInto(result);
         return result;
@@ -735,19 +726,17 @@ public class AccountTree {
         AccountTreeData[] result = null;
         Vector<Object> vec = new Vector<Object>();
 
-        double ZERO = 0.0;
-
         AccountTreeData[] r = levelFilter(indice, false, strLevel);
 
         for (int i = 0; i < r.length; i++) {
             if (r[i].showelement.equals("Y")) {
-                r[i].qty = Double.toString(applySign(Double.valueOf(r[i].qty)
-                        .doubleValue(), r[i].showvaluecond, true));
-                r[i].qtyRef = Double.toString(applySign(Double.valueOf(
-                        r[i].qtyRef).doubleValue(), r[i].showvaluecond, true));
+                r[i].qty = (applySign(new BigDecimal(r[i].qty),
+			r[i].showvaluecond, true)).toPlainString();
+                r[i].qtyRef = (applySign(new BigDecimal(r[i].qtyRef),
+			r[i].showvaluecond, true)).toPlainString();
                 if (!notEmptyLines
-                        || (Double.valueOf(r[i].qty).doubleValue() != ZERO || Double
-                                .valueOf(r[i].qtyRef).doubleValue() != ZERO)) {
+                        || (new BigDecimal(r[i].qty).compareTo(BigDecimal.ZERO) != 0 || new BigDecimal(
+				r[i].qtyRef).compareTo(BigDecimal.ZERO) != 0)) {
                     vec.addElement(r[i]);
                 }
             }
