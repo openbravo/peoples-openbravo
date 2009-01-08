@@ -27,6 +27,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
@@ -111,9 +112,14 @@ public class OBQuery<E extends BaseOBObject> {
      * @return a new Hibernate Query object
      */
     public Query createQuery() {
-        final Query qry = getSession().createQuery(createQueryString());
-        setParameters(qry);
-        return qry;
+        final String qryStr = createQueryString();
+        try {
+            final Query qry = getSession().createQuery(qryStr);
+            setParameters(qry);
+            return qry;
+        } catch (final Exception e) {
+            throw new OBException("Exception when creating query " + qryStr, e);
+        }
     }
 
     String createQueryString() {
