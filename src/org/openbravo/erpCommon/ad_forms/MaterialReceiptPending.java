@@ -211,7 +211,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
         String strWindowName = WindowTabsData.selectWindowInfo(this, vars
                 .getLanguage(), "184");
         OBError myMessage = null;
-        OBError myMessageAux = null;
+        OBError myMessageAux = new OBError();
         myMessage = new OBError();
         myMessage.setTitle("");
         if (strcOrderLineId.equals("")) {
