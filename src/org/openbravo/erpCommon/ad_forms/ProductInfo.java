@@ -219,7 +219,7 @@ public class ProductInfo {
     public static String getConvertedQty(String qty, String C_UOM_From_ID,
             String C_UOM_To_ID, String StdPrecision, ConnectionProvider conn) {
         // Nothing to do
-        if (qty.equals("") || qty.equals(ZERO.toString())
+        if (qty.equals("") || (new BigDecimal(qty).compareTo(BigDecimal.ZERO) == 0)
                 || C_UOM_From_ID.equals(C_UOM_To_ID))
             return qty;
         //
