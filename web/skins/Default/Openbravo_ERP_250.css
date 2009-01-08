@@ -4187,7 +4187,7 @@ td.TextBox_MsgContainerVt_td {
   padding: 3 10 0 35;
   font-weight: bold;
   text-align: center;
-  background-image: url(Common/Tree/iconProcessing.gif) no-repeat 10px;
+  background: url(Common/Tree/iconProcessing.gif) no-repeat 10px;
   background-color: rgb(255, 245, 104);
   -moz-border-radius-topleft: 8px;
   -moz-border-radius-topright: 8px;
