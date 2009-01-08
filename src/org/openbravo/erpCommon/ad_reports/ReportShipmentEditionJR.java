@@ -153,7 +153,7 @@ public class ReportShipmentEditionJR extends HttpSecureAppServlet {
             response.setHeader("Content-disposition",
                     "inline; filename=ReportShipmetEditionJR.pdf");
 
-        InoutEditionData[] data = InoutEditionData.select(this, Utility
+        InoutEditionData[] data = InoutEditionData.selectShipment(this, Utility
                 .getContext(this, vars, "#User_Org", "ShipmentFilter"), Utility
                 .getContext(this, vars, "#User_Client", "ShipmentFilter"),
                 strdateFrom, strdateTo, strcBpartnetId, strmWarehouseId,
