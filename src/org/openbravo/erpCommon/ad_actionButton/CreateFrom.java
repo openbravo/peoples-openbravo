@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2008 Openbravo SL
+ * All portions are Copyright (C) 2001-2009 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -43,7 +43,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class CreateFrom extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;
-    static final BigDecimal ZERO = new BigDecimal(0.0);
+    static final BigDecimal ZERO = BigDecimal.ZERO;
 
     @Override
     public void init(ServletConfig config) {
@@ -2069,35 +2069,30 @@ public class CreateFrom extends HttpSecureAppServlet {
                         multiplyRate = new BigDecimal(strMultiplyRate);
                         qty = new BigDecimal(strMovementqty);
                         boolean qtyIsNegative = false;
-                        if (qty.doubleValue() < ZERO.doubleValue()) {
+                        if (qty.compareTo(ZERO) < 0) {    
                             qtyIsNegative = true;
-                            qty = new BigDecimal(-1.0 * qty.doubleValue());
+                            qty = qty.negate();
                         }
-                        quantity = new BigDecimal(multiplyRate.doubleValue()
-                                * qty.doubleValue());
+                        quantity = qty.multiply(multiplyRate);
                         if (quantity.scale() > stdPrecision)
                             quantity = quantity.setScale(stdPrecision,
                                     BigDecimal.ROUND_HALF_UP);
-                        while (qty.doubleValue() > ZERO.doubleValue()) {
+                        while (qty.compareTo(ZERO) > 0) {
                             String total = "1";
                             BigDecimal conversion;
-                            if (quantity.doubleValue() < 1.0) {
+                            if (quantity.compareTo(BigDecimal.ONE) < 0) {
                                 total = quantity.toString();
                                 conversion = qty;
                                 quantity = ZERO;
                                 qty = ZERO;
                             } else {
-                                conversion = new BigDecimal(1.0 * multiplyRate
-                                        .doubleValue());
-                                if (conversion.doubleValue() > qty
-                                        .doubleValue()) {
+                                conversion = multiplyRate;
+                                if (conversion.compareTo(qty) > 0) {
                                     conversion = qty;
                                     qty = ZERO;
                                 } else
-                                    qty = new BigDecimal(qty.doubleValue()
-                                            - conversion.doubleValue());
-                                quantity = new BigDecimal(quantity
-                                        .doubleValue() - 1.0);
+                                    qty = qty.subtract(conversion);
+                                quantity = quantity.subtract(BigDecimal.ONE);
                             }
                             final String strConversion = conversion.toString();
                             final String strSequence = SequenceIdData.getUUID();
@@ -2282,35 +2277,30 @@ public class CreateFrom extends HttpSecureAppServlet {
                         multiplyRate = new BigDecimal(strMultiplyRate);
                         qty = new BigDecimal(data[i].id);
                         boolean qtyIsNegative = false;
-                        if (qty.doubleValue() < ZERO.doubleValue()) {
+                        if (qty.compareTo(ZERO) < 0) {
                             qtyIsNegative = true;
-                            qty = new BigDecimal(-1.0 * qty.doubleValue());
+                            qty = qty.negate();
                         }
-                        quantity = new BigDecimal(multiplyRate.doubleValue()
-                                * qty.doubleValue());
+                        quantity = qty.multiply(multiplyRate);
                         if (quantity.scale() > stdPrecision)
                             quantity = quantity.setScale(stdPrecision,
                                     BigDecimal.ROUND_HALF_UP);
-                        while (qty.doubleValue() > ZERO.doubleValue()) {
+                        while (qty.compareTo(ZERO) > 0) {
                             String total = "1";
                             BigDecimal conversion;
-                            if (quantity.doubleValue() < 1.0) {
+                            if (quantity.compareTo(BigDecimal.ONE) < 0) {
                                 total = quantity.toString();
                                 conversion = qty;
                                 quantity = ZERO;
                                 qty = ZERO;
                             } else {
-                                conversion = new BigDecimal(1.0 * multiplyRate
-                                        .doubleValue());
-                                if (conversion.doubleValue() > qty
-                                        .doubleValue()) {
+                                conversion = multiplyRate;
+                                if (conversion.compareTo(qty) > 0) {
                                     conversion = qty;
                                     qty = ZERO;
                                 } else
-                                    qty = new BigDecimal(qty.doubleValue()
-                                            - conversion.doubleValue());
-                                quantity = new BigDecimal(quantity
-                                        .doubleValue() - 1.0);
+                                    qty = qty.subtract(conversion);
+                                quantity = quantity.subtract(BigDecimal.ONE);
                             }
                             final String strConversion = conversion.toString();
                             final String strSequence = SequenceIdData.getUUID();

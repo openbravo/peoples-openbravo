@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -397,14 +397,15 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
                             && !strProjectContractDuration.equals("")
                             && !strProjectContractDuration.equals("0")) {
                         int decimalPlace = 2;
-                        Double DaysElapsed = Double.parseDouble(strDaysElapsed);
-                        Double ContractDuration = Double
-                                .parseDouble(strProjectContractDuration);
-                        Double TimeBurned = (DaysElapsed / ContractDuration) * 100;
-                        BigDecimal TB = new BigDecimal(TimeBurned);
-                        TB = TB.setScale(decimalPlace, BigDecimal.ROUND_UP);
-                        TimeBurned = TB.doubleValue();
-                        data[i].timeburned = TimeBurned.toString();
+                        BigDecimal daysElapsed = new BigDecimal(strDaysElapsed);
+                        BigDecimal contractDuration = new BigDecimal(
+				strProjectContractDuration);
+                        BigDecimal timeBurned = ((daysElapsed
+				.multiply(new BigDecimal("100"))).divide(
+				contractDuration, 12,
+				BigDecimal.ROUND_HALF_EVEN)).setScale(
+				decimalPlace, BigDecimal.ROUND_UP);
+                        data[i].timeburned = timeBurned.toPlainString();
                     } else {
                         data[i].timeburned = "";
                     }
@@ -583,11 +584,11 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
                 // delays of the project
                 if ((i == data.length - 1)
                         || !data[i].projectid.equals(data[i + 1].projectid)) {
-                    Double CompletionPerc = 0.0;
-                    Integer TotalContractDuration = 0;
-                    Integer CompletedContractDuration = 0;
-                    Integer TotalItems = 0;
-                    Integer CompletedItems = 0;
+                    BigDecimal completionPerc = BigDecimal.ZERO;
+                    Integer totalContractDuration = 0;
+                    Integer completedContractDuration = 0;
+                    Integer totalItems = 0;
+                    Integer completedItems = 0;
                     int itemsWithoutContractDuration = 0;
                     boolean noCompletionPerc = false;
                     Integer CumDaysDelayed = 0;
@@ -600,19 +601,19 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
                             if (!data[j].taskcontractduration.equals("")
                                     && data[j].taskcontractduration != null
                                     && itemsWithoutContractDuration == 0) {
-                                TotalContractDuration = TotalContractDuration
+                                totalContractDuration = totalContractDuration
                                         + Integer
                                                 .parseInt(data[j].taskcontractduration);
                                 if (data[j].taskcomp.equals("Y"))
-                                    CompletedContractDuration = CompletedContractDuration
+                                    completedContractDuration = completedContractDuration
                                             + Integer
                                                     .parseInt(data[j].taskcontractduration);
                             } else {
                                 itemsWithoutContractDuration++;
                             }
-                            TotalItems++;
+                            totalItems++;
                             if (data[j].taskcomp.equals("Y"))
-                                CompletedItems++;
+                                completedItems++;
 
                             // Calculation of the cumulative days delayed
                             if (!data[j].taskdaysdelayed.equals("")
@@ -629,19 +630,19 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
                             if (!data[j].phasecontractduration.equals("")
                                     && data[j].phasecontractduration != null
                                     && itemsWithoutContractDuration == 0) {
-                                TotalContractDuration = TotalContractDuration
+                                totalContractDuration = totalContractDuration
                                         + Integer
                                                 .parseInt(data[j].phasecontractduration);
                                 if (data[j].phasecomp.equals("Y"))
-                                    CompletedContractDuration = CompletedContractDuration
+                                    completedContractDuration = completedContractDuration
                                             + Integer
                                                     .parseInt(data[j].phasecontractduration);
                             } else {
                                 itemsWithoutContractDuration++;
                             }
-                            TotalItems++;
+                            totalItems++;
                             if (data[j].phasecomp.equals("Y"))
-                                CompletedItems++;
+                                completedItems++;
 
                             // Calculation of the cumulative days delayed
                             if (!data[j].phasedaysdelayed.equals("")
@@ -671,17 +672,23 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
                             // Calculate the Completion Percentage as the
                             // quotient between CompletedContractDuration and
                             // TotalContractDuration
-                            CompletionPerc = ((double) CompletedContractDuration / (double) TotalContractDuration) * 100;
+			    completionPerc = (new BigDecimal(
+				    completedContractDuration)
+				    .multiply(new BigDecimal("100"))).divide(
+				    new BigDecimal(totalContractDuration), 12,
+				    BigDecimal.ROUND_HALF_EVEN);
                         } else {
                             // Calculate the Completion Percentage as the
                             // quotient between CompletedItems and TotalItems
-                            CompletionPerc = ((double) CompletedItems / (double) TotalItems) * 100;
+			    completionPerc = (new BigDecimal(completedItems)
+				    .multiply(new BigDecimal("100"))).divide(
+				    new BigDecimal(totalItems), 12,
+				    BigDecimal.ROUND_HALF_EVEN);
                         }
                         int decimalPlace = 2;
-                        BigDecimal CP = new BigDecimal(CompletionPerc);
-                        CP = CP.setScale(decimalPlace, BigDecimal.ROUND_UP);
-                        CompletionPerc = CP.doubleValue();
-                        strCompletionPerc = CompletionPerc.toString();
+			strCompletionPerc = (completionPerc.setScale(
+				decimalPlace, BigDecimal.ROUND_UP))
+				.toPlainString();
                     }
 
                     // Get the Cumulative Days Delayed

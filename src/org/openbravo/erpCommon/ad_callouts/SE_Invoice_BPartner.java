@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,7 @@ import org.openbravo.utils.FormatUtilities;
 import org.openbravo.erpCommon.utility.*;
 import org.openbravo.data.FieldProvider;
 import java.io.*;
+import java.math.BigDecimal;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
@@ -261,7 +262,8 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
                     + data[0].isdiscountprinted + "\")");
             if (data != null
                     && data.length > 0
-                    && Double.valueOf(data[0].creditavailable).doubleValue() < 0.0)
+                    && new BigDecimal(data[0].creditavailable)
+			    .compareTo(BigDecimal.ZERO) < 0)
                 resultado.append(", new Array('MESSAGE', \""
                         + Utility.messageBD(this, "CreditLimitOver", vars
                                 .getLanguage()) + data[0].creditavailable

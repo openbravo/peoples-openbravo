@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,8 +29,6 @@ import javax.servlet.http.*;
 
 public class SL_MachineCost extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;
-
-    static final BigDecimal ZERO = new BigDecimal(0.0);
 
     public void init(ServletConfig config) {
         super.init(config);
@@ -85,32 +83,36 @@ public class SL_MachineCost extends HttpSecureAppServlet {
             if (strPurchaseAmt != null && !strPurchaseAmt.equals("")
                     && strToolsetAmt != null && !strToolsetAmt.equals("")
                     && strYearValue != null && !strYearValue.equals("")) {
-                Float fPurchaseAmt = Float.valueOf(strPurchaseAmt);
-                Float fToolsetAmt = Float.valueOf(strToolsetAmt);
-                Float fYearValue = Float.valueOf(strYearValue);
-                Float fAmortization = (fPurchaseAmt + fToolsetAmt) / fYearValue;
+                BigDecimal fPurchaseAmt = new BigDecimal(strPurchaseAmt);
+		BigDecimal fToolsetAmt = new BigDecimal(strToolsetAmt);
+		BigDecimal fYearValue = new BigDecimal(strYearValue);
+		BigDecimal fAmortization = (fPurchaseAmt.add(fToolsetAmt))
+			.divide(fYearValue, 12, BigDecimal.ROUND_HALF_EVEN);
                 strAmortization = fAmortization.toString();
 
                 if (strCostUomYear != null && !strCostUomYear.equals("")) {
-                    Float fCostUomYear = Float.valueOf(strCostUomYear);
-                    Float fCost = fYearValue / fCostUomYear;
-                    strCost = fCost.toString();
+                    BigDecimal fCostUomYear = new BigDecimal(strCostUomYear);
+		    BigDecimal fCost = fYearValue.divide(fCostUomYear, 12,
+			    BigDecimal.ROUND_HALF_EVEN);
+		    strCost = fCost.toPlainString();
                 }
             }
         } else if (strChanged.equals("inpamortization")) {
             if (strPurchaseAmt != null && !strPurchaseAmt.equals("")
                     && strToolsetAmt != null && !strToolsetAmt.equals("")
                     && strAmortization != null && !strAmortization.equals("")) {
-                Float fPurchaseAmt = Float.valueOf(strPurchaseAmt);
-                Float fToolsetAmt = Float.valueOf(strToolsetAmt);
-                Float fAmortization = Float.valueOf(strAmortization);
-                Float fYearValue = (fPurchaseAmt + fToolsetAmt) / fAmortization;
-                strYearValue = fYearValue.toString();
+                BigDecimal fPurchaseAmt = new BigDecimal(strPurchaseAmt);
+		BigDecimal fToolsetAmt = new BigDecimal(strToolsetAmt);
+		BigDecimal fAmortization = new BigDecimal(strAmortization);
+		BigDecimal fYearValue = (fPurchaseAmt.add(fToolsetAmt)).divide(
+			fAmortization, 12, BigDecimal.ROUND_HALF_EVEN);
+		strYearValue = fYearValue.toPlainString();
 
                 if (strCostUomYear != null && !strCostUomYear.equals("")) {
-                    Float fCostUomYear = Float.valueOf(strCostUomYear);
-                    Float fCost = fYearValue / fCostUomYear;
-                    strCost = fCost.toString();
+                    BigDecimal fCostUomYear = new BigDecimal(strCostUomYear);
+		    BigDecimal fCost = fYearValue.divide(fCostUomYear, 12,
+			    BigDecimal.ROUND_HALF_EVEN);
+                    strCost = fCost.toPlainString();
                 }
             }
         } else if (strChanged.equals("inpdaysyear")
@@ -120,18 +122,19 @@ public class SL_MachineCost extends HttpSecureAppServlet {
                     && strDayHours != null && !strDayHours.equals("")
                     && strImproductiveHoursYear != null
                     && !strImproductiveHoursYear.equals("")) {
-                Float fDaysYear = Float.valueOf(strDaysYear);
-                Float fDayHours = Float.valueOf(strDayHours);
-                Float fImproductiveHoursYear = Float
-                        .valueOf(strImproductiveHoursYear);
-                Float fCostUomYear = (fDaysYear * fDayHours)
-                        - fImproductiveHoursYear;
-                strCostUomYear = fCostUomYear.toString();
+                BigDecimal fDaysYear = new BigDecimal(strDaysYear);
+		BigDecimal fDayHours = new BigDecimal(strDayHours);
+		BigDecimal fImproductiveHoursYear = new BigDecimal(
+			strImproductiveHoursYear);
+		BigDecimal fCostUomYear = (fDaysYear.multiply(fDayHours))
+			.subtract(fImproductiveHoursYear);
+                strCostUomYear = fCostUomYear.toPlainString();
 
                 if (strYearValue != null && !strYearValue.equals("")) {
-                    Float fYearValue = Float.valueOf(strYearValue);
-                    Float fCost = fYearValue / fCostUomYear;
-                    strCost = fCost.toString();
+                    BigDecimal fYearValue = new BigDecimal(strYearValue);
+		    BigDecimal fCost = fYearValue.divide(fCostUomYear, 12,
+			    BigDecimal.ROUND_HALF_EVEN);
+		    strCost = fCost.toPlainString();
                 }
             }
         } else if (strChanged.equals("inpcostuomyear")) {
@@ -139,36 +142,37 @@ public class SL_MachineCost extends HttpSecureAppServlet {
                 if (strDaysYear != null && !strDaysYear.equals("")
                         && strDayHours != null && !strDayHours.equals("")
                         && strCostUomYear != null && !strCostUomYear.equals("")) {
-                    Float fDaysYear = Float.valueOf(strDaysYear);
-                    Float fDayHours = Float.valueOf(strDayHours);
-                    Float fCostUomYear = Float.valueOf(strCostUomYear);
-                    Float fImproductiveHoursYear = (fDaysYear * fDayHours)
-                            - fCostUomYear;
+                    BigDecimal fDaysYear = new BigDecimal(strDaysYear);
+		    BigDecimal fDayHours = new BigDecimal(strDayHours);
+		    BigDecimal fCostUomYear = new BigDecimal(strCostUomYear);
+		    BigDecimal fImproductiveHoursYear = (fDaysYear
+			    .multiply(fDayHours)).subtract(fCostUomYear);
                     strImproductiveHoursYear = fImproductiveHoursYear
-                            .toString();
+                            .toPlainString();
                 }
             if (strYearValue != null && !strYearValue.equals("")
                     && strCostUomYear != null && !strCostUomYear.equals("")) {
-                Float fYearValue = Float.valueOf(strYearValue);
-                Float fCostUomYear = Float.valueOf(strCostUomYear);
-                Float fCost = fYearValue / fCostUomYear;
-                strCost = fCost.toString();
+                BigDecimal fYearValue = new BigDecimal(strYearValue);
+		BigDecimal fCostUomYear = new BigDecimal(strCostUomYear);
+		BigDecimal fCost = fYearValue.divide(fCostUomYear, 12,
+			BigDecimal.ROUND_HALF_EVEN);
+		strCost = fCost.toPlainString();
             }
         } else if (strChanged.equals("inpcost")) {
             if (strCost != null && !strCost.equals("")
                     && strCostUomYear != null && !strCostUomYear.equals("")) {
-                Float fCostUomYear = Float.valueOf(strCostUomYear);
-                Float fCost = Float.valueOf(strCost);
-                Float fYearValue = fCost * fCostUomYear;
-                strYearValue = fYearValue.toString();
+                BigDecimal fCostUomYear = new BigDecimal(strCostUomYear);
+		BigDecimal fCost = new BigDecimal(strCost);
+		BigDecimal fYearValue = fCost.multiply(fCostUomYear);
+		strYearValue = fYearValue.toPlainString();
 
                 if (strPurchaseAmt != null && !strPurchaseAmt.equals("")
                         && strToolsetAmt != null && !strToolsetAmt.equals("")) {
-                    Float fPurchaseAmt = Float.valueOf(strPurchaseAmt);
-                    Float fToolsetAmt = Float.valueOf(strToolsetAmt);
-                    Float fAmortization = (fPurchaseAmt + fToolsetAmt)
-                            / fYearValue;
-                    strAmortization = fAmortization.toString();
+                    BigDecimal fPurchaseAmt = new BigDecimal(strPurchaseAmt);
+		    BigDecimal fToolsetAmt = new BigDecimal(strToolsetAmt);
+		    BigDecimal fAmortization = (fPurchaseAmt.add(fToolsetAmt))
+			    .divide(fYearValue, 12, BigDecimal.ROUND_HALF_EVEN);
+		    strAmortization = fAmortization.toPlainString();
                 }
             }
         }

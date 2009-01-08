@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,7 +30,6 @@ import javax.servlet.http.*;
 
 public class SL_SequenceProduct_Conversion extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;
-    static final BigDecimal ZERO = new BigDecimal(0.0);
 
     public void init(ServletConfig config) {
         super.init(config);
@@ -100,8 +99,7 @@ public class SL_SequenceProduct_Conversion extends HttpSecureAppServlet {
         resultado.append("var respuesta = new Array(");
         if (!strQuantityOrder.equals("")) {
             quantityOrder = new BigDecimal(strQuantityOrder);
-            qtyOrdered = new BigDecimal(quantityOrder.doubleValue()
-                    * multiplyRate.doubleValue());
+            qtyOrdered = quantityOrder.multiply(multiplyRate);
             if (qtyOrdered.scale() > stdPrecision)
                 qtyOrdered = qtyOrdered.setScale(stdPrecision,
                         BigDecimal.ROUND_HALF_UP);

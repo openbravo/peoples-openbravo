@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,7 +39,7 @@ import org.openbravo.erpCommon.utility.DateTimeData;
 
 public class ExpenseAPInvoice extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;
-    static final BigDecimal ZERO = new BigDecimal(0.0);
+    static final BigDecimal ZERO = BigDecimal.ZERO;
     static Logger log4j = Logger.getLogger(ExpenseAPInvoice.class);
 
     String strVersionNo = "";
@@ -110,8 +110,8 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
         String strSalesrepId = "";
         String strPaymentRule = "";
         String strPaymentterm = "";
-        float qty = 0;
-        float amount = 0;
+        BigDecimal qty = BigDecimal.ZERO;
+	BigDecimal amount = BigDecimal.ZERO;
         int total = 0;
 
         StringBuffer textoMensaje = new StringBuffer();
@@ -341,7 +341,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
                 if (dataInvoiceline == null || dataInvoiceline.length == 0) {
                     // If it is a new line, calculates c_invoiceline_id and qty
                     strcInvoiceLineId = SequenceIdData.getUUID();
-                    qty = Float.valueOf(data[i].qty);
+                    qty = new BigDecimal(data[i].qty);
                     String strLine = ExpenseAPInvoiceData.selectLine(conn,
                             this, strcInvoiceId);
                     if (strLine.equals(""))
@@ -361,9 +361,10 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
                                 data[i].mProductId, "", data[i].description,
                                 "", strmProductUomId, String.valueOf(qty),
                                 data[i].cUomId, strPricestd, strPricelist,
-                                strcTaxID, String.valueOf(Float
-                                        .valueOf(strPricestd)
-                                        * qty), "", strPricestd, strPricelimit,
+                                strcTaxID, (new BigDecimal(strPricestd)
+					.multiply(qty)).toPlainString(), "",
+				strPricestd,
+				strPricelimit,
                                 "", "", "", "Y", "0", "", "",
                                 strcInvoiceLineId, "N", vars.getUser(), vars
                                         .getUser());
@@ -377,14 +378,14 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
                     // If there are more lines that full filled the
                     // requirements, adds the new amount to the old
                     strcInvoiceLineId = dataInvoiceline[0].cInvoicelineId;
-                    qty = Float.valueOf(dataInvoiceline[0].qtyinvoiced)
-                            + Float.valueOf(data[i].qty);
+                    qty = new BigDecimal(dataInvoiceline[0].qtyinvoiced)
+			    .add(new BigDecimal(data[i].qty));
                     // Catch database error message
                     try {
                         ExpenseAPInvoiceData.updateInvoiceline(conn, this,
-                                String.valueOf(qty), String.valueOf(Float
-                                        .valueOf(strPricestd)
-                                        * qty), strcInvoiceLineId);
+                                String.valueOf(qty), (new BigDecimal(
+					strPricestd).multiply(qty))
+					.toPlainString(), strcInvoiceLineId);
                     } catch (ServletException ex) {
                         myMessage = Utility.translateError(this, vars, vars
                                 .getLanguage(), ex.getMessage());
@@ -417,11 +418,10 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
                                             "Y",
                                             vars.getUser(),
                                             vars.getUser(),
-                                            strcInvoiceLineId,
-                                            String
-                                                    .valueOf(qty
-                                                            * Float
-                                                                    .valueOf(strPricestd)),
+                                            strcInvoiceLineId, (qty
+						    .multiply(new BigDecimal(
+							    strPricestd)))
+						    .toPlainString(),
                                             data[i].cProjectId,
                                             data[i].cCampaignId, "", "");
                         } catch (ServletException ex) {
@@ -433,9 +433,9 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
                     } else {
                         // If there are more lines that full filled the
                         // requirements, adds the new amount to the old
-                        amount = Float.valueOf(dataAcctdimension[0].amt)
-                                + (Float.valueOf(data[i].qty) * Float
-                                        .valueOf(strPricestd));
+			amount = new BigDecimal(dataAcctdimension[0].amt)
+				.add(new BigDecimal(data[i].qty)
+					.multiply(new BigDecimal(strPricestd)));
                         // Catch database error message
                         try {
                             ExpenseAPInvoiceData

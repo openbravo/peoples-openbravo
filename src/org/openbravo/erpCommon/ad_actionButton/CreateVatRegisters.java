@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2008-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,8 +38,6 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class CreateVatRegisters extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;
-
-    static final BigDecimal ZERO = new BigDecimal(0.0);
 
     public void init(ServletConfig config) {
         super.init(config);
@@ -141,7 +139,7 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
         // register lines
         if (strProcessed.equalsIgnoreCase("N")) {
             // check for already used periods)
-            Double CrossPeriodCount = new Double(TaxPayment
+	    BigDecimal CrossPeriodCount = new BigDecimal(TaxPayment
                     .selectCrossPeriodCount(this, vars.getClient(),
                             strDatefrom, strDateto));
             if (CrossPeriodCount.intValue() > 0) {
@@ -249,17 +247,16 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
                             .equals(DocInvoice.DOCTYPE_APCredit)
                             || myinvoice.docbasetype
                                     .equals(DocInvoice.DOCTYPE_ARCredit)) {
-                        strTaxBaseAmt = new Double(new Double(strTaxBaseAmt)
-                                * new Double(-1)).toString();
-                        strTaxAmt = new Double(new Double(strTaxAmt)
-                                * new Double(-1)).toString();
-                        strTaxUndeducAmt = new Double(new Double(
-                                strTaxUndeducAmt)
-                                * new Double(-1)).toString();
-                        strExemptAmt = new Double(new Double(strExemptAmt)
-                                * new Double(-1)).toString();
-                        strNoVatAmt = new Double(new Double(strNoVatAmt)
-                                * new Double(-1)).toString();
+                        strTaxBaseAmt = (new BigDecimal(strTaxBaseAmt).negate())
+				.toPlainString();
+                        strTaxAmt = (new BigDecimal(strTaxAmt).negate())
+				.toPlainString();
+                        strTaxUndeducAmt = (new BigDecimal(strTaxUndeducAmt)
+				.negate()).toPlainString();
+                        strExemptAmt = (new BigDecimal(strExemptAmt).negate())
+				.toPlainString();
+                        strNoVatAmt = (new BigDecimal(strNoVatAmt).negate())
+				.toPlainString();
                     }
 
                     // Calculate totalamt
@@ -268,13 +265,13 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
                             + strDateto + "strProcessed: " + strProcessed
                             + "strGeneratePayment: " + strGeneratePayment);
 
-                    Double dbTotalAmt = new Double(strTaxBaseAmt)
-                            + new Double(strTaxAmt)
-                            + new Double(strTaxUndeducAmt)
-                            + new Double(strExemptAmt)
-                            + new Double(strNoVatAmt);
+                    BigDecimal dbTotalAmt = new BigDecimal(strTaxBaseAmt).add(
+			    new BigDecimal(strTaxAmt)).add(
+			    new BigDecimal(strTaxUndeducAmt)).add(
+			    new BigDecimal(strExemptAmt)).add(
+			    new BigDecimal(strNoVatAmt));
 
-                    strTotalAmt = dbTotalAmt.toString();
+                    strTotalAmt = dbTotalAmt.toPlainString();
 
                     String strSequence = SequenceIdData.getUUID();
                     log4j.info("Sequence: " + strSequence);
@@ -320,8 +317,8 @@ public class CreateVatRegisters extends HttpSecureAppServlet {
                     + strGeneratePayment);
 
             try {
-                if (new Double(TaxPayment.calculateVatPayment(this,
-                        strTaxpaymentID)).compareTo(new Double(0)) > 0) {
+                if (new BigDecimal(TaxPayment.calculateVatPayment(this,
+			strTaxpaymentID)).compareTo(BigDecimal.ZERO) > 0) {
                     TaxPayment.updateGeneratePayment(this, "Y", strUser,
                             strTaxpaymentID);
                 } else

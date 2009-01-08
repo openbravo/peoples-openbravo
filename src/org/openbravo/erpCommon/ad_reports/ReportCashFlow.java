@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
 import java.io.*;
+import java.math.BigDecimal;
 import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -466,7 +467,7 @@ public class ReportCashFlow extends HttpSecureAppServlet {
     ReportCashFlowData[] convertVector(Vector<Object> vectorArray)
             throws ServletException {
         ReportCashFlowData[] data = new ReportCashFlowData[vectorArray.size()];
-        double count = 0;
+        BigDecimal count = BigDecimal.ZERO;
         for (int i = 0; i < vectorArray.size(); i++) {
             data[i] = (ReportCashFlowData) vectorArray.elementAt(i);
         }
@@ -477,11 +478,11 @@ public class ReportCashFlow extends HttpSecureAppServlet {
                             .valueOf(data[i].levelAccount).intValue()
                             && data[j].parent.equals(data[i].id)) {
                         String total = data[j].total;
-                        count += Double.valueOf(total).doubleValue();
+                        count = count.add(new BigDecimal(total));
                     }
                 }
                 data[i].total = String.valueOf(count);
-                count = 0;
+                count = BigDecimal.ZERO;
             }
         }
         return data;

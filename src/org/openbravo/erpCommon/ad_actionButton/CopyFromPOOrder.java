@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,7 +38,7 @@ import org.openbravo.erpCommon.utility.DateTimeData;
 
 public class CopyFromPOOrder extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;
-    static final BigDecimal ZERO = new BigDecimal(0.0);
+    static final BigDecimal ZERO = BigDecimal.ZERO;
 
     public void init(ServletConfig config) {
         super.init(config);
@@ -136,13 +136,13 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
                                 PricePrecision, BigDecimal.ROUND_HALF_UP);
                         priceList = (pricelist.equals("") ? ZERO
                                 : new BigDecimal(pricelist));
-                        if (priceList.doubleValue() == 0.0)
+                        if (priceList.compareTo(ZERO) == 0)
                             discount = ZERO;
                         else
-                            discount = new BigDecimal(
-                                    (priceList.doubleValue() - priceActual
-                                            .doubleValue())
-                                            / priceList.doubleValue() * 100.0);
+			    discount = ((priceList.subtract(priceActual))
+				    .divide(priceList, 12,
+					    BigDecimal.ROUND_HALF_EVEN))
+				    .multiply(new BigDecimal("100")); // ((PL-PA)/PL)*100
                         if (discount.scale() > StdPrecision)
                             discount = discount.setScale(StdPrecision,
                                     BigDecimal.ROUND_HALF_UP);

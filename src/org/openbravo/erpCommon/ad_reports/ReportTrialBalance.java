@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
 import java.io.*;
+import java.math.BigDecimal;
 import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -526,14 +527,10 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             vecTotal.addElement("0");
             vecTotal.addElement("0");
         }
-        double totalDR = Double.valueOf((String) vecTotal.elementAt(0))
-                .doubleValue();
-        double totalCR = Double.valueOf((String) vecTotal.elementAt(1))
-                .doubleValue();
-        double totalInicial = Double.valueOf((String) vecTotal.elementAt(2))
-                .doubleValue();
-        double totalFinal = Double.valueOf((String) vecTotal.elementAt(3))
-                .doubleValue();
+        BigDecimal totalDR = new BigDecimal((String) vecTotal.elementAt(0));
+        BigDecimal totalCR = new BigDecimal((String) vecTotal.elementAt(1));
+        BigDecimal totalInicial = new BigDecimal((String) vecTotal.elementAt(2));
+        BigDecimal totalFinal = new BigDecimal((String) vecTotal.elementAt(3));
         boolean encontrado = false;
         for (int i = 0; i < data.length; i++) {
             if (data[i].parentId.equals(indice)) {
@@ -545,32 +542,28 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
                 vecParcial.addElement("0");
                 ReportTrialBalanceData[] dataChilds = calculateTree(data,
                         data[i].id, vecParcial);
-                double parcialDR = Double.valueOf(
-                        (String) vecParcial.elementAt(0)).doubleValue();
-                double parcialCR = Double.valueOf(
-                        (String) vecParcial.elementAt(1)).doubleValue();
-                double parcialInicial = Double.valueOf(
-                        (String) vecParcial.elementAt(2)).doubleValue();
-                double parcialFinal = Double.valueOf(
-                        (String) vecParcial.elementAt(3)).doubleValue();
-                data[i].amtacctdr = Double.toString(Double.valueOf(
-                        data[i].amtacctdr).doubleValue()
-                        + parcialDR);
-                data[i].amtacctcr = Double.toString(Double.valueOf(
-                        data[i].amtacctcr).doubleValue()
-                        + parcialCR);
-                data[i].saldoInicial = Double.toString(Double.valueOf(
-                        data[i].saldoInicial).doubleValue()
-                        + parcialInicial);
-                data[i].saldoFinal = Double.toString(Double.valueOf(
-                        data[i].saldoFinal).doubleValue()
-                        + parcialFinal);
+                BigDecimal parcialDR = new BigDecimal((String) vecParcial
+			.elementAt(0));
+                BigDecimal parcialCR = new BigDecimal((String) vecParcial
+			.elementAt(1));
+                BigDecimal parcialInicial = new BigDecimal((String) vecParcial
+			.elementAt(2));
+                BigDecimal parcialFinal = new BigDecimal((String) vecParcial
+			.elementAt(3));
+                data[i].amtacctdr = (new BigDecimal(data[i].amtacctdr)
+			.add(parcialDR)).toPlainString();
+                data[i].amtacctcr = (new BigDecimal(data[i].amtacctcr)
+			.add(parcialCR)).toPlainString();
+                data[i].saldoInicial = (new BigDecimal(data[i].saldoInicial)
+			.add(parcialInicial)).toPlainString();
+                data[i].saldoFinal = (new BigDecimal(data[i].saldoFinal)
+			.add(parcialFinal)).toPlainString();
 
-                totalDR += Double.valueOf(data[i].amtacctdr).doubleValue();
-                totalCR += Double.valueOf(data[i].amtacctcr).doubleValue();
-                totalInicial += Double.valueOf(data[i].saldoInicial)
-                        .doubleValue();
-                totalFinal += Double.valueOf(data[i].saldoFinal).doubleValue();
+                totalDR = totalDR.add(new BigDecimal(data[i].amtacctdr));
+		totalCR = totalCR.add(new BigDecimal(data[i].amtacctcr));
+                totalInicial = totalInicial.add(new BigDecimal(
+			data[i].saldoInicial));
+		totalFinal = totalFinal.add(new BigDecimal(data[i].saldoFinal));
 
                 vec.addElement(data[i]);
                 if (dataChilds != null && dataChilds.length > 0) {
@@ -580,10 +573,10 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             } else if (encontrado)
                 break;
         }
-        vecTotal.set(0, Double.toString(totalDR));
-        vecTotal.set(1, Double.toString(totalCR));
-        vecTotal.set(2, Double.toString(totalInicial));
-        vecTotal.set(3, Double.toString(totalFinal));
+        vecTotal.set(0, totalDR.toPlainString());
+	vecTotal.set(1, totalCR.toPlainString());
+	vecTotal.set(2, totalInicial.toPlainString());
+	vecTotal.set(3, totalFinal.toPlainString());
         result = new ReportTrialBalanceData[vec.size()];
         vec.copyInto(result);
         return result;
@@ -594,10 +587,13 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             return data;
         Vector<Object> dataFiltered = new Vector<Object>();
         for (int i = 0; i < data.length; i++) {
-            if (Double.valueOf(data[i].amtacctdr).doubleValue() != 0.0
-                    || Double.valueOf(data[i].amtacctcr).doubleValue() != 0.0
-                    || Double.valueOf(data[i].saldoInicial).doubleValue() != 0.0
-                    || Double.valueOf(data[i].saldoFinal).doubleValue() != 0.0) {
+            if (new BigDecimal(data[i].amtacctdr).compareTo(BigDecimal.ZERO) != 0
+		    || new BigDecimal(data[i].amtacctcr)
+			    .compareTo(BigDecimal.ZERO) != 0
+		    || new BigDecimal(data[i].saldoInicial)
+			    .compareTo(BigDecimal.ZERO) != 0
+		    || new BigDecimal(data[i].saldoFinal)
+			    .compareTo(BigDecimal.ZERO) != 0) {
                 dataFiltered.addElement(data[i]);
             }
         }
