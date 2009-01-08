@@ -596,6 +596,43 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         out.println(xmlDocument.print());
         out.close();
     }
+    
+    /**
+     * Creates a pop up that when closed, will refresh the parent window.
+     * 
+     * @param response the HttpServletResponse object
+     * @param strTitle the title of the popup window
+     * @param strText the text to be displayed in the popup message area
+     * @throws IOException if an error occurs writing to the output stream
+     */
+    public void advisePopUpRefresh(HttpServletResponse response, String strTitle,
+            String strText) throws IOException {
+        advisePopUpRefresh(response, "Error", strTitle, strText);
+    }
+
+    /**
+     * Creates a pop up that when closed, will refresh the parent window.
+     * 
+     * @param response the HttpServletResponse object
+     * @param strType the type of message to be displayed (e.g. ERROR, SUCCESS)
+     * @param strTitle the title of the popup window
+     * @param strText the text to be displayed in the popup message area
+     * @throws IOException if an error occurs writing to the output stream
+     */
+    public void advisePopUpRefresh(HttpServletResponse response, String strType,
+            String strTitle, String strText) throws IOException {
+        final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/base/secureApp/AdvisePopUpRefresh").createXmlDocument();
+
+        xmlDocument.setParameter("theme", myTheme);
+        xmlDocument.setParameter("ParamType", strType.toUpperCase());
+        xmlDocument.setParameter("ParamTitle", strTitle);
+        xmlDocument.setParameter("ParamText", strText);
+        response.setContentType("text/html; charset=UTF-8");
+        final PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
+    }
 
     public void bdError(HttpServletResponse response, String strCode,
             String strLanguage) throws IOException {

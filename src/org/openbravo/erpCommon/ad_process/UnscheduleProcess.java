@@ -40,10 +40,10 @@ public class UnscheduleProcess extends HttpSecureAppServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
+        final VariablesSecureApp vars = new VariablesSecureApp(request);
 
-        String windowId = request.getParameter("inpwindowId");
-        String requestId = vars.getSessionValue(windowId + "|"
+        final String windowId = request.getParameter("inpwindowId");
+        final String requestId = vars.getSessionValue(windowId + "|"
                 + PROCESS_REQUEST_ID);
 
         String message;
@@ -51,7 +51,7 @@ public class UnscheduleProcess extends HttpSecureAppServlet {
             OBScheduler.getInstance().unschedule(requestId,
                     new ProcessContext(vars));
 
-        } catch (SchedulerException e) {
+        } catch (final SchedulerException e) {
             message = Utility.messageBD(this, "UNSCHED_ERROR", vars
                     .getLanguage());
             advisePopUp(response, "ERROR", "Process Request", message + " "
@@ -59,6 +59,6 @@ public class UnscheduleProcess extends HttpSecureAppServlet {
         }
         message = Utility
                 .messageBD(this, "UNSCHED_SUCCESS", vars.getLanguage());
-        advisePopUp(response, "SUCCESS", "Process Request", message);
+        advisePopUpRefresh(response, "SUCCESS", "Process Request", message);
     }
 }

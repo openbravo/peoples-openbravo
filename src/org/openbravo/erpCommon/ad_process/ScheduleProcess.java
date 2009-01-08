@@ -43,24 +43,24 @@ public class ScheduleProcess extends HttpSecureAppServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
+        final VariablesSecureApp vars = new VariablesSecureApp(request);
 
-        String windowId = request.getParameter("inpwindowId");
-        String requestId = vars.getSessionValue(windowId + "|"
+        final String windowId = request.getParameter("inpwindowId");
+        final String requestId = vars.getSessionValue(windowId + "|"
                 + PROCESS_REQUEST_ID);
 
         String message = null;
         try {
-            ProcessBundle bundle = ProcessBundle.request(requestId, vars, this);
+            final ProcessBundle bundle = ProcessBundle.request(requestId, vars, this);
             OBScheduler.getInstance().schedule(requestId, bundle);
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             message = Utility
                     .messageBD(this, "SCHED_ERROR", vars.getLanguage());
             advisePopUp(response, "ERROR", "Process Request", message + " "
                     + e.getMessage());
         }
         message = Utility.messageBD(this, "SCHED_SUCCESS", vars.getLanguage());
-        advisePopUp(response, "SUCCESS", "Process Request", message);
+        advisePopUpRefresh(response, "SUCCESS", "Process Request", message);
     }
 }
