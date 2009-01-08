@@ -150,7 +150,7 @@ public class OrgTree implements Serializable {
      * Obtains a tree with all the nodes that can be referenced from the
      * original one.
      * 
-     * @param original
+     * @param tree
      *            tree contains all the nodes to reference from
      * @return new tree with referenceable nodes.
      */
@@ -340,7 +340,7 @@ public class OrgTree implements Serializable {
             if (withZero || !getNodeById(parentNodeId).getId().equals("0"))
                 list.add(getNodeById(parentNodeId));
         } else {
-            if ((list == null)
+            if ((list.size() == 0)
                     && (withZero || !getNodeById(parentNodeId).getId().equals(
                             "0")))
                 list.add(getNodeById(parentNodeId));
