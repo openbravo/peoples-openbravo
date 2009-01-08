@@ -551,7 +551,7 @@ compare.database.structure: refer to compare.database.structure target of databa
 		calls the tomcat.reload.do task as a spawned task.
 	-->
 	<target name="tomcat.reload" description="Reload the Openbravo context">
-		<java classname="org.openbravo.service.system.ReloadContext" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}">
+		<java classname="org.openbravo.service.system.ReloadContext" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}" spawn="true" fork="true">
 			<arg line="${base.src}" />
 			<classpath refid="project.class.path" />
 		</java>
