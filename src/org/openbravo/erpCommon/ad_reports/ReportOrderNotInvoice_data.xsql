@@ -66,6 +66,7 @@
       AND C_ORDER.PROCESSED = 'Y'
       AND C_ORDER.ISSOTRX = 'Y'
       AND C_ORDERLINE.QTYORDERED<>C_ORDERLINE.QTYINVOICED
+      AND C_BPARTNER.ISACTIVE = 'Y' 
       AND C_ORDER.AD_Client_ID IN ('1')
       AND C_ORDER.AD_ORG_ID IN ('1')
       AND 1=1
@@ -105,6 +106,7 @@
                  WHERE C2.c_order_id = C.c_order_id
                  and c2.c_order_id=cl.c_order_id
                  and cl.QTYORDERED<>cl.QTYINVOICED)
+      AND C_BPARTNER.ISACTIVE = 'Y' 
       AND C.AD_Client_ID IN ('2')
       AND C.AD_ORG_ID IN ('2')
       AND 2=2
