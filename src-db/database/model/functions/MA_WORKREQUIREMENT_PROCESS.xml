@@ -158,7 +158,7 @@
           FOR Cur_SeqProduct IN
             (SELECT *
             FROM MA_SequenceProduct
-            WHERE MA_Sequence_ID=Cur_Sequence.MA_Sequence_ID
+            WHERE MA_Sequence_ID=Cur_Sequence.MA_Sequence_ID AND productiontype in ('+','-')
             )
           LOOP
             v_ResultStr:='InsertProduct';
@@ -198,7 +198,7 @@
           FOR Cur_SeqProduct IN
             (SELECT *
             FROM MA_SequenceProduct
-            WHERE MA_Sequence_ID=Cur_WRPhase.MA_Sequence_ID
+            WHERE MA_Sequence_ID=Cur_WRPhase.MA_Sequence_ID AND productiontype in ('+','-')
             )
           LOOP
             v_ResultStr:='NInsertProduct';
