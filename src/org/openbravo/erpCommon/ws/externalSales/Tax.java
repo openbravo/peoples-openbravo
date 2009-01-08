@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,12 +20,13 @@
 package org.openbravo.erpCommon.ws.externalSales;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 public class Tax extends Object implements Serializable {
     private static final long serialVersionUID = 1L;
     private String id;
     private String name;
-    private double percentage;
+    private BigDecimal percentage;
 
     /** Creates a new instance of Tax */
     public Tax() {
@@ -47,11 +48,11 @@ public class Tax extends Object implements Serializable {
         this.name = name;
     }
 
-    public double getPercentage() {
+    public BigDecimal getPercentage() {
         return percentage;
     }
 
-    public void setPercentage(double percentage) {
+    public void setPercentage(BigDecimal percentage) {
         this.percentage = percentage;
     }
 

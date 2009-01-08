@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,6 +20,7 @@
 package org.openbravo.erpCommon.ws.externalSales;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 public class Product extends Object implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -27,8 +28,8 @@ public class Product extends Object implements Serializable {
     private String name;
     private String number;
     private String description;
-    private double listPrice;
-    private double purchasePrice;
+    private BigDecimal listPrice;
+    private BigDecimal purchasePrice;
     private Tax tax;
     private String imageUrl;
     private String ean;
@@ -66,19 +67,19 @@ public class Product extends Object implements Serializable {
         this.description = description;
     }
 
-    public double getListPrice() {
+    public BigDecimal getListPrice() {
         return listPrice;
     }
 
-    public void setListPrice(double listPrice) {
+    public void setListPrice(BigDecimal listPrice) {
         this.listPrice = listPrice;
     }
 
-    public double getPurchasePrice() {
+    public BigDecimal getPurchasePrice() {
         return purchasePrice;
     }
 
-    public void setPurchasePrice(double purchasePrice) {
+    public void setPurchasePrice(BigDecimal purchasePrice) {
         this.purchasePrice = purchasePrice;
     }
 

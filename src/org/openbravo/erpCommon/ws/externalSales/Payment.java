@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,20 +19,22 @@
 
 package org.openbravo.erpCommon.ws.externalSales;
 
+import java.math.BigDecimal;
+
 public class Payment {
 
-    private double amount;
+    private BigDecimal amount;
     private String paymentType;
 
     /** Creates a new instance of Payment */
     public Payment() {
     }
 
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 

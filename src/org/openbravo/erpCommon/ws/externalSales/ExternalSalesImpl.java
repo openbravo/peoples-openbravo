@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2008 Openbravo SL
+ * All portions are Copyright (C) 2001-2009 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,7 @@
 
 package org.openbravo.erpCommon.ws.externalSales;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Vector;
 
@@ -101,13 +102,14 @@ public class ExternalSalesImpl implements ExternalSales {
                     products[i].setName(data[i].name);
                     products[i].setNumber(data[i].number1);
                     products[i].setDescription(data[i].description);
-                    products[i].setListPrice(parseDouble(data[i].listPrice));
+                    products[i].setListPrice(new BigDecimal(data[i].listPrice));
                     products[i]
-                            .setPurchasePrice(parseDouble(data[i].purchasePrice));
+                            .setPurchasePrice(new BigDecimal(
+			    data[i].purchasePrice));
                     Tax tax = new org.openbravo.erpCommon.ws.externalSales.Tax();
                     tax.setId(data[i].taxId);
                     tax.setName(data[i].taxName);
-                    tax.setPercentage(parseDouble(data[i].percentage));
+                    tax.setPercentage(new BigDecimal(data[i].percentage));
                     products[i].setTax(tax);
                     products[i].setImageUrl(data[i].imageUrl);
                     products[i].setEan(data[i].ean);
@@ -179,13 +181,14 @@ public class ExternalSalesImpl implements ExternalSales {
                     products[i].setName(data[i].name);
                     products[i].setNumber(data[i].number1);
                     products[i].setDescription(data[i].description);
-                    products[i].setListPrice(parseDouble(data[i].listPrice));
+                    products[i].setListPrice(new BigDecimal(data[i].listPrice));
                     products[i]
-                            .setPurchasePrice(parseDouble(data[i].purchasePrice));
+                            .setPurchasePrice(new BigDecimal(
+			    data[i].purchasePrice));
                     Tax tax = new org.openbravo.erpCommon.ws.externalSales.Tax();
                     tax.setId(data[i].taxId);
                     tax.setName(data[i].taxName);
-                    tax.setPercentage(parseDouble(data[i].percentage));
+                    tax.setPercentage(new BigDecimal(data[i].percentage));
                     products[i].setTax(tax);
                     products[i].setImageUrl(data[i].imageUrl);
                     products[i].setEan(data[i].ean);
@@ -195,7 +198,7 @@ public class ExternalSalesImpl implements ExternalSales {
                     category
                             .setDescription(data[i].mProductCategoryDescription);
                     products[i].setCategory(category);
-                    products[i].setQtyonhand(parseDouble(data[i].qtyonhand));
+                    products[i].setQtyonhand(new BigDecimal(data[i].qtyonhand));
                     i++;
                 }
                 return products;
@@ -301,20 +304,21 @@ public class ExternalSalesImpl implements ExternalSales {
                     // This could change in the future
                     if (newOrders[i].getPayment() != null
                             && newOrders[i].getPayment().length >= 1) {
-                        data[0].paymentamount1 = Double.toString(newOrders[i]
-                                .getPayment()[0].getAmount());
+                        data[0].paymentamount1 = (newOrders[i].getPayment()[0]
+				.getAmount()).toPlainString();
                         data[0].paymentrule1 = newOrders[i].getPayment()[0]
                                 .getPaymentType();
                     }
-                    int amount = 0;
+                    BigDecimal amount = BigDecimal.ZERO;
                     while (newOrders[i].getPayment() != null
                             && k < newOrders[i].getPayment().length) {
-                        amount += newOrders[i].getPayment()[1].getAmount();
+                        amount = amount.add(newOrders[i].getPayment()[1]
+				.getAmount());
                         data[0].paymentrule2 = newOrders[i].getPayment()[1]
                                 .getPaymentType();
                         k++;
                     }
-                    data[0].paymentamount2 = Integer.toString(amount);
+                    data[0].paymentamount2 = amount.toPlainString();
                 }
                 int j = 0;
                 if (newOrders[i].getLines() != null) {
@@ -323,8 +327,8 @@ public class ExternalSalesImpl implements ExternalSales {
                             && j < newOrders[i].getLines().length) {
                         data[0].mProductId = newOrders[i].getLines()[j]
                                 .getProductId();
-                        data[0].qtyordered = Double.toString(newOrders[i]
-                                .getLines()[j].getUnits());
+                        data[0].qtyordered = (newOrders[i].getLines()[j]
+				.getUnits()).toPlainString();
                         data[0].priceactual = ""
                                 + newOrders[i].getLines()[j].getPrice();
 
@@ -471,12 +475,10 @@ public class ExternalSalesImpl implements ExternalSales {
                                                 .equals("")) ? (dataLines[j].orderLineId)
                                                 : "0");
                                 orderLine.setProductId(dataLines[j].productId);
-                                orderLine.setUnits((Double
-                                        .valueOf(dataLines[j].units))
-                                        .doubleValue());
-                                orderLine.setPrice((Double
-                                        .valueOf(dataLines[j].price))
-                                        .doubleValue());
+                                orderLine.setUnits(new BigDecimal(
+					dataLines[j].units));
+                                orderLine.setPrice(new BigDecimal(
+					dataLines[j].price));
                                 orderLine.setTaxId(dataLines[j].taxId);
                                 orderLines[j] = orderLine;
                                 j++;
@@ -530,9 +532,7 @@ public class ExternalSalesImpl implements ExternalSales {
                             int k = 0;
                             while (k < dataPayments.length) {
                                 Payment payment = new org.openbravo.erpCommon.ws.externalSales.Payment();
-                                payment.setAmount((Double
-                                        .valueOf(dataPayments[k].amount))
-                                        .doubleValue());
+                                payment.setAmount(new BigDecimal(dataPayments[k].amount));
                                 payment
                                         .setPaymentType(dataPayments[k].paymentrule);
                                 payments[k] = payment;
@@ -575,11 +575,4 @@ public class ExternalSalesImpl implements ExternalSales {
             log4j.debug("destroy");
     }
 
-    protected final double parseDouble(String value) {
-        try {
-            return Double.valueOf(value).doubleValue();
-        } catch (NumberFormatException e) {
-            return 0.0;
-        }
-    }
 }

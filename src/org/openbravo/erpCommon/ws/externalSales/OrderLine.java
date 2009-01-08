@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,12 +19,14 @@
 
 package org.openbravo.erpCommon.ws.externalSales;
 
+import java.math.BigDecimal;
+
 public class OrderLine {
 
     private String orderLineId;
     private String productId;
-    private double units;
-    private double price;
+    private BigDecimal units;
+    private BigDecimal price;
     private String taxId;
 
     /** Creates a new instance of OrderLine */
@@ -47,19 +49,19 @@ public class OrderLine {
         this.productId = productId;
     }
 
-    public double getUnits() {
+    public BigDecimal getUnits() {
         return units;
     }
 
-    public void setUnits(double units) {
+    public void setUnits(BigDecimal units) {
         this.units = units;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
