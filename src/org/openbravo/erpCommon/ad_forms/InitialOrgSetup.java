@@ -299,7 +299,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
             } catch (final Exception ignored) {
             }
         }
-        // verify that organization type and parent selection makes sense
+/*        // verify that organization type and parent selection makes sense
         try {
             conn = this.getTransactionConnection();
             final String strIsLE = InitialOrgSetupData.isLE(this, strOrgType);
@@ -324,7 +324,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
                 releaseRollbackConnection(conn);
             } catch (final Exception ignored) {
             }
-        }
+        }*/
         try {
             m_info.append(SALTO_LINEA).append(
                     "*****************************************************")
@@ -1244,7 +1244,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
 
     /**
      * Returns the error. "" if there is no error
-     * 
+     *
      * @param vars
      * @param strOrganization
      * @param strClient
@@ -1372,7 +1372,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
     /**
      * Returns the modules {@link FieldProvider} ordered taking into account
      * dependencies
-     * 
+     *
      * @param modules
      * @return
      */
