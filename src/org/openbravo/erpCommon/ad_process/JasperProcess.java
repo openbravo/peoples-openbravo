@@ -87,6 +87,7 @@ public class JasperProcess implements Process {
         String strFileName = strReportName.substring(strReportName
                 .lastIndexOf("/") + 1);
 
+        // FIXME: os is never assigned, but used leading to an NPE
         ServletOutputStream os = null;
         try {
             JasperDesign jasperDesign = JRXmlLoader.load(strReportName);
