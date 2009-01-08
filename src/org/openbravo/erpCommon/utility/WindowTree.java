@@ -161,10 +161,9 @@ public class WindowTree extends HttpSecureAppServlet {
         String TreeType = WindowTreeUtility.getTreeType(key);
         StringBuffer menu = new StringBuffer();
         menu.append("<ul>\n");
-        StringBuffer script = new StringBuffer();
-        script.append(generateTree(WindowTreeUtility.getTree(this, vars,
+        String script = generateTree(WindowTreeUtility.getTree(this, vars,
                 TreeType, strTreeID, editable, strParentID, "", strTabId),
-                strDireccion, strParentID, true));
+                strDireccion, strParentID, true);
         if (!script.equals("")) {
             String TreeName = "", TreeDescription = "";
             WindowTreeData[] data = null;
