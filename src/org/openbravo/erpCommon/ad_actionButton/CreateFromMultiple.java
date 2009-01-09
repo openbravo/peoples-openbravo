@@ -179,6 +179,7 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
                         "org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Receipt",
                         discard).createXmlDocument();
 
+        xmlDocument.setParameter("theme", vars.getTheme());
         xmlDocument.setParameter("language", "defaultLang=\""
                 + vars.getLanguage() + "\";");
         xmlDocument.setParameter("directory", "var baseDirectory = \""
@@ -292,6 +293,7 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
                         "org/openbravo/erpCommon/ad_actionButton/CreateFromMultiple_Shipment",
                         discard).createXmlDocument();
 
+        xmlDocument.setParameter("theme", vars.getTheme());
         xmlDocument.setParameter("language", "defaultLang=\""
                 + vars.getLanguage() + "\";");
         xmlDocument.setParameter("directory", "var baseDirectory = \""
