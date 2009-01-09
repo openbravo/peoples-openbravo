@@ -21,7 +21,6 @@ package org.openbravo.translate;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -49,12 +48,9 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     protected static CPStandAlone pool;
     static XMLReader parser;
     static TranslateData[] toLanguage;
-    static String fromLanguage;
     static String actualLanguage;
     static String fileTermination;
 
-    static PrintWriter printWriterTxt;
-    static boolean error;
     static boolean isHtml = false;
 
     static String actualTag;
@@ -101,7 +97,6 @@ public class Translate extends DefaultHandler implements LexicalHandler {
             parser = new SAXParser();
         parser.setEntityResolver(new LocalEntityResolver());
         parser.setContentHandler(this);
-        fromLanguage = TranslateData.baseLanguage(pool);
         toLanguage = TranslateData.systemLanguage(pool);
         if (toLanguage.length == 0)
             log4j
@@ -373,7 +368,6 @@ public class Translate extends DefaultHandler implements LexicalHandler {
 
         log4j.debug("File: " + fileParsing);
 
-        error = false;
         try {
             parser.parse(new InputSource(new FileReader(fileParsing)));
         } catch (final IOException e) {

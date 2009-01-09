@@ -18,8 +18,6 @@
  */
 package org.openbravo.translate;
 
-import org.openbravo.database.CPStandAlone;
-
 import java.io.*;
 import java.util.Vector;
 import java.lang.Math;
@@ -35,7 +33,6 @@ import org.apache.log4j.PropertyConfigurator;
  **/
 public class RTLSkin {
     public static final String VERSION = "V1.0";
-    protected static CPStandAlone pool;
     static int count = 0;
     private static String srcDirRTLSkin = "";
     private static String srcDirLTRSkin = "";
@@ -330,10 +327,4 @@ public class RTLSkin {
         out.close();
     }
 
-    /**
-     * The method to close database connection.
-     */
-    public void destroy() {
-        pool.destroy();
-    }
 }

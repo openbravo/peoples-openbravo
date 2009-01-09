@@ -241,14 +241,6 @@ build.war: build a war file in the lib directory.
 		<copy todir="${build}">
 			<fileset file="${base.config}/quartz.properties" />
 		</copy>
-		<java classname="org.openbravo.translate.CommandLine_CopyFiles" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-			<arg line="'${base.config}/Openbravo.properties' '${base.design}/design' '${base.design}' '.xml' 'true' 'false'" />
-			<classpath refid="project.class.path" />
-		</java>
-		<java classname="org.openbravo.translate.CommandLine_CopyFiles" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-			<arg line="'${base.config}/Openbravo.properties' '${base.design}/design' '${base.design}' 'jasper' 'true' 'false'" />
-			<classpath refid="project.class.path" />
-		</java>
 		<antcall target="build.local.context" inheritAll="true" inheritrefs="true" />
 	</target>
 

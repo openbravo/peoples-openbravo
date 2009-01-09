@@ -23,7 +23,7 @@
   <SqlMethod name="select" type="preparedStatement" return="multiple">
     <SqlMethodComment>Return the translation of a text</SqlMethodComment>
     <Sql>
-      select A.ad_textinterfaces_id, A.tr, '' AS NAME, A.o AS ORDEN, '' as ad_language, '' AS TOTAL
+      select A.ad_textinterfaces_id, A.tr, '' AS NAME, '' AS TOTAL
         from (select tt.ad_textinterfaces_id AS ad_textinterfaces_id, trim(tt.text) AS tr, 1 AS o
                 from ad_textinterfaces_trl tt
                where tt.ad_textinterfaces_id =  (select min(ad_textinterfaces_id)
@@ -171,12 +171,6 @@
                         and m.isInDevelopment = 'Y')
     </Sql>
     <Parameter name="adTextinterfacesId"/>
-  </SqlMethod>
-  <SqlMethod name="baseLanguage" type="preparedStatement" return="String" default="">
-    <SqlMethodComment>Return the translation of a text</SqlMethodComment>
-    <Sql>
-      SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE ISACTIVE='Y' AND ISBASELANGUAGE='Y'
-    </Sql>
   </SqlMethod>
 
   <SqlMethod name="systemLanguage" type="preparedStatement" return="multiple">
