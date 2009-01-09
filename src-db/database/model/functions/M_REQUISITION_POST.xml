@@ -69,7 +69,6 @@ BEGIN
       FROM M_RequisitionLine
       WHERE M_REQUISITION_ID = v_Record_ID;
       IF v_Aux=0 THEN
-      /*cambiar este mensajillo!!!!*/
         RAISE_APPLICATION_ERROR(-20000, '@RequisitionWithoutLines@');
       END IF;
     END IF;
