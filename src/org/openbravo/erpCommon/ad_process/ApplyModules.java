@@ -145,7 +145,8 @@ public class ApplyModules extends HttpSecureAppServlet {
         xmlDocument.setParameter("theme", vars.getTheme());
         final String message = Utility.messageBD(this, "CONTEXT_RELOAD", vars
                 .getLanguage());
-        xmlDocument.setParameter("message", message);
+        xmlDocument.setParameter("message", Utility
+                .formatMessageBDToHtml(message));
 
         response.setContentType("text/html; charset=UTF-8");
         final PrintWriter out = response.getWriter();
@@ -177,7 +178,8 @@ public class ApplyModules extends HttpSecureAppServlet {
         xmlDocument.setParameter("theme", vars.getTheme());
         final String message = Utility.messageBD(this, "TOMCAT_RESTART", vars
                 .getLanguage());
-        xmlDocument.setParameter("message", message);
+        xmlDocument.setParameter("message", Utility
+                .formatMessageBDToHtml(message));
 
         response.setContentType("text/html; charset=UTF-8");
         final PrintWriter out = response.getWriter();
@@ -365,7 +367,8 @@ public class ApplyModules extends HttpSecureAppServlet {
             }
             xmlDocument.setParameter("type", type);
             xmlDocument.setParameter("title", title);
-            xmlDocument.setParameter("description", description);
+            xmlDocument.setParameter("description", Utility
+                    .formatMessageBDToHtml(description));
             response.setContentType("text/xml; charset=UTF-8");
             response.setHeader("Cache-Control", "no-cache");
             final PrintWriter out = response.getWriter();

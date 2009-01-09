@@ -19,24 +19,27 @@
 
 package org.openbravo.erpCommon.businessUtility;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintWriter;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.xmlEngine.XmlDocument;
 
 public class MessageJS extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;
 
+    @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        VariablesSecureApp vars = new VariablesSecureApp(request);
+        final VariablesSecureApp vars = new VariablesSecureApp(request);
 
-        String strValue = vars.getRequiredStringParameter("inpvalue");
+        final String strValue = vars.getRequiredStringParameter("inpvalue");
         printPage(response, vars, strValue);
     }
 
@@ -45,7 +48,7 @@ public class MessageJS extends HttpSecureAppServlet {
             ServletException {
         if (log4j.isDebugEnabled())
             log4j.debug("Output: print page message");
-        XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
                 "org/openbravo/erpCommon/businessUtility/MessageJS")
                 .createXmlDocument();
         String type = "Hidden";
@@ -57,7 +60,7 @@ public class MessageJS extends HttpSecureAppServlet {
         MessageJSData[] data = null;
         try {
             data = MessageJSData.getMessage(this, strLanguage, strValue);
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             type = "Error";
             title = "Error";
             description = ex.toString();
@@ -69,12 +72,14 @@ public class MessageJS extends HttpSecureAppServlet {
             title = Utility.messageBD(this, type, strLanguage);
             description = "<![CDATA[" + data[0].msgtext + "]]>";
         }
+
         xmlDocument.setParameter("type", type);
         xmlDocument.setParameter("title", title);
-        xmlDocument.setParameter("description", description);
+        xmlDocument.setParameter("description", Utility
+                .formatMessageBDToHtml(description));
         response.setContentType("text/xml; charset=UTF-8");
         response.setHeader("Cache-Control", "no-cache");
-        PrintWriter out = response.getWriter();
+        final PrintWriter out = response.getWriter();
         if (log4j.isDebugEnabled())
             log4j.debug(xmlDocument.print());
         out.println(xmlDocument.print());

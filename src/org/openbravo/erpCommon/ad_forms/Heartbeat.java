@@ -110,8 +110,9 @@ public class Heartbeat extends HttpSecureAppServlet {
         xmlDocument.setParameter("language", "defaultLang=\""
                 + vars.getLanguage() + "\";");
         xmlDocument.setParameter("theme", vars.getTheme());
-        xmlDocument.setParameter("welcome", Utility.messageBD(this,
-                "HB_WELCOME", vars.getLanguage()));
+        xmlDocument.setParameter("welcome", Utility
+                .formatMessageBDToHtml(Utility.messageBD(this, "HB_WELCOME",
+                        vars.getLanguage())));
 
         final RegisterData[] rData = RegisterData.select(this);
         if (rData.length > 0) {

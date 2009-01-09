@@ -228,6 +228,33 @@ public class Utility {
     }
 
     /**
+     * 
+     * Formats a message String into a String for html presentation. Escapes the
+     * &, <, >, " and ®, and replace the \n by <br/>
+     * and \r for space.
+     * 
+     * IMPORTANT! : this method is designed to transform the output of
+     * Utility.messageBD method, and this method replaces \n by \\n and \" by
+     * &quote. Because of that, the first replacements revert this previous
+     * replacements.
+     * 
+     * @param message
+     *            message with java formating
+     * @return html format message
+     */
+    public static String formatMessageBDToHtml(String message) {
+        return Replace.replace(Replace.replace(
+                Replace.replace(Replace.replace(Replace.replace(Replace
+                        .replace(Replace.replace(Replace.replace(Replace
+                                .replace(Replace.replace(Replace.replace(
+                                        message, "\\n", "\n"), "&quot", "\""),
+                                        "&", "&amp;"), "\"", "&quot;"), "<",
+                                "&lt;"), ">", "&gt;"), "\n", "<br/>"), "\r",
+                        " "), "®", "&reg;"), "&lt;![CDATA[", "<![CDATA["),
+                "]]&gt;", "]]>");
+    }
+
+    /**
      * Gets the value of the given preference.
      * 
      * @param vars
@@ -338,7 +365,7 @@ public class Utility {
                 } else { // add *
                     if (!retValue.equals("0") && !retValue.startsWith("'0',")
                             && retValue.indexOf(",'0'") == -1) {// Any: current
-                                                                // list and *
+                        // list and *
                         retValue = "'0'" + (retValue.equals("") ? "" : ",")
                                 + retValue;
                     }
@@ -417,12 +444,12 @@ public class Utility {
                         return OrgTree.getTransactionAllowedOrgs(retValue);
                     } else {
                         if ((accessLevel == 1) || (userLevel.equals("  O"))) { // No
-                                                                               // *:
-                                                                               // remove
-                                                                               // 0
-                                                                               // from
-                                                                               // current
-                                                                               // list
+                            // *:
+                            // remove
+                            // 0
+                            // from
+                            // current
+                            // list
                             if (retValue.equals("'0'"))
                                 retValue = "";
                             else if (retValue.startsWith("'0',"))
@@ -433,9 +460,9 @@ public class Utility {
                             if (!retValue.equals("'0'")
                                     && !retValue.startsWith("'0',")
                                     && retValue.indexOf(",'0'") == -1) {// Any:
-                                                                        // current
-                                                                        // list
-                                                                        // and *
+                                // current
+                                // list
+                                // and *
                                 retValue = "'0'"
                                         + (retValue.equals("") ? "" : ",")
                                         + retValue;
@@ -2091,19 +2118,19 @@ public class Utility {
                 do {
                     strDate2 = Utility.addDaysToDate(strDate2, "1",
                             DateFormatter); // Adds a day to the Date 2 until it
-                                            // reaches the Date 1
+                    // reaches the Date 1
                     if (!Utility.isWeekendDay(strDate2, DateFormatter))
                         LaborDays++; // If it is not a weekend day, it adds a
-                                     // day to the labor days
+                    // day to the labor days
                 } while (!strDate2.equals(strDate1));
             } else {
                 do {
                     strDate1 = Utility.addDaysToDate(strDate1, "1",
                             DateFormatter); // Adds a day to the Date 1 until it
-                                            // reaches the Date 2
+                    // reaches the Date 2
                     if (!Utility.isWeekendDay(strDate1, DateFormatter))
                         LaborDays++; // If it is not a weekend day, it adds a
-                                     // day to the labor days
+                    // day to the labor days
                 } while (!strDate1.equals(strDate2));
             }
             strLaborDays = LaborDays.toString();
@@ -2129,13 +2156,13 @@ public class Utility {
                 && !strDays.equals("")) {
             final Calendar FinalDate = Calendar.getInstance();
             FinalDate.setTime(DateFormatter.parse(strDate)); // FinalDate equals
-                                                             // to strDate
+            // to strDate
             FinalDate.add(Calendar.DATE, Integer.parseInt(strDays)); // FinalDate
-                                                                     // equals
-                                                                     // to
-                                                                     // strDate
-                                                                     // plus one
-                                                                     // day
+            // equals
+            // to
+            // strDate
+            // plus one
+            // day
             strFinalDate = DateFormatter.format(FinalDate.getTime());
         }
         return strFinalDate;
@@ -2151,9 +2178,9 @@ public class Utility {
     public static DateFormat getDateFormatter(VariablesSecureApp vars) {
         String strFormat = vars.getSessionValue("#AD_SqlDateFormat").toString();
         strFormat = strFormat.replace('Y', 'y'); // Java accepts 'yy' for the
-                                                 // year
+        // year
         strFormat = strFormat.replace('D', 'd'); // Java accepts 'dd' for the
-                                                 // day of the date
+        // day of the date
         final DateFormat DateFormatter = new SimpleDateFormat(strFormat);
         return DateFormatter;
     }
@@ -2172,14 +2199,14 @@ public class Utility {
         final Calendar Day = Calendar.getInstance();
         Day.setTime(DateFormatter.parse(strDay));
         final int weekday = Day.get(Calendar.DAY_OF_WEEK); // Gets the number of
-                                                           // the day of the
-                                                           // week: 1-Sunday,
-                                                           // 2-Monday,
-                                                           // 3-Tuesday,
-                                                           // 4-Wednesday,
-                                                           // 5-Thursday,
-                                                           // 6-Friday,
-                                                           // 7-Saturday
+        // the day of the
+        // week: 1-Sunday,
+        // 2-Monday,
+        // 3-Tuesday,
+        // 4-Wednesday,
+        // 5-Thursday,
+        // 6-Friday,
+        // 7-Saturday
         if (weekday == 1 || weekday == 7)
             return true; // 1-Sunday, 7-Saturday
         return false;

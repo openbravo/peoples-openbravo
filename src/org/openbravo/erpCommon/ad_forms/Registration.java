@@ -93,8 +93,9 @@ public class Registration extends HttpSecureAppServlet {
         xmlDocument.setParameter("language", "defaultLang=\""
                 + vars.getLanguage() + "\";");
         xmlDocument.setParameter("theme", vars.getTheme());
-        xmlDocument.setParameter("welcome", Utility.messageBD(this,
-                "REG_WELCOME", vars.getLanguage()));
+        xmlDocument.setParameter("welcome", Utility
+                .formatMessageBDToHtml(Utility.messageBD(this, "REG_WELCOME",
+                        vars.getLanguage())));
 
         out.println(xmlDocument.print());
         out.close();
