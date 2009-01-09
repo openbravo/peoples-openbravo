@@ -3733,7 +3733,7 @@ dojo.declare("openbravo.widget.DataGrid.SortingHandler", null, {
       //nobr1.setAttribute("id", this.headerTableId + '_img_' + n);
       //nobr1.innerHTML     =  '<span id="' + this.headerTableId + '_img_' + n + '"></span>' +
       //cell.innerHTML;
-      cell.innerHTML = '<nobr><span id="' + this.headerTableId + '_img_' + n + '"></span>' + cell.innerHTML + '</nobr>';
+      cell.innerHTML = '<span id="' + this.headerTableId + '_img_' + n + '"></span>' + cell.innerHTML;
       //cell.appendChild(nobr1);
     }
   },
