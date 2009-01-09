@@ -1720,7 +1720,7 @@ public class TableSQLData {
             result = field;
             break;
         default:
-            result = "TO_CHAR(" + field + ")";
+            result = "COALESCE(TO_CHAR(" + field + "),'')";
             break;
         }
         return result;
@@ -2578,7 +2578,7 @@ public class TableSQLData {
 
         // Order by
 
-        setOrderBy(_OrderFields, _OrderParams);
+        setOrderBy(_OrderSimple, _OrderParams);
         aux = getOrderByFields();
         boolean hasOrder = false;
         StringBuffer txtAuxOrderBy = new StringBuffer();
