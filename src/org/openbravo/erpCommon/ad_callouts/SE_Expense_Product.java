@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -82,9 +82,9 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
         String strUOM = SEExpenseProductData.selectUOM(this, strmProductId);
         boolean noPrice = true;
         String priceActual = "";
-        String CCurrencyID = "";
-        BigDecimal Qty = new BigDecimal(strqty);
-        BigDecimal Amount = null;
+        String cCurrencyID = "";
+        BigDecimal qty = new BigDecimal(strqty);
+        BigDecimal amount = null;
 
         if (strDateexpense.equals("")) {
             strDateexpense = SEExpenseProductData.selectReportDate(this,
@@ -107,7 +107,7 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
                     if (priceActual.equals(""))
                         priceActual = data[i].pricelimit;
                     // Currency
-                    CCurrencyID = data[i].cCurrencyId;
+                    cCurrencyID = data[i].cCurrencyId;
                 }
             }
             if (noPrice) {
@@ -126,7 +126,7 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
                         if (priceActual.equals(""))
                             priceActual = data[i].pricelimit;
                         // Currency
-                        CCurrencyID = data[i].cCurrencyId;
+                        cCurrencyID = data[i].cCurrencyId;
                     }
                 }
             }
@@ -134,15 +134,15 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
             priceActual = strInvPrice;
         }
 
-        if (strChanged.equals("inpqty") || CCurrencyID.equals("")) {
-            CCurrencyID = strcCurrencyId;
+        if (strChanged.equals("inpqty") || cCurrencyID.equals("")) {
+            cCurrencyID = strcCurrencyId;
         }
         String strPrecision = "0";
-        if (!CCurrencyID.equals("")) {
+        if (!cCurrencyID.equals("")) {
             strPrecision = SEExpenseProductData.selectPrecision(this,
-                    CCurrencyID);
+                    cCurrencyID);
         }
-        int StdPrecision = Integer.valueOf(strPrecision).intValue();
+        int stdPrecision = Integer.valueOf(strPrecision).intValue();
 
         StringBuffer resultado = new StringBuffer();
         resultado.append("var calloutName='SE_Expense_Product';\n\n");
@@ -151,29 +151,29 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
                 + (strUOM.equals("") ? "\"\"" : strUOM) + ")\n");
 
         if (!priceActual.equals("")) {
-            Amount = new BigDecimal(priceActual);
-            Amount = Amount.multiply(Qty);
+            amount = new BigDecimal(priceActual);
+            amount = amount.multiply(qty);
         } else {
-            Amount = new BigDecimal(0.0);
+            amount = BigDecimal.ZERO;
         }
-        if (Amount.scale() > StdPrecision)
-            Amount = Amount.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
+        if (amount.scale() > stdPrecision)
+	    amount = amount.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
         resultado.append(", new Array(\"inpexpenseamt\", \""
-                + Amount.toString() + "\")");
-        String C_Currency_To_ID = Utility.getContext(this, vars,
+                + amount.toPlainString() + "\")");
+        String c_Currency_To_ID = Utility.getContext(this, vars,
                 "$C_Currency_ID", "");
         // Checks if there is a conversion rate for each of the transactions of
         // the report
         String strConvRateErrorMsg = "";
         OBError myMessage = null;
         myMessage = new OBError();
-        if (!CCurrencyID.equals("")) {
-            String convertedAmount = Amount.toString();
-            if (!CCurrencyID.equals(C_Currency_To_ID)) {
+        if (!cCurrencyID.equals("")) {
+            String convertedAmount = amount.toPlainString();
+	    if (!cCurrencyID.equals(c_Currency_To_ID)) {
                 try {
                     convertedAmount = SEExpenseProductData.selectConvertedAmt(
-                            this, Amount.toString(), CCurrencyID,
-                            C_Currency_To_ID, strDateexpense, vars.getClient(),
+                            this, amount.toPlainString(), cCurrencyID,
+                            c_Currency_To_ID, strDateexpense, vars.getClient(),
                             vars.getOrg());
                 } catch (ServletException e) {
                     convertedAmount = "";
@@ -184,26 +184,26 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
                 }
             }
             String strPrecisionConv = "0";
-            if (!C_Currency_To_ID.equals("")) {
+            if (!c_Currency_To_ID.equals("")) {
                 strPrecisionConv = SEExpenseProductData.selectPrecision(this,
-                        C_Currency_To_ID);
+                        c_Currency_To_ID);
             }
-            int StdPrecisionConv = Integer.valueOf(strPrecisionConv).intValue();
-            BigDecimal ConvAmount;
+            int stdPrecisionConv = Integer.valueOf(strPrecisionConv).intValue();
+            BigDecimal convAmount;
             if (!convertedAmount.equals("")) {
-                ConvAmount = new BigDecimal(convertedAmount);
+                convAmount = new BigDecimal(convertedAmount);
             } else {
-                ConvAmount = new BigDecimal(0.0);
+                convAmount = BigDecimal.ZERO;
             }
-            if (ConvAmount.scale() > StdPrecisionConv)
-                ConvAmount = ConvAmount.setScale(StdPrecisionConv,
+            if (convAmount.scale() > stdPrecisionConv)
+                convAmount = convAmount.setScale(stdPrecisionConv,
                         BigDecimal.ROUND_HALF_UP);
             resultado.append(", new Array(\"inpconvertedamt\", \""
-                    + (ConvAmount.equals(new BigDecimal(0.0)) ? "" : ConvAmount
-                            .toString()) + "\")");
+                    + (convAmount.compareTo(BigDecimal.ZERO) == 0 ? ""
+			    : convAmount.toPlainString()) + "\")");
         }
-        if (strChanged.equals("inpmProductId") && !CCurrencyID.equals("")) {
-            resultado.append(", new Array(\"inpcCurrencyId\", \"" + CCurrencyID
+        if (strChanged.equals("inpmProductId") && !cCurrencyID.equals("")) {
+            resultado.append(", new Array(\"inpcCurrencyId\", \"" + cCurrencyID
                     + "\")");
         }
         if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {

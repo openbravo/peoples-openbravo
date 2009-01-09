@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2008 Openbravo SL
+ * All portions are Copyright (C) 2001-2009 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,7 +34,7 @@ public class DocPayment extends AcctServer {
 
     private String SeqNo = "0";
     private String SettlementType = "";
-    public final BigDecimal ZERO = new BigDecimal("0");
+    static final BigDecimal ZERO = BigDecimal.ZERO;
 
     /**
      * Constructor

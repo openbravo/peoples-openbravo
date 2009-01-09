@@ -91,7 +91,7 @@ public class SL_InvoiceTax_Amt extends HttpSecureAppServlet {
         Integer taxScale = new Integer(data[0].priceprecision);
 
         if (strChanged.equals("inptaxamt")) {
-            if (!taxRate.equals(new BigDecimal(0)))
+            if (taxRate.compareTo(BigDecimal.ZERO) != 0)
                 taxBaseAmt = ((taxAmt.divide(taxRate, 12,
 			BigDecimal.ROUND_HALF_EVEN)).multiply(new BigDecimal(
 			"100"))).setScale(taxScale,
@@ -105,9 +105,10 @@ public class SL_InvoiceTax_Amt extends HttpSecureAppServlet {
         resultado.append("var calloutName='SL_InvoiceTax_Amt';\n\n");
         resultado.append("var respuesta = new Array(");
         resultado
-                .append("new Array(\"inptaxamt\", " + taxAmt.toString() + "),");
+                .append("new Array(\"inptaxamt\", " + taxAmt.toPlainString()
+		+ "),");
         resultado.append("new Array(\"inptaxbaseamt\", "
-                + taxBaseAmt.toString() + "));");
+                + taxBaseAmt.toPlainString() + "));");
 
         xmlDocument.setParameter("array", resultado.toString());
         xmlDocument.setParameter("frameName", "appFrame");

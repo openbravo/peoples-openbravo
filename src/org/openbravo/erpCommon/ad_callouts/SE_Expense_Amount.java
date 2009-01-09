@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -69,7 +69,7 @@ public class SE_Expense_Amount extends HttpSecureAppServlet {
                 "org/openbravo/erpCommon/ad_callouts/CallOut")
                 .createXmlDocument();
 
-        String C_Currency_To_ID = Utility.getContext(this, vars,
+        String c_Currency_To_ID = Utility.getContext(this, vars,
                 "$C_Currency_ID", "");
         // Checks if there is a conversion rate for each of the transactions of
         // the report
@@ -84,34 +84,34 @@ public class SE_Expense_Amount extends HttpSecureAppServlet {
                             strTimeExpenseId);
         }
 
-        BigDecimal Amount = null;
+        BigDecimal amount = null;
         if (!strExpenseAmt.equals("")) {
-            Amount = new BigDecimal(strExpenseAmt);
+            amount = new BigDecimal(strExpenseAmt);
         } else {
-            Amount = new BigDecimal(0.0);
+            amount = new BigDecimal(0.0);
         }
         String strPrecision = "0";
         if (!strcCurrencyId.equals("")) {
             strPrecision = SEExpenseAmountData.selectPrecision(this,
                     strcCurrencyId);
         }
-        int StdPrecision = Integer.valueOf(strPrecision).intValue();
-        if (Amount.scale() > StdPrecision)
-            Amount = Amount.setScale(StdPrecision, BigDecimal.ROUND_HALF_UP);
+        int stdPrecision = Integer.valueOf(strPrecision).intValue();
+        if (amount.scale() > stdPrecision)
+            amount = amount.setScale(stdPrecision, BigDecimal.ROUND_HALF_UP);
 
         String convertedAmount = strExpenseAmt;
-        BigDecimal ConvAmount = Amount;
+        BigDecimal convAmount = amount;
 
-        if (!strcCurrencyId.equals(C_Currency_To_ID)) {
+        if (!strcCurrencyId.equals(c_Currency_To_ID)) {
             String strPrecisionConv = "0";
-            if (!C_Currency_To_ID.equals("")) {
+            if (!c_Currency_To_ID.equals("")) {
                 strPrecisionConv = SEExpenseAmountData.selectPrecision(this,
-                        C_Currency_To_ID);
+                        c_Currency_To_ID);
             }
-            int StdPrecisionConv = Integer.valueOf(strPrecisionConv).intValue();
+            int stdPrecisionConv = Integer.valueOf(strPrecisionConv).intValue();
             try {
                 convertedAmount = SEExpenseAmountData.selectConvertedAmt(this,
-                        strExpenseAmt, strcCurrencyId, C_Currency_To_ID,
+                        strExpenseAmt, strcCurrencyId, c_Currency_To_ID,
                         strDateexpense, vars.getClient(), vars.getOrg());
             } catch (ServletException e) {
                 convertedAmount = "";
@@ -121,12 +121,12 @@ public class SE_Expense_Amount extends HttpSecureAppServlet {
                 log4j.warn("Currency does not exist. Exception:" + e);
             }
             if (!convertedAmount.equals("")) {
-                ConvAmount = new BigDecimal(convertedAmount);
+                convAmount = new BigDecimal(convertedAmount);
             } else {
-                ConvAmount = new BigDecimal(0.0);
+                convAmount = BigDecimal.ZERO;
             }
-            if (ConvAmount.scale() > StdPrecisionConv)
-                ConvAmount = ConvAmount.setScale(StdPrecisionConv,
+            if (convAmount.scale() > stdPrecisionConv)
+                convAmount = convAmount.setScale(stdPrecisionConv,
                         BigDecimal.ROUND_HALF_UP);
         }
         StringBuffer resultado = new StringBuffer();
@@ -136,11 +136,11 @@ public class SE_Expense_Amount extends HttpSecureAppServlet {
             resultado.append("new Array('MESSAGE', \"" + strConvRateErrorMsg
                     + "\"), ");
         }
-        resultado.append("new Array(\"inpexpenseamt\", \"" + Amount.toString()
+        resultado.append("new Array(\"inpexpenseamt\", \"" + amount.toPlainString()
                 + "\")");
         resultado.append(", new Array(\"inpconvertedamt\", \""
-                + (ConvAmount.equals(new BigDecimal(0.0)) ? "" : ConvAmount
-                        .toString()) + "\")");
+                + (convAmount.compareTo(BigDecimal.ZERO) == 0 ? "" : convAmount
+                        .toPlainString()) + "\")");
         resultado.append(");");
         xmlDocument.setParameter("array", resultado.toString());
         xmlDocument.setParameter("frameName", "appFrame");
