@@ -211,7 +211,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
      * @param relativePath
      *            The relative path.
      */
-    public static void listDir(File file, boolean boolFilter,
+    private static void listDir(File file, boolean boolFilter,
             DirFilter dirFilter, String relativePath,
             boolean parse, String parent, int level, String module) {
         File[] list;
@@ -369,19 +369,15 @@ public class Translate extends DefaultHandler implements LexicalHandler {
      * 
      * @param amap
      *            Attributes of the element.
-     * @return String with the list of attributes translated.
      */
-    public String parseAttributes(Attributes amap) {
-        final StringBuffer data = new StringBuffer();
+    private void parseAttributes(Attributes amap) {
         String type = "";
         String value = "";
-        boolean hasvalue = false;
         for (int i = 0; i < amap.getLength(); i++) {
             String strAux = amap.getValue(i);
             if (amap.getQName(i).equalsIgnoreCase("type")) {
                 type = strAux;
             } else if (amap.getQName(i).equalsIgnoreCase("value")) {
-                hasvalue = true;
                 value = strAux;
             } else if (amap.getQName(i).equalsIgnoreCase("onMouseOver")) {
                 if (strAux.toLowerCase().startsWith("window.status='")) {
@@ -391,27 +387,18 @@ public class Translate extends DefaultHandler implements LexicalHandler {
                             && (aux = strAux.lastIndexOf("';", j - 1)) != -1) {
                         j = aux;
                     }
-                    final String strToken = translate(strAux.substring(15, j));
-                    strAux = strAux.substring(0, 15) + strToken
-                            + strAux.substring(j);
+                    translate(strAux.substring(15, j));
                 }
             } else if (amap.getQName(i).equalsIgnoreCase("alt")) {
-                strAux = translate(strAux);
+                translate(strAux);
             } else if (amap.getQName(i).equalsIgnoreCase("title")) {
-                strAux = translate(strAux);
+                translate(strAux);
             }
-            if (!amap.getQName(i).equalsIgnoreCase("value"))
-                data.append(" ").append(amap.getQName(i)).append("=\"").append(
-                        strAux).append("\"");
         }
         if (value != null && !value.equals("")) {
             if (type.equalsIgnoreCase("button"))
-                value = translate(value);
-            data.append(" value=\"").append(value).append("\"");
-        } else if (hasvalue) {
-            data.append(" value=\"").append(value).append("\"");
+                translate(value);
         }
-        return data.toString();
     }
 
     /**
@@ -436,7 +423,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
      *            Name of the element.
      * @return True if the element is parseable, false if not.
      */
-    public boolean isParseable(String tagname) {
+    private static boolean isParseable(String tagname) {
         if (tagname.equalsIgnoreCase("script"))
             return false;
         else if (fileTermination.equalsIgnoreCase("jrxml")) {
@@ -542,7 +529,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
      *            String with the text to translate.
      * @return String with the translated text.
      */
-    public String translate(String ini) {
+    private String translate(String ini) {
         return translate(ini, false);
     }
 
@@ -556,7 +543,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
      *            one found in the element content.
      * @return String with the translated text.
      */
-    public String translate(String ini, boolean isPartial) {
+    private String translate(String ini, boolean isPartial) {
         ini = replace(replace(ini.trim(), "\r", ""), "\n", " ");
         ini = ini.trim();
         ini = delSp(ini);
@@ -620,7 +607,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
      *            String with the text.
      * @return True if has no letter in the text or false if has any letter.
      */
-    public boolean isNumeric(String ini) {
+    private static boolean isNumeric(String ini) {
         boolean isNumericData = true;
         for (int i = 0; i < ini.length(); i++) {
             if (Character.isLetter(ini.charAt(i))) {
@@ -642,7 +629,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
      *            Char to replace with.
      * @return String with the replaced text.
      */
-    public String replace(String strInicial, String strReplaceWhat,
+    private static String replace(String strInicial, String strReplaceWhat,
             String strReplaceWith) {
         int index = 0;
         int pos;
@@ -667,7 +654,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
      *            String to clean.
      * @return String without spaces.
      */
-    public String delSp(String strIni) {
+    private static String delSp(String strIni) {
         boolean sp = false;
         String strFin = "";
         for (int i = 0; i < strIni.length(); i++) {
@@ -690,7 +677,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
      *            Indicates if the text has been translated.
      * @return String translated.
      */
-    public String tokenize(String ini, int indice, Vector<String> isTranslated) {
+    private String tokenize(String ini, int indice, Vector<String> isTranslated) {
         final StringBuffer fin = new StringBuffer();
         try {
             boolean first = true;
@@ -748,7 +735,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     /**
      * The method to close database connection.
      */
-    public void destroy() {
+    private void destroy() {
         pool.destroy();
     }
 }
