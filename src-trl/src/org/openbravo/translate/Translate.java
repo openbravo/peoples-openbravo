@@ -527,10 +527,9 @@ public class Translate extends DefaultHandler implements LexicalHandler {
      * 
      * @param ini
      *            String with the text to translate.
-     * @return String with the translated text.
      */
-    private String translate(String ini) {
-        return translate(ini, false);
+    private void translate(String ini) {
+        translate(ini, false);
     }
 
     /**
@@ -541,29 +540,24 @@ public class Translate extends DefaultHandler implements LexicalHandler {
      * @param isPartial
      *            Indicates if the text passed is partial text or the complete
      *            one found in the element content.
-     * @return String with the translated text.
      */
-    private String translate(String ini, boolean isPartial) {
+    private void translate(String ini, boolean isPartial) {
         ini = replace(replace(ini.trim(), "\r", ""), "\n", " ");
         ini = ini.trim();
         ini = delSp(ini);
         if (!isPartial && actualTag.equalsIgnoreCase("textFieldExpression")) {
-            final StringBuffer text = new StringBuffer();
             int pos = ini.indexOf("\"");
             while (pos != -1) {
-                text.append(ini.substring(0, pos + 1));
                 ini = ini.substring(pos + 1);
                 pos = ini.indexOf("\"");
                 if (pos != -1) {
-                    text.append(translate(ini.substring(0, pos), true)).append(
-                            "\"");
+                    translate(ini.substring(0, pos), true);
                     ini = ini.substring(pos + 1);
                 } else
                     break;
                 pos = ini.indexOf("\"");
             }
-            text.append(ini);
-            return text.toString();
+            return;
         }
         final Vector<String> translated = new Vector<String>(0);
         boolean aux = true;
@@ -597,7 +591,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
                 e.printStackTrace();
             }
         }
-        return resultado;
+        return;
     }
 
     /**
