@@ -44,7 +44,6 @@ import org.xml.sax.helpers.DefaultHandler;
  *         Translate the HTML file of the folder especified
  **/
 public class Translate extends DefaultHandler implements LexicalHandler {
-    public static final String VERSION = "V1.O00.1";
     protected static CPStandAlone pool;
     static XMLReader parser;
     static TranslateData[] toLanguage;
@@ -62,7 +61,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     static String moduleName = "";
     static String moduleLang = "";
     static String moduleID = "";
-    public static final String[] tokens = { "-", ":" };
+    static final String[] tokens = { "-", ":" };
 
     static Logger log4j = Logger.getLogger(Translate.class);
 
@@ -112,14 +111,13 @@ public class Translate extends DefaultHandler implements LexicalHandler {
      *            AD_TEXTINTERFACES must be cleaned ("clean") and the second one
      *            is the Openbravo.properties path. The other way is with more
      *            arguments, where: 0- Openbravo.properties path. 1- File
-     *            extension. 2- Path where are the files to translate. 3- Path
-     *            where the translated files must be created. 4- Relative path.
+     *            extension. 2- Path where are the files to translate.
+     *            3- Relative path.
      * @throws Exception
      */
     public static void main(String argv[]) throws Exception {
         PropertyConfigurator.configure("log4j.lcf");
         String dirIni;
-        String dirFin;
         boolean boolFilter;
         DirFilter dirFilter = null;
         String relativePath = "";
@@ -131,27 +129,25 @@ public class Translate extends DefaultHandler implements LexicalHandler {
             return;
         }
 
-        if (argv.length < 4) {
+        if (argv.length < 3) {
             log4j
-                    .error("Usage: java Translate Openbravo.properties fileTermination sourceDir destinyDir relativePath");
+                    .error("Usage: java Translate Openbravo.properties fileTermination sourceDir relativePath");
             return;
         }
 
         final Translate translate = new Translate(argv[0], argv[1]);
 
         dirIni = argv[2].replace("\\", "/");
-        dirFin = argv[3].replace("\\", "/");
-        if (argv.length > 4)
-            relativePath = argv[4];
+        if (argv.length > 3)
+            relativePath = argv[3];
 
-        if (argv.length > 5) {
-            moduleDirectories = getDirectories(argv[5]);
+        if (argv.length > 4) {
+            moduleDirectories = getDirectories(argv[4]);
             log4j.info("Translation for modules");
         }
         boolFilter = true;
         dirFilter = new DirFilter(fileTermination);
         log4j.info("directory source: " + dirIni);
-        log4j.info("directory destiny: " + dirFin);
         log4j.info("file termination: " + fileTermination);
 
         final File path = new File(dirIni, relativePath);
@@ -160,22 +156,16 @@ public class Translate extends DefaultHandler implements LexicalHandler {
             translate.destroy();
             return;
         }
-        final File fileFin = new File(dirFin);
-        if (!fileFin.exists()) {
-            log4j.error("Can´t find directory: " + dirFin);
-            translate.destroy();
-            return;
-        }
         if (moduleDirectories == null) {
             if (TranslateData.isInDevelopmentModule(pool, "0")) {
-                listDir(path, boolFilter, dirFilter, fileFin, relativePath,
+                listDir(path, boolFilter, dirFilter, relativePath,
                         true, "", 0, "");
                 log4j.info("Translated files for " + fileTermination + ": "
                         + count);
             } else
                 log4j.info("Core is not in development: skipping it");
         } else {
-            listDir(path, boolFilter, dirFilter, fileFin, relativePath, false,
+            listDir(path, boolFilter, dirFilter, relativePath, false,
                     "", 0, "");
             log4j
                     .info("Translated files for " + fileTermination + ": "
@@ -218,13 +208,11 @@ public class Translate extends DefaultHandler implements LexicalHandler {
      *            If is filtered.
      * @param dirFilter
      *            Filter to apply.
-     * @param fileFin
-     *            Path where the new files must been created.
      * @param relativePath
      *            The relative path.
      */
     public static void listDir(File file, boolean boolFilter,
-            DirFilter dirFilter, File fileFin, String relativePath,
+            DirFilter dirFilter, String relativePath,
             boolean parse, String parent, int level, String module) {
         File[] list;
         if (boolFilter)
@@ -254,7 +242,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
                                             .get(level)
                                             : "--"));
                 if (parse)
-                    listDir(fileItem, boolFilter, dirFilter, fileFin,
+                    listDir(fileItem, boolFilter, dirFilter,
                             relativePath, true, parent, level + 1, module);
                 else {
                     if ((moduleDirectories.size() == level + 1)
@@ -266,7 +254,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
                             if (TranslateData.isInDevelopmentModulePack(pool,
                                     parent.replace("/", "")))
                                 listDir(fileItem, boolFilter, dirFilter,
-                                        fileFin, relativePath, true, parent
+                                        relativePath, true, parent
                                                 + "/" + fileItem.getName(),
                                         level + 1, parent.replace("/", ""));
                             else
@@ -278,7 +266,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
                     } else if (moduleDirectories.size() > level
                             && (moduleDirectories.get(level).equals("*") || moduleDirectories
                                     .get(level).equals(fileItem.getName())))
-                        listDir(fileItem, boolFilter, dirFilter, fileFin,
+                        listDir(fileItem, boolFilter, dirFilter,
                                 relativePath, false, parent + "/"
                                         + fileItem.getName(), level + 1, module);
                     // other case don't follow deeping into the tree
@@ -295,13 +283,11 @@ public class Translate extends DefaultHandler implements LexicalHandler {
                                     + fileItem.getCanonicalPath());
                         for (int h = 0; h < toLanguage.length; h++) {
                             actualLanguage = toLanguage[h].name;
-                            parseFile(list[i], fileFin, relativePath, parent,
-                                    module);
+                            parseFile(list[i], relativePath, parent, module);
                         }
                         if (toLanguage.length == 0) {
                             actualLanguage = "";
-                            parseFile(list[i], fileFin, relativePath, parent,
-                                    module);
+                            parseFile(list[i], relativePath, parent, module);
                         }
                     }
                 } catch (final IOException e) {
@@ -316,12 +302,10 @@ public class Translate extends DefaultHandler implements LexicalHandler {
      * 
      * @param fileParsing
      *            File to parse.
-     * @param fileFin
-     *            Path where the new files must been created.
      * @param relativePath
      *            The relative path.
      */
-    private static void parseFile(File fileParsing, File fileFin,
+    private static void parseFile(File fileParsing,
             String relativePath, String parent, String module) {
         final String strFileName = fileParsing.getName();
         if (log4j.isDebugEnabled())
