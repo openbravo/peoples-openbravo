@@ -50,6 +50,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.poc.EmailData;
@@ -74,6 +75,8 @@ public class PrintController extends HttpSecureAppServlet {
     static Logger log4j = Logger.getLogger(PrintController.class);
     final Map differentDocTypes = new HashMap<String, TemplateData[]>();
     private PocData[] pocData;
+    private boolean moreThanOneCustomer;
+    private boolean moreThanOnesalesRep;
 
     // TODO: When an email is in draft status add the notification that the
     // document can not be emailed
@@ -258,10 +261,26 @@ public class PrintController extends HttpSecureAppServlet {
                     }
 
                 }
+                
 
                 vars.setSessionObject(sessionValuePrefix + ".Documents",
                         reports);
                 // try {
+                if ("".equals(PocConfigurationData.getSenderAddress(this, vars
+                    .getClient()))
+                    || PocConfigurationData.getSenderAddress(this, vars
+                            .getClient()) == null) {
+                  final OBError on = new OBError();
+                  on.setMessage("No sender defined: Please go to cliente configuration to complete de email configuration");
+                  on.setTitle("Email Configuration Error");
+                  on.setType("Error");
+                  vars.setMessage("290", on);
+                  vars.getRequestGlobalVariable("inpTabId",
+                  "AttributeSetInstance.tabId");
+                  printPageClosePopUp(response, vars);
+                throw new ServletException(
+                        "Configuration Error no sender defined");
+            }
                 if (request.getServletPath().toLowerCase()
                         .indexOf("print.html") != -1)
                     createPrintOptionsPage(request, response, vars,
@@ -432,10 +451,22 @@ public class PrintController extends HttpSecureAppServlet {
             log4j.debug("user name: " + userName);
         if (log4j.isDebugEnabled())
             log4j.debug("user email: " + userEmail);
-        final String salesrepName = documentData.salesrepName;
-        final String salesrepEmail = documentData.salesrepEmail;
         final String contactName = documentData.contactName;
-        final String contactEmail = documentData.contactEmail;
+        String contactEmail = null;
+        final String salesrepName = documentData.salesrepName;
+        String salesrepEmail = null;
+
+        if (moreThanOneCustomer) {
+            contactEmail = documentData.contactEmail;
+        } else {
+            contactEmail = vars.getStringParameter("contactEmail");
+        }
+
+        if (moreThanOnesalesRep) {
+            salesrepEmail = documentData.contactEmail;
+        } else {
+            salesrepEmail = vars.getStringParameter("salesrepEmail");
+        }
         String emailSubject = vars.getStringParameter("emailSubject");
         String emailBody = vars.getStringParameter("emailBody");
 
@@ -474,6 +505,8 @@ public class PrintController extends HttpSecureAppServlet {
         emailBody = emailBody.replaceAll("@sal_nam@", salesrepName);
 
         try {
+          
+         
             final Session session = EmailManager.newMailSession(this, vars
                     .getClient());
 
@@ -574,7 +607,7 @@ public class PrintController extends HttpSecureAppServlet {
             log4j.error(exception);
             throw new ServletException(exception);
         } catch (final AddressException exception) {
-            log4j.error(exception);
+          log4j.error(exception);
             throw new ServletException(exception);
         } catch (final MessagingException exception) {
             log4j.error(exception);
@@ -653,6 +686,7 @@ public class PrintController extends HttpSecureAppServlet {
             request.getSession().setAttribute("files", vector);
 
         }
+        
 
         if ("yes".equals(vars.getStringParameter("closed"))) {
             xmlDocument.setParameter("closed", "yes");
@@ -710,13 +744,16 @@ public class PrintController extends HttpSecureAppServlet {
             }
 
             final String salesRep = documentData.salesrepName;
-            if (salesRep == null || salesRep.length() == 0)
+            if (moreThanOnesalesRep){
+              if (salesRep == null || salesRep.length() == 0)
                 throw new ServletException(
                         Utility
                                 .messageBD(
                                         this,
                                         "There is at least one document with no sales representive",
                                         vars.getLanguage()));
+            }
+           
             if (!salesRepMap.containsKey(salesRep)) {
                 salesRepMap.put(salesRep, documentData);
             }
