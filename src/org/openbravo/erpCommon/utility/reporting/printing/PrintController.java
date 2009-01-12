@@ -277,7 +277,7 @@ public class PrintController extends HttpSecureAppServlet {
                   vars.setMessage("290", on);
                   vars.getRequestGlobalVariable("inpTabId",
                   "AttributeSetInstance.tabId");
-                  printPageClosePopUp(response, vars);
+                  printPageClosePopUpAndRefresh(response, vars);
                 throw new ServletException(
                         "Configuration Error no sender defined");
             }
