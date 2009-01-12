@@ -195,15 +195,10 @@ public class SL_Order_Product extends HttpSecureAppServlet {
                         .getContext(this, vars, "#User_Client",
                                 "SLOrderProduct"), "'" + strADOrgID + "'");
         if (orgLocationID.equals("")) {
-            resultado
-                    .append("new Array('MESSAGE', \""
-                            + FormatUtilities
-                                    .replaceJS(Utility
-                                            .messageBD(
-                                                    this,
-                                                    "Tax can not be calculated, because the organization has not a location defined",
-                                                    vars.getLanguage()))
-                            + "\"),\n");
+                resultado.append("new Array('MESSAGE', \""
+                    + FormatUtilities.replaceJS(Utility.messageBD(this,
+                            "NoLocationNoTaxCalculated", vars.getLanguage()))
+                    + "\"),\n");
         } else {
             SLOrderTaxData[] data = SLOrderTaxData.select(this, strCOrderId);
             strCTaxID = Tax.get(this, strMProductID, data[0].dateordered,
