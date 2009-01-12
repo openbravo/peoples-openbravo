@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -58,7 +58,7 @@ public class ReportBudgetExportExcel extends HttpSecureAppServlet {
         data = ReportBudgetGenerateExcelData.selectLines(this, vars
                 .getLanguage(), strBudgetId);
 
-        if (data[0].exportactual.equals("Y")) {
+        if (data.length != 0 && data[0].exportactual.equals("Y")) {
             xmlDocument = xmlEngine
                     .readXmlTemplate(
                             "org/openbravo/erpCommon/ad_reports/ReportBudgetGenerateExcelXLS")
