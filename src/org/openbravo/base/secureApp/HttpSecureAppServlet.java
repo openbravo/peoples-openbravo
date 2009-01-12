@@ -53,6 +53,7 @@ import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.authentication.basic.DefaultAuthenticationManager;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.security.AccessData;
 import org.openbravo.erpCommon.security.SessionLogin;
@@ -224,11 +225,23 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
                             strUserAuth);
                     if (strWarehouse == null) {
                         if (!strRole.equals("0")) {
-                            strWarehouse = DefaultOptionsData
-                                    .getDefaultWarehouse(this, strClient,
-                                            new OrgTree(this, strClient)
-                                                    .getAccessibleTree(this,
-                                                            strRole).toString());
+                            try {
+                                // enable admin mode, as normal non admin-role
+                                // has no read-access to i.e. AD_OrgType
+                                OBContext.getOBContext()
+                                        .setInAdministratorMode(true);
+
+                                strWarehouse = DefaultOptionsData
+                                        .getDefaultWarehouse(this, strClient,
+                                                new OrgTree(this, strClient)
+                                                        .getAccessibleTree(
+                                                                this, strRole)
+                                                        .toString());
+
+                            } finally {
+                                OBContext.getOBContext()
+                                        .setInAdministratorMode(false);
+                            }
                         } else
                             strWarehouse = "";
                     }
