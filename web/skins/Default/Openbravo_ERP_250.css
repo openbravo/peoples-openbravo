@@ -2078,6 +2078,12 @@ a.FieldButtonLink_focus table.FieldButton .FieldButton_bg, table.FieldButton_foc
   background-image: url(Common/FieldButton/iconOrder.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
 }
 
+.FieldButton_Icon_Order {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(Common/FieldButton/iconOrder.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+}
+
 .FieldButton_Icon_AttributeSetInstance {
   background-repeat: no-repeat;
   background-position: center center;
