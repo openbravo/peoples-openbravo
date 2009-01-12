@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -105,7 +105,7 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
         try {
             conn = this.getTransactionConnection();
             CopyFromGLJournalData[] data = CopyFromGLJournalData.select(this,
-                    strKey, strGLJournalBatch);
+                    strGLJournalBatch, strKey);
             for (int i = 0; data != null && i < data.length; i++) {
                 String strSequence = SequenceIdData.getUUID();
                 String strDocumentNo = Utility.getDocumentNo(this, vars,
