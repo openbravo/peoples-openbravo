@@ -49,7 +49,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="CLASSNAME" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+      <column name="CLASSNAME" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -122,6 +122,10 @@
       </index>
       <unique name="AD_TABLE_NAME">
         <unique-column name="NAME"/>
+      </unique>
+      <unique name="CLASSNAME_PACKAGE">
+        <unique-column name="CLASSNAME"/>
+        <unique-column name="AD_PACKAGE_ID"/>
       </unique>
       <check name="ADTABLE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="ADTABLE_ISDELETEABLE_CHECK"><![CDATA[ISDELETEABLE IN ('Y', 'N')]]></check>

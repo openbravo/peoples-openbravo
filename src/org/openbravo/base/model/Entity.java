@@ -91,11 +91,7 @@ public class Entity {
         setTableName(table.getTableName());
         setTableId(table.getId());
         setClassName(table.getPackageName() + "." + table.getNotNullClassName());
-        if (getMappingClass() != null) {
-            setName(NamingUtil.getEntityName(getMappingClass()));
-        } else {
-            setName(table.getName());
-        }
+        setName(table.getName());
         setDeletable(table.isDeletable());
         setMutable(!table.isView());
 

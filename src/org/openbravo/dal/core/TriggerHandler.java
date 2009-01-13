@@ -24,8 +24,8 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.system.SessionStatus;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.core.ADSessionStatus;
 
 /**
  * Supports disabling and again enabling of database triggers.
@@ -48,7 +48,7 @@ public class TriggerHandler {
         return instance;
     }
 
-    private ThreadLocal<ADSessionStatus> sessionStatus = new ThreadLocal<ADSessionStatus>();
+    private ThreadLocal<SessionStatus> sessionStatus = new ThreadLocal<SessionStatus>();
 
     /**
      * Disabled all triggers in the database. This is done by creating an
@@ -62,8 +62,8 @@ public class TriggerHandler {
                         + "call enable before calling disable again");
         try {
             OBContext.getOBContext().setInAdministratorMode(true);
-            final ADSessionStatus localSessionStatus = OBProvider.getInstance()
-                    .get(ADSessionStatus.class);
+            final SessionStatus localSessionStatus = OBProvider.getInstance()
+                    .get(SessionStatus.class);
             localSessionStatus.setImporting(true);
             localSessionStatus.setClient(OBDal.getInstance().get(Client.class,
                     "0"));

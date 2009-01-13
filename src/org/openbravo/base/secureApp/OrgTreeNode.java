@@ -21,7 +21,7 @@ import java.util.List;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.WindowTreeData;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.core.AD_OrgType;
+import org.openbravo.model.common.enterprise.OrganizationType;
 
 public class OrgTreeNode implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -29,7 +29,7 @@ public class OrgTreeNode implements Serializable {
     private String parentId;
     private String value;
     private String isReady;
-    private AD_OrgType orgType;
+    private OrganizationType orgType;
     private String serializedOrgTypeId;
 
     /**
@@ -43,7 +43,7 @@ public class OrgTreeNode implements Serializable {
         parentId = nodeData.parentId;
         value = nodeData.name;
         isReady = nodeData.isready;
-        orgType = OBDal.getInstance().get(AD_OrgType.class,
+        orgType = OBDal.getInstance().get(OrganizationType.class,
                 nodeData.adOrgtypeId);
     }
 
@@ -59,7 +59,7 @@ public class OrgTreeNode implements Serializable {
         id = AD_Org_ID;
         value = org.getName();
         isReady = org.isReady().toString();
-        orgType = org.getOrgType();
+        orgType = org.getOrganizationType();
     }
 
     // The orgtreenode is serialized in a persistent http session by tomcat
@@ -108,16 +108,16 @@ public class OrgTreeNode implements Serializable {
         this.isReady = isReady;
     }
 
-    public AD_OrgType getOrgType() {
+    public OrganizationType getOrgType() {
         if (serializedOrgTypeId != null) {
-            orgType = OBDal.getInstance().get(AD_OrgType.class,
+            orgType = OBDal.getInstance().get(OrganizationType.class,
                     serializedOrgTypeId);
             serializedOrgTypeId = null;
         }
         return orgType;
     }
 
-    public void setOrgType(AD_OrgType orgType) {
+    public void setOrgType(OrganizationType orgType) {
         this.orgType = orgType;
     }
 

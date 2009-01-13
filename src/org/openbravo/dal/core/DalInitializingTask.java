@@ -167,6 +167,8 @@ public class DalInitializingTask extends Task {
         // set all from Openbravo as info and the rest at warn level
         props.setProperty("log4j.category.org.openbravo", level);
         props.setProperty("log4j.category.org", Level.WARN.toString());
+        props.setProperty("log4j.category.org.hibernate.SQL", Level.DEBUG
+                .toString());
 
         LogManager.resetConfiguration();
         PropertyConfigurator.configure(props);

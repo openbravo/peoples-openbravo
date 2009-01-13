@@ -14,7 +14,7 @@
 <!--100 CREATEDBY-->
 <!--100-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--100 UPDATED-->
-<!--100-->              <UPDATED><![CDATA[2007-05-03 10:09:26.0]]></UPDATED>
+<!--100-->              <UPDATED><![CDATA[2009-01-13 13:25:24.0]]></UPDATED>
 <!--100 UPDATEDBY-->
 <!--100-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--100 NAME-->
@@ -1503,7 +1503,7 @@ Allows the translation of any field of the application. After the edition, the w
 <!--135 UPDATEDBY-->
 <!--135-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--135 NAME-->
-<!--135-->              <NAME><![CDATA[AD_Test]]></NAME>
+<!--135-->              <NAME><![CDATA[Test]]></NAME>
 <!--135 TABLENAME-->
 <!--135-->              <TABLENAME><![CDATA[AD_Test]]></TABLENAME>
 <!--135 CLASSNAME-->
@@ -3659,7 +3659,7 @@ The Product Details allows you to display and maintain all products for a select
 <!--227 UPDATEDBY-->
 <!--227-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--227 NAME-->
-<!--227-->              <NAME><![CDATA[AD_ClientInfo]]></NAME>
+<!--227-->              <NAME><![CDATA[ClientInformation]]></NAME>
 <!--227 DESCRIPTION-->
 <!--227-->              <DESCRIPTION><![CDATA[Client Info]]></DESCRIPTION>
 <!--227 HELP-->
@@ -3864,13 +3864,15 @@ Maintain Sales Region Accounting Dimension Tree]]></DESCRIPTION>
 <!--249 UPDATEDBY-->
 <!--249-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--249 NAME-->
-<!--249-->              <NAME><![CDATA[M_Replenish]]></NAME>
+<!--249-->              <NAME><![CDATA[Replenish]]></NAME>
 <!--249 DESCRIPTION-->
 <!--249-->              <DESCRIPTION><![CDATA[Define Replenishment]]></DESCRIPTION>
 <!--249 HELP-->
 <!--249-->              <HELP><![CDATA[The Replenishment defines the type of replenishment quantities.  This is used for automated ordering.]]></HELP>
 <!--249 TABLENAME-->
 <!--249-->              <TABLENAME><![CDATA[M_Replenish]]></TABLENAME>
+<!--249 CLASSNAME-->
+<!--249-->              <CLASSNAME><![CDATA[Replenish]]></CLASSNAME>
 <!--249 ISVIEW-->
 <!--249-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--249 ACCESSLEVEL-->
@@ -4071,13 +4073,15 @@ The Pricing Tab displays the List, Standard and Limit prices for each price list
 <!--254 UPDATEDBY-->
 <!--254-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--254 NAME-->
-<!--254-->              <NAME><![CDATA[AD_Attachment]]></NAME>
+<!--254-->              <NAME><![CDATA[Attachment]]></NAME>
 <!--254 DESCRIPTION-->
 <!--254-->              <DESCRIPTION><![CDATA[Attachment]]></DESCRIPTION>
 <!--254 HELP-->
 <!--254-->              <HELP><![CDATA[The Attachment tab displays the attributes of an attachment.]]></HELP>
 <!--254 TABLENAME-->
 <!--254-->              <TABLENAME><![CDATA[AD_Attachment]]></TABLENAME>
+<!--254 CLASSNAME-->
+<!--254-->              <CLASSNAME><![CDATA[Attachment]]></CLASSNAME>
 <!--254 ISVIEW-->
 <!--254-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--254 ACCESSLEVEL-->
@@ -6690,13 +6694,15 @@ Maintain Acitivity Accounting Dimension Tree]]></DESCRIPTION>
 <!--336 UPDATEDBY-->
 <!--336-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--336 NAME-->
-<!--336-->              <NAME><![CDATA[C_RevenueRecognition]]></NAME>
+<!--336-->              <NAME><![CDATA[RevenueRecognition]]></NAME>
 <!--336 DESCRIPTION-->
 <!--336-->              <DESCRIPTION><![CDATA[Revenue Recognition]]></DESCRIPTION>
 <!--336 HELP-->
 <!--336-->              <HELP><![CDATA[The Revenue Recognition Tab defines the intervals at which revenue will be recognized.  You can also base the revenue recognition on provided Service Levels.]]></HELP>
 <!--336 TABLENAME-->
 <!--336-->              <TABLENAME><![CDATA[C_RevenueRecognition]]></TABLENAME>
+<!--336 CLASSNAME-->
+<!--336-->              <CLASSNAME><![CDATA[RevenueRecognition]]></CLASSNAME>
 <!--336 ISVIEW-->
 <!--336-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--336 ACCESSLEVEL-->
@@ -6739,13 +6745,15 @@ Maintain Acitivity Accounting Dimension Tree]]></DESCRIPTION>
 <!--337 UPDATEDBY-->
 <!--337-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--337 NAME-->
-<!--337-->              <NAME><![CDATA[C_ServiceLevel]]></NAME>
+<!--337-->              <NAME><![CDATA[ServiceLevel]]></NAME>
 <!--337 DESCRIPTION-->
 <!--337-->              <DESCRIPTION><![CDATA[View Service Level]]></DESCRIPTION>
 <!--337 HELP-->
 <!--337-->              <HELP><![CDATA[The service level is automatically created when creating an invoice with products using revenue recognition based on service levels.]]></HELP>
 <!--337 TABLENAME-->
 <!--337-->              <TABLENAME><![CDATA[C_ServiceLevel]]></TABLENAME>
+<!--337 CLASSNAME-->
+<!--337-->              <CLASSNAME><![CDATA[ServiceLevel]]></CLASSNAME>
 <!--337 ISVIEW-->
 <!--337-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--337 ACCESSLEVEL-->
@@ -6788,13 +6796,15 @@ Maintain Acitivity Accounting Dimension Tree]]></DESCRIPTION>
 <!--338 UPDATEDBY-->
 <!--338-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--338 NAME-->
-<!--338-->              <NAME><![CDATA[C_ServiceLevelLine]]></NAME>
+<!--338-->              <NAME><![CDATA[ServiceLevelLine]]></NAME>
 <!--338 DESCRIPTION-->
 <!--338-->              <DESCRIPTION><![CDATA[Maintain Service Levels]]></DESCRIPTION>
 <!--338 HELP-->
 <!--338-->              <HELP><![CDATA[Add new service level lines to change the recognized amount]]></HELP>
 <!--338 TABLENAME-->
 <!--338-->              <TABLENAME><![CDATA[C_ServiceLevelLine]]></TABLENAME>
+<!--338 CLASSNAME-->
+<!--338-->              <CLASSNAME><![CDATA[ServiceLevelLine]]></CLASSNAME>
 <!--338 ISVIEW-->
 <!--338-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--338 ACCESSLEVEL-->
@@ -6888,9 +6898,11 @@ Maintain Acitivity Accounting Dimension Tree]]></DESCRIPTION>
 <!--342 UPDATEDBY-->
 <!--342-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--342 NAME-->
-<!--342-->              <NAME><![CDATA[M_PerpetualInv]]></NAME>
+<!--342-->              <NAME><![CDATA[PerpetualInv]]></NAME>
 <!--342 TABLENAME-->
 <!--342-->              <TABLENAME><![CDATA[M_PerpetualInv]]></TABLENAME>
+<!--342 CLASSNAME-->
+<!--342-->              <CLASSNAME><![CDATA[PerpetualInv]]></CLASSNAME>
 <!--342 ISVIEW-->
 <!--342-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--342 ACCESSLEVEL-->
@@ -7176,9 +7188,11 @@ Maintain Acitivity Accounting Dimension Tree]]></DESCRIPTION>
 <!--369 UPDATEDBY-->
 <!--369-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--369 NAME-->
-<!--369-->              <NAME><![CDATA[C_Invoice_Day]]></NAME>
+<!--369-->              <NAME><![CDATA[InvoiceDay]]></NAME>
 <!--369 TABLENAME-->
 <!--369-->              <TABLENAME><![CDATA[C_Invoice_Day]]></TABLENAME>
+<!--369 CLASSNAME-->
+<!--369-->              <CLASSNAME><![CDATA[InvoiceDay]]></CLASSNAME>
 <!--369 ISVIEW-->
 <!--369-->              <ISVIEW><![CDATA[Y]]></ISVIEW>
 <!--369 ACCESSLEVEL-->
@@ -7219,9 +7233,11 @@ Maintain Acitivity Accounting Dimension Tree]]></DESCRIPTION>
 <!--370 UPDATEDBY-->
 <!--370-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--370 NAME-->
-<!--370-->              <NAME><![CDATA[C_Invoice_Month]]></NAME>
+<!--370-->              <NAME><![CDATA[InvoiceMonth]]></NAME>
 <!--370 TABLENAME-->
 <!--370-->              <TABLENAME><![CDATA[C_Invoice_Month]]></TABLENAME>
+<!--370 CLASSNAME-->
+<!--370-->              <CLASSNAME><![CDATA[InvoiceMonth]]></CLASSNAME>
 <!--370 ISVIEW-->
 <!--370-->              <ISVIEW><![CDATA[Y]]></ISVIEW>
 <!--370 ACCESSLEVEL-->
@@ -7262,9 +7278,11 @@ Maintain Acitivity Accounting Dimension Tree]]></DESCRIPTION>
 <!--371 UPDATEDBY-->
 <!--371-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--371 NAME-->
-<!--371-->              <NAME><![CDATA[C_Invoice_ProdMonth]]></NAME>
+<!--371-->              <NAME><![CDATA[InvoiceProdMonth]]></NAME>
 <!--371 TABLENAME-->
 <!--371-->              <TABLENAME><![CDATA[C_Invoice_ProdMonth]]></TABLENAME>
+<!--371 CLASSNAME-->
+<!--371-->              <CLASSNAME><![CDATA[InvoiceProdMonth]]></CLASSNAME>
 <!--371 ISVIEW-->
 <!--371-->              <ISVIEW><![CDATA[Y]]></ISVIEW>
 <!--371 ACCESSLEVEL-->
@@ -7305,9 +7323,11 @@ Maintain Acitivity Accounting Dimension Tree]]></DESCRIPTION>
 <!--372 UPDATEDBY-->
 <!--372-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--372 NAME-->
-<!--372-->              <NAME><![CDATA[C_Invoice_ProdWeek]]></NAME>
+<!--372-->              <NAME><![CDATA[InvoiceProdWeek]]></NAME>
 <!--372 TABLENAME-->
 <!--372-->              <TABLENAME><![CDATA[C_Invoice_ProdWeek]]></TABLENAME>
+<!--372 CLASSNAME-->
+<!--372-->              <CLASSNAME><![CDATA[InvoiceProdWeek]]></CLASSNAME>
 <!--372 ISVIEW-->
 <!--372-->              <ISVIEW><![CDATA[Y]]></ISVIEW>
 <!--372 ACCESSLEVEL-->
@@ -7348,9 +7368,11 @@ Maintain Acitivity Accounting Dimension Tree]]></DESCRIPTION>
 <!--373 UPDATEDBY-->
 <!--373-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--373 NAME-->
-<!--373-->              <NAME><![CDATA[C_Invoice_VendorMonth]]></NAME>
+<!--373-->              <NAME><![CDATA[InvoiceVendorMonth]]></NAME>
 <!--373 TABLENAME-->
 <!--373-->              <TABLENAME><![CDATA[C_Invoice_VendorMonth]]></TABLENAME>
+<!--373 CLASSNAME-->
+<!--373-->              <CLASSNAME><![CDATA[InvoiceVendorMonth]]></CLASSNAME>
 <!--373 ISVIEW-->
 <!--373-->              <ISVIEW><![CDATA[Y]]></ISVIEW>
 <!--373 ACCESSLEVEL-->
@@ -7391,9 +7413,11 @@ Maintain Acitivity Accounting Dimension Tree]]></DESCRIPTION>
 <!--374 UPDATEDBY-->
 <!--374-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--374 NAME-->
-<!--374-->              <NAME><![CDATA[C_Invoice_Week]]></NAME>
+<!--374-->              <NAME><![CDATA[InvoiceWeek]]></NAME>
 <!--374 TABLENAME-->
 <!--374-->              <TABLENAME><![CDATA[C_Invoice_Week]]></TABLENAME>
+<!--374 CLASSNAME-->
+<!--374-->              <CLASSNAME><![CDATA[InvoiceWeek]]></CLASSNAME>
 <!--374 ISVIEW-->
 <!--374-->              <ISVIEW><![CDATA[Y]]></ISVIEW>
 <!--374 ACCESSLEVEL-->
@@ -7804,9 +7828,11 @@ Available Quantity:
 <!--387 UPDATEDBY-->
 <!--387-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--387 NAME-->
-<!--387-->              <NAME><![CDATA[C_Invoice_CustomerProdQtr]]></NAME>
+<!--387-->              <NAME><![CDATA[InvoiceCustomerProdQtr]]></NAME>
 <!--387 TABLENAME-->
 <!--387-->              <TABLENAME><![CDATA[C_Invoice_CustomerProdQtr]]></TABLENAME>
+<!--387 CLASSNAME-->
+<!--387-->              <CLASSNAME><![CDATA[InvoiceCustomerProdQtr]]></CLASSNAME>
 <!--387 ISVIEW-->
 <!--387-->              <ISVIEW><![CDATA[Y]]></ISVIEW>
 <!--387 ACCESSLEVEL-->
@@ -7847,9 +7873,11 @@ Available Quantity:
 <!--388 UPDATEDBY-->
 <!--388-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--388 NAME-->
-<!--388-->              <NAME><![CDATA[C_Invoice_CustomerVendQtr]]></NAME>
+<!--388-->              <NAME><![CDATA[InvoiceCustomerVendQtr]]></NAME>
 <!--388 TABLENAME-->
 <!--388-->              <TABLENAME><![CDATA[C_Invoice_CustomerVendQtr]]></TABLENAME>
+<!--388 CLASSNAME-->
+<!--388-->              <CLASSNAME><![CDATA[InvoiceCustomerVendQtr]]></CLASSNAME>
 <!--388 ISVIEW-->
 <!--388-->              <ISVIEW><![CDATA[Y]]></ISVIEW>
 <!--388 ACCESSLEVEL-->
@@ -7890,13 +7918,15 @@ Available Quantity:
 <!--389 UPDATEDBY-->
 <!--389-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--389 NAME-->
-<!--389-->              <NAME><![CDATA[AD_Note]]></NAME>
+<!--389-->              <NAME><![CDATA[ADNote]]></NAME>
 <!--389 DESCRIPTION-->
 <!--389-->              <DESCRIPTION><![CDATA[System Notice]]></DESCRIPTION>
 <!--389 HELP-->
 <!--389-->              <HELP><![CDATA[The Notice Tab provides a method of viewing messages that are generated by this system when performing processes.]]></HELP>
 <!--389 TABLENAME-->
 <!--389-->              <TABLENAME><![CDATA[AD_Note]]></TABLENAME>
+<!--389 CLASSNAME-->
+<!--389-->              <CLASSNAME><![CDATA[ADNote]]></CLASSNAME>
 <!--389 ISVIEW-->
 <!--389-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--389 ACCESSLEVEL-->
@@ -8808,7 +8838,7 @@ Run Synchronize Terminology to update menu translation. You need only to transla
 <!--417 UPDATEDBY-->
 <!--417-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--417 NAME-->
-<!--417-->              <NAME><![CDATA[R_Request]]></NAME>
+<!--417-->              <NAME><![CDATA[Request]]></NAME>
 <!--417 DESCRIPTION-->
 <!--417-->              <DESCRIPTION><![CDATA[Define Request
 Define Request
@@ -8819,6 +8849,8 @@ The Request Tab defines any Request submitted by a Business Partner.
 Shows all the resquests  of the partner selected.]]></HELP>
 <!--417 TABLENAME-->
 <!--417-->              <TABLENAME><![CDATA[R_Request]]></TABLENAME>
+<!--417 CLASSNAME-->
+<!--417-->              <CLASSNAME><![CDATA[Request]]></CLASSNAME>
 <!--417 ISVIEW-->
 <!--417-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--417 ACCESSLEVEL-->
@@ -8861,7 +8893,7 @@ Shows all the resquests  of the partner selected.]]></HELP>
 <!--418 UPDATEDBY-->
 <!--418-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--418 NAME-->
-<!--418-->              <NAME><![CDATA[R_RequestAction]]></NAME>
+<!--418-->              <NAME><![CDATA[RequestionAction]]></NAME>
 <!--418 DESCRIPTION-->
 <!--418-->              <DESCRIPTION><![CDATA[Action History
 Action History]]></DESCRIPTION>
@@ -8870,6 +8902,8 @@ Action History]]></DESCRIPTION>
 The Action History Tab displays any actions which have been taken for a Request.]]></HELP>
 <!--418 TABLENAME-->
 <!--418-->              <TABLENAME><![CDATA[R_RequestAction]]></TABLENAME>
+<!--418 CLASSNAME-->
+<!--418-->              <CLASSNAME><![CDATA[RequestionAction]]></CLASSNAME>
 <!--418 ISVIEW-->
 <!--418-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--418 ACCESSLEVEL-->
@@ -8912,13 +8946,15 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--420 UPDATEDBY-->
 <!--420-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--420 NAME-->
-<!--420-->              <NAME><![CDATA[R_RequestProcessor]]></NAME>
+<!--420-->              <NAME><![CDATA[RequestProcessor]]></NAME>
 <!--420 DESCRIPTION-->
 <!--420-->              <DESCRIPTION><![CDATA[Request Processor]]></DESCRIPTION>
 <!--420 HELP-->
 <!--420-->              <HELP><![CDATA[The Request Processor Tab allows you to define processes that you want to occur and the frequency and timing of these processes. If no other user is found, the items are assigned to the supervisor.]]></HELP>
 <!--420 TABLENAME-->
 <!--420-->              <TABLENAME><![CDATA[R_RequestProcessor]]></TABLENAME>
+<!--420 CLASSNAME-->
+<!--420-->              <CLASSNAME><![CDATA[RequestProcessor]]></CLASSNAME>
 <!--420 ISVIEW-->
 <!--420-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--420 ACCESSLEVEL-->
@@ -9453,13 +9489,15 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--443 UPDATEDBY-->
 <!--443-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--443 NAME-->
-<!--443-->              <NAME><![CDATA[C_RevenueRecognition_Plan]]></NAME>
+<!--443-->              <NAME><![CDATA[RevenueRecognitionPlan]]></NAME>
 <!--443 DESCRIPTION-->
 <!--443-->              <DESCRIPTION><![CDATA[View Revenue Recognition Plan]]></DESCRIPTION>
 <!--443 HELP-->
 <!--443-->              <HELP><![CDATA[The Revenue Recognition plan is generated then invoicing a product with revenue recognition.  With Revenue Recognition, the amount is posted to the Unrecognized revenue and over time or based on Service Level booked to Earned Revenue.]]></HELP>
 <!--443 TABLENAME-->
 <!--443-->              <TABLENAME><![CDATA[C_RevenueRecognition_Plan]]></TABLENAME>
+<!--443 CLASSNAME-->
+<!--443-->              <CLASSNAME><![CDATA[RevenueRecognitionPlan]]></CLASSNAME>
 <!--443 ISVIEW-->
 <!--443-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--443 ACCESSLEVEL-->
@@ -9502,9 +9540,11 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--444 UPDATEDBY-->
 <!--444-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--444 NAME-->
-<!--444-->              <NAME><![CDATA[C_RevenueRecognition_Run]]></NAME>
+<!--444-->              <NAME><![CDATA[RevenueRecognitionRun]]></NAME>
 <!--444 TABLENAME-->
 <!--444-->              <TABLENAME><![CDATA[C_RevenueRecognition_Run]]></TABLENAME>
+<!--444 CLASSNAME-->
+<!--444-->              <CLASSNAME><![CDATA[RevenueRecognitionRun]]></CLASSNAME>
 <!--444 ISVIEW-->
 <!--444-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--444 ACCESSLEVEL-->
@@ -9596,13 +9636,15 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--452 UPDATEDBY-->
 <!--452-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--452 NAME-->
-<!--452-->              <NAME><![CDATA[AD_TreeNodeMM]]></NAME>
+<!--452-->              <NAME><![CDATA[ADTreeNodeMM]]></NAME>
 <!--452 DESCRIPTION-->
 <!--452-->              <DESCRIPTION><![CDATA[Menu tree]]></DESCRIPTION>
 <!--452 HELP-->
 <!--452-->              <HELP><![CDATA[This table defines the relations of nodes for menu tree.]]></HELP>
 <!--452 TABLENAME-->
 <!--452-->              <TABLENAME><![CDATA[AD_TreeNodeMM]]></TABLENAME>
+<!--452 CLASSNAME-->
+<!--452-->              <CLASSNAME><![CDATA[TreeNodeMM]]></CLASSNAME>
 <!--452 ISVIEW-->
 <!--452-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--452 ACCESSLEVEL-->
@@ -9692,13 +9734,15 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--456 UPDATEDBY-->
 <!--456-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--456 NAME-->
-<!--456-->              <NAME><![CDATA[AD_TreeBar]]></NAME>
+<!--456-->              <NAME><![CDATA[ADTreeBar]]></NAME>
 <!--456 DESCRIPTION-->
 <!--456-->              <DESCRIPTION><![CDATA[Tree of bookmarks]]></DESCRIPTION>
 <!--456 HELP-->
 <!--456-->              <HELP><![CDATA[This table defines the relations between nodes for bookmarks trees.]]></HELP>
 <!--456 TABLENAME-->
 <!--456-->              <TABLENAME><![CDATA[AD_TreeBar]]></TABLENAME>
+<!--456 CLASSNAME-->
+<!--456-->              <CLASSNAME><![CDATA[TreeBar]]></CLASSNAME>
 <!--456 ISVIEW-->
 <!--456-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--456 ACCESSLEVEL-->
@@ -9935,13 +9979,15 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--474 UPDATEDBY-->
 <!--474-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--474 NAME-->
-<!--474-->              <NAME><![CDATA[R_RequestProcessor_Route]]></NAME>
+<!--474-->              <NAME><![CDATA[RequestProcessorRoute]]></NAME>
 <!--474 DESCRIPTION-->
 <!--474-->              <DESCRIPTION><![CDATA[Request Routing]]></DESCRIPTION>
 <!--474 HELP-->
 <!--474-->              <HELP><![CDATA[Define the sequence of keywords and to whom the web and mail requests should be routed to.]]></HELP>
 <!--474 TABLENAME-->
 <!--474-->              <TABLENAME><![CDATA[R_RequestProcessor_Route]]></TABLENAME>
+<!--474 CLASSNAME-->
+<!--474-->              <CLASSNAME><![CDATA[RequestProcessorRoute]]></CLASSNAME>
 <!--474 ISVIEW-->
 <!--474-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--474 ACCESSLEVEL-->
@@ -10086,13 +10132,15 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--480 UPDATEDBY-->
 <!--480-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--480 NAME-->
-<!--480-->              <NAME><![CDATA[S_ResourceType]]></NAME>
+<!--480-->              <NAME><![CDATA[ResourceType]]></NAME>
 <!--480 DESCRIPTION-->
 <!--480-->              <DESCRIPTION><![CDATA[Maintain Resource Types]]></DESCRIPTION>
 <!--480 HELP-->
 <!--480-->              <HELP><![CDATA[Maintain Resource types and their principal availability.]]></HELP>
 <!--480 TABLENAME-->
 <!--480-->              <TABLENAME><![CDATA[S_ResourceType]]></TABLENAME>
+<!--480 CLASSNAME-->
+<!--480-->              <CLASSNAME><![CDATA[ResourceType]]></CLASSNAME>
 <!--480 ISVIEW-->
 <!--480-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--480 ACCESSLEVEL-->
@@ -10135,11 +10183,13 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--481 UPDATEDBY-->
 <!--481-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--481 NAME-->
-<!--481-->              <NAME><![CDATA[S_ExpenseType]]></NAME>
+<!--481-->              <NAME><![CDATA[ExpenseType]]></NAME>
 <!--481 HELP-->
 <!--481-->              <HELP><![CDATA[Contains all the expsenses types for reporting purpose]]></HELP>
 <!--481 TABLENAME-->
 <!--481-->              <TABLENAME><![CDATA[S_ExpenseType]]></TABLENAME>
+<!--481 CLASSNAME-->
+<!--481-->              <CLASSNAME><![CDATA[ExpenseType]]></CLASSNAME>
 <!--481 ISVIEW-->
 <!--481-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--481 ACCESSLEVEL-->
@@ -10182,13 +10232,15 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--482 UPDATEDBY-->
 <!--482-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--482 NAME-->
-<!--482-->              <NAME><![CDATA[S_ResourceUnAvailable]]></NAME>
+<!--482-->              <NAME><![CDATA[ResourceUnAvailable]]></NAME>
 <!--482 DESCRIPTION-->
 <!--482-->              <DESCRIPTION><![CDATA[Resource unavailability]]></DESCRIPTION>
 <!--482 HELP-->
 <!--482-->              <HELP><![CDATA[Dates, when the resource is not available (e.g. vacation)]]></HELP>
 <!--482 TABLENAME-->
 <!--482-->              <TABLENAME><![CDATA[S_ResourceUnAvailable]]></TABLENAME>
+<!--482 CLASSNAME-->
+<!--482-->              <CLASSNAME><![CDATA[ResourceUnAvailable]]></CLASSNAME>
 <!--482 ISVIEW-->
 <!--482-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--482 ACCESSLEVEL-->
@@ -10231,13 +10283,15 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--485 UPDATEDBY-->
 <!--485-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--485 NAME-->
-<!--485-->              <NAME><![CDATA[S_ResourceAssignment]]></NAME>
+<!--485-->              <NAME><![CDATA[ResourceAssignment]]></NAME>
 <!--485 DESCRIPTION-->
 <!--485-->              <DESCRIPTION><![CDATA[Resource Assignments]]></DESCRIPTION>
 <!--485 HELP-->
 <!--485-->              <HELP><![CDATA[History of Assignments]]></HELP>
 <!--485 TABLENAME-->
 <!--485-->              <TABLENAME><![CDATA[S_ResourceAssignment]]></TABLENAME>
+<!--485 CLASSNAME-->
+<!--485-->              <CLASSNAME><![CDATA[ResourceAssignment]]></CLASSNAME>
 <!--485 ISVIEW-->
 <!--485-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--485 ACCESSLEVEL-->
@@ -10331,13 +10385,15 @@ The Action History Tab displays any actions which have been taken for a Request.
 <!--487 UPDATEDBY-->
 <!--487-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--487 NAME-->
-<!--487-->              <NAME><![CDATA[S_Resource]]></NAME>
+<!--487-->              <NAME><![CDATA[Resource]]></NAME>
 <!--487 DESCRIPTION-->
 <!--487-->              <DESCRIPTION><![CDATA[Maintain Resources]]></DESCRIPTION>
 <!--487 HELP-->
 <!--487-->              <HELP><![CDATA[Maintain Resources]]></HELP>
 <!--487 TABLENAME-->
 <!--487-->              <TABLENAME><![CDATA[S_Resource]]></TABLENAME>
+<!--487 CLASSNAME-->
+<!--487-->              <CLASSNAME><![CDATA[Resource]]></CLASSNAME>
 <!--487 ISVIEW-->
 <!--487-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--487 ACCESSLEVEL-->
@@ -10798,13 +10854,15 @@ The subscription is used to follow up the contacts which are subscribed to an sp
 <!--529 UPDATEDBY-->
 <!--529-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--529 NAME-->
-<!--529-->              <NAME><![CDATA[R_RequestType]]></NAME>
+<!--529-->              <NAME><![CDATA[RequestType]]></NAME>
 <!--529 DESCRIPTION-->
 <!--529-->              <DESCRIPTION><![CDATA[Type of request (e.g. Inquiry, Complaint, ..)]]></DESCRIPTION>
 <!--529 HELP-->
 <!--529-->              <HELP><![CDATA[Request Types are used for processing and categorizing requests. Options are Account Inquiry, Warranty Issue, etc.]]></HELP>
 <!--529 TABLENAME-->
 <!--529-->              <TABLENAME><![CDATA[R_RequestType]]></TABLENAME>
+<!--529 CLASSNAME-->
+<!--529-->              <CLASSNAME><![CDATA[RequestType]]></CLASSNAME>
 <!--529 ISVIEW-->
 <!--529-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--529 ACCESSLEVEL-->
@@ -11205,6 +11263,8 @@ The subscription is used to follow up the contacts which are subscribed to an sp
 <!--544-->              <NAME><![CDATA[T_Report]]></NAME>
 <!--544 TABLENAME-->
 <!--544-->              <TABLENAME><![CDATA[T_Report]]></TABLENAME>
+<!--544 CLASSNAME-->
+<!--544-->              <CLASSNAME><![CDATA[Report]]></CLASSNAME>
 <!--544 ISVIEW-->
 <!--544-->              <ISVIEW><![CDATA[Y]]></ISVIEW>
 <!--544 ACCESSLEVEL-->
@@ -12249,7 +12309,7 @@ The subscription is used to follow up the contacts which are subscribed to an sp
 <!--580 UPDATEDBY-->
 <!--580-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--580 NAME-->
-<!--580-->              <NAME><![CDATA[AD_ChangeLog]]></NAME>
+<!--580-->              <NAME><![CDATA[ADChangeLog]]></NAME>
 <!--580 DESCRIPTION-->
 <!--580-->              <DESCRIPTION><![CDATA[Data Changes
 Log of data changes]]></DESCRIPTION>
@@ -12258,6 +12318,8 @@ Log of data changes]]></DESCRIPTION>
 Log of data changes]]></HELP>
 <!--580 TABLENAME-->
 <!--580-->              <TABLENAME><![CDATA[AD_ChangeLog]]></TABLENAME>
+<!--580 CLASSNAME-->
+<!--580-->              <CLASSNAME><![CDATA[ADChangeLog]]></CLASSNAME>
 <!--580 ISVIEW-->
 <!--580-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--580 ACCESSLEVEL-->
@@ -12300,13 +12362,15 @@ Log of data changes]]></HELP>
 <!--581 UPDATEDBY-->
 <!--581-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--581 NAME-->
-<!--581-->              <NAME><![CDATA[S_TimeType]]></NAME>
+<!--581-->              <NAME><![CDATA[TimeType]]></NAME>
 <!--581 DESCRIPTION-->
 <!--581-->              <DESCRIPTION><![CDATA[Type of Time recorded]]></DESCRIPTION>
 <!--581 HELP-->
 <!--581-->              <HELP><![CDATA[Contains all the time types for reporting purposes (In parallel to Activities)]]></HELP>
 <!--581 TABLENAME-->
 <!--581-->              <TABLENAME><![CDATA[S_TimeType]]></TABLENAME>
+<!--581 CLASSNAME-->
+<!--581-->              <CLASSNAME><![CDATA[TimeType]]></CLASSNAME>
 <!--581 ISVIEW-->
 <!--581-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--581 ACCESSLEVEL-->
@@ -12349,13 +12413,15 @@ Log of data changes]]></HELP>
 <!--582 UPDATEDBY-->
 <!--582-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--582 NAME-->
-<!--582-->              <NAME><![CDATA[R_ResourcePlanCost]]></NAME>
+<!--582-->              <NAME><![CDATA[ResourcePlanCost]]></NAME>
 <!--582 DESCRIPTION-->
 <!--582-->              <DESCRIPTION><![CDATA[Planned Costs of the Resource]]></DESCRIPTION>
 <!--582 HELP-->
 <!--582-->              <HELP><![CDATA[Planned (budgeted) Costs of the Resource]]></HELP>
 <!--582 TABLENAME-->
 <!--582-->              <TABLENAME><![CDATA[R_ResourcePlanCost]]></TABLENAME>
+<!--582 CLASSNAME-->
+<!--582-->              <CLASSNAME><![CDATA[ResourcePlanCost]]></CLASSNAME>
 <!--582 ISVIEW-->
 <!--582-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--582 ACCESSLEVEL-->
@@ -12500,9 +12566,11 @@ Log of data changes]]></HELP>
 <!--585 UPDATEDBY-->
 <!--585-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--585 NAME-->
-<!--585-->              <NAME><![CDATA[C_OrgAssignment]]></NAME>
+<!--585-->              <NAME><![CDATA[OrganizationAssignment]]></NAME>
 <!--585 TABLENAME-->
 <!--585-->              <TABLENAME><![CDATA[C_OrgAssignment]]></TABLENAME>
+<!--585 CLASSNAME-->
+<!--585-->              <CLASSNAME><![CDATA[OrganizationAssignment]]></CLASSNAME>
 <!--585 ISVIEW-->
 <!--585-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--585 ACCESSLEVEL-->
@@ -14334,7 +14402,7 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800025 UPDATEDBY-->
 <!--800025-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800025 NAME-->
-<!--800025-->              <NAME><![CDATA[C_Projectproposal_V]]></NAME>
+<!--800025-->              <NAME><![CDATA[ActiveProposalV]]></NAME>
 <!--800025 TABLENAME-->
 <!--800025-->              <TABLENAME><![CDATA[C_Projectproposal_V]]></TABLENAME>
 <!--800025 CLASSNAME-->
@@ -14487,11 +14555,13 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800030 UPDATEDBY-->
 <!--800030-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800030 NAME-->
-<!--800030-->              <NAME><![CDATA[M_WH_Schedule]]></NAME>
+<!--800030-->              <NAME><![CDATA[WarehouseSchedule]]></NAME>
 <!--800030 HELP-->
 <!--800030-->              <HELP><![CDATA[Contains all the differents schedules for a warehouse. These schedules are used to invoice rented locators]]></HELP>
 <!--800030 TABLENAME-->
 <!--800030-->              <TABLENAME><![CDATA[M_WH_Schedule]]></TABLENAME>
+<!--800030 CLASSNAME-->
+<!--800030-->              <CLASSNAME><![CDATA[WarehouseSchedule]]></CLASSNAME>
 <!--800030 ISVIEW-->
 <!--800030-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--800030 ACCESSLEVEL-->
@@ -14534,11 +14604,13 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800031 UPDATEDBY-->
 <!--800031-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800031 NAME-->
-<!--800031-->              <NAME><![CDATA[M_WH_Period]]></NAME>
+<!--800031-->              <NAME><![CDATA[WarehousePeriod]]></NAME>
 <!--800031 HELP-->
 <!--800031-->              <HELP><![CDATA[Contains all the periods  for the schedule]]></HELP>
 <!--800031 TABLENAME-->
 <!--800031-->              <TABLENAME><![CDATA[M_WH_Period]]></TABLENAME>
+<!--800031 CLASSNAME-->
+<!--800031-->              <CLASSNAME><![CDATA[WarehousePeriod]]></CLASSNAME>
 <!--800031 ISVIEW-->
 <!--800031-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--800031 ACCESSLEVEL-->
@@ -14581,11 +14653,13 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800032 UPDATEDBY-->
 <!--800032-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800032 NAME-->
-<!--800032-->              <NAME><![CDATA[M_WH_Period_Invoiced]]></NAME>
+<!--800032-->              <NAME><![CDATA[WarehousePeriodInvoiced]]></NAME>
 <!--800032 HELP-->
 <!--800032-->              <HELP><![CDATA[Contains all the invoices generated due based on the rented locators for that period]]></HELP>
 <!--800032 TABLENAME-->
 <!--800032-->              <TABLENAME><![CDATA[M_WH_Period_Invoiced]]></TABLENAME>
+<!--800032 CLASSNAME-->
+<!--800032-->              <CLASSNAME><![CDATA[WarehousePeriodInvoiced]]></CLASSNAME>
 <!--800032 ISVIEW-->
 <!--800032-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--800032 ACCESSLEVEL-->
@@ -14628,11 +14702,13 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800033 UPDATEDBY-->
 <!--800033-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800033 NAME-->
-<!--800033-->              <NAME><![CDATA[M_WH_Schedule_Product]]></NAME>
+<!--800033-->              <NAME><![CDATA[WarehouseScheduleProduct]]></NAME>
 <!--800033 HELP-->
 <!--800033-->              <HELP><![CDATA[Contains all the differents product that will be used in the invoices]]></HELP>
 <!--800033 TABLENAME-->
 <!--800033-->              <TABLENAME><![CDATA[M_WH_Schedule_Product]]></TABLENAME>
+<!--800033 CLASSNAME-->
+<!--800033-->              <CLASSNAME><![CDATA[WarehouseScheduleProduct]]></CLASSNAME>
 <!--800033 ISVIEW-->
 <!--800033-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--800033 ACCESSLEVEL-->
@@ -14824,9 +14900,11 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800039 UPDATEDBY-->
 <!--800039-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800039 NAME-->
-<!--800039-->              <NAME><![CDATA[AD_Table_Post_V]]></NAME>
+<!--800039-->              <NAME><![CDATA[ADTablePostV]]></NAME>
 <!--800039 TABLENAME-->
 <!--800039-->              <TABLENAME><![CDATA[AD_Table_Post_V]]></TABLENAME>
+<!--800039 CLASSNAME-->
+<!--800039-->              <CLASSNAME><![CDATA[TablePostV]]></CLASSNAME>
 <!--800039 ISVIEW-->
 <!--800039-->              <ISVIEW><![CDATA[Y]]></ISVIEW>
 <!--800039 ACCESSLEVEL-->
@@ -15334,13 +15412,15 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800049 UPDATEDBY-->
 <!--800049-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800049 NAME-->
-<!--800049-->              <NAME><![CDATA[AD_Month]]></NAME>
+<!--800049-->              <NAME><![CDATA[ADMonth]]></NAME>
 <!--800049 DESCRIPTION-->
 <!--800049-->              <DESCRIPTION><![CDATA[Month of the year]]></DESCRIPTION>
 <!--800049 HELP-->
 <!--800049-->              <HELP><![CDATA[It is necessary to configurate the months of the year to the terms of the year.]]></HELP>
 <!--800049 TABLENAME-->
 <!--800049-->              <TABLENAME><![CDATA[AD_Month]]></TABLENAME>
+<!--800049 CLASSNAME-->
+<!--800049-->              <CLASSNAME><![CDATA[ADMonth]]></CLASSNAME>
 <!--800049 ISVIEW-->
 <!--800049-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--800049 ACCESSLEVEL-->
@@ -15436,13 +15516,15 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800051 UPDATEDBY-->
 <!--800051-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800051 NAME-->
-<!--800051-->              <NAME><![CDATA[AT_Test]]></NAME>
+<!--800051-->              <NAME><![CDATA[ATTest]]></NAME>
 <!--800051 DESCRIPTION-->
 <!--800051-->              <DESCRIPTION><![CDATA[This window contains all the instructions of the applicaction.]]></DESCRIPTION>
 <!--800051 HELP-->
 <!--800051-->              <HELP><![CDATA[This window contains all the instructions of the applicaction.]]></HELP>
 <!--800051 TABLENAME-->
 <!--800051-->              <TABLENAME><![CDATA[AT_Test]]></TABLENAME>
+<!--800051 CLASSNAME-->
+<!--800051-->              <CLASSNAME><![CDATA[Test]]></CLASSNAME>
 <!--800051 ISVIEW-->
 <!--800051-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--800051 ACCESSLEVEL-->
@@ -15487,13 +15569,15 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800052 UPDATEDBY-->
 <!--800052-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800052 NAME-->
-<!--800052-->              <NAME><![CDATA[AT_TestDocument]]></NAME>
+<!--800052-->              <NAME><![CDATA[TestDocument]]></NAME>
 <!--800052 DESCRIPTION-->
 <!--800052-->              <DESCRIPTION><![CDATA[This window contiains different instructions' documents. Is based on AT_Document table.]]></DESCRIPTION>
 <!--800052 HELP-->
 <!--800052-->              <HELP><![CDATA[This window contiains different instructions' documents.]]></HELP>
 <!--800052 TABLENAME-->
 <!--800052-->              <TABLENAME><![CDATA[AT_TestDocument]]></TABLENAME>
+<!--800052 CLASSNAME-->
+<!--800052-->              <CLASSNAME><![CDATA[TestDocument]]></CLASSNAME>
 <!--800052 ISVIEW-->
 <!--800052-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--800052 ACCESSLEVEL-->
@@ -15538,13 +15622,15 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800053 UPDATEDBY-->
 <!--800053-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800053 NAME-->
-<!--800053-->              <NAME><![CDATA[AT_Command]]></NAME>
+<!--800053-->              <NAME><![CDATA[Command]]></NAME>
 <!--800053 DESCRIPTION-->
 <!--800053-->              <DESCRIPTION><![CDATA[Test command configuration]]></DESCRIPTION>
 <!--800053 HELP-->
 <!--800053-->              <HELP><![CDATA[This tab contains de test instruction commands.]]></HELP>
 <!--800053 TABLENAME-->
 <!--800053-->              <TABLENAME><![CDATA[AT_Command]]></TABLENAME>
+<!--800053 CLASSNAME-->
+<!--800053-->              <CLASSNAME><![CDATA[Command]]></CLASSNAME>
 <!--800053 ISVIEW-->
 <!--800053-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--800053 ACCESSLEVEL-->
@@ -15589,13 +15675,15 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800054 UPDATEDBY-->
 <!--800054-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800054 NAME-->
-<!--800054-->              <NAME><![CDATA[AT_Command_Trl]]></NAME>
+<!--800054-->              <NAME><![CDATA[CommandTrl]]></NAME>
 <!--800054 DESCRIPTION-->
 <!--800054-->              <DESCRIPTION><![CDATA[Test command translation]]></DESCRIPTION>
 <!--800054 HELP-->
 <!--800054-->              <HELP><![CDATA[This tab contains de command translation]]></HELP>
 <!--800054 TABLENAME-->
 <!--800054-->              <TABLENAME><![CDATA[AT_Command_Trl]]></TABLENAME>
+<!--800054 CLASSNAME-->
+<!--800054-->              <CLASSNAME><![CDATA[CommandTrl]]></CLASSNAME>
 <!--800054 ISVIEW-->
 <!--800054-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--800054 ACCESSLEVEL-->
@@ -15640,13 +15728,15 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800055 UPDATEDBY-->
 <!--800055-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800055 NAME-->
-<!--800055-->              <NAME><![CDATA[AT_Line]]></NAME>
+<!--800055-->              <NAME><![CDATA[Line]]></NAME>
 <!--800055 DESCRIPTION-->
 <!--800055-->              <DESCRIPTION><![CDATA[This tab contains instructions lines. Is based on AT_Line]]></DESCRIPTION>
 <!--800055 HELP-->
 <!--800055-->              <HELP><![CDATA[This tab contains instructions lines.]]></HELP>
 <!--800055 TABLENAME-->
 <!--800055-->              <TABLENAME><![CDATA[AT_Line]]></TABLENAME>
+<!--800055 CLASSNAME-->
+<!--800055-->              <CLASSNAME><![CDATA[Line]]></CLASSNAME>
 <!--800055 ISVIEW-->
 <!--800055-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--800055 ACCESSLEVEL-->
@@ -15691,13 +15781,15 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800056 UPDATEDBY-->
 <!--800056-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800056 NAME-->
-<!--800056-->              <NAME><![CDATA[AT_RolLogin]]></NAME>
+<!--800056-->              <NAME><![CDATA[RolLogin]]></NAME>
 <!--800056 DESCRIPTION-->
 <!--800056-->              <DESCRIPTION><![CDATA[This window defines different ways of login in the application for tests. Is based on AT_Rollogin.]]></DESCRIPTION>
 <!--800056 HELP-->
 <!--800056-->              <HELP><![CDATA[This window defines different ways of login in the application for tests.]]></HELP>
 <!--800056 TABLENAME-->
 <!--800056-->              <TABLENAME><![CDATA[AT_Rollogin]]></TABLENAME>
+<!--800056 CLASSNAME-->
+<!--800056-->              <CLASSNAME><![CDATA[RolLogin]]></CLASSNAME>
 <!--800056 ISVIEW-->
 <!--800056-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--800056 ACCESSLEVEL-->
@@ -15742,13 +15834,15 @@ For example, once the goods have been shipped to the customer, the merchant can 
 <!--800057 UPDATEDBY-->
 <!--800057-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800057 NAME-->
-<!--800057-->              <NAME><![CDATA[AT_TestDocumentLine]]></NAME>
+<!--800057-->              <NAME><![CDATA[TestDocumentLine]]></NAME>
 <!--800057 DESCRIPTION-->
 <!--800057-->              <DESCRIPTION><![CDATA[Document text configuration]]></DESCRIPTION>
 <!--800057 HELP-->
 <!--800057-->              <HELP><![CDATA[This tab contains the document text configuration]]></HELP>
 <!--800057 TABLENAME-->
 <!--800057-->              <TABLENAME><![CDATA[AT_TestDocumentLine]]></TABLENAME>
+<!--800057 CLASSNAME-->
+<!--800057-->              <CLASSNAME><![CDATA[TestDocumentLine]]></CLASSNAME>
 <!--800057 ISVIEW-->
 <!--800057-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--800057 ACCESSLEVEL-->
@@ -22589,11 +22683,13 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--1007400000 UPDATEDBY-->
 <!--1007400000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1007400000 NAME-->
-<!--1007400000-->              <NAME><![CDATA[C_AcctSchema_Table_DocType]]></NAME>
+<!--1007400000-->              <NAME><![CDATA[AcctSchemaTableDocType]]></NAME>
 <!--1007400000 DESCRIPTION-->
 <!--1007400000-->              <DESCRIPTION><![CDATA[AcctSchema table doc base type]]></DESCRIPTION>
 <!--1007400000 TABLENAME-->
 <!--1007400000-->              <TABLENAME><![CDATA[C_AcctSchema_Table_DocType]]></TABLENAME>
+<!--1007400000 CLASSNAME-->
+<!--1007400000-->              <CLASSNAME><![CDATA[AcctSchemaTableDocType]]></CLASSNAME>
 <!--1007400000 ISVIEW-->
 <!--1007400000-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--1007400000 ACCESSLEVEL-->
@@ -22638,11 +22734,13 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--088ED0B6930847508865BCB06E75228A UPDATEDBY-->
 <!--088ED0B6930847508865BCB06E75228A-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--088ED0B6930847508865BCB06E75228A NAME-->
-<!--088ED0B6930847508865BCB06E75228A-->              <NAME><![CDATA[AD_Org_AcctSchema]]></NAME>
+<!--088ED0B6930847508865BCB06E75228A-->              <NAME><![CDATA[OrganizationAcctSchema]]></NAME>
 <!--088ED0B6930847508865BCB06E75228A DESCRIPTION-->
 <!--088ED0B6930847508865BCB06E75228A-->              <DESCRIPTION><![CDATA[Stores the relationship between an organization and the accounting schemas]]></DESCRIPTION>
 <!--088ED0B6930847508865BCB06E75228A TABLENAME-->
 <!--088ED0B6930847508865BCB06E75228A-->              <TABLENAME><![CDATA[AD_Org_AcctSchema]]></TABLENAME>
+<!--088ED0B6930847508865BCB06E75228A CLASSNAME-->
+<!--088ED0B6930847508865BCB06E75228A-->              <CLASSNAME><![CDATA[OrganizationAcctSchema]]></CLASSNAME>
 <!--088ED0B6930847508865BCB06E75228A ISVIEW-->
 <!--088ED0B6930847508865BCB06E75228A-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--088ED0B6930847508865BCB06E75228A ACCESSLEVEL-->
@@ -22664,7 +22762,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--088ED0B6930847508865BCB06E75228A DEVELOPMENTSTATUS-->
 <!--088ED0B6930847508865BCB06E75228A-->              <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--088ED0B6930847508865BCB06E75228A AD_PACKAGE_ID-->
-<!--088ED0B6930847508865BCB06E75228A-->              <AD_PACKAGE_ID><![CDATA[0]]></AD_PACKAGE_ID>
+<!--088ED0B6930847508865BCB06E75228A-->              <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DF4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--088ED0B6930847508865BCB06E75228A**************--></AD_TABLE>
 
 <!--08A203FD84AA412BB38882A1EDDD1A83**************--><AD_TABLE>
@@ -22685,7 +22783,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--08A203FD84AA412BB38882A1EDDD1A83 UPDATEDBY-->
 <!--08A203FD84AA412BB38882A1EDDD1A83-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--08A203FD84AA412BB38882A1EDDD1A83 NAME-->
-<!--08A203FD84AA412BB38882A1EDDD1A83-->              <NAME><![CDATA[AD_Dataset]]></NAME>
+<!--08A203FD84AA412BB38882A1EDDD1A83-->              <NAME><![CDATA[DataSet]]></NAME>
 <!--08A203FD84AA412BB38882A1EDDD1A83 DESCRIPTION-->
 <!--08A203FD84AA412BB38882A1EDDD1A83-->              <DESCRIPTION><![CDATA[Sets of data.]]></DESCRIPTION>
 <!--08A203FD84AA412BB38882A1EDDD1A83 HELP-->
@@ -22738,11 +22836,13 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--1F17CA14C9D04D1D99DB72BE2E4C585C UPDATEDBY-->
 <!--1F17CA14C9D04D1D99DB72BE2E4C585C-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1F17CA14C9D04D1D99DB72BE2E4C585C NAME-->
-<!--1F17CA14C9D04D1D99DB72BE2E4C585C-->              <NAME><![CDATA[AD_Month_Trl]]></NAME>
+<!--1F17CA14C9D04D1D99DB72BE2E4C585C-->              <NAME><![CDATA[ADMonthTrl]]></NAME>
 <!--1F17CA14C9D04D1D99DB72BE2E4C585C DESCRIPTION-->
 <!--1F17CA14C9D04D1D99DB72BE2E4C585C-->              <DESCRIPTION><![CDATA[Month Translation]]></DESCRIPTION>
 <!--1F17CA14C9D04D1D99DB72BE2E4C585C TABLENAME-->
 <!--1F17CA14C9D04D1D99DB72BE2E4C585C-->              <TABLENAME><![CDATA[AD_Month_Trl]]></TABLENAME>
+<!--1F17CA14C9D04D1D99DB72BE2E4C585C CLASSNAME-->
+<!--1F17CA14C9D04D1D99DB72BE2E4C585C-->              <CLASSNAME><![CDATA[ADMonthTrl]]></CLASSNAME>
 <!--1F17CA14C9D04D1D99DB72BE2E4C585C ISVIEW-->
 <!--1F17CA14C9D04D1D99DB72BE2E4C585C-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--1F17CA14C9D04D1D99DB72BE2E4C585C ACCESSLEVEL-->
@@ -22787,7 +22887,7 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 <!--21E98AE4A7D94935A32D17B6EFC81AAC UPDATEDBY-->
 <!--21E98AE4A7D94935A32D17B6EFC81AAC-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--21E98AE4A7D94935A32D17B6EFC81AAC NAME-->
-<!--21E98AE4A7D94935A32D17B6EFC81AAC-->              <NAME><![CDATA[AD_OrgType]]></NAME>
+<!--21E98AE4A7D94935A32D17B6EFC81AAC-->              <NAME><![CDATA[OrganizationType]]></NAME>
 <!--21E98AE4A7D94935A32D17B6EFC81AAC DESCRIPTION-->
 <!--21E98AE4A7D94935A32D17B6EFC81AAC-->              <DESCRIPTION><![CDATA[Defines an organization type which will be available into the system]]></DESCRIPTION>
 <!--21E98AE4A7D94935A32D17B6EFC81AAC HELP-->
@@ -22795,6 +22895,8 @@ In case that are needed in this tab are introduced the diferent toolset used in 
 You can also select if transactions are allowed or not for this organization type.]]></HELP>
 <!--21E98AE4A7D94935A32D17B6EFC81AAC TABLENAME-->
 <!--21E98AE4A7D94935A32D17B6EFC81AAC-->              <TABLENAME><![CDATA[AD_OrgType]]></TABLENAME>
+<!--21E98AE4A7D94935A32D17B6EFC81AAC CLASSNAME-->
+<!--21E98AE4A7D94935A32D17B6EFC81AAC-->              <CLASSNAME><![CDATA[OrganizationType]]></CLASSNAME>
 <!--21E98AE4A7D94935A32D17B6EFC81AAC ISVIEW-->
 <!--21E98AE4A7D94935A32D17B6EFC81AAC-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--21E98AE4A7D94935A32D17B6EFC81AAC ACCESSLEVEL-->
@@ -22818,7 +22920,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--21E98AE4A7D94935A32D17B6EFC81AAC DEVELOPMENTSTATUS-->
 <!--21E98AE4A7D94935A32D17B6EFC81AAC-->              <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--21E98AE4A7D94935A32D17B6EFC81AAC AD_PACKAGE_ID-->
-<!--21E98AE4A7D94935A32D17B6EFC81AAC-->              <AD_PACKAGE_ID><![CDATA[0]]></AD_PACKAGE_ID>
+<!--21E98AE4A7D94935A32D17B6EFC81AAC-->              <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D54B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--21E98AE4A7D94935A32D17B6EFC81AAC**************--></AD_TABLE>
 
 <!--42EFE5EEF79147C791EFAF73D4FEA5D7**************--><AD_TABLE>
@@ -22839,7 +22941,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--42EFE5EEF79147C791EFAF73D4FEA5D7 UPDATEDBY-->
 <!--42EFE5EEF79147C791EFAF73D4FEA5D7-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--42EFE5EEF79147C791EFAF73D4FEA5D7 NAME-->
-<!--42EFE5EEF79147C791EFAF73D4FEA5D7-->              <NAME><![CDATA[AD_Model_Object_Para]]></NAME>
+<!--42EFE5EEF79147C791EFAF73D4FEA5D7-->              <NAME><![CDATA[ModelImplementationParameter]]></NAME>
 <!--42EFE5EEF79147C791EFAF73D4FEA5D7 TABLENAME-->
 <!--42EFE5EEF79147C791EFAF73D4FEA5D7-->              <TABLENAME><![CDATA[AD_Model_Object_Para]]></TABLENAME>
 <!--42EFE5EEF79147C791EFAF73D4FEA5D7 CLASSNAME-->
@@ -22888,7 +22990,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--47CA957C59F947D2B8E8D7E37AFA40DE UPDATEDBY-->
 <!--47CA957C59F947D2B8E8D7E37AFA40DE-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--47CA957C59F947D2B8E8D7E37AFA40DE NAME-->
-<!--47CA957C59F947D2B8E8D7E37AFA40DE-->              <NAME><![CDATA[AD_Module_Dbprefix]]></NAME>
+<!--47CA957C59F947D2B8E8D7E37AFA40DE-->              <NAME><![CDATA[ModuleDBPrefix]]></NAME>
 <!--47CA957C59F947D2B8E8D7E37AFA40DE DESCRIPTION-->
 <!--47CA957C59F947D2B8E8D7E37AFA40DE-->              <DESCRIPTION><![CDATA[DB Prefixes of the module]]></DESCRIPTION>
 <!--47CA957C59F947D2B8E8D7E37AFA40DE HELP-->
@@ -22939,7 +23041,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--4D8B61CFF8F04F38B2C9BF2E30D92024 UPDATEDBY-->
 <!--4D8B61CFF8F04F38B2C9BF2E30D92024-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--4D8B61CFF8F04F38B2C9BF2E30D92024 NAME-->
-<!--4D8B61CFF8F04F38B2C9BF2E30D92024-->              <NAME><![CDATA[AD_Dataset_Table]]></NAME>
+<!--4D8B61CFF8F04F38B2C9BF2E30D92024-->              <NAME><![CDATA[DataSetTable]]></NAME>
 <!--4D8B61CFF8F04F38B2C9BF2E30D92024 DESCRIPTION-->
 <!--4D8B61CFF8F04F38B2C9BF2E30D92024-->              <DESCRIPTION><![CDATA[Tables of a Dataset.]]></DESCRIPTION>
 <!--4D8B61CFF8F04F38B2C9BF2E30D92024 HELP-->
@@ -22990,7 +23092,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--55EA8703587B40C1A05D225FBEE8C7FE UPDATEDBY-->
 <!--55EA8703587B40C1A05D225FBEE8C7FE-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--55EA8703587B40C1A05D225FBEE8C7FE NAME-->
-<!--55EA8703587B40C1A05D225FBEE8C7FE-->              <NAME><![CDATA[AD_Module_Dependency]]></NAME>
+<!--55EA8703587B40C1A05D225FBEE8C7FE-->              <NAME><![CDATA[ModuleDependency]]></NAME>
 <!--55EA8703587B40C1A05D225FBEE8C7FE DESCRIPTION-->
 <!--55EA8703587B40C1A05D225FBEE8C7FE-->              <DESCRIPTION><![CDATA[Defines dependencies for modules]]></DESCRIPTION>
 <!--55EA8703587B40C1A05D225FBEE8C7FE HELP-->
@@ -23043,7 +23145,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--686694E77C424953BC759965AB2D19C5 UPDATEDBY-->
 <!--686694E77C424953BC759965AB2D19C5-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--686694E77C424953BC759965AB2D19C5 NAME-->
-<!--686694E77C424953BC759965AB2D19C5-->              <NAME><![CDATA[AD_Dataset_Column]]></NAME>
+<!--686694E77C424953BC759965AB2D19C5-->              <NAME><![CDATA[DataSetColumn]]></NAME>
 <!--686694E77C424953BC759965AB2D19C5 DESCRIPTION-->
 <!--686694E77C424953BC759965AB2D19C5-->              <DESCRIPTION><![CDATA[Columns of a table from a Dataset.]]></DESCRIPTION>
 <!--686694E77C424953BC759965AB2D19C5 HELP-->
@@ -23094,13 +23196,15 @@ You can also select if transactions are allowed or not for this organization typ
 <!--7F900CBEF00C45D2833F897E12BAE86E UPDATEDBY-->
 <!--7F900CBEF00C45D2833F897E12BAE86E-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--7F900CBEF00C45D2833F897E12BAE86E NAME-->
-<!--7F900CBEF00C45D2833F897E12BAE86E-->              <NAME><![CDATA[AD_Process_Run]]></NAME>
+<!--7F900CBEF00C45D2833F897E12BAE86E-->              <NAME><![CDATA[ProcessRun]]></NAME>
 <!--7F900CBEF00C45D2833F897E12BAE86E DESCRIPTION-->
 <!--7F900CBEF00C45D2833F897E12BAE86E-->              <DESCRIPTION><![CDATA[View the results of executed Process Requests' and individual Process executions.]]></DESCRIPTION>
 <!--7F900CBEF00C45D2833F897E12BAE86E HELP-->
 <!--7F900CBEF00C45D2833F897E12BAE86E-->              <HELP><![CDATA[View the results of executed Process Requests' and individual Process executions.]]></HELP>
 <!--7F900CBEF00C45D2833F897E12BAE86E TABLENAME-->
 <!--7F900CBEF00C45D2833F897E12BAE86E-->              <TABLENAME><![CDATA[AD_Process_Run_V]]></TABLENAME>
+<!--7F900CBEF00C45D2833F897E12BAE86E CLASSNAME-->
+<!--7F900CBEF00C45D2833F897E12BAE86E-->              <CLASSNAME><![CDATA[ProcessRun]]></CLASSNAME>
 <!--7F900CBEF00C45D2833F897E12BAE86E ISVIEW-->
 <!--7F900CBEF00C45D2833F897E12BAE86E-->              <ISVIEW><![CDATA[Y]]></ISVIEW>
 <!--7F900CBEF00C45D2833F897E12BAE86E ACCESSLEVEL-->
@@ -23143,13 +23247,15 @@ You can also select if transactions are allowed or not for this organization typ
 <!--82D4EDCF39AE44FB9B24E95A1B18B21C UPDATEDBY-->
 <!--82D4EDCF39AE44FB9B24E95A1B18B21C-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--82D4EDCF39AE44FB9B24E95A1B18B21C NAME-->
-<!--82D4EDCF39AE44FB9B24E95A1B18B21C-->              <NAME><![CDATA[AD_Process_Request]]></NAME>
+<!--82D4EDCF39AE44FB9B24E95A1B18B21C-->              <NAME><![CDATA[ProcessRequest]]></NAME>
 <!--82D4EDCF39AE44FB9B24E95A1B18B21C DESCRIPTION-->
 <!--82D4EDCF39AE44FB9B24E95A1B18B21C-->              <DESCRIPTION><![CDATA[Create a new Process Request to be executed immediately, at a later date or on a recurring basis.]]></DESCRIPTION>
 <!--82D4EDCF39AE44FB9B24E95A1B18B21C HELP-->
 <!--82D4EDCF39AE44FB9B24E95A1B18B21C-->              <HELP><![CDATA[Create a new Process Request to be executed immediately, at a later date or on a recurring basis.]]></HELP>
 <!--82D4EDCF39AE44FB9B24E95A1B18B21C TABLENAME-->
 <!--82D4EDCF39AE44FB9B24E95A1B18B21C-->              <TABLENAME><![CDATA[AD_Process_Request]]></TABLENAME>
+<!--82D4EDCF39AE44FB9B24E95A1B18B21C CLASSNAME-->
+<!--82D4EDCF39AE44FB9B24E95A1B18B21C-->              <CLASSNAME><![CDATA[ProcessRequest]]></CLASSNAME>
 <!--82D4EDCF39AE44FB9B24E95A1B18B21C ISVIEW-->
 <!--82D4EDCF39AE44FB9B24E95A1B18B21C-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--82D4EDCF39AE44FB9B24E95A1B18B21C ACCESSLEVEL-->
@@ -23192,13 +23298,15 @@ You can also select if transactions are allowed or not for this organization typ
 <!--84B117B791D9407187EB929BB2B3DD19 UPDATEDBY-->
 <!--84B117B791D9407187EB929BB2B3DD19-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--84B117B791D9407187EB929BB2B3DD19 NAME-->
-<!--84B117B791D9407187EB929BB2B3DD19-->              <NAME><![CDATA[C_PeriodControl_Log]]></NAME>
+<!--84B117B791D9407187EB929BB2B3DD19-->              <NAME><![CDATA[PeriodControlLog]]></NAME>
 <!--84B117B791D9407187EB929BB2B3DD19 DESCRIPTION-->
 <!--84B117B791D9407187EB929BB2B3DD19-->              <DESCRIPTION><![CDATA[It stores a log about the execution of the open or close period control process]]></DESCRIPTION>
 <!--84B117B791D9407187EB929BB2B3DD19 HELP-->
 <!--84B117B791D9407187EB929BB2B3DD19-->              <HELP><![CDATA[It stores a log about the execution of the open or close period control process.]]></HELP>
 <!--84B117B791D9407187EB929BB2B3DD19 TABLENAME-->
 <!--84B117B791D9407187EB929BB2B3DD19-->              <TABLENAME><![CDATA[C_PeriodControl_Log]]></TABLENAME>
+<!--84B117B791D9407187EB929BB2B3DD19 CLASSNAME-->
+<!--84B117B791D9407187EB929BB2B3DD19-->              <CLASSNAME><![CDATA[PeriodControlLog]]></CLASSNAME>
 <!--84B117B791D9407187EB929BB2B3DD19 ISVIEW-->
 <!--84B117B791D9407187EB929BB2B3DD19-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--84B117B791D9407187EB929BB2B3DD19 ACCESSLEVEL-->
@@ -23243,11 +23351,13 @@ You can also select if transactions are allowed or not for this organization typ
 <!--97EFB890E1994E5CADC833B04157B3AC UPDATEDBY-->
 <!--97EFB890E1994E5CADC833B04157B3AC-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--97EFB890E1994E5CADC833B04157B3AC NAME-->
-<!--97EFB890E1994E5CADC833B04157B3AC-->              <NAME><![CDATA[AD_Org_Closing]]></NAME>
+<!--97EFB890E1994E5CADC833B04157B3AC-->              <NAME><![CDATA[OrganizationClosing]]></NAME>
 <!--97EFB890E1994E5CADC833B04157B3AC DESCRIPTION-->
 <!--97EFB890E1994E5CADC833B04157B3AC-->              <DESCRIPTION><![CDATA[It connects the entry closing with the organizations]]></DESCRIPTION>
 <!--97EFB890E1994E5CADC833B04157B3AC TABLENAME-->
 <!--97EFB890E1994E5CADC833B04157B3AC-->              <TABLENAME><![CDATA[AD_Org_Closing]]></TABLENAME>
+<!--97EFB890E1994E5CADC833B04157B3AC CLASSNAME-->
+<!--97EFB890E1994E5CADC833B04157B3AC-->              <CLASSNAME><![CDATA[OrganizationClosing]]></CLASSNAME>
 <!--97EFB890E1994E5CADC833B04157B3AC ISVIEW-->
 <!--97EFB890E1994E5CADC833B04157B3AC-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--97EFB890E1994E5CADC833B04157B3AC ACCESSLEVEL-->
@@ -23394,13 +23504,15 @@ You can also select if transactions are allowed or not for this organization typ
 <!--BA8789DA0AD84BA585F9417AA48C3FF8 UPDATEDBY-->
 <!--BA8789DA0AD84BA585F9417AA48C3FF8-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--BA8789DA0AD84BA585F9417AA48C3FF8 NAME-->
-<!--BA8789DA0AD84BA585F9417AA48C3FF8-->              <NAME><![CDATA[C_Year_V]]></NAME>
+<!--BA8789DA0AD84BA585F9417AA48C3FF8-->              <NAME><![CDATA[YearV]]></NAME>
 <!--BA8789DA0AD84BA585F9417AA48C3FF8 DESCRIPTION-->
 <!--BA8789DA0AD84BA585F9417AA48C3FF8-->              <DESCRIPTION><![CDATA[View to link the organization's calendar to the available years.]]></DESCRIPTION>
 <!--BA8789DA0AD84BA585F9417AA48C3FF8 HELP-->
 <!--BA8789DA0AD84BA585F9417AA48C3FF8-->              <HELP><![CDATA[View to link the organization's calendar to the available years.]]></HELP>
 <!--BA8789DA0AD84BA585F9417AA48C3FF8 TABLENAME-->
 <!--BA8789DA0AD84BA585F9417AA48C3FF8-->              <TABLENAME><![CDATA[C_Year_V]]></TABLENAME>
+<!--BA8789DA0AD84BA585F9417AA48C3FF8 CLASSNAME-->
+<!--BA8789DA0AD84BA585F9417AA48C3FF8-->              <CLASSNAME><![CDATA[YearV]]></CLASSNAME>
 <!--BA8789DA0AD84BA585F9417AA48C3FF8 ISVIEW-->
 <!--BA8789DA0AD84BA585F9417AA48C3FF8-->              <ISVIEW><![CDATA[Y]]></ISVIEW>
 <!--BA8789DA0AD84BA585F9417AA48C3FF8 ACCESSLEVEL-->
@@ -23443,7 +23555,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--BB497D0047A34E2C89BA8CC23DEE6AD4 UPDATEDBY-->
 <!--BB497D0047A34E2C89BA8CC23DEE6AD4-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--BB497D0047A34E2C89BA8CC23DEE6AD4 NAME-->
-<!--BB497D0047A34E2C89BA8CC23DEE6AD4-->              <NAME><![CDATA[AD_Module_Trl]]></NAME>
+<!--BB497D0047A34E2C89BA8CC23DEE6AD4-->              <NAME><![CDATA[ModuleTrl]]></NAME>
 <!--BB497D0047A34E2C89BA8CC23DEE6AD4 DESCRIPTION-->
 <!--BB497D0047A34E2C89BA8CC23DEE6AD4-->              <DESCRIPTION><![CDATA[Translations for modules]]></DESCRIPTION>
 <!--BB497D0047A34E2C89BA8CC23DEE6AD4 HELP-->
@@ -23503,6 +23615,8 @@ You can also select if transactions are allowed or not for this organization typ
 <!--BBB7275AB448478885E0FB24AA4BCB0B-->              <HELP><![CDATA[Maintains information for the current session]]></HELP>
 <!--BBB7275AB448478885E0FB24AA4BCB0B TABLENAME-->
 <!--BBB7275AB448478885E0FB24AA4BCB0B-->              <TABLENAME><![CDATA[AD_Session_Status]]></TABLENAME>
+<!--BBB7275AB448478885E0FB24AA4BCB0B CLASSNAME-->
+<!--BBB7275AB448478885E0FB24AA4BCB0B-->              <CLASSNAME><![CDATA[SessionStatus]]></CLASSNAME>
 <!--BBB7275AB448478885E0FB24AA4BCB0B ISVIEW-->
 <!--BBB7275AB448478885E0FB24AA4BCB0B-->              <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--BBB7275AB448478885E0FB24AA4BCB0B ACCESSLEVEL-->
@@ -23524,7 +23638,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--BBB7275AB448478885E0FB24AA4BCB0B DEVELOPMENTSTATUS-->
 <!--BBB7275AB448478885E0FB24AA4BCB0B-->              <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--BBB7275AB448478885E0FB24AA4BCB0B AD_PACKAGE_ID-->
-<!--BBB7275AB448478885E0FB24AA4BCB0B-->              <AD_PACKAGE_ID><![CDATA[0]]></AD_PACKAGE_ID>
+<!--BBB7275AB448478885E0FB24AA4BCB0B-->              <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CE4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--BBB7275AB448478885E0FB24AA4BCB0B**************--></AD_TABLE>
 
 <!--CF666DF225D54938B5368B5FB2EC2E76**************--><AD_TABLE>
@@ -23545,7 +23659,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--CF666DF225D54938B5368B5FB2EC2E76 UPDATEDBY-->
 <!--CF666DF225D54938B5368B5FB2EC2E76-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--CF666DF225D54938B5368B5FB2EC2E76 NAME-->
-<!--CF666DF225D54938B5368B5FB2EC2E76-->              <NAME><![CDATA[AD_Ref_Data_Loaded]]></NAME>
+<!--CF666DF225D54938B5368B5FB2EC2E76-->              <NAME><![CDATA[ReferenceDataStore]]></NAME>
 <!--CF666DF225D54938B5368B5FB2EC2E76 DESCRIPTION-->
 <!--CF666DF225D54938B5368B5FB2EC2E76-->              <DESCRIPTION><![CDATA[Stores the relation between import ids and the ids used in the database in different client and organizations]]></DESCRIPTION>
 <!--CF666DF225D54938B5368B5FB2EC2E76 HELP-->
@@ -23596,7 +23710,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--D5066ABE94C144C19E3516C882B51DE4 UPDATEDBY-->
 <!--D5066ABE94C144C19E3516C882B51DE4-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--D5066ABE94C144C19E3516C882B51DE4 NAME-->
-<!--D5066ABE94C144C19E3516C882B51DE4-->              <NAME><![CDATA[AD_Package]]></NAME>
+<!--D5066ABE94C144C19E3516C882B51DE4-->              <NAME><![CDATA[Package]]></NAME>
 <!--D5066ABE94C144C19E3516C882B51DE4 DESCRIPTION-->
 <!--D5066ABE94C144C19E3516C882B51DE4-->              <DESCRIPTION><![CDATA[Table for packages]]></DESCRIPTION>
 <!--D5066ABE94C144C19E3516C882B51DE4 HELP-->
@@ -23700,7 +23814,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--DDD16E3F00E940CBBDCF06228B264991 UPDATEDBY-->
 <!--DDD16E3F00E940CBBDCF06228B264991-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--DDD16E3F00E940CBBDCF06228B264991 NAME-->
-<!--DDD16E3F00E940CBBDCF06228B264991-->              <NAME><![CDATA[AD_Module_Log]]></NAME>
+<!--DDD16E3F00E940CBBDCF06228B264991-->              <NAME><![CDATA[ModuleLog]]></NAME>
 <!--DDD16E3F00E940CBBDCF06228B264991 DESCRIPTION-->
 <!--DDD16E3F00E940CBBDCF06228B264991-->              <DESCRIPTION><![CDATA[Log for module actions]]></DESCRIPTION>
 <!--DDD16E3F00E940CBBDCF06228B264991 HELP-->
