@@ -195,7 +195,7 @@
           || 'WHERE p.C_Invoice_ID = h.C_Invoice_ID'
           || ' AND p.DocStatus IN (''CL'',''CO'')'
           || ' AND h.C_Invoice_ID = l.C_Invoice_ID'
-          || ' AND h.AD_Client_ID = :1'
+          || ' AND h.AD_Client_ID = '':1'''
           || ' AND h.DateInvoiced >= to_date('':2'')'
           || ' AND h.DateInvoiced < to_date('':3'') +1';
           || ' ';
@@ -206,7 +206,7 @@
           || 'WHERE p.C_Invoice_ID = h.C_Invoice_ID'
           || ' AND p.DocStatus IN (''CL'',''CO'')'
           || ' AND h.C_Invoice_ID = l.C_Invoice_ID'
-          || ' AND h.AD_Client_ID = :1'
+          || ' AND h.AD_Client_ID = '':1'''
           || ' AND h.DateInvoiced >= to_date('':2'')'
           || ' AND h.DateInvoiced < to_date('':3'') +1';
           END IF;*/
@@ -219,7 +219,7 @@
             || 'WHERE h.C_Invoice_ID = l.C_Invoice_ID'
             || ' AND h.DocStatus IN (''CL'',''CO'')'
             || ' AND h.ISSOTRX = ''Y'''
-            || ' AND h.AD_Client_ID = :1'
+            || ' AND h.AD_Client_ID = '':1'''
             || ' AND h.DateInvoiced >= to_date('':2'')'
             || ' AND h.DateInvoiced < to_date('':3'') +1';
           ELSE
@@ -229,7 +229,7 @@
             || 'WHERE h.C_Invoice_ID = l.C_Invoice_ID'
             || ' AND h.DocStatus IN (''CL'',''CO'')'
             || ' AND h.ISSOTRX = ''Y'''
-            || ' AND h.AD_Client_ID = :1'
+            || ' AND h.AD_Client_ID = '':1'''
             || ' AND h.DateInvoiced >= to_date('':2'')'
             || ' AND h.DateInvoiced < to_date('':3'') +1';
           END IF;
@@ -242,7 +242,7 @@
             || 'WHERE h.C_Order_ID = l.C_Order_ID'
             || ' AND h.DocStatus IN (''CL'',''CO'')'
             || ' AND h.ISSOTRX = ''Y'''
-            || ' AND h.AD_Client_ID = :1'
+            || ' AND h.AD_Client_ID = '':1'''
             || ' AND h.DateOrdered >= to_date('':2'')'
             || ' AND h.DateOrdered < to_date('':3'') +1';
           ELSE
@@ -252,38 +252,38 @@
             || 'WHERE h.C_Order_ID = l.C_Order_ID'
             || ' AND h.DocStatus IN (''CL'',''CO'')'
             || ' AND h.ISSOTRX = ''Y'''
-            || ' AND h.AD_Client_ID = :1'
+            || ' AND h.AD_Client_ID = '':1'''
             || ' AND h.DateOrdered >= to_date('':2'')'
             || ' AND h.DateOrdered < to_date('':3'') +1';
           END IF;
         END IF;
         -- CommissionOrders/Invoices
         IF(CUR_CLine.CommissionOrders='Y') THEN
-          v_Cmd:=v_Cmd || ' AND h.SalesRep_ID = (SELECT AD_User_ID FROM AD_User WHERE C_BPartner_ID=' || v_SalesRep_ID || ')';
+          v_Cmd:=v_Cmd || ' AND h.SalesRep_ID = (SELECT AD_User_ID FROM AD_User WHERE C_BPartner_ID=''' || v_SalesRep_ID || ''')';
         END IF;
         -- Organization
         IF(CUR_CLine.Org_ID IS NOT NULL) THEN
-          v_Cmd:=v_Cmd || ' AND h.AD_Org_ID=' || CUR_CLine.Org_ID;
+          v_Cmd:=v_Cmd || ' AND h.AD_Org_ID=''' || CUR_CLine.Org_ID || '''';
         END IF;
         -- BPartner
         IF(CUR_CLine.C_BPartner_ID IS NOT NULL) THEN
-          v_Cmd:=v_Cmd || ' AND h.C_BPartner_ID=' || CUR_CLine.C_BPartner_ID;
+          v_Cmd:=v_Cmd || ' AND h.C_BPartner_ID=''' || CUR_CLine.C_BPartner_ID || '''';
         END IF;
         -- BPartner Group
         IF(CUR_CLine.C_BP_Group_ID IS NOT NULL) THEN
-          v_Cmd:=v_Cmd || ' AND h.C_BPartner_ID IN '  || '(SELECT C_BPartner_ID FROM C_BPartner WHERE C_BP_Group_ID=' || CUR_CLine.C_BP_Group_ID || ')';
+          v_Cmd:=v_Cmd || ' AND h.C_BPartner_ID IN'  || '(SELECT C_BPartner_ID FROM C_BPartner WHERE C_BP_Group_ID=''' || CUR_CLine.C_BP_Group_ID || ''')';
         END IF;
         -- Sales Region
         IF(CUR_CLine.C_SalesRegion_ID IS NOT NULL) THEN
-          v_Cmd:=v_Cmd || ' AND h.C_BPartner_Location_ID IN '  || '(SELECT C_BPartner_Location_ID FROM C_BPartner_Location WHERE C_SalesRegion_ID=' || CUR_CLine.C_SalesRegion_ID || ')';
+          v_Cmd:=v_Cmd || ' AND h.C_BPartner_Location_ID IN '  || '(SELECT C_BPartner_Location_ID FROM C_BPartner_Location WHERE C_SalesRegion_ID=''' || CUR_CLine.C_SalesRegion_ID || ''')';
         END IF;
         -- Product
         IF(CUR_CLine.M_Product_ID IS NOT NULL) THEN
-          v_Cmd:=v_Cmd || ' AND l.M_Product_ID=' || CUR_CLine.M_Product_ID;
+          v_Cmd:=v_Cmd || ' AND l.M_Product_ID=''' || CUR_CLine.M_Product_ID || '''';
         END IF;
         -- Product Category
         IF(CUR_CLine.M_Product_Category_ID IS NOT NULL) THEN
-          v_Cmd:=v_Cmd || ' AND l.M_Product_ID IN '  || '(SELECT M_Product_ID FROM M_Product WHERE M_Product_Category_ID=' || CUR_CLine.M_Product_Category_ID ||')';
+          v_Cmd:=v_Cmd || ' AND l.M_Product_ID IN '  || '(SELECT M_Product_ID FROM M_Product WHERE M_Product_Category_ID=''' || CUR_CLine.M_Product_Category_ID ||''')';
         END IF;
         -- Grouping
         IF(v_ListDetails<>'Y') THEN
