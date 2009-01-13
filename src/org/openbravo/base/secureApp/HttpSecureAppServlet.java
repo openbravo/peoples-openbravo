@@ -347,7 +347,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
                         if (servletMappingName != null
                                 && !Utility.isExcludedFromAutoSave(this
-                                        .getClass().getCanonicalName())) {
+                                        .getClass().getCanonicalName())
+				&& !vars1.commandIn("DIRECT")) {
 
                             final String hash = vars1
                                     .getSessionValue(servletMappingName
