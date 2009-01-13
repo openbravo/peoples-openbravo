@@ -55,6 +55,7 @@
         <reference local="C_SALARY_CATEGORY_ID" foreign="C_SALARY_CATEGORY_ID"/>
       </foreign-key>
       <unique name="C_BPSALCAT_SALCAT_DFROM_UN_KEY">
+        <unique-column name="C_BPARTNER_ID"/>
         <unique-column name="C_SALARY_CATEGORY_ID"/>
         <unique-column name="DATEFROM"/>
       </unique>
