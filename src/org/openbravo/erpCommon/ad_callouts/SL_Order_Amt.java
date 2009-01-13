@@ -119,9 +119,12 @@ public class SL_Order_Amt extends HttpSecureAppServlet {
         priceLimit = (strPriceLimit.equals("") ? ZERO : (new BigDecimal(
                 strPriceLimit))).setScale(PricePrecision,
                 BigDecimal.ROUND_HALF_UP);
-        priceList = (strPriceList.equals("") ? ZERO : new BigDecimal(
-                strPriceList));
-        priceStd = (strPriceStd.equals("") ? ZERO : new BigDecimal(strPriceStd));
+        priceList = (strPriceList.equals("") ? ZERO : (new BigDecimal(
+                strPriceList))).setScale(PricePrecision,
+                BigDecimal.ROUND_HALF_UP);
+        priceStd = (strPriceStd.equals("") ? ZERO
+                : (new BigDecimal(strPriceStd))).setScale(PricePrecision,
+                BigDecimal.ROUND_HALF_UP);
         /*
          * if (enforcedLimit) { String strPriceVersion = "";
          * PriceListVersionComboData[] data1 =
