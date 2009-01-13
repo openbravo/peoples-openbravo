@@ -18,7 +18,11 @@
  */
 package org.openbravo.wad.controls;
 
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Properties;
+import java.util.Vector;
+
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.xmlEngine.XmlEngine;

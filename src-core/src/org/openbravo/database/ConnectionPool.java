@@ -12,20 +12,26 @@
 
 package org.openbravo.database;
 
-import java.sql.*;
-import javax.sql.DataSource;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.servlet.*;
-import org.apache.log4j.Logger;
+import javax.servlet.ServletException;
+import javax.sql.DataSource;
+
 import org.apache.commons.dbcp.ConnectionFactory;
-import org.apache.commons.dbcp.PoolingDataSource;
 import org.apache.commons.dbcp.PoolableConnectionFactory;
+import org.apache.commons.dbcp.PoolingDataSource;
 import org.apache.commons.pool.KeyedObjectPoolFactory;
-import org.apache.commons.pool.impl.StackKeyedObjectPoolFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
-import org.openbravo.database.OpenbravoDriverManagerConnectionFactory;
+import org.apache.commons.pool.impl.StackKeyedObjectPoolFactory;
+import org.apache.log4j.Logger;
 
 /**
  * ConnectionPool Pool of database connections with internal pool of

@@ -11,15 +11,21 @@
  */
 package org.openbravo.database;
 
-import javax.servlet.ServletException;
-
-import java.io.*;
-import java.sql.*;
-import org.openbravo.exception.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Hashtable;
 import java.util.Properties;
 
+import javax.servlet.ServletException;
+
 import org.apache.log4j.Logger;
+import org.openbravo.exception.PoolNotFoundException;
 
 public class StandAloneConnection implements ConnectionProvider {
     public static ConnectionPool myPool;

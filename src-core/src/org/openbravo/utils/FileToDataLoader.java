@@ -11,11 +11,15 @@
  */
 package org.openbravo.utils;
 
-import org.openbravo.data.*;
-import org.openbravo.database.StandAloneConnection;
-import java.io.*;
-import org.apache.log4j.Logger;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.Vector;
+
+import org.apache.log4j.Logger;
+import org.openbravo.data.FieldProvider;
+import org.openbravo.data.SetFieldProvider;
+import org.openbravo.database.StandAloneConnection;
 
 public class FileToDataLoader extends StandAloneConnection {
 

@@ -18,7 +18,7 @@
  */
 package org.openbravo.wad.controls;
 
-import java.util.*;
+import java.util.Properties;
 
 public class WADPrice extends WADNumber {
 

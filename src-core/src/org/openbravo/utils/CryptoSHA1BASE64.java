@@ -11,10 +11,11 @@
  */
 package org.openbravo.utils;
 
-import javax.servlet.ServletException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
+import javax.servlet.ServletException;
 
 public final class CryptoSHA1BASE64 {
     public static String hash(String plaintext) throws ServletException {

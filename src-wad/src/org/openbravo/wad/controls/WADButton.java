@@ -18,7 +18,8 @@
  */
 package org.openbravo.wad.controls;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Properties;
 
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;

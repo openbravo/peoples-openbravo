@@ -12,18 +12,19 @@
 
 package org.openbravo.base;
 
-import org.apache.avalon.framework.logger.Log4JLogger;
-import org.apache.fop.messaging.MessageHandler;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-
-import javax.servlet.ServletContext;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.Properties;
+
+import javax.servlet.ServletContext;
+
+import org.apache.avalon.framework.logger.Log4JLogger;
+import org.apache.fop.messaging.MessageHandler;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 /**
  * Application parameters stored in web.xml as init parameters.

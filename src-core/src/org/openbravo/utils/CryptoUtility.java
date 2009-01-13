@@ -12,8 +12,9 @@
 
 package org.openbravo.utils;
 
-import javax.crypto.*;
-import javax.crypto.spec.*;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.ServletException;
 
 public class CryptoUtility {

@@ -11,14 +11,13 @@
  */
 package org.openbravo.xmlEngine;
 
-import java.util.Hashtable;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-
-import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.Attributes;
+import java.util.Hashtable;
 
 import org.apache.log4j.Logger;
+import org.xml.sax.Attributes;
+import org.xml.sax.helpers.DefaultHandler;
 
 public class FormatRead extends DefaultHandler {
     Hashtable<String, FormatCouple> hasFormats;

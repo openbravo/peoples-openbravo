@@ -18,7 +18,7 @@
  */
 package org.openbravo.wad.controls;
 
-import java.util.*;
+import java.util.Properties;
 
 import org.openbravo.xmlEngine.XmlDocument;
 

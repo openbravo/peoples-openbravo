@@ -11,10 +11,14 @@
  */
 package org.openbravo.data;
 
-import java.sql.*;
-import java.util.Date;
-import java.lang.reflect.*;
+import java.lang.reflect.Field;
+import java.sql.Blob;
+import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class UtilSql {
 

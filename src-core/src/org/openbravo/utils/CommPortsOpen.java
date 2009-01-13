@@ -11,9 +11,20 @@
  */
 package org.openbravo.utils;
 
-import java.io.*;
-import javax.comm.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.Enumeration;
+
+import javax.comm.CommPort;
+import javax.comm.CommPortIdentifier;
+import javax.comm.NoSuchPortException;
+import javax.comm.ParallelPort;
+import javax.comm.PortInUseException;
+import javax.comm.SerialPort;
+import javax.comm.UnsupportedCommOperationException;
 
 public class CommPortsOpen {
     /** How long to wait for the open to finish up. */

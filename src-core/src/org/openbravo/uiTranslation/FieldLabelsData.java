@@ -1,16 +1,17 @@
 //Sqlc generated V1.O00-1
 package org.openbravo.uiTranslation;
 
-import java.sql.*;
-
-import org.apache.log4j.Logger;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Vector;
 
 import javax.servlet.ServletException;
 
+import org.apache.log4j.Logger;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.database.ConnectionProvider;
 import org.openbravo.data.UtilSql;
-import java.util.*;
+import org.openbravo.database.ConnectionProvider;
 
 public class FieldLabelsData implements FieldProvider {
     static Logger log4j = Logger.getLogger(FieldLabelsData.class);

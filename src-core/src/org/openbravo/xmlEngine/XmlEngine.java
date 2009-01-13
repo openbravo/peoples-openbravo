@@ -11,25 +11,29 @@
  */
 package org.openbravo.xmlEngine;
 
-import java.util.Vector;
-import java.util.Enumeration;
-import java.util.Stack;
-import java.util.Hashtable;
-import java.io.IOException;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import javax.servlet.*;
-import javax.servlet.http.*;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Stack;
+import java.util.Vector;
 
-import org.apache.xerces.parsers.*;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+import org.apache.xerces.parsers.SAXParser;
 import org.openbravo.database.ConnectionProvider;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
 public class XmlEngine extends HttpServlet {
     private static final long serialVersionUID = 1L;

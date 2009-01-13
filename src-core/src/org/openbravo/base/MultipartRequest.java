@@ -11,10 +11,12 @@
  */
 package org.openbravo.base;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Vector;
+
 import org.apache.commons.fileupload.FileItem;
-import org.openbravo.data.*;
+import org.openbravo.data.FieldProvider;
 
 public class MultipartRequest implements FieldProvider {
     public VariablesBase vars;

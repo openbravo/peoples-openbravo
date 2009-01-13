@@ -11,9 +11,15 @@
  */
 package org.openbravo.database;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
 import javax.servlet.ServletException;
-import java.util.*;
+
 import org.openbravo.data.UtilSql;
 
 public class RDBMSIndependent {

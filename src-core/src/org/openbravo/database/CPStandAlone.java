@@ -11,9 +11,15 @@
  */
 package org.openbravo.database;
 
-import java.sql.*;
-import org.openbravo.exception.*;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import org.apache.commons.pool.ObjectPool;
+import org.openbravo.exception.NoConnectionAvailableException;
+import org.openbravo.exception.PoolNotFoundException;
 
 public class CPStandAlone implements ConnectionProvider {
     protected ConnectionProviderImpl myPool;

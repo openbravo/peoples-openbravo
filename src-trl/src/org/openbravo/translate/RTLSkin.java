@@ -18,9 +18,12 @@
  */
 package org.openbravo.translate;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.Vector;
-import java.lang.Math;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;

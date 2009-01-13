@@ -18,13 +18,20 @@
  */
 package org.openbravo.wad;
 
-import java.sql.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
-import java.io.*;
 
-import org.openbravo.exception.*;
-import org.openbravo.database.*;
 import org.apache.log4j.Logger;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.exception.NoConnectionAvailableException;
 
 public class WadConnection implements ConnectionProvider {
     static Logger log4j = Logger.getLogger(WadConnection.class);

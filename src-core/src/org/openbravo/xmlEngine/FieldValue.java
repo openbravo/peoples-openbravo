@@ -11,10 +11,11 @@
  */
 package org.openbravo.xmlEngine;
 
-import org.openbravo.utils.Replace;
-import java.sql.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
+import org.openbravo.utils.Replace;
 
 class FieldValue implements XmlComponentValue {
     protected FieldTemplate fieldTemplate;

@@ -11,14 +11,16 @@
  */
 package org.openbravo.xmlEngine;
 
-import org.openbravo.data.FieldProvider;
-
-import java.sql.*;
-
-import java.util.Vector;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Enumeration;
+import java.util.Vector;
 
 import org.apache.log4j.Logger;
+import org.openbravo.data.FieldProvider;
 
 /**
  * A piece of a XmlDocument with a defined data. This class manages the

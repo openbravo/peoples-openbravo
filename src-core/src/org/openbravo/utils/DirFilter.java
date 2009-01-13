@@ -11,8 +11,8 @@
  */
 package org.openbravo.utils;
 
-import java.io.FilenameFilter;
 import java.io.File;
+import java.io.FilenameFilter;
 
 public class DirFilter implements FilenameFilter {
     String afn;

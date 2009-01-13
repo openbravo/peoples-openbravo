@@ -11,14 +11,13 @@
  */
 package org.openbravo.xmlEngine;
 
-import java.util.Vector;
-import java.util.Stack;
 import java.util.Hashtable;
-
-import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.Attributes;
+import java.util.Stack;
+import java.util.Vector;
 
 import org.apache.log4j.Logger;
+import org.xml.sax.Attributes;
+import org.xml.sax.helpers.DefaultHandler;
 
 public class XmlTemplate extends DefaultHandler implements
         XmlComponentTemplate, IDComponent {

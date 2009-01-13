@@ -12,6 +12,7 @@
 package org.openbravo.utils;
 
 import javax.servlet.ServletException;
+
 import org.apache.log4j.Logger;
 
 public class FormatUtilities {
