@@ -583,9 +583,8 @@ public class Translate extends DefaultHandler implements LexicalHandler {
                         log4j.debug("inserting in module:" + moduleName
                                 + " - ID:" + moduleID);
                     TranslateData.insert(pool, ini, actualFile, moduleID);
-                    log4j.warn("Couldn't translate: " + ini
-                            + ".Result translated: " + resultado
-                            + ".Actual file: " + actualFile);
+                    log4j.info("Inserting text: " + ini + "from file: "
+                            + actualFile + "into ad_textinterfaces");
                 }
             } catch (final ServletException e) {
                 e.printStackTrace();
