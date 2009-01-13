@@ -444,5 +444,16 @@
     }
     return gt_getElementByName(gt_returnPositionArrayToName(parentPositionArray));
   }
+  
+  function gt_setActiveUninstall() {
+	disableButton('buttonUninstall');
+    boxes = gt_getElementsByName('inpNodes','input');
+	for (i=0; i<boxes.length; i++) {
+	  if (boxes[i].checked == true) {
+	    enableButton('buttonUninstall');
+	    return;
+	  }
+	}
+  }
 
   //---
