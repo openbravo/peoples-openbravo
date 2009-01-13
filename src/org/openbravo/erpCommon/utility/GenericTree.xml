@@ -41,6 +41,7 @@
     <FIELD id="folderxx" attribute="id" replace="xx">nodeId</FIELD>  
     <FIELD id="node_xx" attribute="name" replace="yy">position</FIELD>
     <FIELD id="node_xx" attribute="id" replace="xx">nodeId</FIELD>
+    <FIELD id="node_xx" attribute="onclick" replace="xx">nodeId</FIELD>
     <SECTION id="sectionTree"/>
   </structure>
 

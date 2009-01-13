@@ -19,7 +19,7 @@
 -->
 <FIELD_TMP>
         <FIELD_TMP id="sectionTree">
-         <div class="Tree_Row" id="node_xx" name="node_yy" onclick="gt_setFocusNode(this);" onmouseover="gt_hoverNode(this);" onmouseout="gt_unhoverNode(this);">
+         <div class="Tree_Row" id="node_xx" name="node_yy" onclick="gt_setFocusNode(this); gt_getDescription('xx'); gt_checkToggleNode('xx', 'node'); return false;" onmouseover="gt_hoverNode(this);" onmouseout="gt_unhoverNode(this);">
             <FIELD_TMP id="level">
               <!-- Put a vertical spotted line per level --> 
             </FIELD_TMP>
@@ -37,7 +37,7 @@
              <div id="icon2_xx" class="Tree_Icon_Update"></div>
            </div>
            <div class="Tree_Text_Container">
-             <div class="Tree_Text_Title" id="name" onclick="gt_getDescription('xx'); return false;">xxName</div>
+             <div class="Tree_Text_Title" id="name">xxName</div>
            </div>
            <div class="Tree_Text_Separator"></div>
              <div class="Tree_Text_Update">
