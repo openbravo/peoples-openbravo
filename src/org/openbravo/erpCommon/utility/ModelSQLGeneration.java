@@ -151,7 +151,10 @@ public class ModelSQLGeneration {
                         filter.addElement("1=1");
                     }
                 }
-                if (prop.getProperty("AD_Reference_ID").equals("15")) {
+                final String adRefId = prop.getProperty("AD_Reference_ID");
+                if (Utility.isDecimalNumber(adRefId)
+                        || Utility.isIntegerNumber(adRefId)
+                        || Utility.isDateTime(adRefId)) {
                     aux = vars.getRequestGlobalVariable("inpParam"
                             + prop.getProperty("ColumnName") + "_f", tableSQL
                             .getTabID()
@@ -195,7 +198,10 @@ public class ModelSQLGeneration {
                         filter.addElement("1=1");
                     }
                 }
-                if (prop.getProperty("AD_Reference_ID").equals("15")) {
+                final String adRefId = prop.getProperty("AD_Reference_ID");
+                if (Utility.isDecimalNumber(adRefId)
+                        || Utility.isIntegerNumber(adRefId)
+                        || Utility.isDateTime(adRefId)) {
                     aux = vars.getSessionValue(tableSQL.getTabID() + "|param"
                             + prop.getProperty("ColumnName") + "_f");
                     if (!aux.equals("")) {
