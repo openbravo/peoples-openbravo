@@ -32,8 +32,8 @@ public class CheckMemory extends Task {
         log4j.info("Checking ant's memory...");
         final Runtime runtime = Runtime.getRuntime();
         final long maxCurrentMemory = runtime.maxMemory() / (1024 * 1024); // Memory
-                                                                           // in
-                                                                           // MB
+        // in
+        // MB
 
         final long maxMemory = new Long(new PropertiesManager()
                 .getProperty("max.memory"));

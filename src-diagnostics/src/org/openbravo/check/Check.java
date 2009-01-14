@@ -45,7 +45,7 @@ public class Check extends HttpServlet {
         if (command.equals("memory")) {
             final Runtime runtime = Runtime.getRuntime();
             final long maxMemory = runtime.maxMemory() / (1024 * 1024); // Memory
-                                                                        // in MB
+            // in MB
 
             out.println(maxMemory);
         } else if (command.equals("jvm-version")) {

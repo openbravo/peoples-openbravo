@@ -22,7 +22,6 @@ package org.openbravo.task;
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
-
 import org.openbravo.utils.PropertiesManager;
 import org.openbravo.utils.ServerConnection;
 import org.openbravo.utils.Version;
