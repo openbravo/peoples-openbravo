@@ -693,7 +693,7 @@
                 ON bp.C_InvoiceSchedule_ID=si.C_InvoiceSchedule_ID
               WHERE sh.M_InOut_ID=sl.M_InOut_ID
                 AND sh.C_BPartner_ID=bp.C_BPartner_ID
-                AND sh.C_Order_ID=o.C_Order_ID
+                AND ol.C_Order_ID=o.C_Order_ID
                 AND sl.C_OrderLine_ID=ol.C_OrderLine_ID
                 AND sh.AD_Org_ID=ao.AD_Org_ID  -- for all BPartners or a specific
                 AND(v_BPartner_ID IS NULL
@@ -1037,6 +1037,7 @@
       END; --BODY
     EXCEPTION
     WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
      v_ResultStr:= '@ERROR=' || SQLERRM;
       DBMS_OUTPUT.PUT_LINE(v_ResultStr) ;
       IF(p_PInstance_ID IS NOT NULL) THEN

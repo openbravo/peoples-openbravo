@@ -117,7 +117,7 @@ cWithHoldId varchar2(32);
     v_CumDiscount NUMBER;
     v_OldCumDiscount NUMBER;
     v_InvoiceLineSeqNo NUMBER;
-    v_InvoiceLine NUMBER;
+    v_InvoiceLine VARCHAR2(32);
     v_Discount NUMBER;
     v_Line NUMBER;
     v_InvoiceDiscount NUMBER;
