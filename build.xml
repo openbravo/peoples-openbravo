@@ -61,8 +61,6 @@ export.database: exports database structure and data to xml files.
 export.database.structure: refer to export.database.structure target of database.
 export.database.data: refer to export.database.data target of database.
 import.database.data: refer to import.database.data target of database.
-export.database.masterdata: refer to export.database.masterdata target of database.
-import.database.masterdata: refer to import.database.masterdata target of database.
 save.database.model: refer to save.database.model target of database.
 compare.database.structure: refer to compare.database.structure target of database.
 -->
