@@ -49,11 +49,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="FREQUENCYTYPE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="FREQUENCYTYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="DOCBASISTYPE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="DOCBASISTYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

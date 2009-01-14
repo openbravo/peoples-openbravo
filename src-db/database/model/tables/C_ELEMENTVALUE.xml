@@ -45,11 +45,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ACCOUNTTYPE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="ACCOUNTTYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ACCOUNTSIGN" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="ACCOUNTSIGN" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -109,11 +109,11 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
-      <column name="SHOWVALUECOND" primaryKey="false" required="true" type="VARCHAR" size="2" autoIncrement="false">
+      <column name="SHOWVALUECOND" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[A]]></default>
         <onCreateDefault/>
       </column>
-      <column name="ELEMENTLEVEL" primaryKey="false" required="true" type="VARCHAR" size="2" autoIncrement="false">
+      <column name="ELEMENTLEVEL" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[C]]></default>
         <onCreateDefault/>
       </column>

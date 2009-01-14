@@ -37,7 +37,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="BANKACCOUNTTYPE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="BANKACCOUNTTYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -49,7 +49,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="CREDITCARDTYPE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="CREDITCARDTYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -97,7 +97,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="R_AVSZIP" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="R_AVSZIP" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2008 Openbravo SL
+* All portions are Copyright (C) 2001-2009 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -32,7 +32,7 @@
   v_Price NUMBER;
   v_DateOld DATE;
   v_CumQty NUMBER;
-  v_Processed CHAR(1) ;
+  v_Processed VARCHAR2(60) ;
   v_count NUMBER;
   v_Deleted NUMBER;
   v_ProductOld VARCHAR2(32);

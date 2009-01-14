@@ -189,7 +189,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="AMORTIZATIONTYPE" primaryKey="false" required="false" type="CHAR" size="2" autoIncrement="false">
+      <column name="AMORTIZATIONTYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -197,7 +197,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ASSETSCHEDULE" primaryKey="false" required="false" type="CHAR" size="2" autoIncrement="false">
+      <column name="ASSETSCHEDULE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -205,7 +205,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PROCESSED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="PROCESSED" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
@@ -217,7 +217,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="AMORTIZATIONCALCTYPE" primaryKey="false" required="false" type="CHAR" size="2" autoIncrement="false">
+      <column name="AMORTIZATIONCALCTYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

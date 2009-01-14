@@ -157,7 +157,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PRODUCTTYPE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="PRODUCTTYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[I]]></default>
         <onCreateDefault/>
       </column>
@@ -213,7 +213,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="COSTTYPE" primaryKey="false" required="false" type="CHAR" size="2" autoIncrement="false">
+      <column name="COSTTYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

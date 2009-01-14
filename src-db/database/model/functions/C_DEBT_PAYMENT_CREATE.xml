@@ -33,11 +33,11 @@
     v_C_BPartner_ID VARCHAR2(32);
     v_Amount NUMBER;
     v_C_Currency_ID VARCHAR2(32);
-    v_PaymentRule VARCHAR2(1) ;
+    v_PaymentRule VARCHAR2(60) ;
     v_DatePlanned DATE;
     v_IsReceipt VARCHAR2(1) ;
     v_Description VARCHAR2(60) ;
-    v_Status VARCHAR2(32);
+    v_Status VARCHAR2(60);
     --Local variables
     v_Client_ID VARCHAR2(32);
     v_AD_Org_ID VARCHAR2(32);

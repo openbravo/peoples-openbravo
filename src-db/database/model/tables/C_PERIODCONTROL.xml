@@ -37,15 +37,15 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="DOCBASETYPE" primaryKey="false" required="true" type="CHAR" size="3" autoIncrement="false">
+      <column name="DOCBASETYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PERIODSTATUS" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="PERIODSTATUS" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PERIODACTION" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="PERIODACTION" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

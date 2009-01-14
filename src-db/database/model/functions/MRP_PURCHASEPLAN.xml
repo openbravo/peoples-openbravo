@@ -50,7 +50,6 @@
   v_Result NUMBER:=1; -- 0=failure
 
   v_Aux_New NUMBER;
-  v_planned CHAR(1) := 'N';
 
   v_Stock NUMBER:=0;
   v_neededQty_New NUMBER;

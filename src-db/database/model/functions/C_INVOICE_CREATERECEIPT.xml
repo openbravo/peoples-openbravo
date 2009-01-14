@@ -39,7 +39,7 @@
     -- Parameter Variables
     v_M_Locator_ID VARCHAR2(32);
     --
-    v_DocStatus CHAR(2) ;
+    v_DocStatus VARCHAR2(60) ;
     v_InOut_ID VARCHAR2(32);
     FINISH_PROCESS BOOLEAN:=false;
   BEGIN

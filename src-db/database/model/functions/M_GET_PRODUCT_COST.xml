@@ -28,7 +28,7 @@
 ************************************************************************/
   v_Cost     NUMBER;
   v_Count    NUMBER;
-  v_CostType CHAR(2) ;
+  v_CostType VARCHAR2(60) ;
   TYPE RECORD IS REF CURSOR;
     Cur_Cost RECORD;
   BEGIN

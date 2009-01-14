@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.
+  * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -77,7 +77,7 @@
     --MODIFIED BY F.IRIAZABAL
     v_QtyOrder NUMBER;
     v_ProductUOM NUMBER;
-    v_BreakDown CHAR(1) ;
+    v_BreakDown VARCHAR2(60) ;
     v_ActualQty NUMBER;
     v_QtyAux NUMBER;
     v_Count NUMBER:=0;

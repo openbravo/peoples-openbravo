@@ -23,7 +23,7 @@
     * Contributor(s):  ______________________________________.
     ************************************************************************/
 
- v_IsProcessed CHAR(1);
+ v_IsProcessed VARCHAR(60);
  v_Canceled NUMBER:=0;
  v_Generated NUMBER:=0;
  v_Applied NUMBER:=0;
@@ -35,7 +35,7 @@
  v_Org_ID VARCHAR2(32);
  v_multiplier NUMBER:=1;
  v_Oldmultiplier NUMBER:=1;
- v_Processed CHAR(1);
+ v_Processed VARCHAR(60);
  v_Aux NUMBER;
     
 BEGIN

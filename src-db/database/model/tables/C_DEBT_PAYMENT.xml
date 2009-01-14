@@ -73,7 +73,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PAYMENTRULE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="PAYMENTRULE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -141,11 +141,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="STATUS" primaryKey="false" required="true" type="CHAR" size="2" autoIncrement="false">
+      <column name="STATUS" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="STATUS_INITIAL" primaryKey="false" required="false" type="CHAR" size="2" autoIncrement="false">
+      <column name="STATUS_INITIAL" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

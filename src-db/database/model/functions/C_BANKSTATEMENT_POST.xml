@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.
+  * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -45,7 +45,7 @@
  v_documentno_Dp_Management VARCHAR2(50);
  v_column_identifier VARCHAR2(200);
  v_dateSettlement DATE;
- v_Cancel_Processed CHAR(1);
+ v_Cancel_Processed VARCHAR(60);
  v_nameBankstatement VARCHAR2 (60);
  v_dateBankstatement DATE;
  v_nameCash VARCHAR2 (60);

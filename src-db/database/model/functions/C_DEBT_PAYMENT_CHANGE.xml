@@ -31,7 +31,7 @@
     Cur_Parameter RECORD;
     --  Parameter Variables
     v_Aux NUMBER;
-    v_GetOutSettlement CHAR(1):='N';
+    v_GetOutSettlement VARCHAR2(60):='N';
     v_IsPaid CHAR(1) ;
     v_WriteOffAmt NUMBER;
     FINISH_PROCESS BOOLEAN:=false;

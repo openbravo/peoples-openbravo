@@ -41,15 +41,15 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
-      <column name="STATUS_TO" primaryKey="false" required="false" type="CHAR" size="2" autoIncrement="false">
+      <column name="STATUS_TO" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PAYMENTRULECONSOLIDATED" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="PAYMENTRULECONSOLIDATED" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="STATUS_RETURNED" primaryKey="false" required="false" type="CHAR" size="2" autoIncrement="false">
+      <column name="STATUS_RETURNED" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

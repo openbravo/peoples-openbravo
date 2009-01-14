@@ -29,7 +29,7 @@
   * Title: Copy One Tab content (i.e. Fields) to another
   * Description:
   ************************************************************************/
-  -- Logistice
+  -- Logistic
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Record_ID VARCHAR2(32);
@@ -41,7 +41,6 @@
     v_AD_Tab_ID VARCHAR2(32);
     v_NoOfFields NUMBER:=0;
     v_NextNo VARCHAR2(32);
-    v_EntityType CHAR(1) ;
     -- Copy
     Cur_Fields RECORD;
   BEGIN

@@ -69,11 +69,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="INCLUDE_PRODUCT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="INCLUDE_PRODUCT" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="INCLUDE_PRODUCT_CATEGORY" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="INCLUDE_PRODUCT_CATEGORY" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

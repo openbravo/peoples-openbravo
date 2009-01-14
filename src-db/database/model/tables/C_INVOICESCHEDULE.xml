@@ -49,15 +49,15 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <column name="INVOICEFREQUENCY" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="INVOICEFREQUENCY" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="INVOICEWEEKDAY" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="INVOICEWEEKDAY" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="INVOICEWEEKDAYCUTOFF" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="INVOICEWEEKDAYCUTOFF" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

@@ -41,11 +41,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="DOCSTATUS" primaryKey="false" required="true" type="CHAR" size="2" autoIncrement="false">
+      <column name="DOCSTATUS" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="DOCACTION" primaryKey="false" required="true" type="CHAR" size="2" autoIncrement="false">
+      <column name="DOCACTION" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -129,7 +129,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PAYMENTRULE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="PAYMENTRULE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -137,15 +137,15 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="INVOICERULE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="INVOICERULE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="DELIVERYRULE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="DELIVERYRULE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="FREIGHTCOSTRULE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="FREIGHTCOSTRULE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -153,7 +153,7 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <column name="DELIVERYVIARULE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="DELIVERYVIARULE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -169,7 +169,7 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <column name="PRIORITYRULE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="PRIORITYRULE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -205,7 +205,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="POSTED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="POSTED" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>

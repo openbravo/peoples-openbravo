@@ -17,7 +17,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2008 Openbravo SL
+* All portions are Copyright (C) 2001-2009 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -25,7 +25,7 @@
     * Title: Check in inserting and updating Accounting Report correction
     ************************************************************************/
   v_EqualAcctSchema NUMBER;
-  v_TreeType VARCHAR2(2);
+  v_TreeType VARCHAR2(60);
   v_IsReady AD_ORG.ISREADY%TYPE;
     
 BEGIN

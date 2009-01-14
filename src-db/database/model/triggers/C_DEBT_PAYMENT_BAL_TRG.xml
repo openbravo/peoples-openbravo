@@ -23,7 +23,7 @@
     * Contributor(s):  ______________________________________.
     ************************************************************************/
   v_Qty NUMBER:=0;
-  v_Processed         CHAR(1) ;
+  v_Processed         VARCHAR(60) ;
   v_C_DEBT_PAYMENT_ID VARCHAR2(32) ;
     
 BEGIN

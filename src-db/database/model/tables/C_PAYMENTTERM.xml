@@ -73,7 +73,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="NETDAY" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="NETDAY" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

@@ -57,7 +57,7 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="ACCESSLEVEL" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="ACCESSLEVEL" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -97,7 +97,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="DEVELOPMENTSTATUS" primaryKey="false" required="false" type="VARCHAR" size="2" autoIncrement="false">
+      <column name="DEVELOPMENTSTATUS" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[RE]]></default>
         <onCreateDefault/>
       </column>

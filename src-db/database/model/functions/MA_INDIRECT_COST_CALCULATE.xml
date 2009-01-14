@@ -27,7 +27,7 @@ v_result NUMBER:= 1;
 v_message VARCHAR2(2000);
 p_user NUMBER;
 v_total NUMBER;
-v_cost_type CHAR(1);
+v_cost_type VARCHAR2(60);
 -- FINISH_PROCESS                        BOOLEAN := FALSE;
 -- Parameter
 

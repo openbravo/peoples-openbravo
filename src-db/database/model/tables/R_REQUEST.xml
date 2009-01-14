@@ -41,11 +41,11 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <column name="PRIORITY" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="PRIORITY" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="DUETYPE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="DUETYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -93,7 +93,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ACTIONTYPE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="ACTIONTYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -113,7 +113,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="NEXTACTION" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="NEXTACTION" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

@@ -32,9 +32,9 @@
     v_AD_Org_ID VARCHAR2(32);
     v_Name VARCHAR2(90) ;
     v_Currency VARCHAR2(10) ;
-    v_FrequencyType CHAR(1) ;
-    v_DocBasisType CHAR(1) ;
-    v_ListDetails CHAR(1) ;
+    v_FrequencyType VARCHAR(60);
+    v_DocBasisType VARCHAR(60);
+    v_ListDetails VARCHAR(60);
     v_SalesRep_ID VARCHAR2(32) ;
     --
     v_StartDate DATE;

@@ -1338,7 +1338,7 @@ cWithHoldId varchar2(32);
             p_DateInvoiced DATE;
             v_totalQtyInvoiced NUMBER;
             v_deliveredQty NUMBER;
-            v_inOutStatus CHAR(2) ;
+            v_inOutStatus varchar2(60) ;
           BEGIN
             SELECT DateInvoiced
             INTO p_DateInvoiced

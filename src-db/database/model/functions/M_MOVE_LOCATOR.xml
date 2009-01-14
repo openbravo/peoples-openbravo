@@ -35,7 +35,7 @@
     v_LocatorTo VARCHAR2(32) ;
     v_ClientID varchar2(32) ;
     v_OrgID varchar2(32) ;
-    v_Processed CHAR(1) ;
+    v_Processed VARCHAR2(60) ;
     v_MovementLine_ID VARCHAR2(32) ;
     v_LineNo NUMBER(10) ;
     END_PROCESS BOOLEAN:=false;

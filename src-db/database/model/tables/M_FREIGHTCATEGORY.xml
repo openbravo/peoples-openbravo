@@ -49,15 +49,15 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="FREIGHT_UNIT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="FREIGHT_UNIT" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="LINE_ROUND" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="LINE_ROUND" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="TOTAL_ROUND" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="TOTAL_ROUND" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

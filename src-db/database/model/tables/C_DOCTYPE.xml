@@ -45,7 +45,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="DOCBASETYPE" primaryKey="false" required="true" type="CHAR" size="3" autoIncrement="false">
+      <column name="DOCBASETYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -53,7 +53,7 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
-      <column name="DOCSUBTYPESO" primaryKey="false" required="false" type="CHAR" size="2" autoIncrement="false">
+      <column name="DOCSUBTYPESO" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

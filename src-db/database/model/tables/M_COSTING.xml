@@ -65,7 +65,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="COSTTYPE" primaryKey="false" required="true" type="CHAR" size="2" autoIncrement="false">
+      <column name="COSTTYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

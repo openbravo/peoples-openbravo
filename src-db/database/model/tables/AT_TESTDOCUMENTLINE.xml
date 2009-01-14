@@ -45,7 +45,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ARG1" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="ARG1" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -53,7 +53,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ARG2" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="ARG2" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -61,7 +61,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ARG3" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="ARG3" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -69,15 +69,15 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ARGTYPE3" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="ARGTYPE3" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ARGTYPE2" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="ARGTYPE2" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ARGTYPE1" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="ARGTYPE1" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

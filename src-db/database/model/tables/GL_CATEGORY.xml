@@ -41,7 +41,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="CATEGORYTYPE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="CATEGORYTYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -49,7 +49,7 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="DOCBASETYPE" primaryKey="false" required="false" type="CHAR" size="3" autoIncrement="false">
+      <column name="DOCBASETYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

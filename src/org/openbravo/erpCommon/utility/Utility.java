@@ -352,7 +352,7 @@ public class Utility {
             }
 
             if (context.equalsIgnoreCase("#User_Org")) {
-                if (userLevel.contains("S") || userLevel.equals(" C "))
+                if (userLevel.contains("S") || userLevel.equals(" C"))
                     return "'0'"; // force org *
 
                 if (userLevel.equals("  O")) { // remove *

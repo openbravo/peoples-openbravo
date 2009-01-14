@@ -81,7 +81,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PRODUCTTYPE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="PRODUCTTYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[I]]></default>
         <onCreateDefault/>
       </column>

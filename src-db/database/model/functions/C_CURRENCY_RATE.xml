@@ -10,7 +10,7 @@
       <parameter name="p_convdate" type="TIMESTAMP" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_ratetype" type="CHAR" mode="in">
+      <parameter name="p_ratetype" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_client_id" type="VARCHAR" mode="in">
@@ -34,7 +34,7 @@
 * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
 * All Rights Reserved.
 * Contributor(s): Openbravo SL
-* Contributions are Copyright (C) 2001-2008 Openbravo, S.L.
+* Contributions are Copyright (C) 2001-2009 Openbravo, S.L.
 *
 * Specifically, this derivative work is based upon the following Compiere
 * file and version.
@@ -56,7 +56,7 @@
   v_CurrencyEuro VARCHAR(32);
   --
   v_ConvDate DATE := now();
-  v_RateType CHAR := 'S';
+  v_RateType VARCHAR(60) := 'S';
   v_Rate     NUMBER;
 
   v_Message VARCHAR2(2000):='';

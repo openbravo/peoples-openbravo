@@ -18,7 +18,7 @@
   * All Rights Reserved.
   * Contributor(s):  ______________________________________.
   ************************************************************************/
-  v_Type CHAR(1);
+  v_Type VARCHAR2(60);
   v_name VARCHAR2(60);
     
 BEGIN

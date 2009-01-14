@@ -49,7 +49,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ACCESSLEVEL" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="ACCESSLEVEL" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -85,7 +85,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="SERVICE_TYPE" primaryKey="false" required="false" type="CHAR" size="2" autoIncrement="false">
+      <column name="SERVICE_TYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -101,7 +101,7 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault><![CDATA[SELECT AD_MODULE_ID FROM AD_MODULE WHERE AD_MODULE_ID<>'0' AND TYPE='M']]></onCreateDefault>
       </column>
-      <column name="UIPATTERN" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="UIPATTERN" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[S]]></default>
         <onCreateDefault><![CDATA[CASE WHEN PROCEDURENAME IS NOT NULL THEN 'S' WHEN ISJASPER='Y' THEN 'S' ELSE 'M' END]]></onCreateDefault>
       </column>

@@ -61,19 +61,19 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="BPARTNER_SELECTION" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="BPARTNER_SELECTION" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="BP_GROUP_SELECTION" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="BP_GROUP_SELECTION" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PRODUCT_SELECTION" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="PRODUCT_SELECTION" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PROD_CAT_SELECTION" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="PROD_CAT_SELECTION" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -81,7 +81,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PRICELIST_SELECTION" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="PRICELIST_SELECTION" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>

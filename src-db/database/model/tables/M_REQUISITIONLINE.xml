@@ -73,7 +73,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="REQSTATUS" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="REQSTATUS" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[O]]></default>
         <onCreateDefault/>
       </column>
@@ -137,7 +137,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="LOCKCAUSE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="LOCKCAUSE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

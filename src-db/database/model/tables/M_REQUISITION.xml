@@ -57,11 +57,11 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="DOCSTATUS" primaryKey="false" required="true" type="CHAR" size="2" autoIncrement="false">
+      <column name="DOCSTATUS" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[DR]]></default>
         <onCreateDefault/>
       </column>
-      <column name="DOCACTION" primaryKey="false" required="true" type="CHAR" size="2" autoIncrement="false">
+      <column name="DOCACTION" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[CO]]></default>
         <onCreateDefault/>
       </column>

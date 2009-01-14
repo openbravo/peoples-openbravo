@@ -117,7 +117,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="TRXTYPE" primaryKey="false" required="false" type="VARCHAR" size="20" autoIncrement="false">
+      <column name="TRXTYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

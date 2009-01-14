@@ -20,7 +20,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 1999-2008 Openbravo, S.L
+  * Contributions are Copyright (C) 1999-2009 Openbravo, S.L
   *************************************************************************
   * $Id: C_Cash_Post.sql,v 1.10 2003/03/17 20:32:25 jjanke Exp $
   ***
@@ -41,7 +41,7 @@
   --Added by P.SAROBE
 	v_documentno_Settlement VARCHAR2(40);
 	v_dateSettlement DATE;
-	v_Cancel_Processed CHAR(1);
+	v_Cancel_Processed VARCHAR(60);
 	v_nameBankstatement VARCHAR2 (60);
 	v_dateBankstatement DATE;
 	v_nameCash VARCHAR2 (60);
@@ -60,8 +60,8 @@
     Cur_Parameter RECORD;
     Cur_CashlineDebtpayment RECORD;
     --  Parameter Variables
-    v_Processed CHAR(1) ;
-    v_Posted CHAR(1) ;
+    v_Processed VARCHAR(60);
+    v_Posted VARCHAR(60);
     v_count NUMBER;
     v_SettlementDocType_ID VARCHAR2(32) ;
     v_settlementID varchar2(32) ;

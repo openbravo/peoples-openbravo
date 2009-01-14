@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All portions are Copyright (C) 2001-2009 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -29,8 +29,8 @@
   TYPE RECORD IS REF CURSOR;
 
   cur_parameter       RECORD;
-  v_p_projectstatus   CHAR (2);
-  v_projectstatus     CHAR (2);
+  v_p_projectstatus   VARCHAR(60);
+  v_projectstatus     VARCHAR(60);
   v_created NUMBER:= 0;
   finish_process      BOOLEAN         := FALSE;
 BEGIN

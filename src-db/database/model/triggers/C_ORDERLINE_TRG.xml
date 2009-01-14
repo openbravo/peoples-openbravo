@@ -33,7 +33,7 @@
   v_HasTaxLine  BOOLEAN := FALSE;
   v_Prec   NUMBER;
   v_ID   VARCHAR2(32);
-  v_Processed  CHAR(1);
+  v_Processed  VARCHAR(60);
   v_UOM_ID    VARCHAR2(32);
   v_IsSOTrx CHAR(1);
   v_Count NUMBER;

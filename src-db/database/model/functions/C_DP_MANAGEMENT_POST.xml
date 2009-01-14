@@ -31,8 +31,8 @@
   v_AD_User_ID VARCHAR2(32) ;
   v_AD_Client_ID VARCHAR2(32) ;
   v_AD_Org_ID VARCHAR2(32) ;
-  v_Processed CHAR(1) ;
-  v_Posted char(1) ;
+  v_Processed VARCHAR2(60) ;
+  v_Posted VARCHAR2(60) ;
   v_Currency VARCHAR2(32);
   v_Date DATE;
   v_CashBook_ISO_Code VARCHAR(10) ;

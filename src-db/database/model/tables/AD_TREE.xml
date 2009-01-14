@@ -41,7 +41,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="TREETYPE" primaryKey="false" required="true" type="CHAR" size="2" autoIncrement="false">
+      <column name="TREETYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

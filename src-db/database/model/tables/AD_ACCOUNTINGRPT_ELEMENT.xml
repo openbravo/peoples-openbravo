@@ -53,7 +53,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="TEMPORARYFILTERTYPE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="TEMPORARYFILTERTYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -69,7 +69,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="REPORT_TYPE" primaryKey="false" required="false" type="CHAR" size="2" autoIncrement="false">
+      <column name="REPORT_TYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

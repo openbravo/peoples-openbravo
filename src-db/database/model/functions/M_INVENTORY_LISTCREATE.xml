@@ -47,9 +47,9 @@
     v_ProductValue VARCHAR2(40) ;
     v_Locator_ID VARCHAR2(32);
     v_Product_Category_ID VARCHAR2(32);
-    v_QtyRange CHAR(1) ;
-    v_Regularization CHAR(1) ;
-    v_ABC CHAR(1);
+    v_QtyRange VARCHAR2(60) ;
+    v_Regularization VARCHAR2(60) ;
+    v_ABC VARCHAR2(60);
     --
     v_Warehouse_ID VARCHAR2(32);
     v_Client_ID VARCHAR2(32);

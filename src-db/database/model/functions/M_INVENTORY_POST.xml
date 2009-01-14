@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.
+  * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -38,7 +38,7 @@
   v_Result NUMBER:=0; -- failure
   v_User VARCHAR2(32);
   v_IsProcessing CHAR(1) ;
-  v_IsProcessed CHAR(1) ;
+  v_IsProcessed VARCHAR2(60) ;
   v_NoProcessed NUMBER:=0;
   v_is_included NUMBER:=0;
   v_available_period NUMBER:=0;

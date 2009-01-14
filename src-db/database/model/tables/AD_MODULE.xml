@@ -53,7 +53,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="TYPE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="TYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[M]]></default>
         <onCreateDefault/>
       </column>
@@ -77,7 +77,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="LICENSETYPE" primaryKey="false" required="false" type="VARCHAR" size="10" autoIncrement="false">
+      <column name="LICENSETYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -85,7 +85,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="STATUS" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="STATUS" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[I]]></default>
         <onCreateDefault/>
       </column>

@@ -41,7 +41,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="GAAP" primaryKey="false" required="true" type="CHAR" size="2" autoIncrement="false">
+      <column name="GAAP" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -49,7 +49,7 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
-      <column name="COSTINGMETHOD" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="COSTINGMETHOD" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

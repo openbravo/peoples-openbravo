@@ -89,7 +89,7 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="SOPOTYPE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="SOPOTYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[B]]></default>
         <onCreateDefault/>
       </column>

@@ -169,7 +169,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PROJECTCATEGORY" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="PROJECTCATEGORY" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
@@ -177,15 +177,15 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PUBLICPRIVATE" primaryKey="false" required="false" type="CHAR" size="2" autoIncrement="false">
+      <column name="PUBLICPRIVATE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PROJECTSTATUS" primaryKey="false" required="false" type="CHAR" size="2" autoIncrement="false">
+      <column name="PROJECTSTATUS" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PROJECTKIND" primaryKey="false" required="false" type="CHAR" size="2" autoIncrement="false">
+      <column name="PROJECTKIND" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -193,7 +193,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PROJECTPHASE" primaryKey="false" required="false" type="CHAR" size="2" autoIncrement="false">
+      <column name="PROJECTPHASE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -201,7 +201,7 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="CHANGEPROJECTSTATUS" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="CHANGEPROJECTSTATUS" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
@@ -213,7 +213,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PAYMENTRULE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="PAYMENTRULE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

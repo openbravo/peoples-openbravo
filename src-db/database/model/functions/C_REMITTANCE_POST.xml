@@ -19,7 +19,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2008 Openbravo SL
+* All portions are Copyright (C) 2001-2009 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -31,8 +31,8 @@
   v_AD_User_ID VARCHAR2(32) ;
   v_AD_Client_ID VARCHAR2(32) ;
   v_AD_Org_ID VARCHAR2(32) ;
-  v_Processed CHAR(1) ;
-  v_Posted CHAR(1) ;
+  v_Processed VARCHAR(60) ;
+  v_Posted VARCHAR(60) ;
   v_Processing CHAR(1);
   v_Currency VARCHAR2(32);
   v_Date DATE;
@@ -45,7 +45,7 @@
   v_Remittanceline_ID VARCHAR2(32);
   v_documentno_Settlement VARCHAR2(40);
   v_dateSettlement DATE;
-  v_Cancel_Processed CHAR(1);
+  v_Cancel_Processed VARCHAR(60);
   v_nameBankstatement VARCHAR2 (60);
   v_dateBankstatement DATE;
   v_nameCash VARCHAR2 (60);
@@ -66,8 +66,8 @@
     v_CanceledNotChargeAmt NUMBER:=0;
     v_DateTrx DATE;
     v_DueDate DATE;
-    v_Status_to CHAR(2) ;
-    v_Consolidate CHAR(1) ;
+    v_Status_to VARCHAR(60) ;
+    v_Consolidate VARCHAR(60) ;
     v_SettlementID varchar2(32) ;
     v_DocumentNo NUMBER;
     v_DPMId varchar2(32);

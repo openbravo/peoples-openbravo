@@ -7,7 +7,7 @@
       <parameter name="p_orgid" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_docbasetype" type="CHAR" mode="in">
+      <parameter name="p_docbasetype" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_docsubtypeso" type="CHAR" mode="in">

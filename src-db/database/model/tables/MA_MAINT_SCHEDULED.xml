@@ -49,7 +49,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="MAINTENANCE_TYPE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="MAINTENANCE_TYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -61,7 +61,7 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="SHIFT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="SHIFT" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

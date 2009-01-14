@@ -38,7 +38,7 @@
     v_DocumentNo VARCHAR2(40) ;
     v_seqno NUMBER(10) ;
     v_line NUMBER(10):=0;
-    v_paymentRule CHAR(1) ;
+    v_paymentRule VARCHAR2(60) ;
     v_paymenttermId varchar2(32) ;
     v_pricelistId varchar2(32) ;
     v_description VARCHAR2(100) ;

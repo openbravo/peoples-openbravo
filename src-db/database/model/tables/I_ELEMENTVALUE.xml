@@ -57,11 +57,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ACCOUNTTYPE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="ACCOUNTTYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ACCOUNTSIGN" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="ACCOUNTSIGN" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -121,7 +121,7 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="ELEMENTLEVEL" primaryKey="false" required="false" type="VARCHAR" size="2" autoIncrement="false">
+      <column name="ELEMENTLEVEL" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

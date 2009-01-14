@@ -61,7 +61,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="CURRENCYRATETYPE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="CURRENCYRATETYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

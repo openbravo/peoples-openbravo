@@ -53,7 +53,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="CONVERSIONRATETYPE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="CONVERSIONRATETYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -61,7 +61,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="LIST_BASE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="LIST_BASE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -73,7 +73,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="LIST_ROUNDING" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="LIST_ROUNDING" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -89,7 +89,7 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <column name="STD_BASE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="STD_BASE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -101,7 +101,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="STD_ROUNDING" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="STD_ROUNDING" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -117,7 +117,7 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <column name="LIMIT_BASE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="LIMIT_BASE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -129,7 +129,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="LIMIT_ROUNDING" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="LIMIT_ROUNDING" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

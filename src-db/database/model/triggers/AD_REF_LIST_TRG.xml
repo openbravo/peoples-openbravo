@@ -17,7 +17,7 @@
     * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
     * All Rights Reserved.
     * Contributor(s): Openbravo SL
-    * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.
+    * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.
     *
     * Specifically, this derivative work is based upon the following Compiere
     * file and version.
@@ -27,11 +27,29 @@
     * Title: Ref List Translation
     * Description:
     ************************************************************************/
-        
+    v_aux number;    
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
+
+
+  SELECT count(*)
+    INTO v_Aux
+    FROM AD_REFERENCE R, 
+         AD_PACKAGE M
+   WHERE R.AD_REFERENCE_ID = :new.AD_REFERENCE_ID
+     AND R.AD_MODULE_ID = M.AD_Module_ID
+     AND R.AD_MODULE_ID != :new.AD_Module_ID
+     AND NOT EXISTS (SELECT 1 
+                      FROM AD_MODULE_DBPREFIX P
+                      WHERE P.AD_MODULE_ID = :new.AD_Module_ID 
+                      AND instr(upper(:new.value), upper(P.name)||'_') = 1);
+  
+  IF v_Aux != 0 THEN
+    RAISE_APPLICATION_ERROR(-20536, 'Names must start with its module''s DB prefix') ;
+  END IF;
+  
 
 
     -- Insert AD_Ref_List Trigger

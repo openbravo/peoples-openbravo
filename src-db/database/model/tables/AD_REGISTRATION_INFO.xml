@@ -77,7 +77,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="COMPANYINDUSTRY" primaryKey="false" required="false" type="NVARCHAR" size="60" autoIncrement="false">
+      <column name="COMPANYINDUSTRY" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -85,7 +85,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="COMPANYNUM_EMPLOYEES" primaryKey="false" required="false" type="NVARCHAR" size="20" autoIncrement="false">
+      <column name="COMPANYNUM_EMPLOYEES" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

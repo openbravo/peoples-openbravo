@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2008 Openbravo SL
+* All portions are Copyright (C) 2001-2009 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -30,7 +30,7 @@
     Cur_Parameter RECORD;
     -- Parameter Variables
     v_IsProcessing CHAR(1) ;
-    v_IsProcessed CHAR(1) ;
+    v_IsProcessed VARCHAR2(60) ;
     v_NoProcessed NUMBER:=0;
     v_MoveDate DATE;
     v_Client_ID VARCHAR2(32) ;

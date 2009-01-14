@@ -33,7 +33,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ACTION" primaryKey="false" required="false" type="VARCHAR" size="1" autoIncrement="false">
+      <column name="ACTION" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -77,7 +77,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="OBJECT_TYPE" primaryKey="false" required="false" type="VARCHAR" size="1" autoIncrement="false">
+      <column name="OBJECT_TYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[S]]></default>
         <onCreateDefault><![CDATA['S']]></onCreateDefault>
       </column>

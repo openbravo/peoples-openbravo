@@ -45,11 +45,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="DOCSTATUS" primaryKey="false" required="true" type="CHAR" size="2" autoIncrement="false">
+      <column name="DOCSTATUS" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="DOCACTION" primaryKey="false" required="true" type="CHAR" size="2" autoIncrement="false">
+      <column name="DOCACTION" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -65,7 +65,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="POSTINGTYPE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="POSTINGTYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -89,7 +89,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="CURRENCYRATETYPE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="CURRENCYRATETYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -121,7 +121,7 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="POSTED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="POSTED" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>

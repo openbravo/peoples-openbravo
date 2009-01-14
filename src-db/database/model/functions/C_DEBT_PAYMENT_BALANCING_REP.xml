@@ -34,9 +34,9 @@
     v_AmountDebit NUMBER(10) ;
     v_Amount NUMBER(10) ;
     v_IsDirectPosting CHAR(1) ;
-    v_Posted CHAR(1) ;
+    v_Posted VARCHAR2(60) ;
     v_IsReceipt CHAR(1) ;
-    v_Processed CHAR(1) ;
+    v_Processed VARCHAR2(60) ;
     FINISH_PROCESS BOOLEAN:=false;
   BEGIN
     --  Update AD_PInstance

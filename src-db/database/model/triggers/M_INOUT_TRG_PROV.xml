@@ -18,7 +18,7 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SL
-    * All portions are Copyright (C) 2001-2006 Openbravo SL
+    * All portions are Copyright (C) 2001-2009 Openbravo SL
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
@@ -26,7 +26,7 @@
     * Description: Provisional. Added by Ismael Ciordia. Update movement type depending on document type
     ************************************************************************/
   v_docType_ID VARCHAR2(32) ;
-  v_movementType CHAR(2) ;
+  v_movementType VARCHAR(60) ;
     
 BEGIN
     

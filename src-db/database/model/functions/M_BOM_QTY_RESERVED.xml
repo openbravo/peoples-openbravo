@@ -25,7 +25,7 @@
 * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
 * All Rights Reserved.
 * Contributor(s): Openbravo SL
-* Contributions are Copyright (C) 2001-2008 Openbravo, S.L.
+* Contributions are Copyright (C) 2001-2009 Openbravo, S.L.
 *
 * Specifically, this derivative work is based upon the following Compiere
 * file and version.
@@ -36,7 +36,7 @@
   v_Quantity NUMBER:=99999; -- unlimited
   v_IsBOM        CHAR(1) ;
   v_IsStocked    CHAR(1) ;
-  v_ProductType  CHAR(1) ;
+  v_ProductType  VARCHAR(60);
   v_ProductQty   NUMBER;
   v_StdPrecision NUMBER;
   -- Get BOM Product info

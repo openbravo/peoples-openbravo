@@ -36,7 +36,7 @@
     --  WHSchedule Variables
     v_Client_ID VARCHAR2(32);
     v_Org_ID VARCHAR2(32);
-    v_Periodicity CHAR(1) ;
+    v_Periodicity VARCHAR2(60) ;
     v_User_ID VARCHAR2(32);
   BEGIN
     --  Update AD_PInstance
