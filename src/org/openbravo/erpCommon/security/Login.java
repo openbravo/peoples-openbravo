@@ -18,15 +18,17 @@
  */
 package org.openbravo.erpCommon.security;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
-
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
-
-import org.openbravo.erpCommon.utility.*;
 
 public class Login extends HttpBaseServlet {
     private static final long serialVersionUID = 1L;

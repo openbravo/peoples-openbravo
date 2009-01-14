@@ -18,8 +18,8 @@
  */
 package org.openbravo.erpCommon.utility;
 
-import org.openbravo.data.FieldProvider;
 import org.apache.log4j.Logger;
+import org.openbravo.data.FieldProvider;
 
 /**
  * @author Fernando Iriazabal

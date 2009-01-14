@@ -18,23 +18,30 @@
  */
 package org.openbravo.erpCommon.ad_reports;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
-import org.openbravo.erpCommon.utility.*;
-import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.xmlEngine.XmlDocument;
-import java.io.*;
-import java.util.HashMap;
-import javax.servlet.*;
-import javax.servlet.http.*;
-
+import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.DateTimeData;
+import org.openbravo.erpCommon.utility.LeftTabsBar;
+import org.openbravo.erpCommon.utility.NavigationBar;
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.ToolBar;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportProductionJR extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;

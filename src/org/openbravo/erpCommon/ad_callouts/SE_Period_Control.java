@@ -26,10 +26,10 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.openbravo.xmlEngine.XmlDocument;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.xmlEngine.XmlDocument;
 
 public class SE_Period_Control extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;

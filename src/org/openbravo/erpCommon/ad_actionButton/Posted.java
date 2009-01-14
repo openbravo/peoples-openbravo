@@ -18,20 +18,24 @@
  */
 package org.openbravo.erpCommon.ad_actionButton;
 
-import org.openbravo.erpCommon.utility.OBError;
-import org.openbravo.erpCommon.utility.SequenceIdData;
-import org.openbravo.erpCommon.ad_forms.*;
-import org.openbravo.erpCommon.reference.*;
-import org.openbravo.erpCommon.utility.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.ad_forms.AcctServer;
+import org.openbravo.erpCommon.reference.ActionButtonData;
+import org.openbravo.erpCommon.reference.PInstanceProcessData;
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
-
-// imports for transactions
-import java.sql.Connection;
 
 public class Posted extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;

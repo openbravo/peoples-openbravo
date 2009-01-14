@@ -18,9 +18,10 @@
  */
 package org.openbravo.erpCommon.businessUtility;
 
-import org.openbravo.database.ConnectionProvider;
-import javax.servlet.*;
+import javax.servlet.ServletException;
+
 import org.apache.log4j.Logger;
+import org.openbravo.database.ConnectionProvider;
 
 public class PAttributeSet {
     static Logger log4j = Logger.getLogger(PAttributeSet.class);

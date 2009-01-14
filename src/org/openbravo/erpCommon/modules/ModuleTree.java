@@ -20,12 +20,12 @@ package org.openbravo.erpCommon.modules;
 
 import javax.servlet.ServletException;
 
-import org.openbravo.base.*;
-import org.openbravo.xmlEngine.XmlDocument;
+import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.GenericTree;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.xmlEngine.XmlDocument;
 
 /**
  * Manages the tree of installed modules.

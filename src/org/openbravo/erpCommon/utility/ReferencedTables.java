@@ -18,10 +18,12 @@
  */
 package org.openbravo.erpCommon.utility;
 
-import org.openbravo.database.ConnectionProvider;
 import java.util.Vector;
-import javax.servlet.*;
+
+import javax.servlet.ServletException;
+
 import org.apache.log4j.Logger;
+import org.openbravo.database.ConnectionProvider;
 
 public class ReferencedTables {
     static Logger log4j = Logger.getLogger(ReferencedTables.class);

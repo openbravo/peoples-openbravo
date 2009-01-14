@@ -18,18 +18,19 @@
  */
 package org.openbravo.erpCommon.utility;
 
-import java.io.PrintWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.xmlEngine.XmlDocument;
-import org.openbravo.erpCommon.businessUtility.WindowTabs;
-import org.apache.log4j.Logger;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.xmlEngine.XmlDocument;
 
 public class ServletSetPriority extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;

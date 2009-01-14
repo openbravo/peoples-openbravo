@@ -18,13 +18,15 @@
  */
 package org.openbravo.erpCommon.ad_help;
 
-import org.openbravo.base.secureApp.*;
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+
+import org.apache.log4j.Logger;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.xmlEngine.XmlEngine;
-import java.io.*;
-import javax.servlet.*;
-import org.apache.log4j.Logger;
-import org.openbravo.database.ConnectionProvider;
 
 public class HelpWindow {
     static Logger log4j = Logger.getLogger(HelpWindow.class);

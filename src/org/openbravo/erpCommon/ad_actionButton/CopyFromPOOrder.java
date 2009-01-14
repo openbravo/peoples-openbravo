@@ -18,23 +18,27 @@
  */
 package org.openbravo.erpCommon.ad_actionButton;
 
-import org.openbravo.erpCommon.utility.*;
-import org.openbravo.utils.FormatUtilities;
-import org.openbravo.erpCommon.ad_callouts.*;
-import org.openbravo.erpCommon.businessUtility.*;
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.xmlEngine.XmlDocument;
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
-import javax.servlet.*;
-import javax.servlet.http.*;
-
-//mports for transactions
-//import org.openbravo.base.ConnectionProvider;
 import java.sql.Connection;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.ad_callouts.SEExpenseProductData;
+import org.openbravo.erpCommon.ad_callouts.SLOrderAmtData;
+import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.DateTimeData;
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.utils.FormatUtilities;
+import org.openbravo.xmlEngine.XmlDocument;
 
 public class CopyFromPOOrder extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;

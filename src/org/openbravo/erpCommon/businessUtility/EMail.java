@@ -16,15 +16,32 @@
  */
 package org.openbravo.erpCommon.businessUtility;
 
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import java.util.*;
-import java.io.*;
-import java.net.*;
-import javax.mail.*;
-import javax.mail.internet.*;
-import javax.activation.*;
-import com.sun.mail.smtp.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Properties;
+
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import javax.activation.URLDataSource;
+import javax.mail.Address;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.SendFailedException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+
 import org.apache.log4j.Logger;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+
+import com.sun.mail.smtp.SMTPMessage;
 
 public class EMail {
     static Logger log4j = Logger.getLogger(EMail.class);

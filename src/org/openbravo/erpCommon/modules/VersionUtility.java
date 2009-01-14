@@ -33,14 +33,13 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.ConnectionProviderContextListener;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
-
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.services.webservice.Module;
 import org.openbravo.services.webservice.ModuleDependency;
+import org.openbravo.services.webservice.ModuleInstallDetail;
 import org.openbravo.services.webservice.WebServiceImpl;
 import org.openbravo.services.webservice.WebServiceImplServiceLocator;
-import org.openbravo.services.webservice.ModuleInstallDetail;
 
 public class VersionUtility {
     protected static ConnectionProvider pool;

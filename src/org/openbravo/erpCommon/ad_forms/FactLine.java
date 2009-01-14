@@ -16,15 +16,19 @@
  */
 package org.openbravo.erpCommon.ad_forms;
 
-import org.openbravo.erpCommon.utility.SequenceIdData;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.exception.*;
-import java.math.*;
-import java.sql.*;
-import javax.servlet.*;
-import org.apache.log4j.Logger; // imports for transactions
-import org.openbravo.database.ConnectionProvider;
+import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import javax.servlet.ServletException;
+
+import org.apache.log4j.Logger;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.exception.NoConnectionAvailableException;
 
 public class FactLine {
     static Logger log4jFactLine = Logger.getLogger(FactLine.class);

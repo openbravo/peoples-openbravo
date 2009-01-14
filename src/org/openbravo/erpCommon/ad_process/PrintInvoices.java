@@ -19,19 +19,23 @@
 
 package org.openbravo.erpCommon.ad_process;
 
-import org.openbravo.erpCommon.utility.*;
-import org.openbravo.erpCommon.businessUtility.*;
+import java.io.IOException;
+import java.io.PrintWriter;
 
-import org.openbravo.erpCommon.ad_actionButton.*;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.xmlEngine.XmlDocument;
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
-
+import org.openbravo.erpCommon.ad_actionButton.ActionButtonDefaultData;
 import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
+import org.openbravo.erpCommon.businessUtility.WindowTabs;
+import org.openbravo.erpCommon.utility.LeftTabsBar;
+import org.openbravo.erpCommon.utility.NavigationBar;
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.ToolBar;
+import org.openbravo.xmlEngine.XmlDocument;
 
 public class PrintInvoices extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;

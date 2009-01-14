@@ -19,7 +19,8 @@
 package org.openbravo.erpCommon.modules;
 
 import javax.servlet.ServletException;
-import org.openbravo.base.*;
+
+import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
 

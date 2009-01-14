@@ -18,16 +18,19 @@
  */
 package org.openbravo.erpCommon.ad_forms;
 
-import java.sql.*;
-import java.util.*;
-
-import org.apache.log4j.Logger;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.Vector;
 
 import javax.servlet.ServletException;
 
+import org.apache.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.exception.*;
+import org.openbravo.exception.NoConnectionAvailableException;
 
 public class SQLExecutor_Query implements FieldProvider {
     static Logger log4j = Logger.getLogger(SQLExecutor_Query.class);

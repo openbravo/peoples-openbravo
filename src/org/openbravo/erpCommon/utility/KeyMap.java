@@ -18,10 +18,12 @@
  */
 package org.openbravo.erpCommon.utility;
 
+import java.util.Properties;
+import java.util.Vector;
+
+import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.utils.FormatUtilities;
-import java.util.*;
-import org.apache.log4j.Logger;
 
 /**
  * @author Fernando Iriazabal

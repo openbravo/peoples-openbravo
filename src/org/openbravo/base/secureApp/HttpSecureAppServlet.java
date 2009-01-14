@@ -240,7 +240,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
                             } finally {
                                 OBContext.getOBContext()
-                                        .setInAdministratorMode(false);
+                                        .restorePreviousAdminMode();
                             }
                         } else
                             strWarehouse = "";
@@ -265,19 +265,28 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
                     final VariablesSecureApp vars = new VariablesSecureApp(
                             request);
-                    if (LoginUtils.fillSessionArguments(this, vars,
-                            strUserAuth, strLanguage, strIsRTL, strRole,
-                            strClient, strOrg, strWarehouse)) {
-                        readProperties(vars, globalParameters
-                                .getOpenbravoPropertiesPath());
-                        readNumberFormat(vars, globalParameters.getFormatPath());
-                        saveLoginBD(request, vars, strClient, strOrg);
-                    } else {
-                        // Re-login
-                        log4j.error("Unable to fill session Arguments for: "
-                                + strUserAuth);
-                        logout(request, response);
-                        return;
+                    try {
+                        // enable admin mode, as normal non admin-role
+                        // has no read-access to i.e. AD_OrgType
+                        OBContext.getOBContext().setInAdministratorMode(true);
+                        if (LoginUtils.fillSessionArguments(this, vars,
+                                strUserAuth, strLanguage, strIsRTL, strRole,
+                                strClient, strOrg, strWarehouse)) {
+                            readProperties(vars, globalParameters
+                                    .getOpenbravoPropertiesPath());
+                            readNumberFormat(vars, globalParameters
+                                    .getFormatPath());
+                            saveLoginBD(request, vars, strClient, strOrg);
+                        } else {
+                            // Re-login
+                            log4j
+                                    .error("Unable to fill session Arguments for: "
+                                            + strUserAuth);
+                            logout(request, response);
+                            return;
+                        }
+                    } finally {
+                        OBContext.getOBContext().restorePreviousAdminMode();
                     }
                 } else
                     variables.updateHistory(request);

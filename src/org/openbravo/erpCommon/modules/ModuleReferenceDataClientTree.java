@@ -19,7 +19,8 @@
 package org.openbravo.erpCommon.modules;
 
 import javax.servlet.ServletException;
-import org.openbravo.base.*;
+
+import org.openbravo.base.HttpBaseServlet;
 
 /**
  * Manages the tree of installed modules.

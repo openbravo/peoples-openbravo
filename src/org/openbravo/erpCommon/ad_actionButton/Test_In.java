@@ -19,20 +19,23 @@
 
 package org.openbravo.erpCommon.ad_actionButton;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
-import org.openbravo.base.secureApp.*;
-import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.FormatUtilities;
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
-
-import org.openbravo.data.*;
-
-// imports for transactions
-import java.sql.Connection;
+import org.openbravo.xmlEngine.XmlDocument;
 
 public class Test_In extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;

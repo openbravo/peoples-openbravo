@@ -19,8 +19,8 @@
 
 package org.openbravo.erpCommon.utility;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.util.UUID;
 
 import org.openbravo.database.ConnectionProvider;
 

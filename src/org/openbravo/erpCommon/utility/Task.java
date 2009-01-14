@@ -18,7 +18,10 @@
  */
 package org.openbravo.erpCommon.utility;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import org.apache.log4j.Logger;
 
 public class Task extends Thread {

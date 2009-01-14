@@ -16,36 +16,44 @@
  */
 package org.openbravo.erpCommon.ad_forms;
 
-import org.openbravo.service.db.DataImportService;
-import org.openbravo.service.db.ImportResult;
-import org.openbravo.utils.FormatUtilities;
-import org.openbravo.erpCommon.utility.*;
-import org.openbravo.erpCommon.businessUtility.WindowTabs;
-import org.openbravo.model.ad.module.Module;
-import org.openbravo.model.ad.system.Client;
-import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.base.secureApp.*;
-import org.openbravo.xmlEngine.XmlDocument;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
-
-import javax.servlet.*;
-
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import javax.servlet.http.*;
 
-import org.openbravo.erpCommon.ad_combos.*;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.ad_combos.MonedaComboData;
+import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ModuleReferenceDataClientTree;
 import org.openbravo.erpCommon.modules.ModuleUtiltiy;
-import org.openbravo.exception.*;
-
-import org.openbravo.dal.service.OBDal;
-import org.openbravo.data.*;
-
-// imports for transactions
-import java.sql.*;
+import org.openbravo.erpCommon.utility.ComboTableData;
+import org.openbravo.erpCommon.utility.LeftTabsBar;
+import org.openbravo.erpCommon.utility.NavigationBar;
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.erpCommon.utility.ToolBar;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.exception.NoConnectionAvailableException;
+import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.service.db.DataImportService;
+import org.openbravo.service.db.ImportResult;
+import org.openbravo.utils.FormatUtilities;
+import org.openbravo.xmlEngine.XmlDocument;
 
 public class InitialClientSetup extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;

@@ -12,11 +12,12 @@ package org.openbravo.erpCommon.utility;
  ************************************************************************************
  */
 
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Vector;
 
-import org.openbravo.data.FieldProvider;
-import org.apache.log4j.Logger;
 import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.openbravo.data.FieldProvider;
 
 public class SetPriorityCategoryData implements FieldProvider {
 

@@ -18,8 +18,8 @@
  */
 package org.openbravo.erpCommon.utility;
 
-import org.openbravo.database.ConnectionProvider;
 import org.apache.log4j.Logger;
+import org.openbravo.database.ConnectionProvider;
 
 public class Alert {
 

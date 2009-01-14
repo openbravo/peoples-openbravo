@@ -18,6 +18,7 @@ package org.openbravo.erpCommon.businessUtility;
 
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
+
 import org.apache.log4j.Logger;
 
 public class EMailAuthenticator extends Authenticator {

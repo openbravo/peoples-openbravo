@@ -18,13 +18,14 @@
  */
 package org.openbravo.erpCommon.utility;
 
-import java.math.*;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import org.openbravo.data.FieldProvider;
 
-import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
+
+import org.openbravo.data.FieldProvider;
 
 public class JRFieldProviderDataSource implements JRDataSource {
 

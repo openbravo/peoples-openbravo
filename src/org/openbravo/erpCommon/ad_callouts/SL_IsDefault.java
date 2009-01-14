@@ -18,14 +18,19 @@
  */
 package org.openbravo.erpCommon.ad_callouts;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.Sqlc;
-import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.erpCommon.utility.Utility;
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
+import org.openbravo.xmlEngine.XmlDocument;
 
 /**
  * This callout checks if this is the only active isDefault checked for the

@@ -18,17 +18,24 @@
  */
 package org.openbravo.erpCommon.utility;
 
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.data.FieldProvider;
-
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.Vector;
-import javax.servlet.http.*;
-import java.io.*;
-import javax.servlet.*;
-import java.sql.*;
+
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import net.sf.jasperreports.engine.JRException;
+
+import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.data.FieldProvider;
 
 public class ExportGrid extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;

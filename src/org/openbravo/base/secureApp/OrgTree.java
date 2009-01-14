@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.openbravo.erpCommon.utility.WindowTreeData;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.WindowTreeData;
 
 public class OrgTree implements Serializable {
     private static final long serialVersionUID = 1L;

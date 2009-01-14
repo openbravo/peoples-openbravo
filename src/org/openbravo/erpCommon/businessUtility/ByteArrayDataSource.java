@@ -16,8 +16,14 @@
  */
 package org.openbravo.erpCommon.businessUtility;
 
-import java.io.*;
-import javax.activation.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+
+import javax.activation.DataSource;
 
 public class ByteArrayDataSource implements DataSource {
     private byte[] g_data = null;

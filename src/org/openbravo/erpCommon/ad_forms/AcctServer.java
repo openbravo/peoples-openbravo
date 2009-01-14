@@ -16,18 +16,23 @@
  */
 package org.openbravo.erpCommon.ad_forms;
 
-import org.openbravo.erpCommon.utility.*;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.exception.*;
-import java.math.*;
-import java.sql.*;
-import java.io.*;
-import java.util.*;
-import javax.servlet.*;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Vector;
+
+import javax.servlet.ServletException;
+
 import org.apache.log4j.Logger;
-import org.openbravo.erpCommon.utility.DateTimeData; // imports for transactions
-import org.openbravo.database.ConnectionProvider;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.DateTimeData;
+import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.exception.NoConnectionAvailableException;
 
 public abstract class AcctServer {
     static Logger log4j = Logger.getLogger(AcctServer.class);

@@ -18,15 +18,16 @@
  */
 package org.openbravo.base.secureApp;
 
-import org.openbravo.base.ConnectionProviderContextListener;
-import org.openbravo.xmlEngine.XmlDocument;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
+
+import org.openbravo.base.ConnectionProviderContextListener;
+import org.openbravo.xmlEngine.XmlDocument;
 
 public class ErrorConnection extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;

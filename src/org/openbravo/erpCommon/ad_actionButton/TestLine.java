@@ -18,14 +18,15 @@
  */
 package org.openbravo.erpCommon.ad_actionButton;
 
-import java.util.regex.*;
-import java.io.*;
-import javax.servlet.*;
-import org.openbravo.base.MultipartRequest;
-import org.openbravo.data.*;
-import org.openbravo.base.VariablesBase;
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-// imports for transactions
+import javax.servlet.ServletException;
+
+import org.openbravo.base.MultipartRequest;
+import org.openbravo.base.VariablesBase;
+import org.openbravo.data.FieldProvider;
 import org.openbravo.database.ConnectionProvider;
 
 public class TestLine extends MultipartRequest implements FieldProvider {

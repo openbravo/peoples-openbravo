@@ -42,9 +42,6 @@ import org.openbravo.erpCommon.businessUtility.TabAttachmentsData;
 import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.erpCommon.utility.reporting.Report;
-import org.openbravo.erpCommon.utility.reporting.ReportManager;
-import org.openbravo.erpCommon.utility.reporting.ReportingException;
 import org.openbravo.utils.Replace;
 
 public class ReportManager {

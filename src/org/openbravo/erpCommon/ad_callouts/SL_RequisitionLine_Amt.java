@@ -18,13 +18,18 @@
  */
 package org.openbravo.erpCommon.ad_callouts;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.math.BigDecimal;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.xmlEngine.XmlDocument;
-import java.io.*;
-import java.math.BigDecimal;
-import javax.servlet.*;
-import javax.servlet.http.*;
 
 public class SL_RequisitionLine_Amt extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;

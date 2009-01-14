@@ -12,11 +12,13 @@
 package org.openbravo.base.secureApp;
 
 //import org.openbravo.xmlEngine.Report;
-import org.openbravo.base.*;
+import java.io.IOException;
 
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.ServletConfig;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.openbravo.base.HttpBaseServlet;
 
 public class ServletGoBack extends HttpBaseServlet {
     private static final long serialVersionUID = 1L;

@@ -29,11 +29,10 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.xmlEngine.XmlDocument;
-
 import org.openbravo.services.webservice.Module;
 import org.openbravo.services.webservice.WebServiceImpl;
 import org.openbravo.services.webservice.WebServiceImplServiceLocator;
+import org.openbravo.xmlEngine.XmlDocument;
 
 public class RegisterModule extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;

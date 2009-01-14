@@ -18,23 +18,30 @@
  */
 package org.openbravo.erpCommon.ad_forms;
 
-import org.openbravo.erpCommon.utility.*;
-import org.openbravo.utils.FormatUtilities;
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.xmlEngine.XmlDocument;
-import org.openbravo.base.secureApp.DefaultOptionsData;
-import org.openbravo.base.secureApp.LoginUtils;
-import org.openbravo.erpCommon.ad_combos.LanguageComboData;
-import org.openbravo.erpCommon.ad_combos.RoleComboData;
-import org.openbravo.erpCommon.security.*;
-import java.io.*;
-
-import javax.servlet.*;
-import javax.servlet.http.*;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.openbravo.base.secureApp.DefaultOptionsData;
+import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.LoginUtils;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.ad_combos.LanguageComboData;
+import org.openbravo.erpCommon.ad_combos.RoleComboData;
+import org.openbravo.erpCommon.security.ClientData;
+import org.openbravo.erpCommon.security.OrganizationData;
+import org.openbravo.erpCommon.security.WarehouseData;
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.utils.FormatUtilities;
+import org.openbravo.xmlEngine.XmlDocument;
 
 public class Role extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;

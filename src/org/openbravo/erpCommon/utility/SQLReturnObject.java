@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.utility;
 
 import java.util.Hashtable;
+
 import org.openbravo.data.FieldProvider;
 
 public class SQLReturnObject implements FieldProvider {

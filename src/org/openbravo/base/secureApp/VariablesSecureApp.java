@@ -11,10 +11,11 @@
  */
 package org.openbravo.base.secureApp;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.openbravo.base.VariablesBase;
-import javax.servlet.http.*;
-import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.utility.OBError;
 
 /**
  * This class is used to provide the coder with friendly methods to retrieve

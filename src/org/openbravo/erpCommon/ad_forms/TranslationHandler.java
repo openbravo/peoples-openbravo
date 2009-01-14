@@ -14,14 +14,13 @@
  ******************************************************************************/
 package org.openbravo.erpCommon.ad_forms;
 
-import java.sql.*;
-
-import org.xml.sax.helpers.*;
-import org.xml.sax.*;
-
-import org.openbravo.database.ConnectionProvider;
+import java.sql.Statement;
 
 import org.apache.log4j.Logger;
+import org.openbravo.database.ConnectionProvider;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 //import org.compiere.util.*;
 

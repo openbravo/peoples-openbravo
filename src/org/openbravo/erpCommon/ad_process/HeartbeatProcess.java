@@ -15,7 +15,6 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.ad_process.HeartbeatProcessData;
 import org.openbravo.erpCommon.utility.Alert;
 import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;

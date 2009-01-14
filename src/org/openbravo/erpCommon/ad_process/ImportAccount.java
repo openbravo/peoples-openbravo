@@ -17,19 +17,20 @@
 
 package org.openbravo.erpCommon.ad_process;
 
-import org.openbravo.erpCommon.utility.*;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.exception.*;
-
 import java.math.BigDecimal;
-import java.sql.*;
-import javax.servlet.*;
-import java.util.StringTokenizer;
-import org.apache.log4j.Logger;
-
-// imports for transactions
-import org.openbravo.database.ConnectionProvider;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.StringTokenizer;
+
+import javax.servlet.ServletException;
+
+import org.apache.log4j.Logger;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.exception.NoConnectionAvailableException;
 
 public class ImportAccount extends ImportProcess {
     static Logger log4j = Logger.getLogger(ImportAccount.class);

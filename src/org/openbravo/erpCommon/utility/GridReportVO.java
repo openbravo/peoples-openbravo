@@ -18,9 +18,10 @@
  */
 package org.openbravo.erpCommon.utility;
 
-import org.openbravo.data.FieldProvider;
-import java.util.List;
 import java.awt.Color;
+import java.util.List;
+
+import org.openbravo.data.FieldProvider;
 
 public class GridReportVO {
     private String jrxmlTemplate;

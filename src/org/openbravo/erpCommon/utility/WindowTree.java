@@ -18,14 +18,20 @@
  */
 package org.openbravo.erpCommon.utility;
 
-import org.openbravo.base.secureApp.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.Sqlc;
-import org.openbravo.xmlEngine.XmlDocument;
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
-import org.openbravo.utils.Replace;
 import org.openbravo.utils.FormatUtilities;
+import org.openbravo.utils.Replace;
+import org.openbravo.xmlEngine.XmlDocument;
 
 /**
  * @author Fernando Iriazabal

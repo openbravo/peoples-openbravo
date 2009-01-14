@@ -17,11 +17,13 @@
 package org.openbravo.erpCommon.ad_forms;
 
 import java.io.Serializable;
-import org.openbravo.database.ConnectionProvider;
-import org.apache.log4j.Logger;
-import javax.servlet.*;
 import java.sql.Connection;
 import java.util.ArrayList;
+
+import javax.servlet.ServletException;
+
+import org.apache.log4j.Logger;
+import org.openbravo.database.ConnectionProvider;
 
 public final class Account implements Serializable {
     private static final long serialVersionUID = 1L;

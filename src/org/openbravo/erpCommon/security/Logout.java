@@ -13,10 +13,12 @@
 package org.openbravo.erpCommon.security;
 
 import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.openbravo.base.secureApp.*;
+
+import org.openbravo.base.secureApp.HttpSecureAppServlet;
 
 /**
  * 

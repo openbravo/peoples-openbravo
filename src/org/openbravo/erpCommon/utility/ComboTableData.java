@@ -18,14 +18,17 @@
  */
 package org.openbravo.erpCommon.utility;
 
-import org.openbravo.database.ConnectionProvider;
-import org.openbravo.data.FieldProvider;
-import org.openbravo.data.UtilSql;
-import org.openbravo.base.secureApp.VariablesSecureApp;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Hashtable;
 import java.util.Vector;
-import java.sql.*;
+
 import org.apache.log4j.Logger;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.data.FieldProvider;
+import org.openbravo.data.UtilSql;
+import org.openbravo.database.ConnectionProvider;
 
 /**
  * @author Fernando Iriazabal

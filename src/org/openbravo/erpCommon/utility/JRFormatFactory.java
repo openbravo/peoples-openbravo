@@ -18,11 +18,12 @@
  */
 package org.openbravo.erpCommon.utility;
 
-import net.sf.jasperreports.engine.util.DefaultFormatFactory;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.TimeZone;
-import java.text.SimpleDateFormat;
+
+import net.sf.jasperreports.engine.util.DefaultFormatFactory;
 
 public class JRFormatFactory extends DefaultFormatFactory {
     String datePattern;

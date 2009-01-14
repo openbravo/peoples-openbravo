@@ -18,20 +18,29 @@
  */
 package org.openbravo.erpCommon.ad_process;
 
-import java.io.*;
-import java.util.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.util.StringTokenizer;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.ad_combos.*;
+import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
-import org.openbravo.erpCommon.utility.*;
+import org.openbravo.erpCommon.utility.ComboTableData;
+import org.openbravo.erpCommon.utility.LeftTabsBar;
+import org.openbravo.erpCommon.utility.NavigationBar;
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.erpCommon.utility.ToolBar;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
-
-// imports for transactions
-import java.sql.Connection;
 
 public class ChangeOrderOrg extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;

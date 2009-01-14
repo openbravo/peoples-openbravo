@@ -19,15 +19,17 @@
 
 package org.openbravo.erpCommon.ad_forms;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
-
-import java.io.*;
-
-import javax.servlet.*;
-import javax.servlet.http.*;
 
 public class RegistrationConfirm extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;

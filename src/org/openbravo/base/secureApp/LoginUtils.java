@@ -12,13 +12,14 @@
 package org.openbravo.base.secureApp;
 
 import javax.servlet.ServletException;
+
+import org.apache.log4j.Logger;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_combos.ClientComboData;
 import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
 import org.openbravo.erpCommon.ad_combos.RoleComboData;
 import org.openbravo.erpCommon.reference.PreferencesData;
 import org.openbravo.erpCommon.utility.Utility;
-import org.apache.log4j.Logger;
-import org.openbravo.database.ConnectionProvider;
 
 public class LoginUtils {
 

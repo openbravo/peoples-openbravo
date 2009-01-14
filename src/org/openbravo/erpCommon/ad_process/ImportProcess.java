@@ -16,15 +16,16 @@
  */
 package org.openbravo.erpCommon.ad_process;
 
-import org.openbravo.erpCommon.utility.*;
-import org.openbravo.base.secureApp.VariablesSecureApp;
+import java.util.Vector;
 
-import java.util.*;
-import javax.servlet.*;
+import javax.servlet.ServletException;
+
 import org.apache.log4j.Logger;
-
-// imports for transactions
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.erpCommon.utility.Utility;
 
 public abstract class ImportProcess {
     static Logger log4j = Logger.getLogger(ImportProcess.class);

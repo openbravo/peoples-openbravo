@@ -18,10 +18,11 @@
  */
 package org.openbravo.erpCommon.utility;
 
-import org.openbravo.database.ConnectionProvider;
-import org.openbravo.base.secureApp.*;
-import javax.servlet.*;
+import javax.servlet.ServletException;
+
 import org.apache.log4j.Logger;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.database.ConnectionProvider;
 
 /**
  * @author Fernando Iriazabal

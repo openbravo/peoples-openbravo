@@ -18,11 +18,13 @@
  */
 package org.openbravo.erpCommon.ad_forms;
 
-import org.openbravo.data.*;
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.log4j.Logger;
 import org.openbravo.base.MultipartRequest;
 import org.openbravo.base.VariablesBase;
-import org.apache.log4j.Logger;
-import java.io.*;
+import org.openbravo.data.FieldProvider;
 
 public class AccountingValueData extends MultipartRequest implements
         FieldProvider {

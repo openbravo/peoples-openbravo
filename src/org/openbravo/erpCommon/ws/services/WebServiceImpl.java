@@ -19,16 +19,14 @@
 
 package org.openbravo.erpCommon.ws.services;
 
-import org.openbravo.database.ConnectionProvider;
-import org.openbravo.base.ConnectionProviderContextListener;
-
-import org.apache.log4j.Logger;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServlet;
 
 import org.apache.axis.MessageContext;
 import org.apache.axis.transport.http.HTTPConstants;
-
-import javax.servlet.http.HttpServlet;
-import javax.servlet.ServletContext;
+import org.apache.log4j.Logger;
+import org.openbravo.base.ConnectionProviderContextListener;
+import org.openbravo.database.ConnectionProvider;
 
 public class WebServiceImpl implements WebService {
     protected static ConnectionProvider pool;

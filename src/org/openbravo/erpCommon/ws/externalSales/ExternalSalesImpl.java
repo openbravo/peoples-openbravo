@@ -23,17 +23,15 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Vector;
 
-import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.utility.SequenceIdData;
-import org.openbravo.base.ConnectionProviderContextListener;
-
-import org.apache.log4j.Logger;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServlet;
 
 import org.apache.axis.MessageContext;
 import org.apache.axis.transport.http.HTTPConstants;
-
-import javax.servlet.http.HttpServlet;
-import javax.servlet.ServletContext;
+import org.apache.log4j.Logger;
+import org.openbravo.base.ConnectionProviderContextListener;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.SequenceIdData;
 
 public class ExternalSalesImpl implements ExternalSales {
     protected static ConnectionProvider pool;

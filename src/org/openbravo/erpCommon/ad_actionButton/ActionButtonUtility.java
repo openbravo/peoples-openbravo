@@ -19,13 +19,14 @@
 package org.openbravo.erpCommon.ad_actionButton;
 
 import java.util.Vector;
-import org.openbravo.database.ConnectionProvider;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.utility.ComboTableData;
-import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.erpCommon.utility.SQLReturnObject;
-import org.openbravo.data.FieldProvider;
+
 import org.apache.log4j.Logger;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.data.FieldProvider;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.ComboTableData;
+import org.openbravo.erpCommon.utility.SQLReturnObject;
+import org.openbravo.erpCommon.utility.Utility;
 
 public class ActionButtonUtility {
     static Logger log4j = Logger.getLogger(ActionButtonUtility.class);

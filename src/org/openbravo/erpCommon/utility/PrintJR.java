@@ -18,19 +18,25 @@
  */
 package org.openbravo.erpCommon.utility;
 
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import java.io.*;
-import java.util.*;
-import java.text.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.data.Sqlc;
-import org.openbravo.utils.Replace;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
 
-import net.sf.jasperreports.engine.*;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRParameter;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
+
+import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.data.Sqlc;
+import org.openbravo.utils.Replace;
 
 public class PrintJR extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;

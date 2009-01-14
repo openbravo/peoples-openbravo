@@ -19,19 +19,22 @@
 
 package org.openbravo.erpCommon.utility;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.*;
+import java.util.Vector;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.erpCommon.security.AccessData;
+import org.openbravo.xmlEngine.XmlDocument;
 
 /**
  * @author Fernando Iriazabal

@@ -18,13 +18,15 @@
  */
 package org.openbravo.erpCommon.security;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import java.net.*;
-import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.utility.SequenceIdData;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.SequenceIdData;
 
 public class SessionLogin {
     static Logger log4j = Logger.getLogger(SessionLogin.class);

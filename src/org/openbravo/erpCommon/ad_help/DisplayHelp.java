@@ -18,12 +18,19 @@
  */
 package org.openbravo.erpCommon.ad_help;
 
-import org.openbravo.base.secureApp.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
-import org.openbravo.erpCommon.utility.*;
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
 
 public class DisplayHelp extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;

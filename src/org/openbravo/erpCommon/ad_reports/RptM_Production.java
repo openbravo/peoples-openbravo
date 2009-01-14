@@ -18,10 +18,15 @@
  */
 package org.openbravo.erpCommon.ad_reports;
 
-import org.openbravo.base.secureApp.*;
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
+import java.io.IOException;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 
 public class RptM_Production extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;

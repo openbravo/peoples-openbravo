@@ -18,16 +18,23 @@
  */
 package org.openbravo.erpCommon.ad_callouts;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.math.BigDecimal;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.xmlEngine.XmlDocument;
-import org.openbravo.utils.FormatUtilities;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.utility.*;
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
-import java.math.BigDecimal;
+import org.openbravo.erpCommon.utility.ComboTableData;
+import org.openbravo.erpCommon.utility.DateTimeData;
+import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.utils.FormatUtilities;
+import org.openbravo.xmlEngine.XmlDocument;
 
 public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;

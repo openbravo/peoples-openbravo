@@ -18,8 +18,8 @@
  */
 package org.openbravo.erpCommon.ad_forms;
 
-import org.openbravo.data.FieldProvider;
 import org.apache.log4j.Logger;
+import org.openbravo.data.FieldProvider;
 
 class ShowSessionVariablesStructureData implements FieldProvider {
     static Logger log4j = Logger

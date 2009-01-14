@@ -18,11 +18,12 @@
  */
 package org.openbravo.erpCommon.ad_forms;
 
-import org.openbravo.data.FieldProvider;
-import org.openbravo.base.MultipartRequest;
-import java.io.*;
+import java.io.IOException;
+
 import org.apache.log4j.Logger;
+import org.openbravo.base.MultipartRequest;
 import org.openbravo.base.VariablesBase;
+import org.openbravo.data.FieldProvider;
 
 public class FileLoadData extends MultipartRequest {
     static Logger log4j = Logger.getLogger(FileLoadData.class);

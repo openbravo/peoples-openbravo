@@ -18,18 +18,22 @@
  */
 package org.openbravo.erpReports;
 
+import java.io.IOException;
+import java.util.HashMap;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
-import org.openbravo.base.secureApp.*;
-import java.io.*;
-import java.util.HashMap;
-
-import javax.servlet.*;
-import javax.servlet.http.*;
+import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.Utility;
 
 public class RptC_ProposalJr extends HttpSecureAppServlet {

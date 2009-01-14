@@ -32,11 +32,6 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.servlet.ServletException;
 
-import org.openbravo.erpCommon.utility.poc.PocConfigurationData;
-import org.openbravo.erpCommon.utility.poc.ClientAuthenticator;
-import org.openbravo.erpCommon.utility.poc.EmailManager;
-import org.openbravo.erpCommon.utility.poc.PocException;
-
 import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 

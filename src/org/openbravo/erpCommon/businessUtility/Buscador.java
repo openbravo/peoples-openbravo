@@ -18,13 +18,21 @@
  */
 package org.openbravo.erpCommon.businessUtility;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Vector;
-import javax.servlet.*;
-import javax.servlet.http.*;
-import org.openbravo.base.secureApp.*;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.utility.*;
+import org.openbravo.erpCommon.utility.ComboTableData;
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 

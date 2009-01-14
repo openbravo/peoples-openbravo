@@ -18,15 +18,22 @@
  */
 package org.openbravo.erpReports;
 
-import org.openbravo.base.secureApp.*;
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.HashMap;
 
-import net.sf.jasperreports.engine.*;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
+
+import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 
 public class RptC_OrderPO extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;

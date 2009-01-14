@@ -16,8 +16,9 @@
  */
 package org.openbravo.erpCommon.ad_forms;
 
-import javax.servlet.*;
-import org.apache.log4j.Logger; // imports for transactions
+import javax.servlet.ServletException;
+
+import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 public class DocTax {

@@ -16,8 +16,9 @@
  */
 package org.openbravo.erpCommon.ad_forms;
 
-import java.math.*;
-import org.apache.log4j.Logger; // imports for transactions
+import java.math.BigDecimal;
+
+import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 
 public class DocLine_Invoice extends DocLine {

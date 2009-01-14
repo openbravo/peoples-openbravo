@@ -19,11 +19,14 @@
 
 package org.openbravo.erpCommon.utility;
 
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Properties;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
-import org.openbravo.database.ConnectionProvider;
-import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.apache.log4j.Logger;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.database.ConnectionProvider;
 
 /**
  * @author Fernando Iriazabal

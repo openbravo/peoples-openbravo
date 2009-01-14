@@ -18,10 +18,12 @@
  */
 package org.openbravo.erpCommon.businessUtility;
 
-import org.openbravo.database.ConnectionProvider;
-import java.io.*;
-import javax.servlet.*;
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+
 import org.apache.log4j.Logger;
+import org.openbravo.database.ConnectionProvider;
 
 public class Tree {
     static Logger log4jTree = Logger.getLogger(Tree.class);

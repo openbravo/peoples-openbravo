@@ -18,16 +18,23 @@
  */
 package org.openbravo.erpCommon.ad_callouts;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.xmlEngine.XmlDocument;
 import org.openbravo.erpCommon.utility.Utility;
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
-
-import java.sql.*;
 import org.openbravo.utils.FormatUtilities;
+import org.openbravo.xmlEngine.XmlDocument;
 
 public class SL_AlertRule_SQL extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;

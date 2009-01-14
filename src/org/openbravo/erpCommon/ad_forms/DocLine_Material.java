@@ -16,9 +16,10 @@
  */
 package org.openbravo.erpCommon.ad_forms;
 
-import org.apache.log4j.Logger; // imports for transactions
-import org.openbravo.database.ConnectionProvider;
 import java.sql.Connection;
+
+import org.apache.log4j.Logger;
+import org.openbravo.database.ConnectionProvider;
 
 public class DocLine_Material extends DocLine {
     static Logger log4jDocLine_Material = Logger

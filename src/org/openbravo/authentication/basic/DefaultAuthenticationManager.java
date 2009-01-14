@@ -13,19 +13,20 @@
 package org.openbravo.authentication.basic;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
-import org.apache.log4j.Logger;
-import org.openbravo.authentication.AuthenticationException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
+import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.secureApp.VariablesHistory;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.database.ConnectionProvider;
-import java.io.*;
+import org.openbravo.erpCommon.utility.Utility;
 
 /**
  * 
