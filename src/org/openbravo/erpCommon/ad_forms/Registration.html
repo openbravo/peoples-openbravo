@@ -29,7 +29,7 @@
   <script language="JavaScript" type="text/javascript">
   function configure() {
   	submitCommandForm('REGISTER', false, null);
-  	openLink('../Register/Register_Relation.html', 'appFrame');
+  	window.opener.submitCommandForm('DEFAULT', false, null, 'http://www.openbravo.com/embedreg/form', '_blank', null, false);
   	self.close();
   }
   function disable() {

@@ -12419,7 +12419,7 @@
 <!--1000001 CREATEDBY-->
 <!--1000001-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1000001 UPDATED-->
-<!--1000001-->              <UPDATED><![CDATA[2007-07-17 19:26:15.0]]></UPDATED>
+<!--1000001-->              <UPDATED><![CDATA[2009-01-14 19:17:51.0]]></UPDATED>
 <!--1000001 NAME-->
 <!--1000001-->              <NAME><![CDATA[Openbravo ERP]]></NAME>
 <!--1000001 UPDATEDBY-->
@@ -12812,7 +12812,7 @@
 <!--1005400002 CREATEDBY-->
 <!--1005400002-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--1005400002 UPDATED-->
-<!--1005400002-->              <UPDATED><![CDATA[2008-04-08 12:34:45.0]]></UPDATED>
+<!--1005400002-->              <UPDATED><![CDATA[2009-01-14 19:18:30.0]]></UPDATED>
 <!--1005400002 NAME-->
 <!--1005400002-->              <NAME><![CDATA[Register]]></NAME>
 <!--1005400002 UPDATEDBY-->
@@ -12822,9 +12822,9 @@
 <!--1005400002 ISSUMMARY-->
 <!--1005400002-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
 <!--1005400002 ACTION-->
-<!--1005400002-->              <ACTION><![CDATA[W]]></ACTION>
-<!--1005400002 AD_WINDOW_ID-->
-<!--1005400002-->              <AD_WINDOW_ID><![CDATA[1005400003]]></AD_WINDOW_ID>
+<!--1005400002-->              <ACTION><![CDATA[L]]></ACTION>
+<!--1005400002 URL-->
+<!--1005400002-->              <URL><![CDATA[http://www.openbravo.com/embedreg/form]]></URL>
 <!--1005400002 AD_MODULE_ID-->
 <!--1005400002-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005400002**************--></AD_MENU>

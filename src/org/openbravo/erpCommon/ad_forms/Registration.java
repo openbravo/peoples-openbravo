@@ -42,7 +42,7 @@ public class Registration extends HttpSecureAppServlet {
             throws IOException, ServletException {
         final VariablesSecureApp vars = new VariablesSecureApp(request);
 
-        removeFromPageHistory(request);
+        //removeFromPageHistory(request);
 
         if (vars.commandIn("DEFAULT")) {
             printPageDataSheet(response, vars);
@@ -60,13 +60,14 @@ public class Registration extends HttpSecureAppServlet {
             pageError(response);
     }
 
+    
     /**
      * Removes the Registration pop-up from the page history so when Openbravo
      * back arrow is pressed, Registration window has no chance of being shown.
      * 
      * @param request
      *            the HttpServletRequest object
-     */
+     *
     public void removeFromPageHistory(HttpServletRequest request) {
         final Variables variables = new Variables(request);
         final String sufix = variables.getCurrentHistoryIndex();
@@ -75,6 +76,7 @@ public class Registration extends HttpSecureAppServlet {
         variables.removeSessionValue("reqHistory.command" + sufix);
         variables.downCurrentHistoryIndex();
     }
+    */
 
     void printPageDataSheet(HttpServletResponse response,
             VariablesSecureApp vars) throws IOException, ServletException {

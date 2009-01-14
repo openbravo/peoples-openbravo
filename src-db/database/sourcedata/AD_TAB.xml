@@ -26288,57 +26288,6 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--1005400006-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005400006**************--></AD_TAB>
 
-<!--1005400007**************--><AD_TAB>
-<!--1005400007 AD_TAB_ID-->
-<!--1005400007-->              <AD_TAB_ID><![CDATA[1005400007]]></AD_TAB_ID>
-<!--1005400007 AD_CLIENT_ID-->
-<!--1005400007-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1005400007 AD_ORG_ID-->
-<!--1005400007-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1005400007 ISACTIVE-->
-<!--1005400007-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1005400007 CREATED-->
-<!--1005400007-->              <CREATED><![CDATA[2008-04-08 12:22:03.0]]></CREATED>
-<!--1005400007 CREATEDBY-->
-<!--1005400007-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--1005400007 UPDATED-->
-<!--1005400007-->              <UPDATED><![CDATA[2008-06-18 12:42:47.0]]></UPDATED>
-<!--1005400007 UPDATEDBY-->
-<!--1005400007-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--1005400007 NAME-->
-<!--1005400007-->              <NAME><![CDATA[Register]]></NAME>
-<!--1005400007 DESCRIPTION-->
-<!--1005400007-->              <DESCRIPTION><![CDATA[Register your installation of Openbravo]]></DESCRIPTION>
-<!--1005400007 HELP-->
-<!--1005400007-->              <HELP><![CDATA[Register your installation of Openbravo ERP in order to receive development and commercial updates and information]]></HELP>
-<!--1005400007 AD_TABLE_ID-->
-<!--1005400007-->              <AD_TABLE_ID><![CDATA[1005400007]]></AD_TABLE_ID>
-<!--1005400007 AD_WINDOW_ID-->
-<!--1005400007-->              <AD_WINDOW_ID><![CDATA[1005400003]]></AD_WINDOW_ID>
-<!--1005400007 SEQNO-->
-<!--1005400007-->              <SEQNO><![CDATA[10]]></SEQNO>
-<!--1005400007 TABLEVEL-->
-<!--1005400007-->              <TABLEVEL><![CDATA[0]]></TABLEVEL>
-<!--1005400007 ISSINGLEROW-->
-<!--1005400007-->              <ISSINGLEROW><![CDATA[Y]]></ISSINGLEROW>
-<!--1005400007 ISINFOTAB-->
-<!--1005400007-->              <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
-<!--1005400007 ISTRANSLATIONTAB-->
-<!--1005400007-->              <ISTRANSLATIONTAB><![CDATA[N]]></ISTRANSLATIONTAB>
-<!--1005400007 ISREADONLY-->
-<!--1005400007-->              <ISREADONLY><![CDATA[N]]></ISREADONLY>
-<!--1005400007 HASTREE-->
-<!--1005400007-->              <HASTREE><![CDATA[N]]></HASTREE>
-<!--1005400007 PROCESSING-->
-<!--1005400007-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--1005400007 IMPORTFIELDS-->
-<!--1005400007-->              <IMPORTFIELDS><![CDATA[N]]></IMPORTFIELDS>
-<!--1005400007 ISSORTTAB-->
-<!--1005400007-->              <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
-<!--1005400007 AD_MODULE_ID-->
-<!--1005400007-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1005400007**************--></AD_TAB>
-
 <!--1007400000**************--><AD_TAB>
 <!--1007400000 AD_TAB_ID-->
 <!--1007400000-->              <AD_TAB_ID><![CDATA[1007400000]]></AD_TAB_ID>

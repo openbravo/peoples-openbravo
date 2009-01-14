@@ -14,17 +14,21 @@
 <!--0 CREATEDBY-->
 <!--0-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--0 UPDATED-->
-<!--0-->              <UPDATED><![CDATA[2005-07-04 16:59:10.0]]></UPDATED>
+<!--0-->              <UPDATED><![CDATA[2009-01-12 18:03:10.0]]></UPDATED>
 <!--0 UPDATEDBY-->
 <!--0-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--0 NAME-->
-<!--0-->              <NAME><![CDATA[System]]></NAME>
+<!--0-->              <NAME><![CDATA[Teedub]]></NAME>
 <!--0 PASSWORD-->
 <!--0-->              <PASSWORD><![CDATA[vAeS2NyB6KowuYckalzpfEDNaDM=]]></PASSWORD>
+<!--0 EMAIL-->
+<!--0-->              <EMAIL><![CDATA[anthony.woski@openbravo.com]]></EMAIL>
 <!--0 SUPERVISOR_ID-->
 <!--0-->              <SUPERVISOR_ID><![CDATA[100]]></SUPERVISOR_ID>
+<!--0 FIRSTNAME-->
+<!--0-->              <FIRSTNAME><![CDATA[Teedub]]></FIRSTNAME>
 <!--0 USERNAME-->
-<!--0-->              <USERNAME><![CDATA[System]]></USERNAME>
+<!--0-->              <USERNAME><![CDATA[Teedub]]></USERNAME>
 <!--0**************--></AD_USER>
 
 <!--100**************--><AD_USER>

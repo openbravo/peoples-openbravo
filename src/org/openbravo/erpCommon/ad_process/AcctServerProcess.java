@@ -9,7 +9,6 @@ import javax.servlet.ServletException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
-import org.openbravo.erpCommon.ad_process.AcctServerProcessData;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
@@ -32,16 +31,16 @@ public class AcctServerProcess implements Process {
     private ConnectionProvider connection;
 
     public void execute(ProcessBundle bundle) throws Exception {
-
+        
         logger = bundle.getLogger();
         connection = bundle.getConnection();
 
         VariablesSecureApp vars = bundle.getContext().toVars();
 
-        String processId = bundle.getProcessId();
-        String pinstanceId = bundle.getPinstanceId();
+        final String processId = bundle.getProcessId();
+        final String pinstanceId = bundle.getPinstanceId();
 
-        ProcessContext ctx = bundle.getContext();
+        final ProcessContext ctx = bundle.getContext();
         isDirect = bundle.getChannel() == Channel.DIRECT;
 
         String adNoteId = "";
@@ -52,7 +51,7 @@ public class AcctServerProcess implements Process {
         }
         if (vars == null) {
             try {
-                AcctServerProcessData[] dataOrg = AcctServerProcessData
+                final AcctServerProcessData[] dataOrg = AcctServerProcessData
                         .selectUserOrg(connection, processId);
                 if (dataOrg == null || dataOrg.length == 0) {
                     if (isDirect) {
@@ -64,21 +63,21 @@ public class AcctServerProcess implements Process {
                 }
                 vars = new VariablesSecureApp(dataOrg[0].adUserId, ctx
                         .getClient(), dataOrg[0].adOrgId);
-            } catch (ServletException ex) {
+            } catch (final ServletException ex) {
                 ex.printStackTrace();
                 return;
             }
         }
         try {
-            AcctServerProcessData[] data = AcctServerProcessData
+            final AcctServerProcessData[] data = AcctServerProcessData
                     .selectAcctTable(connection);
-            ArrayList<Object> vTableIds = new ArrayList<Object>();
+            final ArrayList<Object> vTableIds = new ArrayList<Object>();
             for (int i = 0; i < data.length; i++) {
                 vTableIds.add(data[i].adTableId);
             }
             TableIds = new String[vTableIds.size()];
             vTableIds.toArray(TableIds);
-        } catch (ServletException ex) {
+        } catch (final ServletException ex) {
             ex.printStackTrace();
             return;
         }
@@ -99,7 +98,7 @@ public class AcctServerProcess implements Process {
         }
         String strTableDesc;
         for (int i = 0; i < tables.length; i++) {
-            AcctServer acct = AcctServer.get(tables[i], vars.getClient(),
+            final AcctServer acct = AcctServer.get(tables[i], vars.getClient(),
                     strOrg, connection);
             acct.setBatchSize(BATCH_SIZE);
             strTableDesc = AcctServerProcessData.selectDescription(connection,
@@ -122,7 +121,7 @@ public class AcctServerProcess implements Process {
                 try {
                     acct.run(vars);
 
-                } catch (IOException ex) {
+                } catch (final IOException ex) {
                     ex.printStackTrace();
                     return;
                 }
@@ -146,6 +145,7 @@ public class AcctServerProcess implements Process {
             }
             adNoteId = saveLog(adNoteId, vars.getClient());
         }
+        throw new Exception("test");
     }
 
     /**
@@ -161,7 +161,7 @@ public class AcctServerProcess implements Process {
      */
     public void addLog(String msg, boolean generalLog) {
         logger.log(msg + "\n");
-        Timestamp tmp = new Timestamp(System.currentTimeMillis());
+        final Timestamp tmp = new Timestamp(System.currentTimeMillis());
         if (isDirect) {
             lastLog.append("<span>").append(msg).append("</span><br>");
         } else {
@@ -200,7 +200,7 @@ public class AcctServerProcess implements Process {
                 adNoteId = saveLog("", adClientId);
             }
 
-        } catch (ServletException ex) {
+        } catch (final ServletException ex) {
             ex.printStackTrace();
         }
         return adNoteId;

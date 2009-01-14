@@ -19,27 +19,11 @@
 
 package org.openbravo.erpCommon.ad_process;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.GeneralSecurityException;
-import java.util.UUID;
-
-import javax.net.ssl.SSLHandshakeException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.erpCommon.utility.HttpsUtils;
-import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.xmlEngine.XmlDocument;
-import org.openbravo.erpCommon.ad_combos.PaisComboData;
 
 public class Register extends HttpSecureAppServlet {
 
+    /*
     private static final long serialVersionUID = 1L;
 
     public static final String PROTOCOL = "https";
@@ -231,4 +215,5 @@ public class Register extends HttpSecureAppServlet {
 
         return sb.toString();
     }
+    */
 }

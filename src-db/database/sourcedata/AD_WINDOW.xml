@@ -6767,49 +6767,6 @@ By enabling the heartbeat, you consent to the processing of this data and storin
 <!--1005400002-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1005400002**************--></AD_WINDOW>
 
-<!--1005400003**************--><AD_WINDOW>
-<!--1005400003 AD_WINDOW_ID-->
-<!--1005400003-->              <AD_WINDOW_ID><![CDATA[1005400003]]></AD_WINDOW_ID>
-<!--1005400003 AD_CLIENT_ID-->
-<!--1005400003-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1005400003 AD_ORG_ID-->
-<!--1005400003-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1005400003 ISACTIVE-->
-<!--1005400003-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1005400003 CREATED-->
-<!--1005400003-->              <CREATED><![CDATA[2008-04-08 12:19:03.0]]></CREATED>
-<!--1005400003 CREATEDBY-->
-<!--1005400003-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--1005400003 UPDATED-->
-<!--1005400003-->              <UPDATED><![CDATA[2008-07-28 15:46:53.0]]></UPDATED>
-<!--1005400003 UPDATEDBY-->
-<!--1005400003-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--1005400003 NAME-->
-<!--1005400003-->              <NAME><![CDATA[Register]]></NAME>
-<!--1005400003 DESCRIPTION-->
-<!--1005400003-->              <DESCRIPTION><![CDATA[Register your installation of Openbravo ERP in order to receive development and commercial updates and information]]></DESCRIPTION>
-<!--1005400003 HELP-->
-<!--1005400003-->              <HELP><![CDATA[On registration, we only collect the data set out in the form. The fields with yellow background are obligatory. This registration data is stored in a file controlled by Openbravo S.L. It is collected and processed to assist managing your Openbravo product installation and use, communicating with you and managing the relationship between you and Openbravo S.L. Openbravo may send you certain technical information (including updates and upgrades), commercial offers and other relevant information. This data will also be used on an aggregated and anonymous basis to generate reports identifying where and how the Openbravo product is being utilised. 
-
-Openbravo stores this information on servers in the USA and implements security measures in accordance with applicable legislation to maintain the confidentiality of this data. This data is not used for purposes other than as set out above. It is not communicated or transferred in an identifiable form to any third party. 
-
-You may deactivate this feature by disabling the “activate registration” box and clicking on “update registration”. In addition, you may exercise your right to access, rectify, oppose and cancel the data by writing to Openbravo, S.L. PO Box 5117, 31010 Pamplona, Navarra, Spain, or by email to privacy@openbravo.com. 
-
-By activating the registration, you consent to the processing of this data and storing of the same in the USA as set out above.
-
-For further information, please consult http://wiki.openbravo.com/wiki/User_Manual_2.40/Registration]]></HELP>
-<!--1005400003 WINDOWTYPE-->
-<!--1005400003-->              <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
-<!--1005400003 ISSOTRX-->
-<!--1005400003-->              <ISSOTRX><![CDATA[Y]]></ISSOTRX>
-<!--1005400003 PROCESSING-->
-<!--1005400003-->              <PROCESSING><![CDATA[N]]></PROCESSING>
-<!--1005400003 ISDEFAULT-->
-<!--1005400003-->              <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
-<!--1005400003 AD_MODULE_ID-->
-<!--1005400003-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1005400003**************--></AD_WINDOW>
-
 <!--08F09D2A7C774585B014C06C0F44F591**************--><AD_WINDOW>
 <!--08F09D2A7C774585B014C06C0F44F591 AD_WINDOW_ID-->
 <!--08F09D2A7C774585B014C06C0F44F591-->              <AD_WINDOW_ID><![CDATA[08F09D2A7C774585B014C06C0F44F591]]></AD_WINDOW_ID>
