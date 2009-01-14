@@ -4499,7 +4499,7 @@
     <name>Accounting Test Org</name>
     <description/>
     <isSummary>false</isSummary>
-    <orgType id="1" entity-name="AD_OrgType" identifier="Legal"/>
+    <organizationType id="1" entity-name="OrganizationType" identifier="Legal"/>
     <isPeriodControlAllowed>true</isPeriodControlAllowed>
     <calendar id="1000001" entity-name="FinancialMgmtCalendar" identifier="Accounting Test Calendar"/>
     <isReady>true</isReady>
@@ -11678,7 +11678,7 @@
     <updated transient="true">2009-01-13T14:07:59.0Z</updated>
     <updatedBy transient="true" id="0" entity-name="ADUser" identifier="System"/>
   </FinancialMgmtElementValueOperand>
-  <AD_ClientInfo id="1000001" identifier="1000001 Accounting Test">
+  <ClientInformation id="1000001" identifier="1000001 Accounting Test">
     <id>1000001</id>
     <organization id="0" entity-name="Organization" identifier="*"/>
     <isActive>true</isActive>
@@ -11711,7 +11711,7 @@
     <checkinoutorg>true</checkinoutorg>
     <groupAccountinvlines>false</groupAccountinvlines>
     <client id="1000001" entity-name="ADClient" identifier="Accounting Test"/>
-  </AD_ClientInfo>
+  </ClientInformation>
   <ADProcessAccess id="5E4DB943A6CB16CFE040007F01002944" identifier="Create File Accounting Test User">
     <id>5E4DB943A6CB16CFE040007F01002944</id>
     <process id="800027" entity-name="ADProcess" identifier="Create File"/>
@@ -30213,7 +30213,7 @@
     <updatedBy transient="true" id="0" entity-name="ADUser" identifier="System"/>
     <isReadWrite>true</isReadWrite>
   </ADWindowAccess>
-  <AD_Org_AcctSchema id="5AEDC6F79ADDDDC0E040007F010138DD" identifier="AD_Org_AcctSchema (5AEDC6F79ADDDDC0E040007F010138DD)">
+  <OrganizationAcctSchema id="5AEDC6F79ADDDDC0E040007F010138DD" identifier="AD_Org_AcctSchema (5AEDC6F79ADDDDC0E040007F010138DD)">
     <id>5AEDC6F79ADDDDC0E040007F010138DD</id>
     <client id="1000001" entity-name="ADClient" identifier="Accounting Test"/>
     <organization id="1000001" entity-name="Organization" identifier="Accounting Test Org"/>
@@ -30223,7 +30223,7 @@
     <updated transient="true">2009-01-13T14:07:59.0Z</updated>
     <updatedBy transient="true" id="0" entity-name="ADUser" identifier="System"/>
     <accountschema id="1000001" entity-name="FinancialMgmtAcctSchema" identifier="Accounting Test US/A/US Dollar"/>
-  </AD_Org_AcctSchema>
+  </OrganizationAcctSchema>
   <ADProcessAccess id="5E4DB943A65D16CFE040007F01002944" identifier="Vendor Selection Accounting Test User">
     <id>5E4DB943A65D16CFE040007F01002944</id>
     <process id="115" entity-name="ADProcess" identifier="Vendor Selection"/>
@@ -34537,7 +34537,7 @@
     <isDefaultAccount>true</isDefaultAccount>
     <sQLRecordIdentifier>SELECT TO_CHAR(COALESCE(TO_CHAR(T.DocumentNo),''))||' - '||TO_CHAR(COALESCE(TO_CHAR(T.GrandTotal),''))||' - '||TO_CHAR(COALESCE(TO_CHAR(T.DateInvoiced),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, C_Invoice T WHERE C_Invoice_ID=':c_ID'</sQLRecordIdentifier>
     <developmentstatus>RE</developmentstatus>
-    <package id="5A3ED54AB1D84B84E040007F01006125" entity-name="AD_Package" identifier="org.openbravo.model.common.invoice"/>
+    <package id="5A3ED54AB1D84B84E040007F01006125" entity-name="Package" identifier="org.openbravo.model.common.invoice"/>
   </ADTable>
   <ADProcess id="800188" identifier="Proposal print Jr" reference="true">
     <id>800188</id>
@@ -36611,7 +36611,7 @@ The second one is to update one property in the product organization specific ta
     <isDefaultAccount>false</isDefaultAccount>
     <sQLRecordIdentifier>SELECT TO_CHAR(COALESCE(TO_CHAR(T.DocumentNo),''))||' - '||TO_CHAR(COALESCE(TO_CHAR(T.DateOrdered),''))||' - '||TO_CHAR(COALESCE(TO_CHAR(T.GrandTotal),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, C_Order T WHERE C_Order_ID=':c_ID'</sQLRecordIdentifier>
     <developmentstatus>RE</developmentstatus>
-    <package id="5A3ED54AB1D94B84E040007F01006125" entity-name="AD_Package" identifier="org.openbravo.model.common.order"/>
+    <package id="5A3ED54AB1D94B84E040007F01006125" entity-name="Package" identifier="org.openbravo.model.common.order"/>
   </ADTable>
   <UOM id="100" identifier="Unit" reference="true">
     <id>100</id>
@@ -36835,7 +36835,7 @@ The second one is to update one property in the product organization specific ta
     <isDefaultAccount>true</isDefaultAccount>
     <sQLRecordIdentifier>SELECT TO_CHAR(COALESCE(TO_CHAR(T.Name),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, C_Cash T WHERE C_Cash_ID=':c_ID'</sQLRecordIdentifier>
     <developmentstatus>RE</developmentstatus>
-    <package id="5A3ED54AB1E44B84E040007F01006125" entity-name="AD_Package" identifier="org.openbravo.model.financialmgmt.cashmgmt"/>
+    <package id="5A3ED54AB1E44B84E040007F01006125" entity-name="Package" identifier="org.openbravo.model.financialmgmt.cashmgmt"/>
   </ADTable>
   <ADProcess id="1000500001" identifier="M_UPDATE_PARETO_PRODUCT" reference="true">
     <id>1000500001</id>
@@ -37549,7 +37549,7 @@ The Service Point is the Warehouse needed in the Purchase Order headers.</help>
     <isDefaultAccount>false</isDefaultAccount>
     <sQLRecordIdentifier>SELECT TO_CHAR(COALESCE(TO_CHAR(T.Name),''))||' - '||TO_CHAR(COALESCE(TO_CHAR(T.DocumentNo),''))||' - '||TO_CHAR(COALESCE(TO_CHAR(T.MovementDate),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, M_Production T WHERE M_Production_ID=':c_ID'</sQLRecordIdentifier>
     <developmentstatus>RE</developmentstatus>
-    <package id="5A3ED54AB1F14B84E040007F01006125" entity-name="AD_Package" identifier="org.openbravo.model.materialmgmt.transaction"/>
+    <package id="5A3ED54AB1F14B84E040007F01006125" entity-name="Package" identifier="org.openbravo.model.materialmgmt.transaction"/>
   </ADTable>
   <ADProcess id="166" identifier="Create Invoice" reference="true">
     <id>166</id>
@@ -37626,7 +37626,7 @@ The Service Point is the Warehouse needed in the Purchase Order headers.</help>
     <isDefault>false</isDefault>
     <module id="0" entity-name="ADModule" identifier="core 2.50.10440 English (USA)"/>
   </ADWindow>
-  <AD_OrgType id="1" identifier="Legal" reference="true">
+  <OrganizationType id="1" identifier="Legal" reference="true">
     <client id="0" entity-name="ADClient" identifier="System"/>
     <organization id="0" entity-name="Organization" identifier="*"/>
     <isActive>true</isActive>
@@ -37641,7 +37641,7 @@ The Service Point is the Warehouse needed in the Purchase Order headers.</help>
     <isLegalEntity>true</isLegalEntity>
     <isBusinessUnit>false</isBusinessUnit>
     <isTransactionsAllowed>true</isTransactionsAllowed>
-  </AD_OrgType>
+  </OrganizationType>
   <ADForm id="111" identifier="Password Maintenance" reference="true">
     <id>111</id>
     <client id="0" entity-name="ADClient" identifier="System"/>
@@ -38646,7 +38646,7 @@ Depending on the configuration of the Cost Center the process will also calculat
     <isDefaultAccount>false</isDefaultAccount>
     <sQLRecordIdentifier>SELECT TO_CHAR(COALESCE(TO_CHAR(T.M_MatchPO_ID),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, M_MatchPO T WHERE M_MatchPO_ID=':c_ID'</sQLRecordIdentifier>
     <developmentstatus>RE</developmentstatus>
-    <package id="5A3ED54AB1F84B84E040007F01006125" entity-name="AD_Package" identifier="org.openbravo.model.procurement"/>
+    <package id="5A3ED54AB1F84B84E040007F01006125" entity-name="Package" identifier="org.openbravo.model.procurement"/>
   </ADTable>
   <ADProcess id="800038" identifier="Drop Reg Fact Acct" reference="true">
     <id>800038</id>
@@ -38841,7 +38841,7 @@ For example, once the goods have been shipped to the customer, the merchant can 
     <isDefaultAccount>true</isDefaultAccount>
     <sQLRecordIdentifier>SELECT TO_CHAR(COALESCE(TO_CHAR(T.DocumentNo),''))||' - '||TO_CHAR(COALESCE(TO_CHAR(T.DateTrx),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, C_Settlement T WHERE C_Settlement_ID=':c_ID'</sQLRecordIdentifier>
     <developmentstatus>RE</developmentstatus>
-    <package id="5A3ED54AB1E64B84E040007F01006125" entity-name="AD_Package" identifier="org.openbravo.model.financialmgmt.payment"/>
+    <package id="5A3ED54AB1E64B84E040007F01006125" entity-name="Package" identifier="org.openbravo.model.financialmgmt.payment"/>
   </ADTable>
   <ADProcess id="168" identifier="Open/Close" reference="true">
     <id>168</id>
@@ -39264,7 +39264,7 @@ For example, once the goods have been shipped to the customer, the merchant can 
     <isDefaultAccount>false</isDefaultAccount>
     <sQLRecordIdentifier>SELECT (SELECT TO_CHAR(COALESCE(TO_CHAR(TT.Value),''))||' - '||TO_CHAR(COALESCE(TO_CHAR(TT.Name),'')) FROM C_Project TT WHERE TT.C_Project_ID=T.C_Project_ID) ||' - '||TO_CHAR(COALESCE(TO_CHAR(T.Line),''))||' - '||TO_CHAR(COALESCE(TO_CHAR(T.MovementQty),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, C_ProjectIssue T WHERE C_ProjectIssue_ID=':c_ID'</sQLRecordIdentifier>
     <developmentstatus>RE</developmentstatus>
-    <package id="5A3ED54AB1F94B84E040007F01006125" entity-name="AD_Package" identifier="org.openbravo.model.project"/>
+    <package id="5A3ED54AB1F94B84E040007F01006125" entity-name="Package" identifier="org.openbravo.model.project"/>
   </ADTable>
   <ADProcess id="800028" identifier="Change Order Organization" reference="true">
     <id>800028</id>
@@ -39665,7 +39665,7 @@ For example, once the goods have been shipped to the customer, the merchant can 
     <isDefaultAccount>true</isDefaultAccount>
     <sQLRecordIdentifier>SELECT TO_CHAR(COALESCE(TO_CHAR(T.Name),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, C_BankStatement T WHERE C_BankStatement_ID=':c_ID'</sQLRecordIdentifier>
     <developmentstatus>RE</developmentstatus>
-    <package id="5A3ED54AB1E44B84E040007F01006125" entity-name="AD_Package" identifier="org.openbravo.model.financialmgmt.cashmgmt"/>
+    <package id="5A3ED54AB1E44B84E040007F01006125" entity-name="Package" identifier="org.openbravo.model.financialmgmt.cashmgmt"/>
   </ADTable>
   <ADProcess id="140" identifier="Copy Accounts" reference="true">
     <id>140</id>
@@ -39849,7 +39849,7 @@ For example, once the goods have been shipped to the customer, the merchant can 
     <isDefaultAccount>false</isDefaultAccount>
     <sQLRecordIdentifier>SELECT TO_CHAR(COALESCE(TO_CHAR(T.Name),''))||' - '||TO_CHAR(COALESCE(TO_CHAR(T.StartDate),''))||' - '||TO_CHAR(COALESCE(TO_CHAR(T.EndDate),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, A_Amortization T WHERE A_Amortization_ID=':c_ID'</sQLRecordIdentifier>
     <developmentstatus>RE</developmentstatus>
-    <package id="5A3ED54AB1E24B84E040007F01006125" entity-name="AD_Package" identifier="org.openbravo.model.financialmgmt.assetmgmt"/>
+    <package id="5A3ED54AB1E24B84E040007F01006125" entity-name="Package" identifier="org.openbravo.model.financialmgmt.assetmgmt"/>
   </ADTable>
   <ADProcess id="224" identifier="Issue to Project" reference="true">
     <id>224</id>
@@ -40237,7 +40237,7 @@ For example, once the goods have been shipped to the customer, the merchant can 
     <isDefaultAccount>false</isDefaultAccount>
     <sQLRecordIdentifier>SELECT TO_CHAR(COALESCE(TO_CHAR(T.Name),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, M_Inventory T WHERE M_Inventory_ID=':c_ID'</sQLRecordIdentifier>
     <developmentstatus>RE</developmentstatus>
-    <package id="5A3ED54AB1F14B84E040007F01006125" entity-name="AD_Package" identifier="org.openbravo.model.materialmgmt.transaction"/>
+    <package id="5A3ED54AB1F14B84E040007F01006125" entity-name="Package" identifier="org.openbravo.model.materialmgmt.transaction"/>
   </ADTable>
   <ADWindow id="800069" identifier="Promissory Note Format" reference="true">
     <id>800069</id>
@@ -41145,7 +41145,7 @@ You can also select if transactions are allowed or not for this organization typ
     <isDefaultAccount>false</isDefaultAccount>
     <sQLRecordIdentifier>SELECT TO_CHAR(COALESCE(TO_CHAR(T.DocumentNo),''))||' - '||TO_CHAR(COALESCE(TO_CHAR(T.MovementDate),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, M_InOut T WHERE M_InOut_ID=':c_ID'</sQLRecordIdentifier>
     <developmentstatus>RE</developmentstatus>
-    <package id="5A3ED54AB1F14B84E040007F01006125" entity-name="AD_Package" identifier="org.openbravo.model.materialmgmt.transaction"/>
+    <package id="5A3ED54AB1F14B84E040007F01006125" entity-name="Package" identifier="org.openbravo.model.materialmgmt.transaction"/>
   </ADTable>
   <ADProcess id="800123" identifier="G/L Items Report" reference="true">
     <id>800123</id>
@@ -41379,7 +41379,7 @@ You can also select if transactions are allowed or not for this organization typ
     <isDefaultAccount>false</isDefaultAccount>
     <sQLRecordIdentifier>SELECT TO_CHAR(COALESCE(TO_CHAR(T.DocumentNo),''))||' - '||TO_CHAR(COALESCE(TO_CHAR(T.Name),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, M_Movement T WHERE M_Movement_ID=':c_ID'</sQLRecordIdentifier>
     <developmentstatus>RE</developmentstatus>
-    <package id="5A3ED54AB1F14B84E040007F01006125" entity-name="AD_Package" identifier="org.openbravo.model.materialmgmt.transaction"/>
+    <package id="5A3ED54AB1F14B84E040007F01006125" entity-name="Package" identifier="org.openbravo.model.materialmgmt.transaction"/>
   </ADTable>
   <ADProcess id="107" identifier="Process Inventory Count" reference="true">
     <id>107</id>
@@ -41814,7 +41814,7 @@ Each time that is pressed the Create button is opened a popup to create a unique
     <isDefaultAccount>false</isDefaultAccount>
     <sQLRecordIdentifier>**No key found</sQLRecordIdentifier>
     <developmentstatus>RE</developmentstatus>
-    <package id="5A3ED54AB1E44B84E040007F01006125" entity-name="AD_Package" identifier="org.openbravo.model.financialmgmt.cashmgmt"/>
+    <package id="5A3ED54AB1E44B84E040007F01006125" entity-name="Package" identifier="org.openbravo.model.financialmgmt.cashmgmt"/>
   </ADTable>
   <ADWorkflow id="111" identifier="Sales Setup" reference="true">
     <id>111</id>
@@ -42194,7 +42194,7 @@ Each time that is pressed the Create button is opened a popup to create a unique
     <isDefaultAccount>false</isDefaultAccount>
     <sQLRecordIdentifier>SELECT TO_CHAR(COALESCE(TO_CHAR(T.Name),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, M_Internal_Consumption T WHERE M_Internal_Consumption_ID=':c_ID'</sQLRecordIdentifier>
     <developmentstatus>RE</developmentstatus>
-    <package id="5A3ED54AB1F14B84E040007F01006125" entity-name="AD_Package" identifier="org.openbravo.model.materialmgmt.transaction"/>
+    <package id="5A3ED54AB1F14B84E040007F01006125" entity-name="Package" identifier="org.openbravo.model.materialmgmt.transaction"/>
   </ADTable>
   <ADProcess id="132" identifier="Monthly Product Invoice" reference="true">
     <id>132</id>
@@ -44389,7 +44389,7 @@ Each time that is pressed the Create button is opened a popup to create a unique
     <isDefaultAccount>false</isDefaultAccount>
     <sQLRecordIdentifier>SELECT TO_CHAR(COALESCE(TO_CHAR(T.DocumentNo),''))||' - '||TO_CHAR(COALESCE(TO_CHAR(T.DateTrx),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, C_DP_Management T WHERE C_Dp_Management_ID=':c_ID'</sQLRecordIdentifier>
     <developmentstatus>RE</developmentstatus>
-    <package id="5A3ED54AB1E64B84E040007F01006125" entity-name="AD_Package" identifier="org.openbravo.model.financialmgmt.payment"/>
+    <package id="5A3ED54AB1E64B84E040007F01006125" entity-name="Package" identifier="org.openbravo.model.financialmgmt.payment"/>
   </ADTable>
   <ADForm id="800002" identifier="Payments Selection (Bank)" reference="true">
     <id>800002</id>
@@ -46080,7 +46080,7 @@ Each time that is pressed the Create button is opened a popup to create a unique
     <isDefaultAccount>true</isDefaultAccount>
     <sQLRecordIdentifier>SELECT TO_CHAR(COALESCE(TO_CHAR(T.DocumentNo),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, GL_Journal T WHERE GL_Journal_ID=':c_ID'</sQLRecordIdentifier>
     <developmentstatus>RE</developmentstatus>
-    <package id="5A3ED54AB1E54B84E040007F01006125" entity-name="AD_Package" identifier="org.openbravo.model.financialmgmt.gl"/>
+    <package id="5A3ED54AB1E54B84E040007F01006125" entity-name="Package" identifier="org.openbravo.model.financialmgmt.gl"/>
   </ADTable>
   <ADWindow id="193" identifier="Notice" reference="true">
     <id>193</id>
@@ -46556,7 +46556,7 @@ Each time that is pressed the Create button is opened a popup to create a unique
     <isDefaultAccount>false</isDefaultAccount>
     <sQLRecordIdentifier>SELECT TO_CHAR(COALESCE(TO_CHAR(T.M_MatchInv_ID),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, M_MatchInv T WHERE M_MatchInv_ID=':c_ID'</sQLRecordIdentifier>
     <developmentstatus>RE</developmentstatus>
-    <package id="5A3ED54AB1F84B84E040007F01006125" entity-name="AD_Package" identifier="org.openbravo.model.procurement"/>
+    <package id="5A3ED54AB1F84B84E040007F01006125" entity-name="Package" identifier="org.openbravo.model.procurement"/>
   </ADTable>
   <ADWindow id="163" identifier="Tree and Node Image" reference="true">
     <id>163</id>
@@ -47219,7 +47219,7 @@ Each time that is pressed the Create button is opened a popup to create a unique
     <updateVer/>
     <referenceDataInfo/>
   </ADModule>
-  <AD_Package id="5A3ED54AB1D84B84E040007F01006125" identifier="org.openbravo.model.common.invoice" reference="true">
+  <Package id="5A3ED54AB1D84B84E040007F01006125" identifier="org.openbravo.model.common.invoice" reference="true">
     <id>5A3ED54AB1D84B84E040007F01006125</id>
     <client id="0" entity-name="ADClient" identifier="System"/>
     <organization id="0" entity-name="Organization" identifier="*"/>
@@ -47232,7 +47232,7 @@ Each time that is pressed the Create button is opened a popup to create a unique
     <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
     <updated transient="true">2008-10-27T17:43:39.0Z</updated>
     <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-  </AD_Package>
+  </Package>
   <ADWFNode id="125" identifier="Fiscal Calendar" reference="true">
     <id>125</id>
     <client id="0" entity-name="ADClient" identifier="System"/>
@@ -47302,7 +47302,7 @@ Each time that is pressed the Create button is opened a popup to create a unique
     <xposition>7</xposition>
     <yposition>10</yposition>
   </ADWFNode>
-  <AD_Package id="5A3ED54AB1D94B84E040007F01006125" identifier="org.openbravo.model.common.order" reference="true">
+  <Package id="5A3ED54AB1D94B84E040007F01006125" identifier="org.openbravo.model.common.order" reference="true">
     <id>5A3ED54AB1D94B84E040007F01006125</id>
     <client id="0" entity-name="ADClient" identifier="System"/>
     <organization id="0" entity-name="Organization" identifier="*"/>
@@ -47315,8 +47315,8 @@ Each time that is pressed the Create button is opened a popup to create a unique
     <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
     <updated transient="true">2008-10-27T17:43:39.0Z</updated>
     <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-  </AD_Package>
-  <AD_Package id="5A3ED54AB1E44B84E040007F01006125" identifier="org.openbravo.model.financialmgmt.cashmgmt" reference="true">
+  </Package>
+  <Package id="5A3ED54AB1E44B84E040007F01006125" identifier="org.openbravo.model.financialmgmt.cashmgmt" reference="true">
     <id>5A3ED54AB1E44B84E040007F01006125</id>
     <client id="0" entity-name="ADClient" identifier="System"/>
     <organization id="0" entity-name="Organization" identifier="*"/>
@@ -47329,7 +47329,7 @@ Each time that is pressed the Create button is opened a popup to create a unique
     <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
     <updated transient="true">2008-10-27T17:43:39.0Z</updated>
     <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-  </AD_Package>
+  </Package>
   <FinancialMgmtGLCategory id="0" identifier="None" reference="true">
     <id>0</id>
     <client id="0" entity-name="ADClient" identifier="System"/>
@@ -47345,7 +47345,7 @@ Each time that is pressed the Create button is opened a popup to create a unique
     <isDefault>false</isDefault>
     <docBaseType inactive="true"/>
   </FinancialMgmtGLCategory>
-  <AD_Package id="5A3ED54AB1F14B84E040007F01006125" identifier="org.openbravo.model.materialmgmt.transaction" reference="true">
+  <Package id="5A3ED54AB1F14B84E040007F01006125" identifier="org.openbravo.model.materialmgmt.transaction" reference="true">
     <id>5A3ED54AB1F14B84E040007F01006125</id>
     <client id="0" entity-name="ADClient" identifier="System"/>
     <organization id="0" entity-name="Organization" identifier="*"/>
@@ -47358,7 +47358,7 @@ Each time that is pressed the Create button is opened a popup to create a unique
     <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
     <updated transient="true">2008-10-27T17:43:40.0Z</updated>
     <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-  </AD_Package>
+  </Package>
   <AttributeSet id="0" identifier="STANDARD" reference="true">
     <id>0</id>
     <client id="0" entity-name="ADClient" identifier="System"/>
@@ -47378,7 +47378,7 @@ Each time that is pressed the Create button is opened a popup to create a unique
     <guaranteeDays>0</guaranteeDays>
     <isLockable>false</isLockable>
   </AttributeSet>
-  <AD_Package id="5A3ED54AB1F84B84E040007F01006125" identifier="org.openbravo.model.procurement" reference="true">
+  <Package id="5A3ED54AB1F84B84E040007F01006125" identifier="org.openbravo.model.procurement" reference="true">
     <id>5A3ED54AB1F84B84E040007F01006125</id>
     <client id="0" entity-name="ADClient" identifier="System"/>
     <organization id="0" entity-name="Organization" identifier="*"/>
@@ -47391,8 +47391,8 @@ Each time that is pressed the Create button is opened a popup to create a unique
     <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
     <updated transient="true">2008-10-27T17:43:40.0Z</updated>
     <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-  </AD_Package>
-  <AD_Package id="5A3ED54AB1E64B84E040007F01006125" identifier="org.openbravo.model.financialmgmt.payment" reference="true">
+  </Package>
+  <Package id="5A3ED54AB1E64B84E040007F01006125" identifier="org.openbravo.model.financialmgmt.payment" reference="true">
     <id>5A3ED54AB1E64B84E040007F01006125</id>
     <client id="0" entity-name="ADClient" identifier="System"/>
     <organization id="0" entity-name="Organization" identifier="*"/>
@@ -47405,8 +47405,8 @@ Each time that is pressed the Create button is opened a popup to create a unique
     <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
     <updated transient="true">2008-10-27T17:43:40.0Z</updated>
     <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-  </AD_Package>
-  <AD_Package id="5A3ED54AB1F94B84E040007F01006125" identifier="org.openbravo.model.project" reference="true">
+  </Package>
+  <Package id="5A3ED54AB1F94B84E040007F01006125" identifier="org.openbravo.model.project" reference="true">
     <id>5A3ED54AB1F94B84E040007F01006125</id>
     <client id="0" entity-name="ADClient" identifier="System"/>
     <organization id="0" entity-name="Organization" identifier="*"/>
@@ -47419,8 +47419,8 @@ Each time that is pressed the Create button is opened a popup to create a unique
     <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
     <updated transient="true">2008-10-27T17:43:40.0Z</updated>
     <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-  </AD_Package>
-  <AD_Package id="5A3ED54AB1E24B84E040007F01006125" identifier="org.openbravo.model.financialmgmt.assetmgmt" reference="true">
+  </Package>
+  <Package id="5A3ED54AB1E24B84E040007F01006125" identifier="org.openbravo.model.financialmgmt.assetmgmt" reference="true">
     <id>5A3ED54AB1E24B84E040007F01006125</id>
     <client id="0" entity-name="ADClient" identifier="System"/>
     <organization id="0" entity-name="Organization" identifier="*"/>
@@ -47433,7 +47433,7 @@ Each time that is pressed the Create button is opened a popup to create a unique
     <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
     <updated transient="true">2008-10-27T17:43:39.0Z</updated>
     <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-  </AD_Package>
+  </Package>
   <ADWFNode id="158" identifier="Warehouse and Storage Bins" reference="true">
     <id>158</id>
     <client id="0" entity-name="ADClient" identifier="System"/>
@@ -47549,7 +47549,7 @@ Each time that is pressed the Create button is opened a popup to create a unique
     <xposition>8</xposition>
     <yposition>5</yposition>
   </ADWFNode>
-  <AD_Package id="5A3ED54AB1E54B84E040007F01006125" identifier="org.openbravo.model.financialmgmt.gl" reference="true">
+  <Package id="5A3ED54AB1E54B84E040007F01006125" identifier="org.openbravo.model.financialmgmt.gl" reference="true">
     <id>5A3ED54AB1E54B84E040007F01006125</id>
     <client id="0" entity-name="ADClient" identifier="System"/>
     <organization id="0" entity-name="Organization" identifier="*"/>
@@ -47562,7 +47562,7 @@ Each time that is pressed the Create button is opened a popup to create a unique
     <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
     <updated transient="true">2008-10-27T17:43:40.0Z</updated>
     <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-  </AD_Package>
+  </Package>
   <ADWFNode id="800003" identifier="Product" reference="true">
     <id>800003</id>
     <client id="0" entity-name="ADClient" identifier="System"/>
