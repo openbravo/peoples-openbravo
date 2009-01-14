@@ -313,7 +313,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             final VariablesSecureApp vars1 = new VariablesSecureApp(request,
                     false);
             if (vars1.getRole().equals("") || hasAccess(vars1)) {
-
+                // Autosave logic
                 final Boolean saveRequest = (Boolean) request
                         .getAttribute("autosave");
                 final String strTabId = vars1.getStringParameter("inpTabId");
@@ -348,7 +348,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
                         if (servletMappingName != null
                                 && !Utility.isExcludedFromAutoSave(this
                                         .getClass().getCanonicalName())
-				&& !vars1.commandIn("DIRECT")) {
+                                && !vars1.commandIn("DIRECT")) {
 
                             final String hash = vars1
                                     .getSessionValue(servletMappingName
@@ -357,14 +357,15 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
                             if (log4j.isDebugEnabled()) {
                                 log4j.debug("hash in session: " + hash);
                             }
-                            // Check if the form was previously saved
+                            // Check if the form was previously saved based on
+                            // the hash of the post data
                             if (!hash.equals(vars1.getPostDataHash())) {
-                                // forward request
                                 request.setAttribute("autosave", true);
                                 if (vars1.getCommand().indexOf("BUTTON") != -1)
                                     request.setAttribute("popupWindow", true);
+                                // forward request
                                 if (!forwardRequest(request, response)) {
-                                    return;
+                                    return; // failed save
                                 }
                             }
                         }
@@ -610,33 +611,43 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         out.println(xmlDocument.print());
         out.close();
     }
-    
+
     /**
      * Creates a pop up that when closed, will refresh the parent window.
      * 
-     * @param response the HttpServletResponse object
-     * @param strTitle the title of the popup window
-     * @param strText the text to be displayed in the popup message area
-     * @throws IOException if an error occurs writing to the output stream
+     * @param response
+     *            the HttpServletResponse object
+     * @param strTitle
+     *            the title of the popup window
+     * @param strText
+     *            the text to be displayed in the popup message area
+     * @throws IOException
+     *             if an error occurs writing to the output stream
      */
-    public void advisePopUpRefresh(HttpServletResponse response, String strTitle,
-            String strText) throws IOException {
+    public void advisePopUpRefresh(HttpServletResponse response,
+            String strTitle, String strText) throws IOException {
         advisePopUpRefresh(response, "Error", strTitle, strText);
     }
 
     /**
      * Creates a pop up that when closed, will refresh the parent window.
      * 
-     * @param response the HttpServletResponse object
-     * @param strType the type of message to be displayed (e.g. ERROR, SUCCESS)
-     * @param strTitle the title of the popup window
-     * @param strText the text to be displayed in the popup message area
-     * @throws IOException if an error occurs writing to the output stream
+     * @param response
+     *            the HttpServletResponse object
+     * @param strType
+     *            the type of message to be displayed (e.g. ERROR, SUCCESS)
+     * @param strTitle
+     *            the title of the popup window
+     * @param strText
+     *            the text to be displayed in the popup message area
+     * @throws IOException
+     *             if an error occurs writing to the output stream
      */
-    public void advisePopUpRefresh(HttpServletResponse response, String strType,
-            String strTitle, String strText) throws IOException {
+    public void advisePopUpRefresh(HttpServletResponse response,
+            String strType, String strTitle, String strText) throws IOException {
         final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-                "org/openbravo/base/secureApp/AdvisePopUpRefresh").createXmlDocument();
+                "org/openbravo/base/secureApp/AdvisePopUpRefresh")
+                .createXmlDocument();
 
         xmlDocument.setParameter("theme", myTheme);
         xmlDocument.setParameter("ParamType", strType.toUpperCase());
