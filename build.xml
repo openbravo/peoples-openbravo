@@ -384,6 +384,7 @@ compare.database.structure: refer to compare.database.structure target of databa
 
 	<target name="eclipse.install.source" depends="init,code.rev">
 		<antcall target="database.lib" />
+		<antcall target="core.lib" />
 		<eclipse.incrementalBuild project="OpenbravoCore" kind="full" />
 		<ant dir="${base.db}" antfile="build-create.xml" target="create.database" inheritAll="true" inheritRefs="true" />
 		<antcall target="eclipse.wad.lib" />
