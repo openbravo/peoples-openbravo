@@ -1,4 +1,4 @@
-#Fri Nov 14 16:23:14 CET 2008
+#Wed Jan 14 12:14:56 CET 2009
 /instance/org.eclipse.jdt.ui/sp_cleanup.add_missing_annotations=true
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.comment.indent_parameter_description=true
 @org.eclipse.ui.editors=3.3.0.v20070606-0010
@@ -57,8 +57,8 @@
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.alignment_for_parameters_in_constructor_declaration=16
 /instance/org.eclipse.jdt.ui/sp_cleanup.make_local_variable_final=true
 /instance/org.eclipse.jdt.ui/sp_cleanup.remove_trailing_whitespaces_ignore_empty=false
-/instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.blank_lines_between_type_declarations=1
 /instance/org.eclipse.jdt.ui/sp_cleanup.always_use_this_for_non_static_field_access=false
+/instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.blank_lines_between_type_declarations=1
 /instance/org.eclipse.ui.editors/overviewRuler_migration=migrated_3.1
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_after_comma_in_multiple_field_declarations=insert
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.alignment_for_arguments_in_explicit_constructor_call=16
@@ -147,7 +147,6 @@
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_before_closing_paren_in_parenthesized_expression=do not insert
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_before_opening_bracket_in_array_allocation_expression=do not insert
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_after_opening_paren_in_cast=do not insert
-@org.eclipse.pde.core=3.3.0.v20070608-1300
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_after_opening_paren_in_annotation=do not insert
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_after_and_in_type_parameter=insert
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_after_question_in_wildcard=do not insert
@@ -171,7 +170,7 @@
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_after_comma_in_for_increments=insert
 /instance/org.eclipse.jdt.ui/sp_cleanup.make_parameters_final=false
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_after_opening_angle_bracket_in_type_arguments=do not insert
-/instance/org.eclipse.jdt.launching/org.eclipse.jdt.launching.PREF_VM_XML=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\n<vmSettings defaultVM\="57,org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType13,1226577139765">\n<vmType id\="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType">\n<vm id\="1226577139765" javadocURL\="http\://java.sun.com/javase/6/docs/api/" name\="java-6-sun-1.6.0.07" path\="/usr/lib/jvm/java-6-sun-1.6.0.07"/>\n</vmType>\n</vmSettings>\n
+/instance/org.eclipse.jdt.launching/org.eclipse.jdt.launching.PREF_VM_XML=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\n<vmSettings defaultVM\="57,org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType13,1226577139765" defaultVMConnector\="">\n<vmType id\="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType">\n<vm id\="1226577139765" javadocURL\="http\://java.sun.com/javase/6/docs/api/" name\="java-6-sun-1.6.0.07" path\="/usr/lib/jvm/java-6-sun-1.6.0.07"/>\n</vmType>\n</vmSettings>\n
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_before_at_in_annotation_type_declaration=insert
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.number_of_blank_lines_at_beginning_of_method_body=0
 /instance/org.eclipse.jdt.ui/sp_cleanup.add_generated_serial_version_id=false
@@ -267,7 +266,7 @@
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_after_comma_in_multiple_local_declarations=insert
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_before_question_in_wildcard=do not insert
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_before_closing_paren_in_catch=do not insert
-/instance/org.eclipse.jdt.ui/sp_cleanup.on_save_use_additional_actions=true
+/instance/org.eclipse.jdt.ui/sp_cleanup.on_save_use_additional_actions=false
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.alignment_for_binary_expression=16
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.indent_statements_compare_to_block=true
 @org.eclipse.ui.workbench=3.3.0.I20070608-1100
@@ -362,7 +361,7 @@ file_export_version=3.0
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_new_line_in_empty_type_declaration=insert
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.alignment_for_arguments_in_qualified_allocation_expression=16
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.6
-/instance/org.eclipse.mylyn.tasks.ui/org.eclipse.mylyn.tasks.ui.backup.last=1226577186885
+/instance/org.eclipse.mylyn.tasks.ui/org.eclipse.mylyn.tasks.ui.backup.last=1231931664101
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.alignment_for_multiple_fields=16
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_after_comma_in_for_inits=insert
 /instance/org.eclipse.jdt.ui/sp_cleanup.use_this_for_non_static_field_access_only_if_necessary=true
