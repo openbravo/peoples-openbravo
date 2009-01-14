@@ -18,24 +18,26 @@
  */
 package org.openbravo.erpCommon.info;
 
-import org.openbravo.base.secureApp.*;
-import org.openbravo.xmlEngine.XmlDocument;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Vector;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.ad_combos.PriceListVersionComboData;
+import org.openbravo.erpCommon.ad_combos.WarehouseComboData;
+import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.Utility;
-import java.io.*;
-import java.util.Vector;
-
-import javax.servlet.*;
-import javax.servlet.http.*;
-
 import org.openbravo.utils.Replace;
-
-import org.openbravo.erpCommon.utility.DateTimeData; //import org.openbravo.erpCommon.utility.ToolBar;
-
-import org.openbravo.erpCommon.ad_combos.WarehouseComboData;
-import org.openbravo.erpCommon.ad_combos.PriceListVersionComboData;
+import org.openbravo.xmlEngine.XmlDocument;
 
 public class Product extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;
@@ -267,8 +269,9 @@ public class Product extends HttpSecureAppServlet {
         xmlDocument.setParameter("grid_SortDirs", "ASC");
         xmlDocument.setParameter("grid_Default", "0");
 
-        xmlDocument.setData("structure1", WarehouseComboData.selectFilter(this,
-                Utility.getContext(this, vars, "#User_Client", "Product")));
+        xmlDocument.setData("structure1", WarehouseComboData.select(this, vars
+                .getRole(), vars.getClient()));
+
         xmlDocument.setData("structure2", PriceListVersionComboData.select(
                 this, strPriceList, Utility.getContext(this, vars,
                         "#User_Client", "Product")));
@@ -405,10 +408,10 @@ public class Product extends HttpSecureAppServlet {
         if (headers != null) {
             try {
                 if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
-                                                                           // filter
-                                                                           // or
-                                                                           // first
-                                                                           // load
+                    // filter
+                    // or
+                    // first
+                    // load
                     strNumRows = ProductData.countRows(this, strKey, strName,
                             strPriceListVersion, Utility.getContext(this, vars,
                                     "#User_Client", "Product"), Utility
