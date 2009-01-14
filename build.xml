@@ -61,8 +61,6 @@ export.database: exports database structure and data to xml files.
 export.database.structure: refer to export.database.structure target of database.
 export.database.data: refer to export.database.data target of database.
 import.database.data: refer to import.database.data target of database.
-export.database.sampledata: refer to export.database.sampledata target of database.
-import.database.sampledata: refer to import.database.sampledata target of database.
 export.database.masterdata: refer to export.database.masterdata target of database.
 import.database.masterdata: refer to import.database.masterdata target of database.
 save.database.model: refer to save.database.model target of database.
@@ -378,7 +376,6 @@ compare.database.structure: refer to compare.database.structure target of databa
     	this antcall implements the previous method of importing data 
     	use that if the new method does not work for you: 
     -->
-		<!--<antcall target="import.database.sampledata"/>-->
 		<antcall target="import.sample.data" />
 	</target>
 
@@ -457,23 +454,6 @@ compare.database.structure: refer to compare.database.structure target of databa
 
 	<target name="import.database.data" depends="init,code.rev">
 		<ant dir="${base.db}" target="import.database.data" inheritAll="true" inheritRefs="true" />
-	</target>
-
-	<target name="export.database.sampledata" depends="init,code.rev">
-		<ant dir="${base.db}" target="export.database.sampledata" inheritAll="true" inheritRefs="true" />
-	</target>
-
-	<target name="import.database.sampledata" depends="init,code.rev">
-		<!--<ant dir="${base.src}" target="import.reference.data" inheritAll="true" inheritRefs="true"/>-->
-		<ant dir="${base.db}" target="import.database.sampledata" inheritAll="true" inheritRefs="true" />
-	</target>
-
-	<target name="export.database.masterdata" depends="init,code.rev">
-		<ant dir="${base.db}" target="export.database.masterdata" inheritAll="true" inheritRefs="true" />
-	</target>
-
-	<target name="import.database.masterdata" depends="init,code.rev">
-		<ant dir="${base.db}" target="import.database.masterdata" inheritAll="true" inheritRefs="true" />
 	</target>
 
 	<target name="db.apply.modules" if="apply.modules.on.create">
