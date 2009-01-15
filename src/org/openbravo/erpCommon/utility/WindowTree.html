@@ -71,7 +71,7 @@ function getKeyField() {
       var strText = "";
       if (getReadyStateHandler(xmlreq,null,false)) {
         try {
-          if (xmlreq.responseXML) strText = xmlreq.responseXML;
+          if (xmlreq.responseText) strText = xmlreq.responseText;
         } catch (e) {
           initialize_MessageBox('messageBoxID');
           setValues_MessageBox('messageBoxID','ERROR','ERROR',e);
@@ -79,19 +79,22 @@ function getKeyField() {
         if (strText == "") {
           showJSMessage(22);
         }else if (strText != "") {
+          strText = xmlreq.responseXML;
           var node = strText.getElementsByTagName("xml-structure");
-          node = node[0].getElementsByTagName("status");
-          var type = node[0].getElementsByTagName("type");
-          var title = node[0].getElementsByTagName("title");
-          var description = node[0].getElementsByTagName("description");
           initialize_MessageBox('messageBoxID');
-          setValues_MessageBox('messageBoxID',getChildText(type[0]),getChildText(title[0]),getChildText(description[0]));
+          if(node.length){
+            node = node[0].getElementsByTagName("status");
+            var type = node[0].getElementsByTagName("type");
+            var title = node[0].getElementsByTagName("title");
+            var description = node[0].getElementsByTagName("description");
+            setValues_MessageBox('messageBoxID',getChildText(type[0]),getChildText(title[0]),getChildText(description[0]));
+          }
           if (getChildText(type[0]) == 'Success') document.frmMain.reset();
         }
       }
       return true;
-    }	
-	
+    }
+
      function showInfo() { 
        showJSMessage(21);
      }
