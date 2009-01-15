@@ -38,6 +38,7 @@
 	<PARAMETER id="salesrepEmail" name="salesrepEmail" attribute="value" default=""/>
 	<PARAMETER id="salesrepName" name="salesrepName" default=""/>
 	<PARAMETER id="multCusCount" name="multCusCount" default=""/>
+	<PARAMETER id="tab" name="tab" default="" attribute="value"/>
 	<PARAMETER id="multSalesRepCount" name="multSalesRepCount" default=""/>	
 	<PARAMETER id="c_poc_doctype_template_id" name="templateId"/>
 	<SUBREPORT id="reportEmail" name="reportEmail" report="org/openbravo/erpCommon/reference/List">

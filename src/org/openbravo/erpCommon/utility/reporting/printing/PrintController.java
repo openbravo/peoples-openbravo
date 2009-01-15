@@ -1,7 +1,6 @@
 /*
- * ************************************************************************ The
- * contents of this file are subject to the Openbravo Public License Version 1.0
- * (the "License"), being the Mozilla Public License Version 1.1 with a
+ * The contents of this file are subject to the Openbravo Public License Version
+ * 1.0 (the "License"), being the Mozilla Public License Version 1.1 with a
  * permitted attribution clause; you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
  * http://www.openbravo.com/legal/license.html Software distributed under the
@@ -11,7 +10,6 @@
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SL All
  * portions are Copyright (C) 2008 Openbravo SL All Rights Reserved.
  * Contributor(s): ______________________________________.
- * ***********************************************************************
  */
 package org.openbravo.erpCommon.utility.reporting.printing;
 
@@ -181,7 +179,8 @@ public class PrintController extends HttpSecureAppServlet {
                 globalParameters.strBaseDesignPath,
                 globalParameters.strDefaultDesignPath, globalParameters.prefix,
                 classInfo);
-
+        String senderAddress = PocConfigurationData.getSenderAddress(this, vars
+                .getClient());
         if (vars.commandIn("PRINT") || vars.commandIn("ARCHIVE")
                 || (!request.getRequestURI().endsWith(".html"))) {
             final String documentId = vars.getStringParameter("inpDocumentId");
@@ -261,26 +260,30 @@ public class PrintController extends HttpSecureAppServlet {
                     }
 
                 }
-                
 
                 vars.setSessionObject(sessionValuePrefix + ".Documents",
                         reports);
-                // try {
-                if ("".equals(PocConfigurationData.getSenderAddress(this, vars
-                    .getClient()))
-                    || PocConfigurationData.getSenderAddress(this, vars
-                            .getClient()) == null) {
-                  final OBError on = new OBError();
-                  on.setMessage("No sender defined: Please go to cliente configuration to complete de email configuration");
-                  on.setTitle("Email Configuration Error");
-                  on.setType("Error");
-                  vars.setMessage("290", on);
-                  vars.getRequestGlobalVariable("inpTabId",
-                  "AttributeSetInstance.tabId");
-                  printPageClosePopUpAndRefresh(response, vars);
-                throw new ServletException(
-                        "Configuration Error no sender defined");
-            }
+
+                if ("".equals(senderAddress) || senderAddress == null) {
+                    final OBError on = new OBError();
+                    on
+                            .setMessage(Utility
+                                    .messageBD(
+                                            this,
+                                            "No sender defined: Please go to client configuration to complete de email configuration",
+                                            vars.getLanguage()));
+                    on.setTitle(Utility.messageBD(this,
+                            "Email Configuration Error", vars.getLanguage()));
+                    on.setType("Error");
+                    String tabId = vars.getSessionValue("inpTabId");
+                    vars.getStringParameter("tab");
+                    vars.setMessage(tabId, on);
+                    vars.getRequestGlobalVariable("inpTabId",
+                            "AttributeSetInstance.tabId");
+                    printPageClosePopUpAndRefreshParent(response, vars);
+                    throw new ServletException(
+                            "Configuration Error no sender defined");
+                }
                 if (request.getServletPath().toLowerCase()
                         .indexOf("print.html") != -1)
                     createPrintOptionsPage(request, response, vars,
@@ -290,18 +293,7 @@ public class PrintController extends HttpSecureAppServlet {
                     createEmailOptionsPage(request, response, vars,
                             documentType, getComaSeparatedString(documentIds),
                             reports);
-                // } catch (final ServletException e) {
-                // TODO does not work
-                // vars.getRequestGlobalVariable("inpTabId", "inpTabId");
-                // final OBError on = new OBError();
-                // on.setMessage("sdasdasdasdadasd");
-                // on.setTitle("dsadasd");
-                // on.setType("Error");
-                // vars.setMessage("290", on);
-                // vars.getRequestGlobalVariable("inpTabId",
-                // "AttributeSetInstance.tabId");
-                // printPageClosePopUpAndRefresh(response, vars);
-                // }
+
             } else if (vars.commandIn("ADD")) {
                 if (request.getServletPath().toLowerCase()
                         .indexOf("print.html") != -1)
@@ -385,7 +377,8 @@ public class PrintController extends HttpSecureAppServlet {
                         }
 
                         sendDocumentEmail(report, vars, request.getSession()
-                                .getAttribute("files"), documentData);
+                                .getAttribute("files"), documentData,
+                                senderAddress);
                         nrOfEmailsSend++;
                     }
                 }
@@ -431,8 +424,8 @@ public class PrintController extends HttpSecureAppServlet {
     }
 
     protected void sendDocumentEmail(Report report, VariablesSecureApp vars,
-            Object object, PocData documentData) throws IOException,
-            ServletException {
+            Object object, PocData documentData, String senderAddess)
+            throws IOException, ServletException {
         final String documentId = report.getDocumentId();
         final String attachmentFileLocation = report.getTargetLocation();
 
@@ -505,14 +498,12 @@ public class PrintController extends HttpSecureAppServlet {
         emailBody = emailBody.replaceAll("@sal_nam@", salesrepName);
 
         try {
-          
-         
+
             final Session session = EmailManager.newMailSession(this, vars
                     .getClient());
 
             final Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(PocConfigurationData
-                    .getSenderAddress(this, vars.getClient())));
+            message.setFrom(new InternetAddress(senderAddess));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(
                     contactEmail));
 
@@ -607,7 +598,7 @@ public class PrintController extends HttpSecureAppServlet {
             log4j.error(exception);
             throw new ServletException(exception);
         } catch (final AddressException exception) {
-          log4j.error(exception);
+            log4j.error(exception);
             throw new ServletException(exception);
         } catch (final MessagingException exception) {
             log4j.error(exception);
@@ -686,7 +677,6 @@ public class PrintController extends HttpSecureAppServlet {
             request.getSession().setAttribute("files", vector);
 
         }
-        
 
         if ("yes".equals(vars.getStringParameter("closed"))) {
             xmlDocument.setParameter("closed", "yes");
@@ -731,6 +721,7 @@ public class PrintController extends HttpSecureAppServlet {
         final Map<String, PocData> customerMap = new HashMap<String, PocData>();
         final Map<String, PocData> salesRepMap = new HashMap<String, PocData>();
         final Vector<Object> cloneVector = new Vector<Object>();
+        int numberOfCompletedDocuments = 0;
         for (final PocData documentData : pocData) {
             // Map used to count the different users
 
@@ -744,26 +735,29 @@ public class PrintController extends HttpSecureAppServlet {
             }
 
             final String salesRep = documentData.salesrepName;
-            if (moreThanOnesalesRep){
-              if (salesRep == null || salesRep.length() == 0)
-                throw new ServletException(
-                        Utility
-                                .messageBD(
-                                        this,
-                                        "There is at least one document with no sales representive",
-                                        vars.getLanguage()));
+            if (moreThanOnesalesRep) {
+                if (salesRep == null || salesRep.length() == 0)
+                    throw new ServletException(
+                            Utility
+                                    .messageBD(
+                                            this,
+                                            "There is at least one document with no sales representive",
+                                            vars.getLanguage()));
             }
-           
+
             if (!salesRepMap.containsKey(salesRep)) {
                 salesRepMap.put(salesRep, documentData);
             }
 
             final Report report = reports.get(documentData.documentId);
             // All ids of documents in draft are passed to the web client
+            //TODO check if the document is marked as not complete
             if (report.isDraft()) {
                 if (draftDocumentIds.length() > 0)
                     draftDocumentIds += ",";
                 draftDocumentIds += report.getDocumentId();
+            } else {
+                numberOfCompletedDocuments++;
             }
 
             // Fill the report location
@@ -781,6 +775,25 @@ public class PrintController extends HttpSecureAppServlet {
                 cloneVector.add(attachedContent);
             }
 
+        }
+        if (numberOfCompletedDocuments==0) {
+            final OBError on = new OBError();
+            on
+                    .setMessage(Utility
+                            .messageBD(
+                                    this,
+                                    "Some Documents were not completed, the email couldnt be send. Please " +
+                                    "confirm first all the seleted documents to complete the process",
+                                    vars.getLanguage()));
+            on.setTitle(Utility.messageBD(this,
+                    "info", vars.getLanguage()));
+            on.setType("info");
+            String tabId = vars.getSessionValue("inpTabId");
+            vars.getStringParameter("tab");
+            vars.setMessage(tabId, on);
+            vars.getRequestGlobalVariable("inpTabId",
+                    "AttributeSetInstance.tabId");
+            printPageClosePopUpAndRefreshParent(response, vars);
         }
 
         final int numberOfCustomers = customerMap.size();
@@ -876,8 +889,8 @@ public class PrintController extends HttpSecureAppServlet {
                 salesRepMap.put(salesRep, documentData);
             }
         }
-        final boolean moreThanOneCustomer = (customerMap.size() > 1);
-        final boolean moreThanOnesalesRep = (salesRepMap.size() > 1);
+        moreThanOneCustomer = (customerMap.size() > 1);
+        moreThanOnesalesRep = (salesRepMap.size() > 1);
 
         // check the number of customer and the number of
         // sales Rep. to choose one of the 3 possibilities
