@@ -111,7 +111,7 @@ public class DataExportService implements OBSingleton {
      */
     public String exportDataSetToXML(DataSet dataSet, String moduleId) {
         return exportDataSetToXML(dataSet, moduleId, false,
-                new HashMap<String, Object>());
+                new HashMap<String, Object>(), true);
     }
 
     /**
@@ -142,7 +142,7 @@ public class DataExportService implements OBSingleton {
             dataSet = obc.list().get(0);
 
             // the export part may not be run as superuser
-            return exportDataSetToXML(dataSet, null, true, parameters);
+            return exportDataSetToXML(dataSet, null, true, parameters, false);
         } finally {
             OBContext.getOBContext().restorePreviousAdminMode();
         }
@@ -151,11 +151,12 @@ public class DataExportService implements OBSingleton {
     // note returns null if nothing has been generated
     private String exportDataSetToXML(DataSet dataSet, String moduleId,
             boolean exportClientOrganizationReferences,
-            Map<String, Object> parameters) {
+            Map<String, Object> parameters, boolean exportTransientInfo) {
         log.debug("Exporting dataset " + dataSet.getName());
 
         final EntityXMLConverter exc = EntityXMLConverter.newInstance();
         exc.setOptionIncludeReferenced(true);
+        exc.setOptionExportTransientInfo(exportTransientInfo);
         exc
                 .setOptionExportClientOrganizationReferences(exportClientOrganizationReferences);
         final List<DataSetTable> dts = dataSet.getDataSetTableList();

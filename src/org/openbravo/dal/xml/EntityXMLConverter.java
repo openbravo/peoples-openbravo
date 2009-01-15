@@ -71,6 +71,9 @@ public class EntityXMLConverter implements OBNotSingleton {
     // property or placed in the root.
     private boolean optionEmbedChildren = true;
 
+    // should transient info also be exported
+    private boolean optionExportTransientInfo = true;
+
     // controls if the client and organization property are exported to
     private boolean optionExportClientOrganizationReferences = false;
 
@@ -250,6 +253,19 @@ public class EntityXMLConverter implements OBNotSingleton {
                 continue;
             }
 
+            // note only not-mandatory transient fields are allowed to be
+            // not exported, a mandatory field should always be exported
+            // auditinfo is mandatory but can be ignored for export
+            // as it is always set
+            if (p.isAuditInfo() && !isOptionExportTransientInfo()) {
+                continue;
+            }
+            final boolean isTransientField = p.isTransient(obObject);
+            if (!p.isMandatory() && isTransientField
+                    && !isOptionExportTransientInfo()) {
+                continue;
+            }
+
             // set the tag
             final Element currentPropertyElement = currentElement.addElement(p
                     .getName());
@@ -259,6 +275,7 @@ public class EntityXMLConverter implements OBNotSingleton {
                 currentPropertyElement.addAttribute(
                         XMLConstants.TRANSIENT_ATTRIBUTE, "true");
             }
+
             if (p.isAuditInfo()) {
                 currentPropertyElement.addAttribute(
                         XMLConstants.TRANSIENT_ATTRIBUTE, "true");
@@ -531,5 +548,13 @@ public class EntityXMLConverter implements OBNotSingleton {
     public void setOptionExportClientOrganizationReferences(
             boolean optionExportClientOrganizationReferences) {
         this.optionExportClientOrganizationReferences = optionExportClientOrganizationReferences;
+    }
+
+    public boolean isOptionExportTransientInfo() {
+        return optionExportTransientInfo;
+    }
+
+    public void setOptionExportTransientInfo(boolean optionExportTransientInfo) {
+        this.optionExportTransientInfo = optionExportTransientInfo;
     }
 }
