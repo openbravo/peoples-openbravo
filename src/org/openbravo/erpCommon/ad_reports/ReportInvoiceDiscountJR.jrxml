@@ -166,7 +166,7 @@
     AND 2=2
     ORDER BY NAME]]></queryString>
 
-	<field name="ID" class="java.math.BigDecimal"/>
+	<field name="ID" class="java.lang.String"/>
 	<field name="NAME" class="java.lang.String"/>
 	<field name="PRODUCTNAME" class="java.lang.String"/>
 	<field name="QTY" class="java.math.BigDecimal"/>
