@@ -20,7 +20,7 @@
 package org.openbravo.service.db;
 
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -159,7 +159,7 @@ public class DataExportService implements OBSingleton {
         exc
                 .setOptionExportClientOrganizationReferences(exportClientOrganizationReferences);
         final List<DataSetTable> dts = dataSet.getDataSetTableList();
-        final Set<BaseOBObject> toExport = new HashSet<BaseOBObject>();
+        final Set<BaseOBObject> toExport = new LinkedHashSet<BaseOBObject>();
         for (final DataSetTable dt : dts) {
             final Boolean isbo = dt.isBusinessObject();
             exc.setOptionIncludeChildren(isbo != null && isbo.booleanValue());
