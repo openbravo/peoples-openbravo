@@ -726,23 +726,49 @@ public class PrintController extends HttpSecureAppServlet {
             // Map used to count the different users
 
             final String customer = documentData.contactName;
-            if (customer == null || customer.length() == 0)
-                throw new ServletException(Utility.messageBD(this,
-                        "There is at least one document with no contact", vars
-                                .getLanguage()));
+            if (customer == null || customer.length() == 0) {
+              final OBError on = new OBError();
+              on
+                      .setMessage(Utility
+                              .messageBD(
+                                      this,
+                                      "There is at least one document with no contact",
+                                      vars.getLanguage()));
+              on.setTitle(Utility.messageBD(this,
+                      "Info", vars.getLanguage()));
+              on.setType("info");
+              String tabId = vars.getSessionValue("inpTabId");
+              vars.getStringParameter("tab");
+              vars.setMessage(tabId, on);
+              vars.getRequestGlobalVariable("inpTabId",
+                      "AttributeSetInstance.tabId");
+              printPageClosePopUpAndRefreshParent(response, vars);
+            }
+                
             if (!customerMap.containsKey(customer)) {
                 customerMap.put(customer, documentData);
             }
 
             final String salesRep = documentData.salesrepName;
             if (moreThanOnesalesRep) {
-                if (salesRep == null || salesRep.length() == 0)
-                    throw new ServletException(
-                            Utility
-                                    .messageBD(
-                                            this,
-                                            "There is at least one document with no sales representive",
-                                            vars.getLanguage()));
+                if (salesRep == null || salesRep.length() == 0) {
+                  final OBError on = new OBError();
+                  on
+                          .setMessage(Utility
+                                  .messageBD(
+                                          this,
+                                          "There is at least one document with no sales rep.",
+                                          vars.getLanguage()));
+                  on.setTitle(Utility.messageBD(this,
+                          "Info", vars.getLanguage()));
+                  on.setType("info");
+                  String tabId = vars.getSessionValue("inpTabId");
+                  vars.getStringParameter("tab");
+                  vars.setMessage(tabId, on);
+                  vars.getRequestGlobalVariable("inpTabId",
+                          "AttributeSetInstance.tabId");
+                  printPageClosePopUpAndRefreshParent(response, vars);
+                }
             }
 
             if (!salesRepMap.containsKey(salesRep)) {
