@@ -813,7 +813,7 @@ function openPopUpDefaultSize(url, _name, height, width, closeControl, showstatu
 */
 function openPDFSession(strPage, strDirectPrinting, strHiddenKey, strHiddenValue, bolCheckChanges) {
   var direct = (strDirectPrinting!="")?"Y":"N";
-  return submitCommandForm("DEFAULT", false, null, "../businessUtility/PrinterReports.html?tab=&inpTabId" +?inppdfpath=" + escape(strPage) + "&inpdirectprint=" + escape(direct) + "&inphiddenkey=" + escape(strHiddenKey) + ((strHiddenValue!=null)?"&inphiddenvalue=" + escape(strHiddenValue):""), "hiddenFrame", null, bolCheckChanges);
+  return submitCommandForm("DEFAULT", false, null, "../businessUtility/PrinterReports.html?inppdfpath=" + escape(strPage) + "&inpdirectprint=" + escape(direct) + "&inphiddenkey=" + escape(strHiddenKey) + ((strHiddenValue!=null)?"&inphiddenvalue=" + escape(strHiddenValue):""), "hiddenFrame", null, bolCheckChanges);
 }
 
 /**
