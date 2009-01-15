@@ -73,12 +73,12 @@ public class ModuleManagement extends HttpSecureAppServlet {
         } else if (vars.commandIn("APPLY")) {
             printPageApply(response, vars);
         } else if (vars.commandIn("ADD")) {
-            final String searchText = vars.getRequestGlobalVariable(
-                    "inpSearchText", "ModuleManagemetAdd.text");
+            final String searchText = vars.getGlobalVariable("inpSearchText",
+                    "ModuleManagemetAdd|text", "");
             printPageAdd(request, response, vars, searchText, true);
         } else if (vars.commandIn("ADD_SEARCH")) {
             final String searchText = vars.getRequestGlobalVariable(
-                    "inpSearchText", "ModuleManagemetAdd.text");
+                    "inpSearchText", "ModuleManagemetAdd|text");
             printPageAdd(request, response, vars, searchText, true);
         } else if (vars.commandIn("HISTORY")) {
             final String strDateFrom = vars.getGlobalVariable("inpDateFrom",
@@ -463,8 +463,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
                 final WebServiceImpl ws = loc.getWebService();
                 module = ws.moduleDetail(recordId);
             } catch (final Exception e) {
-              log4j.error(e);
-              throw new ServletException(e);
+                log4j.error(e);
+                throw new ServletException(e);
             }
         } else {
             final ImportModule im = (ImportModule) vars
