@@ -390,7 +390,7 @@
 					<textElement textAlignment="Center">
 						<font fontName="Bitstream Vera Sans" pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
-				<text><![CDATA[Unit]]></text>
+				<text><![CDATA[UOM]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
