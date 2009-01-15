@@ -162,7 +162,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
                 classInfo = classInfoAux[0];
             }
         } catch (final Exception ex) {
-            ex.printStackTrace();
+            log4j.error(ex);
             final ClassInfoData[] classInfoAux = ClassInfoData.set();
             classInfo = classInfoAux[0];
         }
@@ -393,7 +393,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             }
         } catch (final ServletException ex) {
             log4j.error("Error captured: " + ex);
-            ex.printStackTrace();
             final OBError myError = Utility.translateError(this, null,
                     variables.getLanguage(), ex.getMessage());
             if (strAjax != null && !strAjax.equals(""))
@@ -411,7 +410,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
                 bdErrorGeneral(response, myError.getTitle(), myError
                         .getMessage());
         } catch (final OBException e) {
-            e.printStackTrace(System.err);
             final Boolean isAutosaving = (Boolean) request
                     .getAttribute("autosave");
             if (isAutosaving) {
@@ -420,7 +418,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
                 throw e;
             } else {
                 log4j.error("Error captured: " + e);
-                e.printStackTrace();
                 if (strPopUp != null && !strPopUp.equals(""))
                     bdErrorGeneralPopUp(response, "Error", e.toString());
                 else
@@ -428,7 +425,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             }
         } catch (final Exception e) {
             log4j.error("Error captured: " + e);
-            e.printStackTrace(System.err);
             if (strPopUp != null && !strPopUp.equals(""))
                 bdErrorGeneralPopUp(response, "Error", e.toString());
             else
@@ -914,7 +910,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             vars.setSessionValue("#sourcePath", sourcePath);
         } catch (final IOException e) {
             // catch possible io errors from readLine()
-            e.printStackTrace();
+            log4j.error(e);
         }
     }
 
@@ -1125,7 +1121,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         } catch (final JRException e) {
             if (log4j.isDebugEnabled())
                 log4j.debug("JR: Error: " + e);
-            e.printStackTrace();
             throw new ServletException(e.getMessage());
         } catch (final Exception e) {
             throw new ServletException(e.getMessage());
