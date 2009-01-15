@@ -856,6 +856,21 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         out.println(xmlDocument.print());
         out.close();
     }
+    
+    public void printPageClosePopUpAndRefreshParent(HttpServletResponse response,
+            VariablesSecureApp vars) throws IOException, ServletException {
+        if (log4j.isDebugEnabled())
+            log4j.debug("Output: PopUp Response");
+        final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+                "org/openbravo/base/secureApp/PopUp_Close_And_Refresh")
+                .createXmlDocument();
+        xmlDocument.setParameter("language", "defaultLang=\""
+                + vars.getLanguage() + "\";");
+        response.setContentType("text/html; charset=UTF-8");
+        final PrintWriter out = response.getWriter();
+        out.println(xmlDocument.print());
+        out.close();
+    }
 
     public void pageErrorCallOut(HttpServletResponse response)
             throws IOException {

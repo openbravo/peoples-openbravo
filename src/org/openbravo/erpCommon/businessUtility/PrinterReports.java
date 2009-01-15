@@ -48,15 +48,16 @@ public class PrinterReports extends HttpSecureAppServlet {
             String strPDFPath = vars.getStringParameter("inppdfpath");
             String strHiddenKey = vars.getStringParameter("inphiddenkey");
             String strHiddenValue = vars.getStringParameter("inphiddenvalue");
+            String inptabId = vars.getStringParameter("inpTabId");
             printPage(response, vars, strDirectPrint, strPDFPath, strHiddenKey,
-                    strHiddenValue);
+                    strHiddenValue, inptabId);
         } else
             pageError(response);
     }
 
     void printPage(HttpServletResponse response, VariablesSecureApp vars,
             String strDirectPrint, String strPDFPath, String strHiddenKey,
-            String strHiddenValue) throws IOException, ServletException {
+            String strHiddenValue, String inptabId) throws IOException, ServletException {
         if (log4j.isDebugEnabled())
             log4j.debug("Output: dataSheet");
         String[] discard = { "isPrintPreview" };
@@ -86,7 +87,7 @@ public class PrinterReports extends HttpSecureAppServlet {
         // String mapping =
         // FormatUtilities.replace(PrinterReportsData.select(this, strPDFPath));
         strPDFPath = FormatUtilities.replace(strPDFPath);
-
+        vars.setSessionValue("inpTabID", inptabId);
         vars.setSessionValue(strPDFPath + "." + strHiddenKey, "('"
                 + strHiddenValue + "')");
         if (!strHiddenValue.equals(""))
