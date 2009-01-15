@@ -105,7 +105,7 @@ public class Sqlc extends DefaultHandler {
             return;
         }
 
-        Sqlc sqlc = new Sqlc();
+        final Sqlc sqlc = new Sqlc();
         XMLReader parser;
         parser = new SAXParser();
         if (argv.length <= 4)
@@ -113,7 +113,7 @@ public class Sqlc extends DefaultHandler {
         else
             sqlc.writeTxtFiles = argv[4].equalsIgnoreCase("true");
         parser.setContentHandler(sqlc);
-        String strFileConnection = argv[0];
+        final String strFileConnection = argv[0];
         sqlc.readProperties(strFileConnection);
 
         // the first parameter is the directory where the search is done
@@ -151,12 +151,12 @@ public class Sqlc extends DefaultHandler {
 
         sqlc.connect(strFileConnection);
 
-        File path = new File(dirIni);
+        final File path = new File(dirIni);
         if (!path.exists()) {
             log4j.error("Directory does not exist: " + dirIni);
             return;
         }
-        File fileFin = new File(dirFin);
+        final File fileFin = new File(dirFin);
         if (!fileFin.exists()) {
             log4j.error("Directory does not exist: " + dirFin);
             return;
@@ -174,8 +174,8 @@ public class Sqlc extends DefaultHandler {
      * @return
      */
     private static ArrayList<String> getDirectories(String s) {
-        ArrayList<String> l = new ArrayList<String>();
-        StringTokenizer tok = new StringTokenizer(s, "/");
+        final ArrayList<String> l = new ArrayList<String>();
+        final StringTokenizer tok = new StringTokenizer(s, "/");
         while (tok.hasMoreTokens())
             l.add(tok.nextToken());
         return l;
@@ -193,7 +193,7 @@ public class Sqlc extends DefaultHandler {
         else
             list = file.listFiles();
         for (int i = 0; i < list.length; i++) {
-            File fileItem = list[i];
+            final File fileItem = list[i];
             if (fileItem.isDirectory()) {
                 if (log4j.isDebugEnabled())
                     log4j
@@ -238,7 +238,7 @@ public class Sqlc extends DefaultHandler {
                     if (parse)
                         parseSqlFile(list[i], sqlc, parser, strFilter, fileFin,
                                 parent);
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     log4j.error("IOException: " + e);
                 }
             }
@@ -251,19 +251,20 @@ public class Sqlc extends DefaultHandler {
 
     private static void parseSqlFile(File fileParsing, Sqlc sqlc,
             XMLReader parser, String strFilter, File fileFin, String parent) {
-        String strFileName = fileParsing.getName();
+        parent = parent.replace("\\", "/");
+        final String strFileName = fileParsing.getName();
         if (log4j.isDebugEnabled())
             log4j.debug("Parsing of " + strFileName);
         sqlc.init();
         if (log4j.isDebugEnabled())
             log4j.debug("new Sql");
-        int pos = strFileName.indexOf(strFilter);
+        final int pos = strFileName.indexOf(strFilter);
         if (pos == -1) {
             log4j.error("File " + strFileName + " don't have termination "
                     + strFilter);
             return;
         }
-        String strFileWithoutTermination = strFileName.substring(0, pos);
+        final String strFileWithoutTermination = strFileName.substring(0, pos);
         if (log4j.isDebugEnabled())
             log4j.debug("File without termination: "
                     + strFileWithoutTermination);
@@ -273,19 +274,19 @@ public class Sqlc extends DefaultHandler {
         }
         try {
 
-            String parentDir = fileParsing.getParent();
+            String parentDir = fileParsing.getParent().replace("\\", "/");
             // In case includeDirectories has value remove parent from path to
             // keep clean the package
             if (includeDirectories != null && parentDir.startsWith(parent))
                 parentDir = parentDir.substring(parent.length());
 
-            File dirJava = new File(fileFin, parentDir);
+            final File dirJava = new File(fileFin, parentDir);
             if (log4j.isDebugEnabled())
                 log4j.debug("parentDir:" + parentDir + " - javadir:" + dirJava
                         + " - parent:" + parent);
             dirJava.mkdirs();
             javaFileName = TransformaNombreFichero(strFileWithoutTermination);
-            File fileJava = new File(dirJava, javaFileName + ".java");
+            final File fileJava = new File(dirJava, javaFileName + ".java");
             File fileTxt = null;
             if (sqlc.writeTxtFiles)
                 fileTxt = new File(fileParsing.getParent(),
@@ -296,7 +297,7 @@ public class Sqlc extends DefaultHandler {
                     log4j.debug(" time file parsed: "
                             + fileParsing.lastModified() + " time file java: "
                             + fileParsing.lastModified());
-                FileOutputStream resultsFile = new FileOutputStream(fileJava);
+                final FileOutputStream resultsFile = new FileOutputStream(fileJava);
                 sqlc.out = new OutputStreamWriter(resultsFile, "UTF-8");
                 sqlc.out1 = new StringBuffer();
                 sqlc.out2 = new StringBuffer();
@@ -310,7 +311,7 @@ public class Sqlc extends DefaultHandler {
                     sqlc.printWriterTxt = new PrintWriter(resultsFileTxt);
                 }
                 log4j.info("File: " + fileParsing + " \tprocessed");
-                java.util.Date date = new java.util.Date(); // there is date in
+                final java.util.Date date = new java.util.Date(); // there is date in
                 // java.sql.*
                 if (log4j.isDebugEnabled())
                     log4j.debug("Time: " + date.getTime());
@@ -318,11 +319,11 @@ public class Sqlc extends DefaultHandler {
                 sqlc.error = false;
                 try {
                     parser.parse(new InputSource(new FileReader(fileParsing)));
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     e.printStackTrace();
-                } catch (SAXException e) {
+                } catch (final SAXException e) {
                     e.printStackTrace();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     e.printStackTrace();
                 }
                 if (!sqlc.first) {
@@ -354,7 +355,7 @@ public class Sqlc extends DefaultHandler {
                 if (log4j.isDebugEnabled())
                     log4j.debug("File: " + fileParsing + " \tskipped");
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
             log4j.error("Problem at close of the file");
         }
@@ -386,7 +387,7 @@ public class Sqlc extends DefaultHandler {
             sql.sqlStatic = "true";
             sql.sqlConnection = "false";
             String sqlPackage = null;
-            int size = amap.getLength();
+            final int size = amap.getLength();
             for (int i = 0; i < size; i++) {
                 if (amap.getQName(i).equals("name")) {
                     sql.sqlName = amap.getValue(i);
@@ -433,7 +434,7 @@ public class Sqlc extends DefaultHandler {
             else
                 sql.sqlClass = sql.sqlObject;
         } else if (name.equals("SqlClass")) {
-            int size = amap.getLength();
+            final int size = amap.getLength();
             for (int i = 0; i < size; i++) {
                 if (amap.getQName(i).equals("name")) {
                     sqlcName = amap.getValue(i);
@@ -448,7 +449,7 @@ public class Sqlc extends DefaultHandler {
             String strOptional = null;
             String strAfter = null;
             String strText = null;
-            int size = amap.getLength();
+            final int size = amap.getLength();
             for (int i = 0; i < size; i++) {
                 if (amap.getQName(i).equals("name")) {
                     strName = amap.getValue(i);
@@ -470,7 +471,7 @@ public class Sqlc extends DefaultHandler {
                     strInOut, strOptional, strAfter, strText);
         } else if (name.equals("Field")) {
             FieldAdded field = null;
-            int size = amap.getLength();
+            final int size = amap.getLength();
             for (int i = 0; i < size; i++) {
                 if (amap.getQName(i).equals("name")) {
                     field = new FieldAdded(amap.getValue(i));
@@ -480,7 +481,7 @@ public class Sqlc extends DefaultHandler {
                 }
             }
         } else if (name.equals("Sequence")) {
-            int size = amap.getLength();
+            final int size = amap.getLength();
             for (int i = 0; i < size; i++) {
                 if (amap.getQName(i).equals("name")) {
                     sql.strSequenceName = amap.getValue(i);
@@ -506,7 +507,7 @@ public class Sqlc extends DefaultHandler {
             if (sql.sqlType.equals("constant")) {
                 try {
                     printFunctionConstant();
-                } catch (IOException ex) {
+                } catch (final IOException ex) {
                     ex.printStackTrace();
                 }
             } else {
@@ -515,13 +516,13 @@ public class Sqlc extends DefaultHandler {
                     first = false;
                     try {
                         printInitClass();
-                    } catch (IOException ex) {
+                    } catch (final IOException ex) {
                         ex.printStackTrace();
                     }
                 }
                 try {
                     printFunctionSql();
-                } catch (IOException ex) {
+                } catch (final IOException ex) {
                     ex.printStackTrace();
                 }
             }
@@ -539,7 +540,7 @@ public class Sqlc extends DefaultHandler {
 
     public void readBuffer() {
         if (buffer != null) {
-            String strBuffer = buffer.toString();
+            final String strBuffer = buffer.toString();
             if (log4j.isDebugEnabled())
                 log4j.debug("Configuration(" + strElement
                         + "): characters are  called: " + strBuffer);
@@ -559,7 +560,7 @@ public class Sqlc extends DefaultHandler {
 
     public void connect(String file) throws ClassNotFoundException,
             SQLException {
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         try {
             properties.load(new FileInputStream(file));
             strDriver = properties.getProperty("bbdd.driver");
@@ -569,7 +570,7 @@ public class Sqlc extends DefaultHandler {
             if (properties.getProperty("bbdd.rdbms")
                     .equalsIgnoreCase("POSTGRE"))
                 strURL += "/" + properties.getProperty("bbdd.sid");
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
         }
 
@@ -587,7 +588,7 @@ public class Sqlc extends DefaultHandler {
     public void closeConnection() {
         try {
             connection.close();
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             log4j.error("SQL error in closeConnection: " + e);
         }
     }
@@ -607,7 +608,7 @@ public class Sqlc extends DefaultHandler {
              * log4j.debug("number of columns in PS: " + numColsPS);
              */
             int i = 1;
-            for (Parameter parameter : sql.vecParameter) {
+            for (final Parameter parameter : sql.vecParameter) {
                 if (!parameter.boolOptional) {
                     if (parameter.type == java.sql.Types.INTEGER) {
                         if (parameter.strDefault == null) {
@@ -653,11 +654,11 @@ public class Sqlc extends DefaultHandler {
                     log4j.debug("number of columns: " + numCols);
             } // else
             // rsmd = preparedStatement.getMetaData ();
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             error = true;
             log4j.error("SQL error in query: " + sql.strSQL + "Exception:" + e);
             e.printStackTrace();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             error = true;
             log4j.error("Error in query. Exception:" + e);
             e.printStackTrace();
@@ -687,7 +688,7 @@ public class Sqlc extends DefaultHandler {
         }
         out2.append("\n");
 
-        String[] strCommentsVector = stringToVector(strComments, false);
+        final String[] strCommentsVector = stringToVector(strComments, false);
         for (int i = 0; i < strCommentsVector.length; i++) {
             if (i == 0) {
                 out2.append("/**\n" + strCommentsVector[i] + "\n");
@@ -718,14 +719,14 @@ public class Sqlc extends DefaultHandler {
                 out2.append(TransformaNombreColumna(rsmd.getColumnLabel(i)));
                 out2.append(";\n");
             }
-            for (Enumeration<Object> e = sql.vecFieldAdded.elements(); e
+            for (final Enumeration<Object> e = sql.vecFieldAdded.elements(); e
                     .hasMoreElements();) {
-                FieldAdded fieldAdded = (FieldAdded) e.nextElement();
+                final FieldAdded fieldAdded = (FieldAdded) e.nextElement();
                 out2.append("  public String ");
                 out2.append(fieldAdded.strName);
                 out2.append(";\n");
             }
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             log4j.error("SQL Exception error:" + e);
         }
         out2.append("\n");
@@ -740,8 +741,8 @@ public class Sqlc extends DefaultHandler {
             if (log4j.isDebugEnabled())
                 log4j.debug("Number of columns in getField: " + numCols);
             for (int i = 1; i <= numCols; i++) {
-                String columnLabel = rsmd.getColumnLabel(i);
-                String transformedColumnLabel = TransformaNombreColumna(columnLabel);
+                final String columnLabel = rsmd.getColumnLabel(i);
+                final String transformedColumnLabel = TransformaNombreColumna(columnLabel);
                 if (i == 1) {
                     out2.append("    if ");
                 } else {
@@ -755,15 +756,15 @@ public class Sqlc extends DefaultHandler {
                 out2.append("\"))\n");
                 out2.append("      return " + transformedColumnLabel + ";\n");
             }
-            for (Enumeration<Object> e = sql.vecFieldAdded.elements(); e
+            for (final Enumeration<Object> e = sql.vecFieldAdded.elements(); e
                     .hasMoreElements();) {
-                FieldAdded fieldAdded = (FieldAdded) e.nextElement();
+                final FieldAdded fieldAdded = (FieldAdded) e.nextElement();
                 out2.append("    else if ");
                 out2.append("(fieldName.equals(\"");
                 out2.append(fieldAdded.strName + "\"))\n");
                 out2.append("      return " + fieldAdded.strName + ";\n");
             }
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             log4j.error("SQL Exception error:" + e);
         }
         out2.append("   else {\n");
@@ -817,7 +818,7 @@ public class Sqlc extends DefaultHandler {
             printWriterTxt.println("    data.a1Rol = vars.getRole();");
             printWriterTxt.println("    return data;");
             printWriterTxt.println("  }");
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             log4j.error("SQL Exception error:" + e);
         }
     }
@@ -831,11 +832,11 @@ public class Sqlc extends DefaultHandler {
                         + "();\n");
         try {
             for (int i = 1; i <= numCols; i++) {
-                String strNameLabel = rsmd.getColumnLabel(i);
+                final String strNameLabel = rsmd.getColumnLabel(i);
                 out2.append("    object" + sqlcName + "[0]."
                         + TransformaNombreColumna(strNameLabel) + " = ");
                 boolean printedParameter = false;
-                for (Parameter parameter : sql.vecParameter) {
+                for (final Parameter parameter : sql.vecParameter) {
                     if (parameter.strName
                             .equals(TransformaNombreColumna(strNameLabel))
                             && !printedParameter) {
@@ -848,7 +849,7 @@ public class Sqlc extends DefaultHandler {
                     out2.append("\"\";\n");
                 }
             }
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             log4j.error("SQL Exception error:" + e);
         }
         out2.append("    return object" + sqlcName + ";\n");
@@ -859,7 +860,7 @@ public class Sqlc extends DefaultHandler {
         // codigo para imprimir trozos de Sql opcionales
         int posSQL = 0;
         out2.append("    String strSql = \"\";\n");
-        for (Parameter parameter : sql.vecParameter) {
+        for (final Parameter parameter : sql.vecParameter) {
             if (parameter.boolOptional) {
                 if (parameter.strAfter == null) {
                     parameter.strAfter = "WHERE";
@@ -975,7 +976,7 @@ public class Sqlc extends DefaultHandler {
     }
 
     public void printSQLParameters() throws IOException {
-        StringBuffer aux = new StringBuffer();
+        final StringBuffer aux = new StringBuffer();
         boolean declareiParameter = false;
 
         aux.append("    try {\n");
@@ -996,7 +997,7 @@ public class Sqlc extends DefaultHandler {
             aux.append("strSql);\n");
         }
         // set value of parameters
-        for (Parameter parameter : sql.vecParameter) {
+        for (final Parameter parameter : sql.vecParameter) {
             if (parameter.boolSequence) {
                 declareiParameter = true;
                 aux
@@ -1205,9 +1206,9 @@ public class Sqlc extends DefaultHandler {
                                     + rsmd.getColumnLabel(i) + "\");\n");
                         }
                     }
-                    for (Enumeration<Object> e = sql.vecFieldAdded.elements(); e
+                    for (final Enumeration<Object> e = sql.vecFieldAdded.elements(); e
                             .hasMoreElements();) {
-                        FieldAdded fieldAdded = (FieldAdded) e.nextElement();
+                        final FieldAdded fieldAdded = (FieldAdded) e.nextElement();
                         if (fieldAdded.strValue.equals("count"))
                             out2.append("        object" + sqlcName + "."
                                     + fieldAdded.strName
@@ -1222,7 +1223,7 @@ public class Sqlc extends DefaultHandler {
                                         + sqlcName
                                         + ".InitRecordNumber = Integer.toString(firstRegister);\n");
                 }
-            } catch (SQLException e) {
+            } catch (final SQLException e) {
                 log4j.error("SQL Exception error:" + e);
                 e.printStackTrace();
             }
@@ -1246,7 +1247,7 @@ public class Sqlc extends DefaultHandler {
         } else if (sql.executeType.equals("execute")) {
             out2.append("      st." + sql.executeType + "();\n");
             if (sql.sqlReturn.equalsIgnoreCase("OBJECT")) {
-                for (Parameter parameter : sql.vecParameter) {
+                for (final Parameter parameter : sql.vecParameter) {
                     if (!parameter.boolSequence && parameter.strName != null) {
                         if (parameter.strInOut.equals("out")
                                 || parameter.strInOut.equals("inOut")) {
@@ -1306,8 +1307,8 @@ public class Sqlc extends DefaultHandler {
                     .append("      Vector<String> parametersTypes = new Vector<String>();\n");
             int outParams = 0;
             String outParamName = "";
-            StringBuffer paramsReceipt = new StringBuffer();
-            for (Parameter parameter : sql.vecParameter) {
+            final StringBuffer paramsReceipt = new StringBuffer();
+            for (final Parameter parameter : sql.vecParameter) {
                 if (!parameter.strInOut.equals("none")
                         && !parameter.strInOut.equals("argument")
                         && !parameter.strInOut.equals("replace")) {
@@ -1397,7 +1398,7 @@ public class Sqlc extends DefaultHandler {
     public void printHeadFunctionSql(boolean printProviderConnection,
             boolean boolPagin, boolean boolSequence) throws IOException {
         out2.append("\n");
-        String[] strSqlCommentsVector = stringToVector(sql.strSqlComments,
+        final String[] strSqlCommentsVector = stringToVector(sql.strSqlComments,
                 false);
         for (int i = 0; i < strSqlCommentsVector.length; i++) {
             if (i == 0) {
@@ -1446,7 +1447,7 @@ public class Sqlc extends DefaultHandler {
         }
         if (log4j.isDebugEnabled())
             log4j.debug("Parameters numbering");
-        for (Parameter parameter : sql.vecParameter) {
+        for (final Parameter parameter : sql.vecParameter) {
             if (sql.sqlStatic.equals("true")) {
                 if (parameter.strName != null && !parameter.boolRepeated
                         && !parameter.boolSequence
@@ -1499,7 +1500,7 @@ public class Sqlc extends DefaultHandler {
         }
         if (log4j.isDebugEnabled())
             log4j.debug("Parameters numbering");
-        for (Parameter parameter : sql.vecParameter) {
+        for (final Parameter parameter : sql.vecParameter) {
             if (sql.sqlStatic.equals("true")) {
                 if (parameter.strName != null && !parameter.boolRepeated
                         && !parameter.boolSequence
@@ -1535,7 +1536,7 @@ public class Sqlc extends DefaultHandler {
 
     public void imprimirSubstring(String strSQL, int posIni, int posFin,
             OutputStreamWriter out) throws IOException {
-        String[] strSqlVector = stringToVector(
+        final String[] strSqlVector = stringToVector(
                 strSQL.substring(posIni, posFin), true);
         for (int i = 0; i < strSqlVector.length; i++) {
             if (i == 0) {
@@ -1554,21 +1555,21 @@ public class Sqlc extends DefaultHandler {
      * text separated by this character
      **/
     public String[] stringToVector(String strSQL, boolean suppressBlankLines) {
-        byte tab[] = { 10 };
-        String strTab = new String(tab);
-        Vector<String> vector = new Vector<String>();
+        final byte tab[] = { 10 };
+        final String strTab = new String(tab);
+        final Vector<String> vector = new Vector<String>();
         if (strSQL == null) {
             return new String[0];
         }
-        StringTokenizer tok = new StringTokenizer(strSQL, strTab);
+        final StringTokenizer tok = new StringTokenizer(strSQL, strTab);
         while (tok.hasMoreTokens()) {
-            String sql = tok.nextToken();
+            final String sql = tok.nextToken();
             if (suppressBlankLines && sql.trim().equals("")) {
                 continue;
             }
             vector.addElement(sql);
         }
-        String[] strSqlVector = new String[vector.size()];
+        final String[] strSqlVector = new String[vector.size()];
         vector.copyInto(strSqlVector);
         return strSqlVector;
     }
@@ -1582,11 +1583,11 @@ public class Sqlc extends DefaultHandler {
     }
 
     static public String TransformaNombreColumna(String strName, boolean isFile) {
-        int numChars = strName.length();
-        StringBuilder result = new StringBuilder(numChars);
+        final int numChars = strName.length();
+        final StringBuilder result = new StringBuilder(numChars);
         boolean underscore = false;
         for (int i = 0; i < numChars; i++) {
-            char curr = strName.charAt(i);
+            final char curr = strName.charAt(i);
             if (i == 0) {
                 if (isFile) {
                     result.append(Character.toUpperCase(curr));
@@ -1615,13 +1616,13 @@ public class Sqlc extends DefaultHandler {
 
     public void readProperties(String strFileProperties) {
         // Read properties file.
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
         try {
             log4j.info("strFileProperties: " + strFileProperties);
             properties.load(new FileInputStream(strFileProperties));
             javaDateFormat = properties.getProperty("dateFormat.java");
             log4j.info("javaDateFormat: " + javaDateFormat);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             // catch possible io errors from readLine()
             e.printStackTrace();
         }
