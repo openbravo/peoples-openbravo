@@ -23,8 +23,8 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.access.SessionStatus;
 import org.openbravo.model.ad.system.Client;
-import org.openbravo.model.ad.system.SessionStatus;
 import org.openbravo.model.common.enterprise.Organization;
 
 /**
