@@ -1,4 +1,4 @@
-#Wed Jan 14 12:14:56 CET 2009
+#Thu Jan 15 09:37:53 CET 2009
 /instance/org.eclipse.jdt.ui/sp_cleanup.add_missing_annotations=true
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.comment.indent_parameter_description=true
 @org.eclipse.ui.editors=3.3.0.v20070606-0010
@@ -23,7 +23,7 @@
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_before_question_in_conditional=insert
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.keep_else_statement_on_same_line=false
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_after_opening_paren_in_parenthesized_expression=do not insert
-/configuration/org.eclipse.ui.ide/SHOW_WORKSPACE_SELECTION_DIALOG=false
+/configuration/org.eclipse.ui.ide/SHOW_WORKSPACE_SELECTION_DIALOG=true
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_before_comma_in_for_increments=do not insert
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_before_closing_angle_bracket_in_parameterized_type_reference=do not insert
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_before_comma_in_multiple_field_declarations=do not insert
@@ -80,7 +80,7 @@
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_after_ellipsis=insert
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.tabulation.char=space
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.brace_position_for_array_initializer=end_of_line
-/instance/org.eclipse.wst.validation/USER_MANUAL_PREFERENCE=enabledManualValidatorListorg.eclipse.wst.common.componentcore.internal.ModuleCoreValidator;org.eclipse.wst.html.internal.validation.HTMLValidator;org.eclipse.jst.j2ee.internal.classpathdep.ClasspathDependencyValidator;org.eclipse.wst.dtd.core.internal.validation.eclipse.Validator;org.eclipse.wst.wsdl.validation.internal.eclipse.WSDLDelegatingValidator;org.eclipse.jst.j2ee.internal.jca.validation.UIConnectorValidator;org.eclipse.jst.j2ee.internal.validation.UIApplicationClientValidator;org.eclipse.wst.xml.core.internal.validation.eclipse.Validator;org.eclipse.wst.xsd.core.internal.validation.eclipse.XSDDelegatingValidator;org.eclipse.jst.j2ee.internal.ejb.workbench.validation.UIEjbValidator;org.eclipse.jst.jsf.validation.internal.appconfig.AppConfigValidator;org.eclipse.wst.wsi.ui.internal.WSIMessageValidator;org.eclipse.jst.j2ee.internal.web.validation.UIWarValidator;org.eclipse.jst.jsp.core.internal.validation.JSPContentValidator;org.eclipse.jst.jsf.validation.internal.JSPSemanticsValidator;org.eclipse.jst.j2ee.internal.validation.UIEarValidator;org.eclipse.jst.jsp.core.internal.validation.JSPBatchValidator;
+/instance/org.eclipse.wst.validation/USER_MANUAL_PREFERENCE=enabledManualValidatorListorg.eclipse.jst.j2ee.internal.jca.validation.UIConnectorValidator;org.eclipse.jst.j2ee.internal.validation.UIApplicationClientValidator;org.eclipse.jst.j2ee.internal.web.validation.UIWarValidator;org.eclipse.wst.xml.core.internal.validation.eclipse.Validator;org.eclipse.wst.wsi.ui.internal.WSIMessageValidator;org.eclipse.jst.jsp.core.internal.validation.JSPBatchValidator;org.eclipse.jst.jsf.validation.internal.appconfig.AppConfigValidator;org.eclipse.wst.xsd.core.internal.validation.eclipse.XSDDelegatingValidator;org.eclipse.wst.common.componentcore.internal.ModuleCoreValidator;org.eclipse.wst.html.internal.validation.HTMLValidator;org.eclipse.wst.dtd.core.internal.validation.eclipse.Validator;org.eclipse.jst.j2ee.internal.classpathdep.ClasspathDependencyValidator;org.eclipse.wst.wsdl.validation.internal.eclipse.WSDLDelegatingValidator;org.eclipse.jst.jsf.validation.internal.JSPSemanticsValidator;org.eclipse.jst.jsp.core.internal.validation.JSPContentValidator;org.eclipse.jst.j2ee.internal.validation.UIEarValidator;org.eclipse.jst.j2ee.internal.ejb.workbench.validation.UIEjbValidator;
 /instance/org.eclipse.jdt.ui/sp_cleanup.remove_trailing_whitespaces_all=true
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.align_type_members_on_columns=false
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_before_postfix_operator=do not insert
@@ -130,7 +130,6 @@
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_after_semicolon_in_for=insert
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_after_opening_paren_in_enum_constant=do not insert
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.alignment_for_arguments_in_enum_constant=16
-/instance/org.eclipse.ui.workbench/OPEN_ON_SINGLE_CLICK=true
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_before_comma_in_constructor_declaration_parameters=do not insert
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.brace_position_for_type_declaration=end_of_line
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_before_closing_paren_in_for=do not insert
@@ -203,7 +202,7 @@
 /instance/org.eclipse.jdt.ui/spelling_locale_initialized=true
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_after_comma_in_type_parameters=insert
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.indent_body_declarations_compare_to_annotation_declaration_header=true
-/instance/org.eclipse.wst.validation/DELEGATES_PREFERENCE=delegateValidatorListorg.eclipse.wst.wsdl.validation.internal.eclipse.WSDLDelegatingValidator\=org.eclipse.wst.wsdl.validation.internal.eclipse.Validator;org.eclipse.wst.xsd.core.internal.validation.eclipse.XSDDelegatingValidator\=org.eclipse.wst.xsd.core.internal.validation.eclipse.Validator;
+/instance/org.eclipse.wst.validation/DELEGATES_PREFERENCE=delegateValidatorListorg.eclipse.wst.xsd.core.internal.validation.eclipse.XSDDelegatingValidator\=org.eclipse.wst.xsd.core.internal.validation.eclipse.Validator;org.eclipse.wst.wsdl.validation.internal.eclipse.WSDLDelegatingValidator\=org.eclipse.wst.wsdl.validation.internal.eclipse.Validator;
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_before_closing_angle_bracket_in_type_arguments=do not insert
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.compact_else_if=true
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_after_unary_operator=do not insert
@@ -361,7 +360,7 @@ file_export_version=3.0
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_new_line_in_empty_type_declaration=insert
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.alignment_for_arguments_in_qualified_allocation_expression=16
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.6
-/instance/org.eclipse.mylyn.tasks.ui/org.eclipse.mylyn.tasks.ui.backup.last=1231931664101
+/instance/org.eclipse.mylyn.tasks.ui/org.eclipse.mylyn.tasks.ui.backup.last=1226577186885
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.alignment_for_multiple_fields=16
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_after_comma_in_for_inits=insert
 /instance/org.eclipse.jdt.ui/sp_cleanup.use_this_for_non_static_field_access_only_if_necessary=true
