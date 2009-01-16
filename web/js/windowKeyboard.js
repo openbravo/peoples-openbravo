@@ -175,7 +175,7 @@ function mouseDownLogic(evt, obj) {
     return true;
   }
 
-  cursorFocus(obj);
+    cursorFocus(obj, 'onmousedown');
 
   if (obj.tagName == 'SELECT') {
     comboKeyBehaviour(obj,'onmousedown');
@@ -195,26 +195,30 @@ function mouseClickLogic(evt, obj) {
     while(obj.tagName != 'SELECT') obj = obj.parentNode;
   }
 
+  cursorFocus(obj, 'onclick');
+
   if (obj.tagName == 'SELECT') {
     comboKeyBehaviour(obj,'onclick');
   }
 }
 
-function cursorFocus(obj) {
+function cursorFocus(obj, event) {
   if (obj == null || obj == 'null' || obj == '') { return false; }
   if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1 && obj.getAttribute('type') == 'checkbox' && (obj.getAttribute('readonly') == 'true' || obj.readOnly)) {
     return false;
   }
-  if (obj == drawnWindowElement) return true;
-  if(!isClickOnGrid==true) blurGrid();
-  isClickOnGrid=false;
-  if (isInsideWindowTable(obj) && couldHaveFocus(obj)) {
+  if (event == 'onmousedown') {
+    if (obj == drawnWindowElement) return true;
+    if(!isClickOnGrid==true) blurGrid();
+    isClickOnGrid=false;
+  }
+  if (isInsideWindowTable(obj) && couldHaveFocus(obj) && event == 'onmousedown') {
     removeTabFocus(focusedTab);
     frameLocked = false;
     selectedArea = 'window';
     focusedWindowElement = obj;
     setWindowElementFocus(focusedWindowElement);
-  } else {
+  } else if (event == 'onclick') {
     if (selectedArea == 'window') setWindowElementFocus(focusedWindowElement);
     if (selectedArea == 'tabs') setTabFocus(focusedTab);
   }
