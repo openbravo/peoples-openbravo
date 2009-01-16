@@ -54,6 +54,7 @@ var isInputFile = false;
 
 var isPageLoading = true;
 var isUserChanges = false;
+var isUserClick = false;
 
 
 /**
@@ -256,7 +257,7 @@ function logClick(hiddenInput) {
   if(typeof autosave == "undefined" || !autosave) {
     return;
   }
-  isUserChanges = true;
+  isUserClick = true;
   if(hiddenInput != null) {
     logChanges(hiddenInput);
   }
@@ -264,21 +265,32 @@ function logClick(hiddenInput) {
 
 /**
 * Check for changes in a Form. This function requires the inpLastFieldChanged field. Is a complementary function to {@link #setChangedField}
-* @param {Form} form Reference to a form where the inpLastFieldChanged is located.
+* @param {Form} f Reference to a form where the inpLastFieldChanged is located.
 * @returns True if the inpLastFieldChanged has data and the user confirm the pop-up message. False if the field has no data or the user no confirm the pop-up message.
 * @type Boolean
 */
-function checkForChanges(form) {
-	if (form==null) form = top.appFrame.document.forms[0];
-	// backward compatibility
+function checkForChanges(f) {
+	var form = f;
+	
+	if (form == null) {
+		if(top.opener != null) { // is a pop-up window
+			form = top.opener.top.appFrame.document.forms[0];
+		}
+		else {
+			form = top.appFrame.document.forms[0];
+		}
+	}	
+	
 	var autosave = null;
-	if(top.opener != null) {
+	
+	if(top.opener != null) { // is a pop-up window
 	  autosave = top.opener.top.frameMenu.autosave;
 	}
 	else {
 	  autosave = top.frameMenu.autosave;
 	}
-	if(typeof autosave == 'undefined' || !autosave) {		
+	
+	if(typeof autosave == 'undefined' || !autosave) { // backward compatibility		
 		if (inputValue(form.inpLastFieldChanged)!="") {
 			if (!showJSMessage(26))
 				return false;
@@ -289,9 +301,9 @@ function checkForChanges(form) {
 		return true;
 	}
 	else {
-		var promptConfirmation = typeof(top.appFrame.confirmOnChanges) == 'undefined' ? true : top.appFrame.confirmOnChanges;
-		var hasUserChanges = typeof(top.appFrame.isUserChanges) == 'undefined' ? false: top.appFrame.isUserChanges;
-		if (hasUserChanges) {
+		var promptConfirmation = typeof top.appFrame.confirmOnChanges == 'undefined' ? true : top.appFrame.confirmOnChanges;
+		var hasUserChanges = typeof top.appFrame.isUserChanges == 'undefined' ? false : top.appFrame.isUserChanges;
+		if (hasUserChanges || isUserClick) {
 			var autoSave = true;		
 			if (promptConfirmation)
 				autoSave = showJSMessage(25);
