@@ -50,10 +50,9 @@
         WHERE EXISTS (SELECT 1 FROM C_PERIOD P
                       WHERE P.C_YEAR_ID = ?
                       AND P.C_PERIOD_ID = FACT_ACCT.C_PERIOD_ID)
-        AND ACCOUNT_ID IN (SELECT ACCOUNT_ID
-                FROM C_ELEMENTVALUE, C_VALIDCOMBINATION
-                WHERE C_VALIDCOMBINATION.ACCOUNT_ID = C_ELEMENTVALUE.C_ELEMENTVALUE_ID
-                AND C_ELEMENTVALUE.ACCOUNTTYPE = ?)
+        AND ACCOUNT_ID IN (SELECT C_ELEMENTVALUE_ID
+                FROM C_ELEMENTVALUE
+                WHERE C_ELEMENTVALUE.ACCOUNTTYPE = ?)
         AND AD_ORG_ID = ?
         AND C_ACCTSCHEMA_ID = ?
         GROUP BY ACCOUNT_ID, ACCTDESCRIPTION, ACCTVALUE, RECORD_ID2, C_BPARTNER_ID, M_PRODUCT_ID, A_ASSET_ID
@@ -75,17 +74,16 @@
         WHERE EXISTS (SELECT 1 FROM C_PERIOD P
                       WHERE P.C_YEAR_ID = ?
                       AND P.C_PERIOD_ID = FACT_ACCT.C_PERIOD_ID)
-        AND ACCOUNT_ID IN (SELECT ACCOUNT_ID
-                FROM C_ELEMENTVALUE, C_VALIDCOMBINATION
-                WHERE C_VALIDCOMBINATION.ACCOUNT_ID = C_ELEMENTVALUE.C_ELEMENTVALUE_ID
-                AND C_ELEMENTVALUE.ACCOUNTTYPE IN ('1'))
+        AND ACCOUNT_ID IN (SELECT C_ELEMENTVALUE_ID
+                FROM C_ELEMENTVALUE
+                WHERE C_ELEMENTVALUE.ACCOUNTTYPE IN ('1'))
         AND AD_ORG_ID = ?
         AND C_ACCTSCHEMA_ID = ?
         GROUP BY ACCOUNT_ID, ACCTDESCRIPTION, ACCTVALUE, RECORD_ID2, C_BPARTNER_ID, M_PRODUCT_ID, A_ASSET_ID
       ]]>
     </Sql>
     <Parameter name="c_year_id"/>
-    <Parameter name="accounttype" optional="true" type="replace" after="AND C_ELEMENTVALUE.ACCOUNTTYPE IN (" text="'1'"/>
+    <Parameter name="accounttype" optional="true" type="replace" after="WHERE C_ELEMENTVALUE.ACCOUNTTYPE IN (" text="'1'"/>
     <Parameter name="org"/>
     <Parameter name="acctSchema"/>
   </SqlMethod>
