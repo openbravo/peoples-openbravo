@@ -97,7 +97,7 @@ public class LeftTabsBar {
         text.append("          <td>\n");
         text
                 .append(
-                        "                <a class=\"Main_LeftTabsBar_ButtonRight\" href=\"#\" onClick=\"submitCommandForm('RELATION', false, null, '")
+                        "                <a class=\"Main_LeftTabsBar_ButtonRight\" href=\"#\" onClick=\"submitCommandForm('RELATION', isUserChanges, null, '")
                 .append(servlet_action)
                 .append(
                         "', '_self', null, true);return false;\" id=\"buttonRelation\">\n");
