@@ -143,7 +143,10 @@ public class SalesOrderLine extends HttpSecureAppServlet {
         } else if (vars.commandIn("STRUCTURE")) {
             printGridStructure(response, vars);
         } else if (vars.commandIn("DATA")) {
-            String strSOTrx = vars.getSessionValue("SalesOrderLine.isSOTrx");
+            String strSOTrx = vars.getStringParameter("inpisSOTrx");
+            if (strSOTrx.equals("")) {
+                strSOTrx = vars.getSessionValue("SalesOrderLine.isSOTrx");
+            }
             if (vars.getStringParameter("newFilter").equals("1")) {
                 removePageSessionVariables(vars);
             }
@@ -373,11 +376,8 @@ public class SalesOrderLine extends HttpSecureAppServlet {
                     strOrder = null;
                 }
 
-                if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
-                                                                           // filter
-                                                                           // or
-                                                                           // first
-                                                                           // load
+                // New filter or first load
+                if (strNewFilter.equals("1") || strNewFilter.equals("")) {
                     if (strSOTrx.equals("Y")) {
                         strNumRows = SalesOrderLineData.countRows(this, Utility
                                 .getContext(this, vars, "#User_Client",
