@@ -351,6 +351,17 @@ function sendDirectLink(form, columnName, parentKey, url, keyId, tableId, newTar
   if (form == null) form = document.forms[0];
   var frmDebug = document.forms[0];
   var action = "DEFAULT";
+  var autosave = null;  
+  if(top.opener != null) { // is a pop-up window
+    autosave = top.opener.top.frameMenu.autosave;
+  }
+  else {
+    autosave = top.frameMenu.autosave;
+  }
+  if(autosave && isUserChanges) {
+	try { initialize_MessageBox('messageBoxID'); } catch (ignored) {}
+	if (!depurar_validate_wrapper(action, form, "")) return false;
+  }
   if (bolCheckChanges==null) bolCheckChanges = false;
   if (arrGeneralChange!=null && arrGeneralChange.length>0 && bolCheckChanges) {
     var strFunction = "sendDirectLink('" + form.name + "', '" + columnName + "', '" + parentKey + "', '" + url + "', '" + keyId + "', '" + tableId + "', " + ((newTarget==null)?"null":"'" + newTarget + "'") + ", " + bolCheckChanges + ")";
