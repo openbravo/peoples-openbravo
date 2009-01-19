@@ -169,9 +169,9 @@ public class DataSetService implements OBSingleton {
      *            the moduleId is a parameter in the whereClause
      * @return the list of exportable business objects
      */
-    public List<BaseOBObject> getExportableObjects(DataSetTable DataSetTable,
+    public List<BaseOBObject> getExportableObjects(DataSetTable dataSetTable,
             String moduleId) {
-        return getExportableObjects(DataSetTable, moduleId,
+        return getExportableObjects(dataSetTable, moduleId,
                 new HashMap<String, Object>());
     }
 
