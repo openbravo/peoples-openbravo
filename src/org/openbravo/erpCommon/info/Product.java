@@ -424,7 +424,7 @@ public class Product extends HttpSecureAppServlet {
 
                 // Filtering result
                 if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-                    String oraLimit = strOffset
+                    String oraLimit = (Integer.valueOf(strOffset) + 1)
                             + " AND "
                             + String.valueOf(Integer.valueOf(strOffset)
                                     .intValue()

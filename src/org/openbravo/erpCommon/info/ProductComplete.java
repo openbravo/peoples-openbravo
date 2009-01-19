@@ -372,10 +372,10 @@ public class ProductComplete extends HttpSecureAppServlet {
         if (headers != null) {
             try {
                 if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
-                                                                           // filter
-                                                                           // or
-                                                                           // first
-                                                                           // load
+                    // filter
+                    // or
+                    // first
+                    // load
                     if (strStore.equals("Y")) {
                         // countRows is the same in en_US and +trl case, so a
                         // single countRows method is used
@@ -402,7 +402,7 @@ public class ProductComplete extends HttpSecureAppServlet {
 
                 // Filtering result
                 if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-                    String oraLimit = strOffset
+                    String oraLimit = (Integer.valueOf(strOffset) + 1)
                             + " AND "
                             + String.valueOf(Integer.valueOf(strOffset)
                                     .intValue()

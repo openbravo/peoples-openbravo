@@ -352,10 +352,10 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
         if (headers != null) {
             try {
                 if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
-                                                                           // filter
-                                                                           // or
-                                                                           // first
-                                                                           // load
+                    // filter
+                    // or
+                    // first
+                    // load
                     if (strSOTrx.equals("Y")) {
                         data = ShipmentReceiptLineData.select(this, "1",
                                 Utility.getContext(this, vars, "#User_Client",
@@ -388,7 +388,7 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
 
                 // Filtering result
                 if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-                    String oraLimit = strOffset
+                    String oraLimit = (Integer.valueOf(strOffset) + 1)
                             + " AND "
                             + String.valueOf(Integer.valueOf(strOffset)
                                     .intValue()

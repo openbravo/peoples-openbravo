@@ -349,10 +349,10 @@ public class InvoiceLine extends HttpSecureAppServlet {
                 }
 
                 if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
-                                                                           // filter
-                                                                           // or
-                                                                           // first
-                                                                           // load
+                    // filter
+                    // or
+                    // first
+                    // load
                     strNumRows = InvoiceLineData.countRows(this, Utility
                             .getContext(this, vars, "#User_Client",
                                     "InvoiceLine"), Utility.getContext(this,
@@ -369,7 +369,7 @@ public class InvoiceLine extends HttpSecureAppServlet {
                 }
                 // Filtering result
                 if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-                    String oraLimit = strOffset
+                    String oraLimit = (Integer.valueOf(strOffset) + 1)
                             + " AND "
                             + String.valueOf(Integer.valueOf(strOffset)
                                     .intValue()

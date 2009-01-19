@@ -268,10 +268,10 @@ public class Project extends HttpSecureAppServlet {
         if (headers != null) {
             try {
                 if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
-                                                                           // filter
-                                                                           // or
-                                                                           // first
-                                                                           // load
+                    // filter
+                    // or
+                    // first
+                    // load
                     data = ProjectData.select(this, "1", vars.getLanguage(),
                             Utility.getContext(this, vars, "#User_Client",
                                     "Project"), Utility.getContext(this, vars,
@@ -285,7 +285,7 @@ public class Project extends HttpSecureAppServlet {
 
                 // Filtering result
                 if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-                    String oraLimit = strOffset
+                    String oraLimit = (Integer.valueOf(strOffset) + 1)
                             + " AND "
                             + String.valueOf(Integer.valueOf(strOffset)
                                     .intValue()

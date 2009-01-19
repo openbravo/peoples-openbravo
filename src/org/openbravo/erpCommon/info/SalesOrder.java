@@ -280,10 +280,10 @@ public class SalesOrder extends HttpSecureAppServlet {
                 }
 
                 if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
-                                                                           // filter
-                                                                           // or
-                                                                           // first
-                                                                           // load
+                    // filter
+                    // or
+                    // first
+                    // load
                     strNumRows = SalesOrderData.countRows(this, Utility
                             .getContext(this, vars, "#User_Client",
                                     "SalesOrder"), Utility.getContext(this,
@@ -298,7 +298,7 @@ public class SalesOrder extends HttpSecureAppServlet {
 
                 // Filtering result
                 if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-                    String oraLimit = strOffset
+                    String oraLimit = (Integer.valueOf(strOffset) + 1)
                             + " AND "
                             + String.valueOf(Integer.valueOf(strOffset)
                                     .intValue()

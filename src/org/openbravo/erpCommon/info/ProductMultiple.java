@@ -251,10 +251,10 @@ public class ProductMultiple extends HttpSecureAppServlet {
         if (headers != null) {
             try {
                 if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
-                                                                           // filter
-                                                                           // or
-                                                                           // first
-                                                                           // load
+                    // filter
+                    // or
+                    // first
+                    // load
                     data = ProductMultipleData.select(this, "1", strKey,
                             strName, strProductCategory, Utility.getContext(
                                     this, vars, "#User_Client",
@@ -271,7 +271,7 @@ public class ProductMultiple extends HttpSecureAppServlet {
 
                 // Filtering result
                 if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-                    String oraLimit = strOffset
+                    String oraLimit = (Integer.valueOf(strOffset) + 1)
                             + " AND "
                             + String.valueOf(Integer.valueOf(strOffset)
                                     .intValue()
