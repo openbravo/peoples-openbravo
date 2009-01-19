@@ -271,8 +271,9 @@ public class ReportCashFlow extends HttpSecureAppServlet {
         ReportCashFlowData[] dataTree = convertVector(vectorArray);
         dataTree = filterData(dataTree);
         strTreeOrg = "";
-
-        xmlDocument.setParameter("title", dataTree[0].name);
+        
+        if (dataTree.length > 0)
+          xmlDocument.setParameter("title", dataTree[0].name);
         xmlDocument.setParameter("directory", "var baseDirectory = \""
                 + strReplaceWith + "/\";\n");
         xmlDocument.setParameter("language", "defaultLang=\""
@@ -454,7 +455,7 @@ public class ReportCashFlow extends HttpSecureAppServlet {
                 strAccountingReportId);
         ReportCashFlowData[] data = ReportCashFlowData.select(this, strParent,
                 String.valueOf(level), Utility.getContext(this, vars,
-                        "#User_Client", "ReportCashFlow"), strOrg,
+                        "#User_Client", "ReportCashFlow"), Utility.stringList(strOrg),
                 strPeriodFrom, strPeriodTo, strAccountId,
                 strAccountingReportId, strcAcctSchemaId);
         if (data == null || data.length == 0)
