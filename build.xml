@@ -591,7 +591,7 @@ compare.database.structure: refer to compare.database.structure target of databa
 		<antcall target="export.config.script" />
 	</target>
 
-	<target name="extract.module">
+	<target name="package.module">
 		<taskdef name="extractModule" classname="org.openbravo.erpCommon.modules.ExtractModuleTask">
 			<classpath refid="project.class.path" />
 		</taskdef>
