@@ -52,9 +52,6 @@ public class PrintInvoices extends PrintController {
 
         strDocumentId = vars.getSessionValue(sessionValuePrefix
                 + ".inpcInvoiceId_R");
-        if (request.getServletPath().toLowerCase().indexOf("purchase") != -1) {
-          String hola = "sa";
-        }
         if (strDocumentId.equals(""))
             strDocumentId = vars.getSessionValue(sessionValuePrefix
                     + ".inpcInvoiceId");
