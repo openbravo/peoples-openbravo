@@ -102,7 +102,7 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
             String strYear = vars.getRequestGlobalVariable("inpYearId",
                     "CreateAccountingReport|year");
             printPagePopUp(response, vars, strcAcctSchemaId,
-                    strAccountingReportId, Utility.stringList(strOrg), strPeriod, strYear);
+                    strAccountingReportId, strOrg, strPeriod, strYear);
             // printPageClosePopUp(response, vars, strWindowPath);
         } else
             pageErrorPopUp(response);
@@ -406,7 +406,7 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
         CreateAccountingReportData[] data = CreateAccountingReportData.select(
                 this, strParent, String.valueOf(level), Utility.getContext(
                         this, vars, "#User_Client", "CreateAccountingReport"),
-                strOrg, strPeriodFrom, strPeriodTo, strAccountId,
+                        Utility.stringList(strOrg), strPeriodFrom, strPeriodTo, strAccountId,
                 strcAcctSchemaId, strAccountingReportId);
         if (data == null || data.length == 0)
             data = CreateAccountingReportData.set();
