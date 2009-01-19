@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<ob:Openbravo xmlns:ob="http://www.openbravo.com" created="Thu Jan 15 21:36:21 CET 2009" ob-version="2.50" ob-revision="11915">
+<ob:Openbravo xmlns:ob="http://www.openbravo.com">
   <ADClient id="1000001" identifier="Accounting Test">
     <id>1000001</id>
     <organization id="0" entity-name="Organization" identifier="*"/>

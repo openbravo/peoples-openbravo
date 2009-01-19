@@ -227,7 +227,7 @@ public class DataSetService implements OBSingleton {
         }
 
         final OBQuery<BaseOBObject> oq = OBDal.getInstance().createQuery(
-                entity.getName(), whereClause + " order by id asc");
+                entity.getName(), whereClause);
         oq.setFilterOnActive(false);
         oq.setNamedParameters(existingParams);
 
