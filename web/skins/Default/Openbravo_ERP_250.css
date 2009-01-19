@@ -82,6 +82,273 @@ body {
   width: 50px;
 }
 
+button.ButtonLink, button.ButtonLink:active, button.ButtonLink:hover, button.ButtonLink:visited, button.ButtonLink:link, button.ButtonLink:focus, button.ButtonLink_default, button.ButtonLink_disabled {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-decoration: none;
+  outline: none;
+}
+
+button.ButtonLink_hover, button.ButtonLink_hover:active, button.ButtonLink_hover:hover, button.ButtonLink_hover:visited, button.ButtonLink_hover:link, button.ButtonLink_hover:focus {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-decoration: none;
+  outline: none;
+}
+
+button.ButtonLink_active, button.ButtonLink_active:active, button.ButtonLink_active:hover, button.ButtonLink_active:visited, button.ButtonLink_active:link, button.ButtonLink_active:focus {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-decoration: none;
+  outline: none;
+}
+
+button.ButtonLink_focus, button.ButtonLink_focus:active, button.ButtonLink_focus:hover, button.ButtonLink_focus:visited, button.ButtonLink_focus:link, button.ButtonLink_focus:focus {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-decoration: none;
+  outline: none;
+}
+
+button.ButtonLink_default, button.ButtonLink_default:active, button.ButtonLink_default:hover, button.ButtonLink_default:visited, button.ButtonLink_default:link, button.ButtonLink_default:focus {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-decoration: none;
+  outline: none;
+}
+
+button.ButtonLink_disabled, button.ButtonLink_disabled:active, button.ButtonLink_disabled:hover, button.ButtonLink_disabled:visited, button.ButtonLink_disabled:link, button.ButtonLink_disabled:focus {
+  background: none;
+  border: 0;
+  cursor: default;
+  text-decoration: none;
+  outline: none;
+}
+
+button.ButtonLink .Button, .Button {
+  border-collapse: collapse;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  color: #1b4106;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button.ButtonLink table.Button .Button_left, table.Button .Button_left {
+  width: 35px;
+  height: 26px;
+  background-repeat: no-repeat;
+  background-position: center right; /*~RTL   background-position: center left;  */
+  background-image: url(Common/Button/buttonLeft.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; sprite-alignment-rtl: left; */
+  text-align: right; /*~RTL   text-align: left; */
+  vertical-align: top;
+}
+
+button.ButtonLink table.Button .Button_text, table.Button .Button_text {
+  background-repeat: repeat-x;
+  background-position: center center;
+  background-image: url(Common/Button/buttonBody.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  text-align: center;
+  height: 26px;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  font-weight: bold;
+  text-align: center;
+}
+
+button.ButtonLink table.Button .Button_right, table.Button .Button_right {
+  width: 26px;
+  height: 26px;
+  background-repeat: no-repeat;
+  background-position: center left;
+  background-image: url(Common/Button/buttonRight.normal.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+}
+
+button.ButtonLink_hover .Button, .Button_hover {
+  border-collapse: collapse;
+  text-align: center;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  color: #1b4106;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button.ButtonLink_hover table.Button .Button_left, table.Button_hover .Button_left {
+  background-repeat: no-repeat;
+  background-position: center right; /*~RTL   background-position: center left; */
+  background-image: url(Common/Button/buttonLeft.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; sprite-alignment-rtl: left; */
+  width: 35px;
+  height: 26px;
+}
+
+button.ButtonLink_hover table.Button .Button_text, table.Button_hover .Button_text {
+  background-repeat: repeat-x;
+  background-position: center center;
+  background-image: url(Common/Button/buttonBody.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+}
+
+button.ButtonLink_hover table.Button .Button_right, table.Button_hover .Button_right {
+  background-repeat: no-repeat;
+  background-position: center left;
+  background-image: url(Common/Button/buttonRight.rollover.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  width: 26px;
+  height: 26px;
+}
+
+button.ButtonLink_active .Button, .Button_active {
+  border-collapse: collapse;
+  text-align: center;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  color: #eaf7e4;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button.ButtonLink_active table.Button .Button_left, .Button_active .Button_left {
+  background-repeat: no-repeat;
+  background-position: center right; /*~RTL    background-position: center left; */
+  background-image: url(Common/Button/buttonLeft.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; sprite-alignment-rtl: left; */
+  width: 35px;
+  height: 26px;
+}
+
+button.ButtonLink_active table.Button .Button_text, table.Button_active .Button_text {
+  background-repeat: repeat-x;
+  background-position: center center;
+  background-image: url(Common/Button/buttonBody.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+}
+
+button.ButtonLink_active table.Button .Button_right, table.Button_active .Button_right {
+  background-repeat: no-repeat;
+  background-position: center left; 
+  background-image: url(Common/Button/buttonRight.pressed.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  width: 26px;
+  height: 26px;
+}
+
+button.ButtonLink_focus .Button, .Button_focus {
+  border-collapse: collapse;
+  text-align: center;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  color: #213e51;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button.ButtonLink_focus table.Button .Button_left, .Button_focus .Button_left {
+  background-repeat: no-repeat;
+  background-position: center right;
+  background-image: url(Common/Button/buttonLeft.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+  width: 35px;
+  height: 26px;
+}
+
+button.ButtonLink_focus table.Button .Button_text, table.Button_focus .Button_text {
+  background-repeat: repeat-x;
+  background-position: center center;
+  background-image: url(Common/Button/buttonBody.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+}
+
+button.ButtonLink_focus table.Button .Button_right, table.Button_focus .Button_right {
+  background-repeat: no-repeat;
+  background-position: center left;
+  background-image: url(Common/Button/buttonRight.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  width: 26px;
+  height: 26px;
+}
+
+button.ButtonLink_default .Button, .Button_default {
+  border-collapse: collapse;
+  text-align: center;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  color: #213e51;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button.ButtonLink_default table.Button .Button_left, .Button_default .Button_left {
+  background-repeat: no-repeat;
+  background-position: center right;
+  background-image: url(Common/Button/buttonLeft.default.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+  width: 35px;
+  height: 26px;
+}
+
+button.ButtonLink_default table.Button .Button_text, table.Button_default .Button_text {
+  background-repeat: repeat-x;
+  background-position: center center;
+  background-image: url(Common/Button/buttonBody.default.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+}
+
+button.ButtonLink_default table.Button .Button_right, table.Button_default .Button_right {
+  background-repeat: no-repeat;
+  background-position: center left;
+  background-image: url(Common/Button/buttonRight.default.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+  width: 26px;
+  height: 26px;
+}
+
+button.ButtonLink_disabled .Button, .ButtonLink_disabled {
+  border-collapse: collapse;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  color: #1b4106;
+  font-weight: bold;
+  cursor: default;
+}
+
+button.ButtonLink_disabled table.Button .Button_left, table.ButtonLink_disabled .Button_left {
+  width: 35px;
+  height: 26px;
+  background-repeat: no-repeat;
+  background-position: center right;
+  background-image: url(Common/Button/buttonLeft.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
+  text-align: right;
+  vertical-align: top;
+}
+
+button.ButtonLink_disabled table.Button .Button_text, table.ButtonLink_disabled .Button_text {
+  background-repeat: repeat-x;
+  background-position: center center;
+  background-image: url(Common/Button/buttonBody.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: repeat; */
+  text-align: center;
+  height: 26px;
+  font-family: tahoma, arial, helvetica, sans-serif;
+  font-size: 8pt;
+  color: #549033;
+  font-weight: bold;
+  text-align: center;
+}
+
+button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled .Button_right {
+  width: 26px;
+  height: 26px;
+  background-repeat: no-repeat;
+  background-position: center left;
+  background-image: url(Common/Button/buttonRight.disabled.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: left; */
+}
+
+
+
+/*
+ *************************
+ * Button  //Used in old r2.40 button definition
+ *************************
+*/
+
+.Button_width {
+  width: 50px;
+}
+
 a.ButtonLink, a.ButtonLink:active, a.ButtonLink:hover, a.ButtonLink:visited, a.ButtonLink:link, a.ButtonLink:focus, a.ButtonLink_default, a.ButtonLink_disabled {
   text-decoration: none;
   outline: none;

@@ -323,7 +323,11 @@ function setWindowElementFocus(obj, type) {
 
 function drawWindowElementDefaultAction(obj) {
   try {
-    if(obj.tagName == 'A') {
+    if(obj.tagName == 'A') {                  //Used in old r2.40 button definition
+      if (obj.className.indexOf('ButtonLink_default') == -1 && obj.className.indexOf('ButtonLink') != -1 && obj.className.indexOf('ButtonLink_disabled') == -1) { //Used in old r2.40 button definition
+        obj.className = 'ButtonLink_default'; //Used in old r2.40 button definition
+      }                                       //Used in old r2.40 button definition
+    } else if(obj.tagName == 'BUTTON') {
       if (obj.className.indexOf('ButtonLink_default') == -1 && obj.className.indexOf('ButtonLink') != -1 && obj.className.indexOf('ButtonLink_disabled') == -1) {
         obj.className = 'ButtonLink_default';
       }
@@ -334,7 +338,9 @@ function drawWindowElementDefaultAction(obj) {
 
 function eraseWindowElementDefaultAction(obj) {
   try {
-    if(obj.tagName == 'A') {
+    if(obj.tagName == 'A') {                                                    //Used in old r2.40 button definition
+      obj.className = obj.className.replace('ButtonLink_default','ButtonLink'); //Used in old r2.40 button definition
+    } else if(obj.tagName == 'BUTTON') {
       obj.className = obj.className.replace('ButtonLink_default','ButtonLink');
     }
   } catch (e) {
@@ -363,8 +369,8 @@ function drawWindowElementFocus(obj) {
         obj.className = obj.className + ' LabelLink_focus';
       } else if (obj.className.indexOf('FieldButtonLink_focus') == -1 && obj.className.indexOf('FieldButtonLink') != -1) {
         obj.className = 'FieldButtonLink_focus';
-      } else if (obj.className.indexOf('ButtonLink_focus') == -1 && obj.className.indexOf('ButtonLink') != -1 && obj.className.indexOf('ButtonLink_disabled') == -1) {
-        obj.className = 'ButtonLink_focus';
+      } else if (obj.className.indexOf('ButtonLink_focus') == -1 && obj.className.indexOf('ButtonLink') != -1 && obj.className.indexOf('ButtonLink_disabled') == -1) { //Used in old r2.40 button definition
+        obj.className = 'ButtonLink_focus'; //Used in old r2.40 button definition
       } else if (obj.className.indexOf('List_Button_TopLink_focus') == -1 && obj.className.indexOf('List_Button_TopLink') != -1) {
         obj.className = 'List_Button_TopLink_focus';
       } else if (obj.className.indexOf('List_Button_MiddleLink_focus') == -1 && obj.className.indexOf('List_Button_MiddleLink') != -1) {
@@ -385,13 +391,17 @@ function drawWindowElementFocus(obj) {
         obj.className = 'Popup_Workflow_text_focus';
       }
       isFirstTime = false;
+    } else if (obj.tagName == 'BUTTON') {
+      if (obj.className.indexOf('ButtonLink_focus') == -1 && obj.className.indexOf('ButtonLink') != -1 && obj.className.indexOf('ButtonLink_disabled') == -1) {
+        obj.className = 'ButtonLink_focus';
+      }
+      isFirstTime = false;
     } else if (obj.tagName == 'SELECT') {
       if (navigator.appName.toUpperCase().indexOf('MICROSOFT') == -1) {
         if (obj.className.indexOf(' Combo_focus') == -1) {
           obj.className = obj.className + ' Combo_focus';
         }
       }
-
       isFirstTime = false;
     } else if (obj.tagName == 'INPUT') {
       if ((obj.className.indexOf(' TextBox_focus') == -1) &&
@@ -485,7 +495,7 @@ function eraseWindowElementFocus(obj) {
       obj.className = obj.className.replace(' LabelLink_focus','');
       obj.className = obj.className.replace(' LabelLink_noicon_focus','');
       obj.className = obj.className.replace('FieldButtonLink_focus','FieldButtonLink');
-      obj.className = obj.className.replace('ButtonLink_focus','ButtonLink');
+      obj.className = obj.className.replace('ButtonLink_focus','ButtonLink'); //Used in old r2.40 button definition
       obj.className = obj.className.replace('List_Button_TopLink_focus','List_Button_TopLink');
       obj.className = obj.className.replace('List_Button_MiddleLink_focus','List_Button_MiddleLink');
       obj.className = obj.className.replace('List_Button_BottomLink_focus','List_Button_BottomLink');
@@ -496,6 +506,8 @@ function eraseWindowElementFocus(obj) {
       obj.className = obj.className.replace('Popup_Workflow_Button_focus','Popup_Workflow_Button');
       obj.className = obj.className.replace('Popup_Workflow_text_focus','Popup_Workflow_text');
       obj.className = obj.className.replace('Popup_Client_Help_Icon_LabelLink_focus','Popup_Client_Help_Icon_LabelLink');
+    } else if (obj.tagName == 'BUTTON') {
+      obj.className = obj.className.replace('ButtonLink_focus','ButtonLink');
     } else if (obj.tagName == 'SELECT') {
       obj.className = obj.className.replace(' Combo_focus','');
     } else if (obj.tagName == 'INPUT') {
@@ -607,6 +619,10 @@ function couldHaveFocus(obj) {
   }
   if (obj.tagName == 'A') {
     currentWindowElementType='a';
+    return true;
+  }
+  if (obj.tagName == 'BUTTON' && obj.className.indexOf('ButtonLink_disabled')==-1) {
+    currentWindowElementType='button';
     return true;
   }
   if (obj.tagName == 'SELECT') {

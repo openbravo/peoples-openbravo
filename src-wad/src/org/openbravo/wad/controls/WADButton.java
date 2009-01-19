@@ -101,12 +101,6 @@ public class WADButton extends WADControl {
                 "IsUpdateable").equals("N"));
         if (isDisabled) {
             xmlDocument.setParameter("disabled", "_disabled");
-            xmlDocument.setParameter("keypress", "ButtonLink_disabled");
-            xmlDocument.setParameter("onkeyup", "ButtonLink_disabled");
-            xmlDocument.setParameter("onmousedown", "ButtonLink_disabled");
-            xmlDocument.setParameter("onmouseup", "ButtonLink_disabled");
-            xmlDocument.setParameter("onmouseover", "ButtonLink_disabled");
-            xmlDocument.setParameter("onmouseout", "ButtonLink_disabled");
         }
         return replaceHTML(xmlDocument.print());
     }
@@ -132,12 +126,6 @@ public class WADButton extends WADControl {
 
         if (isDisabled) {
             xmlDocument.setParameter("disabled", "_disabled");
-            xmlDocument.setParameter("keypress", "ButtonLink_disabled");
-            xmlDocument.setParameter("onkeyup", "ButtonLink_disabled");
-            xmlDocument.setParameter("onmousedown", "ButtonLink_disabled");
-            xmlDocument.setParameter("onmouseup", "ButtonLink_disabled");
-            xmlDocument.setParameter("onmouseover", "ButtonLink_disabled");
-            xmlDocument.setParameter("onmouseout", "ButtonLink_disabled");
         }
         return replaceHTML(xmlDocument.print());
     }

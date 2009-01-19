@@ -22,24 +22,26 @@
 
 
 <div id="xx_inp">
-  <input type="hidden" name="inpxx" value="" onchange="logChanges(this);xx();return true;" id="xx"/>
-  <a class="ButtonLinkxx" href="#"
-    onfocus="setWindowElementFocus(this); window.status='xx'; return true;"
-    onblur="window.status=''; return true;"
-    onkeypress="this.className='xx'; return true;"
-    onkeyup="this.className='xx'; return true;"
-    onclick="logClick(document.getElementById('yy'));xx();return false;" id="xx_linkBTN">
-    <table class="Button"
-      onmousedown="this.className='xx'; return true;"
-      onmouseup="this.className='xx'; return true;"
-      onmouseover="this.className='yy'; window.status='xx'; return true;"
-      onmouseout="this.className='xx'; window.status=''; return true;"
-      id="fieldTable">
+  <input type="hidden" name="inpxx" value="" onchange="logChanges(this); xx(); return true;" id="xx"/>
+  <button type="button" 
+    id="xx_linkBTN" 
+    class="ButtonLinkxx" 
+    onclick="logClick(document.getElementById('yy')); xx(); return false;" 
+    onfocus="buttonEvent('onfocus', this); window.status='xx'; return true;" 
+    onblur="buttonEvent('onblur', this);" 
+    onkeyup="buttonEvent('onkeyup', this);" 
+    onkeydown="buttonEvent('onkeydown', this);" 
+    onkeypress="buttonEvent('onkeypress', this);" 
+    onmouseup="buttonEvent('onmouseup', this);" 
+    onmousedown="buttonEvent('onmousedown', this);" 
+    onmouseover="buttonEvent('onmouseover', this); window.status='xx'; return true;" 
+    onmouseout="buttonEvent('onmouseout', this);">
+    <table class="Button" id="fieldTable">
       <tr>
-        <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="xx" title="xx" src="../../../../../web/images/blank.gif" border=0 id="fieldButton"/></td>
-      <td class="Button_text" id="xx_BTNname">xx</td>
+        <td class="Button_left"><img class="Button_Icon Button_Icon_process" alt="xx" title="xx" src="../../../../../web/images/blank.gif" border="0" id="fieldButton"/></td>
+        <td class="Button_text" id="xx_BTNname">xx</td>
         <td class="Button_right"></td>
       </tr>
     </table>
-  </a>
+  </button>
 </div>

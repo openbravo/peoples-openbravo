@@ -113,22 +113,34 @@ function enableAttributeWithFunction(element, type, attribute) {
 
 function disableButton(id) {
   var link = null;
-  var img = null;
+  var img = null;                                                                                              //Used in old r2.40 button definition
   try {
     link = document.getElementById(id);
-    img = getObjChild(link);
-    if (link.className.indexOf('ButtonLink') != -1 && link.className.indexOf('ButtonLink_disabled') == -1) {
-      link.className = link.className.replace('ButtonLink', 'ButtonLink_disabled');
-      disableAttributeWithFunction(link, 'obj', 'onclick');
-      disableAttributeWithFunction(link, 'obj', 'onfocus');
-      disableAttributeWithFunction(link, 'obj', 'onkeypress');
-      disableAttributeWithFunction(link, 'obj', 'onkeyup');
-      link.setAttribute('id', link.getAttribute('id') + '_disabled');
-      disableAttributeWithFunction(img, 'obj', 'onmouseout');
-      disableAttributeWithFunction(img, 'obj', 'onmouseover');
-      disableAttributeWithFunction(img, 'obj', 'onmousedown');
-      disableAttributeWithFunction(img, 'obj', 'onmouseup');
+    img = getObjChild(link);                                                                                   //Used in old r2.40 button definition
+    if (link.tagName == 'A') {                                                                                 //Used in old r2.40 button definition
+      if (link.className.indexOf('ButtonLink') != -1 && link.className.indexOf('ButtonLink_disabled') == -1) { //Used in old r2.40 button definition
+        link.className = link.className.replace('ButtonLink_default', 'ButtonLink');                           //Used in old r2.40 button definition
+        link.className = link.className.replace('ButtonLink', 'ButtonLink_disabled');                          //Used in old r2.40 button definition
+        disableAttributeWithFunction(link, 'obj', 'onclick');                                                  //Used in old r2.40 button definition
+        disableAttributeWithFunction(link, 'obj', 'onfocus');                                                  //Used in old r2.40 button definition
+        disableAttributeWithFunction(link, 'obj', 'onkeypress');                                               //Used in old r2.40 button definition
+        disableAttributeWithFunction(link, 'obj', 'onkeyup');                                                  //Used in old r2.40 button definition
+        link.setAttribute('id', link.getAttribute('id') + '_disabled');                                        //Used in old r2.40 button definition
+        disableAttributeWithFunction(img, 'obj', 'onmouseout');                                                //Used in old r2.40 button definition
+        disableAttributeWithFunction(img, 'obj', 'onmouseover');                                               //Used in old r2.40 button definition
+        disableAttributeWithFunction(img, 'obj', 'onmousedown');                                               //Used in old r2.40 button definition
+        disableAttributeWithFunction(img, 'obj', 'onmouseup');                                                 //Used in old r2.40 button definition
+      }                                                                                                        //Used in old r2.40 button definition
+    } else {                                                                                                   //Used in old r2.40 button definition
+      if (link.className.indexOf('ButtonLink') != -1 && link.className.indexOf('ButtonLink_disabled') == -1) {
+        link.className = link.className.replace('ButtonLink_default', 'ButtonLink');
+        link.className = link.className.replace('ButtonLink', 'ButtonLink_disabled');
+        link.setAttribute('id', link.getAttribute('id') + '_disabled');
+        link.disabled = true;
+        disableAttributeWithFunction(link, 'obj', 'onclick');
+      }
     }
+
   } catch (e) {
     return false;
   }
@@ -137,25 +149,36 @@ function disableButton(id) {
 
 function enableButton(id) {
   var link = null;
-  var img = null;
+  var img = null;                                                                     //Used in old r2.40 button definition
   try {
     link = document.getElementById(id + "_disabled");
-    img = getObjChild(link);
-    if (link.className.indexOf('ButtonLink_disabled') != -1) {
-      link.className = link.className.replace('ButtonLink_disabled', 'ButtonLink');
-      enableAttributeWithFunction(link, 'obj', 'onclick');
-      enableAttributeWithFunction(link, 'obj', 'onfocus');
-      enableAttributeWithFunction(link, 'obj', 'onkeypress');
-      enableAttributeWithFunction(link, 'obj', 'onkeyup');
-      link.setAttribute('id', link.getAttribute('id').replace('_disabled', ''));
-      enableAttributeWithFunction(img, 'obj', 'onmouseout');
-      enableAttributeWithFunction(img, 'obj', 'onmouseover');
-      enableAttributeWithFunction(img, 'obj', 'onmousedown');
-      enableAttributeWithFunction(img, 'obj', 'onmouseup');
+    img = getObjChild(link);                                                          //Used in old r2.40 button definition
+    if (link.tagName == 'A') {                                                        //Used in old r2.40 button definition
+      if (link.className.indexOf('ButtonLink_disabled') != -1) {                      //Used in old r2.40 button definition
+        link.className = link.className.replace('ButtonLink_disabled', 'ButtonLink'); //Used in old r2.40 button definition
+        enableAttributeWithFunction(link, 'obj', 'onclick');                          //Used in old r2.40 button definition
+        enableAttributeWithFunction(link, 'obj', 'onfocus');                          //Used in old r2.40 button definition
+        enableAttributeWithFunction(link, 'obj', 'onkeypress');                       //Used in old r2.40 button definition
+        enableAttributeWithFunction(link, 'obj', 'onkeyup');                          //Used in old r2.40 button definition
+        link.setAttribute('id', link.getAttribute('id').replace('_disabled', ''));    //Used in old r2.40 button definition
+        enableAttributeWithFunction(img, 'obj', 'onmouseout');                        //Used in old r2.40 button definition
+        enableAttributeWithFunction(img, 'obj', 'onmouseover');                       //Used in old r2.40 button definition
+        enableAttributeWithFunction(img, 'obj', 'onmousedown');                       //Used in old r2.40 button definition
+        enableAttributeWithFunction(img, 'obj', 'onmouseup');                         //Used in old r2.40 button definition
+      }                                                                               //Used in old r2.40 button definition
+    } else {                                                                          //Used in old r2.40 button definition
+      if (link.className.indexOf('ButtonLink_disabled') != -1) {
+        link.className = link.className.replace('ButtonLink_disabled', 'ButtonLink');
+        link.setAttribute('id', link.getAttribute('id').replace('_disabled', ''));
+        link.disabled = false;
+        enableAttributeWithFunction(link, 'obj', 'onclick');
+      }
     }
+
   } catch (e) {
     return false;
   }
+  activateDefaultAction();
   return true;
 }
 

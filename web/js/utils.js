@@ -61,7 +61,7 @@ var isUserClick = false;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '11979';
+  var number = '12002';
   return number;
 }
 
@@ -3505,6 +3505,53 @@ function about() {
     document.onmousedown = function(){winPopUp.close();};
   }
   return winPopUp;
+}
+
+/**
+* Manage button's events
+*/
+function buttonEvent(event, obj) {
+  if (obj.className.indexOf('ButtonLink_disabled') == -1) {
+    if (event == "onkeyup") {
+      obj.className='ButtonLink_focus';
+    } else if (event == "onkeydown") {
+    } else if (event == "onkeypress") {
+      obj.className='ButtonLink_active';
+    } else if (event == "onmouseup") {
+      if (obj.className.indexOf('ButtonLink_active') != -1) {
+        obj.className = obj.className.replace(' xx','');
+        obj.className = obj.className.replace('ButtonLink_active','');
+      }
+    } else if (event == "onmousedown") {
+      if (obj.className.indexOf('ButtonLink_hover') != -1) {
+        obj.className = obj.className.replace(' xx','');
+        obj.className = obj.className.replace('ButtonLink_hover','');
+      }
+      if (obj.className.indexOf('ButtonLink_active') == -1) {
+        obj.className = 'ButtonLink_active' + ' xx' + obj.className;
+      }
+    } else if (event == "onmouseover") {
+      if (obj.className.indexOf('ButtonLink_hover') == -1) {
+        obj.className = 'ButtonLink_hover' + ' xx' + obj.className;
+      }
+    } else if (event == "onmouseout") {
+      if (obj.className.indexOf('ButtonLink_active') != -1) {
+        obj.className = obj.className.replace(' xx','');
+        obj.className = obj.className.replace('ButtonLink_active','');
+      }
+      if (obj.className.indexOf('ButtonLink_hover') != -1) {
+        obj.className = obj.className.replace(' xx','');
+        obj.className = obj.className.replace('ButtonLink_hover','');
+      }
+      window.status='';
+    } else if (event == "onfocus") {
+      setWindowElementFocus(obj);
+    } else if (event == "onblur") {
+      window.status='';
+    } else if (event == "onclick") {
+    }
+  }
+  return true;
 }
 
 /**
