@@ -21669,7 +21669,6 @@ dojo.declare("openbravo.widget.ValidationTextBox.IntegerNumber", [openbravo.widg
 }
 
 
-
 	if(dojo.config.afterOnLoad && dojo.isBrowser){
 		//Dojo is being added to the page after page load, so just trigger
 		//the init sequence after a timeout. Using a timeout so the rest of this
