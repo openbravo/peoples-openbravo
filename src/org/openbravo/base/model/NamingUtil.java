@@ -201,7 +201,29 @@ public class NamingUtil {
                 mappingName = property.getColumnName();
             }
         }
-        return lowerCaseFirst(correctAbbreviations(camelCaseIt(stripUnderScores(mappingName))));
+        // go through a set of repair steps:
+        mappingName = stripUnderScores(mappingName);
+        mappingName = camelCaseIt(mappingName);
+        mappingName = correctAbbreviations(mappingName);
+        mappingName = stripIllegalCharacters(mappingName);
+        mappingName = lowerCaseFirst(mappingName);
+        return mappingName;
+    }
+
+    // get rid of illegal characters
+    private static String stripIllegalCharacters(String value) {
+        // TODO: probably it is faster to use a char array
+        // instead of the stringbuilder
+        final StringBuilder result = new StringBuilder();
+        for (char ch : value.toCharArray()) {
+            if (ch == '_' || (ch >= 'a' && ch <= 'z')
+                    || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9')) {
+                result.append(ch);
+            } else {
+                result.append('_');
+            }
+        }
+        return result.toString();
     }
 
     // checks if the one-to-many has a correct name
