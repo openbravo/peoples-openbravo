@@ -42,11 +42,11 @@ public class EmailManager {
 	 * 
 	 */
     public static Session newMailSession(ConnectionProvider connectionProvider,
-            String clientId) throws PocException, ServletException {
+            String clientId, String adOrgId) throws PocException, ServletException {
         PocConfigurationData configurations[];
         try {
             configurations = PocConfigurationData.getSmtpDetails(
-                    connectionProvider, clientId);
+                    connectionProvider, clientId, adOrgId);
         } catch (ServletException exception) {
             throw new PocException(exception);
         }
