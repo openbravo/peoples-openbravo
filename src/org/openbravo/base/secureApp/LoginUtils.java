@@ -14,6 +14,7 @@ package org.openbravo.base.secureApp;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.ad_combos.ClientComboData;
 import org.openbravo.erpCommon.ad_combos.OrganizationComboData;
@@ -63,6 +64,10 @@ public class LoginUtils {
 
         // Organizations tree
         try {
+            // enable admin mode, as normal non admin-role
+            // has no read-access to i.e. AD_OrgType
+            OBContext.getOBContext().setInAdministratorMode(true);
+
             OrgTree tree = new OrgTree(conn, strCliente);
             vars.setSessionObject("#CompleteOrgTree", tree);
             OrgTree accessibleTree = tree.getAccessibleTree(conn, strRol);
@@ -71,6 +76,8 @@ public class LoginUtils {
         } catch (Exception e) {
             log4j.warn("Error while setting Organzation tree to session " + e);
             return false;
+        } finally {
+            OBContext.getOBContext().restorePreviousAdminMode();
         }
 
         try {

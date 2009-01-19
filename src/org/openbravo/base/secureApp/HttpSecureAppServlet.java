@@ -265,28 +265,19 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
                     final VariablesSecureApp vars = new VariablesSecureApp(
                             request);
-                    try {
-                        // enable admin mode, as normal non admin-role
-                        // has no read-access to i.e. AD_OrgType
-                        OBContext.getOBContext().setInAdministratorMode(true);
-                        if (LoginUtils.fillSessionArguments(this, vars,
-                                strUserAuth, strLanguage, strIsRTL, strRole,
-                                strClient, strOrg, strWarehouse)) {
-                            readProperties(vars, globalParameters
-                                    .getOpenbravoPropertiesPath());
-                            readNumberFormat(vars, globalParameters
-                                    .getFormatPath());
-                            saveLoginBD(request, vars, strClient, strOrg);
-                        } else {
-                            // Re-login
-                            log4j
-                                    .error("Unable to fill session Arguments for: "
-                                            + strUserAuth);
-                            logout(request, response);
-                            return;
-                        }
-                    } finally {
-                        OBContext.getOBContext().restorePreviousAdminMode();
+                    if (LoginUtils.fillSessionArguments(this, vars,
+                            strUserAuth, strLanguage, strIsRTL, strRole,
+                            strClient, strOrg, strWarehouse)) {
+                        readProperties(vars, globalParameters
+                                .getOpenbravoPropertiesPath());
+                        readNumberFormat(vars, globalParameters.getFormatPath());
+                        saveLoginBD(request, vars, strClient, strOrg);
+                    } else {
+                        // Re-login
+                        log4j.error("Unable to fill session Arguments for: "
+                                + strUserAuth);
+                        logout(request, response);
+                        return;
                     }
                 } else
                     variables.updateHistory(request);
@@ -852,9 +843,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         out.println(xmlDocument.print());
         out.close();
     }
-    
-    public void printPageClosePopUpAndRefreshParent(HttpServletResponse response,
-            VariablesSecureApp vars) throws IOException, ServletException {
+
+    public void printPageClosePopUpAndRefreshParent(
+            HttpServletResponse response, VariablesSecureApp vars)
+            throws IOException, ServletException {
         if (log4j.isDebugEnabled())
             log4j.debug("Output: PopUp Response");
         final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
