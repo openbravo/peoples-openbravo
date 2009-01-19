@@ -102,7 +102,7 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
             String strYear = vars.getRequestGlobalVariable("inpYearId",
                     "CreateAccountingReport|year");
             printPagePopUp(response, vars, strcAcctSchemaId,
-                    strAccountingReportId, strOrg, strPeriod, strYear);
+                    strAccountingReportId, Utility.stringList(strOrg), strPeriod, strYear);
             // printPageClosePopUp(response, vars, strWindowPath);
         } else
             pageErrorPopUp(response);
