@@ -622,7 +622,7 @@ public class PrintController extends HttpSecureAppServlet {
     final Map<String, PocData> customerMap = new HashMap<String, PocData>();
     final Map<String, PocData> salesRepMap = new HashMap<String, PocData>();
     final Vector<Object> cloneVector = new Vector<Object>();
-    int numberOfCompletedDocuments = 0;
+    boolean allTheDocsCompleted = true;
     for (final PocData documentData : pocData) {
       // Map used to count the different users
       
@@ -664,14 +664,12 @@ public class PrintController extends HttpSecureAppServlet {
       
       final Report report = reports.get(documentData.documentId);
       // All ids of documents in draft are passed to the web client
-      // TODO check if the document is marked as not complete
       if (report.isDraft()) {
         if (draftDocumentIds.length() > 0)
           draftDocumentIds += ",";
         draftDocumentIds += report.getDocumentId();
-      } else {
-        numberOfCompletedDocuments++;
-      }
+        allTheDocsCompleted=false;
+      } 
       
       // Fill the report location
       final String reportFilename = report.getContextSubFolder() + report.getFilename();
@@ -686,7 +684,7 @@ public class PrintController extends HttpSecureAppServlet {
       }
       
     }
-    if (numberOfCompletedDocuments == 0) {
+    if (!allTheDocsCompleted) {
       final OBError on = new OBError();
       on.setMessage(Utility.messageBD(this, "Some Documents were not completed, the email couldnt be send. Please " + "confirm first all the seleted documents to complete the process", vars.getLanguage()));
       on.setTitle(Utility.messageBD(this, "info", vars.getLanguage()));
