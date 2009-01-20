@@ -307,7 +307,7 @@ function checkForChanges(f) {
 			var autoSave = true;		
 			if (promptConfirmation)
 				autoSave = showJSMessage(25);
-			if (autoSave) {
+			if (autoSave && hasUserChanges) {
 				if(form.autosave) {
 					form.autosave.value = 'Y';
 				}
