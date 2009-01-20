@@ -242,6 +242,17 @@ public class ImportProduct extends ImportProcess {
             if (log4j.isDebugEnabled())
                 log4j.debug("ImportProduct C_TaxCategory_ID ="
                         + strcTaxcategoryId);
+            if (strcTaxcategoryId==null || strcTaxcategoryId.equals("")) {
+             // Default Tax category doesn't exist
+                addLog(Utility.messageBD(conn, "MarkDefaultTaxCategory", vars
+                        .getLanguage()));
+                myError.setType("Error");
+                myError.setTitle(Utility.messageBD(conn, "Error", vars
+                        .getLanguage()));
+                myError.setMessage(Utility.messageBD(conn, "MarkDefaultTaxCategory", vars
+                        .getLanguage()));
+                return myError;
+            }
 
             conn.releaseCommitConnection(con);
         } catch (Exception se) {
