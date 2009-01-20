@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_reports;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.text.SimpleDateFormat;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -204,16 +205,17 @@ public class ReportProductionJR extends HttpSecureAppServlet {
         parameters.put("REPORT_TITLE", strTitle);
         parameters.put("REPORT_SUBTITLE", strSubTitle);
 
-        /*
-         * try{ parameters.put("DATE_FROM", new
-         * SimpleDateFormat("dd-MM-yyyy").parse
-         * (vars.getRequestGlobalVariable("inpDateFrom",
-         * "ReportProductionJR|DateFrom"))); parameters.put("DATE_TO", new
-         * SimpleDateFormat
-         * ("dd-MM-yyyy").parse(vars.getRequestGlobalVariable("inpDateTo",
-         * "ReportProductionJR|DateTo"))); } catch (Exception ex) { throw new
-         * ServletException(ex); }
-         */
+        try {
+            if (!strDateFrom.equals(""))
+                parameters.put("DATE_FROM", new SimpleDateFormat("dd-MM-yyyy")
+                        .parse(strDateFrom));
+            if (!strDateTo.equals(""))
+                parameters.put("DATE_TO", new SimpleDateFormat("dd-MM-yyyy")
+                        .parse(strDateTo));
+        } catch (Exception ex) {
+            throw new ServletException(ex);
+        }
+
         if (log4j.isDebugEnabled())
             log4j.debug("parameters: " + parameters.toString());
         if (log4j.isDebugEnabled())
