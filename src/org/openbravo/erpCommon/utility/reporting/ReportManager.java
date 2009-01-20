@@ -26,13 +26,10 @@ import java.util.Locale;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRParameter;
-import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.ClassInfoData;
@@ -76,19 +73,11 @@ public class ReportManager {
                     _strDefaultDesignPath.length() - 1);
     }
 
-    private String getBaseDesignPath(String language) {
-        String designPath = _strDefaultDesignPath;
-        if (!language.equals("") && !language.equals("en_US"))
-            designPath = language;
-        designPath = _prefix + "/" + _strBaseDesignPath + "/" + designPath;
-
-        return designPath;
-    }
-
     public void processReport(Report report, VariablesSecureApp variables)
             throws ReportingException {
         String language = variables.getLanguage();
-        String baseDesignPath = getBaseDesignPath(language);
+        String baseDesignPath = _prefix + "/" + _strBaseDesignPath + "/"
+                + _strDefaultDesignPath;
         Locale locale = new Locale(language.substring(0, 2), language
                 .substring(3, 5));
 
@@ -104,19 +93,14 @@ public class ReportManager {
 
         designParameters.put("DOCUMENT_ID", report.getDocumentId());
         designParameters.put("TEMPLATE_LOCATION", templateLocation);
-        designParameters.put("BASE_ATTACH", _strAttachmentPath); // TODO: Rename
-                                                                 // parameter to
-                                                                 // BASE_ATTACH_PATH
-        designParameters.put("BASE_WEB", _strBaseWeb); // TODO: Do not use Base
-                                                       // web, this is an url
-                                                       // and generates web
-                                                       // traffic, a local path
-                                                       // reference should be
-                                                       // used
+        // TODO: Rename parameter to BASE_ATTACH_PATH
+        designParameters.put("BASE_ATTACH", _strAttachmentPath);
+        // TODO: Do not use Base web, this is an url and generates web traffic,
+        // a local path reference should be used
+        designParameters.put("BASE_WEB", _strBaseWeb);
         try {
-            JasperDesign jasperDesign = JRXmlLoader.load(templateFile);
-            JasperReport jasperReport = JasperCompileManager
-                    .compileReport(jasperDesign);
+            JasperReport jasperReport = Utility.getTranslatedJasperReport(
+                    _connectionProvider, templateFile, language);
             if (designParameters == null)
                 designParameters = new HashMap<String, Object>();
 

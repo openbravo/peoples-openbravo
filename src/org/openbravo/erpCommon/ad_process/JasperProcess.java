@@ -12,17 +12,14 @@ import javax.servlet.ServletOutputStream;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
-import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.export.JExcelApiExporter;
 import net.sf.jasperreports.engine.export.JExcelApiExporterParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
@@ -80,7 +77,7 @@ public class JasperProcess implements Process {
         Locale locLocale = new Locale(strLanguage.substring(0, 2), strLanguage
                 .substring(3, 5));
 
-        String strBaseDesign = getBaseDesignPath(config, strLanguage);
+        String strBaseDesign = getBaseDesignPath(config);
 
         strReportName = Replace.replace(Replace.replace(strReportName,
                 "@basedesign@", strBaseDesign), "@attach@", strAttach);
@@ -90,9 +87,9 @@ public class JasperProcess implements Process {
         // FIXME: os is never assigned, but used leading to an NPE
         ServletOutputStream os = null;
         try {
-            JasperDesign jasperDesign = JRXmlLoader.load(strReportName);
-            JasperReport jasperReport = JasperCompileManager
-                    .compileReport(jasperDesign);
+            JasperReport jasperReport = Utility.getTranslatedJasperReport(
+                    connection, strReportName, strLanguage);
+
             if (designParameters == null)
                 designParameters = new HashMap<String, Object>();
 
@@ -217,18 +214,13 @@ public class JasperProcess implements Process {
      * Returns the absolute path to the correct language subfolder within the
      * context's src-loc folder.
      * 
-     * @param language
-     *            String specifying the language folder required, e.g. es_ES
      * @return String with the absolute path on the local drive.
      */
-    protected String getBaseDesignPath(ConfigParameters config, String language) {
+    protected String getBaseDesignPath(ConfigParameters config) {
         log4j.info("*********************Base path: "
                 + config.strBaseDesignPath);
         String strNewAddBase = config.strDefaultDesignPath;
         String strFinal = config.strBaseDesignPath;
-        if (!language.equals("") && !language.equals("en_US")) {
-            strNewAddBase = language;
-        }
         if (!strFinal.endsWith("/" + strNewAddBase)) {
             strFinal += "/" + strNewAddBase;
         }

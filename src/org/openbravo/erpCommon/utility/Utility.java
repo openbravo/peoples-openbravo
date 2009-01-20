@@ -26,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -44,6 +45,12 @@ import java.util.Vector;
 
 import javax.servlet.ServletException;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.OrgTree;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -53,6 +60,7 @@ import org.openbravo.data.Sqlc;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.model.ad.ui.Window;
+import org.openbravo.uiTranslation.TranslationHandler;
 import org.openbravo.utils.Replace;
 
 /**
@@ -230,8 +238,7 @@ public class Utility {
     /**
      * 
      * Formats a message String into a String for html presentation. Escapes the
-     * &, <, >, " and ®, and replace the \n by <br/>
-     * and \r for space.
+     * &, <, >, " and ®, and replace the \n by <br/> and \r for space.
      * 
      * IMPORTANT! : this method is designed to transform the output of
      * Utility.messageBD method, and this method replaces \n by \\n and \" by
@@ -2234,6 +2241,36 @@ public class Utility {
         if (MillisDate1 > MillisDate2)
             return true; // Date 1 is bigger than Date 2
         return false;
+    }
+
+    public static JasperReport getTranslatedJasperReport(
+            ConnectionProvider conn, String reportName, String language)
+            throws JRException {
+
+        log4j.debug("translate report: " + reportName + " for language: "
+                + language);
+
+        File reportFile = new File(reportName);
+
+        InputStream reportInputStream = null;
+        if (reportFile.exists()) {
+            TranslationHandler handler = new TranslationHandler(conn);
+            handler.prepareFile(reportName, language, reportFile);
+            reportInputStream = handler.getInputStream();
+        }
+        JasperDesign jasperDesign;
+        if (reportInputStream != null) {
+            log4j.debug("Jasper report being created with inputStream.");
+            jasperDesign = JRXmlLoader.load(reportInputStream);
+        } else {
+            log4j.debug("Jasper report being created with strReportName.");
+            jasperDesign = JRXmlLoader.load(reportName);
+        }
+
+        JasperReport jasperReport = JasperCompileManager
+                .compileReport(jasperDesign);
+
+        return jasperReport;
     }
 
 }

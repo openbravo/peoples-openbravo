@@ -14,7 +14,6 @@ package org.openbravo.base.secureApp;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.text.DecimalFormat;
@@ -36,17 +35,14 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
-import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.export.JExcelApiExporter;
 import net.sf.jasperreports.engine.export.JExcelApiExporterParameter;
 import net.sf.jasperreports.engine.export.JRHtmlExporter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationManager;
@@ -63,7 +59,6 @@ import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.PrintJRData;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.uiTranslation.TranslationHandler;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.w3c.dom.Document;
@@ -986,28 +981,11 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         final String strFileName = strReportName.substring(strReportName
                 .lastIndexOf("/") + 1);
 
-        final File reportFile = new File(strReportName);
-        log4j.debug("renderJR() - strReportName: " + strReportName);
-
-        InputStream reportInputStream = null;
-        if (reportFile.exists()) {
-            final TranslationHandler handler = new TranslationHandler(this);
-            handler.prepareFile(strReportName, strLanguage, reportFile);
-            reportInputStream = handler.getInputStream();
-        }
         ServletOutputStream os = null;
         try {
-            JasperDesign jasperDesign;
-            if (reportInputStream != null) {
-                log4j.debug("Jasper report being created with inputStream.");
-                jasperDesign = JRXmlLoader.load(reportInputStream);
-            } else {
-                log4j.debug("Jasper report being created with strReportName.");
-                jasperDesign = JRXmlLoader.load(strReportName);
-            }
 
-            final JasperReport jasperReport = JasperCompileManager
-                    .compileReport(jasperDesign);
+            final JasperReport jasperReport = Utility
+                    .getTranslatedJasperReport(this, strReportName, strLanguage);
             if (designParameters == null)
                 designParameters = new HashMap<String, Object>();
 
