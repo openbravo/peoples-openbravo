@@ -96,7 +96,7 @@
 					<reportElement
 						x="0"
 						y="1"
-						width="170"
+						width="230"
 						height="16"
 						forecolor="#000000"
 						key="textField"/>
@@ -108,9 +108,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="172"
+						x="232"
 						y="1"
-						width="132"
+						width="72"
 						height="16"
 						forecolor="#000000"
 						key="textField"/>
