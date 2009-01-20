@@ -260,7 +260,7 @@ public class ReportCashFlow extends HttpSecureAppServlet {
                 vars.getSqlDateFormat());
         strPeriodTo = ReportCashFlowData.selectFormat(this, strPeriodTo, vars
                 .getSqlDateFormat());
-        strTreeOrg = strOrg;
+        strTreeOrg = "'" + strOrg + "'";
         treeOrg(vars, strOrg);
 
         Vector<Object> vectorArray = new Vector<Object>();
@@ -271,9 +271,8 @@ public class ReportCashFlow extends HttpSecureAppServlet {
         ReportCashFlowData[] dataTree = convertVector(vectorArray);
         dataTree = filterData(dataTree);
         strTreeOrg = "";
-        
-        if (dataTree.length > 0)
-          xmlDocument.setParameter("title", dataTree[0].name);
+        if (dataTree==null || dataTree.length==0) dataTree = ReportCashFlowData.set();
+        xmlDocument.setParameter("title", dataTree[0].name);
         xmlDocument.setParameter("directory", "var baseDirectory = \""
                 + strReplaceWith + "/\";\n");
         xmlDocument.setParameter("language", "defaultLang=\""
@@ -438,7 +437,7 @@ public class ReportCashFlow extends HttpSecureAppServlet {
         ReportCashFlowData[] dataOrg = ReportCashFlowData.selectOrg(this,
                 strOrg, vars.getClient());
         for (int i = 0; i < dataOrg.length; i++) {
-            strTreeOrg += "," + dataOrg[i].id;
+            strTreeOrg += ",'" + dataOrg[i].id + "'";
             if (dataOrg[i].issummary.equals("Y"))
                 treeOrg(vars, dataOrg[i].id);
         }
@@ -459,7 +458,7 @@ public class ReportCashFlow extends HttpSecureAppServlet {
                 strPeriodFrom, strPeriodTo, strAccountId,
                 strAccountingReportId, strcAcctSchemaId);
         if (data == null || data.length == 0)
-            data = ReportCashFlowData.set();
+            return;
         vectorArray.addElement(data[0]);
         ReportCashFlowData[] dataAux = ReportCashFlowData.selectChild(this,
                 Utility
