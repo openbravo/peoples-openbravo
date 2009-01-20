@@ -56,7 +56,7 @@
 			C_poc_configuration
 		where
 			C_poc_configuration.ad_client_id = ? AND 
-			C_poc_configuration.ad_org_id = ? AND
+			(C_poc_configuration.ad_org_id = ? OR C_poc_configuration.ad_org_id = '0') AND
 			C_poc_configuration.isActive = 'Y'
         ]]>
         </Sql>
@@ -74,7 +74,7 @@
 			C_poc_configuration
 		where
 			C_poc_configuration.ad_client_id = ? AND
-			C_poc_configuration.ad_org_id = ? AND
+			(C_poc_configuration.ad_org_id = ? OR C_poc_configuration.ad_org_id = '0') AND
 			C_poc_configuration.isActive = 'Y'
         ]]>
         </Sql>
