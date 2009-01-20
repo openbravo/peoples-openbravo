@@ -431,7 +431,7 @@ public class PrintController extends HttpSecureAppServlet {
     
     try {
       
-      final Session session = EmailManager.newMailSession(this, vars.getClient(), (String) vars.getSessionValue("183|AD_ORG_ID") + (String) vars.getSessionValue("183|AD_ORG_ID"));
+      final Session session = EmailManager.newMailSession(this, vars.getClient(), report.getOrgId());
       
       final Message message = new MimeMessage(session);
       message.setFrom(new InternetAddress(senderAddess));
