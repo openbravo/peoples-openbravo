@@ -154,8 +154,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
 
         AccountTreeData[][] elements = new AccountTreeData[strGroups.length][];
 
-        WindowTreeData[] dataTree = WindowTreeData.selectTreeID(this, vars
-                .getClient(), "EV");
+        WindowTreeData[] dataTree = WindowTreeData.selectTreeID(this, 
+                          Utility.stringList(vars.getClient()), "EV");
         String TreeID = "";
         if (dataTree != null && dataTree.length != 0)
             TreeID = dataTree[0].id;
