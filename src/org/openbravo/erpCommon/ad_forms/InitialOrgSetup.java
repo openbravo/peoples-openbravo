@@ -39,7 +39,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.ad_combos.MonedaComboData;
-import org.openbravo.erpCommon.ad_combos.RegionComboData;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ModuleReferenceDataOrgTree;
 import org.openbravo.erpCommon.modules.ModuleUtiltiy;
@@ -158,8 +157,10 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
             xmlDocument.setParameter("moduleTreeDescription", tree
                     .descriptionToHtml());
 
-            xmlDocument.setParameter("region", arrayDobleEntrada("arrRegion",
-                    RegionComboData.selectTotal(this)));
+            xmlDocument.setParameter("paramLocationId", "");
+            xmlDocument.setParameter("paramLocationDescription", "");
+            //xmlDocument.setParameter("region", arrayDobleEntrada("arrRegion",
+                    //RegionComboData.selectTotal(this)));
             xmlDocument.setData("reportCurrency", "liststructure",
                     MonedaComboData.select(this));
             xmlDocument.setData("reportOrgType", "liststructure",
@@ -168,19 +169,6 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
             xmlDocument.setData("reportParentOrg", "liststructure",
                     InitialOrgSetupData.selectParentOrg(this, vars
                             .getLanguage(), vars.getClient()));
-            try {
-                ComboTableData comboTableData = new ComboTableData(vars, this,
-                        "TABLEDIR", "C_Country_ID", "156", "", Utility
-                                .getContext(this, vars, "#User_Org", ""),
-                        Utility.getContext(this, vars, "#User_Client", ""), 0);
-                Utility.fillSQLParameters(this, vars, null, comboTableData, "",
-                        "");
-                xmlDocument.setData("reportCountry", "liststructure",
-                        comboTableData.select(false));
-                comboTableData = null;
-            } catch (final Exception ex) {
-                throw new ServletException(ex);
-            }
 
             response.setContentType("text/html; charset=UTF-8");
             final PrintWriter out = response.getWriter();
@@ -271,6 +259,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
                 .getStringParameter("inpCreateAccounting");
         final String strOrgType = vars.getStringParameter("inpOrgType");
         final String strParentOrg = vars.getStringParameter("inpParentOrg");
+        final String strcLocationId = vars.getStringParameter("inpcLocationId");
         final boolean bProduct = isTrue(vars.getStringParameter("inpProduct"));
         final boolean bBPartner = isTrue(vars.getStringParameter("inpBPartner"));
         final boolean bProject = isTrue(vars.getStringParameter("inpProject"));
@@ -333,7 +322,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
                     Utility.messageBD(this, "StartingOrg", vars.getLanguage()))
                     .append(SALTO_LINEA);
             if (!createOrg(vars, strOrganization, strOrgType, strParentOrg,
-                    strOrgUser)) {
+                    strOrgUser, strcLocationId)) {
                 releaseRollbackConnection(conn);
                 m_info.append(SALTO_LINEA).append(
                         Utility.messageBD(this, "createOrgFailed", vars
@@ -493,7 +482,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
     }
 
     public boolean createOrg(VariablesSecureApp vars, String orgName,
-            String strOrgType, String strParentOrg, String userOrg)
+            String strOrgType, String strParentOrg, String userOrg, String strcLocationId)
             throws ServletException {
 
         Connection conn = null;
@@ -531,6 +520,13 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
             InitialOrgSetupData.updateTreeNode(conn, this, strParentOrg,
                     strTree, AD_Org_ID);
             // Info
+            if (InitialClientSetupData.updateOrgInfo(conn ,this, strcLocationId, AD_Org_ID) != 1) {
+                final String err = "InitialOrgSetup - createOrg - Location NOT inserted";
+                log4j.warn(err);
+                m_info.append(err).append(SALTO_LINEA);
+                releaseRollbackConnection(conn);
+                return false;
+            }
             releaseCommitConnection(conn);
             conn = this.getTransactionConnection();
             m_info.append(

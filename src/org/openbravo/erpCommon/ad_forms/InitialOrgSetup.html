@@ -45,9 +45,6 @@ var baseDirectory = "../../../../../web/";
 <script language="JavaScript" src="../../../../../web/js/dojoConfig.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/dojo/dojo.js" type="text/javascript"></script>
 <script language="JavaScript" src="../../../../../web/js/genericTree.js" type="text/javascript"></script>
-<script language="JavaScript" type="text/javascript" id="paramArrayRegion">
-var arrRegion=null;
-</script>
 <script type="text/javascript">
       //all dojo.require above this line
       dojo.hostenv.writeIncludes(); //makes debugging in Venkman possible
@@ -299,6 +296,35 @@ function myReadOnlyLogic() {
                     </select>
                   </td>
                 </tr>
+                <tr>
+                  <td class="TitleCell"><span class="LabelText">Location/Address</span></td>
+                  <td class="TextBox_btn_ContentCell" colspan="2">
+                    <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
+                      <!-- input type="hidden" name="inpcLocationId" id="C_Location_ID" value="" onchange="logChanges(this);return true;"></input-->
+                      <tr>
+                        <td class="TextBox_ContentCell">
+			 			  <input type="hidden" name="inpcLocationId" id="C_Location_ID" value="" onchange="logChanges(this);return true;"></input>
+                          <input class="dojoValidateValid TextBox_btn_TwoCells_width" type="text"  name="inpcLocationId_R" maxlength="20" value=""></input>
+                        </td>
+                        <td class="FieldButton_ContentCell">
+                          <a class="FieldButtonLink" href="#" onfocus="setWindowElementFocus(this); window.status='Business Partner'; return true;" onblur="window.status=''; return true;" onkeypress="this.className='FieldButtonLink_active'; return true;" onkeyup="this.className='FieldButtonLink_focus'; return true;"  onclick="openSearch(null, null, '../info/Location_FS.html', 'SELECTOR_LOCATION', false, 'frmMain', 'inpcLocationId', 'inpcLocationId_R', document.frmMain.inpcLocationId_R, 'inpIDValue', inputValue(document.frmMain.inpcLocationId), 'WindowID', inputValue(document.frmMain.inpwindowId));return false;">
+                          <table class="FieldButton" onmouseout="this.className='FieldButton';window.status='';return true;" onmouseover="this.className='FieldButton_hover';window.status='Search';return true;" onmousedown="this.className='FieldButton_active';return true;" onmouseup="this.className='FieldButton';return true;">
+                            <tr>
+                              <td class="FieldButton_bg">
+                                <img id="buttonLocation" alt="Location" class="FieldButton_Icon FieldButton_Icon_Location" title="Location" src="../../../../../web/images/blank.gif" border="0"></img>
+                              </td>
+                            </tr>
+                          </table>
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+
+
+
                 <tr>
                   <td colspan="6">
                     <table class="FieldGroup" cellspacing="0" cellpadding="0" border="0">
