@@ -117,7 +117,7 @@
             v_NextNo, v_Client_ID, v_Org_ID, 'Y',
             now(), v_User_ID, now(), v_User_ID,
             v_Year_ID, v_MonthNo, TO_DATE(ADD_MONTHS(v_StartDate, v_MonthNo-1)), 'S',
-	        (select substring(name, 1,3) || '-' || substring(year,3) from AD_MONTH, C_YEAR where TO_NUMBER(value)=v_MonthNo and c_year_id=v_Year_ID)
+	        (SELECT SUBSTR(name, 1,3) || '-' || SUBSTR(year,3,2) FROM AD_MONTH, C_YEAR WHERE TO_NUMBER(value)=v_MonthNo AND c_year_id=v_Year_ID)
            );
         DBMS_OUTPUT.PUT_LINE('Month Added') ;
       END IF;
