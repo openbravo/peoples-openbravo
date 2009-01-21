@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -394,7 +394,7 @@ public class WadUtility {
                 || fields.reference.equals("35")
                 || fields.reference.equals("25")
                 || fields.reference.equals("800011")) { // TableDir, Search y
-                                                        // Locator
+            // Locator
             itable++;
             EditionFieldsData[] dataSearchs = null;
             if (fields.reference.equals("30"))
@@ -1099,9 +1099,9 @@ public class WadUtility {
             if (efd.isdisplayed.equals("Y")
                     && isupdateable
                     && (isDateField(efd.reference) || isTimeField(efd.reference))) { // Date.
-                                                                                     // Put
-                                                                                     // a
-                                                                                     // calendar
+                // Put
+                // a
+                // calendar
                 html.append(" onkeyup=\"auto_completar_");
                 if (isDateField(efd.reference))
                     html.append("fecha(this");
@@ -2743,9 +2743,10 @@ public class WadUtility {
         setPropertyValue(prop, field, "SearchName", "searchname", "");
         setPropertyValue(prop, field, "AD_CallOut_ID", "adCalloutId", "");
         setPropertyValue(prop, field, "CallOutName", "calloutname", "");
+        setPropertyValue(prop, field, "CallOutMapping", "mappingnameCallout",
+                "");
         setPropertyValue(prop, field, "CallOutClassName", "classnameCallout",
                 "");
-        setPropertyValue(prop, field, "CallOutMapping", "mappingCallout", "");
         setPropertyValue(prop, field, "AD_Process_ID", "adProcessId", "");
         setPropertyValue(prop, field, "IsReadOnly", "isreadonly", "N");
         setPropertyValue(prop, field, "DisplayLogic", "displaylogic", "");

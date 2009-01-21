@@ -20,6 +20,7 @@
 <REPORT>
   <template file="WADControlJS.html"/>
   <PARAMETER id="fieldCalloutName" name="calloutName"/>
+  <PARAMETER id="fieldCalloutMapping" name="calloutMapping"/>
 
   <DISCARD id="discard"/>
 </REPORT>

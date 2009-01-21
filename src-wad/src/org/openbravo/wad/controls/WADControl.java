@@ -206,6 +206,8 @@ public class WADControl {
                     "org/openbravo/wad/controls/WADControlJS")
                     .createXmlDocument();
             xmlDocument.setParameter("calloutName", callout);
+            xmlDocument.setParameter("calloutMapping",
+                    getData("CallOutMapping"));
             addJSCode("callout" + callout, replaceHTML(xmlDocument.print()));
         }
     }
