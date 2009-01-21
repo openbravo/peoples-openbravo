@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -591,7 +591,7 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
                 intDiscard++;
                 strLevelLabel[i] = dimensionLabel[7].name;
             } else if (strShownArray[i].equals("9")) {
-                strTextShow[i] = "CB.NAME";
+                strTextShow[i] = "AD_USER.NAME";
                 intDiscard++;
                 strLevelLabel[i] = dimensionLabel[8].name;
             } else {
