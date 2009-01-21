@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-  <database name="VIEW C_YEAR_V">
-    <view name="C_YEAR_V"><![CDATA[SELECT c_year.c_year_id, c_year.c_calendar_id, c_year.ad_client_id, ad_org.ad_org_id, c_year.isactive, c_year.created, c_year.createdby, c_year.updated, c_year.updatedby, c_year.year AS yearname, c_year.description
-   FROM c_year, ad_org
-  WHERE c_year.c_calendar_id = ad_org.c_calendar_id]]></view>
-  </database>
