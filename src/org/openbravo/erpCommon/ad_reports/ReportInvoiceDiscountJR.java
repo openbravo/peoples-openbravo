@@ -184,8 +184,10 @@ public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
             }
         }
 
-        xmlDocument.setParameter("language", "defaultLang=\""
+        xmlDocument.setParameter("paramLanguage", "defaultLang=\""
                 + vars.getLanguage() + "\";");
+        xmlDocument
+                .setParameter("calendar", vars.getLanguage().substring(0, 2));
         xmlDocument.setParameter("directory", "var baseDirectory = \""
                 + strReplaceWith + "/\";\n");
         xmlDocument.setParameter("dateFrom", strDateFrom);
