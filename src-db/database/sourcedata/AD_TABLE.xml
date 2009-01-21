@@ -887,9 +887,9 @@ The User identifies a unique user in the system. This could be an internal user 
 <!--118 CREATEDBY-->
 <!--118-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--118 UPDATED-->
-<!--118-->              <UPDATED><![CDATA[0099-09-23 00:00:00.0]]></UPDATED>
+<!--118-->              <UPDATED><![CDATA[2009-01-21 18:53:02.0]]></UPDATED>
 <!--118 UPDATEDBY-->
-<!--118-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--118-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--118 NAME-->
 <!--118-->              <NAME><![CDATA[ADTask]]></NAME>
 <!--118 DESCRIPTION-->
@@ -919,7 +919,7 @@ The User identifies a unique user in the system. This could be an internal user 
 <!--118 SQL_RECORD_IDENTIFIER-->
 <!--118-->              <SQL_RECORD_IDENTIFIER><![CDATA[SELECT (SELECT COALESCE(TO_CHAR(MAX(TT.Name)), TO_CHAR(T.Name)) FROM AD_Task_Trl TT WHERE TT.AD_Task_ID=T.AD_Task_ID AND TT.AD_LANGUAGE=L.AD_LANGUAGE)  AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, AD_Task T WHERE AD_Task_ID=':c_ID']]></SQL_RECORD_IDENTIFIER>
 <!--118 DEVELOPMENTSTATUS-->
-<!--118-->              <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
+<!--118-->              <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
 <!--118 AD_PACKAGE_ID-->
 <!--118-->              <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CF4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--118**************--></AD_TABLE>
@@ -1093,9 +1093,9 @@ Run Synchronize Terminology to update menu translation.]]></HELP>
 <!--124 CREATEDBY-->
 <!--124-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--124 UPDATED-->
-<!--124-->              <UPDATED><![CDATA[2000-12-29 21:03:13.0]]></UPDATED>
+<!--124-->              <UPDATED><![CDATA[2009-01-21 18:53:16.0]]></UPDATED>
 <!--124 UPDATEDBY-->
-<!--124-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--124-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--124 NAME-->
 <!--124-->              <NAME><![CDATA[ADTaskTrl]]></NAME>
 <!--124 DESCRIPTION-->
@@ -1125,7 +1125,7 @@ Run Synchronize Terminology to update menu translation.]]></HELP>
 <!--124 SQL_RECORD_IDENTIFIER-->
 <!--124-->              <SQL_RECORD_IDENTIFIER><![CDATA[SELECT TO_CHAR(COALESCE(TO_CHAR(T.Name),'')) AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, AD_Task_Trl T WHERE AD_Task_Trl_ID=':c_ID']]></SQL_RECORD_IDENTIFIER>
 <!--124 DEVELOPMENTSTATUS-->
-<!--124-->              <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
+<!--124-->              <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
 <!--124 AD_PACKAGE_ID-->
 <!--124-->              <AD_PACKAGE_ID><![CDATA[5A3ED54AB1CF4B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--124**************--></AD_TABLE>
@@ -2880,9 +2880,9 @@ The Report Access Tab determines who can access a report or process]]></HELP>
 <!--199 CREATEDBY-->
 <!--199-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--199 UPDATED-->
-<!--199-->              <UPDATED><![CDATA[2003-05-03 23:57:40.0]]></UPDATED>
+<!--199-->              <UPDATED><![CDATA[2009-01-21 18:53:08.0]]></UPDATED>
 <!--199 UPDATEDBY-->
-<!--199-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--199-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--199 NAME-->
 <!--199-->              <NAME><![CDATA[ADTaskAccess]]></NAME>
 <!--199 DESCRIPTION-->
@@ -2914,7 +2914,7 @@ The Task Access Tab defines the Roles that will have access to this task and the
 <!--199 SQL_RECORD_IDENTIFIER-->
 <!--199-->              <SQL_RECORD_IDENTIFIER><![CDATA[SELECT (SELECT (SELECT COALESCE(TO_CHAR(MAX(TTT.Name)), TO_CHAR(TT.Name)) FROM AD_Task_Trl TTT WHERE TTT.AD_Task_ID=TT.AD_Task_ID AND TTT.AD_LANGUAGE=L.AD_LANGUAGE)  FROM AD_Task TT WHERE TT.AD_Task_ID=T.AD_Task_ID) ||' - '||(SELECT TO_CHAR(COALESCE(TO_CHAR(TT.Name),'')) FROM AD_Role TT WHERE TT.AD_Role_ID=T.AD_Role_ID)  AS COLUMN_IDENTIFIER FROM (SELECT AD_LANGUAGE FROM AD_LANGUAGE WHERE AD_LANGUAGE=:c_language) L, AD_Task_Access T WHERE AD_Task_Access_ID=':c_ID']]></SQL_RECORD_IDENTIFIER>
 <!--199 DEVELOPMENTSTATUS-->
-<!--199-->              <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
+<!--199-->              <DEVELOPMENTSTATUS><![CDATA[DP]]></DEVELOPMENTSTATUS>
 <!--199 AD_PACKAGE_ID-->
 <!--199-->              <AD_PACKAGE_ID><![CDATA[5A3ED54AB1C84B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--199**************--></AD_TABLE>
