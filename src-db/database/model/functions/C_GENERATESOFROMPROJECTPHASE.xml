@@ -157,7 +157,7 @@
             0, 0, Cur_SO.M_WAREHOUSE_ID, Cur_SO.M_PRICELIST_ID,
              'N', 'N', 'N', Cur_SO.SALESREP_ID,
             v_Billto_ID, Cur_SO.C_CAMPAIGN_ID, Cur_SO.C_PROJECT_ID, Cur_SO.AD_User_ID,
-             'N', TRUNC(now(), 'DD'), Cur_SO.PHASE_NAME ||' - '|| Cur_SO.DESCRIPTION
+             'N', TRUNC(now(), 'DD'), Cur_SO.PHASE_NAME || ' - ' || COALESCE(TO_CHAR(Cur_SO.DESCRIPTION),'')
           );
 
         UPDATE C_PROJECTPHASE
@@ -285,7 +285,7 @@
                 0, NULL, 0,
                 Cur_SO.C_CURRENCY_ID, v_PriceList, TRUNC(now(), 'DD'), NULL,
                 NULL, now(), 'Y', Cur_SOLINES.SEQNO,
-                v_C_OrderLine_ID, Cur_SO.AD_CLIENT_ID, v_C_Order_ID, Cur_SOLINES.LINE_NAME || ' - ' || Cur_SOLINES.DESCRIPTION,
+                v_C_OrderLine_ID, Cur_SO.AD_CLIENT_ID, v_C_Order_ID, Cur_SOLINES.LINE_NAME || ' - ' || COALESCE(TO_CHAR(Cur_SOLINES.DESCRIPTION),''),
                 Cur_SOLINES.M_PRODUCT_ID, v_UOM, 'N', v_AD_User_ID,
                 v_AD_User_ID, 0, NULL, 0,
                 now(), Cur_SO.AD_ORG_ID, NULL, Cur_SO.C_BPARTNER_ID,
