@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -640,8 +640,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends
                 intOrder++;
                 strLevelLabel[i] = dimensionLabel[6].name;
             } else if (strShownArray[i].equals("9")) {
-                strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('C_Bpartner'), to_char( CB.C_BPARTNER_ID), to_char( '"
-                        + vars.getLanguage() + "'))";
+                strTextShow[i] = "CASE WHEN AD_USER.AD_USER_ID IS NOT NULL THEN AD_COLUMN_IDENTIFIER(to_char('Ad_User'), to_char( AD_USER.AD_USER_ID), to_char( '"+vars.getLanguage()+"')) ELSE '' END";
                 intDiscard++;
                 intOrder++;
                 strLevelLabel[i] = dimensionLabel[7].name;
