@@ -50185,19 +50185,19 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--1002100021 CREATEDBY-->
 <!--1002100021-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1002100021 UPDATED-->
-<!--1002100021-->              <UPDATED><![CDATA[2008-04-22 22:18:12.0]]></UPDATED>
+<!--1002100021-->              <UPDATED><![CDATA[2009-01-22 17:14:37.0]]></UPDATED>
 <!--1002100021 UPDATEDBY-->
 <!--1002100021-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1002100021 COLUMNNAME-->
 <!--1002100021-->              <COLUMNNAME><![CDATA[IsNoTaxable]]></COLUMNNAME>
 <!--1002100021 NAME-->
-<!--1002100021-->              <NAME><![CDATA[IsNoTaxable]]></NAME>
+<!--1002100021-->              <NAME><![CDATA[Not Taxable]]></NAME>
 <!--1002100021 PRINTNAME-->
-<!--1002100021-->              <PRINTNAME><![CDATA[Not taxable]]></PRINTNAME>
+<!--1002100021-->              <PRINTNAME><![CDATA[Not Taxable]]></PRINTNAME>
 <!--1002100021 DESCRIPTION-->
-<!--1002100021-->              <DESCRIPTION><![CDATA[Is not taxable]]></DESCRIPTION>
+<!--1002100021-->              <DESCRIPTION><![CDATA[Check if it is not taxable]]></DESCRIPTION>
 <!--1002100021 HELP-->
-<!--1002100021-->              <HELP><![CDATA[Is not taxable]]></HELP>
+<!--1002100021-->              <HELP><![CDATA[Check if it is not taxable]]></HELP>
 <!--1002100021 AD_MODULE_ID-->
 <!--1002100021-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1002100021**************--></AD_ELEMENT>
@@ -50278,19 +50278,19 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--1002100024 CREATEDBY-->
 <!--1002100024-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1002100024 UPDATED-->
-<!--1002100024-->              <UPDATED><![CDATA[2008-02-05 17:19:52.0]]></UPDATED>
+<!--1002100024-->              <UPDATED><![CDATA[2009-01-22 17:17:01.0]]></UPDATED>
 <!--1002100024 UPDATEDBY-->
 <!--1002100024-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1002100024 COLUMNNAME-->
 <!--1002100024-->              <COLUMNNAME><![CDATA[Deducpercent]]></COLUMNNAME>
 <!--1002100024 NAME-->
-<!--1002100024-->              <NAME><![CDATA[Deducpercent]]></NAME>
+<!--1002100024-->              <NAME><![CDATA[Deductable Rate]]></NAME>
 <!--1002100024 PRINTNAME-->
-<!--1002100024-->              <PRINTNAME><![CDATA[Deductible Percent]]></PRINTNAME>
+<!--1002100024-->              <PRINTNAME><![CDATA[Deductable Rate]]></PRINTNAME>
 <!--1002100024 DESCRIPTION-->
-<!--1002100024-->              <DESCRIPTION><![CDATA[Deductible Percent]]></DESCRIPTION>
+<!--1002100024-->              <DESCRIPTION><![CDATA[Deductable Rate]]></DESCRIPTION>
 <!--1002100024 HELP-->
-<!--1002100024-->              <HELP><![CDATA[Deductible Percent]]></HELP>
+<!--1002100024-->              <HELP><![CDATA[It is the deductable percentage]]></HELP>
 <!--1002100024 AD_MODULE_ID-->
 <!--1002100024-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1002100024**************--></AD_ELEMENT>
@@ -50309,19 +50309,19 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--1002100025 CREATEDBY-->
 <!--1002100025-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1002100025 UPDATED-->
-<!--1002100025-->              <UPDATED><![CDATA[2008-02-05 17:21:45.0]]></UPDATED>
+<!--1002100025-->              <UPDATED><![CDATA[2009-01-22 17:18:20.0]]></UPDATED>
 <!--1002100025 UPDATEDBY-->
 <!--1002100025-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1002100025 COLUMNNAME-->
 <!--1002100025-->              <COLUMNNAME><![CDATA[Originalrate]]></COLUMNNAME>
 <!--1002100025 NAME-->
-<!--1002100025-->              <NAME><![CDATA[Originalrate]]></NAME>
+<!--1002100025-->              <NAME><![CDATA[Original Rate]]></NAME>
 <!--1002100025 PRINTNAME-->
-<!--1002100025-->              <PRINTNAME><![CDATA[Original rate]]></PRINTNAME>
+<!--1002100025-->              <PRINTNAME><![CDATA[Original Rate]]></PRINTNAME>
 <!--1002100025 DESCRIPTION-->
-<!--1002100025-->              <DESCRIPTION><![CDATA[Original rate]]></DESCRIPTION>
+<!--1002100025-->              <DESCRIPTION><![CDATA[Original Rate]]></DESCRIPTION>
 <!--1002100025 HELP-->
-<!--1002100025-->              <HELP><![CDATA[Original rate]]></HELP>
+<!--1002100025-->              <HELP><![CDATA[Original Rate]]></HELP>
 <!--1002100025 AD_MODULE_ID-->
 <!--1002100025-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1002100025**************--></AD_ELEMENT>
@@ -50369,19 +50369,19 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--1002100028 CREATEDBY-->
 <!--1002100028-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1002100028 UPDATED-->
-<!--1002100028-->              <UPDATED><![CDATA[2008-04-23 00:26:30.0]]></UPDATED>
+<!--1002100028-->              <UPDATED><![CDATA[2009-01-22 17:08:56.0]]></UPDATED>
 <!--1002100028 UPDATEDBY-->
 <!--1002100028-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1002100028 COLUMNNAME-->
 <!--1002100028-->              <COLUMNNAME><![CDATA[IsTaxUndeductable]]></COLUMNNAME>
 <!--1002100028 NAME-->
-<!--1002100028-->              <NAME><![CDATA[Tax Undeductable]]></NAME>
+<!--1002100028-->              <NAME><![CDATA[Not tax-deductable]]></NAME>
 <!--1002100028 PRINTNAME-->
-<!--1002100028-->              <PRINTNAME><![CDATA[Tax Undeductable]]></PRINTNAME>
+<!--1002100028-->              <PRINTNAME><![CDATA[Not tax-deductable]]></PRINTNAME>
 <!--1002100028 DESCRIPTION-->
-<!--1002100028-->              <DESCRIPTION><![CDATA[Is Tax Undeductable.]]></DESCRIPTION>
+<!--1002100028-->              <DESCRIPTION><![CDATA[Not tax-deductable]]></DESCRIPTION>
 <!--1002100028 HELP-->
-<!--1002100028-->              <HELP><![CDATA[Is Tax Undeductable.]]></HELP>
+<!--1002100028-->              <HELP><![CDATA[Check it if the tax is not deductable]]></HELP>
 <!--1002100028 AD_MODULE_ID-->
 <!--1002100028-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1002100028**************--></AD_ELEMENT>
