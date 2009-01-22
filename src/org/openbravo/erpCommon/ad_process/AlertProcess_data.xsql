@@ -146,24 +146,7 @@
              AND SENDEMAIL = 'Y'
              AND R.AD_USER_ID = U.AD_USER_ID
              AND C.AD_CLIENT_ID = U.AD_CLIENT_ID
-          union
-          SELECT C.SMTPHOST,
-                 REQUESTUSER,
-                 REQUESTUSERPW,
-                 C.REQUESTEMAIL AS MAILFROM,
-                 U.EMAIL AS MAILTO,
-                 C.AD_LANGUAGE
-            FROM AD_ALERTRECIPIENT R,
-                 AD_CLIENT C,
-                 AD_USER U
-           WHERE AD_ALERTRULE_ID = ?
-             AND SENDEMAIL = 'Y'
-             AND C.AD_CLIENT_ID = U.AD_CLIENT_ID
-             and u.ad_user_id in (select ad_user_id
-                                    from ad_user_roles ur
-                                   where ur.ad_role_id = r.ad_role_id)
       ]]></Sql>
-      <Parameter name="alertRuleId"/>
       <Parameter name="alertRuleId"/>
    </SqlMethod>
    
