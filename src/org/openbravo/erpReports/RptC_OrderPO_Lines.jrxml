@@ -168,12 +168,12 @@
 		fontSize="11"
 	/>
 
-	<parameter name="ORDER_ID" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA["1000029"]]></defaultValueExpression>
+	<parameter name="C_ORDER_ID" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["'1000029'"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
 	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.NumberFormat"/>
-	<parameter name="CURRENCY_ISO_CODE" isForPrompting="false" class="java.lang.String">
+	<parameter name="ISO_CODE" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["EUR"]]></defaultValueExpression>
 	</parameter>
 	<queryString><![CDATA[SELECT M_PRODUCT.VALUE, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.NAME, SUM(C_ORDERLINE.QTYORDERED) AS QTYORDERED, 
@@ -189,7 +189,7 @@ FROM M_PRODUCT inner join C_ORDERLINE on C_ORDERLINE.M_PRODUCT_ID = M_PRODUCT.M_
                                          AND M_PRODUCT_PO.C_BPARTNER_ID = C_ORDER.C_BPARTNER_ID
                left join  M_ATTRIBUTESETINSTANCE on C_ORDERLINE.M_ATTRIBUTESETINSTANCE_ID = M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESETINSTANCE_ID, C_UOM 
 WHERE C_ORDERLINE.C_UOM_ID = C_UOM.C_UOM_ID
-AND C_ORDER.C_ORDER_ID = $P!{ORDER_ID}
+AND C_ORDER.C_ORDER_ID = $P{C_ORDER_ID}
 GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERLINE.LINENETAMT, 
       (CASE WHEN M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESET_ID IS NULL THEN '' 
             WHEN M_ATTRIBUTESETINSTANCE.M_ATTRIBUTESET_ID='0' THEN '' 
@@ -212,7 +212,7 @@ GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERL
 	</variable>
 
 		<group  name="ORDER_ID" >
-			<groupExpression><![CDATA[$P{ORDER_ID}]]></groupExpression>
+			<groupExpression><![CDATA[$P{C_ORDER_ID}]]></groupExpression>
 			<groupHeader>
 			<band height="16"  isSplitAllowed="true" >
 				<staticText>
@@ -339,7 +339,7 @@ GROUP BY M_PRODUCT.NAME, M_PRODUCT_PO.VENDORPRODUCTNO, M_PRODUCT.VALUE, C_ORDERL
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA["Total (" + $P{CURRENCY_ISO_CODE} + "): "]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Total (" + $P{ISO_CODE} + "): "]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

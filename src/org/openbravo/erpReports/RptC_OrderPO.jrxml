@@ -171,14 +171,14 @@
 	<parameter name="BASE_WEB" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["/usr/local/src/AppsOpenbravo/web"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="ORDER_ID" isForPrompting="true" class="java.lang.String">
-		<defaultValueExpression ><![CDATA["('1000012','1000029')"]]></defaultValueExpression>
+	<parameter name="DOCUMENT_ID" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["'1000012','1000029'"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["/usr/local/src/AppsOpenbravo/src/erpReports/"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="BASE_DESIGN" isForPrompting="false" class="java.lang.String"/>
-	<parameter name="SR_LINES" isForPrompting="false" class="net.sf.jasperreports.engine.JasperReport"/>
+	<parameter name="SUBREP_RptC_OrderPO_Lines" isForPrompting="false" class="net.sf.jasperreports.engine.JasperReport"/>
 	<parameter name="DATEPATTERN" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["dd-MM-yyyy"]]></defaultValueExpression>
 	</parameter>
@@ -206,7 +206,7 @@ WHERE AD_REFERENCE_ID = '151'
   AND AD_LANGUAGE = $P{LANGUAGE}) DELIVERYRULE,
   (SELECT C_PAYMENTTERM.C_PAYMENTTERM_ID, COALESCE( C_PAYMENTTERM_TRL.NAME, C_PAYMENTTERM.NAME) AS TERM
   FROM C_PAYMENTTERM LEFT JOIN C_PAYMENTTERM_TRL ON C_PAYMENTTERM.C_PAYMENTTERM_ID = C_PAYMENTTERM_TRL.C_PAYMENTTERM_ID
-   AND C_PAYMENTTERM_TRL.AD_LANGUAGE= $P{LANGUAGE}) PAYMENTTERM
+   AND C_PAYMENTTERM_TRL.AD_LANGUAGE = $P{LANGUAGE}) PAYMENTTERM
 WHERE C_ORDER.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
 AND C_ORDER.ISSOTRX = 'N'
 AND C_ORDER.ad_org_id = AD_ORGINFO.ad_org_id
@@ -215,7 +215,7 @@ AND C_ORDER.FREIGHTCOSTRULE = FREIGHTCOSTRULE.VALUE
 AND C_ORDER.DELIVERYRULE = DELIVERYRULE.VALUE
 AND C_ORDER.C_CURRENCY_ID = C_CURRENCY.C_CURRENCY_ID
 AND C_ORDER.C_PAYMENTTERM_ID = PAYMENTTERM.C_PAYMENTTERM_ID
-AND C_ORDER.C_ORDER_ID IN $P!{ORDER_ID}]]></queryString>
+AND C_ORDER.C_ORDER_ID IN ($P{DOCUMENT_ID})]]></queryString>
 
 	<field name="C_ORDER_ID" class="java.lang.String"/>
 	<field name="DATEORDERED" class="java.util.Date"/>
@@ -450,7 +450,7 @@ AND C_ORDER.C_ORDER_ID IN $P!{ORDER_ID}]]></queryString>
 						width="480"
 						height="76"
 						key="subreport-1"/>
-					<subreportParameter  name="ORDER_ID">
+					<subreportParameter  name="C_ORDER_ID">
 						<subreportParameterExpression><![CDATA[$F{C_ORDER_ID}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter  name="LOCALE">
@@ -459,11 +459,11 @@ AND C_ORDER.C_ORDER_ID IN $P!{ORDER_ID}]]></queryString>
 					<subreportParameter  name="NUMBERFORMAT">
 						<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
 					</subreportParameter>
-					<subreportParameter  name="CURRENCY_ISO_CODE">
+					<subreportParameter  name="ISO_CODE">
 						<subreportParameterExpression><![CDATA[$F{ISO_CODE}]]></subreportParameterExpression>
 					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SR_LINES}]]></subreportExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SUBREP_RptC_OrderPO_Lines}]]></subreportExpression>
 				</subreport>
 			</band>
 		</detail>
