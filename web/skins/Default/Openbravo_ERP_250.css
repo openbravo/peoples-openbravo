@@ -8591,7 +8591,7 @@ a.Popup_Workflow_Button_focus {
 .Popup_ContentPane_CircleLogo{
   position: absolute;
   top: 0px;
-  right: 5px;  /*~RTL   left: 5px;  */
+  right: 15px;  /*~RTL   left: 15px;  */
   z-index: 99;
 }
 
