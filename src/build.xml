@@ -300,7 +300,7 @@ build.war: build a war file in the lib directory.
 			<fileset file="${build.sqlc}/src/web.xml" />
 			<fileset dir="${base.config}">
 				<exclude name="**/eclipse/**" />
-				<exclude name="**/setup-tool/**" />
+                <exclude name="**/setup-properties**" />
 				<exclude name="*.template" />
 			</fileset>
 		</copy>
