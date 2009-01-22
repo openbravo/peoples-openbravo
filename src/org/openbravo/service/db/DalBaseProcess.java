@@ -50,6 +50,7 @@ public abstract class DalBaseProcess implements Process {
 	final ProcessContext processContext = bundle.getContext();
 
 	boolean errorOccured = true;
+	final OBContext currentOBContext = OBContext.getOBContext();
 	try {
 	    log.debug("Setting user context to user "
 		    + processContext.getUser());
@@ -59,7 +60,7 @@ public abstract class DalBaseProcess implements Process {
 	} finally {
 	    // remove the context at the end, maybe the process scheduler
 	    // reuses the thread?
-	    OBContext.setOBContext((OBContext) null);
+	    OBContext.setOBContext(currentOBContext);
 
 	    if (errorOccured) {
 		OBDal.getInstance().rollbackAndClose();
