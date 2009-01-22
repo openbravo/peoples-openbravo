@@ -3683,35 +3683,6 @@
 <!--800747-->              <OBJECT_TYPE><![CDATA[S]]></OBJECT_TYPE>
 <!--800747**************--></AD_MODEL_OBJECT>
 
-<!--800748**************--><AD_MODEL_OBJECT>
-<!--800748 AD_MODEL_OBJECT_ID-->
-<!--800748-->              <AD_MODEL_OBJECT_ID><![CDATA[800748]]></AD_MODEL_OBJECT_ID>
-<!--800748 AD_CLIENT_ID-->
-<!--800748-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800748 AD_ORG_ID-->
-<!--800748-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800748 ISACTIVE-->
-<!--800748-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800748 CREATED-->
-<!--800748-->              <CREATED><![CDATA[2006-05-22 12:12:41.0]]></CREATED>
-<!--800748 CREATEDBY-->
-<!--800748-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--800748 UPDATED-->
-<!--800748-->              <UPDATED><![CDATA[2006-05-22 12:12:41.0]]></UPDATED>
-<!--800748 UPDATEDBY-->
-<!--800748-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--800748 ACTION-->
-<!--800748-->              <ACTION><![CDATA[P]]></ACTION>
-<!--800748 CLASSNAME-->
-<!--800748-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.RptM_Production]]></CLASSNAME>
-<!--800748 ISDEFAULT-->
-<!--800748-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
-<!--800748 AD_PROCESS_ID-->
-<!--800748-->              <AD_PROCESS_ID><![CDATA[800047]]></AD_PROCESS_ID>
-<!--800748 OBJECT_TYPE-->
-<!--800748-->              <OBJECT_TYPE><![CDATA[S]]></OBJECT_TYPE>
-<!--800748**************--></AD_MODEL_OBJECT>
-
 <!--800779**************--><AD_MODEL_OBJECT>
 <!--800779 AD_MODEL_OBJECT_ID-->
 <!--800779-->              <AD_MODEL_OBJECT_ID><![CDATA[800779]]></AD_MODEL_OBJECT_ID>
@@ -6901,35 +6872,6 @@
 <!--801297 OBJECT_TYPE-->
 <!--801297-->              <OBJECT_TYPE><![CDATA[S]]></OBJECT_TYPE>
 <!--801297**************--></AD_MODEL_OBJECT>
-
-<!--801298**************--><AD_MODEL_OBJECT>
-<!--801298 AD_MODEL_OBJECT_ID-->
-<!--801298-->              <AD_MODEL_OBJECT_ID><![CDATA[801298]]></AD_MODEL_OBJECT_ID>
-<!--801298 AD_CLIENT_ID-->
-<!--801298-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--801298 AD_ORG_ID-->
-<!--801298-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--801298 ISACTIVE-->
-<!--801298-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--801298 CREATED-->
-<!--801298-->              <CREATED><![CDATA[2006-12-17 19:57:45.0]]></CREATED>
-<!--801298 CREATEDBY-->
-<!--801298-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--801298 UPDATED-->
-<!--801298-->              <UPDATED><![CDATA[2007-06-03 20:11:27.0]]></UPDATED>
-<!--801298 UPDATEDBY-->
-<!--801298-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--801298 ACTION-->
-<!--801298-->              <ACTION><![CDATA[R]]></ACTION>
-<!--801298 CLASSNAME-->
-<!--801298-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.Rpt_Etiquetas]]></CLASSNAME>
-<!--801298 ISDEFAULT-->
-<!--801298-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
-<!--801298 AD_PROCESS_ID-->
-<!--801298-->              <AD_PROCESS_ID><![CDATA[800157]]></AD_PROCESS_ID>
-<!--801298 OBJECT_TYPE-->
-<!--801298-->              <OBJECT_TYPE><![CDATA[S]]></OBJECT_TYPE>
-<!--801298**************--></AD_MODEL_OBJECT>
 
 <!--801305**************--><AD_MODEL_OBJECT>
 <!--801305 AD_MODEL_OBJECT_ID-->

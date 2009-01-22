@@ -12763,7 +12763,7 @@
 <!--804263 FILENAME-->
 <!--804263-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/Rpt_Etiquetas_Config.html]]></FILENAME>
 <!--804263 ISUSED-->
-<!--804263-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--804263-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--804263 AD_MODULE_ID-->
 <!--804263-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804263**************--></AD_TEXTINTERFACES>
@@ -13519,7 +13519,7 @@
 <!--804911 FILENAME-->
 <!--804911-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/Rpt_Etiquetas.srpt]]></FILENAME>
 <!--804911 ISUSED-->
-<!--804911-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--804911-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--804911 AD_MODULE_ID-->
 <!--804911-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804911**************--></AD_TEXTINTERFACES>
@@ -13546,7 +13546,7 @@
 <!--804912 FILENAME-->
 <!--804912-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/Rpt_Etiquetas.srpt]]></FILENAME>
 <!--804912 ISUSED-->
-<!--804912-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--804912-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--804912 AD_MODULE_ID-->
 <!--804912-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804912**************--></AD_TEXTINTERFACES>
@@ -13573,7 +13573,7 @@
 <!--804913 FILENAME-->
 <!--804913-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/Rpt_Etiquetas.srpt]]></FILENAME>
 <!--804913 ISUSED-->
-<!--804913-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--804913-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--804913 AD_MODULE_ID-->
 <!--804913-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804913**************--></AD_TEXTINTERFACES>
@@ -13600,7 +13600,7 @@
 <!--804914 FILENAME-->
 <!--804914-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/Rpt_Etiquetas.srpt]]></FILENAME>
 <!--804914 ISUSED-->
-<!--804914-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--804914-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--804914 AD_MODULE_ID-->
 <!--804914-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804914**************--></AD_TEXTINTERFACES>
@@ -13627,7 +13627,7 @@
 <!--804915 FILENAME-->
 <!--804915-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/Rpt_Etiquetas.srpt]]></FILENAME>
 <!--804915 ISUSED-->
-<!--804915-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--804915-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--804915 AD_MODULE_ID-->
 <!--804915-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804915**************--></AD_TEXTINTERFACES>
@@ -13654,7 +13654,7 @@
 <!--804916 FILENAME-->
 <!--804916-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/Rpt_Etiquetas.srpt]]></FILENAME>
 <!--804916 ISUSED-->
-<!--804916-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--804916-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--804916 AD_MODULE_ID-->
 <!--804916-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804916**************--></AD_TEXTINTERFACES>
@@ -13681,7 +13681,7 @@
 <!--804917 FILENAME-->
 <!--804917-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/Rpt_Etiquetas.srpt]]></FILENAME>
 <!--804917 ISUSED-->
-<!--804917-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--804917-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--804917 AD_MODULE_ID-->
 <!--804917-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804917**************--></AD_TEXTINTERFACES>
@@ -13708,7 +13708,7 @@
 <!--804918 FILENAME-->
 <!--804918-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/Rpt_Etiquetas.srpt]]></FILENAME>
 <!--804918 ISUSED-->
-<!--804918-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--804918-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--804918 AD_MODULE_ID-->
 <!--804918-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804918**************--></AD_TEXTINTERFACES>
@@ -13735,7 +13735,7 @@
 <!--804919 FILENAME-->
 <!--804919-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/Rpt_Etiquetas.srpt]]></FILENAME>
 <!--804919 ISUSED-->
-<!--804919-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--804919-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--804919 AD_MODULE_ID-->
 <!--804919-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804919**************--></AD_TEXTINTERFACES>
@@ -13762,7 +13762,7 @@
 <!--804920 FILENAME-->
 <!--804920-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/Rpt_Etiquetas.srpt]]></FILENAME>
 <!--804920 ISUSED-->
-<!--804920-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--804920-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--804920 AD_MODULE_ID-->
 <!--804920-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804920**************--></AD_TEXTINTERFACES>
@@ -13789,7 +13789,7 @@
 <!--804921 FILENAME-->
 <!--804921-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/Rpt_Etiquetas.srpt]]></FILENAME>
 <!--804921 ISUSED-->
-<!--804921-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--804921-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--804921 AD_MODULE_ID-->
 <!--804921-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804921**************--></AD_TEXTINTERFACES>
@@ -13816,7 +13816,7 @@
 <!--804922 FILENAME-->
 <!--804922-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/Rpt_Etiquetas.srpt]]></FILENAME>
 <!--804922 ISUSED-->
-<!--804922-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--804922-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--804922 AD_MODULE_ID-->
 <!--804922-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804922**************--></AD_TEXTINTERFACES>
@@ -18943,7 +18943,7 @@
 <!--806470 TEXT-->
 <!--806470-->              <TEXT><![CDATA[Partner]]></TEXT>
 <!--806470 ISUSED-->
-<!--806470-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--806470-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--806470 AD_MODULE_ID-->
 <!--806470-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--806470**************--></AD_TEXTINTERFACES>
@@ -18970,7 +18970,7 @@
 <!--806471 FILENAME-->
 <!--806471-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ABCbPartner.html]]></FILENAME>
 <!--806471 ISUSED-->
-<!--806471-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--806471-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--806471 AD_MODULE_ID-->
 <!--806471-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--806471**************--></AD_TEXTINTERFACES>
@@ -18997,7 +18997,7 @@
 <!--806474 FILENAME-->
 <!--806474-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ABCbPartner.html]]></FILENAME>
 <!--806474 ISUSED-->
-<!--806474-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--806474-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--806474 AD_MODULE_ID-->
 <!--806474-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--806474**************--></AD_TEXTINTERFACES>
@@ -25228,7 +25228,7 @@
 <!--807208 TEXT-->
 <!--807208-->              <TEXT><![CDATA[MEDIUM PRICE]]></TEXT>
 <!--807208 ISUSED-->
-<!--807208-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--807208-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--807208 AD_MODULE_ID-->
 <!--807208-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--807208**************--></AD_TEXTINTERFACES>
@@ -30519,7 +30519,7 @@
 <!--807511 FILENAME-->
 <!--807511-->              <FILENAME><![CDATA[/org/openbravo/erpCommon/ad_reports/ABCbPartner.html]]></FILENAME>
 <!--807511 ISUSED-->
-<!--807511-->              <ISUSED><![CDATA[Y]]></ISUSED>
+<!--807511-->              <ISUSED><![CDATA[N]]></ISUSED>
 <!--807511 AD_MODULE_ID-->
 <!--807511-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--807511**************--></AD_TEXTINTERFACES>

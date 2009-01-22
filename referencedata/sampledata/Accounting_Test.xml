@@ -6696,15 +6696,6 @@
     <isActive>true</isActive>
     <isReadWrite>true</isReadWrite>
   </ADProcessAccess>
-  <ADProcessAccess id="5E4DB943A68916CFE040007F01002944" identifier="Rpt Labels Accounting Test User">
-    <id>5E4DB943A68916CFE040007F01002944</id>
-    <process id="800157" entity-name="ADProcess" identifier="Rpt Labels"/>
-    <role id="1000006" entity-name="ADRole" identifier="Accounting Test User"/>
-    <client id="1000001" entity-name="ADClient" identifier="Accounting Test"/>
-    <organization id="0" entity-name="Organization" identifier="*"/>
-    <isActive>true</isActive>
-    <isReadWrite>true</isReadWrite>
-  </ADProcessAccess>
   <ADProcessAccess id="5E4DB943A68A16CFE040007F01002944" identifier="Generate Material Requisitions Accounting Test User">
     <id>5E4DB943A68A16CFE040007F01002944</id>
     <process id="800159" entity-name="ADProcess" identifier="Generate Material Requisitions"/>
@@ -7374,15 +7365,6 @@
   <ADProcessAccess id="5E4DB943A6D416CFE040007F01002944" identifier="Product Movements Report Accounting Test User">
     <id>5E4DB943A6D416CFE040007F01002944</id>
     <process id="800046" entity-name="ADProcess" identifier="Product Movements Report"/>
-    <role id="1000006" entity-name="ADRole" identifier="Accounting Test User"/>
-    <client id="1000001" entity-name="ADClient" identifier="Accounting Test"/>
-    <organization id="0" entity-name="Organization" identifier="*"/>
-    <isActive>true</isActive>
-    <isReadWrite>true</isReadWrite>
-  </ADProcessAccess>
-  <ADProcessAccess id="5E4DB943A6D516CFE040007F01002944" identifier="Print Labels Accounting Test User">
-    <id>5E4DB943A6D516CFE040007F01002944</id>
-    <process id="800047" entity-name="ADProcess" identifier="Print Labels"/>
     <role id="1000006" entity-name="ADRole" identifier="Accounting Test User"/>
     <client id="1000001" entity-name="ADClient" identifier="Accounting Test"/>
     <organization id="0" entity-name="Organization" identifier="*"/>
@@ -9324,15 +9306,6 @@
     <isActive>true</isActive>
     <isReadWrite>true</isReadWrite>
   </ADProcessAccess>
-  <ADProcessAccess id="5E4DB943A99E16CFE040007F01002944" identifier="Rpt Labels Accounting Test Admin">
-    <id>5E4DB943A99E16CFE040007F01002944</id>
-    <process id="800157" entity-name="ADProcess" identifier="Rpt Labels"/>
-    <role id="1000005" entity-name="ADRole" identifier="Accounting Test Admin"/>
-    <client id="1000001" entity-name="ADClient" identifier="Accounting Test"/>
-    <organization id="0" entity-name="Organization" identifier="*"/>
-    <isActive>true</isActive>
-    <isReadWrite>true</isReadWrite>
-  </ADProcessAccess>
   <ADProcessAccess id="5E4DB943A9A316CFE040007F01002944" identifier="Copy Client Accounting Test Admin">
     <id>5E4DB943A9A316CFE040007F01002944</id>
     <process id="800158" entity-name="ADProcess" identifier="Copy Client"/>
@@ -10011,15 +9984,6 @@
   <ADProcessAccess id="5E4DB943AB1A16CFE040007F01002944" identifier="Product Movements Report Accounting Test Admin">
     <id>5E4DB943AB1A16CFE040007F01002944</id>
     <process id="800046" entity-name="ADProcess" identifier="Product Movements Report"/>
-    <role id="1000005" entity-name="ADRole" identifier="Accounting Test Admin"/>
-    <client id="1000001" entity-name="ADClient" identifier="Accounting Test"/>
-    <organization id="0" entity-name="Organization" identifier="*"/>
-    <isActive>true</isActive>
-    <isReadWrite>true</isReadWrite>
-  </ADProcessAccess>
-  <ADProcessAccess id="5E4DB943AB1F16CFE040007F01002944" identifier="Print Labels Accounting Test Admin">
-    <id>5E4DB943AB1F16CFE040007F01002944</id>
-    <process id="800047" entity-name="ADProcess" identifier="Print Labels"/>
     <role id="1000005" entity-name="ADRole" identifier="Accounting Test Admin"/>
     <client id="1000001" entity-name="ADClient" identifier="Accounting Test"/>
     <organization id="0" entity-name="Organization" identifier="*"/>
@@ -29167,30 +29131,6 @@
     <module id="0" entity-name="ADModule" identifier="core 2.50.10440 English (USA)"/>
     <uIPattern>M</uIPattern>
   </ADProcess>
-  <ADProcess id="800157" identifier="Rpt Labels" reference="true">
-    <id>800157</id>
-    <client id="0" entity-name="ADClient" identifier="System"/>
-    <organization id="0" entity-name="Organization" identifier="*"/>
-    <isActive>true</isActive>
-    <value>RptLabels</value>
-    <name>Rpt Labels</name>
-    <description>Rpt Labels</description>
-    <help>Rpt Labels</help>
-    <accessLevel>3</accessLevel>
-    <isUserStartable>false</isUserStartable>
-    <procedureName/>
-    <isReport>true</isReport>
-    <isDirectPrint>false</isDirectPrint>
-    <classname>/ad_reports/Rpt_Etiquetas.html</classname>
-    <isBackground>false</isBackground>
-    <isJasper>false</isJasper>
-    <jrname/>
-    <serviceType/>
-    <isexternalservice/>
-    <serviceSource/>
-    <module id="0" entity-name="ADModule" identifier="core 2.50.10440 English (USA)"/>
-    <uIPattern>M</uIPattern>
-  </ADProcess>
   <ADProcess id="800159" identifier="Generate Material Requisitions" reference="true">
     <id>800159</id>
     <client id="0" entity-name="ADClient" identifier="System"/>
@@ -30982,30 +30922,6 @@
     <isReport>true</isReport>
     <isDirectPrint>false</isDirectPrint>
     <classname/>
-    <isBackground>false</isBackground>
-    <isJasper>false</isJasper>
-    <jrname/>
-    <serviceType/>
-    <isexternalservice/>
-    <serviceSource/>
-    <module id="0" entity-name="ADModule" identifier="core 2.50.10440 English (USA)"/>
-    <uIPattern>M</uIPattern>
-  </ADProcess>
-  <ADProcess id="800047" identifier="Print Labels" reference="true">
-    <id>800047</id>
-    <client id="0" entity-name="ADClient" identifier="System"/>
-    <organization id="0" entity-name="Organization" identifier="*"/>
-    <isActive>true</isActive>
-    <value>RptM_ProductionLine</value>
-    <name>Print Labels</name>
-    <description>Print Labels</description>
-    <help>Print Labels</help>
-    <accessLevel>3</accessLevel>
-    <isUserStartable>false</isUserStartable>
-    <procedureName/>
-    <isReport>false</isReport>
-    <isDirectPrint>false</isDirectPrint>
-    <classname>ad_reports/RptM_Production.html</classname>
     <isBackground>false</isBackground>
     <isJasper>false</isJasper>
     <jrname/>

@@ -563,11 +563,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         vars.setHistoryCommand(strCommand);
     }
 
-    public void advise(HttpServletResponse response, String strTitulo,
-            String strTexto) throws IOException {
-        advise(response, "INFO", strTitulo, strTexto);
-    }
-
     public void advise(HttpServletResponse response, String strTipo,
             String strTitulo, String strTexto) throws IOException {
         final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(

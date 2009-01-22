@@ -7550,37 +7550,6 @@
 <!--800054-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800054**************--></AD_MENU>
 
-<!--800057**************--><AD_MENU>
-<!--800057 AD_MENU_ID-->
-<!--800057-->              <AD_MENU_ID><![CDATA[800057]]></AD_MENU_ID>
-<!--800057 AD_CLIENT_ID-->
-<!--800057-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800057 AD_ORG_ID-->
-<!--800057-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800057 ISACTIVE-->
-<!--800057-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800057 CREATED-->
-<!--800057-->              <CREATED><![CDATA[2004-10-01 12:43:35.0]]></CREATED>
-<!--800057 CREATEDBY-->
-<!--800057-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--800057 UPDATED-->
-<!--800057-->              <UPDATED><![CDATA[2007-01-31 15:39:41.0]]></UPDATED>
-<!--800057 NAME-->
-<!--800057-->              <NAME><![CDATA[Rpt Labels]]></NAME>
-<!--800057 UPDATEDBY-->
-<!--800057-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--800057 DESCRIPTION-->
-<!--800057-->              <DESCRIPTION><![CDATA[Rpt Labels]]></DESCRIPTION>
-<!--800057 ISSUMMARY-->
-<!--800057-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--800057 ACTION-->
-<!--800057-->              <ACTION><![CDATA[P]]></ACTION>
-<!--800057 AD_PROCESS_ID-->
-<!--800057-->              <AD_PROCESS_ID><![CDATA[800157]]></AD_PROCESS_ID>
-<!--800057 AD_MODULE_ID-->
-<!--800057-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800057**************--></AD_MENU>
-
 <!--800060**************--><AD_MENU>
 <!--800060 AD_MENU_ID-->
 <!--800060-->              <AD_MENU_ID><![CDATA[800060]]></AD_MENU_ID>

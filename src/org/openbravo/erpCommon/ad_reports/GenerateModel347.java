@@ -92,7 +92,7 @@ public class GenerateModel347 extends HttpSecureAppServlet {
                     strReplaceWith, tabs.breadcrumb());
             xmlDocument.setParameter("navigationBar", nav.toString());
             LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
-                    "ABCbPartner.html", strReplaceWith);
+                    "GenerateModel347.html", strReplaceWith);
             xmlDocument.setParameter("leftTabs", lBar.manualTemplate());
         } catch (Exception ex) {
             throw new ServletException(ex);
