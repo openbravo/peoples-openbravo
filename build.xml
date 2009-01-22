@@ -381,8 +381,10 @@ compare.database.structure: refer to compare.database.structure target of databa
 		
 		<antcall target="import.sample.data" />
 
+		<!--
 		<antcall target="validate.database" />
 		<antcall target="validate.modules" />
+		-->
 	</target>
 
 	<target name="eclipse.install.source" depends="init,code.rev">
