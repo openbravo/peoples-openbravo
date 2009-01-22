@@ -55,6 +55,8 @@ var hasCloseWindowSearch = null;
 
 var propagateEnter = true;
 
+var isContextMenuOpened = false;
+
 
 windowKeyboardCaptureEvents();
 function windowKeyboardCaptureEvents() {
@@ -203,6 +205,7 @@ function mouseClickLogic(evt, obj) {
 }
 
 function cursorFocus(obj, event) {
+  isContextMenuOpened = false;
   if (obj == null || obj == 'null' || obj == '') { return false; }
   if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1 && obj.getAttribute('type') == 'checkbox' && (obj.getAttribute('readonly') == 'true' || obj.readOnly)) {
     return false;
@@ -468,6 +471,7 @@ function drawWindowElementFocus(obj) {
 }
 
 function putWindowElementFocus(obj) {
+  isContextMenuOpened = false;
   previousWindowElementType=currentWindowElementType;
   drawWindowElementFocus(obj);
   defaultActionLogic(obj);
@@ -560,6 +564,7 @@ function eraseWindowElementFocus(obj) {
 }
 
 function removeWindowElementFocus(obj) {
+  isContextMenuOpened = false;
   eraseWindowElementFocus(obj);
   try {
     if (previousWindowElementType == 'grid') {

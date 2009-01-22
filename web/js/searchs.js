@@ -217,7 +217,7 @@ function closeSearch(action, strKey, strText, parameters, wait) {
             }
           }
           if (key.onchange) key.onchange();
-          try { changeToEditingMode(true); } catch (e) {}
+          try { changeToEditingMode('force'); } catch (e) {}
         } else if (action=="CLEAR") {
           strKey="";
           strText="";
@@ -232,7 +232,7 @@ function closeSearch(action, strKey, strText, parameters, wait) {
             }
           }
           if (key.onchange) key.onchange();
-          try { changeToEditingMode(true); } catch (e) {}
+          try { changeToEditingMode('force'); } catch (e) {}
         } else if (action=="SAVE_IMAGE") {
           if (strKey==null || strKey=="") {
             showJSMessage(31);
@@ -255,7 +255,7 @@ function closeSearch(action, strKey, strText, parameters, wait) {
             }
           }
           if (key.onchange) key.onchange();
-          try { changeToEditingMode(true); } catch (e) {}
+          try { changeToEditingMode('force'); } catch (e) {}
         } else if (action=="CLEAR_IMAGE") {
           strKey="";
           strText="";
@@ -275,7 +275,7 @@ function closeSearch(action, strKey, strText, parameters, wait) {
             }
           }
           if (key.onchange) key.onchange();
-          try { changeToEditingMode(true); } catch (e) {}
+          try { changeToEditingMode('force'); } catch (e) {}
         }
       }
     }

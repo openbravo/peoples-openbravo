@@ -61,7 +61,7 @@ var isUserClick = false;
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '12050';
+  var number = '12122';
   return number;
 }
 
@@ -3083,26 +3083,48 @@ function logChanges(field) {
 /**
 * Used on the onKeyDown event for isEditing status.
 */
-function changeToEditingMode(force) {
+function changeToEditingMode(special) {
   try {
-    if (force==true) {
+    isContextMenuOpened = false;
+    if (special == 'force') {
       setWindowEditing(true);
+      return true;
     }
     if (mustBeIgnored(focusedWindowElement)) return false;
-    if (!isTabPressed && focusedWindowElement.tagName.toUpperCase().indexOf("SELECT")!=-1 && focusedWindowElement && !isCtrlPressed && !isAltPressed && isKeyboardLocked==false) {
+    if (special == 'oncut' || special == 'onpaste') {
+      checkFieldChange();
+    } else if (special == 'oncontextmenu') {
+      var elementToCheck = focusedWindowElement;
+      isContextMenuOpened = true;
+      checkContextMenu(elementToCheck);
+    } else if (!isTabPressed && focusedWindowElement.tagName.toUpperCase().indexOf("SELECT")!=-1 && focusedWindowElement && !isCtrlPressed && !isAltPressed && isKeyboardLocked==false) { // Keypress on ComboBox
       setWindowEditing(true);
     } else if (!isTabPressed && focusedWindowElement.tagName.toUpperCase().indexOf("SELECT")==-1 && !isCtrlPressed && !isAltPressed && isKeyboardLocked==false && pressedKeyCode!='33' && pressedKeyCode!='34'
      && pressedKeyCode!='35' && pressedKeyCode!='36' && pressedKeyCode!='37' && pressedKeyCode!='38' && pressedKeyCode!='39' && pressedKeyCode!='40') {
       setWindowEditing(true);
-    } else if (isCtrlPressed && pressedKeyCode=='86' && isKeyboardLocked==false) {
-      setWindowEditing(true);
-    } else if (isCtrlPressed && isAltPressed && isKeyboardLocked==false) {
-      var beforeShortcutValue = null;
-      var afterShortcutValue = null;
-      try { beforeShortcutValue = focusedWindowElement.value; } catch (e) { }
-      setTimeout(function() {try { afterShortcutValue = focusedWindowElement.value; } catch (e) { } if (afterShortcutValue != beforeShortcutValue) { setWindowEditing(true); } },50);
+//  } else if (isCtrlPressed && pressedKeyCode=='86' && isKeyboardLocked==false) { // Ctrl + V
+//    setWindowEditing(true);
+    } else if (isCtrlPressed && isAltPressed && isKeyboardLocked==false) { // AltGr
+      checkFieldChange()
     }
-  } catch (e) {}
+  } catch (e) { }
+}
+
+function checkContextMenu(elementToCheck) {
+  if (isContextMenuOpened == true) {
+    checkFieldChange(elementToCheck); 
+    setTimeout(function() { checkContextMenu(elementToCheck); },50);
+  }
+}
+
+function checkFieldChange(elementToCheck) {
+  if (elementToCheck == null || elementToCheck == 'null' || elementToCheck == '') {
+    elementToCheck = focusedWindowElement;
+  }
+  var beforeShortcutValue = null;
+  var afterShortcutValue = null;
+  try { beforeShortcutValue = elementToCheck.value; } catch (e) { }
+  setTimeout(function() {try { afterShortcutValue = elementToCheck.value; } catch (e) { } if (afterShortcutValue != beforeShortcutValue) { setWindowEditing(true); } },50);
 }
 
 /**

@@ -528,11 +528,11 @@ Calendar.dayMouseDown = function(ev) {
 	if (el.navtype == -1 || el.navtype == 1) {
 		if (cal.timeout) clearTimeout(cal.timeout);
 		cal.timeout = setTimeout("Calendar.showMonthsCombo()", 250);
-    try { changeToEditingMode(true); } catch (e) {}
+    try { changeToEditingMode('force'); } catch (e) {}
 	} else if (el.navtype == -2 || el.navtype == 2) {
 		if (cal.timeout) clearTimeout(cal.timeout);
 		cal.timeout = setTimeout((el.navtype > 0) ? "Calendar.showYearsCombo(true)" : "Calendar.showYearsCombo(false)", 250);
-    try { changeToEditingMode(true); } catch (e) {}
+    try { changeToEditingMode('force'); } catch (e) {}
 	} else {
 		cal.timeout = null;
 	}
@@ -1731,7 +1731,7 @@ Date.prototype.setDateOnly = function(date) {
 	this.setFullYear(tmp.getFullYear());
 	this.setMonth(tmp.getMonth());
 	this.setDate(tmp.getDate());
-  try { changeToEditingMode(true); } catch (e) {}
+  try { changeToEditingMode('force'); } catch (e) {}
 };
 
 /** Prints the date in a string according to the given format. */

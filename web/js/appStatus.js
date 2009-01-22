@@ -183,6 +183,7 @@ function enableButton(id) {
 }
 
 function setWindowEditing(value) {
+  isContextMenuOpened = false;
   var isNewWindow;
   if (document.getElementById('linkButtonEdition').className.indexOf('Main_LeftTabsBar_ButtonRight_Icon_edition_selected') != -1) {
     isNewWindow = false;
