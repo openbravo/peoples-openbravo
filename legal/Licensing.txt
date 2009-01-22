@@ -172,7 +172,6 @@ In addition, the distribution includes
 
 
 # activation.jar 
-# comm.jar 
 # jaxrpc.jar 
 # mail.jar 
 # servlet-api.jar 
