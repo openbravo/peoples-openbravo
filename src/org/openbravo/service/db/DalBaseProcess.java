@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -70,5 +70,5 @@ public abstract class DalBaseProcess implements Process {
 	}
     }
 
-    protected abstract void doExecute(ProcessBundle bundle);
+    protected abstract void doExecute(ProcessBundle bundle) throws Exception;
 }
