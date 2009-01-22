@@ -195,7 +195,7 @@
 		<defaultValueExpression ><![CDATA[""]]></defaultValueExpression>
 	</parameter>
 	<parameter name="SUBREPORT_DIR" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA[$P{BASE_DESIGN}+"/org/openbravo/erpCommon/ad_reports/"]]></defaultValueExpression>
+		<defaultValueExpression ><![CDATA["/home/david/Escritorio/"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="DateTo" isForPrompting="false" class="java.util.Date">
 		<defaultValueExpression ><![CDATA[new Date()]]></defaultValueExpression>
@@ -205,26 +205,18 @@
 	</parameter>
 	<parameter name="NUMBERFORMAT" isForPrompting="false" class="java.text.DecimalFormat"/>
 	<parameter name="LOCALE" isForPrompting="false" class="java.util.Locale"/>
-	<parameter name="SR_LINES" isForPrompting="false" class="net.sf.jasperreports.engine.JasperReport"/>
-	<parameter name="Subtitle" isForPrompting="false" class="java.lang.String"/>
-	<parameter name="Final" isForPrompting="false" class="java.lang.String"/>
-	<queryString><![CDATA[select * from (
-      SELECT VALUE, PARTNER, dateacct, NAME, 
-      (CASE WHEN ABS(SUM(AMTACCTDR))>ABS(SUM(AMTACCTCR)) THEN SUM(AMTACCTDR)-SUM(AMTACCTCR) END) AS AMTACCTDR,
-      (CASE WHEN ABS(SUM(AMTACCTDR))<=ABS(SUM(AMTACCTCR)) THEN SUM(AMTACCTCR)-SUM(AMTACCTDR) END) AS AMTACCTCR,
-      (SUM(amtacctdr-amtacctcr)) AS TOTAL, fact_acct_group_id, ID, 0 AS SALDO, MAX(FACT_ACCT_ID) AS FACT_ACCT_ID,
-      DESCRIPTION, C_BPARTNER_ID
-      FROM (
-      SELECT FACT_ACCT.ACCTVALUE AS VALUE, C_BPARTNER.NAME AS PARTNER, dateacct, FACT_ACCT.ACCTDESCRIPTION AS NAME, 
-      amtacctdr,  amtacctcr AS amtacctcr, fact_acct_group_id, FACT_ACCT.ACCOUNT_ID AS ID, FACT_ACCT.FACT_ACCT_ID, 
-      fact_acct.record_id, fact_acct.ad_table_id, FACT_ACCT.DESCRIPTION, FACT_ACCT.C_BPARTNER_ID
-      FROM fact_acct left join C_BPARTNER on FACT_ACCT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
-      ) AAA
-      GROUP BY ad_table_id, record_id, VALUE, DATEACCT, NAME, FACT_ACCT_GROUP_ID, ID,DESCRIPTION, PARTNER, C_BPARTNER_ID
-      ) AA
-      WHERE 3=3
-        AND 4=4
-        ORDER BY VALUE, dateacct, fact_acct_id]]></queryString>
+	<queryString><![CDATA[SELECT FACT_ACCT.ACCTVALUE AS VALUE, C_BPARTNER.NAME AS PARTNER, DATEACCT, FACT_ACCT.ACCTDESCRIPTION AS NAME,
+  AMTACCTDR,  AMTACCTCR AS AMTACCTCR, FACT_ACCT_GROUP_ID, FACT_ACCT.ACCOUNT_ID AS ID, FACT_ACCT.FACT_ACCT_ID,
+  FACT_ACCT.RECORD_ID, FACT_ACCT.AD_TABLE_ID, FACT_ACCT.DESCRIPTION, FACT_ACCT.C_BPARTNER_ID, 0 AS TOTALDR,
+  0 AS TOTALCR, 0 AS TOTALACCTDR, 0 AS TOTALACCTCR, 0 AS TOTALACCTSUB, (AMTACCTDR-AMTACCTCR) AS TOTAL, 0 AS SALDO,
+  '' AS PADRE
+FROM FACT_ACCT LEFT JOIN C_BPARTNER ON FACT_ACCT.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
+WHERE FACT_ACCT.ACCOUNT_ID IN (
+ SELECT c_elementvalue_id as name
+    FROM C_ELEMENTVALUE
+    WHERE c_elementvalue.ELEMENTLEVEL = 'S'
+    )
+ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryString>
 
 	<field name="VALUE" class="java.lang.String"/>
 	<field name="PARTNER" class="java.lang.String"/>
@@ -232,13 +224,21 @@
 	<field name="NAME" class="java.lang.String"/>
 	<field name="AMTACCTDR" class="java.math.BigDecimal"/>
 	<field name="AMTACCTCR" class="java.math.BigDecimal"/>
-	<field name="TOTAL" class="java.math.BigDecimal"/>
-	<field name="FACT_ACCT_GROUP_ID" class="java.lang.String"/>
-	<field name="ID" class="java.lang.String"/>
-	<field name="SALDO" class="java.math.BigDecimal"/>
-	<field name="FACT_ACCT_ID" class="java.lang.String"/>
+	<field name="FACT_ACCT_GROUP_ID" class="java.math.BigDecimal"/>
+	<field name="ID" class="java.math.BigDecimal"/>
+	<field name="FACT_ACCT_ID" class="java.math.BigDecimal"/>
+	<field name="RECORD_ID" class="java.math.BigDecimal"/>
+	<field name="AD_TABLE_ID" class="java.math.BigDecimal"/>
 	<field name="DESCRIPTION" class="java.lang.String"/>
-	<field name="C_BPARTNER_ID" class="java.lang.String"/>
+	<field name="C_BPARTNER_ID" class="java.math.BigDecimal"/>
+	<field name="TOTALDR" class="java.math.BigDecimal"/>
+	<field name="TOTALCR" class="java.math.BigDecimal"/>
+	<field name="TOTALACCTDR" class="java.math.BigDecimal"/>
+	<field name="TOTALACCTCR" class="java.math.BigDecimal"/>
+	<field name="TOTALACCTSUB" class="java.math.BigDecimal"/>
+	<field name="TOTAL" class="java.math.BigDecimal"/>
+	<field name="SALDO" class="java.math.BigDecimal"/>
+	<field name="PADRE" class="java.lang.String"/>
 
 	<variable name="DetailFieldTotal" class="java.lang.String" resetType="Report" calculation="Nothing">
 	</variable>
@@ -251,8 +251,8 @@
 	<variable name="totalTotal" class="java.math.BigDecimal" resetType="Group" resetGroup="AccountGroup" calculation="Sum">
 		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
 	</variable>
-	<variable name="auxPartnerGroup" class="java.lang.String" resetType="None" calculation="Nothing">
-		<variableExpression><![CDATA[$P{ShowPartner}.booleanValue()?$F{C_BPARTNER_ID}:"-1"]]></variableExpression>
+	<variable name="auxPartnerGroup" class="java.math.BigDecimal" resetType="None" calculation="Nothing">
+		<variableExpression><![CDATA[$P{ShowPartner}.booleanValue()?$F{C_BPARTNER_ID}:new BigDecimal(-1)]]></variableExpression>
 	</variable>
 
 		<group  name="PartnerGroup" >
@@ -524,7 +524,7 @@
 						<subreportParameterExpression><![CDATA[$F{ID}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter  name="Title">
-						<subreportParameterExpression><![CDATA[$P{Subtitle}]]></subreportParameterExpression>
+						<subreportParameterExpression><![CDATA[new String("Previous")]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter  name="Date">
 						<subreportParameterExpression><![CDATA[$F{DATEACCT}]]></subreportParameterExpression>
@@ -542,7 +542,7 @@
 						<subreportParameterExpression><![CDATA[$P{LOCALE}]]></subreportParameterExpression>
 					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SR_LINES}]]></subreportExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "ReportGeneralLedger_Previous.jasper"]]></subreportExpression>
 				</subreport>
 				<line direction="TopDown">
 					<reportElement
@@ -633,7 +633,7 @@
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($V{totalDebit}!=null)?$P{NUMBERFORMAT}.format($V{totalDebit}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{totalDebit}!=BigDecimal.ZERO)?$V{totalDebit}.toString():new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -646,7 +646,7 @@
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($V{totalCredit}!=null)?$P{NUMBERFORMAT}.format($V{totalCredit}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{totalCredit}!=BigDecimal.ZERO)?$V{totalCredit}.toString():new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -659,7 +659,7 @@
 					<textElement textAlignment="Right">
 						<font size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($V{totalTotal}!=null)?$P{NUMBERFORMAT}.format($V{totalTotal}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{totalTotal}!=BigDecimal.ZERO)?$V{totalTotal}.toString():new String(" ")]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -687,7 +687,7 @@
 						<subreportParameterExpression><![CDATA[$F{ID}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter  name="Title">
-						<subreportParameterExpression><![CDATA[$P{Final}]]></subreportParameterExpression>
+						<subreportParameterExpression><![CDATA[new String("Final")]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter  name="Date">
 						<subreportParameterExpression><![CDATA[$P{DateTo}]]></subreportParameterExpression>
@@ -705,7 +705,7 @@
 						<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
 					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{SR_LINES}]]></subreportExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "ReportGeneralLedger_Previous.jasper"]]></subreportExpression>
 				</subreport>
 				<line direction="TopDown">
 					<reportElement
@@ -854,75 +854,75 @@
 						height="16"
 						key="frame-1"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				</frame>				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="278"
-						y="0"
-						width="237"
+						x="109"
+						y="-1"
+						width="56"
 						height="16"
-						key="textField-4"
+						key="textField-9"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Times-Roman" size="9"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="9"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DESCRIPTION}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{AMTACCTDR}!=BigDecimal.ZERO)?$P{NUMBERFORMAT}.format($F{AMTACCTCR}).toString():new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="146"
-						y="0"
+						x="165"
+						y="-1"
 						width="56"
 						height="16"
-						key="textField-6"
+						key="textField-10"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="Thin" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Times-Roman" size="9"/>
+						<font size="9"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{AMTACCTCR}!=null)?$P{NUMBERFORMAT}.format($F{AMTACCTCR}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{AMTACCTCR}!=BigDecimal.ZERO)?$P{NUMBERFORMAT}.format($F{AMTACCTCR}).toString():new String(" ")]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="90"
-						y="0"
-						width="56"
+						x="221"
+						y="-1"
+						width="76"
 						height="16"
-						key="textField-7"
+						key="textField-11"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="Thin" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Times-Roman" size="9"/>
+						<font size="9"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{AMTACCTDR}!=null)?$P{NUMBERFORMAT}.format($F{AMTACCTDR}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($V{totalTotal}!=BigDecimal.ZERO)?$P{NUMBERFORMAT}.format($V{totalTotal}).toString():new String(" ")]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="0"
-						y="0"
-						width="89"
+						x="18"
+						y="-1"
+						width="91"
 						height="16"
-						key="textField-8"
+						key="textField-12"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="Thin" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement verticalAlignment="Middle">
-						<font fontName="Times-Roman" size="9"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="9"/>
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[$F{DATEACCT}]]></textFieldExpression>
 				</textField>
-				</frame>				<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="222"
-						y="0"
-						width="74"
+						x="297"
+						y="-1"
+						width="228"
 						height="16"
-						key="textField"
+						key="textField-13"
 						stretchType="RelativeToBandHeight"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="Thin" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Bitstream Vera Sans" size="9"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="9"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($V{totalTotal}!=null)?$P{NUMBERFORMAT}.format($V{totalTotal}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DESCRIPTION}]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>
@@ -972,12 +972,12 @@
 						key="line"/>
 					<graphicElement stretchType="NoStretch" pen="2Point"/>
 				</line>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Report_Footer"
 						x="277"
 						y="4"
-						width="69"
+						width="79"
 						height="16"
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -989,16 +989,16 @@
 				<staticText>
 					<reportElement
 						style="Report_Footer"
-						x="195"
+						x="198"
 						y="4"
-						width="78"
+						width="76"
 						height="16"
 						key="staticText-1"/>
 					<box topBorder="None" topBorderColor="#000000" topPadding="2" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Right">
 						<font/>
 					</textElement>
-				<text><![CDATA[Generated on]]></text>
+				<text><![CDATA[Printed on]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
