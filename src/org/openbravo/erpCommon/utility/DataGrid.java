@@ -84,34 +84,34 @@ public class DataGrid extends HttpSecureAppServlet {
             if (action.equalsIgnoreCase("getRows")) { // Asking for data rows
                 printPageData(response, vars, tableSQL);
             } else if (action.equalsIgnoreCase("getIdsInRange")) { // Asking for
-                                                                   // selected
-                                                                   // rows
+                // selected
+                // rows
                 if (log4j.isDebugEnabled())
                     log4j.debug(">>>>getIdsInRange");
                 printPageDataId(response, vars, tableSQL);
             } else if (action.equalsIgnoreCase("getColumnTotals")) { // Asking
-                                                                     // for
-                                                                     // total of
-                                                                     // the
-                                                                     // selected
-                                                                     // rows
+                // for
+                // total of
+                // the
+                // selected
+                // rows
                 if (log4j.isDebugEnabled())
                     log4j.debug(">>>>getColumnTotals");
                 getColumnTotals(response, vars, tableSQL);
             } else if (action.equalsIgnoreCase("getComboContent")) { // Asking
-                                                                     // for
-                                                                     // dynamic
-                                                                     // combo
-                                                                     // content
-                                                                     // (Edition)
+                // for
+                // dynamic
+                // combo
+                // content
+                // (Edition)
                 if (log4j.isDebugEnabled())
                     log4j.debug(">>>>getComboContent");
                 getComboContent(response, vars, TabId);
             } else if (action.equalsIgnoreCase("getDefaultValues")) { // Asking
-                                                                      // for
-                                                                      // default
-                                                                      // values
-                                                                      // (Edition)
+                // for
+                // default
+                // values
+                // (Edition)
                 if (log4j.isDebugEnabled())
                     log4j.debug(">>>>getDefaultValues");
                 this.getDefaultValues(response, vars);
@@ -409,15 +409,24 @@ public class DataGrid extends HttpSecureAppServlet {
         String title = "";
         String description = "";
         FieldProvider[] data = null;
+        FieldProvider[] res = null;
         if (tableSQL != null) {
             try {
-                String strSQL = ModelSQLGeneration.generateSQL(this, vars,
-                        tableSQL, tableSQL.getKeyColumn() + " AS ID",
+                String strSQL = ModelSQLGeneration.generateSQLonlyId(this,
+                        vars, tableSQL, (tableSQL.getTableName() + "."
+                                + tableSQL.getKeyColumn() + "AS ID"),
                         new Vector<String>(), new Vector<String>(), minOffset,
                         maxOffset - minOffset);
                 ExecuteQuery execquery = new ExecuteQuery(this, strSQL,
                         tableSQL.getParameterValues());
                 data = execquery.select();
+                res = new FieldProvider[data.length];
+                for (int i = 0; i < data.length; i++) {
+                    SQLReturnObject sqlReturnObject = new SQLReturnObject();
+                    sqlReturnObject.setData("id", data[i].getField(tableSQL
+                            .getKeyColumn()));
+                    res[i] = sqlReturnObject;
+                }
             } catch (Exception e) {
                 if (log4j.isDebugEnabled())
                     log4j.debug("Error obtaining rows data");
@@ -435,7 +444,7 @@ public class DataGrid extends HttpSecureAppServlet {
         xmlDocument.setParameter("type", type);
         xmlDocument.setParameter("title", title);
         xmlDocument.setParameter("description", description);
-        xmlDocument.setData("structure1", data);
+        xmlDocument.setData("structure1", res);
         response.setContentType("text/xml; charset=UTF-8");
         response.setHeader("Cache-Control", "no-cache");
         PrintWriter out = response.getWriter();
