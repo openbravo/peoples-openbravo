@@ -495,7 +495,7 @@ a.ButtonLink_focus .Button, .Button_focus {
 
 a.ButtonLink_focus table.Button .Button_left, .Button_focus .Button_left {
   background-repeat: no-repeat;
-  background-position: center right;
+  background-position: center right;  /*~RTL   background-position: center left; */
   background-image: url(Common/Button/buttonLeft.focused.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
   width: 35px;
   height: 26px;
