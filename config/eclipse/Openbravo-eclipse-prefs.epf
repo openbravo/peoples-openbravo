@@ -169,7 +169,6 @@
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_after_comma_in_for_increments=insert
 /instance/org.eclipse.jdt.ui/sp_cleanup.make_parameters_final=false
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_after_opening_angle_bracket_in_type_arguments=do not insert
-/instance/org.eclipse.jdt.launching/org.eclipse.jdt.launching.PREF_VM_XML=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\n<vmSettings defaultVM\="57,org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType13,1226577139765" defaultVMConnector\="">\n<vmType id\="org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType">\n<vm id\="1226577139765" javadocURL\="http\://java.sun.com/javase/6/docs/api/" name\="java-6-sun-1.6.0.07" path\="/usr/lib/jvm/java-6-sun-1.6.0.07"/>\n</vmType>\n</vmSettings>\n
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_before_at_in_annotation_type_declaration=insert
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.number_of_blank_lines_at_beginning_of_method_body=0
 /instance/org.eclipse.jdt.ui/sp_cleanup.add_generated_serial_version_id=false
@@ -289,7 +288,6 @@
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.indent_breaks_compare_to_cases=true
 /instance/org.eclipse.jdt.ui/sp_cleanup.qualify_static_member_accesses_through_subtypes_with_declaring_class=true
 /instance/org.eclipse.jdt.core/org.eclipse.jdt.core.formatter.insert_space_after_closing_angle_bracket_in_type_parameters=insert
-/instance/org.eclipse.jdt.core/org.eclipse.jdt.core.classpathVariable.JRE_LIB=/usr/lib/jvm/java-6-sun-1.6.0.07/jre/lib/rt.jar
 /instance/org.eclipse.jdt.ui/org.eclipse.jdt.ui.text.custom_code_templates=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><templates/>
 /instance/org.eclipse.jdt.ui/sp_cleanup.qualify_static_member_accesses_with_declaring_class=false
 /instance/org.eclipse.jdt.ui/sp_cleanup.remove_trailing_whitespaces=false
