@@ -103,10 +103,10 @@ public class DataExportService implements OBSingleton {
      * 
      * @param dataSet
      *            the dataset to export
-     * @param the
-     *            moduleId is used as a parameter in where clauses of the
-     *            DataSetTable and is used to set the module id in the
-     *            AD_REF_DATA_LOADED table
+     * @param moduleId
+     *            is used as a parameter in where clauses of the DataSetTable
+     *            and is used to set the module id in the AD_REF_DATA_LOADED
+     *            table
      * @return the XML string containing the data of the dataset
      */
     public String exportDataSetToXML(DataSet dataSet, String moduleId) {
@@ -149,8 +149,28 @@ public class DataExportService implements OBSingleton {
         }
     }
 
-    // note returns null if nothing has been generated
-    private String exportDataSetToXML(DataSet dataSet, String moduleId,
+    /**
+     * Export the data of a specific dataSet to XML. If the dataset is empty
+     * then a null value is returned.
+     * 
+     * @param dataSet
+     *            the dataset to export
+     * @param moduleId
+     *            is used as a parameter in where clauses of the DataSetTable
+     *            and is used to set the module id in the AD_REF_DATA_LOADED
+     *            table
+     * @param exportClientOrganizationReferences
+     *            also export the properties which reference a client or
+     *            organization
+     * @param parameters
+     *            parameters used in the wherequeries of {@link DataSetTable}
+     * @param exportTransientInfo
+     *            export transient properties
+     * @param addSystemAttributes
+     *            add Openbravo version and export time to the root tag
+     * @return the XML string containing the data of the dataset
+     */
+    public String exportDataSetToXML(DataSet dataSet, String moduleId,
             boolean exportClientOrganizationReferences,
             Map<String, Object> parameters, boolean exportTransientInfo,
             boolean addSystemAttributes) {

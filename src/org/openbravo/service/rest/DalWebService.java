@@ -47,6 +47,7 @@ import org.openbravo.dal.xml.EntityResolver.ResolvingMode;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.utility.ReferenceDataStore;
 import org.openbravo.service.web.InvalidContentException;
+import org.openbravo.service.web.InvalidRequestException;
 import org.openbravo.service.web.ResourceNotFoundException;
 import org.openbravo.service.web.WebService;
 import org.openbravo.service.web.WebServiceUtil;
@@ -119,6 +120,8 @@ public class DalWebService implements WebService {
                 // check if there is a whereClause
                 final String where = request.getParameter("where");
                 final String orderBy = request.getParameter("orderBy");
+                final String firstResult = request.getParameter("firstResult");
+                final String maxResult = request.getParameter("maxResult");
 
                 String whereOrderByClause = "";
                 if (where != null) {
@@ -130,6 +133,26 @@ public class DalWebService implements WebService {
 
                 final OBQuery<BaseOBObject> obq = OBDal.getInstance()
                         .createQuery(entityName, whereOrderByClause);
+
+                if (firstResult != null) {
+                    try {
+                        obq.setFirstResult(Integer.parseInt(firstResult));
+                    } catch (NumberFormatException e) {
+                        throw new InvalidRequestException(
+                                "Value of firstResult parameter is not an integer: "
+                                        + firstResult);
+                    }
+                }
+                if (maxResult != null) {
+                    try {
+                        obq.setMaxResult(Integer.parseInt(maxResult));
+                    } catch (NumberFormatException e) {
+                        throw new InvalidRequestException(
+                                "Value of maxResult parameter is not an integer: "
+                                        + firstResult);
+                    }
+                }
+
                 if (countOperation) {
                     response.setContentType("text/xml");
                     response.setCharacterEncoding("utf-8");

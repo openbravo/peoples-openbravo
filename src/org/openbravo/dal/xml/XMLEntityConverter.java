@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -160,7 +161,11 @@ public class XMLEntityConverter implements OBNotSingleton {
 
         // check that the rootelement is the openbravo one
         final Element rootElement = doc.getRootElement();
-        Check.isSameObject(rootElement.getName(), XMLConstants.OB_ROOT_ELEMENT);
+        if (!rootElement.getName().equals(XMLConstants.OB_ROOT_ELEMENT)) {
+            throw new OBException("Root tag of the xml document should be: "
+                    + XMLConstants.OB_ROOT_ELEMENT + ", but it is "
+                    + rootElement.getName());
+        }
 
         // walk through the elements
         final Set<BaseOBObject> checkDuplicates = new HashSet<BaseOBObject>();

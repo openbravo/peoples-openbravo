@@ -207,10 +207,12 @@ public class DataSetService implements OBSingleton {
         String whereClause = dataSetTable.getWhereClause();
 
         final Map<String, Object> existingParams = new HashMap<String, Object>();
-        if (parameters != null) {
-            for (final String name : parameters.keySet()) {
-                if (whereClause.indexOf(":" + name) != -1) {
-                    existingParams.put(name, parameters.get(name));
+        if (whereClause != null) {
+            if (parameters != null) {
+                for (final String name : parameters.keySet()) {
+                    if (whereClause.indexOf(":" + name) != -1) {
+                        existingParams.put(name, parameters.get(name));
+                    }
                 }
             }
         }

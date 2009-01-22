@@ -83,6 +83,16 @@ public class WSUpdateTest extends BaseWSTest {
         assertTrue(content.indexOf("City id=\"" + cityId + "") != -1);
     }
 
+    public void testIncorrectRootTag() throws Exception {
+        final String city = doTestGetRequest("/ws/dal/City/" + cityId, null,
+                200);
+        System.err.println(city);
+        String newCity = city;
+        final String content = doContentRequest("/ws/dal/City/" + cityId,
+                newCity, 200, "<updated>", "POST");
+        assertTrue(content.indexOf("City id=\"" + cityId + "") != -1);
+    }
+
     public void testReadAddDeleteCity() throws Exception {
         final String city = doTestGetRequest("/ws/dal/City/" + cityId, null,
                 200);

@@ -54,6 +54,8 @@ public class OBQuery<E extends BaseOBObject> {
     private boolean filterOnReadableOrganizations = true;
     private boolean filterOnReadableClients = true;
     private boolean filterOnActive = true;
+    private int firstResult = -1;
+    private int maxResult = -1;
 
     // package visible
     OBQuery() {
@@ -116,6 +118,12 @@ public class OBQuery<E extends BaseOBObject> {
         try {
             final Query qry = getSession().createQuery(qryStr);
             setParameters(qry);
+            if (firstResult > -1) {
+                qry.setFirstResult(firstResult);
+            }
+            if (maxResult > -1) {
+                qry.setMaxResults(maxResult);
+            }
             return qry;
         } catch (final Exception e) {
             throw new OBException("Exception when creating query " + qryStr, e);
@@ -476,5 +484,21 @@ public class OBQuery<E extends BaseOBObject> {
      */
     public void setNamedParameters(Map<String, Object> namedParameters) {
         this.namedParameters = namedParameters;
+    }
+
+    public int getFirstResult() {
+        return firstResult;
+    }
+
+    public void setFirstResult(int firstResult) {
+        this.firstResult = firstResult;
+    }
+
+    public int getMaxResult() {
+        return maxResult;
+    }
+
+    public void setMaxResult(int maxResult) {
+        this.maxResult = maxResult;
     }
 }

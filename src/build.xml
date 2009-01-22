@@ -97,6 +97,20 @@ build.war: build a war file in the lib directory.
 		<mkdir dir="${build.docs}" />
 	</target>
 
+	<target name="validate.database">
+		<taskdef name="validateDatabase" classname="org.openbravo.service.system.SystemValidationTask">		
+			<classpath refid="project.class.path" />
+		</taskdef>
+		<validateDatabase userId="0" propertiesFile="${base.config}/Openbravo.properties" type="database"/>
+	</target>
+	
+	<target name="validate.modules">
+		<taskdef name="validateModules" classname="org.openbravo.service.system.SystemValidationTask">		
+			<classpath refid="project.class.path" />
+		</taskdef>
+		<validateModules userId="0" propertiesFile="${base.config}/Openbravo.properties" type="module"/>
+	</target>
+	
 	<target name="trl.clean" if="translation">
 		<java classname="org.openbravo.translate.Translate" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
 			<arg line="clean ${base.config}/Openbravo.properties" />
@@ -180,8 +194,6 @@ build.war: build a war file in the lib directory.
 			<classpath refid="project.class.path" />
 		</javac>
 	</target>
-
-
 
 	<target name="compileSqlc" depends="sqlc">
 		<javac srcdir="${build.sqlc}/src:${basedir}:${build.sqlc}/srcAD/org/openbravo/erpCommon/reference:${base.modules}" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">

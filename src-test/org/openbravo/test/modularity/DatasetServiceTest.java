@@ -19,7 +19,9 @@
 
 package org.openbravo.test.modularity;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
@@ -46,6 +48,10 @@ public class DatasetServiceTest extends BaseTest {
     public void testCheckQueries() {
         setErrorOccured(true);
         setUserContext("100");
+
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("ClientID", "0");
+
         final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(
                 DataSet.class);
         final List<DataSet> dss = obc.list();
@@ -54,7 +60,8 @@ public class DatasetServiceTest extends BaseTest {
             for (final DataSetTable dt : ds.getDataSetTableList()) {
                 try {
                     // just test but do nothing with return value
-                    DataSetService.getInstance().getExportableObjects(dt, "0");
+                    DataSetService.getInstance().getExportableObjects(dt, "0",
+                            parameters);
                 } catch (final Exception e) {
                     System.err.println(ds.getName() + ": " + dt.getEntityName()
                             + ": " + e.getMessage());
@@ -71,9 +78,13 @@ public class DatasetServiceTest extends BaseTest {
                 DataSet.class);
         final List<DataSet> dss = obc.list();
         setUserContext("0");
+
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("ClientID", "0");
+
         for (final DataSet ds : dss) {
             final String xml = DataExportService.getInstance()
-                    .exportDataSetToXML(ds, "0");
+                    .exportDataSetToXML(ds, "0", false, parameters, true, true);
             System.err.println("DataSet " + ds.getName() + " exported "
                     + xml.length() + " characters");
         }
@@ -102,6 +113,10 @@ public class DatasetServiceTest extends BaseTest {
     public void testReadAll() {
         setErrorOccured(true);
         setBigBazaarAdminContext();
+
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("ClientID", "0");
+
         final DataSetService dss = DataSetService.getInstance();
         final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(
                 DataSet.class);
@@ -115,8 +130,9 @@ public class DatasetServiceTest extends BaseTest {
                 System.err.println("Exporting DataSetTable: "
                         + dt.getTable().getName());
                 final List<DataSetColumn> dcs = dss.getDataSetColumns(dt);
+
                 final List<BaseOBObject> bobs = dss.getExportableObjects(dt,
-                        "0");
+                        "0", parameters);
                 for (final BaseOBObject bob : bobs) {
                     final List<Property> ps = dss.getExportableProperties(bob,
                             dt, dcs);

@@ -57,6 +57,21 @@ public class WSReadTest extends BaseWSTest {
         assertTrue(index3 == -1);
     }
 
+    public void testPagedWhereClause() throws Exception {
+        String whereClause = "(table.id='104' or table.id='105') and isKey='Y'";
+        whereClause = URLEncoder.encode(whereClause, "UTF-8");
+        final String content = doTestGetRequest("/ws/dal/ADColumn?where="
+                + whereClause + "&firstResult=10&maxResult=10", "<ADColumn",
+                200);
+        // there should be two columns
+        final int index1 = content.indexOf("<ADColumn");
+        assertTrue(index1 != -1);
+        final int index2 = content.indexOf("<ADColumn", index1 + 2);
+        assertTrue(index2 != -1);
+        final int index3 = content.indexOf("<ADColumn", index2 + 2);
+        assertTrue(index3 == -1);
+    }
+
     public void testAllToXML() {
         setErrorOccured(true);
         setBigBazaarAdminContext();

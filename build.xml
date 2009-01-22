@@ -235,6 +235,14 @@ compare.database.structure: refer to compare.database.structure target of databa
 		<ant dir="${base.src}" target="compile.development" inheritAll="true" inheritRefs="true" />
 	</target>
 
+	<target name="validate.database">
+		<ant dir="${base.src}" target="validate.database" inheritAll="true" inheritRefs="true" />
+	</target>
+
+	<target name="validate.modules">
+		<ant dir="${base.src}" target="validate.modules" inheritAll="true" inheritRefs="true" />
+	</target>
+
 	<target name="compile.war" if="mode.war">
 		<antcall target="compile" />
 		<antcall target="war" />
@@ -369,12 +377,12 @@ compare.database.structure: refer to compare.database.structure target of databa
 		<taskdef name="applyModule" classname="org.openbravo.erpCommon.modules.ApplyModuleTask">
 			<classpath refid="project.class.path" />
 		</taskdef>
-		<applyModule userId="0" propertiesFile="${base.config}/Openbravo.properties" />
-		<!-- 
-    	this antcall implements the previous method of importing data 
-    	use that if the new method does not work for you: 
-    -->
+		<applyModule userId="0" propertiesFile="${base.config}/Openbravo.properties"/>
+		
 		<antcall target="import.sample.data" />
+
+		<antcall target="validate.database" />
+		<antcall target="validate.modules" />
 	</target>
 
 	<target name="eclipse.install.source" depends="init,code.rev">
@@ -391,6 +399,9 @@ compare.database.structure: refer to compare.database.structure target of databa
 		</taskdef>
 		<applyModule userId="0" propertiesFile="${base.config}/Openbravo.properties" />
 		<antcall target="import.sample.data" />
+
+		<antcall target="validate.database" />
+		<antcall target="validate.modules" />
 	</target>
 
 	<target name="create.database" depends="init,code.rev">
@@ -595,7 +606,14 @@ compare.database.structure: refer to compare.database.structure target of databa
 		<taskdef name="extractModule" classname="org.openbravo.erpCommon.modules.ExtractModuleTask">
 			<classpath refid="project.class.path" />
 		</taskdef>
-
+		
+		<taskdef name="validateModules" classname="org.openbravo.service.system.SystemValidationTask">		
+			<classpath refid="project.class.path" />
+		</taskdef>
+		
+		<echo message="Validating Module..." />
+		<validateModules moduleName="${module}" failOnError="true" userId="0" propertiesFile="${base.config}/Openbravo.properties" type="module"/>
+		
 		<antcall target="obx.export.database" />
 		<antcall target="obx.export.config.script" />
 
