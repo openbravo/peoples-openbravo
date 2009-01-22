@@ -40,7 +40,7 @@
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADROLEORGACCESS">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="ADORG_ADROLEORGACCESS">
+      <foreign-key foreignTable="AD_ORG" name="ADORG_ADROLEORGACCESS" onDelete="cascade">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ROLE" name="ADROLE_ADROLEORGACCESS" onDelete="cascade">

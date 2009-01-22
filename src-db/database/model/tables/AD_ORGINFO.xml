@@ -53,7 +53,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_ORG" name="AD_ORG_AD_ORGINFO">
+      <foreign-key foreignTable="AD_ORG" name="AD_ORG_AD_ORGINFO" onDelete="cascade">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="ADCLIENT_ADORGINFO">
