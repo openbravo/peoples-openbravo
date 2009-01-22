@@ -36,54 +36,64 @@ import org.openbravo.base.session.SessionFactoryController;
 public class WSReadTest extends BaseWSTest {
 
     public void testSchemaWebService() throws Exception {
-        doTestGetRequest("/ws/dal/schema", "<element name=\"Openbravo\">", 200);
+	doTestGetRequest("/ws/dal/schema", "<element name=\"Openbravo\">", 200);
     }
 
     public void testTypesWebService() throws Exception {
-        doTestGetRequest("/ws/dal", "<Types>", 200);
+	doTestGetRequest("/ws/dal", "<Types>", 200);
     }
 
     public void testWhereClause() throws Exception {
-        String whereClause = "(table.id='104' or table.id='105') and isKey='Y'";
-        whereClause = URLEncoder.encode(whereClause, "UTF-8");
-        final String content = doTestGetRequest("/ws/dal/ADColumn?where="
-                + whereClause, "<ADColumn", 200);
-        // there should be two columns
-        final int index1 = content.indexOf("<ADColumn");
-        assertTrue(index1 != -1);
-        final int index2 = content.indexOf("<ADColumn", index1 + 2);
-        assertTrue(index2 != -1);
-        final int index3 = content.indexOf("<ADColumn", index2 + 2);
-        assertTrue(index3 == -1);
+	String whereClause = "(table.id='104' or table.id='105') and isKey='Y'";
+	whereClause = URLEncoder.encode(whereClause, "UTF-8");
+	final String content = doTestGetRequest("/ws/dal/ADColumn?where="
+		+ whereClause, "<ADColumn", 200);
+	// there should be two columns
+	final int index1 = content.indexOf("<ADColumn");
+	assertTrue(index1 != -1);
+	final int index2 = content.indexOf("<ADColumn", index1 + 2);
+	assertTrue(index2 != -1);
+	final int index3 = content.indexOf("<ADColumn", index2 + 2);
+	assertTrue(index3 == -1);
     }
 
     public void testPagedWhereClause() throws Exception {
-        String whereClause = "(table.id='104' or table.id='105') and isKey='Y'";
-        whereClause = URLEncoder.encode(whereClause, "UTF-8");
-        final String content = doTestGetRequest("/ws/dal/ADColumn?where="
-                + whereClause + "&firstResult=10&maxResult=10", "<ADColumn",
-                200);
-        // there should be two columns
-        final int index1 = content.indexOf("<ADColumn");
-        assertTrue(index1 != -1);
-        final int index2 = content.indexOf("<ADColumn", index1 + 2);
-        assertTrue(index2 != -1);
-        final int index3 = content.indexOf("<ADColumn", index2 + 2);
-        assertTrue(index3 == -1);
+	requestColumnPage(1, 10, 10);
+	requestColumnPage(1, 5, 5);
+	// note, that there are 32 rows in the query,
+	// the test below may fail if the no. of columns changes
+	requestColumnPage(30, 5, 2);
+    }
+
+    private void requestColumnPage(int firstResult, int maxResult,
+	    int expectedCount) throws Exception {
+	String whereClause = "(table.id='104' or table.id='105')";
+	whereClause = URLEncoder.encode(whereClause, "UTF-8");
+	String content = doTestGetRequest("/ws/dal/ADColumn?where="
+		+ whereClause + "&firstResult=" + firstResult + "&maxResult="
+		+ maxResult, "<ADColumn", 200);
+	// count the columns
+	int index = content.indexOf("<ADColumn");
+	int cnt = 0;
+	while (index != -1) {
+	    cnt++;
+	    index = content.indexOf("<ADColumn", index + 1);
+	}
+	assertEquals(expectedCount, cnt);
     }
 
     public void testAllToXML() {
-        setErrorOccured(true);
-        setBigBazaarAdminContext();
-        final Configuration cfg = SessionFactoryController.getInstance()
-                .getConfiguration();
+	setErrorOccured(true);
+	setBigBazaarAdminContext();
+	final Configuration cfg = SessionFactoryController.getInstance()
+		.getConfiguration();
 
-        for (final Iterator<?> it = cfg.getClassMappings(); it.hasNext();) {
-            final PersistentClass pc = (PersistentClass) it.next();
-            final String entityName = pc.getEntityName();
-            doTestGetRequest("/ws/dal/" + entityName, "<ob:Openbravo", 200);
-        }
-        setErrorOccured(false);
+	for (final Iterator<?> it = cfg.getClassMappings(); it.hasNext();) {
+	    final PersistentClass pc = (PersistentClass) it.next();
+	    final String entityName = pc.getEntityName();
+	    doTestGetRequest("/ws/dal/" + entityName, "<ob:Openbravo", 200);
+	}
+	setErrorOccured(false);
     }
 
 }
