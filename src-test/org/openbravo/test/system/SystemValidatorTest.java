@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2008 Openbravo SL 
+ * All portions are Copyright (C) 2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,42 +35,42 @@ import org.openbravo.test.base.BaseTest;
 public class SystemValidatorTest extends BaseTest {
 
     public void _testSystemValidation() {
-        setErrorOccured(true);
-        setUserContext("0");
-        final ApplicationDictionaryValidator adValidator = new ApplicationDictionaryValidator();
-        final Map<String, SystemValidationResult> results = adValidator
-                .validate();
+	setErrorOccured(true);
+	setUserContext("0");
+	final ApplicationDictionaryValidator adValidator = new ApplicationDictionaryValidator();
+	final Map<String, SystemValidationResult> results = adValidator
+		.validate();
 
-        for (String key : results.keySet()) {
-            System.err
-                    .println("++++++++++++++++++++++++++++++++++++++++++++++++++");
-            System.err.println(key);
-            System.err
-                    .println("++++++++++++++++++++++++++++++++++++++++++++++++++");
-            final SystemValidationResult result = results.get(key);
-            for (String warning : result.getWarnings()) {
-                System.err.println("Warning: " + warning);
-            }
-            System.err.println("------------------------------------");
-            for (String error : result.getErrors()) {
-                System.err.println("Error: " + error);
-            }
-        }
-        setErrorOccured(false);
+	for (String key : results.keySet()) {
+	    System.err
+		    .println("++++++++++++++++++++++++++++++++++++++++++++++++++");
+	    System.err.println(key);
+	    System.err
+		    .println("++++++++++++++++++++++++++++++++++++++++++++++++++");
+	    final SystemValidationResult result = results.get(key);
+	    for (String warning : result.getWarnings()) {
+		System.err.println("Warning: " + warning);
+	    }
+	    System.err.println("------------------------------------");
+	    for (String error : result.getErrors()) {
+		System.err.println("Error: " + error);
+	    }
+	}
+	setErrorOccured(false);
     }
 
     public void testModulesValidation() {
-        setErrorOccured(true);
-        setUserContext("0");
-        final ModuleValidator moduleValidator = new ModuleValidator();
-        final SystemValidationResult result = moduleValidator.validate();
+	setErrorOccured(true);
+	setUserContext("0");
+	final ModuleValidator moduleValidator = new ModuleValidator();
+	final SystemValidationResult result = moduleValidator.validate();
 
-        for (String warning : result.getWarnings()) {
-            System.err.println("Warning: " + warning);
-        }
-        for (String error : result.getErrors()) {
-            System.err.println("Error: " + error);
-        }
-        setErrorOccured(false);
+	for (String warning : result.getWarnings()) {
+	    System.err.println("Warning: " + warning);
+	}
+	for (String error : result.getErrors()) {
+	    System.err.println("Error: " + error);
+	}
+	setErrorOccured(false);
     }
 }
