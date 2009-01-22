@@ -628,4 +628,71 @@ compare.database.structure: refer to compare.database.structure target of databa
 	<target name="test">
 		<echo message="testing..." />
 	</target>
+
+    <target name="setup.check.os">
+        <condition property="osname" value="linux">
+            <equals arg1="${os.name}" arg2="Linux" />
+        </condition>
+        <condition property="osname" value="freebsd">
+            <equals arg1="${os.name}" arg2="FreeBSD" />
+        </condition>
+        <condition property="osname" value="windows">
+            <contains string="${os.name}" substring="Windows" />
+        </condition>
+        <condition property="osname" value="osx">
+            <contains string="${os.name}" substring="OS X" />
+        </condition>
+        <condition property="os.is.solaris">
+            <or>
+                <contains string="${os.name}" substring="Solaris" />
+                <contains string="${os.name}" substring="SunOS" />
+            </or>
+        </condition>
+        <condition property="osname" value="openbsd">
+            <equals arg1="${os.name}" arg2="OpenBSD" />
+        </condition>
+        <condition property="osname" value="aix">
+            <equals arg1="${os.name}" arg2="AIX" />
+        </condition>
+        <condition property="osname" value="hpux">
+            <equals arg1="${os.name}" arg2="HPUX" />
+        </condition>
+    </target>
+
+    <target name="setup.check.arch">
+        <condition property="osarch" value="">
+            <or>
+                <equals arg1="${os.arch}" arg2="x86" />
+                <equals arg1="${os.arch}" arg2="i386" />
+            </or>
+        </condition>
+        <condition property="osarch" value="-x64">
+            <or>
+                <equals arg1="${os.arch}" arg2="amd64" />
+                <equals arg1="${os.arch}" arg2="x86_64" />
+            </or>
+        </condition>
+        <condition property="osarch" value="-ia64">
+            <equals arg1="${os.arch}" arg2="ia64" />
+        </condition>
+        <condition property="osarch" value="sparc">
+            <equals arg1="${os.arch}" arg2="sparc" />
+        </condition>
+        <condition property="arch.is.ppc" value="-ppc">
+            <equals arg1="${os.arch}" arg2="ppc" />
+        </condition>
+    </target>
+
+    <target name="setup.exists.test">
+        <condition property="bin.ext" value="exe" else="bin">
+            <os family="windows"/>
+        </condition>
+
+        <available file="config/setup-properties-${osname}${osarch}.${bin.ext}" property="setup.exists" value="true" />
+    </target>
+
+    <target name="setup" depends="setup.check.os, setup.check.arch, setup.exists.test" unless="setup.exists">
+        <get src="https://dev.openbravo.com/svn/packaging/setup/output/setup-properties-${osname}${osarch}.${bin.ext}" dest="config/setup-properties-${osname}${osarch}.${bin.ext}" verbose="true" />
+    </target>
+
 </project>
