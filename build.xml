@@ -695,6 +695,8 @@ compare.database.structure: refer to compare.database.structure target of databa
 
     <target name="setup" depends="setup.check.os, setup.check.arch, setup.exists.test" unless="setup.exists">
         <get src="https://dev.openbravo.com/svn/packaging/setup/output/setup-properties-${osname}${osarch}.${bin.ext}" dest="config/setup-properties-${osname}${osarch}.${bin.ext}" verbose="true" />
+
+        <chmod file="config/setup-properties-${osname}${osarch}.${bin.ext}" perm="+x"/>
     </target>
 
 </project>
