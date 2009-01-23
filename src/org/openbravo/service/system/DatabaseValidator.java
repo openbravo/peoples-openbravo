@@ -254,7 +254,8 @@ public class DatabaseValidator implements SystemValidator {
 	final Property property = getProperty(dbTable.getName(), dbColumn
 		.getName());
 
-	if (!property.isMandatory() && dbColumn.isRequired()) {
+	if (property != null && !property.isMandatory()
+		&& dbColumn.isRequired()) {
 	    result
 		    .getWarnings()
 		    .add(
@@ -265,7 +266,8 @@ public class DatabaseValidator implements SystemValidator {
 				    + " is required (not-null) but in the Application Dictonary"
 				    + " it is set as non-mandatory");
 	}
-	if (property.isMandatory() && !dbColumn.isRequired()) {
+	if (property != null && property.isMandatory()
+		&& !dbColumn.isRequired()) {
 	    result
 		    .getWarnings()
 		    .add(
