@@ -126,6 +126,7 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
         if (strMwarehouse.equals(""))
             strMwarehouse = vars.getWarehouse();
 
+        StringBuffer message = new StringBuffer();
         StringBuffer resultado = new StringBuffer();
         resultado.append("var calloutName='SE_Order_BPartner';\n\n");
         resultado.append("var respuesta = new Array(");
@@ -134,6 +135,12 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
                 + (strPriceList.equals("") ? Utility.getContext(this, vars,
                         "#M_PriceList_ID", strWindowId) : strPriceList)
                 + "\"),");
+        
+        if (strLocation.equals("")) {
+            message.append(Utility.messageBD(this, "NoBPLocation", vars
+                    .getLanguage()));
+        }
+        
         FieldProvider[] tdv = null;
         try {
             ComboTableData comboTableData = new ComboTableData(
@@ -421,10 +428,18 @@ public class SE_Order_BPartner extends HttpSecureAppServlet {
         resultado.append("\n)");
         if (data != null && data.length > 0
         	&& new BigDecimal(data[0].creditavailable)
-			.compareTo(BigDecimal.ZERO) < 0)
-            resultado.append(", new Array('MESSAGE', \""
-                    + Utility.messageBD(this, "CreditLimitOver", vars
-                            .getLanguage()) + data[0].creditavailable + "\")");
+			.compareTo(BigDecimal.ZERO) < 0) {
+            if (message.length() > 0)
+                message.append("<br>");
+            message.append(Utility.messageBD(this, "CreditLimitOver", vars
+                    .getLanguage())
+                    + data[0].creditavailable);
+        }
+
+        if (message != null) {
+            resultado.append(", new Array('MESSAGE', \"" + message + "\")");
+        }
+            
         resultado.append(");");
         xmlDocument.setParameter("array", resultado.toString());
         xmlDocument.setParameter("frameName", "appFrame");
