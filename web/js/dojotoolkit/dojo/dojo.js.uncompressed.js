@@ -16994,7 +16994,7 @@ dojo._hasResource["openbravo.widget.DataGrid"] = true;
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -18608,7 +18608,11 @@ dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
 */
   doResize: function(evt) {
     var p = this.resizingParams;
-    var newWidth = p.width + evt.clientX - p.start;
+    if (parent.isRTL) {
+      var newWidth = p.width - evt.clientX + p.start;
+    } else {
+      var newWidth = p.width + evt.clientX - p.start;
+    }
     p.self.resizeColumn(p.target.parentNode, p.column, newWidth);
     this.setBounds();
   },
@@ -18620,7 +18624,11 @@ dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
   endResize: function(evt) {
     var body = dojo.body();
     var p = this.resizingParams;
-    var newWidth = p.width + evt.clientX - p.start; 
+    if (parent.isRTL) {
+      var newWidth = p.width - evt.clientX + p.start;
+    } else {
+      var newWidth = p.width + evt.clientX - p.start;
+    }
     dojo.disconnect(this.startResizeConnection); 
     dojo.disconnect(this.endResizeConnection); 
     p.self.resizeColumn(p.target.parentNode, p.column, newWidth);
@@ -21667,6 +21675,9 @@ dojo.declare("openbravo.widget.ValidationTextBox.IntegerNumber", [openbravo.widg
 });
 
 }
+
+	
+
 
 
 	if(dojo.config.afterOnLoad && dojo.isBrowser){

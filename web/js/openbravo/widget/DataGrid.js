@@ -1625,10 +1625,11 @@ dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
 */
   doResize: function(evt) {
     var p = this.resizingParams;
-    if (parent.isRTL)
-    	var newWidth = p.width - evt.clientX + p.start;
-    else
-    	var newWidth = p.width + evt.clientX - p.start;
+    if (parent.isRTL) {
+      var newWidth = p.width - evt.clientX + p.start;
+    } else {
+      var newWidth = p.width + evt.clientX - p.start;
+    }
     p.self.resizeColumn(p.target.parentNode, p.column, newWidth);
     this.setBounds();
   },
@@ -1640,10 +1641,11 @@ dojo.declare("openbravo.widget.DataGrid", [dijit._Widget], {
   endResize: function(evt) {
     var body = dojo.body();
     var p = this.resizingParams;
-    if (parent.isRTL)
-    	var newWidth = p.width - evt.clientX + p.start;
-    else
-    	var newWidth = p.width + evt.clientX - p.start;
+    if (parent.isRTL) {
+      var newWidth = p.width - evt.clientX + p.start;
+    } else {
+      var newWidth = p.width + evt.clientX - p.start;
+    }
     dojo.disconnect(this.startResizeConnection); 
     dojo.disconnect(this.endResizeConnection); 
     p.self.resizeColumn(p.target.parentNode, p.column, newWidth);
