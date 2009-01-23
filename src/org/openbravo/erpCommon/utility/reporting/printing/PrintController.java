@@ -54,6 +54,7 @@ import net.sf.jasperreports.engine.JasperPrint;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.OBError;
@@ -843,7 +844,7 @@ public class PrintController extends HttpSecureAppServlet {
             request.getSession().removeAttribute("files");
         }
 
-        // TODO aki
+        
         // new TemplateInfo(this, documentType., (String) request.getSession()
         // .getAttribute("AD_ORG_ID"), vars.getLanguage(), vars
         // .getRequestGlobalVariable("templates", "templates"));
@@ -855,23 +856,42 @@ public class PrintController extends HttpSecureAppServlet {
         xmlDocument.setParameter("language", vars.getLanguage());
         xmlDocument.setParameter("theme", vars.getTheme());
 
-        // GET EMAIL TEMPLATE (SUBJECT AND BODY)
-        // Temporarily get the email definition from the first report (99% of
-        // the time this is the correct one)
-        // However, with multiple selected documents this can create wrong
-        // results (languages and different documents)
-        EmailDefinition emailDefinition;
+        
+        EmailDefinition emailDefinition = null;
         try {
+          if(moreThanOneLenguageDefined(reports)) {
+            emailDefinition = reports.values().iterator().next().getTemplateInfo().get_DefaultEmailDefinition();
+            if (emailDefinition==null) {
+              throw new OBException("No default lenguage configured");
+            }
+          }else {
             emailDefinition = reports.values().iterator().next()
-                    .getEmailDefinition();
+            .getEmailDefinition();
+          }
+           
             if (log4j.isDebugEnabled())
                 log4j.debug("Crm configuration, template subject: "
                         + emailDefinition.getSubject());
             if (log4j.isDebugEnabled())
                 log4j.debug("Crm configuration, template body: "
                         + emailDefinition.getBody());
-        } catch (final ReportingException exception) {
-            throw new ServletException(exception);
+        } catch (final OBException exception) {
+          final OBError on = new OBError();
+          on.setMessage(Utility.messageBD(this,
+                  "There is no email configuration configured", vars
+                          .getLanguage()));
+          on
+                  .setTitle(Utility.messageBD(this, "Info", vars
+                          .getLanguage()));
+          on.setType("info");
+          final String tabId = vars.getSessionValue("inpTabId");
+          vars.getStringParameter("tab");
+          vars.setMessage(tabId, on);
+          vars.getRequestGlobalVariable("inpTabId",
+                  "AttributeSetInstance.tabId");
+          printPageClosePopUpAndRefreshParent(response, vars);
+        } catch (ReportingException e) {
+          log4j.error(e);
         }
 
         // Get additional document information
@@ -1023,7 +1043,7 @@ public class PrintController extends HttpSecureAppServlet {
             xmlDocument.setParameter("salesrepEmail", vars
                     .getStringParameter("salesrepEmail"));
         } else {
-            xmlDocument.setParameter("emailSubject", emailDefinition
+          xmlDocument.setParameter("emailSubject", emailDefinition
                     .getSubject());
             xmlDocument.setParameter("contactEmail", pocData[0].contactEmail);
             xmlDocument.setParameter("salesrepEmail", pocData[0].salesrepEmail);
@@ -1044,6 +1064,16 @@ public class PrintController extends HttpSecureAppServlet {
         final PrintWriter out = response.getWriter();
         out.println(xmlDocument.print());
         out.close();
+    }
+
+    private boolean moreThanOneLenguageDefined(Map<String, Report> reports) throws ReportingException {
+      Iterator itRep = reports.values().iterator();
+      Map lenguages = new HashMap<String, String>();
+      while (itRep.hasNext()){
+        Report report = (Report) itRep.next();
+        lenguages.put(report.getEmailDefinition().getLanguage(), report.getEmailDefinition().getLanguage());
+      }
+      return ((lenguages.values().size()>1)?true:false);
     }
 
     /**

@@ -16,12 +16,15 @@
 package org.openbravo.erpCommon.utility.reporting;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 
 public class TemplateInfo {
@@ -170,5 +173,12 @@ public class TemplateInfo {
         if (emailDefinition == null)
             throw new ReportingException("No email definition available.");
         return emailDefinition;
+    }
+    public EmailDefinition get_DefaultEmailDefinition() {
+      return _DefaultEmailDefinition;
+    }
+
+    public void set_DefaultEmailDefinition(EmailDefinition defaultEmailDefinition) {
+      _DefaultEmailDefinition = defaultEmailDefinition;
     }
 }
