@@ -703,7 +703,7 @@ and c_settlement_cancel_id is null]]></SQL>
                    (select sum(qtyonhand) as QtyStored
                        from m_storage_detail s
                        where s.m_product_id = po.m_product_id
-                        and ad_isOrgIncluded(s.ad_org_id,po.ad_org_id,po.ad_client_id)!=-1) as description,
+                        and ad_isOrgIncluded(s.ad_org_id,po.ad_org_id,po.ad_client_id) <> -1) as description,
        'Y' as isActive,
         0 as ad_org_id, 
         0 as ad_client_id, 
@@ -718,7 +718,7 @@ where p.m_product_id = po.m_product_id
   and po.stockmin > (select sum(qtyonhand) as QtyStored
                        from m_storage_detail s
                        where s.m_product_id = po.m_product_id
-                        and ad_isOrgIncluded(s.ad_org_id,po.ad_org_id,po.ad_client_id)!=-1)]]></SQL>
+                        and ad_isOrgIncluded(s.ad_org_id,po.ad_org_id,po.ad_client_id) <> -1)]]></SQL>
 <!--1000020 TYPE-->
 <!--1000020-->              <TYPE><![CDATA[D]]></TYPE>
 <!--1000020**************--></AD_ALERTRULE>
