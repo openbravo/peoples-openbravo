@@ -61,7 +61,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="REFERENCEDATAINFO" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false">
+      <column name="REFERENCEDATAINFO" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
