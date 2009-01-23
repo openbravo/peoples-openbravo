@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -111,8 +111,8 @@ public class Translate extends DefaultHandler implements LexicalHandler {
      *            AD_TEXTINTERFACES must be cleaned ("clean") and the second one
      *            is the Openbravo.properties path. The other way is with more
      *            arguments, where: 0- Openbravo.properties path. 1- File
-     *            extension. 2- Path where are the files to translate.
-     *            3- Relative path.
+     *            extension. 2- Path where are the files to translate. 3-
+     *            Relative path.
      * @throws Exception
      */
     public static void main(String argv[]) throws Exception {
@@ -158,15 +158,14 @@ public class Translate extends DefaultHandler implements LexicalHandler {
         }
         if (moduleDirectories == null) {
             if (TranslateData.isInDevelopmentModule(pool, "0")) {
-                listDir(path, boolFilter, dirFilter, relativePath,
-                        true, "", 0, "");
+                listDir(path, boolFilter, dirFilter, relativePath, true, "", 0,
+                        "");
                 log4j.info("Translated files for " + fileTermination + ": "
                         + count);
             } else
                 log4j.info("Core is not in development: skipping it");
         } else {
-            listDir(path, boolFilter, dirFilter, relativePath, false,
-                    "", 0, "");
+            listDir(path, boolFilter, dirFilter, relativePath, false, "", 0, "");
             log4j
                     .info("Translated files for " + fileTermination + ": "
                             + count);
@@ -212,8 +211,8 @@ public class Translate extends DefaultHandler implements LexicalHandler {
      *            The relative path.
      */
     private static void listDir(File file, boolean boolFilter,
-            DirFilter dirFilter, String relativePath,
-            boolean parse, String parent, int level, String module) {
+            DirFilter dirFilter, String relativePath, boolean parse,
+            String parent, int level, String module) {
         File[] list;
         if (boolFilter)
             list = file.listFiles(dirFilter);
@@ -242,8 +241,8 @@ public class Translate extends DefaultHandler implements LexicalHandler {
                                             .get(level)
                                             : "--"));
                 if (parse)
-                    listDir(fileItem, boolFilter, dirFilter,
-                            relativePath, true, parent, level + 1, module);
+                    listDir(fileItem, boolFilter, dirFilter, relativePath,
+                            true, parent, level + 1, module);
                 else {
                     if ((moduleDirectories.size() == level + 1)
                             && (moduleDirectories.get(level).equals("*") || moduleDirectories
@@ -254,8 +253,8 @@ public class Translate extends DefaultHandler implements LexicalHandler {
                             if (TranslateData.isInDevelopmentModulePack(pool,
                                     parent.replace("/", "")))
                                 listDir(fileItem, boolFilter, dirFilter,
-                                        relativePath, true, parent
-                                                + "/" + fileItem.getName(),
+                                        relativePath, true, parent + "/"
+                                                + fileItem.getName(),
                                         level + 1, parent.replace("/", ""));
                             else
                                 log4j
@@ -266,9 +265,9 @@ public class Translate extends DefaultHandler implements LexicalHandler {
                     } else if (moduleDirectories.size() > level
                             && (moduleDirectories.get(level).equals("*") || moduleDirectories
                                     .get(level).equals(fileItem.getName())))
-                        listDir(fileItem, boolFilter, dirFilter,
-                                relativePath, false, parent + "/"
-                                        + fileItem.getName(), level + 1, module);
+                        listDir(fileItem, boolFilter, dirFilter, relativePath,
+                                false, parent + "/" + fileItem.getName(),
+                                level + 1, module);
                     // other case don't follow deeping into the tree
                 }
 
@@ -305,8 +304,8 @@ public class Translate extends DefaultHandler implements LexicalHandler {
      * @param relativePath
      *            The relative path.
      */
-    private static void parseFile(File fileParsing,
-            String relativePath, String parent, String module) {
+    private static void parseFile(File fileParsing, String relativePath,
+            String parent, String module) {
         final String strFileName = fileParsing.getName();
         if (log4j.isDebugEnabled())
             log4j.debug("Parsing of " + strFileName);
@@ -324,7 +323,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
         // In case moduleDirectories has value remove parent from path to keep
         // clean the package
         try {
-            moduleName = module.equals("") ? "CORE" : module;
+            moduleName = module.equals("") ? "org.openbravo" : module;
             moduleID = TranslateData.getModuleID(pool, moduleName);
             if (moduleID == null || moduleID.equals("")) {
                 log4j.error("Trying to insert element in module " + moduleName
@@ -441,7 +440,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
     @Override
     public void startElement(String uri, String name, String qName,
             Attributes amap) {// (String name, AttributeList amap) throws
-                              // SAXException {
+        // SAXException {
         if (log4j.isDebugEnabled())
             log4j.info("Configuration: startElement is called: element name="
                     + qName + " actualtag" + actualTag + " trlTxt"
@@ -493,10 +492,10 @@ public class Translate extends DefaultHandler implements LexicalHandler {
      */
     @Override
     public void endElement(String uri, String name, String qName) {// (String
-                                                                   // name)
-                                                                   // throws
-                                                                   // SAXException
-                                                                   // {
+        // name)
+        // throws
+        // SAXException
+        // {
         if (log4j.isDebugEnabled())
             log4j.debug("Configuration: endElement is called: " + qName);
 
@@ -513,7 +512,7 @@ public class Translate extends DefaultHandler implements LexicalHandler {
      */
     @Override
     public void characters(char[] ch, int start, int length) {// throws
-                                                              // SAXException {
+        // SAXException {
         final String chars = new String(ch, start, length);
         if (log4j.isDebugEnabled())
             log4j.debug("Configuration(characters) is called: " + chars);
