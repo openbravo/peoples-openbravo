@@ -10,9 +10,4 @@ public class ProcedureProcess implements Process {
 
     }
 
-    public void initialize(ProcessBundle bundle) {
-        // TODO Auto-generated method stub
-
-    }
-
 }

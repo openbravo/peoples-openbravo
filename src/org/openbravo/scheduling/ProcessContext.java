@@ -90,6 +90,19 @@ public class ProcessContext {
     }
 
     /**
+     * Create a request with the selected client and organization.
+     * 
+     * @param vars
+     * @param client
+     * @param org
+     */
+    public ProcessContext(VariablesSecureApp vars, String client, String org) {
+        this(vars);
+        this.client = client;
+        this.organization = org;
+    }
+
+    /**
      * @return
      */
     public VariablesSecureApp toVars() {

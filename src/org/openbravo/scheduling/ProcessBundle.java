@@ -68,13 +68,13 @@ public class ProcessBundle {
     private Channel channel;
 
     public ProcessBundle(String processId, VariablesSecureApp vars) {
-        this(processId, vars, Channel.DIRECT);
+        this(processId, vars, Channel.DIRECT, vars.getClient(), vars.getOrg());
     }
 
     public ProcessBundle(String processId, VariablesSecureApp vars,
-            Channel channel) {
+            Channel channel, String client, String organization) {
         this.processId = processId;
-        this.context = new ProcessContext(vars);
+        this.context = new ProcessContext(vars, client, organization);
         this.channel = channel;
     }
 
@@ -253,8 +253,7 @@ public class ProcessBundle {
 
         final String processId = data.processId;
         final ProcessBundle bundle = new ProcessBundle(processId, vars,
-                Channel.SCHEDULED).init(conn);
-        bundle.setContext(new ProcessContext(vars));
+                Channel.SCHEDULED, data.client, data.organization).init(conn);
 
         final String paramString = data.params;
         if (paramString == null || paramString.trim().equals("")) {

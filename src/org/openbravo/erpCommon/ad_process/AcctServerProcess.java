@@ -31,7 +31,7 @@ public class AcctServerProcess implements Process {
     private ConnectionProvider connection;
 
     public void execute(ProcessBundle bundle) throws Exception {
-        
+
         logger = bundle.getLogger();
         connection = bundle.getConnection();
 
@@ -84,7 +84,9 @@ public class AcctServerProcess implements Process {
         adNoteId = saveLog(adNoteId, vars.getClient());
         String[] tables = null;
         String strTable = "";
-        String strOrg = "0";
+        // fill organisation from process request by default
+        String strOrg = ctx.getOrganization();
+        // if called by 'Posting by DB tables' get params from ad_pinstance
         if (isDirect) {
             strTable = AcctServerProcessData.selectTable(connection,
                     pinstanceId);
@@ -125,15 +127,6 @@ public class AcctServerProcess implements Process {
                     ex.printStackTrace();
                     return;
                 }
-                if (isDirect) {
-                    addLog("@DL_TABLE@ = " + strTableDesc + " - "
-                            + acct.getInfo(ctx.getLanguage()), false);
-                } else {
-                    addLog("Table = " + strTableDesc + " - "
-                            + acct.getInfo(ctx.getLanguage()));
-                    adNoteId = saveLog(adNoteId, vars.getClient());
-                    return;
-                }
                 total += Integer.valueOf(BATCH_SIZE).intValue();
             }
             if (isDirect) {
@@ -145,7 +138,6 @@ public class AcctServerProcess implements Process {
             }
             adNoteId = saveLog(adNoteId, vars.getClient());
         }
-        throw new Exception("test");
     }
 
     /**
