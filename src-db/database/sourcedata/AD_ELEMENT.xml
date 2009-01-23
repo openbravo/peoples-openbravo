@@ -17904,9 +17904,9 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1299 CREATEDBY-->
 <!--1299-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--1299 UPDATED-->
-<!--1299-->              <UPDATED><![CDATA[2003-02-22 02:19:10.0]]></UPDATED>
+<!--1299-->              <UPDATED><![CDATA[2009-01-23 02:25:36.0]]></UPDATED>
 <!--1299 UPDATEDBY-->
-<!--1299-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
+<!--1299-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1299 COLUMNNAME-->
 <!--1299-->              <COLUMNNAME><![CDATA[Classname]]></COLUMNNAME>
 <!--1299 NAME-->
@@ -17916,7 +17916,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1299 DESCRIPTION-->
 <!--1299-->              <DESCRIPTION><![CDATA[x not implemented]]></DESCRIPTION>
 <!--1299 HELP-->
-<!--1299-->              <HELP><![CDATA[The Classname identifies the Java classname used by this report or process.]]></HELP>
+<!--1299-->              <HELP><![CDATA[The classname is used when generating a representation of the table in java (the entity or business object). The classname is the simplename of the class (so without the package name). Often the AD_Table.name can be used here. The combination of classname and package needs to be unique.]]></HELP>
 <!--1299 AD_MODULE_ID-->
 <!--1299-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1299**************--></AD_ELEMENT>
@@ -58243,7 +58243,7 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--8F16AEFC996311DD812A001D09C4A2FE CREATEDBY-->
 <!--8F16AEFC996311DD812A001D09C4A2FE-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
 <!--8F16AEFC996311DD812A001D09C4A2FE UPDATED-->
-<!--8F16AEFC996311DD812A001D09C4A2FE-->              <UPDATED><![CDATA[2008-10-14 22:51:26.0]]></UPDATED>
+<!--8F16AEFC996311DD812A001D09C4A2FE-->              <UPDATED><![CDATA[2009-01-23 02:26:49.0]]></UPDATED>
 <!--8F16AEFC996311DD812A001D09C4A2FE UPDATEDBY-->
 <!--8F16AEFC996311DD812A001D09C4A2FE-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--8F16AEFC996311DD812A001D09C4A2FE COLUMNNAME-->
@@ -58255,7 +58255,7 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--8F16AEFC996311DD812A001D09C4A2FE DESCRIPTION-->
 <!--8F16AEFC996311DD812A001D09C4A2FE-->              <DESCRIPTION><![CDATA[Links a table to a package]]></DESCRIPTION>
 <!--8F16AEFC996311DD812A001D09C4A2FE HELP-->
-<!--8F16AEFC996311DD812A001D09C4A2FE-->              <HELP><![CDATA[Links a table to a package]]></HELP>
+<!--8F16AEFC996311DD812A001D09C4A2FE-->              <HELP><![CDATA[An AD_Table record has a mandatory relation to a package (the AD_Package). Choose a sensible package fitting to the functional area to which the table applies (so not the Core package). If no such package exist then create a new one. The relation to the module is maintained through the AD_Package, so an AD_Table has an AD_Package which belongs to a module. When developing for a module then first a package needs to be defined in AD_Package, linked to the module. Then the records in AD_Table (for that module) can be linked to that package.]]></HELP>
 <!--8F16AEFC996311DD812A001D09C4A2FE AD_MODULE_ID-->
 <!--8F16AEFC996311DD812A001D09C4A2FE-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--8F16AEFC996311DD812A001D09C4A2FE**************--></AD_ELEMENT>

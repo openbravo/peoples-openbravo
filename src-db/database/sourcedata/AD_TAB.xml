@@ -26457,15 +26457,21 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--29021BB9A96244BDA7E8AEBA71ADFB11 CREATEDBY-->
 <!--29021BB9A96244BDA7E8AEBA71ADFB11-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
 <!--29021BB9A96244BDA7E8AEBA71ADFB11 UPDATED-->
-<!--29021BB9A96244BDA7E8AEBA71ADFB11-->              <UPDATED><![CDATA[2008-10-23 20:37:27.0]]></UPDATED>
+<!--29021BB9A96244BDA7E8AEBA71ADFB11-->              <UPDATED><![CDATA[2009-01-23 02:38:03.0]]></UPDATED>
 <!--29021BB9A96244BDA7E8AEBA71ADFB11 UPDATEDBY-->
 <!--29021BB9A96244BDA7E8AEBA71ADFB11-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--29021BB9A96244BDA7E8AEBA71ADFB11 NAME-->
-<!--29021BB9A96244BDA7E8AEBA71ADFB11-->              <NAME><![CDATA[Package]]></NAME>
+<!--29021BB9A96244BDA7E8AEBA71ADFB11-->              <NAME><![CDATA[Data Package]]></NAME>
 <!--29021BB9A96244BDA7E8AEBA71ADFB11 DESCRIPTION-->
 <!--29021BB9A96244BDA7E8AEBA71ADFB11-->              <DESCRIPTION><![CDATA[Java Package]]></DESCRIPTION>
 <!--29021BB9A96244BDA7E8AEBA71ADFB11 HELP-->
-<!--29021BB9A96244BDA7E8AEBA71ADFB11-->              <HELP><![CDATA[Java Package]]></HELP>
+<!--29021BB9A96244BDA7E8AEBA71ADFB11-->              <HELP><![CDATA[The Data Package is a grouping mechanism for tables within a module. Openbravo has a java business object for each Table. The java package of the java business object is defined in the Data Package. For example: a module for a crm package with the name: org.crm has packages:
+- org.crm.order
+- org.crm.customer
+
+The corresponding tables have then the following setting:
+- Customer, in the org.crm.customer package, resulting in the java class: org.crm.customer.Customer
+- SalesOrder, in the org.crm.order package, resulting in the java class: org.crm.order.SalesOrder]]></HELP>
 <!--29021BB9A96244BDA7E8AEBA71ADFB11 AD_TABLE_ID-->
 <!--29021BB9A96244BDA7E8AEBA71ADFB11-->              <AD_TABLE_ID><![CDATA[D5066ABE94C144C19E3516C882B51DE4]]></AD_TABLE_ID>
 <!--29021BB9A96244BDA7E8AEBA71ADFB11 AD_WINDOW_ID-->
@@ -26484,6 +26490,8 @@ Purchase Order lines created to fulfill the product demand.]]></HELP>
 <!--29021BB9A96244BDA7E8AEBA71ADFB11-->              <ISREADONLY><![CDATA[N]]></ISREADONLY>
 <!--29021BB9A96244BDA7E8AEBA71ADFB11 HASTREE-->
 <!--29021BB9A96244BDA7E8AEBA71ADFB11-->              <HASTREE><![CDATA[N]]></HASTREE>
+<!--29021BB9A96244BDA7E8AEBA71ADFB11 AD_PROCESS_ID-->
+<!--29021BB9A96244BDA7E8AEBA71ADFB11-->              <AD_PROCESS_ID><![CDATA[172]]></AD_PROCESS_ID>
 <!--29021BB9A96244BDA7E8AEBA71ADFB11 PROCESSING-->
 <!--29021BB9A96244BDA7E8AEBA71ADFB11-->              <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--29021BB9A96244BDA7E8AEBA71ADFB11 IMPORTFIELDS-->
