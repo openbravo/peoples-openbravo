@@ -18,13 +18,14 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2008 Openbravo SL
+* All portions are Copyright (C) 2001-2009 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
     TYPE RECORD IS REF CURSOR;
   CUR_DATA RECORD;
   v_JavaPackage VARCHAR2(60);
+  v_ModuleMapping VARCHAR2(60);
     
 BEGIN
     
@@ -41,9 +42,12 @@ BEGIN
       FROM AD_MODULE M
      WHERE AD_MODULE_ID = :New.AD_Module_ID;
  
+
     IF v_JavaPackage IS NOT NULL THEN
+      v_ModuleMapping := '/'||v_JavaPackage;
       v_JavaPackage := v_JavaPackage||'.'||AD_MAPPING_FORMAT(TO_CHAR(:NEW.NAME));
     ELSE
+      v_ModuleMapping := '/';
       v_JavaPackage := AD_MAPPING_FORMAT(TO_CHAR(:NEW.NAME));
     END IF;
     
@@ -65,17 +69,17 @@ BEGIN
       WHERE AD_MODEL_OBJECT_ID=CUR_DATA.AD_MODEL_OBJECT_ID
         and classname not like '%ComboReload%';
       UPDATE AD_MODEL_OBJECT_MAPPING
-        SET MAPPINGNAME=('/' || CUR_DATA.WINDOWNAME || '/' || CUR_DATA.TABNAME || '_Relation.html'),
+        SET MAPPINGNAME=(v_ModuleMapping || CUR_DATA.WINDOWNAME || '/' || CUR_DATA.TABNAME || '_Relation.html'),
         ISACTIVE=:NEW.ISACTIVE
       WHERE AD_MODEL_OBJECT_ID=CUR_DATA.AD_MODEL_OBJECT_ID
         AND MAPPINGNAME LIKE '%_Relation.html';
       UPDATE AD_MODEL_OBJECT_MAPPING
-        SET MAPPINGNAME=('/' || CUR_DATA.WINDOWNAME || '/' || CUR_DATA.TABNAME || '_Edition.html'),
+        SET MAPPINGNAME=(v_ModuleMapping || CUR_DATA.WINDOWNAME || '/' || CUR_DATA.TABNAME || '_Edition.html'),
         ISACTIVE=:NEW.ISACTIVE
       WHERE AD_MODEL_OBJECT_ID=CUR_DATA.AD_MODEL_OBJECT_ID
         AND MAPPINGNAME LIKE '%_Edition.html';
       UPDATE AD_MODEL_OBJECT_MAPPING
-        SET MAPPINGNAME=('/' || CUR_DATA.WINDOWNAME || '/' || CUR_DATA.TABNAME || '_Excel.xls'),
+        SET MAPPINGNAME=(v_ModuleMapping || CUR_DATA.WINDOWNAME || '/' || CUR_DATA.TABNAME || '_Excel.xls'),
         ISACTIVE=:NEW.ISACTIVE
       WHERE AD_MODEL_OBJECT_ID=CUR_DATA.AD_MODEL_OBJECT_ID
         AND MAPPINGNAME LIKE '%_Excel.xls';
