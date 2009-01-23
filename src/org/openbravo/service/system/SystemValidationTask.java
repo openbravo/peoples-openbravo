@@ -37,66 +37,66 @@ public class SystemValidationTask extends ReferenceDataTask {
 
     @Override
     protected void doExecute() {
-        if (getType().contains("database")) {
-            log.info("Validating Database and Application Dictionary");
-            final DatabaseValidator databaseValidator = new DatabaseValidator();
-            printResult(databaseValidator.validate());
-        }
-        if (getType().contains("module")) {
-            log.info("Validating Modules");
-            final ModuleValidator moduleValidator = new ModuleValidator();
-            if (getModuleName() != null) {
-                printResult(moduleValidator.validate(getModuleName()));
-            } else {
-                printResult(moduleValidator.validate());
-            }
-        }
+	if (getType().contains("database")) {
+	    log.info("Validating Database and Application Dictionary");
+	    final DatabaseValidator databaseValidator = new DatabaseValidator();
+	    printResult(databaseValidator.validate());
+	}
+	if (getType().contains("module")) {
+	    log.info("Validating Modules");
+	    final ModuleValidator moduleValidator = new ModuleValidator();
+	    if (getModuleName() != null) {
+		printResult(moduleValidator.validate(getModuleName()));
+	    } else {
+		printResult(moduleValidator.validate());
+	    }
+	}
     }
 
     private void printResult(SystemValidationResult result) {
-        for (String warning : result.getWarnings()) {
-            log.warn("WARNING: " + warning);
-        }
+	for (String warning : result.getWarnings()) {
+	    log.warn(warning);
+	}
 
-        if (isFailOnError()) {
-            final StringBuilder sb = new StringBuilder();
-            for (String err : result.getErrors()) {
-                sb.append(err);
-                if (sb.length() > 0) {
-                    sb.append("\n");
-                }
-            }
-            if (sb.length() > 0) {
-                throw new OBException(sb.toString());
-            }
-        } else {
-            for (String err : result.getErrors()) {
-                log.error("ERROR: " + err);
-            }
-        }
+	if (isFailOnError()) {
+	    final StringBuilder sb = new StringBuilder();
+	    for (String err : result.getErrors()) {
+		sb.append(err);
+		if (sb.length() > 0) {
+		    sb.append("\n");
+		}
+	    }
+	    if (sb.length() > 0) {
+		throw new OBException(sb.toString());
+	    }
+	} else {
+	    for (String err : result.getErrors()) {
+		log.error(err);
+	    }
+	}
     }
 
     public String getType() {
-        return type;
+	return type;
     }
 
     public void setType(String type) {
-        this.type = type;
+	this.type = type;
     }
 
     public boolean isFailOnError() {
-        return failOnError;
+	return failOnError;
     }
 
     public void setFailOnError(boolean failOnError) {
-        this.failOnError = failOnError;
+	this.failOnError = failOnError;
     }
 
     public String getModuleName() {
-        return moduleName;
+	return moduleName;
     }
 
     public void setModuleName(String moduleName) {
-        this.moduleName = moduleName;
+	this.moduleName = moduleName;
     }
 }

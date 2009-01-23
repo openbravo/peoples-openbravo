@@ -27,7 +27,7 @@
     * Title: Ref List Translation
     * Description:
     ************************************************************************/
-    v_aux number;    
+    v_aux NUMBER;    
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;

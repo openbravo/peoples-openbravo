@@ -370,6 +370,6 @@
       <check name="CBPARTNER_ISTAXEXEMPT_CHECK"><![CDATA[ISTAXEXEMPT IN ('Y', 'N')]]></check>
       <check name="CBPARTNER_ISVENDOR_CHECK"><![CDATA[ISVENDOR IN ('Y', 'N')]]></check>
       <check name="CBPARTNER_SHOWPRICE_CHECK"><![CDATA[SHOWPRICEINORDER IN ('Y', 'N')]]></check>
-      <check name="INVOICERULE_CK_CBPARTNER"><![CDATA[(INVOICERULE <> 'S') OR (C_INVOICESCHEDULE_ID IS NOT NULL)]]></check>
+      <check name="INVOICERULE_CK_CBPARTNER"><![CDATA[((INVOICERULE) <> 'S') OR (C_INVOICESCHEDULE_ID IS NOT NULL)]]></check>
     </table>
   </database>
