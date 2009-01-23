@@ -18,7 +18,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2008 Openbravo SL
+* All portions are Copyright (C) 2001-2009 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -30,8 +30,7 @@
  v_Count       NUMBER(10);
  v_JavaPackage VARCHAR2(315);
  v_ModuleMapping VARCHAR2(315);
- v_MappingDepht VARCHAR2(10);
-    
+   
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
@@ -64,12 +63,11 @@ BEGIN
     IF v_JavaPackage IS NOT NULL THEN
       v_ModuleMapping := '/'||v_JavaPackage;
       v_JavaPackage := v_JavaPackage||'.'||v_WindowName;
-      v_MappingDepht := '/%/%/%';
     ELSE
       v_ModuleMapping := '/';
       v_JavaPackage := v_WindowName;
-      v_MappingDepht := '/%/%';
     END IF;
+
 
     SELECT COUNT(*) INTO v_Count
     FROM AD_MODEL_OBJECT
@@ -106,7 +104,7 @@ BEGIN
     FROM AD_MODEL_OBJECT_MAPPING
     WHERE AD_MODEL_OBJECT_ID IN (
       SELECT AD_MODEL_OBJECT_ID FROM AD_MODEL_OBJECT WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W')
-    AND MAPPINGNAME LIKE v_MappingDepht||'_Relation.html';
+    AND MAPPINGNAME LIKE '%_Relation.html';
 
     IF v_Count > 0 THEN
       UPDATE AD_MODEL_OBJECT_MAPPING
@@ -118,7 +116,7 @@ BEGIN
         MAPPINGNAME = (v_ModuleMapping || v_WindowName || '/' || v_ClassName || '_Relation.html')
       WHERE AD_MODEL_OBJECT_ID IN (
         SELECT AD_MODEL_OBJECT_ID FROM AD_MODEL_OBJECT WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W')
-      AND MAPPINGNAME LIKE v_MappingDepht||'_Relation.html';
+      AND MAPPINGNAME LIKE '%_Relation.html';
 
     ELSE
       Ad_Sequence_Next('AD_Model_Object_Mapping', :new.AD_Client_ID, v_ID_MAP);
@@ -133,7 +131,7 @@ BEGIN
     FROM AD_MODEL_OBJECT_MAPPING
     WHERE AD_MODEL_OBJECT_ID IN (
       SELECT AD_MODEL_OBJECT_ID FROM AD_MODEL_OBJECT WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W')
-    AND MAPPINGNAME LIKE v_MappingDepht||'_Edition.html';
+    AND MAPPINGNAME LIKE '%_Edition.html';
 
     IF v_Count > 0 THEN
       UPDATE AD_MODEL_OBJECT_MAPPING
@@ -145,7 +143,7 @@ BEGIN
         MAPPINGNAME = (v_ModuleMapping || v_WindowName || '/' || v_ClassName || '_Edition.html')
       WHERE AD_MODEL_OBJECT_ID IN (
         SELECT AD_MODEL_OBJECT_ID FROM AD_MODEL_OBJECT WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W')
-      AND MAPPINGNAME LIKE v_MappingDepht||'_Edition.html';
+      AND MAPPINGNAME LIKE '%_Edition.html';
 
     ELSE
       Ad_Sequence_Next('AD_Model_Object_Mapping', :new.AD_Client_ID, v_ID_MAP);
@@ -160,7 +158,7 @@ BEGIN
     FROM AD_MODEL_OBJECT_MAPPING
     WHERE AD_MODEL_OBJECT_ID IN (
       SELECT AD_MODEL_OBJECT_ID FROM AD_MODEL_OBJECT WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W')
-    AND MAPPINGNAME LIKE v_MappingDepht||'_Excel.xls';
+    AND MAPPINGNAME LIKE '%_Excel.xls';
 
     IF v_Count > 0 THEN
       UPDATE AD_MODEL_OBJECT_MAPPING
@@ -172,7 +170,7 @@ BEGIN
         MAPPINGNAME = (v_ModuleMapping  || v_WindowName || '/' || v_ClassName || '_Excel.xls')
       WHERE AD_MODEL_OBJECT_ID IN (
         SELECT AD_MODEL_OBJECT_ID FROM AD_MODEL_OBJECT WHERE AD_MODEL_OBJECT.AD_TAB_ID=:old.AD_TAB_ID AND ACTION = 'W')
-      AND MAPPINGNAME LIKE v_MappingDepht||'_Excel.xls';
+      AND MAPPINGNAME LIKE '%_Excel.xls';
 
     ELSE
       Ad_Sequence_Next('AD_Model_Object_Mapping', :new.AD_Client_ID, v_ID_MAP);
