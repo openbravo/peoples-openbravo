@@ -58,15 +58,15 @@ public abstract class DalBaseProcess implements Process {
 	    doExecute(bundle);
 	    errorOccured = false;
 	} finally {
-	    // remove the context at the end, maybe the process scheduler
-	    // reuses the thread?
-	    OBContext.setOBContext(currentOBContext);
-
 	    if (errorOccured) {
 		OBDal.getInstance().rollbackAndClose();
 	    } else {
 		OBDal.getInstance().commitAndClose();
 	    }
+
+	    // remove the context at the end, maybe the process scheduler
+	    // reuses the thread?
+	    OBContext.setOBContext(currentOBContext);
 	}
     }
 

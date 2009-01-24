@@ -95,10 +95,10 @@ public class SL_Module_Minor_Version extends HttpSecureAppServlet {
 		    Module.class, strModule);
 	    if (dependsOnModule.getVersion() != null) {
 		result.append("new Array(\"" + MINOR_VERSION_FIELD + "\", \""
-			+ dependsOnModule.getVersion() + "\"),");
+			+ dependsOnModule.getVersion() + "\")");
 	    } else {
 		result.append("new Array(\"" + MINOR_VERSION_FIELD + "\", \""
-			+ dependsOnModule.getVersion() + "\"),");
+			+ dependsOnModule.getVersion() + "\")");
 	    }
 	}
 	result.append(");");
