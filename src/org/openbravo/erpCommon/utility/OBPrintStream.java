@@ -48,34 +48,34 @@ public class OBPrintStream extends PrintStream {
      */
     public OBPrintStream(PrintWriter p) {
 
-        super(System.out); // It is needed to call a super constructor, though
-        // it is not going to be used
-        setPrintWritter(p);
-        log = new StringBuffer();
-        finished = false;
+	super(System.out); // It is needed to call a super constructor, though
+	// it is not going to be used
+	setPrintWritter(p);
+	log = new StringBuffer();
+	finished = false;
     }
 
     public OBPrintStream(PrintStream p) {
 
-        super(System.out); // It is needed to call a super constructor, though
-        // it is not going to be used
-        psout = p;
-        log = new StringBuffer();
-        finished = false;
+	super(System.out); // It is needed to call a super constructor, though
+	// it is not going to be used
+	psout = p;
+	log = new StringBuffer();
+	finished = false;
     }
 
     public void setPrintWritter(PrintWriter p) {
-        out = p;
+	out = p;
     }
 
     public void setLogFile(File f) {
-        logFile = f;
-        try {
-            logWriter = new PrintWriter(f);
+	logFile = f;
+	try {
+	    logWriter = new PrintWriter(f);
 
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
+	} catch (final Exception e) {
+	    e.printStackTrace();
+	}
     }
 
     /**
@@ -85,7 +85,7 @@ public class OBPrintStream extends PrintStream {
      */
     @Override
     public void write(byte[] buf) {
-        write(buf, 0, buf.length);
+	write(buf, 0, buf.length);
     }
 
     /**
@@ -94,19 +94,28 @@ public class OBPrintStream extends PrintStream {
      */
     @Override
     public void write(byte[] buf, int off, int len) {
-        final String s = new String(buf, off, len);
-        if (psout != null) {
-            psout.println(s.replace("\n", "<br/>"));
-            psout.flush();
-        } else if (out != null) {
-            out.println(s.replace("\n", "<br/>"));
-            out.flush();
-        }
-        if (logWriter != null) {
-            logWriter.print(s);
-            logWriter.flush();
-        }
-        log.append(s);
+	final String s = new String(buf, off, len);
+	if (psout != null) {
+	    psout.println(encodeHtml(s));
+	    psout.flush();
+	} else if (out != null) {
+	    out.println(encodeHtml(s));
+	    out.flush();
+	}
+	if (logWriter != null) {
+	    logWriter.print(s);
+	    logWriter.flush();
+	}
+	log.append(s);
+    }
+
+    // simple encoding
+    private String encodeHtml(String s) {
+	String value = s.replace("&", "&amp;");
+	value = value.replace(">", "&gt;");
+	value = value.replace("<", "&lt;");
+	value = value.replace("\n", "<br/>");
+	return value;
     }
 
     /**
@@ -120,20 +129,20 @@ public class OBPrintStream extends PrintStream {
      * @return - The newly generated log
      */
     public String getLog(int showType) {
-        String rt = "";
-        if (log != null) {
-            rt = log.toString();
-            log = new StringBuffer();
-        }
-        if (rt.equals("") && finished) {
-            rt = "@END@"; // to force end
-        } else {
-            switch (showType) {
-            case TEXT_HTML:
-                rt = rt.replace("\n", "<br/>");
-            }
-        }
-        return rt;
+	String rt = "";
+	if (log != null) {
+	    rt = log.toString();
+	    log = new StringBuffer();
+	}
+	if (rt.equals("") && finished) {
+	    rt = "@END@"; // to force end
+	} else {
+	    switch (showType) {
+	    case TEXT_HTML:
+		rt = rt.replace("\n", "<br/>");
+	    }
+	}
+	return rt;
     }
 
     /**
@@ -143,6 +152,6 @@ public class OBPrintStream extends PrintStream {
      *            - boolean value to set the finished property.
      */
     public void setFinished(boolean v) {
-        finished = v;
+	finished = v;
     }
 }
