@@ -10108,53 +10108,6 @@ When it has been correctly executed all DB constraints and triggers should be in
 <!--800156-->              <UIPATTERN><![CDATA[M]]></UIPATTERN>
 <!--800156**************--></AD_PROCESS>
 
-<!--800158**************--><AD_PROCESS>
-<!--800158 AD_PROCESS_ID-->
-<!--800158-->              <AD_PROCESS_ID><![CDATA[800158]]></AD_PROCESS_ID>
-<!--800158 AD_CLIENT_ID-->
-<!--800158-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800158 AD_ORG_ID-->
-<!--800158-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800158 ISACTIVE-->
-<!--800158-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800158 CREATED-->
-<!--800158-->              <CREATED><![CDATA[2008-12-12 17:05:24.0]]></CREATED>
-<!--800158 CREATEDBY-->
-<!--800158-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--800158 UPDATED-->
-<!--800158-->              <UPDATED><![CDATA[2008-12-12 17:05:24.0]]></UPDATED>
-<!--800158 UPDATEDBY-->
-<!--800158-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--800158 VALUE-->
-<!--800158-->              <VALUE><![CDATA[Copy Client]]></VALUE>
-<!--800158 NAME-->
-<!--800158-->              <NAME><![CDATA[Copy Client]]></NAME>
-<!--800158 DESCRIPTION-->
-<!--800158-->              <DESCRIPTION><![CDATA[Copy Client]]></DESCRIPTION>
-<!--800158 HELP-->
-<!--800158-->              <HELP><![CDATA[Copies data from an existing Client to a new one.]]></HELP>
-<!--800158 ACCESSLEVEL-->
-<!--800158-->              <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--800158 ISUSERSTARTABLE-->
-<!--800158-->              <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800158 PROCEDURENAME-->
-<!--800158-->              <PROCEDURENAME><![CDATA[AD_Copy_Client]]></PROCEDURENAME>
-<!--800158 ISREPORT-->
-<!--800158-->              <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--800158 ISDIRECTPRINT-->
-<!--800158-->              <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800158 ISBACKGROUND-->
-<!--800158-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800158 ISJASPER-->
-<!--800158-->              <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800158 ISEXTERNALSERVICE-->
-<!--800158-->              <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
-<!--800158 AD_MODULE_ID-->
-<!--800158-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800158 UIPATTERN-->
-<!--800158-->              <UIPATTERN><![CDATA[S]]></UIPATTERN>
-<!--800158**************--></AD_PROCESS>
-
 <!--800159**************--><AD_PROCESS>
 <!--800159 AD_PROCESS_ID-->
 <!--800159-->              <AD_PROCESS_ID><![CDATA[800159]]></AD_PROCESS_ID>

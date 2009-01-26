@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="TABLE AD_PINSTANCE_LOG">
-    <table name="AD_PINSTANCE_LOG">
-      <column name="AD_PINSTANCE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+    <table name="AD_PINSTANCE_LOG" primaryKey="AD_PINSTANCE_LOG_PK">
+      <column name="AD_PINSTANCE_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -28,9 +28,5 @@
       <foreign-key foreignTable="AD_PINSTANCE" name="ADPINSTANCE_PILOG" onDelete="cascade">
         <reference local="AD_PINSTANCE_ID" foreign="AD_PINSTANCE_ID"/>
       </foreign-key>
-      <index name="AD_PINSTANCE_LOG_NU" unique="false">
-        <index-column name="AD_PINSTANCE_ID"/>
-        <index-column name="LOG_ID"/>
-      </index>
     </table>
   </database>
