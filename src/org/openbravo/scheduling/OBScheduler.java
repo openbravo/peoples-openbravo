@@ -188,8 +188,8 @@ public class OBScheduler {
         if (jobClass == null) {
             throw new SchedulerException("Job class cannot be null.");
         }
-        final JobDetail jobDetail = JobDetailProvider.newInstance(requestId, bundle,
-                jobClass);
+        final JobDetail jobDetail = JobDetailProvider.newInstance(requestId,
+                bundle, jobClass);
         final Trigger trigger = TriggerProvider.newInstance(requestId, bundle,
                 getConnection());
 
@@ -209,8 +209,8 @@ public class OBScheduler {
             sched.deleteJob(requestId, OB_GROUP);
 
         } catch (final SchedulerException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("An error occurred rescheduling process "
+                    + bundle.toString(), e);
         }
         schedule(requestId, bundle);
     }
@@ -223,13 +223,8 @@ public class OBScheduler {
             ProcessRequestData.update(getConnection(), UNSCHEDULED, null,
                     format(new Date()), requestId);
 
-        } catch (final SchedulerException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-
-        } catch (final ServletException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (final Exception e) {
+            log.error("An error occurred unscheduling process " + requestId, e);
         }
     }
 
@@ -250,8 +245,8 @@ public class OBScheduler {
         this.ctx = sched.getContext();
         this.sched = sched;
 
-        final ProcessMonitor monitor = new ProcessMonitor("Monitor." + OB_GROUP,
-                this.ctx);
+        final ProcessMonitor monitor = new ProcessMonitor(
+                "Monitor." + OB_GROUP, this.ctx);
         sched.addSchedulerListener(monitor);
         sched.addGlobalJobListener(monitor);
         sched.addGlobalTriggerListener(monitor);
@@ -263,26 +258,21 @@ public class OBScheduler {
                     .selectByStatus(getConnection(), SCHEDULED);
 
             for (final ProcessRequestData request : data) {
-              final String requestId = request.id;
-              final VariablesSecureApp vars = ProcessContext.newInstance(
-                      request.obContext).toVars();
-              try {
-                  final ProcessBundle bundle = ProcessBundle.request(requestId, vars,
-                          getConnection());
-                  schedule(requestId, bundle);
+                final String requestId = request.id;
+                final VariablesSecureApp vars = ProcessContext.newInstance(
+                        request.obContext).toVars();
+                try {
+                    final ProcessBundle bundle = ProcessBundle.request(
+                            requestId, vars, getConnection());
+                    schedule(requestId, bundle);
 
-              } catch (final ServletException e) {
-                  // TODO Auto-generated catch block
-                  e.printStackTrace();
-
-              } catch (final SchedulerException e) {
-                  // TODO Auto-generated catch block
-                  e.printStackTrace();
-              }
+                } catch (final ServletException e) {
+                    log.error("Error scheduling process: " + e.getMessage(), e);
+                }
             }
         } catch (final ServletException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("An error occurred retrieving scheduled process data: "
+                    + e.getMessage(), e);
         }
     }
 
@@ -435,21 +425,21 @@ public class OBScheduler {
                             }
 
                         } else if (data.dailyOption.equals(WEEKDAYS)) {
-                            final String cronExpression = second + " " + minute + " "
-                                    + hour + " ? * MON-FRI";
+                            final String cronExpression = second + " " + minute
+                                    + " " + hour + " ? * MON-FRI";
                             trigger = new CronTrigger(name, OB_GROUP,
                                     cronExpression);
 
                         } else if (data.dailyOption.equals(WEEKENDS)) {
-                            final String cronExpression = second + " " + minute + " "
-                                    + hour + " ? * SAT,SUN";
+                            final String cronExpression = second + " " + minute
+                                    + " " + hour + " ? * SAT,SUN";
                             trigger = new CronTrigger(name, OB_GROUP,
                                     cronExpression);
 
                         } else {
                             throw new ParseException(
                                     "At least one option must be selected.", -1);
-                        }    
+                        }
 
                     } else if (data.frequency.equals(FREQUENCY_WEEKLY)) {
                         final StringBuilder sb = new StringBuilder();
@@ -490,7 +480,8 @@ public class OBScheduler {
                                 || data.monthlyOption
                                         .equals(MONTH_OPTION_FOURTH)) {
                             final String num = data.monthlyOption;
-                            final int day = Integer.parseInt(data.monthlyDayOfWeek) + 1;
+                            final int day = Integer
+                                    .parseInt(data.monthlyDayOfWeek) + 1;
                             sb.append("? * " + (day > 7 ? 1 : day) + "#" + num);
 
                         } else if (data.monthlyOption.equals(MONTH_OPTION_LAST)) {
@@ -500,16 +491,18 @@ public class OBScheduler {
                                 .equals(MONTH_OPTION_SPECIFIC)) {
                             sb.append(Integer.parseInt(data.monthlySpecificDay)
                                     + " * ?");
-                        }  else {
+                        } else {
                             throw new ParseException(
-                                "At least one month option be selected.", -1);
+                                    "At least one month option be selected.",
+                                    -1);
                         }
                         trigger = new CronTrigger(name, OB_GROUP, sb.toString());
 
                     } else if (data.frequency.equals(FREQUENCY_CRON)) {
                         trigger = new CronTrigger(name, OB_GROUP, data.cron);
                     } else {
-                        throw new ServletException("Invalid option: " + data.frequency);
+                        throw new ServletException("Invalid option: "
+                                + data.frequency);
                     }
                     trigger.setStartTime(start.getTime());
 
@@ -579,8 +572,8 @@ public class OBScheduler {
             }
 
             Calendar cal = null;
-            final String dateFormat = dateTimeFormat.substring(0, dateTimeFormat
-                    .indexOf(' '));
+            final String dateFormat = dateTimeFormat.substring(0,
+                    dateTimeFormat.indexOf(' '));
 
             if (date == null || date.equals("")) {
                 cal = Calendar.getInstance();
@@ -590,10 +583,10 @@ public class OBScheduler {
             }
 
             if (time != null && !time.equals("")) {
-                final int hour = Integer.parseInt(time.substring(
-                        time.indexOf(" ") + 1, time.indexOf(':')));
-                final int minute = Integer.parseInt(time.substring(
-                        time.indexOf(':') + 1, time.lastIndexOf(':')));
+                final int hour = Integer.parseInt(time.substring(time
+                        .indexOf(" ") + 1, time.indexOf(':')));
+                final int minute = Integer.parseInt(time.substring(time
+                        .indexOf(':') + 1, time.lastIndexOf(':')));
                 final int second = Integer.parseInt(time.substring(time
                         .lastIndexOf(':') + 1, time.length()));
 

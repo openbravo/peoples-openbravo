@@ -23,6 +23,7 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
+import org.apache.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
@@ -67,6 +68,8 @@ public class ProcessBundle {
 
     private Channel channel;
 
+    static Logger log = Logger.getLogger(ProcessBundle.class);
+
     public ProcessBundle(String processId, VariablesSecureApp vars) {
         this(processId, vars, Channel.DIRECT, vars.getClient(), vars.getOrg());
     }
@@ -94,7 +97,7 @@ public class ProcessBundle {
         return impl;
     }
 
-    public void setImpl(String impl) {
+    public void setImpl(String implnull) {
         this.impl = impl;
     }
 
@@ -192,7 +195,7 @@ public class ProcessBundle {
                 setProcessClass(Class.forName(data.classname).asSubclass(
                         Process.class));
             } catch (final ClassNotFoundException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
                 throw new ServletException(e.getMessage(), e);
             }
 

@@ -18,6 +18,7 @@
  */
 package org.openbravo.scheduling;
 
+import org.apache.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.database.ConnectionProvider;
 import org.quartz.Job;
@@ -25,6 +26,8 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 public class DefaultJob implements Job {
+
+    static Logger log = Logger.getLogger(DefaultJob.class);
 
     /**
      * {@inheritDoc}
@@ -42,7 +45,7 @@ public class DefaultJob implements Job {
             process.execute(bundle);
 
         } catch (final Exception e) {
-            e.printStackTrace();
+            log.error("Error executing process " + bundle.toString(), e);
             throw new JobExecutionException(e);
         }
     }

@@ -14,6 +14,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.apache.log4j.Logger;
 import org.openbravo.scheduling.OBScheduler;
 import org.quartz.Scheduler;
 import org.quartz.impl.StdSchedulerFactory;
@@ -35,10 +36,12 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
 
     private Scheduler scheduler = null;
 
+    static Logger log = Logger.getLogger(OBSchedulerInitializerListener.class);
+
     public void contextInitialized(ServletContextEvent sce) {
 
-        System.out
-                .println("Quartz Initializer Servlet loaded, initializing Scheduler...");
+        log.info("Quartz Initializer Servlet loaded, initializing "
+                + "Scheduler...");
 
         final ServletContext servletContext = sce.getServletContext();
         StdSchedulerFactory factory;
@@ -75,9 +78,11 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
                 if (startDelayS != null && startDelayS.trim().length() > 0)
                     startDelay = Integer.parseInt(startDelayS);
             } catch (final Exception e) {
-                System.out
-                        .println("Cannot parse value of 'start-delay-seconds' to an integer: "
-                                + startDelayS + ", defaulting to 5 seconds.");
+                log
+                        .error(
+                                "Cannot parse value of 'start-delay-seconds' to an integer: "
+                                        + startDelayS
+                                        + ", defaulting to 5 seconds.", e);
                 startDelay = 5;
             }
 
@@ -91,16 +96,16 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
                 if (startDelay <= 0) {
                     // Start now
                     scheduler.start();
-                    System.out.println("Scheduler has been started...");
+                    log.info("Scheduler has been started...");
                 } else {
                     // Start delayed
                     scheduler.startDelayed(startDelay);
-                    System.out.println("Scheduler will start in " + startDelay
+                    log.info("Scheduler will start in " + startDelay
                             + " seconds.");
                 }
             } else {
-                System.out
-                        .println("Scheduler has not been started. Use scheduler.start()");
+                log
+                        .info("Scheduler has not been started. Use scheduler.start()");
             }
 
             String factoryKey = servletContext
@@ -112,26 +117,25 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
             /**
              * Openbravo scheduling stuff.
              */
-            System.out
-                    .println("Storing the Quartz Scheduler Factory in the servlet context at key: "
+            log
+                    .info("Storing the Quartz Scheduler Factory in the servlet context at key: "
                             + factoryKey);
             servletContext.setAttribute(factoryKey, factory);
 
-            System.out
-                    .println("Storing ConfigParameters and ConnectionProvider in Scheduler Context.");
+            log.info("Storing ConfigParameters and ConnectionProvider in "
+                    + "Scheduler Context.");
             scheduler.getContext().put(POOL_ATTRIBUTE,
                     servletContext.getAttribute(POOL_ATTRIBUTE));
             scheduler.getContext().put(CONFIG_ATTRIBUTE,
                     servletContext.getAttribute(CONFIG_ATTRIBUTE));
 
-            System.out.println("Initalizing singleton instance of "
+            log.info("Initalizing singleton instance of "
                     + OBScheduler.class.getName());
             OBScheduler.getInstance().initialize(scheduler);
 
         } catch (final Exception e) {
-            System.out.println("Quartz Scheduler failed to initialize: "
-                    + e.toString());
-            e.printStackTrace();
+            log.error("Quartz Scheduler failed to initialize: " + e.toString(),
+                    e);
         }
     }
 
@@ -146,12 +150,11 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
                 scheduler.shutdown();
             }
         } catch (final Exception e) {
-            System.out.println("Quartz Scheduler failed to shutdown cleanly: "
-                    + e.toString());
-            e.printStackTrace();
+            log.error("Quartz Scheduler failed to shutdown cleanly: "
+                    + e.toString(), e);
         }
 
-        System.out.println("Quartz Scheduler successful shutdown.");
+        log.info("Quartz Scheduler successful shutdown.");
     }
 
 }
