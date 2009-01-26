@@ -110,17 +110,20 @@ public class ReportManager {
 
         // TODO: Rename parameter to BASE_ATTACH_PATH
         designParameters.put("BASE_ATTACH", _strAttachmentPath);
-        // TODO: Do not use Base web, this is an url and generates web traffic,
-        // a local path reference should be used
         designParameters.put("BASE_WEB", _strBaseWeb);
         try {
-            final JasperDesign jasperDesign = JRXmlLoader.load(templateFile);
+            JasperDesign jasperDesign = JRXmlLoader.load(templateFile);
 
-            final Object[] parameters = jasperDesign.getParametersList()
-                    .toArray();
+            Object[] parameters = jasperDesign.getParametersList().toArray();
             String parameterName = "";
             String subReportName = "";
-            final Collection<String> subreportList = new ArrayList<String>();
+            Collection<String> subreportList = new ArrayList<String>();
+
+            /*
+             * TODO: At present this process assumes the subreport is a .jrxml
+             * file. Need to handle the possibility that this subreport file
+             * could be a .jasper file.
+             */
             for (int i = 0; i < parameters.length; i++) {
                 final JRDesignParameter parameter = (JRDesignParameter) parameters[i];
                 if (parameter.getName().startsWith("SUBREP_")) {
@@ -129,13 +132,13 @@ public class ReportManager {
                     subReportName = Replace.replace(parameterName, "SUBREP_",
                             "")
                             + ".jrxml";
-                    final JasperReport jasperReportLines = createSubReport(
+                    JasperReport jasperReportLines = createSubReport(
                             templateLocation, subReportName);
                     designParameters.put(parameterName, jasperReportLines);
                 }
             }
 
-            final JasperReport jasperReport = JasperCompileManager
+            JasperReport jasperReport = JasperCompileManager
                     .compileReport(jasperDesign);
             // JasperReport jasperReport = Utility.getTranslatedJasperReport(
             // _connectionProvider, templateFile, language);
@@ -143,7 +146,7 @@ public class ReportManager {
             if (log4j.isDebugEnabled())
                 log4j.debug("creating the format factory: "
                         + variables.getJavaDateFormat());
-            final JRFormatFactory jrFormatFactory = new JRFormatFactory();
+            JRFormatFactory jrFormatFactory = new JRFormatFactory();
             jrFormatFactory.setDatePattern(variables.getJavaDateFormat());
             designParameters.put(JRParameter.REPORT_FORMAT_FACTORY,
                     jrFormatFactory);
@@ -151,8 +154,10 @@ public class ReportManager {
             jasperPrint = fillReport(designParameters, jasperReport);
 
         } catch (final JRException exception) {
+            log4j.error(exception.getMessage());
             throw new ReportingException(exception);
         } catch (final Exception exception) {
+            log4j.error(exception.getMessage());
             throw new ReportingException(exception);
         }
 
@@ -175,14 +180,20 @@ public class ReportManager {
         report.setTargetDirectory(targetDirectory);
     }
 
-    public void saveReport(boolean saveIndividualReports, Report report,
-            JasperPrint jasperPrint) {
-        // Create target directory if it does not exist
-        // setTargetDirectory(report, reportManager);
+    public void saveTempReport(Report report, VariablesSecureApp vars) {
+        JasperPrint jasperPrint = null;
+        try {
+            jasperPrint = processReport(report, vars);
+            saveReport(report, jasperPrint);
+        } catch (final ReportingException e) {
+            log4j.error(e.getMessage());
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        saveReport(report, jasperPrint);
+    }
 
-        // String target = getAttachmentPath() + "/" + getTempReportDir() + "/"
-        // + report.getFilename();
-
+    private void saveReport(Report report, JasperPrint jasperPrint) {
         String separator = "";
         if (!report.getTargetDirectory().toString().endsWith("/")) {
             separator = "/";
@@ -195,7 +206,6 @@ public class ReportManager {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
     }
 
     private JasperPrint fillReport(HashMap<String, Object> designParameters,
@@ -208,6 +218,7 @@ public class ReportManager {
             jasperPrint = JasperFillManager.fillReport(jasperReport,
                     designParameters, con);
         } catch (final Exception e) {
+            log4j.error(e.getMessage());
             throw new ReportingException(e.getMessage());
         } finally {
             _connectionProvider.releaseRollbackConnection(con);
@@ -225,6 +236,7 @@ public class ReportManager {
             jasperReportLines = JasperCompileManager
                     .compileReport(jasperDesignLines);
         } catch (final JRException e1) {
+            log4j.error(e1.getMessage());
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
@@ -250,7 +262,7 @@ public class ReportManager {
         report.setTargetDirectory(destinationFolder);
 
         final JasperPrint jasperPrint = processReport(report, vars);
-        saveReport(true, report, jasperPrint);
+        saveReport(report, jasperPrint);
 
         final File sourceFile = new File(report.getTargetLocation());
         final File destinationFile = new File(destinationFolder, sourceFile

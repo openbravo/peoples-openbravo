@@ -53,7 +53,6 @@ import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperPrint;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -77,10 +76,14 @@ import org.openbravo.erpCommon.utility.reporting.TemplateInfo.EmailDefinition;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.xmlEngine.XmlDocument;
 
+import com.lowagie.text.Document;
+import com.lowagie.text.pdf.PdfCopy;
+import com.lowagie.text.pdf.PdfImportedPage;
+import com.lowagie.text.pdf.PdfReader;
+
 @SuppressWarnings("serial")
 public class PrintController extends HttpSecureAppServlet {
-    static Logger log4j = Logger.getLogger(PrintController.class);
-    final Map differentDocTypes = new HashMap<String, TemplateData[]>();
+    final Map<String, TemplateData[]> differentDocTypes = new HashMap<String, TemplateData[]>();
     private PocData[] pocData;
     private boolean moreThanOneCustomer;
     private boolean moreThanOnesalesRep;
@@ -95,7 +98,6 @@ public class PrintController extends HttpSecureAppServlet {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         final VariablesSecureApp vars = new VariablesSecureApp(request);
@@ -161,6 +163,7 @@ public class PrintController extends HttpSecureAppServlet {
 
     }
 
+    @SuppressWarnings("unchecked")
     protected void post(HttpServletRequest request,
             HttpServletResponse response, VariablesSecureApp vars,
             DocumentType documentType, String sessionValuePrefix,
@@ -191,45 +194,57 @@ public class PrintController extends HttpSecureAppServlet {
 
         if (vars.commandIn("PRINT")) {
             /*
-             * TODO: the object of the PRINT option will be to output a single
-             * report containing all selected items. This allows multiple
-             * reports to be printed in a single step
+             * PRINT option will print directly to the UI for a single report.
+             * For multiple reports the documents will each be saved
+             * individually and the concatenated in the same manner as the saved
+             * reports. After concatenating the reports they will be deleted.
              */
-
-            final Report report = buildReport(response, vars, strDocumentId,
-                    reportManager, documentType);
+            Report report = null;
             JasperPrint jasperPrint = null;
-            try {
-                jasperPrint = reportManager.processReport(report, vars);
-            } catch (final ReportingException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-            printReports(response, jasperPrint, null, false, report);
-        } else if (vars.commandIn("ARCHIVE")) {
-            /*
-             * TODO: The archive function will save each item in the selection
-             * as a single report. When the reports are output to the screen
-             * they will be individual reports. Not sure if this is correct or
-             * whether the reports should be concatenated into a single
-             * printable report.
-             */
-            final boolean individualReports = true;
+            Collection<JasperPrint> jrPrintReports = new ArrayList<JasperPrint>();
             final Collection<Report> savedReports = new ArrayList<Report>();
-            for (int index = 0; index < documentIds.length; index++) {
-                final String documentId = documentIds[index];
-                final Report report = buildReport(response, vars,
-                        strDocumentId, reportManager, documentType);
-                JasperPrint jasperPrint = null;
+            boolean multipleReports = false;
+            if (documentIds.length > 1)
+                multipleReports = true;
+            for (int i = 0; i < documentIds.length; i++) {
+                String documentId = documentIds[i];
+                report = buildReport(response, vars, documentId, reportManager,
+                        documentType);
                 try {
                     jasperPrint = reportManager.processReport(report, vars);
+                    jrPrintReports.add(jasperPrint);
+                } catch (final ReportingException e) {
+                    advisePopUp(response, "Report processing failed",
+                            "Unable to process report selection");
+                    // Utility.messageBD(this, "ERROR", vars.getLanguage());
+                    log4j.error(e.getMessage());
+                }
+                if (multipleReports) {
+                    reportManager.saveTempReport(report, vars);
+                    savedReports.add(report);
+                }
+            }
+            printReports(response, jrPrintReports, savedReports,
+                    multipleReports, report);
+        } else if (vars.commandIn("ARCHIVE")) {
+            /*
+             * ARCHIVE will save each report individually and then print the
+             * reports in a single printable (concatenated) format.
+             */
+            Report report = null;
+            final Collection<Report> savedReports = new ArrayList<Report>();
+            for (int index = 0; index < documentIds.length; index++) {
+                String documentId = documentIds[index];
+                report = buildReport(response, vars, documentId, reportManager,
+                        documentType);
+                // JasperPrint jasperPrint = null;
+                try {
+                    reportManager.processReport(report, vars);
                 } catch (final ReportingException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-                reportManager
-                        .saveReport(individualReports, report, jasperPrint);
+                reportManager.saveTempReport(report, vars);
                 savedReports.add(report);
             }
             printReports(response, null, savedReports, true, null);
@@ -249,11 +264,6 @@ public class PrintController extends HttpSecureAppServlet {
                         final Report report = new Report(this, documentType,
                                 documentId, vars.getLanguage(), "default");
                         reports.put(documentId, report);
-
-                        // TODO: The creation of the reports can be delayed
-                        // until the actual report is viewed or emailed. This
-                        // saves time when creating the window
-                        // reportManager.processReport(report, vars);
 
                         final String senderAddress = PocConfigurationData
                                 .getSenderAddress(this, vars.getClient(),
@@ -393,6 +403,8 @@ public class PrintController extends HttpSecureAppServlet {
                                 } catch (final ReportingException exception) {
                                     throw new ServletException(exception);
                                 }
+                            } else {
+                                reportManager.saveTempReport(report, vars);
                             }
                         } else {
                             if (log4j.isDebugEnabled())
@@ -415,78 +427,151 @@ public class PrintController extends HttpSecureAppServlet {
         }
     }
 
-    /*
-     * private void saveReport(boolean saveIndividualReports, Report report,
-     * JasperPrint jasperPrint, ReportManager reportManager) { // Create target
-     * directory if it does not exist //setTargetDirectory(report,
-     * reportManager);
-     * 
-     * String target = reportManager.getAttachmentPath() + "/" +
-     * reportManager.getTempReportDir() + "/" + report.getFilename(); try {
-     * JasperExportManager.exportReportToPdfFile(jasperPrint, target); } catch
-     * (JRException e) { // TODO Auto-generated catch block e.printStackTrace();
-     * }
-     * 
-     * }
-     */
-
     private void printReports(HttpServletResponse response,
-            JasperPrint jasperPrint, Collection<Report> reports,
+            Collection<JasperPrint> jrPrintReports, Collection<Report> reports,
             boolean fromSavedFile, Report report) {
         if (fromSavedFile) {
             printReportFromFile(response, reports);
         } else {
-            printReportClean(response, jasperPrint, report.getFilename());
+            printReportClean(response, jrPrintReports, report.getFilename());
         }
 
     }
 
     private void printReportClean(HttpServletResponse response,
-            JasperPrint jasperPrint, String filename) {
+            Collection<JasperPrint> jrPrintReports, String filename) {
+        boolean singleReport = false;
+        String finalFileName = filename;
+        if (jrPrintReports.size() == 1) {
+            singleReport = true;
+        } else {
+            finalFileName = filename.substring(0, filename.indexOf("_"))
+                    + ".pdf";
+        }
+        printReportClean(response, jrPrintReports, finalFileName, singleReport);
+    }
+
+    private void printReportClean(HttpServletResponse response,
+            Collection<JasperPrint> jrPrintReports, String filename,
+            boolean singleReport) {
         ServletOutputStream os = null;
         try {
             os = response.getOutputStream();
             response.setContentType("application/pdf");
-            // TODO: replace filename with filename variable
             response.setHeader("Content-disposition", "attachment"
                     + "; filename=" + filename);
-            JasperExportManager.exportReportToPdfStream(jasperPrint, os);
+            // if (singleReport) {
+            for (Iterator<JasperPrint> iterator = jrPrintReports.iterator(); iterator
+                    .hasNext();) {
+                JasperPrint jasperPrint = (JasperPrint) iterator.next();
+                JasperExportManager.exportReportToPdfStream(jasperPrint, os);
+            }
+            // }
         } catch (final IOException e) {
+            log4j.error(e.getMessage());
             // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (final JRException e) {
+            log4j.error(e.getMessage());
             // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (final Exception e) {
+            log4j.error(e.getMessage());
             e.printStackTrace();
         } finally {
             try {
                 os.close();
             } catch (final Exception e) {
-
+                log4j.error(e.getMessage());
             }
         }
     }
 
     private void printReportFromFile(HttpServletResponse response,
             Collection<Report> reports) {
-        // Dump the report to the users browser
-        for (final Iterator<Report> iterator = reports.iterator(); iterator
-                .hasNext();) {
-            final Report report = iterator.next();
-            response.setContentType("application/pdf; charset=UTF-8");
+        ServletOutputStream os = null;
+        try {
+            os = response.getOutputStream();
+            response.setContentType("application/pdf");
+            concatReport(reports.toArray(new Report[] {}), response);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            log4j.error(e.getMessage());
+            e.printStackTrace();
+        } finally {
             try {
-                if (log4j.isDebugEnabled())
-                    log4j.debug("Dumping file: " + report.getTargetLocation());
-                Utility.dumpFile(report.getTargetLocation(), response
-                        .getOutputStream());
-            } catch (final IOException e) {
+                os.close();
+                response.flushBuffer();
+            } catch (IOException e) {
+                log4j.error(e.getMessage());
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
+    }
+
+    /*
+     * This method is base on code originally created by Mark Thompson
+     * (Concatenate.java) and distributed under the following conditions.
+     * 
+     * $Id: Concatenate.java 3373 2008-05-12 16:21:24Z xlv $
+     * 
+     * This code is free software. It may only be copied or modified if you
+     * include the following copyright notice:
+     * 
+     * This class by Mark Thompson. Copyright (c) 2002 Mark Thompson.
+     * 
+     * This code is distributed in the hope that it will be useful, but WITHOUT
+     * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+     * FITNESS FOR A PARTICULAR PURPOSE.
+     */
+    private void concatReport(Report[] reports, HttpServletResponse response) {
         try {
-            response.flushBuffer();
-        } catch (final IOException e) {
-            // TODO Auto-generated catch block
+            int pageOffset = 0;
+            // ArrayList master = new ArrayList();
+            int f = 0;
+            Report outFile = null;
+            String filename = "";
+            Document document = null;
+            PdfCopy writer = null;
+            while (f < reports.length) {
+                if (filename == null || filename.equals("")) {
+                    outFile = reports[f];
+                    filename = outFile.getFilename().substring(0,
+                            outFile.getFilename().indexOf("_"))
+                            + ".pdf";
+                    response.setHeader("Content-disposition", "attachment"
+                            + "; filename=" + filename);
+                }
+                // we create a reader for a certain document
+                PdfReader reader = new PdfReader(reports[f].getTargetLocation());
+                reader.consolidateNamedDestinations();
+                // we retrieve the total number of pages
+                int n = reader.getNumberOfPages();
+                pageOffset += n;
+
+                if (f == 0) {
+                    // step 1: creation of a document-object
+                    document = new Document(reader.getPageSizeWithRotation(1));
+                    // step 2: we create a writer that listens to the document
+                    writer = new PdfCopy(document, response.getOutputStream());
+                    // step 3: we open the document
+                    document.open();
+                }
+                // step 4: we add content
+                PdfImportedPage page;
+                for (int i = 0; i < n;) {
+                    ++i;
+                    page = writer.getImportedPage(reader, i);
+                    writer.addPage(page);
+                }
+                f++;
+            }
+            // if (!master.isEmpty())
+            // writer.setOutlines(master);
+            // step 5: we close the document
+            document.close();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -495,8 +580,9 @@ public class PrintController extends HttpSecureAppServlet {
             VariablesSecureApp vars, String strDocumentId,
             final ReportManager reportManager, DocumentType documentType) {
         Report report = null;
-        if (strDocumentId != null)
+        if (strDocumentId != null) {
             strDocumentId = strDocumentId.replaceAll("\\(|\\)|'", "");
+        }
         try {
             report = new Report(this, documentType, strDocumentId, vars
                     .getLanguage(), "default");
@@ -844,7 +930,6 @@ public class PrintController extends HttpSecureAppServlet {
             request.getSession().removeAttribute("files");
         }
 
-        
         // new TemplateInfo(this, documentType., (String) request.getSession()
         // .getAttribute("AD_ORG_ID"), vars.getLanguage(), vars
         // .getRequestGlobalVariable("templates", "templates"));
@@ -856,19 +941,19 @@ public class PrintController extends HttpSecureAppServlet {
         xmlDocument.setParameter("language", vars.getLanguage());
         xmlDocument.setParameter("theme", vars.getTheme());
 
-        
         EmailDefinition emailDefinition = null;
         try {
-          if(moreThanOneLenguageDefined(reports)) {
-            emailDefinition = reports.values().iterator().next().getTemplateInfo().get_DefaultEmailDefinition();
-            if (emailDefinition==null) {
-              throw new OBException("No default lenguage configured");
+            if (moreThanOneLenguageDefined(reports)) {
+                emailDefinition = reports.values().iterator().next()
+                        .getTemplateInfo().get_DefaultEmailDefinition();
+                if (emailDefinition == null) {
+                    throw new OBException("No default lenguage configured");
+                }
+            } else {
+                emailDefinition = reports.values().iterator().next()
+                        .getEmailDefinition();
             }
-          }else {
-            emailDefinition = reports.values().iterator().next()
-            .getEmailDefinition();
-          }
-           
+
             if (log4j.isDebugEnabled())
                 log4j.debug("Crm configuration, template subject: "
                         + emailDefinition.getSubject());
@@ -876,22 +961,20 @@ public class PrintController extends HttpSecureAppServlet {
                 log4j.debug("Crm configuration, template body: "
                         + emailDefinition.getBody());
         } catch (final OBException exception) {
-          final OBError on = new OBError();
-          on.setMessage(Utility.messageBD(this,
-                  "There is no email configuration configured", vars
-                          .getLanguage()));
-          on
-                  .setTitle(Utility.messageBD(this, "Info", vars
-                          .getLanguage()));
-          on.setType("info");
-          final String tabId = vars.getSessionValue("inpTabId");
-          vars.getStringParameter("tab");
-          vars.setMessage(tabId, on);
-          vars.getRequestGlobalVariable("inpTabId",
-                  "AttributeSetInstance.tabId");
-          printPageClosePopUpAndRefreshParent(response, vars);
+            final OBError on = new OBError();
+            on.setMessage(Utility.messageBD(this,
+                    "There is no email configuration configured", vars
+                            .getLanguage()));
+            on.setTitle(Utility.messageBD(this, "Info", vars.getLanguage()));
+            on.setType("info");
+            final String tabId = vars.getSessionValue("inpTabId");
+            vars.getStringParameter("tab");
+            vars.setMessage(tabId, on);
+            vars.getRequestGlobalVariable("inpTabId",
+                    "AttributeSetInstance.tabId");
+            printPageClosePopUpAndRefreshParent(response, vars);
         } catch (ReportingException e) {
-          log4j.error(e);
+            log4j.error(e);
         }
 
         // Get additional document information
@@ -1043,7 +1126,7 @@ public class PrintController extends HttpSecureAppServlet {
             xmlDocument.setParameter("salesrepEmail", vars
                     .getStringParameter("salesrepEmail"));
         } else {
-          xmlDocument.setParameter("emailSubject", emailDefinition
+            xmlDocument.setParameter("emailSubject", emailDefinition
                     .getSubject());
             xmlDocument.setParameter("contactEmail", pocData[0].contactEmail);
             xmlDocument.setParameter("salesrepEmail", pocData[0].salesrepEmail);
@@ -1066,14 +1149,16 @@ public class PrintController extends HttpSecureAppServlet {
         out.close();
     }
 
-    private boolean moreThanOneLenguageDefined(Map<String, Report> reports) throws ReportingException {
-      Iterator itRep = reports.values().iterator();
-      Map lenguages = new HashMap<String, String>();
-      while (itRep.hasNext()){
-        Report report = (Report) itRep.next();
-        lenguages.put(report.getEmailDefinition().getLanguage(), report.getEmailDefinition().getLanguage());
-      }
-      return ((lenguages.values().size()>1)?true:false);
+    private boolean moreThanOneLenguageDefined(Map<String, Report> reports)
+            throws ReportingException {
+        Iterator itRep = reports.values().iterator();
+        Map lenguages = new HashMap<String, String>();
+        while (itRep.hasNext()) {
+            Report report = (Report) itRep.next();
+            lenguages.put(report.getEmailDefinition().getLanguage(), report
+                    .getEmailDefinition().getLanguage());
+        }
+        return ((lenguages.values().size() > 1) ? true : false);
     }
 
     /**
