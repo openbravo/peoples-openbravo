@@ -138,10 +138,8 @@ public class ReportManager {
                 }
             }
 
-            JasperReport jasperReport = JasperCompileManager
-                    .compileReport(jasperDesign);
-            // JasperReport jasperReport = Utility.getTranslatedJasperReport(
-            // _connectionProvider, templateFile, language);
+            JasperReport jasperReport = Utility.getTranslatedJasperReport(
+                    _connectionProvider, templateFile, language);
 
             if (log4j.isDebugEnabled())
                 log4j.debug("creating the format factory: "
