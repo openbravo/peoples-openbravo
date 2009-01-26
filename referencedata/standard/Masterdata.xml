@@ -6697,15 +6697,15 @@
     <iBANNoDigits/>
     <iBANCountry/>
   </Country>
-  <Country id="111" identifier="Albany">
+  <Country id="111" identifier="Albania">
     <id>111</id>
     <isActive>true</isActive>
     <created transient="true">2009-01-20T11:29:22.0Z</created>
     <createdBy transient="true" id="0" entity-name="ADUser" identifier="System"/>
     <updated transient="true">2009-01-20T11:29:22.0Z</updated>
     <updatedBy transient="true" id="0" entity-name="ADUser" identifier="System"/>
-    <name>Albany</name>
-    <description>Albany</description>
+    <name>Albania</name>
+    <description>Albania</description>
     <countryCode>AL</countryCode>
     <hasRegion>false</hasRegion>
     <regionName>State</regionName>
