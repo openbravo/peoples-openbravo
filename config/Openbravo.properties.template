@@ -15,6 +15,8 @@
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
 
+# Documentation at http://wiki.openbravo.com/wiki/Openbravo.properties
+
 ####################
 # Date/time format #
 ####################
@@ -56,25 +58,33 @@ deploy.mode=class
 
 # Oracle example:
 #
+# bbdd.rdbms=ORACLE
+# bbdd.driver=oracle.jdbc.driver.OracleDriver
+# bbdd.url=jdbc:oracle:thin:@localhost:1521:xe
 # bbdd.sid=xe
 # bbdd.systemUser=SYSTEM
 # bbdd.systemPassword=SYSTEM
 # bbdd.user=TAD
 # bbdd.password=TAD
-# bbdd.driver=oracle.jdbc.driver.OracleDriver
-# bbdd.url=jdbc:oracle:thin:@localhost:1521:xe
-# bbdd.rdbms=ORACLE
 # bbdd.sessionConfig=ALTER SESSION SET NLS_DATE_FORMAT='DD-MM-YYYY' NLS_NUMERIC_CHARACTERS='.,'
 
+bbdd.rdbms=POSTGRE
+bbdd.driver=org.postgresql.Driver
+bbdd.url=jdbc:postgresql://localhost:5432
 bbdd.sid=openbravo
 bbdd.systemUser=postgres
 bbdd.systemPassword=syspass
 bbdd.user=tad
 bbdd.password=tad
-bbdd.driver=org.postgresql.Driver
-bbdd.url=jdbc:postgresql://localhost:5432
-bbdd.rdbms=POSTGRE
 bbdd.sessionConfig=select update_dateFormat('DD-MM-YYYY')
+
+##################
+# Tomcat manager #
+##################
+#
+tomcat.manager.url=http://localhost:8080/manager
+tomcat.manager.username=admin
+tomcat.manager.password=admin
 
 ##########################
 # Development parameters #
@@ -103,12 +113,3 @@ authentication.class=
 
 # External Pentaho Services
 pentahoServer=
-
-##################
-# Tomcat manager #
-##################
-#
-tomcat.manager.url=http://localhost:8080/manager
-tomcat.manager.username=admin
-tomcat.manager.password=admin
-
