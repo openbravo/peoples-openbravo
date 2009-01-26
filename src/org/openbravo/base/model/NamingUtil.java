@@ -255,7 +255,7 @@ public class NamingUtil {
 		|| p.getReferencedProperty().getColumnName() == null) {
 	    return false;
 	}
-	return p.getColumnName().equalsIgnoreCase(
+	return p.getColumnName().equals(
 		p.getReferencedProperty().getColumnName());
     }
 
