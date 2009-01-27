@@ -30,7 +30,6 @@
     --
     v_Record_ID VARCHAR2(32):=NULL;
     v_User_ID VARCHAR2(32);
-    v_Org_ID VARCHAR2(32);
     v_PlanOrg_ID VARCHAR2(32);
     v_Client_ID VARCHAR2(32);
     v_WRPhase_ID VARCHAR2(32);
@@ -112,7 +111,6 @@
         LOOP
           v_Record_ID:=Cur_Parameter.Record_ID;
           v_User_ID:=Cur_Parameter.AD_User_ID;
-          v_Org_ID:=Cur_Parameter.AD_Org_ID;
           v_Client_ID:=Cur_Parameter.AD_Client_ID;
         END LOOP; --  Get Parameter
       ELSE
@@ -171,7 +169,7 @@
             )
             VALUES
             (
-              v_ToolsetUsed_ID, v_Client_ID, v_Org_ID, now(),
+              v_ToolsetUsed_ID, v_Client_ID, v_PlanOrg_ID, now(),
               v_User_ID, 'Y', v_Record_ID, v_Toolset_ID,
               now(), v_User_ID, Cur_ToolsetProcess.UseCoef*v_DoneQuantity
             );
@@ -206,7 +204,7 @@
             )
             VALUES
             (
-              v_ProductionLine_ID, v_Client_ID, v_Org_ID, now(),
+              v_ProductionLine_ID, v_Client_ID, v_PlanOrg_ID, now(),
               v_User_ID, 'Y', v_Record_ID, Cur_WRPProduct.M_Product_ID,
               Cur_WRPProduct.ProductionType, (CASE v_NoQty WHEN 'Y' THEN 0 ELSE Cur_WRPProduct.MovementQty*v_DoneQuantity END), now(), v_User_ID,
               Cur_WRPProduct.C_UOM_ID,
@@ -395,7 +393,7 @@
          CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
          M_PRODUCTIONPLAN_ID, C_SALARY_CATEGORY_ID, QUANTITY)
         SELECT AD_Get_Next_Sequence('MA_PL_Employee', v_Client_ID),
-         now(), v_User_ID, now(), v_User_ID, v_Client_ID, v_Org_ID, 'Y',
+         now(), v_User_ID, now(), v_User_ID, v_Client_ID, v_PlanOrg_ID, 'Y',
          v_Record_ID, C_Salary_Category_ID, Quantity
         FROM MA_COSTCENTER_EMPLOYEE cce, M_ProductionPlan pp
         WHERE cce.MA_Costcenter_version_ID = pp.MA_COstCenter_Version_ID
@@ -409,7 +407,7 @@
          CREATED,CREATEDBY,UPDATED,UPDATEDBY,AD_CLIENT_ID,AD_ORG_ID,ISACTIVE,
          M_PRODUCTIONPLAN_ID,MA_MACHINE_ID,USE)
         SELECT AD_Get_Next_Sequence('MA_PL_Machine', v_Client_ID),
-         now(), v_User_ID, now(), v_User_ID, v_Client_ID, v_Org_ID, 'Y',
+         now(), v_User_ID, now(), v_User_ID, v_Client_ID, v_PlanOrg_ID, 'Y',
          v_Record_ID, MA_Machine_ID, Use
         FROM MA_COSTCENTER_MACHINE ccm, M_ProductionPlan pp
         WHERE ccm.MA_Costcenter_version_ID = pp.MA_CostCenter_Version_ID
@@ -423,7 +421,7 @@
          CREATED,CREATEDBY,UPDATED,UPDATEDBY,AD_CLIENT_ID,AD_ORG_ID,ISACTIVE,
          M_PRODUCTIONPLAN_ID,MA_INDIRECT_COST_ID)
         SELECT AD_Get_Next_Sequence('MA_PL_IC', v_Client_ID),
-         now(), v_User_ID, now(), v_User_ID, v_Client_ID, v_Org_ID, 'Y',
+         now(), v_User_ID, now(), v_User_ID, v_Client_ID, v_PlanOrg_ID, 'Y',
          v_Record_ID, MA_Indirect_Cost_ID
         FROM MA_COSTCENTER_IC ccic, M_ProductionPlan pp
         WHERE ccic.MA_Costcenter_version_ID = pp.MA_CostCenter_Version_ID
