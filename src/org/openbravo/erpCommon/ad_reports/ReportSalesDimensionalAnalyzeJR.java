@@ -153,7 +153,7 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
             String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
                     "ReportSalesDimensionalAnalyzeJR|currency",
                     strUserCurrencyId);
-            printPageHtml(response, vars, strComparative, strDateFrom,
+            printPageHtml(request, response, vars, strComparative, strDateFrom,
                     strDateTo, strPartnerGroup, strcBpartnerId,
                     strProductCategory, strmProductId, strmWarehouseId,
                     strNotShown, strShown, strDateFromRef, strDateToRef,
@@ -203,7 +203,7 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
             String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
                     "ReportSalesDimensionalAnalyzeJR|currency",
                     strUserCurrencyId);
-            printPageHtml(response, vars, strComparative, strDateFrom,
+            printPageHtml(request, response, vars, strComparative, strDateFrom,
                     strDateTo, strPartnerGroup, strcBpartnerId,
                     strProductCategory, strmProductId, strmWarehouseId,
                     strNotShown, strShown, strDateFromRef, strDateToRef,
@@ -446,7 +446,8 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
         out.close();
     }
 
-    void printPageHtml(HttpServletResponse response, VariablesSecureApp vars,
+    void printPageHtml(HttpServletRequest request,
+            HttpServletResponse response, VariablesSecureApp vars,
             String strComparative, String strDateFrom, String strDateTo,
             String strPartnerGroup, String strcBpartnerId,
             String strProductCategory, String strmProductId,
@@ -696,7 +697,7 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
         // If a conversion rate is missing for a certain transaction, an error
         // message window pops-up.
         if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-            advisePopUp(response, "ERROR", Utility.messageBD(this,
+            advisePopUp(request, response, "ERROR", Utility.messageBD(this,
                     "NoConversionRateHeader", vars.getLanguage()),
                     strConvRateErrorMsg);
         } else { // Otherwise, the report is launched

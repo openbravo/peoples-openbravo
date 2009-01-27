@@ -81,7 +81,7 @@ public class ReportExpense extends HttpSecureAppServlet {
             setHistoryCommand(request, "DIRECT");
             String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
                     "ReportExpense|currency", strUserCurrencyId);
-            printPageDataHtml(response, vars, strDateFrom, strDateTo,
+            printPageDataHtml(request, response, vars, strDateFrom, strDateTo,
                     strcBpartnerId, strPartner, strProject, strExpense,
                     strCurrencyId);
         } else if (vars.commandIn("FIND")) {
@@ -99,18 +99,18 @@ public class ReportExpense extends HttpSecureAppServlet {
             setHistoryCommand(request, "DIRECT");
             String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
                     "ReportExpense|currency", strUserCurrencyId);
-            printPageDataHtml(response, vars, strDateFrom, strDateTo,
+            printPageDataHtml(request, response, vars, strDateFrom, strDateTo,
                     strcBpartnerId, strPartner, strProject, strExpense,
                     strCurrencyId);
         } else
             pageError(response);
     }
 
-    void printPageDataHtml(HttpServletResponse response,
-            VariablesSecureApp vars, String strDateFrom, String strDateTo,
-            String strcBpartnerId, String strPartner, String strProject,
-            String strExpense, String strCurrencyId) throws IOException,
-            ServletException {
+    void printPageDataHtml(HttpServletRequest request,
+            HttpServletResponse response, VariablesSecureApp vars,
+            String strDateFrom, String strDateTo, String strcBpartnerId,
+            String strPartner, String strProject, String strExpense,
+            String strCurrencyId) throws IOException, ServletException {
         if (log4j.isDebugEnabled())
             log4j.debug("Output: dataSheet");
         response.setContentType("text/html; charset=UTF-8");
@@ -151,7 +151,7 @@ public class ReportExpense extends HttpSecureAppServlet {
         // If a conversion rate is missing for a certain transaction, an error
         // message window pops-up.
         if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-            advisePopUp(response, "ERROR", Utility.messageBD(this,
+            advisePopUp(request, response, "ERROR", Utility.messageBD(this,
                     "NoConversionRateHeader", vars.getLanguage()),
                     strConvRateErrorMsg);
         } else { // Otherwise, the report is launched

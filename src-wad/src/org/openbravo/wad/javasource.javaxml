@@ -344,7 +344,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getRequiredInStringParameter("inp<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>");
       String message = deleteRelation(vars, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
       if (!message.equals("")) {
-        bdError(response, message, vars.getLanguage());
+        bdError(request, response, message, vars.getLanguage());
       } else {
         vars.removeSessionValue(windowId + "|<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>");
         vars.setSessionValue(tabId + "|<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>.view", "RELATION");
@@ -492,7 +492,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getGlobalVariable("inp<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>", windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", "");
         <PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
 </PARAMETER_TMP>
-        printPageButton<FIELD_TMP id="EncryptedRealName1">name</FIELD_TMP>(response, vars, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
+        printPageButton<FIELD_TMP id="EncryptedRealName1">name</FIELD_TMP>(request, response, vars, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
 </FIELDS_TMP>
 <FIELDS_TMP id="sectionEncrypted3">    } else if (vars.commandIn("SAVE_BUTTON<FIELD_TMP id="EncryptedRealName3">button</FIELD_TMP>")) {
         String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getGlobalVariable("inpKey", windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", "");
@@ -1035,7 +1035,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     }
 </FIELDS_TMP>
 
-<FIELDS_TMP id="sectionEncrypted2">    void printPageButton<FIELD_TMP id="EncryptedRealName2">name</FIELD_TMP>(HttpServletResponse response, VariablesSecureApp vars, String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>)
+<FIELDS_TMP id="sectionEncrypted2">    void printPageButton<FIELD_TMP id="EncryptedRealName2">name</FIELD_TMP>(HttpServletRequest request, HttpServletResponse response, VariablesSecureApp vars, String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>)
     throws IOException, ServletException {
       log4j.debug("Output: Button Encrypted <FIELD_TMP id="EncryptedRealName2">xx</FIELD_TMP>");
       response.setContentType("text/html; charset=UTF-8");
@@ -1043,7 +1043,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/EncryptedButtons").createXmlDocument();
 
       if (<PARENT_TMP id="class">Almacen</PARENT_TMP>Data.check<FIELD_TMP id="EncryptedUpdateName2">button</FIELD_TMP>(this, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>).equals("0")) {
-        bdErrorGeneralPopUp(response,Utility.messageBD(this,"Error", vars.getLanguage()),Utility.messageBD(this,"SaveAndTry", vars.getLanguage()));
+        bdErrorGeneralPopUp(request, response,Utility.messageBD(this,"Error", vars.getLanguage()),Utility.messageBD(this,"SaveAndTry", vars.getLanguage()));
       } else {
         xmlDocument.setParameter("theme", vars.getTheme());
         xmlDocument.setParameter("realName", "<FIELD_TMP id="EncryptedName2">name</FIELD_TMP>");

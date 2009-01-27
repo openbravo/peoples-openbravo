@@ -69,7 +69,7 @@ import org.w3c.dom.NodeList;
 public class HttpSecureAppServlet extends HttpBaseServlet {
     private static final long serialVersionUID = 1L;
     public boolean boolHist = true;
-    String myTheme = "";
+    // String myTheme = "";
     public ClassInfoData classInfo;
     protected AuthenticationManager m_AuthManager = null;
 
@@ -139,11 +139,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         final Variables variables = new Variables(request);
         // VariablesSecureApp vars = new VariablesSecureApp(request);
 
-        try {
-            myTheme = variables.getSessionValue("#Theme");
-        } catch (final Exception ignored) {
-            myTheme = "Default";
-        }
         try {
             if (log4j.isDebugEnabled())
                 log4j.debug("Servlet request for class info: "
@@ -370,12 +365,13 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             } else {
                 if ((strPopUp != null && !strPopUp.equals(""))
                         || (classInfo.type.equals("S")))
-                    bdErrorGeneralPopUp(response, Utility.messageBD(this,
-                            "Error", variables.getLanguage()), Utility
+                    bdErrorGeneralPopUp(request, response, Utility.messageBD(
+                            this, "Error", variables.getLanguage()), Utility
                             .messageBD(this, "AccessTableNoView", variables
                                     .getLanguage()));
                 else
-                    bdError(response, "AccessTableNoView", vars1.getLanguage());
+                    bdError(request, response, "AccessTableNoView", vars1
+                            .getLanguage());
             }
         } catch (final ServletException ex) {
             log4j.error("Error captured: " + ex);
@@ -390,10 +386,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             else if (!myError.isConnectionAvailable())
                 bdErrorConnection(response);
             else if (strPopUp != null && !strPopUp.equals(""))
-                bdErrorGeneralPopUp(response, myError.getTitle(), myError
-                        .getMessage());
+                bdErrorGeneralPopUp(request, response, myError.getTitle(),
+                        myError.getMessage());
             else
-                bdErrorGeneral(response, myError.getTitle(), myError
+                bdErrorGeneral(request, response, myError.getTitle(), myError
                         .getMessage());
         } catch (final OBException e) {
             final Boolean isAutosaving = (Boolean) request
@@ -405,16 +401,17 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             } else {
                 log4j.error("Error captured: " + e);
                 if (strPopUp != null && !strPopUp.equals(""))
-                    bdErrorGeneralPopUp(response, "Error", e.toString());
+                    bdErrorGeneralPopUp(request, response, "Error", e
+                            .toString());
                 else
-                    bdErrorGeneral(response, "Error", e.toString());
+                    bdErrorGeneral(request, response, "Error", e.toString());
             }
         } catch (final Exception e) {
             log4j.error("Error captured: " + e);
             if (strPopUp != null && !strPopUp.equals(""))
-                bdErrorGeneralPopUp(response, "Error", e.toString());
+                bdErrorGeneralPopUp(request, response, "Error", e.toString());
             else
-                bdErrorGeneral(response, "Error", e.toString());
+                bdErrorGeneral(request, response, "Error", e.toString());
         }
     }
 
@@ -565,6 +562,19 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
     public void advise(HttpServletResponse response, String strTipo,
             String strTitulo, String strTexto) throws IOException {
+        advise(null, response, strTipo, strTitulo, strTexto);
+    }
+
+    public void advise(HttpServletRequest request,
+            HttpServletResponse response, String strTipo, String strTitulo,
+            String strTexto) throws IOException {
+
+        String myTheme;
+        if (request != null)
+            myTheme = new Variables(request).getSessionValue("#Theme");
+        else
+            myTheme = "Default";
+
         final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
                 "org/openbravo/base/secureApp/Advise").createXmlDocument();
 
@@ -578,16 +588,23 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         out.close();
     }
 
-    public void advisePopUp(HttpServletResponse response, String strTitulo,
-            String strTexto) throws IOException {
-        advisePopUp(response, "Error", strTitulo, strTexto);
+    public void advisePopUp(HttpServletRequest request,
+            HttpServletResponse response, String strTitulo, String strTexto)
+            throws IOException {
+        advisePopUp(request, response, "Error", strTitulo, strTexto);
     }
 
-    public void advisePopUp(HttpServletResponse response, String strTipo,
-            String strTitulo, String strTexto) throws IOException {
+    public void advisePopUp(HttpServletRequest request,
+            HttpServletResponse response, String strTipo, String strTitulo,
+            String strTexto) throws IOException {
         final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
                 "org/openbravo/base/secureApp/AdvisePopUp").createXmlDocument();
 
+        String myTheme;
+        if (request != null)
+            myTheme = new Variables(request).getSessionValue("#Theme");
+        else
+            myTheme = "Default";
         xmlDocument.setParameter("theme", myTheme);
         xmlDocument.setParameter("ParamTipo", strTipo.toUpperCase());
         xmlDocument.setParameter("ParamTitulo", strTitulo);
@@ -610,9 +627,20 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
      * @throws IOException
      *             if an error occurs writing to the output stream
      */
+    public void advisePopUpRefresh(HttpServletRequest request,
+            HttpServletResponse response, String strTitle, String strText)
+            throws IOException {
+        advisePopUpRefresh(request, response, "Error", strTitle, strText);
+    }
+
     public void advisePopUpRefresh(HttpServletResponse response,
             String strTitle, String strText) throws IOException {
-        advisePopUpRefresh(response, "Error", strTitle, strText);
+        advisePopUpRefresh(null, response, "Error", strTitle, strText);
+    }
+
+    public void advisePopUpRefresh(HttpServletResponse response,
+            String strType, String strTitle, String strText) throws IOException {
+        advisePopUpRefresh(null, response, strTitle, strText);
     }
 
     /**
@@ -629,11 +657,18 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
      * @throws IOException
      *             if an error occurs writing to the output stream
      */
-    public void advisePopUpRefresh(HttpServletResponse response,
-            String strType, String strTitle, String strText) throws IOException {
+    public void advisePopUpRefresh(HttpServletRequest request,
+            HttpServletResponse response, String strType, String strTitle,
+            String strText) throws IOException {
         final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
                 "org/openbravo/base/secureApp/AdvisePopUpRefresh")
                 .createXmlDocument();
+
+        String myTheme;
+        if (request != null)
+            myTheme = new Variables(request).getSessionValue("#Theme");
+        else
+            myTheme = "Default";
 
         xmlDocument.setParameter("theme", myTheme);
         xmlDocument.setParameter("ParamType", strType.toUpperCase());
@@ -647,8 +682,20 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
     public void bdError(HttpServletResponse response, String strCode,
             String strLanguage) throws IOException {
+        bdError(null, response, strCode, strLanguage);
+    }
+
+    public void bdError(HttpServletRequest request,
+            HttpServletResponse response, String strCode, String strLanguage)
+            throws IOException {
         final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
                 "org/openbravo/base/secureApp/Error").createXmlDocument();
+
+        String myTheme;
+        if (request != null)
+            myTheme = new Variables(request).getSessionValue("#Theme");
+        else
+            myTheme = "Default";
 
         xmlDocument.setParameter("theme", myTheme);
         xmlDocument.setParameter("ParamTitulo", strCode);
@@ -662,8 +709,20 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
     public void bdErrorGeneralPopUp(HttpServletResponse response,
             String strTitle, String strText) throws IOException {
+        bdErrorGeneralPopUp(null, response, strTitle, strText);
+    }
+
+    public void bdErrorGeneralPopUp(HttpServletRequest request,
+            HttpServletResponse response, String strTitle, String strText)
+            throws IOException {
         final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
                 "org/openbravo/base/secureApp/ErrorPopUp").createXmlDocument();
+
+        String myTheme;
+        if (request != null)
+            myTheme = new Variables(request).getSessionValue("#Theme");
+        else
+            myTheme = "Default";
 
         xmlDocument.setParameter("theme", myTheme);
         xmlDocument.setParameter("ParamTipo", "ERROR");
@@ -677,8 +736,20 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
     public void bdErrorGeneral(HttpServletResponse response, String strTitle,
             String strText) throws IOException {
+        bdErrorGeneral(null, response, strTitle, strText);
+    }
+
+    public void bdErrorGeneral(HttpServletRequest request,
+            HttpServletResponse response, String strTitle, String strText)
+            throws IOException {
         final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
                 "org/openbravo/base/secureApp/Error").createXmlDocument();
+
+        String myTheme;
+        if (request != null)
+            myTheme = new Variables(request).getSessionValue("#Theme");
+        else
+            myTheme = "Default";
 
         xmlDocument.setParameter("theme", myTheme);
         xmlDocument.setParameter("ParamTitulo", strTitle);

@@ -168,7 +168,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends
             String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
                     "ReportInvoiceCustomerDimensionalAnalysesJR|currency",
                     strUserCurrencyId);
-            printPageHtml(response, vars, strComparative, strDateFrom,
+            printPageHtml(request, response, vars, strComparative, strDateFrom,
                     strDateTo, strPartnerGroup, strcBpartnerId,
                     strProductCategory, strmProductId, strNotShown, strShown,
                     strDateFromRef, strDateToRef, strOrg, strsalesrepId,
@@ -221,7 +221,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends
             String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
                     "ReportInvoiceCustomerDimensionalAnalysesJR|currency",
                     strUserCurrencyId);
-            printPageHtml(response, vars, strComparative, strDateFrom,
+            printPageHtml(request, response, vars, strComparative, strDateFrom,
                     strDateTo, strPartnerGroup, strcBpartnerId,
                     strProductCategory, strmProductId, strNotShown, strShown,
                     strDateFromRef, strDateToRef, strOrg, strsalesrepId,
@@ -484,7 +484,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends
         out.close();
     }
 
-    void printPageHtml(HttpServletResponse response, VariablesSecureApp vars,
+    void printPageHtml(HttpServletRequest request,
+            HttpServletResponse response, VariablesSecureApp vars,
             String strComparative, String strDateFrom, String strDateTo,
             String strPartnerGroup, String strcBpartnerId,
             String strProductCategory, String strmProductId,
@@ -640,7 +641,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends
                 intOrder++;
                 strLevelLabel[i] = dimensionLabel[6].name;
             } else if (strShownArray[i].equals("9")) {
-                strTextShow[i] = "CASE WHEN AD_USER.AD_USER_ID IS NOT NULL THEN AD_COLUMN_IDENTIFIER(to_char('Ad_User'), to_char( AD_USER.AD_USER_ID), to_char( '"+vars.getLanguage()+"')) ELSE '' END";
+                strTextShow[i] = "CASE WHEN AD_USER.AD_USER_ID IS NOT NULL THEN AD_COLUMN_IDENTIFIER(to_char('Ad_User'), to_char( AD_USER.AD_USER_ID), to_char( '"
+                        + vars.getLanguage() + "')) ELSE '' END";
                 intDiscard++;
                 intOrder++;
                 strLevelLabel[i] = dimensionLabel[7].name;
@@ -774,7 +776,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends
         // If a conversion rate is missing for a certain transaction, an error
         // message window pops-up.
         if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-            advisePopUp(response, "ERROR", Utility.messageBD(this,
+            advisePopUp(request, response, "ERROR", Utility.messageBD(this,
                     "NoConversionRateHeader", vars.getLanguage()),
                     strConvRateErrorMsg);
         } else { // Otherwise, the report is launched

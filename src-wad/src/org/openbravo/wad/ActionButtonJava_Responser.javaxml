@@ -61,7 +61,7 @@ public class ActionButtonJava_Responser extends HttpSecureAppServlet {
       strProcessId = command.substring("SAVE_BUTTONActionButton".length());
    
     if (!vars.commandIn("DEFAULT") &amp;&amp; !hasGeneralAccess(vars, "P", strProcessId)) {
-      bdErrorGeneralPopUp(response, Utility.messageBD(this, "Error", vars.getLanguage()), Utility.messageBD(this, "AccessTableNoView", vars.getLanguage()));
+      bdErrorGeneralPopUp(request, response, Utility.messageBD(this, "Error", vars.getLanguage()), Utility.messageBD(this, "AccessTableNoView", vars.getLanguage()));
     }
     
       
@@ -90,7 +90,7 @@ public class ActionButtonJava_Responser extends HttpSecureAppServlet {
         
  
 
-        processButtonHelper(response, vars, (OBError)pb.getResult());        
+        processButtonHelper(request, response, vars, (OBError)pb.getResult());        
 </FIELDS_TMP>
     } else pageErrorPopUp(response);
   }
@@ -159,9 +159,9 @@ public class ActionButtonJava_Responser extends HttpSecureAppServlet {
     return "Servlet ActionButton_Responser. This Servlet was made by Wad constructor";
   } // end of the getServletInfo() method
 
-  private void processButtonHelper(HttpServletResponse response, VariablesSecureApp vars, OBError myMessage) 
+  private void processButtonHelper(HttpServletRequest request, HttpServletResponse response, VariablesSecureApp vars, OBError myMessage) 
      throws ServletException, IOException {
-      advisePopUp(response, myMessage.getType(), myMessage.getTitle(), myMessage.getMessage());
+      advisePopUp(request, response, myMessage.getType(), myMessage.getTitle(), myMessage.getMessage());
   }
 }
 </java_TMP>

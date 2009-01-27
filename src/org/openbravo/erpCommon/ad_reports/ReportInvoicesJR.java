@@ -92,7 +92,7 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
                     "ReportInvoices|M_Product_Category_ID");
             String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
                     "ReportInvoices|currency", strUserCurrencyId);
-            printPageDataHtml(response, vars, strC_BPartner_ID,
+            printPageDataHtml(request, response, vars, strC_BPartner_ID,
                     strM_Product_ID, strDateFrom, strDateTo, strDocumentNo,
                     strOrder, strC_BpGroup_ID, strM_Product_Category_ID,
                     strCurrencyId);
@@ -100,10 +100,11 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
             pageError(response);
     }
 
-    void printPageDataHtml(HttpServletResponse response,
-            VariablesSecureApp vars, String strC_BPartner_ID,
-            String strM_Product_ID, String strDateFrom, String strDateTo,
-            String strDocumentNo, String strOrder, String strC_BpGroup_ID,
+    void printPageDataHtml(HttpServletRequest request,
+            HttpServletResponse response, VariablesSecureApp vars,
+            String strC_BPartner_ID, String strM_Product_ID,
+            String strDateFrom, String strDateTo, String strDocumentNo,
+            String strOrder, String strC_BpGroup_ID,
             String strM_Product_Category_ID, String strCurrencyId)
             throws IOException, ServletException {
         if (log4j.isDebugEnabled())
@@ -140,7 +141,7 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
         // If a conversion rate is missing for a certain transaction, an error
         // message window pops-up.
         if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-            advisePopUp(response, "ERROR", Utility.messageBD(this,
+            advisePopUp(request, response, "ERROR", Utility.messageBD(this,
                     "NoConversionRateHeader", vars.getLanguage()),
                     strConvRateErrorMsg);
         } else { // Launch the report as usual, calling the JRXML file

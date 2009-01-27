@@ -71,7 +71,7 @@ public class Buscador extends HttpSecureAppServlet {
                 if (log4j.isDebugEnabled())
                     log4j
                             .debug("there're no selection columns and no identifiers defined for this table");
-                bdError(response, "SearchNothing", vars.getLanguage());
+                bdError(request, response, "SearchNothing", vars.getLanguage());
             } else {
                 data = removeParents(data, strTab);
                 if (loadParameters(vars, data, strTab)) {
@@ -89,7 +89,8 @@ public class Buscador extends HttpSecureAppServlet {
                 if (data == null || data.length == 0) {
                     if (log4j.isDebugEnabled())
                         log4j.debug("The columns defined were parent keys");
-                    bdError(response, "SearchNothing", vars.getLanguage());
+                    bdError(request, response, "SearchNothing", vars
+                            .getLanguage());
                 } else
                     printPage(response, vars, strTab, data, strWindow,
                             strWindowId, strIsSOTrx);
@@ -438,7 +439,7 @@ public class Buscador extends HttpSecureAppServlet {
             if (fields[i].reference.equals("17")
                     || fields[i].reference.equals("18")
                     || fields[i].reference.equals("19")) {// List, Table,
-                                                          // TableDir
+                // TableDir
                 scriptSelect = true;
                 strHtml
                         .append("<td class=\"Combo_ContentCell\" colspan=\"3\">");
@@ -706,19 +707,19 @@ public class Buscador extends HttpSecureAppServlet {
                     strHtml.append("</td>");
                 }
             } else if ((Integer.valueOf(fields[i].fieldlength).intValue() > MAX_TEXTBOX_LENGTH)) { // Memo
-                                                                                                   // //
-                                                                                                   // REplace
-                                                                                                   // with
-                                                                                                   // reference
-                                                                                                   // //
-                                                                                                   // 1-2-3
-                                                                                                   // cells
-                                                                                                   // doing
-                                                                                                   // <
-                                                                                                   // MAX_TEXTBOX_LENGTH/4
-                                                                                                   // /2
-                                                                                                   // >
-                                                                                                   // /2
+                // //
+                // REplace
+                // with
+                // reference
+                // //
+                // 1-2-3
+                // cells
+                // doing
+                // <
+                // MAX_TEXTBOX_LENGTH/4
+                // /2
+                // >
+                // /2
                 strHtml.append("<td>");
                 strHtml
                         .append("<textarea class=\"dojoValidateValid TextArea_TwoCells_width TextArea_Medium_height\" ");

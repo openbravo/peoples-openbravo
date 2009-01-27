@@ -96,7 +96,7 @@ public class ReportRefundSalesDimensionalAnalysesPDF extends
             String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
                     "ReportRefundSalesDimensionalAnalyses|currency",
                     strUserCurrencyId);
-            printPagePdf(response, vars, strComparative, strDateFrom,
+            printPagePdf(request, response, vars, strComparative, strDateFrom,
                     strDateTo, strPartnerGroup, strcBpartnerId,
                     strProductCategory, strmProductId, strNotShown, strShown,
                     strDateFromRef, strDateToRef, strOrg, strsalesrepId,
@@ -106,9 +106,9 @@ public class ReportRefundSalesDimensionalAnalysesPDF extends
             pageErrorPopUp(response);
     }
 
-    void printPagePdf(HttpServletResponse response, VariablesSecureApp vars,
-            String strComparative, String strDateFrom, String strDateTo,
-            String strPartnerGroup, String strcBpartnerId,
+    void printPagePdf(HttpServletRequest request, HttpServletResponse response,
+            VariablesSecureApp vars, String strComparative, String strDateFrom,
+            String strDateTo, String strPartnerGroup, String strcBpartnerId,
             String strProductCategory, String strmProductId,
             String strNotShown, String strShown, String strDateFromRef,
             String strDateToRef, String strOrg, String strsalesrepId,
@@ -369,7 +369,7 @@ public class ReportRefundSalesDimensionalAnalysesPDF extends
         // If a conversion rate is missing for a certain transaction, an error
         // message window pops-up.
         if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-            advisePopUp(response, "ERROR", Utility.messageBD(this,
+            advisePopUp(request, response, "ERROR", Utility.messageBD(this,
                     "NoConversionRateHeader", vars.getLanguage()),
                     strConvRateErrorMsg);
         } else { // Otherwise, the report is launched

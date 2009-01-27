@@ -55,7 +55,7 @@ public class CreateFile extends HttpSecureAppServlet {
                     strMessage, true);
         } else if (vars.commandIn("GENERATE")) {
             String strKey = vars.getStringParameter("inpcRemittanceId");
-            getPrintPage(response, vars, strKey);
+            getPrintPage(request, response, vars, strKey);
         }
     }
 
@@ -137,8 +137,9 @@ public class CreateFile extends HttpSecureAppServlet {
         out.close();
     }
 
-    void getPrintPage(HttpServletResponse response, VariablesSecureApp vars,
-            String strKey) throws IOException, ServletException {
+    void getPrintPage(HttpServletRequest request, HttpServletResponse response,
+            VariablesSecureApp vars, String strKey) throws IOException,
+            ServletException {
         if (log4j.isDebugEnabled())
             log4j.debug("generate " + strKey);
         String strCuaderno = CreateFileData.selectParam(this, strKey,
@@ -155,8 +156,8 @@ public class CreateFile extends HttpSecureAppServlet {
         else if (strCuaderno.equals("34"))
             printPageFind34(response, vars, strKey);
         else
-            advisePopUp(response, "Error", Utility.messageBD(this, "Error",
-                    vars.getLanguage()), Utility.messageBD(this,
+            advisePopUp(request, response, "Error", Utility.messageBD(this,
+                    "Error", vars.getLanguage()), Utility.messageBD(this,
                     "RemittanceTypeError", vars.getLanguage()));
     }
 

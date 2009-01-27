@@ -56,8 +56,8 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
                     "ReportParetoProduct|AD_Org_ID", "");
             String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
                     "ReportParetoProduct|currency", strUserCurrencyId);
-            printPageDataSheet(response, vars, strWarehouse, strAD_Org_ID,
-                    strClient, strCurrencyId);
+            printPageDataSheet(request, response, vars, strWarehouse,
+                    strAD_Org_ID, strClient, strCurrencyId);
         } else if (vars.commandIn("FIND")) {
             String strWarehouse = vars.getRequestGlobalVariable(
                     "inpmWarehouseId", "ReportParetoProduct|M_Warehouse_ID");
@@ -66,8 +66,8 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
                     "ReportParetoProduct|AD_Org_ID");
             String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
                     "ReportParetoProduct|currency", strUserCurrencyId);
-            printPageDataSheet(response, vars, strWarehouse, strAD_Org_ID,
-                    strClient, strCurrencyId);
+            printPageDataSheet(request, response, vars, strWarehouse,
+                    strAD_Org_ID, strClient, strCurrencyId);
         } else if (vars.commandIn("GENERATE")) {
             String strClient = vars.getClient();
             String strWarehouse = vars.getRequestGlobalVariable(
@@ -83,16 +83,16 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
             vars.setMessage("ReportParetoProduct", myMessage);
             String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
                     "ReportParetoProduct|currency", strUserCurrencyId);
-            printPageDataSheet(response, vars, strWarehouse, strAD_Org_ID,
-                    strClient, strCurrencyId);
+            printPageDataSheet(request, response, vars, strWarehouse,
+                    strAD_Org_ID, strClient, strCurrencyId);
         } else
             pageError(response);
     }
 
-    void printPageDataSheet(HttpServletResponse response,
-            VariablesSecureApp vars, String strWarehouse, String strAD_Org_ID,
-            String strClient, String strCurrencyId) throws IOException,
-            ServletException {
+    void printPageDataSheet(HttpServletRequest request,
+            HttpServletResponse response, VariablesSecureApp vars,
+            String strWarehouse, String strAD_Org_ID, String strClient,
+            String strCurrencyId) throws IOException, ServletException {
         if (log4j.isDebugEnabled())
             log4j.debug("Output: dataSheet");
         response.setContentType("text/html; charset=UTF-8");
@@ -125,7 +125,7 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
             // If a conversion rate is missing for a certain transaction, an
             // error message window pops-up.
             if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-                advise(response, "ERROR", Utility.messageBD(this,
+                advise(request, response, "ERROR", Utility.messageBD(this,
                         "NoConversionRateHeader", vars.getLanguage()),
                         strConvRateErrorMsg);
             } else { // Otherwise, the report is launched

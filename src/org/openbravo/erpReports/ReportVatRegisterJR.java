@@ -86,7 +86,8 @@ public class ReportVatRegisterJR extends HttpSecureAppServlet {
                         strcTypeVatReport);
             } else {
                 // Standard Report
-                bdError(response, "TypeReportCantBeNull", vars.getLanguage());
+                bdError(request, response, "TypeReportCantBeNull", vars
+                        .getLanguage());
                 return;
             }
 

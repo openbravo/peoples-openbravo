@@ -54,7 +54,7 @@ public class WorkflowControl extends HttpSecureAppServlet {
 
         if (!vars.commandIn("DEFAULT")
                 && !hasGeneralAccess(vars, "F", strAD_Workflow_ID)) {
-            bdError(response, "AccessTableNoView", vars.getLanguage());
+            bdError(request, response, "AccessTableNoView", vars.getLanguage());
             return;
         }
 

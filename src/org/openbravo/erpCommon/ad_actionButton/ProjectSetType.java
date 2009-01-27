@@ -63,7 +63,8 @@ public class ProjectSetType extends HttpSecureAppServlet {
                 printPage(response, vars, strKey, strProjectType, strWindow,
                         strTab, strProcessId);
             else
-                bdError(response, "ProjectSetTypeError", vars.getLanguage());
+                bdError(request, response, "ProjectSetTypeError", vars
+                        .getLanguage());
         } else if (vars.commandIn("SAVE")) {
             String strWindow = vars.getStringParameter("inpwindowId");
             String strProjectType = vars
@@ -329,22 +330,22 @@ public class ProjectSetType extends HttpSecureAppServlet {
         String strStartDate = "";
         if (strLastContractDate != null && !strLastContractDate.equals("")) {
             strStartDate = strLastContractDate; // Start Date equals to Last
-                                                // Contract Date
+            // Contract Date
             do {
                 strStartDate = Utility.addDaysToDate(strStartDate, "1",
                         DateFormatter); // Start Date equals to Last Contract
-                                        // Date plus one day
+                // Date plus one day
             } while (Utility.isWeekendDay(strStartDate, DateFormatter)); // If
-                                                                         // strStartDate
-                                                                         // is a
-                                                                         // weekend
-                                                                         // day,
-                                                                         // looks
-                                                                         // for
-                                                                         // the
-                                                                         // next
-                                                                         // labor
-                                                                         // day
+            // strStartDate
+            // is a
+            // weekend
+            // day,
+            // looks
+            // for
+            // the
+            // next
+            // labor
+            // day
         }
         return strStartDate;
     }
@@ -358,17 +359,17 @@ public class ProjectSetType extends HttpSecureAppServlet {
         if (strStartDate != null && !strStartDate.equals("")
                 && strStdDuration != null && !strStdDuration.equals("")) {
             strContractDate = strStartDate; // Contract Date equals to Starting
-                                            // Date
+            // Date
             Integer StdDuration = Integer.parseInt(strStdDuration) - 1;
             int DaysLeft = StdDuration;
             while (DaysLeft > 0) {
                 strContractDate = Utility.addDaysToDate(strContractDate, "1",
                         DateFormatter); // Contract Date equals to Starting Date
-                                        // plus one day until the standard
-                                        // duration in days is reached
+                // plus one day until the standard
+                // duration in days is reached
                 if (!Utility.isWeekendDay(strContractDate, DateFormatter))
                     DaysLeft--; // If strContractDate is a weekend day, looks
-                                // for the next labor day
+                // for the next labor day
             }
         }
         return strContractDate;

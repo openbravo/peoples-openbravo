@@ -64,8 +64,8 @@ public class WindowTree extends HttpSecureAppServlet {
                     strTreeID = data[0].id;
             }
             if (strTreeID.equals(""))
-                advisePopUp(response, "ERROR", Utility.messageBD(this, "Error",
-                        vars.getLanguage()), Utility.messageBD(this,
+                advisePopUp(request, response, "ERROR", Utility.messageBD(this,
+                        "Error", vars.getLanguage()), Utility.messageBD(this,
                         "AccessTableNoView", vars.getLanguage()));
             else
                 printPageDataSheet(response, vars, strTabId);
@@ -409,7 +409,7 @@ public class WindowTree extends HttpSecureAppServlet {
                     if (!data[i].nodeId.equals(strLink)) {
 
                         if (updated && !finish) { // update only elements after
-                                                  // the current one
+                            // the current one
                             if (data[i].isindevelopment == null
                                     || data[i].isindevelopment.equals("")
                                     || data[i].isindevelopment.equals("Y")) {
@@ -421,8 +421,8 @@ public class WindowTree extends HttpSecureAppServlet {
                                                         .toString(seqNo));
                             } else {
                                 finish = true; // update elements till one is
-                                               // not in developement, then
-                                               // finish
+                                // not in developement, then
+                                // finish
                             }
                         }
 
@@ -440,7 +440,7 @@ public class WindowTree extends HttpSecureAppServlet {
                                 ;
                             if (j == data.length)
                                 add = 10; // it is at the end it can be expanded
-                                          // without problem
+                            // without problem
                             else
                                 add = new Float(
                                         ((new Integer(data[j].seqno) - new Integer(

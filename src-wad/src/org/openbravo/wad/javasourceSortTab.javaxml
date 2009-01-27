@@ -63,7 +63,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
 <PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");</PARAMETER_TMP>
       <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data data = getEditVariables(vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
       if (!Utility.canUpdate(this, vars, <PARAMETER_TMP id="clientId">data.adClientId</PARAMETER_TMP>, <PARAMETER_TMP id="orgId">data.adOrgId</PARAMETER_TMP>, windowId)) {
-        bdError(response, "AccessTableNoUpdate", vars.getLanguage());
+        bdError(request, response, "AccessTableNoUpdate", vars.getLanguage());
       } else {
         Connection conn = null;
         try {

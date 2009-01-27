@@ -51,16 +51,18 @@ public class ScheduleProcess extends HttpSecureAppServlet {
 
         String message = null;
         try {
-            final ProcessBundle bundle = ProcessBundle.request(requestId, vars, this);
+            final ProcessBundle bundle = ProcessBundle.request(requestId, vars,
+                    this);
             OBScheduler.getInstance().schedule(requestId, bundle);
 
         } catch (final Exception e) {
             message = Utility
                     .messageBD(this, "SCHED_ERROR", vars.getLanguage());
-            advisePopUp(response, "ERROR", "Process Request", message + " "
-                    + e.getMessage());
+            advisePopUp(request, response, "ERROR", "Process Request", message
+                    + " " + e.getMessage());
         }
         message = Utility.messageBD(this, "SCHED_SUCCESS", vars.getLanguage());
-        advisePopUpRefresh(response, "SUCCESS", "Process Request", message);
+        advisePopUpRefresh(request, response, "SUCCESS", "Process Request",
+                message);
     }
 }

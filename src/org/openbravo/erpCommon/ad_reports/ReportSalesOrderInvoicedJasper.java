@@ -87,8 +87,8 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
             String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
                     "ReportSalesOrderInvoicedJasper|currency",
                     strUserCurrencyId);
-            printPageDataSheetJasper(response, vars, strdateFrom, strdateTo,
-                    strcBpartnerId, strmWarehouseId, strcProjectId,
+            printPageDataSheetJasper(request, response, vars, strdateFrom,
+                    strdateTo, strcBpartnerId, strmWarehouseId, strcProjectId,
                     strmCategoryId, strProjectkind, strcRegionId,
                     strProjectpublic, strProduct, strCurrencyId);
         } else
@@ -378,12 +378,13 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
     }
 
     // Jasper calling starts here
-    void printPageDataSheetJasper(HttpServletResponse response,
-            VariablesSecureApp vars, String strdateFrom, String strdateTo,
-            String strcBpartnerId, String strmWarehouseId,
-            String strcProjectId, String strmCategoryId, String strProjectkind,
-            String strcRegionId, String strProjectpublic, String strProduct,
-            String strCurrencyId) throws IOException, ServletException {
+    void printPageDataSheetJasper(HttpServletRequest request,
+            HttpServletResponse response, VariablesSecureApp vars,
+            String strdateFrom, String strdateTo, String strcBpartnerId,
+            String strmWarehouseId, String strcProjectId,
+            String strmCategoryId, String strProjectkind, String strcRegionId,
+            String strProjectpublic, String strProduct, String strCurrencyId)
+            throws IOException, ServletException {
 
         // Checks if there is a conversion rate for each of the transactions of
         // the report
@@ -409,7 +410,7 @@ public class ReportSalesOrderInvoicedJasper extends HttpSecureAppServlet {
         // If a conversion rate is missing for a certain transaction, an error
         // message window pops-up.
         if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-            advisePopUp(response, "ERROR", Utility.messageBD(this,
+            advisePopUp(request, response, "ERROR", Utility.messageBD(this,
                     "NoConversionRateHeader", vars.getLanguage()),
                     strConvRateErrorMsg);
         } else { // Launch the report as usual, calling the JRXML file

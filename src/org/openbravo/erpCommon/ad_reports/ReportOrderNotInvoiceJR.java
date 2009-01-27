@@ -80,7 +80,7 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
             String strDetail = vars.getStringParameter("inpDetail", "0");
             String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
                     "ReportOrderNotInvoiceJR|currency", strUserCurrencyId);
-            printPageHtml(response, vars, strdateFrom, strdateTo,
+            printPageHtml(request, response, vars, strdateFrom, strdateTo,
                     strcBpartnetId, strCOrgId, strInvoiceRule, strDetail,
                     strCurrencyId);
         } else
@@ -198,7 +198,8 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
         out.close();
     }
 
-    void printPageHtml(HttpServletResponse response, VariablesSecureApp vars,
+    void printPageHtml(HttpServletRequest request,
+            HttpServletResponse response, VariablesSecureApp vars,
             String strdateFrom, String strdateTo, String strcBpartnetId,
             String strCOrgId, String strInvoiceRule, String strDetail,
             String strCurrencyId) throws IOException, ServletException {
@@ -227,7 +228,7 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
         // If a conversion rate is missing for a certain transaction, an error
         // message window pops-up.
         if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-            advisePopUp(response, "ERROR", Utility.messageBD(this,
+            advisePopUp(request, response, "ERROR", Utility.messageBD(this,
                     "NoConversionRateHeader", vars.getLanguage()),
                     strConvRateErrorMsg);
         } else { // Launch the report as usual, calling the JRXML file

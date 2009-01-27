@@ -112,7 +112,7 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
             String strOutput = "html";
             if (vars.commandIn("PDF"))
                 strOutput = "pdf";
-            printPageDataHtml(response, vars, strOrg, strProject,
+            printPageDataHtml(request, response, vars, strOrg, strProject,
                     strProjectType, strResponsible, strDateFrom, strDateTo,
                     strExpand, strPartner, strDateFrom2, strDateTo2,
                     strDateFrom3, strDateTo3, strOutput, strCurrencyId);
@@ -120,13 +120,14 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
             pageError(response);
     }
 
-    void printPageDataHtml(HttpServletResponse response,
-            VariablesSecureApp vars, String strOrg, String strProject,
-            String strProjectType, String strResponsible, String strDateFrom,
-            String strDateTo, String strExpand, String strPartner,
-            String strDateFrom2, String strDateTo2, String strDateFrom3,
-            String strDateTo3, String strOutput, String strCurrencyId)
-            throws IOException, ServletException {
+    void printPageDataHtml(HttpServletRequest request,
+            HttpServletResponse response, VariablesSecureApp vars,
+            String strOrg, String strProject, String strProjectType,
+            String strResponsible, String strDateFrom, String strDateTo,
+            String strExpand, String strPartner, String strDateFrom2,
+            String strDateTo2, String strDateFrom3, String strDateTo3,
+            String strOutput, String strCurrencyId) throws IOException,
+            ServletException {
         if (log4j.isDebugEnabled())
             log4j.debug("Output: dataSheet");
 
@@ -162,7 +163,7 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
         // If a conversion rate is missing for a certain transaction, an error
         // message window pops-up.
         if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-            advisePopUp(response, "ERROR", Utility.messageBD(this,
+            advisePopUp(request, response, "ERROR", Utility.messageBD(this,
                     "NoConversionRateHeader", vars.getLanguage()),
                     strConvRateErrorMsg);
         } else { // Otherwise, the report is launched

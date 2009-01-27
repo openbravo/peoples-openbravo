@@ -54,11 +54,12 @@ public class UnscheduleProcess extends HttpSecureAppServlet {
         } catch (final SchedulerException e) {
             message = Utility.messageBD(this, "UNSCHED_ERROR", vars
                     .getLanguage());
-            advisePopUp(response, "ERROR", "Process Request", message + " "
-                    + e.getMessage());
+            advisePopUp(request, response, "ERROR", "Process Request", message
+                    + " " + e.getMessage());
         }
         message = Utility
                 .messageBD(this, "UNSCHED_SUCCESS", vars.getLanguage());
-        advisePopUpRefresh(response, "SUCCESS", "Process Request", message);
+        advisePopUpRefresh(request, response, "SUCCESS", "Process Request",
+                message);
     }
 }

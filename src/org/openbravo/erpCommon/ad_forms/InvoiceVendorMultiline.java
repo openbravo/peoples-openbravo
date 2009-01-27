@@ -91,7 +91,7 @@ public class InvoiceVendorMultiline extends HttpSecureAppServlet {
             log4j.info("Sequence: " + strSequence);
             data.cInvoiceId = strSequence;
             if (data.insert(this) == 0) {
-                bdError(response, "DBExecuteError", vars.getLanguage());
+                bdError(request, response, "DBExecuteError", vars.getLanguage());
             } else {
                 vars.setSessionValue(windowId + "|C_Invoice_ID",
                         data.cInvoiceId);
@@ -113,7 +113,7 @@ public class InvoiceVendorMultiline extends HttpSecureAppServlet {
                     + "|C_Invoice_ID");
             InvoiceVendorMultilineData data = getEditVariables(vars);
             if (data.update(this) == 0) {
-                bdError(response, "DBExecuteError", vars.getLanguage());
+                bdError(request, response, "DBExecuteError", vars.getLanguage());
             } else {
                 if (vars.commandIn("SAVE_EDIT_NEW"))
                     response.sendRedirect(strDireccion

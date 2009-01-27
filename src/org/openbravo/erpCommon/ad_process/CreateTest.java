@@ -33,7 +33,7 @@ public class CreateTest extends HttpSecureAppServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         VariablesSecureApp vars = new VariablesSecureApp(request);
-        bdError(response, "OpenbravoDevelopment", vars.getLanguage());
+        bdError(request, response, "OpenbravoDevelopment", vars.getLanguage());
 
     }
 

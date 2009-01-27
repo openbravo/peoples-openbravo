@@ -58,7 +58,7 @@ public class ApplyModules extends HttpSecureAppServlet {
         final VariablesSecureApp vars = new VariablesSecureApp(request);
 
         if (vars.commandIn("DEFAULT")) {
-            printPage(response, vars);
+            printPage(request, response, vars);
         } else if (vars.commandIn("STARTAPPLY")) {
             startApply(response, vars);
         } else if (vars.commandIn("UPDATELOG")) {
@@ -86,13 +86,14 @@ public class ApplyModules extends HttpSecureAppServlet {
      * @throws IOException
      * @throws ServletException
      */
-    private void printPage(HttpServletResponse response, VariablesSecureApp vars)
+    private void printPage(HttpServletRequest request,
+            HttpServletResponse response, VariablesSecureApp vars)
             throws IOException, ServletException {
         // Check for permissions to apply modules from application server.
         final File f = new File(vars.getSessionValue("#sourcePath"));
         if (!f.canWrite()) {
-            bdErrorGeneralPopUp(response, Utility.messageBD(this, "Error", vars
-                    .getLanguage()), Utility.messageBD(this,
+            bdErrorGeneralPopUp(request, response, Utility.messageBD(this,
+                    "Error", vars.getLanguage()), Utility.messageBD(this,
                     "NoApplicableModules", vars.getLanguage()));
             return;
         }

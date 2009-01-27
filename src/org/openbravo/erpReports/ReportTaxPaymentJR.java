@@ -77,7 +77,8 @@ public class ReportTaxPaymentJR extends HttpSecureAppServlet {
                         strDateTo, strcTypeVatReport);
             } else {
                 // Standard Report
-                bdError(response, "TypeReportCantBeNull", vars.getLanguage());
+                bdError(request, response, "TypeReportCantBeNull", vars
+                        .getLanguage());
                 return;
             }
 

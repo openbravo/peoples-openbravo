@@ -81,8 +81,8 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
                     strProductInstance);
             vars.setSessionValue("AttributeSetInstance.close", "N");
             if (strAttributeSet.equals("") || strAttributeSet.equals("0"))
-                advisePopUp(response, "INFO", Utility.messageBD(this, "Info",
-                        vars.getLanguage()), Utility.messageBD(this,
+                advisePopUp(request, response, "INFO", Utility.messageBD(this,
+                        "Info", vars.getLanguage()), Utility.messageBD(this,
                         "PAttributeNoSelection", vars.getLanguage()));
             else
                 response.sendRedirect(strDireccion + request.getServletPath()
@@ -112,8 +112,8 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
                         strProductInstance, strWindowId, strTabId, strLocator,
                         strIsSOTrx, strProduct);
             else
-                advisePopUp(response, "INFO", Utility.messageBD(this, "Info",
-                        vars.getLanguage()), Utility.messageBD(this,
+                advisePopUp(request, response, "INFO", Utility.messageBD(this,
+                        "Info", vars.getLanguage()), Utility.messageBD(this,
                         "PAttributeNoSelection", vars.getLanguage()));
         } else if (vars.commandIn("SAVE")) {
             String strAttributeSet = vars
@@ -283,9 +283,9 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
             }
             boolean hasToUpdate = false;
             if ((!strInstance.equals("")) && (isinstance)) {// Si if it's
-                                                            // existant and
-                                                            // requestable, it
-                                                            // edits it
+                // existant and
+                // requestable, it
+                // edits it
                 hasToUpdate = true;
                 if (AttributeSetInstanceData
                         .updateHeader(conn, this, vars.getUser(),
@@ -298,18 +298,18 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
                             lot, guaranteedate, "", locked, lockDescription);
                 }
             } else if ((isinstance) || (strNewInstance.equals(""))) { // New or
-                                                                      // editable,if
-                                                                      // it's
-                                                                      // requestable
-                                                                      // or
-                                                                      // doesn't
-                                                                      // exist
-                                                                      // the
-                                                                      // identic,
-                                                                      // then it
-                                                                      // inserts
-                                                                      // a new
-                                                                      // one
+                // editable,if
+                // it's
+                // requestable
+                // or
+                // doesn't
+                // exist
+                // the
+                // identic,
+                // then it
+                // inserts
+                // a new
+                // one
                 hasToUpdate = true;
                 strNewInstance = SequenceIdData.getUUID();
                 AttributeSetInstanceData.insertHeader(conn, this,

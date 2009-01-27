@@ -214,7 +214,7 @@ public class PrintController extends HttpSecureAppServlet {
                     jasperPrint = reportManager.processReport(report, vars);
                     jrPrintReports.add(jasperPrint);
                 } catch (final ReportingException e) {
-                    advisePopUp(response, "Report processing failed",
+                    advisePopUp(request, response, "Report processing failed",
                             "Unable to process report selection");
                     // Utility.messageBD(this, "ERROR", vars.getLanguage());
                     log4j.error(e.getMessage());

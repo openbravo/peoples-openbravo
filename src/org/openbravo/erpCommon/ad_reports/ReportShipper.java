@@ -61,8 +61,8 @@ public class ReportShipper extends HttpSecureAppServlet {
                     "ReportShipper|Detail", "N");
             String strCurrencyId = vars.getGlobalVariable("inpCurrencyId", "",
                     strUserCurrencyId);
-            printPageDataSheet(response, vars, strFrom, strTo, strShipper,
-                    strSale, strPurchase, strDetail, strCurrencyId);
+            printPageDataSheet(request, response, vars, strFrom, strTo,
+                    strShipper, strSale, strPurchase, strDetail, strCurrencyId);
         } else if (vars.commandIn("FIND")) {
             String strFrom = vars.getRequestGlobalVariable("inpFrom",
                     "ReportShipper|From");
@@ -78,17 +78,17 @@ public class ReportShipper extends HttpSecureAppServlet {
                     "ReportShipper|Detail");
             String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
                     "ReportShipper|currency", strUserCurrencyId);
-            printPageDataSheet(response, vars, strFrom, strTo, strShipper,
-                    strSale, strPurchase, strDetail, strCurrencyId);
+            printPageDataSheet(request, response, vars, strFrom, strTo,
+                    strShipper, strSale, strPurchase, strDetail, strCurrencyId);
         } else
             pageError(response);
     }
 
-    void printPageDataSheet(HttpServletResponse response,
-            VariablesSecureApp vars, String strFrom, String strTo,
-            String strShipper, String strSale, String strPurchase,
-            String strDetail, String strCurrencyId) throws IOException,
-            ServletException {
+    void printPageDataSheet(HttpServletRequest request,
+            HttpServletResponse response, VariablesSecureApp vars,
+            String strFrom, String strTo, String strShipper, String strSale,
+            String strPurchase, String strDetail, String strCurrencyId)
+            throws IOException, ServletException {
         if (log4j.isDebugEnabled())
             log4j.debug("Output: dataSheet");
         response.setContentType("text/html; charset=UTF-8");
@@ -138,7 +138,7 @@ public class ReportShipper extends HttpSecureAppServlet {
         // If a conversion rate is missing for a certain transaction, an error
         // message window pops-up.
         if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-            advise(response, "ERROR", Utility.messageBD(this,
+            advise(request, response, "ERROR", Utility.messageBD(this,
                     "NoConversionRateHeader", vars.getLanguage()),
                     strConvRateErrorMsg);
         } else { // Otherwise, the report is launched

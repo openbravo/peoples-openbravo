@@ -16,7 +16,7 @@ public class DisplayJasper extends HttpSecureAppServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        advisePopUp(response, "SUCCESS", "Jasper Report",
+        advisePopUp(request, response, "SUCCESS", "Jasper Report",
                 "Displaying Jasper Report");
     }
 

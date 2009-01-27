@@ -122,7 +122,7 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
             String strOutput = "html";
             if (vars.commandIn("PDF"))
                 strOutput = "pdf";
-            printPageDataPDF(response, vars, strdateFrom, strdateTo,
+            printPageDataPDF(request, response, vars, strdateFrom, strdateTo,
                     strcBpartnerId, strcProjectId, strmCategoryId,
                     strProjectkind, strProjectphase, strProjectstatus,
                     strProjectpublic, strcRegionId, strSalesRep, strProduct,
@@ -405,14 +405,14 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
         out.close();
     }
 
-    void printPageDataPDF(HttpServletResponse response,
-            VariablesSecureApp vars, String strdateFrom, String strdateTo,
-            String strcBpartnerId, String strcProjectId, String strmCategoryId,
-            String strProjectkind, String strProjectphase,
-            String strProjectstatus, String strProjectpublic,
-            String strcRegionId, String strSalesRep, String strProduct,
-            String strCurrencyId, String strOutput) throws IOException,
-            ServletException {
+    void printPageDataPDF(HttpServletRequest request,
+            HttpServletResponse response, VariablesSecureApp vars,
+            String strdateFrom, String strdateTo, String strcBpartnerId,
+            String strcProjectId, String strmCategoryId, String strProjectkind,
+            String strProjectphase, String strProjectstatus,
+            String strProjectpublic, String strcRegionId, String strSalesRep,
+            String strProduct, String strCurrencyId, String strOutput)
+            throws IOException, ServletException {
         if (log4j.isDebugEnabled())
             log4j.debug("Output: PDF");
         String discard[] = { "sectionPartner" };
@@ -442,7 +442,7 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
         // If a conversion rate is missing for a certain transaction, an error
         // message window pops-up.
         if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-            advisePopUp(response, "ERROR", Utility.messageBD(this,
+            advisePopUp(request, response, "ERROR", Utility.messageBD(this,
                     "NoConversionRateHeader", vars.getLanguage()),
                     strConvRateErrorMsg);
         } else { // Launch the report as usual, calling the JRXML file

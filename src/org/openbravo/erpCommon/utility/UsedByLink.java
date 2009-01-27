@@ -73,9 +73,9 @@ public class UsedByLink extends HttpSecureAppServlet {
                     .getRequiredStringParameter("inpcolumnname");
             final String strTableId = vars
                     .getRequiredStringParameter("inpTableId");
-            printPageDetail(response, vars, strWindow, strTabId, strKeyColumn,
-                    strKeyId, strAD_TAB_ID, strTABLENAME, strCOLUMNNAME,
-                    strTableId);
+            printPageDetail(request, response, vars, strWindow, strTabId,
+                    strKeyColumn, strKeyId, strAD_TAB_ID, strTABLENAME,
+                    strCOLUMNNAME, strTableId);
         } else
             throw new ServletException();
     }
@@ -179,7 +179,8 @@ public class UsedByLink extends HttpSecureAppServlet {
         out.close();
     }
 
-    void printPageDetail(HttpServletResponse response, VariablesSecureApp vars,
+    void printPageDetail(HttpServletRequest request,
+            HttpServletResponse response, VariablesSecureApp vars,
             String strWindow, String TabId, String keyColumn, String keyId,
             String strAD_TAB_ID, String strTABLENAME, String strCOLUMNNAME,
             String adTableId) throws IOException, ServletException {
@@ -216,7 +217,7 @@ public class UsedByLink extends HttpSecureAppServlet {
         final UsedByLinkData[] data = UsedByLinkData.keyColumns(this,
                 strAD_TAB_ID);
         if (data == null || data.length == 0) {
-            bdError(response, "RecordError", vars.getLanguage());
+            bdError(request, response, "RecordError", vars.getLanguage());
             return;
         }
         final StringBuffer strScript = new StringBuffer();
@@ -238,7 +239,7 @@ public class UsedByLink extends HttpSecureAppServlet {
         final UsedByLinkData[] dataRef = UsedByLinkData.windowRef(this,
                 strAD_TAB_ID);
         if (dataRef == null || dataRef.length == 0) {
-            bdError(response, "RecordError", vars.getLanguage());
+            bdError(request, response, "RecordError", vars.getLanguage());
             return;
         }
         final String windowRef = FormatUtilities.replace(dataRef[0].windowname)

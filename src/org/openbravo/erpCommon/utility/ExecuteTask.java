@@ -53,7 +53,8 @@ public class ExecuteTask extends HttpSecureAppServlet {
             if (data == null || data.length == 0)
                 throw new ServletException("Task not found: " + strTaskId);
             if (!hasGeneralAccess(vars, "T", strTaskId)) {
-                bdError(response, "AccessTableNoView", vars.getLanguage());
+                bdError(request, response, "AccessTableNoView", vars
+                        .getLanguage());
                 return;
             }
 

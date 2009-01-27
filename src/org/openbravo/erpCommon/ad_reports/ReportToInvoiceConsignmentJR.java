@@ -69,8 +69,8 @@ public class ReportToInvoiceConsignmentJR extends HttpSecureAppServlet {
                             "ReportToInvoiceConsignmentJR|Warehouse");
             String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
                     "ReportToInvoiceConsignmentJR|currency", strUserCurrencyId);
-            printPagePDF(response, vars, strDateFrom, strDateTo, strWarehouse,
-                    strCurrencyId);
+            printPagePDF(request, response, vars, strDateFrom, strDateTo,
+                    strWarehouse, strCurrencyId);
         } else
             pageErrorPopUp(response);
     }
@@ -173,9 +173,10 @@ public class ReportToInvoiceConsignmentJR extends HttpSecureAppServlet {
         out.close();
     }
 
-    void printPagePDF(HttpServletResponse response, VariablesSecureApp vars,
-            String strDateFrom, String strDateTo, String strWarehouse,
-            String strCurrencyId) throws IOException, ServletException {
+    void printPagePDF(HttpServletRequest request, HttpServletResponse response,
+            VariablesSecureApp vars, String strDateFrom, String strDateTo,
+            String strWarehouse, String strCurrencyId) throws IOException,
+            ServletException {
         if (log4j.isDebugEnabled())
             log4j.debug("Output: PDF");
 
@@ -203,7 +204,7 @@ public class ReportToInvoiceConsignmentJR extends HttpSecureAppServlet {
         // If a conversion rate is missing for a certain transaction, an error
         // message window pops-up.
         if (!strConvRateErrorMsg.equals("") && strConvRateErrorMsg != null) {
-            advisePopUp(response, "ERROR", Utility.messageBD(this,
+            advisePopUp(request, response, "ERROR", Utility.messageBD(this,
                     "NoConversionRateHeader", vars.getLanguage()),
                     strConvRateErrorMsg);
         } else { // Launch the report as usual, calling the JRXML file

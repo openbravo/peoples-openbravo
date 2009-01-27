@@ -40,13 +40,15 @@ public class OpenPentaho extends HttpSecureAppServlet {
         String pentahoServer = vars.getSessionValue("#pentahoServer");
         String userRole = vars.getSessionValue("#AD_ROLE_ID");
         if (!hasGeneralAccess(vars, "P", adProcessId))
-            bdError(response, "AccessTableNoView", vars.getLanguage());
+            bdError(request, response, "AccessTableNoView", vars.getLanguage());
         else if (pentahoServer.equals(""))
-            bdError(response, "NoPentahoServerDefined", vars.getLanguage());
+            bdError(request, response, "NoPentahoServerDefined", vars
+                    .getLanguage());
         else {
             String source = OpenPentahoData.selectSource(this, adProcessId);
             if (source.equals(""))
-                bdError(response, "NoSourceDefined", vars.getLanguage());
+                bdError(request, response, "NoSourceDefined", vars
+                        .getLanguage());
             else
                 printPageDataSheet(response, vars, pentahoServer, source,
                         adProcessId, userRole);

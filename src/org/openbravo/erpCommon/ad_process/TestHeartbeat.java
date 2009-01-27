@@ -47,12 +47,13 @@ public class TestHeartbeat extends HttpSecureAppServlet {
 
             String msg = Utility.messageBD(this, "HB_SUCCESS", vars
                     .getLanguage());
-            advisePopUp(response, "SUCCESS", "Heartbeat Configuration", msg);
+            advisePopUp(request, response, "SUCCESS",
+                    "Heartbeat Configuration", msg);
 
         } catch (Exception e) {
             e.printStackTrace();
-            advisePopUp(response, "ERROR", "Heartbeat Configuration", e
-                    .getMessage());
+            advisePopUp(request, response, "ERROR", "Heartbeat Configuration",
+                    e.getMessage());
         }
     }
 

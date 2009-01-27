@@ -50,7 +50,7 @@ public class ReportAcctRedirectUtility extends HttpSecureAppServlet {
             ReportAcctRedirectUtilityData[] data = ReportAcctRedirectUtilityData
                     .select(this, strTableId, strDocBaseType, vars.getClient());
             if (data == null || data.length == 0)
-                bdError(response, "RecordError", vars.getLanguage());
+                bdError(request, response, "RecordError", vars.getLanguage());
             else {
                 String inputName = "inp"
                         + Sqlc.TransformaNombreColumna(data[0].columnname);
