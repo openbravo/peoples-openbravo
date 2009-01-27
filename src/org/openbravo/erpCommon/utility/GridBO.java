@@ -41,7 +41,7 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 public class GridBO {
 
-    public void createHTMLReport(InputStream reportFile,
+    public static void createHTMLReport(InputStream reportFile,
             GridReportVO gridReportVO, OutputStream os) throws JRException,
             IOException {
         gridReportVO.setPagination(false);
@@ -56,7 +56,7 @@ public class GridBO {
 
     }
 
-    private JasperDesign createJasperDesign(InputStream reportFile,
+    private static JasperDesign createJasperDesign(InputStream reportFile,
             GridReportVO gridReportVO) throws JRException {
         JasperDesign jasperDesign = JRXmlLoader.load(reportFile);
         ReportDesignBO designBO = new ReportDesignBO(jasperDesign, gridReportVO);
@@ -64,7 +64,7 @@ public class GridBO {
         return jasperDesign;
     }
 
-    private JasperPrint createJasperPrint(InputStream reportFile,
+    private static JasperPrint createJasperPrint(InputStream reportFile,
             GridReportVO gridReportVO) throws JRException, IOException {
         JasperDesign jasperDesign = createJasperDesign(reportFile, gridReportVO);
         JasperReport jasperReport = JasperCompileManager
@@ -79,7 +79,7 @@ public class GridBO {
         return jasperPrint;
     }
 
-    public void createPDFReport(InputStream reportFile,
+    public static void createPDFReport(InputStream reportFile,
             GridReportVO gridReportVO, OutputStream os) throws JRException,
             IOException {
         gridReportVO.setPagination(false);
@@ -88,7 +88,7 @@ public class GridBO {
 
     }
 
-    public void createXLSReport(InputStream reportFile,
+    public static void createXLSReport(InputStream reportFile,
             GridReportVO gridReportVO, OutputStream os) throws JRException,
             IOException {
         gridReportVO.setPagination(true);
@@ -107,7 +107,7 @@ public class GridBO {
         exporter.exportReport();
     }
 
-    public void createCSVReport(InputStream reportFile,
+    public static void createCSVReport(InputStream reportFile,
             GridReportVO gridReportVO, OutputStream os) throws JRException,
             IOException {
         gridReportVO.setPagination(true);
@@ -122,7 +122,7 @@ public class GridBO {
         exporter.exportReport();
     }
 
-    public void createXMLReport(InputStream reportFile,
+    public static void createXMLReport(InputStream reportFile,
             GridReportVO gridReportVO, OutputStream os) throws JRException,
             IOException {
         gridReportVO.setPagination(true);

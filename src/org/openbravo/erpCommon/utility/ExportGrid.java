@@ -21,8 +21,6 @@ package org.openbravo.erpCommon.utility;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.Vector;
 
@@ -39,8 +37,6 @@ import org.openbravo.data.FieldProvider;
 
 public class ExportGrid extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;
-    private GridBO gridBO;
-    private PreparedStatement st = null;
 
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
@@ -67,30 +63,25 @@ public class ExportGrid extends HttpSecureAppServlet {
             is = getInputStream(strBaseDesign
                     + "/org/openbravo/erpCommon/utility/"
                     + gridReportVO.getJrxmlTemplate());
-            gridBO = new GridBO();
 
             if (log4j.isDebugEnabled())
                 log4j.debug("Create report, type: " + vars.getCommand());
 
             if (vars.commandIn("HTML"))
-                gridBO.createHTMLReport(is, gridReportVO, os);
+                GridBO.createHTMLReport(is, gridReportVO, os);
             else if (vars.commandIn("PDF")) {
                 response.setContentType("application/pdf");
-                gridBO.createPDFReport(is, gridReportVO, os);
+                GridBO.createPDFReport(is, gridReportVO, os);
             } else if (vars.commandIn("EXCEL")) {
                 response.setContentType("application/vnd.ms-excel");
-                gridBO.createXLSReport(is, gridReportVO, os);
+                GridBO.createXLSReport(is, gridReportVO, os);
             } else if (vars.commandIn("CSV")) {
                 response.setContentType("text/csv");
-                gridBO.createCSVReport(is, gridReportVO, os);
+                GridBO.createCSVReport(is, gridReportVO, os);
             }
         } catch (JRException e) {
             throw new ServletException(e.getMessage());
         } finally {
-            try {
-                this.releasePreparedStatement(st);
-            } catch (SQLException ex) {
-            }
             is.close();
             os.close();
         }
@@ -139,7 +130,6 @@ public class ExportGrid extends HttpSecureAppServlet {
                 // if (log4j.isDebugEnabled()) log4j.debug("SQL: " + strSQL);
                 ExecuteQuery execquery = new ExecuteQuery(this, strSQL,
                         tableSQL.getParameterValues());
-                st = this.getPreparedStatement(strSQL);
                 data = execquery.select();
             } catch (Exception e) {
                 if (log4j.isDebugEnabled())
