@@ -530,8 +530,10 @@ public class PrintController extends HttpSecureAppServlet {
             int pageOffset = 0;
             // ArrayList master = new ArrayList();
             int f = 0;
-            Report outFile = null;
             String filename = "";
+            Report outFile = null;
+            if (reports.length == 1)
+                filename = reports[0].getFilename();
             Document document = null;
             PdfCopy writer = null;
             while (f < reports.length) {
@@ -540,9 +542,9 @@ public class PrintController extends HttpSecureAppServlet {
                     filename = outFile.getFilename().substring(0,
                             outFile.getFilename().indexOf("_"))
                             + ".pdf";
-                    response.setHeader("Content-disposition", "attachment"
-                            + "; filename=" + filename);
                 }
+                response.setHeader("Content-disposition", "attachment"
+                        + "; filename=" + filename);
                 // we create a reader for a certain document
                 PdfReader reader = new PdfReader(reports[f].getTargetLocation());
                 reader.consolidateNamedDestinations();
