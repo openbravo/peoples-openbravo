@@ -293,7 +293,7 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
         Vector<Object> vectorArray = new Vector<Object>();
 
         childData(vars, vectorArray, strcAcctSchemaId, strAccountingReportId,
-                strPeriodFrom, strPeriodTo, strTreeOrg, level, "0");
+                strPeriodFrom, strPeriodTo, strTreeOrg, level, "0", strPeriod);
 
         CreateAccountingReportData[] dataTree = convertVector(vectorArray);
         dataTree = filterData(dataTree);
@@ -371,7 +371,8 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
     void childData(VariablesSecureApp vars, Vector<Object> vectorArray,
             String strcAcctSchemaId, String strAccountingReportId,
             String strPeriodFrom, String strPeriodTo, String strOrg, int level,
-            String strParent) throws IOException, ServletException {
+            String strParent, String strPeriod) throws IOException,
+            ServletException {
         if (log4j.isDebugEnabled())
             log4j.debug("**********************strAccountingReportId: "
                     + strAccountingReportId);
@@ -397,17 +398,37 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
                             "CreateAccountingReport"));
         if (log4j.isDebugEnabled())
             log4j.debug("Ouput: child tree data");
-        // CreateAccountingReportData[] dataTree = new
-        // CreateAccountingReportData[data.length];
         String strAccountId = CreateAccountingReportData.selectAccounting(this,
                 strAccountingReportId);
         if (log4j.isDebugEnabled())
             log4j.debug("**********************strAccountId: " + strAccountId);
-        CreateAccountingReportData[] data = CreateAccountingReportData.select(
-                this, strParent, String.valueOf(level), Utility.getContext(
-                        this, vars, "#User_Client", "CreateAccountingReport"),
-                        Utility.stringList(strOrg), strPeriodFrom, strPeriodTo, strAccountId,
-                strcAcctSchemaId, strAccountingReportId);
+
+        String initialBalance = CreateAccountingReportData.isInitialBalance(
+                this, strAccountingReportId);
+        if (initialBalance.equals(""))
+            initialBalance = "N";
+        String dateInitialYear = CreateAccountingReportData.dateInitialYear(
+                this, Utility.getContext(this, vars, "#User_Org",
+                        "CreateAccountingReport"), Utility.getContext(this,
+                        vars, "#User_Client", "CreateAccountingReport"),
+                strPeriod);
+        dateInitialYear = CreateAccountingReportData.selectFormat(this,
+                dateInitialYear, vars.getSqlDateFormat());
+        CreateAccountingReportData[] data;
+        if (initialBalance.equals("Y")) {
+            data = CreateAccountingReportData.selectInitial(this, strParent,
+                    String.valueOf(level), Utility.getContext(this, vars,
+                            "#User_Client", "CreateAccountingReport"), strOrg,
+                    dateInitialYear, DateTimeData.nDaysAfter(this,
+                            dateInitialYear, "1"), strAccountId,
+                    strcAcctSchemaId, strAccountingReportId);
+        } else {
+            data = CreateAccountingReportData.select(this, strParent, String
+                    .valueOf(level), Utility.getContext(this, vars,
+                    "#User_Client", "CreateAccountingReport"), Utility
+                    .stringList(strOrg), strPeriodFrom, strPeriodTo,
+                    strAccountId, strcAcctSchemaId, strAccountingReportId);
+        }
         if (data == null || data.length == 0)
             data = CreateAccountingReportData.set();
         vectorArray.addElement(data[0]);
@@ -422,7 +443,8 @@ public class CreateAccountingReport extends HttpSecureAppServlet {
                         strcAcctSchemaId);
         for (int i = 0; i < dataAux.length; i++) {
             childData(vars, vectorArray, strcAcctSchemaId, dataAux[i].id,
-                    strPeriodFrom, strPeriodTo, strOrg, level + 1, data[0].id);
+                    strPeriodFrom, strPeriodTo, strOrg, level + 1, data[0].id,
+                    strPeriod);
         }
     }
 
