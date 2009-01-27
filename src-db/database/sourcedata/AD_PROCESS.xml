@@ -2574,49 +2574,6 @@
 <!--169-->              <UIPATTERN><![CDATA[S]]></UIPATTERN>
 <!--169**************--></AD_PROCESS>
 
-<!--170**************--><AD_PROCESS>
-<!--170 AD_PROCESS_ID-->
-<!--170-->              <AD_PROCESS_ID><![CDATA[170]]></AD_PROCESS_ID>
-<!--170 AD_CLIENT_ID-->
-<!--170-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--170 AD_ORG_ID-->
-<!--170-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--170 ISACTIVE-->
-<!--170-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--170 CREATED-->
-<!--170-->              <CREATED><![CDATA[2001-10-14 15:02:47.0]]></CREATED>
-<!--170 CREATEDBY-->
-<!--170-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--170 UPDATED-->
-<!--170-->              <UPDATED><![CDATA[2003-02-22 02:19:53.0]]></UPDATED>
-<!--170 UPDATEDBY-->
-<!--170-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--170 VALUE-->
-<!--170-->              <VALUE><![CDATA[C_Cash_Detail]]></VALUE>
-<!--170 NAME-->
-<!--170-->              <NAME><![CDATA[Cash Journal Detail]]></NAME>
-<!--170 DESCRIPTION-->
-<!--170-->              <DESCRIPTION><![CDATA[Detail Cash Journal Information]]></DESCRIPTION>
-<!--170 HELP-->
-<!--170-->              <HELP><![CDATA[Detail Cash Journal Information]]></HELP>
-<!--170 ACCESSLEVEL-->
-<!--170-->              <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--170 ISUSERSTARTABLE-->
-<!--170-->              <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--170 ISREPORT-->
-<!--170-->              <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--170 ISDIRECTPRINT-->
-<!--170-->              <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--170 ISBACKGROUND-->
-<!--170-->              <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--170 ISJASPER-->
-<!--170-->              <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--170 AD_MODULE_ID-->
-<!--170-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--170 UIPATTERN-->
-<!--170-->              <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--170**************--></AD_PROCESS>
-
 <!--172**************--><AD_PROCESS>
 <!--172 AD_PROCESS_ID-->
 <!--172-->              <AD_PROCESS_ID><![CDATA[172]]></AD_PROCESS_ID>

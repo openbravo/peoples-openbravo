@@ -4178,37 +4178,6 @@
 <!--287-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--287**************--></AD_MENU>
 
-<!--288**************--><AD_MENU>
-<!--288 AD_MENU_ID-->
-<!--288-->              <AD_MENU_ID><![CDATA[288]]></AD_MENU_ID>
-<!--288 AD_CLIENT_ID-->
-<!--288-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--288 AD_ORG_ID-->
-<!--288-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--288 ISACTIVE-->
-<!--288-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--288 CREATED-->
-<!--288-->              <CREATED><![CDATA[0099-06-29 00:00:00.0]]></CREATED>
-<!--288 CREATEDBY-->
-<!--288-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--288 UPDATED-->
-<!--288-->              <UPDATED><![CDATA[2001-10-14 15:11:51.0]]></UPDATED>
-<!--288 NAME-->
-<!--288-->              <NAME><![CDATA[Cash Journal Detail]]></NAME>
-<!--288 UPDATEDBY-->
-<!--288-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
-<!--288 DESCRIPTION-->
-<!--288-->              <DESCRIPTION><![CDATA[Detail Cash Journal Information]]></DESCRIPTION>
-<!--288 ISSUMMARY-->
-<!--288-->              <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
-<!--288 ACTION-->
-<!--288-->              <ACTION><![CDATA[R]]></ACTION>
-<!--288 AD_PROCESS_ID-->
-<!--288-->              <AD_PROCESS_ID><![CDATA[170]]></AD_PROCESS_ID>
-<!--288 AD_MODULE_ID-->
-<!--288-->              <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--288**************--></AD_MENU>
-
 <!--289**************--><AD_MENU>
 <!--289 AD_MENU_ID-->
 <!--289-->              <AD_MENU_ID><![CDATA[289]]></AD_MENU_ID>

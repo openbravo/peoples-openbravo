@@ -4205,35 +4205,6 @@
 <!--800799-->              <OBJECT_TYPE><![CDATA[S]]></OBJECT_TYPE>
 <!--800799**************--></AD_MODEL_OBJECT>
 
-<!--800800**************--><AD_MODEL_OBJECT>
-<!--800800 AD_MODEL_OBJECT_ID-->
-<!--800800-->              <AD_MODEL_OBJECT_ID><![CDATA[800800]]></AD_MODEL_OBJECT_ID>
-<!--800800 AD_CLIENT_ID-->
-<!--800800-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800800 AD_ORG_ID-->
-<!--800800-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800800 ISACTIVE-->
-<!--800800-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800800 CREATED-->
-<!--800800-->              <CREATED><![CDATA[2006-05-22 17:58:47.0]]></CREATED>
-<!--800800 CREATEDBY-->
-<!--800800-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--800800 UPDATED-->
-<!--800800-->              <UPDATED><![CDATA[2006-05-22 17:58:47.0]]></UPDATED>
-<!--800800 UPDATEDBY-->
-<!--800800-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
-<!--800800 ACTION-->
-<!--800800-->              <ACTION><![CDATA[R]]></ACTION>
-<!--800800 CLASSNAME-->
-<!--800800-->              <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_reports.CashJournalDetail]]></CLASSNAME>
-<!--800800 ISDEFAULT-->
-<!--800800-->              <ISDEFAULT><![CDATA[Y]]></ISDEFAULT>
-<!--800800 AD_PROCESS_ID-->
-<!--800800-->              <AD_PROCESS_ID><![CDATA[170]]></AD_PROCESS_ID>
-<!--800800 OBJECT_TYPE-->
-<!--800800-->              <OBJECT_TYPE><![CDATA[S]]></OBJECT_TYPE>
-<!--800800**************--></AD_MODEL_OBJECT>
-
 <!--800801**************--><AD_MODEL_OBJECT>
 <!--800801 AD_MODEL_OBJECT_ID-->
 <!--800801-->              <AD_MODEL_OBJECT_ID><![CDATA[800801]]></AD_MODEL_OBJECT_ID>
