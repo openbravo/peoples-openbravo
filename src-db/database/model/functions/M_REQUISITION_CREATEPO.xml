@@ -32,8 +32,8 @@
   v_C_Order_ID VARCHAR2(32);
   v_DocumentNo NVARCHAR2(60);
   v_Line NUMBER;
-  v_Vendor_Old NUMBER;
-  v_PriceList_Old NUMBER;
+  v_Vendor_Old VARCHAR2(32);
+  v_PriceList_Old VARCHAR2(32);
   v_BPartner_Location_ID VARCHAR2(32);
   v_BillTo_ID VARCHAR2(32);
   v_Currency_ID VARCHAR2(32);
