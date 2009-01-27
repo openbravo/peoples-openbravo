@@ -109,6 +109,7 @@ public class CopyFromOrder extends HttpSecureAppServlet {
             if (!strRownum.equals("")) {
                 strRownum = Replace.replace(strRownum, "'", "");
                 StringTokenizer st = new StringTokenizer(strRownum, ",", false);
+                BigDecimal discount, priceActual, priceList, priceStd;
                 while (st.hasMoreTokens()) {
                     strRownum = st.nextToken().trim();
                     String strmProductId = vars
@@ -130,6 +131,11 @@ public class CopyFromOrder extends HttpSecureAppServlet {
                     CopyFromOrderData[] orderlineprice = CopyFromOrderData
                             .selectPrices(this, order[0].dateordered,
                                     strmProductId, order[0].mPricelistId);
+                    priceStd = new BigDecimal(CopyFromOrderData
+                            .getOffersStdPrice(this, order[0].cBpartnerId,
+                                    strLastpriceso, strmProductId,
+                                    order[0].dateordered, strQty,
+                                    order[0].mPricelistId, strKey));
                     if (orderlineprice == null || orderlineprice.length == 0) {
                         orderlineprice = CopyFromOrderData.set();
                         orderlineprice[0].pricelist = "0";
@@ -139,9 +145,12 @@ public class CopyFromOrder extends HttpSecureAppServlet {
 
                     String strPrecision = orderlineprice[0].stdprecision
                             .equals("") ? "0" : orderlineprice[0].stdprecision;
-
-                    BigDecimal discount, priceActual, priceList;
+                    String strPricePrecision = orderlineprice[0].priceprecision
+                            .equals("") ? "0"
+                            : orderlineprice[0].priceprecision;
                     int StdPrecision = Integer.valueOf(strPrecision).intValue();
+                    int PricePrecision = Integer.valueOf(strPricePrecision)
+                            .intValue();
                     priceList = (orderlineprice[0].pricelist.equals("") ? ZERO
                             : new BigDecimal(orderlineprice[0].pricelist));
                     priceActual = (strLastpriceso.equals("") ? ZERO
@@ -159,14 +168,19 @@ public class CopyFromOrder extends HttpSecureAppServlet {
                                             + Double.toString(priceActual
                                                     .doubleValue()));
                         discount = ((priceList.subtract(priceActual)).divide(
-				priceList, 12, BigDecimal.ROUND_HALF_EVEN))
-				.multiply(new BigDecimal("100")); // (PL-PA)/PL*100
+                                priceList, 12, BigDecimal.ROUND_HALF_EVEN))
+                                .multiply(new BigDecimal("100")); // (PL-PA)/PL*
+                        // 100
                     }
                     if (log4j.isDebugEnabled())
                         log4j.debug("Discount: " + discount.toString());
                     if (discount.scale() > StdPrecision)
                         discount = discount.setScale(StdPrecision,
                                 BigDecimal.ROUND_HALF_UP);
+                    if (priceStd.scale() > PricePrecision)
+                        priceStd = priceStd.setScale(PricePrecision,
+                                BigDecimal.ROUND_HALF_UP);
+
                     try {
                         CopyFromOrderData
                                 .insertCOrderline(conn, this, strCOrderlineID,
@@ -183,7 +197,8 @@ public class CopyFromOrder extends HttpSecureAppServlet {
                                         order[0].cCurrencyId,
                                         orderlineprice[0].pricelist,
                                         strLastpriceso,
-                                        orderlineprice[0].pricelimit, discount
+                                        orderlineprice[0].pricelimit, priceStd
+                                                .toString(), discount
                                                 .toString(), strcTaxId,
                                         strmAttributesetinstanceId);
                     } catch (ServletException ex) {
@@ -281,8 +296,8 @@ public class CopyFromOrder extends HttpSecureAppServlet {
         String strTotalAverage = "";
         if (total == ZERO) {
             totalAverage = (invoicing.divide(total, 12,
-		    BigDecimal.ROUND_HALF_EVEN))
-		    .multiply(new BigDecimal("100"));
+                    BigDecimal.ROUND_HALF_EVEN))
+                    .multiply(new BigDecimal("100"));
             totalAverage = totalAverage.setScale(2, BigDecimal.ROUND_HALF_UP);
             strTotalAverage = totalAverage.toPlainString();
             // int intscale = totalAverage.scale();

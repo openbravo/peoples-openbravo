@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,7 @@
     <Sql>
       <![CDATA[
         SELECT M_PRODUCT_ID, PRODUCTNAME, M_ATTRIBUTESETINSTANCE_ID, DESCRIPTION, CLASS_OFFER,
-        OFFER_NAME, PRICESTD, LASTPRICESO, C_TAX_ID, NAMETAX, C_UOM_ID, UOMSYMBOL, '0' AS QTY, '' AS PRICELIMIT, '' AS PRICELIST, '' AS STDPRECISION FROM (
+        OFFER_NAME, PRICESTD, LASTPRICESO, C_TAX_ID, NAMETAX, C_UOM_ID, UOMSYMBOL, '0' AS QTY, '' AS PRICELIMIT, '' AS PRICELIST, '' AS STDPRECISION, '' AS PRICEPRECISION FROM (
         SELECT CL.M_PRODUCT_ID AS M_PRODUCT_ID, M.NAME AS PRODUCTNAME,
         MA.M_ATTRIBUTESETINSTANCE_ID AS M_ATTRIBUTESETINSTANCE_ID, MA.DESCRIPTION AS DESCRIPTION,
         (CASE coalesce(M_GET_OFFER(TO_DATE(NOW()), ?, CL.M_PRODUCT_ID),'-1') WHEN '-1' THEN '' ELSE '' END) AS CLASS_OFFER,
@@ -96,7 +96,7 @@
     <Sql>
       <![CDATA[
         SELECT M_BOM_PRICELIST(P.M_PRODUCT_ID,PV.M_PRICELIST_VERSION_ID) AS PRICELIST,
-        M_BOM_PRICELIMIT(P.M_PRODUCT_ID,PV.M_PRICELIST_VERSION_ID) AS PRICELIMIT, CUR.STDPRECISION AS STDPRECISION
+        M_BOM_PRICELIMIT(P.M_PRODUCT_ID,PV.M_PRICELIST_VERSION_ID) AS PRICELIMIT, CUR.STDPRECISION AS STDPRECISION, CUR.PRICEPRECISION AS PRICEPRECISION
         FROM M_PRODUCT P, M_PRODUCTPRICE PP, M_PRICELIST PL, M_PRICELIST_VERSION PV, C_CURRENCY CUR  
         WHERE P.M_PRODUCT_ID=PP.M_PRODUCT_ID
         AND PP.M_PRICELIST_VERSION_ID=PV.M_PRICELIST_VERSION_ID
@@ -113,16 +113,34 @@
     <Parameter name="MProductID"/>
     <Parameter name="MPriceListID"/>
   </SqlMethod>
+  <SqlMethod name="getOffersStdPrice" type="preparedStatement" return="String" default="0">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+	  SELECT ROUND(M_GET_OFFERS_STD_PRICE(?,TO_NUMBER(?),?,TO_DATE(?), TO_NUMBER(?), ?),
+                    (SELECT PRICEPRECISION 
+                       FROM C_CURRENCY C,
+                            C_ORDER    O 
+                      WHERE C.C_CURRENCY_ID = O.C_CURRENCY_ID
+                        AND O.C_ORDER_ID = ?)) as TOTAL FROM DUAL
+	 </Sql>
+    <Parameter name="cBpartnerId"/>
+	<Parameter name="pricestd"/>
+    <Parameter name="mProductId"/>
+    <Parameter name="dateordered"/>
+    <Parameter name="qty"/>
+    <Parameter name="pricelist"/>
+    <Parameter name="orderid"/>
+  </SqlMethod>
   <SqlMethod name="insertCOrderline" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
         INSERT INTO C_ORDERLINE (C_ORDERLINE_ID, AD_CLIENT_ID, AD_ORG_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY,
         C_ORDER_ID, LINE, C_BPARTNER_ID, C_BPARTNER_LOCATION_ID, DATEORDERED, DATEPROMISED, M_PRODUCT_ID, M_WAREHOUSE_ID, C_UOM_ID,
-        QTYORDERED, C_CURRENCY_ID, PRICELIST, PRICEACTUAL, PRICELIMIT, DISCOUNT, C_TAX_ID, M_ATTRIBUTESETINSTANCE_ID) 
+        QTYORDERED, C_CURRENCY_ID, PRICELIST, PRICEACTUAL, PRICELIMIT, PRICESTD, DISCOUNT, C_TAX_ID, M_ATTRIBUTESETINSTANCE_ID) 
         VALUES (?,?,?,NOW(),?,NOW(),?,
                 ?,(SELECT (coalesce(Max(Line),0))+10 FROM C_OrderLine WHERE C_Order_id = ?),?,?,TO_DATE(?),TO_DATE(?),?,?,?,
-                TO_NUMBER(?),?,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?), TO_NUMBER(?), ?, ?)
+                TO_NUMBER(?),?,TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?),TO_NUMBER(?), ?, ?)
       ]]>
     </Sql>
     <Parameter name="cOrderlineId"/>
@@ -144,6 +162,7 @@
     <Parameter name="pricelist"/>
     <Parameter name="priceactual"/>
     <Parameter name="pricelimit"/>
+    <Parameter name="pricestd"/>
     <Parameter name="discount"/>
     <Parameter name="cTaxId"/>
     <Parameter name="mAttributesetinstanceId"/>
