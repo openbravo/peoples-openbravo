@@ -131,7 +131,7 @@
         INSERT INTO C_Order
           (C_ORDER_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
            CREATED, CREATEDBY, UPDATED, UPDATEDBY,
-           ISSOTRX, DOCUMENTNO, DOCSTATUS, DOCACTION,
+           ISSOTRX, DOCUMENTNO, DOCSTATUS, DOCACTION, PROCESSING,
            C_DOCTYPE_ID,C_DOCTYPETARGET_ID, DESCRIPTION,
            DATEORDERED, DATEACCT, C_BPARTNER_ID, BILLTO_ID,
            C_BPARTNER_LOCATION_ID, C_CURRENCY_ID, PAYMENTRULE, C_PAYMENTTERM_ID,
@@ -141,7 +141,7 @@
         VALUES
          (v_COrder_ID, v_Client_ID, v_Org_ID,'Y',
          now(), v_User_ID, now(), v_User_ID,
-         'N', v_DocumentNo,  'DR', 'CO',
+         'N', v_DocumentNo,  'DR', 'CO','N',
           v_CDocTypeID, v_CDocTypeID, v_Description,
           v_DateDoc,v_DateDoc, Cur_workproposal.C_BPartner_ID,v_BillTo_ID,
           v_BPartner_Location_ID, Cur_workproposal.C_Currency_ID, Cur_workproposal.paymentrule, Cur_workproposal.C_PAYMENTTERM_ID,
