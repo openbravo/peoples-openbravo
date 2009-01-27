@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SL
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.
+  * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -45,6 +45,7 @@
     v_Calendar_ID VARCHAR2(32);
     v_Year_Str VARCHAR(20) ;
     v_User_ID VARCHAR2(32);
+    v_year_num NUMBER;
   BEGIN
     --  Update AD_PInstance
     --  DBMS_OUTPUT.PUT_LINE('Updating PInstance - Processing');
@@ -84,6 +85,19 @@
       v_User_ID
     FROM C_Year
     WHERE C_Year_ID=v_Year_ID;
+    -- Check the format
+    DBMS_OUTPUT.PUT_LINE('Checking format') ;
+    v_ResultStr:='Year not numeric: '||v_Year_Str;
+    BEGIN
+    SELECT TO_NUMBER(v_Year_Str) INTO v_year_num FROM DUAL;
+     -- Postgres hack
+     IF (v_year_num IS NULL) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@NotValidNumber@');
+    END IF;
+    EXCEPTION
+    WHEN OTHERS THEN
+      RAISE_APPLICATION_ERROR(-20000, '@NotValidNumber@');
+    END;
     --  Start Date
     DBMS_OUTPUT.PUT_LINE('Calculating start date') ;
     v_ResultStr:='Year not numeric: '||v_Year_Str;
