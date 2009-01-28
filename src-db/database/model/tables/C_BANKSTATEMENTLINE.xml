@@ -107,6 +107,9 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_CBANKSTATEMENTLINE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_GLITEM" name="C_BANKSTATEMENTLINE_C_GLITEM">
+        <reference local="C_GLITEM_ID" foreign="C_GLITEM_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_BANKSTATEMENT" name="CBSTATEMENT_CBSTATEMENTLINE">
         <reference local="C_BANKSTATEMENT_ID" foreign="C_BANKSTATEMENT_ID"/>
       </foreign-key>

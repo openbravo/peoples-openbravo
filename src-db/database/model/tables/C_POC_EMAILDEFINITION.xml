@@ -59,6 +59,9 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_C_POC_EMA_MAILDEFINITION">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_LANGUAGE" name="C_PC_EMAILDFNTN_D_LNGG">
+        <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
+      </foreign-key>
       <foreign-key foreignTable="C_POC_DOCTYPE_TEMPLATE" name="CPOCDOCTYPETEM_CPOC_EMAILDEF">
         <reference local="C_POC_DOCTYPE_TEMPLATE_ID" foreign="C_POC_DOCTYPE_TEMPLATE_ID"/>
       </foreign-key>

@@ -63,6 +63,9 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_CSALESREGION">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="C_SALESREGION_AD_USER">
+        <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
       <unique name="C_SALESREGION_VALUE">
         <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="VALUE"/>

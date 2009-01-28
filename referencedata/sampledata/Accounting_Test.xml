@@ -26080,7 +26080,7 @@
     <isActive>true</isActive>
     <id>1000047</id>
   </MaterialMgmtStorageDetail>
-  <MaterialMgmtStoragePending id="1000020" identifier="MaterialMgmtStoragePending (1000020)">
+  <MaterialMgmtStoragePending id="1000020" identifier="Standard Standard  0 0">
     <product id="1000064" entity-name="Product" identifier="Standard"/>
     <warehouse id="1000002" entity-name="Warehouse" identifier="Standard"/>
     <attributeSetInstance id="0" entity-name="AttributeSetInstance" identifier=""/>
@@ -26095,7 +26095,7 @@
     <isActive>true</isActive>
     <id>1000020</id>
   </MaterialMgmtStoragePending>
-  <MaterialMgmtCosting id="1000089" identifier="MaterialMgmtCosting (1000089)">
+  <MaterialMgmtCosting id="1000089" identifier="Standard 2000-01-01 00:00:00.0">
     <id>1000089</id>
     <client id="1000001" entity-name="ADClient" identifier="Accounting Test"/>
     <organization id="0" entity-name="Organization" identifier="*"/>
@@ -26114,7 +26114,7 @@
     <productionLine/>
     <isproduction>false</isproduction>
   </MaterialMgmtCosting>
-  <FinancialMgmtAssetGroupAcct id="52118BF1B0634D84E040007F01005FEC" identifier="FinancialMgmtAssetGroupAcct (52118BF1B0634D84E040007F01005FEC)">
+  <FinancialMgmtAssetGroupAcct id="52118BF1B0634D84E040007F01005FEC" identifier="Standard Accounting Test US/A/US Dollar">
     <id>52118BF1B0634D84E040007F01005FEC</id>
     <assetGroup id="1000004" entity-name="FinancialMgmtAssetGroup" identifier="Standard"/>
     <accountSchema id="1000001" entity-name="FinancialMgmtAcctSchema" identifier="Accounting Test US/A/US Dollar"/>
@@ -26190,7 +26190,7 @@
     <description/>
     <line>20.0</line>
   </FinancialMgmtAcctRptGroup>
-  <OrganizationAcctSchema id="5AEDC6F79ADDDDC0E040007F010138DD" identifier="OrganizationAcctSchema (5AEDC6F79ADDDDC0E040007F010138DD)">
+  <OrganizationAcctSchema id="5AEDC6F79ADDDDC0E040007F010138DD" identifier="Accounting Test Org Accounting Test US/A/US Dollar">
     <id>5AEDC6F79ADDDDC0E040007F010138DD</id>
     <client id="1000001" entity-name="ADClient" identifier="Accounting Test"/>
     <organization id="1000001" entity-name="Organization" identifier="Accounting Test Org"/>

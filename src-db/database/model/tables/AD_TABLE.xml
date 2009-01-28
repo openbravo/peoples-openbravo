@@ -108,6 +108,9 @@
       <foreign-key foreignTable="AD_PACKAGE" name="AD_PACKAGE_TABLE">
         <reference local="AD_PACKAGE_ID" foreign="AD_PACKAGE_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_WINDOW" name="AD_TABLE_AD_WINDOW">
+        <reference local="PO_WINDOW_ID" foreign="AD_WINDOW_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_WINDOW" name="AD_WINDOW_TABLE" onDelete="setnull">
         <reference local="AD_WINDOW_ID" foreign="AD_WINDOW_ID"/>
       </foreign-key>

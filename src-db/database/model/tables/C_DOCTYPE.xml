@@ -113,6 +113,9 @@
       <foreign-key foreignTable="AD_TABLE" name="ADTABLE_CDOCTYPE">
         <reference local="AD_TABLE_ID" foreign="AD_TABLE_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_DOCTYPE" name="C_DOCTYPE_C_DOCTYPE">
+        <reference local="C_DOCTYPE_REVERSED_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_DOCTYPE" name="CDOCTYPE_INVOICE">
         <reference local="C_DOCTYPEINVOICE_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>

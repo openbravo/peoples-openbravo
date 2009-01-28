@@ -386,6 +386,12 @@ public class Property {
 	}
 
 	if (defaultValue != null && isPrimitive()) {
+	    // strip the ' and ;
+	    if (defaultValue.startsWith("'") && defaultValue.endsWith("'")) {
+		defaultValue = defaultValue.substring(1,
+			defaultValue.length() - 1);
+	    }
+
 	    if (defaultValue.startsWith("@")) {
 		return null;
 	    }

@@ -37,6 +37,7 @@ import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.TextInterface;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.ui.Workflow;
+import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
 
 /**
  * Validates modules, their dependencies and licenses
@@ -69,7 +70,8 @@ public class ModuleValidator implements SystemValidator {
 	modules.add(Expression.eq(Module.PROPERTY_NAME, moduleName));
 
 	if (modules.list().size() == 0) {
-	    result.getErrors().add("Module " + moduleName + " does not exist");
+	    result.addError(SystemValidationType.MODULE_ERROR, "Module "
+		    + moduleName + " does not exist");
 	    return result;
 	}
 	final Module module = modules.list().get(0);
@@ -84,7 +86,8 @@ public class ModuleValidator implements SystemValidator {
 	final Module module = OBDal.getInstance().get(Module.class, moduleId);
 
 	if (module == null) {
-	    result.getErrors().add("Module " + moduleId + " does not exist");
+	    result.addError(SystemValidationType.MODULE_ERROR, "Module "
+		    + moduleId + " does not exist");
 	    return result;
 	}
 
@@ -102,9 +105,10 @@ public class ModuleValidator implements SystemValidator {
 
 	final File moduleDir = new File(modulesDir, module.getJavaPackage());
 	if (!moduleDir.exists()) {
-	    result.getErrors().add(
-		    "Module directory (" + moduleDir.getAbsolutePath()
-			    + ") not found, has the module been installed?");
+	    result.addError(SystemValidationType.MODULE_ERROR,
+
+	    "Module directory (" + moduleDir.getAbsolutePath()
+		    + ") not found, has the module been installed?");
 	    return;
 	}
 
@@ -118,11 +122,12 @@ public class ModuleValidator implements SystemValidator {
 	checkHasUIArtifact(module, result);
 
 	if (module.getLicense() == null || module.getLicenseType() == null) {
-	    result.getErrors().add(
-		    "The license and/or the licenseType of the Module "
-			    + module.getName()
-			    + " are not set, before exporting these "
-			    + "fields should be set");
+	    result.addError(SystemValidationType.MODULE_ERROR,
+
+	    "The license and/or the licenseType of the Module "
+		    + module.getName()
+		    + " are not set, before exporting these "
+		    + "fields should be set");
 	}
 
 	// industry template
@@ -135,11 +140,11 @@ public class ModuleValidator implements SystemValidator {
 		}
 	    }
 	    if (!found) {
-		result.getErrors().add(
-			"Module " + module.getName()
-				+ " is an Industry Template must depend "
-				+ "on Core and the dependency relation "
-				+ "must have isIncluded set to true");
+		result.addError(SystemValidationType.MODULE_ERROR, "Module "
+			+ module.getName()
+			+ " is an Industry Template must depend "
+			+ "on Core and the dependency relation "
+			+ "must have isIncluded set to true");
 	    }
 	}
     }
@@ -155,7 +160,7 @@ public class ModuleValidator implements SystemValidator {
 	for (String part : paths) {
 	    final File partDir = new File(curDir, part);
 	    if (!partDir.exists()) {
-		result.getErrors().add(
+		result.addError(SystemValidationType.MODULE_ERROR,
 			"The source directory of the Module "
 				+ module.getName()
 				+ " is invalid, it should follow the "
@@ -163,8 +168,8 @@ public class ModuleValidator implements SystemValidator {
 	    }
 	    if (curDir.listFiles().length > 1) {
 		result
-			.getErrors()
-			.add(
+			.addError(
+				SystemValidationType.MODULE_ERROR,
 				"The source directory of the Module "
 					+ module.getName()
 					+ " is invalid, it contains directories "
@@ -191,8 +196,8 @@ public class ModuleValidator implements SystemValidator {
 		|| hasArtifact(Workflow.class, module);
 	if (reportError) {
 	    result
-		    .getErrors()
-		    .add(
+		    .addError(
+			    SystemValidationType.MODULE_ERROR,
 			    "Module "
 				    + module.getName()
 				    + " has UI Artifacts, "
@@ -214,7 +219,7 @@ public class ModuleValidator implements SystemValidator {
 		    .getDependentModule(), module.getId());
 	    if (dependentModule != null) {
 		if (dependentModule.getId().equals(module.getId())) {
-		    result.getErrors().add(
+		    result.addError(SystemValidationType.MODULE_ERROR,
 			    "Cycle in module dependencies with module "
 				    + module.getName());
 		    coreModuleFound = true; // prevents additional message
@@ -227,9 +232,9 @@ public class ModuleValidator implements SystemValidator {
 	    }
 	}
 	if (!coreModuleFound) {
-	    result.getErrors().add(
-		    "Module " + module.getName() + " or any of its ancestors "
-			    + "does not depend on the Core module.");
+	    result.addError(SystemValidationType.MODULE_ERROR, "Module "
+		    + module.getName() + " or any of its ancestors "
+		    + "does not depend on the Core module.");
 	}
 
     }
@@ -239,8 +244,8 @@ public class ModuleValidator implements SystemValidator {
 		.getPackageList()) {
 	    if (!pckg.getJavaPackage().startsWith(module.getJavaPackage())) {
 		result
-			.getErrors()
-			.add(
+			.addError(
+				SystemValidationType.MODULE_ERROR,
 				"Data package "
 					+ pckg.getName()
 					+ " has a java package which is not within the java package of its module "

@@ -227,6 +227,9 @@
       <foreign-key foreignTable="C_BPARTNER_LOCATION" name="C_BPLOCATION_CINVOICE">
         <reference local="C_BPARTNER_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_WITHHOLDING" name="C_INVOICE_C_WITHHOLDING">
+        <reference local="C_WITHHOLDING_ID" foreign="C_WITHHOLDING_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_ACTIVITY" name="CACTIVITY_CINVOICE">
         <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>
       </foreign-key>

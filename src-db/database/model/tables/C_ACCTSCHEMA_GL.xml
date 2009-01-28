@@ -91,6 +91,9 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_CACCTSCHEMAGL">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_VALIDCOMBINATION" name="C_ACCTSCHM_GL_C_VLDCMBNTN">
+        <reference local="CFS_ORDER_ACCT" foreign="C_VALIDCOMBINATION_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_ACCTSCHEMA" name="CACCTSCHEMA_CACCTSCHEMAGL" onDelete="cascade">
         <reference local="C_ACCTSCHEMA_ID" foreign="C_ACCTSCHEMA_ID"/>
       </foreign-key>

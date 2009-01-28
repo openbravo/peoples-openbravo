@@ -19,9 +19,12 @@
 
 package org.openbravo.service.system;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.service.db.ReferenceDataTask;
+import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
 
 /**
  * Performs different types of validations on the basis of the type parameter.
@@ -40,39 +43,61 @@ public class SystemValidationTask extends ReferenceDataTask {
 	if (getType().contains("database")) {
 	    log.info("Validating Database and Application Dictionary");
 	    final DatabaseValidator databaseValidator = new DatabaseValidator();
-	    printResult(databaseValidator.validate());
+	    final SystemValidationResult result = databaseValidator.validate();
+	    if (result.getErrors().isEmpty() && result.getWarnings().isEmpty()) {
+		log.warn("Validation successfull no warnings or errors");
+	    } else {
+		printResult(result);
+	    }
 	}
 	if (getType().contains("module")) {
 	    log.info("Validating Modules");
 	    final ModuleValidator moduleValidator = new ModuleValidator();
+	    final SystemValidationResult result;
 	    if (getModuleName() != null) {
-		printResult(moduleValidator.validate(getModuleName()));
+		result = moduleValidator.validate(getModuleName());
 	    } else {
-		printResult(moduleValidator.validate());
+		result = moduleValidator.validate();
+	    }
+	    if (result.getErrors().isEmpty() && result.getWarnings().isEmpty()) {
+		log.warn("Validation successfull no warnings or errors");
+	    } else {
+		printResult(result);
 	    }
 	}
     }
 
     private void printResult(SystemValidationResult result) {
-	for (String warning : result.getWarnings()) {
-	    log.warn(warning);
+	for (SystemValidationType validationType : result.getWarnings()
+		.keySet()) {
+	    log.warn("\n");
+	    log.warn("+++++++++++++++++++++++++++++++++++++++++++++++++++");
+	    log.warn("Warnings for Validation type: " + validationType);
+	    log.warn("+++++++++++++++++++++++++++++++++++++++++++++++++++");
+	    final List<String> warnings = result.getWarnings().get(
+		    validationType);
+	    for (String warning : warnings) {
+		log.warn(warning);
+	    }
 	}
 
-	if (isFailOnError()) {
-	    final StringBuilder sb = new StringBuilder();
-	    for (String err : result.getErrors()) {
+	final StringBuilder sb = new StringBuilder();
+	for (SystemValidationType validationType : result.getErrors().keySet()) {
+	    sb.append("\n");
+	    sb.append("+++++++++++++++++++++++++++++++++++++++++++++++++++");
+	    sb.append("Errors for Validation type: " + validationType);
+	    sb.append("+++++++++++++++++++++++++++++++++++++++++++++++++++");
+	    final List<String> errors = result.getErrors().get(validationType);
+	    for (String err : errors) {
 		sb.append(err);
 		if (sb.length() > 0) {
 		    sb.append("\n");
 		}
 	    }
-	    if (sb.length() > 0) {
-		throw new OBException(sb.toString());
-	    }
-	} else {
-	    for (String err : result.getErrors()) {
-		log.error(err);
-	    }
+	}
+	log.error(sb.toString());
+	if (failOnError) {
+	    throw new OBException(sb.toString());
 	}
     }
 

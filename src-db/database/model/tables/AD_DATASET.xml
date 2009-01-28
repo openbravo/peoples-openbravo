@@ -61,6 +61,9 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault><![CDATA[Y]]></onCreateDefault>
       </column>
+      <foreign-key foreignTable="AD_MODULE" name="AD_DATASET_AD_MODULE">
+        <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="CLIENT_ADDATASET">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>

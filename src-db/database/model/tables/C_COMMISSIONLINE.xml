@@ -99,6 +99,9 @@
       <foreign-key foreignTable="AD_ORG" name="ADORGTRX_CCOMMISSIONLINE">
         <reference local="ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="C_COMMISSIONLINE_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_CCOMMISSIONLINE">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>

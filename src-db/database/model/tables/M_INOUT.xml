@@ -278,6 +278,9 @@
       <foreign-key foreignTable="M_FREIGHTCATEGORY" name="M_FREIGHTCATEGORY_M_INOUT">
         <reference local="M_FREIGHTCATEGORY_ID" foreign="M_FREIGHTCATEGORY_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER_LOCATION" name="M_INOUT_C_BPARTNER_LOCATION">
+        <reference local="DELIVERY_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="M_SHIPPER" name="MSHIPPER_MINOUT">
         <reference local="M_SHIPPER_ID" foreign="M_SHIPPER_ID"/>
       </foreign-key>

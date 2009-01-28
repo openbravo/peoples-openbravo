@@ -163,6 +163,9 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_CDEBTPAYMENT">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_WITHHOLDING" name="C_DEBT_PAYMENT_C_WITHHOLDING">
+        <reference local="C_WITHHOLDING_ID" foreign="C_WITHHOLDING_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_BANKACCOUNT" name="CBANKACCOUNT_CDEBTPAYMENT">
         <reference local="C_BANKACCOUNT_ID" foreign="C_BANKACCOUNT_ID"/>
       </foreign-key>

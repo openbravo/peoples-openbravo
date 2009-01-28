@@ -95,6 +95,9 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_CCASHLINE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_GLITEM" name="C_CASHLINE_C_GLITEM">
+        <reference local="C_GLITEM_ID" foreign="C_GLITEM_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_CASH" name="CCASH_CCASHLINE" onDelete="cascade">
         <reference local="C_CASH_ID" foreign="C_CASH_ID"/>
       </foreign-key>

@@ -59,6 +59,9 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_CACCTRPTNODE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_ELEMENTVALUE" name="C_ACCT_RPT_NODE_C_ELEMENTVALUE">
+        <reference local="C_ELEMENTVALUE_ID" foreign="C_ELEMENTVALUE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_ACCT_RPT_GROUP" name="CACCTRPTGROUP_CACCTRPTNODE">
         <reference local="C_ACCT_RPT_GROUP_ID" foreign="C_ACCT_RPT_GROUP_ID"/>
       </foreign-key>

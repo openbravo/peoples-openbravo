@@ -295,6 +295,15 @@
       <foreign-key foreignTable="C_UOM" name="CUOM_MPRODUCT">
         <reference local="C_UOM_ID" foreign="C_UOM_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="M_PRODUCT_AD_USER">
+        <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="MRP_PLANNER" name="M_PRODUCT_MRP_PLANNER">
+        <reference local="MRP_PLANNER_ID" foreign="MRP_PLANNER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="MRP_PLANNINGMETHOD" name="M_PRODUCT_MRP_PLANNINGMETHOD">
+        <reference local="MRP_PLANNINGMETHOD_ID" foreign="MRP_PLANNINGMETHOD_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="MA_PROCESSPLAN" name="MA_PROCESSPLAN_MPRODUCT">
         <reference local="MA_PROCESSPLAN_ID" foreign="MA_PROCESSPLAN_ID"/>
       </foreign-key>

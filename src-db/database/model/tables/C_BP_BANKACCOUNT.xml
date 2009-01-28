@@ -142,6 +142,9 @@
       <foreign-key foreignTable="AD_USER" name="ADUSER_CBPBANKACCOUNT">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_COUNTRY" name="C_BP_BANKACCOUNT_C_COUNTRY">
+        <reference local="C_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="CBPARTNER_CBPBANKACCOUNT" onDelete="cascade">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
       </foreign-key>

@@ -20,7 +20,9 @@
 package org.openbravo.service.system;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Keeps track of the errors/warnings for a certain type of validation.
@@ -29,23 +31,73 @@ import java.util.List;
  */
 public class SystemValidationResult {
 
-    private List<String> warnings = new ArrayList<String>();
-    private List<String> errors = new ArrayList<String>();
-    private String category;
+    public enum SystemValidationType {
+	MODULE_ERROR, INCORRECT_DEFAULT_VALUE, WRONG_LENGTH, NO_PRIMARY_KEY_COLUMNS, NOT_NULL_IN_DB_NOT_MANDATORY_IN_AD, MANDATORY_IN_AD_NULLABLE_IN_DB, NOT_EXIST_IN_AD, NOT_EXIST_IN_DB, NOT_PART_OF_FOREIGN_KEY, WRONG_TYPE;
 
-    public List<String> getWarnings() {
-        return warnings;
+	public String getName() {
+	    return this.getClass().getSimpleName();
+	}
     }
 
-    public List<String> getErrors() {
-        return errors;
+    private Map<SystemValidationType, List<String>> warnings = new HashMap<SystemValidationType, List<String>>();
+    private Map<SystemValidationType, List<String>> errors = new HashMap<SystemValidationType, List<String>>();
+
+    private String category;
+
+    /**
+     * Adds a warning to the result for a specific validation type.
+     * 
+     * @param validationType
+     *            the type of warning
+     * @param warning
+     *            the message itself
+     */
+    public void addWarning(SystemValidationType validationType, String warning) {
+	addToResult(warnings, validationType, warning);
+    }
+
+    /**
+     * Adds an error message to the result.
+     * 
+     * @param validationType
+     *            the type of message
+     * @param error
+     *            the message text
+     */
+    public void addError(SystemValidationType validationType, String error) {
+	addToResult(errors, validationType, error);
+    }
+
+    private void addToResult(Map<SystemValidationType, List<String>> result,
+	    SystemValidationType validationType, String msg) {
+
+	List<String> msgList = result.get(validationType);
+	if (msgList == null) {
+	    msgList = new ArrayList<String>();
+	    result.put(validationType, msgList);
+	}
+	msgList.add(msg);
+    }
+
+    /**
+     * @return Returns the list of error messages by validationType.
+     */
+    public Map<SystemValidationType, List<String>> getErrors() {
+	return errors;
+    }
+
+    /**
+     * @return Returns the list of warning messages by validationType.
+     */
+    public Map<SystemValidationType, List<String>> getWarnings() {
+	return warnings;
     }
 
     public String getCategory() {
-        return category;
+	return category;
     }
 
     public void setCategory(String category) {
-        this.category = category;
+	this.category = category;
     }
 }

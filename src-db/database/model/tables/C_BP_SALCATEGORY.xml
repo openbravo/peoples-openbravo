@@ -51,6 +51,9 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_CBPEMSALCATEG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="C_BP_SALCATEGORY_C_BPARTNER">
+        <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_SALARY_CATEGORY" name="CSALARYCAT_CBPEMSALCATEG">
         <reference local="C_SALARY_CATEGORY_ID" foreign="C_SALARY_CATEGORY_ID"/>
       </foreign-key>

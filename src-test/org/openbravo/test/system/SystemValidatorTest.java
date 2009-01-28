@@ -19,11 +19,13 @@
 
 package org.openbravo.test.system;
 
+import java.util.List;
 import java.util.Map;
 
 import org.openbravo.service.system.ApplicationDictionaryValidator;
 import org.openbravo.service.system.ModuleValidator;
 import org.openbravo.service.system.SystemValidationResult;
+import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
 import org.openbravo.test.base.BaseTest;
 
 /**
@@ -48,13 +50,7 @@ public class SystemValidatorTest extends BaseTest {
 	    System.err
 		    .println("++++++++++++++++++++++++++++++++++++++++++++++++++");
 	    final SystemValidationResult result = results.get(key);
-	    for (String warning : result.getWarnings()) {
-		System.err.println("Warning: " + warning);
-	    }
-	    System.err.println("------------------------------------");
-	    for (String error : result.getErrors()) {
-		System.err.println("Error: " + error);
-	    }
+	    printResult(result);
 	}
 	setErrorOccured(false);
     }
@@ -64,13 +60,40 @@ public class SystemValidatorTest extends BaseTest {
 	setUserContext("0");
 	final ModuleValidator moduleValidator = new ModuleValidator();
 	final SystemValidationResult result = moduleValidator.validate();
-
-	for (String warning : result.getWarnings()) {
-	    System.err.println("Warning: " + warning);
-	}
-	for (String error : result.getErrors()) {
-	    System.err.println("Error: " + error);
-	}
+	printResult(result);
 	setErrorOccured(false);
     }
+
+    private void printResult(SystemValidationResult result) {
+	for (SystemValidationType validationType : result.getWarnings()
+		.keySet()) {
+	    System.err
+		    .println("\n+++++++++++++++++++++++++++++++++++++++++++++++++++");
+	    System.err.println("Warnings for Validation type: "
+		    + validationType);
+	    System.err
+		    .println("\n+++++++++++++++++++++++++++++++++++++++++++++++++++");
+	    final List<String> warnings = result.getWarnings().get(
+		    validationType);
+	    for (String warning : warnings) {
+		System.err.println(warning);
+	    }
+	}
+
+	final StringBuilder sb = new StringBuilder();
+	for (SystemValidationType validationType : result.getErrors().keySet()) {
+	    sb.append("\n+++++++++++++++++++++++++++++++++++++++++++++++++++");
+	    sb.append("Errors for Validation type: " + validationType);
+	    sb.append("\n+++++++++++++++++++++++++++++++++++++++++++++++++++");
+	    final List<String> errors = result.getErrors().get(validationType);
+	    for (String err : errors) {
+		sb.append(err);
+		if (sb.length() > 0) {
+		    sb.append("\n");
+		}
+	    }
+	}
+	System.err.println(sb.toString());
+    }
+
 }

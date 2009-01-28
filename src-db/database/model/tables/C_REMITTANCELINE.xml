@@ -59,6 +59,9 @@
       <foreign-key foreignTable="AD_ORG" name="ADORG_CREMITTANCELINE">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_REMITTANCE" name="C_REMITTANCELINE_C_REMITTANCE">
+        <reference local="C_REMITTANCE_ID" foreign="C_REMITTANCE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_DEBT_PAYMENT" name="CDEBTPAYMENT_CREMITTANCELINE">
         <reference local="C_DEBT_PAYMENT_ID" foreign="C_DEBT_PAYMENT_ID"/>
       </foreign-key>

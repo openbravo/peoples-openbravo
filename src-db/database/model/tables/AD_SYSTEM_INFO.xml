@@ -97,6 +97,12 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <foreign-key foreignTable="AD_CLIENT" name="AD_SYSTEM_INFO_AD_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="AD_SYSTEM_INFO_AD_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
       <check name="ADSYSTEMINFO_CUSTOMALLOW_CHECK"><![CDATA[CUSTOMIZATION_ALLOWED IN ('Y', 'N')]]></check>
     </table>
   </database>

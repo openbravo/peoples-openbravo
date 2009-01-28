@@ -316,6 +316,9 @@
       <foreign-key foreignTable="C_BP_TAXCATEGORY" name="BP_CBPTAXCATEGORYSO">
         <reference local="SO_BP_TAXCATEGORY_ID" foreign="C_BP_TAXCATEGORY_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_BPARTNER" name="C_BPARTNER_C_BPARTNER">
+        <reference local="SALESREP_ID" foreign="C_BPARTNER_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_SALARY_CATEGORY" name="C_SALARY_CATEGORY_CBPARTNER">
         <reference local="C_SALARY_CATEGORY_ID" foreign="C_SALARY_CATEGORY_ID"/>
       </foreign-key>
