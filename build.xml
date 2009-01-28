@@ -286,7 +286,7 @@ compare.database.structure: refer to compare.database.structure target of databa
 		<ant dir="${base.src}" target="export.sample.data" inheritAll="true" inheritRefs="true" />
 	</target>
 
-	<target name="import.sample.data">
+	<target name="import.sample.data" depends="code.rev">
 		<ant dir="${base.src}" target="import.sample.data" inheritAll="true" inheritRefs="true" />
 	</target>
 
