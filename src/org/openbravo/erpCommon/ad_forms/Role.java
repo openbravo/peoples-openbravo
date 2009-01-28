@@ -45,7 +45,6 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class Role extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;
-    private String strIsRTL = "";
 
     public void init(ServletConfig config) {
         super.init(config);
@@ -140,7 +139,7 @@ public class Role extends HttpSecureAppServlet {
         String strOrg = vars.getStringParameter("organization");
         String strWarehouse = vars.getStringParameter("warehouse");
 
-        strIsRTL = RoleData.getIsRTL(this, strLanguage);
+        final String strIsRTL = RoleData.getIsRTL(this, strLanguage);
         if (strIsRTL.equals("Y")) {
             vars.setSessionValue("#TextDirection", "RTL");
         } else {
@@ -175,6 +174,10 @@ public class Role extends HttpSecureAppServlet {
     private void printPage(HttpServletResponse response,
             VariablesSecureApp vars, boolean bSaveOK) throws IOException,
             ServletException {
+
+        final String strIsRTL = RoleData.getIsRTL(this, vars
+                .getStringParameter("language"));
+
         XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
                 "org/openbravo/erpCommon/ad_forms/Role").createXmlDocument();
         xmlDocument.setParameter("directory", "var baseDirectory = \""
