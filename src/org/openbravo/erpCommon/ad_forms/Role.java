@@ -175,8 +175,7 @@ public class Role extends HttpSecureAppServlet {
             VariablesSecureApp vars, boolean bSaveOK) throws IOException,
             ServletException {
 
-        final String strIsRTL = RoleData.getIsRTL(this, vars
-                .getStringParameter("language"));
+        final String strIsRTL = RoleData.getIsRTL(this, vars.getLanguage());
 
         XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
                 "org/openbravo/erpCommon/ad_forms/Role").createXmlDocument();
