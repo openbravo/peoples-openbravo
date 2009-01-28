@@ -1639,7 +1639,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
             else
                 IsDocNoControlled = "Y";
             if (DocBaseType.startsWith("AR") || DocBaseType.equals("MMS")
-                    || DocBaseType.equals("SOO") || DocBaseType.equals("STM"))
+                    || DocBaseType.equals("SOO") || DocBaseType.equals("STT"))
                 IsSOTrx = "Y";
             else
                 IsSOTrx = "N";
