@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -63,9 +63,9 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
   protected static final String defaultTabView = "<PARAMETER_TMP id="defaultView">RELATION</PARAMETER_TMP>";
   protected static final int accesslevel = <PARAMETER_TMP id="accessLevel">xx</PARAMETER_TMP>;
   protected static final double SUBTABS_COL_SIZE = 15;
-  protected TableSQLData tableSQL = null;
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
+    TableSQLData tableSQL = null;
     VariablesSecureApp vars = new VariablesSecureApp(request);
     Boolean saveRequest = (Boolean) request.getAttribute("autosave");
     
@@ -118,17 +118,17 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         strView = defaultTabView;
 <PARAMETERS_TMP id="NothasReference">
         if (strView.equals("EDIT")) {
-<PARAMETERS_TMP id="sectionNotIsHighVolume">          if (str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = firstElement(vars);
+<PARAMETERS_TMP id="sectionNotIsHighVolume">          if (str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = firstElement(vars, tableSQL);
           if (str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) strView = "RELATION";</PARAMETERS_TMP>
         }</PARAMETERS_TMP>
       }
       if (strView.equals("EDIT")) 
 <PARAMETERS_TMP id="NothasReference">
-        printPageEdit(response, request, vars, false, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
+        printPageEdit(response, request, vars, false, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, tableSQL);
 </PARAMETERS_TMP><PARAMETERS_TMP id="hasReference">
         response.sendRedirect(strDireccion + "<PARAMETER_TMP id="paramEditReference">xx</PARAMETER_TMP>");
 </PARAMETERS_TMP>
-      else printPageDataSheet(response, vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>);
+      else printPageDataSheet(response, vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>, tableSQL);
     } else if (vars.commandIn("DIRECT")) {
       String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getStringParameter("inpDirectKey");
       
@@ -149,7 +149,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
 </PARAMETER_TMP>
       vars.setSessionValue(tabId + "|<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>.view", "EDIT");
 <PARAMETERS_TMP id="NothasReference">
-      printPageEdit(response, request, vars, false, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
+      printPageEdit(response, request, vars, false, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, tableSQL);
 </PARAMETERS_TMP><PARAMETERS_TMP id="hasReference">
         response.sendRedirect(strDireccion + "<PARAMETER_TMP id="paramEditReference">xx</PARAMETER_TMP>");
 </PARAMETERS_TMP>
@@ -164,18 +164,18 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       if (strView.equals("")) {
         strView = defaultTabView;
         if (strView.equals("EDIT")) {
-<PARAMETERS_TMP id="sectionNotIsHighVolume">          str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = firstElement(vars);
+<PARAMETERS_TMP id="sectionNotIsHighVolume">          str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = firstElement(vars, tableSQL);
           if (str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) strView = "RELATION";</PARAMETERS_TMP>
         }
       }
       if (strView.equals("EDIT")) {
 <PARAMETERS_TMP id="NothasReference">
-        if (str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = firstElement(vars);
-        printPageEdit(response, request, vars, false, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
+        if (str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = firstElement(vars, tableSQL);
+        printPageEdit(response, request, vars, false, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, tableSQL);
 </PARAMETERS_TMP><PARAMETERS_TMP id="hasReference">
         response.sendRedirect(strDireccion + "<PARAMETER_TMP id="paramEditReference">xx</PARAMETER_TMP>");
 </PARAMETERS_TMP>
-      } else printPageDataSheet(response, vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, "");
+      } else printPageDataSheet(response, vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, "", tableSQL);
 <FIELDS_TMP id="sectionIsHighVolume4">    } else if (vars.commandIn("SEARCH")) {
 <PARAMETER_TMP id="sectionIsHighVolume5">vars.getRequestGlobalVariable("inpParam<FIELD_TMP id="searchName5">xx</FIELD_TMP>", tabId + "|param<FIELD_TMP id="searchName5">xx</FIELD_TMP>");
 </PARAMETER_TMP>
@@ -189,7 +189,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       if (strView.equals("")) strView=defaultTabView;
 <PARAMETERS_TMP id="NothasReference">
       if (strView.equals("EDIT")) {
-        str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = firstElement(vars);
+        str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = firstElement(vars, tableSQL);
         if (str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) {
           // filter returns empty set
           strView = "RELATION";
@@ -200,23 +200,23 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
 </PARAMETERS_TMP>
       if (strView.equals("EDIT")) 
 <PARAMETERS_TMP id="NothasReference">
-        printPageEdit(response, request, vars, false, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
+        printPageEdit(response, request, vars, false, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, tableSQL);
 </PARAMETERS_TMP><PARAMETERS_TMP id="hasReference">
         response.sendRedirect(strDireccion + "<PARAMETER_TMP id="paramEditReference">xx</PARAMETER_TMP>");
 </PARAMETERS_TMP>
-      else printPageDataSheet(response, vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>);</FIELDS_TMP>
+      else printPageDataSheet(response, vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>, tableSQL);</FIELDS_TMP>
     } else if (vars.commandIn("RELATION")) {
       <PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
       </PARAMETER_TMP>
 
       String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getGlobalVariable("inp<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>", windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", "");
       vars.setSessionValue(tabId + "|<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>.view", "RELATION");
-      printPageDataSheet(response, vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>);
+      printPageDataSheet(response, vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>, tableSQL);
     } else if (vars.commandIn("NEW")) {
 <PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
 </PARAMETER_TMP>
 <PARAMETERS_TMP id="NothasReference">
-      printPageEdit(response, request, vars, true, ""<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
+      printPageEdit(response, request, vars, true, ""<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, tableSQL);
 </PARAMETERS_TMP><PARAMETERS_TMP id="hasReference">
       response.sendRedirect(strDireccion + "<PARAMETER_TMP id="paramEditReference">xx</PARAMETER_TMP>?Command=NEW");
 </PARAMETERS_TMP>
@@ -228,7 +228,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       vars.setSessionValue(tabId + "|<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>.view", "EDIT");
 <PARAMETERS_TMP id="NothasReference">
       setHistoryCommand(request, "EDIT");
-      printPageEdit(response, request, vars, false, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
+      printPageEdit(response, request, vars, false, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, tableSQL);
 </PARAMETERS_TMP><PARAMETERS_TMP id="hasReference">
       response.sendRedirect(strDireccion + "<PARAMETER_TMP id="paramEditReference">xx</PARAMETER_TMP>?Command=EDIT");
 </PARAMETERS_TMP>
@@ -236,16 +236,16 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
 <PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");</PARAMETER_TMP>
       String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getRequiredStringParameter("inp<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>");
       
-      String strNext = nextElement(vars, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>);
+      String strNext = nextElement(vars, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>, tableSQL);
 
-      printPageEdit(response, request, vars, false, strNext<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
+      printPageEdit(response, request, vars, false, strNext<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, tableSQL);
     } else if (vars.commandIn("PREVIOUS")) {
 <PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");</PARAMETER_TMP>
       String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getRequiredStringParameter("inp<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>");
       
-      String strPrevious = previousElement(vars, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>);
+      String strPrevious = previousElement(vars, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>, tableSQL);
 
-      printPageEdit(response, request, vars, false, strPrevious<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
+      printPageEdit(response, request, vars, false, strPrevious<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, tableSQL);
     } else if (vars.commandIn("FIRST_RELATION")) {
 <PARAMETER_TMP id="parent">vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
 </PARAMETER_TMP>
@@ -285,20 +285,20 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     } else if (vars.commandIn("FIRST")) {
 <PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");</PARAMETER_TMP>
       
-      String strFirst = firstElement(vars);
+      String strFirst = firstElement(vars, tableSQL);
 
-      printPageEdit(response, request, vars, false, strFirst<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
+      printPageEdit(response, request, vars, false, strFirst<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, tableSQL);
     } else if (vars.commandIn("LAST_RELATION")) {
 <PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
 </PARAMETER_TMP>
-      String strLast = lastElement(vars);
-      printPageDataSheet(response, vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, strLast);
+      String strLast = lastElement(vars, tableSQL);
+      printPageDataSheet(response, vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, strLast, tableSQL);
     } else if (vars.commandIn("LAST")) {
 <PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");</PARAMETER_TMP>
       
-      String strLast = lastElement(vars);
+      String strLast = lastElement(vars, tableSQL);
 
-      printPageEdit(response, request, vars, false, strLast<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
+      printPageEdit(response, request, vars, false, strLast<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, tableSQL);
     } else if (vars.commandIn("SAVE_NEW_RELATION", "SAVE_NEW_NEW", "SAVE_NEW_EDIT")) {
 <PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");</PARAMETER_TMP>
       OBError myError = new OBError();      
@@ -333,7 +333,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         if (vars.commandIn("SAVE_EDIT_NEW")) response.sendRedirect(strDireccion + request.getServletPath() + "?Command=NEW");
         else if (vars.commandIn("SAVE_EDIT_EDIT")) response.sendRedirect(strDireccion + request.getServletPath() + "?Command=EDIT");
         else if (vars.commandIn("SAVE_EDIT_NEXT")) {
-          String strNext = nextElement(vars, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>);
+          String strNext = nextElement(vars, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>, tableSQL);
           vars.setSessionValue(windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", strNext);
           response.sendRedirect(strDireccion + request.getServletPath() + "?Command=EDIT");
         } else response.sendRedirect(strDireccion + request.getServletPath() + "?Command=RELATION");
@@ -616,8 +616,8 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       refreshSessionEdit(vars, data);
     }
 
-  String nextElement(VariablesSecureApp vars, String strSelected) throws IOException, ServletException {
-    if (strSelected == null || strSelected.equals("")) return firstElement(vars);
+  String nextElement(VariablesSecureApp vars, String strSelected, TableSQLData tableSQL) throws IOException, ServletException {
+    if (strSelected == null || strSelected.equals("")) return firstElement(vars, tableSQL);
     if (tableSQL!=null) {
       String data = null;
       try{
@@ -635,7 +635,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     return strSelected;
   }
 
-  int getKeyPosition(VariablesSecureApp vars, String strSelected) throws IOException, ServletException {
+  int getKeyPosition(VariablesSecureApp vars, String strSelected, TableSQLData tableSQL) throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("getKeyPosition: " + strSelected);
     if (tableSQL!=null) {
       String data = null;
@@ -654,8 +654,8 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     return 0;
   }
 
-  String previousElement(VariablesSecureApp vars, String strSelected) throws IOException, ServletException {
-    if (strSelected == null || strSelected.equals("")) return firstElement(vars);
+  String previousElement(VariablesSecureApp vars, String strSelected, TableSQLData tableSQL) throws IOException, ServletException {
+    if (strSelected == null || strSelected.equals("")) return firstElement(vars, tableSQL);
     if (tableSQL!=null) {
       String data = null;
       try{
@@ -673,7 +673,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     return strSelected;
   }
 
-  String firstElement(VariablesSecureApp vars) throws IOException, ServletException {
+  String firstElement(VariablesSecureApp vars, TableSQLData tableSQL) throws IOException, ServletException {
     if (tableSQL!=null) {
       String data = null;
       try{
@@ -690,7 +690,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     return "";
   }
 
-  String lastElement(VariablesSecureApp vars) throws IOException, ServletException {
+  String lastElement(VariablesSecureApp vars, TableSQLData tableSQL) throws IOException, ServletException {
     if (tableSQL!=null) {
       String data = null;
       try{
@@ -706,7 +706,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     return "";
   }
 
-  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars<PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>)
+  void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars<PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>, TableSQLData tableSQL)
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: dataSheet");
 
@@ -717,7 +717,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     String strOffset = vars.getSessionValue(tabId + "|offset");
     String selectedRow = "0";
     if (!str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) {
-      selectedRow = Integer.toString(getKeyPosition(vars, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>));
+      selectedRow = Integer.toString(getKeyPosition(vars, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>, tableSQL));
     }
 
     String[] discard={"isNotFiltered","isNotTest"};
@@ -804,7 +804,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     out.close();
   }
 
-  void printPageEdit(HttpServletResponse response, HttpServletRequest request, VariablesSecureApp vars,boolean boolNew, String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>)
+  void printPageEdit(HttpServletResponse response, HttpServletRequest request, VariablesSecureApp vars,boolean boolNew, String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, TableSQLData tableSQL)
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: edit");
     
@@ -856,7 +856,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       }
 <FIELDS_TMP id="sectionReadOnly">
       if (data==null || data.length==0) {
-        str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = firstElement(vars);
+        str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = firstElement(vars, tableSQL);
         if (str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) {
           response.sendRedirect(strDireccion + request.getServletPath() + "?Command=RELATION");
           return;
