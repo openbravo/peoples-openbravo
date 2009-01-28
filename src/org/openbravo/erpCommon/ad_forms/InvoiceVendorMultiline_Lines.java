@@ -39,13 +39,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class InvoiceVendorMultiline_Lines extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;
-    protected String windowId = "";
-    protected String tabId = "";
-    protected String tabName = "";
-    protected String windowName = "";
-    protected String windowNameEnUS = "";
-    protected String tabNameEnUS = "";
-    protected String tableId = "";
+
     private static final String formClassName = "org.openbravo.erpCommon.ad_forms.InvoiceVendorMultiline";
 
     public void init(ServletConfig config) {
@@ -57,6 +51,8 @@ public class InvoiceVendorMultiline_Lines extends HttpSecureAppServlet {
             throws IOException, ServletException {
         VariablesSecureApp vars = new VariablesSecureApp(request);
 
+        String windowId = "";
+
         {
             InvoiceVendorMultilineData[] data = InvoiceVendorMultilineData
                     .selectWindowData(this, vars.getLanguage(), formClassName);
@@ -65,27 +61,22 @@ public class InvoiceVendorMultiline_Lines extends HttpSecureAppServlet {
                         + ": Error on window data");
             }
             windowId = data[0].adWindowId;
-            tabId = data[0].adTabId;
-            tableId = data[0].adTableId;
-            tabName = data[0].tabname;
-            windowName = data[0].windowname;
-            tabNameEnUS = data[0].tabnameEnUs;
-            windowNameEnUS = data[0].windownameEnUs;
         }
 
         if (vars.commandIn("DEFAULT")) {
             String strInvoice = vars.getStringParameter("inpcInvoiceId");
-            printPageDataSheet(response, vars, strInvoice);
+            printPageDataSheet(response, vars, strInvoice, windowId);
         } else if (vars.commandIn("HIDDEN", "SAVE_EDIT", "SAVE_NEW", "DELETE")) {
-            printPageHidden(response, vars);
+            printPageHidden(response, vars, windowId);
         } else if (vars.commandIn("PRODUCT_CALLOUT")) {
-            printPageCallOut(response, vars);
+            printPageCallOut(response, vars, windowId);
         } else
             pageError(response);
     }
 
-    void printPageCallOut(HttpServletResponse response, VariablesSecureApp vars)
-            throws IOException, ServletException {
+    void printPageCallOut(HttpServletResponse response,
+            VariablesSecureApp vars, String windowId) throws IOException,
+            ServletException {
         response.setContentType("text/plain");
         response.setHeader("Cache-Control", "no-cache");
         PrintWriter out = response.getWriter();
@@ -108,8 +99,8 @@ public class InvoiceVendorMultiline_Lines extends HttpSecureAppServlet {
     }
 
     void printPageDataSheet(HttpServletResponse response,
-            VariablesSecureApp vars, String strInvoice) throws IOException,
-            ServletException {
+            VariablesSecureApp vars, String strInvoice, String windowId)
+            throws IOException, ServletException {
         if (log4j.isDebugEnabled())
             log4j.debug("Output: dataSheet");
         InvoiceVendorMultilineLinesData[] data = InvoiceVendorMultilineLinesData
@@ -156,8 +147,8 @@ public class InvoiceVendorMultiline_Lines extends HttpSecureAppServlet {
         out.close();
     }
 
-    InvoiceVendorMultilineLinesData getEditVariables(VariablesSecureApp vars)
-            throws IOException, ServletException {
+    InvoiceVendorMultilineLinesData getEditVariables(VariablesSecureApp vars,
+            String windowId) throws IOException, ServletException {
         InvoiceVendorMultilineLinesData data = new InvoiceVendorMultilineLinesData();
 
         data.cInvoicelineId = vars.getStringParameter("inpcInvoicelineId");
@@ -257,11 +248,11 @@ public class InvoiceVendorMultiline_Lines extends HttpSecureAppServlet {
         return data;
     }
 
-    void printPageHidden(HttpServletResponse response, VariablesSecureApp vars)
-            throws IOException, ServletException {
+    void printPageHidden(HttpServletResponse response, VariablesSecureApp vars,
+            String windowId) throws IOException, ServletException {
         if (log4j.isDebugEnabled())
             log4j.debug("Output: hidden");
-        InvoiceVendorMultilineLinesData data = getEditVariables(vars);
+        InvoiceVendorMultilineLinesData data = getEditVariables(vars, windowId);
         String strIDNew = "";
         String strMensaje = "";
         String strLineNo = "";
