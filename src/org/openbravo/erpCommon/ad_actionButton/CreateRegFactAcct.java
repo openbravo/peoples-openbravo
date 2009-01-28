@@ -88,7 +88,7 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
             pageErrorPopUp(response);
     }
 
-    OBError processButton(VariablesSecureApp vars, String strKey,
+    synchronized OBError processButton(VariablesSecureApp vars, String strKey,
             String strOrgId, String windowId) {
 
         Connection conn = null;
@@ -160,9 +160,10 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
         return myError;
     }
 
-    String processButtonReg(Connection conn, VariablesSecureApp vars,
-            String strKey, String windowId, String stradOrgId, String strID,
-            String strAcctSchema) throws ServletException {
+    synchronized String processButtonReg(Connection conn,
+            VariablesSecureApp vars, String strKey, String windowId,
+            String stradOrgId, String strID, String strAcctSchema)
+            throws ServletException {
 
         CreateRegFactAcctData[] expense = CreateRegFactAcctData.getAmounts(
                 this, strKey, "E", stradOrgId, strAcctSchema);
@@ -258,10 +259,10 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
         return "Success";
     }
 
-    String processButtonClose(Connection conn, VariablesSecureApp vars,
-            String strKey, String windowId, String stradOrgId,
-            String strCloseID, String strOpenID, String strDivideUpId,
-            String strAcctSchema) throws ServletException {
+    synchronized String processButtonClose(Connection conn,
+            VariablesSecureApp vars, String strKey, String windowId,
+            String stradOrgId, String strCloseID, String strOpenID,
+            String strDivideUpId, String strAcctSchema) throws ServletException {
         BigDecimal assetAmtDr = new BigDecimal("0");
         BigDecimal assetAmtCr = new BigDecimal("0");
         BigDecimal liabilityAmtDr = new BigDecimal("0");
