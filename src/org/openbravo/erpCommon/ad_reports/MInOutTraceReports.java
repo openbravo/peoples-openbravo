@@ -42,15 +42,17 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;
 
     static final BigDecimal ZERO = new BigDecimal(0.0);
-    private String strmProductIdGlobal = "";
-    private String strmAttributesetinstanceIdGlobal = "";
-    private Hashtable<String, Integer> calculated = new Hashtable<String, Integer>();
 
     int count = 0;
 
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         VariablesSecureApp vars = new VariablesSecureApp(request);
+
+        String strmProductIdGlobal = "";
+        String strmAttributesetinstanceIdGlobal = "";
+        Hashtable<String, Integer> calculated = new Hashtable<String, Integer>();
+
         if (log4j.isDebugEnabled())
             log4j.debug("MInOutTraceReports doPost, commandIn: "
                     + vars.getCommand());
@@ -63,7 +65,8 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
                     "MInOutTraceReports|M_AttributeSetInstance_Id", "");
             String strIn = vars.getGlobalVariable("inpInOut",
                     "MInOutTraceReports|in", "Y");
-            printPageDataSheet(response, vars, strIn);
+            printPageDataSheet(response, vars, strIn, strmProductIdGlobal,
+                    strmAttributesetinstanceIdGlobal, calculated);
         } else if (vars.commandIn("FIND")) {
             strmProductIdGlobal = vars.getRequestGlobalVariable(
                     "inpmProductId", "MInOutTraceReports|M_Product_Id");
@@ -72,7 +75,8 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
                     "MInOutTraceReports|M_AttributeSetInstance_Id");
             String strIn = vars.getStringParameter("inpInOut").equals("") ? "N"
                     : vars.getStringParameter("inpInOut");
-            printPageDataSheet(response, vars, strIn);
+            printPageDataSheet(response, vars, strIn, strmProductIdGlobal,
+                    strmAttributesetinstanceIdGlobal, calculated);
         } else if (vars.commandIn("INVERSE")) {
             strmProductIdGlobal = vars
                     .getRequiredStringParameter("inpmProductId2");
@@ -82,13 +86,16 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
             if (strIn.equals(""))
                 strIn = "N";
             vars.setSessionValue("MInOutTraceReports|in", strIn);
-            printPageDataSheet(response, vars, strIn);
+            printPageDataSheet(response, vars, strIn, strmProductIdGlobal,
+                    strmAttributesetinstanceIdGlobal, calculated);
         } else
             pageError(response);
     }
 
     void printPageDataSheet(HttpServletResponse response,
-            VariablesSecureApp vars, String strIn) throws IOException,
+            VariablesSecureApp vars, String strIn, String strmProductIdGlobal,
+            String strmAttributesetinstanceIdGlobal,
+            Hashtable<String, Integer> calculated) throws IOException,
             ServletException {
         if (log4j.isDebugEnabled())
             log4j.debug("Output: dataSheet");
@@ -126,7 +133,8 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
         xmlDocument.setParameter("in", strIn);
         xmlDocument.setParameter("out", strIn);
 
-        xmlDocument.setData("structure1", processData(vars, data, strIn));
+        xmlDocument.setData("structure1", processData(vars, data, strIn,
+                strmProductIdGlobal, calculated));
         if (log4j.isDebugEnabled())
             log4j.debug("****FIN: "/*
                                     * + ((data!=null &&
@@ -173,13 +181,15 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
     }
 
     private MInOutTraceReportsData[] processData(VariablesSecureApp vars,
-            MInOutTraceReportsData[] data, String strIn)
+            MInOutTraceReportsData[] data, String strIn,
+            String strmProductIdGlobal, Hashtable<String, Integer> calculated)
             throws ServletException {
         if (data == null || data.length == 0)
             return data;
         for (int i = 0; i < data.length; i++) {
             data[i].html = processChilds(vars, data[i].mAttributesetinstanceId,
-                    data[i].mProductId, data[i].mLocatorId, strIn, true);
+                    data[i].mProductId, data[i].mLocatorId, strIn, true,
+                    strmProductIdGlobal, calculated);
         }
         return data;
     }
@@ -221,17 +231,26 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
         return resultado.toString();
     }
 
+    synchronized void incrementAndCalculate(String strCalculated,
+            Hashtable<String, Integer> calculated) {
+        count += 1;
+        calculated.put(strCalculated, new Integer(count));
+    }
+
     private String processChilds(VariablesSecureApp vars,
             String mAttributesetinstanceId, String mProductId,
-            String mLocatorId, String strIn, boolean colorbg2)
+            String mLocatorId, String strIn, boolean colorbg2,
+            String strmProductIdGlobal, Hashtable<String, Integer> calculated)
             throws ServletException {
         BigDecimal total = BigDecimal.ZERO;
-	BigDecimal totalPedido = BigDecimal.ZERO;
+        BigDecimal totalPedido = BigDecimal.ZERO;
         StringBuffer strHtml = new StringBuffer();
-        count += 1;
+
         String strCalculated = mProductId + "&" + mAttributesetinstanceId + "&"
                 + mLocatorId;
-        calculated.put(strCalculated, new Integer(count));
+
+        incrementAndCalculate(strCalculated, calculated);
+
         if (log4j.isDebugEnabled())
             log4j.debug("****** Hashtable.add: " + strCalculated);
         MInOutTraceReportsData[] dataChild = MInOutTraceReportsData
@@ -253,28 +272,28 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
             strHtml.append("<td >\n");
             strHtml.append(getData(dataChild[i], ""));
             strHtml.append("</td>");
-            total = total.add(new BigDecimal(dataChild[i].movementqty));           
+            total = total.add(new BigDecimal(dataChild[i].movementqty));
             if (!dataChild[i].quantityorder.equals(""))
-		totalPedido = totalPedido.add(new BigDecimal(
-			dataChild[i].quantityorder));
-            
-            
+                totalPedido = totalPedido.add(new BigDecimal(
+                        dataChild[i].quantityorder));
+
             strHtml.append(insertTotal(total.toPlainString(),
-		    dataChild[i].uomName, totalPedido.toPlainString(),
+                    dataChild[i].uomName, totalPedido.toPlainString(),
                     dataChild[i].productUomName));
             strHtml.append("  </tr>\n");
             if (log4j.isDebugEnabled())
                 log4j.debug("****** New line, qty: " + dataChild[i].movementqty
                         + " " + getData(dataChild[i], "TraceSubTable"));
             strHtml.append(processExternalChilds(vars, dataChild[i], strIn,
-                    colorbg2));
+                    colorbg2, strmProductIdGlobal, calculated));
         }
         strHtml.append(insertHeaderHtml(true, ""));
         return strHtml.toString();
     }
 
     private String processExternalChilds(VariablesSecureApp vars,
-            MInOutTraceReportsData dataChild, String strIn, boolean colorbg)
+            MInOutTraceReportsData dataChild, String strIn, boolean colorbg,
+            String strmProductIdGlobal, Hashtable<String, Integer> calculated)
             throws ServletException {
         StringBuffer strHtml = new StringBuffer();
         BigDecimal movementQty = new BigDecimal(dataChild.movementqty);
@@ -287,7 +306,7 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
                     + " and movementType:" + dataChild.movementtype);
 
         if (dataChild.movementtype.startsWith("P")
-		&& (movementQty.compareTo(BigDecimal.ZERO) > 0)) {
+                && (movementQty.compareTo(BigDecimal.ZERO) > 0)) {
             String strNewId = dataChild.mProductionlineId;
             MInOutTraceReportsData[] dataProduction;
             if (log4j.isDebugEnabled())
@@ -381,7 +400,7 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
                                     dataProduction[j].mAttributesetinstanceId,
                                     dataProduction[j].mProductId,
                                     dataProduction[j].mLocatorId, strIn,
-                                    !colorbg);
+                                    !colorbg, strmProductIdGlobal, calculated);
                             if (!strPartial.equals("")) {
                                 strHtml.append("  <tr style=\"background: ")
                                         .append(
@@ -403,7 +422,7 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
         }
 
         if (dataChild.movementtype.startsWith("M")
-		&& (movementQty.compareTo(BigDecimal.ZERO) > 0)) {
+                && (movementQty.compareTo(BigDecimal.ZERO) > 0)) {
             String strNewId = dataChild.mMovementlineId;
             MInOutTraceReportsData[] dataMovement;
             if (log4j.isDebugEnabled())
@@ -494,7 +513,8 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
                                         dataMovement[j].mAttributesetinstanceId,
                                         dataMovement[j].mProductId,
                                         dataMovement[j].mLocatorId, strIn,
-                                        !colorbg);
+                                        !colorbg, strmProductIdGlobal,
+                                        calculated);
                             }
                         }
                         if (!strPartial.equals("")) {
