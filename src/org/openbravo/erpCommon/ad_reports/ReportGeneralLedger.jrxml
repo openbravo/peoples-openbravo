@@ -182,18 +182,16 @@
 		<defaultValueExpression ><![CDATA["en_US"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="USER_CLIENT" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA["(1000000)"]]></defaultValueExpression>
+		<defaultValueExpression ><![CDATA["('1000000')"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="USER_ORG" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA["(0)"]]></defaultValueExpression>
+		<defaultValueExpression ><![CDATA["('0')"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Title" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["REPORT TITLE"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="REPORT_SUBTITLE" isForPrompting="false" class="java.lang.String"/>
-	<parameter name="ReportData" isForPrompting="false" class="java.lang.String">
-		<defaultValueExpression ><![CDATA[""]]></defaultValueExpression>
-	</parameter>
+	<parameter name="ReportData" isForPrompting="false" class="net.sf.jasperreports.engine.JasperReport"/>
 	<parameter name="SUBREPORT_DIR" isForPrompting="false" class="java.lang.String">
 		<defaultValueExpression ><![CDATA[$P{BASE_DESIGN}+"/org/openbravo/erpCommon/ad_reports/"]]></defaultValueExpression>
 	</parameter>
@@ -218,41 +216,41 @@ WHERE FACT_ACCT.ACCOUNT_ID IN (
     )
 ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryString>
 
-	<field name="VALUE" class="java.lang.String"/>
-	<field name="PARTNER" class="java.lang.String"/>
-	<field name="DATEACCT" class="java.util.Date"/>
-	<field name="NAME" class="java.lang.String"/>
-	<field name="AMTACCTDR" class="java.math.BigDecimal"/>
-	<field name="AMTACCTCR" class="java.math.BigDecimal"/>
-	<field name="FACT_ACCT_GROUP_ID" class="java.math.BigDecimal"/>
-	<field name="ID" class="java.math.BigDecimal"/>
-	<field name="FACT_ACCT_ID" class="java.math.BigDecimal"/>
-	<field name="RECORD_ID" class="java.math.BigDecimal"/>
-	<field name="AD_TABLE_ID" class="java.math.BigDecimal"/>
-	<field name="DESCRIPTION" class="java.lang.String"/>
-	<field name="C_BPARTNER_ID" class="java.math.BigDecimal"/>
-	<field name="TOTALDR" class="java.math.BigDecimal"/>
-	<field name="TOTALCR" class="java.math.BigDecimal"/>
-	<field name="TOTALACCTDR" class="java.math.BigDecimal"/>
-	<field name="TOTALACCTCR" class="java.math.BigDecimal"/>
-	<field name="TOTALACCTSUB" class="java.math.BigDecimal"/>
-	<field name="TOTAL" class="java.math.BigDecimal"/>
-	<field name="SALDO" class="java.math.BigDecimal"/>
-	<field name="PADRE" class="java.lang.String"/>
+	<field name="value" class="java.lang.String"/>
+	<field name="partner" class="java.lang.String"/>
+	<field name="dateacct" class="java.util.Date"/>
+	<field name="name" class="java.lang.String"/>
+	<field name="amtacctdr" class="java.math.BigDecimal"/>
+	<field name="amtacctcr" class="java.math.BigDecimal"/>
+	<field name="fact_acct_group_id" class="java.lang.String"/>
+	<field name="id" class="java.lang.String"/>
+	<field name="fact_acct_id" class="java.lang.String"/>
+	<field name="record_id" class="java.lang.String"/>
+	<field name="ad_table_id" class="java.lang.String"/>
+	<field name="description" class="java.lang.String"/>
+	<field name="c_bpartner_id" class="java.lang.String"/>
+	<field name="totaldr" class="java.lang.Integer"/>
+	<field name="totalcr" class="java.lang.Integer"/>
+	<field name="totalacctdr" class="java.lang.Integer"/>
+	<field name="totalacctcr" class="java.lang.Integer"/>
+	<field name="totalacctsub" class="java.lang.Integer"/>
+	<field name="total" class="java.math.BigDecimal"/>
+	<field name="saldo" class="java.lang.Integer"/>
+	<field name="padre" class="java.lang.String"/>
 
 	<variable name="DetailFieldTotal" class="java.lang.String" resetType="Report" calculation="Nothing">
 	</variable>
 	<variable name="totalDebit" class="java.math.BigDecimal" resetType="Group" resetGroup="AccountGroup" calculation="Sum">
-		<variableExpression><![CDATA[$F{AMTACCTDR}]]></variableExpression>
+		<variableExpression><![CDATA[$F{amtacctdr}]]></variableExpression>
 	</variable>
 	<variable name="totalCredit" class="java.math.BigDecimal" resetType="Group" resetGroup="AccountGroup" calculation="Sum">
-		<variableExpression><![CDATA[$F{AMTACCTCR}]]></variableExpression>
+		<variableExpression><![CDATA[$F{amtacctcr}]]></variableExpression>
 	</variable>
 	<variable name="totalTotal" class="java.math.BigDecimal" resetType="Group" resetGroup="AccountGroup" calculation="Sum">
-		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+		<variableExpression><![CDATA[$F{total}]]></variableExpression>
 	</variable>
-	<variable name="auxPartnerGroup" class="java.math.BigDecimal" resetType="None" calculation="Nothing">
-		<variableExpression><![CDATA[$P{ShowPartner}.booleanValue()?$F{C_BPARTNER_ID}:new BigDecimal(-1)]]></variableExpression>
+	<variable name="auxPartnerGroup" class="java.lang.String" resetType="None" calculation="Nothing">
+		<variableExpression><![CDATA[$P{ShowPartner}.booleanValue()?$F{c_bpartner_id}:"-1"]]></variableExpression>
 	</variable>
 
 		<group  name="PartnerGroup" >
@@ -308,7 +306,7 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 					<textElement verticalAlignment="Middle">
 						<font fontName="Times-Roman" size="18"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{PARTNER}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{partner}]]></textFieldExpression>
 				</textField>
 			</band>
 			</groupHeader>
@@ -351,7 +349,7 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 			</groupFooter>
 		</group>
 		<group  name="AccountGroup" >
-			<groupExpression><![CDATA[$F{VALUE}]]></groupExpression>
+			<groupExpression><![CDATA[$F{value}]]></groupExpression>
 			<groupHeader>
 			<band height="60"  isSplitAllowed="true" >
 				<line direction="TopDown">
@@ -391,7 +389,7 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 					<textElement>
 						<font size="12"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{VALUE}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{value}]]></textFieldExpression>
 				</textField>
 				<line direction="TopDown">
 					<reportElement
@@ -429,7 +427,7 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 					<textElement verticalAlignment="Middle">
 						<font fontName="Times-Roman" size="12"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{NAME}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
@@ -521,16 +519,16 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 						height="16"
 						key="subreport-1"/>
 					<subreportParameter  name="AcctID">
-						<subreportParameterExpression><![CDATA[$F{ID}]]></subreportParameterExpression>
+						<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter  name="Title">
 						<subreportParameterExpression><![CDATA[new String("Previous")]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter  name="Date">
-						<subreportParameterExpression><![CDATA[$F{DATEACCT}]]></subreportParameterExpression>
+						<subreportParameterExpression><![CDATA[$F{dateacct}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter  name="Partner">
-						<subreportParameterExpression><![CDATA[$F{C_BPARTNER_ID}]]></subreportParameterExpression>
+						<subreportParameterExpression><![CDATA[$F{c_bpartner_id}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter  name="ShowPartner">
 						<subreportParameterExpression><![CDATA[$P{ShowPartner}]]></subreportParameterExpression>
@@ -542,7 +540,7 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 						<subreportParameterExpression><![CDATA[$P{LOCALE}]]></subreportParameterExpression>
 					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "ReportGeneralLedger_Previous.jasper"]]></subreportExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{ReportData}]]></subreportExpression>
 				</subreport>
 				<line direction="TopDown">
 					<reportElement
@@ -684,7 +682,7 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 						height="16"
 						key="subreport-2"/>
 					<subreportParameter  name="AcctID">
-						<subreportParameterExpression><![CDATA[$F{ID}]]></subreportParameterExpression>
+						<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter  name="Title">
 						<subreportParameterExpression><![CDATA[new String("Final")]]></subreportParameterExpression>
@@ -693,7 +691,7 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 						<subreportParameterExpression><![CDATA[$P{DateTo}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter  name="Partner">
-						<subreportParameterExpression><![CDATA[$F{C_BPARTNER_ID}]]></subreportParameterExpression>
+						<subreportParameterExpression><![CDATA[$F{c_bpartner_id}]]></subreportParameterExpression>
 					</subreportParameter>
 					<subreportParameter  name="ShowPartner">
 						<subreportParameterExpression><![CDATA[$P{ShowPartner}]]></subreportParameterExpression>
@@ -705,7 +703,7 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 						<subreportParameterExpression><![CDATA[$P{NUMBERFORMAT}]]></subreportParameterExpression>
 					</subreportParameter>
 					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "ReportGeneralLedger_Previous.jasper"]]></subreportExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{ReportData}]]></subreportExpression>
 				</subreport>
 				<line direction="TopDown">
 					<reportElement
@@ -866,7 +864,7 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{AMTACCTDR}!=BigDecimal.ZERO)?$P{NUMBERFORMAT}.format($F{AMTACCTCR}).toString():new String(" ")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{amtacctdr}!=BigDecimal.ZERO)?$P{NUMBERFORMAT}.format($F{amtacctdr}).toString():new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -880,7 +878,7 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{AMTACCTCR}!=BigDecimal.ZERO)?$P{NUMBERFORMAT}.format($F{AMTACCTCR}).toString():new String(" ")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{amtacctcr}!=BigDecimal.ZERO)?$P{NUMBERFORMAT}.format($F{amtacctcr}).toString():new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -908,7 +906,7 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$F{DATEACCT}]]></textFieldExpression>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$F{dateacct}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -922,7 +920,7 @@ ORDER BY PARTNER, VALUE, DATEACCT, FACT_ACCT_GROUP_ID, FACT_ACCT_ID]]></queryStr
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{DESCRIPTION}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>
