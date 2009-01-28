@@ -46,9 +46,17 @@ function buttonOK_click() {
     return false;
 }
 
+function ensureThatIsNotOpenedInAPopup() {
+  if (top.opener) {
+    top.opener.top.location.href = top.document.location.href;
+    top.window.close();
+  }
+}
+
 </script>
 <script language="JavaScript" type="text/javascript">
   function onLoadDo() {
+    ensureThatIsNotOpenedInAPopup();
     this.windowTables = new Array(
       new windowTableId('client', 'buttonOK')
     );
