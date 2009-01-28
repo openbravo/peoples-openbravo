@@ -41,9 +41,6 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class SendMailText extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;
-    protected String g_log = "";
-    private int counter;
-    private int errors;
 
     private enum resultEnum {
         SUCCESS, INFO, ERRORS
@@ -247,9 +244,9 @@ public class SendMailText extends HttpSecureAppServlet {
             String strUser) throws IOException, ServletException {
         String client = vars.getClient();
         long start = 0;
-        counter = 0;
-        errors = 0;
-        g_log = "";
+        int counter = 0;
+        int errors = 0;
+        StringBuffer g_log = new StringBuffer();
         String language = vars.getLanguage();
         Connection conn = null;
         try {
@@ -337,7 +334,7 @@ public class SendMailText extends HttpSecureAppServlet {
                         if (sendIndividualMail(conn, vars, smtpHost, from,
                                 subject, message, mailData[i].name,
                                 mailData[i].email, mailData[i].adUserId,
-                                fromID, fromPW))
+                                fromID, fromPW, g_log))
                             counter++;
                         else {
                             errors++;
@@ -355,7 +352,7 @@ public class SendMailText extends HttpSecureAppServlet {
                         if (sendIndividualMail(conn, vars, smtpHost, from,
                                 subject, message, mailData[i].name,
                                 mailData[i].email, mailData[i].adUserId,
-                                fromID, fromPW))
+                                fromID, fromPW, g_log))
                             counter++;
                         else {
                             errors++;
@@ -377,16 +374,16 @@ public class SendMailText extends HttpSecureAppServlet {
             mailResult = resultEnum.ERRORS;
             return (Utility.messageBD(this, "ProcessRunError", language));
         }
-        return (g_log + "\n" + Utility.messageBD(this, "Created", language)
-                + "=" + counter + ", "
-                + Utility.messageBD(this, "Errors", language) + "=" + errors
-                + " - " + (System.currentTimeMillis() - start) + "ms");
+        return (g_log.toString() + "\n"
+                + Utility.messageBD(this, "Created", language) + "=" + counter
+                + ", " + Utility.messageBD(this, "Errors", language) + "="
+                + errors + " - " + (System.currentTimeMillis() - start) + "ms");
     }
 
     private boolean sendIndividualMail(Connection conn,
             VariablesSecureApp vars, String smtpHost, String from,
             String subject, String message, String name, String EMailAddress,
-            String AD_User_ID, String fromID, String fromPW)
+            String AD_User_ID, String fromID, String fromPW, StringBuffer g_log)
             throws IOException, ServletException {
         EMail email = new EMail(vars, smtpHost, from, EMailAddress, subject,
                 message);
@@ -394,13 +391,13 @@ public class SendMailText extends HttpSecureAppServlet {
             log4j.warn("sendIndividualMail NOT VALID - " + EMailAddress);
             try {
                 SendMailTextData.update(conn, this, AD_User_ID);
-                g_log += Utility.messageBD(this, "AD_User_ID", vars
+                g_log.append(Utility.messageBD(this, "AD_User_ID", vars
                         .getLanguage())
                         + ": "
                         + AD_User_ID
                         + " "
                         + Utility.messageBD(this, "Deactivated", vars
-                                .getLanguage()) + "<br>";
+                                .getLanguage()) + "<br>");
             } catch (ServletException e) {
                 e.printStackTrace();
                 log4j.warn("Rollback in transaction");
@@ -416,12 +413,13 @@ public class SendMailText extends HttpSecureAppServlet {
             log4j.warn("sendIndividualMail FAILURE - " + EMailAddress);
         if (log4j.isDebugEnabled())
             log4j.debug("adding log message to strMessage for " + EMailAddress);
-        g_log += Utility.messageBD(this, "EMailAddress", vars.getLanguage())
+        g_log.append(Utility
+                .messageBD(this, "EMailAddress", vars.getLanguage())
                 + ": "
                 + EMailAddress
                 + " "
                 + Utility.messageBD(this, (OK ? "OK" : "ERROR"), vars
-                        .getLanguage()) + "<br>";
+                        .getLanguage()) + "<br>");
         return OK;
     }
 
