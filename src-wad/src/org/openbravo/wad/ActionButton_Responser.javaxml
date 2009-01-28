@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,8 +39,6 @@ public class ActionButton_Responser extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   protected static final String windowId = "ActionButtonResponser";
   
-  private String strProcessId;
-
   public void init (ServletConfig config) {
     super.init(config);
     boolHist = false;
@@ -48,7 +46,7 @@ public class ActionButton_Responser extends HttpSecureAppServlet {
 
   public void doPost (HttpServletRequest request, HttpServletResponse response) throws IOException,ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-    strProcessId = null;
+    String strProcessId = null;
     
     String command = vars.getCommand();
     
@@ -68,7 +66,7 @@ public class ActionButton_Responser extends HttpSecureAppServlet {
       printPageDefault(response, vars, strProcessId);
 <FIELDS_TMP id="sectionActionButtons1">    } else if (vars.commandIn("BUTTON<FIELD_TMP id="ProcessID1">button</FIELD_TMP>")) {
         <FIELD_TMP id="FieldsLoad1">String strField = vars.getStringParameter("inpFields");</FIELD_TMP>
-        printPageButton<FIELD_TMP id="ProcessID1">xx</FIELD_TMP>(response, vars<FIELD_TMP id="FieldsLoadName1">, strFields</FIELD_TMP>);
+        printPageButton<FIELD_TMP id="ProcessID1">xx</FIELD_TMP>(response, vars, strProcessId<FIELD_TMP id="FieldsLoadName1">, strFields</FIELD_TMP>);
 </FIELDS_TMP>
 <FIELDS_TMP id="sectionActionButtons3">    } else if (vars.commandIn("SAVE_BUTTONActionButton<FIELD_TMP id="ProcessID3">button</FIELD_TMP>")) {
         <FIELD_TMP id="FieldsLoad3">String strField = vars.getStringParameter("inpFields");</FIELD_TMP>
@@ -97,21 +95,7 @@ public class ActionButton_Responser extends HttpSecureAppServlet {
     out.close();
   }
 
-  void printPageResponse(HttpServletResponse response, VariablesSecureApp vars, String strMessage) throws IOException, ServletException {
-    log4j.debug("Output: Default");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/ActionButtonResponse").createXmlDocument();
-    xmlDocument.setParameter("message", (strMessage.equals("")?"":"alert('" + Replace.replace(strMessage, "\"", "") + "');"));
-    xmlDocument.setParameter("processId", strProcessId);
-	xmlDocument.setParameter("trlFormType", "PROCESS");
-	xmlDocument.setParameter("language", "defaultLang = \"" + vars.getLanguage() + "\";\n");
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-
-<FIELDS_TMP id="sectionActionButtons2">    void printPageButton<FIELD_TMP id="ProcessID2">xx</FIELD_TMP>(HttpServletResponse response, VariablesSecureApp vars<FIELD_TMP id="FieldsLoadName2">, strFields</FIELD_TMP>)
+<FIELDS_TMP id="sectionActionButtons2">    void printPageButton<FIELD_TMP id="ProcessID2">xx</FIELD_TMP>(HttpServletResponse response, VariablesSecureApp vars, String strProcessId<FIELD_TMP id="FieldsLoadName2">, strFields</FIELD_TMP>)
     throws IOException, ServletException {
       log4j.debug("Output: Button process <FIELD_TMP id="ProcessID2">xx</FIELD_TMP>");
       String[] discard = {"newDiscard"};
