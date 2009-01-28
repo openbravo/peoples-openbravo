@@ -62,8 +62,6 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;
     static final String SALTO_LINEA = "<br>\n";
     String C_Currency_ID = "";
-    String AD_User_ID = "";
-    String AD_User_Name = "";
     String AD_User_U_Name = "";
     String AD_User_U_ID = "";
     String AD_Client_ID = "";
@@ -71,7 +69,6 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
     String C_AcctSchema_ID = "";
     String client = "";
     String strError = "";
-    String C_Calendar_ID = null;
     StringBuffer strSummary = new StringBuffer();
     AcctSchema m_AcctSchema;
     boolean m_hasProject;
@@ -159,8 +156,8 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
 
             xmlDocument.setParameter("paramLocationId", "");
             xmlDocument.setParameter("paramLocationDescription", "");
-            //xmlDocument.setParameter("region", arrayDobleEntrada("arrRegion",
-                    //RegionComboData.selectTotal(this)));
+            // xmlDocument.setParameter("region", arrayDobleEntrada("arrRegion",
+            // RegionComboData.selectTotal(this)));
             xmlDocument.setData("reportCurrency", "liststructure",
                     MonedaComboData.select(this));
             xmlDocument.setData("reportOrgType", "liststructure",
@@ -239,7 +236,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
         out.close();
     }
 
-    public String process(HttpServletRequest request,
+    synchronized public String process(HttpServletRequest request,
             HttpServletResponse response, VariablesSecureApp vars,
             String strModules) throws IOException {
         if (log4j.isDebugEnabled())
@@ -288,32 +285,22 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
             } catch (final Exception ignored) {
             }
         }
-/*        // verify that organization type and parent selection makes sense
-        try {
-            conn = this.getTransactionConnection();
-            final String strIsLE = InitialOrgSetupData.isLE(this, strOrgType);
-            final String strIsTransactionAllowed = InitialOrgSetupData
-                    .isTransactionAllowed(this, strOrgType);
-            if (!strIsLE.equals("Y") && strIsTransactionAllowed.equals("Y")) {
-                if (InitialOrgSetupData.verifyIsLE(this, strParentOrg).equals(
-                        "N")) {
-                    m_info.append("Parent organization not correct").append(
-                            SALTO_LINEA);
-                    strError = Utility.messageBD(this,
-                            "ParentOrganizationNotCorrect", vars.getLanguage());
-                    isOK = false;
-                    releaseRollbackConnection(conn);
-                    return m_info.toString();
-                }
-            }
-            releaseCommitConnection(conn);
-        } catch (final Exception err) {
-            log4j.warn(err);
-            try {
-                releaseRollbackConnection(conn);
-            } catch (final Exception ignored) {
-            }
-        }*/
+        /*
+         * // verify that organization type and parent selection makes sense try
+         * { conn = this.getTransactionConnection(); final String strIsLE =
+         * InitialOrgSetupData.isLE(this, strOrgType); final String
+         * strIsTransactionAllowed = InitialOrgSetupData
+         * .isTransactionAllowed(this, strOrgType); if (!strIsLE.equals("Y") &&
+         * strIsTransactionAllowed.equals("Y")) { if
+         * (InitialOrgSetupData.verifyIsLE(this, strParentOrg).equals( "N")) {
+         * m_info.append("Parent organization not correct").append(
+         * SALTO_LINEA); strError = Utility.messageBD(this,
+         * "ParentOrganizationNotCorrect", vars.getLanguage()); isOK = false;
+         * releaseRollbackConnection(conn); return m_info.toString(); } }
+         * releaseCommitConnection(conn); } catch (final Exception err) {
+         * log4j.warn(err); try { releaseRollbackConnection(conn); } catch
+         * (final Exception ignored) { } }
+         */
         try {
             m_info.append(SALTO_LINEA).append(
                     "*****************************************************")
@@ -482,8 +469,8 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
     }
 
     public boolean createOrg(VariablesSecureApp vars, String orgName,
-            String strOrgType, String strParentOrg, String userOrg, String strcLocationId)
-            throws ServletException {
+            String strOrgType, String strParentOrg, String userOrg,
+            String strcLocationId) throws ServletException {
 
         Connection conn = null;
         try {
@@ -520,7 +507,8 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
             InitialOrgSetupData.updateTreeNode(conn, this, strParentOrg,
                     strTree, AD_Org_ID);
             // Info
-            if (InitialClientSetupData.updateOrgInfo(conn ,this, strcLocationId, AD_Org_ID) != 1) {
+            if (InitialClientSetupData.updateOrgInfo(conn, this,
+                    strcLocationId, AD_Org_ID) != 1) {
                 final String err = "InitialOrgSetup - createOrg - Location NOT inserted";
                 log4j.warn(err);
                 m_info.append(err).append(SALTO_LINEA);
@@ -1240,7 +1228,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
 
     /**
      * Returns the error. "" if there is no error
-     *
+     * 
      * @param vars
      * @param strOrganization
      * @param strClient
@@ -1368,7 +1356,7 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
     /**
      * Returns the modules {@link FieldProvider} ordered taking into account
      * dependencies
-     *
+     * 
      * @param modules
      * @return
      */
