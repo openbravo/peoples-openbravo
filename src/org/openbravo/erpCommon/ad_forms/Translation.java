@@ -92,9 +92,6 @@ public class Translation extends HttpSecureAppServlet {
     public static final String CONTRIBUTORS_FILENAME = "CONTRIBUTORS";
     public static final String XML_CONTRIB = "Contributors";
 
-    /** Table is centrally maintained */
-    private boolean m_IsCentrallyMaintained = false;
-
     static Logger translationlog4j;
     static ConnectionProvider cp;
 
@@ -105,8 +102,8 @@ public class Translation extends HttpSecureAppServlet {
         System
                 .setProperty("javax.xml.transform.TransformerFactory",
                         "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl"); // added
-                                                                                                // for
-                                                                                                // JDK1.5
+        // for
+        // JDK1.5
         setLog4j(log4j);
         setConnectionProvicer(this);
         if (vars.commandIn("DEFAULT")) {
@@ -351,12 +348,12 @@ public class Translation extends HttpSecureAppServlet {
                         this, modules[mod].adModuleId);
                 if (moduleLanguage != null && !moduleLanguage.equals("")
                         && !moduleLanguage.equals(AD_Language)) { // Translate
-                                                                  // only
-                                                                  // languages
-                                                                  // different
-                                                                  // than the
-                                                                  // modules's
-                                                                  // one
+                    // only
+                    // languages
+                    // different
+                    // than the
+                    // modules's
+                    // one
 
                     final String tableName = Trl_Table;
                     final int pos = tableName.indexOf("_TRL");
@@ -407,6 +404,15 @@ public class Translation extends HttpSecureAppServlet {
             final String trlTable = table + "_TRL";
             final TranslationData[] trlColumns = getTrlColumns(table);
             final String keyColumn = table + "_ID";
+
+            boolean m_IsCentrallyMaintained = false;
+            try {
+                m_IsCentrallyMaintained = (TranslationData.centrallyMaintained(
+                        cp, table) != "0");
+            } catch (final Exception e) {
+                translationlog4j.error("getTrlColumns (IsCentrallyMaintained)",
+                        e);
+            }
 
             // Prepare query to retrieve translated rows
             final StringBuffer sql = new StringBuffer("SELECT ");
@@ -491,7 +497,7 @@ public class Translation extends HttpSecureAppServlet {
             // Create xml file
 
             if (!exportReferenceData) { // when not exporting rd create always
-                                        // the xml file
+                // the xml file
                 factory = DocumentBuilderFactory.newInstance();
                 builder = factory.newDocumentBuilder();
                 document = builder.newDocument();
@@ -520,8 +526,8 @@ public class Translation extends HttpSecureAppServlet {
 
             while (rs.next()) {
                 if (!hasRows && !exportReferenceData) { // Create file only in
-                                                        // case it has contents
-                                                        // or it is not rd
+                    // case it has contents
+                    // or it is not rd
                     hasRows = true;
 
                     factory = DocumentBuilderFactory.newInstance();
@@ -560,7 +566,7 @@ public class Translation extends HttpSecureAppServlet {
                     value.setAttribute(XML_VALUE_ATTRIBUTE_COLUMN,
                             trlColumns[i].c);
                     String origString = rs.getString(trlColumns[i].c + "O"); // Original
-                                                                             // Value
+                    // Value
                     if (origString == null)
                         origString = "";
                     String valueString = rs.getString(trlColumns[i].c); // Value
@@ -659,13 +665,6 @@ public class Translation extends HttpSecureAppServlet {
     } // importTrl
 
     private TranslationData[] getTrlColumns(String Base_Table) {
-        try {
-            m_IsCentrallyMaintained = (TranslationData.centrallyMaintained(cp,
-                    Base_Table) != "0");
-            m_IsCentrallyMaintained = false; // ???
-        } catch (final Exception e) {
-            translationlog4j.error("getTrlColumns (IsCentrallyMaintained)", e);
-        }
 
         TranslationData[] list = null;
 
