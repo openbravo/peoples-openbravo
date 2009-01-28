@@ -71,6 +71,8 @@ function validate()
 	return true;
 }
 function onloadFunctions() {
+	keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/BusinessPartner.html', null, false, 'frmMain', 'inpcBpartnerId', 'inpBpartnerId_DES', inputValue(document.frmMain.inpBpartnerId_DES), 'inpIDValue', inputValue(document.frmMain.inpcBpartnerId), 'Command', 'KEY');", "inpBpartnerId_DES", "null");
+	keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/ProductComplete.html', null, false, 'frmMain', 'inpmProductId', 'inpmProductId_D', inputValue(document.frmMain.inpmProductId_D), 'inpIDValue', inputValue(document.frmMain.inpmProductId), 'Command', 'KEY');", "inpmProductId_D", "null");
 }
 </script>
 	<script language="JavaScript" type="text/javascript">
@@ -85,7 +87,9 @@ function onloadFunctions() {
 		setTabTableParentElement();
 		enableShortcuts('edition');
 		setBrowserAutoComplete(false);
-		
+		try {
+			  onloadFunctions();
+			} catch (e) {}
 		resizeArea();
 		updateMenuIcon('buttonMenu');
 
