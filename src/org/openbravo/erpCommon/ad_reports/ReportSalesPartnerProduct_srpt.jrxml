@@ -26,7 +26,10 @@
 	<parameter name="PARTNER" isForPrompting="true" class="java.lang.String">
 		<defaultValueExpression ><![CDATA["1000004"]]></defaultValueExpression>
 	</parameter>
-	<queryString><![CDATA[SELECT C_ORDER.C_BPARTNER_ID, AD_COLUMN_IDENTIFIER(to_char('M_PRODUCT'), to_char(M_PRODUCT_ID), to_char('es_ES')) AS PRODUCT, SUM(C_ORDERLINE.LINENETAMT) as LINENETAMT
+	<parameter name="LANGUAGE" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["es_ES"]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[SELECT C_ORDER.C_BPARTNER_ID, AD_COLUMN_IDENTIFIER(to_char('M_PRODUCT'), to_char(M_PRODUCT_ID), to_char($P{LANGUAGE})) AS PRODUCT, SUM(C_ORDERLINE.LINENETAMT) as LINENETAMT
 FROM C_ORDER, C_ORDERLINE
 WHERE C_ORDER.C_ORDER_ID = C_ORDERLINE.C_ORDER_ID
   AND ISSOTRX = 'Y'
@@ -34,16 +37,16 @@ WHERE C_ORDER.C_ORDER_ID = C_ORDERLINE.C_ORDER_ID
 GROUP BY C_ORDERLINE.M_PRODUCT_ID, C_ORDER.C_BPARTNER_ID
 ORDER BY C_ORDER.C_BPARTNER_ID]]></queryString>
 
-	<field name="c_bpartner_id" class="java.lang.String"/>
-	<field name="product" class="java.lang.String"/>
-	<field name="linenetamt" class="java.math.BigDecimal"/>
+	<field name="C_BPARTNER_ID" class="java.lang.String"/>
+	<field name="PRODUCT" class="java.lang.String"/>
+	<field name="LINENETAMT" class="java.math.BigDecimal"/>
 
 	<variable name="sumlinenetamt" class="java.math.BigDecimal" resetType="Report" calculation="Sum">
-		<variableExpression><![CDATA[$F{linenetamt}]]></variableExpression>
+		<variableExpression><![CDATA[$F{LINENETAMT}]]></variableExpression>
 	</variable>
 
 		<group  name="C_BPARTNER_ID" >
-			<groupExpression><![CDATA[$F{c_bpartner_id}]]></groupExpression>
+			<groupExpression><![CDATA[$F{C_BPARTNER_ID}]]></groupExpression>
 			<groupHeader>
 			<band height="237"  isSplitAllowed="true" >
 				<pieChart>
@@ -61,9 +64,9 @@ ORDER BY C_ORDER.C_BPARTNER_ID]]></queryString>
 					<pieDataset>
 						<dataset resetType="Group" resetGroup="C_BPARTNER_ID" >
 						</dataset>
-						<keyExpression><![CDATA[$F{product}]]></keyExpression>
-						<valueExpression><![CDATA[$F{linenetamt}]]></valueExpression>
-						<labelExpression><![CDATA[$F{product}]]></labelExpression>
+						<keyExpression><![CDATA[$F{PRODUCT}]]></keyExpression>
+						<valueExpression><![CDATA[$F{LINENETAMT}]]></valueExpression>
+						<labelExpression><![CDATA[$F{PRODUCT}]]></labelExpression>
 				<sectionHyperlink >
 				</sectionHyperlink>
 					</pieDataset>
