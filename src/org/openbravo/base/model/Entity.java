@@ -66,6 +66,9 @@ public class Entity {
     private Class<?> mappingClass = null;
     private boolean mappingClassComputed = false;
     private String className;
+
+    private boolean isInActive;
+
     private boolean isTraceable;
     private boolean isActiveEnabled;
     private boolean isOrganizationEnabled;
@@ -79,6 +82,8 @@ public class Entity {
     private AccessLevelChecker accessLevelChecker;
     private AccessLevel accessLevel;
 
+    private Module module;
+
     /**
      * Initializes the entity from a table, also creates the properties from the
      * list of Columns of the table.
@@ -87,72 +92,75 @@ public class Entity {
      *            the table used to initialize the Entity
      */
     public void initialize(Table table) {
-        table.setEntity(this);
-        setTableName(table.getTableName());
-        setTableId(table.getId());
-        setClassName(table.getPackageName() + "." + table.getNotNullClassName());
-        setName(table.getName());
-        setDeletable(table.isDeletable());
-        setMutable(!table.isView());
+	table.setEntity(this);
+	setTableName(table.getTableName());
+	setTableId(table.getId());
+	setClassName(table.getPackageName() + "." + table.getNotNullClassName());
+	setName(table.getName());
+	setDeletable(table.isDeletable());
+	setMutable(!table.isView());
+	setInActive(!table.isActive());
 
-        properties = new ArrayList<Property>();
-        idProperties = new ArrayList<Property>();
-        identifierProperties = new ArrayList<Property>();
-        parentProperties = new ArrayList<Property>();
-        orderByProperties = new ArrayList<Property>();
-        // + 5 to take into account some additional properties for onetomany
-        // and such
-        propertiesByName = new HashMap<String, Property>(table.getColumns()
-                .size() + 5);
-        propertiesByColumnName = new HashMap<String, Property>(table
-                .getColumns().size() + 5);
+	properties = new ArrayList<Property>();
+	idProperties = new ArrayList<Property>();
+	identifierProperties = new ArrayList<Property>();
+	parentProperties = new ArrayList<Property>();
+	orderByProperties = new ArrayList<Property>();
+	// + 5 to take into account some additional properties for onetomany
+	// and such
+	propertiesByName = new HashMap<String, Property>(table.getColumns()
+		.size() + 5);
+	propertiesByColumnName = new HashMap<String, Property>(table
+		.getColumns().size() + 5);
 
-        for (final Column c : table.getColumns()) {
+	for (final Column c : table.getColumns()) {
 
-            final Property p = new Property();
-            p.setEntity(this);
-            p.initializeFromColumn(c);
-            properties.add(p);
-            propertiesByName.put(p.getName(), p);
-            if (p.getColumnName() != null) {
-                propertiesByColumnName.put(p.getColumnName().toLowerCase(), p);
-            }
-            if (p.isId()) {
-                idProperties.add(p);
-            }
-            if (p.isIdentifier()) {
-                identifierProperties.add(p);
-            }
-            if (p.isParent()) {
-                parentProperties.add(p);
-            }
-            if (p.isOrderByProperty())
-                orderByProperties.add(p);
-        }
+	    final Property p = new Property();
+	    p.setEntity(this);
+	    p.initializeFromColumn(c);
+	    properties.add(p);
+	    propertiesByName.put(p.getName(), p);
+	    if (p.getColumnName() != null) {
+		propertiesByColumnName.put(p.getColumnName().toLowerCase(), p);
+	    }
+	    if (p.isId()) {
+		idProperties.add(p);
+	    }
+	    if (p.isIdentifier()) {
+		identifierProperties.add(p);
+	    }
+	    if (p.isParent()) {
+		parentProperties.add(p);
+	    }
+	    if (p.isOrderByProperty())
+		orderByProperties.add(p);
+	}
 
-        entityValidator = new EntityValidator();
-        entityValidator.setEntity(this);
-        entityValidator.initialize();
+	entityValidator = new EntityValidator();
+	entityValidator.setEntity(this);
+	entityValidator.initialize();
 
-        if (table.getAccessLevel().equals("1")) {
-            accessLevelChecker = AccessLevelChecker.ORGANIZATION;
-            setAccessLevel(AccessLevel.ORGANIZATION);
-        } else if (table.getAccessLevel().equals("3")) {
-            accessLevelChecker = AccessLevelChecker.CLIENT_ORGANIZATION;
-            setAccessLevel(AccessLevel.CLIENT_ORGANIZATION);
-        } else if (table.getAccessLevel().equals("4")) {
-            setAccessLevel(AccessLevel.SYSTEM);
-            accessLevelChecker = AccessLevelChecker.SYSTEM;
-        } else if (table.getAccessLevel().equals("6")) {
-            accessLevelChecker = AccessLevelChecker.SYSTEM_CLIENT;
-            setAccessLevel(AccessLevel.SYSTEM_CLIENT);
-        } else if (table.getAccessLevel().equals("7")) {
-            accessLevelChecker = AccessLevelChecker.ALL;
-            setAccessLevel(AccessLevel.ALL);
-        } else {
-            Check.fail("Access level " + table.getAccessLevel() + " for table "
-                    + table.getName() + " is not supported");
-        }
+	if (table.getAccessLevel().equals("1")) {
+	    accessLevelChecker = AccessLevelChecker.ORGANIZATION;
+	    setAccessLevel(AccessLevel.ORGANIZATION);
+	} else if (table.getAccessLevel().equals("3")) {
+	    accessLevelChecker = AccessLevelChecker.CLIENT_ORGANIZATION;
+	    setAccessLevel(AccessLevel.CLIENT_ORGANIZATION);
+	} else if (table.getAccessLevel().equals("4")) {
+	    setAccessLevel(AccessLevel.SYSTEM);
+	    accessLevelChecker = AccessLevelChecker.SYSTEM;
+	} else if (table.getAccessLevel().equals("6")) {
+	    accessLevelChecker = AccessLevelChecker.SYSTEM_CLIENT;
+	    setAccessLevel(AccessLevel.SYSTEM_CLIENT);
+	} else if (table.getAccessLevel().equals("7")) {
+	    accessLevelChecker = AccessLevelChecker.ALL;
+	    setAccessLevel(AccessLevel.ALL);
+	} else {
+	    Check.fail("Access level " + table.getAccessLevel() + " for table "
+		    + table.getName() + " is not supported");
+	}
+
+	setModule(table.getThePackage().getModule());
     }
 
     /**
@@ -163,21 +171,21 @@ public class Entity {
      *            the Property to add
      */
     public void addProperty(Property property) {
-        getProperties().add(property);
-        if (property.getColumnName() != null) {
-            propertiesByColumnName.put(property.getColumnName().toLowerCase(),
-                    property);
-        }
-        if (property.isIdentifier()) {
-            getIdentifierProperties().add(property);
-        }
-        if (property.isId()) {
-            getIdProperties().add(property);
-        }
+	getProperties().add(property);
+	if (property.getColumnName() != null) {
+	    propertiesByColumnName.put(property.getColumnName().toLowerCase(),
+		    property);
+	}
+	if (property.isIdentifier()) {
+	    getIdentifierProperties().add(property);
+	}
+	if (property.isId()) {
+	    getIdProperties().add(property);
+	}
     }
 
     public List<UniqueConstraint> getUniqueConstraints() {
-        return uniqueConstraints;
+	return uniqueConstraints;
     }
 
     /**
@@ -192,7 +200,7 @@ public class Entity {
      * @see AccessLevelChecker
      */
     public void checkAccessLevel(String clientId, String orgId) {
-        accessLevelChecker.checkAccessLevel(getName(), clientId, orgId);
+	accessLevelChecker.checkAccessLevel(getName(), clientId, orgId);
     }
 
     /**
@@ -204,23 +212,23 @@ public class Entity {
      * @see PropertyValidator
      */
     public void validate(Object obj) {
-        entityValidator.validate(obj);
+	entityValidator.validate(obj);
     }
 
     public String getName() {
-        return name;
+	return name;
     }
 
     public void setName(String name) {
-        this.name = name;
+	this.name = name;
     }
 
     public String getClassName() {
-        return className;
+	return className;
     }
 
     protected void setClassName(String className) {
-        this.className = className;
+	this.className = className;
     }
 
     /**
@@ -232,33 +240,33 @@ public class Entity {
      *         not available (not found)
      */
     public Class<?> getMappingClass() {
-        if (mappingClass == null && !mappingClassComputed) {
-            try {
-                // the context class loader is the safest one
-                mappingClass = OBClassLoader.getInstance().loadClass(
-                        getClassName());
-            } catch (final ClassNotFoundException e) {
-                mappingClass = null;
-            }
-            mappingClassComputed = true;
-        }
-        return mappingClass;
+	if (mappingClass == null && !mappingClassComputed) {
+	    try {
+		// the context class loader is the safest one
+		mappingClass = OBClassLoader.getInstance().loadClass(
+			getClassName());
+	    } catch (final ClassNotFoundException e) {
+		mappingClass = null;
+	    }
+	    mappingClassComputed = true;
+	}
+	return mappingClass;
     }
 
     public void setTraceable(boolean isTraceable) {
-        this.isTraceable = isTraceable;
+	this.isTraceable = isTraceable;
     }
 
     public void setActiveEnabled(boolean isActiveEnabled) {
-        this.isActiveEnabled = isActiveEnabled;
+	this.isActiveEnabled = isActiveEnabled;
     }
 
     public void setOrganizationEnabled(boolean isOrganizationEnabled) {
-        this.isOrganizationEnabled = isOrganizationEnabled;
+	this.isOrganizationEnabled = isOrganizationEnabled;
     }
 
     public void setClientEnabled(boolean isClientEnabled) {
-        this.isClientEnabled = isClientEnabled;
+	this.isClientEnabled = isClientEnabled;
     }
 
     /**
@@ -270,35 +278,35 @@ public class Entity {
      */
     public String getImplementsStatement() {
 
-        // NOTE not using the direct reference to the class for the interface
-        // names
-        // to prevent binary dependency
-        final StringBuilder sb = new StringBuilder();
-        if (isTraceable()) {
-            sb.append("org.openbravo.base.structure.Traceable");
-        }
-        if (isClientEnabled()) {
-            if (sb.length() > 0) {
-                sb.append(", ");
-            }
-            sb.append("org.openbravo.base.structure.ClientEnabled");
-        }
-        if (isOrganizationEnabled()) {
-            if (sb.length() > 0) {
-                sb.append(", ");
-            }
-            sb.append("org.openbravo.base.structure.OrganizationEnabled");
-        }
-        if (isActiveEnabled()) {
-            if (sb.length() > 0) {
-                sb.append(", ");
-            }
-            sb.append("org.openbravo.base.structure.ActiveEnabled");
-        }
-        if (sb.length() == 0) {
-            return "";
-        }
-        return "implements " + sb.toString();
+	// NOTE not using the direct reference to the class for the interface
+	// names
+	// to prevent binary dependency
+	final StringBuilder sb = new StringBuilder();
+	if (isTraceable()) {
+	    sb.append("org.openbravo.base.structure.Traceable");
+	}
+	if (isClientEnabled()) {
+	    if (sb.length() > 0) {
+		sb.append(", ");
+	    }
+	    sb.append("org.openbravo.base.structure.ClientEnabled");
+	}
+	if (isOrganizationEnabled()) {
+	    if (sb.length() > 0) {
+		sb.append(", ");
+	    }
+	    sb.append("org.openbravo.base.structure.OrganizationEnabled");
+	}
+	if (isActiveEnabled()) {
+	    if (sb.length() > 0) {
+		sb.append(", ");
+	    }
+	    sb.append("org.openbravo.base.structure.ActiveEnabled");
+	}
+	if (sb.length() == 0) {
+	    return "";
+	}
+	return "implements " + sb.toString();
     }
 
     /**
@@ -311,7 +319,7 @@ public class Entity {
      */
     // TODO: it is saver to also check for the type!
     public boolean hasProperty(String propertyName) {
-        return propertiesByName.get(propertyName) != null;
+	return propertiesByName.get(propertyName) != null;
     }
 
     /**
@@ -323,8 +331,8 @@ public class Entity {
      * @throws CheckException
      */
     public void checkIsValidProperty(String propertyName) {
-        Check.isNotNull(propertiesByName.get(propertyName), "Property "
-                + propertyName + " not defined for entity " + this);
+	Check.isNotNull(propertiesByName.get(propertyName), "Property "
+		+ propertyName + " not defined for entity " + this);
     }
 
     /**
@@ -339,16 +347,16 @@ public class Entity {
      * @throws CheckException
      */
     public void checkValidPropertyAndValue(String propName, Object value) {
-        Property p;
-        if ((p = propertiesByName.get(propName)) == null) {
-            throw new OBException("Property " + propName
-                    + " not defined for entity " + this);
-        }
-        p.checkIsValidValue(value);
+	Property p;
+	if ((p = propertiesByName.get(propName)) == null) {
+	    throw new OBException("Property " + propName
+		    + " not defined for entity " + this);
+	}
+	p.checkIsValidValue(value);
     }
 
     public void addPropertyByName(Property p) {
-        propertiesByName.put(p.getName(), p);
+	propertiesByName.put(p.getName(), p);
     }
 
     /**
@@ -361,10 +369,10 @@ public class Entity {
      * @throws CheckException
      */
     public Property getProperty(String propertyName) {
-        final Property prop = propertiesByName.get(propertyName);
-        Check.isNotNull(prop, "Property " + propertyName
-                + " does not exist for entity " + this);
-        return prop;
+	final Property prop = propertiesByName.get(propertyName);
+	Check.isNotNull(prop, "Property " + propertyName
+		+ " does not exist for entity " + this);
+	return prop;
     }
 
     /**
@@ -377,16 +385,16 @@ public class Entity {
      * @throws CheckException
      */
     public Property getPropertyByColumnName(String columnName) {
-        final Property prop = propertiesByColumnName.get(columnName
-                .toLowerCase());
-        Check.isNotNull(prop, "Property with " + columnName
-                + " does not exist for entity " + this);
-        return prop;
+	final Property prop = propertiesByColumnName.get(columnName
+		.toLowerCase());
+	Check.isNotNull(prop, "Property with " + columnName
+		+ " does not exist for entity " + this);
+	return prop;
     }
 
     public String getPackageName() {
-        final int lastIndexOf = getClassName().lastIndexOf('.');
-        return getClassName().substring(0, lastIndexOf);
+	final int lastIndexOf = getClassName().lastIndexOf('.');
+	return getClassName().substring(0, lastIndexOf);
     }
 
     /**
@@ -396,8 +404,8 @@ public class Entity {
      * @return the last segment of the fully qualified Class name
      */
     public String getSimpleClassName() {
-        final int lastIndexOf = getClassName().lastIndexOf('.');
-        return getClassName().substring(1 + lastIndexOf);
+	final int lastIndexOf = getClassName().lastIndexOf('.');
+	return getClassName().substring(1 + lastIndexOf);
     }
 
     /**
@@ -407,36 +415,36 @@ public class Entity {
      * @return true if this Entity has created, createdBy etc. properties.
      */
     public boolean isTraceable() {
-        return isTraceable;
+	return isTraceable;
     }
 
     /**
      * @return true if this Entity has an isActive property.
      */
     public boolean isActiveEnabled() {
-        return isActiveEnabled;
+	return isActiveEnabled;
     }
 
     /**
      * @return true if this Entity has an organization property.
      */
     public boolean isOrganizationEnabled() {
-        return isOrganizationEnabled;
+	return isOrganizationEnabled;
     }
 
     /**
      * @return true if this Entity has a client property.
      */
     public boolean isClientEnabled() {
-        return isClientEnabled;
+	return isClientEnabled;
     }
 
     public List<Property> getProperties() {
-        return properties;
+	return properties;
     }
 
     public void setProperties(List<Property> properties) {
-        this.properties = properties;
+	this.properties = properties;
     }
 
     /**
@@ -444,11 +452,11 @@ public class Entity {
      *         Entity
      */
     public List<Property> getIdentifierProperties() {
-        return identifierProperties;
+	return identifierProperties;
     }
 
     public void setIdentifierProperties(List<Property> identifierProperties) {
-        this.identifierProperties = identifierProperties;
+	this.identifierProperties = identifierProperties;
     }
 
     /**
@@ -459,11 +467,11 @@ public class Entity {
      *         there is no such association to a parent
      */
     public List<Property> getParentProperties() {
-        return parentProperties;
+	return parentProperties;
     }
 
     public void setParentProperties(List<Property> parentProperties) {
-        this.parentProperties = parentProperties;
+	this.parentProperties = parentProperties;
     }
 
     /**
@@ -476,11 +484,11 @@ public class Entity {
      *         Entity
      */
     public List<Property> getOrderByProperties() {
-        return this.orderByProperties;
+	return this.orderByProperties;
     }
 
     public void setOrderByProperties(List<Property> orderByProperties) {
-        this.orderByProperties = orderByProperties;
+	this.orderByProperties = orderByProperties;
     }
 
     /**
@@ -489,68 +497,84 @@ public class Entity {
      * @return the list of primary key properties
      */
     public List<Property> getIdProperties() {
-        return idProperties;
+	return idProperties;
     }
 
     public void setIdProperties(List<Property> idProperties) {
-        this.idProperties = idProperties;
+	this.idProperties = idProperties;
     }
 
     public String getTableName() {
-        return tableName;
+	return tableName;
     }
 
     public void setTableName(String tableName) {
-        this.tableName = tableName;
+	this.tableName = tableName;
     }
 
     @Override
     public String toString() {
-        return getName();
+	return getName();
     }
 
     public boolean isMutable() {
-        return isMutable;
+	return isMutable;
     }
 
     public void setMutable(boolean isMutable) {
-        this.isMutable = isMutable;
+	this.isMutable = isMutable;
     }
 
     public boolean isDeletable() {
-        return isDeletable;
+	return isDeletable;
     }
 
     public void setDeletable(boolean isDeletable) {
-        this.isDeletable = isDeletable;
+	this.isDeletable = isDeletable;
     }
 
     public boolean hasCompositeId() {
-        return getIdProperties().size() == 1
-                && getIdProperties().get(0).isCompositeId();
+	return getIdProperties().size() == 1
+		&& getIdProperties().get(0).isCompositeId();
     }
 
     public AccessLevel getAccessLevel() {
-        return accessLevel;
+	return accessLevel;
     }
 
     public void setAccessLevel(AccessLevel accessLevel) {
-        this.accessLevel = accessLevel;
+	this.accessLevel = accessLevel;
     }
 
     public String getTableId() {
-        return tableId;
+	return tableId;
     }
 
     public void setTableId(String tableId) {
-        this.tableId = tableId;
+	this.tableId = tableId;
     }
 
     public boolean isOrganizationPartOfKey() {
-        return isOrganizationPartOfKey;
+	return isOrganizationPartOfKey;
     }
 
     public void setOrganizationPartOfKey(boolean isOrganizationPartOfKey) {
-        this.isOrganizationPartOfKey = isOrganizationPartOfKey;
+	this.isOrganizationPartOfKey = isOrganizationPartOfKey;
+    }
+
+    public boolean isInActive() {
+	return isInActive;
+    }
+
+    public void setInActive(boolean isInActive) {
+	this.isInActive = isInActive;
+    }
+
+    public Module getModule() {
+	return module;
+    }
+
+    public void setModule(Module module) {
+	this.module = module;
     }
 }

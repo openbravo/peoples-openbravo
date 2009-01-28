@@ -51,6 +51,8 @@
 
 		<property name="transient" type="org.openbravo.base.session.OBYesNoType" column="istransient"/>
 		<property name="isTransientCondition" column="istransientcondition"/>
+		                		
+		<many-to-one name="module" not-null="true" class="org.openbravo.base.model.Module" column="ad_module_id"/>
 		
 	</class>
 </hibernate-mapping>

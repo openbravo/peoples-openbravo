@@ -19,6 +19,8 @@
 
 package org.openbravo.service.db;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -35,6 +37,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.xml.EntityXMLConverter;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.DataSet;
 import org.openbravo.model.ad.utility.DataSetTable;
 
@@ -68,10 +71,10 @@ public class DataExportService implements OBSingleton {
      * @return the DataExportService instance
      */
     public static DataExportService getInstance() {
-        if (instance == null) {
-            instance = OBProvider.getInstance().get(DataExportService.class);
-        }
-        return instance;
+	if (instance == null) {
+	    instance = OBProvider.getInstance().get(DataExportService.class);
+	}
+	return instance;
     }
 
     /**
@@ -82,7 +85,7 @@ public class DataExportService implements OBSingleton {
      *            the DataExportService instance used by the
      */
     public static void setInstance(DataExportService instance) {
-        DataExportService.instance = instance;
+	DataExportService.instance = instance;
     }
 
     /**
@@ -94,7 +97,7 @@ public class DataExportService implements OBSingleton {
      * @return the XML string containing the data of the dataset
      */
     public String exportDataSetToXML(DataSet dataSet) {
-        return exportDataSetToXML(dataSet, null);
+	return exportDataSetToXML(dataSet, null);
     }
 
     /**
@@ -110,8 +113,8 @@ public class DataExportService implements OBSingleton {
      * @return the XML string containing the data of the dataset
      */
     public String exportDataSetToXML(DataSet dataSet, String moduleId) {
-        return exportDataSetToXML(dataSet, moduleId, false,
-                new HashMap<String, Object>(), true, true);
+	return exportDataSetToXML(dataSet, moduleId,
+		new HashMap<String, Object>(), true, true, null);
     }
 
     /**
@@ -129,24 +132,28 @@ public class DataExportService implements OBSingleton {
      * @see CLIENT_ID_PARAMETER_NAME
      */
     public String exportClientToXML(Map<String, Object> parameters) {
-        DataSet dataSet = null;
-        try {
-            OBContext.getOBContext().setInAdministratorMode(true);
-            final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(
-                    DataSet.class);
-            obc.add(Expression.eq("name", CLIENT_DATA_SET_NAME));
-            if (obc.list().size() == 0) {
-                throw new OBException("No dataset found with name "
-                        + CLIENT_DATA_SET_NAME);
-            }
-            dataSet = obc.list().get(0);
+	DataSet dataSet = null;
+	try {
+	    OBContext.getOBContext().setInAdministratorMode(true);
+	    final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(
+		    DataSet.class);
+	    obc.add(Expression.eq("name", CLIENT_DATA_SET_NAME));
+	    if (obc.list().size() == 0) {
+		throw new OBException("No dataset found with name "
+			+ CLIENT_DATA_SET_NAME);
+	    }
+	    dataSet = obc.list().get(0);
 
-            // the export part may not be run as superuser
-            return exportDataSetToXML(dataSet, null, true, parameters, false,
-                    false);
-        } finally {
-            OBContext.getOBContext().restorePreviousAdminMode();
-        }
+	    // read the client
+	    final Client client = OBDal.getInstance().get(Client.class,
+		    parameters.get(CLIENT_ID_PARAMETER_NAME));
+
+	    // the export part may not be run as superuser
+	    return exportDataSetToXML(dataSet, null, parameters, false, false,
+		    client);
+	} finally {
+	    OBContext.getOBContext().restorePreviousAdminMode();
+	}
     }
 
     /**
@@ -171,32 +178,46 @@ public class DataExportService implements OBSingleton {
      * @return the XML string containing the data of the dataset
      */
     public String exportDataSetToXML(DataSet dataSet, String moduleId,
-            boolean exportClientOrganizationReferences,
-            Map<String, Object> parameters, boolean exportTransientInfo,
-            boolean addSystemAttributes) {
-        log.debug("Exporting dataset " + dataSet.getName());
+	    Map<String, Object> parameters, boolean exportTransientInfo,
+	    boolean addSystemAttributes, Client client) {
+	log.debug("Exporting dataset " + dataSet.getName());
 
-        final EntityXMLConverter exc = EntityXMLConverter.newInstance();
-        exc.setOptionIncludeReferenced(true);
-        exc.setOptionExportTransientInfo(exportTransientInfo);
-        exc.setAddSystemAttributes(addSystemAttributes);
-        exc
-                .setOptionExportClientOrganizationReferences(exportClientOrganizationReferences);
-        final List<DataSetTable> dts = dataSet.getDataSetTableList();
-        final Set<BaseOBObject> toExport = new LinkedHashSet<BaseOBObject>();
-        for (final DataSetTable dt : dts) {
-            final Boolean isbo = dt.isBusinessObject();
-            exc.setOptionIncludeChildren(isbo != null && isbo.booleanValue());
-            final List<BaseOBObject> list = DataSetService.getInstance()
-                    .getExportableObjects(dt, moduleId, parameters);
-            toExport.addAll(list);
-        }
+	final EntityXMLConverter exc = EntityXMLConverter.newInstance();
+	exc.setOptionIncludeReferenced(true);
+	exc.setOptionExportTransientInfo(exportTransientInfo);
+	exc.setAddSystemAttributes(addSystemAttributes);
+	if (client != null) {
+	    exc.setClient(client);
+	    exc.setOptionExportClientOrganizationReferences(true);
+	}
 
-        if (toExport.size() > 0) {
-            exc.process(toExport);
-            return exc.getProcessResult();
-        } else {
-            return null;
-        }
+	final List<DataSetTable> dts = dataSet.getDataSetTableList();
+	Collections.sort(dts, new DatasetTableComparator());
+
+	final Set<BaseOBObject> toExport = new LinkedHashSet<BaseOBObject>();
+	for (final DataSetTable dt : dts) {
+	    final Boolean isbo = dt.isBusinessObject();
+	    exc.setOptionIncludeChildren(isbo != null && isbo.booleanValue());
+	    final List<BaseOBObject> list = DataSetService.getInstance()
+		    .getExportableObjects(dt, moduleId, parameters);
+	    toExport.addAll(list);
+	}
+
+	if (toExport.size() > 0) {
+	    exc.process(toExport);
+	    return exc.getProcessResult();
+	} else {
+	    return null;
+	}
+    }
+
+    // sort the datatable by id
+    private class DatasetTableComparator implements Comparator<DataSetTable> {
+
+	@Override
+	public int compare(DataSetTable o1, DataSetTable o2) {
+	    return o1.getId().compareTo(o2.getId());
+	}
+
     }
 }

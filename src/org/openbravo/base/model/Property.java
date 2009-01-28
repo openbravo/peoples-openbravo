@@ -81,6 +81,8 @@ public class Property {
 
     private String transientCondition;
 
+    private Module module;
+
     /**
      * Initializes this Property using the information from the Column.
      * 
@@ -88,33 +90,35 @@ public class Property {
      *            the column used to initialize this Property.
      */
     public void initializeFromColumn(Column fromColumn) {
-        fromColumn.setProperty(this);
-        setId(fromColumn.isKey());
-        setPrimitive(fromColumn.isPrimitiveType());
-        setPrimitiveType(fromColumn.getPrimitiveType());
-        setIdentifier(fromColumn.isIdentifier());
-        setParent(fromColumn.isParent());
-        setColumnName(fromColumn.getColumnName());
-        setDefaultValue(fromColumn.getDefaultValue());
-        setMandatory(overrideMandatoryCustom(fromColumn));
-        setMinValue(fromColumn.getValueMin());
-        setMaxValue(fromColumn.getValueMax());
-        setUuid(fromColumn.getReference().getName().equals("ID")
-                && fromColumn.getReference().getId().equals("13"));
-        setUpdatable(fromColumn.isUpdatable());
-        setFieldLength(fromColumn.getFieldLength());
-        setAllowedValues(fromColumn.getAllowedValues());
-        final String columnname = fromColumn.getColumnName().toLowerCase();
-        if (columnname.equals("line") || columnname.equals("seqno")
-                || columnname.equals("lineno"))
-            setOrderByProperty(true);
-        else
-            setOrderByProperty(false);
+	fromColumn.setProperty(this);
+	setId(fromColumn.isKey());
+	setPrimitive(fromColumn.isPrimitiveType());
+	setPrimitiveType(fromColumn.getPrimitiveType());
+	setIdentifier(fromColumn.isIdentifier());
+	setParent(fromColumn.isParent());
+	setColumnName(fromColumn.getColumnName());
+	setDefaultValue(fromColumn.getDefaultValue());
+	setMandatory(overrideMandatoryCustom(fromColumn));
+	setMinValue(fromColumn.getValueMin());
+	setMaxValue(fromColumn.getValueMax());
+	setUuid(fromColumn.getReference().getName().equals("ID")
+		&& fromColumn.getReference().getId().equals("13"));
+	setUpdatable(fromColumn.isUpdatable());
+	setFieldLength(fromColumn.getFieldLength());
+	setAllowedValues(fromColumn.getAllowedValues());
+	final String columnname = fromColumn.getColumnName().toLowerCase();
+	if (columnname.equals("line") || columnname.equals("seqno")
+		|| columnname.equals("lineno"))
+	    setOrderByProperty(true);
+	else
+	    setOrderByProperty(false);
 
-        setTransient(fromColumn.isTransient());
-        setTransientCondition(fromColumn.getIsTransientCondition());
+	setTransient(fromColumn.isTransient());
+	setTransientCondition(fromColumn.getIsTransientCondition());
 
-        setInactive(!fromColumn.isActive());
+	setInactive(!fromColumn.isActive());
+
+	setModule(fromColumn.getModule());
     }
 
     // TODO: remove this hack when possible
@@ -124,29 +128,29 @@ public class Property {
     // be mandatory. So these columns are hidden on windows/tabs where they
     // should not be entered.
     private boolean overrideMandatoryCustom(Column c) {
-        final boolean columnMandatory = c.isMandatory();
-        if (c.getTable().getTableName().equalsIgnoreCase("AD_User")
-                && c.getColumnName().equalsIgnoreCase("username")) {
-            return false;
-        }
-        if (!c.getTable().getTableName().equalsIgnoreCase("M_ProductionPlan")
-                && !c.getTable().getTableName()
-                        .equalsIgnoreCase("M_Production")) {
-            return columnMandatory;
-        }
-        if (c.getColumnName().equalsIgnoreCase("endtime")) {
-            return false;
-        } else if (c.getColumnName().equalsIgnoreCase("ma_costcenteruse")) {
-            return false;
-        } else if (c.getColumnName().equalsIgnoreCase("MA_Wrphase_ID")) {
-            return false;
-        } else if (c.getColumnName().equalsIgnoreCase("neededquantity")) {
-            return false;
-        } else if (c.getColumnName().equalsIgnoreCase("rejectedquantity")) {
-            return false;
-        } else {
-            return columnMandatory;
-        }
+	final boolean columnMandatory = c.isMandatory();
+	if (c.getTable().getTableName().equalsIgnoreCase("AD_User")
+		&& c.getColumnName().equalsIgnoreCase("username")) {
+	    return false;
+	}
+	if (!c.getTable().getTableName().equalsIgnoreCase("M_ProductionPlan")
+		&& !c.getTable().getTableName()
+			.equalsIgnoreCase("M_Production")) {
+	    return columnMandatory;
+	}
+	if (c.getColumnName().equalsIgnoreCase("endtime")) {
+	    return false;
+	} else if (c.getColumnName().equalsIgnoreCase("ma_costcenteruse")) {
+	    return false;
+	} else if (c.getColumnName().equalsIgnoreCase("MA_Wrphase_ID")) {
+	    return false;
+	} else if (c.getColumnName().equalsIgnoreCase("neededquantity")) {
+	    return false;
+	} else if (c.getColumnName().equalsIgnoreCase("rejectedquantity")) {
+	    return false;
+	} else {
+	    return columnMandatory;
+	}
     }
 
     /**
@@ -157,76 +161,76 @@ public class Property {
      */
     protected void initializeName() {
 
-        // if not set compute a sensible name
-        if (getName() == null) {
-            setName(NamingUtil.getPropertyMappingName(this));
-        }
+	// if not set compute a sensible name
+	if (getName() == null) {
+	    setName(NamingUtil.getPropertyMappingName(this));
+	}
 
-        // correct the name with the static constant in the generated entity
-        // class
-        setName(NamingUtil.getStaticPropertyName(getEntity().getMappingClass(),
-                getName()));
+	// correct the name with the static constant in the generated entity
+	// class
+	setName(NamingUtil.getStaticPropertyName(getEntity().getMappingClass(),
+		getName()));
 
-        getEntity().addPropertyByName(this);
+	getEntity().addPropertyByName(this);
 
-        if (getName().equals("created") && isPrimitive()
-                && Date.class.isAssignableFrom(getPrimitiveType())) {
-            setAuditInfo(true);
-        } else if (getName().equals("updated") && isPrimitive()
-                && Date.class.isAssignableFrom(getPrimitiveType())) {
-            setAuditInfo(true);
-        } else if (getName().toLowerCase().equals("updatedby")
-                && !isPrimitive()) {
-            setAuditInfo(true);
-        } else if (getName().toLowerCase().equals("createdby")
-                && !isPrimitive()) {
-            setAuditInfo(true);
-        } else {
-            setAuditInfo(false);
-        }
-        if (getName().equals("client")) {
-            setClientOrOrganization(true);
-            getEntity().setClientEnabled(true);
-        }
-        if (getName().equals("organization")) {
-            setClientOrOrganization(true);
-            getEntity().setOrganizationEnabled(true);
-            if (isId() || isPartOfCompositeId()) {
-                getEntity().setOrganizationPartOfKey(true);
-            }
-        }
-        if (getName().equalsIgnoreCase("isactive") && isPrimitive()) {
-            getEntity().setActiveEnabled(true);
-        }
+	if (getName().equals("created") && isPrimitive()
+		&& Date.class.isAssignableFrom(getPrimitiveType())) {
+	    setAuditInfo(true);
+	} else if (getName().equals("updated") && isPrimitive()
+		&& Date.class.isAssignableFrom(getPrimitiveType())) {
+	    setAuditInfo(true);
+	} else if (getName().toLowerCase().equals("updatedby")
+		&& !isPrimitive()) {
+	    setAuditInfo(true);
+	} else if (getName().toLowerCase().equals("createdby")
+		&& !isPrimitive()) {
+	    setAuditInfo(true);
+	} else {
+	    setAuditInfo(false);
+	}
+	if (getName().equals("client")) {
+	    setClientOrOrganization(true);
+	    getEntity().setClientEnabled(true);
+	}
+	if (getName().equals("organization")) {
+	    setClientOrOrganization(true);
+	    getEntity().setOrganizationEnabled(true);
+	    if (isId() || isPartOfCompositeId()) {
+		getEntity().setOrganizationPartOfKey(true);
+	    }
+	}
+	if (getName().equalsIgnoreCase("isactive") && isPrimitive()) {
+	    getEntity().setActiveEnabled(true);
+	}
     }
 
     public boolean isBoolean() {
-        return isPrimitive()
-                && (getPrimitiveType().getName().compareTo("boolean") == 0 || Boolean.class == getPrimitiveType());
+	return isPrimitive()
+		&& (getPrimitiveType().getName().compareTo("boolean") == 0 || Boolean.class == getPrimitiveType());
     }
 
     public Entity getEntity() {
-        return entity;
+	return entity;
     }
 
     public void setEntity(Entity entity) {
-        this.entity = entity;
+	this.entity = entity;
     }
 
     public boolean isId() {
-        return id;
+	return id;
     }
 
     public void setId(boolean id) {
-        this.id = id;
+	this.id = id;
     }
 
     public boolean isPrimitive() {
-        return primitive;
+	return primitive;
     }
 
     public void setPrimitive(boolean primitive) {
-        this.primitive = primitive;
+	this.primitive = primitive;
     }
 
     /**
@@ -239,7 +243,7 @@ public class Property {
      */
     // 
     public Property getReferencedProperty() {
-        return referencedProperty;
+	return referencedProperty;
     }
 
     /**
@@ -250,32 +254,32 @@ public class Property {
      *            the property referenced by this property
      */
     public void setReferencedProperty(Property referencedProperty) {
-        this.referencedProperty = referencedProperty;
-        setTargetEntity(referencedProperty.getEntity());
+	this.referencedProperty = referencedProperty;
+	setTargetEntity(referencedProperty.getEntity());
     }
 
     public Entity getTargetEntity() {
-        return targetEntity;
+	return targetEntity;
     }
 
     public void setTargetEntity(Entity targetEntity) {
-        this.targetEntity = targetEntity;
+	this.targetEntity = targetEntity;
     }
 
     public Class<?> getPrimitiveType() {
-        return primitiveType;
+	return primitiveType;
     }
 
     public void setPrimitiveType(Class<?> primitiveType) {
-        this.primitiveType = primitiveType;
+	this.primitiveType = primitiveType;
     }
 
     public String getColumnName() {
-        return columnName;
+	return columnName;
     }
 
     public void setColumnName(String columnName) {
-        this.columnName = columnName;
+	this.columnName = columnName;
     }
 
     /**
@@ -287,78 +291,78 @@ public class Property {
      * @return the java-valid default
      */
     public String getFormattedDefaultValue() {
-        Check
-                .isTrue(
-                        isPrimitive() || isCompositeId() || isOneToMany(),
-                        "Default value is only supported for composite ids, primitive types, and one-to-many properties: property "
-                                + this);
-        if (isCompositeId()) {
-            return " new Id()";
-        }
+	Check
+		.isTrue(
+			isPrimitive() || isCompositeId() || isOneToMany(),
+			"Default value is only supported for composite ids, primitive types, and one-to-many properties: property "
+				+ this);
+	if (isCompositeId()) {
+	    return " new Id()";
+	}
 
-        if (isOneToMany()) {
-            return " new java.util.ArrayList<Object>()";
-        }
+	if (isOneToMany()) {
+	    return " new java.util.ArrayList<Object>()";
+	}
 
-        if (defaultValue == null && isBoolean()) {
-            if (getName().equalsIgnoreCase("isactive")) {
-                log
-                        .debug("Property "
-                                + this
-                                + " is probably the active column but does not have a default value set, supplying default value Y");
-                defaultValue = "Y";
-            } else {
-                defaultValue = "N";
-            }
-        }
+	if (defaultValue == null && isBoolean()) {
+	    if (getName().equalsIgnoreCase("isactive")) {
+		log
+			.debug("Property "
+				+ this
+				+ " is probably the active column but does not have a default value set, supplying default value Y");
+		defaultValue = "Y";
+	    } else {
+		defaultValue = "N";
+	    }
+	}
 
-        if (defaultValue != null && isPrimitive()) {
-            if (defaultValue.startsWith("@")) {
-                return null;
-            }
-            if (defaultValue.toLowerCase().equals("sysdate")) {
-                return " new java.util.Date()";
-            }
-            if (getPrimitiveType() == BigDecimal.class) {
-                return " new java.math.BigDecimal(" + defaultValue + ")";
-            }
-            if (getPrimitiveType() == Float.class
-                    || getPrimitiveType() == float.class) {
-                return defaultValue + "f";
-            }
-            if (getPrimitiveType() == String.class) {
-                if (defaultValue.length() > 1
-                        && (defaultValue.startsWith("'") || defaultValue
-                                .startsWith("\""))) {
-                    defaultValue = defaultValue.substring(1);
-                }
-                if (defaultValue.length() > 1
-                        && (defaultValue.endsWith("'") || defaultValue
-                                .endsWith("\""))) {
-                    defaultValue = defaultValue.substring(0, defaultValue
-                            .length() - 1);
-                }
+	if (defaultValue != null && isPrimitive()) {
+	    if (defaultValue.startsWith("@")) {
+		return null;
+	    }
+	    if (defaultValue.toLowerCase().equals("sysdate")) {
+		return " new java.util.Date()";
+	    }
+	    if (getPrimitiveType() == BigDecimal.class) {
+		return " new java.math.BigDecimal(" + defaultValue + ")";
+	    }
+	    if (getPrimitiveType() == Float.class
+		    || getPrimitiveType() == float.class) {
+		return defaultValue + "f";
+	    }
+	    if (getPrimitiveType() == String.class) {
+		if (defaultValue.length() > 1
+			&& (defaultValue.startsWith("'") || defaultValue
+				.startsWith("\""))) {
+		    defaultValue = defaultValue.substring(1);
+		}
+		if (defaultValue.length() > 1
+			&& (defaultValue.endsWith("'") || defaultValue
+				.endsWith("\""))) {
+		    defaultValue = defaultValue.substring(0, defaultValue
+			    .length() - 1);
+		}
 
-                return "\"" + defaultValue + "\"";
-            } else if (isBoolean()) {
-                if (defaultValue.equals("Y")) {
-                    return "true";
-                } else if (defaultValue.equals("'Y'")) {
-                    return "true";
-                } else if (defaultValue.equals("'N'")) {
-                    return "false";
-                } else if (defaultValue.equals("N")) {
-                    return "false";
-                } else {
-                    log.error("Illegal default value for boolean property "
-                            + this + ", value should be Y or N and it is: "
-                            + defaultValue);
-                    return "false";
-                }
-            }
-        }
+		return "\"" + defaultValue + "\"";
+	    } else if (isBoolean()) {
+		if (defaultValue.equals("Y")) {
+		    return "true";
+		} else if (defaultValue.equals("'Y'")) {
+		    return "true";
+		} else if (defaultValue.equals("'N'")) {
+		    return "false";
+		} else if (defaultValue.equals("N")) {
+		    return "false";
+		} else {
+		    log.error("Illegal default value for boolean property "
+			    + this + ", value should be Y or N and it is: "
+			    + defaultValue);
+		    return "false";
+		}
+	    }
+	}
 
-        return defaultValue;
+	return defaultValue;
     }
 
     /**
@@ -369,49 +373,49 @@ public class Property {
      *         corresponding to this property.
      */
     public Object getActualDefaultValue() {
-        if (defaultValue == null && isBoolean()) {
-            if (getName().equalsIgnoreCase("isactive")) {
-                log
-                        .debug("Property "
-                                + this
-                                + " is probably the active column but does not have a default value set, supplying default value Y");
-                setDefaultValue("Y");
-            } else {
-                setDefaultValue("N");
-            }
-        }
+	if (defaultValue == null && isBoolean()) {
+	    if (getName().equalsIgnoreCase("isactive")) {
+		log
+			.debug("Property "
+				+ this
+				+ " is probably the active column but does not have a default value set, supplying default value Y");
+		setDefaultValue("Y");
+	    } else {
+		setDefaultValue("N");
+	    }
+	}
 
-        if (defaultValue != null && isPrimitive()) {
-            if (defaultValue.startsWith("@")) {
-                return null;
-            }
-            if (defaultValue.toLowerCase().equals("sysdate")) {
-                return new Date();
-            }
-            if (getPrimitiveType() == BigDecimal.class) {
-                return new BigDecimal(defaultValue);
-            }
-            if (getPrimitiveType() == Float.class
-                    || getPrimitiveType() == float.class) {
-                return new Float(defaultValue);
-            }
-            if (getPrimitiveType() == String.class) {
-                return defaultValue;
-            } else if (isBoolean()) {
-                if (defaultValue.equals("Y")) {
-                    return true;
-                } else if (defaultValue.equals("N")) {
-                    return false;
-                } else {
-                    log.error("Illegal default value for boolean property "
-                            + this + ", value should be Y or N and it is: "
-                            + defaultValue);
-                    return false;
-                }
-            }
-        }
+	if (defaultValue != null && isPrimitive()) {
+	    if (defaultValue.startsWith("@")) {
+		return null;
+	    }
+	    if (defaultValue.toLowerCase().equals("sysdate")) {
+		return new Date();
+	    }
+	    if (getPrimitiveType() == BigDecimal.class) {
+		return new BigDecimal(defaultValue);
+	    }
+	    if (getPrimitiveType() == Float.class
+		    || getPrimitiveType() == float.class) {
+		return new Float(defaultValue);
+	    }
+	    if (getPrimitiveType() == String.class) {
+		return defaultValue;
+	    } else if (isBoolean()) {
+		if (defaultValue.equals("Y")) {
+		    return true;
+		} else if (defaultValue.equals("N")) {
+		    return false;
+		} else {
+		    log.error("Illegal default value for boolean property "
+			    + this + ", value should be Y or N and it is: "
+			    + defaultValue);
+		    return false;
+		}
+	    }
+	}
 
-        return null;
+	return null;
     }
 
     /**
@@ -421,49 +425,49 @@ public class Property {
      * @return true if derived readable for the current user, false otherwise.
      */
     public boolean allowDerivedRead() {
-        if (allowDerivedRead == null) {
-            allowDerivedRead = isId() || isIdentifier()
-                    || isClientOrOrganization();
-        }
-        return allowDerivedRead;
+	if (allowDerivedRead == null) {
+	    allowDerivedRead = isId() || isIdentifier()
+		    || isClientOrOrganization();
+	}
+	return allowDerivedRead;
     }
 
     public boolean hasDefaultValue() {
-        if (isCompositeId() || isOneToMany()) {
-            return true;
-        }
-        if (!isPrimitive()) {
-            return false;
-        }
-        return getFormattedDefaultValue() != null;
+	if (isCompositeId() || isOneToMany()) {
+	    return true;
+	}
+	if (!isPrimitive()) {
+	    return false;
+	}
+	return getFormattedDefaultValue() != null;
     }
 
     public void setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue;
+	this.defaultValue = defaultValue;
     }
 
     public boolean isMandatory() {
-        return mandatory;
+	return mandatory;
     }
 
     public void setMandatory(boolean mandatory) {
-        this.mandatory = mandatory;
+	this.mandatory = mandatory;
     }
 
     public boolean isIdentifier() {
-        return identifier;
+	return identifier;
     }
 
     public void setIdentifier(boolean identifier) {
-        this.identifier = identifier;
+	this.identifier = identifier;
     }
 
     public boolean isParent() {
-        return parent;
+	return parent;
     }
 
     public void setParent(boolean parent) {
-        this.parent = parent;
+	this.parent = parent;
     }
 
     /**
@@ -473,19 +477,19 @@ public class Property {
      * @return a String denoting the class name of values of this property
      */
     public String getTypeName() {
-        final String typeName;
-        if (isCompositeId) {
-            typeName = getEntity().getClassName() + ".Id";
-        } else if (isPrimitive()) {
-            typeName = getPrimitiveType().getName();
-        } else if (getTargetEntity() == null) {
-            log.warn("ERROR NO REFERENCETYPE " + getEntity().getName() + "."
-                    + getColumnName());
-            return "java.lang.Object";
-        } else {
-            typeName = getTargetEntity().getClassName();
-        }
-        return typeName;
+	final String typeName;
+	if (isCompositeId) {
+	    typeName = getEntity().getClassName() + ".Id";
+	} else if (isPrimitive()) {
+	    typeName = getPrimitiveType().getName();
+	} else if (getTargetEntity() == null) {
+	    log.warn("ERROR NO REFERENCETYPE " + getEntity().getName() + "."
+		    + getColumnName());
+	    return "java.lang.Object";
+	} else {
+	    typeName = getTargetEntity().getClassName();
+	}
+	return typeName;
     }
 
     /**
@@ -493,11 +497,11 @@ public class Property {
      * entity code generation.
      */
     public String getSimpleTypeName() {
-        final String typeName = getTypeName();
-        if (typeName.indexOf(".") == -1) {
-            return typeName;
-        }
-        return typeName.substring(1 + typeName.lastIndexOf("."));
+	final String typeName = getTypeName();
+	if (typeName.indexOf(".") == -1) {
+	    return typeName;
+	}
+	return typeName.substring(1 + typeName.lastIndexOf("."));
     }
 
     /**
@@ -508,15 +512,15 @@ public class Property {
      * @return the class name of the object type of this property.
      */
     public String getObjectTypeName() {
-        if (isPrimitive()) {
-            final String typeName = getTypeName();
-            if (typeName.indexOf('.') != -1) {
-                return typeName;
-            }
-            return getPrimitiveObjectType().getName();
-        } else {
-            return getTypeName();
-        }
+	if (isPrimitive()) {
+	    final String typeName = getTypeName();
+	    if (typeName.indexOf('.') != -1) {
+		return typeName;
+	    }
+	    return getPrimitiveObjectType().getName();
+	} else {
+	    return getTypeName();
+	}
     }
 
     /**
@@ -527,32 +531,32 @@ public class Property {
      * @return the Object class for the primitive type
      */
     public Class<?> getPrimitiveObjectType() {
-        Check.isTrue(isPrimitive(), "Only primitive types supported here");
-        final String typeName = getTypeName();
-        if (typeName.indexOf('.') != -1) {
-            return getPrimitiveType();
-        }
-        if ("boolean".equals(typeName)) {
-            return Boolean.class;
-        }
-        if ("int".equals(typeName)) {
-            return Integer.class;
-        }
-        if ("long".equals(typeName)) {
-            return Long.class;
-        }
-        if ("byte".equals(typeName)) {
-            return Byte.class;
-        }
-        if ("float".equals(typeName)) {
-            return Float.class;
-        }
-        if ("double".equals(typeName)) {
-            return Double.class;
-        }
-        Check.fail("Type " + typeName + " not supported as object type");
-        // never gets here
-        return null;
+	Check.isTrue(isPrimitive(), "Only primitive types supported here");
+	final String typeName = getTypeName();
+	if (typeName.indexOf('.') != -1) {
+	    return getPrimitiveType();
+	}
+	if ("boolean".equals(typeName)) {
+	    return Boolean.class;
+	}
+	if ("int".equals(typeName)) {
+	    return Integer.class;
+	}
+	if ("long".equals(typeName)) {
+	    return Long.class;
+	}
+	if ("byte".equals(typeName)) {
+	    return Byte.class;
+	}
+	if ("float".equals(typeName)) {
+	    return Float.class;
+	}
+	if ("double".equals(typeName)) {
+	    return Double.class;
+	}
+	Check.fail("Type " + typeName + " not supported as object type");
+	// never gets here
+	return null;
     }
 
     /**
@@ -560,24 +564,24 @@ public class Property {
      *         an object type. Used by code generation of entities.
      */
     public boolean allowNullValues() {
-        if (!isPrimitive()) {
-            return true;
-        }
-        return (getPrimitiveType().getName().indexOf('.') != -1);
+	if (!isPrimitive()) {
+	    return true;
+	}
+	return (getPrimitiveType().getName().indexOf('.') != -1);
     }
 
     public String getName() {
-        return name;
+	return name;
     }
 
     /**
      * @return the name used for creating a getter/setter in generated code.
      */
     public String getGetterSetterName() {
-        if (isBoolean() && getName().startsWith("is")) {
-            return getName().substring(2);
-        }
-        return getName();
+	if (isBoolean() && getName().startsWith("is")) {
+	    return getName().substring(2);
+	}
+	return getName();
     }
 
     /**
@@ -587,12 +591,12 @@ public class Property {
      * @throws ValidationException
      */
     public void checkIsWritable() {
-        if (isInactive()) {
-            final ValidationException ve = new ValidationException();
-            ve.addMessage(this, "Property " + this
-                    + " is inactive and can therefore not be changed.");
-            throw ve;
-        }
+	if (isInactive()) {
+	    final ValidationException ve = new ValidationException();
+	    ve.addMessage(this, "Property " + this
+		    + " is inactive and can therefore not be changed.");
+	    throw ve;
+	}
     }
 
     /**
@@ -606,176 +610,176 @@ public class Property {
      */
     // null
     public void checkIsValidValue(Object value) {
-        // note id's maybe set to null to force the creation of a new one
-        // this assumes ofcourse that all ids are generated
-        // also client and organization may be nullified as they are set
-        // automatically
-        if (value == null && isMandatory() && !isId()
-                && !isClientOrOrganization()) {
-            final ValidationException ve = new ValidationException();
-            ve.addMessage(this, "Property " + this
-                    + " is mandatory, null values are not allowed.");
-            throw ve;
-        }
+	// note id's maybe set to null to force the creation of a new one
+	// this assumes ofcourse that all ids are generated
+	// also client and organization may be nullified as they are set
+	// automatically
+	if (value == null && isMandatory() && !isId()
+		&& !isClientOrOrganization()) {
+	    final ValidationException ve = new ValidationException();
+	    ve.addMessage(this, "Property " + this
+		    + " is mandatory, null values are not allowed.");
+	    throw ve;
+	}
 
-        if (value == null) {
-            return;
-        }
+	if (value == null) {
+	    return;
+	}
 
-        if (isOneToMany() && (value instanceof List)) {
-            return;
-        }
+	if (isOneToMany() && (value instanceof List)) {
+	    return;
+	}
 
-        if (!isPrimitive() && !(value instanceof BaseOBObjectDef)) {
-            final ValidationException ve = new ValidationException();
-            ve.addMessage(this, "Property " + this
-                    + " only allows reference instances of type "
-                    + BaseOBObjectDef.class.getName()
-                    + " but the value is an instanceof "
-                    + value.getClass().getName());
-            throw ve;
-        } else if (isPrimitive()) {
-            if (!getPrimitiveObjectType().isInstance(value)) {
-                final ValidationException ve = new ValidationException();
-                ve.addMessage(this, "Property " + this
-                        + " only allows instances of "
-                        + getPrimitiveObjectType().getName()
-                        + " but the value is an instanceof "
-                        + value.getClass().getName());
-                throw ve;
-            }
+	if (!isPrimitive() && !(value instanceof BaseOBObjectDef)) {
+	    final ValidationException ve = new ValidationException();
+	    ve.addMessage(this, "Property " + this
+		    + " only allows reference instances of type "
+		    + BaseOBObjectDef.class.getName()
+		    + " but the value is an instanceof "
+		    + value.getClass().getName());
+	    throw ve;
+	} else if (isPrimitive()) {
+	    if (!getPrimitiveObjectType().isInstance(value)) {
+		final ValidationException ve = new ValidationException();
+		ve.addMessage(this, "Property " + this
+			+ " only allows instances of "
+			+ getPrimitiveObjectType().getName()
+			+ " but the value is an instanceof "
+			+ value.getClass().getName());
+		throw ve;
+	    }
 
-            final PropertyValidator v = getValidator();
-            if (v != null) {
-                final String msg = v.validate(value);
-                if (msg != null) {
-                    final ValidationException ve = new ValidationException();
-                    ve.addMessage(this, msg);
-                    throw ve;
-                }
-            }
-        }
+	    final PropertyValidator v = getValidator();
+	    if (v != null) {
+		final String msg = v.validate(value);
+		if (msg != null) {
+		    final ValidationException ve = new ValidationException();
+		    ve.addMessage(this, msg);
+		    throw ve;
+		}
+	    }
+	}
     }
 
     public void setName(String name) {
-        Check
-                .isNotNull(name, "Name property can not be null, property "
-                        + this);
-        this.name = name;
+	Check
+		.isNotNull(name, "Name property can not be null, property "
+			+ this);
+	this.name = name;
     }
 
     public String getMinValue() {
-        return minValue;
+	return minValue;
     }
 
     public void setMinValue(String minValue) {
-        this.minValue = minValue;
+	this.minValue = minValue;
     }
 
     public String getMaxValue() {
-        return maxValue;
+	return maxValue;
     }
 
     public void setMaxValue(String maxValue) {
-        this.maxValue = maxValue;
+	this.maxValue = maxValue;
     }
 
     @Override
     public String toString() {
-        if (getName() == null) {
-            return getEntity() + "." + getColumnName();
-        }
-        return getEntity() + "." + getName();
+	if (getName() == null) {
+	    return getEntity() + "." + getColumnName();
+	}
+	return getEntity() + "." + getName();
     }
 
     public Property getIdBasedOnProperty() {
-        return idBasedOnProperty;
+	return idBasedOnProperty;
     }
 
     public void setIdBasedOnProperty(Property idBasedOnProperty) {
-        this.idBasedOnProperty = idBasedOnProperty;
+	this.idBasedOnProperty = idBasedOnProperty;
     }
 
     public boolean isOneToOne() {
-        return oneToOne;
+	return oneToOne;
     }
 
     public void setOneToOne(boolean oneToOne) {
-        this.oneToOne = oneToOne;
+	this.oneToOne = oneToOne;
     }
 
     public boolean isOneToMany() {
-        return oneToMany;
+	return oneToMany;
     }
 
     public void setOneToMany(boolean oneToMany) {
-        this.oneToMany = oneToMany;
+	this.oneToMany = oneToMany;
     }
 
     public boolean isUuid() {
-        return isUuid;
+	return isUuid;
     }
 
     public void setUuid(boolean isUuid) {
-        this.isUuid = isUuid;
+	this.isUuid = isUuid;
     }
 
     public boolean isUpdatable() {
-        return isUpdatable;
+	return isUpdatable;
     }
 
     public void setUpdatable(boolean isUpdatable) {
-        this.isUpdatable = isUpdatable;
+	this.isUpdatable = isUpdatable;
     }
 
     public boolean isCompositeId() {
-        return isCompositeId;
+	return isCompositeId;
     }
 
     public void setCompositeId(boolean isCompositeId) {
-        this.isCompositeId = isCompositeId;
+	this.isCompositeId = isCompositeId;
     }
 
     public List<Property> getIdParts() {
-        return idParts;
+	return idParts;
     }
 
     public boolean isPartOfCompositeId() {
-        return isPartOfCompositeId;
+	return isPartOfCompositeId;
     }
 
     public void setPartOfCompositeId(boolean isPartOfCompositeId) {
-        this.isPartOfCompositeId = isPartOfCompositeId;
+	this.isPartOfCompositeId = isPartOfCompositeId;
     }
 
     public int getFieldLength() {
-        return fieldLength;
+	return fieldLength;
     }
 
     public void setFieldLength(int fieldLength) {
-        this.fieldLength = fieldLength;
+	this.fieldLength = fieldLength;
     }
 
     public boolean doCheckAllowedValue() {
-        return allowedValues != null && allowedValues.size() > 0;
+	return allowedValues != null && allowedValues.size() > 0;
     }
 
     public boolean isAllowedValue(String value) {
-        return allowedValues.contains(value);
+	return allowedValues.contains(value);
     }
 
     /**
      * @return a comma delimited list of allowed values, is used for enums.
      */
     public String concatenatedAllowedValues() {
-        final StringBuffer sb = new StringBuffer();
-        for (final String s : allowedValues) {
-            if (sb.length() > 0) {
-                sb.append(", ");
-            }
-            sb.append(s);
-        }
-        return sb.toString();
+	final StringBuffer sb = new StringBuffer();
+	for (final String s : allowedValues) {
+	    if (sb.length() > 0) {
+		sb.append(", ");
+	    }
+	    sb.append(s);
+	}
+	return sb.toString();
     }
 
     /**
@@ -790,86 +794,94 @@ public class Property {
      *         exported
      */
     public boolean isTransient(BaseOBObjectDef bob) {
-        if (isTransient()) {
-            return true;
-        }
+	if (isTransient()) {
+	    return true;
+	}
 
-        if (getTransientCondition() != null) {
-            final Boolean result = Evaluator.getInstance().evaluateBoolean(bob,
-                    getTransientCondition());
-            return result;
-        }
-        return false;
+	if (getTransientCondition() != null) {
+	    final Boolean result = Evaluator.getInstance().evaluateBoolean(bob,
+		    getTransientCondition());
+	    return result;
+	}
+	return false;
     }
 
     public Set<String> getAllowedValues() {
-        return allowedValues;
+	return allowedValues;
     }
 
     public void setAllowedValues(Set<String> allowedValues) {
-        this.allowedValues = allowedValues;
+	this.allowedValues = allowedValues;
     }
 
     public PropertyValidator getValidator() {
-        return validator;
+	return validator;
     }
 
     public void setValidator(PropertyValidator validator) {
-        this.validator = validator;
+	this.validator = validator;
     }
 
     public String getJavaName() {
-        return NamingUtil.getSafeJavaName(getName());
+	return NamingUtil.getSafeJavaName(getName());
     }
 
     public void setOrderByProperty(boolean isOrderByProperty) {
-        this.isOrderByProperty = isOrderByProperty;
+	this.isOrderByProperty = isOrderByProperty;
     }
 
     public boolean isOrderByProperty() {
-        return isOrderByProperty;
+	return isOrderByProperty;
     }
 
     public boolean isTransient() {
-        return isTransient;
+	return isTransient;
     }
 
     public void setTransient(boolean isTransient) {
-        this.isTransient = isTransient;
+	this.isTransient = isTransient;
     }
 
     public boolean isAuditInfo() {
-        return isAuditInfo;
+	return isAuditInfo;
     }
 
     public void setAuditInfo(boolean isAuditInfo) {
-        this.isAuditInfo = isAuditInfo;
-        if (isAuditInfo) {
-            getEntity().setTraceable(true);
-        }
+	this.isAuditInfo = isAuditInfo;
+	if (isAuditInfo) {
+	    getEntity().setTraceable(true);
+	}
     }
 
     public String getTransientCondition() {
-        return transientCondition;
+	return transientCondition;
     }
 
     public void setTransientCondition(String transientCondition) {
-        this.transientCondition = transientCondition;
+	this.transientCondition = transientCondition;
     }
 
     public boolean isClientOrOrganization() {
-        return isClientOrOrganization;
+	return isClientOrOrganization;
     }
 
     public void setClientOrOrganization(boolean isClientOrOrganization) {
-        this.isClientOrOrganization = isClientOrOrganization;
+	this.isClientOrOrganization = isClientOrOrganization;
     }
 
     public boolean isInactive() {
-        return isInactive;
+	return isInactive;
     }
 
     public void setInactive(boolean isInactive) {
-        this.isInactive = isInactive;
+	this.isInactive = isInactive;
+    }
+
+    public Module getModule() {
+	return module;
+    }
+
+    public void setModule(Module module) {
+	this.module = module;
     }
 }

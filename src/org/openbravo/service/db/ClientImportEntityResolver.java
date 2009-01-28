@@ -19,7 +19,6 @@
 
 package org.openbravo.service.db;
 
-import org.openbravo.base.model.AccessLevel;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
@@ -45,7 +44,7 @@ import org.openbravo.model.common.enterprise.Organization;
 public class ClientImportEntityResolver extends EntityResolver {
 
     public static ClientImportEntityResolver getInstance() {
-        return OBProvider.getInstance().get(ClientImportEntityResolver.class);
+	return OBProvider.getInstance().get(ClientImportEntityResolver.class);
     }
 
     // searches for a previous entity with the same id or an id retrieved from
@@ -57,71 +56,70 @@ public class ClientImportEntityResolver extends EntityResolver {
     @Override
     public BaseOBObject resolve(String entityName, String id, boolean referenced) {
 
-        final Entity entity = ModelProvider.getInstance().getEntity(entityName);
+	final Entity entity = ModelProvider.getInstance().getEntity(entityName);
 
-        BaseOBObject result = null;
+	BaseOBObject result = null;
 
-        // The zero organization is in fact a system level concept, return it
-        // always
-        if (entityName.equals(Organization.ENTITY_NAME) && id != null
-                && id.equals("0")) {
-            return getOrganizationZero();
-        }
+	// The zero organization is in fact a system level concept, return it
+	// always
+	if (entityName.equals(Organization.ENTITY_NAME) && id != null
+		&& id.equals("0")) {
+	    return getOrganizationZero();
+	}
 
-        if (entityName.equals(Client.ENTITY_NAME) && id != null
-                && id.equals("0")) {
-            return getClientZero();
-        }
+	if (entityName.equals(Client.ENTITY_NAME) && id != null
+		&& id.equals("0")) {
+	    return getClientZero();
+	}
 
-        if (id != null) {
-            result = getData().get(entityName + id);
-            if (result != null) {
-                return result;
-            }
-        }
+	if (id != null) {
+	    result = getData().get(entityName + id);
+	    if (result != null) {
+		return result;
+	    }
+	}
 
-        // note id can be null if someone did not care to add it in a manual
-        // xml file
-        // In case of client import the client is always created new
-        if (!entityName.equals(Client.ENTITY_NAME) && id != null) {
-            result = searchInstance(entity, id);
-        }
+	// note id can be null if someone did not care to add it in a manual
+	// xml file
+	// In case of client import the client is always created new
+	if (!entityName.equals(Client.ENTITY_NAME) && id != null) {
+	    result = searchInstance(entity, id);
+	}
 
-        if (result != null) {
-            // found, cache it for future use
-            getData().put(entityName + id, result);
-        } else {
+	if (result != null) {
+	    // found, cache it for future use
+	    getData().put(entityName + id, result);
+	} else {
 
-            // not found create a new one
-            result = (BaseOBObject) OBProvider.getInstance().get(entityName);
+	    // not found create a new one
+	    result = (BaseOBObject) OBProvider.getInstance().get(entityName);
 
-            if (id != null) {
+	    if (id != null) {
 
-                // force new
-                result.setNewOBObject(true);
+		// force new
+		result.setNewOBObject(true);
 
-                // check if we can keep the id for this one
-                if (!OBDal.getInstance().exists(entityName, id)) {
-                    result.setId(id);
-                }
+		// check if we can keep the id for this one
+		if (!OBDal.getInstance().exists(entityName, id)) {
+		    result.setId(id);
+		}
 
-                // keep it here so it can be found later
-                getData().put(entityName + id, result);
-            }
-        }
-        return result;
+		// keep it here so it can be found later
+		getData().put(entityName + id, result);
+	    }
+	}
+	return result;
     }
 
     // search on the basis of the access level of the entity
     @Override
     public BaseOBObject searchInstance(Entity entity, String id) {
-        final AccessLevel al = entity.getAccessLevel();
-        return searchSystem(id, entity);
+	return searchSystem(id, entity);
     }
 
     @Override
     protected BaseOBObject findUniqueConstrainedObject(BaseOBObject obObject) {
-        return null;
+	return null;
     }
 
     @Override

@@ -30,6 +30,7 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.util.Check;
+import org.openbravo.base.validation.ValidationException;
 import org.openbravo.dal.core.OBContext;
 
 /**
@@ -44,7 +45,9 @@ import org.openbravo.dal.core.OBContext;
  */
 
 public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable,
-        DynamicEnabled, OBNotSingleton, Serializable {
+	DynamicEnabled, OBNotSingleton, Serializable {
+    private static final org.apache.log4j.Logger log = org.apache.log4j.Logger
+	    .getLogger(BaseOBObject.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -66,23 +69,27 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable,
     // is used to set default data in a constructor of the generated class
     // without a security check
     protected void setDefaultValue(String propName, Object value) {
-        getEntity().checkValidPropertyAndValue(propName, value);
-        Check.isNotNull(value, "Null default values are not allowed");
-        data.put(propName, value);
+	try {
+	    getEntity().checkValidPropertyAndValue(propName, value);
+	} catch (ValidationException ve) {
+	    log.error(ve.getMessage());
+	}
+	Check.isNotNull(value, "Null default values are not allowed");
+	data.put(propName, value);
     }
 
     public Object getId() {
-        return get("id");
+	return get("id");
     }
 
     public void setId(Object id) {
-        set("id", id);
+	set("id", id);
     }
 
     public abstract String getEntityName();
 
     public String getIdentifier() {
-        return IdentifierProvider.getInstance().getIdentifier(this);
+	return IdentifierProvider.getInstance().getIdentifier(this);
     }
 
     /**
@@ -96,9 +103,9 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable,
      * @throws OBSecurityException
      */
     public Object get(String propName) {
-        final Property p = getEntity().getProperty(propName);
-        checkDerivedReadable(p);
-        return data.get(propName);
+	final Property p = getEntity().getProperty(propName);
+	checkDerivedReadable(p);
+	return data.get(propName);
     }
 
     /**
@@ -114,31 +121,31 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable,
      *             , OBValidationException
      */
     public void set(String propName, Object value) {
-        final Property p = getEntity().getProperty(propName);
-        p.checkIsValidValue(value);
-        checkDerivedReadable(p);
-        p.checkIsWritable();
-        setValue(propName, value);
+	final Property p = getEntity().getProperty(propName);
+	p.checkIsValidValue(value);
+	checkDerivedReadable(p);
+	p.checkIsWritable();
+	setValue(propName, value);
     }
 
     protected void checkDerivedReadable(Property p) {
-        final OBContext obContext = OBContext.getOBContext();
-        // obContext can be null in the OBContext initialize method
-        if (obContext != null && obContext.isInitialized()
-                && !obContext.isInAdministratorMode()) {
-            if (isDerivedReadable == null) {
-                isDerivedReadable = obContext.getEntityAccessChecker()
-                        .isDerivedReadable(getEntity());
-            }
+	final OBContext obContext = OBContext.getOBContext();
+	// obContext can be null in the OBContext initialize method
+	if (obContext != null && obContext.isInitialized()
+		&& !obContext.isInAdministratorMode()) {
+	    if (isDerivedReadable == null) {
+		isDerivedReadable = obContext.getEntityAccessChecker()
+			.isDerivedReadable(getEntity());
+	    }
 
-            if (isDerivedReadable && !p.allowDerivedRead()) {
-                throw new OBSecurityException(
-                        "Entity "
-                                + getEntity()
-                                + " is not directly readable, only id and identifier properties are readable, property "
-                                + p + " is neither of these.");
-            }
-        }
+	    if (isDerivedReadable && !p.allowDerivedRead()) {
+		throw new OBSecurityException(
+			"Entity "
+				+ getEntity()
+				+ " is not directly readable, only id and identifier properties are readable, property "
+				+ p + " is neither of these.");
+	    }
+	}
     }
 
     /**
@@ -150,10 +157,10 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable,
      * @param value
      */
     public void setValue(String propName, Object value) {
-        if (value == null) {
-            data.remove(propName);
-        }
-        data.put(propName, value);
+	if (value == null) {
+	    data.remove(propName);
+	}
+	data.put(propName, value);
     }
 
     /**
@@ -165,7 +172,7 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable,
      * @return the value
      */
     public Object getValue(String propName) {
-        return data.get(propName);
+	return data.get(propName);
     }
 
     /**
@@ -175,10 +182,10 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable,
      * @return the Entity of this object
      */
     public Entity getEntity() {
-        if (model == null) {
-            model = ModelProvider.getInstance().getEntity(getEntityName());
-        }
-        return model;
+	if (model == null) {
+	    model = ModelProvider.getInstance().getEntity(getEntityName());
+	}
+	return model;
     }
 
     /**
@@ -187,32 +194,32 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable,
      * @throws OBValidationException
      */
     public void validate() {
-        getEntity().validate(this);
+	getEntity().validate(this);
     }
 
     @Override
     public String toString() {
-        final Entity e = getEntity();
-        final StringBuilder sb = new StringBuilder();
-        // and also display all values
-        for (final Property p : e.getIdentifierProperties()) {
-            Object value = get(p.getName());
-            if (value != null) {
-                if (sb.length() == 0) {
-                    sb.append("(");
-                } else {
-                    sb.append(", ");
-                }
-                if (value instanceof BaseOBObject) {
-                    value = ((BaseOBObject) value).getId();
-                }
-                sb.append(p.getName() + ": " + value);
-            }
-        }
-        if (sb.length() > 0) {
-            sb.append(")");
-        }
-        return getEntityName() + "(" + getId() + ") " + sb.toString();
+	final Entity e = getEntity();
+	final StringBuilder sb = new StringBuilder();
+	// and also display all values
+	for (final Property p : e.getIdentifierProperties()) {
+	    Object value = get(p.getName());
+	    if (value != null) {
+		if (sb.length() == 0) {
+		    sb.append("(");
+		} else {
+		    sb.append(", ");
+		}
+		if (value instanceof BaseOBObject) {
+		    value = ((BaseOBObject) value).getId();
+		}
+		sb.append(p.getName() + ": " + value);
+	    }
+	}
+	if (sb.length() > 0) {
+	    sb.append(")");
+	}
+	return getEntityName() + "(" + getId() + ") " + sb.toString();
     }
 
     /**
@@ -222,10 +229,10 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable,
      *         otherwise
      */
     public boolean isNewOBObject() {
-        return getId() == null || newOBObject;
+	return getId() == null || newOBObject;
     }
 
     public void setNewOBObject(boolean newOBObject) {
-        this.newOBObject = newOBObject;
+	this.newOBObject = newOBObject;
     }
 }

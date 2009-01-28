@@ -188,12 +188,13 @@ public class NamingUtil {
 		    // nothing to set anyway
 		} else if (columnNameSameAsKeyColumn(property
 			.getReferencedProperty())) {
-		    mappingName = property.getTargetEntity()
-			    .getSimpleClassName()
-			    + "List";
+		    mappingName = property.getTargetEntity().getName() + "List";
 		} else {
-		    mappingName = property.getReferencedProperty()
-			    .getColumnName();
+		    // for a one-to-many the referenced property is the
+		    // property which models the real foreign key column
+		    mappingName = property.getTargetEntity().getName() + "_"
+			    + property.getReferencedProperty().getColumnName()
+			    + "List";
 		}
 	    } else if (columnNameSameAsKeyColumn(property)) {
 		mappingName = property.getTargetEntity().getSimpleClassName();
@@ -201,11 +202,18 @@ public class NamingUtil {
 		mappingName = property.getColumnName();
 	    }
 	}
-	// go through a set of repair steps:
-	mappingName = stripUnderScores(mappingName);
-	mappingName = camelCaseIt(mappingName);
-	mappingName = correctAbbreviations(mappingName);
+	// only strip for core module
+	final boolean coreModuleProp = property.getModule() != null
+		&& !property.getModule().getId().equals("0");
+	final boolean coreModuleEntity = property.getEntity().getModule()
+		.getId().equals("0");
+
+	if (coreModuleProp || coreModuleEntity) {
+	    mappingName = stripPrefix(mappingName);
+	}
 	mappingName = stripIllegalCharacters(mappingName);
+	mappingName = camelCaseItStripUnderscores(mappingName);
+	mappingName = correctAbbreviations(mappingName);
 	mappingName = lowerCaseFirst(mappingName);
 	return mappingName;
     }
@@ -216,11 +224,11 @@ public class NamingUtil {
 	// instead of the stringbuilder
 	final StringBuilder result = new StringBuilder();
 	for (char ch : value.toCharArray()) {
-	    if (ch == '_' || (ch >= 'a' && ch <= 'z')
-		    || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9')) {
+	    if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')
+		    || (ch >= '0' && ch <= '9')) {
 		result.append(ch);
 	    } else {
-		result.append('_');
+		result.append("");
 	    }
 	}
 	return result.toString();
@@ -255,11 +263,11 @@ public class NamingUtil {
 		|| p.getReferencedProperty().getColumnName() == null) {
 	    return false;
 	}
-	return p.getColumnName().equals(
-		p.getReferencedProperty().getColumnName());
+	return p.getColumnName().toLowerCase().equals(
+		p.getReferencedProperty().getColumnName().toLowerCase());
     }
 
-    private static String stripUnderScores(String mappingName) {
+    private static String stripPrefix(String mappingName) {
 	String localMappingName = mappingName;
 	if (localMappingName.toLowerCase().endsWith("_id")) {
 	    localMappingName = mappingName.substring(0,
@@ -274,7 +282,7 @@ public class NamingUtil {
 	return localMappingName;
     }
 
-    private static String camelCaseIt(String mappingName) {
+    private static String camelCaseItStripUnderscores(String mappingName) {
 	String localMappingName = mappingName;
 	// "CamelCasing"
 	int pos = localMappingName.indexOf("_");

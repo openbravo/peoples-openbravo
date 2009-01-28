@@ -217,7 +217,7 @@ public class DatabaseValidator implements SystemValidator {
 	    dbColumnsByName.put(dbColumn.getName().toUpperCase(), dbColumn);
 	}
 
-	for (Column column : adTable.getColumnList()) {
+	for (Column column : adTable.getADColumnList()) {
 	    final org.apache.ddlutils.model.Column dbColumn = dbColumnsByName
 		    .get(column.getColumnName().toUpperCase());
 	    if (dbColumn == null) {

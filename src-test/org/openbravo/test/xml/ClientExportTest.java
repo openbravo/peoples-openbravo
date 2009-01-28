@@ -17,31 +17,43 @@
  ************************************************************************
  */
 
-package org.openbravo.base.model;
+package org.openbravo.test.xml;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.system.Client;
+import org.openbravo.service.db.DataExportService;
 
 /**
- * Models the ad_package table. Is used for generating correct java classnames.
+ * Tests export and import of client dataset.
  * 
  * @author mtaal
  */
-public class Package extends ModelObject {
 
-    private String javaPackage;
-    private Module module;
-
-    public String getJavaPackage() {
-	return javaPackage;
+public class ClientExportTest extends XMLBaseTest {
+    public void _testListClients() {
+	setErrorOccured(true);
+	setUserContext("0");
+	final List<Client> cls = OBDal.getInstance().createCriteria(
+		Client.class).list();
+	for (Client c : cls) {
+	    System.err.println(c.getId() + " " + c.getName());
+	}
+	setErrorOccured(false);
     }
 
-    public void setJavaPackage(String javaPackage) {
-	this.javaPackage = javaPackage;
+    public void testExportClient() {
+	setErrorOccured(true);
+	setUserContext("0");
+	DataExportService des = DataExportService.getInstance();
+	final Map<String, Object> params = new HashMap<String, Object>();
+	params.put(DataExportService.CLIENT_ID_PARAMETER_NAME, "1000000");
+	final String xml = DataExportService.getInstance().exportClientToXML(
+		params);
+	setErrorOccured(false);
     }
 
-    public Module getModule() {
-	return module;
-    }
-
-    public void setModule(Module module) {
-	this.module = module;
-    }
 }
