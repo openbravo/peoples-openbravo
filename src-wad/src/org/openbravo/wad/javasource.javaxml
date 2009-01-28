@@ -54,10 +54,6 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
   
   static Logger log4j = Logger.getLogger(<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>.class);
   
-  private HashMap&#60;String, String&#62; usedButtonShortCuts;
-  <PARAMETER_TMP id="buttonFixed">
-  private HashMap&#60;String, String&#62; reservedButtonShortCuts;
-  </PARAMETER_TMP>
   protected static final String windowId = "<PARAMETER_TMP id="windowId">Almacen</PARAMETER_TMP>";
   protected static final String tabId = "<PARAMETER_TMP id="tabId">Almacen</PARAMETER_TMP>";
   protected static final String defaultTabView = "<PARAMETER_TMP id="defaultView">RELATION</PARAMETER_TMP>";
@@ -808,6 +804,10 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: edit");
     
+    HashMap&#60;String, String&#62; usedButtonShortCuts;
+  <PARAMETER_TMP id="buttonFixed">
+    HashMap&#60;String, String&#62; reservedButtonShortCuts;
+  </PARAMETER_TMP>
     usedButtonShortCuts = new HashMap&#60;String, String&#62;();
     <PARAMETER_TMP id="buttonFixed">
     reservedButtonShortCuts = new HashMap&#60;String, String&#62;();
@@ -967,7 +967,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       <PARAMETER_TMP id="hasOrgKey">xmlDocument.setParameter("paramCurrentOrgId",data[0].getField("adOrgId"));</PARAMETER_TMP>
    
 <PARAMATER_TMP id="fieldControlsJavaCode"></PARAMATER_TMP>
-    xmlDocument.setParameter("scriptOnLoad", getShortcutScript());
+    xmlDocument.setParameter("scriptOnLoad", getShortcutScript(usedButtonShortCuts<PARAMETER_TMP id="buttonFixed">, reservedButtonShortCuts</PARAMETER_TMP>));
     
     final String refererURL = vars.getSessionValue(tabId + "|requestURL");
     vars.removeSessionValue(tabId + "|requestURL");
@@ -1068,7 +1068,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
 </FIELDS_TMP>
 
  
-  private String getShortcutScript(){
+  private String getShortcutScript( HashMap&#60;String, String&#62; usedButtonShortCuts<PARAMETER_TMP id="buttonFixed">, HashMap&#60;String, String&#62; reservedButtonShortCuts</PARAMETER_TMP>){
     StringBuffer shortcuts = new StringBuffer();
     shortcuts.append(" function buttonListShorcuts() {\n");
     Iterator&lt;String&gt; ik = usedButtonShortCuts.keySet().iterator();
