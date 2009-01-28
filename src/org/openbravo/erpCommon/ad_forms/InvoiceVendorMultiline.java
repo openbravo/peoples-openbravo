@@ -42,18 +42,20 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class InvoiceVendorMultiline extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;
-    protected String windowId = "";
-    protected String tabId = "";
-    protected String tableId = "";
-    protected String tabName = "";
-    protected String windowName = "";
-    protected String windowNameEnUS = "";
-    protected String tabNameEnUS = "";
+
     private static final String formClassName = "org.openbravo.erpCommon.ad_forms.InvoiceVendorMultiline";
 
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         VariablesSecureApp vars = new VariablesSecureApp(request);
+
+        String windowId = "";
+        String tabId = "";
+        String tableId = "";
+        String tabName = "";
+        String windowName = "";
+        String windowNameEnUS = "";
+        String tabNameEnUS = "";
 
         {
             InvoiceVendorMultilineData[] data = InvoiceVendorMultilineData
@@ -80,13 +82,16 @@ public class InvoiceVendorMultiline extends HttpSecureAppServlet {
                         + FormatUtilities.replace(tabNameEnUS)
                         + "_Relation.html?Command=RELATION");
             else
-                printPageDataSheet(response, vars, strC_Invoice_ID);
+                printPageDataSheet(response, vars, strC_Invoice_ID, windowName,
+                        tabName, windowId, tabId, tableId, windowNameEnUS,
+                        tabNameEnUS);
         } else if (vars.commandIn("NEW")) {
             vars.removeSessionValue(windowId + "|C_Invoice_ID");
-            printPageDataSheet(response, vars, "");
+            printPageDataSheet(response, vars, "", windowName, tabName,
+                    windowId, tabId, tableId, windowNameEnUS, tabNameEnUS);
         } else if (vars.commandIn("SAVE_NEW_RELATION", "SAVE_NEW_NEW",
                 "SAVE_NEW_EDIT")) {
-            InvoiceVendorMultilineData data = getEditVariables(vars);
+            InvoiceVendorMultilineData data = getEditVariables(vars, windowId);
             String strSequence = SequenceIdData.getUUID();
             log4j.info("Sequence: " + strSequence);
             data.cInvoiceId = strSequence;
@@ -111,7 +116,7 @@ public class InvoiceVendorMultiline extends HttpSecureAppServlet {
                 "SAVE_EDIT_EDIT")) {
             vars.getRequiredGlobalVariable("inpcInvoiceId", windowId
                     + "|C_Invoice_ID");
-            InvoiceVendorMultilineData data = getEditVariables(vars);
+            InvoiceVendorMultilineData data = getEditVariables(vars, windowId);
             if (data.update(this) == 0) {
                 bdError(request, response, "DBExecuteError", vars.getLanguage());
             } else {
@@ -147,8 +152,8 @@ public class InvoiceVendorMultiline extends HttpSecureAppServlet {
             pageError(response);
     }
 
-    InvoiceVendorMultilineData getEditVariables(VariablesSecureApp vars)
-            throws IOException, ServletException {
+    InvoiceVendorMultilineData getEditVariables(VariablesSecureApp vars,
+            String windowId) throws IOException, ServletException {
         InvoiceVendorMultilineData data = new InvoiceVendorMultilineData();
 
         data.processing = vars.getStringParameter("inpprocessing", "N");
@@ -243,8 +248,10 @@ public class InvoiceVendorMultiline extends HttpSecureAppServlet {
     }
 
     void printPageDataSheet(HttpServletResponse response,
-            VariablesSecureApp vars, String strC_Invoice_ID)
-            throws IOException, ServletException {
+            VariablesSecureApp vars, String strC_Invoice_ID, String windowName,
+            String tabName, String windowId, String tabId, String tableId,
+            String windowNameEnUS, String tabNameEnUS) throws IOException,
+            ServletException {
         if (log4j.isDebugEnabled())
             log4j.debug("Output: dataSheet");
         String[] discard = { "newDiscard", "" };
