@@ -408,12 +408,12 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
                         int decimalPlace = 2;
                         BigDecimal daysElapsed = new BigDecimal(strDaysElapsed);
                         BigDecimal contractDuration = new BigDecimal(
-				strProjectContractDuration);
+                                strProjectContractDuration);
                         BigDecimal timeBurned = ((daysElapsed
-				.multiply(new BigDecimal("100"))).divide(
-				contractDuration, 12,
-				BigDecimal.ROUND_HALF_EVEN)).setScale(
-				decimalPlace, BigDecimal.ROUND_UP);
+                                .multiply(new BigDecimal("100"))).divide(
+                                contractDuration, 12,
+                                BigDecimal.ROUND_HALF_EVEN)).setScale(
+                                decimalPlace, BigDecimal.ROUND_UP);
                         data[i].timeburned = timeBurned.toPlainString();
                     } else {
                         data[i].timeburned = "";
@@ -633,7 +633,7 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
 
                         } else if (!data[j].phaseid.equals("")
                                 && data[j].phaseid != null) { // For phases
-                                                              // without tasks
+                            // without tasks
                             // Calculation of the number of contract days and
                             // the number of the completed contract days
                             if (!data[j].phasecontractduration.equals("")
@@ -681,23 +681,23 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
                             // Calculate the Completion Percentage as the
                             // quotient between CompletedContractDuration and
                             // TotalContractDuration
-			    completionPerc = (new BigDecimal(
-				    completedContractDuration)
-				    .multiply(new BigDecimal("100"))).divide(
-				    new BigDecimal(totalContractDuration), 12,
-				    BigDecimal.ROUND_HALF_EVEN);
+                            completionPerc = (new BigDecimal(
+                                    completedContractDuration)
+                                    .multiply(new BigDecimal("100"))).divide(
+                                    new BigDecimal(totalContractDuration), 12,
+                                    BigDecimal.ROUND_HALF_EVEN);
                         } else {
                             // Calculate the Completion Percentage as the
                             // quotient between CompletedItems and TotalItems
-			    completionPerc = (new BigDecimal(completedItems)
-				    .multiply(new BigDecimal("100"))).divide(
-				    new BigDecimal(totalItems), 12,
-				    BigDecimal.ROUND_HALF_EVEN);
+                            completionPerc = (new BigDecimal(completedItems)
+                                    .multiply(new BigDecimal("100"))).divide(
+                                    new BigDecimal(totalItems), 12,
+                                    BigDecimal.ROUND_HALF_EVEN);
                         }
                         int decimalPlace = 2;
-			strCompletionPerc = (completionPerc.setScale(
-				decimalPlace, BigDecimal.ROUND_UP))
-				.toPlainString();
+                        strCompletionPerc = (completionPerc.setScale(
+                                decimalPlace, BigDecimal.ROUND_UP))
+                                .toPlainString();
                     }
 
                     // Get the Cumulative Days Delayed
@@ -719,7 +719,6 @@ public class ReportProjectProgress extends HttpSecureAppServlet {
                     "inline; filename=ReportProjectProgress.pdf");
 
         HashMap<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("REPORT_TITLE", classInfo.name);
         parameters.put("REFERENCE_DATE", strReferenceDate);
 
         renderJR(vars, response, strReportName, strOutput, parameters, data,

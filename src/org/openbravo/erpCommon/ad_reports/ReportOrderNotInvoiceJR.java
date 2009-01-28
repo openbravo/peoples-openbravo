@@ -242,7 +242,6 @@ public class ReportOrderNotInvoiceJR extends HttpSecureAppServlet {
                     + strdateTo;
 
             HashMap<String, Object> parameters = new HashMap<String, Object>();
-            parameters.put("REPORT_TITLE", classInfo.name);
             parameters.put("REPORT_SUBTITLE", strSubTitle);
             parameters.put("Detail", new Boolean(strDetail.equals("-1")));
             renderJR(vars, response, strReportName, strOutput, parameters,

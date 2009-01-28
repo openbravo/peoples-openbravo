@@ -65,10 +65,8 @@ public class RptMA_ProcessPlan extends HttpSecureAppServlet {
 
         String strReportName = "@basedesign@/org/openbravo/erpReports/RptMA_ProcessPlan.jrxml";
         String strOutput = "pdf";
-        String strTitle = classInfo.name;
 
         HashMap<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("REPORT_TITLE", strTitle);
         renderJR(vars, response, strReportName, strOutput, parameters, data,
                 null);
     }

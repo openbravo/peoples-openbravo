@@ -95,7 +95,6 @@ public class ReportGuaranteeDateJR extends HttpSecureAppServlet {
                     "inline; filename=ReportGuaranteeDateJR.pdf");
 
         HashMap<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("REPORT_TITLE", classInfo.name);
         parameters.put("ReportData", strDate);
 
         renderJR(vars, response, strReportName, strOutput, parameters, data,

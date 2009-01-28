@@ -190,7 +190,6 @@ public class ReportMaterialTransactionEditionJR extends HttpSecureAppServlet {
         String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportMaterialTransactionEditionJR.jrxml";
 
         HashMap<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("REPORT_TITLE", classInfo.name);
         renderJR(vars, response, strReportName, strOutput, parameters, data,
                 null);
     }

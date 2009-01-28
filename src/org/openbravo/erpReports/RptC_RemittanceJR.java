@@ -70,7 +70,6 @@ public class RptC_RemittanceJR extends HttpSecureAppServlet {
                         .getContext(this, vars, "#User_Org",
                                 "RptC_RemittanceJR"), strcRemittanceId);
         HashMap<String, Object> parameters = new HashMap<String, Object>();
-        String strTitle = classInfo.name;
         parameters.put("REPORT_TITLE", strTitle);
         renderJR(vars, response, strReportName, strOutput, parameters, data,
                 null);

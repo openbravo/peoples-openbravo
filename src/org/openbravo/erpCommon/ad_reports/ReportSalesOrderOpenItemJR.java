@@ -72,7 +72,6 @@ public class ReportSalesOrderOpenItemJR extends HttpSecureAppServlet {
                         vars, "#User_Org", "ReportSalesOrderOpenItemJR"),
                         strWarehouse);
         HashMap<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("REPORT_TITLE", classInfo.name);
         renderJR(vars, response, strReportName, strOutput, parameters, data,
                 null);
     }

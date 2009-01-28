@@ -388,7 +388,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
                     if ((data2[i].partner.equals(data[0].partner) && (!(strcBpartnerId
                             .equals("") && (strAll.equals("")))))
                             || (strcBpartnerId.equals("") && (strAll.equals(""))))
-                	amount = amount.add(new BigDecimal(data2[i].total));
+                        amount = amount.add(new BigDecimal(data2[i].total));
                 }
                 for (int i = 0; data2 != null && i < data.length; i++) {
                     if (data[i].id.equals(data[0].id))
@@ -718,7 +718,6 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
         }
         parameters.put("SR_LINES", jasperReportLines);
 
-        parameters.put("Title", classInfo.name);
         parameters.put("ShowPartner", new Boolean(
                 !(strcBpartnerId.equals("") && strAll.equals(""))));
         parameters.put("Subtitle", Utility.messageBD(this, "GL_Previous",

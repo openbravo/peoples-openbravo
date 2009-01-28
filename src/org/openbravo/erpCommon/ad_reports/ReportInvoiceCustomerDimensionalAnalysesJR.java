@@ -799,7 +799,6 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends
             parameters.put("LEVEL9_LABEL", strLevelLabel[8]);
             parameters.put("LEVEL10_LABEL", strLevelLabel[9]);
             parameters.put("DIMENSIONS", new Integer(intOrder));
-            parameters.put("REPORT_TITLE", classInfo.name);
             parameters.put("REPORT_SUBTITLE", strTitle);
             parameters.put("PRODUCT_LEVEL", new Integer(intProductLevel));
             renderJR(vars, response, strReportPath, strOutput, parameters,

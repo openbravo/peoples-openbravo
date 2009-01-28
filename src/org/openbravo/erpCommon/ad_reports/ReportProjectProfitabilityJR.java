@@ -177,7 +177,6 @@ public class ReportProjectProfitabilityJR extends HttpSecureAppServlet {
                 response.setHeader("Content-disposition",
                         "inline; filename=ReportProjectProfitabilityJR.pdf");
             HashMap<String, Object> parameters = new HashMap<String, Object>();
-            parameters.put("REPORT_TITLE", classInfo.name);
 
             renderJR(vars, response, strReportName, strOutput, parameters,
                     data, null);

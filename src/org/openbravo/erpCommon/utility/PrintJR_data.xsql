@@ -42,4 +42,17 @@
       </Sql>
       <Parameter name="adProcessId"/>
     </SqlMethod>
+    
+    <SqlMethod name="getReportTitle" type="preparedStatement" return="String">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        select COALESCE(t.name, m.name) AS paramname
+        FROM AD_Menu M LEFT JOIN AD_Menu_Trl t ON m.AD_Menu_ID  = t.AD_Menu_ID
+                                              AND t.AD_Language = ?   
+        WHERE M.AD_Process_ID = ? 
+      </Sql>
+      <Parameter name="adLanguage"/>
+      <Parameter name="adProcessId"/>
+    </SqlMethod>
+    
 </SqlClass>

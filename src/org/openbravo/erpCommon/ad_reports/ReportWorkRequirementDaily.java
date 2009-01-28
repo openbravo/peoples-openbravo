@@ -99,10 +99,8 @@ public class ReportWorkRequirementDaily extends HttpSecureAppServlet {
 
         String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportWorkRequirementDailyEdit.jrxml";
         String strOutput = "html";
-        String strTitle = classInfo.name;
 
         HashMap<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("REPORT_TITLE", strTitle);
         renderJR(vars, response, strReportName, strOutput, parameters, data,
                 null);
 

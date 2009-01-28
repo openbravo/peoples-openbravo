@@ -383,7 +383,6 @@ public class ReportInvoiceCustomerJR extends HttpSecureAppServlet {
                     + strdateTo;
 
             HashMap<String, Object> parameters = new HashMap<String, Object>();
-            parameters.put("REPORT_TITLE", classInfo.name);
             parameters.put("REPORT_SUBTITLE", strSubTitle);
             renderJR(vars, response, strReportName, strOutput, parameters,
                     data, null);

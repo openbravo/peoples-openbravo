@@ -238,7 +238,8 @@ public class Utility {
     /**
      * 
      * Formats a message String into a String for html presentation. Escapes the
-     * &, <, >, " and ®, and replace the \n by <br/> and \r for space.
+     * &, <, >, " and ®, and replace the \n by <br/>
+     * and \r for space.
      * 
      * IMPORTANT! : this method is designed to transform the output of
      * Utility.messageBD method, and this method replaces \n by \\n and \" by

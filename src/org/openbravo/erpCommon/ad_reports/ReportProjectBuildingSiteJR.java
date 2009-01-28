@@ -457,7 +457,6 @@ public class ReportProjectBuildingSiteJR extends HttpSecureAppServlet {
                         "inline; filename=ReportProjectBuildingSiteJR.pdf");
 
             HashMap<String, Object> parameters = new HashMap<String, Object>();
-            parameters.put("REPORT_TITLE", classInfo.name);
             String strSubTitle = Utility.messageBD(this, "From", vars
                     .getLanguage())
                     + " "

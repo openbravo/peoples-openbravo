@@ -149,7 +149,6 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
         String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportTaxInvoice.jrxml";
 
         HashMap<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("REPORT_TITLE", classInfo.name);
         parameters.put("DETAIL", strDetail.equals("-1") ? "Y" : "N");
         parameters.put("cCountryId", new String(Utility.getContext(this, vars,
                 "C_Country_Id", "ReportTaxInvoiceJR")));

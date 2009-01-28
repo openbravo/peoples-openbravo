@@ -181,7 +181,6 @@ public class ReportTaxPaymentJR extends HttpSecureAppServlet {
         String strReportName = "@basedesign@/org/openbravo/erpReports/ReportRegisterByVatJR.jrxml";
 
         HashMap<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("REPORT_TITLE", classInfo.name);
         parameters.put("REPORT_SUBTITLE", "From " + strDateFrom + " to "
                 + strDateTo);
         parameters.put("invoicedateDA", strDateFrom);

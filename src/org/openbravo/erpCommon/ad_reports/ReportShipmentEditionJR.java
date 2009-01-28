@@ -169,13 +169,11 @@ public class ReportShipmentEditionJR extends HttpSecureAppServlet {
                 strcProjectId, strissotrx);
         HashMap<String, Object> parameters = new HashMap<String, Object>();
 
-        String strTitle = classInfo.name;
         String strSubTitle = "";
         strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " "
                 + strdateFrom + " "
                 + Utility.messageBD(this, "To", vars.getLanguage()) + " "
                 + strdateTo;
-        parameters.put("REPORT_TITLE", strTitle);
         parameters.put("REPORT_SUBTITLE", strSubTitle);
         if (log4j.isDebugEnabled())
             log4j.debug("data" + data.length);

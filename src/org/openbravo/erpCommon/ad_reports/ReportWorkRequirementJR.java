@@ -102,7 +102,6 @@ public class ReportWorkRequirementJR extends HttpSecureAppServlet {
         }
         String strReportPath = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportWorkRequirementJR.jrxml";
         HashMap<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("REPORT_TITLE", classInfo.name);
         renderJR(vars, response, strReportPath, "html", parameters, data, null);
     }
 

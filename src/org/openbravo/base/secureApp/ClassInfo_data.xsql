@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
  ************************************************************************************
- * Copyright (C) 2001-2006 Openbravo S.L.
+ * Copyright (C) 2001-2009 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -26,20 +26,16 @@
                               WHEN 'F' THEN MO.AD_WORKFLOW_ID 
                               WHEN 'C' THEN MO.AD_CALLOUT_ID 
                               ELSE MO.AD_TAB_ID END) AS ID, 
-        MOM.MAPPINGNAME, COALESCE(mt.name, m.name) AS NAME
-        FROM AD_MODEL_OBJECT_MAPPING MOM, AD_MODEL_OBJECT MO 
+        m.name AS NAME /*Name is only maintained for backwards compatibility, now REPORT_TITLE is automatically filled*/
+        FROM AD_MODEL_OBJECT MO 
              left join AD_Menu m on MO.ad_process_id = m.ad_process_id 
                                   AND MO.action in ('P', 'R')
                                   AND m.action in ('P', 'R')
-             left join AD_Menu_TRL mt on m.ad_menu_id = mt.ad_menu_id 
-                                    AND mt.ad_language = ? 
-        WHERE MOM.AD_MODEL_OBJECT_ID = MO.AD_MODEL_OBJECT_ID 
-        AND MOM.MAPPINGNAME = ? 
+        WHERE MO.ClassName = ?
         AND MO.IsDefault = 'Y'
         AND MO.IsActive = 'Y'
       ]]></Sql>
-      <Parameter name="adLanguage"/>
-      <Parameter name="mappingname"/>
+      <Parameter name="className"/>
    </SqlMethod>
    <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>

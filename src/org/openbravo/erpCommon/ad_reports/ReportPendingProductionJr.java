@@ -70,7 +70,6 @@ public class ReportPendingProductionJr extends HttpSecureAppServlet {
             response.setHeader("Content-disposition",
                     "inline; filename=ReportPendingProductionJr.pdf");
         HashMap<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("REPORT_TITLE", classInfo.name);
         // parameters.put("PRODUCT_LEVEL", new Integer(intProductLevel));
         renderJR(vars, response, strReportName, strOutput, parameters, data,
                 null);

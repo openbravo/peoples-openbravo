@@ -138,7 +138,6 @@ public class ReportProductionRunJR extends HttpSecureAppServlet {
         String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportProductionRun.jrxml";
 
         HashMap<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("Title", classInfo.name);
         parameters.put("Subtitle", strSubtitle);
         renderJR(vars, response, strReportName, strOutput, parameters, data,
                 null);

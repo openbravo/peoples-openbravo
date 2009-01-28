@@ -122,7 +122,6 @@ public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
                     strConvRateErrorMsg);
         } else { // Launch the report as usual, calling the JRXML file
             HashMap<String, Object> parameters = new HashMap<String, Object>();
-            parameters.put("REPORT_TITLE", classInfo.name);
             String strSubTitle = Utility.messageBD(this, "From", vars
                     .getLanguage())
                     + " "

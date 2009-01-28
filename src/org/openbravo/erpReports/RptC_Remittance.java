@@ -93,7 +93,6 @@ public class RptC_Remittance extends HttpSecureAppServlet {
         }
 
         HashMap<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("REPORT_TITLE", classInfo.name);
         parameters.put("LANGUAGE", language);
         parameters.put("SR_LINES", jasperReportLines);
 

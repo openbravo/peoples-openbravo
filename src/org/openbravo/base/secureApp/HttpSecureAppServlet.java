@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2008 Openbravo S.L.
+ * Copyright (C) 2001-2009 Openbravo S.L.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -131,20 +131,14 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
         if (log4j.isDebugEnabled())
             log4j.debug("strdireccion: " + strDireccion);
-    }
 
-    @Override
-    public void service(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        final Variables variables = new Variables(request);
-        // VariablesSecureApp vars = new VariablesSecureApp(request);
-
+        // Calculate class info
         try {
             if (log4j.isDebugEnabled())
                 log4j.debug("Servlet request for class info: "
-                        + request.getServletPath());
-            ClassInfoData[] classInfoAux = ClassInfoData.select(this, variables
-                    .getLanguage(), request.getServletPath());
+                        + this.getClass());
+            ClassInfoData[] classInfoAux = ClassInfoData.select(this, this
+                    .getClass().getName());
             if (classInfoAux != null && classInfoAux.length > 0)
                 classInfo = classInfoAux[0];
             else {
@@ -153,15 +147,27 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             }
         } catch (final Exception ex) {
             log4j.error(ex);
-            final ClassInfoData[] classInfoAux = ClassInfoData.set();
-            classInfo = classInfoAux[0];
+            ClassInfoData[] classInfoAux;
+            try {
+                classInfoAux = ClassInfoData.set();
+                classInfo = classInfoAux[0];
+            } catch (ServletException e) {
+                log4j.error(e);
+            }
         }
+    }
+
+    @Override
+    public void service(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        final Variables variables = new Variables(request);
+        // VariablesSecureApp vars = new VariablesSecureApp(request);
 
         // bdErrorGeneral(response, "Error", "No access");
 
         if (log4j.isDebugEnabled())
             log4j.debug("class info type: " + classInfo.type + " - ID: "
-                    + classInfo.id + " - NAME: " + classInfo.name);
+                    + classInfo.id);
         String strAjax = "";
         String strHidden = "";
         String strPopUp = "";
@@ -1069,6 +1075,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
                     variables, "#User_Org", ""));
             designParameters.put("LANGUAGE", strLanguage);
             designParameters.put("LOCALE", locLocale);
+            designParameters.put("REPORT_TITLE", PrintJRData.getReportTitle(
+                    this, variables.getLanguage(), classInfo.id));
 
             final DecimalFormatSymbols dfs = new DecimalFormatSymbols();
             dfs.setDecimalSeparator(variables.getSessionValue(

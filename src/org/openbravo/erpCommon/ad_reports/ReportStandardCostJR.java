@@ -185,7 +185,6 @@ public class ReportStandardCostJR extends HttpSecureAppServlet {
         HashMap<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("MA_PROCESSPLAN_ID", strProcessPlan);
         parameters.put("MA_PROCESSPLAN_VERSION_ID", strVersion);
-        parameters.put("REPORT_TITLE", classInfo.name);
         parameters.put("CURRENCY_ID", strCurrencyId);
         parameters.put("BASE_CURRENCY_ID", Utility.stringBaseCurrencyId(this,
                 vars.getClient()));

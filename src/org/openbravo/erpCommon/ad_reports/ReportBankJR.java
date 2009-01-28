@@ -208,7 +208,6 @@ public class ReportBankJR extends HttpSecureAppServlet {
         }
 
         HashMap<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("REPORT_TITLE", classInfo.name);
         parameters.put("DATE_FROM", strDateFrom);
         parameters.put("USER_ORG", Utility.getContext(this, vars, "#User_Org",
                 "ReportBankJR"));
