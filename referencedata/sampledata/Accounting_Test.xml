@@ -14345,7 +14345,7 @@
     <printName>Settlement</printName>
     <description/>
     <docBaseType>STT</docBaseType>
-    <isSOTrx>false</isSOTrx>
+    <isSOTrx>true</isSOTrx>
     <docSubTypeSO/>
     <docTypeShipment id="0" entity-name="DocumentType" identifier="** New **"/>
     <docTypeInvoice id="0" entity-name="DocumentType" identifier="** New **"/>
