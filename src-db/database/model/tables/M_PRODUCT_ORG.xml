@@ -87,11 +87,11 @@
       <foreign-key foreignTable="M_LOCATOR" name="LOCATOR_FK_PRODUCTORG">
         <reference local="M_LOCATOR_ID" foreign="M_LOCATOR_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="MRP_PLANNER" name="M_PRODUCT_ORG_MRP_PLANNER">
-        <reference local="MRP_PLANNER_ID" foreign="MRP_PLANNER_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="MRP_PLANNINGMETHOD" name="M_PRDCT_RG_MRP_PLNNNGMTHD">
         <reference local="MRP_PLANNINGMETHOD_ID" foreign="MRP_PLANNINGMETHOD_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="MRP_PLANNER" name="M_PRODUCT_ORG_MRP_PLANNER">
+        <reference local="MRP_PLANNER_ID" foreign="MRP_PLANNER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="ORG_FK_PRODUCTORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
