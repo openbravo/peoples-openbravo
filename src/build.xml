@@ -577,7 +577,7 @@ build.war: build a war file in the lib directory.
 	
 	<target name="update.build.timestamp">
 	    <sql driver="${bbdd.driver}"
-	         url="${bbdd.url}"
+	         url="${bbdd.owner.url}"
 	    	   userid="${bbdd.user}"
 	    	   password="${bbdd.password}"
 	         delimiter="/">
