@@ -1093,7 +1093,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						style="Level1_Line"
 						x="428"
 						y="0"
-						width="40"
+						width="55"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight">
@@ -1104,23 +1104,6 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						<font/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($V{QTY_SUM1}!=null)?$P{NUMBERFORMAT}.format($V{QTY_SUM1}):new String(" ")]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="Level1_Line"
-						x="468"
-						y="0"
-						width="15"
-						height="18"
-						key="textField"
-						stretchType="RelativeToBandHeight">
-							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=1)]]></printWhenExpression>
-						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{UOMSYMBOL}!=null)?$F{UOMSYMBOL}:new String(" ")]]></textFieldExpression>
 				</textField>
 			</band>
 			</groupHeader>
@@ -1185,7 +1168,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						style="Level2_Line"
 						x="428"
 						y="0"
-						width="40"
+						width="55"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight">
@@ -1196,23 +1179,6 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						<font/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($V{QTY_SUM2}!=null)?$P{NUMBERFORMAT}.format($V{QTY_SUM2}):new String(" ")]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="Level2_Line"
-						x="468"
-						y="0"
-						width="15"
-						height="18"
-						key="textField"
-						stretchType="RelativeToBandHeight">
-							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=2)]]></printWhenExpression>
-						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{UOMSYMBOL}!=null)?$F{UOMSYMBOL}:new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -1352,7 +1318,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						style="Level3_Line"
 						x="428"
 						y="0"
-						width="40"
+						width="55"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight">
@@ -1363,23 +1329,6 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						<font/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($V{QTY_SUM3}!=null)?$P{NUMBERFORMAT}.format($V{QTY_SUM3}):new String(" ")]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="Level3_Line"
-						x="468"
-						y="0"
-						width="15"
-						height="18"
-						key="textField"
-						stretchType="RelativeToBandHeight">
-							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=3)]]></printWhenExpression>
-						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{UOMSYMBOL}!=null)?$F{UOMSYMBOL}:new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -1534,7 +1483,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						style="Level4_Line"
 						x="428"
 						y="0"
-						width="40"
+						width="55"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight">
@@ -1545,23 +1494,6 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						<font/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($V{QTY_SUM4}!=null)?$P{NUMBERFORMAT}.format($V{QTY_SUM4}):new String(" ")]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="Level4_Line"
-						x="468"
-						y="0"
-						width="15"
-						height="18"
-						key="textField"
-						stretchType="RelativeToBandHeight">
-							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=4)]]></printWhenExpression>
-						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{UOMSYMBOL}!=null)?$F{UOMSYMBOL}:new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -1731,7 +1663,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						style="Level5_Line"
 						x="428"
 						y="0"
-						width="40"
+						width="55"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight">
@@ -1742,23 +1674,6 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						<font/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($V{QTY_SUM5}!=null)?$P{NUMBERFORMAT}.format($V{QTY_SUM5}):new String(" ")]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="Level5_Line"
-						x="468"
-						y="0"
-						width="15"
-						height="18"
-						key="textField"
-						stretchType="RelativeToBandHeight">
-							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=5)]]></printWhenExpression>
-						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{UOMSYMBOL}!=null)?$F{UOMSYMBOL}:new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -1943,7 +1858,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						style="Level6_Line"
 						x="428"
 						y="0"
-						width="40"
+						width="55"
 						height="18"
 						key="textField-68"
 						stretchType="RelativeToBandHeight">
@@ -1954,23 +1869,6 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						<font/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($V{QTY_SUM6}!=null)?$P{NUMBERFORMAT}.format($V{QTY_SUM6}):new String(" ")]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL6"  hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="Level6_Line"
-						x="468"
-						y="0"
-						width="15"
-						height="18"
-						key="textField-67"
-						stretchType="RelativeToBandHeight">
-							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=5)]]></printWhenExpression>
-						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{UOMSYMBOL}!=null)?$F{UOMSYMBOL}:new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL6"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -2170,7 +2068,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						style="Level7_Line"
 						x="428"
 						y="0"
-						width="40"
+						width="55"
 						height="18"
 						key="textField-177"
 						stretchType="RelativeToBandHeight">
@@ -2181,23 +2079,6 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						<font/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($V{QTY_SUM7}!=null)?$P{NUMBERFORMAT}.format($V{QTY_SUM7}):new String(" ")]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL7"  hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="Level7_Line"
-						x="468"
-						y="0"
-						width="15"
-						height="18"
-						key="textField-178"
-						stretchType="RelativeToBandHeight">
-							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=5)]]></printWhenExpression>
-						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{UOMSYMBOL}!=null)?$F{UOMSYMBOL}:new String(" ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL7"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -2470,26 +2351,9 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL8"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level8_Line"
-						x="468"
-						y="0"
-						width="15"
-						height="18"
-						key="textField-185"
-						stretchType="RelativeToBandHeight">
-							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=5)]]></printWhenExpression>
-						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{UOMSYMBOL}!=null)?$F{UOMSYMBOL}:new String(" ")]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL8"  hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="Level8_Line"
 						x="428"
 						y="0"
-						width="40"
+						width="55"
 						height="18"
 						key="textField-184"
 						stretchType="RelativeToBandHeight">
@@ -2729,7 +2593,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						style="Level9_Line"
 						x="428"
 						y="0"
-						width="40"
+						width="55"
 						height="18"
 						key="textField-196"
 						stretchType="RelativeToBandHeight">
@@ -2740,23 +2604,6 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						<font/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($V{QTY_SUM9}!=null)?$P{NUMBERFORMAT}.format($V{QTY_SUM9}):new String(" ")]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL9"  hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="Level9_Line"
-						x="468"
-						y="0"
-						width="15"
-						height="18"
-						key="textField-195"
-						stretchType="RelativeToBandHeight">
-							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=5)]]></printWhenExpression>
-						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{UOMSYMBOL}!=null)?$F{UOMSYMBOL}:new String(" ")]]></textFieldExpression>
 				</textField>
 			</band>
 			</groupHeader>
@@ -3001,7 +2848,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						style="Level10_Line"
 						x="428"
 						y="0"
-						width="40"
+						width="55"
 						height="18"
 						key="textField-202"
 						stretchType="RelativeToBandHeight">
@@ -3012,23 +2859,6 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).multiply( ne
 						<font/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($V{QTY_SUM10}!=null)?$P{NUMBERFORMAT}.format($V{QTY_SUM10}):new String(" ")]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL10"  hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="Level10_Line"
-						x="468"
-						y="0"
-						width="15"
-						height="18"
-						key="textField-203"
-						stretchType="RelativeToBandHeight">
-							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=5)]]></printWhenExpression>
-						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#999999" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{UOMSYMBOL}!=null)?$F{UOMSYMBOL}:new String(" ")]]></textFieldExpression>
 				</textField>
 			</band>
 			</groupHeader>
