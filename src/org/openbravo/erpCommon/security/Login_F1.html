@@ -46,7 +46,7 @@ function buttonOK_click() {
     return false;
 }
 
-function ensureThatIsNotOpenedInAPopup() {
+function redirectWhenPopup() {
   if (top.opener) {
     top.opener.top.location.href = top.document.location.href;
     top.window.close();
@@ -56,7 +56,7 @@ function ensureThatIsNotOpenedInAPopup() {
 </script>
 <script language="JavaScript" type="text/javascript">
   function onLoadDo() {
-    ensureThatIsNotOpenedInAPopup();
+    redirectWhenPopup();
     this.windowTables = new Array(
       new windowTableId('client', 'buttonOK')
     );
