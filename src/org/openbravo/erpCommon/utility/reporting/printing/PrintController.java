@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Vector;
 
 import javax.activation.DataHandler;
@@ -214,16 +215,21 @@ public class PrintController extends HttpSecureAppServlet {
                 String documentId = documentIds[i];
                 report = buildReport(response, vars, documentId, reportManager,
                         documentType);
-                try {
-                    jasperPrint = reportManager.processReport(report, vars);
-                    jrPrintReports.add(jasperPrint);
-                } catch (final ReportingException e) {
-                    advisePopUp(request, response, "Report processing failed",
-                            "Unable to process report selection");
-                    // Utility.messageBD(this, "ERROR", vars.getLanguage());
-                    log4j.error(e.getMessage());
-                }
+                if (multipleReports)
+                    try {
+                        jasperPrint = reportManager.processReport(report, vars);
+                        jrPrintReports.add(jasperPrint);
+                    } catch (final ReportingException e) {
+                        advisePopUp(request, response,
+                                "Report processing failed",
+                                "Unable to process report selection");
+                        // Utility.messageBD(this, "ERROR", vars.getLanguage());
+                        log4j.error(e.getMessage());
+                    }
                 if (multipleReports) {
+                    report.setFilename(UUID.randomUUID().toString() + "_"
+                            + report.getFilename());
+                    report.setDeleteable(true);
                     reportManager.saveTempReport(report, vars);
                     savedReports.add(report);
                 }
@@ -572,6 +578,12 @@ public class PrintController extends HttpSecureAppServlet {
                     ++i;
                     page = writer.getImportedPage(reader, i);
                     writer.addPage(page);
+                }
+                if (reports[f].isDeleteable()) {
+                    File file = new File(reports[f].getTargetLocation());
+                    if (file.exists() && !file.isDirectory()) {
+                        file.delete();
+                    }
                 }
                 f++;
             }

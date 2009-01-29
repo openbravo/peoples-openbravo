@@ -49,6 +49,7 @@ public class Report {
     private boolean _isAttached;
     private String docTypeId;
     private String orgId;
+    private boolean deleteReport = false;
 
     public String getDocTypeId() {
         return docTypeId;
@@ -183,6 +184,10 @@ public class Report {
         return _Filename;
     }
 
+    public void setFilename(String newFileName) {
+        _Filename = newFileName;
+    }
+
     public File getTargetDirectory() {
         return _targetDirectory;
     }
@@ -208,5 +213,13 @@ public class Report {
             return templateInfo.getTemplates();
         }
         return null;
+    }
+
+    public boolean isDeleteable() {
+        return deleteReport;
+    }
+
+    public void setDeleteable(boolean deleteable) {
+        deleteReport = deleteable;
     }
 }

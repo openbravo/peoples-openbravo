@@ -188,7 +188,7 @@ public class ReportManager {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        saveReport(report, jasperPrint);
+        // saveReport(report, jasperPrint);
     }
 
     private void saveReport(Report report, JasperPrint jasperPrint) {
