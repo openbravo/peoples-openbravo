@@ -455,6 +455,7 @@ build.war: build a war file in the lib directory.
 	</target>
 
 	<target name="compile.complete" depends="clean,generate.entities,wad,compileSqlc,postsrc,translate">
+		<antcall target="update.build.timestamp"/>
 	</target>
 
 	<target name="translate" if="translation">
@@ -572,5 +573,23 @@ build.war: build a war file in the lib directory.
 			<mapping namespace="/services/WebService" package="org.openbravo.services.webservice" />
 		</axis-wsdl2java>
 	</target>
+	
+	<target name="update.build.timestamp">
+	    <sql driver="${bbdd.driver}"
+	         url="${bbdd.url}"
+	    	   userid="${bbdd.user}"
+	    	   password="${bbdd.password}"
+	         delimiter="/">
+	      <classpath>
+	        <fileset dir="${base.lib}">
+	          <include name="**/*.jar">
+	          </include>
+	        </fileset>
+	      </classpath>
+	      <transaction>
+	        UPDATE AD_SYSTEM_INFO SET LAST_BUILD=NOW()
+	      </transaction>
+	    </sql>
+	  </target>
 
 </project>
