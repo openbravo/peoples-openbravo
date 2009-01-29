@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -137,6 +137,7 @@ public class Wad extends DefaultHandler {
         String webPath;
         String strBaseSrc;
         boolean complete;
+        boolean quick;
 
         if (argv.length < 1) {
             log4j
@@ -253,6 +254,19 @@ public class Wad extends DefaultHandler {
                         + argv[15].replace(", ", ",").replace(",", "', '")
                         + "'";
 
+            // Check for quick build
+            if (argv.length <= 16)
+                quick = false;
+            else
+                quick = argv[16].equals("quick");
+
+            System.out.println("16: " + argv[16] + " l " + argv.length);
+
+            if (quick) {
+                module = "%";
+                strWindowName = "xx";
+            }
+
             log4j.info("File connection: " + strFileConnection);
             log4j.info("window: " + strWindowName);
             log4j.info("module: " + module);
@@ -271,7 +285,7 @@ public class Wad extends DefaultHandler {
             log4j.info("Attach path: " + attachPath);
             log4j.info("Web path: " + webPath);
             log4j.info("Src path: " + strBaseSrc);
-            log4j.info("complete: " + complete);
+            log4j.info("Quick mode: " + quick);
 
             final File fileFin = new File(dirFin);
             if (!fileFin.exists()) {
@@ -373,7 +387,9 @@ public class Wad extends DefaultHandler {
             while (st.hasMoreTokens()) {
                 strCurrentWindow = st.nextToken().trim();
                 TabsData tabsData[];
-                if (module.equals("%"))
+                if (quick)
+                    tabsData = TabsData.selectQuick(wad.pool);
+                else if (module.equals("%"))
                     tabsData = TabsData.selectTabs(wad.pool, strCurrentWindow);
                 else
                     tabsData = TabsData.selectTabsinModules(wad.pool,
@@ -2010,8 +2026,8 @@ public class Wad extends DefaultHandler {
             discard[18] = "client";
             discard[1] = "org";
         } // else if (tableName.toUpperCase().startsWith("M_PRODUCT") ||
-          // tableName.toUpperCase().startsWith("C_BP") ||
-          // tableName.toUpperCase().startsWith("AD_ORG")) discard[1] = "org";
+        // tableName.toUpperCase().startsWith("C_BP") ||
+        // tableName.toUpperCase().startsWith("AD_ORG")) discard[1] = "org";
         if (dl.toString().equals(""))
             discard[2] = "selDisplayLogic";
         if (!isHighVolumen || !tablevel.equals("0")) {
@@ -2068,9 +2084,9 @@ public class Wad extends DefaultHandler {
 
         if (strWindow.equals("250"))
             discard[30] = "refreshTabParentSession"; // TODO: This fixes
-                                                     // [1879633] and shoudn't
-                                                     // be necessary in r2.5x
-                                                     // because of new PKs
+        // [1879633] and shoudn't
+        // be necessary in r2.5x
+        // because of new PKs
 
         xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/javasource",
                 discard).createXmlDocument();
@@ -3007,8 +3023,8 @@ public class Wad extends DefaultHandler {
             discard[6] = "client";
             discard[1] = "org";
         } // else if (tableName.toUpperCase().startsWith("M_PRODUCT") ||
-          // tableName.toUpperCase().startsWith("C_BP") ||
-          // tableName.toUpperCase().startsWith("AD_ORG")) discard[1] = "org";
+        // tableName.toUpperCase().startsWith("C_BP") ||
+        // tableName.toUpperCase().startsWith("AD_ORG")) discard[1] = "org";
         if (selCol == null || selCol.length == 0) {
             discard[2] = "sectionHighVolume";
             discard[3] = "sectionHighVolume1";
@@ -4176,19 +4192,19 @@ public class Wad extends DefaultHandler {
                     + strTab + ", " + tabName);
 
         final boolean isReadOnlyDefinedTab = (isreadonly && editable); // isReadOnlyDefinedTab:
-                                                                       // the
-                                                                       // tab is
-                                                                       // defined
-                                                                       // as
-                                                                       // read-only
-                                                                       // but
-                                                                       // not
-                                                                       // for
-                                                                       // security
+        // the
+        // tab is
+        // defined
+        // as
+        // read-only
+        // but
+        // not
+        // for
+        // security
         if (!editable)
             isreadonly = true; // isreadonly: because it is not editable (for
-                               // security reasons) or because it is defined as
-                               // read-only
+        // security reasons) or because it is defined as
+        // read-only
 
         final HashMap<String, String> shortcuts = new HashMap<String, String>();
 

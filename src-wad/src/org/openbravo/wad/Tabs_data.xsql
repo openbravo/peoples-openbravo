@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -137,6 +137,77 @@
       <Parameter name="ModuleName" type="replace" optional="true" after="AND M.JAVAPACKAGE IN (" text="'1'"/>
   </SqlMethod>
 
+
+  <SqlMethod name="selectQuick" type="preparedStatement" return="multiple">
+      <Sql><![CDATA[
+        SELECT distinct AD_TAB.ad_tab_id AS tabId, AD_TAB.NAME AS tabName, AD_WINDOW.NAME AS windowName, 
+        AD_TAB.seqno AS seqNo, AD_TAB.tablevel AS tabLevel, AD_TAB.NAME AS tabNameCompact, 
+        AD_TAB.AD_WINDOW_ID AS KEY, '' AS TD_Class, '' AS href, '' AS Td_Height, '' AS Parent_Key, 
+        AD_WINDOW.NAME AS realWindowName, AD_TAB.whereclause, AD_WINDOW.windowtype, ad_tab.issorttab, ad_tab.AD_COLUMNSORTORDER_ID, 
+        ad_tab.AD_COLUMNSORTYESNO_ID,
+        AD_TABLE.ACCESSLEVEL, AD_TAB.ad_process_id, AD_TAB.ISREADONLY, AD_TAB.NAME AS realTabName, AD_TAB.ORDERBYCLAUSE, 
+        '' as tabNameTrl, AD_TABLE.ad_table_id AS table_Id, ad_tab.isInfoTab, ad_tab.isTranslationTab, '' AS NameTab, 
+        replace(replace(AD_TAB.FILTERCLAUSE, CHR(10), ' '), CHR(13), ' ') AS FILTERCLAUSE, AD_TAB.EDITREFERENCE, AD_MODEL_OBJECT.CLASSNAME,
+        (CASE WHEN M1.AD_MODULE_ID='0' THEN NULL ELSE M1.JavaPackage END) AS JAVAPACKAGE
+        FROM AD_TAB, AD_WINDOW, AD_TABLE, AD_MODEL_OBJECT, AD_SYSTEM_INFO SI, AD_MODULE M1
+        WHERE AD_TAB.AD_WINDOW_ID = AD_WINDOW.AD_WINDOW_ID
+        AND AD_TAB.AD_TABLE_ID = AD_TABLE.AD_TABLE_ID 
+        AND AD_TAB.AD_TAB_ID = AD_MODEL_OBJECT.AD_TAB_ID 
+        AND AD_MODEL_OBJECT.ISACTIVE = 'Y' 
+        AND AD_MODEL_OBJECT.ISDEFAULT = 'Y' 
+        AND AD_WINDOW.IsActive = 'Y'
+        AND M1.AD_MODULE_ID = AD_WINDOW.AD_Module_ID
+        AND AD_TAB.ad_table_id IN
+        (SELECT AD_TABLE.ad_table_id FROM AD_COLUMN, AD_TABLE 
+         WHERE AD_COLUMN.ad_table_id = AD_TABLE.ad_table_id
+         AND (AD_COLUMN.iskey='Y' OR AD_COLUMN.issecondarykey='Y')
+        AND AD_TAB.ISACTIVE = 'Y'
+        AND EXISTS (SELECT 1 FROM AD_TAB, AD_COLUMN 
+        WHERE AD_TAB.AD_TABLE_ID = AD_COLUMN.ad_table_id
+        AND AD_TAB.TABLEVEL = 0 
+        AND (AD_COLUMN.iskey='Y' OR AD_COLUMN.issecondarykey='Y')
+        )
+        AND AD_TAB.ad_window_id = AD_WINDOW.ad_window_id)
+        AND EXISTS (SELECT 1
+                      FROM AD_WINDOW W
+                     WHERE AD_WINDOW.AD_WINDOW_ID = W.AD_WINDOW_ID
+                       AND W.UPDATED > SI.LAST_BUILD
+                    UNION
+                    SELECT 1
+                      FROM AD_TAB T,
+                           AD_WINDOW W
+                     WHERE AD_WINDOW.AD_WINDOW_ID = W.AD_WINDOW_ID
+                       AND T.UPDATED > SI.LAST_BUILD
+                       AND W.AD_WINDOW_ID = T.AD_WINDOW_ID
+                    UNION
+                    SELECT 1                     
+                      FROM AD_FIELD F,
+                           AD_TAB TB, AD_WINDOW W
+                     WHERE AD_WINDOW.AD_WINDOW_ID = W.AD_WINDOW_ID
+                       AND F.UPDATED > SI.LAST_BUILD
+                       AND F.AD_TAB_ID = TB.AD_TAB_ID
+                       AND W.AD_WINDOW_ID = TB.AD_WINDOW_ID
+                    UNION
+                    SELECT 1
+                      FROM AD_TABLE T,
+                           AD_TAB TB, AD_WINDOW W
+                     WHERE AD_WINDOW.AD_WINDOW_ID = W.AD_WINDOW_ID
+                       AND T.UPDATED > SI.LAST_BUILD
+                       AND T.AD_TABLE_ID = TB.AD_TABLE_ID
+                       AND W.AD_WINDOW_ID = TB.AD_WINDOW_ID
+                    UNION
+                     SELECT 1
+                       FROM AD_COLUMN C,
+                            AD_TAB TB, AD_WINDOW W
+                      WHERE AD_WINDOW.AD_WINDOW_ID = W.AD_WINDOW_ID
+                       AND C.UPDATED > SI.LAST_BUILD
+                        AND C.AD_TABLE_ID = TB.AD_TABLE_ID
+                        AND W.AD_WINDOW_ID = TB.AD_WINDOW_ID
+                       )
+        ORDER BY AD_WINDOW.name, AD_TAB.tablevel, AD_TAB.seqno
+          ]]>
+      </Sql>
+  </SqlMethod>
 
   <SqlMethod name="selectTabParent" type="preparedStatement" return="multiple">
       <SqlMethodComment>Parent Tab for the window</SqlMethodComment>

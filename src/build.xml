@@ -13,7 +13,7 @@
  * and  limitations under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2005-2008 Openbravo SL 
+ * All portions are Copyright (C) 2005-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s): Openbravo S.L.
  ************************************************************************
@@ -219,6 +219,14 @@ build.war: build a war file in the lib directory.
 			<classpath refid="project.class.path" />
 		</java>
 		<antcall target="postwad" inheritall="true" inheritrefs="true" />
+	</target>
+	
+	<target name="wad.quick" depends="init">
+		<java classname="org.openbravo.wad.Wad" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
+		      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'quick'" />
+		      <classpath refid="project.class.path" />
+		    </java>
+		    <antcall target="postwad" inheritall="true" inheritrefs="true" />
 	</target>
 
 
@@ -458,6 +466,12 @@ build.war: build a war file in the lib directory.
 	<target name="compile.complete" depends="clean,generate.entities,wad,compileSqlc,postsrc,translate">
 		<antcall target="update.build.timestamp"/>
 	</target>
+	
+	<target name="build.quick" depends="generate.entities,wad.quick,compileSqlc,postsrc,translate">
+		<antcall target="update.build.timestamp"/>
+	</target>
+	
+	
 
 	<target name="translate" if="translation">
 		<antcall inheritall="true" inheritrefs="true" target="compile.translate">
