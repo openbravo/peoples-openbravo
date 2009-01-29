@@ -211,9 +211,7 @@
           'AV', 'N'
         )
         ;
-      IF(Cur_InOutLine.MOVEMENTDATE=v_DateOld AND Cur_InOutLine.M_PRODUCT_ID=v_ProductOld) THEN
-        v_CumQty:=v_CumQty + Cur_InOutLine.MOVEMENTQTY;
-      END IF;
+      v_CumQty:=v_CumQty + Cur_InOutLine.MOVEMENTQTY;
       v_DateOld:=Cur_InOutLine.MOVEMENTDATE;
       v_ProductOld:=Cur_InOutLine.M_PRODUCT_ID;
     END LOOP;
