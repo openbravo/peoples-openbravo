@@ -456,10 +456,13 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
                         password="${bbdd.password}"
                         excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"
                         model="model"
-			moduledir="${base.modules}"
+                        moduledir="${base.modules}"
                         verbosity="${bbdd.verbosity}" 
-			codeRevision="${code.revision}" 
-			module="${module}"/>
+                        output="sourcedata" 
+                        codeRevision="${code.revision}" 
+                        userId="0"
+                        propertiesFile="${base.config}/Openbravo.properties" 
+                        module="${module}"/>
     </target>
 
   <target name="import.database.data">

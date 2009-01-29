@@ -457,7 +457,6 @@ compare.database.structure: refer to compare.database.structure target of databa
 		<antcall target="database.lib" />
 		<antcall target="core.lib" />
 		<ant dir="${base.db}" target="export.database.structure" inheritAll="true" inheritRefs="true" />
-		<ant dir="${base.db}" target="export.database.data" inheritAll="true" inheritRefs="true" />
 	</target>
 
 	<target name="export.database.structure" depends="init,code.rev">
