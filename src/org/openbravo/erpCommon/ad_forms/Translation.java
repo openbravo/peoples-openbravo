@@ -332,7 +332,7 @@ public class Translation extends HttpSecureAppServlet {
                 exportTable(AD_Language, true, refTrl.isindevelopment
                         .equals("Y"), refTrl.tablename.toUpperCase(),
                         refTrl.adTableId, rootDirectory, refTrl.adModuleId,
-                        refTrl.adLanguage, refTrl.value);
+                        refTrl.adLanguage, refTrl.value, true);
             }
         } catch (final Exception e) {
             e.printStackTrace();
@@ -346,8 +346,7 @@ public class Translation extends HttpSecureAppServlet {
             for (int mod = 0; mod < modules.length; mod++) {
                 final String moduleLanguage = TranslationData.selectModuleLang(
                         this, modules[mod].adModuleId);
-                if (moduleLanguage != null && !moduleLanguage.equals("")
-                        && !moduleLanguage.equals(AD_Language)) { // Translate
+                if (moduleLanguage != null && !moduleLanguage.equals("")) {
                     // only
                     // languages
                     // different
@@ -358,10 +357,13 @@ public class Translation extends HttpSecureAppServlet {
                     final String tableName = Trl_Table;
                     final int pos = tableName.indexOf("_TRL");
                     final String Base_Table = Trl_Table.substring(0, pos);
+                    boolean trl = true;
 
+                    if (moduleLanguage.equals(AD_Language))
+                        trl = false;
                     exportTable(AD_Language, false, false, Base_Table, "0",
                             rootDirectory, modules[mod].adModuleId,
-                            moduleLanguage, modules[mod].value);
+                            moduleLanguage, modules[mod].value, trl);
 
                 } // translate or not (if)
             }
@@ -397,18 +399,20 @@ public class Translation extends HttpSecureAppServlet {
     private void exportTable(String AD_Language, boolean exportReferenceData,
             boolean exportAll, String table, String tableID,
             String rootDirectory, String moduleId, String moduleLanguage,
-            String javaPackage) {
+            String javaPackage, boolean trl) {
 
         Statement st = null;
         try {
-            final String trlTable = table + "_TRL";
+            String trlTable = table;
+            if (trl)
+                trlTable = table + "_TRL";
             final TranslationData[] trlColumns = getTrlColumns(table);
             final String keyColumn = table + "_ID";
 
             boolean m_IsCentrallyMaintained = false;
             try {
-                m_IsCentrallyMaintained = (TranslationData.centrallyMaintained(
-                        cp, table) != "0");
+                m_IsCentrallyMaintained = !(TranslationData
+                        .centrallyMaintained(cp, table).equals("0"));
             } catch (final Exception e) {
                 translationlog4j.error("getTrlColumns (IsCentrallyMaintained)",
                         e);
@@ -416,7 +420,10 @@ public class Translation extends HttpSecureAppServlet {
 
             // Prepare query to retrieve translated rows
             final StringBuffer sql = new StringBuffer("SELECT ");
-            sql.append("t.IsTranslated,");
+            if (trl)
+                sql.append("t.IsTranslated,");
+            else
+                sql.append("'N', ");
             sql.append("t.").append(keyColumn);
 
             for (int i = 0; i < trlColumns.length; i++) {
@@ -432,9 +439,11 @@ public class Translation extends HttpSecureAppServlet {
                 sql.append(", AD_REF_DATA_LOADED DL");
             }
 
-            sql.append(" WHERE t.AD_Language='" + AD_Language + "'").append(
-                    " AND o.").append(keyColumn).append("= t.").append(
-                    keyColumn);
+            sql.append(" WHERE ");
+            if (trl)
+                sql.append("t.AD_Language='" + AD_Language + "'").append(
+                        " AND ");
+            sql.append("o.").append(keyColumn).append("= t.").append(keyColumn);
 
             if (m_IsCentrallyMaintained) {
                 sql.append(" AND ").append("o.IsCentrallyMaintained='N'");
