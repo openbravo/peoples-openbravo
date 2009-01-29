@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2007 Openbravo SL
+ * All portions are Copyright (C) 2007-2009 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,7 +40,6 @@ import org.openbravo.utils.Replace;
 
 public class PrintJR extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;
-    private JasperReport jasperReport;
 
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
@@ -65,6 +64,8 @@ public class PrintJR extends HttpSecureAppServlet {
         if (log4j.isDebugEnabled())
             log4j.debug("JR: Get Parameters");
         String strParamname;
+        JasperReport jasperReport = null;
+
         HashMap<String, Object> parameters = new HashMap<String, Object>();
         PrintJRData[] processparams = PrintJRData.getProcessParams(this,
                 strProcessId);
@@ -102,13 +103,14 @@ public class PrintJR extends HttpSecureAppServlet {
                 parameters.put(processparams[i].paramname, formatParameter(
                         vars, processparams[i].paramname, vars
                                 .getStringParameter("inp" + strParamname),
-                        processparams[i].reference));
+                        processparams[i].reference, jasperReport));
         }
         return parameters;
     }
 
     Object formatParameter(VariablesSecureApp vars, String strParamName,
-            String strParamValue, String reference) throws ServletException {
+            String strParamValue, String reference, JasperReport jasperReport)
+            throws ServletException {
         String strObjectClass = "";
         Object object;
         JRParameter[] jrparams = jasperReport.getParameters();
