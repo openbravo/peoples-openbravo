@@ -36,7 +36,7 @@ public class DocBank extends AcctServer {
 
     /**
      * Constructor
-     * 
+     *
      * @param AD_Client_ID
      *            AD_Client_ID
      */
@@ -53,7 +53,7 @@ public class DocBank extends AcctServer {
 
     /**
      * Load Specific Document Details
-     * 
+     *
      * @param rs
      *            result set
      * @return true if loadDocumentType was set
@@ -108,7 +108,7 @@ public class DocBank extends AcctServer {
     /**
      * Load Invoice Line. 4 amounts AMTTYPE_Payment AMTTYPE_Statement2
      * AMTTYPE_Charge AMTTYPE_Interest
-     * 
+     *
      * @return DocLine Array
      */
     private DocLine[] loadLines(ConnectionProvider conn) {
@@ -151,7 +151,7 @@ public class DocBank extends AcctServer {
     /**
      * Get Source Currency Balance - subtracts line amounts from total - no
      * rounding
-     * 
+     *
      * @return positive amount, if total invoice is bigger than lines
      */
     public BigDecimal getBalance() {
@@ -176,14 +176,14 @@ public class DocBank extends AcctServer {
 
     /**
      * Create Facts (the accounting logic) for CMB.
-     * 
+     *
      * <pre>
      *      BankAsset       DR      CR  (Statement)
      *      BankInTransit   DR      CR              (Payment)
      *      Charge          DR          (Charge)
      *      Interest        DR      CR  (Interest)
      * </pre>
-     * 
+     *
      * @param as
      *            accounting schema
      * @return Fact
@@ -224,6 +224,7 @@ public class DocBank extends AcctServer {
             DocLine_Bank lineAux = new DocLine_Bank(DocumentType, Record_ID,
                     null);
             lineAux.m_DateAcct = line.m_DateAcct;
+            lineAux.m_C_Project_ID = line.m_C_Project_ID;
             fact.createLine(lineAux, getAccount(AcctServer.ACCTTYPE_BankAsset,
                     as, conn), line.m_C_Currency_ID, line.m_StmtAmt,
                     Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
@@ -292,7 +293,7 @@ public class DocBank extends AcctServer {
 
     /**
      * Get the account for Accounting Schema
-     * 
+     *
      * @param BankStatementline_Id
      * @param as
      *            accounting schema
@@ -341,7 +342,7 @@ public class DocBank extends AcctServer {
 
     /**
      * Get Document Confirmation
-     * 
+     *
      * @not used
      */
     public boolean getDocumentConfirmation(ConnectionProvider conn,
