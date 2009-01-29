@@ -188,7 +188,9 @@ public class TranslationHandler {
                                 prefix + result + suffix);
                     }
                 }
+                // write translated line including original newline
                 buffer.append(inputLine);
+                buffer.append("\n");
             }
         } catch (IOException e1) {
             log4j.debug("Error caught tryng to read file: " + e1.getMessage());
