@@ -287,6 +287,10 @@ compare.database.structure: refer to compare.database.structure target of databa
 		<ant dir="${base.src}" target="generate.entities" inheritAll="true" inheritRefs="true" />
 	</target>
 
+	<target name="generate.entities.quick">
+		<ant dir="${base.src}" target="generate.entities.quick" inheritAll="true" inheritRefs="true" />
+	</target>
+
 	<target name="export.sample.data" depends="code.rev">
 		<ant dir="${base.src}" target="export.sample.data" inheritAll="true" inheritRefs="true" />
 	</target>
@@ -418,11 +422,12 @@ compare.database.structure: refer to compare.database.structure target of databa
 		<antcall target="db.apply.modules.sampledata" />
 	</target>
 
-	<target name="update.database" depends="init,code.rev">
+	<target name="update.database" depends="init,code.rev,generate.entities.quick">
 		<antcall target="database.lib" />
 		<antcall target="core.lib" />
 		<ant dir="${base.db}" target="update.database" inheritAll="true" inheritRefs="true" />
 		<antcall target="db.apply.modules" />
+		<antcall target="generate.entities.quick" />
 	</target>
 
 	<target name="update.database.mod" depends="init,code.rev">

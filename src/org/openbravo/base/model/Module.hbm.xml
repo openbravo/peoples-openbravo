@@ -31,5 +31,7 @@
 		<property name="seqno" not-null="false"/>
 		<property name="javaPackage" not-null="false"/>
 
+		<property name="updated"/>
+
 	</class>
 </hibernate-mapping>

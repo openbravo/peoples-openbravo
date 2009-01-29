@@ -183,7 +183,30 @@ build.war: build a war file in the lib directory.
 		<taskdef name="workflow" classpathref="project.class.path" classname="org.openbravo.base.gen.GenerateEntitiesTask" />
 		<!-- debug="true" will perform the in-memory model initialization before generating entities
 	if an error occurs then, then a stacktrace is printed. -->
-		<workflow debug="false" propertiesFile="${base.config}/Openbravo.properties" file="${base.src}/org/openbravo/base/gen/gen_entity.oaw" fork="true" maxmemory="${build.maxmemory}">
+		<workflow debug="false" srcGenPath="${base.src.gen}" propertiesFile="${base.config}/Openbravo.properties" file="${base.src}/org/openbravo/base/gen/gen_entity.oaw" fork="true" maxmemory="${build.maxmemory}">
+			<param name="ob.properties.location" value="${base.config}/Openbravo.properties" />
+			<param name="base.src.gen" value="${base.src.gen}" />
+			<classpath>
+				<path refid="project.class.path" />
+			</classpath>
+		</workflow>
+		<javac srcdir="${base.src.gen}:${base.src}/org/openbravo/base/model:${base.src}/org/openbravo/dal:${base.src}/org/openbravo/base/structure" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
+			<classpath refid="project.class.path" />
+		</javac>
+	</target>
+
+	<!-- 
+		Generates entities only when the application dictionary has changed.
+		Difference with the generate.entities is that it does not clean the src-gen directory. The standard
+		GenerateEntitiesTask always checks if the AD was changed before regenerating. The check is to compare
+		the modified time of the generated sources with the updated time of the Application Dictionary. If there
+		is a source older than the last updated time of the Application Dictionary then the sources need to be regenerated.		
+	-->
+	<target name="generate.entities.quick" depends="compile.src.gen">
+		<taskdef name="workflow" classpathref="project.class.path" classname="org.openbravo.base.gen.GenerateEntitiesTask" />
+		<!-- debug="true" will perform the in-memory model initialization before generating entities
+	if an error occurs then, then a stacktrace is printed. -->
+		<workflow debug="false" srcGenPath="${base.src.gen}" propertiesFile="${base.config}/Openbravo.properties" file="${base.src}/org/openbravo/base/gen/gen_entity.oaw" fork="true" maxmemory="${build.maxmemory}">
 			<param name="ob.properties.location" value="${base.config}/Openbravo.properties" />
 			<param name="base.src.gen" value="${base.src.gen}" />
 			<classpath>
@@ -228,7 +251,6 @@ build.war: build a war file in the lib directory.
 		    </java>
 		    <antcall target="postwad" inheritall="true" inheritrefs="true" />
 	</target>
-
 
 	<target name="postsrc" depends="postsrc.modules">
 		<copy todir="${build}">
@@ -467,11 +489,9 @@ build.war: build a war file in the lib directory.
 		<antcall target="update.build.timestamp"/>
 	</target>
 	
-	<target name="build.quick" depends="generate.entities,wad.quick,compileSqlc,postsrc,translate">
+	<target name="build.quick" depends="generate.entities.quick,wad.quick,compileSqlc,postsrc,translate">
 		<antcall target="update.build.timestamp"/>
 	</target>
-	
-	
 
 	<target name="translate" if="translation">
 		<antcall inheritall="true" inheritrefs="true" target="compile.translate">

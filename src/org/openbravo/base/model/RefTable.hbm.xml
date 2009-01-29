@@ -29,6 +29,8 @@
 		<property name="active" type="org.openbravo.base.session.OBYesNoType" not-null="true" column="isactive"/>				
 		<many-to-one name="column" not-null="true" class="org.openbravo.base.model.Column" column="ad_key"/>				
 		
+		<property name="updated"/>
+		
 	</class>
 
 </hibernate-mapping>

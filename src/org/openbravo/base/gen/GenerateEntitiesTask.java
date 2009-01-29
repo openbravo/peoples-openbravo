@@ -19,6 +19,8 @@
 
 package org.openbravo.base.gen;
 
+import java.io.File;
+
 import org.apache.log4j.Logger;
 import org.openarchitectureware.workflow.ant.WorkflowAntTask;
 import org.openbravo.base.exception.OBException;
@@ -39,6 +41,7 @@ public class GenerateEntitiesTask extends WorkflowAntTask {
             .getLogger(GenerateEntitiesTask.class);
 
     private static String basePath;
+    private String srcGenPath;
 
     public static String getBasePath() {
         return basePath;
@@ -61,7 +64,13 @@ public class GenerateEntitiesTask extends WorkflowAntTask {
     }
 
     @Override
-    public final void execute() {
+    public void execute() {
+
+        if (!hasChanged()) {
+            log
+                    .info("Model has not changed since last run, not re-generating entities");
+            return;
+        }
 
         if (getBasePath() == null) {
             setBasePath(super.getProject().getBaseDir().getAbsolutePath());
@@ -92,6 +101,37 @@ public class GenerateEntitiesTask extends WorkflowAntTask {
         super.execute();
     }
 
+    private boolean hasChanged() {
+        // first check if there is a directory
+        // already in the src-gen
+        // if not then regenerate anyhow
+        final File modelDir = new File(getSrcGenPath(), "org");
+        if (!modelDir.exists()) {
+            return true;
+        }
+
+        // check if there is a sourcefile which was updated before the last
+        // time the model was created. In this case that sourcefile (and
+        // all source files need to be regenerated
+        final long lastModelUpdateTime = ModelProvider.getInstance()
+                .getModelLastUpdated();
+        return isSourceFileUpdatedBeforeModelChange(modelDir,
+                lastModelUpdateTime);
+    }
+
+    private boolean isSourceFileUpdatedBeforeModelChange(File file,
+            long modelUpdateTime) {
+        if (file.isDirectory()) {
+            for (File child : file.listFiles()) {
+                if (isSourceFileUpdatedBeforeModelChange(child, modelUpdateTime)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return file.lastModified() < modelUpdateTime;
+    }
+
     public String getProviderConfigDirectory() {
         return providerConfigDirectory;
     }
@@ -106,5 +146,13 @@ public class GenerateEntitiesTask extends WorkflowAntTask {
 
     public void setDebug(boolean debug) {
         this.debug = debug;
+    }
+
+    public String getSrcGenPath() {
+        return srcGenPath;
+    }
+
+    public void setSrcGenPath(String srcGenPath) {
+        this.srcGenPath = srcGenPath;
     }
 }

@@ -19,6 +19,7 @@
 
 package org.openbravo.base.model;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +35,7 @@ public class ModelObject {
     private String id = null;
     private boolean active = true;
     private String name;
+    private Date updated;
 
     private Map<String, Object> data = new HashMap<String, Object>();
 
@@ -92,5 +94,13 @@ public class ModelObject {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Date getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(Date updated) {
+        this.updated = updated;
     }
 }

@@ -29,6 +29,9 @@
 		<property name="value" type="string" column="value" />		
 		 
 		<many-to-one name="reference" not-null="true" class="org.openbravo.base.model.Reference" column="ad_reference_id" />
+		
+		<property name="updated"/>
+		
 	</class>
 
 </hibernate-mapping>

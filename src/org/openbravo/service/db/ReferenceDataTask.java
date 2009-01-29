@@ -29,6 +29,7 @@ import org.openbravo.dal.core.DalInitializingTask;
  * installation of Openbravo. The files are read and exported from and to the
  * src-db/database/referencedata directory.
  * 
+ * @author mtaal
  */
 public class ReferenceDataTask extends DalInitializingTask {
     public static final String REFERENCE_DATA_DIRECTORY = "/referencedata/sampledata";

@@ -42,14 +42,14 @@ public class SystemService implements OBSingleton {
     private static SystemService instance;
 
     public static SystemService getInstance() {
-	if (instance == null) {
-	    instance = OBProvider.getInstance().get(SystemService.class);
-	}
-	return instance;
+        if (instance == null) {
+            instance = OBProvider.getInstance().get(SystemService.class);
+        }
+        return instance;
     }
 
     public static void setInstance(SystemService instance) {
-	SystemService.instance = instance;
+        SystemService.instance = instance;
     }
 
     /**
@@ -63,16 +63,16 @@ public class SystemService implements OBSingleton {
      *         afterDate, false otherwise
      */
     public boolean hasChanged(Class<?>[] clzs, Date afterDate) {
-	for (Class<?> clz : clzs) {
-	    final OBCriteria<?> obc = OBDal.getInstance().createCriteria(
-		    (Class<BaseOBObject>) clz);
-	    obc.add(Expression.gt(Organization.PROPERTY_UPDATED, afterDate));
-	    // todo: count is slower than exists, is exists possible?
-	    if (obc.count() > 0) {
-		return true;
-	    }
-	}
-	return false;
+        for (Class<?> clz : clzs) {
+            final OBCriteria<?> obc = OBDal.getInstance().createCriteria(
+                    (Class<BaseOBObject>) clz);
+            obc.add(Expression.gt(Organization.PROPERTY_UPDATED, afterDate));
+            // todo: count is slower than exists, is exists possible?
+            if (obc.count() > 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -89,19 +89,19 @@ public class SystemService implements OBSingleton {
      *         afterDate, false afterwards
      */
     public <T extends BaseOBObject> boolean hasChanged(DataSet dataSet,
-	    Date afterDate) {
-	for (DataSetTable dataSetTable : dataSet.getDataSetTableList()) {
-	    final Entity entity = ModelProvider.getInstance()
-		    .getEntityByTableName(
-			    dataSetTable.getTable().getTableName());
-	    final OBCriteria<T> obc = OBDal.getInstance().createCriteria(
-		    entity.getName());
-	    obc.add(Expression.gt(Organization.PROPERTY_UPDATED, afterDate));
-	    // todo: count is slower than exists, is exists possible?
-	    if (obc.count() > 0) {
-		return true;
-	    }
-	}
-	return false;
+            Date afterDate) {
+        for (DataSetTable dataSetTable : dataSet.getDataSetTableList()) {
+            final Entity entity = ModelProvider.getInstance()
+                    .getEntityByTableName(
+                            dataSetTable.getTable().getTableName());
+            final OBCriteria<T> obc = OBDal.getInstance().createCriteria(
+                    entity.getName());
+            obc.add(Expression.gt(Organization.PROPERTY_UPDATED, afterDate));
+            // todo: count is slower than exists, is exists possible?
+            if (obc.count() > 0) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -33,5 +33,7 @@
 				                		
 		<many-to-one name="module" not-null="true" class="org.openbravo.base.model.Module" column="ad_module_id"/>
 		
+		<property name="updated"/>
+		
 	</class>
 </hibernate-mapping>
