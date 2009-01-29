@@ -133,6 +133,7 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
                 verbosity="${bbdd.verbosity}" />
     <antcall target="database.postimport.${bbdd.rdbms}" />
     <antcall target="database.postcreate.${bbdd.rdbms}" />
+    <antcall target="update.dbupdate.timestamp" />
   </target>
 
   <target name="export.config.script">
@@ -188,7 +189,8 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
 		       dataFilter="*/src-db/database/sourcedata"
 			userId="0"
 	  		propertiesFile="${base.config}/Openbravo.properties"/>  
-	      <antcall target="database.postupdate.${bbdd.rdbms}" />
+	    <antcall target="database.postupdate.${bbdd.rdbms}" />
+      <antcall target="update.dbupdate.timestamp" />
     </target>
 
     <target name="update.database.mod">
@@ -652,4 +654,22 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
   <target name="database.poststructure.POSTGRE">
   </target>
 
+  <target name="update.dbupdate.timestamp">
+      <sql driver="${bbdd.driver}"
+          url="${bbdd.owner.url}"
+          userid="${bbdd.user}"
+          password="${bbdd.password}"
+          onerror="continue"
+          autocommit="true">
+        <classpath>
+          <fileset dir="${base.lib}">
+            <include name="**/*.jar">
+            </include>
+          </fileset>
+        </classpath>
+        <transaction>
+          UPDATE AD_SYSTEM_INFO SET LAST_BUILD=NOW()
+        </transaction>
+      </sql>
+    </target>
 </project>
