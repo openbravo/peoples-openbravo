@@ -136,8 +136,13 @@ public class Account extends HttpSecureAppServlet {
                 printPage(response, vars, strKeyValue + "%", "", "",
                         strAcctSchema, true);
         } else if (vars.commandIn("SAVE")) {
-            String strAcctSchema = vars
-                    .getSessionValue("Account.cAcctschemaId");
+            String strAcctSchema = vars.getRequestGlobalVariable(
+                    "inpAcctSchema", "Account.cAcctschemaId");
+            if (strAcctSchema.equals("")) {
+                strAcctSchema = Utility.getContext(this, vars,
+                        "$C_AcctSchema_ID", "Account");
+                vars.setSessionValue("Account.cAcctschemaId", strAcctSchema);
+            }
             String strClave = vars.getStringParameter("inpValidCombination");
             String strAlias = vars.getRequestGlobalVariable("inpAlias",
                     "Account.alias");
