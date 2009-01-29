@@ -20,7 +20,6 @@
 package org.openbravo.base.model;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,8 +70,6 @@ public class ModelProvider implements OBSingleton {
     private HashMap<String, Entity> entitiesByTableName = null;
     private HashMap<String, Entity> entitiesByTableId = null;
     private List<Module> modules;
-
-    private long modelLastUpdated;
 
     /**
      * Returns the singleton instance providing the ModelProvider functionality.
@@ -159,28 +156,6 @@ public class ModelProvider implements OBSingleton {
             refList = list(session, RefList.class);
             modules = retrieveModules(session);
             tables = removeInvalidTables(tables);
-            final List<Package> packages = list(session, Package.class);
-
-            // compute the last updated time
-            long currentLastTimeUpdated = 0;
-            currentLastTimeUpdated = getLastUpdated(tables,
-                    currentLastTimeUpdated);
-            currentLastTimeUpdated = getLastUpdated(cols,
-                    currentLastTimeUpdated);
-            currentLastTimeUpdated = getLastUpdated(refTable,
-                    currentLastTimeUpdated);
-            currentLastTimeUpdated = getLastUpdated(refSearch,
-                    currentLastTimeUpdated);
-            currentLastTimeUpdated = getLastUpdated(refList,
-                    currentLastTimeUpdated);
-            currentLastTimeUpdated = getLastUpdated(modules,
-                    currentLastTimeUpdated);
-            currentLastTimeUpdated = getLastUpdated(packages,
-                    currentLastTimeUpdated);
-            setModelLastUpdated(currentLastTimeUpdated);
-            log
-                    .debug("Model was updated last time on "
-                            + getModelLastUpdated());
 
             for (final RefTable rt : refTable) {
                 refTableMap.put(rt.getId(), rt);
@@ -260,19 +235,6 @@ public class ModelProvider implements OBSingleton {
         clearLists();
     }
 
-    private <T extends ModelObject> long getLastUpdated(List<T> modelObjects,
-            long currentLastTime) {
-        long localCurrentLastTime = currentLastTime;
-        for (ModelObject modelObject : modelObjects) {
-            final Date modelObjectUpdated = modelObject.getUpdated();
-            if (modelObjectUpdated != null
-                    && modelObjectUpdated.getTime() > localCurrentLastTime) {
-                localCurrentLastTime = modelObjectUpdated.getTime();
-            }
-        }
-        return localCurrentLastTime;
-    }
-
     /**
      * Returns the tables in the database, is usefull for debugging purposes.
      * 
@@ -296,6 +258,69 @@ public class ModelProvider implements OBSingleton {
             session.close();
             sessionFactoryController.getSessionFactory().close();
         }
+    }
+
+    /**
+     * @return the last time that one of the relevant Application Dictionary
+     *         objects was modified. Relevant AD objects are: Table, Column,
+     *         Reference, RefList, RefSearch, RefTable, Module, Package.
+     */
+    public long computeLastUpdateModelTime() {
+        final SessionFactoryController sessionFactoryController = new ModelSessionFactoryController();
+        final Session session = sessionFactoryController.getSessionFactory()
+                .openSession();
+        final Transaction tx = session.beginTransaction();
+        try {
+            // compute the last updated time
+            long currentLastTimeUpdated = 0;
+            currentLastTimeUpdated = getLastUpdated(Table.class,
+                    currentLastTimeUpdated, session);
+            currentLastTimeUpdated = getLastUpdated(Column.class,
+                    currentLastTimeUpdated, session);
+            currentLastTimeUpdated = getLastUpdated(RefTable.class,
+                    currentLastTimeUpdated, session);
+            currentLastTimeUpdated = getLastUpdated(RefSearch.class,
+                    currentLastTimeUpdated, session);
+            currentLastTimeUpdated = getLastUpdated(RefList.class,
+                    currentLastTimeUpdated, session);
+            currentLastTimeUpdated = getLastUpdated(Module.class,
+                    currentLastTimeUpdated, session);
+            currentLastTimeUpdated = getLastUpdated(Package.class,
+                    currentLastTimeUpdated, session);
+            currentLastTimeUpdated = getLastUpdated(Reference.class,
+                    currentLastTimeUpdated, session);
+            return currentLastTimeUpdated;
+        } finally {
+            tx.commit();
+            session.close();
+            sessionFactoryController.getSessionFactory().close();
+        }
+    }
+
+    private <T extends ModelObject> long getLastUpdated(Class<T> clz,
+            long currentLastTime, Session session) {
+        final ModelObject mo = queryLastUpdateObject(session, clz);
+        if (mo.getUpdated().getTime() > currentLastTime) {
+            return mo.getUpdated().getTime();
+        }
+        return currentLastTime;
+    }
+
+    private <T extends ModelObject> T queryLastUpdateObject(Session session,
+            Class<T> clazz) {
+        final Criteria c = session.createCriteria(clazz);
+        c.addOrder(Order.desc("updated"));
+        c.setMaxResults(1);
+        @SuppressWarnings("unchecked")
+        final List<T> list = c.list();
+        if (list.size() == 0) {
+            throw new OBException(
+                    "No instances of "
+                            + clazz.getName()
+                            + " in the database, has the database been created and filled with data?");
+        }
+        return (T) list.get(0);
+
     }
 
     // clears some in-memory lists to save memory
@@ -743,13 +768,5 @@ public class ModelProvider implements OBSingleton {
                     + " not found in runtime model [ref: " + reference
                     + ", refval: " + referenceValue + "]");
         return c;
-    }
-
-    public long getModelLastUpdated() {
-        return modelLastUpdated;
-    }
-
-    public void setModelLastUpdated(long modelLastUpdated) {
-        this.modelLastUpdated = modelLastUpdated;
     }
 }

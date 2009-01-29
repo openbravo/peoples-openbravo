@@ -110,11 +110,24 @@ public class GenerateEntitiesTask extends WorkflowAntTask {
             return true;
         }
 
+        OBProvider.getInstance().register(OBClassLoader.class,
+                OBClassLoader.ClassOBClassLoader.class, false);
+
+        // the beautifier uses the source.path if it is not set
+        log.debug("initializating dal layer, getting properties from "
+                + getPropertiesFile());
+        OBPropertiesProvider.getInstance().setProperties(getPropertiesFile());
+
+        if (getProviderConfigDirectory() != null) {
+            OBConfigFileProvider.getInstance().setFileLocation(
+                    getProviderConfigDirectory());
+        }
+
         // check if there is a sourcefile which was updated before the last
         // time the model was created. In this case that sourcefile (and
         // all source files need to be regenerated
         final long lastModelUpdateTime = ModelProvider.getInstance()
-                .getModelLastUpdated();
+                .computeLastUpdateModelTime();
         return isSourceFileUpdatedBeforeModelChange(modelDir,
                 lastModelUpdateTime);
     }
