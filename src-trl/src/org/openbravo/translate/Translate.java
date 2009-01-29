@@ -19,8 +19,9 @@
 package org.openbravo.translate;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -352,7 +353,9 @@ public class Translate extends DefaultHandler implements LexicalHandler {
         log4j.debug("File: " + fileParsing);
 
         try {
-            parser.parse(new InputSource(new FileReader(fileParsing)));
+            FileInputStream fis = new FileInputStream(fileParsing);
+            InputStreamReader reader = new InputStreamReader(fis, "UTF-8");
+            parser.parse(new InputSource(reader));
         } catch (final IOException e) {
             log4j.error("file: " + actualFile);
             e.printStackTrace();
