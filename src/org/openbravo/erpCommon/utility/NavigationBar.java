@@ -30,6 +30,7 @@ public class NavigationBar {
     String base_direction = "";
     String breadcrumb = "";
     String window_type = "";
+    boolean hideBack = false;
 
     public NavigationBar(ConnectionProvider _conn, String _language,
             String _action, String _windowName, String _windowType,
@@ -43,28 +44,45 @@ public class NavigationBar {
         this.window_type = _windowType;
     }
 
+    public NavigationBar(ConnectionProvider _conn, String _language,
+            String _action, String _windowName, String _windowType,
+            String _baseDirection, String _breadcrumb, boolean _hideBack) {
+        this.conn = _conn;
+        this.language = _language;
+        this.servlet_action = _action;
+        this.window_name = _windowName;
+        this.base_direction = _baseDirection;
+        this.breadcrumb = _breadcrumb;
+        this.window_type = _windowType;
+        this.hideBack = _hideBack;
+    }
+
     @Override
     public String toString() {
         final StringBuffer toolbar = new StringBuffer();
+        String auxText;
         toolbar
                 .append("<TABLE class=\"Main_ContentPane_NavBar\" id=\"tdtopNavButtons\">\n");
         toolbar.append("  <TR class=\"Main_NavBar_bg\"><TD></TD>\n");
-        toolbar.append("  <TD class=\"Main_NavBar_LeftButton_cell\">\n");
-        toolbar
-                .append("    <a class=\"Main_NavBar_LeftButton\" href=\"#\" onclick=\"goToPreviousPage(); return false;\" border=\"0\" onmouseover=\"window.status='");
-        String auxText = Utility.messageBD(conn, "GoBack", language);
-        toolbar.append(auxText);
-        toolbar
-                .append(
-                        "';return true;\" onmouseout=\"window.status='';return true;\" id=\"buttonBack\"><IMG src=\"")
-                .append(base_direction)
-                .append(
-                        "/images/blank.gif\" class=\"Main_NavBar_LeftButton_Icon Main_NavBar_LeftButton_Icon_back\" border=\"0\" alt=\"");
-        toolbar.append(auxText).append("\" title=\"").append(auxText).append(
-                "\"");
-        toolbar.append("/></a>\n");
-        toolbar.append("  </TD>\n");
-        toolbar.append("  <TD class=\"Main_NavBar_separator_cell\"></TD>\n");
+        if (!hideBack) {
+            toolbar.append("  <TD class=\"Main_NavBar_LeftButton_cell\">\n");
+            toolbar
+                    .append("    <a class=\"Main_NavBar_LeftButton\" href=\"#\" onclick=\"goToPreviousPage(); return false;\" border=\"0\" onmouseover=\"window.status='");
+            auxText = Utility.messageBD(conn, "GoBack", language);
+            toolbar.append(auxText);
+            toolbar
+                    .append(
+                            "';return true;\" onmouseout=\"window.status='';return true;\" id=\"buttonBack\"><IMG src=\"")
+                    .append(base_direction)
+                    .append(
+                            "/images/blank.gif\" class=\"Main_NavBar_LeftButton_Icon Main_NavBar_LeftButton_Icon_back\" border=\"0\" alt=\"");
+            toolbar.append(auxText).append("\" title=\"").append(auxText)
+                    .append("\"");
+            toolbar.append("/></a>\n");
+            toolbar.append("  </TD>\n");
+            toolbar
+                    .append("  <TD class=\"Main_NavBar_separator_cell\"></TD>\n");
+        }
         toolbar.append("  <TD class=\"Main_NavBar_LeftButton_cell\">\n");
         toolbar
                 .append(

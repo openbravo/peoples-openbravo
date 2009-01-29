@@ -77,7 +77,7 @@ public class OpenPentaho extends HttpSecureAppServlet {
             xmlDocument.setParameter("theme", vars.getTheme());
             NavigationBar nav = new NavigationBar(this, vars.getLanguage(),
                     "OpenPentaho.html", classInfo.id, classInfo.type,
-                    strReplaceWith, tabs.breadcrumb());
+                    strReplaceWith, tabs.breadcrumb(), true);
             xmlDocument.setParameter("navigationBar", nav.toString());
             LeftTabsBar lBar = new LeftTabsBar(this, vars.getLanguage(),
                     "OpenPentaho.html", strReplaceWith);
