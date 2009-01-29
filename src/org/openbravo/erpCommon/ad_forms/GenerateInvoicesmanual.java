@@ -166,12 +166,13 @@ public class GenerateInvoicesmanual extends HttpSecureAppServlet {
             // "#User_Org", "GenerateInvoicesmanual"), strC_BPartner_ID,
             // strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,"1"),
             // strTreeOrg, strAD_Org_ID);
-            data = GenerateInvoicesmanualData.select(this, Utility.getContext(
-                    this, vars, "#User_Client", "GenerateInvoicesmanual"),
-                    Utility.getContext(this, vars, "#User_Org",
-                            "GenerateInvoicesmanual"), strC_BPartner_ID,
-                    strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-                    Tree.getMembers(this, strTreeOrg, strAD_Org_ID));
+            data = GenerateInvoicesmanualData.select(this, vars.getLanguage(),
+                    Utility.getContext(this, vars, "#User_Client",
+                            "GenerateInvoicesmanual"), Utility.getContext(this,
+                            vars, "#User_Org", "GenerateInvoicesmanual"),
+                    strC_BPartner_ID, strDateFrom, DateTimeData.nDaysAfter(
+                            this, strDateTo, "1"), Tree.getMembers(this,
+                            strTreeOrg, strAD_Org_ID));
         }
 
         ToolBar toolbar = new ToolBar(this, vars.getLanguage(),

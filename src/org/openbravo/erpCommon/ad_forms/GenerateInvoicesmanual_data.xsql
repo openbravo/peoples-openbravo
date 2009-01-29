@@ -28,9 +28,9 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT C_Order_ID, o.Name as adorgname, dt.Name as cdoctypename, DocumentNo, bp.Name as cbpartnername, DateOrdered,
+      SELECT C_Order_ID, o.Name as adorgname, COALESCE(dttrl.Name, dt.Name) as cdoctypename, DocumentNo, bp.Name as cbpartnername, DateOrdered,
       amountlines, TotalLines 
-      FROM C_Invoice_Candidate_v ic, AD_Org o, C_BPartner bp, C_DocType dt
+      FROM C_Invoice_Candidate_v ic, AD_Org o, C_BPartner bp, C_DocType dt left join C_DocType_trl dttrl on dt.C_DocType_ID=dttrl.C_DocType_ID AND dttrl.ad_language=?
       WHERE ic.AD_Org_ID=o.AD_Org_ID
       AND ic.C_BPartner_ID=bp.C_BPartner_ID
       AND ic.C_DocType_ID=dt.C_DocType_ID
@@ -41,6 +41,7 @@
       ORDER BY o.Name,bp.Name,DateOrdered
       ]]></Sql>
     <Field name="rownum" value="count"/>
+    <Parameter name="language"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="AND ic.ad_client_id in (" text="'1'"/>
     <Parameter name="adUserOrg" type="replace" optional="true" after="AND ic.ad_org_id in (" text="'1'"/>
     <Parameter name="parBPartner" optional="true" after="AND 1=1">AND ic.C_BPartner_ID= ?</Parameter>
