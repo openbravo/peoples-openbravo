@@ -192,6 +192,13 @@ public class DatabaseValidator implements SystemValidator {
 		}
 
 		final String colName = property.getColumnName().toUpperCase();
+
+		// ignore this specific case
+		if (entity.getTableName().equalsIgnoreCase("ad_module_log")
+			&& colName.equalsIgnoreCase("ad_module_id")) {
+		    continue;
+		}
+
 		boolean found = false;
 		for (ForeignKey fk : table.getForeignKeys()) {
 		    for (Reference reference : fk.getReferences()) {
@@ -398,6 +405,12 @@ public class DatabaseValidator implements SystemValidator {
     private void checkLength(org.apache.ddlutils.model.Column dbColumn,
 	    org.apache.ddlutils.model.Table dbTable,
 	    SystemValidationResult result, int expectedLength) {
+	// special case no length check
+	if ("AD_SCRIPT_SQL.SEQNO".equalsIgnoreCase(dbTable.getName() + "."
+		+ dbColumn.getName())) {
+	    return;
+	}
+
 	if (dbColumn.getSizeAsInt() != expectedLength) {
 	    result.addWarning(SystemValidationType.WRONG_LENGTH, "Column "
 		    + dbTable.getName() + "." + dbColumn.getName()
