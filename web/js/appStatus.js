@@ -203,6 +203,16 @@ function setWindowEditing(value) {
     var Buttons = new Array(
       'linkButtonUndo'
     );
+    var alwaysDisableButtons = new Array(
+      'linkButtonFirst',
+      'linkButtonPrevious',
+      'linkButtonNext',
+      'linkButtonLast'
+    );
+
+    for (var i = 0; i < alwaysDisableButtons.length; i++) {
+      disableToolBarButton(alwaysDisableButtons[i]);
+    }
   }
 
   if (value==true) {
