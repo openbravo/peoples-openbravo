@@ -446,6 +446,7 @@ build.war: build a war file in the lib directory.
 
 
 	<target name="eclipse.compile.complete" depends="clean,generate.entities,wad,sqlc,postsrc,translate">
+		<antcall target="update.build.timestamp"/>
 	</target>
 
 	<target name="eclipse.compile" depends="wad,sqlc, postsrc, translate">
