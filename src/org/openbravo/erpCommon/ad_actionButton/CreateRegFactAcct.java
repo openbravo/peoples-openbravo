@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SL
- * All portions are Copyright (C) 2001-2008 Openbravo SL
+ * All portions are Copyright (C) 2001-2009 Openbravo SL
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -118,10 +118,15 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
                     if (log4j.isDebugEnabled())
                         log4j.debug("Output: After buttonClose - strCloseOut:"
                                 + strCloseOut);
-                    if (!strRegOut.equals("Success")
-                            || !strCloseOut.equals("Success")) {
+                    if (!strRegOut.equals("Success")) {
                         return Utility.translateError(this, vars, vars
                                 .getLanguage(), "ProcessRunError");
+                    } else if (!strCloseOut.equals("Success")) {
+                        return Utility.translateError(this, vars, vars
+                                .getLanguage(),
+                                Utility.messageBD(this,
+                                "ProcessRunError_CreateNextPeriod", vars
+                                        .getLanguage()));
                     }
                     ExpenseAmtDr = new BigDecimal("0");
                     ExpenseAmtCr = new BigDecimal("0");
@@ -172,8 +177,6 @@ public class CreateRegFactAcct extends HttpSecureAppServlet {
         String Fact_Acct_ID = "";
         String Fact_Acct_Group_ID = strID;
         String strPediodId = CreateRegFactAcctData.getLastPeriod(this, strKey);
-        if (CreateRegFactAcctData.getNextPeriod(this, strPediodId).equals(""))
-            return "ProcessRunError1";
         int i;
         for (i = 0; i < expense.length; i++) {
             ExpenseAmtDr = ExpenseAmtDr.add(new BigDecimal(
