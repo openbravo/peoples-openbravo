@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2006 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,12 +30,12 @@
       <Sql>
         SELECT M_PRODUCT_CATEGORY_ID AS ID, NAME, '' AS PADRE
         FROM M_PRODUCT_CATEGORY
-        WHERE M_PRODUCT_CATEGORY.AD_CLIENT_ID IN ('1')
-          AND M_PRODUCT_CATEGORY.AD_ORG_ID IN ('1')
+        WHERE M_PRODUCT_CATEGORY.AD_ORG_ID IN ('1')
+          AND M_PRODUCT_CATEGORY.AD_CLIENT_ID IN ('1')
         ORDER BY M_PRODUCT_CATEGORY.NAME
       </Sql>
-      <Parameter name="adUserClient" type="replace" optional="true" after="M_PRODUCT_CATEGORY.AD_CLIENT_ID IN (" text="'1'"/>
       <Parameter name="adUserOrg" type="replace" optional="true" after="M_PRODUCT_CATEGORY.AD_ORG_ID IN (" text="'1'"/>
+      <Parameter name="adUserClient" type="replace" optional="true" after="M_PRODUCT_CATEGORY.AD_CLIENT_ID IN (" text="'1'"/>      
    </SqlMethod>
    
    
@@ -45,12 +45,12 @@
         SELECT M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID AS PADRE, M_PRODUCT.M_PRODUCT_ID AS ID, M_PRODUCT.NAME
         FROM M_PRODUCT_CATEGORY, M_PRODUCT
         WHERE M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = M_PRODUCT.M_PRODUCT_CATEGORY_ID
-          AND M_PRODUCT_CATEGORY.AD_CLIENT_ID IN ('1')
           AND M_PRODUCT_CATEGORY.AD_ORG_ID IN ('1')
+          AND M_PRODUCT_CATEGORY.AD_CLIENT_ID IN ('1')
         ORDER BY M_PRODUCT.NAME
       </Sql>
-      <Parameter name="adUserClient" type="replace" optional="true" after="M_PRODUCT_CATEGORY.AD_CLIENT_ID IN (" text="'1'"/>
       <Parameter name="adUserOrg" type="replace" optional="true" after="M_PRODUCT_CATEGORY.AD_ORG_ID IN (" text="'1'"/>
+      <Parameter name="adUserClient" type="replace" optional="true" after="M_PRODUCT_CATEGORY.AD_CLIENT_ID IN (" text="'1'"/>      
    </SqlMethod>
    
    <SqlMethod name="selectCategoryProduct" type="preparedStatement" return="multiple">
