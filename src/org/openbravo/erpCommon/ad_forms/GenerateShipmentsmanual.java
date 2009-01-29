@@ -167,8 +167,9 @@ public class GenerateShipmentsmanual extends HttpSecureAppServlet {
             xmlDocument = xmlEngine.readXmlTemplate(
                     "org/openbravo/erpCommon/ad_forms/GenerateShipmentsmanual")
                     .createXmlDocument();
-            data = GenerateShipmentsmanualData.select(this, Utility.getContext(
-                    this, vars, "#User_Client", "GenerateShipmentsmanual"),
+            data = GenerateShipmentsmanualData.select(this, vars.getLanguage(),
+                    Utility.getContext(this, vars, "#User_Client",
+                            "GenerateShipmentsmanual"),
                     Utility.getContext(this, vars, "#User_Org",
                             "GenerateShipmentsmanual"), strC_BPartner_ID,
                     strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
