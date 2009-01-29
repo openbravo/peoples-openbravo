@@ -472,7 +472,6 @@ public class PrintController extends HttpSecureAppServlet {
             response.setContentType("application/pdf");
             response.setHeader("Content-disposition", "attachment"
                     + "; filename=" + filename);
-            // if (singleReport) {
             for (Iterator<JasperPrint> iterator = jrPrintReports.iterator(); iterator
                     .hasNext();) {
                 JasperPrint jasperPrint = (JasperPrint) iterator.next();
