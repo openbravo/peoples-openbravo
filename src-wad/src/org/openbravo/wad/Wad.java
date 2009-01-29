@@ -260,7 +260,7 @@ public class Wad extends DefaultHandler {
             else
                 quick = argv[16].equals("quick");
 
-            System.out.println("16: " + argv[16] + " l " + argv.length);
+            // System.out.println("16: " + argv[16] + " l " + argv.length);
 
             if (quick) {
                 module = "%";
