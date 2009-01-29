@@ -527,7 +527,7 @@ a.ButtonLink_default .Button, .Button_default {
 
 a.ButtonLink_default table.Button .Button_left, .Button_default .Button_left {
   background-repeat: no-repeat;
-  background-position: center right;
+  background-position: center right;  /*~RTL   background-position: center left; */
   background-image: url(Common/Button/buttonLeft.default.png);  /** sprite-ref: xxspritexx_V; sprite-alignment-ltr: right; */
   width: 35px;
   height: 26px;
