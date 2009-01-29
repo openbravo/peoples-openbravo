@@ -85,8 +85,6 @@ import com.lowagie.text.pdf.PdfReader;
 public class PrintController extends HttpSecureAppServlet {
     final Map<String, TemplateData[]> differentDocTypes = new HashMap<String, TemplateData[]>();
     private PocData[] pocData;
-    private boolean moreThanOneCustomer;
-    private boolean moreThanOnesalesRep;
 
     // TODO: When an email is in draft status add the notification that the
     // document can not be emailed
@@ -170,6 +168,12 @@ public class PrintController extends HttpSecureAppServlet {
             String strDocumentId) throws IOException, ServletException {
 
         Map<String, Report> reports;
+
+        // Checks are maintained in this way for mulithread safety
+        HashMap<String, Boolean> checks = new HashMap<String, Boolean>();
+        checks.put("moreThanOneCustomer", new Boolean(false));
+        checks.put("moreThanOnesalesRep", new Boolean(false));
+
         String documentIds[] = null;
         if (log4j.isDebugEnabled())
             log4j.debug("strDocumentId: " + strDocumentId);
@@ -268,6 +272,8 @@ public class PrintController extends HttpSecureAppServlet {
                         final String senderAddress = PocConfigurationData
                                 .getSenderAddress(this, vars.getClient(),
                                         report.getOrgId());
+                        boolean moreThanOnesalesRep = checks.get(
+                                "moreThanOnesalesRep").booleanValue();
                         if (moreThanOnesalesRep) {
                             if ("".equals(senderAddress)
                                     || senderAddress == null) {
@@ -323,7 +329,7 @@ public class PrintController extends HttpSecureAppServlet {
                 else
                     createEmailOptionsPage(request, response, vars,
                             documentType, getComaSeparatedString(documentIds),
-                            reports);
+                            reports, checks);
 
             } else if (vars.commandIn("ADD")) {
                 if (request.getServletPath().toLowerCase()
@@ -335,7 +341,7 @@ public class PrintController extends HttpSecureAppServlet {
                     final boolean showList = true;
                     createEmailOptionsPage(request, response, vars,
                             documentType, getComaSeparatedString(documentIds),
-                            reports);
+                            reports, checks);
                 }
 
             } else if (vars.commandIn("DEL")) {
@@ -347,7 +353,7 @@ public class PrintController extends HttpSecureAppServlet {
 
                 seekAndDestroy(vector, documentToDelete);
                 createEmailOptionsPage(request, response, vars, documentType,
-                        getComaSeparatedString(documentIds), reports);
+                        getComaSeparatedString(documentIds), reports, checks);
 
             } else if (vars.commandIn("EMAIL")) {
                 int nrOfEmailsSend = 0;
@@ -415,7 +421,7 @@ public class PrintController extends HttpSecureAppServlet {
                                         report.getOrgId());
                         sendDocumentEmail(report, vars, request.getSession()
                                 .getAttribute("files"), documentData,
-                                senderAddress);
+                                senderAddress, checks);
                         nrOfEmailsSend++;
                     }
                 }
@@ -673,8 +679,9 @@ public class PrintController extends HttpSecureAppServlet {
     }
 
     protected void sendDocumentEmail(Report report, VariablesSecureApp vars,
-            Object object, PocData documentData, String senderAddess)
-            throws IOException, ServletException {
+            Object object, PocData documentData, String senderAddess,
+            HashMap<String, Boolean> checks) throws IOException,
+            ServletException {
         final String documentId = report.getDocumentId();
         final String attachmentFileLocation = report.getTargetLocation();
 
@@ -698,6 +705,10 @@ public class PrintController extends HttpSecureAppServlet {
         final String salesrepName = documentData.salesrepName;
         String salesrepEmail = null;
 
+        boolean moreThanOneCustomer = checks.get("moreThanOneCustomer")
+                .booleanValue();
+        boolean moreThanOnesalesRep = checks.get("moreThanOnesalesRep")
+                .booleanValue();
         if (moreThanOneCustomer) {
             contactEmail = documentData.contactEmail;
         } else {
@@ -883,13 +894,14 @@ public class PrintController extends HttpSecureAppServlet {
     void createEmailOptionsPage(HttpServletRequest request,
             HttpServletResponse response, VariablesSecureApp vars,
             DocumentType documentType, String strDocumentId,
-            Map<String, Report> reports) throws IOException, ServletException {
+            Map<String, Report> reports, HashMap<String, Boolean> checks)
+            throws IOException, ServletException {
         XmlDocument xmlDocument = null;
         pocData = getContactDetails(documentType, strDocumentId);
         Vector<java.lang.Object> vector = (Vector<java.lang.Object>) request
                 .getSession().getAttribute("files");
 
-        final String[] hiddenTags = getHiddenTags(pocData, vector, vars);
+        final String[] hiddenTags = getHiddenTags(pocData, vector, vars, checks);
         if (hiddenTags != null) {
             xmlDocument = xmlEngine
                     .readXmlTemplate(
@@ -1013,6 +1025,9 @@ public class PrintController extends HttpSecureAppServlet {
             }
 
             final String salesRep = documentData.salesrepName;
+
+            boolean moreThanOnesalesRep = checks.get("moreThanOnesalesRep")
+                    .booleanValue();
             if (moreThanOnesalesRep) {
                 if (salesRep == null || salesRep.length() == 0) {
                     final OBError on = new OBError();
@@ -1171,7 +1186,7 @@ public class PrintController extends HttpSecureAppServlet {
      * @return
      */
     private String[] getHiddenTags(PocData[] pocData, Vector<Object> vector,
-            VariablesSecureApp vars) {
+            VariablesSecureApp vars, HashMap<String, Boolean> checks) {
         String[] discard;
         final Map<String, PocData> customerMap = new HashMap<String, PocData>();
         final Map<String, PocData> salesRepMap = new HashMap<String, PocData>();
@@ -1187,8 +1202,10 @@ public class PrintController extends HttpSecureAppServlet {
                 salesRepMap.put(salesRep, documentData);
             }
         }
-        moreThanOneCustomer = (customerMap.size() > 1);
-        moreThanOnesalesRep = (salesRepMap.size() > 1);
+        boolean moreThanOneCustomer = (customerMap.size() > 1);
+        boolean moreThanOnesalesRep = (salesRepMap.size() > 1);
+        checks.put("moreThanOneCustomer", new Boolean("moreThanOneCustomer"));
+        checks.put("moreThanOnesalesRep", new Boolean("moreThanOnesalesRep"));
 
         // check the number of customer and the number of
         // sales Rep. to choose one of the 3 possibilities
