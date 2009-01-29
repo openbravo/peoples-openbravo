@@ -171,8 +171,8 @@ public class PrintController extends HttpSecureAppServlet {
 
         // Checks are maintained in this way for mulithread safety
         HashMap<String, Boolean> checks = new HashMap<String, Boolean>();
-        checks.put("moreThanOneCustomer", new Boolean(false));
-        checks.put("moreThanOnesalesRep", new Boolean(false));
+        checks.put("moreThanOneCustomer", Boolean.FALSE);
+        checks.put("moreThanOnesalesRep", Boolean.FALSE);
 
         String documentIds[] = null;
         if (log4j.isDebugEnabled())
@@ -1204,8 +1204,8 @@ public class PrintController extends HttpSecureAppServlet {
         }
         boolean moreThanOneCustomer = (customerMap.size() > 1);
         boolean moreThanOnesalesRep = (salesRepMap.size() > 1);
-        checks.put("moreThanOneCustomer", new Boolean("moreThanOneCustomer"));
-        checks.put("moreThanOnesalesRep", new Boolean("moreThanOnesalesRep"));
+        checks.put("moreThanOneCustomer", new Boolean(moreThanOneCustomer));
+        checks.put("moreThanOnesalesRep", new Boolean(moreThanOnesalesRep));
 
         // check the number of customer and the number of
         // sales Rep. to choose one of the 3 possibilities
