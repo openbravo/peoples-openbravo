@@ -22,8 +22,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.math.BigInteger;
+import java.security.MessageDigest;
 import java.util.Properties;
-import java.util.zip.CRC32;
 
 public class CheckSum {
     private String obDir;
@@ -44,7 +45,7 @@ public class CheckSum {
         }
     }
 
-    private void getCheckSum(CRC32 crc, File f) throws Exception {
+    private void getCheckSum(MessageDigest cs, File f) throws Exception {
         if (f.isDirectory()) {
             File[] list = f.listFiles(new FilenameFilter() {
                 public boolean accept(File file, String s) {
@@ -52,7 +53,7 @@ public class CheckSum {
                 }
             });
             for (File element : list)
-                getCheckSum(crc, element);
+                getCheckSum(cs, element);
         } else {
 
             FileInputStream is = new FileInputStream(f);
@@ -61,20 +62,20 @@ public class CheckSum {
 
             // Checksum file directly
             while ((len = is.read(bytes)) >= 0) {
-                crc.update(bytes, 0, len);
+                cs.update(bytes, 0, len);
             }
             is.close();
         }
     }
 
     private String getCheckSum(String[] files) throws Exception {
-        CRC32 crc = new CRC32();
+        MessageDigest cs = MessageDigest.getInstance("MD5");
         for (String fileName : files) {
             File file = new File(fileName);
             if (file.exists())
-                getCheckSum(crc, file);
+                getCheckSum(cs, file);
         }
-        return Long.toHexString(crc.getValue());
+        return new BigInteger(1, cs.digest()).toString(16);
     }
 
     private String[] getFiles(String type) {
