@@ -17,7 +17,7 @@
  ************************************************************************
  */
 
-package org.openbravo.service.db;
+package org.openbravo.service.dataset;
 
 import java.math.BigInteger;
 import java.util.ArrayList;

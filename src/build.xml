@@ -190,7 +190,7 @@ build.war: build a war file in the lib directory.
 				<path refid="project.class.path" />
 			</classpath>
 		</workflow>
-		<javac srcdir="${base.src.gen}:${base.src}/org/openbravo/base/model:${base.src}/org/openbravo/dal:${base.src}/org/openbravo/base/structure" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
+		<javac srcdir="${base.src.gen}:${base.src}/org/openbravo/base/model:${base.src}/org/openbravo/dal:${base.src}/org/openbravo/base/structure:${base.src}/org/openbravo/service/dataset" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
 			<classpath refid="project.class.path" />
 		</javac>
 	</target>
@@ -203,6 +203,7 @@ build.war: build a war file in the lib directory.
 		is a source older than the last updated time of the Application Dictionary then the sources need to be regenerated.		
 	-->
 	<target name="generate.entities.quick" depends="compile.src.gen">
+
 		<taskdef name="workflow" classpathref="project.class.path" classname="org.openbravo.base.gen.GenerateEntitiesTask" />
 		<!-- debug="true" will perform the in-memory model initialization before generating entities
 	if an error occurs then, then a stacktrace is printed. -->
@@ -213,7 +214,7 @@ build.war: build a war file in the lib directory.
 				<path refid="project.class.path" />
 			</classpath>
 		</workflow>
-		<javac srcdir="${base.src.gen}:${base.src}/org/openbravo/base/model:${base.src}/org/openbravo/dal:${base.src}/org/openbravo/base/structure" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
+		<javac srcdir="${base.src.gen}:${base.src}/org/openbravo/base/model:${base.src}/org/openbravo/dal:${base.src}/org/openbravo/base/structure:${base.src}/org/openbravo/service/dataset" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
 			<classpath refid="project.class.path" />
 		</javac>
 	</target>
@@ -234,6 +235,12 @@ build.war: build a war file in the lib directory.
 		<javac srcdir="${base.src}/org/openbravo/base/exception:${base.src}/org/openbravo/base/gen:${base.src}/org/openbravo/base/expression:${base.src}/org/openbravo/base/provider:${base.src}/org/openbravo/base/model:${base.src}/org/openbravo/base/session::${base.src}/org/openbravo/base/validation:${base.src}/org/openbravo/base/util" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on">
 			<classpath refid="project.class.path" />
 		</javac>
+		<copy todir="${build}">
+			<fileset dir="${basedir}" includes="**/*.hbm.xml" />
+		</copy>
+		<copy todir="${build}">
+			<fileset dir="${basedir}" includes="**/*.properties" />
+		</copy>
 	</target>
 
 	<target name="wad" depends="init">

@@ -33,8 +33,8 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.database.CPStandAlone;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.model.ad.utility.DataSet;
+import org.openbravo.service.dataset.DataSetService;
 import org.openbravo.service.db.DataExportService;
-import org.openbravo.service.db.DataSetService;
 
 /**
  * ExtractModule is able to extract an obx file for a module

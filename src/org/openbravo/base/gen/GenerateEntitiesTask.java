@@ -105,7 +105,9 @@ public class GenerateEntitiesTask extends WorkflowAntTask {
         // first check if there is a directory
         // already in the src-gen
         // if not then regenerate anyhow
-        final File modelDir = new File(getSrcGenPath(), "org");
+        final File modelDir = new File(getSrcGenPath(), "org" + File.separator
+                + "openbravo" + File.separator + "model" + File.separator
+                + "ad");
         if (!modelDir.exists()) {
             return true;
         }

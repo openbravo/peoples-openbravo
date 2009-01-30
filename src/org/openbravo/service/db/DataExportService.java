@@ -40,6 +40,7 @@ import org.openbravo.dal.xml.EntityXMLConverter;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.DataSet;
 import org.openbravo.model.ad.utility.DataSetTable;
+import org.openbravo.service.dataset.DataSetService;
 
 /**
  * Exports business objects to XML on the basis of Datasets, DataSetTables and
