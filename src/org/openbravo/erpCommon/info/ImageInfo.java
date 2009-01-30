@@ -123,8 +123,9 @@ public class ImageInfo extends HttpSecureAppServlet {
             String[] discard = { "withoutPrevious", "withoutNext" };
             ImageInfoData[] data = ImageInfoData.select(this, Utility
                     .getContext(this, vars, "#User_Client", "ImageInfo"),
-                    Utility.getContext(this, vars, "#User_Org", "ImageInfo"),
-                    strName, strURL, initRecordNumber, intRecordRange);
+                    Utility.getContext(this, vars, "#AccessibleOrgTree",
+                            "ImageInfo"), strName, strURL, initRecordNumber,
+                    intRecordRange);
             if (data == null || data.length == 0 || initRecordNumber <= 1)
                 discard[0] = new String("hasPrevious");
             if (data == null || data.length == 0

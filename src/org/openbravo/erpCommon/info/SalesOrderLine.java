@@ -126,11 +126,11 @@ public class SalesOrderLine extends HttpSecureAppServlet {
             strKeyValue = strKeyValue + "%";
             vars.setSessionValue("SalesOrderLine.documentno", strKeyValue);
             SalesOrderLineData[] data = null;
+            String strOrg = vars.getStringParameter("inpAD_Org_ID");
             if (strSOTrx.equals("Y"))
                 data = SalesOrderLineData.selectKey(this, Utility.getContext(
                         this, vars, "#User_Client", "SalesOrderLine"), Utility
-                        .getContext(this, vars, "#User_Org", "SalesOrderLine"),
-                        strKeyValue);
+                        .getSelectorOrgs(this, vars, strOrg), strKeyValue);
             else
                 data = SalesOrderLineData.selectKeySOTrx(this, Utility
                         .getContext(this, vars, "#User_Client",
@@ -172,6 +172,8 @@ public class SalesOrderLine extends HttpSecureAppServlet {
                     "SalesOrderLine.deliverd", "N");
             String strInvoiced = vars.getGlobalVariable("inpinvoiced",
                     "SalesOrderLine.invoiced", "N");
+            String strOrg = vars.getGlobalVariable("inpAD_Org_ID",
+                    "SalesOrderLine.adorgid", "");
             String strNewFilter = vars.getStringParameter("newFilter");
             String strOffset = vars.getStringParameter("offset");
             String strPageSize = vars.getStringParameter("page_size");
@@ -183,7 +185,7 @@ public class SalesOrderLine extends HttpSecureAppServlet {
                     strOrder, strBpartnerId, strDateFrom, strDateTo, strCal1,
                     strCal2, strProduct, strDelivered, strInvoiced, strSOTrx,
                     strSortCols + " " + strSortDirs, strOffset, strPageSize,
-                    strNewFilter);
+                    strNewFilter, strOrg);
         } else
             pageError(response);
     }
@@ -200,6 +202,7 @@ public class SalesOrderLine extends HttpSecureAppServlet {
         vars.removeSessionValue("SalesOrderLine.order");
         vars.removeSessionValue("SalesOrderLine.deliverd");
         vars.removeSessionValue("SalesOrderLine.invoiced");
+        vars.removeSessionValue("SalesOrderLine.adorgid");
     }
 
     void printPage(HttpServletResponse response, VariablesSecureApp vars,
@@ -351,7 +354,8 @@ public class SalesOrderLine extends HttpSecureAppServlet {
             String strCal1, String strCalc2, String strProduct,
             String strDelivered, String strInvoiced, String strSOTrx,
             String strOrderBy, String strOffset, String strPageSize,
-            String strNewFilter) throws IOException, ServletException {
+            String strNewFilter, String strOrg) throws IOException,
+            ServletException {
         if (log4j.isDebugEnabled())
             log4j.debug("Output: print page rows");
 
@@ -381,8 +385,8 @@ public class SalesOrderLine extends HttpSecureAppServlet {
                     if (strSOTrx.equals("Y")) {
                         strNumRows = SalesOrderLineData.countRows(this, Utility
                                 .getContext(this, vars, "#User_Client",
-                                        "SalesOrderLine"), Utility.getContext(
-                                this, vars, "#User_Org", "SalesOrderLine"),
+                                        "SalesOrderLine"), Utility
+                                .getSelectorOrgs(this, vars, strOrg),
                                 strDocumentNo, strDescription, strOrder,
                                 strBpartnerId, strDateFrom, DateTimeData
                                         .nDaysAfter(this, strDateTo, "1"),
@@ -390,21 +394,17 @@ public class SalesOrderLine extends HttpSecureAppServlet {
                                         .equals("Y") ? "isdelivered" : ""),
                                 (strInvoiced.equals("Y") ? "isinvoiced" : ""));
                     } else {
-                        data = SalesOrderLineData
-                                .selectSOTrx(this, "1", Utility.getContext(
-                                        this, vars, "#User_Client",
-                                        "SalesOrderLine"), Utility.getContext(
-                                        this, vars, "#User_Org",
-                                        "SalesOrderLine"), strDocumentNo,
-                                        strDescription, strOrder,
-                                        strBpartnerId, strDateFrom,
-                                        DateTimeData.nDaysAfter(this,
-                                                strDateTo, "1"), strCal1,
-                                        strCalc2, strProduct, (strDelivered
-                                                .equals("Y") ? "isdelivered"
-                                                : ""),
-                                        (strInvoiced.equals("Y") ? "isinvoiced"
-                                                : ""), strOrderBy, "", "");
+                        data = SalesOrderLineData.selectSOTrx(this, "1",
+                                Utility.getContext(this, vars, "#User_Client",
+                                        "SalesOrderLine"), Utility
+                                        .getSelectorOrgs(this, vars, strOrg),
+                                strDocumentNo, strDescription, strOrder,
+                                strBpartnerId, strDateFrom, DateTimeData
+                                        .nDaysAfter(this, strDateTo, "1"),
+                                strCal1, strCalc2, strProduct, (strDelivered
+                                        .equals("Y") ? "isdelivered" : ""),
+                                (strInvoiced.equals("Y") ? "isinvoiced" : ""),
+                                strOrderBy, "", "");
                         strNumRows = String.valueOf(data.length);
                     }
                     vars.setSessionValue("SalesOrderLine.numrows", strNumRows);
@@ -420,21 +420,17 @@ public class SalesOrderLine extends HttpSecureAppServlet {
                                     .intValue()
                                     + Integer.valueOf(strPageSize));
                     if (strSOTrx.equals("Y")) {
-                        data = SalesOrderLineData
-                                .select(this, "ROWNUM", Utility.getContext(
-                                        this, vars, "#User_Client",
-                                        "SalesOrderLine"), Utility.getContext(
-                                        this, vars, "#User_Org",
-                                        "SalesOrderLine"), strDocumentNo,
-                                        strDescription, strOrder,
-                                        strBpartnerId, strDateFrom,
-                                        DateTimeData.nDaysAfter(this,
-                                                strDateTo, "1"), strCal1,
-                                        strCalc2, strProduct, (strDelivered
-                                                .equals("Y") ? "isdelivered"
-                                                : ""),
-                                        (strInvoiced.equals("Y") ? "isinvoiced"
-                                                : ""), strOrderBy, oraLimit, "");
+                        data = SalesOrderLineData.select(this, "ROWNUM",
+                                Utility.getContext(this, vars, "#User_Client",
+                                        "SalesOrderLine"), Utility
+                                        .getSelectorOrgs(this, vars, strOrg),
+                                strDocumentNo, strDescription, strOrder,
+                                strBpartnerId, strDateFrom, DateTimeData
+                                        .nDaysAfter(this, strDateTo, "1"),
+                                strCal1, strCalc2, strProduct, (strDelivered
+                                        .equals("Y") ? "isdelivered" : ""),
+                                (strInvoiced.equals("Y") ? "isinvoiced" : ""),
+                                strOrderBy, oraLimit, "");
                     } else {
                         data = SalesOrderLineData
                                 .selectSOTrx(this, "ROWNUM", Utility
@@ -457,8 +453,8 @@ public class SalesOrderLine extends HttpSecureAppServlet {
                     if (strSOTrx.equals("Y")) {
                         data = SalesOrderLineData.select(this, "1", Utility
                                 .getContext(this, vars, "#User_Client",
-                                        "SalesOrderLine"), Utility.getContext(
-                                this, vars, "#User_Org", "SalesOrderLine"),
+                                        "SalesOrderLine"), Utility
+                                .getSelectorOrgs(this, vars, strOrg),
                                 strDocumentNo, strDescription, strOrder,
                                 strBpartnerId, strDateFrom, DateTimeData
                                         .nDaysAfter(this, strDateTo, "1"),
@@ -467,21 +463,17 @@ public class SalesOrderLine extends HttpSecureAppServlet {
                                 (strInvoiced.equals("Y") ? "isinvoiced" : ""),
                                 strOrderBy, "", pgLimit);
                     } else {
-                        data = SalesOrderLineData
-                                .selectSOTrx(this, "1", Utility.getContext(
-                                        this, vars, "#User_Client",
-                                        "SalesOrderLine"), Utility.getContext(
-                                        this, vars, "#User_Org",
-                                        "SalesOrderLine"), strDocumentNo,
-                                        strDescription, strOrder,
-                                        strBpartnerId, strDateFrom,
-                                        DateTimeData.nDaysAfter(this,
-                                                strDateTo, "1"), strCal1,
-                                        strCalc2, strProduct, (strDelivered
-                                                .equals("Y") ? "isdelivered"
-                                                : ""),
-                                        (strInvoiced.equals("Y") ? "isinvoiced"
-                                                : ""), strOrderBy, "", pgLimit);
+                        data = SalesOrderLineData.selectSOTrx(this, "1",
+                                Utility.getContext(this, vars, "#User_Client",
+                                        "SalesOrderLine"), Utility
+                                        .getSelectorOrgs(this, vars, strOrg),
+                                strDocumentNo, strDescription, strOrder,
+                                strBpartnerId, strDateFrom, DateTimeData
+                                        .nDaysAfter(this, strDateTo, "1"),
+                                strCal1, strCalc2, strProduct, (strDelivered
+                                        .equals("Y") ? "isdelivered" : ""),
+                                (strInvoiced.equals("Y") ? "isinvoiced" : ""),
+                                strOrderBy, "", pgLimit);
                     }
                 }
             } catch (ServletException e) {

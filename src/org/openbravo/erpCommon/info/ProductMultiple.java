@@ -115,7 +115,7 @@ public class ProductMultiple extends HttpSecureAppServlet {
         try {
             ComboTableData comboTableData = new ComboTableData(vars, this,
                     "TABLEDIR", "M_Product_Category_ID", "", "", Utility
-                            .getContext(this, vars, "#User_Org",
+                            .getContext(this, vars, "#AccessibleOrgTree",
                                     "ProductMultiple"), Utility.getContext(
                             this, vars, "#User_Client", "ProductMultiple"), 0);
             Utility.fillSQLParameters(this, vars, null, comboTableData,
@@ -157,7 +157,7 @@ public class ProductMultiple extends HttpSecureAppServlet {
         try {
             ComboTableData comboTableData = new ComboTableData(vars, this,
                     "TABLEDIR", "M_Product_Category_ID", "", "", Utility
-                            .getContext(this, vars, "#User_Org",
+                            .getContext(this, vars, "#AccessibleOrgTree",
                                     "ProductMultiple"), Utility.getContext(
                             this, vars, "#User_Client", "ProductMultiple"), 0);
             Utility.fillSQLParameters(this, vars, null, comboTableData,

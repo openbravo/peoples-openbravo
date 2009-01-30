@@ -67,6 +67,7 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
             printPage(response, vars, strNameValue, strSOTrx);
         } else if (vars.commandIn("KEY")) {
             removePageSessionVariables(vars);
+            String strOrg = vars.getStringParameter("inpAD_Org_ID");
             String strKeyValue = vars.getRequestGlobalVariable("inpNameValue",
                     "ShipmentReceipt.name");
             vars.setSessionValue("ShipmentReceipt.name", strKeyValue + "%");
@@ -78,9 +79,8 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
             vars.setSessionValue("ShipmentReceipt.isSOTrx", strSOTrx);
             ShipmentReceiptData[] data = ShipmentReceiptData.selectKey(this,
                     Utility.getContext(this, vars, "#User_Client",
-                            "ShipmentReceipt"), Utility.getContext(this, vars,
-                            "#User_Org", "ShipmentReceipt"), strSOTrx,
-                    strKeyValue + "%");
+                            "ShipmentReceipt"), Utility.getSelectorOrgs(this,
+                            vars, strOrg), strSOTrx, strKeyValue + "%");
             if (data != null && data.length == 1) {
                 printPageKey(response, vars, data);
             } else
@@ -106,7 +106,8 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
                     "ShipmentReceipt.description", "");
             String strOrderReference = vars.getGlobalVariable(
                     "inpOrderReference", "ShipmentReceipt.orderreferrence", "");
-
+            String strOrg = vars.getGlobalVariable("inpAD_Org_ID",
+                    "ShipmentReceipt.adorgid", "");
             String strNewFilter = vars.getStringParameter("newFilter");
             String strOffset = vars.getStringParameter("offset");
             String strPageSize = vars.getStringParameter("page_size");
@@ -118,7 +119,7 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
             printGridData(response, vars, strName, strDescription,
                     strBpartnerId, strOrderReference, strDateFrom, strDateTo,
                     strSalesTransaction, strSortCols + " " + strSortDirs,
-                    strOffset, strPageSize, strNewFilter);
+                    strOffset, strPageSize, strNewFilter, strOrg);
         } else
             pageError(response);
     }
@@ -131,6 +132,7 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
         vars.removeSessionValue("ShipmentReceipt.dateto");
         vars.removeSessionValue("ShipmentReceipt.description");
         vars.removeSessionValue("ShipmentReceipt.orderreferrence");
+        vars.removeSessionValue("ShipmentReceipt.adorgid");
     }
 
     void printPage(HttpServletResponse response, VariablesSecureApp vars,
@@ -266,8 +268,8 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
             String strName, String strDescription, String strBpartnerId,
             String strOrderReference, String strDateFrom, String strDateTo,
             String strSalesTransaction, String strOrderBy, String strOffset,
-            String strPageSize, String strNewFilter) throws IOException,
-            ServletException {
+            String strPageSize, String strNewFilter, String strOrg)
+            throws IOException, ServletException {
         if (log4j.isDebugEnabled())
             log4j.debug("Output: print page rows");
 
@@ -287,12 +289,12 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
                     // load
                     data = ShipmentReceiptData.select(this, "1", Utility
                             .getContext(this, vars, "#User_Client",
-                                    "ShipmentReceipt"), Utility.getContext(
-                            this, vars, "#User_Org", "ShipmentReceipt"),
-                            strName, strDescription, strBpartnerId,
-                            strOrderReference, strDateFrom, DateTimeData
-                                    .nDaysAfter(this, strDateTo, "1"),
-                            strSalesTransaction, strOrderBy, "", "");
+                                    "ShipmentReceipt"), Utility
+                            .getSelectorOrgs(this, vars, strOrg), strName,
+                            strDescription, strBpartnerId, strOrderReference,
+                            strDateFrom, DateTimeData.nDaysAfter(this,
+                                    strDateTo, "1"), strSalesTransaction,
+                            strOrderBy, "", "");
                     strNumRows = String.valueOf(data.length);
                     vars.setSessionValue("ShipmentReceipt.numrows", strNumRows);
                 } else {
@@ -309,22 +311,22 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
                                     + Integer.valueOf(strPageSize));
                     data = ShipmentReceiptData.select(this, "ROWNUM", Utility
                             .getContext(this, vars, "#User_Client",
-                                    "ShipmentReceipt"), Utility.getContext(
-                            this, vars, "#User_Org", "ShipmentReceipt"),
-                            strName, strDescription, strBpartnerId,
-                            strOrderReference, strDateFrom, DateTimeData
-                                    .nDaysAfter(this, strDateTo, "1"),
-                            strSalesTransaction, strOrderBy, oraLimit, "");
+                                    "ShipmentReceipt"), Utility
+                            .getSelectorOrgs(this, vars, strOrg), strName,
+                            strDescription, strBpartnerId, strOrderReference,
+                            strDateFrom, DateTimeData.nDaysAfter(this,
+                                    strDateTo, "1"), strSalesTransaction,
+                            strOrderBy, oraLimit, "");
                 } else {
                     String pgLimit = strPageSize + " OFFSET " + strOffset;
                     data = ShipmentReceiptData.select(this, "1", Utility
                             .getContext(this, vars, "#User_Client",
-                                    "ShipmentReceipt"), Utility.getContext(
-                            this, vars, "#User_Org", "ShipmentReceipt"),
-                            strName, strDescription, strBpartnerId,
-                            strOrderReference, strDateFrom, DateTimeData
-                                    .nDaysAfter(this, strDateTo, "1"),
-                            strSalesTransaction, strOrderBy, "", pgLimit);
+                                    "ShipmentReceipt"), Utility
+                            .getSelectorOrgs(this, vars, strOrg), strName,
+                            strDescription, strBpartnerId, strOrderReference,
+                            strDateFrom, DateTimeData.nDaysAfter(this,
+                                    strDateTo, "1"), strSalesTransaction,
+                            strOrderBy, "", pgLimit);
                 }
             } catch (ServletException e) {
                 log4j.error("Error in print page data: " + e);

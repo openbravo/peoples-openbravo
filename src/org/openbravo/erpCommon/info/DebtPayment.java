@@ -83,6 +83,8 @@ public class DebtPayment extends HttpSecureAppServlet {
                     "DebtPayment.inpInvoice", "");
             String strOrder = vars.getGlobalVariable("inpOrder",
                     "DebtPayment.inpOrder", "");
+            String strOrg = vars.getGlobalVariable("inpAD_Org_ID",
+                    "DebtPayment.adorgid", "");
 
             String strNewFilter = vars.getStringParameter("newFilter");
             String strOffset = vars.getStringParameter("offset");
@@ -96,7 +98,7 @@ public class DebtPayment extends HttpSecureAppServlet {
                     strDateTo, strCal1, strCal2, strPaymentRule, strIsReceipt,
                     strIsPaid, strIsPending, strOrder, strInvoice, strSortCols
                             + " " + strSortDirs, strOffset, strPageSize,
-                    strNewFilter);
+                    strNewFilter, strOrg);
         } else
             pageError(response);
     }
@@ -131,9 +133,9 @@ public class DebtPayment extends HttpSecureAppServlet {
         try {
             ComboTableData comboTableData = new ComboTableData(vars, this,
                     "LIST", "", "All_Payment Rule", "", Utility.getContext(
-                            this, vars, "#User_Org", "DebtPayment"), Utility
-                            .getContext(this, vars, "#User_Client",
-                                    "DebtPayment"), 0);
+                            this, vars, "#AccessibleOrgTree", "DebtPayment"),
+                    Utility.getContext(this, vars, "#User_Client",
+                            "DebtPayment"), 0);
             Utility.fillSQLParameters(this, vars, null, comboTableData,
                     "DebtPayment", "");
             xmlDocument.setData("reportPaymentRule", "liststructure",
@@ -236,8 +238,8 @@ public class DebtPayment extends HttpSecureAppServlet {
             String strCal1, String strCal2, String strPaymentRule,
             String strIsReceipt, String strIsPaid, String strIsPending,
             String strOrder, String strInvoice, String strOrderBy,
-            String strOffset, String strPageSize, String strNewFilter)
-            throws IOException, ServletException {
+            String strOffset, String strPageSize, String strNewFilter,
+            String strOrg) throws IOException, ServletException {
         if (log4j.isDebugEnabled())
             log4j.debug("Output: print page rows");
 
@@ -260,12 +262,11 @@ public class DebtPayment extends HttpSecureAppServlet {
                     // load
                     strNumRows = DebtPaymentData.countRows(this, Utility
                             .getContext(this, vars, "#User_Client",
-                                    "DebtPayment"), Utility.getContext(this,
-                            vars, "#User_Org", "DebtPayment"), strBpartnerId,
-                            strDateFrom, DateTimeData.nDaysAfter(this,
-                                    strDateTo, "1"), strCal1, strCal2,
-                            strPaymentRule, strIsPaid, strIsReceipt,
-                            strInvoice, strOrder, strIsPending);
+                                    "DebtPayment"), Utility.getSelectorOrgs(
+                            this, vars, strOrg), strBpartnerId, strDateFrom,
+                            DateTimeData.nDaysAfter(this, strDateTo, "1"),
+                            strCal1, strCal2, strPaymentRule, strIsPaid,
+                            strIsReceipt, strInvoice, strOrder, strIsPending);
                     vars.setSessionValue("DebtPaymentInfo.numrows", strNumRows);
                 } else {
                     strNumRows = vars
@@ -282,22 +283,21 @@ public class DebtPayment extends HttpSecureAppServlet {
                     data = DebtPaymentData.select(this, vars.getLanguage(),
                             "ROWNUM", Utility.getContext(this, vars,
                                     "#User_Client", "DebtPayment"), Utility
-                                    .getContext(this, vars, "#User_Org",
-                                            "DebtPayment"), strBpartnerId,
-                            strDateFrom, DateTimeData.nDaysAfter(this,
-                                    strDateTo, "1"), strCal1, strCal2,
-                            strPaymentRule, strIsPaid, strIsReceipt,
+                                    .getSelectorOrgs(this, vars, strOrg),
+                            strBpartnerId, strDateFrom, DateTimeData
+                                    .nDaysAfter(this, strDateTo, "1"), strCal1,
+                            strCal2, strPaymentRule, strIsPaid, strIsReceipt,
                             strInvoice, strOrder, strIsPending, strOrderBy,
                             oraLimit, "");
                 } else {
                     String pgLimit = strPageSize + " OFFSET " + strOffset;
                     data = DebtPaymentData.select(this, vars.getLanguage(),
                             "1", Utility.getContext(this, vars, "#User_Client",
-                                    "DebtPayment"), Utility.getContext(this,
-                                    vars, "#User_Org", "DebtPayment"),
-                            strBpartnerId, strDateFrom, DateTimeData
-                                    .nDaysAfter(this, strDateTo, "1"), strCal1,
-                            strCal2, strPaymentRule, strIsPaid, strIsReceipt,
+                                    "DebtPayment"), Utility.getSelectorOrgs(
+                                    this, vars, strOrg), strBpartnerId,
+                            strDateFrom, DateTimeData.nDaysAfter(this,
+                                    strDateTo, "1"), strCal1, strCal2,
+                            strPaymentRule, strIsPaid, strIsReceipt,
                             strInvoice, strOrder, strIsPending, strOrderBy, "",
                             pgLimit);
                 }

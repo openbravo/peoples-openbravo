@@ -65,10 +65,11 @@ public class Locator extends HttpSecureAppServlet {
             vars.setSessionValue("Locator.name", strKeyValue);
             vars.setSessionValue("Locator.warehousename", LocatorData
                     .selectname(this, strWarehouse));
+            String strOrg = vars.getStringParameter("inpAD_Org_ID");
             LocatorData[] data = LocatorData.selectKey(this, Utility
                     .getContext(this, vars, "#User_Client", "Locator"), Utility
-                    .getContext(this, vars, "#User_Org", "Locator"),
-                    LocatorData.selectname(this, strWarehouse), strKeyValue);
+                    .getSelectorOrgs(this, vars, strOrg), LocatorData
+                    .selectname(this, strWarehouse), strKeyValue);
             if (data != null && data.length == 1) {
                 printPageKey(response, vars, data);
             } else
@@ -95,9 +96,11 @@ public class Locator extends HttpSecureAppServlet {
                     .toUpperCase();
             String strSortDirs = vars.getStringParameter("sort_dirs")
                     .toUpperCase();
+            String strOrg = vars.getGlobalVariable("inpAD_Org_ID",
+                    "Locator.adorgid", "");
             printGridData(response, vars, strName, strWarehousename, strAisle,
                     strBin, strLevel, strSortCols + " " + strSortDirs,
-                    strOffset, strPageSize, strNewFilter);
+                    strOffset, strPageSize, strNewFilter, strOrg);
         } else
             pageError(response);
     }
@@ -108,6 +111,7 @@ public class Locator extends HttpSecureAppServlet {
         vars.removeSessionValue("Locator.aisle");
         vars.removeSessionValue("Locator.bin");
         vars.removeSessionValue("Locator.level");
+        vars.removeSessionValue("Locator.adorgid");
     }
 
     void printPage(HttpServletResponse response, VariablesSecureApp vars,
@@ -228,8 +232,8 @@ public class Locator extends HttpSecureAppServlet {
     void printGridData(HttpServletResponse response, VariablesSecureApp vars,
             String strName, String strWarehousename, String strAisle,
             String strBin, String strLevel, String strOrderBy,
-            String strOffset, String strPageSize, String strNewFilter)
-            throws IOException, ServletException {
+            String strOffset, String strPageSize, String strNewFilter,
+            String strOrg) throws IOException, ServletException {
         if (log4j.isDebugEnabled())
             log4j.debug("Output: print page rows");
 
@@ -249,10 +253,9 @@ public class Locator extends HttpSecureAppServlet {
                     // load
                     data = LocatorData.select(this, "1", vars.getLanguage(),
                             Utility.getContext(this, vars, "#User_Client",
-                                    "Locator"), Utility.getContext(this, vars,
-                                    "#User_Org", "Locator"), strName,
-                            strWarehousename, strAisle, strBin, strLevel,
-                            strOrderBy, "", "");
+                                    "Locator"), Utility.getSelectorOrgs(this,
+                                    vars, strOrg), strName, strWarehousename,
+                            strAisle, strBin, strLevel, strOrderBy, "", "");
                     strNumRows = String.valueOf(data.length);
                     vars.setSessionValue("Locator.numrows", strNumRows);
                 } else {
@@ -268,18 +271,19 @@ public class Locator extends HttpSecureAppServlet {
                                     + Integer.valueOf(strPageSize));
                     data = LocatorData.select(this, "ROWNUM", vars
                             .getLanguage(), Utility.getContext(this, vars,
-                            "#User_Client", "Locator"), Utility.getContext(
-                            this, vars, "#User_Org", "Locator"), strName,
+                            "#User_Client", "Locator"), Utility
+                            .getSelectorOrgs(this, vars, strOrg), strName,
                             strWarehousename, strAisle, strBin, strLevel,
                             strOrderBy, oraLimit, "");
                 } else {
                     String pgLimit = strPageSize + " OFFSET " + strOffset;
-                    data = LocatorData.select(this, "1", vars.getLanguage(),
-                            Utility.getContext(this, vars, "#User_Client",
-                                    "Locator"), Utility.getContext(this, vars,
-                                    "#User_Org", "Locator"), strName,
-                            strWarehousename, strAisle, strBin, strLevel,
-                            strOrderBy, "", pgLimit);
+                    data = LocatorData
+                            .select(this, "1", vars.getLanguage(), Utility
+                                    .getContext(this, vars, "#User_Client",
+                                            "Locator"), Utility
+                                    .getSelectorOrgs(this, vars, strOrg),
+                                    strName, strWarehousename, strAisle,
+                                    strBin, strLevel, strOrderBy, "", pgLimit);
                 }
             } catch (ServletException e) {
                 log4j.error("Error in print page data: " + e);

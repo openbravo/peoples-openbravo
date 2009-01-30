@@ -77,11 +77,12 @@ public class Project extends HttpSecureAppServlet {
                     "Project.bpartner", "");
             String strKeyValue = vars.getGlobalVariable("inpNameValue",
                     "Project.key", "");
+            String strOrg = vars.getStringParameter("inpAD_Org_ID");
             vars.setSessionValue("Project.key", strKeyValue + "%");
             ProjectData[] data = ProjectData.selectKey(this, Utility
                     .getContext(this, vars, "#User_Client", "Project"), Utility
-                    .getContext(this, vars, "#User_Org", "Project"),
-                    strBpartner, strKeyValue + "%");
+                    .getSelectorOrgs(this, vars, strOrg), strBpartner,
+                    strKeyValue + "%");
             if (data != null && data.length == 1) {
                 printPageKey(response, vars, data);
             } else
@@ -102,6 +103,8 @@ public class Project extends HttpSecureAppServlet {
                     "Project.bpartner", "");
             String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx",
                     strWindowId);
+            String strOrg = vars.getGlobalVariable("inpAD_Org_ID",
+                    "Project.adorgid", "");
 
             String strNewFilter = vars.getStringParameter("newFilter");
             String strOffset = vars.getStringParameter("offset");
@@ -112,7 +115,7 @@ public class Project extends HttpSecureAppServlet {
                     .toUpperCase();
             printGridData(response, vars, strKey, strName, strBpartners,
                     strSortCols + " " + strSortDirs, strOffset, strPageSize,
-                    strNewFilter);
+                    strNewFilter, strOrg);
         } else
             pageError(response);
     }
@@ -121,6 +124,7 @@ public class Project extends HttpSecureAppServlet {
         vars.removeSessionValue("Project.key");
         vars.removeSessionValue("Project.name");
         vars.removeSessionValue("Project.bpartner");
+        vars.removeSessionValue("Project.adorgid");
     }
 
     void printPage(HttpServletResponse response, VariablesSecureApp vars,
@@ -254,7 +258,8 @@ public class Project extends HttpSecureAppServlet {
     void printGridData(HttpServletResponse response, VariablesSecureApp vars,
             String strKey, String strName, String strBpartners,
             String strOrderBy, String strOffset, String strPageSize,
-            String strNewFilter) throws IOException, ServletException {
+            String strNewFilter, String strOrg) throws IOException,
+            ServletException {
         if (log4j.isDebugEnabled())
             log4j.debug("Output: print page rows");
 
@@ -274,8 +279,8 @@ public class Project extends HttpSecureAppServlet {
                     // load
                     data = ProjectData.select(this, "1", vars.getLanguage(),
                             Utility.getContext(this, vars, "#User_Client",
-                                    "Project"), Utility.getContext(this, vars,
-                                    "#User_Org", "Project"), strKey, strName,
+                                    "Project"), Utility.getSelectorOrgs(this,
+                                    vars, strOrg), strKey, strName,
                             strBpartners, strOrderBy, "", "");
                     strNumRows = String.valueOf(data.length);
                     vars.setSessionValue("ProjectData.numrows", strNumRows);
@@ -292,15 +297,15 @@ public class Project extends HttpSecureAppServlet {
                                     + Integer.valueOf(strPageSize));
                     data = ProjectData.select(this, "ROWNUM", vars
                             .getLanguage(), Utility.getContext(this, vars,
-                            "#User_Client", "Project"), Utility.getContext(
-                            this, vars, "#User_Org", "Project"), strKey,
+                            "#User_Client", "Project"), Utility
+                            .getSelectorOrgs(this, vars, strOrg), strKey,
                             strName, strBpartners, strOrderBy, oraLimit, "");
                 } else {
                     String pgLimit = strPageSize + " OFFSET " + strOffset;
                     data = ProjectData.select(this, "1", vars.getLanguage(),
                             Utility.getContext(this, vars, "#User_Client",
-                                    "Project"), Utility.getContext(this, vars,
-                                    "#User_Org", "Project"), strKey, strName,
+                                    "Project"), Utility.getSelectorOrgs(this,
+                                    vars, strOrg), strKey, strName,
                             strBpartners, strOrderBy, "", pgLimit);
                 }
             } catch (ServletException e) {

@@ -126,10 +126,11 @@ public class Account extends HttpSecureAppServlet {
             }
             vars.removeSessionValue("Account.combination");
             vars.setSessionValue("Account.alias", strKeyValue + "%");
+            String strOrg = vars.getStringParameter("inpAD_Org_ID");
             AccountData[] data = AccountData.selectKey(this, strAcctSchema,
                     Utility.getContext(this, vars, "#User_Client", "Account"),
-                    Utility.getContext(this, vars, "#User_Org", "Account"),
-                    strKeyValue + "%");
+                    Utility.getSelectorOrgs(this, vars, strOrg), strKeyValue
+                            + "%");
             if (data != null && data.length == 1) {
                 printPageKey(response, vars, data);
             } else
@@ -234,9 +235,9 @@ public class Account extends HttpSecureAppServlet {
         try {
             ComboTableData comboTableData = new ComboTableData(vars, this,
                     "TABLE", "C_Campaign_ID", "C_Campaign", "", Utility
-                            .getContext(this, vars, "#User_Org", "Account"),
-                    Utility.getContext(this, vars, "#User_Client", "Account"),
-                    0);
+                            .getContext(this, vars, "#AccessibleOrgTree",
+                                    "Account"), Utility.getContext(this, vars,
+                            "#User_Client", "Account"), 0);
             Utility.fillSQLParameters(this, vars, null, comboTableData,
                     "Account", "");
             xmlDocument.setData("reportC_Campaign_ID", "liststructure",
@@ -249,9 +250,9 @@ public class Account extends HttpSecureAppServlet {
         try {
             ComboTableData comboTableData = new ComboTableData(vars, this,
                     "TABLE", "C_Project_ID", "C_Project", "", Utility
-                            .getContext(this, vars, "#User_Org", "Account"),
-                    Utility.getContext(this, vars, "#User_Client", "Account"),
-                    0);
+                            .getContext(this, vars, "#AccessibleOrgTree",
+                                    "Account"), Utility.getContext(this, vars,
+                            "#User_Client", "Account"), 0);
             Utility.fillSQLParameters(this, vars, null, comboTableData,
                     "Account", "");
             xmlDocument.setData("reportC_Project_ID", "liststructure",
@@ -267,9 +268,9 @@ public class Account extends HttpSecureAppServlet {
 
             ComboTableData comboTableData = new ComboTableData(vars, this,
                     "TABLE", "AD_Org_ID", "AD_Org (Trx)", "", Utility
-                            .getContext(this, vars, "#User_Org", "Account"),
-                    Utility.getContext(this, vars, "#User_Client", "Account"),
-                    0);
+                            .getContext(this, vars, "#AccessibleOrgTree",
+                                    "Account"), Utility.getContext(this, vars,
+                            "#User_Client", "Account"), 0);
             Utility.fillSQLParameters(this, vars, null, comboTableData,
                     "Account", "");
             xmlDocument.setData("reportAD_Org_ID", "liststructure",
@@ -282,17 +283,18 @@ public class Account extends HttpSecureAppServlet {
         try {
             ComboTableData comboTableData = new ComboTableData(vars, this,
                     "TABLE", "Account_ID", "C_ElementValue (Accounts)",
-                    "C_Accounts", Utility.getContext(this, vars, "#User_Org",
-                            "Account"), Utility.getContext(this, vars,
-                            "#User_Client", "Account"), 0);
+                    "C_Accounts", Utility.getContext(this, vars,
+                            "#AccessibleOrgTree", "Account"), Utility
+                            .getContext(this, vars, "#User_Client", "Account"),
+                    0);
             Utility.fillSQLParameters(this, vars, null, comboTableData,
                     "Account", "");
             xmlDocument.setData("reportAccount_ID", "liststructure",
                     AccountData.selectElementValues(this, vars.getLanguage(),
                             strAcctSchema, Utility.getContext(this, vars,
                                     "#User_Client", "Account"), Utility
-                                    .getContext(this, vars, "#User_Org",
-                                            "Account")));
+                                    .getContext(this, vars,
+                                            "#AccessibleOrgTree", "Account")));
             comboTableData = null;
         } catch (Exception ex) {
             throw new ServletException(ex);

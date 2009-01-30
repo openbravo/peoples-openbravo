@@ -80,8 +80,8 @@ public class Product extends HttpSecureAppServlet {
                 if (strPriceList.equals(""))
                     strPriceList = ProductData.priceListDefault(this, Utility
                             .getContext(this, vars, "#User_Client", "Product"),
-                            Utility.getContext(this, vars, "#User_Org",
-                                    "Product"));
+                            Utility.getContext(this, vars,
+                                    "#AccessibleOrgTree", "Product"));
                 vars.setSessionValue("Product.priceList", strPriceList);
             }
             if (strDate.equals("")) {
@@ -126,6 +126,7 @@ public class Product extends HttpSecureAppServlet {
                     "Product.date");
             String windowId = vars.getRequestGlobalVariable("WindowID",
                     "Product.windowId");
+            String strOrg = vars.getStringParameter("inpAD_Org_ID");
             vars.removeSessionValue("Product.name");
             strKeyValue = strKeyValue + "%";
             vars.setSessionValue("Product.key", strKeyValue);
@@ -139,8 +140,7 @@ public class Product extends HttpSecureAppServlet {
                 if (strPriceList.equals(""))
                     strPriceList = ProductData.priceListDefault(this, Utility
                             .getContext(this, vars, "#User_Client", "Product"),
-                            Utility.getContext(this, vars, "#User_Org",
-                                    "Product"));
+                            Utility.getSelectorOrgs(this, vars, strOrg));
                 vars.setSessionValue("Product.priceList", strPriceList);
             }
 
@@ -415,8 +415,7 @@ public class Product extends HttpSecureAppServlet {
                     strNumRows = ProductData.countRows(this, strKey, strName,
                             strPriceListVersion, Utility.getContext(this, vars,
                                     "#User_Client", "Product"), Utility
-                                    .getContext(this, vars, "#User_Org",
-                                            "Product"));
+                                    .getSelectorOrgs(this, vars, strOrg));
                     vars.setSessionValue("Product.numrows", strNumRows);
                 } else {
                     strNumRows = vars.getSessionValue("Product.numrows");
@@ -432,17 +431,15 @@ public class Product extends HttpSecureAppServlet {
                     data = ProductData.select(this, strWarehouse, "ROWNUM",
                             strKey, strName, Utility.getContext(this, vars,
                                     "#User_Client", "Product"), Utility
-                                    .getContext(this, vars, "#User_Org",
-                                            "Product"), strPriceListVersion,
-                            strOrderBy, oraLimit, "");
+                                    .getSelectorOrgs(this, vars, strOrg),
+                            strPriceListVersion, strOrderBy, oraLimit, "");
                 } else {
                     String pgLimit = strPageSize + " OFFSET " + strOffset;
                     data = ProductData.select(this, strWarehouse, "1", strKey,
                             strName, Utility.getContext(this, vars,
                                     "#User_Client", "Product"), Utility
-                                    .getContext(this, vars, "#User_Org",
-                                            "Product"), strPriceListVersion,
-                            strOrderBy, "", pgLimit);
+                                    .getSelectorOrgs(this, vars, strOrg),
+                            strPriceListVersion, strOrderBy, "", pgLimit);
                 }
             } catch (ServletException e) {
                 log4j.error("Error in print page data: " + e);

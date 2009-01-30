@@ -93,9 +93,12 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
                     .toUpperCase();
             String strSortDirs = vars.getStringParameter("sort_dirs")
                     .toUpperCase();
+            String strOrg = vars.getGlobalVariable("inpAD_Org_ID",
+                    "Invoice.adorgid", "");
             printGridData(response, vars, strKey, strName, strContact, strZIP,
                     strProvincia, strBpartners, strCity, strSortCols + " "
-                            + strSortDirs, strOffset, strPageSize, strNewFilter);
+                            + strSortDirs, strOffset, strPageSize,
+                    strNewFilter, strOrg);
         } else
             pageError(response);
     }
@@ -193,7 +196,8 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
             String strKey, String strName, String strContact, String strZIP,
             String strProvincia, String strBpartners, String strCity,
             String strOrderBy, String strOffset, String strPageSize,
-            String strNewFilter) throws IOException, ServletException {
+            String strNewFilter, String strOrg) throws IOException,
+            ServletException {
         if (log4j.isDebugEnabled())
             log4j.debug("Output: print page rows");
 
@@ -214,10 +218,10 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
                     data = BusinessPartnerMultipleData.select(this, "1",
                             Utility.getContext(this, vars, "#User_Client",
                                     "BusinessPartner"), Utility.getContext(
-                                    this, vars, "#User_Org",
-                                    "BusinessPartnerMultiple"), strKey,
-                            strName, strContact, strZIP, strProvincia,
-                            (strBpartners.equals("costumer") ? "clients" : ""),
+                                    this, vars, "#AccessibleOrgTree",
+                                    "BusinessPartner"), strKey, strName,
+                            strContact, strZIP, strProvincia, (strBpartners
+                                    .equals("costumer") ? "clients" : ""),
                             (strBpartners.equals("vendor") ? "vendors" : ""),
                             strCity, strOrderBy, "", "");
                     strNumRows = String.valueOf(data.length);
@@ -238,10 +242,10 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
                     data = BusinessPartnerMultipleData.select(this, "ROWNUM",
                             Utility.getContext(this, vars, "#User_Client",
                                     "BusinessPartner"), Utility.getContext(
-                                    this, vars, "#User_Org",
-                                    "BusinessPartnerMultiple"), strKey,
-                            strName, strContact, strZIP, strProvincia,
-                            (strBpartners.equals("costumer") ? "clients" : ""),
+                                    this, vars, "#AccessibleOrgTree",
+                                    "BusinessPartner"), strKey, strName,
+                            strContact, strZIP, strProvincia, (strBpartners
+                                    .equals("costumer") ? "clients" : ""),
                             (strBpartners.equals("vendor") ? "vendors" : ""),
                             strCity, strOrderBy, oraLimit, "");
                 } else {
@@ -249,10 +253,10 @@ public class BusinessPartnerMultiple extends HttpSecureAppServlet {
                     data = BusinessPartnerMultipleData.select(this, "1",
                             Utility.getContext(this, vars, "#User_Client",
                                     "BusinessPartner"), Utility.getContext(
-                                    this, vars, "#User_Org",
-                                    "BusinessPartnerMultiple"), strKey,
-                            strName, strContact, strZIP, strProvincia,
-                            (strBpartners.equals("costumer") ? "clients" : ""),
+                                    this, vars, "#AccessibleOrgTree",
+                                    "BusinessPartner"), strKey, strName,
+                            strContact, strZIP, strProvincia, (strBpartners
+                                    .equals("costumer") ? "clients" : ""),
                             (strBpartners.equals("vendor") ? "vendors" : ""),
                             strCity, strOrderBy, "", pgLimit);
                 }

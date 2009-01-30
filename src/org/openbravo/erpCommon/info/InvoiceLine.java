@@ -115,10 +115,10 @@ public class InvoiceLine extends HttpSecureAppServlet {
 
             vars.setSessionValue("InvoiceLine.documentno", strKeyValue + "%");
             InvoiceLineData[] data = null;
-
+            String strOrg = vars.getStringParameter("inpAD_Org_ID");
             data = InvoiceLineData.selectKey(this, Utility.getContext(this,
-                    vars, "#User_Client", "InvoiceLine"), Utility.getContext(
-                    this, vars, "#User_Org", "InvoiceLine"), strKeyValue + "%");
+                    vars, "#User_Client", "InvoiceLine"), Utility
+                    .getSelectorOrgs(this, vars, strOrg), strKeyValue + "%");
 
             if (data != null && data.length == 1)
                 printPageKey(response, vars, data);
@@ -165,6 +165,8 @@ public class InvoiceLine extends HttpSecureAppServlet {
                     "InvoiceLine.grandtotalto", "");
             String strOrder = vars.getGlobalVariable("inpInvoice",
                     "InvoiceLine.invoice", "");
+            String strOrg = vars.getGlobalVariable("inpInvoice",
+                    "InvoiceLine.adorgid", "");
 
             String strNewFilter = vars.getStringParameter("newFilter");
             String strOffset = vars.getStringParameter("offset");
@@ -177,7 +179,7 @@ public class InvoiceLine extends HttpSecureAppServlet {
             printGridData(response, vars, strDocumentNo, strBpartnerId,
                     strDateFrom, strDateTo, strDescription, strCal1, strCal2,
                     strOrder, strProduct, strSortCols + " " + strSortDirs,
-                    strOffset, strPageSize, strNewFilter);
+                    strOffset, strPageSize, strNewFilter, strOrg);
 
         } else
             pageError(response);
@@ -323,7 +325,8 @@ public class InvoiceLine extends HttpSecureAppServlet {
             String strDateTo, String strDescription, String strCal1,
             String strCal2, String strOrder, String strProduct,
             String strOrderBy, String strOffset, String strPageSize,
-            String strNewFilter) throws IOException, ServletException {
+            String strNewFilter, String strOrg) throws IOException,
+            ServletException {
         if (log4j.isDebugEnabled())
             log4j.debug("Output: print page rows");
 
@@ -355,12 +358,11 @@ public class InvoiceLine extends HttpSecureAppServlet {
                     // load
                     strNumRows = InvoiceLineData.countRows(this, Utility
                             .getContext(this, vars, "#User_Client",
-                                    "InvoiceLine"), Utility.getContext(this,
-                            vars, "#User_Org", "InvoiceLine"), strDocumentNo,
-                            strDescription, strOrder, strBpartnerId,
-                            strDateFrom, DateTimeData.nDaysAfter(this,
-                                    strDateTo, "1"), strCal1, strCal2,
-                            strProduct);
+                                    "InvoiceLine"), Utility.getSelectorOrgs(
+                            this, vars, strOrg), strDocumentNo, strDescription,
+                            strOrder, strBpartnerId, strDateFrom, DateTimeData
+                                    .nDaysAfter(this, strDateTo, "1"), strCal1,
+                            strCal2, strProduct);
                     vars.setSessionValue("BusinessPartnerInfo.numrows",
                             strNumRows);
                 } else {
@@ -376,22 +378,20 @@ public class InvoiceLine extends HttpSecureAppServlet {
                                     + Integer.valueOf(strPageSize));
                     data = InvoiceLineData.select(this, "ROWNUM", Utility
                             .getContext(this, vars, "#User_Client",
-                                    "InvoiceLine"), Utility.getContext(this,
-                            vars, "#User_Org", "InvoiceLine"), strDocumentNo,
-                            strDescription, strOrder, strBpartnerId,
-                            strDateFrom, DateTimeData.nDaysAfter(this,
-                                    strDateTo, "1"), strCal1, strCal2,
-                            strProduct, strOrderBy, oraLimit, "");
+                                    "InvoiceLine"), Utility.getSelectorOrgs(
+                            this, vars, strOrg), strDocumentNo, strDescription,
+                            strOrder, strBpartnerId, strDateFrom, DateTimeData
+                                    .nDaysAfter(this, strDateTo, "1"), strCal1,
+                            strCal2, strProduct, strOrderBy, oraLimit, "");
                 } else {
                     String pgLimit = strPageSize + " OFFSET " + strOffset;
                     data = InvoiceLineData.select(this, "1", Utility
                             .getContext(this, vars, "#User_Client",
-                                    "InvoiceLine"), Utility.getContext(this,
-                            vars, "#User_Org", "InvoiceLine"), strDocumentNo,
-                            strDescription, strOrder, strBpartnerId,
-                            strDateFrom, DateTimeData.nDaysAfter(this,
-                                    strDateTo, "1"), strCal1, strCal2,
-                            strProduct, strOrderBy, "", pgLimit);
+                                    "InvoiceLine"), Utility.getSelectorOrgs(
+                            this, vars, strOrg), strDocumentNo, strDescription,
+                            strOrder, strBpartnerId, strDateFrom, DateTimeData
+                                    .nDaysAfter(this, strDateTo, "1"), strCal1,
+                            strCal2, strProduct, strOrderBy, "", pgLimit);
                 }
             } catch (ServletException e) {
                 log4j.error("Error in print page data: " + e);

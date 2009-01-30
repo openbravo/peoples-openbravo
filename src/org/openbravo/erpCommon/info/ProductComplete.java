@@ -125,8 +125,8 @@ public class ProductComplete extends HttpSecureAppServlet {
             ProductCompleteData[] data = null;
             String strClients = Utility.getContext(this, vars, "#User_Client",
                     "ProductComplete");
-            String strOrgs = Utility.getContext(this, vars, "#User_Org",
-                    "ProductComplete");
+            String strOrg = vars.getStringParameter("inpAD_Org_ID");
+            String strOrgs = Utility.getSelectorOrgs(this, vars, strOrg);
             if (strStore.equals("Y")) {
                 if (vars.getLanguage().equals("en_US"))
                     data = ProductCompleteData.select(this, "1", strKeyValue,
@@ -176,8 +176,8 @@ public class ProductComplete extends HttpSecureAppServlet {
                     .toUpperCase();
             String strClients = Utility.getContext(this, vars, "#User_Client",
                     "ProductComplete");
-            String strOrgs = Utility.getContext(this, vars, "#User_Org",
-                    "ProductComplete");
+            String strOrg = vars.getStringParameter("inpAD_Org_ID");
+            String strOrgs = Utility.getSelectorOrgs(this, vars, strOrg);
 
             printGridData(response, vars, strKey, strName, strWarehouse,
                     strBpartner, strStore, strOrgs, strClients, strSortCols

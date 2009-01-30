@@ -58,14 +58,14 @@ public class SalesOrder extends HttpSecureAppServlet {
             printPage(response, vars, strNameValue);
         } else if (vars.commandIn("KEY")) {
             removePageSessionVariables(vars);
+            String strOrg = vars.getStringParameter("inpAD_Org_ID");
             String strKeyValue = vars.getRequestGlobalVariable("inpNameValue",
                     "SalesOrder.name");
             strKeyValue = strKeyValue + "%";
             vars.setSessionValue("SalesOrder.name", strKeyValue);
             SalesOrderData[] data = SalesOrderData.selectKey(this, Utility
                     .getContext(this, vars, "#User_Client", "SalesOrder"),
-                    Utility.getContext(this, vars, "#User_Org", "SalesOrder"),
-                    strKeyValue);
+                    Utility.getSelectorOrgs(this, vars, strOrg), strKeyValue);
             if (data != null && data.length == 1) {
                 printPageKey(response, vars, data);
             } else
@@ -95,6 +95,8 @@ public class SalesOrder extends HttpSecureAppServlet {
                     "SalesOrder.grandtotalto", "");
             String strOrder = vars.getGlobalVariable("inpOrder",
                     "SalesOrder.order", "");
+            String strOrg = vars.getGlobalVariable("inpAD_Org_ID",
+                    "SalesOrder.adorgid", "");
             String strNewFilter = vars.getStringParameter("newFilter");
             String strOffset = vars.getStringParameter("offset");
             String strPageSize = vars.getStringParameter("page_size");
@@ -105,7 +107,7 @@ public class SalesOrder extends HttpSecureAppServlet {
             printGridData(response, vars, strName, strBpartnerId, strDateFrom,
                     strDateTo, strDescription, strCal1, strCal2, strOrder,
                     strSortCols + " " + strSortDirs, strOffset, strPageSize,
-                    strNewFilter);
+                    strNewFilter, strOrg);
         } else
             pageError(response);
     }
@@ -119,6 +121,7 @@ public class SalesOrder extends HttpSecureAppServlet {
         vars.removeSessionValue("SalesOrder.grandtotalfrom");
         vars.removeSessionValue("SalesOrder.grandtotalto");
         vars.removeSessionValue("SalesOrder.order");
+        vars.removeSessionValue("SalesOrder.adorgid");
     }
 
     void printPage(HttpServletResponse response, VariablesSecureApp vars,
@@ -253,8 +256,8 @@ public class SalesOrder extends HttpSecureAppServlet {
             String strName, String strBpartnerId, String strDateFrom,
             String strDateTo, String strDescription, String strCal1,
             String strCalc2, String strOrder, String strOrderBy,
-            String strOffset, String strPageSize, String strNewFilter)
-            throws IOException, ServletException {
+            String strOffset, String strPageSize, String strNewFilter,
+            String strOrg) throws IOException, ServletException {
         if (log4j.isDebugEnabled())
             log4j.debug("Output: print page rows");
 
@@ -286,11 +289,11 @@ public class SalesOrder extends HttpSecureAppServlet {
                     // load
                     strNumRows = SalesOrderData.countRows(this, Utility
                             .getContext(this, vars, "#User_Client",
-                                    "SalesOrder"), Utility.getContext(this,
-                            vars, "#User_Org", "SalesOrder"), strName,
-                            strDescription, strOrder, strBpartnerId,
-                            strDateFrom, DateTimeData.nDaysAfter(this,
-                                    strDateTo, "1"), strCal1, strCalc2);
+                                    "SalesOrder"), Utility.getSelectorOrgs(
+                            this, vars, strOrg), strName, strDescription,
+                            strOrder, strBpartnerId, strDateFrom, DateTimeData
+                                    .nDaysAfter(this, strDateTo, "1"), strCal1,
+                            strCalc2);
                     vars.setSessionValue("SalesOrder.numrows", strNumRows);
                 } else {
                     strNumRows = vars.getSessionValue("SalesOrder.numrows");
@@ -305,18 +308,17 @@ public class SalesOrder extends HttpSecureAppServlet {
                                     + Integer.valueOf(strPageSize));
                     data = SalesOrderData.select(this, "ROWNUM", Utility
                             .getContext(this, vars, "#User_Client",
-                                    "SalesOrder"), Utility.getContext(this,
-                            vars, "#User_Org", "SalesOrder"), strName,
-                            strDescription, strOrder, strBpartnerId,
-                            strDateFrom, DateTimeData.nDaysAfter(this,
-                                    strDateTo, "1"), strCal1, strCalc2,
-                            strOrderBy, oraLimit, "");
+                                    "SalesOrder"), Utility.getSelectorOrgs(
+                            this, vars, strOrg), strName, strDescription,
+                            strOrder, strBpartnerId, strDateFrom, DateTimeData
+                                    .nDaysAfter(this, strDateTo, "1"), strCal1,
+                            strCalc2, strOrderBy, oraLimit, "");
                 } else {
                     String pgLimit = strPageSize + " OFFSET " + strOffset;
                     data = SalesOrderData.select(this, "1", Utility.getContext(
                             this, vars, "#User_Client", "SalesOrder"), Utility
-                            .getContext(this, vars, "#User_Org", "SalesOrder"),
-                            strName, strDescription, strOrder, strBpartnerId,
+                            .getSelectorOrgs(this, vars, strOrg), strName,
+                            strDescription, strOrder, strBpartnerId,
                             strDateFrom, DateTimeData.nDaysAfter(this,
                                     strDateTo, "1"), strCal1, strCalc2,
                             strOrderBy, "", pgLimit);

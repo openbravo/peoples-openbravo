@@ -127,18 +127,17 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
             strKeyValue = strKeyValue + "%";
             vars.setSessionValue("ShipmentReceiptLine.documentno", strKeyValue);
             ShipmentReceiptLineData[] data = null;
+            String strOrg = vars.getStringParameter("inpAD_Org_ID");
             if (strSOTrx.equals("Y"))
                 data = ShipmentReceiptLineData.selectKey(this, Utility
                         .getContext(this, vars, "#User_Client",
-                                "ShipmentReceiptLine"), Utility.getContext(
-                        this, vars, "#User_Org", "ShipmentReceiptLine"),
-                        strKeyValue);
+                                "ShipmentReceiptLine"), Utility
+                        .getSelectorOrgs(this, vars, strOrg), strKeyValue);
             else
                 data = ShipmentReceiptLineData.selectKeySOTrx(this, Utility
                         .getContext(this, vars, "#User_Client",
-                                "ShipmentReceiptLine"), Utility.getContext(
-                        this, vars, "#User_Org", "ShipmentReceiptLine"),
-                        strKeyValue);
+                                "ShipmentReceiptLine"), Utility
+                        .getSelectorOrgs(this, vars, strOrg), strKeyValue);
             if (data != null && data.length == 1)
                 printPageKey(response, vars, data);
             else
@@ -167,6 +166,8 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
                     "ShipmentReceiptLine.invoiced", "N");
             String strSOTrx = vars
                     .getSessionValue("ShipmentReceiptLine.isSOTrx");
+            String strOrg = vars.getGlobalVariable("inpAD_Org_ID",
+                    "ShipmentReceiptLine.adorgid", "");
 
             String strNewFilter = vars.getStringParameter("newFilter");
             String strOffset = vars.getStringParameter("offset");
@@ -179,7 +180,8 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
             printGridData(response, vars, strDocumentNo, strBpartnerId,
                     strDateFrom, strDateTo, strDescription, strOrder,
                     strProduct, strInvoiced, strSOTrx, strSortCols + " "
-                            + strSortDirs, strOffset, strPageSize, strNewFilter);
+                            + strSortDirs, strOffset, strPageSize,
+                    strNewFilter, strOrg);
         } else
             pageError(response);
     }
@@ -338,7 +340,8 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
             String strDateTo, String strDescription, String strOrder,
             String strProduct, String strInvoiced, String strSOTrx,
             String strOrderBy, String strOffset, String strPageSize,
-            String strNewFilter) throws IOException, ServletException {
+            String strNewFilter, String strOrg) throws IOException,
+            ServletException {
         if (log4j.isDebugEnabled())
             log4j.debug("Output: print page rows");
 
@@ -360,8 +363,7 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
                         data = ShipmentReceiptLineData.select(this, "1",
                                 Utility.getContext(this, vars, "#User_Client",
                                         "ShipmentReceiptLine"), Utility
-                                        .getContext(this, vars, "#User_Org",
-                                                "ShipmentReceiptLine"),
+                                        .getSelectorOrgs(this, vars, strOrg),
                                 strDocumentNo, strDescription, strOrder,
                                 strBpartnerId, strDateFrom, DateTimeData
                                         .nDaysAfter(this, strDateTo, "1"),
@@ -370,8 +372,7 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
                         data = ShipmentReceiptLineData.selectSOTrx(this, "1",
                                 Utility.getContext(this, vars, "#User_Client",
                                         "ShipmentReceiptLine"), Utility
-                                        .getContext(this, vars, "#User_Org",
-                                                "ShipmentReceiptLine"),
+                                        .getSelectorOrgs(this, vars, strOrg),
                                 strDocumentNo, strDescription, strOrder,
                                 strBpartnerId, strDateFrom, DateTimeData
                                         .nDaysAfter(this, strDateTo, "1"),
@@ -397,8 +398,7 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
                         data = ShipmentReceiptLineData.select(this, "ROWNUM",
                                 Utility.getContext(this, vars, "#User_Client",
                                         "ShipmentReceiptLine"), Utility
-                                        .getContext(this, vars, "#User_Org",
-                                                "ShipmentReceiptLine"),
+                                        .getSelectorOrgs(this, vars, strOrg),
                                 strDocumentNo, strDescription, strOrder,
                                 strBpartnerId, strDateFrom, DateTimeData
                                         .nDaysAfter(this, strDateTo, "1"),
@@ -408,13 +408,12 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
                         data = ShipmentReceiptLineData.selectSOTrx(this,
                                 "ROWNUM", Utility.getContext(this, vars,
                                         "#User_Client", "ShipmentReceiptLine"),
-                                Utility.getContext(this, vars, "#User_Org",
-                                        "ShipmentReceiptLine"), strDocumentNo,
-                                strDescription, strOrder, strBpartnerId,
-                                strDateFrom, DateTimeData.nDaysAfter(this,
-                                        strDateTo, "1"), strProduct,
-                                (strInvoiced.equals("Y") ? "=" : "<>"),
-                                strOrderBy, oraLimit, "");
+                                Utility.getSelectorOrgs(this, vars, strOrg),
+                                strDocumentNo, strDescription, strOrder,
+                                strBpartnerId, strDateFrom, DateTimeData
+                                        .nDaysAfter(this, strDateTo, "1"),
+                                strProduct, (strInvoiced.equals("Y") ? "="
+                                        : "<>"), strOrderBy, oraLimit, "");
                     }
                 } else {
                     String pgLimit = strPageSize + " OFFSET " + strOffset;
@@ -422,8 +421,7 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
                         data = ShipmentReceiptLineData.select(this, "1",
                                 Utility.getContext(this, vars, "#User_Client",
                                         "ShipmentReceiptLine"), Utility
-                                        .getContext(this, vars, "#User_Org",
-                                                "ShipmentReceiptLine"),
+                                        .getSelectorOrgs(this, vars, strOrg),
                                 strDocumentNo, strDescription, strOrder,
                                 strBpartnerId, strDateFrom, DateTimeData
                                         .nDaysAfter(this, strDateTo, "1"),
@@ -433,8 +431,7 @@ public class ShipmentReceiptLine extends HttpSecureAppServlet {
                         data = ShipmentReceiptLineData.selectSOTrx(this, "1",
                                 Utility.getContext(this, vars, "#User_Client",
                                         "ShipmentReceiptLine"), Utility
-                                        .getContext(this, vars, "#User_Org",
-                                                "ShipmentReceiptLine"),
+                                        .getSelectorOrgs(this, vars, strOrg),
                                 strDocumentNo, strDescription, strOrder,
                                 strBpartnerId, strDateFrom, DateTimeData
                                         .nDaysAfter(this, strDateTo, "1"),

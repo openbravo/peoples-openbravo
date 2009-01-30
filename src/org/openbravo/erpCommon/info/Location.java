@@ -240,9 +240,9 @@ public class Location extends HttpSecureAppServlet {
         try {
             ComboTableData comboTableData = new ComboTableData(vars, this,
                     "TABLEDIR", "C_Region_ID", "", "C_Region of Country",
-                    Utility.getContext(this, vars, "#User_Org", strWindow),
-                    Utility.getContext(this, vars, "#User_Client", strWindow),
-                    0);
+                    Utility.getContext(this, vars, "#AccessibleOrgTree",
+                            strWindow), Utility.getContext(this, vars,
+                            "#User_Client", strWindow), 0);
             Utility.fillSQLParameters(this, vars, null, comboTableData,
                     strWindow, "");
             xmlDocument.setParameter("array", arrayEntradaSimple("regions",
