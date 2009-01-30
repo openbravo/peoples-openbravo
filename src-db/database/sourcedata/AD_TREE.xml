@@ -7,14 +7,6 @@
 <!--10-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--10 AD_ORG_ID-->
 <!--10-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--10 CREATED-->
-<!--10-->              <CREATED><![CDATA[1999-11-16 14:55:07.0]]></CREATED>
-<!--10 CREATEDBY-->
-<!--10-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--10 UPDATED-->
-<!--10-->              <UPDATED><![CDATA[2001-07-30 05:39:20.0]]></UPDATED>
-<!--10 UPDATEDBY-->
-<!--10-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--10 ISACTIVE-->
 <!--10-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--10 NAME-->
@@ -34,14 +26,6 @@
 <!--20-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--20 AD_ORG_ID-->
 <!--20-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--20 CREATED-->
-<!--20-->              <CREATED><![CDATA[1999-11-16 14:56:00.0]]></CREATED>
-<!--20 CREATEDBY-->
-<!--20-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--20 UPDATED-->
-<!--20-->              <UPDATED><![CDATA[1999-12-09 20:37:12.0]]></UPDATED>
-<!--20 UPDATEDBY-->
-<!--20-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--20 ISACTIVE-->
 <!--20-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--20 NAME-->
@@ -61,14 +45,6 @@
 <!--30-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--30 AD_ORG_ID-->
 <!--30-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--30 CREATED-->
-<!--30-->              <CREATED><![CDATA[1999-11-16 14:56:39.0]]></CREATED>
-<!--30 CREATEDBY-->
-<!--30-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--30 UPDATED-->
-<!--30-->              <UPDATED><![CDATA[1999-12-09 20:36:26.0]]></UPDATED>
-<!--30 UPDATEDBY-->
-<!--30-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--30 ISACTIVE-->
 <!--30-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--30 NAME-->
@@ -88,14 +64,6 @@
 <!--40-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--40 AD_ORG_ID-->
 <!--40-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--40 CREATED-->
-<!--40-->              <CREATED><![CDATA[1999-11-16 14:57:10.0]]></CREATED>
-<!--40 CREATEDBY-->
-<!--40-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--40 UPDATED-->
-<!--40-->              <UPDATED><![CDATA[1999-12-09 20:37:27.0]]></UPDATED>
-<!--40 UPDATEDBY-->
-<!--40-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--40 ISACTIVE-->
 <!--40-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--40 NAME-->
@@ -115,14 +83,6 @@
 <!--50-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--50 AD_ORG_ID-->
 <!--50-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--50 CREATED-->
-<!--50-->              <CREATED><![CDATA[1999-11-16 14:57:44.0]]></CREATED>
-<!--50 CREATEDBY-->
-<!--50-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--50 UPDATED-->
-<!--50-->              <UPDATED><![CDATA[1999-12-09 20:36:42.0]]></UPDATED>
-<!--50 UPDATEDBY-->
-<!--50-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--50 ISACTIVE-->
 <!--50-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--50 NAME-->
@@ -142,14 +102,6 @@
 <!--60-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--60 AD_ORG_ID-->
 <!--60-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--60 CREATED-->
-<!--60-->              <CREATED><![CDATA[1999-11-16 14:58:45.0]]></CREATED>
-<!--60 CREATEDBY-->
-<!--60-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--60 UPDATED-->
-<!--60-->              <UPDATED><![CDATA[1999-12-09 20:36:12.0]]></UPDATED>
-<!--60 UPDATEDBY-->
-<!--60-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--60 ISACTIVE-->
 <!--60-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--60 NAME-->
@@ -169,14 +121,6 @@
 <!--100-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--100 AD_ORG_ID-->
 <!--100-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--100 CREATED-->
-<!--100-->              <CREATED><![CDATA[1999-12-09 20:35:07.0]]></CREATED>
-<!--100 CREATEDBY-->
-<!--100-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--100 UPDATED-->
-<!--100-->              <UPDATED><![CDATA[1999-12-09 20:35:57.0]]></UPDATED>
-<!--100 UPDATEDBY-->
-<!--100-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--100 ISACTIVE-->
 <!--100-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--100 NAME-->
@@ -196,14 +140,6 @@
 <!--800001-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800001 AD_ORG_ID-->
 <!--800001-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800001 CREATED-->
-<!--800001-->              <CREATED><![CDATA[2006-06-13 17:00:44.0]]></CREATED>
-<!--800001 CREATEDBY-->
-<!--800001-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--800001 UPDATED-->
-<!--800001-->              <UPDATED><![CDATA[2006-06-13 17:00:44.0]]></UPDATED>
-<!--800001 UPDATEDBY-->
-<!--800001-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800001 ISACTIVE-->
 <!--800001-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800001 NAME-->
@@ -221,14 +157,6 @@
 <!--800003-->              <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800003 AD_ORG_ID-->
 <!--800003-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800003 CREATED-->
-<!--800003-->              <CREATED><![CDATA[2006-06-13 17:00:44.0]]></CREATED>
-<!--800003 CREATEDBY-->
-<!--800003-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--800003 UPDATED-->
-<!--800003-->              <UPDATED><![CDATA[2006-06-13 17:00:44.0]]></UPDATED>
-<!--800003 UPDATEDBY-->
-<!--800003-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800003 ISACTIVE-->
 <!--800003-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800003 NAME-->

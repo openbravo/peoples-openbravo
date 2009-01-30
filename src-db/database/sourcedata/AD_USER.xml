@@ -9,14 +9,6 @@
 <!--0-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--0 ISACTIVE-->
 <!--0-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--0 CREATED-->
-<!--0-->              <CREATED><![CDATA[1999-11-12 20:41:43.0]]></CREATED>
-<!--0 CREATEDBY-->
-<!--0-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--0 UPDATED-->
-<!--0-->              <UPDATED><![CDATA[2005-07-04 16:59:10.0]]></UPDATED>
-<!--0 UPDATEDBY-->
-<!--0-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--0 NAME-->
 <!--0-->              <NAME><![CDATA[System]]></NAME>
 <!--0 PASSWORD-->
@@ -36,14 +28,6 @@
 <!--100-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--100 ISACTIVE-->
 <!--100-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--100 CREATED-->
-<!--100-->              <CREATED><![CDATA[1999-12-09 18:15:00.0]]></CREATED>
-<!--100 CREATEDBY-->
-<!--100-->              <CREATEDBY><![CDATA[0]]></CREATEDBY>
-<!--100 UPDATED-->
-<!--100-->              <UPDATED><![CDATA[2007-07-20 12:16:40.0]]></UPDATED>
-<!--100 UPDATEDBY-->
-<!--100-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--100 NAME-->
 <!--100-->              <NAME><![CDATA[Openbravo]]></NAME>
 <!--100 PASSWORD-->

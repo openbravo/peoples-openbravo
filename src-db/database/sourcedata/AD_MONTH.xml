@@ -9,14 +9,6 @@
 <!--100-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--100 ISACTIVE-->
 <!--100-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--100 CREATED-->
-<!--100-->              <CREATED><![CDATA[2005-11-14 12:16:52.0]]></CREATED>
-<!--100 CREATEDBY-->
-<!--100-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--100 UPDATED-->
-<!--100-->              <UPDATED><![CDATA[2005-11-14 12:16:52.0]]></UPDATED>
-<!--100 UPDATEDBY-->
-<!--100-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--100 VALUE-->
 <!--100-->              <VALUE><![CDATA[1]]></VALUE>
 <!--100 NAME-->
@@ -34,14 +26,6 @@
 <!--101-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--101 ISACTIVE-->
 <!--101-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--101 CREATED-->
-<!--101-->              <CREATED><![CDATA[2005-11-14 12:17:03.0]]></CREATED>
-<!--101 CREATEDBY-->
-<!--101-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--101 UPDATED-->
-<!--101-->              <UPDATED><![CDATA[2005-11-14 12:17:03.0]]></UPDATED>
-<!--101 UPDATEDBY-->
-<!--101-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--101 VALUE-->
 <!--101-->              <VALUE><![CDATA[2]]></VALUE>
 <!--101 NAME-->
@@ -59,14 +43,6 @@
 <!--102-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--102 ISACTIVE-->
 <!--102-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--102 CREATED-->
-<!--102-->              <CREATED><![CDATA[2005-11-14 12:17:14.0]]></CREATED>
-<!--102 CREATEDBY-->
-<!--102-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--102 UPDATED-->
-<!--102-->              <UPDATED><![CDATA[2005-11-14 12:17:14.0]]></UPDATED>
-<!--102 UPDATEDBY-->
-<!--102-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--102 VALUE-->
 <!--102-->              <VALUE><![CDATA[3]]></VALUE>
 <!--102 NAME-->
@@ -84,14 +60,6 @@
 <!--103-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--103 ISACTIVE-->
 <!--103-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--103 CREATED-->
-<!--103-->              <CREATED><![CDATA[2005-11-14 12:17:24.0]]></CREATED>
-<!--103 CREATEDBY-->
-<!--103-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--103 UPDATED-->
-<!--103-->              <UPDATED><![CDATA[2005-11-14 12:17:24.0]]></UPDATED>
-<!--103 UPDATEDBY-->
-<!--103-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--103 VALUE-->
 <!--103-->              <VALUE><![CDATA[4]]></VALUE>
 <!--103 NAME-->
@@ -109,14 +77,6 @@
 <!--104-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--104 ISACTIVE-->
 <!--104-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--104 CREATED-->
-<!--104-->              <CREATED><![CDATA[2005-11-14 12:17:31.0]]></CREATED>
-<!--104 CREATEDBY-->
-<!--104-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--104 UPDATED-->
-<!--104-->              <UPDATED><![CDATA[2005-11-14 12:17:31.0]]></UPDATED>
-<!--104 UPDATEDBY-->
-<!--104-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--104 VALUE-->
 <!--104-->              <VALUE><![CDATA[5]]></VALUE>
 <!--104 NAME-->
@@ -134,14 +94,6 @@
 <!--105-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--105 ISACTIVE-->
 <!--105-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--105 CREATED-->
-<!--105-->              <CREATED><![CDATA[2005-11-14 12:17:45.0]]></CREATED>
-<!--105 CREATEDBY-->
-<!--105-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--105 UPDATED-->
-<!--105-->              <UPDATED><![CDATA[2005-11-14 12:17:45.0]]></UPDATED>
-<!--105 UPDATEDBY-->
-<!--105-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--105 VALUE-->
 <!--105-->              <VALUE><![CDATA[6]]></VALUE>
 <!--105 NAME-->
@@ -159,14 +111,6 @@
 <!--106-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--106 ISACTIVE-->
 <!--106-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--106 CREATED-->
-<!--106-->              <CREATED><![CDATA[2005-11-14 12:17:56.0]]></CREATED>
-<!--106 CREATEDBY-->
-<!--106-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--106 UPDATED-->
-<!--106-->              <UPDATED><![CDATA[2005-11-14 12:17:56.0]]></UPDATED>
-<!--106 UPDATEDBY-->
-<!--106-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--106 VALUE-->
 <!--106-->              <VALUE><![CDATA[7]]></VALUE>
 <!--106 NAME-->
@@ -184,14 +128,6 @@
 <!--107-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--107 ISACTIVE-->
 <!--107-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--107 CREATED-->
-<!--107-->              <CREATED><![CDATA[2005-11-14 12:18:45.0]]></CREATED>
-<!--107 CREATEDBY-->
-<!--107-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--107 UPDATED-->
-<!--107-->              <UPDATED><![CDATA[2005-11-14 12:18:45.0]]></UPDATED>
-<!--107 UPDATEDBY-->
-<!--107-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--107 VALUE-->
 <!--107-->              <VALUE><![CDATA[8]]></VALUE>
 <!--107 NAME-->
@@ -209,14 +145,6 @@
 <!--108-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--108 ISACTIVE-->
 <!--108-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--108 CREATED-->
-<!--108-->              <CREATED><![CDATA[2005-11-14 12:18:55.0]]></CREATED>
-<!--108 CREATEDBY-->
-<!--108-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--108 UPDATED-->
-<!--108-->              <UPDATED><![CDATA[2005-11-14 12:18:55.0]]></UPDATED>
-<!--108 UPDATEDBY-->
-<!--108-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--108 VALUE-->
 <!--108-->              <VALUE><![CDATA[9]]></VALUE>
 <!--108 NAME-->
@@ -234,14 +162,6 @@
 <!--109-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--109 ISACTIVE-->
 <!--109-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--109 CREATED-->
-<!--109-->              <CREATED><![CDATA[2005-11-14 12:19:02.0]]></CREATED>
-<!--109 CREATEDBY-->
-<!--109-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--109 UPDATED-->
-<!--109-->              <UPDATED><![CDATA[2005-11-14 12:19:02.0]]></UPDATED>
-<!--109 UPDATEDBY-->
-<!--109-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--109 VALUE-->
 <!--109-->              <VALUE><![CDATA[10]]></VALUE>
 <!--109 NAME-->
@@ -259,14 +179,6 @@
 <!--110-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--110 ISACTIVE-->
 <!--110-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--110 CREATED-->
-<!--110-->              <CREATED><![CDATA[2005-11-14 12:19:10.0]]></CREATED>
-<!--110 CREATEDBY-->
-<!--110-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--110 UPDATED-->
-<!--110-->              <UPDATED><![CDATA[2005-11-14 12:19:10.0]]></UPDATED>
-<!--110 UPDATEDBY-->
-<!--110-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--110 VALUE-->
 <!--110-->              <VALUE><![CDATA[11]]></VALUE>
 <!--110 NAME-->
@@ -284,14 +196,6 @@
 <!--111-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--111 ISACTIVE-->
 <!--111-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--111 CREATED-->
-<!--111-->              <CREATED><![CDATA[2005-11-14 12:19:18.0]]></CREATED>
-<!--111 CREATEDBY-->
-<!--111-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--111 UPDATED-->
-<!--111-->              <UPDATED><![CDATA[2005-11-14 12:19:18.0]]></UPDATED>
-<!--111 UPDATEDBY-->
-<!--111-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--111 VALUE-->
 <!--111-->              <VALUE><![CDATA[12]]></VALUE>
 <!--111 NAME-->

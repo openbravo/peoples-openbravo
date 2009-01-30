@@ -9,14 +9,6 @@
 <!--107-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--107 ISACTIVE-->
 <!--107-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--107 CREATED-->
-<!--107-->              <CREATED><![CDATA[2000-09-10 22:45:40.0]]></CREATED>
-<!--107 CREATEDBY-->
-<!--107-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--107 UPDATED-->
-<!--107-->              <UPDATED><![CDATA[2001-04-05 15:46:30.0]]></UPDATED>
-<!--107 UPDATEDBY-->
-<!--107-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--107 NAME-->
 <!--107-->              <NAME><![CDATA[Language]]></NAME>
 <!--107 DESCRIPTION-->
@@ -46,14 +38,6 @@
 <!--108-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--108 ISACTIVE-->
 <!--108-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--108 CREATED-->
-<!--108-->              <CREATED><![CDATA[2000-09-10 22:51:42.0]]></CREATED>
-<!--108 CREATEDBY-->
-<!--108-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--108 UPDATED-->
-<!--108-->              <UPDATED><![CDATA[2003-06-08 01:41:16.0]]></UPDATED>
-<!--108 UPDATEDBY-->
-<!--108-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--108 NAME-->
 <!--108-->              <NAME><![CDATA[Project Type]]></NAME>
 <!--108 DESCRIPTION-->
@@ -79,14 +63,6 @@
 <!--110-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--110 ISACTIVE-->
 <!--110-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--110 CREATED-->
-<!--110-->              <CREATED><![CDATA[2000-09-24 19:00:25.0]]></CREATED>
-<!--110 CREATEDBY-->
-<!--110-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--110 UPDATED-->
-<!--110-->              <UPDATED><![CDATA[2001-04-05 17:44:39.0]]></UPDATED>
-<!--110 UPDATEDBY-->
-<!--110-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--110 NAME-->
 <!--110-->              <NAME><![CDATA[Client]]></NAME>
 <!--110 DESCRIPTION-->
@@ -116,14 +92,6 @@
 <!--111-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--111 ISACTIVE-->
 <!--111-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--111 CREATED-->
-<!--111-->              <CREATED><![CDATA[2000-09-24 19:10:06.0]]></CREATED>
-<!--111 CREATEDBY-->
-<!--111-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--111 UPDATED-->
-<!--111-->              <UPDATED><![CDATA[2001-04-05 21:02:24.0]]></UPDATED>
-<!--111 UPDATEDBY-->
-<!--111-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--111 NAME-->
 <!--111-->              <NAME><![CDATA[Role]]></NAME>
 <!--111 DESCRIPTION-->
@@ -153,14 +121,6 @@
 <!--112-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--112 ISACTIVE-->
 <!--112-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--112 CREATED-->
-<!--112-->              <CREATED><![CDATA[2000-09-24 19:16:43.0]]></CREATED>
-<!--112 CREATEDBY-->
-<!--112-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--112 UPDATED-->
-<!--112-->              <UPDATED><![CDATA[2001-04-05 21:02:47.0]]></UPDATED>
-<!--112 UPDATEDBY-->
-<!--112-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--112 NAME-->
 <!--112-->              <NAME><![CDATA[User]]></NAME>
 <!--112 DESCRIPTION-->
@@ -190,14 +150,6 @@
 <!--113-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--113 ISACTIVE-->
 <!--113-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--113 CREATED-->
-<!--113-->              <CREATED><![CDATA[2000-09-24 19:38:06.0]]></CREATED>
-<!--113 CREATEDBY-->
-<!--113-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--113 UPDATED-->
-<!--113-->              <UPDATED><![CDATA[2001-04-05 17:48:27.0]]></UPDATED>
-<!--113 UPDATEDBY-->
-<!--113-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--113 NAME-->
 <!--113-->              <NAME><![CDATA[Organization]]></NAME>
 <!--113 DESCRIPTION-->
@@ -227,14 +179,6 @@
 <!--114-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--114 ISACTIVE-->
 <!--114-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--114 CREATED-->
-<!--114-->              <CREATED><![CDATA[2001-04-05 15:09:44.0]]></CREATED>
-<!--114 CREATEDBY-->
-<!--114-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--114 UPDATED-->
-<!--114-->              <UPDATED><![CDATA[2003-08-19 20:34:41.0]]></UPDATED>
-<!--114 UPDATEDBY-->
-<!--114-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--114 NAME-->
 <!--114-->              <NAME><![CDATA[Multiphase Project]]></NAME>
 <!--114 DESCRIPTION-->
@@ -260,14 +204,6 @@
 <!--118-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--118 ISACTIVE-->
 <!--118-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--118 CREATED-->
-<!--118-->              <CREATED><![CDATA[2001-04-05 15:52:07.0]]></CREATED>
-<!--118 CREATEDBY-->
-<!--118-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--118 UPDATED-->
-<!--118-->              <UPDATED><![CDATA[2001-04-05 23:03:59.0]]></UPDATED>
-<!--118 UPDATEDBY-->
-<!--118-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--118 NAME-->
 <!--118-->              <NAME><![CDATA[System Elements]]></NAME>
 <!--118 DESCRIPTION-->
@@ -297,14 +233,6 @@
 <!--119-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--119 ISACTIVE-->
 <!--119-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--119 CREATED-->
-<!--119-->              <CREATED><![CDATA[2001-04-05 15:53:02.0]]></CREATED>
-<!--119 CREATEDBY-->
-<!--119-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--119 UPDATED-->
-<!--119-->              <UPDATED><![CDATA[2001-04-05 23:03:29.0]]></UPDATED>
-<!--119 UPDATEDBY-->
-<!--119-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--119 NAME-->
 <!--119-->              <NAME><![CDATA[Messages]]></NAME>
 <!--119 DESCRIPTION-->
@@ -334,14 +262,6 @@
 <!--120-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--120 ISACTIVE-->
 <!--120-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--120 CREATED-->
-<!--120-->              <CREATED><![CDATA[2001-04-05 15:54:09.0]]></CREATED>
-<!--120 CREATEDBY-->
-<!--120-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--120 UPDATED-->
-<!--120-->              <UPDATED><![CDATA[2001-04-05 23:03:37.0]]></UPDATED>
-<!--120 UPDATEDBY-->
-<!--120-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--120 NAME-->
 <!--120-->              <NAME><![CDATA[Reference]]></NAME>
 <!--120 DESCRIPTION-->
@@ -371,14 +291,6 @@
 <!--121-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--121 ISACTIVE-->
 <!--121-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--121 CREATED-->
-<!--121-->              <CREATED><![CDATA[2001-04-05 15:55:47.0]]></CREATED>
-<!--121 CREATEDBY-->
-<!--121-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--121 UPDATED-->
-<!--121-->              <UPDATED><![CDATA[2001-04-05 23:04:05.0]]></UPDATED>
-<!--121 UPDATEDBY-->
-<!--121-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--121 NAME-->
 <!--121-->              <NAME><![CDATA[Window & Tab]]></NAME>
 <!--121 DESCRIPTION-->
@@ -408,14 +320,6 @@
 <!--122-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--122 ISACTIVE-->
 <!--122-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--122 CREATED-->
-<!--122-->              <CREATED><![CDATA[2001-04-05 15:57:02.0]]></CREATED>
-<!--122 CREATEDBY-->
-<!--122-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--122 UPDATED-->
-<!--122-->              <UPDATED><![CDATA[2001-04-05 23:03:15.0]]></UPDATED>
-<!--122 UPDATEDBY-->
-<!--122-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--122 NAME-->
 <!--122-->              <NAME><![CDATA[Form]]></NAME>
 <!--122 DESCRIPTION-->
@@ -445,14 +349,6 @@
 <!--123-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--123 ISACTIVE-->
 <!--123-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--123 CREATED-->
-<!--123-->              <CREATED><![CDATA[2001-04-05 15:58:56.0]]></CREATED>
-<!--123 CREATEDBY-->
-<!--123-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--123 UPDATED-->
-<!--123-->              <UPDATED><![CDATA[2006-04-05 12:09:51.0]]></UPDATED>
-<!--123 UPDATEDBY-->
-<!--123-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--123 NAME-->
 <!--123-->              <NAME><![CDATA[Report & Process]]></NAME>
 <!--123 DESCRIPTION-->
@@ -482,14 +378,6 @@
 <!--125-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--125 ISACTIVE-->
 <!--125-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--125 CREATED-->
-<!--125-->              <CREATED><![CDATA[2001-04-05 21:10:31.0]]></CREATED>
-<!--125 CREATEDBY-->
-<!--125-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--125 UPDATED-->
-<!--125-->              <UPDATED><![CDATA[2001-04-05 21:10:31.0]]></UPDATED>
-<!--125 UPDATEDBY-->
-<!--125-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--125 NAME-->
 <!--125-->              <NAME><![CDATA[Fiscal Calendar]]></NAME>
 <!--125 DESCRIPTION-->
@@ -519,14 +407,6 @@
 <!--126-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--126 ISACTIVE-->
 <!--126-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--126 CREATED-->
-<!--126-->              <CREATED><![CDATA[2001-04-05 21:14:27.0]]></CREATED>
-<!--126 CREATEDBY-->
-<!--126-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--126 UPDATED-->
-<!--126-->              <UPDATED><![CDATA[2001-04-05 21:14:38.0]]></UPDATED>
-<!--126 UPDATEDBY-->
-<!--126-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--126 NAME-->
 <!--126-->              <NAME><![CDATA[Account Tree]]></NAME>
 <!--126 DESCRIPTION-->
@@ -556,14 +436,6 @@
 <!--127-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--127 ISACTIVE-->
 <!--127-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--127 CREATED-->
-<!--127-->              <CREATED><![CDATA[2001-04-05 21:19:43.0]]></CREATED>
-<!--127 CREATEDBY-->
-<!--127-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--127 UPDATED-->
-<!--127-->              <UPDATED><![CDATA[2001-04-05 21:24:09.0]]></UPDATED>
-<!--127 UPDATEDBY-->
-<!--127-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--127 NAME-->
 <!--127-->              <NAME><![CDATA[Accounting Schema]]></NAME>
 <!--127 DESCRIPTION-->
@@ -593,14 +465,6 @@
 <!--128-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--128 ISACTIVE-->
 <!--128-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--128 CREATED-->
-<!--128-->              <CREATED><![CDATA[2001-04-05 21:25:01.0]]></CREATED>
-<!--128 CREATEDBY-->
-<!--128-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--128 UPDATED-->
-<!--128-->              <UPDATED><![CDATA[2001-04-05 21:25:01.0]]></UPDATED>
-<!--128 UPDATEDBY-->
-<!--128-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--128 NAME-->
 <!--128-->              <NAME><![CDATA[G/L Category]]></NAME>
 <!--128 DESCRIPTION-->
@@ -630,14 +494,6 @@
 <!--129-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--129 ISACTIVE-->
 <!--129-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--129 CREATED-->
-<!--129-->              <CREATED><![CDATA[2001-04-05 21:26:34.0]]></CREATED>
-<!--129 CREATEDBY-->
-<!--129-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--129 UPDATED-->
-<!--129-->              <UPDATED><![CDATA[2001-04-05 21:26:34.0]]></UPDATED>
-<!--129 UPDATEDBY-->
-<!--129-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--129 NAME-->
 <!--129-->              <NAME><![CDATA[Document Type]]></NAME>
 <!--129 DESCRIPTION-->
@@ -667,14 +523,6 @@
 <!--130-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--130 ISACTIVE-->
 <!--130-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--130 CREATED-->
-<!--130-->              <CREATED><![CDATA[2001-04-05 21:28:38.0]]></CREATED>
-<!--130 CREATEDBY-->
-<!--130-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--130 UPDATED-->
-<!--130-->              <UPDATED><![CDATA[2001-04-05 21:30:51.0]]></UPDATED>
-<!--130 UPDATEDBY-->
-<!--130-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--130 NAME-->
 <!--130-->              <NAME><![CDATA[Document Sequence]]></NAME>
 <!--130 DESCRIPTION-->
@@ -704,14 +552,6 @@
 <!--131-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--131 ISACTIVE-->
 <!--131-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--131 CREATED-->
-<!--131-->              <CREATED><![CDATA[2001-04-05 21:34:55.0]]></CREATED>
-<!--131 CREATEDBY-->
-<!--131-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--131 UPDATED-->
-<!--131-->              <UPDATED><![CDATA[2001-04-05 21:34:55.0]]></UPDATED>
-<!--131 UPDATEDBY-->
-<!--131-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--131 NAME-->
 <!--131-->              <NAME><![CDATA[Business Partner Category]]></NAME>
 <!--131 DESCRIPTION-->
@@ -741,14 +581,6 @@
 <!--132-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--132 ISACTIVE-->
 <!--132-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--132 CREATED-->
-<!--132-->              <CREATED><![CDATA[2001-04-05 21:35:37.0]]></CREATED>
-<!--132 CREATEDBY-->
-<!--132-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--132 UPDATED-->
-<!--132-->              <UPDATED><![CDATA[2001-04-05 21:35:37.0]]></UPDATED>
-<!--132 UPDATEDBY-->
-<!--132-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--132 NAME-->
 <!--132-->              <NAME><![CDATA[Title]]></NAME>
 <!--132 DESCRIPTION-->
@@ -778,14 +610,6 @@
 <!--133-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--133 ISACTIVE-->
 <!--133-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--133 CREATED-->
-<!--133-->              <CREATED><![CDATA[2001-04-05 21:36:08.0]]></CREATED>
-<!--133 CREATEDBY-->
-<!--133-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--133 UPDATED-->
-<!--133-->              <UPDATED><![CDATA[2001-04-05 21:36:08.0]]></UPDATED>
-<!--133 UPDATEDBY-->
-<!--133-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--133 NAME-->
 <!--133-->              <NAME><![CDATA[Payment Term]]></NAME>
 <!--133 DESCRIPTION-->
@@ -815,14 +639,6 @@
 <!--134-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--134 ISACTIVE-->
 <!--134-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--134 CREATED-->
-<!--134-->              <CREATED><![CDATA[2001-04-05 21:36:51.0]]></CREATED>
-<!--134 CREATEDBY-->
-<!--134-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--134 UPDATED-->
-<!--134-->              <UPDATED><![CDATA[2001-04-05 21:36:51.0]]></UPDATED>
-<!--134 UPDATEDBY-->
-<!--134-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--134 NAME-->
 <!--134-->              <NAME><![CDATA[Invoice Schedule]]></NAME>
 <!--134 DESCRIPTION-->
@@ -852,14 +668,6 @@
 <!--137-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--137 ISACTIVE-->
 <!--137-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--137 CREATED-->
-<!--137-->              <CREATED><![CDATA[2001-04-05 21:40:45.0]]></CREATED>
-<!--137 CREATEDBY-->
-<!--137-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--137 UPDATED-->
-<!--137-->              <UPDATED><![CDATA[2001-04-05 21:40:45.0]]></UPDATED>
-<!--137 UPDATEDBY-->
-<!--137-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--137 NAME-->
 <!--137-->              <NAME><![CDATA[Revenue Recognition]]></NAME>
 <!--137 DESCRIPTION-->
@@ -889,14 +697,6 @@
 <!--138-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--138 ISACTIVE-->
 <!--138-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--138 CREATED-->
-<!--138-->              <CREATED><![CDATA[2001-04-05 21:41:58.0]]></CREATED>
-<!--138 CREATEDBY-->
-<!--138-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--138 UPDATED-->
-<!--138-->              <UPDATED><![CDATA[2001-04-05 21:41:58.0]]></UPDATED>
-<!--138 UPDATEDBY-->
-<!--138-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--138 NAME-->
 <!--138-->              <NAME><![CDATA[Import Business Partner]]></NAME>
 <!--138 DESCRIPTION-->
@@ -926,14 +726,6 @@
 <!--139-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--139 ISACTIVE-->
 <!--139-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--139 CREATED-->
-<!--139-->              <CREATED><![CDATA[2001-04-05 21:42:27.0]]></CREATED>
-<!--139 CREATEDBY-->
-<!--139-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--139 UPDATED-->
-<!--139-->              <UPDATED><![CDATA[2001-04-05 21:42:27.0]]></UPDATED>
-<!--139 UPDATEDBY-->
-<!--139-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--139 NAME-->
 <!--139-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--139 DESCRIPTION-->
@@ -963,14 +755,6 @@
 <!--140-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--140 ISACTIVE-->
 <!--140-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--140 CREATED-->
-<!--140-->              <CREATED><![CDATA[2001-04-05 21:46:16.0]]></CREATED>
-<!--140 CREATEDBY-->
-<!--140-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--140 UPDATED-->
-<!--140-->              <UPDATED><![CDATA[2001-04-16 20:03:22.0]]></UPDATED>
-<!--140 UPDATEDBY-->
-<!--140-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--140 NAME-->
 <!--140-->              <NAME><![CDATA[User]]></NAME>
 <!--140 DESCRIPTION-->
@@ -1000,14 +784,6 @@
 <!--141-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--141 ISACTIVE-->
 <!--141-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--141 CREATED-->
-<!--141-->              <CREATED><![CDATA[2001-04-05 21:46:41.0]]></CREATED>
-<!--141 CREATEDBY-->
-<!--141-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--141 UPDATED-->
-<!--141-->              <UPDATED><![CDATA[2001-04-16 20:00:30.0]]></UPDATED>
-<!--141 UPDATEDBY-->
-<!--141-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--141 NAME-->
 <!--141-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--141 DESCRIPTION-->
@@ -1037,14 +813,6 @@
 <!--142-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--142 ISACTIVE-->
 <!--142-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--142 CREATED-->
-<!--142-->              <CREATED><![CDATA[2001-04-05 21:47:15.0]]></CREATED>
-<!--142 CREATEDBY-->
-<!--142-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--142 UPDATED-->
-<!--142-->              <UPDATED><![CDATA[2001-04-05 21:47:15.0]]></UPDATED>
-<!--142 UPDATEDBY-->
-<!--142-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--142 NAME-->
 <!--142-->              <NAME><![CDATA[Sales Region]]></NAME>
 <!--142 DESCRIPTION-->
@@ -1074,14 +842,6 @@
 <!--143-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--143 ISACTIVE-->
 <!--143-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--143 CREATED-->
-<!--143-->              <CREATED><![CDATA[2001-04-05 21:52:17.0]]></CREATED>
-<!--143 CREATEDBY-->
-<!--143-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--143 UPDATED-->
-<!--143-->              <UPDATED><![CDATA[2001-04-05 21:52:17.0]]></UPDATED>
-<!--143 UPDATEDBY-->
-<!--143-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--143 NAME-->
 <!--143-->              <NAME><![CDATA[Commission]]></NAME>
 <!--143 DESCRIPTION-->
@@ -1111,14 +871,6 @@
 <!--144-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--144 ISACTIVE-->
 <!--144-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--144 CREATED-->
-<!--144-->              <CREATED><![CDATA[2001-04-05 21:53:09.0]]></CREATED>
-<!--144 CREATEDBY-->
-<!--144-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--144 UPDATED-->
-<!--144-->              <UPDATED><![CDATA[2001-04-05 21:53:09.0]]></UPDATED>
-<!--144 UPDATEDBY-->
-<!--144-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--144 NAME-->
 <!--144-->              <NAME><![CDATA[Sales Channel]]></NAME>
 <!--144 DESCRIPTION-->
@@ -1148,14 +900,6 @@
 <!--145-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--145 ISACTIVE-->
 <!--145-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--145 CREATED-->
-<!--145-->              <CREATED><![CDATA[2001-04-05 21:53:29.0]]></CREATED>
-<!--145 CREATEDBY-->
-<!--145-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--145 UPDATED-->
-<!--145-->              <UPDATED><![CDATA[2001-04-05 21:53:29.0]]></UPDATED>
-<!--145 UPDATEDBY-->
-<!--145-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--145 NAME-->
 <!--145-->              <NAME><![CDATA[Sales Campaign]]></NAME>
 <!--145 DESCRIPTION-->
@@ -1185,14 +929,6 @@
 <!--146-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--146 ISACTIVE-->
 <!--146-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--146 CREATED-->
-<!--146-->              <CREATED><![CDATA[2001-04-05 23:05:18.0]]></CREATED>
-<!--146 CREATEDBY-->
-<!--146-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--146 UPDATED-->
-<!--146-->              <UPDATED><![CDATA[2001-04-05 23:06:22.0]]></UPDATED>
-<!--146 UPDATEDBY-->
-<!--146-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--146 NAME-->
 <!--146-->              <NAME><![CDATA[Workflow]]></NAME>
 <!--146 DESCRIPTION-->
@@ -1222,14 +958,6 @@
 <!--152-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--152 ISACTIVE-->
 <!--152-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--152 CREATED-->
-<!--152-->              <CREATED><![CDATA[2001-12-08 21:11:25.0]]></CREATED>
-<!--152 CREATEDBY-->
-<!--152-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--152 UPDATED-->
-<!--152-->              <UPDATED><![CDATA[2001-12-08 21:16:17.0]]></UPDATED>
-<!--152 UPDATEDBY-->
-<!--152-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--152 NAME-->
 <!--152-->              <NAME><![CDATA[Check Client Setup]]></NAME>
 <!--152 DESCRIPTION-->
@@ -1259,14 +987,6 @@
 <!--153-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--153 ISACTIVE-->
 <!--153-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--153 CREATED-->
-<!--153-->              <CREATED><![CDATA[2001-12-08 21:14:13.0]]></CREATED>
-<!--153 CREATEDBY-->
-<!--153-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--153 UPDATED-->
-<!--153-->              <UPDATED><![CDATA[2001-12-08 21:16:13.0]]></UPDATED>
-<!--153 UPDATEDBY-->
-<!--153-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--153 NAME-->
 <!--153-->              <NAME><![CDATA[Check Users]]></NAME>
 <!--153 DESCRIPTION-->
@@ -1296,14 +1016,6 @@
 <!--155-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--155 ISACTIVE-->
 <!--155-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--155 CREATED-->
-<!--155-->              <CREATED><![CDATA[2001-12-08 21:16:10.0]]></CREATED>
-<!--155 CREATEDBY-->
-<!--155-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--155 UPDATED-->
-<!--155-->              <UPDATED><![CDATA[2001-12-08 21:16:10.0]]></UPDATED>
-<!--155 UPDATEDBY-->
-<!--155-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--155 NAME-->
 <!--155-->              <NAME><![CDATA[Check Business Partners]]></NAME>
 <!--155 DESCRIPTION-->
@@ -1333,14 +1045,6 @@
 <!--156-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--156 ISACTIVE-->
 <!--156-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--156 CREATED-->
-<!--156-->              <CREATED><![CDATA[2001-12-08 21:17:17.0]]></CREATED>
-<!--156 CREATEDBY-->
-<!--156-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--156 UPDATED-->
-<!--156-->              <UPDATED><![CDATA[2001-12-08 21:17:26.0]]></UPDATED>
-<!--156 UPDATEDBY-->
-<!--156-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--156 NAME-->
 <!--156-->              <NAME><![CDATA[Request Processor]]></NAME>
 <!--156 DESCRIPTION-->
@@ -1370,14 +1074,6 @@
 <!--157-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--157 ISACTIVE-->
 <!--157-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--157 CREATED-->
-<!--157-->              <CREATED><![CDATA[2001-12-08 21:17:44.0]]></CREATED>
-<!--157 CREATEDBY-->
-<!--157-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--157 UPDATED-->
-<!--157-->              <UPDATED><![CDATA[2001-12-08 21:17:44.0]]></UPDATED>
-<!--157 UPDATEDBY-->
-<!--157-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--157 NAME-->
 <!--157-->              <NAME><![CDATA[Request]]></NAME>
 <!--157 DESCRIPTION-->
@@ -1407,14 +1103,6 @@
 <!--158-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--158 ISACTIVE-->
 <!--158-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--158 CREATED-->
-<!--158-->              <CREATED><![CDATA[2002-03-01 22:32:41.0]]></CREATED>
-<!--158 CREATEDBY-->
-<!--158-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--158 UPDATED-->
-<!--158-->              <UPDATED><![CDATA[2002-03-01 22:32:41.0]]></UPDATED>
-<!--158 UPDATEDBY-->
-<!--158-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--158 NAME-->
 <!--158-->              <NAME><![CDATA[Warehouse and Storage Bins]]></NAME>
 <!--158 DESCRIPTION-->
@@ -1444,14 +1132,6 @@
 <!--159-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--159 ISACTIVE-->
 <!--159-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--159 CREATED-->
-<!--159-->              <CREATED><![CDATA[2002-03-01 22:33:06.0]]></CREATED>
-<!--159 CREATEDBY-->
-<!--159-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--159 UPDATED-->
-<!--159-->              <UPDATED><![CDATA[2002-03-01 22:33:06.0]]></UPDATED>
-<!--159 UPDATEDBY-->
-<!--159-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--159 NAME-->
 <!--159-->              <NAME><![CDATA[Unit of Measure]]></NAME>
 <!--159 DESCRIPTION-->
@@ -1481,14 +1161,6 @@
 <!--160-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--160 ISACTIVE-->
 <!--160-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--160 CREATED-->
-<!--160-->              <CREATED><![CDATA[2002-03-01 22:33:32.0]]></CREATED>
-<!--160 CREATEDBY-->
-<!--160-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--160 UPDATED-->
-<!--160-->              <UPDATED><![CDATA[2002-03-01 22:33:32.0]]></UPDATED>
-<!--160 UPDATEDBY-->
-<!--160-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--160 NAME-->
 <!--160-->              <NAME><![CDATA[Product Category]]></NAME>
 <!--160 DESCRIPTION-->
@@ -1518,14 +1190,6 @@
 <!--161-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--161 ISACTIVE-->
 <!--161-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--161 CREATED-->
-<!--161-->              <CREATED><![CDATA[2002-03-01 22:34:11.0]]></CREATED>
-<!--161 CREATEDBY-->
-<!--161-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--161 UPDATED-->
-<!--161-->              <UPDATED><![CDATA[2002-03-01 22:34:11.0]]></UPDATED>
-<!--161 UPDATEDBY-->
-<!--161-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--161 NAME-->
 <!--161-->              <NAME><![CDATA[Product]]></NAME>
 <!--161 DESCRIPTION-->
@@ -1555,14 +1219,6 @@
 <!--162-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--162 ISACTIVE-->
 <!--162-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--162 CREATED-->
-<!--162-->              <CREATED><![CDATA[2002-03-01 22:48:13.0]]></CREATED>
-<!--162 CREATEDBY-->
-<!--162-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--162 UPDATED-->
-<!--162-->              <UPDATED><![CDATA[2002-03-01 22:48:13.0]]></UPDATED>
-<!--162 UPDATEDBY-->
-<!--162-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--162 NAME-->
 <!--162-->              <NAME><![CDATA[Price List Schema]]></NAME>
 <!--162 DESCRIPTION-->
@@ -1592,14 +1248,6 @@
 <!--163-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--163 ISACTIVE-->
 <!--163-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--163 CREATED-->
-<!--163-->              <CREATED><![CDATA[2002-03-01 22:48:44.0]]></CREATED>
-<!--163 CREATEDBY-->
-<!--163-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--163 UPDATED-->
-<!--163-->              <UPDATED><![CDATA[2002-03-01 22:48:44.0]]></UPDATED>
-<!--163 UPDATEDBY-->
-<!--163-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--163 NAME-->
 <!--163-->              <NAME><![CDATA[Price List]]></NAME>
 <!--163 DESCRIPTION-->
@@ -1629,14 +1277,6 @@
 <!--164-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--164 ISACTIVE-->
 <!--164-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--164 CREATED-->
-<!--164-->              <CREATED><![CDATA[2002-03-01 22:55:42.0]]></CREATED>
-<!--164 CREATEDBY-->
-<!--164-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--164 UPDATED-->
-<!--164-->              <UPDATED><![CDATA[2002-03-01 22:55:42.0]]></UPDATED>
-<!--164 UPDATEDBY-->
-<!--164-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--164 NAME-->
 <!--164-->              <NAME><![CDATA[Business Partner]]></NAME>
 <!--164 DESCRIPTION-->
@@ -1666,14 +1306,6 @@
 <!--166-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--166 ISACTIVE-->
 <!--166-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--166 CREATED-->
-<!--166-->              <CREATED><![CDATA[2002-03-01 22:58:09.0]]></CREATED>
-<!--166 CREATEDBY-->
-<!--166-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--166 UPDATED-->
-<!--166-->              <UPDATED><![CDATA[2002-03-01 22:58:09.0]]></UPDATED>
-<!--166 UPDATEDBY-->
-<!--166-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--166 NAME-->
 <!--166-->              <NAME><![CDATA[Tax Category]]></NAME>
 <!--166 DESCRIPTION-->
@@ -1703,14 +1335,6 @@
 <!--167-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--167 ISACTIVE-->
 <!--167-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--167 CREATED-->
-<!--167-->              <CREATED><![CDATA[2002-03-01 22:58:48.0]]></CREATED>
-<!--167 CREATEDBY-->
-<!--167-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--167 UPDATED-->
-<!--167-->              <UPDATED><![CDATA[2002-03-01 22:58:48.0]]></UPDATED>
-<!--167 UPDATEDBY-->
-<!--167-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--167 NAME-->
 <!--167-->              <NAME><![CDATA[Product]]></NAME>
 <!--167 DESCRIPTION-->
@@ -1740,14 +1364,6 @@
 <!--168-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--168 ISACTIVE-->
 <!--168-->              <ISACTIVE><![CDATA[N]]></ISACTIVE>
-<!--168 CREATED-->
-<!--168-->              <CREATED><![CDATA[2002-03-01 22:59:28.0]]></CREATED>
-<!--168 CREATEDBY-->
-<!--168-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--168 UPDATED-->
-<!--168-->              <UPDATED><![CDATA[2002-03-01 22:59:28.0]]></UPDATED>
-<!--168 UPDATEDBY-->
-<!--168-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--168 NAME-->
 <!--168-->              <NAME><![CDATA[Charge]]></NAME>
 <!--168 DESCRIPTION-->
@@ -1777,14 +1393,6 @@
 <!--169-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--169 ISACTIVE-->
 <!--169-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--169 CREATED-->
-<!--169-->              <CREATED><![CDATA[2002-03-01 22:59:57.0]]></CREATED>
-<!--169 CREATEDBY-->
-<!--169-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--169 UPDATED-->
-<!--169-->              <UPDATED><![CDATA[2002-03-01 22:59:57.0]]></UPDATED>
-<!--169 UPDATEDBY-->
-<!--169-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--169 NAME-->
 <!--169-->              <NAME><![CDATA[Tax Rate]]></NAME>
 <!--169 DESCRIPTION-->
@@ -1814,14 +1422,6 @@
 <!--170-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--170 ISACTIVE-->
 <!--170-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--170 CREATED-->
-<!--170-->              <CREATED><![CDATA[2002-03-01 23:00:15.0]]></CREATED>
-<!--170 CREATEDBY-->
-<!--170-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--170 UPDATED-->
-<!--170-->              <UPDATED><![CDATA[2002-03-01 23:00:15.0]]></UPDATED>
-<!--170 UPDATEDBY-->
-<!--170-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--170 NAME-->
 <!--170-->              <NAME><![CDATA[Accounting Schema]]></NAME>
 <!--170 DESCRIPTION-->
@@ -1851,14 +1451,6 @@
 <!--171-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--171 ISACTIVE-->
 <!--171-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--171 CREATED-->
-<!--171-->              <CREATED><![CDATA[2002-12-08 22:13:00.0]]></CREATED>
-<!--171 CREATEDBY-->
-<!--171-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--171 UPDATED-->
-<!--171-->              <UPDATED><![CDATA[2002-12-08 22:13:00.0]]></UPDATED>
-<!--171 UPDATEDBY-->
-<!--171-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--171 NAME-->
 <!--171-->              <NAME><![CDATA[Tax Category]]></NAME>
 <!--171 DESCRIPTION-->
@@ -1888,14 +1480,6 @@
 <!--172-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--172 ISACTIVE-->
 <!--172-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--172 CREATED-->
-<!--172-->              <CREATED><![CDATA[2003-03-13 20:11:57.0]]></CREATED>
-<!--172 CREATEDBY-->
-<!--172-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--172 UPDATED-->
-<!--172-->              <UPDATED><![CDATA[2003-03-13 20:11:57.0]]></UPDATED>
-<!--172 UPDATEDBY-->
-<!--172-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--172 NAME-->
 <!--172-->              <NAME><![CDATA[Import File Loader]]></NAME>
 <!--172 DESCRIPTION-->
@@ -1925,14 +1509,6 @@
 <!--173-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--173 ISACTIVE-->
 <!--173-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--173 CREATED-->
-<!--173-->              <CREATED><![CDATA[2003-03-13 20:12:38.0]]></CREATED>
-<!--173 CREATEDBY-->
-<!--173-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--173 UPDATED-->
-<!--173-->              <UPDATED><![CDATA[2003-03-13 20:12:38.0]]></UPDATED>
-<!--173 UPDATEDBY-->
-<!--173-->              <UPDATEDBY><![CDATA[0]]></UPDATEDBY>
 <!--173 NAME-->
 <!--173-->              <NAME><![CDATA[Import Account]]></NAME>
 <!--173 DESCRIPTION-->
@@ -1962,14 +1538,6 @@
 <!--800000-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800000 ISACTIVE-->
 <!--800000-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800000 CREATED-->
-<!--800000-->              <CREATED><![CDATA[2006-01-03 18:03:56.0]]></CREATED>
-<!--800000 CREATEDBY-->
-<!--800000-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--800000 UPDATED-->
-<!--800000-->              <UPDATED><![CDATA[2006-01-03 18:03:56.0]]></UPDATED>
-<!--800000 UPDATEDBY-->
-<!--800000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800000 NAME-->
 <!--800000-->              <NAME><![CDATA[Activity]]></NAME>
 <!--800000 DESCRIPTION-->
@@ -1995,14 +1563,6 @@
 <!--800001-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800001 ISACTIVE-->
 <!--800001-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800001 CREATED-->
-<!--800001-->              <CREATED><![CDATA[2006-01-03 18:04:46.0]]></CREATED>
-<!--800001 CREATEDBY-->
-<!--800001-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--800001 UPDATED-->
-<!--800001-->              <UPDATED><![CDATA[2006-01-03 18:04:46.0]]></UPDATED>
-<!--800001 UPDATEDBY-->
-<!--800001-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800001 NAME-->
 <!--800001-->              <NAME><![CDATA[Cost Center]]></NAME>
 <!--800001 DESCRIPTION-->
@@ -2028,14 +1588,6 @@
 <!--800003-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800003 ISACTIVE-->
 <!--800003-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800003 CREATED-->
-<!--800003-->              <CREATED><![CDATA[2006-01-03 18:07:00.0]]></CREATED>
-<!--800003 CREATEDBY-->
-<!--800003-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--800003 UPDATED-->
-<!--800003-->              <UPDATED><![CDATA[2006-01-03 18:07:00.0]]></UPDATED>
-<!--800003 UPDATEDBY-->
-<!--800003-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--800003 NAME-->
 <!--800003-->              <NAME><![CDATA[Product]]></NAME>
 <!--800003 DESCRIPTION-->
@@ -2061,14 +1613,6 @@
 <!--1005900000-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1005900000 ISACTIVE-->
 <!--1005900000-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1005900000 CREATED-->
-<!--1005900000-->              <CREATED><![CDATA[2008-03-28 18:14:02.0]]></CREATED>
-<!--1005900000 CREATEDBY-->
-<!--1005900000-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--1005900000 UPDATED-->
-<!--1005900000-->              <UPDATED><![CDATA[2008-03-28 18:17:39.0]]></UPDATED>
-<!--1005900000 UPDATEDBY-->
-<!--1005900000-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005900000 NAME-->
 <!--1005900000-->              <NAME><![CDATA[Expense Sheet]]></NAME>
 <!--1005900000 DESCRIPTION-->
@@ -2094,14 +1638,6 @@
 <!--1005900001-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1005900001 ISACTIVE-->
 <!--1005900001-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1005900001 CREATED-->
-<!--1005900001-->              <CREATED><![CDATA[2008-03-28 18:19:57.0]]></CREATED>
-<!--1005900001 CREATEDBY-->
-<!--1005900001-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--1005900001 UPDATED-->
-<!--1005900001-->              <UPDATED><![CDATA[2008-03-28 18:19:57.0]]></UPDATED>
-<!--1005900001 UPDATEDBY-->
-<!--1005900001-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005900001 NAME-->
 <!--1005900001-->              <NAME><![CDATA[Invoiceable Expenses]]></NAME>
 <!--1005900001 DESCRIPTION-->
@@ -2127,14 +1663,6 @@
 <!--1005900002-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1005900002 ISACTIVE-->
 <!--1005900002-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1005900002 CREATED-->
-<!--1005900002-->              <CREATED><![CDATA[2008-03-28 18:23:01.0]]></CREATED>
-<!--1005900002 CREATEDBY-->
-<!--1005900002-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--1005900002 UPDATED-->
-<!--1005900002-->              <UPDATED><![CDATA[2008-03-28 18:23:23.0]]></UPDATED>
-<!--1005900002 UPDATEDBY-->
-<!--1005900002-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005900002 NAME-->
 <!--1005900002-->              <NAME><![CDATA[Create Sales Orders from Expenses]]></NAME>
 <!--1005900002 DESCRIPTION-->
@@ -2160,14 +1688,6 @@
 <!--1005900003-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1005900003 ISACTIVE-->
 <!--1005900003-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1005900003 CREATED-->
-<!--1005900003-->              <CREATED><![CDATA[2008-03-28 18:26:56.0]]></CREATED>
-<!--1005900003 CREATEDBY-->
-<!--1005900003-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--1005900003 UPDATED-->
-<!--1005900003-->              <UPDATED><![CDATA[2008-03-28 18:26:56.0]]></UPDATED>
-<!--1005900003 UPDATEDBY-->
-<!--1005900003-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005900003 NAME-->
 <!--1005900003-->              <NAME><![CDATA[Create AP Expense Invoices]]></NAME>
 <!--1005900003 DESCRIPTION-->
@@ -2193,14 +1713,6 @@
 <!--1005900004-->              <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1005900004 ISACTIVE-->
 <!--1005900004-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1005900004 CREATED-->
-<!--1005900004-->              <CREATED><![CDATA[2008-03-28 18:28:38.0]]></CREATED>
-<!--1005900004 CREATEDBY-->
-<!--1005900004-->              <CREATEDBY><![CDATA[100]]></CREATEDBY>
-<!--1005900004 UPDATED-->
-<!--1005900004-->              <UPDATED><![CDATA[2008-03-28 18:28:38.0]]></UPDATED>
-<!--1005900004 UPDATEDBY-->
-<!--1005900004-->              <UPDATEDBY><![CDATA[100]]></UPDATEDBY>
 <!--1005900004 NAME-->
 <!--1005900004-->              <NAME><![CDATA[Employee Expenses]]></NAME>
 <!--1005900004 DESCRIPTION-->
