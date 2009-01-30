@@ -686,29 +686,12 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{NIVEL1}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="Level1_Line"
-						x="704"
-						y="0"
-						width="25"
-						height="18"
-						key="textField"
-						stretchType="RelativeToBandHeight">
-							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=1)]]></printWhenExpression>
-						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Center">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UOMSYMBOL}]]></textFieldExpression>
-				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL1"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level1_Line"
 						x="654"
 						y="0"
-						width="50"
+						width="75"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight">
@@ -793,31 +776,13 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{NIVEL2}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="Level2_Line"
-						mode="Opaque"
-						x="704"
-						y="0"
-						width="25"
-						height="18"
-						key="textField"
-						stretchType="RelativeToBandHeight">
-							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=2)]]></printWhenExpression>
-						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Center">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UOMSYMBOL}]]></textFieldExpression>
-				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL2"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level2_Line"
 						mode="Opaque"
 						x="654"
 						y="0"
-						width="50"
+						width="75"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight">
@@ -921,31 +886,13 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{NIVEL3}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="Level3_Line"
-						mode="Opaque"
-						x="704"
-						y="0"
-						width="25"
-						height="18"
-						key="textField"
-						stretchType="RelativeToBandHeight">
-							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=3)]]></printWhenExpression>
-						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Center">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UOMSYMBOL}]]></textFieldExpression>
-				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL3"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level3_Line"
 						mode="Opaque"
 						x="654"
 						y="0"
-						width="50"
+						width="75"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight">
@@ -1064,31 +1011,13 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{NIVEL4}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="Level4_Line"
-						mode="Opaque"
-						x="704"
-						y="0"
-						width="25"
-						height="18"
-						key="textField"
-						stretchType="RelativeToBandHeight">
-							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=4)]]></printWhenExpression>
-						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Center">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UOMSYMBOL}]]></textFieldExpression>
-				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="NIVEL4"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level4_Line"
 						mode="Opaque"
 						x="654"
 						y="0"
-						width="50"
+						width="75"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight">
@@ -1224,31 +1153,13 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{NIVEL5}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="Level5_Line"
-						mode="Opaque"
-						x="704"
-						y="0"
-						width="25"
-						height="18"
-						key="textField"
-						stretchType="RelativeToBandHeight">
-							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=5)]]></printWhenExpression>
-						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Center">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UOMSYMBOL}]]></textFieldExpression>
-				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL5"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level5_Line"
 						mode="Opaque"
 						x="654"
 						y="0"
-						width="50"
+						width="75"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight">
@@ -1399,31 +1310,13 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{NIVEL6}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="Level6_Line"
-						mode="Opaque"
-						x="704"
-						y="0"
-						width="25"
-						height="18"
-						key="textField"
-						stretchType="RelativeToBandHeight">
-							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=6)]]></printWhenExpression>
-						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Center">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UOMSYMBOL}]]></textFieldExpression>
-				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL6"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level6_Line"
 						mode="Opaque"
 						x="654"
 						y="0"
-						width="50"
+						width="75"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight">
@@ -1591,31 +1484,13 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{NIVEL7}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="Level7_Line"
-						mode="Opaque"
-						x="704"
-						y="0"
-						width="25"
-						height="18"
-						key="textField"
-						stretchType="RelativeToBandHeight">
-							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=7)]]></printWhenExpression>
-						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Center">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UOMSYMBOL}]]></textFieldExpression>
-				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL7"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level7_Line"
 						mode="Opaque"
 						x="654"
 						y="0"
-						width="50"
+						width="75"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight">
@@ -1798,31 +1673,13 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{NIVEL8}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="Level8_Line"
-						mode="Opaque"
-						x="704"
-						y="0"
-						width="25"
-						height="18"
-						key="textField"
-						stretchType="RelativeToBandHeight">
-							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=8)]]></printWhenExpression>
-						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Center">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UOMSYMBOL}]]></textFieldExpression>
-				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL8"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level8_Line"
 						mode="Opaque"
 						x="654"
 						y="0"
-						width="50"
+						width="75"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight">
@@ -2022,31 +1879,13 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{NIVEL9}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						style="Level9_Line"
-						mode="Opaque"
-						x="704"
-						y="0"
-						width="25"
-						height="18"
-						key="textField"
-						stretchType="RelativeToBandHeight">
-							<printWhenExpression><![CDATA[new Boolean($P{PRODUCT_LEVEL}.intValue()<=9)]]></printWhenExpression>
-						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Center">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{UOMSYMBOL}]]></textFieldExpression>
-				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Group" evaluationGroup="LEVEL9"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						style="Level9_Line"
 						mode="Opaque"
 						x="654"
 						y="0"
-						width="50"
+						width="75"
 						height="18"
 						key="textField"
 						stretchType="RelativeToBandHeight">

@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,7 +30,7 @@
     <![CDATA[
       SELECT NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5,
       SUM(AMOUNT) AS AMOUNT, SUM(QTY) AS QTY,
-      SUM(AMOUNTREF) AS AMOUNTREF, SUM(QTYREF) AS QTYREF, UOMSYMBOL,
+      SUM(AMOUNTREF) AS AMOUNTREF, SUM(QTYREF) AS QTYREF,
       SUM(CONVAMOUNT) AS CONVAMOUNT,           	        	  
 	  SUM(CONVAMOUNTREF) AS CONVAMOUNTREF,
 	  C_CURRENCY_SYMBOL(?, 0, 'Y') AS CONVSYM,	  	  
@@ -38,7 +38,7 @@
 	  '' AS ID, '' AS NAME, '' AS TRANSCURRENCYID, '' AS TRANSDATE, '' AS TRANSCLIENTID, '' AS TRANSORGID
       FROM (SELECT NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, 
       SUM(LINENETAMT) AS AMOUNT, SUM(QTYORDERED) AS QTY,
-      SUM(LINENETREF) AS AMOUNTREF, SUM(QTYORDEREDREF) AS QTYREF, UOMSYMBOL,     
+      SUM(LINENETREF) AS AMOUNTREF, SUM(QTYORDEREDREF) AS QTYREF,     
 	  C_CURRENCY_CONVERT(SUM(LINENETAMT), TRCURRENCYID, ?, TO_DATE(TRDATE), NULL, TRCLIENTID, TRORGID) AS CONVAMOUNT,    	  
       C_CURRENCY_CONVERT(SUM(LINENETREF), TRCURRENCYID, ?, TO_DATE(TRDATE), NULL, TRCLIENTID, TRORGID) AS CONVAMOUNTREF,      
 	  TRCURRENCYID, TRDATE, TRCLIENTID, TRORGID
@@ -80,8 +80,8 @@
       AND 3=3 AND C_ORDER.AD_ORG_ID IN ('1')
       AND C_ORDER.AD_CLIENT_ID IN('12')
       AND 2=2) AA
-      GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, TRCURRENCYID, TRDATE, TRCLIENTID, TRORGID, UOMSYMBOL) ZZ
-      GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, UOMSYMBOL, 1
+      GROUP BY NIVEL1,  NIVEL2, NIVEL3, NIVEL4, NIVEL5, TRCURRENCYID, TRDATE, TRCLIENTID, TRORGID) ZZ
+      GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, 1
      ]]></Sql>
     <Parameter name="cCurrencyConv"/>
 	<Parameter name="cCurrencyConv"/>
@@ -113,7 +113,7 @@
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="mProductCategoryId" optional="true" after="AND 2=2"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 2=2"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, UOMSYMBOL" text=", 1"/>
+    <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5" text=", 1"/>
   </SqlMethod>
   <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>
@@ -125,14 +125,14 @@
     <![CDATA[
       SELECT NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5,
       SUM(AMOUNT) AS AMOUNT, SUM(QTY) AS QTY,
-      SUM(AMOUNTREF) AS AMOUNTREF, SUM(QTYREF) AS QTYREF, UOMSYMBOL,
+      SUM(AMOUNTREF) AS AMOUNTREF, SUM(QTYREF) AS QTYREF,
       SUM(CONVAMOUNT) AS CONVAMOUNT,           
 	  C_CURRENCY_SYMBOL(?, 0, 'Y') AS CONVSYM,      
 	  SUM(CONVAMOUNTREF) AS CONVAMOUNTREF,	  
 	  C_CURRENCY_ISOSYM(?) AS CONVISOSYM
       FROM (SELECT NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, 
       SUM(LINENETAMT) AS AMOUNT, SUM(QTYORDERED) AS QTY,
-      SUM(LINENETREF) AS AMOUNTREF, SUM(QTYORDEREDREF) AS QTYREF, UOMSYMBOL,   
+      SUM(LINENETREF) AS AMOUNTREF, SUM(QTYORDEREDREF) AS QTYREF,   
 	  C_CURRENCY_CONVERT(SUM(LINENETAMT), TRCURRENCYID, ?, TO_DATE(TRDATE), NULL, TRCLIENTID, TRORGID) AS CONVAMOUNT,
 	  0 AS CONVAMOUNTREF,
       TRCURRENCYID, TRDATE, TRCLIENTID, TRORGID
@@ -155,8 +155,8 @@
       AND 0=0 AND C_ORDER.AD_ORG_ID IN ('1')
       AND C_ORDER.AD_CLIENT_ID IN ('6')
       AND 1=1) AA
-      GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, TRCURRENCYID, TRDATE, TRCLIENTID, TRORGID, UOMSYMBOL) ZZ
-      GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, UOMSYMBOL, 1
+      GROUP BY NIVEL1,  NIVEL2, NIVEL3, NIVEL4, NIVEL5, TRCURRENCYID, TRDATE, TRCLIENTID, TRORGID) ZZ
+      GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, 1
      ]]></Sql>
     <Parameter name="cCurrencyConv"/>
 	<Parameter name="cCurrencyConv"/>
@@ -174,7 +174,7 @@
     <Parameter name="cBpartnerId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND C_BPARTNER.C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="mProductCategoryId" optional="true" after="AND 1=1"><![CDATA[AND M_PRODUCT_CATEGORY.M_PRODUCT_CATEGORY_ID = ?]]></Parameter>
     <Parameter name="mProductId" optional="true" type="argument" after="AND 1=1"><![CDATA[AND M_PRODUCT.M_PRODUCT_ID IN]]></Parameter>
-    <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, UOMSYMBOL" text=", 1"/>
+    <Parameter name="orderby" type="replace" optional="true" after="GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5" text=", 1"/>
   </SqlMethod>
   <SqlMethod name="selectBpartner" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>

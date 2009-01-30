@@ -569,8 +569,7 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
                 intDiscard++;
                 strLevelLabel[i] = dimensionLabel[2].name;
             } else if (strShownArray[i].equals("4")) {
-                strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('M_Product'), to_char( M_PRODUCT.M_PRODUCT_ID), to_char('"
-                        + vars.getLanguage() + "'))";
+                strTextShow[i] = "AD_COLUMN_IDENTIFIER(to_char('M_Product'), to_char( M_PRODUCT.M_PRODUCT_ID), to_char('" + vars.getLanguage() + "'))||' ('||UOMSYMBOL||')'";
                 intAuxDiscard = i;
                 intDiscard++;
                 intProductLevel = i + 1;
