@@ -151,6 +151,11 @@ compare.database.structure: refer to compare.database.structure target of databa
 		</not>
 	</condition>
 
+  <condition property="bbdd.owner.url" value="${bbdd.url}/${bbdd.sid}" else="${bbdd.url}">
+    <and>
+      <equals arg1="${bbdd.rdbms}" arg2="POSTGRE"/>
+    </and>
+  </condition>
 
 	<path id="project.class.path">
 		<pathelement path="${build}" />
