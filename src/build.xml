@@ -252,6 +252,8 @@ build.war: build a war file in the lib directory.
 	</target>
 	
 	<target name="wad.quick" depends="init">
+		
+		
 		<java classname="org.openbravo.wad.Wad" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
 		      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' '${client.web.xml}' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'quick'" />
 		      <classpath refid="project.class.path" />
@@ -496,8 +498,17 @@ build.war: build a war file in the lib directory.
 		<antcall target="update.build.timestamp"/>
 	</target>
 	
-	<target name="build.quick" depends="generate.entities.quick,wad.quick,compileSqlc,postsrc,translate">
-		<antcall target="update.build.timestamp"/>
+	
+	<target name="build.quick.new.wad" if="new.wad" depends="generate.entities.quick,wad,compileSqlc,postsrc,translate">
+  </target>
+	
+	<target name="build.quick.no.new.wad" unless="new.wad" depends="generate.entities.quick,wad.quick,compileSqlc,postsrc,translate">
+	</target>
+	
+	<target name="build.quick">
+		<antcall inheritall="true" inheritrefs="true" target="build.quick.new.wad"/>
+		<antcall inheritall="true" inheritrefs="true" target="build.quick.no.new.wad"/>
+		<antcall inheritall="true" inheritrefs="true" target="update.build.timestamp"/>
 	</target>
 
 	<target name="translate" if="translation">

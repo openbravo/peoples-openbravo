@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.checksum;
+package org.openbravo.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -79,13 +79,13 @@ public class CheckSum {
     }
 
     private String[] getFiles(String type) {
-        if (type.equals("db.structure")) {
+        if (type.equals("md5.db.structure")) {
             String rt[] = { obDir + "src-db/database/model" };
             return rt;
-        } else if (type.equals("db.sourcedata")) {
+        } else if (type.equals("md5.db.sourcedata")) {
             String rt[] = { obDir + "src-db/database/sourcedata" };
             return rt;
-        } else if (type.equals("wad")) {
+        } else if (type.equals("md5.wad")) {
             String rt[] = { obDir + "src-wad/lib/openbravo-wad.jar" };
             return rt;
         } else {
@@ -95,8 +95,9 @@ public class CheckSum {
     }
 
     private void saveCheckSum() throws Exception {
-        FileOutputStream file = new FileOutputStream(new File(obDir
-                + "/config/checksums"));
+
+        FileOutputStream file = new FileOutputStream(obDir
+                + "/config/checksums");
         properties.store(file, "Checksums for build tasks comparation");
     }
 
@@ -114,27 +115,32 @@ public class CheckSum {
     }
 
     public String calculateCheckSumDBStructure() {
-        return calculateCheckSum("db.structure");
+        return calculateCheckSum("md5.db.structure");
     }
 
     public String calculateCheckSumDBSourceData() {
-        return calculateCheckSum("db.sourcedata");
+        return calculateCheckSum("md5.db.sourcedata");
     }
 
     public String calculateCheckSumWad() {
-        return calculateCheckSum("wad");
+        return calculateCheckSum("md5.wad");
     }
 
     public String getCheckSumDBSTructure() {
-        return properties.getProperty("db.structure", "0");
+        return properties.getProperty("md5.db.structure", "0");
     }
 
     public String getCheckSumDBSourceData() {
-        return properties.getProperty("db.sourcedata", "0");
+        return properties.getProperty("md5.db.sourcedata", "0");
     }
 
     public String getCheckSumWad() {
-        return properties.getProperty("wad", "0");
+        return properties.getProperty("md5.wad", "0");
+    }
+
+    public static void main(String[] args) {
+        CheckSum cs = new CheckSum("/home/openbravo/ws/trunk/openbravo");
+        cs.calculateCheckSumWad();
     }
 
 }

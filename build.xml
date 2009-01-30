@@ -68,6 +68,7 @@ compare.database.structure: refer to compare.database.structure target of databa
 	<property environment="env" />
 	<property name="base.config" location="config" />
 	<property file="${base.config}/Openbravo.properties" />
+	<property file="${base.config}/checksums" />
 
 	<property name="base.config" location="config" />
 	<property name="base.src" location="src" />
@@ -100,6 +101,14 @@ compare.database.structure: refer to compare.database.structure target of databa
 
 	<available file=".svn/entries" property="is.svn" />
 
+	<checksum file="${base.src.wad}/lib/openbravo-wad.jar" algorithm="MD5" property="test.md5.wad"/>
+	
+	<condition property="new.wad">
+		<not>
+	    <equals arg1="${test.md5.wad}" arg2="${md5.wad}"/>
+		</not>
+	</condition>
+	
   <condition property="deploy.mode" value="class">
     <not>
       <isset property="${deploy.mode}" />
@@ -214,7 +223,8 @@ compare.database.structure: refer to compare.database.structure target of databa
 	</target>
 	
 	 <target name="build.quick" depends="init">
-	    <ant dir="${base.src}" target="build.quick" inheritAll="true" inheritRefs="true" />
+
+	    <ant dir="${base.src}" target="build.quick" inheritAll="true" inheritRefs="true"/>
 	  </target>
 	
 
