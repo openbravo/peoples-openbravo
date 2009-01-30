@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.erpCommon.utility.checksum;
+package org.openbravo.checksum;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -99,28 +99,29 @@ public class CheckSum {
         properties.store(file, "Checksums for build tasks comparation");
     }
 
-    private void calculateCheckSum(String type) {
+    private String calculateCheckSum(String type) {
         try {
             String[] files = getFiles(type);
             String checkSum = getCheckSum(files);
             properties.setProperty(type, checkSum);
             saveCheckSum();
+            return checkSum;
         } catch (Exception e) {
             e.printStackTrace();
-            // do nothing else
+            return "0";
         }
     }
 
-    public void calculateCheckSumDBStructure() {
-        calculateCheckSum("db.structure");
+    public String calculateCheckSumDBStructure() {
+        return calculateCheckSum("db.structure");
     }
 
-    public void calculateCheckSumDBSourceData() {
-        calculateCheckSum("db.sourcedata");
+    public String calculateCheckSumDBSourceData() {
+        return calculateCheckSum("db.sourcedata");
     }
 
-    public void calculateCheckSumWad() {
-        calculateCheckSum("wad");
+    public String calculateCheckSumWad() {
+        return calculateCheckSum("wad");
     }
 
     public String getCheckSumDBSTructure() {
