@@ -4,6 +4,9 @@
       <parameter name="p_pinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
+      <parameter name="quick" type="CHAR" mode="in">
+        <default/>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
@@ -16,7 +19,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SL
-* All portions are Copyright (C) 2001-2006 Openbravo SL
+* All portions are Copyright (C) 2001-2009 Openbravo SL
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -61,9 +64,16 @@
   BEGIN --BODY
     v_ResultStr:='ExecutingUpdates';
     FOR Cur_Tables IN
-      (SELECT TABLENAME FROM AD_TABLE)
+      (SELECT TABLENAME 
+      FROM AD_TABLE t, 
+           AD_SYSTEM_INFO SI
+      WHERE EXISTS (SELECT 1 
+                      FROM AD_COLUMN C 
+                     WHERE T.AD_TABLE_ID = C.AD_TABLE_ID 
+                       AND (C.UPDATED > SI.LAST_BUILD
+                       OR COALESCE(QUICK,'N')='N')))
     LOOP
-      v_sql:=Ad_Column_Identifier_Sql(Cur_Tables.TABLENAME) ;
+      v_sql:= Ad_Column_Identifier_Sql(Cur_Tables.TABLENAME) ;
       UPDATE AD_TABLE
         SET SQL_RECORD_IDENTIFIER=v_sql
       WHERE TABLENAME=Cur_Tables.TABLENAME;

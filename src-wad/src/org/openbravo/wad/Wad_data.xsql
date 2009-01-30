@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,7 +26,7 @@
     <Sql>
       <![CDATA[
       SELECT MAX(COALESCE(ACTION, '') || AD_MODEL_OBJECT_ID) AS NAME, CLASSNAME, CLASSNAME AS DISPLAYNAME, 
-      MAX(LOADONSTARTUP) AS LOADONSTARTUP, '' AS VALUE, '' AS LINE, '' AS AUTH
+      MAX(LOADONSTARTUP) AS LOADONSTARTUP, '' AS VALUE, '' AS LINE, '' AS AUTH, '' as buildxml
       FROM AD_MODEL_OBJECT 
       WHERE ISACTIVE = 'Y' 
       AND OBJECT_TYPE = 'S'
@@ -140,10 +140,26 @@
     </Sql>
     <Parameter name="adLanguage"/>
   </SqlMethod>
+  
+  <SqlMethod name="genereteWebXml" type="preparedStatement" return="boolean" default="true">
+    <Sql>
+      <![CDATA[
+         select (case when count(*)=0 then 0 else 1 end) as buildxml
+          from ad_system_info
+         where last_build < (select max(updated)
+                               from (select max(updated) updated
+                                       from ad_model_object
+                                      union
+                                     select max(updated) 
+                                       from ad_model_object_mapping)) 
+      ]]>
+    </Sql>
+  </SqlMethod>
   <SqlMethod name="updateIdentifiers" type="callableStatement" return="object" object="WadData">
       <SqlMethodComment>procedure AD_Update_Table_Identifier</SqlMethodComment>
       <Sql><![CDATA[
-        CALL AD_Update_Table_Identifier(NULL)
+        CALL AD_Update_Table_Identifier(NULL, ?)
       ]]></Sql>
+      <Parameter name="quick"/>
    </SqlMethod>
 </SqlClass>

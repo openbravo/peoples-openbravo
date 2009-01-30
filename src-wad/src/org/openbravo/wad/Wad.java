@@ -361,24 +361,38 @@ public class Wad extends DefaultHandler {
             }
 
             // Call to update the table identifiers
-            WadData.updateIdentifiers(wad.pool);
+            log4j.info("Updating table identifiers");
+            WadData.updateIdentifiers(wad.pool, quick ? "Y" : "N");
             // If generateTabs parameter is true, the action buttons must be
             // generated
             if (generateTabs) {
-                wad.processActionButton(fileReference);
-                wad.processActionButtonXml(fileActionButton);
-                wad.processActionButtonHtml(fileActionButton);
-                wad.processActionButtonGenerics(fileActionButton);
-                wad.processActionButtonXmlGenerics(fileActionButton);
-                wad.processActionButtonHtmlGenerics(fileActionButton);
+                if (quick && ProcessRelationData.generateActionButton(wad.pool))
+                    wad.processActionButton(fileReference);
+                else
+                    log4j.info("No changes in ActionButton_data.xml");
+                if (quick && FieldsData.buildActionButton(wad.pool)) {
+                    wad.processActionButtonXml(fileActionButton);
+                    wad.processActionButtonHtml(fileActionButton);
+                } else
+                    log4j.info("No changes in Action button for columns");
+                if (quick && ActionButtonRelationData.buildGenerics(wad.pool)) {
+                    wad.processActionButtonGenerics(fileActionButton);
+                    wad.processActionButtonXmlGenerics(fileActionButton);
+                    wad.processActionButtonHtmlGenerics(fileActionButton);
+                } else
+                    log4j.info("No changes in generic action button responser");
+
             }
 
             // If generateWebXml parameter is true, the web.xml file should be
             // generated
             if (generateWebXml) {
-                // TabsData tabsData[] = TabsData.selectTabs(wad.pool, "");
-                wad.processWebXml(fileWebXml, fileWebXmlClient, attachPath,
-                        webPath);
+
+                if (quick && WadData.genereteWebXml(wad.pool))
+                    wad.processWebXml(fileWebXml, fileWebXmlClient, attachPath,
+                            webPath);
+                else
+                    log4j.info("No changes in web.xml");
             }
 
             String strCurrentWindow;
@@ -394,7 +408,8 @@ public class Wad extends DefaultHandler {
                 else
                     tabsData = TabsData.selectTabsinModules(wad.pool,
                             strCurrentWindow, module);
-
+                if (tabsData.length == 0)
+                    log4j.info("No windows to compile");
                 if (generateTabs) {
                     for (int i = 0; i < tabsData.length; i++) {
                         log4j.info("Processing Window: "

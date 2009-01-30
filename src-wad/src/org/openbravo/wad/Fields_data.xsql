@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SL 
- * All portions are Copyright (C) 2001-2008 Openbravo SL 
+ * All portions are Copyright (C) 2001-2009 Openbravo SL 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -489,6 +489,32 @@
       and ad_column.ad_column_id in (select ad_column_id from ad_field where isdisplayed='Y' and isactive='Y')
       and ad_column.isactive='Y'
       order by ad_column.ad_process_id
+      ]]>
+    </Sql>
+  </SqlMethod>
+  
+  <SqlMethod name="buildActionButton" type="preparedStatement" return="boolean">
+    <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      SELECT count(*) as total
+      FROM ad_column, ad_process, ad_field, ad_system_info si
+      where ad_column.ad_process_id = ad_process.ad_process_id 
+      and ad_column.ad_column_id = ad_field.ad_column_id 
+      and (ad_process.procedurename is not null
+      OR ad_process.isjasper = 'Y') 
+      and ad_column.columnname not in('DocAction', 'PaymentRule') 
+      and (ad_column.columnname <> 'CreateFrom'
+      or ad_column.ad_process_id is not null)
+      and (ad_column.columnname <> 'Posted'
+      or ad_column.ad_process_id is not null)
+      and ad_column.ad_column_id in (select ad_column_id from ad_field where isdisplayed='Y' and isactive='Y')
+      and ad_column.isactive='Y'
+      and (ad_process.updated > si.last_build
+           or exists (select 1 
+                        from ad_process_para pp 
+                       where pp.ad_process_id = ad_process.ad_process_id
+                         and pp.updated > si.last_build))
       ]]>
     </Sql>
   </SqlMethod>

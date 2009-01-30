@@ -64,6 +64,21 @@
       ]]>
     </Sql>
   </SqlMethod>
+  
+  <SqlMethod name="generateActionButton" type="preparedStatement" return="boolean" default="false">
+    <SqlMethodComment>The table references in dictionary</SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      SELECT (CASE WHEN COUNT(*)=0 THEN 0 ELSE 1 END) AS AD_PROCESS_ID
+      FROM AD_PROCESS P, AD_SYSTEM_INFO SI
+      WHERE P.ISACTIVE = 'Y' 
+      AND (PROCEDURENAME IS NOT NULL 
+           OR ISJASPER = 'Y')
+      AND P.UPDATED > SI.LAST_BUILD
+      ORDER BY AD_PROCESS_ID
+      ]]>
+    </Sql>
+  </SqlMethod>
   <SqlMethod name="selectXSQL" type="preparedStatement" return="multiple">
     <SqlMethodComment>The table references in dictionary</SqlMethodComment>
     <Sql>
