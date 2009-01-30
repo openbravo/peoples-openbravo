@@ -641,6 +641,7 @@
               C_DocType_ID, Description, IsPrinted, MovementType,
               MovementDate, DateAcct, C_BPartner_ID, C_BPartner_Location_ID,
               AD_User_ID, M_Warehouse_ID, POReference, DateOrdered,
+              SalesRep_ID,
               DeliveryRule,
               FreightCostRule,
               FreightAmt,
@@ -655,6 +656,7 @@
               v_DocType_ID, Cur_Invoice.Description, 'N', 'V+',
               Cur_Invoice.DateInvoiced, Cur_Invoice.DateInvoiced, Cur_Invoice.C_BPartner_ID, Cur_Invoice.C_BPartner_Location_ID,
               Cur_Invoice.AD_User_ID, v_Warehouse_ID, Cur_Invoice.POReference, Cur_Invoice.DateInvoiced,
+              Cur_Invoice.SalesRep_ID,
               'A', -- Available
               'I',
               0, -- Freight included
