@@ -499,14 +499,24 @@ build.war: build a war file in the lib directory.
 	</target>
 	
 	
-	<target name="build.quick.new.wad" if="new.wad" depends="generate.entities.quick,wad,compileSqlc,postsrc,translate">
+	<target name="build.quick.new.wad" if="new.wad">
+		<antcall inheritall="true" inheritrefs="true" target="generate.entities.quick"/>
+		<antcall inheritall="true" inheritrefs="true" target="wad"/>
+		<antcall inheritall="true" inheritrefs="true" target="compileSqlc"/>
+		<antcall inheritall="true" inheritrefs="true" target="postsrc"/>
+		<antcall inheritall="true" inheritrefs="true" target="translate"/>
     <taskdef name="updateWADmd5" classname="org.openbravo.utils.WADCheckSumTask">
       <classpath refid="project.class.path" />
     </taskdef>
     <updateWADmd5 obDir="${basedir}/.."/>
 	</target>
 	
-	<target name="build.quick.no.new.wad" unless="new.wad" depends="generate.entities.quick,wad.quick,compileSqlc,postsrc,translate">
+	<target name="build.quick.no.new.wad" unless="new.wad">
+    <antcall inheritall="true" inheritrefs="true" target="generate.entities.quick"/>
+    <antcall inheritall="true" inheritrefs="true" target="wad.quick"/>
+    <antcall inheritall="true" inheritrefs="true" target="compileSqlc"/>
+    <antcall inheritall="true" inheritrefs="true" target="postsrc"/>
+    <antcall inheritall="true" inheritrefs="true" target="translate"/>
 	</target>
 	
 	<target name="build.quick">
