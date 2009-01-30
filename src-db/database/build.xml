@@ -668,7 +668,7 @@ database.postcreate.POSTGRE: Executes post creation operation in PostgreSQL data
           </fileset>
         </classpath>
         <transaction>
-          UPDATE AD_SYSTEM_INFO SET LAST_BUILD=NOW()
+          UPDATE AD_SYSTEM_INFO SET LAST_DBUPDATE=NOW()
         </transaction>
       </sql>
     </target>
