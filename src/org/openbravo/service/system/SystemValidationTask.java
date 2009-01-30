@@ -32,96 +32,94 @@ import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
  * @author mtaal
  */
 public class SystemValidationTask extends ReferenceDataTask {
-    private static final Logger log = Logger.getLogger("SystemValidation");
+  private static final Logger log = Logger.getLogger("SystemValidation");
 
-    private String type;
-    private boolean failOnError = false;
-    private String moduleName;
+  private String type;
+  private boolean failOnError = false;
+  private String moduleJavaPackage;
 
-    @Override
-    protected void doExecute() {
-	if (getType().contains("database")) {
-	    log.info("Validating Database and Application Dictionary");
-	    final DatabaseValidator databaseValidator = new DatabaseValidator();
-	    final SystemValidationResult result = databaseValidator.validate();
-	    if (result.getErrors().isEmpty() && result.getWarnings().isEmpty()) {
-		log.warn("Validation successfull no warnings or errors");
-	    } else {
-		printResult(result);
-	    }
-	}
-	if (getType().contains("module")) {
-	    log.info("Validating Modules");
-	    final ModuleValidator moduleValidator = new ModuleValidator();
-	    final SystemValidationResult result;
-	    if (getModuleName() != null) {
-		result = moduleValidator.validate(getModuleName());
-	    } else {
-		result = moduleValidator.validate();
-	    }
-	    if (result.getErrors().isEmpty() && result.getWarnings().isEmpty()) {
-		log.warn("Validation successfull no warnings or errors");
-	    } else {
-		printResult(result);
-	    }
-	}
+  @Override
+  protected void doExecute() {
+    if (getType().contains("database")) {
+      log.info("Validating Database and Application Dictionary");
+      final DatabaseValidator databaseValidator = new DatabaseValidator();
+      final SystemValidationResult result = databaseValidator.validate();
+      if (result.getErrors().isEmpty() && result.getWarnings().isEmpty()) {
+        log.warn("Validation successfull no warnings or errors");
+      } else {
+        printResult(result);
+      }
+    }
+    if (getType().contains("module")) {
+      log.info("Validating Modules");
+      final ModuleValidator moduleValidator = new ModuleValidator();
+      final SystemValidationResult result;
+      if (getModuleJavaPackage() != null) {
+        result = moduleValidator.validate(getModuleJavaPackage());
+      } else {
+        result = moduleValidator.validate();
+      }
+      if (result.getErrors().isEmpty() && result.getWarnings().isEmpty()) {
+        log.warn("Validation successfull no warnings or errors");
+      } else {
+        printResult(result);
+      }
+    }
+  }
+
+  private void printResult(SystemValidationResult result) {
+    for (SystemValidationType validationType : result.getWarnings().keySet()) {
+      log.warn("\n");
+      log.warn("+++++++++++++++++++++++++++++++++++++++++++++++++++");
+      log.warn("Warnings for Validation type: " + validationType);
+      log.warn("+++++++++++++++++++++++++++++++++++++++++++++++++++");
+      final List<String> warnings = result.getWarnings().get(validationType);
+      for (String warning : warnings) {
+        log.warn(warning);
+      }
     }
 
-    private void printResult(SystemValidationResult result) {
-	for (SystemValidationType validationType : result.getWarnings()
-		.keySet()) {
-	    log.warn("\n");
-	    log.warn("+++++++++++++++++++++++++++++++++++++++++++++++++++");
-	    log.warn("Warnings for Validation type: " + validationType);
-	    log.warn("+++++++++++++++++++++++++++++++++++++++++++++++++++");
-	    final List<String> warnings = result.getWarnings().get(
-		    validationType);
-	    for (String warning : warnings) {
-		log.warn(warning);
-	    }
-	}
-
-	final StringBuilder sb = new StringBuilder();
-	for (SystemValidationType validationType : result.getErrors().keySet()) {
-	    sb.append("\n");
-	    sb.append("+++++++++++++++++++++++++++++++++++++++++++++++++++");
-	    sb.append("Errors for Validation type: " + validationType);
-	    sb.append("+++++++++++++++++++++++++++++++++++++++++++++++++++");
-	    final List<String> errors = result.getErrors().get(validationType);
-	    for (String err : errors) {
-		sb.append(err);
-		if (sb.length() > 0) {
-		    sb.append("\n");
-		}
-	    }
-	}
-	log.error(sb.toString());
-	if (failOnError) {
-	    throw new OBException(sb.toString());
-	}
+    final StringBuilder sb = new StringBuilder();
+    for (SystemValidationType validationType : result.getErrors().keySet()) {
+      sb.append("\n");
+      sb.append("+++++++++++++++++++++++++++++++++++++++++++++++++++");
+      sb.append("Errors for Validation type: " + validationType);
+      sb.append("+++++++++++++++++++++++++++++++++++++++++++++++++++");
+      final List<String> errors = result.getErrors().get(validationType);
+      for (String err : errors) {
+        sb.append(err);
+        if (sb.length() > 0) {
+          sb.append("\n");
+        }
+      }
     }
-
-    public String getType() {
-	return type;
+    log.error(sb.toString());
+    if (failOnError) {
+      throw new OBException(sb.toString());
     }
+  }
 
-    public void setType(String type) {
-	this.type = type;
-    }
+  public String getType() {
+    return type;
+  }
 
-    public boolean isFailOnError() {
-	return failOnError;
-    }
+  public void setType(String type) {
+    this.type = type;
+  }
 
-    public void setFailOnError(boolean failOnError) {
-	this.failOnError = failOnError;
-    }
+  public boolean isFailOnError() {
+    return failOnError;
+  }
 
-    public String getModuleName() {
-	return moduleName;
-    }
+  public void setFailOnError(boolean failOnError) {
+    this.failOnError = failOnError;
+  }
 
-    public void setModuleName(String moduleName) {
-	this.moduleName = moduleName;
-    }
+  public String getModuleJavaPackage() {
+    return moduleJavaPackage;
+  }
+
+  public void setModuleJavaPackage(String moduleJavaPackage) {
+    this.moduleJavaPackage = moduleJavaPackage;
+  }
 }
