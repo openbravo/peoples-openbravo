@@ -140,7 +140,7 @@
     --
     v_ResultStr:='Update Record';
     UPDATE C_Commission
-      SET DateLastRun=v_StartDate
+      SET DateLastRun=now()
     WHERE C_Commission_ID=v_Record_ID;
     /**
     * Calculate Lines
