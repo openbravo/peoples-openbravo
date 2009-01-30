@@ -297,7 +297,7 @@
               ;
           END LOOP;
         END IF;
-        IF v_Message IS NOT NULL THEN
+        IF NOT(v_Message='') THEN
           v_Message:=v_Message || ', ';
         END IF;
         v_Message:=v_Message || v_DocumentNo;
