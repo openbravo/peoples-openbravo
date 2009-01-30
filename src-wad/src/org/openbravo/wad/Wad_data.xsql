@@ -147,7 +147,7 @@
          select (case when count(*)=0 then 0 else 1 end) as buildxml
           from ad_system_info
          where last_build < (select max(updated)
-                               from (select max(updated) updated
+                               from (select max(updated) as updated
                                        from ad_model_object
                                       union
                                      select max(updated) 
