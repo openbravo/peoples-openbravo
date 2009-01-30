@@ -151,7 +151,7 @@
                                        from ad_model_object
                                       union
                                      select max(updated) 
-                                       from ad_model_object_mapping) as upd) 
+                                       from ad_model_object_mapping) upd) 
       ]]>
     </Sql>
   </SqlMethod>
