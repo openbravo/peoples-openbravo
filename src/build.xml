@@ -500,12 +500,17 @@ build.war: build a war file in the lib directory.
 	
 	
 	<target name="build.quick.new.wad" if="new.wad" depends="generate.entities.quick,wad,compileSqlc,postsrc,translate">
-  </target>
+    <taskdef name="updateWADmd5" classname="org.openbravo.utils.WADCheckSumTask">
+      <classpath refid="project.class.path" />
+    </taskdef>
+    <updateWADmd5 obDir="${basedir}/.."/>
+	</target>
 	
 	<target name="build.quick.no.new.wad" unless="new.wad" depends="generate.entities.quick,wad.quick,compileSqlc,postsrc,translate">
 	</target>
 	
 	<target name="build.quick">
+
 		<antcall inheritall="true" inheritrefs="true" target="build.quick.new.wad"/>
 		<antcall inheritall="true" inheritrefs="true" target="build.quick.no.new.wad"/>
 		<antcall inheritall="true" inheritrefs="true" target="update.build.timestamp"/>
