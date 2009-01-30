@@ -366,16 +366,17 @@ public class Wad extends DefaultHandler {
             // If generateTabs parameter is true, the action buttons must be
             // generated
             if (generateTabs) {
-                if (quick && ProcessRelationData.generateActionButton(wad.pool))
+                if (!quick
+                        || ProcessRelationData.generateActionButton(wad.pool))
                     wad.processActionButton(fileReference);
                 else
                     log4j.info("No changes in ActionButton_data.xml");
-                if (quick && FieldsData.buildActionButton(wad.pool)) {
+                if (!quick || FieldsData.buildActionButton(wad.pool)) {
                     wad.processActionButtonXml(fileActionButton);
                     wad.processActionButtonHtml(fileActionButton);
                 } else
                     log4j.info("No changes in Action button for columns");
-                if (quick && ActionButtonRelationData.buildGenerics(wad.pool)) {
+                if (!quick || ActionButtonRelationData.buildGenerics(wad.pool)) {
                     wad.processActionButtonGenerics(fileActionButton);
                     wad.processActionButtonXmlGenerics(fileActionButton);
                     wad.processActionButtonHtmlGenerics(fileActionButton);
@@ -388,7 +389,7 @@ public class Wad extends DefaultHandler {
             // generated
             if (generateWebXml) {
 
-                if (quick && WadData.genereteWebXml(wad.pool))
+                if (!quick || WadData.genereteWebXml(wad.pool))
                     wad.processWebXml(fileWebXml, fileWebXmlClient, attachPath,
                             webPath);
                 else
