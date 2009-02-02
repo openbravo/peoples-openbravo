@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -59,6 +60,7 @@ import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.PrintJRData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 import org.w3c.dom.Document;
@@ -813,6 +815,17 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     out.close();
   }
 
+  public void printPagePopUpDownload(ServletOutputStream os, String fileName) throws IOException,
+      ServletException {
+    if (log4j.isDebugEnabled())
+      log4j.debug("Output: PopUp Download");
+    String href = strDireccion + "/utility/DownloadReport.html?report=" + fileName;
+    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/base/secureApp/PopUp_Download").createXmlDocument();
+    xmlDocument.setParameter("href", href);
+    os.println(xmlDocument.print());
+  }
+
   public void printPageClosePopUpAndRefresh(HttpServletResponse response, VariablesSecureApp vars)
       throws IOException, ServletException {
     if (log4j.isDebugEnabled())
@@ -948,6 +961,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     final String strFileName = strReportName.substring(strReportName.lastIndexOf("/") + 1);
 
     ServletOutputStream os = null;
+    UUID reportId = null;
     try {
 
       final JasperReport jasperReport = Utility.getTranslatedJasperReport(this, strReportName,
@@ -1018,25 +1032,11 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         exportParameters.put(JRHtmlExporterParameter.OUTPUT_STREAM, os);
         exporter.setParameters(exportParameters);
         exporter.exportReport();
-      } else if (strOutputType.equals("pdf")) {
-        response.setContentType("application/pdf");
-        response.setHeader("Content-disposition", "attachment" + "; filename=" + strFileName + "."
+      } else if (strOutputType.equals("pdf") || strOutputType.equalsIgnoreCase("xls")) {
+        reportId = UUID.randomUUID();
+        saveReport(variables, jasperPrint, exportParameters, strFileName + "-" + (reportId) + "."
             + strOutputType);
-        JasperExportManager.exportReportToPdfStream(jasperPrint, os);
-      } else if (strOutputType.equals("xls")) {
-        response.setContentType("application/vnd.ms-excel");
-        response.setHeader("Content-disposition", "attachment" + "; filename=" + strFileName + "."
-            + strOutputType);
-        final JExcelApiExporter exporter = new JExcelApiExporter();
-        exportParameters.put(JRExporterParameter.JASPER_PRINT, jasperPrint);
-        exportParameters.put(JRExporterParameter.OUTPUT_STREAM, os);
-        exportParameters.put(JExcelApiExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);
-        exportParameters.put(JExcelApiExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS,
-            Boolean.TRUE);
-
-        exporter.setParameters(exportParameters);
-        exporter.exportReport();
-
+        printPagePopUpDownload(os, strFileName + "-" + (reportId) + "." + strOutputType);
       } else {
         throw new ServletException("Output format no supported");
       }
@@ -1044,6 +1044,16 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("JR: Error: " + e);
       throw new ServletException(e.getMessage());
+    } catch (IOException ioe) {
+      try {
+        FileUtility f = new FileUtility(globalParameters.strFTPDirectory, strFileName + "-"
+            + (reportId) + "." + strOutputType, false, true);
+        if (f.exists())
+          f.deleteFile();
+      } catch (IOException ioex) {
+        log4j.error("Error trying to delete temporary report file " + strFileName + "-"
+            + (reportId) + "." + strOutputType + " : " + ioex.getMessage());
+      }
     } catch (final Exception e) {
       throw new ServletException(e.getMessage());
     } finally {
@@ -1052,6 +1062,40 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       } catch (final Exception e) {
       }
     }
+  }
+
+  /**
+   * Saves the report on the attachments folder for future retrieval
+   * 
+   * @param vars
+   *          An instance of VariablesSecureApp that contains the request parameters
+   * @param jp
+   *          An instance of JasperPrint of the loaded JRXML template
+   * @param exportParameters
+   *          A Map with all the parameters passed to all reports
+   * @param fileName
+   *          The file name for the report
+   * @throws JRException
+   */
+  private void saveReport(VariablesSecureApp vars, JasperPrint jp,
+      Map<Object, Object> exportParameters, String fileName) throws JRException {
+    final String outputFile = globalParameters.strFTPDirectory + "/" + fileName;
+    final String reportType = fileName.substring(fileName.lastIndexOf(".") + 1);
+    if (reportType.equalsIgnoreCase("pdf")) {
+      JasperExportManager.exportReportToPdfFile(jp, outputFile);
+    } else if (reportType.equalsIgnoreCase("xls")) {
+      JExcelApiExporter exporter = new JExcelApiExporter();
+      exportParameters.put(JRExporterParameter.JASPER_PRINT, jp);
+      exportParameters.put(JRExporterParameter.OUTPUT_FILE_NAME, outputFile);
+      exportParameters.put(JExcelApiExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);
+      exportParameters.put(JExcelApiExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS,
+          Boolean.TRUE);
+      exporter.setParameters(exportParameters);
+      exporter.exportReport();
+    } else {
+      throw new JRException("Report type not supported");
+    }
+
   }
 
   /**

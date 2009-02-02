@@ -42,14 +42,14 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 public class GridBO {
 
   public static void createHTMLReport(InputStream reportFile, GridReportVO gridReportVO,
-      OutputStream os) throws JRException, IOException {
+      String path, String fileName) throws JRException, IOException {
     gridReportVO.setPagination(false);
     JasperPrint jasperPrint = createJasperPrint(reportFile, gridReportVO);
     JRHtmlExporter exporter = new JRHtmlExporter();
     Map<JRExporterParameter, Object> p = new HashMap<JRExporterParameter, Object>();
     p.put(JRHtmlExporterParameter.JASPER_PRINT, jasperPrint);
     p.put(JRHtmlExporterParameter.IS_USING_IMAGES_TO_ALIGN, Boolean.FALSE);
-    p.put(JRHtmlExporterParameter.OUTPUT_STREAM, os);
+    p.put(JRHtmlExporterParameter.OUTPUT_FILE_NAME, path + "/" + fileName);
     exporter.setParameters(p);
     exporter.exportReport();
 
@@ -78,22 +78,21 @@ public class GridBO {
   }
 
   public static void createPDFReport(InputStream reportFile, GridReportVO gridReportVO,
-      OutputStream os) throws JRException, IOException {
+      String path, String fileName) throws JRException, IOException {
     gridReportVO.setPagination(false);
     JasperPrint jasperPrint = createJasperPrint(reportFile, gridReportVO);
-    JasperExportManager.exportReportToPdfStream(jasperPrint, os);
-
+    JasperExportManager.exportReportToPdfFile(jasperPrint, path + "/" + fileName);
   }
 
   public static void createXLSReport(InputStream reportFile, GridReportVO gridReportVO,
-      OutputStream os) throws JRException, IOException {
+      String path, String fileName) throws JRException, IOException {
     gridReportVO.setPagination(true);
     JasperPrint jasperPrint = createJasperPrint(reportFile, gridReportVO);
     JExcelApiExporter exporter = new JExcelApiExporter();
     Map<JRExporterParameter, Object> p = new HashMap<JRExporterParameter, Object>();
 
     p.put(JRExporterParameter.JASPER_PRINT, jasperPrint);
-    p.put(JRExporterParameter.OUTPUT_STREAM, os);
+    p.put(JRExporterParameter.OUTPUT_FILE_NAME, path + "/" + fileName);
     p.put(JExcelApiExporterParameter.IS_DETECT_CELL_TYPE, Boolean.TRUE);
     p.put(JExcelApiExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);
     p.put(JExcelApiExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE);
@@ -103,14 +102,14 @@ public class GridBO {
   }
 
   public static void createCSVReport(InputStream reportFile, GridReportVO gridReportVO,
-      OutputStream os) throws JRException, IOException {
+      String path, String fileName) throws JRException, IOException {
     gridReportVO.setPagination(true);
     JasperPrint jasperPrint = createJasperPrint(reportFile, gridReportVO);
     JRCsvExporter exporter = new JRCsvExporter();
     Map<JRExporterParameter, Object> p = new HashMap<JRExporterParameter, Object>();
 
     p.put(JRExporterParameter.JASPER_PRINT, jasperPrint);
-    p.put(JRExporterParameter.OUTPUT_STREAM, os);
+    p.put(JRExporterParameter.OUTPUT_FILE_NAME, path + "/" + fileName);
 
     exporter.setParameters(p);
     exporter.exportReport();

@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
+import java.util.UUID;
 import java.util.Vector;
 
 import javax.servlet.ServletException;
@@ -34,6 +35,7 @@ import net.sf.jasperreports.engine.JRException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.utils.FileUtility;
 
 public class ExportGrid extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -51,6 +53,7 @@ public class ExportGrid extends HttpSecureAppServlet {
 
     String strLanguage = vars.getLanguage();
     String strBaseDesign = getBaseDesignPath(strLanguage);
+    String fileName = "";
     if (log4j.isDebugEnabled())
       log4j.debug("*********************Base design path: " + strBaseDesign);
 
@@ -63,21 +66,33 @@ public class ExportGrid extends HttpSecureAppServlet {
 
       if (log4j.isDebugEnabled())
         log4j.debug("Create report, type: " + vars.getCommand());
-
-      if (vars.commandIn("HTML"))
-        GridBO.createHTMLReport(is, gridReportVO, os);
-      else if (vars.commandIn("PDF")) {
-        response.setContentType("application/pdf");
-        GridBO.createPDFReport(is, gridReportVO, os);
-      } else if (vars.commandIn("EXCEL")) {
-        response.setContentType("application/vnd.ms-excel");
-        GridBO.createXLSReport(is, gridReportVO, os);
-      } else if (vars.commandIn("CSV")) {
-        response.setContentType("text/csv");
-        GridBO.createCSVReport(is, gridReportVO, os);
+      UUID reportId = UUID.randomUUID();
+      String strOutputType = vars.getCommand().toLowerCase();
+      if (strOutputType.equals("excel")) {
+        strOutputType = "xls";
       }
+      fileName = "ExportGrid-" + (reportId) + "." + strOutputType;
+      if (vars.commandIn("HTML"))
+        GridBO.createHTMLReport(is, gridReportVO, globalParameters.strFTPDirectory, fileName);
+      else if (vars.commandIn("PDF")) {
+        GridBO.createPDFReport(is, gridReportVO, globalParameters.strFTPDirectory, fileName);
+      } else if (vars.commandIn("EXCEL")) {
+        GridBO.createXLSReport(is, gridReportVO, globalParameters.strFTPDirectory, fileName);
+      } else if (vars.commandIn("CSV")) {
+        GridBO.createCSVReport(is, gridReportVO, globalParameters.strFTPDirectory, fileName);
+      }
+      printPagePopUpDownload(os, fileName);
     } catch (JRException e) {
       throw new ServletException(e.getMessage());
+    } catch (IOException ioe) {
+      try {
+        FileUtility f = new FileUtility(globalParameters.strFTPDirectory, fileName, false, true);
+        if (f.exists())
+          f.deleteFile();
+      } catch (IOException ioex) {
+        log4j.error("Error trying to delete temporary report file " + fileName + " : "
+            + ioex.getMessage());
+      }
     } finally {
       is.close();
       os.close();
