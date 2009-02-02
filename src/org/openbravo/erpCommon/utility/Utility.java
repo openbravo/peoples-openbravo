@@ -185,7 +185,7 @@ public class Utility {
   public static boolean hasTabAttachments(ConnectionProvider conn, VariablesSecureApp vars,
       String strTab, String recordId) throws ServletException {
     return UtilityData.hasTabAttachments(conn, Utility.getContext(conn, vars, "#User_Client", ""),
-        Utility.getContext(conn, vars, "#User_Org", ""), strTab, recordId);
+        Utility.getContext(conn, vars, "#AccessibleOrgTree", ""), strTab, recordId);
   }
 
   /**

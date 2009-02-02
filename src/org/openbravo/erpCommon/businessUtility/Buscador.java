@@ -383,8 +383,8 @@ public class Buscador extends HttpSecureAppServlet {
         try {
           ComboTableData comboTableData = new ComboTableData(vars, this, fields[i].reference,
               fields[i].columnname, fields[i].referencevalue, fields[i].adValRuleId, Utility
-                  .getContext(this, vars, "#User_Org", strWindow), Utility.getContext(this, vars,
-                  "#User_Client", strWindow), 0);
+                  .getContext(this, vars, "#AccessibleOrgTree", strWindow), Utility.getContext(
+                  this, vars, "#User_Client", strWindow), 0);
           Utility.fillSQLParameters(this, vars, null, comboTableData, strWindow, fields[i].value);
           FieldProvider[] data = comboTableData.select(false);
           comboTableData = null;

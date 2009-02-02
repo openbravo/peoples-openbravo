@@ -79,7 +79,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
         try {
           final Integer count = new Integer(VerticalMenuData.selectCountActiveAlerts(this, Utility
               .getContext(this, vars, "#User_Client", ""), Utility.getContext(this, vars,
-              "#User_Org", ""), data[i].adAlertruleId, strWhere)).intValue();
+              "#AccessibleOrgTree", ""), data[i].adAlertruleId, strWhere)).intValue();
           alertCount += count;
         } catch (final Exception ex) {
           log4j.error("Error in Alert Query, alertRule=" + data[i].adAlertruleId + " error:"

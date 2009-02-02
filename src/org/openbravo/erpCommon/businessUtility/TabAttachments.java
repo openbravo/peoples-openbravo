@@ -127,8 +127,8 @@ public class TabAttachments extends HttpSecureAppServlet {
               throw new ServletException("This tab is read only");
           }
           final String strNewFile = TabAttachmentsData.selectNext(this, Utility.getContext(this,
-              vars, "#User_Client", strWindow), Utility.getContext(this, vars, "#User_Org",
-              strWindow), strFileReference, tableId, key);
+              vars, "#User_Client", strWindow), Utility.getContext(this, vars,
+              "#AccessibleOrgTree", strWindow), strFileReference, tableId, key);
           if (!strNewFile.equals(""))
             strFileReference = strNewFile;
           response.sendRedirect(strDireccion + request.getServletPath()
@@ -336,8 +336,8 @@ public class TabAttachments extends HttpSecureAppServlet {
     }
 
     final TabAttachmentsData[] files = TabAttachmentsData.select(this, Utility.getContext(this,
-        vars, "#User_Client", strWindow), Utility.getContext(this, vars, "#User_Org", strWindow),
-        tableId, key);
+        vars, "#User_Client", strWindow), Utility.getContext(this, vars, "#AccessibleOrgTree",
+        strWindow), tableId, key);
 
     if ((files == null) || (files.length == 0))
       discard[0] = "widthData";
@@ -428,7 +428,7 @@ public class TabAttachments extends HttpSecureAppServlet {
         : files));
     xmlDocument.setData("reportAD_Datatype_ID_D", "liststructure", DataTypeComboData.select(this,
         Utility.getContext(this, vars, "#User_Client", "TabAttachments"), Utility.getContext(this,
-            vars, "#User_Org", "TabAttachments")));
+            vars, "#AccessibleOrgTree", "TabAttachments")));
 
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();

@@ -204,10 +204,11 @@ public class WorkflowControl extends HttpSecureAppServlet {
     WorkflowControlData[] data = null;
     if (vars.getLanguage().equals("en_US"))
       data = WorkflowControlData.select(this, Utility.getContext(this, vars, "#User_Client",
-          "WorkflowControl"), Utility.getContext(this, vars, "#User_Org", "WorkflowControl"), node);
+          "WorkflowControl"), Utility.getContext(this, vars, "#AccessibleOrgTree",
+          "WorkflowControl"), node);
     else
       data = WorkflowControlData.selectTrl(this, vars.getLanguage(), Utility.getContext(this, vars,
-          "#User_Client", "WorkflowControl"), Utility.getContext(this, vars, "#User_Org",
+          "#User_Client", "WorkflowControl"), Utility.getContext(this, vars, "#AccessibleOrgTree",
           "WorkflowControl"), node);
     if (data == null || data.length == 0)
       return "";
