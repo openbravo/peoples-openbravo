@@ -41,128 +41,122 @@ import org.openbravo.service.db.ImportResult;
 
 public class EntityXMLIssues extends XMLBaseTest {
 
-    /**
-     * Checks mantis issue 6212, issue text: When inserting reference data using
-     * DAL into ad_client 0 it should not generate new uuids but maintain the
-     * current ids but it is doing so.
-     */
-    public void _testMantis6212() {
-        cleanRefDataLoaded();
-        setErrorOccured(true);
-        setUserContext("1000001");
+  /**
+   * Checks mantis issue 6212, issue text: When inserting reference data using DAL into ad_client 0
+   * it should not generate new uuids but maintain the current ids but it is doing so.
+   */
+  public void _testMantis6212() {
+    cleanRefDataLoaded();
+    setErrorOccured(true);
+    setUserContext("1000001");
 
-        final List<Greeting> gs = getList(Greeting.class);
+    final List<Greeting> gs = getList(Greeting.class);
 
-        // only do one greeting
-        final Greeting greeting = (Greeting) DalUtil.copy(gs.get(0));
-        final String id = "" + System.currentTimeMillis();
-        greeting.setId(id);
-        final List<Greeting> newGs = new ArrayList<Greeting>();
-        newGs.add(greeting);
-        final String xml = getXML(newGs);
+    // only do one greeting
+    final Greeting greeting = (Greeting) DalUtil.copy(gs.get(0));
+    final String id = "" + System.currentTimeMillis();
+    greeting.setId(id);
+    final List<Greeting> newGs = new ArrayList<Greeting>();
+    newGs.add(greeting);
+    final String xml = getXML(newGs);
 
-        final ImportResult ir = DataImportService.getInstance()
-                .importDataFromXML(
-                        OBDal.getInstance().get(Client.class, "1000000"),
-                        OBDal.getInstance().get(Organization.class, "1000000"),
-                        xml);
+    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
+        OBDal.getInstance().get(Client.class, "1000000"),
+        OBDal.getInstance().get(Organization.class, "1000000"), xml);
 
-        if (ir.getException() != null) {
-            ir.getException().printStackTrace(System.err);
-            fail(ir.getException().getMessage());
-        }
-
-        assertEquals(1, ir.getInsertedObjects().size());
-        assertTrue(ir.getWarningMessages() == null);
-        final BaseOBObject bob = ir.getInsertedObjects().get(0);
-        assertEquals(id, bob.getId());
-        System.err.println(id);
-        setErrorOccured(false);
+    if (ir.getException() != null) {
+      ir.getException().printStackTrace(System.err);
+      fail(ir.getException().getMessage());
     }
 
-    /**
-     * Checks mantis issue 6213, issue text: When exporting/importing reference
-     * data for char columns dal trims the blank spaces so in case the column
-     * contains only blank spaces it is treated as null.
-     */
-    public void testMantis6213() {
-        final String spaces = "   ";
-        cleanRefDataLoaded();
-        setErrorOccured(true);
-        setUserContext("1000001");
+    assertEquals(1, ir.getInsertedObjects().size());
+    assertTrue(ir.getWarningMessages() == null);
+    final BaseOBObject bob = ir.getInsertedObjects().get(0);
+    assertEquals(id, bob.getId());
+    System.err.println(id);
+    setErrorOccured(false);
+  }
 
-        // update all greetings to have a name with spaces
-        {
-            final List<Greeting> gs = getList(Greeting.class);
-            for (final Greeting g : gs) {
-                g.setGreetingName(spaces);
-            }
-            OBDal.getInstance().commitAndClose();
-        }
+  /**
+   * Checks mantis issue 6213, issue text: When exporting/importing reference data for char columns
+   * dal trims the blank spaces so in case the column contains only blank spaces it is treated as
+   * null.
+   */
+  public void testMantis6213() {
+    final String spaces = "   ";
+    cleanRefDataLoaded();
+    setErrorOccured(true);
+    setUserContext("1000001");
 
-        final List<Greeting> gs = getList(Greeting.class);
-        for (final Greeting g : gs) {
-            assertEquals(spaces, g.getGreetingName());
-        }
-
-        // only do one greeting
-        final Greeting greeting = (Greeting) DalUtil.copy(gs.get(0));
-        final List<Greeting> newGs = new ArrayList<Greeting>();
-        final String id = "" + System.currentTimeMillis();
-        greeting.setId(id);
-        newGs.add(greeting);
-        final String xml = getXML(newGs);
-        assertTrue(xml.indexOf("<greetingName>   </greetingName>") != -1);
-
-        final ImportResult ir = DataImportService.getInstance()
-                .importDataFromXML(
-                        OBDal.getInstance().get(Client.class, "1000000"),
-                        OBDal.getInstance().get(Organization.class, "1000000"),
-                        xml);
-        if (ir.getException() != null) {
-            ir.getException().printStackTrace(System.err);
-            fail(ir.getException().getMessage());
-        }
-
-        assertEquals(1, ir.getInsertedObjects().size());
-        assertTrue(ir.getWarningMessages() == null);
-        final BaseOBObject bob = ir.getInsertedObjects().get(0);
-        assertEquals(id, bob.getId());
-
-        OBDal.getInstance().commitAndClose();
-
-        // now reread the greeting and check that the space is still there
-        final Greeting newGreeting = OBDal.getInstance()
-                .get(Greeting.class, id);
-        assertTrue(greeting != newGreeting);
-        assertEquals(spaces, newGreeting.getGreetingName());
-        setErrorOccured(false);
+    // update all greetings to have a name with spaces
+    {
+      final List<Greeting> gs = getList(Greeting.class);
+      for (final Greeting g : gs) {
+        g.setGreetingName(spaces);
+      }
+      OBDal.getInstance().commitAndClose();
     }
 
-    public <T extends BaseOBObject> List<T> getList(Class<T> clz) {
-        setErrorOccured(true);
-        final OBCriteria<T> obc = OBDal.getInstance().createCriteria(clz);
-        return obc.list();
+    final List<Greeting> gs = getList(Greeting.class);
+    for (final Greeting g : gs) {
+      assertEquals(spaces, g.getGreetingName());
     }
 
-    public <T extends BaseOBObject> String getXML(List<T> objs) {
-        setErrorOccured(true);
-        final EntityXMLConverter exc = EntityXMLConverter.newInstance();
-        exc.setOptionIncludeReferenced(true);
-        // exc.setOptionEmbedChildren(true);
-        // exc.setOptionIncludeChildren(true);
-        exc.setAddSystemAttributes(false);
-        return exc.toXML(new ArrayList<BaseOBObject>(objs));
+    // only do one greeting
+    final Greeting greeting = (Greeting) DalUtil.copy(gs.get(0));
+    final List<Greeting> newGs = new ArrayList<Greeting>();
+    final String id = "" + System.currentTimeMillis();
+    greeting.setId(id);
+    newGs.add(greeting);
+    final String xml = getXML(newGs);
+    assertTrue(xml.indexOf("<greetingName>   </greetingName>") != -1);
+
+    final ImportResult ir = DataImportService.getInstance().importDataFromXML(
+        OBDal.getInstance().get(Client.class, "1000000"),
+        OBDal.getInstance().get(Organization.class, "1000000"), xml);
+    if (ir.getException() != null) {
+      ir.getException().printStackTrace(System.err);
+      fail(ir.getException().getMessage());
     }
 
-    public <T extends BaseOBObject> String getXML(Class<T> clz) {
-        setErrorOccured(true);
-        final OBCriteria<T> obc = OBDal.getInstance().createCriteria(clz);
-        final EntityXMLConverter exc = EntityXMLConverter.newInstance();
-        exc.setOptionIncludeReferenced(true);
-        // exc.setOptionEmbedChildren(true);
-        // exc.setOptionIncludeChildren(true);
-        exc.setAddSystemAttributes(false);
-        return exc.toXML(new ArrayList<BaseOBObject>(obc.list()));
-    }
+    assertEquals(1, ir.getInsertedObjects().size());
+    assertTrue(ir.getWarningMessages() == null);
+    final BaseOBObject bob = ir.getInsertedObjects().get(0);
+    assertEquals(id, bob.getId());
+
+    OBDal.getInstance().commitAndClose();
+
+    // now reread the greeting and check that the space is still there
+    final Greeting newGreeting = OBDal.getInstance().get(Greeting.class, id);
+    assertTrue(greeting != newGreeting);
+    assertEquals(spaces, newGreeting.getGreetingName());
+    setErrorOccured(false);
+  }
+
+  public <T extends BaseOBObject> List<T> getList(Class<T> clz) {
+    setErrorOccured(true);
+    final OBCriteria<T> obc = OBDal.getInstance().createCriteria(clz);
+    return obc.list();
+  }
+
+  public <T extends BaseOBObject> String getXML(List<T> objs) {
+    setErrorOccured(true);
+    final EntityXMLConverter exc = EntityXMLConverter.newInstance();
+    exc.setOptionIncludeReferenced(true);
+    // exc.setOptionEmbedChildren(true);
+    // exc.setOptionIncludeChildren(true);
+    exc.setAddSystemAttributes(false);
+    return exc.toXML(new ArrayList<BaseOBObject>(objs));
+  }
+
+  public <T extends BaseOBObject> String getXML(Class<T> clz) {
+    setErrorOccured(true);
+    final OBCriteria<T> obc = OBDal.getInstance().createCriteria(clz);
+    final EntityXMLConverter exc = EntityXMLConverter.newInstance();
+    exc.setOptionIncludeReferenced(true);
+    // exc.setOptionEmbedChildren(true);
+    // exc.setOptionIncludeChildren(true);
+    exc.setAddSystemAttributes(false);
+    return exc.toXML(new ArrayList<BaseOBObject>(obc.list()));
+  }
 }

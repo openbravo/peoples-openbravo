@@ -34,26 +34,24 @@ import org.openbravo.service.db.DataExportService;
  */
 
 public class ClientExportTest extends XMLBaseTest {
-    public void _testListClients() {
-	setErrorOccured(true);
-	setUserContext("0");
-	final List<Client> cls = OBDal.getInstance().createCriteria(
-		Client.class).list();
-	for (Client c : cls) {
-	    System.err.println(c.getId() + " " + c.getName());
-	}
-	setErrorOccured(false);
+  public void _testListClients() {
+    setErrorOccured(true);
+    setUserContext("0");
+    final List<Client> cls = OBDal.getInstance().createCriteria(Client.class).list();
+    for (Client c : cls) {
+      System.err.println(c.getId() + " " + c.getName());
     }
+    setErrorOccured(false);
+  }
 
-    public void testExportClient() {
-	setErrorOccured(true);
-	setUserContext("0");
-	DataExportService des = DataExportService.getInstance();
-	final Map<String, Object> params = new HashMap<String, Object>();
-	params.put(DataExportService.CLIENT_ID_PARAMETER_NAME, "1000000");
-	final String xml = DataExportService.getInstance().exportClientToXML(
-		params);
-	setErrorOccured(false);
-    }
+  public void testExportClient() {
+    setErrorOccured(true);
+    setUserContext("0");
+    DataExportService des = DataExportService.getInstance();
+    final Map<String, Object> params = new HashMap<String, Object>();
+    params.put(DataExportService.CLIENT_ID_PARAMETER_NAME, "1000000");
+    final String xml = DataExportService.getInstance().exportClientToXML(params);
+    setErrorOccured(false);
+  }
 
 }

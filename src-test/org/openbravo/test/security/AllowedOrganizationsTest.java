@@ -38,72 +38,62 @@ import org.openbravo.test.base.BaseTest;
 
 public class AllowedOrganizationsTest extends BaseTest {
 
-    public void testOrganizationTree() {
-        setErrorOccured(true);
-        setBigBazaarAdminContext();
-        final OrganizationStructureProvider osp = new OrganizationStructureProvider();
-        osp.setClientId("1000000");
+  public void testOrganizationTree() {
+    setErrorOccured(true);
+    setBigBazaarAdminContext();
+    final OrganizationStructureProvider osp = new OrganizationStructureProvider();
+    osp.setClientId("1000000");
 
-        checkResult("1000001", osp, new String[] { "1000001" });
-        checkResult("1000002", osp, new String[] { "1000003", "1000004",
-                "1000000", "0", "1000002" });
-        checkResult("1000003", osp, new String[] { "1000003", "1000000", "0",
-                "1000002" });
-        checkResult("1000004", osp, new String[] { "1000004", "1000000", "0",
-                "1000002" });
-        checkResult("1000005", osp, new String[] { "1000009", "1000006", "0",
-                "1000000", "1000008", "1000005", "1000007" });
-        checkResult("1000006", osp, new String[] { "1000009", "1000006", "0",
-                "1000000", "1000008", "1000005" });
-        checkResult("1000007", osp, new String[] { "1000000", "0", "1000005",
-                "1000007" });
-        checkResult("1000008", osp, new String[] { "1000000", "1000006", "0",
-                "1000008", "1000005" });
-        checkResult("1000009", osp, new String[] { "1000009", "1000006", "0",
-                "1000000", "1000005" });
-        setErrorOccured(false);
+    checkResult("1000001", osp, new String[] { "1000001" });
+    checkResult("1000002", osp, new String[] { "1000003", "1000004", "1000000", "0", "1000002" });
+    checkResult("1000003", osp, new String[] { "1000003", "1000000", "0", "1000002" });
+    checkResult("1000004", osp, new String[] { "1000004", "1000000", "0", "1000002" });
+    checkResult("1000005", osp, new String[] { "1000009", "1000006", "0", "1000000", "1000008",
+        "1000005", "1000007" });
+    checkResult("1000006", osp, new String[] { "1000009", "1000006", "0", "1000000", "1000008",
+        "1000005" });
+    checkResult("1000007", osp, new String[] { "1000000", "0", "1000005", "1000007" });
+    checkResult("1000008", osp, new String[] { "1000000", "1000006", "0", "1000008", "1000005" });
+    checkResult("1000009", osp, new String[] { "1000009", "1000006", "0", "1000000", "1000005" });
+    setErrorOccured(false);
+  }
+
+  private void checkResult(String id, OrganizationStructureProvider osp, String[] values) {
+    final Set<String> result = osp.getNaturalTree(id);
+    assertEquals(values.length, result.size());
+    for (final String value : values) {
+      assertTrue(result.contains(value));
     }
+  }
 
-    private void checkResult(String id, OrganizationStructureProvider osp,
-            String[] values) {
-        final Set<String> result = osp.getNaturalTree(id);
-        assertEquals(values.length, result.size());
-        for (final String value : values) {
-            assertTrue(result.contains(value));
-        }
+  public void testProjectUpdate() {
+    setErrorOccured(true);
+    setUserContext("1000001");
+    final Project p = OBDal.getInstance().get(Project.class, "1000001");
+    p.setName(p.getName() + "A");
+    setErrorOccured(false);
+  }
+
+  public void testOrganizationCheck() {
+    setErrorOccured(true);
+    setUserContext("0");
+    OBContext.getOBContext().getOrganizationStructureProvider().reInitialize();
+
+    final Project p = OBDal.getInstance().get(Project.class, "1000001");
+    final Organization o5 = OBDal.getInstance().get(Organization.class, "1000005");
+    final Organization o3 = OBDal.getInstance().get(Organization.class, "1000001");
+    p.setOrganization(o3);
+    p.getBusinessPartner().setOrganization(o5);
+
+    try {
+      SessionHandler.getInstance().commitAndClose();
+      fail();
+    } catch (final OBSecurityException e) {
+      assertTrue("Invalid exception " + e.getMessage(), e.getMessage().indexOf(
+          "which is not part of the natural tree of") != -1);
+      // no fail!
+      SessionHandler.getInstance().rollback();
     }
-
-    public void testProjectUpdate() {
-        setErrorOccured(true);
-        setUserContext("1000001");
-        final Project p = OBDal.getInstance().get(Project.class, "1000001");
-        p.setName(p.getName() + "A");
-        setErrorOccured(false);
-    }
-
-    public void testOrganizationCheck() {
-        setErrorOccured(true);
-        setUserContext("0");
-        OBContext.getOBContext().getOrganizationStructureProvider()
-                .reInitialize();
-
-        final Project p = OBDal.getInstance().get(Project.class, "1000001");
-        final Organization o5 = OBDal.getInstance().get(Organization.class,
-                "1000005");
-        final Organization o3 = OBDal.getInstance().get(Organization.class,
-                "1000001");
-        p.setOrganization(o3);
-        p.getBusinessPartner().setOrganization(o5);
-
-        try {
-            SessionHandler.getInstance().commitAndClose();
-            fail();
-        } catch (final OBSecurityException e) {
-            assertTrue("Invalid exception " + e.getMessage(), e.getMessage()
-                    .indexOf("which is not part of the natural tree of") != -1);
-            // no fail!
-            SessionHandler.getInstance().rollback();
-        }
-        setErrorOccured(false);
-    }
+    setErrorOccured(false);
+  }
 }

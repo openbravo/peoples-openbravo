@@ -38,38 +38,34 @@ import org.openbravo.test.base.BaseTest;
 
 public class SystemServiceTest extends BaseTest {
 
-    public void testChangedDataSet() {
-	setErrorOccured(true);
-	setUserContext("0");
-	final List<DataSet> dss = OBDal.getInstance().createCriteria(
-		DataSet.class).list();
-	final Date now = new Date(System.currentTimeMillis());
-	for (DataSet ds : dss) {
-	    assertFalse(SystemService.getInstance().hasChanged(ds, now));
-	}
-
-	// 600 days in the past
-	final Date past = new Date(System.currentTimeMillis()
-		- (1000 * 60 * 60 * 24 * 600));
-	for (DataSet ds : dss) {
-	    assertTrue(SystemService.getInstance().hasChanged(ds, past));
-	}
-	setErrorOccured(false);
+  public void testChangedDataSet() {
+    setErrorOccured(true);
+    setUserContext("0");
+    final List<DataSet> dss = OBDal.getInstance().createCriteria(DataSet.class).list();
+    final Date now = new Date(System.currentTimeMillis());
+    for (DataSet ds : dss) {
+      assertFalse(SystemService.getInstance().hasChanged(ds, now));
     }
 
-    public void testChangedClasses() {
-	setErrorOccured(true);
-	setUserContext("0");
-	final Class<?>[] clzs = new Class<?>[] { Table.class, Column.class,
-		Reference.class };
-
-	final Date now = new Date(System.currentTimeMillis());
-	assertFalse(SystemService.getInstance().hasChanged(clzs, now));
-
-	// 600 days in the past
-	final Date past = new Date(System.currentTimeMillis()
-		- (1000 * 60 * 60 * 24 * 600));
-	assertTrue(SystemService.getInstance().hasChanged(clzs, past));
-	setErrorOccured(false);
+    // 600 days in the past
+    final Date past = new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24 * 600));
+    for (DataSet ds : dss) {
+      assertTrue(SystemService.getInstance().hasChanged(ds, past));
     }
+    setErrorOccured(false);
+  }
+
+  public void testChangedClasses() {
+    setErrorOccured(true);
+    setUserContext("0");
+    final Class<?>[] clzs = new Class<?>[] { Table.class, Column.class, Reference.class };
+
+    final Date now = new Date(System.currentTimeMillis());
+    assertFalse(SystemService.getInstance().hasChanged(clzs, now));
+
+    // 600 days in the past
+    final Date past = new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24 * 600));
+    assertTrue(SystemService.getInstance().hasChanged(clzs, past));
+    setErrorOccured(false);
+  }
 }

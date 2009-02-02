@@ -29,8 +29,8 @@ import org.openbravo.dal.service.OBDal;
 
 public class ImportReferenceDataTest extends BaseAntTest {
 
-    public void testImportReferenceData() {
-        doTest("import.reference.data");
-        OBDal.getInstance().commitAndClose();
-    }
+  public void testImportReferenceData() {
+    doTest("import.reference.data");
+    OBDal.getInstance().commitAndClose();
+  }
 }

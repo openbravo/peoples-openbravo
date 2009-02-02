@@ -27,7 +27,7 @@ package org.openbravo.test.ant;
 
 public class CreateDatabaseTest extends BaseAntTest {
 
-    public void testCompileComplete() {
-        doTest("create.database");
-    }
+  public void testCompileComplete() {
+    doTest("create.database");
+  }
 }

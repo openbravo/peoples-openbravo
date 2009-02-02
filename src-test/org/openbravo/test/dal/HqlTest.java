@@ -35,41 +35,41 @@ import org.openbravo.test.base.BaseTest;
  */
 
 public class HqlTest extends BaseTest {
-    // creates a new BPGroup, test simple save, BPGroup is removed in next test
-    public void testDalWhereClause() {
-        setErrorOccured(true);
-        setUserContext("100");
-        // final String where =
-        // " tree.id='10' and exists( from ADMenu as menu where menu.id = node_id and menu.module.id='0')"
-        // ;
-        final String where = "callout.module.id='0' or reference.module.id='0'";
-        // or form.module.id='0' or process.module.id='0' or
-        // workflow.module.id='0' or tab.module.id='0'";
-        // (callout is not null and callout.module.id='0') or (reference is not
-        // null and reference.module.id='0') or (form is not null and
-        // form.module.id='0') or (process is not null and
-        // process.module.id='0') or (workflow is not null and
-        // workflow.module.id='0') or (tab is not null and tab.module.id='0')
-        final OBQuery<ModelImplementation> obq = OBDal.getInstance()
-                .createQuery(ModelImplementation.class, where);
-        for (final BaseOBObject o : obq.list()) {
-            System.err.println(o.getIdentifier());
-        }
-        setErrorOccured(false);
+  // creates a new BPGroup, test simple save, BPGroup is removed in next test
+  public void testDalWhereClause() {
+    setErrorOccured(true);
+    setUserContext("100");
+    // final String where =
+    // " tree.id='10' and exists( from ADMenu as menu where menu.id = node_id and menu.module.id='0')"
+    // ;
+    final String where = "callout.module.id='0' or reference.module.id='0'";
+    // or form.module.id='0' or process.module.id='0' or
+    // workflow.module.id='0' or tab.module.id='0'";
+    // (callout is not null and callout.module.id='0') or (reference is not
+    // null and reference.module.id='0') or (form is not null and
+    // form.module.id='0') or (process is not null and
+    // process.module.id='0') or (workflow is not null and
+    // workflow.module.id='0') or (tab is not null and tab.module.id='0')
+    final OBQuery<ModelImplementation> obq = OBDal.getInstance().createQuery(
+        ModelImplementation.class, where);
+    for (final BaseOBObject o : obq.list()) {
+      System.err.println(o.getIdentifier());
+    }
+    setErrorOccured(false);
+  }
+
+  // query for the BPGroup again and remove it
+  public void testHql() {
+    setErrorOccured(true);
+    setUserContext("100");
+
+    final Session s = SessionHandler.getInstance().getSession();
+    final Query q = s
+        .createQuery("select mo from ADModelObject as mo left join mo.callout left join mo.reference where mo.callout.module.id='0' or mo.reference.module.id='0'");
+    for (final Object o : q.list()) {
+      System.err.println(((BaseOBObject) o).getIdentifier());
     }
 
-    // query for the BPGroup again and remove it
-    public void testHql() {
-        setErrorOccured(true);
-        setUserContext("100");
-
-        final Session s = SessionHandler.getInstance().getSession();
-        final Query q = s
-                .createQuery("select mo from ADModelObject as mo left join mo.callout left join mo.reference where mo.callout.module.id='0' or mo.reference.module.id='0'");
-        for (final Object o : q.list()) {
-            System.err.println(((BaseOBObject) o).getIdentifier());
-        }
-
-        setErrorOccured(false);
-    }
+    setErrorOccured(false);
+  }
 }

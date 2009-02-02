@@ -31,27 +31,26 @@ import org.openbravo.wad.Wad;
 
 public class CompileTest extends BaseAntTest {
 
-    public void testCompileComplete() {
-        PropertyConfigurator.configure(this.getClass().getResource(
-                "/log4j.properties"));
+  public void testCompileComplete() {
+    PropertyConfigurator.configure(this.getClass().getResource("/log4j.properties"));
 
-        final String[] args = new String[5];
-        args[0] = "config"; // ${base.config}'
-        args[1] = "%";// '${tab}'
-        args[2] = "srcAD/org/openbravo/erpWindows"; // '${build.AD}/org/openbravo/erpWindows'
-        args[3] = "srcAD/org/openbravo/erpCommon"; //
-        args[4] = "build/javasqlc/src"; // '${build.sqlc}/src'
-        // args[5] = '${webTab}'
-        // '${build.AD}/org/openbravo/erpCommon/ad_actionButton'
-        // '${base.design}' '${base.translate.structure}' '${client.web.xml}'
-        // '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}'
-        // '${module}'
-        try {
-            Wad.main(args);
-        } catch (final Exception e) {
-            throw new OBException(e);
-        }
-
-        // doTest("compile");
+    final String[] args = new String[5];
+    args[0] = "config"; // ${base.config}'
+    args[1] = "%";// '${tab}'
+    args[2] = "srcAD/org/openbravo/erpWindows"; // '${build.AD}/org/openbravo/erpWindows'
+    args[3] = "srcAD/org/openbravo/erpCommon"; //
+    args[4] = "build/javasqlc/src"; // '${build.sqlc}/src'
+    // args[5] = '${webTab}'
+    // '${build.AD}/org/openbravo/erpCommon/ad_actionButton'
+    // '${base.design}' '${base.translate.structure}' '${client.web.xml}'
+    // '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}'
+    // '${module}'
+    try {
+      Wad.main(args);
+    } catch (final Exception e) {
+      throw new OBException(e);
     }
+
+    // doTest("compile");
+  }
 }

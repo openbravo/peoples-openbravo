@@ -33,38 +33,33 @@ import org.openbravo.test.base.BaseTest;
 /**
  * Test different parts of the dal api.
  * 
- * Note the testcases assume that they are run in the order defined in this
- * class.
+ * Note the testcases assume that they are run in the order defined in this class.
  * 
  * @author mtaal
  */
 
 public class EvaluationTest extends BaseTest {
 
-    public void testEvaluation() {
-        setErrorOccured(true);
-        setUserContext("0");
+  public void testEvaluation() {
+    setErrorOccured(true);
+    setUserContext("0");
 
-        // as a test print scripting language names
-        final ScriptEngineManager manager = new ScriptEngineManager();
-        for (final ScriptEngineFactory sef : manager.getEngineFactories()) {
-            System.err.println(sef.getEngineName());
-        }
-
-        final List<Table> tables = OBDal.getInstance().createCriteria(
-                Table.class).list();
-        boolean found = false;
-        for (final Table t : tables) {
-            final String script = Table.PROPERTY_CLIENT + "."
-                    + Client.PROPERTY_ID + " == '0' && "
-                    + Table.PROPERTY_TABLENAME + "== 'AD_Client' && "
-                    + Table.PROPERTY_ACCESSLEVEL + " > 5";
-            final Boolean result = Evaluator.getInstance().evaluateBoolean(t,
-                    script);
-            System.err.println(t.getName() + " : " + result);
-            found = found || result;
-        }
-        assertTrue(found);
-        setErrorOccured(false);
+    // as a test print scripting language names
+    final ScriptEngineManager manager = new ScriptEngineManager();
+    for (final ScriptEngineFactory sef : manager.getEngineFactories()) {
+      System.err.println(sef.getEngineName());
     }
+
+    final List<Table> tables = OBDal.getInstance().createCriteria(Table.class).list();
+    boolean found = false;
+    for (final Table t : tables) {
+      final String script = Table.PROPERTY_CLIENT + "." + Client.PROPERTY_ID + " == '0' && "
+          + Table.PROPERTY_TABLENAME + "== 'AD_Client' && " + Table.PROPERTY_ACCESSLEVEL + " > 5";
+      final Boolean result = Evaluator.getInstance().evaluateBoolean(t, script);
+      System.err.println(t.getName() + " : " + result);
+      found = found || result;
+    }
+    assertTrue(found);
+    setErrorOccured(false);
+  }
 }

@@ -39,124 +39,114 @@ import org.openbravo.dal.xml.EntityXMLConverter;
 import org.openbravo.test.base.BaseTest;
 
 /**
- * Test for updates which can happen behind the scenes (but should not happen)
- * if properties are accidentally changed.
+ * Test for updates which can happen behind the scenes (but should not happen) if properties are
+ * accidentally changed.
  * 
- * Note the testcases assume that they are run in the order defined in this
- * class.
+ * Note the testcases assume that they are run in the order defined in this class.
  * 
  * @author mtaal
  */
 
 public class HiddenUpdateTest extends BaseTest {
 
-    // Test for hidden updates, these are not allowed!
-    // Hidden updates can occur when a load/read of an entity also
-    // changes the state, or that hibernate detects dirty in another way
-    public void testHiddenUpdates() {
-        setErrorOccured(true);
-        setUserContext("0");
+  // Test for hidden updates, these are not allowed!
+  // Hidden updates can occur when a load/read of an entity also
+  // changes the state, or that hibernate detects dirty in another way
+  public void testHiddenUpdates() {
+    setErrorOccured(true);
+    setUserContext("0");
 
-        final SessionFactoryController currentSFC = SessionFactoryController
-                .getInstance();
-        OBContext.getOBContext().setInAdministratorMode(true);
-        try {
-            final SessionFactoryController newSFC = new LocalSessionFactoryController();
-            SessionFactoryController.setInstance(newSFC);
-            SessionFactoryController.getInstance().reInitialize();
-            SessionHandler.getInstance().commitAndClose();
+    final SessionFactoryController currentSFC = SessionFactoryController.getInstance();
+    OBContext.getOBContext().setInAdministratorMode(true);
+    try {
+      final SessionFactoryController newSFC = new LocalSessionFactoryController();
+      SessionFactoryController.setInstance(newSFC);
+      SessionFactoryController.getInstance().reInitialize();
+      SessionHandler.getInstance().commitAndClose();
 
-            // System.err.println(SessionFactoryController.getInstance().
-            // getMapping());
+      // System.err.println(SessionFactoryController.getInstance().
+      // getMapping());
 
-            final Configuration cfg = DalSessionFactoryController.getInstance()
-                    .getConfiguration();
+      final Configuration cfg = DalSessionFactoryController.getInstance().getConfiguration();
 
-            for (final Iterator<?> it = cfg.getClassMappings(); it.hasNext();) {
-                final PersistentClass pc = (PersistentClass) it.next();
-                final String entityName = pc.getEntityName();
+      for (final Iterator<?> it = cfg.getClassMappings(); it.hasNext();) {
+        final PersistentClass pc = (PersistentClass) it.next();
+        final String entityName = pc.getEntityName();
 
-                final Entity e = ModelProvider.getInstance().getEntity(
-                        entityName);
+        final Entity e = ModelProvider.getInstance().getEntity(entityName);
 
-                if (entityName.startsWith("C_Selection")) {
-                    continue;
-                }
-                System.err.println("++++++++ Reading entity " + entityName
-                        + " +++++++++++");
-                for (final Object o : OBDal.getInstance().createCriteria(
-                        entityName).list()) {
-                    if (o == null) {
-                        // can occur when reading views which have nullable
-                        // columns in a
-                        // multi-column pk
-                        continue;
-                    }
-                    EntityXMLConverter.newInstance().toXML((BaseOBObject) o);
-                }
-                SessionHandler.getInstance().commitAndClose();
-            }
-        } finally {
-            SessionFactoryController.setInstance(currentSFC);
-            OBContext.getOBContext().setInAdministratorMode(false);
+        if (entityName.startsWith("C_Selection")) {
+          continue;
         }
-        setErrorOccured(false);
+        System.err.println("++++++++ Reading entity " + entityName + " +++++++++++");
+        for (final Object o : OBDal.getInstance().createCriteria(entityName).list()) {
+          if (o == null) {
+            // can occur when reading views which have nullable
+            // columns in a
+            // multi-column pk
+            continue;
+          }
+          EntityXMLConverter.newInstance().toXML((BaseOBObject) o);
+        }
+        SessionHandler.getInstance().commitAndClose();
+      }
+    } finally {
+      SessionFactoryController.setInstance(currentSFC);
+      OBContext.getOBContext().setInAdministratorMode(false);
+    }
+    setErrorOccured(false);
+  }
+
+  class LocalSessionFactoryController extends DalSessionFactoryController {
+    @Override
+    protected void setInterceptor(Configuration configuration) {
+      configuration.setInterceptor(new LocalInterceptor());
+    }
+  }
+
+  class LocalInterceptor extends EmptyInterceptor {
+
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    public boolean onLoad(Object entity, Serializable id, Object[] state, String[] propertyNames,
+        Type[] types) {
+      return false;
     }
 
-    class LocalSessionFactoryController extends DalSessionFactoryController {
-        @Override
-        protected void setInterceptor(Configuration configuration) {
-            configuration.setInterceptor(new LocalInterceptor());
-        }
+    @Override
+    public void onDelete(Object entity, Serializable id, Object[] state, String[] propertyNames,
+        Type[] types) {
+      fail();
     }
 
-    class LocalInterceptor extends EmptyInterceptor {
-
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        public boolean onLoad(Object entity, Serializable id, Object[] state,
-                String[] propertyNames, Type[] types) {
-            return false;
-        }
-
-        @Override
-        public void onDelete(Object entity, Serializable id, Object[] state,
-                String[] propertyNames, Type[] types) {
-            fail();
-        }
-
-        @Override
-        public boolean onFlushDirty(Object entity, Serializable id,
-                Object[] currentState, Object[] previousState,
-                String[] propertyNames, Type[] types) {
-            fail();
-            return false;
-        }
-
-        @Override
-        public boolean onSave(Object entity, Serializable id, Object[] state,
-                String[] propertyNames, Type[] types) {
-            fail();
-            return false;
-        }
-
-        @Override
-        public void onCollectionRemove(Object collection, Serializable key)
-                throws CallbackException {
-            fail();
-        }
-
-        @Override
-        public void onCollectionRecreate(Object collection, Serializable key)
-                throws CallbackException {
-            fail();
-        }
-
-        @Override
-        public void onCollectionUpdate(Object collection, Serializable key)
-                throws CallbackException {
-            fail();
-        }
+    @Override
+    public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState,
+        Object[] previousState, String[] propertyNames, Type[] types) {
+      fail();
+      return false;
     }
+
+    @Override
+    public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames,
+        Type[] types) {
+      fail();
+      return false;
+    }
+
+    @Override
+    public void onCollectionRemove(Object collection, Serializable key) throws CallbackException {
+      fail();
+    }
+
+    @Override
+    public void onCollectionRecreate(Object collection, Serializable key) throws CallbackException {
+      fail();
+    }
+
+    @Override
+    public void onCollectionUpdate(Object collection, Serializable key) throws CallbackException {
+      fail();
+    }
+  }
 }

@@ -41,67 +41,64 @@ import org.openbravo.test.base.BaseTest;
 
 public class MappingGenerationTest extends BaseTest {
 
-    public void _testMappingGeneration() {
-        DalMappingGenerator.getInstance().generateMapping();
-    }
+  public void _testMappingGeneration() {
+    DalMappingGenerator.getInstance().generateMapping();
+  }
 
-    public void testAllPageReadAll() {
-        setErrorOccured(true);
-        setBigBazaarAdminContext();
-        final Configuration cfg = SessionFactoryController.getInstance()
-                .getConfiguration();
-        for (final Iterator<?> it = cfg.getClassMappings(); it.hasNext();) {
-            final PersistentClass pc = (PersistentClass) it.next();
-            final String entityName = pc.getEntityName();
+  public void testAllPageReadAll() {
+    setErrorOccured(true);
+    setBigBazaarAdminContext();
+    final Configuration cfg = SessionFactoryController.getInstance().getConfiguration();
+    for (final Iterator<?> it = cfg.getClassMappings(); it.hasNext();) {
+      final PersistentClass pc = (PersistentClass) it.next();
+      final String entityName = pc.getEntityName();
 
-            // System.err.println("++++++++ Reading entity " + entityName +
-            // " +++++++++++");
+      // System.err.println("++++++++ Reading entity " + entityName +
+      // " +++++++++++");
 
-            // do ordering for some of the classes
-            boolean orderOnName = false;
-            try {
-                if (pc.getProperty("name") != null) {
-                    orderOnName = true;
-                }
-            } catch (final MappingException m) {
-                // ignore on purpose
-            }
-            try {
-                final int count = OBDal.getInstance()
-                        .createCriteria(entityName).count();
-                final int pageSize = 5;
-                int pageCount = 1 + (count / pageSize);
-                if (pageCount > 25) {
-                    // System.err.println("Pagecount " + pageCount +
-                    // " setting to max 25 because of performance reasons");
-                    pageCount = 25;
-                }
-                for (int i = 0; i < pageCount; i++) {
-                    final OBCriteria<BaseOBObject> obc = OBDal.getInstance()
-                            .createCriteria(entityName);
-                    obc.setFirstResult(i * pageSize);
-                    obc.setMaxResults(pageSize);
-                    if (orderOnName) {
-                        obc.addOrderBy("name", true);
-                    }
-
-                    // System.err.println("PAGE>>> " + (1 + i));
-                    for (final Object o : obc.list()) {
-                        if (o instanceof Identifiable) {
-                            // final Identifiable n = (Identifiable) o;
-                            // System.err.println(entityName + ": " +
-                            // n.getIdentifier());
-                        } else {
-                            // System.err.println(entityName + ": " + o);
-                        }
-                    }
-                }
-            } catch (final Exception e) {
-                System.err.println("Exception for entity: " + entityName);
-                e.printStackTrace(System.err);
-            }
-            SessionHandler.getInstance().commitAndClose();
+      // do ordering for some of the classes
+      boolean orderOnName = false;
+      try {
+        if (pc.getProperty("name") != null) {
+          orderOnName = true;
         }
-        setErrorOccured(false);
+      } catch (final MappingException m) {
+        // ignore on purpose
+      }
+      try {
+        final int count = OBDal.getInstance().createCriteria(entityName).count();
+        final int pageSize = 5;
+        int pageCount = 1 + (count / pageSize);
+        if (pageCount > 25) {
+          // System.err.println("Pagecount " + pageCount +
+          // " setting to max 25 because of performance reasons");
+          pageCount = 25;
+        }
+        for (int i = 0; i < pageCount; i++) {
+          final OBCriteria<BaseOBObject> obc = OBDal.getInstance().createCriteria(entityName);
+          obc.setFirstResult(i * pageSize);
+          obc.setMaxResults(pageSize);
+          if (orderOnName) {
+            obc.addOrderBy("name", true);
+          }
+
+          // System.err.println("PAGE>>> " + (1 + i));
+          for (final Object o : obc.list()) {
+            if (o instanceof Identifiable) {
+              // final Identifiable n = (Identifiable) o;
+              // System.err.println(entityName + ": " +
+              // n.getIdentifier());
+            } else {
+              // System.err.println(entityName + ": " + o);
+            }
+          }
+        }
+      } catch (final Exception e) {
+        System.err.println("Exception for entity: " + entityName);
+        e.printStackTrace(System.err);
+      }
+      SessionHandler.getInstance().commitAndClose();
     }
+    setErrorOccured(false);
+  }
 }

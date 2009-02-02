@@ -39,29 +39,27 @@ import org.openbravo.service.db.DataExportService;
 
 public class ClientDataSetCompleteTest extends XMLBaseTest {
 
-    public void testDataSetComplete() {
-        setUserContext("0");
-        final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(
-                DataSet.class);
-        obc.add(Expression.eq("name", DataExportService.CLIENT_DATA_SET_NAME));
-        if (obc.list().size() == 0) {
-            throw new OBException("No dataset found with name "
-                    + DataExportService.CLIENT_DATA_SET_NAME);
-        }
-        final DataSet dataSet = obc.list().get(0);
-        final File dir = new File(
-                "/home/mtaal/mydata/dev/workspaces/obtrunk/openbravo/src-db/database/sampledata");
-        final Set<String> names = new HashSet<String>();
-        for (final File child : dir.listFiles()) {
-            if (!child.isDirectory()) {
-                names.add(child.getName());
-            }
-        }
-        for (final DataSetTable dst : dataSet.getDataSetTableList()) {
-            names.remove(dst.getTable().getTableName().toUpperCase() + ".xml");
-        }
-        for (final String name : names) {
-            System.err.println(name);
-        }
+  public void testDataSetComplete() {
+    setUserContext("0");
+    final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(DataSet.class);
+    obc.add(Expression.eq("name", DataExportService.CLIENT_DATA_SET_NAME));
+    if (obc.list().size() == 0) {
+      throw new OBException("No dataset found with name " + DataExportService.CLIENT_DATA_SET_NAME);
     }
+    final DataSet dataSet = obc.list().get(0);
+    final File dir = new File(
+        "/home/mtaal/mydata/dev/workspaces/obtrunk/openbravo/src-db/database/sampledata");
+    final Set<String> names = new HashSet<String>();
+    for (final File child : dir.listFiles()) {
+      if (!child.isDirectory()) {
+        names.add(child.getName());
+      }
+    }
+    for (final DataSetTable dst : dataSet.getDataSetTableList()) {
+      names.remove(dst.getTable().getTableName().toUpperCase() + ".xml");
+    }
+    for (final String name : names) {
+      System.err.println(name);
+    }
+  }
 }

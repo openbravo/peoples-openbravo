@@ -29,8 +29,8 @@ import org.openbravo.service.system.ReloadContext;
 
 public class RestartTomcatTest extends BaseAntTest {
 
-    public void testRestart() {
-        ReloadContext.reload();
-        // RestartTomcat.restart();
-    }
+  public void testRestart() {
+    ReloadContext.reload();
+    // RestartTomcat.restart();
+  }
 }

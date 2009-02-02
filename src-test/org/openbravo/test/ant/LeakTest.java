@@ -35,38 +35,36 @@ import org.openbravo.erpCommon.utility.AntExecutor;
 
 public class LeakTest extends org.openbravo.test.base.BaseTest {
 
-    public void testLeak() {
-        setBigBazaarAdminContext();
-        for (int i = 0; i < 20; i++) {
-            doTestLeak();
-        }
+  public void testLeak() {
+    setBigBazaarAdminContext();
+    for (int i = 0; i < 20; i++) {
+      doTestLeak();
     }
+  }
 
-    private void doTestLeak() {
-        try {
-            final AntExecutor ant = new AntExecutor(
-                    "/home/mtaal/mydata/dev/workspaces/obtrunk/openbravo");
-            final String fileName = new SimpleDateFormat("yyyyMMddHHmmss")
-                    .format(new Date())
-                    + "-apply.log";
-            // final OBPrintStream obps=new OBPrintStream(new
-            // PrintStream(response.getOutputStream()));
-            // System.setOut(obps);
+  private void doTestLeak() {
+    try {
+      final AntExecutor ant = new AntExecutor("/home/mtaal/mydata/dev/workspaces/obtrunk/openbravo");
+      final String fileName = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())
+          + "-apply.log";
+      // final OBPrintStream obps=new OBPrintStream(new
+      // PrintStream(response.getOutputStream()));
+      // System.setOut(obps);
 
-            // ant.setOBPrintStreamLog(response.getWriter());
-            ant.setOBPrintStreamLog(System.err);
-            // obps.setLogFile(new File(fileName+".db"));
-            ant.setLogFileInOBPrintStream(new File(fileName));
+      // ant.setOBPrintStreamLog(response.getWriter());
+      ant.setOBPrintStreamLog(System.err);
+      // obps.setLogFile(new File(fileName+".db"));
+      ant.setLogFileInOBPrintStream(new File(fileName));
 
-            final Vector<String> tasks = new Vector<String>();
-            // tasks.add("apply.modules");
-            tasks.add("generate.entities");
+      final Vector<String> tasks = new Vector<String>();
+      // tasks.add("apply.modules");
+      tasks.add("generate.entities");
 
-            ant.runTask(tasks);
+      ant.runTask(tasks);
 
-            ant.setFinished(true);
-        } catch (final Exception e) {
-            throw new OBException(e);
-        }
+      ant.setFinished(true);
+    } catch (final Exception e) {
+      throw new OBException(e);
     }
+  }
 }

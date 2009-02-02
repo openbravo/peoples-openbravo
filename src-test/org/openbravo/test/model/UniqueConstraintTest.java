@@ -40,44 +40,41 @@ import org.openbravo.test.base.BaseTest;
 
 public class UniqueConstraintTest extends BaseTest {
 
-    public void testUniqueConstraintLoad() {
-        final Entity entity = ModelProvider.getInstance().getEntityByTableName(
-                "C_Country_Trl");
-        assertEquals(1, entity.getUniqueConstraints().size());
-        dumpUniqueConstraints();
-    }
+  public void testUniqueConstraintLoad() {
+    final Entity entity = ModelProvider.getInstance().getEntityByTableName("C_Country_Trl");
+    assertEquals(1, entity.getUniqueConstraints().size());
+    dumpUniqueConstraints();
+  }
 
-    public void testUniqueConstraintQuerying() {
-        setUserContext("1000001");
-        OBContext.getOBContext().setInAdministratorMode(true);
-        final List<Country> countries = OBDal.getInstance().createCriteria(
-                Country.class).list();
-        assertTrue(countries.size() > 0);
-        for (final Country c : countries) {
-            // make copy to not interfere with hibernate's auto update mechanism
-            final Country copy = (Country) DalUtil.copy(c);
-            copy.setId("test");
-            final List<BaseOBObject> queried = OBDal.getInstance()
-                    .findUniqueConstrainedObjects(copy);
-            assertEquals(1, queried.size());
-            assertEquals(c.getId(), queried.get(0).getId());
-        }
+  public void testUniqueConstraintQuerying() {
+    setUserContext("1000001");
+    OBContext.getOBContext().setInAdministratorMode(true);
+    final List<Country> countries = OBDal.getInstance().createCriteria(Country.class).list();
+    assertTrue(countries.size() > 0);
+    for (final Country c : countries) {
+      // make copy to not interfere with hibernate's auto update mechanism
+      final Country copy = (Country) DalUtil.copy(c);
+      copy.setId("test");
+      final List<BaseOBObject> queried = OBDal.getInstance().findUniqueConstrainedObjects(copy);
+      assertEquals(1, queried.size());
+      assertEquals(c.getId(), queried.get(0).getId());
     }
+  }
 
-    // dump uniqueconstraints
-    private void dumpUniqueConstraints() {
-        for (final Entity e : ModelProvider.getInstance().getModel()) {
-            if (e.getUniqueConstraints().size() > 0) {
-                for (final UniqueConstraint uc : e.getUniqueConstraints()) {
-                    System.err.println(">>> Entity " + e);
-                    System.err.println("UniqueConstraint " + uc.getName());
-                    for (final Property p : uc.getProperties()) {
-                        System.err.print(p.getName() + " ");
-                    }
-                }
-                System.err.println("");
-            }
+  // dump uniqueconstraints
+  private void dumpUniqueConstraints() {
+    for (final Entity e : ModelProvider.getInstance().getModel()) {
+      if (e.getUniqueConstraints().size() > 0) {
+        for (final UniqueConstraint uc : e.getUniqueConstraints()) {
+          System.err.println(">>> Entity " + e);
+          System.err.println("UniqueConstraint " + uc.getName());
+          for (final Property p : uc.getProperties()) {
+            System.err.print(p.getName() + " ");
+          }
         }
+        System.err.println("");
+      }
     }
+  }
 
 }

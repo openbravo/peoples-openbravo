@@ -43,95 +43,93 @@ import org.openbravo.service.db.ReferenceDataTask;
 
 public class ClientExportImportTest extends XMLBaseTest {
 
-    public void testImportReferenceData() {
-	setErrorOccured(true);
-	setUserContext("0");
+  public void testImportReferenceData() {
+    setErrorOccured(true);
+    setUserContext("0");
 
-	final String sourcePath = OBPropertiesProvider.getInstance()
-		.getOpenbravoProperties().getProperty("source.path");
-	final File importDir = new File(sourcePath,
-		ReferenceDataTask.REFERENCE_DATA_DIRECTORY);
+    final String sourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("source.path");
+    final File importDir = new File(sourcePath, ReferenceDataTask.REFERENCE_DATA_DIRECTORY);
 
-	for (final File importFile : importDir.listFiles()) {
-	    if (importFile.isDirectory()) {
-		continue;
-	    }
-	    String xml = DbUtility.readFile(importFile);
-	    final ClientImportProcessor importProcessor = new ClientImportProcessor();
-	    importProcessor.setNewName(null);
-	    final ImportResult ir = DataImportService.getInstance()
-		    .importClientData(xml, importProcessor);
-	    xml = null; // set to null to make debugging faster
-	    if (ir.hasErrorOccured()) {
-		if (ir.getException() != null) {
-		    throw new OBException(ir.getException());
-		}
-		if (ir.getErrorMessages() != null) {
-		    throw new OBException(ir.getErrorMessages());
-		}
-	    }
-	}
-	setErrorOccured(false);
+    for (final File importFile : importDir.listFiles()) {
+      if (importFile.isDirectory()) {
+        continue;
+      }
+      String xml = DbUtility.readFile(importFile);
+      final ClientImportProcessor importProcessor = new ClientImportProcessor();
+      importProcessor.setNewName(null);
+      final ImportResult ir = DataImportService.getInstance()
+          .importClientData(xml, importProcessor);
+      xml = null; // set to null to make debugging faster
+      if (ir.hasErrorOccured()) {
+        if (ir.getException() != null) {
+          throw new OBException(ir.getException());
+        }
+        if (ir.getErrorMessages() != null) {
+          throw new OBException(ir.getErrorMessages());
+        }
+      }
+    }
+    setErrorOccured(false);
+  }
+
+  public void _testExportImportClient1000000() {
+    exportImport("1000000");
+  }
+
+  public void _testExportImportClient1000001() {
+    exportImport("1000001");
+  }
+
+  private void exportImport(String clientId) {
+    setErrorOccured(true);
+    setUserContext("0");
+    final Map<String, Object> parameters = new HashMap<String, Object>();
+    parameters.put(DataExportService.CLIENT_ID_PARAMETER_NAME, clientId);
+    String xml = DataExportService.getInstance().exportClientToXML(parameters);
+
+    try {
+      final File f = new File("/tmp/export.xml");
+      if (f.exists()) {
+        f.delete();
+      }
+      final FileWriter fw = new FileWriter(f);
+      fw.write(xml);
+      fw.close();
+    } catch (final Exception e) {
+      throw new OBException(e);
     }
 
-    public void _testExportImportClient1000000() {
-	exportImport("1000000");
+    final ClientImportProcessor importProcessor = new ClientImportProcessor();
+    importProcessor.setNewName("" + System.currentTimeMillis());
+    try {
+      final ImportResult ir = DataImportService.getInstance()
+          .importClientData(xml, importProcessor);
+      xml = null;
+      if (ir.getException() != null) {
+        ir.getException().printStackTrace(System.err);
+        throw new OBException(ir.getException());
+      }
+      if (ir.getErrorMessages() != null) {
+        fail(ir.getErrorMessages());
+      }
+      // none should be updated!
+      assertEquals(0, ir.getUpdatedObjects().size());
+
+      // and never insert anything in client 0
+      for (final BaseOBObject bob : ir.getInsertedObjects()) {
+        if (bob instanceof ClientEnabled) {
+          final ClientEnabled ce = (ClientEnabled) bob;
+          assertNotNull(ce.getClient());
+          assertTrue(!ce.getClient().getId().equals("0"));
+        }
+      }
+
+      System.err.println(ir.getWarningMessages());
+    } catch (final Exception e) {
+      e.printStackTrace(System.err);
+      throw new OBException(e);
     }
-
-    public void _testExportImportClient1000001() {
-	exportImport("1000001");
-    }
-
-    private void exportImport(String clientId) {
-	setErrorOccured(true);
-	setUserContext("0");
-	final Map<String, Object> parameters = new HashMap<String, Object>();
-	parameters.put(DataExportService.CLIENT_ID_PARAMETER_NAME, clientId);
-	String xml = DataExportService.getInstance().exportClientToXML(
-		parameters);
-
-	try {
-	    final File f = new File("/tmp/export.xml");
-	    if (f.exists()) {
-		f.delete();
-	    }
-	    final FileWriter fw = new FileWriter(f);
-	    fw.write(xml);
-	    fw.close();
-	} catch (final Exception e) {
-	    throw new OBException(e);
-	}
-
-	final ClientImportProcessor importProcessor = new ClientImportProcessor();
-	importProcessor.setNewName("" + System.currentTimeMillis());
-	try {
-	    final ImportResult ir = DataImportService.getInstance()
-		    .importClientData(xml, importProcessor);
-	    xml = null;
-	    if (ir.getException() != null) {
-		ir.getException().printStackTrace(System.err);
-		throw new OBException(ir.getException());
-	    }
-	    if (ir.getErrorMessages() != null) {
-		fail(ir.getErrorMessages());
-	    }
-	    // none should be updated!
-	    assertEquals(0, ir.getUpdatedObjects().size());
-
-	    // and never insert anything in client 0
-	    for (final BaseOBObject bob : ir.getInsertedObjects()) {
-		if (bob instanceof ClientEnabled) {
-		    final ClientEnabled ce = (ClientEnabled) bob;
-		    assertNotNull(ce.getClient());
-		    assertTrue(!ce.getClient().getId().equals("0"));
-		}
-	    }
-
-	    System.err.println(ir.getWarningMessages());
-	} catch (final Exception e) {
-	    e.printStackTrace(System.err);
-	    throw new OBException(e);
-	}
-	setErrorOccured(true);
-    }
+    setErrorOccured(true);
+  }
 }

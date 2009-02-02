@@ -27,7 +27,7 @@ package org.openbravo.test.ant;
 
 public class WadTest extends BaseAntTest {
 
-    public void testCompileComplete() {
-        doTest("wad", "src");
-    }
+  public void testCompileComplete() {
+    doTest("wad", "src");
+  }
 }

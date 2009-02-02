@@ -27,11 +27,11 @@ package org.openbravo.test.ant;
 
 public class AntTasksTest extends BaseAntTest {
 
-    public void _testCompileComplete() {
-	doTest("compile.complete");
-    }
+  public void _testCompileComplete() {
+    doTest("compile.complete");
+  }
 
-    public void testUpdateDatabase() {
-	doTest("update.database");
-    }
+  public void testUpdateDatabase() {
+    doTest("update.database");
+  }
 }
