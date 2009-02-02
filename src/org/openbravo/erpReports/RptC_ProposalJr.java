@@ -62,7 +62,7 @@ public class RptC_ProposalJr extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: pdf - ID:" + strClave);
     RptCProposalJrData[] data = RptCProposalJrData.select(this, strClave, Utility.getContext(this,
-        vars, "#User_Client", "RptC_ProposalJr"), Utility.getContext(this, vars, "#User_Org",
+        vars, "#User_Client", "RptC_ProposalJr"), Utility.getContext(this, vars, "#AccessibleOrgTree",
         "RptC_ProposalJr"));
 
     String strLanguage = vars.getLanguage();

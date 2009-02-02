@@ -56,7 +56,7 @@ public class RptC_Proposal extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: pdf");
     RptCProposalData[] data = RptCProposalData.select(this, Utility.getContext(this, vars,
-        "#User_Client", "RptC_Proposal"), Utility.getContext(this, vars, "#User_Org",
+        "#User_Client", "RptC_Proposal"), Utility.getContext(this, vars, "#AccessibleOrgTree",
         "RptC_Proposal"), strClave);
     String discard[] = { "" };
     if (data == null || data.length == 0)

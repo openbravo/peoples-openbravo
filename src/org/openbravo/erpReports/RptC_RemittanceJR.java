@@ -62,7 +62,7 @@ public class RptC_RemittanceJR extends HttpSecureAppServlet {
       response.setHeader("Content-disposition", "inline; filename=RptC_Remittance.pdf");
 
     RptCRemittanceData[] data = RptCRemittanceData.select(this, Utility.getContext(this, vars,
-        "#User_Client", "RptC_RemittanceJR"), Utility.getContext(this, vars, "#User_Org",
+        "#User_Client", "RptC_RemittanceJR"), Utility.getContext(this, vars, "#AccessibleOrgTree",
         "RptC_RemittanceJR"), strcRemittanceId);
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);

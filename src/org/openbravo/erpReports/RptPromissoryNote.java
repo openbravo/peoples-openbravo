@@ -59,7 +59,7 @@ public class RptPromissoryNote extends HttpSecureAppServlet {
       log4j.debug("Output: pdf");
     if (!strcDebtPaymentId.equals("")) {
       RptPromissoryNoteData[] data = RptPromissoryNoteData.select(this, Utility.getContext(this,
-          vars, "#User_Org", "RptPromissoryNote"), Utility.getContext(this, vars, "#User_Client",
+          vars, "#AccessibleOrgTree", "RptPromissoryNote"), Utility.getContext(this, vars, "#User_Client",
           "RptPromissoryNote"), strcDebtPaymentId);
       RptPromissoryNoteHeaderData[][] pdfPromissoryNoteHeaderData = null;
       RptPromissoryNoteAfterData[][] pdfPromissoryNoteAfterData = null;
@@ -67,7 +67,7 @@ public class RptPromissoryNote extends HttpSecureAppServlet {
 
       if (data == null || data.length == 0) {
         data = RptPromissoryNoteData.selectDebtPayment(this, Utility.getContext(this, vars,
-            "#User_Org", "RptPromissoryNote"), Utility.getContext(this, vars, "#User_Client",
+            "#AccessibleOrgTree", "RptPromissoryNote"), Utility.getContext(this, vars, "#User_Client",
             "RptPromissoryNote"), strcDebtPaymentId);
         pdfPromissoryNoteHeaderData = new RptPromissoryNoteHeaderData[data.length][];
         pdfPromissoryNoteAfterData = new RptPromissoryNoteAfterData[data.length][];
