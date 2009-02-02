@@ -21434,7 +21434,7 @@ Each line is a product demand for a specific date.  It is also possible to defin
 <!--1000500000 ISACTIVE-->
 <!--1000500000-->              <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1000500000 NAME-->
-<!--1000500000-->              <NAME><![CDATA[Poc Configuration]]></NAME>
+<!--1000500000-->              <NAME><![CDATA[Email Configuration]]></NAME>
 <!--1000500000 DESCRIPTION-->
 <!--1000500000-->              <DESCRIPTION><![CDATA[Configuration tab for the Point of Contact features]]></DESCRIPTION>
 <!--1000500000 AD_TABLE_ID-->
